@@ -421,7 +421,7 @@ T('G1. saveStrategyReport + loadStrategyReport round-trip', () => {
 T('G2. evolveReport - rolling history accumulates up to 5 entries', () => {
   ctx.localStorage.clear();
   for (let i = 0; i < 7; i++) evolveReport('player', {}, 'doubles');
-  const stored = JSON.parse(ctx.localStorage.getItem('champions_strategy_v1::' + teamSignature(TEAMS.player)));
+  const stored = JSON.parse(ctx.localStorage.getItem('champions:champions_strategy_v1::' + teamSignature(TEAMS.player)));
   if (!stored || stored.history.length > 5) throw new Error('history must cap at 5, got ' + (stored && stored.history.length));
 });
 T('G3. loadStrategyReport - returns null for unknown team', () => {
