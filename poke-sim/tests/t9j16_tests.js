@@ -67,11 +67,13 @@ const ctx = {
 };
 ctx.self = ctx.window;
 ctx.globalThis = ctx;
+ctx.localStorage = ctx.window.localStorage; // storage_adapter.js expects global localStorage
 vm.createContext(ctx);
 
 function load(f) { vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx, { filename: f }); }
 load('data.js');
 load('engine.js');
+load('storage_adapter.js');
 load('ui.js');
 
 // Expose helpers

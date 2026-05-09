@@ -101,6 +101,7 @@ const ctx = {
 };
 ctx.self = ctx.window;
 ctx.globalThis = ctx;
+ctx.localStorage = ctx.window.localStorage; // storage_adapter.js expects global localStorage
 vm.createContext(ctx);
 
 function load(f) {
@@ -110,6 +111,7 @@ function load(f) {
 // Load engine/data first (so TEAMS, BASE_STATS exist) then ui.
 load('data.js');
 load('engine.js');
+load('storage_adapter.js');
 load('ui.js');
 // Expose ctx-scoped const/let bindings on the context object (vm.createContext
 // does NOT auto-attach top-level const/let to the context, only var). This
