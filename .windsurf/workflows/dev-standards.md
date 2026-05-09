@@ -26,10 +26,16 @@ These rules apply to **every** implementation session. Follow them in order befo
 
 ## Post-Implementation Gate
 
-6. **Update MASTER_PROMPT.md** — After completing work on a branch, update `MASTER_PROMPT.md` with:
-   - What was done (module, PR, key changes)
-   - Current status of the integration plan
-   - Any blockers or open questions
-   - This ensures any team member or AI can pick up where you left off.
-
-7. **Verify before push** — Run the test suite, confirm no regressions, and check that the bundle builds cleanly before pushing.
+6. **Update MASTER_PROMPT.md** — After completing work on a branch, update this file with: what was done, current status, blockers, and open questions. This is the team handoff doc.
+7. **Verify before push** — Run the test suite, confirm no regressions, check that the bundle builds cleanly.
+8. **No auto-commits/pushes** — Never run `git commit` or `git push` without explicit user approval. Present changes for review first.
+9. **Rebuild bundle after app source changes** — If any of `ui.js`, `engine.js`, `data.js`, `storage_adapter.js`, or `supabase_adapter.js` are modified, the bundle MUST be rebuilt before pushing:
+   ```
+   cd poke-sim && python3 tools/build-bundle.py
+   ```
+   Then stage and commit `poke-sim/pokemon-champion-2026.html`. CI will fail with "Bundle drift detected" otherwise.
+10. **Update sw.js after app source changes** — Any PR that modifies app source files must also update `poke-sim/sw.js` to bump the cache version. Run the release script:
+    ```
+    chmod +x tools/release.sh && ./tools/release.sh <tag>
+    ```
+    Or manually bump `CACHE_NAME` in `sw.js`. CI will fail with "PWA users will receive stale cached files" otherwise.

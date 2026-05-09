@@ -70,6 +70,8 @@ git push --force
 ### Post-Implementation Gate
 6. **Update MASTER_PROMPT.md** — After completing work on a branch, update this file with: what was done, current status, blockers, and open questions. This is the team handoff doc.
 7. **Verify before push** — Run the test suite, confirm no regressions, check that the bundle builds cleanly.
+9. **Rebuild bundle after app source changes** — If `ui.js`, `engine.js`, `data.js`, `storage_adapter.js`, or `supabase_adapter.js` are modified, rebuild the bundle before pushing: `cd poke-sim && python3 tools/build-bundle.py` then commit `poke-sim/pokemon-champion-2026.html`. CI gate: "Bundle drift detected".
+10. **Update sw.js after app source changes** — Any branch that touches app source files must bump `CACHE_NAME` in `poke-sim/sw.js` (or run `./tools/release.sh <tag>`). CI gate: "PWA users will receive stale cached files".
 
 ---
 
