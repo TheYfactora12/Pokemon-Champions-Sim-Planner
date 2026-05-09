@@ -47,7 +47,30 @@ git push --force
 
 ---
 
-## 🚨 M4 / POK-20 — QC READINESS REPORT & CONFLICT RESOLUTION PLAN
+## �️ DEVELOPMENT STANDARDS
+
+> These rules govern all implementation work. Every contributor (human or AI) must follow them.
+
+### Pre-Implementation Gate
+1. **Pull latest & check branch** — Run `git fetch origin && git status` and read this `MASTER_PROMPT.md` before touching any code. Confirm correct branch and current progress.
+2. **Read the plan** — Check `.windsurf/plans/` for existing plans. If no plan exists, create one before implementing.
+
+### Implementation Rules
+3. **Embedded Systems Logic** — All code lives in well-named functions and classes. Entry points (`main`, event handlers, top-level scripts) are clean orchestrators only — no inline business logic. Keep cyclomatic complexity low per function.
+4. **TDD + Modular** — Write or update tests BEFORE implementation. Follow RED → GREEN → REFACTOR. Each module gets its own test file. Never merge code that breaks existing tests.
+5. **Precise, Concise Plans** — All plans must be:
+   - Bullet-format, scannable in under 60 seconds
+   - Each step is a single concrete action (not a paragraph)
+   - Written so any AI agent (including free-tier SWE models) can follow and implement precisely
+   - Include file paths, function names, and acceptance criteria
+
+### Post-Implementation Gate
+6. **Update MASTER_PROMPT.md** — After completing work on a branch, update this file with: what was done, current status, blockers, and open questions. This is the team handoff doc.
+7. **Verify before push** — Run the test suite, confirm no regressions, check that the bundle builds cleanly.
+
+---
+
+## �🚨 M4 / POK-20 — QC READINESS REPORT & CONFLICT RESOLUTION PLAN
 
 > **Status: NO-SHIP**
 > This section records the documentation and conflict-triage gate before any M4 persistence implementation.
