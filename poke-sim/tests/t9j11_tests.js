@@ -110,6 +110,7 @@ function load(f) {
 // Load engine/data first (so TEAMS, BASE_STATS exist) then ui.
 load('data.js');
 load('engine.js');
+load('storage_adapter.js');
 load('ui.js');
 // Expose ctx-scoped const/let bindings on the context object (vm.createContext
 // does NOT auto-attach top-level const/let to the context, only var). This
@@ -178,7 +179,14 @@ function resetTeams() {
   for (const k of Object.keys(TEAMS)) {
     if (TEAMS[k] && TEAMS[k].source === 'custom') delete TEAMS[k];
   }
-  ctx.localStorage.clear();
+  // Safe localStorage clear with multiple fallbacks
+  if (ctx && ctx.localStorage && typeof ctx.localStorage.clear === 'function') {
+    ctx.localStorage.clear();
+  } else if (ctx && ctx.localStorage && ctx.localStorage._s !== undefined) {
+    ctx.localStorage._s = {};
+  } else if (typeof localStorage !== 'undefined' && localStorage.clear) {
+    localStorage.clear();
+  }
 }
 
 // ============================================================

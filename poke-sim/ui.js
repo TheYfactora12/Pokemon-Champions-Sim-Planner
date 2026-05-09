@@ -1944,8 +1944,113 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
     });
     done++;
     if (onDone) onDone(opp, res);
+    // M4: persist each matchup result to Supabase (fire-and-forget)
+    try {
+      var _adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+      if (_adapter && _adapter.enabled) {
+        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, opp, bo, res)))
+          .catch(function(e) { console.warn('[M4] run-all saveAnalysis failed:', e && e.message); });
+      }
+    } catch (_m4e) { console.warn('[M4] run-all payload build failed:', _m4e && _m4e.message); }
   }
 }
+
+// __M4_BUILD_PAYLOAD_BEGIN__
+// ============================================================
+// M4 — _buildAnalysisPayload: builds the canonical payload for SupabaseAdapter.saveAnalysis
+// ============================================================
+var _M4_VALID_BO = [1, 3, 5, 10];
+
+function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
+  if (_M4_VALID_BO.indexOf(bo) === -1) {
+    throw new Error('[M4] _buildAnalysisPayload: invalid bo=' + bo + ' — must be one of 1,3,5,10');
+  }
+
+  var policyModel = (res && res.policy_model) || 'deterministic-v1';
+  if (!policyModel || typeof policyModel !== 'string' || policyModel.length === 0) {
+    throw new Error('[M4] _buildAnalysisPayload: policy_model must be non-empty string');
+  }
+
+  var wins   = (res && res.wins)   || 0;
+  var losses = (res && res.losses) || 0;
+  var draws  = (res && res.draws)  || 0;
+  var sampleSize = wins + losses + draws;
+  var winRate = sampleSize > 0 ? wins / sampleSize : 0;
+
+  if (typeof res.win_rate === 'number') { winRate = res.win_rate; }
+  if (typeof res.winRate  === 'number') { winRate = res.winRate; }
+  if (winRate < 0 || winRate > 1) {
+    throw new Error('[M4] _buildAnalysisPayload: win_rate out of [0,1]: ' + winRate);
+  }
+
+  var rulesetId = 'champions_reg_m_doubles_bo3';
+  if (typeof TEAMS !== 'undefined' && TEAMS[playerKey] && TEAMS[playerKey].metadata && TEAMS[playerKey].metadata.ruleset_id) {
+    rulesetId = TEAMS[playerKey].metadata.ruleset_id;
+  }
+
+  var engineVersion = (typeof window !== 'undefined' && window.ENGINE_VERSION) || '1.0.0';
+
+  var winConditions = [];
+  if (res && res.winConditions && typeof res.winConditions === 'object') {
+    var wcObj = res.winConditions;
+    var keys = Object.keys(wcObj);
+    for (var i = 0; i < keys.length; i++) {
+      winConditions.push({ label: keys[i], count: wcObj[keys[i]] });
+    }
+  }
+  if (res && Array.isArray(res.win_conditions)) {
+    winConditions = res.win_conditions;
+  }
+
+  var logs = [];
+  if (res && res.allLogs && Array.isArray(res.allLogs)) {
+    logs = res.allLogs.slice(0, 50);
+  }
+  if (res && Array.isArray(res.logs)) {
+    logs = res.logs.slice(0, 50);
+  }
+
+  var analysisJson = (res && res.analysis_json) || {};
+  if (typeof generatePilotGuide === 'function' && res) {
+    try { analysisJson.pilot_guide = generatePilotGuide(oppKey, res) || null; } catch (_) {}
+  }
+
+  var ciLow  = (res && typeof res.ci_low  === 'number') ? res.ci_low  : 0;
+  var ciHigh = (res && typeof res.ci_high === 'number') ? res.ci_high : 1;
+  if (sampleSize > 0) {
+    var z = 1.96;
+    var p = winRate;
+    var denom = 1 + z * z / sampleSize;
+    ciLow  = Math.max(0, (p + z * z / (2 * sampleSize) - z * Math.sqrt(p * (1 - p) / sampleSize + z * z / (4 * sampleSize * sampleSize))) / denom);
+    ciHigh = Math.min(1, (p + z * z / (2 * sampleSize) + z * Math.sqrt(p * (1 - p) / sampleSize + z * z / (4 * sampleSize * sampleSize))) / denom);
+  }
+
+  return {
+    engine_version:    engineVersion,
+    ruleset_id:        rulesetId,
+    player_team_id:    playerKey,
+    opp_team_id:       oppKey,
+    prior_id:          (res && res.prior_id) || null,
+    policy_model:      policyModel,
+    sample_size:       sampleSize,
+    bo:                bo,
+    win_rate:          winRate,
+    wins:              wins,
+    losses:            losses,
+    draws:             draws,
+    avg_turns:         (res && res.avgTurns)   || (res && res.avg_turns)    || 0,
+    avg_tr_turns:      (res && res.avgTrTurns) || (res && res.avg_tr_turns) || 0,
+    ci_low:            ciLow,
+    ci_high:           ciHigh,
+    hidden_info_model: (res && res.hidden_info_model) || null,
+    analysis_json:     analysisJson,
+    win_conditions:    winConditions,
+    logs:              logs
+  };
+}
+
+if (typeof window !== 'undefined') { window._buildAnalysisPayload = _buildAnalysisPayload; }
+// __M4_BUILD_PAYLOAD_END__
 
 // ============================================================
 // SIM BUTTON HANDLERS
@@ -1988,6 +2093,14 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
   try { generatePilotGuide(oppKey, res); } catch (e) { console.warn('[PilotGuide] single-sim populate failed:', e && e.message); }
   // Cache for Run All parity - keeps PDF builder and strategy rebuild in sync.
   try { if (window.lastSimResults) window.lastSimResults[oppKey] = res; } catch(_){}
+  // M4: persist single-sim result to Supabase (fire-and-forget)
+  try {
+    var _adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+    if (_adapter && _adapter.enabled) {
+      Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, oppKey, bo, res)))
+        .catch(function(e) { console.warn('[M4] single-sim saveAnalysis failed:', e && e.message); });
+    }
+  } catch (_m4e) { console.warn('[M4] single-sim payload build failed:', _m4e && _m4e.message); }
   simRunning=false; this.disabled=false; document.getElementById('run-all-btn').disabled=false;
 });
 

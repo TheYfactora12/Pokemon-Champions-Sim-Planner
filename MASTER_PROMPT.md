@@ -37,6 +37,9 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-09 | @alfredocox | M4 implementation: `_buildAnalysisPayload` + `saveAnalysis` call sites wired in `ui.js` | POK-20. Adapter validation added. 18 TDD cases target GREEN. Pending CI run. |
+| 2026-05-09 | @alfredocox | Added Development Standards to MASTER_PROMPT + `.windsurf/workflows/dev-standards.md` | 7-rule gate (pre-impl, impl, post-impl) for all contributors and AI agents. |
+| 2026-05-09 | @alfredocox | Verified module status: M1 ✅ PR#161, M2 ✅ PR#162, M3 ✅ PR#163, M4 🟡 in-progress | Docs were stale — corrected. |
 | 2026-04-30 | @TheYfactora12 | Added M4 Conflict Resolution Plan + QC Readiness Report to MASTER_PROMPT.md | NO-SHIP gate documented. Blocking issues recorded. PR sequence defined. |
 | 2026-04-28 | @TheYfactora12 | Added April 28 changelog entry to `MASTER_PROMPT.md` | Keeping team log current — no code changes this session. |
 | 2026-04-28 | @TheYfactora12 | Synced MASTER_PROMPT with current repo state | Corrected seed v2, open blockers, db file tree |
@@ -47,11 +50,37 @@ git push --force
 
 ---
 
-## 🚨 M4 / POK-20 — QC READINESS REPORT & CONFLICT RESOLUTION PLAN
+## �️ DEVELOPMENT STANDARDS
 
-> **Status: NO-SHIP**
-> This section records the documentation and conflict-triage gate before any M4 persistence implementation.
-> It intentionally does not change runtime source, database SQL, tests, the service worker, or the built bundle.
+> These rules govern all implementation work. Every contributor (human or AI) must follow them.
+
+### Pre-Implementation Gate
+1. **Pull latest & check branch** — Run `git fetch origin && git status` and read this `MASTER_PROMPT.md` before touching any code. Confirm correct branch and current progress.
+2. **Read the plan** — Check `.windsurf/plans/` for existing plans. If no plan exists, create one before implementing.
+
+### Implementation Rules
+3. **Embedded Systems Logic** — All code lives in well-named functions and classes. Entry points (`main`, event handlers, top-level scripts) are clean orchestrators only — no inline business logic. Keep cyclomatic complexity low per function.
+4. **TDD + Modular** — Write or update tests BEFORE implementation. Follow RED → GREEN → REFACTOR. Each module gets its own test file. Never merge code that breaks existing tests.
+5. **Precise, Concise Plans** — All plans must be:
+   - Bullet-format, scannable in under 60 seconds
+   - Each step is a single concrete action (not a paragraph)
+   - Written so any AI agent (including free-tier SWE models) can follow and implement precisely
+   - Include file paths, function names, and acceptance criteria
+
+### Post-Implementation Gate
+6. **Update MASTER_PROMPT.md** — After completing work on a branch, update this file with: what was done, current status, blockers, and open questions. This is the team handoff doc.
+7. **Verify before push** — Run the test suite, confirm no regressions, check that the bundle builds cleanly.
+9. **Rebuild bundle after app source changes** — If `ui.js`, `engine.js`, `data.js`, `storage_adapter.js`, or `supabase_adapter.js` are modified, rebuild the bundle before pushing: `cd poke-sim && python3 tools/build-bundle.py` then commit `poke-sim/pokemon-champion-2026.html`. CI gate: "Bundle drift detected".
+10. **Update sw.js after app source changes** — Any branch that touches app source files must bump `CACHE_NAME` in `poke-sim/sw.js` (or run `./tools/release.sh <tag>`). CI gate: "PWA users will receive stale cached files".
+
+---
+
+## �🚨 M4 / POK-20 — QC READINESS REPORT & CONFLICT RESOLUTION PLAN
+
+> **Status: IMPLEMENTATION COMPLETE — pending CI test verification (2026-05-09)**
+> M4 code landed on branch `integration/poke-sim-db-m4`. `_buildAnalysisPayload` implemented in `ui.js`.
+> `saveAnalysis` call sites wired at single-sim and run-all paths. Adapter validation added.
+> Previous NO-SHIP findings resolved: ruleset_id default fixed, save hook wired, validation added.
 
 ---
 

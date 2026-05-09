@@ -137,9 +137,24 @@
   }
 
   // ── saveAnalysis ──────────────────────────────────────────────────────────
+  const VALID_BO = [1, 3, 5, 10];
+
   async function saveAnalysis(payload) {
     const sb = getClient();
     if (!sb) return null;
+
+    if (!payload || VALID_BO.indexOf(payload.bo) === -1) {
+      console.warn('[SupabaseAdapter] saveAnalysis rejected — invalid bo:', payload && payload.bo);
+      return null;
+    }
+    if (!payload.policy_model || typeof payload.policy_model !== 'string') {
+      console.warn('[SupabaseAdapter] saveAnalysis rejected — policy_model must be non-empty string');
+      return null;
+    }
+    if (typeof payload.win_rate === 'number' && (payload.win_rate < 0 || payload.win_rate > 1)) {
+      console.warn('[SupabaseAdapter] saveAnalysis rejected — win_rate out of [0,1]:', payload.win_rate);
+      return null;
+    }
 
     const analysis_id = uuid();
     const row = {
