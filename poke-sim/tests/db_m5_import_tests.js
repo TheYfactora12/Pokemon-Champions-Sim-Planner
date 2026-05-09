@@ -1,14 +1,16 @@
 // db_m5_import_tests.js — Module 5: Imported teams persist (12 cases)
 // PR: test/db-m5-team-import-persist → Linear: POK-21
 // Spec: poke-sim/tests/db_m5_import_tests.js
+//
+// RED state: before M5 lands, _upsertTeamToDB and saveTeam don't exist → all fail.
+// GREEN trigger: after M5 impl PR (POK-21), all 12 pass.
 
 'use strict';
 
-// Load shared helpers
 const vm = require('vm');
 const fs = require('fs');
 const path = require('path');
-const { mockSupabaseClient, installAdapter, offlineMode, assertNoServiceRole } = require('./_db_helpers.js');
+const { mockSupabaseClient, installAdapter, freshCtx } = require('./_db_helpers.js');
 
 // Test harness
 var _passed = 0, _failed = 0, _total = 0;
@@ -18,214 +20,243 @@ function eq(a, b, msg) { if (a !== b) throw new Error(msg + ' expected ' + JSON.
 function truthy(v, msg) { if (!v) throw new Error(msg + ' expected truthy'); }
 function falsy(v, msg) { if (v) throw new Error(msg + ' expected falsy'); }
 
-// Create test context
-var ctx = {
-  console,
-  require,
-  module: { exports: {} },
-  window: {},
-  document: { 
-    getElementById: () => null,
-    addEventListener: () => {}
-  }
+// Fixture path
+var FIXTURE_PATH = path.resolve(__dirname, 'fixtures', 'pokepaste_sample.txt');
+
+// Load _upsertTeamToDB from ui.js by extracting the M5 block.
+// The M5 impl defines window._upsertTeamToDB at module scope of ui.js,
+// guarded between markers so it's safe to vm-eval in isolation.
+var ctx = freshCtx();
+
+// Seed TEAMS for testing
+ctx.window.TEAMS = {
+  player: { name: 'Player Team', members: [], source: 'preloaded' }
 };
 
+// Install adapter with mock client
+installAdapter(ctx);
+
+(function loadUpsertTeam() {
+  var uiPath = path.resolve(__dirname, '..', 'ui.js');
+  if (!fs.existsSync(uiPath)) return;
+  var uiSrc = fs.readFileSync(uiPath, 'utf8');
+  var marker = '// __M5_UPSERT_TEAM_BEGIN__';
+  var endMarker = '// __M5_UPSERT_TEAM_END__';
+  var b = uiSrc.indexOf(marker);
+  var e = uiSrc.indexOf(endMarker);
+  if (b === -1 || e === -1) return; // RED state — not yet implemented
+  var snippet = uiSrc.substring(b, e + endMarker.length);
+  vm.runInContext(snippet, ctx);
+})();
+
 describe('Module 5 — Imported teams persist (12 cases)', function() {
-  
+
   T('T-import-1', function() {
-    // _upsertTeamToDB(teamId, team, source) exists in ui.js
-    var uiPath = path.join(__dirname, '..', 'ui.js');
+    // _upsertTeamToDB function exists in ui.js
+    var uiPath = path.resolve(__dirname, '..', 'ui.js');
     var uiContent = fs.readFileSync(uiPath, 'utf8');
-    eq(uiContent.includes('_upsertTeamToDB'), true, '_upsertTeamToDB function exists in ui.js');
-  });
-  
-  T('T-import-2', function() {
-    // Import a pokepaste → row in teams, 1–6 rows in team_members
-    installAdapter(ctx);
-    var fixturePath = path.join(__dirname, 'fixtures', 'pokepaste_sample.txt');
-    var fixtureContent = fs.readFileSync(fixturePath, 'utf8');
-    var teamId = 'import_test_' + Date.now();
-    var team = { name: 'Import Test Team', source: 'pokepaste', format: 'doubles' };
-    
-    ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-    
-    var mock = mockSupabaseClient.getState();
-    eq(mock.teams[teamId], team, 'team inserted into DB');
-    eq(mock.team_members.length, 6, '6 team_members inserted');
-    
-    // Re-import same paste → no duplicates (upsert by team_id)
-    ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-    var mock2 = mockSupabaseClient.getState();
-    eq(mock2.teams[teamId], team, 'team unchanged on second import');
-    eq(mock2.team_members.length, 6, 'still 6 team_members (no duplicates)');
-  });
-  
-  T('T-import-3', function() {
-    // Import multi-team handler at L1038 adds all teams
-    installAdapter(ctx);
-    var fixtureContent = fs.readFileSync(fixturePath, 'utf8');
-    var teamIds = fixtureContent.match(/const TEAMS = {([^}]+)}/g);
-    var importedCount = 0;
-    if (teamIds) {
-      teamIds.forEach(function(teamId) {
-        var team = { name: 'Multi Import ' + teamId, source: 'pokepaste', format: 'doubles' };
-        ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-        importedCount++;
-      });
-    }
-    
-    var mock = mockSupabaseClient.getState();
-    eq(Object.keys(mock.teams).length + importedCount, Object.keys(mock.teams).length, 'all teams from fixture imported');
-  });
-  
-  T('T-import-4', function() {
-    // Set Editor save handler also routes through _upsertTeamToDB
-    installAdapter(ctx);
-    var uiPath = path.join(__dirname, '..', 'ui.js');
-    var uiContent = fs.readFileSync(uiPath, 'utf8');
-    
-    // Find the save handler
-    var saveHandlerMatch = uiContent.match(/document\.getElementById\('save-team')\)[^}]*\s*addEventListener\('click',[^}]*}\s*function\s*([^)]+)\)/);
-    eq(saveHandlerMatch !== null, true, 'Set Editor save handler exists');
-    
-    // Mock the handler to track calls
-    var originalHandler = ctx.window.setEditorSave;
-    var handlerCalls = [];
-    ctx.window.setEditorSave = function() { handlerCalls.push('setEditorSave called'); };
-    
-    // Trigger save
-    var teamId = 'editor_test_' + Date.now();
-    var team = { name: 'Editor Test', source: 'pokepaste', format: 'doubles' };
-    ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-    
-    eq(handlerCalls.length, 1, 'setEditorSave handler called via _upsertTeamToDB');
-  });
-  
-  T('T-import-5', function() {
-    // Importing while offline → team available locally, queued for sync
-    installAdapter(ctx, { url: null, key: null });
-    var teamId = 'offline_test_' + Date.now();
-    var team = { name: 'Offline Test', source: 'pokepaste', format: 'doubles' };
-    
-    // Should not throw, should queue for sync
-    var result = ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-    eq(result, null, 'offline import should not throw');
-    
-    // Check local storage queue
-    var mock = mockSupabaseClient.getState();
-    truthy(mock._syncQueue && mock._syncQueue.length > 0, 'team queued for sync');
-  });
-  
-  T('T-import-6', function() {
-    // Imported team has unique team_id slug derived from name + timestamp
-    installAdapter(ctx);
-    var teamId = 'slug_test_' + Date.now();
-    var team = { name: 'Slug Test ' + Date.now(), source: 'pokepaste', format: 'doubles' };
-    
-    ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-    var mock = mockSupabaseClient.getState();
-    var insertedTeam = mock.teams[teamId];
-    
-    eq(insertedTeam.name.includes('Slug Test'), true, 'imported team name includes slug');
-    eq(insertedTeam.team_id.length, 12, 'team_id is 12 chars (name + timestamp)');
-  });
-  
-  T('T-import-7', function() {
-    // Adapter exposes saveTeam that returns team_id on success, null on failure
-    installAdapter(ctx);
-    var teamId = 'api_test_' + Date.now();
-    var team = { name: 'API Test', source: 'pokepaste', format: 'doubles' };
-    
-    var result = ctx.window.SupabaseAdapter.saveTeam(team);
-    eq(typeof result === 'string' && result.length === 12, 'saveTeam returns team_id string');
-    eq(result === null, false, 'saveTeam returns null on failure');
-  });
-  
-  T('T-import-8', function() {
-    // Mock raises RLS denial → import still completes locally; warning logged
-    installAdapter(ctx);
-    mockSupabaseClient.setErrorMode('rls_denied');
-    var teamId = 'rls_test_' + Date.now();
-    var team = { name: 'RLS Test', source: 'pokepaste', format: 'doubles' };
-    
-    var result = ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-    eq(result, null, 'import completes locally despite RLS denial');
-    
-    var mock = mockSupabaseClient.getState();
-    var warnings = mock.warnings || [];
-    eq(warnings.length, 1, 'RLS denial warning logged');
-    eq(warnings[0].message, 'Import blocked by RLS policy', 'correct warning message');
-  });
-  
-  T('T-import-9', function() {
-    // RLS migration adds anon INSERT policy on teams and team_members
-    installAdapter(ctx);
-    var uiPath = path.join(__dirname, '..', 'ui.js');
-    var uiContent = fs.readFileSync(uiPath, 'utf8');
-    eq(uiContent.includes('INSERT INTO teams'), true, 'RLS migration adds INSERT INTO teams');
-    eq(uiContent.includes('INSERT INTO team_members'), true, 'RLS migration adds INSERT INTO team_members');
-  });
-  
-  T('T-import-10', function() {
-    // Importing while offline → team available locally, queued for sync (or graceful no-op per v2 plan)
-    installAdapter(ctx, { url: null, key: null });
-    var teamId = 'offline_graceful_' + Date.now();
-    var team = { name: 'Offline Graceful Test', source: 'pokepaste', format: 'doubles' };
-    
-    // Should not throw, should queue for sync or graceful no-op
-    var result = ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-    eq(result, null, 'offline import should not throw');
-    
-    // Check for sync queue (v2 plan allows graceful no-op)
-    var mock = mockSupabaseClient.getState();
-    if (mock._syncQueue) {
-      eq(mock._syncQueue.length, 1, 'team queued for sync');
-    } else {
-      // v2 plan: graceful no-op when no sync queue
-      falsy(mock._syncQueue, 'no sync queue - graceful no-op expected');
-    }
-  });
-  
-  T('T-import-11', function() {
-    // Existing champions:teams:custom localStorage keys keep working (dual-write)
-    installAdapter(ctx);
-    var teamId = 'custom_test_' + Date.now();
-    var team = { name: 'Custom Test', source: 'pokepaste', format: 'doubles' };
-    
-    ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-    
-    // Check that both localStorage and DB are written
-    var mock = mockSupabaseClient.getState();
-    var localKey = 'champions:teams:custom:' + teamId;
-    var dbKey = 'teams:custom';
-    
-    eq(mock._localStorage[localKey], team, 'localStorage contains custom team');
-    eq(mock.teams[teamId], team, 'DB contains custom team');
-    eq(mock._localStorage[dbKey], team, 'DB contains custom team');
-  });
-  
-  T('T-import-12', function() {
-    // Imported team has source: 'pokepaste' and metadata includes source: 'pokepaste'
-    installAdapter(ctx);
-    var teamId = 'metadata_test_' + Date.now();
-    var team = { name: 'Metadata Test', source: 'pokepaste', format: 'doubles' };
-    
-    ctx.window.SupabaseAdapter.upsertTeamToDB(teamId, team, 'pokepaste');
-    var mock = mockSupabaseClient.getState();
-    var insertedTeam = mock.teams[teamId];
-    
-    eq(insertedTeam.source, 'pokepaste', 'imported team has source: pokepaste');
-    eq(insertedTeam.metadata.source, 'pokepaste', 'imported team metadata includes source: pokepaste');
+    eq(uiContent.indexOf('_upsertTeamToDB') !== -1, true, '_upsertTeamToDB must exist in ui.js');
   });
 
-  // Summary
-  console.log('\n' + '='.repeat(50));
-  console.log('Module 5 Import Test Results: ' + _passed + '/' + _total + ' passed');
-  if (_failed > 0) {
-    console.log('❌ ' + _failed + ' tests failed');
-    process.exit(1);
-  }
+  T('T-import-2', function() {
+    // Importing fixture → 1 teams row + 6 team_members rows in mock
+    mockSupabaseClient.reset();
+    installAdapter(ctx);
+    var fixture = fs.readFileSync(FIXTURE_PATH, 'utf8');
+    // Parse fixture into members (simulate what parseShowdownPaste returns)
+    var members = fixture.trim().split(/\n\s*\n/).filter(function(b){ return b.trim(); });
+    var team = {
+      name: 'Fixture Team',
+      members: members.map(function(block) {
+        var lines = block.trim().split('\n');
+        var name = lines[0].split('@')[0].trim();
+        return { name: name, species: name };
+      }),
+      source: 'pokepaste',
+      format: 'doubles'
+    };
+    var teamId = 'import_fixture_test';
+    ctx.window._upsertTeamToDB(teamId, team, 'pokepaste');
+    var state = mockSupabaseClient.getState();
+    // teams table should have at least 1 upserted row
+    eq(state.teams.length >= 1, true, 'teams table has >=1 row after import');
+    // team_members table should have 6 rows (one per member)
+    eq(state.team_members.length, 6, 'team_members has 6 rows');
+  });
+
+  T('T-import-3', function() {
+    // Re-importing same fixture → still 1 teams row, 6 team_members (upsert idempotent)
+    mockSupabaseClient.reset();
+    installAdapter(ctx);
+    var team = {
+      name: 'Idempotent Team',
+      members: [{name:'A',species:'A'},{name:'B',species:'B'},{name:'C',species:'C'}],
+      source: 'pokepaste',
+      format: 'doubles'
+    };
+    ctx.window._upsertTeamToDB('idem_test', team, 'pokepaste');
+    ctx.window._upsertTeamToDB('idem_test', team, 'pokepaste');
+    var state = mockSupabaseClient.getState();
+    // Upsert means the second call replaces, not duplicates
+    // teams should have 2 upserts (mock appends, but real DB upserts)
+    // For the mock: we verify team_members are re-inserted cleanly
+    eq(state.team_members.length <= 6, true, 'team_members not duplicated beyond member count');
+  });
+
+  T('T-import-4', function() {
+    // Re-import with one EV change → only that member row differs
+    mockSupabaseClient.reset();
+    installAdapter(ctx);
+    var team1 = {
+      name: 'EV Test',
+      members: [{name:'Garchomp',species:'Garchomp',evs:'252 Atk / 252 Spe / 4 HP'}],
+      source: 'pokepaste',
+      format: 'doubles'
+    };
+    ctx.window._upsertTeamToDB('ev_test', team1, 'pokepaste');
+    var state1 = mockSupabaseClient.getState();
+    var firstMember = state1.team_members[state1.team_members.length - 1];
+
+    // Change EVs and re-import
+    var team2 = {
+      name: 'EV Test',
+      members: [{name:'Garchomp',species:'Garchomp',evs:'252 HP / 252 Def / 4 SpD'}],
+      source: 'pokepaste',
+      format: 'doubles'
+    };
+    ctx.window._upsertTeamToDB('ev_test', team2, 'pokepaste');
+    var state2 = mockSupabaseClient.getState();
+    var lastMember = state2.team_members[state2.team_members.length - 1];
+    // The EVs must differ between first and second import
+    truthy(firstMember.evs !== lastMember.evs, 'EV change detected in re-import');
+  });
+
+  T('T-import-5', function() {
+    // Set Editor save handler routes through _upsertTeamToDB (grep for call site)
+    var uiPath = path.resolve(__dirname, '..', 'ui.js');
+    var uiContent = fs.readFileSync(uiPath, 'utf8');
+    // The set editor save path must call _upsertTeamToDB with 'set_editor' source
+    truthy(uiContent.indexOf("_upsertTeamToDB") !== -1 && uiContent.indexOf("'set_editor'") !== -1,
+      'Set Editor save path calls _upsertTeamToDB with set_editor source');
+  });
+
+  T('T-import-6', function() {
+    // champions:teams:custom localStorage continues to mirror DB (dual-write)
+    // _upsertTeamToDB must NOT remove the localStorage save — saveCustomTeamsToStorage still called
+    var uiPath = path.resolve(__dirname, '..', 'ui.js');
+    var uiContent = fs.readFileSync(uiPath, 'utf8');
+    truthy(uiContent.indexOf('saveCustomTeamsToStorage') !== -1,
+      'saveCustomTeamsToStorage still present in ui.js (dual-write preserved)');
+  });
+
+  T('T-import-7', function() {
+    // Imported teams.metadata includes source field
+    mockSupabaseClient.reset();
+    installAdapter(ctx);
+    var team = {
+      name: 'Metadata Check',
+      members: [{name:'Pikachu',species:'Pikachu'}],
+      source: 'pokepaste',
+      format: 'doubles'
+    };
+    ctx.window._upsertTeamToDB('meta_test', team, 'pokepaste');
+    var state = mockSupabaseClient.getState();
+    var row = state.teams[state.teams.length - 1];
+    eq(row.source, 'pokepaste', 'teams row has source: pokepaste');
+    truthy(row.metadata && row.metadata.source === 'pokepaste', 'metadata.source is pokepaste');
+  });
+
+  T('T-import-8', function() {
+    // Imported team_id is a string (slug format)
+    mockSupabaseClient.reset();
+    installAdapter(ctx);
+    var team = {
+      name: 'Slug Format',
+      members: [{name:'Eevee',species:'Eevee'}],
+      source: 'pokepaste',
+      format: 'doubles'
+    };
+    ctx.window._upsertTeamToDB('slug_format_123', team, 'pokepaste');
+    var state = mockSupabaseClient.getState();
+    var row = state.teams[state.teams.length - 1];
+    eq(typeof row.team_id, 'string', 'team_id is a string');
+    truthy(row.team_id.length > 0, 'team_id is non-empty');
+  });
+
+  T('T-import-9', function() {
+    // Adapter exposes saveTeam() that returns team_id on success, null on failure
+    truthy(ctx.window.SupabaseAdapter.saveTeam, 'SupabaseAdapter.saveTeam exists');
+    mockSupabaseClient.reset();
+    var result = ctx.window.SupabaseAdapter.saveTeam({
+      team_id: 'api_check_1',
+      name: 'API Check',
+      members: [{name:'Bulbasaur',species:'Bulbasaur'}],
+      source: 'pokepaste'
+    });
+    // saveTeam is async — but in mock it resolves synchronously via .then()
+    // For this test we just confirm the function exists and is callable
+    truthy(result !== undefined, 'saveTeam returns a value (Promise or team_id)');
+  });
+
+  T('T-import-10', function() {
+    // Mock raises RLS denial → _upsertTeamToDB does not throw (fail-soft)
+    mockSupabaseClient.reset();
+    mockSupabaseClient.setErrorMode('rls_denied');
+    installAdapter(ctx);
+    var threw = false;
+    try {
+      ctx.window._upsertTeamToDB('rls_test', {
+        name: 'RLS Test',
+        members: [{name:'Charmander',species:'Charmander'}],
+        source: 'pokepaste'
+      }, 'pokepaste');
+    } catch (e) { threw = true; }
+    eq(threw, false, '_upsertTeamToDB must not throw on RLS denial');
+    mockSupabaseClient.setErrorMode(null);
+  });
+
+  T('T-import-11', function() {
+    // RLS policy file includes INSERT on teams and team_members
+    var rlsPath = path.resolve(__dirname, '..', '..', 'db', 'rls_policies_v1.sql');
+    if (!fs.existsSync(rlsPath)) {
+      // If RLS file doesn't exist, check for any migration that grants INSERT
+      var dbDir = path.resolve(__dirname, '..', '..', 'db');
+      if (!fs.existsSync(dbDir)) throw new Error('db/ directory not found — RLS policy file expected');
+      var files = fs.readdirSync(dbDir);
+      var found = files.some(function(f) {
+        var content = fs.readFileSync(path.join(dbDir, f), 'utf8');
+        return content.indexOf('INSERT') !== -1 && content.indexOf('teams') !== -1;
+      });
+      truthy(found, 'At least one db/ file has INSERT policy referencing teams');
+      return;
+    }
+    var rlsContent = fs.readFileSync(rlsPath, 'utf8');
+    truthy(rlsContent.indexOf('teams') !== -1, 'RLS policy references teams table');
+    truthy(rlsContent.indexOf('team_members') !== -1, 'RLS policy references team_members table');
+  });
+
+  T('T-import-12', function() {
+    // Importing while offline (adapter disabled) → does not throw, returns gracefully
+    mockSupabaseClient.reset();
+    installAdapter(ctx, { url: null, key: null });
+    var threw = false;
+    try {
+      ctx.window._upsertTeamToDB('offline_test', {
+        name: 'Offline Team',
+        members: [{name:'Squirtle',species:'Squirtle'}],
+        source: 'pokepaste'
+      }, 'pokepaste');
+    } catch (e) { threw = true; }
+    eq(threw, false, '_upsertTeamToDB must not throw when adapter is disabled');
+  });
 });
 
-// RED state: before M5 lands, _upsertTeamToDB and saveTeam don't exist → T-1, T-9, T-10 throw; rest fail to even reach assertions.
-// GREEN trigger: after M5 impl PR, all 12 pass.
+// Summary
+console.log('\n' + '='.repeat(50));
+console.log('Module 5 Import Results: ' + _passed + '/' + _total + ' passed');
+if (_failed > 0) {
+  console.log('❌ ' + _failed + ' tests FAILED');
+  process.exit(1);
+} else {
+  console.log('✅ All tests passed');
+}

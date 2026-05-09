@@ -1000,6 +1000,8 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
     };
     added++;
     keys.push(key);
+    // M5: persist to Supabase (fire-and-forget)
+    if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(key, TEAMS[key], 'bulk_import');
   }
   if (added > 0 && typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
   return { added: added, skipped: skipped, keys: keys };
@@ -1378,6 +1380,8 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
     };
     // T9f: persist to localStorage immediately
     if (typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
+    // M5: persist to Supabase (fire-and-forget)
+    if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(newKey, TEAMS[newKey], 'pokepaste');
     targetSlot = newKey;
     teamName = guessedName;
     // T9d: rebuild both player + opponent dropdowns so the new team is
@@ -1402,6 +1406,8 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
     } else if (typeof savePreloadedOverride === 'function') {
       savePreloadedOverride(slot); // preloaded override survives reload
     }
+    // M5: persist edits to Supabase (fire-and-forget)
+    if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(slot, TEAMS[slot], 'set_editor');
     if (slot === currentPlayerKey) {
       renderRoster('player-roster', TEAMS[currentPlayerKey].members);
       renderEditorRoster();
@@ -2051,6 +2057,53 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
 
 if (typeof window !== 'undefined') { window._buildAnalysisPayload = _buildAnalysisPayload; }
 // __M4_BUILD_PAYLOAD_END__
+
+// __M5_UPSERT_TEAM_BEGIN__
+// ============================================================
+// M5 — _upsertTeamToDB: persists imported/edited teams to Supabase
+// ============================================================
+function _upsertTeamToDB(teamId, team, source) {
+  try {
+    var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+    if (!adapter || !adapter.enabled || typeof adapter.saveTeam !== 'function') {
+      return; // Adapter not available or disabled — graceful no-op
+    }
+
+    var members = (team && Array.isArray(team.members)) ? team.members : [];
+    var payload = {
+      team_id:     teamId,
+      name:        (team && team.name) || 'Unknown Team',
+      label:       (team && team.label) || 'CUSTOM',
+      mode:        'opponent',
+      ruleset_id:  (adapter.DEFAULT_RULESET_ID) || 'champions_reg_m_doubles_bo3',
+      source:      source || (team && team.source) || 'unknown',
+      description: (team && team.description) || '',
+      metadata:    { source: source || 'unknown', format: (team && team.format) || 'champions' },
+      members:     members.map(function(m) {
+        return {
+          name:      m.name      || m.species || 'Unknown',
+          species:   m.species   || m.name    || 'Unknown',
+          ability:   m.ability   || null,
+          item:      m.item      || null,
+          nature:    m.nature    || null,
+          evs:       m.evs       || null,
+          ivs:       m.ivs       || null,
+          moves:     m.moves     || [],
+          level:     m.level     || 50,
+          tera_type: m.tera_type || m.teraType || null
+        };
+      })
+    };
+
+    Promise.resolve(adapter.saveTeam(payload))
+      .catch(function(e) { console.warn('[M5] _upsertTeamToDB failed:', e && e.message); });
+  } catch (err) {
+    console.warn('[M5] _upsertTeamToDB error:', err && err.message);
+  }
+}
+
+if (typeof window !== 'undefined') { window._upsertTeamToDB = _upsertTeamToDB; }
+// __M5_UPSERT_TEAM_END__
 
 // ============================================================
 // SIM BUTTON HANDLERS

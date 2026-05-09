@@ -4,6 +4,8 @@
 // MUST be bumped on every release that changes engine.js, data.js, ui.js, or style.css
 // Phase 2 automation tracked in #95 (tools/release.sh)
 //
+// v11-m5-import-persist [2026-05-09] — M5 (POK-21): _upsertTeamToDB + saveTeam wired;
+//                                     teams + team_members normalized upsert; 3 call sites
 // v10-m4-save-analyses [2026-05-09] — M4 (POK-20): _buildAnalysisPayload + saveAnalysis wired in ui.js;
 //                                     adapter validation (bo, policy_model, win_rate); fail-soft saves
 // v9-m3-init-wired [2026-04-27] — M3 (POK-19): ui.js awaits loadTeamsFromDB() on DOMContentLoaded;
@@ -11,7 +13,7 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v10-m4-save-analyses';
+const CACHE_NAME = 'champions-sim-v11-m5-import-persist';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
