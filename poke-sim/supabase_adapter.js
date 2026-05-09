@@ -290,6 +290,44 @@
     }
   }
 
+  // ── loadAnalysesForPlayer (M6) ───────────────────────────────────────────
+  async function loadAnalysesForPlayer(playerKey, limit) {
+    limit = limit || 50;
+    const sb = getClient();
+    if (!sb) return [];
+    try {
+      const { data, error } = await sb
+        .from('analyses')
+        .select('analysis_id, created_at, player_team_id, opp_team_id, bo, win_rate, wins, losses, sample_size')
+        .eq('player_team_id', playerKey)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return data || [];
+    } catch (err) {
+      console.warn('[SupabaseAdapter] loadAnalysesForPlayer failed.', err && err.message);
+      return [];
+    }
+  }
+
+  // ── loadAnalysisLogs (M6) — lazy-load turn logs for a single analysis ──
+  async function loadAnalysisLogs(analysisId) {
+    const sb = getClient();
+    if (!sb) return [];
+    try {
+      const { data, error } = await sb
+        .from('analysis_logs')
+        .select('game_number, result, turns, tr_turns, win_condition, log')
+        .eq('analysis_id', analysisId)
+        .order('game_number', { ascending: true });
+      if (error) throw error;
+      return data || [];
+    } catch (err) {
+      console.warn('[SupabaseAdapter] loadAnalysisLogs failed.', err && err.message);
+      return [];
+    }
+  }
+
   // ── Public API ────────────────────────────────────────────────────────────
   window.SupabaseAdapter = {
     enabled:            ENABLED,
@@ -298,7 +336,9 @@
     loadRulesets,
     saveAnalysis,
     loadRecentAnalyses,
-    saveTeam
+    saveTeam,
+    loadAnalysesForPlayer,
+    loadAnalysisLogs
   };
 
   // M3 NOTE: Auto-merge of DB teams into TEAMS has moved to ui.js's

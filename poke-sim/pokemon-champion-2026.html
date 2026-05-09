@@ -8818,6 +8818,10 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+    // M6: load history when replay tab is opened
+    if (btn.dataset.tab === 'replay' && typeof loadAnalysisHistory === 'function') {
+      loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
+    }
   });
 });
 
@@ -10526,6 +10530,107 @@ document.querySelectorAll('.filter-btn').forEach(btn=>{
     else renderReplays();
   });
 });
+
+// __M6_HISTORY_BEGIN__
+// ============================================================
+// M6 — HISTORY: load past analyses from DB into Replay Log
+// ============================================================
+let historyRows = [];
+let historyFilter = 'all';
+
+async function loadAnalysisHistory(playerKey) {
+  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  if (!adapter || !adapter.enabled || typeof adapter.loadAnalysesForPlayer !== 'function') return;
+  try {
+    historyRows = await adapter.loadAnalysesForPlayer(playerKey || 'player', 50);
+    renderHistorySection();
+  } catch (e) {
+    console.warn('[M6] loadAnalysisHistory failed:', e && e.message);
+  }
+}
+
+function renderHistorySection() {
+  var el = document.getElementById('history-list');
+  if (!el) return;
+
+  var filtered = historyRows;
+  if (historyFilter === 'win') filtered = historyRows.filter(function(r) { return r.wins > r.losses; });
+  else if (historyFilter === 'loss') filtered = historyRows.filter(function(r) { return r.losses > r.wins; });
+  else if (historyFilter === 'clutch') filtered = historyRows.filter(function(r) { return r.bo > 1 && Math.abs(r.wins - r.losses) <= 2; });
+
+  el.innerHTML = '';
+  if (!filtered.length) {
+    el.innerHTML = '<div class="replay-empty">No analyses yet — run a simulation to see history here.</div>';
+    return;
+  }
+
+  for (var i = 0; i < filtered.length; i++) {
+    var row = filtered[i];
+    var isWin = row.wins > row.losses;
+    var rc = isWin ? 'var(--green)' : 'var(--red)';
+    var rl = isWin ? 'WIN' : 'LOSS';
+    var oppName = (typeof TEAMS !== 'undefined' && TEAMS[row.opp_team_id]) ? TEAMS[row.opp_team_id].name : row.opp_team_id;
+    var card = document.createElement('div');
+    card.className = 'replay-card history-card';
+    card.dataset.analysisId = row.analysis_id;
+    card.innerHTML =
+      '<div class="replay-card-hdr">' +
+        '<div class="replay-title"><span style="color:' + rc + ';font-weight:900">' + rl + '</span> vs ' + oppName + '</div>' +
+        '<div class="replay-meta">Bo' + row.bo + ' · ' + row.wins + 'W/' + row.losses + 'L · WR ' + (row.win_rate * 100).toFixed(0) + '% · ' + new Date(row.created_at).toLocaleDateString() + '</div>' +
+      '</div>' +
+      '<div class="replay-expanded"><div class="history-logs-placeholder">Click to load game logs…</div></div>';
+    card.addEventListener('click', (function(analysisId, cardEl) {
+      return function() {
+        cardEl.classList.toggle('open');
+        if (cardEl.classList.contains('open') && !cardEl.dataset.loaded) {
+          lazyLoadAnalysisLogs(analysisId, cardEl);
+        }
+      };
+    })(row.analysis_id, card));
+    el.appendChild(card);
+  }
+}
+
+async function lazyLoadAnalysisLogs(analysisId, cardEl) {
+  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  if (!adapter || typeof adapter.loadAnalysisLogs !== 'function') return;
+  try {
+    var logs = await adapter.loadAnalysisLogs(analysisId);
+    var expanded = cardEl.querySelector('.replay-expanded');
+    if (!expanded) return;
+    if (!logs || !logs.length) {
+      expanded.innerHTML = '<div class="history-logs-placeholder">No game logs recorded.</div>';
+    } else {
+      var html = '<div class="battle-log">';
+      for (var i = 0; i < logs.length; i++) {
+        var g = logs[i];
+        var gRc = g.result === 'win' ? 'var(--green)' : 'var(--red)';
+        html += '<div class="history-log-entry"><span style="color:' + gRc + '">' + (g.result || '?').toUpperCase() + '</span> — ' + (g.turns || '?') + ' turns · ' + (g.win_condition || '—') + '</div>';
+      }
+      html += '</div>';
+      expanded.innerHTML = html;
+    }
+    cardEl.dataset.loaded = 'true';
+  } catch (e) {
+    console.warn('[M6] lazyLoadAnalysisLogs failed:', e && e.message);
+  }
+}
+
+// Wire history filter buttons
+document.querySelectorAll('.history-filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.history-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    historyFilter = btn.dataset.filter || 'all';
+    renderHistorySection();
+  });
+});
+
+if (typeof window !== 'undefined') {
+  window.loadAnalysisHistory = loadAnalysisHistory;
+  window.renderHistorySection = renderHistorySection;
+}
+// __M6_HISTORY_END__
 
 // ============================================================
 // GLOBAL SIMULATION RESULTS STORE
@@ -16110,6 +16215,44 @@ if (typeof window !== 'undefined') {
     }
   }
 
+  // ── loadAnalysesForPlayer (M6) ───────────────────────────────────────────
+  async function loadAnalysesForPlayer(playerKey, limit) {
+    limit = limit || 50;
+    const sb = getClient();
+    if (!sb) return [];
+    try {
+      const { data, error } = await sb
+        .from('analyses')
+        .select('analysis_id, created_at, player_team_id, opp_team_id, bo, win_rate, wins, losses, sample_size')
+        .eq('player_team_id', playerKey)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return data || [];
+    } catch (err) {
+      console.warn('[SupabaseAdapter] loadAnalysesForPlayer failed.', err && err.message);
+      return [];
+    }
+  }
+
+  // ── loadAnalysisLogs (M6) — lazy-load turn logs for a single analysis ──
+  async function loadAnalysisLogs(analysisId) {
+    const sb = getClient();
+    if (!sb) return [];
+    try {
+      const { data, error } = await sb
+        .from('analysis_logs')
+        .select('game_number, result, turns, tr_turns, win_condition, log')
+        .eq('analysis_id', analysisId)
+        .order('game_number', { ascending: true });
+      if (error) throw error;
+      return data || [];
+    } catch (err) {
+      console.warn('[SupabaseAdapter] loadAnalysisLogs failed.', err && err.message);
+      return [];
+    }
+  }
+
   // ── Public API ────────────────────────────────────────────────────────────
   window.SupabaseAdapter = {
     enabled:            ENABLED,
@@ -16118,7 +16261,9 @@ if (typeof window !== 'undefined') {
     loadRulesets,
     saveAnalysis,
     loadRecentAnalyses,
-    saveTeam
+    saveTeam,
+    loadAnalysesForPlayer,
+    loadAnalysisLogs
   };
 
   // M3 NOTE: Auto-merge of DB teams into TEAMS has moved to ui.js's
