@@ -31,6 +31,9 @@ function _resetMockState(seed) {
   if (!mockState.analysis_logs)           mockState.analysis_logs = [];
   if (!mockState.analysis_win_conditions) mockState.analysis_win_conditions = [];
   if (!mockState.warnings)                mockState.warnings = [];
+  // M5 tables
+  if (!mockState.teams)                   mockState.teams = [];
+  if (!mockState.team_members)            mockState.team_members = [];
   // Convenience top-level mirrors for T-save-11
   mockState.wins = 0; mockState.losses = 0; mockState.draws = 0;
 }
@@ -45,6 +48,8 @@ function _errorFor(mode) {
 function _chain(table, state) {
   var rows = (state && state[table]) || [];
   var pendingInsert = null;
+  var pendingDelete = false;
+  var eqFilters = [];
 
   function _resolveResult() {
     if (mockErrorMode) {
@@ -55,6 +60,18 @@ function _chain(table, state) {
         state.warnings.push({ message: 'Import blocked by RLS policy', table: table });
       }
       return { data: null, error: err };
+    }
+    if (pendingDelete) {
+      // M5: delete rows matching eq filters
+      state[table] = state[table] || [];
+      if (eqFilters.length > 0) {
+        eqFilters.forEach(function(f) {
+          state[table] = state[table].filter(function(row) { return row[f.col] !== f.val; });
+        });
+      } else {
+        state[table] = [];
+      }
+      return { data: [], error: null };
     }
     if (pendingInsert) {
       // Append insert rows to the table
@@ -78,8 +95,8 @@ function _chain(table, state) {
     insert: function (rows) { pendingInsert = rows; return self; },
     upsert: function (rows) { pendingInsert = rows; return self; },
     update: function () { return self; },
-    delete: function () { return self; },
-    eq:     function () { return self; },
+    delete: function () { pendingDelete = true; return self; },
+    eq:     function (col, val) { eqFilters.push({ col: col, val: val }); return self; },
     in:     function () { return self; },
     order:  function () { return self; },
     limit:  function () { return self; },

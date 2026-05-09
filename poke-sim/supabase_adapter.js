@@ -234,6 +234,62 @@
     }
   }
 
+  // ── saveTeam (M5) ────────────────────────────────────────────────────────
+  async function saveTeam(payload) {
+    const sb = getClient();
+    if (!sb) return null;
+
+    if (!payload || !payload.team_id || !payload.name) {
+      console.warn('[SupabaseAdapter] saveTeam rejected — team_id and name required');
+      return null;
+    }
+
+    const teamRow = {
+      team_id:     payload.team_id,
+      name:        payload.name,
+      label:       payload.label        || 'CUSTOM',
+      mode:        payload.mode         || 'opponent',
+      ruleset_id:  payload.ruleset_id   || DEFAULT_RULESET_ID,
+      source:      payload.source       || 'unknown',
+      description: payload.description  || '',
+      metadata:    payload.metadata     || { source: payload.source || 'unknown' }
+    };
+
+    try {
+      const { error: tErr } = await sb.from('teams').upsert(teamRow);
+      if (tErr) throw tErr;
+
+      // Delete existing members then re-insert (normalized replace)
+      await sb.from('team_members').delete().eq('team_id', payload.team_id);
+
+      if (payload.members && payload.members.length) {
+        const memberRows = payload.members.map(function(m, i) {
+          return {
+            team_id:    payload.team_id,
+            slot_index: i,
+            species:    m.species || m.name || 'Unknown',
+            ability:    m.ability || null,
+            item:       m.item    || null,
+            nature:     m.nature  || null,
+            evs:        m.evs     || null,
+            ivs:        m.ivs     || null,
+            moves:      m.moves   || [],
+            level:      m.level   || 50,
+            tera_type:  m.tera_type || m.teraType || null
+          };
+        });
+        const { error: mErr } = await sb.from('team_members').insert(memberRows);
+        if (mErr) console.warn('[SupabaseAdapter] team_members insert error:', mErr.message);
+      }
+
+      console.info('[SupabaseAdapter] Saved team ' + payload.team_id);
+      return payload.team_id;
+    } catch (err) {
+      console.warn('[SupabaseAdapter] saveTeam failed — team not persisted.', err && err.message);
+      return null;
+    }
+  }
+
   // ── Public API ────────────────────────────────────────────────────────────
   window.SupabaseAdapter = {
     enabled:            ENABLED,
@@ -241,7 +297,8 @@
     loadTeamsFromDB,
     loadRulesets,
     saveAnalysis,
-    loadRecentAnalyses
+    loadRecentAnalyses,
+    saveTeam
   };
 
   // M3 NOTE: Auto-merge of DB teams into TEAMS has moved to ui.js's
