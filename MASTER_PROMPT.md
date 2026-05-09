@@ -37,6 +37,9 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-09 | @alfredocox | M4 implementation: `_buildAnalysisPayload` + `saveAnalysis` call sites wired in `ui.js` | POK-20. Adapter validation added. 18 TDD cases target GREEN. Pending CI run. |
+| 2026-05-09 | @alfredocox | Added Development Standards to MASTER_PROMPT + `.windsurf/workflows/dev-standards.md` | 7-rule gate (pre-impl, impl, post-impl) for all contributors and AI agents. |
+| 2026-05-09 | @alfredocox | Verified module status: M1 ✅ PR#161, M2 ✅ PR#162, M3 ✅ PR#163, M4 🟡 in-progress | Docs were stale — corrected. |
 | 2026-04-30 | @TheYfactora12 | Added M4 Conflict Resolution Plan + QC Readiness Report to MASTER_PROMPT.md | NO-SHIP gate documented. Blocking issues recorded. PR sequence defined. |
 | 2026-04-28 | @TheYfactora12 | Added April 28 changelog entry to `MASTER_PROMPT.md` | Keeping team log current — no code changes this session. |
 | 2026-04-28 | @TheYfactora12 | Synced MASTER_PROMPT with current repo state | Corrected seed v2, open blockers, db file tree |
@@ -72,9 +75,10 @@ git push --force
 
 ## �🚨 M4 / POK-20 — QC READINESS REPORT & CONFLICT RESOLUTION PLAN
 
-> **Status: NO-SHIP**
-> This section records the documentation and conflict-triage gate before any M4 persistence implementation.
-> It intentionally does not change runtime source, database SQL, tests, the service worker, or the built bundle.
+> **Status: IMPLEMENTATION COMPLETE — pending CI test verification (2026-05-09)**
+> M4 code landed on branch `integration/poke-sim-db-m4`. `_buildAnalysisPayload` implemented in `ui.js`.
+> `saveAnalysis` call sites wired at single-sim and run-all paths. Adapter validation added.
+> Previous NO-SHIP findings resolved: ruleset_id default fixed, save hook wired, validation added.
 
 ---
 
