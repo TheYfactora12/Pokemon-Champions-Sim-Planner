@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-09 | @alfredocox | M7 implementation: golden_battles deterministic regression runner + fixture + 8 test cases | POK-23. VM context, SHA256 trace hashes, --generate flag. CI enabled for db_m*.js. |
 | 2026-05-09 | @alfredocox | M6 implementation: `loadAnalysesForPlayer` + `loadAnalysisLogs` + history UI in Replay Log tab | POK-22. Lazy-load logs on expand. Filter chips (all/win/loss/clutch). 10 TDD cases rewritten. |
 | 2026-05-09 | @alfredocox | M5 implementation: `_upsertTeamToDB` + `saveTeam` wired in `ui.js` / `supabase_adapter.js` | POK-21. 3 call sites (paste, bulk, set editor). 12 TDD cases rewritten + target GREEN. |
 | 2026-05-09 | @alfredocox | M4 implementation: `_buildAnalysisPayload` + `saveAnalysis` call sites wired in `ui.js` | POK-20. Adapter validation added. 18 TDD cases target GREEN. Pending CI run. |

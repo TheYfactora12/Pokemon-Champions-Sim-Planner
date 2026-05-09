@@ -100,8 +100,7 @@ jobs:
             # Always skip — runs in gated audit job
             [ "$BASE" = "audit.js" ] && continue
 
-            # Skip: requires live Supabase connection (blocked by issue #158)
-            case "$BASE" in db_m*.js) echo "⏭ SKIP (needs Supabase #158): $t"; SKIPPED=$((SKIPPED + 1)); continue;; esac
+            # All DB module tests now run (they use mocks, not live Supabase)
             [ "$BASE" = "_db_helpers.js" ] && { echo "⏭ SKIP (helper, not test): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
 
             # Skip: requires classifyPokemon() (blocked by issue #141)
