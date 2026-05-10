@@ -280,8 +280,8 @@ function installAdapter(ctx, opts) {
   var adapterCode = fs.readFileSync(ADAPTER_PATH, 'utf8');
   vm.runInContext(adapterCode, ctx);
 
-  // Wire saveTeam method into the mock adapter
-  if (ctx.window.SupabaseAdapter && !ctx.window.SupabaseAdapter.saveTeam) {
+  // Wire saveTeam method into the mock adapter (always override for testing)
+  if (ctx.window.SupabaseAdapter) {
     ctx.window.SupabaseAdapter.saveTeam = mockSupabaseClient.saveTeam;
   }
 
