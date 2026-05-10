@@ -23,6 +23,14 @@ function falsy(v, msg) { if (v) throw new Error(msg + ' expected falsy'); }
 // Create context
 var ctx = freshCtx();
 
+// Add mock document object immediately to prevent DOM errors in Node.js
+ctx.window.document = {
+  querySelectorAll: function() { return []; },
+  querySelector: function() { return null; },
+  addEventListener: function() {},
+  createElement: function() { return { style: {}, appendChild: function() {} }; }
+};
+
 // Inject environment variables for live DB testing
 if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
   ctx.window.__SUPABASE_URL__ = process.env.SUPABASE_URL;
@@ -40,14 +48,6 @@ var SEED_ANALYSES = [
   { analysis_id: 'a2', created_at: '2026-05-08T14:30:00Z', player_team_id: 'player', opp_team_id: 'champions_arena_1st', bo: 5, win_rate: 0.40, wins: 4, losses: 6, sample_size: 10 },
   { analysis_id: 'a3', created_at: '2026-05-07T09:15:00Z', player_team_id: 'player', opp_team_id: 'mega_altaria', bo: 3, win_rate: 0.80, wins: 8, losses: 2, sample_size: 10 }
 ];
-
-// Add mock document object to prevent DOM errors in Node.js
-ctx.window.document = {
-  querySelectorAll: function() { return []; },
-  querySelector: function() { return null; },
-  addEventListener: function() {},
-  createElement: function() { return { style: {}, appendChild: function() {} }; }
-};
 
 // Load M6 history block from ui.js (between markers)
 (function loadHistoryBlock() {
