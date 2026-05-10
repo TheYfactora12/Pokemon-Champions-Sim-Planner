@@ -96,9 +96,8 @@ jobs:
           cd poke-sim
           # Create test environment with real Supabase credentials for DB tests
           if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
-            echo "window.__SUPABASE_URL__ = '$SUPABASE_URL';" > test-creds.js
-            echo "window.__SUPABASE_KEY__ = '$SUPABASE_ANON_KEY';" >> test-creds.js
-            echo "console.log('Using live Supabase:', '$SUPABASE_URL');" >> test-creds.js
+            export SUPABASE_URL="$SUPABASE_URL"
+            export SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY"
             echo "🔗 Live Supabase credentials configured for DB tests"
           else
             echo "⚠️  No Supabase credentials - DB tests will use mock"

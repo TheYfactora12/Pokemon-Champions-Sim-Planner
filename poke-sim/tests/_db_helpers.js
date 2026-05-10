@@ -198,6 +198,12 @@ function freshCtx(extras) {
     removeEventListener: function () {},
     dispatchEvent:     function () { return true; }
   };
+  
+  // Inject Supabase credentials from environment variables if available
+  if (typeof process !== 'undefined' && process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+    fakeWindow.__SUPABASE_URL__ = process.env.SUPABASE_URL;
+    fakeWindow.__SUPABASE_KEY__ = process.env.SUPABASE_ANON_KEY;
+  }
   var sandbox = {
     console:        console,
     window:         fakeWindow,
@@ -262,13 +268,14 @@ function installAdapter(ctx, opts) {
   var bareCall = (opts.url === undefined && opts.key === undefined && !opts.disable && !opts.mockClient);
   if (bareCall) {
     mockSupabaseClient.reset();
-    ctx.window.__SUPABASE_URL__ = 'https://mock.supabase.test';
-    ctx.window.__SUPABASE_KEY__ = 'mock-anon-key';
+    // Preserve environment variables if they exist, otherwise use mock
+    if (!ctx.window.__SUPABASE_URL__) ctx.window.__SUPABASE_URL__ = 'https://mock.supabase.test';
+    if (!ctx.window.__SUPABASE_KEY__) ctx.window.__SUPABASE_KEY__ = 'mock-anon-key';
     ctx.window.__DISABLE_SUPABASE__ = false;
     ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
   } else {
-    ctx.window.__SUPABASE_URL__ = (opts.url === undefined)     ? null : opts.url;
-    ctx.window.__SUPABASE_KEY__ = (opts.key === undefined)     ? null : opts.key;
+    ctx.window.__SUPABASE_URL__ = (opts.url === undefined)     ? ctx.window.__SUPABASE_URL__ : opts.url;
+    ctx.window.__SUPABASE_KEY__ = (opts.key === undefined)     ? ctx.window.__SUPABASE_KEY__ : opts.key;
     ctx.window.__DISABLE_SUPABASE__ = !!opts.disable;
     if (opts.mockClient) {
       ctx.window.supabase = {
