@@ -412,22 +412,18 @@ function cleanupTestData() {
       supabase
         .from('analysis_win_conditions')
         .delete()
-        .in('analysis_id', function() {
-          // This would need to be implemented based on actual test analysis IDs
-          // For now, we'll rely on cascade deletes
-          return Promise.resolve();
-        })
+        .in('analysis_id', [])
+        .then(() => ({ success: true, message: 'win_conditions cleanup skipped (no test IDs)' }))
+        .catch(error => ({ success: false, error: error.message }))
     );
     
     cleanupPromises.push(
       supabase
         .from('analysis_logs')
         .delete()
-        .in('analysis_id', function() {
-          // This would need to be implemented based on actual test analysis IDs
-          // For now, we'll rely on cascade deletes
-          return Promise.resolve();
-        })
+        .in('analysis_id', [])
+        .then(() => ({ success: true, message: 'analysis_logs cleanup skipped (no test IDs)' }))
+        .catch(error => ({ success: false, error: error.message }))
     );
     
     // Wait for all cleanup operations to complete
