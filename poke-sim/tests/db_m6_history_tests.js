@@ -22,6 +22,15 @@ function falsy(v, msg) { if (v) throw new Error(msg + ' expected falsy'); }
 
 // Create context
 var ctx = freshCtx();
+
+// Inject environment variables for live DB testing
+if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+  ctx.window.__SUPABASE_URL__ = process.env.SUPABASE_URL;
+  ctx.window.__SUPABASE_KEY__ = process.env.SUPABASE_ANON_KEY;
+  console.log('✓ Environment variables injected, URL length:', ctx.window.__SUPABASE_URL__.length, 'Key length:', ctx.window.__SUPABASE_KEY__.length);
+  console.log('✓ Window object has URL:', !!ctx.window.__SUPABASE_URL__, 'Key:', !!ctx.window.__SUPABASE_KEY__);
+}
+
 ctx.window.TEAMS = { player: { name: 'Player Team', members: [], source: 'preloaded' } };
 installAdapter(ctx);
 
