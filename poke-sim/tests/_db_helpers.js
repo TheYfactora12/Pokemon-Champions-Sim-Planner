@@ -203,7 +203,8 @@ function freshCtx(extras) {
   if (typeof process !== 'undefined' && process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
     fakeWindow.__SUPABASE_URL__ = process.env.SUPABASE_URL;
     fakeWindow.__SUPABASE_KEY__ = process.env.SUPABASE_ANON_KEY;
-    console.log('✓ Environment variables injected:', process.env.SUPABASE_URL);
+    console.log('✓ Environment variables injected, URL length:', process.env.SUPABASE_URL.length, 'Key length:', process.env.SUPABASE_ANON_KEY.length);
+    console.log('✓ Window object has URL:', !!fakeWindow.__SUPABASE_URL__, 'Key:', !!fakeWindow.__SUPABASE_KEY__);
   } else {
     console.log('⚠️ No environment variables found, process.env:', JSON.stringify(Object.keys(process.env || {}).filter(k => k.includes('SUPABASE')), null, 2));
   }
@@ -271,9 +272,16 @@ function installAdapter(ctx, opts) {
   var bareCall = (opts.url === undefined && opts.key === undefined && !opts.disable && !opts.mockClient);
   if (bareCall) {
     mockSupabaseClient.reset();
-    // Preserve environment variables if they exist, otherwise use mock
-    if (!ctx.window.__SUPABASE_URL__) ctx.window.__SUPABASE_URL__ = 'https://mock.supabase.test';
-    if (!ctx.window.__SUPABASE_KEY__) ctx.window.__SUPABASE_KEY__ = 'mock-anon-key';
+    // If environment variables exist, use them; otherwise use mock
+    if (ctx.window.__SUPABASE_URL__ && ctx.window.__SUPABASE_KEY__) {
+      // Environment variables already set in freshCtx - keep them
+      console.log('✓ Using environment variables from freshCtx');
+    } else {
+      // No environment variables - use mock
+      ctx.window.__SUPABASE_URL__ = 'https://mock.supabase.test';
+      ctx.window.__SUPABASE_KEY__ = 'mock-anon-key';
+      console.log('⚠️ No environment variables found, using mock');
+    }
     ctx.window.__DISABLE_SUPABASE__ = false;
     ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
   } else {
