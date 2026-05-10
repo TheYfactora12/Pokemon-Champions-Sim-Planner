@@ -94,6 +94,10 @@ jobs:
         run: |
           set -e
           cd poke-sim
+          # Install dependencies for live DB testing
+          if [ -f package.json ]; then
+            npm install
+          fi
           # Create test environment with real Supabase credentials for DB tests
           if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
             export SUPABASE_URL="$SUPABASE_URL"
