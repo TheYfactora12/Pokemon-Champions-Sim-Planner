@@ -269,6 +269,19 @@ function installAdapter(ctx, opts) {
   var hasLiveCreds = ctx.window.__SUPABASE_URL__ && ctx.window.__SUPABASE_KEY__;
   var useLiveDB = hasLiveCreds && !opts.forceMock && !opts.disable;
 
+  // Load supabase-js library for live DB testing
+  if (useLiveDB && !ctx.window.supabase) {
+    try {
+      // Try to load supabase-js from node_modules
+      var { createClient } = require('@supabase/supabase-js');
+      ctx.window.supabase = { createClient: createClient };
+      console.log('✓ Loaded supabase-js from node_modules');
+    } catch (e) {
+      console.log('⚠️ supabase-js not available, falling back to mock');
+      useLiveDB = false;
+    }
+  }
+
   // Inject creds / disable flag onto window before evaluating the adapter IIFE.
   var bareCall = (opts.url === undefined && opts.key === undefined && !opts.disable && !opts.mockClient);
   if (bareCall) {
