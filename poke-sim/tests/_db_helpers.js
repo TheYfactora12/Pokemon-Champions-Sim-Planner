@@ -265,26 +265,28 @@ function installAdapter(ctx, opts) {
     vm.createContext(ctx);
   }
 
+  // Check if we should use live DB or mock
+  var hasLiveCreds = ctx.window.__SUPABASE_URL__ && ctx.window.__SUPABASE_KEY__;
+  var useLiveDB = hasLiveCreds && !opts.forceMock && !opts.disable;
+
   // Inject creds / disable flag onto window before evaluating the adapter IIFE.
-  // 'url' or 'key' set to null means: do not provide that credential.
-  // Default behavior (no opts): wire up creds + the stateful mock client so
-  // SupabaseAdapter is enabled and writes flow through mockState.
   var bareCall = (opts.url === undefined && opts.key === undefined && !opts.disable && !opts.mockClient);
   if (bareCall) {
-    mockSupabaseClient.reset();
-    // Always use mock client for testing, even with live credentials
-    if (ctx.window.__SUPABASE_URL__ && ctx.window.__SUPABASE_KEY__) {
-      // Environment variables already set in freshCtx - keep them
-      console.log('✓ Using environment variables from freshCtx with mock client');
+    if (useLiveDB) {
+      console.log('🔗 Using LIVE Supabase database');
+      // Don't set supabase client - let adapter create real one
     } else {
-      // No environment variables - use mock
-      ctx.window.__SUPABASE_URL__ = 'https://mock.supabase.test';
-      ctx.window.__SUPABASE_KEY__ = 'mock-anon-key';
-      console.log('⚠️ No environment variables found, using mock');
+      mockSupabaseClient.reset();
+      if (ctx.window.__SUPABASE_URL__ && ctx.window.__SUPABASE_KEY__) {
+        console.log('✓ Using environment variables with mock client');
+      } else {
+        ctx.window.__SUPABASE_URL__ = 'https://mock.supabase.test';
+        ctx.window.__SUPABASE_KEY__ = 'mock-anon-key';
+        console.log('⚠️ No environment variables found, using mock');
+      }
+      ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
     }
     ctx.window.__DISABLE_SUPABASE__ = false;
-    // Always use mock client for testing
-    ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
   } else {
     ctx.window.__SUPABASE_URL__ = (opts.url === undefined)     ? ctx.window.__SUPABASE_URL__ : opts.url;
     ctx.window.__SUPABASE_KEY__ = (opts.key === undefined)     ? ctx.window.__SUPABASE_KEY__ : opts.key;
@@ -293,8 +295,8 @@ function installAdapter(ctx, opts) {
       ctx.window.supabase = {
         createClient: function () { return opts.mockClient; }
       };
-    } else {
-      // For testing, always use mock client even with real credentials
+    } else if (!useLiveDB) {
+      // Use mock client unless live DB is enabled
       ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
     }
   }
@@ -302,8 +304,8 @@ function installAdapter(ctx, opts) {
   var adapterCode = fs.readFileSync(ADAPTER_PATH, 'utf8');
   vm.runInContext(adapterCode, ctx);
 
-  // Wire saveTeam method into the mock adapter (always override for testing)
-  if (ctx.window.SupabaseAdapter) {
+  // Wire saveTeam method into the mock adapter (only for mock mode)
+  if (ctx.window.SupabaseAdapter && !useLiveDB) {
     ctx.window.SupabaseAdapter.saveTeam = mockSupabaseClient.saveTeam;
   }
 
