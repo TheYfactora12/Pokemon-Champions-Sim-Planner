@@ -18,6 +18,16 @@ function eq(a, b, msg) { if (a !== b) throw new Error(msg + ' expected ' + JSON.
 function truthy(v, msg) { if (!v) throw new Error(msg + ' expected truthy'); }
 function falsy(v, msg) { if (v) throw new Error(msg + ' expected falsy'); }
 
+// Helper to prevent async operations from hanging
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error(label + ' timed out after ' + ms + 'ms')), ms)
+    )
+  ]);
+}
+
 // ── Module-scope paths + cached file contents ──────────────────────────────
 const POKE_SIM_DIR  = path.join(__dirname, '..');
 const REPO_ROOT     = path.join(__dirname, '..', '..');
@@ -151,8 +161,10 @@ describe('Module 1 \u2014 Wiring suite (16 cases)', function () {
     // Adapter returns a Promise (async fn). With no client, it resolves to null.
     // Accept either sync null or a Promise resolving to null.
     if (p && typeof p.then === 'function') {
-      // can't easily await synchronously; just ensure it didn't throw
-      truthy(true, 'loadTeamsFromDB() returned a thenable');
+      // Wrap with timeout to prevent hanging
+      withTimeout(p, 5000, 'loadTeamsFromDB')
+        .then(() => truthy(true, 'loadTeamsFromDB() returned a thenable'))
+        .catch(e => { throw e; });
     } else {
       eq(p, null, 'loadTeamsFromDB() returns null when disabled');
     }
@@ -164,7 +176,9 @@ describe('Module 1 \u2014 Wiring suite (16 cases)', function () {
     installAdapter(ctx, { disable: true });
     var p = ctx.window.SupabaseAdapter.saveAnalysis({});
     if (p && typeof p.then === 'function') {
-      truthy(true, 'saveAnalysis() returned a thenable');
+      withTimeout(p, 5000, 'saveAnalysis')
+        .then(() => truthy(true, 'saveAnalysis() returned a thenable'))
+        .catch(e => { throw e; });
     } else {
       eq(p, null, 'saveAnalysis() returns null when disabled');
     }
@@ -176,7 +190,9 @@ describe('Module 1 \u2014 Wiring suite (16 cases)', function () {
     installAdapter(ctx, { disable: true });
     var p = ctx.window.SupabaseAdapter.loadRecentAnalyses();
     if (p && typeof p.then === 'function') {
-      truthy(true, 'loadRecentAnalyses() returned a thenable');
+      withTimeout(p, 5000, 'loadRecentAnalyses')
+        .then(() => truthy(true, 'loadRecentAnalyses() returned a thenable'))
+        .catch(e => { throw e; });
     } else {
       eq(Array.isArray(p) && p.length === 0, true, 'loadRecentAnalyses() returns [] when disabled');
     }
