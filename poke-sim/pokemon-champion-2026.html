@@ -10872,7 +10872,10 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
     throw new Error('[M4] _buildAnalysisPayload: invalid bo=' + bo + ' — must be one of 1,3,5,10');
   }
 
-  var policyModel = (res && res.policy_model) || 'deterministic-v1';
+  var policyModel = (res && res.policy_model);
+  if (policyModel === undefined) {
+    policyModel = 'deterministic-v1'; // Default only if not provided
+  }
   if (!policyModel || typeof policyModel !== 'string' || policyModel.length === 0) {
     throw new Error('[M4] _buildAnalysisPayload: policy_model must be non-empty string');
   }
