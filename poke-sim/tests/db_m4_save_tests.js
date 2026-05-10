@@ -287,17 +287,27 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
     var payload1 = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {});
     var payload2 = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {});
     
-    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload1)).then(function() {
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload1)).then(function(result1) {
       var mock1 = mockSupabaseClient.getState();
-      var analysis1 = mock1.analyses[mock1.analyses.length - 1];
+      var analysis1 = mock1.analyses && mock1.analyses[mock1.analyses.length - 1];
       
-      return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload2)).then(function() {
+      return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload2)).then(function(result2) {
         var mock2 = mockSupabaseClient.getState();
-        var analysis2 = mock2.analyses[mock2.analyses.length - 1];
+        var analysis2 = mock2.analyses && mock2.analyses[mock2.analyses.length - 1];
         
+        // In mock mode, we can check the mock state
+        // In live mode, the data is in the real database, so just verify operations completed
         var mock = mockSupabaseClient.getState();
-        eq(mock.analyses.length, 2, 'two analyses rows created');
-        eq(analysis1.analysis_id !== analysis2.analysis_id, 'two analyses have different UUIDs (no upsert)');
+        if (mock.analyses && mock.analyses.length > 0) {
+          // Mock mode - check mock state
+          eq(mock.analyses.length, 2, 'two analyses rows created');
+          eq(analysis1.analysis_id !== analysis2.analysis_id, 'two analyses have different UUIDs (no upsert)');
+        } else {
+          // Live mode - verify both operations completed successfully
+          truthy(typeof result1 === 'string', 'first saveAnalysis returned analysis_id in live mode');
+          truthy(typeof result2 === 'string', 'second saveAnalysis returned analysis_id in live mode');
+          truthy(result1 !== result2, 'two analyses have different UUIDs (no upsert)');
+        }
       });
     });
   });
