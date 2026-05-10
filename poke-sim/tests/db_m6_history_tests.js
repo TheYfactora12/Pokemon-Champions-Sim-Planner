@@ -41,6 +41,14 @@ var SEED_ANALYSES = [
   { analysis_id: 'a3', created_at: '2026-05-07T09:15:00Z', player_team_id: 'player', opp_team_id: 'mega_altaria', bo: 3, win_rate: 0.80, wins: 8, losses: 2, sample_size: 10 }
 ];
 
+// Add mock document object to prevent DOM errors in Node.js
+ctx.window.document = {
+  querySelectorAll: function() { return []; },
+  querySelector: function() { return null; },
+  addEventListener: function() {},
+  createElement: function() { return { style: {}, appendChild: function() {} }; }
+};
+
 // Load M6 history block from ui.js (between markers)
 (function loadHistoryBlock() {
   var uiPath = path.resolve(__dirname, '..', 'ui.js');
@@ -52,14 +60,6 @@ var SEED_ANALYSES = [
   var e = uiSrc.indexOf(endMarker);
   if (b === -1 || e === -1) return; // RED state
   var snippet = uiSrc.substring(b, e + endMarker.length);
-  
-  // Add mock document object to prevent DOM errors in Node.js
-  ctx.window.document = {
-    querySelectorAll: function() { return []; },
-    querySelector: function() { return null; },
-    addEventListener: function() {},
-    createElement: function() { return { style: {}, appendChild: function() {} }; }
-  };
   
   vm.runInContext(snippet, ctx);
 })();
