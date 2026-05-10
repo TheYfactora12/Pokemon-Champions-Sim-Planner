@@ -185,9 +185,8 @@ describe('Module 5 — Imported teams persist (12 cases)', function() {
     return new Promise(function(resolve) {
       setTimeout(function() {
         var state = mockSupabaseClient.getState();
-        console.log('Mock state after upsert:', JSON.stringify(state, null, 2));
         if (state.teams.length === 0) {
-          throw new Error('No teams found in mock state - _upsertTeamToDB may not be working. Adapter saveTeam method: ' + (ctx.window.SupabaseAdapter.saveTeam ? 'exists' : 'missing'));
+          throw new Error('No teams found in mock state - _upsertTeamToDB may not be working');
         }
         var row = state.teams[state.teams.length - 1];
         eq(row.source, 'pokepaste', 'teams row has source: pokepaste');

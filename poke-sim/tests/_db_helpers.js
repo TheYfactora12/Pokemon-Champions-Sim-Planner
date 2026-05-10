@@ -203,6 +203,9 @@ function freshCtx(extras) {
   if (typeof process !== 'undefined' && process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
     fakeWindow.__SUPABASE_URL__ = process.env.SUPABASE_URL;
     fakeWindow.__SUPABASE_KEY__ = process.env.SUPABASE_ANON_KEY;
+    console.log('✓ Environment variables injected:', process.env.SUPABASE_URL);
+  } else {
+    console.log('⚠️ No environment variables found, process.env:', JSON.stringify(Object.keys(process.env || {}).filter(k => k.includes('SUPABASE')), null, 2));
   }
   var sandbox = {
     console:        console,
