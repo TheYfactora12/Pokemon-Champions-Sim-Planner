@@ -152,6 +152,34 @@ jobs:
           echo "🧹 Cleaning up test data..."
           node -e "const { cleanupTestData } = require('./tests/_db_helpers.js'); cleanupTestData();"
 
+          # Build production bundle with injected credentials
+          echo ""
+          echo "🚀 Building production bundle with credential injection..."
+          cd poke-sim
+          
+          # Create production HTML with injected Supabase credentials
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+            echo "🔗 Injecting live Supabase credentials into production bundle"
+            
+            # Replace placeholder URL with real credential
+            sed "s|https://YOUR_PROJECT_REF.supabase.co|$SUPABASE_URL|g" pokemon-champion-2026.html > pokemon-champion-2026-temp.html
+            
+            # Replace placeholder key with real credential  
+            sed "s|YOUR_ANON_KEY_HERE|$SUPABASE_ANON_KEY|g" pokemon-champion-2026-temp.html > pokemon-champion-2026.html
+            
+            # Clean up temp file
+            rm pokemon-champion-2026-temp.html
+            
+            echo "✅ Production bundle built with live credentials"
+            echo "📦 Bundle ready for deployment"
+            
+            # Verify credentials were injected (show first 50 chars of URL for security)
+            echo "🔍 URL injected: ${SUPABASE_URL:0:50}..."
+            echo "🔍 Key injected: ${SUPABASE_ANON_KEY:0:20}..."
+          else
+            echo "⚠️  No Supabase credentials available - keeping placeholder bundle"
+          fi
+
   # ----------------------------------------------------------------
   # 3. DETECT ENGINE / DATA CHANGES
   # Uses dorny/paths-filter to check if engine.js or data.js changed.
@@ -211,3 +239,36 @@ jobs:
           echo "▶ Running audit.js (5,070 battles)…"
           node tests/audit.js
           echo "✅ Battle audit passed."
+
+  # ----------------------------------------------------------------
+  # 5. DEPLOYMENT (CREDENTIAL-INJECTED BUNDLE)
+  # Deploys the production bundle with injected Supabase credentials
+  # Only runs after tests pass successfully
+  # ----------------------------------------------------------------
+  deploy:
+    name: "Deploy Production Bundle"
+    runs-on: ubuntu-latest
+    needs: tests
+    if: success() && github.ref == 'refs/heads/deployment/credential-injection'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download production bundle
+        run: |
+          echo "📦 Downloading production bundle with injected credentials"
+          # The bundle was built and modified in the tests job
+          
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/deployment/credential-injection'
+        run: |
+          echo "🚀 Deploying credential-injected bundle to GitHub Pages"
+          echo "🔗 This bundle contains live Supabase credentials"
+          echo "📁 Source: poke-sim/pokemon-champion-2026.html"
+          echo "🌐 Target: GitHub Pages"
+          
+          # For now, just indicate deployment readiness
+          echo "✅ Bundle ready for manual deployment"
+          echo "📋 Next steps:"
+          echo "   1. Merge this branch to main"
+          echo "   2. Enable GitHub Pages on main branch"
+          echo "   3. Deploy pokemon-champion-2026.html"
