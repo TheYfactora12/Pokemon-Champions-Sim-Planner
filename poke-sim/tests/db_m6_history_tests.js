@@ -61,6 +61,9 @@ var SEED_ANALYSES = [
   if (b === -1 || e === -1) return; // RED state
   var snippet = uiSrc.substring(b, e + endMarker.length);
   
+  // Ensure document is available in the VM context
+  ctx.document = ctx.window.document;
+  
   vm.runInContext(snippet, ctx);
 })();
 
