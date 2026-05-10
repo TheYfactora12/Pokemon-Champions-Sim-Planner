@@ -308,8 +308,8 @@ module.exports = {
   mockSupabaseClient: mockSupabaseClient,
   installAdapter:     installAdapter,
   offlineMode:        offlineMode,
-  assertNoServiceRole: assertNoServiceRole,
   freshCtx:           freshCtx,
+  assertNoServiceRole: assertNoServiceRole,
   // Re-exported convenience for tests that want a stateful per-test reset
   resetMockState:     function (seed) { mockSupabaseClient.reset(seed); }
 };
