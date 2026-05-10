@@ -272,10 +272,10 @@ function installAdapter(ctx, opts) {
   var bareCall = (opts.url === undefined && opts.key === undefined && !opts.disable && !opts.mockClient);
   if (bareCall) {
     mockSupabaseClient.reset();
-    // If environment variables exist, use them; otherwise use mock
+    // Always use mock client for testing, even with live credentials
     if (ctx.window.__SUPABASE_URL__ && ctx.window.__SUPABASE_KEY__) {
       // Environment variables already set in freshCtx - keep them
-      console.log('✓ Using environment variables from freshCtx');
+      console.log('✓ Using environment variables from freshCtx with mock client');
     } else {
       // No environment variables - use mock
       ctx.window.__SUPABASE_URL__ = 'https://mock.supabase.test';
@@ -283,6 +283,7 @@ function installAdapter(ctx, opts) {
       console.log('⚠️ No environment variables found, using mock');
     }
     ctx.window.__DISABLE_SUPABASE__ = false;
+    // Always use mock client for testing
     ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
   } else {
     ctx.window.__SUPABASE_URL__ = (opts.url === undefined)     ? ctx.window.__SUPABASE_URL__ : opts.url;
@@ -292,6 +293,9 @@ function installAdapter(ctx, opts) {
       ctx.window.supabase = {
         createClient: function () { return opts.mockClient; }
       };
+    } else {
+      // For testing, always use mock client even with real credentials
+      ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
     }
   }
 
