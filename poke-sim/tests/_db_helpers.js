@@ -101,7 +101,10 @@ function _chain(table, state) {
     order:  function () { return self; },
     limit:  function () { return self; },
     single: function () { var r = _resolveResult(); return Promise.resolve({ data: (r.data && r.data[0]) || null, error: r.error }); },
-    then:   function (resolve) { return resolve(_resolveResult()); }
+    then:   function (resolve) { 
+      var result = _resolveResult();
+      return Promise.resolve({ data: result.data, error: result.error });
+    }
   };
   return self;
 }

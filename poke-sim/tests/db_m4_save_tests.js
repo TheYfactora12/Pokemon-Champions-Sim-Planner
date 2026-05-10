@@ -93,40 +93,87 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
   T('T-save-5', function() {
     // Single Bo3 run → exactly one analyses insert in mock
     installAdapter(ctx);
-    ctx.window.SupabaseAdapter.saveAnalysis(ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {}));
-    var mock = mockSupabaseClient.getState();
-    eq(mock.analyses.length, 1, 'single Bo3 run creates exactly one analyses row');
+    var result = {
+      wins: 60,
+      losses: 40,
+      draws: 0,
+      avg_turns: 12.5,
+      avg_tr_turns: 8.2,
+      win_conditions: [
+        {label: 'KO', count: 60},
+        {label: 'Time', count: 1}
+      ],
+      allLogs: Array(100).fill('test log')
+    };
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, result))).then(function() {
+      var mock = mockSupabaseClient.getState();
+      eq(mock.analyses.length, 1, 'single Bo3 run creates exactly one analyses row');
+    });
   });
   
   T('T-save-6', function() {
     // Same Bo3 run → ≥1 analysis_win_conditions row
     installAdapter(ctx);
-    ctx.window.SupabaseAdapter.saveAnalysis(ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {}));
-    var mock = mockSupabaseClient.getState();
-    eq(mock.analysis_win_conditions.length, 1, 'Bo3 run creates ≥1 analysis_win_conditions row');
+    var result = {
+      wins: 60,
+      losses: 40,
+      draws: 0,
+      avg_turns: 12.5,
+      avg_tr_turns: 8.2,
+      win_conditions: [
+        {label: 'KO', count: 60},
+        {label: 'Time', count: 1}
+      ],
+      allLogs: Array(100).fill('test log')
+    };
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, result))).then(function() {
+      var mock = mockSupabaseClient.getState();
+      eq(mock.analysis_win_conditions.length, 2, 'Bo3 run creates ≥1 analysis_win_conditions row');
+    });
   });
   
   T('T-save-7', function() {
     // Same Bo3 run → ≤50 analysis_logs rows
     installAdapter(ctx);
-    ctx.window.SupabaseAdapter.saveAnalysis(ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {}));
-    var mock = mockSupabaseClient.getState();
-    eq(mock.analysis_logs.length <= 50, true, 'Bo3 run creates ≤50 analysis_logs rows');
+    var result = {
+      wins: 60,
+      losses: 40,
+      draws: 0,
+      avg_turns: 12.5,
+      avg_tr_turns: 8.2,
+      win_conditions: [
+        {label: 'KO', count: 60},
+        {label: 'Time', count: 1}
+      ],
+      allLogs: Array(100).fill('test log')
+    };
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, result))).then(function() {
+      var mock = mockSupabaseClient.getState();
+      eq(mock.analysis_logs.length, 50, 'Bo3 run creates ≤50 analysis_logs rows');
+    });
   });
   
   T('T-save-8', function() {
     // analysis_logs rows preserve (turns, tr_turns, win_condition, log) fields
     installAdapter(ctx);
-    var payload = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {});
-    payload.logs = [
-      { result: 'win', turns: 12, tr_turns: 8, win_condition: 'ko', log: 'Critical hit' },
-      { result: 'loss', turns: 15, tr_turns: 10, win_condition: 'time', log: 'Ran out of PP' }
-    ];
-    ctx.window.SupabaseAdapter.saveAnalysis(payload);
-    var mock = mockSupabaseClient.getState();
-    eq(mock.analysis_logs.length, 2, 'analysis_logs preserve required fields');
-    mock.analysis_logs.forEach(function(log) {
-      truthy(log.turns && log.tr_turns && log.win_condition && log.log, 'log has all required fields');
+    var result = {
+      wins: 60,
+      losses: 40,
+      draws: 0,
+      avg_turns: 12.5,
+      avg_tr_turns: 8.2,
+      win_conditions: [
+        {label: 'KO', count: 60},
+        {label: 'Time', count: 1}
+      ],
+      allLogs: Array(100).fill('test log')
+    };
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, result))).then(function() {
+      var mock = mockSupabaseClient.getState();
+      eq(mock.analysis_logs.length, 50, 'analysis_logs preserve required fields');
+      mock.analysis_logs.forEach(function(log) {
+        truthy(log.turns && log.tr_turns && log.win_condition && log.log, 'log has all required fields');
+      });
     });
   });
   
@@ -136,9 +183,10 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
     var payload = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {
       win_conditions: [{label: 'KO', count: 1}, {label: 'Time', count: 1}]
     });
-    ctx.window.SupabaseAdapter.saveAnalysis(payload);
-    var mock = mockSupabaseClient.getState();
-    eq(mock.analysis_win_conditions.length, 2, 'win_conditions has 2 distinct labels');
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload)).then(function() {
+      var mock = mockSupabaseClient.getState();
+      eq(mock.analysis_win_conditions.length, 2, 'win_conditions has 2 distinct labels');
+    });
   });
   
   T('T-save-10', function() {
@@ -165,9 +213,10 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
     installAdapter(ctx);
     var payload = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, { sample_size: 100 });
     payload.wins = 60; payload.losses = 30; payload.draws = 10;
-    ctx.window.SupabaseAdapter.saveAnalysis(payload);
-    var mock = mockSupabaseClient.getState();
-    eq(mock.wins + mock.losses + mock.draws, 100, 'wins + losses + draws === sample_size');
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload)).then(function() {
+      var mock = mockSupabaseClient.getState();
+      eq(mock.wins + mock.losses + mock.draws, 100, 'wins + losses + draws === sample_size');
+    });
   });
   
   T('T-save-12', function() {
@@ -214,17 +263,19 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
     var payload1 = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {});
     var payload2 = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {});
     
-    ctx.window.SupabaseAdapter.saveAnalysis(payload1);
-    var mock1 = mockSupabaseClient.getState();
-    var analysis1 = mock1.analyses[mock1.analyses.length - 1];
-    
-    ctx.window.SupabaseAdapter.saveAnalysis(payload2);
-    var mock2 = mockSupabaseClient.getState();
-    var analysis2 = mock2.analyses[mock2.analyses.length - 1];
-    
-    var mock = mockSupabaseClient.getState();
-    eq(mock.analyses.length, 2, 'two analyses rows created');
-    eq(analysis1.analysis_id !== analysis2.analysis_id, 'two analyses have different UUIDs (no upsert)');
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload1)).then(function() {
+      var mock1 = mockSupabaseClient.getState();
+      var analysis1 = mock1.analyses[mock1.analyses.length - 1];
+      
+      return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload2)).then(function() {
+        var mock2 = mockSupabaseClient.getState();
+        var analysis2 = mock2.analyses[mock2.analyses.length - 1];
+        
+        var mock = mockSupabaseClient.getState();
+        eq(mock.analyses.length, 2, 'two analyses rows created');
+        eq(analysis1.analysis_id !== analysis2.analysis_id, 'two analyses have different UUIDs (no upsert)');
+      });
+    });
   });
   
   T('T-save-16', function() {
@@ -233,10 +284,11 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
     var payload = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {
       analysis_json: { pilot_guide: 'Switch to weather ball teams' }
     });
-    ctx.window.SupabaseAdapter.saveAnalysis(payload);
-    var mock = mockSupabaseClient.getState();
-    var analysis = mock.analyses[mock.analyses.length - 1];
-    eq(analysis.analysis_json.pilot_guide, 'Switch to weather ball teams', 'analysis_json includes pilot guide blob');
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload)).then(function() {
+      var mock = mockSupabaseClient.getState();
+      var analysis = mock.analyses[mock.analyses.length - 1];
+      eq(analysis.analysis_json.pilot_guide, 'Switch to weather ball teams', 'analysis_json includes pilot guide blob');
+    });
   });
   
   T('T-save-17', function() {
@@ -244,10 +296,11 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
     installAdapter(ctx);
     var payload = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {});
     payload.created_by = null;
-    ctx.window.SupabaseAdapter.saveAnalysis(payload);
-    var mock = mockSupabaseClient.getState();
-    var analysis = mock.analyses[mock.analyses.length - 1];
-    eq(analysis.created_by, null, 'created_by accepts null from anonymous client');
+    return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload)).then(function() {
+      var mock = mockSupabaseClient.getState();
+      var analysis = mock.analyses[mock.analyses.length - 1];
+      eq(analysis.created_by, null, 'created_by accepts null from anonymous client');
+    });
   });
   
   T('T-save-18', function() {

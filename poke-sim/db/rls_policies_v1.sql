@@ -24,8 +24,14 @@ CREATE POLICY "anon_read_rulesets"
 CREATE POLICY "anon_read_teams"
   ON teams FOR SELECT TO anon USING (true);
 
+CREATE POLICY "anon_insert_teams"
+  ON teams FOR INSERT TO anon WITH CHECK (true);
+
 CREATE POLICY "anon_read_team_members"
   ON team_members FOR SELECT TO anon USING (true);
+
+CREATE POLICY "anon_insert_team_members"
+  ON team_members FOR INSERT TO anon WITH CHECK (true);
 
 CREATE POLICY "anon_read_prior_snapshots"
   ON prior_snapshots FOR SELECT TO anon USING (true);
