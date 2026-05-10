@@ -124,6 +124,9 @@ jobs:
             [ "$BASE" = "nightly_bring_harness.js" ] && { echo "⏭ SKIP (manual harness): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
             [ "$BASE" = "golden_battles_runner.js" ] && { echo "⏭ SKIP (helper): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
 
+            # Skip: M9 not implemented yet
+            [ "$BASE" = "db_m9_hardening_tests.js" ] && { echo "⏭ SKIP (M9 not implemented): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
+
             echo "▶ $t"
             node "$t" || FAILED=1
             COUNT=$((COUNT + 1))

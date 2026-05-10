@@ -31,11 +31,6 @@ var ctx = {
 };
 
 describe('Module 9 — Hardening / advisor / migration baseline suite (10 cases)', function() {
-  // Skip M9 tests until module is implemented
-  if (!process.env.ENABLE_M9_TESTS) {
-    console.log('⚠️ M9 tests skipped (ENABLE_M9_TESTS not set - module not implemented yet)');
-    return;
-  }
   
   T('T-hard-1', function() {
     // Baseline migration file 2026_04_27_baseline_v1.sql exists in db/migrations/
