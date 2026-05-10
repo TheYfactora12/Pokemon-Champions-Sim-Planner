@@ -216,7 +216,14 @@ function freshCtx(extras) {
       addEventListener:  function () {},
       removeEventListener: function () {}
     },
-    crypto: { randomUUID: function () { return '00000000-0000-4000-8000-000000000000'; } },
+    crypto: { randomUUID: function () { 
+    // Generate proper UUID for testing
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  } },
     setTimeout:    setTimeout,
     setInterval:   setInterval,
     clearTimeout:  clearTimeout,
