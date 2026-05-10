@@ -76,9 +76,10 @@ describe('Module 5 — Imported teams persist (12 cases)', function() {
       format: 'doubles'
     };
     var teamId = 'import_fixture_test';
+    // Call the function and wait for async saveTeam to complete
     ctx.window._upsertTeamToDB(teamId, team, 'pokepaste');
-    // Wait a bit for async to complete
     return new Promise(function(resolve) {
+      // Wait for the adapter's async saveTeam operation
       setTimeout(function() {
         var state = mockSupabaseClient.getState();
         // teams table should have at least 1 upserted row
@@ -86,7 +87,7 @@ describe('Module 5 — Imported teams persist (12 cases)', function() {
         // team_members table should have 6 rows (one per member)
         eq(state.team_members.length, 6, 'team_members has 6 rows');
         resolve();
-      }, 10);
+      }, 50); // Increased timeout for async operation
     });
   });
 

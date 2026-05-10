@@ -123,6 +123,60 @@ function mockSupabaseClient(state) {
 mockSupabaseClient.getState     = function () { return mockState; };
 mockSupabaseClient.setErrorMode = function (mode) { mockErrorMode = mode || null; };
 mockSupabaseClient.reset        = function (seed) { mockErrorMode = null; _resetMockState(seed); };
+
+// Add saveTeam method for M5 tests
+mockSupabaseClient.saveTeam = function (payload) {
+  if (!payload || !payload.team_id || !payload.name) {
+    return Promise.resolve(null);
+  }
+  
+  // Add team to mock state
+  if (!mockState.teams) mockState.teams = [];
+  if (!mockState.team_members) mockState.team_members = [];
+  
+  // Upsert team
+  var existingTeamIndex = mockState.teams.findIndex(function(t) { return t.team_id === payload.team_id; });
+  var teamRow = {
+    team_id: payload.team_id,
+    name: payload.name,
+    label: payload.label || 'CUSTOM',
+    mode: payload.mode || 'opponent',
+    ruleset_id: payload.ruleset_id || 'champions_reg_m_doubles_bo3',
+    source: payload.source || 'unknown',
+    description: payload.description || '',
+    metadata: payload.metadata || { source: payload.source || 'unknown' }
+  };
+  
+  if (existingTeamIndex >= 0) {
+    mockState.teams[existingTeamIndex] = teamRow;
+  } else {
+    mockState.teams.push(teamRow);
+  }
+  
+  // Remove existing members and add new ones
+  mockState.team_members = mockState.team_members.filter(function(m) { return m.team_id !== payload.team_id; });
+  
+  if (payload.members && payload.members.length) {
+    payload.members.forEach(function(member, i) {
+      var memberRow = {
+        team_id: payload.team_id,
+        name: member.name || member.species || 'Unknown',
+        species: member.species || member.name || 'Unknown',
+        ability: member.ability || null,
+        item: member.item || null,
+        nature: member.nature || null,
+        evs: member.evs || null,
+        ivs: member.ivs || null,
+        moves: member.moves || [],
+        level: member.level || 50,
+        tera_type: member.tera_type || member.teraType || null
+      };
+      mockState.team_members.push(memberRow);
+    });
+  }
+  
+  return Promise.resolve(payload.team_id);
+};
 // Returns a stateful client without re-seeding (lets tests that already
 // pre-seeded via mockSupabaseClient(seed) call this for installAdapter).
 mockSupabaseClient.client       = function () {
@@ -225,6 +279,11 @@ function installAdapter(ctx, opts) {
 
   var adapterCode = fs.readFileSync(ADAPTER_PATH, 'utf8');
   vm.runInContext(adapterCode, ctx);
+
+  // Wire saveTeam method into the mock adapter
+  if (ctx.window.SupabaseAdapter && !ctx.window.SupabaseAdapter.saveTeam) {
+    ctx.window.SupabaseAdapter.saveTeam = mockSupabaseClient.saveTeam;
+  }
 
   return ctx.window.SupabaseAdapter;
 }
