@@ -155,7 +155,6 @@ jobs:
           # Build production bundle with injected credentials
           echo ""
           echo "🚀 Building production bundle with credential injection..."
-          cd poke-sim
           
           # Create production HTML with injected Supabase credentials
           if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
