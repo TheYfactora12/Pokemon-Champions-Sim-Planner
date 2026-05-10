@@ -8,7 +8,8 @@
     "test:db": "node tests/db_m*_tests.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.0",
+    "ws": "^8.14.2"
   },
   "devDependencies": {},
   "keywords": ["pokemon", "simulator", "supabase", "database"],

@@ -274,10 +274,23 @@ function installAdapter(ctx, opts) {
     try {
       // Try to load supabase-js from node_modules
       var { createClient } = require('@supabase/supabase-js');
-      ctx.window.supabase = { createClient: createClient };
-      console.log('✓ Loaded supabase-js from node_modules');
+      var ws = require('ws');
+      
+      // Override createClient to configure WebSocket transport for Node.js
+      ctx.window.supabase = { 
+        createClient: function(url, key, options) {
+          return createClient(url, key, {
+            ...options,
+            realtime: {
+              ...options?.realtime,
+              transport: ws
+            }
+          });
+        }
+      };
+      console.log('✓ Loaded supabase-js with WebSocket transport');
     } catch (e) {
-      console.log('⚠️ supabase-js not available, falling back to mock');
+      console.log('⚠️ supabase-js not available, falling back to mock:', e.message);
       useLiveDB = false;
     }
   }
