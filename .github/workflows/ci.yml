@@ -128,8 +128,14 @@ jobs:
             [ "$BASE" = "db_m9_hardening_tests.js" ] && { echo "⏭ SKIP (M9 not implemented): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
 
             echo "▶ $t"
-            node "$t" || FAILED=1
-            COUNT=$((COUNT + 1))
+            node "$t"
+            TEST_RESULT=$?
+            if [ $TEST_RESULT -eq 0 ]; then
+              COUNT=$((COUNT + 1))
+            else
+              echo "❌ Test file failed: $t (exit code: $TEST_RESULT)"
+              FAILED=1
+            fi
           done
           echo ""
           echo "Ran $COUNT test file(s). Skipped $SKIPPED file(s)."
