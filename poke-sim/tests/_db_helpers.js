@@ -361,12 +361,91 @@ function assertNoServiceRole(filepath) {
   }
 }
 
+// Test cleanup functionality
+function cleanupTestData() {
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+    console.log('🧹 Cleaning up test data from live database...');
+    
+    // Create a temporary Supabase client for cleanup
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+      db: { schema: 'public' },
+      auth: { persistSession: false },
+      realtime: { ws: require('ws') }
+    });
+    
+    // Clean up test data with test-specific identifiers
+    const cleanupPromises = [];
+    
+    // Clean up test analyses (those with test-specific patterns)
+    cleanupPromises.push(
+      supabase
+        .from('analyses')
+        .delete()
+        .or('player_team_id.like.test%,opp_team_id.like.test%')
+        .then(() => console.log('✓ Cleaned test analyses'))
+        .catch(err => console.log('⚠️ Failed to clean analyses:', err.message))
+    );
+    
+    // Clean up test teams
+    cleanupPromises.push(
+      supabase
+        .from('teams')
+        .delete()
+        .like('team_id', 'test%')
+        .then(() => console.log('✓ Cleaned test teams'))
+        .catch(err => console.log('⚠️ Failed to clean teams:', err.message))
+    );
+    
+    // Clean up test team members
+    cleanupPromises.push(
+      supabase
+        .from('team_members')
+        .delete()
+        .in('team_id', ['test_import_fixture_test', 'test_idem_test', 'test_ev_test', 'test_meta_test', 'test_slug_format_123', 'test_offline_test'])
+        .then(() => console.log('✓ Cleaned test team members'))
+        .catch(err => console.log('⚠️ Failed to clean team members:', err.message))
+    );
+    
+    // Clean up test analysis win conditions and logs (cascade deletes should handle these, but let's be explicit)
+    cleanupPromises.push(
+      supabase
+        .from('analysis_win_conditions')
+        .delete()
+        .in('analysis_id', function() {
+          // This would need to be implemented based on actual test analysis IDs
+          // For now, we'll rely on cascade deletes
+          return Promise.resolve();
+        })
+    );
+    
+    cleanupPromises.push(
+      supabase
+        .from('analysis_logs')
+        .delete()
+        .in('analysis_id', function() {
+          // This would need to be implemented based on actual test analysis IDs
+          // For now, we'll rely on cascade deletes
+          return Promise.resolve();
+        })
+    );
+    
+    // Wait for all cleanup operations to complete
+    Promise.allSettled(cleanupPromises).then(() => {
+      console.log('🧹 Test data cleanup completed');
+    });
+  } else {
+    console.log('🧹 No live DB credentials - skipping cleanup');
+  }
+}
+
 module.exports = {
   mockSupabaseClient: mockSupabaseClient,
   installAdapter:     installAdapter,
   offlineMode:        offlineMode,
   freshCtx:           freshCtx,
   assertNoServiceRole: assertNoServiceRole,
+  cleanupTestData:    cleanupTestData,
   // Re-exported convenience for tests that want a stateful per-test reset
   resetMockState:     function (seed) { mockSupabaseClient.reset(seed); }
 };

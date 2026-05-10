@@ -147,6 +147,10 @@ jobs:
             exit 1
           fi
           echo "✅ All test suites passed."
+          # Clean up test data from live database
+          echo ""
+          echo "🧹 Cleaning up test data..."
+          node -e "const { cleanupTestData } = require('./tests/_db_helpers.js'); cleanupTestData();"
 
   # ----------------------------------------------------------------
   # 3. DETECT ENGINE / DATA CHANGES
