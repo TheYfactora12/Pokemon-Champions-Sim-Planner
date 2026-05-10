@@ -1,0 +1,50 @@
+{
+  "_comment": "Golden battles fixture — deterministic regression tests for engine.js. Run golden_battles_runner.js --generate to update hashes after intentional engine changes.",
+  "battles": [
+    {
+      "golden_id": "gb_001",
+      "player_team_id": "player",
+      "opp_team_id": "cofagrigus_tr",
+      "seed": [
+        1337,
+        42,
+        7919,
+        104729
+      ],
+      "format": "doubles",
+      "description": "Player (speed) vs Cofagrigus TR — seed 1337",
+      "expected_trace_hash": "db19ac78c78859553c610d413f3fb0a1387915c060cd354f8a8665734edfce3e",
+      "expected_winner": "loss"
+    },
+    {
+      "golden_id": "gb_002",
+      "player_team_id": "player",
+      "opp_team_id": "chuppa_balance",
+      "seed": [
+        2024,
+        8675,
+        309,
+        5551
+      ],
+      "format": "doubles",
+      "description": "Player (speed) vs Chuppa Balance — seed 2024",
+      "expected_trace_hash": "5b6ae4786e325bd2654f48a72c934f0ab8d4ee0ee35b23561917d6c700b752f6",
+      "expected_winner": "loss"
+    },
+    {
+      "golden_id": "gb_003",
+      "player_team_id": "cofagrigus_tr",
+      "opp_team_id": "chuppa_balance",
+      "seed": [
+        9999,
+        1111,
+        3333,
+        7777
+      ],
+      "format": "doubles",
+      "description": "Cofagrigus TR vs Chuppa Balance — seed 9999",
+      "expected_trace_hash": "1ff91caa7782a0ba118d6d46526314a6ade51f748594e2abb59a26130323aeff",
+      "expected_winner": "loss"
+    }
+  ]
+}

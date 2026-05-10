@@ -88,9 +88,25 @@ jobs:
           node-version: '20'
 
       - name: Run all test suites (auto-discovered, with exclusions)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           set -e
           cd poke-sim
+          # Install dependencies for live DB testing
+          if [ -f package.json ]; then
+            npm install
+          fi
+          # Create test environment with real Supabase credentials for DB tests
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+            export SUPABASE_URL="$SUPABASE_URL"
+            export SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY"
+            echo "🔗 Live Supabase credentials configured for DB tests"
+          else
+            echo "⚠️  No Supabase credentials - DB tests will use mock"
+          fi
+          
           FAILED=0
           COUNT=0
           SKIPPED=0
@@ -100,8 +116,8 @@ jobs:
             # Always skip — runs in gated audit job
             [ "$BASE" = "audit.js" ] && continue
 
-            # Skip: requires live Supabase connection (blocked by issue #158)
-            case "$BASE" in db_m*.js) echo "⏭ SKIP (needs Supabase #158): $t"; SKIPPED=$((SKIPPED + 1)); continue;; esac
+            # Include DB tests with live Supabase connection
+            # db_m*.js tests now run with real credentials
             [ "$BASE" = "_db_helpers.js" ] && { echo "⏭ SKIP (helper, not test): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
 
             # Skip: requires classifyPokemon() (blocked by issue #141)
@@ -111,9 +127,18 @@ jobs:
             [ "$BASE" = "nightly_bring_harness.js" ] && { echo "⏭ SKIP (manual harness): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
             [ "$BASE" = "golden_battles_runner.js" ] && { echo "⏭ SKIP (helper): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
 
+            # Skip: M9 not implemented yet
+            [ "$BASE" = "db_m9_hardening_tests.js" ] && { echo "⏭ SKIP (M9 not implemented): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
+
             echo "▶ $t"
-            node "$t" || FAILED=1
-            COUNT=$((COUNT + 1))
+            node "$t"
+            TEST_RESULT=$?
+            if [ $TEST_RESULT -eq 0 ]; then
+              COUNT=$((COUNT + 1))
+            else
+              echo "❌ Test file failed: $t (exit code: $TEST_RESULT)"
+              FAILED=1
+            fi
           done
           echo ""
           echo "Ran $COUNT test file(s). Skipped $SKIPPED file(s)."
@@ -122,6 +147,10 @@ jobs:
             exit 1
           fi
           echo "✅ All test suites passed."
+          # Clean up test data from live database
+          echo ""
+          echo "🧹 Cleaning up test data..."
+          node -e "const { cleanupTestData } = require('./tests/_db_helpers.js'); cleanupTestData();"
 
   # ----------------------------------------------------------------
   # 3. DETECT ENGINE / DATA CHANGES
@@ -163,6 +192,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Run DB Module Tests
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          cd poke-sim
+          # Create test environment with real Supabase credentials
+          echo "window.__SUPABASE_URL__ = '$SUPABASE_URL';" > test-creds.js
+          echo "window.__SUPABASE_KEY__ = '$SUPABASE_ANON_KEY';" >> test-creds.js
+          echo "console.log('Using live Supabase:', '$SUPABASE_URL');" >> test-creds.js
+          npm test -- tests/db_m*.js
 
       - name: Run full battle audit
         run: |

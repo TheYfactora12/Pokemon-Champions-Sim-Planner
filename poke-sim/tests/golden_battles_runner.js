@@ -1,108 +1,126 @@
-// golden_battles_runner.js — Golden battles test runner
-// Used by db_m7_golden_battles_tests.js to validate engine changes
-// Part of Module 7 implementation
+// golden_battles_runner.js — M7: Deterministic engine regression runner
+// Loads data.js + engine.js in VM, replays battles from a JSON fixture,
+// and verifies trace hashes match. Exit 0 = all pass, exit 1 = mismatch.
+//
+// Usage:
+//   node tests/golden_battles_runner.js            — verify hashes
+//   node tests/golden_battles_runner.js --generate — compute & save hashes
 
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
+const crypto = require('crypto');
 
-// Load Supabase adapter
-var adapterCode = fs.readFileSync('./supabase_adapter.js', 'utf8');
-eval(adapterCode);
+const ROOT = path.resolve(__dirname, '..');
+const FIXTURE_PATH = path.join(__dirname, 'fixtures', 'golden_battles.json');
 
-async function main() {
-  console.log('🏁 Running golden battles test suite...');
-  
-  try {
-    // Load golden battles and teams from Supabase
-    const goldenBattles = await SupabaseAdapter.loadGoldenBattles();
-    const teams = await SupabaseAdapter.loadTeamsFromDB();
-    
-    console.log('📊 Loaded ' + goldenBattles.length + ' golden battles');
-    console.log('📊 Loaded ' + Object.keys(teams).length + ' teams');
-    
-    let passed = 0;
-    let failed = 0;
-    
-    for (const battle of goldenBattles) {
-      console.log('⚔️ Testing battle: ' + battle.player_team_id + ' vs ' + battle.opp_team_id + ' (seed: ' + battle.seed + ')');
-      
-      try {
-        // Get team data
-        const playerTeam = teams[battle.player_team_id];
-        const oppTeam = teams[battle.opp_team_id];
-        
-        if (!playerTeam || !oppTeam) {
-          throw new Error('Missing team data for battle: ' + battle.analysis_id);
+// ─── VM Context (same pattern as other test files) ────────────────────────
+function load(ctx, filename) {
+  var src = fs.readFileSync(path.join(ROOT, filename), 'utf8');
+  vm.runInContext(src, ctx, { filename: filename });
+}
+
+function createEngineContext() {
+  var ctx = vm.createContext({ console: console });
+  load(ctx, 'data.js');
+  load(ctx, 'engine.js');
+  // const-scoped vars need explicit export to context's this
+  vm.runInContext('this.TEAMS=TEAMS; this.simulateBattle=simulateBattle;', ctx);
+  return ctx;
+}
+
+// ─── Trace hash: SHA256 of battle log joined by newlines ──────────────────
+function traceHash(log) {
+  if (!log || !log.length) return 'EMPTY_LOG';
+  var canonical = log.join('\n');
+  return crypto.createHash('sha256').update(canonical).digest('hex');
+}
+
+// ─── Main ─────────────────────────────────────────────────────────────────
+function run(generateMode) {
+  var fixture = JSON.parse(fs.readFileSync(FIXTURE_PATH, 'utf8'));
+  var battles = fixture.battles;
+
+  if (!battles || !battles.length) {
+    console.error('FATAL: No battles in fixture file.');
+    process.exit(1);
+  }
+
+  var ctx = createEngineContext();
+  var TEAMS = ctx.TEAMS;
+  var simulateBattle = ctx.simulateBattle;
+
+  console.log('Golden Battles Runner — ' + battles.length + ' battle(s)');
+  console.log(generateMode ? 'MODE: --generate (computing hashes)\n' : 'MODE: verify\n');
+
+  var passed = 0, failed = 0;
+  var updated = false;
+
+  for (var i = 0; i < battles.length; i++) {
+    var b = battles[i];
+    var playerTeam = TEAMS[b.player_team_id];
+    var oppTeam = TEAMS[b.opp_team_id];
+
+    if (!playerTeam) { console.error('  MISSING TEAM: ' + b.player_team_id); failed++; continue; }
+    if (!oppTeam)    { console.error('  MISSING TEAM: ' + b.opp_team_id); failed++; continue; }
+
+    var result = simulateBattle(playerTeam, oppTeam, {
+      format: b.format || 'doubles',
+      seed: b.seed
+    });
+
+    var hash = traceHash(result.log);
+    var winner = result.result; // 'win' | 'loss' | 'draw'
+
+    if (generateMode) {
+      b.expected_trace_hash = hash;
+      b.expected_winner = winner;
+      updated = true;
+      console.log('  [' + b.golden_id + '] ' + b.description);
+      console.log('    hash: ' + hash.substring(0, 16) + '…  winner: ' + winner);
+    } else {
+      if (!b.expected_trace_hash) {
+        console.log('  [' + b.golden_id + '] SKIP — no expected hash (run --generate first)');
+        continue;
+      }
+      if (hash === b.expected_trace_hash) {
+        console.log('  ✔ [' + b.golden_id + '] ' + b.description);
+        passed++;
+      } else {
+        console.log('  ✖ [' + b.golden_id + '] HASH MISMATCH');
+        console.log('    Expected: ' + b.expected_trace_hash.substring(0, 16) + '…');
+        console.log('    Actual:   ' + hash.substring(0, 16) + '…');
+        console.log('    Result:   ' + winner + ' in ' + result.turns + ' turns');
+        // Find first differing line (rough diff)
+        if (b._expected_log_length) {
+          console.log('    (expected ~' + b._expected_log_length + ' log lines, got ' + (result.log || []).length + ')');
         }
-        
-        // Run the battle with the specified seed
-        const result = window.engine.runOneBattle(battle.seed);
-        
-        // Generate trace hash (simplified SHA256 of battle logs)
-        const trace = generateTraceHash(result.logs || []);
-        
-        // Compare with expected
-        if (trace === battle.expected_trace_hash) {
-          console.log('✅ PASS: Trace hash matches expected');
-          passed++;
-        } else {
-          console.log('❌ FAIL: Trace hash mismatch');
-          console.log('   Expected: ' + battle.expected_trace_hash);
-          console.log('   Actual:   ' + trace);
-          console.log('   First differing turn: ' + findFirstDifferingTurn(result.logs || [], battle.expected_logs || []));
-          failed++;
-        }
-        
-      } catch (error) {
-        console.log('❌ ERROR: Battle execution failed: ' + error.message);
         failed++;
       }
     }
-    
-    // Summary
+  }
+
+  if (generateMode && updated) {
+    fs.writeFileSync(FIXTURE_PATH, JSON.stringify(fixture, null, 2) + '\n');
+    console.log('\n✅ Fixture updated with ' + battles.length + ' hashes.');
+  } else if (!generateMode) {
     console.log('\n' + '='.repeat(50));
-    console.log('🏁 Golden Battles Test Results: ' + passed + ' passed, ' + failed + ' failed');
-    
+    console.log('Golden Battles: ' + passed + ' passed, ' + failed + ' failed');
     if (failed > 0) {
-      console.log('❌ ' + failed + ' battles failed');
+      console.log('❌ FAIL');
       process.exit(1);
     } else {
-      console.log('✅ All ' + passed + ' golden battles passed');
-    }
-    
-  } catch (error) {
-    console.log('❌ FATAL: Runner failed: ' + error.message);
-    process.exit(1);
-  }
-}
-
-function generateTraceHash(logs) {
-  // Simple SHA256 implementation for battle trace comparison
-  const crypto = require('crypto');
-  const traceString = logs.map(log => 
-    log.result + '|' + log.turns + '|' + log.tr_turns + '|' + log.win_condition + '|' + log.log
-  ).join('\n');
-  
-  return crypto.createHash('sha256').update(traceString).digest('hex');
-}
-
-function findFirstDifferingTurn(actualLogs, expectedLogs) {
-  // Find the first turn where logs differ
-  const maxTurns = Math.max(actualLogs.length, expectedLogs.length);
-  for (let i = 0; i < maxTurns; i++) {
-    const actualTurn = actualLogs[i] || {};
-    const expectedTurn = expectedLogs[i] || {};
-    
-    if (JSON.stringify(actualTurn) !== JSON.stringify(expectedTurn)) {
-      return i + 1; // Turns are 1-indexed
+      console.log('✅ All golden battles passed');
     }
   }
-  return null;
 }
 
-// Run if called directly
+// ─── Export for db_m7 tests + direct invocation ───────────────────────────
+module.exports = { run: run, traceHash: traceHash, createEngineContext: createEngineContext, FIXTURE_PATH: FIXTURE_PATH };
+
 if (require.main === module) {
-  main();
+  var generateMode = process.argv.includes('--generate');
+  run(generateMode);
 }

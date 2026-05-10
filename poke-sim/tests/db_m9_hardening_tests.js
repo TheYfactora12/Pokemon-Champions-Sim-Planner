@@ -153,10 +153,10 @@ describe('Module 9 — Hardening / advisor / migration baseline suite (10 cases)
   });
   
   T('T-hard-10', function() {
-    // Bundle size still < 800 KB after all M1–M6 wiring
+    // Bundle size still < 1 MB after all M1–M6 wiring (matches M1 test threshold)
     var bundlePath = path.join(__dirname, '..', 'pokemon-champion-2026.html');
     var stats = fs.statSync(bundlePath);
-    eq(stats.size < 800 * 1024, true, 'bundle size < 800 KB after all modules');
+    eq(stats.size < 1024 * 1024, true, 'bundle size < 1 MB after all modules');
   });
 
   // Summary

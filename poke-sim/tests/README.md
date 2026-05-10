@@ -19,6 +19,7 @@ node tests/t9j13_tests.js      # T9j.13 — format mismatch guard + SP rescale (
 node tests/t9j14_tests.js      # T9j.14 — Shadow Pressure PDF + coaching notes (#75) — 25 cases
 node tests/t9j15_tests.js      # T9j.15 — Best Mega Trigger Turn card (#71) — 22 cases
 node tests/phase4c_detectors.js # Phase 4c — detectors + confidence badges (4 fixtures) — 17 cases
+node tests/golden_battles_runner.js  # M7 — golden battles deterministic regression — 3 battles
 node tests/audit.js            # 5070-battle audit across all 13 teams — 0 JS errors floor
 
 # Nightly (not in fast loop — ~5-25s depending on N)

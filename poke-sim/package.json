@@ -1,0 +1,18 @@
+{
+  "name": "pokemon-champions-sim-planner",
+  "version": "1.0.0",
+  "description": "Pokemon Champions Sim Planner - DB integration testing",
+  "main": "tests/_db_helpers.js",
+  "scripts": {
+    "test": "node tests/*.js",
+    "test:db": "node tests/db_m*_tests.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {},
+  "keywords": ["pokemon", "simulator", "supabase", "database"],
+  "author": "Alfredo Cox",
+  "license": "MIT"
+}

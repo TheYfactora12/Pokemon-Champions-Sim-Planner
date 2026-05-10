@@ -101,7 +101,10 @@ function _chain(table, state) {
     order:  function () { return self; },
     limit:  function () { return self; },
     single: function () { var r = _resolveResult(); return Promise.resolve({ data: (r.data && r.data[0]) || null, error: r.error }); },
-    then:   function (resolve) { return resolve(_resolveResult()); }
+    then:   function (resolve) { 
+      var result = _resolveResult();
+      return Promise.resolve({ data: result.data, error: result.error });
+    }
   };
   return self;
 }
@@ -120,6 +123,60 @@ function mockSupabaseClient(state) {
 mockSupabaseClient.getState     = function () { return mockState; };
 mockSupabaseClient.setErrorMode = function (mode) { mockErrorMode = mode || null; };
 mockSupabaseClient.reset        = function (seed) { mockErrorMode = null; _resetMockState(seed); };
+
+// Add saveTeam method for M5 tests
+mockSupabaseClient.saveTeam = function (payload) {
+  if (!payload || !payload.team_id || !payload.name) {
+    return Promise.resolve(null);
+  }
+  
+  // Add team to mock state
+  if (!mockState.teams) mockState.teams = [];
+  if (!mockState.team_members) mockState.team_members = [];
+  
+  // Upsert team
+  var existingTeamIndex = mockState.teams.findIndex(function(t) { return t.team_id === payload.team_id; });
+  var teamRow = {
+    team_id: payload.team_id,
+    name: payload.name,
+    label: payload.label || 'CUSTOM',
+    mode: payload.mode || 'opponent',
+    ruleset_id: payload.ruleset_id || 'champions_reg_m_doubles_bo3',
+    source: payload.source || 'unknown',
+    description: payload.description || '',
+    metadata: payload.metadata || { source: payload.source || 'unknown' }
+  };
+  
+  if (existingTeamIndex >= 0) {
+    mockState.teams[existingTeamIndex] = teamRow;
+  } else {
+    mockState.teams.push(teamRow);
+  }
+  
+  // Remove existing members and add new ones
+  mockState.team_members = mockState.team_members.filter(function(m) { return m.team_id !== payload.team_id; });
+  
+  if (payload.members && payload.members.length) {
+    payload.members.forEach(function(member, i) {
+      var memberRow = {
+        team_id: payload.team_id,
+        name: member.name || member.species || 'Unknown',
+        species: member.species || member.name || 'Unknown',
+        ability: member.ability || null,
+        item: member.item || null,
+        nature: member.nature || null,
+        evs: member.evs || null,
+        ivs: member.ivs || null,
+        moves: member.moves || [],
+        level: member.level || 50,
+        tera_type: member.tera_type || member.teraType || null
+      };
+      mockState.team_members.push(memberRow);
+    });
+  }
+  
+  return Promise.resolve(payload.team_id);
+};
 // Returns a stateful client without re-seeding (lets tests that already
 // pre-seeded via mockSupabaseClient(seed) call this for installAdapter).
 mockSupabaseClient.client       = function () {
@@ -141,6 +198,16 @@ function freshCtx(extras) {
     removeEventListener: function () {},
     dispatchEvent:     function () { return true; }
   };
+  
+  // Inject Supabase credentials from environment variables if available
+  if (typeof process !== 'undefined' && process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+    fakeWindow.__SUPABASE_URL__ = process.env.SUPABASE_URL;
+    fakeWindow.__SUPABASE_KEY__ = process.env.SUPABASE_ANON_KEY;
+    console.log('✓ Environment variables injected, URL length:', process.env.SUPABASE_URL.length, 'Key length:', process.env.SUPABASE_ANON_KEY.length);
+    console.log('✓ Window object has URL:', !!fakeWindow.__SUPABASE_URL__, 'Key:', !!fakeWindow.__SUPABASE_KEY__);
+  } else {
+    console.log('⚠️ No environment variables found, process.env:', JSON.stringify(Object.keys(process.env || {}).filter(k => k.includes('SUPABASE')), null, 2));
+  }
   var sandbox = {
     console:        console,
     window:         fakeWindow,
@@ -149,7 +216,14 @@ function freshCtx(extras) {
       addEventListener:  function () {},
       removeEventListener: function () {}
     },
-    crypto: { randomUUID: function () { return '00000000-0000-4000-8000-000000000000'; } },
+    crypto: { randomUUID: function () { 
+    // Generate proper UUID for testing
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  } },
     setTimeout:    setTimeout,
     setInterval:   setInterval,
     clearTimeout:  clearTimeout,
@@ -198,30 +272,75 @@ function installAdapter(ctx, opts) {
     vm.createContext(ctx);
   }
 
+  // Check if we should use live DB or mock
+  var hasLiveCreds = ctx.window.__SUPABASE_URL__ && ctx.window.__SUPABASE_KEY__;
+  var useLiveDB = hasLiveCreds && !opts.forceMock && !opts.disable;
+
+  // Load supabase-js library for live DB testing
+  if (useLiveDB && !ctx.window.supabase) {
+    try {
+      // Try to load supabase-js from node_modules
+      var { createClient } = require('@supabase/supabase-js');
+      var ws = require('ws');
+      
+      // Override createClient to configure WebSocket transport for Node.js
+      ctx.window.supabase = { 
+        createClient: function(url, key, options) {
+          return createClient(url, key, {
+            ...options,
+            realtime: {
+              ...options?.realtime,
+              transport: ws
+            }
+          });
+        }
+      };
+      console.log('✓ Loaded supabase-js with WebSocket transport');
+    } catch (e) {
+      console.log('⚠️ supabase-js not available, falling back to mock:', e.message);
+      useLiveDB = false;
+    }
+  }
+
   // Inject creds / disable flag onto window before evaluating the adapter IIFE.
-  // 'url' or 'key' set to null means: do not provide that credential.
-  // Default behavior (no opts): wire up creds + the stateful mock client so
-  // SupabaseAdapter is enabled and writes flow through mockState.
   var bareCall = (opts.url === undefined && opts.key === undefined && !opts.disable && !opts.mockClient);
   if (bareCall) {
-    mockSupabaseClient.reset();
-    ctx.window.__SUPABASE_URL__ = 'https://mock.supabase.test';
-    ctx.window.__SUPABASE_KEY__ = 'mock-anon-key';
+    if (useLiveDB) {
+      console.log('🔗 Using LIVE Supabase database');
+      // Don't set supabase client - let adapter create real one
+    } else {
+      mockSupabaseClient.reset();
+      if (ctx.window.__SUPABASE_URL__ && ctx.window.__SUPABASE_KEY__) {
+        console.log('✓ Using environment variables with mock client');
+      } else {
+        ctx.window.__SUPABASE_URL__ = 'https://mock.supabase.test';
+        ctx.window.__SUPABASE_KEY__ = 'mock-anon-key';
+        console.log('⚠️ No environment variables found, using mock');
+      }
+      ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
+    }
     ctx.window.__DISABLE_SUPABASE__ = false;
-    ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
   } else {
-    ctx.window.__SUPABASE_URL__ = (opts.url === undefined)     ? null : opts.url;
-    ctx.window.__SUPABASE_KEY__ = (opts.key === undefined)     ? null : opts.key;
+    ctx.window.__SUPABASE_URL__ = (opts.url === undefined)     ? ctx.window.__SUPABASE_URL__ : opts.url;
+    ctx.window.__SUPABASE_KEY__ = (opts.key === undefined)     ? ctx.window.__SUPABASE_KEY__ : opts.key;
     ctx.window.__DISABLE_SUPABASE__ = !!opts.disable;
     if (opts.mockClient) {
       ctx.window.supabase = {
         createClient: function () { return opts.mockClient; }
       };
+    } else if (!useLiveDB) {
+      // Use mock client unless live DB is enabled
+      ctx.window.supabase = { createClient: function () { return mockSupabaseClient.client(); } };
     }
   }
 
   var adapterCode = fs.readFileSync(ADAPTER_PATH, 'utf8');
   vm.runInContext(adapterCode, ctx);
+
+  // Wire saveTeam method into the mock adapter (only for mock mode)
+  if (ctx.window.SupabaseAdapter && !useLiveDB) {
+    ctx.window.SupabaseAdapter.saveTeam = mockSupabaseClient.saveTeam;
+  }
 
   return ctx.window.SupabaseAdapter;
 }
@@ -242,12 +361,87 @@ function assertNoServiceRole(filepath) {
   }
 }
 
+// Test cleanup functionality
+function cleanupTestData() {
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+    console.log('🧹 Cleaning up test data from live database...');
+    
+    // Create a temporary Supabase client for cleanup
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+      db: { schema: 'public' },
+      auth: { persistSession: false },
+      realtime: { transport: require('ws') }
+    });
+    
+    // Clean up test data with test-specific identifiers
+    const cleanupPromises = [];
+    
+    // Clean up test analyses (those with test-specific patterns)
+    cleanupPromises.push(
+      supabase
+        .from('analyses')
+        .delete()
+        .or('player_team_id.like.test%,opp_team_id.like.test%')
+        .then(() => console.log('✓ Cleaned test analyses'))
+        .catch(err => console.log('⚠️ Failed to clean analyses:', err.message))
+    );
+    
+    // Clean up test teams
+    cleanupPromises.push(
+      supabase
+        .from('teams')
+        .delete()
+        .like('team_id', 'test%')
+        .then(() => console.log('✓ Cleaned test teams'))
+        .catch(err => console.log('⚠️ Failed to clean teams:', err.message))
+    );
+    
+    // Clean up test team members
+    cleanupPromises.push(
+      supabase
+        .from('team_members')
+        .delete()
+        .in('team_id', ['test_import_fixture_test', 'test_idem_test', 'test_ev_test', 'test_meta_test', 'test_slug_format_123', 'test_offline_test'])
+        .then(() => console.log('✓ Cleaned test team members'))
+        .catch(err => console.log('⚠️ Failed to clean team members:', err.message))
+    );
+    
+    // Clean up test analysis win conditions and logs (cascade deletes should handle these, but let's be explicit)
+    cleanupPromises.push(
+      supabase
+        .from('analysis_win_conditions')
+        .delete()
+        .in('analysis_id', [])
+        .then(() => ({ success: true, message: 'win_conditions cleanup skipped (no test IDs)' }))
+        .catch(error => ({ success: false, error: error.message }))
+    );
+    
+    cleanupPromises.push(
+      supabase
+        .from('analysis_logs')
+        .delete()
+        .in('analysis_id', [])
+        .then(() => ({ success: true, message: 'analysis_logs cleanup skipped (no test IDs)' }))
+        .catch(error => ({ success: false, error: error.message }))
+    );
+    
+    // Wait for all cleanup operations to complete
+    Promise.allSettled(cleanupPromises).then(() => {
+      console.log('🧹 Test data cleanup completed');
+    });
+  } else {
+    console.log('🧹 No live DB credentials - skipping cleanup');
+  }
+}
+
 module.exports = {
   mockSupabaseClient: mockSupabaseClient,
   installAdapter:     installAdapter,
   offlineMode:        offlineMode,
-  assertNoServiceRole: assertNoServiceRole,
   freshCtx:           freshCtx,
+  assertNoServiceRole: assertNoServiceRole,
+  cleanupTestData:    cleanupTestData,
   // Re-exported convenience for tests that want a stateful per-test reset
   resetMockState:     function (seed) { mockSupabaseClient.reset(seed); }
 };
