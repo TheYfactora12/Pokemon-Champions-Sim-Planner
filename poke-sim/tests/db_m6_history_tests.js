@@ -43,6 +43,15 @@ var SEED_ANALYSES = [
   var e = uiSrc.indexOf(endMarker);
   if (b === -1 || e === -1) return; // RED state
   var snippet = uiSrc.substring(b, e + endMarker.length);
+  
+  // Add mock document object to prevent DOM errors in Node.js
+  ctx.window.document = {
+    querySelectorAll: function() { return []; },
+    querySelector: function() { return null; },
+    addEventListener: function() {},
+    createElement: function() { return { style: {}, appendChild: function() {} }; }
+  };
+  
   vm.runInContext(snippet, ctx);
 })();
 
