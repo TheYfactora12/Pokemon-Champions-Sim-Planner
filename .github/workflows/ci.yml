@@ -88,9 +88,22 @@ jobs:
           node-version: '20'
 
       - name: Run all test suites (auto-discovered, with exclusions)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           set -e
           cd poke-sim
+          # Create test environment with real Supabase credentials for DB tests
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+            echo "window.__SUPABASE_URL__ = '$SUPABASE_URL';" > test-creds.js
+            echo "window.__SUPABASE_KEY__ = '$SUPABASE_ANON_KEY';" >> test-creds.js
+            echo "console.log('Using live Supabase:', '$SUPABASE_URL');" >> test-creds.js
+            echo "🔗 Live Supabase credentials configured for DB tests"
+          else
+            echo "⚠️  No Supabase credentials - DB tests will use mock"
+          fi
+          
           FAILED=0
           COUNT=0
           SKIPPED=0
@@ -100,8 +113,8 @@ jobs:
             # Always skip — runs in gated audit job
             [ "$BASE" = "audit.js" ] && continue
 
-            # Skip: requires live Supabase connection (blocked by issue #158)
-            case "$BASE" in db_m*.js) echo "⏭ SKIP (needs Supabase #158): $t"; SKIPPED=$((SKIPPED + 1)); continue;; esac
+            # Include DB tests with live Supabase connection
+            # db_m*.js tests now run with real credentials
             [ "$BASE" = "_db_helpers.js" ] && { echo "⏭ SKIP (helper, not test): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
 
             # Skip: requires classifyPokemon() (blocked by issue #141)
@@ -165,8 +178,15 @@ jobs:
           node-version: '20'
 
       - name: Run DB Module Tests
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           cd poke-sim
+          # Create test environment with real Supabase credentials
+          echo "window.__SUPABASE_URL__ = '$SUPABASE_URL';" > test-creds.js
+          echo "window.__SUPABASE_KEY__ = '$SUPABASE_ANON_KEY';" >> test-creds.js
+          echo "console.log('Using live Supabase:', '$SUPABASE_URL');" >> test-creds.js
           npm test -- tests/db_m*.js
 
       - name: Run full battle audit
