@@ -371,7 +371,7 @@ function cleanupTestData() {
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
       db: { schema: 'public' },
       auth: { persistSession: false },
-      realtime: { ws: require('ws') }
+      realtime: { transport: require('ws') }
     });
     
     // Clean up test data with test-specific identifiers
