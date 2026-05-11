@@ -15945,10 +15945,11 @@ if (typeof window !== 'undefined') {
   // ── Config ────────────────────────────────────────────────────────────────
   // Credentials must be injected at runtime — no hardcoded fallbacks.
   // In index.html, add before this script loads:
-  //   <script>
+  //
   //     window.__SUPABASE_URL__ = 'https://ymlahqnshgiarpbgxehp.supabase.co';
   //     window.__SUPABASE_KEY__ = '<your-anon-key>';
-  //   </script>
+  //
+  // (See index.html credential block for the full inline snippet.)
   //
   // Tests / sandboxes can also set window.__DISABLE_SUPABASE__ = true to force
   // the adapter into local-only mode regardless of injected creds (defense-in-

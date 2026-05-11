@@ -89,13 +89,24 @@ html = re.sub(
 
 html = html.replace('</head>', '<style>\n' + css + '\n</style>\n</head>')
 
+# Defense-in-depth: escape any literal </script> inside JS source files so the
+# HTML parser never closes the <script> block early. This is the standard fix for
+# the "script-in-script" HTML parsing gotcha (even inside JS comments or strings,
+# the HTML parser treats </script> as a closing tag).
+def sanitize_inline_js(src):
+    return src.replace('</script>', r'<\/script>')
+
 # Inline supabase-js UMD FIRST so window.supabase exists before our adapter runs.
 inline_js = (
     '<script>\n/* vendored: @supabase/supabase-js UMD, inlined for offline PWA */\n'
     + supabase_umd
     + '\n</script>\n'
     + '<script>\n'
-    + data + '\n\n' + engine + '\n\n' + ui + '\n\n' + storage + '\n\n' + supabase
+    + sanitize_inline_js(data) + '\n\n'
+    + sanitize_inline_js(engine) + '\n\n'
+    + sanitize_inline_js(ui) + '\n\n'
+    + sanitize_inline_js(storage) + '\n\n'
+    + sanitize_inline_js(supabase)
     + '\n</script>\n</body>'
 )
 html = html.replace('</body>', inline_js)
