@@ -45,7 +45,9 @@ describe('Module 9 — Hardening / advisor / migration baseline suite (10 cases)
       var migrationContent = fs.readFileSync(migrationPath, 'utf8');
       var expectedTables = ['rulesets', 'teams', 'team_members', 'prior_snapshots', 'golden_battles', 'analyses', 'analysis_win_conditions', 'analysis_logs'];
       expectedTables.forEach(function(table) {
-        eq(migrationContent.includes('CREATE TABLE ' + table + ' ('), true, 'migration creates ' + table + ' table');
+        var hasTable = migrationContent.includes('CREATE TABLE ' + table + ' (') ||
+                       migrationContent.includes('CREATE TABLE IF NOT EXISTS ' + table + ' (');
+        eq(hasTable, true, 'migration creates ' + table + ' table');
       });
     }
   });
@@ -70,8 +72,11 @@ describe('Module 9 — Hardening / advisor / migration baseline suite (10 cases)
       var rlsContent = fs.readFileSync(rlsPath, 'utf8');
       
       // Check for required policy patterns
+      // Per-table read + insert policies (matches actual rls_policies_v1.sql)
       var requiredPolicies = [
-        'CREATE POLICY "anon_select_all_tables"',
+        'CREATE POLICY "anon_read_rulesets"',
+        'CREATE POLICY "anon_read_teams"',
+        'CREATE POLICY "anon_read_analyses"',
         'CREATE POLICY "anon_insert_analyses"',
         'CREATE POLICY "anon_insert_analysis_win_conditions"',
         'CREATE POLICY "anon_insert_analysis_logs"'
@@ -148,7 +153,7 @@ describe('Module 9 — Hardening / advisor / migration baseline suite (10 cases)
     if (fs.existsSync(packageJsonPath)) {
       var packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
       var hasTest = packageJson.scripts && packageJson.scripts.test;
-      eq(hasTest, true, 'package.json has test script');
+      truthy(hasTest, 'package.json has test script');
     }
   });
   

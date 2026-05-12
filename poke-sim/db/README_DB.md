@@ -130,6 +130,31 @@ window.__DISABLE_SUPABASE__ = true; // set before adapter loads
 
 ---
 
+## Migration Workflow
+
+All schema changes use the **apply_migration-only** workflow. Never modify `schema_v1.sql` directly for incremental changes.
+
+### Rules
+1. Every DDL change gets its own timestamped file in `db/migrations/` (format: `YYYY_MM_DD_<slug>.sql`)
+2. Baseline: `2026_04_27_baseline_v1.sql` — creates all 8 tables from scratch
+3. Incremental: each subsequent migration is additive (`ALTER TABLE`, `CREATE INDEX`, etc.)
+4. Run order: baseline first, then migrations sorted by filename timestamp
+5. apply_migration steps:
+   - Write the `.sql` file in `db/migrations/`
+   - Test locally or in Supabase SQL Editor
+   - Commit the migration file to the branch
+   - After merge, execute in the live Supabase SQL Editor in timestamp order
+
+### Current Migrations
+
+| File | Purpose |
+|---|---|
+| `2026_04_27_baseline_v1.sql` | Baseline: 8 tables, indexes, triggers |
+| `2026_05_11_m8_add_usage_data_column.sql` | M8: adds `usage_data` JSONB column to `prior_snapshots` |
+| `2026_05_11_m8_seed_prior_snapshots.sql` | M8: seeds 3 months of VGC usage data |
+
+---
+
 ## Verification Checklist (Alfredo)
 
 - [ ] Supabase project created and URL/key available
