@@ -2383,6 +2383,34 @@ function wilsonCI(wins, n, z = 1.96) {
   ];
 }
 
+// M8: Build hidden_info_priors from a prior snapshot (Smogon usage data).
+// Returns an enriched priors object if prior is valid, or the default stub.
+function applyPrior(prior) {
+  if (!prior || !prior.usage_data) {
+    return {
+      note:   'All opponent set details taken as declared in TEAMS definition. No hidden-set priors applied.',
+      source: 'exact-input',
+      items:  'declared',
+      evs:    'declared',
+      tera:   'declared',
+      moves:  'declared'
+    };
+  }
+  return {
+    note:    'Hidden-info priors applied from ' + prior.source + ' (' + prior.month + ')',
+    source:  prior.source,
+    prior_id: prior.prior_id,
+    month:   prior.month,
+    items:   'usage-weighted',
+    evs:     'usage-weighted',
+    tera:    'usage-weighted',
+    moves:   'usage-weighted',
+    species_usage: prior.usage_data.species || [],
+    item_usage:    prior.usage_data.items   || [],
+    move_usage:    prior.usage_data.moves   || []
+  };
+}
+
 function buildAnalysisPayload(rawResult, ctx = {}) {
   const n   = rawResult.wins + rawResult.losses + (rawResult.draws || 0);
   const ci  = wilsonCI(rawResult.wins, n);
@@ -2403,14 +2431,11 @@ function buildAnalysisPayload(rawResult, ctx = {}) {
       player:   rawResult.playerTeam || ctx.playerTeamKey || 'player',
       opponent: rawResult.oppTeam    || ctx.oppTeamKey    || 'unknown'
     },
-    hidden_info_priors: {
-      note:   'All opponent set details taken as declared in TEAMS definition. No hidden-set priors applied.',
-      source: 'exact-input',
-      items:  'declared',
-      evs:    'declared',
-      tera:   'declared',
-      moves:  'declared'
-    },
+    prior_id:           (ctx.prior && ctx.prior.prior_id) || null,
+    hidden_info_model:   (ctx.prior && ctx.prior.source && ctx.prior.month)
+                           ? ctx.prior.source + '-' + ctx.prior.month
+                           : null,
+    hidden_info_priors:  applyPrior(ctx.prior || null),
     seed_policy:    rawResult.seeds ? 'per-battle-mulberry32' : 'legacy-unseed',
     sample_size:    rawResult.sampleSize || n,
     bo_mode:        ctx.bo || null,

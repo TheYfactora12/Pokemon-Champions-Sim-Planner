@@ -329,6 +329,29 @@
     }
   }
 
+  // ── M8: Load prior snapshot for hidden-info inference ───────────────────
+  // Returns the most recent prior_snapshots row for the given format where
+  // month ≤ targetMonth. Returns null if none found or on error (fail-soft).
+  async function loadPriorSnapshot(format, targetMonth) {
+    var sb = getClient();
+    if (!sb) return null;
+    try {
+      var { data, error } = await sb
+        .from('prior_snapshots')
+        .select('*')
+        .eq('format', format)
+        .lte('month', targetMonth)
+        .order('month', { ascending: false })
+        .limit(1)
+        .single();
+      if (error) throw error;
+      return data || null;
+    } catch (err) {
+      console.warn('[SupabaseAdapter] loadPriorSnapshot failed.', err && err.message);
+      return null;
+    }
+  }
+
   // ── Public API ────────────────────────────────────────────────────────────
   window.SupabaseAdapter = {
     enabled:            ENABLED,
@@ -339,7 +362,8 @@
     loadRecentAnalyses,
     saveTeam,
     loadAnalysesForPlayer,
-    loadAnalysisLogs
+    loadAnalysisLogs,
+    loadPriorSnapshot
   };
 
   // M3 NOTE: Auto-merge of DB teams into TEAMS has moved to ui.js's

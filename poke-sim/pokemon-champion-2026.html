@@ -8640,6 +8640,34 @@ function wilsonCI(wins, n, z = 1.96) {
   ];
 }
 
+// M8: Build hidden_info_priors from a prior snapshot (Smogon usage data).
+// Returns an enriched priors object if prior is valid, or the default stub.
+function applyPrior(prior) {
+  if (!prior || !prior.usage_data) {
+    return {
+      note:   'All opponent set details taken as declared in TEAMS definition. No hidden-set priors applied.',
+      source: 'exact-input',
+      items:  'declared',
+      evs:    'declared',
+      tera:   'declared',
+      moves:  'declared'
+    };
+  }
+  return {
+    note:    'Hidden-info priors applied from ' + prior.source + ' (' + prior.month + ')',
+    source:  prior.source,
+    prior_id: prior.prior_id,
+    month:   prior.month,
+    items:   'usage-weighted',
+    evs:     'usage-weighted',
+    tera:    'usage-weighted',
+    moves:   'usage-weighted',
+    species_usage: prior.usage_data.species || [],
+    item_usage:    prior.usage_data.items   || [],
+    move_usage:    prior.usage_data.moves   || []
+  };
+}
+
 function buildAnalysisPayload(rawResult, ctx = {}) {
   const n   = rawResult.wins + rawResult.losses + (rawResult.draws || 0);
   const ci  = wilsonCI(rawResult.wins, n);
@@ -8660,14 +8688,11 @@ function buildAnalysisPayload(rawResult, ctx = {}) {
       player:   rawResult.playerTeam || ctx.playerTeamKey || 'player',
       opponent: rawResult.oppTeam    || ctx.oppTeamKey    || 'unknown'
     },
-    hidden_info_priors: {
-      note:   'All opponent set details taken as declared in TEAMS definition. No hidden-set priors applied.',
-      source: 'exact-input',
-      items:  'declared',
-      evs:    'declared',
-      tera:   'declared',
-      moves:  'declared'
-    },
+    prior_id:           (ctx.prior && ctx.prior.prior_id) || null,
+    hidden_info_model:   (ctx.prior && ctx.prior.source && ctx.prior.month)
+                           ? ctx.prior.source + '-' + ctx.prior.month
+                           : null,
+    hidden_info_priors:  applyPrior(ctx.prior || null),
     seed_policy:    rawResult.seeds ? 'per-battle-mulberry32' : 'legacy-unseed',
     sample_size:    rawResult.sampleSize || n,
     bo_mode:        ctx.bo || null,
@@ -16257,6 +16282,29 @@ if (typeof window !== 'undefined') {
     }
   }
 
+  // ── M8: Load prior snapshot for hidden-info inference ───────────────────
+  // Returns the most recent prior_snapshots row for the given format where
+  // month ≤ targetMonth. Returns null if none found or on error (fail-soft).
+  async function loadPriorSnapshot(format, targetMonth) {
+    var sb = getClient();
+    if (!sb) return null;
+    try {
+      var { data, error } = await sb
+        .from('prior_snapshots')
+        .select('*')
+        .eq('format', format)
+        .lte('month', targetMonth)
+        .order('month', { ascending: false })
+        .limit(1)
+        .single();
+      if (error) throw error;
+      return data || null;
+    } catch (err) {
+      console.warn('[SupabaseAdapter] loadPriorSnapshot failed.', err && err.message);
+      return null;
+    }
+  }
+
   // ── Public API ────────────────────────────────────────────────────────────
   window.SupabaseAdapter = {
     enabled:            ENABLED,
@@ -16267,7 +16315,8 @@ if (typeof window !== 'undefined') {
     loadRecentAnalyses,
     saveTeam,
     loadAnalysesForPlayer,
-    loadAnalysisLogs
+    loadAnalysisLogs,
+    loadPriorSnapshot
   };
 
   // M3 NOTE: Auto-merge of DB teams into TEAMS has moved to ui.js's

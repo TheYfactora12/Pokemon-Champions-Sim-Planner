@@ -34,6 +34,8 @@ function _resetMockState(seed) {
   // M5 tables
   if (!mockState.teams)                   mockState.teams = [];
   if (!mockState.team_members)            mockState.team_members = [];
+  // M8 tables
+  if (!mockState.prior_snapshots)         mockState.prior_snapshots = [];
   // Convenience top-level mirrors for T-save-11
   mockState.wins = 0; mockState.losses = 0; mockState.draws = 0;
 }
@@ -50,6 +52,11 @@ function _chain(table, state) {
   var pendingInsert = null;
   var pendingDelete = false;
   var eqFilters = [];
+  var lteFilters = [];
+  var pendingSelect = false;
+  var orderCol = null;
+  var orderAsc = true;
+  var limitN = null;
 
   function _resolveResult() {
     if (mockErrorMode) {
@@ -87,19 +94,43 @@ function _chain(table, state) {
       }
       return { data: inserted, error: null };
     }
+    // Apply eq and lte filters for SELECT queries
+    var filtered = rows.slice();
+    if (pendingSelect && (eqFilters.length > 0 || lteFilters.length > 0)) {
+      eqFilters.forEach(function(f) {
+        filtered = filtered.filter(function(row) { return row[f.col] === f.val; });
+      });
+      lteFilters.forEach(function(f) {
+        filtered = filtered.filter(function(row) { return row[f.col] <= f.val; });
+      });
+      // Apply ordering
+      if (orderCol) {
+        filtered.sort(function(a, b) {
+          if (a[orderCol] < b[orderCol]) return orderAsc ? -1 : 1;
+          if (a[orderCol] > b[orderCol]) return orderAsc ? 1 : -1;
+          return 0;
+        });
+      }
+      // Apply limit
+      if (limitN !== null) {
+        filtered = filtered.slice(0, limitN);
+      }
+      return { data: filtered, error: null };
+    }
     return { data: rows, error: null };
   }
 
   var self = {
-    select: function () { return self; },
+    select: function () { pendingSelect = true; return self; },
     insert: function (rows) { pendingInsert = rows; return self; },
     upsert: function (rows) { pendingInsert = rows; return self; },
     update: function () { return self; },
     delete: function () { pendingDelete = true; return self; },
     eq:     function (col, val) { eqFilters.push({ col: col, val: val }); return self; },
+    lte:    function (col, val) { lteFilters.push({ col: col, val: val }); return self; },
     in:     function () { return self; },
-    order:  function () { return self; },
-    limit:  function () { return self; },
+    order:  function (col, opts) { orderCol = col; orderAsc = opts && opts.ascending !== undefined ? opts.ascending : true; return self; },
+    limit:  function (n) { limitN = n; return self; },
     single: function () { var r = _resolveResult(); return Promise.resolve({ data: (r.data && r.data[0]) || null, error: r.error }); },
     then:   function (resolve) { 
       var result = _resolveResult();
