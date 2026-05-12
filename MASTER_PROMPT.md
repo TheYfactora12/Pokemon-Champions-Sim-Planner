@@ -37,6 +37,8 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-11 | @alfredocox | M8 implementation: `loadPriorSnapshot` + `applyPrior` engine wiring + 10 TDD cases GREEN | POK-24. Adapter queries `prior_snapshots` table (fail-soft). Engine `buildAnalysisPayload` accepts `ctx.prior` → populates `prior_id`, `hidden_info_model`, enriched `hidden_info_priors`. Mock infra updated with `lte()` filter + select filtering. Bundle rebuilt (930KB). `sw.js` bumped to v15-m8-priors. |
+| 2026-05-11 | @alfredocox | Live app bundle fix: removed `</script>` from JS comment in `supabase_adapter.js` | Root cause: literal `</script>` in comment caused HTML parser to close `<script>` block early when inlined by `build-bundle.py`. Defense-in-depth: `sanitize_inline_js()` added to build script. |
 | 2026-05-09 | @alfredocox | M4/M5 test fixes + live DB testing CI configuration | Fixed async handling in tests, updated mock infrastructure, added RLS policies. CI now runs db_m*.js with live Supabase credentials. GitHub secrets: SUPABASE_URL, SUPABASE_ANON_KEY. |
 | 2026-05-09 | @alfredocox | M7 implementation: golden_battles deterministic regression runner + fixture + 8 test cases | POK-23. VM context, SHA256 trace hashes, --generate flag. CI enabled for db_m*.js. |
 | 2026-05-09 | @alfredocox | M6 implementation: `loadAnalysesForPlayer` + `loadAnalysisLogs` + history UI in Replay Log tab | POK-22. Lazy-load logs on expand. Filter chips (all/win/loss/clutch). 10 TDD cases rewritten. |
@@ -327,16 +329,16 @@ Pokemon-Champions-Sim-Planner/
 │   ├── supabase_adapter.js         ← Supabase sync layer — loadTeams, saveAnalysis, getMatchupHistory
 │   ├── strategy-injectable.js      ← injectable coaching strategy layer
 │   ├── legality.js                 ← VGC legality checker
-│   ├── sw.js                       ← PWA service worker (CACHE_NAME: champions-sim-v9-m3-init-wired)
+│   ├── sw.js                       ← PWA service worker (CACHE_NAME: champions-sim-v15-m8-priors)
 │   ├── manifest.json
 │   ├── icon-192.png / icon-512.png
-│   ├── pokemon-champion-2026.html  ← REBUILT BUNDLE (never edit directly — ~918 KB)
+│   ├── pokemon-champion-2026.html  ← REBUILT BUNDLE (never edit directly — ~930 KB)
 │   ├── db/
 │   │   ├── schema_v1.sql           ← 8-table Supabase schema (updated 2026-04-27: added metadata col)
 │   │   ├── seed_teams_v2.sql       ← ✅ USE THIS — 13 tournament teams, complete data (42 KB)
 │   │   ├── seed_teams_v1.sql       ← ⚠️ DEPRECATED — superseded by v2, do not use
 │   │   ├── rls_policies_v1.sql     ← Row Level Security policies (run third) — HAS MERGE CONFLICT
-│   │   ├── migrations/             ← migration scripts folder
+│   │   ├── migrations/             ← migration scripts folder (includes M8 usage_data + seed)
 │   │   └── README_DB.md            ← full setup checklist + adapter API docs — HAS MERGE CONFLICT
 │   ├── tools/
 │   │   ├── build-bundle.py         ← canonical bundle rebuild (always use this)
@@ -347,7 +349,14 @@ Pokemon-Champions-Sim-Planner/
 │       ├── ui_storage_integration_tests.js  ← 33 cases
 │       ├── items_tests.js / status_tests.js / mega_tests.js
 │       ├── coverage_tests.js / audit.js
-│       └── t9j8-t9j16_tests.js
+│       ├── t9j8-t9j16_tests.js
+│       ├── db_m4_save_tests.js              ← 18 cases (M4 persist analyses)
+│       ├── db_m5_import_tests.js            ← 12 cases (M5 import teams)
+│       ├── db_m6_history_tests.js           ← 10 cases (M6 history tab)
+│       ├── db_m7_golden_battles_tests.js    ← 8 cases (M7 golden battles)
+│       ├── db_m8_priors_tests.js            ← 10 cases (M8 prior snapshots)
+│       ├── _db_helpers.js                   ← shared mock infra for DB tests
+│       └── fixtures/                        ← test fixtures (golden_battles.json, prior_snapshot_sample.json)
 └── MASTER_PROMPT.md
 ```
 
@@ -421,7 +430,7 @@ The SQL files exist but have **NOT been executed** in Supabase yet. Tables do no
 | teams, team_members, pokemon, moves, rulesets, matchups | ✅ open | ✅ open (test data only) |
 | analyses, analysis_logs, analysis_win_conditions | ✅ open | ✅ open (no auth required — accepted risk) |
 
-### 🎯 CURRENT DB INTEGRATION STATUS (2026-05-09)
+### 🎯 CURRENT DB INTEGRATION STATUS (2026-05-11)
 
 #### ✅ **COMPLETED MODULES**
 - **M1**: Adapter wiring (PR #161) - ✅ MERGED
@@ -429,12 +438,26 @@ The SQL files exist but have **NOT been executed** in Supabase yet. Tables do no
 - **M3**: DB source of truth (PR #163) - ✅ MERGED
 - **M4**: Persist analyses - ✅ IMPLEMENTED + 18/18 tests passing
 - **M5**: Import teams persist - ✅ IMPLEMENTED + 12/12 tests passing
+- **M6**: History tab reads from DB - ✅ IMPLEMENTED + 10/10 tests passing
+- **M7**: Golden battles regression runner - ✅ IMPLEMENTED + 8/8 tests passing
+- **M8**: Prior snapshots for hidden-info inference - ✅ IMPLEMENTED + 10/10 tests passing
 
-#### 🔧 **M4/M5 IMPLEMENTATION DETAILS**
+#### 🔧 **M8 IMPLEMENTATION DETAILS (2026-05-11)**
+- **Adapter**: `loadPriorSnapshot(format, targetMonth)` queries `prior_snapshots` table, returns latest snapshot with `month ≤ targetMonth`. Fail-soft returns `null`.
+- **Engine**: `applyPrior(prior)` builds enriched `hidden_info_priors` from Smogon usage data. `buildAnalysisPayload` accepts `ctx.prior` → sets `prior_id`, `hidden_info_model`.
+- **Schema**: `prior_snapshots.usage_data` JSONB column added (migration: `2026_05_11_m8_add_usage_data_column.sql`)
+- **Seed data**: 3 months of VGC 2026 Reg M usage stats (migration: `2026_05_11_m8_seed_prior_snapshots.sql`)
+- **Mock infra**: `_db_helpers.js` updated with `lte()` filter, select-time eq/lte/order/limit filtering, `prior_snapshots` table
+- **Test file**: `poke-sim/tests/db_m8_priors_tests.js` — 10 cases with async test runner
+- **Fixture**: `poke-sim/tests/fixtures/prior_snapshot_sample.json` — 3 snapshots
+
+#### 🔧 **M4-M7 IMPLEMENTATION DETAILS**
 - **M4**: `_buildAnalysisPayload()` in `ui.js` + `saveAnalysis()` calls after simulation
 - **M5**: `_upsertTeamToDB()` in `ui.js` + `saveTeam()` adapter method
+- **M6**: `loadAnalysesForPlayer()` + `loadAnalysisLogs()` + history UI in Replay Log tab
+- **M7**: `golden_battles_runner.js` + deterministic trace hashes + `golden_battles.json` fixture
 - **Test Infrastructure**: Fixed async handling, updated mock promises, added RLS policies
-- **Bundle**: Rebuilt `pokemon-champion-2026.html` with M4/M5 implementations
+- **Bundle**: Rebuilt `pokemon-champion-2026.html` with all implementations (930KB)
 
 #### 🚀 **LIVE DB TESTING CONFIGURATION**
 - **CI Updated**: `.github/workflows/ci.yml` now runs `db_m*.js` with live Supabase
@@ -450,10 +473,15 @@ The SQL files exist but have **NOT been executed** in Supabase yet. Tables do no
 - Tests will create real data in production Supabase when live testing enabled
 
 #### 📋 **NEXT STEPS**
-1. Add GitHub secrets for Supabase credentials
-2. Consider restricting RLS policies for production safety
-3. Add test cleanup to prevent database pollution
-4. Implement M6-M9 modules (fan out after M3)
+1. Run M8 SQL migrations on Supabase: `2026_05_11_m8_add_usage_data_column.sql` then `2026_05_11_m8_seed_prior_snapshots.sql`
+2. Implement M9 (RLS hardening, advisor sweep, baseline migration) — last module
+3. Consider restricting RLS policies for production safety
+4. Add test cleanup to prevent database pollution
+
+#### 📊 **TEST SUITE TOTALS (2026-05-11)**
+- M4: 18/18, M5: 12/12, M6: 10/10, M7: 8/8, M8: 10/10 = **58/58 DB tests GREEN**
+- 343+ engine test cases
+- 40 storage adapter tests + 33 UI integration tests
 
 ---
 
@@ -515,7 +543,7 @@ cd poke-sim; python tools\build-bundle.py
 
 1. **Resolve all merge conflicts** in `supabase_adapter.js`, `rls_policies_v1.sql`, `README_DB.md`
 2. **Rebuild bundle:** `cd poke-sim && python3 tools/build-bundle.py`
-3. **Bump CACHE_NAME in sw.js:** format `champions-sim-v{major}-{tag}` — current: `champions-sim-v9-m3-init-wired` → next: `champions-sim-v10-m4-save-analysis`
+3. **Bump CACHE_NAME in sw.js:** format `champions-sim-v{major}-{tag}` — current: `champions-sim-v15-m8-priors`
 4. **Commit both artifacts:** `git add poke-sim/pokemon-champion-2026.html poke-sim/sw.js`
 5. **Push and wait for CI green:** Bundle Freshness Check + Cache Bump Check both must pass
 
