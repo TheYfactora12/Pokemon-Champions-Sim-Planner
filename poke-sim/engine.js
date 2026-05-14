@@ -604,6 +604,8 @@ class Pokemon {
     this.encoredMove  = null;
     this.lastMoveUsed  = null;
     this.lastTarget    = null;
+    this.protectChain  = 0;
+    this.enduring      = false;
     // T9j.17 (Refs #101) -- Fake Out hard-gate flag. Initialized false so first
     // turn out is the only legal use. Reset on every switch-in (replaceOnField).
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out_(move)
@@ -1689,9 +1691,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
 
     const moveType = MOVE_TYPES[move] || 'Normal';
-    const PROTECT_MOVES = new Set(['Protect','Wide Guard','Quick Guard']);
+    const PROTECT_MOVES = new Set(['Protect','Detect','Wide Guard','Quick Guard','Endure']);
     const STATUS_MOVES  = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder',
-      'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail','Quick Guard',
+      'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail','Quick Guard','Endure',
       // T9j.2 additions — side-state setters
       'Wide Guard','Follow Me','Quick Guard','Protect','Detect',
       // T9j.3 Screens setters
@@ -1707,9 +1709,20 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       return;
     }
 
+    if (!PROTECT_MOVES.has(move)) attacker.protectChain = 0;
+
+    const _protectFamilyChance = Math.pow(1/3, attacker.protectChain || 0);
+
     // Handle Protect (self only — Wide Guard/Quick Guard handled in status branch below)
     if (move === 'Protect' || move === 'Detect') {
+      if (rng() > _protectFamilyChance) {
+        log.push(`${attacker.name} used ${move}! But it failed!`);
+        attacker.protectChain = 0;
+        return;
+      }
       attacker.protected = true;
+      attacker.enduring = false;
+      attacker.protectChain++;
       log.push(`${attacker.name} used ${move}!`);
       return;
     }
@@ -1768,21 +1781,37 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.2 (#31) — Wide Guard with 1/3 consecutive-use diminishing returns.
       if (move === 'Wide Guard') {
         const side = (allies === playerActive) ? field.playerSide : field.oppSide;
-        const chainChance = (side.wideGuardChain === 0) ? 1.0 : Math.pow(1/3, side.wideGuardChain);
-        if (rng() < chainChance) {
-          side.wideGuard = true;
-          side.wideGuardChain++;
-          log.push(`${attacker.name} protected its team with Wide Guard!`);
-        } else {
-          side.wideGuardChain = 0;
+        if (rng() > _protectFamilyChance) {
           log.push(`${attacker.name}'s Wide Guard failed!`);
+          attacker.protectChain = 0;
+          return;
         }
+          side.wideGuard = true;
+        attacker.protectChain++;
+        log.push(`${attacker.name} protected its team with Wide Guard!`);
         return;
       }
       if (move === 'Quick Guard') {
         const side = (allies === playerActive) ? field.playerSide : field.oppSide;
+        if (rng() > _protectFamilyChance) {
+          log.push(`${attacker.name} used Quick Guard! But it failed!`);
+          attacker.protectChain = 0;
+          return;
+        }
         side.quickGuard = true;
+        attacker.protectChain++;
         log.push(`${attacker.name} used Quick Guard!`);
+        return;
+      }
+      if (move === 'Endure') {
+        if (rng() > _protectFamilyChance) {
+          log.push(`${attacker.name} used Endure! But it failed!`);
+          attacker.protectChain = 0;
+          return;
+        }
+        attacker.enduring = true;
+        attacker.protectChain++;
+        log.push(`${attacker.name} braced itself with Endure!`);
         return;
       }
       if (move === 'Taunt' && target && target.alive) {
@@ -2292,6 +2321,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       else log.push(`${attacker.name} used ${move}! (Substitute absorbed ${finalDmg} dmg)`);
       return;
     }
+    if (target.enduring && finalDmg >= target.hp) {
+      target.hp = 1;
+      log.push(`${target.name} endured the hit!`);
+      return;
+    }
     // T9j.6 (#8) — Focus Sash: snapshot full-HP state BEFORE damage mutation.
     // Cite: Bulbapedia Focus Sash.
     const wasFullHp = (target.hp === target.maxHp);
@@ -2402,6 +2436,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const m of [...playerActive, ...oppActive]) {
       m.hasActed = false;
       m.protected = false;
+      m.enduring = false;
       m.helpingHand = false;
       m._chosenMove = null;
       // T9j.8 (Refs #19) Flinch flag resets at top of turn so last-turn flinch
@@ -2653,6 +2688,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           replacement.tauntedTurns = 0;
           replacement.encoredTurns  = 0;
           replacement.encoredMove   = null;
+          replacement.protectChain  = 0;
+          replacement.enduring      = false;
           // T9j.6 (#29) — stat stages must not leak across switches. Entry at all-zero.
           replacement.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
           // T9j.6 (#18) — Choice Scarf lock clears on switch in.
@@ -2807,6 +2844,7 @@ function getPriority(move) {
     'Fake Out':3, 'Extreme Speed':2, 'Aqua Jet':1, 'Shadow Sneak':1,
     'Sucker Punch':1, 'Vacuum Wave':1, 'Quick Attack':1,
     'Helping Hand':5,
+    'Endure':4,
     'Protect':4, 'Detect':4,
     'Wide Guard':3, 'Quick Guard':3,
     'Follow Me':2, 'Rage Powder':2,
