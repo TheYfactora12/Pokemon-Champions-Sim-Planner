@@ -1,0 +1,91 @@
+name: Supabase DB Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      migration:
+        description: "Migration filename under poke-sim/db/migrations/"
+        required: true
+        default: "2026_05_12_align_reg_ma_meta_sources.sql"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-db-migration
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    name: Apply Supabase Migration
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client jq
+
+      - name: Validate migration input
+        id: migration
+        run: |
+          set -euo pipefail
+          migration="${{ inputs.migration }}"
+
+          case "$migration" in
+            /*|*..*|*/*)
+              echo "::error::Migration must be a filename inside poke-sim/db/migrations/"
+              exit 1
+              ;;
+          esac
+
+          path="poke-sim/db/migrations/$migration"
+          if [ ! -f "$path" ]; then
+            echo "::error::Migration file not found: $path"
+            exit 1
+          fi
+
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+          echo "filename=$migration" >> "$GITHUB_OUTPUT"
+
+      - name: Apply migration
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            echo "::error::Missing SUPABASE_DB_URL repository secret"
+            exit 1
+          fi
+
+          psql "$SUPABASE_DB_URL" \
+            --set ON_ERROR_STOP=1 \
+            --file "${{ steps.migration.outputs.path }}"
+
+      - name: Verify Reg M-A prior snapshot
+        if: ${{ steps.migration.outputs.filename == '2026_05_12_align_reg_ma_meta_sources.sql' }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
+            echo "::error::SUPABASE_URL and SUPABASE_ANON_KEY secrets are required for snapshot verification"
+            exit 1
+          fi
+
+          api_url="${SUPABASE_URL%/}/rest/v1/prior_snapshots?prior_id=eq.reg_ma_meta_2026_05_12_public_sources&select=prior_id,usage_data"
+          curl -fsS \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$api_url" > snapshot.json
+
+          jq -e '
+            length == 1 and
+            .[0].prior_id == "reg_ma_meta_2026_05_12_public_sources" and
+            (.[0].usage_data.pokestats_bo3_top | length) > 0
+          ' snapshot.json > /dev/null
+
+          echo "Verified prior_snapshots usage_data for Reg M-A public-source snapshot."
