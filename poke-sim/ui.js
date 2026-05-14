@@ -152,7 +152,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.add('active');
     document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
     // M6: load history when replay tab is opened
-    if (btn.dataset.tab === 'replay' && typeof loadAnalysisHistory === 'function') {
+    if ((btn.dataset.tab === 'replays' || btn.dataset.tab === 'replay') && typeof loadAnalysisHistory === 'function') {
       loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
     }
   });
@@ -311,20 +311,34 @@ function renderRoster(containerId, members) {
   el.innerHTML = '';
   for (const m of members) {
     const types = getPokemonTypes(m.name);
+    const escName = _escapeHtml(m.name || '');
+    const escItem = _escapeHtml(m.item || '—');
+    const escAbility = _escapeHtml(m.ability || '—');
+    const escMoves = _escapeHtml((m.moves || []).join(' / '));
     const row = document.createElement('div');
     row.className = 'poke-row';
     row.innerHTML = `
-      <img class="poke-sprite" src="${getSpriteUrl(m.name)}" alt="${m.name}" loading="lazy" onerror="this.style.opacity='.3'"/>
+      <img class="poke-sprite" src="${getSpriteUrl(m.name)}" alt="${escName}" loading="lazy" onerror="this.style.opacity='.3'"/>
       <div class="poke-info">
-        <div class="poke-name">${m.name}</div>
-        <div class="poke-item">${m.item || '—'} · ${m.ability || '—'}</div>
-        <div class="poke-moves">${(m.moves||[]).join(' / ')}</div>
+        <div class="poke-name">${escName}</div>
+        <div class="poke-item">${escItem} · ${escAbility}</div>
+        <div class="poke-moves">${escMoves}</div>
       </div>
       <div class="type-chips">
-        ${types.map(t=>`<span class="type-chip" style="background:${typeColor(t)}20;color:${typeColor(t)};border:1px solid ${typeColor(t)}40">${t}</span>`).join('')}
-      </div>`;
+        ${types.map(t=>`<span class="type-chip" style="background:${typeColor(t)}20;color:${typeColor(t)};border:1px solid ${typeColor(t)}40">${_escapeHtml(t)}</span>`).join('')}
+      </div>
+      <button class="team-mon-detail-btn" type="button" data-team="${containerId === 'player-roster' ? currentPlayerKey : (document.getElementById('opponent-select') ? document.getElementById('opponent-select').value : '')}" data-mon="${escName}" title="View full stat details">Stats</button>`;
     el.appendChild(row);
   }
+  el.querySelectorAll('.team-mon-detail-btn').forEach(btn => {
+    btn.addEventListener('click', function(ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (typeof openTeamStatDetailPanel === 'function') {
+        openTeamStatDetailPanel(btn.dataset.team, btn.dataset.mon, btn);
+      }
+    });
+  });
 }
 
 // ============================================================
@@ -695,8 +709,8 @@ function buildBringPickerHtml(teamKey, opts) {
       '" title="' + label + (!manualMode ? ' (random mode)' : '') + '">' +
       '<div class="bring-slot-label">' + label + '</div>' +
       (monName
-        ? '<img class="bring-slot-sprite" src="' + sprite + '" alt="' + monName + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
-          '<div class="bring-slot-name">' + monName + '</div>'
+        ? '<img class="bring-slot-sprite" src="' + sprite + '" alt="' + _escapeHtml(monName) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+          '<div class="bring-slot-name">' + _escapeHtml(monName) + '</div>'
         : '<div class="bring-slot-empty">\u2014</div>') +
       '</div>';
   }).join('');
@@ -709,31 +723,31 @@ function buildBringPickerHtml(teamKey, opts) {
       var inBring = manualMode && bring.indexOf(m.name) >= 0;
       var pos = inBring ? (bring.indexOf(m.name) < leadCount ? 'LEAD ' + (bring.indexOf(m.name)+1) : 'BENCH ' + (bring.indexOf(m.name)+1)) : '';
       return '<div class="bring-pool-chip ' + (inBring ? 'bring-in' : 'bring-out') +
-        '" data-team="' + teamKey + '" data-mon="' + m.name +
+        '" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) +
         '" draggable="' + (manualMode ? 'true' : 'false') +
-        '" title="' + m.name + (inBring ? ' (' + pos + ')' : '') + '">' +
-        '<img class="bring-pool-chip-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + m.name + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
-        '<span class="bring-pool-chip-name">' + m.name + '</span>' +
-        (inBring ? '<span class="bring-pool-chip-pos">' + pos + '</span>' : '') +
+        '" title="' + _escapeHtml(m.name) + (inBring ? ' (' + _escapeHtml(pos) + ')' : '') + '">' +
+        '<img class="bring-pool-chip-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        '<span class="bring-pool-chip-name">' + _escapeHtml(m.name) + '</span>' +
+        (inBring ? '<span class="bring-pool-chip-pos">' + _escapeHtml(pos) + '</span>' : '') +
         '</div>';
     }).join('');
   } else {
     poolHtml = team.members.map(function(m){
       var inBring = manualMode && bring.indexOf(m.name) >= 0;
       return '<div class="bring-pool-row ' + (inBring ? 'bring-in' : 'bring-out') +
-        '" data-team="' + teamKey + '" data-mon="' + m.name +
+        '" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) +
         '" draggable="' + (manualMode ? 'true' : 'false') + '">' +
-        '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + m.name + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
         '<div class="poke-full-info">' +
-          '<div class="poke-full-name">' + m.name +
-            ' <span style="font-weight:400;color:var(--text-m);font-size:10px">@ ' + (m.item || '\u2014') + '</span>' +
+          '<div class="poke-full-name">' + _escapeHtml(m.name) +
+            ' <span style="font-weight:400;color:var(--text-m);font-size:10px">@ ' + _escapeHtml(m.item || '\u2014') + '</span>' +
             (inBring ? ' <span style="font-size:9px;color:var(--accent,#4a9eff);font-weight:600;margin-left:4px">\u25c6 ' +
-              (bring.indexOf(m.name) < leadCount ? 'LEAD' : 'BENCH') + ' ' + (bring.indexOf(m.name)+1) + '</span>' : '') +
+              _escapeHtml((bring.indexOf(m.name) < leadCount ? 'LEAD' : 'BENCH') + ' ' + (bring.indexOf(m.name)+1)) + '</span>' : '') +
           '</div>' +
-          '<div class="poke-full-detail">' + (m.ability || '\u2014') + ' \u00b7 ' + (m.nature || 'Hardy') + ' \u00b7 Lv' + (m.level || 50) + '</div>' +
-          '<div class="move-tags">' + (m.moves || []).map(function(mv){ return '<span class="move-tag">' + mv + '</span>'; }).join('') + '</div>' +
+          '<div class="poke-full-detail">' + _escapeHtml(m.ability || '\u2014') + ' \u00b7 ' + _escapeHtml(m.nature || 'Hardy') + ' \u00b7 Lv' + _escapeHtml(String(m.level || 50)) + '</div>' +
+          '<div class="move-tags">' + (m.moves || []).map(function(mv){ return '<span class="move-tag">' + _escapeHtml(mv) + '</span>'; }).join('') + '</div>' +
         '</div>' +
-        '<button class="team-mon-detail-btn" type="button" data-team="' + teamKey + '" data-mon="' + m.name + '" title="View full stat details">Details</button>' +
+        '<button class="team-mon-detail-btn" type="button" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) + '" title="View full stat details">Details</button>' +
       '</div>';
     }).join('');
   }
@@ -1458,7 +1472,7 @@ function renderEditorRoster() {
   TEAMS.player.members.forEach((m, i) => {
     const btn = document.createElement('button');
     btn.className = 'editor-poke-btn';
-    btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${m.name}" onerror="this.style.opacity='.3'"/><span>${m.name}</span>`;
+    btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/><span>${_escapeHtml(m.name || '')}</span>`;
     btn.addEventListener('click', () => { document.querySelectorAll('.editor-poke-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); openEditorForm(i); });
     el.appendChild(btn);
   });
@@ -1471,18 +1485,18 @@ function openEditorForm(idx) {
   const evsHtml = ['hp','atk','def','spa','spd','spe'].map(s=>`
     <div class="form-group">
       <label class="form-label">${s.toUpperCase()}</label>
-      <input class="form-input" id="ev-${s}" value="${m.evs?.[s]||0}" type="number" min="0" max="252"/>
+      <input class="form-input" id="ev-${s}" value="${_escapeHtml(String(m.evs?.[s]||0))}" type="number" min="0" max="252"/>
     </div>`).join('');
   form.innerHTML = `
-    <div class="editor-poke-name">${m.name}</div>
+    <div class="editor-poke-name">${_escapeHtml(m.name || '')}</div>
     <div class="editor-2col">
-      <div class="form-group"><label class="form-label">Item</label><input class="form-input" id="ed-item" value="${m.item||''}"/></div>
-      <div class="form-group"><label class="form-label">Ability</label><input class="form-input" id="ed-ability" value="${m.ability||''}"/></div>
-      <div class="form-group"><label class="form-label">Nature</label><input class="form-input" id="ed-nature" value="${m.nature||'Hardy'}"/></div>
-      <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="ed-role" value="${m.role||''}"/></div>
+      <div class="form-group"><label class="form-label">Item</label><input class="form-input" id="ed-item" value="${_escapeHtml(m.item||'')}"/></div>
+      <div class="form-group"><label class="form-label">Ability</label><input class="form-input" id="ed-ability" value="${_escapeHtml(m.ability||'')}"/></div>
+      <div class="form-group"><label class="form-label">Nature</label><input class="form-input" id="ed-nature" value="${_escapeHtml(m.nature||'Hardy')}"/></div>
+      <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="ed-role" value="${_escapeHtml(m.role||'')}"/></div>
     </div>
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">Moves</label>
-    <div class="moves-2col">${(m.moves||[]).map((mv,i)=>`<input class="form-input" id="ed-mv-${i}" value="${mv}"/>`).join('')}</div></div>
+    <div class="moves-2col">${(m.moves||[]).map((mv,i)=>`<input class="form-input" id="ed-mv-${i}" value="${_escapeHtml(mv)}"/>`).join('')}</div></div>
     ${renderStatPanelHtml(m)}
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">EVs (max 510 total)</label>
     <div class="ev-6col">${evsHtml}</div></div>
@@ -1659,9 +1673,9 @@ function showImportPreview(members) {
   const roster = document.getElementById('preview-roster');
   roster.innerHTML = members.map(m => `
     <div class="preview-row">
-      <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${m.name}" onerror="this.style.opacity='.3'"/>
-      <span class="preview-name">${m.name}</span>
-      <span class="preview-item">${m.item||'No item'} · ${m.ability||'?'}</span>
+      <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/>
+      <span class="preview-name">${_escapeHtml(m.name || '')}</span>
+      <span class="preview-item">${_escapeHtml(m.item||'No item')} · ${_escapeHtml(m.ability||'?')}</span>
     </div>`).join('');
   preview.style.display = '';
 }
@@ -2001,10 +2015,10 @@ function showInlinePilotCard(oppKey, res) {
   container.innerHTML = `
     <div class="pilot-card" style="border:1px solid var(--border,#333);border-radius:8px;padding:14px;background:var(--surface,#1c1b19)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <span style="font-weight:700;font-size:13px">📋 Pilot Notes vs ${teamName}</span>
-        <span class="pilot-verdict ${verdictClass}" style="font-size:11px;padding:3px 8px;border-radius:4px">${verdict} · ${winPct}%</span>
+        <span style="font-weight:700;font-size:13px">📋 Pilot Notes vs ${_escapeHtml(teamName)}</span>
+        <span class="pilot-verdict ${verdictClass}" style="font-size:11px;padding:3px 8px;border-radius:4px">${_escapeHtml(verdict)} · ${_escapeHtml(String(winPct))}%</span>
       </div>
-      ${postCoach ? `<pre class="cs-pilot-card-v2">${_escapeHtml(postCoach)}</pre>` : (tips.length ? `<div style="font-size:11px;color:var(--text-m,#888);line-height:1.7">${tips.map(t=>`• ${t}`).join('<br>')}</div>` : '')}
+      ${postCoach ? `<pre class="cs-pilot-card-v2">${_escapeHtml(postCoach)}</pre>` : (tips.length ? `<div style="font-size:11px;color:var(--text-m,#888);line-height:1.7">${tips.map(t=>`• ${_escapeHtml(t)}`).join('<br>')}</div>` : '')}
     </div>`;
 }
 
@@ -2203,7 +2217,7 @@ async function loadAnalysisHistory(playerKey) {
 }
 
 function renderHistorySection() {
-  var el = document.getElementById('history-list');
+  var el = document.getElementById('history-list') || document.getElementById('replay-list');
   if (!el) return;
 
   var filtered = historyRows;
@@ -2228,8 +2242,8 @@ function renderHistorySection() {
     card.dataset.analysisId = row.analysis_id;
     card.innerHTML =
       '<div class="replay-card-hdr">' +
-        '<div class="replay-title"><span style="color:' + rc + ';font-weight:900">' + rl + '</span> vs ' + oppName + '</div>' +
-        '<div class="replay-meta">Bo' + row.bo + ' · ' + row.wins + 'W/' + row.losses + 'L · WR ' + (row.win_rate * 100).toFixed(0) + '% · ' + new Date(row.created_at).toLocaleDateString() + '</div>' +
+        '<div class="replay-title"><span style="color:' + rc + ';font-weight:900">' + rl + '</span> vs ' + _escapeHtml(oppName) + '</div>' +
+        '<div class="replay-meta">Bo' + _escapeHtml(String(row.bo)) + ' · ' + _escapeHtml(String(row.wins)) + 'W/' + _escapeHtml(String(row.losses)) + 'L · WR ' + _escapeHtml((row.win_rate * 100).toFixed(0)) + '% · ' + _escapeHtml(new Date(row.created_at).toLocaleDateString()) + '</div>' +
       '</div>' +
       '<div class="replay-expanded"><div class="history-logs-placeholder">Click to load game logs…</div></div>';
     card.addEventListener('click', (function(analysisId, cardEl) {
@@ -2957,8 +2971,8 @@ function generatePilotGuide(oppKey, results) {
   card.innerHTML = `
     ${staticAdviceWarningHtml}
     <div class="pilot-card-header">
-      <div class="pilot-card-title">${teamName}</div>
-      <span class="pilot-verdict ${verdictClass}">${verdict}</span>
+      <div class="pilot-card-title">${_escapeHtml(teamName)}</div>
+      <span class="pilot-verdict ${verdictClass}">${_escapeHtml(verdict)}</span>
     </div>
     <div class="pilot-card-body">
       <div class="win-circle ${circleClass}" style="width:72px;height:72px;flex-shrink:0">

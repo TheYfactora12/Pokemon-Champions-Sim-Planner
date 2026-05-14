@@ -520,7 +520,7 @@ class Pokemon {
     this.moves = [...data.moves];
     this.role = data.role || '';
     this.teamStyle = teamStyle;
-    this.tera = data.tera || null;
+    this.tera = data.teraType || data.tera || null;
     // Issue #T1: Champions Stat Point (SP) system support.
     // Champions replaced SV-style EVs with Stat Points:
     //   - Per-stat cap 32 (SV: 252), total cap 66 (SV: 510)
@@ -1931,6 +1931,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     let targetCat = (typeof getMoveTarget === 'function')
       ? getMoveTarget(move)
       : 'normal';
+
+    if (attacker.tera && !attacker.teraActivated) {
+      attacker.teraActivated = true;
+      log.push(`${attacker.name} Terastallized into ${attacker.tera}!`);
+    }
 
     // T9j.17 (Refs #36) -- Expanding Force x Psychic Terrain dynamic target.
     // When the user is grounded AND Psychic Terrain is active, Expanding Force
