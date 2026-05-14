@@ -4,7 +4,7 @@
 // MUST be bumped on every release that changes engine.js, data.js, ui.js, or style.css
 // Phase 2 automation tracked in #95 (tools/release.sh)
 //
-// v31-sim-preview-cache [2026-05-14] — Bundle + SW cache include all simulator runtime assets.
+// v32-client-state-hygiene [2026-05-14] — Bundle + SW cache include all simulator runtime assets.
 // v13-m7-golden-battles [2026-05-09] — M7 (POK-23): golden_battles deterministic regression runner
 //                                   fixture + VM runner + 8 test cases; CI enablement for db_m*.js
 // v12-m6-history-tab [2026-05-09] — M6 (POK-22): loadAnalysesForPlayer + loadAnalysisLogs;
@@ -18,7 +18,7 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v31-sim-preview-cache';
+const CACHE_NAME = 'champions-sim-v32-client-state-hygiene';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

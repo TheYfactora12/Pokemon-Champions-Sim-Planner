@@ -39,6 +39,9 @@
 
 </head>
 <body>
+<div id="runtime-error-banner" style="display:none;position:sticky;top:0;z-index:9999;background:#7f1d1d;color:#fee2e2;border-bottom:1px solid #ef4444;padding:8px 12px;font:600 12px/1.4 system-ui,-apple-system,sans-serif;">
+  <span id="runtime-error-text"></span>
+</div>
 
 <!-- HEADER -->
 <header class="site-header">
@@ -498,7 +501,9 @@
 // Service Worker registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.update().catch(() => {});
+    }).catch(err => {
       window.ChampionsSim.logger.warn('ui', 'SW registration failed', err);
     });
   });

@@ -1684,6 +1684,9 @@ table{border-collapse:collapse;width:100%}
 </style>
 </head>
 <body>
+<div id="runtime-error-banner" style="display:none;position:sticky;top:0;z-index:9999;background:#7f1d1d;color:#fee2e2;border-bottom:1px solid #ef4444;padding:8px 12px;font:600 12px/1.4 system-ui,-apple-system,sans-serif;">
+  <span id="runtime-error-text"></span>
+</div>
 
 <!-- HEADER -->
 <header class="site-header">
@@ -2143,7 +2146,9 @@ table{border-collapse:collapse;width:100%}
 // Service Worker registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.update().catch(() => {});
+    }).catch(err => {
       window.ChampionsSim.logger.warn('ui', 'SW registration failed', err);
     });
   });
@@ -10130,16 +10135,111 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 
 function exposeLegacyWindowAlias(name, value) {
   if (typeof window === 'undefined') return;
-  Object.defineProperty(window, name, {
-    configurable: true,
-    enumerable: false,
-    writable: true,
-    value: value
-  });
+  try {
+    var desc = Object.getOwnPropertyDescriptor(window, name);
+    if (desc) {
+      if ('value' in desc && desc.value === value) return;
+      if (desc.configurable || desc.writable) {
+        window[name] = value;
+        return;
+      }
+      return;
+    }
+    Object.defineProperty(window, name, {
+      configurable: true,
+      enumerable: false,
+      writable: true,
+      value: value
+    });
+  } catch (e) {
+    try { window[name] = value; } catch (_) {}
+  }
 }
 function getWindowValue(name, fallback) {
   if (typeof window === 'undefined') return fallback;
   return Object.prototype.hasOwnProperty.call(window, name) ? window[name] : fallback;
+}
+
+function showRuntimeError(message) {
+  try {
+    var banner = document.getElementById('runtime-error-banner');
+    var text = document.getElementById('runtime-error-text');
+    if (!banner || !text) return;
+    text.textContent = String(message || 'Unexpected runtime error');
+    banner.style.display = '';
+  } catch (e) {
+    // no-op
+  }
+}
+
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('error', function(ev) {
+    var msg = ev && ev.error && ev.error.stack ? ev.error.stack : (ev && ev.message) || 'Uncaught error';
+    showRuntimeError(msg);
+  });
+  window.addEventListener('unhandledrejection', function(ev) {
+    var reason = ev && ev.reason && ev.reason.stack ? ev.reason.stack : (ev && ev.reason) || 'Unhandled promise rejection';
+    showRuntimeError(reason);
+  });
+}
+
+function csGetBuildId() {
+  try {
+    var el = document.getElementById('build-version');
+    var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
+    return txt || 'v2.1.15-sim-preview';
+  } catch (e) {
+    return 'v2.1.15-sim-preview';
+  }
+}
+
+async function csHardenClientState() {
+  if (typeof Storage === 'undefined') return false;
+  var buildId = csGetBuildId();
+  var storedBuildId = null;
+  try { storedBuildId = Storage.get('app:build-id'); } catch (e) {}
+  if (storedBuildId === buildId) return false;
+
+  try {
+    Storage.del('strategy:report');
+    Storage.del('sim_log:v1');
+    Storage.del('app:build-id');
+    if (typeof Storage.list === 'function') {
+      Storage.list().forEach(function(key) {
+        if (key.indexOf('champions_strategy_v1::') === 0) {
+          Storage.del(key);
+        }
+      });
+    }
+    Storage.set('app:build-id', buildId);
+  } catch (e) {
+    UILog.warn('client-state hardening skipped', e);
+    return false;
+  }
+
+  try {
+    if (typeof navigator !== 'undefined' && navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+      var regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(function(reg) {
+        return reg.unregister();
+      }));
+    }
+  } catch (e) {
+    UILog.warn('service worker cleanup skipped', e);
+  }
+
+  try {
+    if (typeof caches !== 'undefined' && caches.keys) {
+      var cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(function(name) {
+        return name.indexOf('champions-sim-') === 0 ? caches.delete(name) : Promise.resolve(false);
+      }));
+    }
+  } catch (e) {
+    UILog.warn('cache cleanup skipped', e);
+  }
+
+  return true;
 }
 
 // ---- Tabs ----
@@ -12011,11 +12111,42 @@ function showInlinePilotCard(oppKey, res) {
 // ============================================================
 let allReplays = [];
 let replayFilter = 'all';
+const MAX_REPLAY_LOG_LINES = 200;
+const MAX_REPLAY_CARDS = 240;
+
+function csCapBattleReplay(battle, maxLines) {
+  var cap = typeof maxLines === 'number' && maxLines >= 0 ? maxLines : MAX_REPLAY_LOG_LINES;
+  var out = Object.assign({}, battle || {});
+  var log = Array.isArray(out.log) ? out.log.slice() : [];
+  out.logLineCount = log.length;
+  if (log.length > cap) {
+    out.log = log.slice(log.length - cap);
+    out.logTruncated = true;
+    out.logShownCount = out.log.length;
+  } else {
+    out.log = log;
+    out.logTruncated = false;
+    out.logShownCount = log.length;
+  }
+  return out;
+}
+ChampionsSim.simLog.csCapBattleReplay = csCapBattleReplay;
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csCapBattleReplay', csCapBattleReplay);
 
 function addReplays(logs, oppKey) {
-  for (const b of logs) allReplays.unshift({...b, oppKey, id:Math.random()});
+  for (const b of logs) allReplays.unshift({...csCapBattleReplay(b), oppKey, id:Math.random()});
+  if (allReplays.length > MAX_REPLAY_CARDS) allReplays.length = MAX_REPLAY_CARDS;
   renderReplays();
 }
+ChampionsSim.simLog.addReplays = addReplays;
+ChampionsSim.simLog.renderReplays = renderReplays;
+ChampionsSim.simLog._setReplayState = function(replays, filter) {
+  allReplays = Array.isArray(replays) ? replays.slice() : [];
+  if (typeof filter === 'string') replayFilter = filter;
+};
+ChampionsSim.simLog._getReplayState = function() {
+  return { allReplays: allReplays.slice(), replayFilter: replayFilter };
+};
 
 function csReplaySparkline(turnLog) {
   var rows = Array.isArray(turnLog) ? turnLog : [];
@@ -12109,6 +12240,10 @@ function renderReplays() {
     const trBroken=(r.log||[]).some(l=>l.includes('NORMAL'));
     const tw=(r.log||[]).some(l=>l.includes('Tailwind'));
     const hasTurnLog = Array.isArray(r.turnLog) && r.turnLog.length > 0;
+    const logLen = (r.log || []).length;
+    const logCapActive = !!r.logTruncated ||
+      (typeof r.logLineCount === 'number' && r.logLineCount > logLen) ||
+      logLen > MAX_REPLAY_LOG_LINES;
     const turning = r.turning_point ? 'Swing T' + r.turning_point.turn : 'No swing';
     const card=document.createElement('div');
     card.className='replay-card';
@@ -12124,6 +12259,7 @@ function renderReplays() {
         ${trBroken?'<span class="rchip tr">TR BROKEN</span>':''}
         ${tw?'<span class="rchip tw">TAILWIND</span>':''}
         <span class="rchip">${r.turns} turns</span>
+        ${logCapActive?`<span class="rchip">Showing last ${MAX_REPLAY_LOG_LINES} lines</span>`:''}
         ${hasTurnLog?`<span class="rchip">${turning}</span>`:''}
       </div>
       <div class="replay-expanded">
@@ -12453,6 +12589,9 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
     await new Promise(r=>setTimeout(r,0));
   }
 
+  results.allLogs = results.allLogs.map(function(battle) {
+    return csCapBattleReplay(battle);
+  });
   results.winRate = results.wins/numSeries;
   results.avgTurns = results.totalTurns/numSeries;
   results.avgTrTurns = results.totalTrTurns/numSeries;
@@ -18174,6 +18313,7 @@ if (typeof window !== 'undefined') {
 
   // Hook the existing tab-nav click and player-select change after DOM is ready
   document.addEventListener('DOMContentLoaded', async function(){
+    await csHardenClientState();
     _csInitEvidenceToggle();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────
