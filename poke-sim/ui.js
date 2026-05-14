@@ -16,6 +16,36 @@
   });
 })();
 
+// ============================================================
+// CHAMPIONS SIM NAMESPACE - Issue #78
+// Cross-module state and public helper APIs live here.
+// ============================================================
+var ChampionsSim = (typeof window !== 'undefined')
+  ? (window.ChampionsSim = window.ChampionsSim || {})
+  : {};
+ChampionsSim.state = ChampionsSim.state || {};
+ChampionsSim.bring = ChampionsSim.bring || {};
+ChampionsSim.history = ChampionsSim.history || {};
+ChampionsSim.internal = ChampionsSim.internal || {};
+ChampionsSim.phase4c = ChampionsSim.phase4c || {};
+ChampionsSim.simLog = ChampionsSim.simLog || {};
+ChampionsSim.strategy = ChampionsSim.strategy || {};
+ChampionsSim.tests = ChampionsSim.tests || {};
+
+function exposeLegacyWindowAlias(name, value) {
+  if (typeof window === 'undefined') return;
+  Object.defineProperty(window, name, {
+    configurable: true,
+    enumerable: false,
+    writable: true,
+    value: value
+  });
+}
+function getWindowValue(name, fallback) {
+  if (typeof window === 'undefined') return fallback;
+  return Object.prototype.hasOwnProperty.call(window, name) ? window[name] : fallback;
+}
+
 // ---- Tabs ----
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -32,14 +62,19 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ---- Format Toggle (Doubles / Singles) ----
 let currentFormat = 'doubles';
-// T9j.2 — expose for engine.js runSimulation (which can't see ui.js lexical scope).
-if (typeof window !== 'undefined') window.currentFormat = currentFormat;
+function setCurrentFormat(format) {
+  currentFormat = (format === 'singles') ? 'singles' : 'doubles';
+  // T9j.2 / #78 - expose for engine.js through the shared namespace.
+  ChampionsSim.state.format = currentFormat;
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('currentFormat', currentFormat);
+  return currentFormat;
+}
+setCurrentFormat(currentFormat);
 document.querySelectorAll('.fmt-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    currentFormat = btn.dataset.fmt;
-    if (typeof window !== 'undefined') window.currentFormat = currentFormat;
+    setCurrentFormat(btn.dataset.fmt);
     const indicator = document.getElementById('fmt-indicator');
     if (currentFormat === 'doubles') {
       indicator.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg> DOUBLES · 4v4 · Spread moves active`;
@@ -615,8 +650,9 @@ function buildBringPickerHtml(teamKey, opts) {
 // onChange() after any state mutation (both renders must re-run).
 function wireBringPickerElements(rootEl, onChange) {
   if (!rootEl) return;
-  var _isHoverCapable = (typeof window !== 'undefined' && window.matchMedia)
-    ? window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  var matchMediaFn = getWindowValue('matchMedia', null);
+  var _isHoverCapable = matchMediaFn
+    ? matchMediaFn('(hover: hover) and (pointer: fine)').matches
     : true;
   var _tapState = {};
   function _assignSlot(teamKey, slotIdx, monName) {
@@ -1116,6 +1152,42 @@ document.getElementById('bulk-import-file')?.addEventListener('change', function
 // EDITOR TAB
 // ============================================================
 let editingIdx = null;
+const STAT_PANEL_KEYS = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'];
+const STAT_PANEL_LABELS = { hp:'HP', atk:'Atk', def:'Def', spa:'SpA', spd:'SpD', spe:'Spe' };
+const STAT_PANEL_NATURE_PLUS = {
+  Adamant:'atk', Bold:'def', Modest:'spa', Calm:'spd', Jolly:'spe', Timid:'spe',
+  Impish:'def', Careful:'spd', Brave:'atk', Quiet:'spa', Relaxed:'def', Sassy:'spd'
+};
+const STAT_PANEL_NATURE_MINUS = {
+  Adamant:'spa', Bold:'atk', Modest:'atk', Calm:'atk', Jolly:'spa', Timid:'atk',
+  Impish:'spa', Careful:'spa', Brave:'spe', Quiet:'spe', Relaxed:'spe', Sassy:'spe'
+};
+
+function renderStatPanelHtml(member) {
+  const evs = (member && member.evs) || {};
+  const ivs = (member && member.ivs) || {};
+  const nature = (member && member.nature) || 'Hardy';
+  const plus = STAT_PANEL_NATURE_PLUS[nature] || null;
+  const minus = STAT_PANEL_NATURE_MINUS[nature] || null;
+  const evTotal = STAT_PANEL_KEYS.reduce((sum, key) => sum + (parseInt(evs[key], 10) || 0), 0);
+  const rows = STAT_PANEL_KEYS.map(key => {
+    const natureMark = key === plus ? '+' : key === minus ? '-' : '';
+    const natureCls = key === plus ? ' plus' : key === minus ? ' minus' : '';
+    return '<div class="stat-panel-row">' +
+      '<span class="stat-panel-stat">' + STAT_PANEL_LABELS[key] + '</span>' +
+      '<span class="stat-panel-pill">EV ' + (parseInt(evs[key], 10) || 0) + '</span>' +
+      '<span class="stat-panel-pill">IV ' + (ivs[key] == null ? 31 : parseInt(ivs[key], 10) || 0) + '</span>' +
+      '<span class="stat-panel-nature' + natureCls + '">' + natureMark + '</span>' +
+    '</div>';
+  }).join('');
+  return '<section class="stat-panel" aria-label="Stat panel">' +
+    '<div class="stat-panel-head">' +
+      '<span>Stats</span>' +
+      '<span class="stat-panel-meta">' + _escapeHtml(nature) + ' · EV ' + evTotal + '/510</span>' +
+    '</div>' +
+    '<div class="stat-panel-grid">' + rows + '</div>' +
+  '</section>';
+}
 
 function renderEditorRoster() {
   const el = document.getElementById('editor-roster');
@@ -1149,6 +1221,7 @@ function openEditorForm(idx) {
     </div>
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">Moves</label>
     <div class="moves-2col">${(m.moves||[]).map((mv,i)=>`<input class="form-input" id="ed-mv-${i}" value="${mv}"/>`).join('')}</div></div>
+    ${renderStatPanelHtml(m)}
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">EVs (max 510 total)</label>
     <div class="ev-6col">${evsHtml}</div></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
@@ -1444,7 +1517,7 @@ function drawBarChart(canvasId, labels, values, color) {
   const cv = document.getElementById(canvasId);
   if (!cv) return;
   const ctx = cv.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = getWindowValue('devicePixelRatio', 1) || 1;
   if (!cv._dprSet) {
     const w = cv.width, h = cv.height;
     cv.width = w * dpr; cv.height = h * dpr;
@@ -1569,8 +1642,8 @@ function displayResults(res, oppKey) {
   // result so the PDF button can build a fresh packet. Each new sim either
   // adds a new matchup entry or replaces the prior one for the same
   // opponent, so the button always regenerates from the latest data.
-  if (!window.lastSimResults) window.lastSimResults = {};
-  window.lastSimResults[oppKey] = res;
+  if (!ChampionsSim.state.lastResults) ChampionsSim.state.lastResults = {};
+  ChampionsSim.state.lastResults[oppKey] = res;
   revealPdfButton();
 }
 
@@ -1580,7 +1653,7 @@ function displayResults(res, oppKey) {
 function revealPdfButton() {
   var btn = document.getElementById('pdf-report-btn');
   if (!btn) return;
-  var count = Object.keys(window.lastSimResults || {}).length;
+  var count = Object.keys(ChampionsSim.state.lastResults || {}).length;
   if (count < 1) return;
   btn.style.display = '';
   var label = btn.querySelector('.pdf-btn-label');
@@ -1744,7 +1817,7 @@ let historyRows = [];
 let historyFilter = 'all';
 
 async function loadAnalysisHistory(playerKey) {
-  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  var adapter = getWindowValue('SupabaseAdapter', null);
   if (!adapter || !adapter.enabled || typeof adapter.loadAnalysesForPlayer !== 'function') return;
   try {
     historyRows = await adapter.loadAnalysesForPlayer(playerKey || 'player', 50);
@@ -1797,7 +1870,7 @@ function renderHistorySection() {
 }
 
 async function lazyLoadAnalysisLogs(analysisId, cardEl) {
-  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  var adapter = getWindowValue('SupabaseAdapter', null);
   if (!adapter || typeof adapter.loadAnalysisLogs !== 'function') return;
   try {
     var logs = await adapter.loadAnalysisLogs(analysisId);
@@ -1831,16 +1904,18 @@ document.querySelectorAll('.history-filter-btn').forEach(function(btn) {
   });
 });
 
-if (typeof window !== 'undefined') {
-  window.loadAnalysisHistory = loadAnalysisHistory;
-  window.renderHistorySection = renderHistorySection;
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.history.loadAnalysisHistory = loadAnalysisHistory;
+  ChampionsSim.history.renderHistorySection = renderHistorySection;
 }
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('loadAnalysisHistory', loadAnalysisHistory);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderHistorySection', renderHistorySection);
 // __M6_HISTORY_END__
 
 // ============================================================
 // GLOBAL SIMULATION RESULTS STORE
 // ============================================================
-window.lastSimResults = {};
+ChampionsSim.state.lastResults = {};
 
 // ============================================================
 // BO SERIES RUNNER
@@ -1948,15 +2023,24 @@ function setLeadsFor(teamKey, leads) {
   }
   setBringFor(teamKey, merged);
 }
-window.BRING_SELECTION = BRING_SELECTION;
-window.BRING_MODE      = BRING_MODE;
-window.getBringFor     = getBringFor;
-window.setBringFor     = setBringFor;
-window.getBringMode    = getBringMode;
-window.setBringMode    = setBringMode;
-window.randomBringFor  = randomBringFor;
-window.getLeadsFor     = getLeadsFor;
-window.setLeadsFor     = setLeadsFor;
+ChampionsSim.bring.BRING_SELECTION = BRING_SELECTION;
+ChampionsSim.bring.BRING_MODE = BRING_MODE;
+ChampionsSim.bring.getBringFor = getBringFor;
+ChampionsSim.bring.setBringFor = setBringFor;
+ChampionsSim.bring.getBringMode = getBringMode;
+ChampionsSim.bring.setBringMode = setBringMode;
+ChampionsSim.bring.randomBringFor = randomBringFor;
+ChampionsSim.bring.getLeadsFor = getLeadsFor;
+ChampionsSim.bring.setLeadsFor = setLeadsFor;
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('BRING_SELECTION', BRING_SELECTION);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('BRING_MODE', BRING_MODE);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('getBringFor', getBringFor);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('setBringFor', setBringFor);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('getBringMode', getBringMode);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('setBringMode', setBringMode);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('randomBringFor', randomBringFor);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('getLeadsFor', getLeadsFor);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('setLeadsFor', setLeadsFor);
 
 async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress) {
   const results = { wins:0, losses:0, draws:0, totalTurns:0, totalTrTurns:0, winConditions:{}, allLogs:[], turnDist:{} };
@@ -2057,7 +2141,7 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
     if (onDone) onDone(opp, res);
     // M4: persist each matchup result to Supabase (fire-and-forget)
     try {
-      var _adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+      var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled) {
         Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, opp, bo, res)))
           .catch(function(e) { console.warn('[M4] run-all saveAnalysis failed:', e && e.message); });
@@ -2102,7 +2186,7 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
     rulesetId = TEAMS[playerKey].metadata.ruleset_id;
   }
 
-  var engineVersion = (typeof window !== 'undefined' && window.ENGINE_VERSION) || '1.0.0';
+  var engineVersion = (typeof window === 'undefined') ? '1.0.0' : (window['ENGINE_VERSION'] || '1.0.0');
 
   var winConditions = [];
   if (res && res.winConditions && typeof res.winConditions === 'object') {
@@ -2163,7 +2247,21 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   };
 }
 
-if (typeof window !== 'undefined') { window._buildAnalysisPayload = _buildAnalysisPayload; }
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.internal.buildAnalysisPayload = _buildAnalysisPayload;
+}
+if (typeof exposeLegacyWindowAlias !== 'function') {
+  var exposeLegacyWindowAlias = function(name, value) {
+    if (typeof window === 'undefined') return;
+    Object.defineProperty(window, name, {
+      configurable: true,
+      enumerable: false,
+      writable: true,
+      value: value
+    });
+  };
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_buildAnalysisPayload', _buildAnalysisPayload);
 // __M4_BUILD_PAYLOAD_END__
 
 // __M5_UPSERT_TEAM_BEGIN__
@@ -2172,7 +2270,7 @@ if (typeof window !== 'undefined') { window._buildAnalysisPayload = _buildAnalys
 // ============================================================
 function _upsertTeamToDB(teamId, team, source) {
   try {
-    var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+    var adapter = (typeof window === 'undefined') ? null : window['SupabaseAdapter'];
     if (!adapter || !adapter.enabled || typeof adapter.saveTeam !== 'function') {
       return; // Adapter not available or disabled — graceful no-op
     }
@@ -2210,7 +2308,21 @@ function _upsertTeamToDB(teamId, team, source) {
   }
 }
 
-if (typeof window !== 'undefined') { window._upsertTeamToDB = _upsertTeamToDB; }
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.internal.upsertTeamToDB = _upsertTeamToDB;
+}
+if (typeof exposeLegacyWindowAlias !== 'function') {
+  var exposeLegacyWindowAlias = function(name, value) {
+    if (typeof window === 'undefined') return;
+    Object.defineProperty(window, name, {
+      configurable: true,
+      enumerable: false,
+      writable: true,
+      value: value
+    });
+  };
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_upsertTeamToDB', _upsertTeamToDB);
 // __M5_UPSERT_TEAM_END__
 
 // ============================================================
@@ -2229,93 +2341,123 @@ function setProgress(pct, label, w, l) {
   }
 }
 
+function setSimError(err) {
+  var msg = (err && err.message) ? err.message : String(err || 'Unknown simulation error');
+  console.error('[Sim] run failed:', err);
+  var wrap = document.getElementById('progress-wrap');
+  var fill = document.getElementById('progress-fill');
+  var label = document.getElementById('progress-label');
+  if (wrap) wrap.style.display = '';
+  if (fill) fill.style.width = '100%';
+  if (label) label.textContent = 'Simulation failed: ' + msg;
+}
+
 document.getElementById('run-sim-btn')?.addEventListener('click', async function() {
   if (simRunning) return;
-  simRunning=true; this.disabled=true; document.getElementById('run-all-btn').disabled=true;
-  document.getElementById('results-section').style.display='none';
-  document.getElementById('progress-wrap').style.display='';
-  setProgress(0,'Starting…',0,0);
-
-  const oppKey=document.getElementById('opponent-select').value;
-  const n=parseInt(document.getElementById('sim-count').value);
-  const bo=currentBo;
-  const matBadge=document.getElementById('matrix-badge');
-  if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
-
-  const res = await runBoSeries(n,currentPlayerKey,oppKey,bo,(cur,tot,w,l)=>{
-    setProgress(Math.round(cur/tot*100),`Running… ${cur} / ${tot}`,w,l);
-  });
-
-  document.getElementById('progress-wrap').style.display='none';
-  displayResults(res, oppKey);
-  // Refs #95 - also populate the Pilot Guide tab after a single sim so the
-  // tab isn't stuck on its empty-state message. generatePilotGuide is
-  // upsert-by-oppKey, so re-running the same matchup replaces its card.
-  try { generatePilotGuide(oppKey, res); } catch (e) { console.warn('[PilotGuide] single-sim populate failed:', e && e.message); }
-  // Cache for Run All parity - keeps PDF builder and strategy rebuild in sync.
-  try { if (window.lastSimResults) window.lastSimResults[oppKey] = res; } catch(_){}
-  // M4: persist single-sim result to Supabase (fire-and-forget)
+  var runBtn = this;
+  var allBtn = document.getElementById('run-all-btn');
+  simRunning=true; runBtn.disabled=true; if (allBtn) allBtn.disabled=true;
   try {
-    var _adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
-    if (_adapter && _adapter.enabled) {
-      Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, oppKey, bo, res)))
-        .catch(function(e) { console.warn('[M4] single-sim saveAnalysis failed:', e && e.message); });
-    }
-  } catch (_m4e) { console.warn('[M4] single-sim payload build failed:', _m4e && _m4e.message); }
-  simRunning=false; this.disabled=false; document.getElementById('run-all-btn').disabled=false;
+    document.getElementById('results-section').style.display='none';
+    document.getElementById('progress-wrap').style.display='';
+    setProgress(0,'Starting…',0,0);
+
+    const oppKey=document.getElementById('opponent-select').value;
+    const n=parseInt(document.getElementById('sim-count').value);
+    const bo=currentBo;
+    if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
+    if (!TEAMS[oppKey]) throw new Error('opponent team not loaded: ' + oppKey);
+    if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
+    const matBadge=document.getElementById('matrix-badge');
+    if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
+
+    const res = await runBoSeries(n,currentPlayerKey,oppKey,bo,(cur,tot,w,l)=>{
+      setProgress(Math.round(cur/tot*100),`Running… ${cur} / ${tot}`,w,l);
+    });
+
+    document.getElementById('progress-wrap').style.display='none';
+    displayResults(res, oppKey);
+    // Refs #95 - also populate the Pilot Guide tab after a single sim so the
+    // tab isn't stuck on its empty-state message. generatePilotGuide is
+    // upsert-by-oppKey, so re-running the same matchup replaces its card.
+    try { generatePilotGuide(oppKey, res); } catch (e) { console.warn('[PilotGuide] single-sim populate failed:', e && e.message); }
+    // Cache for Run All parity - keeps PDF builder and strategy rebuild in sync.
+    try { if (ChampionsSim.state.lastResults) ChampionsSim.state.lastResults[oppKey] = res; } catch(_){}
+    // M4: persist single-sim result to Supabase (fire-and-forget)
+    try {
+      var _adapter = getWindowValue('SupabaseAdapter', null);
+      if (_adapter && _adapter.enabled) {
+        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, oppKey, bo, res)))
+          .catch(function(e) { console.warn('[M4] single-sim saveAnalysis failed:', e && e.message); });
+      }
+    } catch (_m4e) { console.warn('[M4] single-sim payload build failed:', _m4e && _m4e.message); }
+  } catch (e) {
+    setSimError(e);
+  } finally {
+    simRunning=false; runBtn.disabled=false; if (allBtn) allBtn.disabled=false;
+  }
 });
 
 document.getElementById('run-all-btn')?.addEventListener('click', async function() {
   if (simRunning) return;
-  simRunning=true; this.disabled=true; document.getElementById('run-sim-btn').disabled=true;
-  document.getElementById('matchup-table-wrap').style.display='';
-  document.getElementById('results-section').style.display='none';
-  document.getElementById('matchup-tbody').innerHTML='<tr><td colspan="7" style="color:var(--text-m);font-size:12px;text-align:center;padding:20px;font-family:var(--font-mono)">Running all matchups…</td></tr>';
+  var allBtn = this;
+  var runBtn = document.getElementById('run-sim-btn');
+  simRunning=true; allBtn.disabled=true; if (runBtn) runBtn.disabled=true;
+  try {
+    document.getElementById('matchup-table-wrap').style.display='';
+    document.getElementById('results-section').style.display='none';
+    document.getElementById('matchup-tbody').innerHTML='<tr><td colspan="7" style="color:var(--text-m);font-size:12px;text-align:center;padding:20px;font-family:var(--font-mono)">Running all matchups…</td></tr>';
 
-  const n=parseInt(document.getElementById('sim-count').value);
-  const bo=currentBo;
-  document.getElementById('progress-wrap').style.display='';
-  setProgress(0,'Starting…',0,0);
-  const matBadge=document.getElementById('matrix-badge');
-  if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
+    const n=parseInt(document.getElementById('sim-count').value);
+    const bo=currentBo;
+    if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
+    if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
+    document.getElementById('progress-wrap').style.display='';
+    setProgress(0,'Starting…',0,0);
+    const matBadge=document.getElementById('matrix-badge');
+    if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
 
-  const tbody=document.getElementById('matchup-tbody');
-  tbody.innerHTML='';
-  let totalW=0,totalL=0;
+    const tbody=document.getElementById('matchup-tbody');
+    tbody.innerHTML='';
+    let totalW=0,totalL=0;
 
-  await runAllMatchupsUI(n,bo,(cur,tot,w,l)=>{
-    totalW=w; totalL=l;
-    setProgress(Math.round(cur/tot*100),`Running matchups… ${cur} / ${tot}`,w,l);
-  },(opp,res)=>{
-    window.lastSimResults[opp] = res;
-    const winPct=Math.round(res.winRate*100);
-    const pillCls=winPct>=55?'fav':winPct<=45?'unfav':'even';
-    const aCls=winPct>=55?'win':winPct<=45?'loss':'close';
-    const aLbl=winPct>=60?'Favorable':winPct>=55?'Slight Edge':winPct>=45?'Even':winPct>=40?'Slight Disadvantage':'Unfavorable';
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td style="font-weight:700">${TEAMS[opp]?.name||opp}</td>
-      <td><span class="win-pill ${pillCls}">${winPct}%</span></td>
-      <td style="color:var(--green);font-family:var(--font-mono)">${res.wins}</td>
-      <td style="color:var(--red);font-family:var(--font-mono)">${res.losses}</td>
-      <td style="font-family:var(--font-mono)">${res.avgTurns.toFixed(1)}</td>
-      <td style="font-family:var(--font-mono)">${res.avgTrTurns.toFixed(1)}</td>
-      <td><span class="assess-chip ${aCls}">${aLbl}</span></td>`;
-    tbody.appendChild(tr);
-    addReplays(res.allLogs||[], opp);
-    generatePilotGuide(opp, res);
-  });
+    await runAllMatchupsUI(n,bo,(cur,tot,w,l)=>{
+      totalW=w; totalL=l;
+      setProgress(Math.round(cur/tot*100),`Running matchups… ${cur} / ${tot}`,w,l);
+    },(opp,res)=>{
+      ChampionsSim.state.lastResults[opp] = res;
+      const winPct=Math.round(res.winRate*100);
+      const pillCls=winPct>=55?'fav':winPct<=45?'unfav':'even';
+      const aCls=winPct>=55?'win':winPct<=45?'loss':'close';
+      const aLbl=winPct>=60?'Favorable':winPct>=55?'Slight Edge':winPct>=45?'Even':winPct>=40?'Slight Disadvantage':'Unfavorable';
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td style="font-weight:700">${TEAMS[opp]?.name||opp}</td>
+        <td><span class="win-pill ${pillCls}">${winPct}%</span></td>
+        <td style="color:var(--green);font-family:var(--font-mono)">${res.wins}</td>
+        <td style="color:var(--red);font-family:var(--font-mono)">${res.losses}</td>
+        <td style="font-family:var(--font-mono)">${res.avgTurns.toFixed(1)}</td>
+        <td style="font-family:var(--font-mono)">${res.avgTrTurns.toFixed(1)}</td>
+        <td><span class="assess-chip ${aCls}">${aLbl}</span></td>`;
+      tbody.appendChild(tr);
+      addReplays(res.allLogs||[], opp);
+      generatePilotGuide(opp, res);
+    });
 
-  document.getElementById('progress-wrap').style.display='none';
-  // Refs #57 - progressive reveal helper relabels with the correct matchup
-  // count and binds the tooltip. Replaces the old hardcoded display='' line.
-  revealPdfButton();
-  // T9j.16 (Refs #65) - auto-save Strategy Report after Run All Matchups completes.
-  // Persists to localStorage keyed on teamSignature so any imported team gets continuity.
-  try { if (typeof t9j16AutoSave === 'function') t9j16AutoSave(); } catch(e) { console.warn('[T9j.16] autosave skipped:', e && e.message); }
-  // Phase 2 (Refs #46 #49) - rebuild Strategy tab now that fresh sim data is available.
-  try { if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild(); } catch(e) { console.warn('[Phase2] strategy rebuild skipped:', e && e.message); }
-  simRunning=false; this.disabled=false; document.getElementById('run-sim-btn').disabled=false;
+    document.getElementById('progress-wrap').style.display='none';
+    // Refs #57 - progressive reveal helper relabels with the correct matchup
+    // count and binds the tooltip. Replaces the old hardcoded display='' line.
+    revealPdfButton();
+    // T9j.16 (Refs #65) - auto-save Strategy Report after Run All Matchups completes.
+    // Persists to localStorage keyed on teamSignature so any imported team gets continuity.
+    try { if (typeof t9j16AutoSave === 'function') t9j16AutoSave(); } catch(e) { console.warn('[T9j.16] autosave skipped:', e && e.message); }
+    // Phase 2 (Refs #46 #49) - rebuild Strategy tab now that fresh sim data is available.
+    try { if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild(); } catch(e) { console.warn('[Phase2] strategy rebuild skipped:', e && e.message); }
+  } catch (e) {
+    setSimError(e);
+  } finally {
+    simRunning=false; allBtn.disabled=false; if (runBtn) runBtn.disabled=false;
+  }
 });
 
 // ============================================================
@@ -2618,7 +2760,7 @@ function computeMegaTriggerSweep(playerKey, oppKey, bo, format) {
 // lead system, matchup guide, turn flow, rules to win, Bo3 adaptation,
 // final verdict, coaching notes.
 //
-// All analytics are derived from window.lastSimResults + currentPlayerKey.
+// All analytics are derived from ChampionsSim.state.lastResults + currentPlayerKey.
 // COACHING_RULES below is a pluggable registry — add entries to extend
 // advice without touching the renderer.
 document.getElementById('pdf-report-btn')?.addEventListener('click', generatePDFReport);
@@ -2638,6 +2780,108 @@ var PDF_TRAP_ABILITIES = ['Shadow Tag', 'Arena Trap', 'Magnet Pull'];
 
 function _pdfHasAny(mon, list) {
   return !!(mon && mon.moves && list.some(function(x){ return mon.moves.indexOf(x) >= 0; }));
+}
+
+var CLASSIFY_POKEMON_ROLES = [
+  'lead',
+  'sweeper',
+  'support',
+  'pivot',
+  'disruptor',
+  'win_condition',
+  'sacrifice_piece'
+];
+var CLASSIFY_SETUP_MOVES = ['Dragon Dance', 'Swords Dance', 'Calm Mind', 'Clangorous Soul', 'Coil', 'Nasty Plot', 'Bulk Up'];
+var CLASSIFY_PIVOT_MOVES = ['Parting Shot', 'U-turn', 'Flip Turn', 'Volt Switch', 'Baton Pass'];
+var CLASSIFY_SACRIFICE_MOVES = ['Lunar Dance', 'Memento', 'Healing Wish', 'Explosion', 'Final Gambit', 'Shed Tail'];
+var CLASSIFY_WIN_ITEMS = ['Life Orb', 'Choice Scarf', 'Booster Energy'];
+var CLASSIFY_LEAD_ITEMS = ['Focus Sash', 'Eject Button', 'Mental Herb'];
+
+function _classifyHasAny(mon, list) {
+  return !!(mon && Array.isArray(mon.moves) && list.some(function(x){ return mon.moves.indexOf(x) >= 0; }));
+}
+
+function _classifyAdd(scores, role, points, reason) {
+  scores[role].score += points;
+  scores[role].reasons.push(reason);
+}
+
+// Seven-role classifier for the dynamic coaching layer (#141).
+// Returns a stable object so UI, tests, and future detectors can share it.
+function classifyPokemon(mon, teamMembers) {
+  var scores = {};
+  CLASSIFY_POKEMON_ROLES.forEach(function(role){
+    scores[role] = { role: role, score: 0, reasons: [] };
+  });
+  if (!mon || typeof mon !== 'object') {
+    return { role: 'support', confidence: 'low', score: 0, reasons: ['missing Pokemon data'], scores: scores };
+  }
+
+  var name = mon.name || '';
+  var ability = mon.ability || '';
+  var item = mon.item || '';
+  var moves = Array.isArray(mon.moves) ? mon.moves : [];
+  var damagingMoves = moves.filter(function(move){
+    return !(typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[move] === 'status');
+  });
+
+  if (_classifyHasAny(mon, PDF_FAKE_OUT)) _classifyAdd(scores, 'lead', 4, 'Fake Out creates turn-one pressure');
+  if (/Prankster|Intimidate/i.test(ability)) _classifyAdd(scores, 'lead', 2, ability + ' is strongest early');
+  if (CLASSIFY_LEAD_ITEMS.indexOf(item) >= 0) _classifyAdd(scores, 'lead', 1, item + ' supports lead positioning');
+
+  if (_classifyHasAny(mon, CLASSIFY_SETUP_MOVES)) _classifyAdd(scores, 'sweeper', 3, 'setup move enables sweep');
+  if (_classifyHasAny(mon, PDF_SPREAD)) _classifyAdd(scores, 'sweeper', 2, 'spread damage pressures both foes');
+  if (damagingMoves.length >= 3) _classifyAdd(scores, 'sweeper', 1, 'three or more attacking moves');
+
+  if (_classifyHasAny(mon, PDF_TAILWIND) || _classifyHasAny(mon, PDF_TRICK_ROOM)) _classifyAdd(scores, 'support', 3, 'speed control support');
+  if (_classifyHasAny(mon, PDF_REDIRECT) || _classifyHasAny(mon, PDF_SCREENS)) _classifyAdd(scores, 'support', 3, 'team protection support');
+  if (_classifyHasAny(mon, ['Helping Hand', 'Coaching', 'Life Dew', 'Recover', 'Roost'])) _classifyAdd(scores, 'support', 2, 'support or sustain move');
+
+  if (_classifyHasAny(mon, CLASSIFY_PIVOT_MOVES)) _classifyAdd(scores, 'pivot', 3, 'pivot move preserves positioning');
+  if (/Intimidate|Regenerator|Natural Cure/i.test(ability)) _classifyAdd(scores, 'pivot', 2, ability + ' rewards cycling');
+
+  if (_classifyHasAny(mon, PDF_DISRUPT) || _classifyHasAny(mon, ['Will-O-Wisp', 'Thunder Wave', 'Spore', 'Sleep Powder', 'Hypnosis', 'Imprison', 'Trick'])) {
+    _classifyAdd(scores, 'disruptor', 3, 'status or denial move');
+  }
+  if (PDF_TRAP_ABILITIES.indexOf(ability) >= 0) _classifyAdd(scores, 'disruptor', 3, ability + ' traps targets');
+
+  if (/-Mega(?:$|-)/.test(name) || /-Mega(?:$|-)/.test(mon.species || '')) _classifyAdd(scores, 'win_condition', 4, 'Mega slot is a primary win condition');
+  if (CLASSIFY_WIN_ITEMS.indexOf(item) >= 0) _classifyAdd(scores, 'win_condition', 2, item + ' indicates committed damage role');
+  if (_classifyHasAny(mon, ['Last Respects', 'Blood Moon', 'Make It Rain', 'Eruption', 'Expanding Force', 'Light of Ruin'])) {
+    _classifyAdd(scores, 'win_condition', 3, 'signature high-impact attack');
+  }
+  if (_classifyHasAny(mon, CLASSIFY_SETUP_MOVES) && damagingMoves.length >= 2) {
+    _classifyAdd(scores, 'win_condition', 2, 'setup plus attacks can close games');
+  }
+
+  if (_classifyHasAny(mon, CLASSIFY_SACRIFICE_MOVES)) _classifyAdd(scores, 'sacrifice_piece', 6, 'self-sacrifice or pass move');
+  if (item === 'Focus Sash' && (_classifyHasAny(mon, PDF_TAILWIND) || _classifyHasAny(mon, PDF_TRICK_ROOM) || _classifyHasAny(mon, PDF_DISRUPT))) {
+    _classifyAdd(scores, 'sacrifice_piece', 1, 'Focus Sash helps guarantee one utility action');
+  }
+
+  var tieOrder = ['win_condition', 'lead', 'support', 'pivot', 'disruptor', 'sweeper', 'sacrifice_piece'];
+  var best = CLASSIFY_POKEMON_ROLES
+    .slice()
+    .sort(function(a, b){
+      var diff = scores[b].score - scores[a].score;
+      if (diff !== 0) return diff;
+      return tieOrder.indexOf(a) - tieOrder.indexOf(b);
+    })[0];
+
+  if (scores[best].score === 0) {
+    best = damagingMoves.length ? 'sweeper' : 'support';
+    scores[best].score = 1;
+    scores[best].reasons.push(damagingMoves.length ? 'default damaging role' : 'default utility role');
+  }
+
+  var confidence = scores[best].score >= 4 ? 'high' : scores[best].score >= 2 ? 'medium' : 'low';
+  return {
+    role: best,
+    confidence: confidence,
+    score: scores[best].score,
+    reasons: scores[best].reasons.slice(),
+    scores: scores
+  };
 }
 
 // Infer a single-word role label per member based on moves + ability + item.
@@ -2816,10 +3060,11 @@ function findDeadMoves(results, members) {
   return dead;
 }
 
-// Coverage gaps — reuse COVERAGE_CHECKS.
+// Coverage gaps — reuse the lazy coverage-check registry.
 function findCoverageGaps(members) {
-  if (typeof COVERAGE_CHECKS === 'undefined') return [];
-  return COVERAGE_CHECKS.filter(function(chk){ return !(members||[]).some(function(m){ return chk.check(m); }); }).map(function(c){ return c.label; });
+  return getCoverageChecks()
+    .filter(function(chk){ return !(members||[]).some(function(m){ return chk.check(m); }); })
+    .map(function(c){ return c.label; });
 }
 
 // ------------- COACHING_RULES pluggable registry ------------------------
@@ -2923,7 +3168,7 @@ function generatePDFReport() {
   var container = document.getElementById('pdf-report-container');
   if (!container) return;
 
-  var results = window.lastSimResults || {};
+  var results = ChampionsSim.state.lastResults || {};
   var date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   var bo = (typeof currentBo !== 'undefined') ? currentBo : 3;
   var fmtLabel = (typeof currentFormat !== 'undefined' && currentFormat === 'singles') ? 'Singles (Bring 6, Pick 3)' : 'Doubles (Bring 6, Pick 4)';
@@ -3162,7 +3407,7 @@ function renderSeriesSummary() {
   const el = document.getElementById('replay-list');
   if (!el) return;
 
-  const results = window.lastSimResults;
+  const results = ChampionsSim.state.lastResults;
   if (!results || !Object.keys(results).length) {
     el.innerHTML = '<div class="replay-empty">No simulation results yet — run "Run All Matchups" first.</div>';
     return;
@@ -3266,10 +3511,8 @@ function renderSpeedTiersForGrid() {
 
 // ============================================================
 // PART 5B: ROLE COVERAGE CHECKER
-// FIX: Must use var (not const/let) — referenced during init before declaration
 // ============================================================
 // ---- T9j.3b: Champions-legal move/ability lists for coverage detection ----
-// All lists kept as `var` for the same TDZ-safe init pattern COVERAGE_CHECKS uses.
 var PRIORITY_MOVES = [
   'Fake Out','Extreme Speed','Aqua Jet','Shadow Sneak','Sucker Punch',
   'Bullet Punch','Ice Shard','Vacuum Wave','Mach Punch','Grassy Glide',
@@ -3346,17 +3589,31 @@ if (typeof globalThis !== 'undefined') {
   globalThis.computeCoverage = computeCoverage;
 }
 
-// COVERAGE_CHECKS drives the checkmark UI row. Kept as `var` (see file-header note).
-// "Trick Room Counter" renamed to "Trick Room" per user direction 2026-04-24.
-var COVERAGE_CHECKS = [
-  { label: 'Fake Out',       check: (m) => m && m.moves && m.moves.includes('Fake Out') },
-  { label: 'Trick Room',     check: (m) => m && m.moves && TR_PRESSURE_MOVES.some(x => m.moves.includes(x)) },
-  { label: 'Redirection',    check: (m) => m && m.moves && REDIRECTION_MOVES.some(x => m.moves.includes(x)) },
-  { label: 'Priority',       check: (m) => m && m.moves && PRIORITY_MOVES.some(x => m.moves.includes(x)) },
-  { label: 'Weather Setter', check: (m) => (m && m.ability && WEATHER_ABILITIES.includes(m.ability))
-                                         || (m && m.moves && WEATHER_MOVES.some(x => m.moves.includes(x))) },
-  { label: 'Speed Control',  check: (m) => _memberHasSpeedControl(m) }
-];
+var _coverageChecks = null;
+
+// Lazy-init the coverage registry so startup and future module splits never
+// depend on declaration order. Issue #80 replaces the old hoisted var pattern.
+function buildCoverageChecks() {
+  return [
+    { label: 'Fake Out',       check: function(m) { return m && m.moves && m.moves.includes('Fake Out'); } },
+    { label: 'Trick Room',     check: function(m) { return m && m.moves && TR_PRESSURE_MOVES.some(function(x){ return m.moves.includes(x); }); } },
+    { label: 'Redirection',    check: function(m) { return m && m.moves && REDIRECTION_MOVES.some(function(x){ return m.moves.includes(x); }); } },
+    { label: 'Priority',       check: function(m) { return m && m.moves && PRIORITY_MOVES.some(function(x){ return m.moves.includes(x); }); } },
+    { label: 'Weather Setter', check: function(m) { return (m && m.ability && WEATHER_ABILITIES.includes(m.ability))
+                                               || (m && m.moves && WEATHER_MOVES.some(function(x){ return m.moves.includes(x); })); } },
+    { label: 'Speed Control',  check: function(m) { return _memberHasSpeedControl(m); } }
+  ];
+}
+
+function getCoverageChecks() {
+  if (!_coverageChecks) _coverageChecks = buildCoverageChecks();
+  return _coverageChecks;
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.buildCoverageChecks = buildCoverageChecks;
+  globalThis.getCoverageChecks = getCoverageChecks;
+}
 
 function renderCoverageWidget() {
   var el = document.getElementById('coverage-items');
@@ -3365,7 +3622,7 @@ function renderCoverageWidget() {
             ? currentPlayerKey
             : (TEAMS.player ? 'player' : Object.keys(TEAMS)[0]);
   var members = (TEAMS[key] && TEAMS[key].members) || [];
-  el.innerHTML = COVERAGE_CHECKS.map(chk => {
+  el.innerHTML = getCoverageChecks().map(chk => {
     var covered = members.some(m => chk.check(m));
     return `<div class="coverage-item ${covered ? 'coverage-ok' : 'coverage-miss'}">
       <span>${covered ? '✓' : '✗'}</span>
@@ -3564,7 +3821,7 @@ function _renderT9j16PdfSections(report) {
 // ============================================================
 // Pure analysis layer over shipped sim outputs. NO ENGINE CHANGES.
 //
-// Inputs: TEAMS[teamKey].members, window.lastSimResults, currentFormat
+// Inputs: TEAMS[teamKey].members, ChampionsSim.state.lastResults, currentFormat
 // Outputs: structured Strategy Report (Sections 1-6 + Elite Decision
 // Analysis + human coaching summary), persisted via localStorage and
 // keyed on a stable team signature so any imported/custom team gets
@@ -4201,9 +4458,9 @@ function evolveReport(teamKey, newResults, fmt) {
 function t9j16AutoSave() {
   try {
     if (typeof currentPlayerKey === 'undefined') return;
-    if (!window.lastSimResults || !Object.keys(window.lastSimResults).length) return;
+    if (!ChampionsSim.state.lastResults || !Object.keys(ChampionsSim.state.lastResults).length) return;
     var fmt = (typeof currentFormat !== 'undefined') ? currentFormat : 'doubles';
-    evolveReport(currentPlayerKey, window.lastSimResults, fmt);
+    evolveReport(currentPlayerKey, ChampionsSim.state.lastResults, fmt);
   } catch(e) { console.warn('[T9j.16] autosave skipped:', e && e.message); }
 }
 
@@ -5311,8 +5568,14 @@ function _csSourceChip(sourceLabel) {
     '</span>';
 }
 
+function getStrategyContentHost() {
+  return document.getElementById('strategy-content') ||
+    document.getElementById('strategy-panel') ||
+    document.getElementById('tab-strategy');
+}
+
 function renderStrategyTab(teamKey) {
-  var host = document.getElementById('strategy-content');
+  var host = getStrategyContentHost();
   if (!host) return;
   var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
   if (!team) {
@@ -5325,11 +5588,11 @@ function renderStrategyTab(teamKey) {
   // gives us instant paint on team switches and after page reload.
   var report;
   var fromCache = false;
-  if (typeof window !== 'undefined' && window._csCachedOverride) {
-    report = window._csCachedOverride;
+  if (ChampionsSim.state.cachedStrategyOverride) {
+    report = ChampionsSim.state.cachedStrategyOverride;
     fromCache = true;
   } else {
-    var results = (typeof window !== 'undefined' && window.lastSimResults) ? window.lastSimResults : {};
+    var results = (typeof window !== 'undefined' && ChampionsSim.state.lastResults) ? ChampionsSim.state.lastResults : {};
     report = csBuildStrategyReportV2(teamKey, results, (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles'));
   }
   if (!report) {
@@ -5341,7 +5604,8 @@ function renderStrategyTab(teamKey) {
     try { csSaveReport(teamKey, report); } catch(e) { console.warn('[Phase3] save failed:', e && e.message); }
   }
   // Stash for tests / inspection
-  if (typeof window !== 'undefined') window._lastStrategyReport = report;
+  ChampionsSim.state.lastStrategyReport = report;
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_lastStrategyReport', report);
 
   var rc = report.team_report_card;
   var id = report.team_identity;
@@ -5944,16 +6208,23 @@ function csSimLogClearAll() {
   return _csSimLogWrite({ schema_version: CS_SIMLOG_SCHEMA, entries: [] });
 }
 
-// Expose to window so console/debug and Phase 4b/c/d code can reach them.
-try {
-  window.csSimLogAppendSeries = csSimLogAppendSeries;
-  window.csSimLogGetAll       = csSimLogGetAll;
-  window.csSimLogForTeam      = csSimLogForTeam;
-  window.csSimLogForTeamBothSides = csSimLogForTeamBothSides;
-  window.csSimLogForMatchup   = csSimLogForMatchup;
-  window.csSimLogClearTeam    = csSimLogClearTeam;
-  window.csSimLogClearAll     = csSimLogClearAll;
-} catch (_e) { /* non-browser env (node --check) */ }
+// Expose through ChampionsSim; legacy aliases are retained for console/debug.
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.simLog.appendSeries = csSimLogAppendSeries;
+  ChampionsSim.simLog.getAll = csSimLogGetAll;
+  ChampionsSim.simLog.forTeam = csSimLogForTeam;
+  ChampionsSim.simLog.forTeamBothSides = csSimLogForTeamBothSides;
+  ChampionsSim.simLog.forMatchup = csSimLogForMatchup;
+  ChampionsSim.simLog.clearTeam = csSimLogClearTeam;
+  ChampionsSim.simLog.clearAll = csSimLogClearAll;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSimLogAppendSeries', csSimLogAppendSeries);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSimLogGetAll', csSimLogGetAll);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSimLogForTeam', csSimLogForTeam);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSimLogForTeamBothSides', csSimLogForTeamBothSides);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSimLogForMatchup', csSimLogForMatchup);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSimLogClearTeam', csSimLogClearTeam);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSimLogClearAll', csSimLogClearAll);
 
 // =========================================================================
 // Phase 4b (Refs #52) — team_history: adaptive state machine driver.
@@ -6284,13 +6555,18 @@ function csDetectLossConditions(games, teamKey) {
 }
 
 // Expose for tests + debug console.
-try {
-  window.csConfidenceBadge       = csConfidenceBadge;
-  window.csDetectDeadMoves       = csDetectDeadMoves;
-  window.csComputeLeadPerformance = csComputeLeadPerformance;
-  window.csDetectLossConditions  = csDetectLossConditions;
-  window.CS_PHASE4C              = CS_PHASE4C;
-} catch (_e) { /* non-browser env */ }
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.phase4c.csConfidenceBadge = csConfidenceBadge;
+  ChampionsSim.phase4c.csDetectDeadMoves = csDetectDeadMoves;
+  ChampionsSim.phase4c.csComputeLeadPerformance = csComputeLeadPerformance;
+  ChampionsSim.phase4c.csDetectLossConditions = csDetectLossConditions;
+  ChampionsSim.phase4c.CS_PHASE4C = CS_PHASE4C;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csConfidenceBadge', csConfidenceBadge);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csDetectDeadMoves', csDetectDeadMoves);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csComputeLeadPerformance', csComputeLeadPerformance);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csDetectLossConditions', csDetectLossConditions);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('CS_PHASE4C', CS_PHASE4C);
 
 function computeTeamHistory(teamKey) {
   if (!teamKey) return null;
@@ -6777,7 +7053,10 @@ function csRenderPhase4cSections(history, teamKey, team) {
   return html;
 }
 
-try { window.csRenderPhase4cSections = csRenderPhase4cSections; } catch (_e) {}
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.phase4c.csRenderPhase4cSections = csRenderPhase4cSections;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderPhase4cSections', csRenderPhase4cSections);
 
 // Render the Record bar: overall W-L pill + per-archetype chips. Shown right
 // under the adaptive banner on the Strategy tab. No draws surfaced (per user:
@@ -6833,18 +7112,22 @@ function csRenderRecordBar(history) {
   return html;
 }
 
-try {
-  window.computeTeamHistory       = computeTeamHistory;
-  window.csInvalidateTeamHistory  = csInvalidateTeamHistory;
-  window.csRenderAdaptiveBanner   = csRenderAdaptiveBanner;
-  window.csRenderRecordBar        = csRenderRecordBar;
-} catch (_e) { /* non-browser */ }
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.strategy.computeTeamHistory = computeTeamHistory;
+  ChampionsSim.strategy.csInvalidateTeamHistory = csInvalidateTeamHistory;
+  ChampionsSim.strategy.csRenderAdaptiveBanner = csRenderAdaptiveBanner;
+  ChampionsSim.strategy.csRenderRecordBar = csRenderRecordBar;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('computeTeamHistory', computeTeamHistory);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csInvalidateTeamHistory', csInvalidateTeamHistory);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderAdaptiveBanner', csRenderAdaptiveBanner);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderRecordBar', csRenderRecordBar);
 
 // Paint cached report immediately if available. Used as the fast-path on
 // team-select change so the user never sees a blank tab between switches.
 // Returns true if a cached report was painted, false otherwise.
 function renderStrategyTabFromCache(teamKey) {
-  var host = document.getElementById('strategy-content');
+  var host = getStrategyContentHost();
   if (!host) return false;
   var cached = csLoadReport(teamKey);
   if (!cached) return false;
@@ -6856,8 +7139,8 @@ function renderStrategyTabFromCache(teamKey) {
   // BUT we want the cached paint to be instant. So we paint with an
   // override: temporarily stash the cached report on window and read
   // it inside renderStrategyTab.
-  window._csCachedOverride = cached;
-  try { renderStrategyTab(teamKey); } finally { delete window._csCachedOverride; }
+  ChampionsSim.state.cachedStrategyOverride = cached;
+  try { renderStrategyTab(teamKey); } finally { delete ChampionsSim.state.cachedStrategyOverride; }
   return true;
 }
 
@@ -6877,9 +7160,26 @@ function csScheduleStrategyRebuild() {
 
 // ---- Wire-up on DOMContentLoaded ------------------------------------
 if (typeof window !== 'undefined') {
-  window.csBuildStrategyReportV2 = csBuildStrategyReportV2;
-  window.renderStrategyTab = renderStrategyTab;
-  window.csScheduleStrategyRebuild = csScheduleStrategyRebuild;
+  function setDbChip(state, detail) {
+    var chip = document.getElementById('db-offline-chip');
+    if (!chip) return;
+    var connected = state === 'connected';
+    chip.style.display = 'inline-block';
+    chip.textContent = connected ? '[DB connected]' : '[DB offline]';
+    chip.title = detail || (connected ? 'Live Supabase connected' : 'Live database unavailable - using bundled team data');
+    chip.style.background = connected ? '#064e3b' : '#7c2d12';
+    chip.style.color = connected ? '#bbf7d0' : '#fed7aa';
+    chip.style.borderColor = connected ? '#10b981' : '#ea580c';
+  }
+
+  if (typeof ChampionsSim !== 'undefined') {
+    ChampionsSim.strategy.csBuildStrategyReportV2 = csBuildStrategyReportV2;
+    ChampionsSim.strategy.renderStrategyTab = renderStrategyTab;
+    ChampionsSim.strategy.csScheduleStrategyRebuild = csScheduleStrategyRebuild;
+  }
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildStrategyReportV2', csBuildStrategyReportV2);
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderStrategyTab', renderStrategyTab);
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csScheduleStrategyRebuild', csScheduleStrategyRebuild);
 
   // Hook the existing tab-nav click and player-select change after DOM is ready
   document.addEventListener('DOMContentLoaded', async function(){
@@ -6891,29 +7191,25 @@ if (typeof window !== 'undefined') {
     // On failure / empty / disabled adapter, surface the [DB offline] chip and
     // keep the bundled TEAMS fallback intact.
     try {
-      var _adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+      var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled && typeof _adapter.loadTeamsFromDB === 'function') {
         var dbTeams = await _adapter.loadTeamsFromDB();
         if (dbTeams && Object.keys(dbTeams).length && typeof TEAMS !== 'undefined') {
           Object.assign(TEAMS, dbTeams);
           console.info('[UI] TEAMS patched with ' + Object.keys(dbTeams).length + ' DB teams.');
-          var _chip = document.getElementById('db-offline-chip');
-          if (_chip) _chip.style.display = 'none';
+          setDbChip('connected', 'Live Supabase connected - loaded ' + Object.keys(dbTeams).length + ' teams from DB');
         } else {
           // null or empty → fall back to bundled TEAMS, surface chip
-          var _chipOff = document.getElementById('db-offline-chip');
-          if (_chipOff) _chipOff.style.display = 'inline-block';
+          setDbChip('offline', 'Supabase returned no teams - using bundled TEAMS');
           console.info('[UI] DB returned no teams — using bundled TEAMS. [DB offline]');
         }
       } else {
         // Adapter disabled (no creds / __DISABLE_SUPABASE__) → surface chip
-        var _chipDis = document.getElementById('db-offline-chip');
-        if (_chipDis) _chipDis.style.display = 'inline-block';
+        setDbChip('offline', 'Missing local-credentials.js or Supabase anon key - using bundled TEAMS');
         console.info('[UI] SupabaseAdapter disabled — using bundled TEAMS. [DB offline]');
       }
     } catch (_dbErr) {
-      var _chipErr = document.getElementById('db-offline-chip');
-      if (_chipErr) _chipErr.style.display = 'inline-block';
+      setDbChip('offline', 'Supabase load failed: ' + ((_dbErr && _dbErr.message) || 'unknown error'));
       console.warn('[UI] loadTeamsFromDB threw — using bundled TEAMS. [DB offline]', _dbErr && _dbErr.message);
     }
 
@@ -6937,7 +7233,7 @@ if (typeof window !== 'undefined') {
 
 // Expose for tests
 if (typeof window !== 'undefined') {
-  window.T9J16 = {
+  var t9j16Exports = {
     teamSignature: teamSignature,
     inferTeamIdentity: inferTeamIdentity,
     buildLeadRecoveryPlan: buildLeadRecoveryPlan,
@@ -6953,4 +7249,6 @@ if (typeof window !== 'undefined') {
     autoSave: t9j16AutoSave,
     rules: T9J16_RULES
   };
+  if (typeof ChampionsSim !== 'undefined') ChampionsSim.tests.T9J16 = t9j16Exports;
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('T9J16', t9j16Exports);
 }
