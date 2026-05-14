@@ -103,6 +103,9 @@ A phase is "Go" only if every gate from the previous phase passed. Gates are **m
 - [ ] `positionScore()` formula is deterministic and tested at boundary cases
 - [ ] `winProbabilityDelta` micro-rollouts complete inside per-turn budget
 - [ ] Replay Log v2 renders without performance regression on a 25-turn game
+- Phase 5 implementation note: `turnLog` remains runtime-only on battle results
+  and `window.ChampionsSim.turnLog`; only summary fields are exposed to callers.
+  The draft spec was not renamed because upstream approval is still explicit-gate work.
 
 ### Gate 6 -> v1 ship
 - [ ] All 6 voice tests pass

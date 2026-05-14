@@ -1568,6 +1568,86 @@ table{border-collapse:collapse;width:100%}
   margin-top: 5px;
 }
 
+/* Phase 5 replay log v2 */
+.replay-v2-tools {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  margin: 8px 0 10px;
+}
+.replay-sparkline {
+  width: 100%;
+  height: 34px;
+  color: #38bdf8;
+  background: #0b1220;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+}
+.replay-turn-log {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 10px;
+}
+.replay-turn-row {
+  border-left: 3px solid #334155;
+  background: #0b1220;
+  border-radius: 6px;
+  padding: 8px;
+}
+.replay-turn-row.swing {
+  border-left-color: #f59e0b;
+  background: #2b1d07;
+  font-weight: 700;
+}
+.replay-turn-main {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 12px;
+  color: #e2e8f0;
+}
+.replay-turn-score {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+.replay-hp-bars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 4px;
+  margin-top: 6px;
+}
+.replay-hp-chip {
+  position: relative;
+  overflow: hidden;
+  height: 18px;
+  border-radius: 4px;
+  background: #111827;
+  border: 1px solid #334155;
+}
+.replay-hp-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: #16a34a;
+}
+.replay-hp-label {
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: 1px 4px;
+  color: #f8fafc;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.replay-turn-empty {
+  color: #94a3b8;
+  font-size: 12px;
+  margin: 6px 0;
+}
+
 @media (max-width: 640px) {
   .cs-detector-row,
   .cs-detector-row-loss,
@@ -1605,7 +1685,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.11-phase4e.1</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.12-phase5.1</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">April 2026 Meta · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -7617,6 +7697,214 @@ function buildTeam(teamDef) {
   return teamDef.members.map(m => new Pokemon(m, style, teamDef.format));
 }
 
+function _clamp01(v) {
+  v = Number(v);
+  if (!isFinite(v)) return 0.5;
+  return Math.max(0, Math.min(1, v));
+}
+
+function _hpPct(mon) {
+  if (!mon || !mon.maxHp) return 0;
+  return _clamp01(mon.hp / mon.maxHp);
+}
+
+function _sideSnapshot(active, bench) {
+  const all = (active || []).concat(bench || []);
+  return {
+    active: (active || []).filter(m => m && m.alive).map(m => m.name),
+    bench: (bench || []).filter(m => m && m.alive).map(m => m.name),
+    alive_count: all.filter(m => m && m.alive).length,
+    hp_total: all.reduce((s, m) => s + (m && m.alive ? _hpPct(m) : 0), 0),
+    max_count: Math.max(1, all.length || 1)
+  };
+}
+
+function _fieldSnapshot(field) {
+  return {
+    weather: field.weather === 'none' ? null : field.weather,
+    weather_turns: field.weatherTurns || 0,
+    terrain: field.terrain === 'none' ? null : field.terrain,
+    terrain_turns: field.terrainTurns || 0,
+    trick_room: field.trickRoom ? (field.trickRoomTurns || 0) : 0
+  };
+}
+
+function _speedControlSnapshot(field) {
+  return {
+    player: {
+      tailwind_turns: field.playerSide.tailwind ? (field.playerSide.tailwindTurns || 0) : 0,
+      screens: {
+        reflect: field.playerSide.reflect ? (field.playerSide.reflectTurns || 0) : 0,
+        light: field.playerSide.lightScreen ? (field.playerSide.lightScreenTurns || 0) : 0,
+        aurora: field.playerSide.auroraVeil ? (field.playerSide.auroraVeilTurns || 0) : 0
+      }
+    },
+    opponent: {
+      tailwind_turns: field.oppSide.tailwind ? (field.oppSide.tailwindTurns || 0) : 0,
+      screens: {
+        reflect: field.oppSide.reflect ? (field.oppSide.reflectTurns || 0) : 0,
+        light: field.oppSide.lightScreen ? (field.oppSide.lightScreenTurns || 0) : 0,
+        aurora: field.oppSide.auroraVeil ? (field.oppSide.auroraVeilTurns || 0) : 0
+      }
+    }
+  };
+}
+
+function _statusSnapshot(mons) {
+  const out = {};
+  for (const m of mons || []) {
+    if (m && m.status) out[m.name] = m.status;
+  }
+  return out;
+}
+
+function _hpPctSnapshot(mons) {
+  const out = {};
+  for (const m of mons || []) {
+    if (m) out[m.name] = Math.round(_hpPct(m) * 1000) / 1000;
+  }
+  return out;
+}
+
+function _speedOrderSnapshot(playerActive, oppActive, field) {
+  return (playerActive || []).concat(oppActive || [])
+    .filter(m => m && m.alive)
+    .sort((a, b) => {
+      const sA = a.getEffSpeed(field);
+      const sB = b.getEffSpeed(field);
+      return field.trickRoom ? sA - sB : sB - sA;
+    })
+    .map(m => m.name);
+}
+
+function _legalOptionsSnapshot(active, enemies) {
+  const liveTargets = (enemies || []).filter(e => e && e.alive);
+  const targetName = liveTargets[0] ? liveTargets[0].name : 'none';
+  const out = {};
+  for (const mon of (active || []).filter(m => m && m.alive)) {
+    out[mon.name] = (mon.moves || []).map(move => move + (liveTargets.length ? ' -> ' + targetName : ''));
+  }
+  return out;
+}
+
+function _buildPositionState(playerActive, playerBench, oppActive, oppBench, field) {
+  const player = _sideSnapshot(playerActive, playerBench);
+  const opponent = _sideSnapshot(oppActive, oppBench);
+  return {
+    player,
+    opponent,
+    field: _fieldSnapshot(field),
+    speed_control: _speedControlSnapshot(field),
+    status: _statusSnapshot((playerActive || []).concat(playerBench || [], oppActive || [], oppBench || []))
+  };
+}
+
+function positionScore(state) {
+  state = state || {};
+  const player = state.player || {};
+  const opponent = state.opponent || {};
+  const maxCount = Math.max(player.max_count || 1, opponent.max_count || 1, 1);
+  const pHp = Number(player.hp_total != null ? player.hp_total : player.total_hp_pct || 0);
+  const oHp = Number(opponent.hp_total != null ? opponent.hp_total : opponent.total_hp_pct || 0);
+  const hpDiffNorm = ((pHp - oHp) / Math.max(1, maxCount)) / 2 + 0.5;
+  const pAlive = Number(player.alive_count != null ? player.alive_count : player.survivors || 0);
+  const oAlive = Number(opponent.alive_count != null ? opponent.alive_count : opponent.survivors || 0);
+  const survivorsDiffNorm = ((pAlive - oAlive) / Math.max(1, maxCount)) + 0.5;
+  const sc = state.speed_control || {};
+  const pSc = sc.player || {};
+  const oSc = sc.opponent || sc.opp || {};
+  const field = state.field || {};
+  let speedEdge = ((pSc.tailwind_turns || 0) - (oSc.tailwind_turns || 0)) / 4;
+  if (field.trick_room) speedEdge += 0.05;
+  speedEdge = Math.max(-0.5, Math.min(0.5, speedEdge));
+  function screenCount(side) {
+    const s = (side && side.screens) || {};
+    return (s.reflect ? 1 : 0) + (s.light ? 1 : 0) + (s.aurora ? 1 : 0);
+  }
+  const screensEdge = Math.max(-0.5, Math.min(0.5, (screenCount(pSc) - screenCount(oSc)) * 0.1));
+  let statusEdge = 0;
+  const status = state.status || {};
+  const pNames = new Set((player.active || []).concat(player.bench || []));
+  const oNames = new Set((opponent.active || []).concat(opponent.bench || []));
+  Object.keys(status).forEach(name => {
+    const bad = status[name] ? 0.05 : 0;
+    if (pNames.has(name)) statusEdge -= bad;
+    if (oNames.has(name)) statusEdge += bad;
+  });
+  const score = 0.5
+    + 0.30 * (hpDiffNorm - 0.5)
+    + 0.20 * (survivorsDiffNorm - 0.5)
+    + 0.15 * speedEdge
+    + 0.05 * screensEdge
+    + 0.10 * Math.max(-0.5, Math.min(0.5, statusEdge));
+  return Math.round(_clamp01(score) * 1000) / 1000;
+}
+
+function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, includeLegal) {
+  const mons = (playerActive || []).concat(playerBench || [], oppActive || [], oppBench || []);
+  const state = _buildPositionState(playerActive, playerBench, oppActive, oppBench, field);
+  return {
+    active: { player: state.player.active, opponent: state.opponent.active },
+    bench: { player: state.player.bench, opponent: state.opponent.bench },
+    hp_pct: _hpPctSnapshot(mons),
+    status: state.status,
+    field: state.field,
+    speed_control: state.speed_control,
+    speed_order: _speedOrderSnapshot(playerActive, oppActive, field),
+    legal_options: includeLegal ? _legalOptionsSnapshot(playerActive, oppActive) : {},
+    position_score: positionScore(state),
+    win_probability: null
+  };
+}
+
+function _actionSummary(actions) {
+  const out = { player: [], opponent: [] };
+  for (const action of actions || []) {
+    const side = action.side === 'opp' ? 'opponent' : 'player';
+    out[side].push({
+      actor: action.attacker ? action.attacker.name : null,
+      kind: 'move',
+      move: action.move || null,
+      target: action.target ? action.target.name : null
+    });
+  }
+  return out;
+}
+
+function _eventsFromLog(lines) {
+  return (lines || []).map(line => {
+    const text = String(line || '');
+    if (text.includes('fainted')) return { type: 'ko', text };
+    if (text.includes('dmg')) return { type: 'damage', text };
+    if (text.includes('Tailwind') || text.includes('Trick Room') || text.includes('weather') || text.includes('terrain')) return { type: 'field', text };
+    if (text.includes('burn') || text.includes('poison') || text.includes('sleep') || text.includes('paralys')) return { type: 'status', text };
+    return { type: 'log', text };
+  });
+}
+
+function winProbabilityDelta(turnLog) {
+  const rows = Array.isArray(turnLog) ? turnLog : [];
+  const deltas = [];
+  let maxAbs = -1;
+  let swingIdx = -1;
+  for (let i = 1; i < rows.length; i++) {
+    const prev = rows[i - 1] && rows[i - 1].post ? rows[i - 1].post.position_score : null;
+    const curr = rows[i] && rows[i].post ? rows[i].post.position_score : null;
+    const delta = (typeof prev === 'number' && typeof curr === 'number') ? Math.round((curr - prev) * 1000) / 1000 : 0;
+    deltas.push({ turn: rows[i].turn, delta });
+    if (Math.abs(delta) > maxAbs) {
+      maxAbs = Math.abs(delta);
+      swingIdx = i;
+    }
+  }
+  rows.forEach(r => { if (r) delete r.swingTurn; });
+  if (swingIdx >= 0 && rows[swingIdx]) {
+    rows[swingIdx].swingTurn = true;
+    deltas[swingIdx - 1].swingTurn = true;
+  }
+  return deltas;
+}
+
 // ============================================================
 // SIMULATE BATTLE
 // ============================================================
@@ -8405,6 +8693,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   const _protectFamily = new Set(['Protect','Detect','Wide Guard','Quick Guard']);
   const _protectStreak = {};     // running count keyed by side:name
   const _protectStreakMax = {};  // observed peak keyed by side:name
+  const turnLog = [];
   const _recordAction = function(action) {
     try {
       if (!action || !action.attacker || !action.move) return;
@@ -8443,6 +8732,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   while (turn < MAX_TURNS) {
     turn++;
     log.push(`--- Turn ${turn} ---`);
+    const _turnLogStart = log.length;
 
     // Clear per-turn flags
     for (const m of [...playerActive, ...oppActive]) {
@@ -8503,6 +8793,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       _recordAction(_act);
       actions.push(_act);
     }
+
+    const _turnEntry = {
+      turn: turn,
+      playerHP: playerPokemon.map(m => Math.round(_hpPct(m) * 1000) / 1000),
+      oppHP: oppPokemon.map(m => Math.round(_hpPct(m) * 1000) / 1000),
+      activePair: playerActive.concat(oppActive).filter(Boolean).map(m => m.name),
+      action: actions.map(a => (a.attacker ? a.attacker.name : '?') + ':' + (a.move || '?')).join(' | '),
+      positionScore: 0,
+      pre: _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, true),
+      actions: _actionSummary(actions),
+      events: [],
+      post: null,
+      delta: { position_score: 0, win_probability: null, primary_cause: 'none', explanation: '' }
+    };
+    _turnEntry.positionScore = _turnEntry.pre.position_score;
 
     // Sort by priority → then speed (Trick Room inverts)
     actions.sort((a, b) => {
@@ -8686,8 +8991,30 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     field.clockOpp    -= DECISION_TIME_MS;
     if (field.clockPlayer <= 0 || field.clockOpp <= 0) {
       log.push(`[TIMER] Clock expired at turn ${turn}. Resolving via tiebreaker.`);
+      _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
+      _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false);
+      _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
+      _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
+      turnLog.push(_turnEntry);
       break;
     }
+    _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
+    _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false);
+    _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
+    _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
+    turnLog.push(_turnEntry);
+  }
+
+  const positionDeltas = winProbabilityDelta(turnLog);
+  const swingTurn = turnLog.find(t => t && t.swingTurn) || null;
+  const positionPath = [];
+  if (turnLog[0] && turnLog[0].pre) positionPath.push(turnLog[0].pre.position_score);
+  for (const t of turnLog) if (t && t.post) positionPath.push(t.post.position_score);
+  if (typeof window !== 'undefined') {
+    window.ChampionsSim = window.ChampionsSim || {};
+    window.ChampionsSim.turnLog = turnLog;
+    window.ChampionsSim.positionScore = positionScore;
+    window.ChampionsSim.winProbabilityDelta = winProbabilityDelta;
   }
 
   // ============================================================
@@ -8750,6 +9077,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     timerExpired, clockPlayer: field.clockPlayer, clockOpp: field.clockOpp,
     pHpSum, oHpSum,
     log, winCondition, seed,
+    turnLog: turnLog,
+    position_path: positionPath,
+    position_deltas: positionDeltas,
+    turning_point: swingTurn ? {
+      turn: swingTurn.turn,
+      direction: swingTurn.delta && swingTurn.delta.position_score >= 0 ? 'player' : 'opponent',
+      cause: swingTurn.delta ? swingTurn.delta.primary_cause : 'unknown'
+    } : null,
     playerSurvivors: pSurvive, oppSurvivors: oSurvive,
     // T9j.10 (Refs #16) — structured lead + bring info so UI never parses log strings.
     //   leads:  active battlers at turn 1 (doubles: 2, singles: 1)
@@ -9097,6 +9432,13 @@ function runMegaTriggerSweep(teamA, teamB, bo, opts) {
     config:  { maxTurn: MAX_TURN, coarseN: COARSE_N, refineN: REFINE_N },
     results: results
   };
+}
+
+if (typeof window !== 'undefined') {
+  window.ChampionsSim = window.ChampionsSim || {};
+  window.ChampionsSim.turnLog = window.ChampionsSim.turnLog || [];
+  window.ChampionsSim.positionScore = positionScore;
+  window.ChampionsSim.winProbabilityDelta = winProbabilityDelta;
 }
 
 
@@ -11023,6 +11365,74 @@ function addReplays(logs, oppKey) {
   renderReplays();
 }
 
+function csReplaySparkline(turnLog) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var scores = rows.map(function(t) {
+    return t && t.post && typeof t.post.position_score === 'number' ? t.post.position_score : null;
+  }).filter(function(v) { return v != null; });
+  if (!scores.length) scores = [0.5];
+  var points = scores.map(function(v, i) {
+    var x = scores.length === 1 ? 50 : Math.round((i / (scores.length - 1)) * 100);
+    var y = Math.round((1 - Math.max(0, Math.min(1, v))) * 30 + 2);
+    return x + ',' + y;
+  }).join(' ');
+  return '<svg class="replay-sparkline" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true">' +
+    '<polyline points="' + points + '" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>' +
+    '</svg>';
+}
+
+function csRenderHpBars(turn) {
+  var hp = (turn && turn.post && turn.post.hp_pct) || {};
+  var names = Object.keys(hp).slice(0, 8);
+  if (!names.length) return '';
+  return '<div class="replay-hp-bars">' + names.map(function(name) {
+    var pct = Math.max(0, Math.min(1, Number(hp[name]) || 0));
+    return '<span class="replay-hp-chip" title="' + _escapeHtml(name) + ' ' + Math.round(pct * 100) + '%">' +
+      '<span class="replay-hp-fill" style="width:' + Math.round(pct * 100) + '%"></span>' +
+      '<span class="replay-hp-label">' + _escapeHtml(name) + '</span>' +
+    '</span>';
+  }).join('') + '</div>';
+}
+
+function csRenderTurnLogRows(turnLog) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  if (!rows.length) return '<div class="replay-turn-empty">No structured turn log for this replay.</div>';
+  return '<div class="replay-turn-log">' + rows.map(function(t) {
+    var score = t && t.post && typeof t.post.position_score === 'number' ? t.post.position_score : (t.positionScore || 0.5);
+    var delta = t && t.delta && typeof t.delta.position_score === 'number' ? t.delta.position_score : 0;
+    var actions = [];
+    if (t && t.actions) {
+      actions = (t.actions.player || []).concat(t.actions.opponent || []).map(function(a) {
+        return [a.actor, a.move, a.target ? '-> ' + a.target : ''].filter(Boolean).join(' ');
+      });
+    }
+    return '<div class="replay-turn-row' + (t && t.swingTurn ? ' swing' : '') + '">' +
+      '<div class="replay-turn-main"><strong>T' + _escapeHtml(t && t.turn) + '</strong><span>' + _escapeHtml(actions.join(' | ') || t.action || '-') + '</span></div>' +
+      '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
+      csRenderHpBars(t) +
+    '</div>';
+  }).join('') + '</div>';
+}
+
+function downloadReplayTurnLog(replay) {
+  if (!replay || !Array.isArray(replay.turnLog)) return;
+  var payload = {
+    seed: replay.seed || null,
+    result: replay.result || null,
+    winCondition: replay.winCondition || null,
+    turning_point: replay.turning_point || null,
+    position_path: replay.position_path || [],
+    turnLog: replay.turnLog
+  };
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'champions-turn-log-' + (replay.seed || Date.now()) + '.json';
+  a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 0);
+}
+
 function renderReplays() {
   const el = document.getElementById('replay-list');
   if (!el) return;
@@ -11044,6 +11454,8 @@ function renderReplays() {
     const trSet=(r.log||[]).some(l=>l.includes('Trick Room'));
     const trBroken=(r.log||[]).some(l=>l.includes('NORMAL'));
     const tw=(r.log||[]).some(l=>l.includes('Tailwind'));
+    const hasTurnLog = Array.isArray(r.turnLog) && r.turnLog.length > 0;
+    const turning = r.turning_point ? 'Swing T' + r.turning_point.turn : 'No swing';
     const card=document.createElement('div');
     card.className='replay-card';
     card.innerHTML=`
@@ -11058,10 +11470,14 @@ function renderReplays() {
         ${trBroken?'<span class="rchip tr">TR BROKEN</span>':''}
         ${tw?'<span class="rchip tw">TAILWIND</span>':''}
         <span class="rchip">${r.turns} turns</span>
+        ${hasTurnLog?`<span class="rchip">${turning}</span>`:''}
       </div>
       <div class="replay-expanded">
+        ${hasTurnLog ? `<div class="replay-v2-tools">${csReplaySparkline(r.turnLog)}<button class="btn-secondary replay-json-btn" type="button">Download JSON</button></div>${csRenderTurnLogRows(r.turnLog)}` : ''}
         <div class="battle-log">${(r.log||[]).join('<br>')}</div>
       </div>`;
+    const dlBtn = card.querySelector('.replay-json-btn');
+    if (dlBtn) dlBtn.addEventListener('click', (ev)=>{ ev.stopPropagation(); downloadReplayTurnLog(r); });
     card.addEventListener('click', ()=>card.classList.toggle('open'));
     el.appendChild(card);
   }
@@ -11423,6 +11839,22 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
 // ============================================================
 var _M4_VALID_BO = [1, 3, 5, 10];
 
+function _stripTurnLogForPersistence(logRow) {
+  if (!logRow || typeof logRow !== 'object') return logRow;
+  return {
+    result: logRow.result || null,
+    turns: logRow.turns || 0,
+    trTurns: logRow.trTurns || 0,
+    tr_turns: logRow.tr_turns || logRow.trTurns || 0,
+    winCondition: logRow.winCondition || null,
+    win_condition: logRow.win_condition || logRow.winCondition || null,
+    seed: logRow.seed || null,
+    log: Array.isArray(logRow.log) ? logRow.log.slice(0, 200) : (logRow.log || []),
+    position_path: Array.isArray(logRow.position_path) ? logRow.position_path.slice(0, 40) : [],
+    turning_point: logRow.turning_point || null
+  };
+}
+
 function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   if (_M4_VALID_BO.indexOf(bo) === -1) {
     throw new Error('[M4] _buildAnalysisPayload: invalid bo=' + bo + ' — must be one of 1,3,5,10');
@@ -11469,13 +11901,17 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
 
   var logs = [];
   if (res && res.allLogs && Array.isArray(res.allLogs)) {
-    logs = res.allLogs.slice(0, 50);
+    logs = res.allLogs.slice(0, 50).map(_stripTurnLogForPersistence);
   }
   if (res && Array.isArray(res.logs)) {
-    logs = res.logs.slice(0, 50);
+    logs = res.logs.slice(0, 50).map(_stripTurnLogForPersistence);
   }
 
   var analysisJson = (res && res.analysis_json) || {};
+  if (res && res.turning_point && !analysisJson.turning_point) analysisJson.turning_point = res.turning_point;
+  if (res && Array.isArray(res.position_path) && !analysisJson.position_path) {
+    analysisJson.position_path = res.position_path.slice(0, 40);
+  }
   if (typeof generatePilotGuide === 'function' && res) {
     try { analysisJson.pilot_guide = generatePilotGuide(oppKey, res) || null; } catch (_) {}
   }
