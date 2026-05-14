@@ -1564,7 +1564,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       'Light Screen','Reflect','Aurora Veil',
       // Move-control / field-reset support
       'Encore','Haze','Defog']);
-    const PRIORITY_MOVES = new Set(['Fake Out','Aqua Jet','Extreme Speed','Shadow Sneak','Sucker Punch']);
+    const PRIORITY_MOVES = new Set(['Fake Out','Aqua Jet','Extreme Speed','Shadow Sneak','Sucker Punch','Feint']);
 
     let best = { move: null, target: null, score: -Infinity };
 
@@ -1957,7 +1957,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // handlers, which all delegate to applyDamage directly -- and currently treat
     // Protect as full block. Keeping default full-block here preserves parity
     // with pre-T9j.8 behavior for those narrow paths.
-    if (target && target.protected) {
+    if (target && target.protected && move !== 'Feint') {
       log.push(`${attacker.name} used ${move}! But ${target.name} was protected!`);
       return;
     }
@@ -2178,7 +2178,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (movePriority > 0) {
       targets = targets.filter(t => {
         if (!t.side || !attacker.side || t.side === attacker.side) return true;
-        if (t.side.quickGuard) {
+        if (t.side.quickGuard && move !== 'Feint') {
           log.push(`Quick Guard blocked ${move} on ${t.name}!`);
           return false;
         }
@@ -2225,7 +2225,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.8 (Refs #30) Protect resolution: Piercing Drill / Unseen Fist deal
       // 25% damage through Protect on contact moves. Default path is full block.
       let _protectMult = 0;
-      if (t.protected) {
+      if (t.protected && move !== 'Feint') {
         const _isContact = CONTACT_MOVES.has(move);
         const _protRes = callAbilityHook(attacker, 'onProtectResolve', {
           attacker: attacker, defender: t, move: move,
@@ -2238,6 +2238,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`${t.name} protected itself!`);
           continue;
         }
+      }
+      if (move === 'Feint' && t.protected) {
+        t.protected = false;
+        if (t.side) t.side.quickGuard = false;
+        log.push(`${attacker.name}'s Feint broke through ${t.name}'s protection!`);
       }
       // Set spread context for calcDamage
       field._ctx.isSpread = applySpreadMod;

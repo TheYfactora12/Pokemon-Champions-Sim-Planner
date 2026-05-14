@@ -192,7 +192,7 @@ T('B5. _fakeDone flag is set BEFORE the Protect early-return', () => {
   truthy(headerIdx > 0, 'executeAction Fake Out header must exist');
   const slice = src.slice(headerIdx, headerIdx + 4000);
   const localFakeIdx = slice.indexOf('attacker._fakeDone = true;');
-  const localProtIdx = slice.indexOf('if (target && target.protected)');
+  const localProtIdx = slice.indexOf('if (target && target.protected && move !== \'Feint\')');
   truthy(localFakeIdx >= 0, 'flag-set must exist after header');
   truthy(localProtIdx >= 0, 'protect check must exist after header');
   truthy(localFakeIdx < localProtIdx, 'Fake Out flag-set must precede the protect check');

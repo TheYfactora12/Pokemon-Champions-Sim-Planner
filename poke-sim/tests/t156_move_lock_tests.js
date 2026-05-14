@@ -117,6 +117,39 @@ T('4. Source wiring exists for Haze, Defog, and Sucker Punch', () => {
     'Sucker Punch target-intent gate missing');
 });
 
+T('5. Feint breaks through Protect and Quick Guard', () => {
+  const playerTeam = team([{
+    name: 'Gallade',
+    item: '',
+    ability: 'Sharpness',
+    nature: 'Jolly',
+    level: 50,
+    moves: ['Feint'],
+    evs: { hp: 0, atk: 252, def: 0, spa: 0, spd: 0, spe: 252 }
+  }]);
+  const oppTeam = team([{
+    name: 'Whimsicott',
+    item: '',
+    ability: 'Prankster',
+    nature: 'Timid',
+    level: 50,
+    moves: ['Quick Guard'],
+    evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 252 }
+  }, {
+    name: 'Smeargle',
+    item: '',
+    ability: '',
+    nature: 'Serious',
+    level: 50,
+    moves: ['Protect'],
+    evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+  }]);
+  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [21, 22, 23, 24], maxTurns: 1 });
+  truthy(battle.log.some(line => String(line).includes('used Feint!')), 'Feint should resolve');
+  truthy(battle.log.some(line => String(line).includes('broke through')), 'Feint should break protection');
+  truthy(battle.log.some(line => String(line).includes('used Quick Guard!')), 'Quick Guard setup missing');
+});
+
 if (fail > 0) {
   process.exitCode = 1;
 }
