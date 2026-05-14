@@ -85,10 +85,11 @@ Admin database changes need a separate secret that is never bundled into the sit
 
 | Secret | Used by | Purpose |
 |---|---|---|
+| `SUPABASE_DB_URL_T` | Manual `Supabase DB Migration` workflow only | Preferred pooler Postgres connection string for DDL migrations |
 | `SUPABASE_DB_URL_P` | Manual `Supabase DB Migration` workflow only | Preferred Postgres connection string for DDL migrations |
 | `SUPABASE_DB_URL` | Manual `Supabase DB Migration` workflow only | Legacy fallback Postgres connection string |
 
-`SUPABASE_DB_URL_P` should come from Supabase Dashboard -> Project Settings -> Database -> Connection string. Use a URI connection string with SSL enabled, for example:
+`SUPABASE_DB_URL_T` should come from Supabase Dashboard -> Project Settings -> Database -> Connection string -> Session Pooler or Transaction Pooler. Use a URI connection string with SSL enabled, for example:
 
 ```text
 postgresql://postgres.<project-ref>:<password>@<pooler-host>:6543/postgres?sslmode=require
@@ -187,7 +188,7 @@ All schema changes use the **apply_migration-only** workflow. Never modify `sche
 
 ### Running the GitHub Migration Workflow
 
-1. Add repository secret `SUPABASE_DB_URL_P` in GitHub.
+1. Add repository secret `SUPABASE_DB_URL_T` in GitHub.
 2. Go to **Actions** -> **Supabase DB Migration**.
 3. Click **Run workflow** on `main`.
 4. Enter a migration filename from `poke-sim/db/migrations/`, for example:
