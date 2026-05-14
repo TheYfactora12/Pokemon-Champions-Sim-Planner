@@ -802,7 +802,7 @@ class Pokemon {
       if (typeof _WARNED_MOVE_CAT === 'undefined') { globalThis._WARNED_MOVE_CAT = new Set(); }
       if (!globalThis._WARNED_MOVE_CAT.has(move)) {
         globalThis._WARNED_MOVE_CAT.add(move);
-        if (typeof console !== 'undefined') console.warn('[MOVE_CATEGORY] missing classification for', move, '- using type fallback');
+        engineLogWarn('Missing move category; using type fallback', { move: move });
       }
     }
 
@@ -874,7 +874,7 @@ class Pokemon {
       if (typeof _WARNED_MOVE_BP === 'undefined') { globalThis._WARNED_MOVE_BP = new Set(); }
       if (!globalThis._WARNED_MOVE_BP.has(move)) {
         globalThis._WARNED_MOVE_BP.add(move);
-        if (typeof console !== 'undefined') console.warn('[MOVE_BP] missing base power for', move, '- defaulting to 60');
+        engineLogWarn('Missing move base power; defaulting to 60', { move: move });
       }
     }
     // T9j.8 Dragonize BP multiplier applied after base lookup so spread / screens
@@ -1168,6 +1168,11 @@ function _clamp01(v) {
   v = Number(v);
   if (!isFinite(v)) return 0.5;
   return Math.max(0, Math.min(1, v));
+}
+
+function engineLogWarn(message, fields) {
+  const logger = (typeof window !== 'undefined' && window.ChampionsSim && window.ChampionsSim.logger) || null;
+  if (logger) logger.warn('sim', message, fields);
 }
 
 function _hpPct(mon) {

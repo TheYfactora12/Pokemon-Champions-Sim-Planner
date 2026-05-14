@@ -63,7 +63,7 @@
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.12-phase5.1</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.13-logger.1</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">April 2026 Meta · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -477,14 +477,16 @@
 <!-- Script load order (MUST maintain this sequence):
   1. supabase-js CDN     — loaded in <head> synchronously (see above)
   2. data.js             — TEAMS, BASE_STATS, POKEMON_TYPES_DB
-  3. engine.js           — simulateBattle, runBoSeries internals
-  4. storage_adapter.js  — localStorage wrapper (Storage.*)
-  5. supabase_adapter.js — SupabaseAdapter.* (needs supabase-js + Storage)
-  6. ui.js               — all UI logic (needs everything above)
-  7. legality.js         — VGC legality checker
-  8. strategy-injectable.js — injectable coaching layer
+  3. logger.js           — structured logger on window.ChampionsSim.logger
+  4. engine.js           — simulateBattle, runBoSeries internals
+  5. storage_adapter.js  — localStorage wrapper (Storage.*)
+  6. supabase_adapter.js — SupabaseAdapter.* (needs supabase-js + Storage)
+  7. ui.js               — all UI logic (needs everything above)
+  8. legality.js         — VGC legality checker
+  9. strategy-injectable.js — injectable coaching layer
 -->
 <script src="data.js"></script>
+<script src="logger.js"></script>
 <script src="engine.js"></script>
 <script src="storage_adapter.js"></script>
 <script src="supabase_adapter.js"></script>
@@ -497,7 +499,7 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.warn('SW registration failed:', err);
+      window.ChampionsSim.logger.warn('ui', 'SW registration failed', err);
     });
   });
 }
