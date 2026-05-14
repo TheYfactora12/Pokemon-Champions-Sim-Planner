@@ -7384,7 +7384,8 @@ class Pokemon {
     // T9j.1 (Issue #28) — Tailwind doubles effective speed for the side that set it.
     // Champions: Tailwind lasts 4 turns (turns active + 3 more) per Game8 page;
     // counter handled in Field.endTurn().
-    if (this.side && this.side.tailwind) spe *= 2;
+    const side = this.side;
+    if (side && side.tailwind) spe *= 2;
     // Weather speed abilities consolidated here so they compound correctly with Tailwind.
     if (this.ability === 'Swift Swim'   && field.weather === 'rain') spe *= 2;
     if (this.ability === 'Chlorophyll'  && field.weather === 'sun')  spe *= 2;
