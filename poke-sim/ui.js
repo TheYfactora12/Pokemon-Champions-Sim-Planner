@@ -1902,13 +1902,14 @@ function showInlinePilotCard(oppKey, res) {
     }
   } catch(e) { /* silent - inline card stays minimal on error */ }
 
+  const postCoach = (typeof coachPost === 'function') ? coachPost(res) : '';
   container.innerHTML = `
     <div class="pilot-card" style="border:1px solid var(--border,#333);border-radius:8px;padding:14px;background:var(--surface,#1c1b19)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <span style="font-weight:700;font-size:13px">📋 Pilot Notes vs ${teamName}</span>
         <span class="pilot-verdict ${verdictClass}" style="font-size:11px;padding:3px 8px;border-radius:4px">${verdict} · ${winPct}%</span>
       </div>
-      ${tips.length ? `<div style="font-size:11px;color:var(--text-m,#888);line-height:1.7">${tips.map(t=>`• ${t}`).join('<br>')}</div>` : ''}
+      ${postCoach ? `<pre class="cs-pilot-card-v2">${_escapeHtml(postCoach)}</pre>` : (tips.length ? `<div style="font-size:11px;color:var(--text-m,#888);line-height:1.7">${tips.map(t=>`• ${t}`).join('<br>')}</div>` : '')}
     </div>`;
 }
 
@@ -1964,10 +1965,12 @@ function csRenderTurnLogRows(turnLog) {
         return [a.actor, a.move, a.target ? '-> ' + a.target : ''].filter(Boolean).join(' ');
       });
     }
+    var inCoach = (typeof coachIn === 'function') ? coachIn(rows, t && t.turn) : '';
     return '<div class="replay-turn-row' + (t && t.swingTurn ? ' swing' : '') + '">' +
       '<div class="replay-turn-main"><strong>T' + _escapeHtml(t && t.turn) + '</strong><span>' + _escapeHtml(actions.join(' | ') || t.action || '-') + '</span></div>' +
       '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
       csRenderHpBars(t) +
+      (inCoach ? '<pre class="replay-turn-coach">' + _escapeHtml(inCoach) + '</pre>' : '') +
     '</div>';
   }).join('') + '</div>';
 }
@@ -2773,11 +2776,11 @@ function generatePilotGuide(oppKey, results) {
     .map(e => e[0]);
 
   const tips = [];
-  if (leads.length >= 2) tips.push(`Lead with ${leads[0]} + ${leads[1]} for best results.`);
+  if (leads.length >= 2) tips.push(`Lead ${leads[0]} + ${leads[1]} as the first option.`);
   if (wcEntries.length) tips.push(`${wcEntries[0][0]} was the top win condition in ${Math.round(wcEntries[0][1]/total*100)}% of all series.`);
   if (risks.length) tips.push(`Watch for ${risks[0]} — it appeared in over 40% of your losses.`);
   else if (winPct > 55) tips.push('Your team has a consistent edge — focus on denying their setup turns.');
-  if (winPct < 45) tips.push('Consider leading with Fake Out + speed control to disrupt their gameplan.');
+  if (winPct < 45) tips.push('Open with Fake Out + speed control to disrupt their gameplan.');
   const policyOutputAudit = (typeof auditPolicyOutput === 'function') ? auditPolicyOutput(tips) : { fakeGoodCount: 0, flagged: [] };
   const staticAdviceWarningHtml = (typeof renderStaticAdviceWarning === 'function')
     ? renderStaticAdviceWarning(policyOutputAudit, 'pilot') : '';
@@ -2816,6 +2819,7 @@ function generatePilotGuide(oppKey, results) {
   // Refs #95 - tag the card with its opponent key so we can upsert instead of
   // duplicating when the same matchup is re-simulated from the single-sim path.
   card.dataset.oppKey = oppKey;
+  const preCoach = (typeof coachPre === 'function') ? coachPre((typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player', oppKey, { result: results }) : '';
   card.innerHTML = `
     ${staticAdviceWarningHtml}
     <div class="pilot-card-header">
@@ -2828,6 +2832,7 @@ function generatePilotGuide(oppKey, results) {
         <span class="win-label">Series W%</span>
       </div>
       <div class="pilot-details">
+        ${preCoach ? `<details class="cs-pre-coach"><summary>PRE coaching</summary><pre>${_escapeHtml(preCoach)}</pre></details>` : ''}
         ${leads.length ? `<div class="pilot-leads"><span class="pilot-section-label">LEADS</span> ${leads.join(' + ')}</div>` : ''}
         <div class="pilot-section-label">WIN CONDITIONS</div>
         ${wcEntries.map(([cond,cnt]) => `

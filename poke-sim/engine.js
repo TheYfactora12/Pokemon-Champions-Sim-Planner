@@ -1377,6 +1377,20 @@ function winProbabilityDelta(turnLog) {
   return deltas;
 }
 
+function isRNGBlame(turnLog, turn) {
+  const rows = Array.isArray(turnLog) ? turnLog : [];
+  const targetTurn = Number(turn) || (rows.find(r => r && r.swingTurn) || {}).turn || 0;
+  let hits = 0;
+  rows.forEach(row => {
+    if (!row || Math.abs((row.turn || 0) - targetTurn) > 1) return;
+    (row.events || []).forEach(ev => {
+      const text = String((ev && (ev.text || ev.type)) || '');
+      if (/critical hit|missed|flinched|fully paralysed|frozen solid|woke up early/i.test(text)) hits++;
+    });
+  });
+  return hits >= 2;
+}
+
 // ============================================================
 // SIMULATE BATTLE
 // ============================================================
@@ -2487,6 +2501,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     window.ChampionsSim.turnLog = turnLog;
     window.ChampionsSim.positionScore = positionScore;
     window.ChampionsSim.winProbabilityDelta = winProbabilityDelta;
+    window.ChampionsSim.isRNGBlame = isRNGBlame;
   }
 
   // ============================================================
@@ -2911,4 +2926,5 @@ if (typeof window !== 'undefined') {
   window.ChampionsSim.turnLog = window.ChampionsSim.turnLog || [];
   window.ChampionsSim.positionScore = positionScore;
   window.ChampionsSim.winProbabilityDelta = winProbabilityDelta;
+  window.ChampionsSim.isRNGBlame = isRNGBlame;
 }

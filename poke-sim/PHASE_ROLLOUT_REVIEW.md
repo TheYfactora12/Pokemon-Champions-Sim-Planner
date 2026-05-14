@@ -113,6 +113,9 @@ A phase is "Go" only if every gate from the previous phase passed. Gates are **m
 - [ ] RNG gating verified on both fixtures (`rng_dependency` 0.3 vs 0.7)
 - [ ] Side-by-side inline-pilot-card screenshot in PR (today vs Phase 6)
 - [ ] Phase 4e regression still passes after voice changes (no spec drift)
+- Phase 6 implementation note: `tests/phase6_coaching_voice.js` covers 9
+  voice/linter fixtures through the normal CI test runner. Language switcher
+  remains a post-v1 follow-on per spec Section 12.
 
 ---
 

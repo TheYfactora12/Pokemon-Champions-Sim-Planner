@@ -553,3 +553,180 @@ function renderActiveStrategyTab(teamKey) {
     });
   }, 8000);
 })();
+
+// ============================================================
+// Phase 6 - Coaching Voice + Output Templates
+// ============================================================
+const COACH_BANNED_PHRASES = [
+  'always lead with',
+  'never switch',
+  'just win',
+  'you need to',
+  'should have',
+  'you might want to',
+  'this team is okay',
+  'unlucky',
+  'consider running',
+  'in general',
+  'could be',
+  'feels like',
+  'you should probably',
+  'tournament-grade',
+  'ladder-tested',
+  'meta-proven',
+  'competitive viable',
+  'tournament-tested',
+  'pro-approved',
+  "world's #1"
+];
+
+function populationQualifier(populationOrStatus) {
+  if (populationOrStatus === 'ai_vs_ai_smarter') return 'vs adaptive AI';
+  if (populationOrStatus === 'replay_calibrated') return 'replay-calibrated against saved matches';
+  if (populationOrStatus === 'tournament_aligned') return 'aligned with top-cut leads';
+  return 'in simulated play';
+}
+
+function lintCoachOutput(text) {
+  const source = String(text || '').toLowerCase();
+  const banned = COACH_BANNED_PHRASES.filter(function(p) {
+    return source.indexOf(p.toLowerCase()) >= 0;
+  });
+  return { banned: banned, clean: banned.length === 0 };
+}
+
+function _coachLogLint(surface, text) {
+  const lint = lintCoachOutput(text);
+  if (!lint.clean) {
+    const logger = (typeof window !== 'undefined' && window.ChampionsSim && window.ChampionsSim.logger) || null;
+    if (logger) logger.warn('coaching', 'Coach output failed linter', { surface: surface, banned: lint.banned });
+  }
+  return text;
+}
+
+function _coachFooter(n, population) {
+  const count = Math.max(0, Number(n) || 0);
+  return 'Based on ' + count + ' AI-vs-AI simulations. Real ladder + tournament data coming. Battle-tested. Always evolving.';
+}
+
+function _coachResultStats(result) {
+  result = result || {};
+  const wins = result.wins || 0;
+  const losses = result.losses || 0;
+  const draws = result.draws || 0;
+  const n = result.sampleSize || wins + losses + draws || 0;
+  const wr = typeof result.winRate === 'number' ? result.winRate : (n ? wins / n : 0);
+  return { wins: wins, losses: losses, draws: draws, n: n, winPct: Math.round(wr * 100) };
+}
+
+function _coachTopLead(result) {
+  const counts = {};
+  ((result && result.allLogs) || []).forEach(function(g) {
+    const leads = g && g.leads && Array.isArray(g.leads.player) ? g.leads.player : [];
+    const key = leads.join(' + ');
+    if (key) counts[key] = (counts[key] || 0) + 1;
+  });
+  const top = Object.keys(counts).sort(function(a, b) { return counts[b] - counts[a]; })[0];
+  return top || 'current best lead pair';
+}
+
+function _coachTopWinCondition(result) {
+  const entries = Object.entries((result && result.winConditions) || {}).sort(function(a, b) { return b[1] - a[1]; });
+  return entries[0] || ['position control', 0];
+}
+
+function coachPre(playerKey, oppKey, context) {
+  context = context || {};
+  const player = (typeof TEAMS !== 'undefined' && TEAMS[playerKey]) || { name: playerKey, members: [] };
+  const opp = (typeof TEAMS !== 'undefined' && TEAMS[oppKey]) || { name: oppKey, members: [] };
+  const result = context.result || {};
+  const stats = _coachResultStats(result);
+  const topWc = _coachTopWinCondition(result);
+  const lead = _coachTopLead(result);
+  const bring = (player.members || []).slice(0, 4).map(function(m) { return m.name; }).join(', ') || 'first four declared members';
+  const line = stats.n ? ('Best candidate: ' + (stats.winPct >= 50 ? 'pressure line' : 'stabilize line') + ' (' + stats.winPct + '% over ' + stats.n + ', ' + populationQualifier('ai_vs_ai_greedy') + ').')
+    : 'Best candidate: scout line (0% over 0, no game history yet).';
+  const text = [
+    'LINE',
+    '  Recommended: ' + line,
+    '  Lead       : ' + lead,
+    '  Bring      : ' + bring,
+    '',
+    'WIN CONDITION',
+    '  Convert through ' + topWc[0] + ' (' + Math.round((topWc[1] || 0) / Math.max(1, stats.n) * 100) + '% over ' + stats.n + ', ' + populationQualifier('ai_vs_ai_greedy') + ').',
+    '',
+    'LOSS CONDITION',
+    '  Watch ' + opp.name + ' setup turns (' + stats.losses + ' of ' + Math.max(1, stats.n) + ' games, ' + populationQualifier('ai_vs_ai_greedy') + ').',
+    '',
+    'TURN 1 PLAN',
+    '  Lead ' + lead + '.',
+    '  Deny the first setup move before committing ' + ((player.members && player.members[0] && player.members[0].name) || player.name) + '.',
+    '',
+    _coachFooter(stats.n, 'ai_vs_ai_greedy')
+  ].join('\n');
+  return _coachLogLint('pre', text);
+}
+
+function coachIn(turnLog, turn) {
+  const rows = Array.isArray(turnLog) ? turnLog : [];
+  const row = rows.find(function(t) { return t && t.turn === turn; }) || rows[rows.length - 1] || {};
+  const score = row.post && typeof row.post.position_score === 'number' ? row.post.position_score : row.positionScore || 0.5;
+  const delta = row.delta && typeof row.delta.position_score === 'number' ? row.delta.position_score : 0;
+  const order = row.post && row.post.speed_order ? row.post.speed_order.join(' > ') : 'unknown';
+  const text = [
+    'THREAT TABLE',
+    '  Board state scored at ' + Math.round(score * 100) + '% ' + populationQualifier('ai_vs_ai_greedy') + '.',
+    'SPEED ORDER',
+    '  ' + order,
+    'POSITION SCORE',
+    '  ' + Math.round(score * 100) + '%; delta ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '.',
+    'DECISION',
+    '  Preserve speed control and trade damage only when the score improves.'
+  ].join('\n');
+  return _coachLogLint('in', text);
+}
+
+function coachPost(turnLogOrResult, result) {
+  const source = Array.isArray(turnLogOrResult) ? { turnLog: turnLogOrResult } : (turnLogOrResult || {});
+  const res = result || source;
+  const turnLog = source.turnLog || res.turnLog || [];
+  const stats = _coachResultStats(res);
+  const swing = (turnLog || []).find(function(t) { return t && t.swingTurn; }) || (res.turning_point ? { turn: res.turning_point.turn } : null);
+  const rngGate = typeof isRNGBlame === 'function' ? isRNGBlame(turnLog, swing && swing.turn) : false;
+  const topWc = _coachTopWinCondition(res);
+  const root = rngGate
+    ? 'RNG affected 2+ events near the swing turn (' + stats.n + '-game sample, ' + populationQualifier('ai_vs_ai_greedy') + ').'
+    : 'Root cause was position control around turn ' + ((swing && swing.turn) || 'endgame') + ' (' + stats.n + '-game sample, ' + populationQualifier('ai_vs_ai_greedy') + ').';
+  const text = [
+    'ROOT CAUSE',
+    '  ' + root,
+    '',
+    'WHAT WENT WRONG',
+    '  - Turn ' + ((swing && swing.turn) || 1) + ': position score moved against the plan (' + stats.winPct + '% overall, ' + populationQualifier('ai_vs_ai_greedy') + ').',
+    '  - Keep the lead plan tied to ' + topWc[0] + ' (' + Math.round((topWc[1] || 0) / Math.max(1, stats.n) * 100) + '% over ' + stats.n + ', ' + populationQualifier('ai_vs_ai_greedy') + ').',
+    '',
+    'TEAM-LEVEL FLAW',
+    '  No unresolved team flaw is proven from this sample (' + stats.n + '-game sample, ' + populationQualifier('ai_vs_ai_greedy') + ').',
+    '',
+    'BEHAVIOR TO CHANGE',
+    '  Cap repeated defensive turns when position score falls (' + stats.n + '-game sample, ' + populationQualifier('ai_vs_ai_greedy') + ').',
+    '',
+    'CONFIDENCE',
+    '  ' + (stats.n >= 100 ? 'high' : stats.n >= 20 ? 'moderate' : 'low') + ' (' + stats.n + ' games).',
+    '',
+    _coachFooter(stats.n, 'ai_vs_ai_greedy')
+  ].join('\n');
+  return _coachLogLint('post', text);
+}
+
+if (typeof window !== 'undefined') {
+  window.ChampionsSim = window.ChampionsSim || {};
+  window.ChampionsSim.coaching = {
+    coachPre: coachPre,
+    coachIn: coachIn,
+    coachPost: coachPost,
+    lintCoachOutput: lintCoachOutput,
+    populationQualifier: populationQualifier,
+    bannedPhrases: COACH_BANNED_PHRASES.slice()
+  };
+}

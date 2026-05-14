@@ -1609,6 +1609,29 @@ table{border-collapse:collapse;width:100%}
   font-size: 12px;
   margin: 6px 0;
 }
+.cs-pilot-card-v2,
+.cs-pre-coach pre,
+.replay-turn-coach {
+  white-space: pre-wrap;
+  margin: 8px 0 0;
+  padding: 10px;
+  border-radius: 6px;
+  background: #0b1220;
+  color: #dbeafe;
+  border: 1px solid #1e293b;
+  font-size: 11px;
+  line-height: 1.55;
+  overflow-x: auto;
+}
+.cs-pre-coach {
+  margin-bottom: 10px;
+}
+.cs-pre-coach summary {
+  cursor: pointer;
+  color: #bfdbfe;
+  font-weight: 700;
+  font-size: 12px;
+}
 
 @media (max-width: 640px) {
   .cs-detector-row,
