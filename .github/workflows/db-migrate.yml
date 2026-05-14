@@ -21,7 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      SUPABASE_DB_URL_P: ${{ secrets.SUPABASE_DB_URL_P }}
+      SUPABASE_DB_URL_FALLBACK: ${{ secrets.SUPABASE_DB_URL }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
     steps:
@@ -58,12 +59,13 @@ jobs:
       - name: Apply migration
         run: |
           set -euo pipefail
-          if [ -z "${SUPABASE_DB_URL:-}" ]; then
-            echo "::error::Missing SUPABASE_DB_URL repository secret"
+          db_url="${SUPABASE_DB_URL_P:-${SUPABASE_DB_URL_FALLBACK:-}}"
+          if [ -z "$db_url" ]; then
+            echo "::error::Missing SUPABASE_DB_URL_P or SUPABASE_DB_URL repository secret"
             exit 1
           fi
 
-          psql "$SUPABASE_DB_URL" \
+          psql "$db_url" \
             --set ON_ERROR_STOP=1 \
             --file "${{ steps.migration.outputs.path }}"
 
