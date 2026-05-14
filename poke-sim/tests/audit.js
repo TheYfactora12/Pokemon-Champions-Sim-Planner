@@ -122,11 +122,15 @@ for (const p of available) {
 }
 
 console.log('\n=== MIRROR-MATCH WIN RATE CHECK (should be ~50%) ===');
+const mirrorFlags = [];
 for (const t of available) {
   const c = matrix[t][t];
   const total = c.wins + c.losses + c.draws;
   const wr = total > 0 ? (c.wins/total*100).toFixed(0) : '--';
-  const flag = (total > 0 && Math.abs(c.wins/total - 0.5) > 0.25) ? ' [FLAG: >25% off 50%]' : '';
+  const hardFail = total > 0 && (c.wins / total < 0.15 || c.wins / total > 0.85);
+  const flag = hardFail ? ' [FAIL: mirror WR outside 15-85%]' :
+    (total > 0 && Math.abs(c.wins/total - 0.5) > 0.25) ? ' [FLAG: >25% off 50%]' : '';
+  if (hardFail) mirrorFlags.push({ team: t, wins: c.wins, losses: c.losses, draws: c.draws, total: total });
   console.log(`  ${t.padEnd(22)} ${wr}% (${c.wins}w/${c.losses}l/${c.draws}d)${flag}`);
 }
 
@@ -203,7 +207,16 @@ fs.writeFileSync(require('path').join(__dirname, 'audit_matrix.json'), JSON.stri
   timestamp: new Date().toISOString(),
   teams: available,
   N, format: FORMAT,
-  totalBattles, totalErrors, elapsed,
+  totalBattles, totalErrors, elapsed, mirrorFlags,
   matrix, winConditionCounts, jsErrors: jsErrors.slice(0,50)
 }, null, 2));
 console.log('\n[wrote tests/audit_matrix.json]');
+
+if (mirrorFlags.length > 0) {
+  console.error('\nFATAL: mirror-match win-rate hard failures detected:');
+  mirrorFlags.forEach(function(f){
+    const wr = f.total > 0 ? Math.round(f.wins / f.total * 100) : 0;
+    console.error(`  ${f.team}: ${wr}% (${f.wins}w/${f.losses}l/${f.draws}d)`);
+  });
+  process.exit(1);
+}
