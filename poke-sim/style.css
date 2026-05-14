@@ -1433,6 +1433,47 @@ table{border-collapse:collapse;width:100%}
 .cs-severity-medium .cs-severity-tag { color: #fbbf24; font-weight: 600; }
 .cs-severity-low .cs-severity-tag { color: #60a5fa; }
 
+/* Phase 4d threat-response candidate cards */
+.cs-phase4d-block {
+  margin-top: 14px;
+}
+.cs-line-card {
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  background: #0b1220;
+  padding: 10px 12px;
+  margin-top: 8px;
+  color: #cbd5e1;
+}
+.cs-line-recommended {
+  border-color: #2563eb;
+  background: #0c1b33;
+}
+.cs-line-alt {
+  background: #101827;
+}
+.cs-line-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: #e2e8f0;
+  margin-bottom: 6px;
+}
+.cs-line-meta {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.cs-line-alt-wrap {
+  margin-top: 10px;
+}
+.cs-line-alt-wrap summary {
+  cursor: pointer;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
 @media (max-width: 640px) {
   .cs-detector-row,
   .cs-detector-row-loss,
