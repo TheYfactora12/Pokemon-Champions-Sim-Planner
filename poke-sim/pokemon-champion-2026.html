@@ -7221,6 +7221,11 @@ class Pokemon {
     this.toxicCounter = 0;
     this.frozenTurns  = 0;
     this.sleepTurns   = 0;
+    this.tauntedTurns = 0;
+    this.encoredTurns = 0;
+    this.encoredMove  = null;
+    this.lastMoveUsed  = null;
+    this.lastTarget    = null;
     // T9j.17 (Refs #101) -- Fake Out hard-gate flag. Initialized false so first
     // turn out is the only legal use. Reset on every switch-in (replaceOnField).
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out_(move)
@@ -7647,6 +7652,7 @@ class Pokemon {
     }
     // Mental Herb: clears taunt etc (placeholder)
     if (this.item === 'Mental Herb' && trigger === 'taunt') {
+      this.tauntedTurns = 0;
       this.itemConsumed = true;
       return `${this.name}'s Mental Herb removed the effect!`;
     }
@@ -8175,9 +8181,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     const STATUS_MOVES = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder',
       'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail','Quick Guard',
+      'Protect','Detect',
       // T9j.3 Screens setters
-      'Light Screen','Reflect','Aurora Veil']);
-    const PRIORITY_MOVES = new Set(['Fake Out','Aqua Jet','Extreme Speed','Shadow Sneak']);
+      'Light Screen','Reflect','Aurora Veil',
+      // Move-control / field-reset support
+      'Encore','Haze','Defog']);
+    const PRIORITY_MOVES = new Set(['Fake Out','Aqua Jet','Extreme Speed','Shadow Sneak','Sucker Punch']);
 
     let best = { move: null, target: null, score: -Infinity };
 
@@ -8187,8 +8196,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const move of attacker.moves) {
       const moveType = MOVE_TYPES[move] || 'Normal';
 
+      if (attacker.encoredTurns > 0 && attacker.encoredMove) {
+        const target = attacker.lastTarget && attacker.lastTarget.alive
+          ? attacker.lastTarget
+          : liveEnemies[0] || liveAllies[0] || null;
+        return { move: attacker.encoredMove, target };
+      }
+
       // Status/utility scoring
       if (STATUS_MOVES.has(move)) {
+        if (attacker.tauntedTurns > 0) continue;
         let score = 0;
         if (move === 'Trick Room' && !field.trickRoom) score = 55;
         if (move === 'Tailwind'   && !field[attacker.side === 'player' ? 'playerSide' : 'oppSide']?.tailwind) score = 50;
@@ -8210,6 +8227,18 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (move === 'Quick Guard') {
           const hasPriorityThreat = liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => getPriority(m) > 0));
           if (hasPriorityThreat) score = 48;
+        }
+        if (move === 'Taunt' && liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => MOVE_CATEGORY[m] === 'status'))) {
+          score = 34;
+        }
+        if (move === 'Encore' && liveEnemies.some(e => e.lastMoveUsed)) {
+          score = 46;
+        }
+        if (move === 'Haze' && liveEnemies.some(e => e.statBoosts && Object.values(e.statBoosts).some(v => v !== 0))) {
+          score = 44;
+        }
+        if (move === 'Defog' && (field.terrain !== 'none' || liveEnemies.some(e => e.side && (e.side.reflect || e.side.lightScreen || e.side.auroraVeil)))) {
+          score = 44;
         }
         if (move === 'Roost' && attacker.hp < attacker.maxHp * 0.5) score = 45;
         if (score > best.score) best = { move, target: liveEnemies[0] || null, score };
@@ -8248,6 +8277,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     // Fallback
     if (!best.move) {
+      if (attacker.tauntedTurns > 0) {
+        best.move = 'Struggle';
+        best.target = liveEnemies[0] || allies.find(a => a !== attacker && a.alive) || null;
+        return best;
+      }
       best.move   = attacker.moves[0] || 'Tackle';
       best.target = liveEnemies[0] || allies[0];
     }
@@ -8260,6 +8294,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   function executeAction(attacker, move, target, allies, enemies, field, log, rng) {
     if (!attacker.alive) return;
     if (!move) return;
+    attacker.lastMoveUsed = move;
+    attacker.lastTarget = target || null;
 
     // T9j.6 (#18) — Choice Scarf lock SET on first move used. Exempt utility
     // moves that break/transfer the lock per Bulbapedia (Trick, Switcheroo).
@@ -8279,12 +8315,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const STATUS_MOVES  = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder',
       'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail','Quick Guard',
       // T9j.2 additions — side-state setters
-      'Wide Guard','Follow Me','Quick Guard',
+      'Wide Guard','Follow Me','Quick Guard','Protect','Detect',
       // T9j.3 Screens setters
-      'Light Screen','Reflect','Aurora Veil']);
+      'Light Screen','Reflect','Aurora Veil',
+      // Move-control / field-reset support
+      'Encore','Haze','Defog']);
 
     // Attacker must be alive
     if (!attacker.alive) return;
+
+    if (attacker.tauntedTurns > 0 && MOVE_CATEGORY[move] === 'status') {
+      log.push(`${attacker.name} used ${move}! But it failed because of Taunt!`);
+      return;
+    }
 
     // Handle Protect (self only — Wide Guard/Quick Guard handled in status branch below)
     if (move === 'Protect' || move === 'Detect') {
@@ -8364,6 +8407,42 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         log.push(`${attacker.name} used Quick Guard!`);
         return;
       }
+      if (move === 'Taunt' && target && target.alive) {
+        const targetAllies = enemies;
+        const aromaVeilOnSide = targetAllies.some(m => m.alive && m.ability === 'Aroma Veil');
+        if (target.ability === 'Oblivious' || target.ability === 'Aroma Veil' || aromaVeilOnSide) {
+          log.push(`${target.name} is immune to Taunt!`);
+          return;
+        }
+        if (target.tauntedTurns > 0) {
+          log.push(`${target.name} is already taunted!`);
+          return;
+        }
+        const mh = target.applyItem('taunt', field);
+        if (mh) {
+          log.push(mh);
+          return;
+        }
+        target.tauntedTurns = 3;
+        log.push(`${target.name} fell for the Taunt!`);
+        return;
+      }
+      if (move === 'Encore' && target && target.alive) {
+        const targetAllies = enemies;
+        const aromaVeilOnSide = targetAllies.some(m => m.alive && m.ability === 'Aroma Veil');
+        if (target.ability === 'Oblivious' || target.ability === 'Aroma Veil' || aromaVeilOnSide) {
+          log.push(`${target.name} is immune to Encore!`);
+          return;
+        }
+        if (!target.lastMoveUsed) {
+          log.push(`${attacker.name} used Encore! But it failed!`);
+          return;
+        }
+        target.encoredMove = target.lastMoveUsed;
+        target.encoredTurns = 3;
+        log.push(`${target.name} got an Encore!`);
+        return;
+      }
       // T9j.2 (#32) — Follow Me / Rage Powder set side redirect flag.
       if (move === 'Follow Me') {
         const side = (allies === playerActive) ? field.playerSide : field.oppSide;
@@ -8427,6 +8506,26 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target.statBoosts.spa = Math.max(-6, target.statBoosts.spa - 1);
         log.push(`${attacker.name}'s Parting Shot lowered ${target.name}'s offenses!`);
       }
+      if (move === 'Haze') {
+        for (const mon of [...playerActive, ...oppActive].filter(m => m.alive)) {
+          mon.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
+        }
+        log.push(`${attacker.name} cleared all stat changes with Haze!`);
+        return;
+      }
+      if (move === 'Defog' && target && target.alive) {
+        target.statBoosts.eva = Math.max(-6, (target.statBoosts.eva || 0) - 1);
+        const side = target.side || null;
+        if (side) {
+          side.reflect = false; side.reflectTurns = 0;
+          side.lightScreen = false; side.lightScreenTurns = 0;
+          side.auroraVeil = false; side.auroraVeilTurns = 0;
+        }
+        field.terrain = 'none';
+        field.terrainTurns = 0;
+        log.push(`${target.name}'s evasiveness fell and the field was cleared by Defog!`);
+        return;
+      }
       if (move === 'Shed Tail') {
         attacker.substituteHp = Math.floor(attacker.maxHp * 0.25);
         attacker.hp -= attacker.substituteHp;
@@ -8454,6 +8553,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         // Cite: https://bulbapedia.bulbagarden.net/wiki/Struggle
         const _struggleTgt = (target && target.alive) ? target : enemies.find(e => e.alive);
         if (_struggleTgt && _struggleTgt.alive) {
+          log.push(`${attacker.name} used Struggle!`);
           const _stDmg = Math.max(1, Math.floor(_struggleTgt.maxHp * 0.25));
           applyDamage(attacker, 'Struggle', _struggleTgt, _stDmg, field, log, rng);
         }
@@ -8482,6 +8582,33 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (target && target.protected) {
       log.push(`${attacker.name} used ${move}! But ${target.name} was protected!`);
       return;
+    }
+
+    if (move === 'Struggle') {
+      const _struggleTgt = (target && target.alive) ? target : enemies.find(e => e.alive);
+      if (!_struggleTgt) return;
+      log.push(`${attacker.name} used Struggle!`);
+      const _stDmg = Math.max(1, Math.floor(_struggleTgt.maxHp * 0.25));
+      applyDamage(attacker, 'Struggle', _struggleTgt, _stDmg, field, log, rng);
+      const _stRecoil = Math.max(1, Math.floor(attacker.maxHp * 0.25));
+      attacker.hp = Math.max(0, attacker.hp - _stRecoil);
+      log.push(`${attacker.name} is hit by Struggle recoil! [${_stRecoil} dmg]`);
+      if (attacker.hp === 0) {
+        attacker.alive = false;
+        log.push(`${attacker.name} fainted from Struggle recoil!`);
+        _recordKO(attacker, { move: 'Struggle', attacker: attacker, reason: 'recoil' });
+      }
+      return;
+    }
+
+    if (move === 'Sucker Punch') {
+      const targetMove = target && target._chosenMove;
+      const targetIsAttack = !!(targetMove && typeof MOVE_CATEGORY !== 'undefined' &&
+        MOVE_CATEGORY[targetMove] && MOVE_CATEGORY[targetMove] !== 'status');
+      if (!target || !target.alive || target.hasActed || !targetIsAttack) {
+        log.push(`${attacker.name} used Sucker Punch! But it failed!`);
+        return;
+      }
     }
 
     // Miss chance for low-accuracy moves
@@ -8893,6 +9020,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       m.hasActed = false;
       m.protected = false;
       m.helpingHand = false;
+      m._chosenMove = null;
       // T9j.8 (Refs #19) Flinch flag resets at top of turn so last-turn flinch
       // cannot bleed into this turn's action.
       m._flinched = false;
@@ -8938,12 +9066,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const mon of playerActive.filter(m => m.alive)) {
       const { move, target } = selectMove(mon, playerActive, oppActive, field);
       const _act = { attacker:mon, move, target, side:'player', priority: getPriority(move) };
+      mon._chosenMove = move;
       _recordAction(_act);
       actions.push(_act);
     }
     for (const mon of oppActive.filter(m => m.alive)) {
       const { move, target } = selectMove(mon, oppActive, playerActive, field);
       const _act = { attacker:mon, move, target, side:'opp', priority: getPriority(move) };
+      mon._chosenMove = move;
       _recordAction(_act);
       actions.push(_act);
     }
@@ -9086,6 +9216,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       mon.toxicCounter++;
       if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'toxic' }); }
     }
+    for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.tauntedTurns > 0)) {
+      mon.tauntedTurns--;
+      if (mon.tauntedTurns <= 0) {
+        mon.tauntedTurns = 0;
+        log.push(`${mon.name}'s Taunt wore off.`);
+      }
+    }
+    for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.encoredTurns > 0)) {
+      mon.encoredTurns--;
+      if (mon.encoredTurns <= 0) {
+        mon.encoredTurns = 0;
+        mon.encoredMove = null;
+        log.push(`${mon.name}'s Encore wore off.`);
+      }
+    }
     // Note: Snow intentionally has no chip damage (Champions Gen-IX). Hail is absent.
 
     // T9j.6 (#29) — Leftovers: heal 1/16 maxHp end of turn. Only while below max HP.
@@ -9122,6 +9267,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           // Each fresh stay on the field grants exactly one legal Fake Out turn.
           // Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out
           replacement._fakeDone    = false;
+          replacement.tauntedTurns = 0;
+          replacement.encoredTurns  = 0;
+          replacement.encoredMove   = null;
           // T9j.6 (#29) — stat stages must not leak across switches. Entry at all-zero.
           replacement.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
           // T9j.6 (#18) — Choice Scarf lock clears on switch in.
