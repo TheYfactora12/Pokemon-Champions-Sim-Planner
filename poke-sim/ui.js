@@ -28,6 +28,7 @@ ChampionsSim.bring = ChampionsSim.bring || {};
 ChampionsSim.history = ChampionsSim.history || {};
 ChampionsSim.internal = ChampionsSim.internal || {};
 ChampionsSim.phase4c = ChampionsSim.phase4c || {};
+ChampionsSim.phase4d = ChampionsSim.phase4d || {};
 ChampionsSim.simLog = ChampionsSim.simLog || {};
 ChampionsSim.strategy = ChampionsSim.strategy || {};
 ChampionsSim.tests = ChampionsSim.tests || {};
@@ -446,6 +447,7 @@ document.getElementById('player-select').addEventListener('change', function() {
     if (typeof renderCoverageWidget === 'function') renderCoverageWidget();
     // T9j.12 (Refs #74): refresh sim-side bring picker after active-team change.
     if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    if (typeof invalidateThreatResponseCache === 'function') invalidateThreatResponseCache();
     // Phase 2 (Refs #46 #49) - rebuild Strategy tab when player switches teams.
     // Phase 3 (Refs #51) - paint cached snapshot first so the tab never flashes
     // blank between switches; the debounced rebuild will repaint with fresh data.
@@ -462,6 +464,8 @@ document.getElementById('opponent-select').addEventListener('change', function()
     renderRoster('opp-roster', team.members);
     // T9j.12 (Refs #74): refresh sim-side bring picker on opponent switch.
     if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    if (typeof invalidateThreatResponseCache === 'function') invalidateThreatResponseCache();
+    if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild();
   }
 });
 
@@ -2695,6 +2699,18 @@ function generatePilotGuide(oppKey, results) {
   } catch (e) {
     console.warn('[T9j.15] Mega card render skipped:', e && e.message);
   }
+  let threatResponseHtml = '';
+  try {
+    const playerKey = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player';
+    if (typeof solveThreatResponse === 'function' && typeof renderThreatResponseCard === 'function') {
+      threatResponseHtml = renderThreatResponseCard(solveThreatResponse(playerKey, oppKey, {
+        simsPerBranch: 30,
+        rngSeed: 'pilot-guide'
+      }));
+    }
+  } catch (e) {
+    console.warn('[Phase4d] Threat response render skipped:', e && e.message);
+  }
 
   const card = document.createElement('div');
   card.className = 'pilot-card';
@@ -2725,6 +2741,7 @@ function generatePilotGuide(oppKey, results) {
         <div class="pilot-section-label" style="margin-top:8px">TIPS</div>
         <div class="pilot-tips">${tips.map(t => `<div class="pilot-tip">• ${t}</div>`).join('')}</div>
         ${megaTriggerHtml}
+        ${threatResponseHtml}
       </div>
     </div>`;
   // Refs #95 - if a card for this opponent already exists (from a prior sim
@@ -5797,6 +5814,14 @@ function renderStrategyTab(teamKey) {
     if (_history && typeof csRenderPhase4cSections === 'function') {
       html += csRenderPhase4cSections(_history, teamKey, team);
     }
+    // Phase 4d: surface best candidate + alternatives for the currently
+    // selected opponent. Kept low-budget in the tab render; deeper sweeps can
+    // request a larger simsPerBranch explicitly.
+    if (typeof solveThreatResponse === 'function' && typeof renderThreatResponseCard === 'function') {
+      var _oppSel = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+      var _oppKey = (_oppSel && _oppSel.value && TEAMS[_oppSel.value]) ? _oppSel.value : Object.keys(TEAMS).filter(function(k){ return k !== teamKey; })[0];
+      if (_oppKey) html += renderThreatResponseCard(solveThreatResponse(teamKey, _oppKey, { simsPerBranch: 30, rngSeed: 'strategy-tab' }));
+    }
   } catch (e) { console.warn('[Phase4b] banner render failed:', e && e.message); }
 
   // Section 1: Team report card
@@ -7218,6 +7243,304 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.phase4c.csRenderPhase4cSections = csRenderPhase4cSections;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderPhase4cSections', csRenderPhase4cSections);
+
+// Phase 4d (Refs PHASE4D_THREAT_RESPONSE_SPEC.md) - threat response solver.
+// Engine-light: explores four lead/bring branches by calling simulateBattle()
+// with constrained bring lists, then classifies the resulting candidate lines.
+var CS_PHASE4D_BRANCHES = ['safe', 'aggressive', 'counter', 'defensive'];
+var CS_PHASE4D_CACHE = {};
+
+function _cs4dHashSeed(seed, branchId, idx) {
+  var s = String(seed === null || seed === undefined ? 'phase4d' : seed) + ':' + branchId + ':' + idx;
+  var h = 2166136261 >>> 0;
+  for (var i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return [h, (h ^ 0x9e3779b9) >>> 0, Math.imul(h || 1, 2246822519) >>> 0, (h + 0x85ebca6b) >>> 0];
+}
+
+function _cs4dMembers(teamKey) {
+  var team = (typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null;
+  return team && Array.isArray(team.members) ? team.members.slice() : [];
+}
+
+function _cs4dTypes(mon) {
+  if (!mon) return [];
+  if (Array.isArray(mon.types) && mon.types.length) return mon.types;
+  if (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[mon.name]) return POKEMON_TYPES_DB[mon.name];
+  if (typeof BASE_STATS !== 'undefined' && BASE_STATS[mon.name] && BASE_STATS[mon.name].types) return BASE_STATS[mon.name].types;
+  return [];
+}
+
+function _cs4dBase(mon) {
+  return (typeof BASE_STATS !== 'undefined' && mon && BASE_STATS[mon.name]) ? BASE_STATS[mon.name] : {};
+}
+
+function _cs4dOffenseScore(mon) {
+  var b = _cs4dBase(mon);
+  return Math.max(b.atk || 0, b.spa || 0) + (b.spe || 0) * 0.55;
+}
+
+function _cs4dBulkScore(mon) {
+  var b = _cs4dBase(mon);
+  var moves = (mon && mon.moves || []).join(',');
+  var support = /Protect|Follow Me|Rage Powder|Reflect|Light Screen|Aurora Veil|Recover|Roost|Life Dew|Will-O-Wisp|Parting Shot|Fake Out/i.test(moves) ? 45 : 0;
+  return (b.hp || 0) + (b.def || 0) + (b.spd || 0) + support;
+}
+
+function _cs4dSpeedScore(mon) {
+  var b = _cs4dBase(mon);
+  var moves = (mon && mon.moves || []).join(',');
+  var speed = /Tailwind|Trick Room|Icy Wind|Thunder Wave|Electroweb|Fake Out/i.test(moves) ? 80 : 0;
+  return (b.spe || 0) + speed;
+}
+
+function _cs4dTypeCounterScore(mon, oppMons) {
+  var score = _cs4dOffenseScore(mon) * 0.1;
+  var moves = mon && mon.moves || [];
+  var oppTypes = [];
+  oppMons.forEach(function(o){ oppTypes = oppTypes.concat(_cs4dTypes(o)); });
+  moves.forEach(function(move){
+    var mt = (typeof MOVE_TYPES !== 'undefined' && MOVE_TYPES[move]) ? MOVE_TYPES[move] : null;
+    if (!mt || typeof TYPE_CHART === 'undefined' || !TYPE_CHART[mt]) return;
+    oppTypes.forEach(function(t){
+      var mult = TYPE_CHART[mt][t];
+      if (mult >= 2) score += 35;
+      else if (mult === 0) score -= 20;
+      else if (mult < 1) score -= 6;
+    });
+  });
+  return score;
+}
+
+function _cs4dPickPair(members, scorer) {
+  var best = null;
+  for (var i = 0; i < members.length; i++) {
+    for (var j = i + 1; j < members.length; j++) {
+      var pair = [members[i], members[j]];
+      var score = scorer(pair);
+      if (!best || score > best.score) best = { pair: pair, score: score };
+    }
+  }
+  return best ? best.pair : members.slice(0, 2);
+}
+
+function _cs4dBringForLead(members, lead, scorer, bringCount) {
+  var names = {};
+  lead.forEach(function(m){ names[m.name] = true; });
+  var rest = members.filter(function(m){ return !names[m.name]; });
+  rest.sort(function(a,b){ return scorer(b) - scorer(a); });
+  return lead.concat(rest).slice(0, bringCount || 4).map(function(m){ return m.name; });
+}
+
+function _cs4dResolveBranch(teamKey, oppKey, branchId) {
+  var members = _cs4dMembers(teamKey);
+  var oppMembers = _cs4dMembers(oppKey);
+  var bringCount = (typeof currentFormat !== 'undefined' && currentFormat === 'singles') ? 3 : 4;
+  var history = null;
+  try { history = (typeof computeTeamHistory === 'function') ? computeTeamHistory(teamKey) : null; } catch (_e) {}
+  var data = 'meta-only';
+  var lead;
+  if (branchId === 'safe' && history && Array.isArray(history.lead_performance) && history.lead_performance[0]) {
+    var hLead = history.lead_performance[0].lead || [];
+    lead = hLead.map(function(n){ return members.find(function(m){ return m.name === n; }); }).filter(Boolean);
+    if (lead.length === 2) data = 'phase4c';
+  }
+  if (!lead || lead.length !== 2) {
+    if (branchId === 'aggressive') {
+      lead = _cs4dPickPair(members, function(pair){ return _cs4dOffenseScore(pair[0]) + _cs4dOffenseScore(pair[1]); });
+    } else if (branchId === 'counter') {
+      var likelyOpp = oppMembers.slice(0, 2);
+      lead = _cs4dPickPair(members, function(pair){ return _cs4dTypeCounterScore(pair[0], likelyOpp) + _cs4dTypeCounterScore(pair[1], likelyOpp); });
+    } else if (branchId === 'defensive') {
+      lead = _cs4dPickPair(members, function(pair){ return _cs4dBulkScore(pair[0]) + _cs4dBulkScore(pair[1]); });
+    } else {
+      lead = _cs4dPickPair(members, function(pair){ return _cs4dSpeedScore(pair[0]) + _cs4dBulkScore(pair[1]); });
+    }
+  }
+  var fillScore = branchId === 'aggressive' ? _cs4dOffenseScore :
+    branchId === 'defensive' ? _cs4dBulkScore :
+    branchId === 'counter' ? function(m){ return _cs4dTypeCounterScore(m, oppMembers.slice(0, 2)); } :
+    _cs4dSpeedScore;
+  return {
+    id: branchId,
+    lead: lead.map(function(m){ return m.name; }),
+    bring: _cs4dBringForLead(members, lead, fillScore, bringCount),
+    data: data
+  };
+}
+
+function classifyLine(line) {
+  var names = Array.isArray(line) ? line : (line && (line.lead || line.members)) || [];
+  var members = names.map(function(n){
+    if (typeof n === 'object') return n;
+    if (typeof TEAMS === 'undefined') return null;
+    for (var k in TEAMS) {
+      var found = (TEAMS[k].members || []).find(function(m){ return m.name === n; });
+      if (found) return found;
+    }
+    return null;
+  }).filter(Boolean);
+  var moves = members.map(function(m){ return (m.moves || []).join(','); }).join(',');
+  var abilities = members.map(function(m){ return m.ability || ''; }).join(',');
+  if (/Tailwind|Icy Wind|Thunder Wave|Electroweb/i.test(moves)) return 'SPEED_CONTROL';
+  if (/Trick Room/i.test(moves)) return 'TRICK_ROOM';
+  if (/Drought|Drizzle|Sand Stream|Snow Warning|Sunny Day|Rain Dance|Sandstorm|Snowscape/i.test(moves + ',' + abilities)) return 'WEATHER_SETTER';
+  if (/Fake Out|Parting Shot|U-turn|Volt Switch|Flip Turn|Follow Me|Rage Powder/i.test(moves)) return 'UTILITY_PIVOT';
+  return 'ATTACKER_CORE';
+}
+
+function classifyThreatBranch(branch) {
+  var wr = branch && typeof branch.win_rate === 'number' ? branch.win_rate : 0;
+  var n = branch && branch.n || 0;
+  var cs = branch && branch.consistency_score || {};
+  var variance = typeof cs.variance === 'number' ? cs.variance : 1;
+  var rngDep = typeof cs.rng_dependency === 'number' ? cs.rng_dependency : 0;
+  var z = n > 0 ? Math.abs((wr - 0.5) / Math.sqrt(0.25 / n)) : 0;
+  if (wr >= 0.65 && n >= 200 && z >= 1.96 && variance <= 0.20) return 'strong';
+  if (wr >= 0.55 && variance <= 0.30) return 'stable';
+  if (wr >= 0.50 || variance > 0.30 || rngDep > 0.60) return 'volatile';
+  return 'losing';
+}
+
+function _cs4dConsistency(logs) {
+  var turns = logs.map(function(g){ return g.turns || 0; });
+  var n = turns.length || 1;
+  var mean = turns.reduce(function(a,b){ return a + b; }, 0) / n || 1;
+  var variance = turns.reduce(function(a,b){ return a + Math.pow(b - mean, 2); }, 0) / n;
+  var cv = Math.min(1, Math.sqrt(variance) / mean);
+  var rngHits = logs.filter(function(g){
+    var text = Array.isArray(g.log) ? g.log.join(' ') : '';
+    return /critical|missed|flinch|paralysed|frozen|thaw|burned|poisoned/i.test(text);
+  }).length;
+  return {
+    rng_dependency: logs.length ? Math.round((rngHits / logs.length) * 100) / 100 : 0,
+    variance: Math.round(cv * 100) / 100
+  };
+}
+
+function _cs4dCompareBranches(a, b) {
+  var rank = { strong: 4, stable: 3, volatile: 2, losing: 1 };
+  var ar = rank[a.classification] || 0;
+  var br = rank[b.classification] || 0;
+  if (ar !== br) return br - ar;
+  if (a.low_sample !== b.low_sample) return a.low_sample ? 1 : -1;
+  if (a.win_rate !== b.win_rate) return b.win_rate - a.win_rate;
+  var av = a.consistency_score ? a.consistency_score.variance : 1;
+  var bv = b.consistency_score ? b.consistency_score.variance : 1;
+  if (av !== bv) return av - bv;
+  return String(a.id).localeCompare(String(b.id));
+}
+
+function solveThreatResponse(teamKey, oppKey, opts) {
+  opts = opts || {};
+  var branches = opts.branches || CS_PHASE4D_BRANCHES;
+  var simsPerBranch = Math.max(1, opts.simsPerBranch || 30);
+  var cacheKey = [teamKey, oppKey, simsPerBranch, opts.rngSeed || '', (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles')].join('|');
+  if (!opts.noCache && CS_PHASE4D_CACHE[cacheKey]) return CS_PHASE4D_CACHE[cacheKey];
+  if (typeof TEAMS === 'undefined' || !TEAMS[teamKey] || !TEAMS[oppKey] || typeof simulateBattle !== 'function') return null;
+
+  var start = Date.now();
+  var budget = opts.budgetMsTotal || 30000;
+  var out = [];
+  branches.forEach(function(branchId){
+    var branch = _cs4dResolveBranch(teamKey, oppKey, branchId);
+    var w = 0, l = 0, d = 0, logs = [];
+    for (var i = 0; i < simsPerBranch; i++) {
+      if (Date.now() - start > budget && i > 0) break;
+      var battle = simulateBattle(TEAMS[teamKey], TEAMS[oppKey], {
+        format: (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles'),
+        seed: _cs4dHashSeed(opts.rngSeed, branchId, i),
+        playerBring: branch.bring,
+        playerLeads: branch.lead
+      });
+      if (battle.result === 'win') w++;
+      else if (battle.result === 'loss') l++;
+      else d++;
+      if (logs.length < 20) logs.push(battle);
+    }
+    var n = w + l + d;
+    var wr = n ? w / n : 0;
+    branch.n = n;
+    branch.w = w;
+    branch.l = l;
+    branch.d = d;
+    branch.win_rate = Math.round(wr * 1000) / 1000;
+    branch.consistency_score = _cs4dConsistency(logs);
+    branch.classification = classifyThreatBranch(branch);
+    branch.line_label = classifyLine(branch.lead);
+    branch.low_sample = n < 30;
+    branch.confidence = (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(n, wr) : { tier: n < 20 ? 'low' : 'med', reason: 'n=' + n };
+    out.push(branch);
+  });
+
+  var eligible = out.filter(function(b){ return !b.low_sample; });
+  var sorted = (eligible.length ? eligible : out.slice()).sort(_cs4dCompareBranches);
+  var best = sorted[0] ? sorted[0].id : null;
+  var result = {
+    teamKey: teamKey,
+    oppKey: oppKey,
+    population: 'ai_vs_ai_greedy',
+    branches: out,
+    best_candidate: best,
+    recommended: best,
+    alts: out.filter(function(b){ return b.id !== best; }).slice(0, 3),
+    confidence: sorted[0] ? sorted[0].win_rate : 0,
+    generatedAt: Date.now()
+  };
+  if (!opts.noCache) CS_PHASE4D_CACHE[cacheKey] = result;
+  return result;
+}
+
+function queueThreatResponseSolve(fn) {
+  if (typeof requestIdleCallback === 'function') return requestIdleCallback(fn);
+  return setTimeout(fn, 0);
+}
+
+function invalidateThreatResponseCache() {
+  CS_PHASE4D_CACHE = {};
+}
+
+function renderThreatResponseCard(result) {
+  if (!result || !Array.isArray(result.branches) || !result.branches.length) {
+    return '<section class="cs-section cs-phase4d-block"><h3 class="cs-h3">Threat Response</h3><p class="cs-no-data">Run sims to generate threat-response candidates.</p></section>';
+  }
+  var sorted = result.branches.slice().sort(_cs4dCompareBranches);
+  var best = sorted[0];
+  function pct(v) { return Math.round((v || 0) * 100) + '%'; }
+  function card(b, cls) {
+    var conf = b.confidence && b.confidence.tier ? b.confidence.tier : 'low';
+    return '<div class="cs-line-card ' + cls + '">' +
+      '<div class="cs-line-head"><strong>' + _csEsc(b.id) + '</strong> ' + _csChip(b.line_label, {kind:'playstyle'}) + ' ' + _csChip(b.classification, {kind: b.classification}) + '</div>' +
+      '<div><strong>Lead:</strong> ' + _csEsc((b.lead || []).join(' + ')) + '</div>' +
+      '<div><strong>Bring:</strong> ' + _csEsc((b.bring || []).join(', ')) + '</div>' +
+      '<div class="cs-line-meta">' + pct(b.win_rate) + ' over ' + b.n + ' sims &middot; confidence ' + _csEsc(conf) + ' &middot; ' + _csEsc(b.data) + '</div>' +
+      '</div>';
+  }
+  var html = '<section class="cs-section cs-phase4d-block"><h3 class="cs-h3">Threat Response <span class="cs-source cs-source-simulation_data"><span class="cs-source-label">sim data</span></span></h3>';
+  html += '<p class="cs-explain">Best candidate is measured against greedy AI simulation, not a directive.</p>';
+  html += card(best, 'cs-line-recommended');
+  html += '<details class="cs-line-alt-wrap"><summary>Alternatives</summary>';
+  sorted.filter(function(b){ return b.id !== best.id; }).forEach(function(b){ html += card(b, 'cs-line-alt'); });
+  html += '</details></section>';
+  return html;
+}
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.phase4d.solveThreatResponse = solveThreatResponse;
+  ChampionsSim.phase4d.classifyLine = classifyLine;
+  ChampionsSim.phase4d.classifyThreatBranch = classifyThreatBranch;
+  ChampionsSim.phase4d.queueThreatResponseSolve = queueThreatResponseSolve;
+  ChampionsSim.phase4d.invalidateThreatResponseCache = invalidateThreatResponseCache;
+  ChampionsSim.phase4d.renderThreatResponseCard = renderThreatResponseCard;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('solveThreatResponse', solveThreatResponse);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('classifyLine', classifyLine);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('classifyThreatBranch', classifyThreatBranch);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('queueThreatResponseSolve', queueThreatResponseSolve);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('invalidateThreatResponseCache', invalidateThreatResponseCache);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderThreatResponseCard', renderThreatResponseCard);
 
 // Render the Record bar: overall W-L pill + per-archetype chips. Shown right
 // under the adaptive banner on the Strategy tab. No draws surfaced (per user:
