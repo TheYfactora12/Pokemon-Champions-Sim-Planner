@@ -65,6 +65,8 @@ data    = read('data.js')
 logger  = read('logger.js')
 engine  = read('engine.js')
 ui      = read('ui.js')
+legality = read('legality.js')
+strategy = read('strategy-injectable.js')
 storage = read('storage_adapter.js')
 supabase = read('supabase_adapter.js')
 supabase_umd = fetch_supabase_umd()
@@ -75,6 +77,8 @@ html = html.replace('<script src="engine.js"></script>', '')
 html = html.replace('<script src="ui.js"></script>', '')
 html = html.replace('<script src="storage_adapter.js"></script>', '')
 html = html.replace('<script src="supabase_adapter.js"></script>', '')
+html = html.replace('<script src="legality.js"></script>', '')
+html = html.replace('<script src="strategy-injectable.js"></script>', '')
 html = html.replace('<script src="local-credentials.js"></script>', '')
 html = html.replace('<link rel="stylesheet" href="style.css"/>', '')
 html = re.sub(r'<script>\nif \(.serviceWorker.\).*?</script>', '', html, flags=re.DOTALL)
@@ -108,9 +112,11 @@ inline_js = (
     + sanitize_inline_js(data) + '\n\n'
     + sanitize_inline_js(logger) + '\n\n'
     + sanitize_inline_js(engine) + '\n\n'
-    + sanitize_inline_js(ui) + '\n\n'
     + sanitize_inline_js(storage) + '\n\n'
-    + sanitize_inline_js(supabase)
+    + sanitize_inline_js(supabase) + '\n\n'
+    + sanitize_inline_js(ui) + '\n\n'
+    + sanitize_inline_js(legality) + '\n\n'
+    + sanitize_inline_js(strategy)
     + '\n</script>\n</body>'
 )
 html = html.replace('</body>', inline_js)
