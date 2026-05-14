@@ -1921,6 +1921,74 @@ function addReplays(logs, oppKey) {
   renderReplays();
 }
 
+function csReplaySparkline(turnLog) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var scores = rows.map(function(t) {
+    return t && t.post && typeof t.post.position_score === 'number' ? t.post.position_score : null;
+  }).filter(function(v) { return v != null; });
+  if (!scores.length) scores = [0.5];
+  var points = scores.map(function(v, i) {
+    var x = scores.length === 1 ? 50 : Math.round((i / (scores.length - 1)) * 100);
+    var y = Math.round((1 - Math.max(0, Math.min(1, v))) * 30 + 2);
+    return x + ',' + y;
+  }).join(' ');
+  return '<svg class="replay-sparkline" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true">' +
+    '<polyline points="' + points + '" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>' +
+    '</svg>';
+}
+
+function csRenderHpBars(turn) {
+  var hp = (turn && turn.post && turn.post.hp_pct) || {};
+  var names = Object.keys(hp).slice(0, 8);
+  if (!names.length) return '';
+  return '<div class="replay-hp-bars">' + names.map(function(name) {
+    var pct = Math.max(0, Math.min(1, Number(hp[name]) || 0));
+    return '<span class="replay-hp-chip" title="' + _escapeHtml(name) + ' ' + Math.round(pct * 100) + '%">' +
+      '<span class="replay-hp-fill" style="width:' + Math.round(pct * 100) + '%"></span>' +
+      '<span class="replay-hp-label">' + _escapeHtml(name) + '</span>' +
+    '</span>';
+  }).join('') + '</div>';
+}
+
+function csRenderTurnLogRows(turnLog) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  if (!rows.length) return '<div class="replay-turn-empty">No structured turn log for this replay.</div>';
+  return '<div class="replay-turn-log">' + rows.map(function(t) {
+    var score = t && t.post && typeof t.post.position_score === 'number' ? t.post.position_score : (t.positionScore || 0.5);
+    var delta = t && t.delta && typeof t.delta.position_score === 'number' ? t.delta.position_score : 0;
+    var actions = [];
+    if (t && t.actions) {
+      actions = (t.actions.player || []).concat(t.actions.opponent || []).map(function(a) {
+        return [a.actor, a.move, a.target ? '-> ' + a.target : ''].filter(Boolean).join(' ');
+      });
+    }
+    return '<div class="replay-turn-row' + (t && t.swingTurn ? ' swing' : '') + '">' +
+      '<div class="replay-turn-main"><strong>T' + _escapeHtml(t && t.turn) + '</strong><span>' + _escapeHtml(actions.join(' | ') || t.action || '-') + '</span></div>' +
+      '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
+      csRenderHpBars(t) +
+    '</div>';
+  }).join('') + '</div>';
+}
+
+function downloadReplayTurnLog(replay) {
+  if (!replay || !Array.isArray(replay.turnLog)) return;
+  var payload = {
+    seed: replay.seed || null,
+    result: replay.result || null,
+    winCondition: replay.winCondition || null,
+    turning_point: replay.turning_point || null,
+    position_path: replay.position_path || [],
+    turnLog: replay.turnLog
+  };
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'champions-turn-log-' + (replay.seed || Date.now()) + '.json';
+  a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 0);
+}
+
 function renderReplays() {
   const el = document.getElementById('replay-list');
   if (!el) return;
@@ -1942,6 +2010,8 @@ function renderReplays() {
     const trSet=(r.log||[]).some(l=>l.includes('Trick Room'));
     const trBroken=(r.log||[]).some(l=>l.includes('NORMAL'));
     const tw=(r.log||[]).some(l=>l.includes('Tailwind'));
+    const hasTurnLog = Array.isArray(r.turnLog) && r.turnLog.length > 0;
+    const turning = r.turning_point ? 'Swing T' + r.turning_point.turn : 'No swing';
     const card=document.createElement('div');
     card.className='replay-card';
     card.innerHTML=`
@@ -1956,10 +2026,14 @@ function renderReplays() {
         ${trBroken?'<span class="rchip tr">TR BROKEN</span>':''}
         ${tw?'<span class="rchip tw">TAILWIND</span>':''}
         <span class="rchip">${r.turns} turns</span>
+        ${hasTurnLog?`<span class="rchip">${turning}</span>`:''}
       </div>
       <div class="replay-expanded">
+        ${hasTurnLog ? `<div class="replay-v2-tools">${csReplaySparkline(r.turnLog)}<button class="btn-secondary replay-json-btn" type="button">Download JSON</button></div>${csRenderTurnLogRows(r.turnLog)}` : ''}
         <div class="battle-log">${(r.log||[]).join('<br>')}</div>
       </div>`;
+    const dlBtn = card.querySelector('.replay-json-btn');
+    if (dlBtn) dlBtn.addEventListener('click', (ev)=>{ ev.stopPropagation(); downloadReplayTurnLog(r); });
     card.addEventListener('click', ()=>card.classList.toggle('open'));
     el.appendChild(card);
   }
@@ -2321,6 +2395,22 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
 // ============================================================
 var _M4_VALID_BO = [1, 3, 5, 10];
 
+function _stripTurnLogForPersistence(logRow) {
+  if (!logRow || typeof logRow !== 'object') return logRow;
+  return {
+    result: logRow.result || null,
+    turns: logRow.turns || 0,
+    trTurns: logRow.trTurns || 0,
+    tr_turns: logRow.tr_turns || logRow.trTurns || 0,
+    winCondition: logRow.winCondition || null,
+    win_condition: logRow.win_condition || logRow.winCondition || null,
+    seed: logRow.seed || null,
+    log: Array.isArray(logRow.log) ? logRow.log.slice(0, 200) : (logRow.log || []),
+    position_path: Array.isArray(logRow.position_path) ? logRow.position_path.slice(0, 40) : [],
+    turning_point: logRow.turning_point || null
+  };
+}
+
 function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   if (_M4_VALID_BO.indexOf(bo) === -1) {
     throw new Error('[M4] _buildAnalysisPayload: invalid bo=' + bo + ' — must be one of 1,3,5,10');
@@ -2367,13 +2457,17 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
 
   var logs = [];
   if (res && res.allLogs && Array.isArray(res.allLogs)) {
-    logs = res.allLogs.slice(0, 50);
+    logs = res.allLogs.slice(0, 50).map(_stripTurnLogForPersistence);
   }
   if (res && Array.isArray(res.logs)) {
-    logs = res.logs.slice(0, 50);
+    logs = res.logs.slice(0, 50).map(_stripTurnLogForPersistence);
   }
 
   var analysisJson = (res && res.analysis_json) || {};
+  if (res && res.turning_point && !analysisJson.turning_point) analysisJson.turning_point = res.turning_point;
+  if (res && Array.isArray(res.position_path) && !analysisJson.position_path) {
+    analysisJson.position_path = res.position_path.slice(0, 40);
+  }
   if (typeof generatePilotGuide === 'function' && res) {
     try { analysisJson.pilot_guide = generatePilotGuide(oppKey, res) || null; } catch (_) {}
   }

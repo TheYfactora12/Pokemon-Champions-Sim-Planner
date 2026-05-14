@@ -1,0 +1,180 @@
+// Phase 5 (Refs PHASE5_TURN_LOG_SPEC_DRAFT.md) - turnLog, positionScore, Replay Log v2.
+
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
+
+const ROOT = path.resolve(__dirname, '..');
+
+function stubEl() {
+  return {
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    appendChild: () => {},
+    setAttribute: () => {},
+    getAttribute: () => null,
+    classList: { add: () => {}, remove: () => {}, toggle: () => {}, contains: () => false },
+    style: {},
+    innerHTML: '',
+    textContent: '',
+    value: 'mega_altaria',
+    options: [],
+    children: [],
+    querySelector: () => null,
+    querySelectorAll: () => [],
+    click: () => {},
+    focus: () => {},
+    blur: () => {}
+  };
+}
+
+const replayListEl = stubEl();
+const created = [];
+const ctx = {
+  console, require, module: {}, exports: {}, Math, Object, Array, Set, JSON,
+  Promise, setTimeout, clearTimeout, Date, String, Number, Boolean, Map, Error, RegExp,
+  Symbol, parseFloat, parseInt, isFinite,
+  window: {},
+  Blob: function(parts, opts) { this.parts = parts; this.opts = opts; },
+  URL: { createObjectURL: () => 'blob:test', revokeObjectURL: () => {} },
+  document: {
+    getElementById: (id) => id === 'replay-list' ? replayListEl : stubEl(),
+    querySelector: () => stubEl(),
+    querySelectorAll: () => [],
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    body: stubEl(),
+    documentElement: stubEl(),
+    head: stubEl(),
+    createElement: () => {
+      const el = stubEl();
+      created.push(el);
+      return el;
+    }
+  },
+  localStorage: {
+    _s: {},
+    getItem(k) { return this._s[k] || null; },
+    setItem(k, v) { this._s[k] = String(v); },
+    removeItem(k) { delete this._s[k]; }
+  }
+};
+ctx.window.matchMedia = () => ({ matches: false });
+ctx.matchMedia = () => ({ matches: false });
+ctx.addEventListener = () => {};
+ctx.removeEventListener = () => {};
+vm.createContext(ctx);
+
+function load(file) {
+  vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+}
+
+load('data.js');
+try { load('legality.js'); } catch (_) {}
+load('engine.js');
+try { load('strategy-injectable.js'); } catch (_) {}
+load('ui.js');
+
+vm.runInContext([
+  'this.TEAMS = TEAMS;',
+  'this.simulateBattle = simulateBattle;',
+  'this.positionScore = positionScore;',
+  'this.winProbabilityDelta = winProbabilityDelta;',
+  'this.csReplaySparkline = csReplaySparkline;',
+  'this.csRenderTurnLogRows = csRenderTurnLogRows;',
+  'this.downloadReplayTurnLog = downloadReplayTurnLog;'
+].join(' '), ctx);
+
+let pass = 0, fail = 0;
+function T(name, fn) {
+  try { fn(); console.log('  PASS', name); pass++; }
+  catch (e) { console.log('  FAIL', name, '-', e.message); fail++; }
+}
+function truthy(v, msg) { if (!v) throw new Error(msg || 'expected truthy'); }
+function eq(a, b, msg) { if (a !== b) throw new Error((msg || 'not equal') + ' expected=' + b + ' got=' + a); }
+
+console.log('\n=== Phase 5 turn log tests ===\n');
+
+let battleA;
+T('T5a-1 turnLog is populated after simulateBattle', () => {
+  battleA = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_altaria, {});
+  truthy(Array.isArray(battleA.turnLog), 'turnLog array missing');
+  truthy(battleA.turnLog.length > 0, 'turnLog empty');
+  truthy(battleA.turnLog[0].pre && battleA.turnLog[0].post, 'pre/post state missing');
+  const payload = ctx.ChampionsSim.internal.buildAnalysisPayload('player', 'mega_altaria', 1, {
+    wins: 1, losses: 0, draws: 0, avgTurns: 1, avgTrTurns: 0, allLogs: [battleA]
+  });
+  truthy(!payload.logs[0].turnLog, 'turnLog must not be persisted in save payload logs');
+  truthy(Array.isArray(payload.logs[0].position_path), 'summary position path should persist');
+});
+
+T('T5a-2 turnLog clears on new sim run', () => {
+  const battleB = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_charizard_y, {});
+  truthy(Array.isArray(battleB.turnLog), 'second turnLog missing');
+  truthy(battleB.turnLog !== battleA.turnLog, 'turnLog reused across runs');
+  eq(ctx.window.ChampionsSim.turnLog, battleB.turnLog, 'latest namespace turnLog not refreshed');
+});
+
+T('T5b-1 positionScore returns 0..1', () => {
+  const score = ctx.positionScore({
+    player: { hp_total: 2, alive_count: 2, max_count: 4, active: ['A'], bench: ['B'] },
+    opponent: { hp_total: 2, alive_count: 2, max_count: 4, active: ['C'], bench: ['D'] },
+    speed_control: { player: {}, opponent: {} },
+    status: {}
+  });
+  truthy(score >= 0 && score <= 1, 'score outside range: ' + score);
+});
+
+T('T5b-2 positionScore favors higher player HP', () => {
+  const score = ctx.positionScore({
+    player: { hp_total: 3, alive_count: 2, max_count: 4, active: ['A'], bench: ['B'] },
+    opponent: { hp_total: 1, alive_count: 2, max_count: 4, active: ['C'], bench: ['D'] },
+    speed_control: { player: {}, opponent: {} },
+    status: {}
+  });
+  truthy(score > 0.5, 'expected player-favored score, got ' + score);
+});
+
+T('T5b-3 winProbabilityDelta length is turnLog.length - 1', () => {
+  const deltas = ctx.winProbabilityDelta(battleA.turnLog);
+  eq(deltas.length, Math.max(0, battleA.turnLog.length - 1), 'delta length mismatch');
+});
+
+T('T5b-4 swing turn is flagged on known fixture', () => {
+  const fixture = [
+    { turn: 1, post: { position_score: 0.52 } },
+    { turn: 2, post: { position_score: 0.55 } },
+    { turn: 3, post: { position_score: 0.31 } },
+    { turn: 4, post: { position_score: 0.35 } }
+  ];
+  ctx.winProbabilityDelta(fixture);
+  truthy(fixture[2].swingTurn === true, 'largest swing turn not flagged');
+});
+
+T('T5c-1 Replay Log v2 renders turn rows', () => {
+  const html = ctx.csRenderTurnLogRows(battleA.turnLog);
+  truthy(html.includes('replay-turn-row'), 'turn rows missing');
+});
+
+T('T5c-2 swing turn row is highlighted', () => {
+  const rows = [
+    { turn: 1, post: { position_score: 0.5 }, delta: { position_score: 0 }, actions: { player: [], opponent: [] } },
+    { turn: 2, swingTurn: true, post: { position_score: 0.3 }, delta: { position_score: -0.2 }, actions: { player: [], opponent: [] } }
+  ];
+  truthy(ctx.csRenderTurnLogRows(rows).includes('replay-turn-row swing'), 'swing class missing');
+});
+
+T('T5c-3 JSON download produces valid parseable file', () => {
+  let parsed = null;
+  ctx.Blob = function(parts) { parsed = JSON.parse(parts[0]); };
+  ctx.downloadReplayTurnLog({ seed: 'abc', result: 'win', turnLog: battleA.turnLog, position_path: battleA.position_path });
+  truthy(parsed && Array.isArray(parsed.turnLog), 'download JSON did not parse');
+});
+
+T('T5c-4 Sparkline renders without error on 1-turn game', () => {
+  const html = ctx.csReplaySparkline([{ turn: 1, post: { position_score: 0.5 } }]);
+  truthy(html.includes('polyline'), 'sparkline missing polyline');
+});
+
+console.log(`\nPhase 5 turn log: ${pass} pass, ${fail} fail\n`);
+if (fail) process.exit(1);

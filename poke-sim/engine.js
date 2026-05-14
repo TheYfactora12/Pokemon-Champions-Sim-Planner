@@ -1164,6 +1164,214 @@ function buildTeam(teamDef) {
   return teamDef.members.map(m => new Pokemon(m, style, teamDef.format));
 }
 
+function _clamp01(v) {
+  v = Number(v);
+  if (!isFinite(v)) return 0.5;
+  return Math.max(0, Math.min(1, v));
+}
+
+function _hpPct(mon) {
+  if (!mon || !mon.maxHp) return 0;
+  return _clamp01(mon.hp / mon.maxHp);
+}
+
+function _sideSnapshot(active, bench) {
+  const all = (active || []).concat(bench || []);
+  return {
+    active: (active || []).filter(m => m && m.alive).map(m => m.name),
+    bench: (bench || []).filter(m => m && m.alive).map(m => m.name),
+    alive_count: all.filter(m => m && m.alive).length,
+    hp_total: all.reduce((s, m) => s + (m && m.alive ? _hpPct(m) : 0), 0),
+    max_count: Math.max(1, all.length || 1)
+  };
+}
+
+function _fieldSnapshot(field) {
+  return {
+    weather: field.weather === 'none' ? null : field.weather,
+    weather_turns: field.weatherTurns || 0,
+    terrain: field.terrain === 'none' ? null : field.terrain,
+    terrain_turns: field.terrainTurns || 0,
+    trick_room: field.trickRoom ? (field.trickRoomTurns || 0) : 0
+  };
+}
+
+function _speedControlSnapshot(field) {
+  return {
+    player: {
+      tailwind_turns: field.playerSide.tailwind ? (field.playerSide.tailwindTurns || 0) : 0,
+      screens: {
+        reflect: field.playerSide.reflect ? (field.playerSide.reflectTurns || 0) : 0,
+        light: field.playerSide.lightScreen ? (field.playerSide.lightScreenTurns || 0) : 0,
+        aurora: field.playerSide.auroraVeil ? (field.playerSide.auroraVeilTurns || 0) : 0
+      }
+    },
+    opponent: {
+      tailwind_turns: field.oppSide.tailwind ? (field.oppSide.tailwindTurns || 0) : 0,
+      screens: {
+        reflect: field.oppSide.reflect ? (field.oppSide.reflectTurns || 0) : 0,
+        light: field.oppSide.lightScreen ? (field.oppSide.lightScreenTurns || 0) : 0,
+        aurora: field.oppSide.auroraVeil ? (field.oppSide.auroraVeilTurns || 0) : 0
+      }
+    }
+  };
+}
+
+function _statusSnapshot(mons) {
+  const out = {};
+  for (const m of mons || []) {
+    if (m && m.status) out[m.name] = m.status;
+  }
+  return out;
+}
+
+function _hpPctSnapshot(mons) {
+  const out = {};
+  for (const m of mons || []) {
+    if (m) out[m.name] = Math.round(_hpPct(m) * 1000) / 1000;
+  }
+  return out;
+}
+
+function _speedOrderSnapshot(playerActive, oppActive, field) {
+  return (playerActive || []).concat(oppActive || [])
+    .filter(m => m && m.alive)
+    .sort((a, b) => {
+      const sA = a.getEffSpeed(field);
+      const sB = b.getEffSpeed(field);
+      return field.trickRoom ? sA - sB : sB - sA;
+    })
+    .map(m => m.name);
+}
+
+function _legalOptionsSnapshot(active, enemies) {
+  const liveTargets = (enemies || []).filter(e => e && e.alive);
+  const targetName = liveTargets[0] ? liveTargets[0].name : 'none';
+  const out = {};
+  for (const mon of (active || []).filter(m => m && m.alive)) {
+    out[mon.name] = (mon.moves || []).map(move => move + (liveTargets.length ? ' -> ' + targetName : ''));
+  }
+  return out;
+}
+
+function _buildPositionState(playerActive, playerBench, oppActive, oppBench, field) {
+  const player = _sideSnapshot(playerActive, playerBench);
+  const opponent = _sideSnapshot(oppActive, oppBench);
+  return {
+    player,
+    opponent,
+    field: _fieldSnapshot(field),
+    speed_control: _speedControlSnapshot(field),
+    status: _statusSnapshot((playerActive || []).concat(playerBench || [], oppActive || [], oppBench || []))
+  };
+}
+
+function positionScore(state) {
+  state = state || {};
+  const player = state.player || {};
+  const opponent = state.opponent || {};
+  const maxCount = Math.max(player.max_count || 1, opponent.max_count || 1, 1);
+  const pHp = Number(player.hp_total != null ? player.hp_total : player.total_hp_pct || 0);
+  const oHp = Number(opponent.hp_total != null ? opponent.hp_total : opponent.total_hp_pct || 0);
+  const hpDiffNorm = ((pHp - oHp) / Math.max(1, maxCount)) / 2 + 0.5;
+  const pAlive = Number(player.alive_count != null ? player.alive_count : player.survivors || 0);
+  const oAlive = Number(opponent.alive_count != null ? opponent.alive_count : opponent.survivors || 0);
+  const survivorsDiffNorm = ((pAlive - oAlive) / Math.max(1, maxCount)) + 0.5;
+  const sc = state.speed_control || {};
+  const pSc = sc.player || {};
+  const oSc = sc.opponent || sc.opp || {};
+  const field = state.field || {};
+  let speedEdge = ((pSc.tailwind_turns || 0) - (oSc.tailwind_turns || 0)) / 4;
+  if (field.trick_room) speedEdge += 0.05;
+  speedEdge = Math.max(-0.5, Math.min(0.5, speedEdge));
+  function screenCount(side) {
+    const s = (side && side.screens) || {};
+    return (s.reflect ? 1 : 0) + (s.light ? 1 : 0) + (s.aurora ? 1 : 0);
+  }
+  const screensEdge = Math.max(-0.5, Math.min(0.5, (screenCount(pSc) - screenCount(oSc)) * 0.1));
+  let statusEdge = 0;
+  const status = state.status || {};
+  const pNames = new Set((player.active || []).concat(player.bench || []));
+  const oNames = new Set((opponent.active || []).concat(opponent.bench || []));
+  Object.keys(status).forEach(name => {
+    const bad = status[name] ? 0.05 : 0;
+    if (pNames.has(name)) statusEdge -= bad;
+    if (oNames.has(name)) statusEdge += bad;
+  });
+  const score = 0.5
+    + 0.30 * (hpDiffNorm - 0.5)
+    + 0.20 * (survivorsDiffNorm - 0.5)
+    + 0.15 * speedEdge
+    + 0.05 * screensEdge
+    + 0.10 * Math.max(-0.5, Math.min(0.5, statusEdge));
+  return Math.round(_clamp01(score) * 1000) / 1000;
+}
+
+function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, includeLegal) {
+  const mons = (playerActive || []).concat(playerBench || [], oppActive || [], oppBench || []);
+  const state = _buildPositionState(playerActive, playerBench, oppActive, oppBench, field);
+  return {
+    active: { player: state.player.active, opponent: state.opponent.active },
+    bench: { player: state.player.bench, opponent: state.opponent.bench },
+    hp_pct: _hpPctSnapshot(mons),
+    status: state.status,
+    field: state.field,
+    speed_control: state.speed_control,
+    speed_order: _speedOrderSnapshot(playerActive, oppActive, field),
+    legal_options: includeLegal ? _legalOptionsSnapshot(playerActive, oppActive) : {},
+    position_score: positionScore(state),
+    win_probability: null
+  };
+}
+
+function _actionSummary(actions) {
+  const out = { player: [], opponent: [] };
+  for (const action of actions || []) {
+    const side = action.side === 'opp' ? 'opponent' : 'player';
+    out[side].push({
+      actor: action.attacker ? action.attacker.name : null,
+      kind: 'move',
+      move: action.move || null,
+      target: action.target ? action.target.name : null
+    });
+  }
+  return out;
+}
+
+function _eventsFromLog(lines) {
+  return (lines || []).map(line => {
+    const text = String(line || '');
+    if (text.includes('fainted')) return { type: 'ko', text };
+    if (text.includes('dmg')) return { type: 'damage', text };
+    if (text.includes('Tailwind') || text.includes('Trick Room') || text.includes('weather') || text.includes('terrain')) return { type: 'field', text };
+    if (text.includes('burn') || text.includes('poison') || text.includes('sleep') || text.includes('paralys')) return { type: 'status', text };
+    return { type: 'log', text };
+  });
+}
+
+function winProbabilityDelta(turnLog) {
+  const rows = Array.isArray(turnLog) ? turnLog : [];
+  const deltas = [];
+  let maxAbs = -1;
+  let swingIdx = -1;
+  for (let i = 1; i < rows.length; i++) {
+    const prev = rows[i - 1] && rows[i - 1].post ? rows[i - 1].post.position_score : null;
+    const curr = rows[i] && rows[i].post ? rows[i].post.position_score : null;
+    const delta = (typeof prev === 'number' && typeof curr === 'number') ? Math.round((curr - prev) * 1000) / 1000 : 0;
+    deltas.push({ turn: rows[i].turn, delta });
+    if (Math.abs(delta) > maxAbs) {
+      maxAbs = Math.abs(delta);
+      swingIdx = i;
+    }
+  }
+  rows.forEach(r => { if (r) delete r.swingTurn; });
+  if (swingIdx >= 0 && rows[swingIdx]) {
+    rows[swingIdx].swingTurn = true;
+    deltas[swingIdx - 1].swingTurn = true;
+  }
+  return deltas;
+}
+
 // ============================================================
 // SIMULATE BATTLE
 // ============================================================
@@ -1952,6 +2160,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   const _protectFamily = new Set(['Protect','Detect','Wide Guard','Quick Guard']);
   const _protectStreak = {};     // running count keyed by side:name
   const _protectStreakMax = {};  // observed peak keyed by side:name
+  const turnLog = [];
   const _recordAction = function(action) {
     try {
       if (!action || !action.attacker || !action.move) return;
@@ -1990,6 +2199,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   while (turn < MAX_TURNS) {
     turn++;
     log.push(`--- Turn ${turn} ---`);
+    const _turnLogStart = log.length;
 
     // Clear per-turn flags
     for (const m of [...playerActive, ...oppActive]) {
@@ -2050,6 +2260,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       _recordAction(_act);
       actions.push(_act);
     }
+
+    const _turnEntry = {
+      turn: turn,
+      playerHP: playerPokemon.map(m => Math.round(_hpPct(m) * 1000) / 1000),
+      oppHP: oppPokemon.map(m => Math.round(_hpPct(m) * 1000) / 1000),
+      activePair: playerActive.concat(oppActive).filter(Boolean).map(m => m.name),
+      action: actions.map(a => (a.attacker ? a.attacker.name : '?') + ':' + (a.move || '?')).join(' | '),
+      positionScore: 0,
+      pre: _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, true),
+      actions: _actionSummary(actions),
+      events: [],
+      post: null,
+      delta: { position_score: 0, win_probability: null, primary_cause: 'none', explanation: '' }
+    };
+    _turnEntry.positionScore = _turnEntry.pre.position_score;
 
     // Sort by priority → then speed (Trick Room inverts)
     actions.sort((a, b) => {
@@ -2233,8 +2458,30 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     field.clockOpp    -= DECISION_TIME_MS;
     if (field.clockPlayer <= 0 || field.clockOpp <= 0) {
       log.push(`[TIMER] Clock expired at turn ${turn}. Resolving via tiebreaker.`);
+      _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
+      _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false);
+      _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
+      _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
+      turnLog.push(_turnEntry);
       break;
     }
+    _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
+    _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false);
+    _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
+    _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
+    turnLog.push(_turnEntry);
+  }
+
+  const positionDeltas = winProbabilityDelta(turnLog);
+  const swingTurn = turnLog.find(t => t && t.swingTurn) || null;
+  const positionPath = [];
+  if (turnLog[0] && turnLog[0].pre) positionPath.push(turnLog[0].pre.position_score);
+  for (const t of turnLog) if (t && t.post) positionPath.push(t.post.position_score);
+  if (typeof window !== 'undefined') {
+    window.ChampionsSim = window.ChampionsSim || {};
+    window.ChampionsSim.turnLog = turnLog;
+    window.ChampionsSim.positionScore = positionScore;
+    window.ChampionsSim.winProbabilityDelta = winProbabilityDelta;
   }
 
   // ============================================================
@@ -2297,6 +2544,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     timerExpired, clockPlayer: field.clockPlayer, clockOpp: field.clockOpp,
     pHpSum, oHpSum,
     log, winCondition, seed,
+    turnLog: turnLog,
+    position_path: positionPath,
+    position_deltas: positionDeltas,
+    turning_point: swingTurn ? {
+      turn: swingTurn.turn,
+      direction: swingTurn.delta && swingTurn.delta.position_score >= 0 ? 'player' : 'opponent',
+      cause: swingTurn.delta ? swingTurn.delta.primary_cause : 'unknown'
+    } : null,
     playerSurvivors: pSurvive, oppSurvivors: oSurvive,
     // T9j.10 (Refs #16) — structured lead + bring info so UI never parses log strings.
     //   leads:  active battlers at turn 1 (doubles: 2, singles: 1)
@@ -2644,4 +2899,11 @@ function runMegaTriggerSweep(teamA, teamB, bo, opts) {
     config:  { maxTurn: MAX_TURN, coarseN: COARSE_N, refineN: REFINE_N },
     results: results
   };
+}
+
+if (typeof window !== 'undefined') {
+  window.ChampionsSim = window.ChampionsSim || {};
+  window.ChampionsSim.turnLog = window.ChampionsSim.turnLog || [];
+  window.ChampionsSim.positionScore = positionScore;
+  window.ChampionsSim.winProbabilityDelta = winProbabilityDelta;
 }
