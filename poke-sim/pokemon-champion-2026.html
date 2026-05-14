@@ -1685,7 +1685,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.12-phase5.1</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.13-logger.1</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">April 2026 Meta · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -2099,13 +2099,15 @@ table{border-collapse:collapse;width:100%}
 <!-- Script load order (MUST maintain this sequence):
   1. supabase-js CDN     — loaded in <head> synchronously (see above)
   2. data.js             — TEAMS, BASE_STATS, POKEMON_TYPES_DB
-  3. engine.js           — simulateBattle, runBoSeries internals
-  4. storage_adapter.js  — localStorage wrapper (Storage.*)
-  5. supabase_adapter.js — SupabaseAdapter.* (needs supabase-js + Storage)
-  6. ui.js               — all UI logic (needs everything above)
-  7. legality.js         — VGC legality checker
-  8. strategy-injectable.js — injectable coaching layer
+  3. logger.js           — structured logger on window.ChampionsSim.logger
+  4. engine.js           — simulateBattle, runBoSeries internals
+  5. storage_adapter.js  — localStorage wrapper (Storage.*)
+  6. supabase_adapter.js — SupabaseAdapter.* (needs supabase-js + Storage)
+  7. ui.js               — all UI logic (needs everything above)
+  8. legality.js         — VGC legality checker
+  9. strategy-injectable.js — injectable coaching layer
 -->
+
 
 
 
@@ -2119,7 +2121,7 @@ table{border-collapse:collapse;width:100%}
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.warn('SW registration failed:', err);
+      window.ChampionsSim.logger.warn('ui', 'SW registration failed', err);
     });
   });
 }
@@ -6290,12 +6292,14 @@ const MOVE_TARGETS = {
 };
 
 // Helpers (T9j.2, Issue #33)
+function dataLogWarn(message, fields) {
+  const logger = (typeof window !== 'undefined' && window.ChampionsSim && window.ChampionsSim.logger) || null;
+  if (logger) logger.warn('data', message, fields);
+}
 function getMoveTarget(moveName) {
   const t = MOVE_TARGETS[moveName];
   if (!t) {
-    if (typeof console !== 'undefined') {
-      console.warn(`[MOVE_TARGETS] unknown move "${moveName}", defaulting to 'normal'`);
-    }
+    dataLogWarn('Unknown move target; defaulting to normal', { move: moveName });
     return 'normal';
   }
   return t;
@@ -6529,6 +6533,53 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports.CHAMPIONS_UPDATED_ABILITIES = CHAMPIONS_UPDATED_ABILITIES;
   module.exports.CHAMPIONS_BASE_ABILITIES = CHAMPIONS_BASE_ABILITIES;
 }
+
+
+// Structured logger mounted on window.ChampionsSim.logger.
+(function(root) {
+  var LEVELS = { debug: 10, info: 20, warn: 30, error: 40, silent: 99 };
+  var state = { level: 'warn', records: [] };
+  function normalize(fields) {
+    if (!fields) return {};
+    if (fields instanceof Error) return { error: { name: fields.name, message: fields.message, stack: fields.stack } };
+    if (typeof fields === 'object') return fields;
+    return { value: fields };
+  }
+  function emit(level, namespace, message, fields) {
+    var rec = {
+      ts: new Date().toISOString(),
+      level: level,
+      namespace: namespace || 'app',
+      message: String(message || ''),
+      fields: normalize(fields)
+    };
+    state.records.push(rec);
+    if (state.records.length > 200) state.records.shift();
+    if (LEVELS[level] < LEVELS[state.level]) return rec;
+    var c = root.console;
+    if (c && typeof c[level] === 'function') c[level]('[' + rec.namespace + '] ' + rec.message, rec.fields);
+    return rec;
+  }
+  var logger = {
+    setLevel: function(level) { if (LEVELS[level] != null) state.level = level; },
+    getLevel: function() { return state.level; },
+    records: function() { return state.records.slice(); },
+    debug: function(ns, msg, fields) { return emit('debug', ns, msg, fields); },
+    info: function(ns, msg, fields) { return emit('info', ns, msg, fields); },
+    warn: function(ns, msg, fields) { return emit('warn', ns, msg, fields); },
+    error: function(ns, msg, fields) { return emit('error', ns, msg, fields); },
+    for: function(ns) {
+      return {
+        debug: function(msg, fields) { return emit('debug', ns, msg, fields); },
+        info: function(msg, fields) { return emit('info', ns, msg, fields); },
+        warn: function(msg, fields) { return emit('warn', ns, msg, fields); },
+        error: function(msg, fields) { return emit('error', ns, msg, fields); }
+      };
+    }
+  };
+  root.ChampionsSim = root.ChampionsSim || {};
+  root.ChampionsSim.logger = root.ChampionsSim.logger || logger;
+})(typeof window !== 'undefined' ? window : globalThis);
 
 
 // ============================================================
@@ -7335,7 +7386,7 @@ class Pokemon {
       if (typeof _WARNED_MOVE_CAT === 'undefined') { globalThis._WARNED_MOVE_CAT = new Set(); }
       if (!globalThis._WARNED_MOVE_CAT.has(move)) {
         globalThis._WARNED_MOVE_CAT.add(move);
-        if (typeof console !== 'undefined') console.warn('[MOVE_CATEGORY] missing classification for', move, '- using type fallback');
+        engineLogWarn('Missing move category; using type fallback', { move: move });
       }
     }
 
@@ -7407,7 +7458,7 @@ class Pokemon {
       if (typeof _WARNED_MOVE_BP === 'undefined') { globalThis._WARNED_MOVE_BP = new Set(); }
       if (!globalThis._WARNED_MOVE_BP.has(move)) {
         globalThis._WARNED_MOVE_BP.add(move);
-        if (typeof console !== 'undefined') console.warn('[MOVE_BP] missing base power for', move, '- defaulting to 60');
+        engineLogWarn('Missing move base power; defaulting to 60', { move: move });
       }
     }
     // T9j.8 Dragonize BP multiplier applied after base lookup so spread / screens
@@ -7701,6 +7752,11 @@ function _clamp01(v) {
   v = Number(v);
   if (!isFinite(v)) return 0.5;
   return Math.max(0, Math.min(1, v));
+}
+
+function engineLogWarn(message, fields) {
+  const logger = (typeof window !== 'undefined' && window.ChampionsSim && window.ChampionsSim.logger) || null;
+  if (logger) logger.warn('sim', message, fields);
 }
 
 function _hpPct(mon) {
@@ -9476,6 +9532,8 @@ ChampionsSim.phase4d = ChampionsSim.phase4d || {};
 ChampionsSim.simLog = ChampionsSim.simLog || {};
 ChampionsSim.strategy = ChampionsSim.strategy || {};
 ChampionsSim.tests = ChampionsSim.tests || {};
+ChampionsSim.logger = ChampionsSim.logger || { debug(){}, info(){}, warn(){}, error(){}, for(){ return this; } };
+var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsSim.logger;
 
 function exposeLegacyWindowAlias(name, value) {
   if (typeof window === 'undefined') return;
@@ -9704,7 +9762,7 @@ function loadCustomTeamsFromStorage() {
     }
     return count;
   } catch (e) {
-    console.warn('[T9f] Failed to load custom teams:', e);
+    UILog.warn('Failed to load custom teams', e);
     return 0;
   }
 }
@@ -9720,7 +9778,7 @@ function saveCustomTeamsToStorage() {
     if (typeof Storage !== 'undefined') Storage.set('teams:custom', out);
     return Object.keys(out.teams).length;
   } catch (e) {
-    console.warn('[T9f] Failed to save custom teams (quota?):', e);
+    UILog.warn('Failed to save custom teams', e);
     return -1;
   }
 }
@@ -9749,7 +9807,7 @@ function loadPreloadedOverridesFromStorage() {
     }
     return count;
   } catch (e) {
-    console.warn('[T9h] Failed to load preloaded overrides:', e);
+    UILog.warn('Failed to load preloaded overrides', e);
     return 0;
   }
 }
@@ -9766,7 +9824,7 @@ function savePreloadedOverride(key) {
     TEAMS[key]._hasOverride = true;
     return true;
   } catch (e) {
-    console.warn('[T9h] Failed to save preloaded override:', e);
+    UILog.warn('Failed to save preloaded override', e);
     return false;
   }
 }
@@ -9779,7 +9837,7 @@ function clearPreloadedOverride(key) {
     if (typeof Storage !== 'undefined') Storage.set('overrides:preloaded', store);
     return true;
   } catch (e) {
-    console.warn('[T9h] Failed to clear preloaded override:', e);
+    UILog.warn('Failed to clear preloaded override', e);
     return false;
   }
 }
@@ -9820,7 +9878,7 @@ async function deleteCustomTeam(key) {
   var team = TEAMS[key];
   if (!team) return;
   if (team.source !== 'custom') {
-    console.warn('[T9g] Refusing to delete preloaded team:', key);
+    UILog.warn('Refusing to delete preloaded team', { teamKey: key });
     return;
   }
   var ok = await asyncConfirm('Delete team', 'Delete "' + team.name + '"?\n\nThis cannot be undone.', 'Delete');
@@ -10559,7 +10617,7 @@ function _downloadBlob(filename, mime, text) {
     var a = document.createElement('a');
     a.href = url; a.download = filename; document.body.appendChild(a); a.click();
     setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
-  } catch (e) { console.warn('[T9j.11] download failed:', e); alert('Could not download file: ' + e.message); }
+  } catch (e) { UILog.warn('Download failed', e); alert('Could not download file: ' + e.message); }
 }
 
 document.getElementById('bulk-export-json-btn')?.addEventListener('click', function(){
@@ -11506,7 +11564,7 @@ async function loadAnalysisHistory(playerKey) {
     historyRows = await adapter.loadAnalysesForPlayer(playerKey || 'player', 50);
     renderHistorySection();
   } catch (e) {
-    console.warn('[M6] loadAnalysisHistory failed:', e && e.message);
+    UILog.warn('loadAnalysisHistory failed', e);
   }
 }
 
@@ -11573,7 +11631,7 @@ async function lazyLoadAnalysisLogs(analysisId, cardEl) {
     }
     cardEl.dataset.loaded = 'true';
   } catch (e) {
-    console.warn('[M6] lazyLoadAnalysisLogs failed:', e && e.message);
+    UILog.warn('lazyLoadAnalysisLogs failed', e);
   }
 }
 
@@ -11792,7 +11850,7 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
           });
         }
       } catch (e) {
-        console.warn('[Phase4a] simlog append in runBoSeries failed:', e && e.message);
+        UILog.warn('simlog append in runBoSeries failed', e);
       }
     }
     if (onProgress) onProgress(i+bSize, numSeries, liveW, liveL);
@@ -11827,9 +11885,9 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
       var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled) {
         Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, opp, bo, res)))
-          .catch(function(e) { console.warn('[M4] run-all saveAnalysis failed:', e && e.message); });
+          .catch(function(e) { UILog.warn('run-all saveAnalysis failed', e); });
       }
-    } catch (_m4e) { console.warn('[M4] run-all payload build failed:', _m4e && _m4e.message); }
+    } catch (_m4e) { UILog.warn('run-all payload build failed', _m4e); }
   }
 }
 
@@ -12005,9 +12063,9 @@ function _upsertTeamToDB(teamId, team, source) {
     };
 
     Promise.resolve(adapter.saveTeam(payload))
-      .catch(function(e) { console.warn('[M5] _upsertTeamToDB failed:', e && e.message); });
+      .catch(function(e) { UILog.warn('_upsertTeamToDB failed', e); });
   } catch (err) {
-    console.warn('[M5] _upsertTeamToDB error:', err && err.message);
+    UILog.warn('_upsertTeamToDB error', err);
   }
 }
 
@@ -12046,7 +12104,7 @@ function setProgress(pct, label, w, l) {
 
 function setSimError(err) {
   var msg = (err && err.message) ? err.message : String(err || 'Unknown simulation error');
-  console.error('[Sim] run failed:', err);
+  UILog.error('Simulation run failed', err);
   var wrap = document.getElementById('progress-wrap');
   var fill = document.getElementById('progress-fill');
   var label = document.getElementById('progress-label');
@@ -12083,7 +12141,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     // Refs #95 - also populate the Pilot Guide tab after a single sim so the
     // tab isn't stuck on its empty-state message. generatePilotGuide is
     // upsert-by-oppKey, so re-running the same matchup replaces its card.
-    try { generatePilotGuide(oppKey, res); } catch (e) { console.warn('[PilotGuide] single-sim populate failed:', e && e.message); }
+    try { generatePilotGuide(oppKey, res); } catch (e) { UILog.warn('single-sim Pilot Guide populate failed', e); }
     // Cache for Run All parity - keeps PDF builder and strategy rebuild in sync.
     try { if (ChampionsSim.state.lastResults) ChampionsSim.state.lastResults[oppKey] = res; } catch(_){}
     // M4: persist single-sim result to Supabase (fire-and-forget)
@@ -12091,9 +12149,9 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
       var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled) {
         Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, oppKey, bo, res)))
-          .catch(function(e) { console.warn('[M4] single-sim saveAnalysis failed:', e && e.message); });
+          .catch(function(e) { UILog.warn('single-sim saveAnalysis failed', e); });
       }
-    } catch (_m4e) { console.warn('[M4] single-sim payload build failed:', _m4e && _m4e.message); }
+    } catch (_m4e) { UILog.warn('single-sim payload build failed', _m4e); }
   } catch (e) {
     setSimError(e);
   } finally {
@@ -12153,9 +12211,9 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
     revealPdfButton();
     // T9j.16 (Refs #65) - auto-save Strategy Report after Run All Matchups completes.
     // Persists to localStorage keyed on teamSignature so any imported team gets continuity.
-    try { if (typeof t9j16AutoSave === 'function') t9j16AutoSave(); } catch(e) { console.warn('[T9j.16] autosave skipped:', e && e.message); }
+    try { if (typeof t9j16AutoSave === 'function') t9j16AutoSave(); } catch(e) { UILog.warn('autosave skipped', e); }
     // Phase 2 (Refs #46 #49) - rebuild Strategy tab now that fresh sim data is available.
-    try { if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild(); } catch(e) { console.warn('[Phase2] strategy rebuild skipped:', e && e.message); }
+    try { if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild(); } catch(e) { UILog.warn('strategy rebuild skipped', e); }
   } catch (e) {
     setSimError(e);
   } finally {
@@ -12238,7 +12296,7 @@ function generatePilotGuide(oppKey, results) {
     const sweep = computeMegaTriggerSweep(playerKey, oppKey, bo, format);
     megaTriggerHtml = renderMegaTriggerCards(sweep);
   } catch (e) {
-    console.warn('[T9j.15] Mega card render skipped:', e && e.message);
+    UILog.warn('Mega card render skipped', e);
   }
   let threatResponseHtml = '';
   try {
@@ -12250,7 +12308,7 @@ function generatePilotGuide(oppKey, results) {
       }));
     }
   } catch (e) {
-    console.warn('[Phase4d] Threat response render skipped:', e && e.message);
+    UILog.warn('Threat response render skipped', e);
   }
 
   const card = document.createElement('div');
@@ -12473,7 +12531,7 @@ function computeMegaTriggerSweep(playerKey, oppKey, bo, format) {
     setCachedMegaSweep(playerKey, oppKey, bo, format, sweep);
     return sweep;
   } catch (e) {
-    console.warn('[T9j.15] Mega sweep failed:', e && e.message);
+    UILog.warn('Mega sweep failed', e);
     return null;
   }
 }
@@ -13107,7 +13165,7 @@ function generatePDFReport() {
           ? buildStrategyReport(playerKey, results, pdfFormat) : null;
         if (!report) return '';
         return _renderT9j16PdfSections(report);
-      } catch(e) { console.warn('[T9j.16] PDF sections skipped:', e && e.message); return ''; }
+      } catch(e) { UILog.warn('PDF sections skipped', e); return ''; }
     })(),
 
     '<div class="pdf-footer">Generated by Poke-e-Sim Champion 2026 — ' + _escapeHtml(date) + '</div>'
@@ -14187,7 +14245,7 @@ function t9j16AutoSave() {
     if (!ChampionsSim.state.lastResults || !Object.keys(ChampionsSim.state.lastResults).length) return;
     var fmt = (typeof currentFormat !== 'undefined') ? currentFormat : 'doubles';
     evolveReport(currentPlayerKey, ChampionsSim.state.lastResults, fmt);
-  } catch(e) { console.warn('[T9j.16] autosave skipped:', e && e.message); }
+  } catch(e) { UILog.warn('autosave skipped', e); }
 }
 
 
@@ -15327,7 +15385,7 @@ function renderStrategyTab(teamKey) {
   }
   // Phase 3: persist freshly-built reports so the next page load paints instantly.
   if (!fromCache) {
-    try { csSaveReport(teamKey, report); } catch(e) { console.warn('[Phase3] save failed:', e && e.message); }
+    try { csSaveReport(teamKey, report); } catch(e) { UILog.warn('strategy report save failed', e); }
   }
   // Stash for tests / inspection
   ChampionsSim.state.lastStrategyReport = report;
@@ -15373,7 +15431,7 @@ function renderStrategyTab(teamKey) {
       var _oppKey = (_oppSel && _oppSel.value && TEAMS[_oppSel.value]) ? _oppSel.value : Object.keys(TEAMS).filter(function(k){ return k !== teamKey; })[0];
       if (_oppKey) html += renderThreatResponseCard(solveThreatResponse(teamKey, _oppKey, { simsPerBranch: 30, rngSeed: 'strategy-tab' }));
     }
-  } catch (e) { console.warn('[Phase4b] banner render failed:', e && e.message); }
+  } catch (e) { UILog.warn('banner render failed', e); }
 
   // Section 1: Team report card
   html += '<section class="cs-section"><h3 class="cs-h3">Team Report Card ' + _csSourceChip(csLabelSim()) + '</h3>';
@@ -15603,7 +15661,7 @@ function _csPersistRead() {
     if (!parsed.reports) parsed.reports = {};
     return parsed;
   } catch (e) {
-    console.warn('[Phase3] persistence read failed:', e && e.message);
+    UILog.warn('persistence read failed', e);
     return { schema_version: CS_PERSIST_SCHEMA, reports: {} };
   }
 }
@@ -15625,9 +15683,9 @@ function _csPersistWrite(store) {
       try {
         if (typeof Storage !== 'undefined') Storage.set(CS_PERSIST_KEY, store);
         return true;
-      } catch (e2) { console.warn('[Phase3] still over quota after purge:', e2 && e2.message); }
+      } catch (e2) { UILog.warn('still over quota after purge', e2); }
     } else {
-      console.warn('[Phase3] persistence write failed:', e && e.message);
+      UILog.warn('persistence write failed', e);
     }
     return false;
   }
@@ -15765,7 +15823,7 @@ function _csSimLogRead() {
     if (!Array.isArray(parsed.entries)) parsed.entries = [];
     return parsed;
   } catch (e) {
-    console.warn('[Phase4a] simlog read failed, resetting:', e && e.message);
+    UILog.warn('simlog read failed; resetting', e);
     return { schema_version: CS_SIMLOG_SCHEMA, entries: [] };
   }
 }
@@ -15781,14 +15839,14 @@ function _csSimLogWrite(store) {
         var cut = Math.floor(store.entries.length * 0.25);
         if (cut > 0) store.entries = store.entries.slice(cut);
         if (typeof Storage !== 'undefined') Storage.set(CS_SIMLOG_KEY, store);
-        console.warn('[Phase4a] simlog: purged oldest 25% after quota error');
+        UILog.warn('simlog purged oldest entries after quota error', { percent: 25 });
         return true;
       } catch (e2) {
-        console.error('[Phase4a] simlog write failed even after purge:', e2 && e2.message);
+        UILog.error('simlog write failed even after purge', e2);
         return false;
       }
     }
-    console.warn('[Phase4a] simlog write failed:', e && e.message);
+    UILog.warn('simlog write failed', e);
     return false;
   }
 }
@@ -15882,7 +15940,7 @@ function csSimLogAppendSeries(opts) {
     try { if (typeof csInvalidateTeamHistory === 'function') csInvalidateTeamHistory(opts.playerKey); } catch (_e) {}
     return ok;
   } catch (e) {
-    console.warn('[Phase4a] simlog append failed:', e && e.message);
+    UILog.warn('simlog append failed', e);
     return false;
   }
 }
@@ -17489,7 +17547,7 @@ function csScheduleStrategyRebuild() {
     try {
       var key = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : null;
       if (key) renderStrategyTab(key);
-    } catch(e) { console.warn('[Phase2] strategy rebuild failed:', e && e.message); }
+    } catch(e) { UILog.warn('strategy rebuild failed', e); }
   }, 500);
 }
 
@@ -17531,21 +17589,21 @@ if (typeof window !== 'undefined') {
         var dbTeams = await _adapter.loadTeamsFromDB();
         if (dbTeams && Object.keys(dbTeams).length && typeof TEAMS !== 'undefined') {
           Object.assign(TEAMS, dbTeams);
-          console.info('[UI] TEAMS patched with ' + Object.keys(dbTeams).length + ' DB teams.');
+          UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length });
           setDbChip('connected', 'Live Supabase connected - loaded ' + Object.keys(dbTeams).length + ' teams from DB');
         } else {
           // null or empty → fall back to bundled TEAMS, surface chip
           setDbChip('offline', 'Supabase returned no teams - using bundled TEAMS');
-          console.info('[UI] DB returned no teams — using bundled TEAMS. [DB offline]');
+          UILog.info('DB returned no teams; using bundled TEAMS');
         }
       } else {
         // Adapter disabled (no creds / __DISABLE_SUPABASE__) → surface chip
         setDbChip('offline', 'Missing local-credentials.js or Supabase anon key - using bundled TEAMS');
-        console.info('[UI] SupabaseAdapter disabled — using bundled TEAMS. [DB offline]');
+        UILog.info('SupabaseAdapter disabled; using bundled TEAMS');
       }
     } catch (_dbErr) {
       setDbChip('offline', 'Supabase load failed: ' + ((_dbErr && _dbErr.message) || 'unknown error'));
-      console.warn('[UI] loadTeamsFromDB threw — using bundled TEAMS. [DB offline]', _dbErr && _dbErr.message);
+      UILog.warn('loadTeamsFromDB threw; using bundled TEAMS', _dbErr);
     }
 
     // Authoritative rebuild AFTER DB merge (or fallback) is settled.
@@ -17802,12 +17860,15 @@ if (typeof window !== 'undefined') {
     ? null
     : (typeof window !== 'undefined' ? window.__SUPABASE_KEY__ : undefined);
   const ENABLED = !!(SUPABASE_URL && SUPABASE_KEY) && !DISABLED;
+  const log = (typeof window !== 'undefined' && window.ChampionsSim && window.ChampionsSim.logger)
+    ? window.ChampionsSim.logger.for('persistence')
+    : { debug(){}, info(){}, warn(){}, error(){} };
 
   // Canonical ruleset_id — must match seed_teams_v2.sql (M2)
   const DEFAULT_RULESET_ID = 'champions_reg_m_doubles_bo3';
 
   if (!ENABLED) {
-    console.info('[SupabaseAdapter] No credentials — running in local-only mode.');
+    log.info('No credentials; running in local-only mode');
   }
 
   // ── Supabase client ───────────────────────────────────────────────────────
@@ -17816,7 +17877,7 @@ if (typeof window !== 'undefined') {
     if (_client) return _client;
     if (!ENABLED) return null;
     if (typeof window.supabase === 'undefined') {
-      console.warn('[SupabaseAdapter] supabase-js not loaded. Check CDN <script> in index.html.');
+      log.warn('supabase-js not loaded');
       return null;
     }
     _client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -17878,10 +17939,10 @@ if (typeof window !== 'undefined') {
           members:     memberMap[t.team_id] || []
         };
       }
-      console.info(`[SupabaseAdapter] Loaded ${Object.keys(result).length} teams from DB.`);
+      log.info('Loaded teams from DB', { count: Object.keys(result).length });
       return result;
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadTeamsFromDB failed — using local data.', err && err.message);
+      log.warn('loadTeamsFromDB failed; using local data', err);
       return null;
     }
   }
@@ -17898,7 +17959,7 @@ if (typeof window !== 'undefined') {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadRulesets failed.', err && err.message);
+      log.warn('loadRulesets failed', err);
       return [];
     }
   }
@@ -17911,15 +17972,15 @@ if (typeof window !== 'undefined') {
     if (!sb) return null;
 
     if (!payload || VALID_BO.indexOf(payload.bo) === -1) {
-      console.warn('[SupabaseAdapter] saveAnalysis rejected — invalid bo:', payload && payload.bo);
+      log.warn('saveAnalysis rejected: invalid bo', { bo: payload && payload.bo });
       return null;
     }
     if (!payload.policy_model || typeof payload.policy_model !== 'string') {
-      console.warn('[SupabaseAdapter] saveAnalysis rejected — policy_model must be non-empty string');
+      log.warn('saveAnalysis rejected: policy_model must be non-empty string');
       return null;
     }
     if (typeof payload.win_rate === 'number' && (payload.win_rate < 0 || payload.win_rate > 1)) {
-      console.warn('[SupabaseAdapter] saveAnalysis rejected — win_rate out of [0,1]:', payload.win_rate);
+      log.warn('saveAnalysis rejected: win_rate out of range', { win_rate: payload.win_rate });
       return null;
     }
 
@@ -17957,7 +18018,7 @@ if (typeof window !== 'undefined') {
           count: wc.count
         }));
         const { error: wcErr } = await sb.from('analysis_win_conditions').insert(wcRows);
-        if (wcErr) console.warn('[SupabaseAdapter] win_conditions insert error:', wcErr.message);
+        if (wcErr) log.warn('win_conditions insert error', wcErr);
       }
 
       if (payload.logs && payload.logs.length) {
@@ -17971,13 +18032,13 @@ if (typeof window !== 'undefined') {
           log:           l.log           || {}
         }));
         const { error: lErr } = await sb.from('analysis_logs').insert(logRows);
-        if (lErr) console.warn('[SupabaseAdapter] logs insert error:', lErr.message);
+        if (lErr) log.warn('logs insert error', lErr);
       }
 
-      console.info(`[SupabaseAdapter] Saved analysis ${analysis_id}`);
+      log.info('Saved analysis', { analysis_id });
       return analysis_id;
     } catch (err) {
-      console.warn('[SupabaseAdapter] saveAnalysis failed — result not persisted.', err && err.message);
+      log.warn('saveAnalysis failed; result not persisted', err);
       return null;
     }
   }
@@ -17996,7 +18057,7 @@ if (typeof window !== 'undefined') {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadRecentAnalyses failed.', err && err.message);
+      log.warn('loadRecentAnalyses failed', err);
       return [];
     }
   }
@@ -18007,7 +18068,7 @@ if (typeof window !== 'undefined') {
     if (!sb) return null;
 
     if (!payload || !payload.team_id || !payload.name) {
-      console.warn('[SupabaseAdapter] saveTeam rejected — team_id and name required');
+      log.warn('saveTeam rejected: team_id and name required');
       return null;
     }
 
@@ -18046,13 +18107,13 @@ if (typeof window !== 'undefined') {
           };
         });
         const { error: mErr } = await sb.from('team_members').insert(memberRows);
-        if (mErr) console.warn('[SupabaseAdapter] team_members insert error:', mErr.message);
+        if (mErr) log.warn('team_members insert error', mErr);
       }
 
-      console.info('[SupabaseAdapter] Saved team ' + payload.team_id);
+      log.info('Saved team', { team_id: payload.team_id });
       return payload.team_id;
     } catch (err) {
-      console.warn('[SupabaseAdapter] saveTeam failed — team not persisted.', err && err.message);
+      log.warn('saveTeam failed; team not persisted', err);
       return null;
     }
   }
@@ -18072,7 +18133,7 @@ if (typeof window !== 'undefined') {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadAnalysesForPlayer failed.', err && err.message);
+      log.warn('loadAnalysesForPlayer failed', err);
       return [];
     }
   }
@@ -18090,7 +18151,7 @@ if (typeof window !== 'undefined') {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadAnalysisLogs failed.', err && err.message);
+      log.warn('loadAnalysisLogs failed', err);
       return [];
     }
   }
@@ -18113,7 +18174,7 @@ if (typeof window !== 'undefined') {
       if (error) throw error;
       return data || null;
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadPriorSnapshot failed.', err && err.message);
+      log.warn('loadPriorSnapshot failed', err);
       return null;
     }
   }

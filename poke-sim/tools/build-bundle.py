@@ -62,6 +62,7 @@ def fetch_supabase_umd():
 html    = read('index.html')
 css     = read('style.css')
 data    = read('data.js')
+logger  = read('logger.js')
 engine  = read('engine.js')
 ui      = read('ui.js')
 storage = read('storage_adapter.js')
@@ -69,6 +70,7 @@ supabase = read('supabase_adapter.js')
 supabase_umd = fetch_supabase_umd()
 
 html = html.replace('<script src="data.js"></script>', '')
+html = html.replace('<script src="logger.js"></script>', '')
 html = html.replace('<script src="engine.js"></script>', '')
 html = html.replace('<script src="ui.js"></script>', '')
 html = html.replace('<script src="storage_adapter.js"></script>', '')
@@ -104,6 +106,7 @@ inline_js = (
     + '\n</script>\n'
     + '<script>\n'
     + sanitize_inline_js(data) + '\n\n'
+    + sanitize_inline_js(logger) + '\n\n'
     + sanitize_inline_js(engine) + '\n\n'
     + sanitize_inline_js(ui) + '\n\n'
     + sanitize_inline_js(storage) + '\n\n'

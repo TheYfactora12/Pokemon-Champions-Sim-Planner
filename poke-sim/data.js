@@ -4151,12 +4151,14 @@ const MOVE_TARGETS = {
 };
 
 // Helpers (T9j.2, Issue #33)
+function dataLogWarn(message, fields) {
+  const logger = (typeof window !== 'undefined' && window.ChampionsSim && window.ChampionsSim.logger) || null;
+  if (logger) logger.warn('data', message, fields);
+}
 function getMoveTarget(moveName) {
   const t = MOVE_TARGETS[moveName];
   if (!t) {
-    if (typeof console !== 'undefined') {
-      console.warn(`[MOVE_TARGETS] unknown move "${moveName}", defaulting to 'normal'`);
-    }
+    dataLogWarn('Unknown move target; defaulting to normal', { move: moveName });
     return 'normal';
   }
   return t;

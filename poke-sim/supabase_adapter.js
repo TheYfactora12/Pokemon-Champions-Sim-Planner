@@ -36,12 +36,15 @@
     ? null
     : (typeof window !== 'undefined' ? window.__SUPABASE_KEY__ : undefined);
   const ENABLED = !!(SUPABASE_URL && SUPABASE_KEY) && !DISABLED;
+  const log = (typeof window !== 'undefined' && window.ChampionsSim && window.ChampionsSim.logger)
+    ? window.ChampionsSim.logger.for('persistence')
+    : { debug(){}, info(){}, warn(){}, error(){} };
 
   // Canonical ruleset_id — must match seed_teams_v2.sql (M2)
   const DEFAULT_RULESET_ID = 'champions_reg_m_doubles_bo3';
 
   if (!ENABLED) {
-    console.info('[SupabaseAdapter] No credentials — running in local-only mode.');
+    log.info('No credentials; running in local-only mode');
   }
 
   // ── Supabase client ───────────────────────────────────────────────────────
@@ -50,7 +53,7 @@
     if (_client) return _client;
     if (!ENABLED) return null;
     if (typeof window.supabase === 'undefined') {
-      console.warn('[SupabaseAdapter] supabase-js not loaded. Check CDN <script> in index.html.');
+      log.warn('supabase-js not loaded');
       return null;
     }
     _client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -112,10 +115,10 @@
           members:     memberMap[t.team_id] || []
         };
       }
-      console.info(`[SupabaseAdapter] Loaded ${Object.keys(result).length} teams from DB.`);
+      log.info('Loaded teams from DB', { count: Object.keys(result).length });
       return result;
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadTeamsFromDB failed — using local data.', err && err.message);
+      log.warn('loadTeamsFromDB failed; using local data', err);
       return null;
     }
   }
@@ -132,7 +135,7 @@
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadRulesets failed.', err && err.message);
+      log.warn('loadRulesets failed', err);
       return [];
     }
   }
@@ -145,15 +148,15 @@
     if (!sb) return null;
 
     if (!payload || VALID_BO.indexOf(payload.bo) === -1) {
-      console.warn('[SupabaseAdapter] saveAnalysis rejected — invalid bo:', payload && payload.bo);
+      log.warn('saveAnalysis rejected: invalid bo', { bo: payload && payload.bo });
       return null;
     }
     if (!payload.policy_model || typeof payload.policy_model !== 'string') {
-      console.warn('[SupabaseAdapter] saveAnalysis rejected — policy_model must be non-empty string');
+      log.warn('saveAnalysis rejected: policy_model must be non-empty string');
       return null;
     }
     if (typeof payload.win_rate === 'number' && (payload.win_rate < 0 || payload.win_rate > 1)) {
-      console.warn('[SupabaseAdapter] saveAnalysis rejected — win_rate out of [0,1]:', payload.win_rate);
+      log.warn('saveAnalysis rejected: win_rate out of range', { win_rate: payload.win_rate });
       return null;
     }
 
@@ -191,7 +194,7 @@
           count: wc.count
         }));
         const { error: wcErr } = await sb.from('analysis_win_conditions').insert(wcRows);
-        if (wcErr) console.warn('[SupabaseAdapter] win_conditions insert error:', wcErr.message);
+        if (wcErr) log.warn('win_conditions insert error', wcErr);
       }
 
       if (payload.logs && payload.logs.length) {
@@ -205,13 +208,13 @@
           log:           l.log           || {}
         }));
         const { error: lErr } = await sb.from('analysis_logs').insert(logRows);
-        if (lErr) console.warn('[SupabaseAdapter] logs insert error:', lErr.message);
+        if (lErr) log.warn('logs insert error', lErr);
       }
 
-      console.info(`[SupabaseAdapter] Saved analysis ${analysis_id}`);
+      log.info('Saved analysis', { analysis_id });
       return analysis_id;
     } catch (err) {
-      console.warn('[SupabaseAdapter] saveAnalysis failed — result not persisted.', err && err.message);
+      log.warn('saveAnalysis failed; result not persisted', err);
       return null;
     }
   }
@@ -230,7 +233,7 @@
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadRecentAnalyses failed.', err && err.message);
+      log.warn('loadRecentAnalyses failed', err);
       return [];
     }
   }
@@ -241,7 +244,7 @@
     if (!sb) return null;
 
     if (!payload || !payload.team_id || !payload.name) {
-      console.warn('[SupabaseAdapter] saveTeam rejected — team_id and name required');
+      log.warn('saveTeam rejected: team_id and name required');
       return null;
     }
 
@@ -280,13 +283,13 @@
           };
         });
         const { error: mErr } = await sb.from('team_members').insert(memberRows);
-        if (mErr) console.warn('[SupabaseAdapter] team_members insert error:', mErr.message);
+        if (mErr) log.warn('team_members insert error', mErr);
       }
 
-      console.info('[SupabaseAdapter] Saved team ' + payload.team_id);
+      log.info('Saved team', { team_id: payload.team_id });
       return payload.team_id;
     } catch (err) {
-      console.warn('[SupabaseAdapter] saveTeam failed — team not persisted.', err && err.message);
+      log.warn('saveTeam failed; team not persisted', err);
       return null;
     }
   }
@@ -306,7 +309,7 @@
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadAnalysesForPlayer failed.', err && err.message);
+      log.warn('loadAnalysesForPlayer failed', err);
       return [];
     }
   }
@@ -324,7 +327,7 @@
       if (error) throw error;
       return data || [];
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadAnalysisLogs failed.', err && err.message);
+      log.warn('loadAnalysisLogs failed', err);
       return [];
     }
   }
@@ -347,7 +350,7 @@
       if (error) throw error;
       return data || null;
     } catch (err) {
-      console.warn('[SupabaseAdapter] loadPriorSnapshot failed.', err && err.message);
+      log.warn('loadPriorSnapshot failed', err);
       return null;
     }
   }
