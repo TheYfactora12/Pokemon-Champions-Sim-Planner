@@ -987,11 +987,11 @@ function renderTeamsGrid() {
     card.innerHTML = `
       <div class="tfcard-header">
         <div>
-          <div class="tfcard-name">${team.name}</div>
-          <div class="tfcard-meta">${team.style?.toUpperCase().replace('_',' ')} · ${(team.description||'').substring(0,55)}…</div>
+          <div class="tfcard-name">${_escapeHtml(team.name)}</div>
+          <div class="tfcard-meta">${_escapeHtml((team.style || '').toUpperCase().replace('_',' '))} · ${_escapeHtml((team.description||'').substring(0,55))}…</div>
         </div>
         <div class="tfcard-badges">
-          <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${team.label||key}</span>
+          <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
           ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
             var st = team.legality_status; var fmt = team.format;
             if (st === 'legal' && fmt === 'champions') return '<span class="badge-legal">\u2705 LEGAL</span>';
