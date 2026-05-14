@@ -8488,7 +8488,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const ACC_MAP = { 'Focus Blast':0.70, 'Hydro Pump':0.80, 'Blizzard':0.70,
                      'Thunder':0.70, 'Hurricane':0.70, 'Sleep Powder':0.75,
                      'Will-O-Wisp':0.85, 'High Horsepower':0.95, 'Dire Claw':1.0 };
-    const acc = ACC_MAP[move] || 1.0;
+    const ACC_STAGE_TABLE = [1, 1.5, 2, 2.5, 3, 3.5, 4];
+    const _stageMult = (stage) => stage >= 0
+      ? ACC_STAGE_TABLE[Math.min(stage, 6)]
+      : (1 / ACC_STAGE_TABLE[Math.min(-stage, 6)]);
+    let acc = ACC_MAP[move] || 1.0;
+    const _accBoost = attacker.statBoosts.acc || 0;
+    const _evaBoost = target.statBoosts.eva || 0;
+    acc *= _stageMult(_accBoost);
+    acc *= (_evaBoost >= 0) ? (1 / _stageMult(_evaBoost)) : _stageMult(-_evaBoost);
+    acc = Math.max(0, Math.min(1, acc));
     if (rng() > acc) {
       log.push(`${attacker.name} used ${move}! It missed!`);
       return;
@@ -8674,6 +8683,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
 
     const applySpreadMod = isSpread && isDoubles && targets.length > 1;
+    const SPEED_DROP_MOVES = new Set(['Icy Wind', 'Electroweb', 'Bulldoze', 'Rock Tomb']);
 
     // Miss check — single roll for whole move (VGC spread behavior)
     const ACC_MAP = { 'Focus Blast':0.70, 'Hydro Pump':0.80, 'Blizzard':0.70,
@@ -8735,6 +8745,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (dmg > 0) {
         if (_wasCrit) log.push(`A critical hit!`);
         applyDamage(attacker, move, t, dmg, field, log, rng);
+        if (SPEED_DROP_MOVES.has(move)) {
+          t.statBoosts.spe = Math.max(-6, (t.statBoosts.spe || 0) - 1);
+          log.push(`${t.name}'s Speed fell!`);
+        }
+        if (move === 'Muddy Water' && rng() < 0.30) {
+          t.statBoosts.acc = Math.max(-6, (t.statBoosts.acc || 0) - 1);
+          log.push(`${t.name}'s accuracy fell!`);
+        }
         // T9j.8 (Refs #19) Flinch roll: after damage applied, target alive,
         // target hasn't acted yet. Fang moves roll flinch + status independently.
         if (t.alive) {
