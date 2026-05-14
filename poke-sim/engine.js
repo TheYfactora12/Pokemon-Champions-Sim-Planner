@@ -427,6 +427,89 @@ function shouldMegaThisTurn(mon, currentTurn) {
   return false;
 }
 
+// Issue #141 / mirrored #46 - canonical Pokemon role classifier.
+var CANONICAL_ROLES = [
+  'Sweeper',
+  'Wall',
+  'Tank',
+  'Speed Control',
+  'Pivot',
+  'Support',
+  'Weather Control'
+];
+
+var ROLE_SPEED_MOVES = ['Icy Wind','Electroweb','Bulldoze','Rock Tomb','Scary Face','Tailwind','Trick Room','Dragon Dance','Agility','Trailblaze'];
+var ROLE_SPEED_ABILITIES = ['Chlorophyll','Swift Swim','Sand Rush','Slush Rush','Unburden','Surge Surfer'];
+var ROLE_PIVOT_MOVES = ['U-turn','Volt Switch','Flip Turn','Parting Shot','Teleport','Baton Pass'];
+var ROLE_SUPPORT_MOVES = ['Follow Me','Rage Powder','Fake Out','Helping Hand','Wide Guard','Quick Guard','Reflect','Light Screen','Aurora Veil','Heal Pulse','Encore','Taunt'];
+var ROLE_WEATHER_MOVES = ['Sunny Day','Rain Dance','Snowscape','Sandstorm'];
+var ROLE_WEATHER_ABILITIES = ['Drought','Drizzle','Snow Warning','Sand Stream'];
+var ROLE_RECOVERY_MOVES = ['Recover','Roost','Strength Sap','Moonlight','Morning Sun','Synthesis','Slack Off','Soft-Boiled','Wish'];
+var ROLE_STALL_MOVES = ['Will-O-Wisp','Iron Defense','Calm Mind','Bulk Up','Amnesia','Cosmic Power','Leech Seed'];
+var ROLE_BOOSTING_MOVES = ['Swords Dance','Nasty Plot','Dragon Dance','Quiver Dance','Calm Mind','Bulk Up','Shell Smash','Agility','Trailblaze'];
+var ROLE_DAMAGE_ITEMS = ['Life Orb','Choice Band','Choice Specs','Choice Scarf','Expert Belt','Clear Amulet'];
+
+function _roleStatsFor(mon) {
+  var base = (typeof BASE_STATS !== 'undefined' && mon && mon.name && BASE_STATS[mon.name]) ? BASE_STATS[mon.name] : {};
+  return {
+    hp:  Number(base.hp  || mon && mon.hp  || 80),
+    atk: Number(base.atk || mon && mon.atk || 80),
+    def: Number(base.def || mon && mon.def || 80),
+    spa: Number(base.spa || mon && mon.spa || 80),
+    spd: Number(base.spd || mon && mon.spd || 80),
+    spe: Number(base.spe || mon && mon.spe || 80)
+  };
+}
+
+function _roleHasAny(values, needles) {
+  values = values || [];
+  return needles.some(function(n){ return values.indexOf(n) >= 0; });
+}
+
+function _roleAdd(out, role) {
+  if (CANONICAL_ROLES.indexOf(role) >= 0 && out.indexOf(role) < 0 && out.length < 4) out.push(role);
+}
+
+function classifyPokemon(mon) {
+  mon = mon || {};
+  var stats = _roleStatsFor(mon);
+  stats.total = stats.hp + stats.atk + stats.def + stats.spa + stats.spd + stats.spe;
+
+  var moves = Array.isArray(mon.moves) ? mon.moves.slice(0, 4) : [];
+  var ability = mon.ability || '';
+  var item = mon.item || '';
+  var roles = [];
+  var offense = Math.max(stats.atk, stats.spa);
+  var mixedOffense = Math.min(stats.atk, stats.spa);
+  var bulk = stats.hp + Math.max(stats.def, stats.spd);
+  var balancedBulk = stats.hp + Math.min(stats.def, stats.spd);
+
+  if (_roleHasAny(moves, ROLE_SPEED_MOVES) || ROLE_SPEED_ABILITIES.indexOf(ability) >= 0) _roleAdd(roles, 'Speed Control');
+  if (_roleHasAny(moves, ROLE_PIVOT_MOVES)) _roleAdd(roles, 'Pivot');
+  if (_roleHasAny(moves, ROLE_SUPPORT_MOVES) || ability === 'Intimidate' || ability === 'Prankster') _roleAdd(roles, 'Support');
+  if (_roleHasAny(moves, ROLE_WEATHER_MOVES) || ROLE_WEATHER_ABILITIES.indexOf(ability) >= 0) _roleAdd(roles, 'Weather Control');
+  if (bulk >= 210 || balancedBulk >= 190 || _roleHasAny(moves, ROLE_RECOVERY_MOVES) || _roleHasAny(moves, ROLE_STALL_MOVES)) _roleAdd(roles, 'Wall');
+  if (offense >= 115 && (bulk >= 185 || stats.hp >= 95 || stats.def >= 105 || stats.spd >= 105)) _roleAdd(roles, 'Tank');
+  if (stats.spe >= 100 || offense >= 120 || mixedOffense >= 105 || _roleHasAny(moves, ROLE_BOOSTING_MOVES) || ROLE_DAMAGE_ITEMS.indexOf(item) >= 0) _roleAdd(roles, 'Sweeper');
+
+  if (!roles.length) {
+    if (offense >= 100) _roleAdd(roles, 'Sweeper');
+    else if (bulk >= 190) _roleAdd(roles, 'Wall');
+    else _roleAdd(roles, 'Support');
+  }
+
+  return {
+    roles: roles,
+    stats: stats,
+    evs: mon.evs || {},
+    ivs: mon.ivs || {},
+    nature: mon.nature || '',
+    ability: ability,
+    item: item,
+    moves: moves
+  };
+}
+
 class Pokemon {
   constructor(data, teamStyle, teamFormat) {
     this.name = data.name;
