@@ -17,7 +17,7 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v26-phase4d-threat-response';
+const CACHE_NAME = 'champions-sim-v27-phase4e-policy-audit';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
