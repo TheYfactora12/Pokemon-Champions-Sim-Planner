@@ -245,6 +245,8 @@ All 19 open questions across the 4 specs were answered in the staging review. Qu
 - Q3: Soft yellow 'stabilized' banner for legitimate stable teams
 - Q4: Live UI at 50, regression test at 100 (two-threshold model)
 - Q5: Aggregated v1, per-mon v2 for fake-good play attribution
+- T5 CI gate confirmed: `tests/phase4e_policy_regression.js` is a normal
+  `tests/*.js` file, so `_run_all.sh` and the GitHub Test Suite run it on PRs.
 
 ### Phase 6
 - Q1: Inline soft 400 / hard 1000 words; PDF no cap; truncation links to PDF

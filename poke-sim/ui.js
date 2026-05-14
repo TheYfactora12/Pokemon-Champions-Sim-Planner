@@ -2682,6 +2682,9 @@ function generatePilotGuide(oppKey, results) {
   if (risks.length) tips.push(`Watch for ${risks[0]} — it appeared in over 40% of your losses.`);
   else if (winPct > 55) tips.push('Your team has a consistent edge — focus on denying their setup turns.');
   if (winPct < 45) tips.push('Consider leading with Fake Out + speed control to disrupt their gameplan.');
+  const policyOutputAudit = (typeof auditPolicyOutput === 'function') ? auditPolicyOutput(tips) : { fakeGoodCount: 0, flagged: [] };
+  const staticAdviceWarningHtml = (typeof renderStaticAdviceWarning === 'function')
+    ? renderStaticAdviceWarning(policyOutputAudit, 'pilot') : '';
 
   const oppTeam = TEAMS[oppKey];
   const teamName = oppTeam ? oppTeam.name : oppKey;
@@ -2718,6 +2721,7 @@ function generatePilotGuide(oppKey, results) {
   // duplicating when the same matchup is re-simulated from the single-sim path.
   card.dataset.oppKey = oppKey;
   card.innerHTML = `
+    ${staticAdviceWarningHtml}
     <div class="pilot-card-header">
       <div class="pilot-card-title">${teamName}</div>
       <span class="pilot-verdict ${verdictClass}">${verdict}</span>
@@ -2753,6 +2757,12 @@ function generatePilotGuide(oppKey, results) {
   } else {
     el.appendChild(card);
   }
+  const dismiss = card.querySelector('[data-phase4e-dismiss]');
+  if (dismiss) dismiss.addEventListener('click', function(){
+    CS_PHASE4E_DISMISSED = true;
+    const banner = card.querySelector('[data-phase4e-warning]');
+    if (banner) banner.remove();
+  });
 }
 
 // ============================================================
@@ -5814,6 +5824,9 @@ function renderStrategyTab(teamKey) {
     if (_history && typeof csRenderPhase4cSections === 'function') {
       html += csRenderPhase4cSections(_history, teamKey, team);
     }
+    if (_history && typeof csRenderPolicyAuditSection === 'function') {
+      html += csRenderPolicyAuditSection(_history);
+    }
     // Phase 4d: surface best candidate + alternatives for the currently
     // selected opponent. Kept low-budget in the tab render; deeper sweeps can
     // request a larger simsPerBranch explicitly.
@@ -6970,6 +6983,34 @@ function computeTeamHistory(teamKey) {
   try { dead_moves_v2       = csDetectDeadMoves(games, teamKey); }     catch (_e) { dead_moves_v2 = []; }
   try { loss_conditions_v2  = csDetectLossConditions(games, teamKey); } catch (_e) { loss_conditions_v2 = []; }
   var team_confidence_v2 = csConfidenceBadge(total_battles, win_rate);
+  var fake_good_plays = [];
+  var player_behavior_patterns_v2 = [];
+  var policy_output_audit = { fakeGoodCount: 0, flagged: [] };
+  var coaching_delta = null;
+  try { fake_good_plays = detectFakeGoodPlays(games, teamKey); } catch (_e) { fake_good_plays = []; }
+  try { player_behavior_patterns_v2 = detectPlayerBehaviorPatterns(games, teamKey); } catch (_e) { player_behavior_patterns_v2 = []; }
+  try {
+    var firstCut = Math.max(0, total_battles - 100);
+    var priorGames = games.slice(0, firstCut || Math.floor(games.length / 2));
+    var priorHistory = {
+      lead_performance_v2: (typeof csComputeLeadPerformance === 'function') ? csComputeLeadPerformance(priorGames) : [],
+      dead_moves_v2: (typeof csDetectDeadMoves === 'function') ? csDetectDeadMoves(priorGames, teamKey) : [],
+      loss_conditions_v2: (typeof csDetectLossConditions === 'function') ? csDetectLossConditions(priorGames, teamKey) : [],
+      total_battles: priorGames.length
+    };
+    var currentAdvice = {
+      recommended_line: (lead_performance_v2[0] && lead_performance_v2[0].lead) ? lead_performance_v2[0].lead.join(' + ') : '',
+      dominant_loss_condition: loss_conditions_v2[0] ? loss_conditions_v2[0].pattern : null,
+      dead_moves: dead_moves_v2
+    };
+    coaching_delta = auditCoachingDelta(_csPolicyAdviceFromHistory(priorHistory), currentAdvice, priorGames.length, total_battles);
+    var adviceStrings = [];
+    if (currentAdvice.recommended_line) adviceStrings.push('Lead ' + currentAdvice.recommended_line + ' as the current best candidate.');
+    if (loss_conditions_v2[0]) adviceStrings.push('Address ' + loss_conditions_v2[0].pattern + ' before forcing damage.');
+    policy_output_audit = auditPolicyOutput(adviceStrings);
+  } catch (_e) {
+    coaching_delta = auditCoachingDelta({}, {}, 0, total_battles);
+  }
 
   var history = {
     total_battles: total_battles,
@@ -6990,12 +7031,20 @@ function computeTeamHistory(teamKey) {
     protect_peaks: protectPeaks,
     record_total: record_total,
     record_by_archetype: record_by_archetype_arr,
-    player_behavior_patterns: [],  // Phase 4e fills this
+    player_behavior_patterns: player_behavior_patterns_v2,
     // Phase 4c additions (additive, no replace).
     lead_performance_v2: lead_performance_v2,
     dead_moves_v2:       dead_moves_v2,
     loss_conditions_v2:  loss_conditions_v2,
-    team_confidence_v2:  team_confidence_v2
+    team_confidence_v2:  team_confidence_v2,
+    // Phase 4e additions.
+    policy_audit: {
+      fake_good_plays: fake_good_plays,
+      player_behavior_patterns: player_behavior_patterns_v2,
+      policy_output_audit: policy_output_audit,
+      coaching_delta: coaching_delta,
+      fakeGoodCount: (policy_output_audit.fakeGoodCount || 0) + fake_good_plays.length
+    }
   };
 
   _csHistoryCache[teamKey] = { ts: Date.now(), history: history };
@@ -7541,6 +7590,270 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('clas
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('queueThreatResponseSolve', queueThreatResponseSolve);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('invalidateThreatResponseCache', invalidateThreatResponseCache);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderThreatResponseCard', renderThreatResponseCard);
+
+// Phase 4e (Refs PHASE4E_POLICY_AUDIT_SPEC.md) - policy audit and T5 gate.
+var CS_PHASE4E_WARNING_TEXT = '⚠️ Some advice is based on static patterns — verify against your read of the opponent';
+var CS_PHASE4E_DISMISSED = false;
+
+function auditPolicyOutput(adviceArray) {
+  var flagged = [];
+  (adviceArray || []).forEach(function(advice){
+    var text = typeof advice === 'string' ? advice : (advice && (advice.text || advice.advice || advice.message)) || '';
+    var lower = text.toLowerCase();
+    var reason = null;
+    if (/speed[- ]?tie|coin ?flip|50\/50/.test(lower) && /strategy|plan|guarantee|safe|reliable|always/.test(lower)) {
+      reason = 'speed-tie coinflip presented as strategy';
+    } else if (/(trick room|tr\b).*(setter|hatterene|cresselia|dusclops|cofagrigus).*(ko|faint|down|gone|dead)|(?:ko|faint|down|gone|dead).*(trick room|tr\b).*(setter|hatterene|cresselia|dusclops|cofagrigus)/.test(lower)) {
+      reason = 'Trick Room advice issued when setter is already KO’d';
+    } else if (/(add|need|run|bring).*(coverage|answer|check).*(already covered|already have|redundant|covered slot)/.test(lower)) {
+      reason = 'type-coverage recommendation targets an already-covered slot';
+    } else if (/^(be aggressive|play aggressive|be more aggressive|pressure them|just attack)\.?$/.test(lower.trim()) ||
+               (/be aggressive|play aggressive/.test(lower) && !/with|by|because|into|against|lead|target|protect|switch/.test(lower))) {
+      reason = 'generic aggression advice has no actionable detail';
+    }
+    if (reason) flagged.push({ advice: text, reason: reason });
+  });
+  return { fakeGoodCount: flagged.length, flagged: flagged };
+}
+
+function detectFakeGoodPlays(simLog, teamKey) {
+  var games = simLog || [];
+  if (!Array.isArray(games) || games.length === 0) return [];
+  var counts = {};
+  function hit(pattern, idx) {
+    counts[pattern] = counts[pattern] || { pattern: pattern, occurrences: 0, example_games: [] };
+    counts[pattern].occurrences++;
+    if (counts[pattern].example_games.length < 3) counts[pattern].example_games.push(idx);
+  }
+  var wincon = null;
+  try {
+    var team = typeof TEAMS !== 'undefined' ? TEAMS[teamKey] : null;
+    var roles = team && (team.members || []).filter(function(m){ return /win|sweep|clean|closer/i.test((m.role || '') + ' ' + (m.item || '')); });
+    wincon = roles && roles[0] ? roles[0].name : null;
+  } catch (_e) {}
+  games.forEach(function(g, idx){
+    var text = Array.isArray(g.log) ? g.log.join(' ') : '';
+    var koEvents = g.koEvents || [];
+    var playerKOs = koEvents.filter(function(k){ return k.side === 'opponent' || k.bySide === 'player'; });
+    var playerLost = koEvents.some(function(k){ return k.side === 'player'; });
+    var trDropped = /trick room/i.test(text) || g.trTurns > 0 || g.lossPattern === 'tr_unanswered';
+    var twExpired = /tailwind (?:expired|petered|ended)/i.test(text) || g.twExpired;
+    var oppSetup = /dragon dance|calm mind|swords dance|nasty plot|trick room|tailwind/i.test(text) || g.lossPattern === 'setup_free';
+    var highDamageNoKo = g.damageDealtPct >= 0.30 && playerKOs.length === 0 && oppSetup;
+    if (playerKOs.length && trDropped) hit('ko_but_tr_dropped', idx);
+    if (playerKOs.length && twExpired) hit('ko_but_tw_expired', idx);
+    if (playerKOs.length && playerLost) hit('ko_but_position_lost', idx);
+    if (highDamageNoKo) hit('damage_no_progress', idx);
+    if (wincon && playerLost && text.indexOf(wincon) >= 0) hit('wincon_traded', idx);
+  });
+  return Object.keys(counts).map(function(k){
+    var row = counts[k];
+    var share = row.occurrences / games.length;
+    row.share_of_games = share;
+    row.sample_size = games.length;
+    row.severity = (share >= 0.30 && games.length >= 25) ? 'high' : (share >= 0.15 ? 'medium' : 'low');
+    row.confidence = (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(games.length, share) : { tier: games.length >= 25 ? 'med' : 'low' };
+    row.validation_status = 'unvalidated_simulation';
+    row.population = 'ai_vs_ai_greedy';
+    return row;
+  }).sort(function(a,b){ return b.occurrences - a.occurrences; });
+}
+
+function detectPlayerBehaviorPatterns(simLog, teamKey) {
+  var games = simLog || [];
+  if (!Array.isArray(games) || games.length === 0) return [];
+  var out = [];
+  function push(pattern, occurrences, desc) {
+    if (!occurrences) return;
+    var share = occurrences / games.length;
+    if (share < 0.25 && pattern !== 'lead_inconsistency') return;
+    out.push({
+      pattern: pattern,
+      occurrences: occurrences,
+      share_of_games: share,
+      severity: share >= 0.35 ? 'high' : share >= 0.25 ? 'medium' : 'low',
+      confidence: (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(games.length, share) : { tier: 'low' },
+      sample_size: games.length,
+      description: desc
+    });
+  }
+  var overprotect = games.filter(function(g){
+    var peaks = g.protectStreakMax || {};
+    return Object.keys(peaks).some(function(k){ return peaks[k] >= 3; });
+  }).length;
+  push('overprotect', overprotect, 'Protect was chained 3+ times in a game');
+
+  var setupFree = games.filter(function(g){
+    var text = Array.isArray(g.log) ? g.log.join(' ') : '';
+    return /dragon dance|calm mind|swords dance|nasty plot/i.test(text) && !(g.movesUsed && Object.keys(g.movesUsed).length);
+  }).length;
+  push('passive_against_setup', setupFree, 'Opponent setup went unchallenged');
+
+  var leadCounts = {};
+  games.forEach(function(g){
+    var lead = g.leads && g.leads.player ? g.leads.player.slice().sort().join(' + ') : '';
+    if (lead) leadCounts[lead] = (leadCounts[lead] || 0) + 1;
+  });
+  var leadVals = Object.keys(leadCounts).map(function(k){ return leadCounts[k]; });
+  if (games.length >= 30 && leadVals.length > 5 && Math.max.apply(Math, leadVals) < 8) {
+    out.push({
+      pattern: 'lead_inconsistency',
+      occurrences: leadVals.length,
+      share_of_games: leadVals.length / games.length,
+      severity: 'low',
+      confidence: (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(games.length) : { tier: 'med' },
+      sample_size: games.length,
+      description: 'No lead pair is becoming the default line'
+    });
+  }
+
+  var trTeam = false;
+  try {
+    var team = typeof TEAMS !== 'undefined' ? TEAMS[teamKey] : null;
+    trTeam = !!(team && (team.members || []).some(function(m){ return (m.moves || []).indexOf('Trick Room') >= 0; }));
+  } catch (_e) {}
+  if (trTeam) {
+    var trGames = games.filter(function(g){
+      var text = Array.isArray(g.log) ? g.log.join(' ') : '';
+      return /trick room/i.test(text) || g.trTurns > 0;
+    }).length;
+    if (games.length >= 10 && trGames / games.length < 0.60) {
+      out.push({
+        pattern: 'tr_setup_avoidance',
+        occurrences: games.length - trGames,
+        share_of_games: (games.length - trGames) / games.length,
+        severity: 'medium',
+        confidence: (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(games.length) : { tier: 'med' },
+        sample_size: games.length,
+        description: 'Trick Room roster rarely sets Trick Room'
+      });
+    }
+  }
+  return out.sort(function(a,b){ return b.share_of_games - a.share_of_games; });
+}
+
+function auditCoachingDelta(adviceA, adviceB, sampleA, sampleB) {
+  adviceA = adviceA || {};
+  adviceB = adviceB || {};
+  var aDead = adviceA.dead_moves || [];
+  var bDead = adviceB.dead_moves || [];
+  function key(x) { return typeof x === 'string' ? x : ((x.owner || x.pokemon || '') + ':' + (x.move || x.name || '')); }
+  var aSet = {}, bSet = {};
+  aDead.map(key).forEach(function(k){ aSet[k] = true; });
+  bDead.map(key).forEach(function(k){ bSet[k] = true; });
+  var added = Object.keys(bSet).filter(function(k){ return !aSet[k]; });
+  var removed = Object.keys(aSet).filter(function(k){ return !bSet[k]; });
+  var diffs = {
+    recommended_line: {
+      from: adviceA.recommended_line || adviceA.best_candidate || null,
+      to: adviceB.recommended_line || adviceB.best_candidate || null
+    },
+    dominant_loss_condition: {
+      from: adviceA.dominant_loss_condition || null,
+      to: adviceB.dominant_loss_condition || null
+    },
+    dead_moves_added: added,
+    dead_moves_removed: removed
+  };
+  var changed = 0;
+  if (diffs.recommended_line.from !== diffs.recommended_line.to) changed++;
+  if (diffs.dominant_loss_condition.from !== diffs.dominant_loss_condition.to) changed++;
+  if (added.length || removed.length) changed++;
+  var delta = Math.max(0, (sampleB || 0) - (sampleA || 0));
+  return {
+    surfaces_changed: changed,
+    diffs: diffs,
+    verdict: (changed === 0 && delta >= 50) ? 'static' : 'adaptive',
+    delta_sample_size: delta
+  };
+}
+
+function _csPolicyAdviceFromHistory(history) {
+  history = history || {};
+  var lead = (history.lead_performance_v2 && history.lead_performance_v2[0] && history.lead_performance_v2[0].lead) ||
+             (history.lead_performance && history.lead_performance[0] && history.lead_performance[0].leadPair) || [];
+  var loss = (history.loss_conditions_v2 && history.loss_conditions_v2[0] && history.loss_conditions_v2[0].pattern) ||
+             (history.common_loss_conditions && history.common_loss_conditions[0] &&
+              (history.common_loss_conditions[0].victim + ' ' + history.common_loss_conditions[0].bucket)) || null;
+  return {
+    recommended_line: Array.isArray(lead) ? lead.join(' + ') : String(lead || ''),
+    dominant_loss_condition: loss,
+    dead_moves: history.dead_moves_v2 || history.dead_moves || []
+  };
+}
+
+function renderStaticAdviceWarning(audit, location) {
+  audit = audit || {};
+  if (CS_PHASE4E_DISMISSED && location === 'pilot') return '';
+  var count = audit.fakeGoodCount || (audit.flagged ? audit.flagged.length : 0);
+  if (!count) return '';
+  return '<div class="cs-static-advice-warning" data-phase4e-warning>' +
+    '<button class="cs-static-advice-dismiss" data-phase4e-dismiss title="Dismiss warning">×</button>' +
+    '<strong>' + _csEsc(CS_PHASE4E_WARNING_TEXT) + '</strong>' +
+    '<div class="cs-static-advice-detail">' + count + ' policy warning' + (count === 1 ? '' : 's') + ' flagged.</div>' +
+    '</div>';
+}
+
+function csRenderPolicyAuditSection(history) {
+  history = history || {};
+  var audit = history.policy_audit || {};
+  var delta = audit.coaching_delta || {};
+  var fake = audit.fake_good_plays || [];
+  var behavior = audit.player_behavior_patterns || [];
+  var stringAudit = audit.policy_output_audit || { fakeGoodCount: 0, flagged: [] };
+  var isStatic = delta.verdict === 'static';
+  var bannerClass = isStatic ? 'cs-audit-warning' : 'cs-audit-stabilized';
+  var bannerText = isStatic
+    ? 'STATIC ADVICE WARNING: advice did not change over ' + (delta.delta_sample_size || 0) + ' new games.'
+    : 'Adaptive: advice surfaces changed as new sim evidence arrived.';
+  var html = '<details class="cs-detector-section cs-policy-audit-section" open>';
+  html += '<summary class="cs-detector-summary"><span class="cs-detector-title">Policy Audit</span>';
+  html += '<span class="cs-detector-count">' + (history.total_battles || 0) + ' games</span></summary>';
+  html += '<div class="cs-detector-body">';
+  html += '<div class="' + bannerClass + '">' + _csEsc(bannerText) + '</div>';
+  if (stringAudit.fakeGoodCount > 0) {
+    html += renderStaticAdviceWarning(stringAudit, 'strategy');
+  }
+  html += '<div class="cs-detector-table">';
+  html += '<div class="cs-detector-row cs-detector-head"><span>Surface</span><span>From</span><span>To</span><span>Status</span></div>';
+  var d = delta.diffs || {};
+  var rl = d.recommended_line || {};
+  var dl = d.dominant_loss_condition || {};
+  html += '<div class="cs-detector-row"><span>Recommended line</span><span>' + _csEsc(rl.from || '-') + '</span><span>' + _csEsc(rl.to || '-') + '</span><span>' + (rl.from !== rl.to ? 'changed' : 'same') + '</span></div>';
+  html += '<div class="cs-detector-row"><span>Dominant loss</span><span>' + _csEsc(dl.from || '-') + '</span><span>' + _csEsc(dl.to || '-') + '</span><span>' + (dl.from !== dl.to ? 'changed' : 'same') + '</span></div>';
+  html += '<div class="cs-detector-row"><span>Dead moves</span><span>' + _csEsc((d.dead_moves_removed || []).join(', ') || '-') + '</span><span>' + _csEsc((d.dead_moves_added || []).join(', ') || '-') + '</span><span>' + (((d.dead_moves_added || []).length || (d.dead_moves_removed || []).length) ? 'changed' : 'same') + '</span></div>';
+  html += '</div>';
+  if (fake.length) {
+    html += '<h4 class="cs-audit-h4">Fake-good plays</h4>';
+    fake.slice(0, 4).forEach(function(f){
+      html += '<div class="cs-audit-row"><strong>' + _csEsc(f.pattern) + '</strong> ' + f.occurrences + ' occurrence' + (f.occurrences === 1 ? '' : 's') + ' · ' + _csEsc(f.severity) + '</div>';
+    });
+  }
+  if (behavior.length) {
+    html += '<h4 class="cs-audit-h4">Player behavior</h4>';
+    behavior.slice(0, 4).forEach(function(p){
+      html += '<div class="cs-audit-row"><strong>' + _csEsc(p.pattern) + '</strong> ' + p.occurrences + ' occurrence' + (p.occurrences === 1 ? '' : 's') + ' · ' + _csEsc(p.severity) + '</div>';
+    });
+  }
+  html += '</div></details>';
+  return html;
+}
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.phase4e = ChampionsSim.phase4e || {};
+  ChampionsSim.phase4e.auditPolicyOutput = auditPolicyOutput;
+  ChampionsSim.phase4e.detectFakeGoodPlays = detectFakeGoodPlays;
+  ChampionsSim.phase4e.detectPlayerBehaviorPatterns = detectPlayerBehaviorPatterns;
+  ChampionsSim.phase4e.auditCoachingDelta = auditCoachingDelta;
+  ChampionsSim.phase4e.renderStaticAdviceWarning = renderStaticAdviceWarning;
+  ChampionsSim.phase4e.csRenderPolicyAuditSection = csRenderPolicyAuditSection;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('auditPolicyOutput', auditPolicyOutput);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('detectFakeGoodPlays', detectFakeGoodPlays);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('detectPlayerBehaviorPatterns', detectPlayerBehaviorPatterns);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('auditCoachingDelta', auditCoachingDelta);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderStaticAdviceWarning', renderStaticAdviceWarning);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderPolicyAuditSection', csRenderPolicyAuditSection);
 
 // Render the Record bar: overall W-L pill + per-archetype chips. Shown right
 // under the adaptive banner on the Strategy tab. No draws surfaced (per user:

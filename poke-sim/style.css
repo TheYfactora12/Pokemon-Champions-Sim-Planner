@@ -1474,6 +1474,62 @@ table{border-collapse:collapse;width:100%}
   font-weight: 600;
 }
 
+/* Phase 4e policy-audit warnings */
+.cs-policy-audit-section {
+  margin-top: 10px;
+}
+.cs-audit-warning,
+.cs-audit-stabilized,
+.cs-static-advice-warning {
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+.cs-audit-warning,
+.cs-static-advice-warning {
+  background: #3a2708;
+  border: 1px solid #b45309;
+  color: #fde68a;
+}
+.cs-audit-stabilized {
+  background: #172554;
+  border: 1px solid #2563eb;
+  color: #bfdbfe;
+}
+.cs-static-advice-warning {
+  position: relative;
+}
+.cs-static-advice-detail {
+  color: #fcd34d;
+  font-size: 12px;
+  margin-top: 3px;
+}
+.cs-static-advice-dismiss {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+.cs-audit-h4 {
+  margin: 12px 0 6px;
+  color: #e2e8f0;
+  font-size: 13px;
+}
+.cs-audit-row {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #0b1220;
+  color: #cbd5e1;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
 @media (max-width: 640px) {
   .cs-detector-row,
   .cs-detector-row-loss,
