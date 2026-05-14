@@ -72,6 +72,31 @@ Without `.env.local`, `npm run test:db` runs the DB suites against mocks/offline
 
 ---
 
+## GitHub Pages / CI Secrets
+
+The public site needs only read/insert browser credentials:
+
+| Secret | Used by | Purpose |
+|---|---|---|
+| `SUPABASE_URL` | Pages deploy, CI, live tests | Supabase project REST URL |
+| `SUPABASE_ANON_KEY` | Pages deploy, CI, live tests | Public anon key protected by RLS |
+
+Admin database changes need a separate secret that is never bundled into the site:
+
+| Secret | Used by | Purpose |
+|---|---|---|
+| `SUPABASE_DB_URL` | Manual `Supabase DB Migration` workflow only | Postgres connection string for DDL migrations |
+
+`SUPABASE_DB_URL` should come from Supabase Dashboard -> Project Settings -> Database -> Connection string. Use a URI connection string with SSL enabled, for example:
+
+```text
+postgresql://postgres.<project-ref>:<password>@<pooler-host>:6543/postgres?sslmode=require
+```
+
+The `service_role` key bypasses RLS, but it is not a replacement for a Postgres connection string when running `ALTER TABLE` migrations. Do not place a `service_role` key in frontend files, GitHub Pages artifacts, or local browser credentials.
+
+---
+
 ## Where to Find Your Keys
 
 1. Go to your Supabase project dashboard
@@ -153,7 +178,40 @@ All schema changes use the **apply_migration-only** workflow. Never modify `sche
    - Write the `.sql` file in `db/migrations/`
    - Test locally or in Supabase SQL Editor
    - Commit the migration file to the branch
-   - After merge, execute in the live Supabase SQL Editor in timestamp order
+   - After merge, execute in timestamp order with either:
+     - GitHub Actions -> **Supabase DB Migration** -> **Run workflow**
+     - Supabase SQL Editor, if no `SUPABASE_DB_URL` secret is configured
+
+### Running the GitHub Migration Workflow
+
+1. Add repository secret `SUPABASE_DB_URL` in GitHub.
+2. Go to **Actions** -> **Supabase DB Migration**.
+3. Click **Run workflow** on `main`.
+4. Enter a migration filename from `poke-sim/db/migrations/`, for example:
+
+```text
+2026_05_12_align_reg_ma_meta_sources.sql
+```
+
+5. Confirm the workflow passes. For the Reg M-A snapshot migration, the workflow verifies that `prior_snapshots.usage_data.pokestats_bo3_top` can be read through the anon REST API after the DDL completes.
+
+CLI equivalent:
+
+```bash
+gh workflow run db-migrate.yml \
+  --repo TheYfactora12/Pokemon-Champions-Sim-Planner \
+  --ref main \
+  -f migration=2026_05_12_align_reg_ma_meta_sources.sql
+```
+
+After the workflow passes, rerun:
+
+```bash
+cd poke-sim
+npm run test:db:live
+```
+
+The M10 live DB snapshot warning should be gone once the remote schema includes `prior_snapshots.usage_data`.
 
 ### Current Migrations
 
