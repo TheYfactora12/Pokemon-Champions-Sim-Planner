@@ -605,6 +605,7 @@ class Pokemon {
     this.lastMoveUsed  = null;
     this.lastTarget    = null;
     this.protectChain  = 0;
+    this.protectKind   = null;
     this.enduring      = false;
     // T9j.17 (Refs #101) -- Fake Out hard-gate flag. Initialized false so first
     // turn out is the only legal use. Reset on every switch-in (replaceOnField).
@@ -1608,6 +1609,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           const hasPriorityThreat = liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => getPriority(m) > 0));
           if (hasPriorityThreat) score = 48;
         }
+        if ((move === "King's Shield" || move === 'Spiky Shield' || move === 'Baneful Bunker' || move === 'Obstruct')) {
+          const hasContactThreat = liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => CONTACT_MOVES.has(m)));
+          if (hasContactThreat) score = 43;
+        }
+        if (move === 'Endure' && attacker.hp < attacker.maxHp * 0.35) score = 41;
         if (move === 'Taunt' && liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => MOVE_CATEGORY[m] === 'status'))) {
           score = 34;
         }
@@ -1691,11 +1697,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
 
     const moveType = MOVE_TYPES[move] || 'Normal';
-    const PROTECT_MOVES = new Set(['Protect','Detect','Wide Guard','Quick Guard','Endure']);
+    const PROTECT_MOVES = new Set(['Protect','Detect','Wide Guard','Quick Guard','Endure',
+      "King's Shield",'Spiky Shield','Baneful Bunker','Obstruct']);
     const STATUS_MOVES  = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder',
       'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail','Quick Guard','Endure',
       // T9j.2 additions — side-state setters
-      'Wide Guard','Follow Me','Quick Guard','Protect','Detect',
+      'Wide Guard','Follow Me','Quick Guard','Protect','Detect','King\'s Shield','Spiky Shield','Baneful Bunker','Obstruct',
       // T9j.3 Screens setters
       'Light Screen','Reflect','Aurora Veil',
       // Move-control / field-reset support
@@ -1712,15 +1719,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (!PROTECT_MOVES.has(move)) attacker.protectChain = 0;
 
     const _protectFamilyChance = Math.pow(1/3, attacker.protectChain || 0);
+    const _protectFail = () => {
+      log.push(`${attacker.name} used ${move}! But it failed!`);
+      attacker.protectChain = 0;
+      attacker.protectKind = null;
+      return;
+    };
 
     // Handle Protect (self only — Wide Guard/Quick Guard handled in status branch below)
     if (move === 'Protect' || move === 'Detect') {
       if (rng() > _protectFamilyChance) {
-        log.push(`${attacker.name} used ${move}! But it failed!`);
-        attacker.protectChain = 0;
+        _protectFail();
         return;
       }
       attacker.protected = true;
+      attacker.protectKind = move;
       attacker.enduring = false;
       attacker.protectChain++;
       log.push(`${attacker.name} used ${move}!`);
@@ -1784,34 +1797,47 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (rng() > _protectFamilyChance) {
           log.push(`${attacker.name}'s Wide Guard failed!`);
           attacker.protectChain = 0;
+          attacker.protectKind = null;
           return;
         }
           side.wideGuard = true;
         attacker.protectChain++;
+        attacker.protectKind = move;
         log.push(`${attacker.name} protected its team with Wide Guard!`);
         return;
       }
       if (move === 'Quick Guard') {
         const side = (allies === playerActive) ? field.playerSide : field.oppSide;
         if (rng() > _protectFamilyChance) {
-          log.push(`${attacker.name} used Quick Guard! But it failed!`);
-          attacker.protectChain = 0;
+          _protectFail();
           return;
         }
         side.quickGuard = true;
         attacker.protectChain++;
+        attacker.protectKind = move;
         log.push(`${attacker.name} used Quick Guard!`);
         return;
       }
       if (move === 'Endure') {
         if (rng() > _protectFamilyChance) {
-          log.push(`${attacker.name} used Endure! But it failed!`);
-          attacker.protectChain = 0;
+          _protectFail();
           return;
         }
         attacker.enduring = true;
         attacker.protectChain++;
+        attacker.protectKind = move;
         log.push(`${attacker.name} braced itself with Endure!`);
+        return;
+      }
+      if (move === "King's Shield" || move === 'Spiky Shield' || move === 'Baneful Bunker' || move === 'Obstruct') {
+        if (rng() > _protectFamilyChance) {
+          _protectFail();
+          return;
+        }
+        attacker.protected = true;
+        attacker.protectKind = move;
+        attacker.protectChain++;
+        log.push(`${attacker.name} used ${move}!`);
         return;
       }
       if (move === 'Taunt' && target && target.alive) {
@@ -1986,7 +2012,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // handlers, which all delegate to applyDamage directly -- and currently treat
     // Protect as full block. Keeping default full-block here preserves parity
     // with pre-T9j.8 behavior for those narrow paths.
-    if (target && target.protected && move !== 'Feint') {
+    const _shieldRiderKinds = new Set(["King's Shield",'Spiky Shield','Baneful Bunker','Obstruct']);
+    if (target && target.protected && move !== 'Feint' && !_shieldRiderKinds.has(target.protectKind)) {
       log.push(`${attacker.name} used ${move}! But ${target.name} was protected!`);
       return;
     }
@@ -2254,8 +2281,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.8 (Refs #30) Protect resolution: Piercing Drill / Unseen Fist deal
       // 25% damage through Protect on contact moves. Default path is full block.
       let _protectMult = 0;
+      const _isContact = CONTACT_MOVES.has(move);
+      const _shieldKind = t.protectKind || 'Protect';
       if (t.protected && move !== 'Feint') {
-        const _isContact = CONTACT_MOVES.has(move);
         const _protRes = callAbilityHook(attacker, 'onProtectResolve', {
           attacker: attacker, defender: t, move: move,
           moveType: (MOVE_TYPES[move] || 'Normal'), isContact: _isContact, log: log
@@ -2264,12 +2292,42 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           _protectMult = _protRes.damageMult;
           log.push(`${t.name} protected itself, but ${attacker.ability} pierced through!`);
         } else {
-          log.push(`${t.name} protected itself!`);
-          continue;
+          if (_isContact && (_shieldKind === "King's Shield" || _shieldKind === 'Spiky Shield' || _shieldKind === 'Baneful Bunker' || _shieldKind === 'Obstruct')) {
+            if (_shieldKind === "King's Shield") {
+              attacker.statBoosts.atk = Math.max(-6, (attacker.statBoosts.atk || 0) - 1);
+              log.push(`${attacker.name}'s Attack fell due to King's Shield!`);
+            }
+            if (_shieldKind === 'Spiky Shield') {
+              const recoil = Math.max(1, Math.floor(attacker.maxHp / 8));
+              attacker.hp = Math.max(0, attacker.hp - recoil);
+              log.push(`${attacker.name} was hurt by Spiky Shield! [${recoil} dmg]`);
+              if (attacker.hp === 0) {
+                attacker.alive = false;
+                log.push(`${attacker.name} fainted!`);
+                _recordKO(attacker, { move: 'Spiky Shield', attacker: t, reason: 'shield' });
+              }
+            }
+            if (_shieldKind === 'Baneful Bunker') {
+              if (!attacker.status && !attacker.types.includes('Poison') && !attacker.types.includes('Steel')) {
+                attacker.status = 'poison';
+                log.push(`${attacker.name} was poisoned by Baneful Bunker!`);
+              }
+            }
+            if (_shieldKind === 'Obstruct') {
+              attacker.statBoosts.def = Math.max(-6, (attacker.statBoosts.def || 0) - 2);
+              log.push(`${attacker.name}'s Defense harshly fell due to Obstruct!`);
+            }
+            log.push(`${t.name} protected itself!`);
+            continue;
+          } else {
+            log.push(`${t.name} protected itself!`);
+            continue;
+          }
         }
       }
       if (move === 'Feint' && t.protected) {
         t.protected = false;
+        t.protectKind = null;
         if (t.side) t.side.quickGuard = false;
         log.push(`${attacker.name}'s Feint broke through ${t.name}'s protection!`);
       }
@@ -2436,6 +2494,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const m of [...playerActive, ...oppActive]) {
       m.hasActed = false;
       m.protected = false;
+      m.protectKind = null;
       m.enduring = false;
       m.helpingHand = false;
       m._chosenMove = null;
@@ -2689,6 +2748,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           replacement.encoredTurns  = 0;
           replacement.encoredMove   = null;
           replacement.protectChain  = 0;
+          replacement.protectKind   = null;
           replacement.enduring      = false;
           // T9j.6 (#29) — stat stages must not leak across switches. Entry at all-zero.
           replacement.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
