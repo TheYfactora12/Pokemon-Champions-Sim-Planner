@@ -22,6 +22,7 @@ node tests/phase4c_detectors.js # Phase 4c — detectors + confidence badges (4 
 node tests/phase4d_threat_response_tests.js # Phase 4d — threat response solver + line classifier — 7 cases
 node tests/phase4e_policy_regression.js # Phase 4e — policy audit / T5 static-advice gate — 11 cases
 node tests/phase5_turn_log_tests.js # Phase 5 — turnLog, positionScore, Replay Log v2 — 10 cases
+node tests/phase6_coaching_voice.js # Phase 6 — coaching templates, linter, RNG gate — 9 cases
 node tests/structured_logger_tests.js # Infra — structured logger and no raw runtime console calls — 5 cases
 node tests/golden_battles_runner.js  # M7 — golden battles deterministic regression — 3 battles
 node tests/audit.js            # 5070-battle audit across all 13 teams — 0 JS errors floor
@@ -50,8 +51,9 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase4d | 7/7 | Threat-response solver, cache, idle fallback, line labels, renderer |
 | phase4e | 11/11 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate |
 | phase5 | 10/10 | Turn log struct, positionScore, swing-turn delta, Replay Log v2 |
+| phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
-| **Total** | **317/317** | |
+| **Total** | **326/326** | |
 | audit | 0 JS errors | 5070 battles across 13 teams |
 
 ## Conventions
