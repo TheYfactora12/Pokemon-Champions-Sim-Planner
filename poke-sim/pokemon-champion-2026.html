@@ -303,6 +303,31 @@ table{border-collapse:collapse;width:100%}
 .stat-panel-nature.plus{color:var(--green)}
 .stat-panel-nature.minus{color:var(--red)}
 @media(max-width:620px){.stat-panel-grid{grid-template-columns:1fr}.stat-panel-head{align-items:flex-start;flex-direction:column;gap:2px}}
+.team-mon-detail-btn{align-self:center;border:1px solid var(--border);background:var(--surface2);color:var(--text);border-radius:var(--r-sm);padding:7px 9px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0;cursor:pointer;flex:0 0 auto}
+.team-mon-detail-btn:hover,.team-mon-detail-btn:focus-visible{border-color:var(--primary);color:var(--primary);outline:none}
+.team-detail-backdrop{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.62);display:flex;align-items:center;justify-content:center;padding:18px}
+.team-detail-modal{width:min(720px,100%);max-height:min(760px,92vh);overflow:auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:0 24px 70px rgba(0,0,0,.45);padding:18px;color:var(--text);outline:none}
+.team-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border-bottom:1px solid var(--border);padding-bottom:12px}
+.team-detail-kicker{font-size:10px;font-weight:800;color:var(--text-m);text-transform:uppercase;letter-spacing:.08em}
+.team-detail-head h2{margin:3px 0 0;font-size:24px;line-height:1.1;letter-spacing:0}
+.team-detail-close{border:1px solid var(--border);background:var(--surface2);color:var(--text);border-radius:var(--r-sm);width:34px;height:34px;font-size:24px;line-height:1;cursor:pointer;flex:0 0 auto}
+.team-detail-close:hover,.team-detail-close:focus-visible{border-color:var(--red);color:var(--red);outline:none}
+.team-detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.team-detail-meta span,.team-detail-chip{border:1px solid var(--border);background:var(--surface2);border-radius:var(--r-sm);padding:5px 8px;font-size:11px;color:var(--text)}
+.team-detail-chip.muted{color:var(--text-m)}
+.team-detail-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+.team-detail-fields div{border:1px solid var(--border);background:var(--surface2);border-radius:var(--r-sm);padding:8px;min-width:0}
+.team-detail-fields strong{display:block;font-size:10px;text-transform:uppercase;color:var(--text-m);margin-bottom:4px}
+.team-detail-fields span{font-size:12px;font-weight:700;overflow-wrap:anywhere}
+.team-detail-section{margin-top:14px}
+.team-detail-section h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px;color:var(--text)}
+.team-detail-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-sm)}
+.team-detail-table{width:100%;border-collapse:collapse;min-width:420px}
+.team-detail-table th,.team-detail-table td{padding:8px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:11px;text-align:right}
+.team-detail-table th:first-child,.team-detail-table td:first-child{text-align:left}
+.team-detail-table tr:last-child th,.team-detail-table tr:last-child td{border-bottom:0}
+.team-detail-chip-row{display:flex;flex-wrap:wrap;gap:6px}
+@media(max-width:620px){.team-detail-backdrop{align-items:stretch;padding:10px}.team-detail-modal{max-height:calc(100vh - 20px);padding:14px}.team-detail-head h2{font-size:20px}.team-detail-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.team-mon-detail-btn{width:100%;margin-top:8px}.team-detail-table{min-width:0}.team-detail-table th,.team-detail-table td{padding:7px 5px;font-size:10px}}
 .btn-save{margin-top:var(--sp4);padding:7px var(--sp5);background:var(--primary);color:#fff;border:none;border-radius:var(--r-md);font-family:var(--font-display);font-size:var(--text-sm);font-weight:700;cursor:pointer;transition:all var(--tr)}
 .btn-save:hover{background:var(--primary-h)}
 
@@ -9612,6 +9637,7 @@ function buildBringPickerHtml(teamKey, opts) {
           '<div class="poke-full-detail">' + (m.ability || '\u2014') + ' \u00b7 ' + (m.nature || 'Hardy') + ' \u00b7 Lv' + (m.level || 50) + '</div>' +
           '<div class="move-tags">' + (m.moves || []).map(function(mv){ return '<span class="move-tag">' + mv + '</span>'; }).join('') + '</div>' +
         '</div>' +
+        '<button class="team-mon-detail-btn" type="button" data-team="' + teamKey + '" data-mon="' + m.name + '" title="View full stat details">Details</button>' +
       '</div>';
     }).join('');
   }
@@ -9903,6 +9929,13 @@ function renderTeamsGrid() {
   grid.querySelectorAll('.edit-card-btn').forEach(btn => {
     btn.addEventListener('click', () => openEditTeamModal(btn.dataset.team));
   });
+  grid.querySelectorAll('.team-mon-detail-btn').forEach(btn => {
+    btn.addEventListener('click', function(ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      openTeamStatDetailPanel(btn.dataset.team, btn.dataset.mon, btn);
+    });
+  });
   // T9h: reset button wiring (preloaded teams with overrides)
   grid.querySelectorAll('.reset-card-btn').forEach(btn => {
     btn.addEventListener('click', () => resetPreloadedTeam(btn.dataset.team));
@@ -10172,6 +10205,154 @@ function renderStatPanelHtml(member) {
     '</div>' +
     '<div class="stat-panel-grid">' + rows + '</div>' +
   '</section>';
+}
+
+function buildTeamStatDetailModel(teamKey, monName) {
+  const team = TEAMS[teamKey];
+  const member = team && Array.isArray(team.members)
+    ? team.members.find(function(m){ return m && m.name === monName; })
+    : null;
+  if (!team || !member) return null;
+  const evs = Object.assign({ hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }, member.evs || {});
+  const ivs = Object.assign({ hp:31, atk:31, def:31, spa:31, spd:31, spe:31 }, member.ivs || {});
+  let battleMon = null;
+  try {
+    if (typeof Pokemon !== 'undefined') {
+      battleMon = new Pokemon(Object.assign({}, member, { evs: evs, ivs: ivs }), team.style || '', team.format || member.format || null);
+    }
+  } catch (_e) { battleMon = null; }
+  const baseName = battleMon ? battleMon.name : member.name;
+  const base = (battleMon && battleMon._base)
+    || (typeof BASE_STATS !== 'undefined' && BASE_STATS[baseName])
+    || { hp:0, atk:0, def:0, spa:0, spd:0, spe:0, types:[] };
+  const types = (battleMon && battleMon.types)
+    || (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[baseName])
+    || base.types
+    || [];
+  const finalStats = battleMon ? {
+    hp: battleMon.maxHp,
+    atk: battleMon.baseAtk,
+    def: battleMon.baseDef,
+    spa: battleMon.baseSpa,
+    spd: battleMon.baseSpd,
+    spe: battleMon.baseSpe
+  } : { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 };
+  finalStats.total = STAT_PANEL_KEYS.reduce(function(sum, key){ return sum + (parseInt(finalStats[key], 10) || 0); }, 0);
+  const baseStats = {
+    hp: base.hp || 0, atk: base.atk || 0, def: base.def || 0,
+    spa: base.spa || 0, spd: base.spd || 0, spe: base.spe || 0
+  };
+  baseStats.total = STAT_PANEL_KEYS.reduce(function(sum, key){ return sum + (parseInt(baseStats[key], 10) || 0); }, 0);
+  let roles = [];
+  try {
+    if (typeof classifyPokemon === 'function') roles = (classifyPokemon(member).roles || []);
+  } catch (_e) { roles = []; }
+  return {
+    teamKey: teamKey,
+    teamName: team.name || teamKey,
+    name: member.name,
+    displayName: (battleMon && battleMon.displayName) || member.name,
+    form: (battleMon && battleMon.megaForm) ? (member.name + ' -> ' + battleMon.megaForm.megaName) : member.name,
+    types: types,
+    baseStats: baseStats,
+    evs: evs,
+    ivs: ivs,
+    nature: member.nature || 'Hardy',
+    finalStats: finalStats,
+    ability: (battleMon && battleMon.ability) || member.ability || '',
+    item: member.item || '',
+    moves: member.moves || [],
+    roles: roles
+  };
+}
+
+function renderTeamStatDetailHtml(model) {
+  if (!model) return '';
+  function statRow(key) {
+    return '<tr><th scope="row">' + STAT_PANEL_LABELS[key] + '</th>' +
+      '<td>' + (model.baseStats[key] || 0) + '</td>' +
+      '<td>' + (parseInt(model.evs[key], 10) || 0) + '</td>' +
+      '<td>' + (model.ivs[key] == null ? 31 : parseInt(model.ivs[key], 10) || 0) + '</td>' +
+      '<td>' + (model.finalStats[key] || 0) + '</td></tr>';
+  }
+  const moveHtml = (model.moves.length ? model.moves : ['-', '-', '-', '-']).map(function(mv){
+    return '<span class="team-detail-chip">' + _escapeHtml(mv || '-') + '</span>';
+  }).join('');
+  const roleHtml = (model.roles && model.roles.length ? model.roles : ['Support']).map(function(role){
+    return '<span class="team-detail-chip muted">' + _escapeHtml(role) + '</span>';
+  }).join('');
+  return '<div class="team-detail-backdrop" id="team-detail-modal" role="presentation">' +
+    '<section class="team-detail-modal" role="dialog" aria-modal="true" aria-labelledby="team-detail-title" tabindex="-1">' +
+      '<div class="team-detail-head">' +
+        '<div><div class="team-detail-kicker">' + _escapeHtml(model.teamName) + '</div>' +
+        '<h2 id="team-detail-title">' + _escapeHtml(model.displayName) + '</h2></div>' +
+        '<button class="team-detail-close" id="team-detail-close" type="button" aria-label="Close Pokemon details">&times;</button>' +
+      '</div>' +
+      '<div class="team-detail-meta">' +
+        '<span>' + _escapeHtml((model.types || []).join(' / ') || '-') + '</span>' +
+        '<span>' + _escapeHtml(model.form || '-') + '</span>' +
+        '<span>' + _escapeHtml(model.nature || 'Hardy') + '</span>' +
+      '</div>' +
+      '<div class="team-detail-fields">' +
+        '<div><strong>Ability</strong><span>' + _escapeHtml(model.ability || '-') + '</span></div>' +
+        '<div><strong>Item</strong><span>' + _escapeHtml(model.item || '-') + '</span></div>' +
+        '<div><strong>BST</strong><span>' + model.baseStats.total + '</span></div>' +
+        '<div><strong>Total</strong><span>' + model.finalStats.total + '</span></div>' +
+      '</div>' +
+      '<div class="team-detail-section"><h3>Stats</h3>' +
+        '<div class="team-detail-table-wrap"><table class="team-detail-table">' +
+          '<thead><tr><th>Stat</th><th>Base</th><th>EV</th><th>IV</th><th>Final</th></tr></thead>' +
+          '<tbody>' + STAT_PANEL_KEYS.map(statRow).join('') + '</tbody>' +
+        '</table></div>' +
+      '</div>' +
+      '<div class="team-detail-section"><h3>Moves</h3><div class="team-detail-chip-row">' + moveHtml + '</div></div>' +
+      '<div class="team-detail-section"><h3>Roles</h3><div class="team-detail-chip-row">' + roleHtml + '</div></div>' +
+    '</section>' +
+  '</div>';
+}
+
+let _teamDetailReturnFocus = null;
+function closeTeamStatDetailPanel() {
+  const modal = document.getElementById('team-detail-modal');
+  if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+  document.removeEventListener('keydown', _handleTeamDetailKeydown);
+  if (_teamDetailReturnFocus && typeof _teamDetailReturnFocus.focus === 'function') {
+    try { _teamDetailReturnFocus.focus(); } catch (_e) {}
+  }
+  _teamDetailReturnFocus = null;
+}
+function _handleTeamDetailKeydown(ev) {
+  const modal = document.getElementById('team-detail-modal');
+  if (!modal) return;
+  if (ev.key === 'Escape') { ev.preventDefault(); closeTeamStatDetailPanel(); return; }
+  if (ev.key !== 'Tab') return;
+  const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (ev.shiftKey && document.activeElement === first) {
+    ev.preventDefault();
+    last.focus();
+  } else if (!ev.shiftKey && document.activeElement === last) {
+    ev.preventDefault();
+    first.focus();
+  }
+}
+function openTeamStatDetailPanel(teamKey, monName, triggerEl) {
+  const model = buildTeamStatDetailModel(teamKey, monName);
+  if (!model) return;
+  closeTeamStatDetailPanel();
+  _teamDetailReturnFocus = triggerEl || document.activeElement;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = renderTeamStatDetailHtml(model);
+  const modal = wrap.firstElementChild;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', function(ev){ if (ev.target === modal) closeTeamStatDetailPanel(); });
+  const closeBtn = document.getElementById('team-detail-close');
+  if (closeBtn) closeBtn.addEventListener('click', closeTeamStatDetailPanel);
+  document.addEventListener('keydown', _handleTeamDetailKeydown);
+  const dialog = modal.querySelector('.team-detail-modal');
+  if (dialog && typeof dialog.focus === 'function') dialog.focus();
 }
 
 function renderEditorRoster() {
