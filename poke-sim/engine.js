@@ -1078,6 +1078,7 @@ class Field {
       auroraVeil:false, auroraVeilTurns:0, auroraVeilActive:0,
       // T9j.2 (#31/#32) — Wide Guard turn flag + chain counter, redirect target
       wideGuard:false, wideGuardChain:0, redirectTo:null, redirectType:null,
+      quickGuard:false,
       fainted:0
     };
     this.oppSide = {
@@ -1086,6 +1087,7 @@ class Field {
       lightScreen:false, lightScreenTurns:0, lightScreenActive:0,
       auroraVeil:false, auroraVeilTurns:0, auroraVeilActive:0,
       wideGuard:false, wideGuardChain:0, redirectTo:null, redirectType:null,
+      quickGuard:false,
       fainted:0
     };
     // T9j.2 (#26) — spread context sidecar. Set per-hit by executeMove, read by calcDamage.
@@ -1109,6 +1111,8 @@ class Field {
     // Chain counter only resets on non-WG move use (handled in executeAction).
     this.playerSide.wideGuard = false;
     this.oppSide.wideGuard    = false;
+    this.playerSide.quickGuard = false;
+    this.oppSide.quickGuard    = false;
     this.playerSide.redirectTo = null;
     this.oppSide.redirectTo    = null;
     this.playerSide.redirectType = null;
@@ -1548,7 +1552,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       return { move: attacker.choiceLock, target };
     }
     const STATUS_MOVES = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder',
-      'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail',
+      'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail','Quick Guard',
       // T9j.3 Screens setters
       'Light Screen','Reflect','Aurora Veil']);
     const PRIORITY_MOVES = new Set(['Fake Out','Aqua Jet','Extreme Speed','Shadow Sneak']);
@@ -1581,6 +1585,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         }
         if (move === 'Life Dew' && liveAllies.some(a => a.hp < a.maxHp * 0.6)) score = 40;
         if (move === 'Rage Powder' && liveAllies.some(a => !a.alive)) score = 35;
+        if (move === 'Quick Guard') {
+          const hasPriorityThreat = liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => getPriority(m) > 0));
+          if (hasPriorityThreat) score = 48;
+        }
         if (move === 'Roost' && attacker.hp < attacker.maxHp * 0.5) score = 45;
         if (score > best.score) best = { move, target: liveEnemies[0] || null, score };
         continue;
@@ -1647,7 +1655,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const moveType = MOVE_TYPES[move] || 'Normal';
     const PROTECT_MOVES = new Set(['Protect','Wide Guard','Quick Guard']);
     const STATUS_MOVES  = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder',
-      'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail',
+      'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail','Quick Guard',
       // T9j.2 additions — side-state setters
       'Wide Guard','Follow Me','Quick Guard',
       // T9j.3 Screens setters
@@ -1729,7 +1737,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Quick Guard') {
-        attacker.protected = true;  // minimal: treat as self-protect for now (Refs: separate priority-only QG ticket)
+        const side = (allies === playerActive) ? field.playerSide : field.oppSide;
+        side.quickGuard = true;
         log.push(`${attacker.name} used Quick Guard!`);
         return;
       }
@@ -2022,6 +2031,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (t === attacker) return true;
         if (t.side && t.side.wideGuard) {
           log.push(`Wide Guard blocked ${move} on ${t.name}!`);
+          return false;
+        }
+        return true;
+      });
+      if (targets.length === 0) return;
+    }
+
+    const movePriority = getPriority(move);
+    if (movePriority > 0) {
+      targets = targets.filter(t => {
+        if (!t.side || !attacker.side || t.side === attacker.side) return true;
+        if (t.side.quickGuard) {
+          log.push(`Quick Guard blocked ${move} on ${t.name}!`);
           return false;
         }
         return true;
