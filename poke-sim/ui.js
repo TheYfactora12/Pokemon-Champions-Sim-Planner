@@ -2782,7 +2782,7 @@ function _pdfHasAny(mon, list) {
   return !!(mon && mon.moves && list.some(function(x){ return mon.moves.indexOf(x) >= 0; }));
 }
 
-var CLASSIFY_POKEMON_ROLES = [
+var CLASSIFY_POKEMON_LEGACY_ROLES = [
   'lead',
   'sweeper',
   'support',
@@ -2808,9 +2808,9 @@ function _classifyAdd(scores, role, points, reason) {
 
 // Seven-role classifier for the dynamic coaching layer (#141).
 // Returns a stable object so UI, tests, and future detectors can share it.
-function classifyPokemon(mon, teamMembers) {
+function classifyPokemonLegacy(mon, teamMembers) {
   var scores = {};
-  CLASSIFY_POKEMON_ROLES.forEach(function(role){
+  CLASSIFY_POKEMON_LEGACY_ROLES.forEach(function(role){
     scores[role] = { role: role, score: 0, reasons: [] };
   });
   if (!mon || typeof mon !== 'object') {
@@ -2860,7 +2860,7 @@ function classifyPokemon(mon, teamMembers) {
   }
 
   var tieOrder = ['win_condition', 'lead', 'support', 'pivot', 'disruptor', 'sweeper', 'sacrifice_piece'];
-  var best = CLASSIFY_POKEMON_ROLES
+  var best = CLASSIFY_POKEMON_LEGACY_ROLES
     .slice()
     .sort(function(a, b){
       var diff = scores[b].score - scores[a].score;

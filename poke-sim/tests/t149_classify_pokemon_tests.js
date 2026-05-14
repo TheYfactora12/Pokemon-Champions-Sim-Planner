@@ -1,7 +1,4 @@
-// Issue #149 / #141 - classifyPokemon() seven-role classifier tests.
-//
-// classifyPokemon is deterministic plumbing for the coaching layer. These
-// tests pin the seven public role ids and the strongest signal for each role.
+// Issue #149 / #141 - classifyPokemon() canonical seven-role classifier tests.
 
 const fs = require('fs');
 const path = require('path');
@@ -56,14 +53,12 @@ function load(file) {
 
 load('data.js');
 load('engine.js');
-load('storage_adapter.js');
-load('ui.js');
 vm.runInContext([
   'this.classifyPokemon=classifyPokemon;',
-  'this.CLASSIFY_POKEMON_ROLES=CLASSIFY_POKEMON_ROLES;'
+  'this.CANONICAL_ROLES=CANONICAL_ROLES;'
 ].join(' '), ctx);
 
-const { classifyPokemon, CLASSIFY_POKEMON_ROLES } = ctx;
+const { classifyPokemon, CANONICAL_ROLES } = ctx;
 
 let pass = 0, fail = 0;
 function T(name, fn) {
@@ -78,62 +73,74 @@ function truthy(v, msg='') { if (!v) throw new Error(msg || 'expected truthy'); 
 console.log('\n=== classifyPokemon seven-role tests ===\n');
 
 T('1. exposes exactly seven public role ids', () => {
-  eq(CLASSIFY_POKEMON_ROLES.join('|'), 'lead|sweeper|support|pivot|disruptor|win_condition|sacrifice_piece');
+  eq(CANONICAL_ROLES.join('|'), 'Sweeper|Wall|Tank|Speed Control|Pivot|Support|Weather Control');
 });
 
-T('2. Fake Out + Intimidate classifies as lead', () => {
+function hasRole(result, role) {
+  truthy(result.roles.indexOf(role) >= 0, `${role} missing from ${JSON.stringify(result.roles)}`);
+}
+
+T('2. Incineroar is multi-role support/pivot/tank with no duplicates', () => {
   const r = classifyPokemon({ name:'Incineroar', ability:'Intimidate', item:'Sitrus Berry', moves:['Fake Out','Parting Shot','Knock Off','Flare Blitz'] });
-  eq(r.role, 'lead');
-  eq(r.confidence, 'high');
+  hasRole(r, 'Support');
+  hasRole(r, 'Pivot');
+  hasRole(r, 'Tank');
+  truthy(r.roles.length >= 3, JSON.stringify(r.roles));
+  eq(new Set(r.roles).size, r.roles.length, 'roles must be deduped');
 });
 
-T('3. setup attacker classifies as win_condition', () => {
+T('3. setup attacker classifies as Sweeper and Speed Control', () => {
   const r = classifyPokemon({ name:'Dragonite-Mega', ability:'Aerilate', item:'Dragonitite', moves:['Dragon Dance','Extreme Speed','Dragon Claw','Protect'] });
-  eq(r.role, 'win_condition');
-  truthy(r.reasons.some(x => x.indexOf('Mega') >= 0), r.reasons.join('; '));
+  hasRole(r, 'Sweeper');
+  hasRole(r, 'Speed Control');
 });
 
-T('4. Tailwind support classifies as support', () => {
-  const r = classifyPokemon({ name:'Whimsicott', ability:'Prankster', item:'Covert Cloak', moves:['Tailwind','Encore','Moonblast','Protect'] });
-  eq(r.role, 'support');
+T('4. Whimsicott Tailwind + Icy Wind classifies as Speed Control + Support', () => {
+  const r = classifyPokemon({ name:'Whimsicott', ability:'Prankster', item:'Covert Cloak', moves:['Tailwind','Icy Wind','Moonblast','Encore'] });
+  hasRole(r, 'Speed Control');
+  hasRole(r, 'Support');
 });
 
-T('5. Parting Shot cycling classifies as pivot when no lead pressure', () => {
+T('5. screens and Parting Shot classify as Support + Pivot', () => {
   const r = classifyPokemon({ name:'Grimmsnarl', ability:'Prankster', item:'Light Clay', moves:['Parting Shot','Spirit Break','Reflect','Light Screen'] });
-  eq(r.role, 'support');
-  truthy(r.scores.pivot.score > 0, 'pivot score should still be recorded');
+  hasRole(r, 'Support');
+  hasRole(r, 'Pivot');
 });
 
-T('6. trap/status Mega classifies as disruptor', () => {
-  const r = classifyPokemon({ name:'Gengar-Mega', ability:'Shadow Tag', item:'Gengarite', moves:['Perish Song','Protect','Shadow Ball','Sludge Bomb'] });
-  eq(r.role, 'disruptor');
-  truthy(r.scores.disruptor.score >= 3, 'trap/status score should be recorded');
-});
-
-T('7. pure pivot classifies as pivot', () => {
-  const r = classifyPokemon({ name:'Rotom-Wash', ability:'Levitate', item:'Sitrus Berry', moves:['Volt Switch','Hydro Pump','Will-O-Wisp','Protect'] });
-  eq(r.role, 'pivot');
-});
-
-T('8. denial/status mon classifies as disruptor', () => {
+T('6. bulky recovery mon classifies as Wall', () => {
   const r = classifyPokemon({ name:'Sableye', ability:'Prankster', item:'Leftovers', moves:['Encore','Will-O-Wisp','Foul Play','Recover'] });
-  eq(r.role, 'disruptor');
+  hasRole(r, 'Wall');
+  hasRole(r, 'Support');
 });
 
-T('9. Lunar Dance classifies as sacrifice_piece', () => {
+T('7. pure pivot classifies as Pivot', () => {
+  const r = classifyPokemon({ name:'Rotom-Wash', ability:'Levitate', item:'Sitrus Berry', moves:['Volt Switch','Hydro Pump','Will-O-Wisp','Protect'] });
+  hasRole(r, 'Pivot');
+});
+
+T('8. weather ability classifies as Weather Control', () => {
+  const r = classifyPokemon({ name:'Charizard-Mega-Y', ability:'Drought', item:'Charizardite Y', moves:['Heat Wave','Solar Beam','Tailwind','Protect'] });
+  hasRole(r, 'Weather Control');
+  hasRole(r, 'Speed Control');
+});
+
+T('9. bulky Trick Room support classifies as Wall + Speed Control + Support', () => {
   const r = classifyPokemon({ name:'Cresselia', ability:'Levitate', item:'Mental Herb', moves:['Lunar Dance','Trick Room','Helping Hand','Psychic'] });
-  eq(r.role, 'sacrifice_piece');
+  hasRole(r, 'Wall');
+  hasRole(r, 'Speed Control');
+  hasRole(r, 'Support');
 });
 
-T('10. ordinary three-attack mon falls back to sweeper', () => {
+T('10. ordinary strong attacker falls back to Sweeper', () => {
   const r = classifyPokemon({ name:'Garchomp', ability:'Rough Skin', item:'Clear Amulet', moves:['Earthquake','Dragon Claw','Rock Slide','Protect'] });
-  eq(r.role, 'sweeper');
+  hasRole(r, 'Sweeper');
 });
 
-T('11. missing data returns low-confidence support', () => {
+T('11. missing data returns a stable Support shape', () => {
   const r = classifyPokemon(null);
-  eq(r.role, 'support');
-  eq(r.confidence, 'low');
+  hasRole(r, 'Support');
+  truthy(r.stats && typeof r.stats.total === 'number', 'stats payload missing');
+  truthy(Array.isArray(r.moves), 'moves payload missing');
 });
 
 console.log(`\nclassifyPokemon: ${pass} pass, ${fail} fail\n`);
