@@ -24,6 +24,7 @@ Supabase (Postgres + RLS) + `supabase-js` v2
 > ⚠️ Use `seed_teams_v2.sql` — NOT `seed_teams_v1.sql`. v2 has complete data for all 13 teams.
 
 App layer: `poke-sim/supabase_adapter.js` — fully implemented. Browser credentials are injected at runtime through ignored local files or CI secrets; real keys must not be committed.
+UI wiring: `poke-sim/ui.js` already loads DB teams on startup and persists analyses after battle runs when the adapter is enabled.
 
 ---
 
@@ -164,8 +165,8 @@ window.__DISABLE_SUPABASE__ = true; // set before adapter loads
 | 1 | HIGH | `schema_v1.sql` missing `metadata` column on `teams` — referenced by `loadTeamsFromDB()` | ✅ Fixed in schema_v1.sql |
 | 2 | MEDIUM | README referenced `seed_teams_v1.sql` — v2 exists and supersedes it | ✅ Fixed in this README |
 | 3 | LOW | Anon INSERT on `analyses` uses `WITH CHECK (true)` — any browser can insert rows | ✅ Accepted risk, documented |
-| 4 | HIGH | No `saveAnalysis()` call site in `ui.js` — analyses never persist even when DB is live | ❌ OPEN — Alfredo must wire in ui.js |
-| 5 | MEDIUM | CDN `<script>` load order vs `supabase_adapter.js` not verified in `index.html` | ❌ OPEN — Alfredo must confirm |
+| 4 | HIGH | No `saveAnalysis()` call site in `ui.js` — analyses never persist even when DB is live | ✅ Wired in `ui.js` after battle runs |
+| 5 | MEDIUM | CDN `<script>` load order vs `supabase_adapter.js` not verified in `index.html` | ✅ Verified — Supabase JS loads before `supabase_adapter.js` |
 
 ---
 
@@ -232,10 +233,10 @@ The M10 live DB snapshot warning should be gone once the remote schema includes 
 - [ ] `schema_v1.sql` executed — tables visible in Table Editor
 - [ ] `seed_teams_v2.sql` executed — 13 rows in `teams` table
 - [ ] `rls_policies_v1.sql` executed — RLS enabled on all tables
-- [ ] Supabase CDN `<script>` loads synchronously before `supabase_adapter.js` in `index.html`
+- [x] Supabase CDN `<script>` loads synchronously before `supabase_adapter.js` in `index.html`
 - [ ] Local browser smoke uses ignored `local-credentials.js`
 - [ ] Live DB tests use ignored `.env.local` or GitHub Actions secrets
-- [ ] `saveAnalysis()` call wired in `ui.js` after Bo series completes
+- [x] `saveAnalysis()` call wired in `ui.js` after Bo series completes
 - [ ] App reads seeded teams from Supabase on load
 - [ ] Sim analysis write succeeds and row appears in Supabase Table Editor
 - [ ] Records persist after page refresh
