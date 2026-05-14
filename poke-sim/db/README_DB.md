@@ -94,6 +94,8 @@ Admin database changes need a separate secret that is never bundled into the sit
 postgresql://postgres.<project-ref>:<password>@<pooler-host>:6543/postgres?sslmode=require
 ```
 
+The migration workflow sets `PGSSLROOTCERT` to `.github/certs/prod-ca-2021.crt` so `psql` can verify Supabase TLS with the Supabase Root 2021 CA when the connection string requires certificate validation.
+
 The `service_role` key bypasses RLS, but it is not a replacement for a Postgres connection string when running `ALTER TABLE` migrations. Do not place a `service_role` key in frontend files, GitHub Pages artifacts, or local browser credentials.
 
 ---

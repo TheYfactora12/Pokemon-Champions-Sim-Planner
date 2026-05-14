@@ -25,6 +25,7 @@ jobs:
       SUPABASE_DB_URL_FALLBACK: ${{ secrets.SUPABASE_DB_URL }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      PGSSLROOTCERT: ${{ github.workspace }}/.github/certs/prod-ca-2021.crt
     steps:
       - uses: actions/checkout@v4
 
