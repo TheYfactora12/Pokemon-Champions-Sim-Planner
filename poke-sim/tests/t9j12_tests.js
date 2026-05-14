@@ -231,6 +231,39 @@ T('4. mode=random disables drag (draggable="false") on pool and slots', () => {
   inc(html2, 'draggable="true"', 'manual mode allows drag');
 });
 
+T('4b. random mode shows no picked highlights and displays random-leads hint', () => {
+  setCurrentFormat('doubles');
+  resetBring(FIXTURE_KEY);
+  setBringMode(FIXTURE_KEY, 'random');
+  const html = buildBringPickerHtml(FIXTURE_KEY, { compact: true });
+  inc(html, 'Leads will be chosen randomly.', 'random hint visible');
+  notInc(html, 'bring-in', 'random mode has no selected pool chips');
+  notInc(html, 'bring-pool-chip-pos', 'random mode has no lead/bench position badges');
+  notInc(html, 'bring-slot-sprite', 'random mode slots are empty');
+  setBringMode(FIXTURE_KEY, 'manual');
+});
+
+T('4c. manual mode restores picked highlights and hides random-leads hint', () => {
+  setCurrentFormat('doubles');
+  resetBring(FIXTURE_KEY);
+  setBringMode(FIXTURE_KEY, 'manual');
+  const html = buildBringPickerHtml(FIXTURE_KEY, { compact: true });
+  inc(html, 'bring-in', 'manual mode has selected pool chips');
+  inc(html, 'bring-slot-sprite', 'manual mode slots show selected sprites');
+  notInc(html, 'Leads will be chosen randomly.', 'manual hint hidden');
+});
+
+T('4d. auto mode is treated as unresolved leads, same as random', () => {
+  setCurrentFormat('doubles');
+  resetBring(FIXTURE_KEY);
+  setBringMode(FIXTURE_KEY, 'auto');
+  const html = buildBringPickerHtml(FIXTURE_KEY, { compact: false });
+  inc(html, 'Leads will be chosen randomly.', 'auto hint visible');
+  notInc(html, '◆ LEAD', 'auto mode has no lead badges');
+  notInc(html, 'bring-in', 'auto mode has no selected rows');
+  setBringMode(FIXTURE_KEY, 'manual');
+});
+
 T('5. doubles format: 4 slots (LEAD 1, LEAD 2, BENCH 3, BENCH 4)', () => {
   setCurrentFormat('doubles');
   resetBring(FIXTURE_KEY);

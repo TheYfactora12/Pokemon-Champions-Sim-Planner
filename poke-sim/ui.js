@@ -581,15 +581,17 @@ function buildBringPickerHtml(teamKey, opts) {
   var mode = (typeof getBringMode === 'function')
     ? getBringMode(teamKey)
     : (teamKey === (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player') ? 'manual' : 'random');
+  var manualMode = mode === 'manual';
+  var visibleBring = manualMode ? bring : [];
   var slotLabels = [];
   for (var i = 0; i < bringCount; i++) slotLabels.push(i < leadCount ? 'LEAD ' + (i+1) : 'BENCH ' + (i+1));
   var slotsHtml = slotLabels.map(function(label, i){
-    var monName = bring[i] || '';
+    var monName = visibleBring[i] || '';
     var sprite = monName ? getSpriteUrl(monName) : '';
     return '<div class="bring-slot ' + (i < leadCount ? 'bring-slot-lead' : 'bring-slot-bench') +
       '" data-team="' + teamKey + '" data-slot="' + i +
-      '" draggable="' + (monName ? 'true' : 'false') +
-      '" title="' + label + (mode === 'random' ? ' (random mode)' : '') + '">' +
+      '" draggable="' + (manualMode && monName ? 'true' : 'false') +
+      '" title="' + label + (!manualMode ? ' (random mode)' : '') + '">' +
       '<div class="bring-slot-label">' + label + '</div>' +
       (monName
         ? '<img class="bring-slot-sprite" src="' + sprite + '" alt="' + monName + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
@@ -603,11 +605,11 @@ function buildBringPickerHtml(teamKey, opts) {
   var poolHtml;
   if (compact) {
     poolHtml = team.members.map(function(m){
-      var inBring = bring.indexOf(m.name) >= 0;
+      var inBring = manualMode && bring.indexOf(m.name) >= 0;
       var pos = inBring ? (bring.indexOf(m.name) < leadCount ? 'LEAD ' + (bring.indexOf(m.name)+1) : 'BENCH ' + (bring.indexOf(m.name)+1)) : '';
       return '<div class="bring-pool-chip ' + (inBring ? 'bring-in' : 'bring-out') +
         '" data-team="' + teamKey + '" data-mon="' + m.name +
-        '" draggable="' + (mode === 'random' ? 'false' : 'true') +
+        '" draggable="' + (manualMode ? 'true' : 'false') +
         '" title="' + m.name + (inBring ? ' (' + pos + ')' : '') + '">' +
         '<img class="bring-pool-chip-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + m.name + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
         '<span class="bring-pool-chip-name">' + m.name + '</span>' +
@@ -616,10 +618,10 @@ function buildBringPickerHtml(teamKey, opts) {
     }).join('');
   } else {
     poolHtml = team.members.map(function(m){
-      var inBring = bring.indexOf(m.name) >= 0;
+      var inBring = manualMode && bring.indexOf(m.name) >= 0;
       return '<div class="bring-pool-row ' + (inBring ? 'bring-in' : 'bring-out') +
         '" data-team="' + teamKey + '" data-mon="' + m.name +
-        '" draggable="' + (mode === 'random' ? 'false' : 'true') + '">' +
+        '" draggable="' + (manualMode ? 'true' : 'false') + '">' +
         '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + m.name + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
         '<div class="poke-full-info">' +
           '<div class="poke-full-name">' + m.name +
@@ -639,8 +641,11 @@ function buildBringPickerHtml(teamKey, opts) {
       '<button class="bring-mode-btn ' + (mode === 'manual' ? 'active' : '') + '" data-team="' + teamKey + '" data-mode="manual" title="Pick your ' + bringCount + ' Pokemon by hand">Manual</button>' +
       '<button class="bring-mode-btn ' + (mode === 'random' ? 'active' : '') + '" data-team="' + teamKey + '" data-mode="random" title="Re-roll a random ' + bringCount + ' of 6 each series">Random ' + bringCount + '/6</button>' +
     '</div>';
+  var modeHint = !manualMode
+    ? '<div class="bring-mode-hint" id="lead-hint" data-team="' + teamKey + '">Leads will be chosen randomly.</div>'
+    : '';
   var poolCls = compact ? 'bring-pool bring-pool-compact' : 'bring-pool';
-  return modeToggle +
+  return modeToggle + modeHint +
     '<div class="bring-slots">' + slotsHtml + '</div>' +
     '<div class="' + poolCls + '">' + poolHtml + '</div>';
 }
@@ -1929,7 +1934,7 @@ ChampionsSim.state.lastResults = {};
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Team_Preview
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/VGC
 var BRING_SELECTION = {};
-// BRING_MODE[teamKey] = 'manual' | 'random'. Defaults to 'manual' for the
+// BRING_MODE[teamKey] = 'manual' | 'random' | 'auto'. Defaults to 'manual' for the
 // player slot and 'random' for every other team (opponents reroll per series).
 var BRING_MODE = {};
 // localStorage persistence keyed by teamKey + format so each format keeps its
@@ -1965,7 +1970,7 @@ function getBringMode(teamKey) {
   return (teamKey === currentPlayerKey) ? 'manual' : 'random';
 }
 function setBringMode(teamKey, mode) {
-  BRING_MODE[teamKey] = (mode === 'random') ? 'random' : 'manual';
+  BRING_MODE[teamKey] = (mode === 'random' || mode === 'auto') ? mode : 'manual';
   _saveBringState();
 }
 function getBringFor(teamKey) {
