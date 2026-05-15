@@ -102,6 +102,28 @@ table{border-collapse:collapse;width:100%}
   .tab-nav{padding:0 var(--sp2)}
   .tab-btn{padding:10px 12px;min-height:40px;font-size:12px}
 }
+@media(max-width:760px){
+  .tab-nav{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(96px,1fr));
+    gap:1px;
+    overflow:visible;
+    padding:0 var(--sp2);
+  }
+  .tab-btn{
+    white-space:normal;
+    text-align:center;
+    padding:10px 8px;
+    min-height:44px;
+    border-bottom:1px solid var(--border);
+    background:var(--surface2);
+  }
+  .tab-btn.active{
+    color:var(--primary);
+    border-bottom-color:var(--primary);
+    background:rgba(124,106,245,.12);
+  }
+}
 @media(max-width:560px){
   .header-right{display:flex;flex-direction:column;align-items:stretch;width:100%;gap:8px}
   .format-toggle{width:100%;flex-wrap:wrap}
