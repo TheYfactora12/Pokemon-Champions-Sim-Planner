@@ -74,6 +74,9 @@ table{border-collapse:collapse;width:100%}
   .fmt-pill-btn{white-space:normal;line-height:1.2}
   .site-title{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
   .build-version,.db-offline-chip{margin-left:0}
+  .tab-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:0;overflow-x:visible}
+  .tab-nav::-webkit-scrollbar{display:none}
+  .tab-btn{white-space:normal;text-align:center;padding:8px 6px;min-height:44px;font-size:11px;border-bottom:1px solid var(--border)}
 }
 @media(min-width:701px) and (max-width:900px) and (orientation:landscape){
   .header-inner{padding:10px var(--sp3)}
