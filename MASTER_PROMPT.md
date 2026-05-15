@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-15 | @TheYfactora12 | Mechanics audit harness + shared Battle Audit panel + role utility refinement | Added reusable mechanics audit cases/runner, browser smoke coverage, structured battle audit panel, and first-turn support utility bias. Bundle rebuilt and validated. Hosted test site published on fork Pages: https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/ |
 | 2026-05-11 | @alfredocox | M9 implementation: hardening/advisor/migration baseline suite + 10 TDD cases GREEN | POK-25. Fixed test assertions to match actual baseline migration (`IF NOT EXISTS`) and RLS per-table policies. Added `apply_migration` workflow docs to `README_DB.md`. Fixed `package.json` test script assertion. 68/68 total DB tests GREEN. |
 | 2026-05-11 | @alfredocox | M8 implementation: `loadPriorSnapshot` + `applyPrior` engine wiring + 10 TDD cases GREEN | POK-24. Adapter queries `prior_snapshots` table (fail-soft). Engine `buildAnalysisPayload` accepts `ctx.prior` → populates `prior_id`, `hidden_info_model`, enriched `hidden_info_priors`. Mock infra updated with `lte()` filter + select filtering. Bundle rebuilt (930KB). `sw.js` bumped to v15-m8-priors. |
 | 2026-05-11 | @alfredocox | Live app bundle fix: removed `</script>` from JS comment in `supabase_adapter.js` | Root cause: literal `</script>` in comment caused HTML parser to close `<script>` block early when inlined by `build-bundle.py`. Defense-in-depth: `sanitize_inline_js()` added to build script. |
