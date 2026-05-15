@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-15 | @TheYfactora12 | Mobile portrait shell follow-up | Stacked the top header, format banner, and title chips before iPhone portrait overflow could force horizontal scrolling. Added focused regression coverage for the portrait shell plus the earlier Teams and strategy/audit mobile passes. |
 | 2026-05-15 | @TheYfactora12 | Mobile audit follow-up | Tightened mobile reflow for Teams, Strategy, replay, and audit surfaces after a targeted layout audit. Added focused regression coverage for mobile Teams, mobile strategy/audit, and tab/modal semantics. Rebuilt the bundle and validated against smoke + full non-DB suite. |
 | 2026-05-15 | @TheYfactora12 | Accessibility + mobile teams audit | Added roving-tabindex tabs, modal focus trapping/return-focus, mobile teams grid wrap rules, and dedicated regression coverage for tabs/modals + teams layout. Rebuilt the bundle and validated against smoke + full non-DB suite. |
 | 2026-05-15 | @TheYfactora12 | Mobile content-fit pass | Added fluid image defaults, wrap-safe card/header styles, and mobile overflow guards for replay, audit, strategy, and team-detail surfaces. Added dedicated CSS regressions and rebuilt the bundle. |

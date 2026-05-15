@@ -102,6 +102,17 @@ table{border-collapse:collapse;width:100%}
   .tab-nav{padding:0 var(--sp2)}
   .tab-btn{padding:10px 12px;min-height:40px;font-size:12px}
 }
+@media(max-width:560px){
+  .header-right{display:flex;flex-direction:column;align-items:stretch;width:100%;gap:8px}
+  .format-toggle{width:100%;flex-wrap:wrap}
+  .fmt-btn{flex:1 1 calc(50% - 4px);min-width:0;white-space:normal;line-height:1.15}
+  .btn-icon{align-self:flex-end}
+  .format-banner-inner{flex-direction:column;align-items:flex-start}
+  .fmt-indicator,.fmt-source,.fmt-pill-btn{width:100%}
+  .fmt-pill-btn{white-space:normal;line-height:1.2}
+  .site-title{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+  .build-version,.db-offline-chip{margin-left:0}
+}
 
 /* Format toggle */
 .format-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);padding:3px;gap:2px}
