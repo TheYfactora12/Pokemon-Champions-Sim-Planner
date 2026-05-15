@@ -11250,6 +11250,12 @@ document.getElementById('player-select').addEventListener('change', function() {
     currentPlayerKey = this.value;
     document.getElementById('player-team-name').textContent = team.name;
     renderRoster('player-roster', team.members);
+    var nextOpp = enforceDistinctBattleTeams();
+    if (nextOpp && TEAMS[nextOpp]) {
+      document.getElementById('opp-team-name').textContent = TEAMS[nextOpp].name;
+      renderRoster('opp-roster', TEAMS[nextOpp].members);
+      if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    }
     if (typeof applyLadderGate === 'function') applyLadderGate();
     // T9j.3b: recompute coverage on active-team change (no cache, always fresh).
     if (typeof renderCoverageWidget === 'function') renderCoverageWidget();
@@ -11270,6 +11276,12 @@ document.getElementById('opponent-select').addEventListener('change', function()
   if (team) {
     document.getElementById('opp-team-name').textContent = team.name;
     renderRoster('opp-roster', team.members);
+    var nextOpp = enforceDistinctBattleTeams();
+    if (nextOpp && TEAMS[nextOpp]) {
+      document.getElementById('opp-team-name').textContent = TEAMS[nextOpp].name;
+      renderRoster('opp-roster', TEAMS[nextOpp].members);
+      if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    }
     // T9j.12 (Refs #74): refresh sim-side bring picker on opponent switch.
     if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
     if (typeof invalidateThreatResponseCache === 'function') invalidateThreatResponseCache();
@@ -11355,6 +11367,26 @@ function applyLadderGate() {
     if (cb) cb.checked = false;
     applyLadderGate();
   }
+}
+
+function _firstDifferentTeamKey(excludeKey) {
+  if (typeof TEAMS === 'undefined') return null;
+  for (var key in TEAMS) {
+    if (key !== excludeKey && TEAMS[key]) return key;
+  }
+  return null;
+}
+
+function enforceDistinctBattleTeams() {
+  var playerSel = document.getElementById('player-select');
+  var oppSel = document.getElementById('opponent-select');
+  if (!playerSel || !oppSel) return null;
+  if (!playerSel.value || !oppSel.value) return null;
+  if (playerSel.value !== oppSel.value) return null;
+  var nextOpp = _firstDifferentTeamKey(playerSel.value);
+  if (!nextOpp || nextOpp === playerSel.value) return null;
+  oppSel.value = nextOpp;
+  return nextOpp;
 }
 
 document.getElementById('ladder-mode-toggle')?.addEventListener('change', function() {
@@ -13541,6 +13573,12 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     document.getElementById('progress-wrap').style.display='';
     setProgress(0,'Starting…',0,0);
 
+    var swappedOpp = enforceDistinctBattleTeams();
+    if (swappedOpp && TEAMS[swappedOpp]) {
+      document.getElementById('opp-team-name').textContent = TEAMS[swappedOpp].name;
+      renderRoster('opp-roster', TEAMS[swappedOpp].members);
+      if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    }
     const oppKey=document.getElementById('opponent-select').value;
     const n=parseInt(document.getElementById('sim-count').value);
     const bo=currentBo;
@@ -13576,6 +13614,10 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     simRunning=false; runBtn.disabled=false; if (allBtn) allBtn.disabled=false;
   }
 });
+
+ChampionsSim.battle = ChampionsSim.battle || {};
+ChampionsSim.battle.enforceDistinctBattleTeams = enforceDistinctBattleTeams;
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('enforceDistinctBattleTeams', enforceDistinctBattleTeams);
 
 document.getElementById('run-all-btn')?.addEventListener('click', async function() {
   if (simRunning) return;
