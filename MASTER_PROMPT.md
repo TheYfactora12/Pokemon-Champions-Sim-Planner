@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-15 | @TheYfactora12 | Mobile tab picker follow-up | Replaced the phone-width tab strip with a compact section picker and wired the active tab state to stay synced with the picker so narrow mobile views stop relying on desktop-style tab navigation. |
 | 2026-05-15 | @TheYfactora12 | Mobile dense controls follow-up | Collapsed the remaining Teams and bring-picker control rows into a single-column phone layout, tightened the smallest tab grid, and added regression coverage for narrow-phone dense controls. |
 | 2026-05-15 | @TheYfactora12 | Mobile simulator structure follow-up | Moved the simulator controls ahead of the team cards on phone widths and hid the coverage widget from the narrow path so the core Run Simulation flow stays usable without scrolling through a desktop-shaped control stack. Added regression coverage for the mobile simulator structure. |
 | 2026-05-15 | @TheYfactora12 | Mobile tab structure follow-up | Replaced the phone-width horizontal-swipe tab bar with a wrapped two-column grid so the main app sections stay visible without sideways scrolling. Added a regression for the mobile tab grid in addition to the portrait/landscape shell checks. |

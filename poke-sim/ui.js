@@ -166,6 +166,8 @@ function _focusFirstFocusable(root) {
 }
 function _syncTabA11yState(activeTabId) {
   _activeA11yTabId = activeTabId;
+  var mobileTabSelect = document.getElementById('mobile-tab-select');
+  if (mobileTabSelect && mobileTabSelect.value !== activeTabId) mobileTabSelect.value = activeTabId;
   document.querySelectorAll('.tab-btn').forEach(function(btn) {
     var isActive = btn.dataset.tab === activeTabId;
     btn.classList.toggle('active', isActive);
@@ -218,6 +220,13 @@ function _handleTabKeydown(ev) {
 function initTabA11y() {
   var tablist = document.querySelector('.tab-nav');
   if (tablist) tablist.setAttribute('aria-label', 'Main sections');
+  var mobileTabSelect = document.getElementById('mobile-tab-select');
+  if (mobileTabSelect) {
+    mobileTabSelect.value = (_activeA11yTabId || 'simulator');
+    mobileTabSelect.addEventListener('change', function() {
+      _activateTab(this.value, { focus: true });
+    });
+  }
   document.querySelectorAll('.tab-btn').forEach(function(btn) {
     var tabId = btn.dataset.tab;
     if (!btn.id) btn.id = 'tab-btn-' + tabId;

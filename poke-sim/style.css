@@ -74,9 +74,9 @@ table{border-collapse:collapse;width:100%}
   .fmt-pill-btn{white-space:normal;line-height:1.2}
   .site-title{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
   .build-version,.db-offline-chip{margin-left:0}
-  .tab-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:0;overflow-x:visible}
-  .tab-nav::-webkit-scrollbar{display:none}
-  .tab-btn{white-space:normal;text-align:center;padding:8px 6px;min-height:44px;font-size:11px;border-bottom:1px solid var(--border)}
+  .tab-nav{display:none}
+  .mobile-tab-picker{display:block;padding:0 var(--sp3) var(--sp3)}
+  .mobile-tab-picker .select-input{font-size:12px;font-weight:700}
   .teams-filter-row,.bring-mode-row,.replay-filters-row,.team-detail-head,.strategy-header-row,.pilot-card-header,.cs-summary-bar,.cs-detector-team-conf{flex-direction:column;align-items:flex-start}
   .teams-filter-row,.bring-mode-row,.replay-filters-row,.strategy-controls,.pilot-card-body{width:100%}
   .teams-filter-chip,.bring-mode-btn,.team-mon-detail-btn{width:100%;justify-content:center}
@@ -91,11 +91,12 @@ table{border-collapse:collapse;width:100%}
   .cs-cat-grid,.cs-lead-grid,.radar-grid,.breakdown-grid,.steps-grid,.editor-2col,.moves-2col,.team-detail-fields,.stat-panel-grid,.audit-grid{grid-template-columns:1fr}
 }
 @media(max-width:420px){
-  .tab-nav{grid-template-columns:1fr}
-  .tab-btn{font-size:10px;padding:8px 4px;min-height:40px}
   .bring-slots{grid-template-columns:1fr}
   .teams-filter-chip,.bring-mode-btn{font-size:10px}
   .team-full-card,.replay-card,.pilot-card,.cs-section,.editor-form,.editor-sidebar{padding:var(--sp2)}
+}
+@media(min-width:561px){
+  .mobile-tab-picker{display:none}
 }
 @media(min-width:701px) and (max-width:900px) and (orientation:landscape){
   .header-inner{padding:10px var(--sp3)}

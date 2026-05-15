@@ -26,7 +26,8 @@ T('1. teams and bring controls collapse into single-column rows', () => {
 T('2. bring slots and grids compress hard on narrow phones', () => {
   inc(css, '.bring-slots{grid-template-columns:repeat(2,minmax(0,1fr))}');
   inc(css, '@media(max-width:420px){');
-  inc(css, '.tab-nav{grid-template-columns:1fr}');
+  inc(css, '.tab-nav{display:none}');
+  inc(css, '.mobile-tab-picker{display:block;padding:0 var(--sp3) var(--sp3)}');
   inc(css, '.bring-slots{grid-template-columns:1fr}');
 });
 
