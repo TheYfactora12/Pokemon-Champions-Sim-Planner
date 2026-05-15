@@ -145,18 +145,179 @@ async function csHardenClientState() {
 }
 
 // ---- Tabs ----
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
-    // M6: load history when replay tab is opened
-    if ((btn.dataset.tab === 'replays' || btn.dataset.tab === 'replay') && typeof loadAnalysisHistory === 'function') {
-      loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
-    }
+var _activeA11yTabId = null;
+var _activeModalState = null;
+function _getFocusableElements(root) {
+  if (!root || typeof root.querySelectorAll !== 'function') return [];
+  return Array.prototype.slice.call(root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+    .filter(function(el) { return !!el && !el.disabled && !el.hidden && el.getAttribute('aria-hidden') !== 'true'; });
+}
+function _focusFirstFocusable(root) {
+  var items = _getFocusableElements(root);
+  if (items.length && typeof items[0].focus === 'function') {
+    items[0].focus();
+    return items[0];
+  }
+  if (root && typeof root.focus === 'function') {
+    root.focus();
+    return root;
+  }
+  return null;
+}
+function _syncTabA11yState(activeTabId) {
+  _activeA11yTabId = activeTabId;
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    var isActive = btn.dataset.tab === activeTabId;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    btn.tabIndex = isActive ? 0 : -1;
   });
-});
+  document.querySelectorAll('.tab-panel').forEach(function(panel) {
+    var panelTabId = panel.id ? panel.id.replace(/^tab-/, '') : '';
+    var isActive = panelTabId === activeTabId;
+    panel.classList.toggle('active', isActive);
+    panel.setAttribute('role', 'tabpanel');
+    panel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    panel.hidden = !isActive;
+    panel.tabIndex = isActive ? 0 : -1;
+  });
+}
+function _activateTab(tabId, opts) {
+  var btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+  var panel = document.getElementById('tab-' + tabId);
+  if (!btn || !panel) return false;
+  _syncTabA11yState(tabId);
+  btn.setAttribute('aria-controls', 'tab-' + tabId);
+  if (!btn.id) btn.id = 'tab-btn-' + tabId;
+  panel.setAttribute('aria-labelledby', btn.id);
+  if ((tabId === 'replays' || tabId === 'replay') && typeof loadAnalysisHistory === 'function') {
+    loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
+  }
+  return true;
+}
+function _handleTabKeydown(ev) {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+  var idx = tabs.indexOf(ev.currentTarget || ev.target);
+  if (idx < 0) return;
+  var nextIdx = null;
+  if (ev.key === 'ArrowRight') nextIdx = (idx + 1) % tabs.length;
+  else if (ev.key === 'ArrowLeft') nextIdx = (idx - 1 + tabs.length) % tabs.length;
+  else if (ev.key === 'Home') nextIdx = 0;
+  else if (ev.key === 'End') nextIdx = tabs.length - 1;
+  else if (ev.key === 'Enter' || ev.key === ' ') {
+    ev.preventDefault();
+    _activateTab(tabs[idx].dataset.tab, { focus: true });
+    return;
+  } else {
+    return;
+  }
+  ev.preventDefault();
+  tabs[nextIdx].focus();
+  _activateTab(tabs[nextIdx].dataset.tab, { focus: true });
+}
+function initTabA11y() {
+  var tablist = document.querySelector('.tab-nav');
+  if (tablist) tablist.setAttribute('aria-label', 'Main sections');
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    var tabId = btn.dataset.tab;
+    if (!btn.id) btn.id = 'tab-btn-' + tabId;
+    btn.setAttribute('aria-controls', 'tab-' + tabId);
+    btn.setAttribute('aria-selected', btn.classList.contains('active') ? 'true' : 'false');
+    btn.tabIndex = btn.classList.contains('active') ? 0 : -1;
+    btn.addEventListener('click', function() { _activateTab(tabId, { focus: true }); });
+    btn.addEventListener('keydown', _handleTabKeydown);
+  });
+  document.querySelectorAll('.tab-panel').forEach(function(panel) {
+    var tabId = panel.id ? panel.id.replace(/^tab-/, '') : '';
+    var linkedBtn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+    panel.setAttribute('role', 'tabpanel');
+    panel.setAttribute('aria-labelledby', linkedBtn ? linkedBtn.id : 'tab-btn-' + tabId);
+    panel.setAttribute('aria-hidden', panel.classList.contains('active') ? 'false' : 'true');
+    panel.hidden = !panel.classList.contains('active');
+    panel.tabIndex = panel.classList.contains('active') ? 0 : -1;
+  });
+  if (_activeA11yTabId) _syncTabA11yState(_activeA11yTabId);
+}
+initTabA11y();
+
+function _getModalDialog(overlay) {
+  if (!overlay || typeof overlay.querySelector !== 'function') return null;
+  return overlay.querySelector('.modal-box') || overlay.querySelector('.modal') || null;
+}
+function _openModalOverlay(overlayId, opts) {
+  var overlay = document.getElementById(overlayId);
+  if (!overlay) return null;
+  var dialog = _getModalDialog(overlay);
+  _activeModalState = {
+    overlay: overlay,
+    dialog: dialog,
+    returnFocus: document.activeElement || null
+  };
+  overlay.style.display = 'flex';
+  if (typeof overlay.setAttribute === 'function') overlay.setAttribute('aria-hidden', 'false');
+  if (dialog && typeof dialog.setAttribute === 'function') {
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-modal', 'true');
+    if (opts && opts.labelledbyId) dialog.setAttribute('aria-labelledby', opts.labelledbyId);
+    if (opts && opts.describedbyId) dialog.setAttribute('aria-describedby', opts.describedbyId);
+    if (!dialog.hasAttribute || !dialog.hasAttribute('tabindex')) dialog.setAttribute('tabindex', '-1');
+  }
+  var focusTarget = null;
+  if (opts && opts.focusSelector && dialog && typeof dialog.querySelector === 'function') {
+    focusTarget = dialog.querySelector(opts.focusSelector);
+  }
+  if (!focusTarget && dialog) {
+    var focusables = _getFocusableElements(dialog);
+    focusTarget = focusables.length ? focusables[0] : dialog;
+  }
+  if (focusTarget && typeof focusTarget.focus === 'function') {
+    try { focusTarget.focus(); } catch (e) {}
+  }
+  return _activeModalState;
+}
+function _closeModalOverlay(overlayId, restoreFocus) {
+  var overlay = document.getElementById(overlayId);
+  if (overlay) {
+    overlay.style.display = 'none';
+    if (typeof overlay.setAttribute === 'function') overlay.setAttribute('aria-hidden', 'true');
+  }
+  var prev = _activeModalState && _activeModalState.returnFocus;
+  _activeModalState = null;
+  var focusTarget = restoreFocus || prev;
+  if (focusTarget && typeof focusTarget.focus === 'function') {
+    try { focusTarget.focus(); } catch (e) {}
+  }
+}
+function _handleModalKeydown(ev) {
+  if (!_activeModalState || !_activeModalState.dialog) return;
+  if (ev.key === 'Escape') {
+    ev.preventDefault();
+    ev.stopPropagation && ev.stopPropagation();
+    if (_activeModalState.overlay && _activeModalState.overlay.id === 'confirm-modal') {
+      _resolveConfirm(false);
+    } else {
+      _closeModalOverlay(_activeModalState.overlay && _activeModalState.overlay.id);
+    }
+    return;
+  }
+  if (ev.key !== 'Tab') return;
+  var focusables = _getFocusableElements(_activeModalState.dialog);
+  if (!focusables.length) {
+    ev.preventDefault();
+    if (typeof _activeModalState.dialog.focus === 'function') _activeModalState.dialog.focus();
+    return;
+  }
+  var first = focusables[0];
+  var last = focusables[focusables.length - 1];
+  if (ev.shiftKey && document.activeElement === first) {
+    ev.preventDefault();
+    last.focus();
+  } else if (!ev.shiftKey && document.activeElement === last) {
+    ev.preventDefault();
+    first.focus();
+  }
+}
+document.addEventListener('keydown', _handleModalKeydown, true);
 
 // ---- Format Toggle (Doubles / Singles) ----
 let currentFormat = 'doubles';
@@ -466,13 +627,12 @@ function asyncConfirm(title, body, okLabel) {
     titleEl.textContent = title || 'Confirm';
     bodyEl.textContent = body || '';
     okBtn.textContent = okLabel || 'Confirm';
-    modal.style.display = 'flex';
+    _openModalOverlay('confirm-modal', { focusSelector: '#confirm-ok', labelledbyId: 'confirm-title', describedbyId: 'confirm-body' });
     _pendingConfirm = resolve;
   });
 }
 function _resolveConfirm(v) {
-  var modal = document.getElementById('confirm-modal');
-  if (modal) modal.style.display = 'none';
+  _closeModalOverlay('confirm-modal');
   if (_pendingConfirm) { var fn = _pendingConfirm; _pendingConfirm = null; fn(v); }
 }
 document.addEventListener('click', function(e) {
@@ -1576,9 +1736,9 @@ function openExportModal(teamKey) {
   if (!team) return;
   const paste = exportTeamToPaste(team);
   document.getElementById('export-text').value = paste;
-  document.getElementById('export-modal').style.display = 'flex';
+  _openModalOverlay('export-modal', { focusSelector: '#export-text', labelledbyId: 'export-modal-title' });
 }
-document.getElementById('close-export')?.addEventListener('click', ()=>{ document.getElementById('export-modal').style.display='none'; });
+document.getElementById('close-export')?.addEventListener('click', ()=>{ _closeModalOverlay('export-modal'); });
 document.getElementById('copy-export-btn')?.addEventListener('click', function() {
   const ta = document.getElementById('export-text');
   const btn = this;
@@ -1604,7 +1764,7 @@ document.getElementById('export-opp-btn')?.addEventListener('click', ()=>{ const
 // IMPORT MODAL
 // ============================================================
 function openImportModal() {
-  document.getElementById('import-modal').style.display = 'flex';
+  _openModalOverlay('import-modal', { focusSelector: '#showdown-paste', labelledbyId: 'import-modal-title' });
   document.getElementById('showdown-paste').value = '';
   document.getElementById('paste-url-input').value = '';
   document.getElementById('import-status').textContent = '';
@@ -1615,7 +1775,7 @@ function openImportModal() {
   var hint = document.querySelector('#import-modal .modal-hint');
   if (hint) hint.innerHTML = 'Paste Showdown-format text directly from <strong>PS! Teambuilder \u2192 Export</strong> or from a pokepast.es page. All 6 Pok\u00e9mon will be parsed automatically.';
 }
-function closeImportModal() { document.getElementById('import-modal').style.display = 'none'; }
+function closeImportModal() { _closeModalOverlay('import-modal'); }
 
 // ============================================================
 // T9h: Edit any team (preloaded, opponent-added, or custom)
@@ -1815,7 +1975,11 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
 
 // Close modals on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.style.display='none'; });
+  overlay.addEventListener('click', e => {
+    if (e.target !== overlay) return;
+    if (overlay.id === 'confirm-modal') _resolveConfirm(false);
+    else _closeModalOverlay(overlay.id);
+  });
 });
 
 // ============================================================

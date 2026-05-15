@@ -28,6 +28,8 @@ node tests/t161_team_member_uniqueness_tests.js # Catalog teams must not repeat 
 node tests/t163_export_my_data_tests.js # Export My Data as JSON
 node tests/t164_mobile_shell_layout_tests.js # Mobile shell layout safeguards
 node tests/t165_mobile_content_fit_tests.js # Mobile content fit safeguards
+node tests/t166_a11y_tabs_modal_tests.js # Tabs + modal focus and keyboard semantics
+node tests/t167_mobile_teams_layout_tests.js # Mobile teams layout safeguards
 node tests/phase5_turn_log_tests.js # Phase 5 — turnLog, positionScore, Replay Log v2 — 12 cases
 node tests/phase6_coaching_voice.js # Phase 6 — coaching templates, linter, RNG gate — 9 cases
 node tests/structured_logger_tests.js # Infra — structured logger and no raw runtime console calls — 5 cases
@@ -56,6 +58,8 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | t9j15 | 22/22 | Best Mega Trigger Turn card — Pilot Guide + PDF column, severity bands, sweep cache |
 | t9j16 | 5/5 | Mobile shell layout safeguards |
 | t9j17 | 5/5 | Mobile content fit safeguards |
+| t166 | 1/1 | Tabs + modal focus and keyboard semantics |
+| t167 | 4/4 | Mobile teams layout safeguards |
 | phase4c | 20/20 | Detectors (dead moves, lead perf, loss conditions) + confidence badges, 5 fixtures incl. high-n null effect |
 | phase4d | 7/7 | Threat-response solver, cache, idle fallback, line labels, renderer |
 | phase4e | 13/13 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate, weakness dashboard |
@@ -64,7 +68,7 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
 | export | 4/4 | My Data JSON export for persisted history, reports, and DB analyses |
-| **Total** | **375/375** | |
+| **Total** | **377/377** | |
 | audit | 0 JS errors | 5070 battles across 13 teams |
 
 ## Conventions

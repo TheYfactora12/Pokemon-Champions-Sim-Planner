@@ -146,6 +146,16 @@ table{border-collapse:collapse;width:100%}
 .card-action-btn:hover{color:var(--primary);border-color:var(--primary)}
 @media(max-width:620px){
   .team-card,.results-section,.matchup-table-wrap,.about-card,.pilot-card,.team-full-card,.replay-card,.cs-section,.cs-summary-bar,.stat-panel,.editor-sidebar,.editor-form{padding:var(--sp4)}
+  .teams-actions{width:100%;flex-direction:column;margin-bottom:0}
+  .teams-actions .btn-secondary{width:100%;justify-content:center}
+  .teams-grid{grid-template-columns:1fr;gap:var(--sp4)}
+  .team-full-card{padding:var(--sp4)}
+  .tfcard-header{flex-direction:column;align-items:flex-start;gap:6px}
+  .tfcard-badges{width:100%;align-items:flex-start}
+  .poke-full-row{flex-wrap:wrap}
+  .poke-full-sprite{width:40px;height:40px}
+  .move-tags{width:100%}
+  .export-card-btn{width:100%;justify-content:center}
   .card-header,.results-header,.replay-card-hdr,.tfcard-header,.pilot-card-header,.strategy-header-row,.strategy-controls,.cs-summary-bar,.cs-adaptive-row,.team-detail-head,.replay-filters-row{flex-direction:column;align-items:flex-start}
   .card-header,.tfcard-header,.replay-card-hdr,.pilot-card-header,.cs-adaptive-row,.audit-meta-row{gap:6px}
   .card-title{white-space:normal;overflow:visible;text-overflow:clip}
@@ -289,6 +299,7 @@ table{border-collapse:collapse;width:100%}
 .matrix-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--r-full);background:var(--surface2);border:1px solid var(--border);color:var(--text-m);font-family:var(--font-mono)}
 
 /* ===== TEAMS GRID ===== */
+.teams-tab-header{display:flex;flex-direction:column;gap:var(--sp3);margin-bottom:var(--sp4)}
 .teams-actions{margin-bottom:var(--sp4);display:flex;gap:var(--sp3)}
 .teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(380px,100%),1fr));gap:var(--sp5)}
 .team-full-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp5);box-shadow:var(--sh-sm)}
@@ -433,6 +444,8 @@ table{border-collapse:collapse;width:100%}
 .source-table td{padding:9px var(--sp3);border-bottom:1px solid var(--border);font-size:var(--text-sm);vertical-align:middle}
 .source-table tr:last-child td{border-bottom:none}
 .source-table tr:hover td{background:var(--surface2)}
+.sources-content{max-width:100%}
+.sources-content #sources-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .mono{font-family:var(--font-mono);font-size:11px;color:var(--text-m)}
 .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp4)}
 @media(max-width:700px){.steps-grid{grid-template-columns:1fr}}
@@ -448,6 +461,7 @@ table{border-collapse:collapse;width:100%}
 @media(min-width:600px){.modal-overlay{align-items:center}}
 .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp5);max-width:580px;width:100%;max-height:92vh;max-height:92dvh;overflow-y:auto;box-shadow:var(--sh-lg);padding-bottom:max(var(--sp5),env(safe-area-inset-bottom))}
 @media(min-width:600px){.modal-box{padding:var(--sp6)}}
+.modal-box:focus{outline:none}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp4)}
 .modal-title{font-size:var(--text-lg);font-weight:900;letter-spacing:-.01em}
 .modal-close{width:32px;height:32px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--text-m);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--tr);flex-shrink:0}
@@ -2104,7 +2118,7 @@ table{border-collapse:collapse;width:100%}
 <section class="tab-panel" id="tab-teams">
   <div class="teams-tab-header">
     <h2 class="section-title">All Teams</h2>
-    <div style="display:flex;gap:var(--sp3);flex-wrap:wrap">
+    <div class="teams-actions">
       <button class="btn-secondary" id="import-team-btn">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Import Team
@@ -2212,9 +2226,9 @@ table{border-collapse:collapse;width:100%}
 
 <!-- ===== MODALS ===== -->
 <div class="modal-overlay" id="export-modal" style="display:none">
-  <div class="modal">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="export-modal-title" tabindex="-1">
     <div class="modal-header">
-      <span class="modal-title">Export Team</span>
+      <span class="modal-title" id="export-modal-title">Export Team</span>
       <button class="modal-close" id="close-export">✕</button>
     </div>
     <textarea class="export-textarea" id="export-text" readonly></textarea>
@@ -2226,9 +2240,9 @@ table{border-collapse:collapse;width:100%}
 </div>
 
 <div class="modal-overlay" id="import-modal" style="display:none">
-  <div class="modal">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="import-modal-title" tabindex="-1">
     <div class="modal-header">
-      <span class="modal-title">Import Team from Showdown Paste</span>
+      <span class="modal-title" id="import-modal-title">Import Team from Showdown Paste</span>
       <button class="modal-close" id="close-import">✕</button>
     </div>
     <p class="modal-hint">Paste Showdown-format text directly from <strong>PS! Teambuilder → Export</strong> or from a pokepast.es page. All 6 Pokémon will be parsed automatically.</p>
@@ -2275,7 +2289,7 @@ table{border-collapse:collapse;width:100%}
 
 <!-- Confirm modal (replaces window.confirm — blocked in sandboxed iframes) -->
 <div class="modal-overlay" id="confirm-modal" style="display:none">
-  <div class="modal" style="max-width:400px">
+  <div class="modal-box" style="max-width:400px" role="dialog" aria-modal="true" aria-labelledby="confirm-title" tabindex="-1">
     <div class="modal-header">
       <span class="modal-title" id="confirm-title">Confirm</span>
       <button class="modal-close" id="confirm-close">✕</button>
@@ -10956,18 +10970,179 @@ async function csHardenClientState() {
 }
 
 // ---- Tabs ----
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
-    // M6: load history when replay tab is opened
-    if ((btn.dataset.tab === 'replays' || btn.dataset.tab === 'replay') && typeof loadAnalysisHistory === 'function') {
-      loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
-    }
+var _activeA11yTabId = null;
+var _activeModalState = null;
+function _getFocusableElements(root) {
+  if (!root || typeof root.querySelectorAll !== 'function') return [];
+  return Array.prototype.slice.call(root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+    .filter(function(el) { return !!el && !el.disabled && !el.hidden && el.getAttribute('aria-hidden') !== 'true'; });
+}
+function _focusFirstFocusable(root) {
+  var items = _getFocusableElements(root);
+  if (items.length && typeof items[0].focus === 'function') {
+    items[0].focus();
+    return items[0];
+  }
+  if (root && typeof root.focus === 'function') {
+    root.focus();
+    return root;
+  }
+  return null;
+}
+function _syncTabA11yState(activeTabId) {
+  _activeA11yTabId = activeTabId;
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    var isActive = btn.dataset.tab === activeTabId;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    btn.tabIndex = isActive ? 0 : -1;
   });
-});
+  document.querySelectorAll('.tab-panel').forEach(function(panel) {
+    var panelTabId = panel.id ? panel.id.replace(/^tab-/, '') : '';
+    var isActive = panelTabId === activeTabId;
+    panel.classList.toggle('active', isActive);
+    panel.setAttribute('role', 'tabpanel');
+    panel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    panel.hidden = !isActive;
+    panel.tabIndex = isActive ? 0 : -1;
+  });
+}
+function _activateTab(tabId, opts) {
+  var btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+  var panel = document.getElementById('tab-' + tabId);
+  if (!btn || !panel) return false;
+  _syncTabA11yState(tabId);
+  btn.setAttribute('aria-controls', 'tab-' + tabId);
+  if (!btn.id) btn.id = 'tab-btn-' + tabId;
+  panel.setAttribute('aria-labelledby', btn.id);
+  if ((tabId === 'replays' || tabId === 'replay') && typeof loadAnalysisHistory === 'function') {
+    loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
+  }
+  return true;
+}
+function _handleTabKeydown(ev) {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+  var idx = tabs.indexOf(ev.currentTarget || ev.target);
+  if (idx < 0) return;
+  var nextIdx = null;
+  if (ev.key === 'ArrowRight') nextIdx = (idx + 1) % tabs.length;
+  else if (ev.key === 'ArrowLeft') nextIdx = (idx - 1 + tabs.length) % tabs.length;
+  else if (ev.key === 'Home') nextIdx = 0;
+  else if (ev.key === 'End') nextIdx = tabs.length - 1;
+  else if (ev.key === 'Enter' || ev.key === ' ') {
+    ev.preventDefault();
+    _activateTab(tabs[idx].dataset.tab, { focus: true });
+    return;
+  } else {
+    return;
+  }
+  ev.preventDefault();
+  tabs[nextIdx].focus();
+  _activateTab(tabs[nextIdx].dataset.tab, { focus: true });
+}
+function initTabA11y() {
+  var tablist = document.querySelector('.tab-nav');
+  if (tablist) tablist.setAttribute('aria-label', 'Main sections');
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    var tabId = btn.dataset.tab;
+    if (!btn.id) btn.id = 'tab-btn-' + tabId;
+    btn.setAttribute('aria-controls', 'tab-' + tabId);
+    btn.setAttribute('aria-selected', btn.classList.contains('active') ? 'true' : 'false');
+    btn.tabIndex = btn.classList.contains('active') ? 0 : -1;
+    btn.addEventListener('click', function() { _activateTab(tabId, { focus: true }); });
+    btn.addEventListener('keydown', _handleTabKeydown);
+  });
+  document.querySelectorAll('.tab-panel').forEach(function(panel) {
+    var tabId = panel.id ? panel.id.replace(/^tab-/, '') : '';
+    var linkedBtn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+    panel.setAttribute('role', 'tabpanel');
+    panel.setAttribute('aria-labelledby', linkedBtn ? linkedBtn.id : 'tab-btn-' + tabId);
+    panel.setAttribute('aria-hidden', panel.classList.contains('active') ? 'false' : 'true');
+    panel.hidden = !panel.classList.contains('active');
+    panel.tabIndex = panel.classList.contains('active') ? 0 : -1;
+  });
+  if (_activeA11yTabId) _syncTabA11yState(_activeA11yTabId);
+}
+initTabA11y();
+
+function _getModalDialog(overlay) {
+  if (!overlay || typeof overlay.querySelector !== 'function') return null;
+  return overlay.querySelector('.modal-box') || overlay.querySelector('.modal') || null;
+}
+function _openModalOverlay(overlayId, opts) {
+  var overlay = document.getElementById(overlayId);
+  if (!overlay) return null;
+  var dialog = _getModalDialog(overlay);
+  _activeModalState = {
+    overlay: overlay,
+    dialog: dialog,
+    returnFocus: document.activeElement || null
+  };
+  overlay.style.display = 'flex';
+  if (typeof overlay.setAttribute === 'function') overlay.setAttribute('aria-hidden', 'false');
+  if (dialog && typeof dialog.setAttribute === 'function') {
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-modal', 'true');
+    if (opts && opts.labelledbyId) dialog.setAttribute('aria-labelledby', opts.labelledbyId);
+    if (opts && opts.describedbyId) dialog.setAttribute('aria-describedby', opts.describedbyId);
+    if (!dialog.hasAttribute || !dialog.hasAttribute('tabindex')) dialog.setAttribute('tabindex', '-1');
+  }
+  var focusTarget = null;
+  if (opts && opts.focusSelector && dialog && typeof dialog.querySelector === 'function') {
+    focusTarget = dialog.querySelector(opts.focusSelector);
+  }
+  if (!focusTarget && dialog) {
+    var focusables = _getFocusableElements(dialog);
+    focusTarget = focusables.length ? focusables[0] : dialog;
+  }
+  if (focusTarget && typeof focusTarget.focus === 'function') {
+    try { focusTarget.focus(); } catch (e) {}
+  }
+  return _activeModalState;
+}
+function _closeModalOverlay(overlayId, restoreFocus) {
+  var overlay = document.getElementById(overlayId);
+  if (overlay) {
+    overlay.style.display = 'none';
+    if (typeof overlay.setAttribute === 'function') overlay.setAttribute('aria-hidden', 'true');
+  }
+  var prev = _activeModalState && _activeModalState.returnFocus;
+  _activeModalState = null;
+  var focusTarget = restoreFocus || prev;
+  if (focusTarget && typeof focusTarget.focus === 'function') {
+    try { focusTarget.focus(); } catch (e) {}
+  }
+}
+function _handleModalKeydown(ev) {
+  if (!_activeModalState || !_activeModalState.dialog) return;
+  if (ev.key === 'Escape') {
+    ev.preventDefault();
+    ev.stopPropagation && ev.stopPropagation();
+    if (_activeModalState.overlay && _activeModalState.overlay.id === 'confirm-modal') {
+      _resolveConfirm(false);
+    } else {
+      _closeModalOverlay(_activeModalState.overlay && _activeModalState.overlay.id);
+    }
+    return;
+  }
+  if (ev.key !== 'Tab') return;
+  var focusables = _getFocusableElements(_activeModalState.dialog);
+  if (!focusables.length) {
+    ev.preventDefault();
+    if (typeof _activeModalState.dialog.focus === 'function') _activeModalState.dialog.focus();
+    return;
+  }
+  var first = focusables[0];
+  var last = focusables[focusables.length - 1];
+  if (ev.shiftKey && document.activeElement === first) {
+    ev.preventDefault();
+    last.focus();
+  } else if (!ev.shiftKey && document.activeElement === last) {
+    ev.preventDefault();
+    first.focus();
+  }
+}
+document.addEventListener('keydown', _handleModalKeydown, true);
 
 // ---- Format Toggle (Doubles / Singles) ----
 let currentFormat = 'doubles';
@@ -11277,13 +11452,12 @@ function asyncConfirm(title, body, okLabel) {
     titleEl.textContent = title || 'Confirm';
     bodyEl.textContent = body || '';
     okBtn.textContent = okLabel || 'Confirm';
-    modal.style.display = 'flex';
+    _openModalOverlay('confirm-modal', { focusSelector: '#confirm-ok', labelledbyId: 'confirm-title', describedbyId: 'confirm-body' });
     _pendingConfirm = resolve;
   });
 }
 function _resolveConfirm(v) {
-  var modal = document.getElementById('confirm-modal');
-  if (modal) modal.style.display = 'none';
+  _closeModalOverlay('confirm-modal');
   if (_pendingConfirm) { var fn = _pendingConfirm; _pendingConfirm = null; fn(v); }
 }
 document.addEventListener('click', function(e) {
@@ -12387,9 +12561,9 @@ function openExportModal(teamKey) {
   if (!team) return;
   const paste = exportTeamToPaste(team);
   document.getElementById('export-text').value = paste;
-  document.getElementById('export-modal').style.display = 'flex';
+  _openModalOverlay('export-modal', { focusSelector: '#export-text', labelledbyId: 'export-modal-title' });
 }
-document.getElementById('close-export')?.addEventListener('click', ()=>{ document.getElementById('export-modal').style.display='none'; });
+document.getElementById('close-export')?.addEventListener('click', ()=>{ _closeModalOverlay('export-modal'); });
 document.getElementById('copy-export-btn')?.addEventListener('click', function() {
   const ta = document.getElementById('export-text');
   const btn = this;
@@ -12415,7 +12589,7 @@ document.getElementById('export-opp-btn')?.addEventListener('click', ()=>{ const
 // IMPORT MODAL
 // ============================================================
 function openImportModal() {
-  document.getElementById('import-modal').style.display = 'flex';
+  _openModalOverlay('import-modal', { focusSelector: '#showdown-paste', labelledbyId: 'import-modal-title' });
   document.getElementById('showdown-paste').value = '';
   document.getElementById('paste-url-input').value = '';
   document.getElementById('import-status').textContent = '';
@@ -12426,7 +12600,7 @@ function openImportModal() {
   var hint = document.querySelector('#import-modal .modal-hint');
   if (hint) hint.innerHTML = 'Paste Showdown-format text directly from <strong>PS! Teambuilder \u2192 Export</strong> or from a pokepast.es page. All 6 Pok\u00e9mon will be parsed automatically.';
 }
-function closeImportModal() { document.getElementById('import-modal').style.display = 'none'; }
+function closeImportModal() { _closeModalOverlay('import-modal'); }
 
 // ============================================================
 // T9h: Edit any team (preloaded, opponent-added, or custom)
@@ -12626,7 +12800,11 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
 
 // Close modals on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.style.display='none'; });
+  overlay.addEventListener('click', e => {
+    if (e.target !== overlay) return;
+    if (overlay.id === 'confirm-modal') _resolveConfirm(false);
+    else _closeModalOverlay(overlay.id);
+  });
 });
 
 // ============================================================

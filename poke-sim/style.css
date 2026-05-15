@@ -108,6 +108,16 @@ table{border-collapse:collapse;width:100%}
 .card-action-btn:hover{color:var(--primary);border-color:var(--primary)}
 @media(max-width:620px){
   .team-card,.results-section,.matchup-table-wrap,.about-card,.pilot-card,.team-full-card,.replay-card,.cs-section,.cs-summary-bar,.stat-panel,.editor-sidebar,.editor-form{padding:var(--sp4)}
+  .teams-actions{width:100%;flex-direction:column;margin-bottom:0}
+  .teams-actions .btn-secondary{width:100%;justify-content:center}
+  .teams-grid{grid-template-columns:1fr;gap:var(--sp4)}
+  .team-full-card{padding:var(--sp4)}
+  .tfcard-header{flex-direction:column;align-items:flex-start;gap:6px}
+  .tfcard-badges{width:100%;align-items:flex-start}
+  .poke-full-row{flex-wrap:wrap}
+  .poke-full-sprite{width:40px;height:40px}
+  .move-tags{width:100%}
+  .export-card-btn{width:100%;justify-content:center}
   .card-header,.results-header,.replay-card-hdr,.tfcard-header,.pilot-card-header,.strategy-header-row,.strategy-controls,.cs-summary-bar,.cs-adaptive-row,.team-detail-head,.replay-filters-row{flex-direction:column;align-items:flex-start}
   .card-header,.tfcard-header,.replay-card-hdr,.pilot-card-header,.cs-adaptive-row,.audit-meta-row{gap:6px}
   .card-title{white-space:normal;overflow:visible;text-overflow:clip}
@@ -251,6 +261,7 @@ table{border-collapse:collapse;width:100%}
 .matrix-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--r-full);background:var(--surface2);border:1px solid var(--border);color:var(--text-m);font-family:var(--font-mono)}
 
 /* ===== TEAMS GRID ===== */
+.teams-tab-header{display:flex;flex-direction:column;gap:var(--sp3);margin-bottom:var(--sp4)}
 .teams-actions{margin-bottom:var(--sp4);display:flex;gap:var(--sp3)}
 .teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(380px,100%),1fr));gap:var(--sp5)}
 .team-full-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp5);box-shadow:var(--sh-sm)}
@@ -395,6 +406,8 @@ table{border-collapse:collapse;width:100%}
 .source-table td{padding:9px var(--sp3);border-bottom:1px solid var(--border);font-size:var(--text-sm);vertical-align:middle}
 .source-table tr:last-child td{border-bottom:none}
 .source-table tr:hover td{background:var(--surface2)}
+.sources-content{max-width:100%}
+.sources-content #sources-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .mono{font-family:var(--font-mono);font-size:11px;color:var(--text-m)}
 .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp4)}
 @media(max-width:700px){.steps-grid{grid-template-columns:1fr}}
@@ -410,6 +423,7 @@ table{border-collapse:collapse;width:100%}
 @media(min-width:600px){.modal-overlay{align-items:center}}
 .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp5);max-width:580px;width:100%;max-height:92vh;max-height:92dvh;overflow-y:auto;box-shadow:var(--sh-lg);padding-bottom:max(var(--sp5),env(safe-area-inset-bottom))}
 @media(min-width:600px){.modal-box{padding:var(--sp6)}}
+.modal-box:focus{outline:none}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp4)}
 .modal-title{font-size:var(--text-lg);font-weight:900;letter-spacing:-.01em}
 .modal-close{width:32px;height:32px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--text-m);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--tr);flex-shrink:0}

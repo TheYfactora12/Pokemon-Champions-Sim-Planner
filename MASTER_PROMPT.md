@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-15 | @TheYfactora12 | Accessibility + mobile teams audit | Added roving-tabindex tabs, modal focus trapping/return-focus, mobile teams grid wrap rules, and dedicated regression coverage for tabs/modals + teams layout. Rebuilt the bundle and validated against smoke + full non-DB suite. |
 | 2026-05-15 | @TheYfactora12 | Mobile content-fit pass | Added fluid image defaults, wrap-safe card/header styles, and mobile overflow guards for replay, audit, strategy, and team-detail surfaces. Added dedicated CSS regressions and rebuilt the bundle. |
 | 2026-05-15 | @TheYfactora12 | Mobile shell layout pass + bring-order normalization | Tightened header/tab/card reflow for phones, normalized duplicate bring selections out of persisted state, and added CSS + picker regressions. Bundle rebuilt and validated. |
 | 2026-05-15 | @TheYfactora12 | Strategy report memoization + bounded cache | Added stable results hashing, LRU-bounded strategy-report memoization, and regression coverage for identical-call reuse and cache cap behavior. Bundle rebuilt and validated. |

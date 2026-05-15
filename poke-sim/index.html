@@ -308,7 +308,7 @@
 <section class="tab-panel" id="tab-teams">
   <div class="teams-tab-header">
     <h2 class="section-title">All Teams</h2>
-    <div style="display:flex;gap:var(--sp3);flex-wrap:wrap">
+    <div class="teams-actions">
       <button class="btn-secondary" id="import-team-btn">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Import Team
@@ -416,9 +416,9 @@
 
 <!-- ===== MODALS ===== -->
 <div class="modal-overlay" id="export-modal" style="display:none">
-  <div class="modal">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="export-modal-title" tabindex="-1">
     <div class="modal-header">
-      <span class="modal-title">Export Team</span>
+      <span class="modal-title" id="export-modal-title">Export Team</span>
       <button class="modal-close" id="close-export">✕</button>
     </div>
     <textarea class="export-textarea" id="export-text" readonly></textarea>
@@ -430,9 +430,9 @@
 </div>
 
 <div class="modal-overlay" id="import-modal" style="display:none">
-  <div class="modal">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="import-modal-title" tabindex="-1">
     <div class="modal-header">
-      <span class="modal-title">Import Team from Showdown Paste</span>
+      <span class="modal-title" id="import-modal-title">Import Team from Showdown Paste</span>
       <button class="modal-close" id="close-import">✕</button>
     </div>
     <p class="modal-hint">Paste Showdown-format text directly from <strong>PS! Teambuilder → Export</strong> or from a pokepast.es page. All 6 Pokémon will be parsed automatically.</p>
@@ -479,7 +479,7 @@
 
 <!-- Confirm modal (replaces window.confirm — blocked in sandboxed iframes) -->
 <div class="modal-overlay" id="confirm-modal" style="display:none">
-  <div class="modal" style="max-width:400px">
+  <div class="modal-box" style="max-width:400px" role="dialog" aria-modal="true" aria-labelledby="confirm-title" tabindex="-1">
     <div class="modal-header">
       <span class="modal-title" id="confirm-title">Confirm</span>
       <button class="modal-close" id="confirm-close">✕</button>
