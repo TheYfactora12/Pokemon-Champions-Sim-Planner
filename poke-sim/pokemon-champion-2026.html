@@ -39,6 +39,7 @@
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+img{max-width:100%;height:auto;display:block}
 
 :root {
   --font-display:'Cabinet Grotesk',sans-serif;
@@ -146,6 +147,7 @@ table{border-collapse:collapse;width:100%}
 @media(max-width:620px){
   .team-card,.results-section,.matchup-table-wrap,.about-card,.pilot-card,.team-full-card,.replay-card,.cs-section,.cs-summary-bar,.stat-panel,.editor-sidebar,.editor-form{padding:var(--sp4)}
   .card-header,.results-header,.replay-card-hdr,.tfcard-header,.pilot-card-header,.strategy-header-row,.strategy-controls,.cs-summary-bar,.cs-adaptive-row,.team-detail-head,.replay-filters-row{flex-direction:column;align-items:flex-start}
+  .card-header,.tfcard-header,.replay-card-hdr,.pilot-card-header,.cs-adaptive-row,.audit-meta-row{gap:6px}
   .card-title{white-space:normal;overflow:visible;text-overflow:clip}
   .card-action-btn,.btn-secondary,.btn-primary,.export-card-btn{width:100%;justify-content:center}
   .results-header,.strategy-header-row,.pilot-card-header,.team-detail-head{gap:var(--sp2)}
@@ -154,7 +156,10 @@ table{border-collapse:collapse;width:100%}
   .series-summary-table th,.series-summary-table td{padding:6px 8px;font-size:10px}
   .series-summary-table{min-width:540px}
   .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .tfcard-badges,.team-detail-head .team-detail-close{align-items:flex-start}
+  .tfcard-badges{width:100%;align-items:flex-start;flex-wrap:wrap;gap:4px}
+  .tfcard-badges .badge,.tfcard-badges .badge-legal,.tfcard-badges .badge-warn,.tfcard-badges .badge-illegal{max-width:100%}
+  .tfcard-badges .export-card-btn,.tfcard-badges .edit-card-btn,.tfcard-badges .reset-card-btn,.tfcard-badges .delete-card-btn{width:100%;margin-left:0}
+  .team-detail-head .team-detail-close{align-self:flex-start}
   .pilot-card-body{gap:var(--sp3)}
   .pilot-details{min-width:0}
   .pilot-wc-row{grid-template-columns:1fr 1fr auto}
@@ -164,6 +169,10 @@ table{border-collapse:collapse;width:100%}
   .cs-cat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cs-source{margin-left:0}
   .engine-row{grid-template-columns:1fr;gap:4px}
+  .replay-title,.replay-meta,.tfcard-name,.tfcard-meta,.pilot-card-title,.pilot-leads,.cs-summary-line,.cs-explain,.cs-champ-pov,.audit-meta-row,.audit-table,.cs-threat-why,.cs-threat-play{overflow-wrap:anywhere;word-break:break-word}
+  .move-tags,.replay-chips,.team-detail-chip-row,.cs-lead-grid,.cs-moveline-grid,.cs-skill-grid,.cs-threat-grid,.radar-grid,.cs-detector-toolbar,.teams-actions,.teams-filter-row{max-width:100%}
+  .move-tag,.rchip,.team-detail-chip,.cs-chip,.teams-filter-chip,.team-mon-detail-btn,.stat-panel-pill,.speed-val{white-space:normal}
+  .audit-grid{grid-template-columns:1fr}
   .replay-filters{width:100%}
   .modal-box{padding:var(--sp4)}
   .modal-actions{flex-direction:column}
@@ -386,6 +395,7 @@ table{border-collapse:collapse;width:100%}
 .team-detail-chip-row{display:flex;flex-wrap:wrap;gap:6px}
 @media(max-width:620px){.team-detail-backdrop{align-items:stretch;padding:10px}.team-detail-modal{max-height:calc(100vh - 20px);padding:14px}.team-detail-head h2{font-size:20px}.team-detail-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.team-mon-detail-btn{width:100%;margin-top:8px}.team-detail-table{min-width:0}.team-detail-table th,.team-detail-table td{padding:7px 5px;font-size:10px}}
 @media(max-width:420px){.team-detail-fields{grid-template-columns:1fr}}
+@media(max-width:420px){.team-detail-table{min-width:0}}
 .btn-save{margin-top:var(--sp4);padding:7px var(--sp5);background:var(--primary);color:#fff;border:none;border-radius:var(--r-md);font-family:var(--font-display);font-size:var(--text-sm);font-weight:700;cursor:pointer;transition:all var(--tr)}
 .btn-save:hover{background:var(--primary-h)}
 
