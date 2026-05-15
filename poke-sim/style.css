@@ -106,6 +106,20 @@ table{border-collapse:collapse;width:100%}
 .poke-moves{font-size:9px;color:var(--text-f);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .type-chips{display:flex;flex-direction:column;gap:2px;align-items:flex-end;flex-shrink:0}
 .type-chip{font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;font-family:var(--font-mono);letter-spacing:.03em}
+@media(max-width:620px){
+  .poke-row{flex-wrap:wrap;align-items:flex-start;padding:10px 10px}
+  .poke-sprite{width:34px;height:34px}
+  .poke-info{flex:1 1 calc(100% - 48px);min-width:0}
+  .poke-name{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.15}
+  .poke-item,.poke-moves{white-space:normal;overflow-wrap:anywhere}
+  .poke-moves{line-height:1.25}
+  .type-chips{flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start;gap:4px;flex:1 1 100%;margin-left:46px;margin-top:2px}
+  .type-chip{font-size:9px;line-height:1.2;padding:2px 6px;white-space:nowrap;max-width:100%}
+  .team-mon-detail-btn{width:100%;margin-top:8px}
+  .bring-pool-chip{max-width:100%}
+  .bring-pool-chip-name{white-space:normal;overflow-wrap:anywhere;line-height:1.1}
+  .move-tag{white-space:nowrap}
+}
 
 /* ===== CONTROLS ===== */
 .sim-controls{display:flex;flex-direction:column;gap:var(--sp4);align-items:stretch}
