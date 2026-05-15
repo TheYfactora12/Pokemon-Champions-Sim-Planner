@@ -85,6 +85,80 @@ table{border-collapse:collapse;width:100%}
     border-bottom-color:var(--primary);
     background:rgba(124,106,245,.12);
   }
+  .teams-actions{
+    width:100%;
+    flex-direction:column;
+    margin-bottom:0;
+  }
+  .teams-actions .btn-secondary{
+    width:100%;
+    justify-content:center;
+  }
+  .teams-grid{
+    grid-template-columns:1fr;
+    gap:var(--sp3);
+  }
+  .team-full-card{
+    padding:var(--sp3);
+  }
+  .tfcard-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:6px;
+  }
+  .tfcard-badges{
+    width:100%;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:4px;
+  }
+  .tfcard-badges .badge,
+  .tfcard-badges .badge-legal,
+  .tfcard-badges .badge-warn,
+  .tfcard-badges .badge-illegal{
+    max-width:100%;
+  }
+  .tfcard-badges .export-card-btn,
+  .tfcard-badges .edit-card-btn,
+  .tfcard-badges .reset-card-btn,
+  .tfcard-badges .delete-card-btn{
+    width:100%;
+    margin-left:0;
+  }
+  .poke-full-row{
+    flex-wrap:wrap;
+    align-items:flex-start;
+  }
+  .poke-full-sprite{
+    width:40px;
+    height:40px;
+  }
+  .move-tags{
+    width:100%;
+  }
+  .export-card-btn{
+    width:100%;
+    justify-content:center;
+  }
+  .tfcard-name,
+  .tfcard-meta,
+  .poke-full-name,
+  .poke-full-detail,
+  .bring-slot-name{
+    overflow-wrap:anywhere;
+    word-break:break-word;
+  }
+  .bring-slot-name{
+    white-space:normal;
+    text-overflow:clip;
+  }
+  .bring-slot{
+    min-height:80px;
+  }
+  .team-mon-detail-btn{
+    width:100%;
+    margin-top:8px;
+  }
 }
 @media(max-width:560px){
   .header-right{display:flex;flex-direction:column;align-items:stretch;width:100%;gap:8px}
