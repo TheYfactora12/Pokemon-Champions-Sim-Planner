@@ -74,9 +74,6 @@ table{border-collapse:collapse;width:100%}
   .fmt-pill-btn{white-space:normal;line-height:1.2}
   .site-title{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
   .build-version,.db-offline-chip{margin-left:0}
-  .tab-nav{display:none}
-  .mobile-tab-picker{display:block;padding:0 var(--sp3) var(--sp3)}
-  .mobile-tab-picker .select-input{font-size:12px;font-weight:700}
   .teams-filter-row,.bring-mode-row,.replay-filters-row,.team-detail-head,.strategy-header-row,.pilot-card-header,.cs-summary-bar,.cs-detector-team-conf{flex-direction:column;align-items:flex-start}
   .teams-filter-row,.bring-mode-row,.replay-filters-row,.strategy-controls,.pilot-card-body{width:100%}
   .teams-filter-chip,.bring-mode-btn,.team-mon-detail-btn{width:100%;justify-content:center}
@@ -94,6 +91,11 @@ table{border-collapse:collapse;width:100%}
   .bring-slots{grid-template-columns:1fr}
   .teams-filter-chip,.bring-mode-btn{font-size:10px}
   .team-full-card,.replay-card,.pilot-card,.cs-section,.editor-form,.editor-sidebar{padding:var(--sp2)}
+}
+@media(max-width:480px){
+  .tab-nav{display:none}
+  .mobile-tab-picker{display:block;padding:0 var(--sp3) var(--sp3)}
+  .mobile-tab-picker .select-input{font-size:12px;font-weight:700}
 }
 @media(min-width:561px){
   .mobile-tab-picker{display:none}

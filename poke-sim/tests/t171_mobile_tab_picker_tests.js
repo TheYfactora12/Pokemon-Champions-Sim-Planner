@@ -20,6 +20,7 @@ function inc(hay, needle, msg='') {
 console.log('\n=== mobile tab picker tests ===\n');
 
 T('1. phone widths hide the tab strip and show the picker', () => {
+  inc(css, '@media(max-width:480px){');
   inc(css, '.tab-nav{display:none}');
   inc(css, '.mobile-tab-picker{display:block;padding:0 var(--sp3) var(--sp3)}');
   inc(css, '.mobile-tab-picker .select-input{font-size:12px;font-weight:700}');
