@@ -1671,6 +1671,86 @@ table{border-collapse:collapse;width:100%}
   font-size: 12px;
 }
 
+.audit-panel {
+  border: 1px solid #334155;
+  border-radius: 6px;
+  background: #0b1220;
+  padding: 10px 12px;
+}
+.audit-panel > summary {
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 13px;
+  color: #e2e8f0;
+}
+.audit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+.audit-card {
+  border: 1px solid #1f2937;
+  border-radius: 6px;
+  background: #111827;
+  padding: 10px;
+}
+.audit-card h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #bfdbfe;
+}
+.audit-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #1f2937;
+  padding: 4px 0;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+.audit-meta-row strong {
+  color: #f8fafc;
+  font-weight: 700;
+  text-align: right;
+}
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.audit-table th,
+.audit-table td {
+  border-bottom: 1px solid #1f2937;
+  padding: 6px 4px;
+  vertical-align: top;
+  text-align: left;
+}
+.audit-table th {
+  color: #94a3b8;
+  font-weight: 700;
+}
+.audit-subtle {
+  color: #94a3b8;
+  font-size: 10px;
+}
+.audit-turn-log {
+  margin-top: 10px;
+}
+.audit-move-block {
+  margin-top: 8px;
+}
+.audit-move-block summary {
+  cursor: pointer;
+  color: #bfdbfe;
+  font-size: 11px;
+  font-weight: 700;
+}
+.audit-empty {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
 @media (max-width: 640px) {
   .cs-detector-row,
   .cs-detector-row-loss,
@@ -1679,6 +1759,9 @@ table{border-collapse:collapse;width:100%}
     gap: 4px;
   }
   .cs-detector-head { display: none; }
+  .audit-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 </style>
@@ -1922,6 +2005,7 @@ table{border-collapse:collapse;width:100%}
         <div id="win-conditions"></div>
       </div>
     </div>
+    <div id="audit-panel" style="margin-top:var(--sp4)"></div>
     <div style="margin-top:var(--sp4);display:flex;gap:var(--sp3);flex-wrap:wrap">
       <button class="btn-secondary" id="pdf-report-btn" style="display:none">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -6207,6 +6291,7 @@ const MOVE_CATEGORY = {
   'Rain Dance':'status','Thunder Wave':'status','Helping Hand':'status',
   'Shed Tail':'status','Sleep Powder':'status','Ally Switch':'status',
   'Lunar Dance':'status','Coil':'status','Hypnosis':'status',
+  'Rest':'status','Substitute':'status','Sleep Talk':'status','Shore Up':'status',
   'Recover':'status','Dragon Dance':'status','Imprison':'status',
   'Encore':'status','Aurora Veil':'status','Spore':'status',
   'Follow Me':'status','Haze':'status','Coaching':'status'
@@ -6238,8 +6323,26 @@ const MOVE_BP = {
   'Earth Power':90,'Throat Chop':80,'Ally Switch':0,'Lunar Dance':0,'Psychic':90,
   'Shadow Sneak':40,'Psyshock':80,'Mystical Fire':75,'Play Rough':90,'Body Press':80,
   'Zen Headbutt':80,'Bite':60,'Twister':40,'Icicle Crash':85,'Waterfall':80,
+  'Rest':0,'Substitute':0,'Sleep Talk':0,'Shore Up':0,
   'Astonish':30,'Extrasensory':80,'Heart Stamp':60,'Needle Arm':60,'Bone Club':65,
   'Headbutt':70,'Rolling Kick':60,'Stomp':65
+};
+
+// ============================================================
+// MOVE_EFFECTS — reusable self-state / utility move metadata.
+// The engine reads these values instead of hardcoding the healing and
+// status-duration numbers in multiple branches.
+// ============================================================
+const MOVE_EFFECTS = {
+  'Recover': { healFraction: 0.5, failIfFull: true },
+  'Shore Up': { healFraction: 0.5, sandHealFraction: 2 / 3, failIfFull: true },
+  'Rest': { healFraction: 1.0, sleepTurns: 2, curesNonVolatileStatus: true, failIfFull: true },
+  'Substitute': { selfHpFraction: 0.25, failIfLowHp: true },
+  'Shed Tail': { selfHpFraction: 0.25 },
+  'Sleep Talk': { requiresSleep: true, randomCall: true },
+  'Ally Switch': { swapsAllyPositions: true },
+  'Imprison': { locksSharedMoves: true },
+  'Roost': { healFraction: 0.5, failIfFull: true }
 };
 
 
@@ -6287,7 +6390,7 @@ const MOVE_TARGETS = {
   'Swords Dance':'self', 'Dragon Dance':'self', 'Nasty Plot':'self',
   'Calm Mind':'self', 'Bulk Up':'self', 'Coil':'self',
   'Roost':'self', 'Recover':'self', 'Shore Up':'self', 'Shed Tail':'self',
-  'Substitute':'self', 'Rest':'self',
+  'Substitute':'self', 'Rest':'self', 'Sleep Talk':'self',
   'Follow Me':'self', 'Rage Powder':'self',
   'Tailwind':'self', 'Trick Room':'self',
   'Sunny Day':'self', 'Rain Dance':'self', 'Sandstorm':'self', 'Snowscape':'self',
@@ -7208,9 +7311,10 @@ class Pokemon {
     this.types = [...this._base.types];
     this.level = data.level || 50;
     this._calcStats();
-    this.hp = this.maxHp;
-    this.status = null; // burn, paralysis, sleep, poison, toxic, frozen
-    this.statusTurns = 0;
+    const _initialHp = (data.hp != null ? data.hp : (data.currentHp != null ? data.currentHp : this.maxHp));
+    this.hp = Math.max(1, Math.min(this.maxHp, _initialHp));
+    this.status = data.status || null; // burn, paralysis, sleep, poison, toxic, frozen
+    this.statusTurns = data.statusTurns || 0;
     // T9j.4 (#41) — status residual counters.
     // toxicCounter: N in the N/16 Bad Poison formula. Starts at 1 on inflict,
     //   increments post-tick, caps at 15, resets on switch-out.
@@ -7218,12 +7322,12 @@ class Pokemon {
     //   guaranteed thaw on turn 3 (3-turn maximum).
     // sleepTurns: turns-asleep counter for 33% turn-2 wake and 3-turn cap.
     // Cite: Bulbapedia Freeze (Pokemon Champions section); Bulbapedia Status.
-    this.toxicCounter = 0;
-    this.frozenTurns  = 0;
-    this.sleepTurns   = 0;
-    this.tauntedTurns = 0;
-    this.encoredTurns = 0;
-    this.encoredMove  = null;
+    this.toxicCounter = data.toxicCounter || 0;
+    this.frozenTurns  = data.frozenTurns || 0;
+    this.sleepTurns   = data.sleepTurns || 0;
+    this.tauntedTurns = data.tauntedTurns || 0;
+    this.encoredTurns = data.encoredTurns || 0;
+    this.encoredMove  = data.encoredMove || null;
     this.lastMoveUsed  = null;
     this.lastTarget    = null;
     this.protectChain  = 0;
@@ -8188,13 +8292,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.3 Screens setters
       'Light Screen','Reflect','Aurora Veil',
       // Move-control / field-reset support
-      'Encore','Haze','Defog']);
+      'Encore','Haze','Defog',
+      // Recovery / board-state support
+      'Recover','Shore Up','Rest','Sleep Talk','Substitute','Imprison','Ally Switch']);
     const PRIORITY_MOVES = new Set(['Fake Out','Aqua Jet','Extreme Speed','Shadow Sneak','Sucker Punch','Feint']);
 
     let best = { move: null, target: null, score: -Infinity };
 
     const liveEnemies = enemies.filter(e => e.alive);
     const liveAllies  = allies.filter(a => a !== attacker && a.alive);
+    const enemySide = field && attacker.side === 'player' ? field.oppSide : field.playerSide;
+
+    if (attacker.status === 'sleep' && attacker.moves.includes('Sleep Talk')) {
+      const target = liveEnemies[0] || liveAllies[0] || null;
+      return { move: 'Sleep Talk', target };
+    }
 
     for (const move of attacker.moves) {
       const moveType = MOVE_TYPES[move] || 'Normal';
@@ -8209,6 +8321,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // Status/utility scoring
       if (STATUS_MOVES.has(move)) {
         if (attacker.tauntedTurns > 0) continue;
+        if (enemySide && enemySide.imprisonedMoves && enemySide.imprisonedMoves.has(move)) continue;
         let score = 0;
         if (move === 'Trick Room' && !field.trickRoom) score = 55;
         if (move === 'Tailwind'   && !field[attacker.side === 'player' ? 'playerSide' : 'oppSide']?.tailwind) score = 50;
@@ -8248,6 +8361,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (move === 'Defog' && (field.terrain !== 'none' || liveEnemies.some(e => e.side && (e.side.reflect || e.side.lightScreen || e.side.auroraVeil)))) {
           score = 44;
         }
+        if ((move === 'Recover' || move === 'Shore Up') && attacker.hp < attacker.maxHp * 0.65) score = 46;
+        if (move === 'Rest' && attacker.hp < attacker.maxHp * 0.55) score = 47;
+        if (move === 'Substitute' && attacker.hp > attacker.maxHp * 0.35 && attacker.substituteHp <= 0) score = 38;
+        if (move === 'Imprison' && liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => attacker.moves.includes(m)))) score = 45;
+        if (move === 'Ally Switch' && liveAllies.length > 0) score = 32;
         if (move === 'Roost' && attacker.hp < attacker.maxHp * 0.5) score = 45;
         if (score > best.score) best = { move, target: liveEnemies[0] || null, score };
         continue;
@@ -8328,12 +8446,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.3 Screens setters
       'Light Screen','Reflect','Aurora Veil',
       // Move-control / field-reset support
-      'Encore','Haze','Defog']);
+      'Encore','Haze','Defog',
+      // Recovery / board-state support
+      'Recover','Shore Up','Rest','Sleep Talk','Substitute','Imprison','Ally Switch']);
 
     // Attacker must be alive
     if (!attacker.alive) return;
 
-    if (attacker.tauntedTurns > 0 && MOVE_CATEGORY[move] === 'status') {
+    if (attacker.tauntedTurns > 0 && MOVE_CATEGORY[move] === 'status' && move !== 'Sleep Talk') {
       log.push(`${attacker.name} used ${move}! But it failed because of Taunt!`);
       return;
     }
@@ -8341,6 +8461,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (!PROTECT_MOVES.has(move)) attacker.protectChain = 0;
 
     const _protectFamilyChance = Math.pow(1/3, attacker.protectChain || 0);
+    const enemySide = (allies === playerActive) ? field.oppSide : field.playerSide;
     const _protectFail = () => {
       log.push(`${attacker.name} used ${move}! But it failed!`);
       attacker.protectChain = 0;
@@ -8381,6 +8502,90 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         side.tailwind = true;
         side.tailwindTurns = 4;
         log.push(`${attacker.name}'s Tailwind is blowing!`);
+      }
+      if (move === 'Ally Switch') {
+        if (allies.length < 2) {
+          log.push(`${attacker.name} used Ally Switch! But it failed!`);
+          return;
+        }
+        const allyIdx = allies.findIndex(m => m !== attacker && m.alive);
+        const selfIdx = allies.indexOf(attacker);
+        if (allyIdx < 0 || selfIdx < 0) {
+          log.push(`${attacker.name} used Ally Switch! But it failed!`);
+          return;
+        }
+        const other = allies[allyIdx];
+        allies[allyIdx] = attacker;
+        allies[selfIdx] = other;
+        log.push(`${attacker.name} switched places with its ally using Ally Switch!`);
+        return;
+      }
+      if (move === 'Recover') {
+        if (attacker.hp >= attacker.maxHp) {
+          log.push(`${attacker.name} used Recover! But it failed!`);
+          return;
+        }
+        const healFrac = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS.Recover && MOVE_EFFECTS.Recover.healFraction) || 0.5;
+        const heal = Math.floor(attacker.maxHp * healFrac);
+        attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
+        log.push(`${attacker.name} regained health with Recover!`);
+        return;
+      }
+      if (move === 'Shore Up') {
+        if (attacker.hp >= attacker.maxHp) {
+          log.push(`${attacker.name} used Shore Up! But it failed!`);
+          return;
+        }
+        const shoreUp = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS['Shore Up']) || {};
+        const healFrac = field.weather === 'sand'
+          ? (shoreUp.sandHealFraction || (2 / 3))
+          : (shoreUp.healFraction || 0.5);
+        const heal = Math.floor(attacker.maxHp * healFrac);
+        attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
+        log.push(`${attacker.name} regained health with Shore Up!`);
+        return;
+      }
+      if (move === 'Rest') {
+        if (attacker.hp >= attacker.maxHp) {
+          log.push(`${attacker.name} used Rest! But it failed!`);
+          return;
+        }
+        attacker.hp = attacker.maxHp;
+        attacker.status = 'sleep';
+        attacker.statusTurns = ((typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS.Rest && MOVE_EFFECTS.Rest.sleepTurns) || 2);
+        attacker.sleepTurns = 0;
+        attacker.toxicCounter = 0;
+        attacker.frozenTurns = 0;
+        log.push(`${attacker.name} went to sleep with Rest!`);
+        return;
+      }
+      if (move === 'Substitute') {
+        const subFrac = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS.Substitute && MOVE_EFFECTS.Substitute.selfHpFraction) || 0.25;
+        const subHp = Math.floor(attacker.maxHp * subFrac);
+        if (attacker.substituteHp > 0 || attacker.hp <= subHp) {
+          log.push(`${attacker.name} used Substitute! But it failed!`);
+          return;
+        }
+        attacker.substituteHp = subHp;
+        attacker.hp -= subHp;
+        log.push(`${attacker.name} made a Substitute!`);
+        return;
+      }
+      if (move === 'Sleep Talk') {
+        const asleep = attacker.status === 'sleep' || attacker.ability === 'Comatose';
+        if (!asleep) {
+          log.push(`${attacker.name} used Sleep Talk! But it failed!`);
+          return;
+        }
+        const pool = attacker.moves.filter(m => m !== 'Sleep Talk');
+        if (!pool.length) {
+          log.push(`${attacker.name} used Sleep Talk! But it failed!`);
+          return;
+        }
+        const calledMove = pool[Math.floor(rng() * pool.length)];
+        log.push(`${attacker.name} used Sleep Talk!`);
+        executeAction(attacker, calledMove, target, allies, enemies, field, log, rng);
+        return;
       }
       // T9j.3 Screens setters. Duration fixed at 5 turns. Light Clay absent
       // from Champions (games.gg, Game8); T9j.6 closed #43 as WONTFIX — no
@@ -8581,8 +8786,17 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         log.push(`${target.name}'s evasiveness fell and the field was cleared by Defog!`);
         return;
       }
+      if (move === 'Imprison') {
+        const targetSide = enemySide;
+        const blocked = attacker.moves.filter(m => m !== 'Imprison');
+        targetSide.imprisonedMoves = new Set(blocked);
+        targetSide.imprisonedBy = attacker.name;
+        log.push(`${attacker.name} sealed away its foes' moves with Imprison!`);
+        return;
+      }
       if (move === 'Shed Tail') {
-        attacker.substituteHp = Math.floor(attacker.maxHp * 0.25);
+        const tailFrac = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS['Shed Tail'] && MOVE_EFFECTS['Shed Tail'].selfHpFraction) || 0.25;
+        attacker.substituteHp = Math.floor(attacker.maxHp * tailFrac);
         attacker.hp -= attacker.substituteHp;
         log.push(`${attacker.name} shed its tail and created a Substitute!`);
       }
@@ -8665,6 +8879,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         log.push(`${attacker.name} used Sucker Punch! But it failed!`);
         return;
       }
+    }
+    if (enemySide && enemySide.imprisonedMoves && enemySide.imprisonedMoves.has(move)) {
+      log.push(`${attacker.name} used ${move}! But it failed because of Imprison!`);
+      return;
     }
 
     // Miss chance for low-accuracy moves
@@ -9234,6 +9452,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           action.attacker.sleepTurns = 0;
           action.attacker.statusTurns = 0;
           log.push(`${action.attacker.name} woke up early!`);
+        } else if (action.move === 'Sleep Talk') {
+          // Sleep Talk is allowed to execute while the user remains asleep.
         } else {
           log.push(`${action.attacker.name} is fast asleep!`);
           continue;
@@ -9353,6 +9573,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         // T9j.1 — keep side.fainted on the field in sync so calcDamage's
         // Last Respects lookup (target.side.fainted) uses the real count.
         (side === 'player' ? field.playerSide : field.oppSide).fainted = sideFainted[side];
+        const thisSide = (side === 'player' ? field.playerSide : field.oppSide);
+        const otherSide = (side === 'player' ? field.oppSide : field.playerSide);
+        if (thisSide && thisSide.imprisonedBy === mon.name) {
+          thisSide.imprisonedBy = null;
+          thisSide.imprisonedMoves = null;
+        }
         const idx = activeArr.indexOf(mon);
         const replacement = bench.find(b => b.alive);
         if (replacement) {
@@ -9528,7 +9754,7 @@ function getPriority(move) {
     'Helping Hand':5,
     'Endure':4,
     'Protect':4, 'Detect':4,
-    'Wide Guard':3, 'Quick Guard':3,
+    'Wide Guard':3, 'Quick Guard':3, 'Ally Switch':2,
     'Follow Me':2, 'Rage Powder':2,
     'Trick Room':-7, 'Roost':0
   };
@@ -12286,6 +12512,8 @@ function displayResults(res, oppKey) {
   const gn=isDark?'#4ec994':'#2a9d6a', rd=isDark?'#f05464':'#d63048', gd=isDark?'#f5c542':'#c89a00';
   const pri=isDark?'#7c6af5':'#5b49d6';
 
+  renderAuditPanel(res, oppKey);
+
   setTimeout(()=>{
     const cv = document.getElementById('ko-chart');
     if (!cv) return;
@@ -12326,6 +12554,74 @@ function displayResults(res, oppKey) {
   if (!ChampionsSim.state.lastResults) ChampionsSim.state.lastResults = {};
   ChampionsSim.state.lastResults[oppKey] = res;
   revealPdfButton();
+}
+
+function renderAuditPanel(res, oppKey) {
+  const panel = document.getElementById('audit-panel');
+  if (!panel) return;
+  const playerTeam = (typeof currentPlayerKey !== 'undefined' && TEAMS[currentPlayerKey]) ? TEAMS[currentPlayerKey] : null;
+  const sample = Array.isArray(res && res.allLogs) ? res.allLogs.find(function(row) {
+    return row && Array.isArray(row.turnLog) && row.turnLog.length;
+  }) || res.allLogs[0] : null;
+  const sampleTurnLog = sample && Array.isArray(sample.turnLog) ? sample.turnLog : [];
+  const sampleMoves = sample && sample.movesUsed ? sample.movesUsed : {};
+  const metaRows = [
+    ['Battle', (playerTeam?.name || currentPlayerKey || 'Current Team') + ' vs ' + (TEAMS[oppKey]?.name || oppKey)],
+    ['Format', currentFormat === 'doubles' ? 'Doubles' : 'Singles'],
+    ['Series', 'Bo' + currentBo],
+    ['Sample', sample ? ((sample.result || 'unknown') + ' · ' + (sample.turns || 0) + ' turns') : 'No sample battle'],
+    ['Win condition', sample && sample.winCondition ? sample.winCondition : '—']
+  ];
+  const metaHtml = metaRows.map(function(row) {
+    return '<div class="audit-meta-row"><span>' + _escapeHtml(row[0]) + '</span><strong>' + _escapeHtml(row[1]) + '</strong></div>';
+  }).join('');
+  const roster = (playerTeam && Array.isArray(playerTeam.members)) ? playerTeam.members : [];
+  const rosterRows = roster.map(function(m) {
+    var model = null;
+    try { model = buildTeamStatDetailModel(currentPlayerKey, m.name); } catch (_e) { model = null; }
+    if (!model) return '';
+    return '<tr>' +
+      '<td><strong>' + _escapeHtml(model.name) + '</strong><br><span class="audit-subtle">' + _escapeHtml((model.moves || []).join(', ')) + '</span></td>' +
+      '<td>' + _escapeHtml(model.ability || '—') + '</td>' +
+      '<td>' + _escapeHtml(model.item || '—') + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.hp)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.atk)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.def)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.spa)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.spd)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.spe)) + '</td>' +
+    '</tr>';
+  }).join('');
+  const moveUsage = Object.keys(sampleMoves).length ? Object.entries(sampleMoves).map(function(sidePair) {
+    var side = sidePair[0];
+    var mons = sidePair[1] || {};
+    var rows = Object.entries(mons).map(function(entry) {
+      return '<tr><td>' + _escapeHtml(entry[0]) + '</td><td>' + _escapeHtml(JSON.stringify(entry[1] || {})) + '</td></tr>';
+    }).join('');
+    return '<details class="audit-move-block"><summary>' + _escapeHtml(side) + ' move usage</summary><table class="audit-table"><tbody>' + rows + '</tbody></table></details>';
+  }).join('') : '<div class="audit-empty">No move usage captured.</div>';
+  panel.innerHTML =
+    '<details class="audit-panel" open>' +
+      '<summary>Battle Audit</summary>' +
+      '<div class="audit-grid">' +
+        '<section class="audit-card">' +
+          '<h3>Battle Snapshot</h3>' +
+          metaHtml +
+          '<div class="audit-turn-log">' + csRenderTurnLogRows(sampleTurnLog) + '</div>' +
+        '</section>' +
+        '<section class="audit-card">' +
+          '<h3>Team Stats</h3>' +
+          '<table class="audit-table">' +
+            '<thead><tr><th>Mon</th><th>Ability</th><th>Item</th><th>HP</th><th>Atk</th><th>Def</th><th>SpA</th><th>SpD</th><th>Spe</th></tr></thead>' +
+            '<tbody>' + rosterRows + '</tbody>' +
+          '</table>' +
+        '</section>' +
+      '</div>' +
+      '<section class="audit-card">' +
+        '<h3>Move Usage</h3>' +
+        moveUsage +
+      '</section>' +
+    '</details>';
 }
 
 // PDF progressive reveal (Refs #57) - show the Download PDF Report button

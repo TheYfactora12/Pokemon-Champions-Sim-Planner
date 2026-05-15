@@ -4028,6 +4028,7 @@ const MOVE_CATEGORY = {
   'Rain Dance':'status','Thunder Wave':'status','Helping Hand':'status',
   'Shed Tail':'status','Sleep Powder':'status','Ally Switch':'status',
   'Lunar Dance':'status','Coil':'status','Hypnosis':'status',
+  'Rest':'status','Substitute':'status','Sleep Talk':'status','Shore Up':'status',
   'Recover':'status','Dragon Dance':'status','Imprison':'status',
   'Encore':'status','Aurora Veil':'status','Spore':'status',
   'Follow Me':'status','Haze':'status','Coaching':'status'
@@ -4059,8 +4060,26 @@ const MOVE_BP = {
   'Earth Power':90,'Throat Chop':80,'Ally Switch':0,'Lunar Dance':0,'Psychic':90,
   'Shadow Sneak':40,'Psyshock':80,'Mystical Fire':75,'Play Rough':90,'Body Press':80,
   'Zen Headbutt':80,'Bite':60,'Twister':40,'Icicle Crash':85,'Waterfall':80,
+  'Rest':0,'Substitute':0,'Sleep Talk':0,'Shore Up':0,
   'Astonish':30,'Extrasensory':80,'Heart Stamp':60,'Needle Arm':60,'Bone Club':65,
   'Headbutt':70,'Rolling Kick':60,'Stomp':65
+};
+
+// ============================================================
+// MOVE_EFFECTS — reusable self-state / utility move metadata.
+// The engine reads these values instead of hardcoding the healing and
+// status-duration numbers in multiple branches.
+// ============================================================
+const MOVE_EFFECTS = {
+  'Recover': { healFraction: 0.5, failIfFull: true },
+  'Shore Up': { healFraction: 0.5, sandHealFraction: 2 / 3, failIfFull: true },
+  'Rest': { healFraction: 1.0, sleepTurns: 2, curesNonVolatileStatus: true, failIfFull: true },
+  'Substitute': { selfHpFraction: 0.25, failIfLowHp: true },
+  'Shed Tail': { selfHpFraction: 0.25 },
+  'Sleep Talk': { requiresSleep: true, randomCall: true },
+  'Ally Switch': { swapsAllyPositions: true },
+  'Imprison': { locksSharedMoves: true },
+  'Roost': { healFraction: 0.5, failIfFull: true }
 };
 
 
@@ -4108,7 +4127,7 @@ const MOVE_TARGETS = {
   'Swords Dance':'self', 'Dragon Dance':'self', 'Nasty Plot':'self',
   'Calm Mind':'self', 'Bulk Up':'self', 'Coil':'self',
   'Roost':'self', 'Recover':'self', 'Shore Up':'self', 'Shed Tail':'self',
-  'Substitute':'self', 'Rest':'self',
+  'Substitute':'self', 'Rest':'self', 'Sleep Talk':'self',
   'Follow Me':'self', 'Rage Powder':'self',
   'Tailwind':'self', 'Trick Room':'self',
   'Sunny Day':'self', 'Rain Dance':'self', 'Sandstorm':'self', 'Snowscape':'self',

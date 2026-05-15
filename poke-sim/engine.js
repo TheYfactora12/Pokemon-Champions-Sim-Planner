@@ -586,9 +586,10 @@ class Pokemon {
     this.types = [...this._base.types];
     this.level = data.level || 50;
     this._calcStats();
-    this.hp = this.maxHp;
-    this.status = null; // burn, paralysis, sleep, poison, toxic, frozen
-    this.statusTurns = 0;
+    const _initialHp = (data.hp != null ? data.hp : (data.currentHp != null ? data.currentHp : this.maxHp));
+    this.hp = Math.max(1, Math.min(this.maxHp, _initialHp));
+    this.status = data.status || null; // burn, paralysis, sleep, poison, toxic, frozen
+    this.statusTurns = data.statusTurns || 0;
     // T9j.4 (#41) — status residual counters.
     // toxicCounter: N in the N/16 Bad Poison formula. Starts at 1 on inflict,
     //   increments post-tick, caps at 15, resets on switch-out.
@@ -596,12 +597,12 @@ class Pokemon {
     //   guaranteed thaw on turn 3 (3-turn maximum).
     // sleepTurns: turns-asleep counter for 33% turn-2 wake and 3-turn cap.
     // Cite: Bulbapedia Freeze (Pokemon Champions section); Bulbapedia Status.
-    this.toxicCounter = 0;
-    this.frozenTurns  = 0;
-    this.sleepTurns   = 0;
-    this.tauntedTurns = 0;
-    this.encoredTurns = 0;
-    this.encoredMove  = null;
+    this.toxicCounter = data.toxicCounter || 0;
+    this.frozenTurns  = data.frozenTurns || 0;
+    this.sleepTurns   = data.sleepTurns || 0;
+    this.tauntedTurns = data.tauntedTurns || 0;
+    this.encoredTurns = data.encoredTurns || 0;
+    this.encoredMove  = data.encoredMove || null;
     this.lastMoveUsed  = null;
     this.lastTarget    = null;
     this.protectChain  = 0;
@@ -1566,13 +1567,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.3 Screens setters
       'Light Screen','Reflect','Aurora Veil',
       // Move-control / field-reset support
-      'Encore','Haze','Defog']);
+      'Encore','Haze','Defog',
+      // Recovery / board-state support
+      'Recover','Shore Up','Rest','Sleep Talk','Substitute','Imprison','Ally Switch']);
     const PRIORITY_MOVES = new Set(['Fake Out','Aqua Jet','Extreme Speed','Shadow Sneak','Sucker Punch','Feint']);
 
     let best = { move: null, target: null, score: -Infinity };
 
     const liveEnemies = enemies.filter(e => e.alive);
     const liveAllies  = allies.filter(a => a !== attacker && a.alive);
+    const enemySide = field && attacker.side === 'player' ? field.oppSide : field.playerSide;
+
+    if (attacker.status === 'sleep' && attacker.moves.includes('Sleep Talk')) {
+      const target = liveEnemies[0] || liveAllies[0] || null;
+      return { move: 'Sleep Talk', target };
+    }
 
     for (const move of attacker.moves) {
       const moveType = MOVE_TYPES[move] || 'Normal';
@@ -1587,6 +1596,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // Status/utility scoring
       if (STATUS_MOVES.has(move)) {
         if (attacker.tauntedTurns > 0) continue;
+        if (enemySide && enemySide.imprisonedMoves && enemySide.imprisonedMoves.has(move)) continue;
         let score = 0;
         if (move === 'Trick Room' && !field.trickRoom) score = 55;
         if (move === 'Tailwind'   && !field[attacker.side === 'player' ? 'playerSide' : 'oppSide']?.tailwind) score = 50;
@@ -1626,6 +1636,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (move === 'Defog' && (field.terrain !== 'none' || liveEnemies.some(e => e.side && (e.side.reflect || e.side.lightScreen || e.side.auroraVeil)))) {
           score = 44;
         }
+        if ((move === 'Recover' || move === 'Shore Up') && attacker.hp < attacker.maxHp * 0.65) score = 46;
+        if (move === 'Rest' && attacker.hp < attacker.maxHp * 0.55) score = 47;
+        if (move === 'Substitute' && attacker.hp > attacker.maxHp * 0.35 && attacker.substituteHp <= 0) score = 38;
+        if (move === 'Imprison' && liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => attacker.moves.includes(m)))) score = 45;
+        if (move === 'Ally Switch' && liveAllies.length > 0) score = 32;
         if (move === 'Roost' && attacker.hp < attacker.maxHp * 0.5) score = 45;
         if (score > best.score) best = { move, target: liveEnemies[0] || null, score };
         continue;
@@ -1706,12 +1721,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.3 Screens setters
       'Light Screen','Reflect','Aurora Veil',
       // Move-control / field-reset support
-      'Encore','Haze','Defog']);
+      'Encore','Haze','Defog',
+      // Recovery / board-state support
+      'Recover','Shore Up','Rest','Sleep Talk','Substitute','Imprison','Ally Switch']);
 
     // Attacker must be alive
     if (!attacker.alive) return;
 
-    if (attacker.tauntedTurns > 0 && MOVE_CATEGORY[move] === 'status') {
+    if (attacker.tauntedTurns > 0 && MOVE_CATEGORY[move] === 'status' && move !== 'Sleep Talk') {
       log.push(`${attacker.name} used ${move}! But it failed because of Taunt!`);
       return;
     }
@@ -1719,6 +1736,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (!PROTECT_MOVES.has(move)) attacker.protectChain = 0;
 
     const _protectFamilyChance = Math.pow(1/3, attacker.protectChain || 0);
+    const enemySide = (allies === playerActive) ? field.oppSide : field.playerSide;
     const _protectFail = () => {
       log.push(`${attacker.name} used ${move}! But it failed!`);
       attacker.protectChain = 0;
@@ -1759,6 +1777,90 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         side.tailwind = true;
         side.tailwindTurns = 4;
         log.push(`${attacker.name}'s Tailwind is blowing!`);
+      }
+      if (move === 'Ally Switch') {
+        if (allies.length < 2) {
+          log.push(`${attacker.name} used Ally Switch! But it failed!`);
+          return;
+        }
+        const allyIdx = allies.findIndex(m => m !== attacker && m.alive);
+        const selfIdx = allies.indexOf(attacker);
+        if (allyIdx < 0 || selfIdx < 0) {
+          log.push(`${attacker.name} used Ally Switch! But it failed!`);
+          return;
+        }
+        const other = allies[allyIdx];
+        allies[allyIdx] = attacker;
+        allies[selfIdx] = other;
+        log.push(`${attacker.name} switched places with its ally using Ally Switch!`);
+        return;
+      }
+      if (move === 'Recover') {
+        if (attacker.hp >= attacker.maxHp) {
+          log.push(`${attacker.name} used Recover! But it failed!`);
+          return;
+        }
+        const healFrac = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS.Recover && MOVE_EFFECTS.Recover.healFraction) || 0.5;
+        const heal = Math.floor(attacker.maxHp * healFrac);
+        attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
+        log.push(`${attacker.name} regained health with Recover!`);
+        return;
+      }
+      if (move === 'Shore Up') {
+        if (attacker.hp >= attacker.maxHp) {
+          log.push(`${attacker.name} used Shore Up! But it failed!`);
+          return;
+        }
+        const shoreUp = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS['Shore Up']) || {};
+        const healFrac = field.weather === 'sand'
+          ? (shoreUp.sandHealFraction || (2 / 3))
+          : (shoreUp.healFraction || 0.5);
+        const heal = Math.floor(attacker.maxHp * healFrac);
+        attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
+        log.push(`${attacker.name} regained health with Shore Up!`);
+        return;
+      }
+      if (move === 'Rest') {
+        if (attacker.hp >= attacker.maxHp) {
+          log.push(`${attacker.name} used Rest! But it failed!`);
+          return;
+        }
+        attacker.hp = attacker.maxHp;
+        attacker.status = 'sleep';
+        attacker.statusTurns = ((typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS.Rest && MOVE_EFFECTS.Rest.sleepTurns) || 2);
+        attacker.sleepTurns = 0;
+        attacker.toxicCounter = 0;
+        attacker.frozenTurns = 0;
+        log.push(`${attacker.name} went to sleep with Rest!`);
+        return;
+      }
+      if (move === 'Substitute') {
+        const subFrac = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS.Substitute && MOVE_EFFECTS.Substitute.selfHpFraction) || 0.25;
+        const subHp = Math.floor(attacker.maxHp * subFrac);
+        if (attacker.substituteHp > 0 || attacker.hp <= subHp) {
+          log.push(`${attacker.name} used Substitute! But it failed!`);
+          return;
+        }
+        attacker.substituteHp = subHp;
+        attacker.hp -= subHp;
+        log.push(`${attacker.name} made a Substitute!`);
+        return;
+      }
+      if (move === 'Sleep Talk') {
+        const asleep = attacker.status === 'sleep' || attacker.ability === 'Comatose';
+        if (!asleep) {
+          log.push(`${attacker.name} used Sleep Talk! But it failed!`);
+          return;
+        }
+        const pool = attacker.moves.filter(m => m !== 'Sleep Talk');
+        if (!pool.length) {
+          log.push(`${attacker.name} used Sleep Talk! But it failed!`);
+          return;
+        }
+        const calledMove = pool[Math.floor(rng() * pool.length)];
+        log.push(`${attacker.name} used Sleep Talk!`);
+        executeAction(attacker, calledMove, target, allies, enemies, field, log, rng);
+        return;
       }
       // T9j.3 Screens setters. Duration fixed at 5 turns. Light Clay absent
       // from Champions (games.gg, Game8); T9j.6 closed #43 as WONTFIX — no
@@ -1959,8 +2061,17 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         log.push(`${target.name}'s evasiveness fell and the field was cleared by Defog!`);
         return;
       }
+      if (move === 'Imprison') {
+        const targetSide = enemySide;
+        const blocked = attacker.moves.filter(m => m !== 'Imprison');
+        targetSide.imprisonedMoves = new Set(blocked);
+        targetSide.imprisonedBy = attacker.name;
+        log.push(`${attacker.name} sealed away its foes' moves with Imprison!`);
+        return;
+      }
       if (move === 'Shed Tail') {
-        attacker.substituteHp = Math.floor(attacker.maxHp * 0.25);
+        const tailFrac = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS['Shed Tail'] && MOVE_EFFECTS['Shed Tail'].selfHpFraction) || 0.25;
+        attacker.substituteHp = Math.floor(attacker.maxHp * tailFrac);
         attacker.hp -= attacker.substituteHp;
         log.push(`${attacker.name} shed its tail and created a Substitute!`);
       }
@@ -2043,6 +2154,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         log.push(`${attacker.name} used Sucker Punch! But it failed!`);
         return;
       }
+    }
+    if (enemySide && enemySide.imprisonedMoves && enemySide.imprisonedMoves.has(move)) {
+      log.push(`${attacker.name} used ${move}! But it failed because of Imprison!`);
+      return;
     }
 
     // Miss chance for low-accuracy moves
@@ -2612,6 +2727,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           action.attacker.sleepTurns = 0;
           action.attacker.statusTurns = 0;
           log.push(`${action.attacker.name} woke up early!`);
+        } else if (action.move === 'Sleep Talk') {
+          // Sleep Talk is allowed to execute while the user remains asleep.
         } else {
           log.push(`${action.attacker.name} is fast asleep!`);
           continue;
@@ -2731,6 +2848,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         // T9j.1 — keep side.fainted on the field in sync so calcDamage's
         // Last Respects lookup (target.side.fainted) uses the real count.
         (side === 'player' ? field.playerSide : field.oppSide).fainted = sideFainted[side];
+        const thisSide = (side === 'player' ? field.playerSide : field.oppSide);
+        const otherSide = (side === 'player' ? field.oppSide : field.playerSide);
+        if (thisSide && thisSide.imprisonedBy === mon.name) {
+          thisSide.imprisonedBy = null;
+          thisSide.imprisonedMoves = null;
+        }
         const idx = activeArr.indexOf(mon);
         const replacement = bench.find(b => b.alive);
         if (replacement) {
@@ -2906,7 +3029,7 @@ function getPriority(move) {
     'Helping Hand':5,
     'Endure':4,
     'Protect':4, 'Detect':4,
-    'Wide Guard':3, 'Quick Guard':3,
+    'Wide Guard':3, 'Quick Guard':3, 'Ally Switch':2,
     'Follow Me':2, 'Rage Powder':2,
     'Trick Room':-7, 'Roost':0
   };

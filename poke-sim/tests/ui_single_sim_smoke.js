@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { runMechanicsSmoke } = require('./mechanics_audit_cases');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -117,6 +118,11 @@ async function main() {
   if (/^Simulation failed/.test(progress || '')) throw new Error(progress);
   if (!winPct || !/%$/.test(winPct)) throw new Error('win percentage did not render');
   if (resultsDisplay === 'none') throw new Error('results section stayed hidden');
+
+  runMechanicsSmoke(ctx.simulateBattle);
+
+  const auditPanel = ids['audit-panel'] && ids['audit-panel'].innerHTML;
+  if (!auditPanel || !/Battle Audit/.test(auditPanel)) throw new Error('audit panel did not render');
 
   console.log('  PASS UI Run Simulation smoke rendered', winPct);
 }

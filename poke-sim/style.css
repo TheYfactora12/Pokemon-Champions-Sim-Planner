@@ -1633,6 +1633,86 @@ table{border-collapse:collapse;width:100%}
   font-size: 12px;
 }
 
+.audit-panel {
+  border: 1px solid #334155;
+  border-radius: 6px;
+  background: #0b1220;
+  padding: 10px 12px;
+}
+.audit-panel > summary {
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 13px;
+  color: #e2e8f0;
+}
+.audit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+.audit-card {
+  border: 1px solid #1f2937;
+  border-radius: 6px;
+  background: #111827;
+  padding: 10px;
+}
+.audit-card h3 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #bfdbfe;
+}
+.audit-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #1f2937;
+  padding: 4px 0;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+.audit-meta-row strong {
+  color: #f8fafc;
+  font-weight: 700;
+  text-align: right;
+}
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.audit-table th,
+.audit-table td {
+  border-bottom: 1px solid #1f2937;
+  padding: 6px 4px;
+  vertical-align: top;
+  text-align: left;
+}
+.audit-table th {
+  color: #94a3b8;
+  font-weight: 700;
+}
+.audit-subtle {
+  color: #94a3b8;
+  font-size: 10px;
+}
+.audit-turn-log {
+  margin-top: 10px;
+}
+.audit-move-block {
+  margin-top: 8px;
+}
+.audit-move-block summary {
+  cursor: pointer;
+  color: #bfdbfe;
+  font-size: 11px;
+  font-weight: 700;
+}
+.audit-empty {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
 @media (max-width: 640px) {
   .cs-detector-row,
   .cs-detector-row-loss,
@@ -1641,4 +1721,7 @@ table{border-collapse:collapse;width:100%}
     gap: 4px;
   }
   .cs-detector-head { display: none; }
+  .audit-grid {
+    grid-template-columns: 1fr;
+  }
 }

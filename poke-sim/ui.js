@@ -1881,6 +1881,8 @@ function displayResults(res, oppKey) {
   const gn=isDark?'#4ec994':'#2a9d6a', rd=isDark?'#f05464':'#d63048', gd=isDark?'#f5c542':'#c89a00';
   const pri=isDark?'#7c6af5':'#5b49d6';
 
+  renderAuditPanel(res, oppKey);
+
   setTimeout(()=>{
     const cv = document.getElementById('ko-chart');
     if (!cv) return;
@@ -1921,6 +1923,74 @@ function displayResults(res, oppKey) {
   if (!ChampionsSim.state.lastResults) ChampionsSim.state.lastResults = {};
   ChampionsSim.state.lastResults[oppKey] = res;
   revealPdfButton();
+}
+
+function renderAuditPanel(res, oppKey) {
+  const panel = document.getElementById('audit-panel');
+  if (!panel) return;
+  const playerTeam = (typeof currentPlayerKey !== 'undefined' && TEAMS[currentPlayerKey]) ? TEAMS[currentPlayerKey] : null;
+  const sample = Array.isArray(res && res.allLogs) ? res.allLogs.find(function(row) {
+    return row && Array.isArray(row.turnLog) && row.turnLog.length;
+  }) || res.allLogs[0] : null;
+  const sampleTurnLog = sample && Array.isArray(sample.turnLog) ? sample.turnLog : [];
+  const sampleMoves = sample && sample.movesUsed ? sample.movesUsed : {};
+  const metaRows = [
+    ['Battle', (playerTeam?.name || currentPlayerKey || 'Current Team') + ' vs ' + (TEAMS[oppKey]?.name || oppKey)],
+    ['Format', currentFormat === 'doubles' ? 'Doubles' : 'Singles'],
+    ['Series', 'Bo' + currentBo],
+    ['Sample', sample ? ((sample.result || 'unknown') + ' · ' + (sample.turns || 0) + ' turns') : 'No sample battle'],
+    ['Win condition', sample && sample.winCondition ? sample.winCondition : '—']
+  ];
+  const metaHtml = metaRows.map(function(row) {
+    return '<div class="audit-meta-row"><span>' + _escapeHtml(row[0]) + '</span><strong>' + _escapeHtml(row[1]) + '</strong></div>';
+  }).join('');
+  const roster = (playerTeam && Array.isArray(playerTeam.members)) ? playerTeam.members : [];
+  const rosterRows = roster.map(function(m) {
+    var model = null;
+    try { model = buildTeamStatDetailModel(currentPlayerKey, m.name); } catch (_e) { model = null; }
+    if (!model) return '';
+    return '<tr>' +
+      '<td><strong>' + _escapeHtml(model.name) + '</strong><br><span class="audit-subtle">' + _escapeHtml((model.moves || []).join(', ')) + '</span></td>' +
+      '<td>' + _escapeHtml(model.ability || '—') + '</td>' +
+      '<td>' + _escapeHtml(model.item || '—') + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.hp)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.atk)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.def)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.spa)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.spd)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.spe)) + '</td>' +
+    '</tr>';
+  }).join('');
+  const moveUsage = Object.keys(sampleMoves).length ? Object.entries(sampleMoves).map(function(sidePair) {
+    var side = sidePair[0];
+    var mons = sidePair[1] || {};
+    var rows = Object.entries(mons).map(function(entry) {
+      return '<tr><td>' + _escapeHtml(entry[0]) + '</td><td>' + _escapeHtml(JSON.stringify(entry[1] || {})) + '</td></tr>';
+    }).join('');
+    return '<details class="audit-move-block"><summary>' + _escapeHtml(side) + ' move usage</summary><table class="audit-table"><tbody>' + rows + '</tbody></table></details>';
+  }).join('') : '<div class="audit-empty">No move usage captured.</div>';
+  panel.innerHTML =
+    '<details class="audit-panel" open>' +
+      '<summary>Battle Audit</summary>' +
+      '<div class="audit-grid">' +
+        '<section class="audit-card">' +
+          '<h3>Battle Snapshot</h3>' +
+          metaHtml +
+          '<div class="audit-turn-log">' + csRenderTurnLogRows(sampleTurnLog) + '</div>' +
+        '</section>' +
+        '<section class="audit-card">' +
+          '<h3>Team Stats</h3>' +
+          '<table class="audit-table">' +
+            '<thead><tr><th>Mon</th><th>Ability</th><th>Item</th><th>HP</th><th>Atk</th><th>Def</th><th>SpA</th><th>SpD</th><th>Spe</th></tr></thead>' +
+            '<tbody>' + rosterRows + '</tbody>' +
+          '</table>' +
+        '</section>' +
+      '</div>' +
+      '<section class="audit-card">' +
+        '<h3>Move Usage</h3>' +
+        moveUsage +
+      '</section>' +
+    '</details>';
 }
 
 // PDF progressive reveal (Refs #57) - show the Download PDF Report button
