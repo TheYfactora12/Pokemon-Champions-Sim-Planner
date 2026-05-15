@@ -4718,6 +4718,56 @@ function teamSignature(team) {
   return _t9j16_hash(parts.join('||'));
 }
 
+function _stableResultsStringify(value) {
+  if (value === null || value === undefined) return String(value);
+  if (Array.isArray(value)) {
+    return '[' + value.map(function(v){ return _stableResultsStringify(v); }).join(',') + ']';
+  }
+  if (typeof value === 'object') {
+    var keys = Object.keys(value).sort();
+    return '{' + keys.map(function(k){
+      return JSON.stringify(k) + ':' + _stableResultsStringify(value[k]);
+    }).join(',') + '}';
+  }
+  return JSON.stringify(value);
+}
+
+function strategyResultsHash(results) {
+  return _t9j16_hash(_stableResultsStringify(results || {}));
+}
+
+var _strategyReportCache = new Map();
+var _strategyReportCacheLimit = 32;
+
+function _strategyReportCacheKey(teamKey, results, fmt) {
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  return [teamSignature(team), strategyResultsHash(results), fmt || 'doubles'].join('::');
+}
+
+function csClearStrategyReportCache() {
+  _strategyReportCache.clear();
+}
+
+function csStrategyReportCacheSize() {
+  return _strategyReportCache.size;
+}
+
+function _strategyReportCacheGet(key) {
+  if (!_strategyReportCache.has(key)) return null;
+  var cached = _strategyReportCache.get(key);
+  _strategyReportCache.delete(key);
+  _strategyReportCache.set(key, cached);
+  return cached;
+}
+
+function _strategyReportCacheSet(key, report) {
+  _strategyReportCache.set(key, report);
+  while (_strategyReportCache.size > _strategyReportCacheLimit) {
+    var oldestKey = _strategyReportCache.keys().next().value;
+    _strategyReportCache.delete(oldestKey);
+  }
+}
+
 function _t9j16_lsGet(sig) {
   try {
     var raw = (typeof Storage !== 'undefined') ? Storage.get(T9J16_STORAGE_KEY + '::' + sig) : null;
@@ -5288,7 +5338,7 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
 
 // ---------- STRATEGY REPORT (full assembly) ---------------------------
 
-function buildStrategyReport(teamKey, results, fmt) {
+function _buildStrategyReportUncached(teamKey, results, fmt) {
   var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
   if (!team) return null;
   var members = team.members || [];
@@ -5393,6 +5443,15 @@ function buildStrategyReport(teamKey, results, fmt) {
     },
     coaching_summary: summary
   };
+}
+
+function buildStrategyReport(teamKey, results, fmt) {
+  var cacheKey = _strategyReportCacheKey(teamKey, results, fmt);
+  var cached = _strategyReportCacheGet(cacheKey);
+  if (cached) return cached;
+  var report = _buildStrategyReportUncached(teamKey, results, fmt);
+  if (report) _strategyReportCacheSet(cacheKey, report);
+  return report;
 }
 
 // ---------- PERSISTENCE + EVOLUTION -----------------------------------
@@ -8898,11 +8957,17 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.strategy.csInvalidateTeamHistory = csInvalidateTeamHistory;
   ChampionsSim.strategy.csRenderAdaptiveBanner = csRenderAdaptiveBanner;
   ChampionsSim.strategy.csRenderRecordBar = csRenderRecordBar;
+  ChampionsSim.strategy.strategyResultsHash = strategyResultsHash;
+  ChampionsSim.strategy.csStrategyReportCacheSize = csStrategyReportCacheSize;
+  ChampionsSim.strategy.csClearStrategyReportCache = csClearStrategyReportCache;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('computeTeamHistory', computeTeamHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csInvalidateTeamHistory', csInvalidateTeamHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderAdaptiveBanner', csRenderAdaptiveBanner);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderRecordBar', csRenderRecordBar);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('strategyResultsHash', strategyResultsHash);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csStrategyReportCacheSize', csStrategyReportCacheSize);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csClearStrategyReportCache', csClearStrategyReportCache);
 
 // Paint cached report immediately if available. Used as the fast-path on
 // team-select change so the user never sees a blank tab between switches.

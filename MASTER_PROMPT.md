@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-15 | @TheYfactora12 | Strategy report memoization + bounded cache | Added stable results hashing, LRU-bounded strategy-report memoization, and regression coverage for identical-call reuse and cache cap behavior. Bundle rebuilt and validated. |
 | 2026-05-15 | @TheYfactora12 | Josh sprint cleanup: CONTRIBUTING.md path + stat panel markup tracker | Added `poke-sim/CONTRIBUTING.md` for manual contributors and closed the stat-panel markup tracker after confirming the current markup/tests already satisfy it. |
 | 2026-05-15 | @TheYfactora12 | Export My Data JSON + history export wiring | Added one-click JSON export for persisted sim history, current cached report state, and DB analyses/logs for the active team. Bundle rebuilt and validated. |
 | 2026-05-15 | @TheYfactora12 | Mechanics audit harness + shared Battle Audit panel + role utility refinement | Added reusable mechanics audit cases/runner, browser smoke coverage, structured battle audit panel, and first-turn support utility bias. Bundle rebuilt and validated. Hosted test site published on fork Pages: https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/ |
