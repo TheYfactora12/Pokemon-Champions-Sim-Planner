@@ -35,7 +35,7 @@ T('2. team cards collapse cleanly on mobile', () => {
 });
 
 T('3. move rows and export buttons can wrap on small screens', () => {
-  inc(css, '.poke-full-row{flex-wrap:wrap}');
+  inc(css, '.poke-full-row{flex-wrap:wrap;align-items:flex-start}');
   inc(css, '.poke-full-sprite{width:40px;height:40px}');
   inc(css, '.move-tags{width:100%}');
   inc(css, '.export-card-btn{width:100%;justify-content:center}');

@@ -108,16 +108,20 @@ table{border-collapse:collapse;width:100%}
 .card-action-btn:hover{color:var(--primary);border-color:var(--primary)}
 @media(max-width:620px){
   .team-card,.results-section,.matchup-table-wrap,.about-card,.pilot-card,.team-full-card,.replay-card,.cs-section,.cs-summary-bar,.stat-panel,.editor-sidebar,.editor-form{padding:var(--sp4)}
+  .tab-panel{padding:var(--sp3)}
   .teams-actions{width:100%;flex-direction:column;margin-bottom:0}
   .teams-actions .btn-secondary{width:100%;justify-content:center}
   .teams-grid{grid-template-columns:1fr;gap:var(--sp4)}
   .team-full-card{padding:var(--sp4)}
   .tfcard-header{flex-direction:column;align-items:flex-start;gap:6px}
   .tfcard-badges{width:100%;align-items:flex-start}
-  .poke-full-row{flex-wrap:wrap}
+  .poke-full-row{flex-wrap:wrap;align-items:flex-start}
   .poke-full-sprite{width:40px;height:40px}
   .move-tags{width:100%}
   .export-card-btn{width:100%;justify-content:center}
+  .tfcard-name,.tfcard-meta,.poke-full-name,.poke-full-detail,.bring-slot-name{overflow-wrap:anywhere;word-break:break-word}
+  .bring-slot-name{white-space:normal;text-overflow:clip}
+  .bring-slot{min-height:80px}
   .card-header,.results-header,.replay-card-hdr,.tfcard-header,.pilot-card-header,.strategy-header-row,.strategy-controls,.cs-summary-bar,.cs-adaptive-row,.team-detail-head,.replay-filters-row{flex-direction:column;align-items:flex-start}
   .card-header,.tfcard-header,.replay-card-hdr,.pilot-card-header,.cs-adaptive-row,.audit-meta-row{gap:6px}
   .card-title{white-space:normal;overflow:visible;text-overflow:clip}
@@ -149,6 +153,29 @@ table{border-collapse:collapse;width:100%}
   .modal-box{padding:var(--sp4)}
   .modal-actions{flex-direction:column}
   .modal-actions .btn-primary,.modal-actions .btn-secondary{width:100%}
+}
+@media(max-width:640px){
+  .strategy-header-row,.strategy-controls,.cs-summary-bar,.cs-detector-team-conf,.replay-filters-row,.pilot-card-header{flex-direction:column;align-items:flex-start}
+  .strategy-controls,.replay-filters,.pilot-card-body{width:100%}
+  .cs-summary-bar{gap:12px;padding:12px}
+  .cs-tier-badge{width:44px;height:44px;font-size:20px}
+  .cs-score{font-size:26px}
+  .cs-score-suffix{font-size:12px}
+  .cs-meta-line,.cs-summary-line,.cs-explain,.cs-list li,.cs-section p,.pilot-tip,.pilot-leads,.replay-meta,.replay-title{overflow-wrap:anywhere;word-break:break-word}
+  .cs-cat-grid,.cs-lead-grid,.radar-grid,.breakdown-grid,.steps-grid,.editor-2col,.moves-2col,.team-detail-fields,.stat-panel-grid,.audit-grid{grid-template-columns:1fr}
+  .cs-section,.audit-card,.pilot-card,.replay-card,.team-full-card,.editor-form,.editor-sidebar{padding:var(--sp3)}
+  .cs-h3{font-size:12px;gap:6px}
+  .cs-cat{padding:8px}
+  .cs-detector-row,.cs-detector-row-loss,.cs-detector-row-dead{grid-template-columns:1fr;gap:4px}
+  .cs-detector-head{display:none}
+  .audit-meta-row{flex-direction:column;align-items:flex-start;gap:2px}
+  .audit-meta-row strong{text-align:left}
+  .audit-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:520px}
+  .replay-v2-tools{grid-template-columns:1fr}
+  .replay-hp-bars{grid-template-columns:1fr}
+  .source-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:520px}
+  .engine-row{grid-template-columns:1fr;gap:4px}
+  .pilot-wc-row{grid-template-columns:1fr 1fr auto}
 }
 
 /* BADGES */
