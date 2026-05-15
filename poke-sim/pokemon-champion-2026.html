@@ -7122,6 +7122,35 @@ function tryTerrainSeed(mon, field, log) {
   return true;
 }
 
+function applyWeatherAbility(mon, field, log) {
+  if (!mon || !mon.alive || !field) return false;
+  if (mon.ability === 'Drought') {
+    field.weather = 'sun';
+    field.weatherTurns = 5;
+    if (log) log.push(`${mon.name} summoned harsh sunlight!`);
+    return true;
+  }
+  if (mon.ability === 'Drizzle') {
+    field.weather = 'rain';
+    field.weatherTurns = 5;
+    if (log) log.push(`${mon.name} summoned rain!`);
+    return true;
+  }
+  if (mon.ability === 'Sand Stream') {
+    field.weather = 'sand';
+    field.weatherTurns = 5;
+    if (log) log.push(`${mon.name} summoned a sandstorm!`);
+    return true;
+  }
+  if (mon.ability === 'Snow Warning') {
+    field.weather = 'snow';
+    field.weatherTurns = 5;
+    if (log) log.push(`${mon.name} summoned snow!`);
+    return true;
+  }
+  return false;
+}
+
 // T9j.8 — Ability hook dispatcher. Safe call: returns null when no ability or
 // no matching hook. Invoked from engine trigger points.
 function callAbilityHook(mon, hookName, ctx) {
@@ -7426,7 +7455,7 @@ class Pokemon {
   // Swaps stats, types, ability. Preserves HP%, stat boosts, status, item,
   // side-state, turn counters, PP. Idempotent — returns false if already
   // evolved or not Mega-capable.
-  megaEvolve(log) {
+  megaEvolve(log, field) {
     if (!this.megaForm || this.hasMegaEvolved) return false;
     const m = this.megaForm;
     const hpFrac = (this.maxHp > 0) ? (this.hp / this.maxHp) : 1;
@@ -7444,6 +7473,7 @@ class Pokemon {
     this.flying = this.types.includes('Flying') || this.ability === 'Levitate';
     this.hasMegaEvolved = true;
     if (log) log.push(`${m.megaName} Mega Evolved!`);
+    if (field) applyWeatherAbility(this, field, log);
     return true;
   }
 
@@ -8291,10 +8321,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         }
       }
     }
-    if (mon.ability === 'Drought')       { field.weather = 'sun';  field.weatherTurns = 5; log.push(`${mon.name} summoned harsh sunlight!`); }
-    if (mon.ability === 'Drizzle')       { field.weather = 'rain'; field.weatherTurns = 5; log.push(`${mon.name} summoned rain!`); }
-    if (mon.ability === 'Sand Stream')   { field.weather = 'sand'; field.weatherTurns = 5; log.push(`${mon.name} summoned a sandstorm!`); }
-    if (mon.ability === 'Snow Warning')  { field.weather = 'snow'; field.weatherTurns = 5; log.push(`${mon.name} summoned snow!`); }
+    applyWeatherAbility(mon, field, log);
     if (mon.ability === 'Hospitality' && side === 'player') {
       const ally = playerActive.find(a => a !== mon && a.alive);
       if (ally) { ally.hp = Math.min(ally.maxHp, ally.hp + Math.floor(ally.maxHp * 0.25)); log.push(`${mon.name}'s Hospitality restored ${ally.name}'s HP!`); }
@@ -9424,7 +9451,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return rng() < 0.5 ? -1 : 1;
       });
       // One per team: only the first (fastest / coin-flip) evolves.
-      candidates[0].megaEvolve(log);
+      candidates[0].megaEvolve(log, field);
       field[sideFlagKey] = true;
     }
     tryMegaPhase(playerActive, 'playerMegaUsed');

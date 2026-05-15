@@ -231,6 +231,29 @@ const CASES = [
       expectLine(battle, 'used Obstruct!', 'Obstruct should resolve');
       expectLine(battle, 'Defense harshly fell due to Obstruct', 'contact rider should lower Defense');
     }
+  },
+  {
+    name: 'Mega weather abilities trigger before Aurora Veil',
+    run(simulateBattle) {
+      const battle = simulate(simulateBattle, [
+        mon('Froslass-Mega', 'Aurora Veil', {
+          item: 'Froslassite',
+          ability: 'Snow Warning',
+          nature: 'Timid',
+          role: 'Support',
+          moves: ['Aurora Veil', 'Blizzard', 'Shadow Ball', 'Protect'],
+          evs: { hp: 2, atk: 0, def: 0, spa: 32, spd: 0, spe: 32 }
+        })
+      ], [
+        mon('Incineroar', 'Tackle', { atk: 252 })
+      ], { maxTurns: 1, seed: [6, 8, 10, 12] });
+      expectLine(battle, 'Mega Evolved!', 'Mega evolution should resolve first');
+      expectLine(battle, 'summoned snow!', 'Snow Warning should trigger on Mega evolution');
+      expectLine(battle, 'used Aurora Veil!', 'Aurora Veil should be selected');
+      if (hasLine(battle, 'used Aurora Veil! But it failed')) {
+        throw new Error('Aurora Veil should not fail once snow is active');
+      }
+    }
   }
 ];
 
@@ -274,7 +297,8 @@ function runMechanicsSmoke(simulateBattle) {
       CASES[1],
       CASES[4],
       CASES[7],
-      CASES[8]
+      CASES[8],
+      CASES[15]
     ]
   });
 }
