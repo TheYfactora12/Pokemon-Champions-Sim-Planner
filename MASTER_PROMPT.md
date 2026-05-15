@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-15 | @TheYfactora12 | Mobile simulator structure follow-up | Moved the simulator controls ahead of the team cards on phone widths and hid the coverage widget from the narrow path so the core Run Simulation flow stays usable without scrolling through a desktop-shaped control stack. Added regression coverage for the mobile simulator structure. |
 | 2026-05-15 | @TheYfactora12 | Mobile tab structure follow-up | Replaced the phone-width horizontal-swipe tab bar with a wrapped two-column grid so the main app sections stay visible without sideways scrolling. Added a regression for the mobile tab grid in addition to the portrait/landscape shell checks. |
 | 2026-05-15 | @TheYfactora12 | Mobile landscape follow-up | Relaxed the simulator header and restored horizontal structure for iPhone landscape and small tablet widths so the app does not stay squashed in horizontal orientation. Added focused regression coverage for landscape shells alongside the portrait/mobile audits. |
 | 2026-05-15 | @TheYfactora12 | Mobile portrait shell follow-up | Stacked the top header, format banner, and title chips before iPhone portrait overflow could force horizontal scrolling. Added focused regression coverage for the portrait shell plus the earlier Teams and strategy/audit mobile passes. |

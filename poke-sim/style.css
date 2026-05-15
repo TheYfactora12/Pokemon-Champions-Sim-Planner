@@ -123,7 +123,7 @@ table{border-collapse:collapse;width:100%}
 /* ===== SIM LAYOUT ===== */
 .sim-layout{display:grid;grid-template-columns:1fr 220px 1fr;gap:var(--sp4);align-items:start;margin-bottom:var(--sp6)}
 @media(max-width:700px){.sim-layout{grid-template-columns:1fr}}
-@media(max-width:700px){.sim-layout .opp-card{order:3}.sim-layout .sim-controls{order:2}}
+@media(max-width:700px){.sim-layout .sim-controls{order:1}.sim-layout .player-card{order:2}.sim-layout .opp-card{order:3}}
 @media(min-width:701px) and (max-width:900px) and (orientation:landscape){
   .sim-layout{grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr);gap:var(--sp3)}
   .sim-layout .opp-card,.sim-layout .sim-controls{order:unset}
@@ -183,6 +183,10 @@ table{border-collapse:collapse;width:100%}
   .modal-box{padding:var(--sp4)}
   .modal-actions{flex-direction:column}
   .modal-actions .btn-primary,.modal-actions .btn-secondary{width:100%}
+}
+@media(max-width:560px){
+  .sim-controls{gap:var(--sp3)}
+  .coverage-widget{display:none}
 }
 @media(max-width:640px){
   .strategy-header-row,.strategy-controls,.cs-summary-bar,.cs-detector-team-conf,.replay-filters-row,.pilot-card-header{flex-direction:column;align-items:flex-start}
