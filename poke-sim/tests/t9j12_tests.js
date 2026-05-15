@@ -1,6 +1,6 @@
 // T9j.12 (Refs #74) Simulator-tab bring picker tests
 //
-// Coverage targets (~10 cases):
+// Coverage targets (~16 cases):
 //   1. buildBringPickerHtml returns markup containing slots + pool + mode toggle
 //   2. compact=true uses bring-pool-chip markup, compact=false uses bring-pool-row
 //   3. Sim picker state shared with Teams state: setBringFor mutates what
@@ -206,7 +206,22 @@ T('3. shared state: setBringFor is reflected in next buildBringPickerHtml call',
   inc(html, 'bring-in', 'at least one in-bring class');
 });
 
-T('3b. legacy window bring globals remain compatible', () => {
+T('3b. duplicate names are normalized out and backfilled from team order', () => {
+  setCurrentFormat('doubles');
+  const teamNames = TEAMS[FIXTURE_KEY].members.map(m => m.name);
+  setBringFor(FIXTURE_KEY, [teamNames[0], teamNames[0], teamNames[2], teamNames[3]]);
+  const bring = getBringFor(FIXTURE_KEY);
+  eq(new Set(bring).size, bring.length, 'bring list has unique names');
+  eq(bring[0], teamNames[0], 'first pick preserved');
+  eq(bring[1], teamNames[2], 'second unique pick preserved');
+  eq(bring[2], teamNames[3], 'third unique pick preserved');
+  eq(bring[3], teamNames[1], 'missing slot backfilled from team order');
+  const html = buildBringPickerHtml(FIXTURE_KEY, { compact: true });
+  inc(html, 'bring-slot-name">' + teamNames[0], 'normalized first slot rendered');
+  inc(html, 'bring-slot-name">' + teamNames[1], 'backfilled slot rendered');
+});
+
+T('3c. legacy window bring globals remain compatible', () => {
   const all = TEAMS[FIXTURE_KEY].members.map(m => m.name);
   const picked = all.slice(1, 5);
   ctx.window.setBringFor(FIXTURE_KEY, picked);

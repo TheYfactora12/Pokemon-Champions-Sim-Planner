@@ -14,7 +14,7 @@ node tests/t9j8_tests.js       # T9j.8 — ability hooks (#38 #37) — 47 cases
 node tests/t9j9_tests.js       # T9j.9 — nature + EV + IV stat math (#4 #5) — 24 cases
 node tests/t9j10_tests.js      # T9j.10 — bring N-of-6 picker state (#16) — 16 cases
 node tests/t9j11_tests.js      # T9j.11 — custom teams bulk I/O + filter (#73) — 16 cases
-node tests/t9j12_tests.js      # T9j.12 — simulator bring picker (#74) — 11 cases
+node tests/t9j12_tests.js      # T9j.12 — simulator bring picker (#74) — 16 cases
 node tests/t9j13_tests.js      # T9j.13 — format mismatch guard + SP rescale (#42) — 47 cases
 node tests/t9j14_tests.js      # T9j.14 — Shadow Pressure PDF + coaching notes (#75) — 25 cases
 node tests/t9j15_tests.js      # T9j.15 — Best Mega Trigger Turn card (#71) — 22 cases
@@ -26,6 +26,7 @@ node tests/t159_mobile_roster_layout_tests.js # Mobile roster layout safeguards
 node tests/t160_distinct_battle_team_tests.js # Battle team selection must stay distinct
 node tests/t161_team_member_uniqueness_tests.js # Catalog teams must not repeat members
 node tests/t163_export_my_data_tests.js # Export My Data as JSON
+node tests/t164_mobile_shell_layout_tests.js # Mobile shell layout safeguards
 node tests/phase5_turn_log_tests.js # Phase 5 — turnLog, positionScore, Replay Log v2 — 12 cases
 node tests/phase6_coaching_voice.js # Phase 6 — coaching templates, linter, RNG gate — 9 cases
 node tests/structured_logger_tests.js # Infra — structured logger and no raw runtime console calls — 5 cases
@@ -48,10 +49,11 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | t9j9 | 24/24 | Nature + EV + IV stat math |
 | t9j10 | 16/16 | Bring state + random-mode rerolls |
 | t9j11 | 16/16 | Custom team bulk import/export + filter chips |
-| t9j12 | 11/11 | Simulator bring picker + shared Teams/Sim state |
+| t9j12 | 16/16 | Simulator bring picker + shared Teams/Sim state |
 | t9j13 | 47/47 | Format-mismatch guard + SP rescale (cofagrigus_tr, aurora_veil_froslass) |
 | t9j14 | 25/25 | Shadow Pressure PDF master sheet + coaching notes + pluggable COACHING_RULES |
 | t9j15 | 22/22 | Best Mega Trigger Turn card — Pilot Guide + PDF column, severity bands, sweep cache |
+| t9j16 | 5/5 | Mobile shell layout safeguards |
 | phase4c | 20/20 | Detectors (dead moves, lead perf, loss conditions) + confidence badges, 5 fixtures incl. high-n null effect |
 | phase4d | 7/7 | Threat-response solver, cache, idle fallback, line labels, renderer |
 | phase4e | 13/13 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate, weakness dashboard |
@@ -60,7 +62,7 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
 | export | 4/4 | My Data JSON export for persisted history, reports, and DB analyses |
-| **Total** | **360/360** | |
+| **Total** | **370/370** | |
 | audit | 0 JS errors | 5070 battles across 13 teams |
 
 ## Conventions

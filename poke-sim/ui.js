@@ -2746,6 +2746,28 @@ function getBringCount() {
 function getLeadCount() {
   return (currentFormat === 'singles') ? 1 : 2;
 }
+function _normalizeBringOrder(teamKey, names) {
+  var team = TEAMS[teamKey];
+  if (!team || !Array.isArray(team.members)) return [];
+  var count = getBringCount();
+  var seen = Object.create(null);
+  var out = [];
+  var source = Array.isArray(names) ? names : [];
+  for (var i = 0; i < source.length && out.length < count; i++) {
+    var n = source[i];
+    if (!n || seen[n]) continue;
+    if (!team.members.some(function(m) { return m.name === n; })) continue;
+    seen[n] = true;
+    out.push(n);
+  }
+  for (var j = 0; j < team.members.length && out.length < count; j++) {
+    var monName = team.members[j] && team.members[j].name;
+    if (!monName || seen[monName]) continue;
+    seen[monName] = true;
+    out.push(monName);
+  }
+  return out.slice(0, count);
+}
 function getBringMode(teamKey) {
   // Guard for early-load invocations (renderTeamsGrid fires before the var
   // initializer for BRING_MODE runs; var hoists declaration but leaves undefined).
@@ -2760,21 +2782,12 @@ function setBringMode(teamKey, mode) {
 function getBringFor(teamKey) {
   const team = TEAMS[teamKey];
   if (!team) return [];
-  const count = getBringCount();
   // Guard for early-load (var hoisted, initializer not yet run).
   const picked = (typeof BRING_SELECTION !== 'undefined' && BRING_SELECTION && BRING_SELECTION[teamKey]) ? BRING_SELECTION[teamKey] : [];
-  // Keep only names that still exist on the team (handles edits / resets).
-  const valid  = picked.filter(n => team.members.some(m => m.name === n));
-  const filled = valid.slice(0, count);
-  // Fill missing slots from team order, skipping already-picked names.
-  for (const m of team.members) {
-    if (filled.length >= count) break;
-    if (!filled.includes(m.name)) filled.push(m.name);
-  }
-  return filled;
+  return _normalizeBringOrder(teamKey, picked);
 }
 function setBringFor(teamKey, names) {
-  const arr = Array.isArray(names) ? names.slice(0, getBringCount()) : [];
+  const arr = _normalizeBringOrder(teamKey, names);
   BRING_SELECTION[teamKey] = arr;
   _saveBringState();
 }

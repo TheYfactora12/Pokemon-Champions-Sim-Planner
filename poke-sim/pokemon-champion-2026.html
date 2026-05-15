@@ -84,6 +84,23 @@ table{border-collapse:collapse;width:100%}
 .site-title{font-size:var(--text-lg);font-weight:900;letter-spacing:-.02em;line-height:1.1}
 .site-sub{font-size:10px;color:var(--text-m);font-family:var(--font-mono);margin-top:1px}
 .header-right{display:flex;align-items:center;gap:var(--sp3)}
+@media(max-width:720px){
+  .header-inner{padding:10px var(--sp3);align-items:flex-start}
+  .logo-block{width:100%;align-items:flex-start;gap:10px}
+  .site-title{font-size:var(--text-base);line-height:1.15;overflow-wrap:anywhere}
+  .build-version{display:inline-flex;margin:4px 0 0 0}
+  .header-right{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:8px;align-items:stretch}
+  .format-toggle{width:100%;min-width:0}
+  .fmt-btn{flex:1 1 0;justify-content:center;padding:6px 8px;min-height:36px}
+  .btn-icon{justify-self:end}
+  .format-banner-inner{padding:8px var(--sp3);align-items:flex-start;gap:6px}
+  .fmt-div{display:none}
+  .fmt-indicator,.fmt-source{line-height:1.35;overflow-wrap:anywhere}
+  .fmt-source{flex-basis:100%}
+  .fmt-pill-btn{width:100%;justify-content:center}
+  .tab-nav{padding:0 var(--sp2)}
+  .tab-btn{padding:10px 12px;min-height:40px;font-size:12px}
+}
 
 /* Format toggle */
 .format-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);padding:3px;gap:2px}
@@ -126,6 +143,32 @@ table{border-collapse:collapse;width:100%}
 .card-title{font-size:var(--text-sm);font-weight:900;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card-action-btn{display:flex;align-items:center;gap:4px;padding:3px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);font-size:10px;font-weight:700;color:var(--text-m);cursor:pointer;transition:all var(--tr);white-space:nowrap;letter-spacing:.03em;flex-shrink:0}
 .card-action-btn:hover{color:var(--primary);border-color:var(--primary)}
+@media(max-width:620px){
+  .team-card,.results-section,.matchup-table-wrap,.about-card,.pilot-card,.team-full-card,.replay-card,.cs-section,.cs-summary-bar,.stat-panel,.editor-sidebar,.editor-form{padding:var(--sp4)}
+  .card-header,.results-header,.replay-card-hdr,.tfcard-header,.pilot-card-header,.strategy-header-row,.strategy-controls,.cs-summary-bar,.cs-adaptive-row,.team-detail-head,.replay-filters-row{flex-direction:column;align-items:flex-start}
+  .card-title{white-space:normal;overflow:visible;text-overflow:clip}
+  .card-action-btn,.btn-secondary,.btn-primary,.export-card-btn{width:100%;justify-content:center}
+  .results-header,.strategy-header-row,.pilot-card-header,.team-detail-head{gap:var(--sp2)}
+  .win-display{width:100%}
+  .win-circle{width:80px;height:80px}
+  .series-summary-table th,.series-summary-table td{padding:6px 8px;font-size:10px}
+  .series-summary-table{min-width:540px}
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tfcard-badges,.team-detail-head .team-detail-close{align-items:flex-start}
+  .pilot-card-body{gap:var(--sp3)}
+  .pilot-details{min-width:0}
+  .pilot-wc-row{grid-template-columns:1fr 1fr auto}
+  .cs-summary-bar{padding:12px}
+  .cs-tier-badge{width:48px;height:48px;font-size:22px}
+  .cs-score{font-size:28px}
+  .cs-cat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cs-source{margin-left:0}
+  .engine-row{grid-template-columns:1fr;gap:4px}
+  .replay-filters{width:100%}
+  .modal-box{padding:var(--sp4)}
+  .modal-actions{flex-direction:column}
+  .modal-actions .btn-primary,.modal-actions .btn-secondary{width:100%}
+}
 
 /* BADGES */
 .badge{font-size:9px;font-weight:700;letter-spacing:.07em;padding:2px 8px;border-radius:var(--r-full);font-family:var(--font-mono);flex-shrink:0}
@@ -342,6 +385,7 @@ table{border-collapse:collapse;width:100%}
 .team-detail-table tr:last-child th,.team-detail-table tr:last-child td{border-bottom:0}
 .team-detail-chip-row{display:flex;flex-wrap:wrap;gap:6px}
 @media(max-width:620px){.team-detail-backdrop{align-items:stretch;padding:10px}.team-detail-modal{max-height:calc(100vh - 20px);padding:14px}.team-detail-head h2{font-size:20px}.team-detail-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.team-mon-detail-btn{width:100%;margin-top:8px}.team-detail-table{min-width:0}.team-detail-table th,.team-detail-table td{padding:7px 5px;font-size:10px}}
+@media(max-width:420px){.team-detail-fields{grid-template-columns:1fr}}
 .btn-save{margin-top:var(--sp4);padding:7px var(--sp5);background:var(--primary);color:#fff;border:none;border-radius:var(--r-md);font-family:var(--font-display);font-size:var(--text-sm);font-weight:700;cursor:pointer;transition:all var(--tr)}
 .btn-save:hover{background:var(--primary-h)}
 
@@ -1808,7 +1852,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.15-sim-preview</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.16-sim-preview</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">April 2026 Meta · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -13503,6 +13547,28 @@ function getBringCount() {
 function getLeadCount() {
   return (currentFormat === 'singles') ? 1 : 2;
 }
+function _normalizeBringOrder(teamKey, names) {
+  var team = TEAMS[teamKey];
+  if (!team || !Array.isArray(team.members)) return [];
+  var count = getBringCount();
+  var seen = Object.create(null);
+  var out = [];
+  var source = Array.isArray(names) ? names : [];
+  for (var i = 0; i < source.length && out.length < count; i++) {
+    var n = source[i];
+    if (!n || seen[n]) continue;
+    if (!team.members.some(function(m) { return m.name === n; })) continue;
+    seen[n] = true;
+    out.push(n);
+  }
+  for (var j = 0; j < team.members.length && out.length < count; j++) {
+    var monName = team.members[j] && team.members[j].name;
+    if (!monName || seen[monName]) continue;
+    seen[monName] = true;
+    out.push(monName);
+  }
+  return out.slice(0, count);
+}
 function getBringMode(teamKey) {
   // Guard for early-load invocations (renderTeamsGrid fires before the var
   // initializer for BRING_MODE runs; var hoists declaration but leaves undefined).
@@ -13517,21 +13583,12 @@ function setBringMode(teamKey, mode) {
 function getBringFor(teamKey) {
   const team = TEAMS[teamKey];
   if (!team) return [];
-  const count = getBringCount();
   // Guard for early-load (var hoisted, initializer not yet run).
   const picked = (typeof BRING_SELECTION !== 'undefined' && BRING_SELECTION && BRING_SELECTION[teamKey]) ? BRING_SELECTION[teamKey] : [];
-  // Keep only names that still exist on the team (handles edits / resets).
-  const valid  = picked.filter(n => team.members.some(m => m.name === n));
-  const filled = valid.slice(0, count);
-  // Fill missing slots from team order, skipping already-picked names.
-  for (const m of team.members) {
-    if (filled.length >= count) break;
-    if (!filled.includes(m.name)) filled.push(m.name);
-  }
-  return filled;
+  return _normalizeBringOrder(teamKey, picked);
 }
 function setBringFor(teamKey, names) {
-  const arr = Array.isArray(names) ? names.slice(0, getBringCount()) : [];
+  const arr = _normalizeBringOrder(teamKey, names);
   BRING_SELECTION[teamKey] = arr;
   _saveBringState();
 }
