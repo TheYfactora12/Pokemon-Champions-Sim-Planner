@@ -1,6 +1,6 @@
 // T9j.16 (Refs #65) - Champions Coaching Engine tests
 //
-// Coverage targets (~40 cases):
+// Coverage targets (~62 cases):
 //   Section A - teamSignature stability + collision (3)
 //   Section B - inferTeamIdentity branches (4)
 //   Section C - 17 coaching rules: fires/doesn't fire (34)
@@ -9,6 +9,7 @@
 //   Section F - Strategy report assembly + JSON shape (3)
 //   Section G - Persistence (save/load/evolve) (3)
 //   Section H - PDF renderer shape (2)
+//   Section I - Memoization (3)
 //
 // Engine dependency: NONE (T9j.16 is pure analysis on shipped sim outputs).
 //
@@ -79,6 +80,9 @@ load('ui.js');
 vm.runInContext([
   'this.TEAMS=TEAMS;',
   'this.teamSignature=teamSignature;',
+  'this.strategyResultsHash=strategyResultsHash;',
+  'this.csStrategyReportCacheSize=csStrategyReportCacheSize;',
+  'this.csClearStrategyReportCache=csClearStrategyReportCache;',
   'this.inferTeamIdentity=inferTeamIdentity;',
   'this.evaluateT9j16Rules=evaluateT9j16Rules;',
   'this.analyzeEliteDecisions=analyzeEliteDecisions;',
@@ -95,7 +99,8 @@ vm.runInContext([
 ].join(' '), ctx);
 
 const {
-  TEAMS, teamSignature, inferTeamIdentity, evaluateT9j16Rules,
+  TEAMS, teamSignature, strategyResultsHash, csStrategyReportCacheSize, csClearStrategyReportCache,
+  inferTeamIdentity, evaluateT9j16Rules,
   analyzeEliteDecisions, buildPilotPlan, buildMatchupWarnings,
   buildLeadRecoveryPlan, buildCoachingSummary, buildStrategyReport,
   saveStrategyReport, loadStrategyReport, evolveReport,
@@ -125,6 +130,11 @@ T('A3. teamSignature - move order does not affect signature', () => {
   const a = { members: [{ name: 'Incineroar', moves: ['Fake Out','Knock Off','Flare Blitz','Parting Shot'], item: 'Sitrus Berry', ability: 'Intimidate' }] };
   const b = { members: [{ name: 'Incineroar', moves: ['Parting Shot','Flare Blitz','Knock Off','Fake Out'], item: 'Sitrus Berry', ability: 'Intimidate' }] };
   eq(teamSignature(a), teamSignature(b), 'move order should not change signature');
+});
+T('A4. strategyResultsHash is stable for reordered result keys', () => {
+  const a = { o1: { wins: 1, losses: 2, draws: 0, allLogs: [], winConditions: { TR: 2, Pivot: 1 } } };
+  const b = { o1: { losses: 2, draws: 0, wins: 1, allLogs: [], winConditions: { Pivot: 1, TR: 2 } } };
+  eq(strategyResultsHash(a), strategyResultsHash(b), 'stable hash should ignore object key order');
 });
 
 // ---------- Section B: inferTeamIdentity ----------
@@ -427,6 +437,38 @@ T('G2. evolveReport - rolling history accumulates up to 5 entries', () => {
 T('G3. loadStrategyReport - returns null for unknown team', () => {
   ctx.localStorage.clear();
   eq(loadStrategyReport('player'), null);
+});
+
+// ---------- Section I: Memoization ----------
+T('I1. buildStrategyReport memoizes identical team/results/format calls', () => {
+  csClearStrategyReportCache();
+  const results = { o1: { wins: 8, losses: 2, draws: 0, allLogs: [], winConditions: { 'TR sweep': 6 } } };
+  const r1 = buildStrategyReport('player', results, 'doubles');
+  const r2 = buildStrategyReport('player', results, 'doubles');
+  truthy(r1 && r2, 'reports should exist');
+  eq(r1, r2, 'identical calls should reuse the cached object');
+  eq(csStrategyReportCacheSize(), 1, 'cache should contain one entry');
+});
+
+T('I2. different team, results, or format produce fresh cached entries', () => {
+  csClearStrategyReportCache();
+  const base = { o1: { wins: 8, losses: 2, draws: 0, allLogs: [], winConditions: {} } };
+  const sameResultsDifferentFormat = buildStrategyReport('player', base, 'singles');
+  const sameResultsDifferentTeam = buildStrategyReport('mega_altaria', base, 'doubles');
+  const differentResults = buildStrategyReport('player', { o1: { wins: 1, losses: 9, draws: 0, allLogs: [], winConditions: {} } }, 'doubles');
+  truthy(sameResultsDifferentFormat, 'format report missing');
+  truthy(sameResultsDifferentTeam, 'team report missing');
+  truthy(differentResults, 'results report missing');
+  eq(csStrategyReportCacheSize() >= 3, true, 'cache should retain distinct entries');
+});
+
+T('I3. strategy report cache is bounded at 32 entries', () => {
+  csClearStrategyReportCache();
+  for (let i = 0; i < 40; i++) {
+    const results = { o1: { wins: i % 10, losses: 10 - (i % 10), draws: 0, allLogs: [], winConditions: { ['W' + i]: 1 } } };
+    buildStrategyReport('player', results, i % 2 === 0 ? 'doubles' : 'singles');
+  }
+  truthy(csStrategyReportCacheSize() <= 32, 'cache should stay bounded');
 });
 
 // ---------- Section H: PDF renderer ----------

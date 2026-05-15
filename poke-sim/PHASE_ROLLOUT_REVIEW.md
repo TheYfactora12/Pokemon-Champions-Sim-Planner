@@ -103,6 +103,9 @@ A phase is "Go" only if every gate from the previous phase passed. Gates are **m
 - [ ] `positionScore()` formula is deterministic and tested at boundary cases
 - [ ] `winProbabilityDelta` micro-rollouts complete inside per-turn budget
 - [ ] Replay Log v2 renders without performance regression on a 25-turn game
+- Phase 5 implementation note: `turnLog` remains runtime-only on battle results
+  and `window.ChampionsSim.turnLog`; only summary fields are exposed to callers.
+  The draft spec was not renamed because upstream approval is still explicit-gate work.
 
 ### Gate 6 -> v1 ship
 - [ ] All 6 voice tests pass
@@ -110,6 +113,9 @@ A phase is "Go" only if every gate from the previous phase passed. Gates are **m
 - [ ] RNG gating verified on both fixtures (`rng_dependency` 0.3 vs 0.7)
 - [ ] Side-by-side inline-pilot-card screenshot in PR (today vs Phase 6)
 - [ ] Phase 4e regression still passes after voice changes (no spec drift)
+- Phase 6 implementation note: `tests/phase6_coaching_voice.js` covers 9
+  voice/linter fixtures through the normal CI test runner. Language switcher
+  remains a post-v1 follow-on per spec Section 12.
 
 ---
 
@@ -245,6 +251,8 @@ All 19 open questions across the 4 specs were answered in the staging review. Qu
 - Q3: Soft yellow 'stabilized' banner for legitimate stable teams
 - Q4: Live UI at 50, regression test at 100 (two-threshold model)
 - Q5: Aggregated v1, per-mon v2 for fake-good play attribution
+- T5 CI gate confirmed: `tests/phase4e_policy_regression.js` is a normal
+  `tests/*.js` file, so `_run_all.sh` and the GitHub Test Suite run it on PRs.
 
 ### Phase 6
 - Q1: Inline soft 400 / hard 1000 words; PDF no cap; truncation links to PDF

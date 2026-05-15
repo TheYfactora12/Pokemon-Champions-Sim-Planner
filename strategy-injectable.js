@@ -144,12 +144,12 @@ HARD COUNTERS: Rain, Rock Slide (4x Charizard), Tyranitar sand override.`,
   cofagrigus_tr: {
     archetypes: ['trick_room','control'],
     style: 'Full Trick Room — Cofagrigus + Cresselia',
-    guide: `OVERVIEW: Sets TR via Cofagrigus (Ghost immune to Fake Out, Mummy denies physical abilities on contact) or Cresselia. Gothitelle Imprison locks opponent TR. Flutter Mane + Hatterene are TR abusers.
+    guide: `OVERVIEW: Sets TR via Cofagrigus (Ghost immune to Fake Out, Mummy denies physical abilities on contact) or Cresselia. Gothitelle Imprison locks opponent TR. Hatterene + Ursaluna-Bloodmoon are TR abusers.
 
 SETUP PLAYS:
 • Turn 1 [Standard TR]: Cofagrigus + Cresselia — TR (Mummy blocks Fake Out), Cresselia Helping Hand
 • Turn 1 [vs Imprison]: Gothitelle + Dusclops — Imprison + TR lock
-• Turn 2: Flutter Mane + Hatterene sweep under TR
+• Turn 2: Hatterene + Ursaluna-Bloodmoon sweep under TR
 
 WIN CONDITIONS: TR up turn 1 → Moonblast/Dazzling Gleam sweep. Mummy denies Fake Out chains.
 HARD COUNTERS: Taunt, Prankster Taunt, fast Fake Out on CRESSELIA before TR, TR expiring.`,
@@ -157,7 +157,7 @@ HARD COUNTERS: Taunt, Prankster Taunt, fast Fake Out on CRESSELIA before TR, TR 
     setupPlays: [
       { turn:1, lead:'Cofagrigus + Cresselia', action:'Trick Room + Helping Hand', condition:'standard TR' },
       { turn:1, lead:'Gothitelle + Cofagrigus', action:'Imprison + Trick Room', condition:'vs mirror TR' },
-      { turn:2, lead:'Flutter Mane + Hatterene in', action:'Moonblast + Dazzling Gleam nuke', condition:'abuser sweep' },
+      { turn:2, lead:'Hatterene + Ursaluna-Bloodmoon in', action:'Moonblast + Blood Moon nuke', condition:'abuser sweep' },
     ]
   },
   aurora_veil_froslass: {

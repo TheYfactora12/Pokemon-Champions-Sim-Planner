@@ -1,6 +1,6 @@
 // T9j.12 (Refs #74) Simulator-tab bring picker tests
 //
-// Coverage targets (~10 cases):
+// Coverage targets (~16 cases):
 //   1. buildBringPickerHtml returns markup containing slots + pool + mode toggle
 //   2. compact=true uses bring-pool-chip markup, compact=false uses bring-pool-row
 //   3. Sim picker state shared with Teams state: setBringFor mutates what
@@ -206,7 +206,22 @@ T('3. shared state: setBringFor is reflected in next buildBringPickerHtml call',
   inc(html, 'bring-in', 'at least one in-bring class');
 });
 
-T('3b. legacy window bring globals remain compatible', () => {
+T('3b. duplicate names are normalized out and backfilled from team order', () => {
+  setCurrentFormat('doubles');
+  const teamNames = TEAMS[FIXTURE_KEY].members.map(m => m.name);
+  setBringFor(FIXTURE_KEY, [teamNames[0], teamNames[0], teamNames[2], teamNames[3]]);
+  const bring = getBringFor(FIXTURE_KEY);
+  eq(new Set(bring).size, bring.length, 'bring list has unique names');
+  eq(bring[0], teamNames[0], 'first pick preserved');
+  eq(bring[1], teamNames[2], 'second unique pick preserved');
+  eq(bring[2], teamNames[3], 'third unique pick preserved');
+  eq(bring[3], teamNames[1], 'missing slot backfilled from team order');
+  const html = buildBringPickerHtml(FIXTURE_KEY, { compact: true });
+  inc(html, 'bring-slot-name">' + teamNames[0], 'normalized first slot rendered');
+  inc(html, 'bring-slot-name">' + teamNames[1], 'backfilled slot rendered');
+});
+
+T('3c. legacy window bring globals remain compatible', () => {
   const all = TEAMS[FIXTURE_KEY].members.map(m => m.name);
   const picked = all.slice(1, 5);
   ctx.window.setBringFor(FIXTURE_KEY, picked);
@@ -229,6 +244,39 @@ T('4. mode=random disables drag (draggable="false") on pool and slots', () => {
   setBringMode(FIXTURE_KEY, 'manual');
   const html2 = buildBringPickerHtml(FIXTURE_KEY, { compact: true });
   inc(html2, 'draggable="true"', 'manual mode allows drag');
+});
+
+T('4b. random mode shows no picked highlights and displays random-leads hint', () => {
+  setCurrentFormat('doubles');
+  resetBring(FIXTURE_KEY);
+  setBringMode(FIXTURE_KEY, 'random');
+  const html = buildBringPickerHtml(FIXTURE_KEY, { compact: true });
+  inc(html, 'Leads will be chosen randomly.', 'random hint visible');
+  notInc(html, 'bring-in', 'random mode has no selected pool chips');
+  notInc(html, 'bring-pool-chip-pos', 'random mode has no lead/bench position badges');
+  notInc(html, 'bring-slot-sprite', 'random mode slots are empty');
+  setBringMode(FIXTURE_KEY, 'manual');
+});
+
+T('4c. manual mode restores picked highlights and hides random-leads hint', () => {
+  setCurrentFormat('doubles');
+  resetBring(FIXTURE_KEY);
+  setBringMode(FIXTURE_KEY, 'manual');
+  const html = buildBringPickerHtml(FIXTURE_KEY, { compact: true });
+  inc(html, 'bring-in', 'manual mode has selected pool chips');
+  inc(html, 'bring-slot-sprite', 'manual mode slots show selected sprites');
+  notInc(html, 'Leads will be chosen randomly.', 'manual hint hidden');
+});
+
+T('4d. auto mode is treated as unresolved leads, same as random', () => {
+  setCurrentFormat('doubles');
+  resetBring(FIXTURE_KEY);
+  setBringMode(FIXTURE_KEY, 'auto');
+  const html = buildBringPickerHtml(FIXTURE_KEY, { compact: false });
+  inc(html, 'Leads will be chosen randomly.', 'auto hint visible');
+  notInc(html, '◆ LEAD', 'auto mode has no lead badges');
+  notInc(html, 'bring-in', 'auto mode has no selected rows');
+  setBringMode(FIXTURE_KEY, 'manual');
 });
 
 T('5. doubles format: 4 slots (LEAD 1, LEAD 2, BENCH 3, BENCH 4)', () => {

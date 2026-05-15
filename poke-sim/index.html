@@ -39,6 +39,9 @@
 
 </head>
 <body>
+<div id="runtime-error-banner" style="display:none;position:sticky;top:0;z-index:9999;background:#7f1d1d;color:#fee2e2;border-bottom:1px solid #ef4444;padding:8px 12px;font:600 12px/1.4 system-ui,-apple-system,sans-serif;">
+  <span id="runtime-error-text"></span>
+</div>
 
 <!-- HEADER -->
 <header class="site-header">
@@ -63,7 +66,7 @@
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.9-phase4c.1</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.16-sim-preview</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">April 2026 Meta · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -112,6 +115,17 @@
   <button class="tab-btn" role="tab" data-tab="sources">Sources</button>
   <button class="tab-btn" role="tab" data-tab="pilot">Pilot Guide</button>
 </nav>
+<div class="mobile-tab-picker" aria-label="Main sections">
+  <select class="select-input" id="mobile-tab-select" aria-label="Main sections">
+    <option value="simulator">Simulator</option>
+    <option value="teams">Teams</option>
+    <option value="editor">Set Editor</option>
+    <option value="strategy">Strategy</option>
+    <option value="replays">Replay Log</option>
+    <option value="sources">Sources</option>
+    <option value="pilot">Pilot Guide</option>
+  </select>
+</div>
 
 <!-- ===== SIMULATOR ===== -->
 <section class="tab-panel active" id="tab-simulator">
@@ -138,11 +152,6 @@
 
     <div class="sim-controls">
       <div class="vs-badge">VS</div>
-
-      <div class="coverage-widget" id="coverage-widget">
-        <div class="coverage-widget-title">Team Coverage</div>
-        <div id="coverage-items"></div>
-      </div>
 
       <!-- T9d: Swap teams -->
       <button class="btn-secondary" id="swap-teams-btn" style="margin:4px 0" title="Swap your team with opponent">
@@ -217,6 +226,11 @@
           <span><span id="live-wins" style="color:var(--green)">0W</span> · <span id="live-losses" style="color:var(--red)">0L</span> · <span id="live-pct">—</span></span>
         </div>
       </div>
+
+      <div class="coverage-widget" id="coverage-widget">
+        <div class="coverage-widget-title">Team Coverage</div>
+        <div id="coverage-items"></div>
+      </div>
     </div>
 
     <div class="team-card opp-card">
@@ -274,6 +288,7 @@
         <div id="win-conditions"></div>
       </div>
     </div>
+    <div id="audit-panel" style="margin-top:var(--sp4)"></div>
     <div style="margin-top:var(--sp4);display:flex;gap:var(--sp3);flex-wrap:wrap">
       <button class="btn-secondary" id="pdf-report-btn" style="display:none">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -304,7 +319,7 @@
 <section class="tab-panel" id="tab-teams">
   <div class="teams-tab-header">
     <h2 class="section-title">All Teams</h2>
-    <div style="display:flex;gap:var(--sp3);flex-wrap:wrap">
+    <div class="teams-actions">
       <button class="btn-secondary" id="import-team-btn">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Import Team
@@ -371,6 +386,20 @@
     </div>
   </div>
   <div id="replay-list"></div>
+  <div class="section-header" style="margin-top:var(--sp6)">
+    <h2 class="section-title">Saved Analyses</h2>
+    <div class="filter-row">
+      <button class="filter-btn history-filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn history-filter-btn" data-filter="win">Wins</button>
+      <button class="filter-btn history-filter-btn" data-filter="loss">Losses</button>
+      <button class="filter-btn history-filter-btn" data-filter="clutch">Clutch</button>
+      <button class="filter-btn history-export-btn" id="export-history-json-btn" title="Export your saved history as JSON">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Export JSON
+      </button>
+    </div>
+  </div>
+  <div id="history-list" class="replay-list"></div>
 </section>
 
 <!-- ===== SOURCES ===== -->
@@ -398,9 +427,9 @@
 
 <!-- ===== MODALS ===== -->
 <div class="modal-overlay" id="export-modal" style="display:none">
-  <div class="modal">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="export-modal-title" tabindex="-1">
     <div class="modal-header">
-      <span class="modal-title">Export Team</span>
+      <span class="modal-title" id="export-modal-title">Export Team</span>
       <button class="modal-close" id="close-export">✕</button>
     </div>
     <textarea class="export-textarea" id="export-text" readonly></textarea>
@@ -412,9 +441,9 @@
 </div>
 
 <div class="modal-overlay" id="import-modal" style="display:none">
-  <div class="modal">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="import-modal-title" tabindex="-1">
     <div class="modal-header">
-      <span class="modal-title">Import Team from Showdown Paste</span>
+      <span class="modal-title" id="import-modal-title">Import Team from Showdown Paste</span>
       <button class="modal-close" id="close-import">✕</button>
     </div>
     <p class="modal-hint">Paste Showdown-format text directly from <strong>PS! Teambuilder → Export</strong> or from a pokepast.es page. All 6 Pokémon will be parsed automatically.</p>
@@ -461,7 +490,7 @@
 
 <!-- Confirm modal (replaces window.confirm — blocked in sandboxed iframes) -->
 <div class="modal-overlay" id="confirm-modal" style="display:none">
-  <div class="modal" style="max-width:400px">
+  <div class="modal-box" style="max-width:400px" role="dialog" aria-modal="true" aria-labelledby="confirm-title" tabindex="-1">
     <div class="modal-header">
       <span class="modal-title" id="confirm-title">Confirm</span>
       <button class="modal-close" id="confirm-close">✕</button>
@@ -477,14 +506,16 @@
 <!-- Script load order (MUST maintain this sequence):
   1. supabase-js CDN     — loaded in <head> synchronously (see above)
   2. data.js             — TEAMS, BASE_STATS, POKEMON_TYPES_DB
-  3. engine.js           — simulateBattle, runBoSeries internals
-  4. storage_adapter.js  — localStorage wrapper (Storage.*)
-  5. supabase_adapter.js — SupabaseAdapter.* (needs supabase-js + Storage)
-  6. ui.js               — all UI logic (needs everything above)
-  7. legality.js         — VGC legality checker
-  8. strategy-injectable.js — injectable coaching layer
+  3. logger.js           — structured logger on window.ChampionsSim.logger
+  4. engine.js           — simulateBattle, runBoSeries internals
+  5. storage_adapter.js  — localStorage wrapper (Storage.*)
+  6. supabase_adapter.js — SupabaseAdapter.* (needs supabase-js + Storage)
+  7. ui.js               — all UI logic (needs everything above)
+  8. legality.js         — VGC legality checker
+  9. strategy-injectable.js — injectable coaching layer
 -->
 <script src="data.js"></script>
+<script src="logger.js"></script>
 <script src="engine.js"></script>
 <script src="storage_adapter.js"></script>
 <script src="supabase_adapter.js"></script>
@@ -496,8 +527,10 @@
 // Service Worker registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.warn('SW registration failed:', err);
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.update().catch(() => {});
+    }).catch(err => {
+      window.ChampionsSim.logger.warn('ui', 'SW registration failed', err);
     });
   });
 }

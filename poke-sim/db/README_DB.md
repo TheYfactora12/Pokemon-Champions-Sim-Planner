@@ -24,6 +24,7 @@ Supabase (Postgres + RLS) + `supabase-js` v2
 > ⚠️ Use `seed_teams_v2.sql` — NOT `seed_teams_v1.sql`. v2 has complete data for all 13 teams.
 
 App layer: `poke-sim/supabase_adapter.js` — fully implemented. Browser credentials are injected at runtime through ignored local files or CI secrets; real keys must not be committed.
+UI wiring: `poke-sim/ui.js` already loads DB teams on startup and persists analyses after battle runs when the adapter is enabled.
 
 ---
 
@@ -69,6 +70,35 @@ npm run test:db:live
 Without `.env.local`, `npm run test:db` runs the DB suites against mocks/offline behavior.
 
 > Use the anon/public key only. Never put a service_role key in frontend files, `.env.local`, GitHub Pages bundles, or CI logs.
+
+---
+
+## GitHub Pages / CI Secrets
+
+The public site needs only read/insert browser credentials:
+
+| Secret | Used by | Purpose |
+|---|---|---|
+| `SUPABASE_URL` | Pages deploy, CI, live tests | Supabase project REST URL |
+| `SUPABASE_ANON_KEY` | Pages deploy, CI, live tests | Public anon key protected by RLS |
+
+Admin database changes need a separate secret that is never bundled into the site:
+
+| Secret | Used by | Purpose |
+|---|---|---|
+| `SUPABASE_DB_URL_T` | Manual `Supabase DB Migration` workflow only | Preferred pooler Postgres connection string for DDL migrations |
+| `SUPABASE_DB_URL_P` | Manual `Supabase DB Migration` workflow only | Preferred Postgres connection string for DDL migrations |
+| `SUPABASE_DB_URL` | Manual `Supabase DB Migration` workflow only | Legacy fallback Postgres connection string |
+
+`SUPABASE_DB_URL_T` should come from Supabase Dashboard -> Project Settings -> Database -> Connection string -> Session Pooler or Transaction Pooler. Use a URI connection string with SSL enabled, for example:
+
+```text
+postgresql://postgres.<project-ref>:<password>@<pooler-host>:6543/postgres?sslmode=require
+```
+
+The migration workflow sets `PGSSLROOTCERT` to `.github/certs/prod-ca-2021.crt` so `psql` can verify Supabase TLS with the Supabase Root 2021 CA when the connection string requires certificate validation.
+
+The `service_role` key bypasses RLS, but it is not a replacement for a Postgres connection string when running `ALTER TABLE` migrations. Do not place a `service_role` key in frontend files, GitHub Pages artifacts, or local browser credentials.
 
 ---
 
@@ -135,8 +165,8 @@ window.__DISABLE_SUPABASE__ = true; // set before adapter loads
 | 1 | HIGH | `schema_v1.sql` missing `metadata` column on `teams` — referenced by `loadTeamsFromDB()` | ✅ Fixed in schema_v1.sql |
 | 2 | MEDIUM | README referenced `seed_teams_v1.sql` — v2 exists and supersedes it | ✅ Fixed in this README |
 | 3 | LOW | Anon INSERT on `analyses` uses `WITH CHECK (true)` — any browser can insert rows | ✅ Accepted risk, documented |
-| 4 | HIGH | No `saveAnalysis()` call site in `ui.js` — analyses never persist even when DB is live | ❌ OPEN — Alfredo must wire in ui.js |
-| 5 | MEDIUM | CDN `<script>` load order vs `supabase_adapter.js` not verified in `index.html` | ❌ OPEN — Alfredo must confirm |
+| 4 | HIGH | No `saveAnalysis()` call site in `ui.js` — analyses never persist even when DB is live | ✅ Wired in `ui.js` after battle runs |
+| 5 | MEDIUM | CDN `<script>` load order vs `supabase_adapter.js` not verified in `index.html` | ✅ Verified — Supabase JS loads before `supabase_adapter.js` |
 
 ---
 
@@ -153,7 +183,40 @@ All schema changes use the **apply_migration-only** workflow. Never modify `sche
    - Write the `.sql` file in `db/migrations/`
    - Test locally or in Supabase SQL Editor
    - Commit the migration file to the branch
-   - After merge, execute in the live Supabase SQL Editor in timestamp order
+   - After merge, execute in timestamp order with either:
+     - GitHub Actions -> **Supabase DB Migration** -> **Run workflow**
+     - Supabase SQL Editor, if no `SUPABASE_DB_URL` secret is configured
+
+### Running the GitHub Migration Workflow
+
+1. Add repository secret `SUPABASE_DB_URL_T` in GitHub.
+2. Go to **Actions** -> **Supabase DB Migration**.
+3. Click **Run workflow** on `main`.
+4. Enter a migration filename from `poke-sim/db/migrations/`, for example:
+
+```text
+2026_05_12_align_reg_ma_meta_sources.sql
+```
+
+5. Confirm the workflow passes. For the Reg M-A snapshot migration, the workflow verifies that `prior_snapshots.usage_data.pokestats_bo3_top` can be read through the anon REST API after the DDL completes.
+
+CLI equivalent:
+
+```bash
+gh workflow run db-migrate.yml \
+  --repo TheYfactora12/Pokemon-Champions-Sim-Planner \
+  --ref main \
+  -f migration=2026_05_12_align_reg_ma_meta_sources.sql
+```
+
+After the workflow passes, rerun:
+
+```bash
+cd poke-sim
+npm run test:db:live
+```
+
+The M10 live DB snapshot warning should be gone once the remote schema includes `prior_snapshots.usage_data`.
 
 ### Current Migrations
 
@@ -170,10 +233,10 @@ All schema changes use the **apply_migration-only** workflow. Never modify `sche
 - [ ] `schema_v1.sql` executed — tables visible in Table Editor
 - [ ] `seed_teams_v2.sql` executed — 13 rows in `teams` table
 - [ ] `rls_policies_v1.sql` executed — RLS enabled on all tables
-- [ ] Supabase CDN `<script>` loads synchronously before `supabase_adapter.js` in `index.html`
+- [x] Supabase CDN `<script>` loads synchronously before `supabase_adapter.js` in `index.html`
 - [ ] Local browser smoke uses ignored `local-credentials.js`
 - [ ] Live DB tests use ignored `.env.local` or GitHub Actions secrets
-- [ ] `saveAnalysis()` call wired in `ui.js` after Bo series completes
+- [x] `saveAnalysis()` call wired in `ui.js` after Bo series completes
 - [ ] App reads seeded teams from Supabase on load
 - [ ] Sim analysis write succeeds and row appears in Supabase Table Editor
 - [ ] Records persist after page refresh

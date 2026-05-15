@@ -1907,20 +1907,10 @@ const TEAMS = {
         "role": "TR Support"
       },
       {
-        "name": "Hatterene",
-        "item": "Choice Specs",
-        "ability": "Magic Bounce",
-        "teraType": "Fire",
-        "nature": "Quiet",
-        "level": 50,
-        "ivs": {
-          "hp": 31,
-          "atk": 31,
-          "def": 31,
-          "spa": 31,
-          "spd": 31,
-          "spe": 0
-        },
+        "name": "Ursaluna-Bloodmoon",
+        "item": "Assault Vest",
+        "ability": "Mind's Eye",
+        "nature": "Modest",
         "evs": {
           "hp": 32,
           "atk": 0,
@@ -1930,12 +1920,12 @@ const TEAMS = {
           "spe": 0
         },
         "moves": [
-          "Dazzling Gleam",
-          "Psychic",
-          "Expanding Force",
-          "Mystical Fire"
+          "Blood Moon",
+          "Hyper Voice",
+          "Earth Power",
+          "Vacuum Wave"
         ],
-        "role": "TR Sweeper"
+        "role": "TR Sweeper / Tank"
       }
     ]
   },
@@ -4028,6 +4018,7 @@ const MOVE_CATEGORY = {
   'Rain Dance':'status','Thunder Wave':'status','Helping Hand':'status',
   'Shed Tail':'status','Sleep Powder':'status','Ally Switch':'status',
   'Lunar Dance':'status','Coil':'status','Hypnosis':'status',
+  'Rest':'status','Substitute':'status','Sleep Talk':'status','Shore Up':'status',
   'Recover':'status','Dragon Dance':'status','Imprison':'status',
   'Encore':'status','Aurora Veil':'status','Spore':'status',
   'Follow Me':'status','Haze':'status','Coaching':'status'
@@ -4059,8 +4050,26 @@ const MOVE_BP = {
   'Earth Power':90,'Throat Chop':80,'Ally Switch':0,'Lunar Dance':0,'Psychic':90,
   'Shadow Sneak':40,'Psyshock':80,'Mystical Fire':75,'Play Rough':90,'Body Press':80,
   'Zen Headbutt':80,'Bite':60,'Twister':40,'Icicle Crash':85,'Waterfall':80,
+  'Rest':0,'Substitute':0,'Sleep Talk':0,'Shore Up':0,
   'Astonish':30,'Extrasensory':80,'Heart Stamp':60,'Needle Arm':60,'Bone Club':65,
   'Headbutt':70,'Rolling Kick':60,'Stomp':65
+};
+
+// ============================================================
+// MOVE_EFFECTS — reusable self-state / utility move metadata.
+// The engine reads these values instead of hardcoding the healing and
+// status-duration numbers in multiple branches.
+// ============================================================
+const MOVE_EFFECTS = {
+  'Recover': { healFraction: 0.5, failIfFull: true },
+  'Shore Up': { healFraction: 0.5, sandHealFraction: 2 / 3, failIfFull: true },
+  'Rest': { healFraction: 1.0, sleepTurns: 2, curesNonVolatileStatus: true, failIfFull: true },
+  'Substitute': { selfHpFraction: 0.25, failIfLowHp: true },
+  'Shed Tail': { selfHpFraction: 0.25 },
+  'Sleep Talk': { requiresSleep: true, randomCall: true },
+  'Ally Switch': { swapsAllyPositions: true },
+  'Imprison': { locksSharedMoves: true },
+  'Roost': { healFraction: 0.5, failIfFull: true }
 };
 
 
@@ -4108,7 +4117,7 @@ const MOVE_TARGETS = {
   'Swords Dance':'self', 'Dragon Dance':'self', 'Nasty Plot':'self',
   'Calm Mind':'self', 'Bulk Up':'self', 'Coil':'self',
   'Roost':'self', 'Recover':'self', 'Shore Up':'self', 'Shed Tail':'self',
-  'Substitute':'self', 'Rest':'self',
+  'Substitute':'self', 'Rest':'self', 'Sleep Talk':'self',
   'Follow Me':'self', 'Rage Powder':'self',
   'Tailwind':'self', 'Trick Room':'self',
   'Sunny Day':'self', 'Rain Dance':'self', 'Sandstorm':'self', 'Snowscape':'self',
@@ -4151,12 +4160,14 @@ const MOVE_TARGETS = {
 };
 
 // Helpers (T9j.2, Issue #33)
+function dataLogWarn(message, fields) {
+  const logger = (typeof window !== 'undefined' && window.ChampionsSim && window.ChampionsSim.logger) || null;
+  if (logger) logger.warn('data', message, fields);
+}
 function getMoveTarget(moveName) {
   const t = MOVE_TARGETS[moveName];
   if (!t) {
-    if (typeof console !== 'undefined') {
-      console.warn(`[MOVE_TARGETS] unknown move "${moveName}", defaulting to 'normal'`);
-    }
+    dataLogWarn('Unknown move target; defaulting to normal', { move: moveName });
     return 'normal';
   }
   return t;

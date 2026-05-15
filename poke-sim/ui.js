@@ -28,37 +28,305 @@ ChampionsSim.bring = ChampionsSim.bring || {};
 ChampionsSim.history = ChampionsSim.history || {};
 ChampionsSim.internal = ChampionsSim.internal || {};
 ChampionsSim.phase4c = ChampionsSim.phase4c || {};
+ChampionsSim.phase4d = ChampionsSim.phase4d || {};
 ChampionsSim.simLog = ChampionsSim.simLog || {};
 ChampionsSim.strategy = ChampionsSim.strategy || {};
 ChampionsSim.tests = ChampionsSim.tests || {};
+ChampionsSim.logger = ChampionsSim.logger || { debug(){}, info(){}, warn(){}, error(){}, for(){ return this; } };
+var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsSim.logger;
 
 function exposeLegacyWindowAlias(name, value) {
   if (typeof window === 'undefined') return;
-  Object.defineProperty(window, name, {
-    configurable: true,
-    enumerable: false,
-    writable: true,
-    value: value
-  });
+  try {
+    var desc = Object.getOwnPropertyDescriptor(window, name);
+    if (desc) {
+      if ('value' in desc && desc.value === value) return;
+      if (desc.configurable || desc.writable) {
+        window[name] = value;
+        return;
+      }
+      return;
+    }
+    Object.defineProperty(window, name, {
+      configurable: true,
+      enumerable: false,
+      writable: true,
+      value: value
+    });
+  } catch (e) {
+    try { window[name] = value; } catch (_) {}
+  }
 }
 function getWindowValue(name, fallback) {
   if (typeof window === 'undefined') return fallback;
   return Object.prototype.hasOwnProperty.call(window, name) ? window[name] : fallback;
 }
 
-// ---- Tabs ----
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
-    // M6: load history when replay tab is opened
-    if (btn.dataset.tab === 'replay' && typeof loadAnalysisHistory === 'function') {
-      loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
-    }
+function showRuntimeError(message) {
+  try {
+    var banner = document.getElementById('runtime-error-banner');
+    var text = document.getElementById('runtime-error-text');
+    if (!banner || !text) return;
+    text.textContent = String(message || 'Unexpected runtime error');
+    banner.style.display = '';
+  } catch (e) {
+    // no-op
+  }
+}
+
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('error', function(ev) {
+    var msg = ev && ev.error && ev.error.stack ? ev.error.stack : (ev && ev.message) || 'Uncaught error';
+    showRuntimeError(msg);
   });
-});
+  window.addEventListener('unhandledrejection', function(ev) {
+    var reason = ev && ev.reason && ev.reason.stack ? ev.reason.stack : (ev && ev.reason) || 'Unhandled promise rejection';
+    showRuntimeError(reason);
+  });
+}
+
+function csGetBuildId() {
+  try {
+    var el = document.getElementById('build-version');
+    var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
+    return txt || 'v2.1.15-sim-preview';
+  } catch (e) {
+    return 'v2.1.15-sim-preview';
+  }
+}
+
+async function csHardenClientState() {
+  if (typeof Storage === 'undefined') return false;
+  var buildId = csGetBuildId();
+  var storedBuildId = null;
+  try { storedBuildId = Storage.get('app:build-id'); } catch (e) {}
+  if (storedBuildId === buildId) return false;
+
+  try {
+    Storage.del('strategy:report');
+    Storage.del('sim_log:v1');
+    Storage.del('app:build-id');
+    if (typeof Storage.list === 'function') {
+      Storage.list().forEach(function(key) {
+        if (key.indexOf('champions_strategy_v1::') === 0) {
+          Storage.del(key);
+        }
+      });
+    }
+    Storage.set('app:build-id', buildId);
+  } catch (e) {
+    UILog.warn('client-state hardening skipped', e);
+    return false;
+  }
+
+  try {
+    if (typeof navigator !== 'undefined' && navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+      var regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(function(reg) {
+        return reg.unregister();
+      }));
+    }
+  } catch (e) {
+    UILog.warn('service worker cleanup skipped', e);
+  }
+
+  try {
+    if (typeof caches !== 'undefined' && caches.keys) {
+      var cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(function(name) {
+        return name.indexOf('champions-sim-') === 0 ? caches.delete(name) : Promise.resolve(false);
+      }));
+    }
+  } catch (e) {
+    UILog.warn('cache cleanup skipped', e);
+  }
+
+  return true;
+}
+
+// ---- Tabs ----
+var _activeA11yTabId = null;
+var _activeModalState = null;
+function _getFocusableElements(root) {
+  if (!root || typeof root.querySelectorAll !== 'function') return [];
+  return Array.prototype.slice.call(root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+    .filter(function(el) { return !!el && !el.disabled && !el.hidden && el.getAttribute('aria-hidden') !== 'true'; });
+}
+function _focusFirstFocusable(root) {
+  var items = _getFocusableElements(root);
+  if (items.length && typeof items[0].focus === 'function') {
+    items[0].focus();
+    return items[0];
+  }
+  if (root && typeof root.focus === 'function') {
+    root.focus();
+    return root;
+  }
+  return null;
+}
+function _syncTabA11yState(activeTabId) {
+  _activeA11yTabId = activeTabId;
+  var mobileTabSelect = document.getElementById('mobile-tab-select');
+  if (mobileTabSelect && mobileTabSelect.value !== activeTabId) mobileTabSelect.value = activeTabId;
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    var isActive = btn.dataset.tab === activeTabId;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    btn.tabIndex = isActive ? 0 : -1;
+  });
+  document.querySelectorAll('.tab-panel').forEach(function(panel) {
+    var panelTabId = panel.id ? panel.id.replace(/^tab-/, '') : '';
+    var isActive = panelTabId === activeTabId;
+    panel.classList.toggle('active', isActive);
+    panel.setAttribute('role', 'tabpanel');
+    panel.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+    panel.hidden = !isActive;
+    panel.tabIndex = isActive ? 0 : -1;
+  });
+}
+function _activateTab(tabId, opts) {
+  var btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+  var panel = document.getElementById('tab-' + tabId);
+  if (!btn || !panel) return false;
+  _syncTabA11yState(tabId);
+  btn.setAttribute('aria-controls', 'tab-' + tabId);
+  if (!btn.id) btn.id = 'tab-btn-' + tabId;
+  panel.setAttribute('aria-labelledby', btn.id);
+  if ((tabId === 'replays' || tabId === 'replay') && typeof loadAnalysisHistory === 'function') {
+    loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
+  }
+  return true;
+}
+function _handleTabKeydown(ev) {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+  var idx = tabs.indexOf(ev.currentTarget || ev.target);
+  if (idx < 0) return;
+  var nextIdx = null;
+  if (ev.key === 'ArrowRight') nextIdx = (idx + 1) % tabs.length;
+  else if (ev.key === 'ArrowLeft') nextIdx = (idx - 1 + tabs.length) % tabs.length;
+  else if (ev.key === 'Home') nextIdx = 0;
+  else if (ev.key === 'End') nextIdx = tabs.length - 1;
+  else if (ev.key === 'Enter' || ev.key === ' ') {
+    ev.preventDefault();
+    _activateTab(tabs[idx].dataset.tab, { focus: true });
+    return;
+  } else {
+    return;
+  }
+  ev.preventDefault();
+  tabs[nextIdx].focus();
+  _activateTab(tabs[nextIdx].dataset.tab, { focus: true });
+}
+function initTabA11y() {
+  var tablist = document.querySelector('.tab-nav');
+  if (tablist) tablist.setAttribute('aria-label', 'Main sections');
+  var mobileTabSelect = document.getElementById('mobile-tab-select');
+  if (mobileTabSelect) {
+    mobileTabSelect.value = (_activeA11yTabId || 'simulator');
+    mobileTabSelect.addEventListener('change', function() {
+      _activateTab(this.value, { focus: true });
+    });
+  }
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    var tabId = btn.dataset.tab;
+    if (!btn.id) btn.id = 'tab-btn-' + tabId;
+    btn.setAttribute('aria-controls', 'tab-' + tabId);
+    btn.setAttribute('aria-selected', btn.classList.contains('active') ? 'true' : 'false');
+    btn.tabIndex = btn.classList.contains('active') ? 0 : -1;
+    btn.addEventListener('click', function() { _activateTab(tabId, { focus: true }); });
+    btn.addEventListener('keydown', _handleTabKeydown);
+  });
+  document.querySelectorAll('.tab-panel').forEach(function(panel) {
+    var tabId = panel.id ? panel.id.replace(/^tab-/, '') : '';
+    var linkedBtn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+    panel.setAttribute('role', 'tabpanel');
+    panel.setAttribute('aria-labelledby', linkedBtn ? linkedBtn.id : 'tab-btn-' + tabId);
+    panel.setAttribute('aria-hidden', panel.classList.contains('active') ? 'false' : 'true');
+    panel.hidden = !panel.classList.contains('active');
+    panel.tabIndex = panel.classList.contains('active') ? 0 : -1;
+  });
+  if (_activeA11yTabId) _syncTabA11yState(_activeA11yTabId);
+}
+initTabA11y();
+
+function _getModalDialog(overlay) {
+  if (!overlay || typeof overlay.querySelector !== 'function') return null;
+  return overlay.querySelector('.modal-box') || overlay.querySelector('.modal') || null;
+}
+function _openModalOverlay(overlayId, opts) {
+  var overlay = document.getElementById(overlayId);
+  if (!overlay) return null;
+  var dialog = _getModalDialog(overlay);
+  _activeModalState = {
+    overlay: overlay,
+    dialog: dialog,
+    returnFocus: document.activeElement || null
+  };
+  overlay.style.display = 'flex';
+  if (typeof overlay.setAttribute === 'function') overlay.setAttribute('aria-hidden', 'false');
+  if (dialog && typeof dialog.setAttribute === 'function') {
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-modal', 'true');
+    if (opts && opts.labelledbyId) dialog.setAttribute('aria-labelledby', opts.labelledbyId);
+    if (opts && opts.describedbyId) dialog.setAttribute('aria-describedby', opts.describedbyId);
+    if (!dialog.hasAttribute || !dialog.hasAttribute('tabindex')) dialog.setAttribute('tabindex', '-1');
+  }
+  var focusTarget = null;
+  if (opts && opts.focusSelector && dialog && typeof dialog.querySelector === 'function') {
+    focusTarget = dialog.querySelector(opts.focusSelector);
+  }
+  if (!focusTarget && dialog) {
+    var focusables = _getFocusableElements(dialog);
+    focusTarget = focusables.length ? focusables[0] : dialog;
+  }
+  if (focusTarget && typeof focusTarget.focus === 'function') {
+    try { focusTarget.focus(); } catch (e) {}
+  }
+  return _activeModalState;
+}
+function _closeModalOverlay(overlayId, restoreFocus) {
+  var overlay = document.getElementById(overlayId);
+  if (overlay) {
+    overlay.style.display = 'none';
+    if (typeof overlay.setAttribute === 'function') overlay.setAttribute('aria-hidden', 'true');
+  }
+  var prev = _activeModalState && _activeModalState.returnFocus;
+  _activeModalState = null;
+  var focusTarget = restoreFocus || prev;
+  if (focusTarget && typeof focusTarget.focus === 'function') {
+    try { focusTarget.focus(); } catch (e) {}
+  }
+}
+function _handleModalKeydown(ev) {
+  if (!_activeModalState || !_activeModalState.dialog) return;
+  if (ev.key === 'Escape') {
+    ev.preventDefault();
+    ev.stopPropagation && ev.stopPropagation();
+    if (_activeModalState.overlay && _activeModalState.overlay.id === 'confirm-modal') {
+      _resolveConfirm(false);
+    } else {
+      _closeModalOverlay(_activeModalState.overlay && _activeModalState.overlay.id);
+    }
+    return;
+  }
+  if (ev.key !== 'Tab') return;
+  var focusables = _getFocusableElements(_activeModalState.dialog);
+  if (!focusables.length) {
+    ev.preventDefault();
+    if (typeof _activeModalState.dialog.focus === 'function') _activeModalState.dialog.focus();
+    return;
+  }
+  var first = focusables[0];
+  var last = focusables[focusables.length - 1];
+  if (ev.shiftKey && document.activeElement === first) {
+    ev.preventDefault();
+    last.focus();
+  } else if (!ev.shiftKey && document.activeElement === last) {
+    ev.preventDefault();
+    first.focus();
+  }
+}
+document.addEventListener('keydown', _handleModalKeydown, true);
 
 // ---- Format Toggle (Doubles / Singles) ----
 let currentFormat = 'doubles';
@@ -213,20 +481,34 @@ function renderRoster(containerId, members) {
   el.innerHTML = '';
   for (const m of members) {
     const types = getPokemonTypes(m.name);
+    const escName = _escapeHtml(m.name || '');
+    const escItem = _escapeHtml(m.item || '—');
+    const escAbility = _escapeHtml(m.ability || '—');
+    const escMoves = _escapeHtml((m.moves || []).join(' / '));
     const row = document.createElement('div');
     row.className = 'poke-row';
     row.innerHTML = `
-      <img class="poke-sprite" src="${getSpriteUrl(m.name)}" alt="${m.name}" loading="lazy" onerror="this.style.opacity='.3'"/>
+      <img class="poke-sprite" src="${getSpriteUrl(m.name)}" alt="${escName}" loading="lazy" onerror="this.style.opacity='.3'"/>
       <div class="poke-info">
-        <div class="poke-name">${m.name}</div>
-        <div class="poke-item">${m.item || '—'} · ${m.ability || '—'}</div>
-        <div class="poke-moves">${(m.moves||[]).join(' / ')}</div>
+        <div class="poke-name">${escName}</div>
+        <div class="poke-item">${escItem} · ${escAbility}</div>
+        <div class="poke-moves">${escMoves}</div>
       </div>
       <div class="type-chips">
-        ${types.map(t=>`<span class="type-chip" style="background:${typeColor(t)}20;color:${typeColor(t)};border:1px solid ${typeColor(t)}40">${t}</span>`).join('')}
-      </div>`;
+        ${types.map(t=>`<span class="type-chip" style="background:${typeColor(t)}20;color:${typeColor(t)};border:1px solid ${typeColor(t)}40">${_escapeHtml(t)}</span>`).join('')}
+      </div>
+      <button class="team-mon-detail-btn" type="button" data-team="${containerId === 'player-roster' ? currentPlayerKey : (document.getElementById('opponent-select') ? document.getElementById('opponent-select').value : '')}" data-mon="${escName}" title="View full stat details">Stats</button>`;
     el.appendChild(row);
   }
+  el.querySelectorAll('.team-mon-detail-btn').forEach(btn => {
+    btn.addEventListener('click', function(ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (typeof openTeamStatDetailPanel === 'function') {
+        openTeamStatDetailPanel(btn.dataset.team, btn.dataset.mon, btn);
+      }
+    });
+  });
 }
 
 // ============================================================
@@ -259,7 +541,7 @@ function loadCustomTeamsFromStorage() {
     }
     return count;
   } catch (e) {
-    console.warn('[T9f] Failed to load custom teams:', e);
+    UILog.warn('Failed to load custom teams', e);
     return 0;
   }
 }
@@ -275,7 +557,7 @@ function saveCustomTeamsToStorage() {
     if (typeof Storage !== 'undefined') Storage.set('teams:custom', out);
     return Object.keys(out.teams).length;
   } catch (e) {
-    console.warn('[T9f] Failed to save custom teams (quota?):', e);
+    UILog.warn('Failed to save custom teams', e);
     return -1;
   }
 }
@@ -304,7 +586,7 @@ function loadPreloadedOverridesFromStorage() {
     }
     return count;
   } catch (e) {
-    console.warn('[T9h] Failed to load preloaded overrides:', e);
+    UILog.warn('Failed to load preloaded overrides', e);
     return 0;
   }
 }
@@ -321,7 +603,7 @@ function savePreloadedOverride(key) {
     TEAMS[key]._hasOverride = true;
     return true;
   } catch (e) {
-    console.warn('[T9h] Failed to save preloaded override:', e);
+    UILog.warn('Failed to save preloaded override', e);
     return false;
   }
 }
@@ -334,7 +616,7 @@ function clearPreloadedOverride(key) {
     if (typeof Storage !== 'undefined') Storage.set('overrides:preloaded', store);
     return true;
   } catch (e) {
-    console.warn('[T9h] Failed to clear preloaded override:', e);
+    UILog.warn('Failed to clear preloaded override', e);
     return false;
   }
 }
@@ -354,13 +636,12 @@ function asyncConfirm(title, body, okLabel) {
     titleEl.textContent = title || 'Confirm';
     bodyEl.textContent = body || '';
     okBtn.textContent = okLabel || 'Confirm';
-    modal.style.display = 'flex';
+    _openModalOverlay('confirm-modal', { focusSelector: '#confirm-ok', labelledbyId: 'confirm-title', describedbyId: 'confirm-body' });
     _pendingConfirm = resolve;
   });
 }
 function _resolveConfirm(v) {
-  var modal = document.getElementById('confirm-modal');
-  if (modal) modal.style.display = 'none';
+  _closeModalOverlay('confirm-modal');
   if (_pendingConfirm) { var fn = _pendingConfirm; _pendingConfirm = null; fn(v); }
 }
 document.addEventListener('click', function(e) {
@@ -375,7 +656,7 @@ async function deleteCustomTeam(key) {
   var team = TEAMS[key];
   if (!team) return;
   if (team.source !== 'custom') {
-    console.warn('[T9g] Refusing to delete preloaded team:', key);
+    UILog.warn('Refusing to delete preloaded team', { teamKey: key });
     return;
   }
   var ok = await asyncConfirm('Delete team', 'Delete "' + team.name + '"?\n\nThis cannot be undone.', 'Delete');
@@ -441,11 +722,18 @@ document.getElementById('player-select').addEventListener('change', function() {
     currentPlayerKey = this.value;
     document.getElementById('player-team-name').textContent = team.name;
     renderRoster('player-roster', team.members);
+    var nextOpp = enforceDistinctBattleTeams();
+    if (nextOpp && TEAMS[nextOpp]) {
+      document.getElementById('opp-team-name').textContent = TEAMS[nextOpp].name;
+      renderRoster('opp-roster', TEAMS[nextOpp].members);
+      if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    }
     if (typeof applyLadderGate === 'function') applyLadderGate();
     // T9j.3b: recompute coverage on active-team change (no cache, always fresh).
     if (typeof renderCoverageWidget === 'function') renderCoverageWidget();
     // T9j.12 (Refs #74): refresh sim-side bring picker after active-team change.
     if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    if (typeof invalidateThreatResponseCache === 'function') invalidateThreatResponseCache();
     // Phase 2 (Refs #46 #49) - rebuild Strategy tab when player switches teams.
     // Phase 3 (Refs #51) - paint cached snapshot first so the tab never flashes
     // blank between switches; the debounced rebuild will repaint with fresh data.
@@ -460,8 +748,16 @@ document.getElementById('opponent-select').addEventListener('change', function()
   if (team) {
     document.getElementById('opp-team-name').textContent = team.name;
     renderRoster('opp-roster', team.members);
+    var nextOpp = enforceDistinctBattleTeams();
+    if (nextOpp && TEAMS[nextOpp]) {
+      document.getElementById('opp-team-name').textContent = TEAMS[nextOpp].name;
+      renderRoster('opp-roster', TEAMS[nextOpp].members);
+      if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    }
     // T9j.12 (Refs #74): refresh sim-side bring picker on opponent switch.
     if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    if (typeof invalidateThreatResponseCache === 'function') invalidateThreatResponseCache();
+    if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild();
   }
 });
 
@@ -545,6 +841,26 @@ function applyLadderGate() {
   }
 }
 
+function _firstDifferentTeamKey(excludeKey) {
+  if (typeof TEAMS === 'undefined') return null;
+  for (var key in TEAMS) {
+    if (key !== excludeKey && TEAMS[key]) return key;
+  }
+  return null;
+}
+
+function enforceDistinctBattleTeams() {
+  var playerSel = document.getElementById('player-select');
+  var oppSel = document.getElementById('opponent-select');
+  if (!playerSel || !oppSel) return null;
+  if (!playerSel.value || !oppSel.value) return null;
+  if (playerSel.value !== oppSel.value) return null;
+  var nextOpp = _firstDifferentTeamKey(playerSel.value);
+  if (!nextOpp || nextOpp === playerSel.value) return null;
+  oppSel.value = nextOpp;
+  return nextOpp;
+}
+
 document.getElementById('ladder-mode-toggle')?.addEventListener('change', function() {
   LADDER_MODE = !!this.checked;
   applyLadderGate();
@@ -581,19 +897,21 @@ function buildBringPickerHtml(teamKey, opts) {
   var mode = (typeof getBringMode === 'function')
     ? getBringMode(teamKey)
     : (teamKey === (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player') ? 'manual' : 'random');
+  var manualMode = mode === 'manual';
+  var visibleBring = manualMode ? bring : [];
   var slotLabels = [];
   for (var i = 0; i < bringCount; i++) slotLabels.push(i < leadCount ? 'LEAD ' + (i+1) : 'BENCH ' + (i+1));
   var slotsHtml = slotLabels.map(function(label, i){
-    var monName = bring[i] || '';
+    var monName = visibleBring[i] || '';
     var sprite = monName ? getSpriteUrl(monName) : '';
     return '<div class="bring-slot ' + (i < leadCount ? 'bring-slot-lead' : 'bring-slot-bench') +
       '" data-team="' + teamKey + '" data-slot="' + i +
-      '" draggable="' + (monName ? 'true' : 'false') +
-      '" title="' + label + (mode === 'random' ? ' (random mode)' : '') + '">' +
+      '" draggable="' + (manualMode && monName ? 'true' : 'false') +
+      '" title="' + label + (!manualMode ? ' (random mode)' : '') + '">' +
       '<div class="bring-slot-label">' + label + '</div>' +
       (monName
-        ? '<img class="bring-slot-sprite" src="' + sprite + '" alt="' + monName + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
-          '<div class="bring-slot-name">' + monName + '</div>'
+        ? '<img class="bring-slot-sprite" src="' + sprite + '" alt="' + _escapeHtml(monName) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+          '<div class="bring-slot-name">' + _escapeHtml(monName) + '</div>'
         : '<div class="bring-slot-empty">\u2014</div>') +
       '</div>';
   }).join('');
@@ -603,33 +921,34 @@ function buildBringPickerHtml(teamKey, opts) {
   var poolHtml;
   if (compact) {
     poolHtml = team.members.map(function(m){
-      var inBring = bring.indexOf(m.name) >= 0;
+      var inBring = manualMode && bring.indexOf(m.name) >= 0;
       var pos = inBring ? (bring.indexOf(m.name) < leadCount ? 'LEAD ' + (bring.indexOf(m.name)+1) : 'BENCH ' + (bring.indexOf(m.name)+1)) : '';
       return '<div class="bring-pool-chip ' + (inBring ? 'bring-in' : 'bring-out') +
-        '" data-team="' + teamKey + '" data-mon="' + m.name +
-        '" draggable="' + (mode === 'random' ? 'false' : 'true') +
-        '" title="' + m.name + (inBring ? ' (' + pos + ')' : '') + '">' +
-        '<img class="bring-pool-chip-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + m.name + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
-        '<span class="bring-pool-chip-name">' + m.name + '</span>' +
-        (inBring ? '<span class="bring-pool-chip-pos">' + pos + '</span>' : '') +
+        '" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) +
+        '" draggable="' + (manualMode ? 'true' : 'false') +
+        '" title="' + _escapeHtml(m.name) + (inBring ? ' (' + _escapeHtml(pos) + ')' : '') + '">' +
+        '<img class="bring-pool-chip-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        '<span class="bring-pool-chip-name">' + _escapeHtml(m.name) + '</span>' +
+        (inBring ? '<span class="bring-pool-chip-pos">' + _escapeHtml(pos) + '</span>' : '') +
         '</div>';
     }).join('');
   } else {
     poolHtml = team.members.map(function(m){
-      var inBring = bring.indexOf(m.name) >= 0;
+      var inBring = manualMode && bring.indexOf(m.name) >= 0;
       return '<div class="bring-pool-row ' + (inBring ? 'bring-in' : 'bring-out') +
-        '" data-team="' + teamKey + '" data-mon="' + m.name +
-        '" draggable="' + (mode === 'random' ? 'false' : 'true') + '">' +
-        '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + m.name + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        '" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) +
+        '" draggable="' + (manualMode ? 'true' : 'false') + '">' +
+        '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
         '<div class="poke-full-info">' +
-          '<div class="poke-full-name">' + m.name +
-            ' <span style="font-weight:400;color:var(--text-m);font-size:10px">@ ' + (m.item || '\u2014') + '</span>' +
+          '<div class="poke-full-name">' + _escapeHtml(m.name) +
+            ' <span style="font-weight:400;color:var(--text-m);font-size:10px">@ ' + _escapeHtml(m.item || '\u2014') + '</span>' +
             (inBring ? ' <span style="font-size:9px;color:var(--accent,#4a9eff);font-weight:600;margin-left:4px">\u25c6 ' +
-              (bring.indexOf(m.name) < leadCount ? 'LEAD' : 'BENCH') + ' ' + (bring.indexOf(m.name)+1) + '</span>' : '') +
+              _escapeHtml((bring.indexOf(m.name) < leadCount ? 'LEAD' : 'BENCH') + ' ' + (bring.indexOf(m.name)+1)) + '</span>' : '') +
           '</div>' +
-          '<div class="poke-full-detail">' + (m.ability || '\u2014') + ' \u00b7 ' + (m.nature || 'Hardy') + ' \u00b7 Lv' + (m.level || 50) + '</div>' +
-          '<div class="move-tags">' + (m.moves || []).map(function(mv){ return '<span class="move-tag">' + mv + '</span>'; }).join('') + '</div>' +
+          '<div class="poke-full-detail">' + _escapeHtml(m.ability || '\u2014') + ' \u00b7 ' + _escapeHtml(m.nature || 'Hardy') + ' \u00b7 Lv' + _escapeHtml(String(m.level || 50)) + '</div>' +
+          '<div class="move-tags">' + (m.moves || []).map(function(mv){ return '<span class="move-tag">' + _escapeHtml(mv) + '</span>'; }).join('') + '</div>' +
         '</div>' +
+        '<button class="team-mon-detail-btn" type="button" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) + '" title="View full stat details">Details</button>' +
       '</div>';
     }).join('');
   }
@@ -639,8 +958,11 @@ function buildBringPickerHtml(teamKey, opts) {
       '<button class="bring-mode-btn ' + (mode === 'manual' ? 'active' : '') + '" data-team="' + teamKey + '" data-mode="manual" title="Pick your ' + bringCount + ' Pokemon by hand">Manual</button>' +
       '<button class="bring-mode-btn ' + (mode === 'random' ? 'active' : '') + '" data-team="' + teamKey + '" data-mode="random" title="Re-roll a random ' + bringCount + ' of 6 each series">Random ' + bringCount + '/6</button>' +
     '</div>';
+  var modeHint = !manualMode
+    ? '<div class="bring-mode-hint" id="lead-hint" data-team="' + teamKey + '">Leads will be chosen randomly.</div>'
+    : '';
   var poolCls = compact ? 'bring-pool bring-pool-compact' : 'bring-pool';
-  return modeToggle +
+  return modeToggle + modeHint +
     '<div class="bring-slots">' + slotsHtml + '</div>' +
     '<div class="' + poolCls + '">' + poolHtml + '</div>';
 }
@@ -880,11 +1202,11 @@ function renderTeamsGrid() {
     card.innerHTML = `
       <div class="tfcard-header">
         <div>
-          <div class="tfcard-name">${team.name}</div>
-          <div class="tfcard-meta">${team.style?.toUpperCase().replace('_',' ')} · ${(team.description||'').substring(0,55)}…</div>
+          <div class="tfcard-name">${_escapeHtml(team.name)}</div>
+          <div class="tfcard-meta">${_escapeHtml((team.style || '').toUpperCase().replace('_',' '))} · ${_escapeHtml((team.description||'').substring(0,55))}…</div>
         </div>
         <div class="tfcard-badges">
-          <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${team.label||key}</span>
+          <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
           ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
             var st = team.legality_status; var fmt = team.format;
             if (st === 'legal' && fmt === 'champions') return '<span class="badge-legal">\u2705 LEGAL</span>';
@@ -917,6 +1239,13 @@ function renderTeamsGrid() {
   // T9h: edit button wiring (all teams)
   grid.querySelectorAll('.edit-card-btn').forEach(btn => {
     btn.addEventListener('click', () => openEditTeamModal(btn.dataset.team));
+  });
+  grid.querySelectorAll('.team-mon-detail-btn').forEach(btn => {
+    btn.addEventListener('click', function(ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      openTeamStatDetailPanel(btn.dataset.team, btn.dataset.mon, btn);
+    });
   });
   // T9h: reset button wiring (preloaded teams with overrides)
   grid.querySelectorAll('.reset-card-btn').forEach(btn => {
@@ -1098,7 +1427,7 @@ function _downloadBlob(filename, mime, text) {
     var a = document.createElement('a');
     a.href = url; a.download = filename; document.body.appendChild(a); a.click();
     setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
-  } catch (e) { console.warn('[T9j.11] download failed:', e); alert('Could not download file: ' + e.message); }
+  } catch (e) { UILog.warn('Download failed', e); alert('Could not download file: ' + e.message); }
 }
 
 document.getElementById('bulk-export-json-btn')?.addEventListener('click', function(){
@@ -1189,6 +1518,154 @@ function renderStatPanelHtml(member) {
   '</section>';
 }
 
+function buildTeamStatDetailModel(teamKey, monName) {
+  const team = TEAMS[teamKey];
+  const member = team && Array.isArray(team.members)
+    ? team.members.find(function(m){ return m && m.name === monName; })
+    : null;
+  if (!team || !member) return null;
+  const evs = Object.assign({ hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }, member.evs || {});
+  const ivs = Object.assign({ hp:31, atk:31, def:31, spa:31, spd:31, spe:31 }, member.ivs || {});
+  let battleMon = null;
+  try {
+    if (typeof Pokemon !== 'undefined') {
+      battleMon = new Pokemon(Object.assign({}, member, { evs: evs, ivs: ivs }), team.style || '', team.format || member.format || null);
+    }
+  } catch (_e) { battleMon = null; }
+  const baseName = battleMon ? battleMon.name : member.name;
+  const base = (battleMon && battleMon._base)
+    || (typeof BASE_STATS !== 'undefined' && BASE_STATS[baseName])
+    || { hp:0, atk:0, def:0, spa:0, spd:0, spe:0, types:[] };
+  const types = (battleMon && battleMon.types)
+    || (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[baseName])
+    || base.types
+    || [];
+  const finalStats = battleMon ? {
+    hp: battleMon.maxHp,
+    atk: battleMon.baseAtk,
+    def: battleMon.baseDef,
+    spa: battleMon.baseSpa,
+    spd: battleMon.baseSpd,
+    spe: battleMon.baseSpe
+  } : { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 };
+  finalStats.total = STAT_PANEL_KEYS.reduce(function(sum, key){ return sum + (parseInt(finalStats[key], 10) || 0); }, 0);
+  const baseStats = {
+    hp: base.hp || 0, atk: base.atk || 0, def: base.def || 0,
+    spa: base.spa || 0, spd: base.spd || 0, spe: base.spe || 0
+  };
+  baseStats.total = STAT_PANEL_KEYS.reduce(function(sum, key){ return sum + (parseInt(baseStats[key], 10) || 0); }, 0);
+  let roles = [];
+  try {
+    if (typeof classifyPokemon === 'function') roles = (classifyPokemon(member).roles || []);
+  } catch (_e) { roles = []; }
+  return {
+    teamKey: teamKey,
+    teamName: team.name || teamKey,
+    name: member.name,
+    displayName: (battleMon && battleMon.displayName) || member.name,
+    form: (battleMon && battleMon.megaForm) ? (member.name + ' -> ' + battleMon.megaForm.megaName) : member.name,
+    types: types,
+    baseStats: baseStats,
+    evs: evs,
+    ivs: ivs,
+    nature: member.nature || 'Hardy',
+    finalStats: finalStats,
+    ability: (battleMon && battleMon.ability) || member.ability || '',
+    item: member.item || '',
+    moves: member.moves || [],
+    roles: roles
+  };
+}
+
+function renderTeamStatDetailHtml(model) {
+  if (!model) return '';
+  function statRow(key) {
+    return '<tr><th scope="row">' + STAT_PANEL_LABELS[key] + '</th>' +
+      '<td>' + (model.baseStats[key] || 0) + '</td>' +
+      '<td>' + (parseInt(model.evs[key], 10) || 0) + '</td>' +
+      '<td>' + (model.ivs[key] == null ? 31 : parseInt(model.ivs[key], 10) || 0) + '</td>' +
+      '<td>' + (model.finalStats[key] || 0) + '</td></tr>';
+  }
+  const moveHtml = (model.moves.length ? model.moves : ['-', '-', '-', '-']).map(function(mv){
+    return '<span class="team-detail-chip">' + _escapeHtml(mv || '-') + '</span>';
+  }).join('');
+  const roleHtml = (model.roles && model.roles.length ? model.roles : ['Support']).map(function(role){
+    return '<span class="team-detail-chip muted">' + _escapeHtml(role) + '</span>';
+  }).join('');
+  return '<div class="team-detail-backdrop" id="team-detail-modal" role="presentation">' +
+    '<section class="team-detail-modal" role="dialog" aria-modal="true" aria-labelledby="team-detail-title" tabindex="-1">' +
+      '<div class="team-detail-head">' +
+        '<div><div class="team-detail-kicker">' + _escapeHtml(model.teamName) + '</div>' +
+        '<h2 id="team-detail-title">' + _escapeHtml(model.displayName) + '</h2></div>' +
+        '<button class="team-detail-close" id="team-detail-close" type="button" aria-label="Close Pokemon details">&times;</button>' +
+      '</div>' +
+      '<div class="team-detail-meta">' +
+        '<span>' + _escapeHtml((model.types || []).join(' / ') || '-') + '</span>' +
+        '<span>' + _escapeHtml(model.form || '-') + '</span>' +
+        '<span>' + _escapeHtml(model.nature || 'Hardy') + '</span>' +
+      '</div>' +
+      '<div class="team-detail-fields">' +
+        '<div><strong>Ability</strong><span>' + _escapeHtml(model.ability || '-') + '</span></div>' +
+        '<div><strong>Item</strong><span>' + _escapeHtml(model.item || '-') + '</span></div>' +
+        '<div><strong>BST</strong><span>' + model.baseStats.total + '</span></div>' +
+        '<div><strong>Total</strong><span>' + model.finalStats.total + '</span></div>' +
+      '</div>' +
+      '<div class="team-detail-section"><h3>Stats</h3>' +
+        '<div class="team-detail-table-wrap"><table class="team-detail-table">' +
+          '<thead><tr><th>Stat</th><th>Base</th><th>EV</th><th>IV</th><th>Final</th></tr></thead>' +
+          '<tbody>' + STAT_PANEL_KEYS.map(statRow).join('') + '</tbody>' +
+        '</table></div>' +
+      '</div>' +
+      '<div class="team-detail-section"><h3>Moves</h3><div class="team-detail-chip-row">' + moveHtml + '</div></div>' +
+      '<div class="team-detail-section"><h3>Roles</h3><div class="team-detail-chip-row">' + roleHtml + '</div></div>' +
+    '</section>' +
+  '</div>';
+}
+
+let _teamDetailReturnFocus = null;
+function closeTeamStatDetailPanel() {
+  const modal = document.getElementById('team-detail-modal');
+  if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+  document.removeEventListener('keydown', _handleTeamDetailKeydown);
+  if (_teamDetailReturnFocus && typeof _teamDetailReturnFocus.focus === 'function') {
+    try { _teamDetailReturnFocus.focus(); } catch (_e) {}
+  }
+  _teamDetailReturnFocus = null;
+}
+function _handleTeamDetailKeydown(ev) {
+  const modal = document.getElementById('team-detail-modal');
+  if (!modal) return;
+  if (ev.key === 'Escape') { ev.preventDefault(); closeTeamStatDetailPanel(); return; }
+  if (ev.key !== 'Tab') return;
+  const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (ev.shiftKey && document.activeElement === first) {
+    ev.preventDefault();
+    last.focus();
+  } else if (!ev.shiftKey && document.activeElement === last) {
+    ev.preventDefault();
+    first.focus();
+  }
+}
+function openTeamStatDetailPanel(teamKey, monName, triggerEl) {
+  const model = buildTeamStatDetailModel(teamKey, monName);
+  if (!model) return;
+  closeTeamStatDetailPanel();
+  _teamDetailReturnFocus = triggerEl || document.activeElement;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = renderTeamStatDetailHtml(model);
+  const modal = wrap.firstElementChild;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', function(ev){ if (ev.target === modal) closeTeamStatDetailPanel(); });
+  const closeBtn = document.getElementById('team-detail-close');
+  if (closeBtn) closeBtn.addEventListener('click', closeTeamStatDetailPanel);
+  document.addEventListener('keydown', _handleTeamDetailKeydown);
+  const dialog = modal.querySelector('.team-detail-modal');
+  if (dialog && typeof dialog.focus === 'function') dialog.focus();
+}
+
 function renderEditorRoster() {
   const el = document.getElementById('editor-roster');
   if (!el) return;
@@ -1196,7 +1673,7 @@ function renderEditorRoster() {
   TEAMS.player.members.forEach((m, i) => {
     const btn = document.createElement('button');
     btn.className = 'editor-poke-btn';
-    btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${m.name}" onerror="this.style.opacity='.3'"/><span>${m.name}</span>`;
+    btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/><span>${_escapeHtml(m.name || '')}</span>`;
     btn.addEventListener('click', () => { document.querySelectorAll('.editor-poke-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); openEditorForm(i); });
     el.appendChild(btn);
   });
@@ -1209,18 +1686,18 @@ function openEditorForm(idx) {
   const evsHtml = ['hp','atk','def','spa','spd','spe'].map(s=>`
     <div class="form-group">
       <label class="form-label">${s.toUpperCase()}</label>
-      <input class="form-input" id="ev-${s}" value="${m.evs?.[s]||0}" type="number" min="0" max="252"/>
+      <input class="form-input" id="ev-${s}" value="${_escapeHtml(String(m.evs?.[s]||0))}" type="number" min="0" max="252"/>
     </div>`).join('');
   form.innerHTML = `
-    <div class="editor-poke-name">${m.name}</div>
+    <div class="editor-poke-name">${_escapeHtml(m.name || '')}</div>
     <div class="editor-2col">
-      <div class="form-group"><label class="form-label">Item</label><input class="form-input" id="ed-item" value="${m.item||''}"/></div>
-      <div class="form-group"><label class="form-label">Ability</label><input class="form-input" id="ed-ability" value="${m.ability||''}"/></div>
-      <div class="form-group"><label class="form-label">Nature</label><input class="form-input" id="ed-nature" value="${m.nature||'Hardy'}"/></div>
-      <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="ed-role" value="${m.role||''}"/></div>
+      <div class="form-group"><label class="form-label">Item</label><input class="form-input" id="ed-item" value="${_escapeHtml(m.item||'')}"/></div>
+      <div class="form-group"><label class="form-label">Ability</label><input class="form-input" id="ed-ability" value="${_escapeHtml(m.ability||'')}"/></div>
+      <div class="form-group"><label class="form-label">Nature</label><input class="form-input" id="ed-nature" value="${_escapeHtml(m.nature||'Hardy')}"/></div>
+      <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="ed-role" value="${_escapeHtml(m.role||'')}"/></div>
     </div>
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">Moves</label>
-    <div class="moves-2col">${(m.moves||[]).map((mv,i)=>`<input class="form-input" id="ed-mv-${i}" value="${mv}"/>`).join('')}</div></div>
+    <div class="moves-2col">${(m.moves||[]).map((mv,i)=>`<input class="form-input" id="ed-mv-${i}" value="${_escapeHtml(mv)}"/>`).join('')}</div></div>
     ${renderStatPanelHtml(m)}
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">EVs (max 510 total)</label>
     <div class="ev-6col">${evsHtml}</div></div>
@@ -1268,9 +1745,9 @@ function openExportModal(teamKey) {
   if (!team) return;
   const paste = exportTeamToPaste(team);
   document.getElementById('export-text').value = paste;
-  document.getElementById('export-modal').style.display = 'flex';
+  _openModalOverlay('export-modal', { focusSelector: '#export-text', labelledbyId: 'export-modal-title' });
 }
-document.getElementById('close-export')?.addEventListener('click', ()=>{ document.getElementById('export-modal').style.display='none'; });
+document.getElementById('close-export')?.addEventListener('click', ()=>{ _closeModalOverlay('export-modal'); });
 document.getElementById('copy-export-btn')?.addEventListener('click', function() {
   const ta = document.getElementById('export-text');
   const btn = this;
@@ -1296,7 +1773,7 @@ document.getElementById('export-opp-btn')?.addEventListener('click', ()=>{ const
 // IMPORT MODAL
 // ============================================================
 function openImportModal() {
-  document.getElementById('import-modal').style.display = 'flex';
+  _openModalOverlay('import-modal', { focusSelector: '#showdown-paste', labelledbyId: 'import-modal-title' });
   document.getElementById('showdown-paste').value = '';
   document.getElementById('paste-url-input').value = '';
   document.getElementById('import-status').textContent = '';
@@ -1307,7 +1784,7 @@ function openImportModal() {
   var hint = document.querySelector('#import-modal .modal-hint');
   if (hint) hint.innerHTML = 'Paste Showdown-format text directly from <strong>PS! Teambuilder \u2192 Export</strong> or from a pokepast.es page. All 6 Pok\u00e9mon will be parsed automatically.';
 }
-function closeImportModal() { document.getElementById('import-modal').style.display = 'none'; }
+function closeImportModal() { _closeModalOverlay('import-modal'); }
 
 // ============================================================
 // T9h: Edit any team (preloaded, opponent-added, or custom)
@@ -1397,9 +1874,9 @@ function showImportPreview(members) {
   const roster = document.getElementById('preview-roster');
   roster.innerHTML = members.map(m => `
     <div class="preview-row">
-      <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${m.name}" onerror="this.style.opacity='.3'"/>
-      <span class="preview-name">${m.name}</span>
-      <span class="preview-item">${m.item||'No item'} · ${m.ability||'?'}</span>
+      <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/>
+      <span class="preview-name">${_escapeHtml(m.name || '')}</span>
+      <span class="preview-item">${_escapeHtml(m.item||'No item')} · ${_escapeHtml(m.ability||'?')}</span>
     </div>`).join('');
   preview.style.display = '';
 }
@@ -1507,7 +1984,11 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
 
 // Close modals on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.style.display='none'; });
+  overlay.addEventListener('click', e => {
+    if (e.target !== overlay) return;
+    if (overlay.id === 'confirm-modal') _resolveConfirm(false);
+    else _closeModalOverlay(overlay.id);
+  });
 });
 
 // ============================================================
@@ -1605,6 +2086,8 @@ function displayResults(res, oppKey) {
   const gn=isDark?'#4ec994':'#2a9d6a', rd=isDark?'#f05464':'#d63048', gd=isDark?'#f5c542':'#c89a00';
   const pri=isDark?'#7c6af5':'#5b49d6';
 
+  renderAuditPanel(res, oppKey);
+
   setTimeout(()=>{
     const cv = document.getElementById('ko-chart');
     if (!cv) return;
@@ -1645,6 +2128,74 @@ function displayResults(res, oppKey) {
   if (!ChampionsSim.state.lastResults) ChampionsSim.state.lastResults = {};
   ChampionsSim.state.lastResults[oppKey] = res;
   revealPdfButton();
+}
+
+function renderAuditPanel(res, oppKey) {
+  const panel = document.getElementById('audit-panel');
+  if (!panel) return;
+  const playerTeam = (typeof currentPlayerKey !== 'undefined' && TEAMS[currentPlayerKey]) ? TEAMS[currentPlayerKey] : null;
+  const sample = Array.isArray(res && res.allLogs) ? res.allLogs.find(function(row) {
+    return row && Array.isArray(row.turnLog) && row.turnLog.length;
+  }) || res.allLogs[0] : null;
+  const sampleTurnLog = sample && Array.isArray(sample.turnLog) ? sample.turnLog : [];
+  const sampleMoves = sample && sample.movesUsed ? sample.movesUsed : {};
+  const metaRows = [
+    ['Battle', (playerTeam?.name || currentPlayerKey || 'Current Team') + ' vs ' + (TEAMS[oppKey]?.name || oppKey)],
+    ['Format', currentFormat === 'doubles' ? 'Doubles' : 'Singles'],
+    ['Series', 'Bo' + currentBo],
+    ['Sample', sample ? ((sample.result || 'unknown') + ' · ' + (sample.turns || 0) + ' turns') : 'No sample battle'],
+    ['Win condition', sample && sample.winCondition ? sample.winCondition : '—']
+  ];
+  const metaHtml = metaRows.map(function(row) {
+    return '<div class="audit-meta-row"><span>' + _escapeHtml(row[0]) + '</span><strong>' + _escapeHtml(row[1]) + '</strong></div>';
+  }).join('');
+  const roster = (playerTeam && Array.isArray(playerTeam.members)) ? playerTeam.members : [];
+  const rosterRows = roster.map(function(m) {
+    var model = null;
+    try { model = buildTeamStatDetailModel(currentPlayerKey, m.name); } catch (_e) { model = null; }
+    if (!model) return '';
+    return '<tr>' +
+      '<td><strong>' + _escapeHtml(model.name) + '</strong><br><span class="audit-subtle">' + _escapeHtml((model.moves || []).join(', ')) + '</span></td>' +
+      '<td>' + _escapeHtml(model.ability || '—') + '</td>' +
+      '<td>' + _escapeHtml(model.item || '—') + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.hp)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.atk)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.def)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.spa)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.spd)) + '</td>' +
+      '<td>' + _escapeHtml(String(model.finalStats.spe)) + '</td>' +
+    '</tr>';
+  }).join('');
+  const moveUsage = Object.keys(sampleMoves).length ? Object.entries(sampleMoves).map(function(sidePair) {
+    var side = sidePair[0];
+    var mons = sidePair[1] || {};
+    var rows = Object.entries(mons).map(function(entry) {
+      return '<tr><td>' + _escapeHtml(entry[0]) + '</td><td>' + _escapeHtml(JSON.stringify(entry[1] || {})) + '</td></tr>';
+    }).join('');
+    return '<details class="audit-move-block"><summary>' + _escapeHtml(side) + ' move usage</summary><table class="audit-table"><tbody>' + rows + '</tbody></table></details>';
+  }).join('') : '<div class="audit-empty">No move usage captured.</div>';
+  panel.innerHTML =
+    '<details class="audit-panel" open>' +
+      '<summary>Battle Audit</summary>' +
+      '<div class="audit-grid">' +
+        '<section class="audit-card">' +
+          '<h3>Battle Snapshot</h3>' +
+          metaHtml +
+          '<div class="audit-turn-log">' + csRenderTurnLogRows(sampleTurnLog) + '</div>' +
+        '</section>' +
+        '<section class="audit-card">' +
+          '<h3>Team Stats</h3>' +
+          '<table class="audit-table">' +
+            '<thead><tr><th>Mon</th><th>Ability</th><th>Item</th><th>HP</th><th>Atk</th><th>Def</th><th>SpA</th><th>SpD</th><th>Spe</th></tr></thead>' +
+            '<tbody>' + rosterRows + '</tbody>' +
+          '</table>' +
+        '</section>' +
+      '</div>' +
+      '<section class="audit-card">' +
+        '<h3>Move Usage</h3>' +
+        moveUsage +
+      '</section>' +
+    '</details>';
 }
 
 // PDF progressive reveal (Refs #57) - show the Download PDF Report button
@@ -1735,13 +2286,14 @@ function showInlinePilotCard(oppKey, res) {
     }
   } catch(e) { /* silent - inline card stays minimal on error */ }
 
+  const postCoach = (typeof coachPost === 'function') ? coachPost(res) : '';
   container.innerHTML = `
     <div class="pilot-card" style="border:1px solid var(--border,#333);border-radius:8px;padding:14px;background:var(--surface,#1c1b19)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <span style="font-weight:700;font-size:13px">📋 Pilot Notes vs ${teamName}</span>
-        <span class="pilot-verdict ${verdictClass}" style="font-size:11px;padding:3px 8px;border-radius:4px">${verdict} · ${winPct}%</span>
+        <span style="font-weight:700;font-size:13px">📋 Pilot Notes vs ${_escapeHtml(teamName)}</span>
+        <span class="pilot-verdict ${verdictClass}" style="font-size:11px;padding:3px 8px;border-radius:4px">${_escapeHtml(verdict)} · ${_escapeHtml(String(winPct))}%</span>
       </div>
-      ${tips.length ? `<div style="font-size:11px;color:var(--text-m,#888);line-height:1.7">${tips.map(t=>`• ${t}`).join('<br>')}</div>` : ''}
+      ${postCoach ? `<pre class="cs-pilot-card-v2">${_escapeHtml(postCoach)}</pre>` : (tips.length ? `<div style="font-size:11px;color:var(--text-m,#888);line-height:1.7">${tips.map(t=>`• ${_escapeHtml(t)}`).join('<br>')}</div>` : '')}
     </div>`;
 }
 
@@ -1750,10 +2302,320 @@ function showInlinePilotCard(oppKey, res) {
 // ============================================================
 let allReplays = [];
 let replayFilter = 'all';
+const MAX_REPLAY_LOG_LINES = 200;
+const MAX_REPLAY_CARDS = 240;
+
+function csCapBattleReplay(battle, maxLines) {
+  var cap = typeof maxLines === 'number' && maxLines >= 0 ? maxLines : MAX_REPLAY_LOG_LINES;
+  var out = Object.assign({}, battle || {});
+  var log = Array.isArray(out.log) ? out.log.slice() : [];
+  out.logLineCount = log.length;
+  if (log.length > cap) {
+    out.log = log.slice(log.length - cap);
+    out.logTruncated = true;
+    out.logShownCount = out.log.length;
+  } else {
+    out.log = log;
+    out.logTruncated = false;
+    out.logShownCount = log.length;
+  }
+  return out;
+}
+ChampionsSim.simLog.csCapBattleReplay = csCapBattleReplay;
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csCapBattleReplay', csCapBattleReplay);
 
 function addReplays(logs, oppKey) {
-  for (const b of logs) allReplays.unshift({...b, oppKey, id:Math.random()});
+  for (const b of logs) allReplays.unshift({...csCapBattleReplay(b), oppKey, id:Math.random()});
+  if (allReplays.length > MAX_REPLAY_CARDS) allReplays.length = MAX_REPLAY_CARDS;
   renderReplays();
+}
+ChampionsSim.simLog.addReplays = addReplays;
+ChampionsSim.simLog.renderReplays = renderReplays;
+ChampionsSim.simLog._setReplayState = function(replays, filter) {
+  allReplays = Array.isArray(replays) ? replays.slice() : [];
+  if (typeof filter === 'string') replayFilter = filter;
+};
+ChampionsSim.simLog._getReplayState = function() {
+  return { allReplays: allReplays.slice(), replayFilter: replayFilter };
+};
+
+function csReplaySparkline(turnLog) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var scores = rows.map(function(t) {
+    return t && t.post && typeof t.post.position_score === 'number' ? t.post.position_score : null;
+  }).filter(function(v) { return v != null; });
+  if (!scores.length) scores = [0.5];
+  var points = scores.map(function(v, i) {
+    var x = scores.length === 1 ? 50 : Math.round((i / (scores.length - 1)) * 100);
+    var y = Math.round((1 - Math.max(0, Math.min(1, v))) * 30 + 2);
+    return x + ',' + y;
+  }).join(' ');
+  return '<svg class="replay-sparkline" viewBox="0 0 100 34" preserveAspectRatio="none" aria-hidden="true">' +
+    '<polyline points="' + points + '" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>' +
+    '</svg>';
+}
+
+function csRenderHpBars(turn) {
+  var hp = (turn && turn.post && turn.post.hp_pct) || {};
+  var names = Object.keys(hp).slice(0, 8);
+  if (!names.length) return '';
+  return '<div class="replay-hp-bars">' + names.map(function(name) {
+    var pct = Math.max(0, Math.min(1, Number(hp[name]) || 0));
+    return '<span class="replay-hp-chip" title="' + _escapeHtml(name) + ' ' + Math.round(pct * 100) + '%">' +
+      '<span class="replay-hp-fill" style="width:' + Math.round(pct * 100) + '%"></span>' +
+      '<span class="replay-hp-label">' + _escapeHtml(name) + '</span>' +
+    '</span>';
+  }).join('') + '</div>';
+}
+
+function _csDecisionMemberMap(members) {
+  var out = {};
+  for (var i = 0; i < (members || []).length; i++) {
+    var mem = members[i];
+    if (mem && mem.name) out[mem.name] = mem;
+  }
+  return out;
+}
+
+function _csDecisionMoveScore(move, actor, target, turn, opts) {
+  var score = 0;
+  var moveType = (typeof MOVE_TYPES !== 'undefined' && MOVE_TYPES[move]) ? MOVE_TYPES[move] : 'Normal';
+  var category = (typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[move]) ? MOVE_CATEGORY[move] : 'status';
+  var bp = (typeof MOVE_BP !== 'undefined' && MOVE_BP[move]) ? MOVE_BP[move] : 0;
+  var field = (turn && turn.pre && turn.pre.field) || {};
+  var speedOrder = (turn && turn.pre && Array.isArray(turn.pre.speed_order)) ? turn.pre.speed_order : [];
+  var hpPct = 1;
+  var targetHpPct = 1;
+  if (turn && turn.pre && turn.pre.hp_pct && actor && actor.name && typeof turn.pre.hp_pct[actor.name] === 'number') {
+    hpPct = turn.pre.hp_pct[actor.name];
+  } else if (actor && actor.hp != null && actor.maxHp) {
+    hpPct = Math.max(0, Math.min(1, actor.hp / actor.maxHp));
+  }
+  if (turn && turn.pre && turn.pre.hp_pct && target && target.name && typeof turn.pre.hp_pct[target.name] === 'number') {
+    targetHpPct = turn.pre.hp_pct[target.name];
+  } else if (target && target.hp != null && target.maxHp) {
+    targetHpPct = Math.max(0, Math.min(1, target.hp / target.maxHp));
+  }
+
+  var actorTypes = (actor && Array.isArray(actor.types)) ? actor.types : [];
+  var targetTypes = (target && Array.isArray(target.types)) ? target.types : [];
+  var liveEnemies = ((turn && turn.pre && turn.pre.active && turn.pre.active.opponent) || []).slice();
+  var liveAllies = ((turn && turn.pre && turn.pre.active && turn.pre.active.player) || []).slice();
+  var oppLookup = (opts && opts.oppLookup) || {};
+  var hasPriorityThreat = false;
+  var enemyHasStatusMoves = false;
+  var enemyHasSetupMoves = false;
+  var sharedMoveThreat = false;
+
+  for (var i = 0; i < liveEnemies.length; i++) {
+    var oppName = liveEnemies[i];
+    var oppSpec = oppLookup[oppName] || null;
+    if (!oppSpec || !Array.isArray(oppSpec.moves)) continue;
+    for (var j = 0; j < oppSpec.moves.length; j++) {
+      var oppMove = oppSpec.moves[j];
+      if (typeof getPriority === 'function' && getPriority(oppMove) > 0) hasPriorityThreat = true;
+      if (typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[oppMove] === 'status') enemyHasStatusMoves = true;
+      if (typeof CLASSIFY_SETUP_MOVES !== 'undefined' && Array.isArray(CLASSIFY_SETUP_MOVES) && CLASSIFY_SETUP_MOVES.indexOf(oppMove) >= 0) enemyHasSetupMoves = true;
+    }
+  }
+  if (move === 'Imprison') {
+    var ownMoves = (actor && Array.isArray(actor.moves)) ? actor.moves : [];
+    for (var k = 0; k < liveEnemies.length; k++) {
+      var enemySpec = oppLookup[liveEnemies[k]] || null;
+      if (!enemySpec || !Array.isArray(enemySpec.moves)) continue;
+      for (var m = 0; m < enemySpec.moves.length; m++) {
+        if (ownMoves.indexOf(enemySpec.moves[m]) >= 0) {
+          sharedMoveThreat = true;
+          break;
+        }
+      }
+      if (sharedMoveThreat) break;
+    }
+  }
+
+  if (category === 'status') {
+    if (move === 'Recover' || move === 'Shore Up') {
+      score = hpPct < 0.65 ? 72 : 14;
+    } else if (move === 'Rest') {
+      score = hpPct < 0.50 ? 68 : 10;
+    } else if (move === 'Roost') {
+      score = hpPct < 0.55 ? 58 : 12;
+    } else if (move === 'Protect' || move === 'Detect') {
+      score = (hpPct < 0.35 || hasPriorityThreat) ? 55 : 18;
+    } else if (move === 'Quick Guard') {
+      score = hasPriorityThreat ? 52 : 10;
+    } else if (move === 'Taunt') {
+      score = enemyHasStatusMoves ? 48 : 8;
+    } else if (move === 'Encore') {
+      score = 32;
+    } else if (move === 'Haze') {
+      score = enemyHasSetupMoves ? 44 : 8;
+    } else if (move === 'Defog') {
+      var side = turn && turn.pre && turn.pre.speed_control ? turn.pre.speed_control : null;
+      var enemyScreens = side && side.opponent && side.opponent.screens;
+      var ownScreens = side && side.player && side.player.screens;
+      var hasScreenPressure = !!(field.terrain || (enemyScreens && (enemyScreens.reflect || enemyScreens.light || enemyScreens.aurora)) || (ownScreens && (ownScreens.reflect || ownScreens.light || ownScreens.aurora)));
+      score = hasScreenPressure ? 44 : 8;
+    } else if (move === 'Trick Room') {
+      var enemySpeedIdx = liveEnemies.length ? speedOrder.indexOf(liveEnemies[0]) : -1;
+      var actorSpeedIdx = speedOrder.indexOf(actor && actor.name);
+      score = (!field.trick_room && actorSpeedIdx > -1 && enemySpeedIdx > -1 && actorSpeedIdx > enemySpeedIdx) ? 56 : 20;
+    } else if (move === 'Tailwind') {
+      score = 50;
+    } else if (move === 'Substitute') {
+      score = hpPct > 0.35 ? 36 : 10;
+    } else if (move === 'Imprison') {
+      score = sharedMoveThreat ? 45 : 6;
+    } else if (move === 'Ally Switch') {
+      score = liveAllies.length > 0 ? 26 : 5;
+    } else {
+      score = 10;
+    }
+  } else {
+    score = bp / 2;
+    if ((actorTypes.indexOf(moveType) >= 0) && moveType !== 'Normal') score += 10;
+    if (typeof getEffectiveness === 'function' && targetTypes.length) {
+      var eff = getEffectiveness(moveType, targetTypes);
+      if (eff >= 2) score += 18;
+      else if (eff === 0) score -= 70;
+      else if (eff < 1) score -= 8;
+    }
+    if (bp >= 100 && targetHpPct <= 0.45) score += 16;
+    else if (bp >= 80 && targetHpPct <= 0.30) score += 12;
+    if (targetHpPct <= 0.20) score += 14;
+    if ((move === 'Sucker Punch' || move === 'Feint' || move === 'Extreme Speed' || move === 'Aqua Jet' || move === 'Shadow Sneak') && targetHpPct <= 0.35) score += 8;
+    if (typeof getPriority === 'function' && getPriority(move) > 0) score += 5;
+  }
+
+  if (hpPct < 0.35 && (move === 'Protect' || move === 'Detect' || move === 'Recover' || move === 'Shore Up' || move === 'Rest' || move === 'Roost')) score += 8;
+  return score;
+}
+
+function csBuildDecisionAudit(turnLog, opts) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var out = { total_flags: 0, flagged_turns: [], byTurn: {}, byKey: {} };
+  if (!rows.length) return out;
+  opts = opts || {};
+  var playerKey = opts.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
+  var oppKey = opts.oppKey || null;
+  var teamLookup = opts.teamLookup || ((typeof TEAMS !== 'undefined' && TEAMS[playerKey] && Array.isArray(TEAMS[playerKey].members)) ? TEAMS[playerKey].members : []);
+  var oppLookup = opts.oppLookup || ((oppKey && typeof TEAMS !== 'undefined' && TEAMS[oppKey] && Array.isArray(TEAMS[oppKey].members)) ? TEAMS[oppKey].members : []);
+  var playerMap = _csDecisionMemberMap(teamLookup);
+  var oppMap = _csDecisionMemberMap(oppLookup);
+  var threshold = typeof opts.threshold === 'number' ? opts.threshold : 12;
+
+  for (var i = 0; i < rows.length; i++) {
+    var turn = rows[i];
+    if (!turn || !turn.pre || !turn.actions) continue;
+    var playerActs = (turn.actions.player || []).slice();
+    if (!playerActs.length) continue;
+    var bestGap = -Infinity;
+    var bestFlag = null;
+
+    for (var a = 0; a < playerActs.length; a++) {
+      var act = playerActs[a];
+      if (!act || !act.actor || !act.move) continue;
+      var actor = playerMap[act.actor] || { name: act.actor, moves: [], types: [] };
+      var legal = (turn.pre.legal_options && turn.pre.legal_options[act.actor]) ? turn.pre.legal_options[act.actor] : [];
+      var candidates = legal.map(function(opt) {
+        return String(opt).split(' -> ')[0];
+      }).filter(function(mv) { return mv && mv.length; });
+      if (!candidates.length && Array.isArray(actor.moves)) candidates = actor.moves.slice();
+      if (!candidates.length) candidates = [act.move];
+      var targetName = act.target || ((turn.pre.active && turn.pre.active.opponent && turn.pre.active.opponent[0]) || null);
+      var target = targetName ? (oppMap[targetName] || { name: targetName, moves: [], types: [] }) : null;
+
+      var chosenScore = _csDecisionMoveScore(act.move, actor, target, turn, { oppLookup: oppMap });
+      var bestMove = act.move;
+      var bestScore = chosenScore;
+      for (var c = 0; c < candidates.length; c++) {
+        var mv = candidates[c];
+        var sc = _csDecisionMoveScore(mv, actor, target, turn, { oppLookup: oppMap });
+        if (sc > bestScore) {
+          bestScore = sc;
+          bestMove = mv;
+        }
+      }
+      var gap = Math.round((bestScore - chosenScore) * 10) / 10;
+      if (bestMove !== act.move && gap >= threshold && gap > bestGap) {
+        bestGap = gap;
+        bestFlag = {
+          turn: turn.turn,
+          actor: act.actor,
+          chosen_move: act.move,
+          best_move: bestMove,
+          chosen_score: Math.round(chosenScore * 10) / 10,
+          best_score: Math.round(bestScore * 10) / 10,
+          score_gap: gap,
+          expected_delta: Math.round(gap),
+          target: targetName,
+          reason: 'A better line was available based on current board state'
+        };
+      }
+    }
+
+    if (bestFlag) {
+      out.total_flags++;
+      out.flagged_turns.push(bestFlag);
+      out.byTurn[turn.turn] = bestFlag;
+      out.byKey[turn.turn + '|' + bestFlag.actor] = bestFlag;
+    }
+  }
+  return out;
+}
+
+function csRenderDecisionAuditChip(flag) {
+  if (!flag) return '';
+  var delta = (flag.score_gap >= 0 ? '+' : '') + Math.round(flag.score_gap);
+  return '<span class="rchip decision-gap" title="' + _escapeHtml(flag.reason || 'Suboptimal line') + '">' +
+    'Better line: ' + _escapeHtml(flag.best_move) + ' (' + _escapeHtml(delta) + ')' +
+  '</span>';
+}
+
+function csRenderTurnLogRows(turnLog, opts) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  if (!rows.length) return '<div class="replay-turn-empty">No structured turn log for this replay.</div>';
+  var audit = (opts && (opts.playerKey || opts.oppKey || opts.teamLookup || opts.oppLookup)) && typeof csBuildDecisionAudit === 'function'
+    ? csBuildDecisionAudit(rows, opts)
+    : null;
+  return '<div class="replay-turn-log">' + rows.map(function(t) {
+    var score = t && t.post && typeof t.post.position_score === 'number' ? t.post.position_score : (t.positionScore || 0.5);
+    var delta = t && t.delta && typeof t.delta.position_score === 'number' ? t.delta.position_score : 0;
+    var actions = [];
+    if (t && t.actions) {
+      actions = (t.actions.player || []).concat(t.actions.opponent || []).map(function(a) {
+        return [a.actor, a.move, a.target ? '-> ' + a.target : ''].filter(Boolean).join(' ');
+      });
+    }
+    var inCoach = (typeof coachIn === 'function') ? coachIn(rows, t && t.turn) : '';
+    var turnAudit = audit && audit.byTurn ? audit.byTurn[t && t.turn] : null;
+    return '<div class="replay-turn-row' + (t && t.swingTurn ? ' swing' : '') + (turnAudit ? ' decision-gap' : '') + '"' + (turnAudit ? ' style="border-left:4px solid var(--gold);"' : '') + '>' +
+      '<div class="replay-turn-main"><strong>T' + _escapeHtml(t && t.turn) + '</strong><span>' + _escapeHtml(actions.join(' | ') || t.action || '-') + '</span></div>' +
+      '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
+      csRenderDecisionAuditChip(turnAudit) +
+      csRenderHpBars(t) +
+      (inCoach ? '<pre class="replay-turn-coach">' + _escapeHtml(inCoach) + '</pre>' : '') +
+    '</div>';
+  }).join('') + '</div>';
+}
+
+function downloadReplayTurnLog(replay) {
+  if (!replay || !Array.isArray(replay.turnLog)) return;
+  var payload = {
+    seed: replay.seed || null,
+    result: replay.result || null,
+    winCondition: replay.winCondition || null,
+    turning_point: replay.turning_point || null,
+    position_path: replay.position_path || [],
+    turnLog: replay.turnLog
+  };
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'champions-turn-log-' + (replay.seed || Date.now()) + '.json';
+  a.click();
+  setTimeout(function() { URL.revokeObjectURL(url); }, 0);
 }
 
 function renderReplays() {
@@ -1777,6 +2639,12 @@ function renderReplays() {
     const trSet=(r.log||[]).some(l=>l.includes('Trick Room'));
     const trBroken=(r.log||[]).some(l=>l.includes('NORMAL'));
     const tw=(r.log||[]).some(l=>l.includes('Tailwind'));
+    const hasTurnLog = Array.isArray(r.turnLog) && r.turnLog.length > 0;
+    const logLen = (r.log || []).length;
+    const logCapActive = !!r.logTruncated ||
+      (typeof r.logLineCount === 'number' && r.logLineCount > logLen) ||
+      logLen > MAX_REPLAY_LOG_LINES;
+    const turning = r.turning_point ? 'Swing T' + r.turning_point.turn : 'No swing';
     const card=document.createElement('div');
     card.className='replay-card';
     card.innerHTML=`
@@ -1791,14 +2659,27 @@ function renderReplays() {
         ${trBroken?'<span class="rchip tr">TR BROKEN</span>':''}
         ${tw?'<span class="rchip tw">TAILWIND</span>':''}
         <span class="rchip">${r.turns} turns</span>
+        ${logCapActive?`<span class="rchip">Showing last ${MAX_REPLAY_LOG_LINES} lines</span>`:''}
+        ${hasTurnLog?`<span class="rchip">${turning}</span>`:''}
       </div>
       <div class="replay-expanded">
+        ${hasTurnLog ? `<div class="replay-v2-tools">${csReplaySparkline(r.turnLog)}<button class="btn-secondary replay-json-btn" type="button">Download JSON</button></div>${csRenderTurnLogRows(r.turnLog, { playerKey: r.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'), oppKey: r.oppKey || null })}` : ''}
         <div class="battle-log">${(r.log||[]).join('<br>')}</div>
       </div>`;
+    const dlBtn = card.querySelector('.replay-json-btn');
+    if (dlBtn) dlBtn.addEventListener('click', (ev)=>{ ev.stopPropagation(); downloadReplayTurnLog(r); });
     card.addEventListener('click', ()=>card.classList.toggle('open'));
     el.appendChild(card);
   }
 }
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.phase5 = ChampionsSim.phase5 || {};
+  ChampionsSim.phase5.csBuildDecisionAudit = csBuildDecisionAudit;
+  ChampionsSim.phase5.csRenderDecisionAuditChip = csRenderDecisionAuditChip;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildDecisionAudit', csBuildDecisionAudit);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderDecisionAuditChip', csRenderDecisionAuditChip);
 
 document.querySelectorAll('.filter-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -1823,12 +2704,12 @@ async function loadAnalysisHistory(playerKey) {
     historyRows = await adapter.loadAnalysesForPlayer(playerKey || 'player', 50);
     renderHistorySection();
   } catch (e) {
-    console.warn('[M6] loadAnalysisHistory failed:', e && e.message);
+    UILog.warn('loadAnalysisHistory failed', e);
   }
 }
 
 function renderHistorySection() {
-  var el = document.getElementById('history-list');
+  var el = document.getElementById('history-list') || document.getElementById('replay-list');
   if (!el) return;
 
   var filtered = historyRows;
@@ -1853,8 +2734,8 @@ function renderHistorySection() {
     card.dataset.analysisId = row.analysis_id;
     card.innerHTML =
       '<div class="replay-card-hdr">' +
-        '<div class="replay-title"><span style="color:' + rc + ';font-weight:900">' + rl + '</span> vs ' + oppName + '</div>' +
-        '<div class="replay-meta">Bo' + row.bo + ' · ' + row.wins + 'W/' + row.losses + 'L · WR ' + (row.win_rate * 100).toFixed(0) + '% · ' + new Date(row.created_at).toLocaleDateString() + '</div>' +
+        '<div class="replay-title"><span style="color:' + rc + ';font-weight:900">' + rl + '</span> vs ' + _escapeHtml(oppName) + '</div>' +
+        '<div class="replay-meta">Bo' + _escapeHtml(String(row.bo)) + ' · ' + _escapeHtml(String(row.wins)) + 'W/' + _escapeHtml(String(row.losses)) + 'L · WR ' + _escapeHtml((row.win_rate * 100).toFixed(0)) + '% · ' + _escapeHtml(new Date(row.created_at).toLocaleDateString()) + '</div>' +
       '</div>' +
       '<div class="replay-expanded"><div class="history-logs-placeholder">Click to load game logs…</div></div>';
     card.addEventListener('click', (function(analysisId, cardEl) {
@@ -1890,8 +2771,78 @@ async function lazyLoadAnalysisLogs(analysisId, cardEl) {
     }
     cardEl.dataset.loaded = 'true';
   } catch (e) {
-    console.warn('[M6] lazyLoadAnalysisLogs failed:', e && e.message);
+    UILog.warn('lazyLoadAnalysisLogs failed', e);
   }
+}
+
+function csGetActivePlayerKey() {
+  return (typeof currentPlayerKey === 'string' && currentPlayerKey) ? currentPlayerKey : 'player';
+}
+
+async function csBuildMyDataExport(teamKey) {
+  var key = teamKey || csGetActivePlayerKey();
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[key]) ? TEAMS[key] : null;
+  var adapter = getWindowValue('SupabaseAdapter', null);
+  var localReports = (typeof csLoadAllReports === 'function') ? csLoadAllReports() : {};
+  var localSimLog = (typeof csSimLogGetAll === 'function') ? csSimLogGetAll() : [];
+  var localTeamHistory = (typeof csSimLogForTeamBothSides === 'function') ? csSimLogForTeamBothSides(key) : [];
+  var activeReport = (typeof csLoadReport === 'function') ? csLoadReport(key) : null;
+  var dbAnalyses = [];
+
+  if (adapter && adapter.enabled && typeof adapter.loadAnalysesForPlayer === 'function') {
+    try {
+      var rows = await adapter.loadAnalysesForPlayer(key, 500);
+      if (Array.isArray(rows)) {
+        for (var i = 0; i < rows.length; i++) {
+          var row = rows[i] || {};
+          var logs = [];
+          if (typeof adapter.loadAnalysisLogs === 'function' && row.analysis_id) {
+            try { logs = await adapter.loadAnalysisLogs(row.analysis_id) || []; }
+            catch (e) { UILog.warn('export my data loadAnalysisLogs failed', e); }
+          }
+          dbAnalyses.push({
+            analysis_id: row.analysis_id || null,
+            created_at: row.created_at || null,
+            player_team_id: row.player_team_id || key,
+            opp_team_id: row.opp_team_id || null,
+            bo: row.bo || null,
+            win_rate: row.win_rate || 0,
+            wins: row.wins || 0,
+            losses: row.losses || 0,
+            sample_size: row.sample_size || 0,
+            logs: logs
+          });
+        }
+      }
+    } catch (e) {
+      UILog.warn('export my data loadAnalysesForPlayer failed', e);
+    }
+  }
+
+  return {
+    schema_version: 1,
+    exported_at: new Date().toISOString(),
+    player_team_id: key,
+    player_team_name: team && team.name ? team.name : null,
+    current_format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
+    local: {
+      reports: localReports,
+      current_report: activeReport,
+      sim_log: localSimLog,
+      team_history: localTeamHistory
+    },
+    db: {
+      enabled: !!(adapter && adapter.enabled),
+      analyses: dbAnalyses
+    }
+  };
+}
+
+async function csExportMyDataJson(teamKey) {
+  var payload = await csBuildMyDataExport(teamKey);
+  var ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  _downloadBlob('champions-sim-my-data-' + ts + '.json', 'application/json', JSON.stringify(payload, null, 2));
+  return payload;
 }
 
 // Wire history filter buttons
@@ -1904,12 +2855,23 @@ document.querySelectorAll('.history-filter-btn').forEach(function(btn) {
   });
 });
 
+document.getElementById('export-history-json-btn')?.addEventListener('click', function() {
+  csExportMyDataJson(csGetActivePlayerKey()).catch(function(e) {
+    UILog.warn('export my data failed', e);
+    alert('Could not export history: ' + (e && e.message ? e.message : 'unknown error'));
+  });
+});
+
 if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.loadAnalysisHistory = loadAnalysisHistory;
   ChampionsSim.history.renderHistorySection = renderHistorySection;
+  ChampionsSim.history.buildMyDataExport = csBuildMyDataExport;
+  ChampionsSim.history.exportMyDataJson = csExportMyDataJson;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('loadAnalysisHistory', loadAnalysisHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderHistorySection', renderHistorySection);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildMyDataExport', csBuildMyDataExport);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportMyDataJson', csExportMyDataJson);
 // __M6_HISTORY_END__
 
 // ============================================================
@@ -1929,7 +2891,7 @@ ChampionsSim.state.lastResults = {};
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Team_Preview
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/VGC
 var BRING_SELECTION = {};
-// BRING_MODE[teamKey] = 'manual' | 'random'. Defaults to 'manual' for the
+// BRING_MODE[teamKey] = 'manual' | 'random' | 'auto'. Defaults to 'manual' for the
 // player slot and 'random' for every other team (opponents reroll per series).
 var BRING_MODE = {};
 // localStorage persistence keyed by teamKey + format so each format keeps its
@@ -1957,6 +2919,28 @@ function getBringCount() {
 function getLeadCount() {
   return (currentFormat === 'singles') ? 1 : 2;
 }
+function _normalizeBringOrder(teamKey, names) {
+  var team = TEAMS[teamKey];
+  if (!team || !Array.isArray(team.members)) return [];
+  var count = getBringCount();
+  var seen = Object.create(null);
+  var out = [];
+  var source = Array.isArray(names) ? names : [];
+  for (var i = 0; i < source.length && out.length < count; i++) {
+    var n = source[i];
+    if (!n || seen[n]) continue;
+    if (!team.members.some(function(m) { return m.name === n; })) continue;
+    seen[n] = true;
+    out.push(n);
+  }
+  for (var j = 0; j < team.members.length && out.length < count; j++) {
+    var monName = team.members[j] && team.members[j].name;
+    if (!monName || seen[monName]) continue;
+    seen[monName] = true;
+    out.push(monName);
+  }
+  return out.slice(0, count);
+}
 function getBringMode(teamKey) {
   // Guard for early-load invocations (renderTeamsGrid fires before the var
   // initializer for BRING_MODE runs; var hoists declaration but leaves undefined).
@@ -1965,27 +2949,18 @@ function getBringMode(teamKey) {
   return (teamKey === currentPlayerKey) ? 'manual' : 'random';
 }
 function setBringMode(teamKey, mode) {
-  BRING_MODE[teamKey] = (mode === 'random') ? 'random' : 'manual';
+  BRING_MODE[teamKey] = (mode === 'random' || mode === 'auto') ? mode : 'manual';
   _saveBringState();
 }
 function getBringFor(teamKey) {
   const team = TEAMS[teamKey];
   if (!team) return [];
-  const count = getBringCount();
   // Guard for early-load (var hoisted, initializer not yet run).
   const picked = (typeof BRING_SELECTION !== 'undefined' && BRING_SELECTION && BRING_SELECTION[teamKey]) ? BRING_SELECTION[teamKey] : [];
-  // Keep only names that still exist on the team (handles edits / resets).
-  const valid  = picked.filter(n => team.members.some(m => m.name === n));
-  const filled = valid.slice(0, count);
-  // Fill missing slots from team order, skipping already-picked names.
-  for (const m of team.members) {
-    if (filled.length >= count) break;
-    if (!filled.includes(m.name)) filled.push(m.name);
-  }
-  return filled;
+  return _normalizeBringOrder(teamKey, picked);
 }
 function setBringFor(teamKey, names) {
-  const arr = Array.isArray(names) ? names.slice(0, getBringCount()) : [];
+  const arr = _normalizeBringOrder(teamKey, names);
   BRING_SELECTION[teamKey] = arr;
   _saveBringState();
 }
@@ -2109,13 +3084,16 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
           });
         }
       } catch (e) {
-        console.warn('[Phase4a] simlog append in runBoSeries failed:', e && e.message);
+        UILog.warn('simlog append in runBoSeries failed', e);
       }
     }
     if (onProgress) onProgress(i+bSize, numSeries, liveW, liveL);
     await new Promise(r=>setTimeout(r,0));
   }
 
+  results.allLogs = results.allLogs.map(function(battle) {
+    return csCapBattleReplay(battle);
+  });
   results.winRate = results.wins/numSeries;
   results.avgTurns = results.totalTurns/numSeries;
   results.avgTrTurns = results.totalTrTurns/numSeries;
@@ -2144,9 +3122,9 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
       var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled) {
         Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, opp, bo, res)))
-          .catch(function(e) { console.warn('[M4] run-all saveAnalysis failed:', e && e.message); });
+          .catch(function(e) { UILog.warn('run-all saveAnalysis failed', e); });
       }
-    } catch (_m4e) { console.warn('[M4] run-all payload build failed:', _m4e && _m4e.message); }
+    } catch (_m4e) { UILog.warn('run-all payload build failed', _m4e); }
   }
 }
 
@@ -2155,6 +3133,22 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
 // M4 — _buildAnalysisPayload: builds the canonical payload for SupabaseAdapter.saveAnalysis
 // ============================================================
 var _M4_VALID_BO = [1, 3, 5, 10];
+
+function _stripTurnLogForPersistence(logRow) {
+  if (!logRow || typeof logRow !== 'object') return logRow;
+  return {
+    result: logRow.result || null,
+    turns: logRow.turns || 0,
+    trTurns: logRow.trTurns || 0,
+    tr_turns: logRow.tr_turns || logRow.trTurns || 0,
+    winCondition: logRow.winCondition || null,
+    win_condition: logRow.win_condition || logRow.winCondition || null,
+    seed: logRow.seed || null,
+    log: Array.isArray(logRow.log) ? logRow.log.slice(0, 200) : (logRow.log || []),
+    position_path: Array.isArray(logRow.position_path) ? logRow.position_path.slice(0, 40) : [],
+    turning_point: logRow.turning_point || null
+  };
+}
 
 function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   if (_M4_VALID_BO.indexOf(bo) === -1) {
@@ -2202,13 +3196,17 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
 
   var logs = [];
   if (res && res.allLogs && Array.isArray(res.allLogs)) {
-    logs = res.allLogs.slice(0, 50);
+    logs = res.allLogs.slice(0, 50).map(_stripTurnLogForPersistence);
   }
   if (res && Array.isArray(res.logs)) {
-    logs = res.logs.slice(0, 50);
+    logs = res.logs.slice(0, 50).map(_stripTurnLogForPersistence);
   }
 
   var analysisJson = (res && res.analysis_json) || {};
+  if (res && res.turning_point && !analysisJson.turning_point) analysisJson.turning_point = res.turning_point;
+  if (res && Array.isArray(res.position_path) && !analysisJson.position_path) {
+    analysisJson.position_path = res.position_path.slice(0, 40);
+  }
   if (typeof generatePilotGuide === 'function' && res) {
     try { analysisJson.pilot_guide = generatePilotGuide(oppKey, res) || null; } catch (_) {}
   }
@@ -2302,9 +3300,9 @@ function _upsertTeamToDB(teamId, team, source) {
     };
 
     Promise.resolve(adapter.saveTeam(payload))
-      .catch(function(e) { console.warn('[M5] _upsertTeamToDB failed:', e && e.message); });
+      .catch(function(e) { UILog.warn('_upsertTeamToDB failed', e); });
   } catch (err) {
-    console.warn('[M5] _upsertTeamToDB error:', err && err.message);
+    UILog.warn('_upsertTeamToDB error', err);
   }
 }
 
@@ -2343,7 +3341,7 @@ function setProgress(pct, label, w, l) {
 
 function setSimError(err) {
   var msg = (err && err.message) ? err.message : String(err || 'Unknown simulation error');
-  console.error('[Sim] run failed:', err);
+  UILog.error('Simulation run failed', err);
   var wrap = document.getElementById('progress-wrap');
   var fill = document.getElementById('progress-fill');
   var label = document.getElementById('progress-label');
@@ -2362,6 +3360,12 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     document.getElementById('progress-wrap').style.display='';
     setProgress(0,'Starting…',0,0);
 
+    var swappedOpp = enforceDistinctBattleTeams();
+    if (swappedOpp && TEAMS[swappedOpp]) {
+      document.getElementById('opp-team-name').textContent = TEAMS[swappedOpp].name;
+      renderRoster('opp-roster', TEAMS[swappedOpp].members);
+      if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
+    }
     const oppKey=document.getElementById('opponent-select').value;
     const n=parseInt(document.getElementById('sim-count').value);
     const bo=currentBo;
@@ -2380,7 +3384,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     // Refs #95 - also populate the Pilot Guide tab after a single sim so the
     // tab isn't stuck on its empty-state message. generatePilotGuide is
     // upsert-by-oppKey, so re-running the same matchup replaces its card.
-    try { generatePilotGuide(oppKey, res); } catch (e) { console.warn('[PilotGuide] single-sim populate failed:', e && e.message); }
+    try { generatePilotGuide(oppKey, res); } catch (e) { UILog.warn('single-sim Pilot Guide populate failed', e); }
     // Cache for Run All parity - keeps PDF builder and strategy rebuild in sync.
     try { if (ChampionsSim.state.lastResults) ChampionsSim.state.lastResults[oppKey] = res; } catch(_){}
     // M4: persist single-sim result to Supabase (fire-and-forget)
@@ -2388,15 +3392,19 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
       var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled) {
         Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, oppKey, bo, res)))
-          .catch(function(e) { console.warn('[M4] single-sim saveAnalysis failed:', e && e.message); });
+          .catch(function(e) { UILog.warn('single-sim saveAnalysis failed', e); });
       }
-    } catch (_m4e) { console.warn('[M4] single-sim payload build failed:', _m4e && _m4e.message); }
+    } catch (_m4e) { UILog.warn('single-sim payload build failed', _m4e); }
   } catch (e) {
     setSimError(e);
   } finally {
     simRunning=false; runBtn.disabled=false; if (allBtn) allBtn.disabled=false;
   }
 });
+
+ChampionsSim.battle = ChampionsSim.battle || {};
+ChampionsSim.battle.enforceDistinctBattleTeams = enforceDistinctBattleTeams;
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('enforceDistinctBattleTeams', enforceDistinctBattleTeams);
 
 document.getElementById('run-all-btn')?.addEventListener('click', async function() {
   if (simRunning) return;
@@ -2450,9 +3458,9 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
     revealPdfButton();
     // T9j.16 (Refs #65) - auto-save Strategy Report after Run All Matchups completes.
     // Persists to localStorage keyed on teamSignature so any imported team gets continuity.
-    try { if (typeof t9j16AutoSave === 'function') t9j16AutoSave(); } catch(e) { console.warn('[T9j.16] autosave skipped:', e && e.message); }
+    try { if (typeof t9j16AutoSave === 'function') t9j16AutoSave(); } catch(e) { UILog.warn('autosave skipped', e); }
     // Phase 2 (Refs #46 #49) - rebuild Strategy tab now that fresh sim data is available.
-    try { if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild(); } catch(e) { console.warn('[Phase2] strategy rebuild skipped:', e && e.message); }
+    try { if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild(); } catch(e) { UILog.warn('strategy rebuild skipped', e); }
   } catch (e) {
     setSimError(e);
   } finally {
@@ -2512,11 +3520,14 @@ function generatePilotGuide(oppKey, results) {
     .map(e => e[0]);
 
   const tips = [];
-  if (leads.length >= 2) tips.push(`Lead with ${leads[0]} + ${leads[1]} for best results.`);
+  if (leads.length >= 2) tips.push(`Lead ${leads[0]} + ${leads[1]} as the first option.`);
   if (wcEntries.length) tips.push(`${wcEntries[0][0]} was the top win condition in ${Math.round(wcEntries[0][1]/total*100)}% of all series.`);
   if (risks.length) tips.push(`Watch for ${risks[0]} — it appeared in over 40% of your losses.`);
   else if (winPct > 55) tips.push('Your team has a consistent edge — focus on denying their setup turns.');
-  if (winPct < 45) tips.push('Consider leading with Fake Out + speed control to disrupt their gameplan.');
+  if (winPct < 45) tips.push('Open with Fake Out + speed control to disrupt their gameplan.');
+  const policyOutputAudit = (typeof auditPolicyOutput === 'function') ? auditPolicyOutput(tips) : { fakeGoodCount: 0, flagged: [] };
+  const staticAdviceWarningHtml = (typeof renderStaticAdviceWarning === 'function')
+    ? renderStaticAdviceWarning(policyOutputAudit, 'pilot') : '';
 
   const oppTeam = TEAMS[oppKey];
   const teamName = oppTeam ? oppTeam.name : oppKey;
@@ -2532,7 +3543,19 @@ function generatePilotGuide(oppKey, results) {
     const sweep = computeMegaTriggerSweep(playerKey, oppKey, bo, format);
     megaTriggerHtml = renderMegaTriggerCards(sweep);
   } catch (e) {
-    console.warn('[T9j.15] Mega card render skipped:', e && e.message);
+    UILog.warn('Mega card render skipped', e);
+  }
+  let threatResponseHtml = '';
+  try {
+    const playerKey = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player';
+    if (typeof solveThreatResponse === 'function' && typeof renderThreatResponseCard === 'function') {
+      threatResponseHtml = renderThreatResponseCard(solveThreatResponse(playerKey, oppKey, {
+        simsPerBranch: 30,
+        rngSeed: 'pilot-guide'
+      }));
+    }
+  } catch (e) {
+    UILog.warn('Threat response render skipped', e);
   }
 
   const card = document.createElement('div');
@@ -2540,10 +3563,12 @@ function generatePilotGuide(oppKey, results) {
   // Refs #95 - tag the card with its opponent key so we can upsert instead of
   // duplicating when the same matchup is re-simulated from the single-sim path.
   card.dataset.oppKey = oppKey;
+  const preCoach = (typeof coachPre === 'function') ? coachPre((typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player', oppKey, { result: results }) : '';
   card.innerHTML = `
+    ${staticAdviceWarningHtml}
     <div class="pilot-card-header">
-      <div class="pilot-card-title">${teamName}</div>
-      <span class="pilot-verdict ${verdictClass}">${verdict}</span>
+      <div class="pilot-card-title">${_escapeHtml(teamName)}</div>
+      <span class="pilot-verdict ${verdictClass}">${_escapeHtml(verdict)}</span>
     </div>
     <div class="pilot-card-body">
       <div class="win-circle ${circleClass}" style="width:72px;height:72px;flex-shrink:0">
@@ -2551,6 +3576,7 @@ function generatePilotGuide(oppKey, results) {
         <span class="win-label">Series W%</span>
       </div>
       <div class="pilot-details">
+        ${preCoach ? `<details class="cs-pre-coach"><summary>PRE coaching</summary><pre>${_escapeHtml(preCoach)}</pre></details>` : ''}
         ${leads.length ? `<div class="pilot-leads"><span class="pilot-section-label">LEADS</span> ${leads.join(' + ')}</div>` : ''}
         <div class="pilot-section-label">WIN CONDITIONS</div>
         ${wcEntries.map(([cond,cnt]) => `
@@ -2564,6 +3590,7 @@ function generatePilotGuide(oppKey, results) {
         <div class="pilot-section-label" style="margin-top:8px">TIPS</div>
         <div class="pilot-tips">${tips.map(t => `<div class="pilot-tip">• ${t}</div>`).join('')}</div>
         ${megaTriggerHtml}
+        ${threatResponseHtml}
       </div>
     </div>`;
   // Refs #95 - if a card for this opponent already exists (from a prior sim
@@ -2575,6 +3602,12 @@ function generatePilotGuide(oppKey, results) {
   } else {
     el.appendChild(card);
   }
+  const dismiss = card.querySelector('[data-phase4e-dismiss]');
+  if (dismiss) dismiss.addEventListener('click', function(){
+    CS_PHASE4E_DISMISSED = true;
+    const banner = card.querySelector('[data-phase4e-warning]');
+    if (banner) banner.remove();
+  });
 }
 
 // ============================================================
@@ -2747,7 +3780,7 @@ function computeMegaTriggerSweep(playerKey, oppKey, bo, format) {
     setCachedMegaSweep(playerKey, oppKey, bo, format, sweep);
     return sweep;
   } catch (e) {
-    console.warn('[T9j.15] Mega sweep failed:', e && e.message);
+    UILog.warn('Mega sweep failed', e);
     return null;
   }
 }
@@ -2782,7 +3815,7 @@ function _pdfHasAny(mon, list) {
   return !!(mon && mon.moves && list.some(function(x){ return mon.moves.indexOf(x) >= 0; }));
 }
 
-var CLASSIFY_POKEMON_ROLES = [
+var CLASSIFY_POKEMON_LEGACY_ROLES = [
   'lead',
   'sweeper',
   'support',
@@ -2808,9 +3841,9 @@ function _classifyAdd(scores, role, points, reason) {
 
 // Seven-role classifier for the dynamic coaching layer (#141).
 // Returns a stable object so UI, tests, and future detectors can share it.
-function classifyPokemon(mon, teamMembers) {
+function classifyPokemonLegacy(mon, teamMembers) {
   var scores = {};
-  CLASSIFY_POKEMON_ROLES.forEach(function(role){
+  CLASSIFY_POKEMON_LEGACY_ROLES.forEach(function(role){
     scores[role] = { role: role, score: 0, reasons: [] };
   });
   if (!mon || typeof mon !== 'object') {
@@ -2860,7 +3893,7 @@ function classifyPokemon(mon, teamMembers) {
   }
 
   var tieOrder = ['win_condition', 'lead', 'support', 'pivot', 'disruptor', 'sweeper', 'sacrifice_piece'];
-  var best = CLASSIFY_POKEMON_ROLES
+  var best = CLASSIFY_POKEMON_LEGACY_ROLES
     .slice()
     .sort(function(a, b){
       var diff = scores[b].score - scores[a].score;
@@ -3381,7 +4414,7 @@ function generatePDFReport() {
           ? buildStrategyReport(playerKey, results, pdfFormat) : null;
         if (!report) return '';
         return _renderT9j16PdfSections(report);
-      } catch(e) { console.warn('[T9j.16] PDF sections skipped:', e && e.message); return ''; }
+      } catch(e) { UILog.warn('PDF sections skipped', e); return ''; }
     })(),
 
     '<div class="pdf-footer">Generated by Poke-e-Sim Champion 2026 — ' + _escapeHtml(date) + '</div>'
@@ -3871,6 +4904,56 @@ function teamSignature(team) {
   return _t9j16_hash(parts.join('||'));
 }
 
+function _stableResultsStringify(value) {
+  if (value === null || value === undefined) return String(value);
+  if (Array.isArray(value)) {
+    return '[' + value.map(function(v){ return _stableResultsStringify(v); }).join(',') + ']';
+  }
+  if (typeof value === 'object') {
+    var keys = Object.keys(value).sort();
+    return '{' + keys.map(function(k){
+      return JSON.stringify(k) + ':' + _stableResultsStringify(value[k]);
+    }).join(',') + '}';
+  }
+  return JSON.stringify(value);
+}
+
+function strategyResultsHash(results) {
+  return _t9j16_hash(_stableResultsStringify(results || {}));
+}
+
+var _strategyReportCache = new Map();
+var _strategyReportCacheLimit = 32;
+
+function _strategyReportCacheKey(teamKey, results, fmt) {
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  return [teamSignature(team), strategyResultsHash(results), fmt || 'doubles'].join('::');
+}
+
+function csClearStrategyReportCache() {
+  _strategyReportCache.clear();
+}
+
+function csStrategyReportCacheSize() {
+  return _strategyReportCache.size;
+}
+
+function _strategyReportCacheGet(key) {
+  if (!_strategyReportCache.has(key)) return null;
+  var cached = _strategyReportCache.get(key);
+  _strategyReportCache.delete(key);
+  _strategyReportCache.set(key, cached);
+  return cached;
+}
+
+function _strategyReportCacheSet(key, report) {
+  _strategyReportCache.set(key, report);
+  while (_strategyReportCache.size > _strategyReportCacheLimit) {
+    var oldestKey = _strategyReportCache.keys().next().value;
+    _strategyReportCache.delete(oldestKey);
+  }
+}
+
 function _t9j16_lsGet(sig) {
   try {
     var raw = (typeof Storage !== 'undefined') ? Storage.get(T9J16_STORAGE_KEY + '::' + sig) : null;
@@ -4336,9 +5419,112 @@ function buildCoachingSummary(rules, identity, elite) {
   return lines.join(' ');
 }
 
+function buildWeaknessDashboard(team, results, format, identity, leadSystem, trends, deadMoves, matchupWarnings) {
+  var members = (team && team.members) || [];
+  var bestLead = (leadSystem && leadSystem.safe) ? leadSystem.safe : '';
+  var altLead = (leadSystem && leadSystem.speed) ? leadSystem.speed : (leadSystem && leadSystem.pressure) ? leadSystem.pressure : '';
+
+  function _oppName(oppKey) {
+    var opp = (typeof TEAMS !== 'undefined' && TEAMS[oppKey]) ? TEAMS[oppKey] : null;
+    var name = opp && opp.name ? opp.name : oppKey;
+    var arch = '';
+    try { arch = opp && typeof inferPlaystyle === 'function' ? (inferPlaystyle(opp.members || []) || '') : ''; } catch (_e) { arch = ''; }
+    return arch ? (name + ' (' + arch + ')') : name;
+  }
+  function _fmtWR(v) { return Math.round((v || 0) * 100) + '%'; }
+  function _itemRows(items, formatter) {
+    return (items || []).slice(0, 3).map(function(item){ return formatter(item); });
+  }
+
+  var matchupRows = Object.entries(results || {}).map(function(pair){
+    var r = pair[1] || {};
+    var n = (r.wins || 0) + (r.losses || 0) + (r.draws || 0);
+    var wr = n > 0 ? (r.wins || 0) / n : 0;
+    return {
+      oppKey: pair[0],
+      name: _oppName(pair[0]),
+      n: n,
+      win_rate: wr,
+      status: wr < 0.35 ? 'gap' : 'watch'
+    };
+  }).filter(function(row){ return row.n >= 3; })
+    .sort(function(a, b){ return a.win_rate - b.win_rate; });
+
+  var lowMatchups = matchupRows.filter(function(row){ return row.status === 'gap'; });
+  var matchupFocus = lowMatchups.length ? lowMatchups : matchupRows.slice(0, 3);
+  var worstMatchup = matchupFocus[0] || null;
+  var worstLead = (trends && trends.worst_lead) ? trends.worst_lead : null;
+  var deadList = Array.isArray(deadMoves) ? deadMoves.slice(0, 3) : [];
+  var ruleViolations = (matchupWarnings || []).slice(0, 2);
+
+  var sections = [];
+
+  sections.push({
+    key: 'matchup_gaps',
+    title: 'Matchup win-rate gaps',
+    headline: worstMatchup
+      ? ('Worst current matchup: ' + worstMatchup.name + ' at ' + _fmtWR(worstMatchup.win_rate) + ' over ' + worstMatchup.n + ' games.')
+      : 'No matchup gap has enough sample to rank yet.',
+    fix: bestLead
+      ? ('Try leading ' + bestLead + ' into this archetype and keep ' + (altLead || bestLead) + ' as the fallback line.')
+      : 'Keep simming until a stable lead answer shows up.',
+    rows: _itemRows(matchupFocus, function(row){
+      return {
+        label: row.name,
+        value: _fmtWR(row.win_rate) + ' over ' + row.n + ' games'
+      };
+    }),
+    empty: 'No matchup has reached the 3-game threshold yet.'
+  });
+
+  sections.push({
+    key: 'lead_pairs',
+    title: 'Lead-pair issues',
+    headline: worstLead
+      ? ('Weakest lead pair: ' + (worstLead.lead || []).join(' + ') + ' at ' + _fmtWR(worstLead.win_rate) + ' over ' + worstLead.n + ' games.')
+      : 'No lead pair has enough sample to rank yet.',
+    fix: bestLead
+      ? ('Shift your default into ' + bestLead + ' and keep the weak lead as a matchup-specific exception.')
+      : 'Keep the most reliable lead on the field and re-test the rest of the opening pairs.',
+    rows: worstLead ? [{
+      label: (worstLead.lead || []).join(' + '),
+      value: _fmtWR(worstLead.win_rate) + ' over ' + worstLead.n + ' games'
+    }] : [],
+    empty: 'Run at least 5 games with a lead pair before ranking it.'
+  });
+
+  sections.push({
+    key: 'dead_moves',
+    title: 'Dead moves',
+    headline: deadList.length
+      ? (deadList[0].owner + ' - ' + deadList[0].move + ' has 0 calls in the sample.')
+      : 'No dead moves are flagged yet.',
+    fix: deadList.length
+      ? 'Open these slots on turn 1 when they are support tools, or replace them with coverage that patches your worst matchup.'
+      : 'Keep simming until a move crosses the 0-call threshold.',
+    rows: _itemRows(deadList, function(row){
+      return {
+        label: row.owner + ' - ' + row.move,
+        value: row.times_used + ' calls over ' + row.games_sampled + ' games'
+      };
+    }),
+    empty: 'No move has crossed the dead-move threshold yet.'
+  });
+
+  return {
+    summary: worstMatchup
+      ? ('Start with the matchup gap, then clean up the weakest opening pair, then prune dead moves.')
+      : 'Keep simming; the dashboard will populate once the sample is large enough.',
+    sections: sections,
+    rule_violations: ruleViolations.map(function(v){
+      return v.category + ': ' + v.note;
+    })
+  };
+}
+
 // ---------- STRATEGY REPORT (full assembly) ---------------------------
 
-function buildStrategyReport(teamKey, results, fmt) {
+function _buildStrategyReportUncached(teamKey, results, fmt) {
   var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
   if (!team) return null;
   var members = team.members || [];
@@ -4373,6 +5559,23 @@ function buildStrategyReport(teamKey, results, fmt) {
 
   var pilotPlan = buildPilotPlan(team, leadSystem, trends, format);
   var matchupWarnings = buildMatchupWarnings(team, results, format);
+  var matchupGaps = Object.entries(results || {}).map(function(pair){
+    var res = pair[1] || {};
+    var n = (res.wins || 0) + (res.losses || 0) + (res.draws || 0);
+    var wr = n > 0 ? (res.wins || 0) / n : 0;
+    var opp = (typeof TEAMS !== 'undefined' && TEAMS[pair[0]]) ? TEAMS[pair[0]] : null;
+    return {
+      oppKey: pair[0],
+      name: opp && opp.name ? opp.name : pair[0],
+      archetype: (opp && typeof inferPlaystyle === 'function') ? (inferPlaystyle(opp.members || []) || '') : '',
+      n: n,
+      wins: res.wins || 0,
+      losses: res.losses || 0,
+      draws: res.draws || 0,
+      win_rate: wr
+    };
+  }).filter(function(row){ return row.n >= 3; })
+    .sort(function(a, b){ return a.win_rate - b.win_rate; });
 
   // Confidence tier — total games sampled
   var totalGames = 0;
@@ -4380,6 +5583,17 @@ function buildStrategyReport(teamKey, results, fmt) {
   var confidenceTier = totalGames < 20 ? 'low' : totalGames < 100 ? 'moderate' : totalGames < 500 ? 'high' : 'elite';
 
   var summary = buildCoachingSummary(coachingRules, identity, elite);
+  var weaknessDashboard = buildWeaknessDashboard(
+    team,
+    results || {},
+    format,
+    identity,
+    leadSystem,
+    trends,
+    deadMoves,
+    matchupWarnings
+  );
+  weaknessDashboard.matchup_gaps = matchupGaps;
 
   return {
     schema_version: 1,
@@ -4395,6 +5609,7 @@ function buildStrategyReport(teamKey, results, fmt) {
     elite_decision_analysis: elite,
     pilot_plan: pilotPlan,
     matchup_warnings: matchupWarnings,
+    weakness_dashboard: weaknessDashboard,
     coaching_notes: {
       how_team_wants_to_win: identity.primary_win_condition,
       common_mistakes: coachingRules.slice(0,3).map(function(r){ return r.id; }),
@@ -4414,6 +5629,15 @@ function buildStrategyReport(teamKey, results, fmt) {
     },
     coaching_summary: summary
   };
+}
+
+function buildStrategyReport(teamKey, results, fmt) {
+  var cacheKey = _strategyReportCacheKey(teamKey, results, fmt);
+  var cached = _strategyReportCacheGet(cacheKey);
+  if (cached) return cached;
+  var report = _buildStrategyReportUncached(teamKey, results, fmt);
+  if (report) _strategyReportCacheSet(cacheKey, report);
+  return report;
 }
 
 // ---------- PERSISTENCE + EVOLUTION -----------------------------------
@@ -4461,7 +5685,7 @@ function t9j16AutoSave() {
     if (!ChampionsSim.state.lastResults || !Object.keys(ChampionsSim.state.lastResults).length) return;
     var fmt = (typeof currentFormat !== 'undefined') ? currentFormat : 'doubles';
     evolveReport(currentPlayerKey, ChampionsSim.state.lastResults, fmt);
-  } catch(e) { console.warn('[T9j.16] autosave skipped:', e && e.message); }
+  } catch(e) { UILog.warn('autosave skipped', e); }
 }
 
 
@@ -5498,6 +6722,8 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   var identity = csTeamIdentityV2(team, results, format);
   var leadSystem = buildLeadSystem(results, members);
   var gaps = findCoverageGaps(members);
+  var deadMoves = findDeadMoves(results, members);
+  var matchupWarnings = buildMatchupWarnings(team, results, format);
   var leadGuide = csTop3Leads(team, identity, results, format);
   var report_card = csTierAndScore(team, identity, leadSystem, gaps, results, sample);
   var moveLines = csMoveLines(team, identity, leadGuide);
@@ -5509,6 +6735,7 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   var threats = csTopThreats(team);
   var risk = csRiskProfile(team, report_card);
   var trend = csTrendAnalysisV2(team, results);
+  var weaknessDashboard = buildWeaknessDashboard(team, results, format, identity, leadSystem, trend, deadMoves, matchupWarnings);
 
   var summary = report_card.tier + '-tier ' + identity.playstyle + '. ' +
     'Win path: ' + identity.primary_win_condition + '. ' +
@@ -5531,9 +6758,11 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
     move_lines: moveLines,
     mistakes_to_avoid: mistakes,
     risk_profile: risk,
+    matchup_warnings: matchupWarnings,
     trend_analysis: trend,
     skill_coaching: skill,
     stress_test: stress,
+    weakness_dashboard: weaknessDashboard,
     coaching_summary: summary
   };
 }
@@ -5601,7 +6830,7 @@ function renderStrategyTab(teamKey) {
   }
   // Phase 3: persist freshly-built reports so the next page load paints instantly.
   if (!fromCache) {
-    try { csSaveReport(teamKey, report); } catch(e) { console.warn('[Phase3] save failed:', e && e.message); }
+    try { csSaveReport(teamKey, report); } catch(e) { UILog.warn('strategy report save failed', e); }
   }
   // Stash for tests / inspection
   ChampionsSim.state.lastStrategyReport = report;
@@ -5636,7 +6865,21 @@ function renderStrategyTab(teamKey) {
     if (_history && typeof csRenderPhase4cSections === 'function') {
       html += csRenderPhase4cSections(_history, teamKey, team);
     }
-  } catch (e) { console.warn('[Phase4b] banner render failed:', e && e.message); }
+    if (_history && typeof csRenderPolicyAuditSection === 'function') {
+      html += csRenderPolicyAuditSection(_history);
+    }
+    // Phase 4d: surface best candidate + alternatives for the currently
+    // selected opponent. Kept low-budget in the tab render; deeper sweeps can
+    // request a larger simsPerBranch explicitly.
+    if (typeof solveThreatResponse === 'function' && typeof renderThreatResponseCard === 'function') {
+      var _oppSel = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+      var _oppKey = (_oppSel && _oppSel.value && TEAMS[_oppSel.value]) ? _oppSel.value : Object.keys(TEAMS).filter(function(k){ return k !== teamKey; })[0];
+      if (_oppKey) html += renderThreatResponseCard(solveThreatResponse(teamKey, _oppKey, { simsPerBranch: 30, rngSeed: 'strategy-tab' }));
+    }
+    if (report && typeof csRenderWeaknessDashboard === 'function') {
+      html += csRenderWeaknessDashboard(report);
+    }
+  } catch (e) { UILog.warn('banner render failed', e); }
 
   // Section 1: Team report card
   html += '<section class="cs-section"><h3 class="cs-h3">Team Report Card ' + _csSourceChip(csLabelSim()) + '</h3>';
@@ -5811,6 +7054,9 @@ function renderStrategyTab(teamKey) {
   html += '</section>';
 
   host.innerHTML = html;
+  if (_history && typeof csWireLeadPairTableSort === 'function') {
+    csWireLeadPairTableSort(host, teamKey);
+  }
 
   // Apply Evidence toggle state on initial paint
   _csApplyEvidenceVisibility();
@@ -5866,7 +7112,7 @@ function _csPersistRead() {
     if (!parsed.reports) parsed.reports = {};
     return parsed;
   } catch (e) {
-    console.warn('[Phase3] persistence read failed:', e && e.message);
+    UILog.warn('persistence read failed', e);
     return { schema_version: CS_PERSIST_SCHEMA, reports: {} };
   }
 }
@@ -5888,9 +7134,9 @@ function _csPersistWrite(store) {
       try {
         if (typeof Storage !== 'undefined') Storage.set(CS_PERSIST_KEY, store);
         return true;
-      } catch (e2) { console.warn('[Phase3] still over quota after purge:', e2 && e2.message); }
+      } catch (e2) { UILog.warn('still over quota after purge', e2); }
     } else {
-      console.warn('[Phase3] persistence write failed:', e && e.message);
+      UILog.warn('persistence write failed', e);
     }
     return false;
   }
@@ -6028,7 +7274,7 @@ function _csSimLogRead() {
     if (!Array.isArray(parsed.entries)) parsed.entries = [];
     return parsed;
   } catch (e) {
-    console.warn('[Phase4a] simlog read failed, resetting:', e && e.message);
+    UILog.warn('simlog read failed; resetting', e);
     return { schema_version: CS_SIMLOG_SCHEMA, entries: [] };
   }
 }
@@ -6044,14 +7290,14 @@ function _csSimLogWrite(store) {
         var cut = Math.floor(store.entries.length * 0.25);
         if (cut > 0) store.entries = store.entries.slice(cut);
         if (typeof Storage !== 'undefined') Storage.set(CS_SIMLOG_KEY, store);
-        console.warn('[Phase4a] simlog: purged oldest 25% after quota error');
+        UILog.warn('simlog purged oldest entries after quota error', { percent: 25 });
         return true;
       } catch (e2) {
-        console.error('[Phase4a] simlog write failed even after purge:', e2 && e2.message);
+        UILog.error('simlog write failed even after purge', e2);
         return false;
       }
     }
-    console.warn('[Phase4a] simlog write failed:', e && e.message);
+    UILog.warn('simlog write failed', e);
     return false;
   }
 }
@@ -6145,7 +7391,7 @@ function csSimLogAppendSeries(opts) {
     try { if (typeof csInvalidateTeamHistory === 'function') csInvalidateTeamHistory(opts.playerKey); } catch (_e) {}
     return ok;
   } catch (e) {
-    console.warn('[Phase4a] simlog append failed:', e && e.message);
+    UILog.warn('simlog append failed', e);
     return false;
   }
 }
@@ -6275,6 +7521,8 @@ var CS_PHASE4C = {
   CONF_HIGH_MIN:         50,   // n >= 50 -> 'high'
   EFFECT_SIZE_Z:         1.96  // two-sided 95% CI
 };
+
+var CS_LEAD_PAIR_TABLE_SORT = 'wr_desc';
 
 // csConfidenceBadge(n, winRate?) -> { tier, reason }
 //
@@ -6420,6 +7668,98 @@ function csComputeLeadPerformance(games) {
   return rows.slice(0, CS_PHASE4C.LEAD_DISPLAY_TOP);
 }
 
+function csBuildLeadPairTable(games, teamKey) {
+  var out = [];
+  if (!Array.isArray(games) || !games.length) return out;
+
+  var byPair = {};
+  games.forEach(function(g){
+    var lead = (g.leads && Array.isArray(g.leads.player)) ? g.leads.player.slice().sort() : [];
+    if (!lead.length) return;
+    var oppKey = g.oppKey || 'unknown';
+    var key = oppKey + '::' + lead.join(' + ');
+    if (!byPair[key]) {
+      byPair[key] = {
+        matchup_key: oppKey,
+        matchup_name: (typeof TEAMS !== 'undefined' && TEAMS[oppKey] && TEAMS[oppKey].name) ? TEAMS[oppKey].name : oppKey,
+        lead: lead.slice(),
+        n: 0, w: 0, l: 0
+      };
+    }
+    if (g.result === 'win') {
+      byPair[key].n++; byPair[key].w++;
+    } else if (g.result === 'loss') {
+      byPair[key].n++; byPair[key].l++;
+    }
+  });
+
+  out = Object.keys(byPair).map(function(k) {
+    var row = byPair[k];
+    var wr = row.n > 0 ? row.w / row.n : 0;
+    var conf = csConfidenceBadge(row.n, wr);
+    return {
+      matchup_key: row.matchup_key,
+      matchup_name: row.matchup_name,
+      lead: row.lead,
+      lead_label: row.lead.join(' + '),
+      n: row.n,
+      w: row.w,
+      l: row.l,
+      win_rate: wr,
+      confidence: conf.tier,
+      confidence_reason: conf.reason
+    };
+  }).filter(function(r){ return r.n >= CS_PHASE4C.LEAD_MIN_GAMES; });
+
+  return out;
+}
+
+function csSortLeadPairTable(rows, sortKey) {
+  var arr = Array.isArray(rows) ? rows.slice() : [];
+  var mode = sortKey || CS_LEAD_PAIR_TABLE_SORT;
+  arr.sort(function(a, b) {
+    if (mode === 'sample_desc') {
+      if ((b.n || 0) !== (a.n || 0)) return (b.n || 0) - (a.n || 0);
+      if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+      return (a.matchup_name || '').localeCompare(b.matchup_name || '');
+    }
+    if (mode === 'matchup_asc') {
+      var mm = (a.matchup_name || '').localeCompare(b.matchup_name || '');
+      if (mm !== 0) return mm;
+      if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+      return (b.n || 0) - (a.n || 0);
+    }
+    if (mode === 'lead_asc') {
+      var ll = (a.lead_label || '').localeCompare(b.lead_label || '');
+      if (ll !== 0) return ll;
+      if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+      return (b.n || 0) - (a.n || 0);
+    }
+    if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+    if ((b.n || 0) !== (a.n || 0)) return (b.n || 0) - (a.n || 0);
+    return (a.matchup_name || '').localeCompare(b.matchup_name || '');
+  });
+  return arr;
+}
+
+function csSetLeadPairTableSort(sortKey, teamKey) {
+  CS_LEAD_PAIR_TABLE_SORT = sortKey || 'wr_desc';
+  if (typeof renderStrategyTab === 'function') {
+    renderStrategyTab(teamKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'));
+  }
+}
+
+function csWireLeadPairTableSort(host, teamKey) {
+  if (!host) return;
+  var buttons = host.querySelectorAll('[data-cs-lead-sort]');
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function(ev) {
+      ev.preventDefault();
+      csSetLeadPairTableSort(this.getAttribute('data-cs-lead-sort'), teamKey);
+    });
+  }
+}
+
 // csDetectLossConditions(games, teamKey) -> array
 //
 // Surfaces conditions that show up disproportionately in losses. Lift =
@@ -6559,12 +7899,20 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.phase4c.csConfidenceBadge = csConfidenceBadge;
   ChampionsSim.phase4c.csDetectDeadMoves = csDetectDeadMoves;
   ChampionsSim.phase4c.csComputeLeadPerformance = csComputeLeadPerformance;
+  ChampionsSim.phase4c.csBuildLeadPairTable = csBuildLeadPairTable;
+  ChampionsSim.phase4c.csSortLeadPairTable = csSortLeadPairTable;
+  ChampionsSim.phase4c.csSetLeadPairTableSort = csSetLeadPairTableSort;
+  ChampionsSim.phase4c.csWireLeadPairTableSort = csWireLeadPairTableSort;
   ChampionsSim.phase4c.csDetectLossConditions = csDetectLossConditions;
   ChampionsSim.phase4c.CS_PHASE4C = CS_PHASE4C;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csConfidenceBadge', csConfidenceBadge);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csDetectDeadMoves', csDetectDeadMoves);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csComputeLeadPerformance', csComputeLeadPerformance);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildLeadPairTable', csBuildLeadPairTable);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSortLeadPairTable', csSortLeadPairTable);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSetLeadPairTableSort', csSetLeadPairTableSort);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csWireLeadPairTableSort', csWireLeadPairTableSort);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csDetectLossConditions', csDetectLossConditions);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('CS_PHASE4C', CS_PHASE4C);
 
@@ -6671,6 +8019,9 @@ function computeTeamHistory(teamKey) {
     return { leadPair: pair.split(' / '), n: b.n, wins: b.w, win_rate: wr,
              avg_turns: b.n > 0 ? b.turnsSum / b.n : 0, verdict: verdict };
   }).sort(function(a,b){ return b.n - a.n; });
+
+  var lead_pair_table_v2 = [];
+  try { lead_pair_table_v2 = csBuildLeadPairTable(games, teamKey); } catch (_e) { lead_pair_table_v2 = []; }
 
   // Matchup failures (win_rate < 0.35 at n>=3)
   var matchup_failures = Object.keys(byOpp).map(function(k){
@@ -6784,6 +8135,34 @@ function computeTeamHistory(teamKey) {
   try { dead_moves_v2       = csDetectDeadMoves(games, teamKey); }     catch (_e) { dead_moves_v2 = []; }
   try { loss_conditions_v2  = csDetectLossConditions(games, teamKey); } catch (_e) { loss_conditions_v2 = []; }
   var team_confidence_v2 = csConfidenceBadge(total_battles, win_rate);
+  var fake_good_plays = [];
+  var player_behavior_patterns_v2 = [];
+  var policy_output_audit = { fakeGoodCount: 0, flagged: [] };
+  var coaching_delta = null;
+  try { fake_good_plays = detectFakeGoodPlays(games, teamKey); } catch (_e) { fake_good_plays = []; }
+  try { player_behavior_patterns_v2 = detectPlayerBehaviorPatterns(games, teamKey); } catch (_e) { player_behavior_patterns_v2 = []; }
+  try {
+    var firstCut = Math.max(0, total_battles - 100);
+    var priorGames = games.slice(0, firstCut || Math.floor(games.length / 2));
+    var priorHistory = {
+      lead_performance_v2: (typeof csComputeLeadPerformance === 'function') ? csComputeLeadPerformance(priorGames) : [],
+      dead_moves_v2: (typeof csDetectDeadMoves === 'function') ? csDetectDeadMoves(priorGames, teamKey) : [],
+      loss_conditions_v2: (typeof csDetectLossConditions === 'function') ? csDetectLossConditions(priorGames, teamKey) : [],
+      total_battles: priorGames.length
+    };
+    var currentAdvice = {
+      recommended_line: (lead_performance_v2[0] && lead_performance_v2[0].lead) ? lead_performance_v2[0].lead.join(' + ') : '',
+      dominant_loss_condition: loss_conditions_v2[0] ? loss_conditions_v2[0].pattern : null,
+      dead_moves: dead_moves_v2
+    };
+    coaching_delta = auditCoachingDelta(_csPolicyAdviceFromHistory(priorHistory), currentAdvice, priorGames.length, total_battles);
+    var adviceStrings = [];
+    if (currentAdvice.recommended_line) adviceStrings.push('Lead ' + currentAdvice.recommended_line + ' as the current best candidate.');
+    if (loss_conditions_v2[0]) adviceStrings.push('Address ' + loss_conditions_v2[0].pattern + ' before forcing damage.');
+    policy_output_audit = auditPolicyOutput(adviceStrings);
+  } catch (_e) {
+    coaching_delta = auditCoachingDelta({}, {}, 0, total_battles);
+  }
 
   var history = {
     total_battles: total_battles,
@@ -6798,18 +8177,27 @@ function computeTeamHistory(teamKey) {
       rng_dependency: rng_dependency
     },
     lead_performance: lead_performance,
+    lead_pair_table_v2: lead_pair_table_v2,
     matchup_failures: matchup_failures,
     common_loss_conditions: common_loss_conditions,
     dead_moves: dead_moves,
     protect_peaks: protectPeaks,
     record_total: record_total,
     record_by_archetype: record_by_archetype_arr,
-    player_behavior_patterns: [],  // Phase 4e fills this
+    player_behavior_patterns: player_behavior_patterns_v2,
     // Phase 4c additions (additive, no replace).
     lead_performance_v2: lead_performance_v2,
     dead_moves_v2:       dead_moves_v2,
     loss_conditions_v2:  loss_conditions_v2,
-    team_confidence_v2:  team_confidence_v2
+    team_confidence_v2:  team_confidence_v2,
+    // Phase 4e additions.
+    policy_audit: {
+      fake_good_plays: fake_good_plays,
+      player_behavior_patterns: player_behavior_patterns_v2,
+      policy_output_audit: policy_output_audit,
+      coaching_delta: coaching_delta,
+      fakeGoodCount: (policy_output_audit.fakeGoodCount || 0) + fake_good_plays.length
+    }
   };
 
   _csHistoryCache[teamKey] = { ts: Date.now(), history: history };
@@ -6966,6 +8354,43 @@ function csRenderPhase4cSections(history, teamKey, team) {
   }
   html += _section('Lead Performance', leadHeader, leadBody);
 
+  // ---- Section 1b: Lead Pair Table by Matchup ---------------------------
+  var leadPairRows = history.lead_pair_table_v2 || [];
+  var leadPairHeader = '';
+  var leadPairBody = '';
+  if (n < CS_PHASE4C.LEAD_MIN_GAMES) {
+    leadPairHeader = _badgeHtml('none', 'need ' + CS_PHASE4C.LEAD_MIN_GAMES + '+ games');
+    leadPairBody = _emptyHtml('Run ' + CS_PHASE4C.LEAD_MIN_GAMES + '+ sims to surface matchup-specific lead pairs.');
+  } else if (!leadPairRows.length) {
+    leadPairHeader = _badgeHtml('none', 'no matchup lead pairs yet');
+    leadPairBody = _emptyHtml('No matchup/lead pair has reached the threshold yet.');
+  } else {
+    var sortKey = CS_LEAD_PAIR_TABLE_SORT || 'wr_desc';
+    var sortedPairs = csSortLeadPairTable(leadPairRows, sortKey);
+    leadPairHeader = '<span class="cs-detector-count">' + sortedPairs.length + ' tracked</span>' + _badgeHtml(_dominantTier(sortedPairs));
+    leadPairBody += '<div class="cs-detector-toolbar cs-leadpair-toolbar">';
+    leadPairBody +=   '<button class="btn-secondary cs-leadpair-sort' + (sortKey === 'wr_desc' ? ' active' : '') + '" type="button" data-cs-lead-sort="wr_desc">Sort by WR</button>';
+    leadPairBody +=   '<button class="btn-secondary cs-leadpair-sort' + (sortKey === 'sample_desc' ? ' active' : '') + '" type="button" data-cs-lead-sort="sample_desc">Sort by sample</button>';
+    leadPairBody +=   '<button class="btn-secondary cs-leadpair-sort' + (sortKey === 'matchup_asc' ? ' active' : '') + '" type="button" data-cs-lead-sort="matchup_asc">Sort by matchup</button>';
+    leadPairBody +=   '<button class="btn-secondary cs-leadpair-sort' + (sortKey === 'lead_asc' ? ' active' : '') + '" type="button" data-cs-lead-sort="lead_asc">Sort by lead</button>';
+    leadPairBody += '</div>';
+    leadPairBody += '<div class="cs-detector-table">';
+    leadPairBody +=   '<div class="cs-detector-row cs-detector-head">';
+    leadPairBody +=     '<span>Matchup</span><span>Lead pair</span><span>W-L</span><span>WR</span><span>Sample</span>';
+    leadPairBody +=   '</div>';
+    sortedPairs.forEach(function(r){
+      leadPairBody += '<div class="cs-detector-row">';
+      leadPairBody +=   '<span class="cs-detector-cell-desc">' + _csEsc(r.matchup_name || r.matchup_key || '-') + '</span>';
+      leadPairBody +=   '<span class="cs-detector-cell-lead">' + _csEsc(r.lead_label || '-') + '</span>';
+      leadPairBody +=   '<span>' + r.w + '-' + r.l + '</span>';
+      leadPairBody +=   '<span>' + Math.round((r.win_rate || 0) * 100) + '%</span>';
+      leadPairBody +=   '<span title="' + _csEsc(r.confidence_reason || '') + '">' + r.n + '</span>';
+      leadPairBody += '</div>';
+    });
+    leadPairBody += '</div>';
+  }
+  html += _section('Lead Pair Win-Rate Table', leadPairHeader, leadPairBody);
+
   // ---- Section 2: Likely Loss Patterns ----------------------------------
   var lossHeader = '';
   var lossBody = '';
@@ -7058,6 +8483,607 @@ if (typeof ChampionsSim !== 'undefined') {
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderPhase4cSections', csRenderPhase4cSections);
 
+// Phase 4d (Refs PHASE4D_THREAT_RESPONSE_SPEC.md) - threat response solver.
+// Engine-light: explores four lead/bring branches by calling simulateBattle()
+// with constrained bring lists, then classifies the resulting candidate lines.
+var CS_PHASE4D_BRANCHES = ['safe', 'aggressive', 'counter', 'defensive'];
+var CS_PHASE4D_CACHE = {};
+
+function _cs4dHashSeed(seed, branchId, idx) {
+  var s = String(seed === null || seed === undefined ? 'phase4d' : seed) + ':' + branchId + ':' + idx;
+  var h = 2166136261 >>> 0;
+  for (var i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return [h, (h ^ 0x9e3779b9) >>> 0, Math.imul(h || 1, 2246822519) >>> 0, (h + 0x85ebca6b) >>> 0];
+}
+
+function _cs4dMembers(teamKey) {
+  var team = (typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null;
+  return team && Array.isArray(team.members) ? team.members.slice() : [];
+}
+
+function _cs4dTypes(mon) {
+  if (!mon) return [];
+  if (Array.isArray(mon.types) && mon.types.length) return mon.types;
+  if (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[mon.name]) return POKEMON_TYPES_DB[mon.name];
+  if (typeof BASE_STATS !== 'undefined' && BASE_STATS[mon.name] && BASE_STATS[mon.name].types) return BASE_STATS[mon.name].types;
+  return [];
+}
+
+function _cs4dBase(mon) {
+  return (typeof BASE_STATS !== 'undefined' && mon && BASE_STATS[mon.name]) ? BASE_STATS[mon.name] : {};
+}
+
+function _cs4dOffenseScore(mon) {
+  var b = _cs4dBase(mon);
+  return Math.max(b.atk || 0, b.spa || 0) + (b.spe || 0) * 0.55;
+}
+
+function _cs4dBulkScore(mon) {
+  var b = _cs4dBase(mon);
+  var moves = (mon && mon.moves || []).join(',');
+  var support = /Protect|Follow Me|Rage Powder|Reflect|Light Screen|Aurora Veil|Recover|Roost|Life Dew|Will-O-Wisp|Parting Shot|Fake Out/i.test(moves) ? 45 : 0;
+  return (b.hp || 0) + (b.def || 0) + (b.spd || 0) + support;
+}
+
+function _cs4dSpeedScore(mon) {
+  var b = _cs4dBase(mon);
+  var moves = (mon && mon.moves || []).join(',');
+  var speed = /Tailwind|Trick Room|Icy Wind|Thunder Wave|Electroweb|Fake Out/i.test(moves) ? 80 : 0;
+  return (b.spe || 0) + speed;
+}
+
+function _cs4dTypeCounterScore(mon, oppMons) {
+  var score = _cs4dOffenseScore(mon) * 0.1;
+  var moves = mon && mon.moves || [];
+  var oppTypes = [];
+  oppMons.forEach(function(o){ oppTypes = oppTypes.concat(_cs4dTypes(o)); });
+  moves.forEach(function(move){
+    var mt = (typeof MOVE_TYPES !== 'undefined' && MOVE_TYPES[move]) ? MOVE_TYPES[move] : null;
+    if (!mt || typeof TYPE_CHART === 'undefined' || !TYPE_CHART[mt]) return;
+    oppTypes.forEach(function(t){
+      var mult = TYPE_CHART[mt][t];
+      if (mult >= 2) score += 35;
+      else if (mult === 0) score -= 20;
+      else if (mult < 1) score -= 6;
+    });
+  });
+  return score;
+}
+
+function _cs4dPickPair(members, scorer) {
+  var best = null;
+  for (var i = 0; i < members.length; i++) {
+    for (var j = i + 1; j < members.length; j++) {
+      var pair = [members[i], members[j]];
+      var score = scorer(pair);
+      if (!best || score > best.score) best = { pair: pair, score: score };
+    }
+  }
+  return best ? best.pair : members.slice(0, 2);
+}
+
+function _cs4dBringForLead(members, lead, scorer, bringCount) {
+  var names = {};
+  lead.forEach(function(m){ names[m.name] = true; });
+  var rest = members.filter(function(m){ return !names[m.name]; });
+  rest.sort(function(a,b){ return scorer(b) - scorer(a); });
+  return lead.concat(rest).slice(0, bringCount || 4).map(function(m){ return m.name; });
+}
+
+function _cs4dResolveBranch(teamKey, oppKey, branchId) {
+  var members = _cs4dMembers(teamKey);
+  var oppMembers = _cs4dMembers(oppKey);
+  var bringCount = (typeof currentFormat !== 'undefined' && currentFormat === 'singles') ? 3 : 4;
+  var history = null;
+  try { history = (typeof computeTeamHistory === 'function') ? computeTeamHistory(teamKey) : null; } catch (_e) {}
+  var data = 'meta-only';
+  var lead;
+  if (branchId === 'safe' && history && Array.isArray(history.lead_performance) && history.lead_performance[0]) {
+    var hLead = history.lead_performance[0].lead || [];
+    lead = hLead.map(function(n){ return members.find(function(m){ return m.name === n; }); }).filter(Boolean);
+    if (lead.length === 2) data = 'phase4c';
+  }
+  if (!lead || lead.length !== 2) {
+    if (branchId === 'aggressive') {
+      lead = _cs4dPickPair(members, function(pair){ return _cs4dOffenseScore(pair[0]) + _cs4dOffenseScore(pair[1]); });
+    } else if (branchId === 'counter') {
+      var likelyOpp = oppMembers.slice(0, 2);
+      lead = _cs4dPickPair(members, function(pair){ return _cs4dTypeCounterScore(pair[0], likelyOpp) + _cs4dTypeCounterScore(pair[1], likelyOpp); });
+    } else if (branchId === 'defensive') {
+      lead = _cs4dPickPair(members, function(pair){ return _cs4dBulkScore(pair[0]) + _cs4dBulkScore(pair[1]); });
+    } else {
+      lead = _cs4dPickPair(members, function(pair){ return _cs4dSpeedScore(pair[0]) + _cs4dBulkScore(pair[1]); });
+    }
+  }
+  var fillScore = branchId === 'aggressive' ? _cs4dOffenseScore :
+    branchId === 'defensive' ? _cs4dBulkScore :
+    branchId === 'counter' ? function(m){ return _cs4dTypeCounterScore(m, oppMembers.slice(0, 2)); } :
+    _cs4dSpeedScore;
+  return {
+    id: branchId,
+    lead: lead.map(function(m){ return m.name; }),
+    bring: _cs4dBringForLead(members, lead, fillScore, bringCount),
+    data: data
+  };
+}
+
+function classifyLine(line) {
+  var names = Array.isArray(line) ? line : (line && (line.lead || line.members)) || [];
+  var members = names.map(function(n){
+    if (typeof n === 'object') return n;
+    if (typeof TEAMS === 'undefined') return null;
+    for (var k in TEAMS) {
+      var found = (TEAMS[k].members || []).find(function(m){ return m.name === n; });
+      if (found) return found;
+    }
+    return null;
+  }).filter(Boolean);
+  var moves = members.map(function(m){ return (m.moves || []).join(','); }).join(',');
+  var abilities = members.map(function(m){ return m.ability || ''; }).join(',');
+  if (/Tailwind|Icy Wind|Thunder Wave|Electroweb/i.test(moves)) return 'SPEED_CONTROL';
+  if (/Trick Room/i.test(moves)) return 'TRICK_ROOM';
+  if (/Drought|Drizzle|Sand Stream|Snow Warning|Sunny Day|Rain Dance|Sandstorm|Snowscape/i.test(moves + ',' + abilities)) return 'WEATHER_SETTER';
+  if (/Fake Out|Parting Shot|U-turn|Volt Switch|Flip Turn|Follow Me|Rage Powder/i.test(moves)) return 'UTILITY_PIVOT';
+  return 'ATTACKER_CORE';
+}
+
+function classifyThreatBranch(branch) {
+  var wr = branch && typeof branch.win_rate === 'number' ? branch.win_rate : 0;
+  var n = branch && branch.n || 0;
+  var cs = branch && branch.consistency_score || {};
+  var variance = typeof cs.variance === 'number' ? cs.variance : 1;
+  var rngDep = typeof cs.rng_dependency === 'number' ? cs.rng_dependency : 0;
+  var z = n > 0 ? Math.abs((wr - 0.5) / Math.sqrt(0.25 / n)) : 0;
+  if (wr >= 0.65 && n >= 200 && z >= 1.96 && variance <= 0.20) return 'strong';
+  if (wr >= 0.55 && variance <= 0.30) return 'stable';
+  if (wr >= 0.50 || variance > 0.30 || rngDep > 0.60) return 'volatile';
+  return 'losing';
+}
+
+function _cs4dConsistency(logs) {
+  var turns = logs.map(function(g){ return g.turns || 0; });
+  var n = turns.length || 1;
+  var mean = turns.reduce(function(a,b){ return a + b; }, 0) / n || 1;
+  var variance = turns.reduce(function(a,b){ return a + Math.pow(b - mean, 2); }, 0) / n;
+  var cv = Math.min(1, Math.sqrt(variance) / mean);
+  var rngHits = logs.filter(function(g){
+    var text = Array.isArray(g.log) ? g.log.join(' ') : '';
+    return /critical|missed|flinch|paralysed|frozen|thaw|burned|poisoned/i.test(text);
+  }).length;
+  return {
+    rng_dependency: logs.length ? Math.round((rngHits / logs.length) * 100) / 100 : 0,
+    variance: Math.round(cv * 100) / 100
+  };
+}
+
+function _cs4dCompareBranches(a, b) {
+  var rank = { strong: 4, stable: 3, volatile: 2, losing: 1 };
+  var ar = rank[a.classification] || 0;
+  var br = rank[b.classification] || 0;
+  if (ar !== br) return br - ar;
+  if (a.low_sample !== b.low_sample) return a.low_sample ? 1 : -1;
+  if (a.win_rate !== b.win_rate) return b.win_rate - a.win_rate;
+  var av = a.consistency_score ? a.consistency_score.variance : 1;
+  var bv = b.consistency_score ? b.consistency_score.variance : 1;
+  if (av !== bv) return av - bv;
+  return String(a.id).localeCompare(String(b.id));
+}
+
+function solveThreatResponse(teamKey, oppKey, opts) {
+  opts = opts || {};
+  var branches = opts.branches || CS_PHASE4D_BRANCHES;
+  var simsPerBranch = Math.max(1, opts.simsPerBranch || 30);
+  var cacheKey = [teamKey, oppKey, simsPerBranch, opts.rngSeed || '', (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles')].join('|');
+  if (!opts.noCache && CS_PHASE4D_CACHE[cacheKey]) return CS_PHASE4D_CACHE[cacheKey];
+  if (typeof TEAMS === 'undefined' || !TEAMS[teamKey] || !TEAMS[oppKey] || typeof simulateBattle !== 'function') return null;
+
+  var start = Date.now();
+  var budget = opts.budgetMsTotal || 30000;
+  var out = [];
+  branches.forEach(function(branchId){
+    var branch = _cs4dResolveBranch(teamKey, oppKey, branchId);
+    var w = 0, l = 0, d = 0, logs = [];
+    for (var i = 0; i < simsPerBranch; i++) {
+      if (Date.now() - start > budget && i > 0) break;
+      var battle = simulateBattle(TEAMS[teamKey], TEAMS[oppKey], {
+        format: (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles'),
+        seed: _cs4dHashSeed(opts.rngSeed, branchId, i),
+        playerBring: branch.bring,
+        playerLeads: branch.lead
+      });
+      if (battle.result === 'win') w++;
+      else if (battle.result === 'loss') l++;
+      else d++;
+      if (logs.length < 20) logs.push(battle);
+    }
+    var n = w + l + d;
+    var wr = n ? w / n : 0;
+    branch.n = n;
+    branch.w = w;
+    branch.l = l;
+    branch.d = d;
+    branch.win_rate = Math.round(wr * 1000) / 1000;
+    branch.consistency_score = _cs4dConsistency(logs);
+    branch.classification = classifyThreatBranch(branch);
+    branch.line_label = classifyLine(branch.lead);
+    branch.low_sample = n < 30;
+    branch.confidence = (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(n, wr) : { tier: n < 20 ? 'low' : 'med', reason: 'n=' + n };
+    out.push(branch);
+  });
+
+  var eligible = out.filter(function(b){ return !b.low_sample; });
+  var sorted = (eligible.length ? eligible : out.slice()).sort(_cs4dCompareBranches);
+  var best = sorted[0] ? sorted[0].id : null;
+  var result = {
+    teamKey: teamKey,
+    oppKey: oppKey,
+    population: 'ai_vs_ai_greedy',
+    branches: out,
+    best_candidate: best,
+    recommended: best,
+    alts: out.filter(function(b){ return b.id !== best; }).slice(0, 3),
+    confidence: sorted[0] ? sorted[0].win_rate : 0,
+    generatedAt: Date.now()
+  };
+  if (!opts.noCache) CS_PHASE4D_CACHE[cacheKey] = result;
+  return result;
+}
+
+function queueThreatResponseSolve(fn) {
+  if (typeof requestIdleCallback === 'function') return requestIdleCallback(fn);
+  return setTimeout(fn, 0);
+}
+
+function invalidateThreatResponseCache() {
+  CS_PHASE4D_CACHE = {};
+}
+
+function renderThreatResponseCard(result) {
+  if (!result || !Array.isArray(result.branches) || !result.branches.length) {
+    return '<section class="cs-section cs-phase4d-block"><h3 class="cs-h3">Threat Response</h3><p class="cs-no-data">Run sims to generate threat-response candidates.</p></section>';
+  }
+  var sorted = result.branches.slice().sort(_cs4dCompareBranches);
+  var best = sorted[0];
+  function pct(v) { return Math.round((v || 0) * 100) + '%'; }
+  function card(b, cls) {
+    var conf = b.confidence && b.confidence.tier ? b.confidence.tier : 'low';
+    return '<div class="cs-line-card ' + cls + '">' +
+      '<div class="cs-line-head"><strong>' + _csEsc(b.id) + '</strong> ' + _csChip(b.line_label, {kind:'playstyle'}) + ' ' + _csChip(b.classification, {kind: b.classification}) + '</div>' +
+      '<div><strong>Lead:</strong> ' + _csEsc((b.lead || []).join(' + ')) + '</div>' +
+      '<div><strong>Bring:</strong> ' + _csEsc((b.bring || []).join(', ')) + '</div>' +
+      '<div class="cs-line-meta">' + pct(b.win_rate) + ' over ' + b.n + ' sims &middot; confidence ' + _csEsc(conf) + ' &middot; ' + _csEsc(b.data) + '</div>' +
+      '</div>';
+  }
+  var html = '<section class="cs-section cs-phase4d-block"><h3 class="cs-h3">Threat Response <span class="cs-source cs-source-simulation_data"><span class="cs-source-label">sim data</span></span></h3>';
+  html += '<p class="cs-explain">Best candidate is measured against greedy AI simulation, not a directive.</p>';
+  html += card(best, 'cs-line-recommended');
+  html += '<details class="cs-line-alt-wrap"><summary>Alternatives</summary>';
+  sorted.filter(function(b){ return b.id !== best.id; }).forEach(function(b){ html += card(b, 'cs-line-alt'); });
+  html += '</details></section>';
+  return html;
+}
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.phase4d.solveThreatResponse = solveThreatResponse;
+  ChampionsSim.phase4d.classifyLine = classifyLine;
+  ChampionsSim.phase4d.classifyThreatBranch = classifyThreatBranch;
+  ChampionsSim.phase4d.queueThreatResponseSolve = queueThreatResponseSolve;
+  ChampionsSim.phase4d.invalidateThreatResponseCache = invalidateThreatResponseCache;
+  ChampionsSim.phase4d.renderThreatResponseCard = renderThreatResponseCard;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('solveThreatResponse', solveThreatResponse);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('classifyLine', classifyLine);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('classifyThreatBranch', classifyThreatBranch);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('queueThreatResponseSolve', queueThreatResponseSolve);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('invalidateThreatResponseCache', invalidateThreatResponseCache);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderThreatResponseCard', renderThreatResponseCard);
+
+// Phase 4e (Refs PHASE4E_POLICY_AUDIT_SPEC.md) - policy audit and T5 gate.
+var CS_PHASE4E_WARNING_TEXT = '⚠️ Some advice is based on static patterns — verify against your read of the opponent';
+var CS_PHASE4E_DISMISSED = false;
+
+function auditPolicyOutput(adviceArray) {
+  var flagged = [];
+  (adviceArray || []).forEach(function(advice){
+    var text = typeof advice === 'string' ? advice : (advice && (advice.text || advice.advice || advice.message)) || '';
+    var lower = text.toLowerCase();
+    var reason = null;
+    if (/speed[- ]?tie|coin ?flip|50\/50/.test(lower) && /strategy|plan|guarantee|safe|reliable|always/.test(lower)) {
+      reason = 'speed-tie coinflip presented as strategy';
+    } else if (/(trick room|tr\b).*(setter|hatterene|cresselia|dusclops|cofagrigus).*(ko|faint|down|gone|dead)|(?:ko|faint|down|gone|dead).*(trick room|tr\b).*(setter|hatterene|cresselia|dusclops|cofagrigus)/.test(lower)) {
+      reason = 'Trick Room advice issued when setter is already KO’d';
+    } else if (/(add|need|run|bring).*(coverage|answer|check).*(already covered|already have|redundant|covered slot)/.test(lower)) {
+      reason = 'type-coverage recommendation targets an already-covered slot';
+    } else if (/^(be aggressive|play aggressive|be more aggressive|pressure them|just attack)\.?$/.test(lower.trim()) ||
+               (/be aggressive|play aggressive/.test(lower) && !/with|by|because|into|against|lead|target|protect|switch/.test(lower))) {
+      reason = 'generic aggression advice has no actionable detail';
+    }
+    if (reason) flagged.push({ advice: text, reason: reason });
+  });
+  return { fakeGoodCount: flagged.length, flagged: flagged };
+}
+
+function detectFakeGoodPlays(simLog, teamKey) {
+  var games = simLog || [];
+  if (!Array.isArray(games) || games.length === 0) return [];
+  var counts = {};
+  function hit(pattern, idx) {
+    counts[pattern] = counts[pattern] || { pattern: pattern, occurrences: 0, example_games: [] };
+    counts[pattern].occurrences++;
+    if (counts[pattern].example_games.length < 3) counts[pattern].example_games.push(idx);
+  }
+  var wincon = null;
+  try {
+    var team = typeof TEAMS !== 'undefined' ? TEAMS[teamKey] : null;
+    var roles = team && (team.members || []).filter(function(m){ return /win|sweep|clean|closer/i.test((m.role || '') + ' ' + (m.item || '')); });
+    wincon = roles && roles[0] ? roles[0].name : null;
+  } catch (_e) {}
+  games.forEach(function(g, idx){
+    var text = Array.isArray(g.log) ? g.log.join(' ') : '';
+    var koEvents = g.koEvents || [];
+    var playerKOs = koEvents.filter(function(k){ return k.side === 'opponent' || k.bySide === 'player'; });
+    var playerLost = koEvents.some(function(k){ return k.side === 'player'; });
+    var trDropped = /trick room/i.test(text) || g.trTurns > 0 || g.lossPattern === 'tr_unanswered';
+    var twExpired = /tailwind (?:expired|petered|ended)/i.test(text) || g.twExpired;
+    var oppSetup = /dragon dance|calm mind|swords dance|nasty plot|trick room|tailwind/i.test(text) || g.lossPattern === 'setup_free';
+    var highDamageNoKo = g.damageDealtPct >= 0.30 && playerKOs.length === 0 && oppSetup;
+    if (playerKOs.length && trDropped) hit('ko_but_tr_dropped', idx);
+    if (playerKOs.length && twExpired) hit('ko_but_tw_expired', idx);
+    if (playerKOs.length && playerLost) hit('ko_but_position_lost', idx);
+    if (highDamageNoKo) hit('damage_no_progress', idx);
+    if (wincon && playerLost && text.indexOf(wincon) >= 0) hit('wincon_traded', idx);
+  });
+  return Object.keys(counts).map(function(k){
+    var row = counts[k];
+    var share = row.occurrences / games.length;
+    row.share_of_games = share;
+    row.sample_size = games.length;
+    row.severity = (share >= 0.30 && games.length >= 25) ? 'high' : (share >= 0.15 ? 'medium' : 'low');
+    row.confidence = (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(games.length, share) : { tier: games.length >= 25 ? 'med' : 'low' };
+    row.validation_status = 'unvalidated_simulation';
+    row.population = 'ai_vs_ai_greedy';
+    return row;
+  }).sort(function(a,b){ return b.occurrences - a.occurrences; });
+}
+
+function detectPlayerBehaviorPatterns(simLog, teamKey) {
+  var games = simLog || [];
+  if (!Array.isArray(games) || games.length === 0) return [];
+  var out = [];
+  function push(pattern, occurrences, desc) {
+    if (!occurrences) return;
+    var share = occurrences / games.length;
+    if (share < 0.25 && pattern !== 'lead_inconsistency') return;
+    out.push({
+      pattern: pattern,
+      occurrences: occurrences,
+      share_of_games: share,
+      severity: share >= 0.35 ? 'high' : share >= 0.25 ? 'medium' : 'low',
+      confidence: (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(games.length, share) : { tier: 'low' },
+      sample_size: games.length,
+      description: desc
+    });
+  }
+  var overprotect = games.filter(function(g){
+    var peaks = g.protectStreakMax || {};
+    return Object.keys(peaks).some(function(k){ return peaks[k] >= 3; });
+  }).length;
+  push('overprotect', overprotect, 'Protect was chained 3+ times in a game');
+
+  var setupFree = games.filter(function(g){
+    var text = Array.isArray(g.log) ? g.log.join(' ') : '';
+    return /dragon dance|calm mind|swords dance|nasty plot/i.test(text) && !(g.movesUsed && Object.keys(g.movesUsed).length);
+  }).length;
+  push('passive_against_setup', setupFree, 'Opponent setup went unchallenged');
+
+  var leadCounts = {};
+  games.forEach(function(g){
+    var lead = g.leads && g.leads.player ? g.leads.player.slice().sort().join(' + ') : '';
+    if (lead) leadCounts[lead] = (leadCounts[lead] || 0) + 1;
+  });
+  var leadVals = Object.keys(leadCounts).map(function(k){ return leadCounts[k]; });
+  if (games.length >= 30 && leadVals.length > 5 && Math.max.apply(Math, leadVals) < 8) {
+    out.push({
+      pattern: 'lead_inconsistency',
+      occurrences: leadVals.length,
+      share_of_games: leadVals.length / games.length,
+      severity: 'low',
+      confidence: (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(games.length) : { tier: 'med' },
+      sample_size: games.length,
+      description: 'No lead pair is becoming the default line'
+    });
+  }
+
+  var trTeam = false;
+  try {
+    var team = typeof TEAMS !== 'undefined' ? TEAMS[teamKey] : null;
+    trTeam = !!(team && (team.members || []).some(function(m){ return (m.moves || []).indexOf('Trick Room') >= 0; }));
+  } catch (_e) {}
+  if (trTeam) {
+    var trGames = games.filter(function(g){
+      var text = Array.isArray(g.log) ? g.log.join(' ') : '';
+      return /trick room/i.test(text) || g.trTurns > 0;
+    }).length;
+    if (games.length >= 10 && trGames / games.length < 0.60) {
+      out.push({
+        pattern: 'tr_setup_avoidance',
+        occurrences: games.length - trGames,
+        share_of_games: (games.length - trGames) / games.length,
+        severity: 'medium',
+        confidence: (typeof csConfidenceBadge === 'function') ? csConfidenceBadge(games.length) : { tier: 'med' },
+        sample_size: games.length,
+        description: 'Trick Room roster rarely sets Trick Room'
+      });
+    }
+  }
+  return out.sort(function(a,b){ return b.share_of_games - a.share_of_games; });
+}
+
+function auditCoachingDelta(adviceA, adviceB, sampleA, sampleB) {
+  adviceA = adviceA || {};
+  adviceB = adviceB || {};
+  var aDead = adviceA.dead_moves || [];
+  var bDead = adviceB.dead_moves || [];
+  function key(x) { return typeof x === 'string' ? x : ((x.owner || x.pokemon || '') + ':' + (x.move || x.name || '')); }
+  var aSet = {}, bSet = {};
+  aDead.map(key).forEach(function(k){ aSet[k] = true; });
+  bDead.map(key).forEach(function(k){ bSet[k] = true; });
+  var added = Object.keys(bSet).filter(function(k){ return !aSet[k]; });
+  var removed = Object.keys(aSet).filter(function(k){ return !bSet[k]; });
+  var diffs = {
+    recommended_line: {
+      from: adviceA.recommended_line || adviceA.best_candidate || null,
+      to: adviceB.recommended_line || adviceB.best_candidate || null
+    },
+    dominant_loss_condition: {
+      from: adviceA.dominant_loss_condition || null,
+      to: adviceB.dominant_loss_condition || null
+    },
+    dead_moves_added: added,
+    dead_moves_removed: removed
+  };
+  var changed = 0;
+  if (diffs.recommended_line.from !== diffs.recommended_line.to) changed++;
+  if (diffs.dominant_loss_condition.from !== diffs.dominant_loss_condition.to) changed++;
+  if (added.length || removed.length) changed++;
+  var delta = Math.max(0, (sampleB || 0) - (sampleA || 0));
+  return {
+    surfaces_changed: changed,
+    diffs: diffs,
+    verdict: (changed === 0 && delta >= 50) ? 'static' : 'adaptive',
+    delta_sample_size: delta
+  };
+}
+
+function _csPolicyAdviceFromHistory(history) {
+  history = history || {};
+  var lead = (history.lead_performance_v2 && history.lead_performance_v2[0] && history.lead_performance_v2[0].lead) ||
+             (history.lead_performance && history.lead_performance[0] && history.lead_performance[0].leadPair) || [];
+  var loss = (history.loss_conditions_v2 && history.loss_conditions_v2[0] && history.loss_conditions_v2[0].pattern) ||
+             (history.common_loss_conditions && history.common_loss_conditions[0] &&
+              (history.common_loss_conditions[0].victim + ' ' + history.common_loss_conditions[0].bucket)) || null;
+  return {
+    recommended_line: Array.isArray(lead) ? lead.join(' + ') : String(lead || ''),
+    dominant_loss_condition: loss,
+    dead_moves: history.dead_moves_v2 || history.dead_moves || []
+  };
+}
+
+function renderStaticAdviceWarning(audit, location) {
+  audit = audit || {};
+  if (CS_PHASE4E_DISMISSED && location === 'pilot') return '';
+  var count = audit.fakeGoodCount || (audit.flagged ? audit.flagged.length : 0);
+  if (!count) return '';
+  return '<div class="cs-static-advice-warning" data-phase4e-warning>' +
+    '<button class="cs-static-advice-dismiss" data-phase4e-dismiss title="Dismiss warning">×</button>' +
+    '<strong>' + _csEsc(CS_PHASE4E_WARNING_TEXT) + '</strong>' +
+    '<div class="cs-static-advice-detail">' + count + ' policy warning' + (count === 1 ? '' : 's') + ' flagged.</div>' +
+    '</div>';
+}
+
+function csRenderPolicyAuditSection(history) {
+  history = history || {};
+  var audit = history.policy_audit || {};
+  var delta = audit.coaching_delta || {};
+  var fake = audit.fake_good_plays || [];
+  var behavior = audit.player_behavior_patterns || [];
+  var stringAudit = audit.policy_output_audit || { fakeGoodCount: 0, flagged: [] };
+  var isStatic = delta.verdict === 'static';
+  var bannerClass = isStatic ? 'cs-audit-warning' : 'cs-audit-stabilized';
+  var bannerText = isStatic
+    ? 'STATIC ADVICE WARNING: advice did not change over ' + (delta.delta_sample_size || 0) + ' new games.'
+    : 'Adaptive: advice surfaces changed as new sim evidence arrived.';
+  var html = '<details class="cs-detector-section cs-policy-audit-section" open>';
+  html += '<summary class="cs-detector-summary"><span class="cs-detector-title">Policy Audit</span>';
+  html += '<span class="cs-detector-count">' + (history.total_battles || 0) + ' games</span></summary>';
+  html += '<div class="cs-detector-body">';
+  html += '<div class="' + bannerClass + '">' + _csEsc(bannerText) + '</div>';
+  if (stringAudit.fakeGoodCount > 0) {
+    html += renderStaticAdviceWarning(stringAudit, 'strategy');
+  }
+  html += '<div class="cs-detector-table">';
+  html += '<div class="cs-detector-row cs-detector-head"><span>Surface</span><span>From</span><span>To</span><span>Status</span></div>';
+  var d = delta.diffs || {};
+  var rl = d.recommended_line || {};
+  var dl = d.dominant_loss_condition || {};
+  html += '<div class="cs-detector-row"><span>Recommended line</span><span>' + _csEsc(rl.from || '-') + '</span><span>' + _csEsc(rl.to || '-') + '</span><span>' + (rl.from !== rl.to ? 'changed' : 'same') + '</span></div>';
+  html += '<div class="cs-detector-row"><span>Dominant loss</span><span>' + _csEsc(dl.from || '-') + '</span><span>' + _csEsc(dl.to || '-') + '</span><span>' + (dl.from !== dl.to ? 'changed' : 'same') + '</span></div>';
+  html += '<div class="cs-detector-row"><span>Dead moves</span><span>' + _csEsc((d.dead_moves_removed || []).join(', ') || '-') + '</span><span>' + _csEsc((d.dead_moves_added || []).join(', ') || '-') + '</span><span>' + (((d.dead_moves_added || []).length || (d.dead_moves_removed || []).length) ? 'changed' : 'same') + '</span></div>';
+  html += '</div>';
+  if (fake.length) {
+    html += '<h4 class="cs-audit-h4">Fake-good plays</h4>';
+    fake.slice(0, 4).forEach(function(f){
+      html += '<div class="cs-audit-row"><strong>' + _csEsc(f.pattern) + '</strong> ' + f.occurrences + ' occurrence' + (f.occurrences === 1 ? '' : 's') + ' · ' + _csEsc(f.severity) + '</div>';
+    });
+  }
+  if (behavior.length) {
+    html += '<h4 class="cs-audit-h4">Player behavior</h4>';
+    behavior.slice(0, 4).forEach(function(p){
+      html += '<div class="cs-audit-row"><strong>' + _csEsc(p.pattern) + '</strong> ' + p.occurrences + ' occurrence' + (p.occurrences === 1 ? '' : 's') + ' · ' + _csEsc(p.severity) + '</div>';
+    });
+  }
+  html += '</div></details>';
+  return html;
+}
+
+function csRenderWeaknessDashboard(report) {
+  report = report || {};
+  var dash = report.weakness_dashboard || null;
+  var html = '<section class="cs-section cs-weakness-dashboard"><h3 class="cs-h3">Personal Weakness Dashboard</h3>';
+  if (!dash) {
+    html += '<p class="cs-no-data">No weakness dashboard available yet.</p></section>';
+    return html;
+  }
+  if (dash.summary) {
+    html += '<p class="cs-explain">' + _csEsc(dash.summary) + '</p>';
+  }
+  if (Array.isArray(dash.rule_violations) && dash.rule_violations.length) {
+    html += '<p class="cs-explain">Rule violations tracked separately in Policy Audit: ' + _csEsc(dash.rule_violations.join(', ')) + '</p>';
+  }
+  html += '<div class="cs-skill-grid cs-weakness-grid">';
+  (dash.sections || []).forEach(function(section){
+    html += '<div class="cs-skill-card cs-weakness-card">';
+    html +=   '<h4>' + _csEsc(section.title || '') + '</h4>';
+    html +=   '<p><strong>' + _csEsc(section.headline || 'No data yet.') + '</strong></p>';
+    if (Array.isArray(section.rows) && section.rows.length) {
+      html += '<ul class="cs-list">';
+      section.rows.forEach(function(row){
+        html += '<li><strong>' + _csEsc(row.label || '') + ':</strong> ' + _csEsc(row.value || '') + '</li>';
+      });
+      html += '</ul>';
+    } else if (section.empty) {
+      html += '<p class="cs-no-data">' + _csEsc(section.empty) + '</p>';
+    }
+    if (section.fix) {
+      html += '<p><strong>Fix:</strong> ' + _csEsc(section.fix) + '</p>';
+    }
+    html += '</div>';
+  });
+  html += '</div></section>';
+  return html;
+}
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.phase4e = ChampionsSim.phase4e || {};
+  ChampionsSim.phase4e.auditPolicyOutput = auditPolicyOutput;
+  ChampionsSim.phase4e.detectFakeGoodPlays = detectFakeGoodPlays;
+  ChampionsSim.phase4e.detectPlayerBehaviorPatterns = detectPlayerBehaviorPatterns;
+  ChampionsSim.phase4e.auditCoachingDelta = auditCoachingDelta;
+  ChampionsSim.phase4e.renderStaticAdviceWarning = renderStaticAdviceWarning;
+  ChampionsSim.phase4e.csRenderPolicyAuditSection = csRenderPolicyAuditSection;
+  ChampionsSim.phase4e.csRenderWeaknessDashboard = csRenderWeaknessDashboard;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('auditPolicyOutput', auditPolicyOutput);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('detectFakeGoodPlays', detectFakeGoodPlays);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('detectPlayerBehaviorPatterns', detectPlayerBehaviorPatterns);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('auditCoachingDelta', auditCoachingDelta);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderStaticAdviceWarning', renderStaticAdviceWarning);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderPolicyAuditSection', csRenderPolicyAuditSection);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderWeaknessDashboard', csRenderWeaknessDashboard);
+
 // Render the Record bar: overall W-L pill + per-archetype chips. Shown right
 // under the adaptive banner on the Strategy tab. No draws surfaced (per user:
 // "there no draw in pokemon"). Sorted by sample size so the most-battled
@@ -7117,11 +9143,17 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.strategy.csInvalidateTeamHistory = csInvalidateTeamHistory;
   ChampionsSim.strategy.csRenderAdaptiveBanner = csRenderAdaptiveBanner;
   ChampionsSim.strategy.csRenderRecordBar = csRenderRecordBar;
+  ChampionsSim.strategy.strategyResultsHash = strategyResultsHash;
+  ChampionsSim.strategy.csStrategyReportCacheSize = csStrategyReportCacheSize;
+  ChampionsSim.strategy.csClearStrategyReportCache = csClearStrategyReportCache;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('computeTeamHistory', computeTeamHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csInvalidateTeamHistory', csInvalidateTeamHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderAdaptiveBanner', csRenderAdaptiveBanner);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderRecordBar', csRenderRecordBar);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('strategyResultsHash', strategyResultsHash);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csStrategyReportCacheSize', csStrategyReportCacheSize);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csClearStrategyReportCache', csClearStrategyReportCache);
 
 // Paint cached report immediately if available. Used as the fast-path on
 // team-select change so the user never sees a blank tab between switches.
@@ -7154,7 +9186,7 @@ function csScheduleStrategyRebuild() {
     try {
       var key = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : null;
       if (key) renderStrategyTab(key);
-    } catch(e) { console.warn('[Phase2] strategy rebuild failed:', e && e.message); }
+    } catch(e) { UILog.warn('strategy rebuild failed', e); }
   }, 500);
 }
 
@@ -7183,6 +9215,7 @@ if (typeof window !== 'undefined') {
 
   // Hook the existing tab-nav click and player-select change after DOM is ready
   document.addEventListener('DOMContentLoaded', async function(){
+    await csHardenClientState();
     _csInitEvidenceToggle();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────
@@ -7196,21 +9229,21 @@ if (typeof window !== 'undefined') {
         var dbTeams = await _adapter.loadTeamsFromDB();
         if (dbTeams && Object.keys(dbTeams).length && typeof TEAMS !== 'undefined') {
           Object.assign(TEAMS, dbTeams);
-          console.info('[UI] TEAMS patched with ' + Object.keys(dbTeams).length + ' DB teams.');
+          UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length });
           setDbChip('connected', 'Live Supabase connected - loaded ' + Object.keys(dbTeams).length + ' teams from DB');
         } else {
           // null or empty → fall back to bundled TEAMS, surface chip
           setDbChip('offline', 'Supabase returned no teams - using bundled TEAMS');
-          console.info('[UI] DB returned no teams — using bundled TEAMS. [DB offline]');
+          UILog.info('DB returned no teams; using bundled TEAMS');
         }
       } else {
         // Adapter disabled (no creds / __DISABLE_SUPABASE__) → surface chip
         setDbChip('offline', 'Missing local-credentials.js or Supabase anon key - using bundled TEAMS');
-        console.info('[UI] SupabaseAdapter disabled — using bundled TEAMS. [DB offline]');
+        UILog.info('SupabaseAdapter disabled; using bundled TEAMS');
       }
     } catch (_dbErr) {
       setDbChip('offline', 'Supabase load failed: ' + ((_dbErr && _dbErr.message) || 'unknown error'));
-      console.warn('[UI] loadTeamsFromDB threw — using bundled TEAMS. [DB offline]', _dbErr && _dbErr.message);
+      UILog.warn('loadTeamsFromDB threw; using bundled TEAMS', _dbErr);
     }
 
     // Authoritative rebuild AFTER DB merge (or fallback) is settled.
