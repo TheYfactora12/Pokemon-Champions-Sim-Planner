@@ -36,6 +36,7 @@ node tests/t170_landscape_mobile_layout_tests.js # Landscape mobile layout safeg
 node tests/t171_mobile_tab_picker_tests.js # Mobile tab picker safeguards
 node tests/t172_mobile_sim_structure_tests.js # Mobile simulator structure safeguards
 node tests/t173_mobile_dense_controls_tests.js # Mobile dense control safeguards
+node tests/t174_mobile_results_stats_tests.js # Mobile results stats safeguards
 node tests/phase5_turn_log_tests.js # Phase 5 — turnLog, positionScore, Replay Log v2 — 12 cases
 node tests/phase6_coaching_voice.js # Phase 6 — coaching templates, linter, RNG gate — 9 cases
 node tests/structured_logger_tests.js # Infra — structured logger and no raw runtime console calls — 5 cases
@@ -72,6 +73,7 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | t171 | 3/3 | Mobile tab picker safeguards |
 | t172 | 3/3 | Mobile simulator structure safeguards |
 | t173 | 3/3 | Mobile dense control safeguards |
+| t174 | 3/3 | Mobile results stats safeguards |
 | phase4c | 20/20 | Detectors (dead moves, lead perf, loss conditions) + confidence badges, 5 fixtures incl. high-n null effect |
 | phase4d | 7/7 | Threat-response solver, cache, idle fallback, line labels, renderer |
 | phase4e | 13/13 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate, weakness dashboard |
@@ -80,7 +82,7 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
 | export | 4/4 | My Data JSON export for persisted history, reports, and DB analyses |
-| **Total** | **396/396** | |
+| **Total** | **399/399** | |
 | audit | 0 JS errors | 5070 battles across 13 teams |
 
 ## Conventions

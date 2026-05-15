@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-15 | @TheYfactora12 | Mobile results stats fix | Collapsed the results summary and stat cards into a narrow-window stack so the win/loss bar and outcome metrics no longer run too long in half-screen or phone views. Added a regression for the results stats grid. |
 | 2026-05-15 | @TheYfactora12 | Mobile breakpoint correction | Narrowed the mobile-only tab picker so split-screen desktop widths keep the standard tab row, while true phone widths still get the compact picker. |
 | 2026-05-15 | @TheYfactora12 | Mobile tab picker follow-up | Replaced the phone-width tab strip with a compact section picker and wired the active tab state to stay synced with the picker so narrow mobile views stop relying on desktop-style tab navigation. |
 | 2026-05-15 | @TheYfactora12 | Mobile dense controls follow-up | Collapsed the remaining Teams and bring-picker control rows into a single-column phone layout, tightened the smallest tab grid, and added regression coverage for narrow-phone dense controls. |
