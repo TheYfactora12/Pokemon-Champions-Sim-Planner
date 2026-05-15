@@ -63,6 +63,21 @@ const CASES = [
     }
   },
   {
+    name: 'Support uses turn-one utility',
+    run(simulateBattle) {
+      const battle = simulate(simulateBattle, [
+        mon('Whimsicott', 'Tailwind', { spa: 252, spe: 252, moves: ['Tailwind', 'Moonblast'] }),
+        mon('Garchomp', 'Dragon Claw', { atk: 252, spe: 252 }),
+        mon('Incineroar', 'Tackle', { atk: 252 }),
+        mon('Amoonguss', 'Spore')
+      ], [
+        mon('Incineroar', 'Tackle', { atk: 252 }),
+        mon('Cresselia', 'Tackle')
+      ], { maxTurns: 1, seed: [11, 12, 13, 14] });
+      expectLine(battle, 'Whimsicott used Tailwind!', 'Support role should choose turn-one utility');
+    }
+  },
+  {
     name: 'Sucker Punch fails against status intent',
     run(simulateBattle) {
       const battle = simulate(simulateBattle, [
@@ -159,8 +174,12 @@ const CASES = [
         mon('Incineroar2', 'Tackle', { spe: 0 })
       ], { maxTurns: 1, seed: [81, 82, 83, 84] });
       expectLine(battle, 'switched places with its ally using Ally Switch!', 'Ally Switch should resolve');
+      const pre = battle.turnLog && battle.turnLog[0] && battle.turnLog[0].pre && battle.turnLog[0].pre.active;
       const post = battle.turnLog && battle.turnLog[0] && battle.turnLog[0].post && battle.turnLog[0].post.active;
-      if (!post || !Array.isArray(post.player) || post.player[0] !== 'Arcanine') {
+      if (!pre || !post || !Array.isArray(pre.player) || !Array.isArray(post.player) || pre.player.length < 2 || post.player.length < 2) {
+        throw new Error('Ally Switch should expose pre/post active order');
+      }
+      if (pre.player[0] !== post.player[1] || pre.player[1] !== post.player[0]) {
         throw new Error('Ally Switch should swap the player active order');
       }
     }

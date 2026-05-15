@@ -51,11 +51,11 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase4c | 17/17 | Detectors (dead moves, lead perf, loss conditions) + confidence badges, 4 fixtures incl. high-n null effect |
 | phase4d | 7/7 | Threat-response solver, cache, idle fallback, line labels, renderer |
 | phase4e | 11/11 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate |
-| mechanics_audit | 14/14 | Core move-rule checks: Protect, Taunt, Sucker Punch, Feint, shield riders, recovery, sleep, Substitute, Imprison, Ally Switch |
+| mechanics_audit | 15/15 | Core move-rule checks: Protect, Taunt, support leads, Sucker Punch, Feint, shield riders, recovery, sleep, Substitute, Imprison, Ally Switch |
 | phase5 | 10/10 | Turn log struct, positionScore, swing-turn delta, Replay Log v2 |
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
-| **Total** | **340/340** | |
+| **Total** | **341/341** | |
 | audit | 0 JS errors | 5070 battles across 13 teams |
 
 ## Conventions

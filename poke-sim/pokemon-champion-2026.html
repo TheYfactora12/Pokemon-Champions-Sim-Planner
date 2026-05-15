@@ -7244,6 +7244,7 @@ class Pokemon {
     this.evs = data.evs || { hp:0,atk:0,def:0,spa:0,spd:0,spe:0 };
     this.moves = [...data.moves];
     this.role = data.role || '';
+    this.roles = (typeof classifyPokemon === 'function' ? (classifyPokemon(data).roles || []) : []);
     this.teamStyle = teamStyle;
     this.tera = data.teraType || data.tera || null;
     // Issue #T1: Champions Stat Point (SP) system support.
@@ -7333,6 +7334,7 @@ class Pokemon {
     this.protectChain  = 0;
     this.protectKind   = null;
     this.enduring      = false;
+    this.turnsSinceEntry = 0;
     // T9j.17 (Refs #101) -- Fake Out hard-gate flag. Initialized false so first
     // turn out is the only legal use. Reset on every switch-in (replaceOnField).
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out_(move)
@@ -8185,11 +8187,40 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   //   Cite: https://bulbapedia.bulbagarden.net/wiki/Team_Preview
   //   Cite: https://bulbapedia.bulbagarden.net/wiki/VGC
   const _bringCount = (field._format === 'singles') ? 3 : 4;
+  function _battleLeadScore(mon) {
+    const roles = Array.isArray(mon.roles) ? mon.roles : [];
+    const moves = Array.isArray(mon.moves) ? mon.moves : [];
+    let score = 0;
+    if (roles.indexOf('Speed Control') >= 0) score += 120;
+    if (roles.indexOf('Support') >= 0) score += 95;
+    if (roles.indexOf('Pivot') >= 0) score += 55;
+    if (roles.indexOf('Sweeper') >= 0) score += 20;
+    if (roles.indexOf('Tank') >= 0) score -= 5;
+    if (roles.indexOf('Wall') >= 0) score -= 15;
+    if (moves.indexOf('Tailwind') >= 0 || moves.indexOf('Trick Room') >= 0) score += 35;
+    if (moves.indexOf('Fake Out') >= 0 || moves.indexOf('Follow Me') >= 0 || moves.indexOf('Rage Powder') >= 0) score += 25;
+    if (moves.indexOf('Parting Shot') >= 0 || moves.indexOf('U-turn') >= 0 || moves.indexOf('Volt Switch') >= 0 || moves.indexOf('Flip Turn') >= 0) score += 20;
+    const stats = (typeof classifyPokemon === 'function' ? classifyPokemon(mon).stats : null) || {};
+    score += Math.min(Math.round((stats.spe || 0) / 5), 20);
+    return score;
+  }
+  function _sortByLeadScore(arr) {
+    return arr.slice().sort(function(a, b) {
+      const sA = _battleLeadScore(a);
+      const sB = _battleLeadScore(b);
+      if (sA !== sB) return sB - sA;
+      const spA = (classifyPokemon(a).stats || {}).spe || 0;
+      const spB = (classifyPokemon(b).stats || {}).spe || 0;
+      if (spA !== spB) return spB - spA;
+      return a.name.localeCompare(b.name);
+    });
+  }
   function _applyBring(pokemonArr, bringNames, leadNames) {
     // Prefer explicit bring list. Falls back to lead list (legacy T9j.10 early rev).
     const useBring = Array.isArray(bringNames) && bringNames.length > 0;
     const names = useBring ? bringNames : (Array.isArray(leadNames) ? leadNames : []);
-    if (names.length === 0) return pokemonArr.slice(); // no override — use team order as-is (return copy; caller clears original)
+    if (names.length === 0) return pokemonArr.slice();
+
     const picked = [];
     const rest = pokemonArr.slice();
     for (const name of names) {
@@ -8204,6 +8235,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       while (picked.length < _bringCount && rest.length) picked.push(rest.shift());
       return picked;
     }
+
     return picked.concat(rest);
   }
   const _orderedPlayer = _applyBring(playerPokemon, opts.playerBring,   opts.playerLeads);
@@ -8296,6 +8328,17 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // Recovery / board-state support
       'Recover','Shore Up','Rest','Sleep Talk','Substitute','Imprison','Ally Switch']);
     const PRIORITY_MOVES = new Set(['Fake Out','Aqua Jet','Extreme Speed','Shadow Sneak','Sucker Punch','Feint']);
+    const TURN1_ROLE_UTILITY = new Set([
+      'Tailwind','Trick Room','Fake Out','Follow Me','Rage Powder',
+      'Light Screen','Reflect','Aurora Veil','Will-O-Wisp','Thunder Wave',
+      'Encore','Taunt','Quick Guard','Protect','Detect','Parting Shot',
+      'Haze','Defog','Recover','Shore Up','Rest','Substitute','Ally Switch'
+    ]);
+    const roles = Array.isArray(attacker.roles) ? attacker.roles : [];
+    const turnsSinceEntry = attacker.turnsSinceEntry || 0;
+    const freshEntry = turnsSinceEntry <= 1;
+    const isSupportRole = roles.indexOf('Support') >= 0 || roles.indexOf('Speed Control') >= 0;
+    const isPivotRole = roles.indexOf('Pivot') >= 0;
 
     let best = { move: null, target: null, score: -Infinity };
 
@@ -8323,6 +8366,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (attacker.tauntedTurns > 0) continue;
         if (enemySide && enemySide.imprisonedMoves && enemySide.imprisonedMoves.has(move)) continue;
         let score = 0;
+        if (freshEntry && isSupportRole && TURN1_ROLE_UTILITY.has(move)) score += 35;
+        if (freshEntry && isPivotRole && (move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn' || move === 'Teleport' || move === 'Baton Pass')) score += 28;
+        if (freshEntry && roles.indexOf('Sweeper') >= 0 && (move === 'Protect' || move === 'Detect')) score += 10;
+        if (attacker.hp < attacker.maxHp * 0.3 && (move === 'Protect' || move === 'Detect' || move === 'Ally Switch' || move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn')) score += 25;
         if (move === 'Trick Room' && !field.trickRoom) score = 55;
         if (move === 'Tailwind'   && !field[attacker.side === 'player' ? 'playerSide' : 'oppSide']?.tailwind) score = 50;
         // T9j.3 Screens scoring — value them when not already up.
@@ -8367,6 +8414,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (move === 'Imprison' && liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => attacker.moves.includes(m)))) score = 45;
         if (move === 'Ally Switch' && liveAllies.length > 0) score = 32;
         if (move === 'Roost' && attacker.hp < attacker.maxHp * 0.5) score = 45;
+        if (freshEntry && isSupportRole && TURN1_ROLE_UTILITY.has(move)) score = Math.max(score, 70);
+        if (freshEntry && isPivotRole && (move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn' || move === 'Teleport' || move === 'Baton Pass')) score = Math.max(score, 62);
+        if (attacker.hp < attacker.maxHp * 0.3 && (move === 'Protect' || move === 'Detect' || move === 'Ally Switch' || move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn')) score = Math.max(score, 66);
         if (score > best.score) best = { move, target: liveEnemies[0] || null, score };
         continue;
       }
@@ -9338,6 +9388,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       m.enduring = false;
       m.helpingHand = false;
       m._chosenMove = null;
+      m.turnsSinceEntry = (m.turnsSinceEntry || 0) + 1;
       // T9j.8 (Refs #19) Flinch flag resets at top of turn so last-turn flinch
       // cannot bleed into this turn's action.
       m._flinched = false;
@@ -9602,6 +9653,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           replacement.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
           // T9j.6 (#18) — Choice Scarf lock clears on switch in.
           replacement.choiceLock = null;
+          replacement.turnsSinceEntry = 0;
           activeArr[idx] = replacement;
           log.push(`${replacement.name} was sent out!`);
           applyEntryAbility(replacement, side, field, log);
