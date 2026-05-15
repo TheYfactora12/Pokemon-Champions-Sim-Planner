@@ -82,6 +82,7 @@ vm.runInContext([
   'this.winProbabilityDelta = winProbabilityDelta;',
   'this.csReplaySparkline = csReplaySparkline;',
   'this.csRenderTurnLogRows = csRenderTurnLogRows;',
+  'this.csBuildDecisionAudit = csBuildDecisionAudit;',
   'this.downloadReplayTurnLog = downloadReplayTurnLog;'
 ].join(' '), ctx);
 
@@ -174,6 +175,51 @@ T('T5c-3 JSON download produces valid parseable file', () => {
 T('T5c-4 Sparkline renders without error on 1-turn game', () => {
   const html = ctx.csReplaySparkline([{ turn: 1, post: { position_score: 0.5 } }]);
   truthy(html.includes('polyline'), 'sparkline missing polyline');
+});
+
+const DECISION_PLAYER = [{ name: 'Hero', moves: ['Earthquake', 'Recover'], item: 'Leftovers', ability: 'Tough Claws', types: ['Ground'] }];
+const DECISION_OPP = [{ name: 'Dummy', moves: ['Tackle'], item: 'Sitrus Berry', ability: 'Run Away', types: ['Flying'] }];
+const DECISION_TURN_LOG = [{
+  turn: 1,
+  pre: {
+    active: { player: ['Hero'], opponent: ['Dummy'] },
+    hp_pct: { Hero: 0.22, Dummy: 1 },
+    field: { weather: null, weather_turns: 0, terrain: null, terrain_turns: 0, trick_room: 0 },
+    speed_order: ['Dummy', 'Hero'],
+    legal_options: {
+      Hero: ['Earthquake -> Dummy', 'Recover -> Dummy']
+    }
+  },
+  actions: {
+    player: [{ actor: 'Hero', move: 'Earthquake', target: 'Dummy' }],
+    opponent: [{ actor: 'Dummy', move: 'Tackle', target: 'Hero' }]
+  },
+  post: { position_score: 0.3 },
+  delta: { position_score: -0.2 }
+}];
+
+T('T5c-5 csBuildDecisionAudit flags a clearly worse line', () => {
+  const audit = ctx.csBuildDecisionAudit(DECISION_TURN_LOG, {
+    playerKey: 'player',
+    oppKey: 'opp',
+    teamLookup: DECISION_PLAYER,
+    oppLookup: DECISION_OPP,
+    threshold: 10
+  });
+  truthy(audit && audit.total_flags === 1, 'expected one flagged turn');
+  eq(audit.flagged_turns[0].best_move, 'Recover');
+  truthy(audit.flagged_turns[0].score_gap >= 10, 'expected a meaningful score gap');
+});
+
+T('T5c-6 Replay Log v2 renders decision gap chip', () => {
+  const html = ctx.csRenderTurnLogRows(DECISION_TURN_LOG, {
+    playerKey: 'player',
+    oppKey: 'opp',
+    teamLookup: DECISION_PLAYER,
+    oppLookup: DECISION_OPP
+  });
+  truthy(html.includes('decision-gap'), 'missing decision gap class');
+  truthy(html.includes('Better line: Recover'), 'missing best-line chip');
 });
 
 console.log(`\nPhase 5 turn log: ${pass} pass, ${fail} fail\n`);

@@ -2195,9 +2195,216 @@ function csRenderHpBars(turn) {
   }).join('') + '</div>';
 }
 
-function csRenderTurnLogRows(turnLog) {
+function _csDecisionMemberMap(members) {
+  var out = {};
+  for (var i = 0; i < (members || []).length; i++) {
+    var mem = members[i];
+    if (mem && mem.name) out[mem.name] = mem;
+  }
+  return out;
+}
+
+function _csDecisionMoveScore(move, actor, target, turn, opts) {
+  var score = 0;
+  var moveType = (typeof MOVE_TYPES !== 'undefined' && MOVE_TYPES[move]) ? MOVE_TYPES[move] : 'Normal';
+  var category = (typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[move]) ? MOVE_CATEGORY[move] : 'status';
+  var bp = (typeof MOVE_BP !== 'undefined' && MOVE_BP[move]) ? MOVE_BP[move] : 0;
+  var field = (turn && turn.pre && turn.pre.field) || {};
+  var speedOrder = (turn && turn.pre && Array.isArray(turn.pre.speed_order)) ? turn.pre.speed_order : [];
+  var hpPct = 1;
+  var targetHpPct = 1;
+  if (turn && turn.pre && turn.pre.hp_pct && actor && actor.name && typeof turn.pre.hp_pct[actor.name] === 'number') {
+    hpPct = turn.pre.hp_pct[actor.name];
+  } else if (actor && actor.hp != null && actor.maxHp) {
+    hpPct = Math.max(0, Math.min(1, actor.hp / actor.maxHp));
+  }
+  if (turn && turn.pre && turn.pre.hp_pct && target && target.name && typeof turn.pre.hp_pct[target.name] === 'number') {
+    targetHpPct = turn.pre.hp_pct[target.name];
+  } else if (target && target.hp != null && target.maxHp) {
+    targetHpPct = Math.max(0, Math.min(1, target.hp / target.maxHp));
+  }
+
+  var actorTypes = (actor && Array.isArray(actor.types)) ? actor.types : [];
+  var targetTypes = (target && Array.isArray(target.types)) ? target.types : [];
+  var liveEnemies = ((turn && turn.pre && turn.pre.active && turn.pre.active.opponent) || []).slice();
+  var liveAllies = ((turn && turn.pre && turn.pre.active && turn.pre.active.player) || []).slice();
+  var oppLookup = (opts && opts.oppLookup) || {};
+  var hasPriorityThreat = false;
+  var enemyHasStatusMoves = false;
+  var enemyHasSetupMoves = false;
+  var sharedMoveThreat = false;
+
+  for (var i = 0; i < liveEnemies.length; i++) {
+    var oppName = liveEnemies[i];
+    var oppSpec = oppLookup[oppName] || null;
+    if (!oppSpec || !Array.isArray(oppSpec.moves)) continue;
+    for (var j = 0; j < oppSpec.moves.length; j++) {
+      var oppMove = oppSpec.moves[j];
+      if (typeof getPriority === 'function' && getPriority(oppMove) > 0) hasPriorityThreat = true;
+      if (typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[oppMove] === 'status') enemyHasStatusMoves = true;
+      if (typeof CLASSIFY_SETUP_MOVES !== 'undefined' && Array.isArray(CLASSIFY_SETUP_MOVES) && CLASSIFY_SETUP_MOVES.indexOf(oppMove) >= 0) enemyHasSetupMoves = true;
+    }
+  }
+  if (move === 'Imprison') {
+    var ownMoves = (actor && Array.isArray(actor.moves)) ? actor.moves : [];
+    for (var k = 0; k < liveEnemies.length; k++) {
+      var enemySpec = oppLookup[liveEnemies[k]] || null;
+      if (!enemySpec || !Array.isArray(enemySpec.moves)) continue;
+      for (var m = 0; m < enemySpec.moves.length; m++) {
+        if (ownMoves.indexOf(enemySpec.moves[m]) >= 0) {
+          sharedMoveThreat = true;
+          break;
+        }
+      }
+      if (sharedMoveThreat) break;
+    }
+  }
+
+  if (category === 'status') {
+    if (move === 'Recover' || move === 'Shore Up') {
+      score = hpPct < 0.65 ? 72 : 14;
+    } else if (move === 'Rest') {
+      score = hpPct < 0.50 ? 68 : 10;
+    } else if (move === 'Roost') {
+      score = hpPct < 0.55 ? 58 : 12;
+    } else if (move === 'Protect' || move === 'Detect') {
+      score = (hpPct < 0.35 || hasPriorityThreat) ? 55 : 18;
+    } else if (move === 'Quick Guard') {
+      score = hasPriorityThreat ? 52 : 10;
+    } else if (move === 'Taunt') {
+      score = enemyHasStatusMoves ? 48 : 8;
+    } else if (move === 'Encore') {
+      score = 32;
+    } else if (move === 'Haze') {
+      score = enemyHasSetupMoves ? 44 : 8;
+    } else if (move === 'Defog') {
+      var side = turn && turn.pre && turn.pre.speed_control ? turn.pre.speed_control : null;
+      var enemyScreens = side && side.opponent && side.opponent.screens;
+      var ownScreens = side && side.player && side.player.screens;
+      var hasScreenPressure = !!(field.terrain || (enemyScreens && (enemyScreens.reflect || enemyScreens.light || enemyScreens.aurora)) || (ownScreens && (ownScreens.reflect || ownScreens.light || ownScreens.aurora)));
+      score = hasScreenPressure ? 44 : 8;
+    } else if (move === 'Trick Room') {
+      var enemySpeedIdx = liveEnemies.length ? speedOrder.indexOf(liveEnemies[0]) : -1;
+      var actorSpeedIdx = speedOrder.indexOf(actor && actor.name);
+      score = (!field.trick_room && actorSpeedIdx > -1 && enemySpeedIdx > -1 && actorSpeedIdx > enemySpeedIdx) ? 56 : 20;
+    } else if (move === 'Tailwind') {
+      score = 50;
+    } else if (move === 'Substitute') {
+      score = hpPct > 0.35 ? 36 : 10;
+    } else if (move === 'Imprison') {
+      score = sharedMoveThreat ? 45 : 6;
+    } else if (move === 'Ally Switch') {
+      score = liveAllies.length > 0 ? 26 : 5;
+    } else {
+      score = 10;
+    }
+  } else {
+    score = bp / 2;
+    if ((actorTypes.indexOf(moveType) >= 0) && moveType !== 'Normal') score += 10;
+    if (typeof getEffectiveness === 'function' && targetTypes.length) {
+      var eff = getEffectiveness(moveType, targetTypes);
+      if (eff >= 2) score += 18;
+      else if (eff === 0) score -= 70;
+      else if (eff < 1) score -= 8;
+    }
+    if (bp >= 100 && targetHpPct <= 0.45) score += 16;
+    else if (bp >= 80 && targetHpPct <= 0.30) score += 12;
+    if (targetHpPct <= 0.20) score += 14;
+    if ((move === 'Sucker Punch' || move === 'Feint' || move === 'Extreme Speed' || move === 'Aqua Jet' || move === 'Shadow Sneak') && targetHpPct <= 0.35) score += 8;
+    if (typeof getPriority === 'function' && getPriority(move) > 0) score += 5;
+  }
+
+  if (hpPct < 0.35 && (move === 'Protect' || move === 'Detect' || move === 'Recover' || move === 'Shore Up' || move === 'Rest' || move === 'Roost')) score += 8;
+  return score;
+}
+
+function csBuildDecisionAudit(turnLog, opts) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var out = { total_flags: 0, flagged_turns: [], byTurn: {}, byKey: {} };
+  if (!rows.length) return out;
+  opts = opts || {};
+  var playerKey = opts.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
+  var oppKey = opts.oppKey || null;
+  var teamLookup = opts.teamLookup || ((typeof TEAMS !== 'undefined' && TEAMS[playerKey] && Array.isArray(TEAMS[playerKey].members)) ? TEAMS[playerKey].members : []);
+  var oppLookup = opts.oppLookup || ((oppKey && typeof TEAMS !== 'undefined' && TEAMS[oppKey] && Array.isArray(TEAMS[oppKey].members)) ? TEAMS[oppKey].members : []);
+  var playerMap = _csDecisionMemberMap(teamLookup);
+  var oppMap = _csDecisionMemberMap(oppLookup);
+  var threshold = typeof opts.threshold === 'number' ? opts.threshold : 12;
+
+  for (var i = 0; i < rows.length; i++) {
+    var turn = rows[i];
+    if (!turn || !turn.pre || !turn.actions) continue;
+    var playerActs = (turn.actions.player || []).slice();
+    if (!playerActs.length) continue;
+    var bestGap = -Infinity;
+    var bestFlag = null;
+
+    for (var a = 0; a < playerActs.length; a++) {
+      var act = playerActs[a];
+      if (!act || !act.actor || !act.move) continue;
+      var actor = playerMap[act.actor] || { name: act.actor, moves: [], types: [] };
+      var legal = (turn.pre.legal_options && turn.pre.legal_options[act.actor]) ? turn.pre.legal_options[act.actor] : [];
+      var candidates = legal.map(function(opt) {
+        return String(opt).split(' -> ')[0];
+      }).filter(function(mv) { return mv && mv.length; });
+      if (!candidates.length && Array.isArray(actor.moves)) candidates = actor.moves.slice();
+      if (!candidates.length) candidates = [act.move];
+      var targetName = act.target || ((turn.pre.active && turn.pre.active.opponent && turn.pre.active.opponent[0]) || null);
+      var target = targetName ? (oppMap[targetName] || { name: targetName, moves: [], types: [] }) : null;
+
+      var chosenScore = _csDecisionMoveScore(act.move, actor, target, turn, { oppLookup: oppMap });
+      var bestMove = act.move;
+      var bestScore = chosenScore;
+      for (var c = 0; c < candidates.length; c++) {
+        var mv = candidates[c];
+        var sc = _csDecisionMoveScore(mv, actor, target, turn, { oppLookup: oppMap });
+        if (sc > bestScore) {
+          bestScore = sc;
+          bestMove = mv;
+        }
+      }
+      var gap = Math.round((bestScore - chosenScore) * 10) / 10;
+      if (bestMove !== act.move && gap >= threshold && gap > bestGap) {
+        bestGap = gap;
+        bestFlag = {
+          turn: turn.turn,
+          actor: act.actor,
+          chosen_move: act.move,
+          best_move: bestMove,
+          chosen_score: Math.round(chosenScore * 10) / 10,
+          best_score: Math.round(bestScore * 10) / 10,
+          score_gap: gap,
+          expected_delta: Math.round(gap),
+          target: targetName,
+          reason: 'A better line was available based on current board state'
+        };
+      }
+    }
+
+    if (bestFlag) {
+      out.total_flags++;
+      out.flagged_turns.push(bestFlag);
+      out.byTurn[turn.turn] = bestFlag;
+      out.byKey[turn.turn + '|' + bestFlag.actor] = bestFlag;
+    }
+  }
+  return out;
+}
+
+function csRenderDecisionAuditChip(flag) {
+  if (!flag) return '';
+  var delta = (flag.score_gap >= 0 ? '+' : '') + Math.round(flag.score_gap);
+  return '<span class="rchip decision-gap" title="' + _escapeHtml(flag.reason || 'Suboptimal line') + '">' +
+    'Better line: ' + _escapeHtml(flag.best_move) + ' (' + _escapeHtml(delta) + ')' +
+  '</span>';
+}
+
+function csRenderTurnLogRows(turnLog, opts) {
   var rows = Array.isArray(turnLog) ? turnLog : [];
   if (!rows.length) return '<div class="replay-turn-empty">No structured turn log for this replay.</div>';
+  var audit = (opts && (opts.playerKey || opts.oppKey || opts.teamLookup || opts.oppLookup)) && typeof csBuildDecisionAudit === 'function'
+    ? csBuildDecisionAudit(rows, opts)
+    : null;
   return '<div class="replay-turn-log">' + rows.map(function(t) {
     var score = t && t.post && typeof t.post.position_score === 'number' ? t.post.position_score : (t.positionScore || 0.5);
     var delta = t && t.delta && typeof t.delta.position_score === 'number' ? t.delta.position_score : 0;
@@ -2208,9 +2415,11 @@ function csRenderTurnLogRows(turnLog) {
       });
     }
     var inCoach = (typeof coachIn === 'function') ? coachIn(rows, t && t.turn) : '';
-    return '<div class="replay-turn-row' + (t && t.swingTurn ? ' swing' : '') + '">' +
+    var turnAudit = audit && audit.byTurn ? audit.byTurn[t && t.turn] : null;
+    return '<div class="replay-turn-row' + (t && t.swingTurn ? ' swing' : '') + (turnAudit ? ' decision-gap' : '') + '"' + (turnAudit ? ' style="border-left:4px solid var(--gold);"' : '') + '>' +
       '<div class="replay-turn-main"><strong>T' + _escapeHtml(t && t.turn) + '</strong><span>' + _escapeHtml(actions.join(' | ') || t.action || '-') + '</span></div>' +
       '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
+      csRenderDecisionAuditChip(turnAudit) +
       csRenderHpBars(t) +
       (inCoach ? '<pre class="replay-turn-coach">' + _escapeHtml(inCoach) + '</pre>' : '') +
     '</div>';
@@ -2281,7 +2490,7 @@ function renderReplays() {
         ${hasTurnLog?`<span class="rchip">${turning}</span>`:''}
       </div>
       <div class="replay-expanded">
-        ${hasTurnLog ? `<div class="replay-v2-tools">${csReplaySparkline(r.turnLog)}<button class="btn-secondary replay-json-btn" type="button">Download JSON</button></div>${csRenderTurnLogRows(r.turnLog)}` : ''}
+        ${hasTurnLog ? `<div class="replay-v2-tools">${csReplaySparkline(r.turnLog)}<button class="btn-secondary replay-json-btn" type="button">Download JSON</button></div>${csRenderTurnLogRows(r.turnLog, { playerKey: r.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'), oppKey: r.oppKey || null })}` : ''}
         <div class="battle-log">${(r.log||[]).join('<br>')}</div>
       </div>`;
     const dlBtn = card.querySelector('.replay-json-btn');
@@ -2290,6 +2499,14 @@ function renderReplays() {
     el.appendChild(card);
   }
 }
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.phase5 = ChampionsSim.phase5 || {};
+  ChampionsSim.phase5.csBuildDecisionAudit = csBuildDecisionAudit;
+  ChampionsSim.phase5.csRenderDecisionAuditChip = csRenderDecisionAuditChip;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildDecisionAudit', csBuildDecisionAudit);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderDecisionAuditChip', csRenderDecisionAuditChip);
 
 document.querySelectorAll('.filter-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
