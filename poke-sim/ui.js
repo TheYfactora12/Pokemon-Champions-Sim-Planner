@@ -2602,6 +2602,76 @@ async function lazyLoadAnalysisLogs(analysisId, cardEl) {
   }
 }
 
+function csGetActivePlayerKey() {
+  return (typeof currentPlayerKey === 'string' && currentPlayerKey) ? currentPlayerKey : 'player';
+}
+
+async function csBuildMyDataExport(teamKey) {
+  var key = teamKey || csGetActivePlayerKey();
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[key]) ? TEAMS[key] : null;
+  var adapter = getWindowValue('SupabaseAdapter', null);
+  var localReports = (typeof csLoadAllReports === 'function') ? csLoadAllReports() : {};
+  var localSimLog = (typeof csSimLogGetAll === 'function') ? csSimLogGetAll() : [];
+  var localTeamHistory = (typeof csSimLogForTeamBothSides === 'function') ? csSimLogForTeamBothSides(key) : [];
+  var activeReport = (typeof csLoadReport === 'function') ? csLoadReport(key) : null;
+  var dbAnalyses = [];
+
+  if (adapter && adapter.enabled && typeof adapter.loadAnalysesForPlayer === 'function') {
+    try {
+      var rows = await adapter.loadAnalysesForPlayer(key, 500);
+      if (Array.isArray(rows)) {
+        for (var i = 0; i < rows.length; i++) {
+          var row = rows[i] || {};
+          var logs = [];
+          if (typeof adapter.loadAnalysisLogs === 'function' && row.analysis_id) {
+            try { logs = await adapter.loadAnalysisLogs(row.analysis_id) || []; }
+            catch (e) { UILog.warn('export my data loadAnalysisLogs failed', e); }
+          }
+          dbAnalyses.push({
+            analysis_id: row.analysis_id || null,
+            created_at: row.created_at || null,
+            player_team_id: row.player_team_id || key,
+            opp_team_id: row.opp_team_id || null,
+            bo: row.bo || null,
+            win_rate: row.win_rate || 0,
+            wins: row.wins || 0,
+            losses: row.losses || 0,
+            sample_size: row.sample_size || 0,
+            logs: logs
+          });
+        }
+      }
+    } catch (e) {
+      UILog.warn('export my data loadAnalysesForPlayer failed', e);
+    }
+  }
+
+  return {
+    schema_version: 1,
+    exported_at: new Date().toISOString(),
+    player_team_id: key,
+    player_team_name: team && team.name ? team.name : null,
+    current_format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
+    local: {
+      reports: localReports,
+      current_report: activeReport,
+      sim_log: localSimLog,
+      team_history: localTeamHistory
+    },
+    db: {
+      enabled: !!(adapter && adapter.enabled),
+      analyses: dbAnalyses
+    }
+  };
+}
+
+async function csExportMyDataJson(teamKey) {
+  var payload = await csBuildMyDataExport(teamKey);
+  var ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  _downloadBlob('champions-sim-my-data-' + ts + '.json', 'application/json', JSON.stringify(payload, null, 2));
+  return payload;
+}
+
 // Wire history filter buttons
 document.querySelectorAll('.history-filter-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
@@ -2612,12 +2682,23 @@ document.querySelectorAll('.history-filter-btn').forEach(function(btn) {
   });
 });
 
+document.getElementById('export-history-json-btn')?.addEventListener('click', function() {
+  csExportMyDataJson(csGetActivePlayerKey()).catch(function(e) {
+    UILog.warn('export my data failed', e);
+    alert('Could not export history: ' + (e && e.message ? e.message : 'unknown error'));
+  });
+});
+
 if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.loadAnalysisHistory = loadAnalysisHistory;
   ChampionsSim.history.renderHistorySection = renderHistorySection;
+  ChampionsSim.history.buildMyDataExport = csBuildMyDataExport;
+  ChampionsSim.history.exportMyDataJson = csExportMyDataJson;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('loadAnalysisHistory', loadAnalysisHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderHistorySection', renderHistorySection);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildMyDataExport', csBuildMyDataExport);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportMyDataJson', csExportMyDataJson);
 // __M6_HISTORY_END__
 
 // ============================================================

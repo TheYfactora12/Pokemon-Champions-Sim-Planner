@@ -25,6 +25,7 @@ node tests/mechanics_audit.js      # Mechanics audit — move-rule checks used b
 node tests/t159_mobile_roster_layout_tests.js # Mobile roster layout safeguards
 node tests/t160_distinct_battle_team_tests.js # Battle team selection must stay distinct
 node tests/t161_team_member_uniqueness_tests.js # Catalog teams must not repeat members
+node tests/t163_export_my_data_tests.js # Export My Data as JSON
 node tests/phase5_turn_log_tests.js # Phase 5 — turnLog, positionScore, Replay Log v2 — 12 cases
 node tests/phase6_coaching_voice.js # Phase 6 — coaching templates, linter, RNG gate — 9 cases
 node tests/structured_logger_tests.js # Infra — structured logger and no raw runtime console calls — 5 cases
@@ -58,7 +59,8 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase5 | 12/12 | Turn log struct, positionScore, swing-turn delta, Replay Log v2, decision-gap audit |
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
-| **Total** | **356/356** | |
+| export | 4/4 | My Data JSON export for persisted history, reports, and DB analyses |
+| **Total** | **360/360** | |
 | audit | 0 JS errors | 5070 battles across 13 teams |
 
 ## Conventions
