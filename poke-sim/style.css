@@ -75,6 +75,17 @@ table{border-collapse:collapse;width:100%}
   .site-title{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
   .build-version,.db-offline-chip{margin-left:0}
 }
+@media(min-width:701px) and (max-width:900px) and (orientation:landscape){
+  .header-inner{padding:10px var(--sp3)}
+  .logo-block{gap:10px}
+  .site-title{font-size:var(--text-base);line-height:1.12}
+  .build-version{margin-left:6px}
+  .format-banner-inner{padding:6px var(--sp3);gap:8px}
+  .format-toggle{max-width:420px}
+  .tab-nav{padding:0 var(--sp3)}
+  .tab-btn{padding:10px 10px;min-height:40px;font-size:12px}
+  .team-card,.results-section,.about-card,.pilot-card,.team-full-card,.replay-card,.cs-section,.stat-panel,.editor-sidebar,.editor-form{padding:var(--sp3)}
+}
 
 /* Format toggle */
 .format-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);padding:3px;gap:2px}
@@ -108,8 +119,13 @@ table{border-collapse:collapse;width:100%}
 
 /* ===== SIM LAYOUT ===== */
 .sim-layout{display:grid;grid-template-columns:1fr 220px 1fr;gap:var(--sp4);align-items:start;margin-bottom:var(--sp6)}
-@media(max-width:900px){.sim-layout{grid-template-columns:1fr}}
-@media(max-width:900px){.sim-layout .opp-card{order:3}.sim-layout .sim-controls{order:2}}
+@media(max-width:700px){.sim-layout{grid-template-columns:1fr}}
+@media(max-width:700px){.sim-layout .opp-card{order:3}.sim-layout .sim-controls{order:2}}
+@media(min-width:701px) and (max-width:900px) and (orientation:landscape){
+  .sim-layout{grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr);gap:var(--sp3)}
+  .sim-layout .opp-card,.sim-layout .sim-controls{order:unset}
+  .sim-controls{position:sticky;top:var(--sp4)}
+}
 
 /* CARDS */
 .team-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp4);box-shadow:var(--sh-sm)}
