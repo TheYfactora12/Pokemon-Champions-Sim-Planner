@@ -652,6 +652,7 @@ class Pokemon {
     this.teraActivated = false;
     this.itemConsumed = false;
     this.substituteHp = 0;
+    this.roosting = false;
     // Sinistcha Hospitality: restores ally HP on switch
     this.hospitality = (this.ability === 'Hospitality');
     // Multiscale: halves first hit if full HP
@@ -1769,7 +1770,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   // ============================================================
   // EXECUTE ACTION
   // ============================================================
-  function executeAction(attacker, move, target, allies, enemies, field, log, rng) {
+  function executeAction(attacker, move, target, allies, enemies, field, log, rng, opts) {
+    const fromSleepTalk = !!(opts && opts.fromSleepTalk);
     if (!attacker.alive) return;
     if (!move) return;
     attacker.lastMoveUsed = move;
@@ -1838,6 +1840,20 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Status moves
     if (STATUS_MOVES.has(move)) {
       log.push(`${attacker.name} used ${move}!`);
+      const blockedBySubstitute = new Set([
+        'Will-O-Wisp',
+        'Thunder Wave',
+        'Taunt',
+        'Sleep Powder',
+        'Toxic',
+        'Poison Powder',
+        'Encore',
+        'Parting Shot'
+      ]);
+      if (target && target.alive && target.substituteHp > 0 && blockedBySubstitute.has(move)) {
+        log.push(`${attacker.name} used ${move}! But it failed because of Substitute!`);
+        return;
+      }
       if (move === 'Trick Room') {
         if (field.trickRoom) {
           field.trickRoom = false;
@@ -1936,7 +1952,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         }
         const calledMove = pool[Math.floor(rng() * pool.length)];
         log.push(`${attacker.name} used Sleep Talk!`);
-        executeAction(attacker, calledMove, target, allies, enemies, field, log, rng);
+        executeAction(attacker, calledMove, target, allies, enemies, field, log, rng, { fromSleepTalk: true });
         return;
       }
       // T9j.3 Screens setters. Duration fixed at 5 turns. Light Clay absent
@@ -2111,6 +2127,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (move === 'Roost') {
         const heal = Math.floor(attacker.maxHp * 0.5);
         attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
+        attacker.roosting = true;
+        attacker.flying = attacker.ability === 'Levitate';
         log.push(`${attacker.name} restored HP with Roost!`);
       }
       if (move === 'Parting Shot' && target && target.alive) {
@@ -2232,7 +2250,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
     }
-    if (enemySide && enemySide.imprisonedMoves && enemySide.imprisonedMoves.has(move)) {
+    if (enemySide && enemySide.imprisonedMoves && enemySide.imprisonedMoves.has(move) && !fromSleepTalk) {
       log.push(`${attacker.name} used ${move}! But it failed because of Imprison!`);
       return;
     }
@@ -2735,14 +2753,28 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     for (const mon of playerActive.filter(m => m.alive)) {
       const { move, target } = selectMove(mon, playerActive, oppActive, field);
-      const _act = { attacker:mon, move, target, side:'player', priority: getPriority(move) };
+      const _act = {
+        attacker: mon,
+        move,
+        target,
+        targetIndex: (target && oppActive.indexOf(target) >= 0) ? oppActive.indexOf(target) : null,
+        side: 'player',
+        priority: getPriority(move)
+      };
       mon._chosenMove = move;
       _recordAction(_act);
       actions.push(_act);
     }
     for (const mon of oppActive.filter(m => m.alive)) {
       const { move, target } = selectMove(mon, oppActive, playerActive, field);
-      const _act = { attacker:mon, move, target, side:'opp', priority: getPriority(move) };
+      const _act = {
+        attacker: mon,
+        move,
+        target,
+        targetIndex: (target && playerActive.indexOf(target) >= 0) ? playerActive.indexOf(target) : null,
+        side: 'opp',
+        priority: getPriority(move)
+      };
       mon._chosenMove = move;
       _recordAction(_act);
       actions.push(_act);
@@ -2828,10 +2860,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         action.attacker.hasActed = true;
         continue;
       }
-      executeAction(action.attacker, action.move, action.target,
-        action.side === 'player' ? playerActive : oppActive,
-        action.side === 'player' ? oppActive : playerActive,
-        field, log, rng);
+      const _allies = action.side === 'player' ? playerActive : oppActive;
+      const _enemies = action.side === 'player' ? oppActive : playerActive;
+      const _resolvedTarget = (typeof action.targetIndex === 'number' && action.targetIndex >= 0)
+        ? (_enemies[action.targetIndex] || action.target)
+        : action.target;
+      executeAction(action.attacker, action.move, _resolvedTarget,
+        _allies, _enemies, field, log, rng);
       // T9j.8 (Refs #19) Mark as acted so later-in-queue flinch rolls against
       // this mon have no effect (can't flinch a mon that already moved).
       action.attacker.hasActed = true;
@@ -2915,6 +2950,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     // Field upkeep
     field.tick(log);
+    for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.roosting)) {
+      mon.roosting = false;
+      mon.flying = mon.types.includes('Flying') || mon.ability === 'Levitate';
+    }
 
     // --------------------------------------------------------
     // REPLACEMENTS

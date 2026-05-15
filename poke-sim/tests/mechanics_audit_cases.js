@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const ROOT = path.resolve(__dirname, '..');
+
 function team(members) {
   return { name: 'Audit', format: 'vgc', legality_status: 'legal', members };
 }
@@ -254,6 +258,71 @@ const CASES = [
         throw new Error('Aurora Veil should not fail once snow is active');
       }
     }
+  },
+  {
+    name: 'Substitute blocks enemy status moves',
+    run(simulateBattle) {
+      const battle = simulate(simulateBattle, [
+        mon('Whimsicott', 'Substitute', { hp: 140, spe: 252 })
+      ], [
+        mon('Whimsicott', 'Taunt', { spe: 252 })
+      ], { maxTurns: 1, seed: [13, 15, 17, 19] });
+      expectLine(battle, 'made a Substitute!', 'Substitute should be created');
+      expectLine(battle, 'used Taunt! But it failed because of Substitute!', 'Substitute should block Taunt');
+    }
+  },
+  {
+    name: 'Sleep Talk bypasses Imprisoned moves',
+    run(simulateBattle) {
+      const battle = simulate(simulateBattle, [
+        mon('Snorlax', 'Sleep Talk', {
+          hp: 120,
+          status: 'sleep',
+          statusTurns: 2,
+          sleepTurns: 0,
+          moves: ['Sleep Talk', 'Recover']
+        })
+      ], [
+        mon('Whimsicott', 'Imprison', { spe: 252, moves: ['Imprison', 'Recover'] })
+      ], { maxTurns: 1, seed: [23, 25, 27, 29] });
+      expectLine(battle, 'sealed away its foes\' moves with Imprison!', 'Imprison should resolve');
+      expectLine(battle, 'used Sleep Talk!', 'Sleep Talk should still execute');
+      expectLine(battle, 'regained health with Recover!', 'Sleep Talk should bypass Imprison for Recover');
+    }
+  },
+  {
+    name: 'Ally Switch retargets the current slot occupant',
+    run(simulateBattle) {
+      const battle = simulate(simulateBattle, [
+        mon('Indeedee', 'Ally Switch', { spe: 252 }),
+        mon('Arcanine', 'Tackle', { spe: 0 })
+      ], [
+        mon('Incineroar', 'Tackle', { spe: 0 }),
+        mon('Incineroar2', 'Tackle', { spe: 0 })
+      ], { maxTurns: 1, seed: [31, 33, 35, 37] });
+      expectLine(battle, 'switched places with its ally using Ally Switch!', 'Ally Switch should resolve');
+      expectLine(battle, '→ Arcanine', 'later attack should hit the new slot occupant');
+      const pre = battle.turnLog && battle.turnLog[0] && battle.turnLog[0].pre && battle.turnLog[0].pre.active;
+      const post = battle.turnLog && battle.turnLog[0] && battle.turnLog[0].post && battle.turnLog[0].post.active;
+      if (!pre || !post || !Array.isArray(pre.player) || !Array.isArray(post.player) || pre.player.length < 2 || post.player.length < 2) {
+        throw new Error('Ally Switch should expose pre/post active order');
+      }
+      if (pre.player[0] !== post.player[1] || pre.player[1] !== post.player[0]) {
+        throw new Error('Ally Switch should swap the player active order');
+      }
+    }
+  },
+  {
+    name: 'Roost source wiring grounds the user temporarily',
+    run() {
+      const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
+      if (!/attacker\.roosting = true;[\s\S]*attacker\.flying = attacker\.ability === 'Levitate';/.test(src)) {
+        throw new Error('Roost grounding wiring missing');
+      }
+      if (!/mon\.roosting = false;[\s\S]*mon\.flying = mon\.types\.includes\('Flying'\) \|\| mon\.ability === 'Levitate';/.test(src)) {
+        throw new Error('Roost cleanup wiring missing');
+      }
+    }
   }
 ];
 
@@ -298,7 +367,11 @@ function runMechanicsSmoke(simulateBattle) {
       CASES[4],
       CASES[7],
       CASES[8],
-      CASES[15]
+      CASES[15],
+      CASES[16],
+      CASES[17],
+      CASES[18],
+      CASES[19]
     ]
   });
 }
