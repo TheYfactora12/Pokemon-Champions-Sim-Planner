@@ -18,7 +18,7 @@ node tests/t9j12_tests.js      # T9j.12 — simulator bring picker (#74) — 11 
 node tests/t9j13_tests.js      # T9j.13 — format mismatch guard + SP rescale (#42) — 47 cases
 node tests/t9j14_tests.js      # T9j.14 — Shadow Pressure PDF + coaching notes (#75) — 25 cases
 node tests/t9j15_tests.js      # T9j.15 — Best Mega Trigger Turn card (#71) — 22 cases
-node tests/phase4c_detectors.js # Phase 4c — detectors + confidence badges (4 fixtures) — 17 cases
+node tests/phase4c_detectors.js # Phase 4c — detectors + confidence badges (5 fixtures) — 20 cases
 node tests/phase4d_threat_response_tests.js # Phase 4d — threat response solver + line classifier — 7 cases
 node tests/phase4e_policy_regression.js # Phase 4e — policy audit / T5 static-advice gate — 13 cases
 node tests/mechanics_audit.js      # Mechanics audit — move-rule checks used by smoke test
@@ -51,14 +51,14 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | t9j13 | 47/47 | Format-mismatch guard + SP rescale (cofagrigus_tr, aurora_veil_froslass) |
 | t9j14 | 25/25 | Shadow Pressure PDF master sheet + coaching notes + pluggable COACHING_RULES |
 | t9j15 | 22/22 | Best Mega Trigger Turn card — Pilot Guide + PDF column, severity bands, sweep cache |
-| phase4c | 17/17 | Detectors (dead moves, lead perf, loss conditions) + confidence badges, 4 fixtures incl. high-n null effect |
+| phase4c | 20/20 | Detectors (dead moves, lead perf, loss conditions) + confidence badges, 5 fixtures incl. high-n null effect |
 | phase4d | 7/7 | Threat-response solver, cache, idle fallback, line labels, renderer |
 | phase4e | 13/13 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate, weakness dashboard |
 | mechanics_audit | 20/20 | Core move-rule checks: Protect, Taunt, support leads, Sucker Punch, Feint, shield riders, recovery, sleep, Substitute, Imprison, Ally Switch, Mega weather triggers, slot retargeting, Roost grounding |
 | phase5 | 12/12 | Turn log struct, positionScore, swing-turn delta, Replay Log v2, decision-gap audit |
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
-| **Total** | **353/353** | |
+| **Total** | **356/356** | |
 | audit | 0 JS errors | 5070 battles across 13 teams |
 
 ## Conventions

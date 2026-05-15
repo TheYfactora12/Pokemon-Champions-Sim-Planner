@@ -87,6 +87,9 @@ vm.runInContext([
   'this.csConfidenceBadge = csConfidenceBadge;',
   'this.csDetectDeadMoves = csDetectDeadMoves;',
   'this.csComputeLeadPerformance = csComputeLeadPerformance;',
+  'this.csBuildLeadPairTable = csBuildLeadPairTable;',
+  'this.csSortLeadPairTable = csSortLeadPairTable;',
+  'this.csRenderPhase4cSections = csRenderPhase4cSections;',
   'this.csDetectLossConditions = csDetectLossConditions;',
   'this.CS_PHASE4C = CS_PHASE4C;',
   'this.TEAMS = TEAMS;'
@@ -350,6 +353,55 @@ console.log('\nFixture D - high-n null effect (51% over 100 games)');
     const row = out.find(r => r.lead.join('|') === LEAD_PAIR.join('|'));
     truthy(row, 'expected lead row');
     eq(row.confidence, 'inconclusive', 'high-n null-effect lead must be inconclusive, not high');
+  });
+}
+
+// =========================================================================
+// FIXTURE E - Lead pair table by matchup.
+// =========================================================================
+console.log('\nFixture E - lead pair table by matchup');
+{
+  const games = [];
+  for (let i = 0; i < 6; i++) {
+    const g = makeGame({ result: 'win', lead: LEAD_PAIR });
+    g.oppKey = 'mega_altaria';
+    games.push(g);
+  }
+  for (let i = 0; i < 5; i++) {
+    const g = makeGame({ result: i === 0 ? 'win' : 'loss', lead: LEAD_PAIR_ALT });
+    g.oppKey = 'mega_altaria';
+    games.push(g);
+  }
+  for (let i = 0; i < 5; i++) {
+    const g = makeGame({ result: i < 2 ? 'win' : 'loss', lead: LEAD_PAIR });
+    g.oppKey = 'mega_dragonite';
+    games.push(g);
+  }
+
+  T('E1. csBuildLeadPairTable groups by matchup + lead pair', () => {
+    const rows = ctx.csBuildLeadPairTable(games, TEAM_KEY);
+    truthy(rows.length >= 3, 'expected multiple matchup rows');
+    truthy(rows.some(r => r.matchup_key === 'mega_altaria' && r.lead_label === LEAD_PAIR.join(' + ')), 'missing matchup row');
+  });
+
+  T('E2. csSortLeadPairTable sorts by sample size and WR', () => {
+    const rows = ctx.csBuildLeadPairTable(games, TEAM_KEY);
+    const sorted = ctx.csSortLeadPairTable(rows, 'sample_desc');
+    truthy(sorted[0].n >= sorted[1].n, 'sample sort not descending');
+  });
+
+  T('E3. csRenderPhase4cSections renders lead pair table section', () => {
+    const history = {
+      total_battles: games.length,
+      lead_performance_v2: [],
+      lead_pair_table_v2: ctx.csBuildLeadPairTable(games, TEAM_KEY),
+      dead_moves_v2: [],
+      loss_conditions_v2: [],
+      team_confidence_v2: { tier: 'high', reason: 'n=' + games.length }
+    };
+    const html = ctx.csRenderPhase4cSections(history, TEAM_KEY, { members: _members });
+    truthy(html.includes('Lead Pair Win-Rate Table'), 'missing section title');
+    truthy(html.includes('data-cs-lead-sort="wr_desc"'), 'missing sort controls');
   });
 }
 

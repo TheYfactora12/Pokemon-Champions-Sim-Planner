@@ -17481,6 +17481,9 @@ function renderStrategyTab(teamKey) {
   html += '</section>';
 
   host.innerHTML = html;
+  if (_history && typeof csWireLeadPairTableSort === 'function') {
+    csWireLeadPairTableSort(host, teamKey);
+  }
 
   // Apply Evidence toggle state on initial paint
   _csApplyEvidenceVisibility();
@@ -17946,6 +17949,8 @@ var CS_PHASE4C = {
   EFFECT_SIZE_Z:         1.96  // two-sided 95% CI
 };
 
+var CS_LEAD_PAIR_TABLE_SORT = 'wr_desc';
+
 // csConfidenceBadge(n, winRate?) -> { tier, reason }
 //
 // tier in {'none','low','med','high','inconclusive'}.
@@ -18090,6 +18095,98 @@ function csComputeLeadPerformance(games) {
   return rows.slice(0, CS_PHASE4C.LEAD_DISPLAY_TOP);
 }
 
+function csBuildLeadPairTable(games, teamKey) {
+  var out = [];
+  if (!Array.isArray(games) || !games.length) return out;
+
+  var byPair = {};
+  games.forEach(function(g){
+    var lead = (g.leads && Array.isArray(g.leads.player)) ? g.leads.player.slice().sort() : [];
+    if (!lead.length) return;
+    var oppKey = g.oppKey || 'unknown';
+    var key = oppKey + '::' + lead.join(' + ');
+    if (!byPair[key]) {
+      byPair[key] = {
+        matchup_key: oppKey,
+        matchup_name: (typeof TEAMS !== 'undefined' && TEAMS[oppKey] && TEAMS[oppKey].name) ? TEAMS[oppKey].name : oppKey,
+        lead: lead.slice(),
+        n: 0, w: 0, l: 0
+      };
+    }
+    if (g.result === 'win') {
+      byPair[key].n++; byPair[key].w++;
+    } else if (g.result === 'loss') {
+      byPair[key].n++; byPair[key].l++;
+    }
+  });
+
+  out = Object.keys(byPair).map(function(k) {
+    var row = byPair[k];
+    var wr = row.n > 0 ? row.w / row.n : 0;
+    var conf = csConfidenceBadge(row.n, wr);
+    return {
+      matchup_key: row.matchup_key,
+      matchup_name: row.matchup_name,
+      lead: row.lead,
+      lead_label: row.lead.join(' + '),
+      n: row.n,
+      w: row.w,
+      l: row.l,
+      win_rate: wr,
+      confidence: conf.tier,
+      confidence_reason: conf.reason
+    };
+  }).filter(function(r){ return r.n >= CS_PHASE4C.LEAD_MIN_GAMES; });
+
+  return out;
+}
+
+function csSortLeadPairTable(rows, sortKey) {
+  var arr = Array.isArray(rows) ? rows.slice() : [];
+  var mode = sortKey || CS_LEAD_PAIR_TABLE_SORT;
+  arr.sort(function(a, b) {
+    if (mode === 'sample_desc') {
+      if ((b.n || 0) !== (a.n || 0)) return (b.n || 0) - (a.n || 0);
+      if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+      return (a.matchup_name || '').localeCompare(b.matchup_name || '');
+    }
+    if (mode === 'matchup_asc') {
+      var mm = (a.matchup_name || '').localeCompare(b.matchup_name || '');
+      if (mm !== 0) return mm;
+      if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+      return (b.n || 0) - (a.n || 0);
+    }
+    if (mode === 'lead_asc') {
+      var ll = (a.lead_label || '').localeCompare(b.lead_label || '');
+      if (ll !== 0) return ll;
+      if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+      return (b.n || 0) - (a.n || 0);
+    }
+    if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+    if ((b.n || 0) !== (a.n || 0)) return (b.n || 0) - (a.n || 0);
+    return (a.matchup_name || '').localeCompare(b.matchup_name || '');
+  });
+  return arr;
+}
+
+function csSetLeadPairTableSort(sortKey, teamKey) {
+  CS_LEAD_PAIR_TABLE_SORT = sortKey || 'wr_desc';
+  if (typeof renderStrategyTab === 'function') {
+    renderStrategyTab(teamKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'));
+  }
+}
+
+function csWireLeadPairTableSort(host, teamKey) {
+  if (!host) return;
+  var buttons = host.querySelectorAll('[data-cs-lead-sort]');
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function(ev) {
+      ev.preventDefault();
+      csSetLeadPairTableSort(this.getAttribute('data-cs-lead-sort'), teamKey);
+    });
+  }
+}
+
 // csDetectLossConditions(games, teamKey) -> array
 //
 // Surfaces conditions that show up disproportionately in losses. Lift =
@@ -18229,12 +18326,20 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.phase4c.csConfidenceBadge = csConfidenceBadge;
   ChampionsSim.phase4c.csDetectDeadMoves = csDetectDeadMoves;
   ChampionsSim.phase4c.csComputeLeadPerformance = csComputeLeadPerformance;
+  ChampionsSim.phase4c.csBuildLeadPairTable = csBuildLeadPairTable;
+  ChampionsSim.phase4c.csSortLeadPairTable = csSortLeadPairTable;
+  ChampionsSim.phase4c.csSetLeadPairTableSort = csSetLeadPairTableSort;
+  ChampionsSim.phase4c.csWireLeadPairTableSort = csWireLeadPairTableSort;
   ChampionsSim.phase4c.csDetectLossConditions = csDetectLossConditions;
   ChampionsSim.phase4c.CS_PHASE4C = CS_PHASE4C;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csConfidenceBadge', csConfidenceBadge);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csDetectDeadMoves', csDetectDeadMoves);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csComputeLeadPerformance', csComputeLeadPerformance);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildLeadPairTable', csBuildLeadPairTable);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSortLeadPairTable', csSortLeadPairTable);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSetLeadPairTableSort', csSetLeadPairTableSort);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csWireLeadPairTableSort', csWireLeadPairTableSort);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csDetectLossConditions', csDetectLossConditions);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('CS_PHASE4C', CS_PHASE4C);
 
@@ -18341,6 +18446,9 @@ function computeTeamHistory(teamKey) {
     return { leadPair: pair.split(' / '), n: b.n, wins: b.w, win_rate: wr,
              avg_turns: b.n > 0 ? b.turnsSum / b.n : 0, verdict: verdict };
   }).sort(function(a,b){ return b.n - a.n; });
+
+  var lead_pair_table_v2 = [];
+  try { lead_pair_table_v2 = csBuildLeadPairTable(games, teamKey); } catch (_e) { lead_pair_table_v2 = []; }
 
   // Matchup failures (win_rate < 0.35 at n>=3)
   var matchup_failures = Object.keys(byOpp).map(function(k){
@@ -18496,6 +18604,7 @@ function computeTeamHistory(teamKey) {
       rng_dependency: rng_dependency
     },
     lead_performance: lead_performance,
+    lead_pair_table_v2: lead_pair_table_v2,
     matchup_failures: matchup_failures,
     common_loss_conditions: common_loss_conditions,
     dead_moves: dead_moves,
@@ -18671,6 +18780,43 @@ function csRenderPhase4cSections(history, teamKey, team) {
     leadBody += '</div>';
   }
   html += _section('Lead Performance', leadHeader, leadBody);
+
+  // ---- Section 1b: Lead Pair Table by Matchup ---------------------------
+  var leadPairRows = history.lead_pair_table_v2 || [];
+  var leadPairHeader = '';
+  var leadPairBody = '';
+  if (n < CS_PHASE4C.LEAD_MIN_GAMES) {
+    leadPairHeader = _badgeHtml('none', 'need ' + CS_PHASE4C.LEAD_MIN_GAMES + '+ games');
+    leadPairBody = _emptyHtml('Run ' + CS_PHASE4C.LEAD_MIN_GAMES + '+ sims to surface matchup-specific lead pairs.');
+  } else if (!leadPairRows.length) {
+    leadPairHeader = _badgeHtml('none', 'no matchup lead pairs yet');
+    leadPairBody = _emptyHtml('No matchup/lead pair has reached the threshold yet.');
+  } else {
+    var sortKey = CS_LEAD_PAIR_TABLE_SORT || 'wr_desc';
+    var sortedPairs = csSortLeadPairTable(leadPairRows, sortKey);
+    leadPairHeader = '<span class="cs-detector-count">' + sortedPairs.length + ' tracked</span>' + _badgeHtml(_dominantTier(sortedPairs));
+    leadPairBody += '<div class="cs-detector-toolbar cs-leadpair-toolbar">';
+    leadPairBody +=   '<button class="btn-secondary cs-leadpair-sort' + (sortKey === 'wr_desc' ? ' active' : '') + '" type="button" data-cs-lead-sort="wr_desc">Sort by WR</button>';
+    leadPairBody +=   '<button class="btn-secondary cs-leadpair-sort' + (sortKey === 'sample_desc' ? ' active' : '') + '" type="button" data-cs-lead-sort="sample_desc">Sort by sample</button>';
+    leadPairBody +=   '<button class="btn-secondary cs-leadpair-sort' + (sortKey === 'matchup_asc' ? ' active' : '') + '" type="button" data-cs-lead-sort="matchup_asc">Sort by matchup</button>';
+    leadPairBody +=   '<button class="btn-secondary cs-leadpair-sort' + (sortKey === 'lead_asc' ? ' active' : '') + '" type="button" data-cs-lead-sort="lead_asc">Sort by lead</button>';
+    leadPairBody += '</div>';
+    leadPairBody += '<div class="cs-detector-table">';
+    leadPairBody +=   '<div class="cs-detector-row cs-detector-head">';
+    leadPairBody +=     '<span>Matchup</span><span>Lead pair</span><span>W-L</span><span>WR</span><span>Sample</span>';
+    leadPairBody +=   '</div>';
+    sortedPairs.forEach(function(r){
+      leadPairBody += '<div class="cs-detector-row">';
+      leadPairBody +=   '<span class="cs-detector-cell-desc">' + _csEsc(r.matchup_name || r.matchup_key || '-') + '</span>';
+      leadPairBody +=   '<span class="cs-detector-cell-lead">' + _csEsc(r.lead_label || '-') + '</span>';
+      leadPairBody +=   '<span>' + r.w + '-' + r.l + '</span>';
+      leadPairBody +=   '<span>' + Math.round((r.win_rate || 0) * 100) + '%</span>';
+      leadPairBody +=   '<span title="' + _csEsc(r.confidence_reason || '') + '">' + r.n + '</span>';
+      leadPairBody += '</div>';
+    });
+    leadPairBody += '</div>';
+  }
+  html += _section('Lead Pair Win-Rate Table', leadPairHeader, leadPairBody);
 
   // ---- Section 2: Likely Loss Patterns ----------------------------------
   var lossHeader = '';
