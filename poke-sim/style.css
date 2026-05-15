@@ -224,6 +224,112 @@ table{border-collapse:collapse;width:100%}
   .tab-btn{padding:10px 10px;min-height:40px;font-size:12px}
   .team-card,.results-section,.about-card,.pilot-card,.team-full-card,.replay-card,.cs-section,.stat-panel,.editor-sidebar,.editor-form{padding:var(--sp3)}
 }
+@media(max-width:760px) and (hover:hover) and (pointer:fine){
+  .tab-nav{
+    display:flex;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    padding:0 var(--sp4);
+    max-width:1400px;
+    margin:0 auto;
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .tab-nav::-webkit-scrollbar{display:none}
+  .tab-btn{
+    padding:var(--sp3) var(--sp4);
+    font-size:var(--text-sm);
+    font-weight:700;
+    color:var(--text-m);
+    border:none;
+    background:none;
+    border-bottom:2px solid transparent;
+    cursor:pointer;
+    transition:all var(--tr);
+    white-space:nowrap;
+    letter-spacing:.02em;
+    min-height:44px;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .tab-btn:hover{color:var(--text)}
+  .tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+  .teams-actions{
+    width:auto;
+    flex-direction:row;
+    margin-bottom:var(--sp4);
+  }
+  .teams-actions .btn-secondary{
+    width:auto;
+    justify-content:flex-start;
+  }
+  .teams-grid{
+    grid-template-columns:repeat(auto-fill,minmax(min(380px,100%),1fr));
+    gap:var(--sp5);
+  }
+  .team-full-card{
+    padding:var(--sp5);
+  }
+  .tfcard-header{
+    flex-direction:row;
+    align-items:flex-start;
+    gap:var(--sp2);
+  }
+  .tfcard-badges{
+    width:auto;
+    align-items:flex-end;
+    flex-wrap:nowrap;
+    gap:3px;
+  }
+  .tfcard-badges .badge,
+  .tfcard-badges .badge-legal,
+  .tfcard-badges .badge-warn,
+  .tfcard-badges .badge-illegal{
+    max-width:none;
+  }
+  .tfcard-badges .export-card-btn,
+  .tfcard-badges .edit-card-btn,
+  .tfcard-badges .reset-card-btn,
+  .tfcard-badges .delete-card-btn{
+    width:auto;
+    margin-left:0;
+  }
+  .poke-full-row{
+    flex-wrap:nowrap;
+    align-items:stretch;
+  }
+  .poke-full-sprite{
+    width:44px;
+    height:44px;
+  }
+  .move-tags{
+    width:auto;
+  }
+  .export-card-btn{
+    width:auto;
+    justify-content:flex-start;
+  }
+  .tfcard-name,
+  .tfcard-meta,
+  .poke-full-name,
+  .poke-full-detail,
+  .bring-slot-name{
+    overflow-wrap:normal;
+    word-break:normal;
+  }
+  .bring-slot-name{
+    white-space:nowrap;
+    text-overflow:ellipsis;
+  }
+  .bring-slot{
+    min-height:72px;
+  }
+  .team-mon-detail-btn{
+    width:auto;
+    margin-top:0;
+  }
+}
 
 /* Format toggle */
 .format-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);padding:3px;gap:2px}
