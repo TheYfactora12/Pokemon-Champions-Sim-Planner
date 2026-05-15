@@ -1907,20 +1907,10 @@ const TEAMS = {
         "role": "TR Support"
       },
       {
-        "name": "Hatterene",
-        "item": "Choice Specs",
-        "ability": "Magic Bounce",
-        "teraType": "Fire",
-        "nature": "Quiet",
-        "level": 50,
-        "ivs": {
-          "hp": 31,
-          "atk": 31,
-          "def": 31,
-          "spa": 31,
-          "spd": 31,
-          "spe": 0
-        },
+        "name": "Ursaluna-Bloodmoon",
+        "item": "Assault Vest",
+        "ability": "Mind's Eye",
+        "nature": "Modest",
         "evs": {
           "hp": 32,
           "atk": 0,
@@ -1930,12 +1920,12 @@ const TEAMS = {
           "spe": 0
         },
         "moves": [
-          "Dazzling Gleam",
-          "Psychic",
-          "Expanding Force",
-          "Mystical Fire"
+          "Blood Moon",
+          "Hyper Voice",
+          "Earth Power",
+          "Vacuum Wave"
         ],
-        "role": "TR Sweeper"
+        "role": "TR Sweeper / Tank"
       }
     ]
   },
