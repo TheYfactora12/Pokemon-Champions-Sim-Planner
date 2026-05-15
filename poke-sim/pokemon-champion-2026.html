@@ -15638,6 +15638,109 @@ function buildCoachingSummary(rules, identity, elite) {
   return lines.join(' ');
 }
 
+function buildWeaknessDashboard(team, results, format, identity, leadSystem, trends, deadMoves, matchupWarnings) {
+  var members = (team && team.members) || [];
+  var bestLead = (leadSystem && leadSystem.safe) ? leadSystem.safe : '';
+  var altLead = (leadSystem && leadSystem.speed) ? leadSystem.speed : (leadSystem && leadSystem.pressure) ? leadSystem.pressure : '';
+
+  function _oppName(oppKey) {
+    var opp = (typeof TEAMS !== 'undefined' && TEAMS[oppKey]) ? TEAMS[oppKey] : null;
+    var name = opp && opp.name ? opp.name : oppKey;
+    var arch = '';
+    try { arch = opp && typeof inferPlaystyle === 'function' ? (inferPlaystyle(opp.members || []) || '') : ''; } catch (_e) { arch = ''; }
+    return arch ? (name + ' (' + arch + ')') : name;
+  }
+  function _fmtWR(v) { return Math.round((v || 0) * 100) + '%'; }
+  function _itemRows(items, formatter) {
+    return (items || []).slice(0, 3).map(function(item){ return formatter(item); });
+  }
+
+  var matchupRows = Object.entries(results || {}).map(function(pair){
+    var r = pair[1] || {};
+    var n = (r.wins || 0) + (r.losses || 0) + (r.draws || 0);
+    var wr = n > 0 ? (r.wins || 0) / n : 0;
+    return {
+      oppKey: pair[0],
+      name: _oppName(pair[0]),
+      n: n,
+      win_rate: wr,
+      status: wr < 0.35 ? 'gap' : 'watch'
+    };
+  }).filter(function(row){ return row.n >= 3; })
+    .sort(function(a, b){ return a.win_rate - b.win_rate; });
+
+  var lowMatchups = matchupRows.filter(function(row){ return row.status === 'gap'; });
+  var matchupFocus = lowMatchups.length ? lowMatchups : matchupRows.slice(0, 3);
+  var worstMatchup = matchupFocus[0] || null;
+  var worstLead = (trends && trends.worst_lead) ? trends.worst_lead : null;
+  var deadList = Array.isArray(deadMoves) ? deadMoves.slice(0, 3) : [];
+  var ruleViolations = (matchupWarnings || []).slice(0, 2);
+
+  var sections = [];
+
+  sections.push({
+    key: 'matchup_gaps',
+    title: 'Matchup win-rate gaps',
+    headline: worstMatchup
+      ? ('Worst current matchup: ' + worstMatchup.name + ' at ' + _fmtWR(worstMatchup.win_rate) + ' over ' + worstMatchup.n + ' games.')
+      : 'No matchup gap has enough sample to rank yet.',
+    fix: bestLead
+      ? ('Try leading ' + bestLead + ' into this archetype and keep ' + (altLead || bestLead) + ' as the fallback line.')
+      : 'Keep simming until a stable lead answer shows up.',
+    rows: _itemRows(matchupFocus, function(row){
+      return {
+        label: row.name,
+        value: _fmtWR(row.win_rate) + ' over ' + row.n + ' games'
+      };
+    }),
+    empty: 'No matchup has reached the 3-game threshold yet.'
+  });
+
+  sections.push({
+    key: 'lead_pairs',
+    title: 'Lead-pair issues',
+    headline: worstLead
+      ? ('Weakest lead pair: ' + (worstLead.lead || []).join(' + ') + ' at ' + _fmtWR(worstLead.win_rate) + ' over ' + worstLead.n + ' games.')
+      : 'No lead pair has enough sample to rank yet.',
+    fix: bestLead
+      ? ('Shift your default into ' + bestLead + ' and keep the weak lead as a matchup-specific exception.')
+      : 'Keep the most reliable lead on the field and re-test the rest of the opening pairs.',
+    rows: worstLead ? [{
+      label: (worstLead.lead || []).join(' + '),
+      value: _fmtWR(worstLead.win_rate) + ' over ' + worstLead.n + ' games'
+    }] : [],
+    empty: 'Run at least 5 games with a lead pair before ranking it.'
+  });
+
+  sections.push({
+    key: 'dead_moves',
+    title: 'Dead moves',
+    headline: deadList.length
+      ? (deadList[0].owner + ' - ' + deadList[0].move + ' has 0 calls in the sample.')
+      : 'No dead moves are flagged yet.',
+    fix: deadList.length
+      ? 'Open these slots on turn 1 when they are support tools, or replace them with coverage that patches your worst matchup.'
+      : 'Keep simming until a move crosses the 0-call threshold.',
+    rows: _itemRows(deadList, function(row){
+      return {
+        label: row.owner + ' - ' + row.move,
+        value: row.times_used + ' calls over ' + row.games_sampled + ' games'
+      };
+    }),
+    empty: 'No move has crossed the dead-move threshold yet.'
+  });
+
+  return {
+    summary: worstMatchup
+      ? ('Start with the matchup gap, then clean up the weakest opening pair, then prune dead moves.')
+      : 'Keep simming; the dashboard will populate once the sample is large enough.',
+    sections: sections,
+    rule_violations: ruleViolations.map(function(v){
+      return v.category + ': ' + v.note;
+    })
+  };
+}
+
 // ---------- STRATEGY REPORT (full assembly) ---------------------------
 
 function buildStrategyReport(teamKey, results, fmt) {
@@ -15675,6 +15778,23 @@ function buildStrategyReport(teamKey, results, fmt) {
 
   var pilotPlan = buildPilotPlan(team, leadSystem, trends, format);
   var matchupWarnings = buildMatchupWarnings(team, results, format);
+  var matchupGaps = Object.entries(results || {}).map(function(pair){
+    var res = pair[1] || {};
+    var n = (res.wins || 0) + (res.losses || 0) + (res.draws || 0);
+    var wr = n > 0 ? (res.wins || 0) / n : 0;
+    var opp = (typeof TEAMS !== 'undefined' && TEAMS[pair[0]]) ? TEAMS[pair[0]] : null;
+    return {
+      oppKey: pair[0],
+      name: opp && opp.name ? opp.name : pair[0],
+      archetype: (opp && typeof inferPlaystyle === 'function') ? (inferPlaystyle(opp.members || []) || '') : '',
+      n: n,
+      wins: res.wins || 0,
+      losses: res.losses || 0,
+      draws: res.draws || 0,
+      win_rate: wr
+    };
+  }).filter(function(row){ return row.n >= 3; })
+    .sort(function(a, b){ return a.win_rate - b.win_rate; });
 
   // Confidence tier — total games sampled
   var totalGames = 0;
@@ -15682,6 +15802,17 @@ function buildStrategyReport(teamKey, results, fmt) {
   var confidenceTier = totalGames < 20 ? 'low' : totalGames < 100 ? 'moderate' : totalGames < 500 ? 'high' : 'elite';
 
   var summary = buildCoachingSummary(coachingRules, identity, elite);
+  var weaknessDashboard = buildWeaknessDashboard(
+    team,
+    results || {},
+    format,
+    identity,
+    leadSystem,
+    trends,
+    deadMoves,
+    matchupWarnings
+  );
+  weaknessDashboard.matchup_gaps = matchupGaps;
 
   return {
     schema_version: 1,
@@ -15697,6 +15828,7 @@ function buildStrategyReport(teamKey, results, fmt) {
     elite_decision_analysis: elite,
     pilot_plan: pilotPlan,
     matchup_warnings: matchupWarnings,
+    weakness_dashboard: weaknessDashboard,
     coaching_notes: {
       how_team_wants_to_win: identity.primary_win_condition,
       common_mistakes: coachingRules.slice(0,3).map(function(r){ return r.id; }),
@@ -16800,6 +16932,8 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   var identity = csTeamIdentityV2(team, results, format);
   var leadSystem = buildLeadSystem(results, members);
   var gaps = findCoverageGaps(members);
+  var deadMoves = findDeadMoves(results, members);
+  var matchupWarnings = buildMatchupWarnings(team, results, format);
   var leadGuide = csTop3Leads(team, identity, results, format);
   var report_card = csTierAndScore(team, identity, leadSystem, gaps, results, sample);
   var moveLines = csMoveLines(team, identity, leadGuide);
@@ -16811,6 +16945,7 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   var threats = csTopThreats(team);
   var risk = csRiskProfile(team, report_card);
   var trend = csTrendAnalysisV2(team, results);
+  var weaknessDashboard = buildWeaknessDashboard(team, results, format, identity, leadSystem, trend, deadMoves, matchupWarnings);
 
   var summary = report_card.tier + '-tier ' + identity.playstyle + '. ' +
     'Win path: ' + identity.primary_win_condition + '. ' +
@@ -16833,9 +16968,11 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
     move_lines: moveLines,
     mistakes_to_avoid: mistakes,
     risk_profile: risk,
+    matchup_warnings: matchupWarnings,
     trend_analysis: trend,
     skill_coaching: skill,
     stress_test: stress,
+    weakness_dashboard: weaknessDashboard,
     coaching_summary: summary
   };
 }
@@ -16948,6 +17085,9 @@ function renderStrategyTab(teamKey) {
       var _oppSel = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
       var _oppKey = (_oppSel && _oppSel.value && TEAMS[_oppSel.value]) ? _oppSel.value : Object.keys(TEAMS).filter(function(k){ return k !== teamKey; })[0];
       if (_oppKey) html += renderThreatResponseCard(solveThreatResponse(teamKey, _oppKey, { simsPerBranch: 30, rngSeed: 'strategy-tab' }));
+    }
+    if (report && typeof csRenderWeaknessDashboard === 'function') {
+      html += csRenderWeaknessDashboard(report);
     }
   } catch (e) { UILog.warn('banner render failed', e); }
 
@@ -18953,6 +19093,43 @@ function csRenderPolicyAuditSection(history) {
   return html;
 }
 
+function csRenderWeaknessDashboard(report) {
+  report = report || {};
+  var dash = report.weakness_dashboard || null;
+  var html = '<section class="cs-section cs-weakness-dashboard"><h3 class="cs-h3">Personal Weakness Dashboard</h3>';
+  if (!dash) {
+    html += '<p class="cs-no-data">No weakness dashboard available yet.</p></section>';
+    return html;
+  }
+  if (dash.summary) {
+    html += '<p class="cs-explain">' + _csEsc(dash.summary) + '</p>';
+  }
+  if (Array.isArray(dash.rule_violations) && dash.rule_violations.length) {
+    html += '<p class="cs-explain">Rule violations tracked separately in Policy Audit: ' + _csEsc(dash.rule_violations.join(', ')) + '</p>';
+  }
+  html += '<div class="cs-skill-grid cs-weakness-grid">';
+  (dash.sections || []).forEach(function(section){
+    html += '<div class="cs-skill-card cs-weakness-card">';
+    html +=   '<h4>' + _csEsc(section.title || '') + '</h4>';
+    html +=   '<p><strong>' + _csEsc(section.headline || 'No data yet.') + '</strong></p>';
+    if (Array.isArray(section.rows) && section.rows.length) {
+      html += '<ul class="cs-list">';
+      section.rows.forEach(function(row){
+        html += '<li><strong>' + _csEsc(row.label || '') + ':</strong> ' + _csEsc(row.value || '') + '</li>';
+      });
+      html += '</ul>';
+    } else if (section.empty) {
+      html += '<p class="cs-no-data">' + _csEsc(section.empty) + '</p>';
+    }
+    if (section.fix) {
+      html += '<p><strong>Fix:</strong> ' + _csEsc(section.fix) + '</p>';
+    }
+    html += '</div>';
+  });
+  html += '</div></section>';
+  return html;
+}
+
 if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.phase4e = ChampionsSim.phase4e || {};
   ChampionsSim.phase4e.auditPolicyOutput = auditPolicyOutput;
@@ -18961,6 +19138,7 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.phase4e.auditCoachingDelta = auditCoachingDelta;
   ChampionsSim.phase4e.renderStaticAdviceWarning = renderStaticAdviceWarning;
   ChampionsSim.phase4e.csRenderPolicyAuditSection = csRenderPolicyAuditSection;
+  ChampionsSim.phase4e.csRenderWeaknessDashboard = csRenderWeaknessDashboard;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('auditPolicyOutput', auditPolicyOutput);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('detectFakeGoodPlays', detectFakeGoodPlays);
@@ -18968,6 +19146,7 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('dete
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('auditCoachingDelta', auditCoachingDelta);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderStaticAdviceWarning', renderStaticAdviceWarning);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderPolicyAuditSection', csRenderPolicyAuditSection);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderWeaknessDashboard', csRenderWeaknessDashboard);
 
 // Render the Record bar: overall W-L pill + per-archetype chips. Shown right
 // under the adaptive banner on the Strategy tab. No draws surfaced (per user:

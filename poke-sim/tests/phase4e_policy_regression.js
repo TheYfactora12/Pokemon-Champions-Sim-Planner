@@ -73,7 +73,9 @@ vm.runInContext([
   'this.detectPlayerBehaviorPatterns = detectPlayerBehaviorPatterns;',
   'this.auditCoachingDelta = auditCoachingDelta;',
   'this.renderStaticAdviceWarning = renderStaticAdviceWarning;',
-  'this.csRenderPolicyAuditSection = csRenderPolicyAuditSection;'
+  'this.csRenderPolicyAuditSection = csRenderPolicyAuditSection;',
+  'this.buildWeaknessDashboard = buildWeaknessDashboard;',
+  'this.csRenderWeaknessDashboard = csRenderWeaknessDashboard;'
 ].join(' '), ctx);
 
 let pass = 0, fail = 0;
@@ -221,6 +223,47 @@ T('T5-11 Policy Audit section renders static/adaptive state', () => {
   });
   truthy(html.includes('Policy Audit'), 'missing title');
   truthy(html.includes('STATIC ADVICE WARNING'), 'missing static warning');
+});
+
+T('T5-12 buildWeaknessDashboard returns the top 3 default sections', () => {
+  const dash = ctx.buildWeaknessDashboard(
+    { members: [{ name: 'Incineroar', moves: ['Fake Out'] }] },
+    {
+      mega_altaria: { wins: 2, losses: 8, draws: 0 },
+      player: { wins: 7, losses: 3, draws: 0 },
+      kingambit_sneasler: { wins: 1, losses: 6, draws: 0 }
+    },
+    'doubles',
+    {},
+    { safe: 'Whimsicott + Arcanine', speed: 'Garchomp + Whimsicott', pressure: 'Incineroar + Garchomp' },
+    { worst_lead: { lead: ['Incineroar', 'Garchomp'], win_rate: 0.25, n: 8 } },
+    [{ owner: 'Incineroar', move: 'Will-O-Wisp', times_used: 0, games_sampled: 18 }],
+    [{ category: 'Speed control', note: 'No Tailwind or Trick Room - faster meta teams will outpace you.' }]
+  );
+  eq(Array.isArray(dash.sections) ? dash.sections.length : 0, 3);
+  truthy(dash.summary && dash.summary.length > 0, 'missing summary');
+  truthy(dash.sections[0].title.includes('Matchup'), 'matchup section missing');
+  truthy(dash.sections[1].title.includes('Lead'), 'lead section missing');
+  truthy(dash.sections[2].title.includes('Dead'), 'dead move section missing');
+});
+
+T('T5-13 weakness dashboard renders actionable copy', () => {
+  const html = ctx.csRenderWeaknessDashboard({
+    weakness_dashboard: {
+      summary: 'Start with the matchup gap, then clean up the weakest opening pair, then prune dead moves.',
+      rule_violations: ['Speed control'],
+      sections: [
+        { title: 'Matchup win-rate gaps', headline: 'Worst current matchup: Mega Altaria at 20% over 10 games.', rows: [{ label: 'Mega Altaria', value: '20% over 10 games' }], fix: 'Try leading Whimsicott + Arcanine into this archetype.' },
+        { title: 'Lead-pair issues', headline: 'Weakest lead pair: Incineroar + Garchomp at 25% over 8 games.', rows: [{ label: 'Incineroar + Garchomp', value: '25% over 8 games' }], fix: 'Shift your default into Whimsicott + Arcanine and keep the weak lead as a matchup-specific exception.' },
+        { title: 'Dead moves', headline: 'Incineroar - Will-O-Wisp has 0 calls in the sample.', rows: [{ label: 'Incineroar - Will-O-Wisp', value: '0 calls over 18 games' }], fix: 'Open these slots on turn 1 when they are support tools, or replace them with coverage that patches your worst matchup.' }
+      ]
+    }
+  });
+  truthy(html.includes('Personal Weakness Dashboard'), 'missing dashboard title');
+  truthy(html.includes('Matchup win-rate gaps'), 'missing matchup card');
+  truthy(html.includes('Lead-pair issues'), 'missing lead card');
+  truthy(html.includes('Dead moves'), 'missing dead move card');
+  truthy(html.includes('Try leading Whimsicott + Arcanine'), 'missing matchup fix');
 });
 
 console.log(`\nPhase 4e policy regression: ${pass} pass, ${fail} fail\n`);
