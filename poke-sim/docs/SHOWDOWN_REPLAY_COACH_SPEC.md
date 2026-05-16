@@ -239,6 +239,13 @@ Recommended access model:
 
 Do not require login for the first useful replay review. Require login/profile persistence only when the user wants durable saved data, multi-log history, cross-device sync, or a merged long-term coaching profile.
 
+Future premium/report direction:
+
+- Keep Sim Coach and Battle Sensei separate while the data models mature.
+- Once both sides are finalized, combine simulation plans plus real replay behavior into a full coaching report.
+- Working names: `Colosseum Report`, `Professor Doutt's Premium Coaching Report`, or a cleaner final brand later.
+- This report should be a synthesis layer, not a replacement for either tab.
+
 The product rule is:
 
 - basic replay value should be immediate

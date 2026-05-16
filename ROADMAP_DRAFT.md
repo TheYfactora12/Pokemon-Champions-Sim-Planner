@@ -224,6 +224,8 @@ Milestones are **sequential** — each depends on the one before. Engine truth f
 
 **Outcome:** Users paste or upload Pokemon Showdown logs and get a coaching report that explains why they won or lost, which turn mattered, what line was better, and how the replay should update future simulation assumptions.
 
+**Product boundary:** Battle Sensei is its own surface, separate from Strategy. Once Sim Coach and Battle Sensei data are validated, a later synthesis layer can produce a full premium coaching report, with working names such as Colosseum Report or Professor Doutt's Premium Coaching Report.
+
 **Why it belongs:** This is Stage 3 of the Credibility Ladder in `COACHING_NORTH_STAR.md`: replay-calibrated coaching against real player matches. It converts the app from sim-only advice into a feedback loop.
 
 **Ship criteria:**
