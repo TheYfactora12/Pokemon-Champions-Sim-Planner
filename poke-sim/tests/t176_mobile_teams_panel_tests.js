@@ -47,7 +47,7 @@ T('3. team cards and controls reflow for narrow cards', () => {
   inc(css, '.poke-full-row{');
   inc(css, 'flex-wrap:wrap;');
   inc(css, '.poke-full-name{');
-  inc(css, 'flex-direction:column;');
+  inc(css, 'flex-wrap:wrap;');
   inc(css, '.poke-full-item,');
   inc(css, 'overflow-wrap:break-word;');
   inc(css, '.team-mon-detail-btn{');
