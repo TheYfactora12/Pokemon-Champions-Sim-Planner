@@ -470,6 +470,7 @@ Implementation direction:
 - Battle Sensei remains the evidence and confidence authority.
 - Strategy output must not override Battle Sensei confidence labels.
 - If the replay opponent cannot be matched to a simulated opponent with enough evidence, render `needs_sim_data`.
+- When sim data is missing, tell the trainer to run that matchup in Sim Mode or upload more logs so the platform can compare simulation theory against real replay choices.
 - Existing Strategy wording should be audited and aligned with Battle Sensei standards before it becomes a premium combined report source.
 - Longer term, Strategy, Sim Coach, Battle Sensei, Battle IQ, and the future premium report should share the same evidence vocabulary: `Observed`, `Strong inference`, `Weak inference`, and `Needs more data`.
 

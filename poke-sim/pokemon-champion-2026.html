@@ -13018,7 +13018,7 @@ if (typeof window !== 'undefined') {
       evidenceLabel: evidenceLabel('needs_more_data'),
       confidence: 'low',
       note: 'No matched simulation recommendation was provided for this replay yet.',
-      decisionChange: 'Run or attach the matchup simulation, then compare best sim lead/four/path against the actual replay choices.',
+      decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/four/path against the trainer’s real replay choices.',
       actualLead: actualLead,
       actualFour: actualFour
     };
@@ -13051,7 +13051,7 @@ if (typeof window !== 'undefined') {
       actualPath: summary.mainIssue || 'Needs turn review',
       firstDeviation: firstDeviation,
       teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/four matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/bring selection may have diverged from the simulated plan; verify with more battles before changing the team.',
-      decisionChange: 'Use this comparison to decide whether to test a different lead/four first or practice the same sim plan with cleaner sequencing.',
+      decisionChange: 'Use this comparison to decide whether the trainer should test a different lead/four, practice the same sim plan with cleaner sequencing, or collect more logs before changing the team.',
       source: plan.source || 'matched simulation plan',
       matchedOpponentKey: plan.matchedOpponentKey || '',
       matchedOpponentName: plan.matchedOpponentName || '',

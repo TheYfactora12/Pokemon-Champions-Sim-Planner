@@ -120,7 +120,7 @@ T('8. sim comparison stays low confidence until matched sim data exists', () => 
   const sim = analysis.review.learningReport.simComparison;
   eq(sim.status, 'needs_sim_data', 'needs sim status');
   eq(sim.evidenceLabel, 'Needs more data', 'needs evidence');
-  inc(sim.decisionChange, 'Run or attach the matchup simulation', 'decision-changing next step');
+  inc(sim.decisionChange, 'Run this matchup in Sim Mode or upload more logs', 'decision-changing next step');
 
   const matched = replayCoach.analyzeShowdownReplay(sample, {
     selectedSide: 'p1',
