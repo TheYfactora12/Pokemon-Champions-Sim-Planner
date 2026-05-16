@@ -12095,14 +12095,45 @@ if (typeof window !== 'undefined') {
     return 'attack_or_support';
   }
 
-  function addIssue(issues, tag, severity, turn, message, confidence, recommendation) {
+  function addIssue(issues, tag, severity, turn, message, confidence, recommendation, extra) {
+    extra = extra || {};
+    var id = extra.id || cleanText(tag).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+    var whatHappened = extra.whatHappened || message || 'The replay showed a coaching-relevant event.';
+    var whyMattered = extra.whyMattered || 'This can change tempo, board position, or the path to your win condition.';
+    var doInstead = extra.doInstead || recommendation || 'Review the board state and choose the line that preserves your win condition.';
     issues.push({
+      id: id,
       tag: tag,
+      category: extra.category || id,
       severity: severity,
       turn: turn || null,
       message: message,
       confidence: confidence || 'medium',
-      recommendation: recommendation || ''
+      evidence: extra.evidence || '',
+      whatHappened: whatHappened,
+      whyMattered: whyMattered,
+      doInstead: doInstead,
+      recommendation: recommendation || doInstead
+    });
+  }
+
+  function moveNames(moves) {
+    return (moves || []).map(function(m) { return (m.pokemon || '?') + ' used ' + (m.move || '?'); }).join('; ');
+  }
+
+  function hasOpponentFieldProgress(turn, oppSide) {
+    return (turn.field || []).some(function(f) {
+      return !f.side || f.side === oppSide || /trick room|weather|terrain|tailwind/i.test(f.value || '');
+    });
+  }
+
+  function fieldNames(fieldEvents) {
+    return (fieldEvents || []).map(function(f) { return f.value || f.text || f.type || 'field effect'; }).join('; ');
+  }
+
+  function hasIssue(issues, id, turn) {
+    return (issues || []).some(function(issue) {
+      return issue.id === id && (turn == null || issue.turn === turn);
     });
   }
 
@@ -12255,12 +12286,27 @@ if (typeof window !== 'undefined') {
     var userSelected = parsed.selectedPokemon[side] || [];
     var oppSelected = parsed.selectedPokemon[opp] || [];
     var bringConfidence = selectedFourConfidence(parsed, side);
+    var speedControlPieces = {};
 
     if (!userLead.length || !oppLead.length) {
-      addIssue(issues, 'Lead Unclear', 'medium', null, 'The log does not expose a complete opening board.', 'medium', 'Use a full Showdown replay export when possible so lead coaching can be more precise.');
+      addIssue(issues, 'Lead Unclear', 'medium', null, 'The log does not expose a complete opening board.', 'medium', 'Use a full Showdown replay export when possible so lead coaching can be more precise.', {
+        id: 'bad_lead',
+        category: 'lead_quality',
+        whatHappened: 'The replay did not expose both opening leads clearly enough for a reliable lead grade.',
+        whyMattered: 'Lead coaching depends on the first board state because doubles games often swing on turn-one speed control, Fake Out, redirection, and setup pressure.',
+        doInstead: 'Use a full Showdown replay export when possible, then compare your lead against the opponent plan before judging the rest of the game.',
+        evidence: 'Missing lead data'
+      });
     }
     if (parsed.teamPreview[side] && parsed.teamPreview[side].length >= 6 && userSelected.length && userSelected.length < 4) {
-      addIssue(issues, 'Bring-Four Unclear', 'low', null, 'Only part of your selected four could be inferred from revealed actions.', 'medium', 'Treat bring-four grades as incomplete until all brought Pokemon are revealed.');
+      addIssue(issues, 'Questionable Bring Evidence', 'low', null, 'Only part of your selected four could be inferred from revealed actions.', 'medium', 'Treat bring-four grades as incomplete until all brought Pokemon are revealed.', {
+        id: 'questionable_bring',
+        category: 'bring_four',
+        whatHappened: 'Team preview showed six Pokemon, but fewer than four of your brought Pokemon appeared in the parsed log.',
+        whyMattered: 'Bring-four coaching can overclaim when the backline is hidden, especially in VGC-style games where the benched two explain the matchup plan.',
+        doInstead: 'Use the bring-four read as provisional until the full selected four are visible or entered manually.',
+        evidence: 'Preview count ' + parsed.teamPreview[side].length + ', revealed selected count ' + userSelected.length
+      });
     }
 
     parsed.turns.forEach(function(turn) {
@@ -12272,36 +12318,122 @@ if (typeof window !== 'undefined') {
       var userProtect = userMoves.filter(function(m) { return classifyMove(m.move) === 'protection'; });
       var userFakeOut = userMoves.filter(function(m) { return classifyMove(m.move) === 'fake_out'; });
       var userSwitches = turn.switches.filter(function(s) { return s.side === side; });
+      var userField = turn.field.filter(function(f) { return f.side === side; });
+      var userTookDamage = turn.damage.some(function(d) { return d.side === side && d.hp != null && d.hp < 100; });
       var oppSetupOrSpeed = oppMoves.filter(function(m) {
         var kind = classifyMove(m.move);
         return kind === 'setup' || kind === 'speed_control' || kind === 'redirection';
       });
       var userRngBad = turn.rng.filter(function(r) { return r.side === side && (r.type === 'miss' || r.type === 'fail'); });
       var oppRngGood = turn.rng.filter(function(r) { return r.side === opp && r.type === 'crit'; });
+      var opponentProgress = oppSetupOrSpeed.length || hasOpponentFieldProgress(turn, opp);
+      var userMoveText = moveNames(userMoves);
+      var oppMoveText = moveNames(oppMoves);
+      var turnEvidence = [userMoveText, oppMoveText, fieldNames(turn.field)].filter(Boolean).join(' | ');
 
       if (userSpeed.length) {
         speedTurns.push(turn.number);
+        userSpeed.forEach(function(move) { if (move.pokemon) speedControlPieces[move.pokemon] = true; });
         if (!oppFaints.length && !turn.damage.some(function(d) { return d.side === opp && d.hp != null && d.hp < 75; })) {
-          addIssue(issues, 'Speed Control Without Pressure', 'high', turn.number, 'You used speed control but did not immediately create clear damage or KO pressure.', 'medium', 'After Tailwind, Trick Room, Icy Wind, or Electroweb, convert the speed edge into a KO, forced Protect, or preserved win condition.');
+          addIssue(issues, 'Speed Control Without Pressure', 'high', turn.number, 'You used speed control but did not immediately create clear damage or KO pressure.', 'medium', 'After Tailwind, Trick Room, Icy Wind, or Electroweb, convert the speed edge into a KO, forced Protect, or preserved win condition.', {
+            id: 'speed_control_without_pressure',
+            category: 'speed_control',
+            whatHappened: 'You used ' + userSpeed.map(function(m) { return m.move; }).join(', ') + ', but the turn did not remove an opposing Pokemon or create clear damage pressure.',
+            whyMattered: 'Speed control only wins games when it turns into pressure, preservation, or forced defensive choices before the opponent resets the board.',
+            doInstead: 'Before using speed control, plan the next two actions: what target you pressure, what Protect you force, and which win condition you preserve.',
+            evidence: turnEvidence
+          });
         }
       }
-      if (userProtect.length && oppSetupOrSpeed.length && !userFaints.length) {
-        addIssue(issues, 'Passive Protect Turn', 'medium', turn.number, 'You protected while the opponent advanced setup, redirection, or speed control.', 'medium', 'Protect is strongest when it preserves the win condition, not when it gives the opponent a free board improvement.');
+      if (userProtect.length && (opponentProgress || userTookDamage) && !oppFaints.length) {
+        addIssue(issues, 'Protect Misuse', 'medium', turn.number, 'You protected while the opponent advanced position or damaged the other slot.', 'medium', 'Protect is strongest when it preserves the win condition, not when it gives the opponent a free board improvement.', {
+          id: 'protect_misuse',
+          category: 'resource_use',
+          whatHappened: 'You clicked ' + userProtect.map(function(m) { return m.move; }).join(', ') + ', but the opponent still improved the turn by advancing position or damaging your partner.',
+          whyMattered: 'A defensive turn is only good if it stalls a limited resource, protects the correct piece, or prevents the opponent from converting pressure elsewhere.',
+          doInstead: 'Use Protect with a purpose: stall Trick Room/Tailwind/weather turns, shield the actual win condition, or pair it with a partner action that punishes the expected attack.',
+          evidence: turnEvidence
+        });
       }
       if (userFakeOut.length && turn.rng.some(function(r) { return r.type === 'fail' && r.side === side; })) {
-        addIssue(issues, 'Fake Out Failed', 'medium', turn.number, 'Your Fake Out failed or was blocked.', 'high', 'Check Protect, Ghost typing, priority blocking, terrain, and move timing before leaning on Fake Out.');
+        addIssue(issues, 'Targeting Error', 'medium', turn.number, 'Your Fake Out failed or was blocked.', 'high', 'Check Protect, Ghost typing, priority blocking, terrain, and move timing before leaning on Fake Out.', {
+          id: 'targeting_error',
+          category: 'targeting',
+          whatHappened: 'Your Fake Out did not affect the intended target.',
+          whyMattered: 'Fake Out is a turn-one resource. When it fails, the opponent may get setup, redirection, or speed control without being forced to trade.',
+          doInstead: 'Before using Fake Out, verify terrain, typing, protection, priority blocking, and whether the other opposing slot is the real setup threat.',
+          evidence: turnEvidence || 'Fake Out failed'
+        });
+        if (turn.number === 1 && opponentProgress && !hasIssue(issues, 'bad_lead', turn.number)) {
+          addIssue(issues, 'Bad Lead', 'high', turn.number, 'Your opening did not stop the opponent from establishing their plan.', 'medium', 'A safe lead should either threaten the setup piece, block the support line, or create pressure even if Fake Out fails.', {
+            id: 'bad_lead',
+            category: 'lead_quality',
+            whatHappened: 'Your lead used Fake Out, it failed, and the opponent still advanced their opening plan.',
+            whyMattered: 'A lead that depends on one interrupt can collapse when the opponent has redirection, terrain, Protect, Ghost typing, or a better speed-control line.',
+            doInstead: 'Lead with a pair that has a backup answer: direct pressure into the setup Pokemon, Taunt/deny tools, or damage that still matters if Fake Out fails.',
+            evidence: turnEvidence
+          });
+        }
       }
-      if (userSwitches.length && oppSetupOrSpeed.length && !oppFaints.length) {
-        addIssue(issues, 'Switch Tempo Loss', 'medium', turn.number, 'Your switch coincided with the opponent improving their board.', 'medium', 'Switches should either preserve a key piece, absorb a hit, or deny the opponent progress.');
+      if (userSwitches.length && (opponentProgress || userTookDamage) && !oppFaints.length) {
+        addIssue(issues, 'Switch Tempo Loss', 'medium', turn.number, 'Your switch coincided with the opponent improving their board.', 'medium', 'Switches should either preserve a key piece, absorb a hit, or deny the opponent progress.', {
+          id: 'switch_tempo_loss',
+          category: 'positioning',
+          whatHappened: 'You switched while the opponent advanced board state, field control, or damage into your side.',
+          whyMattered: 'Switching can be correct, but a passive switch gives the opponent a free turn if it does not absorb damage, preserve a win condition, or deny setup.',
+          doInstead: 'Make the switch earn something concrete: protect a key Pokemon, reset Intimidate/Fake Out, absorb a resisted hit, or force the opponent backward next turn.',
+          evidence: turnEvidence
+        });
       }
       if (userFaints.length && !oppFaints.length) {
-        addIssue(issues, 'Lost Exchange', 'high', turn.number, 'You lost a Pokemon without taking one back that turn.', 'high', 'Review whether that Pokemon was still needed for speed control, pivoting, or endgame cleanup.');
+        var exposedWinPiece = userFaints.some(function(f) { return speedControlPieces[f.pokemon]; });
+        addIssue(issues, exposedWinPiece ? 'Win Condition Exposed' : 'Lost Exchange', 'high', turn.number, 'You lost a Pokemon without taking one back that turn.', 'high', 'Review whether that Pokemon was still needed for speed control, pivoting, or endgame cleanup.', {
+          id: exposedWinPiece ? 'win_condition_exposed' : 'lost_exchange',
+          category: exposedWinPiece ? 'win_condition' : 'material_exchange',
+          whatHappened: exposedWinPiece ? 'A Pokemon that had provided your speed-control plan fainted without an immediate trade.' : 'You lost ' + userFaints.map(function(f) { return f.pokemon; }).join(', ') + ' without removing an opposing Pokemon that turn.',
+          whyMattered: exposedWinPiece ? 'If your speed-control or endgame piece disappears before its advantage is converted, the rest of the game may no longer follow your intended win path.' : 'A clean material loss usually means the opponent gained both board control and future flexibility.',
+          doInstead: exposedWinPiece ? 'Preserve that support piece until the speed advantage creates a KO, forces Protect, or safely hands the endgame to your cleaner.' : 'Look for a line that trades KOs, protects the threatened piece, or switches into a resist before the opponent gets a free knockout.',
+          evidence: turnEvidence
+        });
+      }
+      if (opponentProgress && !oppFaints.length && !userField.length) {
+        addIssue(issues, 'Field Control Failure', turn.number === 1 ? 'high' : 'medium', turn.number, 'The opponent advanced field control or setup without being punished.', 'medium', 'When the opponent sets Trick Room, Tailwind, terrain, weather, or redirection, answer it immediately or use the turn to take a meaningful trade.', {
+          id: 'field_control_failure',
+          category: 'field_control',
+          whatHappened: 'The opponent gained setup, redirection, speed control, or field control and you did not take a knockout back.',
+          whyMattered: 'Field control changes what moves first, what survives, and which side gets to dictate defensive choices on the next turn.',
+          doInstead: 'Deny the field effect when possible; if denial is impossible, punish the setter or switch into a board that can stall or reverse the field state.',
+          evidence: turnEvidence
+        });
       }
       if (userRngBad.length || oppRngGood.length) {
-        addIssue(issues, 'RNG Materiality Check', 'low', turn.number, 'The turn included a miss, failed action, or critical hit that may have affected the line.', 'high', 'Separate bad luck from avoidable exposure: ask whether a safer line reduced reliance on that roll.');
+        addIssue(issues, 'RNG Materiality Check', 'low', turn.number, 'The turn included a miss, failed action, or critical hit that may have affected the line.', 'high', 'Separate bad luck from avoidable exposure: ask whether a safer line reduced reliance on that roll.', {
+          id: 'rng_material',
+          category: 'variance',
+          whatHappened: 'The log recorded RNG or failed-action variance on this turn.',
+          whyMattered: 'RNG can change outcomes, but coaching should separate unavoidable variance from earlier decisions that increased exposure to that roll.',
+          doInstead: 'Review the previous turn for a safer line before blaming the result entirely on variance.',
+          evidence: turn.rng.map(function(r) { return r.type + (r.pokemon ? ' on ' + r.pokemon : ''); }).join('; ')
+        });
       }
       turnScores[turn.number] = (turnScores[turn.number] || 0) + userFaints.length * 3 + oppSetupOrSpeed.length + userRngBad.length + oppRngGood.length;
     });
+
+    if (parsed.result === 'loss' && parsed.turns.length) {
+      var finalTurn = parsed.turns[parsed.turns.length - 1];
+      var finalUserFaints = finalTurn.faints.filter(function(f) { return f.side === side; });
+      var finalOppFaints = finalTurn.faints.filter(function(f) { return f.side === opp; });
+      if (finalUserFaints.length && finalUserFaints.length >= finalOppFaints.length && !hasIssue(issues, 'endgame_misplay', finalTurn.number)) {
+        addIssue(issues, 'Endgame Misplay', 'medium', finalTurn.number, 'The final exchange still lost the game even after your side found some pressure.', 'medium', 'In the endgame, preserve the piece that can close and target the Pokemon that prevents that closer from winning.', {
+          id: 'endgame_misplay',
+          category: 'endgame',
+          whatHappened: 'On the last parsed turn, your side lost a key Pokemon and the game ended in a loss.',
+          whyMattered: 'Endgames are often decided by preservation, target priority, remaining speed control, and whether the final attacker survives long enough to convert.',
+          doInstead: 'Before the final turns, identify the exact closer and choose the line that keeps that Pokemon alive or removes its biggest blocker first.',
+          evidence: 'Final turn ' + finalTurn.number + ': ' + moveNames(finalTurn.moves)
+        });
+      }
+    }
 
     var criticalTurn = null;
     var criticalScore = -1;
@@ -15181,8 +15313,10 @@ function csReplayCoachRenderAnalysis(analysis) {
   var tags = (review.coachingTags || []).map(function(tag) {
     return '<div class="replay-coach-list-row">' +
       '<strong>' + _escapeHtml(tag.tag || 'Coaching Note') + ' · ' + _escapeHtml(tag.severity || 'medium') + '</strong>' +
-      _escapeHtml(tag.message || '') +
-      '<small>' + _escapeHtml(tag.recommendation || 'Review this turn in context.') + ' Confidence: ' + _escapeHtml(tag.confidence || 'medium') + (tag.turn ? ' · Turn ' + _escapeHtml(String(tag.turn)) : '') + '</small>' +
+      '<div><b>What happened:</b> ' + _escapeHtml(tag.whatHappened || tag.message || 'The replay showed a coaching-relevant event.') + '</div>' +
+      '<div><b>Why it mattered:</b> ' + _escapeHtml(tag.whyMattered || 'This can change tempo, board position, or the path to your win condition.') + '</div>' +
+      '<div><b>Do instead:</b> ' + _escapeHtml(tag.doInstead || tag.recommendation || 'Review this turn in context.') + '</div>' +
+      '<small>' + (tag.evidence ? 'Evidence: ' + _escapeHtml(tag.evidence) + ' · ' : '') + 'Confidence: ' + _escapeHtml(tag.confidence || 'medium') + (tag.turn ? ' · Turn ' + _escapeHtml(String(tag.turn)) : '') + '</small>' +
       '</div>';
   }).join('');
   var turns = (review.turnTimeline || []).slice(0, 80).map(function(turn) {

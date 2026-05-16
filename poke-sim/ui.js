@@ -2800,8 +2800,10 @@ function csReplayCoachRenderAnalysis(analysis) {
   var tags = (review.coachingTags || []).map(function(tag) {
     return '<div class="replay-coach-list-row">' +
       '<strong>' + _escapeHtml(tag.tag || 'Coaching Note') + ' · ' + _escapeHtml(tag.severity || 'medium') + '</strong>' +
-      _escapeHtml(tag.message || '') +
-      '<small>' + _escapeHtml(tag.recommendation || 'Review this turn in context.') + ' Confidence: ' + _escapeHtml(tag.confidence || 'medium') + (tag.turn ? ' · Turn ' + _escapeHtml(String(tag.turn)) : '') + '</small>' +
+      '<div><b>What happened:</b> ' + _escapeHtml(tag.whatHappened || tag.message || 'The replay showed a coaching-relevant event.') + '</div>' +
+      '<div><b>Why it mattered:</b> ' + _escapeHtml(tag.whyMattered || 'This can change tempo, board position, or the path to your win condition.') + '</div>' +
+      '<div><b>Do instead:</b> ' + _escapeHtml(tag.doInstead || tag.recommendation || 'Review this turn in context.') + '</div>' +
+      '<small>' + (tag.evidence ? 'Evidence: ' + _escapeHtml(tag.evidence) + ' · ' : '') + 'Confidence: ' + _escapeHtml(tag.confidence || 'medium') + (tag.turn ? ' · Turn ' + _escapeHtml(String(tag.turn)) : '') + '</small>' +
       '</div>';
   }).join('');
   var turns = (review.turnTimeline || []).slice(0, 80).map(function(turn) {

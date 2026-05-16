@@ -60,14 +60,25 @@ T('3. extracts moves, switches, faints, damage, field effects, and RNG markers',
 T('4. builds a coaching review with tags and critical turn', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const tags = analysis.review.coachingTags.map((t) => t.tag);
+  const ids = analysis.review.coachingTags.map((t) => t.id);
   eq(analysis.review.summary.yourLead.join(','), 'Incineroar,Whimsicott', 'summary lead');
   eq(analysis.review.summary.result, 'loss', 'summary result');
   eq(analysis.review.summary.selectedFourConfidence.level, 'high', 'bring confidence');
   truthy(analysis.review.summary.criticalTurn >= 1, 'critical turn');
-  includes(tags, 'Fake Out Failed', 'Fake Out coaching tag');
+  includes(tags, 'Targeting Error', 'targeting coaching tag');
   includes(tags, 'Speed Control Without Pressure', 'speed control tag');
-  includes(tags, 'Lost Exchange', 'lost exchange tag');
+  includes(tags, 'Win Condition Exposed', 'win condition tag');
   includes(tags, 'RNG Materiality Check', 'rng tag');
+  ['bad_lead', 'speed_control_without_pressure', 'targeting_error', 'field_control_failure', 'protect_misuse', 'switch_tempo_loss', 'win_condition_exposed', 'rng_material', 'endgame_misplay'].forEach((id) => {
+    includes(ids, id, 'coaching rule id');
+  });
+  truthy(ids.length >= 5, 'detects at least five rule ids');
+  analysis.review.coachingTags.forEach((tag) => {
+    truthy(tag.whatHappened, 'tag what happened');
+    truthy(tag.whyMattered, 'tag why mattered');
+    truthy(tag.doInstead, 'tag do instead');
+    truthy(tag.confidence, 'tag confidence');
+  });
 });
 
 T('5. builds readable turn timeline and hidden raw-log preview data', () => {
@@ -88,6 +99,37 @@ T('6. fails soft on empty or incomplete logs', () => {
   const partial = replayCoach.analyzeShowdownReplay('|player|p1|Alice\n|win|Alice', { selectedSide: 'p1' });
   eq(partial.review.summary.result, 'win', 'partial winner result');
   eq(partial.review.summary.confidence, 'medium', 'partial confidence');
+});
+
+T('7. marks partial bring-four evidence without overclaiming', () => {
+  const partialBring = [
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|gametype|doubles',
+    '|poke|p1|Incineroar, L50, M|',
+    '|poke|p1|Whimsicott, L50, F|',
+    '|poke|p1|Garchomp, L50, M|',
+    '|poke|p1|Arcanine, L50, M|',
+    '|poke|p1|Rillaboom, L50, M|',
+    '|poke|p1|Milotic, L50, F|',
+    '|poke|p2|Indeedee-F, L50, F|',
+    '|poke|p2|Hatterene, L50, F|',
+    '|poke|p2|Ursaluna, L50, M|',
+    '|poke|p2|Torkoal, L50, M|',
+    '|poke|p2|Amoonguss, L50, M|',
+    '|poke|p2|Kingambit, L50, M|',
+    '|teampreview',
+    '|start',
+    '|switch|p1a: Incineroar|Incineroar, L50, M|100/100',
+    '|switch|p2a: Hatterene|Hatterene, L50, F|100/100',
+    '|turn|1',
+    '|move|p1a: Incineroar|Protect|p1a: Incineroar',
+    '|win|Bob'
+  ].join('\n');
+  const analysis = replayCoach.analyzeShowdownReplay(partialBring, { selectedSide: 'p1' });
+  const ids = analysis.review.coachingTags.map((t) => t.id);
+  includes(ids, 'questionable_bring', 'questionable bring rule id');
+  eq(analysis.review.summary.selectedFourConfidence.level, 'medium', 'partial bring confidence');
 });
 
 console.log(`\nBattle Sensei parser: ${pass} pass, ${fail} fail\n`);

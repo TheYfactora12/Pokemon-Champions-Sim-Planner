@@ -41,13 +41,21 @@ T('3. timeline renders coaching read, better line, severity, and confidence', ()
   inc(ui, "turn.confidence || 'medium'");
 });
 
-T('4. raw log preview is collapsed and hidden by default', () => {
+T('4. coaching tags explain decision impact, not just labels', () => {
+  inc(ui, '<b>What happened:</b>');
+  inc(ui, '<b>Why it mattered:</b>');
+  inc(ui, '<b>Do instead:</b>');
+  inc(ui, 'Confidence:');
+  inc(ui, 'Evidence:');
+});
+
+T('5. raw log preview is collapsed and hidden by default', () => {
   inc(ui, '<details class="replay-coach-raw"><summary>Raw log preview hidden by default');
   inc(ui, 'rawLogPreview');
   inc(css, '.replay-coach-raw-log{margin-top:10px;white-space:pre-wrap;max-height:260px}');
 });
 
-T('5. timeline styles stay card-based and mobile-safe', () => {
+T('6. timeline styles stay card-based and mobile-safe', () => {
   inc(css, '.replay-coach-turn.high');
   inc(css, '.replay-coach-turn.medium');
   inc(css, '.replay-coach-turn.low');
