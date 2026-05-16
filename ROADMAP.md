@@ -54,16 +54,16 @@ Near-term work should protect this sequence. Meta Stress Lab is valuable, but it
 
 | Order | Issue | Why Next |
 |---|---|---|
-| 1 | #201 Align Strategy coaching with Battle Sensei evidence standards | Needed before Strategy, Sim Comparison, and premium reports share claims. |
-| 2 | #194 Sim Feedback Packet | Turns Battle Sensei replay output into reusable sim-calibration signals without auto-mutating models. |
-| 3 | #195 Replay persistence schema + privacy controls | Defines what can be saved, what stays local, and raw-log boundaries. |
-| 4 | #197 Supabase replay schema migration | Implements the DB layer after privacy rules are explicit. |
-| 5 | #198 Battle IQ profile schema + norm groups | Enables premium Battle IQ history and matched comparisons. |
-| 6 | #199 Opt-in aggregate learning signals | Enables aggregate coaching while protecting users. |
-| 7 | #200 Replay-to-sim calibration scenario queue | Bridges Battle Sensei logs into future Meta Stress Lab scenarios. |
-| 8 | #203 M13 meta snapshot schema | Starts Meta Stress Lab after the evidence and DB loop is clear. |
+| Done | #201 Align Strategy coaching with Battle Sensei evidence standards | Closed after Strategy adopted the Battle Sensei evidence vocabulary. |
+| 1 | #194 Sim Feedback Packet | Turns Battle Sensei replay output into reusable sim-calibration signals without auto-mutating models. |
+| 2 | #195 Replay persistence schema + privacy controls | Defines what can be saved, what stays local, and raw-log boundaries. |
+| 3 | #197 Supabase replay schema migration | Implements the DB layer after privacy rules are explicit. |
+| 4 | #198 Battle IQ profile schema + norm groups | Enables premium Battle IQ history and matched comparisons. |
+| 5 | #199 Opt-in aggregate learning signals | Enables aggregate coaching while protecting users. |
+| 6 | #200 Replay-to-sim calibration scenario queue | Bridges Battle Sensei logs into future Meta Stress Lab scenarios. |
+| 7 | #203 M13 meta snapshot schema | Starts Meta Stress Lab after the evidence and DB loop is clear. |
 
-Recommended next implementation issue: **#201**.
+Recommended next implementation issue: **#194**.
 
 ---
 
@@ -204,7 +204,7 @@ Recommended next implementation issue: **#201**.
 | #198 | Battle IQ profile schema + norm groups | P2 |
 | #199 | Opt-in aggregate learning signals | P2 |
 | #200 | Replay-to-sim calibration scenario queue | P2 |
-| #201 | Align Strategy coaching with Battle Sensei evidence standards | P2 |
+| #201 | Align Strategy coaching with Battle Sensei evidence standards | ✅ CLOSED |
 | #194 | Sim Feedback Packet for replay-calibrated coaching signals | P2 |
 | #195 | Replay persistence schema + explicit raw-log privacy controls | P2 |
 | #196 | Multi-log Player Pattern Dashboard | P2 |

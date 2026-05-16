@@ -6047,6 +6047,7 @@ function buildMatchupIntelligence(team, results, format, identity, leadSystem, t
 }
 
 function buildReportProvenance(totalGames, confidenceTier, format) {
+  var evidence = csStrategyEvidenceStandard(totalGames, confidenceTier);
   var freshnessLabel = 'no sample yet';
   if (totalGames >= 100) freshnessLabel = 'well-sampled';
   else if (totalGames >= 20) freshnessLabel = 'moderately sampled';
@@ -6056,6 +6057,8 @@ function buildReportProvenance(totalGames, confidenceTier, format) {
     generated_at: new Date().toISOString(),
     sample_size: totalGames || 0,
     confidence_tier: confidenceTier || 'low',
+    evidence_label: evidence.label,
+    evidence_confidence: evidence.confidence,
     freshness_label: freshnessLabel,
     freshness_note: totalGames > 0
       ? 'Simulation-driven recommendations with ' + freshnessLabel + ' confidence.'
@@ -6065,16 +6068,50 @@ function buildReportProvenance(totalGames, confidenceTier, format) {
   };
 }
 
+function csStrategyEvidenceStandard(totalGames, confidenceTier) {
+  var n = totalGames || 0;
+  if (n <= 0) {
+    return {
+      label: 'Needs more data',
+      confidence: 'low',
+      rule: 'Strategy has no simulation sample for this team yet.',
+      decision: 'Run matchup simulations before treating the report as matchup guidance.'
+    };
+  }
+  if (n < 20 || confidenceTier === 'low') {
+    return {
+      label: 'Weak inference',
+      confidence: 'low',
+      rule: 'Strategy is using a thin simulation sample.',
+      decision: 'Use this as a test queue, not as a final team-change recommendation.'
+    };
+  }
+  if (n < 100 || confidenceTier === 'moderate') {
+    return {
+      label: 'Strong inference',
+      confidence: 'medium',
+      rule: 'Strategy is supported by a moderate simulation sample.',
+      decision: 'Test the recommended lead and preserve plan before changing team slots.'
+    };
+  }
+  return {
+    label: 'Observed',
+    confidence: 'high',
+    rule: 'Strategy is backed by a mature simulation sample.',
+    decision: 'Use this to prioritize matchup prep, then confirm with Battle Sensei logs.'
+  };
+}
+
 function buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, trends) {
   var safeLead = (matchupIntelligence && Array.isArray(matchupIntelligence.safe_leads) && matchupIntelligence.safe_leads[0]) || leadSystem.safe || 'your safest opener';
   var scoutLead = (matchupIntelligence && Array.isArray(matchupIntelligence.risky_leads) && matchupIntelligence.risky_leads[0]) || leadSystem.speed || safeLead;
   var concentration = elite && typeof elite.lead_concentration === 'number' ? elite.lead_concentration : 0;
   var revealed = concentration > 0.8
-    ? 'You are revealing the same opener repeatedly; game 2 is likely to be targeted.'
-    : 'Lead data is varied enough that the opponent still has to respect multiple openers.';
+    ? 'Sim data shows the same opener repeatedly; if the opponent has seen it, game 2 can be targeted.'
+    : 'Lead data is varied enough that the opponent may still need to respect multiple openers.';
   var opponentAdjustment = concentration > 0.8
-    ? 'Expect the opponent to lead specifically to punish your default opener.'
-    : 'Expect a lighter adaptation, usually only a small lead or move tweak.';
+    ? 'Likely adjustment if they recognize the pattern: lead specifically to punish your default opener.'
+    : 'Likely adjustment if they adapt: a small lead or move tweak rather than a full plan change.';
   var counterAdjustment = concentration > 0.8
     ? 'Rotate to ' + scoutLead + ' or shift one support slot to hide the default line.'
     : 'Keep the game 1 plan, but preserve the pivot piece that lets you pivot into ' + safeLead + '.';
@@ -6085,6 +6122,8 @@ function buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, tr
     : (trends && Array.isArray(trends.topOppFinishers) && trends.topOppFinishers.length ? trends.topOppFinishers[0] : 'the opponent’s win condition');
   return {
     source_label: csLabelSim(),
+    evidence_label: concentration > 0.8 ? 'Strong inference' : 'Weak inference',
+    confidence: concentration > 0.8 ? 'medium' : 'low',
     adaptation_risk: concentration > 0.8 ? 'high' : concentration > 0.5 ? 'medium' : 'low',
     game1_lead: safeLead,
     game2_plan: game2Lead,
@@ -6093,7 +6132,7 @@ function buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, tr
     counter_adjustment: counterAdjustment,
     what_to_preserve: primaryWin,
     common_loss_path: commonLoss,
-    decision_rule: 'If you reveal the same lead twice, assume the opponent can target it in game 2.'
+    decision_rule: 'If you reveal the same lead twice, prepare for the opponent to target it in game 2.'
   };
 }
 
@@ -6293,6 +6332,7 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
 
   var summary = buildCoachingSummary(coachingRules, identity, elite);
   var provenance = buildReportProvenance(totalGames, confidenceTier, format);
+  var evidenceStandard = csStrategyEvidenceStandard(totalGames, confidenceTier);
   var weaknessDashboard = buildWeaknessDashboard(
     team,
     results || {},
@@ -6315,6 +6355,7 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
     generated_at: new Date().toISOString(),
     sample_size: totalGames,
     confidence_tier: confidenceTier,
+    evidence_standard: evidenceStandard,
     provenance: provenance,
     team_identity: identity,
     lead_system: leadSystem,
@@ -6326,6 +6367,7 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
     matchup_intelligence: matchupIntelligence,
     bo3_adaptation: bo3Adaptation,
     coaching_notes: {
+      evidence_standard: evidenceStandard,
       how_team_wants_to_win: identity.primary_win_condition,
       common_mistakes: coachingRules.slice(0,3).map(function(r){ return r.id; }),
       key_habits_to_improve: coachingRules.filter(function(r){ return r.severity === 'high' || r.severity === 'critical'; }).slice(0,3).map(function(r){ return r.correction; }),
@@ -7152,13 +7194,13 @@ function csSkillCoaching(team, identity, leadGuide) {
     advanced: {
       bait_and_punish: [
         'Bait Protect by clicking spread damage, then double-switch to ' + closer + '.',
-        'Bait Trick Room by leading slow, then reveal Tailwind or Taunt.',
-        'Bait their priority by leading a bulky pivot, then bring ' + closer + ' on a Protect turn.'
+        'Represent a Trick Room answer by leading slow, then reveal Tailwind or Taunt only when the board supports it.',
+        'Respect possible priority by leading a bulky pivot, then bring ' + closer + ' on a Protect turn.'
       ],
-      double_switch_logic: 'Double-switch when you can predict their pivot move. Bring a Pokemon that resists their next likely lead.',
+      double_switch_logic: 'Double-switch only when revealed moves, board pressure, or repeated sim patterns support the pivot read. Bring a Pokemon that resists the likely next attack.',
       win_path_compression: 'Force the game to end by turn 6. Long games favor the bulkier team. Pressure spread + speed control.',
-      risk_reward_adjustments: 'Lock-in moves are worth 90% confidence trades. Status moves are worth 70%. Adjust your line based on the opponent\'s remaining team.',
-      opponent_prediction: 'If they have not revealed their item by turn 3, assume Choice Scarf. If they Protected turn 1, expect setup turn 2.'
+      risk_reward_adjustments: 'Treat lock-in moves and status reads as risk trades, not guarantees. Adjust only when the board state gives evidence.',
+      opponent_prediction: 'If an item is unrevealed by turn 3, preserve against possible speed items instead of assuming one. If they Protected turn 1, treat setup turn 2 as possible, not guaranteed.'
     }
   };
 }
@@ -7459,10 +7501,14 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   var risk = csRiskProfile(team, report_card);
   var trend = csTrendAnalysisV2(team, results);
   var weaknessDashboard = buildWeaknessDashboard(team, results, format, identity, leadSystem, trend, deadMoves, matchupWarnings);
+  var confidenceTier = sample < 20 ? 'low' : sample < 100 ? 'moderate' : sample < 500 ? 'high' : 'elite';
+  var evidenceStandard = csStrategyEvidenceStandard(sample, confidenceTier);
+  var provenance = buildReportProvenance(sample, confidenceTier, format);
 
   var summary = report_card.tier + '-tier ' + identity.playstyle + '. ' +
     'Win path: ' + identity.primary_win_condition + '. ' +
-    (mistakes[0] ? 'Top mistake to fix: ' + mistakes[0].mistake + '.' : '');
+    (mistakes[0] ? 'Top mistake to test: ' + mistakes[0].mistake + '.' : '') +
+    ' Evidence: ' + evidenceStandard.label + '.';
 
   return {
     schema_version: 1,
@@ -7471,6 +7517,10 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
     format: format,
     generated_at: new Date().toISOString(),
     sim_data_version: sample,
+    sample_size: sample,
+    confidence_tier: confidenceTier,
+    evidence_standard: evidenceStandard,
+    provenance: provenance,
 
     team_report_card: report_card,
     team_identity: identity,
@@ -7517,6 +7567,15 @@ function _csSourceChip(sourceLabel) {
   return '<span class="cs-source cs-source-' + k + '" data-evidence>' +
     '<span class="cs-source-label">' + labelMap[k] + '</span>' +
     citationsHtml +
+    '</span>';
+}
+function _csEvidenceBadge(evidence) {
+  if (!evidence) return '';
+  var label = evidence.label || evidence.evidence_label || 'Needs more data';
+  var confidence = evidence.confidence || evidence.evidence_confidence || 'low';
+  return '<span class="cs-source cs-source-inferred_strategy" data-evidence>' +
+    '<span class="cs-source-label">' + _csEsc(label) + '</span> ' +
+    '<span class="cs-source-label">' + _csEsc(confidence) + '</span>' +
     '</span>';
 }
 
@@ -7569,12 +7628,17 @@ function renderStrategyTab(teamKey) {
   html +=   '<div class="cs-score">' + rc.score + '<span class="cs-score-suffix">/100</span></div>';
   html +=   '<div class="cs-meta">';
   html +=     '<div><strong>' + _csEsc(team.name || teamKey) + '</strong> ' + _csChip(id.playstyle, {kind:'playstyle'}) + '</div>';
-  html +=     '<div class="cs-meta-line">Confidence: ' + rc.confidence + ' &middot; Risk: ' + rc.risk_level + ' &middot; Sample: ' + report.sim_data_version + ' games</div>';
+  html +=     '<div class="cs-meta-line">Evidence: ' + _csEsc((report.evidence_standard && report.evidence_standard.label) || 'Needs more data') + ' &middot; Confidence: ' + rc.confidence + ' &middot; Risk: ' + rc.risk_level + ' &middot; Sample: ' + report.sim_data_version + ' games</div>';
   html +=     (rc.battle_ready ? '<div class="cs-battle-ready">BATTLE READY</div>' : '');
   html +=   '</div>';
   html += '</div>';
 
   html += '<p class="cs-summary-line">' + _csEsc(report.coaching_summary) + '</p>';
+  if (report.evidence_standard) {
+    html += '<p class="cs-summary-line"><strong>Strategy evidence:</strong> ' +
+      _csEsc(report.evidence_standard.label + ' · ' + report.evidence_standard.rule + ' Decision: ' + report.evidence_standard.decision) +
+      '</p>';
+  }
 
   // Phase 4b (Refs #52) — Adaptive state banner + consistency pill.
   // Inserted above Section 1 so the user sees the state before reading anything.
@@ -7629,7 +7693,7 @@ function renderStrategyTab(teamKey) {
     html += '<li><strong>Pivot core:</strong> ' + _csEsc(id.pivot_mons.join(', ')) + '</li>';
   }
   if (report.provenance) {
-    html += '<li><strong>Provenance:</strong> ' + _csEsc(report.provenance.source_label || 'simulation_data') + ' · ' + _csEsc(report.provenance.freshness_label || 'no sample yet') + ' · ' + _csEsc(report.provenance.freshness_note || '') + '</li>';
+    html += '<li><strong>Provenance:</strong> ' + _csEsc(report.provenance.source_label || 'simulation_data') + ' · ' + _csEsc(report.provenance.evidence_label || 'Needs more data') + ' · ' + _csEsc(report.provenance.freshness_label || 'no sample yet') + ' · ' + _csEsc(report.provenance.freshness_note || '') + '</li>';
   }
   html += '<li><strong>Format fit:</strong> ' + _csEsc(id.format_fit) + '</li>';
   html += '</ul></section>';
@@ -7650,7 +7714,7 @@ function renderStrategyTab(teamKey) {
   // Section 4: BO3 adaptation
   var bo3 = report.bo3_adaptation;
   if (bo3) {
-    html += '<section class="cs-section"><h3 class="cs-h3">BO3 Adaptation</h3>';
+    html += '<section class="cs-section"><h3 class="cs-h3">BO3 Adaptation ' + _csEvidenceBadge(bo3) + '</h3>';
     html += '<p><strong>Game 1 lead:</strong> ' + _csEsc(bo3.game1_lead || 'unclear') + ' ' + _csSourceChip(bo3.source_label) + '</p>';
     html += '<p><strong>Game 2 plan:</strong> ' + _csEsc(bo3.game2_plan || 'unclear') + '</p>';
     html += '<p><strong>Revealed info:</strong> ' + _csEsc(bo3.revealed_info || 'unclear') + '</p>';
@@ -7787,7 +7851,7 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Double-switch logic:</strong> ' + _csEsc(sk.advanced.double_switch_logic) + '</p>';
   html += '<p><strong>Win path compression:</strong> ' + _csEsc(sk.advanced.win_path_compression) + '</p>';
   html += '<p><strong>Risk vs reward:</strong> ' + _csEsc(sk.advanced.risk_reward_adjustments) + '</p>';
-  html += '<p><strong>Opponent prediction:</strong> ' + _csEsc(sk.advanced.opponent_prediction) + '</p></div>';
+  html += '<p><strong>Opponent risk read:</strong> ' + _csEsc(sk.advanced.opponent_prediction) + '</p></div>';
   html += '</div></section>';
 
   // Section 14: Stress test

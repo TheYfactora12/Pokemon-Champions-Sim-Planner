@@ -91,6 +91,7 @@ vm.runInContext([
   'this.buildMatchupWarnings=buildMatchupWarnings;',
   'this.buildLeadRecoveryPlan=buildLeadRecoveryPlan;',
   'this.buildCoachingSummary=buildCoachingSummary;',
+  'this.csStrategyEvidenceStandard=csStrategyEvidenceStandard;',
   'this.buildStrategyReport=buildStrategyReport;',
   'this.saveStrategyReport=saveStrategyReport;',
   'this.loadStrategyReport=loadStrategyReport;',
@@ -103,7 +104,7 @@ const {
   TEAMS, teamSignature, strategyResultsHash, csStrategyReportCacheSize, csClearStrategyReportCache,
   buildLeadSystem, inferTeamIdentity, evaluateT9j16Rules,
   analyzeEliteDecisions, buildPilotPlan, buildMatchupWarnings,
-  buildLeadRecoveryPlan, buildCoachingSummary, buildStrategyReport,
+  buildLeadRecoveryPlan, buildCoachingSummary, csStrategyEvidenceStandard, buildStrategyReport,
   saveStrategyReport, loadStrategyReport, evolveReport,
   _renderT9j16PdfSections, T9J16_RULES
 } = ctx;
@@ -432,6 +433,23 @@ T('F3. buildStrategyReport - confidence_tier upgrades with sample size', () => {
   const big = { o1: { wins: 60, losses: 40, draws: 0, allLogs: [], winConditions: { 'TR sweep': 60 } } };
   const r2 = buildStrategyReport('player', big, 'doubles');
   truthy(r2.confidence_tier === 'moderate' || r2.confidence_tier === 'high', 'expected moderate or high, got ' + r2.confidence_tier);
+});
+T('F4. strategy evidence standard uses Battle Sensei labels', () => {
+  const noData = csStrategyEvidenceStandard(0, 'low');
+  eq(noData.label, 'Needs more data');
+  eq(noData.confidence, 'low');
+  const thin = csStrategyEvidenceStandard(8, 'low');
+  eq(thin.label, 'Weak inference');
+  const moderate = csStrategyEvidenceStandard(50, 'moderate');
+  eq(moderate.label, 'Strong inference');
+  const mature = csStrategyEvidenceStandard(120, 'high');
+  eq(mature.label, 'Observed');
+});
+T('F5. buildStrategyReport exposes evidence and cautious no-sample guidance', () => {
+  const r = buildStrategyReport('player', {}, 'doubles');
+  eq(r.evidence_standard.label, 'Needs more data');
+  eq(r.provenance.evidence_label, 'Needs more data');
+  truthy(/Run matchup simulations/.test(r.evidence_standard.decision), 'no-data decision should tell trainer what to do next');
 });
 
 // ---------- Section G: Persistence ----------
