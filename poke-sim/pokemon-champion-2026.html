@@ -434,8 +434,8 @@ table{border-collapse:collapse;width:100%}
   .type-chips{flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start;gap:4px;flex:1 1 100%;margin-left:46px;margin-top:2px}
   .type-chip{font-size:9px;line-height:1.2;padding:2px 6px;white-space:nowrap;max-width:100%}
   .team-mon-detail-btn{width:100%;margin-top:8px}
-  .bring-pool-chip{max-width:100%}
-  .bring-pool-chip-name{white-space:normal;overflow-wrap:anywhere;line-height:1.1}
+  .bring-pool-chip{flex:0 0 auto;max-width:100%}
+  .bring-pool-chip-name{white-space:normal;overflow-wrap:break-word;line-height:1.1}
   .move-tag{white-space:nowrap}
 }
 
@@ -969,6 +969,8 @@ table{border-collapse:collapse;width:100%}
   font-weight: 600;
   color: #e2e8f0;
   user-select: none;
+  flex: 0 0 auto;
+  max-width: 100%;
 }
 .bring-pool-chip:hover { background: rgba(51, 65, 85, 0.75); }
 .bring-pool-chip:active { cursor: grabbing; transform: scale(0.97); }
