@@ -87,12 +87,7 @@ One legacy team still stands out as unstable in mirrors:
 
 - `cofagrigus_tr`: 15% mirror win rate, flagged as far off 50%
 
-After the cleanup pass, another calibration shell also shows a mirror outlier:
-
-- `suica_sun`: 80% mirror win rate, flagged as far off 50%
-- `sand_bulky_offense`: 80% mirror win rate, flagged as far off 50%
-
-That does not invalidate the calibration shells, but it is a reminder that some older catalog entries may still be skewing the coach.
+The current broader audit no longer flags the other shipped shells as hard mirror outliers. That does not make the matrix perfect, but it does mean the calibration shells are now behaving like useful baselines instead of obvious distortions.
 
 ## Speed-Control / Board-State Signals
 
