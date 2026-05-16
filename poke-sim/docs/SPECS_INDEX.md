@@ -25,6 +25,7 @@ When the migration is complete, `poke-sim/*.md` spec files will be deleted from 
 | [`PHASE4E_POLICY_AUDIT_SPEC.md`](../PHASE4E_POLICY_AUDIT_SPEC.md) | 4e — Policy Audit | #167 | ✅ Final |
 | [`PHASE5_TURN_LOG_SPEC_DRAFT.md`](../PHASE5_TURN_LOG_SPEC_DRAFT.md) | 5 — Turn Log | #168 | 📝 Draft — not final |
 | [`PHASE6_COACHING_VOICE_SPEC.md`](../PHASE6_COACHING_VOICE_SPEC.md) | 6 — Coaching Voice | #169 | ✅ Final |
+| [`SHOWDOWN_REPLAY_COACH_SPEC.md`](./SHOWDOWN_REPLAY_COACH_SPEC.md) | Stage 3 — Replay Coach | TBD | 📝 Accepted roadmap spec |
 | [`PHASE_ROLLOUT_REVIEW.md`](../PHASE_ROLLOUT_REVIEW.md) | All phases | #170 | 📋 Review doc |
 | [`COACHING_NORTH_STAR.md`](../COACHING_NORTH_STAR.md) | All phases | — | ⭐ Reference — do not delete |
 

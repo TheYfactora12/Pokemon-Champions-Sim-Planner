@@ -16,6 +16,8 @@ A competitive VGC simulator that does three things no other tool does together:
 
 Plus a personal learning loop: track YOUR sim history, surface trends, point out your weak spots, and tighten the loop every session.
 
+The next major product expansion is Replay Coach: Sim Mode builds the team; Replay Coach builds the player. Showdown logs should let the app compare what the team can do in simulation against what the player actually did in battle.
+
 ---
 
 ## Milestone Structure
@@ -218,6 +220,39 @@ Milestones are **sequential** — each depends on the one before. Engine truth f
 
 ---
 
+## M12 - Showdown Replay Coach + Sim Intelligence (v2.6)
+
+**Outcome:** Users paste or upload Pokemon Showdown logs and get a coaching report that explains why they won or lost, which turn mattered, what line was better, and how the replay should update future simulation assumptions.
+
+**Why it belongs:** This is Stage 3 of the Credibility Ladder in `COACHING_NORTH_STAR.md`: replay-calibrated coaching against real player matches. It converts the app from sim-only advice into a feedback loop.
+
+**Ship criteria:**
+- Paste/upload log flow with side selection and review mode
+- Parser extracts players, turns, leads, moves, switches, faints, winner, and basic field effects
+- Summary card shows result, turns, leads, selected four where inferable, and likely critical turn
+- Timeline renders turn-by-turn coaching with confidence labels
+- At least five mistake categories detected from logs
+- Critical turn engine separates first mistake from fatal mistake
+- Sim comparison card compares actual lead/four/path to sim recommendations
+- Sim Feedback Packet is generated but does not automatically rewrite models without sample thresholds
+- Raw logs are hidden by default and persisted only with explicit user action
+- Existing sim smoke and full non-DB suite remain green
+
+**Tickets (new):**
+- **NEW: Replay Coach UI Shell** — paste/upload, side selection, review mode, placeholder cards
+- **NEW: Showdown Parser MVP** — fixture-driven parser for players, turns, leads, moves, switches, faints, winner
+- **NEW: Replay Summary + Turn Timeline** — readable cards, raw log collapsed
+- **NEW: Core Replay Coaching Rules** — bad lead, questionable bring, speed-control misuse, Protect misuse, targeting, switch tempo loss, RNG materiality
+- **NEW: Critical Turn Engine** — first mistake, fatal mistake, biggest swing
+- **NEW: Sim Comparison Card** — best sim lead/four/path vs actual replay behavior
+- **NEW: Sim Feedback Packet** — replay-derived lead, bring-four, archetype, difficulty, and scenario signals
+- **NEW: Replay Persistence Schema** — save review summaries and normalized events, raw log opt-in only
+- **NEW: Multi-Log Player Pattern Dashboard** — repeated mistakes, lead trends, practical win rate, practice plan
+
+**Canonical spec:** `poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`
+
+---
+
 ## Proposed Sequencing & Timing
 
 | Milestone | Target | Gate |
@@ -233,6 +268,7 @@ Milestones are **sequential** — each depends on the one before. Engine truth f
 | M9 Observability | +2 weeks | Run in parallel with M7 |
 | M10 Performance & Quality | +2 weeks | After M7 modular split |
 | M11 Advanced Features | +3 weeks | After M8 profile container |
+| M12 Showdown Replay Coach | After M8/M11 foundation | Needs profile container for multi-log patterns; parser MVP can start earlier |
 
 M7 and M9 can parallelize. M10 follows M7. M11 follows M8.
 

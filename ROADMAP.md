@@ -21,6 +21,7 @@
 | M8 | Profile & Sync | 🟡 Unblocked | Supabase ✅ live |
 | M10 | Performance & Quality | 🟡 Partial | #92, #93, #94 |
 | M11 | Advanced Features | ⏳ Deferred | M8 gate |
+| M12 | Showdown Replay Coach | 📝 Spec accepted | Stage 3 credibility gate |
 
 ---
 
@@ -152,6 +153,25 @@
 
 ---
 
+## Backlog — Showdown Replay Coach (M12, Stage 3 Credibility)
+
+> Product line: Sim Mode builds the team. Replay Coach builds the player.
+> Canonical spec: [`poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`](./poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md)
+
+| Issue | Priority |
+|---|---|
+| NEW | Replay Coach UI shell: paste/upload log, side select, review mode | P1 |
+| NEW | Showdown parser MVP: players, turns, leads, moves, switches, faints, winner | P1 |
+| NEW | Replay summary + readable turn timeline | P1 |
+| NEW | Core replay coaching rules: lead, bring-four, speed-control, Protect, targeting, switching | P1 |
+| NEW | Critical turn engine: first mistake, fatal mistake, biggest swing | P1 |
+| NEW | Sim comparison card: sim lead/four/path vs actual replay lead/four/path | P2 |
+| NEW | Sim Feedback Packet for replay-calibrated coaching signals | P2 |
+| NEW | Replay persistence schema + explicit raw-log privacy controls | P2 |
+| NEW | Multi-log Player Pattern Dashboard | P2 |
+
+---
+
 ## Milestone Definitions
 
 | Milestone | Definition |
@@ -167,6 +187,7 @@
 | **M9 Observability & QA** | Structured logger, CI workflows, performance profiling harness. |
 | **M10 Performance & Quality** | Memoization, log caps, XSS audit, NVDA/VO focus management — measurable gains. |
 | **M11 Advanced Features** | Replay shortlinks, multi-team compare, live fingerprinting. Post-M8 only. |
+| **M12 Showdown Replay Coach** | Parse Showdown logs, diagnose real player decisions, compare replay paths to sim plans, and produce replay-calibrated coaching signals. |
 
 ---
 
@@ -197,6 +218,7 @@ All spec files live in [`poke-sim/docs/`](./poke-sim/docs/).
 | `PHASE4E_POLICY_AUDIT_SPEC.md` | 4e | ✅ Final |
 | `PHASE5_TURN_LOG_SPEC_DRAFT.md` | 5 | 📝 Draft |
 | `PHASE6_COACHING_VOICE_SPEC.md` | 6 | ✅ Final |
+| `SHOWDOWN_REPLAY_COACH_SPEC.md` | Stage 3 Replay Coach | 📝 Accepted roadmap spec |
 | `PHASE_ROLLOUT_REVIEW.md` | All | 📋 Review |
 | `COACHING_NORTH_STAR.md` | All | ⭐ Reference |
 
