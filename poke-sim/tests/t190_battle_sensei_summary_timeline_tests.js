@@ -24,6 +24,7 @@ T('1. Battle Sensei remains a separate tab from Strategy', () => {
   inc(html, 'data-tab="replay-coach">Battle Sensei');
   inc(html, '<section class="tab-panel" id="tab-replay-coach">');
   inc(html, '<section class="tab-panel" id="tab-strategy">');
+  inc(html, '<script src="replay_learning.js"></script>');
 });
 
 T('2. summary renders selected-four confidence and team preview read', () => {
@@ -49,13 +50,21 @@ T('4. coaching tags explain decision impact, not just labels', () => {
   inc(ui, 'Evidence:');
 });
 
-T('5. raw log preview is collapsed and hidden by default', () => {
+T('5. learning report renders scorecard, critical turns, win path, and practice plan', () => {
+  inc(ui, 'learningReport');
+  inc(ui, '<h3 class="replay-coach-h3">Critical Turn Engine</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Decision Quality Scorecard</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Win Path + Opponent Plan</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Practice Plan</h3>');
+});
+
+T('6. raw log preview is collapsed and hidden by default', () => {
   inc(ui, '<details class="replay-coach-raw"><summary>Raw log preview hidden by default');
   inc(ui, 'rawLogPreview');
   inc(css, '.replay-coach-raw-log{margin-top:10px;white-space:pre-wrap;max-height:260px}');
 });
 
-T('6. timeline styles stay card-based and mobile-safe', () => {
+T('7. timeline styles stay card-based and mobile-safe', () => {
   inc(css, '.replay-coach-turn.high');
   inc(css, '.replay-coach-turn.medium');
   inc(css, '.replay-coach-turn.low');

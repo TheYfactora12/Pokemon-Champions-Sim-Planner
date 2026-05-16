@@ -607,7 +607,7 @@
     if (!parsed.ok) confidence = 'low';
     var turnTimeline = buildTurnTimeline(parsed, side, issues);
 
-    return {
+    var review = {
       summary: {
         result: parsed.result,
         turns: parsed.totalTurns,
@@ -647,6 +647,10 @@
       },
       warnings: parsed.warnings.slice()
     };
+    if (ChampionsSim.replayLearning && typeof ChampionsSim.replayLearning.buildLearningReport === 'function') {
+      review.learningReport = ChampionsSim.replayLearning.buildLearningReport(parsed, review, opts || {});
+    }
+    return review;
   }
 
   function analyzeShowdownReplay(rawLog, opts) {

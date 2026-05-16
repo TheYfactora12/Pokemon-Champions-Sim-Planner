@@ -2792,6 +2792,7 @@ function csReplayCoachRenderAnalysis(analysis) {
   var parsed = analysis.parsed || {};
   var review = analysis.review || {};
   var summary = review.summary || {};
+  var learning = review.learningReport || null;
   var rawPreview = review.rawLogPreview || {};
   var bringConfidence = summary.selectedFourConfidence || {};
   var warnings = (review.warnings || []).map(function(w) {
@@ -2822,6 +2823,35 @@ function csReplayCoachRenderAnalysis(analysis) {
   var rawLines = (rawPreview.lines || []).slice(-80).map(function(line) {
     return _escapeHtml(line);
   }).join('\n');
+  var criticalCards = learning && learning.criticalTurns ? (learning.criticalTurns.turns || []).map(function(card) {
+    return '<div class="replay-coach-list-row" id="' + _escapeHtml(card.timelineAnchor || '') + '-critical">' +
+      '<strong>' + _escapeHtml(card.kind || 'Critical turn') + ' · Turn ' + _escapeHtml(String(card.turn || '?')) + '</strong>' +
+      '<div><b>What happened:</b> ' + _escapeHtml(card.whatHappened || '') + '</div>' +
+      '<div><b>Why it mattered:</b> ' + _escapeHtml(card.whyItMattered || '') + '</div>' +
+      '<div><b>Better line:</b> ' + _escapeHtml(card.betterAlternative || '') + '</div>' +
+      '<small>' + _escapeHtml(card.category || 'Decision') + ' · Confidence: ' + _escapeHtml(card.confidence || 'medium') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var scoreCards = learning && learning.scorecard ? (learning.scorecard.cards || []).map(function(card) {
+    return '<div class="replay-coach-metric"><strong>' + _escapeHtml(card.label || 'Skill') + '</strong><span>' + _escapeHtml((card.grade || '?') + ' · ' + String(card.score || 0)) + '</span></div>';
+  }).join('') : '';
+  var decisionRows = learning ? (learning.decisionQuality || []).slice(0, 5).map(function(row) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.category || 'Decision') + ' · ' + _escapeHtml(row.matrixQuadrant || 'decision review') + '</strong>' +
+      '<div><b>Decision quality:</b> ' + _escapeHtml(String(row.decisionQualityScore || '?')) + '/10 · <b>Risk:</b> ' + _escapeHtml(row.riskLevel || 'medium') + '</div>' +
+      '<div><b>Alternative:</b> ' + _escapeHtml(row.alternativeLine || '') + '</div>' +
+      '<small>Confidence: ' + _escapeHtml(row.confidence || 'medium') + (row.turn ? ' · Turn ' + _escapeHtml(String(row.turn)) : '') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var drillRows = learning && learning.practicePlan ? (learning.practicePlan.drills || []).map(function(drill) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(drill.skill || 'Practice drill') + '</strong>' +
+      '<div><b>Why:</b> ' + _escapeHtml(drill.whyItMatters || '') + '</div>' +
+      '<div><b>Drill:</b> ' + _escapeHtml(drill.drillSetup || '') + '</div>' +
+      '<div><b>Success:</b> ' + _escapeHtml(drill.successCriteria || '') + '</div>' +
+      '<small>' + _escapeHtml(drill.promptBeforeEachTurn || '') + '</small>' +
+      '</div>';
+  }).join('') : '';
 
   host.innerHTML =
     '<div class="replay-coach-summary-card">' +
@@ -2852,6 +2882,34 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<h3 class="replay-coach-h3">Coaching Tags</h3>' +
       '<div class="replay-coach-list">' + (tags || '<div class="replay-coach-list-row"><strong>No major issue detected</strong>Upload more complete logs to build stronger coaching confidence.</div>') + '</div>' +
     '</div>' +
+    (learning ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Critical Turn Engine</h3>' +
+      '<div class="replay-coach-list">' + (criticalCards || '<div class="replay-coach-list-row"><strong>No critical turn proven</strong>Needs more complete turns before naming a swing turn.</div>') + '</div>' +
+      '<small>' + _escapeHtml((learning.criticalTurns && learning.criticalTurns.note) || '') + '</small>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Decision Quality Scorecard</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Overall Decision Quality</strong><span>' + _escapeHtml((learning.scorecard.overallGrade || '?') + ' · ' + String(learning.scorecard.overallDecisionQuality || 0)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(learning.scorecard.confidence || 'medium') + '</span></div>' +
+        scoreCards +
+      '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Win Path + Opponent Plan</h3>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Your win path</strong>' + _escapeHtml(learning.winPath.afterLeads || '') + '<small>' + _escapeHtml(learning.winPath.followedOrAbandoned || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Opponent plan recognition</strong>' + _escapeHtml(learning.opponentPlan.pressurePattern || '') + '<small>' + _escapeHtml(learning.opponentPlan.recognizeNextTime || '') + '</small></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Decision Quality Matrix</h3>' +
+      '<div class="replay-coach-list">' + (decisionRows || '<div class="replay-coach-list-row"><strong>No key decision rows yet</strong>Upload a fuller log for decision/outcome separation.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Practice Plan</h3>' +
+      '<div class="replay-coach-list">' + (drillRows || '<div class="replay-coach-list-row"><strong>No practice drill yet</strong>More replay data will unlock personalized drills.</div>') + '</div>' +
+    '</div>' : '') +
     '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Turn Timeline</h3>' +
       '<div class="replay-coach-turns">' + (turns || '<div class="replay-coach-turn"><div class="replay-coach-turn-body">No turns parsed from this log.</div></div>') + '</div>' +

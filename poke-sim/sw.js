@@ -30,6 +30,8 @@ const APP_ASSETS = [
   './data.js',
   './logger.js',
   './engine.js',
+  './replay_coach.js',
+  './replay_learning.js',
   './ui.js',
   './legality.js',
   './strategy-injectable.js',
