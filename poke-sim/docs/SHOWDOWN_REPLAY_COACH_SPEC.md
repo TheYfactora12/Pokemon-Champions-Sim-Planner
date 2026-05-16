@@ -1,14 +1,15 @@
-# Showdown Replay Coach + Sim Intelligence Engine
+# Battle Sensei + Sim Intelligence Engine
 
-> Product thesis: Sim Mode builds the team. Replay Coach builds the player.
-> Status: Accepted roadmap spec. Not implemented yet.
+> Product thesis: Sim Mode builds the team. Battle Sensei builds the player.
+> Tagline: Battle Sensei: Learn why the turn went wrong.
+> Status: Accepted roadmap spec. R1/R2 MVP started.
 > Owner split: product / coaching rules by @TheYfactora12, architecture / persistence by @alfredocox, fixtures / a11y by @Jdoutt38.
 
 ## Product Definition
 
-Showdown Replay Coach turns pasted or uploaded Pokemon Showdown battle logs into matchup coaching, mistake diagnosis, player-pattern analysis, and replay-calibrated simulation feedback.
+Battle Sensei turns pasted or uploaded Pokemon Showdown battle logs into matchup coaching, mistake diagnosis, player-pattern analysis, and replay-calibrated simulation feedback.
 
-This is not a replay viewer. The viewer shows what happened. Replay Coach explains what mattered, what decision should change, and how the replay should update future sim assumptions.
+This is not a replay viewer. The viewer shows what happened. Battle Sensei explains what mattered, what decision should change, and how the replay should update future sim assumptions.
 
 ## Why This Adds Value
 
@@ -200,7 +201,7 @@ Definitions:
 
 ## UI Scope
 
-Replay Coach page:
+Battle Sensei page:
 
 - paste log
 - upload `.txt`
@@ -220,13 +221,14 @@ Mobile rule: no spreadsheet replay wall. Use stacked cards, expandable turns, sh
 
 ## Product Surface And Access Model
 
-Replay Coach should be a first-class tab/page, not a hidden subpanel inside the current Replay Log. The mental model is different:
+Battle Sensei should be a first-class tab/page, not a hidden subpanel inside the current Replay Log and not inside the Strategy area. The mental model is different:
 
 - Sim Coach answers: what should my team do?
-- Replay Coach answers: what did I actually do?
+- Strategy answers: how does this team plan against the sim/meta?
+- Battle Sensei answers: what did I actually do?
 - Player Dashboard answers: what pattern keeps repeating?
 
-Replay data should still feed the same Coaching Intelligence Engine. The UI surface is separate, but the data model is shared.
+Replay data should still feed the same Coaching Intelligence Engine. The UI surface is separate, but the normalized data model can be shared later for calibration.
 
 Recommended access model:
 
@@ -267,7 +269,7 @@ Data retention policy:
 
 ## Supabase / DB Design
 
-Replay Coach should use the DB for durable, queryable coaching history, not for temporary anonymous review.
+Battle Sensei should use the DB for durable, queryable coaching history, not for temporary anonymous review.
 
 Recommended split:
 
@@ -360,9 +362,9 @@ Adapter direction:
 
 ## Phased Build
 
-### Phase R1 - Replay Coach UI Shell
+### Phase R1 - Battle Sensei UI Shell
 
-- Add Replay Coach tab.
+- Add Battle Sensei tab.
 - Paste/upload log.
 - Select side and review type.
 - Render placeholder cards.
@@ -446,7 +448,7 @@ V2 is complete when:
 ## First GitHub Issue Breakdown
 
 1. `#187` Parent tracker.
-2. `#188` Replay Coach UI shell.
+2. `#188` Battle Sensei UI shell.
 3. `#189` Showdown log parser MVP with fixtures.
 4. `#190` Replay summary and turn timeline.
 5. `#191` Core replay coaching rules.

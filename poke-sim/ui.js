@@ -2757,6 +2757,138 @@ function renderHistorySection() {
   }
 }
 
+// ============================================================
+// SHOWDOWN REPLAY COACH UI
+// Local-only MVP shell. Persistence and Supabase sync are tracked
+// separately so replay analysis never depends on DB availability.
+// ============================================================
+function csReplayCoachJoin(list, fallback) {
+  return Array.isArray(list) && list.length ? list.join(' + ') : (fallback || 'Unknown');
+}
+
+function csReplayCoachRenderEvent(ev) {
+  if (!ev) return '';
+  if (ev.type === 'move') {
+    return _escapeHtml((ev.pokemon || '?') + ' used ' + (ev.move || '?') + (ev.target ? ' into ' + ev.target : ''));
+  }
+  if (ev.type === 'switch' || ev.type === 'drag' || ev.type === 'replace') {
+    return _escapeHtml((ev.forced ? 'Forced switch: ' : 'Switch: ') + (ev.pokemon || '?'));
+  }
+  if (ev.type === 'faint') return _escapeHtml((ev.pokemon || '?') + ' fainted');
+  if (ev.type === 'damage') return _escapeHtml((ev.pokemon || '?') + ' took damage' + (ev.hp != null ? ' to ' + ev.hp + '%' : ''));
+  if (ev.type === 'heal') return _escapeHtml((ev.pokemon || '?') + ' healed' + (ev.hp != null ? ' to ' + ev.hp + '%' : ''));
+  return _escapeHtml(ev.text || ev.type || '');
+}
+
+function csReplayCoachRenderAnalysis(analysis) {
+  var host = document.getElementById('replay-coach-results');
+  if (!host || !analysis) return;
+  var parsed = analysis.parsed || {};
+  var review = analysis.review || {};
+  var summary = review.summary || {};
+  var warnings = (review.warnings || []).map(function(w) {
+    return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
+  }).join('');
+  var tags = (review.coachingTags || []).map(function(tag) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(tag.tag || 'Coaching Note') + ' · ' + _escapeHtml(tag.severity || 'medium') + '</strong>' +
+      _escapeHtml(tag.message || '') +
+      '<small>' + _escapeHtml(tag.recommendation || 'Review this turn in context.') + ' Confidence: ' + _escapeHtml(tag.confidence || 'medium') + (tag.turn ? ' · Turn ' + _escapeHtml(String(tag.turn)) : '') + '</small>' +
+      '</div>';
+  }).join('');
+  var turns = (parsed.turns || []).filter(function(t) { return t.number > 0; }).slice(0, 80).map(function(turn) {
+    var events = (turn.events || []).slice(0, 8).map(csReplayCoachRenderEvent).filter(Boolean);
+    return '<div class="replay-coach-turn">' +
+      '<div class="replay-coach-turn-title"><span>Turn ' + _escapeHtml(String(turn.number)) + '</span><span>' + _escapeHtml(String((turn.events || []).length)) + ' events</span></div>' +
+      '<div class="replay-coach-turn-body">' + (events.length ? events.join('<br/>') : 'No parsed coaching events.') + '</div>' +
+      '</div>';
+  }).join('');
+
+  host.innerHTML =
+    '<div class="replay-coach-summary-card">' +
+      '<div class="replay-coach-card-head"><span class="badge badge-blue">MATCH SUMMARY</span><span class="replay-coach-tag ' + _escapeHtml(summary.result === 'win' ? 'low' : summary.result === 'loss' ? 'high' : 'medium') + '">' + _escapeHtml((summary.result || 'unknown').toUpperCase()) + '</span></div>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Players</strong><span>' + _escapeHtml((summary.yourPlayer || 'You') + ' vs ' + (summary.opponentPlayer || 'Opponent')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Turns</strong><span>' + _escapeHtml(String(summary.turns || 0)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Your Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourLead)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opp Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentLead)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Your Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourFour, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Critical Turn</strong><span>' + _escapeHtml(summary.criticalTurn ? 'Turn ' + summary.criticalTurn : 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Main Issue</strong><span>' + _escapeHtml(summary.mainIssue || 'No major issue detected') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(summary.confidence || 'medium') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-tags">' + (warnings || '<span class="replay-coach-tag low">Parsed locally. No raw log saved.</span>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Coaching Tags</h3>' +
+      '<div class="replay-coach-list">' + (tags || '<div class="replay-coach-list-row"><strong>No major issue detected</strong>Upload more complete logs to build stronger coaching confidence.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Turn Timeline</h3>' +
+      '<div class="replay-coach-turns">' + (turns || '<div class="replay-coach-turn"><div class="replay-coach-turn-body">No turns parsed from this log.</div></div>') + '</div>' +
+    '</div>';
+}
+
+function csInitReplayCoachUi() {
+  var logEl = document.getElementById('replay-coach-log');
+  var sideEl = document.getElementById('replay-coach-side');
+  var runBtn = document.getElementById('replay-coach-run-btn');
+  var clearBtn = document.getElementById('replay-coach-clear-btn');
+  var uploadBtn = document.getElementById('replay-coach-upload-btn');
+  var fileEl = document.getElementById('replay-coach-file');
+  var statusEl = document.getElementById('replay-coach-status');
+  if (!logEl || !sideEl || !runBtn) return;
+
+  function setStatus(msg, isError) {
+    if (!statusEl) return;
+    statusEl.textContent = msg || '';
+    statusEl.classList.toggle('error', !!isError);
+  }
+
+  runBtn.addEventListener('click', function() {
+    var api = ChampionsSim && ChampionsSim.replayCoach;
+    if (!api || typeof api.analyzeShowdownReplay !== 'function') {
+      setStatus('Battle Sensei parser is not available in this build.', true);
+      return;
+    }
+    var raw = logEl.value || '';
+    if (!raw.trim()) {
+      setStatus('Paste a Showdown log before running analysis.', true);
+      return;
+    }
+    try {
+      var analysis = api.analyzeShowdownReplay(raw, { selectedSide: sideEl.value || 'p1' });
+      csReplayCoachRenderAnalysis(analysis);
+      var parsedTurns = analysis && analysis.parsed ? analysis.parsed.totalTurns : 0;
+      setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only and not saved.');
+    } catch (e) {
+      setStatus('Could not analyze replay: ' + (e && e.message ? e.message : 'unknown error'), true);
+    }
+  });
+
+  if (clearBtn) clearBtn.addEventListener('click', function() {
+    logEl.value = '';
+    setStatus('');
+    var host = document.getElementById('replay-coach-results');
+    if (host) host.innerHTML = '<div class="replay-coach-empty">Paste a log and run analysis to see result, leads, critical turn, coaching tags, and a readable turn timeline.</div>';
+  });
+
+  if (uploadBtn && fileEl) {
+    uploadBtn.addEventListener('click', function() { fileEl.click(); });
+    fileEl.addEventListener('change', function() {
+      var file = fileEl.files && fileEl.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function() {
+        logEl.value = String(reader.result || '');
+        setStatus('Loaded ' + file.name + '. Run analysis when ready.');
+      };
+      reader.onerror = function() { setStatus('Could not read that file.', true); };
+      reader.readAsText(file);
+    });
+  }
+}
+
 async function lazyLoadAnalysisLogs(analysisId, cardEl) {
   var adapter = getWindowValue('SupabaseAdapter', null);
   if (!adapter || typeof adapter.loadAnalysisLogs !== 'function') return;
@@ -9580,6 +9712,7 @@ if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', async function(){
     await csHardenClientState();
     _csInitEvidenceToggle();
+    csInitReplayCoachUi();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────
     // Await loadTeamsFromDB BEFORE the first authoritative rebuildTeamSelects()

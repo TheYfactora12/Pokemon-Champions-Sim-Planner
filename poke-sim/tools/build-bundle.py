@@ -69,6 +69,7 @@ legality = read('legality.js')
 strategy = read('strategy-injectable.js')
 storage = read('storage_adapter.js')
 supabase = read('supabase_adapter.js')
+replay_coach = read('replay_coach.js')
 supabase_umd = fetch_supabase_umd()
 
 html = html.replace('<script src="data.js"></script>', '')
@@ -77,6 +78,7 @@ html = html.replace('<script src="engine.js"></script>', '')
 html = html.replace('<script src="ui.js"></script>', '')
 html = html.replace('<script src="storage_adapter.js"></script>', '')
 html = html.replace('<script src="supabase_adapter.js"></script>', '')
+html = html.replace('<script src="replay_coach.js"></script>', '')
 html = html.replace('<script src="legality.js"></script>', '')
 html = html.replace('<script src="strategy-injectable.js"></script>', '')
 html = html.replace('<script src="local-credentials.js"></script>', '')
@@ -114,6 +116,7 @@ inline_js = (
     + sanitize_inline_js(engine) + '\n\n'
     + sanitize_inline_js(storage) + '\n\n'
     + sanitize_inline_js(supabase) + '\n\n'
+    + sanitize_inline_js(replay_coach) + '\n\n'
     + sanitize_inline_js(ui) + '\n\n'
     + sanitize_inline_js(legality) + '\n\n'
     + sanitize_inline_js(strategy)

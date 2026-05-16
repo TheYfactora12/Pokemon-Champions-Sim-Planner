@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-05-16 | @TheYfactora12 | Started Battle Sensei MVP | Added the first-class Battle Sensei surface for Showdown log review with tagline "Learn why the turn went wrong." This stays separate from the Strategy tab; parser/review data may feed coaching calibration later, but the UX is not mixed into Strategy. |
 | 2026-05-16 | @TheYfactora12 | Accepted Showdown Replay Coach roadmap spec | Added the Stage 3 Replay Coach + Sim Intelligence spec as the next major coaching expansion: parse Showdown logs, diagnose real decisions, compare replay behavior to sim recommendations, and produce replay-calibrated feedback packets. Filed Alfredo issues #187-#197 and fork mirrors #77-#87, including a dedicated Supabase replay schema migration issue. |
 | 2026-05-15 | @TheYfactora12 | Mobile results stats fix | Collapsed the results summary and stat cards into a narrow-window stack so the win/loss bar and outcome metrics no longer run too long in half-screen or phone views. Added a regression for the results stats grid. |
 | 2026-05-15 | @TheYfactora12 | Mobile breakpoint correction | Narrowed the mobile-only tab picker so split-screen desktop widths keep the standard tab row, while true phone widths still get the compact picker. |

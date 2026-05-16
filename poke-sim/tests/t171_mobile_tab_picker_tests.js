@@ -28,7 +28,7 @@ T('1. phone widths hide the tab strip and show the picker', () => {
 
 T('2. the picker includes every main section', () => {
   inc(html, '<div class="mobile-tab-picker" aria-label="Main sections">');
-  ['simulator','teams','editor','strategy','replays','sources','pilot'].forEach(function(tab) {
+  ['simulator','teams','editor','strategy','replay-coach','replays','sources','pilot'].forEach(function(tab) {
     inc(html, '<option value="' + tab + '">');
   });
 });

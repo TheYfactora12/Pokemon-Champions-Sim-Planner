@@ -21,7 +21,7 @@
 | M8 | Profile & Sync | 🟡 Unblocked | Supabase ✅ live |
 | M10 | Performance & Quality | 🟡 Partial | #92, #93, #94 |
 | M11 | Advanced Features | ⏳ Deferred | M8 gate |
-| M12 | Showdown Replay Coach | 📝 Spec accepted | Stage 3 credibility gate |
+| M12 | Battle Sensei | 🧪 R1/R2 MVP started | Stage 3 credibility gate |
 
 ---
 
@@ -153,15 +153,15 @@
 
 ---
 
-## Backlog — Showdown Replay Coach (M12, Stage 3 Credibility)
+## Backlog — Battle Sensei (M12, Stage 3 Credibility)
 
-> Product line: Sim Mode builds the team. Replay Coach builds the player.
+> Product line: Sim Mode builds the team. Battle Sensei builds the player. Learn why the turn went wrong.
 > Canonical spec: [`poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`](./poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md)
 
 | Issue | Priority |
 |---|---|
-| #187 | Parent tracker: Showdown Replay Coach + Sim Intelligence | P1 |
-| #188 | Replay Coach UI shell: paste/upload log, side select, review mode | P1 |
+| #187 | Parent tracker: Battle Sensei + Sim Intelligence | P1 |
+| #188 | Battle Sensei UI shell: paste/upload log, side select, review mode | P1 |
 | #189 | Showdown parser MVP: players, turns, leads, moves, switches, faints, winner | P1 |
 | #190 | Replay summary + readable turn timeline | P1 |
 | #191 | Core replay coaching rules: lead, bring-four, speed-control, Protect, targeting, switching | P1 |
@@ -189,7 +189,7 @@
 | **M9 Observability & QA** | Structured logger, CI workflows, performance profiling harness. |
 | **M10 Performance & Quality** | Memoization, log caps, XSS audit, NVDA/VO focus management — measurable gains. |
 | **M11 Advanced Features** | Replay shortlinks, multi-team compare, live fingerprinting. Post-M8 only. |
-| **M12 Showdown Replay Coach** | Parse Showdown logs, diagnose real player decisions, compare replay paths to sim plans, and produce replay-calibrated coaching signals. |
+| **M12 Battle Sensei** | Parse Showdown logs, diagnose real player decisions, compare replay paths to sim plans, and produce replay-calibrated coaching signals. |
 
 ---
 
@@ -220,7 +220,7 @@ All spec files live in [`poke-sim/docs/`](./poke-sim/docs/).
 | `PHASE4E_POLICY_AUDIT_SPEC.md` | 4e | ✅ Final |
 | `PHASE5_TURN_LOG_SPEC_DRAFT.md` | 5 | 📝 Draft |
 | `PHASE6_COACHING_VOICE_SPEC.md` | 6 | ✅ Final |
-| `SHOWDOWN_REPLAY_COACH_SPEC.md` | Stage 3 Replay Coach | 📝 Accepted roadmap spec |
+| `SHOWDOWN_REPLAY_COACH_SPEC.md` | Stage 3 Battle Sensei | 🧪 R1/R2 MVP started |
 | `PHASE_ROLLOUT_REVIEW.md` | All | 📋 Review |
 | `COACHING_NORTH_STAR.md` | All | ⭐ Reference |
 
