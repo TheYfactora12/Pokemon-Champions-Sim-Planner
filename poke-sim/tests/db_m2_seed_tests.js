@@ -66,11 +66,20 @@ describe('Module 2 \u2014 Seed suite (14 cases)', function() {
   });
 
   T('T-seed-2', function() {
-    // SQL contains exactly 22 distinct team_id values in teams INSERT block
+    // SQL contains exactly the same number of distinct teams as data.js.
     var seedContent = readSeed();
     var ids = teamIdsInSeed(seedContent);
     var distinct = Array.from(new Set(ids));
-    eq(distinct.length, 22, '22 distinct team_id values in teams INSERT block');
+    var dataContent = fs.readFileSync(dataPath, 'utf8');
+    var start = dataContent.indexOf('const TEAMS = {') + 'const TEAMS = '.length;
+    var depth = 0; var end = start;
+    for (var i = start; i < dataContent.length; i++) {
+      var c = dataContent[i];
+      if (c === '{') depth++;
+      else if (c === '}') { depth--; if (depth === 0) { end = i + 1; break; } }
+    }
+    var teamsObj = JSON.parse(dataContent.substring(start, end));
+    eq(distinct.length, Object.keys(teamsObj).length, 'seed team count matches data.js TEAMS literal');
   });
 
   T('T-seed-3', function() {
