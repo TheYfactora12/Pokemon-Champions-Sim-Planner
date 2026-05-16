@@ -16740,6 +16740,10 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
   var members = (team && team.members) || [];
   var bestLead = (leadSystem && leadSystem.safe) ? leadSystem.safe : '';
   var altLead = (leadSystem && leadSystem.speed) ? leadSystem.speed : (leadSystem && leadSystem.pressure) ? leadSystem.pressure : '';
+  var totalGames = 0;
+  Object.values(results || {}).forEach(function(r){
+    totalGames += (r && r.wins ? r.wins : 0) + (r && r.losses ? r.losses : 0) + (r && r.draws ? r.draws : 0);
+  });
 
   function _oppName(oppKey) {
     var opp = (typeof TEAMS !== 'undefined' && TEAMS[oppKey]) ? TEAMS[oppKey] : null;
@@ -16751,6 +16755,15 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
   function _fmtWR(v) { return Math.round((v || 0) * 100) + '%'; }
   function _itemRows(items, formatter) {
     return (items || []).slice(0, 3).map(function(item){ return formatter(item); });
+  }
+  function _deadOwner(row) {
+    return (row && (row.owner || row.pokemon || row.name)) || 'unknown';
+  }
+  function _deadTimes(row) {
+    return (row && typeof row.times_used === 'number') ? row.times_used : ((row && typeof row.used === 'number') ? row.used : 0);
+  }
+  function _deadGames(row) {
+    return (row && typeof row.games_sampled === 'number') ? row.games_sampled : ((row && typeof row.games === 'number') ? row.games : totalGames);
   }
 
   var matchupRows = Object.entries(results || {}).map(function(pair){
@@ -16831,15 +16844,15 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
     key: 'dead_moves',
     title: 'Dead moves',
     headline: deadList.length
-      ? (deadList[0].owner + ' - ' + deadList[0].move + ' has 0 calls in the sample.')
+      ? (_deadOwner(deadList[0]) + ' - ' + deadList[0].move + ' has 0 calls in the sample.')
       : 'No dead moves are flagged yet.',
     fix: deadList.length
       ? 'Open these slots on turn 1 when they are support tools, or replace them with coverage that patches your worst matchup.'
       : 'Keep simming until a move crosses the 0-call threshold.',
     rows: _itemRows(deadList, function(row){
       return {
-        label: row.owner + ' - ' + row.move,
-        value: row.times_used + ' calls over ' + row.games_sampled + ' games'
+        label: _deadOwner(row) + ' - ' + row.move,
+        value: _deadTimes(row) + ' calls over ' + _deadGames(row) + ' games'
       };
     }),
     empty: 'No move has crossed the dead-move threshold yet.'
