@@ -34,6 +34,18 @@ T('2. team cards collapse cleanly on mobile', () => {
   inc(css, '.tfcard-badges{width:100%;align-items:flex-start}');
 });
 
+T('2b. compact desktop keeps a multi-column Teams grid', () => {
+  inc(css, '@media(max-width:900px) and (hover:hover) and (pointer:fine){');
+  inc(css, '.teams-tab-header{');
+  inc(css, 'flex-direction:row;');
+  inc(css, '.teams-actions{');
+  inc(css, 'width:auto;');
+  inc(css, '.teams-grid{');
+  inc(css, 'grid-template-columns:repeat(auto-fill,minmax(320px,1fr));');
+  inc(css, '.tfcard-header{');
+  inc(css, 'flex-direction:row;');
+});
+
 T('3. move rows and export buttons can wrap on small screens', () => {
   inc(css, '.poke-full-row{flex-wrap:wrap;align-items:flex-start}');
   inc(css, '.poke-full-sprite{width:40px;height:40px}');

@@ -19,8 +19,15 @@ function inc(hay, needle, msg='') {
 console.log('\n=== mobile sim structure tests ===\n');
 
 T('1. controls lead the phone layout before team cards', () => {
-  inc(css, '@media(max-width:700px){.sim-layout{grid-template-columns:1fr}}');
+  inc(css, '@media(hover:none) and (pointer:coarse) and (max-width:900px){.sim-layout{grid-template-columns:1fr}');
   inc(css, '.sim-layout .sim-controls{order:1}.sim-layout .player-card{order:2}.sim-layout .opp-card{order:3}');
+  inc(css, '.team-card,.player-card,.opp-card,.sim-controls{min-width:0}');
+});
+
+T('1b. fine-pointer desktop keeps a compact split-screen layout', () => {
+  inc(css, '@media(max-width:900px) and (hover:hover) and (pointer:fine){');
+  inc(css, '.sim-layout{grid-template-columns:minmax(0,1fr) 180px;gap:var(--sp3)}');
+  inc(css, '.sim-layout .sim-controls{grid-column:2;grid-row:1 / span 2;position:sticky;top:var(--sp4)}');
 });
 
 T('2. coverage is secondary on phones', () => {

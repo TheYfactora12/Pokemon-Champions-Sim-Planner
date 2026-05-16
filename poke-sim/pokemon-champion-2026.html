@@ -248,7 +248,56 @@ table{border-collapse:collapse;width:100%}
   .teams-filter-chip,.bring-mode-btn{font-size:10px}
   .team-full-card,.replay-card,.pilot-card,.cs-section,.editor-form,.editor-sidebar{padding:var(--sp2)}
 }
-@media(max-width:480px){
+@media(max-width:900px) and (hover:hover) and (pointer:fine){
+  .teams-tab-header{
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:var(--sp3);
+  }
+  .teams-actions{
+    width:auto;
+    flex-direction:row;
+    flex-wrap:wrap;
+    margin-bottom:var(--sp3);
+  }
+  .teams-actions .btn-secondary{
+    width:auto;
+    justify-content:center;
+  }
+  .teams-grid{
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:var(--sp4);
+  }
+  .team-full-card{
+    padding:var(--sp4);
+  }
+  .tfcard-header{
+    flex-direction:row;
+    align-items:flex-start;
+    gap:var(--sp3);
+  }
+  .tfcard-badges{
+    width:auto;
+    align-items:flex-end;
+  }
+  .poke-full-row{
+    flex-wrap:nowrap;
+    align-items:center;
+  }
+  .move-tags{
+    width:auto;
+  }
+  .export-card-btn{
+    width:auto;
+    justify-content:center;
+  }
+  .team-mon-detail-btn{
+    width:auto;
+    margin-top:0;
+  }
+}
+@media(max-width:480px) and (hover:none) and (pointer:coarse){
   .tab-nav{display:none}
   .mobile-tab-picker{display:block;padding:0 var(--sp3) var(--sp3)}
   .mobile-tab-picker .select-input{font-size:12px;font-weight:700}
@@ -316,9 +365,15 @@ table{border-collapse:collapse;width:100%}
 .tab-panel.active{display:block}
 
 /* ===== SIM LAYOUT ===== */
-.sim-layout{display:grid;grid-template-columns:1fr 220px 1fr;gap:var(--sp4);align-items:start;margin-bottom:var(--sp6)}
-@media(max-width:700px){.sim-layout{grid-template-columns:1fr}}
-@media(max-width:700px){.sim-layout .sim-controls{order:1}.sim-layout .player-card{order:2}.sim-layout .opp-card{order:3}}
+.sim-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px minmax(0,1fr);gap:var(--sp4);align-items:start;margin-bottom:var(--sp6)}
+.team-card,.player-card,.opp-card,.sim-controls{min-width:0}
+@media(max-width:900px) and (hover:hover) and (pointer:fine){
+  .sim-layout{grid-template-columns:minmax(0,1fr) 180px;gap:var(--sp3)}
+  .sim-layout .player-card{grid-column:1;grid-row:1}
+  .sim-layout .opp-card{grid-column:1;grid-row:2}
+  .sim-layout .sim-controls{grid-column:2;grid-row:1 / span 2;position:sticky;top:var(--sp4)}
+}
+@media(hover:none) and (pointer:coarse) and (max-width:900px){.sim-layout{grid-template-columns:1fr}.sim-layout .sim-controls{order:1}.sim-layout .player-card{order:2}.sim-layout .opp-card{order:3}}
 @media(min-width:701px) and (max-width:900px) and (orientation:landscape){
   .sim-layout{grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr);gap:var(--sp3)}
   .sim-layout .opp-card,.sim-layout .sim-controls{order:unset}
@@ -428,8 +483,8 @@ table{border-collapse:collapse;width:100%}
   .poke-row{flex-wrap:wrap;align-items:flex-start;padding:10px 10px}
   .poke-sprite{width:34px;height:34px}
   .poke-info{flex:1 1 calc(100% - 48px);min-width:0}
-  .poke-name{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.15}
-  .poke-item,.poke-moves{white-space:normal;overflow-wrap:anywhere}
+  .poke-name{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.15;overflow-wrap:break-word;word-break:normal}
+  .poke-item,.poke-moves{white-space:normal;overflow-wrap:break-word;word-break:normal}
   .poke-moves{line-height:1.25}
   .type-chips{flex-direction:row;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start;gap:4px;flex:1 1 100%;margin-left:46px;margin-top:2px}
   .type-chip{font-size:9px;line-height:1.2;padding:2px 6px;white-space:nowrap;max-width:100%}
