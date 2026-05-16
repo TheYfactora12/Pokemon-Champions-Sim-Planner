@@ -66,12 +66,13 @@ T('4. scorecard and practice plan are generated from coaching tags', () => {
   truthy(learning.practicePlan.learningLoop.decide, 'OODA decide');
 });
 
-T('5. Battle IQ scoring is provisional, explainable, and not intelligence-claiming', () => {
+T('5. Battle IQ scoring is provisional, explainable, and scoped to game intelligence', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const iq = analysis.review.learningReport.battleIq;
   truthy(iq, 'battle iq missing');
   eq(iq.status, 'Provisional Battle IQ', 'provisional status');
-  inc(iq.definition, 'not a measure of real intelligence', 'definition boundary');
+  inc(iq.definition, 'game-specific competitive battle intelligence', 'game intelligence boundary');
+  inc(iq.definition, 'not a measure of general human intelligence', 'general intelligence boundary');
   eq(iq.confidence, 'medium', 'single-battle score confidence should not overclaim');
   inc(iq.reliabilityNote, 'single clean battle', 'single-battle reliability note');
   truthy(iq.rawComposite >= 0 && iq.rawComposite <= 100, 'raw composite range');

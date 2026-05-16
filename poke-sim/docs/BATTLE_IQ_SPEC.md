@@ -2,13 +2,13 @@
 
 > Status: R1 shipped in `c83a510` on 2026-05-16.
 > Product surface: Battle Sensei.
-> Principle: Battle IQ is not a measure of real intelligence.
+> Principle: Battle IQ measures game-specific competitive battle intelligence, not general human intelligence.
 
 ## Product Definition
 
-Battle IQ is a standardized estimate of competitive battle decision quality based on observable battle data, matchup context, and player execution patterns.
+Battle IQ is a standardized estimate of game-specific competitive battle intelligence based on observable battle decisions, matchup context, and player execution patterns.
 
-It exists to help the player improve. It must never be framed as real intelligence, personal worth, or a fixed player label.
+It exists to help the player improve. It can be described as in-game competitive intelligence, because it maps observable decisions to battle-specific skills. It must never be framed as general human intelligence, personal worth, or a fixed player label.
 
 ## Why This Exists
 
@@ -34,7 +34,7 @@ The scoring system borrows psychometric structure, not psychometric claims:
 - future norm groups
 - future reliability over multiple samples
 
-The app must not imply that Battle IQ is clinically validated, comparable to real IQ, or stable after one battle.
+The app must not imply that Battle IQ is clinically validated, comparable to general IQ, or stable after one battle.
 
 ### Display Scale
 
@@ -306,7 +306,7 @@ Before any Battle IQ expansion ships, answer:
 3. Is a win being rewarded despite bad decision quality?
 4. Is a loss being punished despite good decision quality?
 5. Is the confidence label conservative enough?
-6. Does the UI clearly say this is not real intelligence?
+6. Does the UI clearly say this is game-specific battle intelligence, not general human intelligence?
 7. Does the saved data respect raw-log privacy?
 8. Can the feature still work when DB/Supabase is offline?
 9. Is the premium boundary based on durable value, not withholding basic learning?
@@ -317,7 +317,7 @@ Before any Battle IQ expansion ships, answer:
 R1 is complete when:
 
 - Battle Sensei renders a Battle IQ score card.
-- The card says Battle IQ is not real intelligence.
+- The card says Battle IQ is game-specific battle intelligence, not general human intelligence.
 - Eight sub-scores are produced internally.
 - The score is provisional for single battles.
 - Low-confidence logs produce low-confidence Battle IQ.
@@ -343,4 +343,3 @@ R1 was validated on 2026-05-16 with:
 - `node tests/t192_battle_sensei_learning_tests.js`
 - `bash tests/_run_all.sh --skip-db`
 - `git diff --check`
-

@@ -17,7 +17,7 @@ Battle Sensei is the replay-coaching product surface. Sim Mode builds the team; 
 - `poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`
 - `poke-sim/docs/BATTLE_IQ_SPEC.md`
 
-Battle IQ means a standardized estimate of competitive battle decision quality based on observable battle data, matchup context, and player execution patterns. It is not a measure of real intelligence. Single-battle Battle IQ must remain provisional and confidence-labeled. Do not ship a Battle IQ feature unless it explains what decision should change.
+Battle IQ means a standardized estimate of game-specific competitive battle intelligence based on observable battle decisions, matchup context, and player execution patterns. It is not a measure of general human intelligence. Single-battle Battle IQ must remain provisional and confidence-labeled. Do not ship a Battle IQ feature unless it explains what decision should change.
 
 **GitHub repo:** https://github.com/alfredocox/Pokemon-Champions-Sim-Planner
 **Default branch:** `main`

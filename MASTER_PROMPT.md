@@ -37,7 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
-| 2026-05-16 | @TheYfactora12 | Documented Battle IQ scoring | Added `poke-sim/docs/BATTLE_IQ_SPEC.md` and linked it from the Battle Sensei spec, roadmap, README, and prompt context. Battle IQ is explicitly a provisional decision-quality estimate, not real intelligence, with confidence and privacy guardrails. |
+| 2026-05-16 | @TheYfactora12 | Documented Battle IQ scoring | Added `poke-sim/docs/BATTLE_IQ_SPEC.md` and linked it from the Battle Sensei spec, roadmap, README, and prompt context. Battle IQ is explicitly game-specific competitive battle intelligence, not general human intelligence, with provisional confidence and privacy guardrails. |
 | 2026-05-16 | @TheYfactora12 | Started Battle Sensei MVP | Added the first-class Battle Sensei surface for Showdown log review with tagline "Learn why the turn went wrong." This stays separate from the Strategy tab; parser/review data may feed coaching calibration later, but the UX is not mixed into Strategy. |
 | 2026-05-16 | @TheYfactora12 | Accepted Showdown Replay Coach roadmap spec | Added the Stage 3 Replay Coach + Sim Intelligence spec as the next major coaching expansion: parse Showdown logs, diagnose real decisions, compare replay behavior to sim recommendations, and produce replay-calibrated feedback packets. Filed Alfredo issues #187-#197 and fork mirrors #77-#87, including a dedicated Supabase replay schema migration issue. |
 | 2026-05-15 | @TheYfactora12 | Mobile results stats fix | Collapsed the results summary and stat cards into a narrow-window stack so the win/loss bar and outcome metrics no longer run too long in half-screen or phone views. Added a regression for the results stats grid. |
@@ -324,7 +324,7 @@ Battle Sensei is the replay-coaching product surface. Sim Mode builds the team; 
 - `poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`
 - `poke-sim/docs/BATTLE_IQ_SPEC.md`
 
-Battle IQ means a standardized estimate of competitive battle decision quality based on observable battle data, matchup context, and player execution patterns. It is not a measure of real intelligence. Single-battle Battle IQ must remain provisional and confidence-labeled. Do not ship a Battle IQ feature unless it explains what decision should change.
+Battle IQ means a standardized estimate of game-specific competitive battle intelligence based on observable battle decisions, matchup context, and player execution patterns. It is not a measure of general human intelligence. Single-battle Battle IQ must remain provisional and confidence-labeled. Do not ship a Battle IQ feature unless it explains what decision should change.
 
 **GitHub repo:** https://github.com/alfredocox/Pokemon-Champions-Sim-Planner
 **Default branch:** `main`

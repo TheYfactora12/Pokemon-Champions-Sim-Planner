@@ -60,9 +60,9 @@ Battle IQ is documented in [`BATTLE_IQ_SPEC.md`](./BATTLE_IQ_SPEC.md).
 
 Battle IQ means:
 
-> A standardized estimate of competitive battle decision quality based on observable battle data, matchup context, and player execution patterns.
+> A standardized estimate of game-specific competitive battle intelligence based on observable battle decisions, matchup context, and player execution patterns.
 
-Battle IQ must never be described as real intelligence. It is a coaching score, not a personal judgment.
+Battle IQ may be described as in-game competitive intelligence because it maps battle decisions to battle-specific skills. It must never be described as general human intelligence or personal worth.
 
 Current R1 behavior:
 

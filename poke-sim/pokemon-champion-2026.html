@@ -12890,7 +12890,7 @@ if (typeof window !== 'undefined') {
       return categoryForIssue(issue).toLowerCase().indexOf((weakest.label || '').split(' ')[0].toLowerCase()) >= 0;
     }) || issues.slice().sort(function(a, b) { return issueWeight(b) - issueWeight(a); })[0] || null;
     return {
-      definition: 'A standardized estimate of competitive battle decision quality based on observable battle data, matchup context, and player execution patterns. This is not a measure of real intelligence.',
+      definition: 'A standardized estimate of game-specific competitive battle intelligence based on observable battle decisions, matchup context, and player execution patterns. This is not a measure of general human intelligence.',
       status: 'Provisional Battle IQ',
       rawComposite: rawComposite,
       standardScore: standard,
