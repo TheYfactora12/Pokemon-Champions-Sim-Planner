@@ -82,6 +82,44 @@
     return 'high';
   }
 
+  function evidenceTier(confidence, evidenceCount) {
+    if (confidence === 'high' && evidenceCount >= 2) return 'observed';
+    if ((confidence === 'high' || confidence === 'medium') && evidenceCount >= 1) return 'strong_inference';
+    if (confidence === 'medium') return 'weak_inference';
+    return 'needs_more_data';
+  }
+
+  function evidenceLabel(tier) {
+    var labels = {
+      observed: 'Observed',
+      strong_inference: 'Strong inference',
+      weak_inference: 'Weak inference',
+      needs_more_data: 'Needs more data'
+    };
+    return labels[tier] || 'Needs more data';
+  }
+
+  function buildEvidenceStandard(parsed, review) {
+    var issues = (review && review.coachingTags) || [];
+    var confidence = confidenceFor(parsed, issues);
+    var evidenceCount = 0;
+    if (parsed && parsed.leads && parsed.leads.p1 && parsed.leads.p1.length && parsed.leads.p2 && parsed.leads.p2.length) evidenceCount++;
+    if (parsed && parsed.teamPreview && ((parsed.teamPreview.p1 || []).length || (parsed.teamPreview.p2 || []).length)) evidenceCount++;
+    if (parsed && parsed.turns && parsed.turns.length >= 2) evidenceCount++;
+    if (issues.some(function(i) { return i && i.evidence; })) evidenceCount++;
+    var tier = evidenceTier(confidence, evidenceCount);
+    return {
+      priority: 'Observable battle evidence first; supported inference second; speculation last or not at all.',
+      tier: tier,
+      label: evidenceLabel(tier),
+      confidence: confidence,
+      rule: 'If evidence is weak, lower confidence, avoid hard claims, and recommend additional battles.',
+      opponentIntentRule: 'Never invent opponent intent. Infer likely strategic intent only from common archetype behavior, board state, move sequencing, and revealed information.',
+      evidenceCount: evidenceCount,
+      missingData: (parsed && parsed.warnings || []).slice()
+    };
+  }
+
   function confidenceIntervalFor(confidence) {
     if (confidence === 'high') return 5;
     if (confidence === 'medium') return 8;
@@ -393,8 +431,14 @@
     parsed = parsed || {};
     var opp = side === 'p1' ? 'p2' : 'p1';
     var oppMoves = [];
+    var fieldSignals = [];
     (parsed.turns || []).forEach(function(t) {
       (t.moves || []).forEach(function(m) { if (m.side === opp) oppMoves.push(m.move); });
+      (t.field || []).forEach(function(f) {
+        if (!f.side || f.side === opp || /trick room|tailwind|weather|terrain/i.test(f.value || f.text || '')) {
+          fieldSignals.push(f.value || f.text || f.type || 'field effect');
+        }
+      });
     });
     var joined = oppMoves.join(' | ');
     var signals = [];
@@ -402,14 +446,93 @@
     if (/Tailwind|Icy Wind|Electroweb|Thunder Wave/i.test(joined)) signals.push('control move order');
     if (/Follow Me|Rage Powder/i.test(joined)) signals.push('use redirection to protect setup');
     if (/Helping Hand/i.test(joined)) signals.push('amplify one-slot damage pressure');
-    if (!signals.length) signals.push('trade damage and reveal endgame pieces');
+    var confidence = confidenceFor(parsed, []);
+    var tier = evidenceTier(confidence, signals.length + fieldSignals.length);
+    if (!signals.length) {
+      return {
+        leadGoal: 'Needs more data',
+        pressurePattern: 'Not enough observed move sequencing to infer a reliable opponent plan.',
+        setupPattern: 'Needs more data',
+        baitPattern: 'Needs more data',
+        endgamePlan: 'Needs more data',
+        recognizeNextTime: 'Upload a fuller log or more battles, then identify the must-answer slot before turn 1.',
+        confidence: 'low',
+        evidenceTier: 'needs_more_data',
+        evidenceLabel: evidenceLabel('needs_more_data'),
+        evidence: fieldSignals.slice(0, 4)
+      };
+    }
     return {
       leadGoal: signals[0],
       pressurePattern: signals.join('; '),
       setupPattern: /Trick Room/i.test(joined) ? 'setup protected by support or redirection' : 'not enough setup evidence from this log',
       baitPattern: /Fake Out|Protect|Follow Me|Rage Powder/i.test(joined) ? 'possible support bait around turn-one protection or redirection' : 'not enough bait evidence',
-      endgamePlan: 'preserve the attacker or field state that benefits from the opening plan',
-      recognizeNextTime: 'Identify the must-answer slot before turn 1, then ask whether your lead still works if Fake Out or Protect fails.'
+      endgamePlan: tier === 'observed' || tier === 'strong_inference' ? 'likely preserve the attacker or field state that benefits from the observed opening plan' : 'Needs more data',
+      recognizeNextTime: 'Identify the must-answer slot before turn 1, then ask whether your lead still works if Fake Out or Protect fails.',
+      confidence: confidence === 'high' ? 'medium' : confidence,
+      evidenceTier: tier,
+      evidenceLabel: evidenceLabel(tier),
+      evidence: signals.concat(fieldSignals).slice(0, 4)
+    };
+  }
+
+  function normalizeNames(list) {
+    return (list || []).map(function(v) { return escText(v).toLowerCase(); }).filter(Boolean);
+  }
+
+  function overlapScore(a, b) {
+    var aa = normalizeNames(a);
+    var bb = normalizeNames(b);
+    if (!aa.length || !bb.length) return null;
+    var hits = aa.filter(function(x) { return bb.indexOf(x) >= 0; }).length;
+    return hits / Math.max(aa.length, bb.length);
+  }
+
+  function buildSimComparison(parsed, review, opts) {
+    opts = opts || {};
+    var plan = opts.simPlan || opts.simRecommendation || opts.simComparison || null;
+    var summary = (review && review.summary) || {};
+    var actualLead = summary.yourLead || [];
+    var actualFour = summary.yourFour || [];
+    var noData = {
+      status: 'needs_sim_data',
+      evidenceTier: 'needs_more_data',
+      evidenceLabel: evidenceLabel('needs_more_data'),
+      confidence: 'low',
+      note: 'No matched simulation recommendation was provided for this replay yet.',
+      decisionChange: 'Run or attach the matchup simulation, then compare best sim lead/four/path against the actual replay choices.',
+      actualLead: actualLead,
+      actualFour: actualFour
+    };
+    if (!plan) return noData;
+    var bestLead = plan.bestLead || plan.recommendedLead || plan.bestSimLead || [];
+    var bestFour = plan.bestFour || plan.recommendedFour || plan.bestSimFour || [];
+    var expectedWinPath = plan.expectedWinPath || plan.winPath || plan.safestLine || '';
+    var leadOverlap = overlapScore(actualLead, bestLead);
+    var fourOverlap = overlapScore(actualFour, bestFour);
+    var confidence = confidenceFor(parsed, (review && review.coachingTags) || []);
+    var evidenceCount = 1 + (leadOverlap != null ? 1 : 0) + (fourOverlap != null ? 1 : 0) + (expectedWinPath ? 1 : 0);
+    var tier = evidenceTier(confidence, evidenceCount);
+    var firstDeviation = 'Needs more data';
+    if (leadOverlap != null && leadOverlap < 1) firstDeviation = 'Actual lead differed from the sim-recommended lead.';
+    else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual selected four differed from the sim-recommended four.';
+    else if (expectedWinPath) firstDeviation = 'Lead/four matched; compare turn sequencing against expected win path.';
+    return {
+      status: 'matched',
+      evidenceTier: tier,
+      evidenceLabel: evidenceLabel(tier),
+      confidence: confidence === 'high' ? 'medium' : confidence,
+      actualLead: actualLead,
+      bestSimLead: bestLead,
+      actualFour: actualFour,
+      bestSimFour: bestFour,
+      leadMatch: leadOverlap == null ? 'unknown' : Math.round(leadOverlap * 100),
+      fourMatch: fourOverlap == null ? 'unknown' : Math.round(fourOverlap * 100),
+      expectedWinPath: expectedWinPath || 'Needs sim win-path data',
+      actualPath: summary.mainIssue || 'Needs turn review',
+      firstDeviation: firstDeviation,
+      teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/four matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/bring selection may have diverged from the simulated plan; verify with more battles before changing the team.',
+      decisionChange: 'Use this comparison to decide whether to test a different lead/four first or practice the same sim plan with cleaner sequencing.'
     };
   }
 
@@ -552,6 +675,7 @@
       productMode: 'Battle Sensei',
       philosophy: 'Decision quality over outcome. Every statistic should change a decision.',
       confidence: confidenceFor(parsed, issues),
+      evidenceStandard: buildEvidenceStandard(parsed, review),
       battleSummary: {
         matchup: ((review && review.summary && review.summary.yourPlayer) || 'You') + ' vs ' + ((review && review.summary && review.summary.opponentPlayer) || 'Opponent'),
         apparentPlayerPlan: 'Create a stable opening, preserve the win condition, and convert speed or positioning into pressure.',
@@ -565,6 +689,7 @@
       battleIq: buildBattleIqScore(parsed, review, opts),
       winPath: buildWinPath(parsed, review, critical),
       opponentPlan: inferOpponentPlan(parsed, (parsed && parsed.selectedSide) || opts.selectedSide || 'p1'),
+      simComparison: buildSimComparison(parsed, review, opts),
       practicePlan: buildPracticePlan(review),
       trendDashboard: buildTrendDashboard(opts.priorReports || [])
     };
@@ -579,6 +704,8 @@
   ChampionsSim.replayLearning.buildTrendDashboard = buildTrendDashboard;
   ChampionsSim.replayLearning.buildPremiumTeasers = buildPremiumTeasers;
   ChampionsSim.replayLearning.buildBattleIqScore = buildBattleIqScore;
+  ChampionsSim.replayLearning.buildEvidenceStandard = buildEvidenceStandard;
+  ChampionsSim.replayLearning.buildSimComparison = buildSimComparison;
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = ChampionsSim.replayLearning;

@@ -158,6 +158,27 @@ Examples:
 - A stable line that loses to a critical hit should keep a stronger decision-quality score, with variance noted.
 - A risky low-percentage line that wins should still lower Risk Discipline IQ if the line was not justified by board state.
 
+## Evidence Over Speculation
+
+Battle IQ should score observable decisions before interpreting intent.
+
+Use this evidence order:
+
+1. Parsed actions and board state.
+2. Revealed moves, switches, faints, HP changes, field effects, and team preview.
+3. Common archetype behavior supported by the current board.
+4. Repeated player patterns from saved profile history.
+5. Speculation only as a low-confidence prompt for more data.
+
+If evidence is weak:
+
+- lower confidence
+- widen the range
+- avoid hard claims
+- recommend more battles
+
+Opponent intent must not be invented. The engine may infer likely strategic intent only when supported by common archetype behavior, board state, move sequencing, and revealed information.
+
 ## Free vs Premium Boundary
 
 Free users should receive immediate single-game value:
@@ -307,10 +328,11 @@ Before any Battle IQ expansion ships, answer:
 4. Is a loss being punished despite good decision quality?
 5. Is the confidence label conservative enough?
 6. Does the UI clearly say this is game-specific battle intelligence, not general human intelligence?
-7. Does the saved data respect raw-log privacy?
-8. Can the feature still work when DB/Supabase is offline?
-9. Is the premium boundary based on durable value, not withholding basic learning?
-10. Does this improve coaching, or is it just a vanity metric?
+7. Does the claim prioritize observable evidence over speculative intent?
+8. Does the saved data respect raw-log privacy?
+9. Can the feature still work when DB/Supabase is offline?
+10. Is the premium boundary based on durable value, not withholding basic learning?
+11. Does this improve coaching, or is it just a vanity metric?
 
 ## Acceptance Criteria
 

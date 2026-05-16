@@ -2793,6 +2793,8 @@ function csReplayCoachRenderAnalysis(analysis) {
   var review = analysis.review || {};
   var summary = review.summary || {};
   var learning = review.learningReport || null;
+  var evidenceStandard = learning && learning.evidenceStandard ? learning.evidenceStandard : null;
+  var simComparison = learning && learning.simComparison ? learning.simComparison : null;
   var rawPreview = review.rawLogPreview || {};
   var bringConfidence = summary.selectedFourConfidence || {};
   var warnings = (review.warnings || []).map(function(w) {
@@ -2899,6 +2901,17 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<h3 class="replay-coach-h3">Coaching Tags</h3>' +
       '<div class="replay-coach-list">' + (tags || '<div class="replay-coach-list-row"><strong>No major issue detected</strong>Upload more complete logs to build stronger coaching confidence.</div>') + '</div>' +
     '</div>' +
+    (evidenceStandard ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Evidence Standard</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(evidenceStandard.label || 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(evidenceStandard.confidence || 'low') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Rule</strong>' + _escapeHtml(evidenceStandard.priority || '') + '<small>' + _escapeHtml(evidenceStandard.rule || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Opponent intent boundary</strong>' + _escapeHtml(evidenceStandard.opponentIntentRule || '') + '</div>' +
+      '</div>' +
+    '</div>' : '') +
     (learning ? '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Battle IQ Score</h3>' +
       '<div class="replay-coach-summary-grid">' +
@@ -2934,8 +2947,23 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<div class="replay-coach-list">' +
         '<div class="replay-coach-list-row"><strong>Your win path</strong>' + _escapeHtml(learning.winPath.afterLeads || '') + '<small>' + _escapeHtml(learning.winPath.followedOrAbandoned || '') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>Opponent plan recognition</strong>' + _escapeHtml(learning.opponentPlan.pressurePattern || '') + '<small>' + _escapeHtml(learning.opponentPlan.recognizeNextTime || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Opponent plan evidence</strong>' + _escapeHtml((learning.opponentPlan.evidenceLabel || 'Needs more data') + ' · Confidence: ' + (learning.opponentPlan.confidence || 'low')) + '<small>' + _escapeHtml((learning.opponentPlan.evidence || []).join('; ') || 'Upload more complete logs before treating opponent intent as fact.') + '</small></div>' +
       '</div>' +
     '</div>' +
+    (simComparison ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Sim Comparison</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(simComparison.status || 'needs_sim_data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Four match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>First deviation</strong>' + _escapeHtml(simComparison.firstDeviation || simComparison.note || 'Needs sim data') + '<small>' + _escapeHtml(simComparison.decisionChange || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Diagnosis boundary</strong>' + _escapeHtml(simComparison.teamVsPilotDiagnosis || 'Do not judge team vs pilot until sim and replay data are matched.') + '</div>' +
+      '</div>' +
+    '</div>' : '') +
     '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Decision Quality Matrix</h3>' +
       '<div class="replay-coach-list">' + (decisionRows || '<div class="replay-coach-list-row"><strong>No key decision rows yet</strong>Upload a fuller log for decision/outcome separation.</div>') + '</div>' +

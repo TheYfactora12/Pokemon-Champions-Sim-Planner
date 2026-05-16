@@ -101,16 +101,48 @@ T('6. low-confidence incomplete logs do not overclaim', () => {
   eq(learning.battleIq.confidence, 'low', 'battle iq confidence');
   eq(learning.battleIq.status, 'Provisional Battle IQ', 'battle iq provisional');
   truthy(/Needs more data|same turn/i.test(learning.criticalTurns.note), 'low confidence note');
+  eq(learning.evidenceStandard.label, 'Needs more data', 'evidence standard lowers confidence');
+  inc(learning.opponentPlan.pressurePattern, 'Not enough observed', 'opponent plan avoids invented intent');
 });
 
-T('7. trend dashboard stays cautious for a single review', () => {
+T('7. evidence standard and opponent plan expose support level', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const learning = analysis.review.learningReport;
+  truthy(learning.evidenceStandard, 'evidence standard');
+  inc(learning.evidenceStandard.priority, 'Observable battle evidence first', 'evidence priority');
+  inc(learning.evidenceStandard.opponentIntentRule, 'Never invent opponent intent', 'opponent intent boundary');
+  truthy(['Observed', 'Strong inference', 'Weak inference', 'Needs more data'].includes(learning.opponentPlan.evidenceLabel), 'opponent evidence label');
+  truthy(Array.isArray(learning.opponentPlan.evidence), 'opponent evidence rows');
+});
+
+T('8. sim comparison stays low confidence until matched sim data exists', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const sim = analysis.review.learningReport.simComparison;
+  eq(sim.status, 'needs_sim_data', 'needs sim status');
+  eq(sim.evidenceLabel, 'Needs more data', 'needs evidence');
+  inc(sim.decisionChange, 'Run or attach the matchup simulation', 'decision-changing next step');
+
+  const matched = replayCoach.analyzeShowdownReplay(sample, {
+    selectedSide: 'p1',
+    simPlan: {
+      bestLead: analysis.review.summary.yourLead,
+      bestFour: analysis.review.summary.yourFour,
+      expectedWinPath: 'Set speed control, preserve cleaner, and convert pressure.'
+    }
+  }).review.learningReport.simComparison;
+  eq(matched.status, 'matched', 'matched status');
+  eq(matched.leadMatch, 100, 'lead match score');
+  truthy(matched.evidenceLabel !== 'Needs more data', 'matched evidence improves');
+});
+
+T('9. trend dashboard stays cautious for a single review', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const trend = analysis.review.learningReport.trendDashboard;
   eq(trend.confidence, 'needs more data', 'trend confidence');
   inc(trend.recommendedNextPracticeBlock, 'top practice drill', 'trend practice guidance');
 });
 
-T('8. premium memory preview separates anonymous learning from private profiles', () => {
+T('10. premium memory preview separates anonymous learning from private profiles', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const premium = analysis.review.learningReport.premiumTeasers;
   truthy(premium, 'premium teaser');

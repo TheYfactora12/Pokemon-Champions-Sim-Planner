@@ -54,6 +54,42 @@ Every recommendation must include:
 - what to do instead
 - confidence level
 
+## Evidence Standard
+
+Battle Sensei must prioritize observable evidence over speculative interpretation.
+
+Evidence hierarchy:
+
+1. `Observed`: directly supported by parsed log events, revealed board state, moves, switches, faints, field effects, or team preview.
+2. `Strong inference`: supported by observable sequencing plus known archetype behavior or revealed information.
+3. `Weak inference`: plausible, but missing important context such as full team, item, EV, backline, or repeated samples.
+4. `Needs more data`: not enough evidence to make a reliable claim.
+
+If evidence is weak:
+
+- lower confidence
+- avoid hard claims
+- recommend additional battles or fuller logs
+
+Opponent intent rule:
+
+- never invent opponent intent
+- never state hidden plans as fact
+- infer likely strategic intent only when supported by common archetype behavior, board state, move sequencing, and revealed information
+
+The preferred language is:
+
+- "The log shows..."
+- "This strongly suggests..."
+- "A likely read is..."
+- "Needs more data before judging..."
+
+Avoid:
+
+- "The opponent wanted..." unless the log directly supports it
+- "You should have known..." when hidden information was unavailable
+- "This proves..." from one battle or incomplete replay data
+
 ## Battle IQ Boundary
 
 Battle IQ is documented in [`BATTLE_IQ_SPEC.md`](./BATTLE_IQ_SPEC.md).
