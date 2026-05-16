@@ -2992,6 +2992,102 @@ function csReplayCoachRenderAnalysis(analysis) {
     '</div>';
 }
 
+function csNormalizeReplayName(name) {
+  return String(name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function csTeamPreviewOverlap(previewNames, teamKey) {
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  var preview = (previewNames || []).map(csNormalizeReplayName).filter(Boolean);
+  if (!team || !preview.length) return 0;
+  var roster = (team.members || []).map(function(m) { return csNormalizeReplayName(m && m.name); }).filter(Boolean);
+  if (!roster.length) return 0;
+  var hits = preview.filter(function(n) { return roster.indexOf(n) >= 0; }).length;
+  return hits / Math.max(preview.length, Math.min(6, roster.length));
+}
+
+function csSplitLeadPair(label) {
+  return String(label || '').split(/\s*\+\s*/).map(function(v) { return v.trim(); }).filter(Boolean);
+}
+
+function csUniquePokemonNames(names, teamKey, cap) {
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  var out = [];
+  var seen = Object.create(null);
+  (names || []).forEach(function(n) {
+    var name = String(n || '').trim();
+    if (!name || seen[name]) return;
+    seen[name] = true;
+    out.push(name);
+  });
+  if (team && Array.isArray(team.members)) {
+    team.members.forEach(function(m) {
+      var name = m && m.name;
+      if (!name || seen[name] || out.length >= cap) return;
+      seen[name] = true;
+      out.push(name);
+    });
+  }
+  return out.slice(0, cap || getBringCount());
+}
+
+function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
+  parsed = parsed || {};
+  var playerKey = (typeof currentPlayerKey === 'string' && TEAMS[currentPlayerKey]) ? currentPlayerKey : 'player';
+  var results = (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastResults) ? ChampionsSim.state.lastResults : {};
+  var oppSide = (selectedSide || parsed.selectedSide || 'p1') === 'p1' ? 'p2' : 'p1';
+  var oppPreview = parsed.teamPreview && parsed.teamPreview[oppSide] ? parsed.teamPreview[oppSide] : [];
+  var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+  var selectedOppKey = oppSelect && oppSelect.value && TEAMS[oppSelect.value] ? oppSelect.value : '';
+  var candidateKeys = Object.keys(results || {}).filter(function(k) { return TEAMS[k]; });
+  if (selectedOppKey && candidateKeys.indexOf(selectedOppKey) < 0) candidateKeys.unshift(selectedOppKey);
+  if (!candidateKeys.length) return null;
+
+  var ranked = candidateKeys.map(function(key) {
+    var previewScore = csTeamPreviewOverlap(oppPreview, key);
+    var hasResult = results && results[key] ? 0.25 : 0;
+    var selectedBoost = key === selectedOppKey ? 0.15 : 0;
+    return { key: key, score: previewScore + hasResult + selectedBoost, previewScore: previewScore, hasResult: !!(results && results[key]) };
+  }).sort(function(a, b) { return b.score - a.score; });
+  var best = ranked[0];
+  if (!best || (!best.hasResult && best.previewScore <= 0)) return null;
+
+  var scopedResults = {};
+  if (results && results[best.key]) scopedResults[best.key] = results[best.key];
+  var report = null;
+  try {
+    if (typeof buildStrategyReport === 'function') report = buildStrategyReport(playerKey, scopedResults, currentFormat);
+  } catch (e) { report = null; }
+  if (!report && typeof loadStrategyReport === 'function') {
+    try { report = loadStrategyReport(playerKey); } catch (_e) { report = null; }
+  }
+  if (!report) return null;
+
+  var leadSystem = report.lead_system || {};
+  var matchupIntel = report.matchup_intelligence || {};
+  var bestLeadLabel = (matchupIntel.safe_leads && matchupIntel.safe_leads[0]) || leadSystem.safe || leadSystem.speed || leadSystem.pressure || leadSystem.punish || '';
+  var bestLead = csSplitLeadPair(bestLeadLabel);
+  var preserveNames = [];
+  if (report.team_identity && report.team_identity.primary_win_condition) preserveNames = preserveNames.concat(csSplitLeadPair(report.team_identity.primary_win_condition.replace(/->/g, '+')));
+  if (report.team_identity && Array.isArray(report.team_identity.speed_control_mons)) preserveNames = preserveNames.concat(report.team_identity.speed_control_mons);
+  if (report.team_identity && Array.isArray(report.team_identity.pivot_mons)) preserveNames = preserveNames.concat(report.team_identity.pivot_mons);
+  var bestFour = csUniquePokemonNames(bestLead.concat(preserveNames), playerKey, getBringCount());
+  var matchConfidence = best.previewScore >= 0.5 && best.hasResult ? 'medium' : 'low';
+
+  return {
+    source: 'latest in-app simulation strategy report',
+    matchedOpponentKey: best.key,
+    matchedOpponentName: TEAMS[best.key] && TEAMS[best.key].name ? TEAMS[best.key].name : best.key,
+    matchConfidence: matchConfidence,
+    bestLead: bestLead,
+    bestFour: bestFour,
+    expectedWinPath: matchupIntel.best_win_path || (report.coaching_notes && report.coaching_notes.best_win_path) || (report.team_identity && report.team_identity.primary_win_condition) || '',
+    safestLine: report.pilot_plan ? report.pilot_plan.turn_1 : '',
+    confidence: matchConfidence,
+    sampleSize: report.sample_size || 0
+  };
+}
+
 function csInitReplayCoachUi() {
   var logEl = document.getElementById('replay-coach-log');
   var sideEl = document.getElementById('replay-coach-side');
@@ -3020,7 +3116,16 @@ function csInitReplayCoachUi() {
       return;
     }
     try {
-      var analysis = api.analyzeShowdownReplay(raw, { selectedSide: sideEl.value || 'p1' });
+      var selectedSide = sideEl.value || 'p1';
+      var opts = { selectedSide: selectedSide };
+      if (typeof api.parseShowdownLog === 'function' && typeof api.buildReplayCoachReview === 'function') {
+        var parsed = api.parseShowdownLog(raw, opts);
+        opts.simPlan = csBuildBattleSenseiSimPlan(parsed, selectedSide);
+        opts.sampleSize = opts.simPlan && opts.simPlan.sampleSize ? opts.simPlan.sampleSize : 1;
+        var analysis = { parsed: parsed, review: api.buildReplayCoachReview(parsed, opts) };
+      } else {
+        var analysis = api.analyzeShowdownReplay(raw, opts);
+      }
       csReplayCoachRenderAnalysis(analysis);
       var parsedTurns = analysis && analysis.parsed ? analysis.parsed.totalTurns : 0;
       setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only and not saved.');

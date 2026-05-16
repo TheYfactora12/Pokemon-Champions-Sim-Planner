@@ -511,6 +511,7 @@
     var leadOverlap = overlapScore(actualLead, bestLead);
     var fourOverlap = overlapScore(actualFour, bestFour);
     var confidence = confidenceFor(parsed, (review && review.coachingTags) || []);
+    if (plan.matchConfidence === 'low' || plan.confidence === 'low') confidence = 'low';
     var evidenceCount = 1 + (leadOverlap != null ? 1 : 0) + (fourOverlap != null ? 1 : 0) + (expectedWinPath ? 1 : 0);
     var tier = evidenceTier(confidence, evidenceCount);
     var firstDeviation = 'Needs more data';
@@ -532,7 +533,11 @@
       actualPath: summary.mainIssue || 'Needs turn review',
       firstDeviation: firstDeviation,
       teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/four matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/bring selection may have diverged from the simulated plan; verify with more battles before changing the team.',
-      decisionChange: 'Use this comparison to decide whether to test a different lead/four first or practice the same sim plan with cleaner sequencing.'
+      decisionChange: 'Use this comparison to decide whether to test a different lead/four first or practice the same sim plan with cleaner sequencing.',
+      source: plan.source || 'matched simulation plan',
+      matchedOpponentKey: plan.matchedOpponentKey || '',
+      matchedOpponentName: plan.matchedOpponentName || '',
+      matchConfidence: plan.matchConfidence || confidence
     };
   }
 
