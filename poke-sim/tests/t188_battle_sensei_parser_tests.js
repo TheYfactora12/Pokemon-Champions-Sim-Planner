@@ -62,6 +62,7 @@ T('4. builds a coaching review with tags and critical turn', () => {
   const tags = analysis.review.coachingTags.map((t) => t.tag);
   eq(analysis.review.summary.yourLead.join(','), 'Incineroar,Whimsicott', 'summary lead');
   eq(analysis.review.summary.result, 'loss', 'summary result');
+  eq(analysis.review.summary.selectedFourConfidence.level, 'high', 'bring confidence');
   truthy(analysis.review.summary.criticalTurn >= 1, 'critical turn');
   includes(tags, 'Fake Out Failed', 'Fake Out coaching tag');
   includes(tags, 'Speed Control Without Pressure', 'speed control tag');
@@ -69,7 +70,18 @@ T('4. builds a coaching review with tags and critical turn', () => {
   includes(tags, 'RNG Materiality Check', 'rng tag');
 });
 
-T('5. fails soft on empty or incomplete logs', () => {
+T('5. builds readable turn timeline and hidden raw-log preview data', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const timeline = analysis.review.turnTimeline;
+  eq(timeline.length, 4, 'timeline length');
+  truthy(timeline[0].stateShift.includes('Speed control') || timeline[0].tags.includes('Speed Control Without Pressure'), 'turn 1 speed read');
+  truthy(timeline.some((t) => t.severity === 'high'), 'timeline has high severity turn');
+  truthy(timeline.every((t) => Array.isArray(t.events)), 'timeline events arrays');
+  truthy(analysis.review.rawLogPreview.lineCount >= 50, 'raw log line count');
+  truthy(analysis.review.rawLogPreview.lines.length > 0, 'raw preview lines');
+});
+
+T('6. fails soft on empty or incomplete logs', () => {
   const empty = replayCoach.parseShowdownLog('', { selectedSide: 'p1' });
   eq(empty.ok, false, 'empty ok flag');
   truthy(empty.warnings.length > 0, 'empty warnings');

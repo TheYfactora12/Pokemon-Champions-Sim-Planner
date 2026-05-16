@@ -2766,6 +2766,12 @@ function csReplayCoachJoin(list, fallback) {
   return Array.isArray(list) && list.length ? list.join(' + ') : (fallback || 'Unknown');
 }
 
+function csReplayCoachSeverityClass(value) {
+  if (value === 'high') return 'high';
+  if (value === 'medium') return 'medium';
+  return 'low';
+}
+
 function csReplayCoachRenderEvent(ev) {
   if (!ev) return '';
   if (ev.type === 'move') {
@@ -2786,6 +2792,8 @@ function csReplayCoachRenderAnalysis(analysis) {
   var parsed = analysis.parsed || {};
   var review = analysis.review || {};
   var summary = review.summary || {};
+  var rawPreview = review.rawLogPreview || {};
+  var bringConfidence = summary.selectedFourConfidence || {};
   var warnings = (review.warnings || []).map(function(w) {
     return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
   }).join('');
@@ -2796,13 +2804,22 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<small>' + _escapeHtml(tag.recommendation || 'Review this turn in context.') + ' Confidence: ' + _escapeHtml(tag.confidence || 'medium') + (tag.turn ? ' · Turn ' + _escapeHtml(String(tag.turn)) : '') + '</small>' +
       '</div>';
   }).join('');
-  var turns = (parsed.turns || []).filter(function(t) { return t.number > 0; }).slice(0, 80).map(function(turn) {
-    var events = (turn.events || []).slice(0, 8).map(csReplayCoachRenderEvent).filter(Boolean);
-    return '<div class="replay-coach-turn">' +
-      '<div class="replay-coach-turn-title"><span>Turn ' + _escapeHtml(String(turn.number)) + '</span><span>' + _escapeHtml(String((turn.events || []).length)) + ' events</span></div>' +
-      '<div class="replay-coach-turn-body">' + (events.length ? events.join('<br/>') : 'No parsed coaching events.') + '</div>' +
+  var turns = (review.turnTimeline || []).slice(0, 80).map(function(turn) {
+    var events = (turn.events || []).slice(0, 8).map(function(ev) { return _escapeHtml(ev); }).filter(Boolean);
+    var tags = (turn.tags || []).map(function(tag) {
+      return '<span class="replay-coach-tag medium">' + _escapeHtml(tag) + '</span>';
+    }).join('');
+    return '<div class="replay-coach-turn ' + _escapeHtml(csReplayCoachSeverityClass(turn.severity)) + '">' +
+      '<div class="replay-coach-turn-title"><span>Turn ' + _escapeHtml(String(turn.turn)) + '</span><span class="replay-coach-tag ' + _escapeHtml(csReplayCoachSeverityClass(turn.severity)) + '">' + _escapeHtml(turn.severity || 'neutral') + ' · ' + _escapeHtml(turn.confidence || 'medium') + '</span></div>' +
+      '<div class="replay-coach-turn-read"><strong>' + _escapeHtml(turn.stateShift || 'Neutral exchange') + '</strong>' + _escapeHtml(turn.coachingRead || '') + '</div>' +
+      (turn.betterLine ? '<div class="replay-coach-better-line">' + _escapeHtml(turn.betterLine) + '</div>' : '') +
+      (tags ? '<div class="replay-coach-tags">' + tags + '</div>' : '') +
+      '<details class="replay-coach-events"><summary>' + _escapeHtml(String(turn.rawEventCount || events.length)) + ' parsed events</summary><div class="replay-coach-turn-body">' + (events.length ? events.join('<br/>') : 'No parsed coaching events.') + '</div></details>' +
       '</div>';
   }).join('');
+  var rawLines = (rawPreview.lines || []).slice(-80).map(function(line) {
+    return _escapeHtml(line);
+  }).join('\n');
 
   host.innerHTML =
     '<div class="replay-coach-summary-card">' +
@@ -2813,11 +2830,21 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Your Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourLead)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Opp Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentLead)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Your Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourFour, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Bring Confidence</strong><span>' + _escapeHtml((bringConfidence.label || 'Unknown') + ' · ' + (bringConfidence.level || 'low')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Critical Turn</strong><span>' + _escapeHtml(summary.criticalTurn ? 'Turn ' + summary.criticalTurn : 'Unknown') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Main Issue</strong><span>' + _escapeHtml(summary.mainIssue || 'No major issue detected') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(summary.confidence || 'medium') + '</span></div>' +
       '</div>' +
       '<div class="replay-coach-tags">' + (warnings || '<span class="replay-coach-tag low">Parsed locally. No raw log saved.</span>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Team Preview Read</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Your Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourPreview, 'Missing')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opponent Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentPreview, 'Missing')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opponent Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentFour, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Bring Read</strong><span>' + _escapeHtml(bringConfidence.reason || 'Bring data is unknown from this log.') + '</span></div>' +
+      '</div>' +
     '</div>' +
     '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Coaching Tags</h3>' +
@@ -2826,6 +2853,11 @@ function csReplayCoachRenderAnalysis(analysis) {
     '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Turn Timeline</h3>' +
       '<div class="replay-coach-turns">' + (turns || '<div class="replay-coach-turn"><div class="replay-coach-turn-body">No turns parsed from this log.</div></div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<details class="replay-coach-raw"><summary>Raw log preview hidden by default · ' + _escapeHtml(String(rawPreview.lineCount || 0)) + ' lines</summary>' +
+        '<pre class="battle-log replay-coach-raw-log">' + (rawLines || 'No raw log lines available.') + '</pre>' +
+      '</details>' +
     '</div>';
 }
 

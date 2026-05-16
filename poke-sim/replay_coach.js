@@ -89,7 +89,8 @@
       totalTurns: 0,
       turns: [],
       warnings: [],
-      rawLineCount: text ? text.split(/\r?\n/).length : 0
+      rawLineCount: text ? text.split(/\r?\n/).length : 0,
+      rawPreviewLines: []
     };
 
     if (!text) {
@@ -101,6 +102,7 @@
     var seenFirstTurn = false;
     var activeSeenBeforeTurnOne = { p1: [], p2: [] };
     var lines = text.split(/\r?\n/);
+    model.rawPreviewLines = lines.map(cleanText).filter(Boolean).slice(-250);
 
     lines.forEach(function(line) {
       var raw = cleanText(line);
@@ -260,6 +262,143 @@
     });
   }
 
+  function selectedFourConfidence(parsed, side) {
+    var preview = parsed.teamPreview && parsed.teamPreview[side] ? parsed.teamPreview[side] : [];
+    var selected = parsed.selectedPokemon && parsed.selectedPokemon[side] ? parsed.selectedPokemon[side] : [];
+    if (selected.length >= 4) return { level: 'high', label: 'Four inferred', reason: 'At least four selected Pokemon appeared in the log.' };
+    if (preview.length >= 6 && selected.length > 0) return { level: 'medium', label: 'Partial bring', reason: 'Team preview exists, but not all brought Pokemon were revealed.' };
+    if (selected.length > 0) return { level: 'medium', label: 'Revealed only', reason: 'Selected Pokemon are inferred from revealed actions only.' };
+    return { level: 'low', label: 'Unknown', reason: 'The log did not reveal selected Pokemon.' };
+  }
+
+  function sideNames(parsed, side) {
+    var opp = side === 'p1' ? 'p2' : 'p1';
+    return {
+      side: side,
+      opp: opp,
+      you: parsed.players[side] || side,
+      opponent: parsed.players[opp] || opp
+    };
+  }
+
+  function eventLabel(ev) {
+    if (!ev) return '';
+    if (ev.type === 'move') return (ev.pokemon || '?') + ' used ' + (ev.move || '?') + (ev.target ? ' into ' + ev.target : '');
+    if (ev.type === 'switch' || ev.type === 'drag' || ev.type === 'replace') return (ev.forced ? 'Forced switch: ' : 'Switch: ') + (ev.pokemon || '?');
+    if (ev.type === 'faint') return (ev.pokemon || '?') + ' fainted';
+    if (ev.type === 'damage') return (ev.pokemon || '?') + ' took damage' + (ev.hp != null ? ' to ' + ev.hp + '%' : '');
+    if (ev.type === 'heal') return (ev.pokemon || '?') + ' healed' + (ev.hp != null ? ' to ' + ev.hp + '%' : '');
+    if (ev.type === 'fieldstart' || ev.type === 'sidestart' || ev.type === 'weather') return ev.text || ev.type;
+    if (ev.type === 'crit') return 'Critical hit on ' + (ev.pokemon || '?');
+    if (ev.type === 'miss') return (ev.pokemon || '?') + ' missed';
+    if (ev.type === 'fail') return (ev.pokemon || '?') + ' action failed';
+    return ev.text || ev.type || '';
+  }
+
+  function buildTurnTimeline(parsed, side, issues) {
+    var names = sideNames(parsed, side);
+    var issueByTurn = {};
+    (issues || []).forEach(function(issue) {
+      if (issue && issue.turn != null) {
+        (issueByTurn[issue.turn] = issueByTurn[issue.turn] || []).push(issue);
+      }
+    });
+
+    return (parsed.turns || []).filter(function(turn) {
+      return turn && turn.number > 0;
+    }).map(function(turn) {
+      var turnIssues = issueByTurn[turn.number] || [];
+      var userMoves = turn.moves.filter(function(m) { return m.side === side; });
+      var oppMoves = turn.moves.filter(function(m) { return m.side === names.opp; });
+      var userFaints = turn.faints.filter(function(f) { return f.side === side; });
+      var oppFaints = turn.faints.filter(function(f) { return f.side === names.opp; });
+      var userSwitches = turn.switches.filter(function(s) { return s.side === side; });
+      var oppSwitches = turn.switches.filter(function(s) { return s.side === names.opp; });
+      var userSpeed = userMoves.filter(function(m) { return classifyMove(m.move) === 'speed_control'; });
+      var oppSpeed = oppMoves.filter(function(m) { return classifyMove(m.move) === 'speed_control'; });
+      var userProtect = userMoves.filter(function(m) { return classifyMove(m.move) === 'protection'; });
+      var fieldEvents = turn.field || [];
+      var rngEvents = turn.rng || [];
+      var severity = 'neutral';
+      var confidence = 'medium';
+      var stateShift = 'Neutral exchange';
+      var coachingRead = 'No major state swing was detected from the parsed log.';
+      var betterLine = '';
+
+      if (oppFaints.length && !userFaints.length) {
+        severity = 'good';
+        confidence = 'high';
+        stateShift = 'You gained material';
+        coachingRead = 'You removed an opposing Pokemon without losing one back. This is the kind of turn that should convert into board control.';
+      }
+      if (userFaints.length && !oppFaints.length) {
+        severity = 'high';
+        confidence = 'high';
+        stateShift = 'You lost material';
+        coachingRead = 'You lost a Pokemon without taking one back. Check whether that piece was still needed for speed control, pivoting, or the endgame.';
+        betterLine = 'Look for a line that either trades KOs, protects the key piece, or switches into a resist/immunity before this turn.';
+      }
+      if (userFaints.length && oppFaints.length) {
+        severity = severity === 'high' ? severity : 'medium';
+        stateShift = 'Material trade';
+        coachingRead = 'Both sides lost a Pokemon. The key question is whether your fainted Pokemon was more important to the matchup plan than the one you removed.';
+      }
+      if (userSpeed.length && !oppFaints.length) {
+        severity = severity === 'high' ? severity : 'medium';
+        stateShift = 'Speed control set without clear payoff';
+        coachingRead = 'You used speed control. The next coaching check is whether it created immediate pressure, protected a win condition, or just spent a turn.';
+        betterLine = betterLine || 'After setting speed control, plan the next two turns before clicking it: target, forced Protect, or preserved closer.';
+      }
+      if (oppSpeed.length) {
+        severity = severity === 'high' ? severity : 'medium';
+        stateShift = 'Opponent advanced speed control';
+        coachingRead = 'The opponent advanced speed control. If this was not denied or punished, your next turns may be played from behind.';
+      }
+      if (userProtect.length && (oppSpeed.length || fieldEvents.length)) {
+        severity = severity === 'high' ? severity : 'medium';
+        stateShift = 'Protect gave space';
+        coachingRead = 'Your Protect may have preserved HP, but the opponent also improved the field or speed state. That trade needs a clear reason.';
+        betterLine = betterLine || 'Use Protect when it preserves the actual win condition or stalls a limited field turn, not as a default pause.';
+      }
+      if (userSwitches.length && !oppFaints.length && (oppSpeed.length || fieldEvents.length || oppSwitches.length)) {
+        severity = severity === 'high' ? severity : 'medium';
+        stateShift = 'Positioning risk';
+        coachingRead = 'You changed position while the opponent also improved theirs. The switch needs to either preserve a key piece or deny their next payoff.';
+      }
+      if (rngEvents.length) {
+        confidence = 'medium';
+        if (severity === 'neutral') severity = 'low';
+        coachingRead += ' RNG appeared on this turn, so avoid overclaiming until damage rolls and safer alternatives are checked.';
+      }
+      if (turnIssues.length) {
+        var hasHigh = turnIssues.some(function(i) { return i.severity === 'high'; });
+        severity = hasHigh ? 'high' : (severity === 'neutral' ? 'medium' : severity);
+        confidence = turnIssues.some(function(i) { return i.confidence === 'high'; }) ? 'high' : confidence;
+      }
+
+      var primaryEvents = (turn.events || []).slice(0, 10).map(eventLabel).filter(Boolean);
+      return {
+        turn: turn.number,
+        severity: severity,
+        confidence: confidence,
+        stateShift: stateShift,
+        coachingRead: coachingRead,
+        betterLine: betterLine,
+        tags: turnIssues.map(function(i) { return i.tag; }),
+        events: primaryEvents,
+        rawEventCount: (turn.events || []).length,
+        metrics: {
+          yourMoves: userMoves.length,
+          opponentMoves: oppMoves.length,
+          yourSwitches: userSwitches.length,
+          opponentSwitches: oppSwitches.length,
+          yourFaints: userFaints.length,
+          opponentFaints: oppFaints.length
+        }
+      };
+    });
+  }
+
   function buildReplayCoachReview(parsed, opts) {
     opts = opts || {};
     var side = normalizeSide(opts.selectedSide || parsed.selectedSide || 'p1');
@@ -271,6 +410,7 @@
     var oppLead = parsed.leads[opp] || [];
     var userSelected = parsed.selectedPokemon[side] || [];
     var oppSelected = parsed.selectedPokemon[opp] || [];
+    var bringConfidence = selectedFourConfidence(parsed, side);
 
     if (!userLead.length || !oppLead.length) {
       addIssue(issues, 'Lead Unclear', 'medium', null, 'The log does not expose a complete opening board.', 'medium', 'Use a full Showdown replay export when possible so lead coaching can be more precise.');
@@ -333,6 +473,7 @@
     var fatalMistake = issues.filter(function(i) { return i.severity === 'high'; }).slice(-1)[0] || firstMistake;
     var confidence = parsed.warnings.length ? 'medium' : 'high';
     if (!parsed.ok) confidence = 'low';
+    var turnTimeline = buildTurnTimeline(parsed, side, issues);
 
     return {
       summary: {
@@ -346,6 +487,9 @@
         opponentLead: oppLead,
         yourFour: userSelected,
         opponentFour: oppSelected,
+        yourPreview: parsed.teamPreview[side] || [],
+        opponentPreview: parsed.teamPreview[opp] || [],
+        selectedFourConfidence: bringConfidence,
         leadGrade: userLead.length && oppLead.length ? 'Reviewable' : 'Unknown',
         criticalTurn: criticalTurn,
         mainIssue: firstMistake ? firstMistake.tag : 'No major issue detected',
@@ -362,6 +506,12 @@
       speedControl: {
         turnsUsed: speedTurns,
         note: speedTurns.length ? 'Review whether speed-control turns converted into pressure.' : 'No user speed-control move was detected.'
+      },
+      turnTimeline: turnTimeline,
+      rawLogPreview: {
+        lineCount: parsed.rawLineCount || 0,
+        shownCount: parsed.rawPreviewLines ? parsed.rawPreviewLines.length : 0,
+        lines: (parsed.rawPreviewLines || []).slice()
       },
       warnings: parsed.warnings.slice()
     };
