@@ -23,7 +23,7 @@
 | M11 | Advanced Features | ⏳ Deferred | M8 gate |
 | M12 | Battle Sensei | 🧪 R1/R2 MVP started | Stage 3 credibility gate |
 | M13 | Meta Stress Lab | 📝 Planned | Source-labeled meta + legal stress testing |
-| M14 | Launch Security & Premium Access | 📝 Planned | #208 parent |
+| M14 | Launch Security & Premium Access | 🧱 Final Gate | #208 parent |
 
 ---
 
@@ -48,10 +48,10 @@ The product is now centered on a coaching intelligence loop:
 4. **Battle IQ** scores observable decision quality with confidence labels.
 5. **Profile/DB** stores durable memory, trends, privacy-safe aggregate signals, and premium personalization.
 6. **Meta Stress Lab** challenges the build with source-labeled meta snapshots and legal stress scenarios.
-7. **Launch Security & Premium Access** protects public hosting, login, payment, Supabase privacy, and abuse controls before paid coaching memory goes live.
+7. **Launch Security & Premium Access** is the final gate after the product, sim engine, data, DB, mobile UX, coaching, and deployment workflows are proven.
 
 Near-term work should protect this sequence. Meta Stress Lab is valuable, but it should not jump ahead of evidence cleanup, sim-feedback packets, and persistence/privacy foundations.
-Launch security is a parallel launch-readiness lane: keep GitHub Pages for the static demo, but move premium login/payment/webhooks behind a server-capable host before storing paid coaching memory.
+Launch security is a parallel readiness lane, not the next thing to ship publicly. Keep GitHub Pages for the static demo while issues are being closed, but do not call this launched until M1/M2/M3/M7/M8/M9/M10/M12/M13 are validated and M14 passes. Premium login, payment, webhooks, rate limits, and private coaching memory must sit behind a server-capable host before paid launch.
 
 ## Current Execution Order
 
@@ -68,7 +68,7 @@ Launch security is a parallel launch-readiness lane: keep GitHub Pages for the s
 
 Recommended next implementation issue: **#195**.
 
-Parallel launch-readiness issue: **#208**. This should not block local Battle Sensei engine work, but it must gate public premium launch.
+Parallel launch-readiness issue: **#208**. This should not block local Battle Sensei engine work, but it must be the last launch gate before public premium launch.
 
 ---
 
@@ -230,10 +230,11 @@ Parallel launch-readiness issue: **#208**. This should not block local Battle Se
 | #207 | Premium aggregate pattern suggestions for possible team changes | P2 |
 | #200 | Battle Sensei integration: replay-derived stress scenarios and sim calibration signals | P3 |
 
-## Backlog — Launch Security & Premium Access (M14)
+## Backlog — Launch Security & Premium Access (M14, Final Launch Gate)
 
 > Product line: Free users get immediate local coaching value. Premium users unlock durable memory, saved profiles, trend history, Battle IQ growth, and personalized coaching.
 > Hosting direction: GitHub Pages is acceptable for the static free demo. A custom domain is recommended for public trust. Premium auth, payment webhooks, entitlement checks, rate limits, and private coaching memory require a server-capable deployment layer such as Vercel, Netlify, Cloudflare Pages/Workers, or a small backend service.
+> Gate rule: M14 comes last. It should verify the finished product surface, not hide unfinished core issues behind hosting or payment work.
 
 | Issue | Priority |
 |---|---|
@@ -243,6 +244,16 @@ Parallel launch-readiness issue: **#208**. This should not block local Battle Se
 | #211 | Free vs premium coaching boundary and upgrade UX | P2 |
 | #212 | Supabase security, privacy, and RLS audit for coaching data | P2 |
 | #213 | Deployment hardening, cache safety, and abuse protection | P2 |
+
+Final launch exit criteria:
+
+- All current P1/P2 engine, data, coaching, mobile, DB, and build issues are closed or explicitly deferred with product-owner approval.
+- Battle Sensei, Strategy, Battle IQ, Meta Stress Lab, and replay persistence agree on evidence/confidence language.
+- Free/local mode works without login and does not silently save raw logs.
+- Premium saved profile paths are protected by auth, RLS, server-verified entitlements, and deletion/export policy.
+- Payment webhooks, entitlement checks, and abuse/rate limits are server-side.
+- GitHub Pages or the selected production host is deployable from CI, with cache/service-worker behavior validated on mobile Safari.
+- Custom domain and launch smoke checklist are complete before public announcement.
 
 ---
 
@@ -263,7 +274,7 @@ Parallel launch-readiness issue: **#208**. This should not block local Battle Se
 | **M11 Advanced Features** | Replay shortlinks, multi-team compare, live fingerprinting. Post-M8 only. |
 | **M12 Battle Sensei** | Parse Showdown logs, diagnose real player decisions, compare replay paths to sim plans, and produce replay-calibrated coaching signals. |
 | **M13 Meta Stress Lab** | Source-labeled meta snapshots, legal set templates, and targeted stress scenarios that challenge the team without pretending synthetic data is live usage truth. |
-| **M14 Launch Security & Premium Access** | Public deployment hardening, login, server-verified premium entitlements, Supabase RLS/privacy, rate limits, cache safety, and a custom-domain-ready hosting plan. |
+| **M14 Launch Security & Premium Access** | Final public/premium launch gate: deployment hardening, login, server-verified premium entitlements, Supabase RLS/privacy, rate limits, cache safety, custom-domain readiness, and launch smoke validation after core issues/builds are complete. |
 
 ---
 
@@ -274,8 +285,8 @@ Parallel launch-readiness issue: **#208**. This should not block local Battle Se
 | Frontend | Vanilla JS (ES2020+), HTML5, CSS3 — static PWA, no framework |
 | Offline | Service Worker — `champions-sim-v6-wire-storage-adapter` |
 | Persistence | localStorage (offline) + Supabase PostgreSQL (cloud, M8) |
-| Database | Supabase — 8 tables, RLS enabled, **22 teams / 210 team_members seeded** ✅ |
-| Bundle | `pokemon-champion-2026.html` (710 KB, single-file artifact) |
+| Database | Supabase — 8 tables, RLS enabled, seed SQL aligned to **26 teams** ✅ |
+| Bundle | `pokemon-champion-2026.html` (~1.33 MB, single-file artifact) |
 | CI/CD | GitHub Actions — CI ✅ + Bundle Freshness ✅ + Cache Bump ✅ (3 workflows active) |
 | Hosting | GitHub Pages (`alfredocox.github.io/Pokemon-Champions-Sim-Planner`) |
 | Tests | Vanilla JS runner — 343 cases (T9j.17 baseline), 5,070 battles/audit |
