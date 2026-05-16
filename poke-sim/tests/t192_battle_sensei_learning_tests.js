@@ -66,7 +66,26 @@ T('4. scorecard and practice plan are generated from coaching tags', () => {
   truthy(learning.practicePlan.learningLoop.decide, 'OODA decide');
 });
 
-T('5. low-confidence incomplete logs do not overclaim', () => {
+T('5. Battle IQ scoring is provisional, explainable, and not intelligence-claiming', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const iq = analysis.review.learningReport.battleIq;
+  truthy(iq, 'battle iq missing');
+  eq(iq.status, 'Provisional Battle IQ', 'provisional status');
+  inc(iq.definition, 'not a measure of real intelligence', 'definition boundary');
+  eq(iq.confidence, 'medium', 'single-battle score confidence should not overclaim');
+  inc(iq.reliabilityNote, 'single clean battle', 'single-battle reliability note');
+  truthy(iq.rawComposite >= 0 && iq.rawComposite <= 100, 'raw composite range');
+  truthy(iq.standardScore >= 55 && iq.standardScore <= 145, 'standard range');
+  truthy(iq.confidenceInterval.length === 2, 'confidence interval');
+  truthy(iq.subScores.length === 8, 'eight sub-scores');
+  ['Lead IQ','Turn 1 IQ','Speed Control IQ','Resource IQ','Threat Recognition IQ','Win Condition IQ','Endgame IQ','Risk Discipline IQ'].forEach((label) => {
+    truthy(iq.subScores.some((s) => s.label === label), 'missing sub-score ' + label);
+  });
+  truthy(iq.loweredBy.length >= 1, 'lowered by evidence');
+  truthy(iq.recommendedDrill && iq.recommendedDrill.skill, 'recommended drill');
+});
+
+T('6. low-confidence incomplete logs do not overclaim', () => {
   const lowLog = [
     '|player|p1|Alice',
     '|player|p2|Bob',
@@ -78,17 +97,19 @@ T('5. low-confidence incomplete logs do not overclaim', () => {
   const learning = analysis.review.learningReport;
   eq(learning.confidence, 'low', 'overall confidence');
   eq(learning.criticalTurns.confidence, 'low', 'critical confidence');
+  eq(learning.battleIq.confidence, 'low', 'battle iq confidence');
+  eq(learning.battleIq.status, 'Provisional Battle IQ', 'battle iq provisional');
   truthy(/Needs more data|same turn/i.test(learning.criticalTurns.note), 'low confidence note');
 });
 
-T('6. trend dashboard stays cautious for a single review', () => {
+T('7. trend dashboard stays cautious for a single review', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const trend = analysis.review.learningReport.trendDashboard;
   eq(trend.confidence, 'needs more data', 'trend confidence');
   inc(trend.recommendedNextPracticeBlock, 'top practice drill', 'trend practice guidance');
 });
 
-T('7. premium memory preview separates anonymous learning from private profiles', () => {
+T('8. premium memory preview separates anonymous learning from private profiles', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const premium = analysis.review.learningReport.premiumTeasers;
   truthy(premium, 'premium teaser');
@@ -96,6 +117,7 @@ T('7. premium memory preview separates anonymous learning from private profiles'
   inc(premium.freeValue, 'local and temporary', 'free value');
   inc(premium.premiumValue, 'saved profile', 'premium value');
   truthy(premium.lockedInsights.length >= 4, 'locked insight count');
+  truthy(premium.lockedInsights.some((x) => x.id === 'full_battle_iq_subscores'), 'battle iq trend teaser');
   inc(premium.backendLearningPolicy.freeAnonymous, 'opt-in anonymized signals', 'anonymous learning policy');
   inc(premium.backendLearningPolicy.rawLogDefault, 'Raw logs should not be silently stored', 'raw log boundary');
 });

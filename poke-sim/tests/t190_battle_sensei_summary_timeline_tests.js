@@ -52,6 +52,9 @@ T('4. coaching tags explain decision impact, not just labels', () => {
 
 T('5. learning report renders scorecard, critical turns, win path, and practice plan', () => {
   inc(ui, 'learningReport');
+  inc(ui, '<h3 class="replay-coach-h3">Battle IQ Score</h3>');
+  inc(ui, '<strong>Battle IQ</strong>');
+  inc(ui, '<strong>What this means</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Critical Turn Engine</h3>');
   inc(ui, '<h3 class="replay-coach-h3">Decision Quality Scorecard</h3>');
   inc(ui, '<h3 class="replay-coach-h3">Win Path + Opponent Plan</h3>');

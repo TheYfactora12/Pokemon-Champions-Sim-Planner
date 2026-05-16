@@ -14,6 +14,59 @@
     return 'F';
   }
 
+  var BATTLE_IQ_WEIGHTS = {
+    lead_iq: 0.12,
+    turn_1_iq: 0.13,
+    speed_control_iq: 0.13,
+    resource_iq: 0.14,
+    threat_recognition_iq: 0.14,
+    win_condition_iq: 0.14,
+    endgame_iq: 0.10,
+    risk_discipline_iq: 0.10
+  };
+
+  var BATTLE_IQ_LABELS = {
+    lead_iq: 'Lead IQ',
+    turn_1_iq: 'Turn 1 IQ',
+    speed_control_iq: 'Speed Control IQ',
+    resource_iq: 'Resource IQ',
+    threat_recognition_iq: 'Threat Recognition IQ',
+    win_condition_iq: 'Win Condition IQ',
+    endgame_iq: 'Endgame IQ',
+    risk_discipline_iq: 'Risk Discipline IQ'
+  };
+
+  function clampScore(n) {
+    return Math.max(0, Math.min(100, Math.round(n)));
+  }
+
+  function standardFromRaw(raw) {
+    return Math.max(55, Math.min(145, Math.round(100 + (raw - 70))));
+  }
+
+  function battleIqBand(score) {
+    if (score >= 130) return 'Elite Battle IQ';
+    if (score >= 120) return 'Advanced';
+    if (score >= 110) return 'Strong';
+    if (score >= 90) return 'Average / Developing';
+    if (score >= 80) return 'Needs Focus';
+    return 'Major Coaching Opportunity';
+  }
+
+  function erfApprox(x) {
+    var sign = x < 0 ? -1 : 1;
+    x = Math.abs(x);
+    var a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+    var t = 1 / (1 + p * x);
+    var y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+    return sign * y;
+  }
+
+  function percentileFromStandard(score) {
+    var z = (score - 100) / 15;
+    return Math.max(1, Math.min(99, Math.round(100 * 0.5 * (1 + erfApprox(z / Math.SQRT2)))));
+  }
+
   function issueWeight(issue) {
     if (!issue) return 0;
     if (issue.severity === 'high') return 18;
@@ -27,6 +80,19 @@
     if (!parsed.ok || !parsed.turns || parsed.turns.length < 2) return 'low';
     if ((parsed.warnings || []).length || (issues || []).some(function(i) { return i.confidence === 'low'; })) return 'medium';
     return 'high';
+  }
+
+  function confidenceIntervalFor(confidence) {
+    if (confidence === 'high') return 5;
+    if (confidence === 'medium') return 8;
+    return 12;
+  }
+
+  function battleIqConfidenceFor(parsed, issues, sampleSize) {
+    var base = confidenceFor(parsed, issues);
+    if (base === 'low') return 'low';
+    if ((sampleSize || 1) < 5) return 'medium';
+    return base;
   }
 
   function categoryForIssue(issue) {
@@ -184,6 +250,145 @@
     };
   }
 
+  function meaningfulEndgame(parsed, review) {
+    parsed = parsed || {};
+    var issues = review && review.coachingTags || [];
+    return (parsed.totalTurns || 0) >= 4 || issues.some(function(i) { return i.id === 'endgame_misplay'; });
+  }
+
+  function buildBattleIqScore(parsed, review, opts) {
+    parsed = parsed || {};
+    review = review || {};
+    opts = opts || {};
+    var issues = review.coachingTags || [];
+    var confidence = battleIqConfidenceFor(parsed, issues, opts.sampleSize || 1);
+    var scores = {};
+    var positive = {};
+    var negative = {};
+    Object.keys(BATTLE_IQ_WEIGHTS).forEach(function(k) {
+      scores[k] = 70;
+      positive[k] = [];
+      negative[k] = [];
+    });
+
+    function add(key, points, text) {
+      if (!scores.hasOwnProperty(key)) return;
+      scores[key] += points;
+      if (points >= 0) positive[key].push({ points: points, text: text });
+      else negative[key].push({ points: points, text: text });
+    }
+
+    var summary = review.summary || {};
+    if ((summary.yourLead || []).length && (summary.opponentLead || []).length) add('lead_iq', 8, 'Opening leads were visible enough to evaluate the plan.');
+    if (summary.selectedFourConfidence && summary.selectedFourConfidence.level === 'high') add('lead_iq', 5, 'Selected four were inferred with high confidence.');
+    if (parsed.result === 'win') add('risk_discipline_iq', 3, 'Result slightly supports execution, but win/loss is not the primary scoring driver.');
+
+    issues.forEach(function(issue) {
+      var id = issue.id;
+      if (id === 'bad_lead') {
+        add('lead_iq', -15, 'Lead gave the opponent too much opening access.');
+        add('turn_1_iq', -10, 'Turn 1 plan depended on an interrupt that did not hold.');
+        add('threat_recognition_iq', -4, 'Opponent setup threat was not fully answered from preview.');
+      } else if (id === 'questionable_bring') {
+        add('lead_iq', -5, 'Bring-four evidence was incomplete, so lead quality is less reliable.');
+      } else if (id === 'speed_control_without_pressure') {
+        add('speed_control_iq', -12, 'Speed control was used without immediate pressure or conversion.');
+        add('turn_1_iq', -6, 'Early speed control did not create a clear follow-up.');
+      } else if (id === 'field_control_failure') {
+        add('speed_control_iq', -15, 'Opponent field or speed control advanced without a meaningful trade.');
+        add('threat_recognition_iq', -12, 'The must-answer field threat was not denied or punished.');
+        add('turn_1_iq', -8, 'The opening sequence let the opponent establish their plan.');
+      } else if (id === 'protect_misuse') {
+        add('resource_iq', -8, 'Protect did not clearly preserve the right resource or deny progress.');
+        add('risk_discipline_iq', -4, 'The defensive line gave the opponent room to improve position.');
+      } else if (id === 'switch_tempo_loss') {
+        add('resource_iq', -6, 'Switching did not clearly convert into a stronger resource state.');
+        add('risk_discipline_iq', -5, 'The position reset lacked enough fallback pressure.');
+      } else if (id === 'targeting_error') {
+        add('threat_recognition_iq', -10, 'Targeting spent pressure into a low-value or blocked line.');
+        add('turn_1_iq', -8, 'The first action did not answer the immediate threat cleanly.');
+        add('risk_discipline_iq', -4, 'The line was fragile if the target interaction failed.');
+      } else if (id === 'win_condition_exposed') {
+        add('win_condition_iq', -15, 'A key piece for the win path was exposed before its value was converted.');
+        add('resource_iq', -10, 'A limited resource was lost without enough compensation.');
+      } else if (id === 'endgame_misplay') {
+        add('endgame_iq', -15, 'The final exchange did not preserve the closing piece.');
+        add('win_condition_iq', -6, 'The late-game win path was not fully protected.');
+      } else if (id === 'rng_material') {
+        add('risk_discipline_iq', -3, 'Variance appeared, so the prior turn should be checked for safer alternatives.');
+      } else if (id === 'lost_exchange') {
+        add('resource_iq', -8, 'Material was lost without an immediate trade.');
+        add('win_condition_iq', -6, 'The exchange may have weakened the remaining win path.');
+      }
+    });
+
+    if (!issues.some(function(i) { return i.id === 'speed_control_without_pressure' || i.id === 'field_control_failure'; })) {
+      add('speed_control_iq', 6, 'No major speed-control error was detected from this log.');
+    }
+    if (!issues.some(function(i) { return i.id === 'win_condition_exposed' || i.id === 'endgame_misplay'; })) {
+      add('win_condition_iq', 5, 'No clear win-condition abandonment was detected.');
+    }
+    if (!issues.some(function(i) { return i.id === 'protect_misuse' || i.id === 'switch_tempo_loss'; })) {
+      add('resource_iq', 4, 'No major resource misuse was detected from parsed events.');
+    }
+
+    Object.keys(scores).forEach(function(k) { scores[k] = clampScore(scores[k]); });
+    var weights = Object.assign({}, BATTLE_IQ_WEIGHTS);
+    if (!meaningfulEndgame(parsed, review)) {
+      var redistributed = weights.endgame_iq / 4;
+      weights.endgame_iq = 0;
+      weights.turn_1_iq += redistributed;
+      weights.resource_iq += redistributed;
+      weights.threat_recognition_iq += redistributed;
+      weights.win_condition_iq += redistributed;
+    }
+    var rawComposite = 0;
+    Object.keys(weights).forEach(function(k) { rawComposite += scores[k] * weights[k]; });
+    rawComposite = clampScore(rawComposite);
+    var standard = standardFromRaw(rawComposite);
+    var margin = confidenceIntervalFor(confidence);
+    var subScores = Object.keys(BATTLE_IQ_LABELS).map(function(k) {
+      return {
+        id: k,
+        label: BATTLE_IQ_LABELS[k],
+        rawScore: scores[k],
+        standardScore: standardFromRaw(scores[k]),
+        confidence: confidence,
+        weight: Math.round((weights[k] || 0) * 100),
+        positiveEvidence: positive[k].slice(0, 3),
+        negativeEvidence: negative[k].slice(0, 3)
+      };
+    });
+    var raisedBy = [];
+    var loweredBy = [];
+    subScores.forEach(function(s) {
+      s.positiveEvidence.forEach(function(e) { raisedBy.push({ area: s.label, points: e.points, text: e.text }); });
+      s.negativeEvidence.forEach(function(e) { loweredBy.push({ area: s.label, points: e.points, text: e.text }); });
+    });
+    raisedBy.sort(function(a, b) { return b.points - a.points; });
+    loweredBy.sort(function(a, b) { return a.points - b.points; });
+    var weakest = subScores.slice().sort(function(a, b) { return a.rawScore - b.rawScore; })[0];
+    var drillIssue = issues.find(function(issue) {
+      return categoryForIssue(issue).toLowerCase().indexOf((weakest.label || '').split(' ')[0].toLowerCase()) >= 0;
+    }) || issues.slice().sort(function(a, b) { return issueWeight(b) - issueWeight(a); })[0] || null;
+    return {
+      definition: 'A standardized estimate of competitive battle decision quality based on observable battle data, matchup context, and player execution patterns. This is not a measure of real intelligence.',
+      status: 'Provisional Battle IQ',
+      rawComposite: rawComposite,
+      standardScore: standard,
+      percentile: percentileFromStandard(standard),
+      confidence: confidence,
+      confidenceInterval: [standard - margin, standard + margin],
+      band: battleIqBand(standard),
+      subScores: subScores,
+      raisedBy: raisedBy.slice(0, 2),
+      loweredBy: loweredBy.slice(0, 2),
+      recommendedDrill: drillForIssue(drillIssue),
+      outcomeBiasProtection: 'Win/loss is only a small modifier. The score prioritizes line quality, resource trade, threat recognition, and win-condition alignment.',
+      reliabilityNote: confidence === 'medium' ? 'A single clean battle can support useful coaching, but profile-level Battle IQ needs repeated logs across matchups.' : (confidence === 'low' ? 'This log is too incomplete for strong Battle IQ claims.' : 'Multiple comparable battles support a more reliable Battle IQ estimate.')
+    };
+  }
+
   function inferOpponentPlan(parsed, side) {
     parsed = parsed || {};
     var opp = side === 'p1' ? 'p2' : 'p1';
@@ -299,6 +504,7 @@
     report = report || {};
     var topDrill = report.practicePlan && report.practicePlan.drills && report.practicePlan.drills[0];
     var critical = report.criticalTurns && report.criticalTurns.fatalMistake;
+    var weakest = report.battleIq && report.battleIq.subScores && report.battleIq.subScores.slice().sort(function(a, b) { return a.rawScore - b.rawScore; })[0];
     return {
       title: 'Battle IQ Memory',
       freeValue: 'This review is local and temporary: you get the battle summary, key turns, scorecard, and practice drill without saving a profile.',
@@ -323,6 +529,11 @@
           id: 'matchup_memory',
           label: 'Matchup memory',
           preview: 'Remember which leads, bring-fours, and win paths worked for you into each archetype.'
+        },
+        {
+          id: 'full_battle_iq_subscores',
+          label: 'Full Battle IQ sub-score trends',
+          preview: weakest ? 'Track whether ' + weakest.label + ' is improving across teams and matchups.' : 'Track all eight Battle IQ sub-scores over time.'
         }
       ],
       backendLearningPolicy: {
@@ -351,6 +562,7 @@
       criticalTurns: critical,
       decisionQuality: buildDecisionQuality(parsed, review),
       scorecard: buildScorecard(parsed, review),
+      battleIq: buildBattleIqScore(parsed, review, opts),
       winPath: buildWinPath(parsed, review, critical),
       opponentPlan: inferOpponentPlan(parsed, (parsed && parsed.selectedSide) || opts.selectedSide || 'p1'),
       practicePlan: buildPracticePlan(review),
@@ -366,6 +578,7 @@
   ChampionsSim.replayLearning.buildPracticePlan = buildPracticePlan;
   ChampionsSim.replayLearning.buildTrendDashboard = buildTrendDashboard;
   ChampionsSim.replayLearning.buildPremiumTeasers = buildPremiumTeasers;
+  ChampionsSim.replayLearning.buildBattleIqScore = buildBattleIqScore;
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = ChampionsSim.replayLearning;

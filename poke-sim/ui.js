@@ -2859,6 +2859,16 @@ function csReplayCoachRenderAnalysis(analysis) {
       _escapeHtml(item.preview || '') +
       '</div>';
   }).join('') : '';
+  var battleIq = learning && learning.battleIq ? learning.battleIq : null;
+  var battleIqRaised = battleIq ? (battleIq.raisedBy || []).map(function(row) {
+    return '<div><b>' + _escapeHtml(row.area || 'Raised by') + ':</b> ' + _escapeHtml(row.text || '') + '</div>';
+  }).join('') : '';
+  var battleIqLowered = battleIq ? (battleIq.loweredBy || []).map(function(row) {
+    return '<div><b>' + _escapeHtml(row.area || 'Lowered by') + ':</b> ' + _escapeHtml(row.text || '') + '</div>';
+  }).join('') : '';
+  var battleIqSubPreview = battleIq ? (battleIq.subScores || []).slice(0, 4).map(function(row) {
+    return '<div class="replay-coach-metric"><strong>' + _escapeHtml(row.label || 'Sub-score') + '</strong><span>' + _escapeHtml(String(row.standardScore || 0)) + ' · raw ' + _escapeHtml(String(row.rawScore || 0)) + '</span></div>';
+  }).join('') : '';
 
   host.innerHTML =
     '<div class="replay-coach-summary-card">' +
@@ -2890,6 +2900,23 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<div class="replay-coach-list">' + (tags || '<div class="replay-coach-list-row"><strong>No major issue detected</strong>Upload more complete logs to build stronger coaching confidence.</div>') + '</div>' +
     '</div>' +
     (learning ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Battle IQ Score</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Battle IQ</strong><span>' + _escapeHtml(battleIq ? String(battleIq.standardScore) : 'Needs data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Band</strong><span>' + _escapeHtml(battleIq ? battleIq.band : 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(battleIq ? battleIq.confidence : 'low') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(battleIq ? battleIq.status : 'Provisional') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Percentile</strong><span>' + _escapeHtml(battleIq ? String(battleIq.percentile) + 'th provisional' : 'Needs norms') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Range</strong><span>' + _escapeHtml(battleIq ? battleIq.confidenceInterval.join('-') : 'Needs data') + '</span></div>' +
+        battleIqSubPreview +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>What this means</strong>' + _escapeHtml(battleIq ? battleIq.definition : '') + '<small>' + _escapeHtml(battleIq ? battleIq.outcomeBiasProtection : '') + '</small><small>' + _escapeHtml(battleIq ? battleIq.reliabilityNote : '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Why it moved</strong>' + (battleIqRaised || '<div>No positive score driver was clear from this log.</div>') + (battleIqLowered || '<div>No negative score driver was clear from this log.</div>') + '</div>' +
+        '<div class="replay-coach-list-row"><strong>Recommended drill</strong>' + _escapeHtml(battleIq && battleIq.recommendedDrill ? battleIq.recommendedDrill.skill : 'Decision Review Drill') + '<small>' + _escapeHtml(battleIq && battleIq.recommendedDrill ? battleIq.recommendedDrill.successCriteria : '') + '</small></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Critical Turn Engine</h3>' +
       '<div class="replay-coach-list">' + (criticalCards || '<div class="replay-coach-list-row"><strong>No critical turn proven</strong>Needs more complete turns before naming a swing turn.</div>') + '</div>' +
       '<small>' + _escapeHtml((learning.criticalTurns && learning.criticalTurns.note) || '') + '</small>' +
