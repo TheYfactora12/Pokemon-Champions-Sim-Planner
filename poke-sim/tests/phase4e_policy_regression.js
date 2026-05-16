@@ -276,11 +276,30 @@ T('T5-14 strategy report exposes role anchors and matchup intelligence', () => {
   }, 'doubles');
   truthy(report && report.team_identity, 'missing report');
   truthy(report.matchup_intelligence, 'missing matchup intelligence payload');
+  truthy(report.provenance, 'missing provenance payload');
   truthy(Array.isArray(report.coaching_notes.speed_control_mons), 'missing speed control anchors');
   truthy(Array.isArray(report.coaching_notes.pivot_mons), 'missing pivot anchors');
   truthy(Array.isArray(report.coaching_notes.safe_leads), 'missing safe leads');
   truthy(report.coaching_notes.best_win_path, 'missing best win path');
   truthy(report.coaching_notes.common_loss_path, 'missing common loss path');
+});
+
+T('T5-15 strategy report exposes provenance and BO3 adaptation', () => {
+  const report = ctx.buildStrategyReport('player', {
+    mega_altaria: { wins: 4, losses: 6, draws: 0, allLogs: [
+      { result: 'win', turns: 6, leads: { player: ['Incineroar', 'Whimsicott'] }, log: [] },
+      { result: 'loss', turns: 5, leads: { player: ['Incineroar', 'Whimsicott'] }, log: [] },
+      { result: 'win', turns: 7, leads: { player: ['Incineroar', 'Whimsicott'] }, log: [] }
+    ] }
+  }, 'doubles');
+  truthy(report.provenance && report.provenance.source_label, 'missing source label');
+  truthy(report.provenance && report.provenance.freshness_label, 'missing freshness label');
+  truthy(report.provenance && report.provenance.decision_rule.includes('Never show a statistic'), 'missing decision rule');
+  truthy(report.bo3_adaptation, 'missing BO3 adaptation payload');
+  truthy(report.bo3_adaptation.game1_lead, 'missing game1 lead');
+  truthy(report.bo3_adaptation.game2_plan, 'missing game2 plan');
+  truthy(report.bo3_adaptation.opponent_adjustment_prediction, 'missing opponent prediction');
+  truthy(report.bo3_adaptation.counter_adjustment, 'missing counter adjustment');
 });
 
 console.log(`\nPhase 4e policy regression: ${pass} pass, ${fail} fail\n`);

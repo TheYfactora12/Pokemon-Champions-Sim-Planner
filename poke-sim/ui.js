@@ -5554,6 +5554,57 @@ function buildMatchupIntelligence(team, results, format, identity, leadSystem, t
   };
 }
 
+function buildReportProvenance(totalGames, confidenceTier, format) {
+  var freshnessLabel = 'no sample yet';
+  if (totalGames >= 100) freshnessLabel = 'well-sampled';
+  else if (totalGames >= 20) freshnessLabel = 'moderately sampled';
+  else if (totalGames > 0) freshnessLabel = 'thin sample';
+  return {
+    source_label: csLabelSim(),
+    generated_at: new Date().toISOString(),
+    sample_size: totalGames || 0,
+    confidence_tier: confidenceTier || 'low',
+    freshness_label: freshnessLabel,
+    freshness_note: totalGames > 0
+      ? 'Simulation-driven recommendations with ' + freshnessLabel + ' confidence.'
+      : 'No battle sample yet; recommendations are mostly inference.',
+    format: format || 'doubles',
+    decision_rule: 'Never show a statistic without explaining the decision it should change.'
+  };
+}
+
+function buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, trends) {
+  var safeLead = (matchupIntelligence && Array.isArray(matchupIntelligence.safe_leads) && matchupIntelligence.safe_leads[0]) || leadSystem.safe || 'your safest opener';
+  var scoutLead = (matchupIntelligence && Array.isArray(matchupIntelligence.risky_leads) && matchupIntelligence.risky_leads[0]) || leadSystem.speed || safeLead;
+  var concentration = elite && typeof elite.lead_concentration === 'number' ? elite.lead_concentration : 0;
+  var revealed = concentration > 0.8
+    ? 'You are revealing the same opener repeatedly; game 2 is likely to be targeted.'
+    : 'Lead data is varied enough that the opponent still has to respect multiple openers.';
+  var opponentAdjustment = concentration > 0.8
+    ? 'Expect the opponent to lead specifically to punish your default opener.'
+    : 'Expect a lighter adaptation, usually only a small lead or move tweak.';
+  var counterAdjustment = concentration > 0.8
+    ? 'Rotate to ' + scoutLead + ' or shift one support slot to hide the default line.'
+    : 'Keep the game 1 plan, but preserve the pivot piece that lets you pivot into ' + safeLead + '.';
+  var game2Lead = concentration > 0.8 ? scoutLead : safeLead;
+  var primaryWin = identity && identity.primary_win_condition ? identity.primary_win_condition : 'your primary win condition';
+  var commonLoss = matchupIntelligence && matchupIntelligence.common_loss_path
+    ? matchupIntelligence.common_loss_path
+    : (trends && Array.isArray(trends.topOppFinishers) && trends.topOppFinishers.length ? trends.topOppFinishers[0] : 'the opponent’s win condition');
+  return {
+    source_label: csLabelSim(),
+    adaptation_risk: concentration > 0.8 ? 'high' : concentration > 0.5 ? 'medium' : 'low',
+    game1_lead: safeLead,
+    game2_plan: game2Lead,
+    revealed_info: revealed,
+    opponent_adjustment_prediction: opponentAdjustment,
+    counter_adjustment: counterAdjustment,
+    what_to_preserve: primaryWin,
+    common_loss_path: commonLoss,
+    decision_rule: 'If you reveal the same lead twice, assume the opponent can target it in game 2.'
+  };
+}
+
 function buildWeaknessDashboard(team, results, format, identity, leadSystem, trends, deadMoves, matchupWarnings) {
   var members = (team && team.members) || [];
   var bestLead = (leadSystem && leadSystem.safe) ? leadSystem.safe : '';
@@ -5736,6 +5787,7 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
   var confidenceTier = totalGames < 20 ? 'low' : totalGames < 100 ? 'moderate' : totalGames < 500 ? 'high' : 'elite';
 
   var summary = buildCoachingSummary(coachingRules, identity, elite);
+  var provenance = buildReportProvenance(totalGames, confidenceTier, format);
   var weaknessDashboard = buildWeaknessDashboard(
     team,
     results || {},
@@ -5748,6 +5800,7 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
   );
   weaknessDashboard.matchup_gaps = matchupGaps;
   var matchupIntelligence = weaknessDashboard.matchup_intelligence || null;
+  var bo3Adaptation = buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, trends);
 
   return {
     schema_version: 1,
@@ -5757,6 +5810,7 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
     generated_at: new Date().toISOString(),
     sample_size: totalGames,
     confidence_tier: confidenceTier,
+    provenance: provenance,
     team_identity: identity,
     lead_system: leadSystem,
     coaching_rules: coachingRules,
@@ -5765,6 +5819,7 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
     matchup_warnings: matchupWarnings,
     weakness_dashboard: weaknessDashboard,
     matchup_intelligence: matchupIntelligence,
+    bo3_adaptation: bo3Adaptation,
     coaching_notes: {
       how_team_wants_to_win: identity.primary_win_condition,
       common_mistakes: coachingRules.slice(0,3).map(function(r){ return r.id; }),
@@ -5775,7 +5830,9 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
       safe_leads: matchupIntelligence ? matchupIntelligence.safe_leads : [],
       risky_leads: matchupIntelligence ? matchupIntelligence.risky_leads : [],
       best_win_path: matchupIntelligence ? matchupIntelligence.best_win_path : identity.primary_win_condition,
-      common_loss_path: matchupIntelligence ? matchupIntelligence.common_loss_path : (trends.topOppFinishers && trends.topOppFinishers[0] ? trends.topOppFinishers[0] : '')
+      common_loss_path: matchupIntelligence ? matchupIntelligence.common_loss_path : (trends.topOppFinishers && trends.topOppFinishers[0] ? trends.topOppFinishers[0] : ''),
+      provenance: provenance,
+      bo3_adaptation: bo3Adaptation
     },
     trend_analysis: {
       most_common_loss_condition: trends.topOppFinishers && trends.topOppFinishers.length ? trends.topOppFinishers[0] : null,
@@ -7066,6 +7123,9 @@ function renderStrategyTab(teamKey) {
   if (Array.isArray(id.pivot_mons) && id.pivot_mons.length) {
     html += '<li><strong>Pivot core:</strong> ' + _csEsc(id.pivot_mons.join(', ')) + '</li>';
   }
+  if (report.provenance) {
+    html += '<li><strong>Provenance:</strong> ' + _csEsc(report.provenance.source_label || 'simulation_data') + ' · ' + _csEsc(report.provenance.freshness_label || 'no sample yet') + ' · ' + _csEsc(report.provenance.freshness_note || '') + '</li>';
+  }
   html += '<li><strong>Format fit:</strong> ' + _csEsc(id.format_fit) + '</li>';
   html += '</ul></section>';
 
@@ -7082,7 +7142,21 @@ function renderStrategyTab(teamKey) {
     html += '</section>';
   }
 
-  // Section 4: What works
+  // Section 4: BO3 adaptation
+  var bo3 = report.bo3_adaptation;
+  if (bo3) {
+    html += '<section class="cs-section"><h3 class="cs-h3">BO3 Adaptation</h3>';
+    html += '<p><strong>Game 1 lead:</strong> ' + _csEsc(bo3.game1_lead || 'unclear') + ' ' + _csSourceChip(bo3.source_label) + '</p>';
+    html += '<p><strong>Game 2 plan:</strong> ' + _csEsc(bo3.game2_plan || 'unclear') + '</p>';
+    html += '<p><strong>Revealed info:</strong> ' + _csEsc(bo3.revealed_info || 'unclear') + '</p>';
+    html += '<p><strong>Opponent adjustment:</strong> ' + _csEsc(bo3.opponent_adjustment_prediction || 'unclear') + '</p>';
+    html += '<p><strong>Counter-adjustment:</strong> ' + _csEsc(bo3.counter_adjustment || 'unclear') + '</p>';
+    html += '<p><strong>Preserve:</strong> ' + _csEsc(bo3.what_to_preserve || 'unclear') + '</p>';
+    html += '<p><strong>Common loss path:</strong> ' + _csEsc(bo3.common_loss_path || 'unclear') + '</p>';
+    html += '</section>';
+  }
+
+  // Section 5: What works
   var ww = report.what_works;
   html += '<section class="cs-section"><h3 class="cs-h3">What Works</h3>';
   html += '<p><strong>Best synergy:</strong> ' + _csEsc(ww.best_synergy.description) + ' ' + _csSourceChip(ww.best_synergy.source_label) + '</p>';
@@ -7091,7 +7165,7 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Strongest win path:</strong> ' + _csEsc(ww.strongest_win_path.description) + ' ' + _csSourceChip(ww.strongest_win_path.source_label) + '</p>';
   html += '</section>';
 
-  // Section 5: What is weak
+  // Section 6: What is weak
   var wk = report.what_is_weak;
   html += '<section class="cs-section"><h3 class="cs-h3">What Is Weak</h3>';
   if (wk.missing_roles.length) html += '<p><strong>Missing:</strong> ' + _csEsc(wk.missing_roles.join(', ')) + '</p>';
@@ -7102,7 +7176,7 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Speed control:</strong> ' + _csEsc(wk.speed_issues) + '</p>';
   html += '</section>';
 
-  // Section 6: Top threats
+  // Section 7: Top threats
   if (report.top_threats.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Top Threats</h3><div class="cs-threat-grid">';
     report.top_threats.forEach(function(t){
@@ -7113,7 +7187,7 @@ function renderStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 7: Lead guide (top 3)
+  // Section 8: Lead guide (top 3)
   html += '<section class="cs-section"><h3 class="cs-h3">Top 3 Leads (' + lg.format + ')</h3>';
   html += '<div class="cs-lead-grid">';
   (lg.recommendations || []).forEach(function(rec){
@@ -7131,7 +7205,7 @@ function renderStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 8: Move lines
+  // Section 9: Move lines
   html += '<section class="cs-section"><h3 class="cs-h3">Move Lines (' + report.move_lines.length + ' scenarios)</h3>';
   html += '<div class="cs-moveline-grid">';
   report.move_lines.forEach(function(ml){
@@ -7146,7 +7220,7 @@ function renderStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 9: Mistakes
+  // Section 10: Mistakes
   html += '<section class="cs-section"><h3 class="cs-h3">Mistakes to Avoid (' + report.mistakes_to_avoid.length + ')</h3>';
   html += '<div class="cs-mistake-list">';
   report.mistakes_to_avoid.forEach(function(m, i){
@@ -7158,7 +7232,7 @@ function renderStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 10: Risk profile
+  // Section 11: Risk profile
   if (report.risk_profile.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Risk Profile</h3><div class="cs-risk-grid">';
     report.risk_profile.forEach(function(r){
@@ -7171,7 +7245,7 @@ function renderStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 11: Trend analysis
+  // Section 12: Trend analysis
   var ta = report.trend_analysis;
   html += '<section class="cs-section"><h3 class="cs-h3">Trend Analysis</h3>';
   if (!ta.has_data) {
@@ -7188,7 +7262,7 @@ function renderStrategyTab(teamKey) {
   }
   html += '</section>';
 
-  // Section 12: Skill coaching
+  // Section 13: Skill coaching
   var sk = report.skill_coaching;
   html += '<section class="cs-section"><h3 class="cs-h3">Skill Coaching</h3><div class="cs-skill-grid">';
   html += '<div class="cs-skill-card"><h4>Beginner</h4>';
@@ -7211,7 +7285,7 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Opponent prediction:</strong> ' + _csEsc(sk.advanced.opponent_prediction) + '</p></div>';
   html += '</div></section>';
 
-  // Section 13: Stress test
+  // Section 14: Stress test
   var st = report.stress_test;
   html += '<section class="cs-section"><h3 class="cs-h3">Stress Test &middot; Consistency: ' + st.consistency_rating + '</h3>';
   if (st.break_points.length) {
