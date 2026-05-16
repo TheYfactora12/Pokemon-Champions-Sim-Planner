@@ -1,9 +1,9 @@
-// db_m7_golden_battles_tests.js — Module 7: Golden battles regression (8 cases)
+// db_m7_golden_battles_tests.js — Module 7: Golden battles regression (9 cases)
 // PR: test/db-m7-golden-battles-runner → Linear: POK-23
 // Spec: poke-sim/tests/db_m7_golden_battles_tests.js
 //
 // RED state: before M7 lands, runner/fixture don't exist or have no hashes → all fail.
-// GREEN trigger: after M7 impl PR (POK-23), all 8 pass.
+// GREEN trigger: after M7 impl PR (POK-23), all 6 seeded battles pass.
 
 'use strict';
 
@@ -28,7 +28,7 @@ var ROOT = path.resolve(__dirname, '..');
 // Load runner module
 var runner = require(RUNNER_PATH);
 
-describe('Module 7 — Golden battles regression (8 cases)', function() {
+describe('Module 7 — Golden battles regression (9 cases)', function() {
 
   T('T-golden-1', function() {
     // golden_battles_runner.js exists and is requireable
@@ -39,11 +39,14 @@ describe('Module 7 — Golden battles regression (8 cases)', function() {
   });
 
   T('T-golden-2', function() {
-    // Fixture file exists and has ≥3 battles with required fields
+    // Fixture file exists and has ≥6 battles with required fields
     truthy(fs.existsSync(FIXTURE_PATH), 'golden_battles.json fixture must exist');
     var fixture = JSON.parse(fs.readFileSync(FIXTURE_PATH, 'utf8'));
     truthy(Array.isArray(fixture.battles), 'fixture.battles is array');
-    truthy(fixture.battles.length >= 3, 'at least 3 golden battles seeded');
+    truthy(fixture.battles.length >= 6, 'at least 6 golden battles seeded');
+    var formats = new Set(fixture.battles.map(function(b) { return b.format || 'doubles'; }));
+    truthy(formats.has('doubles'), 'fixture includes doubles battles');
+    truthy(formats.has('singles'), 'fixture includes singles battles');
   });
 
   T('T-golden-3', function() {
@@ -93,7 +96,7 @@ describe('Module 7 — Golden battles regression (8 cases)', function() {
   });
 
   T('T-golden-6', function() {
-    // Runner total time ≤ 5s for 3 battles
+    // Runner total time ≤ 7s for 6 battles
     var fixture = JSON.parse(fs.readFileSync(FIXTURE_PATH, 'utf8'));
     var ctx = runner.createEngineContext();
     var start = Date.now();
@@ -105,7 +108,7 @@ describe('Module 7 — Golden battles regression (8 cases)', function() {
       });
     }
     var elapsed = Date.now() - start;
-    truthy(elapsed <= 5000, 'runner must complete 3 battles within 5s (took ' + elapsed + 'ms)');
+    truthy(elapsed <= 7000, 'runner must complete 6 battles within 7s (took ' + elapsed + 'ms)');
   });
 
   T('T-golden-7', function() {

@@ -45,6 +45,51 @@
       "description": "Cofagrigus TR vs Chuppa Balance — seed 9999",
       "expected_trace_hash": "b153f3f7fa52dbf9cf247b25ecb6544c617455c62a946fd06b043cdd91ad2c0e",
       "expected_winner": "loss"
+    },
+    {
+      "golden_id": "gb_004",
+      "player_team_id": "player",
+      "opp_team_id": "fabulous_sunroom",
+      "seed": [
+        2468,
+        1357,
+        9753,
+        8642
+      ],
+      "format": "singles",
+      "description": "Player (speed) vs Fabulous Sunroom — singles seed 2468",
+      "expected_trace_hash": "9dceb7e135edae329d555fd2a9c6518f833916e9351bd57e315352243ed07898",
+      "expected_winner": "win"
+    },
+    {
+      "golden_id": "gb_005",
+      "player_team_id": "cofagrigus_tr",
+      "opp_team_id": "zardx_snow_setup",
+      "seed": [
+        3141,
+        2718,
+        1618,
+        1414
+      ],
+      "format": "singles",
+      "description": "Cofagrigus TR vs ZardX Snow Setup — singles seed 3141",
+      "expected_trace_hash": "0607cf5bfc6bd1f5a37dea00c0e8994ddb3511174344fc33b5f6602fe08fe12b",
+      "expected_winner": "win"
+    },
+    {
+      "golden_id": "gb_006",
+      "player_team_id": "mega_altaria",
+      "opp_team_id": "player",
+      "seed": [
+        9090,
+        8080,
+        7070,
+        6060
+      ],
+      "format": "singles",
+      "description": "Mega Altaria vs Player — singles seed 9090",
+      "expected_trace_hash": "81c309ec8438e34e122267aa6a3ea61baa3f6c0a522679904cdf73e7b18b0b66",
+      "expected_winner": "loss"
     }
   ]
 }
