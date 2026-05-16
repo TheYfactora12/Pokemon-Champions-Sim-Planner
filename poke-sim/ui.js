@@ -968,6 +968,11 @@ function buildBringPickerHtml(teamKey, opts) {
     '<div class="' + poolCls + '">' + poolHtml + '</div>';
 }
 
+function shouldUseCompactTeamsPicker() {
+  var matchMediaFn = getWindowValue('matchMedia', null);
+  return !!(matchMediaFn && matchMediaFn('(hover: none) and (pointer: coarse) and (max-width: 760px)').matches);
+}
+
 // Shared wiring: attach drag/tap handlers to every .bring-mode-btn /
 // .bring-pool-row / .bring-pool-chip / .bring-slot inside rootEl, and call
 // onChange() after any state mutation (both renders must re-run).
@@ -1198,6 +1203,7 @@ function renderTeamsGrid() {
   for (const [key, team] of Object.entries(TEAMS)) {
     if (!teamMatchesFilter(key, team, TEAMS_FILTER)) continue;
     const isPlayer = key === 'player';
+    const compactTeamsPicker = shouldUseCompactTeamsPicker();
     const card = document.createElement('div');
     card.className = 'team-full-card';
     card.innerHTML = `
@@ -1226,7 +1232,7 @@ function renderTeamsGrid() {
           ${team.source === 'custom' ? `<button class="delete-card-btn" data-team="${key}" title="Delete this custom team"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>` : ''}
         </div>
       </div>
-      ${buildBringPickerHtml(key, { compact: false })}`;
+      ${buildBringPickerHtml(key, { compact: compactTeamsPicker })}`;
     grid.appendChild(card);
   }
   // Export buttons
