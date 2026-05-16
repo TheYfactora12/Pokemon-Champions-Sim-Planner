@@ -1,0 +1,72 @@
+{
+  "opponent": "mega_altaria",
+  "strongResult": {
+    "wins": 8,
+    "losses": 3,
+    "draws": 1,
+    "winRate": 0.667,
+    "avgTurns": 9.5,
+    "avgTrTurns": 2.25,
+    "policy_model": "deterministic-v2",
+    "prior_id": "fixture-prior",
+    "hidden_info_model": "open-sheet",
+    "winConditions": {
+      "Tailwind Win": 5,
+      "KO Sweep": 3
+    },
+    "turning_point": {
+      "turn": 3,
+      "reason": "Tailwind established"
+    },
+    "position_path": [
+      { "turn": 1, "score": 0.48 },
+      { "turn": 2, "score": 0.61 },
+      { "turn": 3, "score": 0.78 }
+    ],
+    "allLogs": [
+      {
+        "result": "win",
+        "turns": 8,
+        "trTurns": 0,
+        "winCondition": "Tailwind Win",
+        "seed": "a1",
+        "leads": { "player": ["Incineroar", "Whimsicott"] },
+        "log": ["Turn 1", "Whimsicott used Tailwind"]
+      },
+      {
+        "result": "win",
+        "turns": 9,
+        "trTurns": 0,
+        "winCondition": "KO Sweep",
+        "seed": "a2",
+        "leads": { "player": ["Incineroar", "Whimsicott"] },
+        "log": ["Turn 1", "Incineroar used Fake Out"]
+      },
+      {
+        "result": "loss",
+        "turns": 10,
+        "trTurns": 2,
+        "winCondition": "Opponent Win",
+        "seed": "a3",
+        "leads": { "player": ["Arcanine", "Garchomp"] },
+        "log": ["Altaria-Mega fainted", "Altaria-Mega fainted"]
+      }
+    ]
+  },
+  "weakResult": {
+    "wins": 2,
+    "losses": 7,
+    "draws": 1,
+    "winRate": 0.2,
+    "policy_model": "deterministic-v2",
+    "winConditions": {},
+    "allLogs": [
+      {
+        "result": "loss",
+        "turns": 7,
+        "trTurns": 0,
+        "log": ["Turn 1", "opponent set up"]
+      }
+    ]
+  }
+}

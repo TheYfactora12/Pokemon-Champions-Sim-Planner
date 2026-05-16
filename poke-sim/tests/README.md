@@ -10,6 +10,7 @@ node tests/items_tests.js      # T9j.6 — items (#29 #8 #18 #11 #43) — 14 cas
 node tests/status_tests.js     # T9j.4 + T9j.5 — status residuals (#41 #17) — 27 cases
 node tests/mega_tests.js       # T9j.7 — mega evolution + trigger sweep (#23) — 27 cases
 node tests/coverage_tests.js   # T9j.3b — coverage + speed control (#36 #33) — 9 cases
+node tests/analytics_tests.js  # Issue #90 — analysis payload, Pilot Guide, inline Pilot Card — 32 cases
 node tests/t9j8_tests.js       # T9j.8 — ability hooks (#38 #37) — 47 cases
 node tests/t9j9_tests.js       # T9j.9 — nature + EV + IV stat math (#4 #5) — 24 cases
 node tests/t9j10_tests.js      # T9j.10 — bring N-of-6 picker state (#16) — 16 cases
@@ -57,6 +58,7 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | status | 27/27 | Poison, toxic, freeze, paralysis 12.5%, sleep 3-turn cap |
 | mega | 27/27 | Dynamic mega evolution, trigger sweep, base-form lead |
 | coverage | 9/9 | Speed control category, meta radar |
+| analytics | 32/32 | Analysis payload, Pilot Guide, inline Pilot Card fixtures |
 | t9j8 | 47/47 | Ability hook coverage |
 | t9j9 | 24/24 | Nature + EV + IV stat math |
 | t9j10 | 17/17 | Bring state + random-mode rerolls + role-aware opener opt-in |
@@ -86,8 +88,8 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
 | export | 4/4 | My Data JSON export for persisted history, reports, and DB analyses |
-| **Total** | **408/408** | |
-| audit | 0 JS errors | 5070 battles across 13 teams |
+| **Total** | **440/440** | |
+| audit | 0 JS errors | 5780 battles across 17 teams |
 
 ## Conventions
 
