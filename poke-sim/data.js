@@ -1119,7 +1119,7 @@ const TEAMS = {
       },
       {
         "name": "Sinistcha",
-        "item": "Sitrus Berry",
+        "item": "Mental Herb",
         "ability": "Hospitality",
         "nature": "Bold",
         "evs": {
@@ -1394,7 +1394,7 @@ const TEAMS = {
       },
       {
         "name": "Farigiraf",
-        "item": "Mental Herb",
+        "item": "Sitrus Berry",
         "ability": "Armor Tail",
         "nature": "Relaxed",
         "evs": {
@@ -1415,7 +1415,7 @@ const TEAMS = {
       },
       {
         "name": "Sinistcha",
-        "item": "Sitrus Berry",
+        "item": "Mental Herb",
         "ability": "Hospitality",
         "nature": "Bold",
         "evs": {
@@ -2153,7 +2153,7 @@ const TEAMS = {
       },
       {
         "name": "Sinistcha",
-        "item": "Sitrus Berry",
+        "item": "Mental Herb",
         "ability": "Hospitality",
         "nature": "Bold",
         "evs": {

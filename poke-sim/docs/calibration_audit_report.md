@@ -49,30 +49,12 @@ These new teams were assembled from already-shipped legal catalog members and pu
 
 ## Legality Audit Summary
 
-Current matrix legality scan:
+Current matrix legality scan: clean.
 
-- `player` clean
-- `mega_altaria` invalid: `Typhlosion-Hisui` SPs exceed 66 in Champions format
-- `mega_dragonite` clean
-- `mega_houndoom` clean
-- `rin_sand` clean
-- `suica_sun` clean
-- `cofagrigus_tr` clean
-- `champions_arena_1st` clean
-- `champions_arena_2nd` invalid: duplicate `Sitrus Berry`
-- `champions_arena_3rd` clean
-- `chuppa_balance` clean
-- `aurora_veil_froslass` clean
-- `kingambit_sneasler` clean
-- `fabulous_sunroom` clean
-- `sand_bulky_offense` clean
-- `fire_ice_fullroom` clean
-- `zardx_snow_setup` clean
+Update:
 
-Interpretation:
-
-- The new calibration shells are usable and legal.
-- The remaining legality warnings are pre-existing catalog issues, not introduced by the calibration expansion.
+- The legacy item-clause issues on `mega_houndoom`, `champions_arena_2nd`, and `cofagrigus_tr` were repaired after the first audit pass.
+- The current catalog legality scan is clean.
 
 ## Matrix Simulation Summary
 
@@ -104,6 +86,11 @@ Mirror performance is mostly reasonable for the new shells:
 One legacy team still stands out as unstable in mirrors:
 
 - `cofagrigus_tr`: 15% mirror win rate, flagged as far off 50%
+
+After the cleanup pass, another calibration shell also shows a mirror outlier:
+
+- `suica_sun`: 80% mirror win rate, flagged as far off 50%
+- `sand_bulky_offense`: 80% mirror win rate, flagged as far off 50%
 
 That does not invalidate the calibration shells, but it is a reminder that some older catalog entries may still be skewing the coach.
 
