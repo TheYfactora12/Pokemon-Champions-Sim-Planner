@@ -2758,7 +2758,7 @@ function renderHistorySection() {
 }
 
 // ============================================================
-// SHOWDOWN REPLAY COACH UI
+// BATTLE SENSEI UI
 // Local-only MVP shell. Persistence and Supabase sync are tracked
 // separately so replay analysis never depends on DB availability.
 // ============================================================

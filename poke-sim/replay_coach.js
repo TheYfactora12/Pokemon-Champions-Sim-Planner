@@ -1,5 +1,5 @@
 // ============================================================
-// SHOWDOWN REPLAY COACH
+// BATTLE SENSEI
 // Local-only parser and coaching summary helpers.
 // ============================================================
 
