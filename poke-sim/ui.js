@@ -940,9 +940,10 @@ function buildBringPickerHtml(teamKey, opts) {
         '" draggable="' + (manualMode ? 'true' : 'false') + '">' +
         '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
         '<div class="poke-full-info">' +
-          '<div class="poke-full-name">' + _escapeHtml(m.name) +
-            ' <span style="font-weight:400;color:var(--text-m);font-size:10px">@ ' + _escapeHtml(m.item || '\u2014') + '</span>' +
-            (inBring ? ' <span style="font-size:9px;color:var(--accent,#4a9eff);font-weight:600;margin-left:4px">\u25c6 ' +
+          '<div class="poke-full-name">' +
+            '<span class="poke-full-name-main">' + _escapeHtml(m.name) + '</span>' +
+            '<span class="poke-full-item">@ ' + _escapeHtml(m.item || '\u2014') + '</span>' +
+            (inBring ? '<span class="poke-full-bring">\u25c6 ' +
               _escapeHtml((bring.indexOf(m.name) < leadCount ? 'LEAD' : 'BENCH') + ' ' + (bring.indexOf(m.name)+1)) + '</span>' : '') +
           '</div>' +
           '<div class="poke-full-detail">' + _escapeHtml(m.ability || '\u2014') + ' \u00b7 ' + _escapeHtml(m.nature || 'Hardy') + ' \u00b7 Lv' + _escapeHtml(String(m.level || 50)) + '</div>' +

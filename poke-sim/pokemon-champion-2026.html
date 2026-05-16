@@ -183,12 +183,32 @@ table{border-collapse:collapse;width:100%}
   .poke-full-name,
   .poke-full-detail,
   .bring-slot-name{
-    overflow-wrap:anywhere;
-    word-break:break-word;
+    overflow-wrap:break-word;
+    word-break:normal;
   }
   .bring-slot-name{
     white-space:normal;
     text-overflow:clip;
+  }
+  .poke-full-name{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:2px;
+    min-width:0;
+  }
+  .poke-full-name-main{
+    min-width:0;
+  }
+  .poke-full-item,
+  .poke-full-bring{
+    color:var(--text-m);
+    font-size:10px;
+    font-weight:400;
+    line-height:1.2;
+    white-space:normal;
+    overflow-wrap:break-word;
+    word-break:normal;
   }
   .bring-slot{
     min-height:80px;
@@ -348,7 +368,7 @@ table{border-collapse:collapse;width:100%}
   .cs-cat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cs-source{margin-left:0}
   .engine-row{grid-template-columns:1fr;gap:4px}
-  .replay-title,.replay-meta,.tfcard-name,.tfcard-meta,.pilot-card-title,.pilot-leads,.cs-summary-line,.cs-explain,.cs-champ-pov,.audit-meta-row,.audit-table,.cs-threat-why,.cs-threat-play{overflow-wrap:anywhere;word-break:break-word}
+  .replay-title,.replay-meta,.tfcard-name,.tfcard-meta,.pilot-card-title,.pilot-leads,.cs-summary-line,.cs-explain,.cs-champ-pov,.audit-meta-row,.audit-table,.cs-threat-why,.cs-threat-play{overflow-wrap:break-word;word-break:normal}
   .move-tags,.replay-chips,.team-detail-chip-row,.cs-lead-grid,.cs-moveline-grid,.cs-skill-grid,.cs-threat-grid,.radar-grid,.cs-detector-toolbar,.teams-actions,.teams-filter-row{max-width:100%}
   .move-tag,.rchip,.team-detail-chip,.cs-chip,.teams-filter-chip,.team-mon-detail-btn,.stat-panel-pill,.speed-val{white-space:normal}
   .audit-grid{grid-template-columns:1fr}
@@ -11972,9 +11992,10 @@ function buildBringPickerHtml(teamKey, opts) {
         '" draggable="' + (manualMode ? 'true' : 'false') + '">' +
         '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
         '<div class="poke-full-info">' +
-          '<div class="poke-full-name">' + _escapeHtml(m.name) +
-            ' <span style="font-weight:400;color:var(--text-m);font-size:10px">@ ' + _escapeHtml(m.item || '\u2014') + '</span>' +
-            (inBring ? ' <span style="font-size:9px;color:var(--accent,#4a9eff);font-weight:600;margin-left:4px">\u25c6 ' +
+          '<div class="poke-full-name">' +
+            '<span class="poke-full-name-main">' + _escapeHtml(m.name) + '</span>' +
+            '<span class="poke-full-item">@ ' + _escapeHtml(m.item || '\u2014') + '</span>' +
+            (inBring ? '<span class="poke-full-bring">\u25c6 ' +
               _escapeHtml((bring.indexOf(m.name) < leadCount ? 'LEAD' : 'BENCH') + ' ' + (bring.indexOf(m.name)+1)) + '</span>' : '') +
           '</div>' +
           '<div class="poke-full-detail">' + _escapeHtml(m.ability || '\u2014') + ' \u00b7 ' + _escapeHtml(m.nature || 'Hardy') + ' \u00b7 Lv' + _escapeHtml(String(m.level || 50)) + '</div>' +
