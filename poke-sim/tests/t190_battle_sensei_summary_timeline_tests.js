@@ -56,6 +56,8 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, '<h3 class="replay-coach-h3">Decision Quality Scorecard</h3>');
   inc(ui, '<h3 class="replay-coach-h3">Win Path + Opponent Plan</h3>');
   inc(ui, '<h3 class="replay-coach-h3">Practice Plan</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Battle IQ Memory Preview</h3>');
+  inc(ui, 'Privacy boundary');
 });
 
 T('6. raw log preview is collapsed and hidden by default', () => {

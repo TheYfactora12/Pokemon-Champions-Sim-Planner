@@ -2852,6 +2852,13 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<small>' + _escapeHtml(drill.promptBeforeEachTurn || '') + '</small>' +
       '</div>';
   }).join('') : '';
+  var premium = learning && learning.premiumTeasers ? learning.premiumTeasers : null;
+  var premiumRows = premium ? (premium.lockedInsights || []).map(function(item) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(item.label || 'Premium insight') + '</strong>' +
+      _escapeHtml(item.preview || '') +
+      '</div>';
+  }).join('') : '';
 
   host.innerHTML =
     '<div class="replay-coach-summary-card">' +
@@ -2909,6 +2916,15 @@ function csReplayCoachRenderAnalysis(analysis) {
     '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Practice Plan</h3>' +
       '<div class="replay-coach-list">' + (drillRows || '<div class="replay-coach-list-row"><strong>No practice drill yet</strong>More replay data will unlock personalized drills.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Battle IQ Memory Preview</h3>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Free review</strong>' + _escapeHtml(premium.freeValue || '') + '</div>' +
+        '<div class="replay-coach-list-row"><strong>Profile unlock</strong>' + _escapeHtml(premium.premiumValue || '') + '</div>' +
+        premiumRows +
+        '<div class="replay-coach-list-row"><strong>Privacy boundary</strong>' + _escapeHtml((premium.backendLearningPolicy && premium.backendLearningPolicy.rawLogDefault) || '') + '<small>' + _escapeHtml((premium.backendLearningPolicy && premium.backendLearningPolicy.freeAnonymous) || '') + '</small></div>' +
+      '</div>' +
     '</div>' : '') +
     '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Turn Timeline</h3>' +

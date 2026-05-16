@@ -295,11 +295,49 @@
     };
   }
 
+  function buildPremiumTeasers(report) {
+    report = report || {};
+    var topDrill = report.practicePlan && report.practicePlan.drills && report.practicePlan.drills[0];
+    var critical = report.criticalTurns && report.criticalTurns.fatalMistake;
+    return {
+      title: 'Battle IQ Memory',
+      freeValue: 'This review is local and temporary: you get the battle summary, key turns, scorecard, and practice drill without saving a profile.',
+      premiumValue: 'A saved profile can remember teams, logs, decisions, recurring patterns, matchup comfort, drills, and improvement over time.',
+      lockedInsights: [
+        {
+          id: 'recurring_mistake_fingerprint',
+          label: 'Recurring mistake fingerprint',
+          preview: critical ? 'Track how often ' + critical.category + ' appears across your saved games.' : 'Track which mistake categories repeat across your saved games.'
+        },
+        {
+          id: 'personal_practical_win_rate',
+          label: 'Personal practical win rate',
+          preview: 'Compare simulated win rate against your real replay results and execution difficulty.'
+        },
+        {
+          id: 'adaptive_training_plan',
+          label: 'Adaptive training plan',
+          preview: topDrill ? 'Turn drills like ' + topDrill.skill + ' into a weekly practice block with progress tracking.' : 'Turn report findings into weekly drills with progress tracking.'
+        },
+        {
+          id: 'matchup_memory',
+          label: 'Matchup memory',
+          preview: 'Remember which leads, bring-fours, and win paths worked for you into each archetype.'
+        }
+      ],
+      backendLearningPolicy: {
+        freeAnonymous: 'Free reviews should only contribute opt-in anonymized signals such as archetype, rule id, confidence, lead outcome, and coaching usefulness rating.',
+        premiumPrivate: 'Premium profiles can save full normalized reports, teams, logs, drills, and longitudinal player patterns for personalized coaching.',
+        rawLogDefault: 'Raw logs should not be silently stored. Save raw logs only when the user explicitly chooses profile history or export.'
+      }
+    };
+  }
+
   function buildLearningReport(parsed, review, opts) {
     opts = opts || {};
     var issues = (review && review.coachingTags) || [];
     var critical = buildCriticalTurns(parsed, review);
-    return {
+    var report = {
       productMode: 'Battle Sensei',
       philosophy: 'Decision quality over outcome. Every statistic should change a decision.',
       confidence: confidenceFor(parsed, issues),
@@ -318,6 +356,8 @@
       practicePlan: buildPracticePlan(review),
       trendDashboard: buildTrendDashboard(opts.priorReports || [])
     };
+    report.premiumTeasers = buildPremiumTeasers(report);
+    return report;
   }
 
   ChampionsSim.replayLearning.buildLearningReport = buildLearningReport;
@@ -325,6 +365,7 @@
   ChampionsSim.replayLearning.buildDecisionQuality = buildDecisionQuality;
   ChampionsSim.replayLearning.buildPracticePlan = buildPracticePlan;
   ChampionsSim.replayLearning.buildTrendDashboard = buildTrendDashboard;
+  ChampionsSim.replayLearning.buildPremiumTeasers = buildPremiumTeasers;
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = ChampionsSim.replayLearning;

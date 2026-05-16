@@ -88,5 +88,17 @@ T('6. trend dashboard stays cautious for a single review', () => {
   inc(trend.recommendedNextPracticeBlock, 'top practice drill', 'trend practice guidance');
 });
 
+T('7. premium memory preview separates anonymous learning from private profiles', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const premium = analysis.review.learningReport.premiumTeasers;
+  truthy(premium, 'premium teaser');
+  inc(premium.title, 'Battle IQ Memory', 'teaser title');
+  inc(premium.freeValue, 'local and temporary', 'free value');
+  inc(premium.premiumValue, 'saved profile', 'premium value');
+  truthy(premium.lockedInsights.length >= 4, 'locked insight count');
+  inc(premium.backendLearningPolicy.freeAnonymous, 'opt-in anonymized signals', 'anonymous learning policy');
+  inc(premium.backendLearningPolicy.rawLogDefault, 'Raw logs should not be silently stored', 'raw log boundary');
+});
+
 console.log(`\nBattle Sensei learning: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);
