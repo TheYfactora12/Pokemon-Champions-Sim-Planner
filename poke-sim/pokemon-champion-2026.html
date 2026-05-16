@@ -15113,9 +15113,11 @@ function inferPlaystyle(members) {
 // Aggregate top-2 leads across all matchups, partitioned by profile.
 function buildLeadSystem(results, playerMembers) {
   var safeLeads = {}, speedLeads = {}, pressureLeads = {}, punishLeads = {};
+  var sawWinningLogs = false;
   Object.entries(results).forEach(function(pair){
     var res = pair[1];
     (res.allLogs || []).filter(function(g){ return g.result === 'win'; }).forEach(function(game){
+      sawWinningLogs = true;
       var names = (game.leads && Array.isArray(game.leads.player)) ? game.leads.player : [];
       if (names.length !== 2) return;
       var pair2 = names.slice().sort().join(' + ');
@@ -15133,6 +15135,60 @@ function buildLeadSystem(results, playerMembers) {
   function top(obj) {
     var entries = Object.entries(obj).sort(function(a,b){ return b[1]-a[1]; });
     return entries.length ? entries[0][0] : null;
+  }
+  function fallbackPairFromRoles() {
+    var members = Array.isArray(playerMembers) ? playerMembers.slice() : [];
+    if (!members.length) return null;
+    var classified = members.map(function(m){
+      var roles = [];
+      try {
+        var c = (typeof classifyPokemon === 'function') ? classifyPokemon(m) : null;
+        roles = c && Array.isArray(c.roles) ? c.roles.slice() : [];
+      } catch (_e) {
+        roles = [];
+      }
+      return { mon: m, roles: roles };
+    });
+    function hasRole(row, role) { return row.roles.indexOf(role) >= 0; }
+    function hasAnyMove(row, moves) {
+      return _pdfHasAny(row.mon, moves);
+    }
+    var support = classified.find(function(row){ return hasRole(row, 'Support') || hasAnyMove(row, PDF_FAKE_OUT) || hasAnyMove(row, PDF_REDIRECT); });
+    var speed = classified.find(function(row){ return hasRole(row, 'Speed Control') || hasAnyMove(row, PDF_TAILWIND) || hasAnyMove(row, PDF_TRICK_ROOM); });
+    var pivot = classified.find(function(row){ return hasRole(row, 'Pivot') || /U-turn|Volt Switch|Flip Turn|Parting Shot|Teleport/i.test((row.mon.moves || []).join(',')); });
+    var breaker = classified.find(function(row){ return hasRole(row, 'Sweeper') || hasRole(row, 'Cleaner') || hasRole(row, 'Wallbreaker'); });
+    var first = classified[0];
+    var second = classified[1] || first;
+    var pair = null;
+    if (support && speed && support.mon.name !== speed.mon.name) pair = [support.mon.name, speed.mon.name];
+    else if (support && breaker && support.mon.name !== breaker.mon.name) pair = [support.mon.name, breaker.mon.name];
+    else if (speed && breaker && speed.mon.name !== breaker.mon.name) pair = [speed.mon.name, breaker.mon.name];
+    else if (support && pivot && support.mon.name !== pivot.mon.name) pair = [support.mon.name, pivot.mon.name];
+    else if (pivot && breaker && pivot.mon.name !== breaker.mon.name) pair = [pivot.mon.name, breaker.mon.name];
+    else if (first && second && first.mon.name !== second.mon.name) pair = [first.mon.name, second.mon.name];
+    if (!pair || !pair[0] || !pair[1]) return null;
+    return pair.join(' + ');
+  }
+  if (!sawWinningLogs) {
+    var fallbackSafe = fallbackPairFromRoles();
+    if (fallbackSafe) {
+      var fallbackSpeed = null;
+      var fallbackPressure = null;
+      var fallbackPunish = null;
+      var members = Array.isArray(playerMembers) ? playerMembers.slice() : [];
+      var supportMon = members.find(function(m){ return _pdfHasAny(m, PDF_FAKE_OUT) || _pdfHasAny(m, PDF_REDIRECT); }) || members[0] || null;
+      var speedMon = members.find(function(m){ return _pdfHasAny(m, PDF_TAILWIND) || _pdfHasAny(m, PDF_TRICK_ROOM); }) || supportMon;
+      var pressureMon = members.find(function(m){ return _pdfHasAny(m, PDF_PRIORITY) || _pdfHasAny(m, PDF_SPREAD); }) || speedMon;
+      if (supportMon && speedMon) fallbackSpeed = [supportMon.name, speedMon.name].filter(Boolean).join(' + ');
+      if (supportMon && pressureMon) fallbackPressure = [supportMon.name, pressureMon.name].filter(Boolean).join(' + ');
+      if (pressureMon && speedMon) fallbackPunish = [pressureMon.name, speedMon.name].filter(Boolean).join(' + ');
+      return {
+        safe: fallbackSafe,
+        speed: fallbackSpeed || fallbackSafe,
+        pressure: fallbackPressure || fallbackSafe,
+        punish: fallbackPunish || fallbackSafe
+      };
+    }
   }
   return {
     safe: top(safeLeads),
@@ -16144,6 +16200,13 @@ function inferTeamIdentity(team, results, fmt) {
   var primary = sorted[0] ? sorted[0][0] : null;
   var secondary = sorted[1] ? sorted[1][0] : null;
   var primaryPct = (primary && totalWins) ? (sorted[0][1] / totalWins) : 0;
+  var hasTR = members.some(function(m){ return _pdfHasAny(m, PDF_TRICK_ROOM); });
+  var hasTW = members.some(function(m){ return _pdfHasAny(m, PDF_TAILWIND); });
+  var hasRedirect = members.some(function(m){ return _pdfHasAny(m, PDF_REDIRECT); });
+  var hasFakeOut = members.some(function(m){ return _pdfHasAny(m, PDF_FAKE_OUT); });
+  var hasWeather = members.some(function(m){ return _pdfHasAny(m, PDF_WEATHER_ABILITIES) || (m.moves || []).some(function(move){
+    return /Sunny Day|Rain Dance|Sandstorm|Snowscape|Hail/i.test(move);
+  }); });
 
   // Synergy: pivot + speed control + finisher
   var hasFO = members.some(function(m){ return _pdfHasAny(m, PDF_FAKE_OUT); });
@@ -16155,6 +16218,28 @@ function inferTeamIdentity(team, results, fmt) {
   if (members.some(function(m){ return PDF_TRAP_ABILITIES.indexOf(m.ability||'') >= 0; })) synergy.push('trap-ability removal');
   if (!synergy.length) synergy.push('no clear synergy core');
 
+  function fallbackPrimary() {
+    if (hasTR || playstyle.indexOf('Trick Room') >= 0) {
+      return 'Set Trick Room, preserve the slow breakers, and clean with the team’s lowest-speed damage core.';
+    }
+    if (hasFakeOut && (hasTW || members.some(function(m){ return _pdfHasAny(m, PDF_PRIORITY); }))) {
+      return 'Win turn 1 tempo with Fake Out plus speed control, then preserve the cleaner for the endgame.';
+    }
+    if (hasWeather || /Offense/i.test(playstyle)) {
+      return 'Establish your weather or offensive mode early, keep the mode setter alive, and force the opponent to react.';
+    }
+    if (hasRedirect) {
+      return 'Use redirection to create one clean setup window, then trade into your strongest finisher.';
+    }
+    return 'Use your support core to create a clean endgame for your best attacker.';
+  }
+  function fallbackSecondary() {
+    if (hasTR) return 'Back up Trick Room with positioning and a preserved secondary breaker.';
+    if (hasTW) return 'If speed control is denied, pivot to your pressure core and play for chip into a late clean.';
+    if (hasWeather) return 'If the weather war is denied, win with positioning and chip rather than forcing a bad mirror.';
+    return 'Keep a pivot piece alive so you can reset bad board states before the endgame.';
+  }
+
   // Format viability heuristic
   var viability = 'both';
   if (members.some(function(m){ return _pdfHasAny(m, PDF_REDIRECT); })) viability = 'doubles-favored';
@@ -16162,8 +16247,8 @@ function inferTeamIdentity(team, results, fmt) {
 
   return {
     playstyle: playstyle,
-    primary_win_condition: primary || 'unclear',
-    secondary_win_condition: secondary || 'none observed',
+    primary_win_condition: primary || fallbackPrimary(),
+    secondary_win_condition: secondary || fallbackSecondary(),
     synergy_core: synergy,
     format_viability: viability,
     primary_win_path_pct: Math.round(primaryPct * 100),
@@ -16635,8 +16720,9 @@ function buildMatchupIntelligence(team, results, format, identity, leadSystem, t
   });
   var totalGames = totalWins + totalLosses + totalDraws;
   var overallWR = totalGames ? totalWins / totalGames : 0;
-  var confidence = csConfidence(totalGames);
-  var grade = overallWR >= 0.65 ? 'strongly favored'
+  var confidence = totalGames > 0 ? csConfidence(totalGames) : 'none';
+  var grade = totalGames === 0 ? 'unproven'
+    : overallWR >= 0.65 ? 'strongly favored'
     : overallWR >= 0.55 ? 'favored'
     : overallWR >= 0.45 ? 'even'
     : overallWR >= 0.35 ? 'unfavored'
@@ -16649,10 +16735,12 @@ function buildMatchupIntelligence(team, results, format, identity, leadSystem, t
     : (trends && Array.isArray(trends.mostLostMons) && trends.mostLostMons.length ? trends.mostLostMons[0] : 'the opponent’s win condition');
   var preserve = identity && identity.primary_win_condition && identity.primary_win_condition !== 'unclear'
     ? identity.primary_win_condition
-    : (topSafe[0] || 'your support core');
+    : (topSafe[0] || (leadSystem && leadSystem.safe) || 'your support core');
   var adjustment = worstMatchup
     ? 'Patch ' + worstMatchup.name + ' first. Start with ' + (topSafe[0] || 'your safest lead') + ' and keep ' + preserve + ' healthy.'
-    : 'Keep the win condition protected and rotate into your best tempo lead when the board is open.';
+    : (totalGames === 0
+      ? 'You have no battle sample yet. Start with ' + (topSafe[0] || (leadSystem && leadSystem.safe) || 'your safest opener') + ' and test the team’s mode before judging matchups.'
+      : 'Keep the win condition protected and rotate into your best tempo lead when the board is open.');
   var speedTruth = (matchupWarnings || []).find(function(v){ return v && v.category === 'Speed control'; });
   var speedLine = speedTruth ? speedTruth.note : 'This team has enough speed access to play honest lines when your lead is correct.';
   var risky = sortedRisky.length ? sortedRisky.slice(0, 3) : [];
@@ -16662,16 +16750,20 @@ function buildMatchupIntelligence(team, results, format, identity, leadSystem, t
     grade: grade,
     confidence: confidence,
     overall_win_rate: overallWR,
-    summary: worstMatchup
+      summary: worstMatchup
       ? 'You are ' + grade + ' overall. The clearest problem is ' + worstMatchup.name + ' at ' + Math.round(worstMatchup.win_rate * 100) + '%.'
-      : 'You are ' + grade + ' overall. The sample is too thin for a sharp matchup read.',
+      : (totalGames === 0
+        ? 'You have no battle sample yet. Start from the baseline opener and collect games before judging matchups.'
+        : 'You are ' + grade + ' overall. The sample is too thin for a sharp matchup read.'),
     headline: topSafe.length
       ? 'Top player read: lead with ' + topSafe[0] + ' when you need safe tempo; do not auto-pilot into the worst matchup.'
-      : 'Top player read: you need more games before the opening plan is stable.',
+      : (totalGames === 0
+        ? 'Top player read: use the baseline opener and test your mode before tuning the matchup map.'
+        : 'Top player read: you need more games before the opening plan is stable.'),
     fix: adjustment,
     safe_leads: topSafe.slice(0, 3),
     risky_leads: risky.map(function(row){ return _leadPairSummary(row); }),
-    best_win_path: identity && identity.primary_win_condition ? identity.primary_win_condition : 'unclear',
+    best_win_path: identity && identity.primary_win_condition ? identity.primary_win_condition : (totalGames === 0 ? 'baseline opener -> preserve the mode setter -> clean with your best attacker' : 'unclear'),
     common_loss_path: commonLoss,
     speed_truth: speedLine,
     matchup_rows: safeRows.map(function(row){
