@@ -40,7 +40,7 @@ T('3. audit and replay surfaces keep a horizontal escape hatch', () => {
 });
 
 T('4. team labels and bring slots stop truncating on mobile', () => {
-  inc(css, '.tfcard-name,.tfcard-meta,.poke-full-name,.poke-full-detail,.bring-slot-name{overflow-wrap:anywhere;word-break:break-word}');
+  inc(css, '.tfcard-name,.tfcard-meta,.poke-full-name,.poke-full-detail,.bring-slot-name{overflow-wrap:break-word;word-break:normal}');
   inc(css, '.bring-slot-name{white-space:normal;text-overflow:clip}');
   inc(css, '.bring-slot{min-height:80px}');
 });
