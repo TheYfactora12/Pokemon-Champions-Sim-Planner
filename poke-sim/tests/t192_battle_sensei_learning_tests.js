@@ -118,9 +118,13 @@ T('7. evidence standard and opponent plan expose support level', () => {
 T('8. sim comparison stays low confidence until matched sim data exists', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const sim = analysis.review.learningReport.simComparison;
+  const packet = analysis.review.learningReport.simFeedback;
   eq(sim.status, 'needs_sim_data', 'needs sim status');
   eq(sim.evidenceLabel, 'Needs more data', 'needs evidence');
   inc(sim.decisionChange, 'Run this matchup in Sim Mode or upload more logs', 'decision-changing next step');
+  eq(packet.shouldUpdateLeadModel, false, 'no sim match means no lead model update');
+  eq(packet.shouldUpdateBringFourModel, false, 'no sim match means no bring model update');
+  eq(packet.confidence, 'low', 'unmatched feedback stays low confidence');
 
   const matched = replayCoach.analyzeShowdownReplay(sample, {
     selectedSide: 'p1',
@@ -133,6 +137,27 @@ T('8. sim comparison stays low confidence until matched sim data exists', () => 
   eq(matched.status, 'matched', 'matched status');
   eq(matched.leadMatch, 100, 'lead match score');
   truthy(matched.evidenceLabel !== 'Needs more data', 'matched evidence improves');
+});
+
+T('8b. sim feedback packet emits calibration signals without auto-updating models', () => {
+  const base = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const mismatch = replayCoach.analyzeShowdownReplay(sample, {
+    selectedSide: 'p1',
+    simPlan: {
+      bestLead: ['Wrong Lead A', 'Wrong Lead B'],
+      bestFour: base.review.summary.yourFour,
+      expectedWinPath: 'Set speed control, preserve cleaner, and convert pressure.',
+      matchConfidence: 'medium'
+    }
+  }).review.learningReport.simFeedback;
+  truthy(mismatch, 'sim feedback missing');
+  eq(mismatch.shouldUpdateLeadModel, true, 'lead mismatch can update lead model signal');
+  eq(mismatch.shouldUpdateBringFourModel, false, 'matched four should not update bring model signal');
+  eq(mismatch.shouldUpdateArchetypeModel, false, 'single medium-confidence replay should not update archetype model');
+  eq(mismatch.shouldCreateScenario, true, 'replay should create scenario');
+  truthy(mismatch.scenarioType && mismatch.scenarioType !== 'none', 'scenario type');
+  truthy(['none', 'minor', 'moderate'].includes(mismatch.rngContamination), 'rng contamination label');
+  inc(mismatch.evidence.note, 'Do not automatically rewrite sim models', 'auto-update guardrail');
 });
 
 T('9. trend dashboard stays cautious for a single review', () => {

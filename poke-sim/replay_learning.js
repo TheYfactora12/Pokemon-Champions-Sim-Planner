@@ -541,6 +541,113 @@
     };
   }
 
+  function normalizeSignalConfidence(confidence) {
+    if (confidence === 'high') return 'high';
+    if (confidence === 'medium') return 'medium';
+    return 'low';
+  }
+
+  function issueIds(review) {
+    return ((review && review.coachingTags) || []).map(function(issue) { return issue && issue.id; }).filter(Boolean);
+  }
+
+  function countIssues(review, ids) {
+    var set = {};
+    (ids || []).forEach(function(id) { set[id] = true; });
+    return issueIds(review).filter(function(id) { return !!set[id]; }).length;
+  }
+
+  function scenarioFromIssues(review, simComparison) {
+    var ids = issueIds(review);
+    if (ids.indexOf('speed_control_without_pressure') >= 0) return 'speed_control_no_pressure';
+    if (ids.indexOf('field_control_failure') >= 0) return 'field_control_allowed';
+    if (ids.indexOf('bad_lead') >= 0) return 'turn_one_lead_collapse';
+    if (ids.indexOf('protect_misuse') >= 0) return 'protect_gives_free_setup';
+    if (ids.indexOf('switch_tempo_loss') >= 0) return 'passive_switch_tempo_loss';
+    if (ids.indexOf('win_condition_exposed') >= 0) return 'win_condition_exposed_before_conversion';
+    if (ids.indexOf('endgame_misplay') >= 0) return 'endgame_conversion_failure';
+    if (simComparison && simComparison.status === 'matched' && simComparison.firstDeviation) {
+      if (/lead/i.test(simComparison.firstDeviation)) return 'actual_lead_differs_from_sim_plan';
+      if (/four|selected/i.test(simComparison.firstDeviation)) return 'actual_four_differs_from_sim_plan';
+    }
+    return 'general_replay_review';
+  }
+
+  function rngContamination(review) {
+    var rng = ((review && review.coachingTags) || []).filter(function(issue) { return issue && issue.id === 'rng_material'; }).length;
+    if (rng >= 2) return 'moderate';
+    if (rng === 1) return 'minor';
+    return 'none';
+  }
+
+  function buildSimFeedbackPacket(parsed, review, simComparison) {
+    review = review || {};
+    simComparison = simComparison || buildSimComparison(parsed, review, {});
+    var ids = issueIds(review);
+    var matched = simComparison.status === 'matched';
+    var leadMismatch = matched && typeof simComparison.leadMatch === 'number' && simComparison.leadMatch < 100;
+    var fourMismatch = matched && typeof simComparison.fourMatch === 'number' && simComparison.fourMatch < 100;
+    var leadIssue = ids.indexOf('bad_lead') >= 0 || leadMismatch;
+    var bringIssue = ids.indexOf('questionable_bring') >= 0 || fourMismatch;
+    var fieldOrSpeedIssue = countIssues(review, ['speed_control_without_pressure', 'field_control_failure']) > 0;
+    var executionIssueCount = countIssues(review, [
+      'speed_control_without_pressure',
+      'field_control_failure',
+      'protect_misuse',
+      'switch_tempo_loss',
+      'targeting_error',
+      'win_condition_exposed',
+      'endgame_misplay',
+      'lost_exchange'
+    ]);
+    var teamConstructionCount = countIssues(review, ['bad_lead', 'questionable_bring']);
+    var confidence = normalizeSignalConfidence((simComparison && simComparison.confidence) || confidenceFor(parsed, review.coachingTags || []));
+    if (!matched && confidence !== 'low') confidence = 'medium';
+    if (!parsed || !parsed.ok) confidence = 'low';
+
+    var shouldCreateScenario = fieldOrSpeedIssue || leadIssue || bringIssue || executionIssueCount >= 2;
+    var scenarioType = shouldCreateScenario ? scenarioFromIssues(review, simComparison) : 'none';
+    var pilotDifficultySignal = executionIssueCount >= 3 ? 'high' : executionIssueCount >= 1 ? 'medium' : 'low';
+    var teamConstructionSignal = teamConstructionCount >= 2 ? 'medium' : teamConstructionCount === 1 ? 'low' : 'none';
+    var archetypeSignal = matched && (fieldOrSpeedIssue || leadIssue);
+    var packet = {
+      shouldUpdateLeadModel: !!(matched && leadIssue && confidence !== 'low'),
+      shouldUpdateBringFourModel: !!(matched && bringIssue && confidence !== 'low'),
+      shouldUpdateArchetypeModel: !!(matched && archetypeSignal && confidence === 'high'),
+      shouldCreateScenario: !!shouldCreateScenario,
+      scenarioType: scenarioType,
+      pilotDifficultySignal: pilotDifficultySignal,
+      teamConstructionSignal: teamConstructionSignal,
+      rngContamination: rngContamination(review),
+      confidence: confidence,
+      evidence: {
+        source: 'replay_review',
+        simMatched: !!matched,
+        leadMatch: simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch,
+        fourMatch: simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch,
+        issueIds: ids.slice(0, 8),
+        firstDeviation: simComparison.firstDeviation || '',
+        note: 'Replay-derived calibration signal only. Do not automatically rewrite sim models from one replay.'
+      },
+      recommendedAction: shouldCreateScenario
+        ? 'Queue this as a replay-derived stress scenario, then retest with simulations before changing recommendations.'
+        : 'Keep as coaching context; collect more logs before changing sim assumptions.'
+    };
+    if (!matched) {
+      packet.shouldUpdateLeadModel = false;
+      packet.shouldUpdateBringFourModel = false;
+      packet.shouldUpdateArchetypeModel = false;
+      packet.evidence.note = 'No matched sim plan was available; use this packet for coaching only until the matchup is simulated.';
+    }
+    if (packet.rngContamination === 'moderate') {
+      packet.shouldUpdateLeadModel = false;
+      packet.shouldUpdateBringFourModel = false;
+      packet.shouldUpdateArchetypeModel = false;
+      packet.recommendedAction = 'Treat this replay as variance-contaminated; review safer lines before using it for calibration.';
+    }
+    return { simFeedback: packet };
+  }
+
   function buildWinPath(parsed, review, critical) {
     var side = parsed && parsed.selectedSide || 'p1';
     var summary = (review && review.summary) || {};
@@ -698,6 +805,7 @@
       practicePlan: buildPracticePlan(review),
       trendDashboard: buildTrendDashboard(opts.priorReports || [])
     };
+    report.simFeedback = buildSimFeedbackPacket(parsed, review, report.simComparison).simFeedback;
     report.premiumTeasers = buildPremiumTeasers(report);
     return report;
   }
@@ -711,6 +819,7 @@
   ChampionsSim.replayLearning.buildBattleIqScore = buildBattleIqScore;
   ChampionsSim.replayLearning.buildEvidenceStandard = buildEvidenceStandard;
   ChampionsSim.replayLearning.buildSimComparison = buildSimComparison;
+  ChampionsSim.replayLearning.buildSimFeedbackPacket = buildSimFeedbackPacket;
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = ChampionsSim.replayLearning;

@@ -23,6 +23,7 @@
 | M11 | Advanced Features | ⏳ Deferred | M8 gate |
 | M12 | Battle Sensei | 🧪 R1/R2 MVP started | Stage 3 credibility gate |
 | M13 | Meta Stress Lab | 📝 Planned | Source-labeled meta + legal stress testing |
+| M14 | Launch Security & Premium Access | 📝 Planned | #208 parent |
 
 ---
 
@@ -47,23 +48,27 @@ The product is now centered on a coaching intelligence loop:
 4. **Battle IQ** scores observable decision quality with confidence labels.
 5. **Profile/DB** stores durable memory, trends, privacy-safe aggregate signals, and premium personalization.
 6. **Meta Stress Lab** challenges the build with source-labeled meta snapshots and legal stress scenarios.
+7. **Launch Security & Premium Access** protects public hosting, login, payment, Supabase privacy, and abuse controls before paid coaching memory goes live.
 
 Near-term work should protect this sequence. Meta Stress Lab is valuable, but it should not jump ahead of evidence cleanup, sim-feedback packets, and persistence/privacy foundations.
+Launch security is a parallel launch-readiness lane: keep GitHub Pages for the static demo, but move premium login/payment/webhooks behind a server-capable host before storing paid coaching memory.
 
 ## Current Execution Order
 
 | Order | Issue | Why Next |
 |---|---|---|
 | Done | #201 Align Strategy coaching with Battle Sensei evidence standards | Closed after Strategy adopted the Battle Sensei evidence vocabulary. |
-| 1 | #194 Sim Feedback Packet | Turns Battle Sensei replay output into reusable sim-calibration signals without auto-mutating models. |
-| 2 | #195 Replay persistence schema + privacy controls | Defines what can be saved, what stays local, and raw-log boundaries. |
-| 3 | #197 Supabase replay schema migration | Implements the DB layer after privacy rules are explicit. |
-| 4 | #198 Battle IQ profile schema + norm groups | Enables premium Battle IQ history and matched comparisons. |
-| 5 | #199 Opt-in aggregate learning signals | Enables aggregate coaching while protecting users. |
-| 6 | #200 Replay-to-sim calibration scenario queue | Bridges Battle Sensei logs into future Meta Stress Lab scenarios. |
-| 7 | #203 M13 meta snapshot schema | Starts Meta Stress Lab after the evidence and DB loop is clear. |
+| Done | #194 Sim Feedback Packet | Closed after Battle Sensei began emitting replay-derived calibration signals without auto-mutating models. |
+| 1 | #195 Replay persistence schema + privacy controls | Defines what can be saved, what stays local, and raw-log boundaries. |
+| 2 | #197 Supabase replay schema migration | Implements the DB layer after privacy rules are explicit. |
+| 3 | #198 Battle IQ profile schema + norm groups | Enables premium Battle IQ history and matched comparisons. |
+| 4 | #199 Opt-in aggregate learning signals | Enables aggregate coaching while protecting users. |
+| 5 | #200 Replay-to-sim calibration scenario queue | Bridges Battle Sensei logs into future Meta Stress Lab scenarios. |
+| 6 | #203 M13 meta snapshot schema | Starts Meta Stress Lab after the evidence and DB loop is clear. |
 
-Recommended next implementation issue: **#194**.
+Recommended next implementation issue: **#195**.
+
+Parallel launch-readiness issue: **#208**. This should not block local Battle Sensei engine work, but it must gate public premium launch.
 
 ---
 
@@ -201,11 +206,11 @@ Recommended next implementation issue: **#194**.
 | #191 | Core replay coaching rules: lead, bring-four, speed-control, Protect, targeting, switching | ✅ CLOSED |
 | #192 | Critical turn engine: first mistake, fatal mistake, biggest swing | ✅ CLOSED |
 | #193 | Sim comparison card: sim lead/four/path vs actual replay lead/four/path | ✅ CLOSED |
+| #194 | Sim Feedback Packet for replay-calibrated coaching signals | ✅ CLOSED |
 | #198 | Battle IQ profile schema + norm groups | P2 |
 | #199 | Opt-in aggregate learning signals | P2 |
 | #200 | Replay-to-sim calibration scenario queue | P2 |
 | #201 | Align Strategy coaching with Battle Sensei evidence standards | ✅ CLOSED |
-| #194 | Sim Feedback Packet for replay-calibrated coaching signals | P2 |
 | #195 | Replay persistence schema + explicit raw-log privacy controls | P2 |
 | #196 | Multi-log Player Pattern Dashboard | P2 |
 | #197 | Supabase replay schema migration | P2 |
@@ -224,6 +229,20 @@ Recommended next implementation issue: **#194**.
 | #205 | Strategy integration: replace static threat radar and upgrade `csStressTest()` with scenario-backed findings | P2 |
 | #207 | Premium aggregate pattern suggestions for possible team changes | P2 |
 | #200 | Battle Sensei integration: replay-derived stress scenarios and sim calibration signals | P3 |
+
+## Backlog — Launch Security & Premium Access (M14)
+
+> Product line: Free users get immediate local coaching value. Premium users unlock durable memory, saved profiles, trend history, Battle IQ growth, and personalized coaching.
+> Hosting direction: GitHub Pages is acceptable for the static free demo. A custom domain is recommended for public trust. Premium auth, payment webhooks, entitlement checks, rate limits, and private coaching memory require a server-capable deployment layer such as Vercel, Netlify, Cloudflare Pages/Workers, or a small backend service.
+
+| Issue | Priority |
+|---|---|
+| #208 | Parent tracker: launch security, premium access, and deployment hardening | P2 |
+| #209 | Auth/login and premium profile entitlement model | P2 |
+| #210 | Payment checkout and entitlement verification | P2 |
+| #211 | Free vs premium coaching boundary and upgrade UX | P2 |
+| #212 | Supabase security, privacy, and RLS audit for coaching data | P2 |
+| #213 | Deployment hardening, cache safety, and abuse protection | P2 |
 
 ---
 
@@ -244,6 +263,7 @@ Recommended next implementation issue: **#194**.
 | **M11 Advanced Features** | Replay shortlinks, multi-team compare, live fingerprinting. Post-M8 only. |
 | **M12 Battle Sensei** | Parse Showdown logs, diagnose real player decisions, compare replay paths to sim plans, and produce replay-calibrated coaching signals. |
 | **M13 Meta Stress Lab** | Source-labeled meta snapshots, legal set templates, and targeted stress scenarios that challenge the team without pretending synthetic data is live usage truth. |
+| **M14 Launch Security & Premium Access** | Public deployment hardening, login, server-verified premium entitlements, Supabase RLS/privacy, rate limits, cache safety, and a custom-domain-ready hosting plan. |
 
 ---
 

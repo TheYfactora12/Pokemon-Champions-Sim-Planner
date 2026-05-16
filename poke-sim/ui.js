@@ -2795,6 +2795,7 @@ function csReplayCoachRenderAnalysis(analysis) {
   var learning = review.learningReport || null;
   var evidenceStandard = learning && learning.evidenceStandard ? learning.evidenceStandard : null;
   var simComparison = learning && learning.simComparison ? learning.simComparison : null;
+  var simFeedback = learning && learning.simFeedback ? learning.simFeedback : null;
   var rawPreview = review.rawLogPreview || {};
   var bringConfidence = summary.selectedFourConfidence || {};
   var warnings = (review.warnings || []).map(function(w) {
@@ -2962,6 +2963,20 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>First deviation</strong>' + _escapeHtml(simComparison.firstDeviation || simComparison.note || 'Needs sim data') + '<small>' + _escapeHtml(simComparison.decisionChange || '') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>Diagnosis boundary</strong>' + _escapeHtml(simComparison.teamVsPilotDiagnosis || 'Do not judge team vs pilot until sim and replay data are matched.') + '</div>' +
+      '</div>' +
+    '</div>' : '') +
+    (simFeedback ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Sim Feedback Packet</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(simFeedback.confidence || 'low') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Scenario</strong><span>' + _escapeHtml(simFeedback.scenarioType || 'none') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Pilot difficulty</strong><span>' + _escapeHtml(simFeedback.pilotDifficultySignal || 'low') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>RNG</strong><span>' + _escapeHtml(simFeedback.rngContamination || 'none') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Model updates</strong>' + _escapeHtml('Lead: ' + !!simFeedback.shouldUpdateLeadModel + ' · Bring four: ' + !!simFeedback.shouldUpdateBringFourModel + ' · Archetype: ' + !!simFeedback.shouldUpdateArchetypeModel) + '<small>Single replay signals do not automatically rewrite sim models.</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Scenario queue</strong>' + _escapeHtml(simFeedback.shouldCreateScenario ? 'Queue for stress retest' : 'Do not queue yet') + '<small>' + _escapeHtml(simFeedback.recommendedAction || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Evidence</strong>' + _escapeHtml((simFeedback.evidence && simFeedback.evidence.note) || 'Replay-derived calibration signal only.') + '</div>' +
       '</div>' +
     '</div>' : '') +
     '<div class="replay-coach-card">' +

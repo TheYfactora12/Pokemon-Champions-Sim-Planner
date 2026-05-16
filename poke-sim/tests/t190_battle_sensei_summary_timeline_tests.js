@@ -62,6 +62,9 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, '<h3 class="replay-coach-h3">Win Path + Opponent Plan</h3>');
   inc(ui, '<strong>Opponent plan evidence</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Sim Comparison</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Sim Feedback Packet</h3>');
+  inc(ui, 'Single replay signals do not automatically rewrite sim models.');
+  inc(ui, 'Scenario queue');
   inc(ui, '<strong>Diagnosis boundary</strong>');
   inc(ui, 'csBuildBattleSenseiSimPlan');
   inc(ui, 'latest in-app simulation strategy report');
