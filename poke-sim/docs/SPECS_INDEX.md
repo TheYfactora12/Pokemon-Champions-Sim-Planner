@@ -27,6 +27,7 @@ When the migration is complete, `poke-sim/*.md` spec files will be deleted from 
 | [`PHASE6_COACHING_VOICE_SPEC.md`](../PHASE6_COACHING_VOICE_SPEC.md) | 6 — Coaching Voice | #169 | ✅ Final |
 | [`SHOWDOWN_REPLAY_COACH_SPEC.md`](./SHOWDOWN_REPLAY_COACH_SPEC.md) | Stage 3 — Battle Sensei | TBD | 🧪 R1/R2 MVP started |
 | [`BATTLE_IQ_SPEC.md`](./BATTLE_IQ_SPEC.md) | Stage 3 — Battle Sensei scoring | #187 | 🧪 R1 shipped |
+| [`META_STRESS_LAB_SPEC.md`](./META_STRESS_LAB_SPEC.md) | M13 — Meta Stress Lab | #202 | 📝 Planned |
 | [`PHASE_ROLLOUT_REVIEW.md`](../PHASE_ROLLOUT_REVIEW.md) | All phases | #170 | 📋 Review doc |
 | [`COACHING_NORTH_STAR.md`](../COACHING_NORTH_STAR.md) | All phases | — | ⭐ Reference — do not delete |
 

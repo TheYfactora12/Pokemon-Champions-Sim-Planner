@@ -22,6 +22,7 @@
 | M10 | Performance & Quality | 🟡 Partial | #92, #93, #94 |
 | M11 | Advanced Features | ⏳ Deferred | M8 gate |
 | M12 | Battle Sensei | 🧪 R1/R2 MVP started | Stage 3 credibility gate |
+| M13 | Meta Stress Lab | 📝 Planned | Source-labeled meta + legal stress testing |
 
 ---
 
@@ -174,6 +175,21 @@
 | #196 | Multi-log Player Pattern Dashboard | P2 |
 | #197 | Supabase replay schema migration | P2 |
 
+## Backlog — Meta Stress Lab (M13, Build Challenge)
+
+> Product line: Sim Mode builds the team. Battle Sensei builds the player. Meta Stress Lab challenges the build.
+> Canonical spec: [`poke-sim/docs/META_STRESS_LAB_SPEC.md`](./poke-sim/docs/META_STRESS_LAB_SPEC.md)
+
+| Issue | Priority |
+|---|---|
+| #202 | Parent tracker: Meta Stress Lab + Build Challenge Coach | P2 |
+| #203 | Meta snapshot schema and source-labeled top usage loader | P2 |
+| #204 | Constrained legal set generator for observed sets, role templates, and mutations | P2 |
+| #206 | Stress Test Matrix for doubles and singles scenario queues | P2 |
+| #205 | Strategy integration: replace static threat radar and upgrade `csStressTest()` with scenario-backed findings | P2 |
+| #207 | Premium aggregate pattern suggestions for possible team changes | P2 |
+| TBD | Battle Sensei integration: replay-derived stress scenarios and sim calibration signals | P3 |
+
 ---
 
 ## Milestone Definitions
@@ -192,6 +208,7 @@
 | **M10 Performance & Quality** | Memoization, log caps, XSS audit, NVDA/VO focus management — measurable gains. |
 | **M11 Advanced Features** | Replay shortlinks, multi-team compare, live fingerprinting. Post-M8 only. |
 | **M12 Battle Sensei** | Parse Showdown logs, diagnose real player decisions, compare replay paths to sim plans, and produce replay-calibrated coaching signals. |
+| **M13 Meta Stress Lab** | Source-labeled meta snapshots, legal set templates, and targeted stress scenarios that challenge the team without pretending synthetic data is live usage truth. |
 
 ---
 
@@ -225,6 +242,7 @@ All spec files live in [`poke-sim/docs/`](./poke-sim/docs/).
 | `SHOWDOWN_REPLAY_COACH_SPEC.md` | Stage 3 Battle Sensei | 🧪 R1/R2 MVP started |
 | `PHASE_ROLLOUT_REVIEW.md` | All | 📋 Review |
 | `COACHING_NORTH_STAR.md` | All | ⭐ Reference |
+| `META_STRESS_LAB_SPEC.md` | M13 Meta Stress Lab | 📝 Planned |
 
 ---
 
