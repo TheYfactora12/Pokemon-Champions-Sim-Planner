@@ -1,8 +1,8 @@
 // T9j.16 (Refs #65) - Champions Coaching Engine tests
 //
-// Coverage targets (~62 cases):
+// Coverage targets (~64 cases):
 //   Section A - teamSignature stability + collision (3)
-//   Section B - inferTeamIdentity branches (4)
+//   Section B - inferTeamIdentity branches (5)
 //   Section C - 17 coaching rules: fires/doesn't fire (34)
 //   Section D - Elite decision analysis derivations (5)
 //   Section E - Pilot plan + matchup warnings (4)
@@ -83,6 +83,7 @@ vm.runInContext([
   'this.strategyResultsHash=strategyResultsHash;',
   'this.csStrategyReportCacheSize=csStrategyReportCacheSize;',
   'this.csClearStrategyReportCache=csClearStrategyReportCache;',
+  'this.buildLeadSystem=buildLeadSystem;',
   'this.inferTeamIdentity=inferTeamIdentity;',
   'this.evaluateT9j16Rules=evaluateT9j16Rules;',
   'this.analyzeEliteDecisions=analyzeEliteDecisions;',
@@ -90,6 +91,7 @@ vm.runInContext([
   'this.buildMatchupWarnings=buildMatchupWarnings;',
   'this.buildLeadRecoveryPlan=buildLeadRecoveryPlan;',
   'this.buildCoachingSummary=buildCoachingSummary;',
+  'this.csStrategyEvidenceStandard=csStrategyEvidenceStandard;',
   'this.buildStrategyReport=buildStrategyReport;',
   'this.saveStrategyReport=saveStrategyReport;',
   'this.loadStrategyReport=loadStrategyReport;',
@@ -100,9 +102,9 @@ vm.runInContext([
 
 const {
   TEAMS, teamSignature, strategyResultsHash, csStrategyReportCacheSize, csClearStrategyReportCache,
-  inferTeamIdentity, evaluateT9j16Rules,
+  buildLeadSystem, inferTeamIdentity, evaluateT9j16Rules,
   analyzeEliteDecisions, buildPilotPlan, buildMatchupWarnings,
-  buildLeadRecoveryPlan, buildCoachingSummary, buildStrategyReport,
+  buildLeadRecoveryPlan, buildCoachingSummary, csStrategyEvidenceStandard, buildStrategyReport,
   saveStrategyReport, loadStrategyReport, evolveReport,
   _renderT9j16PdfSections, T9J16_RULES
 } = ctx;
@@ -138,11 +140,12 @@ T('A4. strategyResultsHash is stable for reordered result keys', () => {
 });
 
 // ---------- Section B: inferTeamIdentity ----------
-T('B1. inferTeamIdentity - flags clarity issue when no win path', () => {
+T('B1. inferTeamIdentity - derives a baseline plan when no win path is sampled', () => {
   const t = TEAMS.player;
   const id = inferTeamIdentity(t, {}, 'doubles');
-  eq(id.primary_win_condition, 'unclear');
+  truthy(id.primary_win_condition && id.primary_win_condition !== 'unclear', 'expected a baseline primary win condition');
   eq(id.primary_win_path_pct, 0);
+  truthy(/tempo|preserve|endgame|support|speed control|Trick Room|weather/i.test(id.primary_win_condition), 'expected a coaching-oriented fallback');
 });
 T('B2. inferTeamIdentity - extracts top win path from results', () => {
   const t = TEAMS.player;
@@ -161,6 +164,19 @@ T('B4. inferTeamIdentity - format viability flags doubles-favored when redirecto
   const t = { members: [{ name: 'Clefable', moves: ['Follow Me'], ability: 'Magic Guard', item: 'Sitrus Berry' }] };
   const id = inferTeamIdentity(t, {}, 'doubles');
   eq(id.format_viability, 'doubles-favored');
+});
+T('B5. buildLeadSystem - derives a baseline opener before battle samples exist', () => {
+  const t = TEAMS.player;
+  const lead = buildLeadSystem({}, t.members);
+  truthy(lead.safe, 'expected a baseline safe lead');
+  truthy(lead.speed, 'expected a baseline speed lead');
+});
+T('B6. buildStrategyReport - no sample surfaces baseline matchup guidance', () => {
+  const report = buildStrategyReport('player', {}, 'doubles');
+  truthy(report && report.matchup_intelligence, 'expected matchup intelligence');
+  eq(report.matchup_intelligence.grade, 'unproven');
+  truthy((report.matchup_intelligence.safe_leads || []).length > 0, 'expected baseline safe lead');
+  truthy(String(report.matchup_intelligence.best_win_path || '').length > 0, 'expected a baseline win path');
 });
 
 // ---------- Section C: 17 coaching rules - fires + doesn't fire ----------
@@ -417,6 +433,23 @@ T('F3. buildStrategyReport - confidence_tier upgrades with sample size', () => {
   const big = { o1: { wins: 60, losses: 40, draws: 0, allLogs: [], winConditions: { 'TR sweep': 60 } } };
   const r2 = buildStrategyReport('player', big, 'doubles');
   truthy(r2.confidence_tier === 'moderate' || r2.confidence_tier === 'high', 'expected moderate or high, got ' + r2.confidence_tier);
+});
+T('F4. strategy evidence standard uses Battle Sensei labels', () => {
+  const noData = csStrategyEvidenceStandard(0, 'low');
+  eq(noData.label, 'Needs more data');
+  eq(noData.confidence, 'low');
+  const thin = csStrategyEvidenceStandard(8, 'low');
+  eq(thin.label, 'Weak inference');
+  const moderate = csStrategyEvidenceStandard(50, 'moderate');
+  eq(moderate.label, 'Strong inference');
+  const mature = csStrategyEvidenceStandard(120, 'high');
+  eq(mature.label, 'Observed');
+});
+T('F5. buildStrategyReport exposes evidence and cautious no-sample guidance', () => {
+  const r = buildStrategyReport('player', {}, 'doubles');
+  eq(r.evidence_standard.label, 'Needs more data');
+  eq(r.provenance.evidence_label, 'Needs more data');
+  truthy(/Run matchup simulations/.test(r.evidence_standard.decision), 'no-data decision should tell trainer what to do next');
 });
 
 // ---------- Section G: Persistence ----------

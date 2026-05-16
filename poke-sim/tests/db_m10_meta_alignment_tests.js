@@ -30,7 +30,7 @@ function eq(actual, expected, msg) {
   }
 }
 
-const MIGRATION = path.join(__dirname, '..', 'db', 'migrations', '2026_05_12_align_reg_ma_meta_sources.sql');
+const MIGRATION = path.join(__dirname, '..', 'db', 'migrations', '2026_05_15_refresh_reg_ma_meta_sources.sql');
 const sql = fs.readFileSync(MIGRATION, 'utf8');
 
 function extractUsageJson() {
@@ -47,14 +47,17 @@ T('T-meta-1 migration adds prior_snapshots.usage_data', function () {
 });
 
 T('T-meta-2 snapshot id and format are stable', function () {
-  truthy(sql.includes('reg_ma_meta_2026_05_12_public_sources'), 'missing snapshot id');
+  truthy(sql.includes('reg_ma_meta_2026_05_15_public_sources'), 'missing snapshot id');
   truthy(sql.includes('gen9championsvgc2026regma'), 'missing Champions Reg M-A format id');
 });
 
-T('T-meta-3 source audit records Smogon stats absence separately from usage data', function () {
+T('T-meta-3 source audit records Smogon stats file presence separately from usage data', function () {
   const data = extractUsageJson();
-  eq(data.source_audit.smogon_stats.champions_reg_ma_file_seen, false,
-    'Smogon stats index should be recorded as checked but not used as usage data');
+  eq(data.source_audit.smogon_stats.champions_reg_ma_file_seen, true,
+    'Smogon stats index should record Champions Reg M-A file presence');
+  truthy(Array.isArray(data.source_audit.smogon_stats.champions_reg_ma_files_seen) &&
+    data.source_audit.smogon_stats.champions_reg_ma_files_seen[0] === 'gen9championsvgc2026regma-0.txt',
+    'Smogon stats file path confirmation missing');
   truthy(data.source_audit.smogon_forum.formatid_seen === 'gen9championsvgc2026regma',
     'Smogon forum challenge-code format id should be captured');
 });
@@ -76,6 +79,8 @@ T('T-meta-5 Pokestats Bo3 ordering is captured for tournament priors', function 
 T('T-meta-6 ShowdownTier is labeled as performance cross-check', function () {
   const data = extractUsageJson();
   eq(data.showdowntier_live_top[0].pokemon, 'Basculegion', 'ShowdownTier top performance row');
+  eq(data.source_audit.showdowntier.last_updated_at, '2026-05-15 01:04 UTC',
+    'ShowdownTier timestamp should be refreshed');
   truthy(data.alignment_notes.some(note => note.indexOf('performance cross-check') !== -1),
     'performance cross-check note missing');
 });
@@ -93,7 +98,7 @@ T('T-meta-7 live DB can read aligned prior snapshot when RUN_LIVE_DB=1', functio
   try {
     body = execFileSync('curl', [
       '-fsS',
-      url + '/rest/v1/prior_snapshots?prior_id=eq.reg_ma_meta_2026_05_12_public_sources&select=prior_id,usage_data',
+      url + '/rest/v1/prior_snapshots?prior_id=eq.reg_ma_meta_2026_05_15_public_sources&select=prior_id,usage_data',
       '-H', 'apikey: ' + key,
       '-H', 'Authorization: Bearer ' + key
     ], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });

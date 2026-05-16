@@ -32,8 +32,8 @@ T('3. stats button becomes full width on mobile roster rows', () => {
 });
 
 T('4. compact bring chips can wrap long names on mobile', () => {
-  inc(css, '.bring-pool-chip{max-width:100%}');
-  inc(css, '.bring-pool-chip-name{white-space:normal;overflow-wrap:anywhere;line-height:1.1}');
+  inc(css, '.bring-pool-chip{flex:0 0 auto;max-width:100%}');
+  inc(css, '.bring-pool-chip-name{white-space:normal;overflow-wrap:break-word;line-height:1.1}');
 });
 
 console.log(`\nmobile roster layout: ${pass} pass, ${fail} fail\n`);

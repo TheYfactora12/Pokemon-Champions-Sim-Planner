@@ -13,6 +13,14 @@
 
 You are continuing development of **Pokémon Champion 2026**, a production-grade VGC competitive team simulator built as a static, offline-capable PWA — now with a live Supabase database backend for persistent analysis storage. **DB integration is mid-rollout** — see `## SUPABASE DATABASE LAYER` below for the active 9-module plan and TDD suite.
 
+Battle Sensei is the replay-coaching product surface. Sim Mode builds the team; Battle Sensei builds the player. The canonical specs are:
+- `poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`
+- `poke-sim/docs/BATTLE_IQ_SPEC.md`
+
+Battle IQ means a standardized estimate of game-specific competitive battle intelligence based on observable battle decisions, matchup context, and player execution patterns. It is not a measure of general human intelligence. Single-battle Battle IQ must remain provisional and confidence-labeled. Do not ship a Battle IQ feature unless it explains what decision should change.
+
+Battle Sensei must prioritize observable evidence over speculative interpretation. If evidence is weak, lower confidence, avoid hard claims, and recommend additional battles. Never invent opponent intent; infer likely strategic intent only from common archetype behavior, board state, move sequencing, and revealed information.
+
 **GitHub repo:** https://github.com/alfredocox/Pokemon-Champions-Sim-Planner
 **Default branch:** `main`
 **Active dev branch:** `main` (all work goes directly to main)
@@ -151,7 +159,7 @@ RUN_LIVE_DB=1 SUPABASE_URL=... SUPABASE_KEY=... node tests/db_m2_seed_tests.js
 Expected line on full success (mirrors the storage adapter precedent): `✅ all DB tests passed`.
 
 ### Hard rules (apply to every DB module)
-- `COVERAGE_CHECKS` MUST stay `var` (TDZ break otherwise).
+- Coverage checks are lazy-initialized via `getCoverageChecks()` / `buildCoverageChecks()`. Do not reintroduce a top-level `COVERAGE_CHECKS` registry.
 - Adapter global is `window.SupabaseAdapter`, NOT `supabase` (the CDN owns that name).
 - Anon key only in any frontend file. Never expose `service_role`.
 - All DB calls fail-soft (`.catch(...) → console.warn`). App must work offline.
@@ -308,13 +316,18 @@ Run: `node poke-sim/tests/ui_storage_integration_tests.js`
 
 ---
 
-## CRITICAL BUG — DO NOT CHANGE
+## Coverage Registry Guard
 
 ```javascript
-// In ui.js — MUST be declared as var, NOT const or let
-var COVERAGE_CHECKS = [...];
+// In ui.js
+var _coverageChecks = null;
+function buildCoverageChecks() { return [/* registry rows */]; }
+function getCoverageChecks() {
+  if (!_coverageChecks) _coverageChecks = buildCoverageChecks();
+  return _coverageChecks;
+}
 ```
-Referenced during init before declaration. `const`/`let` causes TDZ ReferenceError and breaks app on load. Every rebuild must verify `var` is preserved.
+The old top-level `var COVERAGE_CHECKS` workaround is gone. Keep the lazy-init pattern so startup and future module splits do not depend on declaration order.
 
 ---
 
@@ -442,4 +455,3 @@ RUN_LIVE_DB=1 SUPABASE_URL='https://ymlahqnshgiarpbgxehp.supabase.co' SUPABASE_K
 4. **M3 (POK-19)** — `loadTeamsFromDB` becomes awaited source of truth on init; offline fallback verified.
 5. **M4 (POK-20)** — persist `runBoSeries` results via `SupabaseAdapter.saveAnalysis`.
 6. **M9 stretch** — wire `tests/_run_all_db.sh` into `.github/workflows/` so DB suites run on every PR (currently only bundle-freshness + cache-bump checks run).
-

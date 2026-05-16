@@ -24,6 +24,11 @@ T('1. Teams panel content exists in the app shell', () => {
   inc(html, '<div class="teams-grid" id="teams-grid"></div>');
 });
 
+T('1b. narrow phone teams use the compact picker path', () => {
+  inc(String(fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8')), 'function shouldUseCompactTeamsPicker()');
+  inc(String(fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8')), 'buildBringPickerHtml(key, { compact: compactTeamsPicker })');
+});
+
 T('2. narrow widths collapse the Teams panel into one column', () => {
   inc(css, '@media(max-width:760px){');
   inc(css, '.teams-actions{');
@@ -41,6 +46,10 @@ T('3. team cards and controls reflow for narrow cards', () => {
   inc(css, 'flex-wrap:wrap;');
   inc(css, '.poke-full-row{');
   inc(css, 'flex-wrap:wrap;');
+  inc(css, '.poke-full-name{');
+  inc(css, 'flex-wrap:wrap;');
+  inc(css, '.poke-full-item,');
+  inc(css, 'overflow-wrap:break-word;');
   inc(css, '.team-mon-detail-btn{');
   inc(css, 'width:100%;');
 });

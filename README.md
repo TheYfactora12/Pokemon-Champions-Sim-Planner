@@ -67,6 +67,8 @@ Pokemon-Champions-Sim-Planner/
 - Simulator-tab inline bring pickers for player + opponent sharing state with the Teams tab (T9j.12)
 - Custom team bulk import/export via file + filter chips on Teams tab (T9j.11)
 - Replay Log with All / Wins / Losses / Clutch filters
+- Battle Sensei replay coaching with provisional Battle IQ decision-quality scoring
+- Meta Stress Lab planning for source-labeled usage snapshots, legal stress scenarios, and build-challenge coaching
 - Auto-generated Pilot Guide per matchup
 - Strategy tab with team-level tactical guidance
 - Meta Threat Radar, Speed Tiers, Team Coverage checker
@@ -134,4 +136,7 @@ print(f'Bundle: {os.path.getsize(\"pokemon-champion-2026.html\"):,} bytes')
 
 - [`DEVELOPMENT_RUNBOOK.md`](./DEVELOPMENT_RUNBOOK.md) — full dev history, QA log, replication steps, known issues
 - [`MASTER_PROMPT.md`](./MASTER_PROMPT.md) — copy-paste context for resuming in a new AI session
+- [`poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`](./poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md) — Battle Sensei replay coaching spec
+- [`poke-sim/docs/BATTLE_IQ_SPEC.md`](./poke-sim/docs/BATTLE_IQ_SPEC.md) — Battle IQ scoring, confidence, premium memory, and privacy boundaries
+- [`poke-sim/docs/META_STRESS_LAB_SPEC.md`](./poke-sim/docs/META_STRESS_LAB_SPEC.md) — Meta Stress Lab and build-challenge roadmap
 - [`CHAMPIONS_VALIDATOR_FRAMEWORK.md`](./CHAMPIONS_VALIDATOR_FRAMEWORK.md) — validator framework governing engine change tickets

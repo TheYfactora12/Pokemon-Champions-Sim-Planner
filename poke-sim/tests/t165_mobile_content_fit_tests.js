@@ -34,8 +34,9 @@ T('2. card headers and badge stacks can wrap on mobile', () => {
 });
 
 T('3. long text is forced to break before it can overflow', () => {
-  inc(css, '.replay-title,.replay-meta,.tfcard-name,.tfcard-meta,.pilot-card-title,.pilot-leads,.cs-summary-line,.cs-explain,.cs-champ-pov,.audit-meta-row,.audit-table,.cs-threat-why,.cs-threat-play{overflow-wrap:anywhere;word-break:break-word}');
+  inc(css, '.replay-title,.replay-meta,.tfcard-name,.tfcard-meta,.pilot-card-title,.pilot-leads,.cs-summary-line,.cs-explain,.cs-champ-pov,.audit-meta-row,.audit-table,.cs-threat-why,.cs-threat-play{overflow-wrap:break-word;word-break:normal}');
   inc(css, '.move-tag,.rchip,.team-detail-chip,.cs-chip,.teams-filter-chip,.team-mon-detail-btn,.stat-panel-pill,.speed-val{white-space:normal}');
+  inc(css, '.bring-pool-chip-name{white-space:normal;overflow-wrap:break-word;line-height:1.1}');
 });
 
 T('4. dense grids collapse to one column on small screens', () => {

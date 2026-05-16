@@ -74,6 +74,7 @@ vm.runInContext([
   'this.auditCoachingDelta = auditCoachingDelta;',
   'this.renderStaticAdviceWarning = renderStaticAdviceWarning;',
   'this.csRenderPolicyAuditSection = csRenderPolicyAuditSection;',
+  'this.buildStrategyReport = buildStrategyReport;',
   'this.buildWeaknessDashboard = buildWeaknessDashboard;',
   'this.csRenderWeaknessDashboard = csRenderWeaknessDashboard;'
 ].join(' '), ctx);
@@ -225,7 +226,7 @@ T('T5-11 Policy Audit section renders static/adaptive state', () => {
   truthy(html.includes('STATIC ADVICE WARNING'), 'missing static warning');
 });
 
-T('T5-12 buildWeaknessDashboard returns the top 3 default sections', () => {
+T('T5-12 buildWeaknessDashboard returns matchup intelligence + top 3 coaching sections', () => {
   const dash = ctx.buildWeaknessDashboard(
     { members: [{ name: 'Incineroar', moves: ['Fake Out'] }] },
     {
@@ -240,11 +241,13 @@ T('T5-12 buildWeaknessDashboard returns the top 3 default sections', () => {
     [{ owner: 'Incineroar', move: 'Will-O-Wisp', times_used: 0, games_sampled: 18 }],
     [{ category: 'Speed control', note: 'No Tailwind or Trick Room - faster meta teams will outpace you.' }]
   );
-  eq(Array.isArray(dash.sections) ? dash.sections.length : 0, 3);
+  eq(Array.isArray(dash.sections) ? dash.sections.length : 0, 4);
   truthy(dash.summary && dash.summary.length > 0, 'missing summary');
-  truthy(dash.sections[0].title.includes('Matchup'), 'matchup section missing');
-  truthy(dash.sections[1].title.includes('Lead'), 'lead section missing');
-  truthy(dash.sections[2].title.includes('Dead'), 'dead move section missing');
+  truthy(dash.sections[0].title.includes('Matchup Intelligence'), 'matchup intelligence section missing');
+  truthy(dash.sections[1].title.includes('Matchup'), 'matchup gap section missing');
+  truthy(dash.sections[2].title.includes('Lead'), 'lead section missing');
+  truthy(dash.sections[3].title.includes('Dead'), 'dead move section missing');
+  truthy(dash.matchup_intelligence && Array.isArray(dash.matchup_intelligence.safe_leads), 'matchup intelligence payload missing');
 });
 
 T('T5-13 weakness dashboard renders actionable copy', () => {
@@ -264,6 +267,60 @@ T('T5-13 weakness dashboard renders actionable copy', () => {
   truthy(html.includes('Lead-pair issues'), 'missing lead card');
   truthy(html.includes('Dead moves'), 'missing dead move card');
   truthy(html.includes('Try leading Whimsicott + Arcanine'), 'missing matchup fix');
+});
+
+T('T5-14 strategy report exposes role anchors and matchup intelligence', () => {
+  const report = ctx.buildStrategyReport('player', {
+    mega_altaria: { wins: 2, losses: 8, draws: 0, allLogs: [] },
+    kingambit_sneasler: { wins: 1, losses: 6, draws: 0, allLogs: [] }
+  }, 'doubles');
+  truthy(report && report.team_identity, 'missing report');
+  truthy(report.matchup_intelligence, 'missing matchup intelligence payload');
+  truthy(report.provenance, 'missing provenance payload');
+  truthy(Array.isArray(report.coaching_notes.speed_control_mons), 'missing speed control anchors');
+  truthy(Array.isArray(report.coaching_notes.pivot_mons), 'missing pivot anchors');
+  truthy(Array.isArray(report.coaching_notes.safe_leads), 'missing safe leads');
+  truthy(report.coaching_notes.best_win_path, 'missing best win path');
+  truthy(report.coaching_notes.common_loss_path, 'missing common loss path');
+});
+
+T('T5-15 strategy report exposes provenance and BO3 adaptation', () => {
+  const report = ctx.buildStrategyReport('player', {
+    mega_altaria: { wins: 4, losses: 6, draws: 0, allLogs: [
+      { result: 'win', turns: 6, leads: { player: ['Incineroar', 'Whimsicott'] }, log: [] },
+      { result: 'loss', turns: 5, leads: { player: ['Incineroar', 'Whimsicott'] }, log: [] },
+      { result: 'win', turns: 7, leads: { player: ['Incineroar', 'Whimsicott'] }, log: [] }
+    ] }
+  }, 'doubles');
+  truthy(report.provenance && report.provenance.source_label, 'missing source label');
+  truthy(report.provenance && report.provenance.freshness_label, 'missing freshness label');
+  truthy(report.provenance && report.provenance.decision_rule.includes('Never show a statistic'), 'missing decision rule');
+  truthy(report.bo3_adaptation, 'missing BO3 adaptation payload');
+  truthy(report.bo3_adaptation.game1_lead, 'missing game1 lead');
+  truthy(report.bo3_adaptation.game2_plan, 'missing game2 plan');
+  truthy(report.bo3_adaptation.opponent_adjustment_prediction, 'missing opponent prediction');
+  truthy(report.bo3_adaptation.counter_adjustment, 'missing counter adjustment');
+});
+
+T('T5-16 weakness dashboard accepts pokemon-shaped dead-move rows', () => {
+  const dash = ctx.buildWeaknessDashboard(
+    { members: [{ name: 'Incineroar', moves: ['Fake Out', 'Knock Off'] }] },
+    {
+      mega_altaria: { wins: 1, losses: 2, draws: 0 },
+      kingambit_sneasler: { wins: 1, losses: 2, draws: 0 },
+      player: { wins: 1, losses: 1, draws: 0 }
+    },
+    'doubles',
+    {},
+    { safe: 'Incineroar + Whimsicott', speed: 'Whimsicott + Arcanine', pressure: 'Incineroar + Arcanine' },
+    { best_lead: { lead: ['Incineroar', 'Whimsicott'], win_rate: 0.6, n: 5 } },
+    [{ pokemon: 'Incineroar', move: 'Knock Off' }],
+    [{ category: 'Speed control', note: 'No Tailwind or Trick Room - faster meta teams will outpace you.' }]
+  );
+  const deadSection = dash.sections.find(function(section){ return section.title === 'Dead moves'; });
+  truthy(deadSection, 'missing dead move section');
+  truthy((deadSection.rows[0].label || '').indexOf('Incineroar - Knock Off') >= 0, 'dead move label should use pokemon fallback');
+  truthy((deadSection.rows[0].value || '').indexOf('8 games') >= 0, 'dead move value should use total sample size fallback');
 });
 
 console.log(`\nPhase 4e policy regression: ${pass} pass, ${fail} fail\n`);

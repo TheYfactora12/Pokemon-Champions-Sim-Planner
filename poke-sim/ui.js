@@ -940,9 +940,10 @@ function buildBringPickerHtml(teamKey, opts) {
         '" draggable="' + (manualMode ? 'true' : 'false') + '">' +
         '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
         '<div class="poke-full-info">' +
-          '<div class="poke-full-name">' + _escapeHtml(m.name) +
-            ' <span style="font-weight:400;color:var(--text-m);font-size:10px">@ ' + _escapeHtml(m.item || '\u2014') + '</span>' +
-            (inBring ? ' <span style="font-size:9px;color:var(--accent,#4a9eff);font-weight:600;margin-left:4px">\u25c6 ' +
+          '<div class="poke-full-name">' +
+            '<span class="poke-full-name-main">' + _escapeHtml(m.name) + '</span>' +
+            '<span class="poke-full-item">@ ' + _escapeHtml(m.item || '\u2014') + '</span>' +
+            (inBring ? '<span class="poke-full-bring">\u25c6 ' +
               _escapeHtml((bring.indexOf(m.name) < leadCount ? 'LEAD' : 'BENCH') + ' ' + (bring.indexOf(m.name)+1)) + '</span>' : '') +
           '</div>' +
           '<div class="poke-full-detail">' + _escapeHtml(m.ability || '\u2014') + ' \u00b7 ' + _escapeHtml(m.nature || 'Hardy') + ' \u00b7 Lv' + _escapeHtml(String(m.level || 50)) + '</div>' +
@@ -965,6 +966,11 @@ function buildBringPickerHtml(teamKey, opts) {
   return modeToggle + modeHint +
     '<div class="bring-slots">' + slotsHtml + '</div>' +
     '<div class="' + poolCls + '">' + poolHtml + '</div>';
+}
+
+function shouldUseCompactTeamsPicker() {
+  var matchMediaFn = getWindowValue('matchMedia', null);
+  return !!(matchMediaFn && matchMediaFn('(hover: none) and (pointer: coarse) and (max-width: 760px)').matches);
 }
 
 // Shared wiring: attach drag/tap handlers to every .bring-mode-btn /
@@ -1197,6 +1203,7 @@ function renderTeamsGrid() {
   for (const [key, team] of Object.entries(TEAMS)) {
     if (!teamMatchesFilter(key, team, TEAMS_FILTER)) continue;
     const isPlayer = key === 'player';
+    const compactTeamsPicker = shouldUseCompactTeamsPicker();
     const card = document.createElement('div');
     card.className = 'team-full-card';
     card.innerHTML = `
@@ -1225,7 +1232,7 @@ function renderTeamsGrid() {
           ${team.source === 'custom' ? `<button class="delete-card-btn" data-team="${key}" title="Delete this custom team"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>` : ''}
         </div>
       </div>
-      ${buildBringPickerHtml(key, { compact: false })}`;
+      ${buildBringPickerHtml(key, { compact: compactTeamsPicker })}`;
     grid.appendChild(card);
   }
   // Export buttons
@@ -2750,6 +2757,421 @@ function renderHistorySection() {
   }
 }
 
+// ============================================================
+// BATTLE SENSEI UI
+// Local-only MVP shell. Persistence and Supabase sync are tracked
+// separately so replay analysis never depends on DB availability.
+// ============================================================
+function csReplayCoachJoin(list, fallback) {
+  return Array.isArray(list) && list.length ? list.join(' + ') : (fallback || 'Unknown');
+}
+
+function csReplayCoachSeverityClass(value) {
+  if (value === 'high') return 'high';
+  if (value === 'medium') return 'medium';
+  return 'low';
+}
+
+function csReplayCoachRenderEvent(ev) {
+  if (!ev) return '';
+  if (ev.type === 'move') {
+    return _escapeHtml((ev.pokemon || '?') + ' used ' + (ev.move || '?') + (ev.target ? ' into ' + ev.target : ''));
+  }
+  if (ev.type === 'switch' || ev.type === 'drag' || ev.type === 'replace') {
+    return _escapeHtml((ev.forced ? 'Forced switch: ' : 'Switch: ') + (ev.pokemon || '?'));
+  }
+  if (ev.type === 'faint') return _escapeHtml((ev.pokemon || '?') + ' fainted');
+  if (ev.type === 'damage') return _escapeHtml((ev.pokemon || '?') + ' took damage' + (ev.hp != null ? ' to ' + ev.hp + '%' : ''));
+  if (ev.type === 'heal') return _escapeHtml((ev.pokemon || '?') + ' healed' + (ev.hp != null ? ' to ' + ev.hp + '%' : ''));
+  return _escapeHtml(ev.text || ev.type || '');
+}
+
+function csReplayCoachRenderAnalysis(analysis) {
+  var host = document.getElementById('replay-coach-results');
+  if (!host || !analysis) return;
+  var parsed = analysis.parsed || {};
+  var review = analysis.review || {};
+  var summary = review.summary || {};
+  var learning = review.learningReport || null;
+  var evidenceStandard = learning && learning.evidenceStandard ? learning.evidenceStandard : null;
+  var simComparison = learning && learning.simComparison ? learning.simComparison : null;
+  var simFeedback = learning && learning.simFeedback ? learning.simFeedback : null;
+  var rawPreview = review.rawLogPreview || {};
+  var bringConfidence = summary.selectedFourConfidence || {};
+  var warnings = (review.warnings || []).map(function(w) {
+    return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
+  }).join('');
+  var tags = (review.coachingTags || []).map(function(tag) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(tag.tag || 'Coaching Note') + ' · ' + _escapeHtml(tag.severity || 'medium') + '</strong>' +
+      '<div><b>What happened:</b> ' + _escapeHtml(tag.whatHappened || tag.message || 'The replay showed a coaching-relevant event.') + '</div>' +
+      '<div><b>Why it mattered:</b> ' + _escapeHtml(tag.whyMattered || 'This can change tempo, board position, or the path to your win condition.') + '</div>' +
+      '<div><b>Do instead:</b> ' + _escapeHtml(tag.doInstead || tag.recommendation || 'Review this turn in context.') + '</div>' +
+      '<small>' + (tag.evidence ? 'Evidence: ' + _escapeHtml(tag.evidence) + ' · ' : '') + 'Confidence: ' + _escapeHtml(tag.confidence || 'medium') + (tag.turn ? ' · Turn ' + _escapeHtml(String(tag.turn)) : '') + '</small>' +
+      '</div>';
+  }).join('');
+  var turns = (review.turnTimeline || []).slice(0, 80).map(function(turn) {
+    var events = (turn.events || []).slice(0, 8).map(function(ev) { return _escapeHtml(ev); }).filter(Boolean);
+    var tags = (turn.tags || []).map(function(tag) {
+      return '<span class="replay-coach-tag medium">' + _escapeHtml(tag) + '</span>';
+    }).join('');
+    return '<div class="replay-coach-turn ' + _escapeHtml(csReplayCoachSeverityClass(turn.severity)) + '">' +
+      '<div class="replay-coach-turn-title"><span>Turn ' + _escapeHtml(String(turn.turn)) + '</span><span class="replay-coach-tag ' + _escapeHtml(csReplayCoachSeverityClass(turn.severity)) + '">' + _escapeHtml(turn.severity || 'neutral') + ' · ' + _escapeHtml(turn.confidence || 'medium') + '</span></div>' +
+      '<div class="replay-coach-turn-read"><strong>' + _escapeHtml(turn.stateShift || 'Neutral exchange') + '</strong>' + _escapeHtml(turn.coachingRead || '') + '</div>' +
+      (turn.betterLine ? '<div class="replay-coach-better-line">' + _escapeHtml(turn.betterLine) + '</div>' : '') +
+      (tags ? '<div class="replay-coach-tags">' + tags + '</div>' : '') +
+      '<details class="replay-coach-events"><summary>' + _escapeHtml(String(turn.rawEventCount || events.length)) + ' parsed events</summary><div class="replay-coach-turn-body">' + (events.length ? events.join('<br/>') : 'No parsed coaching events.') + '</div></details>' +
+      '</div>';
+  }).join('');
+  var rawLines = (rawPreview.lines || []).slice(-80).map(function(line) {
+    return _escapeHtml(line);
+  }).join('\n');
+  var criticalCards = learning && learning.criticalTurns ? (learning.criticalTurns.turns || []).map(function(card) {
+    return '<div class="replay-coach-list-row" id="' + _escapeHtml(card.timelineAnchor || '') + '-critical">' +
+      '<strong>' + _escapeHtml(card.kind || 'Critical turn') + ' · Turn ' + _escapeHtml(String(card.turn || '?')) + '</strong>' +
+      '<div><b>What happened:</b> ' + _escapeHtml(card.whatHappened || '') + '</div>' +
+      '<div><b>Why it mattered:</b> ' + _escapeHtml(card.whyItMattered || '') + '</div>' +
+      '<div><b>Better line:</b> ' + _escapeHtml(card.betterAlternative || '') + '</div>' +
+      '<small>' + _escapeHtml(card.category || 'Decision') + ' · Confidence: ' + _escapeHtml(card.confidence || 'medium') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var scoreCards = learning && learning.scorecard ? (learning.scorecard.cards || []).map(function(card) {
+    return '<div class="replay-coach-metric"><strong>' + _escapeHtml(card.label || 'Skill') + '</strong><span>' + _escapeHtml((card.grade || '?') + ' · ' + String(card.score || 0)) + '</span></div>';
+  }).join('') : '';
+  var decisionRows = learning ? (learning.decisionQuality || []).slice(0, 5).map(function(row) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.category || 'Decision') + ' · ' + _escapeHtml(row.matrixQuadrant || 'decision review') + '</strong>' +
+      '<div><b>Decision quality:</b> ' + _escapeHtml(String(row.decisionQualityScore || '?')) + '/10 · <b>Risk:</b> ' + _escapeHtml(row.riskLevel || 'medium') + '</div>' +
+      '<div><b>Alternative:</b> ' + _escapeHtml(row.alternativeLine || '') + '</div>' +
+      '<small>Confidence: ' + _escapeHtml(row.confidence || 'medium') + (row.turn ? ' · Turn ' + _escapeHtml(String(row.turn)) : '') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var drillRows = learning && learning.practicePlan ? (learning.practicePlan.drills || []).map(function(drill) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(drill.skill || 'Practice drill') + '</strong>' +
+      '<div><b>Why:</b> ' + _escapeHtml(drill.whyItMatters || '') + '</div>' +
+      '<div><b>Drill:</b> ' + _escapeHtml(drill.drillSetup || '') + '</div>' +
+      '<div><b>Success:</b> ' + _escapeHtml(drill.successCriteria || '') + '</div>' +
+      '<small>' + _escapeHtml(drill.promptBeforeEachTurn || '') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var premium = learning && learning.premiumTeasers ? learning.premiumTeasers : null;
+  var premiumRows = premium ? (premium.lockedInsights || []).map(function(item) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(item.label || 'Premium insight') + '</strong>' +
+      _escapeHtml(item.preview || '') +
+      '</div>';
+  }).join('') : '';
+  var battleIq = learning && learning.battleIq ? learning.battleIq : null;
+  var battleIqRaised = battleIq ? (battleIq.raisedBy || []).map(function(row) {
+    return '<div><b>' + _escapeHtml(row.area || 'Raised by') + ':</b> ' + _escapeHtml(row.text || '') + '</div>';
+  }).join('') : '';
+  var battleIqLowered = battleIq ? (battleIq.loweredBy || []).map(function(row) {
+    return '<div><b>' + _escapeHtml(row.area || 'Lowered by') + ':</b> ' + _escapeHtml(row.text || '') + '</div>';
+  }).join('') : '';
+  var battleIqSubPreview = battleIq ? (battleIq.subScores || []).slice(0, 4).map(function(row) {
+    return '<div class="replay-coach-metric"><strong>' + _escapeHtml(row.label || 'Sub-score') + '</strong><span>' + _escapeHtml(String(row.standardScore || 0)) + ' · raw ' + _escapeHtml(String(row.rawScore || 0)) + '</span></div>';
+  }).join('') : '';
+
+  host.innerHTML =
+    '<div class="replay-coach-summary-card">' +
+      '<div class="replay-coach-card-head"><span class="badge badge-blue">MATCH SUMMARY</span><span class="replay-coach-tag ' + _escapeHtml(summary.result === 'win' ? 'low' : summary.result === 'loss' ? 'high' : 'medium') + '">' + _escapeHtml((summary.result || 'unknown').toUpperCase()) + '</span></div>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Players</strong><span>' + _escapeHtml((summary.yourPlayer || 'You') + ' vs ' + (summary.opponentPlayer || 'Opponent')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Turns</strong><span>' + _escapeHtml(String(summary.turns || 0)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Your Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourLead)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opp Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentLead)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Your Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourFour, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Bring Confidence</strong><span>' + _escapeHtml((bringConfidence.label || 'Unknown') + ' · ' + (bringConfidence.level || 'low')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Critical Turn</strong><span>' + _escapeHtml(summary.criticalTurn ? 'Turn ' + summary.criticalTurn : 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Main Issue</strong><span>' + _escapeHtml(summary.mainIssue || 'No major issue detected') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(summary.confidence || 'medium') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-tags">' + (warnings || '<span class="replay-coach-tag low">Parsed locally. No raw log saved.</span>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Team Preview Read</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Your Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourPreview, 'Missing')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opponent Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentPreview, 'Missing')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opponent Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentFour, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Bring Read</strong><span>' + _escapeHtml(bringConfidence.reason || 'Bring data is unknown from this log.') + '</span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Coaching Tags</h3>' +
+      '<div class="replay-coach-list">' + (tags || '<div class="replay-coach-list-row"><strong>No major issue detected</strong>Upload more complete logs to build stronger coaching confidence.</div>') + '</div>' +
+    '</div>' +
+    (evidenceStandard ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Evidence Standard</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(evidenceStandard.label || 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(evidenceStandard.confidence || 'low') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Rule</strong>' + _escapeHtml(evidenceStandard.priority || '') + '<small>' + _escapeHtml(evidenceStandard.rule || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Opponent intent boundary</strong>' + _escapeHtml(evidenceStandard.opponentIntentRule || '') + '</div>' +
+      '</div>' +
+    '</div>' : '') +
+    (learning ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Battle IQ Score</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Battle IQ</strong><span>' + _escapeHtml(battleIq ? String(battleIq.standardScore) : 'Needs data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Band</strong><span>' + _escapeHtml(battleIq ? battleIq.band : 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(battleIq ? battleIq.confidence : 'low') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(battleIq ? battleIq.status : 'Provisional') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Percentile</strong><span>' + _escapeHtml(battleIq ? String(battleIq.percentile) + 'th provisional' : 'Needs norms') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Range</strong><span>' + _escapeHtml(battleIq ? battleIq.confidenceInterval.join('-') : 'Needs data') + '</span></div>' +
+        battleIqSubPreview +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>What this means</strong>' + _escapeHtml(battleIq ? battleIq.definition : '') + '<small>' + _escapeHtml(battleIq ? battleIq.outcomeBiasProtection : '') + '</small><small>' + _escapeHtml(battleIq ? battleIq.reliabilityNote : '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Why it moved</strong>' + (battleIqRaised || '<div>No positive score driver was clear from this log.</div>') + (battleIqLowered || '<div>No negative score driver was clear from this log.</div>') + '</div>' +
+        '<div class="replay-coach-list-row"><strong>Recommended drill</strong>' + _escapeHtml(battleIq && battleIq.recommendedDrill ? battleIq.recommendedDrill.skill : 'Decision Review Drill') + '<small>' + _escapeHtml(battleIq && battleIq.recommendedDrill ? battleIq.recommendedDrill.successCriteria : '') + '</small></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Critical Turn Engine</h3>' +
+      '<div class="replay-coach-list">' + (criticalCards || '<div class="replay-coach-list-row"><strong>No critical turn proven</strong>Needs more complete turns before naming a swing turn.</div>') + '</div>' +
+      '<small>' + _escapeHtml((learning.criticalTurns && learning.criticalTurns.note) || '') + '</small>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Decision Quality Scorecard</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Overall Decision Quality</strong><span>' + _escapeHtml((learning.scorecard.overallGrade || '?') + ' · ' + String(learning.scorecard.overallDecisionQuality || 0)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(learning.scorecard.confidence || 'medium') + '</span></div>' +
+        scoreCards +
+      '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Win Path + Opponent Plan</h3>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Your win path</strong>' + _escapeHtml(learning.winPath.afterLeads || '') + '<small>' + _escapeHtml(learning.winPath.followedOrAbandoned || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Opponent plan recognition</strong>' + _escapeHtml(learning.opponentPlan.pressurePattern || '') + '<small>' + _escapeHtml(learning.opponentPlan.recognizeNextTime || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Opponent plan evidence</strong>' + _escapeHtml((learning.opponentPlan.evidenceLabel || 'Needs more data') + ' · Confidence: ' + (learning.opponentPlan.confidence || 'low')) + '<small>' + _escapeHtml((learning.opponentPlan.evidence || []).join('; ') || 'Upload more complete logs before treating opponent intent as fact.') + '</small></div>' +
+      '</div>' +
+    '</div>' +
+    (simComparison ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Sim Comparison</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(simComparison.status || 'needs_sim_data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Four match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>First deviation</strong>' + _escapeHtml(simComparison.firstDeviation || simComparison.note || 'Needs sim data') + '<small>' + _escapeHtml(simComparison.decisionChange || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Diagnosis boundary</strong>' + _escapeHtml(simComparison.teamVsPilotDiagnosis || 'Do not judge team vs pilot until sim and replay data are matched.') + '</div>' +
+      '</div>' +
+    '</div>' : '') +
+    (simFeedback ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Sim Feedback Packet</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(simFeedback.confidence || 'low') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Scenario</strong><span>' + _escapeHtml(simFeedback.scenarioType || 'none') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Pilot difficulty</strong><span>' + _escapeHtml(simFeedback.pilotDifficultySignal || 'low') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>RNG</strong><span>' + _escapeHtml(simFeedback.rngContamination || 'none') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Model updates</strong>' + _escapeHtml('Lead: ' + !!simFeedback.shouldUpdateLeadModel + ' · Bring four: ' + !!simFeedback.shouldUpdateBringFourModel + ' · Archetype: ' + !!simFeedback.shouldUpdateArchetypeModel) + '<small>Single replay signals do not automatically rewrite sim models.</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Scenario queue</strong>' + _escapeHtml(simFeedback.shouldCreateScenario ? 'Queue for stress retest' : 'Do not queue yet') + '<small>' + _escapeHtml(simFeedback.recommendedAction || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Evidence</strong>' + _escapeHtml((simFeedback.evidence && simFeedback.evidence.note) || 'Replay-derived calibration signal only.') + '</div>' +
+      '</div>' +
+    '</div>' : '') +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Decision Quality Matrix</h3>' +
+      '<div class="replay-coach-list">' + (decisionRows || '<div class="replay-coach-list-row"><strong>No key decision rows yet</strong>Upload a fuller log for decision/outcome separation.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Practice Plan</h3>' +
+      '<div class="replay-coach-list">' + (drillRows || '<div class="replay-coach-list-row"><strong>No practice drill yet</strong>More replay data will unlock personalized drills.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Battle IQ Memory Preview</h3>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Free review</strong>' + _escapeHtml(premium.freeValue || '') + '</div>' +
+        '<div class="replay-coach-list-row"><strong>Profile unlock</strong>' + _escapeHtml(premium.premiumValue || '') + '</div>' +
+        premiumRows +
+        '<div class="replay-coach-list-row"><strong>Privacy boundary</strong>' + _escapeHtml((premium.backendLearningPolicy && premium.backendLearningPolicy.rawLogDefault) || '') + '<small>' + _escapeHtml((premium.backendLearningPolicy && premium.backendLearningPolicy.freeAnonymous) || '') + '</small></div>' +
+      '</div>' +
+    '</div>' : '') +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Turn Timeline</h3>' +
+      '<div class="replay-coach-turns">' + (turns || '<div class="replay-coach-turn"><div class="replay-coach-turn-body">No turns parsed from this log.</div></div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<details class="replay-coach-raw"><summary>Raw log preview hidden by default · ' + _escapeHtml(String(rawPreview.lineCount || 0)) + ' lines</summary>' +
+        '<pre class="battle-log replay-coach-raw-log">' + (rawLines || 'No raw log lines available.') + '</pre>' +
+      '</details>' +
+    '</div>';
+}
+
+function csNormalizeReplayName(name) {
+  return String(name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function csTeamPreviewOverlap(previewNames, teamKey) {
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  var preview = (previewNames || []).map(csNormalizeReplayName).filter(Boolean);
+  if (!team || !preview.length) return 0;
+  var roster = (team.members || []).map(function(m) { return csNormalizeReplayName(m && m.name); }).filter(Boolean);
+  if (!roster.length) return 0;
+  var hits = preview.filter(function(n) { return roster.indexOf(n) >= 0; }).length;
+  return hits / Math.max(preview.length, Math.min(6, roster.length));
+}
+
+function csSplitLeadPair(label) {
+  return String(label || '').split(/\s*\+\s*/).map(function(v) { return v.trim(); }).filter(Boolean);
+}
+
+function csUniquePokemonNames(names, teamKey, cap) {
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  var out = [];
+  var seen = Object.create(null);
+  (names || []).forEach(function(n) {
+    var name = String(n || '').trim();
+    if (!name || seen[name]) return;
+    seen[name] = true;
+    out.push(name);
+  });
+  if (team && Array.isArray(team.members)) {
+    team.members.forEach(function(m) {
+      var name = m && m.name;
+      if (!name || seen[name] || out.length >= cap) return;
+      seen[name] = true;
+      out.push(name);
+    });
+  }
+  return out.slice(0, cap || getBringCount());
+}
+
+function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
+  parsed = parsed || {};
+  var playerKey = (typeof currentPlayerKey === 'string' && TEAMS[currentPlayerKey]) ? currentPlayerKey : 'player';
+  var results = (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastResults) ? ChampionsSim.state.lastResults : {};
+  var oppSide = (selectedSide || parsed.selectedSide || 'p1') === 'p1' ? 'p2' : 'p1';
+  var oppPreview = parsed.teamPreview && parsed.teamPreview[oppSide] ? parsed.teamPreview[oppSide] : [];
+  var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+  var selectedOppKey = oppSelect && oppSelect.value && TEAMS[oppSelect.value] ? oppSelect.value : '';
+  var candidateKeys = Object.keys(results || {}).filter(function(k) { return TEAMS[k]; });
+  if (selectedOppKey && candidateKeys.indexOf(selectedOppKey) < 0) candidateKeys.unshift(selectedOppKey);
+  if (!candidateKeys.length) return null;
+
+  var ranked = candidateKeys.map(function(key) {
+    var previewScore = csTeamPreviewOverlap(oppPreview, key);
+    var hasResult = results && results[key] ? 0.25 : 0;
+    var selectedBoost = key === selectedOppKey ? 0.15 : 0;
+    return { key: key, score: previewScore + hasResult + selectedBoost, previewScore: previewScore, hasResult: !!(results && results[key]) };
+  }).sort(function(a, b) { return b.score - a.score; });
+  var best = ranked[0];
+  if (!best || (!best.hasResult && best.previewScore <= 0)) return null;
+
+  var scopedResults = {};
+  if (results && results[best.key]) scopedResults[best.key] = results[best.key];
+  var report = null;
+  try {
+    if (typeof buildStrategyReport === 'function') report = buildStrategyReport(playerKey, scopedResults, currentFormat);
+  } catch (e) { report = null; }
+  if (!report && typeof loadStrategyReport === 'function') {
+    try { report = loadStrategyReport(playerKey); } catch (_e) { report = null; }
+  }
+  if (!report) return null;
+
+  var leadSystem = report.lead_system || {};
+  var matchupIntel = report.matchup_intelligence || {};
+  var bestLeadLabel = (matchupIntel.safe_leads && matchupIntel.safe_leads[0]) || leadSystem.safe || leadSystem.speed || leadSystem.pressure || leadSystem.punish || '';
+  var bestLead = csSplitLeadPair(bestLeadLabel);
+  var preserveNames = [];
+  if (report.team_identity && report.team_identity.primary_win_condition) preserveNames = preserveNames.concat(csSplitLeadPair(report.team_identity.primary_win_condition.replace(/->/g, '+')));
+  if (report.team_identity && Array.isArray(report.team_identity.speed_control_mons)) preserveNames = preserveNames.concat(report.team_identity.speed_control_mons);
+  if (report.team_identity && Array.isArray(report.team_identity.pivot_mons)) preserveNames = preserveNames.concat(report.team_identity.pivot_mons);
+  var bestFour = csUniquePokemonNames(bestLead.concat(preserveNames), playerKey, getBringCount());
+  var matchConfidence = best.previewScore >= 0.5 && best.hasResult ? 'medium' : 'low';
+
+  return {
+    source: 'latest in-app simulation strategy report',
+    matchedOpponentKey: best.key,
+    matchedOpponentName: TEAMS[best.key] && TEAMS[best.key].name ? TEAMS[best.key].name : best.key,
+    matchConfidence: matchConfidence,
+    bestLead: bestLead,
+    bestFour: bestFour,
+    expectedWinPath: matchupIntel.best_win_path || (report.coaching_notes && report.coaching_notes.best_win_path) || (report.team_identity && report.team_identity.primary_win_condition) || '',
+    safestLine: report.pilot_plan ? report.pilot_plan.turn_1 : '',
+    confidence: matchConfidence,
+    sampleSize: report.sample_size || 0
+  };
+}
+
+function csInitReplayCoachUi() {
+  var logEl = document.getElementById('replay-coach-log');
+  var sideEl = document.getElementById('replay-coach-side');
+  var runBtn = document.getElementById('replay-coach-run-btn');
+  var clearBtn = document.getElementById('replay-coach-clear-btn');
+  var uploadBtn = document.getElementById('replay-coach-upload-btn');
+  var fileEl = document.getElementById('replay-coach-file');
+  var statusEl = document.getElementById('replay-coach-status');
+  if (!logEl || !sideEl || !runBtn) return;
+
+  function setStatus(msg, isError) {
+    if (!statusEl) return;
+    statusEl.textContent = msg || '';
+    statusEl.classList.toggle('error', !!isError);
+  }
+
+  runBtn.addEventListener('click', function() {
+    var api = ChampionsSim && ChampionsSim.replayCoach;
+    if (!api || typeof api.analyzeShowdownReplay !== 'function') {
+      setStatus('Battle Sensei parser is not available in this build.', true);
+      return;
+    }
+    var raw = logEl.value || '';
+    if (!raw.trim()) {
+      setStatus('Paste a Showdown log before running analysis.', true);
+      return;
+    }
+    try {
+      var selectedSide = sideEl.value || 'p1';
+      var opts = { selectedSide: selectedSide };
+      if (typeof api.parseShowdownLog === 'function' && typeof api.buildReplayCoachReview === 'function') {
+        var parsed = api.parseShowdownLog(raw, opts);
+        opts.simPlan = csBuildBattleSenseiSimPlan(parsed, selectedSide);
+        opts.sampleSize = opts.simPlan && opts.simPlan.sampleSize ? opts.simPlan.sampleSize : 1;
+        var analysis = { parsed: parsed, review: api.buildReplayCoachReview(parsed, opts) };
+      } else {
+        var analysis = api.analyzeShowdownReplay(raw, opts);
+      }
+      csReplayCoachRenderAnalysis(analysis);
+      var parsedTurns = analysis && analysis.parsed ? analysis.parsed.totalTurns : 0;
+      setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only and not saved.');
+    } catch (e) {
+      setStatus('Could not analyze replay: ' + (e && e.message ? e.message : 'unknown error'), true);
+    }
+  });
+
+  if (clearBtn) clearBtn.addEventListener('click', function() {
+    logEl.value = '';
+    setStatus('');
+    var host = document.getElementById('replay-coach-results');
+    if (host) host.innerHTML = '<div class="replay-coach-empty">Paste a log and run analysis to see result, leads, critical turn, coaching tags, and a readable turn timeline.</div>';
+  });
+
+  if (uploadBtn && fileEl) {
+    uploadBtn.addEventListener('click', function() { fileEl.click(); });
+    fileEl.addEventListener('change', function() {
+      var file = fileEl.files && fileEl.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function() {
+        logEl.value = String(reader.result || '');
+        setStatus('Loaded ' + file.name + '. Run analysis when ready.');
+      };
+      reader.onerror = function() { setStatus('Could not read that file.', true); };
+      reader.readAsText(file);
+    });
+  }
+}
+
 async function lazyLoadAnalysisLogs(analysisId, cardEl) {
   var adapter = getWindowValue('SupabaseAdapter', null);
   if (!adapter || typeof adapter.loadAnalysisLogs !== 'function') return;
@@ -3046,7 +3468,12 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
       const seriesBattles = [];
 
       while (seriesW<gamesNeeded && seriesL<gamesNeeded && gamesPlayed<bo) {
-        const battle = simulateBattle(TEAMS[playerTeamKey], TEAMS[oppTeamKey], { format: currentFormat, playerBring, opponentBring });
+        const battle = simulateBattle(TEAMS[playerTeamKey], TEAMS[oppTeamKey], {
+          format: currentFormat,
+          playerBring,
+          opponentBring,
+          roleAwareOpeners: true
+        });
         if (battle.result==='win') seriesW++;
         else if (battle.result==='loss') seriesL++;
         else { seriesW+=0.5; seriesL+=0.5; }
@@ -3970,9 +4397,11 @@ function inferPlaystyle(members) {
 // Aggregate top-2 leads across all matchups, partitioned by profile.
 function buildLeadSystem(results, playerMembers) {
   var safeLeads = {}, speedLeads = {}, pressureLeads = {}, punishLeads = {};
+  var sawWinningLogs = false;
   Object.entries(results).forEach(function(pair){
     var res = pair[1];
     (res.allLogs || []).filter(function(g){ return g.result === 'win'; }).forEach(function(game){
+      sawWinningLogs = true;
       var names = (game.leads && Array.isArray(game.leads.player)) ? game.leads.player : [];
       if (names.length !== 2) return;
       var pair2 = names.slice().sort().join(' + ');
@@ -3990,6 +4419,60 @@ function buildLeadSystem(results, playerMembers) {
   function top(obj) {
     var entries = Object.entries(obj).sort(function(a,b){ return b[1]-a[1]; });
     return entries.length ? entries[0][0] : null;
+  }
+  function fallbackPairFromRoles() {
+    var members = Array.isArray(playerMembers) ? playerMembers.slice() : [];
+    if (!members.length) return null;
+    var classified = members.map(function(m){
+      var roles = [];
+      try {
+        var c = (typeof classifyPokemon === 'function') ? classifyPokemon(m) : null;
+        roles = c && Array.isArray(c.roles) ? c.roles.slice() : [];
+      } catch (_e) {
+        roles = [];
+      }
+      return { mon: m, roles: roles };
+    });
+    function hasRole(row, role) { return row.roles.indexOf(role) >= 0; }
+    function hasAnyMove(row, moves) {
+      return _pdfHasAny(row.mon, moves);
+    }
+    var support = classified.find(function(row){ return hasRole(row, 'Support') || hasAnyMove(row, PDF_FAKE_OUT) || hasAnyMove(row, PDF_REDIRECT); });
+    var speed = classified.find(function(row){ return hasRole(row, 'Speed Control') || hasAnyMove(row, PDF_TAILWIND) || hasAnyMove(row, PDF_TRICK_ROOM); });
+    var pivot = classified.find(function(row){ return hasRole(row, 'Pivot') || /U-turn|Volt Switch|Flip Turn|Parting Shot|Teleport/i.test((row.mon.moves || []).join(',')); });
+    var breaker = classified.find(function(row){ return hasRole(row, 'Sweeper') || hasRole(row, 'Cleaner') || hasRole(row, 'Wallbreaker'); });
+    var first = classified[0];
+    var second = classified[1] || first;
+    var pair = null;
+    if (support && speed && support.mon.name !== speed.mon.name) pair = [support.mon.name, speed.mon.name];
+    else if (support && breaker && support.mon.name !== breaker.mon.name) pair = [support.mon.name, breaker.mon.name];
+    else if (speed && breaker && speed.mon.name !== breaker.mon.name) pair = [speed.mon.name, breaker.mon.name];
+    else if (support && pivot && support.mon.name !== pivot.mon.name) pair = [support.mon.name, pivot.mon.name];
+    else if (pivot && breaker && pivot.mon.name !== breaker.mon.name) pair = [pivot.mon.name, breaker.mon.name];
+    else if (first && second && first.mon.name !== second.mon.name) pair = [first.mon.name, second.mon.name];
+    if (!pair || !pair[0] || !pair[1]) return null;
+    return pair.join(' + ');
+  }
+  if (!sawWinningLogs) {
+    var fallbackSafe = fallbackPairFromRoles();
+    if (fallbackSafe) {
+      var fallbackSpeed = null;
+      var fallbackPressure = null;
+      var fallbackPunish = null;
+      var members = Array.isArray(playerMembers) ? playerMembers.slice() : [];
+      var supportMon = members.find(function(m){ return _pdfHasAny(m, PDF_FAKE_OUT) || _pdfHasAny(m, PDF_REDIRECT); }) || members[0] || null;
+      var speedMon = members.find(function(m){ return _pdfHasAny(m, PDF_TAILWIND) || _pdfHasAny(m, PDF_TRICK_ROOM); }) || supportMon;
+      var pressureMon = members.find(function(m){ return _pdfHasAny(m, PDF_PRIORITY) || _pdfHasAny(m, PDF_SPREAD); }) || speedMon;
+      if (supportMon && speedMon) fallbackSpeed = [supportMon.name, speedMon.name].filter(Boolean).join(' + ');
+      if (supportMon && pressureMon) fallbackPressure = [supportMon.name, pressureMon.name].filter(Boolean).join(' + ');
+      if (pressureMon && speedMon) fallbackPunish = [pressureMon.name, speedMon.name].filter(Boolean).join(' + ');
+      return {
+        safe: fallbackSafe,
+        speed: fallbackSpeed || fallbackSafe,
+        pressure: fallbackPressure || fallbackSafe,
+        punish: fallbackPunish || fallbackSafe
+      };
+    }
   }
   return {
     safe: top(safeLeads),
@@ -4972,6 +5455,22 @@ function inferTeamIdentity(team, results, fmt) {
   var members = (team && team.members) || [];
   var playstyle = inferPlaystyle(members);
   var format = fmt || 'doubles';
+  var memberRoles = members.map(function(m){
+    var classified = (typeof classifyPokemon === 'function') ? classifyPokemon(m) : null;
+    return {
+      name: m && m.name ? m.name : '',
+      roles: classified && Array.isArray(classified.roles) ? classified.roles.slice() : []
+    };
+  });
+  var speedControlMons = memberRoles.filter(function(row){
+    return row.roles.indexOf('Speed Control') >= 0;
+  }).map(function(row){ return row.name; });
+  var pivotMons = memberRoles.filter(function(row){
+    return row.roles.indexOf('Pivot') >= 0;
+  }).map(function(row){ return row.name; });
+  var supportMons = memberRoles.filter(function(row){
+    return row.roles.indexOf('Support') >= 0;
+  }).map(function(row){ return row.name; });
 
   // Aggregate win paths across all matchups
   var totalWins = 0, pathCounts = {};
@@ -4985,6 +5484,13 @@ function inferTeamIdentity(team, results, fmt) {
   var primary = sorted[0] ? sorted[0][0] : null;
   var secondary = sorted[1] ? sorted[1][0] : null;
   var primaryPct = (primary && totalWins) ? (sorted[0][1] / totalWins) : 0;
+  var hasTR = members.some(function(m){ return _pdfHasAny(m, PDF_TRICK_ROOM); });
+  var hasTW = members.some(function(m){ return _pdfHasAny(m, PDF_TAILWIND); });
+  var hasRedirect = members.some(function(m){ return _pdfHasAny(m, PDF_REDIRECT); });
+  var hasFakeOut = members.some(function(m){ return _pdfHasAny(m, PDF_FAKE_OUT); });
+  var hasWeather = members.some(function(m){ return _pdfHasAny(m, PDF_WEATHER_ABILITIES) || (m.moves || []).some(function(move){
+    return /Sunny Day|Rain Dance|Sandstorm|Snowscape|Hail/i.test(move);
+  }); });
 
   // Synergy: pivot + speed control + finisher
   var hasFO = members.some(function(m){ return _pdfHasAny(m, PDF_FAKE_OUT); });
@@ -4996,6 +5502,28 @@ function inferTeamIdentity(team, results, fmt) {
   if (members.some(function(m){ return PDF_TRAP_ABILITIES.indexOf(m.ability||'') >= 0; })) synergy.push('trap-ability removal');
   if (!synergy.length) synergy.push('no clear synergy core');
 
+  function fallbackPrimary() {
+    if (hasTR || playstyle.indexOf('Trick Room') >= 0) {
+      return 'Set Trick Room, preserve the slow breakers, and clean with the team’s lowest-speed damage core.';
+    }
+    if (hasFakeOut && (hasTW || members.some(function(m){ return _pdfHasAny(m, PDF_PRIORITY); }))) {
+      return 'Win turn 1 tempo with Fake Out plus speed control, then preserve the cleaner for the endgame.';
+    }
+    if (hasWeather || /Offense/i.test(playstyle)) {
+      return 'Establish your weather or offensive mode early, keep the mode setter alive, and force the opponent to react.';
+    }
+    if (hasRedirect) {
+      return 'Use redirection to create one clean setup window, then trade into your strongest finisher.';
+    }
+    return 'Use your support core to create a clean endgame for your best attacker.';
+  }
+  function fallbackSecondary() {
+    if (hasTR) return 'Back up Trick Room with positioning and a preserved secondary breaker.';
+    if (hasTW) return 'If speed control is denied, pivot to your pressure core and play for chip into a late clean.';
+    if (hasWeather) return 'If the weather war is denied, win with positioning and chip rather than forcing a bad mirror.';
+    return 'Keep a pivot piece alive so you can reset bad board states before the endgame.';
+  }
+
   // Format viability heuristic
   var viability = 'both';
   if (members.some(function(m){ return _pdfHasAny(m, PDF_REDIRECT); })) viability = 'doubles-favored';
@@ -5003,11 +5531,15 @@ function inferTeamIdentity(team, results, fmt) {
 
   return {
     playstyle: playstyle,
-    primary_win_condition: primary || 'unclear',
-    secondary_win_condition: secondary || 'none observed',
+    primary_win_condition: primary || fallbackPrimary(),
+    secondary_win_condition: secondary || fallbackSecondary(),
     synergy_core: synergy,
     format_viability: viability,
-    primary_win_path_pct: Math.round(primaryPct * 100)
+    primary_win_path_pct: Math.round(primaryPct * 100),
+    member_roles: memberRoles,
+    speed_control_mons: speedControlMons,
+    pivot_mons: pivotMons,
+    support_mons: supportMons
   };
 }
 
@@ -5407,6 +5939,18 @@ function buildCoachingSummary(rules, identity, elite) {
   if (top[0]) lines.push('Fix it: ' + top[0].correction);
   if (top[1]) lines.push('Also: ' + top[1].correction);
 
+  if (identity) {
+    if (identity.primary_win_condition && identity.primary_win_condition !== 'unclear') {
+      lines.push('Your win condition is ' + identity.primary_win_condition + '. Preserve that line before you overtrade resources.');
+    }
+    if (Array.isArray(identity.speed_control_mons) && identity.speed_control_mons.length) {
+      lines.push('Your speed control anchor is ' + identity.speed_control_mons[0] + '. Protect it when the opponent can still contest tempo.');
+    }
+    if (Array.isArray(identity.pivot_mons) && identity.pivot_mons.length) {
+      lines.push('Your pivot piece is ' + identity.pivot_mons[0] + '. Use it to reset bad board states instead of forcing damage.');
+    }
+  }
+
   // Add tempo / risk one-liner
   if (elite && elite.tempo_control === 'losing') {
     lines.push('You are reacting too much. Take initiative on Turn 1.');
@@ -5419,10 +5963,202 @@ function buildCoachingSummary(rules, identity, elite) {
   return lines.join(' ');
 }
 
+function _flattenBattleGames(results) {
+  var games = [];
+  Object.values(results || {}).forEach(function(r){
+    if (r && Array.isArray(r.allLogs)) games = games.concat(r.allLogs);
+  });
+  return games;
+}
+
+function _leadPairSummary(row) {
+  if (!row) return '';
+  return (row.lead_label || (row.lead || []).join(' + ') || '-') + ' vs ' + (row.matchup_name || row.matchup_key || 'unknown');
+}
+
+function buildMatchupIntelligence(team, results, format, identity, leadSystem, trends, matchupGaps, matchupWarnings) {
+  var games = _flattenBattleGames(results);
+  var leadPairs = [];
+  try { leadPairs = csBuildLeadPairTable(games, team && team.key ? team.key : null); } catch (_e) { leadPairs = []; }
+  var sortedSafe = leadPairs.slice().sort(function(a, b){
+    if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+    if ((b.n || 0) !== (a.n || 0)) return (b.n || 0) - (a.n || 0);
+    return (a.matchup_name || '').localeCompare(b.matchup_name || '');
+  });
+  var sortedRisky = leadPairs.slice().sort(function(a, b){
+    if ((a.win_rate || 0) !== (b.win_rate || 0)) return (a.win_rate || 0) - (b.win_rate || 0);
+    if ((b.n || 0) !== (a.n || 0)) return (b.n || 0) - (a.n || 0);
+    return (a.matchup_name || '').localeCompare(b.matchup_name || '');
+  });
+  var topSafe = [];
+  ['safe', 'speed', 'pressure', 'punish'].forEach(function(k){
+    if (leadSystem && leadSystem[k] && topSafe.indexOf(leadSystem[k]) < 0) topSafe.push(leadSystem[k]);
+  });
+  if (!topSafe.length && sortedSafe.length) topSafe.push(sortedSafe[0].lead_label);
+
+  var totalWins = 0, totalLosses = 0, totalDraws = 0;
+  Object.values(results || {}).forEach(function(r){
+    totalWins += r && r.wins ? r.wins : 0;
+    totalLosses += r && r.losses ? r.losses : 0;
+    totalDraws += r && r.draws ? r.draws : 0;
+  });
+  var totalGames = totalWins + totalLosses + totalDraws;
+  var overallWR = totalGames ? totalWins / totalGames : 0;
+  var confidence = totalGames > 0 ? csConfidence(totalGames) : 'none';
+  var grade = totalGames === 0 ? 'unproven'
+    : overallWR >= 0.65 ? 'strongly favored'
+    : overallWR >= 0.55 ? 'favored'
+    : overallWR >= 0.45 ? 'even'
+    : overallWR >= 0.35 ? 'unfavored'
+    : 'critical weakness';
+
+  var matchupList = Array.isArray(matchupGaps) ? matchupGaps.slice() : [];
+  var worstMatchup = matchupList.length ? matchupList[0] : null;
+  var commonLoss = (trends && Array.isArray(trends.topOppFinishers) && trends.topOppFinishers.length)
+    ? trends.topOppFinishers[0]
+    : (trends && Array.isArray(trends.mostLostMons) && trends.mostLostMons.length ? trends.mostLostMons[0] : 'the opponent’s win condition');
+  var preserve = identity && identity.primary_win_condition && identity.primary_win_condition !== 'unclear'
+    ? identity.primary_win_condition
+    : (topSafe[0] || (leadSystem && leadSystem.safe) || 'your support core');
+  var adjustment = worstMatchup
+    ? 'Patch ' + worstMatchup.name + ' first. Start with ' + (topSafe[0] || 'your safest lead') + ' and keep ' + preserve + ' healthy.'
+    : (totalGames === 0
+      ? 'You have no battle sample yet. Start with ' + (topSafe[0] || (leadSystem && leadSystem.safe) || 'your safest opener') + ' and test the team’s mode before judging matchups.'
+      : 'Keep the win condition protected and rotate into your best tempo lead when the board is open.');
+  var speedTruth = (matchupWarnings || []).find(function(v){ return v && v.category === 'Speed control'; });
+  var speedLine = speedTruth ? speedTruth.note : 'This team has enough speed access to play honest lines when your lead is correct.';
+  var risky = sortedRisky.length ? sortedRisky.slice(0, 3) : [];
+  var safeRows = sortedSafe.length ? sortedSafe.slice(0, 3) : [];
+
+  return {
+    grade: grade,
+    confidence: confidence,
+    overall_win_rate: overallWR,
+      summary: worstMatchup
+      ? 'You are ' + grade + ' overall. The clearest problem is ' + worstMatchup.name + ' at ' + Math.round(worstMatchup.win_rate * 100) + '%.'
+      : (totalGames === 0
+        ? 'You have no battle sample yet. Start from the baseline opener and collect games before judging matchups.'
+        : 'You are ' + grade + ' overall. The sample is too thin for a sharp matchup read.'),
+    headline: topSafe.length
+      ? 'Top player read: lead with ' + topSafe[0] + ' when you need safe tempo; do not auto-pilot into the worst matchup.'
+      : (totalGames === 0
+        ? 'Top player read: use the baseline opener and test your mode before tuning the matchup map.'
+        : 'Top player read: you need more games before the opening plan is stable.'),
+    fix: adjustment,
+    safe_leads: topSafe.slice(0, 3),
+    risky_leads: risky.map(function(row){ return _leadPairSummary(row); }),
+    best_win_path: identity && identity.primary_win_condition ? identity.primary_win_condition : (totalGames === 0 ? 'baseline opener -> preserve the mode setter -> clean with your best attacker' : 'unclear'),
+    common_loss_path: commonLoss,
+    speed_truth: speedLine,
+    matchup_rows: safeRows.map(function(row){
+      return {
+        label: _leadPairSummary(row),
+        value: Math.round((row.win_rate || 0) * 100) + '% over ' + row.n + ' games'
+      };
+    }),
+    preserve_piece: preserve,
+    recommended_adjustment: adjustment
+  };
+}
+
+function buildReportProvenance(totalGames, confidenceTier, format) {
+  var evidence = csStrategyEvidenceStandard(totalGames, confidenceTier);
+  var freshnessLabel = 'no sample yet';
+  if (totalGames >= 100) freshnessLabel = 'well-sampled';
+  else if (totalGames >= 20) freshnessLabel = 'moderately sampled';
+  else if (totalGames > 0) freshnessLabel = 'thin sample';
+  return {
+    source_label: csLabelSim(),
+    generated_at: new Date().toISOString(),
+    sample_size: totalGames || 0,
+    confidence_tier: confidenceTier || 'low',
+    evidence_label: evidence.label,
+    evidence_confidence: evidence.confidence,
+    freshness_label: freshnessLabel,
+    freshness_note: totalGames > 0
+      ? 'Simulation-driven recommendations with ' + freshnessLabel + ' confidence.'
+      : 'No battle sample yet; recommendations are mostly inference.',
+    format: format || 'doubles',
+    decision_rule: 'Never show a statistic without explaining the decision it should change.'
+  };
+}
+
+function csStrategyEvidenceStandard(totalGames, confidenceTier) {
+  var n = totalGames || 0;
+  if (n <= 0) {
+    return {
+      label: 'Needs more data',
+      confidence: 'low',
+      rule: 'Strategy has no simulation sample for this team yet.',
+      decision: 'Run matchup simulations before treating the report as matchup guidance.'
+    };
+  }
+  if (n < 20 || confidenceTier === 'low') {
+    return {
+      label: 'Weak inference',
+      confidence: 'low',
+      rule: 'Strategy is using a thin simulation sample.',
+      decision: 'Use this as a test queue, not as a final team-change recommendation.'
+    };
+  }
+  if (n < 100 || confidenceTier === 'moderate') {
+    return {
+      label: 'Strong inference',
+      confidence: 'medium',
+      rule: 'Strategy is supported by a moderate simulation sample.',
+      decision: 'Test the recommended lead and preserve plan before changing team slots.'
+    };
+  }
+  return {
+    label: 'Observed',
+    confidence: 'high',
+    rule: 'Strategy is backed by a mature simulation sample.',
+    decision: 'Use this to prioritize matchup prep, then confirm with Battle Sensei logs.'
+  };
+}
+
+function buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, trends) {
+  var safeLead = (matchupIntelligence && Array.isArray(matchupIntelligence.safe_leads) && matchupIntelligence.safe_leads[0]) || leadSystem.safe || 'your safest opener';
+  var scoutLead = (matchupIntelligence && Array.isArray(matchupIntelligence.risky_leads) && matchupIntelligence.risky_leads[0]) || leadSystem.speed || safeLead;
+  var concentration = elite && typeof elite.lead_concentration === 'number' ? elite.lead_concentration : 0;
+  var revealed = concentration > 0.8
+    ? 'Sim data shows the same opener repeatedly; if the opponent has seen it, game 2 can be targeted.'
+    : 'Lead data is varied enough that the opponent may still need to respect multiple openers.';
+  var opponentAdjustment = concentration > 0.8
+    ? 'Likely adjustment if they recognize the pattern: lead specifically to punish your default opener.'
+    : 'Likely adjustment if they adapt: a small lead or move tweak rather than a full plan change.';
+  var counterAdjustment = concentration > 0.8
+    ? 'Rotate to ' + scoutLead + ' or shift one support slot to hide the default line.'
+    : 'Keep the game 1 plan, but preserve the pivot piece that lets you pivot into ' + safeLead + '.';
+  var game2Lead = concentration > 0.8 ? scoutLead : safeLead;
+  var primaryWin = identity && identity.primary_win_condition ? identity.primary_win_condition : 'your primary win condition';
+  var commonLoss = matchupIntelligence && matchupIntelligence.common_loss_path
+    ? matchupIntelligence.common_loss_path
+    : (trends && Array.isArray(trends.topOppFinishers) && trends.topOppFinishers.length ? trends.topOppFinishers[0] : 'the opponent’s win condition');
+  return {
+    source_label: csLabelSim(),
+    evidence_label: concentration > 0.8 ? 'Strong inference' : 'Weak inference',
+    confidence: concentration > 0.8 ? 'medium' : 'low',
+    adaptation_risk: concentration > 0.8 ? 'high' : concentration > 0.5 ? 'medium' : 'low',
+    game1_lead: safeLead,
+    game2_plan: game2Lead,
+    revealed_info: revealed,
+    opponent_adjustment_prediction: opponentAdjustment,
+    counter_adjustment: counterAdjustment,
+    what_to_preserve: primaryWin,
+    common_loss_path: commonLoss,
+    decision_rule: 'If you reveal the same lead twice, prepare for the opponent to target it in game 2.'
+  };
+}
+
 function buildWeaknessDashboard(team, results, format, identity, leadSystem, trends, deadMoves, matchupWarnings) {
   var members = (team && team.members) || [];
   var bestLead = (leadSystem && leadSystem.safe) ? leadSystem.safe : '';
   var altLead = (leadSystem && leadSystem.speed) ? leadSystem.speed : (leadSystem && leadSystem.pressure) ? leadSystem.pressure : '';
+  var totalGames = 0;
+  Object.values(results || {}).forEach(function(r){
+    totalGames += (r && r.wins ? r.wins : 0) + (r && r.losses ? r.losses : 0) + (r && r.draws ? r.draws : 0);
+  });
 
   function _oppName(oppKey) {
     var opp = (typeof TEAMS !== 'undefined' && TEAMS[oppKey]) ? TEAMS[oppKey] : null;
@@ -5434,6 +6170,15 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
   function _fmtWR(v) { return Math.round((v || 0) * 100) + '%'; }
   function _itemRows(items, formatter) {
     return (items || []).slice(0, 3).map(function(item){ return formatter(item); });
+  }
+  function _deadOwner(row) {
+    return (row && (row.owner || row.pokemon || row.name)) || 'unknown';
+  }
+  function _deadTimes(row) {
+    return (row && typeof row.times_used === 'number') ? row.times_used : ((row && typeof row.used === 'number') ? row.used : 0);
+  }
+  function _deadGames(row) {
+    return (row && typeof row.games_sampled === 'number') ? row.games_sampled : ((row && typeof row.games === 'number') ? row.games : totalGames);
   }
 
   var matchupRows = Object.entries(results || {}).map(function(pair){
@@ -5452,12 +6197,29 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
 
   var lowMatchups = matchupRows.filter(function(row){ return row.status === 'gap'; });
   var matchupFocus = lowMatchups.length ? lowMatchups : matchupRows.slice(0, 3);
+  var matchupIntel = buildMatchupIntelligence(team, results, format, identity, leadSystem, trends, matchupFocus, matchupWarnings);
   var worstMatchup = matchupFocus[0] || null;
   var worstLead = (trends && trends.worst_lead) ? trends.worst_lead : null;
   var deadList = Array.isArray(deadMoves) ? deadMoves.slice(0, 3) : [];
   var ruleViolations = (matchupWarnings || []).slice(0, 2);
 
   var sections = [];
+
+  sections.push({
+    key: 'matchup_intelligence',
+    title: 'Matchup Intelligence',
+    headline: matchupIntel.summary,
+    fix: matchupIntel.fix,
+    rows: [
+      { label: 'Grade', value: matchupIntel.grade + ' · ' + matchupIntel.confidence + ' confidence' },
+      { label: 'Safe leads', value: (matchupIntel.safe_leads || []).join(' | ') || 'No safe lead logged yet' },
+      { label: 'Risky leads', value: (matchupIntel.risky_leads || []).join(' | ') || 'No risky lead logged yet' },
+      { label: 'Speed truth', value: matchupIntel.speed_truth || 'No speed note yet' },
+      { label: 'Best win path', value: matchupIntel.best_win_path || 'unclear' },
+      { label: 'Common loss path', value: matchupIntel.common_loss_path || 'unclear' }
+    ],
+    empty: 'Run more sims to populate matchup intelligence.'
+  });
 
   sections.push({
     key: 'matchup_gaps',
@@ -5497,28 +6259,29 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
     key: 'dead_moves',
     title: 'Dead moves',
     headline: deadList.length
-      ? (deadList[0].owner + ' - ' + deadList[0].move + ' has 0 calls in the sample.')
+      ? (_deadOwner(deadList[0]) + ' - ' + deadList[0].move + ' has 0 calls in the sample.')
       : 'No dead moves are flagged yet.',
     fix: deadList.length
       ? 'Open these slots on turn 1 when they are support tools, or replace them with coverage that patches your worst matchup.'
       : 'Keep simming until a move crosses the 0-call threshold.',
     rows: _itemRows(deadList, function(row){
       return {
-        label: row.owner + ' - ' + row.move,
-        value: row.times_used + ' calls over ' + row.games_sampled + ' games'
+        label: _deadOwner(row) + ' - ' + row.move,
+        value: _deadTimes(row) + ' calls over ' + _deadGames(row) + ' games'
       };
     }),
     empty: 'No move has crossed the dead-move threshold yet.'
   });
 
   return {
-    summary: worstMatchup
+    summary: matchupIntel.summary || (worstMatchup
       ? ('Start with the matchup gap, then clean up the weakest opening pair, then prune dead moves.')
-      : 'Keep simming; the dashboard will populate once the sample is large enough.',
+      : 'Keep simming; the dashboard will populate once the sample is large enough.'),
     sections: sections,
     rule_violations: ruleViolations.map(function(v){
       return v.category + ': ' + v.note;
-    })
+    }),
+    matchup_intelligence: matchupIntel
   };
 }
 
@@ -5583,6 +6346,8 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
   var confidenceTier = totalGames < 20 ? 'low' : totalGames < 100 ? 'moderate' : totalGames < 500 ? 'high' : 'elite';
 
   var summary = buildCoachingSummary(coachingRules, identity, elite);
+  var provenance = buildReportProvenance(totalGames, confidenceTier, format);
+  var evidenceStandard = csStrategyEvidenceStandard(totalGames, confidenceTier);
   var weaknessDashboard = buildWeaknessDashboard(
     team,
     results || {},
@@ -5594,6 +6359,8 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
     matchupWarnings
   );
   weaknessDashboard.matchup_gaps = matchupGaps;
+  var matchupIntelligence = weaknessDashboard.matchup_intelligence || null;
+  var bo3Adaptation = buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, trends);
 
   return {
     schema_version: 1,
@@ -5603,6 +6370,8 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
     generated_at: new Date().toISOString(),
     sample_size: totalGames,
     confidence_tier: confidenceTier,
+    evidence_standard: evidenceStandard,
+    provenance: provenance,
     team_identity: identity,
     lead_system: leadSystem,
     coaching_rules: coachingRules,
@@ -5610,11 +6379,22 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
     pilot_plan: pilotPlan,
     matchup_warnings: matchupWarnings,
     weakness_dashboard: weaknessDashboard,
+    matchup_intelligence: matchupIntelligence,
+    bo3_adaptation: bo3Adaptation,
     coaching_notes: {
+      evidence_standard: evidenceStandard,
       how_team_wants_to_win: identity.primary_win_condition,
       common_mistakes: coachingRules.slice(0,3).map(function(r){ return r.id; }),
       key_habits_to_improve: coachingRules.filter(function(r){ return r.severity === 'high' || r.severity === 'critical'; }).slice(0,3).map(function(r){ return r.correction; }),
-      top_critical_rules: coachingRules.filter(function(r){ return r.severity === 'critical' || r.severity === 'high'; }).slice(0,2)
+      top_critical_rules: coachingRules.filter(function(r){ return r.severity === 'critical' || r.severity === 'high'; }).slice(0,2),
+      speed_control_mons: identity.speed_control_mons || [],
+      pivot_mons: identity.pivot_mons || [],
+      safe_leads: matchupIntelligence ? matchupIntelligence.safe_leads : [],
+      risky_leads: matchupIntelligence ? matchupIntelligence.risky_leads : [],
+      best_win_path: matchupIntelligence ? matchupIntelligence.best_win_path : identity.primary_win_condition,
+      common_loss_path: matchupIntelligence ? matchupIntelligence.common_loss_path : (trends.topOppFinishers && trends.topOppFinishers[0] ? trends.topOppFinishers[0] : ''),
+      provenance: provenance,
+      bo3_adaptation: bo3Adaptation
     },
     trend_analysis: {
       most_common_loss_condition: trends.topOppFinishers && trends.topOppFinishers.length ? trends.topOppFinishers[0] : null,
@@ -6429,13 +7209,13 @@ function csSkillCoaching(team, identity, leadGuide) {
     advanced: {
       bait_and_punish: [
         'Bait Protect by clicking spread damage, then double-switch to ' + closer + '.',
-        'Bait Trick Room by leading slow, then reveal Tailwind or Taunt.',
-        'Bait their priority by leading a bulky pivot, then bring ' + closer + ' on a Protect turn.'
+        'Represent a Trick Room answer by leading slow, then reveal Tailwind or Taunt only when the board supports it.',
+        'Respect possible priority by leading a bulky pivot, then bring ' + closer + ' on a Protect turn.'
       ],
-      double_switch_logic: 'Double-switch when you can predict their pivot move. Bring a Pokemon that resists their next likely lead.',
+      double_switch_logic: 'Double-switch only when revealed moves, board pressure, or repeated sim patterns support the pivot read. Bring a Pokemon that resists the likely next attack.',
       win_path_compression: 'Force the game to end by turn 6. Long games favor the bulkier team. Pressure spread + speed control.',
-      risk_reward_adjustments: 'Lock-in moves are worth 90% confidence trades. Status moves are worth 70%. Adjust your line based on the opponent\'s remaining team.',
-      opponent_prediction: 'If they have not revealed their item by turn 3, assume Choice Scarf. If they Protected turn 1, expect setup turn 2.'
+      risk_reward_adjustments: 'Treat lock-in moves and status reads as risk trades, not guarantees. Adjust only when the board state gives evidence.',
+      opponent_prediction: 'If an item is unrevealed by turn 3, preserve against possible speed items instead of assuming one. If they Protected turn 1, treat setup turn 2 as possible, not guaranteed.'
     }
   };
 }
@@ -6736,10 +7516,14 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   var risk = csRiskProfile(team, report_card);
   var trend = csTrendAnalysisV2(team, results);
   var weaknessDashboard = buildWeaknessDashboard(team, results, format, identity, leadSystem, trend, deadMoves, matchupWarnings);
+  var confidenceTier = sample < 20 ? 'low' : sample < 100 ? 'moderate' : sample < 500 ? 'high' : 'elite';
+  var evidenceStandard = csStrategyEvidenceStandard(sample, confidenceTier);
+  var provenance = buildReportProvenance(sample, confidenceTier, format);
 
   var summary = report_card.tier + '-tier ' + identity.playstyle + '. ' +
     'Win path: ' + identity.primary_win_condition + '. ' +
-    (mistakes[0] ? 'Top mistake to fix: ' + mistakes[0].mistake + '.' : '');
+    (mistakes[0] ? 'Top mistake to test: ' + mistakes[0].mistake + '.' : '') +
+    ' Evidence: ' + evidenceStandard.label + '.';
 
   return {
     schema_version: 1,
@@ -6748,6 +7532,10 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
     format: format,
     generated_at: new Date().toISOString(),
     sim_data_version: sample,
+    sample_size: sample,
+    confidence_tier: confidenceTier,
+    evidence_standard: evidenceStandard,
+    provenance: provenance,
 
     team_report_card: report_card,
     team_identity: identity,
@@ -6794,6 +7582,15 @@ function _csSourceChip(sourceLabel) {
   return '<span class="cs-source cs-source-' + k + '" data-evidence>' +
     '<span class="cs-source-label">' + labelMap[k] + '</span>' +
     citationsHtml +
+    '</span>';
+}
+function _csEvidenceBadge(evidence) {
+  if (!evidence) return '';
+  var label = evidence.label || evidence.evidence_label || 'Needs more data';
+  var confidence = evidence.confidence || evidence.evidence_confidence || 'low';
+  return '<span class="cs-source cs-source-inferred_strategy" data-evidence>' +
+    '<span class="cs-source-label">' + _csEsc(label) + '</span> ' +
+    '<span class="cs-source-label">' + _csEsc(confidence) + '</span>' +
     '</span>';
 }
 
@@ -6846,12 +7643,17 @@ function renderStrategyTab(teamKey) {
   html +=   '<div class="cs-score">' + rc.score + '<span class="cs-score-suffix">/100</span></div>';
   html +=   '<div class="cs-meta">';
   html +=     '<div><strong>' + _csEsc(team.name || teamKey) + '</strong> ' + _csChip(id.playstyle, {kind:'playstyle'}) + '</div>';
-  html +=     '<div class="cs-meta-line">Confidence: ' + rc.confidence + ' &middot; Risk: ' + rc.risk_level + ' &middot; Sample: ' + report.sim_data_version + ' games</div>';
+  html +=     '<div class="cs-meta-line">Evidence: ' + _csEsc((report.evidence_standard && report.evidence_standard.label) || 'Needs more data') + ' &middot; Confidence: ' + rc.confidence + ' &middot; Risk: ' + rc.risk_level + ' &middot; Sample: ' + report.sim_data_version + ' games</div>';
   html +=     (rc.battle_ready ? '<div class="cs-battle-ready">BATTLE READY</div>' : '');
   html +=   '</div>';
   html += '</div>';
 
   html += '<p class="cs-summary-line">' + _csEsc(report.coaching_summary) + '</p>';
+  if (report.evidence_standard) {
+    html += '<p class="cs-summary-line"><strong>Strategy evidence:</strong> ' +
+      _csEsc(report.evidence_standard.label + ' · ' + report.evidence_standard.rule + ' Decision: ' + report.evidence_standard.decision) +
+      '</p>';
+  }
 
   // Phase 4b (Refs #52) — Adaptive state banner + consistency pill.
   // Inserted above Section 1 so the user sees the state before reading anything.
@@ -6899,10 +7701,46 @@ function renderStrategyTab(teamKey) {
   html += '<li><strong>Win condition:</strong> ' + _csEsc(id.primary_win_condition) + '</li>';
   html += '<li><strong>Closer:</strong> ' + _csEsc(id.closer) + '</li>';
   html += '<li><strong>Support core:</strong> ' + _csEsc((id.support_core||[]).join(', ') || '-') + '</li>';
+  if (Array.isArray(id.speed_control_mons) && id.speed_control_mons.length) {
+    html += '<li><strong>Speed control anchor:</strong> ' + _csEsc(id.speed_control_mons.join(', ')) + '</li>';
+  }
+  if (Array.isArray(id.pivot_mons) && id.pivot_mons.length) {
+    html += '<li><strong>Pivot core:</strong> ' + _csEsc(id.pivot_mons.join(', ')) + '</li>';
+  }
+  if (report.provenance) {
+    html += '<li><strong>Provenance:</strong> ' + _csEsc(report.provenance.source_label || 'simulation_data') + ' · ' + _csEsc(report.provenance.evidence_label || 'Needs more data') + ' · ' + _csEsc(report.provenance.freshness_label || 'no sample yet') + ' · ' + _csEsc(report.provenance.freshness_note || '') + '</li>';
+  }
   html += '<li><strong>Format fit:</strong> ' + _csEsc(id.format_fit) + '</li>';
   html += '</ul></section>';
 
-  // Section 3: What works
+  // Section 3: Matchup intelligence
+  var mi = report.matchup_intelligence;
+  if (mi) {
+    html += '<section class="cs-section"><h3 class="cs-h3">Matchup Intelligence</h3>';
+    html += '<p><strong>Grade:</strong> ' + _csEsc(mi.grade + ' · ' + mi.confidence + ' confidence') + '</p>';
+    html += '<p><strong>Safe leads:</strong> ' + _csEsc((mi.safe_leads || []).join(' | ') || 'No safe lead logged yet') + '</p>';
+    html += '<p><strong>Risky leads:</strong> ' + _csEsc((mi.risky_leads || []).join(' | ') || 'No risky lead logged yet') + '</p>';
+    html += '<p><strong>Speed truth:</strong> ' + _csEsc(mi.speed_truth || 'No speed note yet') + '</p>';
+    html += '<p><strong>Best win path:</strong> ' + _csEsc(mi.best_win_path || 'unclear') + '</p>';
+    html += '<p><strong>Common loss path:</strong> ' + _csEsc(mi.common_loss_path || 'unclear') + '</p>';
+    html += '</section>';
+  }
+
+  // Section 4: BO3 adaptation
+  var bo3 = report.bo3_adaptation;
+  if (bo3) {
+    html += '<section class="cs-section"><h3 class="cs-h3">BO3 Adaptation ' + _csEvidenceBadge(bo3) + '</h3>';
+    html += '<p><strong>Game 1 lead:</strong> ' + _csEsc(bo3.game1_lead || 'unclear') + ' ' + _csSourceChip(bo3.source_label) + '</p>';
+    html += '<p><strong>Game 2 plan:</strong> ' + _csEsc(bo3.game2_plan || 'unclear') + '</p>';
+    html += '<p><strong>Revealed info:</strong> ' + _csEsc(bo3.revealed_info || 'unclear') + '</p>';
+    html += '<p><strong>Opponent adjustment:</strong> ' + _csEsc(bo3.opponent_adjustment_prediction || 'unclear') + '</p>';
+    html += '<p><strong>Counter-adjustment:</strong> ' + _csEsc(bo3.counter_adjustment || 'unclear') + '</p>';
+    html += '<p><strong>Preserve:</strong> ' + _csEsc(bo3.what_to_preserve || 'unclear') + '</p>';
+    html += '<p><strong>Common loss path:</strong> ' + _csEsc(bo3.common_loss_path || 'unclear') + '</p>';
+    html += '</section>';
+  }
+
+  // Section 5: What works
   var ww = report.what_works;
   html += '<section class="cs-section"><h3 class="cs-h3">What Works</h3>';
   html += '<p><strong>Best synergy:</strong> ' + _csEsc(ww.best_synergy.description) + ' ' + _csSourceChip(ww.best_synergy.source_label) + '</p>';
@@ -6911,7 +7749,7 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Strongest win path:</strong> ' + _csEsc(ww.strongest_win_path.description) + ' ' + _csSourceChip(ww.strongest_win_path.source_label) + '</p>';
   html += '</section>';
 
-  // Section 4: What is weak
+  // Section 6: What is weak
   var wk = report.what_is_weak;
   html += '<section class="cs-section"><h3 class="cs-h3">What Is Weak</h3>';
   if (wk.missing_roles.length) html += '<p><strong>Missing:</strong> ' + _csEsc(wk.missing_roles.join(', ')) + '</p>';
@@ -6922,7 +7760,7 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Speed control:</strong> ' + _csEsc(wk.speed_issues) + '</p>';
   html += '</section>';
 
-  // Section 5: Top threats
+  // Section 7: Top threats
   if (report.top_threats.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Top Threats</h3><div class="cs-threat-grid">';
     report.top_threats.forEach(function(t){
@@ -6933,7 +7771,7 @@ function renderStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 6: Lead guide (top 3)
+  // Section 8: Lead guide (top 3)
   html += '<section class="cs-section"><h3 class="cs-h3">Top 3 Leads (' + lg.format + ')</h3>';
   html += '<div class="cs-lead-grid">';
   (lg.recommendations || []).forEach(function(rec){
@@ -6951,7 +7789,7 @@ function renderStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 7: Move lines
+  // Section 9: Move lines
   html += '<section class="cs-section"><h3 class="cs-h3">Move Lines (' + report.move_lines.length + ' scenarios)</h3>';
   html += '<div class="cs-moveline-grid">';
   report.move_lines.forEach(function(ml){
@@ -6966,7 +7804,7 @@ function renderStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 8: Mistakes
+  // Section 10: Mistakes
   html += '<section class="cs-section"><h3 class="cs-h3">Mistakes to Avoid (' + report.mistakes_to_avoid.length + ')</h3>';
   html += '<div class="cs-mistake-list">';
   report.mistakes_to_avoid.forEach(function(m, i){
@@ -6978,7 +7816,7 @@ function renderStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 9: Risk profile
+  // Section 11: Risk profile
   if (report.risk_profile.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Risk Profile</h3><div class="cs-risk-grid">';
     report.risk_profile.forEach(function(r){
@@ -6991,7 +7829,7 @@ function renderStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 10: Trend analysis
+  // Section 12: Trend analysis
   var ta = report.trend_analysis;
   html += '<section class="cs-section"><h3 class="cs-h3">Trend Analysis</h3>';
   if (!ta.has_data) {
@@ -7008,7 +7846,7 @@ function renderStrategyTab(teamKey) {
   }
   html += '</section>';
 
-  // Section 11: Skill coaching
+  // Section 13: Skill coaching
   var sk = report.skill_coaching;
   html += '<section class="cs-section"><h3 class="cs-h3">Skill Coaching</h3><div class="cs-skill-grid">';
   html += '<div class="cs-skill-card"><h4>Beginner</h4>';
@@ -7028,10 +7866,10 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Double-switch logic:</strong> ' + _csEsc(sk.advanced.double_switch_logic) + '</p>';
   html += '<p><strong>Win path compression:</strong> ' + _csEsc(sk.advanced.win_path_compression) + '</p>';
   html += '<p><strong>Risk vs reward:</strong> ' + _csEsc(sk.advanced.risk_reward_adjustments) + '</p>';
-  html += '<p><strong>Opponent prediction:</strong> ' + _csEsc(sk.advanced.opponent_prediction) + '</p></div>';
+  html += '<p><strong>Opponent risk read:</strong> ' + _csEsc(sk.advanced.opponent_prediction) + '</p></div>';
   html += '</div></section>';
 
-  // Section 12: Stress test
+  // Section 14: Stress test
   var st = report.stress_test;
   html += '<section class="cs-section"><h3 class="cs-h3">Stress Test &middot; Consistency: ' + st.consistency_rating + '</h3>';
   if (st.break_points.length) {
@@ -8453,8 +9291,12 @@ function csRenderPhase4cSections(history, teamKey, team) {
     covBody += '<ul class="cs-list cs-detector-roles">';
     if (archetype) covBody += '<li><strong>Archetype:</strong> ' + _csEsc(archetype) + '</li>';
     var roleLines = members.map(function(m){
-      var role = (m.item ? '@ ' + m.item : '') + (m.ability ? ' (' + m.ability + ')' : '');
-      return _csEsc(m.name + ' ' + role);
+      var classified = (typeof classifyPokemon === 'function') ? classifyPokemon(m) : null;
+      var roles = classified && Array.isArray(classified.roles) && classified.roles.length ? classified.roles.join(' / ') : 'Support';
+      var extras = [];
+      if (m.item) extras.push('@ ' + m.item);
+      if (m.ability) extras.push('(' + m.ability + ')');
+      return _csEsc(m.name + ' [' + roles + ']' + (extras.length ? ' ' + extras.join(' ') : ''));
     });
     covBody += '<li><strong>Roster:</strong> ' + roleLines.join(', ') + '</li>';
     covBody += '</ul>';
@@ -9217,6 +10059,7 @@ if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', async function(){
     await csHardenClientState();
     _csInitEvidenceToggle();
+    csInitReplayCoachUi();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────
     // Await loadTeamsFromDB BEFORE the first authoritative rebuildTeamSelects()

@@ -2,7 +2,7 @@
 
 > **Battle-tested. Always evolving.**
 > Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/)
-> **Last updated:** 2026-04-30 | **Baseline:** T9j.17 (343 tests · 5,070 battles/audit)
+> **Last updated:** 2026-05-16 | **Baseline:** Battle Sensei R1 + Battle IQ R1
 
 ---
 
@@ -13,14 +13,17 @@
 | M1 | Engine Truth | 🟡 83% (19/23) | #140 test coverage |
 | M7 | Architecture Foundation | 🟡 In Progress | #78 namespace next |
 | M9 | Observability & QA | 🟡 In Progress | CI ✅ live · #89 logger next |
-| M2 | Dynamic Strategy Coach | 🔴 Open | #141 classifier |
+| M2 | Dynamic Strategy Coach | 🟡 Partial | #141 classifier |
 | M3 | Piloting Analytics | 🔴 Open | #142, #143 |
 | M5 | Tournament Packet | 🔴 Open | #57 parent |
-| M4 | Community & Sharing | 🔴 Open | M3 gate |
+| M4 | Community & Sharing | 📝 Needs issue refresh | M3 gate |
 | M6 | Polish & Launch | 🔴 Open | M1–M5 gate |
 | M8 | Profile & Sync | 🟡 Unblocked | Supabase ✅ live |
 | M10 | Performance & Quality | 🟡 Partial | #92, #93, #94 |
 | M11 | Advanced Features | ⏳ Deferred | M8 gate |
+| M12 | Battle Sensei | 🧪 R1/R2 MVP started | Stage 3 credibility gate |
+| M13 | Meta Stress Lab | 📝 Planned | Source-labeled meta + legal stress testing |
+| M14 | Launch Security & Premium Access | 📝 Planned | #208 parent |
 
 ---
 
@@ -32,6 +35,40 @@
 
 > ✅ **#87 CLOSED** — `ci.yml` live 2026-04-30 (commit `4f9579d`). Branch protection on `main` confirmed. Sprint 1 unblocked.
 > ✅ **#158 CLOSED** — Supabase confirmed live 2026-04-30: 8 tables, RLS enabled, 22 teams seeded, 210 team_members loaded.
+
+---
+
+## Current Product Direction
+
+The product is now centered on a coaching intelligence loop:
+
+1. **Sim Mode** tests what the team can do.
+2. **Strategy** explains the team plan from sim data.
+3. **Battle Sensei** explains what the player actually did from Showdown logs.
+4. **Battle IQ** scores observable decision quality with confidence labels.
+5. **Profile/DB** stores durable memory, trends, privacy-safe aggregate signals, and premium personalization.
+6. **Meta Stress Lab** challenges the build with source-labeled meta snapshots and legal stress scenarios.
+7. **Launch Security & Premium Access** protects public hosting, login, payment, Supabase privacy, and abuse controls before paid coaching memory goes live.
+
+Near-term work should protect this sequence. Meta Stress Lab is valuable, but it should not jump ahead of evidence cleanup, sim-feedback packets, and persistence/privacy foundations.
+Launch security is a parallel launch-readiness lane: keep GitHub Pages for the static demo, but move premium login/payment/webhooks behind a server-capable host before storing paid coaching memory.
+
+## Current Execution Order
+
+| Order | Issue | Why Next |
+|---|---|---|
+| Done | #201 Align Strategy coaching with Battle Sensei evidence standards | Closed after Strategy adopted the Battle Sensei evidence vocabulary. |
+| Done | #194 Sim Feedback Packet | Closed after Battle Sensei began emitting replay-derived calibration signals without auto-mutating models. |
+| 1 | #195 Replay persistence schema + privacy controls | Defines what can be saved, what stays local, and raw-log boundaries. |
+| 2 | #197 Supabase replay schema migration | Implements the DB layer after privacy rules are explicit. |
+| 3 | #198 Battle IQ profile schema + norm groups | Enables premium Battle IQ history and matched comparisons. |
+| 4 | #199 Opt-in aggregate learning signals | Enables aggregate coaching while protecting users. |
+| 5 | #200 Replay-to-sim calibration scenario queue | Bridges Battle Sensei logs into future Meta Stress Lab scenarios. |
+| 6 | #203 M13 meta snapshot schema | Starts Meta Stress Lab after the evidence and DB loop is clear. |
+
+Recommended next implementation issue: **#195**.
+
+Parallel launch-readiness issue: **#208**. This should not block local Battle Sensei engine work, but it must gate public premium launch.
 
 ---
 
@@ -59,9 +96,9 @@
 | #141 | **`classifyPokemon()` 7-role classifier** | @TheYfactora12 | M2 | P1 — critical path |
 | #142 | Stat panel (EVs/IVs/Nature display) | @TheYfactora12 | M3 | P1 |
 | #143 | Bug: lead-selector highlight in Auto mode | @TheYfactora12 | M3 | P1 |
-| #165 | Phase 4c: Archetype detectors | @TheYfactora12 | M2 | P1 |
-| #166 | Phase 4d: Threat-response matrix | @TheYfactora12 | M2 | P2 |
-| #167 | Phase 4e: Policy audit layer | @TheYfactora12 | M2 | P2 |
+| #165 | Phase 4c: Archetype detectors | @TheYfactora12 | M2 | ✅ CLOSED |
+| #166 | Phase 4d: Threat-response matrix | @TheYfactora12 | M2 | ✅ CLOSED |
+| #167 | Phase 4e: Policy audit layer | @TheYfactora12 | M2 | ✅ CLOSED |
 | #140 | T9j.18 status immunity tests | @Jdoutt38 | M1 | P2 |
 | #139 | T9j.18 mirror-match hard assertion | @Jdoutt38 | M1 | P2 |
 | #80 | TDZ lazy-init crash risk | @alfredocox | M7 | P2 |
@@ -82,7 +119,7 @@
 | #92 | Memoize `buildStrategyReport()` | @alfredocox | M10 |
 | #93 | Cap battle-log array size | @alfredocox | M10 |
 | #96 | Focus management NVDA/VO audit | @alfredocox | M10 |
-| #168 | Phase 5: Turn log (VGC-authentic) | @TheYfactora12 | M2 |
+| #168 | Phase 5: Turn log (VGC-authentic) | @TheYfactora12 | M2 — ✅ CLOSED |
 | #53 | Lead pair win-rate table | @TheYfactora12 | M3 |
 | #54 | Suboptimal decision flagger | @TheYfactora12 | M3 |
 | #55 | Personal weakness dashboard | @TheYfactora12 | M3 |
@@ -103,7 +140,7 @@
 | #85 | Cross-device sync (live) | @alfredocox | M8 |
 | #86 | Profile badge system | @alfredocox | M8 |
 | #91 | localStorage migration runner | @alfredocox | M8 |
-| #169 | Phase 6: Coaching voice + tone layers | @TheYfactora12 | M2 |
+| #169 | Phase 6: Coaching voice + tone layers | @TheYfactora12 | M2 — ✅ CLOSED |
 
 ---
 
@@ -123,10 +160,12 @@
 
 | # | Issue | Priority |
 |---|---|---|
-| #62 | Share team link (hash-based) | P2 |
-| #63 | Team export to Pokémon Showdown | P2 |
-| #64 | Embed widget (iFrame) | P3 |
-| #65 | Social preview card generator | P3 |
+| TBD | Share team link (hash-based) | P2 |
+| TBD | Team export to Pokémon Showdown | P2 |
+| TBD | Embed widget (iFrame) | P3 |
+| TBD | Social preview card generator | P3 |
+
+> Issue numbers #62-#65 are no longer Community & Sharing tickets in GitHub. They now track meta-ingestion and threat-radar work and are superseded by M13 where appropriate.
 
 ---
 
@@ -134,11 +173,11 @@
 
 | # | Issue | Priority |
 |---|---|---|
-| #66 | VGC format calendar integration | P3 |
+| #66 | First-run onboarding tour | P3 |
 | #67 | Accessibility full audit | P3 |
 | #68 | Performance budget v2.0 | P3 |
-| #69 | Keyboard shortcuts | P3 |
-| #70 | Dark mode override toggle | P3 |
+| #69 | Usage docs and screencast walkthrough | P3 |
+| #70 | v2.0 release notes and announcement | P3 |
 
 ---
 
@@ -149,6 +188,61 @@
 | #97 | Replay shortlink | P3 |
 | #98 | Multi-team compare | P3 |
 | #99 | Live team fingerprinting | P3 |
+
+---
+
+## Backlog — Battle Sensei (M12, Stage 3 Credibility)
+
+> Product line: Sim Mode builds the team. Battle Sensei builds the player. Learn why the turn went wrong.
+> Canonical spec: [`poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`](./poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md)
+> Battle IQ spec: [`poke-sim/docs/BATTLE_IQ_SPEC.md`](./poke-sim/docs/BATTLE_IQ_SPEC.md)
+
+| Issue | Priority |
+|---|---|
+| #187 | Parent tracker: Battle Sensei + Sim Intelligence | P1 |
+| #188 | Battle Sensei UI shell: paste/upload log, side select, review mode | ✅ CLOSED |
+| #189 | Showdown parser MVP: players, turns, leads, moves, switches, faints, winner | ✅ CLOSED |
+| #190 | Replay summary + readable turn timeline | ✅ CLOSED |
+| #191 | Core replay coaching rules: lead, bring-four, speed-control, Protect, targeting, switching | ✅ CLOSED |
+| #192 | Critical turn engine: first mistake, fatal mistake, biggest swing | ✅ CLOSED |
+| #193 | Sim comparison card: sim lead/four/path vs actual replay lead/four/path | ✅ CLOSED |
+| #194 | Sim Feedback Packet for replay-calibrated coaching signals | ✅ CLOSED |
+| #198 | Battle IQ profile schema + norm groups | P2 |
+| #199 | Opt-in aggregate learning signals | P2 |
+| #200 | Replay-to-sim calibration scenario queue | P2 |
+| #201 | Align Strategy coaching with Battle Sensei evidence standards | ✅ CLOSED |
+| #195 | Replay persistence schema + explicit raw-log privacy controls | P2 |
+| #196 | Multi-log Player Pattern Dashboard | P2 |
+| #197 | Supabase replay schema migration | P2 |
+
+## Backlog — Meta Stress Lab (M13, Build Challenge)
+
+> Product line: Sim Mode builds the team. Battle Sensei builds the player. Meta Stress Lab challenges the build.
+> Canonical spec: [`poke-sim/docs/META_STRESS_LAB_SPEC.md`](./poke-sim/docs/META_STRESS_LAB_SPEC.md)
+
+| Issue | Priority |
+|---|---|
+| #202 | Parent tracker: Meta Stress Lab + Build Challenge Coach | P2 |
+| #203 | Meta snapshot schema and source-labeled top usage loader | P2 |
+| #204 | Constrained legal set generator for observed sets, role templates, and mutations | P2 |
+| #206 | Stress Test Matrix for doubles and singles scenario queues | P2 |
+| #205 | Strategy integration: replace static threat radar and upgrade `csStressTest()` with scenario-backed findings | P2 |
+| #207 | Premium aggregate pattern suggestions for possible team changes | P2 |
+| #200 | Battle Sensei integration: replay-derived stress scenarios and sim calibration signals | P3 |
+
+## Backlog — Launch Security & Premium Access (M14)
+
+> Product line: Free users get immediate local coaching value. Premium users unlock durable memory, saved profiles, trend history, Battle IQ growth, and personalized coaching.
+> Hosting direction: GitHub Pages is acceptable for the static free demo. A custom domain is recommended for public trust. Premium auth, payment webhooks, entitlement checks, rate limits, and private coaching memory require a server-capable deployment layer such as Vercel, Netlify, Cloudflare Pages/Workers, or a small backend service.
+
+| Issue | Priority |
+|---|---|
+| #208 | Parent tracker: launch security, premium access, and deployment hardening | P2 |
+| #209 | Auth/login and premium profile entitlement model | P2 |
+| #210 | Payment checkout and entitlement verification | P2 |
+| #211 | Free vs premium coaching boundary and upgrade UX | P2 |
+| #212 | Supabase security, privacy, and RLS audit for coaching data | P2 |
+| #213 | Deployment hardening, cache safety, and abuse protection | P2 |
 
 ---
 
@@ -167,6 +261,9 @@
 | **M9 Observability & QA** | Structured logger, CI workflows, performance profiling harness. |
 | **M10 Performance & Quality** | Memoization, log caps, XSS audit, NVDA/VO focus management — measurable gains. |
 | **M11 Advanced Features** | Replay shortlinks, multi-team compare, live fingerprinting. Post-M8 only. |
+| **M12 Battle Sensei** | Parse Showdown logs, diagnose real player decisions, compare replay paths to sim plans, and produce replay-calibrated coaching signals. |
+| **M13 Meta Stress Lab** | Source-labeled meta snapshots, legal set templates, and targeted stress scenarios that challenge the team without pretending synthetic data is live usage truth. |
+| **M14 Launch Security & Premium Access** | Public deployment hardening, login, server-verified premium entitlements, Supabase RLS/privacy, rate limits, cache safety, and a custom-domain-ready hosting plan. |
 
 ---
 
@@ -197,8 +294,11 @@ All spec files live in [`poke-sim/docs/`](./poke-sim/docs/).
 | `PHASE4E_POLICY_AUDIT_SPEC.md` | 4e | ✅ Final |
 | `PHASE5_TURN_LOG_SPEC_DRAFT.md` | 5 | 📝 Draft |
 | `PHASE6_COACHING_VOICE_SPEC.md` | 6 | ✅ Final |
+| `SHOWDOWN_REPLAY_COACH_SPEC.md` | Stage 3 Battle Sensei | 🧪 R1/R2 MVP started |
+| `BATTLE_IQ_SPEC.md` | Stage 3 Battle Sensei scoring | 🧪 R1 shipped |
 | `PHASE_ROLLOUT_REVIEW.md` | All | 📋 Review |
 | `COACHING_NORTH_STAR.md` | All | ⭐ Reference |
+| `META_STRESS_LAB_SPEC.md` | M13 Meta Stress Lab | 📝 Planned |
 
 ---
 

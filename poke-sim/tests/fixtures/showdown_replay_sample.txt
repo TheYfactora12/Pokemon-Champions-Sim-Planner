@@ -1,0 +1,58 @@
+|j|Alice
+|j|Bob
+|player|p1|Alice|1|1500
+|player|p2|Bob|2|1500
+|teamsize|p1|4
+|teamsize|p2|4
+|gametype|doubles
+|tier|[Gen 9] VGC 2026
+|poke|p1|Incineroar, L50, M|
+|poke|p1|Whimsicott, L50, F|
+|poke|p1|Garchomp, L50, M|
+|poke|p1|Arcanine, L50, M|
+|poke|p1|Rillaboom, L50, M|
+|poke|p1|Milotic, L50, F|
+|poke|p2|Indeedee-F, L50, F|
+|poke|p2|Hatterene, L50, F|
+|poke|p2|Ursaluna, L50, M|
+|poke|p2|Torkoal, L50, M|
+|poke|p2|Amoonguss, L50, M|
+|poke|p2|Kingambit, L50, M|
+|teampreview
+|start
+|switch|p1a: Incineroar|Incineroar, L50, M|100/100
+|switch|p1b: Whimsicott|Whimsicott, L50, F|100/100
+|switch|p2a: Indeedee-F|Indeedee-F, L50, F|100/100
+|switch|p2b: Hatterene|Hatterene, L50, F|100/100
+|turn|1
+|move|p1a: Incineroar|Fake Out|p2b: Hatterene
+|-fail|p1a: Incineroar|move: Fake Out
+|move|p2a: Indeedee-F|Follow Me|p2a: Indeedee-F
+|move|p1b: Whimsicott|Tailwind|p1: Alice
+|-sidestart|p1: Alice|move: Tailwind
+|move|p2b: Hatterene|Trick Room|p2: Bob
+|-fieldstart|move: Trick Room
+|turn|2
+|switch|p1a: Arcanine|Arcanine, L50, M|100/100
+|move|p1b: Whimsicott|Protect|p1b: Whimsicott
+|move|p2a: Indeedee-F|Helping Hand|p2b: Hatterene
+|move|p2b: Hatterene|Psychic|p1a: Arcanine
+|-damage|p1a: Arcanine|42/100
+|turn|3
+|move|p2b: Hatterene|Dazzling Gleam|p1a: Arcanine
+|-crit|p1a: Arcanine
+|-damage|p1a: Arcanine|0 fnt
+|faint|p1a: Arcanine
+|move|p2a: Indeedee-F|Psychic|p1b: Whimsicott
+|-damage|p1b: Whimsicott|0 fnt
+|faint|p1b: Whimsicott
+|switch|p1a: Garchomp|Garchomp, L50, M|100/100
+|switch|p1b: Incineroar|Incineroar, L50, M|100/100
+|turn|4
+|move|p1a: Garchomp|Earthquake|p2a: Indeedee-F
+|-damage|p2a: Indeedee-F|0 fnt
+|faint|p2a: Indeedee-F
+|move|p2b: Hatterene|Dazzling Gleam|p1a: Garchomp
+|-damage|p1a: Garchomp|0 fnt
+|faint|p1a: Garchomp
+|win|Bob
