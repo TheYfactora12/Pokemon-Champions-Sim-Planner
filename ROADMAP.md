@@ -160,15 +160,17 @@
 
 | Issue | Priority |
 |---|---|
-| NEW | Replay Coach UI shell: paste/upload log, side select, review mode | P1 |
-| NEW | Showdown parser MVP: players, turns, leads, moves, switches, faints, winner | P1 |
-| NEW | Replay summary + readable turn timeline | P1 |
-| NEW | Core replay coaching rules: lead, bring-four, speed-control, Protect, targeting, switching | P1 |
-| NEW | Critical turn engine: first mistake, fatal mistake, biggest swing | P1 |
-| NEW | Sim comparison card: sim lead/four/path vs actual replay lead/four/path | P2 |
-| NEW | Sim Feedback Packet for replay-calibrated coaching signals | P2 |
-| NEW | Replay persistence schema + explicit raw-log privacy controls | P2 |
-| NEW | Multi-log Player Pattern Dashboard | P2 |
+| #187 | Parent tracker: Showdown Replay Coach + Sim Intelligence | P1 |
+| #188 | Replay Coach UI shell: paste/upload log, side select, review mode | P1 |
+| #189 | Showdown parser MVP: players, turns, leads, moves, switches, faints, winner | P1 |
+| #190 | Replay summary + readable turn timeline | P1 |
+| #191 | Core replay coaching rules: lead, bring-four, speed-control, Protect, targeting, switching | P1 |
+| #192 | Critical turn engine: first mistake, fatal mistake, biggest swing | P1 |
+| #193 | Sim comparison card: sim lead/four/path vs actual replay lead/four/path | P2 |
+| #194 | Sim Feedback Packet for replay-calibrated coaching signals | P2 |
+| #195 | Replay persistence schema + explicit raw-log privacy controls | P2 |
+| #196 | Multi-log Player Pattern Dashboard | P2 |
+| #197 | Supabase replay schema migration | P2 |
 
 ---
 

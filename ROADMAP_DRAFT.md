@@ -239,15 +239,17 @@ Milestones are **sequential** — each depends on the one before. Engine truth f
 - Existing sim smoke and full non-DB suite remain green
 
 **Tickets (new):**
-- **NEW: Replay Coach UI Shell** — paste/upload, side selection, review mode, placeholder cards
-- **NEW: Showdown Parser MVP** — fixture-driven parser for players, turns, leads, moves, switches, faints, winner
-- **NEW: Replay Summary + Turn Timeline** — readable cards, raw log collapsed
-- **NEW: Core Replay Coaching Rules** — bad lead, questionable bring, speed-control misuse, Protect misuse, targeting, switch tempo loss, RNG materiality
-- **NEW: Critical Turn Engine** — first mistake, fatal mistake, biggest swing
-- **NEW: Sim Comparison Card** — best sim lead/four/path vs actual replay behavior
-- **NEW: Sim Feedback Packet** — replay-derived lead, bring-four, archetype, difficulty, and scenario signals
-- **NEW: Replay Persistence Schema** — save review summaries and normalized events, raw log opt-in only
-- **NEW: Multi-Log Player Pattern Dashboard** — repeated mistakes, lead trends, practical win rate, practice plan
+- **#187: Parent tracker** — Showdown Replay Coach + Sim Intelligence
+- **#188: Replay Coach UI Shell** — paste/upload, side selection, review mode, placeholder cards
+- **#189: Showdown Parser MVP** — fixture-driven parser for players, turns, leads, moves, switches, faints, winner
+- **#190: Replay Summary + Turn Timeline** — readable cards, raw log collapsed
+- **#191: Core Replay Coaching Rules** — bad lead, questionable bring, speed-control misuse, Protect misuse, targeting, switch tempo loss, RNG materiality
+- **#192: Critical Turn Engine** — first mistake, fatal mistake, biggest swing
+- **#193: Sim Comparison Card** — best sim lead/four/path vs actual replay behavior
+- **#194: Sim Feedback Packet** — replay-derived lead, bring-four, archetype, difficulty, and scenario signals
+- **#195: Replay Persistence Schema** — save review summaries and normalized events, raw log opt-in only
+- **#196: Multi-Log Player Pattern Dashboard** — repeated mistakes, lead trends, practical win rate, practice plan
+- **#197: Supabase Replay Schema Migration** — durable replay tables, RLS, fail-soft adapter plan
 
 **Canonical spec:** `poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`
 

@@ -218,6 +218,31 @@ Replay Coach page:
 
 Mobile rule: no spreadsheet replay wall. Use stacked cards, expandable turns, short coaching reads, and one-thumb controls.
 
+## Product Surface And Access Model
+
+Replay Coach should be a first-class tab/page, not a hidden subpanel inside the current Replay Log. The mental model is different:
+
+- Sim Coach answers: what should my team do?
+- Replay Coach answers: what did I actually do?
+- Player Dashboard answers: what pattern keeps repeating?
+
+Replay data should still feed the same Coaching Intelligence Engine. The UI surface is separate, but the data model is shared.
+
+Recommended access model:
+
+- Anonymous visitor: can paste one log, run a temporary review, and see a cached report in the current browser session.
+- Local-only user: can keep temporary reports in browser storage, export them manually, and clear them.
+- Account/profile user: can save teams, sim history, replay summaries, player patterns, and cross-device progress.
+- Advanced/full coach report: can be a future paid or gated capability, but the parser and basic replay review should exist before any monetization decision.
+
+Do not require login for the first useful replay review. Require login/profile persistence only when the user wants durable saved data, multi-log history, cross-device sync, or a merged long-term coaching profile.
+
+The product rule is:
+
+- basic replay value should be immediate
+- saved coaching history should require a profile
+- full merged sim-plus-replay intelligence can be a later premium/business layer
+
 ## Persistence Scope
 
 Persist normalized summaries before raw logs.
@@ -232,6 +257,106 @@ Recommended entities:
 - player_pattern_snapshots
 
 Raw logs are optional and should be user-controlled because they may contain usernames or private notes.
+
+Data retention policy:
+
+- Temp review: normalized result lives in memory and may be cached locally for the session.
+- Saved review: normalized summary, mistake tags, confidence, and sim feedback packet are saved.
+- Raw log: saved only after explicit opt-in.
+- Account/profile sync: saved only after the user signs in or imports/exports a profile bundle.
+
+## Supabase / DB Design
+
+Replay Coach should use the DB for durable, queryable coaching history, not for temporary anonymous review.
+
+Recommended split:
+
+- anonymous temp review: memory plus optional browser storage
+- saved local review: `Storage` / IndexedDB-style local persistence
+- signed-in profile: Supabase persistence
+- raw log: opt-in only, never required for coaching summaries
+
+Suggested Supabase tables:
+
+```sql
+replay_reviews (
+  id uuid primary key,
+  profile_id uuid null,
+  player_team_id text null,
+  opp_team_id text null,
+  source text not null,
+  format text null,
+  selected_side text not null,
+  winner text null,
+  result text null,
+  turn_count int not null default 0,
+  lead_grade text null,
+  bring_grade text null,
+  critical_turn int null,
+  confidence text not null,
+  raw_log_saved boolean not null default false,
+  raw_log text null,
+  summary_json jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+
+replay_turns (
+  id uuid primary key,
+  review_id uuid references replay_reviews(id) on delete cascade,
+  turn_number int not null,
+  board_state jsonb not null default '{}',
+  events jsonb not null default '[]',
+  coaching_json jsonb not null default '{}'
+);
+
+replay_mistake_tags (
+  id uuid primary key,
+  review_id uuid references replay_reviews(id) on delete cascade,
+  turn_number int null,
+  tag text not null,
+  severity text not null,
+  confidence text not null,
+  evidence text null,
+  recommendation text null
+);
+
+replay_sim_feedback (
+  id uuid primary key,
+  review_id uuid references replay_reviews(id) on delete cascade,
+  should_update_lead_model boolean not null default false,
+  should_update_bring_four_model boolean not null default false,
+  should_update_archetype_model boolean not null default false,
+  should_create_scenario boolean not null default false,
+  scenario_type text null,
+  pilot_difficulty_signal text null,
+  team_construction_signal text null,
+  rng_contamination text null,
+  confidence text not null,
+  payload jsonb not null default '{}'
+);
+
+player_pattern_snapshots (
+  id uuid primary key,
+  profile_id uuid null,
+  team_signature text null,
+  sample_size int not null default 0,
+  pattern_json jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+```
+
+RLS direction:
+
+- anonymous inserts can be disabled until the account/profile model exists
+- public read should be off by default
+- profile-scoped read/write should require ownership once auth exists
+- local-only mode must continue to work without Supabase credentials
+
+Adapter direction:
+
+- add fail-soft methods such as `saveReplayReview`, `loadReplayReviewsForProfile`, and `loadReplayTurns`
+- never block replay analysis when DB is unavailable
+- persist normalized data first; raw log is a separate opt-in field
 
 ## Phased Build
 
@@ -320,13 +445,14 @@ V2 is complete when:
 
 ## First GitHub Issue Breakdown
 
-1. Replay Coach UI shell.
-2. Showdown log parser MVP with fixtures.
-3. Replay summary and turn timeline.
-4. Core replay coaching rules.
-5. Critical turn detector.
-6. Sim comparison card.
-7. Sim Feedback Packet.
-8. Replay persistence schema.
-9. Multi-log player pattern dashboard.
-
+1. `#187` Parent tracker.
+2. `#188` Replay Coach UI shell.
+3. `#189` Showdown log parser MVP with fixtures.
+4. `#190` Replay summary and turn timeline.
+5. `#191` Core replay coaching rules.
+6. `#192` Critical turn detector.
+7. `#193` Sim comparison card.
+8. `#194` Sim Feedback Packet.
+9. `#195` Replay persistence schema and privacy controls.
+10. `#196` Multi-log player pattern dashboard.
+11. `#197` Supabase replay schema migration.
