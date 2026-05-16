@@ -1023,7 +1023,7 @@ const TEAMS = {
           "def": 32,
           "spa": 32,
           "spd": 0,
-          "spe": 32
+          "spe": 0
         },
         "moves": [
           "Eruption",
@@ -2132,7 +2132,7 @@ const TEAMS = {
       },
       {
         "name": "Milotic",
-        "item": "Leftovers",
+        "item": "Mystic Water",
         "ability": "Competitive",
         "nature": "Calm",
         "evs": {
