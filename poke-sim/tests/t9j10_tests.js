@@ -110,6 +110,12 @@ T('4. default bring (no opts) uses team.members[0..N-1] in order', () => {
   arrEq(r.leads.player, ['Incineroar','Arcanine'], 'default doubles leads');
 });
 
+T('4a. roleAwareOpeners promotes support/speed-control leads when requested', () => {
+  const r = simulateBattle(sixTeam('P'), sixTeam('O'), { format:'doubles', seed:[4,5,6,7], roleAwareOpeners: true });
+  arrEq(r.bring.player, ['Incineroar','Arcanine','Garchomp','Whimsicott'], 'bring order stays stable');
+  arrEq(r.leads.player, ['Whimsicott','Arcanine'], 'role-aware leads should favor speed control + support');
+});
+
 // ============================================================
 // ENGINE — _applyBring semantics via opts.playerBring / opponentBring
 // ============================================================

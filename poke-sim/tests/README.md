@@ -20,7 +20,7 @@ node tests/t9j14_tests.js      # T9j.14 — Shadow Pressure PDF + coaching notes
 node tests/t9j15_tests.js      # T9j.15 — Best Mega Trigger Turn card (#71) — 22 cases
 node tests/phase4c_detectors.js # Phase 4c — detectors + confidence badges (5 fixtures) — 20 cases
 node tests/phase4d_threat_response_tests.js # Phase 4d — threat response solver + line classifier — 7 cases
-node tests/phase4e_policy_regression.js # Phase 4e — policy audit / T5 static-advice gate — 13 cases
+node tests/phase4e_policy_regression.js # Phase 4e — policy audit / T5 static-advice gate — 14 cases
 node tests/mechanics_audit.js      # Mechanics audit — move-rule checks used by smoke test
 node tests/t159_mobile_roster_layout_tests.js # Mobile roster layout safeguards
 node tests/t160_distinct_battle_team_tests.js # Battle team selection must stay distinct
@@ -59,7 +59,7 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | coverage | 9/9 | Speed control category, meta radar |
 | t9j8 | 47/47 | Ability hook coverage |
 | t9j9 | 24/24 | Nature + EV + IV stat math |
-| t9j10 | 16/16 | Bring state + random-mode rerolls |
+| t9j10 | 17/17 | Bring state + random-mode rerolls + role-aware opener opt-in |
 | t9j11 | 16/16 | Custom team bulk import/export + filter chips |
 | t9j12 | 16/16 | Simulator bring picker + shared Teams/Sim state |
 | t9j13 | 47/47 | Format-mismatch guard + SP rescale (cofagrigus_tr, aurora_veil_froslass) |
@@ -80,13 +80,13 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | t176 | 3/3 | Mobile teams panel safeguards |
 | phase4c | 20/20 | Detectors (dead moves, lead perf, loss conditions) + confidence badges, 5 fixtures incl. high-n null effect |
 | phase4d | 7/7 | Threat-response solver, cache, idle fallback, line labels, renderer |
-| phase4e | 13/13 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate, weakness dashboard |
+| phase4e | 14/14 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate, weakness dashboard |
 | mechanics_audit | 20/20 | Core move-rule checks: Protect, Taunt, support leads, Sucker Punch, Feint, shield riders, recovery, sleep, Substitute, Imprison, Ally Switch, Mega weather triggers, slot retargeting, Roost grounding |
 | phase5 | 12/12 | Turn log struct, positionScore, swing-turn delta, Replay Log v2, decision-gap audit |
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
 | export | 4/4 | My Data JSON export for persisted history, reports, and DB analyses |
-| **Total** | **404/404** | |
+| **Total** | **406/406** | |
 | audit | 0 JS errors | 5070 battles across 13 teams |
 
 ## Conventions

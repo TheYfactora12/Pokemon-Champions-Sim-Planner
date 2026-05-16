@@ -3053,7 +3053,12 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
       const seriesBattles = [];
 
       while (seriesW<gamesNeeded && seriesL<gamesNeeded && gamesPlayed<bo) {
-        const battle = simulateBattle(TEAMS[playerTeamKey], TEAMS[oppTeamKey], { format: currentFormat, playerBring, opponentBring });
+        const battle = simulateBattle(TEAMS[playerTeamKey], TEAMS[oppTeamKey], {
+          format: currentFormat,
+          playerBring,
+          opponentBring,
+          roleAwareOpeners: true
+        });
         if (battle.result==='win') seriesW++;
         else if (battle.result==='loss') seriesL++;
         else { seriesW+=0.5; seriesL+=0.5; }
@@ -4979,6 +4984,22 @@ function inferTeamIdentity(team, results, fmt) {
   var members = (team && team.members) || [];
   var playstyle = inferPlaystyle(members);
   var format = fmt || 'doubles';
+  var memberRoles = members.map(function(m){
+    var classified = (typeof classifyPokemon === 'function') ? classifyPokemon(m) : null;
+    return {
+      name: m && m.name ? m.name : '',
+      roles: classified && Array.isArray(classified.roles) ? classified.roles.slice() : []
+    };
+  });
+  var speedControlMons = memberRoles.filter(function(row){
+    return row.roles.indexOf('Speed Control') >= 0;
+  }).map(function(row){ return row.name; });
+  var pivotMons = memberRoles.filter(function(row){
+    return row.roles.indexOf('Pivot') >= 0;
+  }).map(function(row){ return row.name; });
+  var supportMons = memberRoles.filter(function(row){
+    return row.roles.indexOf('Support') >= 0;
+  }).map(function(row){ return row.name; });
 
   // Aggregate win paths across all matchups
   var totalWins = 0, pathCounts = {};
@@ -5014,7 +5035,11 @@ function inferTeamIdentity(team, results, fmt) {
     secondary_win_condition: secondary || 'none observed',
     synergy_core: synergy,
     format_viability: viability,
-    primary_win_path_pct: Math.round(primaryPct * 100)
+    primary_win_path_pct: Math.round(primaryPct * 100),
+    member_roles: memberRoles,
+    speed_control_mons: speedControlMons,
+    pivot_mons: pivotMons,
+    support_mons: supportMons
   };
 }
 
@@ -5414,6 +5439,18 @@ function buildCoachingSummary(rules, identity, elite) {
   if (top[0]) lines.push('Fix it: ' + top[0].correction);
   if (top[1]) lines.push('Also: ' + top[1].correction);
 
+  if (identity) {
+    if (identity.primary_win_condition && identity.primary_win_condition !== 'unclear') {
+      lines.push('Your win condition is ' + identity.primary_win_condition + '. Preserve that line before you overtrade resources.');
+    }
+    if (Array.isArray(identity.speed_control_mons) && identity.speed_control_mons.length) {
+      lines.push('Your speed control anchor is ' + identity.speed_control_mons[0] + '. Protect it when the opponent can still contest tempo.');
+    }
+    if (Array.isArray(identity.pivot_mons) && identity.pivot_mons.length) {
+      lines.push('Your pivot piece is ' + identity.pivot_mons[0] + '. Use it to reset bad board states instead of forcing damage.');
+    }
+  }
+
   // Add tempo / risk one-liner
   if (elite && elite.tempo_control === 'losing') {
     lines.push('You are reacting too much. Take initiative on Turn 1.');
@@ -5424,6 +5461,97 @@ function buildCoachingSummary(rules, identity, elite) {
   }
 
   return lines.join(' ');
+}
+
+function _flattenBattleGames(results) {
+  var games = [];
+  Object.values(results || {}).forEach(function(r){
+    if (r && Array.isArray(r.allLogs)) games = games.concat(r.allLogs);
+  });
+  return games;
+}
+
+function _leadPairSummary(row) {
+  if (!row) return '';
+  return (row.lead_label || (row.lead || []).join(' + ') || '-') + ' vs ' + (row.matchup_name || row.matchup_key || 'unknown');
+}
+
+function buildMatchupIntelligence(team, results, format, identity, leadSystem, trends, matchupGaps, matchupWarnings) {
+  var games = _flattenBattleGames(results);
+  var leadPairs = [];
+  try { leadPairs = csBuildLeadPairTable(games, team && team.key ? team.key : null); } catch (_e) { leadPairs = []; }
+  var sortedSafe = leadPairs.slice().sort(function(a, b){
+    if ((b.win_rate || 0) !== (a.win_rate || 0)) return (b.win_rate || 0) - (a.win_rate || 0);
+    if ((b.n || 0) !== (a.n || 0)) return (b.n || 0) - (a.n || 0);
+    return (a.matchup_name || '').localeCompare(b.matchup_name || '');
+  });
+  var sortedRisky = leadPairs.slice().sort(function(a, b){
+    if ((a.win_rate || 0) !== (b.win_rate || 0)) return (a.win_rate || 0) - (b.win_rate || 0);
+    if ((b.n || 0) !== (a.n || 0)) return (b.n || 0) - (a.n || 0);
+    return (a.matchup_name || '').localeCompare(b.matchup_name || '');
+  });
+  var topSafe = [];
+  ['safe', 'speed', 'pressure', 'punish'].forEach(function(k){
+    if (leadSystem && leadSystem[k] && topSafe.indexOf(leadSystem[k]) < 0) topSafe.push(leadSystem[k]);
+  });
+  if (!topSafe.length && sortedSafe.length) topSafe.push(sortedSafe[0].lead_label);
+
+  var totalWins = 0, totalLosses = 0, totalDraws = 0;
+  Object.values(results || {}).forEach(function(r){
+    totalWins += r && r.wins ? r.wins : 0;
+    totalLosses += r && r.losses ? r.losses : 0;
+    totalDraws += r && r.draws ? r.draws : 0;
+  });
+  var totalGames = totalWins + totalLosses + totalDraws;
+  var overallWR = totalGames ? totalWins / totalGames : 0;
+  var confidence = csConfidence(totalGames);
+  var grade = overallWR >= 0.65 ? 'strongly favored'
+    : overallWR >= 0.55 ? 'favored'
+    : overallWR >= 0.45 ? 'even'
+    : overallWR >= 0.35 ? 'unfavored'
+    : 'critical weakness';
+
+  var matchupList = Array.isArray(matchupGaps) ? matchupGaps.slice() : [];
+  var worstMatchup = matchupList.length ? matchupList[0] : null;
+  var commonLoss = (trends && Array.isArray(trends.topOppFinishers) && trends.topOppFinishers.length)
+    ? trends.topOppFinishers[0]
+    : (trends && Array.isArray(trends.mostLostMons) && trends.mostLostMons.length ? trends.mostLostMons[0] : 'the opponent’s win condition');
+  var preserve = identity && identity.primary_win_condition && identity.primary_win_condition !== 'unclear'
+    ? identity.primary_win_condition
+    : (topSafe[0] || 'your support core');
+  var adjustment = worstMatchup
+    ? 'Patch ' + worstMatchup.name + ' first. Start with ' + (topSafe[0] || 'your safest lead') + ' and keep ' + preserve + ' healthy.'
+    : 'Keep the win condition protected and rotate into your best tempo lead when the board is open.';
+  var speedTruth = (matchupWarnings || []).find(function(v){ return v && v.category === 'Speed control'; });
+  var speedLine = speedTruth ? speedTruth.note : 'This team has enough speed access to play honest lines when your lead is correct.';
+  var risky = sortedRisky.length ? sortedRisky.slice(0, 3) : [];
+  var safeRows = sortedSafe.length ? sortedSafe.slice(0, 3) : [];
+
+  return {
+    grade: grade,
+    confidence: confidence,
+    overall_win_rate: overallWR,
+    summary: worstMatchup
+      ? 'You are ' + grade + ' overall. The clearest problem is ' + worstMatchup.name + ' at ' + Math.round(worstMatchup.win_rate * 100) + '%.'
+      : 'You are ' + grade + ' overall. The sample is too thin for a sharp matchup read.',
+    headline: topSafe.length
+      ? 'Top player read: lead with ' + topSafe[0] + ' when you need safe tempo; do not auto-pilot into the worst matchup.'
+      : 'Top player read: you need more games before the opening plan is stable.',
+    fix: adjustment,
+    safe_leads: topSafe.slice(0, 3),
+    risky_leads: risky.map(function(row){ return _leadPairSummary(row); }),
+    best_win_path: identity && identity.primary_win_condition ? identity.primary_win_condition : 'unclear',
+    common_loss_path: commonLoss,
+    speed_truth: speedLine,
+    matchup_rows: safeRows.map(function(row){
+      return {
+        label: _leadPairSummary(row),
+        value: Math.round((row.win_rate || 0) * 100) + '% over ' + row.n + ' games'
+      };
+    }),
+    preserve_piece: preserve,
+    recommended_adjustment: adjustment
+  };
 }
 
 function buildWeaknessDashboard(team, results, format, identity, leadSystem, trends, deadMoves, matchupWarnings) {
@@ -5459,12 +5587,29 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
 
   var lowMatchups = matchupRows.filter(function(row){ return row.status === 'gap'; });
   var matchupFocus = lowMatchups.length ? lowMatchups : matchupRows.slice(0, 3);
+  var matchupIntel = buildMatchupIntelligence(team, results, format, identity, leadSystem, trends, matchupFocus, matchupWarnings);
   var worstMatchup = matchupFocus[0] || null;
   var worstLead = (trends && trends.worst_lead) ? trends.worst_lead : null;
   var deadList = Array.isArray(deadMoves) ? deadMoves.slice(0, 3) : [];
   var ruleViolations = (matchupWarnings || []).slice(0, 2);
 
   var sections = [];
+
+  sections.push({
+    key: 'matchup_intelligence',
+    title: 'Matchup Intelligence',
+    headline: matchupIntel.summary,
+    fix: matchupIntel.fix,
+    rows: [
+      { label: 'Grade', value: matchupIntel.grade + ' · ' + matchupIntel.confidence + ' confidence' },
+      { label: 'Safe leads', value: (matchupIntel.safe_leads || []).join(' | ') || 'No safe lead logged yet' },
+      { label: 'Risky leads', value: (matchupIntel.risky_leads || []).join(' | ') || 'No risky lead logged yet' },
+      { label: 'Speed truth', value: matchupIntel.speed_truth || 'No speed note yet' },
+      { label: 'Best win path', value: matchupIntel.best_win_path || 'unclear' },
+      { label: 'Common loss path', value: matchupIntel.common_loss_path || 'unclear' }
+    ],
+    empty: 'Run more sims to populate matchup intelligence.'
+  });
 
   sections.push({
     key: 'matchup_gaps',
@@ -5519,13 +5664,14 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
   });
 
   return {
-    summary: worstMatchup
+    summary: matchupIntel.summary || (worstMatchup
       ? ('Start with the matchup gap, then clean up the weakest opening pair, then prune dead moves.')
-      : 'Keep simming; the dashboard will populate once the sample is large enough.',
+      : 'Keep simming; the dashboard will populate once the sample is large enough.'),
     sections: sections,
     rule_violations: ruleViolations.map(function(v){
       return v.category + ': ' + v.note;
-    })
+    }),
+    matchup_intelligence: matchupIntel
   };
 }
 
@@ -5601,6 +5747,7 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
     matchupWarnings
   );
   weaknessDashboard.matchup_gaps = matchupGaps;
+  var matchupIntelligence = weaknessDashboard.matchup_intelligence || null;
 
   return {
     schema_version: 1,
@@ -5617,11 +5764,18 @@ function _buildStrategyReportUncached(teamKey, results, fmt) {
     pilot_plan: pilotPlan,
     matchup_warnings: matchupWarnings,
     weakness_dashboard: weaknessDashboard,
+    matchup_intelligence: matchupIntelligence,
     coaching_notes: {
       how_team_wants_to_win: identity.primary_win_condition,
       common_mistakes: coachingRules.slice(0,3).map(function(r){ return r.id; }),
       key_habits_to_improve: coachingRules.filter(function(r){ return r.severity === 'high' || r.severity === 'critical'; }).slice(0,3).map(function(r){ return r.correction; }),
-      top_critical_rules: coachingRules.filter(function(r){ return r.severity === 'critical' || r.severity === 'high'; }).slice(0,2)
+      top_critical_rules: coachingRules.filter(function(r){ return r.severity === 'critical' || r.severity === 'high'; }).slice(0,2),
+      speed_control_mons: identity.speed_control_mons || [],
+      pivot_mons: identity.pivot_mons || [],
+      safe_leads: matchupIntelligence ? matchupIntelligence.safe_leads : [],
+      risky_leads: matchupIntelligence ? matchupIntelligence.risky_leads : [],
+      best_win_path: matchupIntelligence ? matchupIntelligence.best_win_path : identity.primary_win_condition,
+      common_loss_path: matchupIntelligence ? matchupIntelligence.common_loss_path : (trends.topOppFinishers && trends.topOppFinishers[0] ? trends.topOppFinishers[0] : '')
     },
     trend_analysis: {
       most_common_loss_condition: trends.topOppFinishers && trends.topOppFinishers.length ? trends.topOppFinishers[0] : null,
@@ -6906,10 +7060,29 @@ function renderStrategyTab(teamKey) {
   html += '<li><strong>Win condition:</strong> ' + _csEsc(id.primary_win_condition) + '</li>';
   html += '<li><strong>Closer:</strong> ' + _csEsc(id.closer) + '</li>';
   html += '<li><strong>Support core:</strong> ' + _csEsc((id.support_core||[]).join(', ') || '-') + '</li>';
+  if (Array.isArray(id.speed_control_mons) && id.speed_control_mons.length) {
+    html += '<li><strong>Speed control anchor:</strong> ' + _csEsc(id.speed_control_mons.join(', ')) + '</li>';
+  }
+  if (Array.isArray(id.pivot_mons) && id.pivot_mons.length) {
+    html += '<li><strong>Pivot core:</strong> ' + _csEsc(id.pivot_mons.join(', ')) + '</li>';
+  }
   html += '<li><strong>Format fit:</strong> ' + _csEsc(id.format_fit) + '</li>';
   html += '</ul></section>';
 
-  // Section 3: What works
+  // Section 3: Matchup intelligence
+  var mi = report.matchup_intelligence;
+  if (mi) {
+    html += '<section class="cs-section"><h3 class="cs-h3">Matchup Intelligence</h3>';
+    html += '<p><strong>Grade:</strong> ' + _csEsc(mi.grade + ' · ' + mi.confidence + ' confidence') + '</p>';
+    html += '<p><strong>Safe leads:</strong> ' + _csEsc((mi.safe_leads || []).join(' | ') || 'No safe lead logged yet') + '</p>';
+    html += '<p><strong>Risky leads:</strong> ' + _csEsc((mi.risky_leads || []).join(' | ') || 'No risky lead logged yet') + '</p>';
+    html += '<p><strong>Speed truth:</strong> ' + _csEsc(mi.speed_truth || 'No speed note yet') + '</p>';
+    html += '<p><strong>Best win path:</strong> ' + _csEsc(mi.best_win_path || 'unclear') + '</p>';
+    html += '<p><strong>Common loss path:</strong> ' + _csEsc(mi.common_loss_path || 'unclear') + '</p>';
+    html += '</section>';
+  }
+
+  // Section 4: What works
   var ww = report.what_works;
   html += '<section class="cs-section"><h3 class="cs-h3">What Works</h3>';
   html += '<p><strong>Best synergy:</strong> ' + _csEsc(ww.best_synergy.description) + ' ' + _csSourceChip(ww.best_synergy.source_label) + '</p>';
@@ -6918,7 +7091,7 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Strongest win path:</strong> ' + _csEsc(ww.strongest_win_path.description) + ' ' + _csSourceChip(ww.strongest_win_path.source_label) + '</p>';
   html += '</section>';
 
-  // Section 4: What is weak
+  // Section 5: What is weak
   var wk = report.what_is_weak;
   html += '<section class="cs-section"><h3 class="cs-h3">What Is Weak</h3>';
   if (wk.missing_roles.length) html += '<p><strong>Missing:</strong> ' + _csEsc(wk.missing_roles.join(', ')) + '</p>';
@@ -6929,7 +7102,7 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Speed control:</strong> ' + _csEsc(wk.speed_issues) + '</p>';
   html += '</section>';
 
-  // Section 5: Top threats
+  // Section 6: Top threats
   if (report.top_threats.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Top Threats</h3><div class="cs-threat-grid">';
     report.top_threats.forEach(function(t){
@@ -6940,7 +7113,7 @@ function renderStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 6: Lead guide (top 3)
+  // Section 7: Lead guide (top 3)
   html += '<section class="cs-section"><h3 class="cs-h3">Top 3 Leads (' + lg.format + ')</h3>';
   html += '<div class="cs-lead-grid">';
   (lg.recommendations || []).forEach(function(rec){
@@ -6958,7 +7131,7 @@ function renderStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 7: Move lines
+  // Section 8: Move lines
   html += '<section class="cs-section"><h3 class="cs-h3">Move Lines (' + report.move_lines.length + ' scenarios)</h3>';
   html += '<div class="cs-moveline-grid">';
   report.move_lines.forEach(function(ml){
@@ -6973,7 +7146,7 @@ function renderStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 8: Mistakes
+  // Section 9: Mistakes
   html += '<section class="cs-section"><h3 class="cs-h3">Mistakes to Avoid (' + report.mistakes_to_avoid.length + ')</h3>';
   html += '<div class="cs-mistake-list">';
   report.mistakes_to_avoid.forEach(function(m, i){
@@ -6985,7 +7158,7 @@ function renderStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 9: Risk profile
+  // Section 10: Risk profile
   if (report.risk_profile.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Risk Profile</h3><div class="cs-risk-grid">';
     report.risk_profile.forEach(function(r){
@@ -6998,7 +7171,7 @@ function renderStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 10: Trend analysis
+  // Section 11: Trend analysis
   var ta = report.trend_analysis;
   html += '<section class="cs-section"><h3 class="cs-h3">Trend Analysis</h3>';
   if (!ta.has_data) {
@@ -7015,7 +7188,7 @@ function renderStrategyTab(teamKey) {
   }
   html += '</section>';
 
-  // Section 11: Skill coaching
+  // Section 12: Skill coaching
   var sk = report.skill_coaching;
   html += '<section class="cs-section"><h3 class="cs-h3">Skill Coaching</h3><div class="cs-skill-grid">';
   html += '<div class="cs-skill-card"><h4>Beginner</h4>';
@@ -7038,7 +7211,7 @@ function renderStrategyTab(teamKey) {
   html += '<p><strong>Opponent prediction:</strong> ' + _csEsc(sk.advanced.opponent_prediction) + '</p></div>';
   html += '</div></section>';
 
-  // Section 12: Stress test
+  // Section 13: Stress test
   var st = report.stress_test;
   html += '<section class="cs-section"><h3 class="cs-h3">Stress Test &middot; Consistency: ' + st.consistency_rating + '</h3>';
   if (st.break_points.length) {
@@ -8460,8 +8633,12 @@ function csRenderPhase4cSections(history, teamKey, team) {
     covBody += '<ul class="cs-list cs-detector-roles">';
     if (archetype) covBody += '<li><strong>Archetype:</strong> ' + _csEsc(archetype) + '</li>';
     var roleLines = members.map(function(m){
-      var role = (m.item ? '@ ' + m.item : '') + (m.ability ? ' (' + m.ability + ')' : '');
-      return _csEsc(m.name + ' ' + role);
+      var classified = (typeof classifyPokemon === 'function') ? classifyPokemon(m) : null;
+      var roles = classified && Array.isArray(classified.roles) && classified.roles.length ? classified.roles.join(' / ') : 'Support';
+      var extras = [];
+      if (m.item) extras.push('@ ' + m.item);
+      if (m.ability) extras.push('(' + m.ability + ')');
+      return _csEsc(m.name + ' [' + roles + ']' + (extras.length ? ' ' + extras.join(' ') : ''));
     });
     covBody += '<li><strong>Roster:</strong> ' + roleLines.join(', ') + '</li>';
     covBody += '</ul>';

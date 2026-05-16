@@ -1493,6 +1493,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   //   Cite: https://bulbapedia.bulbagarden.net/wiki/Team_Preview
   //   Cite: https://bulbapedia.bulbagarden.net/wiki/VGC
   const _bringCount = (field._format === 'singles') ? 3 : 4;
+  const _leadSlots = (field._format === 'singles') ? 1 : 2;
   function _battleLeadScore(mon) {
     const roles = Array.isArray(mon.roles) ? mon.roles : [];
     const moves = Array.isArray(mon.moves) ? mon.moves : [];
@@ -1544,11 +1545,20 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     return picked.concat(rest);
   }
+  function _chooseOpeningSlots(pokemonArr, explicitLeadNames, explicitBringNames, roleAwareOpeners) {
+    const hasExplicitBring = Array.isArray(explicitBringNames) && explicitBringNames.length > 0;
+    const hasExplicitLeads = Array.isArray(explicitLeadNames) && explicitLeadNames.length > 0;
+    if (hasExplicitBring || hasExplicitLeads) {
+      return pokemonArr.slice(0, _leadSlots);
+    }
+    if (roleAwareOpeners) return _sortByLeadScore(pokemonArr).slice(0, _leadSlots);
+    return pokemonArr.slice(0, _leadSlots);
+  }
   const _orderedPlayer = _applyBring(playerPokemon, opts.playerBring,   opts.playerLeads);
   const _orderedOpp    = _applyBring(oppPokemon,    opts.opponentBring, opts.opponentLeads);
-  // Replace the array contents in place so any downstream references still work.
-  playerPokemon.length = 0; for (const p of _orderedPlayer) playerPokemon.push(p);
-  oppPokemon.length    = 0; for (const p of _orderedOpp)    oppPokemon.push(p);
+  const _roleAwareOpeners = !!opts.roleAwareOpeners;
+  const _playerOpening = _chooseOpeningSlots(_orderedPlayer, opts.playerLeads, opts.playerBring, _roleAwareOpeners);
+  const _oppOpening    = _chooseOpeningSlots(_orderedOpp,    opts.opponentLeads, opts.opponentBring, _roleAwareOpeners);
 
   // T9j.7 — apply Mega trigger policy override from sweep driver.
   // When runMegaTriggerSweep() calls simulateBattle with _megaPolicyOverride,
@@ -1565,10 +1575,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   // Active battlers (doubles: 2 per side)
-  let playerActive = [playerPokemon[0], playerPokemon[1]].filter(Boolean);
-  let oppActive    = [oppPokemon[0],    oppPokemon[1]   ].filter(Boolean);
-  let playerBench  = playerPokemon.slice(2);
-  let oppBench     = oppPokemon.slice(2);
+  let playerActive = _playerOpening.slice(0, _leadSlots).filter(Boolean);
+  let oppActive    = _oppOpening.slice(0, _leadSlots).filter(Boolean);
+  let playerBench  = _orderedPlayer.filter(function(p) { return playerActive.indexOf(p) < 0; });
+  let oppBench     = _orderedOpp.filter(function(p) { return oppActive.indexOf(p) < 0; });
+  const _initialPlayerActive = playerActive.slice();
+  const _initialOppActive = oppActive.slice();
 
   // T9j.1 (Issue #25) — wire every Pokemon to its side object so that
   // screens, Tailwind speed, and Last Respects fainted count all work.
@@ -2972,7 +2984,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           thisSide.imprisonedMoves = null;
         }
         const idx = activeArr.indexOf(mon);
-        const replacement = bench.find(b => b.alive);
+        const replacement = bench.filter(b => b.alive).sort(function(a, b) {
+          const sA = _battleLeadScore(a);
+          const sB = _battleLeadScore(b);
+          if (sA !== sB) return sB - sA;
+          const hpA = a.hp / Math.max(1, a.maxHp);
+          const hpB = b.hp / Math.max(1, b.maxHp);
+          if (hpA !== hpB) return hpB - hpA;
+          return a.name.localeCompare(b.name);
+        })[0];
         if (replacement) {
           bench.splice(bench.indexOf(replacement), 1);
           // T9j.4 (#41) — toxicCounter + frozenTurns reset on switch in.
@@ -3114,15 +3134,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     //   leads:  active battlers at turn 1 (doubles: 2, singles: 1)
     //   bring:  the N-of-6 actually entering battle (doubles: 4, singles: 3)
     leads: {
-      player:   playerPokemon.slice(0, field._format === 'singles' ? 1 : 2).map(p => p.name),
-      opponent: oppPokemon.slice(0,    field._format === 'singles' ? 1 : 2).map(p => p.name)
+      player:   _initialPlayerActive.map(p => p.name),
+      opponent: _initialOppActive.map(p => p.name)
     },
     bring: {
       // Always slice to bring count so default (no override) still reflects VGC rules:
       // doubles 4 of 6, singles 3 of 6. When caller supplies playerBring, the team
       // has already been pruned to that count by _applyBring above.
-      player:   playerPokemon.slice(0, field._format === 'singles' ? 3 : 4).map(p => p.name),
-      opponent: oppPokemon.slice(0,    field._format === 'singles' ? 3 : 4).map(p => p.name)
+      player:   _orderedPlayer.slice(0, field._format === 'singles' ? 3 : 4).map(p => p.name),
+      opponent: _orderedOpp.slice(0,    field._format === 'singles' ? 3 : 4).map(p => p.name)
     },
     // #5 — attach legality verdict so UI can surface warnings on team/match cards.
     legality: { player: playerLegality, opp: oppLegality },
