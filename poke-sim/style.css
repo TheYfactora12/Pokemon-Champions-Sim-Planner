@@ -940,7 +940,7 @@ table{border-collapse:collapse;width:100%}
   background: rgba(15, 23, 42, 0.55);
   border-radius: 50%;
 }
-.bring-pool-chip-name { white-space: nowrap; }
+.bring-pool-chip-name { white-space: normal; overflow-wrap: break-word; line-height: 1.1; }
 .bring-pool-chip-pos {
   font-size: 9px;
   font-weight: 700;
