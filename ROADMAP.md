@@ -2,7 +2,7 @@
 
 > **Battle-tested. Always evolving.**
 > Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/)
-> **Last updated:** 2026-04-30 | **Baseline:** T9j.17 (343 tests · 5,070 battles/audit)
+> **Last updated:** 2026-05-16 | **Baseline:** Battle Sensei R1 + Battle IQ R1
 
 ---
 
@@ -157,6 +157,7 @@
 
 > Product line: Sim Mode builds the team. Battle Sensei builds the player. Learn why the turn went wrong.
 > Canonical spec: [`poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`](./poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md)
+> Battle IQ spec: [`poke-sim/docs/BATTLE_IQ_SPEC.md`](./poke-sim/docs/BATTLE_IQ_SPEC.md)
 
 | Issue | Priority |
 |---|---|
@@ -166,6 +167,7 @@
 | #190 | Replay summary + readable turn timeline | P1 |
 | #191 | Core replay coaching rules: lead, bring-four, speed-control, Protect, targeting, switching | P1 |
 | #192 | Critical turn engine: first mistake, fatal mistake, biggest swing | P1 |
+| TBD | Battle IQ R1: provisional decision-quality score, eight sub-scores, confidence, drill recommendation | Shipped in `c83a510` |
 | #193 | Sim comparison card: sim lead/four/path vs actual replay lead/four/path | P2 |
 | #194 | Sim Feedback Packet for replay-calibrated coaching signals | P2 |
 | #195 | Replay persistence schema + explicit raw-log privacy controls | P2 |

@@ -45,6 +45,7 @@ Every reviewed replay should produce:
 - practice recommendation
 - sim comparison
 - sim feedback packet
+- provisional Battle IQ score
 
 Every recommendation must include:
 
@@ -52,6 +53,27 @@ Every recommendation must include:
 - why it mattered
 - what to do instead
 - confidence level
+
+## Battle IQ Boundary
+
+Battle IQ is documented in [`BATTLE_IQ_SPEC.md`](./BATTLE_IQ_SPEC.md).
+
+Battle IQ means:
+
+> A standardized estimate of competitive battle decision quality based on observable battle data, matchup context, and player execution patterns.
+
+Battle IQ must never be described as real intelligence. It is a coaching score, not a personal judgment.
+
+Current R1 behavior:
+
+- single-battle scores are provisional
+- one clean replay can be medium confidence at best
+- incomplete logs must lower confidence
+- the UI must explain why the score rose or fell
+- the UI must recommend a drill
+- premium/profile value comes from saved memory, trends, repeated mistake fingerprints, matched norm groups, and longitudinal coaching
+
+The process challenge is intentional: if a Battle IQ feature cannot explain what decision should change, it should not ship.
 
 ## Parser Data Contract
 

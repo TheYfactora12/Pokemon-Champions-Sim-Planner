@@ -13,6 +13,12 @@
 
 You are continuing development of **Pokémon Champion 2026**, a production-grade VGC competitive team simulator built as a static, offline-capable PWA — now with a live Supabase database backend for persistent analysis storage. **DB integration is mid-rollout** — see `## SUPABASE DATABASE LAYER` below for the active 9-module plan and TDD suite.
 
+Battle Sensei is the replay-coaching product surface. Sim Mode builds the team; Battle Sensei builds the player. The canonical specs are:
+- `poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`
+- `poke-sim/docs/BATTLE_IQ_SPEC.md`
+
+Battle IQ means a standardized estimate of competitive battle decision quality based on observable battle data, matchup context, and player execution patterns. It is not a measure of real intelligence. Single-battle Battle IQ must remain provisional and confidence-labeled. Do not ship a Battle IQ feature unless it explains what decision should change.
+
 **GitHub repo:** https://github.com/alfredocox/Pokemon-Champions-Sim-Planner
 **Default branch:** `main`
 **Active dev branch:** `main` (all work goes directly to main)
