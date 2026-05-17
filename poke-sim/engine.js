@@ -3290,6 +3290,16 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 // ============================================================
 const ENGINE_VERSION = '1.1.0'; // Increment on any mechanics change
 
+function _engineIsPositiveWinConditionLabel(label) {
+  if (!label) return false;
+  const lower = String(label).toLowerCase();
+  if (lower.includes('opponent win')) return false;
+  if (lower.includes('loss')) return false;
+  if (lower.includes('draw')) return false;
+  if (lower.includes('aborted')) return false;
+  return true;
+}
+
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
   const p = wins / n;
@@ -3337,6 +3347,7 @@ function buildAnalysisPayload(rawResult, ctx = {}) {
 
   // Top win paths from winConditions map
   const topWinPaths = Object.entries(rawResult.winConditions || {})
+    .filter(([cond]) => _engineIsPositiveWinConditionLabel(cond))
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
     .map(([cond, count]) => ({ condition: cond, count, pct: n > 0 ? Math.round(count / n * 100) : 0 }));

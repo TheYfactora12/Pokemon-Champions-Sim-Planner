@@ -183,6 +183,21 @@ T('6. buildAnalysisPayload converts winConditions object to rows', () => {
   eq(rows.length, 2);
   eq(rows[0].label, 'Tailwind Win');
 });
+T('6b. buildAnalysisPayload filters loss labels out of win condition rows', () => {
+  const mixed = {
+    wins: 2,
+    losses: 3,
+    draws: 0,
+    winConditions: {
+      'Opponent Win': 3,
+      'Tailwind Win': 2,
+      'HP Tiebreak Loss': 1
+    }
+  };
+  const rows = buildAnalysisPayload('player', fixture.opponent, 3, mixed).win_conditions;
+  eq(rows.length, 1);
+  eq(rows[0].label, 'Tailwind Win');
+});
 T('7. buildAnalysisPayload strips logs into persistence rows', () => {
   const logs = buildAnalysisPayload('player', fixture.opponent, 3, fixture.strongResult).logs;
   eq(logs.length, 3);
@@ -232,6 +247,25 @@ T('19. generatePilotGuide uses structured leads from winning logs', () => {
 });
 T('20. generatePilotGuide renders win condition percentages', () => {
   inc(document._els['pilot-content'].children[0].innerHTML, 'Tailwind Win');
+});
+T('20b. generatePilotGuide ignores loss labels in win condition coaching copy', () => {
+  document._els['pilot-content'] = makeStubEl('pilot-content');
+  const mixed = {
+    wins: 1,
+    losses: 3,
+    draws: 0,
+    winRate: 0.25,
+    winConditions: {
+      'Opponent Win': 3,
+      'Tailwind Win': 1
+    },
+    allLogs: fixture.strongResult.allLogs
+  };
+  generatePilotGuide(fixture.opponent, mixed);
+  const html = document._els['pilot-content'].children[0].innerHTML;
+  inc(html, 'Tailwind Win');
+  inc(html, '100% of your wins');
+  if (html.indexOf('Opponent Win') >= 0) throw new Error('loss label should not appear in win-condition coaching copy');
 });
 T('21. generatePilotGuide renders risk branch from loss logs', () => {
   inc(document._els['pilot-content'].children[0].innerHTML, 'Watch out for');

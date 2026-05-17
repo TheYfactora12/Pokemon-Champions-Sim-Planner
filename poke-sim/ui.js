@@ -2088,6 +2088,16 @@ function drawBarChart(canvasId, labels, values, color) {
 // ============================================================
 // RESULTS DISPLAY
 // ============================================================
+function isPositiveWinConditionLabel(label) {
+  if (!label) return false;
+  var lower = String(label).toLowerCase();
+  if (lower.indexOf('opponent win') >= 0) return false;
+  if (lower.indexOf('loss') >= 0) return false;
+  if (lower.indexOf('draw') >= 0) return false;
+  if (lower.indexOf('aborted') >= 0) return false;
+  return true;
+}
+
 function displayResults(res, oppKey) {
   const total = res.wins + res.losses + res.draws;
   const winPct = Math.round(res.winRate * 100);
@@ -2117,13 +2127,16 @@ function displayResults(res, oppKey) {
   // Win conditions
   const wc = document.getElementById('win-conditions');
   wc.innerHTML = '';
-  const wcEntries = Object.entries(res.winConditions||{}).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  const wcEntries = Object.entries(res.winConditions||{})
+    .filter((entry) => isPositiveWinConditionLabel(entry[0]))
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,7);
   if (!wcEntries.length || !res.wins) { wc.innerHTML='<p style="color:var(--text-m);font-size:11px">No wins recorded</p>'; }
   else {
     const maxWC = wcEntries[0][1];
     for (const [cond,cnt] of wcEntries) {
       const barPct = Math.round(cnt/maxWC*100);
-      const labelPct = Math.min(100, Math.round(cnt/total*100));
+      const labelPct = Math.min(100, Math.round(cnt/Math.max(1, res.wins)*100));
       const d = document.createElement('div');
       d.className='win-cond-row';
       d.innerHTML=`<div style="display:flex;justify-content:space-between"><span>${cond}</span><span style="color:var(--primary);font-family:var(--font-mono);font-weight:700">${labelPct}%</span></div><div class="win-cond-bar" style="width:${barPct}%"></div>`;
@@ -3777,6 +3790,7 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
     var wcObj = res.winConditions;
     var keys = Object.keys(wcObj);
     for (var i = 0; i < keys.length; i++) {
+      if (!isPositiveWinConditionLabel(keys[i])) continue;
       winConditions.push({ label: keys[i], count: wcObj[keys[i]] });
     }
   }
@@ -4083,7 +4097,10 @@ function generatePilotGuide(oppKey, results) {
   else if (winPct >= 30) { verdict = 'Risky'; verdictClass = 'verdict-risky'; }
   else { verdict = 'Avoid'; verdictClass = 'verdict-avoid'; }
 
-  const wcEntries = Object.entries(results.winConditions || {}).sort((a,b) => b[1]-a[1]).slice(0,2);
+  const wcEntries = Object.entries(results.winConditions || {})
+    .filter((entry) => isPositiveWinConditionLabel(entry[0]))
+    .sort((a,b) => b[1]-a[1])
+    .slice(0,2);
   const maxWC = wcEntries.length ? wcEntries[0][1] : 1;
 
   // T9j.10 (Refs #16) — read leads from battle.leads, not log string matching.
@@ -4117,7 +4134,7 @@ function generatePilotGuide(oppKey, results) {
 
   const tips = [];
   if (leads.length >= 2) tips.push(`Lead ${leads[0]} + ${leads[1]} as the first option.`);
-  if (wcEntries.length) tips.push(`${wcEntries[0][0]} was the top win condition in ${Math.round(wcEntries[0][1]/total*100)}% of all series.`);
+  if (wcEntries.length) tips.push(`${wcEntries[0][0]} was the top win condition in ${Math.round(wcEntries[0][1]/Math.max(1, results.wins || 0)*100)}% of your wins.`);
   if (risks.length) tips.push(`Watch for ${risks[0]} — it appeared in over 40% of your losses.`);
   else if (winPct > 55) tips.push('Your team has a consistent edge — focus on denying their setup turns.');
   if (winPct < 45) tips.push('Open with Fake Out + speed control to disrupt their gameplan.');
@@ -5646,6 +5663,7 @@ function inferTeamIdentity(team, results, fmt) {
   Object.values(results || {}).forEach(function(r){
     totalWins += r.wins || 0;
     Object.entries(r.winConditions || {}).forEach(function(p){
+      if (!isPositiveWinConditionLabel(p[0])) return;
       pathCounts[p[0]] = (pathCounts[p[0]] || 0) + p[1];
     });
   });
@@ -6190,7 +6208,7 @@ function buildMatchupIntelligence(team, results, format, identity, leadSystem, t
     ? identity.primary_win_condition
     : (topSafe[0] || (leadSystem && leadSystem.safe) || 'your support core');
   var adjustment = worstMatchup
-    ? 'Patch ' + worstMatchup.name + ' first. Start with ' + (topSafe[0] || 'your safest lead') + ' and keep ' + preserve + ' healthy.'
+    ? 'Patch ' + worstMatchup.name + ' first. Start with ' + (topSafe[0] || 'your safest lead') + ' and preserve the ' + preserve + ' line into the midgame.'
     : (totalGames === 0
       ? 'You have no battle sample yet. Start with ' + (topSafe[0] || (leadSystem && leadSystem.safe) || 'your safest opener') + ' and test the team’s mode before judging matchups.'
       : 'Keep the win condition protected and rotate into your best tempo lead when the board is open.');
@@ -6318,6 +6336,12 @@ function buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, tr
     common_loss_path: commonLoss,
     decision_rule: 'If you reveal the same lead twice, prepare for the opponent to target it in game 2.'
   };
+}
+
+function csDisplayTeamLabel(teamKey) {
+  if (!teamKey) return '';
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  return (team && team.name) ? team.name : teamKey;
 }
 
 function buildWeaknessDashboard(team, results, format, identity, leadSystem, trends, deadMoves, matchupWarnings) {
@@ -7422,7 +7446,7 @@ function csStressTest(team, identity, results, scoreCard) {
   Object.entries(results || {}).forEach(function(p){
     var k = p[0], r = p[1];
     var t = (r.wins||0) + (r.losses||0) + (r.draws||0);
-    if (t >= 3 && r.wins / t < 0.30) worstMatchups.push(k);
+    if (t >= 3 && r.wins / t < 0.30) worstMatchups.push(csDisplayTeamLabel(k));
   });
   worstMatchups = worstMatchups.slice(0, 3);
 
@@ -7492,7 +7516,7 @@ function csWhatIsWeak(team, identity, gaps, results) {
   var bad = [];
   Object.entries(results || {}).forEach(function(p){
     var t = (p[1].wins||0) + (p[1].losses||0) + (p[1].draws||0);
-    if (t >= 3 && (p[1].wins / t) < 0.40) bad.push(p[0]);
+    if (t >= 3 && (p[1].wins / t) < 0.40) bad.push(csDisplayTeamLabel(p[0]));
   });
 
   var fragile = members.filter(function(m){
@@ -7635,7 +7659,7 @@ function csTrendAnalysisV2(team, results) {
   var failed = [];
   Object.entries(results).forEach(function(p){
     var t = (p[1].wins||0) + (p[1].losses||0) + (p[1].draws||0);
-    if (t >= 3 && (p[1].wins / t) < 0.30) failed.push(p[0]);
+    if (t >= 3 && (p[1].wins / t) < 0.30) failed.push(csDisplayTeamLabel(p[0]));
   });
 
   var trends = analyzeLossTrends(results, members);
@@ -7672,6 +7696,8 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   var leadSystem = buildLeadSystem(results, members);
   var gaps = findCoverageGaps(members);
   var deadMoves = findDeadMoves(results, members);
+  var lossTrends = analyzeLossTrends(results, members);
+  var elite = analyzeEliteDecisions(results, members);
   var matchupWarnings = buildMatchupWarnings(team, results, format);
   var leadGuide = csTop3Leads(team, identity, results, format);
   var report_card = csTierAndScore(team, identity, leadSystem, gaps, results, sample);
@@ -7684,14 +7710,21 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   var threats = csTopThreats(team);
   var risk = csRiskProfile(team, report_card);
   var trend = csTrendAnalysisV2(team, results);
-  var weaknessDashboard = buildWeaknessDashboard(team, results, format, identity, leadSystem, trend, deadMoves, matchupWarnings);
+  var dashboardTrends = Object.assign({}, lossTrends, { worst_lead: trend.worst_lead || null });
+  var weaknessDashboard = buildWeaknessDashboard(team, results, format, identity, leadSystem, dashboardTrends, deadMoves, matchupWarnings);
+  var matchupIntelligence = weaknessDashboard.matchup_intelligence || buildMatchupIntelligence(team, results, format, identity, leadSystem, dashboardTrends, [], matchupWarnings);
+  var bo3Adaptation = buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, dashboardTrends);
   var confidenceTier = sample < 20 ? 'low' : sample < 100 ? 'moderate' : sample < 500 ? 'high' : 'elite';
   var evidenceStandard = csStrategyEvidenceStandard(sample, confidenceTier);
   var provenance = buildReportProvenance(sample, confidenceTier, format);
+  var summaryAdjustment = matchupIntelligence && matchupIntelligence.recommended_adjustment
+    ? String(matchupIntelligence.recommended_adjustment).replace(/[.\s]+$/, '')
+    : '';
 
   var summary = report_card.tier + '-tier ' + identity.playstyle + '. ' +
     'Win path: ' + identity.primary_win_condition + '. ' +
     (mistakes[0] ? 'Top mistake to test: ' + mistakes[0].mistake + '.' : '') +
+    (summaryAdjustment ? ' Adjustment: ' + summaryAdjustment + '.' : '') +
     ' Evidence: ' + evidenceStandard.label + '.';
 
   return {
@@ -7708,6 +7741,7 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
 
     team_report_card: report_card,
     team_identity: identity,
+    elite_decision_analysis: elite,
     what_works: whatWorks,
     what_is_weak: whatWeak,
     top_threats: threats,
@@ -7715,6 +7749,8 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
     move_lines: moveLines,
     mistakes_to_avoid: mistakes,
     risk_profile: risk,
+    matchup_intelligence: matchupIntelligence,
+    bo3_adaptation: bo3Adaptation,
     matchup_warnings: matchupWarnings,
     trend_analysis: trend,
     skill_coaching: skill,
