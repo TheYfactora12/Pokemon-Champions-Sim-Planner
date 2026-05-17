@@ -2856,6 +2856,9 @@ function csReplayCoachRenderAnalysis(analysis) {
   var yourSelection = summary.yourSelection || summary.yourFour || [];
   var opponentSelection = summary.opponentSelection || summary.opponentFour || [];
   var parsedFormat = summary.format || parsed.format || summary.formatKind || 'Unknown';
+  var rulesetProfile = summary.rulesetProfile || (parsed.rulesetProfile && parsed.rulesetProfile.compatibilityClass) || 'unknown';
+  var coachingMode = summary.coachingMode || (parsed.rulesetProfile && parsed.rulesetProfile.coachingMode) || 'format-limited';
+  var formatTag = summary.formatTag || parsed.format || summary.formatKind || 'Unknown';
   var warnings = (review.warnings || []).map(function(w) {
     return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
   }).join('');
@@ -2938,6 +2941,9 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Players</strong><span>' + _escapeHtml((summary.yourPlayer || 'You') + ' vs ' + (summary.opponentPlayer || 'Opponent')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Turns</strong><span>' + _escapeHtml(String(summary.turns || 0)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Format</strong><span>' + _escapeHtml(parsedFormat) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Format Tag</strong><span>' + _escapeHtml(formatTag) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Ruleset Profile</strong><span>' + _escapeHtml(rulesetProfile) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Coaching Mode</strong><span>' + _escapeHtml(coachingMode) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Your Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourLead)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Opp Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentLead)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Your Selection</strong><span>' + _escapeHtml(csReplayCoachJoin(yourSelection, 'Inferred from revealed actions')) + '</span></div>' +
@@ -3189,21 +3195,33 @@ function csInitReplayCoachUi() {
 
   function replayCoachDetectedFormat(parsed) {
     if (!parsed) return 'unknown';
+    if (parsed.detectedFormatTag) return parsed.detectedFormatTag;
+    if (parsed.rulesetProfile && parsed.rulesetProfile.formatTag) return parsed.rulesetProfile.formatTag;
     if (parsed.formatMismatch && parsed.formatMismatch.actual && parsed.formatMismatch.actual !== 'unknown') return parsed.formatMismatch.actual;
     if (parsed.formatKind && parsed.formatKind !== 'unknown') return parsed.formatKind;
     if (parsed.format) return parsed.format;
     return 'unknown';
   }
 
+  function replayCoachModeFrom(parsed, detected) {
+    var profile = parsed && parsed.rulesetProfile ? parsed.rulesetProfile : null;
+    if (profile && profile.coachingMode) return profile.coachingMode;
+    var probe = String((profile && profile.formatTag) || (parsed && parsed.detectedFormatTag) || detected || (parsed && parsed.format) || '').toLowerCase();
+    if (/champion/.test(probe)) return 'champion-ready';
+    if (!parsed || !parsed.ok) return 'parser-only';
+    return 'format-limited';
+  }
+
   function setParsedStatus(parsed, prefix) {
     var turns = parsed && parsed.totalTurns ? parsed.totalTurns : 0;
     var detected = replayCoachDetectedFormat(parsed);
+    var mode = replayCoachModeFrom(parsed, detected);
     var lead = prefix ? prefix + ' ' : '';
     if (parsed && parsed.formatMismatch && parsed.formatMismatch.mismatch) {
-      setStatus(lead + 'parsed as ' + detected + ', but the selected replay format is ' + parsed.formatMismatch.expected + '. Switch the format toggle or treat this review as provisional.', true);
+      setStatus(lead + 'parsed as ' + detected + ' (' + mode + '), but the selected replay format is ' + parsed.formatMismatch.expected + '. Switch the format toggle or treat this review as provisional.', true);
       return;
     }
-    setStatus(lead + 'parsed ' + turns + ' turn' + (turns === 1 ? '' : 's') + (detected && detected !== 'unknown' ? ' as ' + detected : '') + '. Review is local-only and not saved.', false);
+    setStatus(lead + 'parsed ' + turns + ' turn' + (turns === 1 ? '' : 's') + (detected && detected !== 'unknown' ? ' as ' + detected : '') + ' · ' + mode + '. Review is local-only and not saved.', false);
   }
 
   function previewLoadedReplay(raw, fileName) {
@@ -3218,11 +3236,12 @@ function csInitReplayCoachUi() {
         expectedFormat: replayCoachExpectedFormat()
       });
       var detected = replayCoachDetectedFormat(previewParsed);
+      var mode = replayCoachModeFrom(previewParsed, detected);
       if (previewParsed.formatMismatch && previewParsed.formatMismatch.mismatch) {
-        setStatus('Loaded ' + fileName + '. Parsed as ' + detected + ', but the selected replay format is ' + previewParsed.formatMismatch.expected + '.', true);
+        setStatus('Loaded ' + fileName + '. Parsed as ' + detected + ' (' + mode + '), but the selected replay format is ' + previewParsed.formatMismatch.expected + '.', true);
         return;
       }
-      setStatus('Loaded ' + fileName + (detected && detected !== 'unknown' ? '. Detected ' + detected + ' replay.' : '. Run analysis when ready.'), false);
+      setStatus('Loaded ' + fileName + (detected && detected !== 'unknown' ? '. Detected ' + detected + ' replay.' : '. Run analysis when ready.') + ' Mode: ' + mode + '.', false);
     } catch (_e) {
       setStatus((fileName ? 'Loaded ' + fileName + '. ' : '') + 'Run analysis when ready.', false);
     }

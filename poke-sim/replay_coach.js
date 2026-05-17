@@ -71,10 +71,66 @@
   }
 
   function formatKind(parsed) {
-    var raw = cleanText(parsed && parsed.format).toLowerCase();
+    var raw = cleanText(parsed && (parsed.gameType || parsed.format || '')).toLowerCase();
     if (raw.indexOf('single') >= 0) return 'singles';
     if (raw.indexOf('double') >= 0 || raw.indexOf('vgc') >= 0) return 'doubles';
     return 'unknown';
+  }
+
+  function detectedFormatTag(parsed) {
+    var tierText = cleanText(parsed && (parsed.tier || parsed.format || '')).toLowerCase();
+    if (/champion/.test(tierText)) return 'champion';
+    var kind = formatKind(parsed);
+    if (kind === 'singles' || kind === 'doubles') return kind;
+    if (/random battle/.test(tierText)) return 'random';
+    return 'unknown';
+  }
+
+  function capConfidence(level, cap) {
+    var order = { low: 0, medium: 1, high: 2 };
+    if (!cap || !order.hasOwnProperty(level)) return level;
+    if (!order.hasOwnProperty(cap)) return level;
+    return order[level] > order[cap] ? cap : level;
+  }
+
+  function rulesetProfileFor(parsed) {
+    parsed = parsed || {};
+    var formatText = cleanText(parsed.tier || parsed.format || parsed.formatKind || '').toLowerCase();
+    var detectedTag = cleanText(parsed.detectedFormatTag || detectedFormatTag(parsed)).toLowerCase();
+    var actualKind = formatKind(parsed);
+    var compatibilityClass = 'unknown';
+    var coachingMode = 'format-limited';
+    var confidenceCap = 'medium';
+
+    if (!parsed.ok) {
+      compatibilityClass = 'unknown';
+      coachingMode = 'parser-only';
+      confidenceCap = 'low';
+    } else if (detectedTag === 'champion') {
+      compatibilityClass = 'champion_exact';
+      coachingMode = 'champion-ready';
+      confidenceCap = 'high';
+    } else if (/random battle/.test(formatText)) {
+      compatibilityClass = 'parser_only';
+      coachingMode = 'parser-only';
+      confidenceCap = 'low';
+    } else if (actualKind === 'singles' || actualKind === 'doubles' || formatText) {
+      compatibilityClass = 'generic_gen9';
+      coachingMode = 'format-limited';
+      confidenceCap = 'medium';
+    }
+
+    if (parsed.formatMismatch && parsed.formatMismatch.mismatch) {
+      coachingMode = 'format-limited';
+    }
+
+    return {
+      formatTag: detectedTag || parsed.tier || parsed.format || parsed.formatKind || 'unknown',
+      formatKind: actualKind,
+      compatibilityClass: compatibilityClass,
+      coachingMode: coachingMode,
+      confidenceCap: confidenceCap
+    };
   }
 
   function countWord(count) {
@@ -125,6 +181,9 @@
       teamPreview: { p1: [], p2: [] },
       selectedPokemon: { p1: [], p2: [] },
       leads: { p1: [], p2: [] },
+      tier: '',
+      gameType: '',
+      detectedFormatTag: 'unknown',
       winner: '',
       result: 'unknown',
       forfeit: false,
@@ -158,7 +217,13 @@
         return;
       }
       if (tag === 'tier' || tag === 'gametype') {
-        model.format = model.format || cleanText(parts[2]);
+        var formatValue = cleanText(parts[2]);
+        if (tag === 'tier') {
+          model.tier = formatValue;
+        } else {
+          model.gameType = formatValue.toLowerCase();
+        }
+        model.format = model.format || formatValue;
         return;
       }
       if (tag === 'rated') {
@@ -280,28 +345,31 @@
     var requestedFormat = cleanText(opts.expectedFormat).toLowerCase();
     var actualFormat = formatKind(model);
     model.formatKind = actualFormat;
+    model.requestedFormat = requestedFormat;
+    model.detectedFormatTag = detectedFormatTag(model);
     if (model.result !== 'tie' && model.winner) {
       model.result = selectedName && model.winner === selectedName ? 'win' : 'loss';
     }
     if (!model.players.p1 && !model.players.p2) model.warnings.push('Player names were not found in the log.');
     if (!model.leads.p1.length || !model.leads.p2.length) model.warnings.push('Lead Pokemon could not be fully inferred.');
     if (!model.teamPreview.p1.length && !model.teamPreview.p2.length) model.warnings.push('Team preview was not present; selected Pokemon are inferred from revealed actions.');
-    if ((requestedFormat === 'singles' || requestedFormat === 'doubles') && actualFormat !== 'unknown' && requestedFormat !== actualFormat) {
-      model.warnings.push('Replay format mismatch: selected ' + requestedFormat + ', but the log parsed as ' + actualFormat + '.');
+    if (requestedFormat && requestedFormat !== 'auto' && model.detectedFormatTag !== 'unknown' && requestedFormat !== model.detectedFormatTag) {
+      model.warnings.push('Replay format mismatch: selected ' + requestedFormat + ', but the log parsed as ' + model.detectedFormatTag + '.');
       model.formatMismatch = {
         expected: requestedFormat,
-        actual: actualFormat,
+        actual: model.detectedFormatTag,
         mismatch: true
       };
     } else {
       model.formatMismatch = {
         expected: requestedFormat || 'auto',
-        actual: actualFormat,
+        actual: model.detectedFormatTag,
         mismatch: false
       };
     }
     model.ok = model.turns.length > 0 || !!model.winner;
     model.opponentSide = oppSide;
+    model.rulesetProfile = rulesetProfileFor(model);
     return model;
   }
 
@@ -360,12 +428,14 @@
   }
 
   function selectedFourConfidence(parsed, side) {
+    var profile = parsed && parsed.rulesetProfile ? parsed.rulesetProfile : rulesetProfileFor(parsed);
     var preview = parsed.teamPreview && parsed.teamPreview[side] ? parsed.teamPreview[side] : [];
     var selected = parsed.selectedPokemon && parsed.selectedPokemon[side] ? parsed.selectedPokemon[side] : [];
     var expected = expectedSelectionCount(parsed, side);
+    var cap = profile && profile.confidenceCap ? profile.confidenceCap : 'medium';
     if (expected && selected.length >= expected) {
       return {
-        level: 'high',
+        level: capConfidence('high', cap),
         label: countWordTitle(expected) + ' inferred',
         reason: 'All ' + expected + ' selected Pokemon appeared in the log.',
         expectedCount: expected
@@ -373,7 +443,7 @@
     }
     if (preview.length >= 6 && selected.length > 0) {
       return {
-        level: 'medium',
+        level: capConfidence('medium', cap),
         label: 'Partial selection',
         reason: 'Team preview exists, but not all selected Pokemon were revealed.',
         expectedCount: expected
@@ -381,18 +451,20 @@
     }
     if (selected.length > 0) {
       return {
-        level: 'medium',
+        level: capConfidence('medium', cap),
         label: 'Revealed only',
         reason: 'Selected Pokemon are inferred from revealed actions only.',
         expectedCount: expected
       };
     }
-    return {
+    var result = {
       level: 'low',
       label: 'Unknown',
       reason: 'The log did not reveal selected Pokemon.',
       expectedCount: expected
     };
+    result.level = capConfidence(result.level, cap);
+    return result;
   }
 
   function sideNames(parsed, side) {
@@ -527,6 +599,7 @@
     opts = opts || {};
     var side = normalizeSide(opts.selectedSide || parsed.selectedSide || 'p1');
     var opp = side === 'p1' ? 'p2' : 'p1';
+    var rulesetProfile = parsed.rulesetProfile || rulesetProfileFor(parsed);
     var issues = [];
     var turnScores = {};
     var speedTurns = [];
@@ -700,6 +773,7 @@
     var fatalMistake = issues.filter(function(i) { return i.severity === 'high'; }).slice(-1)[0] || firstMistake;
     var confidence = parsed.warnings.length ? 'medium' : 'high';
     if (!parsed.ok) confidence = 'low';
+    confidence = capConfidence(confidence, rulesetProfile.confidenceCap || 'medium');
     var turnTimeline = buildTurnTimeline(parsed, side, issues);
 
     var review = {
@@ -713,6 +787,9 @@
         format: parsed.format || formatKind(parsed),
         formatKind: formatKind(parsed),
         formatMismatch: parsed.formatMismatch || null,
+        formatTag: rulesetProfile.formatTag,
+        rulesetProfile: rulesetProfile.compatibilityClass,
+        coachingMode: rulesetProfile.coachingMode,
         leadCountExpected: expectedLeadCount(parsed),
         selectionCountExpected: selectionCount,
         yourLead: userLead,
@@ -751,7 +828,7 @@
       warnings: parsed.warnings.slice()
     };
     if (ChampionsSim.replayLearning && typeof ChampionsSim.replayLearning.buildLearningReport === 'function') {
-      review.learningReport = ChampionsSim.replayLearning.buildLearningReport(parsed, review, opts || {});
+      review.learningReport = ChampionsSim.replayLearning.buildLearningReport(parsed, review, Object.assign({}, opts || {}, { rulesetProfile: rulesetProfile }));
     }
     return review;
   }

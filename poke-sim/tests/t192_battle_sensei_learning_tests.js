@@ -8,6 +8,8 @@ require(path.join(ROOT, 'replay_learning.js'));
 const replayCoach = require(path.join(ROOT, 'replay_coach.js'));
 const sample = fs.readFileSync(path.join(ROOT, 'tests/fixtures/showdown_replay_sample.txt'), 'utf8');
 const singlesSample = fs.readFileSync(path.join(ROOT, 'tests/fixtures/showdown_replay_singles_sample.txt'), 'utf8');
+const nationalDexFixture = fs.readFileSync(path.join(ROOT, 'tests/fixtures/replays/gen9nationaldex-2504810481.log'), 'utf8');
+const championBo3Fixture = fs.readFileSync(path.join(ROOT, 'tests/fixtures/replays/gen9championsvgc2026regmabo3-2603658926.log'), 'utf8');
 
 let pass = 0;
 let fail = 0;
@@ -206,6 +208,58 @@ T('12. singles sim comparison messaging adapts selection language', () => {
   truthy(!/lead\/four/i.test(mismatch.firstDeviation), 'no lead/four wording');
   truthy(!/selected four/i.test(mismatch.firstDeviation), 'no selected four wording');
   truthy(base.review.learningReport.battleIq.standardScore >= 55, 'singles battle iq still scores');
+});
+
+T('13. generic Gen 9 logs are format-limited and no longer high confidence by default', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(nationalDexFixture, { selectedSide: 'p1', expectedFormat: 'singles' });
+  const summary = analysis.review.summary;
+  const learning = analysis.review.learningReport;
+  eq(summary.rulesetProfile, 'generic_gen9', 'ruleset profile');
+  eq(summary.coachingMode, 'format-limited', 'coaching mode');
+  eq(summary.selectedFourConfidence.level, 'medium', 'generic selection confidence should be capped');
+  eq(summary.confidence, 'medium', 'summary confidence should be capped');
+  eq(learning.confidence, 'medium', 'learning confidence should be capped');
+  eq(learning.battleIq.confidence, 'medium', 'battle iq confidence should be capped');
+  truthy(summary.formatTag && summary.formatTag !== 'unknown', 'format tag available');
+});
+
+T('14. Champion-looking logs enter champion-compatible mode', () => {
+  const championSample = [
+    '|j|☆Alpha',
+    '|j|☆Beta',
+    '|gametype|doubles',
+    '|tier|[Gen 9 Champions] VGC 2026 Reg M-A (Bo3)',
+    '|player|p1|Alpha|argenta|1499',
+    '|player|p2|Beta|volkner|1389',
+    '|rule|Flat Rules',
+    '|rule|VGC Timer',
+    '|rule|Open Team Sheets',
+    '|clearpoke',
+    '|poke|p1|Incineroar, M|',
+    '|poke|p1|Whimsicott, F|',
+    '|poke|p1|Garchomp, M|',
+    '|poke|p1|Arcanine, M|',
+    '|poke|p2|Indeedee-F, F|',
+    '|poke|p2|Hatterene, F|',
+    '|poke|p2|Ursaluna, M|',
+    '|poke|p2|Torkoal, M|',
+    '|teampreview',
+    '|start',
+    '|switch|p1a: Incineroar|Incineroar, M|100/100',
+    '|switch|p2a: Indeedee-F|Indeedee-F, F|100/100',
+    '|turn|1',
+    '|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F',
+    '|move|p2a: Indeedee-F|Follow Me|p2a: Indeedee-F',
+    '|win|Alpha'
+  ].join('\n');
+  const analysis = replayCoach.analyzeShowdownReplay(championSample, { selectedSide: 'p1' });
+  const summary = analysis.review.summary;
+  const learning = analysis.review.learningReport;
+  eq(summary.rulesetProfile, 'champion_exact', 'champion ruleset profile');
+  eq(summary.coachingMode, 'champion-ready', 'champion coaching mode');
+  truthy(summary.formatTag.toLowerCase().indexOf('champion') >= 0, 'champion format tag');
+  eq(summary.confidence, 'high', 'champion confidence rises when the log itself is Champion');
+  eq(learning.confidence, 'high', 'learning confidence rises with exact Champion replay metadata');
 });
 
 console.log(`\nBattle Sensei learning: ${pass} pass, ${fail} fail\n`);

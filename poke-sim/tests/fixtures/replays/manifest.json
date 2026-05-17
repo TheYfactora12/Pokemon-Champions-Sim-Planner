@@ -1,0 +1,120 @@
+{
+  "schema_version": "battle_iq_replay_manifest_v1",
+  "notes": "Fixture metadata only. Raw replay logs should be added beside this file with stable filenames and checksums.",
+  "compatibility_classes": [
+    "champion_exact",
+    "champion_compatible",
+    "generic_gen9",
+    "parser_only",
+    "unknown"
+  ],
+  "fixtures": [
+    {
+      "id": "gen9vgc2026regi-2573242187",
+      "source_url": "https://replay.pokemonshowdown.com/gen9vgc2026regi-2573242187",
+      "source_platform": "pokemon_showdown",
+      "raw_file": "gen9vgc2026regi-2573242187.log",
+      "expected_format": "gen9vgc2026regi",
+      "expected_battle_type": "doubles",
+      "expected_best_of": 1,
+      "ruleset_profile": {
+        "format_id": "gen9vgc2026regi",
+        "ruleset_name": "Gen 9 VGC 2026 Reg I",
+        "ruleset_version": "unknown",
+        "generation": 9,
+        "battle_type": "doubles",
+        "team_size": null,
+        "bring_count": null,
+        "lead_count": 2,
+        "best_of": 1,
+        "custom_mechanics_flags": []
+      },
+      "compatibility_class": "generic_gen9",
+      "expected_min_event_count": 25,
+      "expected_confidence_class": "medium",
+      "expected_parser_warnings": []
+    },
+    {
+      "id": "gen9championsvgc2026regmabo3-2603658926",
+      "source_url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regmabo3-2603658926-httgv1tqdo3c77qckkhvycsfxuc3vvqpw",
+      "source_platform": "pokemon_showdown",
+      "raw_file": "gen9championsvgc2026regmabo3-2603658926.log",
+      "expected_format": "gen9championsvgc2026regmabo3",
+      "expected_battle_type": "doubles",
+      "expected_best_of": 3,
+      "ruleset_profile": {
+        "format_id": "gen9championsvgc2026regmabo3",
+        "ruleset_name": "Gen 9 Champions VGC 2026 Reg M-A Bo3",
+        "ruleset_version": "unknown",
+        "generation": 9,
+        "battle_type": "doubles",
+        "team_size": null,
+        "bring_count": null,
+        "lead_count": 2,
+        "best_of": 3,
+        "custom_mechanics_flags": []
+      },
+      "compatibility_class": "unknown",
+      "compatibility_note": "Candidate for champion_compatible only after Pokemon Champions rules are verified against this Showdown format.",
+      "expected_min_event_count": 25,
+      "expected_confidence_class": "medium",
+      "expected_parser_warnings": [
+        "ruleset_unverified"
+      ]
+    },
+    {
+      "id": "gen9nationaldex-2504810481",
+      "source_url": "https://replay.pokemonshowdown.com/gen9nationaldex-2504810481",
+      "source_platform": "pokemon_showdown",
+      "raw_file": "gen9nationaldex-2504810481.log",
+      "expected_format": "gen9nationaldex",
+      "expected_battle_type": "singles",
+      "expected_best_of": 1,
+      "ruleset_profile": {
+        "format_id": "gen9nationaldex",
+        "ruleset_name": "Gen 9 National Dex",
+        "ruleset_version": "unknown",
+        "generation": 9,
+        "battle_type": "singles",
+        "team_size": null,
+        "bring_count": null,
+        "lead_count": 1,
+        "best_of": 1,
+        "custom_mechanics_flags": []
+      },
+      "compatibility_class": "generic_gen9",
+      "expected_min_event_count": 25,
+      "expected_confidence_class": "medium",
+      "expected_parser_warnings": []
+    },
+    {
+      "id": "gen9randombattle-2361075929",
+      "source_url": "https://replay.pokemonshowdown.com/gen9randombattle-2361075929",
+      "source_platform": "pokemon_showdown",
+      "raw_file": "gen9randombattle-2361075929.log",
+      "expected_format": "gen9randombattle",
+      "expected_battle_type": "singles",
+      "expected_best_of": 1,
+      "ruleset_profile": {
+        "format_id": "gen9randombattle",
+        "ruleset_name": "Gen 9 Random Battle",
+        "ruleset_version": "unknown",
+        "generation": 9,
+        "battle_type": "singles",
+        "team_size": null,
+        "bring_count": null,
+        "lead_count": 1,
+        "best_of": 1,
+        "custom_mechanics_flags": [
+          "randomized_teams"
+        ]
+      },
+      "compatibility_class": "parser_only",
+      "expected_min_event_count": 25,
+      "expected_confidence_class": "low",
+      "expected_parser_warnings": [
+        "non_champion_team_construction"
+      ]
+    }
+  ]
+}

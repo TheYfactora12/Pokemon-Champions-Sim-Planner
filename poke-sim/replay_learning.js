@@ -77,9 +77,14 @@
 
   function confidenceFor(parsed, issues) {
     parsed = parsed || {};
+    var rulesetProfile = parsed.rulesetProfile || {};
+    var cap = rulesetProfile.confidenceCap || 'medium';
+    if (rulesetProfile.compatibilityClass === 'parser_only') return 'low';
     if (!parsed.ok || !parsed.turns || parsed.turns.length < 2) return 'low';
-    if ((parsed.warnings || []).length || (issues || []).some(function(i) { return i.confidence === 'low'; })) return 'medium';
-    return 'high';
+    var base = ((parsed.warnings || []).length || (issues || []).some(function(i) { return i.confidence === 'low'; })) ? 'medium' : 'high';
+    if (cap === 'low') return 'low';
+    if (cap === 'medium' && base === 'high') return 'medium';
+    return base;
   }
 
   function evidenceTier(confidence, evidenceCount) {

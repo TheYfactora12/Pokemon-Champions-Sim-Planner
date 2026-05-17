@@ -2540,6 +2540,7 @@ table{border-collapse:collapse;width:100%}
           <label class="form-label" for="replay-coach-format">Replay format</label>
           <select class="select-input" id="replay-coach-format">
             <option value="auto">Auto detect from log</option>
+            <option value="champion">Champion</option>
             <option value="doubles">Doubles</option>
             <option value="singles">Singles</option>
           </select>
@@ -11933,10 +11934,66 @@ if (typeof window !== 'undefined') {
   }
 
   function formatKind(parsed) {
-    var raw = cleanText(parsed && parsed.format).toLowerCase();
+    var raw = cleanText(parsed && (parsed.gameType || parsed.format || '')).toLowerCase();
     if (raw.indexOf('single') >= 0) return 'singles';
     if (raw.indexOf('double') >= 0 || raw.indexOf('vgc') >= 0) return 'doubles';
     return 'unknown';
+  }
+
+  function detectedFormatTag(parsed) {
+    var tierText = cleanText(parsed && (parsed.tier || parsed.format || '')).toLowerCase();
+    if (/champion/.test(tierText)) return 'champion';
+    var kind = formatKind(parsed);
+    if (kind === 'singles' || kind === 'doubles') return kind;
+    if (/random battle/.test(tierText)) return 'random';
+    return 'unknown';
+  }
+
+  function capConfidence(level, cap) {
+    var order = { low: 0, medium: 1, high: 2 };
+    if (!cap || !order.hasOwnProperty(level)) return level;
+    if (!order.hasOwnProperty(cap)) return level;
+    return order[level] > order[cap] ? cap : level;
+  }
+
+  function rulesetProfileFor(parsed) {
+    parsed = parsed || {};
+    var formatText = cleanText(parsed.tier || parsed.format || parsed.formatKind || '').toLowerCase();
+    var detectedTag = cleanText(parsed.detectedFormatTag || detectedFormatTag(parsed)).toLowerCase();
+    var actualKind = formatKind(parsed);
+    var compatibilityClass = 'unknown';
+    var coachingMode = 'format-limited';
+    var confidenceCap = 'medium';
+
+    if (!parsed.ok) {
+      compatibilityClass = 'unknown';
+      coachingMode = 'parser-only';
+      confidenceCap = 'low';
+    } else if (detectedTag === 'champion') {
+      compatibilityClass = 'champion_exact';
+      coachingMode = 'champion-ready';
+      confidenceCap = 'high';
+    } else if (/random battle/.test(formatText)) {
+      compatibilityClass = 'parser_only';
+      coachingMode = 'parser-only';
+      confidenceCap = 'low';
+    } else if (actualKind === 'singles' || actualKind === 'doubles' || formatText) {
+      compatibilityClass = 'generic_gen9';
+      coachingMode = 'format-limited';
+      confidenceCap = 'medium';
+    }
+
+    if (parsed.formatMismatch && parsed.formatMismatch.mismatch) {
+      coachingMode = 'format-limited';
+    }
+
+    return {
+      formatTag: detectedTag || parsed.tier || parsed.format || parsed.formatKind || 'unknown',
+      formatKind: actualKind,
+      compatibilityClass: compatibilityClass,
+      coachingMode: coachingMode,
+      confidenceCap: confidenceCap
+    };
   }
 
   function countWord(count) {
@@ -11987,6 +12044,9 @@ if (typeof window !== 'undefined') {
       teamPreview: { p1: [], p2: [] },
       selectedPokemon: { p1: [], p2: [] },
       leads: { p1: [], p2: [] },
+      tier: '',
+      gameType: '',
+      detectedFormatTag: 'unknown',
       winner: '',
       result: 'unknown',
       forfeit: false,
@@ -12020,7 +12080,13 @@ if (typeof window !== 'undefined') {
         return;
       }
       if (tag === 'tier' || tag === 'gametype') {
-        model.format = model.format || cleanText(parts[2]);
+        var formatValue = cleanText(parts[2]);
+        if (tag === 'tier') {
+          model.tier = formatValue;
+        } else {
+          model.gameType = formatValue.toLowerCase();
+        }
+        model.format = model.format || formatValue;
         return;
       }
       if (tag === 'rated') {
@@ -12142,28 +12208,31 @@ if (typeof window !== 'undefined') {
     var requestedFormat = cleanText(opts.expectedFormat).toLowerCase();
     var actualFormat = formatKind(model);
     model.formatKind = actualFormat;
+    model.requestedFormat = requestedFormat;
+    model.detectedFormatTag = detectedFormatTag(model);
     if (model.result !== 'tie' && model.winner) {
       model.result = selectedName && model.winner === selectedName ? 'win' : 'loss';
     }
     if (!model.players.p1 && !model.players.p2) model.warnings.push('Player names were not found in the log.');
     if (!model.leads.p1.length || !model.leads.p2.length) model.warnings.push('Lead Pokemon could not be fully inferred.');
     if (!model.teamPreview.p1.length && !model.teamPreview.p2.length) model.warnings.push('Team preview was not present; selected Pokemon are inferred from revealed actions.');
-    if ((requestedFormat === 'singles' || requestedFormat === 'doubles') && actualFormat !== 'unknown' && requestedFormat !== actualFormat) {
-      model.warnings.push('Replay format mismatch: selected ' + requestedFormat + ', but the log parsed as ' + actualFormat + '.');
+    if (requestedFormat && requestedFormat !== 'auto' && model.detectedFormatTag !== 'unknown' && requestedFormat !== model.detectedFormatTag) {
+      model.warnings.push('Replay format mismatch: selected ' + requestedFormat + ', but the log parsed as ' + model.detectedFormatTag + '.');
       model.formatMismatch = {
         expected: requestedFormat,
-        actual: actualFormat,
+        actual: model.detectedFormatTag,
         mismatch: true
       };
     } else {
       model.formatMismatch = {
         expected: requestedFormat || 'auto',
-        actual: actualFormat,
+        actual: model.detectedFormatTag,
         mismatch: false
       };
     }
     model.ok = model.turns.length > 0 || !!model.winner;
     model.opponentSide = oppSide;
+    model.rulesetProfile = rulesetProfileFor(model);
     return model;
   }
 
@@ -12222,12 +12291,14 @@ if (typeof window !== 'undefined') {
   }
 
   function selectedFourConfidence(parsed, side) {
+    var profile = parsed && parsed.rulesetProfile ? parsed.rulesetProfile : rulesetProfileFor(parsed);
     var preview = parsed.teamPreview && parsed.teamPreview[side] ? parsed.teamPreview[side] : [];
     var selected = parsed.selectedPokemon && parsed.selectedPokemon[side] ? parsed.selectedPokemon[side] : [];
     var expected = expectedSelectionCount(parsed, side);
+    var cap = profile && profile.confidenceCap ? profile.confidenceCap : 'medium';
     if (expected && selected.length >= expected) {
       return {
-        level: 'high',
+        level: capConfidence('high', cap),
         label: countWordTitle(expected) + ' inferred',
         reason: 'All ' + expected + ' selected Pokemon appeared in the log.',
         expectedCount: expected
@@ -12235,7 +12306,7 @@ if (typeof window !== 'undefined') {
     }
     if (preview.length >= 6 && selected.length > 0) {
       return {
-        level: 'medium',
+        level: capConfidence('medium', cap),
         label: 'Partial selection',
         reason: 'Team preview exists, but not all selected Pokemon were revealed.',
         expectedCount: expected
@@ -12243,18 +12314,20 @@ if (typeof window !== 'undefined') {
     }
     if (selected.length > 0) {
       return {
-        level: 'medium',
+        level: capConfidence('medium', cap),
         label: 'Revealed only',
         reason: 'Selected Pokemon are inferred from revealed actions only.',
         expectedCount: expected
       };
     }
-    return {
+    var result = {
       level: 'low',
       label: 'Unknown',
       reason: 'The log did not reveal selected Pokemon.',
       expectedCount: expected
     };
+    result.level = capConfidence(result.level, cap);
+    return result;
   }
 
   function sideNames(parsed, side) {
@@ -12389,6 +12462,7 @@ if (typeof window !== 'undefined') {
     opts = opts || {};
     var side = normalizeSide(opts.selectedSide || parsed.selectedSide || 'p1');
     var opp = side === 'p1' ? 'p2' : 'p1';
+    var rulesetProfile = parsed.rulesetProfile || rulesetProfileFor(parsed);
     var issues = [];
     var turnScores = {};
     var speedTurns = [];
@@ -12562,6 +12636,7 @@ if (typeof window !== 'undefined') {
     var fatalMistake = issues.filter(function(i) { return i.severity === 'high'; }).slice(-1)[0] || firstMistake;
     var confidence = parsed.warnings.length ? 'medium' : 'high';
     if (!parsed.ok) confidence = 'low';
+    confidence = capConfidence(confidence, rulesetProfile.confidenceCap || 'medium');
     var turnTimeline = buildTurnTimeline(parsed, side, issues);
 
     var review = {
@@ -12575,6 +12650,9 @@ if (typeof window !== 'undefined') {
         format: parsed.format || formatKind(parsed),
         formatKind: formatKind(parsed),
         formatMismatch: parsed.formatMismatch || null,
+        formatTag: rulesetProfile.formatTag,
+        rulesetProfile: rulesetProfile.compatibilityClass,
+        coachingMode: rulesetProfile.coachingMode,
         leadCountExpected: expectedLeadCount(parsed),
         selectionCountExpected: selectionCount,
         yourLead: userLead,
@@ -12613,7 +12691,7 @@ if (typeof window !== 'undefined') {
       warnings: parsed.warnings.slice()
     };
     if (ChampionsSim.replayLearning && typeof ChampionsSim.replayLearning.buildLearningReport === 'function') {
-      review.learningReport = ChampionsSim.replayLearning.buildLearningReport(parsed, review, opts || {});
+      review.learningReport = ChampionsSim.replayLearning.buildLearningReport(parsed, review, Object.assign({}, opts || {}, { rulesetProfile: rulesetProfile }));
     }
     return review;
   }
@@ -12715,9 +12793,14 @@ if (typeof window !== 'undefined') {
 
   function confidenceFor(parsed, issues) {
     parsed = parsed || {};
+    var rulesetProfile = parsed.rulesetProfile || {};
+    var cap = rulesetProfile.confidenceCap || 'medium';
+    if (rulesetProfile.compatibilityClass === 'parser_only') return 'low';
     if (!parsed.ok || !parsed.turns || parsed.turns.length < 2) return 'low';
-    if ((parsed.warnings || []).length || (issues || []).some(function(i) { return i.confidence === 'low'; })) return 'medium';
-    return 'high';
+    var base = ((parsed.warnings || []).length || (issues || []).some(function(i) { return i.confidence === 'low'; })) ? 'medium' : 'high';
+    if (cap === 'low') return 'low';
+    if (cap === 'medium' && base === 'high') return 'medium';
+    return base;
   }
 
   function evidenceTier(confidence, evidenceCount) {
@@ -16329,6 +16412,9 @@ function csReplayCoachRenderAnalysis(analysis) {
   var yourSelection = summary.yourSelection || summary.yourFour || [];
   var opponentSelection = summary.opponentSelection || summary.opponentFour || [];
   var parsedFormat = summary.format || parsed.format || summary.formatKind || 'Unknown';
+  var rulesetProfile = summary.rulesetProfile || (parsed.rulesetProfile && parsed.rulesetProfile.compatibilityClass) || 'unknown';
+  var coachingMode = summary.coachingMode || (parsed.rulesetProfile && parsed.rulesetProfile.coachingMode) || 'format-limited';
+  var formatTag = summary.formatTag || parsed.format || summary.formatKind || 'Unknown';
   var warnings = (review.warnings || []).map(function(w) {
     return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
   }).join('');
@@ -16411,6 +16497,9 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Players</strong><span>' + _escapeHtml((summary.yourPlayer || 'You') + ' vs ' + (summary.opponentPlayer || 'Opponent')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Turns</strong><span>' + _escapeHtml(String(summary.turns || 0)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Format</strong><span>' + _escapeHtml(parsedFormat) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Format Tag</strong><span>' + _escapeHtml(formatTag) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Ruleset Profile</strong><span>' + _escapeHtml(rulesetProfile) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Coaching Mode</strong><span>' + _escapeHtml(coachingMode) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Your Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourLead)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Opp Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentLead)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Your Selection</strong><span>' + _escapeHtml(csReplayCoachJoin(yourSelection, 'Inferred from revealed actions')) + '</span></div>' +
@@ -16662,21 +16751,33 @@ function csInitReplayCoachUi() {
 
   function replayCoachDetectedFormat(parsed) {
     if (!parsed) return 'unknown';
+    if (parsed.detectedFormatTag) return parsed.detectedFormatTag;
+    if (parsed.rulesetProfile && parsed.rulesetProfile.formatTag) return parsed.rulesetProfile.formatTag;
     if (parsed.formatMismatch && parsed.formatMismatch.actual && parsed.formatMismatch.actual !== 'unknown') return parsed.formatMismatch.actual;
     if (parsed.formatKind && parsed.formatKind !== 'unknown') return parsed.formatKind;
     if (parsed.format) return parsed.format;
     return 'unknown';
   }
 
+  function replayCoachModeFrom(parsed, detected) {
+    var profile = parsed && parsed.rulesetProfile ? parsed.rulesetProfile : null;
+    if (profile && profile.coachingMode) return profile.coachingMode;
+    var probe = String((profile && profile.formatTag) || (parsed && parsed.detectedFormatTag) || detected || (parsed && parsed.format) || '').toLowerCase();
+    if (/champion/.test(probe)) return 'champion-ready';
+    if (!parsed || !parsed.ok) return 'parser-only';
+    return 'format-limited';
+  }
+
   function setParsedStatus(parsed, prefix) {
     var turns = parsed && parsed.totalTurns ? parsed.totalTurns : 0;
     var detected = replayCoachDetectedFormat(parsed);
+    var mode = replayCoachModeFrom(parsed, detected);
     var lead = prefix ? prefix + ' ' : '';
     if (parsed && parsed.formatMismatch && parsed.formatMismatch.mismatch) {
-      setStatus(lead + 'parsed as ' + detected + ', but the selected replay format is ' + parsed.formatMismatch.expected + '. Switch the format toggle or treat this review as provisional.', true);
+      setStatus(lead + 'parsed as ' + detected + ' (' + mode + '), but the selected replay format is ' + parsed.formatMismatch.expected + '. Switch the format toggle or treat this review as provisional.', true);
       return;
     }
-    setStatus(lead + 'parsed ' + turns + ' turn' + (turns === 1 ? '' : 's') + (detected && detected !== 'unknown' ? ' as ' + detected : '') + '. Review is local-only and not saved.', false);
+    setStatus(lead + 'parsed ' + turns + ' turn' + (turns === 1 ? '' : 's') + (detected && detected !== 'unknown' ? ' as ' + detected : '') + ' · ' + mode + '. Review is local-only and not saved.', false);
   }
 
   function previewLoadedReplay(raw, fileName) {
@@ -16691,11 +16792,12 @@ function csInitReplayCoachUi() {
         expectedFormat: replayCoachExpectedFormat()
       });
       var detected = replayCoachDetectedFormat(previewParsed);
+      var mode = replayCoachModeFrom(previewParsed, detected);
       if (previewParsed.formatMismatch && previewParsed.formatMismatch.mismatch) {
-        setStatus('Loaded ' + fileName + '. Parsed as ' + detected + ', but the selected replay format is ' + previewParsed.formatMismatch.expected + '.', true);
+        setStatus('Loaded ' + fileName + '. Parsed as ' + detected + ' (' + mode + '), but the selected replay format is ' + previewParsed.formatMismatch.expected + '.', true);
         return;
       }
-      setStatus('Loaded ' + fileName + (detected && detected !== 'unknown' ? '. Detected ' + detected + ' replay.' : '. Run analysis when ready.'), false);
+      setStatus('Loaded ' + fileName + (detected && detected !== 'unknown' ? '. Detected ' + detected + ' replay.' : '. Run analysis when ready.') + ' Mode: ' + mode + '.', false);
     } catch (_e) {
       setStatus((fileName ? 'Loaded ' + fileName + '. ' : '') + 'Run analysis when ready.', false);
     }

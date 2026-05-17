@@ -64,7 +64,7 @@ T('4. builds a coaching review with tags and critical turn', () => {
   const ids = analysis.review.coachingTags.map((t) => t.id);
   eq(analysis.review.summary.yourLead.join(','), 'Incineroar,Whimsicott', 'summary lead');
   eq(analysis.review.summary.result, 'loss', 'summary result');
-  eq(analysis.review.summary.selectedFourConfidence.level, 'high', 'bring confidence');
+  eq(analysis.review.summary.selectedFourConfidence.level, 'medium', 'bring confidence');
   truthy(analysis.review.summary.criticalTurn >= 1, 'critical turn');
   includes(tags, 'Targeting Error', 'targeting coaching tag');
   includes(tags, 'Speed Control Without Pressure', 'speed control tag');
@@ -145,10 +145,10 @@ T('8. singles replay uses one lead and three selected Pokemon', () => {
   eq(parsed.formatMismatch.mismatch, false, 'format matches selection');
 });
 
-T('9. singles review stays high confidence without questionable bring tag', () => {
+T('9. singles review stays format-limited without questionable bring tag', () => {
   const analysis = replayCoach.analyzeShowdownReplay(singlesSample, { selectedSide: 'p1', expectedFormat: 'singles' });
   const tags = analysis.review.coachingTags.map((t) => t.id);
-  eq(analysis.review.summary.selectedFourConfidence.level, 'high', 'singles selection confidence');
+  eq(analysis.review.summary.selectedFourConfidence.level, 'medium', 'singles selection confidence');
   eq(analysis.review.summary.selectionCountExpected, 3, 'expected singles selection count');
   eq(analysis.review.summary.yourLead.length, 1, 'summary single lead');
   truthy(tags.length >= 1, 'singles replay still yields coaching tags');
@@ -159,6 +159,42 @@ T('10. format mismatch is flagged when selector and log disagree', () => {
   const parsed = replayCoach.parseShowdownLog(singlesSample, { selectedSide: 'p1', expectedFormat: 'doubles' });
   eq(parsed.formatMismatch.mismatch, true, 'format mismatch flag');
   truthy(parsed.warnings.some((w) => /format mismatch/i.test(w)), 'mismatch warning');
+});
+
+T('11. champion logs are detected from the replay artifact, not the dropdown', () => {
+  const championSample = [
+    '|j|☆Alpha',
+    '|j|☆Beta',
+    '|gametype|doubles',
+    '|tier|[Gen 9 Champions] VGC 2026 Reg M-A (Bo3)',
+    '|player|p1|Alpha|argenta|1499',
+    '|player|p2|Beta|volkner|1389',
+    '|rule|Flat Rules',
+    '|rule|VGC Timer',
+    '|rule|Open Team Sheets',
+    '|clearpoke',
+    '|poke|p1|Incineroar, M|',
+    '|poke|p1|Whimsicott, F|',
+    '|poke|p1|Garchomp, M|',
+    '|poke|p1|Arcanine, M|',
+    '|poke|p2|Indeedee-F, F|',
+    '|poke|p2|Hatterene, F|',
+    '|poke|p2|Ursaluna, M|',
+    '|poke|p2|Torkoal, M|',
+    '|teampreview',
+    '|start',
+    '|switch|p1a: Incineroar|Incineroar, M|100/100',
+    '|switch|p2a: Indeedee-F|Indeedee-F, F|100/100',
+    '|turn|1',
+    '|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F',
+    '|move|p2a: Indeedee-F|Follow Me|p2a: Indeedee-F',
+    '|win|Alpha'
+  ].join('\n');
+  const parsed = replayCoach.parseShowdownLog(championSample, { selectedSide: 'p1' });
+  eq(parsed.detectedFormatTag, 'champion', 'champion detected tag');
+  eq(parsed.rulesetProfile.compatibilityClass, 'champion_exact', 'champion exact profile');
+  eq(parsed.rulesetProfile.coachingMode, 'champion-ready', 'champion coaching mode');
+  eq(parsed.formatMismatch.mismatch, false, 'no mismatch when auto-detecting champion');
 });
 
 console.log(`\nBattle Sensei parser: ${pass} pass, ${fail} fail\n`);
