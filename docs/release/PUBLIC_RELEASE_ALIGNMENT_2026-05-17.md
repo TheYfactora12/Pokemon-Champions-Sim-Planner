@@ -2,6 +2,10 @@
 
 This is the no-drift coordination plan for the next release pass.
 
+Related architecture audit:
+
+- [TEAM_PROFILE_PERSISTENCE_AUDIT_2026-05-17.md](/Users/kevinmedeiros/Pokemon-Champions-Sim-Planner-yours/docs/release/TEAM_PROFILE_PERSISTENCE_AUDIT_2026-05-17.md)
+
 Current branch baseline:
 
 - Your fork: `TheYfactora12/Pokemon-Champions-Sim-Planner`, branch `rollback-main`

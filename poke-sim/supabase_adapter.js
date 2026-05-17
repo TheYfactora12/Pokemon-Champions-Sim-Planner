@@ -294,6 +294,225 @@
     }
   }
 
+  async function saveTeamProfile(payload) {
+    const sb = getClient();
+    if (!sb) return null;
+    if (!payload || !payload.team_profile_id || !payload.display_name) {
+      log.warn('saveTeamProfile rejected: team_profile_id and display_name required');
+      return null;
+    }
+    const row = {
+      team_profile_id: payload.team_profile_id,
+      user_id: payload.user_id || null,
+      display_name: payload.display_name,
+      canonical_format: payload.canonical_format || null,
+      canonical_ruleset: payload.canonical_ruleset || null,
+      metadata: payload.metadata || {}
+    };
+    try {
+      const { error } = await sb.from('team_profiles').upsert(row);
+      if (error) throw error;
+      return payload.team_profile_id;
+    } catch (err) {
+      log.warn('saveTeamProfile failed; profile not persisted', err);
+      return null;
+    }
+  }
+
+  async function saveTeamVersion(payload) {
+    const sb = getClient();
+    if (!sb) return null;
+    if (!payload || !payload.team_version_id || !payload.team_profile_id) {
+      log.warn('saveTeamVersion rejected: team_version_id and team_profile_id required');
+      return null;
+    }
+    const row = {
+      team_version_id: payload.team_version_id,
+      team_profile_id: payload.team_profile_id,
+      version_label: payload.version_label || null,
+      fingerprint_hash: payload.fingerprint_hash || null,
+      format: payload.format || null,
+      ruleset_id: payload.ruleset_id || null,
+      source: payload.source || null,
+      team_payload: payload.team_payload || {}
+    };
+    try {
+      const { error } = await sb.from('team_versions').upsert(row);
+      if (error) throw error;
+      return payload.team_version_id;
+    } catch (err) {
+      log.warn('saveTeamVersion failed; version not persisted', err);
+      return null;
+    }
+  }
+
+  async function saveTeamRunSnapshot(payload) {
+    const sb = getClient();
+    if (!sb) return null;
+    if (!payload || !payload.team_run_snapshot_id) {
+      log.warn('saveTeamRunSnapshot rejected: team_run_snapshot_id required');
+      return null;
+    }
+    const row = {
+      team_run_snapshot_id: payload.team_run_snapshot_id,
+      team_profile_id: payload.team_profile_id || null,
+      team_version_id: payload.team_version_id || null,
+      opponent_fingerprint: payload.opponent_fingerprint || null,
+      opponent_team_key: payload.opponent_team_key || null,
+      format: payload.format || null,
+      ruleset_id: payload.ruleset_id || null,
+      bo: payload.bo || null,
+      source: payload.source || null,
+      sim_summary: payload.sim_summary || {},
+      strategy_summary: payload.strategy_summary || {}
+    };
+    try {
+      const { error } = await sb.from('team_run_snapshots').upsert(row);
+      if (error) throw error;
+      return payload.team_run_snapshot_id;
+    } catch (err) {
+      log.warn('saveTeamRunSnapshot failed; snapshot not persisted', err);
+      return null;
+    }
+  }
+
+  async function saveReplayArtifact(payload) {
+    const sb = getClient();
+    if (!sb) return null;
+    if (!payload || !payload.replay_artifact_id) {
+      log.warn('saveReplayArtifact rejected: replay_artifact_id required');
+      return null;
+    }
+    const row = {
+      replay_artifact_id: payload.replay_artifact_id,
+      user_id: payload.user_id || null,
+      source_type: payload.source_type || 'showdown_log',
+      source_url: payload.source_url || null,
+      format: payload.format || null,
+      ruleset_profile: payload.ruleset_profile || null,
+      player_fingerprint: payload.player_fingerprint || null,
+      opponent_fingerprint: payload.opponent_fingerprint || null,
+      normalized_summary: payload.normalized_summary || {},
+      raw_log_saved: !!payload.raw_log_saved
+    };
+    try {
+      const { error } = await sb.from('replay_artifacts').upsert(row);
+      if (error) throw error;
+      return payload.replay_artifact_id;
+    } catch (err) {
+      log.warn('saveReplayArtifact failed; replay not persisted', err);
+      return null;
+    }
+  }
+
+  async function saveReplayTeamMatch(payload) {
+    const sb = getClient();
+    if (!sb) return null;
+    if (!payload || !payload.replay_team_match_id || !payload.replay_artifact_id) {
+      log.warn('saveReplayTeamMatch rejected: replay_team_match_id and replay_artifact_id required');
+      return null;
+    }
+    const row = {
+      replay_team_match_id: payload.replay_team_match_id,
+      replay_artifact_id: payload.replay_artifact_id,
+      team_profile_id: payload.team_profile_id || null,
+      team_version_id: payload.team_version_id || null,
+      match_status: payload.match_status || 'unknown',
+      similarity_score: payload.similarity_score || 0,
+      confidence: payload.confidence || 'low',
+      evidence_json: payload.evidence_json || {}
+    };
+    try {
+      const { error } = await sb.from('replay_team_matches').upsert(row);
+      if (error) throw error;
+      return payload.replay_team_match_id;
+    } catch (err) {
+      log.warn('saveReplayTeamMatch failed; match not persisted', err);
+      return null;
+    }
+  }
+
+  async function saveReplaySimComparison(payload) {
+    const sb = getClient();
+    if (!sb) return null;
+    if (!payload || !payload.replay_sim_comparison_id || !payload.replay_artifact_id) {
+      log.warn('saveReplaySimComparison rejected: replay_sim_comparison_id and replay_artifact_id required');
+      return null;
+    }
+    const row = {
+      replay_sim_comparison_id: payload.replay_sim_comparison_id,
+      replay_artifact_id: payload.replay_artifact_id,
+      team_run_snapshot_id: payload.team_run_snapshot_id || null,
+      team_profile_id: payload.team_profile_id || null,
+      team_version_id: payload.team_version_id || null,
+      comparison_status: payload.comparison_status || 'needs_sim_data',
+      calibration_action: payload.calibration_action || 'none',
+      confidence: payload.confidence || 'low',
+      summary_json: payload.summary_json || {}
+    };
+    try {
+      const { error } = await sb.from('replay_sim_comparisons').upsert(row);
+      if (error) throw error;
+      return payload.replay_sim_comparison_id;
+    } catch (err) {
+      log.warn('saveReplaySimComparison failed; comparison not persisted', err);
+      return null;
+    }
+  }
+
+  async function saveCoachingReport(payload) {
+    const sb = getClient();
+    if (!sb) return null;
+    if (!payload || !payload.coaching_report_id) {
+      log.warn('saveCoachingReport rejected: coaching_report_id required');
+      return null;
+    }
+    const row = {
+      coaching_report_id: payload.coaching_report_id,
+      replay_artifact_id: payload.replay_artifact_id || null,
+      team_profile_id: payload.team_profile_id || null,
+      team_version_id: payload.team_version_id || null,
+      report_type: payload.report_type || 'battle_sensei_replay',
+      confidence: payload.confidence || 'low',
+      report_summary: payload.report_summary || {}
+    };
+    try {
+      const { error } = await sb.from('coaching_reports').upsert(row);
+      if (error) throw error;
+      return payload.coaching_report_id;
+    } catch (err) {
+      log.warn('saveCoachingReport failed; report not persisted', err);
+      return null;
+    }
+  }
+
+  async function saveReplayHistoryBundle(payload) {
+    const sb = getClient();
+    if (!sb || !payload) return null;
+    const result = {
+      team_profile_id: null,
+      team_version_id: null,
+      team_run_snapshot_id: null,
+      replay_artifact_id: null,
+      replay_team_match_id: null,
+      replay_sim_comparison_id: null,
+      coaching_report_id: null
+    };
+    try {
+      if (payload.teamProfile) result.team_profile_id = await saveTeamProfile(payload.teamProfile);
+      if (payload.teamVersion) result.team_version_id = await saveTeamVersion(payload.teamVersion);
+      if (payload.teamRunSnapshot) result.team_run_snapshot_id = await saveTeamRunSnapshot(payload.teamRunSnapshot);
+      if (payload.replayArtifact) result.replay_artifact_id = await saveReplayArtifact(payload.replayArtifact);
+      if (payload.replayTeamMatch) result.replay_team_match_id = await saveReplayTeamMatch(payload.replayTeamMatch);
+      if (payload.replaySimComparison) result.replay_sim_comparison_id = await saveReplaySimComparison(payload.replaySimComparison);
+      if (payload.coachingReport) result.coaching_report_id = await saveCoachingReport(payload.coachingReport);
+      return result;
+    } catch (err) {
+      log.warn('saveReplayHistoryBundle failed', err);
+      return result;
+    }
+  }
+
   // ── loadAnalysesForPlayer (M6) ───────────────────────────────────────────
   async function loadAnalysesForPlayer(playerKey, limit) {
     limit = limit || 50;
@@ -364,6 +583,14 @@
     saveAnalysis,
     loadRecentAnalyses,
     saveTeam,
+    saveTeamProfile,
+    saveTeamVersion,
+    saveTeamRunSnapshot,
+    saveReplayArtifact,
+    saveReplayTeamMatch,
+    saveReplaySimComparison,
+    saveCoachingReport,
+    saveReplayHistoryBundle,
     loadAnalysesForPlayer,
     loadAnalysisLogs,
     loadPriorSnapshot

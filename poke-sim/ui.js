@@ -3611,7 +3611,260 @@ function csStoreTeamRunSnapshot(teamKey, oppKey, fmt, bo, source) {
     source: source || 'sim'
   };
   ChampionsSim.state.lastTeamRunSnapshot = snapshot;
+  try { csPersistTeamRunSnapshot(snapshot); } catch (_persistErr) { UILog.warn('team snapshot persistence skipped', _persistErr); }
   return snapshot;
+}
+
+function csPersistenceToken(value, fallback) {
+  var token = String(value || fallback || 'unknown').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return token || String(fallback || 'unknown');
+}
+
+function csPersistenceSpeciesKey(fingerprint) {
+  var list = [];
+  if (fingerprint && Array.isArray(fingerprint.speciesSet) && fingerprint.speciesSet.length) list = fingerprint.speciesSet.slice();
+  else if (fingerprint && Array.isArray(fingerprint.selectedPokemon) && fingerprint.selectedPokemon.length) list = fingerprint.selectedPokemon.slice();
+  return list.map(csNormalizeReplayName).filter(Boolean).sort().join('|') || csPersistenceToken(fingerprint && (fingerprint.teamId || fingerprint.displayName), 'team');
+}
+
+function csBuildTeamProfileIdentity(fingerprint) {
+  if (!fingerprint) return null;
+  var format = csPersistenceToken(fingerprint.format, 'unknown');
+  var ruleset = csPersistenceToken(fingerprint.ruleset, 'unknown');
+  var base = csPersistenceToken(fingerprint.teamId || fingerprint.displayName, 'team');
+  var speciesKey = csPersistenceSpeciesKey(fingerprint);
+  var profileId = 'tp:' + base + ':' + format + ':' + ruleset;
+  return {
+    team_profile_id: profileId,
+    team_version_id: profileId + ':v:' + csPersistenceToken(speciesKey, 'roster'),
+    fingerprint_hash: speciesKey,
+    display_name: fingerprint.displayName || fingerprint.teamId || 'Team profile',
+    canonical_format: fingerprint.format || format,
+    canonical_ruleset: fingerprint.ruleset || ruleset
+  };
+}
+
+function csRememberProfilePersistence(status, payload) {
+  if (typeof ChampionsSim === 'undefined' || !ChampionsSim.state) return null;
+  ChampionsSim.state.lastProfilePersistence = {
+    status: status || 'unknown',
+    savedAt: new Date().toISOString(),
+    payload: payload || {}
+  };
+  return ChampionsSim.state.lastProfilePersistence;
+}
+
+function csBuildPersistableTeamRunSnapshot(snapshot) {
+  if (!snapshot || !snapshot.teamFingerprint) return null;
+  var identity = csBuildTeamProfileIdentity(snapshot.teamFingerprint);
+  if (!identity) return null;
+  return {
+    teamProfile: {
+      team_profile_id: identity.team_profile_id,
+      display_name: identity.display_name,
+      canonical_format: identity.canonical_format,
+      canonical_ruleset: identity.canonical_ruleset,
+      metadata: {
+        source: snapshot.source || 'sim',
+        storage_scope: snapshot.storageScope || 'session_only'
+      }
+    },
+    teamVersion: {
+      team_version_id: identity.team_version_id,
+      team_profile_id: identity.team_profile_id,
+      version_label: snapshot.createdAt || 'session snapshot',
+      fingerprint_hash: identity.fingerprint_hash,
+      format: snapshot.format || identity.canonical_format,
+      ruleset_id: snapshot.ruleset || identity.canonical_ruleset,
+      source: snapshot.source || 'sim',
+      team_payload: {
+        display_name: snapshot.teamFingerprint.displayName || '',
+        species_set: (snapshot.teamFingerprint.speciesSet || []).slice(),
+        selected_pokemon: (snapshot.teamFingerprint.selectedPokemon || []).slice(),
+        moves_known: (snapshot.teamFingerprint.movesKnown || []).slice(),
+        items_known: (snapshot.teamFingerprint.itemsKnown || []).slice(),
+        abilities_known: (snapshot.teamFingerprint.abilitiesKnown || []).slice(),
+        tera_known: (snapshot.teamFingerprint.teraKnown || []).slice()
+      }
+    },
+    teamRunSnapshot: {
+      team_run_snapshot_id: snapshot.id,
+      team_profile_id: identity.team_profile_id,
+      team_version_id: identity.team_version_id,
+      opponent_fingerprint: snapshot.opponentFingerprint ? csPersistenceSpeciesKey(snapshot.opponentFingerprint) : null,
+      opponent_team_key: snapshot.opponentKey || null,
+      format: snapshot.format || identity.canonical_format,
+      ruleset_id: snapshot.ruleset || identity.canonical_ruleset,
+      bo: snapshot.bo || null,
+      source: snapshot.source || 'sim',
+      sim_summary: {
+        opponent_name: snapshot.opponentName || '',
+        created_at: snapshot.createdAt || null
+      },
+      strategy_summary: {}
+    }
+  };
+}
+
+function csPersistTeamRunSnapshot(snapshot) {
+  var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
+  if (!adapter || !adapter.enabled) return Promise.resolve(null);
+  var bundle = csBuildPersistableTeamRunSnapshot(snapshot);
+  if (!bundle) return Promise.resolve(null);
+  if (typeof adapter.saveReplayHistoryBundle === 'function') {
+    return Promise.resolve(adapter.saveReplayHistoryBundle(bundle)).then(function(result) {
+      csRememberProfilePersistence('team_snapshot_saved', result || bundle.teamRunSnapshot);
+      return result;
+    }).catch(function(err) {
+      UILog.warn('saveReplayHistoryBundle(team snapshot) failed', err);
+      csRememberProfilePersistence('team_snapshot_failed', { message: err && err.message ? err.message : 'unknown' });
+      return null;
+    });
+  }
+  var chain = Promise.resolve();
+  if (typeof adapter.saveTeamProfile === 'function') chain = chain.then(function() { return adapter.saveTeamProfile(bundle.teamProfile); });
+  if (typeof adapter.saveTeamVersion === 'function') chain = chain.then(function() { return adapter.saveTeamVersion(bundle.teamVersion); });
+  if (typeof adapter.saveTeamRunSnapshot === 'function') chain = chain.then(function() { return adapter.saveTeamRunSnapshot(bundle.teamRunSnapshot); });
+  return chain.then(function(result) {
+    csRememberProfilePersistence('team_snapshot_saved', { team_run_snapshot_id: result || bundle.teamRunSnapshot.team_run_snapshot_id });
+    return result;
+  }).catch(function(err) {
+    UILog.warn('team snapshot persistence failed', err);
+    csRememberProfilePersistence('team_snapshot_failed', { message: err && err.message ? err.message : 'unknown' });
+    return null;
+  });
+}
+
+function csBuildReplayHistoryBundle(analysis) {
+  if (!analysis || !analysis.review) return null;
+  var snapshot = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? (ChampionsSim.state.lastTeamRunSnapshot || null) : null;
+  var base = snapshot ? csBuildPersistableTeamRunSnapshot(snapshot) : { teamProfile: null, teamVersion: null, teamRunSnapshot: null };
+  var parsed = analysis.parsed || {};
+  var review = analysis.review || {};
+  var summary = review.summary || {};
+  var learning = review.learningReport || {};
+  var simComparison = learning.simComparison || null;
+  var replayTeamMatch = simComparison && simComparison.replayTeamMatch ? simComparison.replayTeamMatch : null;
+  var replayFacts = simComparison && simComparison.battleFacts && simComparison.battleFacts.replay
+    ? simComparison.battleFacts.replay
+    : ((typeof ChampionsSim !== 'undefined' && ChampionsSim.replayLearning && typeof ChampionsSim.replayLearning.normalizeShowdownReplayToFacts === 'function')
+      ? ChampionsSim.replayLearning.normalizeShowdownReplayToFacts(parsed, review, {})
+      : null);
+  var identity = base.teamProfile ? {
+    team_profile_id: base.teamProfile.team_profile_id,
+    team_version_id: base.teamVersion && base.teamVersion.team_version_id
+  } : null;
+  var replayArtifactId = 'ra:' + csPersistenceToken(parsed.battleId || parsed.id || [summary.yourPlayer, summary.opponentPlayer, summary.turns, summary.format].join('-'), 'replay');
+  var result = {
+    teamProfile: base.teamProfile,
+    teamVersion: base.teamVersion,
+    teamRunSnapshot: base.teamRunSnapshot,
+    replayArtifact: {
+      replay_artifact_id: replayArtifactId,
+      source_type: 'showdown_log',
+      source_url: parsed.sourceUrl || null,
+      format: summary.format || parsed.formatKind || parsed.gametype || 'unknown',
+      ruleset_profile: summary.rulesetProfile || 'unknown',
+      player_fingerprint: replayFacts && replayFacts.playerTeamFingerprint ? replayFacts.playerTeamFingerprint : '',
+      opponent_fingerprint: replayFacts && replayFacts.opponentTeamFingerprint ? replayFacts.opponentTeamFingerprint : '',
+      normalized_summary: {
+        battle_id: parsed.battleId || parsed.id || '',
+        result: summary.result || parsed.result || 'unknown',
+        winner: summary.winner || parsed.winner || '',
+        confidence: summary.confidence || learning.confidence || 'low',
+        critical_turn: summary.criticalTurn || null,
+        main_issue: summary.mainIssue || '',
+        your_lead: (summary.yourLead || []).slice(),
+        opponent_lead: (summary.opponentLead || []).slice(),
+        your_selection: (summary.yourFour || summary.yourSelection || []).slice(),
+        opponent_selection: (summary.opponentFour || summary.opponentSelection || []).slice(),
+        battle_facts: replayFacts || {}
+      },
+      raw_log_saved: false
+    },
+    replayTeamMatch: (!replayTeamMatch || !identity) ? null : {
+      replay_team_match_id: 'rtm:' + replayArtifactId,
+      replay_artifact_id: replayArtifactId,
+      team_profile_id: identity.team_profile_id,
+      team_version_id: identity.team_version_id,
+      match_status: replayTeamMatch.status || 'unknown',
+      similarity_score: replayTeamMatch.similarityScore || 0,
+      confidence: replayTeamMatch.confidence || 'low',
+      evidence_json: {
+        species_overlap: replayTeamMatch.speciesOverlap || 0,
+        format_match: !!replayTeamMatch.formatMatch,
+        ruleset_match: !!replayTeamMatch.rulesetMatch,
+        overlap_names: (replayTeamMatch.overlapNames || []).slice(),
+        blockers: (replayTeamMatch.blockers || []).slice(),
+        evidence: (replayTeamMatch.evidence || []).slice(),
+        summary: replayTeamMatch.summary || '',
+        recommended_next_step: replayTeamMatch.recommendedNextStep || ''
+      }
+    },
+    replaySimComparison: (!simComparison || !identity) ? null : {
+      replay_sim_comparison_id: 'rsc:' + replayArtifactId,
+      replay_artifact_id: replayArtifactId,
+      team_run_snapshot_id: base.teamRunSnapshot ? base.teamRunSnapshot.team_run_snapshot_id : null,
+      team_profile_id: identity.team_profile_id,
+      team_version_id: identity.team_version_id,
+      comparison_status: simComparison.comparisonStatus || simComparison.status || 'needs_sim_data',
+      calibration_action: simComparison.calibrationAction || 'none',
+      confidence: simComparison.confidence || learning.confidence || 'low',
+      summary_json: {
+        evidence_tier: simComparison.evidenceTier || '',
+        evidence_label: simComparison.evidenceLabel || '',
+        lead_match: simComparison.leadMatch,
+        four_match: simComparison.fourMatch,
+        predicted_winner: simComparison.predictedWinner || '',
+        actual_winner: simComparison.actualWinner || '',
+        expected_win_path: simComparison.expectedWinPath || '',
+        actual_path: simComparison.actualPath || '',
+        first_deviation: simComparison.firstDeviation || '',
+        team_vs_pilot_diagnosis: simComparison.teamVsPilotDiagnosis || '',
+        battle_mirror: simComparison.factComparison || null
+      }
+    },
+    coachingReport: (!identity ? null : {
+      coaching_report_id: 'cr:' + replayArtifactId,
+      replay_artifact_id: replayArtifactId,
+      team_profile_id: identity.team_profile_id,
+      team_version_id: identity.team_version_id,
+      report_type: 'battle_sensei_replay',
+      confidence: learning.confidence || summary.confidence || 'low',
+      report_summary: {
+        major_turning_point: learning.battleSummary && learning.battleSummary.majorTurningPoint ? learning.battleSummary.majorTurningPoint : '',
+        main_issue: summary.mainIssue || '',
+        critical_turn: summary.criticalTurn || null,
+        battle_iq: learning.battleIq ? {
+          standard_score: learning.battleIq.standardScore,
+          band: learning.battleIq.band,
+          confidence: learning.battleIq.confidence,
+          status: learning.battleIq.status
+        } : null,
+        practice_drills: learning.practicePlan && Array.isArray(learning.practicePlan.drills) ? learning.practicePlan.drills.slice(0, 3) : [],
+        recurring_fingerprint_preview: learning.criticalTurns && learning.criticalTurns.fatalMistake ? learning.criticalTurns.fatalMistake.category : ''
+      }
+    })
+  };
+  return result;
+}
+
+function csPersistReplayHistoryBundle(analysis) {
+  var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
+  if (!adapter || !adapter.enabled) return Promise.resolve(null);
+  var bundle = csBuildReplayHistoryBundle(analysis);
+  if (!bundle) return Promise.resolve(null);
+  if (typeof adapter.saveReplayHistoryBundle === 'function') {
+    return Promise.resolve(adapter.saveReplayHistoryBundle(bundle)).then(function(result) {
+      csRememberProfilePersistence('replay_history_saved', result || { replay_artifact_id: bundle.replayArtifact && bundle.replayArtifact.replay_artifact_id });
+      return result;
+    }).catch(function(err) {
+      UILog.warn('replay history bundle persistence failed', err);
+      csRememberProfilePersistence('replay_history_failed', { message: err && err.message ? err.message : 'unknown' });
+      return null;
+    });
+  }
+  return Promise.resolve(null);
 }
 
 function csBuildReplayTeamMatch(parsed, selectedSide) {
@@ -3822,6 +4075,7 @@ function csInitReplayCoachUi() {
       try {
         ChampionsSim.state.lastReplayCoachAnalysis = analysis;
       } catch (_stateErr) {}
+      try { csPersistReplayHistoryBundle(analysis); } catch (_persistErr) { UILog.warn('replay history persistence skipped', _persistErr); }
       csReplayCoachRenderAnalysis(analysis);
       setParsedStatus(analysis && analysis.parsed ? analysis.parsed : null, '');
     } catch (e) {
@@ -8499,6 +8753,7 @@ function csBuildSourcesProvenanceModel(teamKey) {
   } catch (_compErr) {}
   var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
   var dbEnabled = !!(adapter && adapter.enabled);
+  var profilePersistence = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastProfilePersistence : null;
   var teamRunSnapshot = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastTeamRunSnapshot : null;
   var replayAnalysis = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastReplayCoachAnalysis : null;
   var replaySummary = replayAnalysis && replayAnalysis.review ? replayAnalysis.review.summary : null;
@@ -8566,7 +8821,11 @@ function csBuildSourcesProvenanceModel(teamKey) {
         title: 'Premium saved memory',
         status: dbEnabled ? 'connected' : 'locked',
         confidence: dbEnabled ? 'medium' : 'needs profile',
-        detail: dbEnabled ? 'Supabase adapter is available for saved analysis paths.' : 'Profile history, cross-device trends, norm groups, and long-term Battle IQ are not active in local free mode.',
+        detail: dbEnabled
+          ? (profilePersistence && profilePersistence.status
+            ? ('Latest profile sync: ' + profilePersistence.status + ' · ' + (profilePersistence.savedAt || 'recently') + '.')
+            : 'Supabase adapter is available for saved analysis paths, but no profile-backed replay history has been saved in this session yet.')
+          : 'Profile history, cross-device trends, norm groups, and long-term Battle IQ are not active in local free mode.',
         boundary: 'Paid value should come from durable memory and trend reliability, not hiding basic coaching.'
       }
     ]
