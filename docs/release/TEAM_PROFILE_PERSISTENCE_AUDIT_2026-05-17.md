@@ -11,7 +11,7 @@ Scope:
 Status:
 
 - audited against `rollback-main`
-- this is an architecture plan, not a persistence implementation
+- now doubles as the persistence implementation boundary document
 
 ## Executive conclusion
 
@@ -26,12 +26,11 @@ What is correct today:
 
 What is missing:
 
-- stable subscriber team profiles
-- team version history
-- replay artifact persistence
-- replay-to-team linking
-- replay-to-sim comparison persistence
-- long-term coaching trend rollups
+- live Supabase migration execution
+- real authenticated internal account provisioning
+- cross-account isolation QA evidence
+- cross-device persistence QA evidence
+- long-term coaching trend rollups backed by production data
 
 Main risk:
 
@@ -131,9 +130,16 @@ Current exported API:
 
 Assessment:
 
-- this is a narrow simulation persistence layer
-- it is not yet a coaching profile memory layer
-- it does not currently model replay artifacts, team profiles, team versions, or coaching histories
+- this began as a narrow simulation persistence layer
+- it now also exposes the app-side persistence seams for:
+  - team profiles
+  - team versions
+  - team run snapshots
+  - replay artifacts
+  - replay-team matches
+  - replay-vs-sim comparisons
+  - coaching reports
+- the remaining gap is live rollout and verified account-scoped operation, not local modeling
 
 ## Current data-class audit
 
@@ -144,7 +150,7 @@ Every new feature should fall into one class only.
 | `session_only` | last replay parse, team run snapshot, recommendation state | memory only |
 | `local_cache` | Strategy report cache, custom teams, browser sim history | local browser only |
 | `persistable` | normalized replay summary, replay-team match, sim comparison summary | may be promoted to DB |
-| `subscriber_persisted` | future team profiles, team versions, replay history, trend rollups | Supabase |
+| `subscriber_persisted` | team profiles, team versions, replay history bundle, coaching reports | Supabase with auth + RLS |
 | `community_opt_in` | future aggregate anonymized matchup memory | separate controlled DB path |
 
 ## File-level audit and safest insertion points
@@ -161,7 +167,7 @@ Why this is the safest insertion point:
 - fail-soft behavior already exists
 - UI code already expects adapter availability checks
 
-Recommended additions here:
+Implemented or recommended additions here:
 
 - `saveTeamProfile`
 - `saveTeamVersion`
@@ -256,9 +262,9 @@ Rule going forward:
 - keep this for caching and free-mode continuity only
 - do not extend it into pseudo-premium memory
 
-## Missing durable identity layer
+## Durable identity layer
 
-This is the main architecture gap.
+This was the main architecture gap.
 
 The product needs stable identities for:
 
@@ -276,7 +282,9 @@ Without those IDs, the system cannot safely answer:
 - is this comparison same-format and same-ruleset?
 - does this user’s saved history actually belong together?
 
-## Recommended database contracts
+These IDs are now wired in app-side persistence payloads and the migration contract. The remaining risk is whether the live Supabase project and QA evidence match the contract.
+
+## Database contracts
 
 ## Temporary internal account access plan
 
@@ -479,29 +487,27 @@ These should now be treated as architecture requirements.
 6. Browser cache must never masquerade as durable profile history.
 7. Community sharing must be opt-in and aggregate-first.
 
-## Recommended implementation order
+## Recommended implementation and rollout order
 
-1. add DB identity contracts in `supabase_adapter.js`
-2. add team profile and team version persistence
-3. persist replay artifact metadata and normalized replay facts
-4. persist replay-team matches
-5. persist replay-to-sim comparison summaries
-6. persist coaching report summaries
-7. build team trend rollups
-8. expose subscriber history in Sources and Team Builder profile
+1. keep DB identity contracts in `supabase_adapter.js` as the only frontend DB gateway
+2. execute `2026_05_17_auth_profile_memory.sql` in live Supabase
+3. provision authenticated internal test accounts with trusted `app_metadata`
+4. verify RLS-backed cross-account isolation
+5. verify cross-device persistence restore
+6. expose subscriber history in Sources and Team Builder profile
+7. build team trend rollups from production-backed data
 
 ## Safest next engineering task
 
-`Team Profile Persistence + Replay History MVP`
+`Live auth rollout + account isolation QA`
 
 Definition:
 
 - no raw log autosave
-- save stable `team_profile`
-- save immutable `team_version`
-- save normalized replay summary
-- save replay-team match
-- save replay-vs-sim comparison summary
-- update Sources to show when a profile-backed path is active
+- run the private profile-memory migration
+- provision internal free and premium accounts
+- set trusted `app_metadata.subscription_tier`
+- verify account-scoped replay/team memory
+- collect QA evidence for guest, free, premium, switching, and cross-device paths
 
-That is the minimum professional persistence layer needed before selling durable coaching memory.
+That is the minimum professional rollout layer needed before selling durable coaching memory.

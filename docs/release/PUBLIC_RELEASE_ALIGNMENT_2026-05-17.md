@@ -5,6 +5,10 @@ This is the no-drift coordination plan for the next release pass.
 Related architecture audit:
 
 - [TEAM_PROFILE_PERSISTENCE_AUDIT_2026-05-17.md](/Users/kevinmedeiros/Pokemon-Champions-Sim-Planner-yours/docs/release/TEAM_PROFILE_PERSISTENCE_AUDIT_2026-05-17.md)
+- [FREE_PREMIUM_PRIVACY_POSITIONING.md](/Users/kevinmedeiros/Pokemon-Champions-Sim-Planner-yours/docs/release/FREE_PREMIUM_PRIVACY_POSITIONING.md)
+- [QA_TRUST_CHECKLIST.md](/Users/kevinmedeiros/Pokemon-Champions-Sim-Planner-yours/docs/release/QA_TRUST_CHECKLIST.md)
+- [INTERNAL_AUTH_TEST_ACCOUNTS_TEMPLATE.md](/Users/kevinmedeiros/Pokemon-Champions-Sim-Planner-yours/docs/release/INTERNAL_AUTH_TEST_ACCOUNTS_TEMPLATE.md)
+- [TEAM_HANDOFF_AND_NEXT_ACTIONS_2026-05-17.md](/Users/kevinmedeiros/Pokemon-Champions-Sim-Planner-yours/docs/release/TEAM_HANDOFF_AND_NEXT_ACTIONS_2026-05-17.md)
 
 Current branch baseline:
 
@@ -79,94 +83,71 @@ The app now has a safer evidence foundation for Battle Sensei and Battle Mirror:
 
 This is a foundation, not the final team-improvement loop.
 
-## Current next big item
-
 ### Team Snapshot + Replay Match MVP
 
-Build this before showing any `your edit improved by X` claim.
+Status: shipped on `rollback-main`.
 
-Goal: detect whether the uploaded replay belongs to the same or similar team that the user simulated in the current session.
+The app now:
 
-Free-user flow:
+- stores a session-only team snapshot after sim runs
+- fingerprints replay teams from parsed evidence
+- classifies replay/team alignment
+- blocks fake sim-vs-replay deltas on weak or mismatched evidence
 
-1. User runs a sim with the current team.
-2. App stores a session-only `TeamRunSnapshot`.
-3. User uploads or pastes a replay log.
-4. App builds a replay-side `TeamFingerprint` from preview, selected Pokemon, revealed moves/items/abilities, format, and ruleset.
-5. App compares replay fingerprint to the current/simmed team fingerprint.
-6. If similarity is strong enough, Battle Sensei can compare sim plan vs real execution in the same browser session.
-7. Free UI shows a premium teaser for saved profile trends, but does not persist raw logs.
+### Coach Recommends UX MVP
 
-Subscriber flow:
+Status: shipped on `rollback-main`.
 
-1. Saved Team Builder profile stores team profile, team versions, and derived replay summaries.
-2. Logs and stats stay scoped under that team profile.
-3. Team-version history enables before/after comparisons across edits.
-4. Community Data tab may accept opt-in anonymized, aggregate matchup data.
+The app now:
 
-Do not key saved stats by mutable team name. Use stable profile/version identifiers.
+- shows one best next action across Simulator, Battle Sensei, Strategy, and Sources
+- distinguishes no-sim, no-replay, wrong-team, stale-team, and matched-comparison states
+- avoids pushing the user through multiple conflicting workflows
 
-Required contracts:
+### Team Profile Persistence + Replay History MVP
 
-```js
-TeamFingerprint {
-  teamId,
-  teamProfileId,
-  teamVersionId,
-  displayName,
-  format,
-  ruleset,
-  speciesSet,
-  selectedPokemon,
-  movesKnown,
-  itemsKnown,
-  abilitiesKnown,
-  teraKnown,
-  source,
-  confidence
-}
+Status: shipped in app wiring on `rollback-main`.
 
-TeamRunSnapshot {
-  id,
-  teamFingerprint,
-  opponentFingerprint,
-  format,
-  ruleset,
-  simResultsSummary,
-  strategySummary,
-  createdAt,
-  expiresAt,
-  storageScope
-}
+The app now includes:
 
-ReplayTeamMatch {
-  status,
-  similarityScore,
-  speciesOverlap,
-  formatMatch,
-  rulesetMatch,
-  evidence,
-  blockers,
-  confidence,
-  recommendedNextStep
-}
-```
+- team profile persistence contract
+- team version persistence contract
+- replay artifact persistence contract
+- replay-team match persistence contract
+- replay-vs-sim comparison persistence contract
+- coaching report persistence contract
 
-Similarity bands:
+Remaining rollout work:
 
-| Band | Rule of thumb | UI wording |
-|---|---|---|
-| Exact | 6/6 species, same format/ruleset | Same team |
-| Strong | 5/6 species, or 4/6 plus key core match | Similar team |
-| Possible | 3-4 species overlap and same format | Possible match |
-| Weak/no match | less than 3 overlap or wrong format | Different team |
+- live Supabase migration execution
+- authenticated internal account provisioning
+- cross-account isolation QA
+- cross-device restore QA
 
-Product guardrail:
+## Current next big item
 
-- `Different team` or `Unknown` must block team-delta claims.
-- `Possible match` can show coaching with low confidence, but should not show improvement deltas.
-- `Strong` or `Exact` can unlock session-local sim-vs-replay comparison.
-- Subscriber saved trends require explicit profile storage and privacy controls.
+### Live auth rollout + account isolation QA
+
+Build this before marketing durable premium memory as fully live.
+
+Goal: prove that authenticated saved memory is real, private, and correctly scoped.
+
+Required live steps:
+
+1. Run `poke-sim/db/migrations/2026_05_17_auth_profile_memory.sql`
+2. Provision internal free and premium auth accounts
+3. Set trusted `app_metadata.subscription_tier`
+4. Verify RLS on private profile-memory tables
+5. Verify guest/free/premium separation
+6. Verify no cross-account replay/team leakage
+7. Verify cross-device restore on the premium test account
+
+Security guardrails:
+
+- no premium from `user_metadata`
+- no hardcoded premium bypass
+- no raw replay-log autosave by default
+- no private profile-memory access for `anon`
 
 ## Guided UX layer
 
@@ -259,8 +240,8 @@ Tabs in the shipped bundle:
 | Lane | Owner | Responsibility |
 |---|---|---|
 | Product/coaching standard | TheYfactora12 | Approves final user-facing coaching voice and paid/free boundary. |
-| Architecture/backend/security | alfredocox | Reviews persistence, Supabase, auth/payment, RLS, and release hardening plans. |
-| Manual QA/accessibility | Jdoutt38 | Runs browser/device QA against both repos and records pass/fail evidence. |
+| Architecture/backend/security | alfredocox | Runs live Supabase migration, provisions internal accounts, verifies RLS and account isolation. |
+| Manual QA/accessibility | Jdoutt38 | Runs browser/device QA against both repos and records pass/fail evidence for guest/free/premium/auth flows. |
 | Implementation/tests/docs | Codex | Adds scoped changes, tests, docs, bundle rebuilds, and issue alignment. |
 
 ## No-drift rules
@@ -279,6 +260,7 @@ Tabs in the shipped bundle:
 12. Team-tweak improvement claims require matched replay/current team fingerprints and same-opponent sim baselines.
 13. Saved subscriber replay/team stats must be scoped to stable team profile/version IDs, not mutable team names.
 14. Community data sharing must be opt-in, anonymized by default, and aggregate-first.
+15. Premium/account tier must come from trusted `app_metadata`, not client-controlled `user_metadata`.
 
 ## Current automated QA evidence
 

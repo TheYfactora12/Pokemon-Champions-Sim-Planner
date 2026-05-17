@@ -93,7 +93,7 @@ Rule:
 
 ## Role metadata recommendation
 
-Use Supabase user metadata or app metadata:
+Use trusted Supabase `app_metadata` only:
 
 ```json
 {
@@ -108,5 +108,8 @@ or
   "subscription_tier": "premium"
 }
 ```
+
+Do not use `user_metadata` to grant premium.
+`user_metadata` is client-controlled and should not unlock paid access.
 
 The app should treat unknown values as `free`.
