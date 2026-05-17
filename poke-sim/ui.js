@@ -997,6 +997,162 @@ function csCapConfidenceTierByCompliance(tier, compliance) {
   return 'low';
 }
 
+function csCoachRecommendationLabel(status) {
+  if (status === 'high' || status === 'ready' || status === 'confirmed') return 'low';
+  if (status === 'medium' || status === 'provisional' || status === 'next') return 'medium';
+  return 'high';
+}
+
+function csBuildCoachRecommendation() {
+  var playerKey = (typeof currentPlayerKey === 'string' && currentPlayerKey) ? currentPlayerKey : 'player';
+  var format = (typeof currentFormat === 'string' && currentFormat) ? currentFormat : 'doubles';
+  var snapshot = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastTeamRunSnapshot : null;
+  var replayAnalysis = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastReplayCoachAnalysis : null;
+  var replayLearning = replayAnalysis && replayAnalysis.review ? replayAnalysis.review.learningReport : null;
+  var replaySimComparison = replayLearning && replayLearning.simComparison ? replayLearning.simComparison : null;
+  var replayTeamMatch = replaySimComparison && replaySimComparison.replayTeamMatch ? replaySimComparison.replayTeamMatch : null;
+  var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
+  var dbEnabled = !!(adapter && adapter.enabled);
+  var staleSnapshot = !!(snapshot && snapshot.teamFingerprint && (snapshot.teamFingerprint.teamId !== playerKey || snapshot.format !== format));
+  var hasSnapshot = !!(snapshot && snapshot.teamFingerprint);
+  var hasReplay = !!replayAnalysis;
+
+  if (staleSnapshot) {
+    return {
+      id: 'rerun_after_team_change',
+      priority: 100,
+      title: 'Rerun This Team',
+      message: 'The active team or format changed after the last session snapshot. Rerun the matchup before claiming team improvement.',
+      actionLabel: 'Go To Simulator',
+      actionTarget: 'simulator',
+      confidence: 'high',
+      reason: 'Team tweaks only count when replay and sim baseline stay on the same team and format.',
+      unlockContext: 'Needed before team-delta claims.'
+    };
+  }
+  if (!hasSnapshot) {
+    return {
+      id: 'run_sim_first',
+      priority: 90,
+      title: 'Run A Sim First',
+      message: 'Start with a simulation so Battle Sensei has a session team snapshot and matchup baseline.',
+      actionLabel: 'Go To Simulator',
+      actionTarget: 'simulator',
+      confidence: 'high',
+      reason: 'Replay comparison should not guess a baseline from unrelated or stale results.',
+      unlockContext: 'Unlocks Team Snapshot and Sim vs Replay.'
+    };
+  }
+  if (!hasReplay) {
+    return {
+      id: 'upload_replay_next',
+      priority: 80,
+      title: 'Upload A Replay Next',
+      message: 'You have a session sim baseline. Upload a replay to compare planned execution against real play.',
+      actionLabel: 'Open Battle Sensei',
+      actionTarget: 'replay-coach',
+      confidence: 'high',
+      reason: 'This is the fastest way to tell whether the issue is sequencing, team choice, or matchup pressure.',
+      unlockContext: 'Unlocks replay team match and Battle Mirror.'
+    };
+  }
+  if (replayTeamMatch && replayTeamMatch.status === 'different_team') {
+    return {
+      id: 'replay_wrong_team',
+      priority: 85,
+      title: 'Replay Is A Different Team',
+      message: 'This replay does not match the current session team. Switch teams or sim this replay team before trusting deltas.',
+      actionLabel: 'Go To Simulator',
+      actionTarget: 'simulator',
+      confidence: replayTeamMatch.confidence || 'medium',
+      reason: replayTeamMatch.summary || 'Replay team fingerprint does not match the current team snapshot.',
+      unlockContext: 'Blocks team-improvement claims.'
+    };
+  }
+  if (replayTeamMatch && replayTeamMatch.status === 'possible_match') {
+    return {
+      id: 'replay_possible_match',
+      priority: 75,
+      title: 'Confirm The Team Version',
+      message: 'The replay only partially matches the current team. Rerun the sim with this exact team version before trusting the comparison.',
+      actionLabel: 'Go To Simulator',
+      actionTarget: 'simulator',
+      confidence: replayTeamMatch.confidence || 'medium',
+      reason: replayTeamMatch.summary || 'Only part of the replay team could be matched.',
+      unlockContext: 'Needed before reliable team-delta coaching.'
+    };
+  }
+  if (replayTeamMatch && replayTeamMatch.allowsSimComparison && replaySimComparison) {
+    if (dbEnabled) {
+      return {
+        id: 'profile_save_path',
+        priority: 70,
+        title: 'Save This Team Trail',
+        message: 'This replay matches the session team. Save the comparison under the team profile path when profile sync is active.',
+        actionLabel: 'Open Sources',
+        actionTarget: 'sources',
+        confidence: replaySimComparison.confidence || 'medium',
+        reason: 'Matched replay plus sim baseline is the right moment to persist derived trends, not raw logs by default.',
+        unlockContext: 'Subscriber continuity and team-version history.'
+      };
+    }
+    return {
+      id: 'review_sim_vs_replay',
+      priority: 70,
+      title: 'Review Sim Vs Replay',
+      message: 'The replay matches the session team well enough for a real comparison. Use Battle Sensei to inspect execution gaps before editing the team.',
+      actionLabel: 'Open Battle Sensei',
+      actionTarget: 'replay-coach',
+      confidence: replaySimComparison.confidence || 'medium',
+      reason: replayTeamMatch.summary || 'Replay and sim snapshots are aligned enough to coach sequencing.',
+      unlockContext: 'Safe comparison path is unlocked.'
+    };
+  }
+  return {
+    id: 'check_sources_state',
+    priority: 60,
+    title: 'Check Your Data State',
+    message: 'The current session has partial evidence. Review Sources before making team changes.',
+    actionLabel: 'Open Sources',
+    actionTarget: 'sources',
+    confidence: 'low',
+    reason: 'The product should lower confidence when replay, sim, or team-match evidence is incomplete.',
+    unlockContext: 'Fallback guidance.'
+  };
+}
+
+function csRenderCoachRecommendationCard(rec, opts) {
+  rec = rec || csBuildCoachRecommendation();
+  opts = opts || {};
+  if (!rec) return '';
+  var title = opts.title || 'Coach Recommends';
+  var compact = !!opts.compact;
+  return '<section class="cs-section cs-coach-recommends">' +
+    '<div class="replay-coach-card-head"><span class="badge badge-blue">' + _escapeHtml(title) + '</span>' +
+    '<span class="replay-coach-tag ' + _escapeHtml(csCoachRecommendationLabel(rec.confidence)) + '">' + _escapeHtml(rec.confidence || 'low') + '</span></div>' +
+    '<div class="replay-coach-list">' +
+      '<div class="replay-coach-list-row"><strong>' + _escapeHtml(rec.title || 'Next step') + '</strong>' + _escapeHtml(rec.message || '') +
+      '<small>' + _escapeHtml(rec.reason || '') + '</small>' +
+      (compact ? '' : '<small>' + _escapeHtml(rec.unlockContext || '') + '</small>') +
+      '</div>' +
+    '</div>' +
+    '<div class="cs-strategy-actions"><button class="secondary-btn js-coach-recommend-action" type="button" data-target-tab="' + _escapeHtml(rec.actionTarget || 'simulator') + '">' + _escapeHtml(rec.actionLabel || 'Open') + '</button></div>' +
+  '</section>';
+}
+
+function csBindCoachRecommendationActions(root) {
+  var scope = root || document;
+  if (!scope || typeof scope.querySelectorAll !== 'function') return;
+  Array.prototype.forEach.call(scope.querySelectorAll('.js-coach-recommend-action'), function(btn) {
+    if (!btn || btn.dataset.boundCoachRec === '1') return;
+    btn.dataset.boundCoachRec = '1';
+    btn.addEventListener('click', function() {
+      var target = btn.getAttribute('data-target-tab') || 'simulator';
+      if (typeof _activateTab === 'function') _activateTab(target, { persist: true });
+    });
+  });
+}
+
 function csInferComplianceLabel(compliance) {
   if (!compliance) return 'Unknown';
   if (compliance.status === 'approved') return 'Approved';
@@ -2295,6 +2451,17 @@ function displayResults(res, oppKey) {
   const tdEl = document.getElementById('stat-timer-draws');
   if (tdEl) tdEl.textContent = res.timerDraws || 0;
   document.getElementById('stat-format').textContent = `${fmtLabel} ${boLabel}`;
+  var resultsSection = document.getElementById('results-section');
+  if (resultsSection) {
+    var recHost = document.getElementById('simulator-coach-recommends');
+    if (!recHost) {
+      recHost = document.createElement('div');
+      recHost.id = 'simulator-coach-recommends';
+      resultsSection.insertBefore(recHost, resultsSection.firstChild);
+    }
+    recHost.innerHTML = csRenderCoachRecommendationCard(null, { compact: true });
+    csBindCoachRecommendationActions(recHost);
+  }
 
   const circle = document.getElementById('win-circle');
   circle.className = `win-circle ${winPct>=55?'s-win':winPct<=45?'s-loss':'s-even'}`;
@@ -3112,6 +3279,7 @@ function csReplayCoachRenderAnalysis(analysis) {
   }).join('') : '';
 
   host.innerHTML =
+    csRenderCoachRecommendationCard(null, { compact: true }) +
     '<div class="replay-coach-summary-card">' +
       '<div class="replay-coach-card-head"><span class="badge badge-blue">MATCH SUMMARY</span><span class="replay-coach-tag ' + _escapeHtml(summary.result === 'win' ? 'low' : summary.result === 'loss' ? 'high' : 'medium') + '">' + _escapeHtml((summary.result || 'unknown').toUpperCase()) + '</span></div>' +
       '<div class="replay-coach-summary-grid">' +
@@ -3255,6 +3423,7 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<pre class="battle-log replay-coach-raw-log">' + (rawLines || 'No raw log lines available.') + '</pre>' +
       '</details>' +
     '</div>';
+  csBindCoachRecommendationActions(host);
 }
 
 function csNormalizeReplayName(name) {
@@ -8448,6 +8617,7 @@ function renderSourcesTab(teamKey) {
   if (!host) return null;
   var model = csBuildSourcesProvenanceModel(teamKey);
   var html = '';
+  html += csRenderCoachRecommendationCard(null, { compact: true });
   html += '<section class="cs-section cs-data-sources">' +
     '<h3 class="cs-h3">Data Provenance Control Room</h3>' +
     '<p class="cs-explain">This page explains what the coach is allowed to use right now for ' + _escapeHtml(model.activeTeamName) + '. It is designed to prevent drift between simulation advice, replay coaching, Champion compliance, free local memory, and future premium saved memory.</p>' +
@@ -8477,6 +8647,7 @@ function renderSourcesTab(teamKey) {
     '</div>' +
   '</section>';
   host.innerHTML = html;
+  csBindCoachRecommendationActions(host);
   return model;
 }
 
@@ -8519,6 +8690,7 @@ function renderStrategyTab(teamKey) {
   var lg = report.lead_guide;
 
   var html = '';
+  html += csRenderCoachRecommendationCard(null, { compact: true });
   html += '<div class="cs-summary-bar">';
   html +=   '<div class="cs-tier-badge cs-tier-' + rc.tier + '">' + rc.tier + '</div>';
   html +=   '<div class="cs-score">' + rc.score + '<span class="cs-score-suffix">/100</span></div>';
@@ -8780,6 +8952,7 @@ function renderStrategyTab(teamKey) {
   html += '</section>';
 
   host.innerHTML = html;
+  csBindCoachRecommendationActions(host);
   if (_history && typeof csWireLeadPairTableSort === 'function') {
     csWireLeadPairTableSort(host, teamKey);
   }
