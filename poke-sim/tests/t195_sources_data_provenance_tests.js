@@ -136,11 +136,13 @@ vm.runInContext([
   'this.ChampionsSim = ChampionsSim;',
   'this.renderSourcesTab = renderSourcesTab;',
   'this._activateTab = _activateTab;',
+  'this.csBuildReplayTeamMatch = csBuildReplayTeamMatch;',
   'this.csBuildBattleSenseiSimPlan = csBuildBattleSenseiSimPlan;',
+  'this.csStoreTeamRunSnapshot = csStoreTeamRunSnapshot;',
   'this.setCurrentFormat = setCurrentFormat;'
 ].join(' '), ctx);
 
-const { TEAMS, ChampionsSim, renderSourcesTab, _activateTab, csBuildBattleSenseiSimPlan, setCurrentFormat } = ctx;
+const { TEAMS, ChampionsSim, renderSourcesTab, _activateTab, csBuildReplayTeamMatch, csBuildBattleSenseiSimPlan, csStoreTeamRunSnapshot, setCurrentFormat } = ctx;
 const host = ctx.document.getElementById('sources-list');
 const opponentSelect = ctx.document.getElementById('opponent-select');
 
@@ -195,6 +197,17 @@ function makeScopedSimResult() {
       }
     ],
     winConditions: { 'Tailwind cleanup': 3, 'Opponent Win': 1 }
+  };
+}
+
+function makeReplayParsedForTeam(teamKey, formatKind) {
+  const members = (TEAMS[teamKey] && TEAMS[teamKey].members) ? TEAMS[teamKey].members.map((m) => m.name) : [];
+  return {
+    selectedSide: 'p1',
+    formatKind: formatKind || 'doubles',
+    rulesetProfile: { compatibilityClass: 'champion_exact' },
+    teamPreview: { p1: members.slice(0, 6), p2: ['Tyranitar', 'Excadrill', 'Rotom-Heat', 'Amoonguss', 'Dragonite', 'Gholdengo'] },
+    selectedPokemon: { p1: members.slice(0, 4), p2: ['Tyranitar', 'Excadrill', 'Rotom-Heat', 'Amoonguss'] }
   };
 }
 
@@ -282,14 +295,16 @@ T('5. Sources exposes Replay-to-sim comparison provenance without model rewrite 
 T('6. Battle Sensei sim plan uses scoped Strategy V2 evidence only', () => {
   setCurrentFormat('doubles');
   opponentSelect.value = 'rin_sand';
+  csStoreTeamRunSnapshot('player', 'rin_sand', 'doubles', 3, 'test');
   ChampionsSim.state.lastResults = { rin_sand: makeScopedSimResult() };
   ChampionsSim.state.lastResultsPlayerKey = 'wrong_team';
   ChampionsSim.state.lastResultsFormat = 'doubles';
+  const replayTeamMatch = csBuildReplayTeamMatch(makeReplayParsedForTeam('player', 'doubles'), 'p1');
   const blocked = csBuildBattleSenseiSimPlan({
     formatKind: 'doubles',
     selectedSide: 'p1',
     teamPreview: { p2: ['Tyranitar', 'Excadrill'] }
-  }, 'p1');
+  }, 'p1', replayTeamMatch);
   eq(blocked, null, 'mismatched team scope should not become sim evidence');
 
   ChampionsSim.state.lastResultsPlayerKey = 'player';
@@ -297,11 +312,33 @@ T('6. Battle Sensei sim plan uses scoped Strategy V2 evidence only', () => {
     formatKind: 'doubles',
     selectedSide: 'p1',
     teamPreview: { p2: ['Tyranitar', 'Excadrill'] }
-  }, 'p1');
+  }, 'p1', replayTeamMatch);
   truthy(plan, 'matching scoped results should produce a sim plan');
   eq(plan.matchedOpponentKey, 'rin_sand', 'matched opponent');
   inc(plan.expectedWinPath, 'Tailwind cleanup', 'win path should come from corrected Strategy evidence');
   notInc(plan.expectedWinPath, 'Opponent Win', 'loss labels should not become replay sim win paths');
+});
+
+T('7. replay team matching distinguishes same, possible, and different teams in-session', () => {
+  setCurrentFormat('doubles');
+  csStoreTeamRunSnapshot('player', 'rin_sand', 'doubles', 3, 'test');
+  const same = csBuildReplayTeamMatch(makeReplayParsedForTeam('player', 'doubles'), 'p1');
+  truthy(['same_team', 'similar_team'].includes(same.status), 'active player team should strongly match');
+  eq(same.allowsSimComparison, true, 'same/similar team should allow comparison');
+
+  const possible = csBuildReplayTeamMatch({
+    selectedSide: 'p1',
+    formatKind: 'doubles',
+    rulesetProfile: { compatibilityClass: 'champion_exact' },
+    teamPreview: { p1: (TEAMS.player.members || []).slice(0, 4).map((m) => m.name), p2: [] },
+    selectedPokemon: { p1: (TEAMS.player.members || []).slice(0, 3).map((m) => m.name), p2: [] }
+  }, 'p1');
+  eq(possible.status, 'possible_match', 'partial overlap should stay provisional');
+  eq(possible.allowsSimComparison, false, 'possible match should not unlock comparison');
+
+  const different = csBuildReplayTeamMatch(makeReplayParsedForTeam('rin_sand', 'doubles'), 'p1');
+  eq(different.status, 'different_team', 'different roster should be blocked');
+  eq(different.allowsSimComparison, false, 'different team should block comparison');
 });
 
 console.log(`\nsources data provenance render tests: ${pass} pass, ${fail} fail\n`);

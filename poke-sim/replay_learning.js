@@ -732,6 +732,7 @@
   function buildSimComparison(parsed, review, opts) {
     opts = opts || {};
     var plan = opts.simPlan || opts.simRecommendation || opts.simComparison || null;
+    var replayTeamMatch = opts.replayTeamMatch || (plan && plan.replayTeamMatch) || null;
     var summary = (review && review.summary) || {};
     var actualLead = summary.yourLead || [];
     var actualFour = summary.yourFour || [];
@@ -749,12 +750,33 @@
       decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/' + selectionLabel + '/path against the trainer’s real replay choices.',
       actualLead: actualLead,
       actualFour: actualFour,
+      replayTeamMatch: replayTeamMatch,
       battleFacts: {
         replay: replayFacts,
         sim: null
       },
       factComparison: null
     };
+    if (replayTeamMatch && replayTeamMatch.allowsSimComparison === false) {
+      return {
+        status: replayTeamMatch.status === 'possible_match' ? 'team_match_uncertain' : 'team_match_blocked',
+        comparisonStatus: replayTeamMatch.status === 'possible_match' ? 'team_match_uncertain' : 'team_mismatch',
+        calibrationAction: 'none',
+        evidenceTier: 'needs_more_data',
+        evidenceLabel: evidenceLabel('needs_more_data'),
+        confidence: replayTeamMatch.confidence === 'high' ? 'medium' : (replayTeamMatch.confidence || 'low'),
+        note: replayTeamMatch.summary || 'Replay team matching blocked the sim comparison.',
+        decisionChange: replayTeamMatch.recommendedNextStep || 'Run a sim with this team first before trusting sim-vs-replay deltas.',
+        actualLead: actualLead,
+        actualFour: actualFour,
+        replayTeamMatch: replayTeamMatch,
+        battleFacts: {
+          replay: replayFacts,
+          sim: null
+        },
+        factComparison: null
+      };
+    }
     if (!plan) return noData;
     var simFacts = normalizeSimulatorBattleToFacts(plan, {
       format: replayFacts.format,
@@ -825,8 +847,8 @@
       source: plan.source || 'matched simulation plan',
       matchedOpponentKey: plan.matchedOpponentKey || '',
       matchedOpponentName: plan.matchedOpponentName || '',
-      matchConfidence: plan.matchConfidence || confidence
-      ,
+      matchConfidence: plan.matchConfidence || confidence,
+      replayTeamMatch: replayTeamMatch,
       battleFacts: {
         replay: replayFacts,
         sim: simFacts

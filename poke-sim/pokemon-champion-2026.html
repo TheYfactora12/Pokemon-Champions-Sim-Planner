@@ -13448,6 +13448,7 @@ if (typeof window !== 'undefined') {
   function buildSimComparison(parsed, review, opts) {
     opts = opts || {};
     var plan = opts.simPlan || opts.simRecommendation || opts.simComparison || null;
+    var replayTeamMatch = opts.replayTeamMatch || (plan && plan.replayTeamMatch) || null;
     var summary = (review && review.summary) || {};
     var actualLead = summary.yourLead || [];
     var actualFour = summary.yourFour || [];
@@ -13465,12 +13466,33 @@ if (typeof window !== 'undefined') {
       decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/' + selectionLabel + '/path against the trainer’s real replay choices.',
       actualLead: actualLead,
       actualFour: actualFour,
+      replayTeamMatch: replayTeamMatch,
       battleFacts: {
         replay: replayFacts,
         sim: null
       },
       factComparison: null
     };
+    if (replayTeamMatch && replayTeamMatch.allowsSimComparison === false) {
+      return {
+        status: replayTeamMatch.status === 'possible_match' ? 'team_match_uncertain' : 'team_match_blocked',
+        comparisonStatus: replayTeamMatch.status === 'possible_match' ? 'team_match_uncertain' : 'team_mismatch',
+        calibrationAction: 'none',
+        evidenceTier: 'needs_more_data',
+        evidenceLabel: evidenceLabel('needs_more_data'),
+        confidence: replayTeamMatch.confidence === 'high' ? 'medium' : (replayTeamMatch.confidence || 'low'),
+        note: replayTeamMatch.summary || 'Replay team matching blocked the sim comparison.',
+        decisionChange: replayTeamMatch.recommendedNextStep || 'Run a sim with this team first before trusting sim-vs-replay deltas.',
+        actualLead: actualLead,
+        actualFour: actualFour,
+        replayTeamMatch: replayTeamMatch,
+        battleFacts: {
+          replay: replayFacts,
+          sim: null
+        },
+        factComparison: null
+      };
+    }
     if (!plan) return noData;
     var simFacts = normalizeSimulatorBattleToFacts(plan, {
       format: replayFacts.format,
@@ -13541,8 +13563,8 @@ if (typeof window !== 'undefined') {
       source: plan.source || 'matched simulation plan',
       matchedOpponentKey: plan.matchedOpponentKey || '',
       matchedOpponentName: plan.matchedOpponentName || '',
-      matchConfidence: plan.matchConfidence || confidence
-      ,
+      matchConfidence: plan.matchConfidence || confidence,
+      replayTeamMatch: replayTeamMatch,
       battleFacts: {
         replay: replayFacts,
         sim: simFacts
@@ -16238,6 +16260,7 @@ function displayResults(res, oppKey) {
   // opponent, so the button always regenerates from the latest data.
   if (!ChampionsSim.state.lastResults) ChampionsSim.state.lastResults = {};
   ChampionsSim.state.lastResults[oppKey] = res;
+  try { csStoreTeamRunSnapshot(currentPlayerKey, oppKey, currentFormat, currentBo, 'single_sim_result'); } catch (_snapshotErr) {}
   revealPdfButton();
 }
 
@@ -16900,6 +16923,7 @@ function csReplayCoachRenderAnalysis(analysis) {
   var evidenceStandard = learning && learning.evidenceStandard ? learning.evidenceStandard : null;
   var simComparison = learning && learning.simComparison ? learning.simComparison : null;
   var simFeedback = learning && learning.simFeedback ? learning.simFeedback : null;
+  var replayTeamMatch = simComparison && simComparison.replayTeamMatch ? simComparison.replayTeamMatch : null;
   var rawPreview = review.rawLogPreview || {};
   var bringConfidence = summary.selectedFourConfidence || {};
   var yourSelection = summary.yourSelection || summary.yourFour || [];
@@ -17072,6 +17096,7 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Classification</strong><span>' + _escapeHtml(simComparison.comparisonStatus || 'needs_sim_data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Calibration</strong><span>' + _escapeHtml(simComparison.calibrationAction || 'none') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Team match</strong><span>' + _escapeHtml(replayTeamMatch ? (replayTeamMatch.status || 'unknown') : 'unknown') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Selection match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Battle Mirror</strong><span>' + _escapeHtml((simComparison.factComparison && simComparison.factComparison.classification) || simComparison.comparisonStatus || 'needs_sim_data') + '</span></div>' +
@@ -17079,6 +17104,7 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Turn delta</strong><span>' + _escapeHtml(simComparison.factComparison && simComparison.factComparison.turnCountDelta != null ? String(simComparison.factComparison.turnCountDelta) : 'unknown') + '</span></div>' +
       '</div>' +
       '<div class="replay-coach-list">' +
+        (replayTeamMatch ? '<div class="replay-coach-list-row"><strong>Replay team match</strong>' + _escapeHtml(replayTeamMatch.summary || '') + '<small>' + _escapeHtml((replayTeamMatch.evidence || []).join(' · ')) + '</small><small>' + _escapeHtml(replayTeamMatch.recommendedNextStep || '') + '</small></div>' : '') +
         '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>First deviation</strong>' + _escapeHtml(simComparison.firstDeviation || simComparison.note || 'Needs sim data') + '<small>' + _escapeHtml(simComparison.decisionChange || '') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>Diagnosis boundary</strong>' + _escapeHtml(simComparison.teamVsPilotDiagnosis || 'Do not judge team vs pilot until sim and replay data are matched.') + '</div>' +
@@ -17166,10 +17192,189 @@ function csUniquePokemonNames(names, teamKey, cap) {
   return out.slice(0, cap || getBringCount());
 }
 
-function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
+function csNormalizeReplayNameList(list) {
+  return (list || []).map(csNormalizeReplayName).filter(Boolean).filter(function(name, idx, arr) {
+    return arr.indexOf(name) === idx;
+  });
+}
+
+function csSimpleReplayFingerprint(list) {
+  return csNormalizeReplayNameList(list).sort().join('|');
+}
+
+function csReplayRulesetBucket(value) {
+  value = String(value || '').toLowerCase();
+  if (!value) return 'unknown';
+  if (/champion/.test(value)) return 'champion';
+  if (/generic|showdown|nationaldex/.test(value)) return 'generic';
+  if (/single/.test(value)) return 'singles';
+  if (/double|vgc/.test(value)) return 'doubles';
+  return value;
+}
+
+function csBuildActiveTeamFingerprint(teamKey, fmt) {
+  var key = teamKey || ((typeof currentPlayerKey === 'string' && currentPlayerKey) ? currentPlayerKey : 'player');
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[key]) ? TEAMS[key] : null;
+  if (!team || !Array.isArray(team.members)) return null;
+  var format = fmt || (typeof currentFormat !== 'undefined' ? currentFormat : (team.format || 'doubles'));
+  var rulesetProfile = null;
+  try {
+    if (typeof csInferRulesetProfile === 'function') rulesetProfile = csInferRulesetProfile(format, team);
+  } catch (_e) {
+    rulesetProfile = null;
+  }
+  var species = team.members.map(function(member) { return member && member.name; }).filter(Boolean);
+  return {
+    teamId: key,
+    teamProfileId: key,
+    teamVersionId: key + ':' + format,
+    displayName: team.name || key,
+    format: format,
+    ruleset: (rulesetProfile && (rulesetProfile.compatibilityClass || rulesetProfile.formatTag || rulesetProfile.label)) || 'champion_sim',
+    speciesSet: csNormalizeReplayNameList(species),
+    selectedPokemon: [],
+    source: team.source || 'bundled',
+    confidence: 'high',
+    fingerprint: csSimpleReplayFingerprint(species)
+  };
+}
+
+function csBuildReplayTeamFingerprint(parsed, selectedSide) {
+  parsed = parsed || {};
+  var side = selectedSide || parsed.selectedSide || 'p1';
+  var preview = parsed.teamPreview && parsed.teamPreview[side] ? parsed.teamPreview[side] : [];
+  var selected = parsed.selectedPokemon && parsed.selectedPokemon[side] ? parsed.selectedPokemon[side] : [];
+  var species = preview.length ? preview : selected;
+  var rulesetProfile = parsed.rulesetProfile || {};
+  var format = parsed.formatKind || parsed.gametype || parsed.format || 'unknown';
+  var confidence = preview.length >= 6 ? 'high' : (preview.length >= 4 ? 'medium' : (selected.length >= 3 ? 'medium' : 'low'));
+  return {
+    teamId: parsed.battleId || parsed.id || 'replay',
+    teamProfileId: '',
+    teamVersionId: '',
+    displayName: parsed.playerNames && parsed.playerNames[side] ? parsed.playerNames[side] : 'Replay team',
+    format: format,
+    ruleset: rulesetProfile.compatibilityClass || rulesetProfile.formatTag || format,
+    speciesSet: csNormalizeReplayNameList(species),
+    selectedPokemon: csNormalizeReplayNameList(selected),
+    source: 'showdown_replay',
+    confidence: confidence,
+    fingerprint: csSimpleReplayFingerprint(species)
+  };
+}
+
+function csCompareTeamFingerprints(snapshot, replayFingerprint) {
+  if (!snapshot || !snapshot.teamFingerprint || !replayFingerprint) return null;
+  var simTeam = snapshot.teamFingerprint;
+  var replayTeam = replayFingerprint;
+  var simSpecies = csNormalizeReplayNameList(simTeam.speciesSet || []);
+  var replaySpecies = csNormalizeReplayNameList(replayTeam.speciesSet || []);
+  var overlapNames = replaySpecies.filter(function(name) { return simSpecies.indexOf(name) >= 0; });
+  var overlapCount = overlapNames.length;
+  var scoreBase = Math.max(simSpecies.length, replaySpecies.length, 1);
+  var formatMatch = !!(simTeam.format && replayTeam.format && simTeam.format === replayTeam.format);
+  var rulesetMatch = csReplayRulesetBucket(simTeam.ruleset) === csReplayRulesetBucket(replayTeam.ruleset)
+    || csReplayRulesetBucket(simTeam.ruleset) === 'unknown'
+    || csReplayRulesetBucket(replayTeam.ruleset) === 'unknown';
+  var status = 'unknown';
+  if (formatMatch && rulesetMatch && simSpecies.length >= 6 && replaySpecies.length >= 6 && overlapCount >= 6) status = 'same_team';
+  else if (formatMatch && rulesetMatch && overlapCount >= 5) status = 'similar_team';
+  else if (formatMatch && overlapCount >= 3) status = 'possible_match';
+  else if (formatMatch && replaySpecies.length) status = 'different_team';
+  var allowsSimComparison = status === 'same_team' || status === 'similar_team';
+  var summary = 'Unknown team match.';
+  if (status === 'same_team') summary = 'Replay looks like the same team as the current simulated team.';
+  else if (status === 'similar_team') summary = 'Replay looks like a similar version of the current simulated team.';
+  else if (status === 'possible_match') summary = 'Replay only partially matches the current simulated team.';
+  else if (status === 'different_team') summary = 'Replay does not look like the current simulated team.';
+  if (!formatMatch) summary = 'Replay format does not match the current simulation format.';
+  else if (!rulesetMatch) summary = 'Replay ruleset does not match the current simulation ruleset.';
+  return {
+    status: status,
+    similarityScore: Math.round((overlapCount / scoreBase) * 100),
+    speciesOverlap: overlapCount,
+    overlapNames: overlapNames,
+    formatMatch: formatMatch,
+    rulesetMatch: rulesetMatch,
+    confidence: replayFingerprint.confidence || 'low',
+    blockers: [
+      formatMatch ? null : 'format_mismatch',
+      rulesetMatch ? null : 'ruleset_mismatch',
+      replaySpecies.length ? null : 'missing_replay_team_data'
+    ].filter(Boolean),
+    allowsSimComparison: allowsSimComparison,
+    evidence: [
+      overlapCount + '/' + scoreBase + ' species overlap',
+      'format ' + (formatMatch ? 'matched' : 'mismatched'),
+      'ruleset ' + (rulesetMatch ? 'matched' : 'mismatched')
+    ],
+    summary: summary,
+    recommendedNextStep: allowsSimComparison
+      ? 'Sim comparison can use this session team snapshot.'
+      : (status === 'possible_match'
+        ? 'Run a sim with this exact team version before trusting sim-vs-replay deltas.'
+        : 'Run a sim with this team first, or switch back to the team that produced the current session snapshot.')
+  };
+}
+
+function csStoreTeamRunSnapshot(teamKey, oppKey, fmt, bo, source) {
+  if (typeof ChampionsSim === 'undefined') return null;
+  var activeFingerprint = csBuildActiveTeamFingerprint(teamKey, fmt);
+  if (!activeFingerprint) return null;
+  var oppFingerprint = (typeof TEAMS !== 'undefined' && TEAMS[oppKey]) ? csBuildActiveTeamFingerprint(oppKey, fmt) : null;
+  var now = new Date().toISOString();
+  var snapshot = {
+    id: 'team-run:' + (teamKey || 'player') + ':' + (fmt || activeFingerprint.format) + ':' + now,
+    teamFingerprint: activeFingerprint,
+    opponentFingerprint: oppFingerprint,
+    opponentKey: oppKey || '',
+    opponentName: oppKey && TEAMS[oppKey] && TEAMS[oppKey].name ? TEAMS[oppKey].name : '',
+    format: fmt || activeFingerprint.format,
+    ruleset: activeFingerprint.ruleset,
+    bo: bo || null,
+    createdAt: now,
+    expiresAt: now,
+    storageScope: 'session_only',
+    source: source || 'sim'
+  };
+  ChampionsSim.state.lastTeamRunSnapshot = snapshot;
+  return snapshot;
+}
+
+function csBuildReplayTeamMatch(parsed, selectedSide) {
+  if (typeof ChampionsSim === 'undefined') return null;
+  var snapshot = ChampionsSim.state.lastTeamRunSnapshot || null;
+  var replayFingerprint = csBuildReplayTeamFingerprint(parsed, selectedSide);
+  if (!snapshot || !snapshot.teamFingerprint) {
+    return {
+      status: 'unknown',
+      similarityScore: 0,
+      speciesOverlap: 0,
+      overlapNames: [],
+      formatMatch: false,
+      rulesetMatch: false,
+      confidence: replayFingerprint && replayFingerprint.confidence ? replayFingerprint.confidence : 'low',
+      blockers: ['missing_session_snapshot'],
+      allowsSimComparison: false,
+      evidence: ['No session team snapshot is available yet.'],
+      summary: 'No session sim snapshot exists for team matching yet.',
+      recommendedNextStep: 'Run a sim with this team first, then upload the replay in the same browser session.',
+      replayFingerprint: replayFingerprint,
+      teamFingerprint: null
+    };
+  }
+  var match = csCompareTeamFingerprints(snapshot, replayFingerprint) || {};
+  match.replayFingerprint = replayFingerprint;
+  match.teamFingerprint = snapshot.teamFingerprint;
+  match.snapshot = snapshot;
+  return match;
+}
+
+function csBuildBattleSenseiSimPlan(parsed, selectedSide, replayTeamMatch) {
   parsed = parsed || {};
   var playerKey = (typeof currentPlayerKey === 'string' && TEAMS[currentPlayerKey]) ? currentPlayerKey : 'player';
   var results = (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastResults) ? ChampionsSim.state.lastResults : {};
+  if (replayTeamMatch && replayTeamMatch.allowsSimComparison === false) return null;
   var replayFormat = parsed.formatKind || '';
   if ((replayFormat === 'singles' || replayFormat === 'doubles') && typeof currentFormat === 'string' && currentFormat && replayFormat !== currentFormat) {
     return null;
@@ -17227,6 +17432,10 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
 
   return {
     source: 'latest in-app simulation strategy report',
+    format: compareFormat,
+    playerPreview: (replayTeamMatch && replayTeamMatch.teamFingerprint && replayTeamMatch.teamFingerprint.speciesSet) ? replayTeamMatch.teamFingerprint.speciesSet : [],
+    playerFingerprint: (replayTeamMatch && replayTeamMatch.teamFingerprint && replayTeamMatch.teamFingerprint.fingerprint) || '',
+    replayTeamMatch: replayTeamMatch || null,
     matchedOpponentKey: best.key,
     matchedOpponentName: TEAMS[best.key] && TEAMS[best.key].name ? TEAMS[best.key].name : best.key,
     matchConfidence: matchConfidence,
@@ -17330,7 +17539,8 @@ function csInitReplayCoachUi() {
       var opts = { selectedSide: selectedSide, expectedFormat: replayCoachExpectedFormat() };
       if (typeof api.parseShowdownLog === 'function' && typeof api.buildReplayCoachReview === 'function') {
         var parsed = api.parseShowdownLog(raw, opts);
-        opts.simPlan = csBuildBattleSenseiSimPlan(parsed, selectedSide);
+        opts.replayTeamMatch = csBuildReplayTeamMatch(parsed, selectedSide);
+        opts.simPlan = csBuildBattleSenseiSimPlan(parsed, selectedSide, opts.replayTeamMatch);
         opts.sampleSize = opts.simPlan && opts.simPlan.sampleSize ? opts.simPlan.sampleSize : 1;
         var analysis = { parsed: parsed, review: api.buildReplayCoachReview(parsed, opts) };
       } else {
@@ -18026,6 +18236,7 @@ function csStartFreshSimResultScope(teamKey, fmt) {
   ChampionsSim.state.lastResults = {};
   ChampionsSim.state.lastResultsPlayerKey = teamKey || null;
   ChampionsSim.state.lastResultsFormat = fmt || (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles');
+  delete ChampionsSim.state.lastTeamRunSnapshot;
   delete ChampionsSim.state.cachedStrategyOverride;
 }
 
@@ -18103,6 +18314,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
 
     document.getElementById('progress-wrap').style.display='none';
     displayResults(res, oppKey);
+    try { csStoreTeamRunSnapshot(currentPlayerKey, oppKey, currentFormat, bo, 'single_sim'); } catch (_snapshotErr) {}
     // Refs #95 - also populate the Pilot Guide tab after a single sim so the
     // tab isn't stuck on its empty-state message. generatePilotGuide is
     // upsert-by-oppKey, so re-running the same matchup replaces its card.
@@ -18143,6 +18355,7 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
     if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
     csStartFreshSimResultScope(currentPlayerKey, currentFormat);
+    try { csStoreTeamRunSnapshot(currentPlayerKey, '', currentFormat, bo, 'run_all'); } catch (_snapshotErr) {}
     const planCount = buildFormatAwareTeamPlans(currentPlayerKey, currentFormat).length;
     const effectiveSeriesCount = planCount ? Math.max(n, planCount) : n;
     const opponentCount = getOrderedOpponentTeamKeys(currentPlayerKey, {
@@ -22013,10 +22226,12 @@ function csBuildSourcesProvenanceModel(teamKey) {
   } catch (_compErr) {}
   var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
   var dbEnabled = !!(adapter && adapter.enabled);
+  var teamRunSnapshot = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastTeamRunSnapshot : null;
   var replayAnalysis = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastReplayCoachAnalysis : null;
   var replaySummary = replayAnalysis && replayAnalysis.review ? replayAnalysis.review.summary : null;
   var replayLearning = replayAnalysis && replayAnalysis.review ? replayAnalysis.review.learningReport : null;
   var replaySimComparison = replayLearning && replayLearning.simComparison ? replayLearning.simComparison : null;
+  var replayTeamMatch = replaySimComparison && replaySimComparison.replayTeamMatch ? replaySimComparison.replayTeamMatch : null;
   var replayMode = replaySummary ? ((replaySummary.rulesetProfile || 'unknown') + ' · ' + (replaySummary.coachingMode || 'local review')) : 'No replay analyzed in this session';
   var replayComparisonMode = replaySimComparison
     ? ((replaySimComparison.comparisonStatus || replaySimComparison.status || 'needs_sim_data') + ' · calibration ' + (replaySimComparison.calibrationAction || 'none'))
@@ -22033,6 +22248,8 @@ function csBuildSourcesProvenanceModel(teamKey) {
     dbEnabled: dbEnabled,
     replayMode: replayMode,
     replayComparisonMode: replayComparisonMode,
+    teamRunSnapshot: teamRunSnapshot,
+    replayTeamMatch: replayTeamMatch,
     customTeams: customTeams,
     cards: [
       {
@@ -22055,7 +22272,7 @@ function csBuildSourcesProvenanceModel(teamKey) {
         title: 'Replay-to-sim comparison',
         status: replaySimComparison && replaySimComparison.status === 'matched' ? 'available' : (replaySimComparison ? 'limited' : 'missing'),
         confidence: replaySimComparison ? (replaySimComparison.confidence || replaySimComparison.evidenceLabel || 'low') : 'needs sim data',
-        detail: replayComparisonMode,
+        detail: replayTeamMatch ? (replayComparisonMode + ' · ' + (replayTeamMatch.status || 'unknown') + ' · ' + (replayTeamMatch.summary || '')) : replayComparisonMode,
         boundary: 'Session-local Battle Mirror evidence can queue calibration signals, but one replay or one team tweak does not rewrite sim models or Battle IQ.'
       },
       {
@@ -22135,6 +22352,8 @@ function renderSourcesTab(teamKey) {
       '<div class="replay-coach-metric"><strong>Format scope</strong><span>' + _escapeHtml(model.format) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Scoped sim games</strong><span>' + _escapeHtml(String(model.simGames)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Local trend memory</strong><span>' + _escapeHtml(String(model.localHistoryCount)) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Session team snapshot</strong><span>' + _escapeHtml(model.teamRunSnapshot ? (model.teamRunSnapshot.teamFingerprint.displayName + ' · ' + model.teamRunSnapshot.format) : 'none yet') + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Replay team match</strong><span>' + _escapeHtml(model.replayTeamMatch ? (model.replayTeamMatch.status || 'unknown') : 'none yet') + '</span></div>' +
     '</div>' +
   '</section>';
   html += '<div class="replay-coach-grid cs-source-provenance-grid">' + model.cards.map(csRenderSourceCard).join('') + '</div>';
@@ -22688,6 +22907,7 @@ function csClearStrategyData(teamKey, opts) {
         ChampionsSim.state.lastResults = {};
         ChampionsSim.state.lastResultsPlayerKey = key;
         ChampionsSim.state.lastResultsFormat = (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles');
+        delete ChampionsSim.state.lastTeamRunSnapshot;
         cleared.transientResults = true;
       }
       delete ChampionsSim.state.lastStrategyReport;

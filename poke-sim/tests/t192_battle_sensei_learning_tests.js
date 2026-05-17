@@ -175,6 +175,29 @@ T('8b. sim feedback packet emits calibration signals without auto-updating model
   inc(mismatch.evidence.note, 'Do not automatically rewrite sim models', 'auto-update guardrail');
 });
 
+T('8c. replay team mismatch blocks sim comparison even if a plan is provided', () => {
+  const blocked = replayCoach.analyzeShowdownReplay(sample, {
+    selectedSide: 'p1',
+    replayTeamMatch: {
+      status: 'different_team',
+      allowsSimComparison: false,
+      confidence: 'medium',
+      summary: 'Replay does not look like the current simulated team.',
+      recommendedNextStep: 'Run a sim with this team first.'
+    },
+    simPlan: {
+      bestLead: ['Incineroar', 'Whimsicott'],
+      bestFour: ['Incineroar', 'Whimsicott', 'Garchomp', 'Rotom-Wash'],
+      expectedWinPath: 'Set speed control, preserve cleaner, and convert pressure.'
+    }
+  }).review.learningReport.simComparison;
+  eq(blocked.status, 'team_match_blocked', 'team mismatch should block matched comparison');
+  eq(blocked.comparisonStatus, 'team_mismatch', 'mismatch status');
+  eq(blocked.calibrationAction, 'none', 'mismatch should not calibrate');
+  truthy(blocked.replayTeamMatch && blocked.replayTeamMatch.status === 'different_team', 'team match contract should be attached');
+  inc(blocked.decisionChange, 'Run a sim with this team first', 'next-step guidance');
+});
+
 T('9. trend dashboard stays cautious for a single review', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const trend = analysis.review.learningReport.trendDashboard;
