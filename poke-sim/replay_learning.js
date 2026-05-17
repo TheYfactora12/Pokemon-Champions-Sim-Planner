@@ -505,6 +505,8 @@
     var selectionLabel = selectionCount === 3 ? 'selected three' : (selectionCount === 4 ? 'selected four' : 'selected team');
     var noData = {
       status: 'needs_sim_data',
+      comparisonStatus: 'parser_confidence_too_low',
+      calibrationAction: 'none',
       evidenceTier: 'needs_more_data',
       evidenceLabel: evidenceLabel('needs_more_data'),
       confidence: 'low',
@@ -517,6 +519,8 @@
     var bestLead = plan.bestLead || plan.recommendedLead || plan.bestSimLead || [];
     var bestFour = plan.bestFour || plan.recommendedFour || plan.bestSimFour || [];
     var expectedWinPath = plan.expectedWinPath || plan.winPath || plan.safestLine || '';
+    var predictedWinner = plan.predictedWinner || plan.expectedWinner || '';
+    var actualWinner = summary.winner || (parsed && parsed.winner) || '';
     var leadOverlap = overlapScore(actualLead, bestLead);
     var fourOverlap = overlapScore(actualFour, bestFour);
     var confidence = confidenceFor(parsed, (review && review.coachingTags) || []);
@@ -527,8 +531,28 @@
     if (leadOverlap != null && leadOverlap < 1) firstDeviation = 'Actual lead differed from the sim-recommended lead.';
     else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual ' + selectionLabel + ' differed from the sim-recommended ' + selectionLabel + '.';
     else if (expectedWinPath) firstDeviation = 'Lead/' + selectionLabel + ' matched; compare turn sequencing against expected win path.';
+    var leadMatchPct = leadOverlap == null ? 'unknown' : Math.round(leadOverlap * 100);
+    var fourMatchPct = fourOverlap == null ? 'unknown' : Math.round(fourOverlap * 100);
+    var ids = issueIds(review);
+    var hasExecutionIssue = ids.some(function(id) {
+      return ['speed_control_without_pressure', 'field_control_failure', 'protect_misuse', 'switch_tempo_loss', 'targeting_error', 'win_condition_exposed', 'endgame_misplay', 'lost_exchange'].indexOf(id) >= 0;
+    });
+    var hasTeamIssue = ids.indexOf('bad_lead') >= 0 || ids.indexOf('questionable_bring') >= 0 || leadMatchPct !== 100 || fourMatchPct !== 100;
+    var rngHeavy = rngContamination(review) === 'moderate';
+    var comparisonStatus = 'simulator_partially_confirmed';
+    if (confidence === 'low') comparisonStatus = 'parser_confidence_too_low';
+    else if (rngHeavy) comparisonStatus = 'variance_heavy_result';
+    else if (predictedWinner && actualWinner && predictedWinner !== actualWinner) comparisonStatus = 'simulator_contradicted';
+    else if (hasExecutionIssue) comparisonStatus = 'player_execution_loss';
+    else if (hasTeamIssue) comparisonStatus = 'team_construction_loss';
+    else if (leadMatchPct === 100 && fourMatchPct === 100 && expectedWinPath) comparisonStatus = 'simulator_confirmed';
+    var calibrationAction = comparisonStatus === 'simulator_contradicted'
+      ? 'review_sim_model'
+      : (comparisonStatus === 'team_construction_loss' || comparisonStatus === 'player_execution_loss' ? 'create_fixture' : 'none');
     return {
       status: 'matched',
+      comparisonStatus: comparisonStatus,
+      calibrationAction: calibrationAction,
       evidenceTier: tier,
       evidenceLabel: evidenceLabel(tier),
       confidence: confidence === 'high' ? 'medium' : confidence,
@@ -536,8 +560,18 @@
       bestSimLead: bestLead,
       actualFour: actualFour,
       bestSimFour: bestFour,
-      leadMatch: leadOverlap == null ? 'unknown' : Math.round(leadOverlap * 100),
-      fourMatch: fourOverlap == null ? 'unknown' : Math.round(fourOverlap * 100),
+      leadMatch: leadMatchPct,
+      fourMatch: fourMatchPct,
+      predictedWinner: predictedWinner,
+      actualWinner: actualWinner,
+      predictedLeads: bestLead,
+      actualLeads: actualLead,
+      predictedWinPath: expectedWinPath || 'Needs sim win-path data',
+      observedWinPath: summary.mainIssue || 'Needs turn review',
+      simulatorCorrect: leadMatchPct === 100 ? ['lead_plan'] : [],
+      simulatorMissed: leadMatchPct !== 100 ? ['lead_plan'] : [],
+      playerExecutionNotes: hasExecutionIssue ? ids.filter(function(id) { return id !== 'rng_material'; }).slice(0, 4) : [],
+      teamBuildingNotes: hasTeamIssue ? ['Lead or selection diverged from the simulated plan.'] : [],
       expectedWinPath: expectedWinPath || 'Needs sim win-path data',
       actualPath: summary.mainIssue || 'Needs turn review',
       firstDeviation: firstDeviation,
@@ -723,26 +757,58 @@
 
   function buildTrendDashboard(reports) {
     reports = Array.isArray(reports) ? reports : [];
-    if (reports.length < 2) {
+    var verifiedChampionReports = reports.filter(function(r) {
+      var parsedProfile = r && r.parsed && r.parsed.rulesetProfile && r.parsed.rulesetProfile.compatibilityClass;
+      var summaryProfile = r && r.review && r.review.summary && r.review.summary.rulesetProfile;
+      var artifactProfile = r && r.replayArtifact && r.replayArtifact.ruleset_profile;
+      var directProfile = r && r.rulesetProfile;
+      return (parsedProfile || summaryProfile || artifactProfile || directProfile) === 'champion_exact';
+    });
+    if (verifiedChampionReports.length < 2) {
       return {
         confidence: 'needs more data',
-        mostCommonLossReason: 'Upload multiple logs to detect repeated patterns.',
-        repeatedMistakePattern: 'No trend yet from a single review.',
-        recommendedNextPracticeBlock: 'Start with the top practice drill from this replay.'
+        verifiedReplayCount: verifiedChampionReports.length,
+        mostCommonLossReason: 'Upload at least two verified Champion logs to detect repeated patterns.',
+        repeatedMistakePattern: 'No Champion trend yet from fewer than two verified replays.',
+        recommendedNextPracticeBlock: 'Start with the top practice drill from this replay.',
+        replayTrends: []
       };
     }
     var counts = {};
-    reports.forEach(function(r) {
+    var examples = {};
+    verifiedChampionReports.forEach(function(r) {
       (((r.review || {}).coachingTags) || []).forEach(function(issue) {
+        if (!issue || !issue.id) return;
         counts[issue.id] = (counts[issue.id] || 0) + 1;
+        examples[issue.id] = examples[issue.id] || [];
+        if (examples[issue.id].length < 3) {
+          examples[issue.id].push({
+            turn: issue.turn || null,
+            tag: issue.tag || issue.id,
+            evidence: issue.evidence || issue.message || ''
+          });
+        }
       });
     });
     var top = Object.keys(counts).sort(function(a, b) { return counts[b] - counts[a]; })[0];
+    var trends = Object.keys(counts).filter(function(id) { return counts[id] >= 2; }).map(function(id) {
+      return {
+        pattern: id,
+        frequency: counts[id],
+        examples: examples[id] || [],
+        likelyCause: id === 'rng_material' ? 'variance_noise' : (id === 'bad_lead' || id === 'questionable_bring' ? 'team_flaw' : 'player_habit'),
+        coachingPriority: counts[id] >= 3 ? 'high' : 'medium',
+        recommendedDrill: drillForIssue({ id: id }).skill,
+        confidence: verifiedChampionReports.length >= 5 ? 'medium' : 'low'
+      };
+    });
     return {
-      confidence: reports.length >= 10 ? 'medium' : 'low',
+      confidence: verifiedChampionReports.length >= 10 ? 'medium' : 'low',
+      verifiedReplayCount: verifiedChampionReports.length,
       mostCommonLossReason: top || 'No repeated loss reason yet.',
       repeatedMistakePattern: top ? top + ' appeared ' + counts[top] + ' times.' : 'No repeated mistake pattern yet.',
-      recommendedNextPracticeBlock: top ? drillForIssue({ id: top }).skill : 'Decision Review Drill'
+      recommendedNextPracticeBlock: top ? drillForIssue({ id: top }).skill : 'Decision Review Drill',
+      replayTrends: trends
     };
   }
 

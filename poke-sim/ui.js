@@ -3191,6 +3191,8 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<h3 class="replay-coach-h3">Sim Comparison</h3>' +
       '<div class="replay-coach-summary-grid">' +
         '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(simComparison.status || 'needs_sim_data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Classification</strong><span>' + _escapeHtml(simComparison.comparisonStatus || 'needs_sim_data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Calibration</strong><span>' + _escapeHtml(simComparison.calibrationAction || 'none') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Selection match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +

@@ -255,6 +255,8 @@ T('1. V2 report exposes matchup intelligence and BO3 adaptation', () => {
   const report = csBuildStrategyReportV2('player', testResults, 'doubles');
   truthy(report.matchup_intelligence, 'matchup_intelligence should exist');
   truthy(report.bo3_adaptation, 'bo3_adaptation should exist');
+  truthy(report.team_compliance, 'team_compliance should exist');
+  truthy(['approved', 'provisional', 'noncompliant', 'unknown'].includes(report.team_compliance.status), 'team compliance status should be normalized');
   eq(report.matchup_intelligence.grade, 'even', 'grade should derive from aggregate results');
   truthy(report.bo3_adaptation.game1_lead, 'game1 lead should be present');
 });
@@ -288,6 +290,7 @@ T('3. live Strategy tab renders Matchup Intelligence and BO3 sections after sims
   renderStrategyTab('player');
   inc(host.innerHTML, 'Matchup Intelligence', 'matchup intelligence section should render');
   inc(host.innerHTML, 'BO3 Adaptation', 'bo3 section should render');
+  inc(host.innerHTML, 'Team compliance', 'team compliance note should render');
   inc(host.innerHTML, TEAMS.rin_sand.name, 'rendered HTML should use trainer-facing matchup names');
   if (TEAMS.rin_sand.name !== 'rin_sand') {
     notInc(host.innerHTML, 'rin_sand', 'internal team key should not leak into trainer UI');

@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-require(path.join(ROOT, 'replay_learning.js'));
+const replayLearning = require(path.join(ROOT, 'replay_learning.js'));
 const replayCoach = require(path.join(ROOT, 'replay_coach.js'));
 const sample = fs.readFileSync(path.join(ROOT, 'tests/fixtures/showdown_replay_sample.txt'), 'utf8');
 const singlesSample = fs.readFileSync(path.join(ROOT, 'tests/fixtures/showdown_replay_singles_sample.txt'), 'utf8');
@@ -123,6 +123,8 @@ T('8. sim comparison stays low confidence until matched sim data exists', () => 
   const sim = analysis.review.learningReport.simComparison;
   const packet = analysis.review.learningReport.simFeedback;
   eq(sim.status, 'needs_sim_data', 'needs sim status');
+  eq(sim.comparisonStatus, 'parser_confidence_too_low', 'contract status for missing sim data');
+  eq(sim.calibrationAction, 'none', 'no sim data should not calibrate');
   eq(sim.evidenceLabel, 'Needs more data', 'needs evidence');
   inc(sim.decisionChange, 'Run this matchup in Sim Mode or upload more logs', 'decision-changing next step');
   eq(packet.shouldUpdateLeadModel, false, 'no sim match means no lead model update');
@@ -139,6 +141,9 @@ T('8. sim comparison stays low confidence until matched sim data exists', () => 
   }).review.learningReport.simComparison;
   eq(matched.status, 'matched', 'matched status');
   eq(matched.leadMatch, 100, 'lead match score');
+  truthy(['simulator_confirmed', 'simulator_partially_confirmed', 'player_execution_loss', 'team_construction_loss', 'variance_heavy_result'].includes(matched.comparisonStatus), 'contract comparison status');
+  truthy(['none', 'create_fixture', 'review_sim_model'].includes(matched.calibrationAction), 'contract calibration action');
+  eq(matched.predictedWinPath, 'Set speed control, preserve cleaner, and convert pressure.', 'predicted win path');
   truthy(matched.evidenceLabel !== 'Needs more data', 'matched evidence improves');
 });
 
@@ -168,6 +173,27 @@ T('9. trend dashboard stays cautious for a single review', () => {
   const trend = analysis.review.learningReport.trendDashboard;
   eq(trend.confidence, 'needs more data', 'trend confidence');
   inc(trend.recommendedNextPracticeBlock, 'top practice drill', 'trend practice guidance');
+});
+
+T('9b. trend dashboard only counts verified Champion replay reports', () => {
+  const generic = {
+    parsed: { rulesetProfile: { compatibilityClass: 'generic_gen9' } },
+    review: { coachingTags: [{ id: 'bad_lead', tag: 'Bad Lead', turn: 1, evidence: 'generic fixture' }] }
+  };
+  const champA = {
+    parsed: { rulesetProfile: { compatibilityClass: 'champion_exact' } },
+    review: { coachingTags: [{ id: 'bad_lead', tag: 'Bad Lead', turn: 1, evidence: 'champion fixture A' }] }
+  };
+  const champB = {
+    parsed: { rulesetProfile: { compatibilityClass: 'champion_exact' } },
+    review: { coachingTags: [{ id: 'bad_lead', tag: 'Bad Lead', turn: 2, evidence: 'champion fixture B' }] }
+  };
+  const one = replayLearning.buildTrendDashboard([generic, champA]);
+  eq(one.confidence, 'needs more data', 'one verified Champion replay is not enough');
+  eq(one.verifiedReplayCount, 1, 'generic replay does not count');
+  const two = replayLearning.buildTrendDashboard([generic, champA, champB]);
+  eq(two.verifiedReplayCount, 2, 'two verified Champion replays count');
+  truthy(two.replayTrends.some((t) => t.pattern === 'bad_lead' && t.frequency === 2), 'repeated Champion trend emitted');
 });
 
 T('10. premium memory preview separates anonymous learning from private profiles', () => {
