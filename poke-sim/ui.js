@@ -836,6 +836,171 @@ function isLadderLegal(teamKey) {
   return t.legality_status === 'legal' || t.legality_status === 'legal_inferred';
 }
 
+function csInferRulesetProfile(format, team) {
+  var raw = String(format || (team && team.format) || '').trim().toLowerCase();
+  var champion = /champion/.test(raw) || raw === 'champions';
+  var singles = raw.indexOf('single') >= 0;
+  var doubles = raw.indexOf('double') >= 0 || raw.indexOf('vgc') >= 0;
+  return {
+    format_id: raw || (champion ? 'champions' : 'unknown'),
+    ruleset_name: champion ? 'Champions' : (raw || 'Unknown'),
+    ruleset_version: 'ui-inferred',
+    generation: 9,
+    battle_type: champion || doubles ? 'doubles' : (singles ? 'singles' : 'unknown'),
+    team_size: team && Array.isArray(team.members) ? team.members.length : null,
+    bring_count: champion ? 4 : (doubles ? 4 : (singles ? 3 : null)),
+    lead_count: champion || doubles ? 2 : (singles ? 1 : null),
+    best_of: champion ? 3 : 1,
+    custom_mechanics_flags: [],
+    compatibility_class: champion ? 'champion_exact' : 'generic_gen9'
+  };
+}
+
+function csComplianceBadgeLabel(compliance) {
+  if (!compliance) return '<span class="badge-warn">\u26A0 COMPLIANCE UNKNOWN</span>';
+  if (compliance.status === 'approved') return '<span class="badge-legal">\u2705 APPROVED</span>';
+  if (compliance.status === 'provisional') return '<span class="badge-warn">\u26A0 PROVISIONAL</span>';
+  if (compliance.status === 'noncompliant') return '<span class="badge-illegal">\u274C NONCOMPLIANT</span>';
+  return '<span class="badge-warn">\u26A0 UNKNOWN</span>';
+}
+
+function csEvaluateTeamCompliance(teamKey, rulesetProfile, battleContext) {
+  var team = (typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null;
+  var profile = rulesetProfile || csInferRulesetProfile(team && team.format, team);
+  var context = battleContext || {};
+  var isChampionTarget = /champion/.test(String((profile && profile.format_id) || '') + ' ' + String((profile && profile.ruleset_name) || '') + ' ' + String((profile && profile.compatibility_class) || '').toLowerCase());
+  var violations = [];
+  var warnings = [];
+  var recommendations = [];
+  var confidence = 'low';
+  var status = 'unknown';
+  var gating = {
+    allow_champion_coaching: false,
+    allow_champion_norm_training: false,
+    allow_high_confidence: false
+  };
+
+  if (!team) {
+    return {
+      status: status,
+      confidence: confidence,
+      ruleset_profile: profile && profile.compatibility_class ? profile.compatibility_class : 'unknown',
+      violations: [{ severity: 'error', code: 'unknown_team', message: 'No team was selected.' }],
+      warnings: warnings,
+      recommendations: recommendations,
+      gating: gating
+    };
+  }
+
+  if (context && context.parser_only) warnings.push({ code: 'parser_only_source', message: 'Parser-only replay source.' });
+  if (context && context.format_mismatch) warnings.push({ code: 'mixed_metadata', message: 'Replay and team metadata do not agree.' });
+
+  if (isChampionTarget) {
+    if (team.format !== 'champions') {
+      violations.push({ severity: 'error', code: 'generic_gen9_as_champion', message: 'Team format is ' + String(team.format || 'unknown') + ', not Champions.' });
+      recommendations.push('Switch to a Champions-format team before using Champion coaching.');
+    }
+    if (team.legality_status === 'illegal') {
+      violations.push({ severity: 'error', code: 'illegal_team', message: 'Team is already marked illegal.' });
+      recommendations.push('Fix the listed team legality issues.');
+    }
+    if (typeof validateChampionsLegality === 'function' && team.format === 'champions') {
+      var checks = validateChampionsLegality(team) || { violations: [] };
+      (checks.violations || []).forEach(function(v) {
+        violations.push({
+          severity: v.severity === 'warn' ? 'warn' : 'error',
+          code: v.code || 'ruleset_violation',
+          message: v.message || 'Ruleset violation'
+        });
+      });
+    }
+    var hasErrorViolations = violations.some(function(v) { return v.severity === 'error'; });
+    var hasWarnViolations = violations.some(function(v) { return v.severity === 'warn'; });
+    if (hasErrorViolations) {
+      status = 'noncompliant';
+      confidence = 'high';
+      gating.allow_champion_coaching = false;
+      gating.allow_champion_norm_training = false;
+      gating.allow_high_confidence = false;
+    } else if (!hasWarnViolations && team.legality_status === 'legal') {
+      status = 'approved';
+      confidence = 'high';
+      gating.allow_champion_coaching = true;
+      gating.allow_champion_norm_training = true;
+      gating.allow_high_confidence = true;
+    } else {
+      status = 'provisional';
+      confidence = 'medium';
+      warnings.push({ code: 'unverified_ruleset', message: 'Champion compatibility is not fully verified for this team.' });
+      recommendations.push('Verify the Champion ruleset before training norms from this team.');
+      gating.allow_champion_coaching = true;
+      gating.allow_champion_norm_training = false;
+      gating.allow_high_confidence = false;
+    }
+  } else {
+    if (team.legality_status === 'illegal') {
+      status = 'noncompliant';
+      confidence = 'high';
+      violations.push({ severity: 'error', code: 'illegal_team', message: 'Team is marked illegal.' });
+      recommendations.push('Fix legality before running Strategy analysis.');
+    } else if (team.legality_status === 'legal') {
+      status = 'approved';
+      confidence = 'high';
+      gating.allow_high_confidence = true;
+    } else if (team.legality_status === 'legal_inferred') {
+      status = 'provisional';
+      confidence = 'medium';
+      warnings.push({ code: 'format_inferred', message: 'Team legality is inferred rather than manually verified.' });
+      gating.allow_high_confidence = false;
+    } else {
+      status = 'unknown';
+      confidence = 'low';
+      warnings.push({ code: 'unknown_format_tag', message: 'Team legality is not verified.' });
+      gating.allow_high_confidence = false;
+    }
+  }
+
+  if (context && context.log_source === 'parser_only') {
+    warnings.push({ code: 'parser_only_source', message: 'Parser-only source cannot train Champion norms.' });
+    if (status === 'approved') status = 'provisional';
+    gating.allow_champion_norm_training = false;
+  }
+
+  if (context && context.sample_size != null && context.sample_size < 5 && status === 'approved') {
+    status = 'provisional';
+    confidence = 'medium';
+  }
+
+  return {
+    status: status,
+    confidence: confidence,
+    ruleset_profile: profile && profile.compatibility_class ? profile.compatibility_class : 'unknown',
+    violations: violations,
+    warnings: warnings,
+    recommendations: recommendations,
+    gating: gating
+  };
+}
+
+function csCapConfidenceTierByCompliance(tier, compliance) {
+  if (!compliance || !compliance.status) return tier;
+  if (compliance.status === 'approved') return tier;
+  if (compliance.status === 'provisional') {
+    if (tier === 'elite') return 'high';
+    if (tier === 'high') return 'moderate';
+    return tier;
+  }
+  return 'low';
+}
+
+function csInferComplianceLabel(compliance) {
+  if (!compliance) return 'Unknown';
+  if (compliance.status === 'approved') return 'Approved';
+  if (compliance.status === 'provisional') return 'Provisional';
+  if (compliance.status === 'noncompliant') return 'Noncompliant';
+  return 'Unknown';
+}
+
 function _gateOneSelect(selId) {
   var sel = document.getElementById(selId);
   if (!sel) return { anyVisible:false, firstVisibleValue:null };
@@ -1246,6 +1411,11 @@ function renderTeamsGrid() {
     if (!teamMatchesFilter(key, team, TEAMS_FILTER)) continue;
     const isPlayer = key === 'player';
     const compactTeamsPicker = shouldUseCompactTeamsPicker();
+    var selectedFormatForCompliance = (typeof currentFormat !== 'undefined' && currentFormat) ? currentFormat : (ChampionsSim.state && ChampionsSim.state.format) || team.format || 'unknown';
+    var compliance = csEvaluateTeamCompliance(key, csInferRulesetProfile(selectedFormatForCompliance, team), {
+      sample_size: 0,
+      log_source: 'team_grid'
+    });
     const card = document.createElement('div');
     card.className = 'team-full-card';
     card.innerHTML = `
@@ -1256,6 +1426,7 @@ function renderTeamsGrid() {
         </div>
         <div class="tfcard-badges">
           <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
+          ${csComplianceBadgeLabel(compliance)}
           ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
             var st = team.legality_status; var fmt = team.format;
             if (st === 'legal' && fmt === 'champions') return '<span class="badge-legal">\u2705 LEGAL</span>';
@@ -7729,21 +7900,30 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
   var threats = csTopThreats(team);
   var risk = csRiskProfile(team, report_card);
   var trend = csTrendAnalysisV2(team, results);
+  var compliance = csEvaluateTeamCompliance(teamKey, csInferRulesetProfile(format, team), {
+    sample_size: sample,
+    log_source: 'strategy_report'
+  });
   var dashboardTrends = Object.assign({}, lossTrends, { worst_lead: trend.worst_lead || null });
   var weaknessDashboard = buildWeaknessDashboard(team, results, format, identity, leadSystem, dashboardTrends, deadMoves, matchupWarnings);
   var matchupIntelligence = weaknessDashboard.matchup_intelligence || buildMatchupIntelligence(team, results, format, identity, leadSystem, dashboardTrends, [], matchupWarnings);
   var bo3Adaptation = buildBo3Adaptation(identity, leadSystem, elite, matchupIntelligence, dashboardTrends);
   var confidenceTier = sample < 20 ? 'low' : sample < 100 ? 'moderate' : sample < 500 ? 'high' : 'elite';
+  confidenceTier = csCapConfidenceTierByCompliance(confidenceTier, compliance);
   var evidenceStandard = csStrategyEvidenceStandard(sample, confidenceTier);
   var provenance = buildReportProvenance(sample, confidenceTier, format);
   var summaryAdjustment = matchupIntelligence && matchupIntelligence.recommended_adjustment
     ? String(matchupIntelligence.recommended_adjustment).replace(/[.\s]+$/, '')
     : '';
+  var complianceNote = compliance.status === 'approved'
+    ? 'Compliance approved for ' + (compliance.ruleset_profile || 'current ruleset') + '.'
+    : 'Compliance ' + compliance.status + ' for ' + (compliance.ruleset_profile || 'current ruleset') + '.';
 
   var summary = report_card.tier + '-tier ' + identity.playstyle + '. ' +
     'Win path: ' + identity.primary_win_condition + '. ' +
     (mistakes[0] ? 'Top mistake to test: ' + mistakes[0].mistake + '.' : '') +
     (summaryAdjustment ? ' Adjustment: ' + summaryAdjustment + '.' : '') +
+    ' ' + complianceNote +
     ' Evidence: ' + evidenceStandard.label + '.';
 
   return {
@@ -7768,6 +7948,7 @@ function csBuildStrategyReportV2(teamKey, results, fmt) {
     move_lines: moveLines,
     mistakes_to_avoid: mistakes,
     risk_profile: risk,
+    team_compliance: compliance,
     matchup_intelligence: matchupIntelligence,
     bo3_adaptation: bo3Adaptation,
     matchup_warnings: matchupWarnings,
@@ -7873,6 +8054,12 @@ function renderStrategyTab(teamKey) {
   html += '</div>';
 
   html += '<p class="cs-summary-line">' + _csEsc(report.coaching_summary) + '</p>';
+  if (report.team_compliance) {
+    html += '<p class="cs-summary-line"><strong>Team compliance:</strong> ' +
+      _csEsc(csInferComplianceLabel(report.team_compliance) + ' · ' + (report.team_compliance.ruleset_profile || 'unknown')) +
+      (report.team_compliance.recommendations && report.team_compliance.recommendations.length ? ' · ' + _csEsc(report.team_compliance.recommendations[0]) : '') +
+      '</p>';
+  }
   if (report.evidence_standard) {
     html += '<p class="cs-summary-line"><strong>Strategy evidence:</strong> ' +
       _csEsc(report.evidence_standard.label + ' · ' + report.evidence_standard.rule + ' Decision: ' + report.evidence_standard.decision) +
@@ -10209,6 +10396,9 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.strategy.csInvalidateTeamHistory = csInvalidateTeamHistory;
   ChampionsSim.strategy.csRenderAdaptiveBanner = csRenderAdaptiveBanner;
   ChampionsSim.strategy.csRenderRecordBar = csRenderRecordBar;
+  ChampionsSim.strategy.csInferRulesetProfile = csInferRulesetProfile;
+  ChampionsSim.strategy.csEvaluateTeamCompliance = csEvaluateTeamCompliance;
+  ChampionsSim.strategy.csComplianceBadgeLabel = csComplianceBadgeLabel;
   ChampionsSim.strategy.strategyResultsHash = strategyResultsHash;
   ChampionsSim.strategy.csStrategyReportCacheSize = csStrategyReportCacheSize;
   ChampionsSim.strategy.csClearStrategyReportCache = csClearStrategyReportCache;

@@ -63,6 +63,31 @@
       ]
     },
     {
+      "id": "gen9championsvgc2026regmabo3-2606726147",
+      "source_url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regmabo3-2606726147",
+      "source_platform": "pokemon_showdown",
+      "raw_file": "gen9championsvgc2026regmabo3-2606726147.log",
+      "expected_format": "gen9championsvgc2026regmabo3",
+      "expected_battle_type": "doubles",
+      "expected_best_of": 3,
+      "ruleset_profile": {
+        "format_id": "gen9championsvgc2026regmabo3",
+        "ruleset_name": "Gen 9 Champions VGC 2026 Reg M-A Bo3",
+        "ruleset_version": "verified_replay_header",
+        "generation": 9,
+        "battle_type": "doubles",
+        "team_size": null,
+        "bring_count": null,
+        "lead_count": 2,
+        "best_of": 3,
+        "custom_mechanics_flags": []
+      },
+      "compatibility_class": "champion_exact",
+      "expected_min_event_count": 200,
+      "expected_confidence_class": "high",
+      "expected_parser_warnings": []
+    },
+    {
       "id": "gen9nationaldex-2504810481",
       "source_url": "https://replay.pokemonshowdown.com/gen9nationaldex-2504810481",
       "source_platform": "pokemon_showdown",

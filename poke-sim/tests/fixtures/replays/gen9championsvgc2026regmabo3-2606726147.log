@@ -1,0 +1,218 @@
+|j|☆pwny person
+|j|☆animus
+|html|<table width="100%"><tr><td align="left">pwny person</td><td align="right">animus</tr><tr><td align="left"><i class="fa fa-circle-o"></i> <i class="fa fa-circle-o"></i> </td><td align="right"><i class="fa fa-circle-o"></i> <i class="fa fa-circle"></i> </tr></table>
+|uhtml|bestof|<h2><strong>Game 2</strong> of <a href="/game-bestof3-gen9championsvgc2026regmabo3-2606723197">a best-of-3</a></h2>
+|t:|1778463474
+|gametype|doubles
+|player|p1|pwny person|#vgcpliiizoruas|
+|player|p2|animus|#scl2spartans|
+|gen|9
+|tier|[Gen 9 Champions] VGC 2026 Reg M-A (Bo3)
+|rule|Species Clause: Limit one of each Pokémon
+|rule|Item Clause: Limit 1 of each item
+|clearpoke
+|poke|p1|Sylveon, L50, M|
+|poke|p1|Dragonite, L50, M|
+|poke|p1|Archaludon, L50, F|
+|poke|p1|Basculegion, L50, M|
+|poke|p1|Sableye, L50, F|
+|poke|p1|Venusaur, L50, F|
+|poke|p2|Basculegion, L50, M|
+|poke|p2|Farigiraf, L50, M|
+|poke|p2|Torkoal, L50, M|
+|poke|p2|Vivillon, L50, M|
+|poke|p2|Blastoise, L50, F|
+|poke|p2|Kangaskhan, L50, F|
+|teampreview|4
+|showteam|p1|Sylveon||SitrusBerry|Pixilate|Yawn,HyperVoice,QuickAttack,Protect|||M|||50|]Dragonite||Dragoninite|Multiscale|DragonPulse,Hurricane,Tailwind,Protect|||M|||50|]Archaludon||Leftovers|Stamina|FlashCannon,DracoMeteor,ElectroShot,Protect|||F|||50|]Basculegion||ChoiceScarf|Adaptability|WaveCrash,FlipTurn,AquaJet,LastRespects|||M|||50|]Sableye||RoseliBerry|Prankster|RainDance,Encore,LightScreen,Reflect|||F|||50|]Venusaur||Venusaurite|Chlorophyll|GigaDrain,SludgeBomb,EarthPower,Protect|||F|||50|
+|showteam|p2|Basculegion||FocusSash|Adaptability|Liquidation,LastRespects,Protect,AquaJet|||M|||50|]Farigiraf||SitrusBerry|ArmorTail|TrickRoom,Protect,HelpingHand,Psychic|||M|||50|]Torkoal||Charcoal|Drought|Eruption,WeatherBall,Protect,EarthPower|||M|||50|]Vivillon||ChoiceScarf|CompoundEyes|SleepPowder,Tailwind,RagePowder,Hurricane|||M|||50|]Blastoise||Blastoisinite|RainDish|WaterSpout,DarkPulse,ShellSmash,FakeOut|||F|||50|]Kangaskhan||SilkScarf|Scrappy|FakeOut,LastResort|||F|||50|
+|j| RK_pocoyo
+|j| thebusinesspiggy2
+|j| Yoshiandlugia
+|j| kirans
+|j| baaaaat_
+|j| thacrow
+|j| Code
+|j| Mogo
+|l| RK_pocoyo
+|l| kirans
+|j| multi boy
+|j| templevgc
+|j| kirans
+|j| emo tung sahur
+|l| Code
+|j| christianfinity
+|j| say galati bro
+|j| hiyopon
+|
+|t:|1778463555
+|teamsize|p1|4
+|teamsize|p2|4
+|start
+|switch|p1a: Venusaur|Venusaur, L50, F|100/100
+|switch|p1b: Sylveon|Sylveon, L50, M|100/100
+|switch|p2a: Blastoise|Blastoise, L50, F|100/100
+|switch|p2b: Vivillon|Vivillon, L50, M|100/100
+|turn|1
+|
+|t:|1778463567
+|detailschange|p1a: Venusaur|Venusaur-Mega, L50, F
+|-mega|p1a: Venusaur|Venusaur|Venusaurite
+|detailschange|p2a: Blastoise|Blastoise-Mega, L50, F
+|-mega|p2a: Blastoise|Blastoise|Blastoisinite
+|move|p2b: Vivillon|Hurricane|p1a: Venusaur
+|-supereffective|p1a: Venusaur|1
+|-damage|p1a: Venusaur|12/100
+|move|p1a: Venusaur|Giga Drain|p2a: Blastoise
+|-supereffective|p2a: Blastoise|1
+|-damage|p2a: Blastoise|15/100
+|-heal|p1a: Venusaur|54/100|[from] drain|[of] p2a: Blastoise
+|move|p2a: Blastoise|Water Spout|p1b: Sylveon|[spread] p1a,p1b
+|-resisted|p1a: Venusaur|1
+|-damage|p1a: Venusaur|49/100
+|-damage|p1b: Sylveon|93/100
+|move|p1b: Sylveon|Hyper Voice|p2a: Blastoise|[spread] p2a,p2b
+|-damage|p2a: Blastoise|0 fnt
+|-damage|p2b: Vivillon|32/100
+|faint|p2a: Blastoise
+|
+|upkeep
+|
+|t:|1778463589
+|switch|p2a: Basculegion|Basculegion, L50, M|100/100
+|turn|2
+|j| wow_yang
+|
+|t:|1778463616
+|move|p2b: Vivillon|Hurricane|p1b: Sylveon
+|-damage|p1b: Sylveon|61/100
+|move|p1a: Venusaur|Giga Drain|p2a: Basculegion
+|-supereffective|p2a: Basculegion|1
+|-enditem|p2a: Basculegion|Focus Sash
+|-damage|p2a: Basculegion|1/100
+|-heal|p1a: Venusaur|100/100|[from] drain|[of] p2a: Basculegion
+|move|p2a: Basculegion|Last Respects|p1b: Sylveon
+|-damage|p1b: Sylveon|0 fnt
+|faint|p1b: Sylveon
+|
+|upkeep
+|j| Nash01
+|j| RK_pocoyo
+|
+|t:|1778463627
+|switch|p1b: Archaludon|Archaludon, L50, F|100/100
+|turn|3
+|j| Galahad Excalibur
+|
+|t:|1778463640
+|switch|p2a: Farigiraf|Farigiraf, L50, M|100/100
+|move|p1a: Venusaur|Protect|p1a: Venusaur
+|-singleturn|p1a: Venusaur|Protect
+|move|p1b: Archaludon|Protect|p1b: Archaludon
+|-singleturn|p1b: Archaludon|Protect
+|move|p2b: Vivillon|Hurricane|p1a: Venusaur
+|-activate|p1a: Venusaur|move: Protect
+|
+|upkeep
+|turn|4
+|
+|t:|1778463661
+|switch|p1a: Sableye|Sableye, L50, F|100/100
+|move|p2a: Farigiraf|Helping Hand|p2b: Vivillon
+|-singleturn|p2b: Vivillon|Helping Hand|[of] p2a: Farigiraf
+|move|p2b: Vivillon|Hurricane|p1a: Sableye|[miss]
+|-miss|p2b: Vivillon|p1a: Sableye
+|move|p1b: Archaludon|Flash Cannon|p2b: Vivillon
+|-damage|p2b: Vivillon|0 fnt
+|faint|p2b: Vivillon
+|
+|upkeep
+|
+|t:|1778463670
+|switch|p2b: Basculegion|Basculegion, L50, M|1/100
+|turn|5
+|
+|t:|1778463676
+|move|p2a: Farigiraf|Helping Hand|p2b: Basculegion
+|-singleturn|p2b: Basculegion|Helping Hand|[of] p2a: Farigiraf
+|move|p1b: Archaludon|Protect|p1b: Archaludon
+|-singleturn|p1b: Archaludon|Protect
+|move|p1a: Sableye|Reflect|p1a: Sableye
+|-sidestart|p1: pwny person|Reflect
+|move|p2b: Basculegion|Last Respects|p1b: Archaludon
+|-activate|p1b: Archaludon|move: Protect
+|
+|upkeep
+|turn|6
+|
+|t:|1778463686
+|move|p2a: Farigiraf|Helping Hand|p2b: Basculegion
+|-singleturn|p2b: Basculegion|Helping Hand|[of] p2a: Farigiraf
+|move|p1a: Sableye|Light Screen|p1a: Sableye
+|-sidestart|p1: pwny person|move: Light Screen
+|move|p2b: Basculegion|Last Respects|p1b: Archaludon
+|-damage|p1b: Archaludon|20/100y
+|-ability|p1b: Archaludon|Stamina|boost
+|-boost|p1b: Archaludon|def|1
+|move|p1b: Archaludon|Flash Cannon|p2b: Basculegion
+|-resisted|p2b: Basculegion|1
+|-damage|p2b: Basculegion|0 fnt
+|faint|p2b: Basculegion
+|
+|-heal|p1b: Archaludon|26/100|[from] item: Leftovers
+|upkeep
+|turn|7
+|-message|animus forfeited.
+|
+|win|pwny person
+||animus is ready for game 3.
+||pwny person is ready for game 3.
+|uhtml|next|Next: <a href="/battle-gen9championsvgc2026regmabo3-2606728106"><strong>Game 3 of 3</strong></a>
+|l| thacrow
+|l| RK_pocoyo
+|l|☆animus
+|player|p2|
+|j| KCric
+|l| hiyopon
+|j| weather pricing
+|j| RK_pocoyo
+|j| Ally
+|j| peaktime
+|l| Ally
+|j| PqlarBear
+|j| Code
+|j| kunal
+|l| christianfinity
+|l| RK_pocoyo
+|l| kunal
+|l| Code
+|l| peaktime
+|l| kirans
+|l| thebusinesspiggy2
+|l| Galahad Excalibur
+|l| Yoshiandlugia
+|l| emo tung sahur
+|l| weather pricing
+|l| PqlarBear
+|j|+Aldrich
+|l| Nash01
+|l| baaaaat_
+|l|☆pwny person
+|player|p1|
+|j| cablevgc
+|j| Kommander
+|l| Mogo
+|l|+Aldrich
+|l| cablevgc
+|l| Kommander
+|j| SlycedBreadVGC
+|l| templevgc
+|j| david pearoddu
+|j| marcofiero
+|l| marcofiero
+|j| zimmer003
+|l| zimmer003
+|l| SlycedBreadVGC
+|j| Will of urshifu
+|j| A Regu1ar Guy
+|l| A Regu1ar Guy

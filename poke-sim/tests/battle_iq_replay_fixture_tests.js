@@ -43,7 +43,7 @@ T('manifest parses and defines compatibility classes', () => {
   assert(manifest.compatibility_classes.includes('generic_gen9'), 'missing generic_gen9');
   assert(manifest.compatibility_classes.includes('parser_only'), 'missing parser_only');
   assert(manifest.compatibility_classes.includes('unknown'), 'missing unknown');
-  assert(Array.isArray(manifest.fixtures) && manifest.fixtures.length >= 4, 'expected at least four fixtures');
+  assert(Array.isArray(manifest.fixtures) && manifest.fixtures.length >= 5, 'expected at least five fixtures');
 });
 
 T('all fixtures have required metadata and raw log files', () => {
@@ -91,6 +91,16 @@ T('Champion-looking fixtures stay unknown until rules are verified', () => {
     if (fixture.compatibility_class !== 'champion_exact') {
       assert(fixture.compatibility_note || fixture.expected_parser_warnings.includes('ruleset_unverified'), fixture.id + ' should document unverified ruleset');
     }
+  });
+});
+
+T('verified Champion fixtures are marked champion_exact and high confidence', () => {
+  const manifest = readManifest();
+  const verified = manifest.fixtures.filter((fixture) => fixture.compatibility_class === 'champion_exact');
+  assert(verified.length >= 1, 'expected at least one champion_exact fixture');
+  verified.forEach((fixture) => {
+    assert(fixture.expected_confidence_class === 'high', fixture.id + ' champion_exact fixture should be high confidence');
+    assert(Array.isArray(fixture.expected_parser_warnings) && fixture.expected_parser_warnings.length === 0, fixture.id + ' champion_exact fixture should not need parser warnings');
   });
 });
 
