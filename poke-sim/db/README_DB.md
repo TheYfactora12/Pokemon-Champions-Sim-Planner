@@ -34,9 +34,10 @@ UI wiring: `poke-sim/ui.js` already loads DB teams on startup and persists analy
 |---|---|---|
 | 1 | `schema_v1.sql` | Creates all 8 tables — run first |
 | 2 | `seed_teams_v2.sql` | Loads 13 teams — verify 13 rows in Table Editor after |
-| 3 | `rls_policies_v1.sql` | Locks down security — run last |
-| 4 | Wire local or CI credentials | See below |
-| 5 | Wire `saveAnalysis()` in `ui.js` | See Adapter API section below |
+| 3 | `2026_05_17_auth_profile_memory.sql` | Adds authenticated profile-memory tables + strict RLS for subscriber paths |
+| 4 | `rls_policies_v1.sql` | Locks down baseline public tables |
+| 5 | Wire local or CI credentials | See below |
+| 6 | Wire `saveAnalysis()` in `ui.js` | See Adapter API section below |
 
 ---
 
@@ -149,11 +150,12 @@ window.__DISABLE_SUPABASE__ = true; // set before adapter loads
 
 ## Security Rules
 
-- `anon` key is safe to expose in client code — RLS blocks unauthorized writes
+- `anon` key is safe to expose in client code only when RLS blocks unauthorized reads and writes
 - **Never** put the `service_role` key in any frontend file or commit it to GitHub
-- Anonymous users: read-only on reference/team tables, insert-only on analysis/log tables
+- Anonymous users: read-only on reference/team tables, insert-only on public analysis/log tables
+- Authenticated users: private profile-memory tables must be scoped by `auth.uid()`
 - No UPDATE or DELETE for anonymous users on any table
-- Auth scaffold is in `rls_policies_v1.sql` (commented out) — uncomment when adding login
+- Subscriber replay/team history must never be readable across accounts
 - Unrestricted anonymous INSERT on `analyses` is a deliberate accepted-risk decision for a public sim with no auth. Add an Edge Function rate limiter if spam becomes a concern.
 
 ---

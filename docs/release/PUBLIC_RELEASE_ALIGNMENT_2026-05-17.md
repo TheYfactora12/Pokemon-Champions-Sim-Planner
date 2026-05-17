@@ -25,6 +25,30 @@ Every public-facing coaching claim must be:
 - clear about free local data vs paid saved memory
 - free from internal team IDs and raw machine language
 
+## Temporary internal account access
+
+Until polished signup exists, the team should use temporary internal auth accounts for separation testing.
+
+Minimum set:
+
+- anonymous/local free path
+- internal free account
+- internal premium account
+- QA/admin account
+- cross-device persistence account
+
+Purpose:
+
+- prove free vs premium memory separation
+- prove saved team profiles are tied to authenticated identity
+- prove no cross-account leakage
+- prove profile-backed Sources state is real
+
+Constraint:
+
+- do not ship hardcoded premium bypasses as the long-term model
+- use these accounts only as MVP auth and QA scaffolding until the real subscriber flow is ready
+
 ## Immediate status
 
 ### Sources + Data Provenance cleanup

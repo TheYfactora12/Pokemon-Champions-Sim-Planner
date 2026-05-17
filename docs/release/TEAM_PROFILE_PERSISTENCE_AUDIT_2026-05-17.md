@@ -278,6 +278,43 @@ Without those IDs, the system cannot safely answer:
 
 ## Recommended database contracts
 
+## Temporary internal account access plan
+
+Before polished signup exists, the team should still test subscriber separation with controlled internal accounts.
+
+Required rule:
+
+- no hardcoded premium bypass in production logic
+
+Recommended temporary setup:
+
+- one anonymous/free local browser user
+- one internal free auth account
+- one internal premium auth account
+- one QA/admin auth account
+- one cross-device persistence auth account
+- one optional community-opt-in auth account
+
+What these accounts are for:
+
+- verify `user_id` scoping for saved team profiles
+- verify replay history stays under the correct team profile
+- verify no cross-account leakage
+- verify premium-only saved memory remains separate from free local memory
+- verify cross-device restore works once minimal auth is added
+- verify community sharing remains opt-in
+
+What must be documented separately in team ops notes:
+
+- account email/alias
+- intended permission tier
+- whether it is safe for QA only or product demo use
+- whether community sharing is enabled
+
+Architecture rule:
+
+- subscriber persistence features are not complete until they are tested through authenticated accounts with distinct access tiers
+
 ### `team_profiles`
 
 Purpose:

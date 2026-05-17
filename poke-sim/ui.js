@@ -3620,6 +3620,121 @@ function csPersistenceToken(value, fallback) {
   return token || String(fallback || 'unknown');
 }
 
+function csGetAuthState() {
+  if (typeof ChampionsSim === 'undefined' || !ChampionsSim.state || !ChampionsSim.state.authState) {
+    return {
+      authenticated: false,
+      user_id: null,
+      email: '',
+      access_tier: 'free',
+      is_premium: false
+    };
+  }
+  return ChampionsSim.state.authState;
+}
+
+function csRememberAuthState(authState) {
+  if (typeof ChampionsSim === 'undefined' || !ChampionsSim.state) return null;
+  ChampionsSim.state.authState = authState || {
+    authenticated: false,
+    user_id: null,
+    email: '',
+    access_tier: 'free',
+    is_premium: false
+  };
+  return ChampionsSim.state.authState;
+}
+
+function csRenderAuthUi() {
+  var auth = csGetAuthState();
+  var indicator = document.getElementById('auth-indicator');
+  var copy = document.getElementById('auth-copy');
+  var message = document.getElementById('auth-message');
+  var email = document.getElementById('auth-email');
+  var password = document.getElementById('auth-password');
+  var signInBtn = document.getElementById('auth-signin-btn');
+  var signOutBtn = document.getElementById('auth-signout-btn');
+  if (indicator) indicator.textContent = auth.authenticated
+    ? ('AUTH · ' + (auth.is_premium ? 'Premium' : 'Free') + ' · ' + (auth.email || 'signed in'))
+    : 'AUTH · Guest session';
+  if (copy) copy.textContent = auth.authenticated
+    ? 'Saved team profiles and replay history now attach to this authenticated account when profile sync is active.'
+    : 'Free mode stays local. Sign in to attach saved team profiles and replay history to an account.';
+  if (message) message.textContent = auth.authenticated
+    ? ('Access tier: ' + (auth.access_tier || 'free') + '. Raw replay logs remain opt-in only.')
+    : 'Internal MVP accounts only for now.';
+  if (email) email.style.display = auth.authenticated ? 'none' : '';
+  if (password) password.style.display = auth.authenticated ? 'none' : '';
+  if (signInBtn) signInBtn.style.display = auth.authenticated ? 'none' : '';
+  if (signOutBtn) signOutBtn.style.display = auth.authenticated ? '' : 'none';
+}
+
+function csBindAuthUi() {
+  var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
+  var signInBtn = document.getElementById('auth-signin-btn');
+  var signOutBtn = document.getElementById('auth-signout-btn');
+  var message = document.getElementById('auth-message');
+  var email = document.getElementById('auth-email');
+  var password = document.getElementById('auth-password');
+  if (!adapter || !adapter.enabled) {
+    csRememberAuthState(null);
+    csRenderAuthUi();
+    if (message) message.textContent = 'Supabase auth is offline in this build. Free local mode remains available.';
+    return;
+  }
+  if (signInBtn && signInBtn.dataset.boundAuth !== '1') {
+    signInBtn.dataset.boundAuth = '1';
+    signInBtn.addEventListener('click', function() {
+      var mail = email && email.value ? String(email.value).trim() : '';
+      var pass = password && password.value ? String(password.value) : '';
+      if (!mail || !pass) {
+        if (message) message.textContent = 'Enter an email and password for an internal account.';
+        return;
+      }
+      if (message) message.textContent = 'Signing in…';
+      Promise.resolve(typeof adapter.signIn === 'function' ? adapter.signIn(mail, pass) : null).then(function(result) {
+        if (!result || !result.ok) {
+          if (message) message.textContent = (result && result.message) || 'Sign in failed.';
+          return;
+        }
+        csRememberAuthState(result.auth || null);
+        csRenderAuthUi();
+      }).catch(function(err) {
+        if (message) message.textContent = err && err.message ? err.message : 'Sign in failed.';
+      });
+    });
+  }
+  if (signOutBtn && signOutBtn.dataset.boundAuth !== '1') {
+    signOutBtn.dataset.boundAuth = '1';
+    signOutBtn.addEventListener('click', function() {
+      if (message) message.textContent = 'Signing out…';
+      Promise.resolve(typeof adapter.signOut === 'function' ? adapter.signOut() : null).then(function(result) {
+        if (!result || !result.ok) {
+          if (message) message.textContent = (result && result.message) || 'Sign out failed.';
+          return;
+        }
+        csRememberAuthState(null);
+        csRenderAuthUi();
+      }).catch(function(err) {
+        if (message) message.textContent = err && err.message ? err.message : 'Sign out failed.';
+      });
+    });
+  }
+  Promise.resolve(typeof adapter.getAuthState === 'function' ? adapter.getAuthState() : null).then(function(authState) {
+    csRememberAuthState(authState || null);
+    csRenderAuthUi();
+  }).catch(function() {
+    csRenderAuthUi();
+  });
+  if (typeof adapter.onAuthStateChange === 'function' && typeof ChampionsSim !== 'undefined' && ChampionsSim.state && !ChampionsSim.state.authSubscriptionBound) {
+    ChampionsSim.state.authSubscriptionBound = true;
+    adapter.onAuthStateChange(function(authState) {
+      csRememberAuthState(authState || null);
+      csRenderAuthUi();
+    });
+  }
+}
+
 function csPersistenceSpeciesKey(fingerprint) {
   var list = [];
   if (fingerprint && Array.isArray(fingerprint.speciesSet) && fingerprint.speciesSet.length) list = fingerprint.speciesSet.slice();
@@ -3661,6 +3776,7 @@ function csBuildPersistableTeamRunSnapshot(snapshot) {
   return {
     teamProfile: {
       team_profile_id: identity.team_profile_id,
+      user_id: csGetAuthState().user_id || null,
       display_name: identity.display_name,
       canonical_format: identity.canonical_format,
       canonical_ruleset: identity.canonical_ruleset,
@@ -3754,6 +3870,7 @@ function csBuildReplayHistoryBundle(analysis) {
     team_profile_id: base.teamProfile.team_profile_id,
     team_version_id: base.teamVersion && base.teamVersion.team_version_id
   } : null;
+  var auth = csGetAuthState();
   var replayArtifactId = 'ra:' + csPersistenceToken(parsed.battleId || parsed.id || [summary.yourPlayer, summary.opponentPlayer, summary.turns, summary.format].join('-'), 'replay');
   var result = {
     teamProfile: base.teamProfile,
@@ -3761,6 +3878,7 @@ function csBuildReplayHistoryBundle(analysis) {
     teamRunSnapshot: base.teamRunSnapshot,
     replayArtifact: {
       replay_artifact_id: replayArtifactId,
+      user_id: auth.user_id || null,
       source_type: 'showdown_log',
       source_url: parsed.sourceUrl || null,
       format: summary.format || parsed.formatKind || parsed.gametype || 'unknown',
@@ -8753,6 +8871,7 @@ function csBuildSourcesProvenanceModel(teamKey) {
   } catch (_compErr) {}
   var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
   var dbEnabled = !!(adapter && adapter.enabled);
+  var authState = csGetAuthState();
   var profilePersistence = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastProfilePersistence : null;
   var teamRunSnapshot = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastTeamRunSnapshot : null;
   var replayAnalysis = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastReplayCoachAnalysis : null;
@@ -8774,12 +8893,22 @@ function csBuildSourcesProvenanceModel(teamKey) {
     localHistoryCount: historyCount,
     compliance: compliance,
     dbEnabled: dbEnabled,
+    authState: authState,
     replayMode: replayMode,
     replayComparisonMode: replayComparisonMode,
     teamRunSnapshot: teamRunSnapshot,
     replayTeamMatch: replayTeamMatch,
     customTeams: customTeams,
     cards: [
+      {
+        title: 'Profile access',
+        status: authState && authState.authenticated ? (authState.is_premium ? 'premium' : 'signed-in') : 'guest',
+        confidence: authState && authState.authenticated ? 'high' : 'needs sign-in',
+        detail: authState && authState.authenticated
+          ? ((authState.email || 'signed in') + ' · tier ' + (authState.access_tier || 'free'))
+          : 'No authenticated profile is active. Saved replay/team memory cannot be tied to a user yet.',
+        boundary: 'Authentication is required for durable subscriber memory. Free mode still works without login.'
+      },
       {
         title: 'Simulation data',
         status: simGames ? 'available' : 'missing',
@@ -11445,6 +11574,7 @@ if (typeof window !== 'undefined') {
     await csHardenClientState();
     _csInitEvidenceToggle();
     csInitReplayCoachUi();
+    csBindAuthUi();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────
     // Await loadTeamsFromDB BEFORE the first authoritative rebuildTeamSelects()

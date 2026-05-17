@@ -60,6 +60,28 @@
     return _client;
   }
 
+  function resolveAccessTier(user) {
+    var appMeta = (user && user.app_metadata) || {};
+    var userMeta = (user && user.user_metadata) || {};
+    var tier = appMeta.subscription_tier || userMeta.subscription_tier || appMeta.role || userMeta.role || 'free';
+    tier = String(tier || 'free').toLowerCase();
+    if (['premium', 'admin', 'qa', 'qa_admin'].indexOf(tier) >= 0) return 'premium';
+    return 'free';
+  }
+
+  function normalizeAuthState(session) {
+    var user = session && session.user ? session.user : null;
+    var accessTier = resolveAccessTier(user);
+    return {
+      authenticated: !!user,
+      user_id: user ? user.id : null,
+      email: user ? (user.email || '') : '',
+      access_tier: accessTier,
+      is_premium: accessTier === 'premium',
+      session_expires_at: session ? (session.expires_at || null) : null
+    };
+  }
+
   // ── UUID helper ───────────────────────────────────────────────────────────
   function uuid() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -513,6 +535,61 @@
     }
   }
 
+  async function getAuthState() {
+    const sb = getClient();
+    if (!sb || !sb.auth || typeof sb.auth.getSession !== 'function') {
+      return normalizeAuthState(null);
+    }
+    try {
+      const { data, error } = await sb.auth.getSession();
+      if (error) throw error;
+      return normalizeAuthState(data && data.session ? data.session : null);
+    } catch (err) {
+      log.warn('getAuthState failed', err);
+      return normalizeAuthState(null);
+    }
+  }
+
+  async function signIn(email, password) {
+    const sb = getClient();
+    if (!sb || !sb.auth || typeof sb.auth.signInWithPassword !== 'function') {
+      return { ok: false, message: 'Auth is not available in this build.' };
+    }
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
+      if (error) throw error;
+      return { ok: true, auth: normalizeAuthState(data && data.session ? data.session : null) };
+    } catch (err) {
+      log.warn('signIn failed', err);
+      return { ok: false, message: err && err.message ? err.message : 'Sign in failed.' };
+    }
+  }
+
+  async function signOut() {
+    const sb = getClient();
+    if (!sb || !sb.auth || typeof sb.auth.signOut !== 'function') {
+      return { ok: false, message: 'Auth is not available in this build.' };
+    }
+    try {
+      const { error } = await sb.auth.signOut();
+      if (error) throw error;
+      return { ok: true };
+    } catch (err) {
+      log.warn('signOut failed', err);
+      return { ok: false, message: err && err.message ? err.message : 'Sign out failed.' };
+    }
+  }
+
+  function onAuthStateChange(callback) {
+    const sb = getClient();
+    if (!sb || !sb.auth || typeof sb.auth.onAuthStateChange !== 'function' || typeof callback !== 'function') {
+      return { data: { subscription: { unsubscribe: function(){} } } };
+    }
+    return sb.auth.onAuthStateChange(function(_event, session) {
+      try { callback(normalizeAuthState(session)); } catch (err) { log.warn('onAuthStateChange callback failed', err); }
+    });
+  }
+
   // ── loadAnalysesForPlayer (M6) ───────────────────────────────────────────
   async function loadAnalysesForPlayer(playerKey, limit) {
     limit = limit || 50;
@@ -591,6 +668,10 @@
     saveReplaySimComparison,
     saveCoachingReport,
     saveReplayHistoryBundle,
+    getAuthState,
+    signIn,
+    signOut,
+    onAuthStateChange,
     loadAnalysesForPlayer,
     loadAnalysisLogs,
     loadPriorSnapshot

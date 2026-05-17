@@ -2241,6 +2241,20 @@ table{border-collapse:collapse;width:100%}
   </div>
 </div>
 
+<div class="format-banner" id="auth-banner">
+  <div class="format-banner-inner" style="gap:10px;flex-wrap:wrap">
+    <span class="fmt-indicator" id="auth-indicator">AUTH · Guest session</span>
+    <span class="fmt-div">·</span>
+    <span class="fmt-source" id="auth-copy">Free mode stays local. Sign in to attach saved team profiles and replay history to an account.</span>
+    <span class="fmt-div">·</span>
+    <input class="select-input" id="auth-email" type="email" placeholder="internal account email" style="max-width:220px"/>
+    <input class="select-input" id="auth-password" type="password" placeholder="password" style="max-width:160px"/>
+    <button class="fmt-pill-btn" id="auth-signin-btn">Sign In</button>
+    <button class="fmt-pill-btn" id="auth-signout-btn" style="display:none">Sign Out</button>
+    <span class="fmt-source" id="auth-message">Internal MVP accounts only for now.</span>
+  </div>
+</div>
+
 <!-- TABS -->
 <nav class="tab-nav" role="tablist">
   <button class="tab-btn active" role="tab" data-tab="simulator">Simulator</button>
@@ -11544,6 +11558,28 @@ if (typeof window !== 'undefined') {
     return _client;
   }
 
+  function resolveAccessTier(user) {
+    var appMeta = (user && user.app_metadata) || {};
+    var userMeta = (user && user.user_metadata) || {};
+    var tier = appMeta.subscription_tier || userMeta.subscription_tier || appMeta.role || userMeta.role || 'free';
+    tier = String(tier || 'free').toLowerCase();
+    if (['premium', 'admin', 'qa', 'qa_admin'].indexOf(tier) >= 0) return 'premium';
+    return 'free';
+  }
+
+  function normalizeAuthState(session) {
+    var user = session && session.user ? session.user : null;
+    var accessTier = resolveAccessTier(user);
+    return {
+      authenticated: !!user,
+      user_id: user ? user.id : null,
+      email: user ? (user.email || '') : '',
+      access_tier: accessTier,
+      is_premium: accessTier === 'premium',
+      session_expires_at: session ? (session.expires_at || null) : null
+    };
+  }
+
   // ── UUID helper ───────────────────────────────────────────────────────────
   function uuid() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -11997,6 +12033,61 @@ if (typeof window !== 'undefined') {
     }
   }
 
+  async function getAuthState() {
+    const sb = getClient();
+    if (!sb || !sb.auth || typeof sb.auth.getSession !== 'function') {
+      return normalizeAuthState(null);
+    }
+    try {
+      const { data, error } = await sb.auth.getSession();
+      if (error) throw error;
+      return normalizeAuthState(data && data.session ? data.session : null);
+    } catch (err) {
+      log.warn('getAuthState failed', err);
+      return normalizeAuthState(null);
+    }
+  }
+
+  async function signIn(email, password) {
+    const sb = getClient();
+    if (!sb || !sb.auth || typeof sb.auth.signInWithPassword !== 'function') {
+      return { ok: false, message: 'Auth is not available in this build.' };
+    }
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
+      if (error) throw error;
+      return { ok: true, auth: normalizeAuthState(data && data.session ? data.session : null) };
+    } catch (err) {
+      log.warn('signIn failed', err);
+      return { ok: false, message: err && err.message ? err.message : 'Sign in failed.' };
+    }
+  }
+
+  async function signOut() {
+    const sb = getClient();
+    if (!sb || !sb.auth || typeof sb.auth.signOut !== 'function') {
+      return { ok: false, message: 'Auth is not available in this build.' };
+    }
+    try {
+      const { error } = await sb.auth.signOut();
+      if (error) throw error;
+      return { ok: true };
+    } catch (err) {
+      log.warn('signOut failed', err);
+      return { ok: false, message: err && err.message ? err.message : 'Sign out failed.' };
+    }
+  }
+
+  function onAuthStateChange(callback) {
+    const sb = getClient();
+    if (!sb || !sb.auth || typeof sb.auth.onAuthStateChange !== 'function' || typeof callback !== 'function') {
+      return { data: { subscription: { unsubscribe: function(){} } } };
+    }
+    return sb.auth.onAuthStateChange(function(_event, session) {
+      try { callback(normalizeAuthState(session)); } catch (err) { log.warn('onAuthStateChange callback failed', err); }
+    });
+  }
+
   // ── loadAnalysesForPlayer (M6) ───────────────────────────────────────────
   async function loadAnalysesForPlayer(playerKey, limit) {
     limit = limit || 50;
@@ -12075,6 +12166,10 @@ if (typeof window !== 'undefined') {
     saveReplaySimComparison,
     saveCoachingReport,
     saveReplayHistoryBundle,
+    getAuthState,
+    signIn,
+    signOut,
+    onAuthStateChange,
     loadAnalysesForPlayer,
     loadAnalysisLogs,
     loadPriorSnapshot
@@ -17743,6 +17838,121 @@ function csPersistenceToken(value, fallback) {
   return token || String(fallback || 'unknown');
 }
 
+function csGetAuthState() {
+  if (typeof ChampionsSim === 'undefined' || !ChampionsSim.state || !ChampionsSim.state.authState) {
+    return {
+      authenticated: false,
+      user_id: null,
+      email: '',
+      access_tier: 'free',
+      is_premium: false
+    };
+  }
+  return ChampionsSim.state.authState;
+}
+
+function csRememberAuthState(authState) {
+  if (typeof ChampionsSim === 'undefined' || !ChampionsSim.state) return null;
+  ChampionsSim.state.authState = authState || {
+    authenticated: false,
+    user_id: null,
+    email: '',
+    access_tier: 'free',
+    is_premium: false
+  };
+  return ChampionsSim.state.authState;
+}
+
+function csRenderAuthUi() {
+  var auth = csGetAuthState();
+  var indicator = document.getElementById('auth-indicator');
+  var copy = document.getElementById('auth-copy');
+  var message = document.getElementById('auth-message');
+  var email = document.getElementById('auth-email');
+  var password = document.getElementById('auth-password');
+  var signInBtn = document.getElementById('auth-signin-btn');
+  var signOutBtn = document.getElementById('auth-signout-btn');
+  if (indicator) indicator.textContent = auth.authenticated
+    ? ('AUTH · ' + (auth.is_premium ? 'Premium' : 'Free') + ' · ' + (auth.email || 'signed in'))
+    : 'AUTH · Guest session';
+  if (copy) copy.textContent = auth.authenticated
+    ? 'Saved team profiles and replay history now attach to this authenticated account when profile sync is active.'
+    : 'Free mode stays local. Sign in to attach saved team profiles and replay history to an account.';
+  if (message) message.textContent = auth.authenticated
+    ? ('Access tier: ' + (auth.access_tier || 'free') + '. Raw replay logs remain opt-in only.')
+    : 'Internal MVP accounts only for now.';
+  if (email) email.style.display = auth.authenticated ? 'none' : '';
+  if (password) password.style.display = auth.authenticated ? 'none' : '';
+  if (signInBtn) signInBtn.style.display = auth.authenticated ? 'none' : '';
+  if (signOutBtn) signOutBtn.style.display = auth.authenticated ? '' : 'none';
+}
+
+function csBindAuthUi() {
+  var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
+  var signInBtn = document.getElementById('auth-signin-btn');
+  var signOutBtn = document.getElementById('auth-signout-btn');
+  var message = document.getElementById('auth-message');
+  var email = document.getElementById('auth-email');
+  var password = document.getElementById('auth-password');
+  if (!adapter || !adapter.enabled) {
+    csRememberAuthState(null);
+    csRenderAuthUi();
+    if (message) message.textContent = 'Supabase auth is offline in this build. Free local mode remains available.';
+    return;
+  }
+  if (signInBtn && signInBtn.dataset.boundAuth !== '1') {
+    signInBtn.dataset.boundAuth = '1';
+    signInBtn.addEventListener('click', function() {
+      var mail = email && email.value ? String(email.value).trim() : '';
+      var pass = password && password.value ? String(password.value) : '';
+      if (!mail || !pass) {
+        if (message) message.textContent = 'Enter an email and password for an internal account.';
+        return;
+      }
+      if (message) message.textContent = 'Signing in…';
+      Promise.resolve(typeof adapter.signIn === 'function' ? adapter.signIn(mail, pass) : null).then(function(result) {
+        if (!result || !result.ok) {
+          if (message) message.textContent = (result && result.message) || 'Sign in failed.';
+          return;
+        }
+        csRememberAuthState(result.auth || null);
+        csRenderAuthUi();
+      }).catch(function(err) {
+        if (message) message.textContent = err && err.message ? err.message : 'Sign in failed.';
+      });
+    });
+  }
+  if (signOutBtn && signOutBtn.dataset.boundAuth !== '1') {
+    signOutBtn.dataset.boundAuth = '1';
+    signOutBtn.addEventListener('click', function() {
+      if (message) message.textContent = 'Signing out…';
+      Promise.resolve(typeof adapter.signOut === 'function' ? adapter.signOut() : null).then(function(result) {
+        if (!result || !result.ok) {
+          if (message) message.textContent = (result && result.message) || 'Sign out failed.';
+          return;
+        }
+        csRememberAuthState(null);
+        csRenderAuthUi();
+      }).catch(function(err) {
+        if (message) message.textContent = err && err.message ? err.message : 'Sign out failed.';
+      });
+    });
+  }
+  Promise.resolve(typeof adapter.getAuthState === 'function' ? adapter.getAuthState() : null).then(function(authState) {
+    csRememberAuthState(authState || null);
+    csRenderAuthUi();
+  }).catch(function() {
+    csRenderAuthUi();
+  });
+  if (typeof adapter.onAuthStateChange === 'function' && typeof ChampionsSim !== 'undefined' && ChampionsSim.state && !ChampionsSim.state.authSubscriptionBound) {
+    ChampionsSim.state.authSubscriptionBound = true;
+    adapter.onAuthStateChange(function(authState) {
+      csRememberAuthState(authState || null);
+      csRenderAuthUi();
+    });
+  }
+}
+
 function csPersistenceSpeciesKey(fingerprint) {
   var list = [];
   if (fingerprint && Array.isArray(fingerprint.speciesSet) && fingerprint.speciesSet.length) list = fingerprint.speciesSet.slice();
@@ -17784,6 +17994,7 @@ function csBuildPersistableTeamRunSnapshot(snapshot) {
   return {
     teamProfile: {
       team_profile_id: identity.team_profile_id,
+      user_id: csGetAuthState().user_id || null,
       display_name: identity.display_name,
       canonical_format: identity.canonical_format,
       canonical_ruleset: identity.canonical_ruleset,
@@ -17877,6 +18088,7 @@ function csBuildReplayHistoryBundle(analysis) {
     team_profile_id: base.teamProfile.team_profile_id,
     team_version_id: base.teamVersion && base.teamVersion.team_version_id
   } : null;
+  var auth = csGetAuthState();
   var replayArtifactId = 'ra:' + csPersistenceToken(parsed.battleId || parsed.id || [summary.yourPlayer, summary.opponentPlayer, summary.turns, summary.format].join('-'), 'replay');
   var result = {
     teamProfile: base.teamProfile,
@@ -17884,6 +18096,7 @@ function csBuildReplayHistoryBundle(analysis) {
     teamRunSnapshot: base.teamRunSnapshot,
     replayArtifact: {
       replay_artifact_id: replayArtifactId,
+      user_id: auth.user_id || null,
       source_type: 'showdown_log',
       source_url: parsed.sourceUrl || null,
       format: summary.format || parsed.formatKind || parsed.gametype || 'unknown',
@@ -22876,6 +23089,7 @@ function csBuildSourcesProvenanceModel(teamKey) {
   } catch (_compErr) {}
   var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
   var dbEnabled = !!(adapter && adapter.enabled);
+  var authState = csGetAuthState();
   var profilePersistence = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastProfilePersistence : null;
   var teamRunSnapshot = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastTeamRunSnapshot : null;
   var replayAnalysis = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastReplayCoachAnalysis : null;
@@ -22897,12 +23111,22 @@ function csBuildSourcesProvenanceModel(teamKey) {
     localHistoryCount: historyCount,
     compliance: compliance,
     dbEnabled: dbEnabled,
+    authState: authState,
     replayMode: replayMode,
     replayComparisonMode: replayComparisonMode,
     teamRunSnapshot: teamRunSnapshot,
     replayTeamMatch: replayTeamMatch,
     customTeams: customTeams,
     cards: [
+      {
+        title: 'Profile access',
+        status: authState && authState.authenticated ? (authState.is_premium ? 'premium' : 'signed-in') : 'guest',
+        confidence: authState && authState.authenticated ? 'high' : 'needs sign-in',
+        detail: authState && authState.authenticated
+          ? ((authState.email || 'signed in') + ' · tier ' + (authState.access_tier || 'free'))
+          : 'No authenticated profile is active. Saved replay/team memory cannot be tied to a user yet.',
+        boundary: 'Authentication is required for durable subscriber memory. Free mode still works without login.'
+      },
       {
         title: 'Simulation data',
         status: simGames ? 'available' : 'missing',
@@ -25568,6 +25792,7 @@ if (typeof window !== 'undefined') {
     await csHardenClientState();
     _csInitEvidenceToggle();
     csInitReplayCoachUi();
+    csBindAuthUi();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────
     // Await loadTeamsFromDB BEFORE the first authoritative rebuildTeamSelects()

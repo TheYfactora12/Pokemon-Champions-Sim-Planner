@@ -105,6 +105,20 @@
   </div>
 </div>
 
+<div class="format-banner" id="auth-banner">
+  <div class="format-banner-inner" style="gap:10px;flex-wrap:wrap">
+    <span class="fmt-indicator" id="auth-indicator">AUTH · Guest session</span>
+    <span class="fmt-div">·</span>
+    <span class="fmt-source" id="auth-copy">Free mode stays local. Sign in to attach saved team profiles and replay history to an account.</span>
+    <span class="fmt-div">·</span>
+    <input class="select-input" id="auth-email" type="email" placeholder="internal account email" style="max-width:220px"/>
+    <input class="select-input" id="auth-password" type="password" placeholder="password" style="max-width:160px"/>
+    <button class="fmt-pill-btn" id="auth-signin-btn">Sign In</button>
+    <button class="fmt-pill-btn" id="auth-signout-btn" style="display:none">Sign Out</button>
+    <span class="fmt-source" id="auth-message">Internal MVP accounts only for now.</span>
+  </div>
+</div>
+
 <!-- TABS -->
 <nav class="tab-nav" role="tablist">
   <button class="tab-btn active" role="tab" data-tab="simulator">Simulator</button>
