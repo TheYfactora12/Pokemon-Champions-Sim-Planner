@@ -13211,6 +13211,240 @@ if (typeof window !== 'undefined') {
     return hits / Math.max(aa.length, bb.length);
   }
 
+  function canonicalNameList(list) {
+    return (list || []).map(function(v) { return escText(v); }).filter(Boolean);
+  }
+
+  function simpleFingerprint(names) {
+    return normalizeNames(names).sort().join('|');
+  }
+
+  function pushUnique(list, value) {
+    value = escText(value);
+    if (value && list.indexOf(value) < 0) list.push(value);
+  }
+
+  function extractReplaySpeedEvents(parsed) {
+    var out = [];
+    (parsed && parsed.turns || []).forEach(function(turn) {
+      (turn.moves || []).forEach(function(move) {
+        var name = move && move.move || '';
+        if (/Tailwind|Trick Room|Icy Wind|Electroweb|Thunder Wave|Agility|Dragon Dance|Rapid Spin/i.test(name)) {
+          pushUnique(out, 'Turn ' + turn.turn + ': ' + name);
+        }
+      });
+      (turn.field || []).forEach(function(field) {
+        var text = field && (field.value || field.text || field.type) || '';
+        if (/Tailwind|Trick Room|weather|terrain|Sandstorm|Rain|Sun|Hail|Snow|Snowscape/i.test(text)) {
+          pushUnique(out, 'Turn ' + turn.turn + ': ' + text);
+        }
+      });
+    });
+    return out.slice(0, 10);
+  }
+
+  function extractReplayResourceEvents(parsed) {
+    var out = [];
+    (parsed && parsed.turns || []).forEach(function(turn) {
+      (turn.moves || []).forEach(function(move) {
+        var name = move && move.move || '';
+        if (/Protect|Detect|Fake Out|Follow Me|Rage Powder|U-turn|Volt Switch|Flip Turn|Recover|Roost|Tera/i.test(name)) {
+          pushUnique(out, 'Turn ' + turn.turn + ': ' + name);
+        }
+      });
+      (turn.events || []).forEach(function(ev) {
+        var text = ev && (ev.text || ev.type || ev.value) || '';
+        if (/tera|item|focus sash|leftovers|berry|protect|faint/i.test(text)) {
+          pushUnique(out, 'Turn ' + turn.turn + ': ' + text);
+        }
+      });
+    });
+    return out.slice(0, 12);
+  }
+
+  function extractReplayKoTimeline(parsed) {
+    var out = [];
+    (parsed && parsed.turns || []).forEach(function(turn) {
+      (turn.faints || []).forEach(function(faint) {
+        var mon = faint && (faint.pokemon || faint.name || faint.text) || 'Pokemon fainted';
+        out.push({ turn: turn.turn, pokemon: escText(mon) });
+      });
+    });
+    return out.slice(0, 20);
+  }
+
+  function extractReplayRngEvents(parsed, review) {
+    var out = [];
+    (review && review.coachingTags || []).forEach(function(issue) {
+      if (issue && issue.id === 'rng_material') out.push({ turn: issue.turn || null, event: issue.whatHappened || issue.message || 'Material RNG event' });
+    });
+    (parsed && parsed.turns || []).forEach(function(turn) {
+      (turn.events || []).forEach(function(ev) {
+        var text = ev && (ev.text || ev.type || ev.value) || '';
+        if (/crit|critical|miss|freeze|flinch|paraly|speed tie/i.test(text)) out.push({ turn: turn.turn, event: text });
+      });
+    });
+    return out.slice(0, 12);
+  }
+
+  function normalizeShowdownReplayToFacts(parsed, review, opts) {
+    opts = opts || {};
+    parsed = parsed || {};
+    review = review || {};
+    var summary = review.summary || {};
+    var rulesetProfile = parsed.rulesetProfile || {};
+    var confidence = confidenceFor(parsed, review.coachingTags || []);
+    return {
+      source: 'showdown',
+      sourceId: parsed.battleId || parsed.id || opts.sourceId || '',
+      format: summary.format || parsed.formatKind || parsed.gametype || opts.format || 'unknown',
+      rulesetProfile: summary.rulesetProfile || rulesetProfile.compatibilityClass || 'unknown',
+      playerTeamFingerprint: simpleFingerprint(summary.yourPreview || summary.yourFour || []),
+      opponentTeamFingerprint: simpleFingerprint(summary.opponentPreview || summary.opponentFour || []),
+      playerSelection: canonicalNameList(summary.yourFour || summary.yourSelection || []),
+      opponentSelection: canonicalNameList(summary.opponentFour || summary.opponentSelection || []),
+      playerLead: canonicalNameList(summary.yourLead || []),
+      opponentLead: canonicalNameList(summary.opponentLead || []),
+      winner: summary.winner || parsed.winner || '',
+      result: parsed.result || summary.result || '',
+      turnCount: parsed.totalTurns || summary.totalTurns || (parsed.turns && parsed.turns.length) || null,
+      winPath: summary.winPath || '',
+      lossPath: summary.mainIssue || '',
+      observedPath: summary.mainIssue || summary.criticalTurnLabel || '',
+      speedControlEvents: extractReplaySpeedEvents(parsed),
+      resourceEvents: extractReplayResourceEvents(parsed),
+      koTimeline: extractReplayKoTimeline(parsed),
+      statusTimeline: [],
+      rngEvents: extractReplayRngEvents(parsed, review),
+      criticalTurn: summary.criticalTurn || null,
+      mistakeTags: issueIds(review),
+      confidence: confidence
+    };
+  }
+
+  function normalizeSimulatorBattleToFacts(plan, opts) {
+    opts = opts || {};
+    plan = plan || {};
+    var battle = plan.battle || plan.simBattle || {};
+    var result = plan.result || battle.result || '';
+    var predictedWinner = plan.predictedWinner || plan.expectedWinner || '';
+    if (!predictedWinner && result) predictedWinner = result === 'win' ? 'player' : (result === 'loss' ? 'opponent' : 'draw');
+    var playerLead = plan.bestLead || plan.recommendedLead || plan.bestSimLead || (battle.leads && battle.leads.player) || [];
+    var opponentLead = plan.opponentLead || plan.expectedOpponentLead || (battle.leads && battle.leads.opponent) || [];
+    var playerSelection = plan.bestFour || plan.recommendedFour || plan.bestSimFour || (battle.bring && battle.bring.player) || [];
+    var opponentSelection = plan.opponentFour || plan.expectedOpponentFour || (battle.bring && battle.bring.opponent) || [];
+    var speedEvents = [];
+    if (battle.trTurns) speedEvents.push('Trick Room turns: ' + battle.trTurns);
+    if (battle.twTurns) speedEvents.push('Tailwind turns: ' + battle.twTurns);
+    (plan.speedControlEvents || []).forEach(function(x) { pushUnique(speedEvents, x); });
+    return {
+      source: 'sim',
+      sourceId: plan.sourceId || plan.matchedOpponentKey || '',
+      format: plan.format || opts.format || 'unknown',
+      rulesetProfile: plan.rulesetProfile || opts.rulesetProfile || 'simulation',
+      playerTeamFingerprint: simpleFingerprint(plan.playerPreview || playerSelection),
+      opponentTeamFingerprint: simpleFingerprint(plan.opponentPreview || opponentSelection),
+      playerSelection: canonicalNameList(playerSelection),
+      opponentSelection: canonicalNameList(opponentSelection),
+      playerLead: canonicalNameList(playerLead),
+      opponentLead: canonicalNameList(opponentLead),
+      winner: predictedWinner,
+      result: result,
+      turnCount: plan.turnCount || battle.turns || null,
+      winPath: plan.expectedWinPath || plan.winPath || plan.safestLine || battle.winCondition || '',
+      lossPath: plan.expectedLossPath || '',
+      observedPath: plan.expectedWinPath || plan.winPath || battle.winCondition || '',
+      speedControlEvents: speedEvents.slice(0, 10),
+      resourceEvents: canonicalNameList(plan.resourceEvents || []),
+      koTimeline: Array.isArray(battle.koEvents) ? battle.koEvents.slice(0, 20) : [],
+      statusTimeline: [],
+      rngEvents: canonicalNameList(plan.rngEvents || []),
+      criticalTurn: plan.criticalTurn || null,
+      mistakeTags: canonicalNameList(plan.expectedRiskTags || []),
+      confidence: plan.matchConfidence || plan.confidence || 'medium'
+    };
+  }
+
+  function textOverlap(a, b) {
+    a = normalizeNames(String(a || '').split(/[^A-Za-z0-9-]+/)).filter(function(x) { return x.length > 2; });
+    b = normalizeNames(String(b || '').split(/[^A-Za-z0-9-]+/)).filter(function(x) { return x.length > 2; });
+    if (!a.length || !b.length) return null;
+    var hits = a.filter(function(x) { return b.indexOf(x) >= 0; }).length;
+    return hits / Math.max(a.length, b.length);
+  }
+
+  function eventOverlap(a, b) {
+    var aa = normalizeNames(a);
+    var bb = normalizeNames(b);
+    if (!aa.length || !bb.length) return null;
+    var hits = aa.filter(function(x) {
+      return bb.some(function(y) { return y.indexOf(x) >= 0 || x.indexOf(y) >= 0; });
+    }).length;
+    return hits / Math.max(aa.length, bb.length);
+  }
+
+  function compareBattleFacts(simFacts, replayFacts, opts) {
+    opts = opts || {};
+    simFacts = simFacts || {};
+    replayFacts = replayFacts || {};
+    var leadOverlap = overlapScore(replayFacts.playerLead, simFacts.playerLead);
+    var selectionOverlap = overlapScore(replayFacts.playerSelection, simFacts.playerSelection);
+    var speedOverlap = eventOverlap(replayFacts.speedControlEvents, simFacts.speedControlEvents);
+    var pathOverlap = textOverlap(replayFacts.observedPath || replayFacts.winPath || replayFacts.lossPath, simFacts.winPath || simFacts.observedPath);
+    var winnerMatch = 'unknown';
+    if (simFacts.winner && replayFacts.winner) winnerMatch = normalizeNames([simFacts.winner])[0] === normalizeNames([replayFacts.winner])[0];
+    var turnCountDelta = null;
+    if (typeof simFacts.turnCount === 'number' && typeof replayFacts.turnCount === 'number') {
+      turnCountDelta = replayFacts.turnCount - simFacts.turnCount;
+    }
+    var criticalTurnOverlap = 'unknown';
+    if (simFacts.criticalTurn != null && replayFacts.criticalTurn != null) {
+      criticalTurnOverlap = Math.abs(Number(simFacts.criticalTurn) - Number(replayFacts.criticalTurn)) <= 1;
+    }
+    var replayOnlyMistakes = (replayFacts.mistakeTags || []).filter(function(tag) {
+      return (simFacts.mistakeTags || []).indexOf(tag) < 0;
+    });
+    var varianceEvents = replayFacts.rngEvents || [];
+    var simMissedThreats = [];
+    if (leadOverlap != null && leadOverlap < 0.5) simMissedThreats.push('opening_lead_plan');
+    if (selectionOverlap != null && selectionOverlap < 0.5) simMissedThreats.push('selected_team_plan');
+    if (speedOverlap === null && (replayFacts.speedControlEvents || []).length) simMissedThreats.push('observed_speed_control');
+    var classification = 'simulator_partially_confirmed';
+    if (replayFacts.confidence === 'low') classification = 'parser_confidence_too_low';
+    else if (varianceEvents.length >= 2) classification = 'variance_heavy_result';
+    else if (winnerMatch === false) classification = 'simulator_contradicted';
+    else if (replayOnlyMistakes.length && leadOverlap === 1 && (selectionOverlap === 1 || selectionOverlap === null)) classification = 'player_execution_loss';
+    else if ((leadOverlap != null && leadOverlap < 1) || (selectionOverlap != null && selectionOverlap < 1)) classification = 'team_construction_loss';
+    else if (leadOverlap === 1 && (selectionOverlap === 1 || selectionOverlap === null) && (pathOverlap === null || pathOverlap >= 0.2)) classification = 'simulator_confirmed';
+    var coachingNote = 'Compare the real replay against the sim plan before changing the team.';
+    if (classification === 'simulator_confirmed') coachingNote = 'The replay mostly followed the simulator story. Coach the sequencing and repeat the plan before rebuilding.';
+    else if (classification === 'player_execution_loss') coachingNote = 'The plan appears reasonable, but the replay shows execution mistakes that should become practice drills.';
+    else if (classification === 'team_construction_loss') coachingNote = 'The real lead or selection diverged from the sim plan. Test whether the sim plan is playable before changing slots.';
+    else if (classification === 'simulator_contradicted') coachingNote = 'The replay contradicts the sim expectation. Preserve this as a calibration fixture before trusting the matchup rating.';
+    else if (classification === 'variance_heavy_result') coachingNote = 'Variance materially touched the replay, so use the comparison cautiously and focus on whether the line preserved outs.';
+    return {
+      schema: 'battle_fact_comparison_v1',
+      leadMatch: leadOverlap == null ? 'unknown' : Math.round(leadOverlap * 100),
+      selectionMatch: selectionOverlap == null ? 'unknown' : Math.round(selectionOverlap * 100),
+      winnerMatch: winnerMatch,
+      turnCountDelta: turnCountDelta,
+      winPathMatch: pathOverlap == null ? 'unknown' : Math.round(pathOverlap * 100),
+      speedControlMatch: speedOverlap == null ? 'unknown' : Math.round(speedOverlap * 100),
+      criticalTurnOverlap: criticalTurnOverlap,
+      simPredictedThreatsSeen: [],
+      simMissedThreats: simMissedThreats,
+      replayOnlyMistakes: replayOnlyMistakes.slice(0, 6),
+      varianceEvents: varianceEvents,
+      classification: classification,
+      coachingNote: coachingNote,
+      confidence: replayFacts.confidence === 'low' || simFacts.confidence === 'low' ? 'low' : 'medium'
+    };
+  }
+
+  ChampionsSim.replayLearning.normalizeShowdownReplayToFacts = normalizeShowdownReplayToFacts;
+  ChampionsSim.replayLearning.normalizeSimulatorBattleToFacts = normalizeSimulatorBattleToFacts;
+  ChampionsSim.replayLearning.compareBattleFacts = compareBattleFacts;
+
   function buildSimComparison(parsed, review, opts) {
     opts = opts || {};
     var plan = opts.simPlan || opts.simRecommendation || opts.simComparison || null;
@@ -13219,6 +13453,7 @@ if (typeof window !== 'undefined') {
     var actualFour = summary.yourFour || [];
     var selectionCount = summary.selectionCountExpected || null;
     var selectionLabel = selectionCount === 3 ? 'selected three' : (selectionCount === 4 ? 'selected four' : 'selected team');
+    var replayFacts = normalizeShowdownReplayToFacts(parsed, review, opts);
     var noData = {
       status: 'needs_sim_data',
       comparisonStatus: 'parser_confidence_too_low',
@@ -13229,9 +13464,19 @@ if (typeof window !== 'undefined') {
       note: 'No matched simulation recommendation was provided for this replay yet.',
       decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/' + selectionLabel + '/path against the trainer’s real replay choices.',
       actualLead: actualLead,
-      actualFour: actualFour
+      actualFour: actualFour,
+      battleFacts: {
+        replay: replayFacts,
+        sim: null
+      },
+      factComparison: null
     };
     if (!plan) return noData;
+    var simFacts = normalizeSimulatorBattleToFacts(plan, {
+      format: replayFacts.format,
+      rulesetProfile: replayFacts.rulesetProfile
+    });
+    var factComparison = compareBattleFacts(simFacts, replayFacts, opts);
     var bestLead = plan.bestLead || plan.recommendedLead || plan.bestSimLead || [];
     var bestFour = plan.bestFour || plan.recommendedFour || plan.bestSimFour || [];
     var expectedWinPath = plan.expectedWinPath || plan.winPath || plan.safestLine || '';
@@ -13297,6 +13542,13 @@ if (typeof window !== 'undefined') {
       matchedOpponentKey: plan.matchedOpponentKey || '',
       matchedOpponentName: plan.matchedOpponentName || '',
       matchConfidence: plan.matchConfidence || confidence
+      ,
+      battleFacts: {
+        replay: replayFacts,
+        sim: simFacts
+      },
+      factComparison: factComparison,
+      battleMirror: factComparison
     };
   }
 
@@ -16819,11 +17071,15 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Selection match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Battle Mirror</strong><span>' + _escapeHtml((simComparison.factComparison && simComparison.factComparison.classification) || simComparison.comparisonStatus || 'needs_sim_data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Winner overlap</strong><span>' + _escapeHtml(simComparison.factComparison ? String(simComparison.factComparison.winnerMatch) : 'unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Turn delta</strong><span>' + _escapeHtml(simComparison.factComparison && simComparison.factComparison.turnCountDelta != null ? String(simComparison.factComparison.turnCountDelta) : 'unknown') + '</span></div>' +
       '</div>' +
       '<div class="replay-coach-list">' +
         '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>First deviation</strong>' + _escapeHtml(simComparison.firstDeviation || simComparison.note || 'Needs sim data') + '<small>' + _escapeHtml(simComparison.decisionChange || '') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>Diagnosis boundary</strong>' + _escapeHtml(simComparison.teamVsPilotDiagnosis || 'Do not judge team vs pilot until sim and replay data are matched.') + '</div>' +
+        (simComparison.factComparison ? '<div class="replay-coach-list-row"><strong>Battle Mirror coach read</strong>' + _escapeHtml(simComparison.factComparison.coachingNote || '') + '<small>Replay-only mistakes: ' + _escapeHtml((simComparison.factComparison.replayOnlyMistakes || []).join(', ') || 'none detected') + '</small><small>Sim missed: ' + _escapeHtml((simComparison.factComparison.simMissedThreats || []).join(', ') || 'none detected') + '</small></div>' : '') +
       '</div>' +
     '</div>' : '') +
     (simFeedback ? '<div class="replay-coach-card">' +

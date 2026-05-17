@@ -3197,11 +3197,15 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Selection match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Battle Mirror</strong><span>' + _escapeHtml((simComparison.factComparison && simComparison.factComparison.classification) || simComparison.comparisonStatus || 'needs_sim_data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Winner overlap</strong><span>' + _escapeHtml(simComparison.factComparison ? String(simComparison.factComparison.winnerMatch) : 'unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Turn delta</strong><span>' + _escapeHtml(simComparison.factComparison && simComparison.factComparison.turnCountDelta != null ? String(simComparison.factComparison.turnCountDelta) : 'unknown') + '</span></div>' +
       '</div>' +
       '<div class="replay-coach-list">' +
         '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>First deviation</strong>' + _escapeHtml(simComparison.firstDeviation || simComparison.note || 'Needs sim data') + '<small>' + _escapeHtml(simComparison.decisionChange || '') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>Diagnosis boundary</strong>' + _escapeHtml(simComparison.teamVsPilotDiagnosis || 'Do not judge team vs pilot until sim and replay data are matched.') + '</div>' +
+        (simComparison.factComparison ? '<div class="replay-coach-list-row"><strong>Battle Mirror coach read</strong>' + _escapeHtml(simComparison.factComparison.coachingNote || '') + '<small>Replay-only mistakes: ' + _escapeHtml((simComparison.factComparison.replayOnlyMistakes || []).join(', ') || 'none detected') + '</small><small>Sim missed: ' + _escapeHtml((simComparison.factComparison.simMissedThreats || []).join(', ') || 'none detected') + '</small></div>' : '') +
       '</div>' +
     '</div>' : '') +
     (simFeedback ? '<div class="replay-coach-card">' +

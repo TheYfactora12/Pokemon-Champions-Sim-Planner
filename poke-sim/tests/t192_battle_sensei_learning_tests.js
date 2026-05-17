@@ -126,6 +126,8 @@ T('8. sim comparison stays low confidence until matched sim data exists', () => 
   eq(sim.comparisonStatus, 'parser_confidence_too_low', 'contract status for missing sim data');
   eq(sim.calibrationAction, 'none', 'no sim data should not calibrate');
   eq(sim.evidenceLabel, 'Needs more data', 'needs evidence');
+  truthy(sim.battleFacts && sim.battleFacts.replay && sim.battleFacts.replay.source === 'showdown', 'showdown facts should exist without sim data');
+  eq(sim.factComparison, null, 'no sim data has no fact comparison');
   inc(sim.decisionChange, 'Run this matchup in Sim Mode or upload more logs', 'decision-changing next step');
   eq(packet.shouldUpdateLeadModel, false, 'no sim match means no lead model update');
   eq(packet.shouldUpdateBringFourModel, false, 'no sim match means no bring model update');
@@ -144,6 +146,11 @@ T('8. sim comparison stays low confidence until matched sim data exists', () => 
   truthy(['simulator_confirmed', 'simulator_partially_confirmed', 'player_execution_loss', 'team_construction_loss', 'variance_heavy_result'].includes(matched.comparisonStatus), 'contract comparison status');
   truthy(['none', 'create_fixture', 'review_sim_model'].includes(matched.calibrationAction), 'contract calibration action');
   eq(matched.predictedWinPath, 'Set speed control, preserve cleaner, and convert pressure.', 'predicted win path');
+  truthy(matched.battleFacts && matched.battleFacts.sim && matched.battleFacts.replay, 'matched comparison includes both normalized fact models');
+  truthy(matched.factComparison && matched.factComparison.schema === 'battle_fact_comparison_v1', 'matched comparison includes Battle Mirror fact comparison');
+  eq(matched.factComparison.leadMatch, 100, 'Battle Mirror lead overlap');
+  truthy(['simulator_confirmed', 'simulator_partially_confirmed', 'player_execution_loss', 'team_construction_loss', 'variance_heavy_result', 'simulator_contradicted'].includes(matched.factComparison.classification), 'Battle Mirror classification');
+  truthy(matched.factComparison.coachingNote, 'Battle Mirror coaching note');
   truthy(matched.evidenceLabel !== 'Needs more data', 'matched evidence improves');
 });
 
