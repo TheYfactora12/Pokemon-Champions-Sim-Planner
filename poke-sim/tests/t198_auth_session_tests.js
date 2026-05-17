@@ -136,6 +136,13 @@ T('1. auth state is stored and exposes premium tier', () => {
   eq(auth.is_premium, true, 'premium flag');
 });
 
+T('1b. premium must not be inferred from client-controlled user metadata', () => {
+  const adapterSrc = fs.readFileSync(path.join(ROOT, 'supabase_adapter.js'), 'utf8');
+  if (adapterSrc.includes('userMeta.subscription_tier') || adapterSrc.includes('userMeta.role')) {
+    throw new Error('resolveAccessTier still trusts user_metadata');
+  }
+});
+
 T('2. team profile persistence bundle is scoped to signed-in user', () => {
   setCurrentFormat('doubles');
   const snapshot = csStoreTeamRunSnapshot('player', 'rin_sand', 'doubles', 3, 'test');

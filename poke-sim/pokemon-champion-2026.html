@@ -11560,8 +11560,7 @@ if (typeof window !== 'undefined') {
 
   function resolveAccessTier(user) {
     var appMeta = (user && user.app_metadata) || {};
-    var userMeta = (user && user.user_metadata) || {};
-    var tier = appMeta.subscription_tier || userMeta.subscription_tier || appMeta.role || userMeta.role || 'free';
+    var tier = appMeta.subscription_tier || appMeta.role || 'free';
     tier = String(tier || 'free').toLowerCase();
     if (['premium', 'admin', 'qa', 'qa_admin'].indexOf(tier) >= 0) return 'premium';
     return 'free';
