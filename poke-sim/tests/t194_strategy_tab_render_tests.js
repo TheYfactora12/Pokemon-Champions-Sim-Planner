@@ -135,11 +135,15 @@ vm.runInContext([
   'this.TEAMS = TEAMS;',
   'this.csBuildStrategyReportV2 = csBuildStrategyReportV2;',
   'this.renderStrategyTab = renderStrategyTab;',
+  'this.csClearStrategyData = csClearStrategyData;',
+  'this.csGetScopedStrategyResults = csGetScopedStrategyResults;',
+  'this.csSimLogAppendSeries = csSimLogAppendSeries;',
+  'this.csSimLogForTeamBothSides = csSimLogForTeamBothSides;',
   'this.setCurrentFormat = setCurrentFormat;',
   'this.ChampionsSim = ChampionsSim;'
 ].join(' '), ctx);
 
-const { TEAMS, csBuildStrategyReportV2, renderStrategyTab, setCurrentFormat, ChampionsSim } = ctx;
+const { TEAMS, csBuildStrategyReportV2, renderStrategyTab, csClearStrategyData, csGetScopedStrategyResults, csSimLogAppendSeries, csSimLogForTeamBothSides, setCurrentFormat, ChampionsSim } = ctx;
 
 const host = ctx.document.getElementById('strategy-content');
 const oppSel = ctx.document.getElementById('opponent-select');
@@ -287,14 +291,53 @@ T('2. trainer-facing matchup lists use names instead of internal team keys', () 
 
 T('3. live Strategy tab renders Matchup Intelligence and BO3 sections after sims', () => {
   ChampionsSim.state.lastResults = testResults;
+  ChampionsSim.state.lastResultsPlayerKey = 'player';
+  ChampionsSim.state.lastResultsFormat = 'doubles';
   renderStrategyTab('player');
   inc(host.innerHTML, 'Matchup Intelligence', 'matchup intelligence section should render');
   inc(host.innerHTML, 'BO3 Adaptation', 'bo3 section should render');
   inc(host.innerHTML, 'Team compliance', 'team compliance note should render');
+  inc(host.innerHTML, 'Data Sources', 'data source section should render');
+  inc(host.innerHTML, 'Clear Strategy data', 'fresh-data clear action should render');
   inc(host.innerHTML, TEAMS.rin_sand.name, 'rendered HTML should use trainer-facing matchup names');
   if (TEAMS.rin_sand.name !== 'rin_sand') {
     notInc(host.innerHTML, 'rin_sand', 'internal team key should not leak into trainer UI');
   }
+});
+
+T('4. Strategy results are scoped to the active player team and format', () => {
+  ChampionsSim.state.lastResults = testResults;
+  ChampionsSim.state.lastResultsPlayerKey = 'rin_sand';
+  ChampionsSim.state.lastResultsFormat = 'doubles';
+  eq(Object.keys(csGetScopedStrategyResults('player', 'doubles')).length, 0, 'mismatched team results should be ignored');
+  ChampionsSim.state.lastResultsPlayerKey = 'player';
+  ChampionsSim.state.lastResultsFormat = 'singles';
+  eq(Object.keys(csGetScopedStrategyResults('player', 'doubles')).length, 0, 'mismatched format results should be ignored');
+  ChampionsSim.state.lastResultsFormat = 'doubles';
+  truthy(Object.keys(csGetScopedStrategyResults('player', 'doubles')).length > 0, 'matching scoped results should be used');
+});
+
+T('5. Strategy clear removes this team from both-side local sim history', () => {
+  csSimLogAppendSeries({
+    playerKey: 'player',
+    oppKey: 'rin_sand',
+    format: 'doubles',
+    bo: 1,
+    battleResults: [{ result: 'win', turns: 3, leads: { player: ['A'], opponent: ['B'] }, bring: { player: ['A'], opponent: ['B'] } }],
+    seriesResult: 'win'
+  });
+  csSimLogAppendSeries({
+    playerKey: 'rin_sand',
+    oppKey: 'player',
+    format: 'doubles',
+    bo: 1,
+    battleResults: [{ result: 'loss', turns: 3, leads: { player: ['B'], opponent: ['A'] }, bring: { player: ['B'], opponent: ['A'] } }],
+    seriesResult: 'loss'
+  });
+  truthy(csSimLogForTeamBothSides('player').length >= 2, 'precondition: player has both-side sim history');
+  const cleared = csClearStrategyData('player', { render: false });
+  eq(cleared.ok, true, 'clear result');
+  eq(csSimLogForTeamBothSides('player').length, 0, 'player history should be fully cleared');
 });
 
 console.log(`\nstrategy tab V2 render tests: ${pass} pass, ${fail} fail\n`);

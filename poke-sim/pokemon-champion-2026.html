@@ -14398,6 +14398,7 @@ document.getElementById('player-select').addEventListener('change', function() {
     // T9j.12 (Refs #74): refresh sim-side bring picker after active-team change.
     if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
     if (typeof invalidateThreatResponseCache === 'function') invalidateThreatResponseCache();
+    if (typeof csStartFreshSimResultScope === 'function') csStartFreshSimResultScope(this.value, (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles'));
     // Phase 2 (Refs #46 #49) - rebuild Strategy tab when player switches teams.
     // Phase 3 (Refs #51) - paint cached snapshot first so the tab never flashes
     // blank between switches; the debounced rebuild will repaint with fresh data.
@@ -17746,6 +17747,34 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_ups
 // ============================================================
 let simRunning = false;
 
+function csStartFreshSimResultScope(teamKey, fmt) {
+  if (typeof ChampionsSim === 'undefined') return;
+  ChampionsSim.state.lastResults = {};
+  ChampionsSim.state.lastResultsPlayerKey = teamKey || null;
+  ChampionsSim.state.lastResultsFormat = fmt || (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles');
+  delete ChampionsSim.state.cachedStrategyOverride;
+}
+
+function csEnsureSimResultScope(teamKey, fmt) {
+  if (typeof ChampionsSim === 'undefined') return;
+  var format = fmt || (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles');
+  if (!ChampionsSim.state.lastResults ||
+      ChampionsSim.state.lastResultsPlayerKey !== teamKey ||
+      ChampionsSim.state.lastResultsFormat !== format) {
+    csStartFreshSimResultScope(teamKey, format);
+  }
+}
+
+function csGetScopedStrategyResults(teamKey, fmt) {
+  if (typeof ChampionsSim === 'undefined' || !ChampionsSim.state.lastResults) return {};
+  var format = fmt || (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles');
+  var owner = ChampionsSim.state.lastResultsPlayerKey || null;
+  var ownerFormat = ChampionsSim.state.lastResultsFormat || null;
+  if (owner && owner !== teamKey) return {};
+  if (ownerFormat && ownerFormat !== format) return {};
+  return ChampionsSim.state.lastResults || {};
+}
+
 function setProgress(pct, label, w, l) {
   document.getElementById('progress-fill').style.width=pct+'%';
   document.getElementById('progress-label').textContent=label;
@@ -17790,6 +17819,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
     if (!TEAMS[oppKey]) throw new Error('opponent team not loaded: ' + oppKey);
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
+    csEnsureSimResultScope(currentPlayerKey, currentFormat);
     const matBadge=document.getElementById('matrix-badge');
     if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
 
@@ -17838,6 +17868,7 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
     const bo=currentBo;
     if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
+    csStartFreshSimResultScope(currentPlayerKey, currentFormat);
     const planCount = buildFormatAwareTeamPlans(currentPlayerKey, currentFormat).length;
     const effectiveSeriesCount = planCount ? Math.max(n, planCount) : n;
     const opponentCount = getOrderedOpponentTeamKeys(currentPlayerKey, {
@@ -21629,6 +21660,37 @@ function getStrategyContentHost() {
     document.getElementById('tab-strategy');
 }
 
+function csRenderStrategyDataSources(report, teamKey, fromCache) {
+  var compliance = report && report.team_compliance ? report.team_compliance : null;
+  var complianceText = compliance ? (csInferComplianceLabel(compliance) + ' · ' + (compliance.ruleset_profile || 'unknown ruleset')) : 'Not checked';
+  var simSample = report && report.sim_data_version ? report.sim_data_version : 0;
+  var historyCount = 0;
+  try {
+    var h = (typeof computeTeamHistory === 'function') ? computeTeamHistory(teamKey) : null;
+    historyCount = h && typeof h.total_battles === 'number' ? h.total_battles : 0;
+  } catch (_e) {}
+  var scoped = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state.lastResultsPlayerKey)
+    ? (ChampionsSim.state.lastResultsPlayerKey === teamKey ? 'Scoped to this active team' : 'Ignored because it belongs to another team')
+    : 'Legacy/unscoped browser sample';
+  var sourceMode = fromCache ? 'Cached Strategy snapshot' : (simSample > 0 ? 'Fresh simulation overlay' : 'Team theory + available local memory');
+  var teamName = (typeof TEAMS !== 'undefined' && TEAMS[teamKey] && TEAMS[teamKey].name) ? TEAMS[teamKey].name : teamKey;
+  return '' +
+    '<section class="cs-section cs-data-sources">' +
+      '<h3 class="cs-h3">Data Sources</h3>' +
+      '<p class="cs-explain">This report is built from the data currently available for ' + _csEsc(teamName) + '. Free mode stays local and limited; paid mode can expand this into saved replay trends and long-term Battle IQ memory.</p>' +
+      '<div class="cs-cat-grid">' +
+        '<div class="cs-cat"><div class="cs-cat-label">Report source</div><div class="cs-cat-score">' + _csEsc(sourceMode) + '</div></div>' +
+        '<div class="cs-cat"><div class="cs-cat-label">Current sim data</div><div class="cs-cat-score">' + _csEsc(String(simSample)) + ' games</div><small>' + _csEsc(scoped) + '</small></div>' +
+        '<div class="cs-cat"><div class="cs-cat-label">Local trend memory</div><div class="cs-cat-score">' + _csEsc(String(historyCount)) + ' games</div><small>Browser-only until profile sync exists.</small></div>' +
+        '<div class="cs-cat"><div class="cs-cat-label">Compliance source</div><div class="cs-cat-score">' + _csEsc(complianceText) + '</div></div>' +
+      '</div>' +
+      '<div class="cs-strategy-actions">' +
+        '<button class="secondary-btn" type="button" id="strategy-clear-data-btn">Clear Strategy data</button>' +
+        '<span class="cs-muted">Clears cached report and local sim history for this team so the next run starts fresh.</span>' +
+      '</div>' +
+    '</section>';
+}
+
 function renderStrategyTab(teamKey) {
   var host = getStrategyContentHost();
   if (!host) return;
@@ -21647,8 +21709,9 @@ function renderStrategyTab(teamKey) {
     report = ChampionsSim.state.cachedStrategyOverride;
     fromCache = true;
   } else {
-    var results = (typeof window !== 'undefined' && ChampionsSim.state.lastResults) ? ChampionsSim.state.lastResults : {};
-    report = csBuildStrategyReportV2(teamKey, results, (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles'));
+    var strategyFormat = (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles');
+    var results = (typeof csGetScopedStrategyResults === 'function') ? csGetScopedStrategyResults(teamKey, strategyFormat) : ((typeof window !== 'undefined' && ChampionsSim.state.lastResults) ? ChampionsSim.state.lastResults : {});
+    report = csBuildStrategyReportV2(teamKey, results, strategyFormat);
   }
   if (!report) {
     host.innerHTML = '<div class="strategy-empty">Could not generate report for this team.</div>';
@@ -21689,6 +21752,7 @@ function renderStrategyTab(teamKey) {
       _csEsc(report.evidence_standard.label + ' · ' + report.evidence_standard.rule + ' Decision: ' + report.evidence_standard.decision) +
       '</p>';
   }
+  html += csRenderStrategyDataSources(report, teamKey, fromCache);
 
   // Phase 4b (Refs #52) — Adaptive state banner + consistency pill.
   // Inserted above Section 1 so the user sees the state before reading anything.
@@ -21930,6 +21994,14 @@ function renderStrategyTab(teamKey) {
   if (_history && typeof csWireLeadPairTableSort === 'function') {
     csWireLeadPairTableSort(host, teamKey);
   }
+  var strategyClearBtn = host.querySelector ? host.querySelector('#strategy-clear-data-btn') : null;
+  if (strategyClearBtn) {
+    strategyClearBtn.addEventListener('click', function(){
+      try {
+        if (typeof csClearStrategyData === 'function') csClearStrategyData(teamKey, { render: true });
+      } catch (e) { UILog.warn('strategy clear failed', e); }
+    });
+  }
 
   // Apply Evidence toggle state on initial paint
   _csApplyEvidenceVisibility();
@@ -22113,6 +22185,53 @@ function csClearReport(teamKey) {
 // Drop everything. Used by tests + a possible debug button later.
 function csClearAllReports() {
   return _csPersistWrite({ schema_version: CS_PERSIST_SCHEMA, reports: {} });
+}
+
+function csClearLegacyStrategyReport(teamKey) {
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  if (!team || typeof Storage === 'undefined' || typeof Storage.del !== 'function') return false;
+  try {
+    Storage.del(T9J16_STORAGE_KEY + '::' + teamSignature(team));
+    return true;
+  } catch (e) {
+    UILog.warn('legacy strategy clear failed', e);
+    return false;
+  }
+}
+
+function csClearStrategyData(teamKey, opts) {
+  var key = teamKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : null);
+  if (!key || typeof TEAMS === 'undefined' || !TEAMS[key]) return { ok: false, reason: 'unknown_team' };
+  var cleared = {
+    ok: true,
+    report: false,
+    legacyReport: false,
+    simLog: false,
+    memoryCache: false,
+    transientResults: false
+  };
+  try { cleared.report = !!csClearReport(key); } catch (_reportErr) {}
+  try { cleared.legacyReport = !!csClearLegacyStrategyReport(key); } catch (_legacyErr) {}
+  try { if (typeof csSimLogClearTeam === 'function') cleared.simLog = !!csSimLogClearTeam(key); } catch (_simErr) {}
+  try { if (typeof csInvalidateTeamHistory === 'function') csInvalidateTeamHistory(key); } catch (_histErr) {}
+  try { if (typeof csClearStrategyReportCache === 'function') { csClearStrategyReportCache(); cleared.memoryCache = true; } } catch (_cacheErr) {}
+  try {
+    if (typeof ChampionsSim !== 'undefined') {
+      var owner = ChampionsSim.state.lastResultsPlayerKey || null;
+      if (!owner || owner === key) {
+        ChampionsSim.state.lastResults = {};
+        ChampionsSim.state.lastResultsPlayerKey = key;
+        ChampionsSim.state.lastResultsFormat = (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles');
+        cleared.transientResults = true;
+      }
+      delete ChampionsSim.state.lastStrategyReport;
+      delete ChampionsSim.state.cachedStrategyOverride;
+    }
+  } catch (_stateErr) {}
+  if (!opts || opts.render !== false) {
+    try { if (typeof renderStrategyTab === 'function') renderStrategyTab(key); } catch (_renderErr) {}
+  }
+  return cleared;
 }
 
 // =========================================================================
@@ -22320,8 +22439,10 @@ function csSimLogForMatchup(playerKey, oppKey) {
 }
 function csSimLogClearTeam(teamKey) {
   var store = _csSimLogRead();
-  store.entries = store.entries.filter(function(e){ return e.playerKey !== teamKey; });
-  return _csSimLogWrite(store);
+  store.entries = store.entries.filter(function(e){ return e.playerKey !== teamKey && e.oppKey !== teamKey; });
+  var ok = _csSimLogWrite(store);
+  try { if (typeof csInvalidateTeamHistory === 'function') csInvalidateTeamHistory(teamKey); } catch (_e) {}
+  return ok;
 }
 function csSimLogClearAll() {
   return _csSimLogWrite({ schema_version: CS_SIMLOG_SCHEMA, entries: [] });
@@ -24026,6 +24147,7 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.strategy.strategyResultsHash = strategyResultsHash;
   ChampionsSim.strategy.csStrategyReportCacheSize = csStrategyReportCacheSize;
   ChampionsSim.strategy.csClearStrategyReportCache = csClearStrategyReportCache;
+  ChampionsSim.strategy.csClearStrategyData = csClearStrategyData;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('computeTeamHistory', computeTeamHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csInvalidateTeamHistory', csInvalidateTeamHistory);
@@ -24034,6 +24156,7 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRe
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('strategyResultsHash', strategyResultsHash);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csStrategyReportCacheSize', csStrategyReportCacheSize);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csClearStrategyReportCache', csClearStrategyReportCache);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csClearStrategyData', csClearStrategyData);
 
 // Paint cached report immediately if available. Used as the fast-path on
 // team-select change so the user never sees a blank tab between switches.
@@ -24088,10 +24211,12 @@ if (typeof window !== 'undefined') {
     ChampionsSim.strategy.csBuildStrategyReportV2 = csBuildStrategyReportV2;
     ChampionsSim.strategy.renderStrategyTab = renderStrategyTab;
     ChampionsSim.strategy.csScheduleStrategyRebuild = csScheduleStrategyRebuild;
+    ChampionsSim.strategy.csClearStrategyData = csClearStrategyData;
   }
   if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildStrategyReportV2', csBuildStrategyReportV2);
   if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderStrategyTab', renderStrategyTab);
   if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csScheduleStrategyRebuild', csScheduleStrategyRebuild);
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csClearStrategyData', csClearStrategyData);
 
   // Hook the existing tab-nav click and player-select change after DOM is ready
   document.addEventListener('DOMContentLoaded', async function(){
