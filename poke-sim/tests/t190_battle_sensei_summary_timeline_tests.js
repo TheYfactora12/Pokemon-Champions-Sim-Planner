@@ -27,11 +27,17 @@ T('1. Battle Sensei remains a separate tab from Strategy', () => {
   inc(html, '<script src="replay_learning.js"></script>');
 });
 
-T('2. summary renders selected-four confidence and team preview read', () => {
-  inc(ui, '<strong>Bring Confidence</strong>');
+T('2. summary renders selection confidence, format prompt, and team preview read', () => {
+  inc(html, 'for="replay-coach-format">Replay format</label>');
+  inc(html, 'id="replay-coach-format"');
+  inc(html, '<option value="auto">Auto detect from log</option>');
+  inc(ui, '<strong>Format</strong>');
+  inc(ui, '<strong>Your Selection</strong>');
+  inc(ui, '<strong>Selection Confidence</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Team Preview Read</h3>');
-  inc(ui, '<strong>Opponent Four</strong>');
+  inc(ui, '<strong>Opponent Selection</strong>');
   inc(ui, 'selectedFourConfidence');
+  inc(ui, 'formatMismatch');
 });
 
 T('3. timeline renders coaching read, better line, severity, and confidence', () => {
@@ -64,6 +70,7 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, '<h3 class="replay-coach-h3">Sim Comparison</h3>');
   inc(ui, '<h3 class="replay-coach-h3">Sim Feedback Packet</h3>');
   inc(ui, 'Single replay signals do not automatically rewrite sim models.');
+  inc(ui, '<strong>Selection match</strong>');
   inc(ui, 'Scenario queue');
   inc(ui, '<strong>Diagnosis boundary</strong>');
   inc(ui, 'csBuildBattleSenseiSimPlan');

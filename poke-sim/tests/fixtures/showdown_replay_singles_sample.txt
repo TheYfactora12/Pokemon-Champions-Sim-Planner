@@ -1,0 +1,49 @@
+|j|Alice
+|j|Bob
+|player|p1|Alice|1|1500
+|player|p2|Bob|2|1500
+|teamsize|p1|3
+|teamsize|p2|3
+|gametype|singles
+|tier|[Gen 9] Battle Stadium Singles
+|poke|p1|Dragonite, L50, M|
+|poke|p1|Rotom-Wash, L50|
+|poke|p1|Gholdengo, L50|
+|poke|p2|Mimikyu, L50, F|
+|poke|p2|Garchomp, L50, M|
+|poke|p2|Gholdengo, L50|
+|teampreview
+|start
+|switch|p1a: Dragonite|Dragonite, L50, M|100/100
+|switch|p2a: Mimikyu|Mimikyu, L50, F|100/100
+|turn|1
+|move|p1a: Dragonite|Dragon Dance|p1a: Dragonite
+|-boost|p1a: Dragonite|atk|1
+|-boost|p1a: Dragonite|spe|1
+|move|p2a: Mimikyu|Will-O-Wisp|p1a: Dragonite
+|-status|p1a: Dragonite|brn
+|turn|2
+|move|p1a: Dragonite|Earthquake|p2a: Mimikyu
+|-damage|p2a: Mimikyu|0 fnt
+|faint|p2a: Mimikyu
+|switch|p2a: Garchomp|Garchomp, L50, M|100/100
+|turn|3
+|switch|p1a: Rotom-Wash|Rotom-Wash, L50|100/100
+|move|p2a: Garchomp|Swords Dance|p2a: Garchomp
+|-boost|p2a: Garchomp|atk|2
+|turn|4
+|move|p2a: Garchomp|Earthquake|p1a: Rotom-Wash
+|-crit|p1a: Rotom-Wash
+|-damage|p1a: Rotom-Wash|0 fnt
+|faint|p1a: Rotom-Wash
+|switch|p1a: Gholdengo|Gholdengo, L50|100/100
+|turn|5
+|move|p1a: Gholdengo|Make It Rain|p2a: Garchomp
+|-damage|p2a: Garchomp|0 fnt
+|faint|p2a: Garchomp
+|switch|p2a: Gholdengo|Gholdengo, L50|100/100
+|turn|6
+|move|p1a: Gholdengo|Shadow Ball|p2a: Gholdengo
+|-damage|p2a: Gholdengo|0 fnt
+|faint|p2a: Gholdengo
+|win|Alice

@@ -6,6 +6,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const replayCoach = require(path.join(ROOT, 'replay_coach.js'));
 const sample = fs.readFileSync(path.join(ROOT, 'tests/fixtures/showdown_replay_sample.txt'), 'utf8');
+const singlesSample = fs.readFileSync(path.join(ROOT, 'tests/fixtures/showdown_replay_singles_sample.txt'), 'utf8');
 
 let pass = 0;
 let fail = 0;
@@ -130,6 +131,34 @@ T('7. marks partial bring-four evidence without overclaiming', () => {
   const ids = analysis.review.coachingTags.map((t) => t.id);
   includes(ids, 'questionable_bring', 'questionable bring rule id');
   eq(analysis.review.summary.selectedFourConfidence.level, 'medium', 'partial bring confidence');
+});
+
+T('8. singles replay uses one lead and three selected Pokemon', () => {
+  const parsed = replayCoach.parseShowdownLog(singlesSample, { selectedSide: 'p1', expectedFormat: 'singles' });
+  eq(parsed.format, 'singles', 'singles format');
+  eq(parsed.teamSizes.p1, 3, 'p1 teamsize');
+  eq(parsed.teamSizes.p2, 3, 'p2 teamsize');
+  eq(parsed.leads.p1.length, 1, 'single lead on p1');
+  eq(parsed.leads.p2.length, 1, 'single lead on p2');
+  eq(parsed.selectedPokemon.p1.length, 3, 'selected three on p1');
+  eq(parsed.selectedPokemon.p2.length, 3, 'selected three on p2');
+  eq(parsed.formatMismatch.mismatch, false, 'format matches selection');
+});
+
+T('9. singles review stays high confidence without questionable bring tag', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(singlesSample, { selectedSide: 'p1', expectedFormat: 'singles' });
+  const tags = analysis.review.coachingTags.map((t) => t.id);
+  eq(analysis.review.summary.selectedFourConfidence.level, 'high', 'singles selection confidence');
+  eq(analysis.review.summary.selectionCountExpected, 3, 'expected singles selection count');
+  eq(analysis.review.summary.yourLead.length, 1, 'summary single lead');
+  truthy(tags.length >= 1, 'singles replay still yields coaching tags');
+  if (tags.includes('questionable_bring')) throw new Error('singles fixture should not raise questionable_bring when all 3 selected Pokemon are revealed');
+});
+
+T('10. format mismatch is flagged when selector and log disagree', () => {
+  const parsed = replayCoach.parseShowdownLog(singlesSample, { selectedSide: 'p1', expectedFormat: 'doubles' });
+  eq(parsed.formatMismatch.mismatch, true, 'format mismatch flag');
+  truthy(parsed.warnings.some((w) => /format mismatch/i.test(w)), 'mismatch warning');
 });
 
 console.log(`\nBattle Sensei parser: ${pass} pass, ${fail} fail\n`);

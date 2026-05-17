@@ -2537,6 +2537,12 @@ table{border-collapse:collapse;width:100%}
             <option value="p1">Player 1 / p1</option>
             <option value="p2">Player 2 / p2</option>
           </select>
+          <label class="form-label" for="replay-coach-format">Replay format</label>
+          <select class="select-input" id="replay-coach-format">
+            <option value="auto">Auto detect from log</option>
+            <option value="doubles">Doubles</option>
+            <option value="singles">Singles</option>
+          </select>
           <label class="form-label" for="replay-coach-mode">Review type</label>
           <select class="select-input" id="replay-coach-mode">
             <option value="quick">Quick Review</option>
@@ -11915,6 +11921,47 @@ if (typeof window !== 'undefined') {
     if (v && list.indexOf(v) < 0) list.push(v);
   }
 
+  function formatKind(parsed) {
+    var raw = cleanText(parsed && parsed.format).toLowerCase();
+    if (raw.indexOf('single') >= 0) return 'singles';
+    if (raw.indexOf('double') >= 0 || raw.indexOf('vgc') >= 0) return 'doubles';
+    return 'unknown';
+  }
+
+  function countWord(count) {
+    var map = {
+      1: 'one',
+      2: 'two',
+      3: 'three',
+      4: 'four',
+      5: 'five',
+      6: 'six'
+    };
+    return map[count] || String(count || '');
+  }
+
+  function countWordTitle(count) {
+    var word = countWord(count);
+    return word ? word.charAt(0).toUpperCase() + word.slice(1) : '';
+  }
+
+  function expectedLeadCount(parsed) {
+    var kind = formatKind(parsed);
+    if (kind === 'singles') return 1;
+    if (kind === 'doubles') return 2;
+    return 2;
+  }
+
+  function expectedSelectionCount(parsed, side) {
+    var sizes = parsed && parsed.teamSizes ? parsed.teamSizes : null;
+    var size = sizes && sizes[side];
+    if (size && size > 0) return size;
+    var kind = formatKind(parsed);
+    if (kind === 'singles') return 3;
+    if (kind === 'doubles') return 4;
+    return null;
+  }
+
   function parseShowdownLog(rawLog, opts) {
     opts = opts || {};
     var selectedSide = normalizeSide(opts.selectedSide || 'p1');
@@ -11925,6 +11972,7 @@ if (typeof window !== 'undefined') {
       format: '',
       rated: null,
       players: { p1: '', p2: '' },
+      teamSizes: { p1: null, p2: null },
       teamPreview: { p1: [], p2: [] },
       selectedPokemon: { p1: [], p2: [] },
       leads: { p1: [], p2: [] },
@@ -11966,6 +12014,12 @@ if (typeof window !== 'undefined') {
       }
       if (tag === 'rated') {
         model.rated = true;
+        return;
+      }
+      if (tag === 'teamsize') {
+        var teamSizeSide = normalizeSide(parts[2]);
+        var teamSize = parseInt(parts[3], 10) || 0;
+        if (teamSizeSide && teamSize > 0) model.teamSizes[teamSizeSide] = teamSize;
         return;
       }
       if (tag === 'poke') {
@@ -12062,23 +12116,41 @@ if (typeof window !== 'undefined') {
       }
     });
 
-    model.leads.p1 = activeSeenBeforeTurnOne.p1.slice(0, 2);
-    model.leads.p2 = activeSeenBeforeTurnOne.p2.slice(0, 2);
+    var leadCount = expectedLeadCount(model);
+    model.leads.p1 = activeSeenBeforeTurnOne.p1.slice(0, leadCount);
+    model.leads.p2 = activeSeenBeforeTurnOne.p2.slice(0, leadCount);
     if (!model.leads.p1.length && model.turns[0]) {
-      model.leads.p1 = model.turns[0].switches.filter(function(s) { return s.side === 'p1'; }).map(function(s) { return s.pokemon; }).slice(0, 2);
-      model.leads.p2 = model.turns[0].switches.filter(function(s) { return s.side === 'p2'; }).map(function(s) { return s.pokemon; }).slice(0, 2);
+      model.leads.p1 = model.turns[0].switches.filter(function(s) { return s.side === 'p1'; }).map(function(s) { return s.pokemon; }).slice(0, leadCount);
+      model.leads.p2 = model.turns[0].switches.filter(function(s) { return s.side === 'p2'; }).map(function(s) { return s.pokemon; }).slice(0, leadCount);
     }
     model.turns = model.turns.filter(function(t) { return t.number > 0 || t.events.length > 0; });
     if (!model.totalTurns && model.turns.length) model.totalTurns = model.turns[model.turns.length - 1].number || 0;
 
     var selectedName = model.players[selectedSide];
     var oppSide = selectedSide === 'p1' ? 'p2' : 'p1';
+    var requestedFormat = cleanText(opts.expectedFormat).toLowerCase();
+    var actualFormat = formatKind(model);
+    model.formatKind = actualFormat;
     if (model.result !== 'tie' && model.winner) {
       model.result = selectedName && model.winner === selectedName ? 'win' : 'loss';
     }
     if (!model.players.p1 && !model.players.p2) model.warnings.push('Player names were not found in the log.');
     if (!model.leads.p1.length || !model.leads.p2.length) model.warnings.push('Lead Pokemon could not be fully inferred.');
     if (!model.teamPreview.p1.length && !model.teamPreview.p2.length) model.warnings.push('Team preview was not present; selected Pokemon are inferred from revealed actions.');
+    if ((requestedFormat === 'singles' || requestedFormat === 'doubles') && actualFormat !== 'unknown' && requestedFormat !== actualFormat) {
+      model.warnings.push('Replay format mismatch: selected ' + requestedFormat + ', but the log parsed as ' + actualFormat + '.');
+      model.formatMismatch = {
+        expected: requestedFormat,
+        actual: actualFormat,
+        mismatch: true
+      };
+    } else {
+      model.formatMismatch = {
+        expected: requestedFormat || 'auto',
+        actual: actualFormat,
+        mismatch: false
+      };
+    }
     model.ok = model.turns.length > 0 || !!model.winner;
     model.opponentSide = oppSide;
     return model;
@@ -12141,10 +12213,37 @@ if (typeof window !== 'undefined') {
   function selectedFourConfidence(parsed, side) {
     var preview = parsed.teamPreview && parsed.teamPreview[side] ? parsed.teamPreview[side] : [];
     var selected = parsed.selectedPokemon && parsed.selectedPokemon[side] ? parsed.selectedPokemon[side] : [];
-    if (selected.length >= 4) return { level: 'high', label: 'Four inferred', reason: 'At least four selected Pokemon appeared in the log.' };
-    if (preview.length >= 6 && selected.length > 0) return { level: 'medium', label: 'Partial bring', reason: 'Team preview exists, but not all brought Pokemon were revealed.' };
-    if (selected.length > 0) return { level: 'medium', label: 'Revealed only', reason: 'Selected Pokemon are inferred from revealed actions only.' };
-    return { level: 'low', label: 'Unknown', reason: 'The log did not reveal selected Pokemon.' };
+    var expected = expectedSelectionCount(parsed, side);
+    if (expected && selected.length >= expected) {
+      return {
+        level: 'high',
+        label: countWordTitle(expected) + ' inferred',
+        reason: 'All ' + expected + ' selected Pokemon appeared in the log.',
+        expectedCount: expected
+      };
+    }
+    if (preview.length >= 6 && selected.length > 0) {
+      return {
+        level: 'medium',
+        label: 'Partial selection',
+        reason: 'Team preview exists, but not all selected Pokemon were revealed.',
+        expectedCount: expected
+      };
+    }
+    if (selected.length > 0) {
+      return {
+        level: 'medium',
+        label: 'Revealed only',
+        reason: 'Selected Pokemon are inferred from revealed actions only.',
+        expectedCount: expected
+      };
+    }
+    return {
+      level: 'low',
+      label: 'Unknown',
+      reason: 'The log did not reveal selected Pokemon.',
+      expectedCount: expected
+    };
   }
 
   function sideNames(parsed, side) {
@@ -12287,6 +12386,8 @@ if (typeof window !== 'undefined') {
     var userSelected = parsed.selectedPokemon[side] || [];
     var oppSelected = parsed.selectedPokemon[opp] || [];
     var bringConfidence = selectedFourConfidence(parsed, side);
+    var selectionCount = expectedSelectionCount(parsed, side);
+    var selectionTitle = selectionCount ? 'Selected ' + countWordTitle(selectionCount) : 'Selected Team';
     var speedControlPieces = {};
 
     if (!userLead.length || !oppLead.length) {
@@ -12299,14 +12400,14 @@ if (typeof window !== 'undefined') {
         evidence: 'Missing lead data'
       });
     }
-    if (parsed.teamPreview[side] && parsed.teamPreview[side].length >= 6 && userSelected.length && userSelected.length < 4) {
-      addIssue(issues, 'Questionable Bring Evidence', 'low', null, 'Only part of your selected four could be inferred from revealed actions.', 'medium', 'Treat bring-four grades as incomplete until all brought Pokemon are revealed.', {
+    if (parsed.teamPreview[side] && parsed.teamPreview[side].length >= 6 && selectionCount && userSelected.length && userSelected.length < selectionCount) {
+      addIssue(issues, 'Questionable Bring Evidence', 'low', null, 'Only part of your selected team could be inferred from revealed actions.', 'medium', 'Treat team-selection grades as incomplete until all selected Pokemon are revealed.', {
         id: 'questionable_bring',
         category: 'bring_four',
-        whatHappened: 'Team preview showed six Pokemon, but fewer than four of your brought Pokemon appeared in the parsed log.',
-        whyMattered: 'Bring-four coaching can overclaim when the backline is hidden, especially in VGC-style games where the benched two explain the matchup plan.',
-        doInstead: 'Use the bring-four read as provisional until the full selected four are visible or entered manually.',
-        evidence: 'Preview count ' + parsed.teamPreview[side].length + ', revealed selected count ' + userSelected.length
+        whatHappened: 'Team preview showed six Pokemon, but fewer than ' + selectionCount + ' selected Pokemon appeared in the parsed log.',
+        whyMattered: 'Selection coaching can overclaim when the backline is hidden, especially in bring-' + selectionCount + ' formats where the unrevealed slots explain the matchup plan.',
+        doInstead: 'Use the selection read as provisional until the full selected team is visible or entered manually.',
+        evidence: 'Preview count ' + parsed.teamPreview[side].length + ', expected selected count ' + selectionCount + ', revealed selected count ' + userSelected.length
       });
     }
 
@@ -12460,13 +12561,21 @@ if (typeof window !== 'undefined') {
         yourSide: side,
         yourPlayer: parsed.players[side] || side,
         opponentPlayer: parsed.players[opp] || opp,
+        format: parsed.format || formatKind(parsed),
+        formatKind: formatKind(parsed),
+        formatMismatch: parsed.formatMismatch || null,
+        leadCountExpected: expectedLeadCount(parsed),
+        selectionCountExpected: selectionCount,
         yourLead: userLead,
         opponentLead: oppLead,
+        yourSelection: userSelected,
+        opponentSelection: oppSelected,
         yourFour: userSelected,
         opponentFour: oppSelected,
         yourPreview: parsed.teamPreview[side] || [],
         opponentPreview: parsed.teamPreview[opp] || [],
         selectedFourConfidence: bringConfidence,
+        selectionTitle: selectionTitle,
         leadGrade: userLead.length && oppLead.length ? 'Reviewable' : 'Unknown',
         criticalTurn: criticalTurn,
         mainIssue: firstMistake ? firstMistake.tag : 'No major issue detected',
@@ -12835,8 +12944,10 @@ if (typeof window !== 'undefined') {
     }
 
     var summary = review.summary || {};
+    var selectionCount = summary.selectionCountExpected || null;
+    var selectionLabel = selectionCount === 3 ? 'selected three' : (selectionCount === 4 ? 'selected four' : 'selected team');
     if ((summary.yourLead || []).length && (summary.opponentLead || []).length) add('lead_iq', 8, 'Opening leads were visible enough to evaluate the plan.');
-    if (summary.selectedFourConfidence && summary.selectedFourConfidence.level === 'high') add('lead_iq', 5, 'Selected four were inferred with high confidence.');
+    if (summary.selectedFourConfidence && summary.selectedFourConfidence.level === 'high') add('lead_iq', 5, selectionLabel.charAt(0).toUpperCase() + selectionLabel.slice(1) + ' was inferred with high confidence.');
     if (parsed.result === 'win') add('risk_discipline_iq', 3, 'Result slightly supports execution, but win/loss is not the primary scoring driver.');
 
     issues.forEach(function(issue) {
@@ -12846,7 +12957,7 @@ if (typeof window !== 'undefined') {
         add('turn_1_iq', -10, 'Turn 1 plan depended on an interrupt that did not hold.');
         add('threat_recognition_iq', -4, 'Opponent setup threat was not fully answered from preview.');
       } else if (id === 'questionable_bring') {
-        add('lead_iq', -5, 'Bring-four evidence was incomplete, so lead quality is less reliable.');
+        add('lead_iq', -5, 'Selected-team evidence was incomplete, so lead quality is less reliable.');
       } else if (id === 'speed_control_without_pressure') {
         add('speed_control_iq', -12, 'Speed control was used without immediate pressure or conversion.');
         add('turn_1_iq', -6, 'Early speed control did not create a clear follow-up.');
@@ -13012,13 +13123,15 @@ if (typeof window !== 'undefined') {
     var summary = (review && review.summary) || {};
     var actualLead = summary.yourLead || [];
     var actualFour = summary.yourFour || [];
+    var selectionCount = summary.selectionCountExpected || null;
+    var selectionLabel = selectionCount === 3 ? 'selected three' : (selectionCount === 4 ? 'selected four' : 'selected team');
     var noData = {
       status: 'needs_sim_data',
       evidenceTier: 'needs_more_data',
       evidenceLabel: evidenceLabel('needs_more_data'),
       confidence: 'low',
       note: 'No matched simulation recommendation was provided for this replay yet.',
-      decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/four/path against the trainer’s real replay choices.',
+      decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/' + selectionLabel + '/path against the trainer’s real replay choices.',
       actualLead: actualLead,
       actualFour: actualFour
     };
@@ -13034,8 +13147,8 @@ if (typeof window !== 'undefined') {
     var tier = evidenceTier(confidence, evidenceCount);
     var firstDeviation = 'Needs more data';
     if (leadOverlap != null && leadOverlap < 1) firstDeviation = 'Actual lead differed from the sim-recommended lead.';
-    else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual selected four differed from the sim-recommended four.';
-    else if (expectedWinPath) firstDeviation = 'Lead/four matched; compare turn sequencing against expected win path.';
+    else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual ' + selectionLabel + ' differed from the sim-recommended ' + selectionLabel + '.';
+    else if (expectedWinPath) firstDeviation = 'Lead/' + selectionLabel + ' matched; compare turn sequencing against expected win path.';
     return {
       status: 'matched',
       evidenceTier: tier,
@@ -13050,8 +13163,8 @@ if (typeof window !== 'undefined') {
       expectedWinPath: expectedWinPath || 'Needs sim win-path data',
       actualPath: summary.mainIssue || 'Needs turn review',
       firstDeviation: firstDeviation,
-      teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/four matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/bring selection may have diverged from the simulated plan; verify with more battles before changing the team.',
-      decisionChange: 'Use this comparison to decide whether the trainer should test a different lead/four, practice the same sim plan with cleaner sequencing, or collect more logs before changing the team.',
+      teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/' + selectionLabel + ' matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/team selection may have diverged from the simulated plan; verify with more battles before changing the team.',
+      decisionChange: 'Use this comparison to decide whether the trainer should test a different lead/' + selectionLabel + ', practice the same sim plan with cleaner sequencing, or collect more logs before changing the team.',
       source: plan.source || 'matched simulation plan',
       matchedOpponentKey: plan.matchedOpponentKey || '',
       matchedOpponentName: plan.matchedOpponentName || '',
@@ -13171,9 +13284,11 @@ if (typeof window !== 'undefined') {
     var summary = (review && review.summary) || {};
     var first = critical && critical.firstMistake;
     var fatal = critical && critical.fatalMistake;
-    var leadNames = (summary.yourLead || []).join(' + ') || 'your lead pair';
+    var leadNames = (summary.yourLead || []).join(' + ') || 'your lead';
+    var selectionCount = summary.selectionCountExpected || null;
+    var selectionLabel = selectionCount === 3 ? 'selected three' : (selectionCount === 4 ? 'selected four' : 'selected team');
     return {
-      beforeGame: 'Use your selected four to create speed or positioning control, then preserve the Pokemon that converts the endgame.',
+      beforeGame: 'Use your ' + selectionLabel + ' to create speed or positioning control, then preserve the Pokemon that converts the endgame.',
       afterLeads: 'With ' + leadNames + ', your first test is whether the lead pressures the opponent plan even if the first interrupt fails.',
       afterKeyTurn: fatal ? 'After turn ' + fatal.turn + ', the win path likely shifted toward recovery: preserve the remaining cleaner and stop further field control.' : 'No key-turn shift was proven from the log.',
       followedOrAbandoned: first && fatal && first.turn !== fatal.turn ? 'The early plan was stressed before the fatal turn. This suggests an execution path problem, not only a last-turn mistake.' : 'The log does not prove a separate abandoned win path.',
@@ -13281,7 +13396,7 @@ if (typeof window !== 'undefined') {
         {
           id: 'matchup_memory',
           label: 'Matchup memory',
-          preview: 'Remember which leads, bring-fours, and win paths worked for you into each archetype.'
+          preview: 'Remember which leads, team selections, and win paths worked for you into each archetype.'
         },
         {
           id: 'full_battle_iq_subscores',
@@ -16145,6 +16260,9 @@ function csReplayCoachRenderAnalysis(analysis) {
   var simFeedback = learning && learning.simFeedback ? learning.simFeedback : null;
   var rawPreview = review.rawLogPreview || {};
   var bringConfidence = summary.selectedFourConfidence || {};
+  var yourSelection = summary.yourSelection || summary.yourFour || [];
+  var opponentSelection = summary.opponentSelection || summary.opponentFour || [];
+  var parsedFormat = summary.format || parsed.format || summary.formatKind || 'Unknown';
   var warnings = (review.warnings || []).map(function(w) {
     return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
   }).join('');
@@ -16226,10 +16344,11 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<div class="replay-coach-summary-grid">' +
         '<div class="replay-coach-metric"><strong>Players</strong><span>' + _escapeHtml((summary.yourPlayer || 'You') + ' vs ' + (summary.opponentPlayer || 'Opponent')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Turns</strong><span>' + _escapeHtml(String(summary.turns || 0)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Format</strong><span>' + _escapeHtml(parsedFormat) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Your Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourLead)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Opp Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentLead)) + '</span></div>' +
-        '<div class="replay-coach-metric"><strong>Your Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourFour, 'Inferred from revealed actions')) + '</span></div>' +
-        '<div class="replay-coach-metric"><strong>Bring Confidence</strong><span>' + _escapeHtml((bringConfidence.label || 'Unknown') + ' · ' + (bringConfidence.level || 'low')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Your Selection</strong><span>' + _escapeHtml(csReplayCoachJoin(yourSelection, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Selection Confidence</strong><span>' + _escapeHtml((bringConfidence.label || 'Unknown') + ' · ' + (bringConfidence.level || 'low')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Critical Turn</strong><span>' + _escapeHtml(summary.criticalTurn ? 'Turn ' + summary.criticalTurn : 'Unknown') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Main Issue</strong><span>' + _escapeHtml(summary.mainIssue || 'No major issue detected') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(summary.confidence || 'medium') + '</span></div>' +
@@ -16241,8 +16360,8 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<div class="replay-coach-summary-grid">' +
         '<div class="replay-coach-metric"><strong>Your Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourPreview, 'Missing')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Opponent Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentPreview, 'Missing')) + '</span></div>' +
-        '<div class="replay-coach-metric"><strong>Opponent Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentFour, 'Inferred from revealed actions')) + '</span></div>' +
-        '<div class="replay-coach-metric"><strong>Bring Read</strong><span>' + _escapeHtml(bringConfidence.reason || 'Bring data is unknown from this log.') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opponent Selection</strong><span>' + _escapeHtml(csReplayCoachJoin(opponentSelection, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Selection Read</strong><span>' + _escapeHtml(bringConfidence.reason || 'Selection data is unknown from this log.') + '</span></div>' +
       '</div>' +
     '</div>' +
     '<div class="replay-coach-card">' +
@@ -16304,7 +16423,7 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(simComparison.status || 'needs_sim_data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
-        '<div class="replay-coach-metric"><strong>Four match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Selection match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
       '</div>' +
       '<div class="replay-coach-list">' +
         '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
@@ -16321,7 +16440,7 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>RNG</strong><span>' + _escapeHtml(simFeedback.rngContamination || 'none') + '</span></div>' +
       '</div>' +
       '<div class="replay-coach-list">' +
-        '<div class="replay-coach-list-row"><strong>Model updates</strong>' + _escapeHtml('Lead: ' + !!simFeedback.shouldUpdateLeadModel + ' · Bring four: ' + !!simFeedback.shouldUpdateBringFourModel + ' · Archetype: ' + !!simFeedback.shouldUpdateArchetypeModel) + '<small>Single replay signals do not automatically rewrite sim models.</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Model updates</strong>' + _escapeHtml('Lead: ' + !!simFeedback.shouldUpdateLeadModel + ' · Selection: ' + !!simFeedback.shouldUpdateBringFourModel + ' · Archetype: ' + !!simFeedback.shouldUpdateArchetypeModel) + '<small>Single replay signals do not automatically rewrite sim models.</small></div>' +
         '<div class="replay-coach-list-row"><strong>Scenario queue</strong>' + _escapeHtml(simFeedback.shouldCreateScenario ? 'Queue for stress retest' : 'Do not queue yet') + '<small>' + _escapeHtml(simFeedback.recommendedAction || '') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>Evidence</strong>' + _escapeHtml((simFeedback.evidence && simFeedback.evidence.note) || 'Replay-derived calibration signal only.') + '</div>' +
       '</div>' +
@@ -16397,6 +16516,10 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
   parsed = parsed || {};
   var playerKey = (typeof currentPlayerKey === 'string' && TEAMS[currentPlayerKey]) ? currentPlayerKey : 'player';
   var results = (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastResults) ? ChampionsSim.state.lastResults : {};
+  var replayFormat = parsed.formatKind || '';
+  if ((replayFormat === 'singles' || replayFormat === 'doubles') && typeof currentFormat === 'string' && currentFormat && replayFormat !== currentFormat) {
+    return null;
+  }
   var oppSide = (selectedSide || parsed.selectedSide || 'p1') === 'p1' ? 'p2' : 'p1';
   var oppPreview = parsed.teamPreview && parsed.teamPreview[oppSide] ? parsed.teamPreview[oppSide] : [];
   var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
@@ -16418,7 +16541,7 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
   if (results && results[best.key]) scopedResults[best.key] = results[best.key];
   var report = null;
   try {
-    if (typeof buildStrategyReport === 'function') report = buildStrategyReport(playerKey, scopedResults, currentFormat);
+    if (typeof buildStrategyReport === 'function') report = buildStrategyReport(playerKey, scopedResults, replayFormat || currentFormat);
   } catch (e) { report = null; }
   if (!report && typeof loadStrategyReport === 'function') {
     try { report = loadStrategyReport(playerKey); } catch (_e) { report = null; }
@@ -16453,6 +16576,7 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
 function csInitReplayCoachUi() {
   var logEl = document.getElementById('replay-coach-log');
   var sideEl = document.getElementById('replay-coach-side');
+  var formatEl = document.getElementById('replay-coach-format');
   var runBtn = document.getElementById('replay-coach-run-btn');
   var clearBtn = document.getElementById('replay-coach-clear-btn');
   var uploadBtn = document.getElementById('replay-coach-upload-btn');
@@ -16464,6 +16588,51 @@ function csInitReplayCoachUi() {
     if (!statusEl) return;
     statusEl.textContent = msg || '';
     statusEl.classList.toggle('error', !!isError);
+  }
+
+  function replayCoachExpectedFormat() {
+    return formatEl && formatEl.value ? formatEl.value : 'auto';
+  }
+
+  function replayCoachDetectedFormat(parsed) {
+    if (!parsed) return 'unknown';
+    if (parsed.formatMismatch && parsed.formatMismatch.actual && parsed.formatMismatch.actual !== 'unknown') return parsed.formatMismatch.actual;
+    if (parsed.formatKind && parsed.formatKind !== 'unknown') return parsed.formatKind;
+    if (parsed.format) return parsed.format;
+    return 'unknown';
+  }
+
+  function setParsedStatus(parsed, prefix) {
+    var turns = parsed && parsed.totalTurns ? parsed.totalTurns : 0;
+    var detected = replayCoachDetectedFormat(parsed);
+    var lead = prefix ? prefix + ' ' : '';
+    if (parsed && parsed.formatMismatch && parsed.formatMismatch.mismatch) {
+      setStatus(lead + 'parsed as ' + detected + ', but the selected replay format is ' + parsed.formatMismatch.expected + '. Switch the format toggle or treat this review as provisional.', true);
+      return;
+    }
+    setStatus(lead + 'parsed ' + turns + ' turn' + (turns === 1 ? '' : 's') + (detected && detected !== 'unknown' ? ' as ' + detected : '') + '. Review is local-only and not saved.', false);
+  }
+
+  function previewLoadedReplay(raw, fileName) {
+    var api = ChampionsSim && ChampionsSim.replayCoach;
+    if (!api || typeof api.parseShowdownLog !== 'function' || !raw || !raw.trim()) {
+      setStatus((fileName ? 'Loaded ' + fileName + '. ' : '') + 'Run analysis when ready.', false);
+      return;
+    }
+    try {
+      var previewParsed = api.parseShowdownLog(raw, {
+        selectedSide: sideEl && sideEl.value ? sideEl.value : 'p1',
+        expectedFormat: replayCoachExpectedFormat()
+      });
+      var detected = replayCoachDetectedFormat(previewParsed);
+      if (previewParsed.formatMismatch && previewParsed.formatMismatch.mismatch) {
+        setStatus('Loaded ' + fileName + '. Parsed as ' + detected + ', but the selected replay format is ' + previewParsed.formatMismatch.expected + '.', true);
+        return;
+      }
+      setStatus('Loaded ' + fileName + (detected && detected !== 'unknown' ? '. Detected ' + detected + ' replay.' : '. Run analysis when ready.'), false);
+    } catch (_e) {
+      setStatus((fileName ? 'Loaded ' + fileName + '. ' : '') + 'Run analysis when ready.', false);
+    }
   }
 
   runBtn.addEventListener('click', function() {
@@ -16479,7 +16648,7 @@ function csInitReplayCoachUi() {
     }
     try {
       var selectedSide = sideEl.value || 'p1';
-      var opts = { selectedSide: selectedSide };
+      var opts = { selectedSide: selectedSide, expectedFormat: replayCoachExpectedFormat() };
       if (typeof api.parseShowdownLog === 'function' && typeof api.buildReplayCoachReview === 'function') {
         var parsed = api.parseShowdownLog(raw, opts);
         opts.simPlan = csBuildBattleSenseiSimPlan(parsed, selectedSide);
@@ -16489,8 +16658,7 @@ function csInitReplayCoachUi() {
         var analysis = api.analyzeShowdownReplay(raw, opts);
       }
       csReplayCoachRenderAnalysis(analysis);
-      var parsedTurns = analysis && analysis.parsed ? analysis.parsed.totalTurns : 0;
-      setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only and not saved.');
+      setParsedStatus(analysis && analysis.parsed ? analysis.parsed : null, '');
     } catch (e) {
       setStatus('Could not analyze replay: ' + (e && e.message ? e.message : 'unknown error'), true);
     }
@@ -16511,10 +16679,16 @@ function csInitReplayCoachUi() {
       var reader = new FileReader();
       reader.onload = function() {
         logEl.value = String(reader.result || '');
-        setStatus('Loaded ' + file.name + '. Run analysis when ready.');
+        previewLoadedReplay(logEl.value, file.name);
       };
       reader.onerror = function() { setStatus('Could not read that file.', true); };
       reader.readAsText(file);
+    });
+  }
+
+  if (formatEl) {
+    formatEl.addEventListener('change', function() {
+      if ((logEl.value || '').trim()) previewLoadedReplay(logEl.value, 'Log');
     });
   }
 }

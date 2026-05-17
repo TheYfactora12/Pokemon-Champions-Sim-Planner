@@ -70,6 +70,47 @@
     if (v && list.indexOf(v) < 0) list.push(v);
   }
 
+  function formatKind(parsed) {
+    var raw = cleanText(parsed && parsed.format).toLowerCase();
+    if (raw.indexOf('single') >= 0) return 'singles';
+    if (raw.indexOf('double') >= 0 || raw.indexOf('vgc') >= 0) return 'doubles';
+    return 'unknown';
+  }
+
+  function countWord(count) {
+    var map = {
+      1: 'one',
+      2: 'two',
+      3: 'three',
+      4: 'four',
+      5: 'five',
+      6: 'six'
+    };
+    return map[count] || String(count || '');
+  }
+
+  function countWordTitle(count) {
+    var word = countWord(count);
+    return word ? word.charAt(0).toUpperCase() + word.slice(1) : '';
+  }
+
+  function expectedLeadCount(parsed) {
+    var kind = formatKind(parsed);
+    if (kind === 'singles') return 1;
+    if (kind === 'doubles') return 2;
+    return 2;
+  }
+
+  function expectedSelectionCount(parsed, side) {
+    var sizes = parsed && parsed.teamSizes ? parsed.teamSizes : null;
+    var size = sizes && sizes[side];
+    if (size && size > 0) return size;
+    var kind = formatKind(parsed);
+    if (kind === 'singles') return 3;
+    if (kind === 'doubles') return 4;
+    return null;
+  }
+
   function parseShowdownLog(rawLog, opts) {
     opts = opts || {};
     var selectedSide = normalizeSide(opts.selectedSide || 'p1');
@@ -80,6 +121,7 @@
       format: '',
       rated: null,
       players: { p1: '', p2: '' },
+      teamSizes: { p1: null, p2: null },
       teamPreview: { p1: [], p2: [] },
       selectedPokemon: { p1: [], p2: [] },
       leads: { p1: [], p2: [] },
@@ -121,6 +163,12 @@
       }
       if (tag === 'rated') {
         model.rated = true;
+        return;
+      }
+      if (tag === 'teamsize') {
+        var teamSizeSide = normalizeSide(parts[2]);
+        var teamSize = parseInt(parts[3], 10) || 0;
+        if (teamSizeSide && teamSize > 0) model.teamSizes[teamSizeSide] = teamSize;
         return;
       }
       if (tag === 'poke') {
@@ -217,23 +265,41 @@
       }
     });
 
-    model.leads.p1 = activeSeenBeforeTurnOne.p1.slice(0, 2);
-    model.leads.p2 = activeSeenBeforeTurnOne.p2.slice(0, 2);
+    var leadCount = expectedLeadCount(model);
+    model.leads.p1 = activeSeenBeforeTurnOne.p1.slice(0, leadCount);
+    model.leads.p2 = activeSeenBeforeTurnOne.p2.slice(0, leadCount);
     if (!model.leads.p1.length && model.turns[0]) {
-      model.leads.p1 = model.turns[0].switches.filter(function(s) { return s.side === 'p1'; }).map(function(s) { return s.pokemon; }).slice(0, 2);
-      model.leads.p2 = model.turns[0].switches.filter(function(s) { return s.side === 'p2'; }).map(function(s) { return s.pokemon; }).slice(0, 2);
+      model.leads.p1 = model.turns[0].switches.filter(function(s) { return s.side === 'p1'; }).map(function(s) { return s.pokemon; }).slice(0, leadCount);
+      model.leads.p2 = model.turns[0].switches.filter(function(s) { return s.side === 'p2'; }).map(function(s) { return s.pokemon; }).slice(0, leadCount);
     }
     model.turns = model.turns.filter(function(t) { return t.number > 0 || t.events.length > 0; });
     if (!model.totalTurns && model.turns.length) model.totalTurns = model.turns[model.turns.length - 1].number || 0;
 
     var selectedName = model.players[selectedSide];
     var oppSide = selectedSide === 'p1' ? 'p2' : 'p1';
+    var requestedFormat = cleanText(opts.expectedFormat).toLowerCase();
+    var actualFormat = formatKind(model);
+    model.formatKind = actualFormat;
     if (model.result !== 'tie' && model.winner) {
       model.result = selectedName && model.winner === selectedName ? 'win' : 'loss';
     }
     if (!model.players.p1 && !model.players.p2) model.warnings.push('Player names were not found in the log.');
     if (!model.leads.p1.length || !model.leads.p2.length) model.warnings.push('Lead Pokemon could not be fully inferred.');
     if (!model.teamPreview.p1.length && !model.teamPreview.p2.length) model.warnings.push('Team preview was not present; selected Pokemon are inferred from revealed actions.');
+    if ((requestedFormat === 'singles' || requestedFormat === 'doubles') && actualFormat !== 'unknown' && requestedFormat !== actualFormat) {
+      model.warnings.push('Replay format mismatch: selected ' + requestedFormat + ', but the log parsed as ' + actualFormat + '.');
+      model.formatMismatch = {
+        expected: requestedFormat,
+        actual: actualFormat,
+        mismatch: true
+      };
+    } else {
+      model.formatMismatch = {
+        expected: requestedFormat || 'auto',
+        actual: actualFormat,
+        mismatch: false
+      };
+    }
     model.ok = model.turns.length > 0 || !!model.winner;
     model.opponentSide = oppSide;
     return model;
@@ -296,10 +362,37 @@
   function selectedFourConfidence(parsed, side) {
     var preview = parsed.teamPreview && parsed.teamPreview[side] ? parsed.teamPreview[side] : [];
     var selected = parsed.selectedPokemon && parsed.selectedPokemon[side] ? parsed.selectedPokemon[side] : [];
-    if (selected.length >= 4) return { level: 'high', label: 'Four inferred', reason: 'At least four selected Pokemon appeared in the log.' };
-    if (preview.length >= 6 && selected.length > 0) return { level: 'medium', label: 'Partial bring', reason: 'Team preview exists, but not all brought Pokemon were revealed.' };
-    if (selected.length > 0) return { level: 'medium', label: 'Revealed only', reason: 'Selected Pokemon are inferred from revealed actions only.' };
-    return { level: 'low', label: 'Unknown', reason: 'The log did not reveal selected Pokemon.' };
+    var expected = expectedSelectionCount(parsed, side);
+    if (expected && selected.length >= expected) {
+      return {
+        level: 'high',
+        label: countWordTitle(expected) + ' inferred',
+        reason: 'All ' + expected + ' selected Pokemon appeared in the log.',
+        expectedCount: expected
+      };
+    }
+    if (preview.length >= 6 && selected.length > 0) {
+      return {
+        level: 'medium',
+        label: 'Partial selection',
+        reason: 'Team preview exists, but not all selected Pokemon were revealed.',
+        expectedCount: expected
+      };
+    }
+    if (selected.length > 0) {
+      return {
+        level: 'medium',
+        label: 'Revealed only',
+        reason: 'Selected Pokemon are inferred from revealed actions only.',
+        expectedCount: expected
+      };
+    }
+    return {
+      level: 'low',
+      label: 'Unknown',
+      reason: 'The log did not reveal selected Pokemon.',
+      expectedCount: expected
+    };
   }
 
   function sideNames(parsed, side) {
@@ -442,6 +535,8 @@
     var userSelected = parsed.selectedPokemon[side] || [];
     var oppSelected = parsed.selectedPokemon[opp] || [];
     var bringConfidence = selectedFourConfidence(parsed, side);
+    var selectionCount = expectedSelectionCount(parsed, side);
+    var selectionTitle = selectionCount ? 'Selected ' + countWordTitle(selectionCount) : 'Selected Team';
     var speedControlPieces = {};
 
     if (!userLead.length || !oppLead.length) {
@@ -454,14 +549,14 @@
         evidence: 'Missing lead data'
       });
     }
-    if (parsed.teamPreview[side] && parsed.teamPreview[side].length >= 6 && userSelected.length && userSelected.length < 4) {
-      addIssue(issues, 'Questionable Bring Evidence', 'low', null, 'Only part of your selected four could be inferred from revealed actions.', 'medium', 'Treat bring-four grades as incomplete until all brought Pokemon are revealed.', {
+    if (parsed.teamPreview[side] && parsed.teamPreview[side].length >= 6 && selectionCount && userSelected.length && userSelected.length < selectionCount) {
+      addIssue(issues, 'Questionable Bring Evidence', 'low', null, 'Only part of your selected team could be inferred from revealed actions.', 'medium', 'Treat team-selection grades as incomplete until all selected Pokemon are revealed.', {
         id: 'questionable_bring',
         category: 'bring_four',
-        whatHappened: 'Team preview showed six Pokemon, but fewer than four of your brought Pokemon appeared in the parsed log.',
-        whyMattered: 'Bring-four coaching can overclaim when the backline is hidden, especially in VGC-style games where the benched two explain the matchup plan.',
-        doInstead: 'Use the bring-four read as provisional until the full selected four are visible or entered manually.',
-        evidence: 'Preview count ' + parsed.teamPreview[side].length + ', revealed selected count ' + userSelected.length
+        whatHappened: 'Team preview showed six Pokemon, but fewer than ' + selectionCount + ' selected Pokemon appeared in the parsed log.',
+        whyMattered: 'Selection coaching can overclaim when the backline is hidden, especially in bring-' + selectionCount + ' formats where the unrevealed slots explain the matchup plan.',
+        doInstead: 'Use the selection read as provisional until the full selected team is visible or entered manually.',
+        evidence: 'Preview count ' + parsed.teamPreview[side].length + ', expected selected count ' + selectionCount + ', revealed selected count ' + userSelected.length
       });
     }
 
@@ -615,13 +710,21 @@
         yourSide: side,
         yourPlayer: parsed.players[side] || side,
         opponentPlayer: parsed.players[opp] || opp,
+        format: parsed.format || formatKind(parsed),
+        formatKind: formatKind(parsed),
+        formatMismatch: parsed.formatMismatch || null,
+        leadCountExpected: expectedLeadCount(parsed),
+        selectionCountExpected: selectionCount,
         yourLead: userLead,
         opponentLead: oppLead,
+        yourSelection: userSelected,
+        opponentSelection: oppSelected,
         yourFour: userSelected,
         opponentFour: oppSelected,
         yourPreview: parsed.teamPreview[side] || [],
         opponentPreview: parsed.teamPreview[opp] || [],
         selectedFourConfidence: bringConfidence,
+        selectionTitle: selectionTitle,
         leadGrade: userLead.length && oppLead.length ? 'Reviewable' : 'Unknown',
         criticalTurn: criticalTurn,
         mainIssue: firstMistake ? firstMistake.tag : 'No major issue detected',

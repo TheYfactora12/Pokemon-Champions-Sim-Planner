@@ -317,8 +317,10 @@
     }
 
     var summary = review.summary || {};
+    var selectionCount = summary.selectionCountExpected || null;
+    var selectionLabel = selectionCount === 3 ? 'selected three' : (selectionCount === 4 ? 'selected four' : 'selected team');
     if ((summary.yourLead || []).length && (summary.opponentLead || []).length) add('lead_iq', 8, 'Opening leads were visible enough to evaluate the plan.');
-    if (summary.selectedFourConfidence && summary.selectedFourConfidence.level === 'high') add('lead_iq', 5, 'Selected four were inferred with high confidence.');
+    if (summary.selectedFourConfidence && summary.selectedFourConfidence.level === 'high') add('lead_iq', 5, selectionLabel.charAt(0).toUpperCase() + selectionLabel.slice(1) + ' was inferred with high confidence.');
     if (parsed.result === 'win') add('risk_discipline_iq', 3, 'Result slightly supports execution, but win/loss is not the primary scoring driver.');
 
     issues.forEach(function(issue) {
@@ -328,7 +330,7 @@
         add('turn_1_iq', -10, 'Turn 1 plan depended on an interrupt that did not hold.');
         add('threat_recognition_iq', -4, 'Opponent setup threat was not fully answered from preview.');
       } else if (id === 'questionable_bring') {
-        add('lead_iq', -5, 'Bring-four evidence was incomplete, so lead quality is less reliable.');
+        add('lead_iq', -5, 'Selected-team evidence was incomplete, so lead quality is less reliable.');
       } else if (id === 'speed_control_without_pressure') {
         add('speed_control_iq', -12, 'Speed control was used without immediate pressure or conversion.');
         add('turn_1_iq', -6, 'Early speed control did not create a clear follow-up.');
@@ -494,13 +496,15 @@
     var summary = (review && review.summary) || {};
     var actualLead = summary.yourLead || [];
     var actualFour = summary.yourFour || [];
+    var selectionCount = summary.selectionCountExpected || null;
+    var selectionLabel = selectionCount === 3 ? 'selected three' : (selectionCount === 4 ? 'selected four' : 'selected team');
     var noData = {
       status: 'needs_sim_data',
       evidenceTier: 'needs_more_data',
       evidenceLabel: evidenceLabel('needs_more_data'),
       confidence: 'low',
       note: 'No matched simulation recommendation was provided for this replay yet.',
-      decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/four/path against the trainer’s real replay choices.',
+      decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/' + selectionLabel + '/path against the trainer’s real replay choices.',
       actualLead: actualLead,
       actualFour: actualFour
     };
@@ -516,8 +520,8 @@
     var tier = evidenceTier(confidence, evidenceCount);
     var firstDeviation = 'Needs more data';
     if (leadOverlap != null && leadOverlap < 1) firstDeviation = 'Actual lead differed from the sim-recommended lead.';
-    else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual selected four differed from the sim-recommended four.';
-    else if (expectedWinPath) firstDeviation = 'Lead/four matched; compare turn sequencing against expected win path.';
+    else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual ' + selectionLabel + ' differed from the sim-recommended ' + selectionLabel + '.';
+    else if (expectedWinPath) firstDeviation = 'Lead/' + selectionLabel + ' matched; compare turn sequencing against expected win path.';
     return {
       status: 'matched',
       evidenceTier: tier,
@@ -532,8 +536,8 @@
       expectedWinPath: expectedWinPath || 'Needs sim win-path data',
       actualPath: summary.mainIssue || 'Needs turn review',
       firstDeviation: firstDeviation,
-      teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/four matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/bring selection may have diverged from the simulated plan; verify with more battles before changing the team.',
-      decisionChange: 'Use this comparison to decide whether the trainer should test a different lead/four, practice the same sim plan with cleaner sequencing, or collect more logs before changing the team.',
+      teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/' + selectionLabel + ' matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/team selection may have diverged from the simulated plan; verify with more battles before changing the team.',
+      decisionChange: 'Use this comparison to decide whether the trainer should test a different lead/' + selectionLabel + ', practice the same sim plan with cleaner sequencing, or collect more logs before changing the team.',
       source: plan.source || 'matched simulation plan',
       matchedOpponentKey: plan.matchedOpponentKey || '',
       matchedOpponentName: plan.matchedOpponentName || '',
@@ -653,9 +657,11 @@
     var summary = (review && review.summary) || {};
     var first = critical && critical.firstMistake;
     var fatal = critical && critical.fatalMistake;
-    var leadNames = (summary.yourLead || []).join(' + ') || 'your lead pair';
+    var leadNames = (summary.yourLead || []).join(' + ') || 'your lead';
+    var selectionCount = summary.selectionCountExpected || null;
+    var selectionLabel = selectionCount === 3 ? 'selected three' : (selectionCount === 4 ? 'selected four' : 'selected team');
     return {
-      beforeGame: 'Use your selected four to create speed or positioning control, then preserve the Pokemon that converts the endgame.',
+      beforeGame: 'Use your ' + selectionLabel + ' to create speed or positioning control, then preserve the Pokemon that converts the endgame.',
       afterLeads: 'With ' + leadNames + ', your first test is whether the lead pressures the opponent plan even if the first interrupt fails.',
       afterKeyTurn: fatal ? 'After turn ' + fatal.turn + ', the win path likely shifted toward recovery: preserve the remaining cleaner and stop further field control.' : 'No key-turn shift was proven from the log.',
       followedOrAbandoned: first && fatal && first.turn !== fatal.turn ? 'The early plan was stressed before the fatal turn. This suggests an execution path problem, not only a last-turn mistake.' : 'The log does not prove a separate abandoned win path.',
@@ -763,7 +769,7 @@
         {
           id: 'matchup_memory',
           label: 'Matchup memory',
-          preview: 'Remember which leads, bring-fours, and win paths worked for you into each archetype.'
+          preview: 'Remember which leads, team selections, and win paths worked for you into each archetype.'
         },
         {
           id: 'full_battle_iq_subscores',

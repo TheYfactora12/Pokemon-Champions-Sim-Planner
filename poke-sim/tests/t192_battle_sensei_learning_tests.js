@@ -7,6 +7,7 @@ const ROOT = path.resolve(__dirname, '..');
 require(path.join(ROOT, 'replay_learning.js'));
 const replayCoach = require(path.join(ROOT, 'replay_coach.js'));
 const sample = fs.readFileSync(path.join(ROOT, 'tests/fixtures/showdown_replay_sample.txt'), 'utf8');
+const singlesSample = fs.readFileSync(path.join(ROOT, 'tests/fixtures/showdown_replay_singles_sample.txt'), 'utf8');
 
 let pass = 0;
 let fail = 0;
@@ -178,6 +179,33 @@ T('10. premium memory preview separates anonymous learning from private profiles
   truthy(premium.lockedInsights.some((x) => x.id === 'full_battle_iq_subscores'), 'battle iq trend teaser');
   inc(premium.backendLearningPolicy.freeAnonymous, 'opt-in anonymized signals', 'anonymous learning policy');
   inc(premium.backendLearningPolicy.rawLogDefault, 'Raw logs should not be silently stored', 'raw log boundary');
+});
+
+T('11. singles learning copy uses selected three and not doubles-only wording', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(singlesSample, { selectedSide: 'p1', expectedFormat: 'singles' });
+  const learning = analysis.review.learningReport;
+  eq(analysis.review.summary.selectionCountExpected, 3, 'singles selection count');
+  inc(learning.winPath.beforeGame, 'selected three', 'singles win-path copy');
+  truthy(!/selected four/i.test(learning.winPath.beforeGame), 'no doubles-only selected four copy');
+  truthy(!/bring-four/i.test(JSON.stringify(learning)), 'no bring-four wording in learning report');
+});
+
+T('12. singles sim comparison messaging adapts selection language', () => {
+  const base = replayCoach.analyzeShowdownReplay(singlesSample, { selectedSide: 'p1', expectedFormat: 'singles' });
+  const mismatch = replayCoach.analyzeShowdownReplay(singlesSample, {
+    selectedSide: 'p1',
+    expectedFormat: 'singles',
+    simPlan: {
+      bestLead: ['Wrong Lead'],
+      bestFour: ['Wrong A', 'Wrong B', 'Wrong C'],
+      expectedWinPath: 'Preserve the cleaner and avoid boosting the wrong target.',
+      matchConfidence: 'medium'
+    }
+  }).review.learningReport.simComparison;
+  inc(mismatch.decisionChange, 'selected three', 'singles comparison wording');
+  truthy(!/lead\/four/i.test(mismatch.firstDeviation), 'no lead/four wording');
+  truthy(!/selected four/i.test(mismatch.firstDeviation), 'no selected four wording');
+  truthy(base.review.learningReport.battleIq.standardScore >= 55, 'singles battle iq still scores');
 });
 
 console.log(`\nBattle Sensei learning: ${pass} pass, ${fail} fail\n`);
