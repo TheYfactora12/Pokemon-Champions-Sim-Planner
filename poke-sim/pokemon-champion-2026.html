@@ -13977,9 +13977,37 @@ function renderRoster(containerId, members) {
 // T9d: Dynamic player/opponent team selectors + Swap button
 // currentPlayerKey tracks the active player team (user-selectable).
 // rebuildTeamSelects() re-populates both dropdowns from TEAMS so that
-// imported/custom teams appear in BOTH sides.
+// imported/custom teams appear in BOTH sides, with custom teams ordered first.
 // ============================================================
 var currentPlayerKey = 'player';
+
+function isCustomTeamRecord(team) {
+  return !!(team && team.source === 'custom');
+}
+
+function getOrderedTeamKeys() {
+  if (typeof TEAMS === 'undefined') return [];
+  var custom = [];
+  var preloaded = [];
+  for (var key in TEAMS) {
+    var team = TEAMS[key];
+    if (!team || !team.name) continue;
+    if (isCustomTeamRecord(team)) custom.push(key);
+    else preloaded.push(key);
+  }
+  return custom.concat(preloaded);
+}
+
+function getOrderedOpponentTeamKeys(playerKey, opts) {
+  opts = opts || {};
+  var includePlayer = !!opts.includePlayer;
+  var ladderOnly = !!opts.ladderOnly;
+  return getOrderedTeamKeys().filter(function(key) {
+    if (!includePlayer && key === playerKey) return false;
+    if (ladderOnly && typeof isLadderLegal === 'function' && !isLadderLegal(key)) return false;
+    return true;
+  });
+}
 
 // ============================================================
 // T9f: Custom-team persistence (localStorage)
@@ -14150,22 +14178,31 @@ function rebuildTeamSelects() {
   if (!playerSel || !oppSel) return;
   var prevPlayer = playerSel.value || currentPlayerKey;
   var prevOpp = oppSel.value || 'mega_altaria';
+  var playerKeys = getOrderedTeamKeys();
+  var opponentKeys = getOrderedOpponentTeamKeys(prevPlayer, { includePlayer: false, ladderOnly: false });
   playerSel.innerHTML = '';
-  // Rebuild opponent while preserving order (existing option text has
-  // ladder-gate glyph mutations; start fresh from TEAMS)
+  if (Array.isArray(playerSel.options)) playerSel.options.length = 0;
   oppSel.innerHTML = '';
-  for (var key in TEAMS) {
+  if (Array.isArray(oppSel.options)) oppSel.options.length = 0;
+  for (var i = 0; i < playerKeys.length; i++) {
+    var key = playerKeys[i];
     var t = TEAMS[key];
     if (!t || !t.name) continue;
     var o1 = document.createElement('option');
     o1.value = key; o1.textContent = t.name;
     playerSel.appendChild(o1);
+  }
+  for (var j = 0; j < opponentKeys.length; j++) {
+    var oppKey = opponentKeys[j];
+    var oppTeam = TEAMS[oppKey];
+    if (!oppTeam || !oppTeam.name) continue;
     var o2 = document.createElement('option');
-    o2.value = key; o2.textContent = t.name;
+    o2.value = oppKey; o2.textContent = oppTeam.name;
     oppSel.appendChild(o2);
   }
   if (TEAMS[prevPlayer]) playerSel.value = prevPlayer;
-  if (TEAMS[prevOpp]) oppSel.value = prevOpp;
+  if (opponentKeys.indexOf(prevOpp) >= 0) oppSel.value = prevOpp;
+  else if (opponentKeys.length) oppSel.value = opponentKeys[0];
   currentPlayerKey = playerSel.value;
   if (typeof applyLadderGate === 'function') applyLadderGate();
 }
@@ -14182,6 +14219,7 @@ document.getElementById('player-select').addEventListener('change', function() {
   var team = TEAMS[this.value];
   if (team) {
     currentPlayerKey = this.value;
+    if (typeof rebuildTeamSelects === 'function') rebuildTeamSelects();
     document.getElementById('player-team-name').textContent = team.name;
     renderRoster('player-roster', team.members);
     var nextOpp = enforceDistinctBattleTeams();
@@ -14190,7 +14228,11 @@ document.getElementById('player-select').addEventListener('change', function() {
       renderRoster('opp-roster', TEAMS[nextOpp].members);
       if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
     }
-    if (typeof applyLadderGate === 'function') applyLadderGate();
+    var oppSel = document.getElementById('opponent-select');
+    if (oppSel && TEAMS[oppSel.value]) {
+      document.getElementById('opp-team-name').textContent = TEAMS[oppSel.value].name;
+      renderRoster('opp-roster', TEAMS[oppSel.value].members);
+    }
     // T9j.3b: recompute coverage on active-team change (no cache, always fresh).
     if (typeof renderCoverageWidget === 'function') renderCoverageWidget();
     // T9j.12 (Refs #74): refresh sim-side bring picker after active-team change.
@@ -14304,11 +14346,11 @@ function applyLadderGate() {
 }
 
 function _firstDifferentTeamKey(excludeKey) {
-  if (typeof TEAMS === 'undefined') return null;
-  for (var key in TEAMS) {
-    if (key !== excludeKey && TEAMS[key]) return key;
-  }
-  return null;
+  var keys = getOrderedOpponentTeamKeys(excludeKey, {
+    includePlayer: false,
+    ladderOnly: !!LADDER_MODE
+  });
+  return keys.length ? keys[0] : null;
 }
 
 function enforceDistinctBattleTeams() {
@@ -16924,6 +16966,50 @@ function randomBringFor(teamKey, seed) {
   }
   return pool.slice(0, count);
 }
+
+function _chooseCombos(source, count) {
+  var out = [];
+  var arr = Array.isArray(source) ? source.slice() : [];
+  if (!count || count < 1 || count > arr.length) return out;
+  function walk(start, picked) {
+    if (picked.length === count) {
+      out.push(picked.slice());
+      return;
+    }
+    for (var i = start; i <= arr.length - (count - picked.length); i++) {
+      picked.push(arr[i]);
+      walk(i + 1, picked);
+      picked.pop();
+    }
+  }
+  walk(0, []);
+  return out;
+}
+
+function buildFormatAwareTeamPlans(teamKey, format) {
+  var team = TEAMS[teamKey];
+  if (!team || !Array.isArray(team.members) || !team.members.length) return [];
+  var fmt = (format === 'singles') ? 'singles' : 'doubles';
+  var bringCount = (fmt === 'singles') ? 3 : 4;
+  var leadCount = (fmt === 'singles') ? 1 : 2;
+  var names = team.members.map(function(m) { return m && m.name; }).filter(Boolean);
+  if (names.length < bringCount) return [];
+  var plans = [];
+  var bringCombos = _chooseCombos(names, bringCount);
+  for (var i = 0; i < bringCombos.length; i++) {
+    var bring = bringCombos[i];
+    var leadCombos = _chooseCombos(bring, leadCount);
+    for (var j = 0; j < leadCombos.length; j++) {
+      var lead = leadCombos[j];
+      var bench = bring.filter(function(name) { return lead.indexOf(name) < 0; });
+      plans.push({
+        lead: lead.slice(),
+        bring: lead.concat(bench)
+      });
+    }
+  }
+  return plans;
+}
 // Legacy shims — kept in case external callers / saved sessions still reference
 // the pre-T9j.10 lead-only API. Map onto the bring picker (leads = first N).
 function getLeadsFor(teamKey) {
@@ -16948,6 +17034,7 @@ ChampionsSim.bring.setBringFor = setBringFor;
 ChampionsSim.bring.getBringMode = getBringMode;
 ChampionsSim.bring.setBringMode = setBringMode;
 ChampionsSim.bring.randomBringFor = randomBringFor;
+ChampionsSim.bring.buildFormatAwareTeamPlans = buildFormatAwareTeamPlans;
 ChampionsSim.bring.getLeadsFor = getLeadsFor;
 ChampionsSim.bring.setLeadsFor = setLeadsFor;
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('BRING_SELECTION', BRING_SELECTION);
@@ -16957,10 +17044,12 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('setB
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('getBringMode', getBringMode);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('setBringMode', setBringMode);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('randomBringFor', randomBringFor);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('buildFormatAwareTeamPlans', buildFormatAwareTeamPlans);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('getLeadsFor', getLeadsFor);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('setLeadsFor', setLeadsFor);
 
-async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress) {
+async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress, opts) {
+  opts = opts || {};
   const results = { wins:0, losses:0, draws:0, totalTurns:0, totalTrTurns:0, winConditions:{}, allLogs:[], turnDist:{} };
   let liveW=0, liveL=0;
   const BATCH = 20;
@@ -16971,9 +17060,15 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
   const oppMode    = getBringMode(oppTeamKey);
   const manualPlayerBring = (playerMode === 'manual') ? getBringFor(playerTeamKey) : null;
   const manualOpponentBring = (oppMode === 'manual') ? getBringFor(oppTeamKey) : null;
+  const playerPlans = Array.isArray(opts.playerPlans) ? opts.playerPlans.slice() : [];
+  const effectiveSeriesCount = playerPlans.length ? Math.max(numSeries, playerPlans.length) : numSeries;
+  results.playerPlanCatalogSize = playerPlans.length;
+  results.seriesCountRequested = numSeries;
+  results.seriesCountExecuted = effectiveSeriesCount;
+  results.planMode = playerPlans.length ? 'exhaustive_player' : 'standard';
 
-  for (let i=0; i<numSeries; i+=BATCH) {
-    const bSize = Math.min(BATCH, numSeries-i);
+  for (let i=0; i<effectiveSeriesCount; i+=BATCH) {
+    const bSize = Math.min(BATCH, effectiveSeriesCount-i);
     for (let j=0; j<bSize; j++) {
       let seriesW=0, seriesL=0;
       const gamesNeeded = Math.ceil(bo/2);
@@ -16981,7 +17076,10 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
       let seriesTurns=0, seriesTrTurns=0;
 
       // Per-series bring lock. Re-roll for random teams at each new series.
-      const playerBring   = manualPlayerBring   || randomBringFor(playerTeamKey);
+      const playerPlan = playerPlans.length ? playerPlans[(i + j) % playerPlans.length] : null;
+      const playerBring   = (playerPlan && Array.isArray(playerPlan.bring) && playerPlan.bring.length)
+        ? playerPlan.bring.slice()
+        : (manualPlayerBring || randomBringFor(playerTeamKey));
       const opponentBring = manualOpponentBring || randomBringFor(oppTeamKey);
 
       // Phase 4a (Refs #52) — capture every game of this series so we can
@@ -16990,7 +17088,7 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
 
       while (seriesW<gamesNeeded && seriesL<gamesNeeded && gamesPlayed<bo) {
         const battle = simulateBattle(TEAMS[playerTeamKey], TEAMS[oppTeamKey], {
-          format: currentFormat,
+          format: opts.format || currentFormat,
           playerBring,
           opponentBring,
           roleAwareOpeners: true
@@ -17035,33 +17133,39 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
         UILog.warn('simlog append in runBoSeries failed', e);
       }
     }
-    if (onProgress) onProgress(i+bSize, numSeries, liveW, liveL);
+    if (onProgress) onProgress(i+bSize, effectiveSeriesCount, liveW, liveL);
     await new Promise(r=>setTimeout(r,0));
   }
 
   results.allLogs = results.allLogs.map(function(battle) {
     return csCapBattleReplay(battle);
   });
-  results.winRate = results.wins/numSeries;
-  results.avgTurns = results.totalTurns/numSeries;
-  results.avgTrTurns = results.totalTrTurns/numSeries;
+  results.winRate = results.wins/effectiveSeriesCount;
+  results.avgTurns = results.totalTurns/effectiveSeriesCount;
+  results.avgTrTurns = results.totalTrTurns/effectiveSeriesCount;
   return results;
 }
 
 // runAllMatchupsUI — UI wrapper; distinct from engine.js runAllMatchups
 // Issue #T6: when LADDER_MODE is ON, iterate only ladder-legal opponents.
 async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
-  const opps = Object.keys(TEAMS).filter(k => {
-    if (k === currentPlayerKey) return false;
-    if (typeof LADDER_MODE !== 'undefined' && LADDER_MODE && typeof isLadderLegal === 'function') {
-      return isLadderLegal(k);
-    }
-    return true;
+  const opps = getOrderedOpponentTeamKeys(currentPlayerKey, {
+    includePlayer: false,
+    ladderOnly: !!LADDER_MODE
   });
+  const playerPlans = buildFormatAwareTeamPlans(currentPlayerKey, currentFormat);
+  const effectiveSeriesCount = playerPlans.length ? Math.max(numSeries, playerPlans.length) : numSeries;
+  try {
+    ChampionsSim.state.lastRunAllOpponentKeys = opps.slice();
+    ChampionsSim.state.lastRunAllPlayerPlans = playerPlans.slice();
+  } catch (_e) {}
   let done=0;
   for (const opp of opps) {
     const res = await runBoSeries(numSeries,currentPlayerKey,opp,bo,(cur,tot,w,l)=>{
-      if (onProgress) onProgress(done*numSeries+cur, opps.length*numSeries, w, l);
+      if (onProgress) onProgress(done*effectiveSeriesCount+cur, opps.length*effectiveSeriesCount, w, l);
+    }, {
+      format: currentFormat,
+      playerPlans: playerPlans
     });
     done++;
     if (onDone) onDone(opp, res);
@@ -17368,10 +17472,16 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
     const bo=currentBo;
     if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
+    const planCount = buildFormatAwareTeamPlans(currentPlayerKey, currentFormat).length;
+    const effectiveSeriesCount = planCount ? Math.max(n, planCount) : n;
+    const opponentCount = getOrderedOpponentTeamKeys(currentPlayerKey, {
+      includePlayer: false,
+      ladderOnly: !!LADDER_MODE
+    }).length;
     document.getElementById('progress-wrap').style.display='';
-    setProgress(0,'Starting…',0,0);
+    setProgress(0,'Starting… ' + opponentCount + ' opponents · ' + effectiveSeriesCount + ' series each',0,0);
     const matBadge=document.getElementById('matrix-badge');
-    if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
+    if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${opponentCount} opponents · ${effectiveSeriesCount} series each`;
 
     const tbody=document.getElementById('matchup-tbody');
     tbody.innerHTML='';
