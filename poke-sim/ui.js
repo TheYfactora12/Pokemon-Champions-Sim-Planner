@@ -3300,29 +3300,41 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
   if ((replayFormat === 'singles' || replayFormat === 'doubles') && typeof currentFormat === 'string' && currentFormat && replayFormat !== currentFormat) {
     return null;
   }
+  var compareFormat = replayFormat || currentFormat;
+  var scopedAll = {};
+  try {
+    scopedAll = (typeof csGetScopedStrategyResults === 'function') ? csGetScopedStrategyResults(playerKey, compareFormat) : results;
+  } catch (_scopeErr) {
+    scopedAll = {};
+  }
   var oppSide = (selectedSide || parsed.selectedSide || 'p1') === 'p1' ? 'p2' : 'p1';
   var oppPreview = parsed.teamPreview && parsed.teamPreview[oppSide] ? parsed.teamPreview[oppSide] : [];
   var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
   var selectedOppKey = oppSelect && oppSelect.value && TEAMS[oppSelect.value] ? oppSelect.value : '';
-  var candidateKeys = Object.keys(results || {}).filter(function(k) { return TEAMS[k]; });
+  var candidateKeys = Object.keys(scopedAll || {}).filter(function(k) { return TEAMS[k]; });
   if (selectedOppKey && candidateKeys.indexOf(selectedOppKey) < 0) candidateKeys.unshift(selectedOppKey);
   if (!candidateKeys.length) return null;
 
   var ranked = candidateKeys.map(function(key) {
     var previewScore = csTeamPreviewOverlap(oppPreview, key);
-    var hasResult = results && results[key] ? 0.25 : 0;
+    var hasResult = scopedAll && scopedAll[key] ? 0.25 : 0;
     var selectedBoost = key === selectedOppKey ? 0.15 : 0;
-    return { key: key, score: previewScore + hasResult + selectedBoost, previewScore: previewScore, hasResult: !!(results && results[key]) };
+    return { key: key, score: previewScore + hasResult + selectedBoost, previewScore: previewScore, hasResult: !!(scopedAll && scopedAll[key]) };
   }).sort(function(a, b) { return b.score - a.score; });
   var best = ranked[0];
-  if (!best || (!best.hasResult && best.previewScore <= 0)) return null;
+  if (!best || !best.hasResult) return null;
 
   var scopedResults = {};
-  if (results && results[best.key]) scopedResults[best.key] = results[best.key];
+  if (scopedAll && scopedAll[best.key]) scopedResults[best.key] = scopedAll[best.key];
   var report = null;
   try {
-    if (typeof buildStrategyReport === 'function') report = buildStrategyReport(playerKey, scopedResults, replayFormat || currentFormat);
+    if (typeof csBuildStrategyReportV2 === 'function') report = csBuildStrategyReportV2(playerKey, scopedResults, compareFormat);
   } catch (e) { report = null; }
+  if (!report) {
+    try {
+      if (typeof buildStrategyReport === 'function') report = buildStrategyReport(playerKey, scopedResults, compareFormat);
+    } catch (_legacyErr) { report = null; }
+  }
   if (!report && typeof loadStrategyReport === 'function') {
     try { report = loadStrategyReport(playerKey); } catch (_e) { report = null; }
   }
@@ -8129,7 +8141,12 @@ function csBuildSourcesProvenanceModel(teamKey) {
   var dbEnabled = !!(adapter && adapter.enabled);
   var replayAnalysis = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastReplayCoachAnalysis : null;
   var replaySummary = replayAnalysis && replayAnalysis.review ? replayAnalysis.review.summary : null;
+  var replayLearning = replayAnalysis && replayAnalysis.review ? replayAnalysis.review.learningReport : null;
+  var replaySimComparison = replayLearning && replayLearning.simComparison ? replayLearning.simComparison : null;
   var replayMode = replaySummary ? ((replaySummary.rulesetProfile || 'unknown') + ' · ' + (replaySummary.coachingMode || 'local review')) : 'No replay analyzed in this session';
+  var replayComparisonMode = replaySimComparison
+    ? ((replaySimComparison.comparisonStatus || replaySimComparison.status || 'needs_sim_data') + ' · calibration ' + (replaySimComparison.calibrationAction || 'none'))
+    : 'No replay-to-sim comparison has been produced in this session.';
   var customTeams = csCountCustomTeams();
   return {
     activeTeamName: team && team.name ? team.name : key,
@@ -8141,6 +8158,7 @@ function csBuildSourcesProvenanceModel(teamKey) {
     compliance: compliance,
     dbEnabled: dbEnabled,
     replayMode: replayMode,
+    replayComparisonMode: replayComparisonMode,
     customTeams: customTeams,
     cards: [
       {
@@ -8158,6 +8176,13 @@ function csBuildSourcesProvenanceModel(teamKey) {
         confidence: replayAnalysis ? ((replaySummary && replaySummary.confidence) || 'medium') : 'needs more data',
         detail: replayMode,
         boundary: 'Battle Sensei parses pasted or uploaded logs locally. Raw logs are not silently stored.'
+      },
+      {
+        title: 'Replay-to-sim comparison',
+        status: replaySimComparison && replaySimComparison.status === 'matched' ? 'available' : (replaySimComparison ? 'limited' : 'missing'),
+        confidence: replaySimComparison ? (replaySimComparison.confidence || replaySimComparison.evidenceLabel || 'low') : 'needs sim data',
+        detail: replayComparisonMode,
+        boundary: 'Session-local Battle Mirror evidence can queue calibration signals, but one replay or one team tweak does not rewrite sim models or Battle IQ.'
       },
       {
         title: 'Champion compliance',
@@ -8249,6 +8274,7 @@ function renderSourcesTab(teamKey) {
     '<div class="replay-coach-list">' +
       '<div class="replay-coach-list-row"><strong>Raw-log privacy</strong>Raw logs are not silently stored. Saved replay history requires an explicit profile/privacy path.</div>' +
       '<div class="replay-coach-list-row"><strong>Champion boundary</strong>Verified Champion artifacts can calibrate Champion confidence. Generic Showdown logs remain format-limited.</div>' +
+      '<div class="replay-coach-list-row"><strong>Team-tweak loop</strong>Replay team vs edited team improvement requires the same opponent, format, and sim baseline before showing strength or rating delta.</div>' +
       '<div class="replay-coach-list-row"><strong>Premium boundary</strong>Free users get useful local review. Premium value is durable memory, trend reliability, norm groups, and cross-device coaching.</div>' +
       '<div class="replay-coach-list-row"><strong>Evidence vocabulary</strong>Strategy, Battle Sensei, Battle IQ, and Battle Mirror should use observed, strong inference, weak inference, and needs more data.</div>' +
     '</div>' +

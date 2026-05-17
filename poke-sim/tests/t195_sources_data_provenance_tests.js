@@ -136,11 +136,13 @@ vm.runInContext([
   'this.ChampionsSim = ChampionsSim;',
   'this.renderSourcesTab = renderSourcesTab;',
   'this._activateTab = _activateTab;',
+  'this.csBuildBattleSenseiSimPlan = csBuildBattleSenseiSimPlan;',
   'this.setCurrentFormat = setCurrentFormat;'
 ].join(' '), ctx);
 
-const { TEAMS, ChampionsSim, renderSourcesTab, _activateTab, setCurrentFormat } = ctx;
+const { TEAMS, ChampionsSim, renderSourcesTab, _activateTab, csBuildBattleSenseiSimPlan, setCurrentFormat } = ctx;
 const host = ctx.document.getElementById('sources-list');
+const opponentSelect = ctx.document.getElementById('opponent-select');
 
 let pass = 0;
 let fail = 0;
@@ -178,6 +180,24 @@ function notInc(hay, needle, msg) {
   }
 }
 
+function makeScopedSimResult() {
+  return {
+    wins: 3,
+    losses: 1,
+    draws: 0,
+    allLogs: [
+      {
+        result: 'win',
+        turns: 5,
+        leads: { player: ['Whimsicott', 'Garchomp'], opponent: ['Tyranitar', 'Excadrill'] },
+        bring: { player: ['Whimsicott', 'Garchomp', 'Incineroar', 'Rotom-Wash'], opponent: ['Tyranitar', 'Excadrill'] },
+        log: ['[TURN 1]', 'Whimsicott used Tailwind', '[TURN 2]', 'Garchomp used Earthquake']
+      }
+    ],
+    winConditions: { 'Tailwind cleanup': 3, 'Opponent Win': 1 }
+  };
+}
+
 console.log('\n=== sources data provenance render tests ===\n');
 
 T('1. live Sources renderer explains data boundaries', () => {
@@ -193,6 +213,7 @@ T('1. live Sources renderer explains data boundaries', () => {
   inc(host.innerHTML, 'Raw logs are not silently stored', 'privacy boundary should render');
   inc(host.innerHTML, 'Generic Showdown logs remain format-limited', 'format boundary should render');
   inc(host.innerHTML, 'Verified Champion artifacts can calibrate Champion confidence', 'Champion calibration boundary should render');
+  inc(host.innerHTML, 'Replay team vs edited team improvement requires the same opponent, format, and sim baseline', 'team-tweak loop boundary should render');
 });
 
 T('2. Sources table uses trainer-facing team names instead of internal keys', () => {
@@ -227,6 +248,60 @@ T('4. Replay provenance reflects the latest local replay analysis without saving
   truthy(replay, 'replay data card should exist');
   inc(host.innerHTML, 'champion-ready', 'latest replay coaching mode should render');
   inc(host.innerHTML, 'Raw logs are not silently stored', 'raw log privacy reminder should remain visible');
+});
+
+T('5. Sources exposes Replay-to-sim comparison provenance without model rewrite claims', () => {
+  ChampionsSim.state.lastReplayCoachAnalysis = {
+    parsed: { format: 'gen9championsvgc2026', turns: [{ turn: 1 }, { turn: 2 }], winner: 'p1' },
+    review: {
+      summary: {
+        rulesetProfile: 'champion_exact',
+        coachingMode: 'champion-ready',
+        confidence: 'medium'
+      },
+      learningReport: {
+        simComparison: {
+          status: 'matched',
+          comparisonStatus: 'simulator_confirmed',
+          calibrationAction: 'none',
+          confidence: 'medium',
+          evidenceLabel: 'Strong inference'
+        }
+      }
+    }
+  };
+  const model = renderSourcesTab('player');
+  const card = model.cards.find((row) => row.title === 'Replay-to-sim comparison');
+  truthy(card, 'comparison card should exist');
+  eq(card.status, 'available', 'matched comparison should be available');
+  inc(host.innerHTML, 'Replay-to-sim comparison', 'comparison card should render');
+  inc(host.innerHTML, 'simulator_confirmed', 'classification should render');
+  inc(host.innerHTML, 'one replay or one team tweak does not rewrite sim models or Battle IQ', 'single-replay/team-tweak guardrail should render');
+});
+
+T('6. Battle Sensei sim plan uses scoped Strategy V2 evidence only', () => {
+  setCurrentFormat('doubles');
+  opponentSelect.value = 'rin_sand';
+  ChampionsSim.state.lastResults = { rin_sand: makeScopedSimResult() };
+  ChampionsSim.state.lastResultsPlayerKey = 'wrong_team';
+  ChampionsSim.state.lastResultsFormat = 'doubles';
+  const blocked = csBuildBattleSenseiSimPlan({
+    formatKind: 'doubles',
+    selectedSide: 'p1',
+    teamPreview: { p2: ['Tyranitar', 'Excadrill'] }
+  }, 'p1');
+  eq(blocked, null, 'mismatched team scope should not become sim evidence');
+
+  ChampionsSim.state.lastResultsPlayerKey = 'player';
+  const plan = csBuildBattleSenseiSimPlan({
+    formatKind: 'doubles',
+    selectedSide: 'p1',
+    teamPreview: { p2: ['Tyranitar', 'Excadrill'] }
+  }, 'p1');
+  truthy(plan, 'matching scoped results should produce a sim plan');
+  eq(plan.matchedOpponentKey, 'rin_sand', 'matched opponent');
+  inc(plan.expectedWinPath, 'Tailwind cleanup', 'win path should come from corrected Strategy evidence');
+  notInc(plan.expectedWinPath, 'Opponent Win', 'loss labels should not become replay sim win paths');
 });
 
 console.log(`\nsources data provenance render tests: ${pass} pass, ${fail} fail\n`);
