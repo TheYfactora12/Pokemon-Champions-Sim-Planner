@@ -195,6 +195,9 @@ function _activateTab(tabId, opts) {
   if ((tabId === 'replays' || tabId === 'replay') && typeof loadAnalysisHistory === 'function') {
     loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
   }
+  if (tabId === 'sources' && typeof renderSourcesTab === 'function') {
+    renderSourcesTab();
+  }
   return true;
 }
 function _handleTabKeydown(ev) {
@@ -3447,6 +3450,9 @@ function csInitReplayCoachUi() {
       } else {
         var analysis = api.analyzeShowdownReplay(raw, opts);
       }
+      try {
+        ChampionsSim.state.lastReplayCoachAnalysis = analysis;
+      } catch (_stateErr) {}
       csReplayCoachRenderAnalysis(analysis);
       setParsedStatus(analysis && analysis.parsed ? analysis.parsed : null, '');
     } catch (e) {
@@ -8071,6 +8077,184 @@ function csRenderStrategyDataSources(report, teamKey, fromCache) {
         '<span class="cs-muted">Clears cached report and local sim history for this team so the next run starts fresh.</span>' +
       '</div>' +
     '</section>';
+}
+
+function csSourceCardStatusClass(status) {
+  status = String(status || '').toLowerCase();
+  if (status === 'available' || status === 'ready' || status === 'connected') return 'low';
+  if (status === 'limited' || status === 'local-only' || status === 'provisional') return 'medium';
+  return 'high';
+}
+
+function csCountCustomTeams() {
+  var count = 0;
+  try {
+    Object.keys(TEAMS || {}).forEach(function(k) {
+      if (TEAMS[k] && TEAMS[k].source === 'custom') count++;
+    });
+  } catch (_e) {}
+  return count;
+}
+
+function csFormatSourceText(value, fallback) {
+  value = String(value == null ? '' : value).trim();
+  return value || fallback || 'Not specified';
+}
+
+function csBuildSourcesProvenanceModel(teamKey) {
+  var key = teamKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[key]) ? TEAMS[key] : null;
+  var fmt = (typeof currentFormat !== 'undefined' && currentFormat) ? currentFormat : (team && team.format) || 'doubles';
+  var scopedResults = (typeof csGetScopedStrategyResults === 'function') ? csGetScopedStrategyResults(key, fmt) : {};
+  var simMatchups = Object.keys(scopedResults || {}).length;
+  var simGames = Object.keys(scopedResults || {}).reduce(function(sum, opp) {
+    var r = scopedResults[opp] || {};
+    return sum + (r.wins || 0) + (r.losses || 0) + (r.draws || 0);
+  }, 0);
+  var historyCount = 0;
+  try {
+    var h = (typeof computeTeamHistory === 'function') ? computeTeamHistory(key) : null;
+    historyCount = h && typeof h.total_battles === 'number' ? h.total_battles : 0;
+  } catch (_histErr) {}
+  var compliance = null;
+  try {
+    if (team && typeof csEvaluateTeamCompliance === 'function') {
+      compliance = csEvaluateTeamCompliance(key, csInferRulesetProfile(fmt, team), {
+        sample_size: simGames,
+        log_source: 'sources_tab'
+      });
+    }
+  } catch (_compErr) {}
+  var adapter = (typeof getWindowValue === 'function') ? getWindowValue('SupabaseAdapter', null) : null;
+  var dbEnabled = !!(adapter && adapter.enabled);
+  var replayAnalysis = (typeof ChampionsSim !== 'undefined' && ChampionsSim.state) ? ChampionsSim.state.lastReplayCoachAnalysis : null;
+  var replaySummary = replayAnalysis && replayAnalysis.review ? replayAnalysis.review.summary : null;
+  var replayMode = replaySummary ? ((replaySummary.rulesetProfile || 'unknown') + ' · ' + (replaySummary.coachingMode || 'local review')) : 'No replay analyzed in this session';
+  var customTeams = csCountCustomTeams();
+  return {
+    activeTeamName: team && team.name ? team.name : key,
+    activeTeamKey: key,
+    format: fmt,
+    simMatchups: simMatchups,
+    simGames: simGames,
+    localHistoryCount: historyCount,
+    compliance: compliance,
+    dbEnabled: dbEnabled,
+    replayMode: replayMode,
+    customTeams: customTeams,
+    cards: [
+      {
+        title: 'Simulation data',
+        status: simGames ? 'available' : 'missing',
+        confidence: simGames ? 'medium' : 'needs more data',
+        detail: simGames
+          ? simGames + ' local sim games across ' + simMatchups + ' matchup' + (simMatchups === 1 ? '' : 's') + '.'
+          : 'No scoped sim results for this active team and format yet.',
+        boundary: 'Used for Strategy, Pilot Guide, matchup odds, lead plans, and Battle Mirror sim expectations.'
+      },
+      {
+        title: 'Replay data',
+        status: replayAnalysis ? 'local-only' : 'missing',
+        confidence: replayAnalysis ? ((replaySummary && replaySummary.confidence) || 'medium') : 'needs more data',
+        detail: replayMode,
+        boundary: 'Battle Sensei parses pasted or uploaded logs locally. Raw logs are not silently stored.'
+      },
+      {
+        title: 'Champion compliance',
+        status: compliance ? csInferComplianceLabel(compliance) : 'unknown',
+        confidence: compliance && compliance.confidence ? compliance.confidence : 'low',
+        detail: compliance ? ((compliance.ruleset_profile || 'unknown ruleset') + ' · ' + ((compliance.recommendations || [])[0] || 'No blocking recommendation.')) : 'No compliance result for the active team.',
+        boundary: 'Champion-exact evidence can train Champion confidence; generic Gen 9 logs stay format-limited.'
+      },
+      {
+        title: 'Free local memory',
+        status: 'local-only',
+        confidence: historyCount ? 'medium' : 'needs more data',
+        detail: historyCount + ' local sim-history games for this team; ' + customTeams + ' custom teams in browser storage.',
+        boundary: 'Free mode is useful immediately, but browser storage is temporary and device-local.'
+      },
+      {
+        title: 'Premium saved memory',
+        status: dbEnabled ? 'connected' : 'locked',
+        confidence: dbEnabled ? 'medium' : 'needs profile',
+        detail: dbEnabled ? 'Supabase adapter is available for saved analysis paths.' : 'Profile history, cross-device trends, norm groups, and long-term Battle IQ are not active in local free mode.',
+        boundary: 'Paid value should come from durable memory and trend reliability, not hiding basic coaching.'
+      }
+    ]
+  };
+}
+
+function csRenderSourceCard(card) {
+  return '<div class="replay-coach-card cs-source-provenance-card">' +
+    '<div class="replay-coach-card-head"><span class="badge badge-blue">' + _escapeHtml(card.title || 'Source') + '</span>' +
+    '<span class="replay-coach-tag ' + _escapeHtml(csSourceCardStatusClass(card.status)) + '">' + _escapeHtml(card.status || 'unknown') + '</span></div>' +
+    '<div class="replay-coach-list">' +
+      '<div class="replay-coach-list-row"><strong>Confidence</strong>' + _escapeHtml(card.confidence || 'low') + '</div>' +
+      '<div class="replay-coach-list-row"><strong>What it uses</strong>' + _escapeHtml(card.detail || '') + '</div>' +
+      '<div class="replay-coach-list-row"><strong>Boundary</strong>' + _escapeHtml(card.boundary || '') + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function csRenderTeamSourceTable() {
+  var rows = [];
+  try {
+    Object.keys(TEAMS || {}).forEach(function(key) {
+      var team = TEAMS[key] || {};
+      var prov = team.provenance || {};
+      var assumptions = Array.isArray(team.assumption_register) ? team.assumption_register.length : 0;
+      var complianceLabel = team.legality_status === 'legal' ? 'approved'
+        : (team.legality_status === 'legal_inferred' ? 'provisional' : (team.legality_status || 'unknown'));
+      rows.push('<tr>' +
+        '<td>' + _escapeHtml(team.name || 'Unnamed team') + '</td>' +
+        '<td>' + _escapeHtml(csFormatSourceText(prov.roster_source, team.source === 'custom' ? 'custom import, browser local' : 'bundled catalog')) + '</td>' +
+        '<td>' + _escapeHtml(csFormatSourceText(prov.spread_source, team.source === 'custom' ? 'custom import, browser local' : 'not disclosed / inferred')) + '</td>' +
+        '<td>' + _escapeHtml(complianceLabel) + '</td>' +
+        '<td>' + _escapeHtml(String(assumptions)) + '</td>' +
+      '</tr>');
+    });
+  } catch (_e) {}
+  if (!rows.length) {
+    rows.push('<tr><td colspan="5">No team catalog loaded yet.</td></tr>');
+  }
+  return '<table class="source-table">' +
+    '<thead><tr><th>Team</th><th>Roster source</th><th>Spread source</th><th>Compliance</th><th>Assumptions</th></tr></thead>' +
+    '<tbody>' + rows.join('') + '</tbody>' +
+  '</table>';
+}
+
+function renderSourcesTab(teamKey) {
+  var host = document.getElementById('sources-list');
+  if (!host) return null;
+  var model = csBuildSourcesProvenanceModel(teamKey);
+  var html = '';
+  html += '<section class="cs-section cs-data-sources">' +
+    '<h3 class="cs-h3">Data Provenance Control Room</h3>' +
+    '<p class="cs-explain">This page explains what the coach is allowed to use right now for ' + _escapeHtml(model.activeTeamName) + '. It is designed to prevent drift between simulation advice, replay coaching, Champion compliance, free local memory, and future premium saved memory.</p>' +
+    '<div class="replay-coach-summary-grid">' +
+      '<div class="replay-coach-metric"><strong>Active team</strong><span>' + _escapeHtml(model.activeTeamName) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Format scope</strong><span>' + _escapeHtml(model.format) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Scoped sim games</strong><span>' + _escapeHtml(String(model.simGames)) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Local trend memory</strong><span>' + _escapeHtml(String(model.localHistoryCount)) + '</span></div>' +
+    '</div>' +
+  '</section>';
+  html += '<div class="replay-coach-grid cs-source-provenance-grid">' + model.cards.map(csRenderSourceCard).join('') + '</div>';
+  html += '<section class="cs-section">' +
+    '<h3 class="cs-h3">Team Catalog Sources</h3>' +
+    '<p class="cs-explain">Trainer UI should show team names and source quality, not internal team IDs. Provisional or inferred catalog rows can support coaching, but should lower confidence when used for Champion-specific calibration.</p>' +
+    csRenderTeamSourceTable() +
+  '</section>';
+  html += '<section class="cs-section">' +
+    '<h3 class="cs-h3">Release Guardrails</h3>' +
+    '<div class="replay-coach-list">' +
+      '<div class="replay-coach-list-row"><strong>Raw-log privacy</strong>Raw logs are not silently stored. Saved replay history requires an explicit profile/privacy path.</div>' +
+      '<div class="replay-coach-list-row"><strong>Champion boundary</strong>Verified Champion artifacts can calibrate Champion confidence. Generic Showdown logs remain format-limited.</div>' +
+      '<div class="replay-coach-list-row"><strong>Premium boundary</strong>Free users get useful local review. Premium value is durable memory, trend reliability, norm groups, and cross-device coaching.</div>' +
+      '<div class="replay-coach-list-row"><strong>Evidence vocabulary</strong>Strategy, Battle Sensei, Battle IQ, and Battle Mirror should use observed, strong inference, weak inference, and needs more data.</div>' +
+    '</div>' +
+  '</section>';
+  host.innerHTML = html;
+  return model;
 }
 
 function renderStrategyTab(teamKey) {
