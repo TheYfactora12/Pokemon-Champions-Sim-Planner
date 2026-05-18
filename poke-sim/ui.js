@@ -2692,10 +2692,11 @@ function renderReplays() {
     const trBroken=(r.log||[]).some(l=>l.includes('NORMAL'));
     const tw=(r.log||[]).some(l=>l.includes('Tailwind'));
     const hasTurnLog = Array.isArray(r.turnLog) && r.turnLog.length > 0;
-    const coachingSummary = csBuildReplayCoachingSummary(r, {
+    const showCoachingSummary = r.result === 'loss';
+    const coachingSummary = showCoachingSummary ? csBuildReplayCoachingSummary(r, {
       playerKey: r.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'),
       oppKey: r.oppKey || null
-    });
+    }) : null;
     const logLen = (r.log || []).length;
     const logCapActive = !!r.logTruncated ||
       (typeof r.logLineCount === 'number' && r.logLineCount > logLen) ||
@@ -2719,7 +2720,7 @@ function renderReplays() {
         ${hasTurnLog?`<span class="rchip">${turning}</span>`:''}
       </div>
       <div class="replay-expanded">
-        ${csRenderReplayCoachingSummary(coachingSummary)}
+        ${showCoachingSummary ? csRenderReplayCoachingSummary(coachingSummary) : ''}
         ${hasTurnLog ? `<div class="replay-v2-tools">${csReplaySparkline(r.turnLog)}<button class="btn-secondary replay-json-btn" type="button">Download JSON</button></div>${csRenderTurnLogRows(r.turnLog, { playerKey: r.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'), oppKey: r.oppKey || null })}` : ''}
         <div class="battle-log">${(r.log||[]).join('<br>')}</div>
       </div>`;
