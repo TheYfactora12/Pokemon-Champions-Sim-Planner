@@ -665,6 +665,14 @@ table{border-collapse:collapse;width:100%}
 .rchip.tw{border-color:var(--gold);color:var(--gold);background:rgba(245,197,66,.07)}
 .replay-expanded{display:none;margin-top:var(--sp3);padding-top:var(--sp3);border-top:1px solid var(--border)}
 .replay-card.open .replay-expanded{display:block}
+.replay-coach-summary{margin-bottom:var(--sp3);padding:var(--sp3);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface2)}
+.replay-coach-execution{border-color:rgba(245,197,66,.45)}
+.replay-coach-plan-mismatch{border-color:rgba(91,164,245,.45)}
+.replay-coach-not-enough-evidence{border-color:var(--border)}
+.replay-coach-title{font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:6px}
+.replay-coach-detail{font-size:11px;line-height:1.6;color:var(--text);margin-bottom:8px}
+.replay-coach-row{display:grid;grid-template-columns:80px 1fr;gap:8px;font-size:11px;line-height:1.5;color:var(--text);margin-top:4px}
+.replay-coach-label{font-family:var(--font-mono);color:var(--text-m);text-transform:uppercase;font-size:10px}
 .battle-log{font-family:var(--font-mono);font-size:11px;color:var(--text-m);max-height:220px;overflow-y:auto;line-height:1.9}
 .battle-log .lt{color:var(--primary);font-weight:600}
 .battle-log .lk{color:var(--red)}

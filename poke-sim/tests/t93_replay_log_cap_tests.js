@@ -121,5 +121,22 @@ T('2. replay renderer shows truncation indicator', () => {
   inc(replayList.innerHTML, 'battle-log');
 });
 
+T('3. replay renderer includes coaching summary block', () => {
+  replayList.children = [];
+  replayList.innerHTML = '';
+  setReplayState([{
+    result: 'loss',
+    turns: 8,
+    trTurns: 0,
+    winCondition: 'KO',
+    oppKey: 'mega_altaria',
+    log: ['Turn 1'],
+    turnLog: []
+  }], 'all');
+  renderReplays();
+  inc(replayList.innerHTML, 'Coaching Summary');
+  inc(replayList.innerHTML, 'not enough evidence');
+});
+
 console.log(`\nreplay log cap: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);
