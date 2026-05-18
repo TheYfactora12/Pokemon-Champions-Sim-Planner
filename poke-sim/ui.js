@@ -2625,6 +2625,51 @@ function downloadReplayTurnLog(replay) {
   setTimeout(function() { URL.revokeObjectURL(url); }, 0);
 }
 
+function csBuildReplayCoachingSummary(replay, opts) {
+  opts = opts || {};
+  var fallback = {
+    issue_category: 'not enough evidence',
+    evidence_label: 'not enough evidence',
+    next_action: 'Run another replay with structured turn log so the Replay Log can show a clearer decision review.',
+    detail: 'This replay does not expose enough structured evidence to label the miss confidently.'
+  };
+  if (!replay || typeof replay !== 'object') return fallback;
+
+  var rows = Array.isArray(replay.turnLog) ? replay.turnLog : [];
+  if (rows.length) {
+    var audit = csBuildDecisionAudit(rows, {
+      playerKey: opts.playerKey || replay.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'),
+      oppKey: opts.oppKey || replay.oppKey || null,
+      teamLookup: opts.teamLookup,
+      oppLookup: opts.oppLookup
+    });
+    if (audit && audit.total_flags && Array.isArray(audit.flagged_turns) && audit.flagged_turns.length) {
+      var flag = audit.flagged_turns[0];
+      return {
+        issue_category: 'execution',
+        evidence_label: 'replay + turn log',
+        next_action: 'Review T' + flag.turn + ': compare ' + flag.chosen_move + ' against ' + flag.best_move + '.',
+        detail: 'The replay shows a clearer line on the turning turn, so the next review target is execution rather than team theory.'
+      };
+    }
+  }
+
+  return fallback;
+}
+
+function csRenderReplayCoachingSummary(summary) {
+  if (!summary) return '';
+  var issue = summary.issue_category || 'not enough evidence';
+  var issueClass = issue.replace(/\s+/g, '-');
+  return '<div class="replay-coach-summary replay-coach-' + _escapeHtml(issueClass) + '">' +
+    '<div class="replay-coach-title">Coaching Summary</div>' +
+    (summary.detail ? '<div class="replay-coach-detail">' + _escapeHtml(summary.detail) + '</div>' : '') +
+    '<div class="replay-coach-row"><span class="replay-coach-label">Issue</span><strong>' + _escapeHtml(issue) + '</strong></div>' +
+    '<div class="replay-coach-row"><span class="replay-coach-label">Evidence</span><span>' + _escapeHtml(summary.evidence_label || 'not enough evidence') + '</span></div>' +
+    '<div class="replay-coach-row"><span class="replay-coach-label">Next action</span><span>' + _escapeHtml(summary.next_action || '') + '</span></div>' +
+  '</div>';
+}
+
 function renderReplays() {
   const el = document.getElementById('replay-list');
   if (!el) return;
@@ -2647,6 +2692,10 @@ function renderReplays() {
     const trBroken=(r.log||[]).some(l=>l.includes('NORMAL'));
     const tw=(r.log||[]).some(l=>l.includes('Tailwind'));
     const hasTurnLog = Array.isArray(r.turnLog) && r.turnLog.length > 0;
+    const coachingSummary = csBuildReplayCoachingSummary(r, {
+      playerKey: r.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'),
+      oppKey: r.oppKey || null
+    });
     const logLen = (r.log || []).length;
     const logCapActive = !!r.logTruncated ||
       (typeof r.logLineCount === 'number' && r.logLineCount > logLen) ||
@@ -2670,6 +2719,7 @@ function renderReplays() {
         ${hasTurnLog?`<span class="rchip">${turning}</span>`:''}
       </div>
       <div class="replay-expanded">
+        ${csRenderReplayCoachingSummary(coachingSummary)}
         ${hasTurnLog ? `<div class="replay-v2-tools">${csReplaySparkline(r.turnLog)}<button class="btn-secondary replay-json-btn" type="button">Download JSON</button></div>${csRenderTurnLogRows(r.turnLog, { playerKey: r.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'), oppKey: r.oppKey || null })}` : ''}
         <div class="battle-log">${(r.log||[]).join('<br>')}</div>
       </div>`;
@@ -2684,9 +2734,13 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.phase5 = ChampionsSim.phase5 || {};
   ChampionsSim.phase5.csBuildDecisionAudit = csBuildDecisionAudit;
   ChampionsSim.phase5.csRenderDecisionAuditChip = csRenderDecisionAuditChip;
+  ChampionsSim.phase5.csBuildReplayCoachingSummary = csBuildReplayCoachingSummary;
+  ChampionsSim.phase5.csRenderReplayCoachingSummary = csRenderReplayCoachingSummary;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildDecisionAudit', csBuildDecisionAudit);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderDecisionAuditChip', csRenderDecisionAuditChip);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildReplayCoachingSummary', csBuildReplayCoachingSummary);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderReplayCoachingSummary', csRenderReplayCoachingSummary);
 
 document.querySelectorAll('.filter-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{

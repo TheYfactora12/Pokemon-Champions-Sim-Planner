@@ -83,6 +83,8 @@ vm.runInContext([
   'this.csReplaySparkline = csReplaySparkline;',
   'this.csRenderTurnLogRows = csRenderTurnLogRows;',
   'this.csBuildDecisionAudit = csBuildDecisionAudit;',
+  'this.csBuildReplayCoachingSummary = csBuildReplayCoachingSummary;',
+  'this.csRenderReplayCoachingSummary = csRenderReplayCoachingSummary;',
   'this.downloadReplayTurnLog = downloadReplayTurnLog;'
 ].join(' '), ctx);
 
@@ -220,6 +222,64 @@ T('T5c-6 Replay Log v2 renders decision gap chip', () => {
   });
   truthy(html.includes('decision-gap'), 'missing decision gap class');
   truthy(html.includes('Better line: Recover'), 'missing best-line chip');
+});
+
+T('T5c-7 replay coaching summary flags execution from turn-log evidence', () => {
+  const out = ctx.csBuildReplayCoachingSummary({
+    result: 'loss',
+    oppKey: 'opp',
+    turnLog: DECISION_TURN_LOG,
+    turning_point: { turn: 1 }
+  }, {
+    playerKey: 'player',
+    oppKey: 'opp',
+    teamLookup: DECISION_PLAYER,
+    oppLookup: DECISION_OPP
+  });
+  eq(out.issue_category, 'execution', 'expected execution issue');
+  eq(out.evidence_label, 'replay + turn log', 'expected turn-log evidence label');
+  truthy(/Review T1/.test(out.next_action), 'expected turn review action');
+});
+
+T('T5c-8 replay coaching summary does not fall back to strategy context in v1', () => {
+  const out = ctx.csBuildReplayCoachingSummary({
+    result: 'loss',
+    oppKey: 'mega_altaria',
+    turnLog: [{
+      turn: 1,
+      pre: {},
+      actions: { player: [{ actor: 'Hero', move: 'Protect', target: 'Dummy' }], opponent: [] },
+      post: { position_score: 0.4 },
+      delta: { position_score: -0.1 }
+    }],
+    turning_point: { turn: 2 }
+  });
+  eq(out.issue_category, 'not enough evidence', 'expected conservative fallback');
+  eq(out.evidence_label, 'not enough evidence', 'expected conservative evidence label');
+  truthy(!/Protect the speed-control turn/.test(out.next_action), 'unexpected strategy-context action');
+});
+
+T('T5c-9 replay coaching summary supports not enough evidence', () => {
+  const out = ctx.csBuildReplayCoachingSummary({
+    result: 'loss',
+    oppKey: 'mega_altaria',
+    log: ['Turn 1']
+  });
+  eq(out.issue_category, 'not enough evidence', 'expected not-enough-evidence issue');
+  eq(out.evidence_label, 'not enough evidence', 'expected not-enough-evidence label');
+});
+
+T('T5c-10 replay coaching summary renderer prints the bounded output rows', () => {
+  const html = ctx.csRenderReplayCoachingSummary({
+    issue_category: 'execution',
+    evidence_label: 'replay + turn log',
+    next_action: 'Review T1',
+    detail: 'Replay shows a clearer line on the turning turn.'
+  });
+  truthy(html.includes('Coaching Summary'), 'summary title missing');
+  truthy(html.includes('Issue'), 'issue row missing');
+  truthy(html.includes('Evidence'), 'evidence row missing');
+  truthy(html.includes('Next action'), 'next action row missing');
 });
 
 console.log(`\nPhase 5 turn log: ${pass} pass, ${fail} fail\n`);
