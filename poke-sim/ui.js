@@ -2630,7 +2630,7 @@ function csBuildReplayCoachingSummary(replay, opts) {
   var fallback = {
     issue_category: 'not enough evidence',
     evidence_label: 'not enough evidence',
-    next_action: 'Run another replay with structured turn log, then compare it against the current Strategy tab.',
+    next_action: 'Run another replay with structured turn log so the Replay Log can show a clearer decision review.',
     detail: 'This replay does not expose enough structured evidence to label the miss confidently.'
   };
   if (!replay || typeof replay !== 'object') return fallback;
@@ -2652,37 +2652,6 @@ function csBuildReplayCoachingSummary(replay, opts) {
         detail: 'The replay shows a clearer line on the turning turn, so the next review target is execution rather than team theory.'
       };
     }
-  }
-
-  var report = opts.strategyReport || null;
-  if (!report && typeof ChampionsSim !== 'undefined' && ChampionsSim.state && ChampionsSim.state.lastResults &&
-      Object.keys(ChampionsSim.state.lastResults).length && typeof buildStrategyReport === 'function') {
-    try {
-      report = buildStrategyReport(
-        opts.playerKey || replay.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'),
-        ChampionsSim.state.lastResults,
-        opts.format || (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles')
-      );
-    } catch (_e) {
-      report = null;
-    }
-  }
-  var topRule = report && Array.isArray(report.coaching_rules)
-    ? report.coaching_rules.find(function(rule) {
-        return rule && typeof rule.correction === 'string' && rule.correction &&
-          (rule.severity === 'critical' || rule.severity === 'high');
-      }) || report.coaching_rules.find(function(rule) {
-        return rule && typeof rule.correction === 'string' && rule.correction;
-      })
-    : null;
-
-  if (replay.result === 'loss' && rows.length && replay.turning_point && topRule) {
-    return {
-      issue_category: 'plan mismatch',
-      evidence_label: 'replay + strategy context',
-      next_action: topRule.correction,
-      detail: 'The replay does not show a clean decision-gap flag, so the safest next check is the current strategy rule rather than a claimed misplay.'
-    };
   }
 
   return fallback;

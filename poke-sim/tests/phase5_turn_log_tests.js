@@ -241,7 +241,7 @@ T('T5c-7 replay coaching summary flags execution from turn-log evidence', () => 
   truthy(/Review T1/.test(out.next_action), 'expected turn review action');
 });
 
-T('T5c-8 replay coaching summary can fall back to strategy context', () => {
+T('T5c-8 replay coaching summary does not fall back to strategy context in v1', () => {
   const out = ctx.csBuildReplayCoachingSummary({
     result: 'loss',
     oppKey: 'mega_altaria',
@@ -253,16 +253,10 @@ T('T5c-8 replay coaching summary can fall back to strategy context', () => {
       delta: { position_score: -0.1 }
     }],
     turning_point: { turn: 2 }
-  }, {
-    strategyReport: {
-      coaching_rules: [
-        { severity: 'critical', correction: 'Protect the speed-control turn and keep your pivot healthy.' }
-      ]
-    }
   });
-  eq(out.issue_category, 'plan mismatch', 'expected plan mismatch issue');
-  eq(out.evidence_label, 'replay + strategy context', 'expected strategy evidence label');
-  truthy(/Protect the speed-control turn/.test(out.next_action), 'expected strategy correction action');
+  eq(out.issue_category, 'not enough evidence', 'expected conservative fallback');
+  eq(out.evidence_label, 'not enough evidence', 'expected conservative evidence label');
+  truthy(!/Protect the speed-control turn/.test(out.next_action), 'unexpected strategy-context action');
 });
 
 T('T5c-9 replay coaching summary supports not enough evidence', () => {
