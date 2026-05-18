@@ -667,7 +667,6 @@ table{border-collapse:collapse;width:100%}
 .replay-card.open .replay-expanded{display:block}
 .replay-coach-summary{margin-bottom:var(--sp3);padding:var(--sp3);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface2)}
 .replay-coach-execution{border-color:rgba(245,197,66,.45)}
-.replay-coach-plan-mismatch{border-color:rgba(91,164,245,.45)}
 .replay-coach-not-enough-evidence{border-color:var(--border)}
 .replay-coach-title{font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:6px}
 .replay-coach-detail{font-size:11px;line-height:1.6;color:var(--text);margin-bottom:8px}
