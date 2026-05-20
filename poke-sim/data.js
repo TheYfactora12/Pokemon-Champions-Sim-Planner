@@ -16,7 +16,10 @@ const BASE_STATS = {
   Arcanine:       { hp:90, atk:110, def:80, spa:100, spd:80, spe:95, types:['Fire'] },
   Garchomp:       { hp:108, atk:130, def:95, spa:80, spd:85, spe:102, types:['Dragon','Ground'] },
   // Mega Altaria team
-  'Typhlosion-Hisui': { hp:84, atk:68, def:78, spa:119, spd:85, spe:95, types:['Fire','Ghost'] },
+  // Regional / alt forms are keyed here because the engine reads BASE_STATS
+  // directly for stat and battle calculations.
+  'Typhlosion-Hisui': { hp:73, atk:84, def:78, spa:119, spd:85, spe:95, types:['Fire','Ghost'] },
+  'Ninetales-Alola': { hp:73, atk:67, def:75, spa:81, spd:100, spe:109, types:['Ice','Fairy'] },
   'Altaria-Mega':  { hp:75, atk:110, def:110, spa:110, spd:105, spe:80, types:['Dragon','Fairy'] },
   Whimsicott:     { hp:60, atk:67, def:85, spa:77, spd:75, spe:116, types:['Grass','Fairy'] },
   'Rotom-Wash':   { hp:50, atk:65, def:107, spa:105, spd:107, spe:86, types:['Electric','Water'] },
@@ -66,7 +69,7 @@ const BASE_STATS = {
   Kingambit:       { hp:100, atk:135, def:120, spa:60, spd:85, spe:50, types:['Dark','Steel'] },
   Amoonguss:       { hp:114, atk:85, def:70, spa:85, spd:80, spe:30, types:['Grass','Poison'] },
   Gholdengo:       { hp:87, atk:60, def:95, spa:133, spd:91, spe:84, types:['Steel','Ghost'] },
-  'Ursaluna-Bloodmoon': { hp:113, atk:70, def:85, spa:135, spd:95, spe:55, types:['Ground','Normal'] },
+  'Ursaluna-Bloodmoon': { hp:113, atk:70, def:120, spa:135, spd:65, spe:52, types:['Ground','Normal'] },
   Maushold:        { hp:74, atk:75, def:70, spa:65, spd:75, spe:111, types:['Normal'] },
   Dragonite:       { hp:91, atk:134, def:95, spa:100, spd:100, spe:80, types:['Dragon','Flying'] },  // T9e: species used by preloaded tournament teams (14-20)
   Talonflame:      { hp:78, atk:81, def:71, spa:74, spd:69, spe:126, types:['Fire','Flying'] },
