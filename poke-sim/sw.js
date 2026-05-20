@@ -4,6 +4,7 @@
 // MUST be bumped on every release that changes engine.js, data.js, ui.js, or style.css
 // Phase 2 automation tracked in #95 (tools/release.sh)
 //
+// v35-regional-form-stats [2026-05-19] — Canonical regional/form stat corrections + shipped form fallback fix.
 // v34-mobile-shell-layout [2026-05-15] — Mobile shell layout + bring-order normalization.
 // v13-m7-golden-battles [2026-05-09] — M7 (POK-23): golden_battles deterministic regression runner
 //                                   fixture + VM runner + 8 test cases; CI enablement for db_m*.js
@@ -18,7 +19,7 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v34-mobile-shell-layout';
+const CACHE_NAME = 'champions-sim-v35-regional-form-stats';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

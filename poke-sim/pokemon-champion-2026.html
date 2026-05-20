@@ -703,6 +703,13 @@ table{border-collapse:collapse;width:100%}
 .rchip.tw{border-color:var(--gold);color:var(--gold);background:rgba(245,197,66,.07)}
 .replay-expanded{display:none;margin-top:var(--sp3);padding-top:var(--sp3);border-top:1px solid var(--border)}
 .replay-card.open .replay-expanded{display:block}
+.replay-coach-summary{margin-bottom:var(--sp3);padding:var(--sp3);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface2)}
+.replay-coach-execution{border-color:rgba(245,197,66,.45)}
+.replay-coach-not-enough-evidence{border-color:var(--border)}
+.replay-coach-title{font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:6px}
+.replay-coach-detail{font-size:11px;line-height:1.6;color:var(--text);margin-bottom:8px}
+.replay-coach-row{display:grid;grid-template-columns:80px 1fr;gap:8px;font-size:11px;line-height:1.5;color:var(--text);margin-top:4px}
+.replay-coach-label{font-family:var(--font-mono);color:var(--text-m);text-transform:uppercase;font-size:10px}
 .battle-log{font-family:var(--font-mono);font-size:11px;color:var(--text-m);max-height:220px;overflow-y:auto;line-height:1.9}
 .battle-log .lt{color:var(--primary);font-weight:600}
 .battle-log .lk{color:var(--red)}
@@ -2651,7 +2658,10 @@ const BASE_STATS = {
   Arcanine:       { hp:90, atk:110, def:80, spa:100, spd:80, spe:95, types:['Fire'] },
   Garchomp:       { hp:108, atk:130, def:95, spa:80, spd:85, spe:102, types:['Dragon','Ground'] },
   // Mega Altaria team
-  'Typhlosion-Hisui': { hp:84, atk:68, def:78, spa:119, spd:85, spe:95, types:['Fire','Ghost'] },
+  // Regional / alt forms are keyed here because the engine reads BASE_STATS
+  // directly for stat and battle calculations.
+  'Typhlosion-Hisui': { hp:73, atk:84, def:78, spa:119, spd:85, spe:95, types:['Fire','Ghost'] },
+  'Ninetales-Alola': { hp:73, atk:67, def:75, spa:81, spd:100, spe:109, types:['Ice','Fairy'] },
   'Altaria-Mega':  { hp:75, atk:110, def:110, spa:110, spd:105, spe:80, types:['Dragon','Fairy'] },
   Whimsicott:     { hp:60, atk:67, def:85, spa:77, spd:75, spe:116, types:['Grass','Fairy'] },
   'Rotom-Wash':   { hp:50, atk:65, def:107, spa:105, spd:107, spe:86, types:['Electric','Water'] },
@@ -2701,7 +2711,7 @@ const BASE_STATS = {
   Kingambit:       { hp:100, atk:135, def:120, spa:60, spd:85, spe:50, types:['Dark','Steel'] },
   Amoonguss:       { hp:114, atk:85, def:70, spa:85, spd:80, spe:30, types:['Grass','Poison'] },
   Gholdengo:       { hp:87, atk:60, def:95, spa:133, spd:91, spe:84, types:['Steel','Ghost'] },
-  'Ursaluna-Bloodmoon': { hp:113, atk:70, def:85, spa:135, spd:95, spe:55, types:['Ground','Normal'] },
+  'Ursaluna-Bloodmoon': { hp:113, atk:70, def:120, spa:135, spd:65, spe:52, types:['Ground','Normal'] },
   Maushold:        { hp:74, atk:75, def:70, spa:65, spd:75, spe:111, types:['Normal'] },
   Dragonite:       { hp:91, atk:134, def:95, spa:100, spd:100, spe:80, types:['Dragon','Flying'] },  // T9e: species used by preloaded tournament teams (14-20)
   Talonflame:      { hp:78, atk:81, def:71, spa:74, spd:69, spe:126, types:['Fire','Flying'] },
@@ -13756,6 +13766,51 @@ function downloadReplayTurnLog(replay) {
   setTimeout(function() { URL.revokeObjectURL(url); }, 0);
 }
 
+function csBuildReplayCoachingSummary(replay, opts) {
+  opts = opts || {};
+  var fallback = {
+    issue_category: 'not enough evidence',
+    evidence_label: 'not enough evidence',
+    next_action: 'Run another replay with structured turn log so the Replay Log can show a clearer decision review.',
+    detail: 'This replay does not expose enough structured evidence to label the miss confidently.'
+  };
+  if (!replay || typeof replay !== 'object') return fallback;
+
+  var rows = Array.isArray(replay.turnLog) ? replay.turnLog : [];
+  if (rows.length) {
+    var audit = csBuildDecisionAudit(rows, {
+      playerKey: opts.playerKey || replay.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'),
+      oppKey: opts.oppKey || replay.oppKey || null,
+      teamLookup: opts.teamLookup,
+      oppLookup: opts.oppLookup
+    });
+    if (audit && audit.total_flags && Array.isArray(audit.flagged_turns) && audit.flagged_turns.length) {
+      var flag = audit.flagged_turns[0];
+      return {
+        issue_category: 'execution',
+        evidence_label: 'replay + turn log',
+        next_action: 'Review T' + flag.turn + ': compare ' + flag.chosen_move + ' against ' + flag.best_move + '.',
+        detail: 'The replay shows a clearer line on the turning turn, so the next review target is execution rather than team theory.'
+      };
+    }
+  }
+
+  return fallback;
+}
+
+function csRenderReplayCoachingSummary(summary) {
+  if (!summary) return '';
+  var issue = summary.issue_category || 'not enough evidence';
+  var issueClass = issue.replace(/\s+/g, '-');
+  return '<div class="replay-coach-summary replay-coach-' + _escapeHtml(issueClass) + '">' +
+    '<div class="replay-coach-title">Coaching Summary</div>' +
+    (summary.detail ? '<div class="replay-coach-detail">' + _escapeHtml(summary.detail) + '</div>' : '') +
+    '<div class="replay-coach-row"><span class="replay-coach-label">Issue</span><strong>' + _escapeHtml(issue) + '</strong></div>' +
+    '<div class="replay-coach-row"><span class="replay-coach-label">Evidence</span><span>' + _escapeHtml(summary.evidence_label || 'not enough evidence') + '</span></div>' +
+    '<div class="replay-coach-row"><span class="replay-coach-label">Next action</span><span>' + _escapeHtml(summary.next_action || '') + '</span></div>' +
+  '</div>';
+}
+
 function renderReplays() {
   const el = document.getElementById('replay-list');
   if (!el) return;
@@ -13778,6 +13833,11 @@ function renderReplays() {
     const trBroken=(r.log||[]).some(l=>l.includes('NORMAL'));
     const tw=(r.log||[]).some(l=>l.includes('Tailwind'));
     const hasTurnLog = Array.isArray(r.turnLog) && r.turnLog.length > 0;
+    const showCoachingSummary = r.result === 'loss';
+    const coachingSummary = showCoachingSummary ? csBuildReplayCoachingSummary(r, {
+      playerKey: r.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'),
+      oppKey: r.oppKey || null
+    }) : null;
     const logLen = (r.log || []).length;
     const logCapActive = !!r.logTruncated ||
       (typeof r.logLineCount === 'number' && r.logLineCount > logLen) ||
@@ -13801,6 +13861,7 @@ function renderReplays() {
         ${hasTurnLog?`<span class="rchip">${turning}</span>`:''}
       </div>
       <div class="replay-expanded">
+        ${showCoachingSummary ? csRenderReplayCoachingSummary(coachingSummary) : ''}
         ${hasTurnLog ? `<div class="replay-v2-tools">${csReplaySparkline(r.turnLog)}<button class="btn-secondary replay-json-btn" type="button">Download JSON</button></div>${csRenderTurnLogRows(r.turnLog, { playerKey: r.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'), oppKey: r.oppKey || null })}` : ''}
         <div class="battle-log">${(r.log||[]).join('<br>')}</div>
       </div>`;
@@ -13815,9 +13876,13 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.phase5 = ChampionsSim.phase5 || {};
   ChampionsSim.phase5.csBuildDecisionAudit = csBuildDecisionAudit;
   ChampionsSim.phase5.csRenderDecisionAuditChip = csRenderDecisionAuditChip;
+  ChampionsSim.phase5.csBuildReplayCoachingSummary = csBuildReplayCoachingSummary;
+  ChampionsSim.phase5.csRenderReplayCoachingSummary = csRenderReplayCoachingSummary;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildDecisionAudit', csBuildDecisionAudit);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderDecisionAuditChip', csRenderDecisionAuditChip);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildReplayCoachingSummary', csBuildReplayCoachingSummary);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRenderReplayCoachingSummary', csRenderReplayCoachingSummary);
 
 document.querySelectorAll('.filter-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
