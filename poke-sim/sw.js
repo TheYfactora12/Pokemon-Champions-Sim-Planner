@@ -1,4 +1,4 @@
-// Poke-e-Sim Champion 2026 — Service Worker
+// Poke-e-Sim Champion 2026 Preview — Service Worker
 // Cache-first strategy for all app assets + sprite CDN
 // CACHE_NAME scheme: champions-sim-v{major}-{release-tag}
 // MUST be bumped on every release that changes engine.js, data.js, ui.js, or style.css
