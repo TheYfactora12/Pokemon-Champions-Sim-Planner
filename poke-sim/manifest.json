@@ -1,7 +1,7 @@
 {
-  "name": "Poke-e-Sim Champion 2026",
+  "name": "Poke-e-Sim Champion 2026 Preview",
   "short_name": "Poke-e-Sim",
-  "description": "Poke-e-Sim Champion 2026 — VGC competitive team simulator",
+  "description": "Poke-e-Sim Champion 2026 Preview — Pokémon Champions sim and replay-review workbench",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0b1220",

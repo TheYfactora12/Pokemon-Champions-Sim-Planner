@@ -89,9 +89,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.15-sim-preview';
+    return txt || 'v2.1.17-trust-copy';
   } catch (e) {
-    return 'v2.1.15-sim-preview';
+    return 'v2.1.17-trust-copy';
   }
 }
 
@@ -7089,8 +7089,8 @@ function _csSourceChip(sourceLabel) {
   if (!sourceLabel) return '';
   var k = sourceLabel.kind || 'unknown';
   var labelMap = {
-    verified_champions_source: 'verified',
-    simulation_data: 'sim data',
+    verified_champions_source: 'verified source',
+    simulation_data: 'sim sample',
     inferred_strategy: 'inferred',
     unknown: 'unknown'
   };
@@ -8499,7 +8499,7 @@ function computeTeamHistory(teamKey) {
     };
     coaching_delta = auditCoachingDelta(_csPolicyAdviceFromHistory(priorHistory), currentAdvice, priorGames.length, total_battles);
     var adviceStrings = [];
-    if (currentAdvice.recommended_line) adviceStrings.push('Lead ' + currentAdvice.recommended_line + ' as the current best candidate.');
+    if (currentAdvice.recommended_line) adviceStrings.push('Lead ' + currentAdvice.recommended_line + ' as the current top sim candidate.');
     if (loss_conditions_v2[0]) adviceStrings.push('Address ' + loss_conditions_v2[0].pattern + ' before forcing damage.');
     policy_output_audit = auditPolicyOutput(adviceStrings);
   } catch (_e) {
@@ -8561,14 +8561,14 @@ function csRenderAdaptiveBanner(history) {
   var bannerClass = 'cs-adaptive-banner cs-adaptive-state-' + state;
   var bannerTitle, bannerBody;
   if (state === 1) {
-    bannerTitle = 'Theory-based coaching';
-    bannerBody  = 'Sim battles to unlock tailored coaching. Tips below come from archetype heuristics.';
+    bannerTitle = 'Theory-backed preview';
+    bannerBody  = 'Run sims to unlock team-specific coaching. Until then, guidance below comes from roster and archetype heuristics, not your logged sim history.';
   } else if (state === 2) {
     bannerTitle = 'Early data';
     bannerBody  = total + ' battle' + (total === 1 ? '' : 's') + ' logged. ' + remaining + ' more to reach mature confidence.';
   } else {
-    bannerTitle = 'Mature data';
-    bannerBody  = total + ' battles logged. Coaching reflects your actual sim trends.';
+    bannerTitle = 'Established sim sample';
+    bannerBody  = total + ' battles logged. Coaching reflects repeated sim patterns, not guaranteed tournament truth.';
   }
   html += '<div class="' + bannerClass + '">';
   html +=   '<div class="cs-adaptive-row">';
@@ -9103,8 +9103,8 @@ function renderThreatResponseCard(result) {
       '<div class="cs-line-meta">' + pct(b.win_rate) + ' over ' + b.n + ' sims &middot; confidence ' + _csEsc(conf) + ' &middot; ' + _csEsc(b.data) + '</div>' +
       '</div>';
   }
-  var html = '<section class="cs-section cs-phase4d-block"><h3 class="cs-h3">Threat Response <span class="cs-source cs-source-simulation_data"><span class="cs-source-label">sim data</span></span></h3>';
-  html += '<p class="cs-explain">Best candidate is measured against greedy AI simulation, not a directive.</p>';
+  var html = '<section class="cs-section cs-phase4d-block"><h3 class="cs-h3">Threat Response <span class="cs-source cs-source-simulation_data"><span class="cs-source-label">sim sample</span></span></h3>';
+  html += '<p class="cs-explain">Top sim candidate is measured against greedy AI simulation. Treat it as a starting point, not a directive or approval.</p>';
   html += card(best, 'cs-line-recommended');
   html += '<details class="cs-line-alt-wrap"><summary>Alternatives</summary>';
   sorted.filter(function(b){ return b.id !== best.id; }).forEach(function(b){ html += card(b, 'cs-line-alt'); });
