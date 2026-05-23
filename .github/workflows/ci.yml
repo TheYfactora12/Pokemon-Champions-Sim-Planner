@@ -98,13 +98,20 @@ jobs:
           if [ -f package.json ]; then
             npm install
           fi
+          # Only enable strict live DB seed checks when roster/seed artifacts changed.
+          # UI-only PRs should not fail on unrelated hosted DB drift.
+          CHANGED="$(git diff --name-only origin/main...HEAD || true)"
+          ROSTER_CHANGED="$(echo "$CHANGED" | grep -E '^poke-sim/(data\.js|db/seed_teams_v2\.sql|db/migrations/2026_04_28_seed_teams_v2\.sql)$' || true)"
           # Create test environment with real Supabase credentials for DB tests
-          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ] && [ -n "$ROSTER_CHANGED" ]; then
             export SUPABASE_URL="$SUPABASE_URL"
             export SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY"
             export SUPABASE_KEY="$SUPABASE_ANON_KEY"
             export RUN_LIVE_DB=1
-            echo "🔗 Live Supabase credentials configured for DB tests"
+            echo "🔗 Live Supabase credentials configured for strict roster/seed DB tests"
+          elif [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+            echo "ℹ️  Live Supabase credentials available, but roster/seed files did not change"
+            echo "   Skipping strict live DB seed-count assertions for this PR"
           else
             echo "⚠️  No Supabase credentials - DB tests will use mock"
           fi
