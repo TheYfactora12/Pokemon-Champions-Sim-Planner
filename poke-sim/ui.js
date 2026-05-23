@@ -89,9 +89,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.15-sim-preview';
+    return txt || 'v2.1.18-may-meta-roster';
   } catch (e) {
-    return 'v2.1.15-sim-preview';
+    return 'v2.1.18-may-meta-roster';
   }
 }
 
@@ -2368,11 +2368,29 @@ function csRenderHpBars(turn) {
   if (!names.length) return '';
   return '<div class="replay-hp-bars">' + names.map(function(name) {
     var pct = Math.max(0, Math.min(1, Number(hp[name]) || 0));
-    return '<span class="replay-hp-chip" title="' + _escapeHtml(name) + ' ' + Math.round(pct * 100) + '%">' +
+    var label = _csSnapshotDisplayName(name);
+    return '<span class="replay-hp-chip" title="' + _escapeHtml(label) + ' ' + Math.round(pct * 100) + '%">' +
       '<span class="replay-hp-fill" style="width:' + Math.round(pct * 100) + '%"></span>' +
-      '<span class="replay-hp-label">' + _escapeHtml(name) + '</span>' +
+      '<span class="replay-hp-label">' + _escapeHtml(label) + '</span>' +
     '</span>';
   }).join('') + '</div>';
+}
+
+function _csSnapshotDisplayName(key) {
+  var raw = String(key || '');
+  var parts = raw.split(':');
+  return parts.length >= 4 ? parts.slice(3).join(':') : raw;
+}
+
+function _csResolveSnapshotKey(pre, side, name) {
+  if (!pre || !name) return name;
+  var groups = [];
+  if (pre.active_keys && Array.isArray(pre.active_keys[side])) groups = groups.concat(pre.active_keys[side]);
+  if (pre.bench_keys && Array.isArray(pre.bench_keys[side])) groups = groups.concat(pre.bench_keys[side]);
+  for (var i = 0; i < groups.length; i++) {
+    if (_csSnapshotDisplayName(groups[i]) === name) return groups[i];
+  }
+  return name;
 }
 
 function _csDecisionMemberMap(members) {
@@ -2390,16 +2408,20 @@ function _csDecisionMoveScore(move, actor, target, turn, opts) {
   var category = (typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[move]) ? MOVE_CATEGORY[move] : 'status';
   var bp = (typeof MOVE_BP !== 'undefined' && MOVE_BP[move]) ? MOVE_BP[move] : 0;
   var field = (turn && turn.pre && turn.pre.field) || {};
-  var speedOrder = (turn && turn.pre && Array.isArray(turn.pre.speed_order)) ? turn.pre.speed_order : [];
+  var speedOrder = (turn && turn.pre && Array.isArray(turn.pre.speed_order_keys) && turn.pre.speed_order_keys.length)
+    ? turn.pre.speed_order_keys
+    : ((turn && turn.pre && Array.isArray(turn.pre.speed_order)) ? turn.pre.speed_order : []);
   var hpPct = 1;
   var targetHpPct = 1;
-  if (turn && turn.pre && turn.pre.hp_pct && actor && actor.name && typeof turn.pre.hp_pct[actor.name] === 'number') {
-    hpPct = turn.pre.hp_pct[actor.name];
+  var actorSnapshotKey = _csResolveSnapshotKey(turn && turn.pre, 'player', actor && actor.name);
+  var targetSnapshotKey = _csResolveSnapshotKey(turn && turn.pre, 'opponent', target && target.name);
+  if (turn && turn.pre && turn.pre.hp_pct && actorSnapshotKey && typeof turn.pre.hp_pct[actorSnapshotKey] === 'number') {
+    hpPct = turn.pre.hp_pct[actorSnapshotKey];
   } else if (actor && actor.hp != null && actor.maxHp) {
     hpPct = Math.max(0, Math.min(1, actor.hp / actor.maxHp));
   }
-  if (turn && turn.pre && turn.pre.hp_pct && target && target.name && typeof turn.pre.hp_pct[target.name] === 'number') {
-    targetHpPct = turn.pre.hp_pct[target.name];
+  if (turn && turn.pre && turn.pre.hp_pct && targetSnapshotKey && typeof turn.pre.hp_pct[targetSnapshotKey] === 'number') {
+    targetHpPct = turn.pre.hp_pct[targetSnapshotKey];
   } else if (target && target.hp != null && target.maxHp) {
     targetHpPct = Math.max(0, Math.min(1, target.hp / target.maxHp));
   }
@@ -2464,8 +2486,8 @@ function _csDecisionMoveScore(move, actor, target, turn, opts) {
       var hasScreenPressure = !!(field.terrain || (enemyScreens && (enemyScreens.reflect || enemyScreens.light || enemyScreens.aurora)) || (ownScreens && (ownScreens.reflect || ownScreens.light || ownScreens.aurora)));
       score = hasScreenPressure ? 44 : 8;
     } else if (move === 'Trick Room') {
-      var enemySpeedIdx = liveEnemies.length ? speedOrder.indexOf(liveEnemies[0]) : -1;
-      var actorSpeedIdx = speedOrder.indexOf(actor && actor.name);
+      var enemySpeedIdx = liveEnemies.length ? speedOrder.indexOf(_csResolveSnapshotKey(turn && turn.pre, 'opponent', liveEnemies[0])) : -1;
+      var actorSpeedIdx = speedOrder.indexOf(actorSnapshotKey);
       score = (!field.trick_room && actorSpeedIdx > -1 && enemySpeedIdx > -1 && actorSpeedIdx > enemySpeedIdx) ? 56 : 20;
     } else if (move === 'Tailwind') {
       score = 50;
@@ -3882,6 +3904,19 @@ function _pdfHasAny(mon, list) {
   return !!(mon && mon.moves && list.some(function(x){ return mon.moves.indexOf(x) >= 0; }));
 }
 
+function _csHasTrueDamageWincon(mon) {
+  var moves = (mon && mon.moves) || [];
+  var damaging = moves.filter(function(mv) {
+    return typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[mv] && MOVE_CATEGORY[mv] !== 'status';
+  });
+  if (damaging.length >= 2) return true;
+  if (!damaging.length) return false;
+  if (_pdfHasAny(mon, PDF_SPREAD) || _pdfHasAny(mon, PDF_PRIORITY)) return true;
+  var base = (typeof BASE_STATS !== 'undefined' && mon && BASE_STATS[mon.name]) ? BASE_STATS[mon.name] : null;
+  var offense = base ? Math.max(base.atk || 0, base.spa || 0) : 0;
+  return offense >= 95;
+}
+
 var CLASSIFY_POKEMON_LEGACY_ROLES = [
   'lead',
   'sweeper',
@@ -4484,7 +4519,7 @@ function generatePDFReport() {
       } catch(e) { UILog.warn('PDF sections skipped', e); return ''; }
     })(),
 
-    '<div class="pdf-footer">Generated by Poke-e-Sim Champion 2026 — ' + _escapeHtml(date) + '</div>'
+    '<div class="pdf-footer">Generated by Poke-e-Sim Champion 2026 Preview — ' + _escapeHtml(date) + '</div>'
   ].join('');
 
   window.print();
@@ -6460,7 +6495,7 @@ function csMistakes(team, identity, format) {
 
   // Single wincon
   var damagers = members.filter(function(m){
-    return (m.moves || []).some(function(mv){ return PDF_SPREAD.indexOf(mv) >= 0 || _pdfHasAny(m, PDF_PRIORITY); });
+    return _csHasTrueDamageWincon(m);
   });
   if (damagers.length <= 2) {
     rules.push({
@@ -6727,8 +6762,7 @@ function csStressTest(team, identity, results, scoreCard) {
   if (!hasSpeed) breakPoints.push('Speed control denied -> slow exposed team');
   if (!hasFO) breakPoints.push('No Fake Out -> turn 1 setup vulnerable to faster pressure');
   var damagers = members.filter(function(m){
-    return (m.moves || []).some(function(mv){ return PDF_SPREAD.indexOf(mv) >= 0; }) ||
-           _pdfHasAny(m, PDF_PRIORITY);
+    return _csHasTrueDamageWincon(m);
   });
   if (damagers.length <= 2) breakPoints.push('Closer removed early -> late game collapses');
   if (members.length < 6) breakPoints.push('Roster slots short -> matchup volatility increases');
@@ -6887,8 +6921,7 @@ function csRiskProfile(team, scoreCard) {
   });
 
   var damagers = members.filter(function(m){
-    return (m.moves || []).some(function(mv){ return PDF_SPREAD.indexOf(mv) >= 0; }) ||
-           _pdfHasAny(m, PDF_PRIORITY);
+    return _csHasTrueDamageWincon(m);
   }).length;
   if (damagers <= 1) risks.push({
     category: 'single_wincon', severity: damagers === 0 ? 'extreme' : 'high',
@@ -7056,8 +7089,8 @@ function _csSourceChip(sourceLabel) {
   if (!sourceLabel) return '';
   var k = sourceLabel.kind || 'unknown';
   var labelMap = {
-    verified_champions_source: 'verified',
-    simulation_data: 'sim data',
+    verified_champions_source: 'verified source',
+    simulation_data: 'sim sample',
     inferred_strategy: 'inferred',
     unknown: 'unknown'
   };
@@ -8466,7 +8499,7 @@ function computeTeamHistory(teamKey) {
     };
     coaching_delta = auditCoachingDelta(_csPolicyAdviceFromHistory(priorHistory), currentAdvice, priorGames.length, total_battles);
     var adviceStrings = [];
-    if (currentAdvice.recommended_line) adviceStrings.push('Lead ' + currentAdvice.recommended_line + ' as the current best candidate.');
+    if (currentAdvice.recommended_line) adviceStrings.push('Lead ' + currentAdvice.recommended_line + ' as the current top sim candidate.');
     if (loss_conditions_v2[0]) adviceStrings.push('Address ' + loss_conditions_v2[0].pattern + ' before forcing damage.');
     policy_output_audit = auditPolicyOutput(adviceStrings);
   } catch (_e) {
@@ -8528,14 +8561,14 @@ function csRenderAdaptiveBanner(history) {
   var bannerClass = 'cs-adaptive-banner cs-adaptive-state-' + state;
   var bannerTitle, bannerBody;
   if (state === 1) {
-    bannerTitle = 'Theory-based coaching';
-    bannerBody  = 'Sim battles to unlock tailored coaching. Tips below come from archetype heuristics.';
+    bannerTitle = 'Theory-backed preview';
+    bannerBody  = 'Run sims to unlock team-specific coaching. Until then, guidance below comes from roster and archetype heuristics, not your logged sim history.';
   } else if (state === 2) {
     bannerTitle = 'Early data';
     bannerBody  = total + ' battle' + (total === 1 ? '' : 's') + ' logged. ' + remaining + ' more to reach mature confidence.';
   } else {
-    bannerTitle = 'Mature data';
-    bannerBody  = total + ' battles logged. Coaching reflects your actual sim trends.';
+    bannerTitle = 'Established sim sample';
+    bannerBody  = total + ' battles logged. Coaching reflects repeated sim patterns, not guaranteed tournament truth.';
   }
   html += '<div class="' + bannerClass + '">';
   html +=   '<div class="cs-adaptive-row">';
@@ -9070,8 +9103,8 @@ function renderThreatResponseCard(result) {
       '<div class="cs-line-meta">' + pct(b.win_rate) + ' over ' + b.n + ' sims &middot; confidence ' + _csEsc(conf) + ' &middot; ' + _csEsc(b.data) + '</div>' +
       '</div>';
   }
-  var html = '<section class="cs-section cs-phase4d-block"><h3 class="cs-h3">Threat Response <span class="cs-source cs-source-simulation_data"><span class="cs-source-label">sim data</span></span></h3>';
-  html += '<p class="cs-explain">Best candidate is measured against greedy AI simulation, not a directive.</p>';
+  var html = '<section class="cs-section cs-phase4d-block"><h3 class="cs-h3">Threat Response <span class="cs-source cs-source-simulation_data"><span class="cs-source-label">sim sample</span></span></h3>';
+  html += '<p class="cs-explain">Top sim candidate is measured against greedy AI simulation. Treat it as a starting point, not a directive or approval.</p>';
   html += card(best, 'cs-line-recommended');
   html += '<details class="cs-line-alt-wrap"><summary>Alternatives</summary>';
   sorted.filter(function(b){ return b.id !== best.id; }).forEach(function(b){ html += card(b, 'cs-line-alt'); });
@@ -9511,7 +9544,7 @@ if (typeof window !== 'undefined') {
     var connected = state === 'connected';
     chip.style.display = 'inline-block';
     chip.textContent = connected ? '[DB connected]' : '[DB offline]';
-    chip.title = detail || (connected ? 'Live Supabase connected' : 'Live database unavailable - using bundled team data');
+    chip.title = detail || (connected ? 'Live team database connected' : 'Live database unavailable - using bundled team data');
     chip.style.background = connected ? '#064e3b' : '#7c2d12';
     chip.style.color = connected ? '#bbf7d0' : '#fed7aa';
     chip.style.borderColor = connected ? '#10b981' : '#ea580c';
@@ -9543,20 +9576,20 @@ if (typeof window !== 'undefined') {
         if (dbTeams && Object.keys(dbTeams).length && typeof TEAMS !== 'undefined') {
           Object.assign(TEAMS, dbTeams);
           UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length });
-          setDbChip('connected', 'Live Supabase connected - loaded ' + Object.keys(dbTeams).length + ' teams from DB');
+          setDbChip('connected', 'Live team database connected - loaded ' + Object.keys(dbTeams).length + ' teams from the shared roster store');
         } else {
           // null or empty → fall back to bundled TEAMS, surface chip
-          setDbChip('offline', 'Supabase returned no teams - using bundled TEAMS');
-          UILog.info('DB returned no teams; using bundled TEAMS');
+          setDbChip('offline', 'Live team database returned no teams - using bundled roster data');
+          UILog.info('DB returned no teams; using bundled roster data');
         }
       } else {
         // Adapter disabled (no creds / __DISABLE_SUPABASE__) → surface chip
-        setDbChip('offline', 'Missing local-credentials.js or Supabase anon key - using bundled TEAMS');
-        UILog.info('SupabaseAdapter disabled; using bundled TEAMS');
+        setDbChip('offline', 'Live team database is not configured in this build - using bundled roster data');
+        UILog.info('SupabaseAdapter disabled; using bundled roster data');
       }
     } catch (_dbErr) {
       setDbChip('offline', 'Supabase load failed: ' + ((_dbErr && _dbErr.message) || 'unknown error'));
-      UILog.warn('loadTeamsFromDB threw; using bundled TEAMS', _dbErr);
+      UILog.warn('loadTeamsFromDB threw; using bundled roster data', _dbErr);
     }
 
     // Authoritative rebuild AFTER DB merge (or fallback) is settled.

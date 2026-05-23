@@ -1228,11 +1228,18 @@ function _hpPct(mon) {
   return _clamp01(mon.hp / mon.maxHp);
 }
 
-function _sideSnapshot(active, bench) {
+function _snapshotMonKey(side, zone, index, mon) {
+  const label = mon && (mon.displayName || mon.name) ? (mon.displayName || mon.name) : 'Unknown';
+  return side + ':' + zone + ':' + index + ':' + label;
+}
+
+function _sideSnapshot(active, bench, side) {
   const all = (active || []).concat(bench || []);
   return {
     active: (active || []).filter(m => m && m.alive).map(m => m.name),
     bench: (bench || []).filter(m => m && m.alive).map(m => m.name),
+    active_keys: (active || []).map((m, i) => (m && m.alive ? _snapshotMonKey(side, 'active', i, m) : null)).filter(Boolean),
+    bench_keys: (bench || []).map((m, i) => (m && m.alive ? _snapshotMonKey(side, 'bench', i, m) : null)).filter(Boolean),
     alive_count: all.filter(m => m && m.alive).length,
     hp_total: all.reduce((s, m) => s + (m && m.alive ? _hpPct(m) : 0), 0),
     max_count: Math.max(1, all.length || 1)
@@ -1270,23 +1277,41 @@ function _speedControlSnapshot(field) {
   };
 }
 
-function _statusSnapshot(mons) {
+function _statusSnapshot(playerActive, playerBench, oppActive, oppBench) {
   const out = {};
-  for (const m of mons || []) {
-    if (m && m.status) out[m.name] = m.status;
+  const groups = [
+    { side: 'player', zone: 'active', mons: playerActive || [] },
+    { side: 'player', zone: 'bench', mons: playerBench || [] },
+    { side: 'opponent', zone: 'active', mons: oppActive || [] },
+    { side: 'opponent', zone: 'bench', mons: oppBench || [] }
+  ];
+  for (const group of groups) {
+    for (let i = 0; i < group.mons.length; i += 1) {
+      const m = group.mons[i];
+      if (m && m.status) out[_snapshotMonKey(group.side, group.zone, i, m)] = m.status;
+    }
   }
   return out;
 }
 
-function _hpPctSnapshot(mons) {
+function _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench) {
   const out = {};
-  for (const m of mons || []) {
-    if (m) out[m.name] = Math.round(_hpPct(m) * 1000) / 1000;
+  const groups = [
+    { side: 'player', zone: 'active', mons: playerActive || [] },
+    { side: 'player', zone: 'bench', mons: playerBench || [] },
+    { side: 'opponent', zone: 'active', mons: oppActive || [] },
+    { side: 'opponent', zone: 'bench', mons: oppBench || [] }
+  ];
+  for (const group of groups) {
+    for (let i = 0; i < group.mons.length; i += 1) {
+      const m = group.mons[i];
+      if (m) out[_snapshotMonKey(group.side, group.zone, i, m)] = Math.round(_hpPct(m) * 1000) / 1000;
+    }
   }
   return out;
 }
 
-function _speedOrderSnapshot(playerActive, oppActive, field) {
+function _speedOrderSnapshot(playerActive, oppActive, field, useKeys) {
   return (playerActive || []).concat(oppActive || [])
     .filter(m => m && m.alive)
     .sort((a, b) => {
@@ -1294,7 +1319,11 @@ function _speedOrderSnapshot(playerActive, oppActive, field) {
       const sB = b.getEffSpeed(field);
       return field.trickRoom ? sA - sB : sB - sA;
     })
-    .map(m => m.name);
+    .map(m => {
+      if (!useKeys) return m.name;
+      const idx = (m.side === 'player' ? (playerActive || []) : (oppActive || [])).indexOf(m);
+      return _snapshotMonKey(m.side === 'player' ? 'player' : 'opponent', 'active', Math.max(0, idx), m);
+    });
 }
 
 function _legalOptionsSnapshot(active, enemies) {
@@ -1308,14 +1337,16 @@ function _legalOptionsSnapshot(active, enemies) {
 }
 
 function _buildPositionState(playerActive, playerBench, oppActive, oppBench, field) {
-  const player = _sideSnapshot(playerActive, playerBench);
-  const opponent = _sideSnapshot(oppActive, oppBench);
+  const player = _sideSnapshot(playerActive, playerBench, 'player');
+  const opponent = _sideSnapshot(oppActive, oppBench, 'opponent');
   return {
     player,
     opponent,
     field: _fieldSnapshot(field),
     speed_control: _speedControlSnapshot(field),
-    status: _statusSnapshot((playerActive || []).concat(playerBench || [], oppActive || [], oppBench || []))
+    speed_order: _speedOrderSnapshot(playerActive, oppActive, field, false),
+    speed_order_keys: _speedOrderSnapshot(playerActive, oppActive, field, true),
+    status: _statusSnapshot(playerActive, playerBench, oppActive, oppBench)
   };
 }
 
@@ -1335,7 +1366,22 @@ function positionScore(state) {
   const oSc = sc.opponent || sc.opp || {};
   const field = state.field || {};
   let speedEdge = ((pSc.tailwind_turns || 0) - (oSc.tailwind_turns || 0)) / 4;
-  if (field.trick_room) speedEdge += 0.05;
+  const pKeys = new Set((player.active_keys || []).concat(player.bench_keys || [], player.active || [], player.bench || []));
+  const oKeys = new Set((opponent.active_keys || []).concat(opponent.bench_keys || [], opponent.active || [], opponent.bench || []));
+  const speedOrder = Array.isArray(state.speed_order_keys) && state.speed_order_keys.length
+    ? state.speed_order_keys
+    : (Array.isArray(state.speed_order) ? state.speed_order : []);
+  if (speedOrder.length) {
+    let orderEdge = 0;
+    let totalWeight = 0;
+    for (let i = 0; i < speedOrder.length; i += 1) {
+      const weight = speedOrder.length - i;
+      totalWeight += weight;
+      if (pKeys.has(speedOrder[i])) orderEdge += weight;
+      else if (oKeys.has(speedOrder[i])) orderEdge -= weight;
+    }
+    if (totalWeight > 0) speedEdge += (orderEdge / totalWeight) * 0.25;
+  }
   speedEdge = Math.max(-0.5, Math.min(0.5, speedEdge));
   function screenCount(side) {
     const s = (side && side.screens) || {};
@@ -1344,12 +1390,10 @@ function positionScore(state) {
   const screensEdge = Math.max(-0.5, Math.min(0.5, (screenCount(pSc) - screenCount(oSc)) * 0.1));
   let statusEdge = 0;
   const status = state.status || {};
-  const pNames = new Set((player.active || []).concat(player.bench || []));
-  const oNames = new Set((opponent.active || []).concat(opponent.bench || []));
-  Object.keys(status).forEach(name => {
-    const bad = status[name] ? 0.05 : 0;
-    if (pNames.has(name)) statusEdge -= bad;
-    if (oNames.has(name)) statusEdge += bad;
+  Object.keys(status).forEach(key => {
+    const bad = status[key] ? 0.05 : 0;
+    if (pKeys.has(key)) statusEdge -= bad;
+    if (oKeys.has(key)) statusEdge += bad;
   });
   const score = 0.5
     + 0.30 * (hpDiffNorm - 0.5)
@@ -1361,16 +1405,18 @@ function positionScore(state) {
 }
 
 function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, includeLegal) {
-  const mons = (playerActive || []).concat(playerBench || [], oppActive || [], oppBench || []);
   const state = _buildPositionState(playerActive, playerBench, oppActive, oppBench, field);
   return {
     active: { player: state.player.active, opponent: state.opponent.active },
     bench: { player: state.player.bench, opponent: state.opponent.bench },
-    hp_pct: _hpPctSnapshot(mons),
+    active_keys: { player: state.player.active_keys, opponent: state.opponent.active_keys },
+    bench_keys: { player: state.player.bench_keys, opponent: state.opponent.bench_keys },
+    hp_pct: _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench),
     status: state.status,
     field: state.field,
     speed_control: state.speed_control,
-    speed_order: _speedOrderSnapshot(playerActive, oppActive, field),
+    speed_order: state.speed_order,
+    speed_order_keys: state.speed_order_keys,
     legal_options: includeLegal ? _legalOptionsSnapshot(playerActive, oppActive) : {},
     position_score: positionScore(state),
     win_probability: null

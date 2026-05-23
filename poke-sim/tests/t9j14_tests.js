@@ -90,6 +90,7 @@ vm.runInContext([
   'this.analyzeLossTrends=analyzeLossTrends;',
   'this.findDeadMoves=findDeadMoves;',
   'this.findCoverageGaps=findCoverageGaps;',
+  'this.csRiskProfile=csRiskProfile;',
   'this.evaluateCoachingRules=evaluateCoachingRules;',
   'this.COACHING_RULES=COACHING_RULES;',
   'this._verdictFor=_verdictFor;',
@@ -100,7 +101,7 @@ vm.runInContext([
 const {
   TEAMS, inferRole, inferWinFunction, inferPlaystyle,
   buildLeadSystem, analyzeLossTrends, findDeadMoves, findCoverageGaps,
-  evaluateCoachingRules, COACHING_RULES, _verdictFor, _escapeHtml, generatePDFReport
+  csRiskProfile, evaluateCoachingRules, COACHING_RULES, _verdictFor, _escapeHtml, generatePDFReport
 } = ctx;
 
 let pass = 0, fail = 0;
@@ -255,6 +256,18 @@ T('22. evaluateCoachingRules - clean team only fires optional / dead-move rules'
   };
   const notes = evaluateCoachingRules(ctx2);
   eq(notes.filter(n => n.severity === 'critical').length, 0);
+});
+
+T('23. csRiskProfile does not mark multiple single-target closers as single wincon', () => {
+  const risk = csRiskProfile({
+    members: [
+      { name:'Dragapult', ability:'Clear Body', item:'Clear Amulet', moves:['Dragon Darts','Phantom Force','Protect','U-turn'] },
+      { name:'Garchomp', ability:'Rough Skin', item:'Clear Amulet', moves:['Dragon Claw','Stomping Tantrum','Protect','Crunch'] },
+      { name:'Charizard-Mega-Y', ability:'Drought', item:'Charizardite Y', moves:['Flamethrower','Solar Beam','Protect','Air Slash'] },
+      { name:'Whimsicott', ability:'Prankster', item:'Focus Sash', moves:['Tailwind','Encore','Moonblast','Protect'] }
+    ]
+  }, {});
+  truthy(!risk.some(function(r){ return r.category === 'single_wincon'; }), 'unexpected single_wincon risk for multiple real attackers');
 });
 
 // ---- Bonus: verdict helper + escape ----
