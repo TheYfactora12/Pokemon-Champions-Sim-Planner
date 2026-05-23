@@ -89,9 +89,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.17-trust-copy';
+    return txt || 'v2.1.18-may-meta-roster';
   } catch (e) {
-    return 'v2.1.17-trust-copy';
+    return 'v2.1.18-may-meta-roster';
   }
 }
 

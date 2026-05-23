@@ -2158,7 +2158,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.17-trust-copy</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.18-may-meta-roster</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -2254,7 +2254,7 @@ table{border-collapse:collapse;width:100%}
       <!-- Issue #T6: Ladder Mode toggle -->
       <div class="control-block">
         <label class="control-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
-          <!-- T9h: default unchecked so all 22 preloaded + custom teams are swap-pickable -->
+          <!-- T9h: default unchecked so all preloaded + custom teams are swap-pickable -->
           <input type="checkbox" id="ladder-mode-toggle"
             style="width:16px;height:16px;cursor:pointer"/>
           <span>Ladder Mode
@@ -2663,6 +2663,7 @@ const BASE_STATS = {
   'Typhlosion-Hisui': { hp:73, atk:84, def:78, spa:119, spd:85, spe:95, types:['Fire','Ghost'] },
   'Ninetales-Alola': { hp:73, atk:67, def:75, spa:81, spd:100, spe:109, types:['Ice','Fairy'] },
   'Altaria-Mega':  { hp:75, atk:110, def:110, spa:110, spd:105, spe:80, types:['Dragon','Fairy'] },
+  Ariados:        { hp:70, atk:90, def:70, spa:60, spd:70, spe:40, types:['Bug','Poison'] },
   Whimsicott:     { hp:60, atk:67, def:85, spa:77, spd:75, spe:116, types:['Grass','Fairy'] },
   'Rotom-Wash':   { hp:50, atk:65, def:107, spa:105, spd:107, spe:86, types:['Electric','Water'] },
   Sableye:        { hp:50, atk:75, def:75, spa:65, spd:65, spe:50, types:['Dark','Ghost'] },
@@ -2725,6 +2726,8 @@ const BASE_STATS = {
   'Rotom-Heat':    { hp:50, atk:65, def:107, spa:105, spd:107, spe:86, types:['Electric','Fire'] },
   Froslass:        { hp:70, atk:80, def:70, spa:80, spd:70, spe:110, types:['Ice','Ghost'] },
   Clefable:        { hp:95, atk:70, def:73, spa:95, spd:90, spe:60, types:['Fairy'] },
+  Sylveon:         { hp:95, atk:65, def:65, spa:110, spd:130, spe:60, types:['Fairy'] },
+  'Vivillon-Continental': { hp:80, atk:52, def:50, spa:90, spd:50, spe:89, types:['Bug','Flying'] },
   'Gengar-Mega':   { hp:60, atk:65, def:80, spa:170, spd:95, spe:130, types:['Ghost','Poison'] },
   'Aerodactyl-Mega': { hp:80, atk:135, def:85, spa:70, spd:95, spe:150, types:['Rock','Flying'] },
   'Meganium-Mega': { hp:80, atk:92, def:115, spa:143, spd:115, spe:80, types:['Grass','Fairy'] },
@@ -2986,7 +2989,7 @@ const DEX_NUM_MAP = {
   // Rotom forms (all use 479)
   'Rotom-Wash':479,'Rotom-Heat':479,'Rotom-Frost':479,'Rotom-Fan':479,'Rotom-Mow':479,
   // Misc forms
-  'Basculin-White':550,'Flutter Mane':1000,'Flutter-Mane':987,
+  'Basculin-White':550,'Flutter Mane':1000,'Flutter-Mane':987,'Vivillon-Continental':666,
   'Indeedee-F':876,'Indeedee-M':876,
   // Extra VGC-relevant
   'Amoonguss':591,'Urshifu-Single':892,'Urshifu-Rapid':892,
@@ -3031,6 +3034,7 @@ const POKEMON_TYPES_DB = {
   'Meganium':['Grass'],'Bayleef':['Grass'],'Chikorita':['Grass'],
   'Ampharos':['Electric'],'Flaaffy':['Electric'],'Mareep':['Electric'],
   'Scizor':['Bug','Steel'],'Heracross':['Bug','Fighting'],
+  'Ariados':['Bug','Poison'],'Spinarak':['Bug','Poison'],
   'Tyranitar':['Rock','Dark'],'Larvitar':['Rock','Ground'],'Pupitar':['Rock','Ground'],
   'Blissey':['Normal'],'Chansey':['Normal'],
   'Wobbuffet':['Psychic'],'Wynaut':['Psychic'],
@@ -3159,6 +3163,7 @@ const POKEMON_TYPES_DB = {
   'Delphox':['Fire','Psychic'],'Braixen':['Fire'],'Fennekin':['Fire'],
   'Greninja':['Water','Dark'],'Frogadier':['Water'],'Froakie':['Water'],
   'Talonflame':['Fire','Flying'],'Fletchinder':['Fire','Flying'],'Fletchling':['Normal','Flying'],
+  'Vivillon-Continental':['Bug','Flying'],'Vivillon':['Bug','Flying'],
   'Pyroar':['Fire','Normal'],'Litleo':['Fire','Normal'],
   'Aegislash':['Steel','Ghost'],'Doublade':['Steel','Ghost'],'Honedge':['Steel','Ghost'],
   'Sylveon':['Fairy'],
@@ -6495,6 +6500,321 @@ const TEAMS = {
         "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Protect"],
         "tera": "Water",
         "role": "Revenge Killer"
+      }
+    ]
+  },
+  "fedecampovgc_aerodactyl_ariados": {
+    "name": "FedeCampoVGC — Aerodactyl Ariados",
+    "label": "MAY META",
+    "style": "speed_sun_pressure",
+    "description": "Current May 2026 public meta-index roster built around Mega Aerodactyl + Mega Charizard Y pressure. Rental: AV7NTVGB10.",
+    "champion_pack_id": "fedecampovgc_aerodactyl_ariados_may2026_v1",
+    "format": "champions",
+    "formatid": "champions-vgc-2026-regma",
+    "gametype": "doubles",
+    "ruleset": ["Species Clause", "Item Clause", "Bring 6 Pick 4", "Level 50"],
+    "source": "preloaded",
+    "origin": {
+      "url": "https://pokemonchampionsmeta.net/",
+      "player": "Federico Camporesi",
+      "event": "Public meta index (May 1, 2026) · rental AV7NTVGB10"
+    },
+    "provenance": {
+      "roster_source": "pokemon_champions_meta_index",
+      "spread_source": "archetype_default",
+      "author": "Federico Camporesi",
+      "url": "https://pokemonchampionsmeta.net/",
+      "status": "species-forms-verified-sets-inferred"
+    },
+    "legality_status": "legal_inferred",
+    "legality_notes": "Species/forms verified from the current public Champions meta index. Full sets are inferred because the index does not expose a raw export in-repo.",
+    "assumption_register": [
+      "Species/forms verified from the public May 1, 2026 Champions meta index entry.",
+      "Items, abilities, moves, EVs, natures, and Tera types were inferred from current Reg M-A archetypes.",
+      "Team carries two Mega-capable species; actual per-game Mega choice remains player-selected in battle."
+    ],
+    "members": [
+      {
+        "name": "Ariados",
+        "item": "Focus Sash",
+        "ability": "Insomnia",
+        "nature": "Adamant",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Lunge", "Poison Jab", "Sucker Punch", "Protect"],
+        "tera": "Poison",
+        "role": "Utility Pressure"
+      },
+      {
+        "name": "Aerodactyl-Mega",
+        "item": "Aerodactylite",
+        "ability": "Tough Claws",
+        "nature": "Jolly",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Tailwind", "Dual Wingbeat", "Rock Slide", "Protect"],
+        "tera": "Flying",
+        "role": "Mega Speed Control"
+      },
+      {
+        "name": "Charizard-Mega-Y",
+        "item": "Charizardite Y",
+        "ability": "Drought",
+        "nature": "Timid",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Heat Wave", "Solar Beam", "Overheat", "Protect"],
+        "tera": "Fire",
+        "role": "Sun Breaker"
+      },
+      {
+        "name": "Basculegion",
+        "item": "Choice Scarf",
+        "ability": "Adaptability",
+        "nature": "Adamant",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Flip Turn"],
+        "tera": "Ghost",
+        "role": "Scarf Cleaner"
+      },
+      {
+        "name": "Sylveon",
+        "item": "Leftovers",
+        "ability": "Pixilate",
+        "nature": "Modest",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "ev_source": "archetype_default",
+        "moves": ["Hyper Voice", "Moonblast", "Helping Hand", "Protect"],
+        "tera": "Fairy",
+        "role": "Fairy Support"
+      },
+      {
+        "name": "Sneasler",
+        "item": "White Herb",
+        "ability": "Unburden",
+        "nature": "Jolly",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
+        "tera": "Fighting",
+        "role": "Unburden Sweeper"
+      }
+    ]
+  },
+  "swirlingroses_meganium_vivillon": {
+    "name": "swirlingroses — Meganium Vivillon Balance",
+    "label": "MAY REPLAY",
+    "style": "balance_speed",
+    "description": "May 6, 2026 Champions replay-preview roster with Sneasler / Basculegion / Incineroar / Kingambit / Meganium / Vivillon-Continental.",
+    "champion_pack_id": "swirlingroses_meganium_vivillon_may2026_v1",
+    "format": "champions",
+    "formatid": "champions-vgc-2026-regma",
+    "gametype": "doubles",
+    "ruleset": ["Species Clause", "Item Clause", "Bring 6 Pick 4", "Level 50"],
+    "source": "preloaded",
+    "origin": {
+      "url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regma-2603247306",
+      "player": "swirlingroses",
+      "event": "Pokémon Showdown replay preview (Tournament battle, May 6, 2026)"
+    },
+    "provenance": {
+      "roster_source": "pokemon_showdown_replay_preview",
+      "spread_source": "archetype_default",
+      "author": "swirlingroses",
+      "url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regma-2603247306",
+      "status": "species-verified-sets-inferred"
+    },
+    "legality_status": "legal_inferred",
+    "legality_notes": "Six species verified from the replay preview team line. Full sets are inferred because replay preview does not expose items, moves, or spreads.",
+    "assumption_register": [
+      "Only the six species were verified from the replay preview.",
+      "Items, abilities, moves, EVs, natures, and Tera types were inferred from current Reg M-A archetypes.",
+      "Vivillon-Continental uses Vivillon's canonical statline and typing; regional wing pattern is cosmetic for sim purposes."
+    ],
+    "members": [
+      {
+        "name": "Sneasler",
+        "item": "White Herb",
+        "ability": "Unburden",
+        "nature": "Jolly",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
+        "tera": "Fighting",
+        "role": "Unburden Sweeper"
+      },
+      {
+        "name": "Basculegion",
+        "item": "Mystic Water",
+        "ability": "Adaptability",
+        "nature": "Adamant",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Protect"],
+        "tera": "Water",
+        "role": "Physical Cleaner"
+      },
+      {
+        "name": "Incineroar",
+        "item": "Sitrus Berry",
+        "ability": "Intimidate",
+        "nature": "Careful",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 252, "atk": 4, "def": 0, "spa": 0, "spd": 252, "spe": 0},
+        "ev_source": "archetype_default",
+        "moves": ["Fake Out", "Parting Shot", "Flare Blitz", "Knock Off"],
+        "tera": "Ghost",
+        "role": "Pivot"
+      },
+      {
+        "name": "Kingambit",
+        "item": "Black Glasses",
+        "ability": "Defiant",
+        "nature": "Adamant",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Kowtow Cleave", "Sucker Punch", "Low Kick", "Protect"],
+        "tera": "Dark",
+        "role": "Late-Game Cleaner"
+      },
+      {
+        "name": "Meganium",
+        "item": "Leftovers",
+        "ability": "Overgrow",
+        "nature": "Calm",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 0, "spd": 252, "spe": 0},
+        "ev_source": "archetype_default",
+        "moves": ["Giga Drain", "Dazzling Gleam", "Leech Seed", "Protect"],
+        "tera": "Fairy",
+        "role": "Bulky Support"
+      },
+      {
+        "name": "Vivillon-Continental",
+        "item": "Focus Sash",
+        "ability": "Compound Eyes",
+        "nature": "Timid",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Sleep Powder", "Hurricane", "Tailwind", "Protect"],
+        "tera": "Flying",
+        "role": "Fast Utility"
+      }
+    ]
+  },
+  "prro_t_floette_aerodactyl": {
+    "name": "Prro-T — Floette Aerodactyl Pressure",
+    "label": "MAY REPLAY",
+    "style": "fast_pressure",
+    "description": "May 8, 2026 Champions Bo3 replay-preview roster with Floette-Eternal / Aerodactyl / Incineroar / Garchomp / Sneasler / Basculegion.",
+    "champion_pack_id": "prro_t_floette_aerodactyl_may2026_v1",
+    "format": "champions",
+    "formatid": "champions-vgc-2026-regma",
+    "gametype": "doubles",
+    "ruleset": ["Species Clause", "Item Clause", "Bring 6 Pick 4", "Level 50"],
+    "source": "preloaded",
+    "origin": {
+      "url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regma-2604413910",
+      "player": "Prro-T",
+      "event": "Pokémon Showdown replay preview (Bo3 Game 2, May 8, 2026)"
+    },
+    "provenance": {
+      "roster_source": "pokemon_showdown_replay_preview",
+      "spread_source": "archetype_default",
+      "author": "Prro-T",
+      "url": "https://replay.pokemonshowdown.com/gen9championsvgc2026regma-2604413910",
+      "status": "species-verified-sets-inferred"
+    },
+    "legality_status": "legal_inferred",
+    "legality_notes": "Six species verified from the replay preview team line. Full sets are inferred because replay preview does not expose items, moves, or spreads.",
+    "assumption_register": [
+      "Only the six species were verified from the replay preview.",
+      "Repo canonical naming normalizes replay-preview Floette-Eternal to Floette (Eternal Flower).",
+      "Items, abilities, moves, EVs, natures, and Tera types were inferred from current Reg M-A archetypes."
+    ],
+    "members": [
+      {
+        "name": "Floette (Eternal Flower)",
+        "item": "Fairy Feather",
+        "ability": "Flower Veil",
+        "nature": "Timid",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Light of Ruin", "Dazzling Gleam", "Moonblast", "Protect"],
+        "tera": "Fairy",
+        "role": "Fairy Breaker"
+      },
+      {
+        "name": "Aerodactyl",
+        "item": "Focus Sash",
+        "ability": "Unnerve",
+        "nature": "Jolly",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Tailwind", "Dual Wingbeat", "Rock Slide", "Protect"],
+        "tera": "Flying",
+        "role": "Speed Control"
+      },
+      {
+        "name": "Incineroar",
+        "item": "Chople Berry",
+        "ability": "Intimidate",
+        "nature": "Careful",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 252, "atk": 4, "def": 0, "spa": 0, "spd": 252, "spe": 0},
+        "ev_source": "archetype_default",
+        "moves": ["Fake Out", "Parting Shot", "Flare Blitz", "Darkest Lariat"],
+        "tera": "Ghost",
+        "role": "Pivot"
+      },
+      {
+        "name": "Garchomp",
+        "item": "Soft Sand",
+        "ability": "Rough Skin",
+        "nature": "Jolly",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Earthquake", "Dragon Claw", "Rock Slide", "Protect"],
+        "tera": "Ground",
+        "role": "Physical Pressure"
+      },
+      {
+        "name": "Sneasler",
+        "item": "White Herb",
+        "ability": "Unburden",
+        "nature": "Jolly",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
+        "tera": "Fighting",
+        "role": "Unburden Sweeper"
+      },
+      {
+        "name": "Basculegion",
+        "item": "Choice Scarf",
+        "ability": "Adaptability",
+        "nature": "Adamant",
+        "nature_source": "archetype_default",
+        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "ev_source": "archetype_default",
+        "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Flip Turn"],
+        "tera": "Ghost",
+        "role": "Scarf Cleaner"
       }
     ]
   }
@@ -11276,9 +11596,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.17-trust-copy';
+    return txt || 'v2.1.18-may-meta-roster';
   } catch (e) {
-    return 'v2.1.17-trust-copy';
+    return 'v2.1.18-may-meta-roster';
   }
 }
 
