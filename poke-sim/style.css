@@ -1947,7 +1947,7 @@ table{border-collapse:collapse;width:100%}
 .replay-hp-chip {
   position: relative;
   overflow: hidden;
-  height: 18px;
+  min-height: 18px;
   border-radius: 4px;
   background: #111827;
   border: 1px solid #334155;
@@ -1964,9 +1964,9 @@ table{border-collapse:collapse;width:100%}
   padding: 1px 4px;
   color: #f8fafc;
   font-size: 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .replay-turn-empty {
   color: #94a3b8;

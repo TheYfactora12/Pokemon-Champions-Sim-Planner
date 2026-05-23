@@ -156,5 +156,39 @@ T('4. replay renderer does not show coaching summary for wins', () => {
   truthy(replayList.innerHTML.indexOf('Coaching Summary') < 0, 'unexpected coaching summary on win replay');
 });
 
+T('5. replay renderer shows visible HP percentages and damage deltas', () => {
+  replayList.children = [];
+  replayList.innerHTML = '';
+  setReplayState([{
+    result: 'loss',
+    turns: 6,
+    trTurns: 0,
+    winCondition: 'KO',
+    oppKey: 'mega_altaria',
+    log: ['Turn 1'],
+    turnLog: [{
+      turn: 1,
+      pre: {
+        hp_pct: {
+          'player:active:0:Incineroar': 0.82,
+          'opponent:active:0:Altaria': 0.74
+        }
+      },
+      post: {
+        position_score: 0.5,
+        hp_pct: {
+          'player:active:0:Incineroar': 0.52,
+          'opponent:active:0:Altaria': 0.61
+        }
+      },
+      delta: { position_score: -0.08 },
+      actions: { player: [], opponent: [] }
+    }]
+  }], 'all');
+  renderReplays();
+  inc(replayList.innerHTML, 'Incineroar 52% (-30%)');
+  inc(replayList.innerHTML, 'Altaria 61% (-13%)');
+});
+
 console.log(`\nreplay log cap: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);

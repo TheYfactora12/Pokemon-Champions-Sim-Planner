@@ -2369,9 +2369,22 @@ function csRenderHpBars(turn) {
   return '<div class="replay-hp-bars">' + names.map(function(name) {
     var pct = Math.max(0, Math.min(1, Number(hp[name]) || 0));
     var label = _csSnapshotDisplayName(name);
-    return '<span class="replay-hp-chip" title="' + _escapeHtml(label) + ' ' + Math.round(pct * 100) + '%">' +
+    var pctText = Math.round(pct * 100) + '%';
+    var title = label + ' ' + pctText;
+    var deltaText = '';
+    var prePct = turn && turn.pre && turn.pre.hp_pct && typeof turn.pre.hp_pct[name] === 'number'
+      ? Math.max(0, Math.min(1, Number(turn.pre.hp_pct[name]) || 0))
+      : null;
+    if (prePct != null) {
+      var delta = Math.round((pct - prePct) * 100);
+      if (delta !== 0) {
+        deltaText = ' (' + (delta > 0 ? '+' : '') + delta + '%)';
+        title += ' ' + deltaText.trim();
+      }
+    }
+    return '<span class="replay-hp-chip" title="' + _escapeHtml(title) + '">' +
       '<span class="replay-hp-fill" style="width:' + Math.round(pct * 100) + '%"></span>' +
-      '<span class="replay-hp-label">' + _escapeHtml(label) + '</span>' +
+      '<span class="replay-hp-label">' + _escapeHtml(label + ' ' + pctText + deltaText) + '</span>' +
     '</span>';
   }).join('') + '</div>';
 }

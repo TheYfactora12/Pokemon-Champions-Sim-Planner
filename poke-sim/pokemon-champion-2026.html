@@ -1985,7 +1985,7 @@ table{border-collapse:collapse;width:100%}
 .replay-hp-chip {
   position: relative;
   overflow: hidden;
-  height: 18px;
+  min-height: 18px;
   border-radius: 4px;
   background: #111827;
   border: 1px solid #334155;
@@ -2002,9 +2002,9 @@ table{border-collapse:collapse;width:100%}
   padding: 1px 4px;
   color: #f8fafc;
   font-size: 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .replay-turn-empty {
   color: #94a3b8;
@@ -5705,7 +5705,7 @@ const TEAMS = {
         "ability": "Defiant",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Low Kick", "Protect"],
         "tera": "Dark",
@@ -5754,7 +5754,7 @@ const TEAMS = {
         "ability": "Unnerve",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Tailwind", "Dual Wingbeat", "Rock Slide", "Protect"],
         "tera": "Flying",
@@ -5799,7 +5799,7 @@ const TEAMS = {
         "ability": "Mega Sol",
         "nature": "Modest",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Solar Beam", "Weather Ball", "Dazzling Gleam", "Protect"],
         "tera": "Fairy",
@@ -5835,7 +5835,7 @@ const TEAMS = {
         "ability": "Adaptability",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Flip Turn", "Aqua Jet", "Last Respects"],
         "tera": "Ghost",
@@ -5847,7 +5847,7 @@ const TEAMS = {
         "ability": "Drizzle",
         "nature": "Modest",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Weather Ball", "Hurricane", "Tailwind", "Protect"],
         "tera": "Ghost",
@@ -5859,7 +5859,7 @@ const TEAMS = {
         "ability": "Unburden",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
         "tera": "Stellar",
@@ -5942,7 +5942,7 @@ const TEAMS = {
         "ability": "Unburden",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Coaching"],
         "tera": "Fighting",
@@ -6062,7 +6062,7 @@ const TEAMS = {
         "ability": "Defiant",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Iron Head", "Swords Dance"],
         "tera": "Dark",
@@ -6119,7 +6119,7 @@ const TEAMS = {
         "ability": "Gale Wings",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Dual Wingbeat", "Flare Blitz", "Tailwind"],
         "tera": "Flying",
@@ -6131,7 +6131,7 @@ const TEAMS = {
         "ability": "Rough Skin",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Rock Slide", "Earthquake", "Dragon Claw"],
         "tera": "Steel",
@@ -6179,7 +6179,7 @@ const TEAMS = {
         "ability": "Fairy Aura",
         "nature": "Timid",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Light of Ruin", "Dazzling Gleam", "Moonblast"],
         "tera": "Fairy",
@@ -6224,7 +6224,7 @@ const TEAMS = {
         "ability": "Adaptability",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Icy Wind", "Flip Turn"],
         "tera": "Water",
@@ -6446,7 +6446,7 @@ const TEAMS = {
         "ability": "Stance Change",
         "nature": "Brave",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Poltergeist", "Close Combat", "Shadow Sneak", "King's Shield"],
@@ -6471,7 +6471,7 @@ const TEAMS = {
         "ability": "Rough Skin",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Dragon Claw", "Earthquake", "Rock Slide", "Protect"],
         "tera": "Ground",
@@ -6483,7 +6483,7 @@ const TEAMS = {
         "ability": "Defiant",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Low Kick", "Protect"],
         "tera": "Dark",
@@ -6495,7 +6495,7 @@ const TEAMS = {
         "ability": "Adaptability",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Protect"],
         "tera": "Water",
@@ -6540,7 +6540,7 @@ const TEAMS = {
         "ability": "Insomnia",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Lunge", "Poison Jab", "Sucker Punch", "Protect"],
         "tera": "Poison",
@@ -6552,7 +6552,7 @@ const TEAMS = {
         "ability": "Tough Claws",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Tailwind", "Dual Wingbeat", "Rock Slide", "Protect"],
         "tera": "Flying",
@@ -6564,7 +6564,7 @@ const TEAMS = {
         "ability": "Drought",
         "nature": "Timid",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Heat Wave", "Solar Beam", "Overheat", "Protect"],
         "tera": "Fire",
@@ -6576,7 +6576,7 @@ const TEAMS = {
         "ability": "Adaptability",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Flip Turn"],
         "tera": "Ghost",
@@ -6588,7 +6588,7 @@ const TEAMS = {
         "ability": "Pixilate",
         "nature": "Modest",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Hyper Voice", "Moonblast", "Helping Hand", "Protect"],
         "tera": "Fairy",
@@ -6600,7 +6600,7 @@ const TEAMS = {
         "ability": "Unburden",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
         "tera": "Fighting",
@@ -6645,7 +6645,7 @@ const TEAMS = {
         "ability": "Unburden",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
         "tera": "Fighting",
@@ -6657,7 +6657,7 @@ const TEAMS = {
         "ability": "Adaptability",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Protect"],
         "tera": "Water",
@@ -6669,7 +6669,7 @@ const TEAMS = {
         "ability": "Intimidate",
         "nature": "Careful",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 4, "def": 0, "spa": 0, "spd": 252, "spe": 0},
+        "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Fake Out", "Parting Shot", "Flare Blitz", "Knock Off"],
         "tera": "Ghost",
@@ -6681,7 +6681,7 @@ const TEAMS = {
         "ability": "Defiant",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Low Kick", "Protect"],
         "tera": "Dark",
@@ -6693,7 +6693,7 @@ const TEAMS = {
         "ability": "Overgrow",
         "nature": "Calm",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 0, "spd": 252, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Giga Drain", "Dazzling Gleam", "Leech Seed", "Protect"],
         "tera": "Fairy",
@@ -6705,7 +6705,7 @@ const TEAMS = {
         "ability": "Compound Eyes",
         "nature": "Timid",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Sleep Powder", "Hurricane", "Tailwind", "Protect"],
         "tera": "Flying",
@@ -6750,7 +6750,7 @@ const TEAMS = {
         "ability": "Flower Veil",
         "nature": "Timid",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Light of Ruin", "Dazzling Gleam", "Moonblast", "Protect"],
         "tera": "Fairy",
@@ -6762,7 +6762,7 @@ const TEAMS = {
         "ability": "Unnerve",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Tailwind", "Dual Wingbeat", "Rock Slide", "Protect"],
         "tera": "Flying",
@@ -6774,7 +6774,7 @@ const TEAMS = {
         "ability": "Intimidate",
         "nature": "Careful",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 4, "def": 0, "spa": 0, "spd": 252, "spe": 0},
+        "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Fake Out", "Parting Shot", "Flare Blitz", "Darkest Lariat"],
         "tera": "Ghost",
@@ -6786,7 +6786,7 @@ const TEAMS = {
         "ability": "Rough Skin",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Earthquake", "Dragon Claw", "Rock Slide", "Protect"],
         "tera": "Ground",
@@ -6798,7 +6798,7 @@ const TEAMS = {
         "ability": "Unburden",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
         "tera": "Fighting",
@@ -6810,7 +6810,7 @@ const TEAMS = {
         "ability": "Adaptability",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Flip Turn"],
         "tera": "Ghost",
@@ -13876,9 +13876,22 @@ function csRenderHpBars(turn) {
   return '<div class="replay-hp-bars">' + names.map(function(name) {
     var pct = Math.max(0, Math.min(1, Number(hp[name]) || 0));
     var label = _csSnapshotDisplayName(name);
-    return '<span class="replay-hp-chip" title="' + _escapeHtml(label) + ' ' + Math.round(pct * 100) + '%">' +
+    var pctText = Math.round(pct * 100) + '%';
+    var title = label + ' ' + pctText;
+    var deltaText = '';
+    var prePct = turn && turn.pre && turn.pre.hp_pct && typeof turn.pre.hp_pct[name] === 'number'
+      ? Math.max(0, Math.min(1, Number(turn.pre.hp_pct[name]) || 0))
+      : null;
+    if (prePct != null) {
+      var delta = Math.round((pct - prePct) * 100);
+      if (delta !== 0) {
+        deltaText = ' (' + (delta > 0 ? '+' : '') + delta + '%)';
+        title += ' ' + deltaText.trim();
+      }
+    }
+    return '<span class="replay-hp-chip" title="' + _escapeHtml(title) + '">' +
       '<span class="replay-hp-fill" style="width:' + Math.round(pct * 100) + '%"></span>' +
-      '<span class="replay-hp-label">' + _escapeHtml(label) + '</span>' +
+      '<span class="replay-hp-label">' + _escapeHtml(label + ' ' + pctText + deltaText) + '</span>' +
     '</span>';
   }).join('') + '</div>';
 }

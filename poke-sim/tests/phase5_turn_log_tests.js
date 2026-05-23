@@ -201,6 +201,12 @@ T('T5c-4 Sparkline renders without error on 1-turn game', () => {
 
 T('T5c-4a replay HP bars hide snapshot side prefixes on mirror species', () => {
   const html = ctx.csRenderHpBars({
+    pre: {
+      hp_pct: {
+        'player:active:0:Incineroar': 0.85,
+        'opponent:active:0:Incineroar': 0.25
+      }
+    },
     post: {
       hp_pct: {
         'player:active:0:Incineroar': 0.55,
@@ -211,6 +217,8 @@ T('T5c-4a replay HP bars hide snapshot side prefixes on mirror species', () => {
   truthy(!html.includes('player:active:0:'), 'snapshot key leaked into HP bars');
   truthy(!html.includes('opponent:active:0:'), 'snapshot key leaked into HP bars');
   truthy((html.match(/Incineroar/g) || []).length >= 2, 'expected mirrored species labels to render');
+  truthy(html.includes('55%'), 'expected visible HP percentage');
+  truthy(html.includes('(-30%)'), 'expected visible HP loss delta');
 });
 
 const DECISION_PLAYER = [{ name: 'Hero', moves: ['Earthquake', 'Recover'], item: 'Leftovers', ability: 'Tough Claws', types: ['Ground'] }];
