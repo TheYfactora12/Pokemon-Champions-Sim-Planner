@@ -138,6 +138,26 @@ T('T5b-2 positionScore favors higher player HP', () => {
   truthy(score > 0.5, 'expected player-favored score, got ' + score);
 });
 
+T('T5b-2a positionScore uses actual turn order under Trick Room', () => {
+  const playerAhead = ctx.positionScore({
+    player: { hp_total: 2, alive_count: 1, max_count: 2, active: ['Slowmon'], active_keys: ['player:active:0:Slowmon'], bench: [], bench_keys: [] },
+    opponent: { hp_total: 2, alive_count: 1, max_count: 2, active: ['Fastmon'], active_keys: ['opponent:active:0:Fastmon'], bench: [], bench_keys: [] },
+    field: { trick_room: 1 },
+    speed_control: { player: {}, opponent: {} },
+    speed_order_keys: ['player:active:0:Slowmon', 'opponent:active:0:Fastmon'],
+    status: {}
+  });
+  const opponentAhead = ctx.positionScore({
+    player: { hp_total: 2, alive_count: 1, max_count: 2, active: ['Slowmon'], active_keys: ['player:active:0:Slowmon'], bench: [], bench_keys: [] },
+    opponent: { hp_total: 2, alive_count: 1, max_count: 2, active: ['Fastmon'], active_keys: ['opponent:active:0:Fastmon'], bench: [], bench_keys: [] },
+    field: { trick_room: 1 },
+    speed_control: { player: {}, opponent: {} },
+    speed_order_keys: ['opponent:active:0:Fastmon', 'player:active:0:Slowmon'],
+    status: {}
+  });
+  truthy(playerAhead > opponentAhead, 'expected Trick Room score to follow actual order');
+});
+
 T('T5b-3 winProbabilityDelta length is turnLog.length - 1', () => {
   const deltas = ctx.winProbabilityDelta(battleA.turnLog);
   eq(deltas.length, Math.max(0, battleA.turnLog.length - 1), 'delta length mismatch');
@@ -177,6 +197,20 @@ T('T5c-3 JSON download produces valid parseable file', () => {
 T('T5c-4 Sparkline renders without error on 1-turn game', () => {
   const html = ctx.csReplaySparkline([{ turn: 1, post: { position_score: 0.5 } }]);
   truthy(html.includes('polyline'), 'sparkline missing polyline');
+});
+
+T('T5c-4a replay HP bars hide snapshot side prefixes on mirror species', () => {
+  const html = ctx.csRenderHpBars({
+    post: {
+      hp_pct: {
+        'player:active:0:Incineroar': 0.55,
+        'opponent:active:0:Incineroar': 0.25
+      }
+    }
+  });
+  truthy(!html.includes('player:active:0:'), 'snapshot key leaked into HP bars');
+  truthy(!html.includes('opponent:active:0:'), 'snapshot key leaked into HP bars');
+  truthy((html.match(/Incineroar/g) || []).length >= 2, 'expected mirrored species labels to render');
 });
 
 const DECISION_PLAYER = [{ name: 'Hero', moves: ['Earthquake', 'Recover'], item: 'Leftovers', ability: 'Tough Claws', types: ['Ground'] }];

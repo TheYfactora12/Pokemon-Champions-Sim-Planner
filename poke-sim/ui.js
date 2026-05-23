@@ -2368,11 +2368,29 @@ function csRenderHpBars(turn) {
   if (!names.length) return '';
   return '<div class="replay-hp-bars">' + names.map(function(name) {
     var pct = Math.max(0, Math.min(1, Number(hp[name]) || 0));
-    return '<span class="replay-hp-chip" title="' + _escapeHtml(name) + ' ' + Math.round(pct * 100) + '%">' +
+    var label = _csSnapshotDisplayName(name);
+    return '<span class="replay-hp-chip" title="' + _escapeHtml(label) + ' ' + Math.round(pct * 100) + '%">' +
       '<span class="replay-hp-fill" style="width:' + Math.round(pct * 100) + '%"></span>' +
-      '<span class="replay-hp-label">' + _escapeHtml(name) + '</span>' +
+      '<span class="replay-hp-label">' + _escapeHtml(label) + '</span>' +
     '</span>';
   }).join('') + '</div>';
+}
+
+function _csSnapshotDisplayName(key) {
+  var raw = String(key || '');
+  var parts = raw.split(':');
+  return parts.length >= 4 ? parts.slice(3).join(':') : raw;
+}
+
+function _csResolveSnapshotKey(pre, side, name) {
+  if (!pre || !name) return name;
+  var groups = [];
+  if (pre.active_keys && Array.isArray(pre.active_keys[side])) groups = groups.concat(pre.active_keys[side]);
+  if (pre.bench_keys && Array.isArray(pre.bench_keys[side])) groups = groups.concat(pre.bench_keys[side]);
+  for (var i = 0; i < groups.length; i++) {
+    if (_csSnapshotDisplayName(groups[i]) === name) return groups[i];
+  }
+  return name;
 }
 
 function _csDecisionMemberMap(members) {
@@ -2390,16 +2408,20 @@ function _csDecisionMoveScore(move, actor, target, turn, opts) {
   var category = (typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[move]) ? MOVE_CATEGORY[move] : 'status';
   var bp = (typeof MOVE_BP !== 'undefined' && MOVE_BP[move]) ? MOVE_BP[move] : 0;
   var field = (turn && turn.pre && turn.pre.field) || {};
-  var speedOrder = (turn && turn.pre && Array.isArray(turn.pre.speed_order)) ? turn.pre.speed_order : [];
+  var speedOrder = (turn && turn.pre && Array.isArray(turn.pre.speed_order_keys) && turn.pre.speed_order_keys.length)
+    ? turn.pre.speed_order_keys
+    : ((turn && turn.pre && Array.isArray(turn.pre.speed_order)) ? turn.pre.speed_order : []);
   var hpPct = 1;
   var targetHpPct = 1;
-  if (turn && turn.pre && turn.pre.hp_pct && actor && actor.name && typeof turn.pre.hp_pct[actor.name] === 'number') {
-    hpPct = turn.pre.hp_pct[actor.name];
+  var actorSnapshotKey = _csResolveSnapshotKey(turn && turn.pre, 'player', actor && actor.name);
+  var targetSnapshotKey = _csResolveSnapshotKey(turn && turn.pre, 'opponent', target && target.name);
+  if (turn && turn.pre && turn.pre.hp_pct && actorSnapshotKey && typeof turn.pre.hp_pct[actorSnapshotKey] === 'number') {
+    hpPct = turn.pre.hp_pct[actorSnapshotKey];
   } else if (actor && actor.hp != null && actor.maxHp) {
     hpPct = Math.max(0, Math.min(1, actor.hp / actor.maxHp));
   }
-  if (turn && turn.pre && turn.pre.hp_pct && target && target.name && typeof turn.pre.hp_pct[target.name] === 'number') {
-    targetHpPct = turn.pre.hp_pct[target.name];
+  if (turn && turn.pre && turn.pre.hp_pct && targetSnapshotKey && typeof turn.pre.hp_pct[targetSnapshotKey] === 'number') {
+    targetHpPct = turn.pre.hp_pct[targetSnapshotKey];
   } else if (target && target.hp != null && target.maxHp) {
     targetHpPct = Math.max(0, Math.min(1, target.hp / target.maxHp));
   }
@@ -2464,8 +2486,8 @@ function _csDecisionMoveScore(move, actor, target, turn, opts) {
       var hasScreenPressure = !!(field.terrain || (enemyScreens && (enemyScreens.reflect || enemyScreens.light || enemyScreens.aurora)) || (ownScreens && (ownScreens.reflect || ownScreens.light || ownScreens.aurora)));
       score = hasScreenPressure ? 44 : 8;
     } else if (move === 'Trick Room') {
-      var enemySpeedIdx = liveEnemies.length ? speedOrder.indexOf(liveEnemies[0]) : -1;
-      var actorSpeedIdx = speedOrder.indexOf(actor && actor.name);
+      var enemySpeedIdx = liveEnemies.length ? speedOrder.indexOf(_csResolveSnapshotKey(turn && turn.pre, 'opponent', liveEnemies[0])) : -1;
+      var actorSpeedIdx = speedOrder.indexOf(actorSnapshotKey);
       score = (!field.trick_room && actorSpeedIdx > -1 && enemySpeedIdx > -1 && actorSpeedIdx > enemySpeedIdx) ? 56 : 20;
     } else if (move === 'Tailwind') {
       score = 50;
@@ -3880,6 +3902,19 @@ var PDF_TRAP_ABILITIES = ['Shadow Tag', 'Arena Trap', 'Magnet Pull'];
 
 function _pdfHasAny(mon, list) {
   return !!(mon && mon.moves && list.some(function(x){ return mon.moves.indexOf(x) >= 0; }));
+}
+
+function _csHasTrueDamageWincon(mon) {
+  var moves = (mon && mon.moves) || [];
+  var damaging = moves.filter(function(mv) {
+    return typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[mv] && MOVE_CATEGORY[mv] !== 'status';
+  });
+  if (damaging.length >= 2) return true;
+  if (!damaging.length) return false;
+  if (_pdfHasAny(mon, PDF_SPREAD) || _pdfHasAny(mon, PDF_PRIORITY)) return true;
+  var base = (typeof BASE_STATS !== 'undefined' && mon && BASE_STATS[mon.name]) ? BASE_STATS[mon.name] : null;
+  var offense = base ? Math.max(base.atk || 0, base.spa || 0) : 0;
+  return offense >= 95;
 }
 
 var CLASSIFY_POKEMON_LEGACY_ROLES = [
@@ -6460,7 +6495,7 @@ function csMistakes(team, identity, format) {
 
   // Single wincon
   var damagers = members.filter(function(m){
-    return (m.moves || []).some(function(mv){ return PDF_SPREAD.indexOf(mv) >= 0 || _pdfHasAny(m, PDF_PRIORITY); });
+    return _csHasTrueDamageWincon(m);
   });
   if (damagers.length <= 2) {
     rules.push({
@@ -6727,8 +6762,7 @@ function csStressTest(team, identity, results, scoreCard) {
   if (!hasSpeed) breakPoints.push('Speed control denied -> slow exposed team');
   if (!hasFO) breakPoints.push('No Fake Out -> turn 1 setup vulnerable to faster pressure');
   var damagers = members.filter(function(m){
-    return (m.moves || []).some(function(mv){ return PDF_SPREAD.indexOf(mv) >= 0; }) ||
-           _pdfHasAny(m, PDF_PRIORITY);
+    return _csHasTrueDamageWincon(m);
   });
   if (damagers.length <= 2) breakPoints.push('Closer removed early -> late game collapses');
   if (members.length < 6) breakPoints.push('Roster slots short -> matchup volatility increases');
@@ -6887,8 +6921,7 @@ function csRiskProfile(team, scoreCard) {
   });
 
   var damagers = members.filter(function(m){
-    return (m.moves || []).some(function(mv){ return PDF_SPREAD.indexOf(mv) >= 0; }) ||
-           _pdfHasAny(m, PDF_PRIORITY);
+    return _csHasTrueDamageWincon(m);
   }).length;
   if (damagers <= 1) risks.push({
     category: 'single_wincon', severity: damagers === 0 ? 'extreme' : 'high',
