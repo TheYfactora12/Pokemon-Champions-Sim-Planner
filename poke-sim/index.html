@@ -111,6 +111,7 @@
   <button class="tab-btn" role="tab" data-tab="teams">Teams</button>
   <button class="tab-btn" role="tab" data-tab="editor">Set Editor</button>
   <button class="tab-btn" role="tab" data-tab="strategy">Strategy</button>
+  <button class="tab-btn" role="tab" data-tab="replay-coach">Battle Sensei</button>
   <button class="tab-btn" role="tab" data-tab="replays">Replay Log</button>
   <button class="tab-btn" role="tab" data-tab="sources">Sources</button>
   <button class="tab-btn" role="tab" data-tab="pilot">Pilot Guide</button>
@@ -121,6 +122,7 @@
     <option value="teams">Teams</option>
     <option value="editor">Set Editor</option>
     <option value="strategy">Strategy</option>
+    <option value="replay-coach">Battle Sensei</option>
     <option value="replays">Replay Log</option>
     <option value="sources">Sources</option>
     <option value="pilot">Pilot Guide</option>
@@ -374,6 +376,63 @@
   </div>
 </section>
 
+<!-- ===== BATTLE SENSEI ===== -->
+<section class="tab-panel" id="tab-replay-coach">
+  <div class="replay-coach-shell">
+    <div class="replay-coach-header">
+      <div>
+        <h2 class="section-title">Battle Sensei</h2>
+        <p class="section-subtitle"><strong>Battle Sensei:</strong> Learn why the turn went wrong.</p>
+        <p class="section-subtitle">Use a Pokémon Showdown replay log only. Paste the raw battle log text or upload a saved <code>.txt</code>/<code>.log</code> export from Showdown.</p>
+      </div>
+      <span class="replay-coach-privacy">Local review · raw log not saved</span>
+    </div>
+
+    <div class="replay-coach-grid">
+      <div class="replay-coach-input-card">
+        <div class="replay-coach-card-head">
+          <span class="badge badge-blue">SHOWDOWN LOG</span>
+          <button class="btn-secondary" id="replay-coach-clear-btn" type="button">Clear</button>
+        </div>
+        <div class="replay-coach-list" style="margin-bottom:var(--sp3)">
+          <div class="replay-coach-list-row">
+            <strong>How to use</strong>
+            <div>1. Open your replay in Pokémon Showdown.</div>
+            <div>2. Copy the full replay log text, or save it as a plain <code>.txt</code>/<code>.log</code> file.</div>
+            <div>3. Paste it here or upload the file, choose your side, then run analysis.</div>
+            <small>Replay HTML, screenshots, and team exports are not the primary input path in this build.</small>
+          </div>
+        </div>
+        <textarea id="replay-coach-log" class="replay-coach-textarea" rows="14" spellcheck="false" placeholder="Paste a Pokemon Showdown battle log here."></textarea>
+        <div class="replay-coach-controls">
+          <label class="form-label" for="replay-coach-side">Your side</label>
+          <select class="select-input" id="replay-coach-side">
+            <option value="p1">Player 1 / p1</option>
+            <option value="p2">Player 2 / p2</option>
+          </select>
+          <label class="form-label" for="replay-coach-mode">Review type</label>
+          <select class="select-input" id="replay-coach-mode">
+            <option value="quick">Quick Review</option>
+            <option value="full">Full Turn Review</option>
+            <option value="mistakes">Mistake Finder</option>
+            <option value="sim">Sim Comparison Prep</option>
+          </select>
+          <input type="file" id="replay-coach-file" accept=".txt,.log" hidden/>
+          <button class="btn-secondary" id="replay-coach-upload-btn" type="button">Upload .txt</button>
+          <button class="btn-primary" id="replay-coach-run-btn" type="button">Analyze Replay</button>
+        </div>
+        <div id="replay-coach-status" class="replay-coach-status" aria-live="polite"></div>
+      </div>
+
+      <div class="replay-coach-results" id="replay-coach-results">
+        <div class="replay-coach-empty">
+          Paste a log and run analysis to see result, leads, critical turn, coaching tags, and a readable turn timeline.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== REPLAY LOG ===== -->
 <section class="tab-panel" id="tab-replays">
   <div class="section-header">
@@ -519,6 +578,8 @@
 <script src="engine.js"></script>
 <script src="storage_adapter.js"></script>
 <script src="supabase_adapter.js"></script>
+<script src="replay_coach.js"></script>
+<script src="replay_learning.js"></script>
 <script src="ui.js"></script>
 <script src="legality.js"></script>
 <script src="strategy-injectable.js"></script>
