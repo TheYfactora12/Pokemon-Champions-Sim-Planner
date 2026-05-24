@@ -68,7 +68,8 @@ T('4. scorecard and practice plan are generated from coaching tags', () => {
 
 T('5. Battle IQ scoring is provisional, explainable, and scoped to game intelligence', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
-  const iq = analysis.review.learningReport.battleIq;
+  const learning = analysis.review.learningReport;
+  const iq = learning.battleIq;
   truthy(iq, 'battle iq missing');
   eq(iq.status, 'Provisional Battle IQ', 'provisional status');
   inc(iq.definition, 'game-specific competitive battle intelligence', 'game intelligence boundary');
@@ -84,6 +85,10 @@ T('5. Battle IQ scoring is provisional, explainable, and scoped to game intellig
   });
   truthy(iq.loweredBy.length >= 1, 'lowered by evidence');
   truthy(iq.recommendedDrill && iq.recommendedDrill.skill, 'recommended drill');
+  truthy(learning.coachingReadouts, 'coaching readouts missing');
+  truthy(learning.coachingReadouts.strengths.length >= 1, 'positive coaching evidence missing');
+  truthy(learning.coachingReadouts.tightenUp.length >= 1, 'tighten-up guidance missing');
+  inc(learning.coachingReadouts.note, 'evidence-bound', 'coaching note');
 });
 
 T('6. low-confidence incomplete logs do not overclaim', () => {
@@ -113,6 +118,15 @@ T('7. evidence standard and opponent plan expose support level', () => {
   inc(learning.evidenceStandard.opponentIntentRule, 'Never invent opponent intent', 'opponent intent boundary');
   truthy(['Observed', 'Strong inference', 'Weak inference', 'Needs more data'].includes(learning.opponentPlan.evidenceLabel), 'opponent evidence label');
   truthy(Array.isArray(learning.opponentPlan.evidence), 'opponent evidence rows');
+});
+
+T('7b. advanced play recognition stays evidence-bound', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const readouts = analysis.review.learningReport.coachingReadouts;
+  truthy(Array.isArray(readouts.advancedPlays), 'advanced plays array');
+  readouts.advancedPlays.forEach((row) => {
+    truthy(row.label && row.evidence && row.limitation, 'advanced play row completeness');
+  });
 });
 
 T('8. sim comparison stays low confidence until matched sim data exists', () => {

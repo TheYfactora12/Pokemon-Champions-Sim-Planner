@@ -779,6 +779,108 @@
     };
   }
 
+  function playerMoveNames(parsed) {
+    var side = parsed && parsed.selectedSide || 'p1';
+    var names = [];
+    (parsed && parsed.turns || []).forEach(function(turn) {
+      (turn.moves || []).forEach(function(move) {
+        if (move && move.side === side && move.move) names.push(String(move.move));
+      });
+    });
+    return names;
+  }
+
+  function buildCoachingReadouts(parsed, review, battleIq, critical) {
+    parsed = parsed || {};
+    review = review || {};
+    battleIq = battleIq || buildBattleIqScore(parsed, review, {});
+    critical = critical || buildCriticalTurns(parsed, review);
+    var confidence = confidenceFor(parsed, review.coachingTags || []);
+    var strengths = [];
+    var advanced = [];
+    var tighten = [];
+    var moves = playerMoveNames(parsed);
+    var moveText = moves.join(' | ');
+    var issueMap = {};
+    (review.coachingTags || []).forEach(function(issue) {
+      if (issue && issue.id) issueMap[issue.id] = issue;
+    });
+
+    (battleIq.raisedBy || []).slice(0, 3).forEach(function(row) {
+      strengths.push({
+        label: row.area || 'Positive signal',
+        evidence: row.text || '',
+        confidence: confidence,
+        tradeoff: 'Keep repeating this only when it still protects the current win path.'
+      });
+    });
+    if (!strengths.length && !(review.coachingTags || []).length) {
+      strengths.push({
+        label: 'No major execution error detected',
+        evidence: 'This log did not expose a clear tactical collapse from the current parser.',
+        confidence: confidence,
+        tradeoff: 'Treat this as a small-sample result until more replay evidence is collected.'
+      });
+    }
+
+    if (/Tailwind|Icy Wind|Electroweb|Thunder Wave|Trick Room/i.test(moveText) && !issueMap.speed_control_without_pressure && !issueMap.field_control_failure) {
+      advanced.push({
+        label: 'Speed-control setup recognized',
+        evidence: 'Your replay shows a speed-control line without a flagged conversion failure.',
+        confidence: confidence,
+        limitation: 'This recognizes the setup pattern, not whether it was the only correct line.'
+      });
+    }
+    if (/Follow Me|Rage Powder/i.test(moveText) && !issueMap.win_condition_exposed) {
+      advanced.push({
+        label: 'Support redirection recognized',
+        evidence: 'The log shows redirection support while keeping the win condition intact.',
+        confidence: confidence,
+        limitation: 'This does not prove every redirection turn was optimal; it only confirms the pattern existed.'
+      });
+    }
+    if (/Protect|Detect/i.test(moveText) && !issueMap.protect_misuse) {
+      advanced.push({
+        label: 'Defensive timing recognized',
+        evidence: 'Protect-style resource management appeared without a tagged Protect misuse.',
+        confidence: confidence,
+        limitation: 'A clean Protect pattern in one battle does not guarantee repeatable timing across matchups.'
+      });
+    }
+    if (/Helping Hand|Parting Shot|Fake Out/i.test(moveText) && !issueMap.targeting_error) {
+      advanced.push({
+        label: 'Support sequencing recognized',
+        evidence: 'The log includes pressure-support tools without a flagged targeting collapse on those lines.',
+        confidence: confidence,
+        limitation: 'This is replay evidence only; it does not grade hidden alternatives the log never reveals.'
+      });
+    }
+
+    (battleIq.loweredBy || []).slice(0, 3).forEach(function(row) {
+      tighten.push({
+        label: row.area || 'Tighten-up area',
+        evidence: row.text || '',
+        nextStep: 'Use the top practice drill to rehearse a lower-risk line in the same board state.',
+        confidence: confidence
+      });
+    });
+    if (!tighten.length && critical && critical.fatalMistake) {
+      tighten.push({
+        label: critical.fatalMistake.category || 'Tighten-up area',
+        evidence: critical.fatalMistake.whyItMattered || critical.fatalMistake.whatHappened || '',
+        nextStep: critical.fatalMistake.betterAlternative || 'Replay the critical turn and name the lower-risk alternative before locking an action.',
+        confidence: critical.fatalMistake.confidence || confidence
+      });
+    }
+
+    return {
+      strengths: strengths,
+      advancedPlays: advanced.slice(0, 3),
+      tightenUp: tighten,
+      note: 'Every section is evidence-bound to the parsed replay. Missing context lowers confidence instead of filling gaps with guesswork.'
+    };
+  }
+
   function buildLearningReport(parsed, review, opts) {
     opts = opts || {};
     var issues = (review && review.coachingTags) || [];
@@ -805,6 +907,7 @@
       practicePlan: buildPracticePlan(review),
       trendDashboard: buildTrendDashboard(opts.priorReports || [])
     };
+    report.coachingReadouts = buildCoachingReadouts(parsed, review, report.battleIq, critical);
     report.simFeedback = buildSimFeedbackPacket(parsed, review, report.simComparison).simFeedback;
     report.premiumTeasers = buildPremiumTeasers(report);
     return report;
@@ -817,6 +920,7 @@
   ChampionsSim.replayLearning.buildTrendDashboard = buildTrendDashboard;
   ChampionsSim.replayLearning.buildPremiumTeasers = buildPremiumTeasers;
   ChampionsSim.replayLearning.buildBattleIqScore = buildBattleIqScore;
+  ChampionsSim.replayLearning.buildCoachingReadouts = buildCoachingReadouts;
   ChampionsSim.replayLearning.buildEvidenceStandard = buildEvidenceStandard;
   ChampionsSim.replayLearning.buildSimComparison = buildSimComparison;
   ChampionsSim.replayLearning.buildSimFeedbackPacket = buildSimFeedbackPacket;

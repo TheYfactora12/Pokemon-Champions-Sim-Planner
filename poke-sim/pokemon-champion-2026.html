@@ -14415,6 +14415,29 @@ function csReplayCoachRenderAnalysis(analysis) {
   var battleIqSubPreview = battleIq ? (battleIq.subScores || []).slice(0, 4).map(function(row) {
     return '<div class="replay-coach-metric"><strong>' + _escapeHtml(row.label || 'Sub-score') + '</strong><span>' + _escapeHtml(String(row.standardScore || 0)) + ' · raw ' + _escapeHtml(String(row.rawScore || 0)) + '</span></div>';
   }).join('') : '';
+  var coachingReadouts = learning && learning.coachingReadouts ? learning.coachingReadouts : null;
+  var strengthsRows = coachingReadouts ? (coachingReadouts.strengths || []).map(function(row) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.label || 'What you did well') + '</strong>' +
+      '<div><b>Supported by log:</b> ' + _escapeHtml(row.evidence || '') + '</div>' +
+      '<small>Confidence: ' + _escapeHtml(row.confidence || 'medium') + ' · Tradeoff: ' + _escapeHtml(row.tradeoff || '') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var advancedRows = coachingReadouts ? (coachingReadouts.advancedPlays || []).map(function(row) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.label || 'Advanced play recognized') + '</strong>' +
+      '<div><b>Observed:</b> ' + _escapeHtml(row.evidence || '') + '</div>' +
+      '<small>Confidence: ' + _escapeHtml(row.confidence || 'medium') + ' · Limit: ' + _escapeHtml(row.limitation || '') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var tightenRows = coachingReadouts ? (coachingReadouts.tightenUp || []).map(function(row) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.label || 'Tighten up next') + '</strong>' +
+      '<div><b>Why:</b> ' + _escapeHtml(row.evidence || '') + '</div>' +
+      '<div><b>Next rep:</b> ' + _escapeHtml(row.nextStep || '') + '</div>' +
+      '<small>Confidence: ' + _escapeHtml(row.confidence || 'medium') + '</small>' +
+      '</div>';
+  }).join('') : '';
 
   host.innerHTML =
     '<div class="replay-coach-summary-card">' +
@@ -14455,6 +14478,19 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-list-row"><strong>Rule</strong>' + _escapeHtml(evidenceStandard.priority || '') + '<small>' + _escapeHtml(evidenceStandard.rule || '') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>Opponent intent boundary</strong>' + _escapeHtml(evidenceStandard.opponentIntentRule || '') + '</div>' +
       '</div>' +
+    '</div>' : '') +
+    (coachingReadouts ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">What You Did Well</h3>' +
+      '<div class="replay-coach-list">' + (strengthsRows || '<div class="replay-coach-list-row"><strong>No positive signal proven yet</strong>Use a fuller replay log before treating a line as repeatable.</div>') + '</div>' +
+      '<small>' + _escapeHtml(coachingReadouts.note || '') + '</small>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Advanced Plays Recognized</h3>' +
+      '<div class="replay-coach-list">' + (advancedRows || '<div class="replay-coach-list-row"><strong>No advanced pattern proven yet</strong>This log may still be useful, but the parser did not find a strong advanced setup or support line.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Tighten Up Next</h3>' +
+      '<div class="replay-coach-list">' + (tightenRows || '<div class="replay-coach-list-row"><strong>No tighten-up item proven yet</strong>Collect more complete turns before naming a concrete adjustment.</div>') + '</div>' +
     '</div>' : '') +
     (learning ? '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Battle IQ Score</h3>' +
