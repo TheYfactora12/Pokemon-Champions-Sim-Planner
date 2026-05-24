@@ -2903,7 +2903,7 @@ function csRenderReplayTurnRoster(rosterState, selectedSide) {
   var order = [selectedSide || 'p1', (selectedSide || 'p1') === 'p1' ? 'p2' : 'p1'];
   return '<div class="replay-turn-roster">' + order.map(function(side) {
     return '<div class="replay-turn-roster-side">' +
-      '<strong>' + _escapeHtml(side === (selectedSide || 'p1') ? 'Your board' : 'Opponent board') + '</strong>' +
+      '<strong>' + _escapeHtml(side === (selectedSide || 'p1') ? 'Your team after this turn' : 'Their team after this turn') + '</strong>' +
       '<div class="replay-roster-mini-grid">' + csRenderReplayRosterRows(rosterState[side] || [], true) + '</div>' +
     '</div>';
   }).join('') + '</div>';
@@ -2914,9 +2914,10 @@ function csRenderReplayTurn0(turn0, selectedSide) {
   var order = [selectedSide || 'p1', (selectedSide || 'p1') === 'p1' ? 'p2' : 'p1'];
   var sideHtml = order.map(function(side) {
     var row = turn0.sides[side] || {};
+    var sideLabel = side === (selectedSide || 'p1') ? 'Your team' : 'Their team';
     var roster = csRenderReplayRosterRows(row.roster || [], false);
     return '<div class="replay-coach-card">' +
-      '<h3 class="replay-coach-h3">' + _escapeHtml((row.player || side) + ' · Turn 0') + '</h3>' +
+      '<h3 class="replay-coach-h3">' + _escapeHtml(sideLabel + ' — ' + (row.player || side) + ' · Turn 0') + '</h3>' +
       '<div class="replay-coach-metric"><strong>Team preview</strong><span>' + _escapeHtml(csReplayCoachJoin(row.teamPreview, 'Unknown')) + '</span></div>' +
       '<div class="replay-roster-grid">' + roster + '</div>' +
     '</div>';
