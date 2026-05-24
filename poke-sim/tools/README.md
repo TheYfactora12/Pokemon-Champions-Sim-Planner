@@ -51,7 +51,7 @@ Pokemon-Champions-Sim-Planner/
 ├── poke-sim/
 │   ├── index.html                   ← app shell (SINGLE SOURCE OF TRUTH)
 │   ├── style.css
-│   ├── data.js                      ← BASE_STATS, POKEMON_TYPES_DB, TEAMS (25 teams)
+│   ├── data.js                      ← BASE_STATS, POKEMON_TYPES_DB, TEAMS (29 teams)
 │   ├── engine.js                    ← battle engine, damage formula
 │   ├── ui.js                        ← all UI logic
 │   ├── storage_adapter.js           ← localStorage wrapper
@@ -216,7 +216,7 @@ git push --force origin main
 | Key | Value |
 |---|---|
 | Project URL | `https://ymlahqnshgiarpbgxehp.supabase.co` |
-| Status | ✅ Live — schema + 25 canonical teams seeded |
+| Status | ✅ Live — schema active; 29-team seed target pending shared catalog migration |
 | Auth | anon key (read-only for teams/pokemon; open write for analyses) |
 
 ### Initial setup (already done — for reference)
@@ -224,7 +224,7 @@ git push --force origin main
 -- Run in order in Supabase SQL Editor:
 -- 1. poke-sim/db/schema_v1.sql
 -- 2. poke-sim/db/seed_teams_v2.sql for fresh DBs only
---    Use poke-sim/db/migrations/2026_05_24_upsert_seed_teams_v2_repair.sql for existing DBs with analyses history.
+--    Use poke-sim/db/migrations/2026_05_24_align_shared_29_team_catalog.sql for existing DBs with analyses history.
 -- 3. poke-sim/db/rls_policies_v1.sql
 ```
 
