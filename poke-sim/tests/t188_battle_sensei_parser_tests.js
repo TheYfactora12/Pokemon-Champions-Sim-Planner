@@ -76,6 +76,9 @@ T('4. builds a coaching review with tags and critical turn', () => {
   eq(analysis.review.summary.yourLead.join(','), 'Incineroar,Whimsicott', 'summary lead');
   eq(analysis.review.summary.result, 'loss', 'summary result');
   eq(analysis.review.summary.selectedFourConfidence.level, 'high', 'bring confidence');
+  eq(analysis.review.summary.selectedFourConfidence.fullRosterKnown, true, 'full roster known');
+  eq(analysis.review.summary.selectedFourConfidence.selectedFourKnown, true, 'selected four known');
+  eq(analysis.review.summary.selectedFourConfidence.bringChoiceReviewable, true, 'bring choice reviewable');
   truthy(analysis.review.summary.criticalTurn >= 1, 'critical turn');
   includes(tags, 'Targeting Error', 'targeting coaching tag');
   includes(tags, 'Speed Control Without Pressure', 'speed control tag');
@@ -142,9 +145,43 @@ T('7. marks partial bring-four evidence without overclaiming', () => {
   const ids = analysis.review.coachingTags.map((t) => t.id);
   includes(ids, 'questionable_bring', 'questionable bring rule id');
   eq(analysis.review.summary.selectedFourConfidence.level, 'medium', 'partial bring confidence');
+  eq(analysis.review.summary.selectedFourConfidence.fullRosterKnown, true, 'partial bring full preview known');
+  eq(analysis.review.summary.selectedFourConfidence.selectedFourKnown, false, 'partial bring selected four incomplete');
+  eq(analysis.review.summary.selectedFourConfidence.bringChoiceReviewable, false, 'partial bring choice not reviewable');
+  truthy(/limited/i.test(analysis.review.summary.selectedFourConfidence.limitation), 'partial bring limitation');
 });
 
-T('8. normalizes copied replay page text down to raw log lines', () => {
+T('8. accepts replay-only visible four without full six overclaiming', () => {
+  const visibleFourOnly = [
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|gametype|doubles',
+    '|start',
+    '|switch|p1a: Incineroar|Incineroar, L50, M|100/100',
+    '|switch|p1b: Whimsicott|Whimsicott, L50, F|100/100',
+    '|switch|p2a: Hatterene|Hatterene, L50, F|100/100',
+    '|switch|p2b: Torkoal|Torkoal, L50, M|100/100',
+    '|turn|1',
+    '|move|p1a: Incineroar|Fake Out|p2a: Hatterene',
+    '|switch|p1b: Garchomp|Garchomp, L50, M|100/100',
+    '|turn|2',
+    '|switch|p1a: Arcanine|Arcanine, L50, M|100/100',
+    '|win|Alice'
+  ].join('\n');
+  const analysis = replayCoach.analyzeShowdownReplay(visibleFourOnly, { selectedSide: 'p1' });
+  const ids = analysis.review.coachingTags.map((t) => t.id);
+  eq(analysis.review.summary.selectedFourConfidence.level, 'medium', 'visible four confidence should stay medium without preview');
+  eq(analysis.review.summary.selectedFourConfidence.label, 'Visible four inferred', 'visible four label');
+  eq(analysis.review.summary.selectedFourConfidence.previewCount, 0, 'no full preview count');
+  eq(analysis.review.summary.selectedFourConfidence.selectedCount, 4, 'four visible selected count');
+  eq(analysis.review.summary.selectedFourConfidence.fullRosterKnown, false, 'full roster not known');
+  eq(analysis.review.summary.selectedFourConfidence.selectedFourKnown, true, 'selected four known');
+  eq(analysis.review.summary.selectedFourConfidence.bringChoiceReviewable, false, 'bring choice not reviewable without full six');
+  truthy(/full six/i.test(analysis.review.summary.selectedFourConfidence.limitation), 'full six limitation');
+  if (ids.includes('questionable_bring')) throw new Error('visible four should not be blocked by questionable_bring');
+});
+
+T('9. normalizes copied replay page text down to raw log lines', () => {
   const pastedPage = [
     'Pokemon Showdown replay',
     'Battle log',
@@ -160,7 +197,7 @@ T('8. normalizes copied replay page text down to raw log lines', () => {
   truthy(normalized.indexOf('|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F') >= 0, 'move line preserved');
 });
 
-T('9. converts replay URLs to .log endpoints and fetches them through the helper', async () => {
+T('10. converts replay URLs to .log endpoints and fetches them through the helper', async () => {
   const logUrl = replayCoach.replayUrlToLogUrl('https://replay.pokemonshowdown.com/gen9vgc2026-123456');
   eq(logUrl, 'https://replay.pokemonshowdown.com/gen9vgc2026-123456.log', 'log endpoint');
   let fetched = '';

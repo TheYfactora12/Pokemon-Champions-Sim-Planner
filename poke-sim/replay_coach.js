@@ -361,10 +361,55 @@
   function selectedFourConfidence(parsed, side) {
     var preview = parsed.teamPreview && parsed.teamPreview[side] ? parsed.teamPreview[side] : [];
     var selected = parsed.selectedPokemon && parsed.selectedPokemon[side] ? parsed.selectedPokemon[side] : [];
-    if (selected.length >= 4) return { level: 'high', label: 'Four inferred', reason: 'At least four selected Pokemon appeared in the log.' };
-    if (preview.length >= 6 && selected.length > 0) return { level: 'medium', label: 'Partial bring', reason: 'Team preview exists, but not all brought Pokemon were revealed.' };
-    if (selected.length > 0) return { level: 'medium', label: 'Revealed only', reason: 'Selected Pokemon are inferred from revealed actions only.' };
-    return { level: 'low', label: 'Unknown', reason: 'The log did not reveal selected Pokemon.' };
+    var previewCount = preview.length;
+    var selectedCount = selected.length;
+    var fullRosterKnown = previewCount >= 6;
+    var selectedFourKnown = selectedCount >= 4;
+    var base = {
+      previewCount: previewCount,
+      selectedCount: selectedCount,
+      fullRosterKnown: fullRosterKnown,
+      selectedFourKnown: selectedFourKnown,
+      bringChoiceReviewable: fullRosterKnown && selectedFourKnown,
+      limitation: ''
+    };
+    if (fullRosterKnown && selectedFourKnown) {
+      return Object.assign(base, {
+        level: 'high',
+        label: 'Full preview + four inferred',
+        reason: 'Team preview showed the full six and at least four selected Pokemon appeared in the log.'
+      });
+    }
+    if (selectedFourKnown) {
+      return Object.assign(base, {
+        level: 'medium',
+        label: 'Visible four inferred',
+        reason: 'At least four brought Pokemon appeared in the log, so replay review can continue.',
+        limitation: 'Bring-choice analysis is limited because the full six were not available from this replay.'
+      });
+    }
+    if (fullRosterKnown && selectedCount > 0) {
+      return Object.assign(base, {
+        level: 'medium',
+        label: 'Partial bring',
+        reason: 'Team preview showed the full six, but fewer than four brought Pokemon were revealed.',
+        limitation: 'Bring-four analysis is limited until the missing brought Pokemon appear in the log or are entered manually.'
+      });
+    }
+    if (selectedCount > 0) {
+      return Object.assign(base, {
+        level: 'medium',
+        label: 'Partial visible roster',
+        reason: 'Selected Pokemon are inferred from revealed actions only.',
+        limitation: 'Both the full six and complete selected four are incomplete from this replay.'
+      });
+    }
+    return Object.assign(base, {
+      level: 'low',
+      label: 'Unknown',
+      reason: 'The log did not reveal selected Pokemon.',
+      limitation: 'Upload a fuller replay log before using bring-choice coaching.'
+    });
   }
 
   function sideNames(parsed, side) {

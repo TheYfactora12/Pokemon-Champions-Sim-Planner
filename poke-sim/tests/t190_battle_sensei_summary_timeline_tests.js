@@ -38,6 +38,10 @@ T('2. summary renders selected-four confidence and team preview read', () => {
   inc(ui, '<strong>Why this lead made sense</strong>');
   inc(ui, '<strong>What it still conceded</strong>');
   inc(ui, '<strong>Opponent Four</strong>');
+  inc(ui, '<strong>Roster Evidence</strong>');
+  inc(ui, '<strong>Bring Scope</strong>');
+  inc(ui, '<strong>Limit</strong>');
+  inc(ui, 'bringChoiceReviewable');
   inc(ui, 'selectedFourConfidence');
 });
 

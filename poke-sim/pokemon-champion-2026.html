@@ -14341,6 +14341,12 @@ function csReplayCoachRenderAnalysis(analysis) {
   var simFeedback = learning && learning.simFeedback ? learning.simFeedback : null;
   var rawPreview = review.rawLogPreview || {};
   var bringConfidence = summary.selectedFourConfidence || {};
+  var rosterEvidenceLabel = bringConfidence.fullRosterKnown
+    ? 'Full six shown'
+    : (bringConfidence.selectedFourKnown ? 'Visible four only' : 'Partial replay only');
+  var bringScopeLabel = bringConfidence.bringChoiceReviewable
+    ? 'Bring choice reviewable'
+    : 'Bring-choice limited';
   var warnings = (review.warnings || []).map(function(w) {
     return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
   }).join('');
@@ -14471,7 +14477,10 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Your Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourPreview, 'Missing')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Opponent Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentPreview, 'Missing')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Opponent Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentFour, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Roster Evidence</strong><span>' + _escapeHtml(rosterEvidenceLabel + ' · ' + String(bringConfidence.previewCount || 0) + ' preview / ' + String(bringConfidence.selectedCount || 0) + ' visible') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Bring Scope</strong><span>' + _escapeHtml(bringScopeLabel) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Bring Read</strong><span>' + _escapeHtml(bringConfidence.reason || 'Bring data is unknown from this log.') + '</span></div>' +
+        (bringConfidence.limitation ? '<div class="replay-coach-metric"><strong>Limit</strong><span>' + _escapeHtml(bringConfidence.limitation) + '</span></div>' : '') +
       '</div>' +
     '</div>' +
     (leadLogic ? '<div class="replay-coach-card">' +
@@ -14520,12 +14529,12 @@ function csReplayCoachRenderAnalysis(analysis) {
     (learning ? '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Battle IQ Score</h3>' +
       '<div class="replay-coach-summary-grid">' +
-        '<div class="replay-coach-metric"><strong>Battle IQ</strong><span>' + _escapeHtml(battleIq ? String(battleIq.standardScore) : 'Needs data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Battle IQ</strong><span>' + _escapeHtml(battleIq && battleIq.displayScore != null ? String(battleIq.displayScore) : 'Needs more data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Band</strong><span>' + _escapeHtml(battleIq ? battleIq.band : 'Unknown') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(battleIq ? battleIq.confidence : 'low') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(battleIq ? battleIq.status : 'Provisional') + '</span></div>' +
-        '<div class="replay-coach-metric"><strong>Percentile</strong><span>' + _escapeHtml(battleIq ? String(battleIq.percentile) + 'th provisional' : 'Needs norms') + '</span></div>' +
-        '<div class="replay-coach-metric"><strong>Range</strong><span>' + _escapeHtml(battleIq ? battleIq.confidenceInterval.join('-') : 'Needs data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Percentile</strong><span>' + _escapeHtml(battleIq && battleIq.percentile != null ? String(battleIq.percentile) + 'th provisional' : 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Range</strong><span>' + _escapeHtml(battleIq && battleIq.confidenceInterval && battleIq.confidenceInterval.length ? battleIq.confidenceInterval.join('-') : 'Needs more data') + '</span></div>' +
         battleIqSubPreview +
       '</div>' +
       '<div class="replay-coach-list">' +

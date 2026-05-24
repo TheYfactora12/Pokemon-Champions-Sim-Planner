@@ -2716,6 +2716,12 @@ function csReplayCoachRenderAnalysis(analysis) {
   var simFeedback = learning && learning.simFeedback ? learning.simFeedback : null;
   var rawPreview = review.rawLogPreview || {};
   var bringConfidence = summary.selectedFourConfidence || {};
+  var rosterEvidenceLabel = bringConfidence.fullRosterKnown
+    ? 'Full six shown'
+    : (bringConfidence.selectedFourKnown ? 'Visible four only' : 'Partial replay only');
+  var bringScopeLabel = bringConfidence.bringChoiceReviewable
+    ? 'Bring choice reviewable'
+    : 'Bring-choice limited';
   var warnings = (review.warnings || []).map(function(w) {
     return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
   }).join('');
@@ -2846,7 +2852,10 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Your Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourPreview, 'Missing')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Opponent Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentPreview, 'Missing')) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Opponent Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentFour, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Roster Evidence</strong><span>' + _escapeHtml(rosterEvidenceLabel + ' · ' + String(bringConfidence.previewCount || 0) + ' preview / ' + String(bringConfidence.selectedCount || 0) + ' visible') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Bring Scope</strong><span>' + _escapeHtml(bringScopeLabel) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Bring Read</strong><span>' + _escapeHtml(bringConfidence.reason || 'Bring data is unknown from this log.') + '</span></div>' +
+        (bringConfidence.limitation ? '<div class="replay-coach-metric"><strong>Limit</strong><span>' + _escapeHtml(bringConfidence.limitation) + '</span></div>' : '') +
       '</div>' +
     '</div>' +
     (leadLogic ? '<div class="replay-coach-card">' +
