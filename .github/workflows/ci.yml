@@ -221,11 +221,6 @@ jobs:
               - 'poke-sim/data.js'
               - 'poke-sim/db/**'
               - 'poke-sim/supabase_adapter.js'
-              - 'poke-sim/tests/_db_helpers.js'
-              - 'poke-sim/tests/db_m2_seed_tests.js'
-              - 'poke-sim/tests/db_m3_init_tests.js'
-              - 'poke-sim/tests/db_m6_history_tests.js'
-              - 'poke-sim/tests/db_m10_meta_alignment_tests.js'
 
   # ----------------------------------------------------------------
   # 4. BATTLE AUDIT (GATED)
