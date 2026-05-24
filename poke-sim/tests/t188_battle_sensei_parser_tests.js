@@ -9,9 +9,21 @@ const sample = fs.readFileSync(path.join(ROOT, 'tests/fixtures/showdown_replay_s
 
 let pass = 0;
 let fail = 0;
+const tests = [];
 function T(name, fn) {
-  try { fn(); console.log('  PASS', name); pass++; }
-  catch (e) { console.log('  FAIL', name, '-', e.message); fail++; }
+  tests.push([name, fn]);
+}
+async function runTests() {
+  for (const [name, fn] of tests) {
+    try {
+      await fn();
+      console.log('  PASS', name);
+      pass++;
+    } catch (e) {
+      console.log('  FAIL', name, '-', e.message);
+      fail++;
+    }
+  }
 }
 function eq(actual, expected, msg) {
   if (actual !== expected) throw new Error((msg || 'expected equality') + ': got ' + actual + ', expected ' + expected);
@@ -132,5 +144,40 @@ T('7. marks partial bring-four evidence without overclaiming', () => {
   eq(analysis.review.summary.selectedFourConfidence.level, 'medium', 'partial bring confidence');
 });
 
-console.log(`\nBattle Sensei parser: ${pass} pass, ${fail} fail\n`);
-process.exit(fail ? 1 : 0);
+T('8. normalizes copied replay page text down to raw log lines', () => {
+  const pastedPage = [
+    'Pokemon Showdown replay',
+    'Battle log',
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|turn|1',
+    '|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F',
+    'Download replay'
+  ].join('\n');
+  const normalized = replayCoach.normalizeReplayLogInput(pastedPage);
+  eq(normalized.split('\n').length, 4, 'normalized replay line count');
+  truthy(normalized.indexOf('Pokemon Showdown replay') < 0, 'page chrome removed');
+  truthy(normalized.indexOf('|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F') >= 0, 'move line preserved');
+});
+
+T('9. converts replay URLs to .log endpoints and fetches them through the helper', async () => {
+  const logUrl = replayCoach.replayUrlToLogUrl('https://replay.pokemonshowdown.com/gen9vgc2026-123456');
+  eq(logUrl, 'https://replay.pokemonshowdown.com/gen9vgc2026-123456.log', 'log endpoint');
+  let fetched = '';
+  const text = await replayCoach.fetchReplayLog('https://replay.pokemonshowdown.com/gen9vgc2026-123456', async (url) => {
+    fetched = url;
+    return {
+      ok: true,
+      async text() {
+        return 'Battle log\n|player|p1|Alice\n|turn|1';
+      }
+    };
+  });
+  eq(fetched, logUrl, 'helper fetch target');
+  eq(text, '|player|p1|Alice\n|turn|1', 'fetched log normalized');
+});
+
+runTests().then(() => {
+  console.log(`\nBattle Sensei parser: ${pass} pass, ${fail} fail\n`);
+  process.exit(fail ? 1 : 0);
+});

@@ -70,10 +70,75 @@
     if (v && list.indexOf(v) < 0) list.push(v);
   }
 
+  function looksLikeReplayTag(tag) {
+    return /^(player|teamsize|gametype|gen|tier|rule|rated|poke|teampreview|start|turn|upkeep|move|switch|drag|replace|faint|win|tie|-damage|-heal|-status|-curestatus|-boost|-unboost|-weather|-fieldstart|-fieldend|-sidestart|-sideend|-crit|-miss|-fail|-immune|-message|j|c)$/i.test(tag || '');
+  }
+
+  function normalizeReplayLogInput(rawInput) {
+    var text = String(rawInput == null ? '' : rawInput)
+      .replace(/^\uFEFF/, '')
+      .replace(/\u00a0/g, ' ')
+      .replace(/\r\n?/g, '\n');
+    if (!text.trim()) return '';
+    if (text.indexOf('\n') < 0 && text.indexOf('\\n|') >= 0) {
+      text = text.replace(/\\n/g, '\n');
+    }
+    var directLines = [];
+    text.split('\n').forEach(function(line) {
+      var trimmed = cleanText(line);
+      if (!trimmed) return;
+      if (trimmed.charAt(0) === '|') {
+        var directTag = trimmed.split('|')[1] || '';
+        if (looksLikeReplayTag(directTag)) directLines.push(trimmed);
+        return;
+      }
+      var idx = trimmed.indexOf('|');
+      if (idx >= 0) {
+        var candidate = trimmed.slice(idx);
+        var tag = candidate.split('|')[1] || '';
+        if (looksLikeReplayTag(tag)) directLines.push(candidate);
+      }
+    });
+    if (directLines.length) return directLines.join('\n');
+    return cleanText(text);
+  }
+
+  function replayUrlToLogUrl(rawUrl) {
+    var input = cleanText(rawUrl);
+    if (!input) throw new Error('Enter a replay URL.');
+    var normalized = input;
+    if (!/^https?:\/\//i.test(normalized)) normalized = 'https://' + normalized;
+    var url;
+    try {
+      url = new URL(normalized);
+    } catch (e) {
+      throw new Error('Replay URL is not valid.');
+    }
+    if (!/replay\.pokemonshowdown\.com$/i.test(url.hostname || '')) {
+      throw new Error('Use a replay.pokemonshowdown.com URL.');
+    }
+    var path = String(url.pathname || '').replace(/^\/+/, '');
+    if (!path) throw new Error('Replay URL is missing an ID.');
+    path = path.replace(/\.json$/i, '').replace(/\.log$/i, '');
+    return url.origin + '/' + path + '.log';
+  }
+
+  async function fetchReplayLog(rawUrl, fetchImpl) {
+    var fetcher = fetchImpl || (typeof fetch === 'function' ? fetch : null);
+    if (!fetcher) throw new Error('Replay URL loading is not available in this build.');
+    var logUrl = replayUrlToLogUrl(rawUrl);
+    var resp = await fetcher(logUrl, { credentials: 'omit' });
+    if (!resp || !resp.ok) {
+      throw new Error('Could not load that replay URL.');
+    }
+    var text = await resp.text();
+    return normalizeReplayLogInput(text);
+  }
+
   function parseShowdownLog(rawLog, opts) {
     opts = opts || {};
     var selectedSide = normalizeSide(opts.selectedSide || 'p1');
-    var text = cleanText(rawLog);
+    var text = normalizeReplayLogInput(rawLog);
     var model = {
       ok: false,
       selectedSide: selectedSide,
@@ -662,6 +727,9 @@
   }
 
   ChampionsSim.replayCoach.parseShowdownLog = parseShowdownLog;
+  ChampionsSim.replayCoach.normalizeReplayLogInput = normalizeReplayLogInput;
+  ChampionsSim.replayCoach.replayUrlToLogUrl = replayUrlToLogUrl;
+  ChampionsSim.replayCoach.fetchReplayLog = fetchReplayLog;
   ChampionsSim.replayCoach.buildReplayCoachReview = buildReplayCoachReview;
   ChampionsSim.replayCoach.analyzeShowdownReplay = analyzeShowdownReplay;
 

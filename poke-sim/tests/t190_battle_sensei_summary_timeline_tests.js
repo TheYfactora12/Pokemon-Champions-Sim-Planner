@@ -25,6 +25,8 @@ T('1. Battle Sensei remains a separate tab from Strategy', () => {
   inc(html, '<section class="tab-panel" id="tab-replay-coach">');
   inc(html, '<section class="tab-panel" id="tab-strategy">');
   inc(html, '<script src="replay_learning.js"></script>');
+  inc(html, 'id="replay-coach-url"');
+  inc(html, 'id="replay-coach-fetch-btn"');
 });
 
 T('2. summary renders selected-four confidence and team preview read', () => {
@@ -78,6 +80,8 @@ T('6. raw log preview is collapsed and hidden by default', () => {
   inc(ui, '<details class="replay-coach-raw"><summary>Raw log preview hidden by default');
   inc(ui, 'rawLogPreview');
   inc(css, '.replay-coach-raw-log{margin-top:10px;white-space:pre-wrap;max-height:260px}');
+  inc(ui, "api.fetchReplayLog(rawUrl)");
+  inc(ui, "Loaded replay URL into the log box. Run analysis when ready.");
 });
 
 T('7. timeline styles stay card-based and mobile-safe', () => {

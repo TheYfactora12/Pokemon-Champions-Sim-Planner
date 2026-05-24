@@ -691,6 +691,7 @@ table{border-collapse:collapse;width:100%}
 .replay-coach-grid{display:grid;grid-template-columns:minmax(320px,420px) minmax(0,1fr);gap:var(--sp4);align-items:start}
 .replay-coach-input-card,.replay-coach-summary-card,.replay-coach-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp4);box-shadow:var(--sh-sm);min-width:0}
 .replay-coach-card-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp2);margin-bottom:var(--sp3)}
+.replay-coach-url-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sp2);align-items:center;margin-bottom:var(--sp3)}
 .replay-coach-textarea{width:100%;min-height:260px;padding:var(--sp3);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);font-family:var(--font-mono),monospace;font-size:11px;line-height:1.65;resize:vertical;transition:border-color var(--tr);-webkit-appearance:none;overflow-wrap:normal;word-break:normal;white-space:pre;overflow:auto}
 .replay-coach-textarea:focus{outline:none;border-color:var(--primary)}
 .replay-coach-controls{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp2);align-items:end;margin-top:var(--sp3)}
@@ -760,6 +761,7 @@ table{border-collapse:collapse;width:100%}
 @media(max-width:900px){.replay-coach-grid{grid-template-columns:1fr}.replay-coach-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){
   .replay-coach-input-card,.replay-coach-summary-card,.replay-coach-card{padding:var(--sp3)}
+  .replay-coach-url-row{grid-template-columns:1fr}
   .replay-coach-controls{grid-template-columns:1fr}
   .replay-coach-summary-grid{grid-template-columns:1fr}
   .replay-coach-privacy{white-space:normal}
@@ -2541,9 +2543,14 @@ table{border-collapse:collapse;width:100%}
             <strong>How to use</strong>
             <div>1. Open your replay in Pokémon Showdown.</div>
             <div>2. Copy the full replay log text, or save it as a plain <code>.txt</code>/<code>.log</code> file.</div>
-            <div>3. Paste it here or upload the file, choose your side, then run analysis.</div>
-            <small>Replay HTML, screenshots, and team exports are not the primary input path in this build.</small>
+            <div>3. You can also paste a replay URL from <code>replay.pokemonshowdown.com</code> and let Battle Sensei load the raw log.</div>
+            <div>4. Paste it here or upload the file, choose your side, then run analysis.</div>
+            <small>Replay HTML, screenshots, and team exports are still not the primary input path in this build.</small>
           </div>
+        </div>
+        <div class="replay-coach-url-row">
+          <input id="replay-coach-url" class="form-input" type="url" placeholder="https://replay.pokemonshowdown.com/... or .../.log" />
+          <button class="btn-secondary" id="replay-coach-fetch-btn" type="button">Load Replay URL</button>
         </div>
         <textarea id="replay-coach-log" class="replay-coach-textarea" rows="14" spellcheck="false" placeholder="Paste a Pokemon Showdown battle log here."></textarea>
         <div class="replay-coach-controls">
@@ -14641,10 +14648,12 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
 
 function csInitReplayCoachUi() {
   var logEl = document.getElementById('replay-coach-log');
+  var urlEl = document.getElementById('replay-coach-url');
   var sideEl = document.getElementById('replay-coach-side');
   var runBtn = document.getElementById('replay-coach-run-btn');
   var clearBtn = document.getElementById('replay-coach-clear-btn');
   var uploadBtn = document.getElementById('replay-coach-upload-btn');
+  var fetchBtn = document.getElementById('replay-coach-fetch-btn');
   var fileEl = document.getElementById('replay-coach-file');
   var statusEl = document.getElementById('replay-coach-status');
   if (!logEl || !sideEl || !runBtn) return;
@@ -14705,6 +14714,30 @@ function csInitReplayCoachUi() {
       };
       reader.onerror = function() { setStatus('Could not read that file.', true); };
       reader.readAsText(file);
+    });
+  }
+
+  if (fetchBtn && urlEl) {
+    fetchBtn.addEventListener('click', async function() {
+      var api = ChampionsSim && ChampionsSim.replayCoach;
+      if (!api || typeof api.fetchReplayLog !== 'function') {
+        setStatus('Replay URL loading is not available in this build.', true);
+        return;
+      }
+      var rawUrl = urlEl.value || '';
+      if (!rawUrl.trim()) {
+        setStatus('Paste a replay URL before loading it.', true);
+        return;
+      }
+      setStatus('Loading replay URL...');
+      try {
+        var normalized = await api.fetchReplayLog(rawUrl);
+        if (!normalized) throw new Error('Replay log was empty.');
+        logEl.value = normalized;
+        setStatus('Loaded replay URL into the log box. Run analysis when ready.');
+      } catch (e) {
+        setStatus((e && e.message) ? e.message : 'Could not load that replay URL.', true);
+      }
     });
   }
 }

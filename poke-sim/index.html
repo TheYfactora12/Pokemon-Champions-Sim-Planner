@@ -399,9 +399,14 @@
             <strong>How to use</strong>
             <div>1. Open your replay in Pokémon Showdown.</div>
             <div>2. Copy the full replay log text, or save it as a plain <code>.txt</code>/<code>.log</code> file.</div>
-            <div>3. Paste it here or upload the file, choose your side, then run analysis.</div>
-            <small>Replay HTML, screenshots, and team exports are not the primary input path in this build.</small>
+            <div>3. You can also paste a replay URL from <code>replay.pokemonshowdown.com</code> and let Battle Sensei load the raw log.</div>
+            <div>4. Paste it here or upload the file, choose your side, then run analysis.</div>
+            <small>Replay HTML, screenshots, and team exports are still not the primary input path in this build.</small>
           </div>
+        </div>
+        <div class="replay-coach-url-row">
+          <input id="replay-coach-url" class="form-input" type="url" placeholder="https://replay.pokemonshowdown.com/... or .../.log" />
+          <button class="btn-secondary" id="replay-coach-fetch-btn" type="button">Load Replay URL</button>
         </div>
         <textarea id="replay-coach-log" class="replay-coach-textarea" rows="14" spellcheck="false" placeholder="Paste a Pokemon Showdown battle log here."></textarea>
         <div class="replay-coach-controls">

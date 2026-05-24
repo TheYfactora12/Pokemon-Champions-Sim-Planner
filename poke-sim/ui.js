@@ -3023,10 +3023,12 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
 
 function csInitReplayCoachUi() {
   var logEl = document.getElementById('replay-coach-log');
+  var urlEl = document.getElementById('replay-coach-url');
   var sideEl = document.getElementById('replay-coach-side');
   var runBtn = document.getElementById('replay-coach-run-btn');
   var clearBtn = document.getElementById('replay-coach-clear-btn');
   var uploadBtn = document.getElementById('replay-coach-upload-btn');
+  var fetchBtn = document.getElementById('replay-coach-fetch-btn');
   var fileEl = document.getElementById('replay-coach-file');
   var statusEl = document.getElementById('replay-coach-status');
   if (!logEl || !sideEl || !runBtn) return;
@@ -3087,6 +3089,30 @@ function csInitReplayCoachUi() {
       };
       reader.onerror = function() { setStatus('Could not read that file.', true); };
       reader.readAsText(file);
+    });
+  }
+
+  if (fetchBtn && urlEl) {
+    fetchBtn.addEventListener('click', async function() {
+      var api = ChampionsSim && ChampionsSim.replayCoach;
+      if (!api || typeof api.fetchReplayLog !== 'function') {
+        setStatus('Replay URL loading is not available in this build.', true);
+        return;
+      }
+      var rawUrl = urlEl.value || '';
+      if (!rawUrl.trim()) {
+        setStatus('Paste a replay URL before loading it.', true);
+        return;
+      }
+      setStatus('Loading replay URL...');
+      try {
+        var normalized = await api.fetchReplayLog(rawUrl);
+        if (!normalized) throw new Error('Replay log was empty.');
+        logEl.value = normalized;
+        setStatus('Loaded replay URL into the log box. Run analysis when ready.');
+      } catch (e) {
+        setStatus((e && e.message) ? e.message : 'Could not load that replay URL.', true);
+      }
     });
   }
 }
