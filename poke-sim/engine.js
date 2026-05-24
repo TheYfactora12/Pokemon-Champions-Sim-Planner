@@ -110,6 +110,36 @@ function makeSeed() {
 //   - Optional Champions legality layer (ban list, fakemon) wired in
 //     via validateChampionsLegality() if legality.js is loaded.
 // ============================================================
+function detectSpreadStatFormat(evs) {
+  const vals = Object.values(evs || {});
+  if (vals.length === 0) return 'sv';
+  const total = vals.reduce((a, b) => a + b, 0);
+  const max = Math.max(...vals);
+  if (total === 0) return 'sv';
+  if (max <= 32 && total <= 66) return 'champions';
+  return 'sv';
+}
+
+function spreadFitsChampions(evs) {
+  const vals = Object.values(evs || {});
+  if (vals.length === 0) return true;
+  const total = vals.reduce((a, b) => a + b, 0);
+  const max = Math.max(...vals);
+  return max <= 32 && total <= 66;
+}
+
+function resolveMonStatFormat(mon, teamFormat) {
+  const declaredFmt = teamFormat || (mon && mon.format) || null;
+  if (declaredFmt === 'champions' && !spreadFitsChampions((mon && mon.evs) || {})) {
+    return { statFormat: 'sv', formatMismatch: true, declaredFormat: declaredFmt };
+  }
+  return {
+    statFormat: declaredFmt || detectSpreadStatFormat((mon && mon.evs) || {}),
+    formatMismatch: false,
+    declaredFormat: declaredFmt
+  };
+}
+
 function validateTeam(team, format = 'vgc') {
   const errors = [];
   const warnings = [];
@@ -118,27 +148,17 @@ function validateTeam(team, format = 'vgc') {
     return { valid: false, errors, warnings };
   }
 
-  // Determine stat-point format per team. Priority:
-  //   team.format === 'champions' -> SP caps
-  //   team.format === 'sv'        -> SV caps
-  //   otherwise                   -> auto-detect by spread shape
-  function detectFormat(mon) {
-    if (team.format === 'champions' || mon.format === 'champions') return 'champions';
-    if (team.format === 'sv' || mon.format === 'sv') return 'sv';
-    const vals = Object.values(mon.evs || {});
-    if (vals.length === 0) return 'sv';
-    const total = vals.reduce((a, b) => a + b, 0);
-    const max = Math.max(...vals);
-    if (total > 0 && max <= 32 && total <= 66) return 'champions';
-    return 'sv';
-  }
-
   for (const mon of team.members) {
     const name = mon.name || 'Unknown';
-    const fmt = detectFormat(mon);
+    const resolved = resolveMonStatFormat(mon, team.format);
+    const fmt = resolved.statFormat;
     const caps = fmt === 'champions'
       ? { perStat: 32, total: 66, label: 'SP' }
       : { perStat: 252, total: 510, label: 'EV' };
+
+    if (resolved.formatMismatch) {
+      warnings.push(`${name}: declared Champions but spread is SV-scale, so runtime falls back to SV stat math`);
+    }
 
     // Total cap
     const totalPoints = Object.values(mon.evs || {}).reduce((a, b) => a + b, 0);
@@ -569,13 +589,9 @@ class Pokemon {
     //   Cite: https://bulbapedia.bulbagarden.net/wiki/Stat_point
     //   Cite: https://game8.co/games/Pokemon-Champions/archives/538683
     var _declaredFmt = teamFormat || data.format || null;
-    if (_declaredFmt === 'champions' && !Pokemon._spreadFitsChampions(this.evs)) {
-      this.statFormat = 'sv';
-      this.formatMismatch = true;
-    } else {
-      this.statFormat = _declaredFmt || this._detectStatFormat(this.evs);
-      this.formatMismatch = false;
-    }
+    var _resolvedStatFormat = resolveMonStatFormat(data, _declaredFmt);
+    this.statFormat = _resolvedStatFormat.statFormat;
+    this.formatMismatch = _resolvedStatFormat.formatMismatch;
 
     // T9j.7 — Mega form resolution.
     // If this is a -Mega name and we have a CHAMPIONS_MEGAS entry AND the
@@ -674,13 +690,7 @@ class Pokemon {
   // Champions spreads: every stat ≤32 AND total ≤66 AND total > 0.
   // All-zero or anything exceeding the SP caps → SV (preserves legacy behavior).
   _detectStatFormat(evs) {
-    const vals = Object.values(evs || {});
-    if (vals.length === 0) return 'sv';
-    const total = vals.reduce((a, b) => a + b, 0);
-    const max = Math.max(...vals);
-    if (total === 0) return 'sv'; // empty spread → SV default
-    if (max <= 32 && total <= 66) return 'champions';
-    return 'sv';
+    return detectSpreadStatFormat(evs);
   }
 
   // T9j.13 (Refs #42) — static shape check. Returns true iff the spread
@@ -688,11 +698,7 @@ class Pokemon {
   //   Cite: https://bulbapedia.bulbagarden.net/wiki/Stat_point
   //   Cite: https://pokeos.com/p/champions/stats
   static _spreadFitsChampions(evs) {
-    const vals = Object.values(evs || {});
-    if (vals.length === 0) return true; // empty spread is trivially valid
-    const total = vals.reduce((a, b) => a + b, 0);
-    const max = Math.max(...vals);
-    return max <= 32 && total <= 66;
+    return spreadFitsChampions(evs);
   }
 
   // Issue #4 FIX: _stat() is HP-only. Removed broken nature logic that

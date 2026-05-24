@@ -1824,8 +1824,8 @@ const TEAMS = {
         "url": "",
         "status": "assumed"
     },
-    "legality_status": "legal",
-    "legality_notes": "Flutter Mane (Paradox, banned in Reg M-A) replaced with Hatterene in T8. Team now passes Champions Reg M-A validation.",
+    "legality_status": "illegal",
+    "legality_notes": "Current stored roster is not Champions Reg M-A legal: Cresselia is banned, and Hatterene Life Orb, Dusclops Eviolite, and Ursaluna-Bloodmoon Assault Vest are outside the Champions item pool.",
     "assumption_register": [
         "Spreads inferred from meta norms, not a pinned paste."
     ],
@@ -2598,8 +2598,8 @@ const TEAMS = {
         "url": "",
         "status": "unproven"
     },
-    "legality_status": "legal",
-    "legality_notes": "Mega Froslass is a new Champions-introduced Mega Evolution (Froslassite, Shop: 2000 VP). Legal in Reg M-A. Source: Game8 Items List.",
+    "legality_status": "illegal",
+    "legality_notes": "Current stored roster is not Champions Reg M-A legal: Milotic Life Orb and Garchomp Rocky Helmet are outside the Champions item pool.",
     "assumption_register": [
         "Froslass Mega form verified via Game8 Items List.",
         "Mega activation consumes team's once-per-match Mega slot."
@@ -4214,8 +4214,8 @@ const TEAMS = {
       "url": "https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/",
       "status": "derived"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Derived from the public sample-team archetype and composed from shipped legal catalog sets.",
+    "legality_status": "illegal",
+    "legality_notes": "Current derived shell is not Champions Reg M-A legal: Arcanine Life Orb is outside the Champions item pool. Rebuild from a legal shipped catalog set before using in Ladder Mode.",
     "assumption_register": [
       "Roster was assembled from already-shipped legal sets to widen calibration coverage.",
       "This is a calibration shell, not a pinned public paste."
@@ -4366,8 +4366,8 @@ const TEAMS = {
       "url": "https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/",
       "status": "derived"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Derived from the public sample-team archetype and composed from shipped legal catalog sets.",
+    "legality_status": "illegal",
+    "legality_notes": "Current derived shell is not Champions Reg M-A legal: Gholdengo Choice Specs is outside the Champions item pool. Rebuild from a legal shipped catalog set before using in Ladder Mode.",
     "assumption_register": [
       "Roster was assembled from already-shipped legal sets to widen calibration coverage.",
       "This is a calibration shell, not a pinned public paste."
@@ -4520,8 +4520,8 @@ const TEAMS = {
       "url": "https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/",
       "status": "derived"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Derived from the public sample-team archetype and composed from shipped legal catalog sets.",
+    "legality_status": "illegal",
+    "legality_notes": "Current derived shell is not Champions Reg M-A legal: Ursaluna-Bloodmoon Assault Vest is outside the Champions item pool. Rebuild from a legal shipped catalog set before using in Ladder Mode.",
     "assumption_register": [
       "Roster was assembled from already-shipped legal sets to widen calibration coverage.",
       "This is a calibration shell, not a pinned public paste."
@@ -4673,8 +4673,8 @@ const TEAMS = {
       "url": "https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/",
       "status": "derived"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Derived from the public sample-team archetype and composed from shipped legal catalog sets.",
+    "legality_status": "illegal",
+    "legality_notes": "Current derived shell is not Champions Reg M-A legal: Milotic Life Orb is outside the Champions item pool. Rebuild from a legal shipped catalog set before using in Ladder Mode.",
     "assumption_register": [
       "Roster was assembled from already-shipped legal sets to widen calibration coverage.",
       "This is a calibration shell, not a pinned public paste."

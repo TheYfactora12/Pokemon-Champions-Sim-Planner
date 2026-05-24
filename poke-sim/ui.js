@@ -801,13 +801,17 @@ function getTeamLegalityVerdict(teamKey, team) {
   var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
   var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
   var valid = errors.length === 0;
+  var statAware = warnings.some(function(w){ return /runtime falls back to SV stat math/i.test(String(w || '')); });
   return {
     valid: valid,
     inferred: team.legality_status === 'legal_inferred',
+    statAware: statAware,
     errors: errors,
     warnings: warnings,
     label: valid
-      ? (team.legality_status === 'legal_inferred' ? 'Legal (inferred)' : 'Legal')
+      ? (team.legality_status === 'legal_inferred'
+          ? (statAware ? 'Legal (inferred SV spreads)' : 'Legal (inferred)')
+          : 'Legal')
       : 'Not legal'
   };
 }
@@ -1251,7 +1255,7 @@ function renderTeamsGrid() {
             var st = team.legality_status; var fmt = team.format;
             if (!legalityVerdict.valid) return '<span class="badge-illegal" title="' + _escapeHtml(legalityVerdict.errors.join('; ')) + '">\u274C NOT LEGAL</span>';
             if (st === 'legal' && fmt === 'champions') return '<span class="badge-legal">\u2705 LEGAL</span>';
-            if (st === 'legal_inferred' && fmt === 'champions') return '<span class="badge-warn" title="Tournament-placement team; EVs are archetype defaults (Open Team Lists redact EVs). Ladder-legal in Ladder Mode.">\u26A0 LEGAL (inferred)</span>';
+            if (st === 'legal_inferred' && fmt === 'champions') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.warnings || []).join('; ') || 'Tournament-placement team; spreads are inferred from source archetypes.') + '">\u26A0 ' + _escapeHtml(legalityVerdict.label || 'LEGAL (inferred)') + '</span>';
             if (st === 'illegal') return '<span class="badge-illegal">\u274C ILLEGAL</span>';
             if (fmt === 'sv') return '<span class="badge-warn">\u26A0 SV FORMAT</span>';
             return '<span class="badge-warn">\u26A0 UNVERIFIED</span>';

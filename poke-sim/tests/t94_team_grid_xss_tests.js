@@ -138,6 +138,36 @@ ctx.TEAMS.__invalid_fixture = {
   ]
 };
 
+ctx.TEAMS.__stataware_fixture = {
+  name: 'Inferred Champions Fixture',
+  style: 'balance',
+  description: 'SV-shaped spreads under Champions tag should warn, not hard-fail',
+  label: 'INF',
+  source: 'preloaded',
+  legality_status: 'legal_inferred',
+  format: 'champions',
+  members: [
+    {
+      name: 'Gengar-Mega',
+      item: 'Gengarite',
+      ability: 'Shadow Tag',
+      nature: 'Timid',
+      level: 50,
+      evs: { hp: 4, atk: 0, def: 0, spa: 252, spd: 0, spe: 252 },
+      moves: ['Shadow Ball', 'Sludge Bomb', 'Perish Song', 'Protect']
+    },
+    {
+      name: 'Kingambit',
+      item: 'Black Glasses',
+      ability: 'Defiant',
+      nature: 'Adamant',
+      level: 50,
+      evs: { hp: 1, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 },
+      moves: ['Kowtow Cleave', 'Sucker Punch', 'Low Kick', 'Protect']
+    }
+  ]
+};
+
 T('1. renderTeamsGrid escapes hostile team name and description', () => {
   vm.runInContext('TEAMS_FILTER = "custom";', ctx);
   renderTeamsGrid();
@@ -153,6 +183,12 @@ T('2. renderTeamsGrid surfaces invalid team legality reason', () => {
   inc(teamsGrid.innerHTML, 'NOT LEGAL', 'illegal badge');
   inc(teamsGrid.innerHTML, 'Not legal for current sim rules', 'legality note');
   inc(teamsGrid.innerHTML, 'Item Clause violation: duplicate items: Sitrus Berry', 'legality reason');
+});
+
+T('3. renderTeamsGrid labels inferred Champions teams with stat-aware fallback copy', () => {
+  vm.runInContext('TEAMS_FILTER = "all";', ctx);
+  renderTeamsGrid();
+  inc(teamsGrid.innerHTML, 'Legal (inferred SV spreads)', 'stat-aware legality label');
 });
 
 console.log(`\nteam grid XSS: ${pass} pass, ${fail} fail\n`);
