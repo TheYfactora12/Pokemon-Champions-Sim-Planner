@@ -9,8 +9,8 @@ Scope:
 
 Summary:
 - unique curated-team + mega abilities audited: 82
-- already modeled by the engine: 19
-- still unmodeled and classified: 63
+- already modeled by the engine: 23
+- still unmodeled and classified: 59
 
 Why this exists:
 - Issue #125 showed repeated review friction around ability gaps being noticed ad hoc.
@@ -22,15 +22,18 @@ Classification buckets:
 - `missing_battle_result_impacting`
 
 Highest-priority shipped-team gaps:
-- `Prankster`: current engine uses it for role labels only, not battle priority.
 - `Adaptability`: affects Basculegion damage across multiple shipped teams.
-- `Armor Tail`: changes Fake Out / Sucker Punch and other priority lines.
 - `Clear Body`, `Competitive`, `Defiant`: all change Intimidate-heavy matchups.
 - `Cloud Nine`: changes weather suppression, damage, and speed.
-- `Good as Gold`, `Magic Bounce`: change status and utility targeting.
 - `Shadow Tag`: changes switch options and perish-style endgames.
 - `Solar Power`, `Tough Claws`, `Pixilate`, `Supreme Overlord`: direct damage modifiers.
 - `Stance Change`, `Sturdy`, `Unaware`: major battle-result mechanics, not flavor.
+
+Implemented after this audit:
+- `Prankster`: real battle priority for status moves, with Dark-type immunity on targeted opposing status.
+- `Armor Tail`: side-wide blocking for opposing priority moves.
+- `Good as Gold`: targeted status immunity.
+- `Magic Bounce`: targeted status reflection back to the user.
 
 Lower-priority or no-op examples:
 - `Frisk`: item reveal is effectively already visible in the sim.
@@ -39,10 +42,6 @@ Lower-priority or no-op examples:
 
 Recommended implementation order:
 1. Priority and targeting control
-   - `Prankster`
-   - `Armor Tail`
-   - `Good as Gold`
-   - `Magic Bounce`
    - `Shadow Tag`
 2. Damage modifiers with broad shipped-team exposure
    - `Adaptability`

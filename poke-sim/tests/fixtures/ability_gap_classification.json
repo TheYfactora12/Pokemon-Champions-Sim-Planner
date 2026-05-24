@@ -18,10 +18,6 @@
       "category": "missing_battle_result_impacting",
       "why": "Type conversion plus damage boost changes Mega Pinsir damage and STAB coverage."
     },
-    "Armor Tail": {
-      "category": "missing_battle_result_impacting",
-      "why": "Blocks opposing priority into the side and changes Fake Out/Sucker Punch lines."
-    },
     "Berserk": {
       "category": "missing_battle_result_impacting",
       "why": "Special Attack boost on HP threshold changes Mega Drampa snowball turns."
@@ -82,10 +78,6 @@
       "category": "missing_battle_result_impacting",
       "why": "Priority Flying moves change Talonflame turn order and lead pressure."
     },
-    "Good as Gold": {
-      "category": "missing_battle_result_impacting",
-      "why": "Status immunity changes Taunt, Encore, Thunder Wave, and utility targeting."
-    },
     "Healer": {
       "category": "missing_low_impact",
       "why": "End-turn ally status cure can matter, but it is mega-only and relatively narrow."
@@ -113,10 +105,6 @@
     "Limber": {
       "category": "missing_low_impact",
       "why": "Paralysis immunity matters, but current exposure is one Mega Lopunny team."
-    },
-    "Magic Bounce": {
-      "category": "missing_battle_result_impacting",
-      "why": "Status reflection changes matchup flow against Taunt, sleep, and hazards-style utility."
     },
     "Mega Launcher": {
       "category": "missing_battle_result_impacting",
@@ -149,10 +137,6 @@
     "Poison Touch": {
       "category": "missing_battle_result_impacting",
       "why": "Contact poison chance changes Sneasler chip and status pressure."
-    },
-    "Prankster": {
-      "category": "missing_battle_result_impacting",
-      "why": "Priority status moves materially change Whimsicott, Sableye, and Liepard turn order."
     },
     "Pressure": {
       "category": "passive_or_noop_for_current_sim",
