@@ -14416,6 +14416,16 @@ function csReplayCoachRenderAnalysis(analysis) {
     return '<div class="replay-coach-metric"><strong>' + _escapeHtml(row.label || 'Sub-score') + '</strong><span>' + _escapeHtml(String(row.standardScore || 0)) + ' · raw ' + _escapeHtml(String(row.rawScore || 0)) + '</span></div>';
   }).join('') : '';
   var coachingReadouts = learning && learning.coachingReadouts ? learning.coachingReadouts : null;
+  var leadLogic = learning && learning.leadLogic ? learning.leadLogic : null;
+  var leadSignals = leadLogic ? (leadLogic.synergySignals || []).map(function(row) {
+    return '<div class="replay-coach-list-row"><strong>Observed synergy</strong>' + _escapeHtml(row || '') + '</div>';
+  }).join('') : '';
+  var leadPros = leadLogic ? (leadLogic.pros || []).map(function(row) {
+    return '<div class="replay-coach-list-row"><strong>Why this lead made sense</strong>' + _escapeHtml(row || '') + '</div>';
+  }).join('') : '';
+  var leadCons = leadLogic ? (leadLogic.cons || []).map(function(row) {
+    return '<div class="replay-coach-list-row"><strong>What it still conceded</strong>' + _escapeHtml(row || '') + '</div>';
+  }).join('') : '';
   var strengthsRows = coachingReadouts ? (coachingReadouts.strengths || []).map(function(row) {
     return '<div class="replay-coach-list-row">' +
       '<strong>' + _escapeHtml(row.label || 'What you did well') + '</strong>' +
@@ -14464,6 +14474,21 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Bring Read</strong><span>' + _escapeHtml(bringConfidence.reason || 'Bring data is unknown from this log.') + '</span></div>' +
       '</div>' +
     '</div>' +
+    (leadLogic ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Lead Logic Read</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Lead identity</strong><span>' + _escapeHtml(leadLogic.label || 'Unknown opener') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Your lead</strong><span>' + _escapeHtml((leadLogic.yourLead || []).join(' + ') || 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opp lead</strong><span>' + _escapeHtml((leadLogic.opponentLead || []).join(' + ') || 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(leadLogic.confidence || 'medium') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        (leadSignals || '<div class="replay-coach-list-row"><strong>Observed synergy</strong>Turn-one synergy was not clear enough to grade beyond the board state.</div>') +
+        (leadPros || '<div class="replay-coach-list-row"><strong>Why this lead made sense</strong>Use a lead that pressures the shown opposing mode while still keeping a backup line if the first interrupt fails.</div>') +
+        (leadCons || '<div class="replay-coach-list-row"><strong>What it still conceded</strong>Check whether the pair still has play if the opponent gets their support or speed plan through.</div>') +
+      '</div>' +
+      '<small>' + _escapeHtml(leadLogic.limitation || '') + '</small>' +
+    '</div>' : '') +
     '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Coaching Tags</h3>' +
       '<div class="replay-coach-list">' + (tags || '<div class="replay-coach-list-row"><strong>No major issue detected</strong>Upload more complete logs to build stronger coaching confidence.</div>') + '</div>' +
