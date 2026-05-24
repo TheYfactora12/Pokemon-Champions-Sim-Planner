@@ -691,13 +691,16 @@ table{border-collapse:collapse;width:100%}
 .replay-turn-board .replay-roster-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .replay-stadium{border:1px solid var(--border);border-radius:var(--r-lg);background:linear-gradient(180deg,rgba(78,201,148,.07),rgba(91,164,245,.04));padding:10px;margin:8px 0}
 .replay-stadium-title{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:8px}
-.replay-stadium-field{display:grid;grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr);gap:8px;align-items:stretch}
-.replay-stadium-vs{align-self:center;justify-self:center;border:1px solid var(--border);border-radius:var(--r-full);width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;font-weight:900;color:var(--text-m);background:var(--surface)}
+.replay-stadium-field{position:relative;display:grid;grid-template-rows:auto 34px auto;gap:8px;align-items:stretch;padding:12px;border:1px solid rgba(78,201,148,.25);border-radius:var(--r-lg);background:radial-gradient(circle at 50% 46%,rgba(78,201,148,.17),transparent 42%),linear-gradient(180deg,rgba(11,18,32,.08),rgba(11,18,32,.26))}
+.replay-stadium-vs{align-self:center;justify-self:center;border:1px solid var(--border);border-radius:var(--r-full);width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;font-weight:900;color:var(--text-m);background:var(--surface);box-shadow:0 0 0 1px rgba(255,255,255,.04)}
 .replay-stadium-side{display:flex;flex-direction:column;gap:8px;min-width:0}
 .replay-stadium-side-title{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--text);font-family:var(--font-mono)}
+.replay-stadium-opponent{justify-self:end;width:min(100%,520px)}
+.replay-stadium-player{justify-self:start;width:min(100%,520px)}
+.replay-stadium-active-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.replay-stadium-reserves{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
 .replay-stadium-zone{border:1px dashed rgba(148,163,184,.35);border-radius:var(--r-md);padding:8px;display:grid;gap:6px;background:rgba(11,18,32,.18)}
 .replay-stadium-zone>span{font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m)}
-.replay-stadium-zone.on-field{border-color:rgba(78,201,148,.42)}
 .replay-stadium-zone.off-field{filter:grayscale(.18)}
 .replay-stadium-mon{padding:9px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface2);font-size:var(--text-sm);line-height:1.4}
 .replay-stadium-mon.active{border-color:rgba(78,201,148,.5);background:rgba(78,201,148,.08)}
