@@ -2,7 +2,7 @@
 
 > **STATUS: ACTIVE**
 > Last verified: 2026-05-24.
-> The live Supabase project is provisioned and the app has DB wiring. Current canonical team seed count is 25 teams, matching `poke-sim/data.js`.
+> The live Supabase project is provisioned and the app has DB wiring. Current canonical team seed count is 29 teams, matching `poke-sim/data.js` and the Alfredo alignment branch.
 > Alfredo's repo is a separate remote and must be aligned by review/PR, not by blindly overwriting divergent history.
 
 ---
@@ -17,12 +17,13 @@ Supabase (Postgres + RLS) + `supabase-js` v2
 | File | Purpose | Status |
 |---|---|---|
 | `schema_v1.sql` | Creates all 8 tables | Updated 2026-04-27 — includes `metadata` column on `teams` |
-| `seed_teams_v2.sql` | Generated seed for all 25 repo teams | Fresh-DB/reference seed only; delete-first shape is unsafe on live DBs with analysis history |
+| `seed_teams_v2.sql` | Generated seed for all 29 repo teams | Fresh-DB/reference seed only; delete-first shape is unsafe on live DBs with analysis history |
 | `rls_policies_v1.sql` | Row-level security policies | Ready to run |
-| `migrations/2026_05_24_upsert_seed_teams_v2_repair.sql` | Non-destructive repair seed for live DB alignment | Use this for existing DBs because it upserts teams and replaces only canonical `team_members` |
+| `migrations/2026_05_24_upsert_seed_teams_v2_repair.sql` | Superseded 25-team non-destructive repair seed | Historical reference; use the 29-team shared catalog migration now |
+| `migrations/2026_05_24_align_shared_29_team_catalog.sql` | Non-destructive 29-team shared catalog alignment | Preferred live-DB migration after this alignment PR |
 | `README_DB.md` | This file | — |
 
-> Do not run the delete-first `seed_teams_v2.sql` or `2026_04_28_seed_teams_v2.sql` against a live DB that already has `analyses` rows. Use `2026_05_24_upsert_seed_teams_v2_repair.sql` instead.
+> Do not run the delete-first `seed_teams_v2.sql` or `2026_04_28_seed_teams_v2.sql` against a live DB that already has `analyses` rows. Use `2026_05_24_align_shared_29_team_catalog.sql` instead.
 
 App layer: `poke-sim/supabase_adapter.js` — fully implemented. Browser credentials are injected at runtime through ignored local files or CI secrets; real keys must not be committed.
 UI wiring: `poke-sim/ui.js` already loads DB teams on startup and persists analyses after battle runs when the adapter is enabled.
@@ -35,16 +36,17 @@ UI wiring: `poke-sim/ui.js` already loads DB teams on startup and persists analy
 |---|---|---|
 | 1 | `schema_v1.sql` | Fresh DB only; creates all 8 tables |
 | 2 | `migrations/2026_04_28_add_teams_metadata_column.sql` | Fresh DBs may already have this through `schema_v1.sql`; existing DBs need the migration |
-| 3 | `seed_teams_v2.sql` | Fresh DB/reference only; loads 25 canonical teams |
+| 3 | `seed_teams_v2.sql` | Fresh DB/reference only; loads 29 canonical teams |
 | 4 | `rls_policies_v1.sql` | Locks down security |
-| 5 | `migrations/2026_05_24_upsert_seed_teams_v2_repair.sql` | Existing/live DB repair path; safe with analysis FK history |
+| 5 | `migrations/2026_05_24_align_shared_29_team_catalog.sql` | Existing/live DB repair path; safe with analysis FK history |
 | 6 | Wire local or CI credentials | See below |
 
 ## Current Seed Repair Status (2026-05-24)
 
-- Current repo source of truth: `poke-sim/data.js` with 25 `TEAMS` entries.
-- Live DB drift was repaired with `migrations/2026_05_24_upsert_seed_teams_v2_repair.sql`.
-- The repair migration is intentionally non-destructive for `teams` and `rulesets`: it uses UPSERTs and only replaces `team_members` for canonical repo team IDs.
+- Current repo source of truth: `poke-sim/data.js` with 29 `TEAMS` entries.
+- Previous 25-team drift was repaired with `migrations/2026_05_24_upsert_seed_teams_v2_repair.sql`.
+- Current shared 29-team drift should be repaired with `migrations/2026_05_24_align_shared_29_team_catalog.sql`.
+- The shared 29-team alignment migration is intentionally non-destructive for `teams` and `rulesets`: it uses UPSERTs and only replaces `team_members` for canonical repo team IDs.
 - The older generated seed files are still useful for fresh DB/bootstrap review, but their delete-first shape can fail or partially apply on a DB with existing `analyses` FK references.
 - GitHub migration workflow evidence: run `26351524164` passed for `2026_05_24_upsert_seed_teams_v2_repair.sql`.
 - PR #121 CI evidence: run `26351547525` passed the test suite with live DB relevance enabled.
@@ -235,10 +237,11 @@ The M10 live DB snapshot warning should be gone once the remote schema includes 
 |---|---|
 | `2026_04_27_baseline_v1.sql` | Baseline: 8 tables, indexes, triggers |
 | `2026_04_28_add_teams_metadata_column.sql` | Adds `teams.metadata` for generated seed metadata |
-| `2026_04_28_seed_teams_v2.sql` | Generated delete-first seed for 25 teams; do not use on live DBs with analysis history |
+| `2026_04_28_seed_teams_v2.sql` | Generated delete-first seed for 29 teams; do not use on live DBs with analysis history |
 | `2026_05_12_align_reg_ma_meta_sources.sql` | Adds `prior_snapshots.usage_data` if missing and seeds the current public Reg M-A source-alignment snapshot |
 | `2026_05_15_refresh_reg_ma_meta_sources.sql` | Refreshes current Reg M-A meta source snapshot data |
-| `2026_05_24_upsert_seed_teams_v2_repair.sql` | Non-destructive 25-team seed repair for live DB alignment |
+| `2026_05_24_upsert_seed_teams_v2_repair.sql` | Superseded non-destructive 25-team seed repair for live DB alignment |
+| `2026_05_24_align_shared_29_team_catalog.sql` | Non-destructive shared 29-team catalog alignment for existing live DBs |
 
 ---
 
@@ -246,7 +249,7 @@ The M10 live DB snapshot warning should be gone once the remote schema includes 
 
 - [x] Supabase project created and URL/key available
 - [ ] `schema_v1.sql` executed — tables visible in Table Editor
-- [x] Current canonical seed alignment verified — 25 rows in `teams` table
+- [ ] Current canonical seed alignment verified — 29 rows in `teams` table after `2026_05_24_align_shared_29_team_catalog.sql` runs
 - [ ] `rls_policies_v1.sql` executed — RLS enabled on all tables
 - [x] Supabase CDN `<script>` loads synchronously before `supabase_adapter.js` in `index.html`
 - [ ] Local browser smoke uses ignored `local-credentials.js`
