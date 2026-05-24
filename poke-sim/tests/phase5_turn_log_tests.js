@@ -82,6 +82,8 @@ vm.runInContext([
   'this.winProbabilityDelta = winProbabilityDelta;',
   'this.csReplaySparkline = csReplaySparkline;',
   'this.csRenderTurnLogRows = csRenderTurnLogRows;',
+  'this.csRenderReplayTurn0 = csRenderReplayTurn0;',
+  'this.csRenderReplayTurnRoster = csRenderReplayTurnRoster;',
   'this.csBuildDecisionAudit = csBuildDecisionAudit;',
   'this.csBuildReplayCoachingSummary = csBuildReplayCoachingSummary;',
   'this.csRenderReplayCoachingSummary = csRenderReplayCoachingSummary;',
@@ -218,6 +220,45 @@ T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
   truthy(html.includes('Tyranitar'), 'opponent mon missing');
   truthy(html.includes('fainted'), 'fainted status missing');
   truthy(html.includes('0%'), 'zero HP missing');
+});
+
+T('T5c-1b Battle Sensei renders Turn 0 and both side boards', () => {
+  const turn0Html = ctx.csRenderReplayTurn0({
+    sides: {
+      p1: {
+        player: 'Alice',
+        teamPreview: ['Kangaskhan', 'Milotic'],
+        roster: [
+          { displayName: 'Kangaskhan', species: 'Kangaskhan', status: 'active', hp: 100, hpLabel: '100%' },
+          { displayName: 'Milotic', species: 'Milotic', status: 'bench', hp: 100, hpLabel: '100%' }
+        ]
+      },
+      p2: {
+        player: 'Bob',
+        teamPreview: ['Tyranitar'],
+        roster: [
+          { displayName: 'Tyranitar', species: 'Tyranitar', status: 'active', hp: 100, hpLabel: '100%' }
+        ]
+      }
+    }
+  }, 'p1');
+  const turnHtml = ctx.csRenderReplayTurnRoster({
+    p1: [
+      { displayName: 'Kangaskhan', species: 'Kangaskhan', status: 'active', hp: 75, hpLabel: '75%' },
+      { displayName: 'Milotic', species: 'Milotic', status: 'bench', hp: 100, hpLabel: '100%' }
+    ],
+    p2: [
+      { displayName: 'Tyranitar', species: 'Tyranitar', status: 'fainted', hp: 0, hpLabel: '0%', faintTurn: 1 }
+    ]
+  }, 'p1');
+  truthy(turn0Html.includes('Turn 0 — Starting State'), 'Battle Sensei Turn 0 header missing');
+  truthy(turn0Html.includes('Your team — Alice · Turn 0'), 'Battle Sensei your Turn 0 side missing');
+  truthy(turn0Html.includes('Their team — Bob · Turn 0'), 'Battle Sensei their Turn 0 side missing');
+  truthy(turnHtml.includes('Your team after this turn'), 'Battle Sensei your per-turn board missing');
+  truthy(turnHtml.includes('Their team after this turn'), 'Battle Sensei their per-turn board missing');
+  truthy(turnHtml.includes('Tyranitar'), 'Battle Sensei opponent mon missing');
+  truthy(turnHtml.includes('fainted'), 'Battle Sensei fainted status missing');
+  truthy(turnHtml.includes('0%'), 'Battle Sensei zero HP missing');
 });
 
 T('T5c-2 swing turn row is highlighted', () => {
