@@ -90,7 +90,7 @@ function byId(id) {
   return ids[id];
 }
 
-const tabOrder = ['simulator', 'teams', 'editor', 'strategy', 'replays', 'sources', 'pilot'];
+const tabOrder = ['simulator', 'teams', 'editor', 'strategy', 'replay-coach', 'replays', 'sources', 'pilot'];
 const tabButtons = tabOrder.map((tabId, idx) => {
   const btn = makeNode(`tab-btn-${tabId}`);
   btn.dataset.tab = tabId;
@@ -197,9 +197,10 @@ const selectorMap = {
   '.tab-btn[data-tab="teams"]': [tabButtons[1]],
   '.tab-btn[data-tab="editor"]': [tabButtons[2]],
   '.tab-btn[data-tab="strategy"]': [tabButtons[3]],
-  '.tab-btn[data-tab="replays"]': [tabButtons[4]],
-  '.tab-btn[data-tab="sources"]': [tabButtons[5]],
-  '.tab-btn[data-tab="pilot"]': [tabButtons[6]],
+  '.tab-btn[data-tab="replay-coach"]': [tabButtons[4]],
+  '.tab-btn[data-tab="replays"]': [tabButtons[5]],
+  '.tab-btn[data-tab="sources"]': [tabButtons[6]],
+  '.tab-btn[data-tab="pilot"]': [tabButtons[7]],
   '#import-modal .modal-title': importTitle,
   '#import-modal .modal-hint': importHint,
   '#confirm-modal .modal-title': confirmTitle,

@@ -2692,6 +2692,501 @@ function csRenderReplayCoachingSummary(summary) {
   '</div>';
 }
 
+function csReplayCoachSeverityClass(severity) {
+  var key = String(severity || '').toLowerCase();
+  if (key === 'high' || key === 'critical') return 'high';
+  if (key === 'low' || key === 'good') return 'low';
+  return 'medium';
+}
+
+function csReplayCoachJoin(list, fallback) {
+  if (!Array.isArray(list) || !list.length) return fallback || 'Unknown';
+  return list.join(' + ');
+}
+
+function csReplayCoachRenderAnalysis(analysis) {
+  var host = document.getElementById('replay-coach-results');
+  if (!host || !analysis) return;
+  var parsed = analysis.parsed || {};
+  var review = analysis.review || {};
+  var summary = review.summary || {};
+  var learning = review.learningReport || null;
+  var evidenceStandard = learning && learning.evidenceStandard ? learning.evidenceStandard : null;
+  var simComparison = learning && learning.simComparison ? learning.simComparison : null;
+  var simFeedback = learning && learning.simFeedback ? learning.simFeedback : null;
+  var rawPreview = review.rawLogPreview || {};
+  var bringConfidence = summary.selectedFourConfidence || {};
+  var rosterEvidenceLabel = bringConfidence.fullRosterKnown
+    ? 'Full six shown'
+    : (bringConfidence.selectedFourKnown ? 'Visible four only' : 'Partial replay only');
+  var bringScopeLabel = bringConfidence.bringChoiceReviewable
+    ? 'Bring choice reviewable'
+    : 'Bring-choice limited';
+  var warnings = (review.warnings || []).map(function(w) {
+    return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
+  }).join('');
+  var tags = (review.coachingTags || []).map(function(tag) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(tag.tag || 'Coaching Note') + ' · ' + _escapeHtml(tag.severity || 'medium') + '</strong>' +
+      '<div><b>What happened:</b> ' + _escapeHtml(tag.whatHappened || tag.message || 'The replay showed a coaching-relevant event.') + '</div>' +
+      '<div><b>Why it mattered:</b> ' + _escapeHtml(tag.whyMattered || 'This can change tempo, board position, or the path to your win condition.') + '</div>' +
+      '<div><b>Do instead:</b> ' + _escapeHtml(tag.doInstead || tag.recommendation || 'Review this turn in context.') + '</div>' +
+      '<small>' + (tag.evidence ? 'Evidence: ' + _escapeHtml(tag.evidence) + ' · ' : '') + 'Confidence: ' + _escapeHtml(tag.confidence || 'medium') + (tag.turn ? ' · Turn ' + _escapeHtml(String(tag.turn)) : '') + '</small>' +
+      '</div>';
+  }).join('');
+  var turns = (review.turnTimeline || []).slice(0, 80).map(function(turn) {
+    var events = (turn.events || []).slice(0, 8).map(function(ev) { return _escapeHtml(ev); }).filter(Boolean);
+    var tags = (turn.tags || []).map(function(tag) {
+      return '<span class="replay-coach-tag medium">' + _escapeHtml(tag) + '</span>';
+    }).join('');
+    return '<div class="replay-coach-turn ' + _escapeHtml(csReplayCoachSeverityClass(turn.severity)) + '">' +
+      '<div class="replay-coach-turn-title"><span>Turn ' + _escapeHtml(String(turn.turn)) + '</span><span class="replay-coach-tag ' + _escapeHtml(csReplayCoachSeverityClass(turn.severity)) + '">' + _escapeHtml(turn.severity || 'neutral') + ' · ' + _escapeHtml(turn.confidence || 'medium') + '</span></div>' +
+      '<div class="replay-coach-turn-read"><strong>' + _escapeHtml(turn.stateShift || 'Neutral exchange') + '</strong>' + _escapeHtml(turn.coachingRead || '') + '</div>' +
+      (turn.betterLine ? '<div class="replay-coach-better-line">' + _escapeHtml(turn.betterLine) + '</div>' : '') +
+      (tags ? '<div class="replay-coach-tags">' + tags + '</div>' : '') +
+      '<details class="replay-coach-events"><summary>' + _escapeHtml(String(turn.rawEventCount || events.length)) + ' parsed events</summary><div class="replay-coach-turn-body">' + (events.length ? events.join('<br/>') : 'No parsed coaching events.') + '</div></details>' +
+      '</div>';
+  }).join('');
+  var rawLines = (rawPreview.lines || []).slice(-80).map(function(line) {
+    return _escapeHtml(line);
+  }).join('\n');
+  var criticalCards = learning && learning.criticalTurns ? (learning.criticalTurns.turns || []).map(function(card) {
+    return '<div class="replay-coach-list-row" id="' + _escapeHtml(card.timelineAnchor || '') + '-critical">' +
+      '<strong>' + _escapeHtml(card.kind || 'Critical turn') + ' · Turn ' + _escapeHtml(String(card.turn || '?')) + '</strong>' +
+      '<div><b>What happened:</b> ' + _escapeHtml(card.whatHappened || '') + '</div>' +
+      '<div><b>Why it mattered:</b> ' + _escapeHtml(card.whyItMattered || '') + '</div>' +
+      '<div><b>Better line:</b> ' + _escapeHtml(card.betterAlternative || '') + '</div>' +
+      '<small>' + _escapeHtml(card.category || 'Decision') + ' · Confidence: ' + _escapeHtml(card.confidence || 'medium') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var scoreCards = learning && learning.scorecard ? (learning.scorecard.cards || []).map(function(card) {
+    return '<div class="replay-coach-metric"><strong>' + _escapeHtml(card.label || 'Skill') + '</strong><span>' + _escapeHtml((card.grade || '?') + ' · ' + String(card.score || 0)) + '</span></div>';
+  }).join('') : '';
+  var decisionRows = learning ? (learning.decisionQuality || []).slice(0, 5).map(function(row) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.category || 'Decision') + ' · ' + _escapeHtml(row.matrixQuadrant || 'decision review') + '</strong>' +
+      '<div><b>Decision quality:</b> ' + _escapeHtml(String(row.decisionQualityScore || '?')) + '/10 · <b>Risk:</b> ' + _escapeHtml(row.riskLevel || 'medium') + '</div>' +
+      '<div><b>Alternative:</b> ' + _escapeHtml(row.alternativeLine || '') + '</div>' +
+      '<small>Confidence: ' + _escapeHtml(row.confidence || 'medium') + (row.turn ? ' · Turn ' + _escapeHtml(String(row.turn)) : '') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var drillRows = learning && learning.practicePlan ? (learning.practicePlan.drills || []).map(function(drill) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(drill.skill || 'Practice drill') + '</strong>' +
+      '<div><b>Why:</b> ' + _escapeHtml(drill.whyItMatters || '') + '</div>' +
+      '<div><b>Drill:</b> ' + _escapeHtml(drill.drillSetup || '') + '</div>' +
+      '<div><b>Success:</b> ' + _escapeHtml(drill.successCriteria || '') + '</div>' +
+      '<small>' + _escapeHtml(drill.promptBeforeEachTurn || '') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var premium = learning && learning.premiumTeasers ? learning.premiumTeasers : null;
+  var premiumRows = premium ? (premium.lockedInsights || []).map(function(item) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(item.label || 'Premium insight') + '</strong>' +
+      _escapeHtml(item.preview || '') +
+      '</div>';
+  }).join('') : '';
+  var battleIq = learning && learning.battleIq ? learning.battleIq : null;
+  var battleIqRaised = battleIq ? (battleIq.raisedBy || []).map(function(row) {
+    return '<div><b>' + _escapeHtml(row.area || 'Raised by') + ':</b> ' + _escapeHtml(row.text || '') + '</div>';
+  }).join('') : '';
+  var battleIqLowered = battleIq ? (battleIq.loweredBy || []).map(function(row) {
+    return '<div><b>' + _escapeHtml(row.area || 'Lowered by') + ':</b> ' + _escapeHtml(row.text || '') + '</div>';
+  }).join('') : '';
+  var battleIqSubPreview = battleIq ? (battleIq.subScores || []).slice(0, 4).map(function(row) {
+    return '<div class="replay-coach-metric"><strong>' + _escapeHtml(row.label || 'Sub-score') + '</strong><span>' + _escapeHtml(String(row.standardScore || 0)) + ' · raw ' + _escapeHtml(String(row.rawScore || 0)) + '</span></div>';
+  }).join('') : '';
+  var coachingReadouts = learning && learning.coachingReadouts ? learning.coachingReadouts : null;
+  var leadLogic = learning && learning.leadLogic ? learning.leadLogic : null;
+  var leadSignals = leadLogic ? (leadLogic.synergySignals || []).map(function(row) {
+    return '<div class="replay-coach-list-row"><strong>Observed synergy</strong>' + _escapeHtml(row || '') + '</div>';
+  }).join('') : '';
+  var leadPros = leadLogic ? (leadLogic.pros || []).map(function(row) {
+    return '<div class="replay-coach-list-row"><strong>Why this lead made sense</strong>' + _escapeHtml(row || '') + '</div>';
+  }).join('') : '';
+  var leadCons = leadLogic ? (leadLogic.cons || []).map(function(row) {
+    return '<div class="replay-coach-list-row"><strong>What it still conceded</strong>' + _escapeHtml(row || '') + '</div>';
+  }).join('') : '';
+  var strengthsRows = coachingReadouts ? (coachingReadouts.strengths || []).map(function(row) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.label || 'What you did well') + '</strong>' +
+      '<div><b>Supported by log:</b> ' + _escapeHtml(row.evidence || '') + '</div>' +
+      '<small>Confidence: ' + _escapeHtml(row.confidence || 'medium') + ' · Tradeoff: ' + _escapeHtml(row.tradeoff || '') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var advancedRows = coachingReadouts ? (coachingReadouts.advancedPlays || []).map(function(row) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.label || 'Advanced play recognized') + '</strong>' +
+      '<div><b>Observed:</b> ' + _escapeHtml(row.evidence || '') + '</div>' +
+      '<small>Confidence: ' + _escapeHtml(row.confidence || 'medium') + ' · Limit: ' + _escapeHtml(row.limitation || '') + '</small>' +
+      '</div>';
+  }).join('') : '';
+  var tightenRows = coachingReadouts ? (coachingReadouts.tightenUp || []).map(function(row) {
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.label || 'Tighten up next') + '</strong>' +
+      '<div><b>Why:</b> ' + _escapeHtml(row.evidence || '') + '</div>' +
+      '<div><b>Next rep:</b> ' + _escapeHtml(row.nextStep || '') + '</div>' +
+      '<small>Confidence: ' + _escapeHtml(row.confidence || 'medium') + '</small>' +
+      '</div>';
+  }).join('') : '';
+
+  host.innerHTML =
+    '<div class="replay-coach-summary-card">' +
+      '<div class="replay-coach-card-head"><span class="badge badge-blue">MATCH SUMMARY</span><span class="replay-coach-tag ' + _escapeHtml(summary.result === 'win' ? 'low' : summary.result === 'loss' ? 'high' : 'medium') + '">' + _escapeHtml((summary.result || 'unknown').toUpperCase()) + '</span></div>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Players</strong><span>' + _escapeHtml((summary.yourPlayer || 'You') + ' vs ' + (summary.opponentPlayer || 'Opponent')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Turns</strong><span>' + _escapeHtml(String(summary.turns || 0)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Your Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourLead)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opp Lead</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentLead)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Your Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourFour, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Bring Confidence</strong><span>' + _escapeHtml((bringConfidence.label || 'Unknown') + ' · ' + (bringConfidence.level || 'low')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Critical Turn</strong><span>' + _escapeHtml(summary.criticalTurn ? 'Turn ' + summary.criticalTurn : 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Main Issue</strong><span>' + _escapeHtml(summary.mainIssue || 'No major issue detected') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(summary.confidence || 'medium') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-tags">' + (warnings || '<span class="replay-coach-tag low">Parsed locally. No raw log saved.</span>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Team Preview Read</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Your Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.yourPreview, 'Missing')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opponent Preview</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentPreview, 'Missing')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opponent Four</strong><span>' + _escapeHtml(csReplayCoachJoin(summary.opponentFour, 'Inferred from revealed actions')) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Roster Evidence</strong><span>' + _escapeHtml(rosterEvidenceLabel + ' · ' + String(bringConfidence.previewCount || 0) + ' preview / ' + String(bringConfidence.selectedCount || 0) + ' visible') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Bring Scope</strong><span>' + _escapeHtml(bringScopeLabel) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Bring Read</strong><span>' + _escapeHtml(bringConfidence.reason || 'Bring data is unknown from this log.') + '</span></div>' +
+        (bringConfidence.limitation ? '<div class="replay-coach-metric"><strong>Limit</strong><span>' + _escapeHtml(bringConfidence.limitation) + '</span></div>' : '') +
+      '</div>' +
+    '</div>' +
+    (leadLogic ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Lead Logic Read</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Lead identity</strong><span>' + _escapeHtml(leadLogic.label || 'Unknown opener') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Your lead</strong><span>' + _escapeHtml((leadLogic.yourLead || []).join(' + ') || 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Opp lead</strong><span>' + _escapeHtml((leadLogic.opponentLead || []).join(' + ') || 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(leadLogic.confidence || 'medium') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        (leadSignals || '<div class="replay-coach-list-row"><strong>Observed synergy</strong>Turn-one synergy was not clear enough to grade beyond the board state.</div>') +
+        (leadPros || '<div class="replay-coach-list-row"><strong>Why this lead made sense</strong>Use a lead that pressures the shown opposing mode while still keeping a backup line if the first interrupt fails.</div>') +
+        (leadCons || '<div class="replay-coach-list-row"><strong>What it still conceded</strong>Check whether the pair still has play if the opponent gets their support or speed plan through.</div>') +
+      '</div>' +
+      '<small>' + _escapeHtml(leadLogic.limitation || '') + '</small>' +
+    '</div>' : '') +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Coaching Tags</h3>' +
+      '<div class="replay-coach-list">' + (tags || '<div class="replay-coach-list-row"><strong>No major issue detected</strong>Upload more complete logs to build stronger coaching confidence.</div>') + '</div>' +
+    '</div>' +
+    (evidenceStandard ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Evidence Standard</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(evidenceStandard.label || 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(evidenceStandard.confidence || 'low') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Rule</strong>' + _escapeHtml(evidenceStandard.priority || '') + '<small>' + _escapeHtml(evidenceStandard.rule || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Opponent intent boundary</strong>' + _escapeHtml(evidenceStandard.opponentIntentRule || '') + '</div>' +
+      '</div>' +
+    '</div>' : '') +
+    (coachingReadouts ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">What You Did Well</h3>' +
+      '<div class="replay-coach-list">' + (strengthsRows || '<div class="replay-coach-list-row"><strong>No positive signal proven yet</strong>Use a fuller replay log before treating a line as repeatable.</div>') + '</div>' +
+      '<small>' + _escapeHtml(coachingReadouts.note || '') + '</small>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Advanced Plays Recognized</h3>' +
+      '<div class="replay-coach-list">' + (advancedRows || '<div class="replay-coach-list-row"><strong>No advanced pattern proven yet</strong>This log may still be useful, but the parser did not find a strong advanced setup or support line.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Tighten Up Next</h3>' +
+      '<div class="replay-coach-list">' + (tightenRows || '<div class="replay-coach-list-row"><strong>No tighten-up item proven yet</strong>Collect more complete turns before naming a concrete adjustment.</div>') + '</div>' +
+    '</div>' : '') +
+    (learning ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Battle IQ Score</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Battle IQ</strong><span>' + _escapeHtml(battleIq && battleIq.displayScore != null ? String(battleIq.displayScore) : 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Band</strong><span>' + _escapeHtml(battleIq ? battleIq.band : 'Unknown') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(battleIq ? battleIq.confidence : 'low') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(battleIq ? battleIq.status : 'Provisional') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Percentile</strong><span>' + _escapeHtml(battleIq && battleIq.percentile != null ? String(battleIq.percentile) + 'th provisional' : 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Range</strong><span>' + _escapeHtml(battleIq && battleIq.confidenceInterval && battleIq.confidenceInterval.length ? battleIq.confidenceInterval.join('-') : 'Needs more data') + '</span></div>' +
+        battleIqSubPreview +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>What this means</strong>' + _escapeHtml(battleIq ? battleIq.definition : '') + '<small>' + _escapeHtml(battleIq ? battleIq.outcomeBiasProtection : '') + '</small><small>' + _escapeHtml(battleIq ? battleIq.reliabilityNote : '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Why it moved</strong>' + (battleIqRaised || '<div>No positive score driver was clear from this log.</div>') + (battleIqLowered || '<div>No negative score driver was clear from this log.</div>') + '</div>' +
+        '<div class="replay-coach-list-row"><strong>Recommended drill</strong>' + _escapeHtml(battleIq && battleIq.recommendedDrill ? battleIq.recommendedDrill.skill : 'Decision Review Drill') + '<small>' + _escapeHtml(battleIq && battleIq.recommendedDrill ? battleIq.recommendedDrill.successCriteria : '') + '</small></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Critical Turn Engine</h3>' +
+      '<div class="replay-coach-list">' + (criticalCards || '<div class="replay-coach-list-row"><strong>No critical turn proven</strong>Needs more complete turns before naming a swing turn.</div>') + '</div>' +
+      '<small>' + _escapeHtml((learning.criticalTurns && learning.criticalTurns.note) || '') + '</small>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Decision Quality Scorecard</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Overall Decision Quality</strong><span>' + _escapeHtml((learning.scorecard.overallGrade || '?') + ' · ' + String(learning.scorecard.overallDecisionQuality || 0)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(learning.scorecard.confidence || 'medium') + '</span></div>' +
+        scoreCards +
+      '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Win Path + Opponent Plan</h3>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Your win path</strong>' + _escapeHtml(learning.winPath.afterLeads || '') + '<small>' + _escapeHtml(learning.winPath.followedOrAbandoned || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Opponent plan recognition</strong>' + _escapeHtml(learning.opponentPlan.pressurePattern || '') + '<small>' + _escapeHtml(learning.opponentPlan.recognizeNextTime || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Opponent plan evidence</strong>' + _escapeHtml((learning.opponentPlan.evidenceLabel || 'Needs more data') + ' · Confidence: ' + (learning.opponentPlan.confidence || 'low')) + '<small>' + _escapeHtml((learning.opponentPlan.evidence || []).join('; ') || 'Upload more complete logs before treating opponent intent as fact.') + '</small></div>' +
+      '</div>' +
+    '</div>' +
+    (simComparison ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Sim Comparison</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(simComparison.status || 'needs_sim_data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Four match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>First deviation</strong>' + _escapeHtml(simComparison.firstDeviation || simComparison.note || 'Needs sim data') + '<small>' + _escapeHtml(simComparison.decisionChange || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Diagnosis boundary</strong>' + _escapeHtml(simComparison.teamVsPilotDiagnosis || 'Do not judge team vs pilot until sim and replay data are matched.') + '</div>' +
+      '</div>' +
+    '</div>' : '') +
+    (simFeedback ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Sim Feedback Packet</h3>' +
+      '<div class="replay-coach-summary-grid">' +
+        '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(simFeedback.confidence || 'low') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Scenario</strong><span>' + _escapeHtml(simFeedback.scenarioType || 'none') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Pilot difficulty</strong><span>' + _escapeHtml(simFeedback.pilotDifficultySignal || 'low') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>RNG</strong><span>' + _escapeHtml(simFeedback.rngContamination || 'none') + '</span></div>' +
+      '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Model updates</strong>' + _escapeHtml('Lead: ' + !!simFeedback.shouldUpdateLeadModel + ' · Bring four: ' + !!simFeedback.shouldUpdateBringFourModel + ' · Archetype: ' + !!simFeedback.shouldUpdateArchetypeModel) + '<small>Single replay signals do not automatically rewrite sim models.</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Scenario queue</strong>' + _escapeHtml(simFeedback.shouldCreateScenario ? 'Queue for stress retest' : 'Do not queue yet') + '<small>' + _escapeHtml(simFeedback.recommendedAction || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Evidence</strong>' + _escapeHtml((simFeedback.evidence && simFeedback.evidence.note) || 'Replay-derived calibration signal only.') + '</div>' +
+      '</div>' +
+    '</div>' : '') +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Decision Quality Matrix</h3>' +
+      '<div class="replay-coach-list">' + (decisionRows || '<div class="replay-coach-list-row"><strong>No key decision rows yet</strong>Upload a fuller log for decision/outcome separation.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Practice Plan</h3>' +
+      '<div class="replay-coach-list">' + (drillRows || '<div class="replay-coach-list-row"><strong>No practice drill yet</strong>More replay data will unlock personalized drills.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Battle IQ Memory Preview</h3>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Free review</strong>' + _escapeHtml(premium.freeValue || '') + '</div>' +
+        '<div class="replay-coach-list-row"><strong>Profile unlock</strong>' + _escapeHtml(premium.premiumValue || '') + '</div>' +
+        premiumRows +
+        '<div class="replay-coach-list-row"><strong>Privacy boundary</strong>' + _escapeHtml((premium.backendLearningPolicy && premium.backendLearningPolicy.rawLogDefault) || '') + '<small>' + _escapeHtml((premium.backendLearningPolicy && premium.backendLearningPolicy.freeAnonymous) || '') + '</small></div>' +
+      '</div>' +
+    '</div>' : '') +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Turn Timeline</h3>' +
+      '<div class="replay-coach-turns">' + (turns || '<div class="replay-coach-turn"><div class="replay-coach-turn-body">No turns parsed from this log.</div></div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<details class="replay-coach-raw"><summary>Raw log preview hidden by default · ' + _escapeHtml(String(rawPreview.lineCount || 0)) + ' lines</summary>' +
+        '<pre class="battle-log replay-coach-raw-log">' + (rawLines || 'No raw log lines available.') + '</pre>' +
+      '</details>' +
+    '</div>';
+}
+
+function csNormalizeReplayName(name) {
+  return String(name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function csTeamPreviewOverlap(previewNames, teamKey) {
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  var preview = (previewNames || []).map(csNormalizeReplayName).filter(Boolean);
+  if (!team || !preview.length) return 0;
+  var roster = (team.members || []).map(function(m) { return csNormalizeReplayName(m && m.name); }).filter(Boolean);
+  if (!roster.length) return 0;
+  var hits = preview.filter(function(n) { return roster.indexOf(n) >= 0; }).length;
+  return hits / Math.max(preview.length, Math.min(6, roster.length));
+}
+
+function csSplitLeadPair(label) {
+  return String(label || '').split(/\s*\+\s*/).map(function(v) { return v.trim(); }).filter(Boolean);
+}
+
+function csUniquePokemonNames(names, teamKey, cap) {
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  var out = [];
+  var seen = Object.create(null);
+  (names || []).forEach(function(n) {
+    var name = String(n || '').trim();
+    if (!name || seen[name]) return;
+    seen[name] = true;
+    out.push(name);
+  });
+  if (team && Array.isArray(team.members)) {
+    team.members.forEach(function(m) {
+      var name = m && m.name;
+      if (!name || seen[name] || out.length >= cap) return;
+      seen[name] = true;
+      out.push(name);
+    });
+  }
+  return out.slice(0, cap || getBringCount());
+}
+
+function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
+  parsed = parsed || {};
+  var playerKey = (typeof currentPlayerKey === 'string' && TEAMS[currentPlayerKey]) ? currentPlayerKey : 'player';
+  var results = (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastResults) ? ChampionsSim.state.lastResults : {};
+  var oppSide = (selectedSide || parsed.selectedSide || 'p1') === 'p1' ? 'p2' : 'p1';
+  var oppPreview = parsed.teamPreview && parsed.teamPreview[oppSide] ? parsed.teamPreview[oppSide] : [];
+  var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+  var selectedOppKey = oppSelect && oppSelect.value && TEAMS[oppSelect.value] ? oppSelect.value : '';
+  var candidateKeys = Object.keys(results || {}).filter(function(k) { return TEAMS[k]; });
+  if (selectedOppKey && candidateKeys.indexOf(selectedOppKey) < 0) candidateKeys.unshift(selectedOppKey);
+  if (!candidateKeys.length) return null;
+
+  var ranked = candidateKeys.map(function(key) {
+    var previewScore = csTeamPreviewOverlap(oppPreview, key);
+    var hasResult = results && results[key] ? 0.25 : 0;
+    var selectedBoost = key === selectedOppKey ? 0.15 : 0;
+    return { key: key, score: previewScore + hasResult + selectedBoost, previewScore: previewScore, hasResult: !!(results && results[key]) };
+  }).sort(function(a, b) { return b.score - a.score; });
+  var best = ranked[0];
+  if (!best || (!best.hasResult && best.previewScore <= 0)) return null;
+
+  var scopedResults = {};
+  if (results && results[best.key]) scopedResults[best.key] = results[best.key];
+  var report = null;
+  try {
+    if (typeof buildStrategyReport === 'function') report = buildStrategyReport(playerKey, scopedResults, currentFormat);
+  } catch (e) { report = null; }
+  if (!report && typeof loadStrategyReport === 'function') {
+    try { report = loadStrategyReport(playerKey); } catch (_e) { report = null; }
+  }
+  if (!report) return null;
+
+  var leadSystem = report.lead_system || {};
+  var matchupIntel = report.matchup_intelligence || {};
+  var bestLeadLabel = (matchupIntel.safe_leads && matchupIntel.safe_leads[0]) || leadSystem.safe || leadSystem.speed || leadSystem.pressure || leadSystem.punish || '';
+  var bestLead = csSplitLeadPair(bestLeadLabel);
+  var preserveNames = [];
+  if (report.team_identity && report.team_identity.primary_win_condition) preserveNames = preserveNames.concat(csSplitLeadPair(report.team_identity.primary_win_condition.replace(/->/g, '+')));
+  if (report.team_identity && Array.isArray(report.team_identity.speed_control_mons)) preserveNames = preserveNames.concat(report.team_identity.speed_control_mons);
+  if (report.team_identity && Array.isArray(report.team_identity.pivot_mons)) preserveNames = preserveNames.concat(report.team_identity.pivot_mons);
+  var bestFour = csUniquePokemonNames(bestLead.concat(preserveNames), playerKey, getBringCount());
+  var matchConfidence = best.previewScore >= 0.5 && best.hasResult ? 'medium' : 'low';
+
+  return {
+    source: 'latest in-app simulation strategy report',
+    matchedOpponentKey: best.key,
+    matchedOpponentName: TEAMS[best.key] && TEAMS[best.key].name ? TEAMS[best.key].name : best.key,
+    matchConfidence: matchConfidence,
+    bestLead: bestLead,
+    bestFour: bestFour,
+    expectedWinPath: matchupIntel.best_win_path || (report.coaching_notes && report.coaching_notes.best_win_path) || (report.team_identity && report.team_identity.primary_win_condition) || '',
+    safestLine: report.pilot_plan ? report.pilot_plan.turn_1 : '',
+    confidence: matchConfidence,
+    sampleSize: report.sample_size || 0
+  };
+}
+
+function csInitReplayCoachUi() {
+  var logEl = document.getElementById('replay-coach-log');
+  var urlEl = document.getElementById('replay-coach-url');
+  var sideEl = document.getElementById('replay-coach-side');
+  var runBtn = document.getElementById('replay-coach-run-btn');
+  var clearBtn = document.getElementById('replay-coach-clear-btn');
+  var uploadBtn = document.getElementById('replay-coach-upload-btn');
+  var fetchBtn = document.getElementById('replay-coach-fetch-btn');
+  var fileEl = document.getElementById('replay-coach-file');
+  var statusEl = document.getElementById('replay-coach-status');
+  if (!logEl || !sideEl || !runBtn) return;
+
+  function setStatus(msg, isError) {
+    if (!statusEl) return;
+    statusEl.textContent = msg || '';
+    statusEl.classList.toggle('error', !!isError);
+  }
+
+  runBtn.addEventListener('click', function() {
+    var api = ChampionsSim && ChampionsSim.replayCoach;
+    if (!api || typeof api.analyzeShowdownReplay !== 'function') {
+      setStatus('Battle Sensei parser is not available in this build.', true);
+      return;
+    }
+    var raw = logEl.value || '';
+    if (!raw.trim()) {
+      setStatus('Paste a Showdown log before running analysis.', true);
+      return;
+    }
+    try {
+      var selectedSide = sideEl.value || 'p1';
+      var opts = { selectedSide: selectedSide };
+      var analysis;
+      if (typeof api.parseShowdownLog === 'function' && typeof api.buildReplayCoachReview === 'function') {
+        var parsed = api.parseShowdownLog(raw, opts);
+        opts.simPlan = csBuildBattleSenseiSimPlan(parsed, selectedSide);
+        opts.sampleSize = opts.simPlan && opts.simPlan.sampleSize ? opts.simPlan.sampleSize : 1;
+        analysis = { parsed: parsed, review: api.buildReplayCoachReview(parsed, opts) };
+      } else {
+        analysis = api.analyzeShowdownReplay(raw, opts);
+      }
+      csReplayCoachRenderAnalysis(analysis);
+      var parsedTurns = analysis && analysis.parsed ? analysis.parsed.totalTurns : 0;
+      setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only and not saved.');
+    } catch (e) {
+      setStatus('Could not analyze replay: ' + (e && e.message ? e.message : 'unknown error'), true);
+    }
+  });
+
+  if (clearBtn) clearBtn.addEventListener('click', function() {
+    logEl.value = '';
+    setStatus('');
+    var host = document.getElementById('replay-coach-results');
+    if (host) host.innerHTML = '<div class="replay-coach-empty">Paste a log and run analysis to see result, leads, critical turn, coaching tags, and a readable turn timeline.</div>';
+  });
+
+  if (uploadBtn && fileEl) {
+    uploadBtn.addEventListener('click', function() { fileEl.click(); });
+    fileEl.addEventListener('change', function() {
+      var file = fileEl.files && fileEl.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function() {
+        logEl.value = String(reader.result || '');
+        setStatus('Loaded ' + file.name + '. Run analysis when ready.');
+      };
+      reader.onerror = function() { setStatus('Could not read that file.', true); };
+      reader.readAsText(file);
+    });
+  }
+
+  if (fetchBtn && urlEl) {
+    fetchBtn.addEventListener('click', async function() {
+      var api = ChampionsSim && ChampionsSim.replayCoach;
+      if (!api || typeof api.fetchReplayLog !== 'function') {
+        setStatus('Replay URL loading is not available in this build.', true);
+        return;
+      }
+      var rawUrl = urlEl.value || '';
+      if (!rawUrl.trim()) {
+        setStatus('Paste a replay URL before loading it.', true);
+        return;
+      }
+      setStatus('Loading replay URL...');
+      try {
+        var normalized = await api.fetchReplayLog(rawUrl);
+        if (!normalized) throw new Error('Replay log was empty.');
+        logEl.value = normalized;
+        setStatus('Loaded replay URL into the log box. Run analysis when ready.');
+      } catch (e) {
+        setStatus((e && e.message) ? e.message : 'Could not load that replay URL.', true);
+      }
+    });
+  }
+}
+
 function renderReplays() {
   const el = document.getElementById('replay-list');
   if (!el) return;
@@ -9563,6 +10058,7 @@ if (typeof window !== 'undefined') {
   document.addEventListener('DOMContentLoaded', async function(){
     await csHardenClientState();
     _csInitEvidenceToggle();
+    csInitReplayCoachUi();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────
     // Await loadTeamsFromDB BEFORE the first authoritative rebuildTeamSelects()

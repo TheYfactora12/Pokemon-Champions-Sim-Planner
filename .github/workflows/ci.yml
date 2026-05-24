@@ -3,14 +3,14 @@
 #
 # Jobs:
 #   1. syntax          — node --check all source JS (fast, ~30s)
-#   2. tests           — auto-discovers all tests/*.js except excluded files (~2-4 min)
+#   2. tests           — auto-discovers all tests/*.js except helper/manual files (~2-4 min)
 #   3. detect-changes  — checks if engine.js or data.js were touched
 #   4. audit           — 5,070-battle audit ONLY when engine/data changed (~5-8 min)
 #
 # Bundle freshness + sw cache bump are enforced by their own dedicated workflows.
 #
 # EXCLUDED TESTS (re-enable when unblocked):
-#   db_m*.js            — require live Supabase connection (blocked by #158)
+#   db_m*.js            — run in mock mode by default; only enable live DB smoke on DB/data-relevant PRs
 #   _db_helpers.js      — shared helper, not a test runner
 #   phase4c_detectors.js — requires classifyPokemon() (blocked by #141)
 #   nightly_bring_harness.js — manual harness only
@@ -68,7 +68,7 @@ jobs:
   # Auto-discovers every file in poke-sim/tests/*.js.
   # Excluded files:
   #   - audit.js              → runs in gated audit job below
-  #   - db_m*.js              → require live Supabase (#158 blocker)
+  #   - db_m*.js              → run normally; live DB smoke only turns on for DB/data-relevant PRs
   #   - _db_helpers.js        → shared helper, not a test runner
   #   - phase4c_detectors.js  → requires classifyPokemon() (#141 blocker)
   #   - nightly_bring_harness.js → manual harness only
@@ -79,7 +79,7 @@ jobs:
     name: "Test Suite"
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    needs: syntax
+    needs: [syntax, detect-changes]
     steps:
       - uses: actions/checkout@v4
 
@@ -91,6 +91,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          LIVE_DB_RELEVANT: ${{ needs.detect-changes.outputs.live_db_relevant }}
         run: |
           set -e
           cd poke-sim
@@ -98,15 +99,20 @@ jobs:
           if [ -f package.json ]; then
             npm install
           fi
-          # Create test environment with real Supabase credentials for DB tests
-          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+          # Only turn on live DB smoke when the PR touches data / DB-relevant files.
+          # UI-only and replay-only changes should not fail on unrelated hosted roster drift.
+          if [ "$LIVE_DB_RELEVANT" = "true" ] && [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
             export SUPABASE_URL="$SUPABASE_URL"
             export SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY"
             export SUPABASE_KEY="$SUPABASE_ANON_KEY"
             export RUN_LIVE_DB=1
             echo "🔗 Live Supabase credentials configured for DB tests"
           else
-            echo "⚠️  No Supabase credentials - DB tests will use mock"
+            unset SUPABASE_URL
+            unset SUPABASE_ANON_KEY
+            unset SUPABASE_KEY
+            unset RUN_LIVE_DB
+            echo "⚠️  Live DB smoke disabled for this PR - DB tests will use mock/skip mode"
           fi
           
           FAILED=0
@@ -118,8 +124,8 @@ jobs:
             # Always skip — runs in gated audit job
             [ "$BASE" = "audit.js" ] && continue
 
-            # Include DB tests with live Supabase connection
-            # db_m*.js tests now run with real credentials
+            # DB tests always run, but live DB smoke only activates when
+            # the PR touches DB/data-relevant files and credentials exist.
             [ "$BASE" = "_db_helpers.js" ] && { echo "⏭ SKIP (helper, not test): $t"; SKIPPED=$((SKIPPED + 1)); continue; }
 
             # Skip: requires classifyPokemon() (blocked by issue #141)
@@ -200,6 +206,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       engine: ${{ steps.filter.outputs.engine }}
+      live_db_relevant: ${{ steps.filter.outputs.live_db_relevant }}
     steps:
       - uses: actions/checkout@v4
 
@@ -210,6 +217,10 @@ jobs:
             engine:
               - 'poke-sim/engine.js'
               - 'poke-sim/data.js'
+            live_db_relevant:
+              - 'poke-sim/data.js'
+              - 'poke-sim/db/**'
+              - 'poke-sim/supabase_adapter.js'
 
   # ----------------------------------------------------------------
   # 4. BATTLE AUDIT (GATED)

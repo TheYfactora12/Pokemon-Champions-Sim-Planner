@@ -5,6 +5,7 @@
 // Phase 2 automation tracked in #95 (tools/release.sh)
 //
 // v37-may-meta-roster [2026-05-22] — Added current May 2026 preloaded meta rosters, explicit species coverage, and synced DB seed artifacts.
+// v38-battle-sensei-port [2026-05-24] — Added Battle Sensei replay review tab, replay URL loading, evidence-bound coaching reads, and lead-logic explanations.
 // v36-ui-trust-copy [2026-05-22] — Trust/provenance copy tightening for preview labeling, source wording, and strategy evidence framing.
 // v35-regional-form-stats [2026-05-19] — Canonical regional/form stat corrections + shipped form fallback fix.
 // v34-mobile-shell-layout [2026-05-15] — Mobile shell layout + bring-order normalization.
@@ -21,7 +22,7 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v37-may-meta-roster';
+const CACHE_NAME = 'champions-sim-v38-battle-sensei-port';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
