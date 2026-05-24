@@ -2594,28 +2594,44 @@ function csRenderReplayLogTurnZero(turnLog) {
 function csRenderReplayPlayByPlay(turn) {
   turn = turn || {};
   var rows = [];
+  function showdownMoveText(action) {
+    if (!action || !action.actor || !action.move) return '';
+    var text = action.actor + ' used ' + action.move + '!';
+    if (action.target) text += ' → ' + action.target;
+    return text;
+  }
+  function showdownEventText(ev) {
+    var text = String((ev && (ev.text || ev.message)) || '').trim();
+    if (!text) return '';
+    text = text.replace(/\[(\d+)\s*dmg\]/ig, 'lost $1 HP');
+    text = text.replace(/\[\+(\d+)\]/g, 'restored $1 HP');
+    text = text.replace(/\s+/g, ' ');
+    return text;
+  }
   if (turn.actions) {
     (turn.actions.player || []).forEach(function(action) {
       if (!action) return;
-      rows.push({ kind: 'your move', text: [action.actor, action.move, action.target ? '-> ' + action.target : ''].filter(Boolean).join(' ') });
+      var line = showdownMoveText(action);
+      if (line) rows.push(line);
     });
     (turn.actions.opponent || []).forEach(function(action) {
       if (!action) return;
-      rows.push({ kind: 'their move', text: [action.actor, action.move, action.target ? '-> ' + action.target : ''].filter(Boolean).join(' ') });
+      var line = showdownMoveText(action);
+      if (line) rows.push(line);
     });
   }
   (turn.events || []).forEach(function(ev) {
     if (!ev) return;
-    var text = ev.text || ev.message || '';
+    var text = showdownEventText(ev);
     if (!text) return;
-    rows.push({ kind: ev.type || 'event', text: text });
+    rows.push(text);
   });
   if (!rows.length) return '';
-  return '<div class="replay-play-by-play"><strong>Play by play</strong>' +
-    rows.slice(0, 14).map(function(row) {
-      return '<div class="replay-play-row ' + _escapeHtml(String(row.kind || 'event').replace(/[^a-z0-9_-]+/gi, '-').toLowerCase()) + '">' +
-        '<span>' + _escapeHtml(row.kind || 'event') + '</span>' +
-        '<b>' + _escapeHtml(row.text || '') + '</b>' +
+  return '<div class="replay-play-by-play"><strong>Battle log</strong>' +
+    rows.slice(0, 14).map(function(text, idx) {
+      return '<div class="replay-play-row">' +
+        '<span>' + _escapeHtml(String(idx + 1).padStart(2, '0')) + '</span>' +
+        '<b>' + _escapeHtml(text || '') + '</b>' +
       '</div>';
     }).join('') +
   '</div>';
