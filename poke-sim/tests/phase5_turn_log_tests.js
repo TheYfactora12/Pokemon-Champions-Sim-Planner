@@ -115,6 +115,13 @@ T('T5a-1 turnLog is populated after simulateBattle', () => {
   truthy(Array.isArray(payload.logs[0].position_path), 'summary position path should persist');
 });
 
+T('T5a-1a live turn snapshots keep player/opponent side keys distinct', () => {
+  const first = battleA.turnLog[0] || {};
+  const speedKeys = (((first.pre || {}).speed_order_keys) || []).join(' ');
+  truthy(speedKeys.includes('player:active:'), 'player active key missing from live snapshot');
+  truthy(speedKeys.includes('opponent:active:'), 'opponent active key missing from live snapshot');
+});
+
 T('T5a-2 turnLog clears on new sim run', () => {
   const battleB = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_charizard_y, {});
   truthy(Array.isArray(battleB.turnLog), 'second turnLog missing');

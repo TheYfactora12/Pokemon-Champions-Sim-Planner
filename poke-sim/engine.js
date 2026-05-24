@@ -1364,8 +1364,9 @@ function _speedOrderSnapshot(playerActive, oppActive, field, useKeys) {
     })
     .map(m => {
       if (!useKeys) return m.name;
-      const idx = (m.side === 'player' ? (playerActive || []) : (oppActive || [])).indexOf(m);
-      return _snapshotMonKey(m.side === 'player' ? 'player' : 'opponent', 'active', Math.max(0, idx), m);
+      const sideName = m && m.side === (field && field.playerSide) ? 'player' : 'opponent';
+      const idx = (sideName === 'player' ? (playerActive || []) : (oppActive || [])).indexOf(m);
+      return _snapshotMonKey(sideName, 'active', Math.max(0, idx), m);
     });
 }
 
@@ -1752,7 +1753,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     const liveEnemies = enemies.filter(e => e.alive);
     const liveAllies  = allies.filter(a => a !== attacker && a.alive);
-    const enemySide = field && attacker.side === 'player' ? field.oppSide : field.playerSide;
+    const attackerOnPlayerSide = !!(field && attacker && attacker.side === field.playerSide);
+    const enemySide = field && attackerOnPlayerSide ? field.oppSide : field.playerSide;
 
     if (attacker.status === 'sleep' && attacker.moves.includes('Sleep Talk')) {
       const target = liveEnemies[0] || liveAllies[0] || null;
@@ -1779,9 +1781,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (freshEntry && roles.indexOf('Sweeper') >= 0 && (move === 'Protect' || move === 'Detect')) score += 10;
         if (attacker.hp < attacker.maxHp * 0.3 && (move === 'Protect' || move === 'Detect' || move === 'Ally Switch' || move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn')) score += 25;
         if (move === 'Trick Room' && !field.trickRoom) score = 55;
-        if (move === 'Tailwind'   && !field[attacker.side === 'player' ? 'playerSide' : 'oppSide']?.tailwind) score = 50;
+        if (move === 'Tailwind'   && !(attackerOnPlayerSide ? field.playerSide : field.oppSide)?.tailwind) score = 50;
         // T9j.3 Screens scoring — value them when not already up.
-        const _selfSide = field[attacker.side === 'player' ? 'playerSide' : 'oppSide'];
+        const _selfSide = attackerOnPlayerSide ? field.playerSide : field.oppSide;
         if (move === 'Light Screen' && _selfSide && !_selfSide.lightScreen) score = 42;
         if (move === 'Reflect'      && _selfSide && !_selfSide.reflect)     score = 42;
         if (move === 'Aurora Veil' && _selfSide && !_selfSide.auroraVeil
