@@ -46,6 +46,17 @@ T('2. critical engine separates first mistake from fatal mistake on fixture', ()
   truthy(critical.turns.every((t) => t.whatHappened && t.whyItMattered && t.betterAlternative && t.confidence), 'critical cards complete');
 });
 
+T('2b. lead logic explains opener synergy plus concession risk', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const lead = analysis.review.learningReport.leadLogic;
+  truthy(lead, 'lead logic missing');
+  inc(lead.label, 'opener', 'lead label');
+  truthy(lead.synergySignals.length >= 1, 'lead synergy signals');
+  truthy(lead.pros.length >= 1, 'lead pros');
+  truthy(lead.cons.length >= 1, 'lead cons');
+  inc(lead.limitation, 'visible turn-one replay evidence', 'lead limitation boundary');
+});
+
 T('3. decision quality matrix separates decision and outcome', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const rows = analysis.review.learningReport.decisionQuality;

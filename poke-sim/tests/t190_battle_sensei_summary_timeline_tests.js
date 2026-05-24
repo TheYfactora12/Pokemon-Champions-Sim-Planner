@@ -32,6 +32,11 @@ T('1. Battle Sensei remains a separate tab from Strategy', () => {
 T('2. summary renders selected-four confidence and team preview read', () => {
   inc(ui, '<strong>Bring Confidence</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Team Preview Read</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Lead Logic Read</h3>');
+  inc(ui, '<strong>Lead identity</strong>');
+  inc(ui, '<strong>Observed synergy</strong>');
+  inc(ui, '<strong>Why this lead made sense</strong>');
+  inc(ui, '<strong>What it still conceded</strong>');
   inc(ui, '<strong>Opponent Four</strong>');
   inc(ui, 'selectedFourConfidence');
 });
