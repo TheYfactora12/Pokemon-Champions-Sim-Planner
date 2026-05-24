@@ -210,16 +210,65 @@ T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
       position_score: 0.6
     },
     actions: { player: [{ actor: 'Kangaskhan', move: 'Fake Out', target: 'Tyranitar' }], opponent: [] },
+    events: [{ type: 'ko', text: 'Tyranitar fainted!' }, { type: 'log', text: 'Milotic was sent out!' }],
     delta: { position_score: 0.1 }
   }]);
   truthy(html.includes('Turn 0 — Starting State'), 'Turn 0 block missing');
-  truthy(html.includes('Turn 0 · Your team'), 'your Turn 0 board missing');
-  truthy(html.includes('Turn 0 · Their team'), 'their Turn 0 board missing');
-  truthy(html.includes('After T1 · Your team'), 'your per-turn board missing');
-  truthy(html.includes('After T1 · Their team'), 'their per-turn board missing');
+  truthy(html.includes('replay-stadium-vs'), 'VS stadium divider missing');
+  truthy(html.includes('Your team'), 'your board missing');
+  truthy(html.includes('Their team'), 'their board missing');
+  truthy(html.includes('On field'), 'on-field zone missing');
+  truthy(html.includes('Bench / knocked out'), 'off-field zone missing');
+  truthy(html.includes('Play by play'), 'play-by-play section missing');
+  truthy(html.includes('Kangaskhan Fake Out -&gt; Tyranitar'), 'move play-by-play missing');
+  truthy(html.includes('Tyranitar fainted!'), 'KO play-by-play missing');
+  truthy(html.includes('Milotic was sent out!'), 'switch play-by-play missing');
   truthy(html.includes('Tyranitar'), 'opponent mon missing');
   truthy(html.includes('fainted'), 'fainted status missing');
   truthy(html.includes('0%'), 'zero HP missing');
+});
+
+T('T5c-1aa Replay Log v2 supports singles and doubles field visibility', () => {
+  const singles = ctx.csRenderTurnLogRows([{
+    turn: 1,
+    pre: {
+      roster: {
+        player: [{ displayName: 'Charizard', species: 'Charizard', status: 'active', hp: 100, hpLabel: '100%', moves: ['Heat Wave'] }],
+        opponent: [{ displayName: 'Blastoise', species: 'Blastoise', status: 'active', hp: 100, hpLabel: '100%', moves: ['Water Pulse'] }]
+      }
+    },
+    post: {
+      roster: {
+        player: [{ displayName: 'Charizard', species: 'Charizard', status: 'active', hp: 55, hpLabel: '55%', moves: ['Heat Wave'] }],
+        opponent: [{ displayName: 'Blastoise', species: 'Blastoise', status: 'active', hp: 40, hpLabel: '40%', moves: ['Water Pulse'] }]
+      },
+      position_score: 0.5
+    },
+    actions: { player: [{ actor: 'Charizard', move: 'Heat Wave', target: 'Blastoise' }], opponent: [{ actor: 'Blastoise', move: 'Water Pulse', target: 'Charizard' }] },
+    delta: { position_score: 0 }
+  }]);
+  const doubles = ctx.csRenderTurnLogRows([{
+    turn: 1,
+    pre: {
+      roster: {
+        player: [
+          { displayName: 'Kangaskhan', species: 'Kangaskhan', status: 'active', hp: 100, hpLabel: '100%', moves: ['Fake Out'] },
+          { displayName: 'Arcanine-Hisui', species: 'Arcanine-Hisui', status: 'active', hp: 100, hpLabel: '100%', moves: ['Rock Slide'] }
+        ],
+        opponent: [
+          { displayName: 'Tyranitar', species: 'Tyranitar', status: 'active', hp: 100, hpLabel: '100%', moves: ['Rock Slide'] },
+          { displayName: 'Indeedee-F', species: 'Indeedee-F', status: 'active', hp: 100, hpLabel: '100%', moves: ['Follow Me'] }
+        ]
+      }
+    },
+    post: { roster: { player: [], opponent: [] }, position_score: 0.5 },
+    actions: { player: [], opponent: [] },
+    delta: { position_score: 0 }
+  }]);
+  truthy(singles.includes('Charizard') && singles.includes('Blastoise'), 'singles active field missing');
+  truthy((singles.match(/replay-stadium-vs/g) || []).length >= 2, 'singles stadium missing Turn 0/post-turn VS views');
+  truthy(doubles.includes('Kangaskhan') && doubles.includes('Arcanine-Hisui'), 'doubles player leads missing');
+  truthy(doubles.includes('Tyranitar') && doubles.includes('Indeedee-F'), 'doubles opponent leads missing');
 });
 
 T('T5c-1b Battle Sensei renders Turn 0 and both side boards', () => {
@@ -256,6 +305,8 @@ T('T5c-1b Battle Sensei renders Turn 0 and both side boards', () => {
   truthy(turn0Html.includes('Their team — Bob · Turn 0'), 'Battle Sensei their Turn 0 side missing');
   truthy(turnHtml.includes('Your team after this turn'), 'Battle Sensei your per-turn board missing');
   truthy(turnHtml.includes('Their team after this turn'), 'Battle Sensei their per-turn board missing');
+  truthy(turnHtml.includes('replay-stadium-vs'), 'Battle Sensei VS stadium missing');
+  truthy(turnHtml.includes('Bench / knocked out'), 'Battle Sensei off-field zone missing');
   truthy(turnHtml.includes('Tyranitar'), 'Battle Sensei opponent mon missing');
   truthy(turnHtml.includes('fainted'), 'Battle Sensei fainted status missing');
   truthy(turnHtml.includes('0%'), 'Battle Sensei zero HP missing');

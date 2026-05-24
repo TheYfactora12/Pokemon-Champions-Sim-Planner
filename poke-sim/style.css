@@ -689,6 +689,25 @@ table{border-collapse:collapse;width:100%}
 .replay-turn-roster-side>strong{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-m);font-family:var(--font-mono)}
 .replay-turn-zero{border:1px solid rgba(91,164,245,.35);border-radius:var(--r-md);background:rgba(91,164,245,.06);padding:10px;margin-bottom:8px}
 .replay-turn-board .replay-roster-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.replay-stadium{border:1px solid var(--border);border-radius:var(--r-lg);background:linear-gradient(180deg,rgba(78,201,148,.07),rgba(91,164,245,.04));padding:10px;margin:8px 0}
+.replay-stadium-title{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:8px}
+.replay-stadium-field{display:grid;grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr);gap:8px;align-items:stretch}
+.replay-stadium-vs{align-self:center;justify-self:center;border:1px solid var(--border);border-radius:var(--r-full);width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;font-weight:900;color:var(--text-m);background:var(--surface)}
+.replay-stadium-side{display:flex;flex-direction:column;gap:8px;min-width:0}
+.replay-stadium-side-title{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--text);font-family:var(--font-mono)}
+.replay-stadium-zone{border:1px dashed rgba(148,163,184,.35);border-radius:var(--r-md);padding:8px;display:grid;gap:6px;background:rgba(11,18,32,.18)}
+.replay-stadium-zone>span{font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m)}
+.replay-stadium-zone.on-field{border-color:rgba(78,201,148,.42)}
+.replay-stadium-zone.off-field{filter:grayscale(.18)}
+.replay-stadium-mon{padding:9px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface2);font-size:var(--text-sm);line-height:1.4}
+.replay-stadium-mon.active{border-color:rgba(78,201,148,.5);background:rgba(78,201,148,.08)}
+.replay-stadium-mon.bench{opacity:.62;filter:grayscale(.65)}
+.replay-stadium-mon.fainted{border-color:rgba(240,84,100,.55);background:rgba(240,84,100,.09);opacity:.86}
+.replay-play-by-play{border:1px solid var(--border);border-radius:var(--r-md);background:rgba(148,163,184,.06);padding:8px;margin:8px 0;display:grid;gap:5px}
+.replay-play-by-play>strong{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m)}
+.replay-play-row{display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px;align-items:start;font-size:11px;line-height:1.35}
+.replay-play-row span{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--text-m)}
+.replay-play-row b{font-weight:800;overflow-wrap:anywhere}
 .replay-coach-metric{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp3);min-width:0}
 .replay-coach-metric strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-m);margin-bottom:4px;font-family:var(--font-mono)}
 .replay-coach-metric span{display:block;font-size:var(--text-sm);font-weight:800;overflow-wrap:break-word;word-break:normal}
