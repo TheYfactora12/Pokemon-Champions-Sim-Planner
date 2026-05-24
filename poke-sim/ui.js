@@ -2467,6 +2467,68 @@ function _csSnapshotDisplayName(key) {
   return parts.length >= 4 ? parts.slice(3).join(':') : raw;
 }
 
+function _csSnapshotSideRows(snapshot, side) {
+  snapshot = snapshot || {};
+  side = side || 'player';
+  if (snapshot.roster && Array.isArray(snapshot.roster[side])) {
+    return snapshot.roster[side].map(function(row) {
+      row = row || {};
+      var hp = row.hp == null ? null : Number(row.hp);
+      return Object.assign({}, row, {
+        hp: hp == null ? null : Math.max(0, Math.min(100, hp)),
+        hpLabel: row.hpLabel || (hp == null ? 'unknown' : Math.round(hp) + '%')
+      });
+    });
+  }
+
+  var activeNames = (snapshot.active && snapshot.active[side]) || [];
+  var benchNames = (snapshot.bench && snapshot.bench[side]) || [];
+  var activeKeys = (snapshot.active_keys && snapshot.active_keys[side]) || [];
+  var benchKeys = (snapshot.bench_keys && snapshot.bench_keys[side]) || [];
+  var hp = snapshot.hp_pct || {};
+  function rowFrom(name, key, status) {
+    var pct = hp[key];
+    if (pct == null) pct = hp[name];
+    var pct100 = pct == null ? null : Math.round(Math.max(0, Math.min(1, Number(pct) || 0)) * 100);
+    return {
+      status: status,
+      displayName: _csSnapshotDisplayName(key || name),
+      species: _csSnapshotDisplayName(key || name),
+      hp: pct100,
+      hpLabel: pct100 == null ? 'unknown' : pct100 + '%'
+    };
+  }
+  return activeNames.map(function(name, i) {
+    return rowFrom(name, activeKeys[i] || name, 'active');
+  }).concat(benchNames.map(function(name, i) {
+    return rowFrom(name, benchKeys[i] || name, 'bench');
+  }));
+}
+
+function csRenderReplayLogSnapshot(snapshot, title, compact) {
+  if (!snapshot) return '';
+  return '<div class="replay-turn-roster replay-turn-board">' +
+    '<div class="replay-turn-roster-side">' +
+      '<strong>' + _escapeHtml((title ? title + ' · ' : '') + 'Your team') + '</strong>' +
+      '<div class="replay-roster-mini-grid">' + csRenderReplayRosterRows(_csSnapshotSideRows(snapshot, 'player'), compact !== false) + '</div>' +
+    '</div>' +
+    '<div class="replay-turn-roster-side">' +
+      '<strong>' + _escapeHtml((title ? title + ' · ' : '') + 'Their team') + '</strong>' +
+      '<div class="replay-roster-mini-grid">' + csRenderReplayRosterRows(_csSnapshotSideRows(snapshot, 'opponent'), compact !== false) + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function csRenderReplayLogTurnZero(turnLog) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var first = rows[0] || {};
+  if (!first.pre) return '';
+  return '<div class="replay-turn-zero">' +
+    '<div class="replay-turn-main"><strong>Turn 0 — Starting State</strong><span>Before any moves: leads, bench, HP, stats, items, abilities, and known moves.</span></div>' +
+    csRenderReplayLogSnapshot(first.pre, 'Turn 0', false) +
+  '</div>';
+}
+
 function _csResolveSnapshotKey(pre, side, name) {
   if (!pre || !name) return name;
   var groups = [];
@@ -2692,7 +2754,7 @@ function csRenderTurnLogRows(turnLog, opts) {
   var audit = (opts && (opts.playerKey || opts.oppKey || opts.teamLookup || opts.oppLookup)) && typeof csBuildDecisionAudit === 'function'
     ? csBuildDecisionAudit(rows, opts)
     : null;
-  return '<div class="replay-turn-log">' + rows.map(function(t) {
+  return '<div class="replay-turn-log">' + csRenderReplayLogTurnZero(rows) + rows.map(function(t) {
     var score = t && t.post && typeof t.post.position_score === 'number' ? t.post.position_score : (t.positionScore || 0.5);
     var delta = t && t.delta && typeof t.delta.position_score === 'number' ? t.delta.position_score : 0;
     var actions = [];
@@ -2707,6 +2769,7 @@ function csRenderTurnLogRows(turnLog, opts) {
       '<div class="replay-turn-main"><strong>T' + _escapeHtml(t && t.turn) + '</strong><span>' + _escapeHtml(actions.join(' | ') || t.action || '-') + '</span></div>' +
       '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
       csRenderDecisionAuditChip(turnAudit) +
+      csRenderReplayLogSnapshot(t && t.post, 'After T' + (t && t.turn), true) +
       csRenderHpBars(t) +
       (inCoach ? '<pre class="replay-turn-coach">' + _escapeHtml(inCoach) + '</pre>' : '') +
     '</div>';

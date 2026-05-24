@@ -1311,6 +1311,49 @@ function _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench) {
   return out;
 }
 
+function _statsLabel(stats) {
+  stats = stats || {};
+  return ['hp','atk','def','spa','spd','spe'].map(k => Number(stats[k] || 0)).join('/');
+}
+
+function _battleRosterSnapshot(active, bench, roster, side) {
+  const activeSet = new Set(active || []);
+  const benchSet = new Set(bench || []);
+  const rows = [];
+  for (const mon of (roster || [])) {
+    if (!mon) continue;
+    const hpPct = Math.round(_hpPct(mon) * 100);
+    const status = (!mon.alive || mon.hp <= 0) ? 'fainted' : (activeSet.has(mon) ? 'active' : 'bench');
+    const zone = status === 'active' ? 'active' : (status === 'bench' && benchSet.has(mon) ? 'bench' : status);
+    const activeIdx = (active || []).indexOf(mon);
+    const benchIdx = (bench || []).indexOf(mon);
+    const idx = activeIdx >= 0 ? activeIdx : (benchIdx >= 0 ? benchIdx : rows.length);
+    rows.push({
+      key: _snapshotMonKey(side, zone, idx, mon),
+      side,
+      status,
+      displayName: mon.displayName || mon.name || 'Unknown',
+      species: mon.name || mon.displayName || 'Unknown',
+      hp: hpPct,
+      hpLabel: hpPct + '%',
+      level: mon.level || 50,
+      item: mon.item || '',
+      ability: mon.ability || '',
+      moves: Array.isArray(mon.moves) ? mon.moves.slice() : [],
+      baseStatsLabel: _statsLabel(mon._base),
+      calculatedStats: _statsLabel({
+        hp: mon.maxHp,
+        atk: mon.atk,
+        def: mon.def,
+        spa: mon.spa,
+        spd: mon.spd,
+        spe: mon.spe
+      })
+    });
+  }
+  return rows;
+}
+
 function _speedOrderSnapshot(playerActive, oppActive, field, useKeys) {
   return (playerActive || []).concat(oppActive || [])
     .filter(m => m && m.alive)
@@ -1404,7 +1447,7 @@ function positionScore(state) {
   return Math.round(_clamp01(score) * 1000) / 1000;
 }
 
-function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, includeLegal) {
+function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, includeLegal, playerRoster, oppRoster) {
   const state = _buildPositionState(playerActive, playerBench, oppActive, oppBench, field);
   return {
     active: { player: state.player.active, opponent: state.opponent.active },
@@ -1412,6 +1455,10 @@ function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field
     active_keys: { player: state.player.active_keys, opponent: state.opponent.active_keys },
     bench_keys: { player: state.player.bench_keys, opponent: state.opponent.bench_keys },
     hp_pct: _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench),
+    roster: {
+      player: _battleRosterSnapshot(playerActive, playerBench, playerRoster || playerActive.concat(playerBench), 'player'),
+      opponent: _battleRosterSnapshot(oppActive, oppBench, oppRoster || oppActive.concat(oppBench), 'opponent')
+    },
     status: state.status,
     field: state.field,
     speed_control: state.speed_control,
@@ -2845,7 +2892,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       activePair: playerActive.concat(oppActive).filter(Boolean).map(m => m.name),
       action: actions.map(a => (a.attacker ? a.attacker.name : '?') + ':' + (a.move || '?')).join(' | '),
       positionScore: 0,
-      pre: _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, true),
+      pre: _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, true, _orderedPlayer, _orderedOpp),
       actions: _actionSummary(actions),
       events: [],
       post: null,
@@ -3081,14 +3128,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (field.clockPlayer <= 0 || field.clockOpp <= 0) {
       log.push(`[TIMER] Clock expired at turn ${turn}. Resolving via tiebreaker.`);
       _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
-      _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false);
+      _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false, _orderedPlayer, _orderedOpp);
       _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
       _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
       turnLog.push(_turnEntry);
       break;
     }
     _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
-    _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false);
+    _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false, _orderedPlayer, _orderedOpp);
     _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
     _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
     turnLog.push(_turnEntry);
