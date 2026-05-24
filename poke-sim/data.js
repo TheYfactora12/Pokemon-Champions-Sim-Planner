@@ -1651,7 +1651,9 @@ const TEAMS = {
     },
     "legality_status": "legal",
     "legality_notes": "",
-    "assumption_register": [],
+    "assumption_register": [
+      "2026-05-24 audit: Sinistcha item corrected to Kouba Berry from the public P08QQ5NU9C rental mirror after a repo transcription error duplicated Sitrus Berry."
+    ],
     "members": [
       {
         "name": "Charizard",
@@ -2161,7 +2163,7 @@ const TEAMS = {
       },
       {
         "name": "Sinistcha",
-        "item": "Sitrus Berry",
+        "item": "Kouba Berry",
         "ability": "Hospitality",
         "nature": "Bold",
         "evs": {
