@@ -104,6 +104,8 @@ T('T5a-1 turnLog is populated after simulateBattle', () => {
   truthy(Array.isArray(battleA.turnLog), 'turnLog array missing');
   truthy(battleA.turnLog.length > 0, 'turnLog empty');
   truthy(battleA.turnLog[0].pre && battleA.turnLog[0].post, 'pre/post state missing');
+  truthy(Array.isArray(battleA.turnLog[0].pre.roster.player), 'player roster snapshot missing');
+  truthy(Array.isArray(battleA.turnLog[0].pre.roster.opponent), 'opponent roster snapshot missing');
   const payload = ctx.ChampionsSim.internal.buildAnalysisPayload('player', 'mega_altaria', 1, {
     wins: 1, losses: 0, draws: 0, avgTurns: 1, avgTrTurns: 0, allLogs: [battleA]
   });
@@ -177,6 +179,45 @@ T('T5b-4 swing turn is flagged on known fixture', () => {
 T('T5c-1 Replay Log v2 renders turn rows', () => {
   const html = ctx.csRenderTurnLogRows(battleA.turnLog);
   truthy(html.includes('replay-turn-row'), 'turn rows missing');
+});
+
+T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
+  const html = ctx.csRenderTurnLogRows([{
+    turn: 1,
+    pre: {
+      roster: {
+        player: [
+          { displayName: 'Kangaskhan', species: 'Kangaskhan', status: 'active', hp: 100, hpLabel: '100%', moves: ['Fake Out'], baseStatsLabel: '105/95/80/40/80/90' },
+          { displayName: 'Milotic', species: 'Milotic', status: 'bench', hp: 100, hpLabel: '100%', moves: ['Recover'] }
+        ],
+        opponent: [
+          { displayName: 'Tyranitar', species: 'Tyranitar', status: 'active', hp: 100, hpLabel: '100%', moves: ['Rock Slide'] }
+        ]
+      }
+    },
+    post: {
+      roster: {
+        player: [
+          { displayName: 'Kangaskhan', species: 'Kangaskhan', status: 'active', hp: 70, hpLabel: '70%', moves: ['Fake Out'] },
+          { displayName: 'Milotic', species: 'Milotic', status: 'bench', hp: 100, hpLabel: '100%', moves: ['Recover'] }
+        ],
+        opponent: [
+          { displayName: 'Tyranitar', species: 'Tyranitar', status: 'fainted', hp: 0, hpLabel: '0%', faintTurn: 1, moves: ['Rock Slide'] }
+        ]
+      },
+      position_score: 0.6
+    },
+    actions: { player: [{ actor: 'Kangaskhan', move: 'Fake Out', target: 'Tyranitar' }], opponent: [] },
+    delta: { position_score: 0.1 }
+  }]);
+  truthy(html.includes('Turn 0 — Starting State'), 'Turn 0 block missing');
+  truthy(html.includes('Turn 0 · Your team'), 'your Turn 0 board missing');
+  truthy(html.includes('Turn 0 · Their team'), 'their Turn 0 board missing');
+  truthy(html.includes('After T1 · Your team'), 'your per-turn board missing');
+  truthy(html.includes('After T1 · Their team'), 'their per-turn board missing');
+  truthy(html.includes('Tyranitar'), 'opponent mon missing');
+  truthy(html.includes('fainted'), 'fainted status missing');
+  truthy(html.includes('0%'), 'zero HP missing');
 });
 
 T('T5c-2 swing turn row is highlighted', () => {
