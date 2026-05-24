@@ -787,11 +787,37 @@ document.getElementById('swap-teams-btn')?.addEventListener('click', function() 
 // (tournament placement teams with archetype-default spreads).
 var LADDER_MODE = false;
 
+function getTeamLegalityVerdict(teamKey, team) {
+  team = team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null);
+  var fallback = {
+    valid: !!team && (team.legality_status === 'legal' || team.legality_status === 'legal_inferred'),
+    inferred: !!team && team.legality_status === 'legal_inferred',
+    errors: [],
+    warnings: [],
+    label: team && team.legality_status === 'legal_inferred' ? 'Legal (inferred)' : 'Legal'
+  };
+  if (!team || typeof validateTeam !== 'function') return fallback;
+  var verdict = validateTeam(team, 'vgc') || {};
+  var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
+  var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
+  var valid = errors.length === 0;
+  return {
+    valid: valid,
+    inferred: team.legality_status === 'legal_inferred',
+    errors: errors,
+    warnings: warnings,
+    label: valid
+      ? (team.legality_status === 'legal_inferred' ? 'Legal (inferred)' : 'Legal')
+      : 'Not legal'
+  };
+}
+
 function isLadderLegal(teamKey) {
   var t = (typeof TEAMS !== 'undefined') && TEAMS[teamKey];
   if (!t) return false;
   if (t.format !== 'champions') return false;
-  return t.legality_status === 'legal' || t.legality_status === 'legal_inferred';
+  return getTeamLegalityVerdict(teamKey, t).valid
+    && (t.legality_status === 'legal' || t.legality_status === 'legal_inferred');
 }
 
 function _gateOneSelect(selId) {
@@ -808,11 +834,12 @@ function _gateOneSelect(selId) {
     opt.disabled = false;
     opt.textContent = opt.textContent.replace(/\s*[\u2705\u26A0\u274C].*$/,'').trim();
     if (team) {
-      var glyph = legal ? '\u2705' : (team.legality_status === 'illegal' ? '\u274C' : '\u26A0');
+      var verdict = getTeamLegalityVerdict(key, team);
+      var glyph = legal ? '\u2705' : (!verdict.valid || team.legality_status === 'illegal' ? '\u274C' : '\u26A0');
       // T9h: distinguish inferred from manually-verified legal
-      var legalLabel = (team.legality_status === 'legal_inferred') ? 'Legal (inferred)' : 'Legal';
+      var legalLabel = verdict.label || ((team.legality_status === 'legal_inferred') ? 'Legal (inferred)' : 'Legal');
       opt.textContent = opt.textContent + '  ' + glyph + ' ' +
-        (legal ? legalLabel : (team.legality_status === 'illegal' ? 'Illegal' : (team.format || '?').toUpperCase()));
+        (legal ? legalLabel : (!verdict.valid ? 'Not legal' : (team.legality_status === 'illegal' ? 'Illegal' : (team.format || '?').toUpperCase())));
     }
     if (LADDER_MODE && team && !legal) {
       opt.hidden = true;
@@ -1204,6 +1231,12 @@ function renderTeamsGrid() {
     if (!teamMatchesFilter(key, team, TEAMS_FILTER)) continue;
     const isPlayer = key === 'player';
     const compactTeamsPicker = shouldUseCompactTeamsPicker();
+    const legalityVerdict = getTeamLegalityVerdict(key, team);
+    const legalityNote = !legalityVerdict.valid
+      ? '<div class="team-legality-note"><strong>Not legal for current sim rules</strong><span>' +
+        _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'Unknown legality issue') +
+        '</span><small>Team remains visible for review/testing, but results should be treated as untrusted until the source data is fixed.</small></div>'
+      : '';
     const card = document.createElement('div');
     card.className = 'team-full-card';
     card.innerHTML = `
@@ -1216,6 +1249,7 @@ function renderTeamsGrid() {
           <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
           ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
             var st = team.legality_status; var fmt = team.format;
+            if (!legalityVerdict.valid) return '<span class="badge-illegal" title="' + _escapeHtml(legalityVerdict.errors.join('; ')) + '">\u274C NOT LEGAL</span>';
             if (st === 'legal' && fmt === 'champions') return '<span class="badge-legal">\u2705 LEGAL</span>';
             if (st === 'legal_inferred' && fmt === 'champions') return '<span class="badge-warn" title="Tournament-placement team; EVs are archetype defaults (Open Team Lists redact EVs). Ladder-legal in Ladder Mode.">\u26A0 LEGAL (inferred)</span>';
             if (st === 'illegal') return '<span class="badge-illegal">\u274C ILLEGAL</span>';
@@ -1232,6 +1266,7 @@ function renderTeamsGrid() {
           ${team.source === 'custom' ? `<button class="delete-card-btn" data-team="${key}" title="Delete this custom team"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>` : ''}
         </div>
       </div>
+      ${legalityNote}
       ${buildBringPickerHtml(key, { compact: compactTeamsPicker })}`;
     grid.appendChild(card);
   }
@@ -1686,6 +1721,51 @@ function renderEditorRoster() {
   });
 }
 
+function buildSetEditorMoveLegalityWarnings(member) {
+  var api = ChampionsSim && ChampionsSim.moveLegality;
+  if (!api || typeof api.validateMovesForSet !== 'function') {
+    return [{
+      severity: 'unchecked',
+      text: 'Move legality unchecked: generated Pokemon Showdown source data is not loaded.'
+    }];
+  }
+  var checks = api.validateMovesForSet(member || {});
+  if (!checks.length) return [];
+  return checks.filter(function(row) {
+    return !row.legal || row.reason === 'source_unavailable' || row.reason === 'unknown_species';
+  }).map(function(row) {
+    var severity = row.reason === 'source_unavailable' || row.reason === 'unknown_species' ? 'unchecked' : 'warning';
+    return {
+      severity: severity,
+      text: (row.moveName || 'Unknown move') + ' on ' + (row.canonicalSpeciesKey || member.name || 'unknown species') + ': ' + (row.reason || 'unchecked') + '. Source: ' + (row.source || 'unavailable') + ' ' + (row.sourceVersion || '') + '. ' + (row.notes || '')
+    };
+  });
+}
+
+function renderSetEditorMoveLegalityHtml(member) {
+  var warnings = buildSetEditorMoveLegalityWarnings(member);
+  if (!warnings.length) {
+    return '<div class="editor-legality-ok">Move legality checked against Pokemon Showdown species/form learnsets.</div>';
+  }
+  return '<div class="editor-legality-warnings">' + warnings.map(function(row) {
+    return '<div class="editor-legality-warning ' + _escapeHtml(row.severity) + '">' + _escapeHtml(row.text) + '</div>';
+  }).join('') + '</div>';
+}
+
+function currentEditorMemberForLegality(baseMember) {
+  var moves = [0,1,2,3].map(function(i) {
+    var el = document.getElementById('ed-mv-' + i);
+    return el ? (el.value || '').trim() : '';
+  }).filter(Boolean);
+  return Object.assign({}, baseMember || {}, { moves: moves });
+}
+
+function refreshEditorMoveLegality(baseMember) {
+  var host = document.getElementById('editor-move-legality');
+  if (!host) return;
+  host.innerHTML = renderSetEditorMoveLegalityHtml(currentEditorMemberForLegality(baseMember));
+}
+
 function openEditorForm(idx) {
   editingIdx = idx;
   const m = TEAMS.player.members[idx];
@@ -1705,6 +1785,7 @@ function openEditorForm(idx) {
     </div>
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">Moves</label>
     <div class="moves-2col">${(m.moves||[]).map((mv,i)=>`<input class="form-input" id="ed-mv-${i}" value="${_escapeHtml(mv)}"/>`).join('')}</div></div>
+    <div id="editor-move-legality">${renderSetEditorMoveLegalityHtml(m)}</div>
     ${renderStatPanelHtml(m)}
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">EVs (max 510 total)</label>
     <div class="ev-6col">${evsHtml}</div></div>
@@ -1718,6 +1799,10 @@ function openEditorForm(idx) {
     <p style="font-size:10px;color:var(--text-m);margin-top:6px">Changes apply to all future simulations immediately.</p>`;
   document.getElementById('save-edits').addEventListener('click', saveEdits);
   document.getElementById('export-this-mon').addEventListener('click', () => openExportModal(currentPlayerKey));
+  [0,1,2,3].forEach(function(i) {
+    var el = document.getElementById('ed-mv-' + i);
+    if (el) el.addEventListener('input', function() { refreshEditorMoveLegality(m); });
+  });
 }
 
 function saveEdits() {
@@ -2704,6 +2789,86 @@ function csReplayCoachJoin(list, fallback) {
   return list.join(' + ');
 }
 
+function csReplayCoachHpClass(row) {
+  var status = String((row && row.status) || '').toLowerCase();
+  var hp = row && row.hp;
+  if (status === 'fainted' || hp === 0) return 'fainted';
+  if (status === 'bench') return 'bench';
+  return 'active';
+}
+
+function csRenderReplayRosterMon(row, compact) {
+  row = row || {};
+  var status = String(row.status || 'bench').toLowerCase();
+  var hp = row.hp == null ? null : Math.max(0, Math.min(100, Number(row.hp) || 0));
+  var hpLabel = row.hpLabel || (hp == null ? 'unknown' : hp + '%');
+  var hpClass = csReplayCoachHpClass(row);
+  var moves = (row.moves || []).join(', ');
+  var legality = (row.moveLegality || []).filter(function(item) {
+    return item && item.move && item.move !== 'unknown';
+  }).map(function(item) {
+    var cls = item.legal ? 'low' : (item.reason === 'source_unavailable' || item.reason === 'unknown_species' ? 'medium' : 'high');
+    return '<span class="replay-coach-tag ' + cls + '">' + _escapeHtml(item.move || 'unknown') + ': ' + _escapeHtml(item.legal ? 'legal' : (item.reason || 'unchecked')) + '</span>';
+  }).join('');
+  var warnings = (row.parserWarnings || []).map(function(w) {
+    return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
+  }).join('');
+  return '<div class="replay-roster-mon ' + _escapeHtml(status) + '">' +
+    '<div class="replay-roster-mon-head">' +
+      '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
+      '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
+    '</div>' +
+    '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
+    '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(hpLabel) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
+    '<div class="replay-roster-meta"><b>Species/form:</b> ' + _escapeHtml(row.species || 'unknown') + ' · <b>Gender:</b> ' + _escapeHtml(row.gender || 'unknown') + ' · <b>Level:</b> ' + _escapeHtml(String(row.level || 'unknown')) + '</div>' +
+    (compact ? '' : '<div class="replay-roster-meta"><b>Item:</b> ' + _escapeHtml(row.item || 'unknown') + ' · <b>Ability:</b> ' + _escapeHtml(row.ability || 'unknown') + '</div>') +
+    (compact ? '' : '<div class="replay-roster-meta"><b>Base stats:</b> ' + _escapeHtml(row.baseStatsLabel || 'unknown') + ' · <b>Calculated L50:</b> ' + _escapeHtml(row.calculatedStats || 'unknown') + '</div>') +
+    (compact ? '' : '<div class="replay-roster-meta"><b>Known moves:</b> ' + _escapeHtml(moves || 'unknown') + '</div>') +
+    (legality && !compact ? '<div class="replay-coach-tags">' + legality + '</div>' : '') +
+    (warnings && !compact ? '<div class="replay-coach-tags">' + warnings + '</div>' : '') +
+  '</div>';
+}
+
+function csRenderReplayRosterRows(roster, compact) {
+  var rows = Array.isArray(roster) ? roster : [];
+  if (!rows.length) return '<div class="replay-coach-list-row"><strong>No roster state found</strong>Replay data did not expose this side.</div>';
+  return rows.map(function(row) { return csRenderReplayRosterMon(row, compact); }).join('');
+}
+
+function csRenderReplayTurnRoster(rosterState, selectedSide) {
+  if (!rosterState) return '';
+  var order = [selectedSide || 'p1', (selectedSide || 'p1') === 'p1' ? 'p2' : 'p1'];
+  return '<div class="replay-turn-roster">' + order.map(function(side) {
+    return '<div class="replay-turn-roster-side">' +
+      '<strong>' + _escapeHtml(side === (selectedSide || 'p1') ? 'Your board' : 'Opponent board') + '</strong>' +
+      '<div class="replay-roster-mini-grid">' + csRenderReplayRosterRows(rosterState[side] || [], true) + '</div>' +
+    '</div>';
+  }).join('') + '</div>';
+}
+
+function csRenderReplayTurn0(turn0, selectedSide) {
+  if (!turn0 || !turn0.sides) return '';
+  var order = [selectedSide || 'p1', (selectedSide || 'p1') === 'p1' ? 'p2' : 'p1'];
+  var sideHtml = order.map(function(side) {
+    var row = turn0.sides[side] || {};
+    var roster = csRenderReplayRosterRows(row.roster || [], false);
+    return '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">' + _escapeHtml((row.player || side) + ' · Turn 0') + '</h3>' +
+      '<div class="replay-coach-metric"><strong>Team preview</strong><span>' + _escapeHtml(csReplayCoachJoin(row.teamPreview, 'Unknown')) + '</span></div>' +
+      '<div class="replay-roster-grid">' + roster + '</div>' +
+    '</div>';
+  }).join('');
+  var parserWarnings = (turn0.parserWarnings || []).map(function(w) {
+    return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
+  }).join('');
+  return '<div class="replay-coach-card replay-turn0-card">' +
+    '<div class="replay-coach-card-head"><h3 class="replay-coach-h3">Turn 0 — Starting State</h3><span class="replay-coach-tag low">audit snapshot</span></div>' +
+    '<p class="replay-coach-turn-read">Starting snapshot before Turn 1. Unknown fields stay unknown; this does not change battle simulation results.</p>' +
+    (parserWarnings ? '<div class="replay-coach-tags">' + parserWarnings + '</div>' : '') +
+    '<div class="replay-coach-turn0-grid">' + sideHtml + '</div>' +
+  '</div>';
+}
+
 function csReplayCoachRenderAnalysis(analysis) {
   var host = document.getElementById('replay-coach-results');
   if (!host || !analysis) return;
@@ -2715,6 +2880,7 @@ function csReplayCoachRenderAnalysis(analysis) {
   var simComparison = learning && learning.simComparison ? learning.simComparison : null;
   var simFeedback = learning && learning.simFeedback ? learning.simFeedback : null;
   var rawPreview = review.rawLogPreview || {};
+  var turn0 = parsed.turn0 || null;
   var bringConfidence = summary.selectedFourConfidence || {};
   var rosterEvidenceLabel = bringConfidence.fullRosterKnown
     ? 'Full six shown'
@@ -2739,9 +2905,11 @@ function csReplayCoachRenderAnalysis(analysis) {
     var tags = (turn.tags || []).map(function(tag) {
       return '<span class="replay-coach-tag medium">' + _escapeHtml(tag) + '</span>';
     }).join('');
+    var rosterState = csRenderReplayTurnRoster(turn.rosterState, parsed.selectedSide || 'p1');
     return '<div class="replay-coach-turn ' + _escapeHtml(csReplayCoachSeverityClass(turn.severity)) + '">' +
       '<div class="replay-coach-turn-title"><span>Turn ' + _escapeHtml(String(turn.turn)) + '</span><span class="replay-coach-tag ' + _escapeHtml(csReplayCoachSeverityClass(turn.severity)) + '">' + _escapeHtml(turn.severity || 'neutral') + ' · ' + _escapeHtml(turn.confidence || 'medium') + '</span></div>' +
       '<div class="replay-coach-turn-read"><strong>' + _escapeHtml(turn.stateShift || 'Neutral exchange') + '</strong>' + _escapeHtml(turn.coachingRead || '') + '</div>' +
+      rosterState +
       (turn.betterLine ? '<div class="replay-coach-better-line">' + _escapeHtml(turn.betterLine) + '</div>' : '') +
       (tags ? '<div class="replay-coach-tags">' + tags + '</div>' : '') +
       '<details class="replay-coach-events"><summary>' + _escapeHtml(String(turn.rawEventCount || events.length)) + ' parsed events</summary><div class="replay-coach-turn-body">' + (events.length ? events.join('<br/>') : 'No parsed coaching events.') + '</div></details>' +
@@ -2858,6 +3026,7 @@ function csReplayCoachRenderAnalysis(analysis) {
         (bringConfidence.limitation ? '<div class="replay-coach-metric"><strong>Limit</strong><span>' + _escapeHtml(bringConfidence.limitation) + '</span></div>' : '') +
       '</div>' +
     '</div>' +
+    csRenderReplayTurn0(turn0, parsed.selectedSide || 'p1') +
     (leadLogic ? '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Lead Logic Read</h3>' +
       '<div class="replay-coach-summary-grid">' +

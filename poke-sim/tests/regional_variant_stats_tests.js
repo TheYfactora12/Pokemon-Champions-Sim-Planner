@@ -34,11 +34,13 @@ vm.runInContext(dataSource, ctx, { filename: 'data.js' });
 vm.runInContext(engineSource, ctx, { filename: 'engine.js' });
 vm.runInContext([
   'this.BASE_STATS = BASE_STATS;',
+  'this.POKEMON_TYPES_DB = POKEMON_TYPES_DB;',
   'this.TEAMS = TEAMS;',
-  'this.Pokemon = Pokemon;'
+  'this.Pokemon = Pokemon;',
+  'this.validateTeam = validateTeam;'
 ].join('\n'), ctx);
 
-const { BASE_STATS, TEAMS, Pokemon } = ctx;
+const { BASE_STATS, POKEMON_TYPES_DB, TEAMS, Pokemon, validateTeam } = ctx;
 
 let pass = 0;
 let fail = 0;
@@ -130,6 +132,40 @@ T('4. Corrected regional-form stats flow into derived battle stats', () => {
   eq(bear.baseDef, 140, 'Ursaluna-Bloodmoon def');
   eq(bear.baseSpd, 85, 'Ursaluna-Bloodmoon spd');
   eq(bear.baseSpe, 72, 'Ursaluna-Bloodmoon spe');
+});
+
+T('5. Arcanine-Hisui is distinct from normal Arcanine in stats and typing', () => {
+  const normal = BASE_STATS.Arcanine;
+  const hisui = BASE_STATS['Arcanine-Hisui'];
+  eq(hisui.hp, 95, 'Arcanine-Hisui hp');
+  eq(hisui.atk, 115, 'Arcanine-Hisui atk');
+  eq(hisui.spa, 95, 'Arcanine-Hisui spa');
+  eq(hisui.spe, 90, 'Arcanine-Hisui spe');
+  arrEq(hisui.types, ['Fire', 'Rock'], 'BASE_STATS Arcanine-Hisui types');
+  arrEq(POKEMON_TYPES_DB['Arcanine-Hisui'], ['Fire', 'Rock'], 'POKEMON_TYPES_DB Arcanine-Hisui types');
+  if (JSON.stringify(normal) === JSON.stringify(hisui)) throw new Error('Arcanine-Hisui must not share normal Arcanine stats');
+});
+
+T('6. Supported Hisui forms have concrete BASE_STATS instead of 80-all fallback', () => {
+  [
+    'Growlithe-Hisui', 'Arcanine-Hisui', 'Typhlosion-Hisui', 'Samurott-Hisui',
+    'Decidueye-Hisui', 'Zorua-Hisui', 'Zoroark-Hisui', 'Braviary-Hisui',
+    'Sliggoo-Hisui', 'Goodra-Hisui', 'Avalugg-Hisui', 'Lilligant-Hisui',
+    'Voltorb-Hisui', 'Electrode-Hisui', 'Qwilfish-Hisui', 'Sneasel-Hisui'
+  ].forEach((key) => {
+    const s = BASE_STATS[key];
+    if (!s) throw new Error(key + ' missing BASE_STATS');
+    const line = [s.hp, s.atk, s.def, s.spa, s.spd, s.spe].join('/');
+    if (line === '80/80/80/80/80/80') throw new Error(key + ' still uses placeholder fallback stats');
+  });
+});
+
+T('7. Mega Altaria shipped team no longer has invalid Typhlosion-Hisui SP total', () => {
+  const typh = TEAMS.mega_altaria.members.find((m) => m.name === 'Typhlosion-Hisui');
+  const total = Object.values(typh.evs || {}).reduce((sum, value) => sum + value, 0);
+  eq(total, 66, 'Typhlosion-Hisui SP total');
+  const validation = validateTeam(TEAMS.mega_altaria, 'vgc');
+  if (!validation.valid) throw new Error(validation.errors.join('; '));
 });
 
 console.log(`\nregional variant stat tests: ${pass} pass, ${fail} fail\n`);
