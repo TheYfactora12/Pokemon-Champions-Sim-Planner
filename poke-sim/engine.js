@@ -418,25 +418,25 @@ function applyWeatherAbility(mon, field, log) {
   if (mon.ability === 'Drought') {
     field.weather = 'sun';
     field.weatherTurns = 5;
-    if (log) log.push(`${mon.name} summoned harsh sunlight!`);
+    if (log) log.push(`${mon.name}'s Drought summoned harsh sunlight!`);
     return true;
   }
   if (mon.ability === 'Drizzle') {
     field.weather = 'rain';
     field.weatherTurns = 5;
-    if (log) log.push(`${mon.name} summoned rain!`);
+    if (log) log.push(`${mon.name}'s Drizzle summoned rain!`);
     return true;
   }
   if (mon.ability === 'Sand Stream') {
     field.weather = 'sand';
     field.weatherTurns = 5;
-    if (log) log.push(`${mon.name} summoned a sandstorm!`);
+    if (log) log.push(`${mon.name}'s Sand Stream summoned a sandstorm!`);
     return true;
   }
   if (mon.ability === 'Snow Warning') {
     field.weather = 'snow';
     field.weatherTurns = 5;
-    if (log) log.push(`${mon.name} summoned snow!`);
+    if (log) log.push(`${mon.name}'s Snow Warning summoned snow!`);
     return true;
   }
   return false;
@@ -1698,11 +1698,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   function applyEntryAbility(mon, side, field, log) {
     if (mon.ability === 'Intimidate') {
       const targets = side === 'player' ? oppActive : playerActive;
+      log.push(`${mon.name}'s Intimidate activated!`);
       for (const t of targets) {
-        if (t.alive && t.ability !== 'Inner Focus' && t.ability !== 'Own Tempo' && t.ability !== 'Oblivious') {
-          t.statBoosts.atk = Math.max(-6, t.statBoosts.atk - 1);
-          log.push(`${mon.name}'s Intimidate lowered ${t.name}'s Attack!`);
+        if (!t.alive) continue;
+        if (t.ability === 'Inner Focus' || t.ability === 'Own Tempo' || t.ability === 'Oblivious') {
+          log.push(`${t.name} ignored Intimidate!`);
+          continue;
         }
+        t.statBoosts.atk = Math.max(-6, t.statBoosts.atk - 1);
+        log.push(`${mon.name}'s Intimidate lowered ${t.name}'s Attack!`);
       }
     }
     applyWeatherAbility(mon, field, log);
@@ -1845,7 +1849,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         // Champions rule: Fake Out is only legal on the user's first turn out.
         // Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out_(move)
         if (move === 'Fake Out') {
-          if (attacker._fakeDone) continue; // illegal selection -- skip entirely
+          if (attacker._fakeDone || (attacker.turnsSinceEntry || 0) > 1) continue; // illegal selection -- skip entirely
           const target = liveEnemies[0];
           if (target) {
             const dmg = attacker.calcDamage(move, target, field, null, rng);
@@ -2310,7 +2314,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // a legal Fake Out is blocked by Protect, the _fakeDone flag is still set --
     // i.e. the user has spent its one Fake Out window for this stay on the field.
     if (move === 'Fake Out') {
-      if (attacker._fakeDone) {
+      if (attacker._fakeDone || (attacker.turnsSinceEntry || 0) > 1) {
         log.push(`${attacker.name} tried Fake Out -- but it failed! (only on first turn out)`);
         // Encore -> Struggle path: deal 1/4 max HP fixed damage to a live
         // enemy and recoil 1/4 max HP. Standard Struggle resolution.

@@ -194,5 +194,31 @@ T('5. Magic Bounce reflects targeted status moves back to the user', function() 
     'Magic Bounce holder should not be taunted');
 });
 
+T('6. Intimidate activation is visible in the battle log', function() {
+  const playerTeam = team([{
+    name: 'Incineroar',
+    item: '',
+    ability: 'Intimidate',
+    nature: 'Careful',
+    level: 50,
+    moves: ['Protect'],
+    evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 4 }
+  }]);
+  const oppTeam = team([{
+    name: 'Garchomp',
+    item: '',
+    ability: 'Rough Skin',
+    nature: 'Jolly',
+    level: 50,
+    moves: ['Protect'],
+    evs: { hp: 32, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 }
+  }]);
+  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [21, 22, 23, 24], maxTurns: 1 });
+  truthy(battle.log.some(line => String(line).includes("Incineroar's Intimidate activated!")),
+    'Intimidate activation log missing');
+  truthy(battle.log.some(line => String(line).includes("Incineroar's Intimidate lowered Garchomp's Attack!")),
+    'Intimidate stat-drop log missing');
+});
+
 console.log('\nability priority / targeting:', pass + ' pass, ' + fail + ' fail\n');
 process.exit(fail ? 1 : 0);
