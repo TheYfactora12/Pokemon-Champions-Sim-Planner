@@ -1824,8 +1824,8 @@ const TEAMS = {
         "url": "",
         "status": "assumed"
     },
-    "legality_status": "illegal",
-    "legality_notes": "Current stored roster is not Champions Reg M-A legal: Cresselia is banned, and Hatterene Life Orb, Dusclops Eviolite, and Ursaluna-Bloodmoon Assault Vest are outside the Champions item pool.",
+    "legality_status": "legal_inferred",
+    "legality_notes": "Community Trick Room shell repaired to Champions Reg M-A legality by replacing banned Cresselia with Farigiraf and swapping banned item-pool slots to legal alternatives while preserving the same slow-room identity.",
     "assumption_register": [
         "Spreads inferred from meta norms, not a pinned paste."
     ],
@@ -1874,7 +1874,7 @@ const TEAMS = {
       },
       {
         "name": "Hatterene",
-        "item": "Life Orb",
+        "item": "Fairy Feather",
         "ability": "Magic Bounce",
         "nature": "Quiet",
         "evs": {
@@ -1894,29 +1894,29 @@ const TEAMS = {
         "role": "TR Sweeper"
       },
       {
-        "name": "Cresselia",
-        "item": "Leftovers",
-        "ability": "Levitate",
-        "nature": "Sassy",
+        "name": "Farigiraf",
+        "item": "Safety Goggles",
+        "ability": "Armor Tail",
+        "nature": "Relaxed",
         "evs": {
           "hp": 32,
           "atk": 0,
           "def": 18,
-          "spa": 0,
-          "spd": 16,
+          "spa": 2,
+          "spd": 14,
           "spe": 0
         },
         "moves": [
           "Trick Room",
-          "Lunar Dance",
-          "Psychic",
-          "Helping Hand"
+          "Helping Hand",
+          "Hyper Voice",
+          "Psychic Noise"
         ],
-        "role": "TR + Revive"
+        "role": "TR Support"
       },
       {
         "name": "Dusclops",
-        "item": "Eviolite",
+        "item": "Colbur Berry",
         "ability": "Pressure",
         "nature": "Relaxed",
         "evs": {
@@ -1937,7 +1937,7 @@ const TEAMS = {
       },
       {
         "name": "Ursaluna-Bloodmoon",
-        "item": "Assault Vest",
+        "item": "Leftovers",
         "ability": "Mind's Eye",
         "nature": "Modest",
         "evs": {
@@ -2598,8 +2598,8 @@ const TEAMS = {
         "url": "",
         "status": "unproven"
     },
-    "legality_status": "illegal",
-    "legality_notes": "Current stored roster is not Champions Reg M-A legal: Milotic Life Orb and Garchomp Rocky Helmet are outside the Champions item pool.",
+    "legality_status": "legal_inferred",
+    "legality_notes": "Community veil shell repaired to Champions Reg M-A legality by replacing banned item-pool slots with legal alternatives while preserving the same snow/veil structure.",
     "assumption_register": [
         "Froslass Mega form verified via Game8 Items List.",
         "Mega activation consumes team's once-per-match Mega slot."
@@ -2670,7 +2670,7 @@ const TEAMS = {
       },
       {
         "name": "Milotic",
-        "item": "Life Orb",
+        "item": "Leftovers",
         "ability": "Competitive",
         "nature": "Modest",
         "evs": {
@@ -2712,7 +2712,7 @@ const TEAMS = {
       },
       {
         "name": "Garchomp",
-        "item": "Rocky Helmet",
+        "item": "Roseli Berry",
         "ability": "Rough Skin",
         "nature": "Jolly",
         "evs": {
@@ -4214,8 +4214,8 @@ const TEAMS = {
       "url": "https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/",
       "status": "derived"
     },
-    "legality_status": "illegal",
-    "legality_notes": "Current derived shell is not Champions Reg M-A legal: Arcanine Life Orb is outside the Champions item pool. Rebuild from a legal shipped catalog set before using in Ladder Mode.",
+    "legality_status": "legal_inferred",
+    "legality_notes": "Derived sample shell repaired to Champions Reg M-A legality by replacing the banned Arcanine Life Orb slot with a legal berry item while preserving the same sunroom structure.",
     "assumption_register": [
       "Roster was assembled from already-shipped legal sets to widen calibration coverage.",
       "This is a calibration shell, not a pinned public paste."
@@ -4307,7 +4307,7 @@ const TEAMS = {
       },
       {
         "name": "Arcanine",
-        "item": "Life Orb",
+        "item": "Roseli Berry",
         "ability": "Intimidate",
         "nature": "Adamant",
         "evs": {
@@ -4366,8 +4366,8 @@ const TEAMS = {
       "url": "https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/",
       "status": "derived"
     },
-    "legality_status": "illegal",
-    "legality_notes": "Current derived shell is not Champions Reg M-A legal: Gholdengo Choice Specs is outside the Champions item pool. Rebuild from a legal shipped catalog set before using in Ladder Mode.",
+    "legality_status": "legal_inferred",
+    "legality_notes": "Derived sample shell repaired to Champions Reg M-A legality by replacing the banned Gholdengo Choice Specs slot with a legal held item while preserving the same sand-offense role mix.",
     "assumption_register": [
       "Roster was assembled from already-shipped legal sets to widen calibration coverage.",
       "This is a calibration shell, not a pinned public paste."
@@ -4482,7 +4482,7 @@ const TEAMS = {
       },
       {
         "name": "Gholdengo",
-        "item": "Choice Specs",
+        "item": "Spell Tag",
         "ability": "Good as Gold",
         "nature": "Modest",
         "evs": {
@@ -4520,8 +4520,8 @@ const TEAMS = {
       "url": "https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/",
       "status": "derived"
     },
-    "legality_status": "illegal",
-    "legality_notes": "Current derived shell is not Champions Reg M-A legal: Ursaluna-Bloodmoon Assault Vest is outside the Champions item pool. Rebuild from a legal shipped catalog set before using in Ladder Mode.",
+    "legality_status": "legal_inferred",
+    "legality_notes": "Derived sample shell repaired to Champions Reg M-A legality by replacing the banned Ursaluna-Bloodmoon Assault Vest slot with a legal held item while preserving the same fullroom structure.",
     "assumption_register": [
       "Roster was assembled from already-shipped legal sets to widen calibration coverage.",
       "This is a calibration shell, not a pinned public paste."
@@ -4635,7 +4635,7 @@ const TEAMS = {
       },
       {
         "name": "Ursaluna-Bloodmoon",
-        "item": "Assault Vest",
+        "item": "Leftovers",
         "ability": "Mind's Eye",
         "nature": "Modest",
         "evs": {
@@ -4673,8 +4673,8 @@ const TEAMS = {
       "url": "https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/",
       "status": "derived"
     },
-    "legality_status": "illegal",
-    "legality_notes": "Current derived shell is not Champions Reg M-A legal: Milotic Life Orb is outside the Champions item pool. Rebuild from a legal shipped catalog set before using in Ladder Mode.",
+    "legality_status": "legal_inferred",
+    "legality_notes": "Derived sample shell repaired to Champions Reg M-A legality by replacing the banned Milotic Life Orb slot with a legal held item while preserving the same Zard X snow setup shell.",
     "assumption_register": [
       "Roster was assembled from already-shipped legal sets to widen calibration coverage.",
       "This is a calibration shell, not a pinned public paste."
@@ -4787,7 +4787,7 @@ const TEAMS = {
       },
       {
         "name": "Milotic",
-        "item": "Life Orb",
+        "item": "Leftovers",
         "ability": "Competitive",
         "nature": "Modest",
         "evs": {

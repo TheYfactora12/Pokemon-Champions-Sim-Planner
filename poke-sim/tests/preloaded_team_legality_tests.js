@@ -73,8 +73,19 @@ T('2. inferred Champions teams with SV-shaped spreads stay stat-aware at runtime
 });
 
 T('3. true Champions item-pool violations still remain hard errors', () => {
-  const verdict = validateTeam(TEAMS.fire_ice_fullroom, 'vgc');
-  truthy((verdict.errors || []).some(err => err.includes('Assault Vest')), 'expected actual item-pool violation to remain');
+  const verdict = validateTeam({
+    name: 'Invalid fixture',
+    format: 'champions',
+    members: [{
+      name: 'Milotic',
+      item: 'Life Orb',
+      ability: 'Competitive',
+      nature: 'Bold',
+      evs: { hp: 32, atk: 0, def: 10, spa: 23, spd: 0, spe: 1 },
+      moves: ['Scald', 'Protect', 'Recover', 'Ice Beam']
+    }]
+  }, 'vgc');
+  truthy((verdict.errors || []).some(err => err.includes('Life Orb')), 'expected actual item-pool violation to remain');
 });
 
 T('4. preloaded Champions legality tags match the validator', () => {
