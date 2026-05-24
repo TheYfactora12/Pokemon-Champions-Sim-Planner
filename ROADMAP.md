@@ -31,7 +31,7 @@
 | **#147** | Ko-fi account missing | @alfredocox | Create `ko-fi.com/alfredocox` before merging PR #146 |
 
 > ✅ **#87 CLOSED** — `ci.yml` live 2026-04-30 (commit `4f9579d`). Branch protection on `main` confirmed. Sprint 1 unblocked.
-> ✅ **#158 CLOSED** — Supabase confirmed live 2026-04-30: 8 tables, RLS enabled, 22 teams seeded, 210 team_members loaded.
+> ✅ **#158 CLOSED** — Supabase confirmed live. Current canonical seed alignment verified 2026-05-24: 8 tables, RLS enabled, 25 teams seeded, 150 canonical team_members loaded.
 
 ---
 
@@ -177,7 +177,7 @@
 | Frontend | Vanilla JS (ES2020+), HTML5, CSS3 — static PWA, no framework |
 | Offline | Service Worker — `champions-sim-v6-wire-storage-adapter` |
 | Persistence | localStorage (offline) + Supabase PostgreSQL (cloud, M8) |
-| Database | Supabase — 8 tables, RLS enabled, **22 teams / 210 team_members seeded** ✅ |
+| Database | Supabase — 8 tables, RLS enabled, **25 canonical teams / 150 canonical team_members seeded** ✅ |
 | Bundle | `pokemon-champion-2026.html` (710 KB, single-file artifact) |
 | CI/CD | GitHub Actions — CI ✅ + Bundle Freshness ✅ + Cache Bump ✅ (3 workflows active) |
 | Hosting | GitHub Pages (`alfredocox.github.io/Pokemon-Champions-Sim-Planner`) |
