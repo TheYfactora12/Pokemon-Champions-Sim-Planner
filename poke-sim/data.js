@@ -60,6 +60,8 @@ const BASE_STATS = {
   'Flutter Mane': { hp:55, atk:55, def:55, spa:135, spd:135, spe:135, types:['Ghost','Fairy'] },
   Hatterene:      { hp:57, atk:90, def:95, spa:136, spd:103, spe:29, types:['Psychic','Fairy'] },
   // New meta entries
+  Kangaskhan:      { hp:105, atk:95, def:80, spa:40, spd:80, spe:90, types:['Normal'] },
+  'Kangaskhan-Mega': { hp:105, atk:125, def:100, spa:60, spd:100, spe:100, types:['Normal'] },
   'Charizard-Mega-Y': { hp:78, atk:104, def:78, spa:159, spd:115, spe:100, types:['Fire','Flying'] },
   'Charizard-Mega-X': { hp:78, atk:130, def:111, spa:130, spd:85, spe:100, types:['Fire','Dragon'] },
   'Tyranitar-Mega': { hp:100, atk:164, def:150, spa:95, spd:120, spe:71, types:['Rock','Dark'] },
