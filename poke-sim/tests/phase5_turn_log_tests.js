@@ -220,8 +220,13 @@ T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
   truthy(html.includes('Their team · On field'), 'opponent top field label missing');
   truthy(html.includes('Your team · On field'), 'player bottom field label missing');
   truthy(html.includes('Bench / knocked out'), 'off-field zone missing');
-  truthy(html.includes('Play by play'), 'play-by-play section missing');
-  truthy(html.includes('Kangaskhan Fake Out -&gt; Tyranitar'), 'move play-by-play missing');
+  truthy(html.includes('Battle log'), 'battle-log section missing');
+  truthy(html.includes('Kangaskhan used Fake Out!'), 'Showdown-style move line missing');
+  truthy(html.includes('→ Tyranitar'), 'target arrow missing');
+  truthy(!html.includes('your move'), 'debug move label leaked');
+  truthy(!html.includes('their move'), 'debug opponent label leaked');
+  truthy(!html.includes('damage</span>'), 'debug damage label leaked');
+  truthy(!html.includes('field</span>'), 'debug field label leaked');
   truthy(html.includes('Tyranitar fainted!'), 'KO play-by-play missing');
   truthy(html.includes('Milotic was sent out!'), 'switch play-by-play missing');
   truthy(html.includes('Tyranitar'), 'opponent mon missing');
