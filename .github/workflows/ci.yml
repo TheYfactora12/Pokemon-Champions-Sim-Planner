@@ -108,6 +108,10 @@ jobs:
             export RUN_LIVE_DB=1
             echo "🔗 Live Supabase credentials configured for DB tests"
           else
+            unset SUPABASE_URL
+            unset SUPABASE_ANON_KEY
+            unset SUPABASE_KEY
+            unset RUN_LIVE_DB
             echo "⚠️  Live DB smoke disabled for this PR - DB tests will use mock/skip mode"
           fi
           
@@ -217,7 +221,11 @@ jobs:
               - 'poke-sim/data.js'
               - 'poke-sim/db/**'
               - 'poke-sim/supabase_adapter.js'
-              - 'poke-sim/tests/db_m*.js'
+              - 'poke-sim/tests/_db_helpers.js'
+              - 'poke-sim/tests/db_m2_seed_tests.js'
+              - 'poke-sim/tests/db_m3_init_tests.js'
+              - 'poke-sim/tests/db_m6_history_tests.js'
+              - 'poke-sim/tests/db_m10_meta_alignment_tests.js'
 
   # ----------------------------------------------------------------
   # 4. BATTLE AUDIT (GATED)
