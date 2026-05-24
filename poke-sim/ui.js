@@ -2505,18 +2505,64 @@ function _csSnapshotSideRows(snapshot, side) {
   }));
 }
 
-function csRenderReplayLogSnapshot(snapshot, title, compact) {
-  if (!snapshot) return '';
-  return '<div class="replay-turn-roster replay-turn-board">' +
-    '<div class="replay-turn-roster-side">' +
-      '<strong>' + _escapeHtml((title ? title + ' · ' : '') + 'Your team') + '</strong>' +
-      '<div class="replay-roster-mini-grid">' + csRenderReplayRosterRows(_csSnapshotSideRows(snapshot, 'player'), compact !== false) + '</div>' +
+function csRenderReplayStadiumMon(row) {
+  row = row || {};
+  var status = String(row.status || 'bench').toLowerCase();
+  var hp = row.hp == null ? null : Math.max(0, Math.min(100, Number(row.hp) || 0));
+  var hpClass = csReplayCoachHpClass(row);
+  var moves = (row.moves || []).slice(0, 4).join(' / ');
+  var meta = [];
+  if (row.item) meta.push(row.item);
+  if (row.ability) meta.push(row.ability);
+  return '<div class="replay-stadium-mon ' + _escapeHtml(status) + '">' +
+    '<div class="replay-roster-mon-head">' +
+      '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
+      '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
     '</div>' +
-    '<div class="replay-turn-roster-side">' +
-      '<strong>' + _escapeHtml((title ? title + ' · ' : '') + 'Their team') + '</strong>' +
-      '<div class="replay-roster-mini-grid">' + csRenderReplayRosterRows(_csSnapshotSideRows(snapshot, 'opponent'), compact !== false) + '</div>' +
+    '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
+    '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(row.hpLabel || (hp == null ? 'unknown' : hp + '%')) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
+    (meta.length ? '<div class="replay-roster-meta">' + _escapeHtml(meta.join(' · ')) + '</div>' : '') +
+    '<div class="replay-roster-meta"><b>Moves:</b> ' + _escapeHtml(moves || 'unknown') + '</div>' +
+  '</div>';
+}
+
+function csRenderReplayStadiumSide(rows, label) {
+  rows = Array.isArray(rows) ? rows : [];
+  var active = rows.filter(function(row) { return String((row && row.status) || '').toLowerCase() === 'active'; });
+  var offField = rows.filter(function(row) { return String((row && row.status) || '').toLowerCase() !== 'active'; });
+  return '<div class="replay-stadium-side">' +
+    '<strong class="replay-stadium-side-title">' + _escapeHtml(label) + '</strong>' +
+    '<div class="replay-stadium-zone on-field"><span>On field</span>' +
+      (active.length ? active.map(csRenderReplayStadiumMon).join('') : '<div class="replay-coach-list-row"><strong>No active Pokemon</strong>None currently on field.</div>') +
+    '</div>' +
+    '<div class="replay-stadium-zone off-field"><span>Bench / knocked out</span>' +
+      (offField.length ? offField.map(csRenderReplayStadiumMon).join('') : '<div class="replay-coach-list-row"><strong>No bench shown</strong>No off-field Pokemon in this snapshot.</div>') +
     '</div>' +
   '</div>';
+}
+
+function csRenderReplayStadium(rowsBySide, title, labels) {
+  rowsBySide = rowsBySide || {};
+  labels = labels || {};
+  return '<div class="replay-stadium">' +
+    (title ? '<div class="replay-stadium-title">' + _escapeHtml(title) + '</div>' : '') +
+    '<div class="replay-stadium-field">' +
+      csRenderReplayStadiumSide(rowsBySide.left || [], labels.left || 'Your team') +
+      '<div class="replay-stadium-vs">VS</div>' +
+      csRenderReplayStadiumSide(rowsBySide.right || [], labels.right || 'Their team') +
+    '</div>' +
+  '</div>';
+}
+
+function csRenderReplayLogSnapshot(snapshot, title, compact) {
+  if (!snapshot) return '';
+  return csRenderReplayStadium({
+    left: _csSnapshotSideRows(snapshot, 'player'),
+    right: _csSnapshotSideRows(snapshot, 'opponent')
+  }, title || '', {
+    left: 'Your team',
+    right: 'Their team'
+  });
 }
 
 function csRenderReplayLogTurnZero(turnLog) {
@@ -2526,6 +2572,36 @@ function csRenderReplayLogTurnZero(turnLog) {
   return '<div class="replay-turn-zero">' +
     '<div class="replay-turn-main"><strong>Turn 0 — Starting State</strong><span>Before any moves: leads, bench, HP, stats, items, abilities, and known moves.</span></div>' +
     csRenderReplayLogSnapshot(first.pre, 'Turn 0', false) +
+  '</div>';
+}
+
+function csRenderReplayPlayByPlay(turn) {
+  turn = turn || {};
+  var rows = [];
+  if (turn.actions) {
+    (turn.actions.player || []).forEach(function(action) {
+      if (!action) return;
+      rows.push({ kind: 'your move', text: [action.actor, action.move, action.target ? '-> ' + action.target : ''].filter(Boolean).join(' ') });
+    });
+    (turn.actions.opponent || []).forEach(function(action) {
+      if (!action) return;
+      rows.push({ kind: 'their move', text: [action.actor, action.move, action.target ? '-> ' + action.target : ''].filter(Boolean).join(' ') });
+    });
+  }
+  (turn.events || []).forEach(function(ev) {
+    if (!ev) return;
+    var text = ev.text || ev.message || '';
+    if (!text) return;
+    rows.push({ kind: ev.type || 'event', text: text });
+  });
+  if (!rows.length) return '';
+  return '<div class="replay-play-by-play"><strong>Play by play</strong>' +
+    rows.slice(0, 14).map(function(row) {
+      return '<div class="replay-play-row ' + _escapeHtml(String(row.kind || 'event').replace(/[^a-z0-9_-]+/gi, '-').toLowerCase()) + '">' +
+        '<span>' + _escapeHtml(row.kind || 'event') + '</span>' +
+        '<b>' + _escapeHtml(row.text || '') + '</b>' +
+      '</div>';
+    }).join('') +
   '</div>';
 }
 
@@ -2769,6 +2845,7 @@ function csRenderTurnLogRows(turnLog, opts) {
       '<div class="replay-turn-main"><strong>T' + _escapeHtml(t && t.turn) + '</strong><span>' + _escapeHtml(actions.join(' | ') || t.action || '-') + '</span></div>' +
       '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
       csRenderDecisionAuditChip(turnAudit) +
+      csRenderReplayPlayByPlay(t) +
       csRenderReplayLogSnapshot(t && t.post, 'After T' + (t && t.turn), true) +
       csRenderHpBars(t) +
       (inCoach ? '<pre class="replay-turn-coach">' + _escapeHtml(inCoach) + '</pre>' : '') +
@@ -2900,13 +2977,15 @@ function csRenderReplayRosterRows(roster, compact) {
 
 function csRenderReplayTurnRoster(rosterState, selectedSide) {
   if (!rosterState) return '';
-  var order = [selectedSide || 'p1', (selectedSide || 'p1') === 'p1' ? 'p2' : 'p1'];
-  return '<div class="replay-turn-roster">' + order.map(function(side) {
-    return '<div class="replay-turn-roster-side">' +
-      '<strong>' + _escapeHtml(side === (selectedSide || 'p1') ? 'Your team after this turn' : 'Their team after this turn') + '</strong>' +
-      '<div class="replay-roster-mini-grid">' + csRenderReplayRosterRows(rosterState[side] || [], true) + '</div>' +
-    '</div>';
-  }).join('') + '</div>';
+  var selected = selectedSide || 'p1';
+  var other = selected === 'p1' ? 'p2' : 'p1';
+  return csRenderReplayStadium({
+    left: rosterState[selected] || [],
+    right: rosterState[other] || []
+  }, 'After this turn', {
+    left: 'Your team after this turn',
+    right: 'Their team after this turn'
+  });
 }
 
 function csRenderReplayTurn0(turn0, selectedSide) {
