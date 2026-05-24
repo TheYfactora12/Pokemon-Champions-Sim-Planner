@@ -80,7 +80,7 @@ var CHAMPIONS_HOME_TRANSFER_MEGAS = new Set([
 // Keeps regional forms (Alola/Galar/Hisui/Paldea) legal where the base is legal,
 // but banned sub-legendary forms (e.g. Urshifu-Rapid-Strike) still match their base.
 function _stripForm(name) {
-  return name.replace(
+  return String(name || '').replace(
     /-(Mega(?:-[XY])?|Alola|Galar|Hisui|Paldea(?:-[A-Za-z]+)?|Therian|Incarnate|White|Black|Origin|Crowned|Ice|Shadow|Dusk-Mane|Dawn-Wings|Ultra|Rapid-Strike|Single-Strike|Ice-Rider|Shadow-Rider|Wellspring|Hearthflame|Cornerstone|Teal)$/i,
     ''
   );
@@ -89,10 +89,17 @@ function _stripForm(name) {
 function validateChampionsLegality(team) {
   var violations = [];
   if (!team || !Array.isArray(team.members)) return { violations: violations };
+  if (typeof FAKEMON_BLOCKLIST === 'undefined'
+      || typeof CHAMPIONS_BANNED_POKEMON === 'undefined'
+      || typeof CHAMPIONS_BANNED_ITEMS === 'undefined'
+      || typeof CHAMPIONS_STONE_TO_SPECIES === 'undefined'
+      || typeof CHAMPIONS_HOME_TRANSFER_MEGAS === 'undefined') {
+    return { violations: violations };
+  }
 
   for (var i = 0; i < team.members.length; i++) {
     var mon = team.members[i];
-    var name = mon && mon.name ? mon.name : '';
+    var name = mon && mon.name ? String(mon.name) : '';
 
     if (FAKEMON_BLOCKLIST.has(name)) {
       violations.push({
