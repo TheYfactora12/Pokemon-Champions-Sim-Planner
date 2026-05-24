@@ -2530,26 +2530,42 @@ function csRenderReplayStadiumSide(rows, label) {
   rows = Array.isArray(rows) ? rows : [];
   var active = rows.filter(function(row) { return String((row && row.status) || '').toLowerCase() === 'active'; });
   var offField = rows.filter(function(row) { return String((row && row.status) || '').toLowerCase() !== 'active'; });
-  return '<div class="replay-stadium-side">' +
-    '<strong class="replay-stadium-side-title">' + _escapeHtml(label) + '</strong>' +
-    '<div class="replay-stadium-zone on-field"><span>On field</span>' +
-      (active.length ? active.map(csRenderReplayStadiumMon).join('') : '<div class="replay-coach-list-row"><strong>No active Pokemon</strong>None currently on field.</div>') +
+  return { active: active, offField: offField, label: label };
+}
+
+function csRenderReplayStadiumActive(side, position) {
+  side = side || { active: [], label: 'Team' };
+  return '<div class="replay-stadium-side replay-stadium-' + _escapeHtml(position || 'side') + '">' +
+    '<strong class="replay-stadium-side-title">' + _escapeHtml(side.label || 'Team') + ' · On field</strong>' +
+    '<div class="replay-stadium-active-slots">' +
+      (side.active.length ? side.active.map(csRenderReplayStadiumMon).join('') : '<div class="replay-coach-list-row"><strong>No active Pokemon</strong>None currently on field.</div>') +
     '</div>' +
-    '<div class="replay-stadium-zone off-field"><span>Bench / knocked out</span>' +
-      (offField.length ? offField.map(csRenderReplayStadiumMon).join('') : '<div class="replay-coach-list-row"><strong>No bench shown</strong>No off-field Pokemon in this snapshot.</div>') +
-    '</div>' +
+  '</div>';
+}
+
+function csRenderReplayStadiumReserve(side) {
+  side = side || { offField: [], label: 'Team' };
+  return '<div class="replay-stadium-zone off-field">' +
+    '<span>' + _escapeHtml(side.label || 'Team') + ' · Bench / knocked out</span>' +
+    (side.offField.length ? side.offField.map(csRenderReplayStadiumMon).join('') : '<div class="replay-coach-list-row"><strong>No bench shown</strong>No off-field Pokemon in this snapshot.</div>') +
   '</div>';
 }
 
 function csRenderReplayStadium(rowsBySide, title, labels) {
   rowsBySide = rowsBySide || {};
   labels = labels || {};
+  var yourSide = csRenderReplayStadiumSide(rowsBySide.left || [], labels.left || 'Your team');
+  var theirSide = csRenderReplayStadiumSide(rowsBySide.right || [], labels.right || 'Their team');
   return '<div class="replay-stadium">' +
     (title ? '<div class="replay-stadium-title">' + _escapeHtml(title) + '</div>' : '') +
     '<div class="replay-stadium-field">' +
-      csRenderReplayStadiumSide(rowsBySide.left || [], labels.left || 'Your team') +
+      csRenderReplayStadiumActive(theirSide, 'opponent') +
       '<div class="replay-stadium-vs">VS</div>' +
-      csRenderReplayStadiumSide(rowsBySide.right || [], labels.right || 'Their team') +
+      csRenderReplayStadiumActive(yourSide, 'player') +
+    '</div>' +
+    '<div class="replay-stadium-reserves">' +
+      csRenderReplayStadiumReserve(yourSide) +
+      csRenderReplayStadiumReserve(theirSide) +
     '</div>' +
   '</div>';
 }

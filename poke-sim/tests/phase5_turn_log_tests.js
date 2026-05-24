@@ -217,7 +217,8 @@ T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
   truthy(html.includes('replay-stadium-vs'), 'VS stadium divider missing');
   truthy(html.includes('Your team'), 'your board missing');
   truthy(html.includes('Their team'), 'their board missing');
-  truthy(html.includes('On field'), 'on-field zone missing');
+  truthy(html.includes('Their team · On field'), 'opponent top field label missing');
+  truthy(html.includes('Your team · On field'), 'player bottom field label missing');
   truthy(html.includes('Bench / knocked out'), 'off-field zone missing');
   truthy(html.includes('Play by play'), 'play-by-play section missing');
   truthy(html.includes('Kangaskhan Fake Out -&gt; Tyranitar'), 'move play-by-play missing');
@@ -306,6 +307,7 @@ T('T5c-1b Battle Sensei renders Turn 0 and both side boards', () => {
   truthy(turnHtml.includes('Your team after this turn'), 'Battle Sensei your per-turn board missing');
   truthy(turnHtml.includes('Their team after this turn'), 'Battle Sensei their per-turn board missing');
   truthy(turnHtml.includes('replay-stadium-vs'), 'Battle Sensei VS stadium missing');
+  truthy(turnHtml.indexOf('Their team after this turn · On field') < turnHtml.indexOf('Your team after this turn · On field'), 'Battle Sensei should render opponent field above player field');
   truthy(turnHtml.includes('Bench / knocked out'), 'Battle Sensei off-field zone missing');
   truthy(turnHtml.includes('Tyranitar'), 'Battle Sensei opponent mon missing');
   truthy(turnHtml.includes('fainted'), 'Battle Sensei fainted status missing');
