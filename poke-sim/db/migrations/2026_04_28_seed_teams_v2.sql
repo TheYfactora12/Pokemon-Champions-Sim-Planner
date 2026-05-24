@@ -133,7 +133,7 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
 
 -- mega_altaria
 INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
-  ('mega_altaria', 1, 'Typhlosion-Hisui', 'Choice Scarf', 'Frisk', 'Timid', 50, '{"atk":0,"def":32,"hp":2,"spa":32,"spd":0,"spe":32}'::jsonb, '["Eruption","Heat Wave","Focus Blast","Shadow Ball"]'::jsonb, NULL, 'Scarfer'),
+  ('mega_altaria', 1, 'Typhlosion-Hisui', 'Choice Scarf', 'Frisk', 'Timid', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":0,"spe":32}'::jsonb, '["Eruption","Heat Wave","Focus Blast","Shadow Ball"]'::jsonb, NULL, 'Scarfer'),
   ('mega_altaria', 2, 'Altaria-Mega', 'Altarianite', 'Cloud Nine', 'Modest', 50, '{"atk":0,"def":0,"hp":32,"spa":10,"spd":17,"spe":7}'::jsonb, '["Protect","Roost","Flamethrower","Hyper Voice"]'::jsonb, NULL, 'Mega Sweeper'),
   ('mega_altaria', 3, 'Whimsicott', 'Focus Sash', 'Prankster', 'Serious', 50, '{"atk":0,"def":1,"hp":1,"spa":32,"spd":0,"spe":32}'::jsonb, '["Protect","Sunny Day","Tailwind","Moonblast"]'::jsonb, NULL, 'Speed Control'),
   ('mega_altaria', 4, 'Rotom-Wash', 'Leftovers', 'Levitate', 'Modest', 50, '{"atk":0,"def":10,"hp":32,"spa":23,"spd":0,"spe":1}'::jsonb, '["Protect","Will-O-Wisp","Thunderbolt","Hydro Pump"]'::jsonb, NULL, 'Spread Attacker'),

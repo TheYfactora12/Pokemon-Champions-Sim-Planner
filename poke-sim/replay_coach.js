@@ -357,6 +357,221 @@
     return normalizeReplayLogInput(text);
   }
 
+  function sourceStatsForSpecies(species) {
+    var key = cleanText(species);
+    if (!key) return null;
+    if (typeof BASE_STATS !== 'undefined' && BASE_STATS && BASE_STATS[key]) return BASE_STATS[key];
+    var audit = ChampionsSim.pokemonDataAudit;
+    var sourceRow = audit && audit.species ? audit.species[key] : null;
+    return sourceRow && sourceRow.stats ? sourceRow.stats : null;
+  }
+
+  function statLine(stats) {
+    if (!stats) return 'unknown';
+    return [stats.hp, stats.atk, stats.def, stats.spa, stats.spd, stats.spe].join('/');
+  }
+
+  function addReplayWarning(warnings, value) {
+    var text = cleanText(value);
+    if (text && warnings.indexOf(text) < 0) warnings.push(text);
+  }
+
+  function legalityForMoves(species, moves) {
+    var api = ChampionsSim.moveLegality;
+    if (!api || typeof api.isMoveLegalForSpecies !== 'function') {
+      return (moves || []).map(function(move) {
+        return {
+          move: move,
+          legal: false,
+          reason: 'source_unavailable',
+          notes: 'unchecked'
+        };
+      });
+    }
+    return (moves || []).map(function(move) {
+      var out = api.isMoveLegalForSpecies(species, move);
+      return {
+        move: move,
+        legal: !!out.legal,
+        reason: out.reason || '',
+        notes: out.notes || '',
+        source: out.source || '',
+        sourceVersion: out.sourceVersion || ''
+      };
+    });
+  }
+
+  function observedMovesForSpecies(ctx, species, aliases) {
+    var seen = [];
+    var lookup = (ctx && ctx.observedMovesBySpecies) || {};
+    [species].concat(aliases || []).forEach(function(key) {
+      (lookup[key] || []).forEach(function(move) { addUnique(seen, move); });
+    });
+    return seen;
+  }
+
+  function applyMoveLegalityWarnings(warnings, legality) {
+    (legality || []).forEach(function(item) {
+      if (item.reason === 'not_in_species_form_learnset') addReplayWarning(warnings, 'move not legal for this species/form: ' + item.move);
+      if (item.reason === 'source_unavailable' || item.reason === 'unknown_species') addReplayWarning(warnings, 'move legality unchecked: ' + item.move);
+    });
+  }
+
+  function auditRosterRow(row, ctx) {
+    row = row || {};
+    var species = row.species || 'unknown';
+    var warnings = (row.warnings || row.parserWarnings || []).slice();
+    var stats = sourceStatsForSpecies(species);
+    var moves = observedMovesForSpecies(ctx, species, [row.postImportSpecies, row.resolvedSpecies, row.baseSpecies]);
+    if (!stats) addReplayWarning(warnings, 'stats fallback used or source stats unavailable for ' + species);
+    var legality = legalityForMoves(species, moves);
+    applyMoveLegalityWarnings(warnings, legality);
+    return {
+      side: row.side || '',
+      slot: row.slot || '',
+      leadOrder: row.leadOrder || null,
+      species: species,
+      displayName: row.displayName || species,
+      baseSpecies: row.baseSpecies || replayBaseSpecies(species),
+      resolvedSpecies: row.resolvedSpecies || row.postImportSpecies || '',
+      status: row.status || 'bench',
+      hp: row.hp == null ? (row.status === 'unknown' ? null : 100) : row.hp,
+      hpLabel: row.hp == null ? (row.status === 'unknown' ? 'unknown' : '100%') : String(row.hp) + '%',
+      faintTurn: row.faintTurn || null,
+      gender: row.gender || 'unknown',
+      level: row.level || 'unknown',
+      item: row.item || 'unknown',
+      ability: row.ability || 'unknown',
+      moves: moves.length ? moves : ['unknown'],
+      baseStats: stats || null,
+      baseStatsLabel: statLine(stats),
+      calculatedStats: 'unknown',
+      moveLegality: legality,
+      parserWarnings: warnings
+    };
+  }
+
+  function ensureRosterEntry(rosterState, side, species, meta) {
+    meta = meta || {};
+    var key = cleanText(species);
+    if (!side || !key) return null;
+    var sideRows = rosterState[side] = rosterState[side] || {};
+    var row = sideRows[key] = sideRows[key] || {
+      side: side,
+      species: key,
+      displayName: key,
+      baseSpecies: replayBaseSpecies(key),
+      status: 'bench',
+      hp: 100,
+      warnings: []
+    };
+    if (meta.displayName) row.displayName = meta.displayName;
+    if (meta.baseSpecies) row.baseSpecies = meta.baseSpecies;
+    if (meta.slot) row.slot = meta.slot;
+    if (meta.status) row.status = meta.status;
+    if (meta.hp != null) row.hp = meta.hp;
+    if (meta.faintTurn) row.faintTurn = meta.faintTurn;
+    if (meta.gender) row.gender = meta.gender;
+    if (meta.level) row.level = meta.level;
+    if (meta.item) row.item = meta.item;
+    if (meta.ability) row.ability = meta.ability;
+    if (meta.leadOrder) row.leadOrder = meta.leadOrder;
+    (meta.warnings || []).forEach(function(w) { addReplayWarning(row.warnings, w); });
+    return row;
+  }
+
+  function benchSlotOccupant(rosterState, side, species) {
+    var row = ensureRosterEntry(rosterState, side, species);
+    if (row && row.status !== 'fainted') {
+      row.status = 'bench';
+      row.slot = '';
+    }
+  }
+
+  function replaceRosterSpecies(rosterState, side, before, after, meta) {
+    var oldKey = cleanText(before);
+    var newKey = cleanText(after);
+    if (!side || !oldKey || !newKey || oldKey === newKey) return ensureRosterEntry(rosterState, side, newKey, meta || {});
+    var sideRows = rosterState[side] = rosterState[side] || {};
+    var oldRow = sideRows[oldKey];
+    var newRow = sideRows[newKey] || oldRow || { side: side, warnings: [] };
+    if (oldRow && oldRow !== newRow) delete sideRows[oldKey];
+    newRow.species = newKey;
+    newRow.displayName = newKey;
+    newRow.baseSpecies = replayBaseSpecies(newKey);
+    sideRows[newKey] = newRow;
+    return ensureRosterEntry(rosterState, side, newKey, meta || {});
+  }
+
+  function rosterRowsForSide(rosterState, side, ctx) {
+    var rows = Object.keys((rosterState && rosterState[side]) || {}).map(function(key) {
+      return auditRosterRow(rosterState[side][key], ctx);
+    });
+    rows.sort(function(a, b) {
+      var order = { active: 0, bench: 1, fainted: 2, unknown: 3 };
+      var ao = order[a.status] == null ? 9 : order[a.status];
+      var bo = order[b.status] == null ? 9 : order[b.status];
+      if (ao !== bo) return ao - bo;
+      if ((a.leadOrder || 99) !== (b.leadOrder || 99)) return (a.leadOrder || 99) - (b.leadOrder || 99);
+      return (a.species || '').localeCompare(b.species || '');
+    });
+    return rows;
+  }
+
+  function snapshotRosterState(rosterState, ctx) {
+    return {
+      p1: rosterRowsForSide(rosterState, 'p1', ctx),
+      p2: rosterRowsForSide(rosterState, 'p2', ctx)
+    };
+  }
+
+  function buildReplayTurn0Snapshot(model, ctx) {
+    ctx = ctx || {};
+    var sides = {};
+    ['p1', 'p2'].forEach(function(side) {
+      var preview = ctx.previewDetails && ctx.previewDetails[side] ? ctx.previewDetails[side] : [];
+      var starters = ctx.startingSlots && ctx.startingSlots[side] ? ctx.startingSlots[side] : [];
+      var starterBySpecies = {};
+      starters.forEach(function(row, idx) {
+        starterBySpecies[row.species] = Object.assign({}, row, { status: 'active', hp: row.hp == null ? 100 : row.hp, leadOrder: idx + 1 });
+      });
+      var roster = [];
+      preview.forEach(function(row) {
+        var active = starterBySpecies[row.species];
+        roster.push(auditRosterRow(active || {
+          side: side,
+          species: row.species || 'unknown',
+          displayName: row.species || 'unknown',
+          baseSpecies: row.baseSpecies,
+          status: 'bench',
+          hp: 100,
+          gender: row.gender,
+          level: row.level,
+          item: row.item,
+          ability: row.ability,
+          warnings: row.gender ? ['gender token seen and stripped'] : []
+        }, ctx));
+        if (active) delete starterBySpecies[row.species];
+      });
+      Object.keys(starterBySpecies).forEach(function(key) {
+        roster.push(auditRosterRow(starterBySpecies[key], ctx));
+      });
+      sides[side] = {
+        side: side,
+        player: model.players[side] || side,
+        teamPreview: preview.map(function(row) { return row.species || 'unknown'; }),
+        roster: roster,
+        leads: roster.filter(function(row) { return row.status === 'active'; })
+      };
+    });
+    return {
+      title: 'Turn 0 — Starting State',
+      generatedFrom: 'local replay parser audit',
+      sides: sides,
+      parserWarnings: (ctx.parserWarnings || []).slice()
+    };
+  }
+
   function parseShowdownLog(rawLog, opts) {
     opts = opts || {};
     var selectedSide = normalizeSide(opts.selectedSide || 'p1');
@@ -376,6 +591,7 @@
       totalTurns: 0,
       turns: [],
       warnings: [],
+      turn0: null,
       rawLineCount: text ? text.split(/\r?\n/).length : 0,
       rawPreviewLines: []
     };
@@ -389,6 +605,12 @@
     var seenFirstTurn = false;
     var activeSeenBeforeTurnOne = { p1: [], p2: [] };
     var activeSpeciesBySlot = {};
+    var previewDetails = { p1: [], p2: [] };
+    var startingSlots = { p1: [], p2: [] };
+    var startingBySlot = {};
+    var rosterState = { p1: {}, p2: {} };
+    var observedMovesBySpecies = {};
+    var parserWarnings = [];
     var lines = text.split(/\r?\n/);
     model.rawPreviewLines = lines.map(cleanText).filter(Boolean).slice(-250);
 
@@ -415,9 +637,26 @@
         var previewSide = normalizeSide(parts[2]);
         var previewMon = normalizeReplayPokemonDetails('', parts[3] || '');
         addUnique(model.teamPreview[previewSide], previewMon.species);
+        if (previewMon.gender) addReplayWarning(parserWarnings, 'gender token seen and stripped for ' + (previewMon.species || 'unknown'));
+        previewDetails[previewSide].push(previewMon);
+        ensureRosterEntry(rosterState, previewSide, previewMon.species, {
+          side: previewSide,
+          status: 'bench',
+          hp: 100,
+          displayName: previewMon.displayName,
+          baseSpecies: previewMon.baseSpecies,
+          gender: previewMon.gender,
+          level: previewMon.level,
+          item: previewMon.item,
+          ability: previewMon.ability,
+          warnings: previewMon.gender ? ['gender token seen and stripped'] : []
+        });
         return;
       }
       if (tag === 'turn') {
+        if (currentTurn && currentTurn.number > 0) {
+          currentTurn.rosterState = snapshotRosterState(rosterState, { observedMovesBySpecies: observedMovesBySpecies });
+        }
         seenFirstTurn = true;
         currentTurn = ensureTurn(model, parts[2]);
         model.totalTurns = Math.max(model.totalTurns, currentTurn.number);
@@ -443,10 +682,42 @@
         var details = parsedMon.species || mon;
         var hp = hpPercent(parts[4] || '');
         var key = slotKey(slot);
+        var previous = key ? activeSpeciesBySlot[key] : '';
+        if (side && previous && previous !== details) benchSlotOccupant(rosterState, side, previous);
         if (key && details) activeSpeciesBySlot[key] = details;
+        if (parsedMon.gender) addReplayWarning(parserWarnings, 'gender token seen and stripped for ' + details);
         if (side) {
           addUnique(model.selectedPokemon[side], details);
           if (!seenFirstTurn) addUnique(activeSeenBeforeTurnOne[side], details);
+          ensureRosterEntry(rosterState, side, details, {
+            side: side,
+            slot: key,
+            status: 'active',
+            hp: hp == null ? 100 : hp,
+            displayName: details,
+            baseSpecies: parsedMon.baseSpecies || replayBaseSpecies(details),
+            gender: parsedMon.gender,
+            level: parsedMon.level,
+            item: parsedMon.item,
+            ability: parsedMon.ability,
+            warnings: parsedMon.gender ? ['gender token seen and stripped'] : []
+          });
+        }
+        if (side && key && !seenFirstTurn && !startingBySlot[key]) {
+          startingBySlot[key] = {
+            side: side,
+            slot: key,
+            species: details,
+            postImportSpecies: details,
+            baseSpecies: parsedMon.baseSpecies || replayBaseSpecies(details),
+            gender: parsedMon.gender,
+            level: parsedMon.level,
+            item: parsedMon.item,
+            ability: parsedMon.ability,
+            hp: hp == null ? 100 : hp,
+            warnings: parsedMon.gender ? ['gender token seen and stripped'] : []
+          };
+          startingSlots[side].push(startingBySlot[key]);
         }
         currentTurn.switches.push({
           side: side,
@@ -474,6 +745,19 @@
         if (megaKey && megaSpecies) activeSpeciesBySlot[megaKey] = megaSpecies;
         if (megaSide && megaSpecies) {
           replaceUniquePokemon(model.selectedPokemon[megaSide], baseSpecies, megaSpecies);
+          replaceRosterSpecies(rosterState, megaSide, baseSpecies, megaSpecies, {
+            side: megaSide,
+            slot: megaKey,
+            status: 'active',
+            item: cleanText(megaItem),
+            warnings: megaSpecies !== baseSpecies ? ['Mega form resolved from ' + baseSpecies + ' to ' + megaSpecies] : []
+          });
+        }
+        if (megaKey && startingBySlot[megaKey] && megaSpecies && megaSpecies !== baseSpecies) {
+          startingBySlot[megaKey].resolvedSpecies = megaSpecies;
+          startingBySlot[megaKey].item = cleanText(megaItem) || startingBySlot[megaKey].item;
+          addReplayWarning(startingBySlot[megaKey].warnings, 'Mega form resolved from ' + baseSpecies + ' to ' + megaSpecies);
+          addReplayWarning(parserWarnings, 'Mega form resolved from ' + baseSpecies + ' to ' + megaSpecies);
         }
         currentTurn.events.push({
           type: 'mega',
@@ -495,6 +779,7 @@
         var targetSide = sideOf(targetSlot);
         var target = speciesForSlot(activeSpeciesBySlot, targetSlot);
         if (actorSide) addUnique(model.selectedPokemon[actorSide], actor);
+        if (actor && move) addUnique((observedMovesBySpecies[actor] = observedMovesBySpecies[actor] || []), move);
         currentTurn.moves.push({ side: actorSide, pokemon: actor, move: move, targetSide: targetSide, target: target });
         currentTurn.events.push({ type: 'move', side: actorSide, pokemon: actor, move: move, target: target, text: raw });
         return;
@@ -505,6 +790,12 @@
         var faintSide = sideOf(faintSlot);
         var faintMon = speciesForSlot(activeSpeciesBySlot, faintSlot);
         if (faintSide) addUnique(model.selectedPokemon[faintSide], faintMon);
+        ensureRosterEntry(rosterState, faintSide, faintMon, {
+          side: faintSide,
+          status: 'fainted',
+          hp: 0,
+          faintTurn: currentTurn.number
+        });
         currentTurn.faints.push({ side: faintSide, pokemon: faintMon });
         currentTurn.events.push({ type: 'faint', side: faintSide, pokemon: faintMon, text: raw });
         return;
@@ -516,6 +807,12 @@
         var hpMon = speciesForSlot(activeSpeciesBySlot, hpSlot);
         var hpValue = hpPercent(parts[3] || '');
         var row = { side: hpSide, pokemon: hpMon, hp: hpValue, cause: cleanText(parts.slice(4).join('|')) };
+        ensureRosterEntry(rosterState, hpSide, hpMon, {
+          side: hpSide,
+          hp: hpValue,
+          status: hpValue === 0 ? 'fainted' : '',
+          faintTurn: hpValue === 0 ? currentTurn.number : null
+        });
         if (tag === '-damage') currentTurn.damage.push(row);
         else currentTurn.healing.push(row);
         currentTurn.events.push({ type: tag.slice(1), side: hpSide, pokemon: hpMon, hp: hpValue, text: raw });
@@ -542,13 +839,17 @@
       }
     });
 
+    if (currentTurn && currentTurn.number > 0) {
+      currentTurn.rosterState = snapshotRosterState(rosterState, { observedMovesBySpecies: observedMovesBySpecies });
+    }
+
     model.leads.p1 = activeSeenBeforeTurnOne.p1.slice(0, 2);
     model.leads.p2 = activeSeenBeforeTurnOne.p2.slice(0, 2);
     if (!model.leads.p1.length && model.turns[0]) {
       model.leads.p1 = model.turns[0].switches.filter(function(s) { return s.side === 'p1'; }).map(function(s) { return s.pokemon; }).slice(0, 2);
       model.leads.p2 = model.turns[0].switches.filter(function(s) { return s.side === 'p2'; }).map(function(s) { return s.pokemon; }).slice(0, 2);
     }
-    model.turns = model.turns.filter(function(t) { return t.number > 0 || t.events.length > 0; });
+    model.turns = model.turns.filter(function(t) { return t.number > 0; });
     if (!model.totalTurns && model.turns.length) model.totalTurns = model.turns[model.turns.length - 1].number || 0;
 
     var selectedName = model.players[selectedSide];
@@ -559,6 +860,12 @@
     if (!model.players.p1 && !model.players.p2) model.warnings.push('Player names were not found in the log.');
     if (!model.leads.p1.length || !model.leads.p2.length) model.warnings.push('Lead Pokemon could not be fully inferred.');
     if (!model.teamPreview.p1.length && !model.teamPreview.p2.length) model.warnings.push('Team preview was not present; selected Pokemon are inferred from revealed actions.');
+    model.turn0 = buildReplayTurn0Snapshot(model, {
+      previewDetails: previewDetails,
+      startingSlots: startingSlots,
+      observedMovesBySpecies: observedMovesBySpecies,
+      parserWarnings: parserWarnings
+    });
     model.ok = model.turns.length > 0 || !!model.winner;
     model.opponentSide = oppSide;
     return model;
@@ -685,6 +992,7 @@
   function eventLabel(ev) {
     if (!ev) return '';
     if (ev.type === 'move') return (ev.pokemon || '?') + ' used ' + (ev.move || '?') + (ev.target ? ' into ' + ev.target : '');
+    if (ev.type === 'mega') return (ev.baseSpecies || '?') + ' Mega Evolved into ' + (ev.pokemon || '?') + (ev.item ? ' with ' + ev.item : '') + ' (timing shown in replay order)';
     if (ev.type === 'switch' || ev.type === 'drag' || ev.type === 'replace') return (ev.forced ? 'Forced switch: ' : 'Switch: ') + (ev.pokemon || '?');
     if (ev.type === 'faint') return (ev.pokemon || '?') + ' fainted';
     if (ev.type === 'damage') return (ev.pokemon || '?') + ' took damage' + (ev.hp != null ? ' to ' + ev.hp + '%' : '');
@@ -787,6 +1095,7 @@
         betterLine: betterLine,
         tags: turnIssues.map(function(i) { return i.tag; }),
         events: primaryEvents,
+        rosterState: turn.rosterState || null,
         rawEventCount: (turn.events || []).length,
         metrics: {
           yourMoves: userMoves.length,

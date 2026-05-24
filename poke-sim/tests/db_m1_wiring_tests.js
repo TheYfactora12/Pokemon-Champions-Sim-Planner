@@ -99,12 +99,12 @@ describe('Module 1 \u2014 Wiring suite (16 cases)', function () {
   });
 
   T('T-wiring-6', function () {
-    // Bundle size < 1.40 MiB. Battle Sensei plus Supabase-js UMD and the
-    // simulator runtime are intentionally inlined so GitHub Pages/local
+    // Bundle size < 5.25 MiB. Battle Sensei, Supabase-js UMD, and generated
+    // Showdown legality data are intentionally inlined so GitHub Pages/local
     // previews do not depend on stale split-file cache state.
     // If this trips, investigate before raising further — it's our bloat canary.
     var stats = fs.statSync(bundlePath);
-    eq(stats.size < 1434 * 1024, true, 'bundle size < 1.40 MiB (got ' + stats.size + ')');
+    eq(stats.size < 5376 * 1024, true, 'bundle size < 5.25 MiB (got ' + stats.size + ')');
   });
 
   T('T-wiring-7', function () {
@@ -204,6 +204,8 @@ describe('Module 1 \u2014 Wiring suite (16 cases)', function () {
     if (!fs.existsSync(buildScriptPath)) throw new Error('build-bundle.py not found');
     var buildScript = fs.readFileSync(buildScriptPath, 'utf8');
     eq(buildScript.includes('supabase_adapter.js'), true, 'build-bundle.py includes supabase_adapter.js');
+    eq(buildScript.includes('generated/pokemon_showdown_legal_data.js'), true, 'build-bundle.py includes generated Pokemon legality data');
+    eq(buildScript.includes('move_legality.js'), true, 'build-bundle.py includes move_legality.js');
     eq(buildScript.includes('replay_coach.js'), true, 'build-bundle.py includes replay_coach.js');
     eq(buildScript.includes('replay_learning.js'), true, 'build-bundle.py includes replay_learning.js');
   });

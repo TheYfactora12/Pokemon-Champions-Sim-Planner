@@ -108,6 +108,36 @@ ctx.TEAMS.__xss_fixture = {
   }]
 };
 
+ctx.TEAMS.__invalid_fixture = {
+  name: 'Invalid Item Clause Fixture',
+  style: 'balance',
+  description: 'Duplicate item test',
+  label: 'BAD',
+  source: 'custom',
+  legality_status: 'legal',
+  format: 'champions',
+  members: [
+    {
+      name: 'Garchomp',
+      item: 'Sitrus Berry',
+      ability: 'Rough Skin',
+      nature: 'Jolly',
+      level: 50,
+      evs: { hp: 2, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 },
+      moves: ['Earthquake', 'Protect']
+    },
+    {
+      name: 'Rotom-Wash',
+      item: 'Sitrus Berry',
+      ability: 'Levitate',
+      nature: 'Bold',
+      level: 50,
+      evs: { hp: 32, atk: 0, def: 10, spa: 23, spd: 0, spe: 1 },
+      moves: ['Thunderbolt', 'Hydro Pump', 'Protect']
+    }
+  ]
+};
+
 T('1. renderTeamsGrid escapes hostile team name and description', () => {
   vm.runInContext('TEAMS_FILTER = "custom";', ctx);
   renderTeamsGrid();
@@ -115,6 +145,14 @@ T('1. renderTeamsGrid escapes hostile team name and description', () => {
   inc(teamsGrid.innerHTML, '&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;');
   inc(teamsGrid.innerHTML, '&lt;svg/onload=alert(2)&gt;');
   falsy(teamsGrid.innerHTML.includes('<img src=x onerror=alert(1)>'), 'raw image tag leaked');
+});
+
+T('2. renderTeamsGrid surfaces invalid team legality reason', () => {
+  vm.runInContext('TEAMS_FILTER = "custom";', ctx);
+  renderTeamsGrid();
+  inc(teamsGrid.innerHTML, 'NOT LEGAL', 'illegal badge');
+  inc(teamsGrid.innerHTML, 'Not legal for current sim rules', 'legality note');
+  inc(teamsGrid.innerHTML, 'Item Clause violation: duplicate items: Sitrus Berry', 'legality reason');
 });
 
 console.log(`\nteam grid XSS: ${pass} pass, ${fail} fail\n`);

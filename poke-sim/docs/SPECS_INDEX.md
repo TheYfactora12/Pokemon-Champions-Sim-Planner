@@ -19,6 +19,7 @@ When the migration is complete, `poke-sim/*.md` spec files will be deleted from 
 
 | File | Phase | Issues | Status |
 |---|---|---|---|
+| [`POKEMON_DATA_AUDIT_REVIEW.md`](POKEMON_DATA_AUDIT_REVIEW.md) | Data Audit | #117, #123 | Review control |
 | [`PHASE4_DYNAMIC_ADVICE_SPEC.md`](../PHASE4_DYNAMIC_ADVICE_SPEC.md) | 4 — Dynamic Advice | #141, #144 | ✅ Final |
 | [`PHASE4C_DETECTORS_SPEC.md`](../PHASE4C_DETECTORS_SPEC.md) | 4c — Archetype Detectors | #165 | ✅ Final |
 | [`PHASE4D_THREAT_RESPONSE_SPEC.md`](../PHASE4D_THREAT_RESPONSE_SPEC.md) | 4d — Threat Response | #166 | ✅ Final |

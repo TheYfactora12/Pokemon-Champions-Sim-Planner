@@ -14,11 +14,26 @@ const TYPE_COLORS = {
 const BASE_STATS = {
   Incineroar:     { hp:95, atk:115, def:90, spa:80, spd:90, spe:60, types:['Fire','Dark'] },
   Arcanine:       { hp:90, atk:110, def:80, spa:100, spd:80, spe:95, types:['Fire'] },
+  'Growlithe-Hisui': { hp:60, atk:75, def:45, spa:65, spd:50, spe:55, types:['Fire','Rock'] },
+  'Arcanine-Hisui': { hp:95, atk:115, def:80, spa:95, spd:80, spe:90, types:['Fire','Rock'] },
   Garchomp:       { hp:108, atk:130, def:95, spa:80, spd:85, spe:102, types:['Dragon','Ground'] },
   // Mega Altaria team
   // Regional / alt forms are keyed here because the engine reads BASE_STATS
   // directly for stat and battle calculations.
   'Typhlosion-Hisui': { hp:73, atk:84, def:78, spa:119, spd:85, spe:95, types:['Fire','Ghost'] },
+  'Samurott-Hisui': { hp:90, atk:108, def:80, spa:100, spd:65, spe:85, types:['Water','Dark'] },
+  'Decidueye-Hisui': { hp:88, atk:112, def:80, spa:95, spd:95, spe:60, types:['Grass','Fighting'] },
+  'Zorua-Hisui': { hp:35, atk:60, def:40, spa:85, spd:40, spe:70, types:['Normal','Ghost'] },
+  'Zoroark-Hisui': { hp:55, atk:100, def:60, spa:125, spd:60, spe:110, types:['Normal','Ghost'] },
+  'Braviary-Hisui': { hp:110, atk:83, def:70, spa:112, spd:70, spe:65, types:['Psychic','Flying'] },
+  'Sliggoo-Hisui': { hp:58, atk:75, def:83, spa:83, spd:113, spe:40, types:['Steel','Dragon'] },
+  'Goodra-Hisui': { hp:80, atk:100, def:100, spa:110, spd:150, spe:60, types:['Steel','Dragon'] },
+  'Avalugg-Hisui': { hp:95, atk:127, def:184, spa:34, spd:36, spe:38, types:['Ice','Rock'] },
+  'Lilligant-Hisui': { hp:70, atk:105, def:75, spa:50, spd:75, spe:105, types:['Grass','Fighting'] },
+  'Voltorb-Hisui': { hp:40, atk:30, def:50, spa:55, spd:55, spe:100, types:['Electric','Grass'] },
+  'Electrode-Hisui': { hp:60, atk:50, def:70, spa:80, spd:80, spe:150, types:['Electric','Grass'] },
+  'Qwilfish-Hisui': { hp:65, atk:95, def:85, spa:55, spd:55, spe:85, types:['Dark','Poison'] },
+  'Sneasel-Hisui': { hp:55, atk:95, def:55, spa:35, spd:75, spe:115, types:['Fighting','Poison'] },
   'Ninetales-Alola': { hp:73, atk:67, def:75, spa:81, spd:100, spe:109, types:['Ice','Fairy'] },
   'Altaria-Mega':  { hp:75, atk:110, def:110, spa:110, spd:105, spe:80, types:['Dragon','Fairy'] },
   Ariados:        { hp:70, atk:90, def:70, spa:60, spd:70, spe:40, types:['Bug','Poison'] },
@@ -334,6 +349,7 @@ const DEX_NUM_MAP = {
   'Corsola-Galar':222,'Zigzagoon-Galar':263,'Linoone-Galar':264,'Darumaka-Galar':554,
   'Darmanitan-Galar':555,'Yamask-Galar':562,'Stunfisk-Galar':618,
   // Hisuian forms
+  'Growlithe-Hisui':58,'Arcanine-Hisui':59,
   'Typhlosion-Hisui':157,'Samurott-Hisui':503,'Decidueye-Hisui':724,
   'Zorua-Hisui':570,'Zoroark-Hisui':571,'Braviary-Hisui':628,
   'Sliggoo-Hisui':705,'Goodra-Hisui':706,'Avalugg-Hisui':713,'Lilligant-Hisui':549,
@@ -642,6 +658,7 @@ const POKEMON_TYPES_DB = {
   'Wyrdeer':['Normal','Psychic'],'Kleavor':['Bug','Rock'],
   'Ursaluna':['Ground','Normal'],
   'Basculegion':['Water','Ghost'],
+  'Growlithe-Hisui':['Fire','Rock'],'Arcanine-Hisui':['Fire','Rock'],
   'Sneasler':['Fighting','Poison'],'Sneasel-Hisui':['Fighting','Poison'],
   'Overqwil':['Dark','Poison'],
   'Enamorus':['Fairy','Flying'],
@@ -1030,7 +1047,7 @@ const TEAMS = {
         "evs": {
           "hp": 2,
           "atk": 0,
-          "def": 32,
+          "def": 0,
           "spa": 32,
           "spd": 0,
           "spe": 32
