@@ -67,6 +67,7 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, '<b>Next rep:</b>');
   inc(ui, '<h3 class="replay-coach-h3">Battle IQ Score</h3>');
   inc(ui, '<strong>Battle IQ</strong>');
+  inc(ui, "battleIq && battleIq.displayScore != null ? String(battleIq.displayScore) : 'Needs more data'");
   inc(ui, '<strong>What this means</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Evidence Standard</h3>');
   inc(ui, '<strong>Opponent intent boundary</strong>');

@@ -2895,12 +2895,12 @@ function csReplayCoachRenderAnalysis(analysis) {
     (learning ? '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Battle IQ Score</h3>' +
       '<div class="replay-coach-summary-grid">' +
-        '<div class="replay-coach-metric"><strong>Battle IQ</strong><span>' + _escapeHtml(battleIq ? String(battleIq.standardScore) : 'Needs data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Battle IQ</strong><span>' + _escapeHtml(battleIq && battleIq.displayScore != null ? String(battleIq.displayScore) : 'Needs more data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Band</strong><span>' + _escapeHtml(battleIq ? battleIq.band : 'Unknown') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Confidence</strong><span>' + _escapeHtml(battleIq ? battleIq.confidence : 'low') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Status</strong><span>' + _escapeHtml(battleIq ? battleIq.status : 'Provisional') + '</span></div>' +
-        '<div class="replay-coach-metric"><strong>Percentile</strong><span>' + _escapeHtml(battleIq ? String(battleIq.percentile) + 'th provisional' : 'Needs norms') + '</span></div>' +
-        '<div class="replay-coach-metric"><strong>Range</strong><span>' + _escapeHtml(battleIq ? battleIq.confidenceInterval.join('-') : 'Needs data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Percentile</strong><span>' + _escapeHtml(battleIq && battleIq.percentile != null ? String(battleIq.percentile) + 'th provisional' : 'Needs more data') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Range</strong><span>' + _escapeHtml(battleIq && battleIq.confidenceInterval && battleIq.confidenceInterval.length ? battleIq.confidenceInterval.join('-') : 'Needs more data') + '</span></div>' +
         battleIqSubPreview +
       '</div>' +
       '<div class="replay-coach-list">' +

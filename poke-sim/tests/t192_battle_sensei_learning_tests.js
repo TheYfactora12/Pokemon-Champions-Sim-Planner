@@ -98,6 +98,7 @@ T('5. Battle IQ scoring is provisional, explainable, and scoped to game intellig
   truthy(iq.recommendedDrill && iq.recommendedDrill.skill, 'recommended drill');
   truthy(learning.coachingReadouts, 'coaching readouts missing');
   truthy(learning.coachingReadouts.strengths.length >= 1, 'positive coaching evidence missing');
+  eq(new Set(learning.coachingReadouts.strengths.map((row) => row.label + '|' + row.evidence)).size, learning.coachingReadouts.strengths.length, 'positive coaching rows should dedupe duplicate evidence');
   truthy(learning.coachingReadouts.tightenUp.length >= 1, 'tighten-up guidance missing');
   inc(learning.coachingReadouts.note, 'evidence-bound', 'coaching note');
 });
@@ -116,6 +117,10 @@ T('6. low-confidence incomplete logs do not overclaim', () => {
   eq(learning.criticalTurns.confidence, 'low', 'critical confidence');
   eq(learning.battleIq.confidence, 'low', 'battle iq confidence');
   eq(learning.battleIq.status, 'Provisional Battle IQ', 'battle iq provisional');
+  eq(learning.battleIq.displayScore, null, 'low-confidence battle iq should hide the player-facing score');
+  eq(learning.battleIq.band, 'Needs more data', 'low-confidence battle iq should show a needs-more-data band');
+  eq(learning.battleIq.percentile, null, 'low-confidence battle iq should hide percentile');
+  eq(learning.battleIq.confidenceInterval.length, 0, 'low-confidence battle iq should hide score range');
   truthy(/Needs more data|same turn/i.test(learning.criticalTurns.note), 'low confidence note');
   eq(learning.evidenceStandard.label, 'Needs more data', 'evidence standard lowers confidence');
   inc(learning.opponentPlan.pressurePattern, 'Not enough observed', 'opponent plan avoids invented intent');

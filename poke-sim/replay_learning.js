@@ -53,6 +53,31 @@
     return 'Major Coaching Opportunity';
   }
 
+  function uniqueReadoutRows(rows) {
+    var seen = {};
+    return (rows || []).filter(function(row) {
+      if (!row) return false;
+      var key = [
+        escText(row.label).toLowerCase(),
+        escText(row.evidence).toLowerCase()
+      ].join('||');
+      if (!key || seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
+  function uniqueReadoutLabels(rows) {
+    var seen = {};
+    return (rows || []).filter(function(row) {
+      if (!row) return false;
+      var key = escText(row.label).toLowerCase();
+      if (!key || seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
   function erfApprox(x) {
     var sign = x < 0 ? -1 : 1;
     x = Math.abs(x);
@@ -384,6 +409,9 @@
     Object.keys(weights).forEach(function(k) { rawComposite += scores[k] * weights[k]; });
     rawComposite = clampScore(rawComposite);
     var standard = standardFromRaw(rawComposite);
+    var displayScore = standard;
+    var displayBand = battleIqBand(standard);
+    var displayPercentile = percentileFromStandard(standard);
     var margin = confidenceIntervalFor(confidence);
     var subScores = Object.keys(BATTLE_IQ_LABELS).map(function(k) {
       return {
@@ -405,6 +433,11 @@
     });
     raisedBy.sort(function(a, b) { return b.points - a.points; });
     loweredBy.sort(function(a, b) { return a.points - b.points; });
+    if (confidence === 'low') {
+      displayScore = null;
+      displayBand = 'Needs more data';
+      displayPercentile = null;
+    }
     var weakest = subScores.slice().sort(function(a, b) { return a.rawScore - b.rawScore; })[0];
     var drillIssue = issues.find(function(issue) {
       return categoryForIssue(issue).toLowerCase().indexOf((weakest.label || '').split(' ')[0].toLowerCase()) >= 0;
@@ -414,10 +447,11 @@
       status: 'Provisional Battle IQ',
       rawComposite: rawComposite,
       standardScore: standard,
-      percentile: percentileFromStandard(standard),
+      displayScore: displayScore,
+      percentile: displayPercentile,
       confidence: confidence,
-      confidenceInterval: [standard - margin, standard + margin],
-      band: battleIqBand(standard),
+      confidenceInterval: confidence === 'low' ? [] : [standard - margin, standard + margin],
+      band: displayBand,
       subScores: subScores,
       raisedBy: raisedBy.slice(0, 2),
       loweredBy: loweredBy.slice(0, 2),
@@ -968,9 +1002,9 @@
     }
 
     return {
-      strengths: strengths,
-      advancedPlays: advanced.slice(0, 3),
-      tightenUp: tighten,
+      strengths: uniqueReadoutLabels(uniqueReadoutRows(strengths)).slice(0, 3),
+      advancedPlays: uniqueReadoutRows(advanced).slice(0, 3),
+      tightenUp: uniqueReadoutRows(tighten).slice(0, 3),
       note: 'Every section is evidence-bound to the parsed replay. Missing context lowers confidence instead of filling gaps with guesswork.'
     };
   }
