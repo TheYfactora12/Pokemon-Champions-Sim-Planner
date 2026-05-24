@@ -25,6 +25,7 @@ var ctx = freshCtx();
 
 // Add mock document object immediately to prevent DOM errors in Node.js
 ctx.window.document = {
+  getElementById: function() { return null; },
   querySelectorAll: function() { return []; },
   querySelector: function() { return null; },
   addEventListener: function() {},
