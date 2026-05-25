@@ -8,7 +8,7 @@
 // v38-battle-sensei-port [2026-05-24] — Added Battle Sensei replay review tab, replay URL loading, evidence-bound coaching reads, and lead-logic explanations.
 // v39-replay-species-normalization [2026-05-24] — Fixed replay gender-token species parsing and Mega event species resolution.
 // v40-replay-turn0-legality [2026-05-24] — Added Replay Turn 0 audit and Showdown-derived species/form move legality data.
-// v41-docs-branch-sync [2026-05-25] — Synced docs branch simulator artifacts, Fake Out first-stay enforcement, and rebuilt bundle/seed outputs.
+// v41-move-support-heartbeat [2026-05-24] — Added move support trust layer, replay board sprites, and daily deterministic heartbeat.
 // v36-ui-trust-copy [2026-05-22] — Trust/provenance copy tightening for preview labeling, source wording, and strategy evidence framing.
 // v35-regional-form-stats [2026-05-19] — Canonical regional/form stat corrections + shipped form fallback fix.
 // v34-mobile-shell-layout [2026-05-15] — Mobile shell layout + bring-order normalization.
@@ -25,7 +25,7 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v41-docs-branch-sync';
+const CACHE_NAME = 'champions-sim-v41-move-support-heartbeat';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
@@ -39,6 +39,7 @@ const APP_ASSETS = [
   './engine.js',
   './generated/pokemon_showdown_legal_data.js',
   './move_legality.js',
+  './move_support.js',
   './replay_coach.js',
   './replay_learning.js',
   './ui.js',
