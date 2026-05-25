@@ -108,6 +108,38 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 3. Ensure relative paths only — do not hardcode `/home/user/...` or `/tmp/...`
 4. Add the run line to this README's "Run all tests" block
 
-## CI (future)
+## CI
 
-No CI runner is wired up yet. Candidate: a simple `npm test` script that runs all five suites and exits non-zero on any failure. Ticket out when T9j.10 golden-pack lands.
+This repo uses GitHub Actions for:
+
+- PR/push CI
+- bundle freshness and cache-bump checks
+- the daily deterministic simulator heartbeat
+
+Keep this README aligned with the actual workflow files when adding or removing recurring checks.
+
+## Daily Heartbeat
+
+GitHub Actions `Daily Sim Heartbeat` runs a deterministic smoke set every day and on manual dispatch:
+
+- `node tools/generate-move-support-audit.mjs`
+- `node tests/move_legality_tests.js`
+- `node tests/move_support_audit_tests.js`
+- `node tests/move_verification_registry_tests.js`
+- `node tests/replay_species_parser_tests.js`
+- `node tests/replay_turn0_tests.js`
+- `node tests/preloaded_team_legality_tests.js`
+- `node tests/phase5_turn_log_tests.js`
+- `node tests/pokemon_data_audit_tests.js`
+- `bash tools/check-bundle.sh`
+
+It is intentionally read-only and does not hit live Supabase by default.
+
+When engine/log behavior changes intentionally:
+
+- regenerate golden battle hashes with `node tests/golden_battles_runner.js --generate`
+- rerun `node tests/db_m7_golden_battles_tests.js`
+- rebuild `pokemon-champion-2026.html` with `python3 tools/build-bundle.py` if app source changed
+- bump `poke-sim/sw.js` `CACHE_NAME` and keep `APP_ASSETS` aligned when adding or changing shipped browser assets
+
+This avoids the two most common trust-layer regressions: stale golden fixtures and stale PWA caches.
