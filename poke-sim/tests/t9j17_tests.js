@@ -257,8 +257,11 @@ T('B9. Fake Out cannot be saved for a later turn in the same field stay', () => 
   const r = ctx.simulateBattle(team([fo, ally, opp, opp, opp, opp]),
                                 team([opp, opp, opp, opp, opp, opp]),
                                 { format:'doubles', seed: seed(3030), maxTurns: 2 });
-  const foLines = (r.log || []).filter(l => /Incineroar.*Fake Out/.test(l));
-  eq(foLines.length, 0, `Fake Out should be unavailable after turn 1 of the same stay, saw ${foLines.length} uses`);
+  const lines = (r.log || []).map(String);
+  const turn2Idx = lines.findIndex(l => l.indexOf('--- Turn 2 ---') !== -1);
+  truthy(turn2Idx >= 0, 'battle log should include turn 2');
+  const turn2FakeOuts = lines.slice(turn2Idx).filter(l => /Incineroar.*Fake Out/.test(l));
+  eq(turn2FakeOuts.length, 0, `Fake Out should be unavailable on turn 2 of the same stay, saw ${turn2FakeOuts.length} uses`);
 });
 
 // ============================================================
