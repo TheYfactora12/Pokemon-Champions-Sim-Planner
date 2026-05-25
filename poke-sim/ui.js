@@ -2518,15 +2518,24 @@ function csRenderReplayStadiumMon(row) {
   var meta = [];
   if (row.item) meta.push(row.item);
   if (row.ability) meta.push(row.ability);
+  var species = row.species || row.displayName || 'unknown';
+  var spriteUrl = (typeof getSpriteUrl === 'function') ? getSpriteUrl(species) : '';
   return '<div class="replay-stadium-mon ' + _escapeHtml(status) + '">' +
-    '<div class="replay-roster-mon-head">' +
-      '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
-      '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
+    '<div class="replay-stadium-mon-shell">' +
+      (spriteUrl
+        ? '<img class="replay-stadium-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>'
+        : '<div class="replay-stadium-sprite replay-mon-sprite-fallback" aria-hidden="true"></div>') +
+      '<div class="replay-stadium-mon-body">' +
+        '<div class="replay-roster-mon-head">' +
+          '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
+          '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
+        '</div>' +
+        '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
+        '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(row.hpLabel || (hp == null ? 'unknown' : hp + '%')) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
+        (meta.length ? '<div class="replay-roster-meta">' + _escapeHtml(meta.join(' · ')) + '</div>' : '') +
+        '<div class="replay-roster-meta"><b>Moves:</b> ' + _escapeHtml(moves || 'unknown') + '</div>' +
+      '</div>' +
     '</div>' +
-    '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
-    '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(row.hpLabel || (hp == null ? 'unknown' : hp + '%')) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
-    (meta.length ? '<div class="replay-roster-meta">' + _escapeHtml(meta.join(' · ')) + '</div>' : '') +
-    '<div class="replay-roster-meta"><b>Moves:</b> ' + _escapeHtml(moves || 'unknown') + '</div>' +
   '</div>';
 }
 
@@ -2980,6 +2989,8 @@ function csRenderReplayRosterMon(row, compact) {
   var hpLabel = row.hpLabel || (hp == null ? 'unknown' : hp + '%');
   var hpClass = csReplayCoachHpClass(row);
   var moves = (row.moves || []).join(', ');
+  var species = row.species || row.displayName || 'unknown';
+  var spriteUrl = (typeof getSpriteUrl === 'function') ? getSpriteUrl(species) : '';
   var legality = (row.moveLegality || []).filter(function(item) {
     return item && item.move && item.move !== 'unknown';
   }).map(function(item) {
@@ -2990,18 +3001,25 @@ function csRenderReplayRosterMon(row, compact) {
     return '<span class="replay-coach-tag medium">' + _escapeHtml(w) + '</span>';
   }).join('');
   return '<div class="replay-roster-mon ' + _escapeHtml(status) + '">' +
-    '<div class="replay-roster-mon-head">' +
-      '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
-      '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
+    '<div class="replay-roster-mon-shell">' +
+      (spriteUrl
+        ? '<img class="replay-roster-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>'
+        : '<div class="replay-roster-sprite replay-mon-sprite-fallback" aria-hidden="true"></div>') +
+      '<div class="replay-roster-mon-body">' +
+        '<div class="replay-roster-mon-head">' +
+          '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
+          '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
+        '</div>' +
+        '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
+        '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(hpLabel) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
+        '<div class="replay-roster-meta"><b>Species/form:</b> ' + _escapeHtml(row.species || 'unknown') + ' · <b>Gender:</b> ' + _escapeHtml(row.gender || 'unknown') + ' · <b>Level:</b> ' + _escapeHtml(String(row.level || 'unknown')) + '</div>' +
+        (compact ? '' : '<div class="replay-roster-meta"><b>Item:</b> ' + _escapeHtml(row.item || 'unknown') + ' · <b>Ability:</b> ' + _escapeHtml(row.ability || 'unknown') + '</div>') +
+        (compact ? '' : '<div class="replay-roster-meta"><b>Base stats:</b> ' + _escapeHtml(row.baseStatsLabel || 'unknown') + ' · <b>Calculated L50:</b> ' + _escapeHtml(row.calculatedStats || 'unknown') + '</div>') +
+        (compact ? '' : '<div class="replay-roster-meta"><b>Known moves:</b> ' + _escapeHtml(moves || 'unknown') + '</div>') +
+        (legality && !compact ? '<div class="replay-coach-tags">' + legality + '</div>' : '') +
+        (warnings && !compact ? '<div class="replay-coach-tags">' + warnings + '</div>' : '') +
+      '</div>' +
     '</div>' +
-    '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
-    '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(hpLabel) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
-    '<div class="replay-roster-meta"><b>Species/form:</b> ' + _escapeHtml(row.species || 'unknown') + ' · <b>Gender:</b> ' + _escapeHtml(row.gender || 'unknown') + ' · <b>Level:</b> ' + _escapeHtml(String(row.level || 'unknown')) + '</div>' +
-    (compact ? '' : '<div class="replay-roster-meta"><b>Item:</b> ' + _escapeHtml(row.item || 'unknown') + ' · <b>Ability:</b> ' + _escapeHtml(row.ability || 'unknown') + '</div>') +
-    (compact ? '' : '<div class="replay-roster-meta"><b>Base stats:</b> ' + _escapeHtml(row.baseStatsLabel || 'unknown') + ' · <b>Calculated L50:</b> ' + _escapeHtml(row.calculatedStats || 'unknown') + '</div>') +
-    (compact ? '' : '<div class="replay-roster-meta"><b>Known moves:</b> ' + _escapeHtml(moves || 'unknown') + '</div>') +
-    (legality && !compact ? '<div class="replay-coach-tags">' + legality + '</div>' : '') +
-    (warnings && !compact ? '<div class="replay-coach-tags">' + warnings + '</div>' : '') +
   '</div>';
 }
 

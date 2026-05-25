@@ -574,19 +574,27 @@
   4. engine.js           — simulateBattle, runBoSeries internals
   5. storage_adapter.js  — localStorage wrapper (Storage.*)
   6. supabase_adapter.js — SupabaseAdapter.* (needs supabase-js + Storage)
-  7. ui.js               — all UI logic (needs everything above)
-  8. legality.js         — VGC legality checker
-  9. strategy-injectable.js — injectable coaching layer
+  7. generated/pokemon_showdown_legal_data.js — Showdown-derived stats/learnsets
+  8. move_legality.js    — species/form move legality helper
+  9. move_support.js     — local move support confidence helper
+ 10. replay_coach.js     — Battle Sensei replay parser
+ 11. replay_learning.js  — Battle Sensei learning layer
+ 12. legality.js         — VGC legality checker
+ 13. ui.js               — all UI logic (needs everything above)
+ 14. strategy-injectable.js — injectable coaching layer
 -->
 <script src="data.js"></script>
 <script src="logger.js"></script>
 <script src="engine.js"></script>
 <script src="storage_adapter.js"></script>
 <script src="supabase_adapter.js"></script>
+<script src="generated/pokemon_showdown_legal_data.js"></script>
+<script src="move_legality.js"></script>
+<script src="move_support.js"></script>
 <script src="replay_coach.js"></script>
 <script src="replay_learning.js"></script>
-<script src="ui.js"></script>
 <script src="legality.js"></script>
+<script src="ui.js"></script>
 <script src="strategy-injectable.js"></script>
 
 <script>

@@ -2,7 +2,7 @@
 
 > **Battle-tested. Always evolving.**
 > Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/)
-> **Last updated:** 2026-04-30 | **Baseline:** T9j.17 (343 tests · 5,070 battles/audit)
+> **Last updated:** 2026-05-24 | **Baseline:** T9j.17 (343 tests · 5,070 battles/audit)
 
 ---
 
@@ -140,6 +140,40 @@
 | #69 | Keyboard shortcuts | P3 |
 | #70 | Dark mode override toggle | P3 |
 
+### M6 Release Track — Public Site, Security, and Revenue Readiness
+
+This is the concrete release path for turning the simulator into a trustworthy public site. Core battle truth stays in repo code and generated artifacts. Supabase remains for user and operational data only.
+
+| Step | What | Why | Owner | Exit Criteria | When |
+|---|---|---|---|---|---|
+| M6.1 | Stable public site on GitHub Pages or equivalent static host | Give users one canonical URL for the known-good build | Kevin | `main` deploy is live, HTTPS works, bundle loads, mobile smoke passes | Before public sharing |
+| M6.2 | Security baseline for site and data flows | Prevent avoidable release mistakes before real users arrive | Kevin + engineering | Secrets not exposed in client bundle, Supabase keys scoped correctly, RLS reviewed, no unsafe admin paths in browser code | Before accounts or payments |
+| M6.3 | Release gates and rollback path | Avoid shipping broken simulator logic or stale bundles | Engineering | CI green, bundle freshness green, heartbeat green, rollback steps documented, previous stable build recoverable | Before every release |
+| M6.4 | Trust UX for sim confidence | Do not fake confidence on partially modeled mechanics | Engineering + product | UI can distinguish verified / baseline / incomplete move support and legality warnings remain visible | Before paid coaching claims |
+| M6.5 | Free public core experience | Grow usage before monetization | Kevin + product | Public users can sim, import teams, review replays, and get basic Battle Sensei output without account friction | First public launch |
+| M6.6 | Donations layer | Allow early supporters to fund hosting and iteration without gating core utility | Kevin | Donation link/page live with clear disclaimer that donations do not affect simulator truth | After stable public launch |
+| M6.7 | Account + saved history layer | Support retention and premium workflow without moving battle truth into DB | Engineering | Users can save teams, replays, notes, and history in Supabase with RLS | After launch stability |
+| M6.8 | Premium subscription layer | Monetize repeat value, not basic correctness | Kevin + product | Premium features are scoped to history, deeper analysis, and workflow convenience rather than core sim access | After free adoption signal |
+| M6.9 | Human coaching offer | Turn software usage into higher-value expert service | Kevin / Josh / Alfredo as assigned | Coaching flow is separate from simulator truth and clearly labeled as human review | After replay trust layer is proven |
+
+### M6 Security Checklist
+
+- Keep canonical mechanics, stats, learnsets, and move behavior in repo code and generated artifacts.
+- Keep Supabase for users, saved teams, replays, subscriptions, notes, and operational metadata.
+- Do not put live battle-truth tables in DB unless a separate architecture mission approves it.
+- Require green CI, bundle freshness, cache bump, and daily heartbeat before release promotion.
+- Verify GitHub Pages or host config uses HTTPS and only serves the merged `main` bundle.
+- Audit client-visible keys and environment wiring so browser code only gets intentionally public values.
+- Review Supabase RLS and roles before enabling accounts, saved history, or subscriptions.
+- Keep a rollback path: last known-good bundle SHA, previous release note, and restore steps.
+
+### M6 Roles
+
+- Kevin: product owner, release approval, public messaging, monetization sequencing.
+- Engineering repo owner: battle-truth changes, CI gates, bundle/build integrity, release rollback readiness.
+- Josh: workbook/data review, trust-layer QA, pre-release spot checks.
+- Alfredo mirror repo owner: mirror validation and parity once the source repo release is stable.
+
 ---
 
 ## Backlog — Advanced Features (M11, Post-M8)
@@ -161,7 +195,7 @@
 | **M3 Piloting Analytics** | Stat panel, lead pair table, weakness dashboard, decision flagger, confidence overlay all live. |
 | **M4 Community & Sharing** | Users can share teams and replays externally. |
 | **M5 Tournament Packet** | Full tournament-ready PDF: per-matchup pages, cover, mobile layout. |
-| **M6 Polish & Launch** | Performance, accessibility, keyboard nav, dark mode — public launch quality. |
+| **M6 Polish & Launch** | Public site, security baseline, trust UX, launch gates, donations/accounts/subscription sequencing — public launch quality. |
 | **M7 Architecture Foundation** | Namespace, `ui.js` module split, TDZ safety, CI/CD all operational. |
 | **M8 Profile & Sync** | Per-user profiles, Supabase cloud sync, cross-device support. Supabase layer already live. |
 | **M9 Observability & QA** | Structured logger, CI workflows, performance profiling harness. |
