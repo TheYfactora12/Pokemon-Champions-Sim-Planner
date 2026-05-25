@@ -1,0 +1,51 @@
+name: Daily Sim Heartbeat
+
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-sim-heartbeat
+  cancel-in-progress: true
+
+jobs:
+  heartbeat:
+    name: Daily deterministic simulator smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies
+        run: |
+          set -euo pipefail
+          cd poke-sim
+          npm install
+
+      - name: Run deterministic heartbeat suites
+        run: |
+          set -euo pipefail
+          cd poke-sim
+          node tools/generate-move-support-audit.mjs
+          node tests/move_legality_tests.js
+          node tests/move_support_audit_tests.js
+          node tests/move_verification_registry_tests.js
+          node tests/replay_species_parser_tests.js
+          node tests/replay_turn0_tests.js
+          node tests/preloaded_team_legality_tests.js
+          node tests/phase5_turn_log_tests.js
+          node tests/pokemon_data_audit_tests.js
+          bash tools/check-bundle.sh

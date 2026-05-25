@@ -4914,6 +4914,16 @@ const MOVE_TYPES = {
   'Make It Rain':'Steel', 'Feint':'Normal', 'Follow Me':'Normal', 'Haze':'Ice',
   'Scald':'Water', 'Coaching':'Fighting', 'Super Fang':'Normal',
   'Dragon Claw':'Dragon', 'Overheat':'Fire',
+  'Aura Sphere':'Fighting', 'Clanging Scales':'Dragon', 'Clangorous Soul':'Dragon',
+  'Dual Wingbeat':'Flying', 'Fake Tears':'Dark', 'Freeze-Dry':'Ice',
+  'Giga Drain':'Grass', 'Gunk Shot':'Poison', 'Headlong Rush':'Ground',
+  'Ice Shard':'Ice', "King's Shield":'Steel', 'Leaf Storm':'Grass',
+  'Leech Seed':'Grass', 'Light Screen':'Psychic', 'Light of Ruin':'Fairy',
+  'Lunge':'Bug', 'Perish Song':'Normal', 'Poison Jab':'Poison',
+  'Poltergeist':'Ghost', 'Reflect':'Psychic', 'Rock Tomb':'Rock',
+  'Sludge Wave':'Poison', 'Swords Dance':'Normal', 'Taunt':'Dark',
+  'Tera Blast':'Normal', 'Trick':'Psychic', 'Volt Switch':'Electric',
+  'Calm Mind':'Psychic',
 };
 
 
@@ -4965,7 +4975,10 @@ const MOVE_CATEGORY = {
   'Psychic':'special','Psyshock':'special','Overheat':'special',
   'Blizzard':'special','Blood Moon':'special','Vacuum Wave':'special',
   'Make It Rain':'special','Scald':'special','Icy Wind':'special',
-  'Night Daze':'special','Infernal Parade':'special',
+  'Night Daze':'special','Infernal Parade':'special','Aura Sphere':'special',
+  'Clanging Scales':'special','Freeze-Dry':'special','Giga Drain':'special',
+  'Leaf Storm':'special','Light of Ruin':'special','Sludge Wave':'special',
+  'Volt Switch':'special',
   // --- Status (BP 0) ---
   'Parting Shot':'status','Will-O-Wisp':'status','Protect':'status',
   'Tailwind':'status','Sunny Day':'status','Roost':'status',
@@ -4976,7 +4989,15 @@ const MOVE_CATEGORY = {
   'Rest':'status','Substitute':'status','Sleep Talk':'status','Shore Up':'status',
   'Recover':'status','Dragon Dance':'status','Imprison':'status',
   'Encore':'status','Aurora Veil':'status','Spore':'status',
-  'Follow Me':'status','Haze':'status','Coaching':'status'
+  'Follow Me':'status','Haze':'status','Coaching':'status',
+  'Calm Mind':'status','Clangorous Soul':'status','Fake Tears':'status',
+  "King's Shield":'status','Leech Seed':'status','Light Screen':'status',
+  'Perish Song':'status','Reflect':'status','Swords Dance':'status',
+  'Taunt':'status','Trick':'status','Tera Blast':'special',
+  // --- Physical (continued) ---
+  'Dual Wingbeat':'physical','Gunk Shot':'physical','Headlong Rush':'physical',
+  'Ice Shard':'physical','Lunge':'physical','Poison Jab':'physical',
+  'Poltergeist':'physical','Rock Tomb':'physical'
 };
 
 const MOVE_BP = {
@@ -5006,6 +5027,13 @@ const MOVE_BP = {
   'Shadow Sneak':40,'Psyshock':80,'Mystical Fire':75,'Play Rough':90,'Body Press':80,
   'Zen Headbutt':80,'Bite':60,'Twister':40,'Icicle Crash':85,'Waterfall':80,
   'Rest':0,'Substitute':0,'Sleep Talk':0,'Shore Up':0,
+  'Aura Sphere':80,'Calm Mind':0,'Clanging Scales':110,'Clangorous Soul':0,
+  'Dual Wingbeat':40,'Fake Tears':0,'Freeze-Dry':70,'Giga Drain':75,
+  'Gunk Shot':120,'Headlong Rush':120,'Ice Shard':40,"King's Shield":0,
+  'Leaf Storm':130,'Leech Seed':0,'Light Screen':0,'Light of Ruin':140,
+  'Lunge':80,'Perish Song':0,'Poison Jab':80,'Poltergeist':110,'Reflect':0,
+  'Rock Tomb':60,'Sludge Wave':95,'Swords Dance':0,'Taunt':0,'Tera Blast':80,
+  'Trick':0,'Volt Switch':70,
   'Astonish':30,'Extrasensory':80,'Heart Stamp':60,'Needle Arm':60,'Bone Club':65,
   'Headbutt':70,'Rolling Kick':60,'Stomp':65
 };
@@ -5110,8 +5138,16 @@ const MOVE_TARGETS = {
   'Taunt':'normal', 'Sleep Powder':'normal', 'Spore':'normal', 'Hypnosis':'normal',
   'Encore':'normal', 'Clear Smog':'normal', 'Rock Tomb':'normal',
   'Heal Pulse':'normal', 'Coaching':'normal',
+  'Aura Sphere':'normal', 'Dual Wingbeat':'normal', 'Fake Tears':'normal',
+  'Freeze-Dry':'normal', 'Giga Drain':'normal', 'Gunk Shot':'normal',
+  'Headlong Rush':'normal', 'Ice Shard':'normal', 'Leaf Storm':'normal',
+  'Leech Seed':'normal', 'Light of Ruin':'normal', 'Lunge':'normal',
+  'Poison Jab':'normal', 'Poltergeist':'normal', 'Rock Tomb':'normal',
+  'Taunt':'normal', 'Trick':'normal', 'Volt Switch':'normal',
   'Expanding Force':'normal',  // dynamic → 'all-adjacent-foes' under Psychic Terrain (Issue #36 -- T9j.17 IMPLEMENTED in engine.js executeMove)
   'Tera Blast':'normal',       // normally single-target; type changes with Tera (Issue #7)
+  'Clanging Scales':'all-adjacent-foes', 'Clangorous Soul':'self',
+  'Perish Song':'all-foes', 'Sludge Wave':'all-adjacent',
 };
 
 // Helpers (T9j.2, Issue #33)

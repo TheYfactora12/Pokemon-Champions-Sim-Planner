@@ -983,6 +983,11 @@ class Pokemon {
     for (const t of targetTypes) {
       typeEff *= (chart[t] !== undefined ? chart[t] : 1);
     }
+    // Freeze-Dry is super effective against Water regardless of the standard Ice chart.
+    // Cite: Bulbapedia Freeze-Dry / damage modifier notes.
+    if (move === 'Freeze-Dry' && targetTypes.includes('Water')) {
+      typeEff *= 2;
+    }
     if (typeEff === 0) return 0;
 
     // STAB — include Tera STAB
@@ -2716,11 +2721,18 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   function applyDamage(attacker, move, target, dmg, field, log, rng) {
     if (dmg <= 0) return;
     let finalDmg = dmg;
+    const DRAIN_MOVES = new Set(['Giga Drain', 'Matcha Gotcha']);
     // Substitute absorb
     if (target.substituteHp > 0) {
       target.substituteHp -= finalDmg;
       if (target.substituteHp <= 0) { target.substituteHp = 0; log.push(`${target.name}'s Substitute was destroyed!`); }
       else log.push(`${attacker.name} used ${move}! (Substitute absorbed ${finalDmg} dmg)`);
+      if (DRAIN_MOVES.has(move) && attacker && attacker.alive) {
+        const drainHeal = Math.max(1, Math.floor(finalDmg / 2));
+        const healed = Math.max(0, Math.min(attacker.maxHp, attacker.hp + drainHeal) - attacker.hp);
+        attacker.hp += healed;
+        if (healed > 0) log.push(`${attacker.name} restored HP with ${move}! [${healed} HP]`);
+      }
       return;
     }
     if (target.enduring && finalDmg >= target.hp) {
@@ -2741,6 +2753,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     log.push(`${attacker.name} used ${move}! → ${target.name} [${finalDmg} dmg, ${target.hp}/${target.maxHp} HP]`);
     if (sashSaved) log.push(`${target.name} hung on with its Focus Sash!`);
+    if (DRAIN_MOVES.has(move) && attacker && attacker.alive) {
+      const drainHeal = Math.max(1, Math.floor(finalDmg / 2));
+      const healed = Math.max(0, Math.min(attacker.maxHp, attacker.hp + drainHeal) - attacker.hp);
+      attacker.hp += healed;
+      if (healed > 0) log.push(`${attacker.name} restored HP with ${move}! [${healed} HP]`);
+    }
     // T9j.4 (#41) — Fire-move thaw on hit. Any damaging Fire move thaws target.
     // Cite: Bulbapedia Freeze.
     if (target.status === 'frozen' && finalDmg > 0 && target.hp > 0 &&
