@@ -147,4 +147,5 @@ print(f'Bundle: {os.path.getsize(\"pokemon-champion-2026.html\"):,} bytes')
 
 - [`DEVELOPMENT_RUNBOOK.md`](./DEVELOPMENT_RUNBOOK.md) — full dev history, QA log, replication steps, known issues
 - [`MASTER_PROMPT.md`](./MASTER_PROMPT.md) — copy-paste context for resuming in a new AI session
+- [`docs/repo-sync-playbook.md`](./docs/repo-sync-playbook.md) — fastest safe process for syncing validated fixes into mirror repos
 - [`CHAMPIONS_VALIDATOR_FRAMEWORK.md`](./CHAMPIONS_VALIDATOR_FRAMEWORK.md) — validator framework governing engine change tickets
