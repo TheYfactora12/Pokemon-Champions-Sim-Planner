@@ -1,9 +1,13 @@
-// Poke-e-Sim Champion 2026 — Service Worker
+// Poke-e-Sim Champion 2026 Preview — Service Worker
 // Cache-first strategy for all app assets + sprite CDN
 // CACHE_NAME scheme: champions-sim-v{major}-{release-tag}
 // MUST be bumped on every release that changes engine.js, data.js, ui.js, or style.css
 // Phase 2 automation tracked in #95 (tools/release.sh)
 //
+// v37-may-meta-roster [2026-05-22] — Added current May 2026 preloaded meta rosters, explicit species coverage, and synced DB seed artifacts.
+// v38-battle-sensei-port [2026-05-24] — Added Battle Sensei replay review tab, replay URL loading, evidence-bound coaching reads, and lead-logic explanations.
+// v36-ui-trust-copy [2026-05-22] — Trust/provenance copy tightening for preview labeling, source wording, and strategy evidence framing.
+// v35-regional-form-stats [2026-05-19] — Canonical regional/form stat corrections + shipped form fallback fix.
 // v34-mobile-shell-layout [2026-05-15] — Mobile shell layout + bring-order normalization.
 // v13-m7-golden-battles [2026-05-09] — M7 (POK-23): golden_battles deterministic regression runner
 //                                   fixture + VM runner + 8 test cases; CI enablement for db_m*.js
@@ -18,7 +22,7 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v34-mobile-shell-layout';
+const CACHE_NAME = 'champions-sim-v39-shared-29-team-catalog';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
@@ -30,8 +34,6 @@ const APP_ASSETS = [
   './data.js',
   './logger.js',
   './engine.js',
-  './replay_coach.js',
-  './replay_learning.js',
   './ui.js',
   './legality.js',
   './strategy-injectable.js',

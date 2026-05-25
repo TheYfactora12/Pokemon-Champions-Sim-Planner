@@ -10,16 +10,15 @@ Three ways to open the sim without cloning. Each points to a different snapshot 
 
 | Channel | Name | What it serves | Updates when | Use it for | Status |
 |---|---|---|---|---|---|
-| **Dev preview** | `fix/champions-sp-and-legality` (current active dev branch) | Newest work-in-progress bundle — what Alfredo and the agent push fixes to today | Every push to `fix/champions-sp-and-legality` | Testing the latest mechanics / tickets before merge | ✅ Live |
+| **Dev preview** | feature / PR branch | Newest work-in-progress bundle for the branch under review | Every push to that branch | Testing the latest mechanics / tickets before merge | ✅ Live when a branch preview URL is shared |
 | **Stable** | `main` branch | Last merged bundle on the default branch | Only after a PR from a feature branch is merged into `main` | Sharing with teammates / VGC players who want a known-good build | ✅ Live |
 | **Static host** | GitHub Pages | Clean short URL, no proxy | Re-publishes on every push to `main` once enabled | Giving out a permanent link; best mobile experience | ⚠️ Not yet enabled — see setup below |
 
 **Links:**
-- **Dev preview — current branch `fix/champions-sp-and-legality`** (latest work-in-progress bundle, updates on every push): [htmlpreview.github.io — fix/champions-sp-and-legality](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/fix/champions-sp-and-legality/poke-sim/pokemon-champion-2026.html)
 - **Stable — branch `main`** (last merged bundle, updates only after PR merge): [htmlpreview.github.io — main](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html)
 - **GitHub Pages** (not yet enabled): will be `https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/` once configured — to enable, go to repo → Settings → Pages → Source: `Deploy from a branch`, select `main` branch, folder `/ (root)`, save
 
-> **Note:** The two htmlpreview links are *live proxies* — they pull the raw HTML from GitHub at load time, so a push to that branch updates what viewers see on next reload. The **dev preview** shows whatever is on `fix/champions-sp-and-legality` (the branch we are actively iterating on); the **stable** link shows whatever is on `main`. The local file at `poke-sim/pokemon-champion-2026.html` is the *source of truth* — everything above is a hosted view of it.
+> **Note:** The htmlpreview link is a live proxy for the raw single-file bundle on GitHub. Use the `main` link for the last merged stable build. For branch testing, generate the same URL pattern against that branch's raw `poke-sim/pokemon-champion-2026.html`. The local file at `poke-sim/pokemon-champion-2026.html` is the source of truth.
 
 ---
 
@@ -35,7 +34,7 @@ Pokemon-Champions-Sim-Planner/
     ├── pokemon-champion-2026.html     ← Self-contained single-file bundle (~400 KB)
     ├── index.html                     ← App shell, tabs, PWA meta
     ├── style.css                      ← Mobile-first dark theme
-    ├── data.js                        ← BASE_STATS, TEAMS (13), POKEMON_TYPES_DB (500+)
+    ├── data.js                        ← BASE_STATS, TEAMS (29), POKEMON_TYPES_DB (500+)
     ├── engine.js                      ← Battle sim engine, damage formula, Bo runner
     ├── ui.js                          ← All UI logic, import/export, pilot guide, PDF
     ├── legality.js                    ← Team legality validator
@@ -61,7 +60,7 @@ Pokemon-Champions-Sim-Planner/
 
 - Bo1 / Bo3 / Bo5 / Bo10 Monte Carlo simulation
 - Doubles and Singles format toggle
-- 13 tournament teams preloaded (Champions Arena, Chuppa, Rin Sand, Suica Sun, etc.)
+- 29 preloaded teams covering tournament, ladder, and replay-validation scenarios
 - Poképaste + Showdown import/export
 - Team Preview bring-N-of-6 picker with drag+tap UI and Random 4/6 opponent mode (T9j.10)
 - Simulator-tab inline bring pickers for player + opponent sharing state with the Teams tab (T9j.12)

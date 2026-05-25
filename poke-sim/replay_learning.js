@@ -53,6 +53,31 @@
     return 'Major Coaching Opportunity';
   }
 
+  function uniqueReadoutRows(rows) {
+    var seen = {};
+    return (rows || []).filter(function(row) {
+      if (!row) return false;
+      var key = [
+        escText(row.label).toLowerCase(),
+        escText(row.evidence).toLowerCase()
+      ].join('||');
+      if (!key || seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
+  function uniqueReadoutLabels(rows) {
+    var seen = {};
+    return (rows || []).filter(function(row) {
+      if (!row) return false;
+      var key = escText(row.label).toLowerCase();
+      if (!key || seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
   function erfApprox(x) {
     var sign = x < 0 ? -1 : 1;
     x = Math.abs(x);
@@ -384,6 +409,9 @@
     Object.keys(weights).forEach(function(k) { rawComposite += scores[k] * weights[k]; });
     rawComposite = clampScore(rawComposite);
     var standard = standardFromRaw(rawComposite);
+    var displayScore = standard;
+    var displayBand = battleIqBand(standard);
+    var displayPercentile = percentileFromStandard(standard);
     var margin = confidenceIntervalFor(confidence);
     var subScores = Object.keys(BATTLE_IQ_LABELS).map(function(k) {
       return {
@@ -405,6 +433,11 @@
     });
     raisedBy.sort(function(a, b) { return b.points - a.points; });
     loweredBy.sort(function(a, b) { return a.points - b.points; });
+    if (confidence === 'low') {
+      displayScore = null;
+      displayBand = 'Needs more data';
+      displayPercentile = null;
+    }
     var weakest = subScores.slice().sort(function(a, b) { return a.rawScore - b.rawScore; })[0];
     var drillIssue = issues.find(function(issue) {
       return categoryForIssue(issue).toLowerCase().indexOf((weakest.label || '').split(' ')[0].toLowerCase()) >= 0;
@@ -414,10 +447,11 @@
       status: 'Provisional Battle IQ',
       rawComposite: rawComposite,
       standardScore: standard,
-      percentile: percentileFromStandard(standard),
+      displayScore: displayScore,
+      percentile: displayPercentile,
       confidence: confidence,
-      confidenceInterval: [standard - margin, standard + margin],
-      band: battleIqBand(standard),
+      confidenceInterval: confidence === 'low' ? [] : [standard - margin, standard + margin],
+      band: displayBand,
       subScores: subScores,
       raisedBy: raisedBy.slice(0, 2),
       loweredBy: loweredBy.slice(0, 2),
@@ -779,6 +813,202 @@
     };
   }
 
+  function replayMoveKind(move) {
+    var m = escText(move).toLowerCase();
+    if (!m) return 'unknown';
+    if (m === 'protect' || m === 'detect' || m === 'spiky shield' || m === 'wide guard' || m === 'quick guard') return 'protection';
+    if (m === 'fake out') return 'fake_out';
+    if (m === 'tailwind' || m === 'trick room' || m === 'icy wind' || m === 'electroweb' || m === 'thunder wave') return 'speed_control';
+    if (m === 'follow me' || m === 'rage powder') return 'redirection';
+    if (m === 'swords dance' || m === 'nasty plot' || m === 'calm mind' || m === 'dragon dance') return 'setup';
+    if (m === 'parting shot' || m === 'u-turn' || m === 'volt switch') return 'pivot';
+    if (m === 'helping hand') return 'damage_support';
+    return 'attack_or_support';
+  }
+
+  function buildLeadLogicRead(parsed, review) {
+    parsed = parsed || {};
+    review = review || {};
+    var summary = review.summary || {};
+    var side = parsed.selectedSide || 'p1';
+    var opp = side === 'p1' ? 'p2' : 'p1';
+    var firstTurn = (parsed.turns || []).find(function(turn) { return turn && turn.number === 1; }) || null;
+    var yourMoves = firstTurn ? (firstTurn.moves || []).filter(function(move) { return move.side === side; }) : [];
+    var oppMoves = firstTurn ? (firstTurn.moves || []).filter(function(move) { return move.side === opp; }) : [];
+    var issueMap = {};
+    (review.coachingTags || []).forEach(function(issue) {
+      if (issue && issue.id) issueMap[issue.id] = issue;
+    });
+    var kinds = {};
+    yourMoves.forEach(function(move) {
+      var kind = replayMoveKind(move.move);
+      if (!kinds[kind]) kinds[kind] = [];
+      kinds[kind].push(move);
+    });
+    var oppKinds = {};
+    oppMoves.forEach(function(move) {
+      var kind = replayMoveKind(move.move);
+      if (!oppKinds[kind]) oppKinds[kind] = [];
+      oppKinds[kind].push(move);
+    });
+
+    var signals = [];
+    if ((kinds.fake_out || []).length) {
+      signals.push('Fake Out pressure from ' + (kinds.fake_out[0].pokemon || 'your lead') + ' gave the opener an interrupt line into the opposing board.');
+    }
+    if ((kinds.speed_control || []).length) {
+      signals.push((kinds.speed_control[0].move || 'Speed control') + ' gave the pair a move-order plan instead of pure damage racing.');
+    }
+    if ((kinds.redirection || []).length) {
+      signals.push((kinds.redirection[0].move || 'Redirection') + ' gave the lead a protection layer for a setup or pressure partner.');
+    }
+    if ((kinds.pivot || []).length) {
+      signals.push((kinds.pivot[0].move || 'Pivoting') + ' gave the opener a repositioning option if the first board state was unstable.');
+    }
+    if (!signals.length && (summary.yourLead || []).length) {
+      signals.push('Lead logic is only partially visible because this replay did not reveal a strong turn-one support pattern from the opening pair.');
+    }
+
+    var pros = [];
+    if ((kinds.fake_out || []).length) pros.push('The lead had a turn-one interrupt tool, which is useful when the opponent relies on setup or support to unlock their damage.');
+    if ((kinds.speed_control || []).length) pros.push('The lead had direct move-order control, which can create a safer line for your backline if it converts quickly.');
+    if ((kinds.redirection || []).length) pros.push('The lead included visible support synergy, so one slot could buy time for the other.');
+    if ((oppKinds.setup || oppKinds.speed_control || oppKinds.redirection) && ((kinds.fake_out || []).length || (kinds.speed_control || []).length)) {
+      pros.push('Into the shown opposing opener, your pair at least had tools that could contest setup, support, or speed manipulation on turn 1.');
+    }
+
+    var cons = [];
+    if (issueMap.bad_lead) cons.push(issueMap.bad_lead.whyMattered || issueMap.bad_lead.whatHappened || 'The opening pair still gave the opponent too much access to their plan.');
+    if (issueMap.targeting_error) cons.push(issueMap.targeting_error.whyMattered || 'The interrupt line was fragile to protection, terrain, redirection, or move blocking.');
+    if (issueMap.field_control_failure || issueMap.speed_control_without_pressure) {
+      var issue = issueMap.field_control_failure || issueMap.speed_control_without_pressure;
+      cons.push(issue.whyMattered || 'The lead did not convert its speed or field plan into immediate pressure.');
+    }
+    if (!cons.length && (oppKinds.setup || oppKinds.speed_control)) {
+      cons.push('The replay still requires a check on whether the lead could punish the opponent if their first support line resolved cleanly.');
+    }
+
+    var identity = [];
+    if ((kinds.fake_out || []).length) identity.push('interrupt');
+    if ((kinds.speed_control || []).length) identity.push('speed control');
+    if ((kinds.redirection || []).length) identity.push('support');
+    if ((kinds.setup || []).length) identity.push('setup');
+    if (!identity.length) identity.push('pressure');
+
+    return {
+      label: identity.join(' + ') + ' opener',
+      yourLead: (summary.yourLead || []).slice(),
+      opponentLead: (summary.opponentLead || []).slice(),
+      synergySignals: signals,
+      pros: pros,
+      cons: cons,
+      confidence: confidenceFor(parsed, review.coachingTags || []),
+      limitation: 'This lead read is based on visible turn-one replay evidence and revealed support tools. It does not assume hidden sets, items, or full team intent.'
+    };
+  }
+
+  function playerMoveNames(parsed) {
+    var side = parsed && parsed.selectedSide || 'p1';
+    var names = [];
+    (parsed && parsed.turns || []).forEach(function(turn) {
+      (turn.moves || []).forEach(function(move) {
+        if (move && move.side === side && move.move) names.push(String(move.move));
+      });
+    });
+    return names;
+  }
+
+  function buildCoachingReadouts(parsed, review, battleIq, critical) {
+    parsed = parsed || {};
+    review = review || {};
+    battleIq = battleIq || buildBattleIqScore(parsed, review, {});
+    critical = critical || buildCriticalTurns(parsed, review);
+    var confidence = confidenceFor(parsed, review.coachingTags || []);
+    var strengths = [];
+    var advanced = [];
+    var tighten = [];
+    var moves = playerMoveNames(parsed);
+    var moveText = moves.join(' | ');
+    var issueMap = {};
+    (review.coachingTags || []).forEach(function(issue) {
+      if (issue && issue.id) issueMap[issue.id] = issue;
+    });
+
+    (battleIq.raisedBy || []).slice(0, 3).forEach(function(row) {
+      strengths.push({
+        label: row.area || 'Positive signal',
+        evidence: row.text || '',
+        confidence: confidence,
+        tradeoff: 'Keep repeating this only when it still protects the current win path.'
+      });
+    });
+    if (!strengths.length && !(review.coachingTags || []).length) {
+      strengths.push({
+        label: 'No major execution error detected',
+        evidence: 'This log did not expose a clear tactical collapse from the current parser.',
+        confidence: confidence,
+        tradeoff: 'Treat this as a small-sample result until more replay evidence is collected.'
+      });
+    }
+
+    if (/Tailwind|Icy Wind|Electroweb|Thunder Wave|Trick Room/i.test(moveText) && !issueMap.speed_control_without_pressure && !issueMap.field_control_failure) {
+      advanced.push({
+        label: 'Speed-control setup recognized',
+        evidence: 'Your replay shows a speed-control line without a flagged conversion failure.',
+        confidence: confidence,
+        limitation: 'This recognizes the setup pattern, not whether it was the only correct line.'
+      });
+    }
+    if (/Follow Me|Rage Powder/i.test(moveText) && !issueMap.win_condition_exposed) {
+      advanced.push({
+        label: 'Support redirection recognized',
+        evidence: 'The log shows redirection support while keeping the win condition intact.',
+        confidence: confidence,
+        limitation: 'This does not prove every redirection turn was optimal; it only confirms the pattern existed.'
+      });
+    }
+    if (/Protect|Detect/i.test(moveText) && !issueMap.protect_misuse) {
+      advanced.push({
+        label: 'Defensive timing recognized',
+        evidence: 'Protect-style resource management appeared without a tagged Protect misuse.',
+        confidence: confidence,
+        limitation: 'A clean Protect pattern in one battle does not guarantee repeatable timing across matchups.'
+      });
+    }
+    if (/Helping Hand|Parting Shot|Fake Out/i.test(moveText) && !issueMap.targeting_error) {
+      advanced.push({
+        label: 'Support sequencing recognized',
+        evidence: 'The log includes pressure-support tools without a flagged targeting collapse on those lines.',
+        confidence: confidence,
+        limitation: 'This is replay evidence only; it does not grade hidden alternatives the log never reveals.'
+      });
+    }
+
+    (battleIq.loweredBy || []).slice(0, 3).forEach(function(row) {
+      tighten.push({
+        label: row.area || 'Tighten-up area',
+        evidence: row.text || '',
+        nextStep: 'Use the top practice drill to rehearse a lower-risk line in the same board state.',
+        confidence: confidence
+      });
+    });
+    if (!tighten.length && critical && critical.fatalMistake) {
+      tighten.push({
+        label: critical.fatalMistake.category || 'Tighten-up area',
+        evidence: critical.fatalMistake.whyItMattered || critical.fatalMistake.whatHappened || '',
+        nextStep: critical.fatalMistake.betterAlternative || 'Replay the critical turn and name the lower-risk alternative before locking an action.',
+        confidence: critical.fatalMistake.confidence || confidence
+      });
+    }
+
+    return {
+      strengths: uniqueReadoutLabels(uniqueReadoutRows(strengths)).slice(0, 3),
+      advancedPlays: uniqueReadoutRows(advanced).slice(0, 3),
+      tightenUp: uniqueReadoutRows(tighten).slice(0, 3),
+      note: 'Every section is evidence-bound to the parsed replay. Missing context lowers confidence instead of filling gaps with guesswork.'
+    };
+  }
+
   function buildLearningReport(parsed, review, opts) {
     opts = opts || {};
     var issues = (review && review.coachingTags) || [];
@@ -799,12 +1029,14 @@
       decisionQuality: buildDecisionQuality(parsed, review),
       scorecard: buildScorecard(parsed, review),
       battleIq: buildBattleIqScore(parsed, review, opts),
+      leadLogic: buildLeadLogicRead(parsed, review),
       winPath: buildWinPath(parsed, review, critical),
       opponentPlan: inferOpponentPlan(parsed, (parsed && parsed.selectedSide) || opts.selectedSide || 'p1'),
       simComparison: buildSimComparison(parsed, review, opts),
       practicePlan: buildPracticePlan(review),
       trendDashboard: buildTrendDashboard(opts.priorReports || [])
     };
+    report.coachingReadouts = buildCoachingReadouts(parsed, review, report.battleIq, critical);
     report.simFeedback = buildSimFeedbackPacket(parsed, review, report.simComparison).simFeedback;
     report.premiumTeasers = buildPremiumTeasers(report);
     return report;
@@ -817,6 +1049,8 @@
   ChampionsSim.replayLearning.buildTrendDashboard = buildTrendDashboard;
   ChampionsSim.replayLearning.buildPremiumTeasers = buildPremiumTeasers;
   ChampionsSim.replayLearning.buildBattleIqScore = buildBattleIqScore;
+  ChampionsSim.replayLearning.buildLeadLogicRead = buildLeadLogicRead;
+  ChampionsSim.replayLearning.buildCoachingReadouts = buildCoachingReadouts;
   ChampionsSim.replayLearning.buildEvidenceStandard = buildEvidenceStandard;
   ChampionsSim.replayLearning.buildSimComparison = buildSimComparison;
   ChampionsSim.replayLearning.buildSimFeedbackPacket = buildSimFeedbackPacket;

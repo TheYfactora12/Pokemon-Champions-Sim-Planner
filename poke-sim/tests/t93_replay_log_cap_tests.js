@@ -108,6 +108,8 @@ T('1. cap helper trims logs to the last 200 lines', () => {
 });
 
 T('2. replay renderer shows truncation indicator', () => {
+  replayList.children = [];
+  replayList.innerHTML = '';
   setReplayState([{
     result: 'win',
     turns: 12,
@@ -119,6 +121,39 @@ T('2. replay renderer shows truncation indicator', () => {
   renderReplays();
   inc(replayList.innerHTML, 'Showing last 200 lines');
   inc(replayList.innerHTML, 'battle-log');
+});
+
+T('3. replay renderer includes coaching summary block for losses only', () => {
+  replayList.children = [];
+  replayList.innerHTML = '';
+  setReplayState([{
+    result: 'loss',
+    turns: 8,
+    trTurns: 0,
+    winCondition: 'KO',
+    oppKey: 'mega_altaria',
+    log: ['Turn 1'],
+    turnLog: []
+  }], 'all');
+  renderReplays();
+  inc(replayList.innerHTML, 'Coaching Summary');
+  inc(replayList.innerHTML, 'not enough evidence');
+});
+
+T('4. replay renderer does not show coaching summary for wins', () => {
+  replayList.children = [];
+  replayList.innerHTML = '';
+  setReplayState([{
+    result: 'win',
+    turns: 8,
+    trTurns: 0,
+    winCondition: 'KO',
+    oppKey: 'mega_altaria',
+    log: ['Turn 1'],
+    turnLog: []
+  }], 'all');
+  renderReplays();
+  truthy(replayList.innerHTML.indexOf('Coaching Summary') < 0, 'unexpected coaching summary on win replay');
 });
 
 console.log(`\nreplay log cap: ${pass} pass, ${fail} fail\n`);

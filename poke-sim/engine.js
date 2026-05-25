@@ -110,6 +110,36 @@ function makeSeed() {
 //   - Optional Champions legality layer (ban list, fakemon) wired in
 //     via validateChampionsLegality() if legality.js is loaded.
 // ============================================================
+function detectSpreadStatFormat(evs) {
+  const vals = Object.values(evs || {});
+  if (vals.length === 0) return 'sv';
+  const total = vals.reduce((a, b) => a + b, 0);
+  const max = Math.max(...vals);
+  if (total === 0) return 'sv';
+  if (max <= 32 && total <= 66) return 'champions';
+  return 'sv';
+}
+
+function spreadFitsChampions(evs) {
+  const vals = Object.values(evs || {});
+  if (vals.length === 0) return true;
+  const total = vals.reduce((a, b) => a + b, 0);
+  const max = Math.max(...vals);
+  return max <= 32 && total <= 66;
+}
+
+function resolveMonStatFormat(mon, teamFormat) {
+  const declaredFmt = teamFormat || (mon && mon.format) || null;
+  if (declaredFmt === 'champions' && !spreadFitsChampions((mon && mon.evs) || {})) {
+    return { statFormat: 'sv', formatMismatch: true, declaredFormat: declaredFmt };
+  }
+  return {
+    statFormat: declaredFmt || detectSpreadStatFormat((mon && mon.evs) || {}),
+    formatMismatch: false,
+    declaredFormat: declaredFmt
+  };
+}
+
 function validateTeam(team, format = 'vgc') {
   const errors = [];
   const warnings = [];
@@ -118,27 +148,17 @@ function validateTeam(team, format = 'vgc') {
     return { valid: false, errors, warnings };
   }
 
-  // Determine stat-point format per team. Priority:
-  //   team.format === 'champions' -> SP caps
-  //   team.format === 'sv'        -> SV caps
-  //   otherwise                   -> auto-detect by spread shape
-  function detectFormat(mon) {
-    if (team.format === 'champions' || mon.format === 'champions') return 'champions';
-    if (team.format === 'sv' || mon.format === 'sv') return 'sv';
-    const vals = Object.values(mon.evs || {});
-    if (vals.length === 0) return 'sv';
-    const total = vals.reduce((a, b) => a + b, 0);
-    const max = Math.max(...vals);
-    if (total > 0 && max <= 32 && total <= 66) return 'champions';
-    return 'sv';
-  }
-
   for (const mon of team.members) {
     const name = mon.name || 'Unknown';
-    const fmt = detectFormat(mon);
+    const resolved = resolveMonStatFormat(mon, team.format);
+    const fmt = resolved.statFormat;
     const caps = fmt === 'champions'
       ? { perStat: 32, total: 66, label: 'SP' }
       : { perStat: 252, total: 510, label: 'EV' };
+
+    if (resolved.formatMismatch) {
+      warnings.push(`${name}: declared Champions but spread is SV-scale, so runtime falls back to SV stat math`);
+    }
 
     // Total cap
     const totalPoints = Object.values(mon.evs || {}).reduce((a, b) => a + b, 0);
@@ -398,25 +418,25 @@ function applyWeatherAbility(mon, field, log) {
   if (mon.ability === 'Drought') {
     field.weather = 'sun';
     field.weatherTurns = 5;
-    if (log) log.push(`${mon.name} summoned harsh sunlight!`);
+    if (log) log.push(`${mon.name}'s Drought summoned harsh sunlight!`);
     return true;
   }
   if (mon.ability === 'Drizzle') {
     field.weather = 'rain';
     field.weatherTurns = 5;
-    if (log) log.push(`${mon.name} summoned rain!`);
+    if (log) log.push(`${mon.name}'s Drizzle summoned rain!`);
     return true;
   }
   if (mon.ability === 'Sand Stream') {
     field.weather = 'sand';
     field.weatherTurns = 5;
-    if (log) log.push(`${mon.name} summoned a sandstorm!`);
+    if (log) log.push(`${mon.name}'s Sand Stream summoned a sandstorm!`);
     return true;
   }
   if (mon.ability === 'Snow Warning') {
     field.weather = 'snow';
     field.weatherTurns = 5;
-    if (log) log.push(`${mon.name} summoned snow!`);
+    if (log) log.push(`${mon.name}'s Snow Warning summoned snow!`);
     return true;
   }
   return false;
@@ -569,13 +589,9 @@ class Pokemon {
     //   Cite: https://bulbapedia.bulbagarden.net/wiki/Stat_point
     //   Cite: https://game8.co/games/Pokemon-Champions/archives/538683
     var _declaredFmt = teamFormat || data.format || null;
-    if (_declaredFmt === 'champions' && !Pokemon._spreadFitsChampions(this.evs)) {
-      this.statFormat = 'sv';
-      this.formatMismatch = true;
-    } else {
-      this.statFormat = _declaredFmt || this._detectStatFormat(this.evs);
-      this.formatMismatch = false;
-    }
+    var _resolvedStatFormat = resolveMonStatFormat(data, _declaredFmt);
+    this.statFormat = _resolvedStatFormat.statFormat;
+    this.formatMismatch = _resolvedStatFormat.formatMismatch;
 
     // T9j.7 — Mega form resolution.
     // If this is a -Mega name and we have a CHAMPIONS_MEGAS entry AND the
@@ -674,13 +690,7 @@ class Pokemon {
   // Champions spreads: every stat ≤32 AND total ≤66 AND total > 0.
   // All-zero or anything exceeding the SP caps → SV (preserves legacy behavior).
   _detectStatFormat(evs) {
-    const vals = Object.values(evs || {});
-    if (vals.length === 0) return 'sv';
-    const total = vals.reduce((a, b) => a + b, 0);
-    const max = Math.max(...vals);
-    if (total === 0) return 'sv'; // empty spread → SV default
-    if (max <= 32 && total <= 66) return 'champions';
-    return 'sv';
+    return detectSpreadStatFormat(evs);
   }
 
   // T9j.13 (Refs #42) — static shape check. Returns true iff the spread
@@ -688,11 +698,7 @@ class Pokemon {
   //   Cite: https://bulbapedia.bulbagarden.net/wiki/Stat_point
   //   Cite: https://pokeos.com/p/champions/stats
   static _spreadFitsChampions(evs) {
-    const vals = Object.values(evs || {});
-    if (vals.length === 0) return true; // empty spread is trivially valid
-    const total = vals.reduce((a, b) => a + b, 0);
-    const max = Math.max(...vals);
-    return max <= 32 && total <= 66;
+    return spreadFitsChampions(evs);
   }
 
   // Issue #4 FIX: _stat() is HP-only. Removed broken nature logic that
@@ -1228,11 +1234,18 @@ function _hpPct(mon) {
   return _clamp01(mon.hp / mon.maxHp);
 }
 
-function _sideSnapshot(active, bench) {
+function _snapshotMonKey(side, zone, index, mon) {
+  const label = mon && (mon.displayName || mon.name) ? (mon.displayName || mon.name) : 'Unknown';
+  return side + ':' + zone + ':' + index + ':' + label;
+}
+
+function _sideSnapshot(active, bench, side) {
   const all = (active || []).concat(bench || []);
   return {
     active: (active || []).filter(m => m && m.alive).map(m => m.name),
     bench: (bench || []).filter(m => m && m.alive).map(m => m.name),
+    active_keys: (active || []).map((m, i) => (m && m.alive ? _snapshotMonKey(side, 'active', i, m) : null)).filter(Boolean),
+    bench_keys: (bench || []).map((m, i) => (m && m.alive ? _snapshotMonKey(side, 'bench', i, m) : null)).filter(Boolean),
     alive_count: all.filter(m => m && m.alive).length,
     hp_total: all.reduce((s, m) => s + (m && m.alive ? _hpPct(m) : 0), 0),
     max_count: Math.max(1, all.length || 1)
@@ -1270,23 +1283,84 @@ function _speedControlSnapshot(field) {
   };
 }
 
-function _statusSnapshot(mons) {
+function _statusSnapshot(playerActive, playerBench, oppActive, oppBench) {
   const out = {};
-  for (const m of mons || []) {
-    if (m && m.status) out[m.name] = m.status;
+  const groups = [
+    { side: 'player', zone: 'active', mons: playerActive || [] },
+    { side: 'player', zone: 'bench', mons: playerBench || [] },
+    { side: 'opponent', zone: 'active', mons: oppActive || [] },
+    { side: 'opponent', zone: 'bench', mons: oppBench || [] }
+  ];
+  for (const group of groups) {
+    for (let i = 0; i < group.mons.length; i += 1) {
+      const m = group.mons[i];
+      if (m && m.status) out[_snapshotMonKey(group.side, group.zone, i, m)] = m.status;
+    }
   }
   return out;
 }
 
-function _hpPctSnapshot(mons) {
+function _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench) {
   const out = {};
-  for (const m of mons || []) {
-    if (m) out[m.name] = Math.round(_hpPct(m) * 1000) / 1000;
+  const groups = [
+    { side: 'player', zone: 'active', mons: playerActive || [] },
+    { side: 'player', zone: 'bench', mons: playerBench || [] },
+    { side: 'opponent', zone: 'active', mons: oppActive || [] },
+    { side: 'opponent', zone: 'bench', mons: oppBench || [] }
+  ];
+  for (const group of groups) {
+    for (let i = 0; i < group.mons.length; i += 1) {
+      const m = group.mons[i];
+      if (m) out[_snapshotMonKey(group.side, group.zone, i, m)] = Math.round(_hpPct(m) * 1000) / 1000;
+    }
   }
   return out;
 }
 
-function _speedOrderSnapshot(playerActive, oppActive, field) {
+function _statsLabel(stats) {
+  stats = stats || {};
+  return ['hp','atk','def','spa','spd','spe'].map(k => Number(stats[k] || 0)).join('/');
+}
+
+function _battleRosterSnapshot(active, bench, roster, side) {
+  const activeSet = new Set(active || []);
+  const benchSet = new Set(bench || []);
+  const rows = [];
+  for (const mon of (roster || [])) {
+    if (!mon) continue;
+    const hpPct = Math.round(_hpPct(mon) * 100);
+    const status = (!mon.alive || mon.hp <= 0) ? 'fainted' : (activeSet.has(mon) ? 'active' : 'bench');
+    const zone = status === 'active' ? 'active' : (status === 'bench' && benchSet.has(mon) ? 'bench' : status);
+    const activeIdx = (active || []).indexOf(mon);
+    const benchIdx = (bench || []).indexOf(mon);
+    const idx = activeIdx >= 0 ? activeIdx : (benchIdx >= 0 ? benchIdx : rows.length);
+    rows.push({
+      key: _snapshotMonKey(side, zone, idx, mon),
+      side,
+      status,
+      displayName: mon.displayName || mon.name || 'Unknown',
+      species: mon.name || mon.displayName || 'Unknown',
+      hp: hpPct,
+      hpLabel: hpPct + '%',
+      level: mon.level || 50,
+      item: mon.item || '',
+      ability: mon.ability || '',
+      moves: Array.isArray(mon.moves) ? mon.moves.slice() : [],
+      baseStatsLabel: _statsLabel(mon._base),
+      calculatedStats: _statsLabel({
+        hp: mon.maxHp,
+        atk: mon.atk,
+        def: mon.def,
+        spa: mon.spa,
+        spd: mon.spd,
+        spe: mon.spe
+      })
+    });
+  }
+  return rows;
+}
+
+function _speedOrderSnapshot(playerActive, oppActive, field, useKeys) {
   return (playerActive || []).concat(oppActive || [])
     .filter(m => m && m.alive)
     .sort((a, b) => {
@@ -1294,7 +1368,12 @@ function _speedOrderSnapshot(playerActive, oppActive, field) {
       const sB = b.getEffSpeed(field);
       return field.trickRoom ? sA - sB : sB - sA;
     })
-    .map(m => m.name);
+    .map(m => {
+      if (!useKeys) return m.name;
+      const sideName = m && m.side === (field && field.playerSide) ? 'player' : 'opponent';
+      const idx = (sideName === 'player' ? (playerActive || []) : (oppActive || [])).indexOf(m);
+      return _snapshotMonKey(sideName, 'active', Math.max(0, idx), m);
+    });
 }
 
 function _legalOptionsSnapshot(active, enemies) {
@@ -1308,14 +1387,16 @@ function _legalOptionsSnapshot(active, enemies) {
 }
 
 function _buildPositionState(playerActive, playerBench, oppActive, oppBench, field) {
-  const player = _sideSnapshot(playerActive, playerBench);
-  const opponent = _sideSnapshot(oppActive, oppBench);
+  const player = _sideSnapshot(playerActive, playerBench, 'player');
+  const opponent = _sideSnapshot(oppActive, oppBench, 'opponent');
   return {
     player,
     opponent,
     field: _fieldSnapshot(field),
     speed_control: _speedControlSnapshot(field),
-    status: _statusSnapshot((playerActive || []).concat(playerBench || [], oppActive || [], oppBench || []))
+    speed_order: _speedOrderSnapshot(playerActive, oppActive, field, false),
+    speed_order_keys: _speedOrderSnapshot(playerActive, oppActive, field, true),
+    status: _statusSnapshot(playerActive, playerBench, oppActive, oppBench)
   };
 }
 
@@ -1335,7 +1416,22 @@ function positionScore(state) {
   const oSc = sc.opponent || sc.opp || {};
   const field = state.field || {};
   let speedEdge = ((pSc.tailwind_turns || 0) - (oSc.tailwind_turns || 0)) / 4;
-  if (field.trick_room) speedEdge += 0.05;
+  const pKeys = new Set((player.active_keys || []).concat(player.bench_keys || [], player.active || [], player.bench || []));
+  const oKeys = new Set((opponent.active_keys || []).concat(opponent.bench_keys || [], opponent.active || [], opponent.bench || []));
+  const speedOrder = Array.isArray(state.speed_order_keys) && state.speed_order_keys.length
+    ? state.speed_order_keys
+    : (Array.isArray(state.speed_order) ? state.speed_order : []);
+  if (speedOrder.length) {
+    let orderEdge = 0;
+    let totalWeight = 0;
+    for (let i = 0; i < speedOrder.length; i += 1) {
+      const weight = speedOrder.length - i;
+      totalWeight += weight;
+      if (pKeys.has(speedOrder[i])) orderEdge += weight;
+      else if (oKeys.has(speedOrder[i])) orderEdge -= weight;
+    }
+    if (totalWeight > 0) speedEdge += (orderEdge / totalWeight) * 0.25;
+  }
   speedEdge = Math.max(-0.5, Math.min(0.5, speedEdge));
   function screenCount(side) {
     const s = (side && side.screens) || {};
@@ -1344,12 +1440,10 @@ function positionScore(state) {
   const screensEdge = Math.max(-0.5, Math.min(0.5, (screenCount(pSc) - screenCount(oSc)) * 0.1));
   let statusEdge = 0;
   const status = state.status || {};
-  const pNames = new Set((player.active || []).concat(player.bench || []));
-  const oNames = new Set((opponent.active || []).concat(opponent.bench || []));
-  Object.keys(status).forEach(name => {
-    const bad = status[name] ? 0.05 : 0;
-    if (pNames.has(name)) statusEdge -= bad;
-    if (oNames.has(name)) statusEdge += bad;
+  Object.keys(status).forEach(key => {
+    const bad = status[key] ? 0.05 : 0;
+    if (pKeys.has(key)) statusEdge -= bad;
+    if (oKeys.has(key)) statusEdge += bad;
   });
   const score = 0.5
     + 0.30 * (hpDiffNorm - 0.5)
@@ -1360,17 +1454,23 @@ function positionScore(state) {
   return Math.round(_clamp01(score) * 1000) / 1000;
 }
 
-function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, includeLegal) {
-  const mons = (playerActive || []).concat(playerBench || [], oppActive || [], oppBench || []);
+function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, includeLegal, playerRoster, oppRoster) {
   const state = _buildPositionState(playerActive, playerBench, oppActive, oppBench, field);
   return {
     active: { player: state.player.active, opponent: state.opponent.active },
     bench: { player: state.player.bench, opponent: state.opponent.bench },
-    hp_pct: _hpPctSnapshot(mons),
+    active_keys: { player: state.player.active_keys, opponent: state.opponent.active_keys },
+    bench_keys: { player: state.player.bench_keys, opponent: state.opponent.bench_keys },
+    hp_pct: _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench),
+    roster: {
+      player: _battleRosterSnapshot(playerActive, playerBench, playerRoster || playerActive.concat(playerBench), 'player'),
+      opponent: _battleRosterSnapshot(oppActive, oppBench, oppRoster || oppActive.concat(oppBench), 'opponent')
+    },
     status: state.status,
     field: state.field,
     speed_control: state.speed_control,
-    speed_order: _speedOrderSnapshot(playerActive, oppActive, field),
+    speed_order: state.speed_order,
+    speed_order_keys: state.speed_order_keys,
     legal_options: includeLegal ? _legalOptionsSnapshot(playerActive, oppActive) : {},
     position_score: positionScore(state),
     win_probability: null
@@ -1598,11 +1698,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   function applyEntryAbility(mon, side, field, log) {
     if (mon.ability === 'Intimidate') {
       const targets = side === 'player' ? oppActive : playerActive;
+      log.push(`${mon.name}'s Intimidate activated!`);
       for (const t of targets) {
-        if (t.alive && t.ability !== 'Inner Focus' && t.ability !== 'Own Tempo' && t.ability !== 'Oblivious') {
-          t.statBoosts.atk = Math.max(-6, t.statBoosts.atk - 1);
-          log.push(`${mon.name}'s Intimidate lowered ${t.name}'s Attack!`);
+        if (!t.alive) continue;
+        if (t.ability === 'Inner Focus' || t.ability === 'Own Tempo' || t.ability === 'Oblivious') {
+          log.push(`${t.name} ignored Intimidate!`);
+          continue;
         }
+        t.statBoosts.atk = Math.max(-6, t.statBoosts.atk - 1);
+        log.push(`${mon.name}'s Intimidate lowered ${t.name}'s Attack!`);
       }
     }
     applyWeatherAbility(mon, field, log);
@@ -1659,7 +1763,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     const liveEnemies = enemies.filter(e => e.alive);
     const liveAllies  = allies.filter(a => a !== attacker && a.alive);
-    const enemySide = field && attacker.side === 'player' ? field.oppSide : field.playerSide;
+    const attackerOnPlayerSide = !!(field && attacker && attacker.side === field.playerSide);
+    const enemySide = field && attackerOnPlayerSide ? field.oppSide : field.playerSide;
 
     if (attacker.status === 'sleep' && attacker.moves.includes('Sleep Talk')) {
       const target = liveEnemies[0] || liveAllies[0] || null;
@@ -1686,9 +1791,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (freshEntry && roles.indexOf('Sweeper') >= 0 && (move === 'Protect' || move === 'Detect')) score += 10;
         if (attacker.hp < attacker.maxHp * 0.3 && (move === 'Protect' || move === 'Detect' || move === 'Ally Switch' || move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn')) score += 25;
         if (move === 'Trick Room' && !field.trickRoom) score = 55;
-        if (move === 'Tailwind'   && !field[attacker.side === 'player' ? 'playerSide' : 'oppSide']?.tailwind) score = 50;
+        if (move === 'Tailwind'   && !(attackerOnPlayerSide ? field.playerSide : field.oppSide)?.tailwind) score = 50;
         // T9j.3 Screens scoring — value them when not already up.
-        const _selfSide = field[attacker.side === 'player' ? 'playerSide' : 'oppSide'];
+        const _selfSide = attackerOnPlayerSide ? field.playerSide : field.oppSide;
         if (move === 'Light Screen' && _selfSide && !_selfSide.lightScreen) score = 42;
         if (move === 'Reflect'      && _selfSide && !_selfSide.reflect)     score = 42;
         if (move === 'Aurora Veil' && _selfSide && !_selfSide.auroraVeil
@@ -1744,7 +1849,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         // Champions rule: Fake Out is only legal on the user's first turn out.
         // Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out_(move)
         if (move === 'Fake Out') {
-          if (attacker._fakeDone) continue; // illegal selection -- skip entirely
+          if (attacker._fakeDone || (attacker.turnsSinceEntry || 0) > 1) continue; // illegal selection -- skip entirely
           const target = liveEnemies[0];
           if (target) {
             const dmg = attacker.calcDamage(move, target, field, null, rng);
@@ -1865,6 +1970,18 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (target && target.alive && target.substituteHp > 0 && blockedBySubstitute.has(move)) {
         log.push(`${attacker.name} used ${move}! But it failed because of Substitute!`);
         return;
+      }
+      if (target && target.alive && shouldPranksterFailOnTarget(attacker, move, target)) {
+        log.push(`${target.name} is immune to Prankster-boosted ${move}!`);
+        return;
+      }
+      if (target && target.alive && isBlockedByGoodAsGold(target, move)) {
+        log.push(`${target.name}'s Good as Gold blocked ${move}!`);
+        return;
+      }
+      if (target && target.alive && shouldReflectByMagicBounce(attacker, target, move)) {
+        log.push(`${target.name}'s Magic Bounce reflected ${move}!`);
+        target = attacker;
       }
       if (move === 'Trick Room') {
         if (field.trickRoom) {
@@ -2048,7 +2165,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Taunt' && target && target.alive) {
-        const targetAllies = enemies;
+        const targetAllies = (target.side && attacker.side && target.side === attacker.side) ? allies : enemies;
         const aromaVeilOnSide = targetAllies.some(m => m.alive && m.ability === 'Aroma Veil');
         if (target.ability === 'Oblivious' || target.ability === 'Aroma Veil' || aromaVeilOnSide) {
           log.push(`${target.name} is immune to Taunt!`);
@@ -2068,7 +2185,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Encore' && target && target.alive) {
-        const targetAllies = enemies;
+        const targetAllies = (target.side && attacker.side && target.side === attacker.side) ? allies : enemies;
         const aromaVeilOnSide = targetAllies.some(m => m.alive && m.ability === 'Aroma Veil');
         if (target.ability === 'Oblivious' || target.ability === 'Aroma Veil' || aromaVeilOnSide) {
           log.push(`${target.name} is immune to Encore!`);
@@ -2197,7 +2314,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // a legal Fake Out is blocked by Protect, the _fakeDone flag is still set --
     // i.e. the user has spent its one Fake Out window for this stay on the field.
     if (move === 'Fake Out') {
-      if (attacker._fakeDone) {
+      if (attacker._fakeDone || (attacker.turnsSinceEntry || 0) > 1) {
         log.push(`${attacker.name} tried Fake Out -- but it failed! (only on first turn out)`);
         // Encore -> Struggle path: deal 1/4 max HP fixed damage to a live
         // enemy and recoil 1/4 max HP. Standard Struggle resolution.
@@ -2452,12 +2569,17 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (targets.length === 0) return;
     }
 
-    const movePriority = getPriority(move);
+    const movePriority = getPriority(move, attacker);
     if (movePriority > 0) {
       targets = targets.filter(t => {
         if (!t.side || !attacker.side || t.side === attacker.side) return true;
         if (t.side.quickGuard && move !== 'Feint') {
           log.push(`Quick Guard blocked ${move} on ${t.name}!`);
+          return false;
+        }
+        const defenders = (t.side === field.playerSide) ? playerActive : oppActive;
+        if (defenders.some(m => m.alive && m.ability === 'Armor Tail')) {
+          log.push(`Armor Tail blocked ${move} on ${t.name}!`);
           return false;
         }
         return true;
@@ -2771,7 +2893,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target,
         targetIndex: (target && oppActive.indexOf(target) >= 0) ? oppActive.indexOf(target) : null,
         side: 'player',
-        priority: getPriority(move)
+        priority: getPriority(move, mon)
       };
       mon._chosenMove = move;
       _recordAction(_act);
@@ -2785,7 +2907,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target,
         targetIndex: (target && playerActive.indexOf(target) >= 0) ? playerActive.indexOf(target) : null,
         side: 'opp',
-        priority: getPriority(move)
+        priority: getPriority(move, mon)
       };
       mon._chosenMove = move;
       _recordAction(_act);
@@ -2799,7 +2921,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       activePair: playerActive.concat(oppActive).filter(Boolean).map(m => m.name),
       action: actions.map(a => (a.attacker ? a.attacker.name : '?') + ':' + (a.move || '?')).join(' | '),
       positionScore: 0,
-      pre: _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, true),
+      pre: _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, true, _orderedPlayer, _orderedOpp),
       actions: _actionSummary(actions),
       events: [],
       post: null,
@@ -3035,14 +3157,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (field.clockPlayer <= 0 || field.clockOpp <= 0) {
       log.push(`[TIMER] Clock expired at turn ${turn}. Resolving via tiebreaker.`);
       _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
-      _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false);
+      _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false, _orderedPlayer, _orderedOpp);
       _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
       _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
       turnLog.push(_turnEntry);
       break;
     }
     _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
-    _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false);
+    _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false, _orderedPlayer, _orderedOpp);
     _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
     _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
     turnLog.push(_turnEntry);
@@ -3158,7 +3280,25 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 // ============================================================
 // PRIORITY LOOKUP
 // ============================================================
-function getPriority(move) {
+var STATUS_MOVE_NAMES = new Set([
+  'Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder','Tailwind','Sunny Day',
+  'Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail',
+  'Quick Guard','Endure','Wide Guard','Follow Me','Protect','Detect',
+  "King's Shield",'Spiky Shield','Baneful Bunker','Obstruct','Light Screen',
+  'Reflect','Aurora Veil','Encore','Haze','Defog','Recover','Shore Up','Rest',
+  'Sleep Talk','Substitute','Imprison','Ally Switch','Toxic','Poison Powder'
+]);
+
+var TARGETED_STATUS_MOVES = new Set([
+  'Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder','Toxic',
+  'Poison Powder','Encore','Parting Shot'
+]);
+
+function isStatusMoveName(move) {
+  return !!(move && (STATUS_MOVE_NAMES.has(move) || MOVE_CATEGORY[move] === 'status'));
+}
+
+function getPriority(move, attacker) {
   // T9j.2 — Champions 2026 priority table (Refs CHAMPIONS_MECHANICS_SPEC §4).
   // Rage Powder and Follow Me are +2 in Champions (ORACLE-DIVERGENCE-3 vs SV +3).
   const P = {
@@ -3171,7 +3311,40 @@ function getPriority(move) {
     'Follow Me':2, 'Rage Powder':2,
     'Trick Room':-7, 'Roost':0
   };
-  return P[move] || 0;
+  let priority = P[move] || 0;
+  if (attacker && attacker.ability === 'Prankster' && isStatusMoveName(move)) priority += 1;
+  return priority;
+}
+
+function shouldPranksterFailOnTarget(attacker, move, target) {
+  return !!(attacker
+    && attacker.ability === 'Prankster'
+    && target
+    && target.alive
+    && target.side
+    && attacker.side
+    && target.side !== attacker.side
+    && TARGETED_STATUS_MOVES.has(move)
+    && Array.isArray(target.types)
+    && target.types.indexOf('Dark') !== -1);
+}
+
+function isBlockedByGoodAsGold(target, move) {
+  return !!(target
+    && target.alive
+    && target.ability === 'Good as Gold'
+    && TARGETED_STATUS_MOVES.has(move));
+}
+
+function shouldReflectByMagicBounce(attacker, target, move) {
+  return !!(attacker
+    && target
+    && target.alive
+    && target.ability === 'Magic Bounce'
+    && attacker.side
+    && target.side
+    && attacker.side !== target.side
+    && TARGETED_STATUS_MOVES.has(move));
 }
 
 // ============================================================
