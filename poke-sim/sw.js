@@ -9,7 +9,9 @@
 // v39-replay-species-normalization [2026-05-24] — Fixed replay gender-token species parsing and Mega event species resolution.
 // v40-replay-turn0-legality [2026-05-24] — Added Replay Turn 0 audit and Showdown-derived species/form move legality data.
 // v41-move-support-heartbeat [2026-05-24] — Added move support trust layer, replay board sprites, and daily deterministic heartbeat.
-// v42-pages-cache-refresh [2026-05-25] — Forced cache refresh after Pages layout fix so live replay UI stops serving stale cached assets.
+// v43-sim-board-bootstrap [2026-05-25] — Refresh shipped assets after adding
+// first-load simulator board bootstrap so the website opens closer to the
+// preferred local board-first view.
 // v36-ui-trust-copy [2026-05-22] — Trust/provenance copy tightening for preview labeling, source wording, and strategy evidence framing.
 // v35-regional-form-stats [2026-05-19] — Canonical regional/form stat corrections + shipped form fallback fix.
 // v34-mobile-shell-layout [2026-05-15] — Mobile shell layout + bring-order normalization.
@@ -26,7 +28,7 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v42-pages-cache-refresh';
+const CACHE_NAME = 'champions-sim-v43-sim-board-bootstrap';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
