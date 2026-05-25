@@ -674,6 +674,10 @@ table{border-collapse:collapse;width:100%}
 .replay-roster-mon.active{border-color:rgba(78,201,148,.5);background:rgba(78,201,148,.07);opacity:1}
 .replay-roster-mon.bench{filter:grayscale(.75);opacity:.54}
 .replay-roster-mon.fainted{border-color:rgba(240,84,100,.55);background:rgba(240,84,100,.08);opacity:.78}
+.replay-stadium-mon-shell,.replay-roster-mon-shell{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:start}
+.replay-stadium-mon-body,.replay-roster-mon-body{min-width:0}
+.replay-stadium-sprite,.replay-roster-sprite{width:44px;height:44px;image-rendering:pixelated;background:var(--surface);border:1px solid rgba(148,163,184,.22);border-radius:var(--r-sm);object-fit:contain;flex-shrink:0}
+.replay-mon-sprite-fallback{opacity:.2}
 .replay-roster-mon-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
 .replay-roster-status{border-radius:var(--r-full);border:1px solid var(--border);padding:2px 7px;font-family:var(--font-mono);font-size:9px;font-weight:900;text-transform:uppercase;color:var(--text-m)}
 .replay-roster-status.active{border-color:rgba(78,201,148,.5);color:var(--green)}
@@ -733,6 +737,12 @@ table{border-collapse:collapse;width:100%}
 .replay-coach-turn-read{font-size:var(--text-sm);line-height:1.45;margin-bottom:8px;overflow-wrap:break-word;word-break:normal}
 .replay-coach-turn-read strong{display:block;margin-bottom:3px}
 .replay-coach-better-line{border-left:2px solid var(--primary);padding:6px 8px;margin:8px 0;background:rgba(124,106,245,.08);font-size:12px;line-height:1.45;color:var(--text)}
+.replay-turn0-grid .replay-roster-sprite{width:48px;height:48px}
+@media(max-width:640px){
+  .replay-stadium-mon-shell,.replay-roster-mon-shell{grid-template-columns:38px minmax(0,1fr);gap:8px}
+  .replay-stadium-sprite,.replay-roster-sprite{width:38px;height:38px}
+  .replay-turn0-grid .replay-roster-sprite{width:42px;height:42px}
+}
 .replay-coach-events{margin-top:8px}
 .replay-coach-events summary,.replay-coach-raw summary{cursor:pointer;color:var(--text-m);font-size:11px;font-weight:800}
 .replay-coach-turn-body{font-size:11px;line-height:1.55;color:var(--text-m);font-family:var(--font-mono);overflow-wrap:break-word;word-break:normal}

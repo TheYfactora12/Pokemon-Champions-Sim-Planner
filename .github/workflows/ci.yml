@@ -54,6 +54,10 @@ jobs:
             poke-sim/ui.js
             poke-sim/storage_adapter.js
             poke-sim/supabase_adapter.js
+            poke-sim/move_legality.js
+            poke-sim/move_support.js
+            poke-sim/replay_coach.js
+            poke-sim/replay_learning.js
             poke-sim/strategy-injectable.js
             poke-sim/legality.js
           )

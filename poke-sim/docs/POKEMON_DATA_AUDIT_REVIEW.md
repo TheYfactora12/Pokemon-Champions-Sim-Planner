@@ -24,10 +24,10 @@ Use the current project command:
 
 ```bash
 node poke-sim/tools/generate-pokemon-data-audit.js \
-  --pokedex /private/tmp/pokemon-showdown-pokedex.ts \
-  --learnsets /private/tmp/pokemon-showdown-learnsets.ts \
-  --moves /private/tmp/pokemon-showdown-moves.ts \
-  --source-commit 46e2933ea71194e448456aa3a88902c8e9bbc919 \
+  --pokedex /private/tmp/pokedex.ts \
+  --learnsets /private/tmp/learnsets.ts \
+  --moves /private/tmp/moves.ts \
+  --source-commit 3f5079d395ad018f13e8f785a675a13bd4cbf59e \
   --source-date 2026-05-24
 ```
 

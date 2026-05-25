@@ -417,6 +417,19 @@
     });
   }
 
+  function supportForMoves(moves) {
+    var api = ChampionsSim.moveSupport;
+    if (!api || typeof api.summarizeMoveSupport !== 'function') return [];
+    return api.summarizeMoveSupport(moves || []);
+  }
+
+  function applyMoveSupportWarnings(warnings, supportRows) {
+    (supportRows || []).forEach(function(item) {
+      if (item.supportLevel === 'incomplete') addReplayWarning(warnings, 'local sim move data incomplete: ' + item.moveName);
+      if (item.supportLevel === 'baseline') addReplayWarning(warnings, 'advanced move interactions not individually verified: ' + item.moveName);
+    });
+  }
+
   function auditRosterRow(row, ctx) {
     row = row || {};
     var species = row.species || 'unknown';
@@ -425,7 +438,9 @@
     var moves = observedMovesForSpecies(ctx, species, [row.postImportSpecies, row.resolvedSpecies, row.baseSpecies]);
     if (!stats) addReplayWarning(warnings, 'stats fallback used or source stats unavailable for ' + species);
     var legality = legalityForMoves(species, moves);
+    var support = supportForMoves(moves);
     applyMoveLegalityWarnings(warnings, legality);
+    applyMoveSupportWarnings(warnings, support);
     return {
       side: row.side || '',
       slot: row.slot || '',
@@ -447,6 +462,7 @@
       baseStatsLabel: statLine(stats),
       calculatedStats: 'unknown',
       moveLegality: legality,
+      moveSupport: support,
       parserWarnings: warnings
     };
   }
