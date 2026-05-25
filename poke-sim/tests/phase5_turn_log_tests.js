@@ -226,6 +226,8 @@ T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
   truthy(html.includes('Their team'), 'their board missing');
   truthy(html.includes('Their team · On field'), 'opponent top field label missing');
   truthy(html.includes('Your team · On field'), 'player bottom field label missing');
+  truthy(html.includes('replay-stadium-sprite'), 'stadium sprite missing');
+  truthy(html.includes('Kangaskhan sprite'), 'stadium sprite alt text missing');
   truthy(html.includes('Bench / knocked out'), 'off-field zone missing');
   truthy(html.includes('Battle log'), 'battle-log section missing');
   truthy(html.includes('Kangaskhan used Fake Out!'), 'Showdown-style move line missing');
@@ -316,6 +318,7 @@ T('T5c-1b Battle Sensei renders Turn 0 and both side boards', () => {
   truthy(turn0Html.includes('Turn 0 — Starting State'), 'Battle Sensei Turn 0 header missing');
   truthy(turn0Html.includes('Your team — Alice · Turn 0'), 'Battle Sensei your Turn 0 side missing');
   truthy(turn0Html.includes('Their team — Bob · Turn 0'), 'Battle Sensei their Turn 0 side missing');
+  truthy(turn0Html.includes('replay-roster-sprite'), 'Battle Sensei sprite missing');
   truthy(turnHtml.includes('Your team after this turn'), 'Battle Sensei your per-turn board missing');
   truthy(turnHtml.includes('Their team after this turn'), 'Battle Sensei their per-turn board missing');
   truthy(turnHtml.includes('replay-stadium-vs'), 'Battle Sensei VS stadium missing');
