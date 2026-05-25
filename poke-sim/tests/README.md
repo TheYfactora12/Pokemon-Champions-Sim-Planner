@@ -139,3 +139,12 @@ GitHub Actions `Daily Sim Heartbeat` runs a deterministic smoke set every day an
 - `bash tools/check-bundle.sh`
 
 It is intentionally read-only and does not hit live Supabase by default.
+
+When engine/log behavior changes intentionally:
+
+- regenerate golden battle hashes with `node tests/golden_battles_runner.js --generate`
+- rerun `node tests/db_m7_golden_battles_tests.js`
+- rebuild `pokemon-champion-2026.html` with `python3 tools/build-bundle.py` if app source changed
+- bump `poke-sim/sw.js` `CACHE_NAME` and keep `APP_ASSETS` aligned when adding or changing shipped browser assets
+
+This avoids the two most common trust-layer regressions: stale golden fixtures and stale PWA caches.
