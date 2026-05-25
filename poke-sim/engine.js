@@ -1858,7 +1858,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           const target = liveEnemies[0];
           if (target) {
             const dmg = attacker.calcDamage(move, target, field, null, rng);
-            const score = dmg / target.maxHp * 100 + 25;
+            let score = dmg / target.maxHp * 100 + 25;
+            // Turn-1 support leads should strongly prefer legal Fake Out pressure
+            // over passive lines like Protect so guard/counterplay tests reflect
+            // actual opener behavior instead of AI scoring noise.
+            if (freshEntry) score = Math.max(score, 74);
             if (score > best.score) best = { move, target, score };
           }
           continue;
