@@ -1,6 +1,6 @@
 # Pokémon Champion 2026 — VGC Team Simulator
 
-A production-grade VGC competitive team simulator for April 2026 meta play. Built as a fully offline-capable PWA with no server required.
+A production-grade VGC competitive team simulator for April 2026 meta play. Built as a fully offline-capable PWA with a static-site deployment path and optional Supabase-backed user features.
 
 **Live single-file app:** [`pokemon-champion-2026.html`](./poke-sim/pokemon-champion-2026.html) — open in any browser, works offline.
 
@@ -10,15 +10,27 @@ Three ways to open the sim without cloning. Each points to a different snapshot 
 
 | Channel | Name | What it serves | Updates when | Use it for | Status |
 |---|---|---|---|---|---|
-| **Dev preview** | feature / PR branch | Newest work-in-progress bundle for the branch under review | Every push to that branch | Testing the latest mechanics / tickets before merge | ✅ Live when a branch preview URL is shared |
+| **Dev preview** | current active PR branch | Newest work-in-progress bundle for the branch under active review | Every push to that branch | Testing the latest mechanics / tickets before merge | ✅ Live when branch preview is shared |
 | **Stable** | `main` branch | Last merged bundle on the default branch | Only after a PR from a feature branch is merged into `main` | Sharing with teammates / VGC players who want a known-good build | ✅ Live |
-| **Static host** | GitHub Pages | Clean short URL, no proxy | Re-publishes on every push to `main` once enabled | Giving out a permanent link; best mobile experience | ⚠️ Not yet enabled — see setup below |
+| **Static host** | GitHub Pages | Clean short URL, no proxy | Re-publishes on every push to `main` once enabled | Giving out a permanent link; best mobile experience | ⚠️ Enable in repo settings if you want a public site |
 
 **Links:**
-- **Stable — branch `main`** (last merged bundle, updates only after PR merge): [htmlpreview.github.io — main](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html)
-- **GitHub Pages** (not yet enabled): will be `https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/` once configured — to enable, go to repo → Settings → Pages → Source: `Deploy from a branch`, select `main` branch, folder `/ (root)`, save
+- **Stable raw preview — branch `main`**: [htmlpreview.github.io — main](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html)
+- **GitHub Pages** (enable if desired): `https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/`
+- **Dev preview**: use the active branch preview URL shared in the PR under review
 
-> **Note:** The htmlpreview link is a live proxy for the raw single-file bundle on GitHub. Use the `main` link for the last merged stable build. For branch testing, generate the same URL pattern against that branch's raw `poke-sim/pokemon-champion-2026.html`. The local file at `poke-sim/pokemon-champion-2026.html` is the source of truth.
+> **Note:** The htmlpreview link is a branch/raw preview tool, not the canonical public site. If GitHub Pages is enabled for this fork, use that as the stable public URL. The local file at `poke-sim/pokemon-champion-2026.html` remains the source artifact that the site serves.
+
+## Release Direction
+
+This project should ship as a public site first, then add optional accounts, donations, subscriptions, and coaching on top of a trustworthy free core.
+
+- Site: canonical public entry point for simulator, replay review, Battle Sensei, and team tools.
+- Donations: optional support channel after the stable site is live.
+- Subscription: for saved history, deeper analysis, and repeat workflow value, not for basic simulator trust.
+- Coaching: separate premium human service layered on top of replay evidence and Battle Sensei outputs.
+
+See [ROADMAP.md](./ROADMAP.md) `M6 Release Track` for the step-by-step launch, security, ownership, and revenue plan.
 
 ---
 
