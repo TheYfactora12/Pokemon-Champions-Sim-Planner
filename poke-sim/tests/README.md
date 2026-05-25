@@ -22,6 +22,8 @@ node tests/phase4c_detectors.js # Phase 4c — detectors + confidence badges (5 
 node tests/phase4d_threat_response_tests.js # Phase 4d — threat response solver + line classifier — 7 cases
 node tests/phase4e_policy_regression.js # Phase 4e — policy audit / T5 static-advice gate — 15 cases
 node tests/mechanics_audit.js      # Mechanics audit — move-rule checks used by smoke test
+node tests/move_support_audit_tests.js # Shipped move support coverage + registry completeness guard
+node tests/move_verification_registry_tests.js # First verified move slice: Freeze-Dry, Giga Drain, Rock Tomb, screens
 node tests/ability_coverage_audit_tests.js # Ability coverage inventory + classification guard
 node tests/ability_priority_targeting_tests.js # Prankster, Armor Tail, Good as Gold, Magic Bounce
 node tests/t159_mobile_roster_layout_tests.js # Mobile roster layout safeguards
@@ -46,6 +48,7 @@ node tests/phase6_coaching_voice.js # Phase 6 — coaching templates, linter, RN
 node tests/structured_logger_tests.js # Infra — structured logger and no raw runtime console calls — 5 cases
 node tests/golden_battles_runner.js  # M7 — golden battles deterministic regression — 3 battles
 node tests/audit.js            # 5070-battle configured audit matrix — 0 JS errors floor
+node tools/generate-move-support-audit.mjs # rebuilds shipped move support report used by the daily heartbeat
 
 # Nightly (not in fast loop — ~5-25s depending on N)
 N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring check across 5 matchups
@@ -84,6 +87,8 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase4d | 7/7 | Threat-response solver, cache, idle fallback, line labels, renderer |
 | phase4e | 15/15 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate, weakness dashboard |
 | mechanics_audit | 20/20 | Core move-rule checks: Protect, Taunt, support leads, Sucker Punch, Feint, shield riders, recovery, sleep, Substitute, Imprison, Ally Switch, Mega weather triggers, slot retargeting, Roost grounding |
+| move_support_audit | 4/4 | Shipped move registry completeness + verified/baseline support audit |
+| move_verification_registry | 6/6 | First promoted verified move slice with source/test metadata |
 | phase5 | 12/12 | Turn log struct, positionScore, swing-turn delta, Replay Log v2, decision-gap audit |
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
@@ -108,6 +113,29 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 3. Ensure relative paths only — do not hardcode `/home/user/...` or `/tmp/...`
 4. Add the run line to this README's "Run all tests" block
 
-## CI (future)
+## CI
 
-No CI runner is wired up yet. Candidate: a simple `npm test` script that runs all five suites and exits non-zero on any failure. Ticket out when T9j.10 golden-pack lands.
+This repo uses GitHub Actions for:
+
+- PR/push CI
+- bundle freshness and cache-bump checks
+- the daily deterministic simulator heartbeat
+
+Keep this README aligned with the actual workflow files when adding or removing recurring checks.
+
+## Daily Heartbeat
+
+GitHub Actions `Daily Sim Heartbeat` runs a deterministic smoke set every day and on manual dispatch:
+
+- `node tools/generate-move-support-audit.mjs`
+- `node tests/move_legality_tests.js`
+- `node tests/move_support_audit_tests.js`
+- `node tests/move_verification_registry_tests.js`
+- `node tests/replay_species_parser_tests.js`
+- `node tests/replay_turn0_tests.js`
+- `node tests/preloaded_team_legality_tests.js`
+- `node tests/phase5_turn_log_tests.js`
+- `node tests/pokemon_data_audit_tests.js`
+- `bash tools/check-bundle.sh`
+
+It is intentionally read-only and does not hit live Supabase by default.

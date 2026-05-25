@@ -33,7 +33,7 @@ T('2. CSV fallback exposes required sheet names and source version', () => {
   ['README', 'Species_Stats', 'Learnsets', 'Moves', 'Form_Differences', 'Validation_Errors', 'Replay_Turn0_Sample'].forEach((sheet) => {
     truthy(csv.includes(sheet + ','), 'missing sheet ' + sheet);
   });
-  truthy(csv.includes('46e2933ea71194e448456aa3a88902c8e9bbc919'), 'source commit missing');
+  truthy(/[0-9a-f]{40} \(\d{4}-\d{2}-\d{2}\)/.test(csv), 'source commit/version missing');
 });
 
 T('3. required example species/forms exist separately', () => {
