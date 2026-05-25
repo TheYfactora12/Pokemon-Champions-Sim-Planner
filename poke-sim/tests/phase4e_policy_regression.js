@@ -302,26 +302,5 @@ T('T5-15 strategy report exposes provenance and BO3 adaptation', () => {
   truthy(report.bo3_adaptation.counter_adjustment, 'missing counter adjustment');
 });
 
-T('T5-16 weakness dashboard accepts pokemon-shaped dead-move rows', () => {
-  const dash = ctx.buildWeaknessDashboard(
-    { members: [{ name: 'Incineroar', moves: ['Fake Out', 'Knock Off'] }] },
-    {
-      mega_altaria: { wins: 1, losses: 2, draws: 0 },
-      kingambit_sneasler: { wins: 1, losses: 2, draws: 0 },
-      player: { wins: 1, losses: 1, draws: 0 }
-    },
-    'doubles',
-    {},
-    { safe: 'Incineroar + Whimsicott', speed: 'Whimsicott + Arcanine', pressure: 'Incineroar + Arcanine' },
-    { best_lead: { lead: ['Incineroar', 'Whimsicott'], win_rate: 0.6, n: 5 } },
-    [{ pokemon: 'Incineroar', move: 'Knock Off' }],
-    [{ category: 'Speed control', note: 'No Tailwind or Trick Room - faster meta teams will outpace you.' }]
-  );
-  const deadSection = dash.sections.find(function(section){ return section.title === 'Dead moves'; });
-  truthy(deadSection, 'missing dead move section');
-  truthy((deadSection.rows[0].label || '').indexOf('Incineroar - Knock Off') >= 0, 'dead move label should use pokemon fallback');
-  truthy((deadSection.rows[0].value || '').indexOf('8 games') >= 0, 'dead move value should use total sample size fallback');
-});
-
 console.log(`\nPhase 4e policy regression: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);

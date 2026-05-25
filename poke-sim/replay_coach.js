@@ -28,8 +28,230 @@
     return cleanText(idx >= 0 ? raw.slice(idx + 1) : raw);
   }
 
+  function slotKey(slot) {
+    var raw = cleanText(slot);
+    var m = raw.match(/^(p[12][a-z]?)(?::|$)/i);
+    return m ? m[1].toLowerCase() : '';
+  }
+
+  function isLooseGenderToken(value) {
+    var raw = cleanText(value);
+    return /^(?:gender\s*:\s*)?(?:F|M|Female|Male)$/i.test(raw);
+  }
+
+  function normalizeGenderToken(value) {
+    var raw = cleanText(value).replace(/^gender\s*:\s*/i, '');
+    if (/^(F|Female)$/i.test(raw)) return 'F';
+    if (/^(M|Male)$/i.test(raw)) return 'M';
+    return '';
+  }
+
+  function parseLevelToken(value) {
+    var raw = cleanText(value);
+    var m = raw.match(/^(?:L|Level|lvl)\s*\.?\s*(\d{1,3})$/i);
+    return m ? Math.max(1, Math.min(100, parseInt(m[1], 10) || 0)) : null;
+  }
+
+  function normalizeReplaySpeciesName(value) {
+    var raw = cleanText(value);
+    if (!raw) return '';
+    if (/^Nidoran(?:♀|\s+F)$/i.test(raw)) return 'Nidoran-F';
+    if (/^Nidoran(?:♂|\s+M)$/i.test(raw)) return 'Nidoran-M';
+    return raw;
+  }
+
+  function isReplayMetadataToken(value) {
+    var raw = cleanText(value);
+    return !raw
+      || isLooseGenderToken(raw)
+      || parseLevelToken(raw) != null
+      || /^shiny$/i.test(raw)
+      || /^tera\s*type\s*:/i.test(raw)
+      || /^ability\s*:/i.test(raw)
+      || /^item\s*:/i.test(raw);
+  }
+
+  function splitIdentityAndDetails(identityOrDetails, details) {
+    var identity = cleanText(identityOrDetails);
+    var detailText = cleanText(details);
+    if (!detailText && identity.indexOf('|') >= 0) {
+      var pieces = identity.split('|');
+      identity = cleanText(pieces[0]);
+      detailText = cleanText(pieces.slice(1).join('|'));
+    }
+    if (!detailText) detailText = identity;
+    return { identity: identity, details: detailText };
+  }
+
+  function replayBaseSpecies(species) {
+    var raw = cleanText(species);
+    if (!raw) return '';
+    return raw
+      .replace(/-Mega(?:-[XY])?$/i, '')
+      .replace(/-(?:Gmax|Totem)$/i, '');
+  }
+
+  function replayForme(species) {
+    var raw = cleanText(species);
+    var base = replayBaseSpecies(raw);
+    if (!raw || raw === base) return '';
+    return raw.slice(base.length).replace(/^-/, '');
+  }
+
+  function normalizeReplayPokemonDetails(identityOrDetails, details, opts) {
+    opts = opts || {};
+    var split = splitIdentityAndDetails(identityOrDetails, details);
+    var tokens = split.details.split(',').map(cleanText).filter(Boolean);
+    var identityName = nameFromSlot(split.identity);
+    var species = '';
+    var gender = '';
+    var level = null;
+    var item = cleanText(opts.item || '');
+    var ability = cleanText(opts.ability || '');
+
+    tokens.forEach(function(token) {
+      var parsedLevel = parseLevelToken(token);
+      if (parsedLevel != null) {
+        level = parsedLevel;
+        return;
+      }
+      if (isLooseGenderToken(token)) {
+        gender = gender || normalizeGenderToken(token);
+        return;
+      }
+      var itemMatch = token.match(/^item\s*:\s*(.+)$/i);
+      if (itemMatch) {
+        item = item || cleanText(itemMatch[1]);
+        return;
+      }
+      var abilityMatch = token.match(/^ability\s*:\s*(.+)$/i);
+      if (abilityMatch) {
+        ability = ability || cleanText(abilityMatch[1]);
+        return;
+      }
+      if (!species && !isReplayMetadataToken(token)) {
+        species = normalizeReplaySpeciesName(token);
+      }
+    });
+
+    if ((!species || isLooseGenderToken(species)) && identityName && !isLooseGenderToken(identityName)) {
+      species = normalizeReplaySpeciesName(identityName);
+    }
+    if (isLooseGenderToken(species)) species = '';
+
+    return {
+      displayName: species,
+      species: species,
+      baseSpecies: replayBaseSpecies(species),
+      gender: gender,
+      level: level,
+      forme: replayForme(species),
+      item: item,
+      ability: ability,
+      raw: {
+        identity: split.identity,
+        details: split.details,
+        tokens: tokens
+      }
+    };
+  }
+
   function speciesFromDetails(details) {
-    return cleanText(details).split(',')[0].trim();
+    return normalizeReplayPokemonDetails('', details).species;
+  }
+
+  function showId(value) {
+    return cleanText(value).toLowerCase().replace(/[^a-z0-9]+/g, '');
+  }
+
+  var MEGA_ITEM_FORM_MAP = {
+    kangaskhanite: 'Kangaskhan-Mega',
+    charizarditex: 'Charizard-Mega-X',
+    charizarditey: 'Charizard-Mega-Y',
+    venusaurite: 'Venusaur-Mega',
+    blastoisinite: 'Blastoise-Mega',
+    gengarite: 'Gengar-Mega',
+    gyaradosite: 'Gyarados-Mega',
+    aerodactylite: 'Aerodactyl-Mega',
+    ampharosite: 'Ampharos-Mega',
+    scizorite: 'Scizor-Mega',
+    heracronite: 'Heracross-Mega',
+    houndoominite: 'Houndoom-Mega',
+    tyranitarite: 'Tyranitar-Mega',
+    blazikenite: 'Blaziken-Mega',
+    gardevoirite: 'Gardevoir-Mega',
+    mawilite: 'Mawile-Mega',
+    aggronite: 'Aggron-Mega',
+    medichamite: 'Medicham-Mega',
+    manectite: 'Manectric-Mega',
+    banettite: 'Banette-Mega',
+    absolite: 'Absol-Mega',
+    garchompite: 'Garchomp-Mega',
+    lucarionite: 'Lucario-Mega',
+    abomasite: 'Abomasnow-Mega',
+    beedrillite: 'Beedrill-Mega',
+    pidgeotite: 'Pidgeot-Mega',
+    slowbronite: 'Slowbro-Mega',
+    steelixite: 'Steelix-Mega',
+    sceptilite: 'Sceptile-Mega',
+    swampertite: 'Swampert-Mega',
+    sableite: 'Sableye-Mega',
+    sharpedonite: 'Sharpedo-Mega',
+    cameruptite: 'Camerupt-Mega',
+    altarianite: 'Altaria-Mega',
+    glalitite: 'Glalie-Mega',
+    salamencite: 'Salamence-Mega',
+    metagrossite: 'Metagross-Mega',
+    lopunnite: 'Lopunny-Mega',
+    galladite: 'Gallade-Mega',
+    audinite: 'Audino-Mega',
+    diancite: 'Diancie-Mega'
+  };
+
+  function resolveReplayMegaSpecies(baseSpecies, itemOrForm) {
+    var base = normalizeReplayPokemonDetails(baseSpecies).species || cleanText(baseSpecies);
+    var item = cleanText(itemOrForm);
+    var mapped = MEGA_ITEM_FORM_MAP[showId(item)];
+    if (mapped) return mapped;
+    if (/-Mega(?:-[XY])?$/i.test(base)) return base;
+    if (/^(Charizard|Mewtwo)$/i.test(base)) return base;
+
+    if (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS) {
+      var matches = Object.keys(CHAMPIONS_MEGAS).filter(function(key) {
+        var row = CHAMPIONS_MEGAS[key] || {};
+        return cleanText(row.baseSpecies).toLowerCase() === base.toLowerCase();
+      });
+      if (matches.length === 1) return matches[0];
+    }
+
+    var candidate = base + '-Mega';
+    if ((typeof BASE_STATS !== 'undefined' && BASE_STATS && BASE_STATS[candidate])
+      || (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB && POKEMON_TYPES_DB[candidate])) {
+      return candidate;
+    }
+    return base;
+  }
+
+  function replaceUniquePokemon(list, before, after) {
+    var target = cleanText(after);
+    if (!Array.isArray(list) || !target || isLooseGenderToken(target)) return;
+    var old = cleanText(before);
+    var existing = list.indexOf(target);
+    var idx = old ? list.indexOf(old) : -1;
+    if (idx >= 0) {
+      if (existing >= 0 && existing !== idx) list.splice(idx, 1);
+      else list[idx] = target;
+      return;
+    }
+    if (existing < 0) list.push(target);
+  }
+
+  function speciesForSlot(activeBySlot, slot) {
+    var key = slotKey(slot);
+    var active = key ? activeBySlot[key] : '';
+    if (active && !isLooseGenderToken(active)) return active;
+    var name = nameFromSlot(slot);
+    return isLooseGenderToken(name) ? '' : name;
   }
 
   function hpPercent(hpText) {
@@ -70,10 +292,290 @@
     if (v && list.indexOf(v) < 0) list.push(v);
   }
 
+  function looksLikeReplayTag(tag) {
+    return /^(player|teamsize|gametype|gen|tier|rule|rated|poke|teampreview|start|turn|upkeep|move|switch|drag|replace|faint|win|tie|-damage|-heal|-status|-curestatus|-boost|-unboost|-mega|-weather|-fieldstart|-fieldend|-sidestart|-sideend|-crit|-miss|-fail|-immune|-message|j|c)$/i.test(tag || '');
+  }
+
+  function normalizeReplayLogInput(rawInput) {
+    var text = String(rawInput == null ? '' : rawInput)
+      .replace(/^\uFEFF/, '')
+      .replace(/\u00a0/g, ' ')
+      .replace(/\r\n?/g, '\n');
+    if (!text.trim()) return '';
+    if (text.indexOf('\n') < 0 && text.indexOf('\\n|') >= 0) {
+      text = text.replace(/\\n/g, '\n');
+    }
+    var directLines = [];
+    text.split('\n').forEach(function(line) {
+      var trimmed = cleanText(line);
+      if (!trimmed) return;
+      if (trimmed.charAt(0) === '|') {
+        var directTag = trimmed.split('|')[1] || '';
+        if (looksLikeReplayTag(directTag)) directLines.push(trimmed);
+        return;
+      }
+      var idx = trimmed.indexOf('|');
+      if (idx >= 0) {
+        var candidate = trimmed.slice(idx);
+        var tag = candidate.split('|')[1] || '';
+        if (looksLikeReplayTag(tag)) directLines.push(candidate);
+      }
+    });
+    if (directLines.length) return directLines.join('\n');
+    return cleanText(text);
+  }
+
+  function replayUrlToLogUrl(rawUrl) {
+    var input = cleanText(rawUrl);
+    if (!input) throw new Error('Enter a replay URL.');
+    var normalized = input;
+    if (!/^https?:\/\//i.test(normalized)) normalized = 'https://' + normalized;
+    var url;
+    try {
+      url = new URL(normalized);
+    } catch (e) {
+      throw new Error('Replay URL is not valid.');
+    }
+    if (!/replay\.pokemonshowdown\.com$/i.test(url.hostname || '')) {
+      throw new Error('Use a replay.pokemonshowdown.com URL.');
+    }
+    var path = String(url.pathname || '').replace(/^\/+/, '');
+    if (!path) throw new Error('Replay URL is missing an ID.');
+    path = path.replace(/\.json$/i, '').replace(/\.log$/i, '');
+    return url.origin + '/' + path + '.log';
+  }
+
+  async function fetchReplayLog(rawUrl, fetchImpl) {
+    var fetcher = fetchImpl || (typeof fetch === 'function' ? fetch : null);
+    if (!fetcher) throw new Error('Replay URL loading is not available in this build.');
+    var logUrl = replayUrlToLogUrl(rawUrl);
+    var resp = await fetcher(logUrl, { credentials: 'omit' });
+    if (!resp || !resp.ok) {
+      throw new Error('Could not load that replay URL.');
+    }
+    var text = await resp.text();
+    return normalizeReplayLogInput(text);
+  }
+
+  function sourceStatsForSpecies(species) {
+    var key = cleanText(species);
+    if (!key) return null;
+    if (typeof BASE_STATS !== 'undefined' && BASE_STATS && BASE_STATS[key]) return BASE_STATS[key];
+    var audit = ChampionsSim.pokemonDataAudit;
+    var sourceRow = audit && audit.species ? audit.species[key] : null;
+    return sourceRow && sourceRow.stats ? sourceRow.stats : null;
+  }
+
+  function statLine(stats) {
+    if (!stats) return 'unknown';
+    return [stats.hp, stats.atk, stats.def, stats.spa, stats.spd, stats.spe].join('/');
+  }
+
+  function addReplayWarning(warnings, value) {
+    var text = cleanText(value);
+    if (text && warnings.indexOf(text) < 0) warnings.push(text);
+  }
+
+  function legalityForMoves(species, moves) {
+    var api = ChampionsSim.moveLegality;
+    if (!api || typeof api.isMoveLegalForSpecies !== 'function') {
+      return (moves || []).map(function(move) {
+        return {
+          move: move,
+          legal: false,
+          reason: 'source_unavailable',
+          notes: 'unchecked'
+        };
+      });
+    }
+    return (moves || []).map(function(move) {
+      var out = api.isMoveLegalForSpecies(species, move);
+      return {
+        move: move,
+        legal: !!out.legal,
+        reason: out.reason || '',
+        notes: out.notes || '',
+        source: out.source || '',
+        sourceVersion: out.sourceVersion || ''
+      };
+    });
+  }
+
+  function observedMovesForSpecies(ctx, species, aliases) {
+    var seen = [];
+    var lookup = (ctx && ctx.observedMovesBySpecies) || {};
+    [species].concat(aliases || []).forEach(function(key) {
+      (lookup[key] || []).forEach(function(move) { addUnique(seen, move); });
+    });
+    return seen;
+  }
+
+  function applyMoveLegalityWarnings(warnings, legality) {
+    (legality || []).forEach(function(item) {
+      if (item.reason === 'not_in_species_form_learnset') addReplayWarning(warnings, 'move not legal for this species/form: ' + item.move);
+      if (item.reason === 'source_unavailable' || item.reason === 'unknown_species') addReplayWarning(warnings, 'move legality unchecked: ' + item.move);
+    });
+  }
+
+  function auditRosterRow(row, ctx) {
+    row = row || {};
+    var species = row.species || 'unknown';
+    var warnings = (row.warnings || row.parserWarnings || []).slice();
+    var stats = sourceStatsForSpecies(species);
+    var moves = observedMovesForSpecies(ctx, species, [row.postImportSpecies, row.resolvedSpecies, row.baseSpecies]);
+    if (!stats) addReplayWarning(warnings, 'stats fallback used or source stats unavailable for ' + species);
+    var legality = legalityForMoves(species, moves);
+    applyMoveLegalityWarnings(warnings, legality);
+    return {
+      side: row.side || '',
+      slot: row.slot || '',
+      leadOrder: row.leadOrder || null,
+      species: species,
+      displayName: row.displayName || species,
+      baseSpecies: row.baseSpecies || replayBaseSpecies(species),
+      resolvedSpecies: row.resolvedSpecies || row.postImportSpecies || '',
+      status: row.status || 'bench',
+      hp: row.hp == null ? (row.status === 'unknown' ? null : 100) : row.hp,
+      hpLabel: row.hp == null ? (row.status === 'unknown' ? 'unknown' : '100%') : String(row.hp) + '%',
+      faintTurn: row.faintTurn || null,
+      gender: row.gender || 'unknown',
+      level: row.level || 'unknown',
+      item: row.item || 'unknown',
+      ability: row.ability || 'unknown',
+      moves: moves.length ? moves : ['unknown'],
+      baseStats: stats || null,
+      baseStatsLabel: statLine(stats),
+      calculatedStats: 'unknown',
+      moveLegality: legality,
+      parserWarnings: warnings
+    };
+  }
+
+  function ensureRosterEntry(rosterState, side, species, meta) {
+    meta = meta || {};
+    var key = cleanText(species);
+    if (!side || !key) return null;
+    var sideRows = rosterState[side] = rosterState[side] || {};
+    var row = sideRows[key] = sideRows[key] || {
+      side: side,
+      species: key,
+      displayName: key,
+      baseSpecies: replayBaseSpecies(key),
+      status: 'bench',
+      hp: 100,
+      warnings: []
+    };
+    if (meta.displayName) row.displayName = meta.displayName;
+    if (meta.baseSpecies) row.baseSpecies = meta.baseSpecies;
+    if (meta.slot) row.slot = meta.slot;
+    if (meta.status) row.status = meta.status;
+    if (meta.hp != null) row.hp = meta.hp;
+    if (meta.faintTurn) row.faintTurn = meta.faintTurn;
+    if (meta.gender) row.gender = meta.gender;
+    if (meta.level) row.level = meta.level;
+    if (meta.item) row.item = meta.item;
+    if (meta.ability) row.ability = meta.ability;
+    if (meta.leadOrder) row.leadOrder = meta.leadOrder;
+    (meta.warnings || []).forEach(function(w) { addReplayWarning(row.warnings, w); });
+    return row;
+  }
+
+  function benchSlotOccupant(rosterState, side, species) {
+    var row = ensureRosterEntry(rosterState, side, species);
+    if (row && row.status !== 'fainted') {
+      row.status = 'bench';
+      row.slot = '';
+    }
+  }
+
+  function replaceRosterSpecies(rosterState, side, before, after, meta) {
+    var oldKey = cleanText(before);
+    var newKey = cleanText(after);
+    if (!side || !oldKey || !newKey || oldKey === newKey) return ensureRosterEntry(rosterState, side, newKey, meta || {});
+    var sideRows = rosterState[side] = rosterState[side] || {};
+    var oldRow = sideRows[oldKey];
+    var newRow = sideRows[newKey] || oldRow || { side: side, warnings: [] };
+    if (oldRow && oldRow !== newRow) delete sideRows[oldKey];
+    newRow.species = newKey;
+    newRow.displayName = newKey;
+    newRow.baseSpecies = replayBaseSpecies(newKey);
+    sideRows[newKey] = newRow;
+    return ensureRosterEntry(rosterState, side, newKey, meta || {});
+  }
+
+  function rosterRowsForSide(rosterState, side, ctx) {
+    var rows = Object.keys((rosterState && rosterState[side]) || {}).map(function(key) {
+      return auditRosterRow(rosterState[side][key], ctx);
+    });
+    rows.sort(function(a, b) {
+      var order = { active: 0, bench: 1, fainted: 2, unknown: 3 };
+      var ao = order[a.status] == null ? 9 : order[a.status];
+      var bo = order[b.status] == null ? 9 : order[b.status];
+      if (ao !== bo) return ao - bo;
+      if ((a.leadOrder || 99) !== (b.leadOrder || 99)) return (a.leadOrder || 99) - (b.leadOrder || 99);
+      return (a.species || '').localeCompare(b.species || '');
+    });
+    return rows;
+  }
+
+  function snapshotRosterState(rosterState, ctx) {
+    return {
+      p1: rosterRowsForSide(rosterState, 'p1', ctx),
+      p2: rosterRowsForSide(rosterState, 'p2', ctx)
+    };
+  }
+
+  function buildReplayTurn0Snapshot(model, ctx) {
+    ctx = ctx || {};
+    var sides = {};
+    ['p1', 'p2'].forEach(function(side) {
+      var preview = ctx.previewDetails && ctx.previewDetails[side] ? ctx.previewDetails[side] : [];
+      var starters = ctx.startingSlots && ctx.startingSlots[side] ? ctx.startingSlots[side] : [];
+      var starterBySpecies = {};
+      starters.forEach(function(row, idx) {
+        starterBySpecies[row.species] = Object.assign({}, row, { status: 'active', hp: row.hp == null ? 100 : row.hp, leadOrder: idx + 1 });
+      });
+      var roster = [];
+      preview.forEach(function(row) {
+        var active = starterBySpecies[row.species];
+        roster.push(auditRosterRow(active || {
+          side: side,
+          species: row.species || 'unknown',
+          displayName: row.species || 'unknown',
+          baseSpecies: row.baseSpecies,
+          status: 'bench',
+          hp: 100,
+          gender: row.gender,
+          level: row.level,
+          item: row.item,
+          ability: row.ability,
+          warnings: row.gender ? ['gender token seen and stripped'] : []
+        }, ctx));
+        if (active) delete starterBySpecies[row.species];
+      });
+      Object.keys(starterBySpecies).forEach(function(key) {
+        roster.push(auditRosterRow(starterBySpecies[key], ctx));
+      });
+      sides[side] = {
+        side: side,
+        player: model.players[side] || side,
+        teamPreview: preview.map(function(row) { return row.species || 'unknown'; }),
+        roster: roster,
+        leads: roster.filter(function(row) { return row.status === 'active'; })
+      };
+    });
+    return {
+      title: 'Turn 0 — Starting State',
+      generatedFrom: 'local replay parser audit',
+      sides: sides,
+      parserWarnings: (ctx.parserWarnings || []).slice()
+    };
+  }
+
   function parseShowdownLog(rawLog, opts) {
     opts = opts || {};
     var selectedSide = normalizeSide(opts.selectedSide || 'p1');
-    var text = cleanText(rawLog);
+    var text = normalizeReplayLogInput(rawLog);
     var model = {
       ok: false,
       selectedSide: selectedSide,
@@ -89,6 +591,7 @@
       totalTurns: 0,
       turns: [],
       warnings: [],
+      turn0: null,
       rawLineCount: text ? text.split(/\r?\n/).length : 0,
       rawPreviewLines: []
     };
@@ -101,6 +604,13 @@
     var currentTurn = ensureTurn(model, 0);
     var seenFirstTurn = false;
     var activeSeenBeforeTurnOne = { p1: [], p2: [] };
+    var activeSpeciesBySlot = {};
+    var previewDetails = { p1: [], p2: [] };
+    var startingSlots = { p1: [], p2: [] };
+    var startingBySlot = {};
+    var rosterState = { p1: {}, p2: {} };
+    var observedMovesBySpecies = {};
+    var parserWarnings = [];
     var lines = text.split(/\r?\n/);
     model.rawPreviewLines = lines.map(cleanText).filter(Boolean).slice(-250);
 
@@ -125,10 +635,28 @@
       }
       if (tag === 'poke') {
         var previewSide = normalizeSide(parts[2]);
-        addUnique(model.teamPreview[previewSide], speciesFromDetails(parts[3] || ''));
+        var previewMon = normalizeReplayPokemonDetails('', parts[3] || '');
+        addUnique(model.teamPreview[previewSide], previewMon.species);
+        if (previewMon.gender) addReplayWarning(parserWarnings, 'gender token seen and stripped for ' + (previewMon.species || 'unknown'));
+        previewDetails[previewSide].push(previewMon);
+        ensureRosterEntry(rosterState, previewSide, previewMon.species, {
+          side: previewSide,
+          status: 'bench',
+          hp: 100,
+          displayName: previewMon.displayName,
+          baseSpecies: previewMon.baseSpecies,
+          gender: previewMon.gender,
+          level: previewMon.level,
+          item: previewMon.item,
+          ability: previewMon.ability,
+          warnings: previewMon.gender ? ['gender token seen and stripped'] : []
+        });
         return;
       }
       if (tag === 'turn') {
+        if (currentTurn && currentTurn.number > 0) {
+          currentTurn.rosterState = snapshotRosterState(rosterState, { observedMovesBySpecies: observedMovesBySpecies });
+        }
         seenFirstTurn = true;
         currentTurn = ensureTurn(model, parts[2]);
         model.totalTurns = Math.max(model.totalTurns, currentTurn.number);
@@ -149,27 +677,109 @@
       if (tag === 'switch' || tag === 'drag' || tag === 'replace') {
         var slot = parts[2];
         var side = sideOf(slot);
-        var mon = nameFromSlot(slot) || speciesFromDetails(parts[3] || '');
-        var details = speciesFromDetails(parts[3] || mon);
+        var parsedMon = normalizeReplayPokemonDetails(slot, parts[3] || '');
+        var mon = parsedMon.species || speciesForSlot(activeSpeciesBySlot, slot) || nameFromSlot(slot);
+        var details = parsedMon.species || mon;
         var hp = hpPercent(parts[4] || '');
+        var key = slotKey(slot);
+        var previous = key ? activeSpeciesBySlot[key] : '';
+        if (side && previous && previous !== details) benchSlotOccupant(rosterState, side, previous);
+        if (key && details) activeSpeciesBySlot[key] = details;
+        if (parsedMon.gender) addReplayWarning(parserWarnings, 'gender token seen and stripped for ' + details);
         if (side) {
-          addUnique(model.selectedPokemon[side], mon || details);
-          if (!seenFirstTurn) addUnique(activeSeenBeforeTurnOne[side], mon || details);
+          addUnique(model.selectedPokemon[side], details);
+          if (!seenFirstTurn) addUnique(activeSeenBeforeTurnOne[side], details);
+          ensureRosterEntry(rosterState, side, details, {
+            side: side,
+            slot: key,
+            status: 'active',
+            hp: hp == null ? 100 : hp,
+            displayName: details,
+            baseSpecies: parsedMon.baseSpecies || replayBaseSpecies(details),
+            gender: parsedMon.gender,
+            level: parsedMon.level,
+            item: parsedMon.item,
+            ability: parsedMon.ability,
+            warnings: parsedMon.gender ? ['gender token seen and stripped'] : []
+          });
         }
-        currentTurn.switches.push({ side: side, pokemon: mon || details, details: details, hp: hp, forced: tag === 'drag' });
-        currentTurn.events.push({ type: tag, side: side, pokemon: mon || details, text: raw });
+        if (side && key && !seenFirstTurn && !startingBySlot[key]) {
+          startingBySlot[key] = {
+            side: side,
+            slot: key,
+            species: details,
+            postImportSpecies: details,
+            baseSpecies: parsedMon.baseSpecies || replayBaseSpecies(details),
+            gender: parsedMon.gender,
+            level: parsedMon.level,
+            item: parsedMon.item,
+            ability: parsedMon.ability,
+            hp: hp == null ? 100 : hp,
+            warnings: parsedMon.gender ? ['gender token seen and stripped'] : []
+          };
+          startingSlots[side].push(startingBySlot[key]);
+        }
+        currentTurn.switches.push({
+          side: side,
+          pokemon: details,
+          details: details,
+          nickname: nameFromSlot(slot),
+          gender: parsedMon.gender,
+          level: parsedMon.level,
+          hp: hp,
+          forced: tag === 'drag'
+        });
+        currentTurn.events.push({ type: tag, side: side, pokemon: details, text: raw });
+        return;
+      }
+
+      if (tag === '-mega') {
+        var megaSlot = parts[2];
+        var megaSide = sideOf(megaSlot);
+        var megaKey = slotKey(megaSlot);
+        var currentSpecies = speciesForSlot(activeSpeciesBySlot, megaSlot) || nameFromSlot(megaSlot);
+        var megaItem = parts[4] || parts[3] || '';
+        var formHint = parts[4] ? parts[3] : '';
+        var baseSpecies = normalizeReplayPokemonDetails(currentSpecies || formHint).species || currentSpecies || formHint;
+        var megaSpecies = resolveReplayMegaSpecies(baseSpecies, megaItem || formHint);
+        if (megaKey && megaSpecies) activeSpeciesBySlot[megaKey] = megaSpecies;
+        if (megaSide && megaSpecies) {
+          replaceUniquePokemon(model.selectedPokemon[megaSide], baseSpecies, megaSpecies);
+          replaceRosterSpecies(rosterState, megaSide, baseSpecies, megaSpecies, {
+            side: megaSide,
+            slot: megaKey,
+            status: 'active',
+            item: cleanText(megaItem),
+            warnings: megaSpecies !== baseSpecies ? ['Mega form resolved from ' + baseSpecies + ' to ' + megaSpecies] : []
+          });
+        }
+        if (megaKey && startingBySlot[megaKey] && megaSpecies && megaSpecies !== baseSpecies) {
+          startingBySlot[megaKey].resolvedSpecies = megaSpecies;
+          startingBySlot[megaKey].item = cleanText(megaItem) || startingBySlot[megaKey].item;
+          addReplayWarning(startingBySlot[megaKey].warnings, 'Mega form resolved from ' + baseSpecies + ' to ' + megaSpecies);
+          addReplayWarning(parserWarnings, 'Mega form resolved from ' + baseSpecies + ' to ' + megaSpecies);
+        }
+        currentTurn.events.push({
+          type: 'mega',
+          side: megaSide,
+          pokemon: megaSpecies || baseSpecies,
+          baseSpecies: baseSpecies,
+          item: cleanText(megaItem),
+          text: raw
+        });
         return;
       }
 
       if (tag === 'move') {
         var actorSlot = parts[2];
         var actorSide = sideOf(actorSlot);
-        var actor = nameFromSlot(actorSlot);
+        var actor = speciesForSlot(activeSpeciesBySlot, actorSlot);
         var move = cleanText(parts[3]);
         var targetSlot = parts[4] || '';
         var targetSide = sideOf(targetSlot);
-        var target = nameFromSlot(targetSlot);
+        var target = speciesForSlot(activeSpeciesBySlot, targetSlot);
         if (actorSide) addUnique(model.selectedPokemon[actorSide], actor);
+        if (actor && move) addUnique((observedMovesBySpecies[actor] = observedMovesBySpecies[actor] || []), move);
         currentTurn.moves.push({ side: actorSide, pokemon: actor, move: move, targetSide: targetSide, target: target });
         currentTurn.events.push({ type: 'move', side: actorSide, pokemon: actor, move: move, target: target, text: raw });
         return;
@@ -178,8 +788,14 @@
       if (tag === 'faint') {
         var faintSlot = parts[2];
         var faintSide = sideOf(faintSlot);
-        var faintMon = nameFromSlot(faintSlot);
+        var faintMon = speciesForSlot(activeSpeciesBySlot, faintSlot);
         if (faintSide) addUnique(model.selectedPokemon[faintSide], faintMon);
+        ensureRosterEntry(rosterState, faintSide, faintMon, {
+          side: faintSide,
+          status: 'fainted',
+          hp: 0,
+          faintTurn: currentTurn.number
+        });
         currentTurn.faints.push({ side: faintSide, pokemon: faintMon });
         currentTurn.events.push({ type: 'faint', side: faintSide, pokemon: faintMon, text: raw });
         return;
@@ -188,9 +804,15 @@
       if (tag === '-damage' || tag === '-heal') {
         var hpSlot = parts[2];
         var hpSide = sideOf(hpSlot);
-        var hpMon = nameFromSlot(hpSlot);
+        var hpMon = speciesForSlot(activeSpeciesBySlot, hpSlot);
         var hpValue = hpPercent(parts[3] || '');
         var row = { side: hpSide, pokemon: hpMon, hp: hpValue, cause: cleanText(parts.slice(4).join('|')) };
+        ensureRosterEntry(rosterState, hpSide, hpMon, {
+          side: hpSide,
+          hp: hpValue,
+          status: hpValue === 0 ? 'fainted' : '',
+          faintTurn: hpValue === 0 ? currentTurn.number : null
+        });
         if (tag === '-damage') currentTurn.damage.push(row);
         else currentTurn.healing.push(row);
         currentTurn.events.push({ type: tag.slice(1), side: hpSide, pokemon: hpMon, hp: hpValue, text: raw });
@@ -199,8 +821,8 @@
 
       if (tag === '-status' || tag === '-curestatus' || tag === '-boost' || tag === '-unboost') {
         var statusSlot = parts[2];
-        currentTurn.status.push({ type: tag.slice(1), side: sideOf(statusSlot), pokemon: nameFromSlot(statusSlot), value: cleanText(parts[3]) });
-        currentTurn.events.push({ type: tag.slice(1), side: sideOf(statusSlot), pokemon: nameFromSlot(statusSlot), text: raw });
+        currentTurn.status.push({ type: tag.slice(1), side: sideOf(statusSlot), pokemon: speciesForSlot(activeSpeciesBySlot, statusSlot), value: cleanText(parts[3]) });
+        currentTurn.events.push({ type: tag.slice(1), side: sideOf(statusSlot), pokemon: speciesForSlot(activeSpeciesBySlot, statusSlot), text: raw });
         return;
       }
 
@@ -212,10 +834,14 @@
 
       if (tag === '-crit' || tag === '-miss' || tag === '-fail' || tag === '-immune') {
         var rngSlot = parts[2];
-        currentTurn.rng.push({ type: tag.slice(1), side: sideOf(rngSlot), pokemon: nameFromSlot(rngSlot), value: cleanText(parts[3]) });
-        currentTurn.events.push({ type: tag.slice(1), side: sideOf(rngSlot), pokemon: nameFromSlot(rngSlot), text: raw });
+        currentTurn.rng.push({ type: tag.slice(1), side: sideOf(rngSlot), pokemon: speciesForSlot(activeSpeciesBySlot, rngSlot), value: cleanText(parts[3]) });
+        currentTurn.events.push({ type: tag.slice(1), side: sideOf(rngSlot), pokemon: speciesForSlot(activeSpeciesBySlot, rngSlot), text: raw });
       }
     });
+
+    if (currentTurn && currentTurn.number > 0) {
+      currentTurn.rosterState = snapshotRosterState(rosterState, { observedMovesBySpecies: observedMovesBySpecies });
+    }
 
     model.leads.p1 = activeSeenBeforeTurnOne.p1.slice(0, 2);
     model.leads.p2 = activeSeenBeforeTurnOne.p2.slice(0, 2);
@@ -223,7 +849,7 @@
       model.leads.p1 = model.turns[0].switches.filter(function(s) { return s.side === 'p1'; }).map(function(s) { return s.pokemon; }).slice(0, 2);
       model.leads.p2 = model.turns[0].switches.filter(function(s) { return s.side === 'p2'; }).map(function(s) { return s.pokemon; }).slice(0, 2);
     }
-    model.turns = model.turns.filter(function(t) { return t.number > 0 || t.events.length > 0; });
+    model.turns = model.turns.filter(function(t) { return t.number > 0; });
     if (!model.totalTurns && model.turns.length) model.totalTurns = model.turns[model.turns.length - 1].number || 0;
 
     var selectedName = model.players[selectedSide];
@@ -234,6 +860,12 @@
     if (!model.players.p1 && !model.players.p2) model.warnings.push('Player names were not found in the log.');
     if (!model.leads.p1.length || !model.leads.p2.length) model.warnings.push('Lead Pokemon could not be fully inferred.');
     if (!model.teamPreview.p1.length && !model.teamPreview.p2.length) model.warnings.push('Team preview was not present; selected Pokemon are inferred from revealed actions.');
+    model.turn0 = buildReplayTurn0Snapshot(model, {
+      previewDetails: previewDetails,
+      startingSlots: startingSlots,
+      observedMovesBySpecies: observedMovesBySpecies,
+      parserWarnings: parserWarnings
+    });
     model.ok = model.turns.length > 0 || !!model.winner;
     model.opponentSide = oppSide;
     return model;
@@ -296,10 +928,55 @@
   function selectedFourConfidence(parsed, side) {
     var preview = parsed.teamPreview && parsed.teamPreview[side] ? parsed.teamPreview[side] : [];
     var selected = parsed.selectedPokemon && parsed.selectedPokemon[side] ? parsed.selectedPokemon[side] : [];
-    if (selected.length >= 4) return { level: 'high', label: 'Four inferred', reason: 'At least four selected Pokemon appeared in the log.' };
-    if (preview.length >= 6 && selected.length > 0) return { level: 'medium', label: 'Partial bring', reason: 'Team preview exists, but not all brought Pokemon were revealed.' };
-    if (selected.length > 0) return { level: 'medium', label: 'Revealed only', reason: 'Selected Pokemon are inferred from revealed actions only.' };
-    return { level: 'low', label: 'Unknown', reason: 'The log did not reveal selected Pokemon.' };
+    var previewCount = preview.length;
+    var selectedCount = selected.length;
+    var fullRosterKnown = previewCount >= 6;
+    var selectedFourKnown = selectedCount >= 4;
+    var base = {
+      previewCount: previewCount,
+      selectedCount: selectedCount,
+      fullRosterKnown: fullRosterKnown,
+      selectedFourKnown: selectedFourKnown,
+      bringChoiceReviewable: fullRosterKnown && selectedFourKnown,
+      limitation: ''
+    };
+    if (fullRosterKnown && selectedFourKnown) {
+      return Object.assign(base, {
+        level: 'high',
+        label: 'Full preview + four inferred',
+        reason: 'Team preview showed the full six and at least four selected Pokemon appeared in the log.'
+      });
+    }
+    if (selectedFourKnown) {
+      return Object.assign(base, {
+        level: 'medium',
+        label: 'Visible four inferred',
+        reason: 'At least four brought Pokemon appeared in the log, so replay review can continue.',
+        limitation: 'Bring-choice analysis is limited because the full six were not available from this replay.'
+      });
+    }
+    if (fullRosterKnown && selectedCount > 0) {
+      return Object.assign(base, {
+        level: 'medium',
+        label: 'Partial bring',
+        reason: 'Team preview showed the full six, but fewer than four brought Pokemon were revealed.',
+        limitation: 'Bring-four analysis is limited until the missing brought Pokemon appear in the log or are entered manually.'
+      });
+    }
+    if (selectedCount > 0) {
+      return Object.assign(base, {
+        level: 'medium',
+        label: 'Partial visible roster',
+        reason: 'Selected Pokemon are inferred from revealed actions only.',
+        limitation: 'Both the full six and complete selected four are incomplete from this replay.'
+      });
+    }
+    return Object.assign(base, {
+      level: 'low',
+      label: 'Unknown',
+      reason: 'The log did not reveal selected Pokemon.',
+      limitation: 'Upload a fuller replay log before using bring-choice coaching.'
+    });
   }
 
   function sideNames(parsed, side) {
@@ -315,6 +992,7 @@
   function eventLabel(ev) {
     if (!ev) return '';
     if (ev.type === 'move') return (ev.pokemon || '?') + ' used ' + (ev.move || '?') + (ev.target ? ' into ' + ev.target : '');
+    if (ev.type === 'mega') return (ev.baseSpecies || '?') + ' Mega Evolved into ' + (ev.pokemon || '?') + (ev.item ? ' with ' + ev.item : '') + ' (timing shown in replay order)';
     if (ev.type === 'switch' || ev.type === 'drag' || ev.type === 'replace') return (ev.forced ? 'Forced switch: ' : 'Switch: ') + (ev.pokemon || '?');
     if (ev.type === 'faint') return (ev.pokemon || '?') + ' fainted';
     if (ev.type === 'damage') return (ev.pokemon || '?') + ' took damage' + (ev.hp != null ? ' to ' + ev.hp + '%' : '');
@@ -417,6 +1095,7 @@
         betterLine: betterLine,
         tags: turnIssues.map(function(i) { return i.tag; }),
         events: primaryEvents,
+        rosterState: turn.rosterState || null,
         rawEventCount: (turn.events || []).length,
         metrics: {
           yourMoves: userMoves.length,
@@ -662,6 +1341,11 @@
   }
 
   ChampionsSim.replayCoach.parseShowdownLog = parseShowdownLog;
+  ChampionsSim.replayCoach.normalizeReplayPokemonDetails = normalizeReplayPokemonDetails;
+  ChampionsSim.replayCoach.resolveReplayMegaSpecies = resolveReplayMegaSpecies;
+  ChampionsSim.replayCoach.normalizeReplayLogInput = normalizeReplayLogInput;
+  ChampionsSim.replayCoach.replayUrlToLogUrl = replayUrlToLogUrl;
+  ChampionsSim.replayCoach.fetchReplayLog = fetchReplayLog;
   ChampionsSim.replayCoach.buildReplayCoachReview = buildReplayCoachReview;
   ChampionsSim.replayCoach.analyzeShowdownReplay = analyzeShowdownReplay;
 

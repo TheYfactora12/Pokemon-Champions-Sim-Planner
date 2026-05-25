@@ -99,13 +99,12 @@ describe('Module 1 \u2014 Wiring suite (16 cases)', function () {
   });
 
   T('T-wiring-6', function () {
-    // Bundle size < 1.35 MiB. Supabase-js UMD plus the simulator runtime support
-    // files are intentionally inlined so GitHub Pages/local previews do not
-    // depend on stale split-file cache state. The budget is still a bloat canary
-    // for the current single-file architecture, not a permanent launch target.
+    // Bundle size < 1.25 MiB. Battle Sensei plus Supabase-js UMD and the
+    // simulator runtime are intentionally inlined so GitHub Pages/local
+    // previews do not depend on stale split-file cache state.
     // If this trips, investigate before raising further — it's our bloat canary.
     var stats = fs.statSync(bundlePath);
-    eq(stats.size < 1383 * 1024, true, 'bundle size < 1.35 MiB (got ' + stats.size + ')');
+    eq(stats.size < 1280 * 1024, true, 'bundle size < 1.25 MiB (got ' + stats.size + ')');
   });
 
   T('T-wiring-7', function () {

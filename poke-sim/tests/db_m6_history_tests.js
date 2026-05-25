@@ -24,14 +24,40 @@ function falsy(v, msg) { if (v) throw new Error(msg + ' expected falsy'); }
 var ctx = freshCtx();
 
 // Add mock document object immediately to prevent DOM errors in Node.js
+function makeStubEl(id) {
+  return {
+    id: id || '',
+    style: {},
+    dataset: {},
+    innerHTML: '',
+    textContent: '',
+    value: '',
+    classList: { add: function(){}, remove: function(){}, toggle: function(){}, contains: function(){ return false; } },
+    addEventListener: function(){},
+    removeEventListener: function(){},
+    setAttribute: function(){},
+    getAttribute: function() { return null; },
+    appendChild: function(){},
+    removeChild: function(){},
+    querySelector: function() { return makeStubEl('query'); },
+    querySelectorAll: function() { return []; }
+  };
+}
+
 ctx.window.document = {
-  getElementById: function() { return null; },
+  _els: {},
+  getElementById: function(id) {
+    if (!this._els[id]) this._els[id] = makeStubEl(id);
+    return this._els[id];
+  },
   querySelectorAll: function() { return []; },
-  querySelector: function() { return null; },
+  querySelector: function() { return makeStubEl('query'); },
   addEventListener: function() {},
   removeEventListener: function() {},
-  createElement: function() { return { style: {}, appendChild: function() {} }; }
+  createElement: function() { return makeStubEl('el'); },
+  body: makeStubEl('body')
 };
+ctx.document = ctx.window.document;
 
 // Inject environment variables for live DB testing
 if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {

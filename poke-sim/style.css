@@ -402,7 +402,6 @@ table{border-collapse:collapse;width:100%}
 }
 @media(max-width:640px){
   .strategy-header-row,.strategy-controls,.cs-summary-bar,.cs-detector-team-conf,.replay-filters-row,.pilot-card-header{flex-direction:column;align-items:flex-start}
-  .replay-coach-header,.replay-coach-card-head{flex-direction:column;align-items:flex-start}
   .strategy-controls,.replay-filters,.pilot-card-body{width:100%}
   .cs-summary-bar{gap:12px;padding:12px}
   .cs-tier-badge{width:44px;height:44px;font-size:20px}
@@ -654,6 +653,7 @@ table{border-collapse:collapse;width:100%}
 .replay-coach-grid{display:grid;grid-template-columns:minmax(320px,420px) minmax(0,1fr);gap:var(--sp4);align-items:start}
 .replay-coach-input-card,.replay-coach-summary-card,.replay-coach-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp4);box-shadow:var(--sh-sm);min-width:0}
 .replay-coach-card-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp2);margin-bottom:var(--sp3)}
+.replay-coach-url-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sp2);align-items:center;margin-bottom:var(--sp3)}
 .replay-coach-textarea{width:100%;min-height:260px;padding:var(--sp3);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);font-family:var(--font-mono),monospace;font-size:11px;line-height:1.65;resize:vertical;transition:border-color var(--tr);-webkit-appearance:none;overflow-wrap:normal;word-break:normal;white-space:pre;overflow:auto}
 .replay-coach-textarea:focus{outline:none;border-color:var(--primary)}
 .replay-coach-controls{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp2);align-items:end;margin-top:var(--sp3)}
@@ -708,6 +708,13 @@ table{border-collapse:collapse;width:100%}
 .rchip.tw{border-color:var(--gold);color:var(--gold);background:rgba(245,197,66,.07)}
 .replay-expanded{display:none;margin-top:var(--sp3);padding-top:var(--sp3);border-top:1px solid var(--border)}
 .replay-card.open .replay-expanded{display:block}
+.replay-coach-summary{margin-bottom:var(--sp3);padding:var(--sp3);border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface2)}
+.replay-coach-execution{border-color:rgba(245,197,66,.45)}
+.replay-coach-not-enough-evidence{border-color:var(--border)}
+.replay-coach-title{font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:6px}
+.replay-coach-detail{font-size:11px;line-height:1.6;color:var(--text);margin-bottom:8px}
+.replay-coach-row{display:grid;grid-template-columns:80px 1fr;gap:8px;font-size:11px;line-height:1.5;color:var(--text);margin-top:4px}
+.replay-coach-label{font-family:var(--font-mono);color:var(--text-m);text-transform:uppercase;font-size:10px}
 .battle-log{font-family:var(--font-mono);font-size:11px;color:var(--text-m);max-height:220px;overflow-y:auto;line-height:1.9}
 .battle-log .lt{color:var(--primary);font-weight:600}
 .battle-log .lk{color:var(--red)}
@@ -716,6 +723,7 @@ table{border-collapse:collapse;width:100%}
 @media(max-width:900px){.replay-coach-grid{grid-template-columns:1fr}.replay-coach-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){
   .replay-coach-input-card,.replay-coach-summary-card,.replay-coach-card{padding:var(--sp3)}
+  .replay-coach-url-row{grid-template-columns:1fr}
   .replay-coach-controls{grid-template-columns:1fr}
   .replay-coach-summary-grid{grid-template-columns:1fr}
   .replay-coach-privacy{white-space:normal}

@@ -46,6 +46,17 @@ T('2. critical engine separates first mistake from fatal mistake on fixture', ()
   truthy(critical.turns.every((t) => t.whatHappened && t.whyItMattered && t.betterAlternative && t.confidence), 'critical cards complete');
 });
 
+T('2b. lead logic explains opener synergy plus concession risk', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const lead = analysis.review.learningReport.leadLogic;
+  truthy(lead, 'lead logic missing');
+  inc(lead.label, 'opener', 'lead label');
+  truthy(lead.synergySignals.length >= 1, 'lead synergy signals');
+  truthy(lead.pros.length >= 1, 'lead pros');
+  truthy(lead.cons.length >= 1, 'lead cons');
+  inc(lead.limitation, 'visible turn-one replay evidence', 'lead limitation boundary');
+});
+
 T('3. decision quality matrix separates decision and outcome', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
   const rows = analysis.review.learningReport.decisionQuality;
@@ -68,7 +79,8 @@ T('4. scorecard and practice plan are generated from coaching tags', () => {
 
 T('5. Battle IQ scoring is provisional, explainable, and scoped to game intelligence', () => {
   const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
-  const iq = analysis.review.learningReport.battleIq;
+  const learning = analysis.review.learningReport;
+  const iq = learning.battleIq;
   truthy(iq, 'battle iq missing');
   eq(iq.status, 'Provisional Battle IQ', 'provisional status');
   inc(iq.definition, 'game-specific competitive battle intelligence', 'game intelligence boundary');
@@ -84,6 +96,11 @@ T('5. Battle IQ scoring is provisional, explainable, and scoped to game intellig
   });
   truthy(iq.loweredBy.length >= 1, 'lowered by evidence');
   truthy(iq.recommendedDrill && iq.recommendedDrill.skill, 'recommended drill');
+  truthy(learning.coachingReadouts, 'coaching readouts missing');
+  truthy(learning.coachingReadouts.strengths.length >= 1, 'positive coaching evidence missing');
+  eq(new Set(learning.coachingReadouts.strengths.map((row) => row.label + '|' + row.evidence)).size, learning.coachingReadouts.strengths.length, 'positive coaching rows should dedupe duplicate evidence');
+  truthy(learning.coachingReadouts.tightenUp.length >= 1, 'tighten-up guidance missing');
+  inc(learning.coachingReadouts.note, 'evidence-bound', 'coaching note');
 });
 
 T('6. low-confidence incomplete logs do not overclaim', () => {
@@ -100,6 +117,10 @@ T('6. low-confidence incomplete logs do not overclaim', () => {
   eq(learning.criticalTurns.confidence, 'low', 'critical confidence');
   eq(learning.battleIq.confidence, 'low', 'battle iq confidence');
   eq(learning.battleIq.status, 'Provisional Battle IQ', 'battle iq provisional');
+  eq(learning.battleIq.displayScore, null, 'low-confidence battle iq should hide the player-facing score');
+  eq(learning.battleIq.band, 'Needs more data', 'low-confidence battle iq should show a needs-more-data band');
+  eq(learning.battleIq.percentile, null, 'low-confidence battle iq should hide percentile');
+  eq(learning.battleIq.confidenceInterval.length, 0, 'low-confidence battle iq should hide score range');
   truthy(/Needs more data|same turn/i.test(learning.criticalTurns.note), 'low confidence note');
   eq(learning.evidenceStandard.label, 'Needs more data', 'evidence standard lowers confidence');
   inc(learning.opponentPlan.pressurePattern, 'Not enough observed', 'opponent plan avoids invented intent');
@@ -113,6 +134,15 @@ T('7. evidence standard and opponent plan expose support level', () => {
   inc(learning.evidenceStandard.opponentIntentRule, 'Never invent opponent intent', 'opponent intent boundary');
   truthy(['Observed', 'Strong inference', 'Weak inference', 'Needs more data'].includes(learning.opponentPlan.evidenceLabel), 'opponent evidence label');
   truthy(Array.isArray(learning.opponentPlan.evidence), 'opponent evidence rows');
+});
+
+T('7b. advanced play recognition stays evidence-bound', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const readouts = analysis.review.learningReport.coachingReadouts;
+  truthy(Array.isArray(readouts.advancedPlays), 'advanced plays array');
+  readouts.advancedPlays.forEach((row) => {
+    truthy(row.label && row.evidence && row.limitation, 'advanced play row completeness');
+  });
 });
 
 T('8. sim comparison stays low confidence until matched sim data exists', () => {

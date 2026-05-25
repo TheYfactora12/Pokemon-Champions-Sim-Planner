@@ -1,6 +1,6 @@
 # poke-sim/tools — M3 Runbook
 > **Pokémon Champion 2026** · Build & Release SOP  
-> Maintained by: `@TheYfactora12` · Last updated: 2026-04-27  
+> Maintained by: repo contributors · Last updated: 2026-05-24
 > **"Battle-tested. Always evolving."**
 
 ---
@@ -51,7 +51,7 @@ Pokemon-Champions-Sim-Planner/
 ├── poke-sim/
 │   ├── index.html                   ← app shell (SINGLE SOURCE OF TRUTH)
 │   ├── style.css
-│   ├── data.js                      ← BASE_STATS, POKEMON_TYPES_DB, TEAMS (13 teams)
+│   ├── data.js                      ← BASE_STATS, POKEMON_TYPES_DB, TEAMS (29 teams)
 │   ├── engine.js                    ← battle engine, damage formula
 │   ├── ui.js                        ← all UI logic
 │   ├── storage_adapter.js           ← localStorage wrapper
@@ -60,7 +60,8 @@ Pokemon-Champions-Sim-Planner/
 │   ├── pokemon-champion-2026.html   ← REBUILT BUNDLE (never edit directly)
 │   ├── db/
 │   │   ├── schema_v1.sql
-│   │   ├── seed_teams_v1.sql
+│   │   ├── seed_teams_v2.sql
+│   │   ├── migrations/
 │   │   └── rls_policies_v1.sql
 │   └── tools/
 │       ├── build-bundle.py          ← canonical bundle builder (always use this)
@@ -215,14 +216,15 @@ git push --force origin main
 | Key | Value |
 |---|---|
 | Project URL | `https://ymlahqnshgiarpbgxehp.supabase.co` |
-| Status | ✅ Live — schema + 13 teams seeded |
+| Status | ✅ Live — schema active; 29-team seed target pending shared catalog migration |
 | Auth | anon key (read-only for teams/pokemon; open write for analyses) |
 
 ### Initial setup (already done — for reference)
 ```sql
 -- Run in order in Supabase SQL Editor:
 -- 1. poke-sim/db/schema_v1.sql
--- 2. poke-sim/db/seed_teams_v1.sql
+-- 2. poke-sim/db/seed_teams_v2.sql for fresh DBs only
+--    Use poke-sim/db/migrations/2026_05_24_align_shared_29_team_catalog.sql for existing DBs with analyses history.
 -- 3. poke-sim/db/rls_policies_v1.sql
 ```
 
@@ -299,8 +301,8 @@ Next release: use `v9-{tag}`.
 | Role | Handle | Responsibility |
 |---|---|---|
 | Project Owner | `@alfredocox` | Repo owner, final merge authority |
-| Lead Dev / PM | `@TheYfactora12` | All new feature tickets, releases |
+| Lead Dev / PM | repo owner / active reviewer | Feature tickets, releases |
 
-> All new feature issues → assigned to `@TheYfactora12`  
+> All new feature issues → assign based on the current repo owner's queue and active reviewer
 > ⚠️ Do NOT delete `archive/snapshot-*` branches — team safety net  
-> Tag `@TheYfactora12` before any PR that restructures `poke-sim/`
+> Tag the active reviewer before any PR that restructures `poke-sim/`

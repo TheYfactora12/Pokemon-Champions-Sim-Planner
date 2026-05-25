@@ -25,12 +25,23 @@ T('1. Battle Sensei remains a separate tab from Strategy', () => {
   inc(html, '<section class="tab-panel" id="tab-replay-coach">');
   inc(html, '<section class="tab-panel" id="tab-strategy">');
   inc(html, '<script src="replay_learning.js"></script>');
+  inc(html, 'id="replay-coach-url"');
+  inc(html, 'id="replay-coach-fetch-btn"');
 });
 
 T('2. summary renders selected-four confidence and team preview read', () => {
   inc(ui, '<strong>Bring Confidence</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Team Preview Read</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Lead Logic Read</h3>');
+  inc(ui, '<strong>Lead identity</strong>');
+  inc(ui, '<strong>Observed synergy</strong>');
+  inc(ui, '<strong>Why this lead made sense</strong>');
+  inc(ui, '<strong>What it still conceded</strong>');
   inc(ui, '<strong>Opponent Four</strong>');
+  inc(ui, '<strong>Roster Evidence</strong>');
+  inc(ui, '<strong>Bring Scope</strong>');
+  inc(ui, '<strong>Limit</strong>');
+  inc(ui, 'bringChoiceReviewable');
   inc(ui, 'selectedFourConfidence');
 });
 
@@ -52,8 +63,15 @@ T('4. coaching tags explain decision impact, not just labels', () => {
 
 T('5. learning report renders scorecard, critical turns, win path, and practice plan', () => {
   inc(ui, 'learningReport');
+  inc(ui, '<h3 class="replay-coach-h3">What You Did Well</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Advanced Plays Recognized</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Tighten Up Next</h3>');
+  inc(ui, '<b>Supported by log:</b>');
+  inc(ui, '<b>Observed:</b>');
+  inc(ui, '<b>Next rep:</b>');
   inc(ui, '<h3 class="replay-coach-h3">Battle IQ Score</h3>');
   inc(ui, '<strong>Battle IQ</strong>');
+  inc(ui, "battleIq && battleIq.displayScore != null ? String(battleIq.displayScore) : 'Needs more data'");
   inc(ui, '<strong>What this means</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Evidence Standard</h3>');
   inc(ui, '<strong>Opponent intent boundary</strong>');
@@ -78,6 +96,8 @@ T('6. raw log preview is collapsed and hidden by default', () => {
   inc(ui, '<details class="replay-coach-raw"><summary>Raw log preview hidden by default');
   inc(ui, 'rawLogPreview');
   inc(css, '.replay-coach-raw-log{margin-top:10px;white-space:pre-wrap;max-height:260px}');
+  inc(ui, "api.fetchReplayLog(rawUrl)");
+  inc(ui, "Loaded replay URL into the log box. Run analysis when ready.");
 });
 
 T('7. timeline styles stay card-based and mobile-safe', () => {

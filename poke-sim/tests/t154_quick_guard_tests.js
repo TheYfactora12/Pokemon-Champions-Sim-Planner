@@ -44,7 +44,7 @@ const playerTeam = {
     ability: 'Prankster',
     nature: 'Timid',
     level: 50,
-    moves: ['Quick Guard', 'Tackle', 'Protect', 'Taunt'],
+    moves: ['Quick Guard'],
     evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 4, spe: 252 }
   }, {
     name: 'Incineroar',
@@ -52,7 +52,7 @@ const playerTeam = {
     ability: 'Intimidate',
     nature: 'Careful',
     level: 50,
-    moves: ['Tackle', 'Protect', 'Taunt', 'Parting Shot'],
+    moves: ['Tackle'],
     evs: { hp: 252, atk: 0, def: 0, spa: 0, spd: 252, spe: 4 }
   }]
 };
@@ -64,19 +64,19 @@ const oppTeam = {
   members: [{
     name: 'Incineroar',
     item: '',
-    ability: '',
-    nature: 'Careful',
+    ability: 'Intimidate',
+    nature: 'Adamant',
     level: 50,
-    moves: ['Fake Out', 'Tackle', 'Protect', 'Taunt'],
-    evs: { hp: 252, atk: 252, def: 0, spa: 0, spd: 0, spe: 0 }
+    moves: ['Fake Out'],
+    evs: { hp: 32, atk: 32, def: 0, spa: 0, spd: 0, spe: 4 }
   }, {
-    name: 'SupportMon',
+    name: 'Smeargle',
     item: '',
-    ability: '',
+    ability: 'Own Tempo',
     nature: 'Serious',
     level: 50,
-    moves: ['Tackle', 'Protect', 'Taunt', 'Parting Shot'],
-    evs: { hp: 252, atk: 0, def: 0, spa: 0, spd: 252, spe: 4 }
+    moves: ['Protect'],
+    evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
   }]
 };
 

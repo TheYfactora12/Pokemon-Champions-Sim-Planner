@@ -167,14 +167,14 @@ T('B1. New Pokemon initializes _fakeDone = false', () => {
 
 T('B2. selectMove gate present for Fake Out (skips selection past turn 1)', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  truthy(/if \(move === 'Fake Out'\)[\s\S]*?if \(attacker\._fakeDone\) continue;/.test(src),
-    'selectMove must skip Fake Out when _fakeDone is set');
+  truthy(/if \(move === 'Fake Out'\)[\s\S]*?attacker\._fakeDone \|\| \(attacker\.turnsSinceEntry \|\| 0\) > 1/.test(src),
+    'selectMove must skip Fake Out once the first turn of that field stay has passed');
 });
 
 T('B3. executeAction hard-gate routes blocked Fake Out to Struggle', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  truthy(/if \(move === 'Fake Out'\)[\s\S]*?if \(attacker\._fakeDone\)[\s\S]*?Struggle/.test(src),
-    'Forced Fake Out past turn 1 must trigger Struggle path');
+  truthy(/if \(move === 'Fake Out'\)[\s\S]*?attacker\._fakeDone \|\| \(attacker\.turnsSinceEntry \|\| 0\) > 1[\s\S]*?Struggle/.test(src),
+    'Forced Fake Out past the first turn of that stay must trigger Struggle path');
 });
 
 T('B4. Struggle redirect deals 1/4 maxHp to target and 1/4 maxHp recoil to user', () => {
@@ -242,6 +242,23 @@ T('B8. Fake Out user picks a non-Fake-Out move on its second turn out', () => {
   // (0 if Incineroar fainted before T1 acted; 1 if it landed on T1 then never again.)
   const foLines = (r.log || []).filter(l => /Incineroar.*Fake Out/.test(l));
   truthy(foLines.length <= 1, `Incineroar may use Fake Out at most once, saw ${foLines.length}`);
+});
+
+T('B9. Fake Out cannot be saved for a later turn in the same field stay', () => {
+  const fo = { name:'Incineroar', item:'', ability:'Intimidate', nature:'Serious',
+               evs:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0},
+               moves:['Protect','Fake Out','Knock Off','Flare Blitz'] };
+  const ally = { name:'Magnemite', item:'', ability:'Sturdy', nature:'Serious',
+                 evs:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0},
+                 moves:['Protect','Thunderbolt','Volt Switch','Flash Cannon'] };
+  const opp = { name:'Pikachu', item:'', ability:'Static', nature:'Serious',
+                evs:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0},
+                moves:['Protect','Thunderbolt','Quick Attack','Iron Tail'] };
+  const r = ctx.simulateBattle(team([fo, ally, opp, opp, opp, opp]),
+                                team([opp, opp, opp, opp, opp, opp]),
+                                { format:'doubles', seed: seed(3030), maxTurns: 2 });
+  const foLines = (r.log || []).filter(l => /Incineroar.*Fake Out/.test(l));
+  eq(foLines.length, 0, `Fake Out should be unavailable after turn 1 of the same stay, saw ${foLines.length} uses`);
 });
 
 // ============================================================

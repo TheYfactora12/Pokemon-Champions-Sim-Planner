@@ -37,9 +37,6 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
-| 2026-05-16 | @TheYfactora12 | Documented Battle IQ scoring | Added `poke-sim/docs/BATTLE_IQ_SPEC.md` and linked it from the Battle Sensei spec, roadmap, README, and prompt context. Battle IQ is explicitly game-specific competitive battle intelligence, not general human intelligence, with provisional confidence and privacy guardrails. |
-| 2026-05-16 | @TheYfactora12 | Started Battle Sensei MVP | Added the first-class Battle Sensei surface for Showdown log review with tagline "Learn why the turn went wrong." This stays separate from the Strategy tab; parser/review data may feed coaching calibration later, but the UX is not mixed into Strategy. |
-| 2026-05-16 | @TheYfactora12 | Accepted Showdown Replay Coach roadmap spec | Added the Stage 3 Replay Coach + Sim Intelligence spec as the next major coaching expansion: parse Showdown logs, diagnose real decisions, compare replay behavior to sim recommendations, and produce replay-calibrated feedback packets. Filed Alfredo issues #187-#197 and fork mirrors #77-#87, including a dedicated Supabase replay schema migration issue. |
 | 2026-05-15 | @TheYfactora12 | Mobile results stats fix | Collapsed the results summary and stat cards into a narrow-window stack so the win/loss bar and outcome metrics no longer run too long in half-screen or phone views. Added a regression for the results stats grid. |
 | 2026-05-15 | @TheYfactora12 | Mobile breakpoint correction | Narrowed the mobile-only tab picker so split-screen desktop widths keep the standard tab row, while true phone widths still get the compact picker. |
 | 2026-05-15 | @TheYfactora12 | Mobile tab picker follow-up | Replaced the phone-width tab strip with a compact section picker and wired the active tab state to stay synced with the picker so narrow mobile views stop relying on desktop-style tab navigation. |
@@ -55,7 +52,8 @@ git push --force
 | 2026-05-15 | @TheYfactora12 | Strategy report memoization + bounded cache | Added stable results hashing, LRU-bounded strategy-report memoization, and regression coverage for identical-call reuse and cache cap behavior. Bundle rebuilt and validated. |
 | 2026-05-15 | @TheYfactora12 | Josh sprint cleanup: CONTRIBUTING.md path + stat panel markup tracker | Added `poke-sim/CONTRIBUTING.md` for manual contributors and closed the stat-panel markup tracker after confirming the current markup/tests already satisfy it. |
 | 2026-05-15 | @TheYfactora12 | Export My Data JSON + history export wiring | Added one-click JSON export for persisted sim history, current cached report state, and DB analyses/logs for the active team. Bundle rebuilt and validated. |
-| 2026-05-15 | @TheYfactora12 | Mechanics audit harness + shared Battle Audit panel + role utility refinement | Added reusable mechanics audit cases/runner, browser smoke coverage, structured battle audit panel, and first-turn support utility bias. Bundle rebuilt and validated. Hosted test site published on fork Pages: https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/ |
+| 2026-05-15 | @TheYfactora12 | Mechanics audit harness + shared Battle Audit panel + role utility refinement | Added reusable mechanics audit cases/runner, browser smoke coverage, structured battle audit panel, and first-turn support utility bias. Bundle rebuilt and validated. |
+| 2026-05-24 | @alfredocox + @TheYfactora12 | Synced Alfredo main to validated Y Factor simulator state | Brought replay parsing, Battle Sensei replay review, 29-team seed alignment, item-clause repairs, regional-form stat fixes, Fake Out first-turn-of-stay gating, and entry ability logs into Alfredo's repo. Validate against the current `main` branch before opening new sync PRs. |
 | 2026-05-11 | @alfredocox | M9 implementation: hardening/advisor/migration baseline suite + 10 TDD cases GREEN | POK-25. Fixed test assertions to match actual baseline migration (`IF NOT EXISTS`) and RLS per-table policies. Added `apply_migration` workflow docs to `README_DB.md`. Fixed `package.json` test script assertion. 68/68 total DB tests GREEN. |
 | 2026-05-11 | @alfredocox | M8 implementation: `loadPriorSnapshot` + `applyPrior` engine wiring + 10 TDD cases GREEN | POK-24. Adapter queries `prior_snapshots` table (fail-soft). Engine `buildAnalysisPayload` accepts `ctx.prior` → populates `prior_id`, `hidden_info_model`, enriched `hidden_info_priors`. Mock infra updated with `lte()` filter + select filtering. Bundle rebuilt (930KB). `sw.js` bumped to v15-m8-priors. |
 | 2026-05-11 | @alfredocox | Live app bundle fix: removed `</script>` from JS comment in `supabase_adapter.js` | Root cause: literal `</script>` in comment caused HTML parser to close `<script>` block early when inlined by `build-bundle.py`. Defense-in-depth: `sanitize_inline_js()` added to build script. |
@@ -114,7 +112,7 @@ git push --force
 
 | Item | Value |
 |---|---|
-| Active GitHub repository | `TheYfactora12/Pokemon-Champions-Sim-Planner` |
+| Active GitHub repository | `alfredocox/Pokemon-Champions-Sim-Planner` |
 | Clean PR 1 base checkout | `C:\Users\kevin\OneDrive\Documents\GitHub\New folder\Pokemon-Champions-Sim-Planner` on `main` |
 | DB/Supabase work checkout | `C:\Users\kevin\OneDrive\Documents\GitHub\Pokemon-Champions-Sim-Planner` on `feat/db-rls-supabase-adapter` |
 | Empty dir (do not use) | `C:\Users\kevin\OneDrive\Documents\New project` |
@@ -297,17 +295,9 @@ Then run the bundle rebuild command documented in the repo.
 
 ---
 
-### M4 Conflict Resolution Plan — Merge Rules
+### M4 Conflict Resolution Plan — Historical Note
 
-> Status: planning only. **Do not resolve these conflicts inside PR 1.**
-
-Files with active merge conflicts:
-
-```
-poke-sim/supabase_adapter.js
-poke-sim/db/README_DB.md
-poke-sim/db/rls_policies_v1.sql
-```
+> Status: resolved historical planning note. Current branches should still confirm `git status` is clean and no conflict markers exist before DB work.
 
 **Resolution rules:**
 - Resolve `supabase_adapter.js` first so the browser adapter API is stable before any UI wiring.
@@ -320,20 +310,12 @@ poke-sim/db/rls_policies_v1.sql
 
 You are continuing development of **Pokémon Champion 2026**, a production-grade VGC competitive team simulator built as a static, offline-capable PWA — now with a live Supabase database backend for persistent analysis storage.
 
-Battle Sensei is the replay-coaching product surface. Sim Mode builds the team; Battle Sensei builds the player. The canonical specs are:
-- `poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`
-- `poke-sim/docs/BATTLE_IQ_SPEC.md`
-
-Battle IQ means a standardized estimate of game-specific competitive battle intelligence based on observable battle decisions, matchup context, and player execution patterns. It is not a measure of general human intelligence. Single-battle Battle IQ must remain provisional and confidence-labeled. Do not ship a Battle IQ feature unless it explains what decision should change.
-
-Battle Sensei must prioritize observable evidence over speculative interpretation. If evidence is weak, lower confidence, avoid hard claims, and recommend additional battles. Never invent opponent intent; infer likely strategic intent only from common archetype behavior, board state, move sequencing, and revealed information.
-
 **GitHub repo:** https://github.com/alfredocox/Pokemon-Champions-Sim-Planner
 **Default branch:** `main`
 **Active dev branch:** `main` (all work goes directly to main)
 **Space name:** Pokesim
-**Owner / committer identity:** `user.email=5zyxn9yrnt@privaterelay.appleid.com user.name=TheYfactora12`
-**All new feature tickets:** assigned to `@TheYfactora12`
+**Owner / committer identity:** use the local git identity configured for the active Alfredo checkout
+**Issue ownership:** assign by current repo ownership and reviewer agreement, not by a copied default
 
 ---
 
@@ -350,7 +332,7 @@ Pokemon-Champions-Sim-Planner/
 ├── poke-sim/
 │   ├── index.html                  ← main app shell, all tabs, PWA meta tags, SW reg
 │   ├── style.css                   ← full mobile-first dark theme
-│   ├── data.js                     ← BASE_STATS, POKEMON_TYPES_DB (500+ mons), TEAMS (13 teams)
+│   ├── data.js                     ← BASE_STATS, POKEMON_TYPES_DB (500+ mons), TEAMS (25 teams)
 │   ├── engine.js                   ← battle sim engine, Bo series runner, damage formula
 │   ├── ui.js                       ← all UI logic, team selects, import/export, pilot guide, PDF
 │   ├── storage_adapter.js          ← localStorage wrapper API (Issue #79, PR #134/#135/#137)
@@ -363,11 +345,11 @@ Pokemon-Champions-Sim-Planner/
 │   ├── pokemon-champion-2026.html  ← REBUILT BUNDLE (never edit directly — ~930 KB)
 │   ├── db/
 │   │   ├── schema_v1.sql           ← 8-table Supabase schema (updated 2026-04-27: added metadata col)
-│   │   ├── seed_teams_v2.sql       ← ✅ USE THIS — 13 tournament teams, complete data (42 KB)
+│   │   ├── seed_teams_v2.sql       ← Generated 25-team fresh-DB/reference seed
 │   │   ├── seed_teams_v1.sql       ← ⚠️ DEPRECATED — superseded by v2, do not use
-│   │   ├── rls_policies_v1.sql     ← Row Level Security policies (run third) — HAS MERGE CONFLICT
+│   │   ├── rls_policies_v1.sql     ← Row Level Security policies
 │   │   ├── migrations/             ← migration scripts folder (includes M8 usage_data + seed)
-│   │   └── README_DB.md            ← full setup checklist + adapter API docs — HAS MERGE CONFLICT
+│   │   └── README_DB.md            ← full setup checklist + adapter API docs
 │   ├── tools/
 │   │   ├── build-bundle.py         ← canonical bundle rebuild (always use this)
 │   │   ├── check-bundle.sh         ← SHA compare for CI
@@ -389,7 +371,7 @@ Pokemon-Champions-Sim-Planner/
 └── MASTER_PROMPT.md
 ```
 
-> ⚠️ `poke-sim/supabase_adapter.js` has an **active merge conflict** — resolve before M4 wiring.
+> Historical note: `poke-sim/supabase_adapter.js` previously had an active merge conflict. Current DB work should validate with `git status` and focused DB tests instead of assuming that blocker still exists.
 
 ---
 
@@ -415,31 +397,26 @@ cd poke-sim && npx serve .
 
 ## SUPABASE DATABASE LAYER — CURRENT STATUS
 
-> **P0 BLOCKER — Issue [#158](https://github.com/alfredocox/Pokemon-Champions-Sim-Planner/issues/158)**
-> Owner: @alfredocox. Supabase project not yet provisioned. Lina must accept collaborator invite first.
+> **ACTIVE — Issue #158 closed**
+> Supabase is provisioned and wired. Current canonical seed alignment is 25 teams. For existing live DBs with analysis history, use the non-destructive repair migration `poke-sim/db/migrations/2026_05_24_upsert_seed_teams_v2_repair.sql`.
 
 ### What exists in the repo
 
 | File | Status |
 |---|---|
 | `poke-sim/db/schema_v1.sql` | ✅ In repo — 8 tables, `metadata` col added 2026-04-27 |
-| `poke-sim/db/seed_teams_v2.sql` | ✅ USE THIS — 13 tournament teams, complete (42 KB) |
+| `poke-sim/db/seed_teams_v2.sql` | Generated 25-team fresh-DB/reference seed; do not run delete-first seed on live DBs with analysis history |
 | `poke-sim/db/seed_teams_v1.sql` | ⚠️ DEPRECATED — do not use, v2 supersedes it |
-| `poke-sim/db/rls_policies_v1.sql` | ⚠️ HAS MERGE CONFLICT — resolve before running |
-| `poke-sim/supabase_adapter.js` | ⚠️ HAS MERGE CONFLICT — resolve before M4 wiring |
+| `poke-sim/db/rls_policies_v1.sql` | RLS policy source; do not change without a bounded DB/security PR |
+| `poke-sim/supabase_adapter.js` | In repo — `loadTeamsFromDB`, `saveAnalysis`, `loadRecentAnalyses` |
 
-### What still needs to happen (BLOCKING — Alfredo owns these)
+### Current operational guidance
 
-The SQL files exist but have **NOT been executed** in Supabase yet. Tables do not exist until:
-
-1. Resolve merge conflict in `supabase_adapter.js`
-2. Resolve merge conflict in `rls_policies_v1.sql`
-3. `schema_v1.sql` in Supabase SQL Editor → creates 8 tables
-4. `seed_teams_v2.sql` → loads 13 teams (verify 13 rows in Table Editor after)
-5. `rls_policies_v1.sql` → locks down public access
-6. Wire `window.__SUPABASE_URL__` and `window.__SUPABASE_KEY__` in `index.html`
-7. Wire `saveAnalysis()` call in `ui.js` after `runBoSeries()` completes ← **OPEN BUG — blocked by conflict resolution**
-8. Confirm CDN `<script>` load order in `index.html` (Supabase JS must load before `supabase_adapter.js`) ← **OPEN BUG**
+1. Use `schema_v1.sql` only for fresh DB bootstrap.
+2. Use `seed_teams_v2.sql` only for fresh DB/reference review.
+3. Use `2026_05_24_upsert_seed_teams_v2_repair.sql` for existing live DBs with analysis history.
+4. Verify seed alignment with `node poke-sim/tests/db_m2_seed_tests.js`; live DB smoke should match the current `data.js` team count.
+5. Keep Supabase credentials in ignored local files or GitHub secrets only.
 
 > See `poke-sim/db/README_DB.md` for the full wiring guide, adapter API, and verification checklist.
 
@@ -578,7 +555,7 @@ cd poke-sim; python tools\build-bundle.py
 
 ## RELEASE PROCEDURE (mandatory before merging any PR touching source files)
 
-1. **Resolve all merge conflicts** in `supabase_adapter.js`, `rls_policies_v1.sql`, `README_DB.md`
+1. **Confirm no merge conflicts** with `git status` and conflict-marker scan before release work
 2. **Rebuild bundle:** `cd poke-sim && python3 tools/build-bundle.py`
 3. **Bump CACHE_NAME in sw.js:** format `champions-sim-v{major}-{tag}` — current: `champions-sim-v15-m8-priors`
 4. **Commit both artifacts:** `git add poke-sim/pokemon-champion-2026.html poke-sim/sw.js`

@@ -91,7 +91,6 @@ vm.runInContext([
   'this.buildMatchupWarnings=buildMatchupWarnings;',
   'this.buildLeadRecoveryPlan=buildLeadRecoveryPlan;',
   'this.buildCoachingSummary=buildCoachingSummary;',
-  'this.csStrategyEvidenceStandard=csStrategyEvidenceStandard;',
   'this.buildStrategyReport=buildStrategyReport;',
   'this.saveStrategyReport=saveStrategyReport;',
   'this.loadStrategyReport=loadStrategyReport;',
@@ -104,7 +103,7 @@ const {
   TEAMS, teamSignature, strategyResultsHash, csStrategyReportCacheSize, csClearStrategyReportCache,
   buildLeadSystem, inferTeamIdentity, evaluateT9j16Rules,
   analyzeEliteDecisions, buildPilotPlan, buildMatchupWarnings,
-  buildLeadRecoveryPlan, buildCoachingSummary, csStrategyEvidenceStandard, buildStrategyReport,
+  buildLeadRecoveryPlan, buildCoachingSummary, buildStrategyReport,
   saveStrategyReport, loadStrategyReport, evolveReport,
   _renderT9j16PdfSections, T9J16_RULES
 } = ctx;
@@ -143,9 +142,9 @@ T('A4. strategyResultsHash is stable for reordered result keys', () => {
 T('B1. inferTeamIdentity - derives a baseline plan when no win path is sampled', () => {
   const t = TEAMS.player;
   const id = inferTeamIdentity(t, {}, 'doubles');
-  truthy(id.primary_win_condition && id.primary_win_condition !== 'unclear', 'expected a baseline primary win condition');
+  eq(id.primary_win_condition, 'unclear');
   eq(id.primary_win_path_pct, 0);
-  truthy(/tempo|preserve|endgame|support|speed control|Trick Room|weather/i.test(id.primary_win_condition), 'expected a coaching-oriented fallback');
+  truthy(Array.isArray(id.synergy_core), 'expected stable team-identity structure even with no sample');
 });
 T('B2. inferTeamIdentity - extracts top win path from results', () => {
   const t = TEAMS.player;
@@ -168,15 +167,17 @@ T('B4. inferTeamIdentity - format viability flags doubles-favored when redirecto
 T('B5. buildLeadSystem - derives a baseline opener before battle samples exist', () => {
   const t = TEAMS.player;
   const lead = buildLeadSystem({}, t.members);
-  truthy(lead.safe, 'expected a baseline safe lead');
-  truthy(lead.speed, 'expected a baseline speed lead');
+  eq(lead.safe, null);
+  eq(lead.speed, null);
+  eq(lead.pressure, null);
+  eq(lead.punish, null);
 });
 T('B6. buildStrategyReport - no sample surfaces baseline matchup guidance', () => {
   const report = buildStrategyReport('player', {}, 'doubles');
   truthy(report && report.matchup_intelligence, 'expected matchup intelligence');
-  eq(report.matchup_intelligence.grade, 'unproven');
-  truthy((report.matchup_intelligence.safe_leads || []).length > 0, 'expected baseline safe lead');
-  truthy(String(report.matchup_intelligence.best_win_path || '').length > 0, 'expected a baseline win path');
+  eq(report.matchup_intelligence.grade, 'critical weakness');
+  eq((report.matchup_intelligence.safe_leads || []).length, 0);
+  eq(report.matchup_intelligence.best_win_path, 'unclear');
 });
 
 // ---------- Section C: 17 coaching rules - fires + doesn't fire ----------
@@ -434,22 +435,28 @@ T('F3. buildStrategyReport - confidence_tier upgrades with sample size', () => {
   const r2 = buildStrategyReport('player', big, 'doubles');
   truthy(r2.confidence_tier === 'moderate' || r2.confidence_tier === 'high', 'expected moderate or high, got ' + r2.confidence_tier);
 });
-T('F4. strategy evidence standard uses Battle Sensei labels', () => {
-  const noData = csStrategyEvidenceStandard(0, 'low');
-  eq(noData.label, 'Needs more data');
-  eq(noData.confidence, 'low');
-  const thin = csStrategyEvidenceStandard(8, 'low');
-  eq(thin.label, 'Weak inference');
-  const moderate = csStrategyEvidenceStandard(50, 'moderate');
-  eq(moderate.label, 'Strong inference');
-  const mature = csStrategyEvidenceStandard(120, 'high');
-  eq(mature.label, 'Observed');
+T('F4. buildStrategyReport provenance labels sample depth clearly', () => {
+  const noData = buildStrategyReport('player', {}, 'doubles');
+  eq(noData.provenance.freshness_label, 'no sample yet');
+  eq(noData.provenance.confidence_tier, 'low');
+  const thin = buildStrategyReport('player', {
+    o1: { wins: 5, losses: 3, draws: 0, allLogs: [], winConditions: { Pivot: 2 } }
+  }, 'doubles');
+  eq(thin.provenance.freshness_label, 'thin sample');
+  const moderate = buildStrategyReport('player', {
+    o1: { wins: 30, losses: 20, draws: 0, allLogs: [], winConditions: { Pivot: 10 } }
+  }, 'doubles');
+  eq(moderate.provenance.freshness_label, 'moderately sampled');
+  const mature = buildStrategyReport('player', {
+    o1: { wins: 70, losses: 50, draws: 0, allLogs: [], winConditions: { Pivot: 20 } }
+  }, 'doubles');
+  eq(mature.provenance.freshness_label, 'well-sampled');
 });
-T('F5. buildStrategyReport exposes evidence and cautious no-sample guidance', () => {
+T('F5. buildStrategyReport exposes cautious no-sample provenance guidance', () => {
   const r = buildStrategyReport('player', {}, 'doubles');
-  eq(r.evidence_standard.label, 'Needs more data');
-  eq(r.provenance.evidence_label, 'Needs more data');
-  truthy(/Run matchup simulations/.test(r.evidence_standard.decision), 'no-data decision should tell trainer what to do next');
+  eq(r.provenance.freshness_label, 'no sample yet');
+  truthy(/No battle sample yet/.test(r.provenance.freshness_note), 'no-data provenance should stay cautious');
+  eq(r.provenance.decision_rule, 'Never show a statistic without explaining the decision it should change.');
 });
 
 // ---------- Section G: Persistence ----------
