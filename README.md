@@ -1,6 +1,8 @@
 # Pokémon Champion 2026 — VGC Team Simulator
 
-A production-grade VGC competitive team simulator for April 2026 meta play. Built as a fully offline-capable PWA with no server required.
+A production-grade VGC competitive team simulator for April 2026 meta play. Built as a fully offline-capable PWA with a static-site deployment path and optional Supabase-backed user features.
+
+**Live public site:** https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/
 
 **Live single-file app:** [`pokemon-champion-2026.html`](./poke-sim/pokemon-champion-2026.html) — open in any browser, works offline.
 
@@ -10,16 +12,27 @@ Three ways to open the sim without cloning. Each points to a different snapshot 
 
 | Channel | Name | What it serves | Updates when | Use it for | Status |
 |---|---|---|---|---|---|
-| **Dev preview** | `fix/champions-sp-and-legality` (current active dev branch) | Newest work-in-progress bundle — what Alfredo and the agent push fixes to today | Every push to `fix/champions-sp-and-legality` | Testing the latest mechanics / tickets before merge | ✅ Live |
+| **Dev preview** | current active PR branch | Newest work-in-progress bundle for the branch under active review | Every push to that branch | Testing the latest mechanics / tickets before merge | ✅ Live when branch preview is shared |
 | **Stable** | `main` branch | Last merged bundle on the default branch | Only after a PR from a feature branch is merged into `main` | Sharing with teammates / VGC players who want a known-good build | ✅ Live |
-| **Static host** | GitHub Pages | Clean short URL, no proxy | Re-publishes on every push to `main` once enabled | Giving out a permanent link; best mobile experience | ⚠️ Not yet enabled — see setup below |
+| **Static host** | GitHub Pages | Clean short URL, no proxy | Re-publishes on every push to `main` | Giving out a permanent link; best mobile experience | ✅ Live |
 
 **Links:**
-- **Dev preview — current branch `fix/champions-sp-and-legality`** (latest work-in-progress bundle, updates on every push): [htmlpreview.github.io — fix/champions-sp-and-legality](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/fix/champions-sp-and-legality/poke-sim/pokemon-champion-2026.html)
-- **Stable — branch `main`** (last merged bundle, updates only after PR merge): [htmlpreview.github.io — main](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html)
-- **GitHub Pages** (not yet enabled): will be `https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/` once configured — to enable, go to repo → Settings → Pages → Source: `Deploy from a branch`, select `main` branch, folder `/ (root)`, save
+- **Stable — branch `main`**: [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
+- **Stable raw preview — branch `main`**: [htmlpreview.github.io — main](https://htmlpreview.github.io/?https://raw.githubusercontent.com/TheYfactora12/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html)
+- **Dev preview**: use the active branch preview URL shared in the PR under review
 
-> **Note:** The two htmlpreview links are *live proxies* — they pull the raw HTML from GitHub at load time, so a push to that branch updates what viewers see on next reload. The **dev preview** shows whatever is on `fix/champions-sp-and-legality` (the branch we are actively iterating on); the **stable** link shows whatever is on `main`. The local file at `poke-sim/pokemon-champion-2026.html` is the *source of truth* — everything above is a hosted view of it.
+> **Note:** The htmlpreview link is a branch/raw preview tool, not the canonical public site. The stable public site is GitHub Pages on `main`. The local file at `poke-sim/pokemon-champion-2026.html` remains the source artifact that the site serves.
+
+## Release Direction
+
+This project should ship as a public site first, then add optional accounts, donations, subscriptions, and coaching on top of a trustworthy free core.
+
+- Site: canonical public entry point for simulator, replay review, Battle Sensei, and team tools.
+- Donations: optional support channel after the stable site is live.
+- Subscription: for saved history, deeper analysis, and repeat workflow value, not for basic simulator trust.
+- Coaching: separate premium human service layered on top of replay evidence and Battle Sensei outputs.
+
+See [ROADMAP.md](./ROADMAP.md) `M6 Release Track` for the step-by-step launch, security, ownership, and revenue plan.
 
 ---
 
