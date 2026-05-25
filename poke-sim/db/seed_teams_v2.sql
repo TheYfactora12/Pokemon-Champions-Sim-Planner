@@ -180,10 +180,10 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
 INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
   ('cofagrigus_tr', 1, 'Cofagrigus', 'Mental Herb', 'Mummy', 'Quiet', 50, '{"atk":0,"def":2,"hp":32,"spa":32,"spd":0,"spe":0}'::jsonb, '["Trick Room","Will-O-Wisp","Shadow Ball","Ally Switch"]'::jsonb, NULL, 'TR Setter'),
   ('cofagrigus_tr', 2, 'Sinistcha', 'Sitrus Berry', 'Hospitality', 'Quiet', 50, '{"atk":0,"def":2,"hp":32,"spa":32,"spd":0,"spe":0}'::jsonb, '["Trick Room","Matcha Gotcha","Rage Powder","Life Dew"]'::jsonb, NULL, 'TR Setter'),
-  ('cofagrigus_tr', 3, 'Hatterene', 'Life Orb', 'Magic Bounce', 'Quiet', 50, '{"atk":0,"def":0,"hp":32,"spa":32,"spd":2,"spe":0}'::jsonb, '["Psychic","Dazzling Gleam","Shadow Ball","Protect"]'::jsonb, NULL, 'TR Sweeper'),
-  ('cofagrigus_tr', 4, 'Cresselia', 'Leftovers', 'Levitate', 'Sassy', 50, '{"atk":0,"def":18,"hp":32,"spa":0,"spd":16,"spe":0}'::jsonb, '["Trick Room","Lunar Dance","Psychic","Helping Hand"]'::jsonb, NULL, 'TR + Revive'),
-  ('cofagrigus_tr', 5, 'Dusclops', 'Eviolite', 'Pressure', 'Relaxed', 50, '{"atk":0,"def":18,"hp":32,"spa":0,"spd":16,"spe":0}'::jsonb, '["Trick Room","Will-O-Wisp","Shadow Sneak","Helping Hand"]'::jsonb, NULL, 'TR Support'),
-  ('cofagrigus_tr', 6, 'Ursaluna-Bloodmoon', 'Assault Vest', 'Mind''s Eye', 'Modest', 50, '{"atk":0,"def":2,"hp":32,"spa":32,"spd":0,"spe":0}'::jsonb, '["Blood Moon","Hyper Voice","Earth Power","Vacuum Wave"]'::jsonb, NULL, 'TR Sweeper / Tank');
+  ('cofagrigus_tr', 3, 'Hatterene', 'Fairy Feather', 'Magic Bounce', 'Quiet', 50, '{"atk":0,"def":0,"hp":32,"spa":32,"spd":2,"spe":0}'::jsonb, '["Psychic","Dazzling Gleam","Shadow Ball","Protect"]'::jsonb, NULL, 'TR Sweeper'),
+  ('cofagrigus_tr', 4, 'Farigiraf', 'Safety Goggles', 'Armor Tail', 'Relaxed', 50, '{"atk":0,"def":18,"hp":32,"spa":2,"spd":14,"spe":0}'::jsonb, '["Trick Room","Helping Hand","Hyper Voice","Psychic Noise"]'::jsonb, NULL, 'TR Support'),
+  ('cofagrigus_tr', 5, 'Dusclops', 'Colbur Berry', 'Pressure', 'Relaxed', 50, '{"atk":0,"def":18,"hp":32,"spa":0,"spd":16,"spe":0}'::jsonb, '["Trick Room","Will-O-Wisp","Shadow Sneak","Helping Hand"]'::jsonb, NULL, 'TR Support'),
+  ('cofagrigus_tr', 6, 'Ursaluna-Bloodmoon', 'Leftovers', 'Mind''s Eye', 'Modest', 50, '{"atk":0,"def":2,"hp":32,"spa":32,"spd":0,"spe":0}'::jsonb, '["Blood Moon","Hyper Voice","Earth Power","Vacuum Wave"]'::jsonb, NULL, 'TR Sweeper / Tank');
 
 -- champions_arena_1st
 INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
@@ -226,9 +226,9 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
   ('aurora_veil_froslass', 1, 'Froslass-Mega', 'Froslassite', 'Snow Warning', 'Timid', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":0,"spe":32}'::jsonb, '["Aurora Veil","Blizzard","Shadow Ball","Protect"]'::jsonb, NULL, 'Veil Setter / Attacker'),
   ('aurora_veil_froslass', 2, 'Dragonite', 'Lum Berry', 'Multiscale', 'Adamant', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Extreme Speed","Dragon Dance","Fire Punch","Protect"]'::jsonb, NULL, 'Multiscale Setup Sweeper'),
   ('aurora_veil_froslass', 3, 'Kingambit', 'Chople Berry', 'Supreme Overlord', 'Adamant', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Kowtow Cleave","Sucker Punch","Low Kick","Protect"]'::jsonb, NULL, 'Supreme Overlord Sweeper'),
-  ('aurora_veil_froslass', 4, 'Milotic', 'Life Orb', 'Competitive', 'Modest', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":0,"spe":32}'::jsonb, '["Scald","Ice Beam","Life Dew","Protect"]'::jsonb, NULL, 'Competitive Attacker'),
+  ('aurora_veil_froslass', 4, 'Milotic', 'Leftovers', 'Competitive', 'Modest', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":0,"spe":32}'::jsonb, '["Scald","Ice Beam","Life Dew","Protect"]'::jsonb, NULL, 'Competitive Attacker'),
   ('aurora_veil_froslass', 5, 'Incineroar', 'Sitrus Berry', 'Intimidate', 'Careful', 50, '{"atk":2,"def":0,"hp":32,"spa":0,"spd":32,"spe":0}'::jsonb, '["Fake Out","Parting Shot","Flare Blitz","Knock Off"]'::jsonb, NULL, 'Support / Pivot'),
-  ('aurora_veil_froslass', 6, 'Garchomp', 'Rocky Helmet', 'Rough Skin', 'Jolly', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Earthquake","Rock Slide","Dragon Claw","Protect"]'::jsonb, NULL, 'Physical Pressure');
+  ('aurora_veil_froslass', 6, 'Garchomp', 'Roseli Berry', 'Rough Skin', 'Jolly', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Earthquake","Rock Slide","Dragon Claw","Protect"]'::jsonb, NULL, 'Physical Pressure');
 
 -- kingambit_sneasler
 INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
@@ -353,7 +353,7 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
   ('fabulous_sunroom', 2, 'Torkoal', 'Charcoal', 'Drought', 'Quiet', 50, '{"atk":0,"def":1,"hp":32,"spa":32,"spd":1,"spe":0}'::jsonb, '["Protect","Helping Hand","Heat Wave","Eruption"]'::jsonb, NULL, 'Sun Setter'),
   ('fabulous_sunroom', 3, 'Venusaur', 'Focus Sash', 'Chlorophyll', 'Modest', 50, '{"atk":0,"def":1,"hp":0,"spa":32,"spd":1,"spe":32}'::jsonb, '["Energy Ball","Sludge Bomb","Sleep Powder","Earth Power"]'::jsonb, NULL, 'Sun Abuser'),
   ('fabulous_sunroom', 4, 'Whimsicott', 'Sitrus Berry', 'Prankster', 'Timid', 50, '{"atk":0,"def":0,"hp":4,"spa":32,"spd":0,"spe":30}'::jsonb, '["Tailwind","Sunny Day","Moonblast","Protect"]'::jsonb, NULL, 'Speed Control'),
-  ('fabulous_sunroom', 5, 'Arcanine', 'Life Orb', 'Intimidate', 'Adamant', 50, '{"atk":32,"def":0,"hp":4,"spa":0,"spd":0,"spe":30}'::jsonb, '["Power Gem","Head Smash","Extreme Speed","Will-O-Wisp"]'::jsonb, NULL, 'TR Breaker / Speed Control'),
+  ('fabulous_sunroom', 5, 'Arcanine', 'Roseli Berry', 'Intimidate', 'Adamant', 50, '{"atk":32,"def":0,"hp":4,"spa":0,"spd":0,"spe":30}'::jsonb, '["Power Gem","Head Smash","Extreme Speed","Will-O-Wisp"]'::jsonb, NULL, 'TR Breaker / Speed Control'),
   ('fabulous_sunroom', 6, 'Floette (Eternal Flower)-Mega', 'Floettite', 'Fairy Aura', 'Timid', 50, '{"atk":0,"def":0,"hp":4,"spa":32,"spd":0,"spe":30}'::jsonb, '["Protect","Light of Ruin","Dazzling Gleam","Moonblast"]'::jsonb, NULL, 'Mega Special Wall-Breaker');
 
 -- sand_bulky_offense
@@ -363,7 +363,7 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
   ('sand_bulky_offense', 3, 'Rotom-Wash', 'Leftovers', 'Levitate', 'Bold', 50, '{"atk":0,"def":0,"hp":31,"spa":32,"spd":0,"spe":3}'::jsonb, '["Thunderbolt","Hydro Pump","Will-O-Wisp","Protect"]'::jsonb, NULL, 'Spread Check'),
   ('sand_bulky_offense', 4, 'Milotic', 'Mystic Water', 'Competitive', 'Bold', 50, '{"atk":0,"def":21,"hp":31,"spa":1,"spd":12,"spe":1}'::jsonb, '["Muddy Water","Coil","Hypnosis","Recover"]'::jsonb, NULL, 'Utility / Secret Weapon'),
   ('sand_bulky_offense', 5, 'Kingambit', 'Black Glasses', 'Defiant', 'Adamant', 50, '{"atk":32,"def":0,"hp":4,"spa":0,"spd":0,"spe":30}'::jsonb, '["Kowtow Cleave","Sucker Punch","Low Kick","Protect"]'::jsonb, NULL, 'Late-Game Sweeper'),
-  ('sand_bulky_offense', 6, 'Gholdengo', 'Choice Specs', 'Good as Gold', 'Modest', 50, '{"atk":0,"def":0,"hp":4,"spa":32,"spd":0,"spe":30}'::jsonb, '["Make It Rain","Shadow Ball","Power Gem","Trick"]'::jsonb, NULL, 'Status-Immune Attacker');
+  ('sand_bulky_offense', 6, 'Gholdengo', 'Spell Tag', 'Good as Gold', 'Modest', 50, '{"atk":0,"def":0,"hp":4,"spa":32,"spd":0,"spe":30}'::jsonb, '["Make It Rain","Shadow Ball","Power Gem","Trick"]'::jsonb, NULL, 'Status-Immune Attacker');
 
 -- fire_ice_fullroom
 INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
@@ -372,7 +372,7 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
   ('fire_ice_fullroom', 3, 'Typhlosion-Hisui', 'Choice Scarf', 'Frisk', 'Timid', 50, '{"atk":0,"def":32,"hp":2,"spa":32,"spd":0,"spe":0}'::jsonb, '["Eruption","Heat Wave","Focus Blast","Shadow Ball"]'::jsonb, NULL, 'Scarfer'),
   ('fire_ice_fullroom', 4, 'Vanilluxe', 'Covert Cloak', 'Snow Warning', 'Modest', 50, '{"atk":0,"def":0,"hp":4,"spa":32,"spd":0,"spe":30}'::jsonb, '["Blizzard","Icy Wind","Freeze-Dry","Ice Shard"]'::jsonb, NULL, 'Snow Setter / Scarf'),
   ('fire_ice_fullroom', 5, 'Torkoal', 'Charcoal', 'Drought', 'Quiet', 50, '{"atk":0,"def":1,"hp":32,"spa":32,"spd":1,"spe":0}'::jsonb, '["Protect","Helping Hand","Heat Wave","Eruption"]'::jsonb, NULL, 'Sun Setter'),
-  ('fire_ice_fullroom', 6, 'Ursaluna-Bloodmoon', 'Assault Vest', 'Mind''s Eye', 'Modest', 50, '{"atk":0,"def":2,"hp":32,"spa":32,"spd":0,"spe":0}'::jsonb, '["Blood Moon","Hyper Voice","Earth Power","Vacuum Wave"]'::jsonb, NULL, 'TR Sweeper / Tank');
+  ('fire_ice_fullroom', 6, 'Ursaluna-Bloodmoon', 'Leftovers', 'Mind''s Eye', 'Modest', 50, '{"atk":0,"def":2,"hp":32,"spa":32,"spd":0,"spe":0}'::jsonb, '["Blood Moon","Hyper Voice","Earth Power","Vacuum Wave"]'::jsonb, NULL, 'TR Sweeper / Tank');
 
 -- zardx_snow_setup
 INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
@@ -381,4 +381,4 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
   ('zardx_snow_setup', 3, 'Froslass-Mega', 'Froslassite', 'Snow Warning', 'Timid', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":0,"spe":32}'::jsonb, '["Aurora Veil","Blizzard","Shadow Ball","Protect"]'::jsonb, NULL, 'Veil Setter / Attacker'),
   ('zardx_snow_setup', 4, 'Dragonite', 'Lum Berry', 'Multiscale', 'Adamant', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Extreme Speed","Dragon Dance","Fire Punch","Protect"]'::jsonb, NULL, 'Multiscale Setup Sweeper'),
   ('zardx_snow_setup', 5, 'Kingambit', 'Chople Berry', 'Supreme Overlord', 'Adamant', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Kowtow Cleave","Sucker Punch","Low Kick","Protect"]'::jsonb, NULL, 'Supreme Overlord Sweeper'),
-  ('zardx_snow_setup', 6, 'Milotic', 'Life Orb', 'Competitive', 'Modest', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":32,"spe":0}'::jsonb, '["Blizzard","Scald","Weather Ball","Life Dew"]'::jsonb, NULL, 'Utility / Secret Weapon');
+  ('zardx_snow_setup', 6, 'Milotic', 'Leftovers', 'Competitive', 'Modest', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":32,"spe":0}'::jsonb, '["Blizzard","Scald","Weather Ball","Life Dew"]'::jsonb, NULL, 'Utility / Secret Weapon');
