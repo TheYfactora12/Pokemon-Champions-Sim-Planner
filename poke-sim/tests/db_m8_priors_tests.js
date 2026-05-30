@@ -115,6 +115,12 @@ T('T-prior-4', async function() {
 
 T('T-prior-5', async function() {
   // Load fails (DB error) → fail-soft returns null
+  // Skip this test when using live DB (error mode only works with mock)
+  if (process.env.RUN_LIVE_DB === '1') {
+    console.log('  ⚠ SKIP T-prior-5 (error mode test requires mock DB)');
+    return;
+  }
+  
   mockSupabaseClient.setErrorMode('4xx');
   var freshContext = freshCtx();
   freshContext.window.TEAMS = ctx.window.TEAMS;
