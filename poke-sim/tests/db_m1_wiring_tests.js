@@ -200,11 +200,12 @@ describe('Module 1 \u2014 Wiring suite (16 cases)', function () {
   });
 
   T('T-wiring-15', function () {
-    // tools/build-bundle.py includes the explicit runtime files that the
-    // single-file bundle still strips from index.html before inlining.
+    // tools/build-bundle.py includes runtime source files in the concat list.
     if (!fs.existsSync(buildScriptPath)) throw new Error('build-bundle.py not found');
     var buildScript = fs.readFileSync(buildScriptPath, 'utf8');
     eq(buildScript.includes('supabase_adapter.js'), true, 'build-bundle.py includes supabase_adapter.js');
+    eq(buildScript.includes('generated/pokemon_showdown_legal_data.js'), true, 'build-bundle.py includes generated Pokemon legality data');
+    eq(buildScript.includes('move_legality.js'), true, 'build-bundle.py includes move_legality.js');
     eq(buildScript.includes('replay_coach.js'), true, 'build-bundle.py includes replay_coach.js');
     eq(buildScript.includes('replay_learning.js'), true, 'build-bundle.py includes replay_learning.js');
   });

@@ -8505,6 +8505,39 @@ function _csSimLogWrite(store) {
   }
 }
 
+function csShouldBootstrapSimulatorBoard() {
+  try {
+    var resultsSection = document.getElementById('results-section');
+    if (resultsSection && resultsSection.style.display !== 'none') return false;
+    if (typeof Storage === 'undefined') return true;
+    var simlog = Storage.get(CS_SIMLOG_KEY);
+    if (simlog && Array.isArray(simlog.entries) && simlog.entries.length) return false;
+    return true;
+  } catch (e) {
+    UILog.warn('bootstrap sim-board check failed', e);
+    return false;
+  }
+}
+
+async function csBootstrapSimulatorBoard() {
+  if (simRunning) return false;
+  if (!csShouldBootstrapSimulatorBoard()) return false;
+  var oppSel = document.getElementById('opponent-select');
+  var oppKey = oppSel ? oppSel.value : null;
+  if (!oppKey || !TEAMS[currentPlayerKey] || !TEAMS[oppKey]) return false;
+  simRunning = true;
+  try {
+    var res = await runBoSeries(1, currentPlayerKey, oppKey, currentBo, function(){});
+    displayResults(res, oppKey);
+    return true;
+  } catch (e) {
+    UILog.warn('sim-board bootstrap skipped', e);
+    return false;
+  } finally {
+    simRunning = false;
+  }
+}
+
 // Shape a single simulateBattle result into the compact sim-log game form.
 // Keeps the essentials (result/turns/leads/bring/survivors/winCondition
 // /TR+TW turns/koEvents). Drops the big "log" string array — not needed
@@ -10458,6 +10491,10 @@ if (typeof window !== 'undefined') {
     if (typeof rebuildTeamSelects === 'function') {
       try { rebuildTeamSelects(); } catch (_e) { /* fail-soft */ }
     }
+
+    // On fresh origins with no prior local sim history, paint one seeded board
+    // so the first-load website experience matches the local board-first view.
+    try { setTimeout(function(){ csBootstrapSimulatorBoard(); }, 50); } catch (_e) {}
 
     // Render when Strategy tab is opened
     document.querySelectorAll('.tab-btn[data-tab="strategy"]').forEach(function(btn){

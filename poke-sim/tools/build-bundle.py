@@ -129,8 +129,8 @@ inline_js = (
     + sanitize_inline_js(move_support) + '\n\n'
     + sanitize_inline_js(replay_coach) + '\n\n'
     + sanitize_inline_js(replay_learning) + '\n\n'
-    + sanitize_inline_js(ui) + '\n\n'
     + sanitize_inline_js(legality) + '\n\n'
+    + sanitize_inline_js(ui) + '\n\n'
     + sanitize_inline_js(strategy)
     + '\n</script>\n</body>'
 )

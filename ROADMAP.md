@@ -1,7 +1,7 @@
 # Pokémon Champion 2026 — Product Roadmap
 
 > **Battle-tested. Always evolving.**
-> Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/)
+> Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/TheYfactora12/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
 > **Last updated:** 2026-05-24 | **Baseline:** T9j.17 (343 tests · 5,070 battles/audit)
 
 ---
@@ -214,7 +214,7 @@ This is the concrete release path for turning the simulator into a trustworthy p
 | Database | Supabase — 8 tables, RLS enabled, **25 canonical teams / 150 canonical team_members seeded** ✅ |
 | Bundle | `pokemon-champion-2026.html` (710 KB, single-file artifact) |
 | CI/CD | GitHub Actions — CI ✅ + Bundle Freshness ✅ + Cache Bump ✅ (3 workflows active) |
-| Hosting | GitHub Pages (`alfredocox.github.io/Pokemon-Champions-Sim-Planner`) |
+| Hosting | GitHub Pages (`theyfactora12.github.io/Pokemon-Champions-Sim-Planner`) |
 | Tests | Vanilla JS runner — 343 cases (T9j.17 baseline), 5,070 battles/audit |
 
 ---
