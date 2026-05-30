@@ -1,24 +1,24 @@
 # Pokémon Champion 2026 — Supabase DB Integration Plan **v2 (canonical)**
 
 > **Project:** `poke-sim` — Pokémon-Champions-Sim-Planner
-> **Active repo:** [github.com/alfredocox/Pokemon-Champions-Sim-Planner](https://github.com/alfredocox/Pokemon-Champions-Sim-Planner)
-> **Validated comparison repo:** [github.com/TheYfactora12/Pokemon-Champions-Sim-Planner](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner)
+> **Active repo:** [github.com/TheYfactora12/Pokemon-Champions-Sim-Planner](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner)
+> **Alfredo remote:** [github.com/alfredocox/Pokemon-Champions-Sim-Planner](https://github.com/alfredocox/Pokemon-Champions-Sim-Planner) — align by reviewed PR only; do not overwrite divergent history.
 > **Linear team:** `POK` — *Poke-e-Sim* (Alfredo, joshualeondoutt, kevin medeiros)
 > **Supabase project:** `ymlahqnshgiarpbgxehp` (region `us-west-2`, Postgres 17.6, status `ACTIVE_HEALTHY`, owner *TheYfactora12's Project*)
 > **Author:** Alfredo Cox · **Reviewers:** TheYfactora12, Joshua, Kevin
 > **Last updated:** 2026-05-24
-> **Status:** App DB wiring is active. Canonical repo seed is 29 teams. Live DB seed drift was repaired with `2026_05_24_upsert_seed_teams_v2_repair.sql`.
+> **Status:** App DB wiring is active. Canonical repo seed is 25 teams. Live DB seed drift was repaired with `2026_05_24_upsert_seed_teams_v2_repair.sql`.
 
 ## Current status note (2026-05-24)
 
 This file started as the original DB integration roadmap. The current implementation has moved past the 2026-04-27 snapshot:
 
-- `poke-sim/data.js` currently has 29 canonical teams.
+- `poke-sim/data.js` currently has 25 canonical teams.
 - `poke-sim/db/seed_teams_v2.sql` and `migrations/2026_04_28_seed_teams_v2.sql` are generated delete-first seed artifacts for fresh DB/bootstrap review.
 - Existing live DBs with `analyses` history must use `migrations/2026_05_24_upsert_seed_teams_v2_repair.sql`, which upserts rulesets/teams and replaces only canonical `team_members`.
 - The repair migration passed in GitHub Actions run `26351524164`.
 - PR #121 CI run `26351547525` passed with live DB relevance enabled.
-- Alfredo's repo was resynced to the validated Y Factor app state on 2026-05-24. Future drift should be handled through reviewed sync branches, not ad hoc overwrites.
+- Alfredo's remote is currently divergent from the active repo. Treat cross-repo alignment as a separate reviewed sync task.
 
 ---
 
@@ -33,7 +33,7 @@ The three prior drafts (`DB_INTEGRATION_PLAN.md`, `poke-sim-db-integration-plan.
 | Sim result storage | `matchups` + child `pilot_notes` + `replay_logs` | Single `analyses` row + child `analysis_win_conditions` + `analysis_logs` |
 | Adapter file | "to be created" | `poke-sim/supabase_adapter.js` already exists with `loadTeamsFromDB`, `saveAnalysis`, `loadRecentAnalyses` |
 | `index.html` wiring | Plan step | Historical 2026-04-27 state was not wired. Current `index.html` loads supabase-js, `local-credentials.js`, and `supabase_adapter.js`. |
-| Seed status | Empty | Historical 2026-04-27 state was 3 of 22 teams seeded. Current canonical repo state is 29 teams, repaired live on 2026-05-24. |
+| Seed status | Empty | Historical 2026-04-27 state was 3 of 22 teams seeded. Current canonical repo state is 25 teams, repaired live on 2026-05-24. |
 | RLS | "set later" | Already enabled on every table; anon = read everywhere + insert on `analyses*` only |
 | Migrations | n/a | Historical 2026-04-27 state had no registered migrations. Current repo has timestamped migrations under `poke-sim/db/migrations/`. |
 

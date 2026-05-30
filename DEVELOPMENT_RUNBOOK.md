@@ -8,7 +8,7 @@
 
 **What it is:** A VGC-style competitive team simulator for April 2026 meta play. Fully client-side, no backend, no dependencies — one HTML file runs the entire app.
 
-**Repo:** [github.com/alfredocox/Pokemon-Champions-Sim-Planner](https://github.com/alfredocox/Pokemon-Champions-Sim-Planner)
+**Repo:** [github.com/TheYfactora12/Pokemon-Champions-Sim-Planner](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner)
 
 **Primary artifact:** `poke-sim/pokemon-champion-2026.html` (~400 KB self-contained bundle)
 
@@ -196,15 +196,15 @@ Tabs: `simulator` | `teams` | `set-editor` | `replay` | `sources` | `pilot` | `s
 
 `htmlpreview.github.io` does not work for this app. GitHub serves raw `.html` files with `text/plain` MIME type, and the app's cross-origin asset references are blocked by CORS when loaded from a non-origin host. Use one of the three methods below instead.
 
-### Option A — Stable public site (recommended for user testing if enabled)
+### Option A — Stable public site (recommended for user testing)
 ```bash
-https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/
+https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/
 ```
 
 ### Option B — Just open the app locally
 ```bash
 # Clone repo
-git clone https://github.com/alfredocox/Pokemon-Champions-Sim-Planner.git
+git clone https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner.git
 cd Pokemon-Champions-Sim-Planner
 
 # Open in browser

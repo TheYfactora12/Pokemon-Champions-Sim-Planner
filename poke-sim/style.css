@@ -600,6 +600,10 @@ table{border-collapse:collapse;width:100%}
 .form-label{font-size:9px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.07em}
 .form-input{padding:8px var(--sp3);min-height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-family:var(--font-mono),monospace;font-size:11px;transition:border-color var(--tr);-webkit-appearance:none}
 .form-input:focus{outline:none;border-color:var(--primary)}
+.editor-legality-ok{margin-top:8px;color:var(--green);font-size:11px;font-family:var(--font-mono)}
+.editor-legality-warnings{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.editor-legality-warning{border:1px solid rgba(245,197,66,.45);background:rgba(245,197,66,.08);color:var(--gold);border-radius:var(--r-sm);padding:7px 9px;font-size:11px;line-height:1.45}
+.editor-legality-warning.warning{border-color:rgba(240,84,100,.45);background:rgba(240,84,100,.08);color:var(--red)}
 .moves-2col{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp2);margin-top:var(--sp4)}
 .ev-6col{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-top:var(--sp3)}
 @media(max-width:420px){.ev-6col{grid-template-columns:repeat(3,1fr)}}
@@ -774,7 +778,11 @@ table{border-collapse:collapse;width:100%}
 .battle-log .lk{color:var(--red)}
 .battle-log .lw{color:var(--green);font-weight:600}
 .battle-log .ltr{color:var(--blue)}
-@media(max-width:900px){.replay-coach-grid{grid-template-columns:1fr}.replay-coach-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.team-legality-note{margin-top:var(--sp3);padding:10px;border:1px solid rgba(240,84,100,.48);border-radius:var(--r-md);background:rgba(240,84,100,.08);font-size:var(--text-sm);line-height:1.45;color:var(--text)}
+.team-legality-note strong{display:block;color:var(--red);font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--font-mono);margin-bottom:4px}
+.team-legality-note span{display:block;overflow-wrap:anywhere}
+.team-legality-note small{display:block;color:var(--text-m);margin-top:4px}
+@media(max-width:900px){.replay-coach-grid{grid-template-columns:1fr}.replay-coach-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.replay-coach-turn0-grid,.replay-turn-roster{grid-template-columns:1fr}}
 @media(max-width:560px){
   .replay-coach-input-card,.replay-coach-summary-card,.replay-coach-card{padding:var(--sp3)}
   .replay-coach-url-row{grid-template-columns:1fr}

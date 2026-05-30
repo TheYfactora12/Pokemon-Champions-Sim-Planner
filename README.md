@@ -2,6 +2,8 @@
 
 A production-grade VGC competitive team simulator for April 2026 meta play. Built as a fully offline-capable PWA with a static-site deployment path and optional Supabase-backed user features.
 
+**Live public site:** https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/
+
 **Live single-file app:** [`pokemon-champion-2026.html`](./poke-sim/pokemon-champion-2026.html) — open in any browser, works offline.
 
 ## Where the App Lives (Shareable URLs)
@@ -12,14 +14,14 @@ Three ways to open the sim without cloning. Each points to a different snapshot 
 |---|---|---|---|---|---|
 | **Dev preview** | current active PR branch | Newest work-in-progress bundle for the branch under active review | Every push to that branch | Testing the latest mechanics / tickets before merge | ✅ Live when branch preview is shared |
 | **Stable** | `main` branch | Last merged bundle on the default branch | Only after a PR from a feature branch is merged into `main` | Sharing with teammates / VGC players who want a known-good build | ✅ Live |
-| **Static host** | GitHub Pages | Clean short URL, no proxy | Re-publishes on every push to `main` once enabled | Giving out a permanent link; best mobile experience | ⚠️ Enable in repo settings if you want a public site |
+| **Static host** | GitHub Pages | Clean short URL, no proxy | Re-publishes on every push to `main` | Giving out a permanent link; best mobile experience | ✅ Live |
 
 **Links:**
-- **Stable raw preview — branch `main`**: [htmlpreview.github.io — main](https://htmlpreview.github.io/?https://raw.githubusercontent.com/alfredocox/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html)
-- **GitHub Pages** (enable if desired): `https://alfredocox.github.io/Pokemon-Champions-Sim-Planner/`
+- **Stable — branch `main`**: [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
+- **Stable raw preview — branch `main`**: [htmlpreview.github.io — main](https://htmlpreview.github.io/?https://raw.githubusercontent.com/TheYfactora12/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html)
 - **Dev preview**: use the active branch preview URL shared in the PR under review
 
-> **Note:** The htmlpreview link is a branch/raw preview tool, not the canonical public site. If GitHub Pages is enabled for this fork, use that as the stable public URL. The local file at `poke-sim/pokemon-champion-2026.html` remains the source artifact that the site serves.
+> **Note:** The htmlpreview link is a branch/raw preview tool, not the canonical public site. The stable public site is GitHub Pages on `main`. The local file at `poke-sim/pokemon-champion-2026.html` remains the source artifact that the site serves.
 
 ## Release Direction
 
@@ -46,7 +48,7 @@ Pokemon-Champions-Sim-Planner/
     ├── pokemon-champion-2026.html     ← Self-contained single-file bundle (~400 KB)
     ├── index.html                     ← App shell, tabs, PWA meta
     ├── style.css                      ← Mobile-first dark theme
-    ├── data.js                        ← BASE_STATS, TEAMS (29), POKEMON_TYPES_DB (500+)
+    ├── data.js                        ← BASE_STATS, TEAMS (13), POKEMON_TYPES_DB (500+)
     ├── engine.js                      ← Battle sim engine, damage formula, Bo runner
     ├── ui.js                          ← All UI logic, import/export, pilot guide, PDF
     ├── legality.js                    ← Team legality validator
@@ -72,14 +74,12 @@ Pokemon-Champions-Sim-Planner/
 
 - Bo1 / Bo3 / Bo5 / Bo10 Monte Carlo simulation
 - Doubles and Singles format toggle
-- 29 preloaded teams covering tournament, ladder, and replay-validation scenarios
+- 13 tournament teams preloaded (Champions Arena, Chuppa, Rin Sand, Suica Sun, etc.)
 - Poképaste + Showdown import/export
 - Team Preview bring-N-of-6 picker with drag+tap UI and Random 4/6 opponent mode (T9j.10)
 - Simulator-tab inline bring pickers for player + opponent sharing state with the Teams tab (T9j.12)
 - Custom team bulk import/export via file + filter chips on Teams tab (T9j.11)
 - Replay Log with All / Wins / Losses / Clutch filters
-- Battle Sensei replay coaching with provisional Battle IQ decision-quality scoring
-- Meta Stress Lab planning for source-labeled usage snapshots, legal stress scenarios, and build-challenge coaching
 - Auto-generated Pilot Guide per matchup
 - Strategy tab with team-level tactical guidance
 - Meta Threat Radar, Speed Tiers, Team Coverage checker
@@ -147,7 +147,4 @@ print(f'Bundle: {os.path.getsize(\"pokemon-champion-2026.html\"):,} bytes')
 
 - [`DEVELOPMENT_RUNBOOK.md`](./DEVELOPMENT_RUNBOOK.md) — full dev history, QA log, replication steps, known issues
 - [`MASTER_PROMPT.md`](./MASTER_PROMPT.md) — copy-paste context for resuming in a new AI session
-- [`poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md`](./poke-sim/docs/SHOWDOWN_REPLAY_COACH_SPEC.md) — Battle Sensei replay coaching spec
-- [`poke-sim/docs/BATTLE_IQ_SPEC.md`](./poke-sim/docs/BATTLE_IQ_SPEC.md) — Battle IQ scoring, confidence, premium memory, and privacy boundaries
-- [`poke-sim/docs/META_STRESS_LAB_SPEC.md`](./poke-sim/docs/META_STRESS_LAB_SPEC.md) — Meta Stress Lab and build-challenge roadmap
 - [`CHAMPIONS_VALIDATOR_FRAMEWORK.md`](./CHAMPIONS_VALIDATOR_FRAMEWORK.md) — validator framework governing engine change tickets

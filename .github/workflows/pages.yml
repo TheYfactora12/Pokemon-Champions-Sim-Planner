@@ -69,9 +69,18 @@ jobs:
 
           echo "Supabase anon runtime config injected for Pages artifact."
 
+      - name: Stage Pages artifact to match local repo layout
+        run: |
+          set -euo pipefail
+          rm -rf pages-dist
+          mkdir -p pages-dist/poke-sim
+          cp index.html pages-dist/index.html
+          cp .nojekyll pages-dist/.nojekyll
+          cp -R poke-sim/. pages-dist/poke-sim/
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: poke-sim
+          path: pages-dist
 
       - id: deployment
         uses: actions/deploy-pages@v4

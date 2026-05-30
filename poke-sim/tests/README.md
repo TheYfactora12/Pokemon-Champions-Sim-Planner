@@ -25,6 +25,7 @@ node tests/mechanics_audit.js      # Mechanics audit — move-rule checks used b
 node tests/move_support_audit_tests.js # Shipped move support coverage + registry completeness guard
 node tests/move_verification_registry_tests.js # First verified move slice: Freeze-Dry, Giga Drain, Rock Tomb, screens
 node tests/ability_coverage_audit_tests.js # Ability coverage inventory + classification guard
+node tests/ability_priority_targeting_tests.js # Prankster, Armor Tail, Good as Gold, Magic Bounce
 node tests/t159_mobile_roster_layout_tests.js # Mobile roster layout safeguards
 node tests/t160_distinct_battle_team_tests.js # Battle team selection must stay distinct
 node tests/t161_team_member_uniqueness_tests.js # Catalog teams must not repeat members

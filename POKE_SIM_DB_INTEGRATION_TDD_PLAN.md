@@ -2,7 +2,7 @@
 
 > **Companion to:** [`POKE_SIM_DB_INTEGRATION_PLAN_v2.md`](./POKE_SIM_DB_INTEGRATION_PLAN_v2.md)
 > **Linear parent:** [POK-16 — Main DB Integration](https://linear.app/poke-e-sim/issue/POK-16/main-db-integration)
-> **Active repo:** [github.com/alfredocox/Pokemon-Champions-Sim-Planner](https://github.com/alfredocox/Pokemon-Champions-Sim-Planner)
+> **Active repo:** [github.com/TheYfactora12/Pokemon-Champions-Sim-Planner](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner)
 > **Alfredo remote:** [github.com/alfredocox/Pokemon-Champions-Sim-Planner](https://github.com/alfredocox/Pokemon-Champions-Sim-Planner) — align by reviewed PR only.
 > **Branch convention:** `test/db-m<N>-<slug>` (test PR), then `feat/db-m<N>-<slug>` (impl PR) — **two PRs per module**.
 > **Last updated:** 2026-05-24
