@@ -49,7 +49,24 @@ Foundational correctness gaps that must be resolved for the simulator to produce
 ---
 
 ## 6. Showdown Database Import
+
+Data source: **Pokémon Showdown live data CDN** — `https://play.pokemonshowdown.com/data/`
+
+Planned pull targets and what each file resolves:
+
+| File | CDN URL | Resolves |
+|---|---|---|
+| `pokedex.js` | https://play.pokemonshowdown.com/data/pokedex.js | Base stats + types for every species and regional form — replaces manual BASE_STATS entries |
+| `moves.js` | https://play.pokemonshowdown.com/data/moves.js | BP, accuracy, priority, spread flags, contact flags, category |
+| `abilities.js` | https://play.pokemonshowdown.com/data/abilities.js | Ability metadata |
+| `items.js` | https://play.pokemonshowdown.com/data/items.js | Item effects, fling BP, berry data |
+| `typechart.js` | https://play.pokemonshowdown.com/data/typechart.js | Full type effectiveness table |
+| `aliases.js` | https://play.pokemonshowdown.com/data/aliases.js | Name normalization — resolves regional form keys (e.g. `ninetalesalola` → `Ninetales-Alola`) |
+| `learnsets.js` | https://play.pokemonshowdown.com/data/learnsets.js | Legal movepool per species for legality validation |
+
+**Implementation requirements:**
+- Pull and parse the above files from the Showdown CDN (or the `smogon/pokemon-showdown` GitHub repo) at build time or runtime
+- Map Showdown species IDs to internal `POKEMON_TYPES_DB` and `BASE_STATS` keys via `aliases.js`
 - Import pokepaste URLs and raw Showdown text correctly into team slots
 - Parse species name, item, ability, nature, EVs/IVs, moves, and level without data loss
-- Regional form names (e.g. `Ninetales-Alola`, `Slowbro-Galar`) must resolve to correct BASE_STATS and POKEMON_TYPES_DB keys
 - Imported teams must pass the legality validator before being accepted into a slot
