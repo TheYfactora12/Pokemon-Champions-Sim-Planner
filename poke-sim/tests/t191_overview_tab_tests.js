@@ -32,6 +32,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Review tab restored');
   inc(ui, 'Stable Pokemon identity in sim exports');
   inc(ui, 'Move priority aligned with Showdown data');
+  inc(ui, 'Alfredo merge candidate prepared');
   inc(ui, 'CI-style local sweep passed');
   inc(ui, 'User sample logs show no hard item/order drift');
 });
@@ -39,15 +40,19 @@ T('2. Overview tracks accomplished work and validation proof', () => {
 T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Supabase app wiring is live for existing app tables');
   inc(ui, 'Showdown mirror tables are not live in Supabase yet');
+  inc(ui, 'Merge candidate PR is not open yet');
   inc(ui, 'showdown_sync_runs');
   inc(ui, 'showdown_entities');
   inc(ui, 'champions_overrides');
 });
 
 T('4. Overview includes next milestones and source docs', () => {
+  inc(ui, 'Open the Alfredo merge candidate PR');
   inc(ui, 'Apply sync/audit DB migrations');
   inc(ui, 'Add entity and override tables');
   inc(ui, 'Generate app assets from approved DB views');
+  inc(ui, 'Closeout Note');
+  inc(ui, 'CLOSEOUT_2026-06-06.md');
   inc(ui, 'Showdown DB Plan');
   inc(ui, 'SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md');
   inc(ui, 'SHOWDOWN_SYNC_ARCHITECTURE.md');

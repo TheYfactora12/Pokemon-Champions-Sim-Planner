@@ -5193,6 +5193,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Showdown DB source-of-truth plan written',
       detail: 'Repo docs now describe Showdown-mirrored rows plus separate Champions override rows as the target architecture.'
+    },
+    {
+      status: 'done',
+      title: 'Alfredo merge candidate prepared',
+      detail: 'merge-candidate/alfredo-main-2026-06-06 is pushed with Alfredo main merged and the service-worker cache conflict resolved.'
     }
   ],
   validation: [
@@ -5232,9 +5237,19 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'App still consumes generated/static Showdown data',
       detail: 'The browser bundle is not yet reading approved Showdown entity rows plus Champions override rows from Supabase.'
+    },
+    {
+      status: 'gap',
+      title: 'Merge candidate PR is not open yet',
+      detail: 'The branch is ready, but GitHub PR CI will not run until the pull request is opened from merge-candidate/alfredo-main-2026-06-06.'
     }
   ],
   next: [
+    {
+      status: 'next',
+      title: 'Open the Alfredo merge candidate PR',
+      detail: 'Create the PR into main, let PR CI run, then review the service-worker cache resolution and M8 prior-snapshot migrations.'
+    },
     {
       status: 'next',
       title: 'Apply sync/audit DB migrations',
@@ -5293,6 +5308,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'release gates', active: true }
   ],
   docs: [
+    { label: 'Closeout Note', href: '../docs/release/CLOSEOUT_2026-06-06.md' },
     { label: 'Showdown DB Plan', href: 'docs/SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md' },
     { label: 'Showdown Sync Architecture', href: 'docs/SHOWDOWN_SYNC_ARCHITECTURE.md' },
     { label: 'Spec Index', href: 'docs/SPECS_INDEX.md' }

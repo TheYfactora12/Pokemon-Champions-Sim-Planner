@@ -12,6 +12,7 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 
 ### Added
 - Project Overview tab that turns the team planning docs into an in-app checklist of shipped fixes, validation proof, Supabase status, Showdown DB gaps, next milestones, and open decisions.
+- Team closeout note for the Alfredo merge candidate and Showdown/Supabase follow-up path.
 - Exported turn-log validator for downloaded `champions-turn-log-*.json` files. It checks roster identity, item drift, active/bench key maps, HP key coverage, speed-order key coverage, and observed priority/speed order.
 - Showdown priority drift test that compares shipped move priorities against generated Pokemon Showdown move metadata, with an explicit Champions override allowlist.
 - Team-facing validation note for the 2026-06-05 user-provided logs.
