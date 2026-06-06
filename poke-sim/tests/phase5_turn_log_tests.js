@@ -122,6 +122,78 @@ T('T5a-1a live turn snapshots keep player/opponent side keys distinct', () => {
   truthy(speedKeys.includes('opponent:active:'), 'opponent active key missing from live snapshot');
 });
 
+T('T5a-1b exported turn snapshots can be rescored directly', () => {
+  const first = battleA.turnLog[0] || {};
+  eq(ctx.positionScore(first.pre), first.pre.position_score, 'flattened pre snapshot score mismatch');
+  eq(ctx.positionScore(first.post), first.post.position_score, 'flattened post snapshot score mismatch');
+
+  truthy(first.pre.score_state && first.pre.score_state.player && first.pre.score_state.opponent, 'score_state missing from pre snapshot');
+
+  const flattenedWithScoreState = {
+    active: { player: ['A'], opponent: ['B'] },
+    bench: { player: [], opponent: [] },
+    active_keys: { player: ['player:active:0:A'], opponent: ['opponent:active:0:B'] },
+    bench_keys: { player: [], opponent: [] },
+    hp_pct: { 'player:active:0:A': 0.333, 'opponent:active:0:B': 0.667 },
+    roster: {
+      player: [{ displayName: 'A', status: 'active' }],
+      opponent: [{ displayName: 'B', status: 'active' }]
+    },
+    status: {},
+    field: {},
+    speed_control: { player: {}, opponent: {} },
+    speed_order_keys: ['player:active:0:A', 'opponent:active:0:B'],
+    score_state: {
+      player: { hp_total: 0.3334, alive_count: 1, max_count: 1, active: ['A'], bench: [], active_keys: ['player:active:0:A'], bench_keys: [] },
+      opponent: { hp_total: 0.6666, alive_count: 1, max_count: 1, active: ['B'], bench: [], active_keys: ['opponent:active:0:B'], bench_keys: [] }
+    }
+  };
+  const nestedEquivalent = {
+    player: flattenedWithScoreState.score_state.player,
+    opponent: flattenedWithScoreState.score_state.opponent,
+    status: {},
+    field: {},
+    speed_control: { player: {}, opponent: {} },
+    speed_order_keys: ['player:active:0:A', 'opponent:active:0:B']
+  };
+  eq(ctx.positionScore(flattenedWithScoreState), ctx.positionScore(nestedEquivalent), 'score_state should preserve exact scorer inputs');
+});
+
+T('T5a-1c roster calculated stats include non-HP stats', () => {
+  const first = battleA.turnLog[0] || {};
+  const row = (((first.pre || {}).roster || {}).player || [])[0] || {};
+  truthy(!/\/0\/0\/0\/0\/0$/.test(row.calculatedStats || ''), 'calculated stats should not zero non-HP stats');
+});
+
+T('T5a-1d stable roster identity survives bench to active movement', () => {
+  const battle = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.fire_ice_fullroom, {
+    format: 'doubles',
+    seed: [3060085469, 1693309830, 2374429629, 716694517],
+    playerBring: ['Incineroar', 'Arcanine', 'Garchomp', 'Whimsicott'],
+    opponentBring: ['Cofagrigus', 'Ursaluna-Bloodmoon', 'Vanilluxe', 'Typhlosion-Hisui']
+  });
+  const rows = [];
+  for (const turn of battle.turnLog || []) {
+    for (const snapName of ['pre', 'post']) {
+      const snap = turn[snapName] || {};
+      const playerRows = ((snap.roster || {}).player || []);
+      for (const row of playerRows) {
+        if (row.displayName === 'Garchomp') rows.push(row);
+      }
+    }
+  }
+  truthy(rows.some(row => row.zone === 'bench'), 'expected Garchomp to appear on bench');
+  truthy(rows.some(row => row.zone === 'active'), 'expected Garchomp to appear active after a replacement');
+  eq(new Set(rows.map(row => row.stableKey)).size, 1, 'Garchomp stableKey changed across movement');
+  eq(new Set(rows.map(row => row.item)).size, 1, 'Garchomp item changed across movement');
+
+  const first = rows[0];
+  truthy(first.stableKey && first.stableKey.includes(':slot:'), 'stableKey missing slot identity');
+  const firstPre = ((battle.turnLog[0] || {}).pre || {});
+  truthy(firstPre.hp_pct_stable && Object.prototype.hasOwnProperty.call(firstPre.hp_pct_stable, first.stableKey), 'stable HP map missing Garchomp');
+  truthy(Array.isArray(firstPre.bench_stable_keys.player) && firstPre.bench_stable_keys.player.includes(first.stableKey), 'stable bench keys missing Garchomp');
+});
+
 T('T5a-2 turnLog clears on new sim run', () => {
   const battleB = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_charizard_y, {});
   truthy(Array.isArray(battleB.turnLog), 'second turnLog missing');

@@ -801,7 +801,8 @@ class Pokemon {
     // (Choice Band / Choice Specs multipliers removed — #11 WONTFIX pattern.)
     // T9j.6 (#11 WONTFIX) — Assault Vest absent from Champions launch item pool
     // (Game8 Champions item list; IGN Champions Changes). No effect applied.
-    // Trick Room inverts speed (handled in turn order)
+    // Trick Room is a turn-order rule, so it is applied by the action/speed
+    // comparators. This getter returns boosted Speed only.
     return Math.floor(val);
   }
 
@@ -816,7 +817,6 @@ class Pokemon {
     if (this.ability === 'Swift Swim'   && field.weather === 'rain') spe *= 2;
     if (this.ability === 'Chlorophyll'  && field.weather === 'sun')  spe *= 2;
     if (this.ability === 'Slush Rush'   && field.weather === 'snow') spe *= 2;
-    if (field.trickRoom) spe = 10000 - spe; // lower is faster under TR (applied last)
     return spe;
   }
 
@@ -1216,11 +1216,16 @@ class Field {
 // ============================================================
 // TEAM BUILDER — builds active battlers from team definition
 // ============================================================
-function buildTeam(teamDef) {
+function buildTeam(teamDef, side) {
   if (!teamDef || !teamDef.members) return [];
   const style = teamDef.style || '';
   // Issue #T1: propagate team.format so Pokemon uses correct stat math.
-  return teamDef.members.map(m => new Pokemon(m, style, teamDef.format));
+  return teamDef.members.map(function(m, i) {
+    const mon = new Pokemon(m, style, teamDef.format);
+    mon.teamSlot = i;
+    mon.stableKey = (side || 'team') + ':slot:' + i + ':' + (mon.displayName || mon.name || 'Unknown');
+    return mon;
+  });
 }
 
 function _clamp01(v) {
@@ -1244,6 +1249,13 @@ function _snapshotMonKey(side, zone, index, mon) {
   return side + ':' + zone + ':' + index + ':' + label;
 }
 
+function _snapshotMonStableKey(side, mon) {
+  if (mon && mon.stableKey) return mon.stableKey;
+  const slot = mon && mon.teamSlot != null ? mon.teamSlot : 'unknown';
+  const label = mon && (mon.displayName || mon.name) ? (mon.displayName || mon.name) : 'Unknown';
+  return side + ':slot:' + slot + ':' + label;
+}
+
 function _sideSnapshot(active, bench, side) {
   const all = (active || []).concat(bench || []);
   return {
@@ -1251,6 +1263,8 @@ function _sideSnapshot(active, bench, side) {
     bench: (bench || []).filter(m => m && m.alive).map(m => m.name),
     active_keys: (active || []).map((m, i) => (m && m.alive ? _snapshotMonKey(side, 'active', i, m) : null)).filter(Boolean),
     bench_keys: (bench || []).map((m, i) => (m && m.alive ? _snapshotMonKey(side, 'bench', i, m) : null)).filter(Boolean),
+    active_stable_keys: (active || []).map(m => (m && m.alive ? _snapshotMonStableKey(side, m) : null)).filter(Boolean),
+    bench_stable_keys: (bench || []).map(m => (m && m.alive ? _snapshotMonStableKey(side, m) : null)).filter(Boolean),
     alive_count: all.filter(m => m && m.alive).length,
     hp_total: all.reduce((s, m) => s + (m && m.alive ? _hpPct(m) : 0), 0),
     max_count: Math.max(1, all.length || 1)
@@ -1305,6 +1319,22 @@ function _statusSnapshot(playerActive, playerBench, oppActive, oppBench) {
   return out;
 }
 
+function _statusStableSnapshot(playerActive, playerBench, oppActive, oppBench) {
+  const out = {};
+  const groups = [
+    { side: 'player', mons: playerActive || [] },
+    { side: 'player', mons: playerBench || [] },
+    { side: 'opponent', mons: oppActive || [] },
+    { side: 'opponent', mons: oppBench || [] }
+  ];
+  for (const group of groups) {
+    for (const m of group.mons) {
+      if (m && m.status) out[_snapshotMonStableKey(group.side, m)] = m.status;
+    }
+  }
+  return out;
+}
+
 function _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench) {
   const out = {};
   const groups = [
@@ -1317,6 +1347,22 @@ function _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench) {
     for (let i = 0; i < group.mons.length; i += 1) {
       const m = group.mons[i];
       if (m) out[_snapshotMonKey(group.side, group.zone, i, m)] = Math.round(_hpPct(m) * 1000) / 1000;
+    }
+  }
+  return out;
+}
+
+function _hpPctStableSnapshot(playerActive, playerBench, oppActive, oppBench) {
+  const out = {};
+  const groups = [
+    { side: 'player', mons: playerActive || [] },
+    { side: 'player', mons: playerBench || [] },
+    { side: 'opponent', mons: oppActive || [] },
+    { side: 'opponent', mons: oppBench || [] }
+  ];
+  for (const group of groups) {
+    for (const m of group.mons) {
+      if (m) out[_snapshotMonStableKey(group.side, m)] = Math.round(_hpPct(m) * 1000) / 1000;
     }
   }
   return out;
@@ -1341,6 +1387,10 @@ function _battleRosterSnapshot(active, bench, roster, side) {
     const idx = activeIdx >= 0 ? activeIdx : (benchIdx >= 0 ? benchIdx : rows.length);
     rows.push({
       key: _snapshotMonKey(side, zone, idx, mon),
+      stableKey: _snapshotMonStableKey(side, mon),
+      teamSlot: mon.teamSlot != null ? mon.teamSlot : null,
+      zone,
+      zoneIndex: idx,
       side,
       status,
       displayName: mon.displayName || mon.name || 'Unknown',
@@ -1349,35 +1399,57 @@ function _battleRosterSnapshot(active, bench, roster, side) {
       hpLabel: hpPct + '%',
       level: mon.level || 50,
       item: mon.item || '',
+      itemConsumed: !!mon.itemConsumed,
       ability: mon.ability || '',
       moves: Array.isArray(mon.moves) ? mon.moves.slice() : [],
       baseStatsLabel: _statsLabel(mon._base),
       calculatedStats: _statsLabel({
         hp: mon.maxHp,
-        atk: mon.atk,
-        def: mon.def,
-        spa: mon.spa,
-        spd: mon.spd,
-        spe: mon.spe
+        atk: mon.baseAtk,
+        def: mon.baseDef,
+        spa: mon.baseSpa,
+        spd: mon.baseSpd,
+        spe: mon.baseSpe
       })
     });
   }
   return rows;
 }
 
+function _comparePokemonSpeedOrder(a, b, field, rng) {
+  const sA = a && a.getEffSpeed ? a.getEffSpeed(field) : 0;
+  const sB = b && b.getEffSpeed ? b.getEffSpeed(field) : 0;
+  if (sA !== sB) return field && field.trickRoom ? sA - sB : sB - sA;
+  if (typeof rng === 'function') return rng() < 0.5 ? -1 : 1;
+  return 0;
+}
+
+function _compareTurnActionOrder(a, b, field, rng) {
+  const pA = a && a.priority ? a.priority : 0;
+  const pB = b && b.priority ? b.priority : 0;
+  if (pB !== pA) return pB - pA;
+  return _comparePokemonSpeedOrder(a && a.attacker, b && b.attacker, field, rng);
+}
+
 function _speedOrderSnapshot(playerActive, oppActive, field, useKeys) {
   return (playerActive || []).concat(oppActive || [])
     .filter(m => m && m.alive)
-    .sort((a, b) => {
-      const sA = a.getEffSpeed(field);
-      const sB = b.getEffSpeed(field);
-      return field.trickRoom ? sA - sB : sB - sA;
-    })
+    .sort((a, b) => _comparePokemonSpeedOrder(a, b, field))
     .map(m => {
       if (!useKeys) return m.name;
       const sideName = m && m.side === (field && field.playerSide) ? 'player' : 'opponent';
       const idx = (sideName === 'player' ? (playerActive || []) : (oppActive || [])).indexOf(m);
       return _snapshotMonKey(sideName, 'active', Math.max(0, idx), m);
+    });
+}
+
+function _speedOrderStableSnapshot(playerActive, oppActive, field) {
+  return (playerActive || []).concat(oppActive || [])
+    .filter(m => m && m.alive)
+    .sort((a, b) => _comparePokemonSpeedOrder(a, b, field))
+    .map(m => {
+      const sideName = m && m.side === (field && field.playerSide) ? 'player' : 'opponent';
+      return _snapshotMonStableKey(sideName, m);
     });
 }
 
@@ -1401,12 +1473,41 @@ function _buildPositionState(playerActive, playerBench, oppActive, oppBench, fie
     speed_control: _speedControlSnapshot(field),
     speed_order: _speedOrderSnapshot(playerActive, oppActive, field, false),
     speed_order_keys: _speedOrderSnapshot(playerActive, oppActive, field, true),
+    speed_order_stable_keys: _speedOrderStableSnapshot(playerActive, oppActive, field),
     status: _statusSnapshot(playerActive, playerBench, oppActive, oppBench)
   };
 }
 
 function positionScore(state) {
   state = state || {};
+  if (state.score_state && state.score_state.player && state.score_state.opponent) {
+    state = Object.assign({}, state, {
+      player: state.score_state.player,
+      opponent: state.score_state.opponent
+    });
+  }
+  if ((!state.player || !state.opponent) && state.active && state.bench) {
+    const hpPct = state.hp_pct || {};
+    const roster = state.roster || {};
+    function sideFromFlat(side) {
+      const activeKeys = (state.active_keys && state.active_keys[side]) || [];
+      const benchKeys = (state.bench_keys && state.bench_keys[side]) || [];
+      const keys = activeKeys.concat(benchKeys);
+      return {
+        active: (state.active && state.active[side]) || [],
+        bench: (state.bench && state.bench[side]) || [],
+        active_keys: activeKeys,
+        bench_keys: benchKeys,
+        alive_count: keys.filter(k => Number(hpPct[k] || 0) > 0).length,
+        hp_total: keys.reduce((s, k) => s + Number(hpPct[k] || 0), 0),
+        max_count: Math.max(1, keys.length || ((roster[side] || []).length))
+      };
+    }
+    state = Object.assign({}, state, {
+      player: sideFromFlat('player'),
+      opponent: sideFromFlat('opponent')
+    });
+  }
   const player = state.player || {};
   const opponent = state.opponent || {};
   const maxCount = Math.max(player.max_count || 1, opponent.max_count || 1, 1);
@@ -1466,16 +1567,25 @@ function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field
     bench: { player: state.player.bench, opponent: state.opponent.bench },
     active_keys: { player: state.player.active_keys, opponent: state.opponent.active_keys },
     bench_keys: { player: state.player.bench_keys, opponent: state.opponent.bench_keys },
+    active_stable_keys: { player: state.player.active_stable_keys, opponent: state.opponent.active_stable_keys },
+    bench_stable_keys: { player: state.player.bench_stable_keys, opponent: state.opponent.bench_stable_keys },
     hp_pct: _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench),
+    hp_pct_stable: _hpPctStableSnapshot(playerActive, playerBench, oppActive, oppBench),
+    score_state: {
+      player: Object.assign({}, state.player),
+      opponent: Object.assign({}, state.opponent)
+    },
     roster: {
       player: _battleRosterSnapshot(playerActive, playerBench, playerRoster || playerActive.concat(playerBench), 'player'),
       opponent: _battleRosterSnapshot(oppActive, oppBench, oppRoster || oppActive.concat(oppBench), 'opponent')
     },
     status: state.status,
+    status_stable: _statusStableSnapshot(playerActive, playerBench, oppActive, oppBench),
     field: state.field,
     speed_control: state.speed_control,
     speed_order: state.speed_order,
     speed_order_keys: state.speed_order_keys,
+    speed_order_stable_keys: state.speed_order_stable_keys,
     legal_options: includeLegal ? _legalOptionsSnapshot(playerActive, oppActive) : {},
     position_score: positionScore(state),
     win_probability: null
@@ -1585,8 +1695,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     };
   }
 
-  const playerPokemon = buildTeam(playerTeam);
-  const oppPokemon    = buildTeam(oppTeam);
+  const playerPokemon = buildTeam(playerTeam, 'player');
+  const oppPokemon    = buildTeam(oppTeam, 'opponent');
 
   // T9j.10 (Refs #16) — Team Preview / bring-N-of-6.
   //   Doubles: bring 4 of 6 (leads 1-2, bench 3-4)
@@ -2625,9 +2735,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     log.push(`${attacker.name} used ${move}!`);
 
     // Speed order so faints register correctly mid-spread
-    const ordered = [...targets].sort((a, b) =>
-      (b.getEffSpeed ? b.getEffSpeed(field) : 0) - (a.getEffSpeed ? a.getEffSpeed(field) : 0)
-    );
+    const ordered = [...targets].sort((a, b) => _comparePokemonSpeedOrder(a, b, field));
 
     for (const t of ordered) {
       if (!t.alive) continue;
@@ -2889,12 +2997,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (field[sideFlagKey]) return;
       const candidates = activeArr.filter(m => shouldMegaThisTurn(m, turn));
       if (candidates.length === 0) return;
-      candidates.sort((a, b) => {
-        const sA = a.getEffSpeed(field);
-        const sB = b.getEffSpeed(field);
-        if (sA !== sB) return sB - sA;
-        return rng() < 0.5 ? -1 : 1;
-      });
+      candidates.sort((a, b) => _comparePokemonSpeedOrder(a, b, field, rng));
       // One per team: only the first (fastest / coin-flip) evolves.
       candidates[0].megaEvolve(log, field);
       field[sideFlagKey] = true;
@@ -2952,13 +3055,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     _turnEntry.positionScore = _turnEntry.pre.position_score;
 
     // Sort by priority → then speed (Trick Room inverts)
-    actions.sort((a, b) => {
-      if (b.priority !== a.priority) return b.priority - a.priority;
-      const sA = a.attacker.getEffSpeed(field);
-      const sB = b.attacker.getEffSpeed(field);
-      if (sA !== sB) return field.trickRoom ? sA - sB : sB - sA;
-      return rng() < 0.5 ? -1 : 1; // Speed tie
-    });
+    actions.sort((a, b) => _compareTurnActionOrder(a, b, field, rng));
 
     // Execute actions
     for (const action of actions) {
