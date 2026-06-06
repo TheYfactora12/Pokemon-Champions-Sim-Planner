@@ -29,6 +29,17 @@ if (available.length === 0) {
 const N = 20; // 20 battles per matchup across the shipped calibration set
 const FORMAT = 'doubles';
 
+function auditSeed(player, opp, battleIndex) {
+  const text = player + '|' + opp + '|' + battleIndex + '|champions-audit-v2';
+  const seeds = [0x9e3779b9, 0x85ebca6b, 0xc2b2ae35, 0x27d4eb2f];
+  for (let i = 0; i < text.length; i++) {
+    const slot = i % 4;
+    seeds[slot] ^= text.charCodeAt(i);
+    seeds[slot] = (Math.imul(seeds[slot], 1664525) + 1013904223) >>> 0;
+  }
+  return seeds.map(s => s || 0xa5a5a5a5);
+}
+
 // Metrics to collect per team
 const matrix = {};
 const globalFlags = [];
@@ -70,7 +81,7 @@ for (const player of available) {
     for (let i = 0; i < N; i++) {
       let b;
       try {
-        b = simulateBattle(TEAMS[player], TEAMS[opp], { format: FORMAT });
+        b = simulateBattle(TEAMS[player], TEAMS[opp], { format: FORMAT, seed: auditSeed(player, opp, i) });
       } catch (e) {
         cell.errors++;
         totalErrors++;

@@ -8,6 +8,9 @@
 // v38-battle-sensei-port [2026-05-24] — Added Battle Sensei replay review tab, replay URL loading, evidence-bound coaching reads, and lead-logic explanations.
 // v39-replay-species-normalization [2026-05-24] — Fixed replay gender-token species parsing and Mega event species resolution.
 // v40-replay-turn0-legality [2026-05-24] — Added Replay Turn 0 audit and Showdown-derived species/form move legality data.
+// v44-trick-room-fix [2026-06-06] — Fixed Trick Room turn order inversion bug;
+// added 175 lines of turn order tests; stable replay Pokemon identity; deterministic
+// battle audit. Solves CORE_ISSUES #3 (Turn Order) completely.
 // v41-move-support-heartbeat [2026-05-24] — Added move support trust layer, replay board sprites, and daily deterministic heartbeat.
 // v43-sim-board-bootstrap [2026-05-25] — Refresh shipped assets after adding
 // first-load simulator board bootstrap so the website opens closer to the
@@ -28,7 +31,7 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v43-sim-board-bootstrap';
+const CACHE_NAME = 'champions-sim-v44-trick-room-fix';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
