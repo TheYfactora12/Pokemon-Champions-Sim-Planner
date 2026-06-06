@@ -6,12 +6,23 @@ The shared merge candidate branch is 1:1 across both repositories.
 
 The `main` branches are not 1:1 yet. They become 1:1 only after the shared branch is merged into both repos through PR + CI.
 
+This report is committed on the same shared branch, so the branch head advances each time the report itself is edited. Treat the table below as the parity baseline before this report commit, then use `git ls-remote` or the PR pages for the live branch head.
+
 ## Branch Parity
 
-| Repo | Branch | SHA | Status |
+| Repo | Branch | Baseline SHA Before This Report | Status |
 |---|---|---|---|
 | `TheYfactora12/Pokemon-Champions-Sim-Planner` | `merge-candidate/alfredo-main-2026-06-06` | `fa584f2c2d5cdeeff777e6f74a8d19e45516b9a5` | 1:1 |
 | `alfredocox/Pokemon-Champions-Sim-Planner` | `merge-candidate/alfredo-main-2026-06-06` | `fa584f2c2d5cdeeff777e6f74a8d19e45516b9a5` | 1:1 |
+
+Latest verification command:
+
+```bash
+git ls-remote origin refs/heads/merge-candidate/alfredo-main-2026-06-06
+git ls-remote alfredo refs/heads/merge-candidate/alfredo-main-2026-06-06
+```
+
+Both commands must return the same SHA.
 
 ## Main Branch Difference
 
@@ -74,4 +85,3 @@ node tools/validate-turn-logs.mjs --require-stable path/to/champions-turn-log.js
 - Both `main` branches point to the same commit or equivalent reviewed merge state.
 - Deployed Pages preview contains Overview, Review, stable log fields, and current service-worker cache.
 - One fresh hard-refreshed exported log passes strict validation.
-
