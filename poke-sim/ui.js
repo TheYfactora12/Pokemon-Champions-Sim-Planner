@@ -5308,6 +5308,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'release gates', active: true }
   ],
   docs: [
+    { label: 'Repo Parity Report', href: '../docs/release/REPO_PARITY_REPORT_2026-06-06.md' },
     { label: 'Closeout Note', href: '../docs/release/CLOSEOUT_2026-06-06.md' },
     { label: 'Showdown DB Plan', href: 'docs/SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md' },
     { label: 'Showdown Sync Architecture', href: 'docs/SHOWDOWN_SYNC_ARCHITECTURE.md' },
