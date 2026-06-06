@@ -160,7 +160,9 @@ Older coaching-first roadmap items remain useful product research, but they are 
 
 ### M6 Release Track — Public Site, Security, and Revenue Readiness
 
-This is the concrete release path for turning the simulator into a trustworthy public site. Core battle truth stays in repo code and generated artifacts. Supabase remains for user and operational data only.
+This is the concrete release path for turning the simulator into a trustworthy public site. Core battle truth ships through reviewed code and deterministic generated artifacts. Supabase may store the audited Showdown mirror, Champions overrides, users, saved teams, replays, subscriptions, notes, and operational metadata, but the public app should consume only approved views or generated release assets.
+
+Current public-release plan: [`docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md`](docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md).
 
 | Step | What | Why | Owner | Exit Criteria | When |
 |---|---|---|---|---|---|
@@ -176,9 +178,9 @@ This is the concrete release path for turning the simulator into a trustworthy p
 
 ### M6 Security Checklist
 
-- Keep canonical mechanics, stats, learnsets, and move behavior in repo code and generated artifacts.
-- Keep Supabase for users, saved teams, replays, subscriptions, notes, and operational metadata.
-- Do not put live battle-truth tables in DB unless a separate architecture mission approves it.
+- Keep canonical mechanics behavior in reviewed code, with generated data artifacts produced from approved Showdown mirror rows plus Champions overrides.
+- Keep Supabase for audited Showdown mirror data, Champions overrides, users, saved teams, replays, subscriptions, notes, and operational metadata.
+- Do not make browser runtime reads from raw battle-truth tables; expose approved views or ship generated release assets.
 - Require green CI, bundle freshness, cache bump, and daily heartbeat before release promotion.
 - Verify GitHub Pages or host config uses HTTPS and only serves the merged `main` bundle.
 - Audit client-visible keys and environment wiring so browser code only gets intentionally public values.

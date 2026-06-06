@@ -35,6 +35,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Move priority aligned with Showdown data');
   inc(ui, 'Alfredo merge candidate prepared');
   inc(ui, 'Simulation-first direction documented');
+  inc(ui, 'Public release milestone map documented');
   inc(ui, 'CI-style local sweep passed');
   inc(ui, 'User sample logs show no hard item/order drift');
 });
@@ -44,6 +45,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Showdown mirror tables are not live in Supabase yet');
   inc(ui, 'Merge candidate PR is not open yet');
   inc(ui, 'Coaching expansion is paused behind sim truth');
+  inc(ui, 'Public release gates are not fully enforced yet');
   inc(ui, 'showdown_sync_runs');
   inc(ui, 'showdown_entities');
   inc(ui, 'champions_overrides');
@@ -51,12 +53,15 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 
 T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Open the Alfredo merge candidate PR');
+  inc(ui, 'Create public release issues');
   inc(ui, 'Apply sync/audit DB migrations');
   inc(ui, 'Expand simulation truth gates');
   inc(ui, 'Add entity and override tables');
   inc(ui, 'Generate app assets from approved DB views');
   inc(ui, 'Simulation First');
   inc(ui, 'SIMULATION_FIRST_REALIGNMENT_2026-06-06.md');
+  inc(ui, 'Public Release Plan');
+  inc(ui, 'PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md');
   inc(ui, 'Showdown DB Stress Test');
   inc(ui, 'SHOWDOWN_DB_WIRING_STRESS_TEST_2026-06-06.md');
   inc(ui, 'Jdoutt38 Investigation');

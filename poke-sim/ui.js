@@ -5204,6 +5204,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Simulation-first direction documented',
       detail: 'Roadmap and release docs now make simulation correctness the gate before new coaching, premium, Battle IQ, or recommendation work.'
+    },
+    {
+      status: 'done',
+      title: 'Public release milestone map documented',
+      detail: 'The team now has a release issue layout covering repo alignment, GitHub Pages hosting, CI gates, Supabase security, Showdown data promotion, launch, rollback, and post-trust growth.'
     }
   ],
   validation: [
@@ -5253,6 +5258,11 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Coaching expansion is paused behind sim truth',
       detail: 'Coach Recommends, Battle IQ expansion, premium coaching reports, and replay-derived claims wait until mechanics, Showdown data, overrides, and strict logs are proven.'
+    },
+    {
+      status: 'gap',
+      title: 'Public release gates are not fully enforced yet',
+      detail: 'The release plan names required GitHub branch protection, Pages deploy checks, live smoke, RLS review, rollback, and strict sim-truth gates before broad public launch.'
     }
   ],
   next: [
@@ -5260,6 +5270,11 @@ var CS_OVERVIEW_DATA = {
       status: 'next',
       title: 'Open the Alfredo merge candidate PR',
       detail: 'Create the PR into main, let PR CI run, then review the service-worker cache resolution and M8 prior-snapshot migrations.'
+    },
+    {
+      status: 'next',
+      title: 'Create public release issues',
+      detail: 'Turn the R0-R8 release milestone map into GitHub issues for repo alignment, hosting, PR gates, Showdown data, Supabase security, simulation truth, UX readiness, launch, and rollback.'
     },
     {
       status: 'next',
@@ -5325,6 +5340,7 @@ var CS_OVERVIEW_DATA = {
   ],
   docs: [
     { label: 'Simulation First', href: '../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md' },
+    { label: 'Public Release Plan', href: '../docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md' },
     { label: 'Showdown DB Stress Test', href: '../docs/release/SHOWDOWN_DB_WIRING_STRESS_TEST_2026-06-06.md' },
     { label: 'Jdoutt38 Investigation', href: '../docs/release/JDOUTT38_INVESTIGATION_2026-06-06.md' },
     { label: 'Closure Confidence', href: '../docs/release/CLOSURE_CONFIDENCE_2026-06-06.md' },

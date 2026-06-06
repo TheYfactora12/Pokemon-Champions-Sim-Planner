@@ -11,6 +11,7 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 ## [Unreleased]
 
 ### Added
+- Public release milestone plan covering GitHub Pages hosting, PR/CI gates, Supabase security, Showdown data promotion, launch, rollback, and post-trust growth.
 - Simulation-first realignment report and roadmap override: simulation correctness now gates new coaching, premium, Battle IQ, and recommendation work.
 - Project Overview tab that turns the team planning docs into an in-app checklist of shipped fixes, validation proof, Supabase status, Showdown DB gaps, next milestones, and open decisions.
 - Team closeout note for the Alfredo merge candidate and Showdown/Supabase follow-up path.
