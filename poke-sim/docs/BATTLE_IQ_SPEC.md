@@ -3,6 +3,7 @@
 > Status: R1 shipped in `c83a510` on 2026-05-16.
 > Product surface: Battle Sensei.
 > Principle: Battle IQ measures game-specific competitive battle intelligence, not general human intelligence.
+> Direction note, 2026-06-06: Battle IQ expansion is paused. Do not build additional scoring, norm groups, premium Battle IQ, or recommendation surfaces until the simulation-truth gate in ../../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md passes.
 
 ## Product Definition
 

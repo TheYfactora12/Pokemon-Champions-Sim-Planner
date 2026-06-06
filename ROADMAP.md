@@ -6,6 +6,24 @@
 
 ---
 
+## Current Direction Override - 2026-06-06
+
+Simulation truth is the active product gate. New coaching, premium, Battle IQ, Coach Recommends, and replay-derived claim work is paused until the simulator is accurate enough to safely support those claims.
+
+Active order:
+
+1. Align both repos through PR + CI.
+2. Prove battle mechanics and turn logs against strict tests.
+3. Wire Showdown-mirrored data plus Champions overrides as the source-of-truth path.
+4. Add release gates for unresolved high-severity drift.
+5. Resume coaching expansion only after the sim-truth gate is green.
+
+Current direction doc: [`docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md`](docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md).
+
+Older coaching-first roadmap items remain useful product research, but they are not the active build priority until this gate passes.
+
+---
+
 ## Milestone Index
 
 | # | Milestone | Status | Gate Issue |

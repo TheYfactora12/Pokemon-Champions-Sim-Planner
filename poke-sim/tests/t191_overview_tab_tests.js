@@ -29,10 +29,12 @@ T('1. Overview is a top-level tab and mobile picker option', () => {
 
 T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'CS_OVERVIEW_DATA');
+  inc(ui, 'Sim Truth Gate');
   inc(ui, 'Review tab restored');
   inc(ui, 'Stable Pokemon identity in sim exports');
   inc(ui, 'Move priority aligned with Showdown data');
   inc(ui, 'Alfredo merge candidate prepared');
+  inc(ui, 'Simulation-first direction documented');
   inc(ui, 'CI-style local sweep passed');
   inc(ui, 'User sample logs show no hard item/order drift');
 });
@@ -41,6 +43,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Supabase app wiring is live for existing app tables');
   inc(ui, 'Showdown mirror tables are not live in Supabase yet');
   inc(ui, 'Merge candidate PR is not open yet');
+  inc(ui, 'Coaching expansion is paused behind sim truth');
   inc(ui, 'showdown_sync_runs');
   inc(ui, 'showdown_entities');
   inc(ui, 'champions_overrides');
@@ -49,8 +52,11 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Open the Alfredo merge candidate PR');
   inc(ui, 'Apply sync/audit DB migrations');
+  inc(ui, 'Expand simulation truth gates');
   inc(ui, 'Add entity and override tables');
   inc(ui, 'Generate app assets from approved DB views');
+  inc(ui, 'Simulation First');
+  inc(ui, 'SIMULATION_FIRST_REALIGNMENT_2026-06-06.md');
   inc(ui, 'Showdown DB Stress Test');
   inc(ui, 'SHOWDOWN_DB_WIRING_STRESS_TEST_2026-06-06.md');
   inc(ui, 'Jdoutt38 Investigation');

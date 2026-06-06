@@ -11,6 +11,7 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 ## [Unreleased]
 
 ### Added
+- Simulation-first realignment report and roadmap override: simulation correctness now gates new coaching, premium, Battle IQ, and recommendation work.
 - Project Overview tab that turns the team planning docs into an in-app checklist of shipped fixes, validation proof, Supabase status, Showdown DB gaps, next milestones, and open decisions.
 - Team closeout note for the Alfredo merge candidate and Showdown/Supabase follow-up path.
 - Repo parity report showing the shared 1:1 merge candidate branch, current `main` divergence, PR links, and Jdoutt38 review/QA list.

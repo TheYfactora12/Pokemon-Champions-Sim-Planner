@@ -19,6 +19,7 @@ When the migration is complete, `poke-sim/*.md` spec files will be deleted from 
 
 | File | Phase | Issues | Status |
 |---|---|---|---|
+| [../../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md](../../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md) | Direction/Gate | TBD | Active direction |
 | [`SHOWDOWN_SYNC_ARCHITECTURE.md`](SHOWDOWN_SYNC_ARCHITECTURE.md) | Data/DB/Oracle | TBD | Draft architecture |
 | [`SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md`](SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md) | Data/DB/Oracle | TBD | Implementation plan |
 | [`POKEMON_DATA_AUDIT_REVIEW.md`](POKEMON_DATA_AUDIT_REVIEW.md) | Data Audit | #117, #123 | Review control |

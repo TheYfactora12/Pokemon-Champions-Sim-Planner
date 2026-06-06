@@ -3,6 +3,7 @@
 > Product line: Sim Mode builds the team. Battle Sensei builds the player. Meta Stress Lab challenges the build.
 > Status: planned, M13 candidate
 > Last updated: 2026-05-16
+> Direction note, 2026-06-06: Meta Stress Lab is paused as a coaching/product surface until simulation truth, Showdown DB mirroring, Champions overrides, and release gates are proven.
 
 ## Product Definition
 

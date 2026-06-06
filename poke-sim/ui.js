@@ -5163,6 +5163,7 @@ function _escapeHtml(s) {
 var CS_OVERVIEW_DATA = {
   updated: '2026-06-06',
   metrics: [
+    { label: 'Sim Truth Gate', value: 'Active' },
     { label: 'Live Supabase', value: 'Teams + analyses' },
     { label: 'Showdown DB', value: 'Planned layer' },
     { label: 'Priority Drift', value: 'Guarded' },
@@ -5198,6 +5199,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Alfredo merge candidate prepared',
       detail: 'merge-candidate/alfredo-main-2026-06-06 is pushed with Alfredo main merged and the service-worker cache conflict resolved.'
+    },
+    {
+      status: 'done',
+      title: 'Simulation-first direction documented',
+      detail: 'Roadmap and release docs now make simulation correctness the gate before new coaching, premium, Battle IQ, or recommendation work.'
     }
   ],
   validation: [
@@ -5242,6 +5248,11 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Merge candidate PR is not open yet',
       detail: 'The branch is ready, but GitHub PR CI will not run until the pull request is opened from merge-candidate/alfredo-main-2026-06-06.'
+    },
+    {
+      status: 'gap',
+      title: 'Coaching expansion is paused behind sim truth',
+      detail: 'Coach Recommends, Battle IQ expansion, premium coaching reports, and replay-derived claims wait until mechanics, Showdown data, overrides, and strict logs are proven.'
     }
   ],
   next: [
@@ -5254,6 +5265,11 @@ var CS_OVERVIEW_DATA = {
       status: 'next',
       title: 'Apply sync/audit DB migrations',
       detail: 'Start with showdown_sync_runs, showdown_source_files, mechanics_validation_runs, and mechanics_validation_findings.'
+    },
+    {
+      status: 'next',
+      title: 'Expand simulation truth gates',
+      detail: 'Add tests and release checks for damage, terrain, weather, status, abilities, items, switching, speed ties, Trick Room, and Champions overrides.'
     },
     {
       status: 'next',
@@ -5308,6 +5324,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'release gates', active: true }
   ],
   docs: [
+    { label: 'Simulation First', href: '../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md' },
     { label: 'Showdown DB Stress Test', href: '../docs/release/SHOWDOWN_DB_WIRING_STRESS_TEST_2026-06-06.md' },
     { label: 'Jdoutt38 Investigation', href: '../docs/release/JDOUTT38_INVESTIGATION_2026-06-06.md' },
     { label: 'Closure Confidence', href: '../docs/release/CLOSURE_CONFIDENCE_2026-06-06.md' },
