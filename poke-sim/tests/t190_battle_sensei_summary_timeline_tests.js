@@ -20,8 +20,9 @@ function inc(hay, needle, msg='') {
 
 console.log('\n=== Battle Sensei summary/timeline UI tests ===\n');
 
-T('1. Battle Sensei remains a separate tab from Strategy', () => {
-  inc(html, 'data-tab="replay-coach">Battle Sensei');
+T('1. Review remains a separate tab from Strategy', () => {
+  inc(html, 'data-tab="replay-coach">Review');
+  inc(html, '<h2 class="section-title">Review Overview</h2>');
   inc(html, '<section class="tab-panel" id="tab-replay-coach">');
   inc(html, '<section class="tab-panel" id="tab-strategy">');
   inc(html, '<script src="replay_learning.js"></script>');
