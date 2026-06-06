@@ -122,6 +122,18 @@ T('T5a-1a live turn snapshots keep player/opponent side keys distinct', () => {
   truthy(speedKeys.includes('opponent:active:'), 'opponent active key missing from live snapshot');
 });
 
+T('T5a-1b exported turn snapshots can be rescored directly', () => {
+  const first = battleA.turnLog[0] || {};
+  eq(ctx.positionScore(first.pre), first.pre.position_score, 'flattened pre snapshot score mismatch');
+  eq(ctx.positionScore(first.post), first.post.position_score, 'flattened post snapshot score mismatch');
+});
+
+T('T5a-1c roster calculated stats include non-HP stats', () => {
+  const first = battleA.turnLog[0] || {};
+  const row = (((first.pre || {}).roster || {}).player || [])[0] || {};
+  truthy(!/\/0\/0\/0\/0\/0$/.test(row.calculatedStats || ''), 'calculated stats should not zero non-HP stats');
+});
+
 T('T5a-2 turnLog clears on new sim run', () => {
   const battleB = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_charizard_y, {});
   truthy(Array.isArray(battleB.turnLog), 'second turnLog missing');
