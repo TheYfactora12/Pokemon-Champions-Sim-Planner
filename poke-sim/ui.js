@@ -5230,7 +5230,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Live preview bundle contains the new safeguards',
-      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the v44 service-worker cache.'
+      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the network-first v46 service-worker cache.'
     },
     {
       status: 'validated',

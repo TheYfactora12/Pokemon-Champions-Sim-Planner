@@ -39,5 +39,19 @@ T('3. missing local-credentials.js returns empty JavaScript instead of cached ap
     'missing local credentials should return empty JS response');
 });
 
+T('4. service worker cache is bumped for stale app-shell release fix', () => {
+  truthy(sw.includes('champions-sim-v46-network-first-app-shell'), 'CACHE_NAME should be v46 network-first app shell');
+});
+
+T('5. app shell includes pokemon-champion bundle in network-first detection', () => {
+  truthy(/isAppShellRequest[\s\S]*pokemon-champion-2026\.html/.test(sw),
+    'pokemon-champion-2026.html must be treated as app shell');
+});
+
+T('6. app shell requests bypass stale HTTP/SW cache before fallback', () => {
+  truthy(/isAppShellRequest\(event,\s*url\)[\s\S]*fetch\(event\.request,\s*\{\s*cache:\s*'no-store'\s*\}/.test(sw),
+    'app shell should fetch with no-store before cached fallback');
+});
+
 console.log(`\nsw local credentials: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);

@@ -54,7 +54,7 @@ Pokemon-Champions-Sim-Planner/
     ├── legality.js                    ← Team legality validator
     ├── strategy-injectable.js         ← Strategy tab knowledge base
     ├── manifest.json                  ← PWA manifest
-    ├── sw.js                          ← Service worker (cache-first)
+    ├── sw.js                          ← Service worker (network-first app shell, cached assets)
     ├── icon-192.png                   ← PWA icon
     ├── icon-512.png                   ← PWA icon large
     └── tests/                         ← Node regression suite (items, status, mega, coverage, audit)
