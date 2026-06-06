@@ -801,7 +801,8 @@ class Pokemon {
     // (Choice Band / Choice Specs multipliers removed — #11 WONTFIX pattern.)
     // T9j.6 (#11 WONTFIX) — Assault Vest absent from Champions launch item pool
     // (Game8 Champions item list; IGN Champions Changes). No effect applied.
-    // Trick Room inverts speed (handled in turn order)
+    // Trick Room is a turn-order rule, so it is applied by the action/speed
+    // comparators. This getter returns boosted Speed only.
     return Math.floor(val);
   }
 
@@ -816,7 +817,6 @@ class Pokemon {
     if (this.ability === 'Swift Swim'   && field.weather === 'rain') spe *= 2;
     if (this.ability === 'Chlorophyll'  && field.weather === 'sun')  spe *= 2;
     if (this.ability === 'Slush Rush'   && field.weather === 'snow') spe *= 2;
-    if (field.trickRoom) spe = 10000 - spe; // lower is faster under TR (applied last)
     return spe;
   }
 
@@ -1416,14 +1416,25 @@ function _battleRosterSnapshot(active, bench, roster, side) {
   return rows;
 }
 
+function _comparePokemonSpeedOrder(a, b, field, rng) {
+  const sA = a && a.getEffSpeed ? a.getEffSpeed(field) : 0;
+  const sB = b && b.getEffSpeed ? b.getEffSpeed(field) : 0;
+  if (sA !== sB) return field && field.trickRoom ? sA - sB : sB - sA;
+  if (typeof rng === 'function') return rng() < 0.5 ? -1 : 1;
+  return 0;
+}
+
+function _compareTurnActionOrder(a, b, field, rng) {
+  const pA = a && a.priority ? a.priority : 0;
+  const pB = b && b.priority ? b.priority : 0;
+  if (pB !== pA) return pB - pA;
+  return _comparePokemonSpeedOrder(a && a.attacker, b && b.attacker, field, rng);
+}
+
 function _speedOrderSnapshot(playerActive, oppActive, field, useKeys) {
   return (playerActive || []).concat(oppActive || [])
     .filter(m => m && m.alive)
-    .sort((a, b) => {
-      const sA = a.getEffSpeed(field);
-      const sB = b.getEffSpeed(field);
-      return field.trickRoom ? sA - sB : sB - sA;
-    })
+    .sort((a, b) => _comparePokemonSpeedOrder(a, b, field))
     .map(m => {
       if (!useKeys) return m.name;
       const sideName = m && m.side === (field && field.playerSide) ? 'player' : 'opponent';
@@ -1435,11 +1446,7 @@ function _speedOrderSnapshot(playerActive, oppActive, field, useKeys) {
 function _speedOrderStableSnapshot(playerActive, oppActive, field) {
   return (playerActive || []).concat(oppActive || [])
     .filter(m => m && m.alive)
-    .sort((a, b) => {
-      const sA = a.getEffSpeed(field);
-      const sB = b.getEffSpeed(field);
-      return field.trickRoom ? sA - sB : sB - sA;
-    })
+    .sort((a, b) => _comparePokemonSpeedOrder(a, b, field))
     .map(m => {
       const sideName = m && m.side === (field && field.playerSide) ? 'player' : 'opponent';
       return _snapshotMonStableKey(sideName, m);
@@ -2728,9 +2735,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     log.push(`${attacker.name} used ${move}!`);
 
     // Speed order so faints register correctly mid-spread
-    const ordered = [...targets].sort((a, b) =>
-      (b.getEffSpeed ? b.getEffSpeed(field) : 0) - (a.getEffSpeed ? a.getEffSpeed(field) : 0)
-    );
+    const ordered = [...targets].sort((a, b) => _comparePokemonSpeedOrder(a, b, field));
 
     for (const t of ordered) {
       if (!t.alive) continue;
@@ -2992,12 +2997,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (field[sideFlagKey]) return;
       const candidates = activeArr.filter(m => shouldMegaThisTurn(m, turn));
       if (candidates.length === 0) return;
-      candidates.sort((a, b) => {
-        const sA = a.getEffSpeed(field);
-        const sB = b.getEffSpeed(field);
-        if (sA !== sB) return sB - sA;
-        return rng() < 0.5 ? -1 : 1;
-      });
+      candidates.sort((a, b) => _comparePokemonSpeedOrder(a, b, field, rng));
       // One per team: only the first (fastest / coin-flip) evolves.
       candidates[0].megaEvolve(log, field);
       field[sideFlagKey] = true;
@@ -3055,13 +3055,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     _turnEntry.positionScore = _turnEntry.pre.position_score;
 
     // Sort by priority → then speed (Trick Room inverts)
-    actions.sort((a, b) => {
-      if (b.priority !== a.priority) return b.priority - a.priority;
-      const sA = a.attacker.getEffSpeed(field);
-      const sB = b.attacker.getEffSpeed(field);
-      if (sA !== sB) return field.trickRoom ? sA - sB : sB - sA;
-      return rng() < 0.5 ? -1 : 1; // Speed tie
-    });
+    actions.sort((a, b) => _compareTurnActionOrder(a, b, field, rng));
 
     // Execute actions
     for (const action of actions) {

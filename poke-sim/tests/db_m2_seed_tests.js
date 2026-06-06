@@ -23,8 +23,12 @@ var generatorPath = path.join(ROOT, 'tools', 'generate_seed_from_data.py');
 var migrationMetaPath = path.join(ROOT, 'db', 'migrations', '2026_04_28_add_teams_metadata_column.sql');
 var migrationSeedPath = path.join(ROOT, 'db', 'migrations', '2026_04_28_seed_teams_v2.sql');
 
+function normalizeEol(s) {
+  return String(s).replace(/\r\n/g, '\n');
+}
+
 function readSeed() {
-  return fs.readFileSync(seedPath, 'utf8');
+  return normalizeEol(fs.readFileSync(seedPath, 'utf8'));
 }
 
 function dataTeamIds() {
@@ -141,11 +145,11 @@ describe('Module 2 \u2014 Seed suite (14 cases)', function() {
     eq(fs.existsSync(generatorPath), true, 'tools/generate_seed_from_data.py exists');
     var execSync = require('child_process').execSync;
     var py = process.platform === 'win32' ? 'python' : 'python3';
-    var out1 = execSync(py + ' ' + JSON.stringify(generatorPath) + ' --stdout', { cwd: ROOT }).toString();
-    var out2 = execSync(py + ' ' + JSON.stringify(generatorPath) + ' --stdout', { cwd: ROOT }).toString();
+    var out1 = normalizeEol(execSync(py + ' ' + JSON.stringify(generatorPath) + ' --stdout', { cwd: ROOT }).toString());
+    var out2 = normalizeEol(execSync(py + ' ' + JSON.stringify(generatorPath) + ' --stdout', { cwd: ROOT }).toString());
     eq(out1, out2, 'generator produces byte-identical output on re-run');
     // And the committed file matches the generator output
-    var onDisk = fs.readFileSync(seedPath, 'utf8');
+    var onDisk = readSeed();
     eq(out1, onDisk, 'committed db/seed_teams_v2.sql matches generator output');
   });
 
