@@ -5160,6 +5160,216 @@ function _escapeHtml(s) {
   });
 }
 
+var CS_OVERVIEW_DATA = {
+  updated: '2026-06-06',
+  metrics: [
+    { label: 'Live Supabase', value: 'Teams + analyses' },
+    { label: 'Showdown DB', value: 'Planned layer' },
+    { label: 'Priority Drift', value: 'Guarded' },
+    { label: 'Turn Logs', value: 'Validator ready' }
+  ],
+  shipped: [
+    {
+      status: 'done',
+      title: 'Review tab restored',
+      detail: 'The replay-analysis entry point is back as a top-level Review tab with a Review Overview heading.'
+    },
+    {
+      status: 'done',
+      title: 'Stable Pokemon identity in sim exports',
+      detail: 'Battle snapshots now carry stable roster keys, stable HP maps, bench/active stable keys, and item-consumption state.'
+    },
+    {
+      status: 'done',
+      title: 'Move priority aligned with Showdown data',
+      detail: 'Feint, Ice Shard, and Protect-family shield priorities are covered by local priority drift tests.'
+    },
+    {
+      status: 'done',
+      title: 'Exported log validator added',
+      detail: 'tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, and observed priority order.'
+    },
+    {
+      status: 'done',
+      title: 'Showdown DB source-of-truth plan written',
+      detail: 'Repo docs now describe Showdown-mirrored rows plus separate Champions override rows as the target architecture.'
+    }
+  ],
+  validation: [
+    {
+      status: 'validated',
+      title: 'Supabase app wiring is live for existing app tables',
+      detail: 'The deployed page has runtime Supabase config, and read checks reached teams, team_members, and analyses through the public anon path.'
+    },
+    {
+      status: 'validated',
+      title: 'CI-style local sweep passed',
+      detail: 'The workflow-shaped local pass ran 84 JS test files with the known helper/manual exclusions and zero failures.'
+    },
+    {
+      status: 'validated',
+      title: 'Priority and turn-log tests are green',
+      detail: 'showdown_priority_drift_tests.js, turn_order_priority_tests.js, and turn_log_export_validator_tests.js passed after the fixes.'
+    },
+    {
+      status: 'validated',
+      title: 'Live preview bundle contains the new safeguards',
+      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the v44 service-worker cache.'
+    },
+    {
+      status: 'validated',
+      title: 'User sample logs show no hard item/order drift',
+      detail: 'Legacy exports pass non-strict validation, but still warn until new hard-refreshed logs include stable identity fields.'
+    }
+  ],
+  gaps: [
+    {
+      status: 'gap',
+      title: 'Showdown mirror tables are not live in Supabase yet',
+      detail: 'showdown_sync_runs, showdown_source_files, mechanics_validation tables, showdown_entities, and champions_overrides are not readable in the live DB.'
+    },
+    {
+      status: 'gap',
+      title: 'App still consumes generated/static Showdown data',
+      detail: 'The browser bundle is not yet reading approved Showdown entity rows plus Champions override rows from Supabase.'
+    }
+  ],
+  next: [
+    {
+      status: 'next',
+      title: 'Apply sync/audit DB migrations',
+      detail: 'Start with showdown_sync_runs, showdown_source_files, mechanics_validation_runs, and mechanics_validation_findings.'
+    },
+    {
+      status: 'next',
+      title: 'Add entity and override tables',
+      detail: 'Create showdown_entities, showdown_entity_diffs, champions_overrides, approved_showdown_entities, and approved_champions_data.'
+    },
+    {
+      status: 'next',
+      title: 'Promote fetch output into DB rows',
+      detail: 'Extend fetch_showdown_data.mjs to create sync runs, source hashes, normalized entities, and unapproved diffs.'
+    },
+    {
+      status: 'next',
+      title: 'Generate app assets from approved DB views',
+      detail: 'Emit deterministic generated JS for move metadata, species stats/types, item data, ability data, and legality indexes.'
+    },
+    {
+      status: 'next',
+      title: 'Migrate static JS tables gradually',
+      detail: 'Move priority first, then move type/category/base power/targets, then species, items, and abilities through a local data adapter.'
+    },
+    {
+      status: 'next',
+      title: 'Add Showdown oracle release gates',
+      detail: 'Use Showdown or @pkmn/sim smoke cases for behavior that cannot be proven from static rows alone.'
+    }
+  ],
+  decisions: [
+    {
+      status: 'decision',
+      title: 'Sync job promotion policy',
+      detail: 'Decide whether scheduled syncs only upload artifacts at first or open reviewed PRs automatically.'
+    },
+    {
+      status: 'decision',
+      title: 'Runtime DB reads vs static offline bundle',
+      detail: 'Decide if the PWA should fetch approved rows at runtime or keep Supabase as audit/history while GitHub Pages serves generated assets.'
+    },
+    {
+      status: 'decision',
+      title: 'Champions damage-roll override',
+      detail: 'Confirm whether to patch the 86..100 discrete roll behind a Champions format flag before the oracle harness lands.'
+    }
+  ],
+  flow: [
+    { label: 'Showdown upstream', active: true },
+    { label: 'Raw snapshots', active: false },
+    { label: 'showdown_entities', active: false },
+    { label: 'approved views', active: false },
+    { label: 'champions_overrides', active: false },
+    { label: 'generated JS', active: true },
+    { label: 'release gates', active: true }
+  ],
+  docs: [
+    { label: 'Showdown DB Plan', href: 'docs/SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md' },
+    { label: 'Showdown Sync Architecture', href: 'docs/SHOWDOWN_SYNC_ARCHITECTURE.md' },
+    { label: 'Spec Index', href: 'docs/SPECS_INDEX.md' }
+  ]
+};
+
+function csOverviewStatusLabel(status) {
+  var labels = {
+    done: 'Done',
+    validated: 'Verified',
+    next: 'Next',
+    gap: 'Gap',
+    decision: 'Decision'
+  };
+  return labels[status] || status || 'Open';
+}
+
+function csRenderOverviewRows(rows) {
+  return (rows || []).map(function(row) {
+    var status = row.status || 'next';
+    return '<div class="overview-item">' +
+      '<span class="overview-status ' + _escapeHtml(status) + '">' + _escapeHtml(csOverviewStatusLabel(status)) + '</span>' +
+      '<div><div class="overview-item-title">' + _escapeHtml(row.title) + '</div>' +
+      '<div class="overview-item-detail">' + _escapeHtml(row.detail) + '</div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function csRenderOverviewSection(title, kicker, rows) {
+  return '<div class="overview-section">' +
+    '<div class="overview-section-head"><h3>' + _escapeHtml(title) + '</h3><span class="overview-kicker">' + _escapeHtml(kicker) + '</span></div>' +
+    '<div class="overview-list">' + csRenderOverviewRows(rows) + '</div>' +
+  '</div>';
+}
+
+function renderOverviewTab() {
+  var host = document.getElementById('overview-content');
+  if (!host) return false;
+  var data = CS_OVERVIEW_DATA;
+  var metrics = data.metrics.map(function(metric) {
+    return '<div class="overview-metric"><strong>' + _escapeHtml(metric.label) + '</strong><span>' + _escapeHtml(metric.value) + '</span></div>';
+  }).join('');
+  var flow = data.flow.map(function(step) {
+    return '<span class="overview-flow-step' + (step.active ? ' active' : '') + '">' + _escapeHtml(step.label) + '</span>';
+  }).join('');
+  var docs = data.docs.map(function(doc) {
+    return '<a href="' + _escapeHtml(doc.href) + '" target="_blank" rel="noopener">' + _escapeHtml(doc.label) + '</a>';
+  }).join('');
+  host.innerHTML =
+    '<div class="overview-metrics">' + metrics + '</div>' +
+    '<div class="overview-grid">' +
+      '<div class="overview-list">' +
+        csRenderOverviewSection('Already Accomplished', 'shipped', data.shipped) +
+        csRenderOverviewSection('Validation Record', 'proof', data.validation) +
+      '</div>' +
+      '<div class="overview-list">' +
+        csRenderOverviewSection('Current Alignment Gaps', 'not done yet', data.gaps) +
+        csRenderOverviewSection('Next Milestones', 'roadmap', data.next) +
+        csRenderOverviewSection('Open Decisions', 'team review', data.decisions) +
+        '<div class="overview-section">' +
+          '<div class="overview-section-head"><h3>Source Of Truth Flow</h3><span class="overview-kicker">target</span></div>' +
+          '<div class="overview-flow">' + flow + '</div>' +
+          '<div class="overview-doc-links">' + docs + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  return true;
+}
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.overview = {
+    data: CS_OVERVIEW_DATA,
+    renderOverviewTab: renderOverviewTab
+  };
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderOverviewTab', renderOverviewTab);
+
 function generatePDFReport() {
   var container = document.getElementById('pdf-report-container');
   if (!container) return;
@@ -10458,6 +10668,7 @@ if (typeof window !== 'undefined') {
     await csHardenClientState();
     _csInitEvidenceToggle();
     csInitReplayCoachUi();
+    renderOverviewTab();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────
     // Await loadTeamsFromDB BEFORE the first authoritative rebuildTeamSelects()
@@ -10500,6 +10711,12 @@ if (typeof window !== 'undefined') {
     document.querySelectorAll('.tab-btn[data-tab="strategy"]').forEach(function(btn){
       btn.addEventListener('click', function(){
         try { renderStrategyTab(currentPlayerKey); } catch(e) {}
+      });
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab="overview"]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        try { renderOverviewTab(); } catch(e) {}
       });
     });
 

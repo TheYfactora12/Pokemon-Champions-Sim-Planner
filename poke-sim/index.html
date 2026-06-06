@@ -108,6 +108,7 @@
 <!-- TABS -->
 <nav class="tab-nav" role="tablist">
   <button class="tab-btn active" role="tab" data-tab="simulator">Simulator</button>
+  <button class="tab-btn" role="tab" data-tab="overview">Overview</button>
   <button class="tab-btn" role="tab" data-tab="teams">Teams</button>
   <button class="tab-btn" role="tab" data-tab="editor">Set Editor</button>
   <button class="tab-btn" role="tab" data-tab="strategy">Strategy</button>
@@ -119,6 +120,7 @@
 <div class="mobile-tab-picker" aria-label="Main sections">
   <select class="select-input" id="mobile-tab-select" aria-label="Main sections">
     <option value="simulator">Simulator</option>
+    <option value="overview">Overview</option>
     <option value="teams">Teams</option>
     <option value="editor">Set Editor</option>
     <option value="strategy">Strategy</option>
@@ -128,6 +130,23 @@
     <option value="pilot">Pilot Guide</option>
   </select>
 </div>
+
+<!-- ===== OVERVIEW ===== -->
+<section class="tab-panel" id="tab-overview">
+  <div class="overview-shell">
+    <div class="overview-header">
+      <div>
+        <span class="badge badge-blue">PROJECT CHECKLIST</span>
+        <h2 class="section-title">High Level Overview</h2>
+        <p class="section-subtitle">Living record of shipped changes, validation proof, Supabase status, and the next Showdown source-of-truth milestones.</p>
+      </div>
+      <span class="overview-updated">Updated from repo docs</span>
+    </div>
+    <div id="overview-content">
+      <div class="overview-empty">Loading project checklist...</div>
+    </div>
+  </div>
+</section>
 
 <!-- ===== SIMULATOR ===== -->
 <section class="tab-panel active" id="tab-simulator">
