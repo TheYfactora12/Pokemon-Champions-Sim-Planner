@@ -165,6 +165,35 @@ T('T5a-1c roster calculated stats include non-HP stats', () => {
   truthy(!/\/0\/0\/0\/0\/0$/.test(row.calculatedStats || ''), 'calculated stats should not zero non-HP stats');
 });
 
+T('T5a-1d stable roster identity survives bench to active movement', () => {
+  const battle = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.fire_ice_fullroom, {
+    format: 'doubles',
+    seed: [3060085469, 1693309830, 2374429629, 716694517],
+    playerBring: ['Incineroar', 'Arcanine', 'Garchomp', 'Whimsicott'],
+    opponentBring: ['Cofagrigus', 'Ursaluna-Bloodmoon', 'Vanilluxe', 'Typhlosion-Hisui']
+  });
+  const rows = [];
+  for (const turn of battle.turnLog || []) {
+    for (const snapName of ['pre', 'post']) {
+      const snap = turn[snapName] || {};
+      const playerRows = ((snap.roster || {}).player || []);
+      for (const row of playerRows) {
+        if (row.displayName === 'Garchomp') rows.push(row);
+      }
+    }
+  }
+  truthy(rows.some(row => row.zone === 'bench'), 'expected Garchomp to appear on bench');
+  truthy(rows.some(row => row.zone === 'active'), 'expected Garchomp to appear active after a replacement');
+  eq(new Set(rows.map(row => row.stableKey)).size, 1, 'Garchomp stableKey changed across movement');
+  eq(new Set(rows.map(row => row.item)).size, 1, 'Garchomp item changed across movement');
+
+  const first = rows[0];
+  truthy(first.stableKey && first.stableKey.includes(':slot:'), 'stableKey missing slot identity');
+  const firstPre = ((battle.turnLog[0] || {}).pre || {});
+  truthy(firstPre.hp_pct_stable && Object.prototype.hasOwnProperty.call(firstPre.hp_pct_stable, first.stableKey), 'stable HP map missing Garchomp');
+  truthy(Array.isArray(firstPre.bench_stable_keys.player) && firstPre.bench_stable_keys.player.includes(first.stableKey), 'stable bench keys missing Garchomp');
+});
+
 T('T5a-2 turnLog clears on new sim run', () => {
   const battleB = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_charizard_y, {});
   truthy(Array.isArray(battleB.turnLog), 'second turnLog missing');

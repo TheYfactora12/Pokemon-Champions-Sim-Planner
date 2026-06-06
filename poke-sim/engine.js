@@ -1216,11 +1216,16 @@ class Field {
 // ============================================================
 // TEAM BUILDER — builds active battlers from team definition
 // ============================================================
-function buildTeam(teamDef) {
+function buildTeam(teamDef, side) {
   if (!teamDef || !teamDef.members) return [];
   const style = teamDef.style || '';
   // Issue #T1: propagate team.format so Pokemon uses correct stat math.
-  return teamDef.members.map(m => new Pokemon(m, style, teamDef.format));
+  return teamDef.members.map(function(m, i) {
+    const mon = new Pokemon(m, style, teamDef.format);
+    mon.teamSlot = i;
+    mon.stableKey = (side || 'team') + ':slot:' + i + ':' + (mon.displayName || mon.name || 'Unknown');
+    return mon;
+  });
 }
 
 function _clamp01(v) {
@@ -1244,6 +1249,13 @@ function _snapshotMonKey(side, zone, index, mon) {
   return side + ':' + zone + ':' + index + ':' + label;
 }
 
+function _snapshotMonStableKey(side, mon) {
+  if (mon && mon.stableKey) return mon.stableKey;
+  const slot = mon && mon.teamSlot != null ? mon.teamSlot : 'unknown';
+  const label = mon && (mon.displayName || mon.name) ? (mon.displayName || mon.name) : 'Unknown';
+  return side + ':slot:' + slot + ':' + label;
+}
+
 function _sideSnapshot(active, bench, side) {
   const all = (active || []).concat(bench || []);
   return {
@@ -1251,6 +1263,8 @@ function _sideSnapshot(active, bench, side) {
     bench: (bench || []).filter(m => m && m.alive).map(m => m.name),
     active_keys: (active || []).map((m, i) => (m && m.alive ? _snapshotMonKey(side, 'active', i, m) : null)).filter(Boolean),
     bench_keys: (bench || []).map((m, i) => (m && m.alive ? _snapshotMonKey(side, 'bench', i, m) : null)).filter(Boolean),
+    active_stable_keys: (active || []).map(m => (m && m.alive ? _snapshotMonStableKey(side, m) : null)).filter(Boolean),
+    bench_stable_keys: (bench || []).map(m => (m && m.alive ? _snapshotMonStableKey(side, m) : null)).filter(Boolean),
     alive_count: all.filter(m => m && m.alive).length,
     hp_total: all.reduce((s, m) => s + (m && m.alive ? _hpPct(m) : 0), 0),
     max_count: Math.max(1, all.length || 1)
@@ -1305,6 +1319,22 @@ function _statusSnapshot(playerActive, playerBench, oppActive, oppBench) {
   return out;
 }
 
+function _statusStableSnapshot(playerActive, playerBench, oppActive, oppBench) {
+  const out = {};
+  const groups = [
+    { side: 'player', mons: playerActive || [] },
+    { side: 'player', mons: playerBench || [] },
+    { side: 'opponent', mons: oppActive || [] },
+    { side: 'opponent', mons: oppBench || [] }
+  ];
+  for (const group of groups) {
+    for (const m of group.mons) {
+      if (m && m.status) out[_snapshotMonStableKey(group.side, m)] = m.status;
+    }
+  }
+  return out;
+}
+
 function _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench) {
   const out = {};
   const groups = [
@@ -1317,6 +1347,22 @@ function _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench) {
     for (let i = 0; i < group.mons.length; i += 1) {
       const m = group.mons[i];
       if (m) out[_snapshotMonKey(group.side, group.zone, i, m)] = Math.round(_hpPct(m) * 1000) / 1000;
+    }
+  }
+  return out;
+}
+
+function _hpPctStableSnapshot(playerActive, playerBench, oppActive, oppBench) {
+  const out = {};
+  const groups = [
+    { side: 'player', mons: playerActive || [] },
+    { side: 'player', mons: playerBench || [] },
+    { side: 'opponent', mons: oppActive || [] },
+    { side: 'opponent', mons: oppBench || [] }
+  ];
+  for (const group of groups) {
+    for (const m of group.mons) {
+      if (m) out[_snapshotMonStableKey(group.side, m)] = Math.round(_hpPct(m) * 1000) / 1000;
     }
   }
   return out;
@@ -1341,6 +1387,10 @@ function _battleRosterSnapshot(active, bench, roster, side) {
     const idx = activeIdx >= 0 ? activeIdx : (benchIdx >= 0 ? benchIdx : rows.length);
     rows.push({
       key: _snapshotMonKey(side, zone, idx, mon),
+      stableKey: _snapshotMonStableKey(side, mon),
+      teamSlot: mon.teamSlot != null ? mon.teamSlot : null,
+      zone,
+      zoneIndex: idx,
       side,
       status,
       displayName: mon.displayName || mon.name || 'Unknown',
@@ -1349,6 +1399,7 @@ function _battleRosterSnapshot(active, bench, roster, side) {
       hpLabel: hpPct + '%',
       level: mon.level || 50,
       item: mon.item || '',
+      itemConsumed: !!mon.itemConsumed,
       ability: mon.ability || '',
       moves: Array.isArray(mon.moves) ? mon.moves.slice() : [],
       baseStatsLabel: _statsLabel(mon._base),
@@ -1381,6 +1432,20 @@ function _speedOrderSnapshot(playerActive, oppActive, field, useKeys) {
     });
 }
 
+function _speedOrderStableSnapshot(playerActive, oppActive, field) {
+  return (playerActive || []).concat(oppActive || [])
+    .filter(m => m && m.alive)
+    .sort((a, b) => {
+      const sA = a.getEffSpeed(field);
+      const sB = b.getEffSpeed(field);
+      return field.trickRoom ? sA - sB : sB - sA;
+    })
+    .map(m => {
+      const sideName = m && m.side === (field && field.playerSide) ? 'player' : 'opponent';
+      return _snapshotMonStableKey(sideName, m);
+    });
+}
+
 function _legalOptionsSnapshot(active, enemies) {
   const liveTargets = (enemies || []).filter(e => e && e.alive);
   const targetName = liveTargets[0] ? liveTargets[0].name : 'none';
@@ -1401,6 +1466,7 @@ function _buildPositionState(playerActive, playerBench, oppActive, oppBench, fie
     speed_control: _speedControlSnapshot(field),
     speed_order: _speedOrderSnapshot(playerActive, oppActive, field, false),
     speed_order_keys: _speedOrderSnapshot(playerActive, oppActive, field, true),
+    speed_order_stable_keys: _speedOrderStableSnapshot(playerActive, oppActive, field),
     status: _statusSnapshot(playerActive, playerBench, oppActive, oppBench)
   };
 }
@@ -1494,7 +1560,10 @@ function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field
     bench: { player: state.player.bench, opponent: state.opponent.bench },
     active_keys: { player: state.player.active_keys, opponent: state.opponent.active_keys },
     bench_keys: { player: state.player.bench_keys, opponent: state.opponent.bench_keys },
+    active_stable_keys: { player: state.player.active_stable_keys, opponent: state.opponent.active_stable_keys },
+    bench_stable_keys: { player: state.player.bench_stable_keys, opponent: state.opponent.bench_stable_keys },
     hp_pct: _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench),
+    hp_pct_stable: _hpPctStableSnapshot(playerActive, playerBench, oppActive, oppBench),
     score_state: {
       player: Object.assign({}, state.player),
       opponent: Object.assign({}, state.opponent)
@@ -1504,10 +1573,12 @@ function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field
       opponent: _battleRosterSnapshot(oppActive, oppBench, oppRoster || oppActive.concat(oppBench), 'opponent')
     },
     status: state.status,
+    status_stable: _statusStableSnapshot(playerActive, playerBench, oppActive, oppBench),
     field: state.field,
     speed_control: state.speed_control,
     speed_order: state.speed_order,
     speed_order_keys: state.speed_order_keys,
+    speed_order_stable_keys: state.speed_order_stable_keys,
     legal_options: includeLegal ? _legalOptionsSnapshot(playerActive, oppActive) : {},
     position_score: positionScore(state),
     win_probability: null
@@ -1617,8 +1688,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     };
   }
 
-  const playerPokemon = buildTeam(playerTeam);
-  const oppPokemon    = buildTeam(oppTeam);
+  const playerPokemon = buildTeam(playerTeam, 'player');
+  const oppPokemon    = buildTeam(oppTeam, 'opponent');
 
   // T9j.10 (Refs #16) — Team Preview / bring-N-of-6.
   //   Doubles: bring 4 of 6 (leads 1-2, bench 3-4)
