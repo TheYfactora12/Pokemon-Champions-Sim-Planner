@@ -17,8 +17,8 @@ You are continuing development of **Pokémon Champion 2026**, a production-grade
 **Default branch:** `main`
 **Active dev branch:** `main` (all work goes directly to main)
 **Space name:** Pokesim
-**Owner / committer identity:** `user.email=5zyxn9yrnt@privaterelay.appleid.com user.name=TheYfactora12`
-**All new feature tickets:** assigned to `@TheYfactora12`
+**Owner / committer identity:** use the local git identity configured for the active Alfredo checkout
+**Issue ownership:** assign by current repo ownership and reviewer agreement, not by a copied default
 
 ---
 

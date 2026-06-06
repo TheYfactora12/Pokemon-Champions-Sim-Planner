@@ -52,7 +52,8 @@ git push --force
 | 2026-05-15 | @TheYfactora12 | Strategy report memoization + bounded cache | Added stable results hashing, LRU-bounded strategy-report memoization, and regression coverage for identical-call reuse and cache cap behavior. Bundle rebuilt and validated. |
 | 2026-05-15 | @TheYfactora12 | Josh sprint cleanup: CONTRIBUTING.md path + stat panel markup tracker | Added `poke-sim/CONTRIBUTING.md` for manual contributors and closed the stat-panel markup tracker after confirming the current markup/tests already satisfy it. |
 | 2026-05-15 | @TheYfactora12 | Export My Data JSON + history export wiring | Added one-click JSON export for persisted sim history, current cached report state, and DB analyses/logs for the active team. Bundle rebuilt and validated. |
-| 2026-05-15 | @TheYfactora12 | Mechanics audit harness + shared Battle Audit panel + role utility refinement | Added reusable mechanics audit cases/runner, browser smoke coverage, structured battle audit panel, and first-turn support utility bias. Bundle rebuilt and validated. Hosted test site published on fork Pages: https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/ |
+| 2026-05-15 | @TheYfactora12 | Mechanics audit harness + shared Battle Audit panel + role utility refinement | Added reusable mechanics audit cases/runner, browser smoke coverage, structured battle audit panel, and first-turn support utility bias. Bundle rebuilt and validated. |
+| 2026-05-24 | @alfredocox + @TheYfactora12 | Synced Alfredo main to validated Y Factor simulator state | Brought replay parsing, Battle Sensei replay review, 29-team seed alignment, item-clause repairs, regional-form stat fixes, Fake Out first-turn-of-stay gating, and entry ability logs into Alfredo's repo. Validate against the current `main` branch before opening new sync PRs. |
 | 2026-05-11 | @alfredocox | M9 implementation: hardening/advisor/migration baseline suite + 10 TDD cases GREEN | POK-25. Fixed test assertions to match actual baseline migration (`IF NOT EXISTS`) and RLS per-table policies. Added `apply_migration` workflow docs to `README_DB.md`. Fixed `package.json` test script assertion. 68/68 total DB tests GREEN. |
 | 2026-05-11 | @alfredocox | M8 implementation: `loadPriorSnapshot` + `applyPrior` engine wiring + 10 TDD cases GREEN | POK-24. Adapter queries `prior_snapshots` table (fail-soft). Engine `buildAnalysisPayload` accepts `ctx.prior` → populates `prior_id`, `hidden_info_model`, enriched `hidden_info_priors`. Mock infra updated with `lte()` filter + select filtering. Bundle rebuilt (930KB). `sw.js` bumped to v15-m8-priors. |
 | 2026-05-11 | @alfredocox | Live app bundle fix: removed `</script>` from JS comment in `supabase_adapter.js` | Root cause: literal `</script>` in comment caused HTML parser to close `<script>` block early when inlined by `build-bundle.py`. Defense-in-depth: `sanitize_inline_js()` added to build script. |
@@ -111,7 +112,7 @@ git push --force
 
 | Item | Value |
 |---|---|
-| Active GitHub repository | `TheYfactora12/Pokemon-Champions-Sim-Planner` |
+| Active GitHub repository | `alfredocox/Pokemon-Champions-Sim-Planner` |
 | Clean PR 1 base checkout | `C:\Users\kevin\OneDrive\Documents\GitHub\New folder\Pokemon-Champions-Sim-Planner` on `main` |
 | DB/Supabase work checkout | `C:\Users\kevin\OneDrive\Documents\GitHub\Pokemon-Champions-Sim-Planner` on `feat/db-rls-supabase-adapter` |
 | Empty dir (do not use) | `C:\Users\kevin\OneDrive\Documents\New project` |
@@ -313,8 +314,8 @@ You are continuing development of **Pokémon Champion 2026**, a production-grade
 **Default branch:** `main`
 **Active dev branch:** `main` (all work goes directly to main)
 **Space name:** Pokesim
-**Owner / committer identity:** `user.email=5zyxn9yrnt@privaterelay.appleid.com user.name=TheYfactora12`
-**All new feature tickets:** assigned to `@TheYfactora12`
+**Owner / committer identity:** use the local git identity configured for the active Alfredo checkout
+**Issue ownership:** assign by current repo ownership and reviewer agreement, not by a copied default
 
 ---
 

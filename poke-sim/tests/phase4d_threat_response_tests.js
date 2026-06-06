@@ -91,7 +91,8 @@ const KNOWN_TEAMS = [
   'player', 'mega_altaria', 'mega_dragonite', 'mega_houndoom',
   'rin_sand', 'suica_sun', 'cofagrigus_tr',
   'champions_arena_1st', 'champions_arena_2nd', 'champions_arena_3rd',
-  'chuppa_balance', 'aurora_veil_froslass', 'kingambit_sneasler'
+  'chuppa_balance', 'aurora_veil_froslass', 'kingambit_sneasler',
+  'fabulous_sunroom', 'sand_bulky_offense', 'fire_ice_fullroom', 'zardx_snow_setup'
 ];
 
 console.log('\n=== Phase 4d threat response tests ===\n');

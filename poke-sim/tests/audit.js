@@ -9,12 +9,13 @@ globalThis._exported = { Pokemon, Field, TEAMS, simulateBattle, validateTeam, BA
 new vm.Script(combined).runInThisContext();
 const { TEAMS, simulateBattle, validateTeam } = globalThis._exported;
 
-// Filter to the 13 known teams (skip any custom_* imports)
+// Filter to the known shipped teams (skip any custom_* imports)
 const KNOWN_TEAMS = [
   'player', 'mega_altaria', 'mega_dragonite', 'mega_houndoom',
   'rin_sand', 'suica_sun', 'cofagrigus_tr',
   'champions_arena_1st', 'champions_arena_2nd', 'champions_arena_3rd',
-  'chuppa_balance', 'aurora_veil_froslass', 'kingambit_sneasler'
+  'chuppa_balance', 'aurora_veil_froslass', 'kingambit_sneasler',
+  'fabulous_sunroom', 'sand_bulky_offense', 'fire_ice_fullroom', 'zardx_snow_setup'
 ];
 
 const available = KNOWN_TEAMS.filter(k => TEAMS[k]);
@@ -25,7 +26,7 @@ if (available.length === 0) {
   process.exit(1);
 }
 
-const N = 30; // 30 battles per matchup = 13*13*30 = 5070 battles total
+const N = 20; // 20 battles per matchup across the shipped calibration set
 const FORMAT = 'doubles';
 
 function auditSeed(player, opp, battleIndex) {

@@ -1,6 +1,6 @@
 # poke-sim/tools — M3 Runbook
 > **Pokémon Champion 2026** · Build & Release SOP  
-> Maintained by: `@TheYfactora12` · Last updated: 2026-04-27  
+> Maintained by: repo contributors · Last updated: 2026-05-24
 > **"Battle-tested. Always evolving."**
 
 ---
@@ -324,8 +324,8 @@ Next release: use `v9-{tag}`.
 | Role | Handle | Responsibility |
 |---|---|---|
 | Project Owner | `@alfredocox` | Repo owner, final merge authority |
-| Lead Dev / PM | `@TheYfactora12` | All new feature tickets, releases |
+| Lead Dev / PM | repo owner / active reviewer | Feature tickets, releases |
 
-> All new feature issues → assigned to `@TheYfactora12`  
+> All new feature issues → assign based on the current repo owner's queue and active reviewer
 > ⚠️ Do NOT delete `archive/snapshot-*` branches — team safety net  
-> Tag `@TheYfactora12` before any PR that restructures `poke-sim/`
+> Tag the active reviewer before any PR that restructures `poke-sim/`
