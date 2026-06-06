@@ -17,6 +17,7 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 
 ### Fixed
 - Aligned local move priority with Showdown for `Feint` (+2), `Ice Shard` (+1), and Protect-family shields such as `King's Shield` (+4).
+- Restored the replay-analysis entry point as a top-level `Review` tab label so testers can find the overview/review workflow faster.
 
 ### Validation
 - Five user-provided exported logs passed with zero hard errors: no item drift, key-map mismatch, HP-key mismatch, speed-order key mismatch, or observed priority-order mismatch.
