@@ -15,6 +15,7 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 - Team closeout note for the Alfredo merge candidate and Showdown/Supabase follow-up path.
 - Repo parity report showing the shared 1:1 merge candidate branch, current `main` divergence, PR links, and Jdoutt38 review/QA list.
 - Closure confidence report that separates proven closed candidate work from items that must remain open until PR, CI, deployment, strict logs, or human QA complete.
+- Jdoutt38 issue investigation report that separates ready-for-review tasks from Sources/Data Provenance, Team Snapshot, and Coach Recommends implementation work.
 - Exported turn-log validator for downloaded `champions-turn-log-*.json` files. It checks roster identity, item drift, active/bench key maps, HP key coverage, speed-order key coverage, and observed priority/speed order.
 - Showdown priority drift test that compares shipped move priorities against generated Pokemon Showdown move metadata, with an explicit Champions override allowlist.
 - Team-facing validation note for the 2026-06-05 user-provided logs.

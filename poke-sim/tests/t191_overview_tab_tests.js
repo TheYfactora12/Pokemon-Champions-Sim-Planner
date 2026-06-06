@@ -51,6 +51,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Apply sync/audit DB migrations');
   inc(ui, 'Add entity and override tables');
   inc(ui, 'Generate app assets from approved DB views');
+  inc(ui, 'Jdoutt38 Investigation');
+  inc(ui, 'JDOUTT38_INVESTIGATION_2026-06-06.md');
   inc(ui, 'Closure Confidence');
   inc(ui, 'CLOSURE_CONFIDENCE_2026-06-06.md');
   inc(ui, 'Repo Parity Report');
