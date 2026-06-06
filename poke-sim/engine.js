@@ -1407,6 +1407,12 @@ function _buildPositionState(playerActive, playerBench, oppActive, oppBench, fie
 
 function positionScore(state) {
   state = state || {};
+  if (state.score_state && state.score_state.player && state.score_state.opponent) {
+    state = Object.assign({}, state, {
+      player: state.score_state.player,
+      opponent: state.score_state.opponent
+    });
+  }
   if ((!state.player || !state.opponent) && state.active && state.bench) {
     const hpPct = state.hp_pct || {};
     const roster = state.roster || {};
@@ -1489,6 +1495,10 @@ function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field
     active_keys: { player: state.player.active_keys, opponent: state.opponent.active_keys },
     bench_keys: { player: state.player.bench_keys, opponent: state.opponent.bench_keys },
     hp_pct: _hpPctSnapshot(playerActive, playerBench, oppActive, oppBench),
+    score_state: {
+      player: Object.assign({}, state.player),
+      opponent: Object.assign({}, state.opponent)
+    },
     roster: {
       player: _battleRosterSnapshot(playerActive, playerBench, playerRoster || playerActive.concat(playerBench), 'player'),
       opponent: _battleRosterSnapshot(oppActive, oppBench, oppRoster || oppActive.concat(oppBench), 'opponent')

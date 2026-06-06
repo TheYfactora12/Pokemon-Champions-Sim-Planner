@@ -126,6 +126,37 @@ T('T5a-1b exported turn snapshots can be rescored directly', () => {
   const first = battleA.turnLog[0] || {};
   eq(ctx.positionScore(first.pre), first.pre.position_score, 'flattened pre snapshot score mismatch');
   eq(ctx.positionScore(first.post), first.post.position_score, 'flattened post snapshot score mismatch');
+
+  truthy(first.pre.score_state && first.pre.score_state.player && first.pre.score_state.opponent, 'score_state missing from pre snapshot');
+
+  const flattenedWithScoreState = {
+    active: { player: ['A'], opponent: ['B'] },
+    bench: { player: [], opponent: [] },
+    active_keys: { player: ['player:active:0:A'], opponent: ['opponent:active:0:B'] },
+    bench_keys: { player: [], opponent: [] },
+    hp_pct: { 'player:active:0:A': 0.333, 'opponent:active:0:B': 0.667 },
+    roster: {
+      player: [{ displayName: 'A', status: 'active' }],
+      opponent: [{ displayName: 'B', status: 'active' }]
+    },
+    status: {},
+    field: {},
+    speed_control: { player: {}, opponent: {} },
+    speed_order_keys: ['player:active:0:A', 'opponent:active:0:B'],
+    score_state: {
+      player: { hp_total: 0.3334, alive_count: 1, max_count: 1, active: ['A'], bench: [], active_keys: ['player:active:0:A'], bench_keys: [] },
+      opponent: { hp_total: 0.6666, alive_count: 1, max_count: 1, active: ['B'], bench: [], active_keys: ['opponent:active:0:B'], bench_keys: [] }
+    }
+  };
+  const nestedEquivalent = {
+    player: flattenedWithScoreState.score_state.player,
+    opponent: flattenedWithScoreState.score_state.opponent,
+    status: {},
+    field: {},
+    speed_control: { player: {}, opponent: {} },
+    speed_order_keys: ['player:active:0:A', 'opponent:active:0:B']
+  };
+  eq(ctx.positionScore(flattenedWithScoreState), ctx.positionScore(nestedEquivalent), 'score_state should preserve exact scorer inputs');
 });
 
 T('T5a-1c roster calculated stats include non-HP stats', () => {
