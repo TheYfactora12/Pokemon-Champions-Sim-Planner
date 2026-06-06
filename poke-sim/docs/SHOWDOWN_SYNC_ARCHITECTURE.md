@@ -67,6 +67,38 @@ Validation layer
 
 ---
 
+## Data Mirror Contract
+
+The long-term goal is to make Showdown the canonical upstream mirror for static Pokemon data, then keep Champions-specific differences as reviewed override rows.
+
+Static data that should mirror Showdown 1:1:
+
+- move identity, priority, target, flags, type, category, base power, accuracy, PP, status, volatile status, boosts, secondaries, drain/recoil, terrain/weather/field markers
+- species/forms, typing, stats, aliases, learnsets, required item/form metadata
+- item and ability metadata, including berries, mega stones, fling data, short descriptions, and nonstandard flags
+- type chart and format metadata
+
+Data that should not be silently edited in the Showdown mirror:
+
+- Champions damage-roll rules
+- Champions status nerfs
+- Champions Mega forms, custom abilities, custom items, or timing differences
+- Champions-specific Protect, priority, terrain, or item behavior changes
+
+Those differences belong in `champions_overrides` with source notes and tests. The frontend can still receive a generated JS artifact for offline GitHub Pages, but the source of truth should be:
+
+```text
+showdown_raw_sources
+  -> showdown_entities
+  -> approved_app_data
+  -> champions_overrides
+  -> generated app assets
+```
+
+This keeps the app easy to sync while avoiding hidden hand-maintained static tables in `engine.js` and `data.js`.
+
+---
+
 ## Showdown Pull Targets
 
 Primary source: `https://play.pokemonshowdown.com/data/`
@@ -87,6 +119,11 @@ Secondary source:
 - `smogon/pokemon-showdown` repo for simulator code, protocol docs, and exact git commit references.
 - `@pkmn/sim` for typed/package-based local simulator usage when browser or CI packaging matters.
 - `@smogon/calc` for targeted damage-range checks where a full battle stream is heavier than needed.
+
+Current local guardrail:
+
+- `tests/showdown_priority_drift_tests.js` compares local `getPriority()` for every shipped move against generated Showdown move metadata, with a Champions override allowlist for intentional differences.
+- `tools/validate-turn-logs.mjs` uses the same corrected priority assumptions to audit exported battle logs.
 
 ---
 

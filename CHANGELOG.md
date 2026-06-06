@@ -10,6 +10,18 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 
 ## [Unreleased]
 
+### Added
+- Exported turn-log validator for downloaded `champions-turn-log-*.json` files. It checks roster identity, item drift, active/bench key maps, HP key coverage, speed-order key coverage, and observed priority/speed order.
+- Showdown priority drift test that compares shipped move priorities against generated Pokemon Showdown move metadata, with an explicit Champions override allowlist.
+- Team-facing validation note for the 2026-06-05 user-provided logs.
+
+### Fixed
+- Aligned local move priority with Showdown for `Feint` (+2), `Ice Shard` (+1), and Protect-family shields such as `King's Shield` (+4).
+
+### Validation
+- Five user-provided exported logs passed with zero hard errors: no item drift, key-map mismatch, HP-key mismatch, speed-order key mismatch, or observed priority-order mismatch.
+- The same logs warn as legacy exports because they lack `stableKey`, stable HP maps, and `itemConsumed`, so future exports should be taken after a hard refresh and checked with `node tools/validate-turn-logs.mjs --require-stable`.
+
 ### Planned
 - **T9j.17** (engine closeout, closes M1) - Piercing Drill 25% miss chance, Parental Bond 0.25x second hit, Fake Out hard-gate (turn-1 only + Inner Focus immune), status weakening residuals, #36 Expanding Force x Psychic Terrain dynamic target + BP boost, #44 Terrain Seed items (Grassy/Electric/Psychic/Misty Seed)
 - **M7-M11 infrastructure milestones** (23 issues, #77 - #99) across Architecture, Profile & Sync, Observability, Perf, Advanced Features

@@ -112,6 +112,29 @@ Called automatically by CI on every PR via `bundle-freshness-check.yml`.
 
 ---
 
+### `validate-turn-logs.mjs`
+Audits exported `champions-turn-log-*.json` files from the Replay Log download flow.
+
+Checks:
+- roster identity across active, bench, and fainted states
+- item drift across switches/replacements
+- active/bench key maps
+- HP and speed-order key coverage
+- observed event order against move priority plus snapshot speed order
+
+```bash
+# Legacy-compatible validation
+cd poke-sim
+node tools/validate-turn-logs.mjs path/to/champions-turn-log.json
+
+# Strong validation for current exports; fails if stable identity fields are missing
+node tools/validate-turn-logs.mjs --require-stable path/to/champions-turn-log.json
+```
+
+If `--require-stable` fails on a newly downloaded log, hard-refresh the GitHub Pages preview and export again. The browser may still be serving an older cached bundle.
+
+---
+
 ## 3. Standard Release — M3 Steps
 
 > Follow **all 6 steps** every time source files change. Do not skip steps.

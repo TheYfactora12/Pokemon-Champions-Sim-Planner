@@ -3422,10 +3422,12 @@ function getPriority(move, attacker) {
   // Rage Powder and Follow Me are +2 in Champions (ORACLE-DIVERGENCE-3 vs SV +3).
   const P = {
     'Fake Out':3, 'Extreme Speed':2, 'Aqua Jet':1, 'Shadow Sneak':1,
-    'Sucker Punch':1, 'Vacuum Wave':1, 'Quick Attack':1,
+    'Sucker Punch':1, 'Vacuum Wave':1, 'Quick Attack':1, 'Ice Shard':1,
+    'Feint':2,
     'Helping Hand':5,
     'Endure':4,
     'Protect':4, 'Detect':4,
+    "King's Shield":4, 'Spiky Shield':4, 'Baneful Bunker':4, 'Obstruct':4,
     'Wide Guard':3, 'Quick Guard':3, 'Ally Switch':2,
     'Follow Me':2, 'Rage Powder':2,
     'Trick Room':-7, 'Roost':0

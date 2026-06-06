@@ -28,7 +28,7 @@
       ],
       "format": "doubles",
       "description": "Player (speed) vs Chuppa Balance — seed 2024",
-      "expected_trace_hash": "3c3fa98482be90cdf2e78bbe7eb6d97eb5373f7d2caa390ae8811c34b13e2f67",
+      "expected_trace_hash": "542f9111c31db74ed919b7fc2b08805314a4b3147fe12040e158374573883d40",
       "expected_winner": "win"
     },
     {
@@ -43,7 +43,7 @@
       ],
       "format": "doubles",
       "description": "Cofagrigus TR vs Chuppa Balance — seed 9999",
-      "expected_trace_hash": "5aaad49d2f6f20cebceb43838cc6ff5dbd94aacd164211bd3053cf6cce07f7dc",
+      "expected_trace_hash": "5986a903a781ae112c098d0a77612e7d006dca52eae7373eec57dc72467eb506",
       "expected_winner": "win"
     }
   ]

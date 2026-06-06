@@ -28,7 +28,8 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v43-sim-board-bootstrap';
+// v44-showdown-priority [2026-06-05] - Showdown priority alignment plus exported turn-log validation.
+const CACHE_NAME = 'champions-sim-v44-showdown-priority';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
