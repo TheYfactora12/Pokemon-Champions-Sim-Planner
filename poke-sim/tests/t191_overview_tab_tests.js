@@ -51,6 +51,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Apply sync/audit DB migrations');
   inc(ui, 'Add entity and override tables');
   inc(ui, 'Generate app assets from approved DB views');
+  inc(ui, 'Showdown DB Stress Test');
+  inc(ui, 'SHOWDOWN_DB_WIRING_STRESS_TEST_2026-06-06.md');
   inc(ui, 'Jdoutt38 Investigation');
   inc(ui, 'JDOUTT38_INVESTIGATION_2026-06-06.md');
   inc(ui, 'Closure Confidence');
