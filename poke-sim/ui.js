@@ -5161,11 +5161,11 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-06-06',
+  updated: '2026-06-07',
   metrics: [
     { label: 'Sim Truth Gate', value: 'Active' },
     { label: 'Live Supabase', value: 'Teams + analyses' },
-    { label: 'Showdown DB', value: 'Generated primary' },
+    { label: 'Showdown DB', value: 'Approved path staged' },
     { label: 'Priority Drift', value: 'Guarded' },
     { label: 'Turn Logs', value: 'Validator ready' }
   ],
@@ -5189,6 +5189,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Showdown primary move metadata for imported teams',
       detail: 'The engine now reads generated Showdown move rows first for type, category, base power, accuracy, priority, target, and contact flags, then falls back to local Champions data for custom gaps.'
+    },
+    {
+      status: 'done',
+      title: 'Approved Showdown DB generator staged',
+      detail: 'The repo now has the showdown_entities/champions_overrides migration candidate plus a deterministic generator that emits runtime app data from approved DB rows.'
     },
     {
       status: 'done',
@@ -5225,17 +5230,17 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'CI-style local sweep passed',
-      detail: 'The workflow-shaped local pass ran 84 JS test files with the known helper/manual exclusions and zero failures.'
+      detail: 'The workflow-shaped local pass ran 85 JS test files with the known helper/manual exclusions and zero failures.'
     },
     {
       status: 'validated',
       title: 'Priority and turn-log tests are green',
-      detail: 'showdown_priority_drift_tests.js, turn_order_priority_tests.js, recoil_faint_turn_log_tests.js, move_support_audit_tests.js, and turn_log_export_validator_tests.js passed after the fixes.'
+      detail: 'showdown_priority_drift_tests.js, showdown_approved_data_generator_tests.js, turn_order_priority_tests.js, recoil_faint_turn_log_tests.js, move_support_audit_tests.js, and turn_log_export_validator_tests.js passed after the fixes.'
     },
     {
       status: 'validated',
       title: 'Live preview bundle contains the new safeguards',
-      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the v48 Showdown-primary service-worker cache.'
+      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the v49 approved-Showdown service-worker cache.'
     },
     {
       status: 'validated',
@@ -5246,8 +5251,8 @@ var CS_OVERVIEW_DATA = {
   gaps: [
     {
       status: 'gap',
-      title: 'Showdown mirror tables are not live in Supabase yet',
-      detail: 'showdown_sync_runs, showdown_source_files, mechanics_validation tables, showdown_entities, and champions_overrides are not readable in the live DB.'
+      title: 'Showdown mirror migrations are staged but not live yet',
+      detail: 'The repo has migration files for showdown_sync_runs, showdown_source_files, mechanics_validation tables, showdown_entities, and champions_overrides, but they still need to be applied to live Supabase.'
     },
     {
       status: 'gap',
@@ -5293,8 +5298,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
-      title: 'Add entity and override tables',
-      detail: 'Create showdown_entities, showdown_entity_diffs, champions_overrides, approved_showdown_entities, and approved_champions_data.'
+      title: 'Apply entity and override table migration',
+      detail: 'Run 2026_06_07_showdown_entities_approved_views.sql so approved_showdown_entities and approved_champions_data exist in live Supabase.'
     },
     {
       status: 'next',

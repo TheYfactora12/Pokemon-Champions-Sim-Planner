@@ -333,8 +333,9 @@ function _moveCategory(move) {
 
 function _moveBasePower(move) {
   var row = _showdownMoveRow(move);
-  if (row && row.base_power !== undefined && row.base_power !== null && row.base_power !== '') {
-    var bp = Number(row.base_power);
+  var rowBasePower = row && row.base_power !== undefined ? row.base_power : (row && row.basePower);
+  if (rowBasePower !== undefined && rowBasePower !== null && rowBasePower !== '') {
+    var bp = Number(rowBasePower);
     if (Number.isFinite(bp)) return bp;
   }
   if (typeof MOVE_BP !== 'undefined' &&
@@ -371,6 +372,7 @@ function _moveTargetCategory(move) {
 function _moveHasFlag(move, flag) {
   var row = _showdownMoveRow(move);
   if (!row || !row.flags) return false;
+  if (typeof row.flags === 'object') return !!row.flags[flag];
   return String(row.flags).split('|').indexOf(flag) >= 0;
 }
 

@@ -14,6 +14,7 @@ Only mark work closed when the repo has direct evidence: code is present, docs a
 | Repo parity report exists | `docs/release/REPO_PARITY_REPORT_2026-06-06.md` documents both repos, branch status, PR links, and Jdoutt38 list | Closed on candidate |
 | Closeout note exists | `docs/release/CLOSEOUT_2026-06-06.md` documents done/open/next and the closeout definition | Closed on candidate |
 | Showdown priority drift guard exists | `tests/showdown_priority_drift_tests.js` passed 4/4 | Closed on candidate |
+| Approved Showdown DB migration/generator is staged | `db/migrations/2026_06_07_showdown_entities_approved_views.sql`, `tools/generate-approved-data-from-db.mjs`, and `tests/showdown_approved_data_generator_tests.js` exist | Closed in repo, not live DB |
 | Exported turn-log validator exists | `tests/turn_log_export_validator_tests.js` passed 5/5 | Closed on candidate |
 | App bundle contains latest Overview links | `python tools/build-bundle.py` rebuilt `poke-sim/pokemon-champion-2026.html` after Overview doc-link updates | Closed on candidate |
 
@@ -25,7 +26,7 @@ Only mark work closed when the repo has direct evidence: code is present, docs a
 | Shared candidate PRs | No open PR exists yet for `merge-candidate/alfredo-main-2026-06-06` in either repo | Open PRs |
 | GitHub Pages preview for candidate work | Candidate is not merged to `main`, so Pages has not deployed this branch state | Merge, wait for Pages, verify live URL |
 | Strict fresh turn-log proof | Existing user logs were legacy/non-strict; strict proof requires hard-refreshed new exports | Run `validate-turn-logs.mjs --require-stable` on new logs |
-| Showdown/Supabase mirror DB source of truth | Architecture docs exist, but live DB tables/views/generator are not complete | Apply migrations, add entity/override tables, generate approved data |
+| Showdown/Supabase mirror DB source of truth | Repo migration/generator slice is staged, but live DB migration, DB write path, approval workflow, and release gates are not complete | Apply migrations, write entity/diff rows, generate approved data from live views |
 | Jdoutt38 workbook review | The workbook review issue is still open and requires human review | Jdoutt38 comments approved or row fixes |
 | Jdoutt38 manual QA | Manual browser QA is still open | Jdoutt38 records pass/fail evidence |
 | Data provenance cleanup | Broader release evidence-language work is not complete | Implement and test Sources/Data Sources alignment |
@@ -50,6 +51,7 @@ Reason:
 tests/t190_battle_sensei_summary_timeline_tests.js: 7 pass, 0 fail
 tests/t191_overview_tab_tests.js: 6 pass, 0 fail
 tests/showdown_priority_drift_tests.js: 4 pass, 0 fail
+tests/showdown_approved_data_generator_tests.js: 4 pass, 0 fail
 tests/turn_log_export_validator_tests.js: 5 pass, 0 fail
 ```
 
@@ -63,4 +65,3 @@ tests/turn_log_export_validator_tests.js: 5 pass, 0 fail
 6. Export fresh logs from the deployed preview.
 7. Run strict turn-log validation.
 8. Close only the issues whose acceptance criteria are fully met by merged code, docs, tests, and QA evidence.
-

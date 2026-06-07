@@ -231,37 +231,39 @@ Default behavior should be "detect and open/report", not "auto-merge". Showdown 
 
 - [ ] Confirm which repo branch is the active TheYfactora release branch.
 - [x] Add `docs/SHOWDOWN_SYNC_ARCHITECTURE.md` to the spec index.
-- [ ] Add a machine-readable source manifest, for example `tools/showdown_sources.json`.
+- [x] Add a machine-readable source manifest, for example `tools/showdown_sources.json`.
 - [ ] Record current generated data hash for `generated/pokemon_showdown_legal_data.js`.
 - [ ] Record current upstream Showdown source URLs and fetched hashes.
 
 ### Phase 2: Fetch And Diff
 
-- [ ] Build `tools/fetch_showdown_data.mjs`.
+- [x] Build `tools/fetch_showdown_data.mjs`.
 - [ ] Fetch each configured CDN source.
 - [ ] Save raw source snapshots as CI artifacts, not committed blobs.
-- [ ] Parse each source into normalized JSON.
-- [ ] Produce entity-level diffs.
+- [x] Parse each source into normalized JSON.
+- [x] Produce entity-level diffs.
 - [ ] Fail the job if a source file cannot parse.
 
 ### Phase 3: Supabase Sync Audit
 
-- [ ] Add migration for `showdown_sync_runs`.
-- [ ] Add migration for `showdown_source_files`.
-- [ ] Add migration for `showdown_entities`.
-- [ ] Add migration for `showdown_entity_diffs`.
-- [ ] Add migration for `mechanics_validation_runs`.
-- [ ] Add migration for `mechanics_validation_findings`.
-- [ ] Add migration for `champions_overrides`.
-- [ ] Add tests proving anon users cannot mutate sync tables.
-- [ ] Add indexes on `run_id`, `entity_kind`, `entity_id`, `source_hash`, and `severity`.
-- [ ] Add unique constraints that make repeated sync writes idempotent.
+- [x] Add migration for `showdown_sync_runs`.
+- [x] Add migration for `showdown_source_files`.
+- [x] Add migration for `showdown_entities`.
+- [x] Add migration for `showdown_entity_diffs`.
+- [x] Add migration for `mechanics_validation_runs`.
+- [x] Add migration for `mechanics_validation_findings`.
+- [x] Add migration for `champions_overrides`.
+- [x] Add tests proving anon users cannot mutate entity/override rows.
+- [x] Add indexes on run IDs, entity kind/key, source hash, status, and severity.
+- [x] Add unique constraints that make repeated sync writes idempotent.
+
+Repo note: the migrations and tests are staged in source. Live Supabase still needs the migration workflow to apply them.
 
 ### Phase 4: Generated Assets
 
-- [ ] Convert normalized Showdown data into `generated/pokemon_showdown_legal_data.js`.
-- [ ] Keep the generated asset deterministic.
-- [ ] Include upstream source version/hash in the generated file.
+- [x] Convert approved Showdown rows into `generated/pokemon_showdown_legal_data.js`.
+- [x] Keep the generated asset deterministic.
+- [x] Include upstream source version/hash in the generated file.
 - [ ] Add a freshness check to CI.
 - [ ] Open a PR when generated output changes.
 
@@ -351,4 +353,4 @@ create table if not exists mechanics_validation_findings (
 );
 ```
 
-Follow-up migrations can add the heavier `showdown_entities`, `showdown_entity_diffs`, and `champions_overrides` tables once the first sync job is producing stable normalized JSON.
+Follow-up migration `2026_06_07_showdown_entities_approved_views.sql` now adds the heavier `showdown_entities`, `showdown_entity_diffs`, and `champions_overrides` tables plus approved read views. The remaining work is applying it to live Supabase and wiring sync output into those rows.

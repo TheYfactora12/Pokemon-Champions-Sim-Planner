@@ -148,11 +148,9 @@ Already present:
 Still missing:
 
 - DB write path from `fetch_showdown_data.mjs` to Supabase.
-- `showdown_entities` migration.
-- `showdown_entity_diffs` migration.
-- `champions_overrides` migration.
-- approved read views for app consumption.
-- generator from approved DB views to deterministic JS.
+- live application of the staged `showdown_entities` / `showdown_entity_diffs` / `champions_overrides` migration.
+- live approved read views for app consumption.
+- production generation from approved DB views to deterministic JS.
 - release gate that fails when high-severity Showdown drift is unresolved.
 
 ## Recommended Next Implementation Steps
@@ -163,7 +161,7 @@ Still missing:
    - `showdown_source_files`
    - `mechanics_validation_runs`
    - `mechanics_validation_findings`
-3. Add second migration for:
+3. Apply the staged second migration:
    - `showdown_entities`
    - `showdown_entity_diffs`
    - `champions_overrides`
@@ -171,8 +169,8 @@ Still missing:
    - `approved_champions_data`
 4. Extend `tools/fetch_showdown_data.mjs` with an opt-in DB write mode for trusted CI only.
 5. Keep default sync behavior as detect/report, not auto-approve.
-6. Add tests proving anon users can read approved rows but cannot mutate sync/entity/override rows.
-7. Build `tools/generate-approved-data-from-db.mjs`.
+6. Promote generated DB fixtures into the live views and run `tools/generate-approved-data-from-db.mjs` against Supabase.
+7. Add live smoke proving anon users can read approved rows but cannot mutate sync/entity/override rows.
 8. Migrate static JS data gradually:
    - priority
    - move type/category/base power/targets
@@ -189,4 +187,3 @@ Do not mark the Showdown DB mirror as complete until all are true:
 - app assets can be generated from approved DB views
 - CI blocks unresolved high-severity drift
 - Champions-specific deltas are represented as override rows with tests
-

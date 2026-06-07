@@ -88,7 +88,8 @@
     var localCategory = typeof MOVE_CATEGORY !== 'undefined' && registryEntry(move, MOVE_CATEGORY) ? MOVE_CATEGORY[move] : '';
     var localBasePower = typeof MOVE_BP !== 'undefined' && registryEntry(move, MOVE_BP, true) ? MOVE_BP[move] : '';
     var localTarget = typeof MOVE_TARGETS !== 'undefined' && registryEntry(move, MOVE_TARGETS) ? MOVE_TARGETS[move] : '';
-    var hasShowdownBasePower = !!(row && Object.prototype.hasOwnProperty.call(row, 'base_power'));
+    var showdownBasePower = row && Object.prototype.hasOwnProperty.call(row, 'base_power') ? row.base_power : (row && row.basePower);
+    var hasShowdownBasePower = !!(row && (Object.prototype.hasOwnProperty.call(row, 'base_power') || Object.prototype.hasOwnProperty.call(row, 'basePower')));
     var hasType = !!(row && row.type) || !!localType;
     var hasCategory = !!(row && row.category) || !!localCategory;
     var hasBasePower = hasShowdownBasePower || localBasePower !== '';
@@ -112,14 +113,14 @@
     }
     return {
       moveName: move,
-      canonicalMoveName: row && row.move_name ? row.move_name : move,
+      canonicalMoveName: row && (row.move_name || row.name) ? (row.move_name || row.name) : move,
       moveId: toId(move),
       source: auditData && auditData.source ? auditData.source : 'unavailable',
       sourceVersion: auditData && auditData.sourceCommitOrVersion ? auditData.sourceCommitOrVersion : 'unavailable',
       showdown: row ? {
         type: row.type || '',
         category: row.category || '',
-        basePower: row.base_power,
+        basePower: showdownBasePower,
         target: row.target || '',
         flags: row.flags || ''
       } : null,
@@ -132,7 +133,7 @@
       effective: {
         type: row && row.type ? row.type : localType,
         category: row && row.category ? String(row.category).toLowerCase() : localCategory,
-        basePower: hasShowdownBasePower ? row.base_power : localBasePower,
+        basePower: hasShowdownBasePower ? showdownBasePower : localBasePower,
         target: row && row.target ? row.target : localTarget,
         source: row ? 'showdown' : (localType || localCategory || localBasePower !== '' || localTarget ? 'local' : 'missing')
       },

@@ -135,6 +135,34 @@ If `--require-stable` fails on a newly downloaded log, hard-refresh the GitHub P
 
 ---
 
+### `generate-approved-data-from-db.mjs`
+Builds the runtime Showdown data file from approved Supabase rows.
+
+Default live path reads:
+- `approved_showdown_entities`
+- `approved_champions_data`
+
+```bash
+cd poke-sim
+SUPABASE_URL=https://your-project-ref.supabase.co \
+SUPABASE_ANON_KEY=your-anon-public-key \
+npm run showdown:generate-approved
+```
+
+Fixture/artifact path for CI or review:
+
+```bash
+cd poke-sim
+node tools/generate-approved-data-from-db.mjs \
+  --entities artifacts/showdown-sync/approved_entities.json \
+  --overrides artifacts/showdown-sync/approved_overrides.json \
+  --out generated/pokemon_showdown_legal_data.js
+```
+
+The output is deterministic and assigns `window.ChampionsSim.pokemonDataAudit`, matching the runtime contract already consumed by `engine.js` and `move_support.js`.
+
+---
+
 ## 3. Standard Release — M3 Steps
 
 > Follow **all 6 steps** every time source files change. Do not skip steps.

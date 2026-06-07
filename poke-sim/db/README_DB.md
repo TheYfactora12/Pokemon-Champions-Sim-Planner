@@ -21,6 +21,7 @@ Supabase (Postgres + RLS) + `supabase-js` v2
 | `rls_policies_v1.sql` | Row-level security policies | Ready to run |
 | `migrations/2026_05_24_upsert_seed_teams_v2_repair.sql` | Superseded 25-team non-destructive repair seed | Historical reference; use the 29-team shared catalog migration now |
 | `migrations/2026_05_24_align_shared_29_team_catalog.sql` | Non-destructive 29-team shared catalog alignment | Preferred live-DB migration after this alignment PR |
+| `migrations/2026_06_07_showdown_entities_approved_views.sql` | Approved Showdown mirror tables, diff rows, Champions overrides, and approved read views | Migration candidate; apply before generating app assets from Supabase-approved rows |
 | `README_DB.md` | This file | — |
 
 > Do not run the delete-first `seed_teams_v2.sql` or `2026_04_28_seed_teams_v2.sql` against a live DB that already has `analyses` rows. Use `2026_05_24_align_shared_29_team_catalog.sql` instead.
@@ -39,7 +40,9 @@ UI wiring: `poke-sim/ui.js` already loads DB teams on startup and persists analy
 | 3 | `seed_teams_v2.sql` | Fresh DB/reference only; loads 29 canonical teams |
 | 4 | `rls_policies_v1.sql` | Locks down security |
 | 5 | `migrations/2026_05_24_align_shared_29_team_catalog.sql` | Existing/live DB repair path; safe with analysis FK history |
-| 6 | Wire local or CI credentials | See below |
+| 6 | `migrations/2026_06_06_showdown_sync_audit_tables.sql` | Adds Showdown sync/audit evidence tables |
+| 7 | `migrations/2026_06_07_showdown_entities_approved_views.sql` | Adds approved Showdown entity/override layer and read views |
+| 8 | Wire local or CI credentials | See below |
 
 ## Current Seed Repair Status (2026-05-24)
 
@@ -243,6 +246,8 @@ The M10 live DB snapshot warning should be gone once the remote schema includes 
 | `2026_05_24_upsert_seed_teams_v2_repair.sql` | Superseded non-destructive 25-team seed repair for live DB alignment |
 | `2026_05_24_align_shared_29_team_catalog.sql` | Non-destructive shared 29-team catalog alignment for existing live DBs |
 | `2026_05_24_fix_champions_arena_2nd_item_clause.sql` | Source-backed item correction for Jorge Tabuyo's finalist roster (`Sinistcha` -> `Kouba Berry`) |
+| `2026_06_06_showdown_sync_audit_tables.sql` | Adds Showdown sync runs, source files, mechanics validation runs, and findings |
+| `2026_06_07_showdown_entities_approved_views.sql` | Adds approved Showdown entities, entity diffs, Champions overrides, and approved read views |
 
 ---
 
@@ -251,6 +256,8 @@ The M10 live DB snapshot warning should be gone once the remote schema includes 
 - [x] Supabase project created and URL/key available
 - [ ] `schema_v1.sql` executed — tables visible in Table Editor
 - [ ] Current canonical seed alignment verified — 29 rows in `teams` table after `2026_05_24_align_shared_29_team_catalog.sql` runs
+- [ ] Showdown sync/audit migration applied — `showdown_sync_runs` and `showdown_source_files` visible
+- [ ] Showdown approved mirror migration applied — `approved_showdown_entities` and `approved_champions_data` visible
 - [ ] `rls_policies_v1.sql` executed — RLS enabled on all tables
 - [x] Supabase CDN `<script>` loads synchronously before `supabase_adapter.js` in `index.html`
 - [ ] Local browser smoke uses ignored `local-credentials.js`

@@ -22,11 +22,14 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 - Exported turn-log validator for downloaded `champions-turn-log-*.json` files. It checks roster identity, item drift, active/bench key maps, HP key coverage, speed-order key coverage, and observed priority/speed order.
 - Showdown priority drift test that compares shipped move priorities against generated Pokemon Showdown move metadata, with an explicit Champions override allowlist.
 - Showdown-primary move metadata bridge for imported/custom teams: move type, category, base power, accuracy, priority, target, and contact flags now read generated Showdown rows before falling back to local Champions gaps.
+- Approved Showdown DB migration/generator slice: `showdown_entities`, `showdown_entity_diffs`, `champions_overrides`, approved read views, and deterministic `generate-approved-data-from-db.mjs` runtime output.
 - Team-facing validation note for the 2026-06-05 user-provided logs.
 
 ### Fixed
 - Recoil moves now mark the attacker fainted and record KO state when recoil reaches 0 HP, preventing fainted Pokemon from staying active in post-turn snapshots.
 - Damage-based recoil now uses Showdown-compatible fractions, including `Head Smash` and `Light of Ruin` at 1/2 damage, `Flare Blitz`/`Wave Crash`/`Brave Bird`/`Double-Edge`/`Wood Hammer`/`Volt Tackle` at 33/100, and `Wild Charge`/`Take Down`/`Submission`/`Head Charge` at 1/4.
+- Showdown runtime adapters now accept both generated snake_case rows (`base_power`) and DB-native Showdown rows (`basePower`) for move metadata.
+- Bumped the service-worker cache to v49 so live users receive the approved-Showdown DB overview and adapter bundle.
 - Strict turn-log validation now allows legal same-priority exact Speed ties while still rejecting priority violations and non-tied speed-order reversals.
 - Bumped the service-worker cache to v48 so live users receive the Showdown-primary imported-move metadata bundle.
 - Bumped the service-worker cache to v47 so live users receive the recoil-faint cleanup bundle.
@@ -36,6 +39,7 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 
 ### Validation
 - Added/updated focused coverage for Showdown-primary imported move metadata (`Brave Bird`), Head Smash 1/2 recoil, recoil replacement snapshots, and move-support audit reporting.
+- Added `showdown_approved_data_generator_tests.js` coverage for approved DB RLS/view contract, Champions override application, unapproved-row exclusion, and engine compatibility.
 - Four fresh live exports were checked in strict mode: three passed cleanly, and `champions-turn-log-3765649682,915019675,502668142,3322095033.json` exposed the recoil-faint replacement bug now covered by `recoil_faint_turn_log_tests.js`.
 - Fresh live export `champions-turn-log-3597100759,1153237126,1130282361,1929379376.json` passes strict validation with stable IDs present: 8 turns, 0 errors, 0 warnings.
 - Five user-provided exported logs passed with zero hard errors: no item drift, key-map mismatch, HP-key mismatch, speed-order key mismatch, or observed priority-order mismatch.

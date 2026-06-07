@@ -1,0 +1,221 @@
+'use strict';
+
+const childProcess = require('child_process');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const vm = require('vm');
+
+const ROOT = path.resolve(__dirname, '..');
+const migrationPath = path.join(ROOT, 'db', 'migrations', '2026_06_07_showdown_entities_approved_views.sql');
+const generatorPath = path.join(ROOT, 'tools', 'generate-approved-data-from-db.mjs');
+
+let pass = 0;
+let fail = 0;
+
+function T(name, fn) {
+  try {
+    fn();
+    console.log('  PASS', name);
+    pass += 1;
+  } catch (err) {
+    console.log('  FAIL', name, '-', err.message);
+    fail += 1;
+  }
+}
+
+function truthy(value, msg) {
+  if (!value) throw new Error(msg || 'expected truthy');
+}
+
+function eq(actual, expected, msg) {
+  if (actual !== expected) throw new Error((msg || 'not equal') + ' expected=' + JSON.stringify(expected) + ' got=' + JSON.stringify(actual));
+}
+
+function fixtureRows() {
+  return {
+    entities: [
+      {
+        entity_id: 'move-bravebird',
+        entity_kind: 'move',
+        entity_key: 'bravebird',
+        display_name: 'Brave Bird',
+        source_hash: 'h-bravebird',
+        approved: true,
+        data: {
+          id: 'bravebird',
+          name: 'Brave Bird',
+          type: 'Flying',
+          category: 'Physical',
+          basePower: 120,
+          accuracy: 100,
+          priority: 0,
+          target: 'any',
+          flags: { contact: 1, protect: 1 },
+          recoil: [33, 100]
+        }
+      },
+      {
+        entity_id: 'move-hydropump',
+        entity_kind: 'move',
+        entity_key: 'hydropump',
+        display_name: 'Hydro Pump',
+        source_hash: 'h-hydropump',
+        approved: false,
+        data: {
+          id: 'hydropump',
+          name: 'Hydro Pump',
+          type: 'Water',
+          category: 'Special',
+          basePower: 110,
+          accuracy: 80,
+          priority: 0,
+          target: 'normal'
+        }
+      },
+      {
+        entity_id: 'species-charizard',
+        entity_kind: 'species',
+        entity_key: 'charizard',
+        display_name: 'Charizard',
+        source_hash: 'h-charizard',
+        approved: true,
+        data: {
+          id: 'charizard',
+          displayName: 'Charizard',
+          baseSpecies: 'Charizard',
+          stats: { hp: 78, atk: 84, def: 78, spa: 109, spd: 85, spe: 100 },
+          types: ['Fire', 'Flying'],
+          moves: { bravebird: '9M' }
+        }
+      }
+    ],
+    overrides: [
+      {
+        override_id: 'override-bravebird-priority',
+        entity_kind: 'move',
+        entity_key: 'bravebird',
+        field_path: 'priority',
+        override_value: 1,
+        reason: 'Fixture Champions override',
+        status: 'active'
+      },
+      {
+        override_id: 'override-rejected-base-power',
+        entity_kind: 'move',
+        entity_key: 'bravebird',
+        field_path: 'basePower',
+        override_value: 10,
+        reason: 'Rejected fixture override',
+        status: 'rejected'
+      },
+      {
+        override_id: 'override-missing-row',
+        entity_kind: 'move',
+        entity_key: 'missingmove',
+        field_path: 'priority',
+        override_value: 2,
+        reason: 'Missing row fixture',
+        status: 'active'
+      }
+    ]
+  };
+}
+
+function generateFixtureRuntime() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'champions-approved-data-'));
+  const rows = fixtureRows();
+  const entitiesPath = path.join(dir, 'entities.json');
+  const overridesPath = path.join(dir, 'overrides.json');
+  const outPath = path.join(dir, 'approved-runtime.js');
+  fs.writeFileSync(entitiesPath, JSON.stringify(rows.entities, null, 2));
+  fs.writeFileSync(overridesPath, JSON.stringify(rows.overrides, null, 2));
+  const result = childProcess.spawnSync(process.execPath, [
+    generatorPath,
+    '--entities', entitiesPath,
+    '--overrides', overridesPath,
+    '--out', outPath,
+    '--generated-at', '2026-06-07T00:00:00.000Z',
+    '--source-version', 'fixture-sync'
+  ], { cwd: ROOT, encoding: 'utf8' });
+  if (result.status !== 0) {
+    throw new Error('generator failed: ' + (result.stderr || result.stdout));
+  }
+  delete require.cache[outPath];
+  return { dir, outPath, runtime: require(outPath) };
+}
+
+console.log('\n=== approved Showdown data generator tests ===\n');
+
+T('1. migration creates approved entity, diff, override, and view objects', () => {
+  const sql = fs.readFileSync(migrationPath, 'utf8');
+  [
+    'CREATE TABLE IF NOT EXISTS showdown_entities',
+    'CREATE TABLE IF NOT EXISTS showdown_entity_diffs',
+    'CREATE TABLE IF NOT EXISTS champions_overrides',
+    'CREATE OR REPLACE VIEW approved_showdown_entities',
+    'CREATE OR REPLACE VIEW approved_champions_data',
+    'WITH (security_invoker = true)'
+  ].forEach((needle) => truthy(sql.includes(needle), 'missing SQL: ' + needle));
+});
+
+T('2. migration allows anon reads only through approved/active RLS paths', () => {
+  const sql = fs.readFileSync(migrationPath, 'utf8');
+  truthy(sql.includes('USING (approved = true)'), 'approved entity RLS missing');
+  truthy(sql.includes("USING (status = 'active')"), 'active override RLS missing');
+  truthy(!/FOR\s+(INSERT|UPDATE|DELETE)\s+TO\s+anon/i.test(sql), 'anon write policy should not exist');
+  truthy(sql.includes('GRANT SELECT ON approved_showdown_entities TO anon'), 'approved view grant missing');
+  truthy(sql.includes('GRANT SELECT ON approved_champions_data TO anon'), 'override view grant missing');
+});
+
+T('3. generator emits approved runtime data and excludes unapproved rows', () => {
+  const generated = generateFixtureRuntime();
+  const runtime = generated.runtime;
+  truthy(runtime.moves.bravebird, 'Brave Bird missing');
+  truthy(!runtime.moves.hydropump, 'unapproved Hydro Pump should not be emitted');
+  eq(runtime.moves.bravebird.base_power, 120, 'Brave Bird base_power');
+  eq(runtime.moves.bravebird.basePower, 120, 'Brave Bird basePower');
+  eq(runtime.moves.bravebird.priority, 1, 'active Champions override should apply');
+  eq(runtime.moves.bravebird.flags, 'contact|protect', 'flags should be deterministic');
+  eq(runtime.moves.bravebird.recoil[0], 33, 'recoil numerator');
+  truthy(runtime.species.Charizard, 'Charizard species missing');
+  eq(runtime.meta.appliedOverrideCount, 1, 'applied override count');
+  eq(runtime.meta.activeOverrideCount, 2, 'active override count includes missing-row warning');
+  truthy(runtime.meta.warnings.some((line) => line.includes('missingmove')), 'missing override warning absent');
+});
+
+T('4. generated DB-style rows are compatible with the battle engine helpers', () => {
+  const generated = generateFixtureRuntime();
+  const ctx = {
+    console,
+    require,
+    module: {},
+    exports: {},
+    Math,
+    Object,
+    Array,
+    Set,
+    JSON,
+    String,
+    Number,
+    Boolean,
+    RegExp,
+    parseInt,
+    parseFloat
+  };
+  vm.createContext(ctx);
+  function load(file) {
+    vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+  }
+  load('data.js');
+  load('engine.js');
+  vm.runInContext(fs.readFileSync(generated.outPath, 'utf8'), ctx, { filename: generated.outPath });
+  vm.runInContext('this._moveBasePower = _moveBasePower; this._moveAccuracy = _moveAccuracy; this._moveHasFlag = _moveHasFlag; this.getPriority = getPriority;', ctx);
+  eq(ctx._moveBasePower('Brave Bird'), 120, 'engine should read DB-style basePower');
+  eq(ctx._moveAccuracy('Brave Bird', 0.01), 1, 'engine should read Showdown accuracy first');
+  eq(ctx.getPriority('Brave Bird', { ability: '' }), 1, 'engine should read overridden priority');
+  truthy(ctx._moveHasFlag('Brave Bird', 'contact'), 'engine should read generated contact flags');
+});
+
+console.log('\napproved Showdown data generator:', pass + ' pass, ' + fail + ' fail\n');
+process.exit(fail ? 1 : 0);

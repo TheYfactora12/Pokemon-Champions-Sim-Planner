@@ -29,7 +29,7 @@ As of 2026-06-06, the battle engine treats generated Pokemon Showdown move rows 
 
 Damage-based recoil is now resolved from Showdown-compatible recoil metadata when present, with a checked local bridge table for the current generated file. This covers common imported recoil moves such as Brave Bird, Double-Edge, Wild Charge, Volt Tackle, Wood Hammer, Take Down, Submission, Head Charge, Head Smash, Flare Blitz, Wave Crash, and Light of Ruin.
 
-This is not the final DB state. The next target is still approved Supabase rows: `showdown_entities` plus explicit `champions_overrides`, then deterministic generated app assets from those approved views.
+This is not the final DB state. As of 2026-06-07, the repo has a migration candidate for `showdown_entities`, `showdown_entity_diffs`, `champions_overrides`, `approved_showdown_entities`, and `approved_champions_data`, plus a deterministic approved-data generator. The live Supabase project still needs the migration applied before approved DB rows can become the reviewed generation source.
 
 ## Source Boundaries
 
@@ -66,14 +66,17 @@ Already present:
 - `showdown_source_files`
 - `mechanics_validation_runs`
 - `mechanics_validation_findings`
+- migration candidate `db/migrations/2026_06_07_showdown_entities_approved_views.sql`
 - `tools/fetch_showdown_data.mjs`
+- `tools/generate-approved-data-from-db.mjs`
 - `tests/showdown_priority_drift_tests.js`
+- `tests/showdown_approved_data_generator_tests.js`
 
 Gap:
 
-- no persisted `showdown_entities`
-- no persisted `champions_overrides`
-- no approved read views consumed by the app
+- migration has not been applied to live Supabase yet
+- fetch output is not yet promoted into `showdown_entities`
+- approved read views are not yet the production generation source
 
 ### Phase 1 - Add Entity And Override Tables
 
@@ -84,6 +87,12 @@ Migration target:
 - `champions_overrides`
 - `approved_showdown_entities` view
 - `approved_champions_data` view
+
+Repo status:
+
+- `db/migrations/2026_06_07_showdown_entities_approved_views.sql` creates the target objects.
+- Anon reads are limited by RLS to `approved = true` entities and `status = 'active'` overrides.
+- No anon INSERT/UPDATE/DELETE policy is granted for mirror, diff, or override rows.
 
 Recommended table shape:
 
@@ -142,16 +151,25 @@ Default job behavior:
 
 ### Phase 3 - Generate App Data From DB Views
 
-Add a generator:
+Generator:
 
 ```bash
 node tools/generate-approved-data-from-db.mjs
 ```
 
-It should read approved DB views and emit deterministic artifacts:
+It reads approved DB views through Supabase REST when `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set. For CI and review, it can also read fixture/artifact JSON:
+
+```bash
+node tools/generate-approved-data-from-db.mjs \
+  --entities artifacts/showdown-sync/approved_entities.json \
+  --overrides artifacts/showdown-sync/approved_overrides.json \
+  --out generated/pokemon_showdown_legal_data.js
+```
+
+It emits deterministic artifacts:
 
 - `generated/pokemon_showdown_legal_data.js`
-- generated move tables for `MOVE_TYPES`, `MOVE_CATEGORY`, `MOVE_BP`, `MOVE_TARGETS`, and priority metadata
+- runtime `ChampionsSim.pokemonDataAudit` rows using Showdown as primary metadata
 - generated species/type/stat maps that can replace hand-maintained static sections over time
 
 Generated files must be deterministic and diff-friendly.
@@ -199,11 +217,13 @@ Unknown or blocker findings should stop release promotion.
 
 ## First Implementation Slice
 
-1. Add the missing DB tables/views for `showdown_entities`, `showdown_entity_diffs`, and `champions_overrides`.
-2. Add mock DB tests proving anon read-only behavior and write blocking.
-3. Extend `fetch_showdown_data.mjs` to produce entity rows locally first.
-4. Add a dry-run report that lists changed move priority/target/type/category/BP rows.
-5. Only after dry-run is stable, wire GitHub Actions to upload artifacts or write DB rows.
+1. Done in repo: add the missing DB tables/views for `showdown_entities`, `showdown_entity_diffs`, and `champions_overrides`.
+2. Done in repo: add tests proving anon read-only approved/active behavior and no anon write policy.
+3. Done in repo: add a deterministic generator from approved rows to `ChampionsSim.pokemonDataAudit`.
+4. Next: apply the migration to live Supabase through the migration workflow.
+5. Next: extend `fetch_showdown_data.mjs` to produce DB-ready entity/diff rows locally first.
+6. Next: add a dry-run report that lists changed move priority/target/type/category/BP rows.
+7. Only after dry-run is stable, wire GitHub Actions to upload artifacts or write DB rows.
 
 ## Acceptance Criteria
 

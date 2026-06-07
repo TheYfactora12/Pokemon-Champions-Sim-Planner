@@ -36,7 +36,8 @@
 // v46-network-first-app-shell [2026-06-06] - Force app-shell HTML refreshes so live exports cannot use stale simulator bundles.
 // v47-recoil-faint-cleanup [2026-06-06] - Recoil KOs now mark the attacker fainted before replacement snapshots.
 // v48-showdown-primary-moves [2026-06-06] - Showdown move metadata is primary for imported/custom move facts.
-const CACHE_NAME = 'champions-sim-v48-showdown-primary-moves';
+// v49-approved-showdown-db [2026-06-07] - Approved Showdown DB migration/generator path staged.
+const CACHE_NAME = 'champions-sim-v49-approved-showdown-db';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

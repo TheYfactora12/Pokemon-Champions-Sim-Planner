@@ -40,7 +40,7 @@ T('3. missing local-credentials.js returns empty JavaScript instead of cached ap
 });
 
 T('4. service worker cache is bumped for stale app-shell release fix', () => {
-  truthy(sw.includes('champions-sim-v48-showdown-primary-moves'), 'CACHE_NAME should be v48 Showdown primary moves');
+  truthy(sw.includes('champions-sim-v49-approved-showdown-db'), 'CACHE_NAME should be v49 approved Showdown DB');
 });
 
 T('5. app shell includes pokemon-champion bundle in network-first detection', () => {
