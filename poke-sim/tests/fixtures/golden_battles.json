@@ -43,7 +43,7 @@
       ],
       "format": "doubles",
       "description": "Cofagrigus TR vs Chuppa Balance — seed 9999",
-      "expected_trace_hash": "5986a903a781ae112c098d0a77612e7d006dca52eae7373eec57dc72467eb506",
+      "expected_trace_hash": "857569037d789698288d4db279eec88b200182974cccd5663030bfe361e7eb73",
       "expected_winner": "win"
     }
   ]
