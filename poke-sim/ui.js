@@ -5225,12 +5225,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Priority and turn-log tests are green',
-      detail: 'showdown_priority_drift_tests.js, turn_order_priority_tests.js, and turn_log_export_validator_tests.js passed after the fixes.'
+      detail: 'showdown_priority_drift_tests.js, turn_order_priority_tests.js, recoil_faint_turn_log_tests.js, and turn_log_export_validator_tests.js passed after the fixes.'
     },
     {
       status: 'validated',
       title: 'Live preview bundle contains the new safeguards',
-      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the network-first v46 service-worker cache.'
+      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the v47 recoil-faint service-worker cache.'
     },
     {
       status: 'validated',

@@ -2884,6 +2884,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       const recoil = Math.floor(finalDmg / 3);
       attacker.hp = Math.max(0, attacker.hp - recoil);
       log.push(`${attacker.name} was hurt by recoil! [${recoil} dmg]`);
+      if (attacker.hp === 0) {
+        attacker.alive = false;
+        log.push(`${attacker.name} fainted!`);
+        _recordKO(attacker, { move: move, attacker: attacker, reason: 'recoil' });
+      }
     }
     // T9j.6 (#11 WONTFIX) — Life Orb recoil removed; item absent from Champions.
     // Berry check after damage

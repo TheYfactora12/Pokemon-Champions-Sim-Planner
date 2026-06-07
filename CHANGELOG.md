@@ -24,12 +24,15 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 - Team-facing validation note for the 2026-06-05 user-provided logs.
 
 ### Fixed
+- Recoil moves (`Flare Blitz`, `Head Smash`, `Wave Crash`) now mark the attacker fainted and record KO state when recoil reaches 0 HP, preventing fainted Pokemon from staying active in post-turn snapshots.
 - Strict turn-log validation now allows legal same-priority exact Speed ties while still rejecting priority violations and non-tied speed-order reversals.
+- Bumped the service-worker cache to v47 so live users receive the recoil-faint cleanup bundle.
 - Bumped the service-worker cache to v46 and made app-shell HTML network-first so live exports cannot keep using a stale cached simulator bundle.
 - Aligned local move priority with Showdown for `Feint` (+2), `Ice Shard` (+1), and Protect-family shields such as `King's Shield` (+4).
 - Restored the replay-analysis entry point as a top-level `Review` tab label so testers can find the overview/review workflow faster.
 
 ### Validation
+- Four fresh live exports were checked in strict mode: three passed cleanly, and `champions-turn-log-3765649682,915019675,502668142,3322095033.json` exposed the recoil-faint replacement bug now covered by `recoil_faint_turn_log_tests.js`.
 - Fresh live export `champions-turn-log-3597100759,1153237126,1130282361,1929379376.json` passes strict validation with stable IDs present: 8 turns, 0 errors, 0 warnings.
 - Five user-provided exported logs passed with zero hard errors: no item drift, key-map mismatch, HP-key mismatch, speed-order key mismatch, or observed priority-order mismatch.
 - The same logs warn as legacy exports because they lack `stableKey`, stable HP maps, and `itemConsumed`, so future exports should be taken after a hard refresh and checked with `node tools/validate-turn-logs.mjs --require-stable`.

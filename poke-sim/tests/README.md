@@ -44,7 +44,8 @@ node tests/t174_mobile_results_stats_tests.js # Mobile results stats safeguards
 node tests/t175_mobile_tab_grid_tests.js # Mobile tab grid safeguards
 node tests/t176_mobile_teams_panel_tests.js # Mobile teams panel safeguards
 node tests/phase5_turn_log_tests.js # Phase 5 — turnLog, positionScore, Replay Log v2 — 25 cases
-node tests/turn_log_export_validator_tests.js # Exported turn-log identity/item/order validator — 5 cases
+node tests/recoil_faint_turn_log_tests.js # Recoil KO cleanup for turn-log replacement snapshots — 1 case
+node tests/turn_log_export_validator_tests.js # Exported turn-log identity/item/order validator — 7 cases
 node tests/showdown_priority_drift_tests.js # Showdown priority drift audit for shipped moves — 4 cases
 node tests/phase6_coaching_voice.js # Phase 6 — coaching templates, linter, RNG gate — 9 cases
 node tests/structured_logger_tests.js # Infra — structured logger and no raw runtime console calls — 5 cases
@@ -92,12 +93,13 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | move_support_audit | 4/4 | Shipped move registry completeness + verified/baseline support audit |
 | move_verification_registry | 6/6 | First promoted verified move slice with source/test metadata |
 | phase5 | 25/25 | Turn log struct, positionScore, swing-turn delta, Replay Log v2, decision-gap audit |
-| turn_log_export_validator | 5/5 | Exported log checks for stable identity, item drift, key maps, and priority/speed order |
+| recoil_faint_turn_log | 1/1 | Recoil KOs mark the attacker fainted before replacement snapshots |
+| turn_log_export_validator | 7/7 | Exported log checks for stable identity, item drift, key maps, and priority/speed order |
 | showdown_priority_drift | 4/4 | Shipped move priorities mirror generated Showdown metadata unless explicitly overridden |
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
 | export | 4/4 | My Data JSON export for persisted history, reports, and DB analyses |
-| **Total** | **429/429** | |
+| **Total** | **432/432** | |
 | audit | 0 JS errors | 5070-battle configured audit matrix |
 
 ## Conventions

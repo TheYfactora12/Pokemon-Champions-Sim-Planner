@@ -37,7 +37,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Simulation-first direction documented');
   inc(ui, 'Public release milestone map documented');
   inc(ui, 'CI-style local sweep passed');
-  inc(ui, 'network-first v46 service-worker cache');
+  inc(ui, 'v47 recoil-faint service-worker cache');
   inc(ui, 'User sample logs show no hard item/order drift');
 });
 
