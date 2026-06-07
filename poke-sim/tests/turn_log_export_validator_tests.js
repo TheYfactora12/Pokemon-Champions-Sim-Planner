@@ -186,6 +186,32 @@ function stripStableFields(payload) {
     truthy(res.findings.some(f => f.code === 'observed-action-order-mismatch'), 'missing action order mismatch');
   });
 
+  T('6. observed action order allows exact same-Speed ties', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    turn.actions.player[0].move = 'Knock Off';
+    turn.events = [
+      { type: 'log', text: 'Incineroar used Knock Off!' },
+      { type: 'log', text: 'Milotic used Scald!' }
+    ];
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+  });
+
+  T('7. observed action order rejects non-tied same-priority reversals', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    turn.pre.roster.player[0].calculatedStats = '100/1/1/1/1/60';
+    turn.pre.roster.opponent[0].calculatedStats = '100/1/1/1/1/90';
+    turn.actions.player[0].move = 'Knock Off';
+    turn.events = [
+      { type: 'log', text: 'Incineroar used Knock Off!' },
+      { type: 'log', text: 'Milotic used Scald!' }
+    ];
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'observed-action-order-mismatch' && f.reason === 'speed'), 'missing speed order mismatch');
+  });
+
   console.log('\nturn log export validator:', pass + ' pass, ' + fail + ' fail\n');
   process.exit(fail ? 1 : 0);
 })().catch(err => {

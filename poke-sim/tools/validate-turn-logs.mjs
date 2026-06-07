@@ -197,10 +197,11 @@ function actorOrderFromEvents(events) {
   const seen = new Set();
   for (const event of events || []) {
     const text = cleanText(event && event.text);
+    if (text && text.includes(String.fromCharCode(0x2192))) continue;
     if (!text || text.includes('->') || text.includes('→') || text.includes('â†’')) continue;
     const match = text.match(/^(.+?) used (.+?)!/);
     if (!match) continue;
-    const key = `${out.length}:${match[1]}:${match[2]}`;
+    const key = `${match[1]}:${match[2]}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push({ actor: match[1], move: match[2] });
@@ -223,6 +224,47 @@ function movePriority(move, row) {
   return p;
 }
 
+function parsedCalculatedSpeed(row) {
+  const stats = row && row.calculatedStats;
+  if (stats && typeof stats === 'object') {
+    const value = Number(stats.spe ?? stats.speed);
+    return Number.isFinite(value) ? Math.floor(value) : null;
+  }
+  const parts = String(stats || '').split('/');
+  if (parts.length >= 6) {
+    const value = Number(parts[5]);
+    return Number.isFinite(value) ? Math.floor(value) : null;
+  }
+  return null;
+}
+
+function snapshotEffectiveSpeed(row, snapshot) {
+  const baseSpeed = parsedCalculatedSpeed(row);
+  if (!row || baseSpeed == null) return null;
+
+  const field = (snapshot && snapshot.field) || {};
+  const weather = field.weather || null;
+  let statSpeed = baseSpeed;
+  if (row.ability === 'Sand Rush' && weather === 'sand') statSpeed *= 2;
+  if (row.ability === 'Unburden' && row.itemConsumed) statSpeed *= 2;
+  if (row.item === 'Choice Scarf') statSpeed *= 1.5;
+  statSpeed = Math.floor(statSpeed);
+
+  let effectiveSpeed = statSpeed;
+  const speedControl = (snapshot && snapshot.speed_control && snapshot.speed_control[row.side]) || {};
+  if ((speedControl.tailwind_turns || 0) > 0) effectiveSpeed *= 2;
+  if (row.ability === 'Swift Swim' && weather === 'rain') effectiveSpeed *= 2;
+  if (row.ability === 'Chlorophyll' && weather === 'sun') effectiveSpeed *= 2;
+  if (row.ability === 'Slush Rush' && weather === 'snow') effectiveSpeed *= 2;
+  return effectiveSpeed;
+}
+
+function isSameEffectiveSpeedTie(rowA, rowB, snapshot) {
+  const speedA = snapshotEffectiveSpeed(rowA, snapshot);
+  const speedB = snapshotEffectiveSpeed(rowB, snapshot);
+  return speedA != null && speedB != null && speedA === speedB;
+}
+
 function validateObservedActionOrder(turn, findings) {
   const observed = actorOrderFromEvents(turn.events);
   if (observed.length < 2 || !turn.pre || !turn.actions) return;
@@ -236,33 +278,53 @@ function validateObservedActionOrder(turn, findings) {
   const roster = rosterByName(turn.pre);
   const speedOrder = Array.isArray(turn.pre.speed_order) ? turn.pre.speed_order.map(String) : [];
   const speedIndex = new Map(speedOrder.map((name, index) => [name, index]));
-  const observedKeys = new Set(observed.map(o => `${o.actor}|${o.move}`));
-  const expected = actionRows
-    .filter(a => observedKeys.has(`${a.actor}|${a.move}`))
-    .sort((a, b) => {
-      const pa = movePriority(a.move, roster.get(a.actor));
-      const pb = movePriority(b.move, roster.get(b.actor));
-      if (pb !== pa) return pb - pa;
-      const ia = speedIndex.has(a.actor) ? speedIndex.get(a.actor) : 999;
-      const ib = speedIndex.has(b.actor) ? speedIndex.get(b.actor) : 999;
-      return ia - ib;
-    })
-    .map(a => `${a.actor}|${a.move}`);
 
+  const actionByKey = new Map(actionRows.map(a => [`${a.actor}|${a.move}`, a]));
   const actual = observed
-    .filter(o => observedKeys.has(`${o.actor}|${o.move}`))
-    .map(o => `${o.actor}|${o.move}`);
+    .map(o => {
+      const key = `${o.actor}|${o.move}`;
+      const action = actionByKey.get(key);
+      return action ? { key, actor: o.actor, move: o.move, action } : null;
+    })
+    .filter(Boolean);
 
-  if (expected.length > 1 && actual.length === expected.length) {
-    for (let i = 0; i < expected.length; i += 1) {
-      if (expected[i] !== actual[i]) {
-        findings.push(finding('error', 'observed-action-order-mismatch', 'Observed event order does not match priority plus speed_order snapshot.', {
-          turn: turn.turn,
-          expected,
-          actual
-        }));
-        break;
+  if (actual.length < 2) return;
+
+  const failOrder = (reason, expectedBefore, actualBefore) => {
+    findings.push(finding('error', 'observed-action-order-mismatch', 'Observed event order does not match priority plus speed_order snapshot.', {
+      turn: turn.turn,
+      reason,
+      expectedBefore,
+      actualBefore,
+      actual: actual.map(a => a.key)
+    }));
+  };
+
+  for (let i = 0; i < actual.length; i += 1) {
+    for (let j = i + 1; j < actual.length; j += 1) {
+      const first = actual[i];
+      const second = actual[j];
+      const firstPriority = movePriority(first.move, roster.get(first.actor));
+      const secondPriority = movePriority(second.move, roster.get(second.actor));
+
+      if (firstPriority < secondPriority) {
+        failOrder('priority', second.key, first.key);
+        return;
       }
+
+      if (firstPriority !== secondPriority) continue;
+      if (!speedIndex.has(first.actor) || !speedIndex.has(second.actor)) continue;
+
+      const firstSpeedIndex = speedIndex.get(first.actor);
+      const secondSpeedIndex = speedIndex.get(second.actor);
+      if (firstSpeedIndex <= secondSpeedIndex) continue;
+
+      const firstRow = roster.get(first.actor);
+      const secondRow = roster.get(second.actor);
+      if (isSameEffectiveSpeedTie(firstRow, secondRow, turn.pre)) continue;
+
+      failOrder('speed', second.key, first.key);
+      return;
     }
   }
 }
