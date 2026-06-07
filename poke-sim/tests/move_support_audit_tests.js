@@ -81,5 +81,13 @@ T('4. audit report exists and names the shipped move count', () => {
   truthy(report.includes('Freeze-Dry | verified | yes'), 'promoted verified move row missing');
 });
 
+T('5. imported Showdown moves can be baseline-supported without local table rows', () => {
+  const braveBird = moveSupport.getLocalMoveSupport('Brave Bird');
+  truthy(braveBird, 'Brave Bird summary missing');
+  eq(braveBird.supportLevel, 'baseline', 'Brave Bird support');
+  truthy(braveBird.showdown && braveBird.showdown.basePower === 120, 'Brave Bird Showdown BP missing');
+  truthy(braveBird.effective && braveBird.effective.source === 'showdown', 'Brave Bird should be sourced from Showdown');
+});
+
 console.log(`\nmove support audit: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);

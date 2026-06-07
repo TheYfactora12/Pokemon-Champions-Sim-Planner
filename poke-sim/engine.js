@@ -281,8 +281,127 @@ var CONTACT_MOVES = new Set([
   'Bite','Waterfall','Headbutt','Rolling Kick','Stomp','Needle Arm',
   'Heart Stamp','Bone Club','Heracross','Wicked Blow','Surging Strikes',
   'Low Kick','Throat Chop','Scale Shot','Darkest Lariat','Tackle',
-  'Beak Blast'
+  'Beak Blast','Brave Bird','Double-Edge','Wild Charge','Volt Tackle',
+  'Wood Hammer','Take Down','Submission','Head Charge'
 ]);
+
+var MOVE_RECOIL_BY_ID = {
+  bravebird:   { numerator: 33, denominator: 100 },
+  doubleedge:  { numerator: 33, denominator: 100 },
+  flareblitz:  { numerator: 33, denominator: 100 },
+  headcharge:  { numerator: 1,  denominator: 4 },
+  headsmash:   { numerator: 1,  denominator: 2 },
+  lightofruin: { numerator: 1,  denominator: 2 },
+  submission:  { numerator: 1,  denominator: 4 },
+  takedown:    { numerator: 1,  denominator: 4 },
+  volttackle:  { numerator: 33, denominator: 100 },
+  wavecrash:   { numerator: 33, denominator: 100 },
+  wildcharge:  { numerator: 1,  denominator: 4 },
+  woodhammer:  { numerator: 33, denominator: 100 }
+};
+
+function _moveId(move) {
+  return String(move == null ? '' : move).toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function _showdownMoveRow(move) {
+  try {
+    var root = (typeof globalThis !== 'undefined') ? globalThis
+      : ((typeof window !== 'undefined') ? window : null);
+    var data = root && root.ChampionsSim && root.ChampionsSim.pokemonDataAudit;
+    return data && data.moves ? (data.moves[_moveId(move)] || null) : null;
+  } catch (_e) {
+    return null;
+  }
+}
+
+function _moveType(move) {
+  var row = _showdownMoveRow(move);
+  if (row && row.type) return row.type;
+  if (typeof MOVE_TYPES !== 'undefined' &&
+      Object.prototype.hasOwnProperty.call(MOVE_TYPES, move)) return MOVE_TYPES[move];
+  return 'Normal';
+}
+
+function _moveCategory(move) {
+  var row = _showdownMoveRow(move);
+  if (row && row.category) return String(row.category).toLowerCase();
+  if (typeof MOVE_CATEGORY !== 'undefined' &&
+      Object.prototype.hasOwnProperty.call(MOVE_CATEGORY, move)) return MOVE_CATEGORY[move];
+  return '';
+}
+
+function _moveBasePower(move) {
+  var row = _showdownMoveRow(move);
+  if (row && row.base_power !== undefined && row.base_power !== null && row.base_power !== '') {
+    var bp = Number(row.base_power);
+    if (Number.isFinite(bp)) return bp;
+  }
+  if (typeof MOVE_BP !== 'undefined' &&
+      Object.prototype.hasOwnProperty.call(MOVE_BP, move)) return MOVE_BP[move];
+  return undefined;
+}
+
+function _moveAccuracy(move, localValue) {
+  var row = _showdownMoveRow(move);
+  if (row && row.accuracy !== undefined && row.accuracy !== null && row.accuracy !== '') {
+    if (row.accuracy === true || row.accuracy === 'true') return 1.0;
+    var acc = Number(row.accuracy);
+    if (Number.isFinite(acc)) return acc > 1 ? acc / 100 : acc;
+  }
+  if (localValue !== undefined && localValue !== null) return localValue;
+  return 1.0;
+}
+
+function _movePriority(move) {
+  var row = _showdownMoveRow(move);
+  if (!row || row.priority === undefined || row.priority === null || row.priority === '') return 0;
+  var priority = Number(row.priority);
+  return Number.isFinite(priority) ? priority : 0;
+}
+
+function _moveTargetCategory(move) {
+  var row = _showdownMoveRow(move);
+  if (row && row.target) return row.target;
+  if (typeof MOVE_TARGETS !== 'undefined' &&
+      Object.prototype.hasOwnProperty.call(MOVE_TARGETS, move)) return MOVE_TARGETS[move];
+  return 'normal';
+}
+
+function _moveHasFlag(move, flag) {
+  var row = _showdownMoveRow(move);
+  if (!row || !row.flags) return false;
+  return String(row.flags).split('|').indexOf(flag) >= 0;
+}
+
+function _isContactMove(move) {
+  return CONTACT_MOVES.has(move) || _moveHasFlag(move, 'contact');
+}
+
+function _normalizeRecoilRule(value) {
+  if (!value) return null;
+  if (Array.isArray(value) && value.length >= 2) {
+    var arrNum = Number(value[0]);
+    var arrDen = Number(value[1]);
+    if (Number.isFinite(arrNum) && Number.isFinite(arrDen) && arrNum > 0 && arrDen > 0) {
+      return { numerator: arrNum, denominator: arrDen };
+    }
+  }
+  if (typeof value === 'object') {
+    var objNum = Number(value.numerator || value.num || value[0]);
+    var objDen = Number(value.denominator || value.den || value[1]);
+    if (Number.isFinite(objNum) && Number.isFinite(objDen) && objNum > 0 && objDen > 0) {
+      return { numerator: objNum, denominator: objDen };
+    }
+  }
+  return null;
+}
+
+function _moveRecoilRule(move) {
+  var row = _showdownMoveRow(move);
+  var rowRule = _normalizeRecoilRule(row && row.recoil);
+  return rowRule || MOVE_RECOIL_BY_ID[_moveId(move)] || null;
+}
 
 // ============================================================
 // ABILITIES REGISTRY — T9j.8
@@ -313,7 +432,7 @@ var ABILITIES = {
     // Cite: https://www.serebii.net/pokemonchampions/newabilities.shtml
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Champions
     onModifyMove: function(ctx) {
-      var baseType = (typeof MOVE_TYPES !== 'undefined' && MOVE_TYPES[ctx.move]) || 'Normal';
+      var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Dragon', bpMult: 1.20 };
       return null;
     }
@@ -833,7 +952,7 @@ class Pokemon {
       if (_modRes.typeOverride) _typeOverride = _modRes.typeOverride;
       if (_modRes.bpMult) _bpMult = _modRes.bpMult;
     }
-    const moveType = _typeOverride || (MOVE_TYPES[move] || 'Normal');
+    const moveType = _typeOverride || _moveType(move);
 
     // --- T9j.9 (Refs #3) Physical/Special classifier ---
     // Data-driven: MOVE_CATEGORY from data.js is the canonical source of truth.
@@ -842,8 +961,9 @@ class Pokemon {
     //   Cite: https://game8.co/games/Pokemon-Champions/archives/590527
     //   Cite: https://bulbapedia.bulbagarden.net/wiki/Damage_category
     let isPhysical;
-    if (typeof MOVE_CATEGORY !== 'undefined' && MOVE_CATEGORY[move]) {
-      isPhysical = MOVE_CATEGORY[move] === 'physical';
+    const moveCategory = _moveCategory(move);
+    if (moveCategory) {
+      isPhysical = moveCategory === 'physical';
     } else {
       // Fallback: Gen 1-3 style type-based physical/special split.
       const _physTypes = ['Normal','Fighting','Flying','Poison','Ground','Rock','Bug','Ghost','Steel'];
@@ -914,8 +1034,9 @@ class Pokemon {
       'Infernal Parade':65,'Bone Rush':30
     };
     let bp;
-    if (typeof MOVE_BP !== 'undefined' && MOVE_BP[move] !== undefined) {
-      bp = MOVE_BP[move];
+    const moveBasePower = _moveBasePower(move);
+    if (moveBasePower !== undefined) {
+      bp = moveBasePower;
     } else if (BP_MAP[move] !== undefined) {
       bp = BP_MAP[move];
     } else {
@@ -1861,7 +1982,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       'Encore','Haze','Defog',
       // Recovery / board-state support
       'Recover','Shore Up','Rest','Sleep Talk','Substitute','Imprison','Ally Switch']);
-    const PRIORITY_MOVES = new Set(['Fake Out','Aqua Jet','Extreme Speed','Shadow Sneak','Sucker Punch','Feint']);
     const TURN1_ROLE_UTILITY = new Set([
       'Tailwind','Trick Room','Fake Out','Follow Me','Rage Powder',
       'Light Screen','Reflect','Aurora Veil','Will-O-Wisp','Thunder Wave',
@@ -1887,7 +2007,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
 
     for (const move of attacker.moves) {
-      const moveType = MOVE_TYPES[move] || 'Normal';
+      const moveType = _moveType(move);
 
       if (attacker.encoredTurns > 0 && attacker.encoredMove) {
         const target = attacker.lastTarget && attacker.lastTarget.alive
@@ -1897,7 +2017,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
 
       // Status/utility scoring
-      if (STATUS_MOVES.has(move)) {
+      if (STATUS_MOVES.has(move) || _moveCategory(move) === 'status') {
         if (attacker.tauntedTurns > 0) continue;
         if (enemySide && enemySide.imprisonedMoves && enemySide.imprisonedMoves.has(move)) continue;
         let score = 0;
@@ -1927,11 +2047,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           if (hasPriorityThreat) score = 48;
         }
         if ((move === "King's Shield" || move === 'Spiky Shield' || move === 'Baneful Bunker' || move === 'Obstruct')) {
-          const hasContactThreat = liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => CONTACT_MOVES.has(m)));
+          const hasContactThreat = liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => _isContactMove(m)));
           if (hasContactThreat) score = 43;
         }
         if (move === 'Endure' && attacker.hp < attacker.maxHp * 0.35) score = 41;
-        if (move === 'Taunt' && liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => MOVE_CATEGORY[m] === 'status'))) {
+        if (move === 'Taunt' && liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => _moveCategory(m) === 'status'))) {
           score = 34;
         }
         if (move === 'Encore' && liveEnemies.some(e => e.lastMoveUsed)) {
@@ -1957,7 +2077,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
 
       // Priority move logic
-      if (PRIORITY_MOVES.has(move)) {
+      if (getPriority(move, attacker) > 0) {
         // T9j.17 (Refs #101) -- Fake Out hard-gate: skip selection entirely past
         // first turn out. Previously it fell through to the damage-scoring loop
         // below, which let the AI "select" Fake Out turn 2+ as a 40-BP attack.
@@ -1985,7 +2105,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         // Score: damage fraction + KO bonus + priority bonus
         let score = dmg / target.maxHp * 100;
         if (dmg >= target.hp) score += 50; // KO bonus
-        if (PRIORITY_MOVES.has(move)) score += 10;
+        if (getPriority(move, attacker) > 0) score += 10;
         if (score > best.score) best = { move, target, score };
       }
     }
@@ -2026,7 +2146,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (wgSide && wgSide.wideGuardChain > 0) wgSide.wideGuardChain = 0;
     }
 
-    const moveType = MOVE_TYPES[move] || 'Normal';
+    const moveType = _moveType(move);
     const PROTECT_MOVES = new Set(['Protect','Detect','Wide Guard','Quick Guard','Endure',
       "King's Shield",'Spiky Shield','Baneful Bunker','Obstruct']);
     const STATUS_MOVES  = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder',
@@ -2043,7 +2163,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Attacker must be alive
     if (!attacker.alive) return;
 
-    if (attacker.tauntedTurns > 0 && MOVE_CATEGORY[move] === 'status' && move !== 'Sleep Talk') {
+    if (attacker.tauntedTurns > 0 && _moveCategory(move) === 'status' && move !== 'Sleep Talk') {
       log.push(`${attacker.name} used ${move}! But it failed because of Taunt!`);
       return;
     }
@@ -2491,8 +2611,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     if (move === 'Sucker Punch') {
       const targetMove = target && target._chosenMove;
-      const targetIsAttack = !!(targetMove && typeof MOVE_CATEGORY !== 'undefined' &&
-        MOVE_CATEGORY[targetMove] && MOVE_CATEGORY[targetMove] !== 'status');
+      const targetCategory = _moveCategory(targetMove);
+      const targetIsAttack = !!(targetMove && targetCategory && targetCategory !== 'status');
       if (!target || !target.alive || target.hasActed || !targetIsAttack) {
         log.push(`${attacker.name} used Sucker Punch! But it failed!`);
         return;
@@ -2511,7 +2631,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const _stageMult = (stage) => stage >= 0
       ? ACC_STAGE_TABLE[Math.min(stage, 6)]
       : (1 / ACC_STAGE_TABLE[Math.min(-stage, 6)]);
-    let acc = ACC_MAP[move] || 1.0;
+    let acc = _moveAccuracy(move, ACC_MAP[move]);
     const _accBoost = attacker.statBoosts.acc || 0;
     const _evaBoost = target.statBoosts.eva || 0;
     acc *= _stageMult(_accBoost);
@@ -2565,7 +2685,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // mainline behavior (Bulbapedia Parental Bond). Status, multi-hit moves
     // (Dragon Darts / Bone Rush), and fainted attackers also skip the 2nd hit.
     const _isParentalBond = (attacker.ability === 'Parental Bond');
-    const _tCat = (typeof getMoveTarget === 'function') ? getMoveTarget(move) : 'normal';
+    const _tCat = _moveTargetCategory(move);
     const _isSingleTargetDamage = (_tCat === 'normal' || _tCat === 'adjacent-foe');
     const _skipSecond = new Set(['Dragon Darts','Bone Rush','U-turn','Flip Turn','Fake Out']);
     const _pbEligible = _isParentalBond && _isSingleTargetDamage && !_skipSecond.has(move);
@@ -2588,9 +2708,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   function executeMove(attacker, move, intendedTarget, allies, enemies, field, log, rng) {
     const format = (opts && opts.format) || 'doubles';
     const isDoubles = (format !== 'singles');
-    let targetCat = (typeof getMoveTarget === 'function')
-      ? getMoveTarget(move)
-      : 'normal';
+    let targetCat = _moveTargetCategory(move);
 
     if (attacker.tera && !attacker.teraActivated) {
       attacker.teraActivated = true;
@@ -2714,7 +2832,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
                       'Thunder':0.70, 'Hurricane':0.70, 'Sleep Powder':0.75,
                       'Will-O-Wisp':0.85, 'High Horsepower':0.95, 'Dire Claw':1.0,
                       'Rock Slide':0.90, 'Heat Wave':0.90 };
-    const acc = ACC_MAP[move] || 1.0;
+    const acc = _moveAccuracy(move, ACC_MAP[move]);
     if (rng() > acc) {
       log.push(`${attacker.name} used ${move}! It missed!`);
       if (_bpMultPushed) field._ctx.bpMult = _prevBpMult;
@@ -2742,12 +2860,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.8 (Refs #30) Protect resolution: Piercing Drill / Unseen Fist deal
       // 25% damage through Protect on contact moves. Default path is full block.
       let _protectMult = 0;
-      const _isContact = CONTACT_MOVES.has(move);
+      const _isContact = _isContactMove(move);
       const _shieldKind = t.protectKind || 'Protect';
       if (t.protected && move !== 'Feint') {
         const _protRes = callAbilityHook(attacker, 'onProtectResolve', {
           attacker: attacker, defender: t, move: move,
-          moveType: (MOVE_TYPES[move] || 'Normal'), isContact: _isContact, log: log
+          moveType: _moveType(move), isContact: _isContact, log: log
         });
         if (_protRes && _protRes.damageMult > 0) {
           _protectMult = _protRes.damageMult;
@@ -2874,14 +2992,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // T9j.4 (#41) — Fire-move thaw on hit. Any damaging Fire move thaws target.
     // Cite: Bulbapedia Freeze.
     if (target.status === 'frozen' && finalDmg > 0 && target.hp > 0 &&
-        (MOVE_TYPES[move] || 'Normal') === 'Fire') {
+        _moveType(move) === 'Fire') {
       target.status = null;
       target.frozenTurns = 0;
       log.push(`${target.name} was thawed out by ${attacker.name}'s ${move}!`);
     }
     // Recoil
-    if (move === 'Flare Blitz' || move === 'Head Smash' || move === 'Wave Crash') {
-      const recoil = Math.floor(finalDmg / 3);
+    const recoilRule = _moveRecoilRule(move);
+    if (recoilRule && attacker && attacker.alive) {
+      const recoil = Math.max(1, Math.round(finalDmg * recoilRule.numerator / recoilRule.denominator));
       attacker.hp = Math.max(0, attacker.hp - recoil);
       log.push(`${attacker.name} was hurt by recoil! [${recoil} dmg]`);
       if (attacker.hp === 0) {
@@ -2902,7 +3021,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (target.alive && finalDmg > 0) {
       callAbilityHook(target, 'onDamageTaken', {
         attacker: attacker, defender: target, move: move,
-        moveType: (MOVE_TYPES[move] || 'Normal'),
+        moveType: _moveType(move),
         damage: finalDmg, field: field, log: log
       });
     }
@@ -3419,13 +3538,14 @@ var TARGETED_STATUS_MOVES = new Set([
 ]);
 
 function isStatusMoveName(move) {
-  return !!(move && (STATUS_MOVE_NAMES.has(move) || MOVE_CATEGORY[move] === 'status'));
+  return !!(move && (STATUS_MOVE_NAMES.has(move) || _moveCategory(move) === 'status'));
 }
 
 function getPriority(move, attacker) {
-  // T9j.2 — Champions 2026 priority table (Refs CHAMPIONS_MECHANICS_SPEC §4).
-  // Rage Powder and Follow Me are +2 in Champions (ORACLE-DIVERGENCE-3 vs SV +3).
-  const P = {
+  const CHAMPIONS_PRIORITY_OVERRIDES = {
+    // Keep intentional Champions-vs-Showdown differences here with source notes.
+  };
+  const LOCAL_PRIORITY_FALLBACK = {
     'Fake Out':3, 'Extreme Speed':2, 'Aqua Jet':1, 'Shadow Sneak':1,
     'Sucker Punch':1, 'Vacuum Wave':1, 'Quick Attack':1, 'Ice Shard':1,
     'Feint':2,
@@ -3437,7 +3557,14 @@ function getPriority(move, attacker) {
     'Follow Me':2, 'Rage Powder':2,
     'Trick Room':-7, 'Roost':0
   };
-  let priority = P[move] || 0;
+  let priority = 0;
+  if (Object.prototype.hasOwnProperty.call(CHAMPIONS_PRIORITY_OVERRIDES, move)) {
+    priority = CHAMPIONS_PRIORITY_OVERRIDES[move];
+  } else if (_showdownMoveRow(move)) {
+    priority = _movePriority(move);
+  } else if (Object.prototype.hasOwnProperty.call(LOCAL_PRIORITY_FALLBACK, move)) {
+    priority = LOCAL_PRIORITY_FALLBACK[move];
+  }
   if (attacker && attacker.ability === 'Prankster' && isStatusMoveName(move)) priority += 1;
   return priority;
 }

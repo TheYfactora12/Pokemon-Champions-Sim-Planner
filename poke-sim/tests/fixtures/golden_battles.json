@@ -13,8 +13,8 @@
       ],
       "format": "doubles",
       "description": "Player (speed) vs Cofagrigus TR — seed 1337",
-      "expected_trace_hash": "f878b5ff78ef4109c1fc26b856c239016f9ab55c702d2d7404b65b07845d2de3",
-      "expected_winner": "loss"
+      "expected_trace_hash": "5d93bd34467a16d97731e9613ebeea9edb128cf3d5bb06b4394c05e1e85914d4",
+      "expected_winner": "win"
     },
     {
       "golden_id": "gb_002",
@@ -28,7 +28,7 @@
       ],
       "format": "doubles",
       "description": "Player (speed) vs Chuppa Balance — seed 2024",
-      "expected_trace_hash": "542f9111c31db74ed919b7fc2b08805314a4b3147fe12040e158374573883d40",
+      "expected_trace_hash": "079f3433c4efa4aa4864ffba47d30b2b798de4679c41f41e9b095aa6e0c3d6eb",
       "expected_winner": "win"
     },
     {
@@ -43,8 +43,8 @@
       ],
       "format": "doubles",
       "description": "Cofagrigus TR vs Chuppa Balance — seed 9999",
-      "expected_trace_hash": "857569037d789698288d4db279eec88b200182974cccd5663030bfe361e7eb73",
-      "expected_winner": "win"
+      "expected_trace_hash": "83e1f36e2881eafcdad1f17a754814c14c7b0cf68e5a89a7da367d692452b2b5",
+      "expected_winner": "loss"
     }
   ]
 }

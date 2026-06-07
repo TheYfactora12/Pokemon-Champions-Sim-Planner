@@ -100,6 +100,7 @@ function parseMoves(file) {
       return m ? Number(m[1]) : '';
     };
     const accuracyMatch = block.match(/accuracy\s*:\s*(true|-?\d+)/);
+    const recoilMatch = block.match(/recoil\s*:\s*\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]/);
     const flagsMatch = block.match(/flags\s*:\s*\{([^}]*)\}/);
     const flags = flagsMatch
       ? flagsMatch[1].split(',').map((part) => cleanKey(part.split(':')[0])).filter(Boolean).sort()
@@ -115,6 +116,7 @@ function parseMoves(file) {
       priority: numberValue('priority'),
       target: stringValue('target'),
       flags: flags.join('|'),
+      recoil: recoilMatch ? [Number(recoilMatch[1]), Number(recoilMatch[2])] : null,
     };
     id = '';
     blockLines = [];

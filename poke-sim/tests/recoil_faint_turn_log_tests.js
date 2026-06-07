@@ -18,7 +18,8 @@ function load(file) {
 
 load('data.js');
 load('engine.js');
-vm.runInContext('this.TEAMS = TEAMS; this.simulateBattle = simulateBattle;', ctx);
+load('generated/pokemon_showdown_legal_data.js');
+vm.runInContext('this.TEAMS = TEAMS; this.simulateBattle = simulateBattle; this.MOVE_BP = MOVE_BP; this.MOVE_TYPES = MOVE_TYPES; this._moveAccuracy = _moveAccuracy;', ctx);
 
 let pass = 0;
 let fail = 0;
@@ -55,6 +56,10 @@ function selectedTeam(team, names) {
   };
 }
 
+function customTeam(name, members) {
+  return { name, format: 'sv', legality_status: 'legal', members };
+}
+
 function eventTexts(turn) {
   return (turn.events || []).map(event => String(event && event.text || ''));
 }
@@ -70,34 +75,102 @@ function assertActiveKeysMatch(snapshot, side) {
 console.log('\n=== recoil faint turn-log tests ===\n');
 
 T('1. recoil KO marks attacker fainted before replacement snapshots', () => {
-  const player = selectedTeam(ctx.TEAMS.player, ['Incineroar', 'Arcanine', 'Garchomp', 'Whimsicott']);
-  const opponent = selectedTeam(ctx.TEAMS.fire_ice_fullroom, ['Torkoal', 'Cofagrigus', 'Typhlosion-Hisui', 'Ursaluna-Bloodmoon']);
+  const player = customTeam('Recoil Cleanup', [{
+    name: 'Arcanine',
+    ability: 'Intimidate',
+    item: '',
+    nature: 'Jolly',
+    level: 50,
+    currentHp: 20,
+    moves: ['Head Smash'],
+    evs: { hp: 4, atk: 252, def: 0, spa: 0, spd: 0, spe: 252 }
+  }, {
+    name: 'Whimsicott',
+    ability: 'Prankster',
+    item: 'Focus Sash',
+    nature: 'Timid',
+    level: 50,
+    moves: ['Tailwind'],
+    evs: { hp: 4, atk: 0, def: 0, spa: 0, spd: 0, spe: 252 }
+  }]);
+  const opponent = customTeam('Recoil Dummy', [{
+    name: 'Torkoal',
+    ability: 'Drought',
+    item: '',
+    nature: 'Relaxed',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 252, atk: 0, def: 252, spa: 0, spd: 0, spe: 0 }
+  }]);
   const battle = ctx.simulateBattle(player, opponent, {
-    format: 'doubles',
+    format: 'singles',
     seed: [3765649682, 915019675, 502668142, 3322095033],
-    maxTurns: 5
+    playerBring: ['Arcanine', 'Whimsicott'],
+    opponentBring: ['Torkoal'],
+    maxTurns: 1
   });
 
-  const turn2 = battle.turnLog.find(turn => turn.turn === 2);
-  const turn3 = battle.turnLog.find(turn => turn.turn === 3);
-  truthy(turn2 && turn3, 'expected turn 2 and turn 3 snapshots');
+  const turn1 = battle.turnLog.find(turn => turn.turn === 1);
+  truthy(turn1, 'expected turn 1 snapshots');
 
-  const t2Events = eventTexts(turn2);
-  const recoilIdx = t2Events.findIndex(text => text.includes('Arcanine was hurt by recoil!'));
-  const faintIdx = t2Events.findIndex(text => text === 'Arcanine fainted!');
-  const replaceIdx = t2Events.findIndex(text => text === 'Whimsicott was sent out!');
+  const t1Events = eventTexts(turn1);
+  const damageLine = t1Events.find(text => text.includes('Arcanine used Head Smash!') && text.includes('dmg'));
+  truthy(damageLine, 'Head Smash damage event missing');
+  const damageMatch = String(damageLine).match(/\[(\d+) dmg/);
+  truthy(damageMatch, 'Head Smash damage amount missing');
+  const expectedRecoil = Math.max(1, Math.round(Number(damageMatch[1]) / 2));
+  const recoilIdx = t1Events.findIndex(text => text.includes('Arcanine was hurt by recoil!'));
+  const faintIdx = t1Events.findIndex(text => text === 'Arcanine fainted!');
+  const replaceIdx = t1Events.findIndex(text => text === 'Whimsicott was sent out!');
   truthy(recoilIdx >= 0, 'Arcanine recoil event missing');
+  truthy(t1Events[recoilIdx].includes('[' + expectedRecoil + ' dmg]'), 'Head Smash should use 1/2 damage recoil');
   truthy(faintIdx > recoilIdx, 'Arcanine should faint immediately after recoil reaches 0 HP');
   truthy(replaceIdx > faintIdx, 'replacement should happen after recoil faint cleanup');
 
-  assertActiveKeysMatch(turn2.post, 'player');
-  assertActiveKeysMatch(turn3.pre, 'player');
-  truthy(!turn2.post.active.player.includes('Arcanine'), 'turn 2 post active list should not include recoil-fainted Arcanine');
-  truthy(turn2.post.active.player.includes('Whimsicott'), 'Whimsicott should replace recoil-fainted Arcanine');
+  assertActiveKeysMatch(turn1.post, 'player');
+  truthy(!turn1.post.active.player.includes('Arcanine'), 'turn 1 post active list should not include recoil-fainted Arcanine');
+  truthy(turn1.post.active.player.includes('Whimsicott'), 'Whimsicott should replace recoil-fainted Arcanine');
+});
 
-  const t3Events = eventTexts(turn3).join(' | ');
-  truthy(!t3Events.includes('-> Arcanine') && !t3Events.includes('Arcanine fainted!'),
-    'turn 3 should not target or faint an already recoil-fainted Arcanine');
+T('2. imported recoil moves use Showdown primary metadata', () => {
+  truthy(!Object.prototype.hasOwnProperty.call(ctx.MOVE_BP, 'Brave Bird'), 'Brave Bird should be absent from local MOVE_BP control table');
+  truthy(!Object.prototype.hasOwnProperty.call(ctx.MOVE_TYPES, 'Brave Bird'), 'Brave Bird should be absent from local MOVE_TYPES control table');
+
+  const player = customTeam('Imported Recoil', [{
+    name: 'Charizard',
+    ability: 'Blaze',
+    item: '',
+    nature: 'Adamant',
+    level: 50,
+    moves: ['Brave Bird'],
+    evs: { hp: 4, atk: 252, def: 0, spa: 0, spd: 0, spe: 252 }
+  }]);
+  const opponent = customTeam('Imported Dummy', [{
+    name: 'Abomasnow',
+    ability: 'Snow Warning',
+    item: '',
+    nature: 'Hardy',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 252, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+  }]);
+  const battle = ctx.simulateBattle(player, opponent, {
+    format: 'singles',
+    seed: [11, 13, 17, 19],
+    maxTurns: 1
+  });
+  const damageLine = battle.log.find(line => String(line).includes('Charizard used Brave Bird!') && String(line).includes('dmg'));
+  truthy(damageLine, 'Brave Bird damage line missing');
+  const damageMatch = String(damageLine).match(/\[(\d+) dmg/);
+  truthy(damageMatch, 'Brave Bird damage amount missing');
+  truthy(Number(damageMatch[1]) > 50, 'Brave Bird should use Showdown Flying 120 BP instead of local fallback damage');
+  truthy(battle.log.some(line => String(line).includes('Charizard was hurt by recoil!')),
+    'Brave Bird recoil line missing');
+});
+
+T('3. Showdown accuracy metadata wins over local fallback values', () => {
+  eq(ctx._moveAccuracy('Hydro Pump', 0.01), 0.8, 'Hydro Pump should use Showdown 80% accuracy');
+  eq(ctx._moveAccuracy('Never Local Move', 0.42), 0.42, 'missing Showdown rows should use local fallback');
 });
 
 console.log('\nrecoil faint turn-log tests:', pass + ' pass, ' + fail + ' fail\n');

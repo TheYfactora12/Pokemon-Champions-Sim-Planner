@@ -5165,7 +5165,7 @@ var CS_OVERVIEW_DATA = {
   metrics: [
     { label: 'Sim Truth Gate', value: 'Active' },
     { label: 'Live Supabase', value: 'Teams + analyses' },
-    { label: 'Showdown DB', value: 'Planned layer' },
+    { label: 'Showdown DB', value: 'Generated primary' },
     { label: 'Priority Drift', value: 'Guarded' },
     { label: 'Turn Logs', value: 'Validator ready' }
   ],
@@ -5184,6 +5184,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Move priority aligned with Showdown data',
       detail: 'Feint, Ice Shard, and Protect-family shield priorities are covered by local priority drift tests.'
+    },
+    {
+      status: 'done',
+      title: 'Showdown primary move metadata for imported teams',
+      detail: 'The engine now reads generated Showdown move rows first for type, category, base power, accuracy, priority, target, and contact flags, then falls back to local Champions data for custom gaps.'
     },
     {
       status: 'done',
@@ -5225,12 +5230,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Priority and turn-log tests are green',
-      detail: 'showdown_priority_drift_tests.js, turn_order_priority_tests.js, recoil_faint_turn_log_tests.js, and turn_log_export_validator_tests.js passed after the fixes.'
+      detail: 'showdown_priority_drift_tests.js, turn_order_priority_tests.js, recoil_faint_turn_log_tests.js, move_support_audit_tests.js, and turn_log_export_validator_tests.js passed after the fixes.'
     },
     {
       status: 'validated',
       title: 'Live preview bundle contains the new safeguards',
-      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the v47 recoil-faint service-worker cache.'
+      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the v48 Showdown-primary service-worker cache.'
     },
     {
       status: 'validated',
@@ -5247,7 +5252,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'App still consumes generated/static Showdown data',
-      detail: 'The browser bundle is not yet reading approved Showdown entity rows plus Champions override rows from Supabase.'
+      detail: 'The browser bundle now uses generated Showdown rows as the primary local metadata layer, but it is not yet reading approved Showdown entity rows plus Champions override rows from Supabase.'
     },
     {
       status: 'gap',
@@ -5304,7 +5309,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Migrate static JS tables gradually',
-      detail: 'Move priority first, then move type/category/base power/targets, then species, items, and abilities through a local data adapter.'
+      detail: 'Keep moving static facts behind the Showdown-primary adapter, then replace generated/static assets with approved Supabase views for species, items, abilities, and Champions overrides.'
     },
     {
       status: 'next',

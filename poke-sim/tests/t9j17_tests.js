@@ -303,7 +303,7 @@ T('C4. executeMove gates a 25% miss when attacker.ability === Piercing Drill', (
 T('C5. Piercing Drill miss happens AFTER the standard ACC_MAP check', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
   // Check the ACC_MAP miss block precedes the Piercing Drill block in source.
-  const accIdx = src.indexOf('const acc = ACC_MAP[move] || 1.0;');
+  const accIdx = src.indexOf('const acc = _moveAccuracy(move, ACC_MAP[move]);');
   const pdIdx  = src.indexOf("attacker.ability === 'Piercing Drill' && rng() < 0.25");
   truthy(accIdx < pdIdx && accIdx > 0 && pdIdx > 0,
     'Piercing Drill roll must fire after ACC_MAP miss block in executeMove');

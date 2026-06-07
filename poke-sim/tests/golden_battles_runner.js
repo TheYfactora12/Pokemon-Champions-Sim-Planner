@@ -26,6 +26,7 @@ function createEngineContext() {
   var ctx = vm.createContext({ console: console });
   load(ctx, 'data.js');
   load(ctx, 'engine.js');
+  load(ctx, 'generated/pokemon_showdown_legal_data.js');
   // const-scoped vars need explicit export to context's this
   vm.runInContext('this.TEAMS=TEAMS; this.simulateBattle=simulateBattle;', ctx);
   return ctx;

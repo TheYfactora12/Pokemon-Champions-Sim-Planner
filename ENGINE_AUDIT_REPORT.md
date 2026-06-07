@@ -292,10 +292,11 @@ Each item below is a ready-to-file issue.
 - **Fix hint:** Branch on `results.format` / `results.playerTeam` style.
 - **Acceptance:** Tips for a Trick Room team are different from tips for a Tailwind team.
 
-### [P2] [recoil] Head Smash recoil should be 1/2, not 1/3
+### [P2] [recoil] Head Smash recoil should be 1/2, not 1/3 - RESOLVED 2026-06-06
 - **File:Line:** `engine.js:753–757`.
 - **Fix hint:** Split recoil by move.
 - **Acceptance:** Head Smash self-damage doubles.
+- **Resolution:** `poke-sim/engine.js` now uses a Showdown-compatible recoil table and `poke-sim/tests/recoil_faint_turn_log_tests.js` asserts Head Smash uses 1/2 damage recoil before replacement snapshots.
 
 ### [P2] [status] `applyEntryAbility` `Hospitality` only fires for player side
 - **File:Line:** `engine.js:512`.

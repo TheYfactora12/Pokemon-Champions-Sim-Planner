@@ -35,7 +35,8 @@
 // v45-overview-alfredo-sync [2026-06-06] - Project Overview tab plus Alfredo merge-candidate sync.
 // v46-network-first-app-shell [2026-06-06] - Force app-shell HTML refreshes so live exports cannot use stale simulator bundles.
 // v47-recoil-faint-cleanup [2026-06-06] - Recoil KOs now mark the attacker fainted before replacement snapshots.
-const CACHE_NAME = 'champions-sim-v47-recoil-faint-cleanup';
+// v48-showdown-primary-moves [2026-06-06] - Showdown move metadata is primary for imported/custom move facts.
+const CACHE_NAME = 'champions-sim-v48-showdown-primary-moves';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

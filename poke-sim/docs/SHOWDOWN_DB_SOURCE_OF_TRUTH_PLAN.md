@@ -23,6 +23,14 @@ Pokemon Showdown upstream
 
 The browser may still receive generated JS for offline GitHub Pages support. The database becomes the source of truth, not the hand-authored JS tables.
 
+## Current Runtime Bridge
+
+As of 2026-06-06, the battle engine treats generated Pokemon Showdown move rows as the primary metadata layer for imported/custom moves. Move type, category, base power, accuracy, priority, target, and contact flags read from `generated/pokemon_showdown_legal_data.js` first when a row exists; local JS tables remain as a fallback for Champions-only/custom gaps until Supabase approved views are live.
+
+Damage-based recoil is now resolved from Showdown-compatible recoil metadata when present, with a checked local bridge table for the current generated file. This covers common imported recoil moves such as Brave Bird, Double-Edge, Wild Charge, Volt Tackle, Wood Hammer, Take Down, Submission, Head Charge, Head Smash, Flare Blitz, Wave Crash, and Light of Ruin.
+
+This is not the final DB state. The next target is still approved Supabase rows: `showdown_entities` plus explicit `champions_overrides`, then deterministic generated app assets from those approved views.
+
 ## Source Boundaries
 
 ### Mirror Showdown 1:1

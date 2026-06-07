@@ -84,10 +84,15 @@
   function getLocalMoveSupport(moveName) {
     var move = clean(moveName);
     var row = moveRow(move);
-    var hasType = typeof MOVE_TYPES !== 'undefined' && registryEntry(move, MOVE_TYPES);
-    var hasCategory = typeof MOVE_CATEGORY !== 'undefined' && registryEntry(move, MOVE_CATEGORY);
-    var hasBasePower = typeof MOVE_BP !== 'undefined' && registryEntry(move, MOVE_BP, true);
-    var hasTarget = typeof MOVE_TARGETS !== 'undefined' && registryEntry(move, MOVE_TARGETS);
+    var localType = typeof MOVE_TYPES !== 'undefined' && registryEntry(move, MOVE_TYPES) ? MOVE_TYPES[move] : '';
+    var localCategory = typeof MOVE_CATEGORY !== 'undefined' && registryEntry(move, MOVE_CATEGORY) ? MOVE_CATEGORY[move] : '';
+    var localBasePower = typeof MOVE_BP !== 'undefined' && registryEntry(move, MOVE_BP, true) ? MOVE_BP[move] : '';
+    var localTarget = typeof MOVE_TARGETS !== 'undefined' && registryEntry(move, MOVE_TARGETS) ? MOVE_TARGETS[move] : '';
+    var hasShowdownBasePower = !!(row && Object.prototype.hasOwnProperty.call(row, 'base_power'));
+    var hasType = !!(row && row.type) || !!localType;
+    var hasCategory = !!(row && row.category) || !!localCategory;
+    var hasBasePower = hasShowdownBasePower || localBasePower !== '';
+    var hasTarget = !!(row && row.target) || !!localTarget;
     var missing = [];
     if (!hasType) missing.push('type');
     if (!hasCategory) missing.push('category');
@@ -99,11 +104,11 @@
     var supportLevel = registryComplete ? (verified ? (verification.supportLevel || 'verified') : 'baseline') : 'incomplete';
     var notes = '';
     if (!registryComplete) {
-      notes = 'Local sim metadata is incomplete: missing ' + missing.join(', ') + '.';
+      notes = 'Runtime move metadata is incomplete: missing ' + missing.join(', ') + '.';
     } else if (verified) {
       notes = verification.summary || 'Move has explicit regression coverage in the local simulator test suite.';
     } else {
-      notes = 'Move has core local metadata, but no dedicated edge-case regression tag yet.';
+      notes = 'Move has Showdown/base runtime metadata, but no dedicated edge-case regression tag yet.';
     }
     return {
       moveName: move,
@@ -119,10 +124,17 @@
         flags: row.flags || ''
       } : null,
       local: {
-        type: hasType ? MOVE_TYPES[move] : '',
-        category: hasCategory ? MOVE_CATEGORY[move] : '',
-        basePower: hasBasePower ? MOVE_BP[move] : '',
-        target: hasTarget ? MOVE_TARGETS[move] : ''
+        type: localType,
+        category: localCategory,
+        basePower: localBasePower,
+        target: localTarget
+      },
+      effective: {
+        type: row && row.type ? row.type : localType,
+        category: row && row.category ? String(row.category).toLowerCase() : localCategory,
+        basePower: hasShowdownBasePower ? row.base_power : localBasePower,
+        target: row && row.target ? row.target : localTarget,
+        source: row ? 'showdown' : (localType || localCategory || localBasePower !== '' || localTarget ? 'local' : 'missing')
       },
       registryComplete: registryComplete,
       verified: verified,
