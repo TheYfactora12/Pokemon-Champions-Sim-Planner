@@ -27,6 +27,8 @@ The browser may still receive generated JS for offline GitHub Pages support. The
 
 As of 2026-06-06, the battle engine treats generated Pokemon Showdown move rows as the primary metadata layer for imported/custom moves. Move type, category, base power, accuracy, priority, target, and contact flags read from `generated/pokemon_showdown_legal_data.js` first when a row exists; local JS tables remain as a fallback for Champions-only/custom gaps until Supabase approved views are live.
 
+As of 2026-06-10, battle construction also prefers generated Showdown species stats/types before local fallback tables. Browser-exported turn logs were checked against the generated species table; all logged species resolved, and a stale Farigiraf fallback stat row was corrected to Showdown's `120/90/70/110/70/60`.
+
 Damage-based recoil is now resolved from Showdown-compatible recoil metadata when present, with a checked local bridge table for the current generated file. This covers common imported recoil moves such as Brave Bird, Double-Edge, Wild Charge, Volt Tackle, Wood Hammer, Take Down, Submission, Head Charge, Head Smash, Flare Blitz, Wave Crash, and Light of Ruin.
 
 This is not the final DB state. As of 2026-06-07, the repo has a migration candidate for `showdown_entities`, `showdown_entity_diffs`, `champions_overrides`, `approved_showdown_entities`, and `approved_champions_data`, plus a deterministic approved-data generator. The live Supabase project still needs the migration applied before approved DB rows can become the reviewed generation source.
@@ -135,7 +137,7 @@ RLS:
 
 ### Phase 2 - Promote Fetch Output Into DB
 
-Extend `tools/fetch_showdown_data.mjs` to optionally:
+Use `tools/write_showdown_data_to_db.mjs` after `tools/fetch_showdown_data.mjs` to:
 
 - write a `showdown_sync_runs` row
 - write `showdown_source_files`
@@ -148,6 +150,30 @@ Default job behavior:
 - detect and report
 - do not auto-approve
 - do not auto-merge generated assets without review
+
+Local dry run:
+
+```bash
+npm run showdown:sync
+npm run showdown:write-db -- --dry-run
+```
+
+Trusted DB write, for local admin or GitHub Actions only:
+
+```bash
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+  npm run showdown:write-db -- --sync-run-id showdown_YYYYMMDD
+```
+
+Promotion mode:
+
+```bash
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+  npm run showdown:write-db -- --sync-run-id showdown_YYYYMMDD --approve
+```
+
+The public browser must never receive `SUPABASE_SERVICE_ROLE_KEY`; it can only
+read approved rows through anon-safe views/policies.
 
 ### Phase 3 - Generate App Data From DB Views
 

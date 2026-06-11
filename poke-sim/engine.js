@@ -315,6 +315,49 @@ function _showdownMoveRow(move) {
   }
 }
 
+function _showdownSpeciesRow(species) {
+  try {
+    var root = (typeof globalThis !== 'undefined') ? globalThis
+      : ((typeof window !== 'undefined') ? window : null);
+    var data = root && root.ChampionsSim && root.ChampionsSim.pokemonDataAudit;
+    var rows = data && data.species ? data.species : null;
+    if (!rows) return null;
+    if (rows[species]) return rows[species];
+    var id = _moveId(species);
+    var altId = id === 'floetteeternalflower' ? 'floetteeternal' : id;
+    for (var key in rows) {
+      if (!Object.prototype.hasOwnProperty.call(rows, key)) continue;
+      var row = rows[key];
+      if (!row) continue;
+      var rowId = row.id || '';
+      var rowNameId = _moveId(row.speciesKey || row.displayName || key);
+      if (rowId === id || rowId === altId || rowNameId === id || rowNameId === altId) return row;
+    }
+    return null;
+  } catch (_e) {
+    return null;
+  }
+}
+
+function _showdownSpeciesBase(species) {
+  var row = _showdownSpeciesRow(species);
+  if (!row || !row.stats) return null;
+  var base = {
+    hp: Number(row.stats.hp),
+    atk: Number(row.stats.atk),
+    def: Number(row.stats.def),
+    spa: Number(row.stats.spa),
+    spd: Number(row.stats.spd),
+    spe: Number(row.stats.spe),
+    types: Array.isArray(row.types) ? row.types.slice() : []
+  };
+  if (!Number.isFinite(base.hp) || !Number.isFinite(base.atk) ||
+      !Number.isFinite(base.def) || !Number.isFinite(base.spa) ||
+      !Number.isFinite(base.spd) || !Number.isFinite(base.spe) ||
+      !base.types.length) return null;
+  return base;
+}
+
 function _moveType(move) {
   var row = _showdownMoveRow(move);
   if (row && row.type) return row.type;
@@ -620,7 +663,8 @@ var ROLE_BOOSTING_MOVES = ['Swords Dance','Nasty Plot','Dragon Dance','Quiver Da
 var ROLE_DAMAGE_ITEMS = ['Life Orb','Choice Band','Choice Specs','Choice Scarf','Expert Belt','Clear Amulet'];
 
 function _roleStatsFor(mon) {
-  var base = (typeof BASE_STATS !== 'undefined' && mon && mon.name && BASE_STATS[mon.name]) ? BASE_STATS[mon.name] : {};
+  var base = (mon && mon.name && _showdownSpeciesBase(mon.name)) ||
+    ((typeof BASE_STATS !== 'undefined' && mon && mon.name && BASE_STATS[mon.name]) ? BASE_STATS[mon.name] : {});
   return {
     hp:  Number(base.hp  || mon && mon.hp  || 80),
     atk: Number(base.atk || mon && mon.atk || 80),
@@ -744,9 +788,14 @@ class Pokemon {
                            ? MEGA_TRIGGER_POLICY.FIRST_ELIGIBLE : 'first_eligible');
     this.megaTriggerTurn = 1;
 
-    const _baseStats = BASE_STATS[this.name] || { hp:80,atk:80,def:80,spa:80,spd:80,spe:80, types:['Normal'] };
+    // Source order: generated Showdown species rows first; local tables only
+    // backfill unknown/custom/partial rows and Champions-specific overrides.
+    const _showdownBaseStats = _showdownSpeciesBase(this.name);
+    const _baseStats = _showdownBaseStats || BASE_STATS[this.name] || { hp:80,atk:80,def:80,spa:80,spd:80,spe:80, types:['Normal'] };
     // Use POKEMON_TYPES_DB for more accurate type coverage on imported Pokémon
-    const _types = (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[this.name])
+    const _types = (_showdownBaseStats && Array.isArray(_showdownBaseStats.types) && _showdownBaseStats.types.length)
+      ? _showdownBaseStats.types
+      : (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[this.name])
       ? POKEMON_TYPES_DB[this.name]
       : _baseStats.types;
     this._base = Object.assign({}, _baseStats, { types: _types });

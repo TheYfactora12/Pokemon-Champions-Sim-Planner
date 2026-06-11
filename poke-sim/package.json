@@ -9,6 +9,7 @@
     "test:db": "bash tests/_run_all_db.sh",
     "test:db:live": "bash tests/_run_all_db.sh --live",
     "showdown:sync": "node tools/fetch_showdown_data.mjs",
+    "showdown:write-db": "node tools/write_showdown_data_to_db.mjs",
     "showdown:generate-approved": "node tools/generate-approved-data-from-db.mjs"
   },
   "dependencies": {

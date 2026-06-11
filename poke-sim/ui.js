@@ -423,6 +423,60 @@ function parseShowdownPaste(text) {
   return members;
 }
 
+function buildImportedTeamValidation(members, opts) {
+  opts = opts || {};
+  // Imports stay usable with warnings, but hard team-rule failures are marked
+  // illegal so they cannot masquerade as reviewed legal teams.
+  var team = {
+    name: opts.name || 'Imported Team',
+    format: opts.format || 'champions',
+    legality_status: 'unverified',
+    members: members || []
+  };
+  var out = {
+    valid: true,
+    errors: [],
+    warnings: [],
+    sourceVersion: '',
+    memberWarnings: {}
+  };
+  if (typeof validateTeam === 'function') {
+    try {
+      var verdict = validateTeam(team, 'vgc') || {};
+      out.errors = out.errors.concat(verdict.errors || []);
+      out.warnings = out.warnings.concat(verdict.warnings || []);
+    } catch (_e) {
+      out.warnings.push('Team rules could not be fully checked.');
+    }
+  }
+  var root = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : null);
+  var simRoot = (typeof ChampionsSim !== 'undefined') ? ChampionsSim : (root && root.ChampionsSim);
+  var api = simRoot && simRoot.moveLegality ? simRoot.moveLegality : null;
+  if (!api || typeof api.validateMovesForSet !== 'function') {
+    out.warnings.push('Showdown species and move legality data is not loaded.');
+  } else {
+    (members || []).forEach(function(member, idx) {
+      var checks = api.validateMovesForSet(member || {});
+      checks.forEach(function(row) {
+        if (!out.sourceVersion && row.sourceVersion) out.sourceVersion = row.sourceVersion;
+        if (row.legal) return;
+        var label = (member && member.name ? member.name : 'Pokemon') + ': ' + (row.moveName || 'unknown move') + ' - ' + (row.notes || row.reason || 'not verified');
+        var isUnchecked = row.reason === 'source_unavailable' || row.reason === 'unknown_species';
+        out.warnings.push(label);
+        out.memberWarnings[String(idx)] = out.memberWarnings[String(idx)] || [];
+        out.memberWarnings[String(idx)].push({
+          severity: isUnchecked ? 'unchecked' : 'warning',
+          text: label
+        });
+      });
+    });
+  }
+  out.errors = Array.from(new Set(out.errors.filter(Boolean)));
+  out.warnings = Array.from(new Set(out.warnings.filter(Boolean)));
+  out.valid = out.errors.length === 0;
+  return out;
+}
+
 // ============================================================
 // SHOWDOWN PASTE EXPORTER
 // Generates a valid PS!/pokepast.es paste from a team object
@@ -1402,6 +1456,7 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
     if (!t || !Array.isArray(t.members) || t.members.length === 0) { skipped++; continue; }
     var key = _uniqueCustomKey(t.name);
     var name = _uniqueTeamName(t.name || 'Imported Team');
+    var validation = buildImportedTeamValidation(t.members, { name: name, format: 'champions' });
     TEAMS[key] = {
       name: name,
       label: 'CUSTOM',
@@ -1410,7 +1465,10 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
       members: t.members,
       source: 'custom',
       format: 'champions',
-      legality_status: 'unverified',
+      legality_status: validation.valid ? 'unverified' : 'illegal',
+      import_warnings: validation.warnings,
+      import_errors: validation.errors,
+      showdown_source_version: validation.sourceVersion,
       created_at: new Date().toISOString()
     };
     added++;
@@ -1968,12 +2026,27 @@ document.getElementById('showdown-paste')?.addEventListener('input', function() 
 function showImportPreview(members) {
   const preview = document.getElementById('import-preview');
   const roster = document.getElementById('preview-roster');
-  roster.innerHTML = members.map(m => `
+  const validation = buildImportedTeamValidation(members, { format: 'champions' });
+  roster.innerHTML = members.map((m, idx) => {
+    const warnings = validation.memberWarnings[String(idx)] || [];
+    const warningHtml = warnings.length
+      ? '<div class="preview-warnings">' + warnings.slice(0, 3).map(w => '<span class="preview-warning ' + _escapeHtml(w.severity) + '">' + _escapeHtml(w.text) + '</span>').join('') + '</div>'
+      : '<div class="preview-ok">Showdown species and moves checked</div>';
+    return `
     <div class="preview-row">
       <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/>
-      <span class="preview-name">${_escapeHtml(m.name || '')}</span>
-      <span class="preview-item">${_escapeHtml(m.item||'No item')} · ${_escapeHtml(m.ability||'?')}</span>
-    </div>`).join('');
+      <div class="preview-main">
+        <span class="preview-name">${_escapeHtml(m.name || '')}</span>
+        <span class="preview-item">${_escapeHtml(m.item||'No item')} · ${_escapeHtml(m.ability||'?')}</span>
+        ${warningHtml}
+      </div>
+    </div>`;
+  }).join('') + (validation.errors.length || validation.warnings.length
+    ? '<div class="preview-team-warnings">' +
+        validation.errors.slice(0, 3).map(e => '<div class="preview-team-error">' + _escapeHtml(e) + '</div>').join('') +
+        validation.warnings.slice(0, 5).map(w => '<div class="preview-team-warning">' + _escapeHtml(w) + '</div>').join('') +
+      '</div>'
+    : '');
   preview.style.display = '';
 }
 
@@ -2016,6 +2089,7 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
   if (slot === '__new__') {
     const newKey = 'custom_' + Date.now();
     const guessedName = members[0] ? `${members[0].name}'s Team` : 'Imported Team';
+    const validation = buildImportedTeamValidation(members, { name: guessedName, format: 'champions' });
     TEAMS[newKey] = {
       name: guessedName,
       label: 'CUSTOM',
@@ -2025,7 +2099,10 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
       // T9f: persistence + legality flags
       source: 'custom',
       format: 'champions',
-      legality_status: 'unverified',
+      legality_status: validation.valid ? 'unverified' : 'illegal',
+      import_warnings: validation.warnings,
+      import_errors: validation.errors,
+      showdown_source_version: validation.sourceVersion,
       created_at: new Date().toISOString()
     };
     // T9f: persist to localStorage immediately
@@ -2047,7 +2124,12 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
   } else {
     const teamKeys = Object.keys(TEAMS);
     if (!teamKeys.includes(slot)) { statusEl.textContent = 'Unknown slot'; statusEl.className='modal-status err'; return; }
+    const validation = buildImportedTeamValidation(members, { name: TEAMS[slot].name, format: TEAMS[slot].format || 'champions' });
     TEAMS[slot].members = members;
+    TEAMS[slot].legality_status = validation.valid ? 'unverified' : 'illegal';
+    TEAMS[slot].import_warnings = validation.warnings;
+    TEAMS[slot].import_errors = validation.errors;
+    TEAMS[slot].showdown_source_version = validation.sourceVersion;
     targetSlot = slot;
     teamName = TEAMS[slot].name;
     // T9h: persist edits appropriately by team source
@@ -4232,7 +4314,14 @@ function _upsertTeamToDB(teamId, team, source) {
       ruleset_id:  (adapter.DEFAULT_RULESET_ID) || 'champions_reg_m_doubles_bo3',
       source:      source || (team && team.source) || 'unknown',
       description: (team && team.description) || '',
-      metadata:    { source: source || 'unknown', format: (team && team.format) || 'champions' },
+      metadata:    {
+        source: source || 'unknown',
+        format: (team && team.format) || 'champions',
+        legality_status: (team && team.legality_status) || 'unverified',
+        import_warnings: (team && team.import_warnings) || [],
+        import_errors: (team && team.import_errors) || [],
+        showdown_source_version: (team && team.showdown_source_version) || ''
+      },
       members:     members.map(function(m) {
         return {
           name:      m.name      || m.species || 'Unknown',
@@ -5165,7 +5254,7 @@ var CS_OVERVIEW_DATA = {
   metrics: [
     { label: 'Sim Truth Gate', value: 'Active' },
     { label: 'Live Supabase', value: 'Teams + analyses' },
-    { label: 'Showdown DB', value: 'Approved path staged' },
+    { label: 'Showdown DB', value: 'Checking...' },
     { label: 'Priority Drift', value: 'Guarded' },
     { label: 'Turn Logs', value: 'Validator ready' }
   ],
@@ -5391,12 +5480,91 @@ function csRenderOverviewSection(title, kicker, rows) {
   '</div>';
 }
 
+function csFormatOverviewDate(value) {
+  if (!value) return 'not recorded';
+  try {
+    var d = new Date(value);
+    if (Number.isNaN(d.getTime())) return String(value);
+    return d.toLocaleString();
+  } catch (_e) {
+    return String(value);
+  }
+}
+
+function csShortHash(value) {
+  var s = String(value || '');
+  return s.length > 12 ? s.slice(0, 12) : (s || 'none');
+}
+
+function csRenderShowdownDbInspectorState(kind, payload) {
+  if (kind === 'loading') {
+    return '<div class="overview-db-empty">Checking approved Showdown rows...</div>';
+  }
+  if (kind === 'error' || !payload || !payload.available) {
+    return '<div class="overview-db-empty">' + _escapeHtml(payload && payload.message ? payload.message : 'Showdown DB unavailable') + '</div>';
+  }
+  var run = payload.latestRun || {};
+  var counts = (payload.approvedCounts || []).map(function(row) {
+    var count = row.count == null ? 'n/a' : String(row.count);
+    return '<div class="overview-db-count"><strong>' + _escapeHtml(row.kind) + '</strong><span>' + _escapeHtml(count) + '</span></div>';
+  }).join('');
+  var files = (payload.sourceFiles || []).map(function(file) {
+    return '<tr><td>' + _escapeHtml(file.source_name || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(file.parse_status || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(csShortHash(file.source_hash)) + '</td>' +
+      '<td>' + _escapeHtml(String(file.byte_size || 0)) + '</td></tr>';
+  }).join('');
+  var sample = (payload.approvedSample || []).map(function(row) {
+    return '<tr><td>' + _escapeHtml(row.entity_kind || '') + '</td>' +
+      '<td>' + _escapeHtml(row.display_name || row.entity_key || '') + '</td>' +
+      '<td>' + _escapeHtml(csShortHash(row.source_hash)) + '</td>' +
+      '<td>' + _escapeHtml(csFormatOverviewDate(row.approved_at || row.created_at)) + '</td></tr>';
+  }).join('');
+  return '<div class="overview-db-summary">' +
+      '<div><strong>Latest run</strong><span>' + _escapeHtml(run.sync_run_id || 'none found') + '</span></div>' +
+      '<div><strong>Status</strong><span>' + _escapeHtml(run.status || payload.mode || 'unknown') + '</span></div>' +
+      '<div><strong>Finished</strong><span>' + _escapeHtml(csFormatOverviewDate(run.finished_at)) + '</span></div>' +
+    '</div>' +
+    '<div class="overview-db-counts">' + counts + '</div>' +
+    '<div class="overview-db-table-wrap"><table class="overview-db-table"><thead><tr><th>Source</th><th>Parse</th><th>Hash</th><th>Bytes</th></tr></thead><tbody>' +
+      (files || '<tr><td colspan="4">No source-file rows readable yet</td></tr>') +
+    '</tbody></table></div>' +
+    '<div class="overview-db-table-wrap"><table class="overview-db-table"><thead><tr><th>Kind</th><th>Approved row</th><th>Hash</th><th>Approved</th></tr></thead><tbody>' +
+      (sample || '<tr><td colspan="4">No approved rows readable yet</td></tr>') +
+    '</tbody></table></div>';
+}
+
+function csToggleShowdownDbInspector() {
+  var body = document.getElementById('overview-showdown-db-inspector-body');
+  var button = document.getElementById('overview-showdown-db-inspect');
+  if (!body || !button) return;
+  var opening = body.hidden;
+  body.hidden = !opening;
+  button.setAttribute('aria-expanded', opening ? 'true' : 'false');
+  if (!opening) return;
+  body.innerHTML = csRenderShowdownDbInspectorState('loading');
+  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  if (!adapter || !adapter.enabled || typeof adapter.loadShowdownDbSnapshot !== 'function') {
+    body.innerHTML = csRenderShowdownDbInspectorState('error', { available: false, message: 'Static bundle' });
+    return;
+  }
+  adapter.loadShowdownDbSnapshot().then(function(snapshot) {
+    body.innerHTML = csRenderShowdownDbInspectorState('ready', snapshot);
+  }).catch(function() {
+    body.innerHTML = csRenderShowdownDbInspectorState('error', { available: false, message: 'Showdown DB unavailable' });
+  });
+}
+
 function renderOverviewTab() {
   var host = document.getElementById('overview-content');
   if (!host) return false;
   var data = CS_OVERVIEW_DATA;
   var metrics = data.metrics.map(function(metric) {
-    return '<div class="overview-metric"><strong>' + _escapeHtml(metric.label) + '</strong><span>' + _escapeHtml(metric.value) + '</span></div>';
+    var idAttr = metric.label === 'Showdown DB' ? ' id="overview-showdown-db-status"' : '';
+    var action = metric.label === 'Showdown DB'
+      ? '<button type="button" class="overview-metric-action" id="overview-showdown-db-inspect" aria-controls="overview-showdown-db-inspector-body" aria-expanded="false">Inspect</button>'
+      : '';
+    return '<div class="overview-metric"' + idAttr + '><strong>' + _escapeHtml(metric.label) + '</strong><span>' + _escapeHtml(metric.value) + '</span>' + action + '</div>';
   }).join('');
   var flow = data.flow.map(function(step) {
     return '<span class="overview-flow-step' + (step.active ? ' active' : '') + '">' + _escapeHtml(step.label) + '</span>';
@@ -5418,11 +5586,40 @@ function renderOverviewTab() {
         '<div class="overview-section">' +
           '<div class="overview-section-head"><h3>Source Of Truth Flow</h3><span class="overview-kicker">target</span></div>' +
           '<div class="overview-flow">' + flow + '</div>' +
+          '<div class="overview-db-inspector" id="overview-showdown-db-inspector-body" hidden></div>' +
           '<div class="overview-doc-links">' + docs + '</div>' +
         '</div>' +
       '</div>' +
     '</div>';
+  var inspectButton = document.getElementById('overview-showdown-db-inspect');
+  if (inspectButton) inspectButton.addEventListener('click', csToggleShowdownDbInspector);
+  csUpdateShowdownDbStatus();
   return true;
+}
+
+function csUpdateShowdownDbStatus() {
+  var node = document.getElementById('overview-showdown-db-status');
+  if (!node) return;
+  var span = node.querySelector('span');
+  if (!span) return;
+  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  if (!adapter || !adapter.enabled || typeof adapter.loadShowdownDbStatus !== 'function') {
+    span.textContent = 'Static bundle';
+    return;
+  }
+  adapter.loadShowdownDbStatus().then(function(status) {
+    if (!status || !status.available) {
+      span.textContent = status && status.message ? status.message : 'Static bundle';
+    } else if (status.mode === 'approved-db') {
+      span.textContent = 'Approved DB active';
+    } else if (status.mode === 'empty-db') {
+      span.textContent = 'DB views empty';
+    } else {
+      span.textContent = status.message || 'DB reachable';
+    }
+  }).catch(function() {
+    span.textContent = 'Static bundle';
+  });
 }
 
 if (typeof ChampionsSim !== 'undefined') {

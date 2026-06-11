@@ -274,8 +274,8 @@ T('43. Building Pokemon from aurora_veil_froslass does NOT set formatMismatch', 
 });
 
 // ==== SECTION 5 — End-to-end WR sanity (4 cases, small N) ====
-// 100% WR was deterministic before fix; even at N=10 we should see < 100% now
-// against the hardest opponents. We test per-team against three separate opps.
+// 100% WR was deterministic before fix. A 25-game deterministic sample avoids
+// false failures where a strong but finite matchup opens 10-0 by seed order.
 function wr(teamKey, oppKey, n=10) {
   let w = 0, played = 0;
   for (let i = 0; i < n; i++) {
@@ -289,7 +289,7 @@ function wr(teamKey, oppKey, n=10) {
 }
 
 T('44. cofagrigus_tr vs player no longer 100% WR (was 100% before fix)', () => {
-  const r = wr('cofagrigus_tr', 'player', 10);
+  const r = wr('cofagrigus_tr', 'player', 25);
   if (r >= 1.0) throw new Error(`still 100% WR (${r})`);
 });
 

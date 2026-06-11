@@ -50,11 +50,11 @@ const BASE_STATS = {
   Liepard:        { hp:64, atk:88, def:50, spa:88, spd:50, spe:106, types:['Dark'] },
   Archaludon:     { hp:90, atk:105, def:130, spa:125, spd:65, spe:85, types:['Steel','Dragon'] },
   Pelipper:       { hp:60, atk:50, def:100, spa:95, spd:70, spe:65, types:['Water','Flying'] },
-  Orthworm:       { hp:70, atk:85, def:145, spa:60, spd:55, spe:40, types:['Steel'] },
+  Orthworm:       { hp:70, atk:85, def:145, spa:60, spd:55, spe:65, types:['Steel'] },
   // Mega Houndoom
   'Houndoom-Mega': { hp:75, atk:90, def:90, spa:140, spd:90, spe:115, types:['Dark','Fire'] },
   Torkoal:        { hp:70, atk:85, def:140, spa:85, spd:70, spe:20, types:['Fire'] },
-  Farigiraf:      { hp:120, atk:90, def:70, spa:90, spd:90, spe:60, types:['Normal','Psychic'] },
+  Farigiraf:      { hp:120, atk:90, def:70, spa:110, spd:70, spe:60, types:['Normal','Psychic'] },
   // T9j.3b: corrected to Champions canonical 78/85/110/160/116/36 (BST 585).
   // Sources: Game8, RotomLabs Champions, Bulbapedia.
   'Drampa-Mega':  { hp:78, atk:85, def:110, spa:160, spd:116, spe:36, types:['Normal','Dragon'] },
@@ -69,7 +69,7 @@ const BASE_STATS = {
   Venusaur:       { hp:80, atk:82, def:83, spa:100, spd:100, spe:80, types:['Grass','Poison'] },
   // Cofagrigus TR
   Cofagrigus:     { hp:58, atk:50, def:145, spa:95, spd:105, spe:30, types:['Ghost'] },
-  Cresselia:      { hp:120, atk:70, def:120, spa:75, spd:130, spe:85, types:['Psychic'] },
+  Cresselia:      { hp:120, atk:70, def:110, spa:75, spd:120, spe:85, types:['Psychic'] },
   Gothitelle:     { hp:70, atk:55, def:95, spa:95, spd:110, spe:65, types:['Psychic'] },
   Dusclops:       { hp:40, atk:70, def:130, spa:60, spd:130, spe:25, types:['Ghost'] },
   'Flutter Mane': { hp:55, atk:55, def:55, spa:135, spd:135, spe:135, types:['Ghost','Fairy'] },
@@ -108,7 +108,7 @@ const BASE_STATS = {
   'Meganium-Mega': { hp:80, atk:92, def:115, spa:143, spd:115, spe:80, types:['Grass','Fairy'] },
   Lopunny:         { hp:65, atk:76, def:84, spa:54, spd:96, spe:105, types:['Normal'] },
   'Lopunny-Mega':  { hp:65, atk:136, def:94, spa:54, spd:96, spe:135, types:['Normal','Fighting'] },
-  Aegislash:       { hp:60, atk:50, def:150, spa:50, spd:150, spe:60, types:['Steel','Ghost'] },
+  Aegislash:       { hp:60, atk:50, def:140, spa:50, spd:140, spe:60, types:['Steel','Ghost'] },
   Vanilluxe:       { hp:71, atk:95, def:85, spa:110, spd:95, spe:79, types:['Ice'] },
 
   // T9j.7: base-form stats for Mega base species referenced by loaded teams.

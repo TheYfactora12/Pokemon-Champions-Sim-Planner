@@ -4,6 +4,23 @@ on:
   schedule:
     - cron: '30 13 * * *'
   workflow_dispatch:
+    inputs:
+      write_db:
+        description: 'Write normalized Showdown rows to Supabase'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      approve:
+        description: 'Mark written showdown_entities rows approved immediately'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 permissions:
   contents: read
@@ -17,6 +34,9 @@ jobs:
     name: Fetch Showdown source hashes
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +62,53 @@ jobs:
           else
             npm run showdown:sync
           fi
+
+      - name: Dry-run DB row promotion
+        run: |
+          set -euo pipefail
+          cd poke-sim
+          npm run showdown:write-db -- --dry-run
+
+      - name: Evaluate Showdown changes
+        id: change_check
+        run: |
+          set -euo pipefail
+          cd poke-sim
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+
+          const summary = JSON.parse(fs.readFileSync('artifacts/showdown-sync/normalized/change_summary.json', 'utf8'));
+          const totals = summary.totals || {};
+          const changedKinds = Object.entries(totals).filter(([, row]) => ((row.added || 0) + (row.removed || 0) + (row.changed || 0)) > 0);
+          const totalChanges = changedKinds.reduce((acc, [, row]) => acc + (row.added || 0) + (row.removed || 0) + (row.changed || 0), 0);
+          const changedKindsLabel = changedKinds.map(([kind]) => kind).join(',');
+          const output = [
+            `has_changes=${totalChanges > 0}`,
+            `total_changes=${totalChanges}`,
+            `changed_kinds=${changedKindsLabel}`
+          ].join('\n');
+
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `${output}\n`);
+          console.log(output);
+          NODE
+
+      - name: Skip DB writes when nothing changed
+        if: ${{ steps.change_check.outputs.has_changes != 'true' }}
+        run: echo "No Showdown entity changes detected; skipping Supabase writes."
+
+      - name: Write unapproved Showdown rows to Supabase
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' && steps.change_check.outputs.has_changes == 'true' && (github.event_name == 'schedule' || github.event.inputs.write_db == 'true') && github.event.inputs.approve != 'true' }}
+        run: |
+          set -euo pipefail
+          cd poke-sim
+          npm run showdown:write-db -- --sync-run-id "showdown_${GITHUB_RUN_ID}"
+
+      - name: Write approved Showdown rows to Supabase
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' && steps.change_check.outputs.has_changes == 'true' && github.event_name == 'workflow_dispatch' && github.event.inputs.write_db == 'true' && github.event.inputs.approve == 'true' }}
+        run: |
+          set -euo pipefail
+          cd poke-sim
+          npm run showdown:write-db -- --sync-run-id "showdown_${GITHUB_RUN_ID}" --approve
 
       - name: Save latest entity hash baseline
         run: |

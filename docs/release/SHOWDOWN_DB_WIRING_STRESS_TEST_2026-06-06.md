@@ -9,14 +9,17 @@ What works today:
 - The repo can fetch current Pokemon Showdown data from `https://play.pokemonshowdown.com/data/`.
 - The sync tool normalizes Showdown files into deterministic local JSON artifacts.
 - The app uses generated/static Showdown-derived data for legality and local validation.
+- The GitHub Actions sync workflow can dry-run normalized DB rows and can write unapproved or approved rows when service-role credentials are present.
+- The browser Overview tab has an anon-read-only Showdown DB inspector for approved rows, source hashes, and latest sync status.
+- The battle engine prefers generated Showdown species stats/types before local fallback tables.
 - GitHub Pages has Supabase runtime config wiring through `local-credentials.js` / injected bundle globals.
 - Live Supabase reads work for current app tables such as teams, team members, analyses, and analysis logs.
 
 What is not wired yet:
 
-- The Showdown sync tool does not write normalized rows into Supabase.
-- Live Supabase does not currently expose the planned Showdown sync/audit/entity tables.
-- The browser does not read approved Showdown entity rows from Supabase.
+- Live Supabase writes are intentionally blocked until `SUPABASE_SERVICE_ROLE_KEY` is added and the target schema/views exist.
+- Live Supabase does not currently expose the planned Showdown sync/audit/entity tables in this environment.
+- The browser can inspect approved Showdown entity views when they exist, but the production app bundle is still generated from checked-in static data.
 - Champions override rows are planned, but not live.
 
 ## How The Connection Is Supposed To Work
@@ -86,6 +89,12 @@ Mapping validation findings: 0
 
 The generated stress-test artifacts are ignored by git under `poke-sim/artifacts/`.
 
+### Local Turn-Log Proof
+
+Four browser-exported turn logs were inspected after the runtime bridge was added. They showed complete roster snapshots, legal-option lists, speed order, weather/field state, and outcomes with no `NaN`, `undefined`, missing species, malformed HP, or runtime error strings. Every logged species resolved to generated Showdown species rows.
+
+That inspection caught one stale local fallback row: Farigiraf was still `120/90/70/90/90/60` while Showdown has `120/90/70/110/70/60`. The fallback row is now corrected, and `showdown_runtime_data_tests.js` includes a regression check so Farigiraf cannot silently drift if generated Showdown data is unavailable.
+
 ### Live Supabase Runtime Config
 
 Checked deployed GitHub Pages:
@@ -147,7 +156,7 @@ Already present:
 
 Still missing:
 
-- DB write path from `fetch_showdown_data.mjs` to Supabase.
+- Live execution of the DB write path with Supabase service-role credentials.
 - live application of the staged `showdown_entities` / `showdown_entity_diffs` / `champions_overrides` migration.
 - live approved read views for app consumption.
 - production generation from approved DB views to deterministic JS.
@@ -167,7 +176,7 @@ Still missing:
    - `champions_overrides`
    - `approved_showdown_entities`
    - `approved_champions_data`
-4. Extend `tools/fetch_showdown_data.mjs` with an opt-in DB write mode for trusted CI only.
+4. Run `tools/write_showdown_data_to_db.mjs` after `tools/fetch_showdown_data.mjs` from trusted CI/local admin only.
 5. Keep default sync behavior as detect/report, not auto-approve.
 6. Promote generated DB fixtures into the live views and run `tools/generate-approved-data-from-db.mjs` against Supabase.
 7. Add live smoke proving anon users can read approved rows but cannot mutate sync/entity/override rows.
