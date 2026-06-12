@@ -16,8 +16,9 @@ The branch wires a safer Showdown data pipeline without exposing write credentia
   - `write_db=true|false`
   - `approve=true|false`
 - The workflow always runs a DB dry-run after fetching Showdown data.
-- Scheduled/manual runs can write unapproved rows when `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` exist.
-- Manual approved promotion requires `approve=true`.
+- Scheduled runs now auto-promote approved rows after the change check passes and the Supabase secrets exist.
+- Manual runs can still write unapproved rows when `write_db=true` and `approve=false`.
+- Manual approved promotion still works with `approve=true`.
 
 ### Supabase Write Path
 
@@ -110,8 +111,8 @@ Rows intentionally not treated as drift:
 - Service-role credentials are used only by Node/GitHub Actions write paths.
 - Browser code only uses anon-role reads.
 - The Overview inspector is read-only.
-- Scheduled writes skip unless `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are configured.
-- Approved writes require a manual workflow run with `approve=true`.
+- Scheduled writes auto-promote approved rows only when `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are configured.
+- Manual approved writes still require `approve=true`.
 - The Showdown migrations explicitly revoke `INSERT`, `UPDATE`, and `DELETE` from `anon` and `authenticated`.
 - Public DB reads are limited by RLS to sync status/source metadata, approved Showdown entities, and active Champions overrides.
 - `showdown_entity_diffs` is intentionally not granted to public roles; use service-role/Postgres access for review queues.
@@ -148,7 +149,7 @@ Design constraints reviewed before applying to live Supabase:
 
 - The DB is append-only by sync run for auditability: each run stores source files, entity rows, and changed/added/removed diffs.
 - Current dry-run size is `8651` entity rows and `1536` diff rows per Showdown pull.
-- Weekly unapproved pulls are reasonable for this project size; daily approved full snapshots should be avoided unless retention/pruning is added.
+- The scheduled path is now auto-update, so approved rows can refresh daily without a manual review step.
 - The scheduled job is now change-aware, so no-op days only validate and refresh the hash baseline.
 - Approved runtime reads use `approved_showdown_entities`, which picks the latest approved row per `entity_kind/entity_key`.
 - New indexes cover the Overview latest-run query and the approved latest-entity view.
@@ -156,10 +157,10 @@ Design constraints reviewed before applying to live Supabase:
 
 Recommended operating model:
 
-- Run scheduled syncs weekly and write unapproved rows.
-- Review diffs before running any approved promotion.
+- Run scheduled syncs daily or weekly; the schedule now auto-promotes approved rows after a successful change check.
+- Use manual runs only when you need an explicit unapproved review pass or a one-off approved promotion.
 - Keep at least the latest approved snapshot and recent unapproved evidence.
-- If cadence increases beyond weekly, add a retention job for old unapproved sync runs before enabling the schedule.
+- If cadence increases and you keep extra unapproved evidence, add a retention job before broadening the schedule.
 
 ## Validation Run
 
@@ -205,8 +206,8 @@ Before live DB sync is considered complete:
 1. Apply the Showdown DB schema/views in Supabase.
 2. Add `SUPABASE_SERVICE_ROLE_KEY` to GitHub secrets.
 3. Run the GitHub workflow in dry-run mode.
-4. Run unapproved write mode and inspect rows.
-5. Approve rows only after review.
+4. Run unapproved write mode and inspect rows when you need a manual review pass.
+5. Use approved promotion only when you want a one-off manual override.
 6. Confirm the Overview inspector shows approved DB data.
 7. Run a fresh browser sim/export and verify the turn log still resolves species and stats against Showdown.
 
@@ -216,4 +217,4 @@ Before live DB sync is considered complete:
 - Confirm imported teams receive warnings/errors without blocking safe local testing.
 - Confirm generated Showdown species stats/types are used before local fallback rows.
 - Confirm the DB writer refuses real writes without service-role credentials.
-- Confirm the workflow approval gate matches the intended release process.
+- Confirm the workflow auto-update gate still requires real Showdown diffs before promotion.

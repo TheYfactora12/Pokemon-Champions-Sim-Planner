@@ -97,14 +97,14 @@ jobs:
         run: echo "No Showdown entity changes detected; skipping Supabase writes."
 
       - name: Write unapproved Showdown rows to Supabase
-        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' && steps.change_check.outputs.has_changes == 'true' && (github.event_name == 'schedule' || github.event.inputs.write_db == 'true') && github.event.inputs.approve != 'true' }}
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' && steps.change_check.outputs.has_changes == 'true' && github.event_name == 'workflow_dispatch' && github.event.inputs.write_db == 'true' && github.event.inputs.approve != 'true' }}
         run: |
           set -euo pipefail
           cd poke-sim
           npm run showdown:write-db -- --sync-run-id "showdown_${GITHUB_RUN_ID}"
 
       - name: Write approved Showdown rows to Supabase
-        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' && steps.change_check.outputs.has_changes == 'true' && github.event_name == 'workflow_dispatch' && github.event.inputs.write_db == 'true' && github.event.inputs.approve == 'true' }}
+        if: ${{ env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' && steps.change_check.outputs.has_changes == 'true' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.write_db == 'true' && github.event.inputs.approve == 'true')) }}
         run: |
           set -euo pipefail
           cd poke-sim
