@@ -1,5 +1,7 @@
 # Showdown DB Wiring Stress Test - 2026-06-06
 
+> Status note, 2026-06-19: this document is a historical stress-test snapshot. For current review state, use `docs/release/SHOWDOWN_DB_RUNTIME_HANDOFF_2026-06-10.md`, which records the successful migrations and unapproved live write evidence after this snapshot.
+
 ## Team Summary
 
 Showdown data sync is partially wired.
@@ -15,10 +17,10 @@ What works today:
 - GitHub Pages has Supabase runtime config wiring through `local-credentials.js` / injected bundle globals.
 - Live Supabase reads work for current app tables such as teams, team members, analyses, and analysis logs.
 
-What is not wired yet:
+What was not wired yet at this snapshot:
 
-- Live Supabase writes are intentionally blocked until `SUPABASE_SERVICE_ROLE_KEY` is added and the target schema/views exist.
-- Live Supabase does not currently expose the planned Showdown sync/audit/entity tables in this environment.
+- Live Supabase writes were intentionally blocked until `SUPABASE_SERVICE_ROLE_KEY` was added and the target schema/views existed.
+- Live Supabase did not expose the planned Showdown sync/audit/entity tables in this environment at the time of this probe.
 - The browser can inspect approved Showdown entity views when they exist, but the production app bundle is still generated from checked-in static data.
 - Champions override rows are planned, but not live.
 
@@ -136,9 +138,9 @@ approved_champions_data: 404
 
 Interpretation:
 
-- Supabase is wired for the current app database layer.
-- The Showdown mirror database layer is not live yet.
-- The existing migration file creates the first sync/audit tables, but it has not been applied to the live database or the schema cache does not expose those tables yet.
+- Supabase was wired for the current app database layer.
+- The Showdown mirror database layer was not live yet at this snapshot.
+- Later handoff evidence supersedes this point: the two Showdown migrations passed and an unapproved write succeeded.
 
 ## Existing Repo Pieces
 

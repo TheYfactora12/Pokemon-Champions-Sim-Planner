@@ -1,5 +1,8 @@
 # Pokemon Champions Sim — Product Roadmap (DRAFT for approval)
 
+> Historical draft, superseded for active planning by `ROADMAP.md` and `docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md`.
+> Keep this file as April 2026 planning context only; do not use it as the current issue or release source of truth.
+
 **Author role:** PM + Product Developer hat
 **Status:** M1-M6 live on GitHub. M7-M11 infrastructure milestones added April 24 with 23 issues filed (#77-#99).
 **Last updated:** 2026-04-24 (post-T9j.16 + infra audit)

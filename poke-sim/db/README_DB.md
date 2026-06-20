@@ -1,8 +1,9 @@
 # Champions Sim — Database Setup
 
 > **STATUS: ACTIVE**
-> Last verified: 2026-05-24.
+> Last reviewed for this branch: 2026-06-19.
 > The live Supabase project is provisioned and the app has DB wiring. Current canonical team seed count is 29 teams, matching `poke-sim/data.js` and the Alfredo alignment branch.
+> Showdown sync/audit and approved-entity migrations have passed in the Kevin fork workflow, and one unapproved Showdown entity write succeeded. Public bundle generation from approved views remains a review/release gate.
 > Alfredo's repo is a separate remote and must be aligned by review/PR, not by blindly overwriting divergent history.
 
 ---
@@ -21,7 +22,7 @@ Supabase (Postgres + RLS) + `supabase-js` v2
 | `rls_policies_v1.sql` | Row-level security policies | Ready to run |
 | `migrations/2026_05_24_upsert_seed_teams_v2_repair.sql` | Superseded 25-team non-destructive repair seed | Historical reference; use the 29-team shared catalog migration now |
 | `migrations/2026_05_24_align_shared_29_team_catalog.sql` | Non-destructive 29-team shared catalog alignment | Preferred live-DB migration after this alignment PR |
-| `migrations/2026_06_07_showdown_entities_approved_views.sql` | Approved Showdown mirror tables, diff rows, Champions overrides, and approved read views | Migration candidate; apply before generating app assets from Supabase-approved rows |
+| `migrations/2026_06_07_showdown_entities_approved_views.sql` | Approved Showdown mirror tables, diff rows, Champions overrides, and approved read views | Applied in review workflow evidence; required before generating app assets from Supabase-approved rows |
 | `README_DB.md` | This file | — |
 
 > Do not run the delete-first `seed_teams_v2.sql` or `2026_04_28_seed_teams_v2.sql` against a live DB that already has `analyses` rows. Use `2026_05_24_align_shared_29_team_catalog.sql` instead.
@@ -86,6 +87,8 @@ npm run test:db:live
 Without `.env.local`, `npm run test:db` runs the DB suites against mocks/offline behavior.
 
 > Use the anon/public key only. Never put a service_role key in frontend files, `.env.local`, GitHub Pages bundles, or CI logs.
+>
+> Review routing rule: GitHub Pages only proves what is on `main`. If DB wiring is under branch review, hand reviewers either the exact branch preview URL or the local `poke-sim/pokemon-champion-2026.html` flow with the required credential files called out explicitly. See `docs/release/QA_ENVIRONMENT_HANDOFF_RULES_2026-06-19.md`.
 
 ---
 

@@ -32,14 +32,14 @@ Pokemon-Champions-Sim-Planner/
 └── poke-sim/                          ← All source files
     ├── index.html                     ← App shell (tabs, PWA meta, script refs)
     ├── style.css                      ← Full dark theme (34 KB)
-    ├── data.js                        ← BASE_STATS, TEAMS (13), POKEMON_TYPES_DB 500+, DEX_NUM_MAP 1025+
+    ├── data.js                        ← BASE_STATS, TEAMS (29), POKEMON_TYPES_DB 700+, DEX_NUM_MAP 1025+
     ├── engine.js                      ← Battle engine, damage calc, Bo runner (37 KB)
     ├── ui.js                          ← All UI, import/export, pilot guide, PDF, strategy tab (59 KB)
     ├── strategy-injectable.js         ← Strategy tab knowledge base (37 KB)
     ├── manifest.json                  ← PWA manifest
     ├── sw.js                          ← Service worker (cache-first)
-    ├── icon-192.jpg                   ← PWA icon
-    └── icon-512.jpg                   ← PWA icon large
+    ├── icon-192.png                   ← PWA icon
+    └── icon-512.png                   ← PWA icon large
 ```
 
 ---
@@ -51,7 +51,7 @@ Pokemon-Champions-Sim-Planner/
 - Implemented VGC doubles battle engine with: weather, Trick Room, Tailwind, Fake Out, Protect, status conditions, priority moves, Intimidate, Multiscale, spread move nerf (0.75x)
 - Damage formula: `floor((floor((2*50/5+2) * BP * Atk / Def) / 50) + 2) * STAB * eff * roll`
 - Random damage roll: `0.85 + Math.random() * 0.15` (confirmed in engine.js — NOT deterministic)
-- Loaded 13 tournament teams into `TEAMS` object
+- Loaded the current curated team catalog into `TEAMS` (29 teams on the 2026-06-19 review branch)
 - Built Monte Carlo runner: `runSimulation(numBattles, playerKey, oppKey)` with async batch processing
 - PWA infrastructure: manifest, service worker, icons
 

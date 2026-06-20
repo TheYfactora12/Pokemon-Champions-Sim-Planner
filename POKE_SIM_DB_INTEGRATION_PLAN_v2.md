@@ -1,5 +1,7 @@
 # Pokémon Champion 2026 — Supabase DB Integration Plan **v2 (canonical)**
 
+> Status note, 2026-06-19: this file remains useful DB integration history. Current live setup and run order are tracked in `poke-sim/db/README_DB.md`; current Showdown DB review state is tracked in `docs/release/SHOWDOWN_DB_RUNTIME_HANDOFF_2026-06-10.md`.
+
 > **Project:** `poke-sim` — Pokémon-Champions-Sim-Planner
 > **Active repo:** [github.com/TheYfactora12/Pokemon-Champions-Sim-Planner](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner)
 > **Alfredo remote:** [github.com/alfredocox/Pokemon-Champions-Sim-Planner](https://github.com/alfredocox/Pokemon-Champions-Sim-Planner) — align by reviewed PR only; do not overwrite divergent history.
@@ -7,7 +9,7 @@
 > **Supabase project:** `ymlahqnshgiarpbgxehp` (region `us-west-2`, Postgres 17.6, status `ACTIVE_HEALTHY`, owner *TheYfactora12's Project*)
 > **Author:** Alfredo Cox · **Reviewers:** TheYfactora12, Joshua, Kevin
 > **Last updated:** 2026-05-24
-> **Status:** App DB wiring is active. Canonical repo seed is 25 teams. Live DB seed drift was repaired with `2026_05_24_upsert_seed_teams_v2_repair.sql`.
+> **Status:** App DB wiring is active. This May 2026 plan predates the shared 29-team catalog and the June Showdown DB review work.
 
 ## Current status note (2026-05-24)
 

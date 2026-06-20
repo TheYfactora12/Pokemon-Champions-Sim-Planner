@@ -2,6 +2,8 @@
 
 > Goal: make Pokemon Showdown mirrored rows the canonical static data source, then layer Champions-specific overrides on top before generating app assets.
 
+Operational guardrails for preventing drift and improving review/testing are tracked in `../../docs/release/SOURCE_OF_TRUTH_GUARDRAILS_2026-06-19.md`.
+
 ## Why This Plan Exists
 
 The app currently has useful static data in `data.js`, generated Showdown legal data in `generated/pokemon_showdown_legal_data.js`, and local engine tables for mechanics such as priority. That works, but it creates drift risk:
@@ -74,11 +76,12 @@ Already present:
 - `tests/showdown_priority_drift_tests.js`
 - `tests/showdown_approved_data_generator_tests.js`
 
-Gap:
+Current live status as of the 2026-06-10 handoff:
 
-- migration has not been applied to live Supabase yet
-- fetch output is not yet promoted into `showdown_entities`
-- approved read views are not yet the production generation source
+- the Showdown sync/audit and approved entity/view migrations have passed in the Kevin fork workflow
+- an unapproved live write has succeeded with 1 sync run, 8 source files, and 8651 entity rows
+- approved promotion remained skipped for that run because `approve=false`
+- approved read views are still not the production generation source for the public bundle
 
 ### Phase 1 - Add Entity And Override Tables
 

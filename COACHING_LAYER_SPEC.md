@@ -1,5 +1,7 @@
 # Champions Coaching Layer — Engineering Spec v1.0
 
+> Direction note, 2026-06-19: this is useful design history, but coaching expansion is paused behind the simulation-truth gate. Treat implementation claims here as future-facing unless they are also verified by current tests and release docs.
+
 **Status:** Draft for review · **Owner:** TheYfactora12 (product) + alfredocox (eng)
 **Implements GitHub issue:** #50
 **Implementing issues that depend on this spec:** #46 #47 #48 #49 #52 #53 #54 #55 #65

@@ -1,5 +1,7 @@
 # Champions 2026 Mechanics Verification
 
+> Historical research snapshot from April 2026. Treat this as evidence context and not as a substitute for the current simulation-truth gate, current runtime behavior, or the latest release docs.
+
 *Research completed: April 2026. Sources: Serebii, Game8, Bulbapedia, Victory Road, MetaVGC, IGN, games.gg, Pikalytics, GamesRadar.*
 
 ---

@@ -4,6 +4,8 @@
 
 This note is for Josh, Alfredo, and reviewers validating the Showdown-to-Supabase work before merge.
 
+Before any QA pass, pin the exact repo, branch, commit SHA, preview target, and local/DB credential requirements. Use `docs/release/QA_ENVIRONMENT_HANDOFF_RULES_2026-06-19.md` for the handoff format and `docs/release/SIM_AND_DB_SNAPSHOT_2026-06-19.md` for the current `feature/showdown-db-writer` snapshot.
+
 ## Summary
 
 The branch wires a safer Showdown data pipeline without exposing write credentials to the browser. The app can keep using generated static data locally/GitHub Pages, while GitHub Actions can prepare and, once secrets/schema exist, write normalized Showdown rows into Supabase for review and approval.

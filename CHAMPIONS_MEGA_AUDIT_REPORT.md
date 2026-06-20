@@ -1,4 +1,5 @@
 # Champions Mega Evolution Master Audit Report
+> Historical research artifact from April 2026. Keep as source collection and audit evidence, but verify any current implementation claim against the active branch and current tests.
 **Generated:** April 2026  
 **Format:** Regulation Set M-A (Pokémon Champions, April 8 – June 17, 2026)  
 **Methodology:** Cross-verification across Serebii, Game8, Bulbapedia, Destructoid, Victory Road, and community sources.

@@ -1,5 +1,7 @@
 # Engine Audit Report — Pokémon Champions 2026 Simulator
 
+> Historical audit snapshot from 2026-04-24. Many findings here were later addressed, partially addressed, or replaced by stricter tests and release-gate docs. Use this report as origin context, not as the current branch-state truth source.
+
 **Audit date:** 2026-04-24
 **Auditor:** autonomous engine-audit subagent
 **Engine version:** `ENGINE_VERSION = '1.1.0'` (engine.js:1026)
