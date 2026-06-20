@@ -37,7 +37,9 @@
 // v47-recoil-faint-cleanup [2026-06-06] - Recoil KOs now mark the attacker fainted before replacement snapshots.
 // v48-showdown-primary-moves [2026-06-06] - Showdown move metadata is primary for imported/custom move facts.
 // v49-approved-showdown-db [2026-06-07] - Approved Showdown DB migration/generator path staged.
-const CACHE_NAME = 'champions-sim-v49-approved-showdown-db';
+// v50-runtime-data-bridge [2026-06-19] - Added a runtime data/override bridge so
+// battle logic reads approved metadata and damage-roll overrides from site code.
+const CACHE_NAME = 'champions-sim-v50-runtime-data-bridge';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
@@ -48,8 +50,9 @@ const APP_ASSETS = [
   './storage_adapter.js',
   './data.js',
   './logger.js',
-  './engine.js',
   './generated/pokemon_showdown_legal_data.js',
+  './runtime_data.js',
+  './engine.js',
   './move_legality.js',
   './move_support.js',
   './replay_coach.js',

@@ -2,6 +2,8 @@
 
 > Goal: make Pokemon Showdown mirrored rows the canonical static data source, then layer Champions-specific overrides on top before generating app assets.
 
+Operational guardrails for preventing drift and improving review/testing are tracked in `../../docs/release/SOURCE_OF_TRUTH_GUARDRAILS_2026-06-19.md`.
+
 ## Why This Plan Exists
 
 The app currently has useful static data in `data.js`, generated Showdown legal data in `generated/pokemon_showdown_legal_data.js`, and local engine tables for mechanics such as priority. That works, but it creates drift risk:
@@ -26,6 +28,8 @@ The browser may still receive generated JS for offline GitHub Pages support. The
 ## Current Runtime Bridge
 
 As of 2026-06-06, the battle engine treats generated Pokemon Showdown move rows as the primary metadata layer for imported/custom moves. Move type, category, base power, accuracy, priority, target, and contact flags read from `generated/pokemon_showdown_legal_data.js` first when a row exists; local JS tables remain as a fallback for Champions-only/custom gaps until Supabase approved views are live.
+
+As of 2026-06-10, battle construction also prefers generated Showdown species stats/types before local fallback tables. Browser-exported turn logs were checked against the generated species table; all logged species resolved, and a stale Farigiraf fallback stat row was corrected to Showdown's `120/90/70/110/70/60`.
 
 Damage-based recoil is now resolved from Showdown-compatible recoil metadata when present, with a checked local bridge table for the current generated file. This covers common imported recoil moves such as Brave Bird, Double-Edge, Wild Charge, Volt Tackle, Wood Hammer, Take Down, Submission, Head Charge, Head Smash, Flare Blitz, Wave Crash, and Light of Ruin.
 
@@ -72,11 +76,12 @@ Already present:
 - `tests/showdown_priority_drift_tests.js`
 - `tests/showdown_approved_data_generator_tests.js`
 
-Gap:
+Current live status as of the 2026-06-10 handoff:
 
-- migration has not been applied to live Supabase yet
-- fetch output is not yet promoted into `showdown_entities`
-- approved read views are not yet the production generation source
+- the Showdown sync/audit and approved entity/view migrations have passed in the Kevin fork workflow
+- an unapproved live write has succeeded with 1 sync run, 8 source files, and 8651 entity rows
+- approved promotion remained skipped for that run because `approve=false`
+- approved read views are still not the production generation source for the public bundle
 
 ### Phase 1 - Add Entity And Override Tables
 
@@ -135,7 +140,7 @@ RLS:
 
 ### Phase 2 - Promote Fetch Output Into DB
 
-Extend `tools/fetch_showdown_data.mjs` to optionally:
+Use `tools/write_showdown_data_to_db.mjs` after `tools/fetch_showdown_data.mjs` to:
 
 - write a `showdown_sync_runs` row
 - write `showdown_source_files`
@@ -148,6 +153,30 @@ Default job behavior:
 - detect and report
 - do not auto-approve
 - do not auto-merge generated assets without review
+
+Local dry run:
+
+```bash
+npm run showdown:sync
+npm run showdown:write-db -- --dry-run
+```
+
+Trusted DB write, for local admin or GitHub Actions only:
+
+```bash
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+  npm run showdown:write-db -- --sync-run-id showdown_YYYYMMDD
+```
+
+Promotion mode:
+
+```bash
+SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+  npm run showdown:write-db -- --sync-run-id showdown_YYYYMMDD --approve
+```
+
+The public browser must never receive `SUPABASE_SERVICE_ROLE_KEY`; it can only
+read approved rows through anon-safe views/policies.
 
 ### Phase 3 - Generate App Data From DB Views
 

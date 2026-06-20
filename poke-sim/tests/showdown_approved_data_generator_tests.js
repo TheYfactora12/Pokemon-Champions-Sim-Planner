@@ -7,6 +7,7 @@ const path = require('path');
 const vm = require('vm');
 
 const ROOT = path.resolve(__dirname, '..');
+const auditMigrationPath = path.join(ROOT, 'db', 'migrations', '2026_06_06_showdown_sync_audit_tables.sql');
 const migrationPath = path.join(ROOT, 'db', 'migrations', '2026_06_07_showdown_entities_approved_views.sql');
 const generatorPath = path.join(ROOT, 'tools', 'generate-approved-data-from-db.mjs');
 
@@ -147,6 +148,20 @@ function generateFixtureRuntime() {
 
 console.log('\n=== approved Showdown data generator tests ===\n');
 
+T('0. sync audit migration exposes read-only status tables', () => {
+  const sql = fs.readFileSync(auditMigrationPath, 'utf8');
+  [
+    'CREATE TABLE IF NOT EXISTS showdown_sync_runs',
+    'CREATE TABLE IF NOT EXISTS showdown_source_files',
+    'REVOKE INSERT, UPDATE, DELETE ON showdown_sync_runs FROM anon, authenticated',
+    'REVOKE INSERT, UPDATE, DELETE ON showdown_source_files FROM anon, authenticated',
+    'GRANT SELECT ON showdown_sync_runs TO anon, authenticated',
+    'GRANT SELECT ON showdown_source_files TO anon, authenticated',
+    'idx_showdown_sync_runs_finished'
+  ].forEach((needle) => truthy(sql.includes(needle), 'missing SQL: ' + needle));
+  truthy(!/FOR\s+(INSERT|UPDATE|DELETE)\s+TO\s+anon/i.test(sql), 'anon write policy should not exist in audit migration');
+});
+
 T('1. migration creates approved entity, diff, override, and view objects', () => {
   const sql = fs.readFileSync(migrationPath, 'utf8');
   [
@@ -164,8 +179,12 @@ T('2. migration allows anon reads only through approved/active RLS paths', () =>
   truthy(sql.includes('USING (approved = true)'), 'approved entity RLS missing');
   truthy(sql.includes("USING (status = 'active')"), 'active override RLS missing');
   truthy(!/FOR\s+(INSERT|UPDATE|DELETE)\s+TO\s+anon/i.test(sql), 'anon write policy should not exist');
-  truthy(sql.includes('GRANT SELECT ON approved_showdown_entities TO anon'), 'approved view grant missing');
-  truthy(sql.includes('GRANT SELECT ON approved_champions_data TO anon'), 'override view grant missing');
+  truthy(sql.includes('REVOKE INSERT, UPDATE, DELETE ON showdown_entities FROM anon, authenticated'), 'entity write revoke missing');
+  truthy(sql.includes('REVOKE INSERT, UPDATE, DELETE ON champions_overrides FROM anon, authenticated'), 'override write revoke missing');
+  truthy(sql.includes('GRANT SELECT ON approved_showdown_entities TO anon, authenticated'), 'approved view grant missing');
+  truthy(sql.includes('GRANT SELECT ON approved_champions_data TO anon, authenticated'), 'override view grant missing');
+  truthy(sql.includes('idx_showdown_entities_approved_latest'), 'approved latest index missing');
+  truthy(!/GRANT\s+SELECT\s+ON\s+showdown_entity_diffs\s+TO\s+anon/i.test(sql), 'diff rows should not be publicly granted');
 });
 
 T('3. generator emits approved runtime data and excludes unapproved rows', () => {

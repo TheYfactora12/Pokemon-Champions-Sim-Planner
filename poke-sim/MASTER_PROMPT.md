@@ -178,7 +178,7 @@ Every public method early-returns:
 - `saveAnalysis(...)` → `null`
 - `loadRecentAnalyses()` → `[]`
 
-The auto-merge `DOMContentLoaded` listener is wrapped in `if (ENABLED) {...}`, so it never even registers. `TEAMS` stays whatever `data.js` provides (the 13 hardcoded teams).
+The auto-merge `DOMContentLoaded` listener is wrapped in `if (ENABLED) {...}`, so it never even registers. `TEAMS` stays whatever `data.js` provides (29 curated teams on the 2026-06-19 review branch).
 
 **Net effect:** identical to the pre-DB app + one harmless console line. Bo1/3/5/10 sim, Pilot Guide, Speed Tier, Coverage checker, PDF report, import/export, Replay Log, PWA offline mode — all work exactly as before.
 

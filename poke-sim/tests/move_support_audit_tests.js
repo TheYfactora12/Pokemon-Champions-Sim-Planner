@@ -68,7 +68,7 @@ T('3. metadata-complete but not explicitly covered moves stay baseline', () => {
   const auraSphere = summary.find((row) => row.moveName === 'Aura Sphere');
   truthy(voltSwitch, 'Volt Switch summary missing');
   truthy(auraSphere, 'Aura Sphere summary missing');
-  eq(voltSwitch.supportLevel, 'baseline', 'Volt Switch support');
+  eq(voltSwitch.supportLevel, 'verified', 'Volt Switch support');
   eq(auraSphere.supportLevel, 'baseline', 'Aura Sphere support');
 });
 

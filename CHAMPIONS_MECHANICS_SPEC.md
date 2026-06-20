@@ -1,5 +1,6 @@
 # CHAMPIONS_MECHANICS_SPEC.md
 **Source of Truth for Pokémon Champions 2026 Battle Engine Implementation**
+> Historical mechanics research baseline. For current delivery direction and release gating, prefer `docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md` plus current tests over this April 2026 snapshot alone.
 Last updated: 2026-04
 
 > **Confidence tags used throughout:**

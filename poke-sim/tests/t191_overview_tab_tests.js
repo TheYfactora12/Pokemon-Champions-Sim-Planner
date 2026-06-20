@@ -45,6 +45,10 @@ T('2. Overview tracks accomplished work and validation proof', () => {
 
 T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Supabase app wiring is live for existing app tables');
+  inc(ui, 'overview-showdown-db-inspect');
+  inc(ui, 'loadShowdownDbSnapshot');
+  inc(ui, 'approvedCounts');
+  inc(ui, 'sourceFiles');
   inc(ui, 'Showdown mirror migrations are staged but not live yet');
   inc(ui, 'generated Showdown rows as the primary local metadata layer');
   inc(ui, 'Merge candidate PR is not open yet');
@@ -84,9 +88,12 @@ T('4. Overview includes next milestones and source docs', () => {
 T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.overview-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp3)}');
   inc(css, '.overview-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);gap:var(--sp4);align-items:start}');
+  inc(css, '.overview-db-inspector');
+  inc(css, '.overview-db-counts');
+  inc(css, '.overview-db-table');
   inc(css, '.overview-status.done');
   inc(css, '.overview-status.gap');
-  inc(css, '@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}');
+  inc(css, '@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}}');
 });
 
 T('6. Overview renders through a reusable function for future growth', () => {

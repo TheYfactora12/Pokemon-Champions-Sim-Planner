@@ -35,6 +35,10 @@
         index[toId(base + ' Hisui')] = key;
       }
     });
+    if (data.species['Floette-Eternal']) {
+      index[toId('Floette (Eternal Flower)')] = 'Floette-Eternal';
+      index[toId('Eternal Flower Floette')] = 'Floette-Eternal';
+    }
     return index;
   }
 

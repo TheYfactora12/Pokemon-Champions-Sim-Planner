@@ -3,7 +3,7 @@
 -- Showdown rows are mirrored 1:1; Champions changes live in separate override rows.
 
 CREATE TABLE IF NOT EXISTS showdown_entities (
-  entity_id TEXT PRIMARY KEY,
+  entity_id TEXT PRIMARY KEY CHECK (length(btrim(entity_id)) > 0),
   sync_run_id TEXT REFERENCES showdown_sync_runs(sync_run_id) ON DELETE SET NULL,
   entity_kind TEXT NOT NULL CHECK (entity_kind IN (
     'move',
@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS showdown_entities (
     'learnset',
     'format'
   )),
-  entity_key TEXT NOT NULL,
-  display_name TEXT NOT NULL,
-  source_hash TEXT NOT NULL,
+  entity_key TEXT NOT NULL CHECK (length(btrim(entity_key)) > 0),
+  display_name TEXT NOT NULL CHECK (length(btrim(display_name)) > 0),
+  source_hash TEXT NOT NULL CHECK (length(btrim(source_hash)) > 0),
   data JSONB NOT NULL DEFAULT '{}'::jsonb,
   approved BOOLEAN NOT NULL DEFAULT false,
   approved_at TIMESTAMPTZ,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS showdown_entities (
 );
 
 CREATE TABLE IF NOT EXISTS showdown_entity_diffs (
-  diff_id TEXT PRIMARY KEY,
+  diff_id TEXT PRIMARY KEY CHECK (length(btrim(diff_id)) > 0),
   sync_run_id TEXT REFERENCES showdown_sync_runs(sync_run_id) ON DELETE CASCADE,
   entity_kind TEXT NOT NULL CHECK (entity_kind IN (
     'move',
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS showdown_entity_diffs (
     'learnset',
     'format'
   )),
-  entity_key TEXT NOT NULL,
+  entity_key TEXT NOT NULL CHECK (length(btrim(entity_key)) > 0),
   diff_type TEXT NOT NULL CHECK (diff_type IN ('added', 'removed', 'changed')),
   previous_hash TEXT,
   current_hash TEXT,
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS showdown_entity_diffs (
 );
 
 CREATE TABLE IF NOT EXISTS champions_overrides (
-  override_id TEXT PRIMARY KEY,
+  override_id TEXT PRIMARY KEY CHECK (length(btrim(override_id)) > 0),
   entity_kind TEXT NOT NULL CHECK (entity_kind IN (
     'move',
     'species',
@@ -66,10 +66,10 @@ CREATE TABLE IF NOT EXISTS champions_overrides (
     'learnset',
     'format'
   )),
-  entity_key TEXT NOT NULL,
-  field_path TEXT NOT NULL,
+  entity_key TEXT NOT NULL CHECK (length(btrim(entity_key)) > 0),
+  field_path TEXT NOT NULL CHECK (length(btrim(field_path)) > 0),
   override_value JSONB NOT NULL,
-  reason TEXT NOT NULL,
+  reason TEXT NOT NULL CHECK (length(btrim(reason)) > 0),
   source_url TEXT,
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN (
     'active',
@@ -83,6 +83,10 @@ CREATE TABLE IF NOT EXISTS champions_overrides (
 
 CREATE INDEX IF NOT EXISTS idx_showdown_entities_kind_key_approved
   ON showdown_entities(entity_kind, entity_key, approved, approved_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_showdown_entities_approved_latest
+  ON showdown_entities(entity_kind, entity_key, approved_at DESC NULLS LAST, created_at DESC)
+  WHERE approved = true;
 
 CREATE INDEX IF NOT EXISTS idx_showdown_entities_sync_kind
   ON showdown_entities(sync_run_id, entity_kind);
@@ -138,15 +142,19 @@ ALTER TABLE showdown_entities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE showdown_entity_diffs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE champions_overrides ENABLE ROW LEVEL SECURITY;
 
+REVOKE INSERT, UPDATE, DELETE ON showdown_entities FROM anon, authenticated;
+REVOKE INSERT, UPDATE, DELETE ON showdown_entity_diffs FROM anon, authenticated;
+REVOKE INSERT, UPDATE, DELETE ON champions_overrides FROM anon, authenticated;
+
 DROP POLICY IF EXISTS "anon_read_approved_showdown_entities" ON showdown_entities;
 CREATE POLICY "anon_read_approved_showdown_entities"
-  ON showdown_entities FOR SELECT TO anon USING (approved = true);
+  ON showdown_entities FOR SELECT TO anon, authenticated USING (approved = true);
 
 DROP POLICY IF EXISTS "anon_read_active_champions_overrides" ON champions_overrides;
 CREATE POLICY "anon_read_active_champions_overrides"
-  ON champions_overrides FOR SELECT TO anon USING (status = 'active');
+  ON champions_overrides FOR SELECT TO anon, authenticated USING (status = 'active');
 
-GRANT SELECT ON approved_showdown_entities TO anon;
-GRANT SELECT ON approved_champions_data TO anon;
-GRANT SELECT ON showdown_entities TO anon;
-GRANT SELECT ON champions_overrides TO anon;
+GRANT SELECT ON approved_showdown_entities TO anon, authenticated;
+GRANT SELECT ON approved_champions_data TO anon, authenticated;
+GRANT SELECT ON showdown_entities TO anon, authenticated;
+GRANT SELECT ON champions_overrides TO anon, authenticated;

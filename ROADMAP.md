@@ -2,7 +2,7 @@
 
 > **Battle-tested. Always evolving.**
 > Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/TheYfactora12/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
-> **Last updated:** 2026-05-24 | **Baseline:** T9j.17 (343 tests · 5,070 battles/audit)
+> **Last updated:** 2026-06-19 | **Baseline:** simulation-truth gate active; `npm run test:fast` green on current Showdown DB review branch
 
 ---
 
@@ -229,13 +229,13 @@ Current public-release plan: [`docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-0
 | Layer | Technology |
 |---|---|
 | Frontend | Vanilla JS (ES2020+), HTML5, CSS3 — static PWA, no framework |
-| Offline | Service Worker — `champions-sim-v6-wire-storage-adapter` |
+| Offline | Service Worker — current cache `champions-sim-v49-approved-showdown-db` |
 | Persistence | localStorage (offline) + Supabase PostgreSQL (cloud, M8) |
-| Database | Supabase — 8 tables, RLS enabled, **25 canonical teams / 150 canonical team_members seeded** ✅ |
-| Bundle | `pokemon-champion-2026.html` (710 KB, single-file artifact) |
+| Database | Supabase — app DB live; current repo target is 29 canonical teams plus staged Showdown sync/entity/approved-view migrations |
+| Bundle | `pokemon-champion-2026.html` single-file artifact |
 | CI/CD | GitHub Actions — CI ✅ + Bundle Freshness ✅ + Cache Bump ✅ (3 workflows active) |
 | Hosting | GitHub Pages (`theyfactora12.github.io/Pokemon-Champions-Sim-Planner`) |
-| Tests | Vanilla JS runner — 343 cases (T9j.17 baseline), 5,070 battles/audit |
+| Tests | Vanilla JS runner — current fast suite plus focused Showdown DB/runtime tests; live DB suites are opt-in |
 
 ---
 

@@ -21,6 +21,7 @@ When the migration is complete, `poke-sim/*.md` spec files will be deleted from 
 |---|---|---|---|
 | [../../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md](../../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md) | Direction/Gate | TBD | Active direction |
 | [../../docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md](../../docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md) | Release/Gate | TBD | Active direction |
+| [`SHOWDOWN_ORACLE_SIM_TRUTH_PLAN.md`](SHOWDOWN_ORACLE_SIM_TRUTH_PLAN.md) | Sim Truth / Oracle | TBD | Active execution plan |
 | [`SHOWDOWN_SYNC_ARCHITECTURE.md`](SHOWDOWN_SYNC_ARCHITECTURE.md) | Data/DB/Oracle | TBD | Draft architecture |
 | [`SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md`](SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md) | Data/DB/Oracle | TBD | Implementation plan |
 | [`POKEMON_DATA_AUDIT_REVIEW.md`](POKEMON_DATA_AUDIT_REVIEW.md) | Data Audit | #117, #123 | Review control |
@@ -41,10 +42,10 @@ When the migration is complete, `poke-sim/*.md` spec files will be deleted from 
 ## Pending Cleanup Tasks
 
 - [ ] Move all `poke-sim/PHASE*.md` files into `poke-sim/docs/`
-- [ ] Delete `poke-sim/MASTER_PROMPT.md` — duplicate of root `MASTER_PROMPT.md`
+- [ ] Review and consolidate `poke-sim/MASTER_PROMPT.md` with root `MASTER_PROMPT.md`; they are not byte-identical, so do not delete without a content merge decision.
 - [ ] Update all `..` relative links after move
 - [ ] Close informational issue #164 (snapshot archived — work is done)
 
 ---
 
-*Last updated: 2026-05-16*
+*Last updated: 2026-06-19*

@@ -63,6 +63,7 @@ html    = read('index.html')
 css     = read('style.css')
 data    = read('data.js')
 logger  = read('logger.js')
+runtime_data = read('runtime_data.js')
 engine  = read('engine.js')
 ui      = read('ui.js')
 legality = read('legality.js')
@@ -78,6 +79,7 @@ supabase_umd = fetch_supabase_umd()
 
 html = html.replace('<script src="data.js"></script>', '')
 html = html.replace('<script src="logger.js"></script>', '')
+html = html.replace('<script src="runtime_data.js"></script>', '')
 html = html.replace('<script src="engine.js"></script>', '')
 html = html.replace('<script src="ui.js"></script>', '')
 html = html.replace('<script src="storage_adapter.js"></script>', '')
@@ -121,10 +123,11 @@ inline_js = (
     + '<script>\n'
     + sanitize_inline_js(data) + '\n\n'
     + sanitize_inline_js(logger) + '\n\n'
+    + sanitize_inline_js(pokemon_legal_data) + '\n\n'
+    + sanitize_inline_js(runtime_data) + '\n\n'
     + sanitize_inline_js(engine) + '\n\n'
     + sanitize_inline_js(storage) + '\n\n'
     + sanitize_inline_js(supabase) + '\n\n'
-    + sanitize_inline_js(pokemon_legal_data) + '\n\n'
     + sanitize_inline_js(move_legality) + '\n\n'
     + sanitize_inline_js(move_support) + '\n\n'
     + sanitize_inline_js(replay_coach) + '\n\n'

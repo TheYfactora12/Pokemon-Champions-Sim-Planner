@@ -355,6 +355,132 @@
     }
   }
 
+  // ── Showdown DB status probe ──────────────────────────────────────────────
+  // Lightweight Overview-tab check. It proves whether the approved Showdown
+  // views are reachable without loading the full mirrored data set.
+  const SHOWDOWN_ENTITY_KINDS = [
+    'species',
+    'moves',
+    'abilities',
+    'items',
+    'learnsets',
+    'formats',
+    'aliases',
+    'typechart'
+  ];
+
+  function normalizeShowdownKind(kind) {
+    if (kind === 'moves') return 'move';
+    if (kind === 'abilities') return 'ability';
+    if (kind === 'items') return 'item';
+    if (kind === 'learnsets') return 'learnset';
+    if (kind === 'formats') return 'format';
+    if (kind === 'aliases') return 'alias';
+    return kind;
+  }
+
+  async function loadShowdownDbStatus() {
+    var sb = getClient();
+    if (!sb) {
+      return { enabled: false, available: false, mode: 'static', message: 'Static bundle' };
+    }
+    try {
+      var approved = await sb
+        .from('approved_showdown_entities')
+        .select('entity_kind,entity_key,approved_at')
+        .limit(1);
+      if (approved.error) throw approved.error;
+
+      var latestRun = null;
+      try {
+        var runs = await sb
+          .from('showdown_sync_runs')
+          .select('sync_run_id,status,finished_at,summary')
+          .order('finished_at', { ascending: false })
+          .limit(1);
+        if (!runs.error && runs.data && runs.data.length) latestRun = runs.data[0];
+      } catch (_runErr) {
+        latestRun = null;
+      }
+
+      return {
+        enabled: true,
+        available: true,
+        mode: approved.data && approved.data.length ? 'approved-db' : 'empty-db',
+        approvedSample: approved.data && approved.data[0] ? approved.data[0] : null,
+        latestRun: latestRun,
+        message: approved.data && approved.data.length ? 'Approved DB rows' : 'DB views empty'
+      };
+    } catch (err) {
+      log.warn('loadShowdownDbStatus failed', err);
+      return { enabled: true, available: false, mode: 'missing-db', message: 'Showdown DB unavailable' };
+    }
+  }
+
+  // Read-only inspector for the Overview tab. This intentionally uses only
+  // anon-role SELECTs against approved views/audit rows; browser code never
+  // uploads, approves, or receives service-role credentials.
+  async function loadShowdownDbSnapshot() {
+    var sb = getClient();
+    if (!sb) {
+      return { enabled: false, available: false, mode: 'static', message: 'Static bundle' };
+    }
+    try {
+      var status = await loadShowdownDbStatus();
+      if (!status || !status.available) return status;
+
+      var sample = await sb
+        .from('approved_showdown_entities')
+        .select('sync_run_id,entity_kind,entity_key,display_name,source_hash,approved_at,created_at')
+        .order('entity_kind', { ascending: true })
+        .order('entity_key', { ascending: true })
+        .limit(12);
+      if (sample.error) throw sample.error;
+
+      var countResults = await Promise.all(SHOWDOWN_ENTITY_KINDS.map(function(kind) {
+        return sb
+          .from('approved_showdown_entities')
+          .select('entity_id', { count: 'exact', head: true })
+          .eq('entity_kind', normalizeShowdownKind(kind))
+          .then(function(result) {
+            return { kind: kind, count: result && !result.error ? (result.count || 0) : null };
+          })
+          .catch(function() {
+            return { kind: kind, count: null };
+          });
+      }));
+
+      var sourceFiles = [];
+      if (status.latestRun && status.latestRun.sync_run_id) {
+        try {
+          var files = await sb
+            .from('showdown_source_files')
+            .select('source_name,source_hash,normalized_hash,byte_size,parse_status,fetched_at')
+            .eq('sync_run_id', status.latestRun.sync_run_id)
+            .order('source_name', { ascending: true })
+            .limit(20);
+          if (!files.error && files.data) sourceFiles = files.data;
+        } catch (_fileErr) {
+          sourceFiles = [];
+        }
+      }
+
+      return {
+        enabled: true,
+        available: true,
+        mode: status.mode,
+        message: status.message,
+        latestRun: status.latestRun || null,
+        approvedSample: sample.data || [],
+        approvedCounts: countResults,
+        sourceFiles: sourceFiles
+      };
+    } catch (err) {
+      log.warn('loadShowdownDbSnapshot failed', err);
+      return { enabled: true, available: false, mode: 'missing-db', message: 'Showdown DB unavailable' };
+    }
+  }
+
   // ── Public API ────────────────────────────────────────────────────────────
   window.SupabaseAdapter = {
     enabled:            ENABLED,
@@ -366,7 +492,9 @@
     saveTeam,
     loadAnalysesForPlayer,
     loadAnalysisLogs,
-    loadPriorSnapshot
+    loadPriorSnapshot,
+    loadShowdownDbStatus,
+    loadShowdownDbSnapshot
   };
 
   // M3 NOTE: Auto-merge of DB teams into TEAMS has moved to ui.js's

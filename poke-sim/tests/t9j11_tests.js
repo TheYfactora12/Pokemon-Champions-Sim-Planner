@@ -1,6 +1,6 @@
 // T9j.11 (Refs #73) Custom teams filter + bulk import/export tests
 //
-// Coverage targets (16 cases):
+// Coverage targets (18 cases):
 //   Persistence (2):   localStorage round-trip; schema version guard.
 //   Filter chips (4):  All/Preloaded/Custom/Tournament/Mega; counts; active
 //                      state; empty-filter safety.
@@ -9,8 +9,8 @@
 //   Import (4):        JSON round-trip parity; Showdown multi-team parser
 //                      with markers; parser with blank-line separator; parser
 //                      with Windows CRLF endings.
-//   Collision (2):     name collision gets `(2)` suffix; key collision yields
-//                      unique custom_ key.
+//   Collision/import metadata (4): name/key collision; Showdown warning
+//                      metadata; hard invalid imports.
 //   Misc (1):          empty file yields 0-team result without error.
 //
 // Citations:
@@ -111,6 +111,11 @@ function load(f) {
 load('data.js');
 load('engine.js');
 load('storage_adapter.js');
+load('generated/pokemon_showdown_legal_data.js');
+ctx.ChampionsSim = ctx.ChampionsSim || {};
+ctx.ChampionsSim.pokemonDataAudit = require(path.join(ROOT, 'generated', 'pokemon_showdown_legal_data.js'));
+load('move_legality.js');
+ctx.window.ChampionsSim = ctx.ChampionsSim;
 load('ui.js');
 // Expose ctx-scoped const/let bindings on the context object (vm.createContext
 // does NOT auto-attach top-level const/let to the context, only var). This
@@ -126,7 +131,8 @@ vm.runInContext([
   'this.countTeamsByFilter=countTeamsByFilter;',
   'this.saveCustomTeamsToStorage=saveCustomTeamsToStorage;',
   'this.loadCustomTeamsFromStorage=loadCustomTeamsFromStorage;',
-  'this.parseShowdownPaste=parseShowdownPaste;'
+  'this.parseShowdownPaste=parseShowdownPaste;',
+  'this.buildImportedTeamValidation=buildImportedTeamValidation;'
 ].join(' '), ctx);
 
 const {
@@ -142,7 +148,8 @@ const {
   CUSTOM_TEAMS_STORAGE_KEY,
   CUSTOM_TEAMS_SCHEMA_VERSION,
   TEAMS,
-  parseShowdownPaste
+  parseShowdownPaste,
+  buildImportedTeamValidation
 } = ctx;
 
 let pass = 0, fail = 0;
@@ -400,6 +407,39 @@ T('15. two bulk imports in the same ms yield distinct keys (no clobber)', () => 
   const keys = res.keys;
   eq(new Set(keys).size, 3, 'all keys distinct');
   for (const k of keys) truthy(TEAMS[k], 'team exists at key');
+});
+
+T('15b. imported teams carry Showdown-backed warning metadata', () => {
+  resetTeams();
+  const member = {
+    name: 'Arcanine',
+    item: '',
+    ability: 'Intimidate',
+    level: 50,
+    nature: 'Hardy',
+    moves: ['Surf'],
+    evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
+  };
+  const validation = buildImportedTeamValidation([member]);
+  truthy(validation.valid, 'move warning should not hard-block import');
+  truthy(validation.warnings.some(w => /Surf/.test(w)), 'Surf warning missing');
+
+  const res = importCustomTeamsBulk([{ name: 'Warned Import', members: [member] }]);
+  const team = TEAMS[res.keys[0]];
+  eq(team.legality_status, 'unverified', 'warning-only import remains unverified');
+  truthy(Array.isArray(team.import_warnings) && team.import_warnings.some(w => /Surf/.test(w)), 'stored warning missing');
+  truthy(team.showdown_source_version, 'source version missing');
+});
+
+T('15c. imported teams with hard rule errors are marked illegal', () => {
+  resetTeams();
+  const res = importCustomTeamsBulk([{ name: 'Illegal Import', members: [
+    { name: 'Arcanine', item: 'Sitrus Berry', ability: 'Intimidate', level: 50, nature: 'Hardy', moves: ['Protect'], evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 } },
+    { name: 'Arcanine', item: 'Sitrus Berry', ability: 'Intimidate', level: 50, nature: 'Hardy', moves: ['Protect'], evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 } }
+  ] }]);
+  const team = TEAMS[res.keys[0]];
+  eq(team.legality_status, 'illegal', 'hard invalid import should be illegal');
+  truthy(Array.isArray(team.import_errors) && team.import_errors.some(e => /duplicate/.test(e)), 'stored hard error missing');
 });
 
 // ============================================================
