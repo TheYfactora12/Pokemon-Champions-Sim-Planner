@@ -565,12 +565,88 @@ function _applyStageMap(mon, deltas, log) {
   return applied;
 }
 
+function _applyTargetStageMap(source, target, deltas, log) {
+  if (!target || !deltas) return 0;
+  var normalized = {};
+  for (const [stat, delta] of Object.entries(deltas || {})) {
+    if (delta) normalized[stat] = delta;
+  }
+  var sourceIsOpponent = !!(
+    source &&
+    source !== target &&
+    (!source.side || !target.side || source.side !== target.side)
+  );
+  var clearBodyBlocked = false;
+  if (sourceIsOpponent && target.ability === 'Clear Body') {
+    for (const [stat, delta] of Object.entries(normalized)) {
+      if (delta < 0) {
+        delete normalized[stat];
+        clearBodyBlocked = true;
+      }
+    }
+    if (clearBodyBlocked && log) {
+      log.push(`${target.name}'s Clear Body prevented its stats from being lowered!`);
+    }
+  }
+
+  var applied = 0;
+  var negativeApplied = false;
+  for (const [stat, delta] of Object.entries(normalized)) {
+    const actual = _applyStageDelta(target, stat, delta);
+    if (actual) {
+      applied++;
+      if (actual < 0) negativeApplied = true;
+      _logStageDelta(log, target, stat, actual);
+    }
+  }
+
+  if (sourceIsOpponent && negativeApplied) {
+    if (target.ability === 'Defiant') _applyStageMap(target, { atk: 2 }, log);
+    if (target.ability === 'Competitive') _applyStageMap(target, { spa: 2 }, log);
+  }
+  return applied;
+}
+
 function _isGrounded(mon) {
   return !!mon && !mon.flying;
 }
 
 function _canReceiveHealing(mon) {
   return !!(mon && mon.alive && (!mon.healBlockedTurns || mon.healBlockedTurns <= 0));
+}
+
+var SUPREME_OVERLORD_MODS = [4096, 4506, 4915, 5325, 5734, 6144];
+
+function _activeWeatherMons(field) {
+  if (!field) return [];
+  var playerActive = field.playerSide && Array.isArray(field.playerSide.activeMons) ? field.playerSide.activeMons : [];
+  var oppActive = field.oppSide && Array.isArray(field.oppSide.activeMons) ? field.oppSide.activeMons : [];
+  return playerActive.concat(oppActive).filter(function(mon) {
+    return !!(mon && mon.alive);
+  });
+}
+
+function _fieldHasWeatherSuppression(field) {
+  return _activeWeatherMons(field).some(function(mon) {
+    return mon.ability === 'Cloud Nine' || mon.ability === 'Air Lock';
+  });
+}
+
+function _effectiveFieldWeather(field) {
+  if (!field || !field.weather) return 'none';
+  return _fieldHasWeatherSuppression(field) ? 'none' : field.weather;
+}
+
+function _effectiveMoveWeather(mon, field, moveType) {
+  var effectiveWeather = _effectiveFieldWeather(field);
+  var wxRes = callAbilityHook(mon, 'onWeatherCheck', {
+    mon: mon,
+    moveType: moveType,
+    field: field,
+    effectiveWeather: effectiveWeather
+  });
+  if (wxRes && wxRes.effectiveWeather) effectiveWeather = wxRes.effectiveWeather;
+  return effectiveWeather;
 }
 
 function _isChargeMove(move) {
@@ -580,8 +656,9 @@ function _isChargeMove(move) {
 function _moveSkipsChargeTurn(mon, move, field) {
   if (!_isChargeMove(move)) return false;
   if (mon && mon.item === 'Power Herb' && !mon.itemConsumed) return true;
-  if (move === 'Electro Shot') return !!field && field.weather === 'rain';
-  if (move === 'Solar Beam' || move === 'Solar Blade') return !!field && field.weather === 'sun';
+  var weather = _effectiveFieldWeather(field);
+  if (move === 'Electro Shot') return weather === 'rain';
+  if (move === 'Solar Beam' || move === 'Solar Blade') return weather === 'sun';
   return false;
 }
 
@@ -637,6 +714,19 @@ function _moveRecoilRule(move) {
 // Sources cited per-ability.
 // ============================================================
 var ABILITIES = {
+  'Aerilate': {
+    onModifyMove: function(ctx) {
+      var baseType = _moveType(ctx.move);
+      if (baseType === 'Normal') return { typeOverride: 'Flying', bpMult: 1.20 };
+      return null;
+    }
+  },
+  'Air Lock': {
+    suppressesWeather: true
+  },
+  'Cloud Nine': {
+    suppressesWeather: true
+  },
   'Dragonize': {
     // Normal moves become Dragon-type and gain 20% BP. Mirrors -ate ability
     // family (Pixilate/Aerilate/Refrigerate) with Dragon as the target type.
@@ -645,6 +735,13 @@ var ABILITIES = {
     onModifyMove: function(ctx) {
       var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Dragon', bpMult: 1.20 };
+      return null;
+    }
+  },
+  'Pixilate': {
+    onModifyMove: function(ctx) {
+      var baseType = _moveType(ctx.move);
+      if (baseType === 'Normal') return { typeOverride: 'Fairy', bpMult: 1.20 };
       return null;
     }
   },
@@ -667,6 +764,13 @@ var ABILITIES = {
       return null;
     }
   },
+  'Refrigerate': {
+    onModifyMove: function(ctx) {
+      var baseType = _moveType(ctx.move);
+      if (baseType === 'Normal') return { typeOverride: 'Ice', bpMult: 1.20 };
+      return null;
+    }
+  },
   'Spicy Spray': {
     // 100% burn attacker when holder takes any damage (except Fire attackers,
     // attackers already statused, or if holder is behind a Substitute).
@@ -683,6 +787,14 @@ var ABILITIES = {
       if (ctx.log) ctx.log.push(defender.name + "'s Spicy Spray burned " + attacker.name + '!');
     }
   },
+  'Tough Claws': {
+    onModifyMove: function(ctx) {
+      if (_isContactMove(ctx.move)) return { bpMult: 1.30 };
+      return null;
+    }
+  },
+  'Solar Power': {},
+  'Supreme Overlord': {},
   'Mega Sol': {
     // Personal sun — treats Fire moves as if sun is up when computing the
     // weather multiplier, but does NOT set field weather. Water 0.5x penalty
@@ -1126,6 +1238,7 @@ class Pokemon {
 
   getStat(stat, field) {
     field = field || { weather: 'none' };
+    const effectiveWeather = _effectiveFieldWeather(field);
     const boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
     const base = { atk:this.baseAtk, def:this.baseDef, spa:this.baseSpa, spd:this.baseSpd, spe:this.baseSpe }[stat];
     const boost = this.statBoosts[stat] || 0;
@@ -1133,12 +1246,12 @@ class Pokemon {
     // Paralysis halves speed (Gen 9 — no action skip, speed only)
     if (stat === 'spe' && this.status === 'paralysis') val *= 0.5;
     // Sand Rush doubles speed in sand
-    if (stat === 'spe' && this.ability === 'Sand Rush' && field.weather === 'sand') val *= 2;
+    if (stat === 'spe' && this.ability === 'Sand Rush' && effectiveWeather === 'sand') val *= 2;
     // Unburden doubles speed after item consumed
     if (stat === 'spe' && this.ability === 'Unburden' && this.itemConsumed) val *= 2;
     // Intimidate already applied to statBoosts.atk
     // Standard baseline: Rock-types gain 1.5x Special Defense in sand.
-    if (stat === 'spd' && field.weather === 'sand' && Array.isArray(this.types) && this.types.includes('Rock')) val *= 1.5;
+    if (stat === 'spd' && effectiveWeather === 'sand' && Array.isArray(this.types) && this.types.includes('Rock')) val *= 1.5;
     // Eviolite for Dusclops
     if ((stat === 'def' || stat === 'spd') && this.item === 'Eviolite') val *= 1.5;
     // T9j.6 (#18) — Choice Scarf +50% Spe (confirmed in Champions). Band/Specs
@@ -1156,15 +1269,16 @@ class Pokemon {
 
   getEffSpeed(field) {
     let spe = this.getStat('spe', field);
+    const effectiveWeather = _effectiveFieldWeather(field);
     // T9j.1 (Issue #28) — Tailwind doubles effective speed for the side that set it.
     // Champions: Tailwind lasts 4 turns (turns active + 3 more) per Game8 page;
     // counter handled in Field.endTurn().
     const side = this.side;
     if (side && side.tailwind) spe *= 2;
     // Weather speed abilities consolidated here so they compound correctly with Tailwind.
-    if (this.ability === 'Swift Swim'   && field.weather === 'rain') spe *= 2;
-    if (this.ability === 'Chlorophyll'  && field.weather === 'sun')  spe *= 2;
-    if (this.ability === 'Slush Rush'   && field.weather === 'snow') spe *= 2;
+    if (this.ability === 'Swift Swim'   && effectiveWeather === 'rain') spe *= 2;
+    if (this.ability === 'Chlorophyll'  && effectiveWeather === 'sun')  spe *= 2;
+    if (this.ability === 'Slush Rush'   && effectiveWeather === 'snow') spe *= 2;
     return spe;
   }
 
@@ -1217,12 +1331,13 @@ class Pokemon {
 
     // Weather Ball changes type from actual field weather before STAB, chart,
     // and weather damage modifiers are resolved.
+    const _fieldWeather = _effectiveFieldWeather(field);
     if (move === 'Weather Ball') {
       moveType =
-        field.weather === 'sun'  ? 'Fire'
-      : field.weather === 'rain' ? 'Water'
-      : field.weather === 'sand' ? 'Rock'
-      : field.weather === 'snow' ? 'Ice'
+        _fieldWeather === 'sun'  ? 'Fire'
+      : _fieldWeather === 'rain' ? 'Water'
+      : _fieldWeather === 'sand' ? 'Rock'
+      : _fieldWeather === 'snow' ? 'Ice'
       : 'Normal';
     }
     if (move === 'Terrain Pulse' && _isGrounded(this)) {
@@ -1235,9 +1350,7 @@ class Pokemon {
     }
 
     // T9j.8 (Refs #30) Mega Sol: personal sun when field weather is 'none'.
-    let _effWeather = field.weather;
-    const _wxRes = callAbilityHook(this, 'onWeatherCheck', { mon: this, moveType: moveType, field: field });
-    if (_wxRes && _wxRes.effectiveWeather) _effWeather = _wxRes.effectiveWeather;
+    let _effWeather = _effectiveMoveWeather(this, field, moveType);
 
     // Meteor Beam / Electro Shot raise SpA before damage. When calcDamage is
     // called directly in tests or heuristics, preview the stage locally without
@@ -1274,6 +1387,9 @@ class Pokemon {
       if (_spaPreviewApplied) _applyStageDelta(this, 'spa', -_spaPreviewApplied);
     }
     if (isPhysical && this.ability === 'Guts' && this.status) {
+      atk = _applyStatMod(atk, 6144);
+    }
+    if (!isPhysical && this.ability === 'Solar Power' && _fieldWeather === 'sun') {
       atk = _applyStatMod(atk, 6144);
     }
 
@@ -1326,10 +1442,10 @@ class Pokemon {
     }
 
     // Weather Ball doubles in active weather and already has its weather type.
-    if (move === 'Weather Ball' && field.weather !== 'none') bp = 100;
+    if (move === 'Weather Ball' && _fieldWeather !== 'none') bp = 100;
     if (move === 'Terrain Pulse' && _isGrounded(this) && field.terrain !== 'none') bp *= 2;
     // Electro Shot: 130 in rain (one-turn), else still 130 after charge
-    if (move === 'Electro Shot' && field.weather === 'rain') bp = 130;
+    if (move === 'Electro Shot' && _fieldWeather === 'rain') bp = 130;
     if (move === 'Rising Voltage' && field.terrain === 'electric' && _isGrounded(target)) bp *= 2;
     // Last Respects: +50 per fainted ally (max +300)
     if (move === 'Last Respects') {
@@ -1436,6 +1552,9 @@ class Pokemon {
     // T9j.6 (#11 WONTFIX) — Life Orb absent from Champions launch (games.gg,
     // IGN Champions Changes, Game8 item list). No multiplier.
     const loMod = 4096;
+    const supremeOverlordMod = this.ability === 'Supreme Overlord'
+      ? SUPREME_OVERLORD_MODS[Math.min(this.side?.fainted || 0, 5)]
+      : 4096;
 
     // Choice Specs/Band handled in getStat
     // Burn handled in getStat
@@ -1443,7 +1562,7 @@ class Pokemon {
     // Base damage formula (Gen 9)
     const raw = Math.floor(Math.floor(Math.floor(2 * this.level / 5 + 2) * bp * atk / def) / 50) + 2;
     const roll = _sampleDamageRoll(this, field, rng);
-    const finalMod = _chain4096Mods([screenMod, loMod]);
+    const finalMod = _chain4096Mods([screenMod, loMod, supremeOverlordMod]);
     const applyStatusPenalty =
       (isPhysical && this.status === 'burn' && this.ability !== 'Guts' && move !== 'Facade') ||
       (!isPhysical && this.status === 'frostbite');
@@ -1495,13 +1614,14 @@ class Pokemon {
 function canInflictStatus(mon, status, field) {
   if (!mon || !mon.alive) return false;
   if (mon.status) return false; // one major status at a time
+  const effectiveWeather = _effectiveFieldWeather(field);
   const types = mon.types || [];
   if (status === 'burn'      && (types.includes('Fire')     || mon.ability === 'Water Veil')) return false;
   if (status === 'paralysis' &&  types.includes('Electric')) return false;
   if ((status === 'poison' || status === 'toxic') &&
       (types.includes('Poison') || types.includes('Steel'))) return false;
   if (status === 'frozen'    &&  types.includes('Ice')) return false;
-  if (status === 'frozen'    && field && field.weather === 'sun') return false;
+  if (status === 'frozen'    && effectiveWeather === 'sun') return false;
   if (status === 'sleep'     && mon.ability === 'Sweet Veil')   return false;
   if (status === 'frozen'    && mon.ability === 'Magma Armor')  return false;
   // T9j.17 (Refs #101) -- Frostbite gates. Ice types and Magma Armor block,
@@ -1509,7 +1629,7 @@ function canInflictStatus(mon, status, field) {
   // Cite: https://bulbapedia.bulbagarden.net/wiki/Frostbite_(status_condition)
   if (status === 'frostbite' && types.includes('Ice')) return false;
   if (status === 'frostbite' && mon.ability === 'Magma Armor') return false;
-  if (status === 'frostbite' && field && field.weather === 'sun') return false;
+  if (status === 'frostbite' && effectiveWeather === 'sun') return false;
   return true;
 }
 
@@ -1536,6 +1656,7 @@ class Field {
       wideGuard:false, wideGuardChain:0, redirectTo:null, redirectType:null,
       quickGuard:false,
       fainted:0,
+      activeMons:[],
       wishes:[]
     };
     this.oppSide = {
@@ -1546,6 +1667,7 @@ class Field {
       wideGuard:false, wideGuardChain:0, redirectTo:null, redirectType:null,
       quickGuard:false,
       fainted:0,
+      activeMons:[],
       wishes:[]
     };
     // T9j.2 (#26) — spread context sidecar. Set per-hit by executeMove, read by calcDamage.
@@ -2226,6 +2348,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   // lookup (attacker.side.fainted) reads real state.
   field.playerSide.fainted = 0;
   field.oppSide.fainted    = 0;
+  field.playerSide.activeMons = playerActive;
+  field.oppSide.activeMons = oppActive;
 
   // Track fainted counts per side for Last Respects
   const sideFainted = { player: 0, opp: 0 };
@@ -2241,8 +2365,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`${t.name} ignored Intimidate!`);
           continue;
         }
-        t.statBoosts.atk = Math.max(-6, t.statBoosts.atk - 1);
-        log.push(`${mon.name}'s Intimidate lowered ${t.name}'s Attack!`);
+        if (_applyTargetStageMap(mon, t, { atk: -1 }, log)) {
+          log.push(`${mon.name}'s Intimidate lowered ${t.name}'s Attack!`);
+        }
       }
     }
     applyWeatherAbility(mon, field, log);
@@ -2428,8 +2553,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         const _selfSide = attackerOnPlayerSide ? field.playerSide : field.oppSide;
         if (move === 'Light Screen' && _selfSide && !_selfSide.lightScreen) score = 42;
         if (move === 'Reflect'      && _selfSide && !_selfSide.reflect)     score = 42;
+        const effectiveWeather = _effectiveFieldWeather(field);
         if (move === 'Aurora Veil' && _selfSide && !_selfSide.auroraVeil
-            && (field.weather === 'hail' || field.weather === 'snow')) score = 52;
+            && (effectiveWeather === 'hail' || effectiveWeather === 'snow')) score = 52;
         if (move === 'Will-O-Wisp' && liveEnemies.length) {
           const target = liveEnemies.find(e => !e.status) || liveEnemies[0];
           if (target && !target.status && target.types.every(t => t !== 'Fire')) {
@@ -2579,9 +2705,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (!attacker.alive) return;
 
     const _continuingCharge = attacker.chargingMove === move;
+    const _effectiveWeather = _effectiveFieldWeather(field);
     const _naturalChargeSkip = !_continuingCharge && (
-      (move === 'Electro Shot' && field.weather === 'rain') ||
-      ((move === 'Solar Beam' || move === 'Solar Blade') && field.weather === 'sun')
+      (move === 'Electro Shot' && _effectiveWeather === 'rain') ||
+      ((move === 'Solar Beam' || move === 'Solar Blade') && _effectiveWeather === 'sun')
     );
     const _powerHerbSkip = !_continuingCharge && _isChargeMove(move) &&
       attacker.item === 'Power Herb' && !attacker.itemConsumed &&
@@ -2723,7 +2850,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           return;
         }
         const shoreUp = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS['Shore Up']) || {};
-        const healFrac = field.weather === 'sand'
+        const healFrac = _effectiveFieldWeather(field) === 'sand'
           ? (shoreUp.sandHealFraction || (2 / 3))
           : (shoreUp.healFraction || 0.5);
         const heal = Math.floor(attacker.maxHp * healFrac);
@@ -2793,7 +2920,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
       if (move === 'Aurora Veil') {
         // Gated: Aurora Veil only succeeds if hail/snow active at cast time.
-        const wx = field.weather;
+        const wx = _effectiveFieldWeather(field);
         if (wx !== 'hail' && wx !== 'snow') {
           log.push(`${attacker.name} used Aurora Veil! But it failed (no hail/snow).`);
           return;
@@ -3151,9 +3278,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Parting Shot' && target && target.alive) {
-        target.statBoosts.atk = Math.max(-6, target.statBoosts.atk - 1);
-        target.statBoosts.spa = Math.max(-6, target.statBoosts.spa - 1);
-        log.push(`${attacker.name}'s Parting Shot lowered ${target.name}'s offenses!`);
+        if (_applyTargetStageMap(attacker, target, { atk: -1, spa: -1 }, log)) {
+          log.push(`${attacker.name}'s Parting Shot lowered ${target.name}'s offenses!`);
+        }
         _switchOutActiveMon(attacker, attacker.side === field.playerSide ? 'player' : 'opp', field, log, { silentPivotLog: true });
         return;
       }
@@ -3165,7 +3292,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Defog' && target && target.alive) {
-        target.statBoosts.eva = Math.max(-6, (target.statBoosts.eva || 0) - 1);
+        _applyTargetStageMap(attacker, target, { eva: -1 }, log);
         const side = target.side || null;
         if (side) {
           side.reflect = false; side.reflectTurns = 0;
@@ -3413,8 +3540,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       } else {
         if (_isContact && (_shieldKind === "King's Shield" || _shieldKind === 'Spiky Shield' || _shieldKind === 'Baneful Bunker' || _shieldKind === 'Obstruct')) {
           if (_shieldKind === "King's Shield") {
-            attacker.statBoosts.atk = Math.max(-6, (attacker.statBoosts.atk || 0) - 1);
-            log.push(`${attacker.name}'s Attack fell due to King's Shield!`);
+            _applyTargetStageMap(t, attacker, { atk: -1 }, log);
           }
           if (_shieldKind === 'Spiky Shield') {
             const recoil = Math.max(1, Math.floor(attacker.maxHp / 8));
@@ -3433,8 +3559,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
             }
           }
           if (_shieldKind === 'Obstruct') {
-            attacker.statBoosts.def = Math.max(-6, (attacker.statBoosts.def || 0) - 2);
-            log.push(`${attacker.name}'s Defense harshly fell due to Obstruct!`);
+            _applyTargetStageMap(t, attacker, { def: -2 }, log);
           }
           log.push(`${target.name} protected itself!`);
           return;
@@ -3752,18 +3877,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         applyDamage(attacker, move, t, dmg, field, log, rng);
         resolution.didDamage = true;
         if (SPEED_DROP_MOVES.has(move)) {
-          t.statBoosts.spe = Math.max(-6, (t.statBoosts.spe || 0) - 1);
-          log.push(`${t.name}'s Speed fell!`);
+          _applyTargetStageMap(attacker, t, { spe: -1 }, log);
         }
-        if (move === 'Snarl' && t.alive && !_hadSubstitute) _applyStageMap(t, { spa: -1 }, log);
-        if (move === 'Lunge' && t.alive && !_hadSubstitute) _applyStageMap(t, { atk: -1 }, log);
+        if (move === 'Snarl' && t.alive && !_hadSubstitute) _applyTargetStageMap(attacker, t, { spa: -1 }, log);
+        if (move === 'Lunge' && t.alive && !_hadSubstitute) _applyTargetStageMap(attacker, t, { atk: -1 }, log);
         if (move === 'Psychic Noise' && t.alive) {
           t.healBlockedTurns = Math.max(t.healBlockedTurns || 0, 2);
           log.push(`${t.name} can no longer recover HP because of Psychic Noise!`);
         }
         if (move === 'Muddy Water' && rng() < 0.30) {
-          t.statBoosts.acc = Math.max(-6, (t.statBoosts.acc || 0) - 1);
-          log.push(`${t.name}'s accuracy fell!`);
+          _applyTargetStageMap(attacker, t, { acc: -1 }, log);
         }
         // T9j.8 (Refs #19) Flinch roll: after damage applied, target alive,
         // target hasn't acted yet. Fang moves roll flinch + status independently.
@@ -4162,7 +4285,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
 
     // Sand damage
-    if (field.weather === 'sand') {
+    if (_effectiveFieldWeather(field) === 'sand') {
       for (const mon of [...playerActive, ...oppActive].filter(m => m.alive)) {
         if (!['Rock','Steel','Ground'].includes(mon.types[0]) &&
             !['Rock','Steel','Ground'].includes(mon.types[1] || '')) {
@@ -4171,6 +4294,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`${mon.name} is buffeted by the sandstorm! [${sandDmg} dmg]`);
           if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'sandstorm' }); }
         }
+      }
+    }
+
+    // Solar Power recoil
+    if (_effectiveFieldWeather(field) === 'sun') {
+      for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.ability === 'Solar Power')) {
+        const solarPowerDmg = Math.floor(mon.maxHp / 8);
+        mon.hp = Math.max(0, mon.hp - solarPowerDmg);
+        log.push(`${mon.name} is hurt by its Solar Power! [${solarPowerDmg} dmg]`);
+        if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'Solar Power' }); }
       }
     }
 

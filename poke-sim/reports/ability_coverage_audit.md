@@ -8,9 +8,9 @@ Scope:
 - current battle engine ability hooks and inline checks in `engine.js`
 
 Summary:
-- unique curated-team + mega abilities audited: 82
-- already modeled by the engine: 23
-- still unmodeled and classified: 59
+- unique curated-team + mega abilities audited: 80
+- already modeled by the engine: 34
+- still unmodeled and classified: 46
 
 Why this exists:
 - Issue #125 showed repeated review friction around ability gaps being noticed ad hoc.
@@ -22,18 +22,23 @@ Classification buckets:
 - `missing_battle_result_impacting`
 
 Highest-priority shipped-team gaps:
-- `Adaptability`: affects Basculegion damage across multiple shipped teams.
-- `Clear Body`, `Competitive`, `Defiant`: all change Intimidate-heavy matchups.
-- `Cloud Nine`: changes weather suppression, damage, and speed.
 - `Shadow Tag`: changes switch options and perish-style endgames.
-- `Solar Power`, `Tough Claws`, `Pixilate`, `Supreme Overlord`: direct damage modifiers.
 - `Stance Change`, `Sturdy`, `Unaware`: major battle-result mechanics, not flavor.
+- `Strong Jaw` and `Mega Launcher`: direct damage modifiers with real mega exposure.
+- `Earth Eater` and `Rough Skin`: common contact and spread interaction swing points.
 
 Implemented after this audit:
 - `Prankster`: real battle priority for status moves, with Dark-type immunity on targeted opposing status.
 - `Armor Tail`: side-wide blocking for opposing priority moves.
 - `Good as Gold`: targeted status immunity.
 - `Magic Bounce`: targeted status reflection back to the user.
+- `Adaptability`: Showdown-aligned STAB handling, including off-type Tera behavior.
+- `Clear Body`, `Competitive`, `Defiant`: opponent-driven stat-drop resolution now flows through a shared anti-Intimidate helper.
+- `Cloud Nine`: effective weather is now centralized, suppressing weather-driven damage, speed, charge-skip, residual, and status gates.
+- `Pixilate`: Showdown-aligned Normal-to-Fairy conversion and boost.
+- `Solar Power`: Showdown-aligned sun damage boost, plus end-of-turn recoil under active sun.
+- `Supreme Overlord`: Showdown-aligned late-game damage scaling from allied faint count.
+- `Tough Claws`: Showdown-aligned contact damage boost.
 
 Lower-priority or no-op examples:
 - `Frisk`: item reveal is effectively already visible in the sim.
@@ -44,21 +49,14 @@ Recommended implementation order:
 1. Priority and targeting control
    - `Shadow Tag`
 2. Damage modifiers with broad shipped-team exposure
-   - `Adaptability`
-   - `Tough Claws`
-   - `Pixilate`
-   - `Solar Power`
-   - `Supreme Overlord`
-3. Stat-reaction and anti-Intimidate slice
-   - `Clear Body`
-   - `Competitive`
-   - `Defiant`
-   - `Unaware`
-4. Defensive and board-state mechanics
-   - `Cloud Nine`
+   - `Strong Jaw`
+   - `Mega Launcher`
+3. Defensive and board-state mechanics
    - `Earth Eater`
    - `Sturdy`
    - `Stance Change`
+   - `Unaware`
+4. Support and mitigation mechanics
    - `Friend Guard`
 
 Guardrail:

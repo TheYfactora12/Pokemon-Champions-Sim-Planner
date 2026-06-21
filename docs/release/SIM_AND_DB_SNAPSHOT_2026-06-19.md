@@ -6,8 +6,9 @@ Audience: Josh and reviewers who need one current picture of what the simulator,
 
 - Repo: `TheYfactora12/Pokemon-Champions-Sim-Planner`
 - Upstream mirror: `alfredocox/Pokemon-Champions-Sim-Planner`
-- Branch: `feature/showdown-db-writer`
-- Commit: `f03b407e6a4b3853c6b202890f8d245f8488a45e`
+- Branch: `main`
+- Commit at snapshot update: `2c91482a2d919ade7877c136d07b7a8bde12a1e9`
+- Workspace note: local review changes may be ahead of the last committed SHA until they are pushed.
 - This is not the same thing as GitHub Pages on `main`.
 
 ## What Data Ships In The Current Branch
@@ -18,7 +19,7 @@ Audience: Josh and reviewers who need one current picture of what the simulator,
   - Used as local fallback stats for shipped teams, custom forms, and Champions-specific gaps.
 - `POKEMON_TYPES_DB`: 728 rows
   - Used for broader type coverage and fallback species resolution.
-- `TEAMS`: 29 entries
+- `TEAMS`: 27 entries
   - Current curated team catalog used by the app before any DB merge.
 
 Representative team keys in the shipped catalog include:
@@ -27,10 +28,11 @@ Representative team keys in the shipped catalog include:
 - `mega_altaria`
 - `mega_dragonite`
 - `champions_arena_1st`
-- `chuppa_balance`
 - `rain_offense`
 - `fire_ice_fullroom`
 - `zardx_snow_setup`
+
+SV-only review packs were removed from the shipped catalog. The remaining built-in teams are now Champions-focused plus the `player` starter slot.
 
 ### Generated Showdown runtime data in `poke-sim/generated/pokemon_showdown_legal_data.js`
 
@@ -109,7 +111,10 @@ Current branch posture:
 
 ## How Teams And DB Interact Today
 
-- The app boots with the 29-team local `TEAMS` catalog.
+- The app boots with the 27-team local `TEAMS` catalog.
+- `poke-sim/data.js` is the reviewed catalog source for shipped teams.
+- `poke-sim/db/seed_teams_v2.sql` and `poke-sim/db/migrations/2026_06_20_align_shared_27_team_catalog.sql` are both generated from that same catalog source.
+- Team metadata such as format, legality notes, provenance, and champion-pack identifiers now persists through the DB seed/alignment path instead of being dropped.
 - If Supabase browser credentials are present, `poke-sim/supabase_adapter.js` can read DB teams and analysis history.
 - The adapter is intentionally optional. Missing credentials fall back to local-only behavior.
 - Browser credentials use `window.__SUPABASE_URL__` and `window.__SUPABASE_KEY__`.

@@ -1304,8 +1304,8 @@ function renderSimBringPickers() {
 //   - Preloaded = any team whose source !== 'custom'
 //   - Custom    = team.source === 'custom' (imported by user, localStorage-backed)
 //   - Tournament = preloaded team whose key matches champions_arena_* or known
-//                  tournament rosters (chuppa_balance, aurora_veil_froslass,
-//                  kingambit_sneasler, cofagrigus_tr, rin_sand, suica_sun).
+//                  Champions-focused tournament/sample rosters
+//                  (aurora_veil_froslass, cofagrigus_tr, rin_sand, suica_sun).
 //   - Mega      = team whose key starts with mega_ (mega_altaria / mega_dragonite
 //                  / mega_houndoom).
 // Bulk I/O: JSON is the authoritative round-trip format (uses the T9f schema
@@ -1318,8 +1318,7 @@ function renderSimBringPickers() {
 var TEAMS_FILTER = 'all'; // 'all' | 'preloaded' | 'custom' | 'tournament' | 'mega'
 var TOURNAMENT_TEAM_KEYS = {
   champions_arena_1st:1, champions_arena_2nd:1, champions_arena_3rd:1,
-  chuppa_balance:1, aurora_veil_froslass:1, kingambit_sneasler:1,
-  cofagrigus_tr:1, rin_sand:1, suica_sun:1
+  aurora_veil_froslass:1, cofagrigus_tr:1, rin_sand:1, suica_sun:1
 };
 function teamMatchesFilter(key, team, filter) {
   if (!team) return false;

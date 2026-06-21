@@ -11,9 +11,11 @@ What is true right now:
 - the Champions review lane is the trusted default
 - the local source-truth suite passes
 - the local fast suite passes
+- the offline DB suite passes
 - the UI smoke path passes
 - the visible shipped catalog is now Champions-only
 - SV-format teams are no longer surfaced in the live team list
+- the preferred live DB catalog migration is generator-backed from `poke-sim/data.js`
 
 What is not true yet:
 
@@ -87,8 +89,10 @@ Key proof points in that passing state:
 
 - kept battle format (`singles` / `doubles`) separate from ruleset intent
 - added a `currentRuleset` default of `champions`
-- marked SV-format teams as `SV compatibility only` in the live Champions review lane
-- prevented SV teams from reading as trusted legal Champions teams in the review UI
+- removed the remaining SV-only shipped team records from the live catalog and test matrix
+- kept the user-facing `player` starter slot, but converted its metadata and SP spreads onto the Champions ruleset
+- fixed DB catalog parity so team metadata now persists through both the fresh seed and the preferred live alignment migration
+- marked superseded DB catalog migrations as historical and added tests that fail if `data.js`, `seed_teams_v2.sql`, and `2026_06_20_align_shared_27_team_catalog.sql` drift apart
 
 ### Review clarity
 
@@ -110,9 +114,9 @@ These still block stronger trust claims:
 3. Fresh deployed-log proof still needs to be repeated after each live push.
    - exported turn logs from the claimed live URL need strict validation
 
-4. Champions and SV are not fully separated as selectable product modes yet.
-   - today the guardrail is review-focused: Champions is trusted, SV is compatibility-only
-   - a full explicit SV mode can come later if it is still wanted
+4. A separate SV product mode still does not exist.
+   - the shipped built-in catalog is now Champions-only
+   - add an explicit SV mode later only if there is a real requirement for dual-format support
 
 ## Roadmap From Here
 

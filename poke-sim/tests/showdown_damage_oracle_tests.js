@@ -66,6 +66,8 @@ function calcMon(name, overrides) {
 function simRange(attacker, target, move, field) {
   attacker.side = field.playerSide;
   target.side = field.oppSide;
+  field.playerSide.activeMons = [attacker];
+  field.oppSide.activeMons = [target];
   field._ctx.forceNoCrit = true;
   return [
     attacker.calcDamage(move, target, field, null, function() { return 0; }),
@@ -391,6 +393,88 @@ T('19. Solar Beam under rain matches Showdown exactly', () => {
     new calc.Field({ gameType: 'Doubles', weather: 'Rain' })
   );
   eqRange(sim, oracle, 'solar beam rain');
+});
+
+T('20. Tough Claws contact boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Charizard-Mega-X', { nature: 'Adamant', moves: ['Dragon Claw'], evs: { atk: 252 }, ability: 'Tough Claws' }),
+    simMon('Pelipper'),
+    'Dragon Claw',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Charizard-Mega-X', { nature: 'Adamant', moves: ['Dragon Claw'], evs: { atk: 252 }, ability: 'Tough Claws' }),
+    calcMon('Pelipper'),
+    'Dragon Claw',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'tough claws');
+});
+
+T('21. Pixilate Normal-to-Fairy conversion matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Altaria-Mega', { nature: 'Adamant', moves: ['Tackle'], evs: { atk: 252 }, ability: 'Pixilate' }),
+    simMon('Kommo-o'),
+    'Tackle',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Altaria-Mega', { nature: 'Adamant', moves: ['Tackle'], evs: { atk: 252 }, ability: 'Pixilate' }),
+    calcMon('Kommo-o'),
+    'Tackle',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'pixilate');
+});
+
+T('22. Solar Power in sun matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Houndoom-Mega', { nature: 'Modest', moves: ['Flamethrower'], evs: { spa: 252 }, ability: 'Solar Power' }),
+    simMon('Incineroar'),
+    'Flamethrower',
+    new Field({ format: 'doubles', weather: 'sun' })
+  );
+  const oracle = oracleRange(
+    calcMon('Houndoom-Mega', { nature: 'Modest', moves: ['Flamethrower'], evs: { spa: 252 }, ability: 'Solar Power' }),
+    calcMon('Incineroar'),
+    'Flamethrower',
+    new calc.Field({ gameType: 'Doubles', weather: 'Sun' })
+  );
+  eqRange(sim, oracle, 'solar power sun');
+});
+
+T('23. Supreme Overlord with three fainted allies matches Showdown exactly', () => {
+  const field = new Field({ format: 'doubles' });
+  field.playerSide.fainted = 3;
+  const sim = simRange(
+    simMon('Kingambit', { nature: 'Adamant', moves: ['Iron Head'], evs: { atk: 252 }, ability: 'Supreme Overlord' }),
+    simMon('Pelipper'),
+    'Iron Head',
+    field
+  );
+  const oracle = oracleRange(
+    calcMon('Kingambit', { nature: 'Adamant', moves: ['Iron Head'], evs: { atk: 252 }, ability: 'Supreme Overlord', alliesFainted: 3 }),
+    calcMon('Pelipper'),
+    'Iron Head',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'supreme overlord');
+});
+
+T('24. Defender Cloud Nine suppresses rain Weather Ball like Showdown', () => {
+  const sim = simRange(
+    simMon('Golduck', { nature: 'Modest', moves: ['Weather Ball'], evs: { spa: 252 }, ability: 'Damp' }),
+    simMon('Tyranitar', { ability: 'Cloud Nine' }),
+    'Weather Ball',
+    new Field({ format: 'doubles', weather: 'rain' })
+  );
+  const oracle = oracleRange(
+    calcMon('Golduck', { nature: 'Modest', moves: ['Weather Ball'], evs: { spa: 252 }, ability: 'Damp' }),
+    calcMon('Tyranitar', { ability: 'Cloud Nine' }),
+    'Weather Ball',
+    new calc.Field({ gameType: 'Doubles', weather: 'Rain' })
+  );
+  eqRange(sim, oracle, 'cloud nine weather suppression');
 });
 
 console.log('\nshowdown damage oracle:', pass + ' pass, ' + fail + ' fail\n');

@@ -108,16 +108,16 @@ function truthy(v, msg) { if (!v) throw new Error(msg + ' expected truthy'); }
       const ctx = freshCtx();
       const mockClient = mockSupabaseClient({
         teams: [
-          { team_id: 'player',       name: 'Player',       metadata: { format: 'gen9vgc2024regh', custom_rules: {} } },
-          { team_id: 'mega_altaria', name: 'Mega Altaria', metadata: { format: 'gen9vgc2024regh', custom_rules: {} } }
+          { team_id: 'player',       name: 'Player',       metadata: { format: 'champions-vgc-2026-regma', custom_rules: {} } },
+          { team_id: 'mega_altaria', name: 'Mega Altaria', metadata: { format: 'champions-vgc-2026-regma', custom_rules: {} } }
         ],
         team_members: []
       });
       const adapter = installAdapter(ctx, { url: 'https://x.supabase.co', key: 'k', mockClient });
       const result = await adapter.loadTeamsFromDB();
       truthy(result, 'loadTeamsFromDB returned non-null');
-      eq(result.player.metadata.format,       'gen9vgc2024regh', 'format flows from DB metadata (player)');
-      eq(result.mega_altaria.metadata.format, 'gen9vgc2024regh', 'format flows from DB metadata (mega_altaria)');
+      eq(result.player.metadata.format,       'champions-vgc-2026-regma', 'format flows from DB metadata (player)');
+      eq(result.mega_altaria.metadata.format, 'champions-vgc-2026-regma', 'format flows from DB metadata (mega_altaria)');
     });
 
     await TA('T-init-7', async function () {

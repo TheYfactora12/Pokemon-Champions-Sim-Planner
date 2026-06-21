@@ -1,5 +1,6 @@
 -- Champions Sim RLS Policies v1
--- Run AFTER schema_v1.sql and seed_teams_v1.sql
+-- Run AFTER schema_v1.sql and seed_teams_v2.sql for fresh DBs,
+-- or after the preferred live alignment migration for existing DBs.
 -- Strategy: anon = read-only on reference tables, read+insert on analyses tables
 
 -- ============================================================

@@ -249,7 +249,7 @@ T('4. teamMatchesFilter: mega subset is keys starting with mega_', () => {
 T('5. teamMatchesFilter: tournament shows Champions tournament teams only', () => {
   truthy(teamMatchesFilter('champions_arena_1st', TEAMS.champions_arena_1st, 'tournament'));
   truthy(teamMatchesFilter('champions_arena_2nd', TEAMS.champions_arena_2nd, 'tournament'));
-  truthy(!teamMatchesFilter('chuppa_balance', TEAMS.chuppa_balance, 'tournament'), 'SV-era tournament team should stay hidden from the Champions catalog');
+  truthy(!teamMatchesFilter('player', TEAMS.player, 'tournament'), 'starter team should stay separate from tournament packs');
   truthy(!teamMatchesFilter('mega_altaria', TEAMS.mega_altaria, 'tournament'), 'mega is not a tournament team');
 });
 

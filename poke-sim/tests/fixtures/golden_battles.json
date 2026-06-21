@@ -13,13 +13,13 @@
       ],
       "format": "doubles",
       "description": "Player (speed) vs Cofagrigus TR — seed 1337",
-      "expected_trace_hash": "5d93bd34467a16d97731e9613ebeea9edb128cf3d5bb06b4394c05e1e85914d4",
+      "expected_trace_hash": "e1709198d0ca6f32619660e94a2dc8b50b8db9f3501adfb4aff8f4be402d5f05",
       "expected_winner": "win"
     },
     {
       "golden_id": "gb_002",
       "player_team_id": "player",
-      "opp_team_id": "chuppa_balance",
+      "opp_team_id": "sand_bulky_offense",
       "seed": [
         2024,
         8675,
@@ -27,14 +27,14 @@
         5551
       ],
       "format": "doubles",
-      "description": "Player (speed) vs Chuppa Balance — seed 2024",
-      "expected_trace_hash": "079f3433c4efa4aa4864ffba47d30b2b798de4679c41f41e9b095aa6e0c3d6eb",
+      "description": "Player (speed) vs Sand Bulky Offense — seed 2024",
+      "expected_trace_hash": "69601d71266080ee055b94d1199613d5c36a7e0a422ba7a3bbb9c176e6fa6d18",
       "expected_winner": "win"
     },
     {
       "golden_id": "gb_003",
       "player_team_id": "cofagrigus_tr",
-      "opp_team_id": "chuppa_balance",
+      "opp_team_id": "sand_bulky_offense",
       "seed": [
         9999,
         1111,
@@ -42,8 +42,8 @@
         7777
       ],
       "format": "doubles",
-      "description": "Cofagrigus TR vs Chuppa Balance — seed 9999",
-      "expected_trace_hash": "83e1f36e2881eafcdad1f17a754814c14c7b0cf68e5a89a7da367d692452b2b5",
+      "description": "Cofagrigus TR vs Sand Bulky Offense — seed 9999",
+      "expected_trace_hash": "4d3e4fdd5c0ed1bd69c171bcf88e31a4ff62034c9f8dac5742a4cc3ba8b93850",
       "expected_winner": "loss"
     }
   ]

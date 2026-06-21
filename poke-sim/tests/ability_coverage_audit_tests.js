@@ -48,13 +48,18 @@ function getMegaAbilities() {
 }
 
 function getModeledAbilities() {
-  return new Set([
+  const inlineModeled = new Set([
+    'Adaptability',
     'Aroma Veil',
     'Chlorophyll',
+    'Clear Body',
     'Comatose',
+    'Competitive',
+    'Defiant',
     'Dragonize',
     'Drizzle',
     'Drought',
+    'Guts',
     'Hospitality',
     'Inner Focus',
     'Intimidate',
@@ -78,10 +83,15 @@ function getModeledAbilities() {
     'Spicy Spray',
     'Sweet Veil',
     'Swift Swim',
+    'Tough Claws',
     'Unburden',
     'Unseen Fist',
     'Water Veil'
   ]);
+  Object.keys(ctx.ABILITIES || {}).forEach(function(ability) {
+    inlineModeled.add(ability);
+  });
+  return inlineModeled;
 }
 
 function uniqSorted(list) {
@@ -143,18 +153,9 @@ T('3. every classification uses an allowed category and a non-empty rationale', 
 
 T('4. known high-impact shipped ability gaps stay marked battle-result-impacting', function() {
   [
-    'Adaptability',
-    'Clear Body',
-    'Cloud Nine',
-    'Competitive',
-    'Defiant',
-    'Pixilate',
     'Shadow Tag',
-    'Solar Power',
     'Stance Change',
     'Sturdy',
-    'Supreme Overlord',
-    'Tough Claws',
     'Unaware'
   ].forEach(function(ability) {
     const entry = catalog[ability];

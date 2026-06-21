@@ -232,16 +232,17 @@ T('36. Other tournament teams unchanged — mega_altaria still SP-scale', () => 
   }
 });
 
-T('37. SV teams still SV-scale — kingambit_sneasler members have >=1 stat > 32', () => {
-  const t = TEAMS.kingambit_sneasler;
-  const anyOver = t.members.some(m => Object.values(m.evs).some(v => v > 32));
-  truthy(anyOver, 'kingambit_sneasler should still be SV-scale');
+T('37. player now declares Champions format', () => {
+  eq(TEAMS.player.format, 'champions');
 });
 
-T('38. SV team player (TR Counter) still has SV spreads', () => {
+T('38. player starter team now stays on Champions SP scale', () => {
   const t = TEAMS.player;
-  const anyOver = t.members.some(m => Object.values(m.evs).some(v => v > 32));
-  truthy(anyOver);
+  for (const m of t.members) {
+    const total = Object.values(m.evs).reduce((a,b)=>a+b, 0);
+    lte(total, 66, m.name + ' total SP overflow');
+    truthy(Object.values(m.evs).every(v => v <= 32), m.name + ' per-stat SP overflow');
+  }
 });
 
 T('39. cofagrigus_tr has SP=32 invested on HP for Cofagrigus + Sinistcha (TR bulk)', () => {
