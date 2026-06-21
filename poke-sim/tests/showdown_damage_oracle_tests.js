@@ -477,5 +477,69 @@ T('24. Defender Cloud Nine suppresses rain Weather Ball like Showdown', () => {
   eqRange(sim, oracle, 'cloud nine weather suppression');
 });
 
+T('25. defender Unaware ignores attacker offensive stat boosts exactly like Showdown', () => {
+  const sim = simRange(
+    simMon('Raichu', { nature: 'Modest', moves: ['Thunderbolt'], evs: { spa: 252 }, statBoosts: { spa: 2 } }),
+    simMon('Pelipper', { ability: 'Unaware' }),
+    'Thunderbolt',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Raichu', { nature: 'Modest', moves: ['Thunderbolt'], evs: { spa: 252 }, boosts: { spa: 2 } }),
+    calcMon('Pelipper', { ability: 'Unaware' }),
+    'Thunderbolt',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'defender unaware');
+});
+
+T('26. attacker Unaware ignores defender defensive stat boosts exactly like Showdown', () => {
+  const sim = simRange(
+    simMon('Skeledirge', { nature: 'Modest', moves: ['Shadow Ball'], evs: { spa: 252 }, ability: 'Unaware' }),
+    simMon('Umbreon', { statBoosts: { spd: 2 } }),
+    'Shadow Ball',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Skeledirge', { nature: 'Modest', moves: ['Shadow Ball'], evs: { spa: 252 }, ability: 'Unaware' }),
+    calcMon('Umbreon', { boosts: { spd: 2 } }),
+    'Shadow Ball',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'attacker unaware');
+});
+
+T('27. Mega Launcher pulse boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Blastoise', { nature: 'Modest', moves: ['Dark Pulse'], evs: { spa: 252 }, ability: 'Mega Launcher' }),
+    simMon('Incineroar'),
+    'Dark Pulse',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Blastoise', { nature: 'Modest', moves: ['Dark Pulse'], evs: { spa: 252 }, ability: 'Mega Launcher' }),
+    calcMon('Incineroar'),
+    'Dark Pulse',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'mega launcher');
+});
+
+T('28. Strong Jaw bite boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Sharpedo', { nature: 'Adamant', moves: ['Crunch'], evs: { atk: 252 }, ability: 'Strong Jaw' }),
+    simMon('Pelipper'),
+    'Crunch',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Sharpedo', { nature: 'Adamant', moves: ['Crunch'], evs: { atk: 252 }, ability: 'Strong Jaw' }),
+    calcMon('Pelipper'),
+    'Crunch',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'strong jaw');
+});
+
 console.log('\nshowdown damage oracle:', pass + ' pass, ' + fail + ' fail\n');
 process.exit(fail ? 1 : 0);

@@ -78,10 +78,6 @@
       "category": "missing_low_impact",
       "why": "Paralysis immunity matters, but current exposure is one Mega Lopunny team."
     },
-    "Mega Launcher": {
-      "category": "missing_battle_result_impacting",
-      "why": "Pulse move boost materially changes Mega Blastoise damage."
-    },
     "Mind's Eye": {
       "category": "missing_battle_result_impacting",
       "why": "Ghost immunity bypass and accuracy behavior affect Ursaluna-Bloodmoon lines."
@@ -162,18 +158,6 @@
       "category": "missing_battle_result_impacting",
       "why": "Defense boosts on hit change Archaludon survivability over multi-hit turns."
     },
-    "Stance Change": {
-      "category": "missing_battle_result_impacting",
-      "why": "Aegislash form swaps alter stats, damage, and survivability every turn."
-    },
-    "Strong Jaw": {
-      "category": "missing_battle_result_impacting",
-      "why": "Bite move boost changes Mega Sharpedo damage."
-    },
-    "Sturdy": {
-      "category": "missing_battle_result_impacting",
-      "why": "Surviving from full HP changes KO math and turn sequencing."
-    },
     "Technician": {
       "category": "missing_battle_result_impacting",
       "why": "Low-base-power move boost changes Mega Scizor damage benchmarks."
@@ -185,10 +169,6 @@
     "Trace": {
       "category": "missing_low_impact",
       "why": "Copied-ability edge cases can matter, but all current exposure is mega-only."
-    },
-    "Unaware": {
-      "category": "missing_battle_result_impacting",
-      "why": "Ignoring opposing stat boosts changes setup matchups and endgame reads."
     },
     "Unnerve": {
       "category": "missing_low_impact",

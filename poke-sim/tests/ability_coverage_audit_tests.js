@@ -153,10 +153,7 @@ T('3. every classification uses an allowed category and a non-empty rationale', 
 
 T('4. known high-impact shipped ability gaps stay marked battle-result-impacting', function() {
   [
-    'Shadow Tag',
-    'Stance Change',
-    'Sturdy',
-    'Unaware'
+    'Shadow Tag'
   ].forEach(function(ability) {
     const entry = catalog[ability];
     truthy(entry, ability + ' should be cataloged');

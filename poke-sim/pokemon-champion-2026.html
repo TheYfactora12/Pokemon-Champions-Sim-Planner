@@ -8998,6 +8998,14 @@ var ABILITIES = {
       return null;
     }
   },
+  'Mega Launcher': {
+    // Pulse moves gain 50% power.
+    // Cite: https://bulbapedia.bulbagarden.net/wiki/Mega_Launcher_(Ability)
+    onModifyMove: function(ctx) {
+      if (_moveHasFlag(ctx.move, 'pulse')) return { bpMult: 1.50 };
+      return null;
+    }
+  },
   'Spicy Spray': {
     // 100% burn attacker when holder takes any damage (except Fire attackers,
     // attackers already statused, or if holder is behind a Substitute).
@@ -9020,8 +9028,22 @@ var ABILITIES = {
       return null;
     }
   },
+  'Strong Jaw': {
+    // Bite moves gain 50% power.
+    // Cite: https://bulbapedia.bulbagarden.net/wiki/Strong_Jaw_(Ability)
+    onModifyMove: function(ctx) {
+      if (_moveHasFlag(ctx.move, 'bite')) return { bpMult: 1.50 };
+      return null;
+    }
+  },
+  // Inline in executeAction/setStanceForm: Aegislash swaps between Shield and Blade.
+  'Stance Change': {},
   'Solar Power': {},
+  // Inline in applyDamage: survive lethal direct damage from full HP at 1 HP.
+  'Sturdy': {},
   'Supreme Overlord': {},
+  // Inline in calcDamage: ignore opposing offensive/defensive stat stages.
+  'Unaware': {},
   'Mega Sol': {
     // Personal sun — treats Fire moves as if sun is up when computing the
     // weather multiplier, but does NOT set field weather. Water 0.5x penalty
@@ -9297,6 +9319,10 @@ class Pokemon {
     // Source order: generated Showdown species rows first; local tables only
     // backfill unknown/custom/partial rows and Champions-specific overrides.
     const _showdownBaseStats = _showdownSpeciesBase(this.name);
+    const _isAegislashStanceMon = data.ability === 'Stance Change' &&
+      (data.name === 'Aegislash' || data.name === 'Aegislash-Blade');
+    const _aegislashShieldBase = _isAegislashStanceMon ? (_showdownSpeciesBase('Aegislash') || BASE_STATS.Aegislash || null) : null;
+    const _aegislashBladeBase = _isAegislashStanceMon ? (_showdownSpeciesBase('Aegislash-Blade') || BASE_STATS['Aegislash-Blade'] || null) : null;
     const _baseStats = _showdownBaseStats || BASE_STATS[this.name] || { hp:80,atk:80,def:80,spa:80,spd:80,spe:80, types:['Normal'] };
     // Use POKEMON_TYPES_DB for more accurate type coverage on imported Pokémon
     const _types = (_showdownBaseStats && Array.isArray(_showdownBaseStats.types) && _showdownBaseStats.types.length)
@@ -9306,6 +9332,27 @@ class Pokemon {
       : _baseStats.types;
     this._base = Object.assign({}, _baseStats, { types: _types });
     this.types = [...this._base.types];
+    this.stanceChangeForms = null;
+    this.stanceForm = null;
+    if (_isAegislashStanceMon && _aegislashShieldBase && _aegislashBladeBase) {
+      const _shieldTypes = Array.isArray(_aegislashShieldBase.types) && _aegislashShieldBase.types.length
+        ? _aegislashShieldBase.types.slice()
+        : this.types.slice();
+      const _bladeTypes = Array.isArray(_aegislashBladeBase.types) && _aegislashBladeBase.types.length
+        ? _aegislashBladeBase.types.slice()
+        : _shieldTypes.slice();
+      this.stanceChangeForms = {
+        shield: Object.assign({}, _aegislashShieldBase, { types: _shieldTypes }),
+        blade: Object.assign({}, _aegislashBladeBase, { types: _bladeTypes })
+      };
+      this.stanceForm = (data.name === 'Aegislash-Blade') ? 'blade' : 'shield';
+      this._base = Object.assign({}, this.stanceChangeForms[this.stanceForm], {
+        types: this.stanceChangeForms[this.stanceForm].types.slice()
+      });
+      this.types = this._base.types.slice();
+      this.name = 'Aegislash';
+      this.displayName = 'Aegislash';
+    }
     this.level = data.level || 50;
     this._calcStats();
     const _initialHp = (data.hp != null ? data.hp : (data.currentHp != null ? data.currentHp : this.maxHp));
@@ -9441,6 +9488,23 @@ class Pokemon {
     this.hasMegaEvolved = true;
     if (log) log.push(`${m.megaName} Mega Evolved!`);
     if (field) applyWeatherAbility(this, field, log);
+    return true;
+  }
+
+  setStanceForm(form) {
+    if (!this.stanceChangeForms) return false;
+    if (form !== 'shield' && form !== 'blade') return false;
+    if (this.stanceForm === form) return false;
+    const nextBase = this.stanceChangeForms[form];
+    if (!nextBase) return false;
+    const currentHp = this.hp;
+    this._base = Object.assign({}, nextBase, { types: nextBase.types.slice() });
+    this.types = nextBase.types.slice();
+    this.stanceForm = form;
+    this._calcStats();
+    this.hp = Math.min(this.maxHp, currentHp);
+    this.multiscaleActive = (this.ability === 'Multiscale') && this.hp === this.maxHp;
+    this.flying = this.types.includes('Flying') || this.ability === 'Levitate';
     return true;
   }
 
@@ -9593,24 +9657,33 @@ class Pokemon {
     //         defender ignores positive Def/SpD stages (takes 0 instead).
     //         Burn still halves physical Atk (Gen 6+).
     let atk, def;
+    const aStatKey = isPhysical ? 'atk' : 'spa';
+    const dStatKey = isPhysical ? 'def' : 'spd';
+    const aBoost = this.statBoosts[aStatKey] || 0;
+    const dBoost = target.statBoosts[dStatKey] || 0;
+    let aOverride = aBoost;
+    let dOverride = dBoost;
+    if (target.ability === 'Unaware') aOverride = 0;
+    if (this.ability === 'Unaware') dOverride = 0;
+    if (_isCrit) {
+      if (aOverride < 0) aOverride = 0;
+      if (dOverride > 0) dOverride = 0;
+    }
+    const _aSaved = aBoost;
+    const _dSaved = dBoost;
+    const _stageOverrideApplied = (aOverride !== aBoost) || (dOverride !== dBoost);
     try {
-      if (_isCrit) {
-        const aStatKey = isPhysical ? 'atk' : 'spa';
-        const dStatKey = isPhysical ? 'def' : 'spd';
-        const aBoost = this.statBoosts[aStatKey] || 0;
-        const dBoost = target.statBoosts[dStatKey] || 0;
-        const _aSaved = aBoost, _dSaved = dBoost;
-        if (aBoost < 0) this.statBoosts[aStatKey] = 0;
-        if (dBoost > 0) target.statBoosts[dStatKey] = 0;
-        atk = isPhysical ? this.getStat('atk', field) : this.getStat('spa', field);
-        def = isPhysical ? target.getStat('def', field) : target.getStat('spd', field);
+      if (_stageOverrideApplied) {
+        this.statBoosts[aStatKey] = aOverride;
+        target.statBoosts[dStatKey] = dOverride;
+      }
+      atk = isPhysical ? this.getStat('atk', field) : this.getStat('spa', field);
+      def = isPhysical ? target.getStat('def', field) : target.getStat('spd', field);
+    } finally {
+      if (_stageOverrideApplied) {
         this.statBoosts[aStatKey] = _aSaved;
         target.statBoosts[dStatKey] = _dSaved;
-      } else {
-        atk = isPhysical ? this.getStat('atk', field) : this.getStat('spa', field);
-        def = isPhysical ? target.getStat('def', field) : target.getStat('spd', field);
       }
-    } finally {
       if (_spaPreviewApplied) _applyStageDelta(this, 'spa', -_spaPreviewApplied);
     }
     if (isPhysical && this.ability === 'Guts' && this.status) {
@@ -10633,6 +10706,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   function _resetSwitchInState(replacement) {
     if (!replacement) return;
+    if (replacement.stanceChangeForms) replacement.setStanceForm('shield');
     replacement.toxicCounter = 0;
     replacement.frozenTurns  = 0;
     replacement.sleepTurns   = 0;
@@ -10930,6 +11004,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     // Attacker must be alive
     if (!attacker.alive) return;
+
+    if (attacker.stanceChangeForms) {
+      if (move === "King's Shield") {
+        if (attacker.setStanceForm('shield')) log.push(`${attacker.name} shifted into Shield Forme!`);
+      } else if (_moveCategory(move) !== 'status') {
+        if (attacker.setStanceForm('blade')) log.push(`${attacker.name} shifted into Blade Forme!`);
+      }
+    }
 
     const _continuingCharge = attacker.chargingMove === move;
     const _effectiveWeather = _effectiveFieldWeather(field);
@@ -12176,13 +12258,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const wasFullHp = (target.hp === target.maxHp);
     target.hp = Math.max(0, target.hp - finalDmg);
     // T9j.6 (#8) — Focus Sash survives a KO from full HP; consumed.
+    let sturdySaved = false;
+    if (target.hp === 0 && target.ability === 'Sturdy' && wasFullHp) {
+      target.hp = 1;
+      sturdySaved = true;
+    }
     let sashSaved = false;
-    if (target.hp === 0 && target.item === 'Focus Sash' && !target.itemConsumed && wasFullHp) {
+    if (!sturdySaved && target.hp === 0 && target.item === 'Focus Sash' && !target.itemConsumed && wasFullHp) {
       target.hp = 1;
       target.itemConsumed = true;
       sashSaved = true;
     }
     log.push(`${attacker.name} used ${move}! → ${target.name} [${finalDmg} dmg, ${target.hp}/${target.maxHp} HP]`);
+    if (sturdySaved) log.push(`${target.name} hung on with Sturdy!`);
     if (sashSaved) log.push(`${target.name} hung on with its Focus Sash!`);
     if (DRAIN_MOVES.has(move) && attacker && attacker.alive) {
       if (_canReceiveHealing(attacker)) {
