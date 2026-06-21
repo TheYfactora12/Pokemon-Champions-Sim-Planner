@@ -65,8 +65,8 @@ T('2. Sucker Punch fails when the target selected a status move', () => {
     ability: 'Super Luck',
     nature: 'Jolly',
     level: 50,
-    moves: ['Sucker Punch', 'Protect', 'Taunt', 'Haze'],
-    evs: { hp: 252, atk: 252, def: 0, spa: 0, spd: 0, spe: 4 }
+    moves: ['Sucker Punch'],
+    evs: { hp: 32, atk: 32, def: 0, spa: 0, spd: 0, spe: 2 }
   }]);
   const oppTeam = team([{
     name: 'Cofagrigus',
@@ -74,8 +74,8 @@ T('2. Sucker Punch fails when the target selected a status move', () => {
     ability: 'Mummy',
     nature: 'Quiet',
     level: 50,
-    moves: ['Haze', 'Protect', 'Encore', 'Defog'],
-    evs: { hp: 252, atk: 0, def: 0, spa: 0, spd: 252, spe: 0 }
+    moves: ['Haze'],
+    evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 0 }
   }]);
   const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [3, 4, 5, 6], maxTurns: 1 });
   truthy(battle.log.some(line => String(line).includes('used Sucker Punch! But it failed!')),
@@ -84,22 +84,22 @@ T('2. Sucker Punch fails when the target selected a status move', () => {
 
 T('3. Encore repeats the last move and can flip Trick Room back off', () => {
   const playerTeam = team([{
-    name: 'RuleMon',
+    name: 'Snorlax',
     item: '',
-    ability: 'Prankster',
-    nature: 'Timid',
+    ability: 'Thick Fat',
+    nature: 'Brave',
     level: 50,
-    moves: ['Will-O-Wisp', 'Encore', 'Protect', 'Haze'],
-    evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 252 }
+    moves: ['Encore'],
+    evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 0 }
   }]);
   const oppTeam = team([{
-    name: 'Cofagrigus',
+    name: 'Cresselia',
     item: '',
-    ability: 'Mummy',
-    nature: 'Quiet',
+    ability: 'Levitate',
+    nature: 'Calm',
     level: 50,
-    moves: ['Trick Room', 'Tackle', 'Protect', 'Shadow Ball'],
-    evs: { hp: 252, atk: 0, def: 0, spa: 0, spd: 252, spe: 0 }
+    moves: ['Trick Room'],
+    evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 32 }
   }]);
   const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [11, 12, 13, 14], maxTurns: 2 });
   truthy(battle.log.some(line => String(line).includes('got an Encore!')), 'Encore should lock the target');

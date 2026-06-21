@@ -7,6 +7,7 @@ function team(members) {
 }
 
 function mon(name, move, extra) {
+  const overrides = Object.assign({}, extra || {});
   const base = {
     name,
     item: '',
@@ -16,7 +17,15 @@ function mon(name, move, extra) {
     moves: [move],
     evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
   };
-  return Object.assign(base, extra || {});
+  const mergedEvs = Object.assign({}, base.evs, overrides.evs || {});
+  ['atk', 'def', 'spa', 'spd', 'spe'].forEach(function(stat) {
+    if (Object.prototype.hasOwnProperty.call(overrides, stat)) {
+      mergedEvs[stat] = overrides[stat];
+      delete overrides[stat];
+    }
+  });
+  base.evs = mergedEvs;
+  return Object.assign(base, overrides);
 }
 
 function battleLog(battle) {
@@ -265,7 +274,7 @@ const CASES = [
       const battle = simulate(simulateBattle, [
         mon('Whimsicott', 'Substitute', { hp: 140, spe: 252 })
       ], [
-        mon('Whimsicott', 'Taunt', { spe: 252 })
+        mon('Whimsicott', 'Taunt', { spe: 0 })
       ], { maxTurns: 1, seed: [13, 15, 17, 19] });
       expectLine(battle, 'made a Substitute!', 'Substitute should be created');
       expectLine(battle, 'used Taunt! But it failed because of Substitute!', 'Substitute should block Taunt');

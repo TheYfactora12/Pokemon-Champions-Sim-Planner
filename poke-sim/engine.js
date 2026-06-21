@@ -1125,6 +1125,7 @@ class Pokemon {
   }
 
   getStat(stat, field) {
+    field = field || { weather: 'none' };
     const boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
     const base = { atk:this.baseAtk, def:this.baseDef, spa:this.baseSpa, spd:this.baseSpd, spe:this.baseSpe }[stat];
     const boost = this.statBoosts[stat] || 0;

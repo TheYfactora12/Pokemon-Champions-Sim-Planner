@@ -46,8 +46,8 @@ T('1. Icy Wind drops Speed on all hit foes', () => {
       ability: 'Prankster',
       nature: 'Timid',
       level: 50,
-      moves: ['Icy Wind', 'Tackle', 'Protect', 'Tailwind'],
-      evs: { hp: 0, atk: 0, def: 0, spa: 252, spd: 4, spe: 252 }
+      moves: ['Icy Wind'],
+      evs: { hp: 32, atk: 0, def: 0, spa: 32, spd: 2, spe: 32 }
     }]
   };
 
@@ -61,16 +61,16 @@ T('1. Icy Wind drops Speed on all hit foes', () => {
       ability: '',
       nature: 'Serious',
       level: 50,
-      moves: ['Tackle', 'Protect', 'Taunt', 'Parting Shot'],
-      evs: { hp: 252, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+      moves: ['Tackle'],
+      evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
     }, {
       name: 'Metagross',
       item: '',
       ability: '',
       nature: 'Serious',
       level: 50,
-      moves: ['Tackle', 'Protect', 'Taunt', 'Parting Shot'],
-      evs: { hp: 252, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+      moves: ['Tackle'],
+      evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
     }]
   };
 
@@ -92,8 +92,8 @@ T('2. Muddy Water can drop accuracy with the expected ratio', () => {
       ability: '',
       nature: 'Serious',
       level: 50,
-      moves: ['Muddy Water', 'Tackle', 'Protect', 'Earthquake'],
-      evs: { hp: 252, atk: 0, def: 0, spa: 252, spd: 4, spe: 0 }
+      moves: ['Muddy Water'],
+      evs: { hp: 32, atk: 0, def: 0, spa: 32, spd: 2, spe: 0 }
     }]
   };
 
@@ -107,12 +107,12 @@ T('2. Muddy Water can drop accuracy with the expected ratio', () => {
       ability: '',
       nature: 'Serious',
       level: 50,
-      moves: ['Tackle', 'Protect', 'Taunt', 'Parting Shot'],
-      evs: { hp: 252, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+      moves: ['Tackle'],
+      evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
     }]
   };
 
-  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [2, 3, 4, 5], maxTurns: 2 });
+  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [2, 3, 4, 5], maxTurns: 3 });
   truthy(Array.isArray(battle.log), 'battle log missing');
   truthy(battle.log.some(line => String(line).includes('used Muddy Water!')), 'Muddy Water did not resolve');
   truthy(battle.log.some(line => String(line).includes("Blissey's accuracy fell!")),

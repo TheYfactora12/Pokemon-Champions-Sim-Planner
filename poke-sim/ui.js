@@ -330,6 +330,25 @@ document.addEventListener('keydown', _handleModalKeydown, true);
 
 // ---- Format Toggle (Doubles / Singles) ----
 let currentFormat = 'doubles';
+let currentRuleset = 'champions';
+function getCurrentRuleset() {
+  return currentRuleset === 'sv' ? 'sv' : 'champions';
+}
+function setCurrentRuleset(ruleset) {
+  currentRuleset = (ruleset === 'sv') ? 'sv' : 'champions';
+  ChampionsSim.state.ruleset = currentRuleset;
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('currentRuleset', currentRuleset);
+  return currentRuleset;
+}
+function isTeamCompatibleWithCurrentRuleset(team) {
+  var teamFormat = (team && team.format) || 'champions';
+  return teamFormat === getCurrentRuleset();
+}
+function getActiveValidationFormat(team) {
+  if (!isTeamCompatibleWithCurrentRuleset(team)) return 'champions';
+  return getCurrentRuleset() === 'champions' ? 'champions' : 'vgc';
+}
+setCurrentRuleset(currentRuleset);
 function setCurrentFormat(format) {
   currentFormat = (format === 'singles') ? 'singles' : 'doubles';
   // T9j.2 / #78 - expose for engine.js through the shared namespace.
@@ -345,9 +364,9 @@ document.querySelectorAll('.fmt-btn').forEach(btn => {
     setCurrentFormat(btn.dataset.fmt);
     const indicator = document.getElementById('fmt-indicator');
     if (currentFormat === 'doubles') {
-      indicator.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg> DOUBLES · 4v4 · Spread moves active`;
+      indicator.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg> DOUBLES · CHAMPIONS · 4v4 · Spread moves active`;
     } else {
-      indicator.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/></svg> SINGLES · 6v6 · No spread nerf`;
+      indicator.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/></svg> SINGLES · CHAMPIONS · 6v6 · No spread nerf`;
     }
     // T9j.12 (Refs #74): format change alters bring slot count (4 vs 3);
     // re-render both Teams grid and Simulator pickers to reflect.
@@ -442,7 +461,7 @@ function buildImportedTeamValidation(members, opts) {
   };
   if (typeof validateTeam === 'function') {
     try {
-      var verdict = validateTeam(team, 'vgc') || {};
+      var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
       out.errors = out.errors.concat(verdict.errors || []);
       out.warnings = out.warnings.concat(verdict.warnings || []);
     } catch (_e) {
@@ -843,6 +862,16 @@ var LADDER_MODE = false;
 
 function getTeamLegalityVerdict(teamKey, team) {
   team = team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null);
+  if (team && !isTeamCompatibleWithCurrentRuleset(team)) {
+    return {
+      valid: false,
+      inferred: false,
+      statAware: false,
+      errors: ['SV-format compatibility team; excluded from Champions source-truth review.'],
+      warnings: ['Keep this team for legacy comparison only until an explicit SV ruleset mode is added.'],
+      label: 'SV compatibility only'
+    };
+  }
   var fallback = {
     valid: !!team && (team.legality_status === 'legal' || team.legality_status === 'legal_inferred'),
     inferred: !!team && team.legality_status === 'legal_inferred',
@@ -851,7 +880,7 @@ function getTeamLegalityVerdict(teamKey, team) {
     label: team && team.legality_status === 'legal_inferred' ? 'Legal (inferred)' : 'Legal'
   };
   if (!team || typeof validateTeam !== 'function') return fallback;
-  var verdict = validateTeam(team, 'vgc') || {};
+  var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
   var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
   var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
   var valid = errors.length === 0;
@@ -897,7 +926,7 @@ function _gateOneSelect(selId) {
       // T9h: distinguish inferred from manually-verified legal
       var legalLabel = verdict.label || ((team.legality_status === 'legal_inferred') ? 'Legal (inferred)' : 'Legal');
       opt.textContent = opt.textContent + '  ' + glyph + ' ' +
-        (legal ? legalLabel : (!verdict.valid ? 'Not legal' : (team.legality_status === 'illegal' ? 'Illegal' : (team.format || '?').toUpperCase())));
+        (legal ? legalLabel : (!verdict.valid ? legalLabel : (team.legality_status === 'illegal' ? 'Illegal' : (team.format || '?').toUpperCase())));
     }
     if (LADDER_MODE && team && !legal) {
       opt.hidden = true;
@@ -1291,9 +1320,13 @@ function renderTeamsGrid() {
     const compactTeamsPicker = shouldUseCompactTeamsPicker();
     const legalityVerdict = getTeamLegalityVerdict(key, team);
     const legalityNote = !legalityVerdict.valid
-      ? '<div class="team-legality-note"><strong>Not legal for current sim rules</strong><span>' +
-        _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'Unknown legality issue') +
-        '</span><small>Team remains visible for review/testing, but results should be treated as untrusted until the source data is fixed.</small></div>'
+      ? ((team.format === 'sv')
+          ? '<div class="team-legality-note"><strong>SV compatibility team</strong><span>' +
+            _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'This team is outside the Champions review lane.') +
+            '</span><small>Keep this visible for legacy comparison only. Live Champions review and trust scoring stay on Champions-format teams.</small></div>'
+          : '<div class="team-legality-note"><strong>Not legal for current sim rules</strong><span>' +
+            _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'Unknown legality issue') +
+            '</span><small>Team remains visible for review/testing, but results should be treated as untrusted until the source data is fixed.</small></div>')
       : '';
     const card = document.createElement('div');
     card.className = 'team-full-card';
@@ -1307,6 +1340,7 @@ function renderTeamsGrid() {
           <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
           ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
             var st = team.legality_status; var fmt = team.format;
+            if (!legalityVerdict.valid && fmt === 'sv') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.errors || []).join('; ')) + '">\u26A0 SV COMPAT ONLY</span>';
             if (!legalityVerdict.valid) return '<span class="badge-illegal" title="' + _escapeHtml(legalityVerdict.errors.join('; ')) + '">\u274C NOT LEGAL</span>';
             if (st === 'legal' && fmt === 'champions') return '<span class="badge-legal">\u2705 LEGAL</span>';
             if (st === 'legal_inferred' && fmt === 'champions') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.warnings || []).join('; ') || 'Tournament-placement team; spreads are inferred from source archetypes.') + '">\u26A0 ' + _escapeHtml(legalityVerdict.label || 'LEGAL (inferred)') + '</span>';
