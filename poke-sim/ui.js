@@ -590,7 +590,60 @@ function renderRoster(containerId, members) {
 // rebuildTeamSelects() re-populates both dropdowns from TEAMS so that
 // imported/custom teams appear in BOTH sides.
 // ============================================================
-var currentPlayerKey = 'player';
+function isVisibleTeamInCatalog(teamKey, team, opts) {
+  team = team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null);
+  opts = opts || {};
+  if (!team || !team.name) return false;
+  if (team.source === 'custom') return opts.includeCustom !== false;
+  return team.format === 'champions';
+}
+
+function getVisibleTeamKeys(opts) {
+  if (typeof TEAMS === 'undefined') return [];
+  var out = [];
+  for (var key in TEAMS) {
+    if (isVisibleTeamInCatalog(key, TEAMS[key], opts)) out.push(key);
+  }
+  return out;
+}
+
+function getDefaultVisiblePlayerTeamKey() {
+  var visible = getVisibleTeamKeys({ includeCustom: true });
+  return visible[0] || (TEAMS.player ? 'player' : Object.keys(TEAMS)[0]);
+}
+
+function getDefaultVisibleOpponentTeamKey(excludeKey) {
+  var visible = getVisibleTeamKeys({ includeCustom: true }).filter(function(key) {
+    return key !== excludeKey;
+  });
+  return visible[0] || getDefaultVisiblePlayerTeamKey();
+}
+
+var currentPlayerKey = getDefaultVisiblePlayerTeamKey();
+
+function getActivePlayerTeamKey() {
+  if (typeof currentPlayerKey === 'string'
+      && TEAMS[currentPlayerKey]
+      && isVisibleTeamInCatalog(currentPlayerKey, TEAMS[currentPlayerKey], { includeCustom: true })) {
+    return currentPlayerKey;
+  }
+  return getDefaultVisiblePlayerTeamKey();
+}
+
+function getActivePlayerTeam() {
+  return TEAMS[getActivePlayerTeamKey()] || null;
+}
+
+function getEditablePlayerTeamKey() {
+  var playerSel = (typeof document !== 'undefined') ? document.getElementById('player-select') : null;
+  if (playerSel && playerSel.value && TEAMS[playerSel.value]) return playerSel.value;
+  if (TEAMS.player) return 'player';
+  return getActivePlayerTeamKey();
+}
+
+function getEditablePlayerTeam() {
+  return TEAMS[getEditablePlayerTeamKey()] || null;
+}
 
 // ============================================================
 // T9f: Custom-team persistence (localStorage)
@@ -740,11 +793,11 @@ async function deleteCustomTeam(key) {
 
   // Fallback selections if deleted team was selected
   if (currentPlayerKey === key) {
-    currentPlayerKey = TEAMS.player ? 'player' : Object.keys(TEAMS)[0];
+    currentPlayerKey = getDefaultVisiblePlayerTeamKey();
   }
   var oppSel = document.getElementById('opponent-select');
   if (oppSel && oppSel.value === key) {
-    oppSel.value = TEAMS.mega_altaria ? 'mega_altaria' : Object.keys(TEAMS)[0];
+    oppSel.value = getDefaultVisibleOpponentTeamKey(currentPlayerKey);
   }
 
   if (typeof rebuildTeamSelects === 'function') rebuildTeamSelects();
@@ -759,31 +812,42 @@ function rebuildTeamSelects() {
   var playerSel = document.getElementById('player-select');
   var oppSel = document.getElementById('opponent-select');
   if (!playerSel || !oppSel) return;
-  var prevPlayer = playerSel.value || currentPlayerKey;
-  var prevOpp = oppSel.value || 'mega_altaria';
+  var prevPlayer = playerSel.value || currentPlayerKey || getDefaultVisiblePlayerTeamKey();
+  var prevOpp = oppSel.value || getDefaultVisibleOpponentTeamKey(prevPlayer);
+  var hadDuplicateSelection = prevPlayer && prevOpp && prevPlayer === prevOpp;
   playerSel.innerHTML = '';
   // Rebuild opponent while preserving order (existing option text has
   // ladder-gate glyph mutations; start fresh from TEAMS)
   oppSel.innerHTML = '';
-  for (var key in TEAMS) {
+  getVisibleTeamKeys({ includeCustom: true }).forEach(function(key) {
     var t = TEAMS[key];
-    if (!t || !t.name) continue;
+    if (!t || !t.name) return;
     var o1 = document.createElement('option');
     o1.value = key; o1.textContent = t.name;
     playerSel.appendChild(o1);
     var o2 = document.createElement('option');
     o2.value = key; o2.textContent = t.name;
     oppSel.appendChild(o2);
+  });
+  playerSel.value = TEAMS[prevPlayer] && isVisibleTeamInCatalog(prevPlayer, TEAMS[prevPlayer], { includeCustom: true })
+    ? prevPlayer
+    : getDefaultVisiblePlayerTeamKey();
+  if (TEAMS[prevOpp] && isVisibleTeamInCatalog(prevOpp, TEAMS[prevOpp], { includeCustom: true }) && prevOpp !== playerSel.value) {
+    oppSel.value = prevOpp;
+  } else if (hadDuplicateSelection) {
+    oppSel.value = playerSel.value;
+  } else {
+    oppSel.value = getDefaultVisibleOpponentTeamKey(playerSel.value);
   }
-  if (TEAMS[prevPlayer]) playerSel.value = prevPlayer;
-  if (TEAMS[prevOpp]) oppSel.value = prevOpp;
   currentPlayerKey = playerSel.value;
   if (typeof applyLadderGate === 'function') applyLadderGate();
 }
 
 // ---- Initial renders ----
-renderRoster('player-roster', TEAMS.player.members);
-renderRoster('opp-roster', TEAMS.mega_altaria.members);
+currentPlayerKey = getDefaultVisiblePlayerTeamKey();
+var _initialOppKey = getDefaultVisibleOpponentTeamKey(currentPlayerKey);
+renderRoster('player-roster', (TEAMS[currentPlayerKey] && TEAMS[currentPlayerKey].members) || []);
+renderRoster('opp-roster', (TEAMS[_initialOppKey] && TEAMS[_initialOppKey].members) || []);
 rebuildTeamSelects();
 // T9j.12 (Refs #74): draw sim-side bring pickers on initial load.
 if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
@@ -956,11 +1020,14 @@ function applyLadderGate() {
 }
 
 function _firstDifferentTeamKey(excludeKey) {
-  if (typeof TEAMS === 'undefined') return null;
-  for (var key in TEAMS) {
-    if (key !== excludeKey && TEAMS[key]) return key;
+  var oppSel = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+  if (oppSel && Array.isArray(oppSel.options)) {
+    for (var i = 0; i < oppSel.options.length; i++) {
+      var opt = oppSel.options[i];
+      if (opt && opt.value && opt.value !== excludeKey && TEAMS[opt.value]) return opt.value;
+    }
   }
-  return null;
+  return getDefaultVisibleOpponentTeamKey(excludeKey);
 }
 
 function enforceDistinctBattleTeams() {
@@ -1223,9 +1290,9 @@ function renderSimBringPicker(containerId, teamKey) {
 }
 
 function renderSimBringPickers() {
-  var playerKey = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player';
+  var playerKey = getActivePlayerTeamKey();
   var oppSel = document.getElementById('opponent-select');
-  var oppKey = oppSel ? oppSel.value : 'mega_altaria';
+  var oppKey = oppSel ? oppSel.value : getDefaultVisibleOpponentTeamKey(playerKey);
   renderSimBringPicker('player-bring-picker', playerKey);
   renderSimBringPicker('opp-bring-picker', oppKey);
 }
@@ -1256,6 +1323,7 @@ var TOURNAMENT_TEAM_KEYS = {
 };
 function teamMatchesFilter(key, team, filter) {
   if (!team) return false;
+  if (!isVisibleTeamInCatalog(key, team, { includeCustom: true })) return false;
   var isCustom = team.source === 'custom';
   if (filter === 'all') return true;
   if (filter === 'custom') return isCustom;
@@ -1316,7 +1384,7 @@ function renderTeamsGrid() {
   grid.innerHTML = '';
   for (const [key, team] of Object.entries(TEAMS)) {
     if (!teamMatchesFilter(key, team, TEAMS_FILTER)) continue;
-    const isPlayer = key === 'player';
+    const isPlayer = key === currentPlayerKey;
     const compactTeamsPicker = shouldUseCompactTeamsPicker();
     const legalityVerdict = getTeamLegalityVerdict(key, team);
     const legalityNote = !legalityVerdict.valid
@@ -1330,6 +1398,8 @@ function renderTeamsGrid() {
       : '';
     const card = document.createElement('div');
     card.className = 'team-full-card';
+    if (card.dataset) card.dataset.teamKey = key;
+    else card._teamKey = key;
     card.innerHTML = `
       <div class="tfcard-header">
         <div>
@@ -1806,9 +1876,11 @@ function openTeamStatDetailPanel(teamKey, monName, triggerEl) {
 
 function renderEditorRoster() {
   const el = document.getElementById('editor-roster');
+  const team = getEditablePlayerTeam();
   if (!el) return;
   el.innerHTML = '';
-  TEAMS.player.members.forEach((m, i) => {
+  if (!team || !Array.isArray(team.members)) return;
+  team.members.forEach((m, i) => {
     const btn = document.createElement('button');
     btn.className = 'editor-poke-btn';
     btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/><span>${_escapeHtml(m.name || '')}</span>`;
@@ -1864,7 +1936,9 @@ function refreshEditorMoveLegality(baseMember) {
 
 function openEditorForm(idx) {
   editingIdx = idx;
-  const m = TEAMS.player.members[idx];
+  const team = getEditablePlayerTeam();
+  if (!team || !Array.isArray(team.members) || !team.members[idx]) return;
+  const m = team.members[idx];
   const form = document.getElementById('editor-form');
   const evsHtml = ['hp','atk','def','spa','spd','spe'].map(s=>`
     <div class="form-group">
@@ -1903,14 +1977,16 @@ function openEditorForm(idx) {
 
 function saveEdits() {
   if (editingIdx === null) return;
-  const m = TEAMS.player.members[editingIdx];
+  const team = getEditablePlayerTeam();
+  if (!team || !Array.isArray(team.members) || !team.members[editingIdx]) return;
+  const m = team.members[editingIdx];
   m.item = document.getElementById('ed-item').value.trim();
   m.ability = document.getElementById('ed-ability').value.trim();
   m.nature = document.getElementById('ed-nature').value.trim();
   m.role = document.getElementById('ed-role').value.trim();
   m.moves = [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean);
   ['hp','atk','def','spa','spd','spe'].forEach(s => { if (!m.evs) m.evs={}; m.evs[s]=parseInt(document.getElementById(`ev-${s}`)?.value)||0; });
-  renderRoster('player-roster', TEAMS.player.members);
+  renderRoster('player-roster', team.members);
   renderTeamsGrid();
   const btn = document.getElementById('save-edits');
   const orig = btn.textContent;
@@ -4171,6 +4247,7 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
 async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
   const opps = Object.keys(TEAMS).filter(k => {
     if (k === currentPlayerKey) return false;
+    if (!isVisibleTeamInCatalog(k, TEAMS[k], { includeCustom: true })) return false;
     if (typeof LADDER_MODE !== 'undefined' && LADDER_MODE && typeof isLadderLegal === 'function') {
       return isLadderLegal(k);
     }
@@ -5998,9 +6075,8 @@ function renderSpeedTiersForGrid() {
   const grid = document.getElementById('teams-grid');
   if (!grid) return;
   const cards = grid.querySelectorAll('.team-full-card');
-  const teamKeys = Object.keys(TEAMS);
-  cards.forEach((card, idx) => {
-    const key = teamKeys[idx];
+  cards.forEach((card) => {
+    const key = (card.dataset && card.dataset.teamKey) || card._teamKey;
     const team = TEAMS[key];
     if (!team || !team.members) return;
     const existing = card.querySelector('.speed-tier-section');
@@ -6118,9 +6194,7 @@ if (typeof globalThis !== 'undefined') {
 function renderCoverageWidget() {
   var el = document.getElementById('coverage-items');
   if (!el) return;
-  var key = (typeof currentPlayerKey === 'string' && TEAMS[currentPlayerKey])
-            ? currentPlayerKey
-            : (TEAMS.player ? 'player' : Object.keys(TEAMS)[0]);
+  var key = getActivePlayerTeamKey();
   var members = (TEAMS[key] && TEAMS[key].members) || [];
   el.innerHTML = getCoverageChecks().map(chk => {
     var covered = members.some(m => chk.check(m));
@@ -6153,9 +6227,11 @@ const META_THREATS = [
 ];
 
 function computeThreatLevel(threat) {
-  const playerMoves = TEAMS.player.members.flatMap(m => m.moves || []);
-  const playerSpeeds = TEAMS.player.members.map(m => getEffectiveSpe(m));
-  const maxPlayerSpe = Math.max(...playerSpeeds);
+  const playerTeam = getActivePlayerTeam();
+  const playerMembers = (playerTeam && Array.isArray(playerTeam.members)) ? playerTeam.members : [];
+  const playerMoves = playerMembers.flatMap(m => m.moves || []);
+  const playerSpeeds = playerMembers.map(m => getEffectiveSpe(m));
+  const maxPlayerSpe = playerSpeeds.length ? Math.max(...playerSpeeds) : 0;
 
   let hasSECoverage = false;
   for (const mv of playerMoves) {

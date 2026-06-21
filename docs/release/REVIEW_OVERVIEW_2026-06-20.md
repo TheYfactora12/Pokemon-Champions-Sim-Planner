@@ -12,7 +12,8 @@ What is true right now:
 - the local source-truth suite passes
 - the local fast suite passes
 - the UI smoke path passes
-- SV-format teams are now treated as compatibility-only in the live Champions review path
+- the visible shipped catalog is now Champions-only
+- SV-format teams are no longer surfaced in the live team list
 
 What is not true yet:
 
