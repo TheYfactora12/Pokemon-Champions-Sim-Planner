@@ -104,10 +104,13 @@ function load(file) {
 ].forEach(load);
 
 vm.runInContext('this.runButton = document.getElementById("run-sim-btn");', ctx);
+vm.runInContext('this.runAllButton = document.getElementById("run-all-btn");', ctx);
 
 async function main() {
   const btn = ctx.runButton;
+  const runAllBtn = ctx.runAllButton;
   if (!btn || typeof btn.onclick !== 'function') throw new Error('Run Simulation click handler missing');
+  if (!runAllBtn || typeof runAllBtn.onclick !== 'function') throw new Error('Run All click handler missing');
   await btn.onclick.call(btn, { target: btn });
   await new Promise(resolve => setTimeout(resolve, 80));
 
@@ -123,6 +126,33 @@ async function main() {
 
   const auditPanel = ids['audit-panel'] && ids['audit-panel'].innerHTML;
   if (!auditPanel || !/Battle Audit/.test(auditPanel)) throw new Error('audit panel did not render');
+
+  const stablePlayerKey = vm.runInContext('getActivePlayerTeamKey()', ctx);
+  const stablePlayerExists = vm.runInContext('!!(TEAMS && TEAMS["' + stablePlayerKey + '"])', ctx);
+  if (!stablePlayerKey || !stablePlayerExists) throw new Error('failed to resolve a stable player team key');
+  vm.runInContext('currentPlayerKey = "stale_missing_team_key";', ctx);
+  ids['player-select'].value = stablePlayerKey;
+  await btn.onclick.call(btn, { target: btn });
+  await new Promise(resolve => setTimeout(resolve, 80));
+
+  const progressAfterRecovery = ids['progress-label'] && ids['progress-label'].textContent;
+  if (/^Simulation failed/.test(progressAfterRecovery || '')) {
+    throw new Error('stale player key recovery failed: ' + progressAfterRecovery);
+  }
+
+  vm.runInContext('currentPlayerKey = "stale_missing_team_key";', ctx);
+  ids['player-select'].value = stablePlayerKey;
+  await runAllBtn.onclick.call(runAllBtn, { target: runAllBtn });
+  await new Promise(resolve => setTimeout(resolve, 80));
+
+  const runAllProgress = ids['progress-label'] && ids['progress-label'].textContent;
+  const matchupBody = ids['matchup-tbody'];
+  if (/^Simulation failed/.test(runAllProgress || '')) {
+    throw new Error('run-all stale player key recovery failed: ' + runAllProgress);
+  }
+  if (!matchupBody || !Array.isArray(matchupBody.children) || matchupBody.children.length === 0) {
+    throw new Error('run-all matchup table did not render');
+  }
 
   console.log('  PASS UI Run Simulation smoke rendered', winPct);
 }

@@ -17384,6 +17384,33 @@ function getWindowValue(name, fallback) {
   return Object.prototype.hasOwnProperty.call(window, name) ? window[name] : fallback;
 }
 
+function safeRemoveNode(node) {
+  if (!node) return false;
+  if (typeof node.remove === 'function') {
+    node.remove();
+    return true;
+  }
+  if (node.parentNode && typeof node.parentNode.removeChild === 'function') {
+    node.parentNode.removeChild(node);
+    return true;
+  }
+  return false;
+}
+
+function safeReplaceChild(parent, nextNode, prevNode) {
+  if (!parent || !nextNode) return false;
+  if (prevNode && typeof parent.replaceChild === 'function') {
+    parent.replaceChild(nextNode, prevNode);
+    return true;
+  }
+  if (prevNode) safeRemoveNode(prevNode);
+  if (typeof parent.appendChild === 'function') {
+    parent.appendChild(nextNode);
+    return true;
+  }
+  return false;
+}
+
 function showRuntimeError(message) {
   try {
     var banner = document.getElementById('runtime-error-banner');
@@ -17944,6 +17971,13 @@ function getDefaultVisibleOpponentTeamKey(excludeKey) {
 var currentPlayerKey = getDefaultVisiblePlayerTeamKey();
 
 function getActivePlayerTeamKey() {
+  var playerSel = (typeof document !== 'undefined') ? document.getElementById('player-select') : null;
+  if (playerSel
+      && playerSel.value
+      && TEAMS[playerSel.value]
+      && isVisibleTeamInCatalog(playerSel.value, TEAMS[playerSel.value], { includeCustom: true })) {
+    return playerSel.value;
+  }
   if (typeof currentPlayerKey === 'string'
       && TEAMS[currentPlayerKey]
       && isVisibleTeamInCatalog(currentPlayerKey, TEAMS[currentPlayerKey], { includeCustom: true })) {
@@ -17954,6 +17988,16 @@ function getActivePlayerTeamKey() {
 
 function getActivePlayerTeam() {
   return TEAMS[getActivePlayerTeamKey()] || null;
+}
+
+function syncActivePlayerTeamKey() {
+  var resolvedKey = getActivePlayerTeamKey();
+  currentPlayerKey = resolvedKey;
+  var playerSel = (typeof document !== 'undefined') ? document.getElementById('player-select') : null;
+  if (playerSel && resolvedKey && playerSel.value !== resolvedKey && TEAMS[resolvedKey]) {
+    playerSel.value = resolvedKey;
+  }
+  return resolvedKey;
 }
 
 function getEditablePlayerTeamKey() {
@@ -21566,8 +21610,9 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
 // runAllMatchupsUI — UI wrapper; distinct from engine.js runAllMatchups
 // Issue #T6: when LADDER_MODE is ON, iterate only ladder-legal opponents.
 async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
+  var playerKey = syncActivePlayerTeamKey();
   const opps = Object.keys(TEAMS).filter(k => {
-    if (k === currentPlayerKey) return false;
+    if (k === playerKey) return false;
     if (!isVisibleTeamInCatalog(k, TEAMS[k], { includeCustom: true })) return false;
     if (typeof LADDER_MODE !== 'undefined' && LADDER_MODE && typeof isLadderLegal === 'function') {
       return isLadderLegal(k);
@@ -21576,7 +21621,7 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
   });
   let done=0;
   for (const opp of opps) {
-    const res = await runBoSeries(numSeries,currentPlayerKey,opp,bo,(cur,tot,w,l)=>{
+    const res = await runBoSeries(numSeries,playerKey,opp,bo,(cur,tot,w,l)=>{
       if (onProgress) onProgress(done*numSeries+cur, opps.length*numSeries, w, l);
     });
     done++;
@@ -21585,7 +21630,7 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
     try {
       var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled) {
-        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, opp, bo, res)))
+        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(playerKey, opp, bo, res)))
           .catch(function(e) { UILog.warn('run-all saveAnalysis failed', e); });
       }
     } catch (_m4e) { UILog.warn('run-all payload build failed', _m4e); }
@@ -21837,16 +21882,17 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
       renderRoster('opp-roster', TEAMS[swappedOpp].members);
       if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
     }
+    var playerKey = syncActivePlayerTeamKey();
     const oppKey=document.getElementById('opponent-select').value;
     const n=parseInt(document.getElementById('sim-count').value);
     const bo=currentBo;
-    if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
+    if (!TEAMS[playerKey]) throw new Error('player team not loaded: ' + playerKey);
     if (!TEAMS[oppKey]) throw new Error('opponent team not loaded: ' + oppKey);
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
     const matBadge=document.getElementById('matrix-badge');
     if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
 
-    const res = await runBoSeries(n,currentPlayerKey,oppKey,bo,(cur,tot,w,l)=>{
+    const res = await runBoSeries(n,playerKey,oppKey,bo,(cur,tot,w,l)=>{
       setProgress(Math.round(cur/tot*100),`Running… ${cur} / ${tot}`,w,l);
     });
 
@@ -21862,7 +21908,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     try {
       var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled) {
-        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, oppKey, bo, res)))
+        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(playerKey, oppKey, bo, res)))
           .catch(function(e) { UILog.warn('single-sim saveAnalysis failed', e); });
       }
     } catch (_m4e) { UILog.warn('single-sim payload build failed', _m4e); }
@@ -21889,7 +21935,8 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
 
     const n=parseInt(document.getElementById('sim-count').value);
     const bo=currentBo;
-    if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
+    var playerKey = syncActivePlayerTeamKey();
+    if (!TEAMS[playerKey]) throw new Error('player team not loaded: ' + playerKey);
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
     document.getElementById('progress-wrap').style.display='';
     setProgress(0,'Starting…',0,0);
@@ -21947,7 +21994,7 @@ function generatePilotGuide(oppKey, results) {
   if (!el) return;
 
   const emptyEl = el.querySelector('.pilot-empty');
-  if (emptyEl) emptyEl.remove();
+  safeRemoveNode(emptyEl);
 
   const total = results.wins + results.losses + results.draws;
   const winPct = Math.round(results.winRate * 100);
@@ -22069,7 +22116,7 @@ function generatePilotGuide(oppKey, results) {
   // incremental when the user runs a single sim and prevents duplicate cards.
   const existing = el.querySelector('.pilot-card[data-opp-key="' + (typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(oppKey) : oppKey) + '"]');
   if (existing) {
-    el.replaceChild(card, existing);
+    safeReplaceChild(el, card, existing);
   } else {
     el.appendChild(card);
   }
@@ -22077,7 +22124,7 @@ function generatePilotGuide(oppKey, results) {
   if (dismiss) dismiss.addEventListener('click', function(){
     CS_PHASE4E_DISMISSED = true;
     const banner = card.querySelector('[data-phase4e-warning]');
-    if (banner) banner.remove();
+    safeRemoveNode(banner);
   });
 }
 
@@ -23401,7 +23448,7 @@ function renderSpeedTiersForGrid() {
     const team = TEAMS[key];
     if (!team || !team.members) return;
     const existing = card.querySelector('.speed-tier-section');
-    if (existing) existing.remove();
+    safeRemoveNode(existing);
     card.insertAdjacentHTML('beforeend', buildSpeedTierHTML(team.members));
   });
 }
@@ -26425,10 +26472,11 @@ async function csBootstrapSimulatorBoard() {
   if (!csShouldBootstrapSimulatorBoard()) return false;
   var oppSel = document.getElementById('opponent-select');
   var oppKey = oppSel ? oppSel.value : null;
-  if (!oppKey || !TEAMS[currentPlayerKey] || !TEAMS[oppKey]) return false;
+  var playerKey = syncActivePlayerTeamKey();
+  if (!oppKey || !TEAMS[playerKey] || !TEAMS[oppKey]) return false;
   simRunning = true;
   try {
-    var res = await runBoSeries(1, currentPlayerKey, oppKey, currentBo, function(){});
+    var res = await runBoSeries(1, playerKey, oppKey, currentBo, function(){});
     displayResults(res, oppKey);
     return true;
   } catch (e) {
