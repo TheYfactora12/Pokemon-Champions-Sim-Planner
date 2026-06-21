@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.19-ability-parity-cache-reset';
+    return txt || 'v2.1.20-sim-selection-sync';
   } catch (e) {
-    return 'v2.1.19-ability-parity-cache-reset';
+    return 'v2.1.20-sim-selection-sync';
   }
 }
 

@@ -39,9 +39,9 @@
 // v49-approved-showdown-db [2026-06-07] - Approved Showdown DB migration/generator path staged.
 // v50-runtime-data-bridge [2026-06-19] - Added a runtime data/override bridge so
 // battle logic reads approved metadata and damage-roll overrides from site code.
-// v51-ability-parity-cache-reset [2026-06-21] - Force browser cache/client-state
-// rotation after the Sturdy/Unaware/Stance Change bundle update.
-const CACHE_NAME = 'champions-sim-v51-ability-parity-cache-reset';
+// v52-sim-selection-sync [2026-06-21] - Force browser cache/client-state
+// rotation after the player-team selection sync fix for Run Simulation/Run All.
+const CACHE_NAME = 'champions-sim-v52-sim-selection-sync';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
