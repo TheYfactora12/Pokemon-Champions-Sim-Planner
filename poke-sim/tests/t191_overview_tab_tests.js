@@ -44,7 +44,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Live exported logs prove the sim now runs');
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.23 item/SP/DB-gate changes pending');
+  inc(ui, 'TheYfactora12 main now carries v2.1.24 ability inventory parity');
   inc(ui, 'GitHub issue sweep completed');
 });
 
@@ -58,7 +58,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Live logs exposed stale DB item drift');
   inc(ui, 'Pokemon data audit has unresolved reviewer risk');
   inc(ui, 'Current Y fork changes are not pushed upstream to Alfredo yet');
-  inc(ui, 'Mechanics parity is broader than the berry fix');
+  inc(ui, 'Mechanics parity is broader than the current ability slice');
   inc(ui, 'Source refresh needed must be visible before trust claims');
   inc(ui, 'Alfredo #241');
   inc(ui, 'Life Orb');
@@ -68,7 +68,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Finish v2.1.23 validation, push Y fork, verify live');
+  inc(ui, 'Verify v2.1.24 live logs and sync Alfredo');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');

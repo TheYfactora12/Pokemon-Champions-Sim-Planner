@@ -2328,7 +2328,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.23-champion-item-sp-gate</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.24-ability-inventory-parity</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -18062,9 +18062,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.23-champion-item-sp-gate';
+    return txt || 'v2.1.24-ability-inventory-parity';
   } catch (e) {
-    return 'v2.1.23-champion-item-sp-gate';
+    return 'v2.1.24-ability-inventory-parity';
   }
 }
 
@@ -23677,7 +23677,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Live exported logs prove the sim now runs',
-      detail: 'Five fresh GitHub Pages turn-log exports from June 21 had no team-load failure, passed the stable turn-log validator with zero warnings, and ended with results matching final alive counts.'
+      detail: 'Fresh GitHub Pages turn-log exports from June 22 have no team-load failure, pass the strict stable turn-log validator with zero warnings, and carry the live source URL for traceability.'
     },
     {
       status: 'validated',
@@ -23691,8 +23691,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'CI-style local sweep passed before the current berry patch',
-      detail: 'The previous v2.1.21 team-load fix passed ui_single_sim_smoke.js, DB M3/M4 tests, and the full non-DB suite. The current v2.1.22 patch is covered by focused item tests and needs the full sweep before push.'
+      title: 'Current release checks are green',
+      detail: 'v2.1.24 ability inventory parity passed source-truth tests, the full non-DB suite, offline DB contract tests, bundle freshness, service-worker cache guard, and strict validation on the fresh live logs.'
     },
     {
       status: 'validated',
@@ -23729,12 +23729,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'The local main branch has v2.1.23 item/SP/DB-gate changes pending. Push to TheYfactora12 first, verify GitHub Pages, then prepare a reviewed upstream PR to Alfredo.'
+      detail: 'TheYfactora12 main now carries v2.1.24 ability inventory parity. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
-      title: 'Mechanics parity is broader than the berry fix',
-      detail: 'The berry bug is one confirmed timing defect. Remaining parity work still needs grouped checks for damage, targeting, redirection, Protect, speed control, switching, status, items, abilities, and Champions overrides.'
+      title: 'Mechanics parity is broader than the current ability slice',
+      detail: 'The team-load, item timing, and ability inventory slices are covered. Remaining parity work still needs grouped checks for damage, targeting, redirection, Protect, speed control, switching, status, items, and Champions overrides.'
     },
     {
       status: 'gap',
@@ -23745,8 +23745,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Finish v2.1.23 validation, push Y fork, verify live',
-      detail: 'Run focused and full tests, commit/push to TheYfactora12 main, wait for GitHub Pages, then export fresh live logs that prove stale SV items are no longer selected.'
+      title: 'Verify v2.1.24 live logs and sync Alfredo',
+      detail: 'Use fresh GitHub Pages logs to confirm the build label, source URL, stable turn-log fields, and no team-load failure, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
       status: 'next',
@@ -23771,7 +23771,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.22 and fresh logs pass, open a clean upstream PR with the berry fix, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.24 and fresh logs pass, open a clean upstream PR with the ability parity slice, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',

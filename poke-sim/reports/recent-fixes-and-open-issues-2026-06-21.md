@@ -4,9 +4,10 @@ This snapshot records the current truth after the June 21-22 live-log review and
 
 ## 2026-06-22 Deployment Update
 
-- Y fork `main` is pushed through commit `e5af069` (`Stamp exported turn logs with build metadata`).
-- GitHub Pages deploy and CI both passed for `e5af069`.
-- The public review target contains `v2.1.23-champion-item-sp-gate`, the Champion item allowlist, SP import/export parsing, DB merge legality gate, and the new `champions-turn-log-v2` export metadata.
+- Y fork `main` is pushed through commit `7e0deca` (`model champion ability parity`).
+- GitHub Pages deploy passed for `7e0deca`; the public review target contains the ability inventory parity slice and service-worker cache `champions-sim-v58-ability-inventory-parity`.
+- The app build label is `v2.1.24-ability-inventory-parity`, superseding the earlier `v2.1.23-champion-item-sp-gate` item/SP gate label.
+- The earlier `e5af069` build added `champions-turn-log-v2` export metadata; fresh June 22 logs from `?v=7e0deca` validate cleanly, but exposed the stale build-label string now fixed in `v2.1.24`.
 - Supabase migration `2026_06_22_retire_legacy_sv_teams.sql` has run successfully; the two stale v1 teams are retired at the source.
 - Fresh logs from the live URL now validate cleanly for team loading, stable IDs, final alive counts, and stale item absence.
 
@@ -19,7 +20,7 @@ This snapshot records the current truth after the June 21-22 live-log review and
 | Lethal Sitrus/Oran restore | Fixed and deployed in `v2.1.22-lethal-berry-guard` | Exported logs showed Sitrus restoring after `0 HP`; `engine.js` now requires `hp > 0` for damage-trigger berries. `items_tests.js` covers surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior. |
 | Golden battle trace drift from berry fix | Updated | `gb_001` and `gb_002` expected trace hashes were refreshed after confirming the new traces remove the invalid berry-after-0-HP behavior while preserving expected winners. |
 | Champion item/SP gate | Fixed and deployed in `v2.1.23-champion-item-sp-gate` | `legality.js` now uses a positive Champions item allowlist; imports reject raw EV/IV lines; exports use `SPs:`; illegal teams are hidden from selectors; stale DB teams cannot replace legal bundled teams. |
-| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v55-champion-item-sp-gate`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.23-champion-item-sp-gate`. |
+| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v58-ability-inventory-parity`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.24-ability-inventory-parity`. |
 | Exported-log build drift | Guarded in `e5af069` | Downloaded replay logs now include `schema_version: champions-turn-log-v2`, `exported_at`, `build_id`, and `source_url`, so future debug logs can prove which deployed build produced them. |
 | Showdown static metadata use | Partially fixed | Battle construction and move metadata can use generated Showdown static rows first, then local fallbacks. This is not the same as live DB runtime consumption. |
 
@@ -99,6 +100,31 @@ Root-cause conclusion:
 - The current prevention layer is a positive gate: normalize DB/static teams through one sim context, reject stale DB teams before selector merge, keep legal bundled teams when DB rows are illegal, validate stable IDs in logs, and stamp future exported logs with build metadata.
 - This proves the live data/load/item guardrails are behaving on the tested logs. It does not prove full Showdown/Champions damage and mechanics parity.
 
+## Fresh Live Log Review - Ability Parity Build
+
+Reviewed user exports from `https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/poke-sim/pokemon-champion-2026.html?v=7e0deca`:
+
+- `champions-turn-log-3795896113,1678786505,541232077,363825156.json`
+- `champions-turn-log-3087352535,836377216,1695902721,1931458225.json`
+- `champions-turn-log-1694391190,163973610,2149898308,2181411774.json`
+- `champions-turn-log-2267437589,2350394465,4291446057,1098773092-2.json`
+- `champions-turn-log-961297591,2414563708,2633954413,3427889307.json`
+- `champions-turn-log-2267437589,2350394465,4291446057,1098773092.json`
+- `champions-turn-log-256938721,1406634238,2986203652,3930972000.json`
+
+Structural result:
+
+- All seven passed `node poke-sim/tools/validate-turn-logs.mjs --require-stable --json ...`.
+- No `team not loaded`, simulation failure, invalid HP map, duplicate stable key, wrong-side key, or `NaN` marker appeared.
+- Results: four wins and three losses across 4-9 turn games.
+- Duplicate seed `2267437589,2350394465,4291446057,1098773092` produced identical turn-log hashes, proving deterministic export behavior for that run.
+- The logs correctly carried `source_url` with `?v=7e0deca`, but still exported stale `build_id: v2.1.23-champion-item-sp-gate`.
+
+Fix from this review:
+
+- App build label and export fallback are updated to `v2.1.24-ability-inventory-parity`.
+- Overview copy now says the Y fork carries the ability parity release and Alfredo sync remains next.
+
 ## GitHub Issue Sweep
 
 Checked open issues in:
@@ -125,6 +151,7 @@ Use these statements in team updates and PR notes:
 - Fixed and deployed to the Y fork: lethal Sitrus/Oran restore bug.
 - Fixed and deployed to the Y fork: Champion item allowlist, SP import/export, selector legality gate, and stale DB-team merge rejection.
 - Fixed and deployed to the Y fork: exported turn logs now include build/source metadata.
+- Fixed and deployed to the Y fork: curated-team plus Champions mega ability inventory is modeled 80/80 with focused ability parity guards.
 - Completed: Supabase cleanup migration retired the stale v1 DB teams.
 - Not fixed yet: live DB `showdown_entities` as the battle runtime source.
 - Not fixed yet: full move/damage/regional-form parity audit.
@@ -132,7 +159,7 @@ Use these statements in team updates and PR notes:
 
 ## Current Next Path
 
-1. Export one fresh single-run log and one fresh Run All log from the public URL after `e5af069`; verify both include `champions-turn-log-v2`, `build_id`, and `source_url`.
+1. Export one fresh single-run log and one fresh Run All log from the public URL after `v2.1.24-ability-inventory-parity`; verify both include `champions-turn-log-v2`, `build_id`, and `source_url`.
 2. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231 so both repos show the same truth.
 3. Continue the grouped move/damage/mechanics parity track against Showdown first, with Champions overrides only when explicitly sourced.
 4. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.
