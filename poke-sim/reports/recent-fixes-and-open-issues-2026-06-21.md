@@ -64,6 +64,7 @@ Item/source-truth finding:
 - Root cause direction: static/bundled data was being repaired, but DB-loaded teams could still override or enter selectors without a positive Champion item-pool gate.
 - Fix: `mergeDbTeamsIntoCatalog()` now validates DB teams before merging, rejects stale/illegal rows, and preserves the legal bundled team when a DB row would otherwise clobber it.
 - Broader prevention added: generated seed/live-alignment SQL must match `data.js`; PR bundle/cache checks now include `legality.js`; Pages deploy runs the seed, Champion legality, import/DB merge, load-order, and bundle-freshness checks before publishing; current coaching/classifier copy no longer recommends absent Champion items.
+- Live DB cleanup follow-up: CI found two retired v1 teams still active in Supabase (`chuppa_balance`, `kingambit_sneasler`). Added `2026_06_22_retire_legacy_sv_teams.sql` to mark them retired and remove stale member/item rows without deleting team rows that historical analyses may reference.
 
 ## GitHub Issue Sweep
 
@@ -91,7 +92,7 @@ Use these statements in team updates and PR notes:
 - Fixed locally: lethal Sitrus/Oran restore bug.
 - Fixed locally: Champion item allowlist, SP import/export, selector legality gate, and stale DB-team merge rejection.
 - Not fixed yet: live DB `showdown_entities` as the battle runtime source.
-- Not fixed yet: Supabase team rows still need cleanup/quarantine so stale SV items are removed at the source.
+- Pending live DB operation: run `2026_06_22_retire_legacy_sv_teams.sql` once against Supabase so retired v1 teams are inactive at the source.
 - Not fixed yet: full move/damage/regional-form parity audit.
 - Not ready for broad accuracy claims: sim still needs grouped mechanics parity work and Showdown/Champions oracle gates.
 

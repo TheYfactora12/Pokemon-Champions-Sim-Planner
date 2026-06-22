@@ -295,18 +295,25 @@ describe('Module 2 \u2014 Seed suite (19 cases)', function() {
         req.end();
       });
     }
-    return get('/rest/v1/teams?select=team_id&order=team_id').then(function(r) {
+    return get('/rest/v1/teams?select=team_id,metadata&order=team_id').then(function(r) {
       truthy(r.status === 200, 'GET /teams returned 200, got ' + r.status);
       var arr = JSON.parse(r.body);
-      var liveIds = Array.from(new Set(arr.map(function(row) { return row.team_id; }))).sort();
+      var retired = arr.filter(function(row) {
+        return row && row.metadata && row.metadata.retired === true;
+      }).map(function(row) { return row.team_id; }).sort();
+      var activeRows = arr.filter(function(row) {
+        return !(row && row.metadata && row.metadata.retired === true);
+      });
+      var liveIds = Array.from(new Set(activeRows.map(function(row) { return row.team_id; }))).sort();
       var expectedIds = Array.from(new Set(teamIdsInTeamsInsert(readSeed()))).sort();
       var missing = expectedIds.filter(function(id) { return liveIds.indexOf(id) === -1; });
       var extra = liveIds.filter(function(id) { return expectedIds.indexOf(id) === -1; });
       truthy(missing.length === 0 && extra.length === 0,
-        'live DB team_ids match seed; expected ' + expectedIds.length +
+        'live DB active team_ids match seed; expected ' + expectedIds.length +
         ', got ' + liveIds.length +
         ', missing=' + JSON.stringify(missing) +
-        ', extra=' + JSON.stringify(extra));
+        ', extra=' + JSON.stringify(extra) +
+        ', retired=' + JSON.stringify(retired));
     });
   });
 

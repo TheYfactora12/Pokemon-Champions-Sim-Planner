@@ -262,6 +262,7 @@ The M10 live DB snapshot warning should be gone once the remote schema includes 
 | `2026_05_24_upsert_seed_teams_v2_repair.sql` | Superseded non-destructive 25-team seed repair for live DB alignment |
 | `2026_06_20_align_shared_27_team_catalog.sql` | Non-destructive shared 27-team catalog alignment for existing live DBs |
 | `2026_05_24_fix_champions_arena_2nd_item_clause.sql` | Historical/superseded item correction. Current generated seed and live alignment use `Coba Berry`; `Kouba Berry` is not in the verified Champions item pool until a stronger source proves otherwise. |
+| `2026_06_22_retire_legacy_sv_teams.sql` | Marks retired v1 teams (`chuppa_balance`, `kingambit_sneasler`) inactive and removes their stale member/item rows while preserving team rows for historical FK references |
 | `2026_06_06_showdown_sync_audit_tables.sql` | Adds Showdown sync runs, source files, mechanics validation runs, and findings |
 | `2026_06_07_showdown_entities_approved_views.sql` | Adds approved Showdown entities, entity diffs, Champions overrides, and approved read views |
 
