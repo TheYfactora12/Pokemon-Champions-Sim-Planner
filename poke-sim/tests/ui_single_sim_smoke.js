@@ -154,6 +154,39 @@ async function main() {
     throw new Error('run-all matchup table did not render');
   }
 
+  const dbStyleKey = 'db_missing_format_team';
+  vm.runInContext(`
+    TEAMS.${dbStyleKey} = JSON.parse(JSON.stringify(TEAMS["${stablePlayerKey}"]));
+    TEAMS.${dbStyleKey}.name = 'DB Missing Format Team';
+    TEAMS.${dbStyleKey}.source = 'supabase';
+    TEAMS.${dbStyleKey}.metadata = { ruleset_id: 'champions_reg_m_doubles_bo3' };
+    delete TEAMS.${dbStyleKey}.format;
+    delete TEAMS.${dbStyleKey}.legality_status;
+    normalizeTeamCatalogForSim();
+    rebuildTeamSelects();
+    currentPlayerKey = 'stale_missing_team_key';
+  `, ctx);
+  ids['player-select'].value = dbStyleKey;
+  ids['opponent-select'].value = stablePlayerKey;
+  await btn.onclick.call(btn, { target: btn });
+  await new Promise(resolve => setTimeout(resolve, 80));
+
+  const dbProgress = ids['progress-label'] && ids['progress-label'].textContent;
+  if (/^Simulation failed/.test(dbProgress || '')) {
+    throw new Error('DB-style missing-format team recovery failed: ' + dbProgress);
+  }
+
+  vm.runInContext('currentPlayerKey = "stale_missing_team_key";', ctx);
+  ids['player-select'].value = dbStyleKey;
+  ids['opponent-select'].value = stablePlayerKey;
+  await runAllBtn.onclick.call(runAllBtn, { target: runAllBtn });
+  await new Promise(resolve => setTimeout(resolve, 80));
+
+  const dbRunAllProgress = ids['progress-label'] && ids['progress-label'].textContent;
+  if (/^Simulation failed/.test(dbRunAllProgress || '')) {
+    throw new Error('run-all DB-style missing-format team recovery failed: ' + dbRunAllProgress);
+  }
+
   console.log('  PASS UI Run Simulation smoke rendered', winPct);
 }
 

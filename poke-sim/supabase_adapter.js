@@ -105,13 +105,17 @@
 
       const result = {};
       for (const t of (teams || [])) {
+        const rulesetId = t.ruleset_id || (t.metadata && t.metadata.ruleset_id) || DEFAULT_RULESET_ID;
         result[t.team_id] = {
           team_id:     t.team_id,
           name:        t.name,
           label:       t.label,
           description: t.description,
           source:      t.source,
-          metadata:    t.metadata || {},
+          ruleset_id:  rulesetId,
+          format:      t.format || 'champions',
+          legality_status: t.legality_status || 'legal_inferred',
+          metadata:    Object.assign({ ruleset_id: rulesetId }, t.metadata || {}),
           members:     memberMap[t.team_id] || []
         };
       }

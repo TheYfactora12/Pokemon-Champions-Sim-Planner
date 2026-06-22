@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.20-sim-selection-sync';
+    return txt || 'v2.1.21-sim-context-team-load';
   } catch (e) {
-    return 'v2.1.20-sim-selection-sync';
+    return 'v2.1.21-sim-context-team-load';
   }
 }
 
@@ -617,8 +617,63 @@ function renderRoster(containerId, members) {
 // rebuildTeamSelects() re-populates both dropdowns from TEAMS so that
 // imported/custom teams appear in BOTH sides.
 // ============================================================
+function normalizeTeamRecordForSim(teamKey, team) {
+  if (!team || typeof team !== 'object') return null;
+  team.team_id = team.team_id || teamKey;
+  team.name = team.name || team.label || teamKey;
+  team.metadata = team.metadata || {};
+  if (!Array.isArray(team.members)) team.members = [];
+
+  var rulesetId = team.ruleset_id || team.metadata.ruleset_id || 'champions_reg_m_doubles_bo3';
+  team.ruleset_id = team.ruleset_id || rulesetId;
+  team.metadata.ruleset_id = team.metadata.ruleset_id || rulesetId;
+  if (!team.format) {
+    team.format = 'champions';
+  }
+  if (!team.legality_status && team.format === 'champions') {
+    team.legality_status = team.source === 'custom' ? 'unverified' : 'legal_inferred';
+  }
+
+  team.members = team.members.map(function(member) {
+    member = member || {};
+    var name = member.name || member.species || 'Unknown';
+    return {
+      name: name,
+      species: member.species || name,
+      item: member.item || '',
+      ability: member.ability || '',
+      nature: member.nature || '',
+      level: member.level || 50,
+      evs: member.evs || {},
+      ivs: member.ivs || {},
+      moves: Array.isArray(member.moves) ? member.moves : [],
+      teraType: member.teraType || member.tera_type || '',
+      tera_type: member.tera_type || member.teraType || '',
+      role: member.role || member.role_tag || ''
+    };
+  });
+  return team;
+}
+
+function normalizeTeamCatalogForSim() {
+  if (typeof TEAMS === 'undefined') return 0;
+  var count = 0;
+  for (var key in TEAMS) {
+    if (normalizeTeamRecordForSim(key, TEAMS[key])) count++;
+  }
+  return count;
+}
+
+function isSimReadyTeam(teamKey, team, opts) {
+  team = normalizeTeamRecordForSim(teamKey, team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null));
+  opts = opts || {};
+  if (!team || !team.name) return false;
+  if (opts.requireMembers !== false && (!Array.isArray(team.members) || team.members.length === 0)) return false;
+  return isVisibleTeamInCatalog(teamKey, team, { includeCustom: opts.includeCustom !== false });
+}
+
 function isVisibleTeamInCatalog(teamKey, team, opts) {
-  team = team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null);
+  team = normalizeTeamRecordForSim(teamKey, team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null));
   opts = opts || {};
   if (!team || !team.name) return false;
   if (team.source === 'custom') return opts.includeCustom !== false;
@@ -627,6 +682,7 @@ function isVisibleTeamInCatalog(teamKey, team, opts) {
 
 function getVisibleTeamKeys(opts) {
   if (typeof TEAMS === 'undefined') return [];
+  normalizeTeamCatalogForSim();
   var out = [];
   for (var key in TEAMS) {
     if (isVisibleTeamInCatalog(key, TEAMS[key], opts)) out.push(key);
@@ -635,13 +691,15 @@ function getVisibleTeamKeys(opts) {
 }
 
 function getDefaultVisiblePlayerTeamKey() {
-  var visible = getVisibleTeamKeys({ includeCustom: true });
+  var visible = getVisibleTeamKeys({ includeCustom: true }).filter(function(key) {
+    return isSimReadyTeam(key, TEAMS[key], { includeCustom: true });
+  });
   return visible[0] || (TEAMS.player ? 'player' : Object.keys(TEAMS)[0]);
 }
 
 function getDefaultVisibleOpponentTeamKey(excludeKey) {
   var visible = getVisibleTeamKeys({ includeCustom: true }).filter(function(key) {
-    return key !== excludeKey;
+    return key !== excludeKey && isSimReadyTeam(key, TEAMS[key], { includeCustom: true });
   });
   return visible[0] || getDefaultVisiblePlayerTeamKey();
 }
@@ -653,12 +711,12 @@ function getActivePlayerTeamKey() {
   if (playerSel
       && playerSel.value
       && TEAMS[playerSel.value]
-      && isVisibleTeamInCatalog(playerSel.value, TEAMS[playerSel.value], { includeCustom: true })) {
+      && isSimReadyTeam(playerSel.value, TEAMS[playerSel.value], { includeCustom: true })) {
     return playerSel.value;
   }
   if (typeof currentPlayerKey === 'string'
       && TEAMS[currentPlayerKey]
-      && isVisibleTeamInCatalog(currentPlayerKey, TEAMS[currentPlayerKey], { includeCustom: true })) {
+      && isSimReadyTeam(currentPlayerKey, TEAMS[currentPlayerKey], { includeCustom: true })) {
     return currentPlayerKey;
   }
   return getDefaultVisiblePlayerTeamKey();
@@ -676,6 +734,50 @@ function syncActivePlayerTeamKey() {
     playerSel.value = resolvedKey;
   }
   return resolvedKey;
+}
+
+function resolveSimContext(opts) {
+  opts = opts || {};
+  normalizeTeamCatalogForSim();
+  var playerSel = (typeof document !== 'undefined') ? document.getElementById('player-select') : null;
+  var oppSel = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+  var playerCandidate = opts.playerKey || (playerSel && playerSel.value) || currentPlayerKey || getDefaultVisiblePlayerTeamKey();
+  var playerKey = isSimReadyTeam(playerCandidate, TEAMS[playerCandidate], { includeCustom: true })
+    ? playerCandidate
+    : getDefaultVisiblePlayerTeamKey();
+  if (!isSimReadyTeam(playerKey, TEAMS[playerKey], { includeCustom: true })) {
+    throw new Error('player team not loaded: ' + (playerCandidate || 'none'));
+  }
+
+  var oppCandidate = opts.oppKey || (oppSel && oppSel.value) || getDefaultVisibleOpponentTeamKey(playerKey);
+  var oppKey = isSimReadyTeam(oppCandidate, TEAMS[oppCandidate], { includeCustom: true }) && oppCandidate !== playerKey
+    ? oppCandidate
+    : getDefaultVisibleOpponentTeamKey(playerKey);
+  if (!isSimReadyTeam(oppKey, TEAMS[oppKey], { includeCustom: true })) {
+    throw new Error('opponent team not loaded: ' + (oppCandidate || 'none'));
+  }
+  if (oppKey === playerKey) {
+    throw new Error('opponent team not loaded: no distinct opponent available');
+  }
+
+  currentPlayerKey = playerKey;
+  if (playerSel && playerSel.value !== playerKey) playerSel.value = playerKey;
+  if (oppSel && oppSel.value !== oppKey) oppSel.value = oppKey;
+
+  var countEl = (typeof document !== 'undefined') ? document.getElementById('sim-count') : null;
+  var n = opts.numSeries != null ? Number(opts.numSeries) : parseInt(countEl && countEl.value, 10);
+  var bo = opts.bo || currentBo;
+  return {
+    playerKey: playerKey,
+    oppKey: oppKey,
+    playerTeam: TEAMS[playerKey],
+    oppTeam: TEAMS[oppKey],
+    numSeries: n,
+    bo: bo,
+    format: currentFormat,
+    formatLabel: currentFormat === 'doubles' ? 'Doubles' : 'Singles',
+    boLabel: 'Bo' + bo
+  };
 }
 
 function getEditablePlayerTeamKey() {
@@ -2370,12 +2472,14 @@ function drawBarChart(canvasId, labels, values, color) {
 // ============================================================
 // RESULTS DISPLAY
 // ============================================================
-function displayResults(res, oppKey) {
+function displayResults(res, oppKey, simCtx) {
+  simCtx = simCtx || resolveSimContext({ bo: currentBo, oppKey: oppKey });
+  oppKey = oppKey || simCtx.oppKey;
   const total = res.wins + res.losses + res.draws;
   const winPct = Math.round(res.winRate * 100);
-  const team = TEAMS[oppKey];
-  const boLabel = `Bo${currentBo}`;
-  const fmtLabel = currentFormat === 'doubles' ? 'Doubles' : 'Singles';
+  const team = simCtx.oppTeam || TEAMS[oppKey];
+  const boLabel = simCtx.boLabel || `Bo${currentBo}`;
+  const fmtLabel = simCtx.formatLabel || (currentFormat === 'doubles' ? 'Doubles' : 'Singles');
 
   document.getElementById('results-section').style.display='';
   document.getElementById('results-title').textContent = `vs ${team?.name||oppKey}`;
@@ -2417,7 +2521,7 @@ function displayResults(res, oppKey) {
   const gn=isDark?'#4ec994':'#2a9d6a', rd=isDark?'#f05464':'#d63048', gd=isDark?'#f5c542':'#c89a00';
   const pri=isDark?'#7c6af5':'#5b49d6';
 
-  renderAuditPanel(res, oppKey);
+  renderAuditPanel(res, oppKey, simCtx);
 
   setTimeout(()=>{
     const cv = document.getElementById('ko-chart');
@@ -2450,7 +2554,7 @@ function displayResults(res, oppKey) {
   addReplays(res.allLogs||[], oppKey);
 
   // Auto-show inline pilot card after every single sim
-  showInlinePilotCard(oppKey, res);
+  showInlinePilotCard(oppKey, res, simCtx);
 
   // PDF progressive reveal (Refs #57) - after ANY single sim, stash the
   // result so the PDF button can build a fresh packet. Each new sim either
@@ -2461,19 +2565,21 @@ function displayResults(res, oppKey) {
   revealPdfButton();
 }
 
-function renderAuditPanel(res, oppKey) {
+function renderAuditPanel(res, oppKey, simCtx) {
   const panel = document.getElementById('audit-panel');
   if (!panel) return;
-  const playerTeam = (typeof currentPlayerKey !== 'undefined' && TEAMS[currentPlayerKey]) ? TEAMS[currentPlayerKey] : null;
+  simCtx = simCtx || resolveSimContext({ oppKey: oppKey, bo: currentBo });
+  const playerKey = simCtx.playerKey;
+  const playerTeam = simCtx.playerTeam || TEAMS[playerKey] || null;
   const sample = Array.isArray(res && res.allLogs) ? res.allLogs.find(function(row) {
     return row && Array.isArray(row.turnLog) && row.turnLog.length;
   }) || res.allLogs[0] : null;
   const sampleTurnLog = sample && Array.isArray(sample.turnLog) ? sample.turnLog : [];
   const sampleMoves = sample && sample.movesUsed ? sample.movesUsed : {};
   const metaRows = [
-    ['Battle', (playerTeam?.name || currentPlayerKey || 'Current Team') + ' vs ' + (TEAMS[oppKey]?.name || oppKey)],
-    ['Format', currentFormat === 'doubles' ? 'Doubles' : 'Singles'],
-    ['Series', 'Bo' + currentBo],
+    ['Battle', (playerTeam?.name || playerKey || 'Current Team') + ' vs ' + (TEAMS[oppKey]?.name || oppKey)],
+    ['Format', simCtx.formatLabel || (currentFormat === 'doubles' ? 'Doubles' : 'Singles')],
+    ['Series', simCtx.boLabel || ('Bo' + currentBo)],
     ['Sample', sample ? ((sample.result || 'unknown') + ' · ' + (sample.turns || 0) + ' turns') : 'No sample battle'],
     ['Win condition', sample && sample.winCondition ? sample.winCondition : '—']
   ];
@@ -2483,7 +2589,7 @@ function renderAuditPanel(res, oppKey) {
   const roster = (playerTeam && Array.isArray(playerTeam.members)) ? playerTeam.members : [];
   const rosterRows = roster.map(function(m) {
     var model = null;
-    try { model = buildTeamStatDetailModel(currentPlayerKey, m.name); } catch (_e) { model = null; }
+    try { model = buildTeamStatDetailModel(playerKey, m.name); } catch (_e) { model = null; }
     if (!model) return '';
     return '<tr>' +
       '<td><strong>' + _escapeHtml(model.name) + '</strong><br><span class="audit-subtle">' + _escapeHtml((model.moves || []).join(', ')) + '</span></td>' +
@@ -2563,7 +2669,9 @@ function revealPdfButton() {
 // ============================================================
 // INLINE PILOT CARD — shown after every single sim run
 // ============================================================
-function showInlinePilotCard(oppKey, res) {
+function showInlinePilotCard(oppKey, res, simCtx) {
+  simCtx = simCtx || resolveSimContext({ playerKey: res && res.playerKey, oppKey: oppKey || (res && res.oppKey), bo: res && res.bo });
+  var playerKey = simCtx.playerKey;
   // Find or create the inline pilot container in the results section
   let container = document.getElementById('inline-pilot-card');
   if (!container) {
@@ -2606,10 +2714,10 @@ function showInlinePilotCard(oppKey, res) {
   // T9j.16 (Refs #65) - inject top critical/high coaching rule for this matchup.
   // Lightweight: builds a single-matchup report and pulls the top-severity rule.
   try {
-    if (typeof buildStrategyReport === 'function' && typeof currentPlayerKey !== 'undefined') {
+    if (typeof buildStrategyReport === 'function' && playerKey) {
       const singleResults = {}; singleResults[oppKey] = res;
-      const fmt = (typeof currentFormat !== 'undefined') ? currentFormat : 'doubles';
-      const rep = buildStrategyReport(currentPlayerKey, singleResults, fmt);
+      const fmt = simCtx.format || ((typeof currentFormat !== 'undefined') ? currentFormat : 'doubles');
+      const rep = buildStrategyReport(playerKey, singleResults, fmt);
       if (rep && rep.coaching_rules && rep.coaching_rules.length) {
         const top = rep.coaching_rules[0];
         tips.push(`<strong>Coach (${top.severity}):</strong> ${top.correction}`);
@@ -4198,6 +4306,12 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('getL
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('setLeadsFor', setLeadsFor);
 
 async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress) {
+  if (!isSimReadyTeam(playerTeamKey, TEAMS[playerTeamKey], { includeCustom: true })) {
+    throw new Error('player team not loaded: ' + (playerTeamKey || 'none'));
+  }
+  if (!isSimReadyTeam(oppTeamKey, TEAMS[oppTeamKey], { includeCustom: true })) {
+    throw new Error('opponent team not loaded: ' + (oppTeamKey || 'none'));
+  }
   const results = { wins:0, losses:0, draws:0, totalTurns:0, totalTrTurns:0, winConditions:{}, allLogs:[], turnDist:{} };
   let liveW=0, liveL=0;
   const BATCH = 20;
@@ -4282,16 +4396,21 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
   results.winRate = results.wins/numSeries;
   results.avgTurns = results.totalTurns/numSeries;
   results.avgTrTurns = results.totalTrTurns/numSeries;
+  results.playerKey = playerTeamKey;
+  results.oppKey = oppTeamKey;
+  results.bo = bo;
+  results.format = currentFormat;
   return results;
 }
 
 // runAllMatchupsUI — UI wrapper; distinct from engine.js runAllMatchups
 // Issue #T6: when LADDER_MODE is ON, iterate only ladder-legal opponents.
-async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
-  var playerKey = syncActivePlayerTeamKey();
+async function runAllMatchupsUI(numSeries, bo, onProgress, onDone, simCtx) {
+  simCtx = simCtx || resolveSimContext({ numSeries: numSeries, bo: bo });
+  var playerKey = simCtx.playerKey;
   const opps = Object.keys(TEAMS).filter(k => {
     if (k === playerKey) return false;
-    if (!isVisibleTeamInCatalog(k, TEAMS[k], { includeCustom: true })) return false;
+    if (!isSimReadyTeam(k, TEAMS[k], { includeCustom: true })) return false;
     if (typeof LADDER_MODE !== 'undefined' && LADDER_MODE && typeof isLadderLegal === 'function') {
       return isLadderLegal(k);
     }
@@ -4394,8 +4513,14 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   if (res && Array.isArray(res.position_path) && !analysisJson.position_path) {
     analysisJson.position_path = res.position_path.slice(0, 40);
   }
-  if (typeof generatePilotGuide === 'function' && res) {
-    try { analysisJson.pilot_guide = generatePilotGuide(oppKey, res) || null; } catch (_) {}
+  if (res && !analysisJson.pilot_summary) {
+    analysisJson.pilot_summary = {
+      player_team_id: playerKey,
+      opp_team_id: oppKey,
+      top_win_conditions: winConditions.slice(0, 5),
+      sample_size: sampleSize,
+      win_rate: winRate
+    };
   }
 
   var ciLow  = (res && typeof res.ci_low  === 'number') ? res.ci_low  : 0;
@@ -4560,26 +4685,25 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
       renderRoster('opp-roster', TEAMS[swappedOpp].members);
       if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
     }
-    var playerKey = syncActivePlayerTeamKey();
-    const oppKey=document.getElementById('opponent-select').value;
-    const n=parseInt(document.getElementById('sim-count').value);
-    const bo=currentBo;
-    if (!TEAMS[playerKey]) throw new Error('player team not loaded: ' + playerKey);
-    if (!TEAMS[oppKey]) throw new Error('opponent team not loaded: ' + oppKey);
+    var simCtx = resolveSimContext();
+    var playerKey = simCtx.playerKey;
+    const oppKey=simCtx.oppKey;
+    const n=simCtx.numSeries;
+    const bo=simCtx.bo;
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
     const matBadge=document.getElementById('matrix-badge');
-    if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
+    if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${n} series`;
 
     const res = await runBoSeries(n,playerKey,oppKey,bo,(cur,tot,w,l)=>{
       setProgress(Math.round(cur/tot*100),`Running… ${cur} / ${tot}`,w,l);
     });
 
     document.getElementById('progress-wrap').style.display='none';
-    displayResults(res, oppKey);
+    displayResults(res, oppKey, simCtx);
     // Refs #95 - also populate the Pilot Guide tab after a single sim so the
     // tab isn't stuck on its empty-state message. generatePilotGuide is
     // upsert-by-oppKey, so re-running the same matchup replaces its card.
-    try { generatePilotGuide(oppKey, res); } catch (e) { UILog.warn('single-sim Pilot Guide populate failed', e); }
+    try { generatePilotGuide(oppKey, res, simCtx); } catch (e) { UILog.warn('single-sim Pilot Guide populate failed', e); }
     // Cache for Run All parity - keeps PDF builder and strategy rebuild in sync.
     try { if (ChampionsSim.state.lastResults) ChampionsSim.state.lastResults[oppKey] = res; } catch(_){}
     // M4: persist single-sim result to Supabase (fire-and-forget)
@@ -4599,7 +4723,11 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
 
 ChampionsSim.battle = ChampionsSim.battle || {};
 ChampionsSim.battle.enforceDistinctBattleTeams = enforceDistinctBattleTeams;
+ChampionsSim.battle.resolveSimContext = resolveSimContext;
+ChampionsSim.battle.normalizeTeamCatalogForSim = normalizeTeamCatalogForSim;
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('enforceDistinctBattleTeams', enforceDistinctBattleTeams);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('resolveSimContext', resolveSimContext);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('normalizeTeamCatalogForSim', normalizeTeamCatalogForSim);
 
 document.getElementById('run-all-btn')?.addEventListener('click', async function() {
   if (simRunning) return;
@@ -4611,15 +4739,15 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
     document.getElementById('results-section').style.display='none';
     document.getElementById('matchup-tbody').innerHTML='<tr><td colspan="7" style="color:var(--text-m);font-size:12px;text-align:center;padding:20px;font-family:var(--font-mono)">Running all matchups…</td></tr>';
 
-    const n=parseInt(document.getElementById('sim-count').value);
-    const bo=currentBo;
-    var playerKey = syncActivePlayerTeamKey();
-    if (!TEAMS[playerKey]) throw new Error('player team not loaded: ' + playerKey);
+    var simCtx = resolveSimContext();
+    const n=simCtx.numSeries;
+    const bo=simCtx.bo;
+    var playerKey = simCtx.playerKey;
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
     document.getElementById('progress-wrap').style.display='';
     setProgress(0,'Starting…',0,0);
     const matBadge=document.getElementById('matrix-badge');
-    if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
+    if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${n} series`;
 
     const tbody=document.getElementById('matchup-tbody');
     tbody.innerHTML='';
@@ -4645,8 +4773,8 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
         <td><span class="assess-chip ${aCls}">${aLbl}</span></td>`;
       tbody.appendChild(tr);
       addReplays(res.allLogs||[], opp);
-      generatePilotGuide(opp, res);
-    });
+      generatePilotGuide(opp, res, Object.assign({}, simCtx, { oppKey: opp, oppTeam: TEAMS[opp] }));
+    }, simCtx);
 
     document.getElementById('progress-wrap').style.display='none';
     // Refs #57 - progressive reveal helper relabels with the correct matchup
@@ -4667,9 +4795,11 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
 // ============================================================
 // PART 2: PILOT GUIDE GENERATOR
 // ============================================================
-function generatePilotGuide(oppKey, results) {
+function generatePilotGuide(oppKey, results, simCtx) {
   const el = document.getElementById('pilot-content');
   if (!el) return;
+  simCtx = simCtx || resolveSimContext({ playerKey: results && results.playerKey, oppKey: oppKey || (results && results.oppKey), bo: results && results.bo });
+  var playerKey = simCtx.playerKey;
 
   const emptyEl = el.querySelector('.pilot-empty');
   safeRemoveNode(emptyEl);
@@ -4733,9 +4863,8 @@ function generatePilotGuide(oppKey, results) {
   // Sweep is computed lazily and cached; safe no-op for non-Mega teams.
   let megaTriggerHtml = '';
   try {
-    const playerKey = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player';
-    const format = (typeof currentFormat !== 'undefined') ? currentFormat : 'doubles';
-    const bo = (typeof currentBo !== 'undefined') ? currentBo : 1;
+    const format = simCtx.format || ((typeof currentFormat !== 'undefined') ? currentFormat : 'doubles');
+    const bo = simCtx.bo || ((typeof currentBo !== 'undefined') ? currentBo : 1);
     const sweep = computeMegaTriggerSweep(playerKey, oppKey, bo, format);
     megaTriggerHtml = renderMegaTriggerCards(sweep);
   } catch (e) {
@@ -4743,7 +4872,6 @@ function generatePilotGuide(oppKey, results) {
   }
   let threatResponseHtml = '';
   try {
-    const playerKey = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player';
     if (typeof solveThreatResponse === 'function' && typeof renderThreatResponseCard === 'function') {
       threatResponseHtml = renderThreatResponseCard(solveThreatResponse(playerKey, oppKey, {
         simsPerBranch: 30,
@@ -4759,7 +4887,7 @@ function generatePilotGuide(oppKey, results) {
   // Refs #95 - tag the card with its opponent key so we can upsert instead of
   // duplicating when the same matchup is re-simulated from the single-sim path.
   card.dataset.oppKey = oppKey;
-  const preCoach = (typeof coachPre === 'function') ? coachPre((typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player', oppKey, { result: results }) : '';
+  const preCoach = (typeof coachPre === 'function') ? coachPre(playerKey, oppKey, { result: results }) : '';
   card.innerHTML = `
     ${staticAdviceWarningHtml}
     <div class="pilot-card-header">
@@ -9148,14 +9276,14 @@ function csShouldBootstrapSimulatorBoard() {
 async function csBootstrapSimulatorBoard() {
   if (simRunning) return false;
   if (!csShouldBootstrapSimulatorBoard()) return false;
-  var oppSel = document.getElementById('opponent-select');
-  var oppKey = oppSel ? oppSel.value : null;
-  var playerKey = syncActivePlayerTeamKey();
-  if (!oppKey || !TEAMS[playerKey] || !TEAMS[oppKey]) return false;
+  var simCtx = null;
+  try { simCtx = resolveSimContext({ bo: currentBo }); } catch (_ctxErr) { return false; }
+  var oppKey = simCtx.oppKey;
+  var playerKey = simCtx.playerKey;
   simRunning = true;
   try {
     var res = await runBoSeries(1, playerKey, oppKey, currentBo, function(){});
-    displayResults(res, oppKey);
+    displayResults(res, oppKey, simCtx);
     return true;
   } catch (e) {
     UILog.warn('sim-board bootstrap skipped', e);
@@ -11098,6 +11226,7 @@ if (typeof window !== 'undefined') {
         var dbTeams = await _adapter.loadTeamsFromDB();
         if (dbTeams && Object.keys(dbTeams).length && typeof TEAMS !== 'undefined') {
           Object.assign(TEAMS, dbTeams);
+          if (typeof normalizeTeamCatalogForSim === 'function') normalizeTeamCatalogForSim();
           UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length });
           setDbChip('connected', 'Live team database connected - loaded ' + Object.keys(dbTeams).length + ' teams from the shared roster store');
         } else {
