@@ -51,7 +51,9 @@
 // stale opposing-target retarget guard, and target vocabulary drift tests.
 // v60-overview-truth-notes [2026-06-22] - Overview truth-board updates for
 // current build state, known gaps, and large-run QA log-retention limits.
-const CACHE_NAME = 'champions-sim-v60-overview-truth-notes';
+// v61-qa-artifact-export [2026-06-22] - Retained-evidence QA artifact export
+// with build/source metadata and explicit browser retention caps.
+const CACHE_NAME = 'champions-sim-v61-qa-artifact-export';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

@@ -5,7 +5,7 @@ This snapshot records the current truth after the June 21-22 live-log review and
 ## 2026-06-22 Deployment Update
 
 - The prior Y fork public validation target was commit `7e0deca` (`model champion ability parity`).
-- `v2.1.26-overview-truth-notes` supersedes `v2.1.25-target-parity-guard` for the current GitHub Pages release and bumps the service-worker cache to `champions-sim-v60-overview-truth-notes`.
+- `v2.1.27-qa-artifact-export` supersedes `v2.1.26-overview-truth-notes` for the current GitHub Pages release and bumps the service-worker cache to `champions-sim-v61-qa-artifact-export`.
 - The earlier `e5af069` build added `champions-turn-log-v2` export metadata; fresh June 22 logs from `?v=7e0deca` validate structurally cleanly, then deeper replay review exposed the target bridge bug fixed in `v2.1.25`.
 - Supabase migration `2026_06_22_retire_legacy_sv_teams.sql` has run successfully; the two stale v1 teams are retired at the source.
 - Fresh logs from the live URL now validate cleanly for team loading, stable IDs, final alive counts, and stale item absence.
@@ -19,11 +19,12 @@ This snapshot records the current truth after the June 21-22 live-log review and
 | Lethal Sitrus/Oran restore | Fixed and deployed in `v2.1.22-lethal-berry-guard` | Exported logs showed Sitrus restoring after `0 HP`; `engine.js` now requires `hp > 0` for damage-trigger berries. `items_tests.js` covers surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior. |
 | Golden battle trace drift from berry fix | Updated | `gb_001` and `gb_002` expected trace hashes were refreshed after confirming the new traces remove the invalid berry-after-0-HP behavior while preserving expected winners. |
 | Champion item/SP gate | Fixed and deployed in `v2.1.23-champion-item-sp-gate` | `legality.js` now uses a positive Champions item allowlist; imports reject raw EV/IV lines; exports use `SPs:`; illegal teams are hidden from selectors; stale DB teams cannot replace legal bundled teams. |
-| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v60-overview-truth-notes`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.26-overview-truth-notes` after bundle rebuild. |
+| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v61-qa-artifact-export`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.27-qa-artifact-export` after bundle rebuild. |
 | Exported-log build drift | Guarded in `e5af069` | Downloaded replay logs now include `schema_version: champions-turn-log-v2`, `exported_at`, `build_id`, and `source_url`, so future debug logs can prove which deployed build produced them. |
 | Showdown static metadata use | Partially fixed | Battle construction and move metadata can use generated Showdown static rows first, then local fallbacks. This is not the same as live DB runtime consumption. |
 | Showdown target category bridge | Fixed and guarded in `v2.1.25-target-parity-guard` | `runtime_data.js` canonicalizes Showdown target categories before engine use; `engine.js` keeps a guarded fallback for engine-only tests; move tests cover Hyper Voice spread targeting and stale opposing-target retargeting. |
-| Overview truth board | Updated in `v2.1.26-overview-truth-notes` | The live Overview tab now names the target bridge fix, DB/runtime source split, capped browser log retention, large-run artifact export next step, and Alfredo sync gap. |
+| Overview truth board | Updated in `v2.1.27-qa-artifact-export` | The live Overview tab now names the target bridge fix, DB/runtime source split, capped browser log retention, shipped QA artifact export, and Alfredo sync gap. |
+| Large-run QA artifact | Added in `v2.1.27-qa-artifact-export` | Saved Analyses now has a `QA Artifact` export that records build ID, source URL, retention caps, summary counts, retained compact sim-log entries, and retained replay cards. |
 
 ## Fresh Turn-Log Review
 
@@ -168,7 +169,8 @@ Fix from this review:
 - The sim and CI can run thousands of battles for validation, but the browser UI intentionally keeps a bounded amount of replay evidence so local storage, downloads, and the page do not become unusable.
 - Current browser caps: replay cards are capped at `MAX_REPLAY_CARDS = 240`, raw replay lines display the last `MAX_REPLAY_LOG_LINES = 200`, stored sim logs are capped at `CS_SIMLOG_MAX_TOTAL = 500`, and stored logs per matchup pair are capped at `CS_SIMLOG_MAX_PER_PAIR = 100`.
 - This is not proof that only that many battles ran. It means normal user-facing retention is capped.
-- Later build recommendation: add a QA/audit artifact export mode for large runs that saves summary metrics plus selected full turn logs, seeds, build IDs, source URLs, and failure examples without overloading normal browser storage.
+- Current guardrail: `v2.1.27-qa-artifact-export` adds a `QA Artifact` export for retained evidence, including summary metrics, replay card evidence, compact sim logs, build ID, source URL, and the exact caps that shaped the retained data.
+- Later build recommendation: add a streaming/full-archive artifact mode if partners require every raw battle log from thousand-battle validations, instead of relying on bounded browser retention.
 
 ## GitHub Issue Sweep
 
@@ -197,18 +199,19 @@ Use these statements in team updates and PR notes:
 - Fixed and deployed to the Y fork: Champion item allowlist, SP import/export, selector legality gate, and stale DB-team merge rejection.
 - Fixed and deployed to the Y fork: exported turn logs now include build/source metadata.
 - Fixed and deployed to the Y fork: curated-team plus Champions mega ability inventory is modeled 80/80 with focused ability parity guards.
-- Fixed for the next Y fork push: Showdown target category bridge and stale opposing-target retargeting are guarded by source-truth and move-registry tests.
-- Updated for the next Y fork push: Overview tab is the current team truth board for working areas, known gaps, next priorities, and build notes.
+- Fixed and deployed to the Y fork: Showdown target category bridge and stale opposing-target retargeting are guarded by source-truth and move-registry tests.
+- Updated and deployed to the Y fork: Overview tab is the current team truth board for working areas, known gaps, next priorities, and build notes.
+- Added for the next Y fork push: QA Artifact export captures retained large-run evidence with build/source metadata and retention caps.
 - Completed: Supabase cleanup migration retired the stale v1 DB teams.
-- Known limitation: browser replay/log retention is intentionally capped; large-run QA evidence needs a dedicated artifact export mode before partners should expect every battle log to be retained.
+- Known limitation: browser replay/log retention is intentionally capped; QA Artifact exports retained evidence and caps, but it still does not preserve every raw battle log from huge runs.
 - Not fixed yet: live DB `showdown_entities` as the battle runtime source.
 - Not fixed yet: full move/damage/regional-form parity audit.
 - Not ready for broad accuracy claims: sim still needs grouped mechanics parity work and Showdown/Champions oracle gates.
 
 ## Current Next Path
 
-1. Export one fresh single-run log and one fresh Run All log from the public URL after `v2.1.26-overview-truth-notes`; verify both include `champions-turn-log-v2`, `build_id`, and `source_url`, and deep-check that no invalid `(no valid target)` lines remain.
+1. Export one fresh single-run log, one fresh Run All log, and one `QA Artifact` from the public URL after `v2.1.27-qa-artifact-export`; verify build/source metadata, stable turn-log fields, no team-load failure, no invalid `(no valid target)` lines, and retained-evidence summary counts.
 2. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231 so both repos show the same truth.
 3. Continue the grouped move/damage/mechanics parity track against Showdown first, with Champions overrides only when explicitly sourced.
-4. Plan the large-run QA artifact export mode so thousand-battle validations can preserve review evidence without using normal browser replay retention.
+4. Decide whether partners need a full raw battle archive stream beyond the retained-evidence QA artifact.
 5. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.

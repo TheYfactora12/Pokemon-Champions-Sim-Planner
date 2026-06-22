@@ -39,6 +39,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Showdown primary move metadata for imported teams');
   inc(ui, 'Target category bridge and stale-target retargeting guarded');
   inc(ui, 'Runtime naming cheat sheet added');
+  inc(ui, 'Large-run QA artifact export added');
   inc(ui, 'Showdown sync and DB writer staged');
   inc(ui, 'Curated ability inventory modeled');
   inc(ui, 'Simulation-first direction documented');
@@ -47,7 +48,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'TheYfactora12 main now carries v2.1.26 overview truth notes plus the v2.1.25 target parity guard');
+  inc(ui, 'v2.1.27 QA artifact export carries the v2.1.25 target parity guard and v2.1.26 overview truth notes');
   inc(ui, 'GitHub issue sweep completed');
 });
 
@@ -63,7 +64,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Current Y fork changes are not pushed upstream to Alfredo yet');
   inc(ui, 'Mechanics parity is broader than the current ability slice');
   inc(ui, 'Source refresh needed must be visible before trust claims');
-  inc(ui, 'Large-run QA logs are intentionally capped in the browser');
+  inc(ui, 'Full raw thousand-battle retention is still not automatic');
   inc(ui, 'Alfredo #241');
   inc(ui, 'Life Orb');
   inc(ui, 'showdown_sync_runs');
@@ -72,12 +73,11 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.26 live logs and sync Alfredo');
+  inc(ui, 'Verify v2.1.27 live logs, QA artifact, and sync Alfredo');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
   inc(ui, 'Group mechanics parity work by battle system');
-  inc(ui, 'Build large-run QA artifact export mode');
   inc(ui, 'Prepare upstream PR to Alfredo after Y fork verification');
   inc(ui, 'Surface source drift as update needed in Overview');
   inc(ui, 'Recent Fix + Issue Snapshot');

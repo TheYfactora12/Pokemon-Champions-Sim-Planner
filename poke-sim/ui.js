@@ -116,9 +116,19 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.26-overview-truth-notes';
+    return txt || 'v2.1.27-qa-artifact-export';
   } catch (e) {
-    return 'v2.1.26-overview-truth-notes';
+    return 'v2.1.27-qa-artifact-export';
+  }
+}
+
+function csGetSourceUrl() {
+  try {
+    return (typeof location !== 'undefined' && location.href)
+      || (typeof window !== 'undefined' && window.location && window.location.href)
+      || null;
+  } catch (_e) {
+    return null;
   }
 }
 
@@ -3337,19 +3347,11 @@ function csRenderTurnLogRows(turnLog, opts) {
 
 function downloadReplayTurnLog(replay) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
-  var sourceUrl = null;
-  try {
-    sourceUrl = (typeof location !== 'undefined' && location.href)
-      || (typeof window !== 'undefined' && window.location && window.location.href)
-      || null;
-  } catch (_e) {
-    sourceUrl = null;
-  }
   var payload = {
     schema_version: 'champions-turn-log-v2',
     exported_at: new Date().toISOString(),
     build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
-    source_url: sourceUrl,
+    source_url: (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null,
     seed: replay.seed || null,
     result: replay.result || null,
     winCondition: replay.winCondition || null,
@@ -4239,6 +4241,136 @@ async function csExportMyDataJson(teamKey) {
   return payload;
 }
 
+function csQaCountResult(bucket, result) {
+  var key = result === 'win' || result === 'loss' || result === 'draw' ? result : 'other';
+  bucket[key] = (bucket[key] || 0) + 1;
+}
+
+function csBuildQaArtifactSummary(simLog, replayCards, teamKey) {
+  var entries = Array.isArray(simLog) ? simLog : [];
+  var replays = Array.isArray(replayCards) ? replayCards : [];
+  var byPair = {};
+  var seriesResults = { win: 0, loss: 0, draw: 0, other: 0 };
+  var gameResults = { win: 0, loss: 0, draw: 0, other: 0 };
+  var replayResults = { win: 0, loss: 0, draw: 0, other: 0 };
+  var teamEntries = 0;
+  var totalGames = 0;
+  var retainedTurnLogs = 0;
+  var truncatedReplayLogs = 0;
+  var latestTs = null;
+
+  for (var i = 0; i < entries.length; i++) {
+    var e = entries[i] || {};
+    if (e.playerKey === teamKey || e.oppKey === teamKey) teamEntries++;
+    var pairKey = (e.playerKey || '?') + '::' + (e.oppKey || '?');
+    byPair[pairKey] = (byPair[pairKey] || 0) + 1;
+    csQaCountResult(seriesResults, e.seriesResult);
+    if (typeof e.ts === 'number' && (!latestTs || e.ts > latestTs)) latestTs = e.ts;
+    var games = Array.isArray(e.games) ? e.games : [];
+    totalGames += games.length;
+    for (var g = 0; g < games.length; g++) {
+      csQaCountResult(gameResults, games[g] && games[g].result);
+    }
+  }
+
+  for (var r = 0; r < replays.length; r++) {
+    var replay = replays[r] || {};
+    csQaCountResult(replayResults, replay.result);
+    if (Array.isArray(replay.turnLog) && replay.turnLog.length) retainedTurnLogs++;
+    if (replay.logTruncated || (typeof replay.logLineCount === 'number' && typeof replay.logShownCount === 'number' && replay.logLineCount > replay.logShownCount)) {
+      truncatedReplayLogs++;
+    }
+  }
+
+  return {
+    total_retained_simlog_entries: entries.length,
+    team_retained_simlog_entries: teamEntries,
+    total_retained_games: totalGames,
+    retained_replay_cards: replays.length,
+    retained_replay_cards_with_turn_logs: retainedTurnLogs,
+    truncated_replay_logs: truncatedReplayLogs,
+    latest_retained_simlog_entry_at: latestTs ? new Date(latestTs).toISOString() : null,
+    series_results: seriesResults,
+    game_results: gameResults,
+    replay_results: replayResults,
+    matchup_pair_counts: byPair
+  };
+}
+
+function csCompactQaReplayCard(replay, playerKey) {
+  var r = replay || {};
+  var log = Array.isArray(r.log) ? r.log : [];
+  var turnLog = Array.isArray(r.turnLog) ? r.turnLog : [];
+  return {
+    id: r.id || null,
+    seed: r.seed || null,
+    playerKey: r.playerKey || playerKey || null,
+    oppKey: r.oppKey || null,
+    result: r.result || null,
+    turns: r.turns || 0,
+    winCondition: r.winCondition || null,
+    trTurns: r.trTurns || 0,
+    twTurns: r.twTurns || 0,
+    logLineCount: (typeof r.logLineCount === 'number') ? r.logLineCount : log.length,
+    logShownCount: (typeof r.logShownCount === 'number') ? r.logShownCount : log.length,
+    logTruncated: !!r.logTruncated,
+    turning_point: r.turning_point || null,
+    position_path: Array.isArray(r.position_path) ? r.position_path : [],
+    turnLog: turnLog,
+    log: log
+  };
+}
+
+async function csBuildQaArtifactExport(teamKey, opts) {
+  var key = teamKey || csGetActivePlayerKey();
+  var options = opts || {};
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[key]) ? TEAMS[key] : null;
+  var adapter = getWindowValue('SupabaseAdapter', null);
+  var localSimLog = (typeof csSimLogGetAll === 'function') ? csSimLogGetAll() : [];
+  var localTeamHistory = (typeof csSimLogForTeamBothSides === 'function') ? csSimLogForTeamBothSides(key) : [];
+  var replayCards = (Array.isArray(allReplays) ? allReplays : []).map(function(replay) {
+    return csCompactQaReplayCard(replay, key);
+  });
+
+  return {
+    schema_version: 'champions-qa-artifact-v1',
+    artifact_type: 'large-run-qa-retained-evidence',
+    exported_at: new Date().toISOString(),
+    build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
+    source_url: (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null,
+    player_team_id: key,
+    player_team_name: team && team.name ? team.name : null,
+    current_format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
+    retention: {
+      scope: 'retained browser evidence',
+      note: 'Normal browser history is intentionally capped. This artifact records all retained local evidence plus the caps that shaped it; it is not proof that only this many battles ran.',
+      max_replay_cards: MAX_REPLAY_CARDS,
+      max_replay_log_lines: MAX_REPLAY_LOG_LINES,
+      max_simlog_total: CS_SIMLOG_MAX_TOTAL,
+      max_simlog_per_pair: CS_SIMLOG_MAX_PER_PAIR,
+      include_replay_cards: options.includeReplayCards !== false,
+      include_sim_log: options.includeSimLog !== false
+    },
+    summary: csBuildQaArtifactSummary(localSimLog, replayCards, key),
+    retained: {
+      sim_log: options.includeSimLog === false ? [] : localSimLog,
+      team_history: options.includeSimLog === false ? [] : localTeamHistory,
+      replay_cards: options.includeReplayCards === false ? [] : replayCards
+    },
+    db: {
+      enabled: !!(adapter && adapter.enabled),
+      note: 'Supabase stores approved source data, teams, overrides, and saved analysis history. The deterministic browser runtime still uses generated/static data plus runtime_data.js for battle execution.'
+    }
+  };
+}
+
+async function csExportQaArtifactJson(teamKey) {
+  var payload = await csBuildQaArtifactExport(teamKey);
+  var ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  _downloadBlob('champions-sim-qa-artifact-' + ts + '.json', 'application/json', JSON.stringify(payload, null, 2));
+  return payload;
+}
+
 // Wire history filter buttons
 document.querySelectorAll('.history-filter-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
@@ -4256,16 +4388,27 @@ document.getElementById('export-history-json-btn')?.addEventListener('click', fu
   });
 });
 
+document.getElementById('export-qa-artifact-json-btn')?.addEventListener('click', function() {
+  csExportQaArtifactJson(csGetActivePlayerKey()).catch(function(e) {
+    UILog.warn('export QA artifact failed', e);
+    alert('Could not export QA artifact: ' + (e && e.message ? e.message : 'unknown error'));
+  });
+});
+
 if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.loadAnalysisHistory = loadAnalysisHistory;
   ChampionsSim.history.renderHistorySection = renderHistorySection;
   ChampionsSim.history.buildMyDataExport = csBuildMyDataExport;
   ChampionsSim.history.exportMyDataJson = csExportMyDataJson;
+  ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
+  ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('loadAnalysisHistory', loadAnalysisHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderHistorySection', renderHistorySection);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildMyDataExport', csBuildMyDataExport);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportMyDataJson', csExportMyDataJson);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaArtifactExport', csBuildQaArtifactExport);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportQaArtifactJson', csExportQaArtifactJson);
 // __M6_HISTORY_END__
 
 // ============================================================
@@ -5654,7 +5797,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Team Format', value: 'Champion/SP focus' },
     { label: 'Turn Logs', value: 'Structural clean' },
     { label: 'Target Guard', value: 'Canonical bridge' },
-    { label: 'QA Log Retention', value: 'Capped in UI' },
+    { label: 'QA Log Retention', value: 'Capped + artifact' },
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
@@ -5702,6 +5845,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Runtime naming cheat sheet added',
       detail: 'v2.1.26 documents Showdown target names versus Champion engine categories so future data, DB, and generated-asset work uses the adapter boundary instead of leaking raw source vocabulary into battle logic.'
+    },
+    {
+      status: 'done',
+      title: 'Large-run QA artifact export added',
+      detail: 'v2.1.27 adds a retained-evidence QA export with build ID, source URL, sim-log caps, replay caps, summary counts, retained replay cards, and retained compact sim-log entries so partner test runs do not depend on reading the capped UI by eye.'
     },
     {
       status: 'done',
@@ -5763,7 +5911,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.26 overview truth notes carry the v2.1.25 target parity guard. Source-truth tests, target bridge coverage, golden battle hashes, DB suites, bundle freshness, service-worker cache guard, and strict validation on the fresh live logs passed locally.'
+      detail: 'v2.1.27 QA artifact export carries the v2.1.25 target parity guard and v2.1.26 overview truth notes. Source-truth tests, target bridge coverage, golden battle hashes, DB suites, bundle freshness, service-worker cache guard, and strict validation on the fresh live logs passed locally.'
     },
     {
       status: 'validated',
@@ -5800,7 +5948,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'TheYfactora12 main now carries v2.1.26 overview truth notes plus the v2.1.25 target parity guard. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
+      detail: 'TheYfactora12 main now carries v2.1.27 QA artifact export plus the v2.1.25 target parity guard and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
@@ -5814,15 +5962,15 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
-      title: 'Large-run QA logs are intentionally capped in the browser',
-      detail: 'The sim can run thousands of battles, but normal UI retention is bounded: replay cards cap at 240, raw replay display shows the last 200 lines, stored sim logs cap at 500 total and 100 per matchup pair. Large partner reviews need a dedicated audit artifact export mode.'
+      title: 'Full raw thousand-battle retention is still not automatic',
+      detail: 'The sim can run thousands of battles, but normal UI retention is bounded: replay cards cap at 240, raw replay display shows the last 200 lines, stored sim logs cap at 500 total and 100 per matchup pair. The QA artifact now exports retained evidence plus caps; a later artifact-stream mode is still needed if every raw battle log must be preserved.'
     }
   ],
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.26 live logs and sync Alfredo',
-      detail: 'Use fresh GitHub Pages logs to confirm the build label, source URL, stable turn-log fields, and no team-load failure, then prepare the reviewed upstream sync to Alfredo.'
+      title: 'Verify v2.1.27 live logs, QA artifact, and sync Alfredo',
+      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, and retained-evidence summary, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
       status: 'next',
@@ -5846,13 +5994,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
-      title: 'Build large-run QA artifact export mode',
-      detail: 'Add a review-mode export that preserves summary metrics, seeds, build IDs, source URLs, selected full turn logs, and failure examples from thousand-battle validations without relying on normal browser replay retention.'
-    },
-    {
-      status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.26 and fresh logs pass, open a clean upstream PR with the target parity guard, ability parity slice, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.27 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',
