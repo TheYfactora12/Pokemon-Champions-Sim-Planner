@@ -41,7 +41,9 @@
 // battle logic reads approved metadata and damage-roll overrides from site code.
 // v53-sim-context-team-load [2026-06-21] - Force browser cache/client-state
 // rotation after central sim-context and DB team normalization fixes.
-const CACHE_NAME = 'champions-sim-v53-sim-context-team-load';
+// v54-lethal-berry-guard [2026-06-21] - Prevent damage-trigger berries from
+// restoring holders that were reduced to 0 HP before faint cleanup.
+const CACHE_NAME = 'champions-sim-v54-lethal-berry-guard';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

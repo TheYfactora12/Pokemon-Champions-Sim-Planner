@@ -1657,14 +1657,14 @@ class Pokemon {
       return `${this.name}'s Lum Berry cured its status!`;
     }
     // Sitrus Berry: restores 25% HP
-    if (this.item === 'Sitrus Berry' && trigger === 'damage' && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
+    if (this.item === 'Sitrus Berry' && trigger === 'damage' && this.hp > 0 && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
       const heal = Math.floor(this.maxHp * 0.25);
       this.hp = Math.min(this.maxHp, this.hp + heal);
       this.itemConsumed = true;
       return `${this.name}'s Sitrus Berry restored HP!`;
     }
     // Oran Berry: restores 10 HP
-    if (this.item === 'Oran Berry' && trigger === 'damage' && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
+    if (this.item === 'Oran Berry' && trigger === 'damage' && this.hp > 0 && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
       this.hp = Math.min(this.maxHp, this.hp + 10);
       this.itemConsumed = true;
       return `${this.name}'s Oran Berry restored HP!`;

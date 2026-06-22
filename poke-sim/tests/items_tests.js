@@ -15,7 +15,7 @@ function load(f) {
 load('data.js');
 load('engine.js');
 vm.runInContext('this.Pokemon=Pokemon; this.Field=Field; this.simulateBattle=simulateBattle;', ctx);
-const { Pokemon, Field } = ctx;
+const { Pokemon, Field, simulateBattle } = ctx;
 
 let pass = 0, fail = 0;
 function T(name, fn) {
@@ -121,11 +121,87 @@ T('7. Focus Sash consumed only once (second full-HP KO would not trigger)', () =
 });
 
 // ============================================================
+// Sitrus / Oran Berry damage timing
+// ============================================================
+console.log('\nDamage-trigger berries:');
+
+T('8. Sitrus Berry heals after surviving damage at half HP or lower', () => {
+  const m = mk('Incineroar', { item:'Sitrus Berry' });
+  m.hp = Math.floor(m.maxHp / 2);
+  const before = m.hp;
+  const msg = m.applyItem('damage', new Field());
+  truthy(msg && msg.includes('Sitrus Berry restored HP'), 'Sitrus heal message missing');
+  truthy(m.hp > before, 'Sitrus should heal surviving holder');
+  eq(m.itemConsumed, true, 'Sitrus should be consumed');
+});
+
+T('9. Sitrus Berry does not restore from 0 HP after lethal damage', () => {
+  const m = mk('Incineroar', { item:'Sitrus Berry' });
+  m.hp = 0;
+  m.alive = true; // mirrors applyDamage before faint cleanup flips alive false
+  const msg = m.applyItem('damage', new Field());
+  eq(msg, undefined, 'Sitrus should not trigger at 0 HP');
+  eq(m.hp, 0, 'Sitrus should not resurrect a fainted holder');
+  eq(m.itemConsumed, false, 'Sitrus should remain unused if holder fainted');
+});
+
+T('10. Oran Berry does not restore from 0 HP after lethal damage', () => {
+  const m = mk('Pikachu', { item:'Oran Berry' });
+  m.hp = 0;
+  m.alive = true;
+  const msg = m.applyItem('damage', new Field());
+  eq(msg, undefined, 'Oran should not trigger at 0 HP');
+  eq(m.hp, 0, 'Oran should not resurrect a fainted holder');
+  eq(m.itemConsumed, false, 'Oran should remain unused if holder fainted');
+});
+
+T('11. Battle log records lethal damage faint before any Sitrus restore', () => {
+  const player = {
+    name: 'Sitrus Lethal Guard',
+    format: 'champions',
+    legality_status: 'legal',
+    members: [{
+      name: 'Torkoal',
+      ability: 'Drought',
+      item: 'Sitrus Berry',
+      nature: 'Relaxed',
+      level: 50,
+      currentHp: 1,
+      moves: ['Tackle'],
+      evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
+    }]
+  };
+  const opponent = {
+    name: 'Fast Chip',
+    format: 'champions',
+    legality_status: 'legal',
+    members: [{
+      name: 'Jolteon',
+      ability: 'Volt Absorb',
+      item: '',
+      nature: 'Timid',
+      level: 50,
+      moves: ['Tackle'],
+      evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:32 }
+    }]
+  };
+  const battle = simulateBattle(player, opponent, {
+    format: 'singles',
+    seed: [31, 37, 41, 43],
+    maxTurns: 1
+  });
+  falsy(battle.log.some(line => String(line).includes('Sitrus Berry restored HP')),
+    'lethal hit should not produce a Sitrus restore line');
+  truthy(battle.log.some(line => String(line).includes('Torkoal fainted!')),
+    'lethal hit should faint the Sitrus holder');
+});
+
+// ============================================================
 // Choice Scarf lock (#18)
 // ============================================================
 console.log('\nChoice Scarf (#18):');
 
-T('8. Choice Scarf multiplies Speed by 1.5 via getStat', () => {
+T('12. Choice Scarf multiplies Speed by 1.5 via getStat', () => {
   const mBase = mk('Garchomp', { item:'' });
   const mScarf = mk('Garchomp', { item:'Choice Scarf' });
   const speBase = mBase.getStat('spe');
@@ -133,12 +209,12 @@ T('8. Choice Scarf multiplies Speed by 1.5 via getStat', () => {
   eq(speScarf, Math.floor(speBase * 1.5), 'Scarf +50% Spe');
 });
 
-T('9. choiceLock initializes null on construction', () => {
+T('13. choiceLock initializes null on construction', () => {
   const m = mk('Garchomp', { item:'Choice Scarf' });
   eq(m.choiceLock, null, 'initial lock null');
 });
 
-T('10. choiceLock clears on switch-in logic (replaceOnField resets)', () => {
+T('14. choiceLock clears on switch-in logic (replaceOnField resets)', () => {
   const m = mk('Garchomp', { item:'Choice Scarf' });
   m.choiceLock = 'Earthquake';
   // Simulate replaceOnField reset clause
@@ -152,7 +228,7 @@ T('10. choiceLock clears on switch-in logic (replaceOnField resets)', () => {
 // ============================================================
 console.log('\nStat-stage reset on switch (#29):');
 
-T('11. Stat boosts reset to all zeros on switch-in', () => {
+T('15. Stat boosts reset to all zeros on switch-in', () => {
   const m = mk('Garchomp');
   m.statBoosts.atk = -2;
   m.statBoosts.spe = 2;
@@ -168,19 +244,19 @@ T('11. Stat boosts reset to all zeros on switch-in', () => {
 // ============================================================
 console.log('\nRemoved placeholders (#11 WONTFIX):');
 
-T('12. Choice Band does NOT multiply Attack (absent from Champions)', () => {
+T('16. Choice Band does NOT multiply Attack (absent from Champions)', () => {
   const mBase = mk('Garchomp', { item:'' });
   const mBand = mk('Garchomp', { item:'Choice Band' });
   eq(mBand.getStat('atk'), mBase.getStat('atk'), 'Band no-op');
 });
 
-T('13. Choice Specs does NOT multiply SpA (absent from Champions)', () => {
+T('17. Choice Specs does NOT multiply SpA (absent from Champions)', () => {
   const mBase = mk('Gengar', { item:'' });
   const mSpecs = mk('Gengar', { item:'Choice Specs' });
   eq(mSpecs.getStat('spa'), mBase.getStat('spa'), 'Specs no-op');
 });
 
-T('14. Assault Vest does NOT multiply SpD (absent from Champions)', () => {
+T('18. Assault Vest does NOT multiply SpD (absent from Champions)', () => {
   const mBase = mk('Tyranitar', { item:'' });
   const mAv = mk('Tyranitar', { item:'Assault Vest' });
   eq(mAv.getStat('spd'), mBase.getStat('spd'), 'AV no-op');

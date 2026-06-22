@@ -2328,7 +2328,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.21-sim-context-team-load</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.22-lethal-berry-guard</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -9884,14 +9884,14 @@ class Pokemon {
       return `${this.name}'s Lum Berry cured its status!`;
     }
     // Sitrus Berry: restores 25% HP
-    if (this.item === 'Sitrus Berry' && trigger === 'damage' && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
+    if (this.item === 'Sitrus Berry' && trigger === 'damage' && this.hp > 0 && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
       const heal = Math.floor(this.maxHp * 0.25);
       this.hp = Math.min(this.maxHp, this.hp + heal);
       this.itemConsumed = true;
       return `${this.name}'s Sitrus Berry restored HP!`;
     }
     // Oran Berry: restores 10 HP
-    if (this.item === 'Oran Berry' && trigger === 'damage' && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
+    if (this.item === 'Oran Berry' && trigger === 'damage' && this.hp > 0 && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
       this.hp = Math.min(this.maxHp, this.hp + 10);
       this.itemConsumed = true;
       return `${this.name}'s Oran Berry restored HP!`;
@@ -17442,9 +17442,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.21-sim-context-team-load';
+    return txt || 'v2.1.22-lethal-berry-guard';
   } catch (e) {
-    return 'v2.1.21-sim-context-team-load';
+    return 'v2.1.22-lethal-berry-guard';
   }
 }
 
@@ -22861,19 +22861,29 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-06-07',
+  updated: '2026-06-21',
   metrics: [
-    { label: 'Sim Truth Gate', value: 'Active' },
+    { label: 'Sim Truth Gate', value: 'Mechanics first' },
     { label: 'Live Supabase', value: 'Teams + analyses' },
     { label: 'Showdown DB', value: 'Checking...' },
-    { label: 'Priority Drift', value: 'Guarded' },
-    { label: 'Turn Logs', value: 'Validator ready' }
+    { label: 'Team Format', value: 'Champion/SP focus' },
+    { label: 'Turn Logs', value: 'Fresh logs clean' }
   ],
   shipped: [
     {
       status: 'done',
       title: 'Review tab restored',
       detail: 'The replay-analysis entry point is back as a top-level Review tab with a Review Overview heading.'
+    },
+    {
+      status: 'done',
+      title: 'Live team-load simulation failure fixed',
+      detail: 'v2.1.21 normalized DB and static teams into one sim context so Run Simulation and Run All no longer fail with player team not loaded when a saved DB team lacks UI-only fields.'
+    },
+    {
+      status: 'done',
+      title: 'Lethal Sitrus and Oran timing fixed',
+      detail: 'v2.1.22 prevents damage-trigger berries from restoring a holder that was already reduced to 0 HP before faint cleanup; the fix is covered by focused item tests and bundled for GitHub Pages.'
     },
     {
       status: 'done',
@@ -22892,8 +22902,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
-      title: 'Approved Showdown DB generator staged',
-      detail: 'The repo now has the showdown_entities/champions_overrides migration candidate plus a deterministic generator that emits runtime app data from approved DB rows.'
+      title: 'Showdown sync and DB writer staged',
+      detail: 'The repo has migrations and writer tooling for showdown_sync_runs, showdown_source_files, showdown_entities, and champions_overrides, plus approved-view tests and generated static Showdown assets; runtime consumption of live DB rows remains tracked separately as an open gap.'
     },
     {
       status: 'done',
@@ -22904,11 +22914,6 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Showdown DB source-of-truth plan written',
       detail: 'Repo docs now describe Showdown-mirrored rows plus separate Champions override rows as the target architecture.'
-    },
-    {
-      status: 'done',
-      title: 'Alfredo merge candidate prepared',
-      detail: 'merge-candidate/alfredo-main-2026-06-06 is pushed with Alfredo main merged and the service-worker cache conflict resolved.'
     },
     {
       status: 'done',
@@ -22929,8 +22934,18 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'CI-style local sweep passed',
-      detail: 'The workflow-shaped local pass ran 85 JS test files with the known helper/manual exclusions and zero failures.'
+      title: 'Live exported logs prove the sim now runs',
+      detail: 'Four fresh GitHub Pages turn-log exports from June 21 had no team-load failure, started with four brought Pokemon per side, used side-prefixed stable keys, and ended with results matching final alive counts.'
+    },
+    {
+      status: 'validated',
+      title: 'Item timing regression reproduced and covered',
+      detail: 'Fresh logs showed Sitrus restoring after a 0 HP hit; items_tests.js now verifies surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior.'
+    },
+    {
+      status: 'validated',
+      title: 'CI-style local sweep passed before the current berry patch',
+      detail: 'The previous v2.1.21 team-load fix passed ui_single_sim_smoke.js, DB M3/M4 tests, and the full non-DB suite. The current v2.1.22 patch is covered by focused item tests and needs the full sweep before push.'
     },
     {
       status: 'validated',
@@ -22940,115 +22955,107 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Live preview bundle contains the new safeguards',
-      detail: 'Direct preview checks found Review tab text, stableKey export code, corrected priority values, and the v49 approved-Showdown service-worker cache.'
+      detail: 'The standalone GitHub Pages bundle is rebuilt from source and the service-worker cache is bumped to champions-sim-v54-lethal-berry-guard for the berry timing fix.'
     },
     {
       status: 'validated',
-      title: 'User sample logs show no hard item/order drift',
-      detail: 'Legacy exports pass non-strict validation, but still warn until new hard-refreshed logs include stable identity fields.'
+      title: 'GitHub issue sweep completed',
+      detail: 'Open issues were checked in TheYfactora12 and alfredocox repos. JD flags Alfredo #241 and #240 remain active; Josh/JD data-audit comments are tracked in Alfredo #231 and Y Factor #123.'
     }
   ],
   gaps: [
     {
       status: 'gap',
-      title: 'Showdown mirror migrations are staged but not live yet',
-      detail: 'The repo has migration files for showdown_sync_runs, showdown_source_files, mechanics_validation tables, showdown_entities, and champions_overrides, but they still need to be applied to live Supabase.'
+      title: 'showdown_entities DB rows are not the battle runtime source yet',
+      detail: 'Alfredo #241 says 8,651 showdown_entities rows exist in Supabase, but the battle runtime still uses generated/static bundle data plus local fallbacks. This is the top source-of-truth gap.'
     },
     {
       status: 'gap',
-      title: 'App still consumes generated/static Showdown data',
-      detail: 'The browser bundle now uses generated Showdown rows as the primary local metadata layer, but it is not yet reading approved Showdown entity rows plus Champions override rows from Supabase.'
+      title: 'Champion-only SP selector and import gate is not fully wired',
+      detail: 'Alfredo #240 requires rejecting IV/EV Showdown/SV teams, excluding illegal non-Champions teams from selectors, and renaming remaining EV/IV UI language to SP.'
     },
     {
       status: 'gap',
-      title: 'Merge candidate PR is not open yet',
-      detail: 'The branch is ready, but GitHub PR CI will not run until the pull request is opened from merge-candidate/alfredo-main-2026-06-06.'
+      title: 'Pokemon data audit has unresolved reviewer risk',
+      detail: 'Josh/JD notes on Alfredo #231 flag that Showdown data is present but not fully used for move calculation and regional forms such as Arcanine may still have legacy mismatches.'
     },
     {
       status: 'gap',
-      title: 'Coaching expansion is paused behind sim truth',
-      detail: 'Coach Recommends, Battle IQ expansion, premium coaching reports, and replay-derived claims wait until mechanics, Showdown data, overrides, and strict logs are proven.'
+      title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
+      detail: 'The local main branch has v2.1.22 mechanics/cache/overview changes pending. Push to TheYfactora12 first, verify GitHub Pages, then prepare a reviewed upstream PR to Alfredo.'
     },
     {
       status: 'gap',
-      title: 'Public release gates are not fully enforced yet',
-      detail: 'The release plan names required GitHub branch protection, Pages deploy checks, live smoke, RLS review, rollback, and strict sim-truth gates before broad public launch.'
+      title: 'Mechanics parity is broader than the berry fix',
+      detail: 'The berry bug is one confirmed timing defect. Remaining parity work still needs grouped checks for damage, targeting, redirection, Protect, speed control, switching, status, items, abilities, and Champions overrides.'
     }
   ],
   next: [
     {
       status: 'next',
-      title: 'Open the Alfredo merge candidate PR',
-      detail: 'Create the PR into main, let PR CI run, then review the service-worker cache resolution and M8 prior-snapshot migrations.'
+      title: 'Finish v2.1.22 validation, push Y fork, verify live',
+      detail: 'Run the focused and full non-DB tests, commit/push to TheYfactora12 main, wait for GitHub Pages, then export fresh live logs that prove no 0 HP berry restore remains.'
     },
     {
       status: 'next',
-      title: 'Create public release issues',
-      detail: 'Turn the R0-R8 release milestone map into GitHub issues for repo alignment, hosting, PR gates, Showdown data, Supabase security, simulation truth, UX readiness, launch, and rollback.'
+      title: 'Mirror or update JD issue alignment in the Y fork',
+      detail: 'The Y fork has #137 and #123, but JD Alfredo #241 and #240 should either be mirrored or summarized into the existing Y issues so both repos show the same open truth.'
     },
     {
       status: 'next',
-      title: 'Apply sync/audit DB migrations',
-      detail: 'Start with showdown_sync_runs, showdown_source_files, mechanics_validation_runs, and mechanics_validation_findings.'
+      title: 'Implement Champion/SP selector and import guard',
+      detail: 'Call validateChampionsLegality at load/import boundaries, block IV/EV pastes, exclude illegal teams from player/opponent selectors, and update remaining labels from EV/IV to SP.'
     },
     {
       status: 'next',
-      title: 'Expand simulation truth gates',
-      detail: 'Add tests and release checks for damage, terrain, weather, status, abilities, items, switching, speed ties, Trick Room, and Champions overrides.'
+      title: 'Wire approved Showdown DB data into generated runtime assets',
+      detail: 'Close Alfredo #241 by generating/reading runtime data from approved showdown_entities plus champions_overrides while preserving static offline fallback.'
     },
     {
       status: 'next',
-      title: 'Apply entity and override table migration',
-      detail: 'Run 2026_06_07_showdown_entities_approved_views.sql so approved_showdown_entities and approved_champions_data exist in live Supabase.'
+      title: 'Group mechanics parity work by battle system',
+      detail: 'Continue from exported-log evidence into item timing, damage formula, move targeting, redirection, Protect family, speed control, switching/replacement, status, abilities, and terrain/weather.'
     },
     {
       status: 'next',
-      title: 'Promote fetch output into DB rows',
-      detail: 'Extend fetch_showdown_data.mjs to create sync runs, source hashes, normalized entities, and unapproved diffs.'
-    },
-    {
-      status: 'next',
-      title: 'Generate app assets from approved DB views',
-      detail: 'Emit deterministic generated JS for move metadata, species stats/types, item data, ability data, and legality indexes.'
-    },
-    {
-      status: 'next',
-      title: 'Migrate static JS tables gradually',
-      detail: 'Keep moving static facts behind the Showdown-primary adapter, then replace generated/static assets with approved Supabase views for species, items, abilities, and Champions overrides.'
+      title: 'Prepare upstream PR to Alfredo after Y fork verification',
+      detail: 'Once the live Y test page shows v2.1.22 and fresh logs pass, open a clean upstream PR with the berry fix, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',
       title: 'Add Showdown oracle release gates',
-      detail: 'Use Showdown or @pkmn/sim smoke cases for behavior that cannot be proven from static rows alone.'
+      detail: 'Use Pokemon Showdown / @smogon/calc / @pkmn-style smoke cases for behavior that cannot be proven from static rows alone, with Champions overrides documented separately.'
     }
   ],
   decisions: [
     {
       status: 'decision',
-      title: 'Sync job promotion policy',
-      detail: 'Decide whether scheduled syncs only upload artifacts at first or open reviewed PRs automatically.'
+      title: 'Runtime DB reads vs generated offline bundle',
+      detail: 'Decide whether GitHub Pages should fetch approved rows at runtime or keep Supabase as audit/history while checked-in generated assets remain the offline battle source.'
     },
     {
       status: 'decision',
-      title: 'Runtime DB reads vs static offline bundle',
-      detail: 'Decide if the PWA should fetch approved rows at runtime or keep Supabase as audit/history while GitHub Pages serves generated assets.'
+      title: 'Issue mirroring policy between repos',
+      detail: 'Decide whether JD/Josh issues should be duplicated in both repos or whether the Y fork should keep one tracker issue linking the Alfredo source tickets.'
     },
     {
       status: 'decision',
-      title: 'Champions damage-roll override',
-      detail: 'Confirm whether to patch the 86..100 discrete roll behind a Champions format flag before the oracle harness lands.'
+      title: 'Damage oracle source order',
+      detail: 'Keep Pokemon Showdown and Smogon calc as baseline oracles, but require explicit source notes and tests for Champions-specific differences.'
     }
   ],
   flow: [
     { label: 'Showdown upstream', active: true },
-    { label: 'Raw snapshots', active: false },
+    { label: 'Raw snapshots', active: true },
     { label: 'showdown_entities', active: false },
     { label: 'approved views', active: false },
     { label: 'champions_overrides', active: false },
     { label: 'generated JS', active: true },
+    { label: 'runtime consumers', active: false },
     { label: 'release gates', active: true }
   ],
   docs: [
+    { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
     { label: 'Simulation First', href: '../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md' },
     { label: 'Public Release Plan', href: '../docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md' },
     { label: 'Showdown DB Stress Test', href: '../docs/release/SHOWDOWN_DB_WIRING_STRESS_TEST_2026-06-06.md' },
