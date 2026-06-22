@@ -2,7 +2,7 @@
 
 > Goal: make Pokemon Showdown mirrored rows the canonical static data source, then layer Champions-specific overrides on top before generating app assets.
 
-Operational guardrails for preventing drift and improving review/testing are tracked in `../../docs/release/SOURCE_OF_TRUTH_GUARDRAILS_2026-06-19.md`.
+Operational guardrails for preventing drift and improving review/testing are tracked in `../../docs/release/SOURCE_OF_TRUTH_GUARDRAILS_2026-06-19.md`. Runtime naming equivalents are tracked in `SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md`.
 
 ## Why This Plan Exists
 

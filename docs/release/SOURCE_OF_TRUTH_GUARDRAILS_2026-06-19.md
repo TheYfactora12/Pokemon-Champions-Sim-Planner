@@ -20,7 +20,7 @@ Do not manually patch broad mirrored data in app files when the same fix belongs
 - Never treat an exported turn log as current-build proof unless it includes `schema_version`, `build_id`, `exported_at`, and `source_url`.
 - Never hand-edit generated Showdown data without regenerating it.
 - Never change fallback stats/types without checking whether the generated Showdown row already covers that species.
-- Never let raw Showdown vocabulary cross directly into engine control flow. Normalize generated target strings, category names, and similar upstream terms at the runtime adapter boundary first.
+- Never let raw Showdown vocabulary cross directly into engine control flow. Normalize generated target strings, category names, and similar upstream terms at the runtime adapter boundary first; keep equivalents documented in `poke-sim/docs/SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md`.
 - Never merge source-truth changes without recording the upstream source commit/date when applicable.
 - Never close a data issue from a different branch than the code under review.
 

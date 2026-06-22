@@ -24,6 +24,7 @@ When the migration is complete, `poke-sim/*.md` spec files will be deleted from 
 | [`SHOWDOWN_ORACLE_SIM_TRUTH_PLAN.md`](SHOWDOWN_ORACLE_SIM_TRUTH_PLAN.md) | Sim Truth / Oracle | TBD | Active execution plan |
 | [`SHOWDOWN_SYNC_ARCHITECTURE.md`](SHOWDOWN_SYNC_ARCHITECTURE.md) | Data/DB/Oracle | TBD | Draft architecture |
 | [`SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md`](SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md) | Data/DB/Oracle | TBD | Implementation plan |
+| [`SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md`](SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md) | Runtime/Data Boundary | TBD | Active guardrail |
 | [`POKEMON_DATA_AUDIT_REVIEW.md`](POKEMON_DATA_AUDIT_REVIEW.md) | Data Audit | #117, #123 | Review control |
 | [`PHASE4_DYNAMIC_ADVICE_SPEC.md`](../PHASE4_DYNAMIC_ADVICE_SPEC.md) | 4 — Dynamic Advice | #141, #144 | ✅ Final |
 | [`PHASE4C_DETECTORS_SPEC.md`](../PHASE4C_DETECTORS_SPEC.md) | 4c — Archetype Detectors | #165 | ✅ Final |
@@ -48,4 +49,4 @@ When the migration is complete, `poke-sim/*.md` spec files will be deleted from 
 
 ---
 
-*Last updated: 2026-06-19*
+*Last updated: 2026-06-22*
