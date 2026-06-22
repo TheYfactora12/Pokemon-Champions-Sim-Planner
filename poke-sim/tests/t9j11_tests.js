@@ -1,6 +1,6 @@
 // T9j.11 (Refs #73) Custom teams filter + bulk import/export tests
 //
-// Coverage targets (18 cases):
+// Coverage targets:
 //   Persistence (2):   localStorage round-trip; schema version guard.
 //   Filter chips (4):  All/Preloaded/Custom/Tournament/Mega; counts; active
 //                      state; empty-filter safety.
@@ -9,8 +9,8 @@
 //   Import (4):        JSON round-trip parity; Showdown multi-team parser
 //                      with markers; parser with blank-line separator; parser
 //                      with Windows CRLF endings.
-//   Collision/import metadata (4): name/key collision; Showdown warning
-//                      metadata; hard invalid imports.
+//   Collision/import metadata: name/key collision; Showdown warning
+//                      metadata; hard invalid imports; Champion SP gates.
 //   Misc (1):          empty file yields 0-team result without error.
 //
 // Citations:
@@ -116,6 +116,7 @@ ctx.ChampionsSim = ctx.ChampionsSim || {};
 ctx.ChampionsSim.pokemonDataAudit = require(path.join(ROOT, 'generated', 'pokemon_showdown_legal_data.js'));
 load('move_legality.js');
 ctx.window.ChampionsSim = ctx.ChampionsSim;
+load('legality.js');
 load('ui.js');
 // Expose ctx-scoped const/let bindings on the context object (vm.createContext
 // does NOT auto-attach top-level const/let to the context, only var). This
@@ -132,7 +133,10 @@ vm.runInContext([
   'this.saveCustomTeamsToStorage=saveCustomTeamsToStorage;',
   'this.loadCustomTeamsFromStorage=loadCustomTeamsFromStorage;',
   'this.parseShowdownPaste=parseShowdownPaste;',
-  'this.buildImportedTeamValidation=buildImportedTeamValidation;'
+  'this.buildImportedTeamValidation=buildImportedTeamValidation;',
+  'this.exportTeamToPaste=exportTeamToPaste;',
+  'this.getVisibleTeamKeys=getVisibleTeamKeys;',
+  'this.mergeDbTeamsIntoCatalog=mergeDbTeamsIntoCatalog;'
 ].join(' '), ctx);
 
 const {
@@ -149,7 +153,10 @@ const {
   CUSTOM_TEAMS_SCHEMA_VERSION,
   TEAMS,
   parseShowdownPaste,
-  buildImportedTeamValidation
+  buildImportedTeamValidation,
+  exportTeamToPaste,
+  getVisibleTeamKeys,
+  mergeDbTeamsIntoCatalog
 } = ctx;
 
 let pass = 0, fail = 0;
@@ -432,15 +439,101 @@ T('15b. imported teams carry Showdown-backed warning metadata', () => {
   truthy(team.showdown_source_version, 'source version missing');
 });
 
-T('15c. imported teams with hard rule errors are marked illegal', () => {
+T('15c. imported teams with hard rule errors are rejected', () => {
   resetTeams();
   const res = importCustomTeamsBulk([{ name: 'Illegal Import', members: [
     { name: 'Arcanine', item: 'Sitrus Berry', ability: 'Intimidate', level: 50, nature: 'Hardy', moves: ['Protect'], evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 } },
     { name: 'Arcanine', item: 'Sitrus Berry', ability: 'Intimidate', level: 50, nature: 'Hardy', moves: ['Protect'], evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 } }
   ] }]);
-  const team = TEAMS[res.keys[0]];
-  eq(team.legality_status, 'illegal', 'hard invalid import should be illegal');
-  truthy(Array.isArray(team.import_errors) && team.import_errors.some(e => /duplicate/.test(e)), 'stored hard error missing');
+  eq(res.added, 0, 'hard invalid import should not be added');
+  eq(res.skipped, 1, 'hard invalid import should be skipped');
+  eq(res.keys.length, 0, 'hard invalid import should not return a team key');
+});
+
+T('15d. Champion SP import parses SPs and validates without EV/IV gate errors', () => {
+  resetTeams();
+  const text = [
+    'Garchomp @ Soft Sand',
+    'Ability: Rough Skin',
+    'Level: 50',
+    'SPs: 2 HP / 32 Atk / 32 Spe',
+    'Jolly Nature',
+    '- Earthquake',
+    '- Protect'
+  ].join('\n');
+  const members = parseShowdownPaste(text);
+  eq(members.length, 1);
+  eq(members[0].evs.hp, 2);
+  eq(members[0].evs.atk, 32);
+  eq(members[0].evs.spe, 32);
+  const validation = buildImportedTeamValidation(members, { format: 'champions' });
+  truthy(!validation.errors.some(e => /EVs|IVs|SP spread/.test(e)), 'SP import should not trip format gate');
+});
+
+T('15e. raw Showdown EV/IV imports are rejected for Champion mode', () => {
+  resetTeams();
+  const members = parseShowdownPaste([
+    'Garchomp @ Life Orb',
+    'Ability: Rough Skin',
+    'Level: 50',
+    'EVs: 252 Atk / 252 Spe / 4 HP',
+    'IVs: 0 SpA',
+    'Jolly Nature',
+    '- Earthquake'
+  ].join('\n'));
+  const validation = buildImportedTeamValidation(members, { format: 'champions' });
+  truthy(!validation.valid, 'raw EV/IV import should be invalid');
+  truthy(validation.errors.some(e => /raw Showdown EVs/.test(e)), 'EV gate error missing');
+  truthy(validation.errors.some(e => /IVs are not configurable/.test(e)), 'IV gate error missing');
+  truthy(validation.errors.some(e => /Life Orb/.test(e)), 'item-pool error missing');
+});
+
+T('15f. Champion text export uses SPs, not EVs', () => {
+  const text = exportTeamToPaste({
+    members: [{
+      name: 'Garchomp',
+      item: 'Soft Sand',
+      ability: 'Rough Skin',
+      level: 50,
+      nature: 'Jolly',
+      evs: { hp: 2, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 },
+      moves: ['Earthquake', 'Protect']
+    }]
+  });
+  deepInc(text, 'SPs: 2 HP / 32 Atk / 32 Spe', 'SP export line present');
+  truthy(text.indexOf('EVs:') === -1, 'Champion export should not emit EVs');
+});
+
+T('15g. illegal existing custom teams are hidden from visible sim selectors', () => {
+  resetTeams();
+  TEAMS.custom_bad_item = mkTeam('Bad Item', ['Garchomp']);
+  TEAMS.custom_bad_item.members[0].item = 'Life Orb';
+  TEAMS.custom_bad_item.legality_status = 'illegal';
+  truthy(getVisibleTeamKeys({ includeCustom: true }).indexOf('custom_bad_item') === -1, 'illegal custom team should be hidden');
+});
+
+T('15h. stale DB teams cannot replace legal bundled teams', () => {
+  resetTeams();
+  const before = TEAMS.champions_arena_1st.members.map(m => m.item).join('|');
+  const res = mergeDbTeamsIntoCatalog({
+    champions_arena_1st: {
+      team_id: 'champions_arena_1st',
+      name: 'Stale DB Override',
+      format: 'champions',
+      legality_status: 'legal_inferred',
+      members: [{
+        name: 'Milotic',
+        item: 'Life Orb',
+        ability: 'Competitive',
+        level: 50,
+        nature: 'Bold',
+        evs: { hp:32, atk:0, def:10, spa:23, spd:0, spe:1 },
+        moves: ['Scald', 'Protect']
+      }]
+    }
+  });
+  eq(res.skipped, 1, 'stale illegal DB team should be blocked');
+  eq(TEAMS.champions_arena_1st.members.map(m => m.item).join('|'), before, 'bundled team should remain intact');
 });
 
 // ============================================================

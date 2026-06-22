@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.22-lethal-berry-guard';
+    return txt || 'v2.1.23-champion-item-sp-gate';
   } catch (e) {
-    return 'v2.1.22-lethal-berry-guard';
+    return 'v2.1.23-champion-item-sp-gate';
   }
 }
 
@@ -416,6 +416,23 @@ document.querySelectorAll('.bo-btn').forEach(btn => {
 // SHOWDOWN PASTE PARSER
 // Parses standard PS! export format into team member objects
 // ============================================================
+function _applySpreadLineToEvs(lineText, evs) {
+  const parts = String(lineText || '').split('/').map(s => s.trim());
+  for (const p of parts) {
+    const m = p.match(/(\d+)\s+(\w+)/);
+    if (m) {
+      const val = parseInt(m[1]), stat = m[2].toLowerCase();
+      const key = stat === 'spatk' || stat === 'spa' ? 'spa' :
+                  stat === 'spdef' || stat === 'spd' ? 'spd' :
+                  stat === 'speed' || stat === 'spe' ? 'spe' :
+                  stat === 'attack' || stat === 'atk' ? 'atk' :
+                  stat === 'defense' || stat === 'def' ? 'def' :
+                  stat === 'hp' ? 'hp' : stat;
+      if (key in evs) evs[key] = val;
+    }
+  }
+}
+
 function parseShowdownPaste(text) {
   const members = [];
   const blocks = text.trim().split(/\n\s*\n/).filter(b => b.trim());
@@ -438,6 +455,11 @@ function parseShowdownPaste(text) {
 
     let ability = '', level = 50, nature = 'Hardy', tera = null;
     const evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 };
+    const importFormatSignals = {
+      sawSpsLine: false,
+      sawEvsLine: false,
+      sawIvsLine: false
+    };
     const moves = [];
 
     for (let i = 1; i < lines.length; i++) {
@@ -445,17 +467,15 @@ function parseShowdownPaste(text) {
       if (l.startsWith('Ability:')) ability = l.replace('Ability:', '').trim();
       else if (l.startsWith('Level:')) level = parseInt(l.replace('Level:', '').trim()) || 50;
       else if (l.startsWith('Tera Type:')) tera = l.replace('Tera Type:', '').trim();
+      else if (l.startsWith('SPs:')) {
+        importFormatSignals.sawSpsLine = true;
+        _applySpreadLineToEvs(l.replace('SPs:', ''), evs);
+      }
       else if (l.startsWith('EVs:')) {
-        const evParts = l.replace('EVs:', '').split('/').map(s => s.trim());
-        for (const p of evParts) {
-          const m = p.match(/(\d+)\s+(\w+)/);
-          if (m) {
-            const val = parseInt(m[1]), stat = m[2].toLowerCase();
-            const key = stat === 'spatk' ? 'spa' : stat === 'spdef' ? 'spd' : stat === 'speed' ? 'spe' :
-                        stat === 'attack' ? 'atk' : stat === 'defense' ? 'def' : stat === 'hp' ? 'hp' : stat;
-            if (key in evs) evs[key] = val;
-          }
-        }
+        importFormatSignals.sawEvsLine = true;
+        _applySpreadLineToEvs(l.replace('EVs:', ''), evs);
+      } else if (l.startsWith('IVs:')) {
+        importFormatSignals.sawIvsLine = true;
       } else if (l.endsWith('Nature')) {
         nature = l.replace('Nature', '').trim();
       } else if (l.startsWith('- ')) {
@@ -464,9 +484,31 @@ function parseShowdownPaste(text) {
     }
 
     if (!rawName) continue;
-    members.push({ name: rawName, item, ability, level, nature, evs, moves, role: '', tera });
+    const member = { name: rawName, item, ability, level, nature, evs, moves, role: '', tera };
+    if (importFormatSignals.sawSpsLine || importFormatSignals.sawEvsLine || importFormatSignals.sawIvsLine) {
+      member.import_format_signals = importFormatSignals;
+    }
+    members.push(member);
   }
   return members;
+}
+
+function buildChampionImportGateErrors(members) {
+  var errors = [];
+  (members || []).forEach(function(member) {
+    var name = member && member.name ? member.name : 'Pokemon';
+    var signals = (member && member.import_format_signals) || {};
+    if (signals.sawEvsLine) {
+      errors.push(name + ': raw Showdown EVs are SV-format data; use Champion SPs instead.');
+    }
+    if (signals.sawIvsLine) {
+      errors.push(name + ': IVs are not configurable in Champions; remove IVs before import.');
+    }
+    if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
+      errors.push(name + ': SP spread exceeds Champions caps (max 32 per stat, 66 total).');
+    }
+  });
+  return errors;
 }
 
 function buildImportedTeamValidation(members, opts) {
@@ -486,6 +528,9 @@ function buildImportedTeamValidation(members, opts) {
     sourceVersion: '',
     memberWarnings: {}
   };
+  if ((opts.format || 'champions') === 'champions') {
+    out.errors = out.errors.concat(buildChampionImportGateErrors(members));
+  }
   if (typeof validateTeam === 'function') {
     try {
       var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
@@ -524,8 +569,9 @@ function buildImportedTeamValidation(members, opts) {
 }
 
 // ============================================================
-// SHOWDOWN PASTE EXPORTER
-// Generates a valid PS!/pokepast.es paste from a team object
+// CHAMPION PASTE EXPORTER
+// Generates a Champion-safe text export. Uses SPs instead of Showdown EVs so
+// round-tripping does not re-import SV-format spread lines by mistake.
 // ============================================================
 function exportTeamToPaste(team) {
   if (!team || !team.members) return '';
@@ -537,7 +583,7 @@ function exportTeamToPaste(team) {
     if (m.ability) lines.push(`Ability: ${m.ability}`);
     lines.push(`Level: ${m.level || 50}`);
     if (m.tera) lines.push(`Tera Type: ${m.tera}`);
-    // EVs — only non-zero
+    // SPs — only non-zero
     const evs = m.evs || {};
     const evParts = [];
     const statLabels = { hp:'HP', atk:'Atk', def:'Def', spa:'SpA', spd:'SpD', spe:'Spe' };
@@ -545,7 +591,7 @@ function exportTeamToPaste(team) {
       const v = evs[k] || 0;
       if (v > 0) evParts.push(`${v} ${label}`);
     }
-    if (evParts.length) lines.push(`EVs: ${evParts.join(' / ')}`);
+    if (evParts.length) lines.push(`SPs: ${evParts.join(' / ')}`);
     if (m.nature) lines.push(`${m.nature} Nature`);
     for (const mv of (m.moves || [])) lines.push(`- ${mv}`);
     lines.push(''); // blank line between mons
@@ -676,8 +722,14 @@ function isVisibleTeamInCatalog(teamKey, team, opts) {
   team = normalizeTeamRecordForSim(teamKey, team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null));
   opts = opts || {};
   if (!team || !team.name) return false;
-  if (team.source === 'custom') return opts.includeCustom !== false;
-  return team.format === 'champions';
+  if (team.source === 'custom' && opts.includeCustom === false) return false;
+  if (team.format !== 'champions') return false;
+  if (team.legality_status === 'illegal') return false;
+  if (typeof getTeamLegalityVerdict === 'function') {
+    var verdict = getTeamLegalityVerdict(teamKey, team);
+    if (verdict && !verdict.valid) return false;
+  }
+  return true;
 }
 
 function getVisibleTeamKeys(opts) {
@@ -702,6 +754,32 @@ function getDefaultVisibleOpponentTeamKey(excludeKey) {
     return key !== excludeKey && isSimReadyTeam(key, TEAMS[key], { includeCustom: true });
   });
   return visible[0] || getDefaultVisiblePlayerTeamKey();
+}
+
+function mergeDbTeamsIntoCatalog(dbTeams) {
+  var summary = { added: 0, replaced: 0, skipped: 0, blocked: [] };
+  if (!dbTeams || typeof TEAMS === 'undefined') return summary;
+  for (var key in dbTeams) {
+    if (!Object.prototype.hasOwnProperty.call(dbTeams, key)) continue;
+    var team = dbTeams[key];
+    normalizeTeamRecordForSim(key, team);
+    var verdict = (typeof getTeamLegalityVerdict === 'function')
+      ? getTeamLegalityVerdict(key, team)
+      : { valid: true, errors: [] };
+    if (!team || team.format !== 'champions' || !verdict.valid) {
+      summary.skipped++;
+      summary.blocked.push({
+        key: key,
+        name: team && team.name,
+        errors: (verdict && verdict.errors) || ['Not a Champion-format legal team']
+      });
+      continue;
+    }
+    if (TEAMS[key]) summary.replaced++;
+    else summary.added++;
+    TEAMS[key] = team;
+  }
+  return summary;
 }
 
 var currentPlayerKey = getDefaultVisiblePlayerTeamKey();
@@ -1706,6 +1784,10 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
     var key = _uniqueCustomKey(t.name);
     var name = _uniqueTeamName(t.name || 'Imported Team');
     var validation = buildImportedTeamValidation(t.members, { name: name, format: 'champions' });
+    if (!validation.valid) {
+      skipped++;
+      continue;
+    }
     TEAMS[key] = {
       name: name,
       label: 'CUSTOM',
@@ -1714,7 +1796,7 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
       members: t.members,
       source: 'custom',
       format: 'champions',
-      legality_status: validation.valid ? 'unverified' : 'illegal',
+      legality_status: 'unverified',
       import_warnings: validation.warnings,
       import_errors: validation.errors,
       showdown_source_version: validation.sourceVersion,
@@ -1857,15 +1939,15 @@ function renderStatPanelHtml(member) {
     const natureCls = key === plus ? ' plus' : key === minus ? ' minus' : '';
     return '<div class="stat-panel-row">' +
       '<span class="stat-panel-stat">' + STAT_PANEL_LABELS[key] + '</span>' +
-      '<span class="stat-panel-pill">EV ' + (parseInt(evs[key], 10) || 0) + '</span>' +
-      '<span class="stat-panel-pill">IV ' + (ivs[key] == null ? 31 : parseInt(ivs[key], 10) || 0) + '</span>' +
+      '<span class="stat-panel-pill">SP ' + (parseInt(evs[key], 10) || 0) + '</span>' +
+      '<span class="stat-panel-pill">Fixed IV ' + (ivs[key] == null ? 31 : parseInt(ivs[key], 10) || 0) + '</span>' +
       '<span class="stat-panel-nature' + natureCls + '">' + natureMark + '</span>' +
     '</div>';
   }).join('');
   return '<section class="stat-panel" aria-label="Stat panel">' +
     '<div class="stat-panel-head">' +
       '<span>Stats</span>' +
-      '<span class="stat-panel-meta">' + _escapeHtml(nature) + ' · EV ' + evTotal + '/510</span>' +
+      '<span class="stat-panel-meta">' + _escapeHtml(nature) + ' · SP ' + evTotal + '/66</span>' +
     '</div>' +
     '<div class="stat-panel-grid">' + rows + '</div>' +
   '</section>';
@@ -1965,7 +2047,7 @@ function renderTeamStatDetailHtml(model) {
       '</div>' +
       '<div class="team-detail-section"><h3>Stats</h3>' +
         '<div class="team-detail-table-wrap"><table class="team-detail-table">' +
-          '<thead><tr><th>Stat</th><th>Base</th><th>EV</th><th>IV</th><th>Final</th></tr></thead>' +
+          '<thead><tr><th>Stat</th><th>Base</th><th>SP</th><th>Fixed IV</th><th>Final</th></tr></thead>' +
           '<tbody>' + STAT_PANEL_KEYS.map(statRow).join('') + '</tbody>' +
         '</table></div>' +
       '</div>' +
@@ -2088,7 +2170,7 @@ function openEditorForm(idx) {
   const evsHtml = ['hp','atk','def','spa','spd','spe'].map(s=>`
     <div class="form-group">
       <label class="form-label">${s.toUpperCase()}</label>
-      <input class="form-input" id="ev-${s}" value="${_escapeHtml(String(m.evs?.[s]||0))}" type="number" min="0" max="252"/>
+      <input class="form-input" id="ev-${s}" value="${_escapeHtml(String(m.evs?.[s]||0))}" type="number" min="0" max="32"/>
     </div>`).join('');
   form.innerHTML = `
     <div class="editor-poke-name">${_escapeHtml(m.name || '')}</div>
@@ -2102,7 +2184,7 @@ function openEditorForm(idx) {
     <div class="moves-2col">${(m.moves||[]).map((mv,i)=>`<input class="form-input" id="ed-mv-${i}" value="${_escapeHtml(mv)}"/>`).join('')}</div></div>
     <div id="editor-move-legality">${renderSetEditorMoveLegalityHtml(m)}</div>
     ${renderStatPanelHtml(m)}
-    <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">EVs (max 510 total)</label>
+    <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">SPs (max 66 total, 32 per stat)</label>
     <div class="ev-6col">${evsHtml}</div></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
       <button class="btn-save" id="save-edits">Save Changes</button>
@@ -2345,6 +2427,12 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
     const newKey = 'custom_' + Date.now();
     const guessedName = members[0] ? `${members[0].name}'s Team` : 'Imported Team';
     const validation = buildImportedTeamValidation(members, { name: guessedName, format: 'champions' });
+    if (!validation.valid) {
+      statusEl.textContent = validation.errors.slice(0, 3).join(' ');
+      statusEl.className = 'modal-status err';
+      showImportPreview(members);
+      return;
+    }
     TEAMS[newKey] = {
       name: guessedName,
       label: 'CUSTOM',
@@ -2354,7 +2442,7 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
       // T9f: persistence + legality flags
       source: 'custom',
       format: 'champions',
-      legality_status: validation.valid ? 'unverified' : 'illegal',
+      legality_status: 'unverified',
       import_warnings: validation.warnings,
       import_errors: validation.errors,
       showdown_source_version: validation.sourceVersion,
@@ -2380,8 +2468,14 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
     const teamKeys = Object.keys(TEAMS);
     if (!teamKeys.includes(slot)) { statusEl.textContent = 'Unknown slot'; statusEl.className='modal-status err'; return; }
     const validation = buildImportedTeamValidation(members, { name: TEAMS[slot].name, format: TEAMS[slot].format || 'champions' });
+    if (!validation.valid) {
+      statusEl.textContent = validation.errors.slice(0, 3).join(' ');
+      statusEl.className = 'modal-status err';
+      showImportPreview(members);
+      return;
+    }
     TEAMS[slot].members = members;
-    TEAMS[slot].legality_status = validation.valid ? 'unverified' : 'illegal';
+    TEAMS[slot].legality_status = 'unverified';
     TEAMS[slot].import_warnings = validation.warnings;
     TEAMS[slot].import_errors = validation.errors;
     TEAMS[slot].showdown_source_version = validation.sourceVersion;
@@ -5164,7 +5258,12 @@ var CLASSIFY_POKEMON_LEGACY_ROLES = [
 var CLASSIFY_SETUP_MOVES = ['Dragon Dance', 'Swords Dance', 'Calm Mind', 'Clangorous Soul', 'Coil', 'Nasty Plot', 'Bulk Up'];
 var CLASSIFY_PIVOT_MOVES = ['Parting Shot', 'U-turn', 'Flip Turn', 'Volt Switch', 'Baton Pass'];
 var CLASSIFY_SACRIFICE_MOVES = ['Lunar Dance', 'Memento', 'Healing Wish', 'Explosion', 'Final Gambit', 'Shed Tail'];
-var CLASSIFY_WIN_ITEMS = ['Life Orb', 'Choice Scarf', 'Booster Energy'];
+var CLASSIFY_WIN_ITEMS = [
+  'Choice Scarf',
+  'Hard Stone','Soft Sand','Black Glasses','Charcoal','Mystic Water',
+  'Never-Melt Ice','Dragon Fang','Fairy Feather','Magnet','Miracle Seed',
+  'Twisted Spoon'
+];
 var CLASSIFY_LEAD_ITEMS = ['Focus Sash', 'Eject Button', 'Mental Herb'];
 
 function _classifyHasAny(mon, list) {
@@ -5485,7 +5584,7 @@ var COACHING_RULES = [
     id: 'most-lost',
     severity: 'suggested', priority: 70,
     when: function(c){ return c.trends.mostLostMons && c.trends.mostLostMons.length; },
-    say: function(c){ return c.trends.mostLostMons[0] + ' faints most often in losses. Bulk investment, Assault Vest, or Sitrus Berry would increase your ceiling here.'; }
+    say: function(c){ return c.trends.mostLostMons[0] + ' faints most often in losses. Bulk SP investment, Sitrus Berry, Leftovers, or a defensive berry would increase your ceiling here.'; }
   },
   {
     id: 'opp-finisher',
@@ -5561,6 +5660,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Champion item and SP gate added',
+      detail: 'v2.1.23 adds a positive Champions item allowlist, blocks stale DB teams before they replace bundled teams, rejects raw EV/IV imports, exports Champion SPs, and keeps illegal teams out of sim selectors.'
+    },
+    {
+      status: 'done',
       title: 'Stable Pokemon identity in sim exports',
       detail: 'Battle snapshots now carry stable roster keys, stable HP maps, bench/active stable keys, and item-consumption state.'
     },
@@ -5582,7 +5686,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Exported log validator added',
-      detail: 'tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, and observed priority order.'
+      detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, and observed priority order.'
     },
     {
       status: 'done',
@@ -5609,12 +5713,17 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Live exported logs prove the sim now runs',
-      detail: 'Four fresh GitHub Pages turn-log exports from June 21 had no team-load failure, started with four brought Pokemon per side, used side-prefixed stable keys, and ended with results matching final alive counts.'
+      detail: 'Five fresh GitHub Pages turn-log exports from June 21 had no team-load failure, passed the stable turn-log validator with zero warnings, and ended with results matching final alive counts.'
     },
     {
       status: 'validated',
       title: 'Item timing regression reproduced and covered',
       detail: 'Fresh logs showed Sitrus restoring after a 0 HP hit; items_tests.js now verifies surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior.'
+    },
+    {
+      status: 'validated',
+      title: 'Live logs exposed stale DB item drift',
+      detail: 'The June 21 live logs still showed SV/unsupported items from loaded opponent teams, including Life Orb, Assault Vest, Choice Specs, Rocky Helmet, Safety Goggles, and Loaded Dice. The v2.1.23 DB merge gate blocks those rows before they can enter selectors or Run All.'
     },
     {
       status: 'validated',
@@ -5629,7 +5738,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Live preview bundle contains the new safeguards',
-      detail: 'The standalone GitHub Pages bundle is rebuilt from source and the service-worker cache is bumped to champions-sim-v54-lethal-berry-guard for the berry timing fix.'
+      detail: 'The standalone GitHub Pages bundle is rebuilt from source and the service-worker cache must be bumped for every legality or data-path release.'
     },
     {
       status: 'validated',
@@ -5645,18 +5754,13 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
-      title: 'Champion-only SP selector and import gate is not fully wired',
-      detail: 'Alfredo #240 requires rejecting IV/EV Showdown/SV teams, excluding illegal non-Champions teams from selectors, and renaming remaining EV/IV UI language to SP.'
-    },
-    {
-      status: 'gap',
       title: 'Pokemon data audit has unresolved reviewer risk',
-      detail: 'Josh/JD notes on Alfredo #231 flag that Showdown data is present but not fully used for move calculation and regional forms such as Arcanine may still have legacy mismatches.'
+      detail: 'Josh/JD notes on Alfredo #231 flag that Showdown data is present but not fully used for every move calculation and regional forms such as Arcanine may still need targeted review.'
     },
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'The local main branch has v2.1.22 mechanics/cache/overview changes pending. Push to TheYfactora12 first, verify GitHub Pages, then prepare a reviewed upstream PR to Alfredo.'
+      detail: 'The local main branch has v2.1.23 item/SP/DB-gate changes pending. Push to TheYfactora12 first, verify GitHub Pages, then prepare a reviewed upstream PR to Alfredo.'
     },
     {
       status: 'gap',
@@ -5667,8 +5771,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Finish v2.1.22 validation, push Y fork, verify live',
-      detail: 'Run the focused and full non-DB tests, commit/push to TheYfactora12 main, wait for GitHub Pages, then export fresh live logs that prove no 0 HP berry restore remains.'
+      title: 'Finish v2.1.23 validation, push Y fork, verify live',
+      detail: 'Run focused and full tests, commit/push to TheYfactora12 main, wait for GitHub Pages, then export fresh live logs that prove stale SV items are no longer selected.'
     },
     {
       status: 'next',
@@ -5677,8 +5781,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
-      title: 'Implement Champion/SP selector and import guard',
-      detail: 'Call validateChampionsLegality at load/import boundaries, block IV/EV pastes, exclude illegal teams from player/opponent selectors, and update remaining labels from EV/IV to SP.'
+      title: 'Apply Champion item cleanup to live Supabase rows',
+      detail: 'Use the v2.1.23 blocked-row evidence to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
     },
     {
       status: 'next',
@@ -6860,7 +6964,7 @@ var T9J16_RULES = [
     },
     severity: function(){ return 'high'; },
     explain: function(){ return 'You are losing your first mon early and switching often. That is the read-heavy pattern of a player trying to outguess instead of outplay.'; },
-    correct: function(){ return 'Simplify your first two turns. Click your highest-EV move and force the opponent to respond. Switch only when shape demands it.'; }
+    correct: function(){ return 'Simplify your first two turns. Click your strongest damage move and force the opponent to respond. Switch only when shape demands it.'; }
   },
   {
     id: 'role-overlap-warning',
@@ -8036,7 +8140,7 @@ function csTop3Leads(team, identity, results, fmt) {
       var t1 = '';
       if (c.tags.hasFO && c.tags.hasSpeed) t1 = 'Fake Out the bigger threat. Set ' + (c.mons.find(function(m){ return _pdfHasAny(m, PDF_TAILWIND); }) ? 'Tailwind' : 'Trick Room') + ' with the partner.';
       else if (c.tags.hasFO) t1 = 'Fake Out the priority threat, click damage with the partner if range is clean.';
-      else if (c.tags.hasSpeed) t1 = 'Set speed control immediately. Partner clicks the highest-EV damage move.';
+      else if (c.tags.hasSpeed) t1 = 'Set speed control immediately. Partner clicks the strongest damage move.';
       else if (c.tags.hasRedirect) t1 = 'Click redirection. Partner sets up or fires the strongest spread.';
       else if (c.tags.hasIntim) t1 = 'Drop Intimidate, then click coverage on the bulkier opposing slot.';
       else t1 = 'Open with strongest spread or coverage move that can KO into the most likely lead.';
@@ -8320,7 +8424,7 @@ function csMoveLines(team, identity, leadGuide) {
       turn_1: 'Lead a Defiant or Competitive ability if you have one. Otherwise, click special attacks to bypass Atk drops.',
       turn_2: 'Force them to swap. Punish predictable Intimidate cycle with Taunt or status.',
       what_to_avoid: 'Do not stack physical attackers. Their Intimidate cycle eats your damage.',
-      fallback_plan: 'Pivot to Assault Vest special attackers to ignore Intimidate.',
+      fallback_plan: 'Pivot to bulkier special attackers or a Defiant/Competitive response to ignore Intimidate.',
       source_label: csLabelInferred(['smogon_vgc'])
     });
   }
@@ -8539,7 +8643,7 @@ function csRiskProfile(team, scoreCard) {
   if (fragile >= 2) risks.push({
     category: 'lead_fragility', severity: fragile >= 3 ? 'high' : 'moderate',
     why_it_matters: fragile + ' lead candidates have low bulk product and die to Fake Out + spread.',
-    how_to_reduce: 'Invest more EVs in HP/Def or Sp.Def on at least one lead, or add a bulky pivot.'
+    how_to_reduce: 'Invest more SPs in HP/Def or Sp.Def on at least one lead, or add a bulky pivot.'
   });
 
   var damagers = members.filter(function(m){
@@ -11232,10 +11336,13 @@ if (typeof window !== 'undefined') {
       if (_adapter && _adapter.enabled && typeof _adapter.loadTeamsFromDB === 'function') {
         var dbTeams = await _adapter.loadTeamsFromDB();
         if (dbTeams && Object.keys(dbTeams).length && typeof TEAMS !== 'undefined') {
-          Object.assign(TEAMS, dbTeams);
+          var dbMerge = (typeof mergeDbTeamsIntoCatalog === 'function')
+            ? mergeDbTeamsIntoCatalog(dbTeams)
+            : { added: 0, replaced: Object.keys(dbTeams).length, skipped: 0, blocked: [] };
+          if (typeof mergeDbTeamsIntoCatalog !== 'function') Object.assign(TEAMS, dbTeams);
           if (typeof normalizeTeamCatalogForSim === 'function') normalizeTeamCatalogForSim();
-          UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length });
-          setDbChip('connected', 'Live team database connected - loaded ' + Object.keys(dbTeams).length + ' teams from the shared roster store');
+          UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length, merge: dbMerge });
+          setDbChip('connected', 'Live team database connected - accepted ' + (dbMerge.added + dbMerge.replaced) + ' teams, blocked ' + dbMerge.skipped + ' stale/illegal rows');
         } else {
           // null or empty → fall back to bundled TEAMS, surface chip
           setDbChip('offline', 'Live team database returned no teams - using bundled roster data');

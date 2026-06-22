@@ -43,7 +43,9 @@
 // rotation after central sim-context and DB team normalization fixes.
 // v54-lethal-berry-guard [2026-06-21] - Prevent damage-trigger berries from
 // restoring holders that were reduced to 0 HP before faint cleanup.
-const CACHE_NAME = 'champions-sim-v54-lethal-berry-guard';
+// v55-champion-item-sp-gate [2026-06-21] - Positive Champions item allowlist,
+// SP import/export gate, and stale DB-team rejection before selector rebuild.
+const CACHE_NAME = 'champions-sim-v55-champion-item-sp-gate';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

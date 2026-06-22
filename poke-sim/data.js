@@ -871,7 +871,7 @@ const TEAMS = {
         "status": "unproven"
     },
     "legality_status": "legal_inferred",
-    "legality_notes": "Champions starter team. Original anti-Trick-Room shell rescaled onto Champions SP values and kept on Champions Reg M-A metadata for review-mode parity.",
+    "legality_notes": "Champions starter team. Original anti-Trick-Room shell rescaled onto Champions SP values and repaired to the verified Champions item pool for review-mode parity.",
     "assumption_register": [
         "This remains a user-authored starter team, not a pinned event export.",
         "The original anti-Trick-Room shell was preserved while converting its spreads to Champions SP scale."
@@ -901,7 +901,7 @@ const TEAMS = {
       },
       {
         "name": "Arcanine",
-        "item": "Life Orb",
+        "item": "Hard Stone",
         "ability": "Intimidate",
         "nature": "Adamant",
         "level": 50,
@@ -923,7 +923,7 @@ const TEAMS = {
       },
       {
         "name": "Garchomp",
-        "item": "Rocky Helmet",
+        "item": "Soft Sand",
         "ability": "Rough Skin",
         "nature": "Jolly",
         "level": 50,
@@ -1671,7 +1671,8 @@ const TEAMS = {
     "legality_status": "legal",
     "legality_notes": "",
     "assumption_register": [
-      "2026-05-24 audit: Sinistcha item corrected to Kouba Berry from the public P08QQ5NU9C rental mirror after a repo transcription error duplicated Sitrus Berry."
+      "2026-05-24 audit: Sinistcha item was recorded as Kouba Berry from the public P08QQ5NU9C rental mirror after a repo transcription error duplicated Sitrus Berry.",
+      "2026-06-21 Champion item-pool gate: Kouba Berry is not in the verified Champions item list, so the shipped sim uses Coba Berry until a stronger source proves otherwise."
     ],
     "members": [
       {
@@ -1895,7 +1896,7 @@ const TEAMS = {
       },
       {
         "name": "Farigiraf",
-        "item": "Safety Goggles",
+        "item": "Twisted Spoon",
         "ability": "Armor Tail",
         "nature": "Relaxed",
         "evs": {
@@ -2182,7 +2183,7 @@ const TEAMS = {
       },
       {
         "name": "Sinistcha",
-        "item": "Kouba Berry",
+        "item": "Coba Berry",
         "ability": "Hospitality",
         "nature": "Bold",
         "evs": {
@@ -4280,7 +4281,7 @@ const TEAMS = {
       },
       {
         "name": "Vanilluxe",
-        "item": "Covert Cloak",
+        "item": "Never-Melt Ice",
         "ability": "Snow Warning",
         "nature": "Modest",
         "evs": {

@@ -39,27 +39,15 @@ The `_stripForm()` helper strips regional/Mega/Therian/etc. suffixes so banned s
 
 ---
 
-## Banned Items (Not in Champions item pool at launch)
+## Legal Item Pool
 
-Enforced by `CHAMPIONS_BANNED_ITEMS` in `legality.js`.
+Enforced by `CHAMPIONS_LEGAL_ITEMS` in `legality.js`.
 
-| Item | Reason |
-|------|--------|
-| Life Orb | Not in game ([IGN](https://www.ign.com/wikis/pokemon-champions/Biggest_Changes_Explained), [games.gg](https://games.gg/news/pokemon-champions-items-list-meta/)) |
-| Choice Band | Not in game |
-| Choice Specs | Not in game |
-| Assault Vest | Not in game |
-| Rocky Helmet | Not in game |
-| Heavy-Duty Boots | Not in game |
-| Black Sludge | Not in game |
-| Eviolite | Not in game |
-| Light Clay | Not in game |
-| Heat/Damp/Smooth/Icy Rock | Not confirmed in item pool |
-| Terrain Extender | Not confirmed in item pool |
-| Toxic Orb | Not confirmed |
-| Flame Orb | Not confirmed |
+The validator now uses a positive allowlist from the Game8 Champions item list. Game8 marks that page as last updated April 10, 2026 and states that the listed items are the only ones available so far. Item effects still come from Showdown/generated runtime data; the allowlist only controls Champions availability.
 
-These must be monitored for future patches; the Champions meta is young.
+Known absent SV carryovers are also kept in `CHAMPIONS_BANNED_ITEMS` so error messages stay clear. Examples include Life Orb, Choice Band, Choice Specs, Assault Vest, Rocky Helmet, Safety Goggles, Covert Cloak, Clear Amulet, Booster Energy, and Loaded Dice.
+
+Any held item outside `CHAMPIONS_LEGAL_ITEMS` is a hard legality error until a stronger Champions source confirms it.
 
 ---
 
@@ -92,7 +80,8 @@ Returned from `validateChampionsLegality(team)` in `{severity, code, message}` f
 |------|----------|---------|
 | `BANNED` | error | Pokemon base species on `CHAMPIONS_BANNED_POKEMON` |
 | `FAKEMON` | error | Pokemon name in `FAKEMON_BLOCKLIST` (currently empty) |
-| `ITEM_ABSENT` | error | Held item in `CHAMPIONS_BANNED_ITEMS` |
+| `ITEM_ABSENT` | error | Held item is a known absent SV carryover |
+| `ITEM_NOT_IN_CHAMPIONS_POOL` | error | Held item is outside `CHAMPIONS_LEGAL_ITEMS` |
 | `MEGA_STONE_MISMATCH` | error | Mega Stone held by non-matching species |
 | `HOME_TRANSFER` | warn | HOME-transfer-only Mega (legal but not shop-obtainable) |
 
@@ -112,6 +101,6 @@ Species Clause and Item Clause are enforced separately in `engine.js::validateTe
 
 Not enforced by `legality.js` yet; filed as follow-up tickets:
 
-- Absent-item set maintenance on patch notes
+- Legal-item allowlist maintenance on patch notes
 - Mewtwo X/Y, Latias, Latios — stones not in Game8 item list as of April 2026; may become Reg M-B content
 - Mega Raichu — Beebom tier list reference unverified; stone not confirmed in item pool

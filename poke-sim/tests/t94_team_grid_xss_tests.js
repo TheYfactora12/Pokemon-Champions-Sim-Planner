@@ -177,12 +177,12 @@ T('1. renderTeamsGrid escapes hostile team name and description', () => {
   falsy(teamsGrid.innerHTML.includes('<img src=x onerror=alert(1)>'), 'raw image tag leaked');
 });
 
-T('2. renderTeamsGrid surfaces invalid team legality reason', () => {
+T('2. renderTeamsGrid hides invalid teams from the runnable catalog', () => {
   vm.runInContext('TEAMS_FILTER = "custom";', ctx);
   renderTeamsGrid();
-  inc(teamsGrid.innerHTML, 'NOT LEGAL', 'illegal badge');
-  inc(teamsGrid.innerHTML, 'Not legal for current sim rules', 'legality note');
-  inc(teamsGrid.innerHTML, 'Item Clause violation: duplicate items: Sitrus Berry', 'legality reason');
+  falsy(teamsGrid.innerHTML.includes('Invalid Item Clause Fixture'), 'invalid team name leaked');
+  falsy(teamsGrid.innerHTML.includes('NOT LEGAL'), 'illegal badge should not render for hidden teams');
+  falsy(teamsGrid.innerHTML.includes('Item Clause violation: duplicate items: Sitrus Berry'), 'hidden legality reason leaked');
 });
 
 T('3. renderTeamsGrid labels inferred Champions teams with stat-aware fallback copy', () => {

@@ -33,6 +33,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Review tab restored');
   inc(ui, 'Live team-load simulation failure fixed');
   inc(ui, 'Lethal Sitrus and Oran timing fixed');
+  inc(ui, 'Champion item and SP gate added');
   inc(ui, 'Stable Pokemon identity in sim exports');
   inc(ui, 'Move priority aligned with Showdown data');
   inc(ui, 'Showdown primary move metadata for imported teams');
@@ -41,7 +42,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Public release milestone map documented');
   inc(ui, 'Live exported logs prove the sim now runs');
   inc(ui, 'Item timing regression reproduced and covered');
-  inc(ui, 'champions-sim-v54-lethal-berry-guard');
+  inc(ui, 'v2.1.23 item/SP/DB-gate changes pending');
   inc(ui, 'GitHub issue sweep completed');
 });
 
@@ -52,21 +53,21 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'approvedCounts');
   inc(ui, 'sourceFiles');
   inc(ui, 'showdown_entities DB rows are not the battle runtime source yet');
-  inc(ui, 'Champion-only SP selector and import gate is not fully wired');
+  inc(ui, 'Live logs exposed stale DB item drift');
   inc(ui, 'Pokemon data audit has unresolved reviewer risk');
   inc(ui, 'Current Y fork changes are not pushed upstream to Alfredo yet');
   inc(ui, 'Mechanics parity is broader than the berry fix');
   inc(ui, 'Alfredo #241');
-  inc(ui, 'Alfredo #240');
+  inc(ui, 'Life Orb');
   inc(ui, 'showdown_sync_runs');
   inc(ui, 'showdown_entities');
   inc(ui, 'champions_overrides');
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Finish v2.1.22 validation, push Y fork, verify live');
+  inc(ui, 'Finish v2.1.23 validation, push Y fork, verify live');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
-  inc(ui, 'Implement Champion/SP selector and import guard');
+  inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
   inc(ui, 'Group mechanics parity work by battle system');
   inc(ui, 'Prepare upstream PR to Alfredo after Y fork verification');

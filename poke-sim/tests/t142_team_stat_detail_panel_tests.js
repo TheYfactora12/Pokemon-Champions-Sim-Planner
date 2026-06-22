@@ -122,7 +122,7 @@ T('2. final stats use engine Pokemon formula', () => {
 
 T('3. rendered modal exposes all acceptance fields', () => {
   const html = renderTeamStatDetailHtml(buildTeamStatDetailModel('__detail_fixture', 'Garchomp'));
-  ['Base', 'EV', 'IV', 'Final', 'Ability', 'Item', 'BST', 'Total', 'Moves', 'Roles', 'Dragon / Ground', 'Garchomp'].forEach(s => inc(html, s));
+  ['Base', 'SP', 'Fixed IV', 'Final', 'Ability', 'Item', 'BST', 'Total', 'Moves', 'Roles', 'Dragon / Ground', 'Garchomp'].forEach(s => inc(html, s));
   ['Earthquake', 'Dragon Claw', 'Protect', 'Rock Slide', 'Rough Skin', 'Choice Scarf', 'Jolly'].forEach(s => inc(html, s));
 });
 
