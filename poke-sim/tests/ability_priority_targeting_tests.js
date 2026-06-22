@@ -350,5 +350,31 @@ T('11. Solar Power recoil is logged at end of turn under sun', function() {
     'Solar Power recoil log missing');
 });
 
+T('12. Scrappy ignores Intimidate Attack drops when active on entry', function() {
+  const playerTeam = team([{
+    name: 'Kangaskhan',
+    item: '',
+    ability: 'Scrappy',
+    nature: 'Jolly',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 0, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 }
+  }]);
+  const oppTeam = team([{
+    name: 'Incineroar',
+    item: '',
+    ability: 'Intimidate',
+    nature: 'Careful',
+    level: 50,
+    moves: ['Protect'],
+    evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 4 }
+  }]);
+  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'singles', seed: [53, 54, 55, 56], maxTurns: 1 });
+  truthy(battle.log.some(line => String(line).includes('Kangaskhan ignored Intimidate!')),
+    'Scrappy should ignore Intimidate');
+  falsy(battle.log.some(line => String(line).includes("Kangaskhan's Attack fell!")),
+    'Scrappy target should not receive the Intimidate Attack drop');
+});
+
 console.log('\nability priority / targeting:', pass + ' pass, ' + fail + ' fail\n');
 process.exit(fail ? 1 : 0);

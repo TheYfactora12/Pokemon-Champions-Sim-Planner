@@ -9,8 +9,8 @@ Scope:
 
 Summary:
 - unique curated-team + mega abilities audited: 80
-- already modeled by the engine: 50
-- still unmodeled and classified: 30
+- already modeled by the engine: 55
+- still unmodeled and classified: 25
 
 Why this exists:
 - Issue #125 showed repeated review friction around ability gaps being noticed ad hoc.
@@ -23,8 +23,8 @@ Classification buckets:
 
 Highest-priority shipped-team gaps:
 - `Shadow Tag`: changes switch options and perish-style endgames.
-- `Sheer Force`, `Fairy Aura`: direct damage modifiers with real KO-range impact.
-- `Infiltrator`, `Mold Breaker`, `Scrappy`, `Stalwart`: targeting, immunity, or defensive-bypass mechanics that can flip matchups.
+- `Gale Wings`, `Skill Link`, `Stamina`, `Protean`: turn order, multi-hit damage, snowball defense, or type-changing mechanics with matchup impact.
+- `Flower Veil`, `Stalwart`, `Mind's Eye`, `No Guard`: support, targeting, immunity, and accuracy mechanics that can flip matchups.
 
 Implemented after this audit:
 - `Prankster`: real battle priority for status moves, with Dark-type immunity on targeted opposing status.
@@ -55,6 +55,12 @@ Implemented after this audit:
 - `Filter`: Showdown-aligned super-effective damage reduction.
 - `Tinted Lens`: Showdown-aligned resisted-hit damage boost.
 - `Earth Eater`: Showdown-aligned Ground immunity and one-quarter max HP recovery on absorbed hits.
+- `Levitate`: Showdown-aligned Ground immunity for non-Flying Levitate users.
+- `Sheer Force`: Showdown-aligned 1.3x secondary-effect move damage boost, with modeled secondary effects suppressed.
+- `Fairy Aura`: Showdown-aligned Fairy damage aura modifier.
+- `Scrappy`: Showdown-aligned Normal/Fighting hits into Ghost targets plus Intimidate immunity.
+- `Infiltrator`: Showdown-aligned screen and Substitute bypass for supported damage/status paths.
+- `Mold Breaker`: Conservative Showdown-aligned bypass for currently modeled defensive ability hooks, defender `Unaware`, `Sturdy`, `Levitate`, and `Earth Eater`.
 
 Lower-priority or no-op examples:
 - `Frisk`: item reveal is effectively already visible in the sim.
@@ -64,16 +70,17 @@ Lower-priority or no-op examples:
 Recommended implementation order:
 1. Priority and targeting control
    - `Shadow Tag`
-2. Damage modifiers with broad shipped-team exposure
-   - `Sheer Force`
-   - `Fairy Aura`
-3. Defensive and board-state mechanics
-   - `Infiltrator`
-   - `Mold Breaker`
-   - `Scrappy`
-4. Support and mitigation mechanics
+2. Turn-order and multi-hit mechanics
+   - `Gale Wings`
+   - `Skill Link`
+3. Defensive and snowball mechanics
+   - `Stamina`
+   - `Innards Out`
+4. Support, accuracy, and targeting mechanics
    - `Flower Veil`
    - `Stalwart`
+   - `Mind's Eye`
+   - `No Guard`
 
 Guardrail:
 - `tests/ability_coverage_audit_tests.js` compares the current unmodeled ability inventory against `tests/fixtures/ability_gap_classification.json`.
