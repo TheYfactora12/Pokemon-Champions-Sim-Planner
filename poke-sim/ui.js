@@ -3337,7 +3337,19 @@ function csRenderTurnLogRows(turnLog, opts) {
 
 function downloadReplayTurnLog(replay) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
+  var sourceUrl = null;
+  try {
+    sourceUrl = (typeof location !== 'undefined' && location.href)
+      || (typeof window !== 'undefined' && window.location && window.location.href)
+      || null;
+  } catch (_e) {
+    sourceUrl = null;
+  }
   var payload = {
+    schema_version: 'champions-turn-log-v2',
+    exported_at: new Date().toISOString(),
+    build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
+    source_url: sourceUrl,
     seed: replay.seed || null,
     result: replay.result || null,
     winCondition: replay.winCondition || null,
