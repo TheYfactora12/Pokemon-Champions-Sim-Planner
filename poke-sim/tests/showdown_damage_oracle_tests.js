@@ -725,5 +725,103 @@ T('39. Earth Eater Ground immunity matches Showdown zero damage', () => {
   eqRange(sim, oracle, 'earth eater');
 });
 
+T('40. Levitate Ground immunity matches Showdown zero damage', () => {
+  const sim = simRange(
+    simMon('Garchomp', { nature: 'Adamant', moves: ['Earthquake'], evs: { atk: 252 } }),
+    simMon('Cresselia', { ability: 'Levitate' }),
+    'Earthquake',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Garchomp', { nature: 'Adamant', moves: ['Earthquake'], evs: { atk: 252 } }),
+    calcMon('Cresselia', { ability: 'Levitate' }),
+    'Earthquake',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'levitate');
+});
+
+T('41. Sheer Force damage boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Nidoking', { nature: 'Modest', moves: ['Sludge Bomb'], evs: { spa: 252 }, ability: 'Sheer Force' }),
+    simMon('Pelipper'),
+    'Sludge Bomb',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Nidoking', { nature: 'Modest', moves: ['Sludge Bomb'], evs: { spa: 252 }, ability: 'Sheer Force' }),
+    calcMon('Pelipper'),
+    'Sludge Bomb',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'sheer force');
+});
+
+T('42. Fairy Aura damage boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Xerneas', { nature: 'Modest', moves: ['Moonblast'], evs: { spa: 252 }, ability: 'Fairy Aura' }),
+    simMon('Incineroar'),
+    'Moonblast',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Xerneas', { nature: 'Modest', moves: ['Moonblast'], evs: { spa: 252 }, ability: 'Fairy Aura' }),
+    calcMon('Incineroar'),
+    'Moonblast',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'fairy aura');
+});
+
+T('43. Scrappy Normal damage into Ghost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Lopunny-Mega', { nature: 'Adamant', moves: ['Tackle'], evs: { atk: 252 }, ability: 'Scrappy' }),
+    simMon('Gengar'),
+    'Tackle',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Lopunny-Mega', { nature: 'Adamant', moves: ['Tackle'], evs: { atk: 252 }, ability: 'Scrappy' }),
+    calcMon('Gengar'),
+    'Tackle',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'scrappy ghost bypass');
+});
+
+T('44. Infiltrator bypasses Light Screen damage reduction like Showdown', () => {
+  const field = new Field({ format: 'doubles' });
+  field.oppSide.lightScreen = true;
+  const sim = simRange(
+    simMon('Chandelure', { nature: 'Modest', moves: ['Shadow Ball'], evs: { spa: 252 }, ability: 'Infiltrator' }),
+    simMon('Umbreon'),
+    'Shadow Ball',
+    field
+  );
+  const oracle = oracleRange(
+    calcMon('Chandelure', { nature: 'Modest', moves: ['Shadow Ball'], evs: { spa: 252 }, ability: 'Infiltrator' }),
+    calcMon('Umbreon'),
+    'Shadow Ball',
+    new calc.Field({ gameType: 'Doubles', defenderSide: { isLightScreen: true } })
+  );
+  eqRange(sim, oracle, 'infiltrator screens');
+});
+
+T('45. Mold Breaker bypasses Levitate immunity like Showdown', () => {
+  const sim = simRange(
+    simMon('Haxorus', { nature: 'Adamant', moves: ['High Horsepower'], evs: { atk: 252 }, ability: 'Mold Breaker' }),
+    simMon('Cresselia', { ability: 'Levitate' }),
+    'High Horsepower',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Haxorus', { nature: 'Adamant', moves: ['High Horsepower'], evs: { atk: 252 }, ability: 'Mold Breaker' }),
+    calcMon('Cresselia', { ability: 'Levitate' }),
+    'High Horsepower',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'mold breaker levitate');
+});
+
 console.log('\nshowdown damage oracle:', pass + ' pass, ' + fail + ' fail\n');
 process.exit(fail ? 1 : 0);

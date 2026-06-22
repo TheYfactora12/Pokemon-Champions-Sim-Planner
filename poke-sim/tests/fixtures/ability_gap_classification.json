@@ -22,10 +22,6 @@
       "category": "missing_battle_result_impacting",
       "why": "Accuracy boost changes hit rates for status and utility lines."
     },
-    "Fairy Aura": {
-      "category": "missing_battle_result_impacting",
-      "why": "Field-wide Fairy damage boost changes Mega Floette and partner damage."
-    },
     "Flower Veil": {
       "category": "missing_battle_result_impacting",
       "why": "Protects allied Grass types from stat drops and status in supported lines."
@@ -42,10 +38,6 @@
       "category": "missing_low_impact",
       "why": "End-turn ally status cure can matter, but it is mega-only and relatively narrow."
     },
-    "Infiltrator": {
-      "category": "missing_battle_result_impacting",
-      "why": "Bypasses Substitute and screens, changing damage and status delivery."
-    },
     "Innards Out": {
       "category": "missing_battle_result_impacting",
       "why": "Punishes KOs with reflected HP loss and can swing trades."
@@ -61,10 +53,6 @@
     "Mind's Eye": {
       "category": "missing_battle_result_impacting",
       "why": "Ghost immunity bypass and accuracy behavior affect Ursaluna-Bloodmoon lines."
-    },
-    "Mold Breaker": {
-      "category": "missing_battle_result_impacting",
-      "why": "Ignores defensive abilities and changes interaction outcomes for multiple Megas."
     },
     "Mummy": {
       "category": "missing_low_impact",
@@ -90,17 +78,9 @@
       "category": "missing_low_impact",
       "why": "Weather evasion can matter, but it is narrower and RNG-heavier than core gaps."
     },
-    "Scrappy": {
-      "category": "missing_battle_result_impacting",
-      "why": "Ghost immunity bypass changes Fake Out and Fighting/Normal targeting."
-    },
     "Shadow Tag": {
       "category": "missing_battle_result_impacting",
       "why": "Trapping fundamentally changes switch options and perish-style endgames."
-    },
-    "Sheer Force": {
-      "category": "missing_battle_result_impacting",
-      "why": "Damage boost plus secondary-effect suppression changes Mega Camerupt outputs."
     },
     "Shell Armor": {
       "category": "missing_low_impact",
