@@ -9,8 +9,8 @@ Scope:
 
 Summary:
 - unique curated-team + mega abilities audited: 80
-- already modeled by the engine: 34
-- still unmodeled and classified: 46
+- already modeled by the engine: 50
+- still unmodeled and classified: 30
 
 Why this exists:
 - Issue #125 showed repeated review friction around ability gaps being noticed ad hoc.
@@ -23,9 +23,8 @@ Classification buckets:
 
 Highest-priority shipped-team gaps:
 - `Shadow Tag`: changes switch options and perish-style endgames.
-- `Stance Change`, `Sturdy`, `Unaware`: major battle-result mechanics, not flavor.
-- `Strong Jaw` and `Mega Launcher`: direct damage modifiers with real mega exposure.
-- `Earth Eater` and `Rough Skin`: common contact and spread interaction swing points.
+- `Sheer Force`, `Fairy Aura`: direct damage modifiers with real KO-range impact.
+- `Infiltrator`, `Mold Breaker`, `Scrappy`, `Stalwart`: targeting, immunity, or defensive-bypass mechanics that can flip matchups.
 
 Implemented after this audit:
 - `Prankster`: real battle priority for status moves, with Dark-type immunity on targeted opposing status.
@@ -39,6 +38,23 @@ Implemented after this audit:
 - `Solar Power`: Showdown-aligned sun damage boost, plus end-of-turn recoil under active sun.
 - `Supreme Overlord`: Showdown-aligned late-game damage scaling from allied faint count.
 - `Tough Claws`: Showdown-aligned contact damage boost.
+- `Strong Jaw`: Showdown-aligned bite move damage boost.
+- `Mega Launcher`: Showdown-aligned pulse move damage boost.
+- `Stance Change`: Aegislash form swap changes battle stats across attacking/protecting lines.
+- `Sturdy`: Showdown-aligned full-HP lethal hit survival.
+- `Unaware`: Showdown-aligned stat-stage ignoring for attacker/defender comparisons.
+- `Rough Skin`: Showdown-aligned contact chip for damaging contact hits, including KO trades.
+- `Blaze`: Showdown-aligned low-HP Fire damage boost.
+- `Overgrow`: Showdown-aligned low-HP Grass damage boost.
+- `Iron Fist`: Showdown-aligned punch move damage boost.
+- `Technician`: Showdown-aligned low-BP move damage boost.
+- `Huge Power`: Showdown-aligned Attack doubling.
+- `Pure Power`: Showdown-aligned Attack doubling.
+- `Sand Force`: Showdown-aligned sand Rock/Ground/Steel damage boost.
+- `Thick Fat`: Showdown-aligned incoming Fire/Ice damage reduction.
+- `Filter`: Showdown-aligned super-effective damage reduction.
+- `Tinted Lens`: Showdown-aligned resisted-hit damage boost.
+- `Earth Eater`: Showdown-aligned Ground immunity and one-quarter max HP recovery on absorbed hits.
 
 Lower-priority or no-op examples:
 - `Frisk`: item reveal is effectively already visible in the sim.
@@ -49,15 +65,15 @@ Recommended implementation order:
 1. Priority and targeting control
    - `Shadow Tag`
 2. Damage modifiers with broad shipped-team exposure
-   - `Strong Jaw`
-   - `Mega Launcher`
+   - `Sheer Force`
+   - `Fairy Aura`
 3. Defensive and board-state mechanics
-   - `Earth Eater`
-   - `Sturdy`
-   - `Stance Change`
-   - `Unaware`
+   - `Infiltrator`
+   - `Mold Breaker`
+   - `Scrappy`
 4. Support and mitigation mechanics
-   - `Friend Guard`
+   - `Flower Veil`
+   - `Stalwart`
 
 Guardrail:
 - `tests/ability_coverage_audit_tests.js` compares the current unmodeled ability inventory against `tests/fixtures/ability_gap_classification.json`.

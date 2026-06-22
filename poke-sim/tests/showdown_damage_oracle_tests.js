@@ -541,5 +541,189 @@ T('28. Strong Jaw bite boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'strong jaw');
 });
 
+T('29. Blaze low-HP Fire boost matches Showdown exactly', () => {
+  const simAttacker = simMon('Charizard', { nature: 'Modest', moves: ['Flamethrower'], evs: { spa: 252 }, ability: 'Blaze' });
+  const oracleBase = calcMon('Charizard', { nature: 'Modest', moves: ['Flamethrower'], evs: { spa: 252 }, ability: 'Blaze' });
+  const lowHp = Math.floor(simAttacker.maxHp / 3);
+  simAttacker.hp = lowHp;
+  const sim = simRange(
+    simAttacker,
+    simMon('Incineroar'),
+    'Flamethrower',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Charizard', { nature: 'Modest', moves: ['Flamethrower'], evs: { spa: 252 }, ability: 'Blaze', curHP: Math.floor(oracleBase.maxHP() / 3) }),
+    calcMon('Incineroar'),
+    'Flamethrower',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'blaze');
+});
+
+T('30. Overgrow low-HP Grass boost matches Showdown exactly', () => {
+  const simAttacker = simMon('Venusaur', { nature: 'Modest', moves: ['Energy Ball'], evs: { spa: 252 }, ability: 'Overgrow' });
+  const oracleBase = calcMon('Venusaur', { nature: 'Modest', moves: ['Energy Ball'], evs: { spa: 252 }, ability: 'Overgrow' });
+  const lowHp = Math.floor(simAttacker.maxHp / 3);
+  simAttacker.hp = lowHp;
+  const sim = simRange(
+    simAttacker,
+    simMon('Pelipper'),
+    'Energy Ball',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Venusaur', { nature: 'Modest', moves: ['Energy Ball'], evs: { spa: 252 }, ability: 'Overgrow', curHP: Math.floor(oracleBase.maxHP() / 3) }),
+    calcMon('Pelipper'),
+    'Energy Ball',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'overgrow');
+});
+
+T('31. Iron Fist punch boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Golurk', { nature: 'Adamant', moves: ['Ice Punch'], evs: { atk: 252 }, ability: 'Iron Fist' }),
+    simMon('Garchomp'),
+    'Ice Punch',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Golurk', { nature: 'Adamant', moves: ['Ice Punch'], evs: { atk: 252 }, ability: 'Iron Fist' }),
+    calcMon('Garchomp'),
+    'Ice Punch',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'iron fist');
+});
+
+T('32. Technician low-BP boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Scizor-Mega', { nature: 'Adamant', moves: ['Bullet Punch'], evs: { atk: 252 }, ability: 'Technician' }),
+    simMon('Tyranitar'),
+    'Bullet Punch',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Scizor-Mega', { nature: 'Adamant', moves: ['Bullet Punch'], evs: { atk: 252 }, ability: 'Technician' }),
+    calcMon('Tyranitar'),
+    'Bullet Punch',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'technician');
+});
+
+T('33. Huge Power Attack boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Azumarill', { nature: 'Adamant', moves: ['Liquidation'], evs: { atk: 252 }, ability: 'Huge Power' }),
+    simMon('Incineroar'),
+    'Liquidation',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Azumarill', { nature: 'Adamant', moves: ['Liquidation'], evs: { atk: 252 }, ability: 'Huge Power' }),
+    calcMon('Incineroar'),
+    'Liquidation',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'huge power');
+});
+
+T('34. Pure Power Attack boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Medicham-Mega', { nature: 'Adamant', moves: ['Drain Punch'], evs: { atk: 252 }, ability: 'Pure Power' }),
+    simMon('Incineroar'),
+    'Drain Punch',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Medicham-Mega', { nature: 'Adamant', moves: ['Drain Punch'], evs: { atk: 252 }, ability: 'Pure Power' }),
+    calcMon('Incineroar'),
+    'Drain Punch',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'pure power');
+});
+
+T('35. Sand Force sand boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Steelix-Mega', { nature: 'Adamant', moves: ['Iron Head'], evs: { atk: 252 }, ability: 'Sand Force' }),
+    simMon('Pelipper'),
+    'Iron Head',
+    new Field({ format: 'doubles', weather: 'sand' })
+  );
+  const oracle = oracleRange(
+    calcMon('Steelix-Mega', { nature: 'Adamant', moves: ['Iron Head'], evs: { atk: 252 }, ability: 'Sand Force' }),
+    calcMon('Pelipper'),
+    'Iron Head',
+    new calc.Field({ gameType: 'Doubles', weather: 'Sand' })
+  );
+  eqRange(sim, oracle, 'sand force');
+});
+
+T('36. Thick Fat Fire reduction matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Charizard', { nature: 'Modest', moves: ['Flamethrower'], evs: { spa: 252 } }),
+    simMon('Venusaur-Mega', { ability: 'Thick Fat' }),
+    'Flamethrower',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Charizard', { nature: 'Modest', moves: ['Flamethrower'], evs: { spa: 252 } }),
+    calcMon('Venusaur-Mega', { ability: 'Thick Fat' }),
+    'Flamethrower',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'thick fat');
+});
+
+T('37. Filter super-effective reduction matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Infernape', { nature: 'Adamant', moves: ['Close Combat'], evs: { atk: 252 } }),
+    simMon('Aggron-Mega', { ability: 'Filter' }),
+    'Close Combat',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Infernape', { nature: 'Adamant', moves: ['Close Combat'], evs: { atk: 252 } }),
+    calcMon('Aggron-Mega', { ability: 'Filter' }),
+    'Close Combat',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'filter');
+});
+
+T('38. Tinted Lens resisted-hit boost matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Yanmega', { nature: 'Modest', moves: ['Bug Buzz'], evs: { spa: 252 }, ability: 'Tinted Lens' }),
+    simMon('Charizard'),
+    'Bug Buzz',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Yanmega', { nature: 'Modest', moves: ['Bug Buzz'], evs: { spa: 252 }, ability: 'Tinted Lens' }),
+    calcMon('Charizard'),
+    'Bug Buzz',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'tinted lens');
+});
+
+T('39. Earth Eater Ground immunity matches Showdown zero damage', () => {
+  const sim = simRange(
+    simMon('Garchomp', { nature: 'Adamant', moves: ['Earthquake'], evs: { atk: 252 } }),
+    simMon('Orthworm', { ability: 'Earth Eater' }),
+    'Earthquake',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Garchomp', { nature: 'Adamant', moves: ['Earthquake'], evs: { atk: 252 } }),
+    calcMon('Orthworm', { ability: 'Earth Eater' }),
+    'Earthquake',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'earth eater');
+});
+
 console.log('\nshowdown damage oracle:', pass + ' pass, ' + fail + ' fail\n');
 process.exit(fail ? 1 : 0);

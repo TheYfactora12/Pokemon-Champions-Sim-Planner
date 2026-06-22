@@ -700,6 +700,18 @@ function _moveRecoilRule(move) {
 // Hook signatures:
 //   onModifyMove({move, attacker, field}) -> {move?, bpMult?, typeOverride?}
 //     Fires at the top of calcDamage so type/STAB/type-chart all see the change.
+//   onBasePower({move, moveType, basePower, attacker, defender, field}) -> {bpMod}
+//     Fires after dynamic BP resolution and before terrain/helping-hand BP mods.
+//     bpMod uses Showdown's 4096 fixed-point modifier scale.
+//   onSourceModifyAtk({move, moveType, attacker, defender, field}) -> {statMod}
+//     Fires from the defender before base damage is computed. statMod uses
+//     Showdown's 4096 fixed-point scale against the attack/sp-atk value.
+//   onModifyDamage({move, moveType, attacker, defender, typeEffectiveness, field}) -> {finalMod}
+//   onSourceModifyDamage({move, moveType, attacker, defender, typeEffectiveness, field}) -> {finalMod}
+//     Fires during final-mod construction. finalMod uses Showdown's 4096 scale.
+//   onTryHit({move, moveType, attacker, defender, field}) -> {immune, healFraction}
+//     Fires before damage calculation in battle execution and as a zero-damage
+//     guard in calcDamage previews.
 //   onProtectResolve({attacker, defender, move, moveType, isContact}) -> {damageMult}
 //     Fires when a target's Protect flag is up; default is 0 (full block). A
 //     positive damageMult lets the attacker deal dmg * mult through Protect.
@@ -809,8 +821,98 @@ var ABILITIES = {
       return null;
     }
   },
+  'Iron Fist': {
+    // Punch moves gain 20% power.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onBasePower: function(ctx) {
+      if (_moveHasFlag(ctx.move, 'punch')) return { bpMod: 4915 };
+      return null;
+    }
+  },
+  'Technician': {
+    // Moves with 60 or lower current BP gain 50% power.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onBasePower: function(ctx) {
+      if (ctx.basePower <= 60) return { bpMod: 6144 };
+      return null;
+    }
+  },
+  'Sand Force': {
+    // Rock/Ground/Steel moves gain 30% power during sand.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onBasePower: function(ctx) {
+      if (_effectiveFieldWeather(ctx.field) === 'sand' &&
+          (ctx.moveType === 'Rock' || ctx.moveType === 'Ground' || ctx.moveType === 'Steel')) {
+        return { bpMod: 5325 };
+      }
+      return null;
+    }
+  },
+  'Thick Fat': {
+    // Incoming Fire/Ice moves use half the attacker's relevant attacking stat.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onSourceModifyAtk: function(ctx) {
+      if (ctx.moveType === 'Fire' || ctx.moveType === 'Ice') return { statMod: 2048 };
+      return null;
+    }
+  },
+  'Filter': {
+    // Super-effective hits against the holder deal 0.75x damage.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onSourceModifyDamage: function(ctx) {
+      if (ctx.typeEffectiveness > 1) return { finalMod: 3072 };
+      return null;
+    }
+  },
+  'Tinted Lens': {
+    // Not-very-effective hits from the holder deal 2x damage.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onModifyDamage: function(ctx) {
+      if (ctx.typeEffectiveness < 1) return { finalMod: 8192 };
+      return null;
+    }
+  },
+  'Earth Eater': {
+    // Ground moves targeting another Pokemon are absorbed; holder heals 1/4 max HP.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onTryHit: function(ctx) {
+      if (ctx.defender !== ctx.attacker && ctx.moveType === 'Ground') {
+        return { immune: true, healFraction: 0.25 };
+      }
+      return null;
+    }
+  },
+  'Rough Skin': {
+    // Contact attackers lose 1/8 of their own max HP on a damaging hit.
+    // Mirrors Pokemon Showdown's onDamagingHit hook.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onDamagingHit: function(ctx) {
+      var attacker = ctx.attacker, defender = ctx.defender;
+      if (!attacker || !attacker.alive || !defender) return;
+      if (!ctx.damage || ctx.damage <= 0) return;
+      if (!_isContactMove(ctx.move)) return;
+      var chip = Math.max(1, Math.floor(attacker.maxHp / 8));
+      attacker.hp = Math.max(0, attacker.hp - chip);
+      if (ctx.log) ctx.log.push(attacker.name + " was hurt by " + defender.name + "'s Rough Skin! [" + chip + " dmg]");
+      if (attacker.hp === 0) {
+        attacker.alive = false;
+        if (ctx.log) ctx.log.push(attacker.name + ' fainted!');
+        if (typeof ctx.recordKO === 'function') {
+          ctx.recordKO(attacker, { move: ctx.move, attacker: defender, reason: 'Rough Skin' });
+        }
+      }
+    }
+  },
   // Inline in executeAction/setStanceForm: Aegislash swaps between Shield and Blade.
   'Stance Change': {},
+  // Inline in getStat: Attack is doubled after stat-stage resolution.
+  'Huge Power': {},
+  // Inline in getStat: Attack is doubled after stat-stage resolution.
+  'Pure Power': {},
+  // Inline in calcDamage: low-HP Fire moves get a 1.5x attacking-stat boost.
+  'Blaze': {},
+  // Inline in calcDamage: low-HP Grass moves get a 1.5x attacking-stat boost.
+  'Overgrow': {},
   'Solar Power': {},
   // Inline in applyDamage: survive lethal direct damage from full HP at 1 HP.
   'Sturdy': {},
@@ -1314,6 +1416,7 @@ class Pokemon {
     // Unburden doubles speed after item consumed
     if (stat === 'spe' && this.ability === 'Unburden' && this.itemConsumed) val *= 2;
     // Intimidate already applied to statBoosts.atk
+    if (stat === 'atk' && (this.ability === 'Huge Power' || this.ability === 'Pure Power')) val *= 2;
     // Standard baseline: Rock-types gain 1.5x Special Defense in sand.
     if (stat === 'spd' && effectiveWeather === 'sand' && Array.isArray(this.types) && this.types.includes('Rock')) val *= 1.5;
     // Eviolite for Dusclops
@@ -1412,6 +1515,14 @@ class Pokemon {
       : field.terrain === 'psychic' ? 'Psychic'
       : 'Normal';
     }
+    const _tryHitPreview = callAbilityHook(target, 'onTryHit', {
+      move: move,
+      moveType: moveType,
+      attacker: this,
+      defender: target,
+      field: field
+    });
+    if (_tryHitPreview && _tryHitPreview.immune) return 0;
 
     // T9j.8 (Refs #30) Mega Sol: personal sun when field weather is 'none'.
     let _effWeather = _effectiveMoveWeather(this, field, moveType);
@@ -1464,6 +1575,24 @@ class Pokemon {
     }
     if (!isPhysical && this.ability === 'Solar Power' && _fieldWeather === 'sun') {
       atk = _applyStatMod(atk, 6144);
+    }
+    if (this.hp <= this.maxHp / 3) {
+      if (this.ability === 'Blaze' && moveType === 'Fire') {
+        atk = _applyStatMod(atk, 6144);
+      }
+      if (this.ability === 'Overgrow' && moveType === 'Grass') {
+        atk = _applyStatMod(atk, 6144);
+      }
+    }
+    const _sourceAtkRes = callAbilityHook(target, 'onSourceModifyAtk', {
+      move: move,
+      moveType: moveType,
+      attacker: this,
+      defender: target,
+      field: field
+    });
+    if (_sourceAtkRes && _sourceAtkRes.statMod) {
+      atk = _applyStatMod(atk, _sourceAtkRes.statMod);
     }
 
     // Base power
@@ -1541,6 +1670,15 @@ class Pokemon {
     // Showdown / mainline terrain and Helping Hand modify base power, not the
     // late final-damage stage. Use fixed-point chaining so ranges stay aligned.
     const bpMods = [];
+    const _abilityBpRes = callAbilityHook(this, 'onBasePower', {
+      move: move,
+      moveType: moveType,
+      basePower: bp,
+      attacker: this,
+      defender: target,
+      field: field
+    });
+    if (_abilityBpRes && _abilityBpRes.bpMod) bpMods.push(_abilityBpRes.bpMod);
     if (this.helpingHand) bpMods.push(6144);
     if (_isGrounded(this)) {
       if (field.terrain === 'electric' && moveType === 'Electric') bpMods.push(5325);
@@ -1628,6 +1766,22 @@ class Pokemon {
     const supremeOverlordMod = this.ability === 'Supreme Overlord'
       ? SUPREME_OVERLORD_MODS[Math.min(this.side?.fainted || 0, 5)]
       : 4096;
+    const _attackerDamageRes = callAbilityHook(this, 'onModifyDamage', {
+      move: move,
+      moveType: moveType,
+      attacker: this,
+      defender: target,
+      typeEffectiveness: typeEff,
+      field: field
+    });
+    const _defenderDamageRes = callAbilityHook(target, 'onSourceModifyDamage', {
+      move: move,
+      moveType: moveType,
+      attacker: this,
+      defender: target,
+      typeEffectiveness: typeEff,
+      field: field
+    });
 
     // Choice Specs/Band handled in getStat
     // Burn handled in getStat
@@ -1635,7 +1789,6 @@ class Pokemon {
     // Base damage formula (Gen 9)
     const raw = Math.floor(Math.floor(Math.floor(2 * this.level / 5 + 2) * bp * atk / def) / 50) + 2;
     const roll = _sampleDamageRoll(this, field, rng);
-    const finalMod = _chain4096Mods([screenMod, loMod, supremeOverlordMod]);
     const applyStatusPenalty =
       (isPhysical && this.status === 'burn' && this.ability !== 'Guts' && move !== 'Facade') ||
       (!isPhysical && this.status === 'frostbite');
@@ -1646,7 +1799,10 @@ class Pokemon {
     baseDamage = _applyBaseDamageMod(baseDamage, spreadMod);
     baseDamage = _applyBaseDamageMod(baseDamage, weatherMod);
     if (_isCrit) baseDamage = Math.floor(_of32(baseDamage * 1.5));
-    return _finalizeDamage(baseDamage, roll, typeEff, applyStatusPenalty, stabMod, finalMod);
+    const finalMods = [screenMod, loMod, supremeOverlordMod];
+    if (_attackerDamageRes && _attackerDamageRes.finalMod) finalMods.push(_attackerDamageRes.finalMod);
+    if (_defenderDamageRes && _defenderDamageRes.finalMod) finalMods.push(_defenderDamageRes.finalMod);
+    return _finalizeDamage(baseDamage, roll, typeEff, applyStatusPenalty, stabMod, _chain4096Mods(finalMods));
   }
 
   applyItem(trigger, field) {
@@ -3943,6 +4099,28 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (t.side) t.side.quickGuard = false;
         log.push(`${attacker.name}'s Feint broke through ${t.name}'s protection!`);
       }
+      const _tryHitRes = callAbilityHook(t, 'onTryHit', {
+        attacker: attacker,
+        defender: t,
+        move: move,
+        moveType: _moveType(move),
+        field: field,
+        log: log
+      });
+      if (_tryHitRes && _tryHitRes.immune) {
+        const healFraction = Number(_tryHitRes.healFraction) || 0;
+        const healAmount = healFraction > 0 ? Math.max(1, Math.floor(t.maxHp * healFraction)) : 0;
+        const healed = healAmount > 0 && _canReceiveHealing(t)
+          ? Math.max(0, Math.min(t.maxHp, t.hp + healAmount) - t.hp)
+          : 0;
+        if (healed > 0) {
+          t.hp += healed;
+          log.push(`${t.name}'s ${t.ability} restored HP! [+${healed} HP]`);
+        } else {
+          log.push(`${t.name} is immune to ${move} because of ${t.ability}!`);
+        }
+        continue;
+      }
       // Set spread context for calcDamage
       field._ctx.isSpread = applySpreadMod;
       field._ctx.lastWasCrit = false;
@@ -4083,6 +4261,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         }
       }
     }
+    callAbilityHook(target, 'onDamagingHit', {
+      attacker: attacker, defender: target, move: move,
+      moveType: _moveType(move),
+      damage: finalDmg, field: field, log: log,
+      recordKO: _recordKO
+    });
     // Recoil
     const recoilRule = _moveRecoilRule(move);
     if (recoilRule && attacker && attacker.alive) {
