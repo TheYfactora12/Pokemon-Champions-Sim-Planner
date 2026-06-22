@@ -102,5 +102,34 @@ T('3. engine damage uses runtime roll override instead of DB-side logic', () => 
   }
 });
 
+T('4. runtime bridge canonicalizes Showdown move target categories for the engine', () => {
+  eq(runtimeData.getMoveTargetCategory('Hyper Voice'), 'all-adjacent-foes', 'Hyper Voice target category');
+  eq(runtimeData.getMoveTargetCategory('Earthquake'), 'all-adjacent', 'Earthquake target category');
+  eq(runtimeData.getMoveTargetCategory('Helping Hand'), 'all-allies', 'Helping Hand target category');
+  eq(runtimeData.getMoveTargetCategory('Stealth Rock'), 'all-foes', 'Stealth Rock target category');
+  eq(runtimeData.getMoveTargetCategory('Hurricane'), 'normal', 'any target category collapses to normal without a distance model');
+});
+
+T('5. every generated Showdown target value maps to a supported engine category', () => {
+  const audit = ctx.ChampionsSim.pokemonDataAudit || {};
+  const rawTargets = new Set(Object.values(audit.moves || {}).map((row) => row && row.target).filter(Boolean));
+  truthy(rawTargets.size > 0, 'generated move target vocabulary should be present');
+  for (const raw of rawTargets) {
+    const canonical = runtimeData.normalizeMoveTargetCategory(raw);
+    const explicitlyMapped = Object.prototype.hasOwnProperty.call(runtimeData.SHOWDOWN_TARGET_CATEGORY_MAP, raw);
+    truthy(explicitlyMapped || runtimeData.isEngineMoveTargetCategory(raw),
+      'raw Showdown target category lacks explicit bridge mapping: ' + raw);
+    truthy(runtimeData.isEngineMoveTargetCategory(canonical),
+      raw + ' normalized to unsupported engine target category: ' + canonical);
+  }
+});
+
+T('6. engine-only fallback target map cannot drift from runtime bridge map', () => {
+  truthy(ctx.SHOWDOWN_TARGET_CATEGORY_FALLBACK_MAP, 'engine fallback target map missing');
+  eq(JSON.stringify(ctx.SHOWDOWN_TARGET_CATEGORY_FALLBACK_MAP),
+    JSON.stringify(runtimeData.SHOWDOWN_TARGET_CATEGORY_MAP),
+    'engine fallback map must match runtime bridge map');
+});
+
 console.log('\nruntime data bridge:', pass + ' pass, ' + fail + ' fail\n');
 process.exit(fail ? 1 : 0);

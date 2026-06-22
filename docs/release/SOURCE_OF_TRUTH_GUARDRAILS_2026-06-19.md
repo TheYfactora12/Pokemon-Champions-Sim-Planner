@@ -20,6 +20,7 @@ Do not manually patch broad mirrored data in app files when the same fix belongs
 - Never treat an exported turn log as current-build proof unless it includes `schema_version`, `build_id`, `exported_at`, and `source_url`.
 - Never hand-edit generated Showdown data without regenerating it.
 - Never change fallback stats/types without checking whether the generated Showdown row already covers that species.
+- Never let raw Showdown vocabulary cross directly into engine control flow. Normalize generated target strings, category names, and similar upstream terms at the runtime adapter boundary first.
 - Never merge source-truth changes without recording the upstream source commit/date when applicable.
 - Never close a data issue from a different branch than the code under review.
 
@@ -34,6 +35,10 @@ npm run test:source-truth
 That grouped suite runs:
 
 - `showdown_runtime_data_tests.js`
+- `runtime_data_bridge_tests.js`
+- `damage_pipeline_tests.js`
+- `showdown_damage_oracle_tests.js`
+- `move_verification_registry_tests.js`
 - `showdown_priority_drift_tests.js`
 - `showdown_approved_data_generator_tests.js`
 - `showdown_db_writer_tests.js`
@@ -46,6 +51,7 @@ Also run these when the change touches the relevant area:
 - workbook regeneration via `tools/generate-pokemon-data-audit.js`
 - bundle rebuild when shipped runtime files changed
 - strict live-log validation for deployed-build proof, including exported build metadata when available
+- focused replay/deep-log review when validator-clean logs still show suspicious battle text such as invalid `(no valid target)`, impossible HP recovery, or stale item/legal-data behavior
 
 ## Review Rules
 
@@ -79,3 +85,5 @@ Treat these as guarded changes:
 - move legality source edits
 - DB writer / approved-view generator changes
 - parser changes that affect species/form resolution
+- runtime adapter changes that translate Showdown rows into engine categories
+- target selection, replacement, spread move, redirection, or retargeting logic changes

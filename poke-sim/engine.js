@@ -445,13 +445,42 @@ function _movePriority(move) {
   return Number.isFinite(priority) ? priority : 0;
 }
 
+// Runtime data owns the canonical target bridge. This fallback keeps older
+// engine-only VM tests working; runtime_data_bridge_tests.js guards drift.
+var SHOWDOWN_TARGET_CATEGORY_FALLBACK_MAP = {
+  allAdjacent: 'all-adjacent',
+  allAdjacentFoes: 'all-adjacent-foes',
+  allAdjacentAlly: 'all-allies',
+  allAllies: 'all-allies',
+  adjacentAlly: 'all-allies',
+  adjacentAllyOrSelf: 'all-allies',
+  adjacentFoe: 'adjacent-foe',
+  allies: 'all-allies',
+  allySide: 'self',
+  allyTeam: 'all-allies',
+  foeSide: 'all-foes',
+  randomNormal: 'random-foe',
+  any: 'normal',
+  all: 'all-adjacent',
+  scripted: 'normal'
+};
+
+function _normalizeMoveTargetCategory(raw) {
+  var api = _runtimeDataApi();
+  if (api && typeof api.normalizeMoveTargetCategory === 'function') {
+    return api.normalizeMoveTargetCategory(raw);
+  }
+  var target = String(raw || '');
+  return SHOWDOWN_TARGET_CATEGORY_FALLBACK_MAP[target] || target || 'normal';
+}
+
 function _moveTargetCategory(move) {
   var api = _runtimeDataApi();
-  if (api && typeof api.getMoveTargetCategory === 'function') return api.getMoveTargetCategory(move);
+  if (api && typeof api.getMoveTargetCategory === 'function') return _normalizeMoveTargetCategory(api.getMoveTargetCategory(move));
   var row = _showdownMoveRow(move);
-  if (row && row.target) return row.target;
+  if (row && row.target) return _normalizeMoveTargetCategory(row.target);
   if (typeof MOVE_TARGETS !== 'undefined' &&
-      Object.prototype.hasOwnProperty.call(MOVE_TARGETS, move)) return MOVE_TARGETS[move];
+      Object.prototype.hasOwnProperty.call(MOVE_TARGETS, move)) return _normalizeMoveTargetCategory(MOVE_TARGETS[move]);
   return 'normal';
 }
 
@@ -4270,6 +4299,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       case 'adjacent-foe':
       default: {
         let t = intendedTarget;
+        if ((!t || !t.alive) && (!t || !t.side || t.side !== attacker.side)) {
+          t = liveEnemies[0] || null;
+        }
         // T9j.2 (#32) — redirection: single-target moves to a side with redirectTo
         if (t && t.side) {
           const rTo = t.side.redirectTo;

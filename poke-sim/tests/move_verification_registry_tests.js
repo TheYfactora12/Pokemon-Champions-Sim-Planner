@@ -2572,5 +2572,104 @@ T('89. Clanging Scales lowers the user Defense after spread damage', () => {
     'Clanging Scales Defense drop log missing');
 });
 
+T('90. Showdown camelCase spread target data still hits both adjacent foes', () => {
+  const player = team('Spread Target Player', [
+    {
+      name: 'Sneasler',
+      ability: '',
+      item: '',
+      nature: 'Jolly',
+      level: 50,
+      moves: ['Tackle'],
+      evs: { hp: 1, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 }
+    },
+    {
+      name: 'Garchomp',
+      ability: '',
+      item: '',
+      nature: 'Jolly',
+      level: 50,
+      moves: ['Tackle'],
+      evs: { hp: 1, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 }
+    }
+  ]);
+  const opp = team('Spread Target Opponent', [
+    {
+      name: 'Farigiraf',
+      ability: '',
+      item: '',
+      nature: 'Modest',
+      level: 50,
+      moves: ['Hyper Voice'],
+      evs: { hp: 32, spa: 32, def: 1, atk: 0, spd: 0, spe: 0 }
+    },
+    {
+      name: 'Torkoal',
+      ability: '',
+      item: '',
+      nature: 'Quiet',
+      level: 50,
+      moves: ['Protect'],
+      evs: { hp: 32, spa: 32, def: 1, atk: 0, spd: 0, spe: 0 }
+    }
+  ]);
+  const battle = simulateBattle(player, opp, { format: 'doubles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  const voiceHits = battle.log.filter((line) => includes(line, 'Farigiraf used Hyper Voice! →'));
+  eq(voiceHits.length, 2, 'Hyper Voice should resolve as all-adjacent-foes from generated Showdown data');
+  truthy(voiceHits.some((line) => includes(line, '→ Sneasler')), 'Hyper Voice should hit first adjacent foe');
+  truthy(voiceHits.some((line) => includes(line, '→ Garchomp')), 'Hyper Voice should hit second adjacent foe');
+  truthy(!battle.log.some((line) => includes(line, 'Farigiraf used Hyper Voice! (no valid target)')),
+    'Hyper Voice should not fall through as a stale single-target move');
+});
+
+T('91. single-target damage retargets when the intended opposing target fainted first', () => {
+  const player = team('Retarget Player', [
+    {
+      name: 'Sneasler',
+      ability: '',
+      item: '',
+      nature: 'Jolly',
+      level: 50,
+      moves: ['Close Combat'],
+      evs: { hp: 1, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 }
+    },
+    {
+      name: 'Basculegion',
+      ability: 'Adaptability',
+      item: 'Mystic Water',
+      nature: 'Adamant',
+      level: 50,
+      moves: ['Wave Crash'],
+      evs: { hp: 1, atk: 32, def: 0, spa: 0, spd: 0, spe: 0 }
+    }
+  ]);
+  const opp = team('Retarget Opponent', [
+    {
+      name: 'Smeargle',
+      ability: '',
+      item: '',
+      nature: 'Hardy',
+      level: 50,
+      moves: ['Tackle'],
+      evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+    },
+    {
+      name: 'Milotic',
+      ability: '',
+      item: '',
+      nature: 'Bold',
+      level: 50,
+      moves: ['Tackle'],
+      evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 1, spe: 0 }
+    }
+  ]);
+  const battle = simulateBattle(player, opp, { format: 'doubles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  truthy(battle.log.some((line) => includes(line, 'Smeargle fainted!')), 'setup should remove the originally chosen target first');
+  truthy(battle.log.some((line) => includes(line, 'Basculegion used Wave Crash! → Milotic')),
+    'Wave Crash should retarget the remaining live opposing slot');
+  truthy(!battle.log.some((line) => includes(line, 'Basculegion used Wave Crash! (no valid target)')),
+    'single-target damage should not fail while another opposing slot is live');
+});
+
 console.log(`\nmove verification registry: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);

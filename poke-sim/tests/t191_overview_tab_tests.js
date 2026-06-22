@@ -37,14 +37,16 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Stable Pokemon identity in sim exports');
   inc(ui, 'Move priority aligned with Showdown data');
   inc(ui, 'Showdown primary move metadata for imported teams');
+  inc(ui, 'Target category bridge and stale-target retargeting guarded');
   inc(ui, 'Showdown sync and DB writer staged');
   inc(ui, 'Curated ability inventory modeled');
   inc(ui, 'Simulation-first direction documented');
   inc(ui, 'Public release milestone map documented');
   inc(ui, 'Live exported logs prove the sim now runs');
   inc(ui, 'Item timing regression reproduced and covered');
+  inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'TheYfactora12 main now carries v2.1.24 ability inventory parity');
+  inc(ui, 'TheYfactora12 main now carries v2.1.25 target parity guard');
   inc(ui, 'GitHub issue sweep completed');
 });
 
@@ -68,7 +70,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.24 live logs and sync Alfredo');
+  inc(ui, 'Verify v2.1.25 live logs and sync Alfredo');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');

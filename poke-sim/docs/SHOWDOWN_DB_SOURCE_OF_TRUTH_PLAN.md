@@ -29,6 +29,8 @@ The browser may still receive generated JS for offline GitHub Pages support. The
 
 As of 2026-06-06, the battle engine treats generated Pokemon Showdown move rows as the primary metadata layer for imported/custom moves. Move type, category, base power, accuracy, priority, target, and contact flags read from `generated/pokemon_showdown_legal_data.js` first when a row exists; local JS tables remain as a fallback for Champions-only/custom gaps until Supabase approved views are live.
 
+As of 2026-06-22, generated Showdown move `target` values are not consumed raw by battle logic. `runtime_data.js` canonicalizes upstream names such as `allAdjacentFoes` into engine categories such as `all-adjacent-foes`; `engine.js` normalizes again at the execution boundary and keeps a tested fallback only for engine-only VM harnesses. This prevents a DB/generated vocabulary change from silently becoming a targeting behavior bug.
+
 As of 2026-06-10, battle construction also prefers generated Showdown species stats/types before local fallback tables. Browser-exported turn logs were checked against the generated species table; all logged species resolved, and a stale Farigiraf fallback stat row was corrected to Showdown's `120/90/70/110/70/60`.
 
 Damage-based recoil is now resolved from Showdown-compatible recoil metadata when present, with a checked local bridge table for the current generated file. This covers common imported recoil moves such as Brave Bird, Double-Edge, Wild Charge, Volt Tackle, Wood Hammer, Take Down, Submission, Head Charge, Head Smash, Flare Blitz, Wave Crash, and Light of Ruin.

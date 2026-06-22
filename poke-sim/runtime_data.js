@@ -109,11 +109,52 @@
     return Number.isFinite(priority) ? priority : 0;
   }
 
+  var ENGINE_MOVE_TARGET_CATEGORIES = [
+    'normal',
+    'adjacent-foe',
+    'all-adjacent',
+    'all-adjacent-foes',
+    'all-foes',
+    'all-allies',
+    'self',
+    'random-foe'
+  ];
+  var ENGINE_MOVE_TARGET_CATEGORY_SET = new Set(ENGINE_MOVE_TARGET_CATEGORIES);
+
+  // Showdown keeps target categories in upstream names; the engine consumes these
+  // canonical internal buckets so generated data cannot bypass doubles targeting.
+  var SHOWDOWN_TARGET_CATEGORY_MAP = {
+    allAdjacent: 'all-adjacent',
+    allAdjacentFoes: 'all-adjacent-foes',
+    allAdjacentAlly: 'all-allies',
+    allAllies: 'all-allies',
+    adjacentAlly: 'all-allies',
+    adjacentAllyOrSelf: 'all-allies',
+    adjacentFoe: 'adjacent-foe',
+    allies: 'all-allies',
+    allySide: 'self',
+    allyTeam: 'all-allies',
+    foeSide: 'all-foes',
+    randomNormal: 'random-foe',
+    any: 'normal',
+    all: 'all-adjacent',
+    scripted: 'normal'
+  };
+
+  function normalizeMoveTargetCategory(raw) {
+    var target = String(raw || '');
+    return SHOWDOWN_TARGET_CATEGORY_MAP[target] || target || 'normal';
+  }
+
+  function isEngineMoveTargetCategory(raw) {
+    return ENGINE_MOVE_TARGET_CATEGORY_SET.has(String(raw || ''));
+  }
+
   function getMoveTargetCategory(move) {
     var row = getMoveRow(move);
-    if (row && row.target) return row.target;
+    if (row && row.target) return normalizeMoveTargetCategory(row.target);
     if (typeof MOVE_TARGETS !== 'undefined' &&
-        Object.prototype.hasOwnProperty.call(MOVE_TARGETS, move)) return MOVE_TARGETS[move];
+        Object.prototype.hasOwnProperty.call(MOVE_TARGETS, move)) return normalizeMoveTargetCategory(MOVE_TARGETS[move]);
     return 'normal';
   }
 
@@ -175,6 +216,10 @@
   ChampionsSim.runtimeData.getMoveAccuracy = getMoveAccuracy;
   ChampionsSim.runtimeData.getMovePriority = getMovePriority;
   ChampionsSim.runtimeData.getMoveTargetCategory = getMoveTargetCategory;
+  ChampionsSim.runtimeData.normalizeMoveTargetCategory = normalizeMoveTargetCategory;
+  ChampionsSim.runtimeData.isEngineMoveTargetCategory = isEngineMoveTargetCategory;
+  ChampionsSim.runtimeData.ENGINE_MOVE_TARGET_CATEGORIES = ENGINE_MOVE_TARGET_CATEGORIES;
+  ChampionsSim.runtimeData.SHOWDOWN_TARGET_CATEGORY_MAP = SHOWDOWN_TARGET_CATEGORY_MAP;
   ChampionsSim.runtimeData.moveHasFlag = moveHasFlag;
   ChampionsSim.runtimeData.isChampionsFormat = isChampionsFormat;
   ChampionsSim.runtimeData.getDamageRollWindow = getDamageRollWindow;

@@ -47,7 +47,9 @@
 // SP import/export gate, and stale DB-team rejection before selector rebuild.
 // v58-ability-inventory-parity [2026-06-22] - Curated ability inventory coverage,
 // ability mechanic guards, and source-drift visibility in the Overview tab.
-const CACHE_NAME = 'champions-sim-v58-ability-inventory-parity';
+// v59-target-parity-guard [2026-06-22] - Canonical Showdown target bridge,
+// stale opposing-target retarget guard, and target vocabulary drift tests.
+const CACHE_NAME = 'champions-sim-v59-target-parity-guard';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

@@ -4,10 +4,9 @@ This snapshot records the current truth after the June 21-22 live-log review and
 
 ## 2026-06-22 Deployment Update
 
-- Y fork `main` is pushed through commit `7e0deca` (`model champion ability parity`).
-- GitHub Pages deploy passed for `7e0deca`; the public review target contains the ability inventory parity slice and service-worker cache `champions-sim-v58-ability-inventory-parity`.
-- The app build label is `v2.1.24-ability-inventory-parity`, superseding the earlier `v2.1.23-champion-item-sp-gate` item/SP gate label.
-- The earlier `e5af069` build added `champions-turn-log-v2` export metadata; fresh June 22 logs from `?v=7e0deca` validate cleanly, but exposed the stale build-label string now fixed in `v2.1.24`.
+- The prior Y fork public validation target was commit `7e0deca` (`model champion ability parity`).
+- `v2.1.25-target-parity-guard` supersedes `v2.1.24-ability-inventory-parity` for this GitHub Pages release and bumps the service-worker cache to `champions-sim-v59-target-parity-guard`.
+- The earlier `e5af069` build added `champions-turn-log-v2` export metadata; fresh June 22 logs from `?v=7e0deca` validate structurally cleanly, then deeper replay review exposed the target bridge bug fixed in `v2.1.25`.
 - Supabase migration `2026_06_22_retire_legacy_sv_teams.sql` has run successfully; the two stale v1 teams are retired at the source.
 - Fresh logs from the live URL now validate cleanly for team loading, stable IDs, final alive counts, and stale item absence.
 
@@ -20,9 +19,10 @@ This snapshot records the current truth after the June 21-22 live-log review and
 | Lethal Sitrus/Oran restore | Fixed and deployed in `v2.1.22-lethal-berry-guard` | Exported logs showed Sitrus restoring after `0 HP`; `engine.js` now requires `hp > 0` for damage-trigger berries. `items_tests.js` covers surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior. |
 | Golden battle trace drift from berry fix | Updated | `gb_001` and `gb_002` expected trace hashes were refreshed after confirming the new traces remove the invalid berry-after-0-HP behavior while preserving expected winners. |
 | Champion item/SP gate | Fixed and deployed in `v2.1.23-champion-item-sp-gate` | `legality.js` now uses a positive Champions item allowlist; imports reject raw EV/IV lines; exports use `SPs:`; illegal teams are hidden from selectors; stale DB teams cannot replace legal bundled teams. |
-| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v58-ability-inventory-parity`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.24-ability-inventory-parity`. |
+| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v59-target-parity-guard`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.25-target-parity-guard` after bundle rebuild. |
 | Exported-log build drift | Guarded in `e5af069` | Downloaded replay logs now include `schema_version: champions-turn-log-v2`, `exported_at`, `build_id`, and `source_url`, so future debug logs can prove which deployed build produced them. |
 | Showdown static metadata use | Partially fixed | Battle construction and move metadata can use generated Showdown static rows first, then local fallbacks. This is not the same as live DB runtime consumption. |
+| Showdown target category bridge | Fixed and guarded in `v2.1.25-target-parity-guard` | `runtime_data.js` canonicalizes Showdown target categories before engine use; `engine.js` keeps a guarded fallback for engine-only tests; move tests cover Hyper Voice spread targeting and stale opposing-target retargeting. |
 
 ## Fresh Turn-Log Review
 
@@ -122,8 +122,45 @@ Structural result:
 
 Fix from this review:
 
-- App build label and export fallback are updated to `v2.1.24-ability-inventory-parity`.
+- App build label and export fallback were updated to `v2.1.24-ability-inventory-parity` for the ability slice; the target parity section below supersedes that label with `v2.1.25-target-parity-guard`.
 - Overview copy now says the Y fork carries the ability parity release and Alfredo sync remains next.
+
+## Fresh Live Log Review - Target Parity Deep Test
+
+Reviewed user exports from `https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/poke-sim/pokemon-champion-2026.html?v=7e0deca` after refresh:
+
+- `champions-turn-log-1390908950,789006894,3994491486,3867498154.json`
+- `champions-turn-log-1812892673,1909893488,99722305,3450463350.json`
+- `champions-turn-log-1677890637,3195818552,1094422766,1758880326.json`
+- `champions-turn-log-2702885822,2361050711,1244081746,3612465656.json`
+
+Structural result:
+
+- All four passed `node poke-sim/tools/validate-turn-logs.mjs --require-stable --json ...`.
+- No `team not loaded`, duplicate stable key, invalid HP map, wrong-side stable key, or `NaN` marker appeared.
+- This means the load/export guardrails held. It did not mean the move logic was fully clean.
+
+Logic finding:
+
+- Confirmed bug: some actions logged `(no valid target)` while another opposing active slot was still alive.
+- Example: Farigiraf `Hyper Voice` could fail as if it were a stale single-target move instead of hitting both adjacent foes.
+- Example: a single-target damage move could keep its original opposing target after that target fainted earlier in the action order, instead of retargeting the remaining live opposing slot.
+- Some `(no valid target)` lines are still legitimate when every active target on that side has already fainted before the move resolves and replacements happen afterward.
+
+Root cause:
+
+- Generated Showdown data uses target strings such as `allAdjacentFoes`, `allAdjacent`, `adjacentFoe`, and `randomNormal`.
+- The engine target switch uses internal buckets such as `all-adjacent-foes`, `all-adjacent`, `adjacent-foe`, and `random-foe`.
+- When generated data was present, raw Showdown target strings could bypass the internal target vocabulary.
+
+Fix from this review:
+
+- `runtime_data.js` now owns the canonical Showdown-to-engine target bridge and exports `normalizeMoveTargetCategory()`.
+- `engine.js` normalizes every target category before executing target logic and keeps a fallback map only for engine-only VM tests.
+- Single-target damaging moves now retarget a dead or missing opposing intended target to a live opposing slot when the move can still legally hit.
+- `runtime_data_bridge_tests.js` verifies common target examples, enumerates every target value in generated Showdown data, and checks that the engine fallback map cannot drift from the runtime bridge.
+- `move_verification_registry_tests.js` covers Hyper Voice spread targeting from Showdown camelCase data and stale opposing-target retargeting.
+- Golden battle hashes were regenerated after confirming the new traces reflect the intentional targeting behavior change.
 
 ## GitHub Issue Sweep
 
@@ -152,6 +189,7 @@ Use these statements in team updates and PR notes:
 - Fixed and deployed to the Y fork: Champion item allowlist, SP import/export, selector legality gate, and stale DB-team merge rejection.
 - Fixed and deployed to the Y fork: exported turn logs now include build/source metadata.
 - Fixed and deployed to the Y fork: curated-team plus Champions mega ability inventory is modeled 80/80 with focused ability parity guards.
+- Fixed for the next Y fork push: Showdown target category bridge and stale opposing-target retargeting are guarded by source-truth and move-registry tests.
 - Completed: Supabase cleanup migration retired the stale v1 DB teams.
 - Not fixed yet: live DB `showdown_entities` as the battle runtime source.
 - Not fixed yet: full move/damage/regional-form parity audit.
@@ -159,7 +197,7 @@ Use these statements in team updates and PR notes:
 
 ## Current Next Path
 
-1. Export one fresh single-run log and one fresh Run All log from the public URL after `v2.1.24-ability-inventory-parity`; verify both include `champions-turn-log-v2`, `build_id`, and `source_url`.
+1. Export one fresh single-run log and one fresh Run All log from the public URL after `v2.1.25-target-parity-guard`; verify both include `champions-turn-log-v2`, `build_id`, and `source_url`, and deep-check that no invalid `(no valid target)` lines remain.
 2. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231 so both repos show the same truth.
 3. Continue the grouped move/damage/mechanics parity track against Showdown first, with Champions overrides only when explicitly sourced.
 4. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.

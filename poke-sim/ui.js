@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.24-ability-inventory-parity';
+    return txt || 'v2.1.25-target-parity-guard';
   } catch (e) {
-    return 'v2.1.24-ability-inventory-parity';
+    return 'v2.1.25-target-parity-guard';
   }
 }
 
@@ -5652,7 +5652,8 @@ var CS_OVERVIEW_DATA = {
     { label: 'Live Supabase', value: 'Teams + analyses' },
     { label: 'Showdown DB', value: 'Checking...' },
     { label: 'Team Format', value: 'Champion/SP focus' },
-    { label: 'Turn Logs', value: 'Fresh logs clean' },
+    { label: 'Turn Logs', value: 'Structural clean' },
+    { label: 'Target Guard', value: 'Canonical bridge' },
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
@@ -5690,6 +5691,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Showdown primary move metadata for imported teams',
       detail: 'The engine now reads generated Showdown move rows first for type, category, base power, accuracy, priority, target, and contact flags, then falls back to local Champions data for custom gaps.'
+    },
+    {
+      status: 'done',
+      title: 'Target category bridge and stale-target retargeting guarded',
+      detail: 'v2.1.25 canonicalizes Showdown target strings such as allAdjacentFoes into engine target categories, then retargets dead opposing intended targets to a live opposing slot when the move can still legally hit.'
     },
     {
       status: 'done',
@@ -5745,8 +5751,13 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
+      title: 'Fresh logs exposed a targeting boundary bug',
+      detail: 'The latest logs stayed structurally clean, but deeper replay review found Hyper Voice and stale single-target actions reporting no valid target while another opposing slot was still active. Runtime bridge tests now enumerate every generated Showdown target value, and move registry tests cover spread targeting plus stale opposing-target retargeting.'
+    },
+    {
+      status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.24 ability inventory parity passed source-truth tests, the full non-DB suite, offline DB contract tests, bundle freshness, service-worker cache guard, and strict validation on the fresh live logs.'
+      detail: 'v2.1.25 target parity guard passed source-truth tests, target bridge coverage, golden battle hashes, bundle freshness, service-worker cache guard, and strict validation on the fresh live logs.'
     },
     {
       status: 'validated',
@@ -5783,12 +5794,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'TheYfactora12 main now carries v2.1.24 ability inventory parity. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
+      detail: 'TheYfactora12 main now carries v2.1.25 target parity guard. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
       title: 'Mechanics parity is broader than the current ability slice',
-      detail: 'The team-load, item timing, and ability inventory slices are covered. Remaining parity work still needs grouped checks for damage, targeting, redirection, Protect, speed control, switching, status, items, and Champions overrides.'
+      detail: 'The team-load, item timing, ability inventory, target category bridge, and stale opposing-target retarget slices are covered. Remaining parity work still needs grouped checks for damage, redirection, Protect, speed control, switching, status, items, and Champions overrides.'
     },
     {
       status: 'gap',
@@ -5799,7 +5810,7 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.24 live logs and sync Alfredo',
+      title: 'Verify v2.1.25 live logs and sync Alfredo',
       detail: 'Use fresh GitHub Pages logs to confirm the build label, source URL, stable turn-log fields, and no team-load failure, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
@@ -5825,7 +5836,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.24 and fresh logs pass, open a clean upstream PR with the ability parity slice, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.25 and fresh logs pass, open a clean upstream PR with the target parity guard, ability parity slice, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',
