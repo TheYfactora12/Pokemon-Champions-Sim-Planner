@@ -2328,7 +2328,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.25-target-parity-guard</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.26-overview-truth-notes</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -18139,9 +18139,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.25-target-parity-guard';
+    return txt || 'v2.1.26-overview-truth-notes';
   } catch (e) {
-    return 'v2.1.25-target-parity-guard';
+    return 'v2.1.26-overview-truth-notes';
   }
 }
 
@@ -23677,6 +23677,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Team Format', value: 'Champion/SP focus' },
     { label: 'Turn Logs', value: 'Structural clean' },
     { label: 'Target Guard', value: 'Canonical bridge' },
+    { label: 'QA Log Retention', value: 'Capped in UI' },
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
@@ -23719,6 +23720,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Target category bridge and stale-target retargeting guarded',
       detail: 'v2.1.25 canonicalizes Showdown target strings such as allAdjacentFoes into engine target categories, then retargets dead opposing intended targets to a live opposing slot when the move can still legally hit.'
+    },
+    {
+      status: 'done',
+      title: 'Runtime naming cheat sheet added',
+      detail: 'v2.1.26 documents Showdown target names versus Champion engine categories so future data, DB, and generated-asset work uses the adapter boundary instead of leaking raw source vocabulary into battle logic.'
     },
     {
       status: 'done',
@@ -23780,7 +23786,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.25 target parity guard passed source-truth tests, target bridge coverage, golden battle hashes, bundle freshness, service-worker cache guard, and strict validation on the fresh live logs.'
+      detail: 'v2.1.26 overview truth notes carry the v2.1.25 target parity guard. Source-truth tests, target bridge coverage, golden battle hashes, DB suites, bundle freshness, service-worker cache guard, and strict validation on the fresh live logs passed locally.'
     },
     {
       status: 'validated',
@@ -23817,7 +23823,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'TheYfactora12 main now carries v2.1.25 target parity guard. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
+      detail: 'TheYfactora12 main now carries v2.1.26 overview truth notes plus the v2.1.25 target parity guard. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
@@ -23828,12 +23834,17 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Source refresh needed must be visible before trust claims',
       detail: 'If Showdown sync hashes or Champion secondary sources change, the site should show an update-needed state until the change is reviewed, tested, and either promoted into generated data or documented as a Champions override.'
+    },
+    {
+      status: 'gap',
+      title: 'Large-run QA logs are intentionally capped in the browser',
+      detail: 'The sim can run thousands of battles, but normal UI retention is bounded: replay cards cap at 240, raw replay display shows the last 200 lines, stored sim logs cap at 500 total and 100 per matchup pair. Large partner reviews need a dedicated audit artifact export mode.'
     }
   ],
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.25 live logs and sync Alfredo',
+      title: 'Verify v2.1.26 live logs and sync Alfredo',
       detail: 'Use fresh GitHub Pages logs to confirm the build label, source URL, stable turn-log fields, and no team-load failure, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
@@ -23858,8 +23869,13 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
+      title: 'Build large-run QA artifact export mode',
+      detail: 'Add a review-mode export that preserves summary metrics, seeds, build IDs, source URLs, selected full turn logs, and failure examples from thousand-battle validations without relying on normal browser replay retention.'
+    },
+    {
+      status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.25 and fresh logs pass, open a clean upstream PR with the target parity guard, ability parity slice, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.26 and fresh logs pass, open a clean upstream PR with the target parity guard, ability parity slice, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',
@@ -23876,7 +23892,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'decision',
       title: 'Runtime DB reads vs generated offline bundle',
-      detail: 'Decide whether GitHub Pages should fetch approved rows at runtime or keep Supabase as audit/history while checked-in generated assets remain the offline battle source.'
+      detail: 'Current architecture direction: Supabase stores approved source data, overrides, teams, and audit/history; generated assets and runtime_data.js feed deterministic engine code for offline GitHub Pages reproducibility. Only change this with an explicit reviewed decision.'
     },
     {
       status: 'decision',
@@ -23909,6 +23925,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Repo Parity Report', href: '../docs/release/REPO_PARITY_REPORT_2026-06-06.md' },
     { label: 'Closeout Note', href: '../docs/release/CLOSEOUT_2026-06-06.md' },
     { label: 'Showdown DB Plan', href: 'docs/SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md' },
+    { label: 'Runtime Naming Cheat Sheet', href: 'docs/SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md' },
     { label: 'Showdown Sync Architecture', href: 'docs/SHOWDOWN_SYNC_ARCHITECTURE.md' },
     { label: 'Spec Index', href: 'docs/SPECS_INDEX.md' }
   ]

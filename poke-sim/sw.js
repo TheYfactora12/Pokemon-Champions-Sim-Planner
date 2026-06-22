@@ -49,7 +49,9 @@
 // ability mechanic guards, and source-drift visibility in the Overview tab.
 // v59-target-parity-guard [2026-06-22] - Canonical Showdown target bridge,
 // stale opposing-target retarget guard, and target vocabulary drift tests.
-const CACHE_NAME = 'champions-sim-v59-target-parity-guard';
+// v60-overview-truth-notes [2026-06-22] - Overview truth-board updates for
+// current build state, known gaps, and large-run QA log-retention limits.
+const CACHE_NAME = 'champions-sim-v60-overview-truth-notes';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
