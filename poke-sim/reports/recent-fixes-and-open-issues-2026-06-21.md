@@ -9,6 +9,7 @@ This snapshot records the current truth after the June 21 live-log review and Gi
 | Live team-load failure | Fixed in `v2.1.21-sim-context-team-load` | `Run Simulation` and `Run All` now normalize DB/static teams through one sim context. Fresh exported logs no longer contain `player team not loaded`. |
 | Sim identity drift risk | Guarded | Turn snapshots include side-prefixed stable keys such as `player:slot:0:Incineroar` and `opponent:slot:2:Incineroar`; four fresh logs had no duplicate or wrong-side stable keys. |
 | Lethal Sitrus/Oran restore | Fixed locally in `v2.1.22-lethal-berry-guard` | Exported logs showed Sitrus restoring after `0 HP`; `engine.js` now requires `hp > 0` for damage-trigger berries. `items_tests.js` covers surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior. |
+| Golden battle trace drift from berry fix | Updated | `gb_001` and `gb_002` expected trace hashes were refreshed after confirming the new traces remove the invalid berry-after-0-HP behavior while preserving expected winners. |
 | GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v54-lethal-berry-guard`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.22-lethal-berry-guard`. |
 | Showdown static metadata use | Partially fixed | Battle construction and move metadata can use generated Showdown static rows first, then local fallbacks. This is not the same as live DB runtime consumption. |
 
@@ -76,4 +77,3 @@ Use these statements in team updates and PR notes:
 5. Export one single-run log, one Run All log, and any log where Sitrus/Oran appears.
 6. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231.
 7. Prepare a reviewed upstream PR to Alfredo after live Y verification passes.
-
