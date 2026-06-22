@@ -2,6 +2,15 @@
 
 Audience: partners, Josh, reviewers, and anyone picking up simulator accuracy work without the chat history.
 
+## 2026-06-22 Live Update
+
+- Y fork `main` is deployed through commit `e5af069`.
+- GitHub Pages and CI passed for that commit.
+- The live page at `https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/poke-sim/pokemon-champion-2026.html` contains `v2.1.23-champion-item-sp-gate`.
+- Fresh live logs passed strict stable-ID validation with no `player team not loaded` text and no stale SV/unsupported item hits.
+- Downloaded turn logs now include schema, build, timestamp, and source URL metadata, so future debug logs can prove which deployed build produced them.
+- This validates the current data/load/item guardrails; it does not close full damage, move, ability, or mechanics parity.
+
 ## Current Status
 
 The simulator is in a better review state today, but it is still not ready for strong "fully accurate" claims.
@@ -16,11 +25,13 @@ What is true right now:
 - the visible shipped catalog is now Champions-only
 - SV-format teams are no longer surfaced in the live team list
 - the preferred live DB catalog migration is generator-backed from `poke-sim/data.js`
+- the Y fork public page is currently deployed through `e5af069`
+- fresh exported logs from that live page pass strict structural validation
 
 What is not true yet:
 
 - full simulator parity is not proven across all mechanics
-- the live GitHub Pages build should not be treated as updated until the current changes are pushed and Pages finishes deploying
+- future live GitHub Pages builds should not be treated as updated until the matching deploy run is green and the exported log `build_id` confirms the tested build
 - approved Supabase views are not yet the final public runtime source
 
 ## Live Review Target
@@ -113,6 +124,7 @@ These still block stronger trust claims:
 
 3. Fresh deployed-log proof still needs to be repeated after each live push.
    - exported turn logs from the claimed live URL need strict validation
+   - exported logs should carry `schema_version`, `build_id`, `exported_at`, and `source_url`
 
 4. A separate SV product mode still does not exist.
    - the shipped built-in catalog is now Champions-only

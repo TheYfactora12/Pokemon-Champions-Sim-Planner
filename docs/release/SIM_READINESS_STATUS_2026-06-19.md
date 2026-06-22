@@ -6,6 +6,8 @@ Audience: partners, reviewers, and internal owners deciding whether the simulato
 
 The simulator is improving, but it should not yet be described as fully ready or fully accurate.
 
+2026-06-22 update: the Y fork live page is now deployed through `e5af069`; CI and GitHub Pages passed; fresh live logs validate cleanly for team loading, stable IDs, final alive counts, stale item absence, and exported build metadata support. This improves live-debug trust, but it does not close the full move, damage, ability, regional-form, or mechanics parity gate.
+
 The correct status today is:
 
 - simulation-truth validation in progress
@@ -46,7 +48,8 @@ These are still open proof gaps and should block strong readiness claims:
   - The branch improves the path, but the public app is still not generated from approved DB views as the final release input.
 
 - Strict fresh live-log proof is not complete.
-  - The project still needs repeated validation of fresh exported logs from a deployed build using `node tools/validate-turn-logs.mjs --require-stable`.
+  - The project still needs repeated validation of fresh exported logs from each deployed build using `node tools/validate-turn-logs.mjs --require-stable`.
+  - New logs should include `schema_version`, `build_id`, `exported_at`, and `source_url` so reviewers can prove which build produced the result.
 
 - Showdown oracle coverage is still incomplete.
   - The project still needs a stronger local-vs-Showdown behavior harness for mechanics that static rows alone cannot prove.

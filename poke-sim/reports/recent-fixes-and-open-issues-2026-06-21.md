@@ -1,6 +1,14 @@
 # Recent Fixes and Open Issue Snapshot - 2026-06-21
 
-This snapshot records the current truth after the June 21 live-log review and GitHub issue sweep. It is meant to remove stale contradictions before pushing the Y fork and preparing the Alfredo upstream PR.
+This snapshot records the current truth after the June 21-22 live-log review and GitHub issue sweep. It is meant to remove stale contradictions before preparing the Alfredo upstream PR.
+
+## 2026-06-22 Deployment Update
+
+- Y fork `main` is pushed through commit `e5af069` (`Stamp exported turn logs with build metadata`).
+- GitHub Pages deploy and CI both passed for `e5af069`.
+- The public review target contains `v2.1.23-champion-item-sp-gate`, the Champion item allowlist, SP import/export parsing, DB merge legality gate, and the new `champions-turn-log-v2` export metadata.
+- Supabase migration `2026_06_22_retire_legacy_sv_teams.sql` has run successfully; the two stale v1 teams are retired at the source.
+- Fresh logs from the live URL now validate cleanly for team loading, stable IDs, final alive counts, and stale item absence.
 
 ## Fixed Recently
 
@@ -8,10 +16,11 @@ This snapshot records the current truth after the June 21 live-log review and Gi
 | --- | --- | --- |
 | Live team-load failure | Fixed in `v2.1.21-sim-context-team-load` | `Run Simulation` and `Run All` now normalize DB/static teams through one sim context. Fresh exported logs no longer contain `player team not loaded`. |
 | Sim identity drift risk | Guarded | Turn snapshots include side-prefixed stable keys such as `player:slot:0:Incineroar` and `opponent:slot:2:Incineroar`; four fresh logs had no duplicate or wrong-side stable keys. |
-| Lethal Sitrus/Oran restore | Fixed locally in `v2.1.22-lethal-berry-guard` | Exported logs showed Sitrus restoring after `0 HP`; `engine.js` now requires `hp > 0` for damage-trigger berries. `items_tests.js` covers surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior. |
+| Lethal Sitrus/Oran restore | Fixed and deployed in `v2.1.22-lethal-berry-guard` | Exported logs showed Sitrus restoring after `0 HP`; `engine.js` now requires `hp > 0` for damage-trigger berries. `items_tests.js` covers surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior. |
 | Golden battle trace drift from berry fix | Updated | `gb_001` and `gb_002` expected trace hashes were refreshed after confirming the new traces remove the invalid berry-after-0-HP behavior while preserving expected winners. |
-| Champion item/SP gate | Fixed locally in `v2.1.23-champion-item-sp-gate` | `legality.js` now uses a positive Champions item allowlist; imports reject raw EV/IV lines; exports use `SPs:`; illegal teams are hidden from selectors; stale DB teams cannot replace legal bundled teams. |
+| Champion item/SP gate | Fixed and deployed in `v2.1.23-champion-item-sp-gate` | `legality.js` now uses a positive Champions item allowlist; imports reject raw EV/IV lines; exports use `SPs:`; illegal teams are hidden from selectors; stale DB teams cannot replace legal bundled teams. |
 | GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v55-champion-item-sp-gate`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.23-champion-item-sp-gate`. |
+| Exported-log build drift | Guarded in `e5af069` | Downloaded replay logs now include `schema_version: champions-turn-log-v2`, `exported_at`, `build_id`, and `source_url`, so future debug logs can prove which deployed build produced them. |
 | Showdown static metadata use | Partially fixed | Battle construction and move metadata can use generated Showdown static rows first, then local fallbacks. This is not the same as live DB runtime consumption. |
 
 ## Fresh Turn-Log Review
@@ -64,7 +73,31 @@ Item/source-truth finding:
 - Root cause direction: static/bundled data was being repaired, but DB-loaded teams could still override or enter selectors without a positive Champion item-pool gate.
 - Fix: `mergeDbTeamsIntoCatalog()` now validates DB teams before merging, rejects stale/illegal rows, and preserves the legal bundled team when a DB row would otherwise clobber it.
 - Broader prevention added: generated seed/live-alignment SQL must match `data.js`; PR bundle/cache checks now include `legality.js`; Pages deploy runs the seed, Champion legality, import/DB merge, load-order, and bundle-freshness checks before publishing; current coaching/classifier copy no longer recommends absent Champion items.
-- Live DB cleanup follow-up: CI found two retired v1 teams still active in Supabase (`chuppa_balance`, `kingambit_sneasler`). Added `2026_06_22_retire_legacy_sv_teams.sql` to mark them retired and remove stale member/item rows without deleting team rows that historical analyses may reference.
+- Live DB cleanup follow-up: CI found two retired v1 teams still active in Supabase (`chuppa_balance`, `kingambit_sneasler`). `2026_06_22_retire_legacy_sv_teams.sql` now marks them retired and removes stale member/item rows without deleting team rows that historical analyses may reference.
+
+## Fresh Live Log Review - Post DB Cleanup
+
+Reviewed user exports from the live GitHub Pages URL:
+
+- `champions-turn-log-3084425982,892997766,4276048414,2229364397.json`
+- `champions-turn-log-788751691,3876826790,1086134230,2226244029.json`
+- `champions-turn-log-1649352473,1693921784,2129474619,909993565.json`
+- `champions-turn-log-593811072,2749655353,1061834934,2103146632.json`
+
+Structural result:
+
+- All four passed `node poke-sim/tools/validate-turn-logs.mjs --require-stable ...`.
+- No `team not loaded` text appeared.
+- Stable IDs passed with zero validator warnings.
+- Results matched final alive counts: two wins and two losses.
+- No stale SV/unsupported item hits appeared.
+- The one Sitrus restore in this batch was valid: Rotom-Wash damaged Incineroar to `34/202 HP`, Sitrus restored after survival, then Flare Blitz recoil applied after Incineroar's attack.
+
+Root-cause conclusion:
+
+- The prior live failure was broader than a single log. Static/bundled data, live DB rows, and the sim-context loader could drift from each other.
+- The current prevention layer is a positive gate: normalize DB/static teams through one sim context, reject stale DB teams before selector merge, keep legal bundled teams when DB rows are illegal, validate stable IDs in logs, and stamp future exported logs with build metadata.
+- This proves the live data/load/item guardrails are behaving on the tested logs. It does not prove full Showdown/Champions damage and mechanics parity.
 
 ## GitHub Issue Sweep
 
@@ -73,7 +106,7 @@ Checked open issues in:
 - Y fork: `TheYfactora12/Pokemon-Champions-Sim-Planner`
 - Alfredo upstream: `alfredocox/Pokemon-Champions-Sim-Planner`
 
-Current active alignment issues:
+Current active alignment issues after the 2026-06-22 issue list check:
 
 | Repo | Issue | Current truth |
 | --- | --- | --- |
@@ -89,19 +122,17 @@ Use these statements in team updates and PR notes:
 
 - Fixed: live sim team context/load path.
 - Fixed: stable battle identity keys in logs.
-- Fixed locally: lethal Sitrus/Oran restore bug.
-- Fixed locally: Champion item allowlist, SP import/export, selector legality gate, and stale DB-team merge rejection.
+- Fixed and deployed to the Y fork: lethal Sitrus/Oran restore bug.
+- Fixed and deployed to the Y fork: Champion item allowlist, SP import/export, selector legality gate, and stale DB-team merge rejection.
+- Fixed and deployed to the Y fork: exported turn logs now include build/source metadata.
+- Completed: Supabase cleanup migration retired the stale v1 DB teams.
 - Not fixed yet: live DB `showdown_entities` as the battle runtime source.
-- Pending live DB operation: run `2026_06_22_retire_legacy_sv_teams.sql` once against Supabase so retired v1 teams are inactive at the source.
 - Not fixed yet: full move/damage/regional-form parity audit.
 - Not ready for broad accuracy claims: sim still needs grouped mechanics parity work and Showdown/Champions oracle gates.
 
-## Next Push Path
+## Current Next Path
 
-1. Run focused item/import/DB-gate tests and full test sweep.
-2. Push `v2.1.23-champion-item-sp-gate` to `TheYfactora12/main`.
-3. Wait for GitHub Pages deploy.
-4. Test `https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/poke-sim/pokemon-champion-2026.html`.
-5. Export one single-run log, one Run All log, and verify no selected teams carry stale SV/unsupported items.
-6. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231.
-7. Prepare a reviewed upstream PR to Alfredo after live Y verification passes.
+1. Export one fresh single-run log and one fresh Run All log from the public URL after `e5af069`; verify both include `champions-turn-log-v2`, `build_id`, and `source_url`.
+2. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231 so both repos show the same truth.
+3. Continue the grouped move/damage/mechanics parity track against Showdown first, with Champions overrides only when explicitly sourced.
+4. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.

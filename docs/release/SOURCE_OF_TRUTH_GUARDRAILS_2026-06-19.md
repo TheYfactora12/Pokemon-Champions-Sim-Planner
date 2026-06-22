@@ -17,6 +17,7 @@ Do not manually patch broad mirrored data in app files when the same fix belongs
 ## Drift Prevention Rules
 
 - Never treat GitHub Pages as proof for unmerged branch data.
+- Never treat an exported turn log as current-build proof unless it includes `schema_version`, `build_id`, `exported_at`, and `source_url`.
 - Never hand-edit generated Showdown data without regenerating it.
 - Never change fallback stats/types without checking whether the generated Showdown row already covers that species.
 - Never merge source-truth changes without recording the upstream source commit/date when applicable.
@@ -44,7 +45,7 @@ Also run these when the change touches the relevant area:
 - `npm run test:fast`
 - workbook regeneration via `tools/generate-pokemon-data-audit.js`
 - bundle rebuild when shipped runtime files changed
-- strict live-log validation for deployed-build proof
+- strict live-log validation for deployed-build proof, including exported build metadata when available
 
 ## Review Rules
 
@@ -54,6 +55,7 @@ Every source-truth handoff should state:
 - branch
 - commit SHA
 - preview or local target
+- exported log `build_id` and `source_url` when the handoff uses live logs
 - source commit/date if Showdown inputs changed
 - whether approved DB views or local generated files are the active review source
 
