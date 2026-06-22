@@ -162,6 +162,13 @@ Fix from this review:
 - `move_verification_registry_tests.js` covers Hyper Voice spread targeting from Showdown camelCase data and stale opposing-target retargeting.
 - Golden battle hashes were regenerated after confirming the new traces reflect the intentional targeting behavior change.
 
+## Large-Run Log Retention Note
+
+- The sim and CI can run thousands of battles for validation, but the browser UI intentionally keeps a bounded amount of replay evidence so local storage, downloads, and the page do not become unusable.
+- Current browser caps: replay cards are capped at `MAX_REPLAY_CARDS = 240`, raw replay lines display the last `MAX_REPLAY_LOG_LINES = 200`, stored sim logs are capped at `CS_SIMLOG_MAX_TOTAL = 500`, and stored logs per matchup pair are capped at `CS_SIMLOG_MAX_PER_PAIR = 100`.
+- This is not proof that only that many battles ran. It means normal user-facing retention is capped.
+- Later build recommendation: add a QA/audit artifact export mode for large runs that saves summary metrics plus selected full turn logs, seeds, build IDs, source URLs, and failure examples without overloading normal browser storage.
+
 ## GitHub Issue Sweep
 
 Checked open issues in:
@@ -191,6 +198,7 @@ Use these statements in team updates and PR notes:
 - Fixed and deployed to the Y fork: curated-team plus Champions mega ability inventory is modeled 80/80 with focused ability parity guards.
 - Fixed for the next Y fork push: Showdown target category bridge and stale opposing-target retargeting are guarded by source-truth and move-registry tests.
 - Completed: Supabase cleanup migration retired the stale v1 DB teams.
+- Known limitation: browser replay/log retention is intentionally capped; large-run QA evidence needs a dedicated artifact export mode before partners should expect every battle log to be retained.
 - Not fixed yet: live DB `showdown_entities` as the battle runtime source.
 - Not fixed yet: full move/damage/regional-form parity audit.
 - Not ready for broad accuracy claims: sim still needs grouped mechanics parity work and Showdown/Champions oracle gates.
@@ -200,4 +208,5 @@ Use these statements in team updates and PR notes:
 1. Export one fresh single-run log and one fresh Run All log from the public URL after `v2.1.25-target-parity-guard`; verify both include `champions-turn-log-v2`, `build_id`, and `source_url`, and deep-check that no invalid `(no valid target)` lines remain.
 2. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231 so both repos show the same truth.
 3. Continue the grouped move/damage/mechanics parity track against Showdown first, with Champions overrides only when explicitly sourced.
-4. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.
+4. Plan the large-run QA artifact export mode so thousand-battle validations can preserve review evidence without using normal browser replay retention.
+5. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.

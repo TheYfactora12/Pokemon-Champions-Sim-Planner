@@ -52,6 +52,7 @@ Also run these when the change touches the relevant area:
 - bundle rebuild when shipped runtime files changed
 - strict live-log validation for deployed-build proof, including exported build metadata when available
 - focused replay/deep-log review when validator-clean logs still show suspicious battle text such as invalid `(no valid target)`, impossible HP recovery, or stale item/legal-data behavior
+- for thousand-battle QA claims, state whether evidence came from normal browser retention caps or from a dedicated artifact export; normal UI retention is intentionally bounded
 
 ## Review Rules
 
@@ -64,6 +65,7 @@ Every source-truth handoff should state:
 - exported log `build_id` and `source_url` when the handoff uses live logs
 - source commit/date if Showdown inputs changed
 - whether approved DB views or local generated files are the active review source
+- whether large-run evidence preserves all battle logs or only capped browser samples plus summaries
 
 ## Release Guardrails
 
