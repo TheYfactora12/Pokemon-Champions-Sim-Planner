@@ -266,6 +266,19 @@ var FLINCH_MOVES = {
   'Stomp':        { chance: 0.30 }
 };
 
+var SHEER_FORCE_MOVES = new Set([
+  'Air Slash','Ancient Power','Bite','Blizzard','Body Slam','Bug Buzz',
+  'Charge Beam','Crunch','Dark Pulse','Discharge','Dragon Rush','Earth Power',
+  'Energy Ball','Extrasensory','Fire Blast','Fire Fang','Flamethrower',
+  'Flash Cannon','Focus Blast','Heat Wave','Hurricane','Hyper Fang',
+  'Ice Beam','Ice Fang','Icicle Crash','Icy Wind','Iron Head','Lava Plume',
+  'Lunge','Meteor Mash','Moonblast','Muddy Water','Needle Arm','Poison Jab',
+  'Psychic','Psychic Noise','Rock Slide','Rock Tomb','Scald','Scorching Sands',
+  'Seed Flare','Shadow Ball','Sludge Bomb','Sludge Wave','Snarl','Thunder',
+  'Thunder Fang','Thunderbolt','Tri Attack','Twister','Waterfall','Zen Headbutt',
+  'Dire Claw','Matcha Gotcha'
+]);
+
 // Contact moves — Champions/Gen 9 contact list used by Piercing Drill,
 // Unseen Fist, and future contact-triggered hooks (Rough Skin, Iron Barbs).
 // Cite: https://bulbapedia.bulbagarden.net/wiki/Contact
@@ -607,6 +620,24 @@ function _applyTargetStageMap(source, target, deltas, log) {
   return applied;
 }
 
+function _attackerIgnoresTargetAbility(attacker, target) {
+  return !!(
+    attacker &&
+    target &&
+    attacker !== target &&
+    attacker.ability === 'Mold Breaker' &&
+    target.item !== 'Ability Shield'
+  );
+}
+
+function _targetAbilityActive(target, attacker, ability) {
+  return !!(
+    target &&
+    target.ability === ability &&
+    !_attackerIgnoresTargetAbility(attacker, target)
+  );
+}
+
 function _isGrounded(mon) {
   return !!mon && !mon.flying;
 }
@@ -821,6 +852,24 @@ var ABILITIES = {
       return null;
     }
   },
+  'Sheer Force': {
+    // Moves with eligible secondary effects gain 30% power and those effects
+    // are suppressed after damage. Uses the current engine's secondary-effect
+    // surface plus common Showdown secondary moves used by shipped teams.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onBasePower: function(ctx) {
+      if (SHEER_FORCE_MOVES.has(ctx.move)) return { bpMod: 5325 };
+      return null;
+    }
+  },
+  'Fairy Aura': {
+    // Fairy moves gain Showdown's aura modifier, 0x1548 / 0x1000.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onBasePower: function(ctx) {
+      if (ctx.moveType === 'Fairy') return { bpMod: 5448 };
+      return null;
+    }
+  },
   'Iron Fist': {
     // Punch moves gain 20% power.
     // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
@@ -872,6 +921,18 @@ var ABILITIES = {
       return null;
     }
   },
+  'Levitate': {
+    // Ground immunity for grounded non-Thousand Arrows attacks. Flying-type
+    // immunity is still handled by the type chart; this covers non-Flying
+    // Levitate users such as Cresselia/Rotom/Chimecho.
+    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
+    onTryHit: function(ctx) {
+      if (ctx.defender !== ctx.attacker && ctx.moveType === 'Ground' && ctx.move !== 'Thousand Arrows') {
+        return { immune: true };
+      }
+      return null;
+    }
+  },
   'Earth Eater': {
     // Ground moves targeting another Pokemon are absorbed; holder heals 1/4 max HP.
     // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
@@ -903,6 +964,14 @@ var ABILITIES = {
       }
     }
   },
+  // Inline in calcDamage/applyDamage: ignores modeled target defensive hooks,
+  // defender Unaware, Sturdy, Levitate/Earth Eater immunity, and reductions.
+  'Mold Breaker': {},
+  // Inline in calcDamage/applyEntryAbility: Normal/Fighting hit Ghosts and
+  // Intimidate-style Attack drops are ignored.
+  'Scrappy': {},
+  // Inline in calcDamage/status/applyDamage: bypasses screens and Substitute.
+  'Infiltrator': {},
   // Inline in executeAction/setStanceForm: Aegislash swaps between Shield and Blade.
   'Stance Change': {},
   // Inline in getStat: Attack is doubled after stat-stage resolution.
@@ -1012,6 +1081,8 @@ function applyWeatherAbility(mon, field, log) {
 // no matching hook. Invoked from engine trigger points.
 function callAbilityHook(mon, hookName, ctx) {
   if (!mon || !mon.ability) return null;
+  if ((hookName === 'onTryHit' || hookName === 'onSourceModifyAtk' || hookName === 'onSourceModifyDamage') &&
+      ctx && _attackerIgnoresTargetAbility(ctx.attacker, mon)) return null;
   var ability = ABILITIES[mon.ability];
   if (!ability || typeof ability[hookName] !== 'function') return null;
   try {
@@ -1547,7 +1618,7 @@ class Pokemon {
     const dBoost = target.statBoosts[dStatKey] || 0;
     let aOverride = aBoost;
     let dOverride = dBoost;
-    if (target.ability === 'Unaware') aOverride = 0;
+    if (_targetAbilityActive(target, this, 'Unaware')) aOverride = 0;
     if (this.ability === 'Unaware') dOverride = 0;
     if (_isCrit) {
       if (aOverride < 0) aOverride = 0;
@@ -1724,6 +1795,8 @@ class Pokemon {
       let eff = (chart[t] !== undefined ? chart[t] : 1);
       // Freeze-Dry replaces Ice's normal Water matchup with super effective.
       if (move === 'Freeze-Dry' && t === 'Water') eff = 2;
+      if (eff === 0 && t === 'Ghost' && this.ability === 'Scrappy' &&
+          (moveType === 'Normal' || moveType === 'Fighting')) eff = 1;
       typeEff *= eff;
     }
     if (typeEff === 0) return 0;
@@ -1750,7 +1823,7 @@ class Pokemon {
     const _screenBase = (_fmt === 'doubles') ? 2732 : 2048;
     let screenMod = 4096;
     const _tSide = target.side;
-    if (_tSide && !_isCrit) {
+    if (_tSide && !_isCrit && this.ability !== 'Infiltrator') {
       if (_tSide.auroraVeil) {
         screenMod = _screenBase;
       } else if (isPhysical && _tSide.reflect) {
@@ -2590,7 +2663,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       log.push(`${mon.name}'s Intimidate activated!`);
       for (const t of targets) {
         if (!t.alive) continue;
-        if (t.ability === 'Inner Focus' || t.ability === 'Own Tempo' || t.ability === 'Oblivious') {
+        if (t.ability === 'Inner Focus' || t.ability === 'Own Tempo' || t.ability === 'Oblivious' || t.ability === 'Scrappy') {
           log.push(`${t.name} ignored Intimidate!`);
           continue;
         }
@@ -3021,7 +3094,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         'Parting Shot',
         'Trick'
       ]);
-      if (target && target.alive && target.substituteHp > 0 && blockedBySubstitute.has(move)) {
+      if (target && target.alive && target.substituteHp > 0 && attacker.ability !== 'Infiltrator' && blockedBySubstitute.has(move)) {
         log.push(`${attacker.name} used ${move}! But it failed because of Substitute!`);
         return;
       }
@@ -4033,7 +4106,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     for (const t of ordered) {
       if (!t.alive) continue;
-      const _hadSubstitute = t.substituteHp > 0;
+      const _hadSubstitute = t.substituteHp > 0 && attacker.ability !== 'Infiltrator';
       if (t.concealedByMove && move !== 'Phantom Force') {
         log.push(`${t.name} avoided the attack while concealed!`);
         continue;
@@ -4136,23 +4209,24 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (_wasCrit) log.push(`A critical hit!`);
         applyDamage(attacker, move, t, dmg, field, log, rng);
         resolution.didDamage = true;
-        if (SPEED_DROP_MOVES.has(move)) {
+        const _suppressSecondary = attacker.ability === 'Sheer Force' && SHEER_FORCE_MOVES.has(move);
+        if (!_suppressSecondary && SPEED_DROP_MOVES.has(move)) {
           _applyTargetStageMap(attacker, t, { spe: -1 }, log);
         }
-        if (move === 'Snarl' && t.alive && !_hadSubstitute) _applyTargetStageMap(attacker, t, { spa: -1 }, log);
-        if (move === 'Lunge' && t.alive && !_hadSubstitute) _applyTargetStageMap(attacker, t, { atk: -1 }, log);
-        if (move === 'Psychic Noise' && t.alive) {
+        if (!_suppressSecondary && move === 'Snarl' && t.alive && !_hadSubstitute) _applyTargetStageMap(attacker, t, { spa: -1 }, log);
+        if (!_suppressSecondary && move === 'Lunge' && t.alive && !_hadSubstitute) _applyTargetStageMap(attacker, t, { atk: -1 }, log);
+        if (!_suppressSecondary && move === 'Psychic Noise' && t.alive) {
           t.healBlockedTurns = Math.max(t.healBlockedTurns || 0, 2);
           log.push(`${t.name} can no longer recover HP because of Psychic Noise!`);
         }
-        if (move === 'Muddy Water' && rng() < 0.30) {
+        if (!_suppressSecondary && move === 'Muddy Water' && rng() < 0.30) {
           _applyTargetStageMap(attacker, t, { acc: -1 }, log);
         }
         // T9j.8 (Refs #19) Flinch roll: after damage applied, target alive,
         // target hasn't acted yet. Fang moves roll flinch + status independently.
         if (t.alive) {
           const _flinch = FLINCH_MOVES[move];
-          if (_flinch && !t.hasActed && rng() < _flinch.chance) {
+          if (!_suppressSecondary && _flinch && !t.hasActed && rng() < _flinch.chance) {
             t._flinched = true;
             log.push(`${t.name} flinched and couldn't move!`);
           }
@@ -4185,7 +4259,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     let finalDmg = dmg;
     const DRAIN_MOVES = new Set(['Giga Drain', 'Matcha Gotcha']);
     // Substitute absorb
-    if (target.substituteHp > 0) {
+    if (target.substituteHp > 0 && !(attacker && attacker.ability === 'Infiltrator')) {
       target.substituteHp -= finalDmg;
       if (target.substituteHp <= 0) { target.substituteHp = 0; log.push(`${target.name}'s Substitute was destroyed!`); }
       else log.push(`${attacker.name} used ${move}! (Substitute absorbed ${finalDmg} dmg)`);
@@ -4210,7 +4284,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     target.hp = Math.max(0, target.hp - finalDmg);
     // T9j.6 (#8) — Focus Sash survives a KO from full HP; consumed.
     let sturdySaved = false;
-    if (target.hp === 0 && target.ability === 'Sturdy' && wasFullHp) {
+    if (target.hp === 0 && _targetAbilityActive(target, attacker, 'Sturdy') && wasFullHp) {
       target.hp = 1;
       sturdySaved = true;
     }
@@ -4239,13 +4313,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       target.frozenTurns = 0;
       log.push(`${target.name} was thawed out by ${attacker.name}'s ${move}!`);
     }
+    const suppressSecondary = attacker && attacker.ability === 'Sheer Force' && SHEER_FORCE_MOVES.has(move);
     if (move === 'Matcha Gotcha' && target.alive) {
-      if (!target.status && canInflictStatus(target, 'burn', field) && rng() < 0.2) {
+      if (!suppressSecondary && !target.status && canInflictStatus(target, 'burn', field) && rng() < 0.2) {
         target.status = 'burn';
         log.push(`${target.name} was burned by ${attacker.name}'s Matcha Gotcha!`);
       }
     }
-    if (move === 'Dire Claw' && target.alive && !target.status) {
+    if (!suppressSecondary && move === 'Dire Claw' && target.alive && !target.status) {
       if (rng() < 0.5) {
         const options = ['poison', 'paralysis', 'sleep'].filter((status) => canInflictStatus(target, status, field));
         if (options.length) {

@@ -45,7 +45,7 @@
 // restoring holders that were reduced to 0 HP before faint cleanup.
 // v55-champion-item-sp-gate [2026-06-21] - Positive Champions item allowlist,
 // SP import/export gate, and stale DB-team rejection before selector rebuild.
-const CACHE_NAME = 'champions-sim-v56-ability-damage-parity';
+const CACHE_NAME = 'champions-sim-v57-ability-mechanics-parity';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

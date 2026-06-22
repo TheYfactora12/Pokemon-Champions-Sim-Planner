@@ -190,5 +190,65 @@ T('6. Earth Eater blocks Ground damage and heals the target', function() {
   eq(battle.playerSurvivors, 1, 'Earth Eater holder should survive the Ground hit');
 });
 
+T('7. Mold Breaker bypasses Sturdy survival', function() {
+  const probe = new ctx.Pokemon(member('Magnemite', { ability: 'Sturdy' }), '', 'champions');
+  const battle = ctx.simulateBattle(
+    team([member('Magnemite', { ability: 'Sturdy', hp: probe.maxHp })]),
+    team([member('Haxorus', {
+      ability: 'Mold Breaker',
+      nature: 'Adamant',
+      moves: ['Earthquake'],
+      evs: { hp: 0, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 }
+    })]),
+    { format: 'singles', seed: [41, 42, 43, 44], maxTurns: 1 }
+  );
+  falsy(battle.log.some(line => String(line).includes('Magnemite hung on with Sturdy!')),
+    'Mold Breaker should bypass Sturdy');
+  eq(battle.playerSurvivors, 0, 'Mold Breaker hit should KO through Sturdy');
+});
+
+T('8. Sheer Force suppresses modeled secondary stat drops', function() {
+  const battle = ctx.simulateBattle(
+    team([member('Nidoking', {
+      ability: 'Sheer Force',
+      nature: 'Modest',
+      moves: ['Snarl'],
+      evs: { hp: 0, atk: 0, def: 0, spa: 32, spd: 0, spe: 32 }
+    })]),
+    team([member('Pelipper', {
+      ability: 'Keen Eye',
+      moves: ['Splash'],
+      evs: { hp: 32, atk: 0, def: 0, spa: 32, spd: 32, spe: 0 }
+    })]),
+    { format: 'singles', seed: [45, 46, 47, 48], maxTurns: 1 }
+  );
+  truthy(battle.log.some(line => String(line).includes('Nidoking used Snarl!')),
+    'Sheer Force test should execute Snarl');
+  falsy(battle.log.some(line => String(line).includes("Pelipper's Special Attack fell!")),
+    'Sheer Force should suppress Snarl Special Attack drops');
+});
+
+T('9. Infiltrator damages the target instead of its Substitute', function() {
+  const battle = ctx.simulateBattle(
+    team([member('Chandelure', {
+      ability: 'Infiltrator',
+      nature: 'Modest',
+      moves: ['Shadow Ball'],
+      evs: { hp: 0, atk: 0, def: 0, spa: 32, spd: 0, spe: 32 }
+    })]),
+    team([member('Cresselia', {
+      ability: 'Levitate',
+      substituteHp: 60,
+      moves: ['Splash'],
+      evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 32, spe: 0 }
+    })]),
+    { format: 'singles', seed: [49, 50, 51, 52], maxTurns: 1 }
+  );
+  truthy(battle.log.some(line => String(line).includes('Chandelure used Shadow Ball!')),
+    'Infiltrator test should execute Shadow Ball');
+  falsy(battle.log.some(line => String(line).includes('Substitute absorbed')),
+    'Infiltrator should not let Substitute absorb the attack');
+});
+
 console.log('\nability damage parity:', pass + ' pass, ' + fail + ' fail\n');
 process.exit(fail ? 1 : 0);
