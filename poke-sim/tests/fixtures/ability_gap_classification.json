@@ -14,10 +14,6 @@
       "category": "missing_battle_result_impacting",
       "why": "Special Attack boost on HP threshold changes Mega Drampa snowball turns."
     },
-    "Blaze": {
-      "category": "missing_battle_result_impacting",
-      "why": "Low-HP Fire boost changes Charizard damage in close endgames."
-    },
     "Bulletproof": {
       "category": "missing_low_impact",
       "why": "Projectile immunities are real but Mega Chesnaught is not in current shipped teams."
@@ -26,17 +22,9 @@
       "category": "missing_battle_result_impacting",
       "why": "Accuracy boost changes hit rates for status and utility lines."
     },
-    "Earth Eater": {
-      "category": "missing_battle_result_impacting",
-      "why": "Ground immunity plus healing changes partner Earthquake interactions."
-    },
     "Fairy Aura": {
       "category": "missing_battle_result_impacting",
       "why": "Field-wide Fairy damage boost changes Mega Floette and partner damage."
-    },
-    "Filter": {
-      "category": "missing_low_impact",
-      "why": "Super-effective damage reduction matters, but only on mega-only catalog rows today."
     },
     "Flower Veil": {
       "category": "missing_battle_result_impacting",
@@ -54,10 +42,6 @@
       "category": "missing_low_impact",
       "why": "End-turn ally status cure can matter, but it is mega-only and relatively narrow."
     },
-    "Huge Power": {
-      "category": "missing_battle_result_impacting",
-      "why": "Attack doubling is a major damage multiplier on Mega Starmie."
-    },
     "Infiltrator": {
       "category": "missing_battle_result_impacting",
       "why": "Bypasses Substitute and screens, changing damage and status delivery."
@@ -69,10 +53,6 @@
     "Insomnia": {
       "category": "missing_low_impact",
       "why": "Sleep immunity matters on Ariados, but it is narrower than the top coverage gaps."
-    },
-    "Iron Fist": {
-      "category": "missing_battle_result_impacting",
-      "why": "Punching move boost changes Mega Golurk and Mega Crabominable damage."
     },
     "Limber": {
       "category": "missing_low_impact",
@@ -94,10 +74,6 @@
       "category": "missing_battle_result_impacting",
       "why": "Perfect accuracy changes both move reliability and opposing hit rates."
     },
-    "Overgrow": {
-      "category": "missing_battle_result_impacting",
-      "why": "Low-HP Grass boost changes Meganium damage in close games."
-    },
     "Poison Touch": {
       "category": "missing_battle_result_impacting",
       "why": "Contact poison chance changes Sneasler chip and status pressure."
@@ -109,18 +85,6 @@
     "Protean": {
       "category": "missing_battle_result_impacting",
       "why": "Type-changing on move use radically changes STAB and defensive matchups."
-    },
-    "Pure Power": {
-      "category": "missing_battle_result_impacting",
-      "why": "Attack doubling is a major damage multiplier on Mega Medicham."
-    },
-    "Rough Skin": {
-      "category": "missing_battle_result_impacting",
-      "why": "Contact chip affects many Garchomp trades and KO ranges."
-    },
-    "Sand Force": {
-      "category": "missing_battle_result_impacting",
-      "why": "Sand-boosted Rock, Ground, and Steel damage matters on Mega Steelix/Garchomp."
     },
     "Sand Veil": {
       "category": "missing_low_impact",
@@ -157,14 +121,6 @@
     "Stamina": {
       "category": "missing_battle_result_impacting",
       "why": "Defense boosts on hit change Archaludon survivability over multi-hit turns."
-    },
-    "Technician": {
-      "category": "missing_battle_result_impacting",
-      "why": "Low-base-power move boost changes Mega Scizor damage benchmarks."
-    },
-    "Thick Fat": {
-      "category": "missing_battle_result_impacting",
-      "why": "Fire and Ice damage reduction changes Mega Venusaur survival ranges."
     },
     "Trace": {
       "category": "missing_low_impact",
