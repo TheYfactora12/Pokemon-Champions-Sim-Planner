@@ -66,8 +66,8 @@ function overlap(r1, r2) { return !(r1.hi < r2.lo || r2.hi < r1.lo); }
 const MATCHUPS = [
   { label: 'TR Counter vs Mega Altaria',            p: 'player',              o: 'mega_altaria' },
   { label: 'TR Counter vs Rin Sand',                p: 'player',              o: 'rin_sand' },
-  { label: 'TR Counter vs Chuppa Balance',          p: 'player',              o: 'chuppa_balance' },
-  { label: 'Mega Dragonite vs Kingambit Sneasler',  p: 'mega_dragonite',      o: 'kingambit_sneasler' },
+  { label: 'TR Counter vs Sand Bulky Offense',      p: 'player',              o: 'sand_bulky_offense' },
+  { label: 'Mega Dragonite vs Aurora Veil',         p: 'mega_dragonite',      o: 'aurora_veil_froslass' },
   { label: 'Aurora Veil vs Suica Sun',              p: 'aurora_veil_froslass', o: 'suica_sun' }
 ];
 

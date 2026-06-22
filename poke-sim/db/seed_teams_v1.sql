@@ -1,3 +1,6 @@
+-- HISTORICAL / SUPERSEDED
+-- Kept for audit trail only. Current repo seed source is poke-sim/db/seed_teams_v2.sql.
+-- Current live DB alignment path is poke-sim/db/migrations/2026_06_20_align_shared_27_team_catalog.sql.
 -- Champions Sim seed data v1
 -- Safe to re-run: DELETE existing rows before inserting
 -- Run order: schema_v1.sql -> THIS FILE -> rls_policies_v1.sql

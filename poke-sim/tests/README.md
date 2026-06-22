@@ -43,7 +43,11 @@ node tests/t173_mobile_dense_controls_tests.js # Mobile dense control safeguards
 node tests/t174_mobile_results_stats_tests.js # Mobile results stats safeguards
 node tests/t175_mobile_tab_grid_tests.js # Mobile tab grid safeguards
 node tests/t176_mobile_teams_panel_tests.js # Mobile teams panel safeguards
-node tests/phase5_turn_log_tests.js # Phase 5 — turnLog, positionScore, Replay Log v2 — 12 cases
+node tests/phase5_turn_log_tests.js # Phase 5 — turnLog, positionScore, Replay Log v2 — 25 cases
+node tests/recoil_faint_turn_log_tests.js # Recoil KO cleanup + imported Showdown move metadata — 3 cases
+node tests/turn_log_export_validator_tests.js # Exported turn-log identity/item/order validator — 7 cases
+node tests/showdown_priority_drift_tests.js # Showdown priority drift audit for shipped moves — 4 cases
+node tests/showdown_approved_data_generator_tests.js # Approved Showdown DB rows + Champions override generator — 4 cases
 node tests/phase6_coaching_voice.js # Phase 6 — coaching templates, linter, RNG gate — 9 cases
 node tests/structured_logger_tests.js # Infra — structured logger and no raw runtime console calls — 5 cases
 node tests/golden_battles_runner.js  # M7 — golden battles deterministic regression — 3 battles
@@ -87,13 +91,17 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase4d | 7/7 | Threat-response solver, cache, idle fallback, line labels, renderer |
 | phase4e | 15/15 | Policy output audit, fake-good detector, behavior patterns, T5 adaptive-advice gate, weakness dashboard |
 | mechanics_audit | 20/20 | Core move-rule checks: Protect, Taunt, support leads, Sucker Punch, Feint, shield riders, recovery, sleep, Substitute, Imprison, Ally Switch, Mega weather triggers, slot retargeting, Roost grounding |
-| move_support_audit | 4/4 | Shipped move registry completeness + verified/baseline support audit |
+| move_support_audit | 5/5 | Shipped move registry completeness + verified/baseline/imported Showdown support audit |
 | move_verification_registry | 6/6 | First promoted verified move slice with source/test metadata |
-| phase5 | 12/12 | Turn log struct, positionScore, swing-turn delta, Replay Log v2, decision-gap audit |
+| phase5 | 25/25 | Turn log struct, positionScore, swing-turn delta, Replay Log v2, decision-gap audit |
+| recoil_faint_turn_log | 3/3 | Recoil KOs mark the attacker fainted before replacement snapshots; imported move metadata uses Showdown first |
+| turn_log_export_validator | 7/7 | Exported log checks for stable identity, item drift, key maps, and priority/speed order |
+| showdown_priority_drift | 4/4 | Shipped move priorities mirror generated Showdown metadata unless explicitly overridden |
+| showdown_approved_data_generator | 4/4 | Approved DB entity/override migration contract + generated runtime compatibility |
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
 | export | 4/4 | My Data JSON export for persisted history, reports, and DB analyses |
-| **Total** | **407/407** | |
+| **Total** | **439/439** | |
 | audit | 0 JS errors | 5070-battle configured audit matrix |
 
 ## Conventions

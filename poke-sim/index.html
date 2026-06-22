@@ -66,7 +66,7 @@
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.18-may-meta-roster</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.23-champion-item-sp-gate</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -108,10 +108,11 @@
 <!-- TABS -->
 <nav class="tab-nav" role="tablist">
   <button class="tab-btn active" role="tab" data-tab="simulator">Simulator</button>
+  <button class="tab-btn" role="tab" data-tab="overview">Overview</button>
   <button class="tab-btn" role="tab" data-tab="teams">Teams</button>
   <button class="tab-btn" role="tab" data-tab="editor">Set Editor</button>
   <button class="tab-btn" role="tab" data-tab="strategy">Strategy</button>
-  <button class="tab-btn" role="tab" data-tab="replay-coach">Battle Sensei</button>
+  <button class="tab-btn" role="tab" data-tab="replay-coach">Review</button>
   <button class="tab-btn" role="tab" data-tab="replays">Replay Log</button>
   <button class="tab-btn" role="tab" data-tab="sources">Sources</button>
   <button class="tab-btn" role="tab" data-tab="pilot">Pilot Guide</button>
@@ -119,15 +120,33 @@
 <div class="mobile-tab-picker" aria-label="Main sections">
   <select class="select-input" id="mobile-tab-select" aria-label="Main sections">
     <option value="simulator">Simulator</option>
+    <option value="overview">Overview</option>
     <option value="teams">Teams</option>
     <option value="editor">Set Editor</option>
     <option value="strategy">Strategy</option>
-    <option value="replay-coach">Battle Sensei</option>
+    <option value="replay-coach">Review</option>
     <option value="replays">Replay Log</option>
     <option value="sources">Sources</option>
     <option value="pilot">Pilot Guide</option>
   </select>
 </div>
+
+<!-- ===== OVERVIEW ===== -->
+<section class="tab-panel" id="tab-overview">
+  <div class="overview-shell">
+    <div class="overview-header">
+      <div>
+        <span class="badge badge-blue">PROJECT CHECKLIST</span>
+        <h2 class="section-title">High Level Overview</h2>
+        <p class="section-subtitle">Living record of shipped changes, validation proof, Supabase status, and the next Showdown source-of-truth milestones.</p>
+      </div>
+      <span class="overview-updated">Updated from repo docs</span>
+    </div>
+    <div id="overview-content">
+      <div class="overview-empty">Loading project checklist...</div>
+    </div>
+  </div>
+</section>
 
 <!-- ===== SIMULATOR ===== -->
 <section class="tab-panel active" id="tab-simulator">
@@ -187,9 +206,7 @@
           <option value="champions_arena_1st">1st Champions Arena (Hyungwoo Shin)</option>
           <option value="champions_arena_2nd">2nd Champions Arena (Jorge Tabuyo)</option>
           <option value="champions_arena_3rd">3rd Champions Arena (Juan Benítez)</option>
-          <option value="chuppa_balance">Pittsburgh Regional (Chuppa Cross IV)</option>
           <option value="aurora_veil_froslass">Aurora Veil (Mega Froslass)</option>
-          <option value="kingambit_sneasler">Meta Core (Kingambit + Sneasler)</option>
         </select>
       </div>
 
@@ -381,7 +398,7 @@
   <div class="replay-coach-shell">
     <div class="replay-coach-header">
       <div>
-        <h2 class="section-title">Battle Sensei</h2>
+        <h2 class="section-title">Review Overview</h2>
         <p class="section-subtitle"><strong>Battle Sensei:</strong> Learn why the turn went wrong.</p>
         <p class="section-subtitle">Use a Pokémon Showdown replay log only. Paste the raw battle log text or upload a saved <code>.txt</code>/<code>.log</code> export from Showdown.</p>
       </div>
@@ -539,9 +556,7 @@
         <option value="champions_arena_1st">Champions Arena 1st</option>
         <option value="champions_arena_2nd">Champions Arena 2nd</option>
         <option value="champions_arena_3rd">Champions Arena 3rd</option>
-        <option value="chuppa_balance">Pittsburgh Regional</option>
         <option value="aurora_veil_froslass">Aurora Veil Froslass</option>
-        <option value="kingambit_sneasler">Kingambit + Sneasler</option>
       </select>
     </div>
     <div id="import-status" class="modal-status"></div>
@@ -585,10 +600,11 @@
 -->
 <script src="data.js"></script>
 <script src="logger.js"></script>
+<script src="generated/pokemon_showdown_legal_data.js"></script>
+<script src="runtime_data.js"></script>
 <script src="engine.js"></script>
 <script src="storage_adapter.js"></script>
 <script src="supabase_adapter.js"></script>
-<script src="generated/pokemon_showdown_legal_data.js"></script>
 <script src="move_legality.js"></script>
 <script src="move_support.js"></script>
 <script src="replay_coach.js"></script>

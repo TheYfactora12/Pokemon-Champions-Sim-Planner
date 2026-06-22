@@ -4,6 +4,7 @@
 > Tagline: Battle Sensei: Learn why the turn went wrong.
 > Status: Accepted roadmap spec. R1/R2 MVP started.
 > Owner split: product / coaching rules by @TheYfactora12, architecture / persistence by @alfredocox, fixtures / a11y by @Jdoutt38.
+> Direction note, 2026-06-06: replay coaching remains useful for QA and evidence capture, but new coaching expansion is paused until the simulator truth gate in ../../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md passes.
 
 ## Product Definition
 

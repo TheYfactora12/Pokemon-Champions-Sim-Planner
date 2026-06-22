@@ -2,7 +2,25 @@
 
 > **Battle-tested. Always evolving.**
 > Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/TheYfactora12/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
-> **Last updated:** 2026-05-24 | **Baseline:** T9j.17 (343 tests · 5,070 battles/audit)
+> **Last updated:** 2026-06-19 | **Baseline:** simulation-truth gate active; `npm run test:fast` green on current Showdown DB review branch
+
+---
+
+## Current Direction Override - 2026-06-06
+
+Simulation truth is the active product gate. New coaching, premium, Battle IQ, Coach Recommends, and replay-derived claim work is paused until the simulator is accurate enough to safely support those claims.
+
+Active order:
+
+1. Align both repos through PR + CI.
+2. Prove battle mechanics and turn logs against strict tests.
+3. Wire Showdown-mirrored data plus Champions overrides as the source-of-truth path.
+4. Add release gates for unresolved high-severity drift.
+5. Resume coaching expansion only after the sim-truth gate is green.
+
+Current direction doc: [`docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md`](docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md).
+
+Older coaching-first roadmap items remain useful product research, but they are not the active build priority until this gate passes.
 
 ---
 
@@ -142,7 +160,9 @@
 
 ### M6 Release Track — Public Site, Security, and Revenue Readiness
 
-This is the concrete release path for turning the simulator into a trustworthy public site. Core battle truth stays in repo code and generated artifacts. Supabase remains for user and operational data only.
+This is the concrete release path for turning the simulator into a trustworthy public site. Core battle truth ships through reviewed code and deterministic generated artifacts. Supabase may store the audited Showdown mirror, Champions overrides, users, saved teams, replays, subscriptions, notes, and operational metadata, but the public app should consume only approved views or generated release assets.
+
+Current public-release plan: [`docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md`](docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md).
 
 | Step | What | Why | Owner | Exit Criteria | When |
 |---|---|---|---|---|---|
@@ -158,9 +178,9 @@ This is the concrete release path for turning the simulator into a trustworthy p
 
 ### M6 Security Checklist
 
-- Keep canonical mechanics, stats, learnsets, and move behavior in repo code and generated artifacts.
-- Keep Supabase for users, saved teams, replays, subscriptions, notes, and operational metadata.
-- Do not put live battle-truth tables in DB unless a separate architecture mission approves it.
+- Keep canonical mechanics behavior in reviewed code, with generated data artifacts produced from approved Showdown mirror rows plus Champions overrides.
+- Keep Supabase for audited Showdown mirror data, Champions overrides, users, saved teams, replays, subscriptions, notes, and operational metadata.
+- Do not make browser runtime reads from raw battle-truth tables; expose approved views or ship generated release assets.
 - Require green CI, bundle freshness, cache bump, and daily heartbeat before release promotion.
 - Verify GitHub Pages or host config uses HTTPS and only serves the merged `main` bundle.
 - Audit client-visible keys and environment wiring so browser code only gets intentionally public values.
@@ -209,13 +229,13 @@ This is the concrete release path for turning the simulator into a trustworthy p
 | Layer | Technology |
 |---|---|
 | Frontend | Vanilla JS (ES2020+), HTML5, CSS3 — static PWA, no framework |
-| Offline | Service Worker — `champions-sim-v6-wire-storage-adapter` |
+| Offline | Service Worker — current cache `champions-sim-v49-approved-showdown-db` |
 | Persistence | localStorage (offline) + Supabase PostgreSQL (cloud, M8) |
-| Database | Supabase — 8 tables, RLS enabled, **25 canonical teams / 150 canonical team_members seeded** ✅ |
-| Bundle | `pokemon-champion-2026.html` (710 KB, single-file artifact) |
+| Database | Supabase — app DB live; current repo target is 29 canonical teams plus staged Showdown sync/entity/approved-view migrations |
+| Bundle | `pokemon-champion-2026.html` single-file artifact |
 | CI/CD | GitHub Actions — CI ✅ + Bundle Freshness ✅ + Cache Bump ✅ (3 workflows active) |
 | Hosting | GitHub Pages (`theyfactora12.github.io/Pokemon-Champions-Sim-Planner`) |
-| Tests | Vanilla JS runner — 343 cases (T9j.17 baseline), 5,070 battles/audit |
+| Tests | Vanilla JS runner — current fast suite plus focused Showdown DB/runtime tests; live DB suites are opt-in |
 
 ---
 

@@ -27,6 +27,7 @@ console.log('\n=== bundle load order tests ===\n');
 T('1. source HTML loads legality/support/replay scripts in order', () => {
   const order = [
     'generated/pokemon_showdown_legal_data.js',
+    'runtime_data.js',
     'move_legality.js',
     'move_support.js',
     'replay_coach.js',
@@ -46,6 +47,7 @@ T('1. source HTML loads legality/support/replay scripts in order', () => {
 T('2. bundle builder inlines legality/support/replay sources', () => {
   [
     "read('generated/pokemon_showdown_legal_data.js')",
+    "read('runtime_data.js')",
     "read('move_legality.js')",
     "read('move_support.js')",
     "read('replay_coach.js')",
@@ -53,6 +55,7 @@ T('2. bundle builder inlines legality/support/replay sources', () => {
   ].forEach((token) => truthy(builder.includes(token), 'missing builder read ' + token));
   [
     "sanitize_inline_js(pokemon_legal_data)",
+    "sanitize_inline_js(runtime_data)",
     "sanitize_inline_js(move_legality)",
     "sanitize_inline_js(move_support)",
     "sanitize_inline_js(replay_coach)",

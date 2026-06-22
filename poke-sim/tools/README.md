@@ -51,7 +51,7 @@ Pokemon-Champions-Sim-Planner/
 ├── poke-sim/
 │   ├── index.html                   ← app shell (SINGLE SOURCE OF TRUTH)
 │   ├── style.css
-│   ├── data.js                      ← BASE_STATS, POKEMON_TYPES_DB, TEAMS (29 teams)
+│   ├── data.js                      ← BASE_STATS, POKEMON_TYPES_DB, TEAMS (27 teams)
 │   ├── engine.js                    ← battle engine, damage formula
 │   ├── ui.js                        ← all UI logic
 │   ├── storage_adapter.js           ← localStorage wrapper
@@ -109,6 +109,57 @@ bash poke-sim/tools/check-bundle.sh
 ```
 
 Called automatically by CI on every PR via `bundle-freshness-check.yml`.
+
+---
+
+### `validate-turn-logs.mjs`
+Audits exported `champions-turn-log-*.json` files from the Replay Log download flow.
+
+Checks:
+- roster identity across active, bench, and fainted states
+- item drift across switches/replacements
+- active/bench key maps
+- HP and speed-order key coverage
+- observed event order against move priority plus snapshot speed order
+
+```bash
+# Legacy-compatible validation
+cd poke-sim
+node tools/validate-turn-logs.mjs path/to/champions-turn-log.json
+
+# Strong validation for current exports; fails if stable identity fields are missing
+node tools/validate-turn-logs.mjs --require-stable path/to/champions-turn-log.json
+```
+
+If `--require-stable` fails on a newly downloaded log, hard-refresh the GitHub Pages preview and export again. The browser may still be serving an older cached bundle.
+
+---
+
+### `generate-approved-data-from-db.mjs`
+Builds the runtime Showdown data file from approved Supabase rows.
+
+Default live path reads:
+- `approved_showdown_entities`
+- `approved_champions_data`
+
+```bash
+cd poke-sim
+SUPABASE_URL=https://your-project-ref.supabase.co \
+SUPABASE_ANON_KEY=your-anon-public-key \
+npm run showdown:generate-approved
+```
+
+Fixture/artifact path for CI or review:
+
+```bash
+cd poke-sim
+node tools/generate-approved-data-from-db.mjs \
+  --entities artifacts/showdown-sync/approved_entities.json \
+  --overrides artifacts/showdown-sync/approved_overrides.json \
+  --out generated/pokemon_showdown_legal_data.js
+```
+
+The output is deterministic and assigns `window.ChampionsSim.pokemonDataAudit`, matching the runtime contract already consumed by `engine.js` and `move_support.js`.
 
 ---
 
@@ -216,7 +267,7 @@ git push --force origin main
 | Key | Value |
 |---|---|
 | Project URL | `https://ymlahqnshgiarpbgxehp.supabase.co` |
-| Status | ✅ Live — schema active; 29-team seed target pending shared catalog migration |
+| Status | ✅ Live — schema active; 27-team seed target pending shared catalog migration |
 | Auth | anon key (read-only for teams/pokemon; open write for analyses) |
 
 ### Initial setup (already done — for reference)
@@ -224,7 +275,8 @@ git push --force origin main
 -- Run in order in Supabase SQL Editor:
 -- 1. poke-sim/db/schema_v1.sql
 -- 2. poke-sim/db/seed_teams_v2.sql for fresh DBs only
---    Use poke-sim/db/migrations/2026_05_24_align_shared_29_team_catalog.sql for existing DBs with analyses history.
+--    Use poke-sim/db/migrations/2026_06_20_align_shared_27_team_catalog.sql for existing DBs with analyses history.
+--    Both files are generated from poke-sim/data.js and must stay byte-identical to generator output.
 -- 3. poke-sim/db/rls_policies_v1.sql
 ```
 

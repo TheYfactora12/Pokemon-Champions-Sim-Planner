@@ -1,4 +1,4 @@
-// db_m2_seed_tests.js — Module 2: Seed suite (14 cases)
+// db_m2_seed_tests.js — Module 2: Seed suite (19 cases)
 // PR: integration/poke-sim-db-m2 → Linear: POK-18
 // Spec: poke-sim/POKE_SIM_DB_INTEGRATION_TDD_PLAN.md §6 Suite-2
 
@@ -22,6 +22,10 @@ var adapterPath = path.join(ROOT, 'supabase_adapter.js');
 var generatorPath = path.join(ROOT, 'tools', 'generate_seed_from_data.py');
 var migrationMetaPath = path.join(ROOT, 'db', 'migrations', '2026_04_28_add_teams_metadata_column.sql');
 var migrationSeedPath = path.join(ROOT, 'db', 'migrations', '2026_04_28_seed_teams_v2.sql');
+var liveAlignPath = path.join(ROOT, 'db', 'migrations', '2026_06_20_align_shared_27_team_catalog.sql');
+var historicalAlignPath = path.join(ROOT, 'db', 'migrations', '2026_05_24_align_shared_29_team_catalog.sql');
+var historicalRepairPath = path.join(ROOT, 'db', 'migrations', '2026_05_24_upsert_seed_teams_v2_repair.sql');
+var rlsPath = path.join(ROOT, 'db', 'rls_policies_v1.sql');
 
 function normalizeEol(s) {
   return String(s).replace(/\r\n/g, '\n');
@@ -47,7 +51,7 @@ function dataTeamIds() {
 // Extract every team_id used as the first column of an INSERT INTO teams (...) VALUES ('id', ...).
 // We anchor on the row pattern emitted by the generator (two-space indent + '(' + id-quote)
 // because SQL string literals can contain ';' which breaks naive [\s\S]*?; matchers.
-function teamIdsInSeed(seedContent) {
+function teamIdsInTeamsInsert(seedContent) {
   // Find the start of the teams INSERT block; the next blank line ends the values list reliably
   var startIdx = seedContent.indexOf('INSERT INTO teams ');
   if (startIdx === -1) return [];
@@ -75,7 +79,7 @@ function memberRowsForTeam(seedContent, teamId) {
   return n;
 }
 
-describe('Module 2 \u2014 Seed suite (14 cases)', function() {
+describe('Module 2 \u2014 Seed suite (19 cases)', function() {
 
   T('T-seed-1', function() {
     // db/seed_teams_v2.sql exists
@@ -85,7 +89,7 @@ describe('Module 2 \u2014 Seed suite (14 cases)', function() {
   T('T-seed-2', function() {
     // SQL contains one distinct team_id per TEAMS entry in data.js
     var seedContent = readSeed();
-    var ids = teamIdsInSeed(seedContent);
+    var ids = teamIdsInTeamsInsert(seedContent);
     var distinct = Array.from(new Set(ids));
     eq(distinct.length, dataTeamIds().length, 'seed team count matches data.js team count');
   });
@@ -102,7 +106,7 @@ describe('Module 2 \u2014 Seed suite (14 cases)', function() {
     // Every team_id from data.js TEAMS literal has a matching INSERT INTO teams row
     var idsFromData = dataTeamIds();
     var seedContent = readSeed();
-    var seedIds = new Set(teamIdsInSeed(seedContent));
+    var seedIds = new Set(teamIdsInTeamsInsert(seedContent));
     idsFromData.forEach(function(id) {
       eq(seedIds.has(id), true, 'team_id ' + id + ' from data.js has matching INSERT in seed SQL');
     });
@@ -111,7 +115,7 @@ describe('Module 2 \u2014 Seed suite (14 cases)', function() {
   T('T-seed-5', function() {
     // Every team has 1..6 INSERT INTO team_members rows
     var seedContent = readSeed();
-    var ids = Array.from(new Set(teamIdsInSeed(seedContent)));
+    var ids = Array.from(new Set(teamIdsInTeamsInsert(seedContent)));
     ids.forEach(function(teamId) {
       var n = memberRowsForTeam(seedContent, teamId);
       truthy(n >= 1 && n <= 6, 'team_id ' + teamId + ' has ' + n + ' member rows (expected 1..6)');
@@ -219,6 +223,52 @@ describe('Module 2 \u2014 Seed suite (14 cases)', function() {
   });
 
   T('T-seed-14', function() {
+    // Seed stores reviewed team metadata instead of dropping it on DB ingest.
+    var seedContent = readSeed();
+    truthy(/INSERT INTO teams \(team_id, name, label, mode, ruleset_id, source, source_ref, description, metadata\)/.test(seedContent),
+      'seed teams insert includes metadata column');
+    truthy(/'player'[\s\S]*?"formatid":"champions-vgc-2026-regma"/.test(seedContent),
+      'player row metadata includes champions format id');
+  });
+
+  T('T-seed-15', function() {
+    // Preferred live alignment migration exists and covers the same canonical team ids.
+    eq(fs.existsSync(liveAlignPath), true, '2026_06_20_align_shared_27_team_catalog.sql exists');
+    var liveAlign = normalizeEol(fs.readFileSync(liveAlignPath, 'utf8'));
+    var liveIds = Array.from(new Set(teamIdsInTeamsInsert(liveAlign))).sort();
+    var dataIds = Array.from(new Set(dataTeamIds())).sort();
+    eq(JSON.stringify(liveIds), JSON.stringify(dataIds), 'preferred live alignment team ids match data.js');
+  });
+
+  T('T-seed-16', function() {
+    // Generator produces the preferred live alignment migration deterministically too.
+    var execSync = require('child_process').execSync;
+    var py = process.platform === 'win32' ? 'python' : 'python3';
+    var out1 = normalizeEol(execSync(py + ' ' + JSON.stringify(generatorPath) + ' --stdout-live-align', { cwd: ROOT }).toString());
+    var out2 = normalizeEol(execSync(py + ' ' + JSON.stringify(generatorPath) + ' --stdout-live-align', { cwd: ROOT }).toString());
+    eq(out1, out2, 'live alignment generator output is stable on re-run');
+    var onDisk = normalizeEol(fs.readFileSync(liveAlignPath, 'utf8'));
+    eq(out1, onDisk, 'committed live alignment migration matches generator output');
+  });
+
+  T('T-seed-17', function() {
+    // Superseded catalog migrations must self-identify as historical so reviewers do not apply them by accident.
+    var historicalAlign = fs.readFileSync(historicalAlignPath, 'utf8');
+    var historicalRepair = fs.readFileSync(historicalRepairPath, 'utf8');
+    truthy(/HISTORICAL \/ SUPERSEDED/.test(historicalAlign), 'historical align migration banner missing');
+    truthy(/2026_06_20_align_shared_27_team_catalog\.sql/.test(historicalAlign), 'historical align migration must point to preferred live path');
+    truthy(/HISTORICAL \/ SUPERSEDED/.test(historicalRepair), 'historical repair migration banner missing');
+    truthy(/2026_06_20_align_shared_27_team_catalog\.sql/.test(historicalRepair), 'historical repair migration must point to preferred live path');
+  });
+
+  T('T-seed-18', function() {
+    // RLS docs should not steer fresh setups toward the retired v1 seed.
+    var rlsContent = fs.readFileSync(rlsPath, 'utf8');
+    truthy(!/seed_teams_v1\.sql/.test(rlsContent), 'rls_policies_v1.sql still references retired seed_teams_v1.sql');
+    truthy(/seed_teams_v2\.sql/.test(rlsContent), 'rls_policies_v1.sql should reference seed_teams_v2.sql');
+  });
+
+  T('T-seed-19', function() {
     // Live DB smoke test, gated behind RUN_LIVE_DB=1
     if (!process.env.RUN_LIVE_DB) {
       console.log('    \u26A0 LIVE DB test skipped (RUN_LIVE_DB not set)');
@@ -245,18 +295,25 @@ describe('Module 2 \u2014 Seed suite (14 cases)', function() {
         req.end();
       });
     }
-    return get('/rest/v1/teams?select=team_id&order=team_id').then(function(r) {
+    return get('/rest/v1/teams?select=team_id,metadata&order=team_id').then(function(r) {
       truthy(r.status === 200, 'GET /teams returned 200, got ' + r.status);
       var arr = JSON.parse(r.body);
-      var liveIds = Array.from(new Set(arr.map(function(row) { return row.team_id; }))).sort();
-      var expectedIds = Array.from(new Set(teamIdsInSeed(readSeed()))).sort();
+      var retired = arr.filter(function(row) {
+        return row && row.metadata && row.metadata.retired === true;
+      }).map(function(row) { return row.team_id; }).sort();
+      var activeRows = arr.filter(function(row) {
+        return !(row && row.metadata && row.metadata.retired === true);
+      });
+      var liveIds = Array.from(new Set(activeRows.map(function(row) { return row.team_id; }))).sort();
+      var expectedIds = Array.from(new Set(teamIdsInTeamsInsert(readSeed()))).sort();
       var missing = expectedIds.filter(function(id) { return liveIds.indexOf(id) === -1; });
       var extra = liveIds.filter(function(id) { return expectedIds.indexOf(id) === -1; });
       truthy(missing.length === 0 && extra.length === 0,
-        'live DB team_ids match seed; expected ' + expectedIds.length +
+        'live DB active team_ids match seed; expected ' + expectedIds.length +
         ', got ' + liveIds.length +
         ', missing=' + JSON.stringify(missing) +
-        ', extra=' + JSON.stringify(extra));
+        ', extra=' + JSON.stringify(extra) +
+        ', retired=' + JSON.stringify(retired));
     });
   });
 

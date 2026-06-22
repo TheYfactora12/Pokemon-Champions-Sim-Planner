@@ -424,7 +424,7 @@ resetStorage();
 const FIXTURE_BRING = {
   player:         ['Garchomp', 'Incineroar', 'Whimsicott', 'Rotom-Wash'],
   mega_altaria:   ['Altaria', 'Garchomp', 'Togekiss', 'Incineroar'],
-  chuppa_balance: ['Urshifu', 'Calyrex', 'Regieleki', 'Incineroar'],
+  sand_bulky_offense: ['Rotom-Wash', 'Gholdengo', 'Garchomp', 'Kingambit'],
 };
 
 T('T38. Bring prefs object survives set -> get round-trip', () => {

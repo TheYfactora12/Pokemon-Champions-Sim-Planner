@@ -3,6 +3,8 @@
 Date: 2026-05-16
 Scope: `poke-sim` shipped catalog, coaching calibration, and matrix coverage
 
+> Direction note, 2026-06-06: this is a historical calibration report. The active product direction is simulation truth first. Coaching conclusions in this file are future-facing and must not be treated as release-ready until the sim-truth gate in docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md passes.
+
 ## Executive Summary
 
 The calibration pass is now materially stronger.
@@ -125,7 +127,7 @@ The application now does real coaching work for a brand-new player:
 - surfaces matchup warnings
 - avoids pretending sparse data is certainty
 
-That is the right behavior for a coaching-first platform.
+That behavior can support a coaching layer later, after the simulator truth gate passes.
 
 ## Remaining Risk
 

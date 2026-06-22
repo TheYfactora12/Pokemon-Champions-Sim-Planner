@@ -24,6 +24,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate Champion sim artifact before deploy
+        run: |
+          set -euo pipefail
+          node poke-sim/tests/db_m2_seed_tests.js
+          node poke-sim/tests/champion_pack_legality_tests.js
+          node poke-sim/tests/preloaded_team_legality_tests.js
+          node poke-sim/tests/t9j11_tests.js
+          node poke-sim/tests/bundle_load_order_tests.js
+          bash poke-sim/tools/check-bundle.sh
+
       - uses: actions/configure-pages@v5
         with:
           enablement: true

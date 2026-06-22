@@ -46,8 +46,46 @@ var FAKEMON_BLOCKLIST = new Set([
   // empty; add only truly fabricated forms here
 ]);
 
-// Items confirmed ABSENT from Champions launch item pool. Reg M-A teams
-// may not carry these. Source:
+// Items verified in the Champions launch item pool. Reg M-A teams may carry
+// only this pool until a newer source confirms additions. Item effects still
+// come from Showdown/generated runtime data; this list is only the Champions
+// availability gate. Source:
+//   https://game8.co/games/Pokemon-Champions/archives/588871
+//   Game8 line 715: "The items listed above are the only ones available..."
+var CHAMPIONS_LEGAL_ITEMS = new Set([
+  // Defensive berries
+  'Roseli Berry','Chilan Berry','Babiri Berry','Haban Berry','Charti Berry',
+  'Tanga Berry','Payapa Berry','Kebia Berry','Chople Berry','Rindo Berry',
+  'Occa Berry','Wacan Berry','Colbur Berry','Kasib Berry','Coba Berry',
+  'Shuca Berry','Yache Berry','Passho Berry',
+  // Mega Stones
+  'Manectite','Houndoominite','Audinite','Lopunnite','Sablenite',
+  'Sharpedonite','Gyaradosite','Lucarionite','Heracronite','Aerodactylite',
+  'Glalitite','Pinsirite','Gardevoirite','Galladite','Skarmorite',
+  'Clefablite','Alakazite','Drampanite','Excadrite','Chandelurite',
+  'Aggronite','Gengarite','Medichamite','Abomasite','Scizorite',
+  'Garchompite','Steelixite','Kangaskhanite','Charizardite X',
+  'Charizardite Y','Blastoisinite','Meganiumite','Feraligite','Emboarite',
+  'Beedrillite','Ampharosite','Victreebelite','Banettite','Cameruptite',
+  'Absolite','Slowbronite','Hawluchanite','Altarianite','Dragoninite',
+  'Froslassite','Pidgeotite','Starminite','Tyranitarite','Venusaurite',
+  'Floettite','Greninjite','Delphoxite','Chesnaughtite','Chimechite',
+  'Crabominite','Glimmoranite','Golurkite','Meowsticite','Scovillainite',
+  // Other / power / recovery / stat items
+  "King's Rock",'Bright Powder','Scope Lens','Quick Claw','Light Ball',
+  'Spell Tag','Metal Coat','Soft Sand','Sharp Beak','Silk Scarf','Magnet',
+  'Black Belt','Black Glasses','Silver Powder','Miracle Seed','Hard Stone',
+  'Mystic Water','Poison Barb','Never-Melt Ice','Twisted Spoon','Charcoal',
+  'Dragon Fang','Fairy Feather','Sitrus Berry','Lum Berry','Persim Berry',
+  'Oran Berry','Leppa Berry','Aspear Berry','Rawst Berry','Pecha Berry',
+  'Chesto Berry','Cheri Berry','Focus Band','Mental Herb','Leftovers',
+  'Shell Bell','White Herb','Choice Scarf','Focus Sash'
+]);
+
+// Items confirmed ABSENT from Champions launch item pool. Kept separately so
+// violation messages can distinguish known absent SV carryovers from unknown
+// unreviewed names.
+// Sources:
 //   https://game8.co/games/Pokemon-Champions/archives/588871
 //   https://games.gg/news/pokemon-champions-items-list-meta/
 //   https://www.ign.com/wikis/pokemon-champions/Biggest_Changes_Explained
@@ -55,7 +93,8 @@ var CHAMPIONS_BANNED_ITEMS = new Set([
   'Life Orb','Choice Band','Choice Specs','Assault Vest','Rocky Helmet',
   'Heavy-Duty Boots','Black Sludge','Eviolite','Light Clay',
   'Heat Rock','Damp Rock','Smooth Rock','Icy Rock','Terrain Extender',
-  'Toxic Orb','Flame Orb'
+  'Toxic Orb','Flame Orb','Safety Goggles','Covert Cloak','Clear Amulet',
+  'Booster Energy','Loaded Dice'
 ]);
 
 // Mega Stone -> required base species. Built from CHAMPIONS_MEGAS at load.
@@ -91,6 +130,7 @@ function validateChampionsLegality(team) {
   if (!team || !Array.isArray(team.members)) return { violations: violations };
   if (typeof FAKEMON_BLOCKLIST === 'undefined'
       || typeof CHAMPIONS_BANNED_POKEMON === 'undefined'
+      || typeof CHAMPIONS_LEGAL_ITEMS === 'undefined'
       || typeof CHAMPIONS_BANNED_ITEMS === 'undefined'
       || typeof CHAMPIONS_STONE_TO_SPECIES === 'undefined'
       || typeof CHAMPIONS_HOME_TRANSFER_MEGAS === 'undefined') {
@@ -121,11 +161,12 @@ function validateChampionsLegality(team) {
 
     // Item legality checks
     var item = mon && mon.item ? mon.item : '';
-    if (item && CHAMPIONS_BANNED_ITEMS.has(item)) {
+    if (item && !CHAMPIONS_LEGAL_ITEMS.has(item)) {
+      var knownAbsent = CHAMPIONS_BANNED_ITEMS.has(item);
       violations.push({
         severity: 'error',
-        code: 'ITEM_ABSENT',
-        message: name + ': item "' + item + '" is not in Champions Reg M-A item pool'
+        code: knownAbsent ? 'ITEM_ABSENT' : 'ITEM_NOT_IN_CHAMPIONS_POOL',
+        message: name + ': item "' + item + '" is not in verified Champions Reg M-A item pool'
       });
     }
 
@@ -158,6 +199,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     CHAMPIONS_BANNED_POKEMON: CHAMPIONS_BANNED_POKEMON,
     FAKEMON_BLOCKLIST: FAKEMON_BLOCKLIST,
+    CHAMPIONS_LEGAL_ITEMS: CHAMPIONS_LEGAL_ITEMS,
     CHAMPIONS_BANNED_ITEMS: CHAMPIONS_BANNED_ITEMS,
     CHAMPIONS_STONE_TO_SPECIES: CHAMPIONS_STONE_TO_SPECIES,
     CHAMPIONS_HOME_TRANSFER_MEGAS: CHAMPIONS_HOME_TRANSFER_MEGAS,

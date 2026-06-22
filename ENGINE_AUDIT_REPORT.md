@@ -1,5 +1,7 @@
 # Engine Audit Report — Pokémon Champions 2026 Simulator
 
+> Historical audit snapshot from 2026-04-24. Many findings here were later addressed, partially addressed, or replaced by stricter tests and release-gate docs. Use this report as origin context, not as the current branch-state truth source.
+
 **Audit date:** 2026-04-24
 **Auditor:** autonomous engine-audit subagent
 **Engine version:** `ENGINE_VERSION = '1.1.0'` (engine.js:1026)
@@ -292,10 +294,11 @@ Each item below is a ready-to-file issue.
 - **Fix hint:** Branch on `results.format` / `results.playerTeam` style.
 - **Acceptance:** Tips for a Trick Room team are different from tips for a Tailwind team.
 
-### [P2] [recoil] Head Smash recoil should be 1/2, not 1/3
+### [P2] [recoil] Head Smash recoil should be 1/2, not 1/3 - RESOLVED 2026-06-06
 - **File:Line:** `engine.js:753–757`.
 - **Fix hint:** Split recoil by move.
 - **Acceptance:** Head Smash self-damage doubles.
+- **Resolution:** `poke-sim/engine.js` now uses a Showdown-compatible recoil table and `poke-sim/tests/recoil_faint_turn_log_tests.js` asserts Head Smash uses 1/2 damage recoil before replacement snapshots.
 
 ### [P2] [status] `applyEntryAbility` `Hospitality` only fires for player side
 - **File:Line:** `engine.js:512`.

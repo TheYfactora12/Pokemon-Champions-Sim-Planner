@@ -177,29 +177,9 @@ HARD COUNTERS: Brick Break (bypasses Veil), Haze (clears boosts), weather overri
       { turn:2, lead:'Sweeper sets up', action:'Dragon Dance / Nasty Plot behind Veil', condition:'setup phase' },
     ]
   },
-  kingambit_sneasler: {
-    archetypes: ['kingambit','aggressive'],
-    style: 'Kingambit + Sneasler — Supreme Overlord',
-    guide: `OVERVIEW: Use Sneasler to stack KOs early (130 Atk / 120 Spe). Then Kingambit enters with Supreme Overlord (+10% Atk per fainted mon) for +20-30% buffed nuke.
-
-SETUP PLAYS:
-• Turn 1: Sneasler + support — Fake Out + Close Combat / Dire Claw for KO
-• Turns 2-3: Stack 2nd KO with Sneasler
-• Midgame: Kingambit in at +20-30% Atk — Kowtow Cleave + Sucker Punch
-
-WIN CONDITIONS: 2 KOs via Sneasler → Kingambit Supreme Overlord sweep.
-HARD COUNTERS: Fighting types (4x Kingambit), Fairy types, Wide Guard, Intimidate chains.`,
-    counters: ['Fighting types','Fairy types','Wide Guard','Intimidate chains','Amoonguss'],
-    setupPlays: [
-      { turn:1, lead:'Sneasler + Incineroar', action:'Fake Out + Close Combat KO', condition:'KO stack' },
-      { turn:2, lead:'Sneasler continues', action:'Dire Claw second KO', condition:'Supreme Overlord stack' },
-      { turn:3, lead:'Kingambit in', action:'Kowtow Cleave + Sucker Punch at +20% Atk', condition:'cleanup' },
-    ]
-  },
   champions_arena_1st: { archetypes:['balance','control'], style:'Hyungwoo Shin — Champions Arena Winner', guide:'Tournament-winning balance build. Run simulations for matchup-specific pilot advice.', counters:[], setupPlays:[] },
   champions_arena_2nd: { archetypes:['aggressive','balance'], style:'Jorge Tabuyo — Champions Arena Finalist', guide:'Finalist aggressive build. Run simulations for matchup pilot advice.', counters:[], setupPlays:[] },
   champions_arena_3rd: { archetypes:['control','balance'], style:'Juan Benítez — Champions Arena Top 3', guide:'Control build. Run simulations for matchup pilot advice.', counters:[], setupPlays:[] },
-  chuppa_balance: { archetypes:['balance','control'], style:'Chuppa Cross IV — Pittsburgh Champion', guide:'Proven regional balance team. Run simulations for pilot advice.', counters:[], setupPlays:[] },
 };
 
 const POKEMON_MOVE_LOG = {

@@ -232,7 +232,7 @@ T('T5-12 buildWeaknessDashboard returns matchup intelligence + top 3 coaching se
     {
       mega_altaria: { wins: 2, losses: 8, draws: 0 },
       player: { wins: 7, losses: 3, draws: 0 },
-      kingambit_sneasler: { wins: 1, losses: 6, draws: 0 }
+      sand_bulky_offense: { wins: 1, losses: 6, draws: 0 }
     },
     'doubles',
     {},
@@ -272,7 +272,7 @@ T('T5-13 weakness dashboard renders actionable copy', () => {
 T('T5-14 strategy report exposes role anchors and matchup intelligence', () => {
   const report = ctx.buildStrategyReport('player', {
     mega_altaria: { wins: 2, losses: 8, draws: 0, allLogs: [] },
-    kingambit_sneasler: { wins: 1, losses: 6, draws: 0, allLogs: [] }
+    sand_bulky_offense: { wins: 1, losses: 6, draws: 0, allLogs: [] }
   }, 'doubles');
   truthy(report && report.team_identity, 'missing report');
   truthy(report.matchup_intelligence, 'missing matchup intelligence payload');

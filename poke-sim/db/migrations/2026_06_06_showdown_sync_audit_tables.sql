@@ -2,7 +2,7 @@
 -- Append-only evidence layer for scheduled upstream data checks and mechanics findings.
 
 CREATE TABLE IF NOT EXISTS showdown_sync_runs (
-  sync_run_id TEXT PRIMARY KEY,
+  sync_run_id TEXT PRIMARY KEY CHECK (length(btrim(sync_run_id)) > 0),
   started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   finished_at TIMESTAMPTZ,
   status TEXT NOT NULL CHECK (status IN ('running', 'passed', 'failed', 'blocked')),
@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS showdown_sync_runs (
 
 CREATE TABLE IF NOT EXISTS showdown_source_files (
   sync_run_id TEXT NOT NULL REFERENCES showdown_sync_runs(sync_run_id) ON DELETE CASCADE,
-  source_name TEXT NOT NULL,
-  source_url TEXT NOT NULL,
-  source_hash TEXT NOT NULL,
+  source_name TEXT NOT NULL CHECK (length(btrim(source_name)) > 0),
+  source_url TEXT NOT NULL CHECK (length(btrim(source_url)) > 0),
+  source_hash TEXT NOT NULL CHECK (length(btrim(source_hash)) > 0),
   normalized_hash TEXT,
   byte_size INTEGER NOT NULL DEFAULT 0 CHECK (byte_size >= 0),
   parse_status TEXT NOT NULL CHECK (parse_status IN ('passed', 'failed', 'skipped')),
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS showdown_source_files (
 );
 
 CREATE TABLE IF NOT EXISTS mechanics_validation_runs (
-  validation_run_id TEXT PRIMARY KEY,
+  validation_run_id TEXT PRIMARY KEY CHECK (length(btrim(validation_run_id)) > 0),
   sync_run_id TEXT REFERENCES showdown_sync_runs(sync_run_id) ON DELETE SET NULL,
   started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   finished_at TIMESTAMPTZ,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS mechanics_validation_runs (
 );
 
 CREATE TABLE IF NOT EXISTS mechanics_validation_findings (
-  finding_id TEXT PRIMARY KEY,
+  finding_id TEXT PRIMARY KEY CHECK (length(btrim(finding_id)) > 0),
   validation_run_id TEXT REFERENCES mechanics_validation_runs(validation_run_id) ON DELETE SET NULL,
   sync_run_id TEXT REFERENCES showdown_sync_runs(sync_run_id) ON DELETE SET NULL,
   severity TEXT NOT NULL CHECK (severity IN ('low', 'medium', 'high', 'blocker')),
@@ -51,6 +51,9 @@ CREATE TABLE IF NOT EXISTS mechanics_validation_findings (
 
 CREATE INDEX IF NOT EXISTS idx_showdown_sync_runs_status_started
   ON showdown_sync_runs(status, started_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_showdown_sync_runs_finished
+  ON showdown_sync_runs(finished_at DESC NULLS LAST);
 
 CREATE INDEX IF NOT EXISTS idx_showdown_source_files_hash
   ON showdown_source_files(source_name, source_hash);
@@ -69,18 +72,28 @@ ALTER TABLE showdown_source_files ENABLE ROW LEVEL SECURITY;
 ALTER TABLE mechanics_validation_runs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE mechanics_validation_findings ENABLE ROW LEVEL SECURITY;
 
+REVOKE INSERT, UPDATE, DELETE ON showdown_sync_runs FROM anon, authenticated;
+REVOKE INSERT, UPDATE, DELETE ON showdown_source_files FROM anon, authenticated;
+REVOKE INSERT, UPDATE, DELETE ON mechanics_validation_runs FROM anon, authenticated;
+REVOKE INSERT, UPDATE, DELETE ON mechanics_validation_findings FROM anon, authenticated;
+
 DROP POLICY IF EXISTS "anon_read_showdown_sync_runs" ON showdown_sync_runs;
 CREATE POLICY "anon_read_showdown_sync_runs"
-  ON showdown_sync_runs FOR SELECT TO anon USING (true);
+  ON showdown_sync_runs FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "anon_read_showdown_source_files" ON showdown_source_files;
 CREATE POLICY "anon_read_showdown_source_files"
-  ON showdown_source_files FOR SELECT TO anon USING (true);
+  ON showdown_source_files FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "anon_read_mechanics_validation_runs" ON mechanics_validation_runs;
 CREATE POLICY "anon_read_mechanics_validation_runs"
-  ON mechanics_validation_runs FOR SELECT TO anon USING (true);
+  ON mechanics_validation_runs FOR SELECT TO anon, authenticated USING (true);
 
 DROP POLICY IF EXISTS "anon_read_mechanics_validation_findings" ON mechanics_validation_findings;
 CREATE POLICY "anon_read_mechanics_validation_findings"
-  ON mechanics_validation_findings FOR SELECT TO anon USING (true);
+  ON mechanics_validation_findings FOR SELECT TO anon, authenticated USING (true);
+
+GRANT SELECT ON showdown_sync_runs TO anon, authenticated;
+GRANT SELECT ON showdown_source_files TO anon, authenticated;
+GRANT SELECT ON mechanics_validation_runs TO anon, authenticated;
+GRANT SELECT ON mechanics_validation_findings TO anon, authenticated;

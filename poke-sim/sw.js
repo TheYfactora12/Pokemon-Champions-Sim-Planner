@@ -31,7 +31,21 @@
 // v8-supabase-live [2026-04-27] — Supabase DB fully wired (real URL + anon key in supabase_adapter.js)
 // v7-phase4c2      — previous
 
-const CACHE_NAME = 'champions-sim-v44-trick-room-fix';
+// v44-showdown-priority [2026-06-05] - Showdown priority alignment plus exported turn-log validation.
+// v45-overview-alfredo-sync [2026-06-06] - Project Overview tab plus Alfredo merge-candidate sync.
+// v46-network-first-app-shell [2026-06-06] - Force app-shell HTML refreshes so live exports cannot use stale simulator bundles.
+// v47-recoil-faint-cleanup [2026-06-06] - Recoil KOs now mark the attacker fainted before replacement snapshots.
+// v48-showdown-primary-moves [2026-06-06] - Showdown move metadata is primary for imported/custom move facts.
+// v49-approved-showdown-db [2026-06-07] - Approved Showdown DB migration/generator path staged.
+// v50-runtime-data-bridge [2026-06-19] - Added a runtime data/override bridge so
+// battle logic reads approved metadata and damage-roll overrides from site code.
+// v53-sim-context-team-load [2026-06-21] - Force browser cache/client-state
+// rotation after central sim-context and DB team normalization fixes.
+// v54-lethal-berry-guard [2026-06-21] - Prevent damage-trigger berries from
+// restoring holders that were reduced to 0 HP before faint cleanup.
+// v55-champion-item-sp-gate [2026-06-21] - Positive Champions item allowlist,
+// SP import/export gate, and stale DB-team rejection before selector rebuild.
+const CACHE_NAME = 'champions-sim-v55-champion-item-sp-gate';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
@@ -42,8 +56,9 @@ const APP_ASSETS = [
   './storage_adapter.js',
   './data.js',
   './logger.js',
-  './engine.js',
   './generated/pokemon_showdown_legal_data.js',
+  './runtime_data.js',
+  './engine.js',
   './move_legality.js',
   './move_support.js',
   './replay_coach.js',
@@ -56,6 +71,18 @@ const APP_ASSETS = [
   './icon-192.png',
   './icon-512.png'
 ];
+
+function isAppShellRequest(event, url) {
+  if (event.request.mode === 'navigate') return true;
+  try {
+    const path = new URL(url).pathname;
+    return path.endsWith('/poke-sim/') ||
+      path.endsWith('/poke-sim/index.html') ||
+      path.endsWith('/poke-sim/pokemon-champion-2026.html');
+  } catch {
+    return false;
+  }
+}
 
 // Install — pre-cache all app assets
 self.addEventListener('install', event => {
@@ -120,6 +147,24 @@ self.addEventListener('fetch', event => {
         } catch {
           return cached || new Response('', { status: 404 });
         }
+      })
+    );
+    return;
+  }
+
+  // App shell HTML — network-first so users do not keep running a stale
+  // simulator/export bundle after a release. Falls back to cache offline.
+  if (isAppShellRequest(event, url)) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' }).then(fresh => {
+        if (fresh.ok) {
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, fresh.clone()));
+        }
+        return fresh;
+      }).catch(() => {
+        return caches.match(event.request).then(cached => {
+          return cached || caches.match('./index.html') || new Response('', { status: 503 });
+        });
       })
     );
     return;

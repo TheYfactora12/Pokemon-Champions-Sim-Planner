@@ -22,6 +22,8 @@ Three ways to open the sim without cloning. Each points to a different snapshot 
 - **Dev preview**: use the active branch preview URL shared in the PR under review
 
 > **Note:** The htmlpreview link is a branch/raw preview tool, not the canonical public site. The stable public site is GitHub Pages on `main`. The local file at `poke-sim/pokemon-champion-2026.html` remains the source artifact that the site serves.
+>
+> For QA handoffs, always pin the exact repo, branch, commit SHA, preview target, and required local/DB credentials. Do not send branch-only review to GitHub Pages. See [`docs/release/QA_ENVIRONMENT_HANDOFF_RULES_2026-06-19.md`](./docs/release/QA_ENVIRONMENT_HANDOFF_RULES_2026-06-19.md) and [`docs/release/SIM_AND_DB_SNAPSHOT_2026-06-19.md`](./docs/release/SIM_AND_DB_SNAPSHOT_2026-06-19.md).
 
 ## Release Direction
 
@@ -48,13 +50,13 @@ Pokemon-Champions-Sim-Planner/
     ├── pokemon-champion-2026.html     ← Self-contained single-file bundle (~400 KB)
     ├── index.html                     ← App shell, tabs, PWA meta
     ├── style.css                      ← Mobile-first dark theme
-    ├── data.js                        ← BASE_STATS, TEAMS (13), POKEMON_TYPES_DB (500+)
+    ├── data.js                        ← BASE_STATS, TEAMS (29), POKEMON_TYPES_DB (700+)
     ├── engine.js                      ← Battle sim engine, damage formula, Bo runner
     ├── ui.js                          ← All UI logic, import/export, pilot guide, PDF
     ├── legality.js                    ← Team legality validator
     ├── strategy-injectable.js         ← Strategy tab knowledge base
     ├── manifest.json                  ← PWA manifest
-    ├── sw.js                          ← Service worker (cache-first)
+    ├── sw.js                          ← Service worker (network-first app shell, cached assets)
     ├── icon-192.png                   ← PWA icon
     ├── icon-512.png                   ← PWA icon large
     └── tests/                         ← Node regression suite (items, status, mega, coverage, audit)
@@ -74,7 +76,7 @@ Pokemon-Champions-Sim-Planner/
 
 - Bo1 / Bo3 / Bo5 / Bo10 Monte Carlo simulation
 - Doubles and Singles format toggle
-- 13 tournament teams preloaded (Champions Arena, Chuppa, Rin Sand, Suica Sun, etc.)
+- 29 curated teams preloaded (Champions Arena, Chuppa, Rin Sand, Suica Sun, Mega variants, and review imports)
 - Poképaste + Showdown import/export
 - Team Preview bring-N-of-6 picker with drag+tap UI and Random 4/6 opponent mode (T9j.10)
 - Simulator-tab inline bring pickers for player + opponent sharing state with the Teams tab (T9j.12)
@@ -105,15 +107,16 @@ node tests/t9j13_tests.js      # 47/47 — format-mismatch guard + SP rescale
 node tests/t9j14_tests.js      # 25/25 — Shadow Pressure PDF + coaching notes
 node tests/t9j15_tests.js      # 22/22 — Best Mega Trigger Turn card (Pilot Guide + PDF)
 node tests/t9j16_tests.js      # 58/58 — Elite Coaching Engine + Strategy Report (17 rules)
+npm run test:fast              # current fast suite, skips live DB tests
 node tests/audit.js            # 5070 battles, 0 errors
-
-# Total: 343/343 across all suites
 
 # Nightly (not in fast loop)
 N=500 node tests/nightly_bring_harness.js   # end-to-end bring picker wiring check
 ```
 
-Green baseline: **285/285** unit tests + 5070-battle audit with 0 JS errors.
+Current review baseline: `npm run test:fast` passes all non-DB suites, with live DB suites skipped unless credentials are explicitly enabled. The latest local Showdown DB review run passed 84 non-DB test files, skipped 14 DB-gated files, and reported 0 failures.
+
+When a change touches Showdown source data, generated runtime artifacts, fallback stats/types, or DB-generation wiring, also run `npm run test:source-truth` from `poke-sim/`. That is the focused drift guardrail suite for source-truth changes.
 
 ---
 

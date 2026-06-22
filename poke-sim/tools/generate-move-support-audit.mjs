@@ -4,8 +4,9 @@ import fs from 'fs';
 import path from 'path';
 import vm from 'vm';
 import {createRequire} from 'module';
+import {fileURLToPath} from 'url';
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const reportPath = path.join(ROOT, 'reports', 'move_support_audit.md');
 const require = createRequire(import.meta.url);
 
@@ -59,6 +60,11 @@ const rows = [...teamUsage.keys()].sort().map((move) => {
     showdownCategory: support.showdown ? support.showdown.category : '',
     showdownBasePower: support.showdown ? support.showdown.basePower : '',
     showdownTarget: support.showdown ? support.showdown.target : '',
+    effectiveType: support.effective ? support.effective.type : '',
+    effectiveCategory: support.effective ? support.effective.category : '',
+    effectiveBasePower: support.effective ? support.effective.basePower : '',
+    effectiveTarget: support.effective ? support.effective.target : '',
+    effectiveSource: support.effective ? support.effective.source : '',
     teams: [...teamUsage.get(move)].sort().join(', '),
     notes: support.notes
   };
@@ -81,15 +87,16 @@ lines.push('- Baseline: ' + (counts.baseline || 0));
 lines.push('- Incomplete: ' + (counts.incomplete || 0));
 lines.push('');
 lines.push('`verified` = explicit sim regression coverage exists.');
-lines.push('`baseline` = core local metadata exists, but no dedicated edge-case regression tag yet.');
-lines.push('`incomplete` = local sim metadata is missing at least one core registry field.');
+lines.push('`baseline` = core Showdown/local runtime metadata exists, but no dedicated edge-case regression tag yet.');
+lines.push('`incomplete` = runtime metadata is missing at least one core registry field.');
 lines.push('');
-lines.push('| Move | Support | Verified | Local | Showdown | Teams | Verification | Tests | Sources | Notes |');
-lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
+lines.push('| Move | Support | Verified | Effective | Local | Showdown | Teams | Verification | Tests | Sources | Notes |');
+lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
 for (const row of rows) {
   const local = [row.localType, row.localCategory, row.localBasePower, row.localTarget].join(' / ');
   const source = [row.showdownType, row.showdownCategory, row.showdownBasePower, row.showdownTarget].join(' / ');
-  lines.push(`| ${row.move} | ${row.supportLevel} | ${row.verified} | ${local} | ${source} | ${row.teams} | ${row.verificationSummary} | ${row.verificationTests} | ${row.verificationSources} | ${row.notes} |`);
+  const effective = [row.effectiveType, row.effectiveCategory, row.effectiveBasePower, row.effectiveTarget, row.effectiveSource].join(' / ');
+  lines.push(`| ${row.move} | ${row.supportLevel} | ${row.verified} | ${effective} | ${local} | ${source} | ${row.teams} | ${row.verificationSummary} | ${row.verificationTests} | ${row.verificationSources} | ${row.notes} |`);
 }
 lines.push('');
 

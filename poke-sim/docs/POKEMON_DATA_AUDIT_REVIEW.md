@@ -16,6 +16,8 @@ Josh (`jdoutt`) should review the workbook whenever a change affects any of thes
 
 Tracking issue: #123.
 
+Before handing the workbook to Josh, include the exact repo, branch, commit SHA, review target URL or local file path, and whether any local credential files are required. Use `docs/release/SIM_AND_DB_SNAPSHOT_2026-06-19.md` as the current branch snapshot and `docs/release/QA_ENVIRONMENT_HANDOFF_RULES_2026-06-19.md` for routing rules.
+
 ## Regeneration Rule
 
 After any supported Pokemon data, parser, or legality-source change, regenerate the workbook before review.
@@ -32,6 +34,13 @@ node poke-sim/tools/generate-pokemon-data-audit.js \
 ```
 
 The source commit/date must be updated when the upstream Pokemon Showdown source files are refreshed.
+
+After regeneration, run the focused drift guardrail suite:
+
+```bash
+cd poke-sim
+npm run test:source-truth
+```
 
 ## Josh Review Checklist
 
@@ -50,3 +59,4 @@ Josh should confirm:
 - Supabase is not the source of truth for Pokemon stats or legal moves.
 - Do not manually type broad stat or move tables unless there is no safer generated path.
 - If generated artifacts change, rerun the relevant parser, move-legality, audit, bundle, and diff checks before PR review.
+- `npm run test:source-truth` is the minimum grouped suite for source-truth changes.

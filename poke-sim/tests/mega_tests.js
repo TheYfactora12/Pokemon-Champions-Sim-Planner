@@ -151,7 +151,7 @@ check('12. runMegaTriggerSweep function is exported',
 // shape without actually running a full sweep (would take >1 min).
 // We'll verify the cell helper (runMegaSweepCell) with minimal n.
 const sweepTeamA = ctx.TEAMS.mega_dragonite;
-const sweepTeamB = ctx.TEAMS.kingambit_sneasler;
+const sweepTeamB = ctx.TEAMS.aurora_veil_froslass;
 if (sweepTeamA && sweepTeamB) {
   try {
     const testCell = ctx.runMegaSweepCell(sweepTeamA, sweepTeamB, 1, 'at_turn', 2, 3);
@@ -163,7 +163,7 @@ if (sweepTeamA && sweepTeamB) {
     check('12b. runMegaSweepCell returns {wr, n, ci95}', false, e.message);
   }
 } else {
-  check('12b. sweep teams available', false, 'mega_dragonite or kingambit_sneasler missing');
+  check('12b. sweep teams available', false, 'mega_dragonite or aurora_veil_froslass missing');
 }
 
 console.log(`\n=== RESULT: ${pass} pass, ${fail} fail (out of ${pass+fail}) ===`);

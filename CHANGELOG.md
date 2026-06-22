@@ -10,6 +10,41 @@ Primary sources for every mechanic are cited inline in code comments and in refe
 
 ## [Unreleased]
 
+### Added
+- Public release milestone plan covering GitHub Pages hosting, PR/CI gates, Supabase security, Showdown data promotion, launch, rollback, and post-trust growth.
+- Simulation-first realignment report and roadmap override: simulation correctness now gates new coaching, premium, Battle IQ, and recommendation work.
+- Project Overview tab that turns the team planning docs into an in-app checklist of shipped fixes, validation proof, Supabase status, Showdown DB gaps, next milestones, and open decisions.
+- Team closeout note for the Alfredo merge candidate and Showdown/Supabase follow-up path.
+- Repo parity report showing the shared 1:1 merge candidate branch, current `main` divergence, PR links, and Jdoutt38 review/QA list.
+- Closure confidence report that separates proven closed candidate work from items that must remain open until PR, CI, deployment, strict logs, or human QA complete.
+- Jdoutt38 issue investigation report that separates ready-for-review tasks from Sources/Data Provenance, Team Snapshot, and Coach Recommends implementation work.
+- Showdown DB wiring stress-test report explaining the current Showdown fetch path, live Supabase probe result, and missing DB mirror pieces.
+- Exported turn-log validator for downloaded `champions-turn-log-*.json` files. It checks roster identity, item drift, active/bench key maps, HP key coverage, speed-order key coverage, and observed priority/speed order.
+- Showdown priority drift test that compares shipped move priorities against generated Pokemon Showdown move metadata, with an explicit Champions override allowlist.
+- Showdown-primary move metadata bridge for imported/custom teams: move type, category, base power, accuracy, priority, target, and contact flags now read generated Showdown rows before falling back to local Champions gaps.
+- Approved Showdown DB migration/generator slice: `showdown_entities`, `showdown_entity_diffs`, `champions_overrides`, approved read views, and deterministic `generate-approved-data-from-db.mjs` runtime output.
+- Team-facing validation note for the 2026-06-05 user-provided logs.
+
+### Fixed
+- Recoil moves now mark the attacker fainted and record KO state when recoil reaches 0 HP, preventing fainted Pokemon from staying active in post-turn snapshots.
+- Damage-based recoil now uses Showdown-compatible fractions, including `Head Smash` and `Light of Ruin` at 1/2 damage, `Flare Blitz`/`Wave Crash`/`Brave Bird`/`Double-Edge`/`Wood Hammer`/`Volt Tackle` at 33/100, and `Wild Charge`/`Take Down`/`Submission`/`Head Charge` at 1/4.
+- Showdown runtime adapters now accept both generated snake_case rows (`base_power`) and DB-native Showdown rows (`basePower`) for move metadata.
+- Bumped the service-worker cache to v49 so live users receive the approved-Showdown DB overview and adapter bundle.
+- Strict turn-log validation now allows legal same-priority exact Speed ties while still rejecting priority violations and non-tied speed-order reversals.
+- Bumped the service-worker cache to v48 so live users receive the Showdown-primary imported-move metadata bundle.
+- Bumped the service-worker cache to v47 so live users receive the recoil-faint cleanup bundle.
+- Bumped the service-worker cache to v46 and made app-shell HTML network-first so live exports cannot keep using a stale cached simulator bundle.
+- Aligned local move priority with Showdown for `Feint` (+2), `Ice Shard` (+1), and Protect-family shields such as `King's Shield` (+4).
+- Restored the replay-analysis entry point as a top-level `Review` tab label so testers can find the overview/review workflow faster.
+
+### Validation
+- Added/updated focused coverage for Showdown-primary imported move metadata (`Brave Bird`), Head Smash 1/2 recoil, recoil replacement snapshots, and move-support audit reporting.
+- Added `showdown_approved_data_generator_tests.js` coverage for approved DB RLS/view contract, Champions override application, unapproved-row exclusion, and engine compatibility.
+- Four fresh live exports were checked in strict mode: three passed cleanly, and `champions-turn-log-3765649682,915019675,502668142,3322095033.json` exposed the recoil-faint replacement bug now covered by `recoil_faint_turn_log_tests.js`.
+- Fresh live export `champions-turn-log-3597100759,1153237126,1130282361,1929379376.json` passes strict validation with stable IDs present: 8 turns, 0 errors, 0 warnings.
+- Five user-provided exported logs passed with zero hard errors: no item drift, key-map mismatch, HP-key mismatch, speed-order key mismatch, or observed priority-order mismatch.
+- The same logs warn as legacy exports because they lack `stableKey`, stable HP maps, and `itemConsumed`, so future exports should be taken after a hard refresh and checked with `node tools/validate-turn-logs.mjs --require-stable`.
+
 ### Planned
 - **T9j.17** (engine closeout, closes M1) - Piercing Drill 25% miss chance, Parental Bond 0.25x second hit, Fake Out hard-gate (turn-1 only + Inner Focus immune), status weakening residuals, #36 Expanding Force x Psychic Terrain dynamic target + BP boost, #44 Terrain Seed items (Grassy/Electric/Psychic/Misty Seed)
 - **M7-M11 infrastructure milestones** (23 issues, #77 - #99) across Architecture, Profile & Sync, Observability, Perf, Advanced Features

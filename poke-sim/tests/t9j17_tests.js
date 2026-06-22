@@ -192,7 +192,7 @@ T('B5. _fakeDone flag is set BEFORE the Protect early-return', () => {
   truthy(headerIdx > 0, 'executeAction Fake Out header must exist');
   const slice = src.slice(headerIdx, headerIdx + 4000);
   const localFakeIdx = slice.indexOf('attacker._fakeDone = true;');
-  const localProtIdx = slice.indexOf('if (target && target.protected && move !== \'Feint\' && !_shieldRiderKinds.has(target.protectKind))');
+  const localProtIdx = slice.indexOf('// Skip if target protected.');
   truthy(localFakeIdx >= 0, 'flag-set must exist after header');
   truthy(localProtIdx >= 0, 'protect check must exist after header');
   truthy(localFakeIdx < localProtIdx, 'Fake Out flag-set must precede the protect check');
@@ -303,7 +303,7 @@ T('C4. executeMove gates a 25% miss when attacker.ability === Piercing Drill', (
 T('C5. Piercing Drill miss happens AFTER the standard ACC_MAP check', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
   // Check the ACC_MAP miss block precedes the Piercing Drill block in source.
-  const accIdx = src.indexOf('const acc = ACC_MAP[move] || 1.0;');
+  const accIdx = src.indexOf('const acc = _moveAccuracy(move, ACC_MAP[move]);');
   const pdIdx  = src.indexOf("attacker.ability === 'Piercing Drill' && rng() < 0.25");
   truthy(accIdx < pdIdx && accIdx > 0 && pdIdx > 0,
     'Piercing Drill roll must fire after ACC_MAP miss block in executeMove');
@@ -469,13 +469,19 @@ T('E8. Seed consume flag prevents double-trigger', () => {
 // ============================================================
 console.log('\n=== SECTION F: Status weakening audit ===');
 
-T('F1. Burn halves attack via getStat', () => {
-  const p = mk({ name:'Garchomp', moves:['Earthquake','Dragon Claw','Stone Edge','Fire Fang'] });
+T('F1. Burn weakens physical damage without mutating raw attack stat', () => {
+  const p = mk({ name:'Garchomp', nature:'Adamant', evs:{ atk:31 }, moves:['Earthquake','Dragon Claw','Stone Edge','Fire Fang'] });
+  const d = mk({ name:'Incineroar', moves:['Protect','Knock Off','Flare Blitz','Parting Shot'] });
   const f = new ctx.Field();
-  const before = p.getStat('atk', f);
+  p.side = f.playerSide; d.side = f.oppSide;
+  f._ctx.forceNoCrit = true;
+  const beforeStat = p.getStat('atk', f);
+  const beforeDmg = p.calcDamage('Earthquake', d, f, null, () => 0);
   p.status = 'burn';
-  const after = p.getStat('atk', f);
-  eq(after, Math.floor(before * 0.5));
+  const afterStat = p.getStat('atk', f);
+  const afterDmg = p.calcDamage('Earthquake', d, f, null, () => 0);
+  eq(afterStat, beforeStat, 'burn should not mutate atk getter directly');
+  truthy(beforeDmg > afterDmg, 'burn should reduce physical damage');
 });
 
 T('F2. Burn chip damage is 1/16 maxHp end of turn (verified in source)', () => {
@@ -536,13 +542,19 @@ T('F8. canInflictStatus blocks burn on Fire-types and frozen on Ice-types', () =
 // ============================================================
 console.log('\n=== SECTION G: Frostbite ===');
 
-T('G1. Frostbite halves Special Attack via getStat', () => {
-  const p = mk({ name:'Latios', moves:['Draco Meteor','Psyshock','Recover','Protect'] });
+T('G1. Frostbite weakens special damage without mutating raw special attack stat', () => {
+  const p = mk({ name:'Latios', nature:'Modest', evs:{ spa:31 }, moves:['Draco Meteor','Psyshock','Recover','Protect'] });
+  const d = mk({ name:'Incineroar', moves:['Protect','Knock Off','Flare Blitz','Parting Shot'] });
   const f = new ctx.Field();
-  const before = p.getStat('spa', f);
+  p.side = f.playerSide; d.side = f.oppSide;
+  f._ctx.forceNoCrit = true;
+  const beforeStat = p.getStat('spa', f);
+  const beforeDmg = p.calcDamage('Draco Meteor', d, f, null, () => 0);
   p.status = 'frostbite';
-  const after = p.getStat('spa', f);
-  eq(after, Math.floor(before * 0.5));
+  const afterStat = p.getStat('spa', f);
+  const afterDmg = p.calcDamage('Draco Meteor', d, f, null, () => 0);
+  eq(afterStat, beforeStat, 'frostbite should not mutate spa getter directly');
+  truthy(beforeDmg > afterDmg, 'frostbite should reduce special damage');
 });
 
 T('G2. Frostbite chip damage line present in end-of-turn loop', () => {

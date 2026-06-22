@@ -62,6 +62,33 @@ function getWindowValue(name, fallback) {
   return Object.prototype.hasOwnProperty.call(window, name) ? window[name] : fallback;
 }
 
+function safeRemoveNode(node) {
+  if (!node) return false;
+  if (typeof node.remove === 'function') {
+    node.remove();
+    return true;
+  }
+  if (node.parentNode && typeof node.parentNode.removeChild === 'function') {
+    node.parentNode.removeChild(node);
+    return true;
+  }
+  return false;
+}
+
+function safeReplaceChild(parent, nextNode, prevNode) {
+  if (!parent || !nextNode) return false;
+  if (prevNode && typeof parent.replaceChild === 'function') {
+    parent.replaceChild(nextNode, prevNode);
+    return true;
+  }
+  if (prevNode) safeRemoveNode(prevNode);
+  if (typeof parent.appendChild === 'function') {
+    parent.appendChild(nextNode);
+    return true;
+  }
+  return false;
+}
+
 function showRuntimeError(message) {
   try {
     var banner = document.getElementById('runtime-error-banner');
@@ -89,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.18-may-meta-roster';
+    return txt || 'v2.1.23-champion-item-sp-gate';
   } catch (e) {
-    return 'v2.1.18-may-meta-roster';
+    return 'v2.1.23-champion-item-sp-gate';
   }
 }
 
@@ -330,6 +357,25 @@ document.addEventListener('keydown', _handleModalKeydown, true);
 
 // ---- Format Toggle (Doubles / Singles) ----
 let currentFormat = 'doubles';
+let currentRuleset = 'champions';
+function getCurrentRuleset() {
+  return currentRuleset === 'sv' ? 'sv' : 'champions';
+}
+function setCurrentRuleset(ruleset) {
+  currentRuleset = (ruleset === 'sv') ? 'sv' : 'champions';
+  ChampionsSim.state.ruleset = currentRuleset;
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('currentRuleset', currentRuleset);
+  return currentRuleset;
+}
+function isTeamCompatibleWithCurrentRuleset(team) {
+  var teamFormat = (team && team.format) || 'champions';
+  return teamFormat === getCurrentRuleset();
+}
+function getActiveValidationFormat(team) {
+  if (!isTeamCompatibleWithCurrentRuleset(team)) return 'champions';
+  return getCurrentRuleset() === 'champions' ? 'champions' : 'vgc';
+}
+setCurrentRuleset(currentRuleset);
 function setCurrentFormat(format) {
   currentFormat = (format === 'singles') ? 'singles' : 'doubles';
   // T9j.2 / #78 - expose for engine.js through the shared namespace.
@@ -345,9 +391,9 @@ document.querySelectorAll('.fmt-btn').forEach(btn => {
     setCurrentFormat(btn.dataset.fmt);
     const indicator = document.getElementById('fmt-indicator');
     if (currentFormat === 'doubles') {
-      indicator.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg> DOUBLES · 4v4 · Spread moves active`;
+      indicator.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg> DOUBLES · CHAMPIONS · 4v4 · Spread moves active`;
     } else {
-      indicator.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/></svg> SINGLES · 6v6 · No spread nerf`;
+      indicator.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/></svg> SINGLES · CHAMPIONS · 6v6 · No spread nerf`;
     }
     // T9j.12 (Refs #74): format change alters bring slot count (4 vs 3);
     // re-render both Teams grid and Simulator pickers to reflect.
@@ -370,6 +416,23 @@ document.querySelectorAll('.bo-btn').forEach(btn => {
 // SHOWDOWN PASTE PARSER
 // Parses standard PS! export format into team member objects
 // ============================================================
+function _applySpreadLineToEvs(lineText, evs) {
+  const parts = String(lineText || '').split('/').map(s => s.trim());
+  for (const p of parts) {
+    const m = p.match(/(\d+)\s+(\w+)/);
+    if (m) {
+      const val = parseInt(m[1]), stat = m[2].toLowerCase();
+      const key = stat === 'spatk' || stat === 'spa' ? 'spa' :
+                  stat === 'spdef' || stat === 'spd' ? 'spd' :
+                  stat === 'speed' || stat === 'spe' ? 'spe' :
+                  stat === 'attack' || stat === 'atk' ? 'atk' :
+                  stat === 'defense' || stat === 'def' ? 'def' :
+                  stat === 'hp' ? 'hp' : stat;
+      if (key in evs) evs[key] = val;
+    }
+  }
+}
+
 function parseShowdownPaste(text) {
   const members = [];
   const blocks = text.trim().split(/\n\s*\n/).filter(b => b.trim());
@@ -392,6 +455,11 @@ function parseShowdownPaste(text) {
 
     let ability = '', level = 50, nature = 'Hardy', tera = null;
     const evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 };
+    const importFormatSignals = {
+      sawSpsLine: false,
+      sawEvsLine: false,
+      sawIvsLine: false
+    };
     const moves = [];
 
     for (let i = 1; i < lines.length; i++) {
@@ -399,17 +467,15 @@ function parseShowdownPaste(text) {
       if (l.startsWith('Ability:')) ability = l.replace('Ability:', '').trim();
       else if (l.startsWith('Level:')) level = parseInt(l.replace('Level:', '').trim()) || 50;
       else if (l.startsWith('Tera Type:')) tera = l.replace('Tera Type:', '').trim();
+      else if (l.startsWith('SPs:')) {
+        importFormatSignals.sawSpsLine = true;
+        _applySpreadLineToEvs(l.replace('SPs:', ''), evs);
+      }
       else if (l.startsWith('EVs:')) {
-        const evParts = l.replace('EVs:', '').split('/').map(s => s.trim());
-        for (const p of evParts) {
-          const m = p.match(/(\d+)\s+(\w+)/);
-          if (m) {
-            const val = parseInt(m[1]), stat = m[2].toLowerCase();
-            const key = stat === 'spatk' ? 'spa' : stat === 'spdef' ? 'spd' : stat === 'speed' ? 'spe' :
-                        stat === 'attack' ? 'atk' : stat === 'defense' ? 'def' : stat === 'hp' ? 'hp' : stat;
-            if (key in evs) evs[key] = val;
-          }
-        }
+        importFormatSignals.sawEvsLine = true;
+        _applySpreadLineToEvs(l.replace('EVs:', ''), evs);
+      } else if (l.startsWith('IVs:')) {
+        importFormatSignals.sawIvsLine = true;
       } else if (l.endsWith('Nature')) {
         nature = l.replace('Nature', '').trim();
       } else if (l.startsWith('- ')) {
@@ -418,14 +484,94 @@ function parseShowdownPaste(text) {
     }
 
     if (!rawName) continue;
-    members.push({ name: rawName, item, ability, level, nature, evs, moves, role: '', tera });
+    const member = { name: rawName, item, ability, level, nature, evs, moves, role: '', tera };
+    if (importFormatSignals.sawSpsLine || importFormatSignals.sawEvsLine || importFormatSignals.sawIvsLine) {
+      member.import_format_signals = importFormatSignals;
+    }
+    members.push(member);
   }
   return members;
 }
 
+function buildChampionImportGateErrors(members) {
+  var errors = [];
+  (members || []).forEach(function(member) {
+    var name = member && member.name ? member.name : 'Pokemon';
+    var signals = (member && member.import_format_signals) || {};
+    if (signals.sawEvsLine) {
+      errors.push(name + ': raw Showdown EVs are SV-format data; use Champion SPs instead.');
+    }
+    if (signals.sawIvsLine) {
+      errors.push(name + ': IVs are not configurable in Champions; remove IVs before import.');
+    }
+    if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
+      errors.push(name + ': SP spread exceeds Champions caps (max 32 per stat, 66 total).');
+    }
+  });
+  return errors;
+}
+
+function buildImportedTeamValidation(members, opts) {
+  opts = opts || {};
+  // Imports stay usable with warnings, but hard team-rule failures are marked
+  // illegal so they cannot masquerade as reviewed legal teams.
+  var team = {
+    name: opts.name || 'Imported Team',
+    format: opts.format || 'champions',
+    legality_status: 'unverified',
+    members: members || []
+  };
+  var out = {
+    valid: true,
+    errors: [],
+    warnings: [],
+    sourceVersion: '',
+    memberWarnings: {}
+  };
+  if ((opts.format || 'champions') === 'champions') {
+    out.errors = out.errors.concat(buildChampionImportGateErrors(members));
+  }
+  if (typeof validateTeam === 'function') {
+    try {
+      var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
+      out.errors = out.errors.concat(verdict.errors || []);
+      out.warnings = out.warnings.concat(verdict.warnings || []);
+    } catch (_e) {
+      out.warnings.push('Team rules could not be fully checked.');
+    }
+  }
+  var root = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : null);
+  var simRoot = (typeof ChampionsSim !== 'undefined') ? ChampionsSim : (root && root.ChampionsSim);
+  var api = simRoot && simRoot.moveLegality ? simRoot.moveLegality : null;
+  if (!api || typeof api.validateMovesForSet !== 'function') {
+    out.warnings.push('Showdown species and move legality data is not loaded.');
+  } else {
+    (members || []).forEach(function(member, idx) {
+      var checks = api.validateMovesForSet(member || {});
+      checks.forEach(function(row) {
+        if (!out.sourceVersion && row.sourceVersion) out.sourceVersion = row.sourceVersion;
+        if (row.legal) return;
+        var label = (member && member.name ? member.name : 'Pokemon') + ': ' + (row.moveName || 'unknown move') + ' - ' + (row.notes || row.reason || 'not verified');
+        var isUnchecked = row.reason === 'source_unavailable' || row.reason === 'unknown_species';
+        out.warnings.push(label);
+        out.memberWarnings[String(idx)] = out.memberWarnings[String(idx)] || [];
+        out.memberWarnings[String(idx)].push({
+          severity: isUnchecked ? 'unchecked' : 'warning',
+          text: label
+        });
+      });
+    });
+  }
+  out.errors = Array.from(new Set(out.errors.filter(Boolean)));
+  out.warnings = Array.from(new Set(out.warnings.filter(Boolean)));
+  out.valid = out.errors.length === 0;
+  return out;
+}
+
 // ============================================================
-// SHOWDOWN PASTE EXPORTER
-// Generates a valid PS!/pokepast.es paste from a team object
+// CHAMPION PASTE EXPORTER
+// Generates a Champion-safe text export. Uses SPs instead of Showdown EVs so
+// round-tripping does not re-import SV-format spread lines by mistake.
 // ============================================================
 function exportTeamToPaste(team) {
   if (!team || !team.members) return '';
@@ -437,7 +583,7 @@ function exportTeamToPaste(team) {
     if (m.ability) lines.push(`Ability: ${m.ability}`);
     lines.push(`Level: ${m.level || 50}`);
     if (m.tera) lines.push(`Tera Type: ${m.tera}`);
-    // EVs — only non-zero
+    // SPs — only non-zero
     const evs = m.evs || {};
     const evParts = [];
     const statLabels = { hp:'HP', atk:'Atk', def:'Def', spa:'SpA', spd:'SpD', spe:'Spe' };
@@ -445,7 +591,7 @@ function exportTeamToPaste(team) {
       const v = evs[k] || 0;
       if (v > 0) evParts.push(`${v} ${label}`);
     }
-    if (evParts.length) lines.push(`EVs: ${evParts.join(' / ')}`);
+    if (evParts.length) lines.push(`SPs: ${evParts.join(' / ')}`);
     if (m.nature) lines.push(`${m.nature} Nature`);
     for (const mv of (m.moves || [])) lines.push(`- ${mv}`);
     lines.push(''); // blank line between mons
@@ -517,7 +663,211 @@ function renderRoster(containerId, members) {
 // rebuildTeamSelects() re-populates both dropdowns from TEAMS so that
 // imported/custom teams appear in BOTH sides.
 // ============================================================
-var currentPlayerKey = 'player';
+function normalizeTeamRecordForSim(teamKey, team) {
+  if (!team || typeof team !== 'object') return null;
+  team.team_id = team.team_id || teamKey;
+  team.name = team.name || team.label || teamKey;
+  team.metadata = team.metadata || {};
+  if (!Array.isArray(team.members)) team.members = [];
+
+  var rulesetId = team.ruleset_id || team.metadata.ruleset_id || 'champions_reg_m_doubles_bo3';
+  team.ruleset_id = team.ruleset_id || rulesetId;
+  team.metadata.ruleset_id = team.metadata.ruleset_id || rulesetId;
+  if (!team.format) {
+    team.format = 'champions';
+  }
+  if (!team.legality_status && team.format === 'champions') {
+    team.legality_status = team.source === 'custom' ? 'unverified' : 'legal_inferred';
+  }
+
+  team.members = team.members.map(function(member) {
+    member = member || {};
+    var name = member.name || member.species || 'Unknown';
+    return {
+      name: name,
+      species: member.species || name,
+      item: member.item || '',
+      ability: member.ability || '',
+      nature: member.nature || '',
+      level: member.level || 50,
+      evs: member.evs || {},
+      ivs: member.ivs || {},
+      moves: Array.isArray(member.moves) ? member.moves : [],
+      teraType: member.teraType || member.tera_type || '',
+      tera_type: member.tera_type || member.teraType || '',
+      role: member.role || member.role_tag || ''
+    };
+  });
+  return team;
+}
+
+function normalizeTeamCatalogForSim() {
+  if (typeof TEAMS === 'undefined') return 0;
+  var count = 0;
+  for (var key in TEAMS) {
+    if (normalizeTeamRecordForSim(key, TEAMS[key])) count++;
+  }
+  return count;
+}
+
+function isSimReadyTeam(teamKey, team, opts) {
+  team = normalizeTeamRecordForSim(teamKey, team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null));
+  opts = opts || {};
+  if (!team || !team.name) return false;
+  if (opts.requireMembers !== false && (!Array.isArray(team.members) || team.members.length === 0)) return false;
+  return isVisibleTeamInCatalog(teamKey, team, { includeCustom: opts.includeCustom !== false });
+}
+
+function isVisibleTeamInCatalog(teamKey, team, opts) {
+  team = normalizeTeamRecordForSim(teamKey, team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null));
+  opts = opts || {};
+  if (!team || !team.name) return false;
+  if (team.source === 'custom' && opts.includeCustom === false) return false;
+  if (team.format !== 'champions') return false;
+  if (team.legality_status === 'illegal') return false;
+  if (typeof getTeamLegalityVerdict === 'function') {
+    var verdict = getTeamLegalityVerdict(teamKey, team);
+    if (verdict && !verdict.valid) return false;
+  }
+  return true;
+}
+
+function getVisibleTeamKeys(opts) {
+  if (typeof TEAMS === 'undefined') return [];
+  normalizeTeamCatalogForSim();
+  var out = [];
+  for (var key in TEAMS) {
+    if (isVisibleTeamInCatalog(key, TEAMS[key], opts)) out.push(key);
+  }
+  return out;
+}
+
+function getDefaultVisiblePlayerTeamKey() {
+  var visible = getVisibleTeamKeys({ includeCustom: true }).filter(function(key) {
+    return isSimReadyTeam(key, TEAMS[key], { includeCustom: true });
+  });
+  return visible[0] || (TEAMS.player ? 'player' : Object.keys(TEAMS)[0]);
+}
+
+function getDefaultVisibleOpponentTeamKey(excludeKey) {
+  var visible = getVisibleTeamKeys({ includeCustom: true }).filter(function(key) {
+    return key !== excludeKey && isSimReadyTeam(key, TEAMS[key], { includeCustom: true });
+  });
+  return visible[0] || getDefaultVisiblePlayerTeamKey();
+}
+
+function mergeDbTeamsIntoCatalog(dbTeams) {
+  var summary = { added: 0, replaced: 0, skipped: 0, blocked: [] };
+  if (!dbTeams || typeof TEAMS === 'undefined') return summary;
+  for (var key in dbTeams) {
+    if (!Object.prototype.hasOwnProperty.call(dbTeams, key)) continue;
+    var team = dbTeams[key];
+    normalizeTeamRecordForSim(key, team);
+    var verdict = (typeof getTeamLegalityVerdict === 'function')
+      ? getTeamLegalityVerdict(key, team)
+      : { valid: true, errors: [] };
+    if (!team || team.format !== 'champions' || !verdict.valid) {
+      summary.skipped++;
+      summary.blocked.push({
+        key: key,
+        name: team && team.name,
+        errors: (verdict && verdict.errors) || ['Not a Champion-format legal team']
+      });
+      continue;
+    }
+    if (TEAMS[key]) summary.replaced++;
+    else summary.added++;
+    TEAMS[key] = team;
+  }
+  return summary;
+}
+
+var currentPlayerKey = getDefaultVisiblePlayerTeamKey();
+
+function getActivePlayerTeamKey() {
+  var playerSel = (typeof document !== 'undefined') ? document.getElementById('player-select') : null;
+  if (playerSel
+      && playerSel.value
+      && TEAMS[playerSel.value]
+      && isSimReadyTeam(playerSel.value, TEAMS[playerSel.value], { includeCustom: true })) {
+    return playerSel.value;
+  }
+  if (typeof currentPlayerKey === 'string'
+      && TEAMS[currentPlayerKey]
+      && isSimReadyTeam(currentPlayerKey, TEAMS[currentPlayerKey], { includeCustom: true })) {
+    return currentPlayerKey;
+  }
+  return getDefaultVisiblePlayerTeamKey();
+}
+
+function getActivePlayerTeam() {
+  return TEAMS[getActivePlayerTeamKey()] || null;
+}
+
+function syncActivePlayerTeamKey() {
+  var resolvedKey = getActivePlayerTeamKey();
+  currentPlayerKey = resolvedKey;
+  var playerSel = (typeof document !== 'undefined') ? document.getElementById('player-select') : null;
+  if (playerSel && resolvedKey && playerSel.value !== resolvedKey && TEAMS[resolvedKey]) {
+    playerSel.value = resolvedKey;
+  }
+  return resolvedKey;
+}
+
+function resolveSimContext(opts) {
+  opts = opts || {};
+  normalizeTeamCatalogForSim();
+  var playerSel = (typeof document !== 'undefined') ? document.getElementById('player-select') : null;
+  var oppSel = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+  var playerCandidate = opts.playerKey || (playerSel && playerSel.value) || currentPlayerKey || getDefaultVisiblePlayerTeamKey();
+  var playerKey = isSimReadyTeam(playerCandidate, TEAMS[playerCandidate], { includeCustom: true })
+    ? playerCandidate
+    : getDefaultVisiblePlayerTeamKey();
+  if (!isSimReadyTeam(playerKey, TEAMS[playerKey], { includeCustom: true })) {
+    throw new Error('player team not loaded: ' + (playerCandidate || 'none'));
+  }
+
+  var oppCandidate = opts.oppKey || (oppSel && oppSel.value) || getDefaultVisibleOpponentTeamKey(playerKey);
+  var oppKey = isSimReadyTeam(oppCandidate, TEAMS[oppCandidate], { includeCustom: true }) && oppCandidate !== playerKey
+    ? oppCandidate
+    : getDefaultVisibleOpponentTeamKey(playerKey);
+  if (!isSimReadyTeam(oppKey, TEAMS[oppKey], { includeCustom: true })) {
+    throw new Error('opponent team not loaded: ' + (oppCandidate || 'none'));
+  }
+  if (oppKey === playerKey) {
+    throw new Error('opponent team not loaded: no distinct opponent available');
+  }
+
+  currentPlayerKey = playerKey;
+  if (playerSel && playerSel.value !== playerKey) playerSel.value = playerKey;
+  if (oppSel && oppSel.value !== oppKey) oppSel.value = oppKey;
+
+  var countEl = (typeof document !== 'undefined') ? document.getElementById('sim-count') : null;
+  var n = opts.numSeries != null ? Number(opts.numSeries) : parseInt(countEl && countEl.value, 10);
+  var bo = opts.bo || currentBo;
+  return {
+    playerKey: playerKey,
+    oppKey: oppKey,
+    playerTeam: TEAMS[playerKey],
+    oppTeam: TEAMS[oppKey],
+    numSeries: n,
+    bo: bo,
+    format: currentFormat,
+    formatLabel: currentFormat === 'doubles' ? 'Doubles' : 'Singles',
+    boLabel: 'Bo' + bo
+  };
+}
+
+function getEditablePlayerTeamKey() {
+  var playerSel = (typeof document !== 'undefined') ? document.getElementById('player-select') : null;
+  if (playerSel && playerSel.value && TEAMS[playerSel.value]) return playerSel.value;
+  if (TEAMS.player) return 'player';
+  return getActivePlayerTeamKey();
+}
+
+function getEditablePlayerTeam() {
+  return TEAMS[getEditablePlayerTeamKey()] || null;
+}
 
 // ============================================================
 // T9f: Custom-team persistence (localStorage)
@@ -667,11 +1017,11 @@ async function deleteCustomTeam(key) {
 
   // Fallback selections if deleted team was selected
   if (currentPlayerKey === key) {
-    currentPlayerKey = TEAMS.player ? 'player' : Object.keys(TEAMS)[0];
+    currentPlayerKey = getDefaultVisiblePlayerTeamKey();
   }
   var oppSel = document.getElementById('opponent-select');
   if (oppSel && oppSel.value === key) {
-    oppSel.value = TEAMS.mega_altaria ? 'mega_altaria' : Object.keys(TEAMS)[0];
+    oppSel.value = getDefaultVisibleOpponentTeamKey(currentPlayerKey);
   }
 
   if (typeof rebuildTeamSelects === 'function') rebuildTeamSelects();
@@ -686,31 +1036,42 @@ function rebuildTeamSelects() {
   var playerSel = document.getElementById('player-select');
   var oppSel = document.getElementById('opponent-select');
   if (!playerSel || !oppSel) return;
-  var prevPlayer = playerSel.value || currentPlayerKey;
-  var prevOpp = oppSel.value || 'mega_altaria';
+  var prevPlayer = playerSel.value || currentPlayerKey || getDefaultVisiblePlayerTeamKey();
+  var prevOpp = oppSel.value || getDefaultVisibleOpponentTeamKey(prevPlayer);
+  var hadDuplicateSelection = prevPlayer && prevOpp && prevPlayer === prevOpp;
   playerSel.innerHTML = '';
   // Rebuild opponent while preserving order (existing option text has
   // ladder-gate glyph mutations; start fresh from TEAMS)
   oppSel.innerHTML = '';
-  for (var key in TEAMS) {
+  getVisibleTeamKeys({ includeCustom: true }).forEach(function(key) {
     var t = TEAMS[key];
-    if (!t || !t.name) continue;
+    if (!t || !t.name) return;
     var o1 = document.createElement('option');
     o1.value = key; o1.textContent = t.name;
     playerSel.appendChild(o1);
     var o2 = document.createElement('option');
     o2.value = key; o2.textContent = t.name;
     oppSel.appendChild(o2);
+  });
+  playerSel.value = TEAMS[prevPlayer] && isVisibleTeamInCatalog(prevPlayer, TEAMS[prevPlayer], { includeCustom: true })
+    ? prevPlayer
+    : getDefaultVisiblePlayerTeamKey();
+  if (TEAMS[prevOpp] && isVisibleTeamInCatalog(prevOpp, TEAMS[prevOpp], { includeCustom: true }) && prevOpp !== playerSel.value) {
+    oppSel.value = prevOpp;
+  } else if (hadDuplicateSelection) {
+    oppSel.value = playerSel.value;
+  } else {
+    oppSel.value = getDefaultVisibleOpponentTeamKey(playerSel.value);
   }
-  if (TEAMS[prevPlayer]) playerSel.value = prevPlayer;
-  if (TEAMS[prevOpp]) oppSel.value = prevOpp;
   currentPlayerKey = playerSel.value;
   if (typeof applyLadderGate === 'function') applyLadderGate();
 }
 
 // ---- Initial renders ----
-renderRoster('player-roster', TEAMS.player.members);
-renderRoster('opp-roster', TEAMS.mega_altaria.members);
+currentPlayerKey = getDefaultVisiblePlayerTeamKey();
+var _initialOppKey = getDefaultVisibleOpponentTeamKey(currentPlayerKey);
+renderRoster('player-roster', (TEAMS[currentPlayerKey] && TEAMS[currentPlayerKey].members) || []);
+renderRoster('opp-roster', (TEAMS[_initialOppKey] && TEAMS[_initialOppKey].members) || []);
 rebuildTeamSelects();
 // T9j.12 (Refs #74): draw sim-side bring pickers on initial load.
 if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
@@ -789,6 +1150,16 @@ var LADDER_MODE = false;
 
 function getTeamLegalityVerdict(teamKey, team) {
   team = team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null);
+  if (team && !isTeamCompatibleWithCurrentRuleset(team)) {
+    return {
+      valid: false,
+      inferred: false,
+      statAware: false,
+      errors: ['SV-format compatibility team; excluded from Champions source-truth review.'],
+      warnings: ['Keep this team for legacy comparison only until an explicit SV ruleset mode is added.'],
+      label: 'SV compatibility only'
+    };
+  }
   var fallback = {
     valid: !!team && (team.legality_status === 'legal' || team.legality_status === 'legal_inferred'),
     inferred: !!team && team.legality_status === 'legal_inferred',
@@ -797,7 +1168,7 @@ function getTeamLegalityVerdict(teamKey, team) {
     label: team && team.legality_status === 'legal_inferred' ? 'Legal (inferred)' : 'Legal'
   };
   if (!team || typeof validateTeam !== 'function') return fallback;
-  var verdict = validateTeam(team, 'vgc') || {};
+  var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
   var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
   var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
   var valid = errors.length === 0;
@@ -843,7 +1214,7 @@ function _gateOneSelect(selId) {
       // T9h: distinguish inferred from manually-verified legal
       var legalLabel = verdict.label || ((team.legality_status === 'legal_inferred') ? 'Legal (inferred)' : 'Legal');
       opt.textContent = opt.textContent + '  ' + glyph + ' ' +
-        (legal ? legalLabel : (!verdict.valid ? 'Not legal' : (team.legality_status === 'illegal' ? 'Illegal' : (team.format || '?').toUpperCase())));
+        (legal ? legalLabel : (!verdict.valid ? legalLabel : (team.legality_status === 'illegal' ? 'Illegal' : (team.format || '?').toUpperCase())));
     }
     if (LADDER_MODE && team && !legal) {
       opt.hidden = true;
@@ -873,11 +1244,14 @@ function applyLadderGate() {
 }
 
 function _firstDifferentTeamKey(excludeKey) {
-  if (typeof TEAMS === 'undefined') return null;
-  for (var key in TEAMS) {
-    if (key !== excludeKey && TEAMS[key]) return key;
+  var oppSel = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+  if (oppSel && Array.isArray(oppSel.options)) {
+    for (var i = 0; i < oppSel.options.length; i++) {
+      var opt = oppSel.options[i];
+      if (opt && opt.value && opt.value !== excludeKey && TEAMS[opt.value]) return opt.value;
+    }
   }
-  return null;
+  return getDefaultVisibleOpponentTeamKey(excludeKey);
 }
 
 function enforceDistinctBattleTeams() {
@@ -1140,9 +1514,9 @@ function renderSimBringPicker(containerId, teamKey) {
 }
 
 function renderSimBringPickers() {
-  var playerKey = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player';
+  var playerKey = getActivePlayerTeamKey();
   var oppSel = document.getElementById('opponent-select');
-  var oppKey = oppSel ? oppSel.value : 'mega_altaria';
+  var oppKey = oppSel ? oppSel.value : getDefaultVisibleOpponentTeamKey(playerKey);
   renderSimBringPicker('player-bring-picker', playerKey);
   renderSimBringPicker('opp-bring-picker', oppKey);
 }
@@ -1154,8 +1528,8 @@ function renderSimBringPickers() {
 //   - Preloaded = any team whose source !== 'custom'
 //   - Custom    = team.source === 'custom' (imported by user, localStorage-backed)
 //   - Tournament = preloaded team whose key matches champions_arena_* or known
-//                  tournament rosters (chuppa_balance, aurora_veil_froslass,
-//                  kingambit_sneasler, cofagrigus_tr, rin_sand, suica_sun).
+//                  Champions-focused tournament/sample rosters
+//                  (aurora_veil_froslass, cofagrigus_tr, rin_sand, suica_sun).
 //   - Mega      = team whose key starts with mega_ (mega_altaria / mega_dragonite
 //                  / mega_houndoom).
 // Bulk I/O: JSON is the authoritative round-trip format (uses the T9f schema
@@ -1168,11 +1542,11 @@ function renderSimBringPickers() {
 var TEAMS_FILTER = 'all'; // 'all' | 'preloaded' | 'custom' | 'tournament' | 'mega'
 var TOURNAMENT_TEAM_KEYS = {
   champions_arena_1st:1, champions_arena_2nd:1, champions_arena_3rd:1,
-  chuppa_balance:1, aurora_veil_froslass:1, kingambit_sneasler:1,
-  cofagrigus_tr:1, rin_sand:1, suica_sun:1
+  aurora_veil_froslass:1, cofagrigus_tr:1, rin_sand:1, suica_sun:1
 };
 function teamMatchesFilter(key, team, filter) {
   if (!team) return false;
+  if (!isVisibleTeamInCatalog(key, team, { includeCustom: true })) return false;
   var isCustom = team.source === 'custom';
   if (filter === 'all') return true;
   if (filter === 'custom') return isCustom;
@@ -1233,16 +1607,22 @@ function renderTeamsGrid() {
   grid.innerHTML = '';
   for (const [key, team] of Object.entries(TEAMS)) {
     if (!teamMatchesFilter(key, team, TEAMS_FILTER)) continue;
-    const isPlayer = key === 'player';
+    const isPlayer = key === currentPlayerKey;
     const compactTeamsPicker = shouldUseCompactTeamsPicker();
     const legalityVerdict = getTeamLegalityVerdict(key, team);
     const legalityNote = !legalityVerdict.valid
-      ? '<div class="team-legality-note"><strong>Not legal for current sim rules</strong><span>' +
-        _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'Unknown legality issue') +
-        '</span><small>Team remains visible for review/testing, but results should be treated as untrusted until the source data is fixed.</small></div>'
+      ? ((team.format === 'sv')
+          ? '<div class="team-legality-note"><strong>SV compatibility team</strong><span>' +
+            _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'This team is outside the Champions review lane.') +
+            '</span><small>Keep this visible for legacy comparison only. Live Champions review and trust scoring stay on Champions-format teams.</small></div>'
+          : '<div class="team-legality-note"><strong>Not legal for current sim rules</strong><span>' +
+            _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'Unknown legality issue') +
+            '</span><small>Team remains visible for review/testing, but results should be treated as untrusted until the source data is fixed.</small></div>')
       : '';
     const card = document.createElement('div');
     card.className = 'team-full-card';
+    if (card.dataset) card.dataset.teamKey = key;
+    else card._teamKey = key;
     card.innerHTML = `
       <div class="tfcard-header">
         <div>
@@ -1253,6 +1633,7 @@ function renderTeamsGrid() {
           <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
           ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
             var st = team.legality_status; var fmt = team.format;
+            if (!legalityVerdict.valid && fmt === 'sv') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.errors || []).join('; ')) + '">\u26A0 SV COMPAT ONLY</span>';
             if (!legalityVerdict.valid) return '<span class="badge-illegal" title="' + _escapeHtml(legalityVerdict.errors.join('; ')) + '">\u274C NOT LEGAL</span>';
             if (st === 'legal' && fmt === 'champions') return '<span class="badge-legal">\u2705 LEGAL</span>';
             if (st === 'legal_inferred' && fmt === 'champions') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.warnings || []).join('; ') || 'Tournament-placement team; spreads are inferred from source archetypes.') + '">\u26A0 ' + _escapeHtml(legalityVerdict.label || 'LEGAL (inferred)') + '</span>';
@@ -1402,6 +1783,11 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
     if (!t || !Array.isArray(t.members) || t.members.length === 0) { skipped++; continue; }
     var key = _uniqueCustomKey(t.name);
     var name = _uniqueTeamName(t.name || 'Imported Team');
+    var validation = buildImportedTeamValidation(t.members, { name: name, format: 'champions' });
+    if (!validation.valid) {
+      skipped++;
+      continue;
+    }
     TEAMS[key] = {
       name: name,
       label: 'CUSTOM',
@@ -1411,6 +1797,9 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
       source: 'custom',
       format: 'champions',
       legality_status: 'unverified',
+      import_warnings: validation.warnings,
+      import_errors: validation.errors,
+      showdown_source_version: validation.sourceVersion,
       created_at: new Date().toISOString()
     };
     added++;
@@ -1550,15 +1939,15 @@ function renderStatPanelHtml(member) {
     const natureCls = key === plus ? ' plus' : key === minus ? ' minus' : '';
     return '<div class="stat-panel-row">' +
       '<span class="stat-panel-stat">' + STAT_PANEL_LABELS[key] + '</span>' +
-      '<span class="stat-panel-pill">EV ' + (parseInt(evs[key], 10) || 0) + '</span>' +
-      '<span class="stat-panel-pill">IV ' + (ivs[key] == null ? 31 : parseInt(ivs[key], 10) || 0) + '</span>' +
+      '<span class="stat-panel-pill">SP ' + (parseInt(evs[key], 10) || 0) + '</span>' +
+      '<span class="stat-panel-pill">Fixed IV ' + (ivs[key] == null ? 31 : parseInt(ivs[key], 10) || 0) + '</span>' +
       '<span class="stat-panel-nature' + natureCls + '">' + natureMark + '</span>' +
     '</div>';
   }).join('');
   return '<section class="stat-panel" aria-label="Stat panel">' +
     '<div class="stat-panel-head">' +
       '<span>Stats</span>' +
-      '<span class="stat-panel-meta">' + _escapeHtml(nature) + ' · EV ' + evTotal + '/510</span>' +
+      '<span class="stat-panel-meta">' + _escapeHtml(nature) + ' · SP ' + evTotal + '/66</span>' +
     '</div>' +
     '<div class="stat-panel-grid">' + rows + '</div>' +
   '</section>';
@@ -1658,7 +2047,7 @@ function renderTeamStatDetailHtml(model) {
       '</div>' +
       '<div class="team-detail-section"><h3>Stats</h3>' +
         '<div class="team-detail-table-wrap"><table class="team-detail-table">' +
-          '<thead><tr><th>Stat</th><th>Base</th><th>EV</th><th>IV</th><th>Final</th></tr></thead>' +
+          '<thead><tr><th>Stat</th><th>Base</th><th>SP</th><th>Fixed IV</th><th>Final</th></tr></thead>' +
           '<tbody>' + STAT_PANEL_KEYS.map(statRow).join('') + '</tbody>' +
         '</table></div>' +
       '</div>' +
@@ -1714,9 +2103,11 @@ function openTeamStatDetailPanel(teamKey, monName, triggerEl) {
 
 function renderEditorRoster() {
   const el = document.getElementById('editor-roster');
+  const team = getEditablePlayerTeam();
   if (!el) return;
   el.innerHTML = '';
-  TEAMS.player.members.forEach((m, i) => {
+  if (!team || !Array.isArray(team.members)) return;
+  team.members.forEach((m, i) => {
     const btn = document.createElement('button');
     btn.className = 'editor-poke-btn';
     btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/><span>${_escapeHtml(m.name || '')}</span>`;
@@ -1772,12 +2163,14 @@ function refreshEditorMoveLegality(baseMember) {
 
 function openEditorForm(idx) {
   editingIdx = idx;
-  const m = TEAMS.player.members[idx];
+  const team = getEditablePlayerTeam();
+  if (!team || !Array.isArray(team.members) || !team.members[idx]) return;
+  const m = team.members[idx];
   const form = document.getElementById('editor-form');
   const evsHtml = ['hp','atk','def','spa','spd','spe'].map(s=>`
     <div class="form-group">
       <label class="form-label">${s.toUpperCase()}</label>
-      <input class="form-input" id="ev-${s}" value="${_escapeHtml(String(m.evs?.[s]||0))}" type="number" min="0" max="252"/>
+      <input class="form-input" id="ev-${s}" value="${_escapeHtml(String(m.evs?.[s]||0))}" type="number" min="0" max="32"/>
     </div>`).join('');
   form.innerHTML = `
     <div class="editor-poke-name">${_escapeHtml(m.name || '')}</div>
@@ -1791,7 +2184,7 @@ function openEditorForm(idx) {
     <div class="moves-2col">${(m.moves||[]).map((mv,i)=>`<input class="form-input" id="ed-mv-${i}" value="${_escapeHtml(mv)}"/>`).join('')}</div></div>
     <div id="editor-move-legality">${renderSetEditorMoveLegalityHtml(m)}</div>
     ${renderStatPanelHtml(m)}
-    <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">EVs (max 510 total)</label>
+    <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">SPs (max 66 total, 32 per stat)</label>
     <div class="ev-6col">${evsHtml}</div></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
       <button class="btn-save" id="save-edits">Save Changes</button>
@@ -1811,14 +2204,16 @@ function openEditorForm(idx) {
 
 function saveEdits() {
   if (editingIdx === null) return;
-  const m = TEAMS.player.members[editingIdx];
+  const team = getEditablePlayerTeam();
+  if (!team || !Array.isArray(team.members) || !team.members[editingIdx]) return;
+  const m = team.members[editingIdx];
   m.item = document.getElementById('ed-item').value.trim();
   m.ability = document.getElementById('ed-ability').value.trim();
   m.nature = document.getElementById('ed-nature').value.trim();
   m.role = document.getElementById('ed-role').value.trim();
   m.moves = [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean);
   ['hp','atk','def','spa','spd','spe'].forEach(s => { if (!m.evs) m.evs={}; m.evs[s]=parseInt(document.getElementById(`ev-${s}`)?.value)||0; });
-  renderRoster('player-roster', TEAMS.player.members);
+  renderRoster('player-roster', team.members);
   renderTeamsGrid();
   const btn = document.getElementById('save-edits');
   const orig = btn.textContent;
@@ -1968,12 +2363,27 @@ document.getElementById('showdown-paste')?.addEventListener('input', function() 
 function showImportPreview(members) {
   const preview = document.getElementById('import-preview');
   const roster = document.getElementById('preview-roster');
-  roster.innerHTML = members.map(m => `
+  const validation = buildImportedTeamValidation(members, { format: 'champions' });
+  roster.innerHTML = members.map((m, idx) => {
+    const warnings = validation.memberWarnings[String(idx)] || [];
+    const warningHtml = warnings.length
+      ? '<div class="preview-warnings">' + warnings.slice(0, 3).map(w => '<span class="preview-warning ' + _escapeHtml(w.severity) + '">' + _escapeHtml(w.text) + '</span>').join('') + '</div>'
+      : '<div class="preview-ok">Showdown species and moves checked</div>';
+    return `
     <div class="preview-row">
       <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/>
-      <span class="preview-name">${_escapeHtml(m.name || '')}</span>
-      <span class="preview-item">${_escapeHtml(m.item||'No item')} · ${_escapeHtml(m.ability||'?')}</span>
-    </div>`).join('');
+      <div class="preview-main">
+        <span class="preview-name">${_escapeHtml(m.name || '')}</span>
+        <span class="preview-item">${_escapeHtml(m.item||'No item')} · ${_escapeHtml(m.ability||'?')}</span>
+        ${warningHtml}
+      </div>
+    </div>`;
+  }).join('') + (validation.errors.length || validation.warnings.length
+    ? '<div class="preview-team-warnings">' +
+        validation.errors.slice(0, 3).map(e => '<div class="preview-team-error">' + _escapeHtml(e) + '</div>').join('') +
+        validation.warnings.slice(0, 5).map(w => '<div class="preview-team-warning">' + _escapeHtml(w) + '</div>').join('') +
+      '</div>'
+    : '');
   preview.style.display = '';
 }
 
@@ -2016,6 +2426,13 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
   if (slot === '__new__') {
     const newKey = 'custom_' + Date.now();
     const guessedName = members[0] ? `${members[0].name}'s Team` : 'Imported Team';
+    const validation = buildImportedTeamValidation(members, { name: guessedName, format: 'champions' });
+    if (!validation.valid) {
+      statusEl.textContent = validation.errors.slice(0, 3).join(' ');
+      statusEl.className = 'modal-status err';
+      showImportPreview(members);
+      return;
+    }
     TEAMS[newKey] = {
       name: guessedName,
       label: 'CUSTOM',
@@ -2026,6 +2443,9 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
       source: 'custom',
       format: 'champions',
       legality_status: 'unverified',
+      import_warnings: validation.warnings,
+      import_errors: validation.errors,
+      showdown_source_version: validation.sourceVersion,
       created_at: new Date().toISOString()
     };
     // T9f: persist to localStorage immediately
@@ -2047,7 +2467,18 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
   } else {
     const teamKeys = Object.keys(TEAMS);
     if (!teamKeys.includes(slot)) { statusEl.textContent = 'Unknown slot'; statusEl.className='modal-status err'; return; }
+    const validation = buildImportedTeamValidation(members, { name: TEAMS[slot].name, format: TEAMS[slot].format || 'champions' });
+    if (!validation.valid) {
+      statusEl.textContent = validation.errors.slice(0, 3).join(' ');
+      statusEl.className = 'modal-status err';
+      showImportPreview(members);
+      return;
+    }
     TEAMS[slot].members = members;
+    TEAMS[slot].legality_status = 'unverified';
+    TEAMS[slot].import_warnings = validation.warnings;
+    TEAMS[slot].import_errors = validation.errors;
+    TEAMS[slot].showdown_source_version = validation.sourceVersion;
     targetSlot = slot;
     teamName = TEAMS[slot].name;
     // T9h: persist edits appropriately by team source
@@ -2135,12 +2566,14 @@ function drawBarChart(canvasId, labels, values, color) {
 // ============================================================
 // RESULTS DISPLAY
 // ============================================================
-function displayResults(res, oppKey) {
+function displayResults(res, oppKey, simCtx) {
+  simCtx = simCtx || resolveSimContext({ bo: currentBo, oppKey: oppKey });
+  oppKey = oppKey || simCtx.oppKey;
   const total = res.wins + res.losses + res.draws;
   const winPct = Math.round(res.winRate * 100);
-  const team = TEAMS[oppKey];
-  const boLabel = `Bo${currentBo}`;
-  const fmtLabel = currentFormat === 'doubles' ? 'Doubles' : 'Singles';
+  const team = simCtx.oppTeam || TEAMS[oppKey];
+  const boLabel = simCtx.boLabel || `Bo${currentBo}`;
+  const fmtLabel = simCtx.formatLabel || (currentFormat === 'doubles' ? 'Doubles' : 'Singles');
 
   document.getElementById('results-section').style.display='';
   document.getElementById('results-title').textContent = `vs ${team?.name||oppKey}`;
@@ -2182,7 +2615,7 @@ function displayResults(res, oppKey) {
   const gn=isDark?'#4ec994':'#2a9d6a', rd=isDark?'#f05464':'#d63048', gd=isDark?'#f5c542':'#c89a00';
   const pri=isDark?'#7c6af5':'#5b49d6';
 
-  renderAuditPanel(res, oppKey);
+  renderAuditPanel(res, oppKey, simCtx);
 
   setTimeout(()=>{
     const cv = document.getElementById('ko-chart');
@@ -2215,7 +2648,7 @@ function displayResults(res, oppKey) {
   addReplays(res.allLogs||[], oppKey);
 
   // Auto-show inline pilot card after every single sim
-  showInlinePilotCard(oppKey, res);
+  showInlinePilotCard(oppKey, res, simCtx);
 
   // PDF progressive reveal (Refs #57) - after ANY single sim, stash the
   // result so the PDF button can build a fresh packet. Each new sim either
@@ -2226,19 +2659,21 @@ function displayResults(res, oppKey) {
   revealPdfButton();
 }
 
-function renderAuditPanel(res, oppKey) {
+function renderAuditPanel(res, oppKey, simCtx) {
   const panel = document.getElementById('audit-panel');
   if (!panel) return;
-  const playerTeam = (typeof currentPlayerKey !== 'undefined' && TEAMS[currentPlayerKey]) ? TEAMS[currentPlayerKey] : null;
+  simCtx = simCtx || resolveSimContext({ oppKey: oppKey, bo: currentBo });
+  const playerKey = simCtx.playerKey;
+  const playerTeam = simCtx.playerTeam || TEAMS[playerKey] || null;
   const sample = Array.isArray(res && res.allLogs) ? res.allLogs.find(function(row) {
     return row && Array.isArray(row.turnLog) && row.turnLog.length;
   }) || res.allLogs[0] : null;
   const sampleTurnLog = sample && Array.isArray(sample.turnLog) ? sample.turnLog : [];
   const sampleMoves = sample && sample.movesUsed ? sample.movesUsed : {};
   const metaRows = [
-    ['Battle', (playerTeam?.name || currentPlayerKey || 'Current Team') + ' vs ' + (TEAMS[oppKey]?.name || oppKey)],
-    ['Format', currentFormat === 'doubles' ? 'Doubles' : 'Singles'],
-    ['Series', 'Bo' + currentBo],
+    ['Battle', (playerTeam?.name || playerKey || 'Current Team') + ' vs ' + (TEAMS[oppKey]?.name || oppKey)],
+    ['Format', simCtx.formatLabel || (currentFormat === 'doubles' ? 'Doubles' : 'Singles')],
+    ['Series', simCtx.boLabel || ('Bo' + currentBo)],
     ['Sample', sample ? ((sample.result || 'unknown') + ' · ' + (sample.turns || 0) + ' turns') : 'No sample battle'],
     ['Win condition', sample && sample.winCondition ? sample.winCondition : '—']
   ];
@@ -2248,7 +2683,7 @@ function renderAuditPanel(res, oppKey) {
   const roster = (playerTeam && Array.isArray(playerTeam.members)) ? playerTeam.members : [];
   const rosterRows = roster.map(function(m) {
     var model = null;
-    try { model = buildTeamStatDetailModel(currentPlayerKey, m.name); } catch (_e) { model = null; }
+    try { model = buildTeamStatDetailModel(playerKey, m.name); } catch (_e) { model = null; }
     if (!model) return '';
     return '<tr>' +
       '<td><strong>' + _escapeHtml(model.name) + '</strong><br><span class="audit-subtle">' + _escapeHtml((model.moves || []).join(', ')) + '</span></td>' +
@@ -2328,7 +2763,9 @@ function revealPdfButton() {
 // ============================================================
 // INLINE PILOT CARD — shown after every single sim run
 // ============================================================
-function showInlinePilotCard(oppKey, res) {
+function showInlinePilotCard(oppKey, res, simCtx) {
+  simCtx = simCtx || resolveSimContext({ playerKey: res && res.playerKey, oppKey: oppKey || (res && res.oppKey), bo: res && res.bo });
+  var playerKey = simCtx.playerKey;
   // Find or create the inline pilot container in the results section
   let container = document.getElementById('inline-pilot-card');
   if (!container) {
@@ -2371,10 +2808,10 @@ function showInlinePilotCard(oppKey, res) {
   // T9j.16 (Refs #65) - inject top critical/high coaching rule for this matchup.
   // Lightweight: builds a single-matchup report and pulls the top-severity rule.
   try {
-    if (typeof buildStrategyReport === 'function' && typeof currentPlayerKey !== 'undefined') {
+    if (typeof buildStrategyReport === 'function' && playerKey) {
       const singleResults = {}; singleResults[oppKey] = res;
-      const fmt = (typeof currentFormat !== 'undefined') ? currentFormat : 'doubles';
-      const rep = buildStrategyReport(currentPlayerKey, singleResults, fmt);
+      const fmt = simCtx.format || ((typeof currentFormat !== 'undefined') ? currentFormat : 'doubles');
+      const rep = buildStrategyReport(playerKey, singleResults, fmt);
       if (rep && rep.coaching_rules && rep.coaching_rules.length) {
         const top = rep.coaching_rules[0];
         tips.push(`<strong>Coach (${top.severity}):</strong> ${top.correction}`);
@@ -2900,7 +3337,19 @@ function csRenderTurnLogRows(turnLog, opts) {
 
 function downloadReplayTurnLog(replay) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
+  var sourceUrl = null;
+  try {
+    sourceUrl = (typeof location !== 'undefined' && location.href)
+      || (typeof window !== 'undefined' && window.location && window.location.href)
+      || null;
+  } catch (_e) {
+    sourceUrl = null;
+  }
   var payload = {
+    schema_version: 'champions-turn-log-v2',
+    exported_at: new Date().toISOString(),
+    build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
+    source_url: sourceUrl,
     seed: replay.seed || null,
     result: replay.result || null,
     winCondition: replay.winCondition || null,
@@ -3963,6 +4412,12 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('getL
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('setLeadsFor', setLeadsFor);
 
 async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress) {
+  if (!isSimReadyTeam(playerTeamKey, TEAMS[playerTeamKey], { includeCustom: true })) {
+    throw new Error('player team not loaded: ' + (playerTeamKey || 'none'));
+  }
+  if (!isSimReadyTeam(oppTeamKey, TEAMS[oppTeamKey], { includeCustom: true })) {
+    throw new Error('opponent team not loaded: ' + (oppTeamKey || 'none'));
+  }
   const results = { wins:0, losses:0, draws:0, totalTurns:0, totalTrTurns:0, winConditions:{}, allLogs:[], turnDist:{} };
   let liveW=0, liveL=0;
   const BATCH = 20;
@@ -4047,14 +4502,21 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
   results.winRate = results.wins/numSeries;
   results.avgTurns = results.totalTurns/numSeries;
   results.avgTrTurns = results.totalTrTurns/numSeries;
+  results.playerKey = playerTeamKey;
+  results.oppKey = oppTeamKey;
+  results.bo = bo;
+  results.format = currentFormat;
   return results;
 }
 
 // runAllMatchupsUI — UI wrapper; distinct from engine.js runAllMatchups
 // Issue #T6: when LADDER_MODE is ON, iterate only ladder-legal opponents.
-async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
+async function runAllMatchupsUI(numSeries, bo, onProgress, onDone, simCtx) {
+  simCtx = simCtx || resolveSimContext({ numSeries: numSeries, bo: bo });
+  var playerKey = simCtx.playerKey;
   const opps = Object.keys(TEAMS).filter(k => {
-    if (k === currentPlayerKey) return false;
+    if (k === playerKey) return false;
+    if (!isSimReadyTeam(k, TEAMS[k], { includeCustom: true })) return false;
     if (typeof LADDER_MODE !== 'undefined' && LADDER_MODE && typeof isLadderLegal === 'function') {
       return isLadderLegal(k);
     }
@@ -4062,7 +4524,7 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
   });
   let done=0;
   for (const opp of opps) {
-    const res = await runBoSeries(numSeries,currentPlayerKey,opp,bo,(cur,tot,w,l)=>{
+    const res = await runBoSeries(numSeries,playerKey,opp,bo,(cur,tot,w,l)=>{
       if (onProgress) onProgress(done*numSeries+cur, opps.length*numSeries, w, l);
     });
     done++;
@@ -4071,7 +4533,7 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone) {
     try {
       var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled) {
-        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, opp, bo, res)))
+        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(playerKey, opp, bo, res)))
           .catch(function(e) { UILog.warn('run-all saveAnalysis failed', e); });
       }
     } catch (_m4e) { UILog.warn('run-all payload build failed', _m4e); }
@@ -4157,8 +4619,14 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   if (res && Array.isArray(res.position_path) && !analysisJson.position_path) {
     analysisJson.position_path = res.position_path.slice(0, 40);
   }
-  if (typeof generatePilotGuide === 'function' && res) {
-    try { analysisJson.pilot_guide = generatePilotGuide(oppKey, res) || null; } catch (_) {}
+  if (res && !analysisJson.pilot_summary) {
+    analysisJson.pilot_summary = {
+      player_team_id: playerKey,
+      opp_team_id: oppKey,
+      top_win_conditions: winConditions.slice(0, 5),
+      sample_size: sampleSize,
+      win_rate: winRate
+    };
   }
 
   var ciLow  = (res && typeof res.ci_low  === 'number') ? res.ci_low  : 0;
@@ -4232,7 +4700,14 @@ function _upsertTeamToDB(teamId, team, source) {
       ruleset_id:  (adapter.DEFAULT_RULESET_ID) || 'champions_reg_m_doubles_bo3',
       source:      source || (team && team.source) || 'unknown',
       description: (team && team.description) || '',
-      metadata:    { source: source || 'unknown', format: (team && team.format) || 'champions' },
+      metadata:    {
+        source: source || 'unknown',
+        format: (team && team.format) || 'champions',
+        legality_status: (team && team.legality_status) || 'unverified',
+        import_warnings: (team && team.import_warnings) || [],
+        import_errors: (team && team.import_errors) || [],
+        showdown_source_version: (team && team.showdown_source_version) || ''
+      },
       members:     members.map(function(m) {
         return {
           name:      m.name      || m.species || 'Unknown',
@@ -4316,32 +4791,32 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
       renderRoster('opp-roster', TEAMS[swappedOpp].members);
       if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
     }
-    const oppKey=document.getElementById('opponent-select').value;
-    const n=parseInt(document.getElementById('sim-count').value);
-    const bo=currentBo;
-    if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
-    if (!TEAMS[oppKey]) throw new Error('opponent team not loaded: ' + oppKey);
+    var simCtx = resolveSimContext();
+    var playerKey = simCtx.playerKey;
+    const oppKey=simCtx.oppKey;
+    const n=simCtx.numSeries;
+    const bo=simCtx.bo;
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
     const matBadge=document.getElementById('matrix-badge');
-    if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
+    if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${n} series`;
 
-    const res = await runBoSeries(n,currentPlayerKey,oppKey,bo,(cur,tot,w,l)=>{
+    const res = await runBoSeries(n,playerKey,oppKey,bo,(cur,tot,w,l)=>{
       setProgress(Math.round(cur/tot*100),`Running… ${cur} / ${tot}`,w,l);
     });
 
     document.getElementById('progress-wrap').style.display='none';
-    displayResults(res, oppKey);
+    displayResults(res, oppKey, simCtx);
     // Refs #95 - also populate the Pilot Guide tab after a single sim so the
     // tab isn't stuck on its empty-state message. generatePilotGuide is
     // upsert-by-oppKey, so re-running the same matchup replaces its card.
-    try { generatePilotGuide(oppKey, res); } catch (e) { UILog.warn('single-sim Pilot Guide populate failed', e); }
+    try { generatePilotGuide(oppKey, res, simCtx); } catch (e) { UILog.warn('single-sim Pilot Guide populate failed', e); }
     // Cache for Run All parity - keeps PDF builder and strategy rebuild in sync.
     try { if (ChampionsSim.state.lastResults) ChampionsSim.state.lastResults[oppKey] = res; } catch(_){}
     // M4: persist single-sim result to Supabase (fire-and-forget)
     try {
       var _adapter = getWindowValue('SupabaseAdapter', null);
       if (_adapter && _adapter.enabled) {
-        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(currentPlayerKey, oppKey, bo, res)))
+        Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(playerKey, oppKey, bo, res)))
           .catch(function(e) { UILog.warn('single-sim saveAnalysis failed', e); });
       }
     } catch (_m4e) { UILog.warn('single-sim payload build failed', _m4e); }
@@ -4354,7 +4829,11 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
 
 ChampionsSim.battle = ChampionsSim.battle || {};
 ChampionsSim.battle.enforceDistinctBattleTeams = enforceDistinctBattleTeams;
+ChampionsSim.battle.resolveSimContext = resolveSimContext;
+ChampionsSim.battle.normalizeTeamCatalogForSim = normalizeTeamCatalogForSim;
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('enforceDistinctBattleTeams', enforceDistinctBattleTeams);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('resolveSimContext', resolveSimContext);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('normalizeTeamCatalogForSim', normalizeTeamCatalogForSim);
 
 document.getElementById('run-all-btn')?.addEventListener('click', async function() {
   if (simRunning) return;
@@ -4366,14 +4845,15 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
     document.getElementById('results-section').style.display='none';
     document.getElementById('matchup-tbody').innerHTML='<tr><td colspan="7" style="color:var(--text-m);font-size:12px;text-align:center;padding:20px;font-family:var(--font-mono)">Running all matchups…</td></tr>';
 
-    const n=parseInt(document.getElementById('sim-count').value);
-    const bo=currentBo;
-    if (!TEAMS[currentPlayerKey]) throw new Error('player team not loaded: ' + currentPlayerKey);
+    var simCtx = resolveSimContext();
+    const n=simCtx.numSeries;
+    const bo=simCtx.bo;
+    var playerKey = simCtx.playerKey;
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
     document.getElementById('progress-wrap').style.display='';
     setProgress(0,'Starting…',0,0);
     const matBadge=document.getElementById('matrix-badge');
-    if(matBadge) matBadge.textContent=`${currentFormat==='doubles'?'Doubles':'Singles'} · Bo${bo} · ${n} series`;
+    if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${n} series`;
 
     const tbody=document.getElementById('matchup-tbody');
     tbody.innerHTML='';
@@ -4399,8 +4879,8 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
         <td><span class="assess-chip ${aCls}">${aLbl}</span></td>`;
       tbody.appendChild(tr);
       addReplays(res.allLogs||[], opp);
-      generatePilotGuide(opp, res);
-    });
+      generatePilotGuide(opp, res, Object.assign({}, simCtx, { oppKey: opp, oppTeam: TEAMS[opp] }));
+    }, simCtx);
 
     document.getElementById('progress-wrap').style.display='none';
     // Refs #57 - progressive reveal helper relabels with the correct matchup
@@ -4421,12 +4901,14 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
 // ============================================================
 // PART 2: PILOT GUIDE GENERATOR
 // ============================================================
-function generatePilotGuide(oppKey, results) {
+function generatePilotGuide(oppKey, results, simCtx) {
   const el = document.getElementById('pilot-content');
   if (!el) return;
+  simCtx = simCtx || resolveSimContext({ playerKey: results && results.playerKey, oppKey: oppKey || (results && results.oppKey), bo: results && results.bo });
+  var playerKey = simCtx.playerKey;
 
   const emptyEl = el.querySelector('.pilot-empty');
-  if (emptyEl) emptyEl.remove();
+  safeRemoveNode(emptyEl);
 
   const total = results.wins + results.losses + results.draws;
   const winPct = Math.round(results.winRate * 100);
@@ -4487,9 +4969,8 @@ function generatePilotGuide(oppKey, results) {
   // Sweep is computed lazily and cached; safe no-op for non-Mega teams.
   let megaTriggerHtml = '';
   try {
-    const playerKey = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player';
-    const format = (typeof currentFormat !== 'undefined') ? currentFormat : 'doubles';
-    const bo = (typeof currentBo !== 'undefined') ? currentBo : 1;
+    const format = simCtx.format || ((typeof currentFormat !== 'undefined') ? currentFormat : 'doubles');
+    const bo = simCtx.bo || ((typeof currentBo !== 'undefined') ? currentBo : 1);
     const sweep = computeMegaTriggerSweep(playerKey, oppKey, bo, format);
     megaTriggerHtml = renderMegaTriggerCards(sweep);
   } catch (e) {
@@ -4497,7 +4978,6 @@ function generatePilotGuide(oppKey, results) {
   }
   let threatResponseHtml = '';
   try {
-    const playerKey = (typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player';
     if (typeof solveThreatResponse === 'function' && typeof renderThreatResponseCard === 'function') {
       threatResponseHtml = renderThreatResponseCard(solveThreatResponse(playerKey, oppKey, {
         simsPerBranch: 30,
@@ -4513,7 +4993,7 @@ function generatePilotGuide(oppKey, results) {
   // Refs #95 - tag the card with its opponent key so we can upsert instead of
   // duplicating when the same matchup is re-simulated from the single-sim path.
   card.dataset.oppKey = oppKey;
-  const preCoach = (typeof coachPre === 'function') ? coachPre((typeof currentPlayerKey !== 'undefined') ? currentPlayerKey : 'player', oppKey, { result: results }) : '';
+  const preCoach = (typeof coachPre === 'function') ? coachPre(playerKey, oppKey, { result: results }) : '';
   card.innerHTML = `
     ${staticAdviceWarningHtml}
     <div class="pilot-card-header">
@@ -4548,7 +5028,7 @@ function generatePilotGuide(oppKey, results) {
   // incremental when the user runs a single sim and prevents duplicate cards.
   const existing = el.querySelector('.pilot-card[data-opp-key="' + (typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(oppKey) : oppKey) + '"]');
   if (existing) {
-    el.replaceChild(card, existing);
+    safeReplaceChild(el, card, existing);
   } else {
     el.appendChild(card);
   }
@@ -4556,7 +5036,7 @@ function generatePilotGuide(oppKey, results) {
   if (dismiss) dismiss.addEventListener('click', function(){
     CS_PHASE4E_DISMISSED = true;
     const banner = card.querySelector('[data-phase4e-warning]');
-    if (banner) banner.remove();
+    safeRemoveNode(banner);
   });
 }
 
@@ -4790,7 +5270,12 @@ var CLASSIFY_POKEMON_LEGACY_ROLES = [
 var CLASSIFY_SETUP_MOVES = ['Dragon Dance', 'Swords Dance', 'Calm Mind', 'Clangorous Soul', 'Coil', 'Nasty Plot', 'Bulk Up'];
 var CLASSIFY_PIVOT_MOVES = ['Parting Shot', 'U-turn', 'Flip Turn', 'Volt Switch', 'Baton Pass'];
 var CLASSIFY_SACRIFICE_MOVES = ['Lunar Dance', 'Memento', 'Healing Wish', 'Explosion', 'Final Gambit', 'Shed Tail'];
-var CLASSIFY_WIN_ITEMS = ['Life Orb', 'Choice Scarf', 'Booster Energy'];
+var CLASSIFY_WIN_ITEMS = [
+  'Choice Scarf',
+  'Hard Stone','Soft Sand','Black Glasses','Charcoal','Mystic Water',
+  'Never-Melt Ice','Dragon Fang','Fairy Feather','Magnet','Miracle Seed',
+  'Twisted Spoon'
+];
 var CLASSIFY_LEAD_ITEMS = ['Focus Sash', 'Eject Button', 'Mental Herb'];
 
 function _classifyHasAny(mon, list) {
@@ -5111,7 +5596,7 @@ var COACHING_RULES = [
     id: 'most-lost',
     severity: 'suggested', priority: 70,
     when: function(c){ return c.trends.mostLostMons && c.trends.mostLostMons.length; },
-    say: function(c){ return c.trends.mostLostMons[0] + ' faints most often in losses. Bulk investment, Assault Vest, or Sitrus Berry would increase your ceiling here.'; }
+    say: function(c){ return c.trends.mostLostMons[0] + ' faints most often in losses. Bulk SP investment, Sitrus Berry, Leftovers, or a defensive berry would increase your ceiling here.'; }
   },
   {
     id: 'opp-finisher',
@@ -5159,6 +5644,399 @@ function _escapeHtml(s) {
     return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
   });
 }
+
+var CS_OVERVIEW_DATA = {
+  updated: '2026-06-21',
+  metrics: [
+    { label: 'Sim Truth Gate', value: 'Mechanics first' },
+    { label: 'Live Supabase', value: 'Teams + analyses' },
+    { label: 'Showdown DB', value: 'Checking...' },
+    { label: 'Team Format', value: 'Champion/SP focus' },
+    { label: 'Turn Logs', value: 'Fresh logs clean' }
+  ],
+  shipped: [
+    {
+      status: 'done',
+      title: 'Review tab restored',
+      detail: 'The replay-analysis entry point is back as a top-level Review tab with a Review Overview heading.'
+    },
+    {
+      status: 'done',
+      title: 'Live team-load simulation failure fixed',
+      detail: 'v2.1.21 normalized DB and static teams into one sim context so Run Simulation and Run All no longer fail with player team not loaded when a saved DB team lacks UI-only fields.'
+    },
+    {
+      status: 'done',
+      title: 'Lethal Sitrus and Oran timing fixed',
+      detail: 'v2.1.22 prevents damage-trigger berries from restoring a holder that was already reduced to 0 HP before faint cleanup; the fix is covered by focused item tests and bundled for GitHub Pages.'
+    },
+    {
+      status: 'done',
+      title: 'Champion item and SP gate added',
+      detail: 'v2.1.23 adds a positive Champions item allowlist, blocks stale DB teams before they replace bundled teams, rejects raw EV/IV imports, exports Champion SPs, and keeps illegal teams out of sim selectors.'
+    },
+    {
+      status: 'done',
+      title: 'Stable Pokemon identity in sim exports',
+      detail: 'Battle snapshots now carry stable roster keys, stable HP maps, bench/active stable keys, and item-consumption state.'
+    },
+    {
+      status: 'done',
+      title: 'Move priority aligned with Showdown data',
+      detail: 'Feint, Ice Shard, and Protect-family shield priorities are covered by local priority drift tests.'
+    },
+    {
+      status: 'done',
+      title: 'Showdown primary move metadata for imported teams',
+      detail: 'The engine now reads generated Showdown move rows first for type, category, base power, accuracy, priority, target, and contact flags, then falls back to local Champions data for custom gaps.'
+    },
+    {
+      status: 'done',
+      title: 'Showdown sync and DB writer staged',
+      detail: 'The repo has migrations and writer tooling for showdown_sync_runs, showdown_source_files, showdown_entities, and champions_overrides, plus approved-view tests and generated static Showdown assets; runtime consumption of live DB rows remains tracked separately as an open gap.'
+    },
+    {
+      status: 'done',
+      title: 'Exported log validator added',
+      detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, and observed priority order.'
+    },
+    {
+      status: 'done',
+      title: 'Showdown DB source-of-truth plan written',
+      detail: 'Repo docs now describe Showdown-mirrored rows plus separate Champions override rows as the target architecture.'
+    },
+    {
+      status: 'done',
+      title: 'Simulation-first direction documented',
+      detail: 'Roadmap and release docs now make simulation correctness the gate before new coaching, premium, Battle IQ, or recommendation work.'
+    },
+    {
+      status: 'done',
+      title: 'Public release milestone map documented',
+      detail: 'The team now has a release issue layout covering repo alignment, GitHub Pages hosting, CI gates, Supabase security, Showdown data promotion, launch, rollback, and post-trust growth.'
+    }
+  ],
+  validation: [
+    {
+      status: 'validated',
+      title: 'Supabase app wiring is live for existing app tables',
+      detail: 'The deployed page has runtime Supabase config, and read checks reached teams, team_members, and analyses through the public anon path.'
+    },
+    {
+      status: 'validated',
+      title: 'Live exported logs prove the sim now runs',
+      detail: 'Five fresh GitHub Pages turn-log exports from June 21 had no team-load failure, passed the stable turn-log validator with zero warnings, and ended with results matching final alive counts.'
+    },
+    {
+      status: 'validated',
+      title: 'Item timing regression reproduced and covered',
+      detail: 'Fresh logs showed Sitrus restoring after a 0 HP hit; items_tests.js now verifies surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior.'
+    },
+    {
+      status: 'validated',
+      title: 'Live logs exposed stale DB item drift',
+      detail: 'The June 21 live logs still showed SV/unsupported items from loaded opponent teams, including Life Orb, Assault Vest, Choice Specs, Rocky Helmet, Safety Goggles, and Loaded Dice. The v2.1.23 DB merge gate blocks those rows before they can enter selectors or Run All.'
+    },
+    {
+      status: 'validated',
+      title: 'CI-style local sweep passed before the current berry patch',
+      detail: 'The previous v2.1.21 team-load fix passed ui_single_sim_smoke.js, DB M3/M4 tests, and the full non-DB suite. The current v2.1.22 patch is covered by focused item tests and needs the full sweep before push.'
+    },
+    {
+      status: 'validated',
+      title: 'Priority and turn-log tests are green',
+      detail: 'showdown_priority_drift_tests.js, showdown_approved_data_generator_tests.js, turn_order_priority_tests.js, recoil_faint_turn_log_tests.js, move_support_audit_tests.js, and turn_log_export_validator_tests.js passed after the fixes.'
+    },
+    {
+      status: 'validated',
+      title: 'Live preview bundle contains the new safeguards',
+      detail: 'The standalone GitHub Pages bundle is rebuilt from source and the service-worker cache must be bumped for every legality or data-path release.'
+    },
+    {
+      status: 'validated',
+      title: 'GitHub issue sweep completed',
+      detail: 'Open issues were checked in TheYfactora12 and alfredocox repos. JD flags Alfredo #241 and #240 remain active; Josh/JD data-audit comments are tracked in Alfredo #231 and Y Factor #123.'
+    }
+  ],
+  gaps: [
+    {
+      status: 'gap',
+      title: 'showdown_entities DB rows are not the battle runtime source yet',
+      detail: 'Alfredo #241 says 8,651 showdown_entities rows exist in Supabase, but the battle runtime still uses generated/static bundle data plus local fallbacks. This is the top source-of-truth gap.'
+    },
+    {
+      status: 'gap',
+      title: 'Pokemon data audit has unresolved reviewer risk',
+      detail: 'Josh/JD notes on Alfredo #231 flag that Showdown data is present but not fully used for every move calculation and regional forms such as Arcanine may still need targeted review.'
+    },
+    {
+      status: 'gap',
+      title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
+      detail: 'The local main branch has v2.1.23 item/SP/DB-gate changes pending. Push to TheYfactora12 first, verify GitHub Pages, then prepare a reviewed upstream PR to Alfredo.'
+    },
+    {
+      status: 'gap',
+      title: 'Mechanics parity is broader than the berry fix',
+      detail: 'The berry bug is one confirmed timing defect. Remaining parity work still needs grouped checks for damage, targeting, redirection, Protect, speed control, switching, status, items, abilities, and Champions overrides.'
+    }
+  ],
+  next: [
+    {
+      status: 'next',
+      title: 'Finish v2.1.23 validation, push Y fork, verify live',
+      detail: 'Run focused and full tests, commit/push to TheYfactora12 main, wait for GitHub Pages, then export fresh live logs that prove stale SV items are no longer selected.'
+    },
+    {
+      status: 'next',
+      title: 'Mirror or update JD issue alignment in the Y fork',
+      detail: 'The Y fork has #137 and #123, but JD Alfredo #241 and #240 should either be mirrored or summarized into the existing Y issues so both repos show the same open truth.'
+    },
+    {
+      status: 'next',
+      title: 'Apply Champion item cleanup to live Supabase rows',
+      detail: 'Use the v2.1.23 blocked-row evidence to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
+    },
+    {
+      status: 'next',
+      title: 'Wire approved Showdown DB data into generated runtime assets',
+      detail: 'Close Alfredo #241 by generating/reading runtime data from approved showdown_entities plus champions_overrides while preserving static offline fallback.'
+    },
+    {
+      status: 'next',
+      title: 'Group mechanics parity work by battle system',
+      detail: 'Continue from exported-log evidence into item timing, damage formula, move targeting, redirection, Protect family, speed control, switching/replacement, status, abilities, and terrain/weather.'
+    },
+    {
+      status: 'next',
+      title: 'Prepare upstream PR to Alfredo after Y fork verification',
+      detail: 'Once the live Y test page shows v2.1.22 and fresh logs pass, open a clean upstream PR with the berry fix, load-path proof, overview alignment, and issue notes.'
+    },
+    {
+      status: 'next',
+      title: 'Add Showdown oracle release gates',
+      detail: 'Use Pokemon Showdown / @smogon/calc / @pkmn-style smoke cases for behavior that cannot be proven from static rows alone, with Champions overrides documented separately.'
+    }
+  ],
+  decisions: [
+    {
+      status: 'decision',
+      title: 'Runtime DB reads vs generated offline bundle',
+      detail: 'Decide whether GitHub Pages should fetch approved rows at runtime or keep Supabase as audit/history while checked-in generated assets remain the offline battle source.'
+    },
+    {
+      status: 'decision',
+      title: 'Issue mirroring policy between repos',
+      detail: 'Decide whether JD/Josh issues should be duplicated in both repos or whether the Y fork should keep one tracker issue linking the Alfredo source tickets.'
+    },
+    {
+      status: 'decision',
+      title: 'Damage oracle source order',
+      detail: 'Keep Pokemon Showdown and Smogon calc as baseline oracles, but require explicit source notes and tests for Champions-specific differences.'
+    }
+  ],
+  flow: [
+    { label: 'Showdown upstream', active: true },
+    { label: 'Raw snapshots', active: true },
+    { label: 'showdown_entities', active: false },
+    { label: 'approved views', active: false },
+    { label: 'champions_overrides', active: false },
+    { label: 'generated JS', active: true },
+    { label: 'runtime consumers', active: false },
+    { label: 'release gates', active: true }
+  ],
+  docs: [
+    { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
+    { label: 'Simulation First', href: '../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md' },
+    { label: 'Public Release Plan', href: '../docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md' },
+    { label: 'Showdown DB Stress Test', href: '../docs/release/SHOWDOWN_DB_WIRING_STRESS_TEST_2026-06-06.md' },
+    { label: 'Jdoutt38 Investigation', href: '../docs/release/JDOUTT38_INVESTIGATION_2026-06-06.md' },
+    { label: 'Closure Confidence', href: '../docs/release/CLOSURE_CONFIDENCE_2026-06-06.md' },
+    { label: 'Repo Parity Report', href: '../docs/release/REPO_PARITY_REPORT_2026-06-06.md' },
+    { label: 'Closeout Note', href: '../docs/release/CLOSEOUT_2026-06-06.md' },
+    { label: 'Showdown DB Plan', href: 'docs/SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md' },
+    { label: 'Showdown Sync Architecture', href: 'docs/SHOWDOWN_SYNC_ARCHITECTURE.md' },
+    { label: 'Spec Index', href: 'docs/SPECS_INDEX.md' }
+  ]
+};
+
+function csOverviewStatusLabel(status) {
+  var labels = {
+    done: 'Done',
+    validated: 'Verified',
+    next: 'Next',
+    gap: 'Gap',
+    decision: 'Decision'
+  };
+  return labels[status] || status || 'Open';
+}
+
+function csRenderOverviewRows(rows) {
+  return (rows || []).map(function(row) {
+    var status = row.status || 'next';
+    return '<div class="overview-item">' +
+      '<span class="overview-status ' + _escapeHtml(status) + '">' + _escapeHtml(csOverviewStatusLabel(status)) + '</span>' +
+      '<div><div class="overview-item-title">' + _escapeHtml(row.title) + '</div>' +
+      '<div class="overview-item-detail">' + _escapeHtml(row.detail) + '</div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function csRenderOverviewSection(title, kicker, rows) {
+  return '<div class="overview-section">' +
+    '<div class="overview-section-head"><h3>' + _escapeHtml(title) + '</h3><span class="overview-kicker">' + _escapeHtml(kicker) + '</span></div>' +
+    '<div class="overview-list">' + csRenderOverviewRows(rows) + '</div>' +
+  '</div>';
+}
+
+function csFormatOverviewDate(value) {
+  if (!value) return 'not recorded';
+  try {
+    var d = new Date(value);
+    if (Number.isNaN(d.getTime())) return String(value);
+    return d.toLocaleString();
+  } catch (_e) {
+    return String(value);
+  }
+}
+
+function csShortHash(value) {
+  var s = String(value || '');
+  return s.length > 12 ? s.slice(0, 12) : (s || 'none');
+}
+
+function csRenderShowdownDbInspectorState(kind, payload) {
+  if (kind === 'loading') {
+    return '<div class="overview-db-empty">Checking approved Showdown rows...</div>';
+  }
+  if (kind === 'error' || !payload || !payload.available) {
+    return '<div class="overview-db-empty">' + _escapeHtml(payload && payload.message ? payload.message : 'Showdown DB unavailable') + '</div>';
+  }
+  var run = payload.latestRun || {};
+  var counts = (payload.approvedCounts || []).map(function(row) {
+    var count = row.count == null ? 'n/a' : String(row.count);
+    return '<div class="overview-db-count"><strong>' + _escapeHtml(row.kind) + '</strong><span>' + _escapeHtml(count) + '</span></div>';
+  }).join('');
+  var files = (payload.sourceFiles || []).map(function(file) {
+    return '<tr><td>' + _escapeHtml(file.source_name || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(file.parse_status || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(csShortHash(file.source_hash)) + '</td>' +
+      '<td>' + _escapeHtml(String(file.byte_size || 0)) + '</td></tr>';
+  }).join('');
+  var sample = (payload.approvedSample || []).map(function(row) {
+    return '<tr><td>' + _escapeHtml(row.entity_kind || '') + '</td>' +
+      '<td>' + _escapeHtml(row.display_name || row.entity_key || '') + '</td>' +
+      '<td>' + _escapeHtml(csShortHash(row.source_hash)) + '</td>' +
+      '<td>' + _escapeHtml(csFormatOverviewDate(row.approved_at || row.created_at)) + '</td></tr>';
+  }).join('');
+  return '<div class="overview-db-summary">' +
+      '<div><strong>Latest run</strong><span>' + _escapeHtml(run.sync_run_id || 'none found') + '</span></div>' +
+      '<div><strong>Status</strong><span>' + _escapeHtml(run.status || payload.mode || 'unknown') + '</span></div>' +
+      '<div><strong>Finished</strong><span>' + _escapeHtml(csFormatOverviewDate(run.finished_at)) + '</span></div>' +
+    '</div>' +
+    '<div class="overview-db-counts">' + counts + '</div>' +
+    '<div class="overview-db-table-wrap"><table class="overview-db-table"><thead><tr><th>Source</th><th>Parse</th><th>Hash</th><th>Bytes</th></tr></thead><tbody>' +
+      (files || '<tr><td colspan="4">No source-file rows readable yet</td></tr>') +
+    '</tbody></table></div>' +
+    '<div class="overview-db-table-wrap"><table class="overview-db-table"><thead><tr><th>Kind</th><th>Approved row</th><th>Hash</th><th>Approved</th></tr></thead><tbody>' +
+      (sample || '<tr><td colspan="4">No approved rows readable yet</td></tr>') +
+    '</tbody></table></div>';
+}
+
+function csToggleShowdownDbInspector() {
+  var body = document.getElementById('overview-showdown-db-inspector-body');
+  var button = document.getElementById('overview-showdown-db-inspect');
+  if (!body || !button) return;
+  var opening = body.hidden;
+  body.hidden = !opening;
+  button.setAttribute('aria-expanded', opening ? 'true' : 'false');
+  if (!opening) return;
+  body.innerHTML = csRenderShowdownDbInspectorState('loading');
+  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  if (!adapter || !adapter.enabled || typeof adapter.loadShowdownDbSnapshot !== 'function') {
+    body.innerHTML = csRenderShowdownDbInspectorState('error', { available: false, message: 'Static bundle' });
+    return;
+  }
+  adapter.loadShowdownDbSnapshot().then(function(snapshot) {
+    body.innerHTML = csRenderShowdownDbInspectorState('ready', snapshot);
+  }).catch(function() {
+    body.innerHTML = csRenderShowdownDbInspectorState('error', { available: false, message: 'Showdown DB unavailable' });
+  });
+}
+
+function renderOverviewTab() {
+  var host = document.getElementById('overview-content');
+  if (!host) return false;
+  var data = CS_OVERVIEW_DATA;
+  var metrics = data.metrics.map(function(metric) {
+    var idAttr = metric.label === 'Showdown DB' ? ' id="overview-showdown-db-status"' : '';
+    var action = metric.label === 'Showdown DB'
+      ? '<button type="button" class="overview-metric-action" id="overview-showdown-db-inspect" aria-controls="overview-showdown-db-inspector-body" aria-expanded="false">Inspect</button>'
+      : '';
+    return '<div class="overview-metric"' + idAttr + '><strong>' + _escapeHtml(metric.label) + '</strong><span>' + _escapeHtml(metric.value) + '</span>' + action + '</div>';
+  }).join('');
+  var flow = data.flow.map(function(step) {
+    return '<span class="overview-flow-step' + (step.active ? ' active' : '') + '">' + _escapeHtml(step.label) + '</span>';
+  }).join('');
+  var docs = data.docs.map(function(doc) {
+    return '<a href="' + _escapeHtml(doc.href) + '" target="_blank" rel="noopener">' + _escapeHtml(doc.label) + '</a>';
+  }).join('');
+  host.innerHTML =
+    '<div class="overview-metrics">' + metrics + '</div>' +
+    '<div class="overview-grid">' +
+      '<div class="overview-list">' +
+        csRenderOverviewSection('Already Accomplished', 'shipped', data.shipped) +
+        csRenderOverviewSection('Validation Record', 'proof', data.validation) +
+      '</div>' +
+      '<div class="overview-list">' +
+        csRenderOverviewSection('Current Alignment Gaps', 'not done yet', data.gaps) +
+        csRenderOverviewSection('Next Milestones', 'roadmap', data.next) +
+        csRenderOverviewSection('Open Decisions', 'team review', data.decisions) +
+        '<div class="overview-section">' +
+          '<div class="overview-section-head"><h3>Source Of Truth Flow</h3><span class="overview-kicker">target</span></div>' +
+          '<div class="overview-flow">' + flow + '</div>' +
+          '<div class="overview-db-inspector" id="overview-showdown-db-inspector-body" hidden></div>' +
+          '<div class="overview-doc-links">' + docs + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  var inspectButton = document.getElementById('overview-showdown-db-inspect');
+  if (inspectButton) inspectButton.addEventListener('click', csToggleShowdownDbInspector);
+  csUpdateShowdownDbStatus();
+  return true;
+}
+
+function csUpdateShowdownDbStatus() {
+  var node = document.getElementById('overview-showdown-db-status');
+  if (!node) return;
+  var span = node.querySelector('span');
+  if (!span) return;
+  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  if (!adapter || !adapter.enabled || typeof adapter.loadShowdownDbStatus !== 'function') {
+    span.textContent = 'Static bundle';
+    return;
+  }
+  adapter.loadShowdownDbStatus().then(function(status) {
+    if (!status || !status.available) {
+      span.textContent = status && status.message ? status.message : 'Static bundle';
+    } else if (status.mode === 'approved-db') {
+      span.textContent = 'Approved DB active';
+    } else if (status.mode === 'empty-db') {
+      span.textContent = 'DB views empty';
+    } else {
+      span.textContent = status.message || 'DB reachable';
+    }
+  }).catch(function() {
+    span.textContent = 'Static bundle';
+  });
+}
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.overview = {
+    data: CS_OVERVIEW_DATA,
+    renderOverviewTab: renderOverviewTab
+  };
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderOverviewTab', renderOverviewTab);
 
 function generatePDFReport() {
   var container = document.getElementById('pdf-report-container');
@@ -5494,13 +6372,12 @@ function renderSpeedTiersForGrid() {
   const grid = document.getElementById('teams-grid');
   if (!grid) return;
   const cards = grid.querySelectorAll('.team-full-card');
-  const teamKeys = Object.keys(TEAMS);
-  cards.forEach((card, idx) => {
-    const key = teamKeys[idx];
+  cards.forEach((card) => {
+    const key = (card.dataset && card.dataset.teamKey) || card._teamKey;
     const team = TEAMS[key];
     if (!team || !team.members) return;
     const existing = card.querySelector('.speed-tier-section');
-    if (existing) existing.remove();
+    safeRemoveNode(existing);
     card.insertAdjacentHTML('beforeend', buildSpeedTierHTML(team.members));
   });
 }
@@ -5614,9 +6491,7 @@ if (typeof globalThis !== 'undefined') {
 function renderCoverageWidget() {
   var el = document.getElementById('coverage-items');
   if (!el) return;
-  var key = (typeof currentPlayerKey === 'string' && TEAMS[currentPlayerKey])
-            ? currentPlayerKey
-            : (TEAMS.player ? 'player' : Object.keys(TEAMS)[0]);
+  var key = getActivePlayerTeamKey();
   var members = (TEAMS[key] && TEAMS[key].members) || [];
   el.innerHTML = getCoverageChecks().map(chk => {
     var covered = members.some(m => chk.check(m));
@@ -5649,9 +6524,11 @@ const META_THREATS = [
 ];
 
 function computeThreatLevel(threat) {
-  const playerMoves = TEAMS.player.members.flatMap(m => m.moves || []);
-  const playerSpeeds = TEAMS.player.members.map(m => getEffectiveSpe(m));
-  const maxPlayerSpe = Math.max(...playerSpeeds);
+  const playerTeam = getActivePlayerTeam();
+  const playerMembers = (playerTeam && Array.isArray(playerTeam.members)) ? playerTeam.members : [];
+  const playerMoves = playerMembers.flatMap(m => m.moves || []);
+  const playerSpeeds = playerMembers.map(m => getEffectiveSpe(m));
+  const maxPlayerSpe = playerSpeeds.length ? Math.max(...playerSpeeds) : 0;
 
   let hasSECoverage = false;
   for (const mv of playerMoves) {
@@ -6099,7 +6976,7 @@ var T9J16_RULES = [
     },
     severity: function(){ return 'high'; },
     explain: function(){ return 'You are losing your first mon early and switching often. That is the read-heavy pattern of a player trying to outguess instead of outplay.'; },
-    correct: function(){ return 'Simplify your first two turns. Click your highest-EV move and force the opponent to respond. Switch only when shape demands it.'; }
+    correct: function(){ return 'Simplify your first two turns. Click your strongest damage move and force the opponent to respond. Switch only when shape demands it.'; }
   },
   {
     id: 'role-overlap-warning',
@@ -7275,7 +8152,7 @@ function csTop3Leads(team, identity, results, fmt) {
       var t1 = '';
       if (c.tags.hasFO && c.tags.hasSpeed) t1 = 'Fake Out the bigger threat. Set ' + (c.mons.find(function(m){ return _pdfHasAny(m, PDF_TAILWIND); }) ? 'Tailwind' : 'Trick Room') + ' with the partner.';
       else if (c.tags.hasFO) t1 = 'Fake Out the priority threat, click damage with the partner if range is clean.';
-      else if (c.tags.hasSpeed) t1 = 'Set speed control immediately. Partner clicks the highest-EV damage move.';
+      else if (c.tags.hasSpeed) t1 = 'Set speed control immediately. Partner clicks the strongest damage move.';
       else if (c.tags.hasRedirect) t1 = 'Click redirection. Partner sets up or fires the strongest spread.';
       else if (c.tags.hasIntim) t1 = 'Drop Intimidate, then click coverage on the bulkier opposing slot.';
       else t1 = 'Open with strongest spread or coverage move that can KO into the most likely lead.';
@@ -7559,7 +8436,7 @@ function csMoveLines(team, identity, leadGuide) {
       turn_1: 'Lead a Defiant or Competitive ability if you have one. Otherwise, click special attacks to bypass Atk drops.',
       turn_2: 'Force them to swap. Punish predictable Intimidate cycle with Taunt or status.',
       what_to_avoid: 'Do not stack physical attackers. Their Intimidate cycle eats your damage.',
-      fallback_plan: 'Pivot to Assault Vest special attackers to ignore Intimidate.',
+      fallback_plan: 'Pivot to bulkier special attackers or a Defiant/Competitive response to ignore Intimidate.',
       source_label: csLabelInferred(['smogon_vgc'])
     });
   }
@@ -7778,7 +8655,7 @@ function csRiskProfile(team, scoreCard) {
   if (fragile >= 2) risks.push({
     category: 'lead_fragility', severity: fragile >= 3 ? 'high' : 'moderate',
     why_it_matters: fragile + ' lead candidates have low bulk product and die to Fake Out + spread.',
-    how_to_reduce: 'Invest more EVs in HP/Def or Sp.Def on at least one lead, or add a bulky pivot.'
+    how_to_reduce: 'Invest more SPs in HP/Def or Sp.Def on at least one lead, or add a bulky pivot.'
   });
 
   var damagers = members.filter(function(m){
@@ -8522,13 +9399,14 @@ function csShouldBootstrapSimulatorBoard() {
 async function csBootstrapSimulatorBoard() {
   if (simRunning) return false;
   if (!csShouldBootstrapSimulatorBoard()) return false;
-  var oppSel = document.getElementById('opponent-select');
-  var oppKey = oppSel ? oppSel.value : null;
-  if (!oppKey || !TEAMS[currentPlayerKey] || !TEAMS[oppKey]) return false;
+  var simCtx = null;
+  try { simCtx = resolveSimContext({ bo: currentBo }); } catch (_ctxErr) { return false; }
+  var oppKey = simCtx.oppKey;
+  var playerKey = simCtx.playerKey;
   simRunning = true;
   try {
-    var res = await runBoSeries(1, currentPlayerKey, oppKey, currentBo, function(){});
-    displayResults(res, oppKey);
+    var res = await runBoSeries(1, playerKey, oppKey, currentBo, function(){});
+    displayResults(res, oppKey, simCtx);
     return true;
   } catch (e) {
     UILog.warn('sim-board bootstrap skipped', e);
@@ -10458,6 +11336,7 @@ if (typeof window !== 'undefined') {
     await csHardenClientState();
     _csInitEvidenceToggle();
     csInitReplayCoachUi();
+    renderOverviewTab();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────
     // Await loadTeamsFromDB BEFORE the first authoritative rebuildTeamSelects()
@@ -10469,9 +11348,13 @@ if (typeof window !== 'undefined') {
       if (_adapter && _adapter.enabled && typeof _adapter.loadTeamsFromDB === 'function') {
         var dbTeams = await _adapter.loadTeamsFromDB();
         if (dbTeams && Object.keys(dbTeams).length && typeof TEAMS !== 'undefined') {
-          Object.assign(TEAMS, dbTeams);
-          UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length });
-          setDbChip('connected', 'Live team database connected - loaded ' + Object.keys(dbTeams).length + ' teams from the shared roster store');
+          var dbMerge = (typeof mergeDbTeamsIntoCatalog === 'function')
+            ? mergeDbTeamsIntoCatalog(dbTeams)
+            : { added: 0, replaced: Object.keys(dbTeams).length, skipped: 0, blocked: [] };
+          if (typeof mergeDbTeamsIntoCatalog !== 'function') Object.assign(TEAMS, dbTeams);
+          if (typeof normalizeTeamCatalogForSim === 'function') normalizeTeamCatalogForSim();
+          UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length, merge: dbMerge });
+          setDbChip('connected', 'Live team database connected - accepted ' + (dbMerge.added + dbMerge.replaced) + ' teams, blocked ' + dbMerge.skipped + ' stale/illegal rows');
         } else {
           // null or empty → fall back to bundled TEAMS, surface chip
           setDbChip('offline', 'Live team database returned no teams - using bundled roster data');
@@ -10500,6 +11383,12 @@ if (typeof window !== 'undefined') {
     document.querySelectorAll('.tab-btn[data-tab="strategy"]').forEach(function(btn){
       btn.addEventListener('click', function(){
         try { renderStrategyTab(currentPlayerKey); } catch(e) {}
+      });
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab="overview"]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        try { renderOverviewTab(); } catch(e) {}
       });
     });
 

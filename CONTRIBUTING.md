@@ -11,7 +11,7 @@ All source lives under `poke-sim/`:
 
 - `index.html` — main app shell, tabs, PWA meta, service worker registration
 - `style.css` — mobile-first dark theme
-- `data.js` — `BASE_STATS`, `POKEMON_TYPES_DB` (500+ mons), `DEX_NUM_MAP`, `TEAMS` (13 tournament teams), `MOVE_TYPES`, `CHAMPIONS_MEGAS`
+- `data.js` — `BASE_STATS`, `POKEMON_TYPES_DB` (700+ rows), `DEX_NUM_MAP`, `TEAMS` (29 curated teams on the current review branch), `MOVE_TYPES`, `CHAMPIONS_MEGAS`
 - `engine.js` — battle simulation engine, damage formula, Bo series runner
 - `ui.js` — UI logic, team selects, import/export, pilot guide, PDF report, speed tiers, meta radar, coverage checker
 - `legality.js` — Reg M-A legality checker
@@ -60,6 +60,8 @@ print(f'Bundle: {os.path.getsize(\"pokemon-champion-2026.html\"):,} bytes')
    add dynamic mega evolution with base form lead and stone trigger (Refs #23 T9j7)
    ```
 9. **Open a PR** against `main`. Fill out the PR template including test evidence.
+10. **QA handoffs must be environment-specific.** State the repo, branch, commit SHA, preview URL or local file path, and whether `local-credentials.js`, `.env.local`, or a live DB state is required. Do not send branch-only review to GitHub Pages.
+11. **Protect the source of truth.** After any Showdown source refresh, generated artifact change, fallback stat/type edit, or DB-source wiring change, run `cd poke-sim && npm run test:source-truth` before review.
 
 ## TDZ-Safe Globals
 

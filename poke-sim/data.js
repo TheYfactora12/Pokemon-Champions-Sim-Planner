@@ -50,11 +50,11 @@ const BASE_STATS = {
   Liepard:        { hp:64, atk:88, def:50, spa:88, spd:50, spe:106, types:['Dark'] },
   Archaludon:     { hp:90, atk:105, def:130, spa:125, spd:65, spe:85, types:['Steel','Dragon'] },
   Pelipper:       { hp:60, atk:50, def:100, spa:95, spd:70, spe:65, types:['Water','Flying'] },
-  Orthworm:       { hp:70, atk:85, def:145, spa:60, spd:55, spe:40, types:['Steel'] },
+  Orthworm:       { hp:70, atk:85, def:145, spa:60, spd:55, spe:65, types:['Steel'] },
   // Mega Houndoom
   'Houndoom-Mega': { hp:75, atk:90, def:90, spa:140, spd:90, spe:115, types:['Dark','Fire'] },
   Torkoal:        { hp:70, atk:85, def:140, spa:85, spd:70, spe:20, types:['Fire'] },
-  Farigiraf:      { hp:120, atk:90, def:70, spa:90, spd:90, spe:60, types:['Normal','Psychic'] },
+  Farigiraf:      { hp:120, atk:90, def:70, spa:110, spd:70, spe:60, types:['Normal','Psychic'] },
   // T9j.3b: corrected to Champions canonical 78/85/110/160/116/36 (BST 585).
   // Sources: Game8, RotomLabs Champions, Bulbapedia.
   'Drampa-Mega':  { hp:78, atk:85, def:110, spa:160, spd:116, spe:36, types:['Normal','Dragon'] },
@@ -69,7 +69,7 @@ const BASE_STATS = {
   Venusaur:       { hp:80, atk:82, def:83, spa:100, spd:100, spe:80, types:['Grass','Poison'] },
   // Cofagrigus TR
   Cofagrigus:     { hp:58, atk:50, def:145, spa:95, spd:105, spe:30, types:['Ghost'] },
-  Cresselia:      { hp:120, atk:70, def:120, spa:75, spd:130, spe:85, types:['Psychic'] },
+  Cresselia:      { hp:120, atk:70, def:110, spa:75, spd:120, spe:85, types:['Psychic'] },
   Gothitelle:     { hp:70, atk:55, def:95, spa:95, spd:110, spe:65, types:['Psychic'] },
   Dusclops:       { hp:40, atk:70, def:130, spa:60, spd:130, spe:25, types:['Ghost'] },
   'Flutter Mane': { hp:55, atk:55, def:55, spa:135, spd:135, spe:135, types:['Ghost','Fairy'] },
@@ -108,7 +108,7 @@ const BASE_STATS = {
   'Meganium-Mega': { hp:80, atk:92, def:115, spa:143, spd:115, spe:80, types:['Grass','Fairy'] },
   Lopunny:         { hp:65, atk:76, def:84, spa:54, spd:96, spe:105, types:['Normal'] },
   'Lopunny-Mega':  { hp:65, atk:136, def:94, spa:54, spd:96, spe:135, types:['Normal','Fighting'] },
-  Aegislash:       { hp:60, atk:50, def:150, spa:50, spd:150, spe:60, types:['Steel','Ghost'] },
+  Aegislash:       { hp:60, atk:50, def:140, spa:50, spd:140, spe:60, types:['Steel','Ghost'] },
   Vanilluxe:       { hp:71, atk:95, def:85, spa:110, spd:95, spe:79, types:['Ice'] },
 
   // T9j.7: base-form stats for Mega base species referenced by loaded teams.
@@ -853,9 +853,9 @@ const TEAMS = {
     "label": "YOUR TEAM",
     "style": "speed",
     "description": "Fast offensive pressure with Intimidate + Will-O-Wisp support. Built to break Trick Room before it starts.",
-    "champion_pack_id": "player_tr_counter_v1",
-    "format": "sv",
-    "formatid": "gen9vgc2024regh",
+    "champion_pack_id": "player_champions_speed_v1",
+    "format": "champions",
+    "formatid": "champions-vgc-2026-regma",
     "gametype": "doubles",
     "ruleset": [
         "Species Clause",
@@ -870,11 +870,11 @@ const TEAMS = {
         "url": "",
         "status": "unproven"
     },
-    "legality_status": "legal",
-    "legality_notes": "SV-format team validated under gen9vgc2024regh. Slot-6 duplicate Garchomp replaced with Dragapult-Scarf in T7 to resolve Species Clause.",
+    "legality_status": "legal_inferred",
+    "legality_notes": "Champions starter team. Original anti-Trick-Room shell rescaled onto Champions SP values and repaired to the verified Champions item pool for review-mode parity.",
     "assumption_register": [
-        "Team is SV-format; validated against gen9vgc rules, not Champions Reg M-A.",
-        "Dragapult slot is SV-legal and also Champions Reg M-A legal (not restricted/paradox)."
+        "This remains a user-authored starter team, not a pinned event export.",
+        "The original anti-Trick-Room shell was preserved while converting its spreads to Champions SP scale."
     ],
     "members": [
       {
@@ -884,12 +884,12 @@ const TEAMS = {
         "nature": "Adamant",
         "level": 50,
         "evs": {
-          "hp": 244,
-          "atk": 68,
+          "hp": 32,
+          "atk": 8,
           "def": 0,
           "spa": 0,
-          "spd": 36,
-          "spe": 12
+          "spd": 18,
+          "spe": 8
         },
         "moves": [
           "Fake Out",
@@ -901,17 +901,17 @@ const TEAMS = {
       },
       {
         "name": "Arcanine",
-        "item": "Life Orb",
+        "item": "Hard Stone",
         "ability": "Intimidate",
         "nature": "Adamant",
         "level": 50,
         "evs": {
-          "hp": 4,
-          "atk": 252,
+          "hp": 2,
+          "atk": 32,
           "def": 0,
           "spa": 0,
           "spd": 0,
-          "spe": 252
+          "spe": 32
         },
         "moves": [
           "Power Gem",
@@ -923,17 +923,17 @@ const TEAMS = {
       },
       {
         "name": "Garchomp",
-        "item": "Rocky Helmet",
+        "item": "Soft Sand",
         "ability": "Rough Skin",
         "nature": "Jolly",
         "level": 50,
         "evs": {
-          "hp": 4,
-          "atk": 252,
+          "hp": 2,
+          "atk": 32,
           "def": 0,
           "spa": 0,
           "spd": 0,
-          "spe": 252
+          "spe": 32
         },
         "moves": [
           "Earthquake",
@@ -950,12 +950,12 @@ const TEAMS = {
         "nature": "Timid",
         "level": 50,
         "evs": {
-          "hp": 4,
+          "hp": 2,
           "atk": 0,
           "def": 0,
-          "spa": 252,
+          "spa": 32,
           "spd": 0,
-          "spe": 252
+          "spe": 32
         },
         "moves": [
           "Tailwind",
@@ -972,10 +972,10 @@ const TEAMS = {
         "nature": "Bold",
         "level": 50,
         "evs": {
-          "hp": 244,
+          "hp": 32,
           "atk": 0,
-          "def": 52,
-          "spa": 212,
+          "def": 8,
+          "spa": 26,
           "spd": 0,
           "spe": 0
         },
@@ -995,12 +995,12 @@ const TEAMS = {
         "nature": "Jolly",
         "level": 50,
         "evs": {
-          "hp": 4,
-          "atk": 252,
+          "hp": 2,
+          "atk": 32,
           "def": 0,
           "spa": 0,
           "spd": 0,
-          "spe": 252
+          "spe": 32
         },
         "moves": [
           "Dragon Darts",
@@ -1671,7 +1671,8 @@ const TEAMS = {
     "legality_status": "legal",
     "legality_notes": "",
     "assumption_register": [
-      "2026-05-24 audit: Sinistcha item corrected to Kouba Berry from the public P08QQ5NU9C rental mirror after a repo transcription error duplicated Sitrus Berry."
+      "2026-05-24 audit: Sinistcha item was recorded as Kouba Berry from the public P08QQ5NU9C rental mirror after a repo transcription error duplicated Sitrus Berry.",
+      "2026-06-21 Champion item-pool gate: Kouba Berry is not in the verified Champions item list, so the shipped sim uses Coba Berry until a stronger source proves otherwise."
     ],
     "members": [
       {
@@ -1895,7 +1896,7 @@ const TEAMS = {
       },
       {
         "name": "Farigiraf",
-        "item": "Safety Goggles",
+        "item": "Twisted Spoon",
         "ability": "Armor Tail",
         "nature": "Relaxed",
         "evs": {
@@ -2182,7 +2183,7 @@ const TEAMS = {
       },
       {
         "name": "Sinistcha",
-        "item": "Kouba Berry",
+        "item": "Coba Berry",
         "ability": "Hospitality",
         "nature": "Bold",
         "evs": {
@@ -2420,162 +2421,6 @@ const TEAMS = {
       }
     ]
   },
-  "chuppa_balance": {
-    "name": "Chuppa Cross IV — Pittsburgh Champion",
-    "label": "REGIONAL WINNER",
-    "style": "balance",
-    "description": "Adaptability Basculegion + Last Respects win-con. Pittsburgh Regional champion. Focus Sash + Maushold Follow Me.",
-    "champion_pack_id": "chuppa_balance_sv_v1",
-    "format": "sv",
-    "formatid": "gen9vgc2024regh",
-    "gametype": "doubles",
-    "ruleset": [
-        "Species Clause",
-        "Item Clause",
-        "Bring 6 Pick 4",
-        "Level 50"
-    ],
-    "provenance": {
-        "roster_source": "community",
-        "spread_source": "community",
-        "author": "Chuppa Cross IV",
-        "url": "",
-        "status": "unproven"
-    },
-    "legality_status": "legal",
-    "legality_notes": "SV-format. Fabricated 'Pittsburgh Regional' description removed in T10.",
-    "assumption_register": [
-        "Team attribution to Chuppa Cross IV not verified from a pinned source."
-    ],
-    "members": [
-      {
-        "name": "Basculegion",
-        "item": "Focus Sash",
-        "ability": "Adaptability",
-        "nature": "Adamant",
-        "evs": {
-          "hp": 4,
-          "atk": 252,
-          "def": 0,
-          "spa": 0,
-          "spd": 0,
-          "spe": 252
-        },
-        "moves": [
-          "Liquidation",
-          "Last Respects",
-          "Aqua Jet",
-          "Protect"
-        ],
-        "role": "Adaptability Sweeper"
-      },
-      {
-        "name": "Maushold",
-        "item": "Rocky Helmet",
-        "ability": "Friend Guard",
-        "nature": "Jolly",
-        "evs": {
-          "hp": 252,
-          "atk": 0,
-          "def": 4,
-          "spa": 0,
-          "spd": 0,
-          "spe": 252
-        },
-        "moves": [
-          "Super Fang",
-          "Feint",
-          "Follow Me",
-          "Protect"
-        ],
-        "role": "Redirection Support"
-      },
-      {
-        "name": "Dragonite",
-        "item": "Loaded Dice",
-        "ability": "Multiscale",
-        "nature": "Adamant",
-        "evs": {
-          "hp": 4,
-          "atk": 252,
-          "def": 0,
-          "spa": 0,
-          "spd": 0,
-          "spe": 252
-        },
-        "moves": [
-          "Scale Shot",
-          "Tailwind",
-          "Haze",
-          "Protect"
-        ],
-        "role": "Tailwind + Multi-hit"
-      },
-      {
-        "name": "Incineroar",
-        "item": "Safety Goggles",
-        "ability": "Intimidate",
-        "nature": "Careful",
-        "evs": {
-          "hp": 252,
-          "atk": 4,
-          "def": 0,
-          "spa": 0,
-          "spd": 252,
-          "spe": 0
-        },
-        "moves": [
-          "Flare Blitz",
-          "Knock Off",
-          "Parting Shot",
-          "Fake Out"
-        ],
-        "role": "Support / Pivot"
-      },
-      {
-        "name": "Ursaluna-Bloodmoon",
-        "item": "Assault Vest",
-        "ability": "Mind's Eye",
-        "nature": "Modest",
-        "evs": {
-          "hp": 252,
-          "atk": 0,
-          "def": 4,
-          "spa": 252,
-          "spd": 0,
-          "spe": 0
-        },
-        "moves": [
-          "Blood Moon",
-          "Hyper Voice",
-          "Earth Power",
-          "Vacuum Wave"
-        ],
-        "role": "TR Sweeper / Tank"
-      },
-      {
-        "name": "Gholdengo",
-        "item": "Choice Specs",
-        "ability": "Good as Gold",
-        "nature": "Modest",
-        "evs": {
-          "hp": 4,
-          "atk": 0,
-          "def": 0,
-          "spa": 252,
-          "spd": 0,
-          "spe": 252
-        },
-        "moves": [
-          "Make It Rain",
-          "Shadow Ball",
-          "Power Gem",
-          "Trick"
-        ],
-        "role": "Status-Immune Attacker"
-      }
-    ]
-  },
   "aurora_veil_froslass": {
     "name": "Mega Froslass — Aurora Veil",
     "label": "VEIL TEAM",
@@ -2730,162 +2575,6 @@ const TEAMS = {
           "Protect"
         ],
         "role": "Physical Pressure"
-      }
-    ]
-  },
-  "kingambit_sneasler": {
-    "name": "Kingambit + Sneasler Core",
-    "label": "META CORE",
-    "style": "offense",
-    "description": "The #1 ranked meta core in Reg M-A. 1,329 teams tracked. Defiant Kingambit punishes Intimidate; Unburden Sneasler cleans up.",
-    "champion_pack_id": "kingambit_sneasler_sv_v1",
-    "format": "sv",
-    "formatid": "gen9vgc2024regh",
-    "gametype": "doubles",
-    "ruleset": [
-        "Species Clause",
-        "Item Clause",
-        "Bring 6 Pick 4",
-        "Level 50"
-    ],
-    "provenance": {
-        "roster_source": "community meta core",
-        "spread_source": "community meta norms",
-        "author": "community",
-        "url": "",
-        "status": "prior_filled"
-    },
-    "legality_status": "legal",
-    "legality_notes": "SV-format meta core.",
-    "assumption_register": [
-        "Spreads are meta-typical, not pinned to a specific paste."
-    ],
-    "members": [
-      {
-        "name": "Kingambit",
-        "item": "Black Glasses",
-        "ability": "Defiant",
-        "nature": "Adamant",
-        "evs": {
-          "hp": 4,
-          "atk": 252,
-          "def": 0,
-          "spa": 0,
-          "spd": 0,
-          "spe": 252
-        },
-        "moves": [
-          "Kowtow Cleave",
-          "Sucker Punch",
-          "Low Kick",
-          "Protect"
-        ],
-        "role": "Primary Win Condition"
-      },
-      {
-        "name": "Sneasler",
-        "item": "White Herb",
-        "ability": "Unburden",
-        "nature": "Adamant",
-        "evs": {
-          "hp": 4,
-          "atk": 252,
-          "def": 0,
-          "spa": 0,
-          "spd": 0,
-          "spe": 252
-        },
-        "moves": [
-          "Fake Out",
-          "Close Combat",
-          "Dire Claw",
-          "Protect"
-        ],
-        "role": "Unburden Sweeper"
-      },
-      {
-        "name": "Incineroar",
-        "item": "Sitrus Berry",
-        "ability": "Intimidate",
-        "nature": "Careful",
-        "evs": {
-          "hp": 252,
-          "atk": 4,
-          "def": 0,
-          "spa": 0,
-          "spd": 252,
-          "spe": 0
-        },
-        "moves": [
-          "Fake Out",
-          "Parting Shot",
-          "Flare Blitz",
-          "Darkest Lariat"
-        ],
-        "role": "Intimidate Chain"
-      },
-      {
-        "name": "Garchomp",
-        "item": "Choice Scarf",
-        "ability": "Rough Skin",
-        "nature": "Jolly",
-        "evs": {
-          "hp": 4,
-          "atk": 252,
-          "def": 0,
-          "spa": 0,
-          "spd": 0,
-          "spe": 252
-        },
-        "moves": [
-          "Earthquake",
-          "Dragon Claw",
-          "Rock Slide",
-          "Stomping Tantrum"
-        ],
-        "role": "Speed Control"
-      },
-      {
-        "name": "Amoonguss",
-        "item": "Rocky Helmet",
-        "ability": "Regenerator",
-        "nature": "Bold",
-        "evs": {
-          "hp": 252,
-          "atk": 0,
-          "def": 252,
-          "spa": 0,
-          "spd": 4,
-          "spe": 0
-        },
-        "moves": [
-          "Spore",
-          "Rage Powder",
-          "Sludge Bomb",
-          "Protect"
-        ],
-        "role": "Redirect / Sleep"
-      },
-      {
-        "name": "Rotom-Wash",
-        "item": "Leftovers",
-        "ability": "Levitate",
-        "nature": "Bold",
-        "evs": {
-          "hp": 244,
-          "atk": 0,
-          "def": 52,
-          "spa": 212,
-          "spd": 0,
-          "spe": 0
-        },
-        "moves": [
-          "Thunderbolt",
-          "Hydro Pump",
-          "Will-O-Wisp",
-          "Protect"
-        ],
-        "role": "Utility / Status"
       }
     ]
   },
@@ -4592,7 +4281,7 @@ const TEAMS = {
       },
       {
         "name": "Vanilluxe",
-        "item": "Covert Cloak",
+        "item": "Never-Melt Ice",
         "ability": "Snow Warning",
         "nature": "Modest",
         "evs": {

@@ -1,5 +1,8 @@
+-- HISTORICAL / SUPERSEDED
+-- Kept for audit trail only. Do not apply for current catalog alignment.
+-- Use poke-sim/db/migrations/2026_06_20_align_shared_27_team_catalog.sql instead.
 -- Repair canonical team seed alignment without deleting referenced teams.
--- Source: 2026_04_28_seed_teams_v2.sql generated from poke-sim/data.js (25 teams).
+-- Source: poke-sim/data.js TEAMS literal and generated seed_teams_v2.sql (27 teams).
 -- Purpose: restore team_members after a failed delete-first seed attempt and align live Supabase with current repo data.
 -- Safe shape: transaction + ruleset/team UPSERTs + team_members replace for canonical team IDs only.
 
@@ -23,7 +26,7 @@ ON CONFLICT (ruleset_id) DO UPDATE SET
 -- Upsert canonical teams without deleting rows that analyses/history may reference.
 INSERT INTO teams (team_id, name, label, mode, ruleset_id, source, source_ref, description)
 VALUES
-  ('player', 'TR Counter Squad', 'YOUR TEAM', 'player', 'champions_reg_m_doubles_bo3', 'builtin', 'player_tr_counter_v1', 'Fast offensive pressure with Intimidate + Will-O-Wisp support. Built to break Trick Room before it starts.'),
+  ('player', 'TR Counter Squad', 'YOUR TEAM', 'player', 'champions_reg_m_doubles_bo3', 'builtin', 'player_champions_speed_v1', 'Fast offensive pressure with Intimidate + Will-O-Wisp support. Built to break Trick Room before it starts.'),
   ('mega_altaria', 'Mega Altaria', 'HYBRID RAINBOW', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'mega_altaria_champions_regma_v1', 'Sun-rain hybrid with Trick Room threat via Sinistcha. Prankster Whimsicott provides flexible speed control.'),
   ('mega_dragonite', 'Mega Dragonite', 'HYBRID RAINBOW', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'mega_dragonite_champions_regma_v1', 'Rain team with Mega Dragonite as the primary sweeper. Basculegion Adaptability + Archaludon Electro Shot under rain.'),
   ('mega_houndoom', 'Mega Houndoom', 'HYBRID RAINBOW', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'mega_houndoom_champions_regma_v1', 'Sun + Trick Room hybrid. Mega Houndoom Solar Power nukes under sun. Flexible TR setters in Sinistcha, Farigiraf, Whimsicott.'),
@@ -33,9 +36,7 @@ VALUES
   ('champions_arena_1st', 'Hyungwoo Shin — Champions Arena', '1ST CHAMPIONS ARENA', 'champion_pack', 'champions_reg_m_doubles_bo3', 'builtin', 'champions_arena_1st_v1', 'Mega Charizard-Y Sun with Coil Milotic secret weapon. Champions Arena winner April 2026. Rental: SQMPYRW6BP'),
   ('champions_arena_2nd', 'Jorge Tabuyo — Champions Arena Finalist', '2ND CHAMPIONS ARENA', 'champion_pack', 'champions_reg_m_doubles_bo3', 'builtin', 'champions_arena_2nd_v1', 'Double Mega Charizard-X + Tyranitar with Sinistcha TR fallback. Rental: P08QQ5NU9C'),
   ('champions_arena_3rd', 'Juan Benítez — Champions Arena Top 3', '3RD CHAMPIONS ARENA', 'champion_pack', 'champions_reg_m_doubles_bo3', 'builtin', 'champions_arena_3rd_v1', 'Mega Charizard-Y + Max Speed Kingambit tech. Prankster Whimsicott + Scarf Garchomp. Rental: KN6SNLGUPA'),
-  ('chuppa_balance', 'Chuppa Cross IV — Pittsburgh Champion', 'REGIONAL WINNER', 'champion_pack', 'champions_reg_m_doubles_bo3', 'builtin', 'chuppa_balance_sv_v1', 'Adaptability Basculegion + Last Respects win-con. Pittsburgh Regional champion. Focus Sash + Maushold Follow Me.'),
   ('aurora_veil_froslass', 'Mega Froslass — Aurora Veil', 'VEIL TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'aurora_veil_froslass_champions_regma_v1', 'Mega Froslass Snow Warning sets instant Aurora Veil. Dragonite + Kingambit behind veil. High win-condition team.'),
-  ('kingambit_sneasler', 'Kingambit + Sneasler Core', 'META CORE', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'kingambit_sneasler_sv_v1', 'The #1 ranked meta core in Reg M-A. 1,329 teams tracked. Defiant Kingambit punishes Intimidate; Unburden Sneasler cleans up.'),
   ('custom_1776995210260', 'Froslass''s Team', 'CUSTOM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', NULL, 'Imported via Showdown paste'),
   ('perish_trap_gengar', 'Perish Trap — Mega Gengar', 'PERISH TRAP', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'perish_trap_gengar_champions_regma_v1', 'Mega Gengar Shadow Tag + Perish Song trap core. Sinistcha Rage Powder redirection stalls opponents through perish countdown. Francesco Rasini Champions Arena Top 12.'),
   ('rain_offense', 'Rain Offense — Mega Meganium', 'RAIN', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'rain_offense_meganium_champions_regma_v1', 'Pelipper Drizzle + Basculegion Adaptability Wave Crash + Archaludon Electro Shot rain core. Mega Meganium (Mega Sol) secondary. leoscerni LIGA DA COMUNIDADE #2 Rank #3.'),
@@ -47,7 +48,11 @@ VALUES
   ('hiroto_imai_snow', 'Hiroto Imai — Snow + Mega Lopunny', 'CHAMPIONS CUP', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'hiroto_imai_snow_champions_regma_v1', 'Vanilluxe Snow Warning + Choice Scarf Blizzard spam, Mega Lopunny Fake Out disruption, Aegislash Stance Change. Hiroto Imai Champions Arena Rank #75.'),
   ('fedecampovgc_aerodactyl_ariados', 'FedeCampoVGC — Aerodactyl Ariados', 'MAY META', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'fedecampovgc_aerodactyl_ariados_may2026_v1', 'Current May 2026 public meta-index roster built around Mega Aerodactyl + Mega Charizard Y pressure. Rental: AV7NTVGB10.'),
   ('swirlingroses_meganium_vivillon', 'swirlingroses — Meganium Vivillon Balance', 'MAY REPLAY', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'swirlingroses_meganium_vivillon_may2026_v1', 'May 6, 2026 Champions replay-preview roster with Sneasler / Basculegion / Incineroar / Kingambit / Meganium / Vivillon-Continental.'),
-  ('prro_t_floette_aerodactyl', 'Prro-T — Floette Aerodactyl Pressure', 'MAY REPLAY', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'prro_t_floette_aerodactyl_may2026_v1', 'May 8, 2026 Champions Bo3 replay-preview roster with Floette-Eternal / Aerodactyl / Incineroar / Garchomp / Sneasler / Basculegion.')
+  ('prro_t_floette_aerodactyl', 'Prro-T — Floette Aerodactyl Pressure', 'MAY REPLAY', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'prro_t_floette_aerodactyl_may2026_v1', 'May 8, 2026 Champions Bo3 replay-preview roster with Floette-Eternal / Aerodactyl / Incineroar / Garchomp / Sneasler / Basculegion.'),
+  ('fabulous_sunroom', 'Fabulous Sunroom', 'SAMPLE TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'fabulous_sunroom_champions_regma_v1', 'Calibration sunroom built from public sample-team archetypes and shipped legal catalog sets.'),
+  ('sand_bulky_offense', 'Sand Bulky Offense', 'SAMPLE TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'sand_bulky_offense_champions_regma_v1', 'Calibration sand offense built from shipped legal catalog sets and public sample-team archetypes.'),
+  ('fire_ice_fullroom', 'Fire and Ice Fullroom', 'SAMPLE TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'fire_ice_fullroom_champions_regma_v1', 'Calibration room team built from shipped legal catalog sets and public sample-team archetypes.'),
+  ('zardx_snow_setup', 'ZardX Snow Setup', 'SAMPLE TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'zardx_snow_setup_champions_regma_v1', 'Calibration snow offense built from shipped legal catalog sets and public sample-team archetypes.');
 ON CONFLICT (team_id) DO UPDATE SET
   name = EXCLUDED.name,
   label = EXCLUDED.label,
@@ -69,9 +74,7 @@ DELETE FROM team_members WHERE team_id IN (
   'champions_arena_1st',
   'champions_arena_2nd',
   'champions_arena_3rd',
-  'chuppa_balance',
   'aurora_veil_froslass',
-  'kingambit_sneasler',
   'custom_1776995210260',
   'perish_trap_gengar',
   'rain_offense',
@@ -83,8 +86,11 @@ DELETE FROM team_members WHERE team_id IN (
   'hiroto_imai_snow',
   'fedecampovgc_aerodactyl_ariados',
   'swirlingroses_meganium_vivillon',
-  'prro_t_floette_aerodactyl'
-
+  'prro_t_floette_aerodactyl',
+  'fabulous_sunroom',
+  'sand_bulky_offense',
+  'fire_ice_fullroom',
+  'zardx_snow_setup'
 );
 
 -- TEAM MEMBERS
@@ -180,15 +186,6 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
   ('champions_arena_3rd', 5, 'Sneasler', 'White Herb', 'Unburden', 'Adamant', 50, '{"atk":20,"def":5,"hp":8,"spa":0,"spd":1,"spe":32}'::jsonb, '["Dire Claw","Fake Out","Close Combat","Protect"]'::jsonb, NULL, 'Unburden Sweeper'),
   ('champions_arena_3rd', 6, 'Kingambit', 'Black Glasses', 'Defiant', 'Adamant', 50, '{"atk":25,"def":2,"hp":6,"spa":0,"spd":1,"spe":32}'::jsonb, '["Kowtow Cleave","Sucker Punch","Low Kick","Protect"]'::jsonb, NULL, 'Late-Game Sweeper');
 
--- chuppa_balance
-INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
-  ('chuppa_balance', 1, 'Basculegion', 'Focus Sash', 'Adaptability', 'Adamant', 50, '{"atk":252,"def":0,"hp":4,"spa":0,"spd":0,"spe":252}'::jsonb, '["Liquidation","Last Respects","Aqua Jet","Protect"]'::jsonb, NULL, 'Adaptability Sweeper'),
-  ('chuppa_balance', 2, 'Maushold', 'Rocky Helmet', 'Friend Guard', 'Jolly', 50, '{"atk":0,"def":4,"hp":252,"spa":0,"spd":0,"spe":252}'::jsonb, '["Super Fang","Feint","Follow Me","Protect"]'::jsonb, NULL, 'Redirection Support'),
-  ('chuppa_balance', 3, 'Dragonite', 'Loaded Dice', 'Multiscale', 'Adamant', 50, '{"atk":252,"def":0,"hp":4,"spa":0,"spd":0,"spe":252}'::jsonb, '["Scale Shot","Tailwind","Haze","Protect"]'::jsonb, NULL, 'Tailwind + Multi-hit'),
-  ('chuppa_balance', 4, 'Incineroar', 'Safety Goggles', 'Intimidate', 'Careful', 50, '{"atk":4,"def":0,"hp":252,"spa":0,"spd":252,"spe":0}'::jsonb, '["Flare Blitz","Knock Off","Parting Shot","Fake Out"]'::jsonb, NULL, 'Support / Pivot'),
-  ('chuppa_balance', 5, 'Ursaluna-Bloodmoon', 'Assault Vest', 'Mind''s Eye', 'Modest', 50, '{"atk":0,"def":4,"hp":252,"spa":252,"spd":0,"spe":0}'::jsonb, '["Blood Moon","Hyper Voice","Earth Power","Vacuum Wave"]'::jsonb, NULL, 'TR Sweeper / Tank'),
-  ('chuppa_balance', 6, 'Gholdengo', 'Choice Specs', 'Good as Gold', 'Modest', 50, '{"atk":0,"def":0,"hp":4,"spa":252,"spd":0,"spe":252}'::jsonb, '["Make It Rain","Shadow Ball","Power Gem","Trick"]'::jsonb, NULL, 'Status-Immune Attacker');
-
 -- aurora_veil_froslass
 INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
   ('aurora_veil_froslass', 1, 'Froslass-Mega', 'Froslassite', 'Snow Warning', 'Timid', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":0,"spe":32}'::jsonb, '["Aurora Veil","Blizzard","Shadow Ball","Protect"]'::jsonb, NULL, 'Veil Setter / Attacker'),
@@ -197,15 +194,6 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
   ('aurora_veil_froslass', 4, 'Milotic', 'Life Orb', 'Competitive', 'Modest', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":0,"spe":32}'::jsonb, '["Scald","Ice Beam","Life Dew","Protect"]'::jsonb, NULL, 'Competitive Attacker'),
   ('aurora_veil_froslass', 5, 'Incineroar', 'Sitrus Berry', 'Intimidate', 'Careful', 50, '{"atk":2,"def":0,"hp":32,"spa":0,"spd":32,"spe":0}'::jsonb, '["Fake Out","Parting Shot","Flare Blitz","Knock Off"]'::jsonb, NULL, 'Support / Pivot'),
   ('aurora_veil_froslass', 6, 'Garchomp', 'Rocky Helmet', 'Rough Skin', 'Jolly', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Earthquake","Rock Slide","Dragon Claw","Protect"]'::jsonb, NULL, 'Physical Pressure');
-
--- kingambit_sneasler
-INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
-  ('kingambit_sneasler', 1, 'Kingambit', 'Black Glasses', 'Defiant', 'Adamant', 50, '{"atk":252,"def":0,"hp":4,"spa":0,"spd":0,"spe":252}'::jsonb, '["Kowtow Cleave","Sucker Punch","Low Kick","Protect"]'::jsonb, NULL, 'Primary Win Condition'),
-  ('kingambit_sneasler', 2, 'Sneasler', 'White Herb', 'Unburden', 'Adamant', 50, '{"atk":252,"def":0,"hp":4,"spa":0,"spd":0,"spe":252}'::jsonb, '["Fake Out","Close Combat","Dire Claw","Protect"]'::jsonb, NULL, 'Unburden Sweeper'),
-  ('kingambit_sneasler', 3, 'Incineroar', 'Sitrus Berry', 'Intimidate', 'Careful', 50, '{"atk":4,"def":0,"hp":252,"spa":0,"spd":252,"spe":0}'::jsonb, '["Fake Out","Parting Shot","Flare Blitz","Darkest Lariat"]'::jsonb, NULL, 'Intimidate Chain'),
-  ('kingambit_sneasler', 4, 'Garchomp', 'Choice Scarf', 'Rough Skin', 'Jolly', 50, '{"atk":252,"def":0,"hp":4,"spa":0,"spd":0,"spe":252}'::jsonb, '["Earthquake","Dragon Claw","Rock Slide","Stomping Tantrum"]'::jsonb, NULL, 'Speed Control'),
-  ('kingambit_sneasler', 5, 'Amoonguss', 'Rocky Helmet', 'Regenerator', 'Bold', 50, '{"atk":0,"def":252,"hp":252,"spa":0,"spd":4,"spe":0}'::jsonb, '["Spore","Rage Powder","Sludge Bomb","Protect"]'::jsonb, NULL, 'Redirect / Sleep'),
-  ('kingambit_sneasler', 6, 'Rotom-Wash', 'Leftovers', 'Levitate', 'Bold', 50, '{"atk":0,"def":52,"hp":244,"spa":212,"spd":0,"spe":0}'::jsonb, '["Thunderbolt","Hydro Pump","Will-O-Wisp","Protect"]'::jsonb, NULL, 'Utility / Status');
 
 -- custom_1776995210260
 INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES

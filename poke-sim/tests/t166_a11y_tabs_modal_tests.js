@@ -90,7 +90,7 @@ function byId(id) {
   return ids[id];
 }
 
-const tabOrder = ['simulator', 'teams', 'editor', 'strategy', 'replay-coach', 'replays', 'sources', 'pilot'];
+const tabOrder = ['simulator', 'overview', 'teams', 'editor', 'strategy', 'replay-coach', 'replays', 'sources', 'pilot'];
 const tabButtons = tabOrder.map((tabId, idx) => {
   const btn = makeNode(`tab-btn-${tabId}`);
   btn.dataset.tab = tabId;
@@ -194,13 +194,14 @@ const selectorMap = {
   '.import-tab': importTabs,
   '.modal-overlay': [exportModal, importModal, confirmModal],
   '.tab-btn[data-tab="simulator"]': [tabButtons[0]],
-  '.tab-btn[data-tab="teams"]': [tabButtons[1]],
-  '.tab-btn[data-tab="editor"]': [tabButtons[2]],
-  '.tab-btn[data-tab="strategy"]': [tabButtons[3]],
-  '.tab-btn[data-tab="replay-coach"]': [tabButtons[4]],
-  '.tab-btn[data-tab="replays"]': [tabButtons[5]],
-  '.tab-btn[data-tab="sources"]': [tabButtons[6]],
-  '.tab-btn[data-tab="pilot"]': [tabButtons[7]],
+  '.tab-btn[data-tab="overview"]': [tabButtons[1]],
+  '.tab-btn[data-tab="teams"]': [tabButtons[2]],
+  '.tab-btn[data-tab="editor"]': [tabButtons[3]],
+  '.tab-btn[data-tab="strategy"]': [tabButtons[4]],
+  '.tab-btn[data-tab="replay-coach"]': [tabButtons[5]],
+  '.tab-btn[data-tab="replays"]': [tabButtons[6]],
+  '.tab-btn[data-tab="sources"]': [tabButtons[7]],
+  '.tab-btn[data-tab="pilot"]': [tabButtons[8]],
   '#import-modal .modal-title': importTitle,
   '#import-modal .modal-hint': importHint,
   '#confirm-modal .modal-title': confirmTitle,

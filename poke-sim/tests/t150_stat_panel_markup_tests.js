@@ -76,12 +76,12 @@ T('1. renderStatPanelHtml emits stat panel section', () => {
   const html = renderStatPanelHtml({
     name: 'Garchomp',
     nature: 'Jolly',
-    evs: { hp:4, atk:252, def:0, spa:0, spd:0, spe:252 },
+    evs: { hp:2, atk:32, def:0, spa:0, spd:0, spe:32 },
     ivs: { hp:31, atk:31, def:31, spa:31, spd:31, spe:31 }
   });
   inc(html, 'class="stat-panel"');
   inc(html, 'aria-label="Stat panel"');
-  inc(html, 'Jolly · EV 508/510');
+  inc(html, 'Jolly · SP 66/66');
 });
 
 T('2. stat panel renders all six stat labels', () => {
@@ -89,10 +89,10 @@ T('2. stat panel renders all six stat labels', () => {
   ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'].forEach(label => inc(html, '>' + label + '<'));
 });
 
-T('3. stat panel displays EV and IV values', () => {
-  const html = renderStatPanelHtml({ nature: 'Modest', evs: { spa:252 }, ivs: { spa:30 } });
-  inc(html, 'EV 252');
-  inc(html, 'IV 30');
+T('3. stat panel displays SP and fixed IV values', () => {
+  const html = renderStatPanelHtml({ nature: 'Modest', evs: { spa:32 }, ivs: { spa:30 } });
+  inc(html, 'SP 32');
+  inc(html, 'Fixed IV 30');
 });
 
 T('4. stat panel marks nature plus/minus stats', () => {

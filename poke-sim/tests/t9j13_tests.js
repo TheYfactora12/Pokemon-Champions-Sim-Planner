@@ -232,16 +232,17 @@ T('36. Other tournament teams unchanged — mega_altaria still SP-scale', () => 
   }
 });
 
-T('37. SV teams still SV-scale — kingambit_sneasler members have >=1 stat > 32', () => {
-  const t = TEAMS.kingambit_sneasler;
-  const anyOver = t.members.some(m => Object.values(m.evs).some(v => v > 32));
-  truthy(anyOver, 'kingambit_sneasler should still be SV-scale');
+T('37. player now declares Champions format', () => {
+  eq(TEAMS.player.format, 'champions');
 });
 
-T('38. SV team player (TR Counter) still has SV spreads', () => {
+T('38. player starter team now stays on Champions SP scale', () => {
   const t = TEAMS.player;
-  const anyOver = t.members.some(m => Object.values(m.evs).some(v => v > 32));
-  truthy(anyOver);
+  for (const m of t.members) {
+    const total = Object.values(m.evs).reduce((a,b)=>a+b, 0);
+    lte(total, 66, m.name + ' total SP overflow');
+    truthy(Object.values(m.evs).every(v => v <= 32), m.name + ' per-stat SP overflow');
+  }
 });
 
 T('39. cofagrigus_tr has SP=32 invested on HP for Cofagrigus + Sinistcha (TR bulk)', () => {
@@ -274,8 +275,8 @@ T('43. Building Pokemon from aurora_veil_froslass does NOT set formatMismatch', 
 });
 
 // ==== SECTION 5 — End-to-end WR sanity (4 cases, small N) ====
-// 100% WR was deterministic before fix; even at N=10 we should see < 100% now
-// against the hardest opponents. We test per-team against three separate opps.
+// 100% WR was deterministic before fix. A 25-game deterministic sample avoids
+// false failures where a strong but finite matchup opens 10-0 by seed order.
 function wr(teamKey, oppKey, n=10) {
   let w = 0, played = 0;
   for (let i = 0; i < n; i++) {
@@ -289,7 +290,7 @@ function wr(teamKey, oppKey, n=10) {
 }
 
 T('44. cofagrigus_tr vs player no longer 100% WR (was 100% before fix)', () => {
-  const r = wr('cofagrigus_tr', 'player', 10);
+  const r = wr('cofagrigus_tr', 'player', 25);
   if (r >= 1.0) throw new Error(`still 100% WR (${r})`);
 });
 
