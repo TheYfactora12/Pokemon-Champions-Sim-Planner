@@ -38,10 +38,12 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Move priority aligned with Showdown data');
   inc(ui, 'Showdown primary move metadata for imported teams');
   inc(ui, 'Showdown sync and DB writer staged');
+  inc(ui, 'Curated ability inventory modeled');
   inc(ui, 'Simulation-first direction documented');
   inc(ui, 'Public release milestone map documented');
   inc(ui, 'Live exported logs prove the sim now runs');
   inc(ui, 'Item timing regression reproduced and covered');
+  inc(ui, 'Ability coverage guard is green');
   inc(ui, 'v2.1.23 item/SP/DB-gate changes pending');
   inc(ui, 'GitHub issue sweep completed');
 });
@@ -57,6 +59,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Pokemon data audit has unresolved reviewer risk');
   inc(ui, 'Current Y fork changes are not pushed upstream to Alfredo yet');
   inc(ui, 'Mechanics parity is broader than the berry fix');
+  inc(ui, 'Source refresh needed must be visible before trust claims');
   inc(ui, 'Alfredo #241');
   inc(ui, 'Life Orb');
   inc(ui, 'showdown_sync_runs');
@@ -71,6 +74,7 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
   inc(ui, 'Group mechanics parity work by battle system');
   inc(ui, 'Prepare upstream PR to Alfredo after Y fork verification');
+  inc(ui, 'Surface source drift as update needed in Overview');
   inc(ui, 'Recent Fix + Issue Snapshot');
   inc(ui, 'recent-fixes-and-open-issues-2026-06-21.md');
   inc(ui, 'Simulation First');

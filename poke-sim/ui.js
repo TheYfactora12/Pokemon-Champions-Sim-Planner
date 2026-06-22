@@ -5646,13 +5646,14 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-06-21',
+  updated: '2026-06-22',
   metrics: [
     { label: 'Sim Truth Gate', value: 'Mechanics first' },
     { label: 'Live Supabase', value: 'Teams + analyses' },
     { label: 'Showdown DB', value: 'Checking...' },
     { label: 'Team Format', value: 'Champion/SP focus' },
-    { label: 'Turn Logs', value: 'Fresh logs clean' }
+    { label: 'Turn Logs', value: 'Fresh logs clean' },
+    { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
     {
@@ -5699,6 +5700,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Exported log validator added',
       detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, and observed priority order.'
+    },
+    {
+      status: 'done',
+      title: 'Curated ability inventory modeled',
+      detail: 'The curated-team plus Champions mega ability audit now reports 80 of 80 abilities modeled, with focused coverage for priority, targeting, accuracy, status immunity, trapping, multi-hit, threshold, contact, crit-prevention, and no-op ability paths.'
     },
     {
       status: 'done',
@@ -5749,6 +5755,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
+      title: 'Ability coverage guard is green',
+      detail: 'ability_coverage_audit_tests.js reports 80/80 curated and mega abilities modeled; ability_damage_parity_tests.js and ability_priority_targeting_tests.js cover the current high-risk behavior paths added in the ability parity slice.'
+    },
+    {
+      status: 'validated',
       title: 'Live preview bundle contains the new safeguards',
       detail: 'The standalone GitHub Pages bundle is rebuilt from source and the service-worker cache must be bumped for every legality or data-path release.'
     },
@@ -5778,6 +5789,11 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Mechanics parity is broader than the berry fix',
       detail: 'The berry bug is one confirmed timing defect. Remaining parity work still needs grouped checks for damage, targeting, redirection, Protect, speed control, switching, status, items, abilities, and Champions overrides.'
+    },
+    {
+      status: 'gap',
+      title: 'Source refresh needed must be visible before trust claims',
+      detail: 'If Showdown sync hashes or Champion secondary sources change, the site should show an update-needed state until the change is reviewed, tested, and either promoted into generated data or documented as a Champions override.'
     }
   ],
   next: [
@@ -5815,6 +5831,11 @@ var CS_OVERVIEW_DATA = {
       status: 'next',
       title: 'Add Showdown oracle release gates',
       detail: 'Use Pokemon Showdown / @smogon/calc / @pkmn-style smoke cases for behavior that cannot be proven from static rows alone, with Champions overrides documented separately.'
+    },
+    {
+      status: 'next',
+      title: 'Surface source drift as update needed in Overview',
+      detail: 'Use Showdown sync run metadata, source file hashes, and reviewed Champion-source notes to mark data or mechanics as update-needed instead of silently trusting stale snapshots.'
     }
   ],
   decisions: [

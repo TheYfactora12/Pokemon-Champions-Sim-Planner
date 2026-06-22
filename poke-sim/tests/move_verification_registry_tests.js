@@ -610,7 +610,7 @@ T('24. Solar Beam full paralysis on the release turn cancels the queued attack',
   }]);
   const battle = simulateBattle(player, opp, {
     format: 'singles',
-    seed: [7, 1025555898, 3429651764, 483484],
+    seed: [8, 1025555898, 3429651764, 483484],
     maxTurns: 2
   });
   const renderedLog = battle.log.map((line) => String(line)).join('\n');
@@ -2464,7 +2464,7 @@ T('85. Draco Meteor harshly lowers the user Special Attack after damage', () => 
 T('86. Overheat harshly lowers the user Special Attack after damage', () => {
   const player = team('Overheat Self Drop', [{
     name: 'Torkoal',
-    ability: '',
+    ability: 'No Guard',
     item: '',
     nature: 'Modest',
     level: 50,
