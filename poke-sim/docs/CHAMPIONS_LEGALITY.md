@@ -25,6 +25,32 @@
 
 ---
 
+## Stat Point Rules
+
+Champion teams use **Stat Points (SPs)**, not Scarlet/Violet EVs.
+
+Current simulator enforcement:
+
+- Max **32 SP per stat**
+- Max **66 SP total per Pokemon**
+- SP values must be integers in an object with `hp`, `atk`, `def`, `spa`, `spd`, and `spe`
+- Raw Showdown `EVs:` lines are rejected by Champion imports
+- `IVs:` lines are rejected because Champions treats IVs as fixed/perfect for simulator purposes
+
+Source truth:
+
+- Pokemon Showdown's current Champions validator treats Champion sets as `Stat Points`, rejects more than `32` in a stat, and applies the Champion stat formula from the `champions` mod. Relevant source files: [`team-validator.ts`](https://github.com/smogon/pokemon-showdown/blob/master/sim/team-validator.ts) and [`data/mods/champions/scripts.ts`](https://github.com/smogon/pokemon-showdown/blob/master/data/mods/champions/scripts.ts).
+- The repo follows Showdown behavior for simulator parity and uses `32/66` as the active guardrail.
+- A public [GamesRadar hands-on preview](https://www.gamesradar.com/games/pokemon/i-made-a-competitively-viable-team-in-a-matter-of-minutes-in-pokemon-champions-and-im-confident-this-could-open-the-door-to-high-level-battles-for-newcomers-galore/) says Champion training has `66` Stat Points with a `31` per-stat cap. That conflicts with Showdown's current validator, so the repo tracks it as a source-review note instead of silently changing runtime behavior. If a stronger official Champion source confirms `31`, update `validateChampionsSpread()`, fixtures, seed tests, and the Overview source-truth note in the same change.
+
+Known conversion policy for inferred archetype spreads:
+
+- Showdown-style `252` investment maps to `32` Champion SP.
+- Showdown-style `4` investment maps to `1` Champion SP.
+- The conversion preserves the original archetype direction; it does not invent extra filler points merely to reach 66 total.
+
+---
+
 ## Banned Pokemon Categories
 
 Enforced by `CHAMPIONS_BANNED_POKEMON` in `legality.js`.

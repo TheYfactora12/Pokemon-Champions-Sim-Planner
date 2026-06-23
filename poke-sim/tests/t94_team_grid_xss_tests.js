@@ -103,7 +103,7 @@ ctx.TEAMS.__xss_fixture = {
     ability: 'Rough Skin',
     nature: 'Jolly',
     level: 50,
-    evs: { hp: 4, atk: 252, spe: 252 },
+    evs: { hp: 1, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 },
     moves: ['Earthquake', 'Protect']
   }]
 };
@@ -141,7 +141,7 @@ ctx.TEAMS.__invalid_fixture = {
 ctx.TEAMS.__stataware_fixture = {
   name: 'Inferred Champions Fixture',
   style: 'balance',
-  description: 'SV-shaped spreads under Champions tag should warn, not hard-fail',
+  description: 'Inferred Champion spread should render without stale SV fallback copy',
   label: 'INF',
   source: 'preloaded',
   legality_status: 'legal_inferred',
@@ -153,7 +153,7 @@ ctx.TEAMS.__stataware_fixture = {
       ability: 'Shadow Tag',
       nature: 'Timid',
       level: 50,
-      evs: { hp: 4, atk: 0, def: 0, spa: 252, spd: 0, spe: 252 },
+      evs: { hp: 1, atk: 0, def: 0, spa: 32, spd: 0, spe: 32 },
       moves: ['Shadow Ball', 'Sludge Bomb', 'Perish Song', 'Protect']
     },
     {
@@ -185,10 +185,11 @@ T('2. renderTeamsGrid hides invalid teams from the runnable catalog', () => {
   falsy(teamsGrid.innerHTML.includes('Item Clause violation: duplicate items: Sitrus Berry'), 'hidden legality reason leaked');
 });
 
-T('3. renderTeamsGrid labels inferred Champions teams with stat-aware fallback copy', () => {
+T('3. renderTeamsGrid labels inferred Champions teams without SV fallback copy', () => {
   vm.runInContext('TEAMS_FILTER = "all";', ctx);
   renderTeamsGrid();
-  inc(teamsGrid.innerHTML, 'Legal (inferred SV spreads)', 'stat-aware legality label');
+  inc(teamsGrid.innerHTML, 'Legal (inferred)', 'inferred legality label');
+  falsy(teamsGrid.innerHTML.includes('Legal (inferred SV spreads)'), 'stale SV fallback label leaked');
 });
 
 console.log(`\nteam grid XSS: ${pass} pass, ${fail} fail\n`);

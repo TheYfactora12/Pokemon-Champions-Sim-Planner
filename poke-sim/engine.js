@@ -121,11 +121,31 @@ function detectSpreadStatFormat(evs) {
 }
 
 function spreadFitsChampions(evs) {
-  const vals = Object.values(evs || {});
-  if (vals.length === 0) return true;
-  const total = vals.reduce((a, b) => a + b, 0);
-  const max = Math.max(...vals);
-  return max <= 32 && total <= 66;
+  return validateChampionsSpread(evs).length === 0;
+}
+
+function validateChampionsSpread(evs, label = 'Pokemon') {
+  const errors = [];
+  if (evs != null && (typeof evs !== 'object' || Array.isArray(evs))) {
+    return [`${label}: Champion SP spread must be a stat object (hp/atk/def/spa/spd/spe).`];
+  }
+  const spread = evs || {};
+  const statKeys = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'];
+  let total = 0;
+  for (const stat of statKeys) {
+    const raw = spread[stat] == null ? 0 : spread[stat];
+    const val = Number(raw);
+    if (!Number.isFinite(val)) {
+      errors.push(`${label}: ${stat} SP is not a number (got ${raw})`);
+      continue;
+    }
+    if (!Number.isInteger(val)) errors.push(`${label}: ${stat} SP must be an integer (got ${val})`);
+    total += val;
+    if (val > 32) errors.push(`${label}: ${stat} SP exceeds 32 (got ${val}) [champions format]`);
+    if (val < 0) errors.push(`${label}: ${stat} SP is negative (got ${val})`);
+  }
+  if (total > 66) errors.push(`${label}: SPs exceed 66 (got ${total}) [champions format]`);
+  return errors;
 }
 
 function resolveMonStatFormat(mon, teamFormat) {
@@ -150,25 +170,31 @@ function validateTeam(team, format = 'vgc') {
 
   for (const mon of team.members) {
     const name = mon.name || 'Unknown';
-    const resolved = resolveMonStatFormat(mon, team.format);
+    const declaredFmt = team.format || mon.format || null;
+    const declaredChampions = declaredFmt === 'champions';
+    const resolved = declaredChampions
+      ? { statFormat: 'champions', formatMismatch: false, declaredFormat: declaredFmt }
+      : resolveMonStatFormat(mon, team.format);
     const fmt = resolved.statFormat;
     const caps = fmt === 'champions'
       ? { perStat: 32, total: 66, label: 'SP' }
       : { perStat: 252, total: 510, label: 'EV' };
 
-    if (resolved.formatMismatch) {
-      warnings.push(`${name}: declared Champions but spread is SV-scale, so runtime falls back to SV stat math`);
+    if (declaredChampions) {
+      errors.push(...validateChampionsSpread(mon.evs || {}, name));
+    } else if (resolved.formatMismatch) {
+      errors.push(`${name}: declared Champions but spread is SV-scale; Champion teams must use Stat Points (max 32 per stat, 66 total)`);
     }
 
     // Total cap
     const totalPoints = Object.values(mon.evs || {}).reduce((a, b) => a + b, 0);
-    if (totalPoints > caps.total) {
+    if (!declaredChampions && totalPoints > caps.total) {
       errors.push(`${name}: ${caps.label}s exceed ${caps.total} (got ${totalPoints}) [${fmt} format]`);
     }
     // Individual cap
     for (const [stat, val] of Object.entries(mon.evs || {})) {
-      if (val > caps.perStat) errors.push(`${name}: ${stat} ${caps.label} exceeds ${caps.perStat} (got ${val}) [${fmt} format]`);
-      if (val < 0)            errors.push(`${name}: ${stat} ${caps.label} is negative (got ${val})`);
+      if (!declaredChampions && val > caps.perStat) errors.push(`${name}: ${stat} ${caps.label} exceeds ${caps.perStat} (got ${val}) [${fmt} format]`);
+      if (!declaredChampions && val < 0)            errors.push(`${name}: ${stat} ${caps.label} is negative (got ${val})`);
     }
     // Move count
     if (!mon.moves || mon.moves.length === 0) errors.push(`${name}: no moves defined`);

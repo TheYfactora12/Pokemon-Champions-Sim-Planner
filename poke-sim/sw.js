@@ -57,7 +57,9 @@
 // damage boosts, and stat/effective-speed turn-log evidence.
 // v63-knock-off-guard [2026-06-22] - Knock Off removable-item boost/removal,
 // corresponding Mega Stone protection, no-item guard, and Sticky Hold coverage.
-const CACHE_NAME = 'champions-sim-v63-knock-off-guard';
+// v64-spread-legality-guard [2026-06-22] - Champion SP caps enforced across
+// bundled teams, import/editor saves, DB merge, and generated seed artifacts.
+const CACHE_NAME = 'champions-sim-v64-spread-legality-guard';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

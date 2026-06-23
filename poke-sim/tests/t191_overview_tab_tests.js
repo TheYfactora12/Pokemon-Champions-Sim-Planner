@@ -56,7 +56,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.29 Knock Off guard carries the v2.1.28 mechanics stack guard');
+  inc(ui, 'v2.1.30 Spread Legality Guard carries the v2.1.29 Knock Off guard');
   inc(ui, 'Damage stack oracle is green');
   inc(ui, 'Knock Off source-truth behavior is documented');
   inc(ui, 'Turn-order stack evidence is green');
@@ -84,7 +84,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.29 live logs, QA artifact, and sync Alfredo');
+  inc(ui, 'Verify v2.1.30 live logs, QA artifact, and sync Alfredo');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');

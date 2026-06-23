@@ -686,6 +686,10 @@ table{border-collapse:collapse;width:100%}
 .form-label{font-size:9px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.07em}
 .form-input{padding:8px var(--sp3);min-height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-family:var(--font-mono),monospace;font-size:11px;transition:border-color var(--tr);-webkit-appearance:none}
 .form-input:focus{outline:none;border-color:var(--primary)}
+.sp-guard-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;font-family:var(--font-mono);font-size:10px;color:var(--text-m)}
+.sp-guard-row span:first-child{border:1px solid var(--border);border-radius:var(--r-sm);padding:3px 6px;background:var(--surface2);white-space:nowrap}
+.sp-guard-row span.bad{color:var(--red);border-color:rgba(240,84,100,.55)}
+#sp-guard-status.bad{color:var(--red)}
 .editor-legality-ok{margin-top:8px;color:var(--green);font-size:11px;font-family:var(--font-mono)}
 .editor-legality-warnings{display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .editor-legality-warning{border:1px solid rgba(245,197,66,.45);background:rgba(245,197,66,.08);color:var(--gold);border-radius:var(--r-sm);padding:7px 9px;font-size:11px;line-height:1.45}
@@ -734,6 +738,7 @@ table{border-collapse:collapse;width:100%}
 @media(max-width:420px){.team-detail-table{min-width:0}}
 .btn-save{margin-top:var(--sp4);padding:7px var(--sp5);background:var(--primary);color:#fff;border:none;border-radius:var(--r-md);font-family:var(--font-display);font-size:var(--text-sm);font-weight:700;cursor:pointer;transition:all var(--tr)}
 .btn-save:hover{background:var(--primary-h)}
+.btn-save:disabled{opacity:.55;cursor:not-allowed;background:var(--surface2);color:var(--text-m);border:1px solid var(--border)}
 
 /* ===== REPLAYS ===== */
 .section-subtitle{color:var(--text-m);font-size:var(--text-sm);line-height:1.5;margin-top:4px;max-width:760px}
@@ -2328,7 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.29-knock-off-guard</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.30-spread-legality-guard</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -5667,7 +5672,7 @@ const TEAMS = {
         "ability": "Shadow Tag",
         "nature": "Timid",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Shadow Ball", "Sludge Bomb", "Perish Song", "Protect"],
         "tera": "Ghost",
@@ -5691,7 +5696,7 @@ const TEAMS = {
         "ability": "Hospitality",
         "nature": "Relaxed",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 252, "spa": 4, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 1, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Matcha Gotcha", "Trick Room", "Rage Powder", "Protect"],
@@ -5704,7 +5709,7 @@ const TEAMS = {
         "ability": "Intimidate",
         "nature": "Careful",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 4, "def": 0, "spa": 0, "spd": 252, "spe": 0},
+        "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Flare Blitz", "Protect", "Parting Shot", "Fake Out"],
         "tera": "Ghost",
@@ -5716,7 +5721,7 @@ const TEAMS = {
         "ability": "Overcoat",
         "nature": "Modest",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Clanging Scales", "Aura Sphere", "Clangorous Soul", "Protect"],
         "tera": "Fairy",
@@ -5785,7 +5790,7 @@ const TEAMS = {
         "ability": "Prankster",
         "nature": "Calm",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 0, "spd": 252, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Foul Play", "Rain Dance", "Light Screen", "Encore"],
         "tera": "Normal",
@@ -5797,7 +5802,7 @@ const TEAMS = {
         "ability": "Stamina",
         "nature": "Modest",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Electro Shot", "Draco Meteor", "Flash Cannon", "Protect"],
         "tera": "Fairy",
@@ -5878,7 +5883,7 @@ const TEAMS = {
         "ability": "Intimidate",
         "nature": "Careful",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 4, "def": 0, "spa": 0, "spd": 252, "spe": 0},
+        "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Flare Blitz", "Throat Chop", "Parting Shot", "Fake Out"],
         "tera": "Fire",
@@ -5890,7 +5895,7 @@ const TEAMS = {
         "ability": "Armor Tail",
         "nature": "Relaxed",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Hyper Voice", "Psychic", "Helping Hand", "Trick Room"],
@@ -5903,7 +5908,7 @@ const TEAMS = {
         "ability": "Iron Fist",
         "nature": "Brave",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Protect", "Headlong Rush", "Poltergeist", "Ice Punch"],
@@ -5928,7 +5933,7 @@ const TEAMS = {
         "ability": "Drought",
         "nature": "Quiet",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Protect", "Heat Wave", "Eruption", "Weather Ball"],
@@ -5941,7 +5946,7 @@ const TEAMS = {
         "ability": "Chlorophyll",
         "nature": "Modest",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Leaf Storm", "Sludge Bomb", "Sleep Powder"],
         "tera": "Grass",
@@ -5986,7 +5991,7 @@ const TEAMS = {
         "ability": "Intimidate",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 4, "def": 0, "spa": 0, "spd": 252, "spe": 0},
+        "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Flare Blitz", "Darkest Lariat", "Close Combat", "Fake Out"],
         "tera": "Fire",
@@ -5998,7 +6003,7 @@ const TEAMS = {
         "ability": "Magic Bounce",
         "nature": "Relaxed",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Psychic", "Trick Room", "Dazzling Gleam", "Protect"],
@@ -6011,7 +6016,7 @@ const TEAMS = {
         "ability": "Armor Tail",
         "nature": "Relaxed",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Hyper Voice", "Trick Room", "Psychic", "Protect"],
@@ -6024,7 +6029,7 @@ const TEAMS = {
         "ability": "Drought",
         "nature": "Modest",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 252, "spd": 0, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Eruption", "Weather Ball", "Earth Power", "Protect"],
         "tera": "Fire",
@@ -6048,7 +6053,7 @@ const TEAMS = {
         "ability": "Solar Power",
         "nature": "Modest",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Heat Wave", "Overheat", "Solar Beam", "Protect"],
         "tera": "Fire",
@@ -6117,7 +6122,7 @@ const TEAMS = {
         "ability": "Adaptability",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Liquidation", "Last Respects", "Aqua Jet"],
         "tera": "Water",
@@ -6129,7 +6134,7 @@ const TEAMS = {
         "ability": "Defiant",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Sucker Punch", "Iron Head", "Kowtow Cleave"],
         "tera": "Dark",
@@ -6141,7 +6146,7 @@ const TEAMS = {
         "ability": "Unburden",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Close Combat", "Gunk Shot", "Fake Out"],
         "tera": "Fighting",
@@ -6210,7 +6215,7 @@ const TEAMS = {
         "ability": "Defiant",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Swords Dance", "Protect"],
         "tera": "Dark",
@@ -6222,7 +6227,7 @@ const TEAMS = {
         "ability": "Levitate",
         "nature": "Bold",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 252, "spa": 0, "spd": 4, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 1, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Thunderbolt", "Overheat", "Will-O-Wisp", "Protect"],
         "tera": "Water",
@@ -6234,7 +6239,7 @@ const TEAMS = {
         "ability": "Snow Cloak",
         "nature": "Timid",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Blizzard", "Shadow Ball", "Taunt", "Protect"],
         "tera": "Ghost",
@@ -6246,7 +6251,7 @@ const TEAMS = {
         "ability": "Poison Touch",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
         "tera": "Fighting",
@@ -6258,7 +6263,7 @@ const TEAMS = {
         "ability": "Unaware",
         "nature": "Calm",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 0, "spd": 252, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Moonblast", "Follow Me", "Helping Hand", "Protect"],
         "tera": "Fairy",
@@ -6303,7 +6308,7 @@ const TEAMS = {
         "ability": "Sand Veil",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Earthquake", "Dragon Claw", "Rock Slide", "Protect"],
         "tera": "Ground",
@@ -6315,7 +6320,7 @@ const TEAMS = {
         "ability": "Sand Stream",
         "nature": "Adamant",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Rock Slide", "Low Kick", "Ice Punch", "Protect"],
         "tera": "Rock",
@@ -6327,7 +6332,7 @@ const TEAMS = {
         "ability": "Shadow Tag",
         "nature": "Timid",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Shadow Ball", "Sludge Wave", "Focus Blast", "Protect"],
         "tera": "Ghost",
@@ -6339,7 +6344,7 @@ const TEAMS = {
         "ability": "Prankster",
         "nature": "Timid",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 4, "spa": 0, "spd": 252, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Moonblast", "Protect", "Tailwind", "Fake Tears"],
         "tera": "Grass",
@@ -6351,7 +6356,7 @@ const TEAMS = {
         "ability": "Levitate",
         "nature": "Bold",
         "nature_source": "archetype_default",
-        "evs": {"hp": 252, "atk": 0, "def": 252, "spa": 0, "spd": 4, "spe": 0},
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 1, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Hydro Pump", "Volt Switch", "Will-O-Wisp", "Protect"],
         "tera": "Water",
@@ -6363,7 +6368,7 @@ const TEAMS = {
         "ability": "Unburden",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
         "tera": "Fighting",
@@ -6408,7 +6413,7 @@ const TEAMS = {
         "ability": "Limber",
         "nature": "Jolly",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 252, "def": 0, "spa": 0, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Fake Out", "Encore", "Protect"],
         "tera": "Normal",
@@ -6433,7 +6438,7 @@ const TEAMS = {
         "ability": "Snow Warning",
         "nature": "Modest",
         "nature_source": "archetype_default",
-        "evs": {"hp": 4, "atk": 0, "def": 0, "spa": 252, "spd": 0, "spe": 252},
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Blizzard", "Icy Wind", "Freeze-Dry", "Ice Shard"],
         "tera": "Ice",
@@ -8398,11 +8403,31 @@ function detectSpreadStatFormat(evs) {
 }
 
 function spreadFitsChampions(evs) {
-  const vals = Object.values(evs || {});
-  if (vals.length === 0) return true;
-  const total = vals.reduce((a, b) => a + b, 0);
-  const max = Math.max(...vals);
-  return max <= 32 && total <= 66;
+  return validateChampionsSpread(evs).length === 0;
+}
+
+function validateChampionsSpread(evs, label = 'Pokemon') {
+  const errors = [];
+  if (evs != null && (typeof evs !== 'object' || Array.isArray(evs))) {
+    return [`${label}: Champion SP spread must be a stat object (hp/atk/def/spa/spd/spe).`];
+  }
+  const spread = evs || {};
+  const statKeys = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'];
+  let total = 0;
+  for (const stat of statKeys) {
+    const raw = spread[stat] == null ? 0 : spread[stat];
+    const val = Number(raw);
+    if (!Number.isFinite(val)) {
+      errors.push(`${label}: ${stat} SP is not a number (got ${raw})`);
+      continue;
+    }
+    if (!Number.isInteger(val)) errors.push(`${label}: ${stat} SP must be an integer (got ${val})`);
+    total += val;
+    if (val > 32) errors.push(`${label}: ${stat} SP exceeds 32 (got ${val}) [champions format]`);
+    if (val < 0) errors.push(`${label}: ${stat} SP is negative (got ${val})`);
+  }
+  if (total > 66) errors.push(`${label}: SPs exceed 66 (got ${total}) [champions format]`);
+  return errors;
 }
 
 function resolveMonStatFormat(mon, teamFormat) {
@@ -8427,25 +8452,31 @@ function validateTeam(team, format = 'vgc') {
 
   for (const mon of team.members) {
     const name = mon.name || 'Unknown';
-    const resolved = resolveMonStatFormat(mon, team.format);
+    const declaredFmt = team.format || mon.format || null;
+    const declaredChampions = declaredFmt === 'champions';
+    const resolved = declaredChampions
+      ? { statFormat: 'champions', formatMismatch: false, declaredFormat: declaredFmt }
+      : resolveMonStatFormat(mon, team.format);
     const fmt = resolved.statFormat;
     const caps = fmt === 'champions'
       ? { perStat: 32, total: 66, label: 'SP' }
       : { perStat: 252, total: 510, label: 'EV' };
 
-    if (resolved.formatMismatch) {
-      warnings.push(`${name}: declared Champions but spread is SV-scale, so runtime falls back to SV stat math`);
+    if (declaredChampions) {
+      errors.push(...validateChampionsSpread(mon.evs || {}, name));
+    } else if (resolved.formatMismatch) {
+      errors.push(`${name}: declared Champions but spread is SV-scale; Champion teams must use Stat Points (max 32 per stat, 66 total)`);
     }
 
     // Total cap
     const totalPoints = Object.values(mon.evs || {}).reduce((a, b) => a + b, 0);
-    if (totalPoints > caps.total) {
+    if (!declaredChampions && totalPoints > caps.total) {
       errors.push(`${name}: ${caps.label}s exceed ${caps.total} (got ${totalPoints}) [${fmt} format]`);
     }
     // Individual cap
     for (const [stat, val] of Object.entries(mon.evs || {})) {
-      if (val > caps.perStat) errors.push(`${name}: ${stat} ${caps.label} exceeds ${caps.perStat} (got ${val}) [${fmt} format]`);
-      if (val < 0)            errors.push(`${name}: ${stat} ${caps.label} is negative (got ${val})`);
+      if (!declaredChampions && val > caps.perStat) errors.push(`${name}: ${stat} ${caps.label} exceeds ${caps.perStat} (got ${val}) [${fmt} format]`);
+      if (!declaredChampions && val < 0)            errors.push(`${name}: ${stat} ${caps.label} is negative (got ${val})`);
     }
     // Move count
     if (!mon.moves || mon.moves.length === 0) errors.push(`${name}: no moves defined`);
@@ -18434,9 +18465,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.29-knock-off-guard';
+    return txt || 'v2.1.30-spread-legality-guard';
   } catch (e) {
-    return 'v2.1.29-knock-off-guard';
+    return 'v2.1.30-spread-legality-guard';
   }
 }
 
@@ -18832,7 +18863,23 @@ function buildChampionImportGateErrors(members) {
     if (signals.sawIvsLine) {
       errors.push(name + ': IVs are not configurable in Champions; remove IVs before import.');
     }
-    if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
+    if (typeof validateChampionsSpread === 'function') {
+      errors = errors.concat(validateChampionsSpread((member && member.evs) || {}, name));
+    } else if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
+      errors.push(name + ': SP spread exceeds Champions caps (max 32 per stat, 66 total).');
+    }
+  });
+  return errors;
+}
+
+function getChampionSpreadErrorsForTeam(team) {
+  if (!team || team.format !== 'champions') return [];
+  var errors = [];
+  (team.members || []).forEach(function(member) {
+    var name = member && member.name ? member.name : 'Pokemon';
+    if (typeof validateChampionsSpread === 'function') {
+      errors = errors.concat(validateChampionsSpread((member && member.evs) || {}, name));
+    } else if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
       errors.push(name + ': SP spread exceeds Champions caps (max 32 per stat, 66 total).');
     }
   });
@@ -19500,16 +19547,15 @@ function getTeamLegalityVerdict(teamKey, team) {
   var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
   var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
   var valid = errors.length === 0;
-  var statAware = warnings.some(function(w){ return /runtime falls back to SV stat math/i.test(String(w || '')); });
   return {
     valid: valid,
     inferred: team.legality_status === 'legal_inferred',
-    statAware: statAware,
+    statAware: false,
     errors: errors,
     warnings: warnings,
     label: valid
       ? (team.legality_status === 'legal_inferred'
-          ? (statAware ? 'Legal (inferred SV spreads)' : 'Legal (inferred)')
+          ? 'Legal (inferred)'
           : 'Legal')
       : 'Not legal'
   };
@@ -20495,6 +20541,9 @@ function openEditorForm(idx) {
   if (!team || !Array.isArray(team.members) || !team.members[idx]) return;
   const m = team.members[idx];
   const form = document.getElementById('editor-form');
+  const currentSpTotal = ['hp','atk','def','spa','spd','spe'].reduce(function(sum, stat) {
+    return sum + (parseInt((m.evs || {})[stat], 10) || 0);
+  }, 0);
   const evsHtml = ['hp','atk','def','spa','spd','spe'].map(s=>`
     <div class="form-group">
       <label class="form-label">${s.toUpperCase()}</label>
@@ -20513,7 +20562,8 @@ function openEditorForm(idx) {
     <div id="editor-move-legality">${renderSetEditorMoveLegalityHtml(m)}</div>
     ${renderStatPanelHtml(m)}
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">SPs (max 66 total, 32 per stat)</label>
-    <div class="ev-6col">${evsHtml}</div></div>
+    <div class="ev-6col">${evsHtml}</div>
+    <div class="sp-guard-row"><span id="sp-total-chip">SP ${currentSpTotal}/66</span><span id="sp-guard-status"></span></div></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
       <button class="btn-save" id="save-edits">Save Changes</button>
       <button class="btn-secondary" style="font-size:11px" id="export-this-mon" title="Export full team">
@@ -20528,19 +20578,77 @@ function openEditorForm(idx) {
     var el = document.getElementById('ed-mv-' + i);
     if (el) el.addEventListener('input', function() { refreshEditorMoveLegality(m); });
   });
+  ['hp','atk','def','spa','spd','spe'].forEach(function(stat) {
+    var el = document.getElementById('ev-' + stat);
+    if (el) el.addEventListener('input', refreshEditorSpreadGuard);
+  });
+  refreshEditorSpreadGuard();
+}
+
+function getEditorSpreadFromInputs() {
+  var evs = {};
+  ['hp','atk','def','spa','spd','spe'].forEach(function(stat) {
+    var el = document.getElementById('ev-' + stat);
+    var raw = el ? el.value : '0';
+    var parsed = parseInt(raw, 10);
+    evs[stat] = Number.isFinite(parsed) ? parsed : 0;
+  });
+  return evs;
+}
+
+function refreshEditorSpreadGuard() {
+  var evs = getEditorSpreadFromInputs();
+  var total = ['hp','atk','def','spa','spd','spe'].reduce(function(sum, stat) { return sum + (evs[stat] || 0); }, 0);
+  var chip = document.getElementById('sp-total-chip');
+  var status = document.getElementById('sp-guard-status');
+  var saveBtn = document.getElementById('save-edits');
+  var errors = typeof validateChampionsSpread === 'function'
+    ? validateChampionsSpread(evs, 'This Pokemon')
+    : (total > 66 ? ['This Pokemon: SPs exceed 66 (got ' + total + ') [champions format]'] : []);
+  if (chip) {
+    chip.textContent = 'SP ' + total + '/66';
+    chip.classList.toggle('bad', errors.length > 0);
+  }
+  if (status) {
+    status.textContent = errors.length ? errors[0] : 'Legal Champion spread';
+    status.classList.toggle('bad', errors.length > 0);
+  }
+  if (saveBtn) saveBtn.disabled = errors.length > 0;
+  return { evs: evs, errors: errors };
 }
 
 function saveEdits() {
   if (editingIdx === null) return;
   const team = getEditablePlayerTeam();
   if (!team || !Array.isArray(team.members) || !team.members[editingIdx]) return;
-  const m = team.members[editingIdx];
-  m.item = document.getElementById('ed-item').value.trim();
-  m.ability = document.getElementById('ed-ability').value.trim();
-  m.nature = document.getElementById('ed-nature').value.trim();
-  m.role = document.getElementById('ed-role').value.trim();
-  m.moves = [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean);
-  ['hp','atk','def','spa','spd','spe'].forEach(s => { if (!m.evs) m.evs={}; m.evs[s]=parseInt(document.getElementById(`ev-${s}`)?.value)||0; });
+  var spreadGuard = refreshEditorSpreadGuard();
+  if (spreadGuard.errors.length) return;
+  const editedMember = Object.assign({}, team.members[editingIdx], {
+    item: document.getElementById('ed-item').value.trim(),
+    ability: document.getElementById('ed-ability').value.trim(),
+    nature: document.getElementById('ed-nature').value.trim(),
+    role: document.getElementById('ed-role').value.trim(),
+    moves: [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean),
+    evs: spreadGuard.evs
+  });
+  var candidateMembers = team.members.slice();
+  candidateMembers[editingIdx] = editedMember;
+  var validation = buildImportedTeamValidation(candidateMembers, { name: team.name, format: team.format || 'champions' });
+  if (!validation.valid) {
+    var status = document.getElementById('sp-guard-status');
+    if (status) {
+      status.textContent = validation.errors[0] || 'Team is not legal for Champions.';
+      status.classList.add('bad');
+    }
+    return;
+  }
+  team.members[editingIdx] = editedMember;
+  team.import_warnings = validation.warnings;
+  team.import_errors = validation.errors;
+  team.showdown_source_version = validation.sourceVersion;
+  if (team.source === 'custom' && typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
+  else if (team.source !== 'custom' && typeof savePreloadedOverride === 'function') savePreloadedOverride(currentPlayerKey);
+  if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(currentPlayerKey, team, 'set_editor');
   renderRoster('player-roster', team.members);
   renderTeamsGrid();
   const btn = document.getElementById('save-edits');
@@ -23151,6 +23259,22 @@ function _upsertTeamToDB(teamId, team, source) {
     if (!adapter || !adapter.enabled || typeof adapter.saveTeam !== 'function') {
       return; // Adapter not available or disabled — graceful no-op
     }
+    var guardErrors = [];
+    if (typeof getChampionSpreadErrorsForTeam === 'function') {
+      guardErrors = guardErrors.concat(getChampionSpreadErrorsForTeam(team));
+    }
+    if (typeof validateTeam === 'function') {
+      var verdict = validateTeam(team, 'vgc') || {};
+      guardErrors = guardErrors.concat(verdict.errors || []);
+    }
+    if (guardErrors.length) {
+      UILog.warn('Refusing to persist illegal Champion team to DB', {
+        team_id: teamId,
+        source: source || 'unknown',
+        errors: guardErrors.slice(0, 6)
+      });
+      return;
+    }
 
     var members = (team && Array.isArray(team.members)) ? team.members : [];
     var payload = {
@@ -24142,6 +24266,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Champion SP spread legality guard tightened',
+      detail: 'v2.1.30 converts 32 shipped inferred SV-shaped archetype spreads into legal Champion SP spreads, validates every bundled Champion team at max 32 SP per stat and 66 total, blocks SP-labeled over-cap imports, blocks malformed DB spread payloads, and prevents illegal editor saves or Supabase team upserts.'
+    },
+    {
+      status: 'done',
       title: 'Stable Pokemon identity in sim exports',
       detail: 'Battle snapshots now carry stable roster keys, stable HP maps, bench/active stable keys, and item-consumption state.'
     },
@@ -24250,7 +24379,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.29 Knock Off guard carries the v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Source-truth tests, target bridge coverage, golden battle hashes, DB suites, bundle freshness, service-worker cache guard, damage-stack oracle, speed-stack evidence, Knock Off item-state tests, and strict validation passed locally for this release.'
+      detail: 'v2.1.30 Spread Legality Guard carries the v2.1.29 Knock Off guard and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, speed-stack evidence, Knock Off item-state tests, and strict validation are the local release checks for this build.'
     },
     {
       status: 'validated',
@@ -24261,6 +24390,11 @@ var CS_OVERVIEW_DATA = {
       status: 'validated',
       title: 'Knock Off source-truth behavior is documented',
       detail: 'The release notes now state the Showdown-first rule: legal no-item targets get no boost or removal, removable held items get the boost and post-damage removal, corresponding Mega Stones are protected even before Mega activation, and Sticky Hold blocks removal while preserving the boost.'
+    },
+    {
+      status: 'validated',
+      title: 'Champion SP legality source guard is green',
+      detail: 'Pokemon Showdown Champion validation rejects more than 32 Stat Points per stat and the repo validator caps Champion spreads at 32 per stat and 66 total. A public preview article says 31 per stat, so that source conflict is documented as an open review note while the sim follows Showdown behavior until a stronger Champion source changes it.'
     },
     {
       status: 'validated',
@@ -24302,7 +24436,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'TheYfactora12 main carries v2.1.29 Knock Off guard plus the v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
+      detail: 'TheYfactora12 main carries v2.1.30 Spread Legality Guard plus v2.1.29 Knock Off guard, v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
@@ -24323,8 +24457,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.29 live logs, QA artifact, and sync Alfredo',
-      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
+      title: 'Verify v2.1.30 live logs, QA artifact, and sync Alfredo',
+      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
       status: 'next',
@@ -24334,7 +24468,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Apply Champion item cleanup to live Supabase rows',
-      detail: 'Use the v2.1.23 blocked-row evidence to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
+      detail: 'Use the v2.1.23 item-block evidence and v2.1.30 SP-spread guard to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
     },
     {
       status: 'next',
@@ -24349,7 +24483,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.29 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.30 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, SP legality guard, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',

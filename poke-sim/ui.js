@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.29-knock-off-guard';
+    return txt || 'v2.1.30-spread-legality-guard';
   } catch (e) {
-    return 'v2.1.29-knock-off-guard';
+    return 'v2.1.30-spread-legality-guard';
   }
 }
 
@@ -514,7 +514,23 @@ function buildChampionImportGateErrors(members) {
     if (signals.sawIvsLine) {
       errors.push(name + ': IVs are not configurable in Champions; remove IVs before import.');
     }
-    if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
+    if (typeof validateChampionsSpread === 'function') {
+      errors = errors.concat(validateChampionsSpread((member && member.evs) || {}, name));
+    } else if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
+      errors.push(name + ': SP spread exceeds Champions caps (max 32 per stat, 66 total).');
+    }
+  });
+  return errors;
+}
+
+function getChampionSpreadErrorsForTeam(team) {
+  if (!team || team.format !== 'champions') return [];
+  var errors = [];
+  (team.members || []).forEach(function(member) {
+    var name = member && member.name ? member.name : 'Pokemon';
+    if (typeof validateChampionsSpread === 'function') {
+      errors = errors.concat(validateChampionsSpread((member && member.evs) || {}, name));
+    } else if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
       errors.push(name + ': SP spread exceeds Champions caps (max 32 per stat, 66 total).');
     }
   });
@@ -1182,16 +1198,15 @@ function getTeamLegalityVerdict(teamKey, team) {
   var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
   var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
   var valid = errors.length === 0;
-  var statAware = warnings.some(function(w){ return /runtime falls back to SV stat math/i.test(String(w || '')); });
   return {
     valid: valid,
     inferred: team.legality_status === 'legal_inferred',
-    statAware: statAware,
+    statAware: false,
     errors: errors,
     warnings: warnings,
     label: valid
       ? (team.legality_status === 'legal_inferred'
-          ? (statAware ? 'Legal (inferred SV spreads)' : 'Legal (inferred)')
+          ? 'Legal (inferred)'
           : 'Legal')
       : 'Not legal'
   };
@@ -2177,6 +2192,9 @@ function openEditorForm(idx) {
   if (!team || !Array.isArray(team.members) || !team.members[idx]) return;
   const m = team.members[idx];
   const form = document.getElementById('editor-form');
+  const currentSpTotal = ['hp','atk','def','spa','spd','spe'].reduce(function(sum, stat) {
+    return sum + (parseInt((m.evs || {})[stat], 10) || 0);
+  }, 0);
   const evsHtml = ['hp','atk','def','spa','spd','spe'].map(s=>`
     <div class="form-group">
       <label class="form-label">${s.toUpperCase()}</label>
@@ -2195,7 +2213,8 @@ function openEditorForm(idx) {
     <div id="editor-move-legality">${renderSetEditorMoveLegalityHtml(m)}</div>
     ${renderStatPanelHtml(m)}
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">SPs (max 66 total, 32 per stat)</label>
-    <div class="ev-6col">${evsHtml}</div></div>
+    <div class="ev-6col">${evsHtml}</div>
+    <div class="sp-guard-row"><span id="sp-total-chip">SP ${currentSpTotal}/66</span><span id="sp-guard-status"></span></div></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
       <button class="btn-save" id="save-edits">Save Changes</button>
       <button class="btn-secondary" style="font-size:11px" id="export-this-mon" title="Export full team">
@@ -2210,19 +2229,77 @@ function openEditorForm(idx) {
     var el = document.getElementById('ed-mv-' + i);
     if (el) el.addEventListener('input', function() { refreshEditorMoveLegality(m); });
   });
+  ['hp','atk','def','spa','spd','spe'].forEach(function(stat) {
+    var el = document.getElementById('ev-' + stat);
+    if (el) el.addEventListener('input', refreshEditorSpreadGuard);
+  });
+  refreshEditorSpreadGuard();
+}
+
+function getEditorSpreadFromInputs() {
+  var evs = {};
+  ['hp','atk','def','spa','spd','spe'].forEach(function(stat) {
+    var el = document.getElementById('ev-' + stat);
+    var raw = el ? el.value : '0';
+    var parsed = parseInt(raw, 10);
+    evs[stat] = Number.isFinite(parsed) ? parsed : 0;
+  });
+  return evs;
+}
+
+function refreshEditorSpreadGuard() {
+  var evs = getEditorSpreadFromInputs();
+  var total = ['hp','atk','def','spa','spd','spe'].reduce(function(sum, stat) { return sum + (evs[stat] || 0); }, 0);
+  var chip = document.getElementById('sp-total-chip');
+  var status = document.getElementById('sp-guard-status');
+  var saveBtn = document.getElementById('save-edits');
+  var errors = typeof validateChampionsSpread === 'function'
+    ? validateChampionsSpread(evs, 'This Pokemon')
+    : (total > 66 ? ['This Pokemon: SPs exceed 66 (got ' + total + ') [champions format]'] : []);
+  if (chip) {
+    chip.textContent = 'SP ' + total + '/66';
+    chip.classList.toggle('bad', errors.length > 0);
+  }
+  if (status) {
+    status.textContent = errors.length ? errors[0] : 'Legal Champion spread';
+    status.classList.toggle('bad', errors.length > 0);
+  }
+  if (saveBtn) saveBtn.disabled = errors.length > 0;
+  return { evs: evs, errors: errors };
 }
 
 function saveEdits() {
   if (editingIdx === null) return;
   const team = getEditablePlayerTeam();
   if (!team || !Array.isArray(team.members) || !team.members[editingIdx]) return;
-  const m = team.members[editingIdx];
-  m.item = document.getElementById('ed-item').value.trim();
-  m.ability = document.getElementById('ed-ability').value.trim();
-  m.nature = document.getElementById('ed-nature').value.trim();
-  m.role = document.getElementById('ed-role').value.trim();
-  m.moves = [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean);
-  ['hp','atk','def','spa','spd','spe'].forEach(s => { if (!m.evs) m.evs={}; m.evs[s]=parseInt(document.getElementById(`ev-${s}`)?.value)||0; });
+  var spreadGuard = refreshEditorSpreadGuard();
+  if (spreadGuard.errors.length) return;
+  const editedMember = Object.assign({}, team.members[editingIdx], {
+    item: document.getElementById('ed-item').value.trim(),
+    ability: document.getElementById('ed-ability').value.trim(),
+    nature: document.getElementById('ed-nature').value.trim(),
+    role: document.getElementById('ed-role').value.trim(),
+    moves: [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean),
+    evs: spreadGuard.evs
+  });
+  var candidateMembers = team.members.slice();
+  candidateMembers[editingIdx] = editedMember;
+  var validation = buildImportedTeamValidation(candidateMembers, { name: team.name, format: team.format || 'champions' });
+  if (!validation.valid) {
+    var status = document.getElementById('sp-guard-status');
+    if (status) {
+      status.textContent = validation.errors[0] || 'Team is not legal for Champions.';
+      status.classList.add('bad');
+    }
+    return;
+  }
+  team.members[editingIdx] = editedMember;
+  team.import_warnings = validation.warnings;
+  team.import_errors = validation.errors;
+  team.showdown_source_version = validation.sourceVersion;
+  if (team.source === 'custom' && typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
+  else if (team.source !== 'custom' && typeof savePreloadedOverride === 'function') savePreloadedOverride(currentPlayerKey);
+  if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(currentPlayerKey, team, 'set_editor');
   renderRoster('player-roster', team.members);
   renderTeamsGrid();
   const btn = document.getElementById('save-edits');
@@ -4833,6 +4910,22 @@ function _upsertTeamToDB(teamId, team, source) {
     if (!adapter || !adapter.enabled || typeof adapter.saveTeam !== 'function') {
       return; // Adapter not available or disabled — graceful no-op
     }
+    var guardErrors = [];
+    if (typeof getChampionSpreadErrorsForTeam === 'function') {
+      guardErrors = guardErrors.concat(getChampionSpreadErrorsForTeam(team));
+    }
+    if (typeof validateTeam === 'function') {
+      var verdict = validateTeam(team, 'vgc') || {};
+      guardErrors = guardErrors.concat(verdict.errors || []);
+    }
+    if (guardErrors.length) {
+      UILog.warn('Refusing to persist illegal Champion team to DB', {
+        team_id: teamId,
+        source: source || 'unknown',
+        errors: guardErrors.slice(0, 6)
+      });
+      return;
+    }
 
     var members = (team && Array.isArray(team.members)) ? team.members : [];
     var payload = {
@@ -5824,6 +5917,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Champion SP spread legality guard tightened',
+      detail: 'v2.1.30 converts 32 shipped inferred SV-shaped archetype spreads into legal Champion SP spreads, validates every bundled Champion team at max 32 SP per stat and 66 total, blocks SP-labeled over-cap imports, blocks malformed DB spread payloads, and prevents illegal editor saves or Supabase team upserts.'
+    },
+    {
+      status: 'done',
       title: 'Stable Pokemon identity in sim exports',
       detail: 'Battle snapshots now carry stable roster keys, stable HP maps, bench/active stable keys, and item-consumption state.'
     },
@@ -5932,7 +6030,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.29 Knock Off guard carries the v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Source-truth tests, target bridge coverage, golden battle hashes, DB suites, bundle freshness, service-worker cache guard, damage-stack oracle, speed-stack evidence, Knock Off item-state tests, and strict validation passed locally for this release.'
+      detail: 'v2.1.30 Spread Legality Guard carries the v2.1.29 Knock Off guard and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, speed-stack evidence, Knock Off item-state tests, and strict validation are the local release checks for this build.'
     },
     {
       status: 'validated',
@@ -5943,6 +6041,11 @@ var CS_OVERVIEW_DATA = {
       status: 'validated',
       title: 'Knock Off source-truth behavior is documented',
       detail: 'The release notes now state the Showdown-first rule: legal no-item targets get no boost or removal, removable held items get the boost and post-damage removal, corresponding Mega Stones are protected even before Mega activation, and Sticky Hold blocks removal while preserving the boost.'
+    },
+    {
+      status: 'validated',
+      title: 'Champion SP legality source guard is green',
+      detail: 'Pokemon Showdown Champion validation rejects more than 32 Stat Points per stat and the repo validator caps Champion spreads at 32 per stat and 66 total. A public preview article says 31 per stat, so that source conflict is documented as an open review note while the sim follows Showdown behavior until a stronger Champion source changes it.'
     },
     {
       status: 'validated',
@@ -5984,7 +6087,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'TheYfactora12 main carries v2.1.29 Knock Off guard plus the v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
+      detail: 'TheYfactora12 main carries v2.1.30 Spread Legality Guard plus v2.1.29 Knock Off guard, v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
@@ -6005,8 +6108,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.29 live logs, QA artifact, and sync Alfredo',
-      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
+      title: 'Verify v2.1.30 live logs, QA artifact, and sync Alfredo',
+      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
       status: 'next',
@@ -6016,7 +6119,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Apply Champion item cleanup to live Supabase rows',
-      detail: 'Use the v2.1.23 blocked-row evidence to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
+      detail: 'Use the v2.1.23 item-block evidence and v2.1.30 SP-spread guard to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
     },
     {
       status: 'next',
@@ -6031,7 +6134,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.29 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.30 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, SP legality guard, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',

@@ -40,7 +40,7 @@ T('3. missing local-credentials.js returns empty JavaScript instead of cached ap
 });
 
 T('4. service worker cache is bumped for stale app-shell release fix', () => {
-  truthy(sw.includes('champions-sim-v63-knock-off-guard'), 'CACHE_NAME should be v63 Knock Off guard');
+  truthy(sw.includes('champions-sim-v64-spread-legality-guard'), 'CACHE_NAME should be v64 Spread Legality Guard');
 });
 
 T('5. app shell includes pokemon-champion bundle in network-first detection', () => {

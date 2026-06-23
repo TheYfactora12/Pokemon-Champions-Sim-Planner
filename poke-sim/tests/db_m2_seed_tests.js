@@ -1,4 +1,4 @@
-// db_m2_seed_tests.js — Module 2: Seed suite (19 cases)
+// db_m2_seed_tests.js — Module 2: Seed suite (20 cases)
 // PR: integration/poke-sim-db-m2 → Linear: POK-18
 // Spec: poke-sim/POKE_SIM_DB_INTEGRATION_TDD_PLAN.md §6 Suite-2
 
@@ -79,7 +79,29 @@ function memberRowsForTeam(seedContent, teamId) {
   return n;
 }
 
-describe('Module 2 \u2014 Seed suite (19 cases)', function() {
+function assertChampionSpCapsForSql(sqlContent, label) {
+  var evsRe = /'(\{[^']*?\})'::jsonb/g;
+  var m; var checked = 0;
+  while ((m = evsRe.exec(sqlContent)) !== null) {
+    var blob = m[1];
+    if (!/"hp"\s*:/.test(blob)) continue;
+    var evs;
+    try { evs = JSON.parse(blob); } catch (e) { throw new Error(label + ' invalid EV/SP JSON: ' + blob); }
+    var total = 0;
+    ['hp','atk','def','spa','spd','spe'].forEach(function(k) {
+      var val = Number(evs[k] || 0);
+      total += val;
+      truthy(Number.isInteger(val), label + ' ' + blob + ' has non-integer ' + k);
+      truthy(val >= 0, label + ' ' + blob + ' has negative ' + k);
+      truthy(val <= 32, label + ' ' + blob + ' has ' + k + ' over Champion cap 32');
+    });
+    truthy(total <= 66, label + ' ' + blob + ' has total SP over Champion cap 66');
+    checked++;
+  }
+  truthy(checked > 0, label + ' inspected at least one member spread');
+}
+
+describe('Module 2 \u2014 Seed suite (20 cases)', function() {
 
   T('T-seed-1', function() {
     // db/seed_teams_v2.sql exists
@@ -269,6 +291,12 @@ describe('Module 2 \u2014 Seed suite (19 cases)', function() {
   });
 
   T('T-seed-19', function() {
+    // Generated SQL must never reintroduce SV-scale EVs into Champion team_members.
+    assertChampionSpCapsForSql(readSeed(), 'seed_teams_v2.sql');
+    assertChampionSpCapsForSql(normalizeEol(fs.readFileSync(liveAlignPath, 'utf8')), 'live alignment migration');
+  });
+
+  T('T-seed-20', function() {
     // Live DB smoke test, gated behind RUN_LIVE_DB=1
     if (!process.env.RUN_LIVE_DB) {
       console.log('    \u26A0 LIVE DB test skipped (RUN_LIVE_DB not set)');
