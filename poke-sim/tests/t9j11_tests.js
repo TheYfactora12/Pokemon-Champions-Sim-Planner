@@ -488,6 +488,23 @@ T('15e. raw Showdown EV/IV imports are rejected for Champion mode', () => {
   truthy(validation.errors.some(e => /Life Orb/.test(e)), 'item-pool error missing');
 });
 
+T('15e2. over-cap Champion SP imports are rejected even when labeled SPs', () => {
+  resetTeams();
+  const members = parseShowdownPaste([
+    'Garchomp @ Soft Sand',
+    'Ability: Rough Skin',
+    'Level: 50',
+    'SPs: 252 Atk / 32 Spe / 1 HP',
+    'Jolly Nature',
+    '- Earthquake',
+    '- Protect'
+  ].join('\n'));
+  const validation = buildImportedTeamValidation(members, { format: 'champions' });
+  truthy(!validation.valid, 'over-cap SP import should be invalid');
+  truthy(validation.errors.some(e => /atk SP exceeds 32/.test(e)), 'per-stat SP cap error missing');
+  truthy(validation.errors.some(e => /SPs exceed 66/.test(e)), 'total SP cap error missing');
+});
+
 T('15f. Champion text export uses SPs, not EVs', () => {
   const text = exportTeamToPaste({
     members: [{
@@ -534,6 +551,56 @@ T('15h. stale DB teams cannot replace legal bundled teams', () => {
   });
   eq(res.skipped, 1, 'stale illegal DB team should be blocked');
   eq(TEAMS.champions_arena_1st.members.map(m => m.item).join('|'), before, 'bundled team should remain intact');
+});
+
+T('15i. stale DB teams with illegal Champion SPs cannot replace bundled teams', () => {
+  resetTeams();
+  const before = JSON.stringify(TEAMS.champions_arena_1st.members[0].evs);
+  const res = mergeDbTeamsIntoCatalog({
+    champions_arena_1st: {
+      team_id: 'champions_arena_1st',
+      name: 'Stale DB Bad Spread',
+      format: 'champions',
+      legality_status: 'legal_inferred',
+      members: [{
+        name: 'Garchomp',
+        item: 'Soft Sand',
+        ability: 'Rough Skin',
+        level: 50,
+        nature: 'Jolly',
+        evs: { hp:4, atk:252, def:0, spa:0, spd:0, spe:252 },
+        moves: ['Earthquake', 'Protect']
+      }]
+    }
+  });
+  eq(res.skipped, 1, 'stale DB team with SV-shaped Champion spread should be blocked');
+  eq(JSON.stringify(TEAMS.champions_arena_1st.members[0].evs), before, 'bundled team spread should remain intact');
+  truthy(res.blocked[0].errors.some(e => /SP exceeds 32|SPs exceed 66/.test(e)), 'blocked summary should name SP cap failure');
+});
+
+T('15j. malformed DB spread payloads cannot replace bundled teams', () => {
+  resetTeams();
+  const before = TEAMS.champions_arena_1st.name;
+  const res = mergeDbTeamsIntoCatalog({
+    champions_arena_1st: {
+      team_id: 'champions_arena_1st',
+      name: 'Stale DB String Spread',
+      format: 'champions',
+      legality_status: 'legal_inferred',
+      members: [{
+        name: 'Garchomp',
+        item: 'Soft Sand',
+        ability: 'Rough Skin',
+        level: 50,
+        nature: 'Jolly',
+        evs: '252 Atk / 252 Spe / 4 HP',
+        moves: ['Earthquake', 'Protect']
+      }]
+    }
+  });
+  eq(res.skipped, 1, 'stale DB team with malformed spread should be blocked');
+  eq(TEAMS.champions_arena_1st.name, before, 'bundled team should remain intact');
+  truthy(res.blocked[0].errors.some(e => /SP spread must be a stat object/.test(e)), 'blocked summary should name malformed spread');
 });
 
 // ============================================================

@@ -45,7 +45,23 @@
 // restoring holders that were reduced to 0 HP before faint cleanup.
 // v55-champion-item-sp-gate [2026-06-21] - Positive Champions item allowlist,
 // SP import/export gate, and stale DB-team rejection before selector rebuild.
-const CACHE_NAME = 'champions-sim-v57-ability-mechanics-parity';
+// v58-ability-inventory-parity [2026-06-22] - Curated ability inventory coverage,
+// ability mechanic guards, and source-drift visibility in the Overview tab.
+// v59-target-parity-guard [2026-06-22] - Canonical Showdown target bridge,
+// stale opposing-target retarget guard, and target vocabulary drift tests.
+// v60-overview-truth-notes [2026-06-22] - Overview truth-board updates for
+// current build state, known gaps, and large-run QA log-retention limits.
+// v61-qa-artifact-export [2026-06-22] - Retained-evidence QA artifact export
+// with build/source metadata and explicit browser retention caps.
+// v62-mechanics-stack-guard [2026-06-22] - Type multiplier audit, typed held-item
+// damage boosts, and stat/effective-speed turn-log evidence.
+// v63-knock-off-guard [2026-06-22] - Knock Off removable-item boost/removal,
+// corresponding Mega Stone protection, no-item guard, and Sticky Hold coverage.
+// v64-spread-legality-guard [2026-06-22] - Champion SP caps enforced across
+// bundled teams, import/editor saves, DB merge, and generated seed artifacts.
+// v65-editor-builder-roadmap [2026-06-22] - Overview note for full team-builder UX.
+// v66-tera-blast-parity [2026-06-22] - Tera Blast dynamic type/category parity.
+const CACHE_NAME = 'champions-sim-v66-tera-blast-parity';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

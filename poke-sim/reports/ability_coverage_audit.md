@@ -1,6 +1,6 @@
 # Ability Coverage Audit
 
-Date: 2026-05-24
+Date: 2026-06-22
 
 Scope:
 - curated shipped teams in `data.js` excluding `player` and `custom_*`
@@ -9,85 +9,51 @@ Scope:
 
 Summary:
 - unique curated-team + mega abilities audited: 80
-- already modeled by the engine: 55
-- still unmodeled and classified: 25
+- modeled by the engine: 80
+- still unmodeled and classified: 0
 
 Why this exists:
 - Issue #125 showed repeated review friction around ability gaps being noticed ad hoc.
 - This audit turns that into a maintained inventory with a guard test so new gaps cannot quietly pile up.
+- Coverage here means the ability has an engine path for the current simulator surface. It does not by itself prove full Champion/Showdown behavioral parity for every edge case.
 
-Classification buckets:
-- `passive_or_noop_for_current_sim`
-- `missing_low_impact`
-- `missing_battle_result_impacting`
+Resolved high-impact gaps in this pass:
+- `Shadow Tag`: blocks voluntary pivot/switch attempts for trapped non-Ghost foes.
+- `Gale Wings`: gives Flying moves +1 priority only while the user is at full HP.
+- `Skill Link`: supported multi-hit moves use the maximum hit count.
+- `Stamina`: raises Defense after surviving a damaging hit.
+- `Protean`: changes type once per switch-in before the first eligible move.
+- `Berserk`: raises Special Attack when direct damage crosses the half-HP threshold.
+- `Innards Out`: reflects the target pre-hit HP to the attacker after a direct-damage KO.
+- `Flower Veil`: protects allied Grass Pokemon from opponent stat drops and major status.
+- `Stalwart`: ignores Follow Me / Rage Powder redirection in supported targeting paths.
+- `Mind's Eye`: blocks accuracy drops, ignores target evasion, and lets Normal/Fighting moves hit Ghost targets.
+- `No Guard`, `Compound Eyes`, `Sand Veil`, `Snow Cloak`: route through the shared accuracy gate.
+- `Poison Touch`: contact damage can poison the target.
 
-Highest-priority shipped-team gaps:
-- `Shadow Tag`: changes switch options and perish-style endgames.
-- `Gale Wings`, `Skill Link`, `Stamina`, `Protean`: turn order, multi-hit damage, snowball defense, or type-changing mechanics with matchup impact.
-- `Flower Veil`, `Stalwart`, `Mind's Eye`, `No Guard`: support, targeting, immunity, and accuracy mechanics that can flip matchups.
-
-Implemented after this audit:
-- `Prankster`: real battle priority for status moves, with Dark-type immunity on targeted opposing status.
-- `Armor Tail`: side-wide blocking for opposing priority moves.
-- `Good as Gold`: targeted status immunity.
-- `Magic Bounce`: targeted status reflection back to the user.
-- `Adaptability`: Showdown-aligned STAB handling, including off-type Tera behavior.
-- `Clear Body`, `Competitive`, `Defiant`: opponent-driven stat-drop resolution now flows through a shared anti-Intimidate helper.
-- `Cloud Nine`: effective weather is now centralized, suppressing weather-driven damage, speed, charge-skip, residual, and status gates.
-- `Pixilate`: Showdown-aligned Normal-to-Fairy conversion and boost.
-- `Solar Power`: Showdown-aligned sun damage boost, plus end-of-turn recoil under active sun.
-- `Supreme Overlord`: Showdown-aligned late-game damage scaling from allied faint count.
-- `Tough Claws`: Showdown-aligned contact damage boost.
-- `Strong Jaw`: Showdown-aligned bite move damage boost.
-- `Mega Launcher`: Showdown-aligned pulse move damage boost.
-- `Stance Change`: Aegislash form swap changes battle stats across attacking/protecting lines.
-- `Sturdy`: Showdown-aligned full-HP lethal hit survival.
-- `Unaware`: Showdown-aligned stat-stage ignoring for attacker/defender comparisons.
-- `Rough Skin`: Showdown-aligned contact chip for damaging contact hits, including KO trades.
-- `Blaze`: Showdown-aligned low-HP Fire damage boost.
-- `Overgrow`: Showdown-aligned low-HP Grass damage boost.
-- `Iron Fist`: Showdown-aligned punch move damage boost.
-- `Technician`: Showdown-aligned low-BP move damage boost.
-- `Huge Power`: Showdown-aligned Attack doubling.
-- `Pure Power`: Showdown-aligned Attack doubling.
-- `Sand Force`: Showdown-aligned sand Rock/Ground/Steel damage boost.
-- `Thick Fat`: Showdown-aligned incoming Fire/Ice damage reduction.
-- `Filter`: Showdown-aligned super-effective damage reduction.
-- `Tinted Lens`: Showdown-aligned resisted-hit damage boost.
-- `Earth Eater`: Showdown-aligned Ground immunity and one-quarter max HP recovery on absorbed hits.
-- `Levitate`: Showdown-aligned Ground immunity for non-Flying Levitate users.
-- `Sheer Force`: Showdown-aligned 1.3x secondary-effect move damage boost, with modeled secondary effects suppressed.
-- `Fairy Aura`: Showdown-aligned Fairy damage aura modifier.
-- `Scrappy`: Showdown-aligned Normal/Fighting hits into Ghost targets plus Intimidate immunity.
-- `Infiltrator`: Showdown-aligned screen and Substitute bypass for supported damage/status paths.
-- `Mold Breaker`: Conservative Showdown-aligned bypass for currently modeled defensive ability hooks, defender `Unaware`, `Sturdy`, `Levitate`, and `Earth Eater`.
-
-Lower-priority or no-op examples:
-- `Frisk`: item reveal is effectively already visible in the sim.
-- `Pressure`: PP drain is not modeled, so it has no current battle-math path.
-- `Healer`, `Shell Armor`, `Trace`, `Limber`, `Insomnia`: real mechanics, but narrower current user impact than the top gaps.
-
-Recommended implementation order:
-1. Priority and targeting control
-   - `Shadow Tag`
-2. Turn-order and multi-hit mechanics
-   - `Gale Wings`
-   - `Skill Link`
-3. Defensive and snowball mechanics
-   - `Stamina`
-   - `Innards Out`
-4. Support, accuracy, and targeting mechanics
-   - `Flower Veil`
-   - `Stalwart`
-   - `Mind's Eye`
-   - `No Guard`
+Resolved lower-impact or narrow gaps:
+- `Bulletproof`: blocks ballistic moves using Showdown flags plus local fallbacks.
+- `Mummy`: contact attackers have their ability overwritten after damaging contact.
+- `Shell Armor`: prevents critical hits.
+- `Trace`: copies the first eligible opposing active ability and refreshes derived state.
+- `Limber`: blocks paralysis.
+- `Insomnia`: blocks sleep.
+- `Unnerve`: suppresses opposing berry activation.
+- `Healer`: end-turn chance to cure an active ally status.
+- `Frisk`: explicit current-sim no-op because item reveal is already visible.
+- `Pressure`: explicit current-sim no-op because PP drain is not modeled.
 
 Guardrail:
 - `tests/ability_coverage_audit_tests.js` compares the current unmodeled ability inventory against `tests/fixtures/ability_gap_classification.json`.
 - If a new shipped-team or mega ability is unmodeled and unclassified, the test fails immediately.
+- Former high-impact gaps are now asserted as modeled so they cannot silently fall out of the engine catalog.
+- Golden battle hashes were regenerated after confirming the trace drift came from the new accuracy gate allowing inaccurate moves such as `Head Smash` to miss under deterministic seeds.
 
-Out of scope for this pass:
-- implementing the missing mechanics
-- Supabase changes
-- bundle or deployment changes
-- broad engine rewrite
+Focused coverage:
+- `tests/ability_damage_parity_tests.js`
+- `tests/ability_priority_targeting_tests.js`
+- `tests/ability_coverage_audit_tests.js`
+
+Known trust boundary:
+- The current spread-move accuracy path still uses one shared roll for the move. The new accuracy helper applies ability/stage/weather modifiers to that roll, but full per-target spread accuracy remains a mechanics-parity follow-up.
+- Champion-specific differences must stay as explicit sourced overrides. If Showdown or secondary Champion sources change, the overview should show an update-needed state before any trust claim is upgraded.

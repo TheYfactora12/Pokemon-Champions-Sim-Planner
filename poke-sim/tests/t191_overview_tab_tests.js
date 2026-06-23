@@ -30,6 +30,8 @@ T('1. Overview is a top-level tab and mobile picker option', () => {
 T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'CS_OVERVIEW_DATA');
   inc(ui, 'Sim Truth Gate');
+  inc(ui, 'Knock Off');
+  inc(ui, 'Verified');
   inc(ui, 'Review tab restored');
   inc(ui, 'Live team-load simulation failure fixed');
   inc(ui, 'Lethal Sitrus and Oran timing fixed');
@@ -37,12 +39,28 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Stable Pokemon identity in sim exports');
   inc(ui, 'Move priority aligned with Showdown data');
   inc(ui, 'Showdown primary move metadata for imported teams');
+  inc(ui, 'Target category bridge and stale-target retargeting guarded');
+  inc(ui, 'Runtime naming cheat sheet added');
+  inc(ui, 'Large-run QA artifact export added');
+  inc(ui, 'Type multiplier audit added');
+  inc(ui, 'Typed held-item damage boosts fixed');
+  inc(ui, 'Stat and effective-speed evidence added to exports');
+  inc(ui, 'Knock Off item behavior guarded');
+  inc(ui, 'Champions SP/SV stat format');
+  inc(ui, 'damage_events');
   inc(ui, 'Showdown sync and DB writer staged');
+  inc(ui, 'Curated ability inventory modeled');
   inc(ui, 'Simulation-first direction documented');
   inc(ui, 'Public release milestone map documented');
   inc(ui, 'Live exported logs prove the sim now runs');
   inc(ui, 'Item timing regression reproduced and covered');
-  inc(ui, 'v2.1.23 item/SP/DB-gate changes pending');
+  inc(ui, 'Fresh logs exposed a targeting boundary bug');
+  inc(ui, 'Ability coverage guard is green');
+  inc(ui, 'v2.1.32 Tera Blast Parity carries the v2.1.31 Editor Builder Roadmap');
+  inc(ui, 'Damage stack oracle is green');
+  inc(ui, 'Tera Blast parity is green');
+  inc(ui, 'Knock Off source-truth behavior is documented');
+  inc(ui, 'Turn-order stack evidence is green');
   inc(ui, 'GitHub issue sweep completed');
 });
 
@@ -56,7 +74,10 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Live logs exposed stale DB item drift');
   inc(ui, 'Pokemon data audit has unresolved reviewer risk');
   inc(ui, 'Current Y fork changes are not pushed upstream to Alfredo yet');
-  inc(ui, 'Mechanics parity is broader than the berry fix');
+  inc(ui, 'Mechanics parity is broader than the current ability slice');
+  inc(ui, 'Source refresh needed must be visible before trust claims');
+  inc(ui, 'Full raw thousand-battle retention is still not automatic');
+  inc(ui, 'Team editor is guarded but not a fluid full builder yet');
   inc(ui, 'Alfredo #241');
   inc(ui, 'Life Orb');
   inc(ui, 'showdown_sync_runs');
@@ -65,14 +86,20 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Finish v2.1.23 validation, push Y fork, verify live');
+  inc(ui, 'Verify v2.1.32 live logs, QA artifact, and sync Alfredo');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
   inc(ui, 'Group mechanics parity work by battle system');
+  inc(ui, 'Rebuild editor into full Champion team builder');
   inc(ui, 'Prepare upstream PR to Alfredo after Y fork verification');
+  inc(ui, 'Surface source drift as update needed in Overview');
   inc(ui, 'Recent Fix + Issue Snapshot');
   inc(ui, 'recent-fixes-and-open-issues-2026-06-21.md');
+  inc(ui, 'Move Support Audit');
+  inc(ui, 'move_support_audit.md');
+  inc(ui, 'Type Multiplier Audit');
+  inc(ui, 'type_multiplier_audit.md');
   inc(ui, 'Simulation First');
   inc(ui, 'SIMULATION_FIRST_REALIGNMENT_2026-06-06.md');
   inc(ui, 'Public Release Plan');
@@ -89,6 +116,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'CLOSEOUT_2026-06-06.md');
   inc(ui, 'Showdown DB Plan');
   inc(ui, 'SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md');
+  inc(ui, 'Runtime Naming Cheat Sheet');
+  inc(ui, 'SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md');
   inc(ui, 'SHOWDOWN_SYNC_ARCHITECTURE.md');
 });
 

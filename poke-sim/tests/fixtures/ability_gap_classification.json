@@ -1,114 +1,14 @@
 {
   "_meta": {
     "issue": 125,
-    "date": "2026-05-24",
+    "date": "2026-06-22",
     "scope": "Unmodeled abilities present in curated shipped teams or the Champions mega registry.",
     "categories": [
       "passive_or_noop_for_current_sim",
       "missing_low_impact",
       "missing_battle_result_impacting"
-    ]
+    ],
+    "note": "As of this snapshot the curated-team + mega ability inventory has engine coverage. Pressure and Frisk are explicit current-sim no-ops because PP drain and hidden item reveal do not affect the current battle math."
   },
-  "classifications": {
-    "Berserk": {
-      "category": "missing_battle_result_impacting",
-      "why": "Special Attack boost on HP threshold changes Mega Drampa snowball turns."
-    },
-    "Bulletproof": {
-      "category": "missing_low_impact",
-      "why": "Projectile immunities are real but Mega Chesnaught is not in current shipped teams."
-    },
-    "Compound Eyes": {
-      "category": "missing_battle_result_impacting",
-      "why": "Accuracy boost changes hit rates for status and utility lines."
-    },
-    "Flower Veil": {
-      "category": "missing_battle_result_impacting",
-      "why": "Protects allied Grass types from stat drops and status in supported lines."
-    },
-    "Frisk": {
-      "category": "passive_or_noop_for_current_sim",
-      "why": "Item reveal is already effectively visible in the sim and does not alter battle math."
-    },
-    "Gale Wings": {
-      "category": "missing_battle_result_impacting",
-      "why": "Priority Flying moves change Talonflame turn order and lead pressure."
-    },
-    "Healer": {
-      "category": "missing_low_impact",
-      "why": "End-turn ally status cure can matter, but it is mega-only and relatively narrow."
-    },
-    "Innards Out": {
-      "category": "missing_battle_result_impacting",
-      "why": "Punishes KOs with reflected HP loss and can swing trades."
-    },
-    "Insomnia": {
-      "category": "missing_low_impact",
-      "why": "Sleep immunity matters on Ariados, but it is narrower than the top coverage gaps."
-    },
-    "Limber": {
-      "category": "missing_low_impact",
-      "why": "Paralysis immunity matters, but current exposure is one Mega Lopunny team."
-    },
-    "Mind's Eye": {
-      "category": "missing_battle_result_impacting",
-      "why": "Ghost immunity bypass and accuracy behavior affect Ursaluna-Bloodmoon lines."
-    },
-    "Mummy": {
-      "category": "missing_low_impact",
-      "why": "Ability overwrite on contact is real, but it is less common than the top-tier gaps."
-    },
-    "No Guard": {
-      "category": "missing_battle_result_impacting",
-      "why": "Perfect accuracy changes both move reliability and opposing hit rates."
-    },
-    "Poison Touch": {
-      "category": "missing_battle_result_impacting",
-      "why": "Contact poison chance changes Sneasler chip and status pressure."
-    },
-    "Pressure": {
-      "category": "passive_or_noop_for_current_sim",
-      "why": "PP drain is not modeled, so Pressure has no active mechanical path today."
-    },
-    "Protean": {
-      "category": "missing_battle_result_impacting",
-      "why": "Type-changing on move use radically changes STAB and defensive matchups."
-    },
-    "Sand Veil": {
-      "category": "missing_low_impact",
-      "why": "Weather evasion can matter, but it is narrower and RNG-heavier than core gaps."
-    },
-    "Shadow Tag": {
-      "category": "missing_battle_result_impacting",
-      "why": "Trapping fundamentally changes switch options and perish-style endgames."
-    },
-    "Shell Armor": {
-      "category": "missing_low_impact",
-      "why": "Crit immunity matters, but it is mega-only and less frequent than the top gaps."
-    },
-    "Skill Link": {
-      "category": "missing_battle_result_impacting",
-      "why": "Guaranteeing multihit move counts changes Mega Heracross damage dramatically."
-    },
-    "Snow Cloak": {
-      "category": "missing_low_impact",
-      "why": "Weather evasion can matter, but it is narrower and RNG-heavier than core gaps."
-    },
-    "Stalwart": {
-      "category": "missing_battle_result_impacting",
-      "why": "Ignoring redirection changes doubles targeting for Mega Skarmory."
-    },
-    "Stamina": {
-      "category": "missing_battle_result_impacting",
-      "why": "Defense boosts on hit change Archaludon survivability over multi-hit turns."
-    },
-    "Trace": {
-      "category": "missing_low_impact",
-      "why": "Copied-ability edge cases can matter, but all current exposure is mega-only."
-    },
-    "Unnerve": {
-      "category": "missing_low_impact",
-      "why": "Berry suppression matters, but it is narrower than the current top mechanic gaps."
-    }
-  }
+  "classifications": {}
 }

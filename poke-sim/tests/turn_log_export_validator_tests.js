@@ -212,6 +212,135 @@ function stripStableFields(payload) {
     truthy(res.findings.some(f => f.code === 'observed-action-order-mismatch' && f.reason === 'speed'), 'missing speed order mismatch');
   });
 
+  T('8. speed_order_details provide SP-aware order evidence over legacy name order', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    const incin = turn.pre.roster.player[0];
+    const milotic = turn.pre.roster.opponent[0];
+    turn.pre.speed_order = ['Milotic', 'Incineroar'];
+    turn.pre.speed_order_details = [{
+      pokemon: 'Incineroar',
+      key: incin.key,
+      stableKey: incin.stableKey,
+      stat_format: 'champions',
+      nature: 'Jolly',
+      speed_points: 32,
+      species_base_speed: 60,
+      base_speed: 112,
+      calculated_speed: 112,
+      speed_stage: 0,
+      effective_speed: 112,
+      item: 'Sitrus Berry',
+      ability: 'Intimidate',
+      status: '',
+      tailwind: false,
+      exact_speed_tie: false
+    }, {
+      pokemon: 'Milotic',
+      key: milotic.key,
+      stableKey: milotic.stableKey,
+      stat_format: 'champions',
+      nature: 'Hardy',
+      speed_points: 0,
+      species_base_speed: 81,
+      base_speed: 101,
+      calculated_speed: 101,
+      speed_stage: 0,
+      effective_speed: 101,
+      item: 'Life Orb',
+      ability: 'Competitive',
+      status: '',
+      tailwind: false,
+      exact_speed_tie: false
+    }];
+    turn.actions.player[0].move = 'Knock Off';
+    turn.events = [
+      { type: 'log', text: 'Incineroar used Knock Off!' },
+      { type: 'log', text: 'Milotic used Scald!' }
+    ];
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+  });
+
+  T('9. malformed speed_order_details fail validation', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    turn.pre.speed_order_details = [{
+      pokemon: 'Incineroar',
+      key: 'player:active:99:Missingno',
+      effective_speed: 'fast'
+    }];
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'speed-detail-key-not-live'), 'missing stale speed detail key error');
+    truthy(res.findings.some(f => f.code === 'speed-detail-missing-effective-speed'), 'missing effective speed error');
+  });
+
+  T('10. calculated damage_events pass validation with modifier evidence', () => {
+    const payload = stableFixture();
+    payload.turnLog[0].damage_events = [{
+      attacker: 'Incineroar',
+      attacker_key: 'player:slot:0:Incineroar',
+      target: 'Milotic',
+      target_key: 'opponent:slot:0:Milotic',
+      move: 'Knock Off',
+      damage_kind: 'calculated',
+      damage: 44,
+      target_hp_before: 160,
+      target_hp_after: 116,
+      target_max_hp: 170,
+      move_type: 'Dark',
+      category: 'physical',
+      type_effectiveness: 1,
+      critical: false,
+      base_power_initial: 65,
+      base_power_modified: 65,
+      attack_stat_key: 'atk',
+      defense_stat_key: 'def',
+      attack_stat_stage: 0,
+      defense_stat_stage: 0,
+      attack_stat_stage_used: 0,
+      defense_stat_stage_used: 0,
+      attack_stat_value: 135,
+      defense_stat_value: 100,
+      attacker_stat_format: 'champions',
+      defender_stat_format: 'champions',
+      typed_item_boost: false,
+      typed_item_boost_mod: 4096,
+      spread_mod: 4096,
+      weather_mod: 4096,
+      screen_mod: 4096,
+      stab_mod: 6144,
+      final_mod: 4096,
+      status_penalty: false,
+      roll: 1,
+      weather: 'none',
+      terrain: 'none'
+    }];
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+  });
+
+  T('11. malformed calculated damage_events fail validation', () => {
+    const payload = stableFixture();
+    payload.turnLog[0].damage_events = [{
+      attacker: 'Incineroar',
+      target: 'Milotic',
+      move: 'Knock Off',
+      damage_kind: 'calculated',
+      damage: 'big',
+      target_hp_before: 160,
+      target_hp_after: 116,
+      target_max_hp: 170,
+      move_type: '',
+      category: '',
+      type_effectiveness: 'strong'
+    }];
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'damage-event-missing-number'), 'missing damage number error');
+    truthy(res.findings.some(f => f.code === 'damage-calc-missing-number'), 'missing calculated numeric error');
+    truthy(res.findings.some(f => f.code === 'damage-calc-missing-field'), 'missing calculated field error');
+  });
+
   console.log('\nturn log export validator:', pass + ' pass, ' + fail + ' fail\n');
   process.exit(fail ? 1 : 0);
 })().catch(err => {

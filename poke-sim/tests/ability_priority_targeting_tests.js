@@ -18,7 +18,15 @@ function load(file) {
 
 load('data.js');
 load('engine.js');
-vm.runInContext('this.simulateBattle = simulateBattle; this.Pokemon = Pokemon; this.Field = Field;', ctx);
+vm.runInContext([
+  'this.simulateBattle = simulateBattle;',
+  'this.Pokemon = Pokemon;',
+  'this.Field = Field;',
+  'this.getPriority = getPriority;',
+  'this._moveHits = _moveHits;',
+  'this.canInflictStatus = canInflictStatus;',
+  'this._applyTargetStageMap = _applyTargetStageMap;'
+].join('\n'), ctx);
 
 let pass = 0;
 let fail = 0;
@@ -40,6 +48,22 @@ function truthy(v, msg) {
 
 function falsy(v, msg) {
   if (v) throw new Error(msg || 'expected falsy');
+}
+
+function eq(actual, expected, msg) {
+  if (actual !== expected) throw new Error((msg || 'not equal') + ' expected=' + JSON.stringify(expected) + ' got=' + JSON.stringify(actual));
+}
+
+function member(name, overrides) {
+  return Object.assign({
+    name,
+    level: 50,
+    item: '',
+    ability: '',
+    nature: 'Serious',
+    moves: ['Tackle'],
+    evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+  }, overrides || {});
 }
 
 function team(members) {
@@ -374,6 +398,165 @@ T('12. Scrappy ignores Intimidate Attack drops when active on entry', function()
     'Scrappy should ignore Intimidate');
   falsy(battle.log.some(line => String(line).includes("Kangaskhan's Attack fell!")),
     'Scrappy target should not receive the Intimidate Attack drop');
+});
+
+T('13. Gale Wings gives Flying moves priority only at full HP', function() {
+  const talonflame = new ctx.Pokemon(member('Talonflame', {
+    ability: 'Gale Wings',
+    moves: ['Tailwind']
+  }), '', 'champions');
+  eq(ctx.getPriority('Tailwind', talonflame), 1, 'full HP Gale Wings Tailwind priority');
+  talonflame.hp -= 1;
+  eq(ctx.getPriority('Tailwind', talonflame), 0, 'chipped Gale Wings Tailwind priority');
+});
+
+T('14. Flower Veil blocks opponent stat drops and status on allied Grass Pokemon', function() {
+  const field = new ctx.Field({ format: 'doubles' });
+  const source = new ctx.Pokemon(member('Incineroar', { ability: 'Intimidate' }), '', 'champions');
+  const grass = new ctx.Pokemon(member('Lilligant', { ability: 'Own Tempo' }), '', 'champions');
+  const veil = new ctx.Pokemon(member('Florges', { ability: 'Flower Veil' }), '', 'champions');
+  source.side = field.oppSide;
+  grass.side = field.playerSide;
+  veil.side = field.playerSide;
+  field.oppSide.activeMons = [source];
+  field.playerSide.activeMons = [grass, veil];
+  const log = [];
+  falsy(ctx._applyTargetStageMap(source, grass, { atk: -1 }, log),
+    'Flower Veil should block the stat drop');
+  eq(grass.statBoosts.atk, 0, 'Flower Veil target Attack stage');
+  truthy(log.some(line => String(line).includes('Flower Veil prevented')),
+    'Flower Veil stat-drop log missing');
+  falsy(ctx.canInflictStatus(grass, 'burn', field, source),
+    'Flower Veil should block opponent-inflicted burn on Grass ally');
+});
+
+T('15. Mind Eye blocks accuracy drops and ignores target evasion', function() {
+  const field = new ctx.Field({ format: 'singles' });
+  const source = new ctx.Pokemon(member('Incineroar'), '', 'champions');
+  const target = new ctx.Pokemon(member('Ursaluna-Bloodmoon', {
+    ability: "Mind's Eye",
+    statBoosts: { eva: 6 }
+  }), '', 'champions');
+  source.side = field.oppSide;
+  target.side = field.playerSide;
+  field.oppSide.activeMons = [source];
+  field.playerSide.activeMons = [target];
+  const log = [];
+  falsy(ctx._applyTargetStageMap(source, target, { acc: -1 }, log),
+    "Mind's Eye should block accuracy drops");
+  eq(target.statBoosts.acc, 0, "Mind's Eye target accuracy stage");
+  truthy(ctx._moveHits(target, source, 'Tackle', field, function() { return 0.99; }, 1.0),
+    "Mind's Eye should ignore evasion boosts when attacking");
+});
+
+T('16. Compound Eyes, No Guard, and weather evasion affect accuracy checks', function() {
+  const field = new ctx.Field({ format: 'singles', weather: 'sand' });
+  const compound = new ctx.Pokemon(member('Butterfree', { ability: 'Compound Eyes' }), '', 'champions');
+  const normal = new ctx.Pokemon(member('Butterfree', { ability: 'Tinted Lens' }), '', 'champions');
+  const neutral = new ctx.Pokemon(member('Pelipper', { ability: 'Keen Eye' }), '', 'champions');
+  const sandVeil = new ctx.Pokemon(member('Garchomp', { ability: 'Sand Veil' }), '', 'champions');
+  compound.side = field.playerSide;
+  normal.side = field.playerSide;
+  neutral.side = field.oppSide;
+  sandVeil.side = field.oppSide;
+  field.playerSide.activeMons = [compound];
+  field.oppSide.activeMons = [neutral, sandVeil];
+  truthy(ctx._moveHits(compound, neutral, 'Sleep Powder', field, function() { return 0.90; }, 0.75),
+    'Compound Eyes should raise Sleep Powder accuracy enough to hit this roll');
+  falsy(ctx._moveHits(normal, sandVeil, 'Tackle', field, function() { return 0.85; }, 1.0),
+    'Sand Veil should lower a normally perfect move enough to miss this roll');
+  normal.ability = 'No Guard';
+  truthy(ctx._moveHits(normal, sandVeil, 'Focus Blast', field, function() { return 0.99; }, 0.70),
+    'No Guard should bypass accuracy');
+});
+
+T('17. Insomnia and Limber block sleep and paralysis status gates', function() {
+  const field = new ctx.Field({ format: 'singles' });
+  const ariados = new ctx.Pokemon(member('Ariados', { ability: 'Insomnia' }), '', 'champions');
+  const lopunny = new ctx.Pokemon(member('Lopunny', { ability: 'Limber' }), '', 'champions');
+  falsy(ctx.canInflictStatus(ariados, 'sleep', field, null), 'Insomnia should block sleep');
+  falsy(ctx.canInflictStatus(lopunny, 'paralysis', field, null), 'Limber should block paralysis');
+});
+
+T('18. Stalwart ignores Follow Me redirection', function() {
+  const playerTeam = team([member('Raichu', {
+    ability: 'Stalwart',
+    nature: 'Modest',
+    moves: ['Thunderbolt'],
+    evs: { hp: 0, atk: 0, def: 0, spa: 32, spd: 0, spe: 32 }
+  })]);
+  const oppTeam = team([member('Clefairy', {
+    ability: 'Friend Guard',
+    moves: ['Follow Me'],
+    evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 32, spe: 0 }
+  }), member('Pelipper', {
+    ability: 'Keen Eye',
+    moves: ['Splash'],
+    evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+  })]);
+  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [77, 78, 79, 80], maxTurns: 1 });
+  falsy(battle.log.some(line => String(line).includes('attack was drawn to Clefairy')),
+    'Stalwart should bypass Follow Me redirection');
+  truthy(battle.log.some(line => String(line).includes('Raichu used Thunderbolt') && String(line).includes('Pelipper')),
+    'Stalwart attack should stay on the intended Pelipper target');
+});
+
+T('19. Shadow Tag blocks voluntary pivoting while a replacement exists', function() {
+  const playerTeam = team([member('Abra', {
+    ability: 'Synchronize',
+    moves: ['Teleport'],
+    evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 }
+  }), member('Pikachu', {
+    ability: 'Static',
+    moves: ['Tackle']
+  })]);
+  const oppTeam = team([member('Gengar-Mega', {
+    ability: 'Shadow Tag',
+    moves: ['Splash'],
+    evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 }
+  })]);
+  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'singles', seed: [81, 82, 83, 84], maxTurns: 1 });
+  truthy(battle.log.some(line => String(line).includes('Abra is trapped by Shadow Tag!')),
+    'Shadow Tag trap log missing');
+  falsy(battle.log.some(line => String(line).includes('Pikachu was sent out!')),
+    'Shadow Tag should prevent the replacement switch');
+});
+
+T('20. Protean changes the user type once before attacking', function() {
+  const battle = ctx.simulateBattle(
+    team([member('Greninja', {
+      ability: 'Protean',
+      nature: 'Modest',
+      moves: ['Ice Beam'],
+      evs: { hp: 0, atk: 0, def: 0, spa: 32, spd: 0, spe: 32 }
+    })]),
+    team([member('Garchomp', {
+      ability: 'Rough Skin',
+      moves: ['Splash'],
+      evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+    })]),
+    { format: 'singles', seed: [85, 86, 87, 88], maxTurns: 1 }
+  );
+  truthy(battle.log.some(line => String(line).includes("Greninja's Protean changed it into the Ice type!")),
+    'Protean type-change log missing');
+});
+
+T('21. Trace copies the first eligible opposing active ability', function() {
+  const battle = ctx.simulateBattle(
+    team([member('Alakazam', {
+      ability: 'Trace',
+      moves: ['Protect'],
+      evs: { hp: 0, atk: 0, def: 0, spa: 32, spd: 0, spe: 32 }
+    })]),
+    team([member('Rotom-Wash', {
+      ability: 'Levitate',
+      moves: ['Splash'],
+      evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 0 }
+    })]),
+    { format: 'singles', seed: [89, 90, 91, 92], maxTurns: 1 }
+  );
+  truthy(battle.log.some(line => String(line).includes("Alakazam traced Rotom-Wash's Levitate!")),
+    'Trace copy log missing');
 });
 
 console.log('\nability priority / targeting:', pass + ' pass, ' + fail + ' fail\n');

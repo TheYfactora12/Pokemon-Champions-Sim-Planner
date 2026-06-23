@@ -151,19 +151,29 @@ T('3. every classification uses an allowed category and a non-empty rationale', 
   });
 });
 
-T('4. known high-impact shipped ability gaps stay marked battle-result-impacting', function() {
+T('4. formerly high-impact shipped ability gaps stay modeled', function() {
   [
-    'Shadow Tag'
+    'Berserk',
+    'Compound Eyes',
+    'Flower Veil',
+    'Gale Wings',
+    'Innards Out',
+    "Mind's Eye",
+    'No Guard',
+    'Poison Touch',
+    'Protean',
+    'Shadow Tag',
+    'Skill Link',
+    'Stalwart',
+    'Stamina'
   ].forEach(function(ability) {
-    const entry = catalog[ability];
-    truthy(entry, ability + ' should be cataloged');
-    eq(entry.category, 'missing_battle_result_impacting', ability + ' should stay high priority');
+    truthy(modeled.has(ability), ability + ' should remain modeled by the engine');
   });
 });
 
-T('5. Pressure and Frisk stay explicitly marked as non-battle-math gaps', function() {
-  eq(catalog.Pressure.category, 'passive_or_noop_for_current_sim', 'Pressure');
-  eq(catalog.Frisk.category, 'passive_or_noop_for_current_sim', 'Frisk');
+T('5. Pressure and Frisk stay modeled as current-sim no-op abilities', function() {
+  truthy(modeled.has('Pressure'), 'Pressure should remain an explicit modeled no-op while PP is unmodeled');
+  truthy(modeled.has('Frisk'), 'Frisk should remain an explicit modeled no-op while items are visible');
 });
 
 const categoryCounts = Object.keys(catalog).reduce(function(acc, ability) {

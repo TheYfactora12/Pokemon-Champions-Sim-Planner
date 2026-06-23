@@ -116,9 +116,19 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.23-champion-item-sp-gate';
+    return txt || 'v2.1.32-tera-blast-parity';
   } catch (e) {
-    return 'v2.1.23-champion-item-sp-gate';
+    return 'v2.1.32-tera-blast-parity';
+  }
+}
+
+function csGetSourceUrl() {
+  try {
+    return (typeof location !== 'undefined' && location.href)
+      || (typeof window !== 'undefined' && window.location && window.location.href)
+      || null;
+  } catch (_e) {
+    return null;
   }
 }
 
@@ -504,7 +514,23 @@ function buildChampionImportGateErrors(members) {
     if (signals.sawIvsLine) {
       errors.push(name + ': IVs are not configurable in Champions; remove IVs before import.');
     }
-    if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
+    if (typeof validateChampionsSpread === 'function') {
+      errors = errors.concat(validateChampionsSpread((member && member.evs) || {}, name));
+    } else if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
+      errors.push(name + ': SP spread exceeds Champions caps (max 32 per stat, 66 total).');
+    }
+  });
+  return errors;
+}
+
+function getChampionSpreadErrorsForTeam(team) {
+  if (!team || team.format !== 'champions') return [];
+  var errors = [];
+  (team.members || []).forEach(function(member) {
+    var name = member && member.name ? member.name : 'Pokemon';
+    if (typeof validateChampionsSpread === 'function') {
+      errors = errors.concat(validateChampionsSpread((member && member.evs) || {}, name));
+    } else if (typeof spreadFitsChampions === 'function' && !spreadFitsChampions((member && member.evs) || {})) {
       errors.push(name + ': SP spread exceeds Champions caps (max 32 per stat, 66 total).');
     }
   });
@@ -1172,16 +1198,15 @@ function getTeamLegalityVerdict(teamKey, team) {
   var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
   var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
   var valid = errors.length === 0;
-  var statAware = warnings.some(function(w){ return /runtime falls back to SV stat math/i.test(String(w || '')); });
   return {
     valid: valid,
     inferred: team.legality_status === 'legal_inferred',
-    statAware: statAware,
+    statAware: false,
     errors: errors,
     warnings: warnings,
     label: valid
       ? (team.legality_status === 'legal_inferred'
-          ? (statAware ? 'Legal (inferred SV spreads)' : 'Legal (inferred)')
+          ? 'Legal (inferred)'
           : 'Legal')
       : 'Not legal'
   };
@@ -2167,6 +2192,9 @@ function openEditorForm(idx) {
   if (!team || !Array.isArray(team.members) || !team.members[idx]) return;
   const m = team.members[idx];
   const form = document.getElementById('editor-form');
+  const currentSpTotal = ['hp','atk','def','spa','spd','spe'].reduce(function(sum, stat) {
+    return sum + (parseInt((m.evs || {})[stat], 10) || 0);
+  }, 0);
   const evsHtml = ['hp','atk','def','spa','spd','spe'].map(s=>`
     <div class="form-group">
       <label class="form-label">${s.toUpperCase()}</label>
@@ -2185,7 +2213,8 @@ function openEditorForm(idx) {
     <div id="editor-move-legality">${renderSetEditorMoveLegalityHtml(m)}</div>
     ${renderStatPanelHtml(m)}
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">SPs (max 66 total, 32 per stat)</label>
-    <div class="ev-6col">${evsHtml}</div></div>
+    <div class="ev-6col">${evsHtml}</div>
+    <div class="sp-guard-row"><span id="sp-total-chip">SP ${currentSpTotal}/66</span><span id="sp-guard-status"></span></div></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
       <button class="btn-save" id="save-edits">Save Changes</button>
       <button class="btn-secondary" style="font-size:11px" id="export-this-mon" title="Export full team">
@@ -2200,19 +2229,77 @@ function openEditorForm(idx) {
     var el = document.getElementById('ed-mv-' + i);
     if (el) el.addEventListener('input', function() { refreshEditorMoveLegality(m); });
   });
+  ['hp','atk','def','spa','spd','spe'].forEach(function(stat) {
+    var el = document.getElementById('ev-' + stat);
+    if (el) el.addEventListener('input', refreshEditorSpreadGuard);
+  });
+  refreshEditorSpreadGuard();
+}
+
+function getEditorSpreadFromInputs() {
+  var evs = {};
+  ['hp','atk','def','spa','spd','spe'].forEach(function(stat) {
+    var el = document.getElementById('ev-' + stat);
+    var raw = el ? el.value : '0';
+    var parsed = parseInt(raw, 10);
+    evs[stat] = Number.isFinite(parsed) ? parsed : 0;
+  });
+  return evs;
+}
+
+function refreshEditorSpreadGuard() {
+  var evs = getEditorSpreadFromInputs();
+  var total = ['hp','atk','def','spa','spd','spe'].reduce(function(sum, stat) { return sum + (evs[stat] || 0); }, 0);
+  var chip = document.getElementById('sp-total-chip');
+  var status = document.getElementById('sp-guard-status');
+  var saveBtn = document.getElementById('save-edits');
+  var errors = typeof validateChampionsSpread === 'function'
+    ? validateChampionsSpread(evs, 'This Pokemon')
+    : (total > 66 ? ['This Pokemon: SPs exceed 66 (got ' + total + ') [champions format]'] : []);
+  if (chip) {
+    chip.textContent = 'SP ' + total + '/66';
+    chip.classList.toggle('bad', errors.length > 0);
+  }
+  if (status) {
+    status.textContent = errors.length ? errors[0] : 'Legal Champion spread';
+    status.classList.toggle('bad', errors.length > 0);
+  }
+  if (saveBtn) saveBtn.disabled = errors.length > 0;
+  return { evs: evs, errors: errors };
 }
 
 function saveEdits() {
   if (editingIdx === null) return;
   const team = getEditablePlayerTeam();
   if (!team || !Array.isArray(team.members) || !team.members[editingIdx]) return;
-  const m = team.members[editingIdx];
-  m.item = document.getElementById('ed-item').value.trim();
-  m.ability = document.getElementById('ed-ability').value.trim();
-  m.nature = document.getElementById('ed-nature').value.trim();
-  m.role = document.getElementById('ed-role').value.trim();
-  m.moves = [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean);
-  ['hp','atk','def','spa','spd','spe'].forEach(s => { if (!m.evs) m.evs={}; m.evs[s]=parseInt(document.getElementById(`ev-${s}`)?.value)||0; });
+  var spreadGuard = refreshEditorSpreadGuard();
+  if (spreadGuard.errors.length) return;
+  const editedMember = Object.assign({}, team.members[editingIdx], {
+    item: document.getElementById('ed-item').value.trim(),
+    ability: document.getElementById('ed-ability').value.trim(),
+    nature: document.getElementById('ed-nature').value.trim(),
+    role: document.getElementById('ed-role').value.trim(),
+    moves: [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean),
+    evs: spreadGuard.evs
+  });
+  var candidateMembers = team.members.slice();
+  candidateMembers[editingIdx] = editedMember;
+  var validation = buildImportedTeamValidation(candidateMembers, { name: team.name, format: team.format || 'champions' });
+  if (!validation.valid) {
+    var status = document.getElementById('sp-guard-status');
+    if (status) {
+      status.textContent = validation.errors[0] || 'Team is not legal for Champions.';
+      status.classList.add('bad');
+    }
+    return;
+  }
+  team.members[editingIdx] = editedMember;
+  team.import_warnings = validation.warnings;
+  team.import_errors = validation.errors;
+  team.showdown_source_version = validation.sourceVersion;
+  if (team.source === 'custom' && typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
+  else if (team.source !== 'custom' && typeof savePreloadedOverride === 'function') savePreloadedOverride(currentPlayerKey);
+  if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(currentPlayerKey, team, 'set_editor');
   renderRoster('player-roster', team.members);
   renderTeamsGrid();
   const btn = document.getElementById('save-edits');
@@ -3337,19 +3424,11 @@ function csRenderTurnLogRows(turnLog, opts) {
 
 function downloadReplayTurnLog(replay) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
-  var sourceUrl = null;
-  try {
-    sourceUrl = (typeof location !== 'undefined' && location.href)
-      || (typeof window !== 'undefined' && window.location && window.location.href)
-      || null;
-  } catch (_e) {
-    sourceUrl = null;
-  }
   var payload = {
     schema_version: 'champions-turn-log-v2',
     exported_at: new Date().toISOString(),
     build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
-    source_url: sourceUrl,
+    source_url: (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null,
     seed: replay.seed || null,
     result: replay.result || null,
     winCondition: replay.winCondition || null,
@@ -4239,6 +4318,136 @@ async function csExportMyDataJson(teamKey) {
   return payload;
 }
 
+function csQaCountResult(bucket, result) {
+  var key = result === 'win' || result === 'loss' || result === 'draw' ? result : 'other';
+  bucket[key] = (bucket[key] || 0) + 1;
+}
+
+function csBuildQaArtifactSummary(simLog, replayCards, teamKey) {
+  var entries = Array.isArray(simLog) ? simLog : [];
+  var replays = Array.isArray(replayCards) ? replayCards : [];
+  var byPair = {};
+  var seriesResults = { win: 0, loss: 0, draw: 0, other: 0 };
+  var gameResults = { win: 0, loss: 0, draw: 0, other: 0 };
+  var replayResults = { win: 0, loss: 0, draw: 0, other: 0 };
+  var teamEntries = 0;
+  var totalGames = 0;
+  var retainedTurnLogs = 0;
+  var truncatedReplayLogs = 0;
+  var latestTs = null;
+
+  for (var i = 0; i < entries.length; i++) {
+    var e = entries[i] || {};
+    if (e.playerKey === teamKey || e.oppKey === teamKey) teamEntries++;
+    var pairKey = (e.playerKey || '?') + '::' + (e.oppKey || '?');
+    byPair[pairKey] = (byPair[pairKey] || 0) + 1;
+    csQaCountResult(seriesResults, e.seriesResult);
+    if (typeof e.ts === 'number' && (!latestTs || e.ts > latestTs)) latestTs = e.ts;
+    var games = Array.isArray(e.games) ? e.games : [];
+    totalGames += games.length;
+    for (var g = 0; g < games.length; g++) {
+      csQaCountResult(gameResults, games[g] && games[g].result);
+    }
+  }
+
+  for (var r = 0; r < replays.length; r++) {
+    var replay = replays[r] || {};
+    csQaCountResult(replayResults, replay.result);
+    if (Array.isArray(replay.turnLog) && replay.turnLog.length) retainedTurnLogs++;
+    if (replay.logTruncated || (typeof replay.logLineCount === 'number' && typeof replay.logShownCount === 'number' && replay.logLineCount > replay.logShownCount)) {
+      truncatedReplayLogs++;
+    }
+  }
+
+  return {
+    total_retained_simlog_entries: entries.length,
+    team_retained_simlog_entries: teamEntries,
+    total_retained_games: totalGames,
+    retained_replay_cards: replays.length,
+    retained_replay_cards_with_turn_logs: retainedTurnLogs,
+    truncated_replay_logs: truncatedReplayLogs,
+    latest_retained_simlog_entry_at: latestTs ? new Date(latestTs).toISOString() : null,
+    series_results: seriesResults,
+    game_results: gameResults,
+    replay_results: replayResults,
+    matchup_pair_counts: byPair
+  };
+}
+
+function csCompactQaReplayCard(replay, playerKey) {
+  var r = replay || {};
+  var log = Array.isArray(r.log) ? r.log : [];
+  var turnLog = Array.isArray(r.turnLog) ? r.turnLog : [];
+  return {
+    id: r.id || null,
+    seed: r.seed || null,
+    playerKey: r.playerKey || playerKey || null,
+    oppKey: r.oppKey || null,
+    result: r.result || null,
+    turns: r.turns || 0,
+    winCondition: r.winCondition || null,
+    trTurns: r.trTurns || 0,
+    twTurns: r.twTurns || 0,
+    logLineCount: (typeof r.logLineCount === 'number') ? r.logLineCount : log.length,
+    logShownCount: (typeof r.logShownCount === 'number') ? r.logShownCount : log.length,
+    logTruncated: !!r.logTruncated,
+    turning_point: r.turning_point || null,
+    position_path: Array.isArray(r.position_path) ? r.position_path : [],
+    turnLog: turnLog,
+    log: log
+  };
+}
+
+async function csBuildQaArtifactExport(teamKey, opts) {
+  var key = teamKey || csGetActivePlayerKey();
+  var options = opts || {};
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[key]) ? TEAMS[key] : null;
+  var adapter = getWindowValue('SupabaseAdapter', null);
+  var localSimLog = (typeof csSimLogGetAll === 'function') ? csSimLogGetAll() : [];
+  var localTeamHistory = (typeof csSimLogForTeamBothSides === 'function') ? csSimLogForTeamBothSides(key) : [];
+  var replayCards = (Array.isArray(allReplays) ? allReplays : []).map(function(replay) {
+    return csCompactQaReplayCard(replay, key);
+  });
+
+  return {
+    schema_version: 'champions-qa-artifact-v1',
+    artifact_type: 'large-run-qa-retained-evidence',
+    exported_at: new Date().toISOString(),
+    build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
+    source_url: (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null,
+    player_team_id: key,
+    player_team_name: team && team.name ? team.name : null,
+    current_format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
+    retention: {
+      scope: 'retained browser evidence',
+      note: 'Normal browser history is intentionally capped. This artifact records all retained local evidence plus the caps that shaped it; it is not proof that only this many battles ran.',
+      max_replay_cards: MAX_REPLAY_CARDS,
+      max_replay_log_lines: MAX_REPLAY_LOG_LINES,
+      max_simlog_total: CS_SIMLOG_MAX_TOTAL,
+      max_simlog_per_pair: CS_SIMLOG_MAX_PER_PAIR,
+      include_replay_cards: options.includeReplayCards !== false,
+      include_sim_log: options.includeSimLog !== false
+    },
+    summary: csBuildQaArtifactSummary(localSimLog, replayCards, key),
+    retained: {
+      sim_log: options.includeSimLog === false ? [] : localSimLog,
+      team_history: options.includeSimLog === false ? [] : localTeamHistory,
+      replay_cards: options.includeReplayCards === false ? [] : replayCards
+    },
+    db: {
+      enabled: !!(adapter && adapter.enabled),
+      note: 'Supabase stores approved source data, teams, overrides, and saved analysis history. The deterministic browser runtime still uses generated/static data plus runtime_data.js for battle execution.'
+    }
+  };
+}
+
+async function csExportQaArtifactJson(teamKey) {
+  var payload = await csBuildQaArtifactExport(teamKey);
+  var ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  _downloadBlob('champions-sim-qa-artifact-' + ts + '.json', 'application/json', JSON.stringify(payload, null, 2));
+  return payload;
+}
+
 // Wire history filter buttons
 document.querySelectorAll('.history-filter-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
@@ -4256,16 +4465,27 @@ document.getElementById('export-history-json-btn')?.addEventListener('click', fu
   });
 });
 
+document.getElementById('export-qa-artifact-json-btn')?.addEventListener('click', function() {
+  csExportQaArtifactJson(csGetActivePlayerKey()).catch(function(e) {
+    UILog.warn('export QA artifact failed', e);
+    alert('Could not export QA artifact: ' + (e && e.message ? e.message : 'unknown error'));
+  });
+});
+
 if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.loadAnalysisHistory = loadAnalysisHistory;
   ChampionsSim.history.renderHistorySection = renderHistorySection;
   ChampionsSim.history.buildMyDataExport = csBuildMyDataExport;
   ChampionsSim.history.exportMyDataJson = csExportMyDataJson;
+  ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
+  ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('loadAnalysisHistory', loadAnalysisHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderHistorySection', renderHistorySection);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildMyDataExport', csBuildMyDataExport);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportMyDataJson', csExportMyDataJson);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaArtifactExport', csBuildQaArtifactExport);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportQaArtifactJson', csExportQaArtifactJson);
 // __M6_HISTORY_END__
 
 // ============================================================
@@ -4689,6 +4909,22 @@ function _upsertTeamToDB(teamId, team, source) {
     var adapter = (typeof window === 'undefined') ? null : window['SupabaseAdapter'];
     if (!adapter || !adapter.enabled || typeof adapter.saveTeam !== 'function') {
       return; // Adapter not available or disabled — graceful no-op
+    }
+    var guardErrors = [];
+    if (typeof getChampionSpreadErrorsForTeam === 'function') {
+      guardErrors = guardErrors.concat(getChampionSpreadErrorsForTeam(team));
+    }
+    if (typeof validateTeam === 'function') {
+      var verdict = validateTeam(team, 'vgc') || {};
+      guardErrors = guardErrors.concat(verdict.errors || []);
+    }
+    if (guardErrors.length) {
+      UILog.warn('Refusing to persist illegal Champion team to DB', {
+        team_id: teamId,
+        source: source || 'unknown',
+        errors: guardErrors.slice(0, 6)
+      });
+      return;
     }
 
     var members = (team && Array.isArray(team.members)) ? team.members : [];
@@ -5646,13 +5882,17 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-06-21',
+  updated: '2026-06-22',
   metrics: [
     { label: 'Sim Truth Gate', value: 'Mechanics first' },
     { label: 'Live Supabase', value: 'Teams + analyses' },
     { label: 'Showdown DB', value: 'Checking...' },
     { label: 'Team Format', value: 'Champion/SP focus' },
-    { label: 'Turn Logs', value: 'Fresh logs clean' }
+    { label: 'Turn Logs', value: 'Structural clean' },
+    { label: 'Target Guard', value: 'Canonical bridge' },
+    { label: 'QA Log Retention', value: 'Capped + artifact' },
+    { label: 'Ability Inventory', value: '80/80 modeled' },
+    { label: 'Knock Off', value: 'Verified' }
   ],
   shipped: [
     {
@@ -5677,6 +5917,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Champion SP spread legality guard tightened',
+      detail: 'v2.1.30 converts 32 shipped inferred SV-shaped archetype spreads into legal Champion SP spreads, validates every bundled Champion team at max 32 SP per stat and 66 total, blocks SP-labeled over-cap imports, blocks malformed DB spread payloads, and prevents illegal editor saves or Supabase team upserts.'
+    },
+    {
+      status: 'done',
       title: 'Stable Pokemon identity in sim exports',
       detail: 'Battle snapshots now carry stable roster keys, stable HP maps, bench/active stable keys, and item-consumption state.'
     },
@@ -5692,6 +5937,41 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Target category bridge and stale-target retargeting guarded',
+      detail: 'v2.1.25 canonicalizes Showdown target strings such as allAdjacentFoes into engine target categories, then retargets dead opposing intended targets to a live opposing slot when the move can still legally hit.'
+    },
+    {
+      status: 'done',
+      title: 'Runtime naming cheat sheet added',
+      detail: 'v2.1.26 documents Showdown target names versus Champion engine categories so future data, DB, and generated-asset work uses the adapter boundary instead of leaking raw source vocabulary into battle logic.'
+    },
+    {
+      status: 'done',
+      title: 'Large-run QA artifact export added',
+      detail: 'v2.1.27 adds a retained-evidence QA export with build ID, source URL, sim-log caps, replay caps, summary counts, retained replay cards, and retained compact sim-log entries so partner test runs do not depend on reading the capped UI by eye.'
+    },
+    {
+      status: 'done',
+      title: 'Type multiplier audit added',
+      detail: 'v2.1.28 adds reports/type_multiplier_audit.md so reviewers can inspect each shipped move user, resolved move type, 4x/2x/1x/0.5x/0.25x/0x roster buckets, declared defensive Tera buckets, and dynamic move-type rules.'
+    },
+    {
+      status: 'done',
+      title: 'Typed held-item damage boosts fixed',
+      detail: 'v2.1.28 applies legal typed held-item boosts such as Charcoal, Mystic Water, Soft Sand, Black Glasses, Spell Tag, Fairy Feather, and Never-Melt Ice as Showdown-style base-power modifiers before final damage.'
+    },
+    {
+      status: 'done',
+      title: 'Stat and effective-speed evidence added to exports',
+      detail: 'v2.1.28 turn snapshots now include stat_boosts, stat_boosts_stable, speed_order_details, and damage_events with Champions SP/SV stat format, nature, Speed points, species base Speed, calculated Speed, speed stage, item, ability, status, weather, Tailwind, Trick Room, effective Speed, exact-speed-tie markers, type effectiveness, typed item boosts, STAB, spread, weather, screen, final modifier, and attack/defense stage evidence.'
+    },
+    {
+      status: 'done',
+      title: 'Knock Off item behavior guarded',
+      detail: 'v2.1.29 aligns Knock Off with Showdown/Bulbapedia behavior for removable held-item damage boost, post-damage item removal, legal no-item targets, corresponding Mega Stone protection before Mega activation, and Sticky Hold removal blocking.'
+    },
+    {
+      status: 'done',
       title: 'Showdown sync and DB writer staged',
       detail: 'The repo has migrations and writer tooling for showdown_sync_runs, showdown_source_files, showdown_entities, and champions_overrides, plus approved-view tests and generated static Showdown assets; runtime consumption of live DB rows remains tracked separately as an open gap.'
     },
@@ -5699,6 +5979,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Exported log validator added',
       detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, and observed priority order.'
+    },
+    {
+      status: 'done',
+      title: 'Curated ability inventory modeled',
+      detail: 'The curated-team plus Champions mega ability audit now reports 80 of 80 abilities modeled, with focused coverage for priority, targeting, accuracy, status immunity, trapping, multi-hit, threshold, contact, crit-prevention, and no-op ability paths.'
     },
     {
       status: 'done',
@@ -5725,7 +6010,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Live exported logs prove the sim now runs',
-      detail: 'Five fresh GitHub Pages turn-log exports from June 21 had no team-load failure, passed the stable turn-log validator with zero warnings, and ended with results matching final alive counts.'
+      detail: 'Fresh GitHub Pages turn-log exports from June 22 have no team-load failure, pass the strict stable turn-log validator with zero warnings, and carry the live source URL for traceability.'
     },
     {
       status: 'validated',
@@ -5739,13 +6024,48 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'CI-style local sweep passed before the current berry patch',
-      detail: 'The previous v2.1.21 team-load fix passed ui_single_sim_smoke.js, DB M3/M4 tests, and the full non-DB suite. The current v2.1.22 patch is covered by focused item tests and needs the full sweep before push.'
+      title: 'Fresh logs exposed a targeting boundary bug',
+      detail: 'The latest logs stayed structurally clean, but deeper replay review found Hyper Voice and stale single-target actions reporting no valid target while another opposing slot was still active. Runtime bridge tests now enumerate every generated Showdown target value, and move registry tests cover spread targeting plus stale opposing-target retargeting.'
+    },
+    {
+      status: 'validated',
+      title: 'Current release checks are green',
+      detail: 'v2.1.32 Tera Blast Parity carries the v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, type multiplier audit, speed-stack evidence, Knock Off item-state tests, and strict validation are the local release checks for this build.'
+    },
+    {
+      status: 'validated',
+      title: 'Damage stack oracle is green',
+      detail: 'showdown_damage_oracle_tests.js now covers Tera Blast before/after Tera, active Tera type, physical/special category selection from boosted Attack vs Special Attack, and DB-style tera_type hydration, alongside terrain, weather, ability, screen, Tera STAB, immunity, item, and spread-sensitive damage cases.'
+    },
+    {
+      status: 'validated',
+      title: 'Tera Blast parity is green',
+      detail: 'v2.1.32 resolves Tera Blast in the engine from battle state: inactive Tera keeps Normal/special behavior, active Tera uses the attacker Tera type, active Tera Blast ignores Normal-conversion abilities such as Pixilate, and active category selects physical only when boosted Attack is greater than boosted Special Attack. The type multiplier audit now expands shipped Tera Blast rows into before-Tera and active-Tera buckets.'
+    },
+    {
+      status: 'validated',
+      title: 'Knock Off source-truth behavior is documented',
+      detail: 'The release notes now state the Showdown-first rule: legal no-item targets get no boost or removal, removable held items get the boost and post-damage removal, corresponding Mega Stones are protected even before Mega activation, and Sticky Hold blocks removal while preserving the boost.'
+    },
+    {
+      status: 'validated',
+      title: 'Champion SP legality source guard is green',
+      detail: 'Pokemon Showdown Champion validation rejects more than 32 Stat Points per stat and the repo validator caps Champion spreads at 32 per stat and 66 total. A public preview article says 31 per stat, so that source conflict is documented as an open review note while the sim follows Showdown behavior until a stronger Champion source changes it.'
+    },
+    {
+      status: 'validated',
+      title: 'Turn-order stack evidence is green',
+      detail: 'turn_order_priority_tests.js now checks SP-aware effective Speed stacks from stat stage, Choice Scarf, Tailwind, and exact-speed ties, while turn_log_export_validator_tests.js still guards observed action order.'
     },
     {
       status: 'validated',
       title: 'Priority and turn-log tests are green',
       detail: 'showdown_priority_drift_tests.js, showdown_approved_data_generator_tests.js, turn_order_priority_tests.js, recoil_faint_turn_log_tests.js, move_support_audit_tests.js, and turn_log_export_validator_tests.js passed after the fixes.'
+    },
+    {
+      status: 'validated',
+      title: 'Ability coverage guard is green',
+      detail: 'ability_coverage_audit_tests.js reports 80/80 curated and mega abilities modeled; ability_damage_parity_tests.js and ability_priority_targeting_tests.js cover the current high-risk behavior paths added in the ability parity slice.'
     },
     {
       status: 'validated',
@@ -5772,19 +6092,34 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'The local main branch has v2.1.23 item/SP/DB-gate changes pending. Push to TheYfactora12 first, verify GitHub Pages, then prepare a reviewed upstream PR to Alfredo.'
+      detail: 'TheYfactora12 main carries v2.1.32 Tera Blast Parity plus v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
-      title: 'Mechanics parity is broader than the berry fix',
-      detail: 'The berry bug is one confirmed timing defect. Remaining parity work still needs grouped checks for damage, targeting, redirection, Protect, speed control, switching, status, items, abilities, and Champions overrides.'
+      title: 'Mechanics parity is broader than the current ability slice',
+      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, and stale opposing-target retarget slices are covered. Remaining parity work still needs grouped checks for redirection, Protect, switching, secondary stat effects, status, items, and Champions overrides.'
+    },
+    {
+      status: 'gap',
+      title: 'Source refresh needed must be visible before trust claims',
+      detail: 'If Showdown sync hashes or Champion secondary sources change, the site should show an update-needed state until the change is reviewed, tested, and either promoted into generated data or documented as a Champions override.'
+    },
+    {
+      status: 'gap',
+      title: 'Full raw thousand-battle retention is still not automatic',
+      detail: 'The sim can run thousands of battles, but normal UI retention is bounded: replay cards cap at 240, raw replay display shows the last 200 lines, stored sim logs cap at 500 total and 100 per matchup pair. The QA artifact now exports retained evidence plus caps; a later artifact-stream mode is still needed if every raw battle log must be preserved.'
+    },
+    {
+      status: 'gap',
+      title: 'Team editor is guarded but not a fluid full builder yet',
+      detail: 'The current edit-team surface now blocks illegal Champion SP saves, but it is still a clunky set editor rather than a fully customizable Champion team builder. Later UX work should support fast add/remove/reorder Pokemon, searchable species/forms/items/abilities/moves, SP sliders with live legality totals, import/export, DB save status, and rollback without breaking sim source truth.'
     }
   ],
   next: [
     {
       status: 'next',
-      title: 'Finish v2.1.23 validation, push Y fork, verify live',
-      detail: 'Run focused and full tests, commit/push to TheYfactora12 main, wait for GitHub Pages, then export fresh live logs that prove stale SV items are no longer selected.'
+      title: 'Verify v2.1.32 live logs, QA artifact, and sync Alfredo',
+      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Tera Blast damage evidence when present, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
       status: 'next',
@@ -5794,7 +6129,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Apply Champion item cleanup to live Supabase rows',
-      detail: 'Use the v2.1.23 blocked-row evidence to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
+      detail: 'Use the v2.1.23 item-block evidence and v2.1.30 SP-spread guard to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
     },
     {
       status: 'next',
@@ -5804,24 +6139,34 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Group mechanics parity work by battle system',
-      detail: 'Continue from exported-log evidence into item timing, damage formula, move targeting, redirection, Protect family, speed control, switching/replacement, status, abilities, and terrain/weather.'
+      detail: 'Continue from exported-log evidence into secondary stat effects, move targeting, redirection, Protect family, switching/replacement, status, abilities, items, and terrain/weather.'
+    },
+    {
+      status: 'next',
+      title: 'Rebuild editor into full Champion team builder',
+      detail: 'After the current sim-truth gates, replace the clunky set editor with a fluid team builder that lets users customize complete Champion teams while preserving legality guardrails, source-truth validation, Supabase persistence, and clean rollback paths.'
     },
     {
       status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.22 and fresh logs pass, open a clean upstream PR with the berry fix, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.32 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, Tera Blast parity, SP legality guard, editor-builder roadmap note, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',
       title: 'Add Showdown oracle release gates',
       detail: 'Use Pokemon Showdown / @smogon/calc / @pkmn-style smoke cases for behavior that cannot be proven from static rows alone, with Champions overrides documented separately.'
+    },
+    {
+      status: 'next',
+      title: 'Surface source drift as update needed in Overview',
+      detail: 'Use Showdown sync run metadata, source file hashes, and reviewed Champion-source notes to mark data or mechanics as update-needed instead of silently trusting stale snapshots.'
     }
   ],
   decisions: [
     {
       status: 'decision',
       title: 'Runtime DB reads vs generated offline bundle',
-      detail: 'Decide whether GitHub Pages should fetch approved rows at runtime or keep Supabase as audit/history while checked-in generated assets remain the offline battle source.'
+      detail: 'Current architecture direction: Supabase stores approved source data, overrides, teams, and audit/history; generated assets and runtime_data.js feed deterministic engine code for offline GitHub Pages reproducibility. Only change this with an explicit reviewed decision.'
     },
     {
       status: 'decision',
@@ -5846,6 +6191,8 @@ var CS_OVERVIEW_DATA = {
   ],
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
+    { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },
+    { label: 'Type Multiplier Audit', href: 'reports/type_multiplier_audit.md' },
     { label: 'Simulation First', href: '../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md' },
     { label: 'Public Release Plan', href: '../docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md' },
     { label: 'Showdown DB Stress Test', href: '../docs/release/SHOWDOWN_DB_WIRING_STRESS_TEST_2026-06-06.md' },
@@ -5854,6 +6201,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Repo Parity Report', href: '../docs/release/REPO_PARITY_REPORT_2026-06-06.md' },
     { label: 'Closeout Note', href: '../docs/release/CLOSEOUT_2026-06-06.md' },
     { label: 'Showdown DB Plan', href: 'docs/SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md' },
+    { label: 'Runtime Naming Cheat Sheet', href: 'docs/SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md' },
     { label: 'Showdown Sync Architecture', href: 'docs/SHOWDOWN_SYNC_ARCHITECTURE.md' },
     { label: 'Spec Index', href: 'docs/SPECS_INDEX.md' }
   ]

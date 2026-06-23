@@ -25,7 +25,8 @@ node tests/mechanics_audit.js      # Mechanics audit — move-rule checks used b
 node tests/move_support_audit_tests.js # Shipped move support coverage + registry completeness guard
 node tests/move_verification_registry_tests.js # First verified move slice: Freeze-Dry, Giga Drain, Rock Tomb, screens
 node tests/ability_coverage_audit_tests.js # Ability coverage inventory + classification guard
-node tests/ability_priority_targeting_tests.js # Prankster, Armor Tail, Good as Gold, Magic Bounce
+node tests/ability_damage_parity_tests.js # Ability damage/KO/contact parity slice
+node tests/ability_priority_targeting_tests.js # Ability priority, targeting, status, and accuracy parity slice
 node tests/t159_mobile_roster_layout_tests.js # Mobile roster layout safeguards
 node tests/t160_distinct_battle_team_tests.js # Battle team selection must stay distinct
 node tests/t161_team_member_uniqueness_tests.js # Catalog teams must not repeat members
@@ -93,6 +94,9 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | mechanics_audit | 20/20 | Core move-rule checks: Protect, Taunt, support leads, Sucker Punch, Feint, shield riders, recovery, sleep, Substitute, Imprison, Ally Switch, Mega weather triggers, slot retargeting, Roost grounding |
 | move_support_audit | 5/5 | Shipped move registry completeness + verified/baseline/imported Showdown support audit |
 | move_verification_registry | 6/6 | First promoted verified move slice with source/test metadata |
+| ability_coverage_audit | 5/5 | Curated-team + mega ability inventory guard, currently 80/80 modeled |
+| ability_damage_parity | 18/18 | Bulletproof, Shell Armor, Berserk, Stamina, Mummy, Innards Out, Skill Link, Unnerve |
+| ability_priority_targeting | 21/21 | Gale Wings, Flower Veil, Mind's Eye, accuracy/evasion, Stalwart, Shadow Tag, Protean, Trace |
 | phase5 | 25/25 | Turn log struct, positionScore, swing-turn delta, Replay Log v2, decision-gap audit |
 | recoil_faint_turn_log | 3/3 | Recoil KOs mark the attacker fainted before replacement snapshots; imported move metadata uses Showdown first |
 | turn_log_export_validator | 7/7 | Exported log checks for stable identity, item drift, key maps, and priority/speed order |
@@ -101,7 +105,7 @@ N=500 node tests/nightly_bring_harness.js    # end-to-end bring picker wiring ch
 | phase6 | 9/9 | PRE/IN/POST coaching voice, banned phrasing linter, RNG gate, footer/proximity |
 | logger | 5/5 | Structured logger, default level, error fields, no raw runtime console calls |
 | export | 4/4 | My Data JSON export for persisted history, reports, and DB analyses |
-| **Total** | **439/439** | |
+| **Total** | **see latest suite output** | Case count changes when focused guards are added; CI output is the source of truth. |
 | audit | 0 JS errors | 5070-battle configured audit matrix |
 
 ## Conventions
@@ -150,6 +154,7 @@ It is intentionally read-only and does not hit live Supabase by default.
 
 When engine/log behavior changes intentionally:
 
+- identify the first behavior-level trace difference and record the reason in the relevant report or issue note
 - regenerate golden battle hashes with `node tests/golden_battles_runner.js --generate`
 - rerun `node tests/db_m7_golden_battles_tests.js`
 - rebuild `pokemon-champion-2026.html` with `python3 tools/build-bundle.py` if app source changed

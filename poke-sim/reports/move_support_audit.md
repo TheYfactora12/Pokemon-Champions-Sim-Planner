@@ -1,11 +1,11 @@
 # Move Support Audit
 
-- Generated at: 2026-06-21T03:29:31.429Z
+- Generated at: 2026-06-23T01:19:53.246Z
 - Source: smogon/pokemon-showdown data/pokedex.ts + learnsets.ts + moves.ts
 - Source version: 3f5079d395ad018f13e8f785a675a13bd4cbf59e (2026-05-24)
 - Shipped distinct moves audited: 120
-- Verified: 72
-- Baseline: 48
+- Verified: 73
+- Baseline: 47
 - Incomplete: 0
 
 `verified` = explicit sim regression coverage exists.
@@ -74,7 +74,7 @@
 | Imprison | verified | yes | Psychic / status / 0 / self / showdown | Psychic / status / 0 / self | Psychic / Status / 0 / self | champions_arena_3rd | Move has dedicated local regression coverage in the simulator test suite. | See existing focused sim regression tests | Local simulator regression suite | Move has dedicated local regression coverage in the simulator test suite. |
 | Iron Head | verified | yes | Steel / physical / 80 / normal / showdown | Steel / physical / 80 / normal | Steel / Physical / 80 / normal | mega_dragonite, rin_sand, sand_bulky_offense, sun_offense_charizard, z2r_feitosa_mega_floette | Deals damage and can flinch the target. | tests/move_verification_registry_tests.js | Bulbapedia: Iron Head move page | Deals damage and can flinch the target. |
 | King's Shield | verified | yes | Steel / status / 0 / self / showdown | Steel / status / 0 / self | Steel / Status / 0 / self | hiroto_imai_snow | Move has dedicated local regression coverage in the simulator test suite. | See existing focused sim regression tests | Local simulator regression suite | Move has dedicated local regression coverage in the simulator test suite. |
-| Knock Off | baseline | no | Dark / physical / 65 / normal / showdown | Dark / physical / 65 / normal | Dark / Physical / 65 / normal | aurora_veil_froslass, player, rin_sand, sand_bulky_offense, swirlingroses_meganium_vivillon |  |  |  | Move has Showdown/base runtime metadata, but no dedicated edge-case regression tag yet. |
+| Knock Off | verified | yes | Dark / physical / 65 / normal / showdown | Dark / physical / 65 / normal | Dark / Physical / 65 / normal | aurora_veil_froslass, player, rin_sand, sand_bulky_offense, swirlingroses_meganium_vivillon | Gets the held-item damage boost only against removable items, removes removable items after damage, leaves legal no-item targets alone, preserves corresponding Mega Stones, and respects Sticky Hold removal blocking. | tests/move_verification_registry_tests.js | Bulbapedia: Knock Off move page, Pokemon Showdown data/moves.ts knockoff | Gets the held-item damage boost only against removable items, removes removable items after damage, leaves legal no-item targets alone, preserves corresponding Mega Stones, and respects Sticky Hold removal blocking. |
 | Kowtow Cleave | baseline | no | Dark / physical / 85 / normal / showdown | Dark / physical / 85 / normal | Dark / Physical / 85 / normal | aurora_veil_froslass, benny_v_mega_froslass, champions_arena_3rd, hiroto_imai_snow, perish_trap_gengar, sand_bulky_offense, sun_offense_charizard, swirlingroses_meganium_vivillon, z2r_feitosa_mega_floette, zardx_snow_setup |  |  |  | Move has Showdown/base runtime metadata, but no dedicated edge-case regression tag yet. |
 | Last Respects | baseline | no | Ghost / physical / 50 / normal / showdown | Ghost / physical / 50 / normal | Ghost / Physical / 50 / normal | benny_v_mega_froslass, fedecampovgc_aerodactyl_ariados, hiroto_imai_snow, mega_dragonite, prro_t_floette_aerodactyl, rain_offense, suica_sun, swirlingroses_meganium_vivillon, z2r_feitosa_mega_floette |  |  |  | Move has Showdown/base runtime metadata, but no dedicated edge-case regression tag yet. |
 | Leaf Storm | baseline | no | Grass / special / 130 / normal / showdown | Grass / special / 130 / normal | Grass / Special / 130 / normal | trick_room_golurk |  |  |  | Move has Showdown/base runtime metadata, but no dedicated edge-case regression tag yet. |

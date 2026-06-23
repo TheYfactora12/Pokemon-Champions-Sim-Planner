@@ -2,7 +2,7 @@
 
 > Goal: make Pokemon Showdown mirrored rows the canonical static data source, then layer Champions-specific overrides on top before generating app assets.
 
-Operational guardrails for preventing drift and improving review/testing are tracked in `../../docs/release/SOURCE_OF_TRUTH_GUARDRAILS_2026-06-19.md`.
+Operational guardrails for preventing drift and improving review/testing are tracked in `../../docs/release/SOURCE_OF_TRUTH_GUARDRAILS_2026-06-19.md`. Runtime naming equivalents are tracked in `SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md`.
 
 ## Why This Plan Exists
 
@@ -28,6 +28,8 @@ The browser may still receive generated JS for offline GitHub Pages support. The
 ## Current Runtime Bridge
 
 As of 2026-06-06, the battle engine treats generated Pokemon Showdown move rows as the primary metadata layer for imported/custom moves. Move type, category, base power, accuracy, priority, target, and contact flags read from `generated/pokemon_showdown_legal_data.js` first when a row exists; local JS tables remain as a fallback for Champions-only/custom gaps until Supabase approved views are live.
+
+As of 2026-06-22, generated Showdown move `target` values are not consumed raw by battle logic. `runtime_data.js` canonicalizes upstream names such as `allAdjacentFoes` into engine categories such as `all-adjacent-foes`; `engine.js` normalizes again at the execution boundary and keeps a tested fallback only for engine-only VM harnesses. This prevents a DB/generated vocabulary change from silently becoming a targeting behavior bug.
 
 As of 2026-06-10, battle construction also prefers generated Showdown species stats/types before local fallback tables. Browser-exported turn logs were checked against the generated species table; all logged species resolved, and a stale Farigiraf fallback stat row was corrected to Showdown's `120/90/70/110/70/60`.
 

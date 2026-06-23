@@ -1,10 +1,13 @@
 // T163 — Export My Data as JSON
 //
-// Coverage targets (4 cases):
+// Coverage targets (7 cases):
 //   1. HTML exposes the export button in the Saved Analyses header.
 //   2. Local export payload includes sim log + cached reports for the active team.
 //   3. DB-backed export payload includes analyses + nested analysis logs.
 //   4. Click handler downloads a JSON file with the expected prefix.
+//   5. HTML exposes the QA artifact export button in the Saved Analyses header.
+//   6. QA artifact documents retention caps, build ID, source URL, and retained evidence.
+//   7. QA artifact click handler downloads a JSON file with the expected prefix.
 
 const fs = require('fs');
 const vm = require('vm');
@@ -109,7 +112,10 @@ vm.runInContext([
   'this.Storage = Storage;',
   'this.teamSignature = teamSignature;',
   'this.csBuildMyDataExport = csBuildMyDataExport;',
-  'this.csExportMyDataJson = csExportMyDataJson;'
+  'this.csExportMyDataJson = csExportMyDataJson;',
+  'this.csBuildQaArtifactExport = csBuildQaArtifactExport;',
+  'this.csExportQaArtifactJson = csExportQaArtifactJson;',
+  'this.addReplays = addReplays;'
 ].join(' '), ctx);
 
 const {
@@ -117,7 +123,10 @@ const {
   Storage,
   teamSignature,
   csBuildMyDataExport,
-  csExportMyDataJson
+  csExportMyDataJson,
+  csBuildQaArtifactExport,
+  csExportQaArtifactJson,
+  addReplays
 } = ctx;
 
 let pass = 0, fail = 0;
@@ -227,6 +236,64 @@ async function main() {
     eq(parsed.schema_version, 1);
     eq(parsed.player_team_id, 'player');
     truthy(payload.db && Array.isArray(payload.db.analyses), 'returned payload malformed');
+  });
+
+  await T('5. index.html exposes the QA artifact export button', () => {
+    const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    truthy(/id="export-qa-artifact-json-btn"/.test(html), 'QA artifact button missing');
+    truthy(/QA Artifact/.test(html), 'QA artifact label missing');
+  });
+
+  await T('6. QA artifact includes retention caps, build, source, and retained evidence', async () => {
+    seedLocalHistory();
+    ctx.window.SupabaseAdapter = { enabled: false };
+    ctx.currentPlayerKey = 'player';
+    addReplays([
+      {
+        seed: 'qa-seed-1',
+        playerKey: 'player',
+        oppKey: 'mega_altaria',
+        result: 'win',
+        turns: 6,
+        winCondition: 'speed control',
+        trTurns: 0,
+        twTurns: 2,
+        log: ['Turn 1', 'Turn 2'],
+        turnLog: [{ turn: 1, actions: { player: [], opponent: [] } }],
+        position_path: [{ turn: 1, position_score: 0.6 }]
+      }
+    ], 'mega_altaria');
+    const payload = await csBuildQaArtifactExport('player');
+    eq(payload.schema_version, 'champions-qa-artifact-v1');
+    eq(payload.artifact_type, 'large-run-qa-retained-evidence');
+    truthy(/^v2\.1\.32-tera-blast-parity/.test(payload.build_id || ''), 'QA build id missing');
+    eq(payload.source_url, 'http://localhost/');
+    eq(payload.retention.max_replay_cards, 240);
+    eq(payload.retention.max_replay_log_lines, 200);
+    eq(payload.retention.max_simlog_total, 500);
+    eq(payload.retention.max_simlog_per_pair, 100);
+    truthy(payload.summary && payload.summary.total_retained_simlog_entries >= 1, 'sim log summary missing');
+    truthy(payload.summary.retained_replay_cards >= 1, 'replay summary missing');
+    truthy(payload.retained && payload.retained.sim_log.length >= 1, 'retained sim log missing');
+    truthy(payload.retained && payload.retained.replay_cards.length >= 1, 'retained replay cards missing');
+    eq(payload.retained.replay_cards[0].seed, 'qa-seed-1');
+  });
+
+  await T('7. QA artifact click downloads a JSON file with the expected prefix', async () => {
+    seedLocalHistory();
+    ctx.window.SupabaseAdapter = { enabled: false };
+    ctx._downloaded = null;
+    ctx._downloadBlob = function(filename, mime, text) {
+      ctx._downloaded = { filename: filename, mime: mime, text: text };
+    };
+    const payload = await csExportQaArtifactJson('player');
+    truthy(ctx._downloaded, 'download not triggered');
+    truthy(/^champions-sim-qa-artifact-/.test(ctx._downloaded.filename), 'unexpected filename');
+    eq(ctx._downloaded.mime, 'application/json');
+    const parsed = JSON.parse(ctx._downloaded.text);
+    eq(parsed.schema_version, 'champions-qa-artifact-v1');
+    eq(parsed.player_team_id, 'player');
+    truthy(payload.summary && payload.retention, 'returned QA payload malformed');
   });
 }
 

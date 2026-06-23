@@ -46,7 +46,7 @@ const championPreloaded = Object.entries(TEAMS).filter(([, team]) =>
   team && team.source === 'preloaded' && team.format === 'champions'
 );
 
-T('1. no preloaded Champions team is invalid solely because inferred spreads are SV-shaped', () => {
+T('1. no preloaded Champions team has an illegal SP spread', () => {
   const offenders = [];
   for (const [key, team] of championPreloaded) {
     const verdict = validateTeam(team, 'vgc');
@@ -58,21 +58,39 @@ T('1. no preloaded Champions team is invalid solely because inferred spreads are
   truthy(offenders.length === 0, JSON.stringify(offenders, null, 2));
 });
 
-T('2. inferred Champions teams with SV-shaped spreads stay stat-aware at runtime', () => {
-  const team = TEAMS.perish_trap_gengar;
-  const mons = buildTeam(team);
-  const mismatched = mons.filter(mon => mon.formatMismatch);
-  truthy(mismatched.length >= 1, 'expected at least one inferred SV-shaped spread');
-  truthy(mismatched.every(mon => mon.statFormat === 'sv'), 'mismatched mons must fall back to SV');
-  const verdict = validateTeam(team, 'vgc');
-  (verdict.errors || []).forEach(err => {
-    notInc(err, 'SPs exceed 66', 'runtime-aware inferred spread still hard-failed on total SP');
-    notInc(err, 'SP exceeds 32', 'runtime-aware inferred spread still hard-failed on per-stat SP');
-  });
-  truthy((verdict.warnings || []).some(w => w.includes('runtime falls back to SV stat math')), 'expected stat-awareness warning');
+T('2. preloaded Champions teams no longer rely on SV-spread runtime fallback', () => {
+  const offenders = [];
+  for (const [key, team] of championPreloaded) {
+    const mons = buildTeam(team);
+    const mismatched = mons.filter(mon => mon.formatMismatch);
+    if (mismatched.length) offenders.push({ key, mismatched: mismatched.map(mon => mon.name) });
+    const verdict = validateTeam(team, 'vgc');
+    if ((verdict.warnings || []).some(w => w.includes('runtime falls back to SV stat math'))) {
+      offenders.push({ key, warnings: verdict.warnings });
+    }
+  }
+  truthy(offenders.length === 0, JSON.stringify(offenders, null, 2));
 });
 
-T('3. true Champions item-pool violations still remain hard errors', () => {
+T('3. declared Champions teams with SV-shaped spreads are hard invalid', () => {
+  const verdict = validateTeam({
+    name: 'Invalid spread fixture',
+    format: 'champions',
+    members: [{
+      name: 'Garchomp',
+      item: 'Soft Sand',
+      ability: 'Rough Skin',
+      nature: 'Jolly',
+      evs: { hp: 4, atk: 252, def: 0, spa: 0, spd: 0, spe: 252 },
+      moves: ['Earthquake', 'Protect']
+    }]
+  }, 'vgc');
+  truthy(!verdict.valid, 'SV-shaped spread must invalidate declared Champions team');
+  truthy((verdict.errors || []).some(err => err.includes('atk SP exceeds 32')), 'per-stat SP error missing');
+  truthy((verdict.errors || []).some(err => err.includes('SPs exceed 66')), 'total SP error missing');
+});
+
+T('4. true Champions item-pool violations still remain hard errors', () => {
   const verdict = validateTeam({
     name: 'Invalid fixture',
     format: 'champions',
@@ -88,7 +106,7 @@ T('3. true Champions item-pool violations still remain hard errors', () => {
   truthy((verdict.errors || []).some(err => err.includes('Life Orb')), 'expected actual item-pool violation to remain');
 });
 
-T('4. preloaded Champions legality tags match the validator', () => {
+T('5. preloaded Champions legality tags match the validator', () => {
   const offenders = [];
   for (const [key, team] of championPreloaded) {
     const verdict = validateTeam(team, 'vgc');
