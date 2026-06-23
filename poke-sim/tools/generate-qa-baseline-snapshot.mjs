@@ -59,6 +59,45 @@ function moveContext(row) {
   return shortDesc || desc || '';
 }
 
+function effectTags(row) {
+  if (!row) return [];
+  const id = moveId(row.move || row.move_name || row.name || row.moveId || '');
+  const context = String(row.context || row.shortDesc || row.short_desc || row.desc || '').toLowerCase();
+  const flags = String(row.flags || '').toLowerCase().split('|').filter(Boolean);
+  const category = String(row.category || '').toLowerCase();
+  const tags = new Set();
+  if (row.recoil) tags.add('recoil');
+  if (/recovers? .*damage dealt|recovers? .*dmg dealt|hp lost by the target/.test(context) ||
+      id === 'gigadrain' || id === 'matchagotcha') tags.add('drain-heal');
+  if (category === 'status' && (flags.includes('heal') || /heals? |restores? .*hp|restores? all of its hp/.test(context))) {
+    tags.add('recovery');
+  }
+  if (/user (?:loses|takes) .*max(?:imum)? hp|in exchange for the user losing/.test(context)) {
+    tags.add('hp-cost');
+  }
+  if (/crash damage|if it misses/.test(context)) tags.add('crash-fail');
+  if (/prevented from healing|recover hp/.test(context) && id === 'psychicnoise') tags.add('healing-block');
+  if (/less power as user's hp decreases|more power the less hp/.test(context)) tags.add('hp-scaled-power');
+  if (id === 'leechseed') tags.add('residual-drain');
+  return [...tags];
+}
+
+function effectMathText(row) {
+  const tags = effectTags(row);
+  const chunks = [];
+  const id = moveId(row.move || row.move_name || row.name || row.moveId || '');
+  if (row.recoil) chunks.push(`recoil ${recoilText(row.recoil)} from applied HP loss`);
+  if (tags.includes('drain-heal')) chunks.push('drain healing uses HP lost by target; Showdown text supplies ratio and rounding');
+  if (tags.includes('recovery')) chunks.push('healing is based on max HP or move-specific text');
+  if (id === 'shedtail') chunks.push('HP cost is 1/2 max HP rounded up; passed Substitute is 1/4 max HP rounded down');
+  else if (tags.includes('hp-cost')) chunks.push('self HP cost is based on user max HP before the effect resolves');
+  if (tags.includes('residual-drain')) chunks.push('end-turn drain/heal uses target max HP');
+  if (tags.includes('crash-fail')) chunks.push('crash/fail damage must be logged separately from attack damage');
+  if (tags.includes('healing-block')) chunks.push('blocks future recovery state instead of dealing direct damage');
+  if (tags.includes('hp-scaled-power')) chunks.push('base power depends on current HP at damage time');
+  return chunks.join('; ') || '-';
+}
+
 function sourceHash() {
   const h = createHash('sha256');
   for (const file of SOURCE_FILES) {
@@ -127,12 +166,18 @@ function supportRow(move) {
     context: moveContext(showdown) || support.effective && support.effective.shortDesc || support.effective && support.effective.desc || '',
     flags: showdown.flags || support.showdown && support.showdown.flags || '',
     tests: support.verification && support.verification.tests ? support.verification.tests.join(', ') : '',
-    notes: support.notes || support.verification && support.verification.summary || ''
+    notes: support.notes || support.verification && support.verification.summary || '',
+    effectTags: [],
+    effectMath: ''
   };
 }
 
 const shippedRows = [...allShippedMoves].sort().map(supportRow);
 const approvedMoveRows = [...approvedMoves].sort().map(supportRow);
+for (const row of shippedRows.concat(approvedMoveRows)) {
+  row.effectTags = effectTags(row);
+  row.effectMath = effectMathText(row);
+}
 const counts = shippedRows.reduce((acc, row) => {
   const level = row.support.supportLevel || 'unknown';
   acc[level] = (acc[level] || 0) + 1;
@@ -188,8 +233,8 @@ for (const [teamKey, team] of approvedTeams) {
 lines.push('');
 lines.push('## Approved Catalog Move Baseline');
 lines.push('');
-lines.push('| Move | Support | Type | Category | Base Power | Accuracy | Priority | Target | Source | Recoil | Showdown Context | Flags | Tests | Notes |');
-lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
+lines.push('| Move | Support | Type | Category | Base Power | Accuracy | Priority | Target | Source | Recoil | Effect Tags | Showdown Context | Flags | Tests | Notes |');
+lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
 for (const row of approvedMoveRows) {
   lines.push([
     row.move,
@@ -202,6 +247,7 @@ for (const row of approvedMoveRows) {
     row.target,
     row.source,
     recoilText(row.recoil),
+    row.effectTags.join(', '),
     row.context,
     row.flags,
     row.tests,
@@ -224,10 +270,26 @@ for (const row of shippedRows.filter(row => row.recoil)) {
   ].map(md).join(' | ').replace(/^/, '| ').replace(/$/, ' |'));
 }
 lines.push('');
+lines.push('## Effect Move QA Context');
+lines.push('');
+lines.push('Use this section to identify moves whose outcome is not explained by base damage alone. Downloaded turn logs should expose damage-tied rows in `damage_events` and non-damage HP changes in `effect_events` when these moves execute.');
+lines.push('');
+lines.push('| Move | Effect Tags | Effect Math / Audit Rule | Showdown Context | Local Coverage |');
+lines.push('| --- | --- | --- | --- | --- |');
+for (const row of shippedRows.filter(row => row.effectTags.length)) {
+  lines.push([
+    row.move,
+    row.effectTags.join(', '),
+    row.effectMath,
+    row.context,
+    row.tests || row.notes
+  ].map(md).join(' | ').replace(/^/, '| ').replace(/$/, ' |'));
+}
+lines.push('');
 lines.push('## All Shipped Move Support Summary');
 lines.push('');
-lines.push('| Move | Support | Type | Category | Base Power | Target | Recoil | Showdown Context | Verification Notes |');
-lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- |');
+lines.push('| Move | Support | Type | Category | Base Power | Target | Recoil | Effect Tags | Showdown Context | Verification Notes |');
+lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
 for (const row of shippedRows) {
   lines.push([
     row.move,
@@ -237,6 +299,7 @@ for (const row of shippedRows) {
     row.basePower,
     row.target,
     recoilText(row.recoil),
+    row.effectTags.join(', '),
     row.context,
     row.notes
   ].map(md).join(' | ').replace(/^/, '| ').replace(/$/, ' |'));

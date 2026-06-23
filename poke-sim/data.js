@@ -4743,7 +4743,7 @@ const MOVE_EFFECTS = {
   'Shore Up': { healFraction: 0.5, sandHealFraction: 2 / 3, failIfFull: true },
   'Rest': { healFraction: 1.0, sleepTurns: 2, curesNonVolatileStatus: true, failIfFull: true },
   'Substitute': { selfHpFraction: 0.25, failIfLowHp: true },
-  'Shed Tail': { selfHpFraction: 0.25 },
+  'Shed Tail': { selfHpFraction: 0.5, selfHpRounding: 'up', substituteHpFraction: 0.25, substituteHpRounding: 'down' },
   'Sleep Talk': { requiresSleep: true, randomCall: true },
   'Ally Switch': { swapsAllyPositions: true },
   'Imprison': { locksSharedMoves: true },

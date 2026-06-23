@@ -59,7 +59,7 @@ For each release that changes engine logic, generated data, legality, runtime da
 - Export one Run All turn log.
 - Export one QA Artifact.
 - Validate logs with `tools/validate-turn-logs.mjs`.
-- Check for team-load failures, stale source URLs, illegal Champion spreads, item drift, missing damage evidence, no-valid-target rows while a live target exists, and missing retained-evidence counts.
+- Check for team-load failures, stale source URLs, illegal Champion spreads, item drift, missing damage evidence, missing `effect_events` evidence for HP-changing effects, no-valid-target rows while a live target exists, and missing retained-evidence counts.
 - Confirm normal selectors and Run All are using only approved Champion-legal teams, not removed legacy or inferred rows.
 
 ## Source Truth Architecture

@@ -1132,6 +1132,61 @@ function _moveRecoilRule(move) {
   return rowRule || MOVE_RECOIL_BY_ID[_moveId(move)] || null;
 }
 
+var MODELED_DRAIN_BY_ID = {
+  gigadrain: { numerator: 1, denominator: 2 },
+  matchagotcha: { numerator: 1, denominator: 2 }
+};
+
+function _moveDrainRule(move) {
+  var rule = MODELED_DRAIN_BY_ID[_moveId(move)];
+  return rule ? { numerator: rule.numerator, denominator: rule.denominator } : null;
+}
+
+function _ratioRuleObject(rule, basis, rounding) {
+  if (!rule) return null;
+  return {
+    numerator: Number(rule.numerator),
+    denominator: Number(rule.denominator),
+    basis: basis || 'applied_damage',
+    rounding: rounding || 'half_up'
+  };
+}
+
+function _ratioAmount(value, rule) {
+  if (!rule) return 0;
+  var amount = Math.round(Number(value || 0) * Number(rule.numerator) / Number(rule.denominator));
+  return Math.max(1, amount);
+}
+
+function _moveContextText(move) {
+  var row = _showdownMoveRow(move);
+  if (!row) return '';
+  return row.shortDesc || row.short_desc || row.desc || '';
+}
+
+function _recordEffectEvent(field, mon, move, kind, hpBefore, hpAfter, details) {
+  if (!field || !field._ctx || !mon) return null;
+  if (!Array.isArray(field._ctx.turnEffectEvents)) field._ctx.turnEffectEvents = [];
+  var side = mon.side === field.playerSide ? 'player' : (mon.side === field.oppSide ? 'opponent' : 'unknown');
+  var before = Number(hpBefore || 0);
+  var after = Number(hpAfter || 0);
+  var row = Object.assign({
+    actor: mon.name || 'Unknown',
+    actor_key: _snapshotMonStableKey(side, mon),
+    side: side,
+    move: move || '',
+    effect_kind: kind || 'effect',
+    hp_before: before,
+    hp_after: after,
+    hp_delta: after - before,
+    max_hp: Number(mon.maxHp || 0),
+    source: 'pokemon-showdown move metadata + engine rule',
+    move_context: _moveContextText(move)
+  }, details || {});
+  field._ctx.turnEffectEvents.push(row);
+  return row;
+}
+
 // ============================================================
 // ABILITIES REGISTRY — T9j.8
 // Each entry declares the hooks an ability participates in. Handlers return
@@ -2579,7 +2634,8 @@ class Field {
       forceNoCrit:false,
       captureDamageCalc:false,
       lastDamageCalc:null,
-      turnDamageEvents:[]
+      turnDamageEvents:[],
+      turnEffectEvents:[]
     };
     // T9j.7 — One Mega per team per match flags. Once set, no further Megas
     // fire for that side for the remainder of the battle.
@@ -3888,9 +3944,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           return;
         }
         const healFrac = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS.Recover && MOVE_EFFECTS.Recover.healFraction) || 0.5;
+        const hpBeforeHeal = attacker.hp;
         const heal = Math.floor(attacker.maxHp * healFrac);
         attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
         log.push(`${attacker.name} regained health with Recover!`);
+        _recordEffectEvent(field, attacker, move, 'recovery', hpBeforeHeal, attacker.hp, {
+          rule: { numerator: 1, denominator: 2, basis: 'max_hp', rounding: 'down' },
+          heal_candidate: heal,
+          heal_applied: Math.max(0, attacker.hp - hpBeforeHeal)
+        });
         return;
       }
       if (move === 'Shore Up') {
@@ -3902,9 +3964,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         const healFrac = _effectiveFieldWeather(field) === 'sand'
           ? (shoreUp.sandHealFraction || (2 / 3))
           : (shoreUp.healFraction || 0.5);
+        const hpBeforeHeal = attacker.hp;
         const heal = Math.floor(attacker.maxHp * healFrac);
         attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
         log.push(`${attacker.name} regained health with Shore Up!`);
+        _recordEffectEvent(field, attacker, move, 'recovery', hpBeforeHeal, attacker.hp, {
+          rule: {
+            numerator: _effectiveFieldWeather(field) === 'sand' ? 2 : 1,
+            denominator: _effectiveFieldWeather(field) === 'sand' ? 3 : 2,
+            basis: 'max_hp',
+            rounding: 'down'
+          },
+          heal_candidate: heal,
+          heal_applied: Math.max(0, attacker.hp - hpBeforeHeal),
+          weather: _effectiveFieldWeather(field)
+        });
         return;
       }
       if (move === 'Rest') {
@@ -3912,6 +3986,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`${attacker.name} used Rest! But it failed!`);
           return;
         }
+        const hpBeforeHeal = attacker.hp;
         attacker.hp = attacker.maxHp;
         attacker.status = 'sleep';
         attacker.statusTurns = ((typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS.Rest && MOVE_EFFECTS.Rest.sleepTurns) || 2);
@@ -3919,6 +3994,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         attacker.toxicCounter = 0;
         attacker.frozenTurns = 0;
         log.push(`${attacker.name} went to sleep with Rest!`);
+        _recordEffectEvent(field, attacker, move, 'full-recovery-status', hpBeforeHeal, attacker.hp, {
+          rule: { basis: 'full_hp_restore', sleep_turns: attacker.statusTurns },
+          heal_candidate: attacker.maxHp - hpBeforeHeal,
+          heal_applied: Math.max(0, attacker.hp - hpBeforeHeal),
+          status_after: attacker.status
+        });
         return;
       }
       if (move === 'Substitute') {
@@ -3928,9 +4009,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`${attacker.name} used Substitute! But it failed!`);
           return;
         }
+        const hpBeforeCost = attacker.hp;
         attacker.substituteHp = subHp;
         attacker.hp -= subHp;
         log.push(`${attacker.name} made a Substitute!`);
+        _recordEffectEvent(field, attacker, move, 'hp-cost', hpBeforeCost, attacker.hp, {
+          rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
+          hp_cost: subHp,
+          substitute_hp: subHp
+        });
         return;
       }
       if (move === 'Sleep Talk') {
@@ -4145,9 +4232,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (move === 'Life Dew') {
         for (const a of allies.filter(a => a.alive)) {
           if (!_canReceiveHealing(a)) continue;
+          const hpBeforeHeal = a.hp;
           const heal = Math.floor(a.maxHp * 0.25);
           a.hp = Math.min(a.maxHp, a.hp + heal);
           log.push(`${a.name} had its HP restored by Life Dew!`);
+          _recordEffectEvent(field, a, move, 'ally-recovery', hpBeforeHeal, a.hp, {
+            source_actor: attacker.name,
+            rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
+            heal_candidate: heal,
+            heal_applied: Math.max(0, a.hp - hpBeforeHeal)
+          });
         }
       }
       if (move === 'Heal Pulse') {
@@ -4158,9 +4252,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`${attacker.name} used Heal Pulse! But it failed!`);
           return;
         }
+        const hpBeforeHeal = healTarget.hp;
         const heal = Math.floor(healTarget.maxHp * 0.5);
         healTarget.hp = Math.min(healTarget.maxHp, healTarget.hp + heal);
         log.push(`${attacker.name} restored HP for ${healTarget.name} with Heal Pulse!`);
+        _recordEffectEvent(field, healTarget, move, 'target-recovery', hpBeforeHeal, healTarget.hp, {
+          source_actor: attacker.name,
+          rule: { numerator: 1, denominator: 2, basis: 'max_hp', rounding: 'down' },
+          heal_candidate: heal,
+          heal_applied: Math.max(0, healTarget.hp - hpBeforeHeal)
+        });
         return;
       }
       if (move === 'Pollen Puff' && target && target.alive && target.side === attacker.side) {
@@ -4168,9 +4269,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`${attacker.name} used Pollen Puff! But it failed!`);
           return;
         }
+        const hpBeforeHeal = target.hp;
         const heal = Math.floor(target.maxHp * 0.5);
         target.hp = Math.min(target.maxHp, target.hp + heal);
         log.push(`${attacker.name} restored HP for ${target.name} with Pollen Puff!`);
+        _recordEffectEvent(field, target, move, 'target-recovery', hpBeforeHeal, target.hp, {
+          source_actor: attacker.name,
+          rule: { numerator: 1, denominator: 2, basis: 'max_hp', rounding: 'down' },
+          heal_candidate: heal,
+          heal_applied: Math.max(0, target.hp - hpBeforeHeal)
+        });
         return;
       }
       if (move === 'Heal Bell' || move === 'Aromatherapy' || move === 'Jungle Healing') {
@@ -4190,8 +4298,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (move === 'Jungle Healing') {
           for (const mon of allies.filter((a) => a.alive)) {
             if (!_canReceiveHealing(mon)) continue;
+            const hpBeforeHeal = mon.hp;
             const heal = Math.floor(mon.maxHp * 0.25);
             if (heal > 0 && mon.hp < mon.maxHp) mon.hp = Math.min(mon.maxHp, mon.hp + heal);
+            _recordEffectEvent(field, mon, move, 'ally-recovery-status', hpBeforeHeal, mon.hp, {
+              source_actor: attacker.name,
+              rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
+              heal_candidate: heal,
+              heal_applied: Math.max(0, mon.hp - hpBeforeHeal),
+              cured_status: true
+            });
           }
           log.push(`${attacker.name} healed its allies with Jungle Healing!`);
         } else {
@@ -4207,11 +4323,18 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`${attacker.name} used Roost! But it failed!`);
           return;
         }
+        const hpBeforeHeal = attacker.hp;
         const heal = Math.floor(attacker.maxHp * 0.5);
         attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
         attacker.roosting = true;
         attacker.flying = attacker.ability === 'Levitate';
         log.push(`${attacker.name} restored HP with Roost!`);
+        _recordEffectEvent(field, attacker, move, 'recovery', hpBeforeHeal, attacker.hp, {
+          rule: { numerator: 1, denominator: 2, basis: 'max_hp', rounding: 'down' },
+          heal_candidate: heal,
+          heal_applied: Math.max(0, attacker.hp - hpBeforeHeal),
+          temporary_grounding: true
+        });
         return;
       }
       if (move === 'Wish') {
@@ -4310,8 +4433,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`${attacker.name} used Clangorous Soul! But it failed!`);
           return;
         }
+        const hpBeforeCost = attacker.hp;
         attacker.hp -= soulCost;
         log.push(`${attacker.name} paid ${soulCost} HP for Clangorous Soul!`);
+        _recordEffectEvent(field, attacker, move, 'hp-cost-stat-boost', hpBeforeCost, attacker.hp, {
+          rule: { numerator: 1, denominator: 3, basis: 'max_hp', rounding: 'down' },
+          hp_cost: soulCost,
+          stat_boosts: { atk: 1, def: 1, spa: 1, spd: 1, spe: 1 }
+        });
         return;
       }
       if (move === 'Trick' && target && target.alive) {
@@ -4366,20 +4495,35 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Shed Tail') {
-        const tailFrac = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS['Shed Tail'] && MOVE_EFFECTS['Shed Tail'].selfHpFraction) || 0.25;
-        const subHp = Math.floor(attacker.maxHp * tailFrac);
+        const tailEffect = (typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS['Shed Tail']) || {};
+        const tailCostFrac = tailEffect.selfHpFraction || 0.5;
+        const tailSubFrac = tailEffect.substituteHpFraction || 0.25;
+        const tailCost = tailEffect.selfHpRounding === 'up'
+          ? Math.ceil(attacker.maxHp * tailCostFrac)
+          : Math.floor(attacker.maxHp * tailCostFrac);
+        const subHp = tailEffect.substituteHpRounding === 'up'
+          ? Math.ceil(attacker.maxHp * tailSubFrac)
+          : Math.floor(attacker.maxHp * tailSubFrac);
         const pivotSide = attacker.side === field.playerSide ? 'player' : 'opp';
         const pivotBench = pivotSide === 'player' ? playerBench : oppBench;
-        if (attacker.substituteHp > 0 || attacker.hp <= subHp || !_chooseBenchReplacement(pivotBench)) {
+        if (attacker.substituteHp > 0 || attacker.hp <= tailCost || !_chooseBenchReplacement(pivotBench)) {
           log.push(`${attacker.name} used Shed Tail! But it failed!`);
           return;
         }
-        attacker.hp -= subHp;
+        const hpBeforeCost = attacker.hp;
+        attacker.hp -= tailCost;
         _switchOutActiveMon(attacker, pivotSide, field, log, {
           silentPivotLog: true,
           incomingSubstituteHp: subHp
         });
         log.push(`${attacker.name} shed its tail and created a Substitute!`);
+        _recordEffectEvent(field, attacker, move, 'hp-cost-pivot-substitute', hpBeforeCost, attacker.hp, {
+          rule: { numerator: 1, denominator: 2, basis: 'max_hp', rounding: 'up' },
+          substitute_rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
+          hp_cost: tailCost,
+          substitute_hp: subHp,
+          pivoted: true
+        });
         return;
       }
       return;
@@ -4410,8 +4554,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           applyDamage(attacker, 'Struggle', _struggleTgt, _stDmg, field, log, rng);
         }
         const _stRecoil = Math.max(1, Math.floor(attacker.maxHp * 0.25));
+        const _stHpBeforeRecoil = attacker.hp;
         attacker.hp = Math.max(0, attacker.hp - _stRecoil);
         log.push(`${attacker.name} is hit by Struggle recoil! [${_stRecoil} dmg]`);
+        _recordEffectEvent(field, attacker, 'Struggle', 'recoil', _stHpBeforeRecoil, attacker.hp, {
+          rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
+          damage_applied_to_user: _stRecoil
+        });
         if (attacker.hp === 0) {
           attacker.alive = false;
           log.push(`${attacker.name} fainted from Struggle recoil!`);
@@ -4447,8 +4596,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       const _stDmg = Math.max(1, Math.floor(_struggleTgt.maxHp * 0.25));
       applyDamage(attacker, 'Struggle', _struggleTgt, _stDmg, field, log, rng);
       const _stRecoil = Math.max(1, Math.floor(attacker.maxHp * 0.25));
+      const _stHpBeforeRecoil = attacker.hp;
       attacker.hp = Math.max(0, attacker.hp - _stRecoil);
       log.push(`${attacker.name} is hit by Struggle recoil! [${_stRecoil} dmg]`);
+      _recordEffectEvent(field, attacker, 'Struggle', 'recoil', _stHpBeforeRecoil, attacker.hp, {
+        rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
+        damage_applied_to_user: _stRecoil
+      });
       if (attacker.hp === 0) {
         attacker.alive = false;
         log.push(`${attacker.name} fainted from Struggle recoil!`);
@@ -5083,7 +5237,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (dmg <= 0) return;
     const calculatedDamage = Math.max(0, Number(dmg) || 0);
     let finalDmg = calculatedDamage;
-    const DRAIN_MOVES = new Set(['Giga Drain', 'Matcha Gotcha']);
+    const drainRule = _moveDrainRule(move);
+    const recoilRuleForEvidence = _moveRecoilRule(move);
+    const moveContext = _moveContextText(move);
+    let damageRow = null;
     // Substitute absorb
     if (target.substituteHp > 0 && !(attacker && attacker.ability === 'Infiltrator')) {
       const substituteHpBefore = target.substituteHp;
@@ -5091,12 +5248,20 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       target.substituteHp -= finalDmg;
       if (target.substituteHp <= 0) { target.substituteHp = 0; log.push(`${target.name}'s Substitute was destroyed!`); }
       else log.push(`${attacker.name} used ${move}! (Substitute absorbed ${substituteDamage} dmg${calculatedDamage !== substituteDamage ? `; calc ${calculatedDamage}` : ''})`);
-      if (DRAIN_MOVES.has(move) && attacker && attacker.alive) {
+      if (drainRule && attacker && attacker.alive) {
         if (_canReceiveHealing(attacker)) {
-          const drainHeal = Math.max(1, Math.floor(substituteDamage / 2));
+          const hpBeforeHeal = attacker.hp;
+          const drainHeal = _ratioAmount(substituteDamage, drainRule);
           const healed = Math.max(0, Math.min(attacker.maxHp, attacker.hp + drainHeal) - attacker.hp);
           attacker.hp += healed;
           if (healed > 0) log.push(`${attacker.name} restored HP with ${move}! [${healed} HP]`);
+          _recordEffectEvent(field, attacker, move, 'drain-heal', hpBeforeHeal, attacker.hp, {
+            rule: _ratioRuleObject(drainRule, 'substitute_damage', 'half_up'),
+            source_damage: substituteDamage,
+            heal_candidate: drainHeal,
+            heal_applied: healed,
+            move_context: moveContext
+          });
         }
       }
       return;
@@ -5159,7 +5324,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target_hp_before: Number(hpBeforeDamage || 0),
         target_hp_after: Number(target.hp || 0),
         target_max_hp: Number(target.maxHp || 0),
-        target_survived: target.hp > 0
+        target_survived: target.hp > 0,
+        move_context: moveContext,
+        effect_tags: []
       }, calcMatches ? calc : {
         move_type: resolvedMoveType,
         category: _moveCategory(move) || 'fixed',
@@ -5176,7 +5343,17 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       row.target_hp_after = Number(target.hp || 0);
       row.target_max_hp = Number(target.maxHp || 0);
       row.target_survived = target.hp > 0;
+      if (drainRule) {
+        row.effect_tags.push('drain');
+        row.drain_rule = _ratioRuleObject(drainRule, 'applied_damage', 'half_up');
+      }
+      if (recoilRuleForEvidence) {
+        row.effect_tags.push('recoil');
+        row.recoil_rule = _ratioRuleObject(recoilRuleForEvidence, 'applied_damage', 'half_up');
+      }
+      if (calculatedDamage !== appliedDamage) row.effect_tags.push('hp-cap');
       field._ctx.turnDamageEvents.push(row);
+      damageRow = row;
       field._ctx.lastDamageCalc = null;
     }
     if (enduredHit) log.push(`${target.name} endured the hit!`);
@@ -5185,12 +5362,29 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (target.hp > 0 && target.ability === 'Berserk' && wasAboveHalf && target.hp <= target.maxHp / 2) {
       _applyStageMap(target, { spa: 1 }, log);
     }
-    if (DRAIN_MOVES.has(move) && attacker && attacker.alive) {
+    if (drainRule && attacker && attacker.alive) {
       if (_canReceiveHealing(attacker)) {
-        const drainHeal = Math.max(1, Math.floor(appliedDamage / 2));
+        const hpBeforeHeal = attacker.hp;
+        const drainHeal = _ratioAmount(appliedDamage, drainRule);
         const healed = Math.max(0, Math.min(attacker.maxHp, attacker.hp + drainHeal) - attacker.hp);
         attacker.hp += healed;
         if (healed > 0) log.push(`${attacker.name} restored HP with ${move}! [${healed} HP]`);
+        if (damageRow) {
+          damageRow.drain_heal_candidate = Number(drainHeal || 0);
+          damageRow.drain_heal_applied = Number(healed || 0);
+          damageRow.drain_hp_before = Number(hpBeforeHeal || 0);
+          damageRow.drain_hp_after = Number(attacker.hp || 0);
+        }
+        _recordEffectEvent(field, attacker, move, 'drain-heal', hpBeforeHeal, attacker.hp, {
+          rule: _ratioRuleObject(drainRule, 'applied_damage', 'half_up'),
+          source_damage: appliedDamage,
+          heal_candidate: drainHeal,
+          heal_applied: healed,
+          damage_event_index: field && field._ctx && Array.isArray(field._ctx.turnDamageEvents)
+            ? field._ctx.turnDamageEvents.length - 1
+            : null,
+          move_context: moveContext
+        });
       }
     }
     // T9j.4 (#41) — Fire-move thaw on hit. Any damaging Fire move thaws target.
@@ -5242,9 +5436,24 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Recoil
     const recoilRule = _moveRecoilRule(move);
     if (recoilRule && attacker && attacker.alive) {
-      const recoil = Math.max(1, Math.round(appliedDamage * recoilRule.numerator / recoilRule.denominator));
+      const hpBeforeRecoil = attacker.hp;
+      const recoil = _ratioAmount(appliedDamage, recoilRule);
       attacker.hp = Math.max(0, attacker.hp - recoil);
       log.push(`${attacker.name} was hurt by recoil! [${recoil} dmg]`);
+      if (damageRow) {
+        damageRow.recoil_damage = Number(recoil || 0);
+        damageRow.recoil_hp_before = Number(hpBeforeRecoil || 0);
+        damageRow.recoil_hp_after = Number(attacker.hp || 0);
+      }
+      _recordEffectEvent(field, attacker, move, 'recoil', hpBeforeRecoil, attacker.hp, {
+        rule: _ratioRuleObject(recoilRule, 'applied_damage', 'half_up'),
+        source_damage: appliedDamage,
+        damage_applied_to_user: recoil,
+        damage_event_index: field && field._ctx && Array.isArray(field._ctx.turnDamageEvents)
+          ? field._ctx.turnDamageEvents.length - 1
+          : null,
+        move_context: moveContext
+      });
       if (attacker.hp === 0) {
         attacker.alive = false;
         log.push(`${attacker.name} fainted!`);
@@ -5378,6 +5587,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     log.push(`--- Turn ${turn} ---`);
     const _turnLogStart = log.length;
     field._ctx.turnDamageEvents = [];
+    field._ctx.turnEffectEvents = [];
     field._ctx.lastDamageCalc = null;
 
     // Clear per-turn flags
@@ -5466,6 +5676,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       actions: _actionSummary(actions),
       events: [],
       damage_events: [],
+      effect_events: [],
       post: null,
       delta: { position_score: 0, win_probability: null, primary_cause: 'none', explanation: '' }
     };
@@ -5683,11 +5894,18 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (!wish || wish.resolveTurn !== turn) return true;
         const recipient = activeArr[wish.slot] || null;
         if (recipient && recipient.alive && _canReceiveHealing(recipient)) {
+          const hpBeforeHeal = recipient.hp;
           const heal = Math.max(0, Math.min(recipient.maxHp, recipient.hp + wish.amount) - recipient.hp);
           if (heal > 0) {
             recipient.hp += heal;
             log.push(`${sideLabel}'s Wish came true for ${recipient.name}!`);
             log.push(`${recipient.name} restored HP with Wish! [+${heal}]`);
+            _recordEffectEvent(field, recipient, 'Wish', 'delayed-recovery', hpBeforeHeal, recipient.hp, {
+              source_actor: wish.sourceName || '',
+              rule: { numerator: 1, denominator: 2, basis: 'source_max_hp', rounding: 'down' },
+              heal_candidate: wish.amount,
+              heal_applied: heal
+            });
           }
         }
         return false;
@@ -5697,13 +5915,28 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.leechSeededBy)) {
       const source = mon.leechSeededBy;
       const drain = Math.max(1, Math.floor(mon.maxHp / 8));
+      const hpBeforeDrain = mon.hp;
       mon.hp = Math.max(0, mon.hp - drain);
       log.push(`${mon.name} was sapped by Leech Seed! [${drain} dmg]`);
+      _recordEffectEvent(field, mon, 'Leech Seed', 'residual-drain-damage', hpBeforeDrain, mon.hp, {
+        source_actor: source && source.name || '',
+        rule: { numerator: 1, denominator: 8, basis: 'target_max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforeDrain - mon.hp)
+      });
       if (source && source.alive && _canReceiveHealing(source)) {
+        const sourceHpBeforeHeal = source.hp;
         const heal = Math.max(0, Math.min(source.maxHp, source.hp + drain) - source.hp);
         if (heal > 0) {
           source.hp += heal;
           log.push(`${source.name} restored HP with Leech Seed! [+${heal}]`);
+          _recordEffectEvent(field, source, 'Leech Seed', 'residual-drain-heal', sourceHpBeforeHeal, source.hp, {
+            source_actor: source.name,
+            drained_target: mon.name,
+            rule: { numerator: 1, denominator: 1, basis: 'leech_seed_damage', rounding: 'none' },
+            source_damage: Math.max(0, hpBeforeDrain - mon.hp),
+            heal_candidate: drain,
+            heal_applied: heal
+          });
         }
       }
       if (mon.hp === 0) {
@@ -5728,8 +5961,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.item === 'Leftovers' && m.hp < m.maxHp)) {
       if (!_canReceiveHealing(mon)) continue;
       const heal = Math.max(1, Math.floor(mon.maxHp / 16));
+      const hpBeforeHeal = mon.hp;
       mon.hp = Math.min(mon.maxHp, mon.hp + heal);
       log.push(`${mon.name} restored HP with Leftovers! [+${heal}]`);
+      _recordEffectEvent(field, mon, 'Leftovers', 'item-recovery', hpBeforeHeal, mon.hp, {
+        source: 'engine item rule',
+        rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
+        heal_candidate: heal,
+        heal_applied: Math.max(0, mon.hp - hpBeforeHeal)
+      });
     }
 
     // Field upkeep
@@ -5776,6 +6016,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       log.push(`[TIMER] Clock expired at turn ${turn}. Resolving via tiebreaker.`);
       _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
       _turnEntry.damage_events = (field._ctx.turnDamageEvents || []).slice();
+      _turnEntry.effect_events = (field._ctx.turnEffectEvents || []).slice();
       _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false, _orderedPlayer, _orderedOpp);
       _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
       _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
@@ -5784,6 +6025,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
     _turnEntry.damage_events = (field._ctx.turnDamageEvents || []).slice();
+    _turnEntry.effect_events = (field._ctx.turnEffectEvents || []).slice();
     _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false, _orderedPlayer, _orderedOpp);
     _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
     _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';

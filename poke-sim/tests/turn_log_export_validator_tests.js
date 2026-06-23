@@ -578,6 +578,44 @@ function stripStableFields(payload) {
     truthy(res.findings.some(f => f.code === 'damage-calc-missing-field'), 'missing calculated field error');
   });
 
+  T('14. effect_events pass validation and malformed effect math fails', () => {
+    const valid = stableFixture();
+    valid.turnLog[0].effect_events = [{
+      actor: 'Incineroar',
+      actor_key: 'player:slot:0:Incineroar',
+      side: 'player',
+      move: 'Flare Blitz',
+      effect_kind: 'recoil',
+      hp_before: 120,
+      hp_after: 90,
+      hp_delta: -30,
+      max_hp: 170,
+      rule: { numerator: 33, denominator: 100, basis: 'applied_damage', rounding: 'half_up' },
+      source_damage: 91,
+      damage_applied_to_user: 30,
+      move_context: 'Has 33% recoil.'
+    }];
+    eq(validateTurnLogPayload(valid, { requireStable: true }).summary.errors, 0, 'valid effect row should pass');
+
+    const bad = stableFixture();
+    bad.turnLog[0].effect_events = [{
+      actor: 'Incineroar',
+      move: 'Flare Blitz',
+      effect_kind: '',
+      hp_before: 120,
+      hp_after: 90,
+      hp_delta: -29,
+      max_hp: 170,
+      rule: {},
+      move_context: { text: 'bad' }
+    }];
+    const res = validateTurnLogPayload(bad, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'effect-event-missing-identity'), 'missing effect identity error');
+    truthy(res.findings.some(f => f.code === 'effect-event-hp-delta-mismatch'), 'missing effect delta mismatch error');
+    truthy(res.findings.some(f => f.code === 'effect-event-rule-missing-basis'), 'missing effect rule basis error');
+    truthy(res.findings.some(f => f.code === 'effect-event-context-malformed'), 'missing effect context malformed error');
+  });
+
   console.log('\nturn log export validator:', pass + ' pass, ' + fail + ' fail\n');
   process.exit(fail ? 1 : 0);
 })().catch(err => {

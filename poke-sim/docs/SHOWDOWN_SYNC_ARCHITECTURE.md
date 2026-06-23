@@ -124,7 +124,7 @@ Secondary source:
 Current local guardrail:
 
 - `tests/showdown_priority_drift_tests.js` compares local `getPriority()` for every shipped move against generated Showdown move metadata, with a Champions override allowlist for intentional differences.
-- `tools/validate-turn-logs.mjs` uses the same corrected priority assumptions to audit exported battle logs.
+- `tools/validate-turn-logs.mjs` uses the same corrected priority assumptions to audit exported battle logs, and validates structured `damage_events`/`effect_events` so recoil, drain, HP-cost, recovery, and delayed effect math remain auditable.
 
 ---
 

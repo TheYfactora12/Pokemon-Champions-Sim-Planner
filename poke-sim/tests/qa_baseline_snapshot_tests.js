@@ -86,8 +86,8 @@ T('4. snapshot documents generated-source update rule', () => {
 
 T('5. snapshot exposes Showdown recoil context for QA', () => {
   const report = fs.readFileSync(reportPath, 'utf8');
-  truthy(report.includes('| Move | Support | Type | Category | Base Power | Accuracy | Priority | Target | Source | Recoil | Showdown Context |'),
-    'move baseline should include recoil and Showdown context columns');
+  truthy(report.includes('| Move | Support | Type | Category | Base Power | Accuracy | Priority | Target | Source | Recoil | Effect Tags | Showdown Context |'),
+    'move baseline should include recoil, effect tags, and Showdown context columns');
   truthy(report.includes('## Recoil Move QA Context'), 'recoil QA context section missing');
   truthy(report.includes('| Flare Blitz |') && report.includes('33/100 damage dealt'),
     'Flare Blitz recoil context missing');
@@ -97,7 +97,21 @@ T('5. snapshot exposes Showdown recoil context for QA', () => {
     'Head Smash recoil context missing');
 });
 
-T('6. generated snapshot is current with source data', () => {
+T('6. snapshot exposes broader effect-math context for QA', () => {
+  const report = fs.readFileSync(reportPath, 'utf8');
+  truthy(report.includes('## Effect Move QA Context'), 'effect QA context section missing');
+  truthy(report.includes('| Giga Drain |') && report.includes('drain-heal'),
+    'Giga Drain drain context missing');
+  truthy(report.includes('| Clangorous Soul |') && report.includes('hp-cost'),
+    'Clangorous Soul HP-cost context missing');
+  truthy(report.includes('| Shed Tail |') && report.includes('HP cost is 1/2 max HP rounded up; passed Substitute is 1/4 max HP rounded down'),
+    'Shed Tail exact HP-cost context missing');
+  truthy(report.includes('| Leech Seed |') && report.includes('residual-drain'),
+    'Leech Seed residual context missing');
+  truthy(report.includes('effect_events'), 'effect_events guidance missing');
+});
+
+T('7. generated snapshot is current with source data', () => {
   const res = spawnSync('node', ['tools/generate-qa-baseline-snapshot.mjs', '--check'], {
     cwd: ROOT,
     encoding: 'utf8'

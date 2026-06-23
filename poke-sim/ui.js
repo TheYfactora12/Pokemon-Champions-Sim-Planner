@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.41-recoil-showdown-context';
+    return txt || 'v2.1.42-effect-math-context';
   } catch (e) {
-    return 'v2.1.41-recoil-showdown-context';
+    return 'v2.1.42-effect-math-context';
   }
 }
 
@@ -6072,9 +6072,10 @@ var CS_OVERVIEW_DATA = {
     { label: 'Testing Catalog Target', value: 'Top 10 Champion archetypes live' },
     { label: 'Removed Teams', value: '17 legacy/inferred rows' },
     { label: 'DB Team Rule', value: 'Approved rows must pass gates' },
-    { label: 'Stress Status', value: 'Focused green; full run pending' },
+    { label: 'Stress Status', value: 'Full local non-DB + DB contracts green' },
     { label: 'Sim Truth Gate', value: 'Mechanics first' },
     { label: 'Live Supabase', value: 'Teams + analyses, gated' },
+    { label: 'DB Log Detail', value: 'Summary/capped; exports are forensic proof' },
     { label: 'Showdown DB', value: 'Manual approval only' },
     { label: 'Team Format', value: 'Champion/SP focus' },
     { label: 'Turn Logs', value: 'Strict applied damage fields' },
@@ -6155,8 +6156,18 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Architecture and evidence map added',
+      detail: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md gives QA a source-to-engine-to-export map: Showdown and Champion source truth, Supabase boundaries, generated runtime assets, deterministic engine responsibilities, damage_events/effect_events evidence, DB history limits, and the required proof workflow.'
+    },
+    {
+      status: 'done',
       title: 'Showdown recoil context added to QA baseline',
       detail: 'v2.1.41 preserves Pokemon Showdown move recoil tuples and official data/text/moves.ts descriptions in generated move metadata. The QA Baseline Snapshot now lists recoil rules and Showdown context for Flare Blitz, Wave Crash, Head Smash, Light of Ruin, and other shipped recoil moves, and recoil tests assert exact applied-damage ratios.'
+    },
+    {
+      status: 'done',
+      title: 'Effect math evidence added to turn logs',
+      detail: 'v2.1.42 adds structured effect_events for recovery, drain healing, HP-cost moves, delayed Wish healing, Leech Seed drain/heal, Leftovers, and Struggle recoil. Shed Tail now follows Showdown context: 1/2 max HP cost rounded up, passing a 1/4 max HP Substitute rounded down. damage_events now carry drain/recoil effect tags, Showdown context, and applied-damage-based drain/recoil rules so QA can audit effect math without parsing free-text logs.'
     },
     {
       status: 'done',
@@ -6206,7 +6217,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Stat and effective-speed evidence added to exports',
-      detail: 'v2.1.28 turn snapshots now include stat_boosts, stat_boosts_stable, speed_order_details, and damage_events with Champions SP/SV stat format, nature, Speed points, species base Speed, calculated Speed, speed stage, item, ability, status, weather, Tailwind, Trick Room, effective Speed, exact-speed-tie markers, type effectiveness, typed item boosts, STAB, spread, weather, screen, final modifier, and attack/defense stage evidence.'
+      detail: 'v2.1.28 turn snapshots added stat_boosts, stat_boosts_stable, speed_order_details, and damage_events with Champions SP/SV stat format, nature, Speed points, species base Speed, calculated Speed, speed stage, item, ability, status, weather, Tailwind, Trick Room, effective Speed, exact-speed-tie markers, type effectiveness, typed item boosts, STAB, spread, weather, screen, final modifier, and attack/defense stage evidence. v2.1.42 adds effect_events for HP-changing move and item effects.'
     },
     {
       status: 'done',
@@ -6221,7 +6232,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Exported log validator added',
-      detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, observed priority order, damage evidence shape, and no-valid-target skips. v2.1.39 validates observed action order by side/stable identity so mirror species and form names do not corrupt speed checks.'
+      detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, observed priority order, damage/effect evidence shape, and no-valid-target skips. v2.1.39 validates observed action order by side/stable identity so mirror species and form names do not corrupt speed checks; v2.1.42 validates effect_events and drain/recoil rule math.'
     },
     {
       status: 'done',
@@ -6279,6 +6290,11 @@ var CS_OVERVIEW_DATA = {
       status: 'validated',
       title: 'Supabase app wiring is live for existing app tables',
       detail: 'The deployed page has runtime Supabase config, and read checks reached teams, team_members, and analyses through the public anon path.'
+    },
+    {
+      status: 'validated',
+      title: 'Local DB contract suite is green',
+      detail: '`bash tests/_run_all_db.sh` passes the local DB adapter/schema contract suites in mock/offline mode. Live Supabase freshness checks require `RUN_LIVE_DB=1` and valid anon credentials, so this proves the repo-side DB contract, not that every remote row is current.'
     },
     {
       status: 'validated',
@@ -6419,6 +6435,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
+      title: 'Supabase history is not full forensic turn-log storage yet',
+      detail: 'Saved analysis history keeps bounded matchup summaries and capped log rows. The current source of truth for structured QA evidence is the downloaded turn-log JSON and QA Artifact export, which carry full turn snapshots, damage_events, and effect_events. Treat DB history as replay/navigation support until a reviewed DB retention upgrade preserves detailed turn logs intentionally.'
+    },
+    {
+      status: 'gap',
       title: 'Team editor is guarded but not a fluid full builder yet',
       detail: 'The current edit-team surface now blocks illegal Champion SP saves, but it is still a clunky set editor rather than a fully customizable Champion team builder. Later UX work should support fast add/remove/reorder Pokemon, searchable species/forms/items/abilities/moves, SP sliders with live legality totals, import/export, DB save status, and rollback without breaking sim source truth.'
     }
@@ -6442,7 +6463,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Verify the next deployed source URL and QA artifact',
-      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, applied/calculated damage fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, applied/calculated damage fields, effect_events for HP-changing effects, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
@@ -6458,6 +6479,11 @@ var CS_OVERVIEW_DATA = {
       status: 'next',
       title: 'Wire approved Showdown DB data into generated runtime assets',
       detail: 'Close Alfredo #241 by generating/reading runtime data from approved showdown_entities plus champions_overrides while preserving static offline fallback.'
+    },
+    {
+      status: 'next',
+      title: 'Design DB forensic log retention before relying on saved history',
+      detail: 'If QA needs Supabase to be the long-term audit store, add a reviewed schema/payload path for structured turnLog, damage_events, effect_events, build_id, source_url, and retention metadata. Until then, keep QA Artifact exports as the authoritative evidence bundle.'
     },
     {
       status: 'next',
@@ -6514,6 +6540,7 @@ var CS_OVERVIEW_DATA = {
   ],
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
+    { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
     { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },
     { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },

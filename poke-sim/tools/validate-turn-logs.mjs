@@ -538,6 +538,14 @@ function validateDamageEvents(turn, findings) {
     if (typeof row.damage_capped_by_hp !== 'boolean') {
       findings.push(finding('error', 'damage-event-missing-flag', 'damage_events row is missing boolean damage_capped_by_hp.', { turn: turn && turn.turn, index: i }));
     }
+    if (row.move_context != null && typeof row.move_context !== 'string') {
+      findings.push(finding('error', 'damage-event-context-malformed', 'damage_events move_context must be a string when present.', { turn: turn && turn.turn, index: i }));
+    }
+    if (row.effect_tags != null) {
+      if (!Array.isArray(row.effect_tags) || row.effect_tags.some(tag => typeof tag !== 'string' || !tag)) {
+        findings.push(finding('error', 'damage-event-effect-tags-malformed', 'damage_events effect_tags must be an array of strings.', { turn: turn && turn.turn, index: i }));
+      }
+    }
     if (damageNumbersValid) {
       const expectedApplied = Math.max(0, damageNumbers.target_hp_before - damageNumbers.target_hp_after);
       const expectedOverkill = Math.max(0, damageNumbers.calculated_damage - damageNumbers.applied_damage);
@@ -598,6 +606,40 @@ function validateDamageEvents(turn, findings) {
         }));
       }
     }
+    if (row.recoil_rule) {
+      const num = Number(row.recoil_rule.numerator);
+      const den = Number(row.recoil_rule.denominator);
+      if (!Number.isFinite(num) || !Number.isFinite(den) || num <= 0 || den <= 0 || row.recoil_rule.basis !== 'applied_damage') {
+        findings.push(finding('error', 'damage-event-recoil-rule-malformed', 'recoil_rule must use a positive applied_damage ratio.', { turn: turn && turn.turn, index: i }));
+      } else if (row.recoil_damage != null) {
+        const expected = Math.max(1, Math.round(Number(row.applied_damage || 0) * num / den));
+        if (Number(row.recoil_damage) !== expected) {
+          findings.push(finding('error', 'damage-event-recoil-mismatch', 'recoil_damage must match the applied damage ratio.', {
+            turn: turn && turn.turn,
+            index: i,
+            expected,
+            actual: row.recoil_damage
+          }));
+        }
+      }
+    }
+    if (row.drain_rule) {
+      const num = Number(row.drain_rule.numerator);
+      const den = Number(row.drain_rule.denominator);
+      if (!Number.isFinite(num) || !Number.isFinite(den) || num <= 0 || den <= 0 || row.drain_rule.basis !== 'applied_damage') {
+        findings.push(finding('error', 'damage-event-drain-rule-malformed', 'drain_rule must use a positive applied_damage ratio.', { turn: turn && turn.turn, index: i }));
+      } else if (row.drain_heal_candidate != null) {
+        const expected = Math.max(1, Math.round(Number(row.applied_damage || 0) * num / den));
+        if (Number(row.drain_heal_candidate) !== expected) {
+          findings.push(finding('error', 'damage-event-drain-mismatch', 'drain_heal_candidate must match the applied damage ratio.', {
+            turn: turn && turn.turn,
+            index: i,
+            expected,
+            actual: row.drain_heal_candidate
+          }));
+        }
+      }
+    }
     if (row.damage_kind === 'calculated') {
       const numericKeys = [
         'type_effectiveness', 'base_power_initial', 'base_power_modified',
@@ -616,6 +658,59 @@ function validateDamageEvents(turn, findings) {
           findings.push(finding('error', 'damage-calc-missing-field', `calculated damage row is missing ${key}.`, { turn: turn && turn.turn, index: i }));
         }
       }
+    }
+  }
+}
+
+function validateEffectEvents(turn, findings) {
+  const rows = Array.isArray(turn && turn.effect_events) ? turn.effect_events : [];
+  for (let i = 0; i < rows.length; i += 1) {
+    const row = rows[i];
+    if (!row || typeof row !== 'object') {
+      findings.push(finding('error', 'effect-event-malformed', 'effect_events contains a non-object row.', { turn: turn && turn.turn, index: i }));
+      continue;
+    }
+    for (const key of ['actor', 'move', 'effect_kind']) {
+      if (!row[key]) {
+        findings.push(finding('error', 'effect-event-missing-identity', `effect_events row is missing ${key}.`, { turn: turn && turn.turn, index: i }));
+      }
+    }
+    const numericKeys = ['hp_before', 'hp_after', 'hp_delta', 'max_hp'];
+    const numbers = {};
+    let ok = true;
+    for (const key of numericKeys) {
+      if (!Number.isFinite(Number(row[key]))) {
+        ok = false;
+        findings.push(finding('error', 'effect-event-missing-number', `effect_events row is missing numeric ${key}.`, { turn: turn && turn.turn, index: i }));
+      } else {
+        numbers[key] = Number(row[key]);
+      }
+    }
+    if (ok) {
+      if (numbers.hp_delta !== numbers.hp_after - numbers.hp_before) {
+        findings.push(finding('error', 'effect-event-hp-delta-mismatch', 'hp_delta must equal hp_after minus hp_before.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: numbers.hp_after - numbers.hp_before,
+          actual: numbers.hp_delta
+        }));
+      }
+      if (numbers.hp_after < 0 || numbers.hp_after > numbers.max_hp) {
+        findings.push(finding('error', 'effect-event-hp-out-of-range', 'effect_events hp_after is outside 0..max HP.', {
+          turn: turn && turn.turn,
+          index: i,
+          hp_after: numbers.hp_after,
+          max_hp: numbers.max_hp
+        }));
+      }
+    }
+    if (row.rule != null && typeof row.rule !== 'object') {
+      findings.push(finding('error', 'effect-event-rule-malformed', 'effect_events rule must be an object when present.', { turn: turn && turn.turn, index: i }));
+    } else if (row.rule && !row.rule.basis) {
+      findings.push(finding('error', 'effect-event-rule-missing-basis', 'effect_events rule is missing basis.', { turn: turn && turn.turn, index: i }));
+    }
+    if (row.move_context != null && typeof row.move_context !== 'string') {
+      findings.push(finding('error', 'effect-event-context-malformed', 'effect_events move_context must be a string when present.', { turn: turn && turn.turn, index: i }));
     }
   }
 }
@@ -672,6 +767,7 @@ export function validateTurnLogPayload(payload, options = {}) {
     validateObservedActionOrder(turn || {}, findings);
     validateNoValidTargetSkips(turn || {}, findings);
     validateDamageEvents(turn || {}, findings);
+    validateEffectEvents(turn || {}, findings);
   }
 
   finalizeIdentityChecks(state, findings);
@@ -732,7 +828,8 @@ function usage() {
     '',
     'Checks exported battle logs for roster identity, item drift, active/bench key mapping,',
     'HP key coverage, speed-order key coverage, observed priority/speed event order,',
-    'and no-valid-target skips while a target side still has a live active Pokemon.'
+    'damage/effect evidence shape, and no-valid-target skips while a target side still has',
+    'a live active Pokemon.'
   ].join('\n');
 }
 

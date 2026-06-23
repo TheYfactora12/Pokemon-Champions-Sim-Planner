@@ -21,6 +21,7 @@ When the migration is complete, `poke-sim/*.md` spec files will be deleted from 
 |---|---|---|---|
 | [../../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md](../../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md) | Direction/Gate | TBD | Active direction |
 | [../../docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md](../../docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md) | Release/Gate | TBD | Active direction |
+| [`CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md`](CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md) | Sim Truth / QA Evidence | TBD | Active map |
 | [`SHOWDOWN_ORACLE_SIM_TRUTH_PLAN.md`](SHOWDOWN_ORACLE_SIM_TRUTH_PLAN.md) | Sim Truth / Oracle | TBD | Active execution plan |
 | [`SHOWDOWN_SYNC_ARCHITECTURE.md`](SHOWDOWN_SYNC_ARCHITECTURE.md) | Data/DB/Oracle | TBD | Draft architecture |
 | [`SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md`](SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md) | Data/DB/Oracle | TBD | Implementation plan |

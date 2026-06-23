@@ -355,7 +355,7 @@
     },
     'Shed Tail': {
       supportLevel: 'verified',
-      summary: 'Consumes the user HP, switches out immediately, and leaves the Substitute with the incoming replacement.',
+      summary: 'Consumes 1/2 max HP rounded up, switches out immediately, and passes a 1/4 max HP rounded-down Substitute to the replacement.',
       tests: ['tests/move_verification_registry_tests.js'],
       sources: ['Bulbapedia: Shed Tail move page']
     },

@@ -118,6 +118,13 @@ T('2. Giga Drain heals after dealing damage', () => {
     'opponent should chip the Giga Drain user first');
   truthy(battle.log.some((line) => String(line).includes('restored HP with Giga Drain')),
     'Giga Drain heal log missing');
+  const row = ((((battle.turnLog || [])[0] || {}).damage_events || []).find((event) => event.move === 'Giga Drain')) || {};
+  truthy(row.drain_rule && row.drain_rule.basis === 'applied_damage', 'Giga Drain drain_rule missing');
+  eq(row.drain_heal_candidate, Math.max(1, Math.round(row.applied_damage / 2)),
+    'Giga Drain should use Showdown half-up drain rounding from applied damage');
+  const effect = ((((battle.turnLog || [])[0] || {}).effect_events || []).find((event) => event.move === 'Giga Drain' && event.effect_kind === 'drain-heal')) || {};
+  truthy(effect.actor === 'Amoonguss', 'Giga Drain effect event missing');
+  eq(effect.heal_candidate, row.drain_heal_candidate, 'Giga Drain effect event should mirror damage row heal candidate');
 });
 
 T('3. Rock Tomb lowers target Speed after damage', () => {
@@ -1062,6 +1069,22 @@ T('35. Shed Tail switches out and leaves the Substitute with the replacement', (
     'Shed Tail success log missing');
   truthy(battle.log.some((line) => includes(line, 'Pelipper used Tackle! (Substitute absorbed')),
     'incoming replacement should inherit the Substitute from Shed Tail');
+  const effectRow = (battle.turnLog && battle.turnLog[0] && battle.turnLog[0].effect_events || [])
+    .find(row => row.move === 'Shed Tail' && row.effect_kind === 'hp-cost-pivot-substitute');
+  truthy(effectRow, 'Shed Tail effect_events row missing');
+  eq(effectRow.rule && effectRow.rule.numerator, 1, 'Shed Tail HP-cost numerator should be 1');
+  eq(effectRow.rule && effectRow.rule.denominator, 2, 'Shed Tail HP-cost denominator should be 2');
+  eq(effectRow.rule && effectRow.rule.rounding, 'up', 'Shed Tail HP-cost rounding should be up');
+  eq(effectRow.substitute_rule && effectRow.substitute_rule.denominator, 4,
+    'Shed Tail substitute HP denominator should be 4');
+  eq(effectRow.substitute_rule && effectRow.substitute_rule.rounding, 'down',
+    'Shed Tail substitute HP rounding should be down');
+  eq(effectRow.hp_cost, Math.ceil(effectRow.max_hp / 2),
+    'Shed Tail should cost half max HP rounded up');
+  eq(effectRow.substitute_hp, Math.floor(effectRow.max_hp / 4),
+    'Shed Tail should pass a quarter-max-HP Substitute rounded down');
+  eq(effectRow.hp_before - effectRow.hp_after, effectRow.hp_cost,
+    'Shed Tail effect row should match actual HP lost');
 });
 
 T('36. Shed Tail fails when no replacement is available', () => {
