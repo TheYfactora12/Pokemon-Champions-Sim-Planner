@@ -388,9 +388,17 @@ function activeTargetKeys(snapshot, side) {
   return stable.length ? stable : getSideKeys(snapshot, side, 'active_keys');
 }
 
+function hasSwitchInAfterEvent(events, index) {
+  for (let i = index + 1; i < events.length; i += 1) {
+    if (/ was sent out!$/.test(cleanText(events[i] && events[i].text))) return true;
+  }
+  return false;
+}
+
 function validateNoValidTargetSkips(turn, findings) {
   const events = Array.isArray(turn && turn.events) ? turn.events : [];
-  for (const event of events) {
+  for (let eventIndex = 0; eventIndex < events.length; eventIndex += 1) {
+    const event = events[eventIndex];
     const text = cleanText(event && event.text);
     const match = text.match(/^(.+?) used (.+?)! \(no valid target\)$/);
     if (!match) continue;
@@ -413,17 +421,26 @@ function validateNoValidTargetSkips(turn, findings) {
       ? (activeSideForName(turn && turn.pre, actionTarget) || activeSideForName(turn && turn.post, actionTarget))
       : null;
     const checkedSide = targetSide || (resolved.side === 'player' ? 'opponent' : 'player');
+    const preActive = activeTargetKeys(turn && turn.pre, checkedSide);
     const postActive = activeTargetKeys(turn && turn.post, checkedSide);
+    const originalActiveStillPresent = postActive.filter(key => preActive.includes(key));
+    const onlyPostTurnReplacementsLive = (
+      postActive.length > 0 &&
+      preActive.length > 0 &&
+      originalActiveStillPresent.length === 0 &&
+      hasSwitchInAfterEvent(events, eventIndex)
+    );
 
-    if (postActive.length) {
+    if (postActive.length && !onlyPostTurnReplacementsLive) {
       findings.push(finding('error', 'no-valid-target-with-live-target', 'A no-valid-target action resolved while the intended target side still had a live active Pokemon.', {
         turn: turn && turn.turn,
         actor,
         move,
         target: actionTarget || '',
         targetSide: checkedSide,
-        preActiveTargetKeys: activeTargetKeys(turn && turn.pre, checkedSide),
-        postActiveTargetKeys: postActive
+        preActiveTargetKeys: preActive,
+        postActiveTargetKeys: postActive,
+        originalActiveStillPresentKeys: originalActiveStillPresent
       }));
     }
   }

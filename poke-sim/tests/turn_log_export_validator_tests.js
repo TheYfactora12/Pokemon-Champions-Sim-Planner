@@ -322,6 +322,94 @@ function stripStableFields(payload) {
     truthy(res.findings.some(f => f.code === 'no-valid-target-with-live-target'), 'missing live-target no-valid-target error');
   });
 
+  T('11b. no-valid-target skips ignore post-turn replacements sent after the skip', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    const milotic = turn.pre.roster.opponent[0];
+    const oppIncin = baseRow('opponent', 'active', 1, 'Incineroar', 'Sitrus Berry', 'Intimidate', 1);
+    const garchompBench = baseRow('opponent', 'bench', 0, 'Garchomp', 'Soft Sand', 'Rough Skin', 2);
+    const kingambitBench = baseRow('opponent', 'bench', 1, 'Kingambit', 'Black Glasses', 'Defiant', 3);
+    const faintedMilotic = Object.assign({}, milotic, {
+      key: 'opponent:fainted:0:Milotic',
+      zone: 'fainted',
+      status: 'fainted',
+      hp: 0,
+      hpLabel: '0%'
+    });
+    const faintedIncin = Object.assign({}, oppIncin, {
+      key: 'opponent:fainted:1:Incineroar',
+      zone: 'fainted',
+      status: 'fainted',
+      hp: 0,
+      hpLabel: '0%'
+    });
+    const garchompActive = Object.assign({}, garchompBench, {
+      key: 'opponent:active:0:Garchomp',
+      zone: 'active',
+      status: 'active',
+      zoneIndex: 0
+    });
+    const kingambitActive = Object.assign({}, kingambitBench, {
+      key: 'opponent:active:1:Kingambit',
+      zone: 'active',
+      status: 'active',
+      zoneIndex: 1
+    });
+
+    turn.actions.player = [
+      { actor: 'Incineroar', kind: 'move', move: 'Knock Off', target: 'Milotic' }
+    ];
+    turn.actions.opponent = [];
+    turn.events = [
+      { type: 'damage', text: 'Garchomp used Earthquake! -> Milotic [100 dmg, 0/100 HP]' },
+      { type: 'ko', text: 'Milotic fainted!' },
+      { type: 'damage', text: 'Garchomp used Earthquake! -> Incineroar [100 dmg, 0/100 HP]' },
+      { type: 'ko', text: 'Incineroar fainted!' },
+      { type: 'log', text: 'Incineroar used Knock Off! (no valid target)' },
+      { type: 'log', text: 'Garchomp was sent out!' },
+      { type: 'log', text: 'Kingambit was sent out!' }
+    ];
+    turn.pre.active.opponent = ['Milotic', 'Incineroar'];
+    turn.pre.bench.opponent = ['Garchomp', 'Kingambit'];
+    turn.pre.active_keys.opponent = [milotic.key, oppIncin.key];
+    turn.pre.bench_keys.opponent = [garchompBench.key, kingambitBench.key];
+    turn.pre.active_stable_keys.opponent = [milotic.stableKey, oppIncin.stableKey];
+    turn.pre.bench_stable_keys.opponent = [garchompBench.stableKey, kingambitBench.stableKey];
+    turn.pre.roster.opponent = [milotic, oppIncin, garchompBench, kingambitBench];
+    turn.pre.hp_pct[oppIncin.key] = 1;
+    turn.pre.hp_pct[garchompBench.key] = 1;
+    turn.pre.hp_pct[kingambitBench.key] = 1;
+    turn.pre.hp_pct_stable[oppIncin.stableKey] = 1;
+    turn.pre.hp_pct_stable[garchompBench.stableKey] = 1;
+    turn.pre.hp_pct_stable[kingambitBench.stableKey] = 1;
+    turn.post.active.opponent = ['Garchomp', 'Kingambit'];
+    turn.post.bench.opponent = [];
+    turn.post.active_keys.opponent = [garchompActive.key, kingambitActive.key];
+    turn.post.bench_keys.opponent = [];
+    turn.post.active_stable_keys.opponent = [garchompActive.stableKey, kingambitActive.stableKey];
+    turn.post.bench_stable_keys.opponent = [];
+    turn.post.roster.opponent = [faintedMilotic, faintedIncin, garchompActive, kingambitActive];
+    turn.post.hp_pct = {
+      [turn.post.active_keys.player[0]]: 1,
+      [garchompActive.key]: 1,
+      [kingambitActive.key]: 1
+    };
+    turn.post.hp_pct_stable = {
+      [turn.post.active_stable_keys.player[0]]: 1,
+      [milotic.stableKey]: 0,
+      [oppIncin.stableKey]: 0,
+      [garchompActive.stableKey]: 1,
+      [kingambitActive.stableKey]: 1
+    };
+    turn.post.speed_order = ['Garchomp', 'Kingambit'];
+    turn.post.speed_order_keys = [garchompActive.key, kingambitActive.key];
+    turn.post.speed_order_stable_keys = [garchompActive.stableKey, kingambitActive.stableKey];
+
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+    truthy(!res.findings.some(f => f.code === 'no-valid-target-with-live-target'), 'post-turn replacements should not make the earlier skip invalid');
+  });
+
   T('12. calculated damage_events pass validation with modifier evidence', () => {
     const payload = stableFixture();
     payload.turnLog[0].damage_events = [{

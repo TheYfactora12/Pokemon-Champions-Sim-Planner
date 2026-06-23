@@ -66,7 +66,8 @@
 // v69-low-kick-weight-parity [2026-06-23] - Showdown species weights and Low Kick variable base-power parity.
 // v70-core-move-parity [2026-06-23] - Remaining shipped move parity, secondary effects, accuracy, and special-case damage coverage.
 // v71-damage-log-team-catalog [2026-06-23] - Applied-vs-calculated damage logs and approved Champion top-10 runtime catalog.
-const CACHE_NAME = 'champions-sim-v71-damage-log-team-catalog';
+// v72-log-validator-replacement [2026-06-23] - No-valid-target validator ignores post-turn replacements not available at skip time.
+const CACHE_NAME = 'champions-sim-v72-log-validator-replacement';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

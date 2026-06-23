@@ -40,7 +40,7 @@ T('3. missing local-credentials.js returns empty JavaScript instead of cached ap
 });
 
 T('4. service worker cache is bumped for stale app-shell release fix', () => {
-  truthy(sw.includes('champions-sim-v71-damage-log-team-catalog'), 'CACHE_NAME should be v71 Damage Log Team Catalog');
+  truthy(sw.includes('champions-sim-v72-log-validator-replacement'), 'CACHE_NAME should be v72 Log Validator Replacement');
   truthy(sw.includes('./generated/pokemon_showdown_species_weights.js'), 'weight companion file should be pre-cached');
 });
 
