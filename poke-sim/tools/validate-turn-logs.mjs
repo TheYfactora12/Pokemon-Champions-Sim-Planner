@@ -220,24 +220,6 @@ function actorOrderFromEvents(events) {
   return out;
 }
 
-function rosterByName(snapshot) {
-  const out = new Map();
-  for (const side of SIDES) {
-    const rows = ((snapshot && snapshot.roster && snapshot.roster[side]) || []);
-    for (const row of rows) out.set(rowName(row), row);
-  }
-  return out;
-}
-
-function speedDetailsByName(snapshot) {
-  const out = new Map();
-  for (const row of (Array.isArray(snapshot && snapshot.speed_order_details) ? snapshot.speed_order_details : [])) {
-    if (!row || !row.pokemon) continue;
-    out.set(String(row.pokemon), row);
-  }
-  return out;
-}
-
 function movePriority(move, row) {
   let p = Object.prototype.hasOwnProperty.call(PRIORITY, move) ? PRIORITY[move] : 0;
   if (row && row.ability === 'Prankster' && STATUS_MOVES.has(move)) p += 1;
@@ -258,8 +240,75 @@ function parsedCalculatedSpeed(row) {
   return null;
 }
 
+function speedDetailForRow(row, snapshot) {
+  const rows = Array.isArray(snapshot && snapshot.speed_order_details) ? snapshot.speed_order_details : [];
+  if (!row || !rows.length) return null;
+  if (row.stableKey) {
+    const byStable = rows.find(detail => detail && String(detail.stableKey || '') === String(row.stableKey));
+    if (byStable) return byStable;
+  }
+  if (row.key) {
+    const byKey = rows.find(detail => detail && String(detail.key || '') === String(row.key));
+    if (byKey) return byKey;
+  }
+  const name = rowName(row);
+  const byName = rows.filter(detail => detail && String(detail.pokemon || '') === name);
+  return byName.length === 1 ? byName[0] : null;
+}
+
+function speedOrderIndexForRow(row, snapshot) {
+  if (!row || !snapshot) return null;
+  const details = Array.isArray(snapshot.speed_order_details) ? snapshot.speed_order_details : [];
+  if (row.stableKey && details.length) {
+    const idx = details.findIndex(detail => detail && String(detail.stableKey || '') === String(row.stableKey));
+    if (idx >= 0) return idx;
+  }
+  if (row.key && details.length) {
+    const idx = details.findIndex(detail => detail && String(detail.key || '') === String(row.key));
+    if (idx >= 0) return idx;
+  }
+  const stableKeys = Array.isArray(snapshot.speed_order_stable_keys) ? snapshot.speed_order_stable_keys.map(String) : [];
+  if (row.stableKey && stableKeys.length) {
+    const idx = stableKeys.indexOf(String(row.stableKey));
+    if (idx >= 0) return idx;
+  }
+  const keys = Array.isArray(snapshot.speed_order_keys) ? snapshot.speed_order_keys.map(String) : [];
+  if (row.key && keys.length) {
+    const idx = keys.indexOf(String(row.key));
+    if (idx >= 0) return idx;
+  }
+  const names = Array.isArray(snapshot.speed_order) ? snapshot.speed_order.map(String) : [];
+  const name = rowName(row);
+  const matches = [];
+  names.forEach((candidate, idx) => {
+    if (candidate === name) matches.push(idx);
+  });
+  return matches.length === 1 ? matches[0] : null;
+}
+
+function activeRowForAction(snapshot, actionRecord) {
+  const actorKey = actionRecord && actionRecord.action && actionRecord.action.actor_key;
+  if (actorKey) {
+    for (const row of ((snapshot && snapshot.roster && snapshot.roster[actionRecord.side]) || [])) {
+      if (!row || row.status !== 'active') continue;
+      if (String(row.stableKey || '') === String(actorKey) || String(row.key || '') === String(actorKey)) return row;
+    }
+  }
+  const rows = ((snapshot && snapshot.roster && snapshot.roster[actionRecord.side]) || [])
+    .filter(row => row && row.status === 'active')
+    .filter(row => rowName(row) === actionRecord.action.actor || row.species === actionRecord.action.actor);
+  return rows.length === 1 ? rows[0] : null;
+}
+
+function sideFromStableKey(key) {
+  const text = String(key || '');
+  if (text.startsWith('player:')) return 'player';
+  if (text.startsWith('opponent:')) return 'opponent';
+  return null;
+}
+
 function snapshotEffectiveSpeed(row, snapshot) {
-  const detail = row && speedDetailsByName(snapshot).get(rowName(row));
+  const detail = speedDetailForRow(row, snapshot);
   if (detail && Number.isFinite(Number(detail.effective_speed))) {
     return Math.floor(Number(detail.effective_speed));
   }
@@ -294,25 +343,37 @@ function validateObservedActionOrder(turn, findings) {
   const observed = actorOrderFromEvents(turn.events);
   if (observed.length < 2 || !turn.pre || !turn.actions) return;
 
-  const actionRows = []
-    .concat(Array.isArray(turn.actions.player) ? turn.actions.player : [])
-    .concat(Array.isArray(turn.actions.opponent) ? turn.actions.opponent : [])
-    .filter(a => a && a.actor && a.move);
+  const actionRows = [];
+  for (const side of SIDES) {
+    const rows = Array.isArray(turn.actions[side]) ? turn.actions[side] : [];
+    for (const action of rows) {
+      if (action && action.actor && action.move) actionRows.push({ side, action });
+    }
+  }
   if (actionRows.length < 2) return;
 
-  const roster = rosterByName(turn.pre);
-  const detailOrder = Array.isArray(turn.pre.speed_order_details)
-    ? turn.pre.speed_order_details.map(row => row && row.pokemon).filter(Boolean).map(String)
-    : [];
-  const speedOrder = detailOrder.length ? detailOrder : (Array.isArray(turn.pre.speed_order) ? turn.pre.speed_order.map(String) : []);
-  const speedIndex = new Map(speedOrder.map((name, index) => [name, index]));
-
-  const actionByKey = new Map(actionRows.map(a => [`${a.actor}|${a.move}`, a]));
+  const actionsByObservedKey = new Map();
+  for (const row of actionRows) {
+    const key = `${row.action.actor}|${row.action.move}`;
+    if (!actionsByObservedKey.has(key)) actionsByObservedKey.set(key, []);
+    actionsByObservedKey.get(key).push(row);
+  }
   const actual = observed
     .map(o => {
       const key = `${o.actor}|${o.move}`;
-      const action = actionByKey.get(key);
-      return action ? { key, actor: o.actor, move: o.move, action } : null;
+      const matches = actionsByObservedKey.get(key) || [];
+      if (matches.length !== 1) return null;
+      const row = activeRowForAction(turn.pre, matches[0]);
+      if (!row) return null;
+      return {
+        key,
+        actor: o.actor,
+        move: o.move,
+        side: matches[0].side,
+        action: matches[0].action,
+        row,
+        speedIndex: speedOrderIndexForRow(row, turn.pre)
+      };
     })
     .filter(Boolean);
 
@@ -332,8 +393,8 @@ function validateObservedActionOrder(turn, findings) {
     for (let j = i + 1; j < actual.length; j += 1) {
       const first = actual[i];
       const second = actual[j];
-      const firstPriority = movePriority(first.move, roster.get(first.actor));
-      const secondPriority = movePriority(second.move, roster.get(second.actor));
+      const firstPriority = movePriority(first.move, first.row);
+      const secondPriority = movePriority(second.move, second.row);
 
       if (firstPriority < secondPriority) {
         failOrder('priority', second.key, first.key);
@@ -341,15 +402,13 @@ function validateObservedActionOrder(turn, findings) {
       }
 
       if (firstPriority !== secondPriority) continue;
-      if (!speedIndex.has(first.actor) || !speedIndex.has(second.actor)) continue;
+      if (first.speedIndex == null || second.speedIndex == null) continue;
 
-      const firstSpeedIndex = speedIndex.get(first.actor);
-      const secondSpeedIndex = speedIndex.get(second.actor);
+      const firstSpeedIndex = first.speedIndex;
+      const secondSpeedIndex = second.speedIndex;
       if (firstSpeedIndex <= secondSpeedIndex) continue;
 
-      const firstRow = roster.get(first.actor);
-      const secondRow = roster.get(second.actor);
-      if (isSameEffectiveSpeedTie(firstRow, secondRow, turn.pre)) continue;
+      if (isSameEffectiveSpeedTie(first.row, second.row, turn.pre)) continue;
 
       failOrder('speed', second.key, first.key);
       return;
@@ -417,9 +476,11 @@ function validateNoValidTargetSkips(turn, findings) {
     }
 
     const actionTarget = resolved.action && resolved.action.target;
-    const targetSide = actionTarget
-      ? (activeSideForName(turn && turn.pre, actionTarget) || activeSideForName(turn && turn.post, actionTarget))
-      : null;
+    const targetSide = resolved.action && (resolved.action.target_side || sideFromStableKey(resolved.action.target_key))
+      ? (resolved.action.target_side || sideFromStableKey(resolved.action.target_key))
+      : (actionTarget
+          ? (activeSideForName(turn && turn.pre, actionTarget) || activeSideForName(turn && turn.post, actionTarget))
+          : null);
     const checkedSide = targetSide || (resolved.side === 'player' ? 'opponent' : 'player');
     const preActive = activeTargetKeys(turn && turn.pre, checkedSide);
     const postActive = activeTargetKeys(turn && turn.post, checkedSide);

@@ -3130,14 +3130,27 @@ function _actionSummary(actions) {
   const out = { player: [], opponent: [] };
   for (const action of actions || []) {
     const side = action.side === 'opp' ? 'opponent' : 'player';
+    const targetSide = _actionTargetSide(action, side);
     out[side].push({
       actor: action.attacker ? action.attacker.name : null,
+      actor_key: action.attacker ? _snapshotMonStableKey(side, action.attacker) : null,
       kind: 'move',
       move: action.move || null,
-      target: action.target ? action.target.name : null
+      target: action.target ? action.target.name : null,
+      target_key: action.target ? (targetSide ? _snapshotMonStableKey(targetSide, action.target) : (action.target.stableKey || null)) : null,
+      target_side: targetSide
     });
   }
   return out;
+}
+
+function _actionTargetSide(action, actorSide) {
+  if (!action || !action.target) return null;
+  if (action.attacker && action.attacker.side && action.target.side) {
+    if (action.target.side === action.attacker.side) return actorSide;
+    return actorSide === 'player' ? 'opponent' : 'player';
+  }
+  return null;
 }
 
 function _eventsFromLog(lines) {

@@ -193,6 +193,23 @@ T('T5a-1d stable roster identity survives bench to active movement', () => {
   truthy(Array.isArray(firstPre.bench_stable_keys.player) && firstPre.bench_stable_keys.player.includes(first.stableKey), 'stable bench keys missing Garchomp');
 });
 
+T('T5a-1e action summaries export stable actor and target identity', () => {
+  const rows = [];
+  for (const turn of battleA.turnLog || []) {
+    const actions = turn.actions || {};
+    (actions.player || []).forEach(row => rows.push(Object.assign({ side: 'player' }, row)));
+    (actions.opponent || []).forEach(row => rows.push(Object.assign({ side: 'opponent' }, row)));
+  }
+  truthy(rows.length > 0, 'expected action summary rows');
+  rows.forEach(row => {
+    truthy(row.actor_key && row.actor_key.indexOf(row.side + ':slot:') === 0, 'action actor_key missing stable side/slot identity');
+    if (row.target) {
+      truthy(row.target_key && /^(player|opponent):slot:/.test(row.target_key), 'targeted action missing stable target_key');
+      truthy(row.target_side === 'player' || row.target_side === 'opponent', 'targeted action missing target_side');
+    }
+  });
+});
+
 T('T5a-2 turnLog clears on new sim run', () => {
   const battleB = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_charizard_y, {});
   truthy(Array.isArray(battleB.turnLog), 'second turnLog missing');
@@ -414,7 +431,7 @@ T('T5c-3 JSON download produces valid parseable file', () => {
   ctx.downloadReplayTurnLog({ seed: 'abc', result: 'win', turnLog: battleA.turnLog, position_path: battleA.position_path });
   truthy(parsed && Array.isArray(parsed.turnLog), 'download JSON did not parse');
   eq(parsed.schema_version, 'champions-turn-log-v2', 'download schema version missing');
-  truthy(/^v2\.1\.38-log-validator-replacement/.test(parsed.build_id || ''), 'download build id missing');
+  truthy(/^v2\.1\.39-stable-action-identity/.test(parsed.build_id || ''), 'download build id missing');
   truthy(typeof parsed.exported_at === 'string' && parsed.exported_at.length > 0, 'download timestamp missing');
 });
 

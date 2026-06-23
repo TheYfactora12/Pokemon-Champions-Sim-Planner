@@ -67,7 +67,8 @@
 // v70-core-move-parity [2026-06-23] - Remaining shipped move parity, secondary effects, accuracy, and special-case damage coverage.
 // v71-damage-log-team-catalog [2026-06-23] - Applied-vs-calculated damage logs and approved Champion top-10 runtime catalog.
 // v72-log-validator-replacement [2026-06-23] - No-valid-target validator ignores post-turn replacements not available at skip time.
-const CACHE_NAME = 'champions-sim-v72-log-validator-replacement';
+// v73-stable-action-identity [2026-06-23] - Turn-log actions export stable actor/target keys for mirror-species validation.
+const CACHE_NAME = 'champions-sim-v73-stable-action-identity';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

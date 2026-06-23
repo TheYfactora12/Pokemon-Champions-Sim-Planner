@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.38-log-validator-replacement';
+    return txt || 'v2.1.39-stable-action-identity';
   } catch (e) {
-    return 'v2.1.38-log-validator-replacement';
+    return 'v2.1.39-stable-action-identity';
   }
 }
 
@@ -6130,7 +6130,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Exported log validator added',
-      detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, observed priority order, damage evidence shape, and no-valid-target skips. v2.1.38 keeps the live-target guard but no longer treats post-turn replacement Pokemon as available before their send-out event.'
+      detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, observed priority order, damage evidence shape, and no-valid-target skips. v2.1.39 validates observed action order by side/stable identity so mirror species and form names do not corrupt speed checks.'
     },
     {
       status: 'done',
@@ -6168,6 +6168,11 @@ var CS_OVERVIEW_DATA = {
       status: 'validated',
       title: 'Run All doubles validator proof is green',
       detail: 'Four v2.1.37 GitHub Pages Run All doubles exports from June 23 validate with zero errors after the no-valid-target guard was corrected for post-turn replacement timing. The sample covers 23 turns, 56 damage events, 18 spread hits, 26 capped/overkill damage rows, 5 crits, 33 super-effective hits, Tailwind, Trick Room, Mega evolution, Knock Off removal, Protect, stat drops, and typed item boosts.'
+    },
+    {
+      status: 'validated',
+      title: 'Stable action identity export is green',
+      detail: 'v2.1.39 turn-log action rows now include actor_key, target_key, and target_side. The focused engine test asserts those fields directly, and seven fresh v2.1.38 browser logs validate after the action-order guard stopped using display names as unique identities.'
     },
     {
       status: 'validated',
@@ -6262,7 +6267,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'GitHub issue sweep completed',
-      detail: 'Open issues were checked in TheYfactora12 and alfredocox repos. JD flags Alfredo #241 and #240 remain active; Josh/JD data-audit comments are tracked in Alfredo #231 and Y Factor #123.'
+      detail: 'Open issues were checked in TheYfactora12 and alfredocox repos on June 23. Active sim-truth trackers are Alfredo #241/#239 and Y #137 for DB runtime-source wiring, Alfredo #231 and Y #123 for Josh/JD data audit risk, Alfredo #220 for full six-mon replay parsing, Alfredo #213 and Y #103 for deployment/cache hardening, Alfredo #206/#204 and Y #96/#94 for stress/legal-set automation, and Alfredo #35/Y #4 for the public Champions damage oracle. Alfredo #240 is closed and should not be treated as an active blocker.'
     },
     {
       status: 'validated',
@@ -6293,8 +6298,18 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
+      title: 'Replay parser full-roster gap remains open',
+      detail: 'Alfredo #220 says Battle Sensei replay parsing only sees the four brought Pokemon instead of the full six-mon team. That does not block the battle simulator catalog directly, but it can corrupt replay-derived QA, matchup scouting, and future calibration if treated as complete team truth.'
+    },
+    {
+      status: 'gap',
       title: '100% parity still has non-move gates',
       detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
+    },
+    {
+      status: 'gap',
+      title: 'Deployment hardening and cache safety remain open',
+      detail: 'Alfredo #213 and Y #103 remain open for deployment hardening, cache safety, and abuse protection. The current release bumps cache names and verifies bundle freshness, but broader deploy/security hardening is still issue-backed work.'
     },
     {
       status: 'gap',
@@ -6316,7 +6331,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Stress-test, rebuild, and prove the new truth board',
-      detail: 'Before pushing to GitHub Pages, run focused legality/damage tests, the broader non-DB suite, rebuild `pokemon-champion-2026.html`, check the bundle, then use a fresh deployed URL to export one single-run log, one Run All log, and one QA Artifact.'
+      detail: 'Before pushing to GitHub Pages, run focused legality/damage tests, the broader non-DB suite, rebuild `pokemon-champion-2026.html`, check the bundle, then use a fresh deployed URL to export one single-run log, one Run All log, and one QA Artifact. This also feeds Y #105/#104 and Alfredo #216 for replay/artifact proof.'
+    },
+    {
+      status: 'next',
+      title: 'Convert stress and legal-set issues into repo gates',
+      detail: 'Use `POKESIM_CODEX_STRESS_TEST_BRIEF.md` plus Alfredo #206/#204 and Y #96/#94 to add deterministic stress, legal-set generation, invariant, browser-smoke, bundle-drift, and preserved-failing-seed scripts instead of relying on manual downloaded logs.'
     },
     {
       status: 'next',
@@ -6331,7 +6351,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Mirror or update JD issue alignment in the Y fork',
-      detail: 'The Y fork has #137 and #123, but JD Alfredo #241 and #240 should either be mirrored or summarized into the existing Y issues so both repos show the same open truth.'
+      detail: 'The Y fork has #137 and #123 for the current source-truth/data-audit mirrors. Alfredo #241 and #239 should stay linked there; Alfredo #240 is closed, so do not list it as an active blocker.'
     },
     {
       status: 'next',
@@ -6378,7 +6398,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'decision',
       title: 'Issue mirroring policy between repos',
-      detail: 'Decide whether JD/Josh issues should be duplicated in both repos or whether the Y fork should keep one tracker issue linking the Alfredo source tickets.'
+      detail: 'Decide whether JD/Josh issues should be duplicated in both repos or whether the Y fork should keep one tracker issue linking the Alfredo source tickets. Closed upstream items such as Alfredo #240 should be recorded as resolved, not mirrored as open work.'
     },
     {
       status: 'decision',

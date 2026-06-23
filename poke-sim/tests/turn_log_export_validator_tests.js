@@ -410,6 +410,79 @@ function stripStableFields(payload) {
     truthy(!res.findings.some(f => f.code === 'no-valid-target-with-live-target'), 'post-turn replacements should not make the earlier skip invalid');
   });
 
+  T('11c. observed action order uses side and stable keys for mirror species', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    const playerIncin = Object.assign({}, baseRow('player', 'active', 0, 'Incineroar', 'Sitrus Berry', 'Intimidate', 0), {
+      calculatedStats: '202/157/110/90/128/88'
+    });
+    const playerWhim = Object.assign({}, baseRow('player', 'active', 1, 'Whimsicott', 'Focus Sash', 'Prankster', 3), {
+      calculatedStats: '137/78/95/121/96/184'
+    });
+    const oppZard = Object.assign({}, baseRow('opponent', 'active', 0, 'Charizard-Mega-X', 'Charizardite X', 'Tough Claws', 0), {
+      calculatedStats: '167/177/131/135/105/149'
+    });
+    const oppIncin = Object.assign({}, baseRow('opponent', 'active', 1, 'Incineroar', 'Sitrus Berry', 'Intimidate', 4), {
+      calculatedStats: '202/157/110/90/128/91'
+    });
+    const activePlayer = [playerIncin, playerWhim];
+    const activeOpponent = [oppZard, oppIncin];
+    const hpPct = {};
+    const hpPctStable = {};
+    for (const row of activePlayer.concat(activeOpponent)) {
+      hpPct[row.key] = 1;
+      hpPctStable[row.stableKey] = 1;
+    }
+    const snapshot = {
+      active: { player: ['Incineroar', 'Whimsicott'], opponent: ['Charizard-Mega-X', 'Incineroar'] },
+      bench: { player: [], opponent: [] },
+      active_keys: { player: activePlayer.map(row => row.key), opponent: activeOpponent.map(row => row.key) },
+      bench_keys: { player: [], opponent: [] },
+      active_stable_keys: { player: activePlayer.map(row => row.stableKey), opponent: activeOpponent.map(row => row.stableKey) },
+      bench_stable_keys: { player: [], opponent: [] },
+      hp_pct: hpPct,
+      hp_pct_stable: hpPctStable,
+      roster: { player: activePlayer, opponent: activeOpponent },
+      status: {},
+      field: { trick_room: 0 },
+      speed_control: { player: { tailwind_turns: 2 }, opponent: {} },
+      speed_order: ['Whimsicott', 'Incineroar', 'Charizard-Mega-X', 'Incineroar'],
+      speed_order_keys: [playerWhim.key, playerIncin.key, oppZard.key, oppIncin.key],
+      speed_order_stable_keys: [playerWhim.stableKey, playerIncin.stableKey, oppZard.stableKey, oppIncin.stableKey],
+      speed_order_details: [
+        { side: 'player', key: playerWhim.key, stableKey: playerWhim.stableKey, pokemon: 'Whimsicott', effective_speed: 368 },
+        { side: 'player', key: playerIncin.key, stableKey: playerIncin.stableKey, pokemon: 'Incineroar', effective_speed: 176 },
+        { side: 'opponent', key: oppZard.key, stableKey: oppZard.stableKey, pokemon: 'Charizard-Mega-X', effective_speed: 149 },
+        { side: 'opponent', key: oppIncin.key, stableKey: oppIncin.stableKey, pokemon: 'Incineroar', effective_speed: 91 }
+      ]
+    };
+    turn.pre = clone(snapshot);
+    turn.post = clone(snapshot);
+    turn.actions = {
+      player: [
+        { actor: 'Incineroar', kind: 'move', move: 'Knock Off', target: 'Charizard-Mega-X' },
+        { actor: 'Whimsicott', kind: 'move', move: 'Protect', target: 'Incineroar' }
+      ],
+      opponent: [
+        { actor: 'Charizard-Mega-X', kind: 'move', move: 'Flare Blitz', target: 'Whimsicott' },
+        { actor: 'Incineroar', kind: 'move', move: 'Flare Blitz', target: 'Whimsicott' }
+      ]
+    };
+    turn.events = [
+      { type: 'log', text: 'Whimsicott used Protect!' },
+      { type: 'log', text: 'Incineroar used Knock Off!' },
+      { type: 'damage', text: 'Incineroar used Knock Off! -> Charizard-Mega-X [30 dmg, 67/167 HP]' },
+      { type: 'log', text: 'Charizard-Mega-X used Flare Blitz!' },
+      { type: 'log', text: 'Whimsicott protected itself!' },
+      { type: 'log', text: 'Incineroar used Flare Blitz!' },
+      { type: 'log', text: 'Whimsicott protected itself!' }
+    ];
+
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+    truthy(!res.findings.some(f => f.code === 'observed-action-order-mismatch'), 'mirror Incineroar names should not corrupt speed order');
+  });
+
   T('12. calculated damage_events pass validation with modifier evidence', () => {
     const payload = stableFixture();
     payload.turnLog[0].damage_events = [{
