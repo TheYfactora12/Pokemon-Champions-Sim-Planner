@@ -40,6 +40,7 @@ function arg(name, fallback) {
 const pokedexPath = arg('pokedex', '');
 const learnsetsPath = arg('learnsets', '');
 const movesPath = arg('moves', '');
+const moveTextPath = arg('move-text', '');
 const sourceCommit = arg('source-commit', 'unknown');
 const sourceDate = arg('source-date', new Date().toISOString().slice(0, 10));
 const csvOut = arg('csv-out', path.join(ROOT, 'reports', 'pokemon_data_audit.csv'));
@@ -47,7 +48,7 @@ const xlsxOut = arg('xlsx-out', path.join(ROOT, 'reports', 'pokemon_data_audit.x
 const runtimeOut = arg('runtime-out', path.join(ROOT, 'generated', 'pokemon_showdown_legal_data.js'));
 
 if (!pokedexPath || !learnsetsPath || !movesPath) {
-  console.error('Usage: node tools/generate-pokemon-data-audit.js --pokedex <pokedex.ts> --learnsets <learnsets.ts> --moves <moves.ts> --source-commit <sha> --source-date <yyyy-mm-dd>');
+  console.error('Usage: node tools/generate-pokemon-data-audit.js --pokedex <pokedex.ts> --learnsets <learnsets.ts> --moves <moves.ts> [--move-text <data/text/moves.ts>] --source-commit <sha> --source-date <yyyy-mm-dd>');
   process.exit(2);
 }
 
@@ -101,6 +102,8 @@ function parseMoves(file) {
     };
     const accuracyMatch = block.match(/accuracy\s*:\s*(true|-?\d+)/);
     const recoilMatch = block.match(/recoil\s*:\s*\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]/);
+    const shortDesc = stringValue('shortDesc');
+    const desc = stringValue('desc');
     const flagsMatch = block.match(/flags\s*:\s*\{([^}]*)\}/);
     const flags = flagsMatch
       ? flagsMatch[1].split(',').map((part) => cleanKey(part.split(':')[0])).filter(Boolean).sort()
@@ -117,6 +120,9 @@ function parseMoves(file) {
       target: stringValue('target'),
       flags: flags.join('|'),
       recoil: recoilMatch ? [Number(recoilMatch[1]), Number(recoilMatch[2])] : null,
+      shortDesc,
+      short_desc: shortDesc,
+      desc,
     };
     id = '';
     blockLines = [];
@@ -135,6 +141,17 @@ function parseMoves(file) {
   });
   flush();
   return out;
+}
+
+function applyMoveText(moves, moveText) {
+  Object.entries(moveText || {}).forEach(([id, row]) => {
+    if (!moves[id] || !row) return;
+    const shortDesc = row.shortDesc || '';
+    const desc = row.desc || '';
+    moves[id].shortDesc = shortDesc;
+    moves[id].short_desc = shortDesc;
+    moves[id].desc = desc;
+  });
 }
 
 function csvEscape(value) {
@@ -290,8 +307,9 @@ function build() {
   const pokedex = loadTsConst(pokedexPath, 'Pokedex');
   const learnsets = loadTsConst(learnsetsPath, 'Learnsets');
   const moves = parseMoves(movesPath);
+  if (moveTextPath) applyMoveText(moves, loadTsConst(moveTextPath, 'MovesText'));
   const app = readAppData();
-  const source = 'smogon/pokemon-showdown data/pokedex.ts + learnsets.ts + moves.ts';
+  const source = 'smogon/pokemon-showdown data/pokedex.ts + learnsets.ts + moves.ts' + (moveTextPath ? ' + text/moves.ts' : '');
   const sourceVersion = sourceCommit + ' (' + sourceDate + ')';
   const generatedAt = new Date().toISOString();
   const appSupportedNames = new Set(Object.keys(app.dex).concat(Object.keys(app.baseStats), Object.keys(app.types), Object.keys(app.megas), REQUIRED_SPECIES));

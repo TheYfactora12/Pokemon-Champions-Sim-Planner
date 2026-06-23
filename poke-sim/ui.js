@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.40-turn-log-team-roster';
+    return txt || 'v2.1.41-recoil-showdown-context';
   } catch (e) {
-    return 'v2.1.40-turn-log-team-roster';
+    return 'v2.1.41-recoil-showdown-context';
   }
 }
 
@@ -6152,6 +6152,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'QA baseline snapshot added',
       detail: 'reports/champion_qa_baseline_snapshot.md is generated from current source data and lists approved Champion runtime team movesets, move metadata, support status, baseline data, and all shipped move support so QA has one readable reference from the Overview page.'
+    },
+    {
+      status: 'done',
+      title: 'Showdown recoil context added to QA baseline',
+      detail: 'v2.1.41 preserves Pokemon Showdown move recoil tuples and official data/text/moves.ts descriptions in generated move metadata. The QA Baseline Snapshot now lists recoil rules and Showdown context for Flare Blitz, Wave Crash, Head Smash, Light of Ruin, and other shipped recoil moves, and recoil tests assert exact applied-damage ratios.'
     },
     {
       status: 'done',

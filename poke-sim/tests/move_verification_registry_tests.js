@@ -46,6 +46,22 @@ function eq(actual, expected, msg) {
 function includes(line, needle) {
   return String(line).includes(needle);
 }
+function logDamage(line) {
+  const match = String(line || '').match(/\[(\d+) dmg/);
+  return match ? Number(match[1]) : null;
+}
+function assertRecoilRatio(battle, actor, move, numerator, denominator) {
+  const damageLine = battle.log.find((line) => includes(line, `${actor} used ${move}!`) && includes(line, 'dmg'));
+  const recoilLine = battle.log.find((line) => includes(line, `${actor} was hurt by recoil!`));
+  truthy(damageLine, `${move} damage line missing`);
+  truthy(recoilLine, `${move} recoil line missing`);
+  const damage = logDamage(damageLine);
+  const recoil = logDamage(recoilLine);
+  truthy(Number.isFinite(damage), `${move} damage amount missing`);
+  truthy(Number.isFinite(recoil), `${move} recoil amount missing`);
+  eq(recoil, Math.max(1, Math.round(damage * numerator / denominator)),
+    `${move} recoil should use applied damage ratio ${numerator}/${denominator}`);
+}
 
 function mk(name, overrides) {
   const d = Object.assign({ name, level: 50, moves: ['Tackle'], ability: '', item: '', nature: 'Hardy' }, overrides || {});
@@ -2291,8 +2307,7 @@ T('78. Flare Blitz applies recoil after a successful hit', () => {
     evs: { hp: 252, def: 252, spd: 4, atk: 0, spa: 0, spe: 0 }
   }]);
   const battle = simulateBattle(player, opp, { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
-  truthy(battle.log.some((line) => includes(line, 'Arcanine was hurt by recoil!')),
-    'Flare Blitz recoil log missing');
+  assertRecoilRatio(battle, 'Arcanine', 'Flare Blitz', 33, 100);
 });
 
 T('79. Wave Crash applies recoil after a successful hit', () => {
@@ -2315,8 +2330,7 @@ T('79. Wave Crash applies recoil after a successful hit', () => {
     evs: { hp: 252, def: 252, spd: 4, atk: 0, spa: 0, spe: 0 }
   }]);
   const battle = simulateBattle(player, opp, { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
-  truthy(battle.log.some((line) => includes(line, 'Basculegion was hurt by recoil!')),
-    'Wave Crash recoil log missing');
+  assertRecoilRatio(battle, 'Basculegion', 'Wave Crash', 33, 100);
 });
 
 T('80. Head Smash applies heavy recoil after a successful hit', () => {
@@ -2339,8 +2353,7 @@ T('80. Head Smash applies heavy recoil after a successful hit', () => {
     evs: { hp: 252, def: 252, spd: 4, atk: 0, spa: 0, spe: 0 }
   }]);
   const battle = simulateBattle(player, opp, { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
-  truthy(battle.log.some((line) => includes(line, 'Tyranitar was hurt by recoil!')),
-    'Head Smash recoil log missing');
+  assertRecoilRatio(battle, 'Tyranitar', 'Head Smash', 1, 2);
 });
 
 T('81. Aqua Jet lets a slower attacker move before a faster standard-priority target', () => {

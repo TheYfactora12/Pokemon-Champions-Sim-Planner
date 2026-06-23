@@ -54,7 +54,9 @@ function fixtureRows() {
           priority: 0,
           target: 'any',
           flags: { contact: 1, protect: 1 },
-          recoil: [33, 100]
+          recoil: [33, 100],
+          shortDesc: 'Has 33% recoil.',
+          desc: 'Has 33% recoil.'
         }
       },
       {
@@ -215,6 +217,9 @@ T('4. generator emits approved runtime data and excludes unapproved rows', () =>
   eq(runtime.moves.bravebird.priority, 1, 'active Champions override should apply');
   eq(runtime.moves.bravebird.flags, 'contact|protect', 'flags should be deterministic');
   eq(runtime.moves.bravebird.recoil[0], 33, 'recoil numerator');
+  eq(runtime.moves.bravebird.shortDesc, 'Has 33% recoil.', 'shortDesc should survive approved generation');
+  eq(runtime.moves.bravebird.short_desc, 'Has 33% recoil.', 'short_desc should survive approved generation');
+  eq(runtime.moves.bravebird.desc, 'Has 33% recoil.', 'desc should survive approved generation');
   truthy(runtime.species.Charizard, 'Charizard species missing');
   eq(runtime.species.Charizard.weightkg, 90.5, 'Charizard weight should survive approved generation');
   eq(runtime.meta.appliedOverrideCount, 1, 'applied override count');

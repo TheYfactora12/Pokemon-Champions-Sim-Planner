@@ -800,7 +800,10 @@
         category: row.category || '',
         basePower: showdownBasePower,
         target: row.target || '',
-        flags: row.flags || ''
+        flags: row.flags || '',
+        recoil: row.recoil || null,
+        shortDesc: row.shortDesc || row.short_desc || '',
+        desc: row.desc || ''
       } : null,
       local: {
         type: localType,
@@ -813,6 +816,9 @@
         category: row && row.category ? String(row.category).toLowerCase() : localCategory,
         basePower: hasShowdownBasePower ? showdownBasePower : localBasePower,
         target: row && row.target ? row.target : localTarget,
+        recoil: row && row.recoil ? row.recoil : null,
+        shortDesc: row && (row.shortDesc || row.short_desc) ? (row.shortDesc || row.short_desc) : '',
+        desc: row && row.desc ? row.desc : '',
         source: row ? 'showdown' : (localType || localCategory || localBasePower !== '' || localTarget ? 'local' : 'missing')
       },
       registryComplete: registryComplete,

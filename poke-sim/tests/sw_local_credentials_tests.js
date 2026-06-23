@@ -40,7 +40,7 @@ T('3. missing local-credentials.js returns empty JavaScript instead of cached ap
 });
 
 T('4. service worker cache is bumped for stale app-shell release fix', () => {
-  truthy(sw.includes('champions-sim-v74-turn-log-team-roster'), 'CACHE_NAME should be v74 Turn Log Team Roster');
+  truthy(sw.includes('champions-sim-v75-recoil-showdown-context'), 'CACHE_NAME should be v75 Recoil Showdown Context');
   truthy(sw.includes('./generated/pokemon_showdown_species_weights.js'), 'weight companion file should be pre-cached');
 });
 

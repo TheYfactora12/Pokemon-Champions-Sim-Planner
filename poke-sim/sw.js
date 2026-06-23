@@ -69,7 +69,8 @@
 // v72-log-validator-replacement [2026-06-23] - No-valid-target validator ignores post-turn replacements not available at skip time.
 // v73-stable-action-identity [2026-06-23] - Turn-log actions export stable actor/target keys for mirror-species validation.
 // v74-turn-log-team-roster [2026-06-23] - Turn-log exports include full team roster metadata for QA review.
-const CACHE_NAME = 'champions-sim-v74-turn-log-team-roster';
+// v75-recoil-showdown-context [2026-06-23] - QA baseline exposes Showdown recoil metadata and move text.
+const CACHE_NAME = 'champions-sim-v75-recoil-showdown-context';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

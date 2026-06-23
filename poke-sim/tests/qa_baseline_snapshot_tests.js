@@ -84,7 +84,20 @@ T('4. snapshot documents generated-source update rule', () => {
   truthy(report.includes('do not hand-edit team or move rows'), 'generated-source warning missing');
 });
 
-T('5. generated snapshot is current with source data', () => {
+T('5. snapshot exposes Showdown recoil context for QA', () => {
+  const report = fs.readFileSync(reportPath, 'utf8');
+  truthy(report.includes('| Move | Support | Type | Category | Base Power | Accuracy | Priority | Target | Source | Recoil | Showdown Context |'),
+    'move baseline should include recoil and Showdown context columns');
+  truthy(report.includes('## Recoil Move QA Context'), 'recoil QA context section missing');
+  truthy(report.includes('| Flare Blitz |') && report.includes('33/100 damage dealt'),
+    'Flare Blitz recoil context missing');
+  truthy(report.includes('| Wave Crash |') && report.includes('33/100 damage dealt'),
+    'Wave Crash recoil context missing');
+  truthy(report.includes('| Head Smash |') && report.includes('1/2 damage dealt'),
+    'Head Smash recoil context missing');
+});
+
+T('6. generated snapshot is current with source data', () => {
   const res = spawnSync('node', ['tools/generate-qa-baseline-snapshot.mjs', '--check'], {
     cwd: ROOT,
     encoding: 'utf8'

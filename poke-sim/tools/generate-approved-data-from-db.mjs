@@ -177,7 +177,10 @@ function normalizeMove(key, displayName, data) {
     priority: firstDefined(data.priority, 0),
     target: firstDefined(data.target, ''),
     flags: normalizeFlags(data.flags),
-    recoil: firstDefined(data.recoil, null)
+    recoil: firstDefined(data.recoil, null),
+    shortDesc: firstDefined(data.shortDesc, data.short_desc, ''),
+    short_desc: firstDefined(data.short_desc, data.shortDesc, ''),
+    desc: firstDefined(data.desc, '')
   }));
 }
 

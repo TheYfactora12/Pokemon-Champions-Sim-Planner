@@ -90,6 +90,10 @@ T('5. imported Showdown moves can be baseline-supported without local table rows
   truthy(braveBird, 'Brave Bird summary missing');
   eq(braveBird.supportLevel, 'baseline', 'Brave Bird support');
   truthy(braveBird.showdown && braveBird.showdown.basePower === 120, 'Brave Bird Showdown BP missing');
+  truthy(braveBird.showdown && Array.isArray(braveBird.showdown.recoil) && braveBird.showdown.recoil[0] === 33,
+    'Brave Bird Showdown recoil missing');
+  truthy(braveBird.showdown && String(braveBird.showdown.shortDesc || '').toLowerCase().includes('recoil'),
+    'Brave Bird Showdown short description missing');
   truthy(braveBird.effective && braveBird.effective.source === 'showdown', 'Brave Bird should be sourced from Showdown');
 });
 

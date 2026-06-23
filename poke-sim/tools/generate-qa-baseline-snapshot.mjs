@@ -42,6 +42,23 @@ function teamStyle(team) {
   return team && (team.style || team.label || team.description || '-');
 }
 
+function recoilText(value) {
+  if (!value) return '-';
+  if (Array.isArray(value) && value.length >= 2) return `${value[0]}/${value[1]} damage dealt`;
+  if (typeof value === 'object') {
+    const num = value.numerator || value.num || value[0];
+    const den = value.denominator || value.den || value[1];
+    if (num && den) return `${num}/${den} damage dealt`;
+  }
+  return String(value);
+}
+
+function moveContext(row) {
+  const shortDesc = row && row.shortDesc || row && row.short_desc || '';
+  const desc = row && row.desc || '';
+  return shortDesc || desc || '';
+}
+
 function sourceHash() {
   const h = createHash('sha256');
   for (const file of SOURCE_FILES) {
@@ -106,6 +123,8 @@ function supportRow(move) {
     source: support.effective && support.effective.source || '',
     accuracy: showdown.accuracy == null ? '' : showdown.accuracy,
     priority: showdown.priority == null ? 0 : showdown.priority,
+    recoil: support.showdown && support.showdown.recoil ? support.showdown.recoil : showdown.recoil || null,
+    context: moveContext(showdown) || support.effective && support.effective.shortDesc || support.effective && support.effective.desc || '',
     flags: showdown.flags || support.showdown && support.showdown.flags || '',
     tests: support.verification && support.verification.tests ? support.verification.tests.join(', ') : '',
     notes: support.notes || support.verification && support.verification.summary || ''
@@ -144,6 +163,7 @@ lines.push('- Battle mechanics live in `engine.js` and generated runtime data, n
 lines.push('- Supabase can store approved source rows, teams, overrides, and audit history, but browser sim behavior must remain reproducible from the bundle.');
 lines.push('- `verified` means an explicit local simulator regression or oracle case exists. `baseline` means metadata exists but dedicated behavior coverage is not enough for a 100% claim.');
 lines.push('- Normal selectors should use approved Champion-legal teams only; custom teams still need legality checks before they can be trusted for QA.');
+lines.push('- Recoil rows use Pokemon Showdown move metadata where available. The engine applies recoil from actual HP loss dealt to the target, not from uncapped overkill formula damage.');
 lines.push('');
 lines.push('## Approved Runtime Team Movesets');
 lines.push('');
@@ -168,8 +188,8 @@ for (const [teamKey, team] of approvedTeams) {
 lines.push('');
 lines.push('## Approved Catalog Move Baseline');
 lines.push('');
-lines.push('| Move | Support | Type | Category | Base Power | Accuracy | Priority | Target | Source | Flags | Tests | Notes |');
-lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
+lines.push('| Move | Support | Type | Category | Base Power | Accuracy | Priority | Target | Source | Recoil | Showdown Context | Flags | Tests | Notes |');
+lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
 for (const row of approvedMoveRows) {
   lines.push([
     row.move,
@@ -181,16 +201,33 @@ for (const row of approvedMoveRows) {
     row.priority,
     row.target,
     row.source,
+    recoilText(row.recoil),
+    row.context,
     row.flags,
     row.tests,
     row.notes
   ].map(md).join(' | ').replace(/^/, '| ').replace(/$/, ' |'));
 }
 lines.push('');
+lines.push('## Recoil Move QA Context');
+lines.push('');
+lines.push('Recoil damage should be calculated from applied HP loss after the target HP cap. For example, if a recoil move calculates 150 damage into a target with 10 HP left, recoil uses 10 applied damage, not 150 overkill damage.');
+lines.push('');
+lines.push('| Move | Recoil Rule | Showdown Context | Local Coverage |');
+lines.push('| --- | --- | --- | --- |');
+for (const row of shippedRows.filter(row => row.recoil)) {
+  lines.push([
+    row.move,
+    recoilText(row.recoil),
+    row.context,
+    row.tests || row.notes
+  ].map(md).join(' | ').replace(/^/, '| ').replace(/$/, ' |'));
+}
+lines.push('');
 lines.push('## All Shipped Move Support Summary');
 lines.push('');
-lines.push('| Move | Support | Type | Category | Base Power | Target | Verification Notes |');
-lines.push('| --- | --- | --- | --- | --- | --- | --- |');
+lines.push('| Move | Support | Type | Category | Base Power | Target | Recoil | Showdown Context | Verification Notes |');
+lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- |');
 for (const row of shippedRows) {
   lines.push([
     row.move,
@@ -199,6 +236,8 @@ for (const row of shippedRows) {
     row.category,
     row.basePower,
     row.target,
+    recoilText(row.recoil),
+    row.context,
     row.notes
   ].map(md).join(' | ').replace(/^/, '| ').replace(/$/, ' |'));
 }
