@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.28-mechanics-stack-guard';
+    return txt || 'v2.1.29-knock-off-guard';
   } catch (e) {
-    return 'v2.1.28-mechanics-stack-guard';
+    return 'v2.1.29-knock-off-guard';
   }
 }
 
@@ -5798,7 +5798,8 @@ var CS_OVERVIEW_DATA = {
     { label: 'Turn Logs', value: 'Structural clean' },
     { label: 'Target Guard', value: 'Canonical bridge' },
     { label: 'QA Log Retention', value: 'Capped + artifact' },
-    { label: 'Ability Inventory', value: '80/80 modeled' }
+    { label: 'Ability Inventory', value: '80/80 modeled' },
+    { label: 'Knock Off', value: 'Verified' }
   ],
   shipped: [
     {
@@ -5868,6 +5869,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Knock Off item behavior guarded',
+      detail: 'v2.1.29 aligns Knock Off with Showdown/Bulbapedia behavior for removable held-item damage boost, post-damage item removal, legal no-item targets, corresponding Mega Stone protection before Mega activation, and Sticky Hold removal blocking.'
+    },
+    {
+      status: 'done',
       title: 'Showdown sync and DB writer staged',
       detail: 'The repo has migrations and writer tooling for showdown_sync_runs, showdown_source_files, showdown_entities, and champions_overrides, plus approved-view tests and generated static Showdown assets; runtime consumption of live DB rows remains tracked separately as an open gap.'
     },
@@ -5926,12 +5932,17 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.28 mechanics stack guard carries the v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Source-truth tests, target bridge coverage, golden battle hashes, DB suites, bundle freshness, service-worker cache guard, damage-stack oracle, speed-stack evidence, and strict validation passed locally for this release.'
+      detail: 'v2.1.29 Knock Off guard carries the v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Source-truth tests, target bridge coverage, golden battle hashes, DB suites, bundle freshness, service-worker cache guard, damage-stack oracle, speed-stack evidence, Knock Off item-state tests, and strict validation passed locally for this release.'
     },
     {
       status: 'validated',
       title: 'Damage stack oracle is green',
-      detail: 'showdown_damage_oracle_tests.js now covers Charcoal plus Blaze plus sun plus STAB plus super-effective Fire damage, alongside terrain, weather, ability, screen, Tera, immunity, and spread-sensitive damage cases. Fresh v2.1.28 exports also carry damage_events so modifier stacks can be audited from live logs.'
+      detail: 'showdown_damage_oracle_tests.js now covers Charcoal plus Blaze plus sun plus STAB plus super-effective Fire damage, alongside terrain, weather, ability, screen, Tera, immunity, and spread-sensitive damage cases. v2.1.29 exports also carry damage_events with typed-item and Knock Off boost fields so modifier stacks can be audited from live logs.'
+    },
+    {
+      status: 'validated',
+      title: 'Knock Off source-truth behavior is documented',
+      detail: 'The release notes now state the Showdown-first rule: legal no-item targets get no boost or removal, removable held items get the boost and post-damage removal, corresponding Mega Stones are protected even before Mega activation, and Sticky Hold blocks removal while preserving the boost.'
     },
     {
       status: 'validated',
@@ -5973,12 +5984,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'TheYfactora12 main carries v2.1.28 mechanics stack guard plus the v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
+      detail: 'TheYfactora12 main carries v2.1.29 Knock Off guard plus the v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
       title: 'Mechanics parity is broader than the current ability slice',
-      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, stat/speed snapshot evidence, target category bridge, and stale opposing-target retarget slices are covered. Remaining parity work still needs grouped checks for Knock Off item removal/boost, Tera Blast dynamic typing, redirection, Protect, switching, status, items, and Champions overrides.'
+      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, and stale opposing-target retarget slices are covered. Remaining parity work still needs grouped checks for Tera Blast dynamic typing, redirection, Protect, switching, status, items, and Champions overrides.'
     },
     {
       status: 'gap',
@@ -5994,8 +6005,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.28 live logs, QA artifact, and sync Alfredo',
-      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, and damage_events snapshots, then prepare the reviewed upstream sync to Alfredo.'
+      title: 'Verify v2.1.29 live logs, QA artifact, and sync Alfredo',
+      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
       status: 'next',
@@ -6015,12 +6026,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Group mechanics parity work by battle system',
-      detail: 'Continue from exported-log evidence into Knock Off item boost/removal, Tera Blast dynamic typing, secondary stat effects, move targeting, redirection, Protect family, switching/replacement, status, abilities, and terrain/weather.'
+      detail: 'Continue from exported-log evidence into Tera Blast dynamic typing, secondary stat effects, move targeting, redirection, Protect family, switching/replacement, status, abilities, and terrain/weather.'
     },
     {
       status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.28 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.29 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',
@@ -6062,6 +6073,8 @@ var CS_OVERVIEW_DATA = {
   ],
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
+    { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },
+    { label: 'Type Multiplier Audit', href: 'reports/type_multiplier_audit.md' },
     { label: 'Simulation First', href: '../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md' },
     { label: 'Public Release Plan', href: '../docs/release/PUBLIC_RELEASE_MILESTONE_PLAN_2026-06-06.md' },
     { label: 'Showdown DB Stress Test', href: '../docs/release/SHOWDOWN_DB_WIRING_STRESS_TEST_2026-06-06.md' },

@@ -55,7 +55,9 @@
 // with build/source metadata and explicit browser retention caps.
 // v62-mechanics-stack-guard [2026-06-22] - Type multiplier audit, typed held-item
 // damage boosts, and stat/effective-speed turn-log evidence.
-const CACHE_NAME = 'champions-sim-v62-mechanics-stack-guard';
+// v63-knock-off-guard [2026-06-22] - Knock Off removable-item boost/removal,
+// corresponding Mega Stone protection, no-item guard, and Sticky Hold coverage.
+const CACHE_NAME = 'champions-sim-v63-knock-off-guard';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

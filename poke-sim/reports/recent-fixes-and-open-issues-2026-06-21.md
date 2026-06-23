@@ -5,7 +5,8 @@ This snapshot records the current truth after the June 21-22 live-log review and
 ## 2026-06-22 Deployment Update
 
 - The prior Y fork public validation target was commit `7e0deca` (`model champion ability parity`).
-- `v2.1.28-mechanics-stack-guard` supersedes `v2.1.27-qa-artifact-export` for the current GitHub Pages release and bumps the service-worker cache to `champions-sim-v62-mechanics-stack-guard`.
+- `v2.1.29-knock-off-guard` supersedes `v2.1.28-mechanics-stack-guard` for the current GitHub Pages release and bumps the service-worker cache to `champions-sim-v63-knock-off-guard`.
+- `v2.1.29` promotes `Knock Off` from baseline to verified move coverage. The source truth is Pokemon Showdown move/item behavior checked against Bulbapedia: removable held items give the 1.5x base-power boost and are removed after damage; legal no-item targets give no boost and remove nothing; corresponding Mega Stones are not removable and do not give the boost even before Mega Evolution; Sticky Hold blocks removal while the holder is alive but does not suppress the boost when the item is otherwise removable.
 - The earlier `e5af069` build added `champions-turn-log-v2` export metadata; fresh June 22 logs from `?v=7e0deca` validate structurally cleanly, then deeper replay review exposed the target bridge bug fixed in `v2.1.25`.
 - Supabase migration `2026_06_22_retire_legacy_sv_teams.sql` has run successfully; the two stale v1 teams are retired at the source.
 - Fresh logs from the live URL now validate cleanly for team loading, stable IDs, final alive counts, and stale item absence.
@@ -17,17 +18,28 @@ This snapshot records the current truth after the June 21-22 live-log review and
 | Live team-load failure | Fixed in `v2.1.21-sim-context-team-load` | `Run Simulation` and `Run All` now normalize DB/static teams through one sim context. Fresh exported logs no longer contain `player team not loaded`. |
 | Sim identity drift risk | Guarded | Turn snapshots include side-prefixed stable keys such as `player:slot:0:Incineroar` and `opponent:slot:2:Incineroar`; four fresh logs had no duplicate or wrong-side stable keys. |
 | Lethal Sitrus/Oran restore | Fixed and deployed in `v2.1.22-lethal-berry-guard` | Exported logs showed Sitrus restoring after `0 HP`; `engine.js` now requires `hp > 0` for damage-trigger berries. `items_tests.js` covers surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior. |
-| Golden battle trace drift from intentional mechanics fixes | Updated | Earlier `gb_001` and `gb_002` hashes were refreshed for the lethal-berry fix; `v2.1.28` refreshes all three golden trace hashes after typed held-item damage boosts and structured damage evidence changed deterministic traces while preserving expected winners. |
+| Golden battle trace drift from intentional mechanics fixes | Updated | Earlier `gb_001` and `gb_002` hashes were refreshed for the lethal-berry fix; `v2.1.28` refreshed all three golden trace hashes after typed held-item damage boosts and structured damage evidence changed deterministic traces; `v2.1.29` refreshes `gb_001` and `gb_003` after Knock Off now boosts/removes removable held items in those traces while preserving expected winners. |
 | Champion item/SP gate | Fixed and deployed in `v2.1.23-champion-item-sp-gate` | `legality.js` now uses a positive Champions item allowlist; imports reject raw EV/IV lines; exports use `SPs:`; illegal teams are hidden from selectors; stale DB teams cannot replace legal bundled teams. |
-| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v62-mechanics-stack-guard`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.28-mechanics-stack-guard` after bundle rebuild. |
+| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v63-knock-off-guard`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.29-knock-off-guard` after bundle rebuild. |
 | Exported-log build drift | Guarded in `e5af069` | Downloaded replay logs now include `schema_version: champions-turn-log-v2`, `exported_at`, `build_id`, and `source_url`, so future debug logs can prove which deployed build produced them. |
 | Showdown static metadata use | Partially fixed | Battle construction and move metadata can use generated Showdown static rows first, then local fallbacks. This is not the same as live DB runtime consumption. |
 | Showdown target category bridge | Fixed and guarded in `v2.1.25-target-parity-guard` | `runtime_data.js` canonicalizes Showdown target categories before engine use; `engine.js` keeps a guarded fallback for engine-only tests; move tests cover Hyper Voice spread targeting and stale opposing-target retargeting. |
-| Overview truth board | Updated in `v2.1.28-mechanics-stack-guard` | The live Overview tab now names the target bridge fix, DB/runtime source split, capped browser log retention, shipped QA artifact export, type audit, typed held-item boost fix, stat/speed export evidence, and Alfredo sync gap. |
+| Overview truth board | Updated in `v2.1.29-knock-off-guard` | The live Overview tab now names the target bridge fix, DB/runtime source split, capped browser log retention, shipped QA artifact export, type audit, typed held-item boost fix, Knock Off behavior fix, stat/speed/export evidence, remaining Tera Blast/mechanics gap, and Alfredo sync gap. |
 | Large-run QA artifact | Added in `v2.1.27-qa-artifact-export` | Saved Analyses now has a `QA Artifact` export that records build ID, source URL, retention caps, summary counts, retained compact sim-log entries, and retained replay cards. |
 | Type multiplier audit | Added in `v2.1.28-mechanics-stack-guard` | `reports/type_multiplier_audit.md` shows each shipped move user's resolved move type, 4x/2x/1x/0.5x/0.25x/0x target buckets across the shipped roster, declared defensive Tera bucket changes, and dynamic move-type rules. |
 | Typed held-item damage boosts | Fixed in `v2.1.28-mechanics-stack-guard` | `engine.js` now applies legal typed held-item boosts such as Charcoal, Mystic Water, Soft Sand, Black Glasses, Spell Tag, Fairy Feather, and Never-Melt Ice as Showdown-style base-power modifiers. `showdown_damage_oracle_tests.js` covers Charcoal + Blaze + sun + STAB + super-effective Fire damage. |
 | Stat, speed, and damage export evidence | Added in `v2.1.28-mechanics-stack-guard` | Turn snapshots now include `stat_boosts`, `stat_boosts_stable`, `speed_order_details`, and `damage_events` with Champions SP/SV stat format, nature, Speed points, species base Speed, calculated Speed, Speed stage, item, ability, status, weather, Tailwind, Trick Room, effective Speed, exact-speed-tie flags, type effectiveness, typed item boosts, STAB, spread/weather/screen/final modifiers, and attack/defense stage evidence. |
+| Knock Off item boost/removal | Fixed in `v2.1.29-knock-off-guard` | `engine.js` now applies the Showdown-style removable-item base-power boost, removes removable items after successful damage, leaves legal no-item targets alone, blocks removal and boost for corresponding Mega Stones before or after Mega activation, and respects Sticky Hold removal blocking. `move_verification_registry_tests.js` covers removable items, no item, pre-Mega corresponding stone, Mega metadata, and Sticky Hold. |
+
+## Knock Off Source-Truth Notes
+
+- Battle logic lives in `engine.js`, not Supabase. Supabase can store source rows, Champion overrides, teams, and audit history, but deterministic runtime mechanics must stay in the engine/generated bundle so GitHub Pages, local tests, and exported logs agree.
+- Pokemon Showdown is the primary behavior source for the move mechanics. The implemented contract mirrors Showdown's `Knock Off` base-power gate and item-removal flow plus Showdown item hooks that make corresponding Mega Stones non-removable for their matching species.
+- Bulbapedia is the human-readable cross-check for the same public rule: since Generation VI, `Knock Off` cannot remove a Mega Stone from a Pokemon that can use that stone to Mega Evolve, and it does not get the damage boost when the held item cannot be removed.
+- Itemless teams are legal. A legal no-item target has no removable item, so `Knock Off` does normal 65 base-power damage, records `knock_off_boost: false`, removes nothing, and does not mark `itemConsumed`.
+- Sticky Hold is intentionally asymmetric: the held item is otherwise removable, so the damage boost still applies; removal is blocked while the holder is alive.
+- Exported `damage_events` now expose `knock_off_boost` and `knock_off_boost_mod` so live logs can prove whether the boost did or did not apply.
+- Remaining risk is not this slice; it is the broader move/mechanics queue, especially dynamic move typing such as `Tera Blast`, redirection, Protect-family edge cases, switching/replacement, status interactions, and data promotion from approved Showdown DB rows into generated runtime assets.
 
 ## Fresh Turn-Log Review
 
@@ -208,18 +220,19 @@ Use these statements in team updates and PR notes:
 - Added for `v2.1.28`: Type Multiplier Audit gives Josh/reviewers a readable map of move typing into roster typing, including 4x, immunity, declared Tera defensive buckets, and dynamic move-type rules.
 - Fixed for `v2.1.28`: typed held-item damage boosts now stack in the damage pipeline; the Showdown oracle covers Charcoal + Blaze + sun + STAB + super-effective Fire damage.
 - Added for `v2.1.28`: turn-log snapshots expose stat boosts, effective-speed details, and structured `damage_events` so SP/nature/stage/item/ability/weather/Tailwind/Trick Room/tie-break and damage-modifier effects can be audited from exported logs.
+- Fixed for `v2.1.29`: Knock Off now handles removable held-item boost/removal, legal no-item targets, corresponding Mega Stone protection before Mega activation, Mega metadata rows, Sticky Hold blocking, and live-log damage-event evidence.
 - Completed: Supabase cleanup migration retired the stale v1 DB teams.
 - Known limitation: browser replay/log retention is intentionally capped; QA Artifact exports retained evidence and caps, but it still does not preserve every raw battle log from huge runs.
 - Not fixed yet: live DB `showdown_entities` as the battle runtime source.
-- Not fixed yet: Knock Off item boost/removal, Tera Blast dynamic typing, full move/damage/regional-form parity audit.
+- Not fixed yet: Tera Blast dynamic typing, full move/damage/regional-form parity audit, and remaining grouped battle mechanics.
 - Not ready for broad accuracy claims: sim still needs grouped mechanics parity work and Showdown/Champions oracle gates.
 
 ## Current Next Path
 
-1. Export one fresh single-run log, one fresh Run All log, and one `QA Artifact` from the public URL after `v2.1.28-mechanics-stack-guard`; verify build/source metadata, stable turn-log fields, `speed_order_details`, `stat_boosts`, `damage_events`, no team-load failure, no invalid `(no valid target)` lines, and retained-evidence summary counts.
+1. Export one fresh single-run log, one fresh Run All log, and one `QA Artifact` from the public URL after `v2.1.29-knock-off-guard`; verify build/source metadata, stable turn-log fields, `speed_order_details`, `stat_boosts`, `damage_events`, `knock_off_boost` evidence when Knock Off appears, no team-load failure, no invalid `(no valid target)` lines, and retained-evidence summary counts.
 2. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231 so both repos show the same truth.
-3. Promote the highest-usage baseline moves into verified mechanics coverage, starting with `Knock Off` item boost/removal because it appears heavily in exported logs and is currently baseline-only.
-4. Promote `Tera Blast` dynamic typing after `Knock Off`, because the type multiplier audit keeps it visible as a current gap.
+3. Promote `Tera Blast` dynamic typing because the type multiplier audit keeps it visible as the next concrete move gap after Knock Off.
+4. Continue converting high-usage baseline moves into verified mechanics coverage, grouping them by damage modifiers, item interactions, stat changes, targeting/redirection, protection, switching, and status.
 5. Continue the grouped move/damage/mechanics parity track against Showdown first, with Champions overrides only when explicitly sourced.
 6. Decide whether partners need a full raw battle archive stream beyond the retained-evidence QA artifact.
 7. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.

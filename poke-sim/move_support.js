@@ -413,6 +413,12 @@
       tests: ['tests/move_verification_registry_tests.js'],
       sources: ['Bulbapedia: Iron Head move page']
     },
+    'Knock Off': {
+      supportLevel: 'verified',
+      summary: 'Gets the held-item damage boost only against removable items, removes removable items after damage, leaves legal no-item targets alone, preserves corresponding Mega Stones, and respects Sticky Hold removal blocking.',
+      tests: ['tests/move_verification_registry_tests.js'],
+      sources: ['Bulbapedia: Knock Off move page', 'Pokemon Showdown data/moves.ts knockoff']
+    },
     'Rock Slide': {
       supportLevel: 'verified',
       summary: 'Deals spread damage and can flinch the target.',

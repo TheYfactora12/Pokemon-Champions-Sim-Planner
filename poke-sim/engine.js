@@ -590,6 +590,65 @@ function _heldItemTypeBoostMod(mon, moveType) {
   return TYPE_BOOSTING_ITEMS[mon.item] === moveType ? 4915 : 4096;
 }
 
+var NON_REMOVABLE_KNOCK_OFF_ITEMS = new Set([
+  'Adamant Crystal',
+  'Adamant Orb',
+  'Booster Energy',
+  'Cornerstone Mask',
+  'Griseous Core',
+  'Griseous Orb',
+  'Hearthflame Mask',
+  'Lustrous Globe',
+  'Lustrous Orb',
+  'Rusted Shield',
+  'Rusted Sword',
+  'Wellspring Mask'
+]);
+
+function _hasUsableHeldItem(mon) {
+  return !!(mon && mon.item && !mon.itemConsumed);
+}
+
+function _holdsCorrespondingMegaStone(mon) {
+  if (!_hasUsableHeldItem(mon)) return false;
+  if (mon.megaForm && mon.megaForm.stone === mon.item) return true;
+  if (typeof CHAMPIONS_MEGAS === 'undefined' || !CHAMPIONS_MEGAS) return false;
+  const displayName = mon.displayName || mon.name || '';
+  for (const megaName of Object.keys(CHAMPIONS_MEGAS)) {
+    const row = CHAMPIONS_MEGAS[megaName];
+    if (!row || row.megaStone !== mon.item) continue;
+    if (mon.name === row.baseSpecies || displayName === megaName || mon.name === megaName) return true;
+  }
+  return false;
+}
+
+function _isKnockOffRestrictedItem(mon) {
+  if (!_hasUsableHeldItem(mon)) return false;
+  if (_holdsCorrespondingMegaStone(mon)) return true;
+  return NON_REMOVABLE_KNOCK_OFF_ITEMS.has(mon.item);
+}
+
+function _knockOffBasePowerMod(target) {
+  if (!_hasUsableHeldItem(target)) return 4096;
+  return _isKnockOffRestrictedItem(target) ? 4096 : 6144;
+}
+
+function _canKnockOffHeldItem(target) {
+  if (!_hasUsableHeldItem(target)) return false;
+  if (_isKnockOffRestrictedItem(target)) return false;
+  if (target.ability === 'Sticky Hold' && target.hp > 0) return false;
+  return true;
+}
+
+function _applyKnockOffItemRemoval(target, log) {
+  if (!_canKnockOffHeldItem(target)) return false;
+  const removed = target.item;
+  target.item = '';
+  target.itemConsumed = true;
+  if (log) log.push(`${target.name} lost its ${removed} because of Knock Off!`);
+  return true;
+}
+
 function _applyBaseDamageMod(baseDamage, mod4096) {
   if (mod4096 === 4096) return baseDamage;
   return _pokeRound(_of32(baseDamage * mod4096) / 4096);
@@ -2020,6 +2079,8 @@ class Pokemon {
     if (_abilityBpRes && _abilityBpRes.bpMod) bpMods.push(_abilityBpRes.bpMod);
     const _itemTypeBoostMod = _heldItemTypeBoostMod(this, moveType);
     if (_itemTypeBoostMod !== 4096) bpMods.push(_itemTypeBoostMod);
+    const _knockOffBoostMod = move === 'Knock Off' ? _knockOffBasePowerMod(target) : 4096;
+    if (_knockOffBoostMod !== 4096) bpMods.push(_knockOffBoostMod);
     if (this.helpingHand) bpMods.push(6144);
     if (_isGrounded(this)) {
       if (field.terrain === 'electric' && moveType === 'Electric') bpMods.push(5325);
@@ -2178,6 +2239,8 @@ class Pokemon {
         defender_ability: target.ability || '',
         typed_item_boost: _itemTypeBoostMod !== 4096,
         typed_item_boost_mod: Number(_itemTypeBoostMod || 4096),
+        knock_off_boost: _knockOffBoostMod !== 4096,
+        knock_off_boost_mod: Number(_knockOffBoostMod || 4096),
         spread_mod: Number(spreadMod || 4096),
         weather_mod: Number(weatherMod || 4096),
         screen_mod: Number(screenMod || 4096),
@@ -4895,6 +4958,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Berry check after damage
     const berryMsg = target.applyItem('damage', field);
     if (berryMsg) log.push(berryMsg);
+    if (move === 'Knock Off') _applyKnockOffItemRemoval(target, log);
     // Multiscale: deactivate after first hit
     target.multiscaleActive = false;
     if (target.hp === 0) {

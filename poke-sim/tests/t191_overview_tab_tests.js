@@ -30,6 +30,8 @@ T('1. Overview is a top-level tab and mobile picker option', () => {
 T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'CS_OVERVIEW_DATA');
   inc(ui, 'Sim Truth Gate');
+  inc(ui, 'Knock Off');
+  inc(ui, 'Verified');
   inc(ui, 'Review tab restored');
   inc(ui, 'Live team-load simulation failure fixed');
   inc(ui, 'Lethal Sitrus and Oran timing fixed');
@@ -43,6 +45,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Type multiplier audit added');
   inc(ui, 'Typed held-item damage boosts fixed');
   inc(ui, 'Stat and effective-speed evidence added to exports');
+  inc(ui, 'Knock Off item behavior guarded');
   inc(ui, 'Champions SP/SV stat format');
   inc(ui, 'damage_events');
   inc(ui, 'Showdown sync and DB writer staged');
@@ -53,8 +56,9 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.28 mechanics stack guard carries the v2.1.27 QA artifact export');
+  inc(ui, 'v2.1.29 Knock Off guard carries the v2.1.28 mechanics stack guard');
   inc(ui, 'Damage stack oracle is green');
+  inc(ui, 'Knock Off source-truth behavior is documented');
   inc(ui, 'Turn-order stack evidence is green');
   inc(ui, 'GitHub issue sweep completed');
 });
@@ -80,7 +84,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.28 live logs, QA artifact, and sync Alfredo');
+  inc(ui, 'Verify v2.1.29 live logs, QA artifact, and sync Alfredo');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
@@ -89,6 +93,10 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Surface source drift as update needed in Overview');
   inc(ui, 'Recent Fix + Issue Snapshot');
   inc(ui, 'recent-fixes-and-open-issues-2026-06-21.md');
+  inc(ui, 'Move Support Audit');
+  inc(ui, 'move_support_audit.md');
+  inc(ui, 'Type Multiplier Audit');
+  inc(ui, 'type_multiplier_audit.md');
   inc(ui, 'Simulation First');
   inc(ui, 'SIMULATION_FIRST_REALIGNMENT_2026-06-06.md');
   inc(ui, 'Public Release Plan');

@@ -153,7 +153,7 @@ T('5. Reflect reduces physical damage', () => {
 });
 
 T('6. verified registry exposes sources and tests for the promoted move slice', () => {
-  ['Freeze-Dry', 'Giga Drain', 'Rock Tomb', 'Light Screen', 'Reflect'].forEach((move) => {
+  ['Freeze-Dry', 'Giga Drain', 'Rock Tomb', 'Light Screen', 'Reflect', 'Knock Off'].forEach((move) => {
     const row = moveSupport.getLocalMoveSupport(move);
     truthy(row, move + ' support row missing');
     eq(row.supportLevel, 'verified', move + ' support level');
@@ -2669,6 +2669,156 @@ T('91. single-target damage retargets when the intended opposing target fainted 
     'Wave Crash should retarget the remaining live opposing slot');
   truthy(!battle.log.some((line) => includes(line, 'Basculegion used Wave Crash! (no valid target)')),
     'single-target damage should not fail while another opposing slot is live');
+});
+
+T('92. Knock Off gains base power against removable held items only', () => {
+  const attacker = mk('Incineroar', { moves: ['Knock Off'], nature: 'Adamant', evs: { atk: 32 } });
+  const noItemTarget = mk('Pelipper', { item: '', nature: 'Bold', evs: { hp: 32, def: 32 } });
+  const itemTarget = mk('Pelipper', { item: 'Leftovers', nature: 'Bold', evs: { hp: 32, def: 32 } });
+  const field = mkField();
+  attacker.side = field.playerSide;
+  noItemTarget.side = field.oppSide;
+  itemTarget.side = field.oppSide;
+  field._ctx.forceNoCrit = true;
+  const noItemDamage = attacker.calcDamage('Knock Off', noItemTarget, field, null, rngAlwaysLo);
+  const itemDamage = attacker.calcDamage('Knock Off', itemTarget, field, null, rngAlwaysLo);
+  truthy(itemDamage > noItemDamage, 'removable held item should activate Knock Off base-power boost');
+});
+
+T('93. Knock Off removes a removable held item after a successful damaging hit', () => {
+  const player = team('Knock Off Player', [{
+    name: 'Incineroar',
+    ability: 'Intimidate',
+    item: '',
+    nature: 'Adamant',
+    level: 50,
+    moves: ['Knock Off'],
+    evs: { hp: 32, atk: 32, def: 1, spa: 0, spd: 0, spe: 0 }
+  }]);
+  const opp = team('Knock Off Target', [{
+    name: 'Pelipper',
+    ability: 'Drizzle',
+    item: 'Leftovers',
+    nature: 'Bold',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 32, def: 32, spd: 1, atk: 0, spa: 0, spe: 0 }
+  }]);
+  const battle = simulateBattle(player, opp, { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  const postRow = ((battle.turnLog[0] || {}).post || {}).roster.opponent.find((row) => row.species === 'Pelipper');
+  truthy(postRow, 'Pelipper post-roster row missing');
+  eq(postRow.item, '', 'Knock Off should remove Leftovers');
+  truthy(postRow.itemConsumed, 'removed item should mark itemConsumed for later item-state logic');
+  truthy(battle.log.some((line) => includes(line, 'Pelipper lost its Leftovers because of Knock Off!')),
+    'Knock Off removal log missing');
+});
+
+T('94. Knock Off does not boost or remove a corresponding Mega Stone before Mega activation', () => {
+  const attacker = mk('Incineroar', { moves: ['Knock Off'], nature: 'Adamant', evs: { atk: 32 } });
+  const noItemTarget = mk('Charizard', { item: '', nature: 'Bold', evs: { hp: 32, def: 32 } });
+  const baseStoneTarget = mk('Charizard', { item: 'Charizardite Y', nature: 'Bold', evs: { hp: 32, def: 32 } });
+  const megaMetadataTarget = mk('Charizard-Mega-Y', { item: 'Charizardite Y', nature: 'Bold', evs: { hp: 32, def: 32 } });
+  const field = mkField();
+  attacker.side = field.playerSide;
+  noItemTarget.side = field.oppSide;
+  baseStoneTarget.side = field.oppSide;
+  megaMetadataTarget.side = field.oppSide;
+  field._ctx.forceNoCrit = true;
+  const noItemDamage = attacker.calcDamage('Knock Off', noItemTarget, field, null, rngAlwaysLo);
+  const baseStoneDamage = attacker.calcDamage('Knock Off', baseStoneTarget, field, null, rngAlwaysLo);
+  const megaMetadataDamage = attacker.calcDamage('Knock Off', megaMetadataTarget, field, null, rngAlwaysLo);
+  eq(baseStoneDamage, noItemDamage, 'base species holding corresponding Mega Stone should not activate Knock Off boost');
+  eq(megaMetadataDamage, noItemDamage, 'mega metadata holding corresponding Mega Stone should not activate Knock Off boost');
+
+  const battle = simulateBattle(team('Knock Mega Player', [{
+    name: 'Incineroar',
+    ability: 'Intimidate',
+    item: '',
+    nature: 'Adamant',
+    level: 50,
+    moves: ['Knock Off'],
+    evs: { hp: 32, atk: 32, def: 1, spa: 0, spd: 0, spe: 0 }
+  }]), team('Mega Stone Target', [{
+    name: 'Charizard-Mega-Y',
+    ability: 'Blaze',
+    item: 'Charizardite Y',
+    nature: 'Bold',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 32, def: 32, spd: 1, atk: 0, spa: 0, spe: 0 }
+  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  const postRow = ((battle.turnLog[0] || {}).post || {}).roster.opponent.find((row) => row.item === 'Charizardite Y');
+  truthy(postRow, 'Charizardite Y should remain held after Knock Off');
+  truthy(!postRow.itemConsumed, 'corresponding Mega Stone should not be marked consumed');
+  truthy(!battle.log.some((line) => includes(line, 'lost its Charizardite Y because of Knock Off')),
+    'corresponding Mega Stone should not be removed');
+  const damageRow = (((battle.turnLog[0] || {}).damage_events || []).find((row) => row.move === 'Knock Off')) || {};
+  eq(damageRow.knock_off_boost, false, 'damage event should prove no Knock Off boost on corresponding Mega Stone');
+});
+
+T('95. Sticky Hold blocks Knock Off item removal while still allowing the damage boost', () => {
+  const attacker = mk('Sableye', { moves: ['Knock Off'], nature: 'Adamant', evs: { atk: 1 } });
+  const noItemTarget = mk('Muk', { item: '', ability: 'Sticky Hold', nature: 'Bold', evs: { hp: 32, def: 32 } });
+  const stickyTarget = mk('Muk', { item: 'Leftovers', ability: 'Sticky Hold', nature: 'Bold', evs: { hp: 32, def: 32 } });
+  const field = mkField();
+  attacker.side = field.playerSide;
+  noItemTarget.side = field.oppSide;
+  stickyTarget.side = field.oppSide;
+  field._ctx.forceNoCrit = true;
+  const noItemDamage = attacker.calcDamage('Knock Off', noItemTarget, field, null, rngAlwaysLo);
+  const stickyDamage = attacker.calcDamage('Knock Off', stickyTarget, field, null, rngAlwaysLo);
+  truthy(stickyDamage > noItemDamage, 'Sticky Hold should not suppress Knock Off damage boost');
+
+  const battle = simulateBattle(team('Sticky Knock Player', [{
+    name: 'Sableye',
+    ability: '',
+    item: '',
+    nature: 'Adamant',
+    level: 50,
+    moves: ['Knock Off'],
+    evs: { hp: 32, atk: 1, def: 1, spa: 0, spd: 0, spe: 0 }
+  }]), team('Sticky Knock Target', [{
+    name: 'Muk',
+    ability: 'Sticky Hold',
+    item: 'Leftovers',
+    nature: 'Bold',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 32, def: 32, spd: 1, atk: 0, spa: 0, spe: 0 }
+  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  const postRow = ((battle.turnLog[0] || {}).post || {}).roster.opponent.find((row) => row.species === 'Muk');
+  truthy(postRow, 'Muk post-roster row missing');
+  eq(postRow.item, 'Leftovers', 'Sticky Hold should keep the item while the holder survives');
+  truthy(!battle.log.some((line) => includes(line, 'Muk lost its Leftovers because of Knock Off!')),
+    'Sticky Hold should block Knock Off removal log while alive');
+});
+
+T('96. Knock Off against a legal no-item target does not boost or remove anything', () => {
+  const battle = simulateBattle(team('No Item Knock Player', [{
+    name: 'Incineroar',
+    ability: 'Intimidate',
+    item: '',
+    nature: 'Adamant',
+    level: 50,
+    moves: ['Knock Off'],
+    evs: { hp: 32, atk: 32, def: 1, spa: 0, spd: 0, spe: 0 }
+  }]), team('No Item Knock Target', [{
+    name: 'Pelipper',
+    ability: 'Drizzle',
+    item: '',
+    nature: 'Bold',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 32, def: 32, spd: 1, atk: 0, spa: 0, spe: 0 }
+  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  const postRow = ((battle.turnLog[0] || {}).post || {}).roster.opponent.find((row) => row.species === 'Pelipper');
+  truthy(postRow, 'Pelipper post-roster row missing');
+  eq(postRow.item, '', 'legal no-item target should remain itemless');
+  truthy(!postRow.itemConsumed, 'legal no-item target should not be marked itemConsumed');
+  truthy(!battle.log.some((line) => includes(line, 'lost its') && includes(line, 'because of Knock Off')),
+    'Knock Off should not log item removal for a no-item target');
+  const damageRow = (((battle.turnLog[0] || {}).damage_events || []).find((row) => row.move === 'Knock Off')) || {};
+  eq(damageRow.knock_off_boost, false, 'damage event should prove no Knock Off boost on a no-item target');
 });
 
 console.log(`\nmove verification registry: ${pass} pass, ${fail} fail\n`);
