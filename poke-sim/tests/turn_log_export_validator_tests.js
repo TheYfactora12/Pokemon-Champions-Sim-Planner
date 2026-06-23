@@ -275,7 +275,54 @@ function stripStableFields(payload) {
     truthy(res.findings.some(f => f.code === 'speed-detail-missing-effective-speed'), 'missing effective speed error');
   });
 
-  T('10. calculated damage_events pass validation with modifier evidence', () => {
+  T('10. terminal no-valid-target skips pass when the target side is empty after earlier KO', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    const milotic = turn.post.roster.opponent[0];
+    turn.actions.player = [
+      { actor: 'Incineroar', kind: 'move', move: 'Knock Off', target: 'Milotic' }
+    ];
+    turn.actions.opponent = [];
+    turn.events = [
+      { type: 'log', text: 'Incineroar used Knock Off! (no valid target)' }
+    ];
+    turn.post.active.opponent = [];
+    turn.post.active_keys.opponent = [];
+    turn.post.active_stable_keys.opponent = [];
+    turn.post.roster.opponent = [Object.assign({}, milotic, {
+      key: 'opponent:fainted:0:Milotic',
+      zone: 'fainted',
+      status: 'fainted',
+      hp: 0,
+      hpLabel: '0%'
+    })];
+    delete turn.post.hp_pct[milotic.key];
+    turn.post.hp_pct_stable[milotic.stableKey] = 0;
+    turn.post.speed_order = ['Whimsicott'];
+    turn.post.speed_order_keys = [turn.post.roster.player[1].key];
+    turn.post.speed_order_stable_keys = [turn.post.roster.player[1].stableKey];
+
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+    truthy(!res.findings.some(f => f.code === 'no-valid-target-with-live-target'), 'terminal skip should not be flagged');
+  });
+
+  T('11. no-valid-target skips fail when a target side still has a live active Pokemon', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    turn.actions.player = [
+      { actor: 'Incineroar', kind: 'move', move: 'Knock Off', target: 'Milotic' }
+    ];
+    turn.actions.opponent = [];
+    turn.events = [
+      { type: 'log', text: 'Incineroar used Knock Off! (no valid target)' }
+    ];
+
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'no-valid-target-with-live-target'), 'missing live-target no-valid-target error');
+  });
+
+  T('12. calculated damage_events pass validation with modifier evidence', () => {
     const payload = stableFixture();
     payload.turnLog[0].damage_events = [{
       attacker: 'Incineroar',
@@ -320,7 +367,7 @@ function stripStableFields(payload) {
     eq(res.summary.errors, 0, JSON.stringify(res.findings));
   });
 
-  T('11. malformed calculated damage_events fail validation', () => {
+  T('13. malformed calculated damage_events fail validation', () => {
     const payload = stableFixture();
     payload.turnLog[0].damage_events = [{
       attacker: 'Incineroar',

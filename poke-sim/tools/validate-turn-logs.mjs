@@ -357,6 +357,78 @@ function validateObservedActionOrder(turn, findings) {
   }
 }
 
+function sideFromActions(turn, actor, move) {
+  const matches = [];
+  for (const side of SIDES) {
+    const rows = Array.isArray(turn && turn.actions && turn.actions[side]) ? turn.actions[side] : [];
+    for (const action of rows) {
+      if (!action || action.actor !== actor || action.move !== move) continue;
+      matches.push({ side, action });
+    }
+  }
+  const sides = Array.from(new Set(matches.map(m => m.side)));
+  return sides.length === 1 ? matches.find(m => m.side === sides[0]) : null;
+}
+
+function activeSideForName(snapshot, name) {
+  const matches = [];
+  for (const side of SIDES) {
+    const rows = ((snapshot && snapshot.roster && snapshot.roster[side]) || []);
+    for (const row of rows) {
+      if (!row || row.status !== 'active') continue;
+      if (rowName(row) === name || row.species === name) matches.push(side);
+    }
+  }
+  const unique = Array.from(new Set(matches));
+  return unique.length === 1 ? unique[0] : null;
+}
+
+function activeTargetKeys(snapshot, side) {
+  const stable = getSideKeys(snapshot, side, 'active_stable_keys');
+  return stable.length ? stable : getSideKeys(snapshot, side, 'active_keys');
+}
+
+function validateNoValidTargetSkips(turn, findings) {
+  const events = Array.isArray(turn && turn.events) ? turn.events : [];
+  for (const event of events) {
+    const text = cleanText(event && event.text);
+    const match = text.match(/^(.+?) used (.+?)! \(no valid target\)$/);
+    if (!match) continue;
+
+    const actor = match[1];
+    const move = match[2];
+    const resolved = sideFromActions(turn, actor, move);
+    if (!resolved) {
+      findings.push(finding('warning', 'no-valid-target-actor-unresolved', 'Could not resolve the side for a no-valid-target action.', {
+        turn: turn && turn.turn,
+        actor,
+        move,
+        text
+      }));
+      continue;
+    }
+
+    const actionTarget = resolved.action && resolved.action.target;
+    const targetSide = actionTarget
+      ? (activeSideForName(turn && turn.pre, actionTarget) || activeSideForName(turn && turn.post, actionTarget))
+      : null;
+    const checkedSide = targetSide || (resolved.side === 'player' ? 'opponent' : 'player');
+    const postActive = activeTargetKeys(turn && turn.post, checkedSide);
+
+    if (postActive.length) {
+      findings.push(finding('error', 'no-valid-target-with-live-target', 'A no-valid-target action resolved while the intended target side still had a live active Pokemon.', {
+        turn: turn && turn.turn,
+        actor,
+        move,
+        target: actionTarget || '',
+        targetSide: checkedSide,
+        preActiveTargetKeys: activeTargetKeys(turn && turn.pre, checkedSide),
+        postActiveTargetKeys: postActive
+      }));
+    }
+  }
+}
+
 function validateDamageEvents(turn, findings) {
   const rows = Array.isArray(turn && turn.damage_events) ? turn.damage_events : [];
   for (let i = 0; i < rows.length; i += 1) {
@@ -447,6 +519,7 @@ export function validateTurnLogPayload(payload, options = {}) {
       validateSnapshot(snapshot, turnNo, snapName, state, findings);
     }
     validateObservedActionOrder(turn || {}, findings);
+    validateNoValidTargetSkips(turn || {}, findings);
     validateDamageEvents(turn || {}, findings);
   }
 
@@ -507,7 +580,8 @@ function usage() {
     'Usage: node tools/validate-turn-logs.mjs [--require-stable] [--json] <champions-turn-log.json...>',
     '',
     'Checks exported battle logs for roster identity, item drift, active/bench key mapping,',
-    'HP key coverage, speed-order key coverage, and observed priority/speed event order.'
+    'HP key coverage, speed-order key coverage, observed priority/speed event order,',
+    'and no-valid-target skips while a target side still has a live active Pokemon.'
   ].join('\n');
 }
 

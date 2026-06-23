@@ -46,7 +46,7 @@ node tests/t175_mobile_tab_grid_tests.js # Mobile tab grid safeguards
 node tests/t176_mobile_teams_panel_tests.js # Mobile teams panel safeguards
 node tests/phase5_turn_log_tests.js # Phase 5 — turnLog, positionScore, Replay Log v2 — 25 cases
 node tests/recoil_faint_turn_log_tests.js # Recoil KO cleanup + imported Showdown move metadata — 3 cases
-node tests/turn_log_export_validator_tests.js # Exported turn-log identity/item/order validator — 7 cases
+node tests/turn_log_export_validator_tests.js # Exported turn-log identity/item/order/target validator — 13 cases
 node tests/showdown_priority_drift_tests.js # Showdown priority drift audit for shipped moves — 4 cases
 node tests/showdown_approved_data_generator_tests.js # Approved Showdown DB rows + Champions override generator — 4 cases
 node tests/phase6_coaching_voice.js # Phase 6 — coaching templates, linter, RNG gate — 9 cases
