@@ -2333,7 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.39-stable-action-identity</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.40-turn-log-team-roster</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -19138,9 +19138,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.39-stable-action-identity';
+    return txt || 'v2.1.40-turn-log-team-roster';
   } catch (e) {
-    return 'v2.1.39-stable-action-identity';
+    return 'v2.1.40-turn-log-team-roster';
   }
 }
 
@@ -21860,7 +21860,7 @@ function displayResults(res, oppKey, simCtx) {
     drawBarChart('turns-chart', turns.map(String), turns.map(t=>td[t]), pri);
   },60);
 
-  addReplays(res.allLogs||[], oppKey);
+  addReplays(res.allLogs||[], oppKey, simCtx.playerKey);
 
   // Auto-show inline pilot card after every single sim
   showInlinePilotCard(oppKey, res, simCtx);
@@ -22072,8 +22072,9 @@ function csCapBattleReplay(battle, maxLines) {
 ChampionsSim.simLog.csCapBattleReplay = csCapBattleReplay;
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csCapBattleReplay', csCapBattleReplay);
 
-function addReplays(logs, oppKey) {
-  for (const b of logs) allReplays.unshift({...csCapBattleReplay(b), oppKey, id:Math.random()});
+function addReplays(logs, oppKey, playerKey) {
+  playerKey = playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : null);
+  for (const b of logs) allReplays.unshift({...csCapBattleReplay(b), playerKey: b.playerKey || playerKey, oppKey, id:Math.random()});
   if (allReplays.length > MAX_REPLAY_CARDS) allReplays.length = MAX_REPLAY_CARDS;
   renderReplays();
 }
@@ -22550,8 +22551,70 @@ function csRenderTurnLogRows(turnLog, opts) {
   }).join('') + '</div>';
 }
 
-function downloadReplayTurnLog(replay) {
+function csTurnLogMemberSnapshot(member, index) {
+  member = member || {};
+  var spread = member.sps || member.spread || member.evs || {};
+  return {
+    slot: index,
+    name: member.name || member.species || null,
+    species: member.species || member.name || null,
+    item: member.item || null,
+    ability: member.ability || null,
+    nature: member.nature || null,
+    level: member.level || 50,
+    tera_type: member.tera_type || member.teraType || null,
+    stat_format: 'champion_sp',
+    stat_points: Object.assign({}, spread || {}),
+    moves: Array.isArray(member.moves) ? member.moves.slice() : [],
+    role: member.role || null
+  };
+}
+
+function csTurnLogTeamSnapshot(teamKey) {
+  var team = (typeof TEAMS !== 'undefined' && teamKey && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  if (!team) return null;
+  return {
+    key: teamKey,
+    name: team.name || team.label || teamKey,
+    format: team.format || team.formatid || null,
+    formatid: team.formatid || null,
+    gametype: team.gametype || null,
+    ruleset: team.ruleset || null,
+    champion_pack_id: team.champion_pack_id || null,
+    legality_status: team.legality_status || null,
+    legality_notes: team.legality_notes || null,
+    source: team.source || (team.provenance && team.provenance.source) || null,
+    members: Array.isArray(team.members) ? team.members.map(csTurnLogMemberSnapshot) : []
+  };
+}
+
+function csTurnLogBroughtSnapshot(turnLog, side) {
+  var first = Array.isArray(turnLog) && turnLog.length ? turnLog[0] : null;
+  var rows = first && first.pre && first.pre.roster && Array.isArray(first.pre.roster[side]) ? first.pre.roster[side] : [];
+  return rows.map(function(row) {
+    return {
+      team_slot: row.teamSlot,
+      name: row.displayName || row.species || row.name || null,
+      species: row.species || row.displayName || row.name || null,
+      stable_key: row.stableKey || null,
+      key: row.key || null,
+      item: row.item || null,
+      ability: row.ability || null,
+      nature: row.nature || null,
+      stat_format: row.stat_format || null,
+      calculated_stats: row.calculatedStats || null,
+      moves: Array.isArray(row.moves) ? row.moves.slice() : []
+    };
+  });
+}
+
+function downloadReplayTurnLog(replay, opts) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
+  opts = opts || {};
+  var playerKey = opts.playerKey || replay.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
+  var oppKey = opts.oppKey || replay.oppKey || null;
+  var playerTeam = csTurnLogTeamSnapshot(playerKey);
+  var opponentTeam = csTurnLogTeamSnapshot(oppKey);
   var payload = {
     schema_version: 'champions-turn-log-v2',
     exported_at: new Date().toISOString(),
@@ -22559,6 +22622,19 @@ function downloadReplayTurnLog(replay) {
     source_url: (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null,
     seed: replay.seed || null,
     result: replay.result || null,
+    format: replay.format || (typeof currentFormat !== 'undefined' ? currentFormat : null),
+    player_team_id: playerKey || null,
+    opponent_team_id: oppKey || null,
+    player_team: playerTeam,
+    opponent_team: opponentTeam,
+    team_preview: {
+      player_full_count: playerTeam && Array.isArray(playerTeam.members) ? playerTeam.members.length : null,
+      opponent_full_count: opponentTeam && Array.isArray(opponentTeam.members) ? opponentTeam.members.length : null,
+      player_brought_count: csTurnLogBroughtSnapshot(replay.turnLog, 'player').length,
+      opponent_brought_count: csTurnLogBroughtSnapshot(replay.turnLog, 'opponent').length,
+      player_brought: csTurnLogBroughtSnapshot(replay.turnLog, 'player'),
+      opponent_brought: csTurnLogBroughtSnapshot(replay.turnLog, 'opponent')
+    },
     winCondition: replay.winCondition || null,
     turning_point: replay.turning_point || null,
     position_path: replay.position_path || [],
@@ -23808,7 +23884,7 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
         gamesPlayed++;
         results.turnDist[battle.turns]=(results.turnDist[battle.turns]||0)+1;
         if (battle.winCondition) results.winConditions[battle.winCondition]=(results.winConditions[battle.winCondition]||0)+1;
-        if (results.allLogs.length<50) results.allLogs.push({...battle, oppKey:oppTeamKey});
+        if (results.allLogs.length<50) results.allLogs.push({...battle, playerKey:playerTeamKey, oppKey:oppTeamKey, format:currentFormat});
         seriesBattles.push(battle);
       }
 
@@ -24242,7 +24318,7 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
         <td style="font-family:var(--font-mono)">${res.avgTrTurns.toFixed(1)}</td>
         <td><span class="assess-chip ${aCls}">${aLbl}</span></td>`;
       tbody.appendChild(tr);
-      addReplays(res.allLogs||[], opp);
+      addReplays(res.allLogs||[], opp, playerKey);
       generatePilotGuide(opp, res, Object.assign({}, simCtx, { oppKey: opp, oppTeam: TEAMS[opp] }));
     }, simCtx);
 
@@ -25091,6 +25167,16 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Full team roster metadata added to turn-log exports',
+      detail: 'v2.1.40 downloaded turn-log JSON now includes player_team, opponent_team, and team_preview metadata with full six-slot Champion team snapshots plus the four Pokemon actually brought into the battle, so QA can audit hidden slots and legal sets without guessing from turn snapshots.'
+    },
+    {
+      status: 'done',
+      title: 'QA baseline snapshot added',
+      detail: 'reports/champion_qa_baseline_snapshot.md is generated from current source data and lists approved Champion runtime team movesets, move metadata, support status, baseline data, and all shipped move support so QA has one readable reference from the Overview page.'
+    },
+    {
+      status: 'done',
       title: 'Move priority aligned with Showdown data',
       detail: 'Feint, Ice Shard, and Protect-family shield priorities are covered by local priority drift tests.'
     },
@@ -25195,6 +25281,11 @@ var CS_OVERVIEW_DATA = {
       status: 'validated',
       title: 'Stable action identity export is green',
       detail: 'v2.1.39 turn-log action rows now include actor_key, target_key, and target_side. The focused engine test asserts those fields directly, and seven fresh v2.1.38 browser logs validate after the action-order guard stopped using display names as unique identities.'
+    },
+    {
+      status: 'validated',
+      title: 'Fresh v2.1.39 browser logs are structurally clean',
+      detail: 'Six fresh doubles exports from the public page validate with zero errors and zero warnings across 40 turns, 144 action rows, and 108 damage events. The batch proves stable action keys, direct damage, super-effective/resisted damage, crits, capped overkill rows, typed-item/Knock Off item evidence, Tailwind, and Trick Room. It does not include spread-hit damage rows, so spread coverage still needs targeted fresh logs.'
     },
     {
       status: 'validated',
@@ -25440,6 +25531,7 @@ var CS_OVERVIEW_DATA = {
   ],
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
+    { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
     { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },
     { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },
     { label: 'Type Multiplier Audit', href: 'reports/type_multiplier_audit.md' },

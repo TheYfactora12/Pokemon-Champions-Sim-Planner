@@ -68,7 +68,8 @@
 // v71-damage-log-team-catalog [2026-06-23] - Applied-vs-calculated damage logs and approved Champion top-10 runtime catalog.
 // v72-log-validator-replacement [2026-06-23] - No-valid-target validator ignores post-turn replacements not available at skip time.
 // v73-stable-action-identity [2026-06-23] - Turn-log actions export stable actor/target keys for mirror-species validation.
-const CACHE_NAME = 'champions-sim-v73-stable-action-identity';
+// v74-turn-log-team-roster [2026-06-23] - Turn-log exports include full team roster metadata for QA review.
+const CACHE_NAME = 'champions-sim-v74-turn-log-team-roster';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
