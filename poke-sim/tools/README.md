@@ -121,6 +121,7 @@ Checks:
 - active/bench key maps
 - HP and speed-order key coverage
 - observed event order against move priority plus snapshot speed order
+- `(no valid target)` lines only pass when the target side is empty after an earlier KO
 
 ```bash
 # Legacy-compatible validation

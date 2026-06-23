@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.32-tera-blast-parity';
+    return txt || 'v2.1.33-log-target-guard';
   } catch (e) {
-    return 'v2.1.32-tera-blast-parity';
+    return 'v2.1.33-log-target-guard';
   }
 }
 
@@ -5888,7 +5888,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Live Supabase', value: 'Teams + analyses' },
     { label: 'Showdown DB', value: 'Checking...' },
     { label: 'Team Format', value: 'Champion/SP focus' },
-    { label: 'Turn Logs', value: 'Structural clean' },
+    { label: 'Turn Logs', value: 'Strict + target guard' },
     { label: 'Target Guard', value: 'Canonical bridge' },
     { label: 'QA Log Retention', value: 'Capped + artifact' },
     { label: 'Ability Inventory', value: '80/80 modeled' },
@@ -5978,7 +5978,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Exported log validator added',
-      detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, and observed priority order.'
+      detail: 'poke-sim/tools/validate-turn-logs.mjs checks identity, item drift, HP maps, active/bench mapping, speed order, observed priority order, damage evidence shape, and no-valid-target skips while a target side still has a live active Pokemon.'
     },
     {
       status: 'done',
@@ -6014,6 +6014,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
+      title: 'Latest v2.1.31 logs pass strict structure and expose stacked mechanics evidence',
+      detail: 'Four June 22 logs from ?v=e209f3b pass strict validation with zero warnings across 28 turns. They include super-effective and resisted damage, typed held-item boosts, Knock Off boosts, doubles spread reduction, sun weather boosts, stat-stage damage evidence, and burn/status penalties. Their lone no-valid-target line is terminal after the last opposing active faints, so v2.1.33 adds a validator guard that only fails no-target skips when a target side still has a live active Pokemon.'
+    },
+    {
+      status: 'validated',
       title: 'Item timing regression reproduced and covered',
       detail: 'Fresh logs showed Sitrus restoring after a 0 HP hit; items_tests.js now verifies surviving Sitrus, lethal Sitrus rejection, lethal Oran rejection, and battle-log faint behavior.'
     },
@@ -6030,7 +6035,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.32 Tera Blast Parity carries the v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, type multiplier audit, speed-stack evidence, Knock Off item-state tests, and strict validation are the local release checks for this build.'
+      detail: 'v2.1.33 Log Target Guard carries v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, type multiplier audit, speed-stack evidence, Knock Off item-state tests, no-valid-target validation, and strict validation are the local release checks for this build.'
     },
     {
       status: 'validated',
@@ -6076,6 +6081,11 @@ var CS_OVERVIEW_DATA = {
       status: 'validated',
       title: 'GitHub issue sweep completed',
       detail: 'Open issues were checked in TheYfactora12 and alfredocox repos. JD flags Alfredo #241 and #240 remain active; Josh/JD data-audit comments are tracked in Alfredo #231 and Y Factor #123.'
+    },
+    {
+      status: 'validated',
+      title: 'Y fork and Alfredo main are synced',
+      detail: 'Alfredo PR #245 merged the Champion parity tree after required checks passed, and TheYfactora12 main was fast-forwarded to the same merge commit so both repos are 1:1 at the current source tree.'
     }
   ],
   gaps: [
@@ -6088,11 +6098,6 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Pokemon data audit has unresolved reviewer risk',
       detail: 'Josh/JD notes on Alfredo #231 flag that Showdown data is present but not fully used for every move calculation and regional forms such as Arcanine may still need targeted review.'
-    },
-    {
-      status: 'gap',
-      title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'TheYfactora12 main carries v2.1.32 Tera Blast Parity plus v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
@@ -6118,8 +6123,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.32 live logs, QA artifact, and sync Alfredo',
-      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Tera Blast damage evidence when present, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
+      title: 'Verify v2.1.33 live logs and QA artifact',
+      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Tera Blast damage evidence when present, Knock Off boost evidence, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
@@ -6148,8 +6153,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
-      title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.32 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, Tera Blast parity, SP legality guard, editor-builder roadmap note, load-path proof, overview alignment, and issue notes.'
+      title: 'Keep Alfredo and Y fork synced through protected PRs',
+      detail: 'Direct Alfredo main pushes are blocked by repository rules, so future parity slices should land in TheYfactora12, pass live-page checks, then sync to Alfredo through a reviewed PR with required checks before fast-forwarding the fork back to the same merge commit.'
     },
     {
       status: 'next',

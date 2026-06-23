@@ -53,15 +53,18 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Simulation-first direction documented');
   inc(ui, 'Public release milestone map documented');
   inc(ui, 'Live exported logs prove the sim now runs');
+  inc(ui, 'Latest v2.1.31 logs pass strict structure and expose stacked mechanics evidence');
+  inc(ui, 'only fails no-target skips when a target side still has a live active Pokemon');
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.32 Tera Blast Parity carries the v2.1.31 Editor Builder Roadmap');
+  inc(ui, 'v2.1.33 Log Target Guard carries v2.1.32 Tera Blast Parity');
   inc(ui, 'Damage stack oracle is green');
   inc(ui, 'Tera Blast parity is green');
   inc(ui, 'Knock Off source-truth behavior is documented');
   inc(ui, 'Turn-order stack evidence is green');
   inc(ui, 'GitHub issue sweep completed');
+  inc(ui, 'Y fork and Alfredo main are synced');
 });
 
 T('3. Overview names current Supabase and Showdown DB alignment state', () => {
@@ -73,7 +76,6 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'showdown_entities DB rows are not the battle runtime source yet');
   inc(ui, 'Live logs exposed stale DB item drift');
   inc(ui, 'Pokemon data audit has unresolved reviewer risk');
-  inc(ui, 'Current Y fork changes are not pushed upstream to Alfredo yet');
   inc(ui, 'Mechanics parity is broader than the current ability slice');
   inc(ui, 'Source refresh needed must be visible before trust claims');
   inc(ui, 'Full raw thousand-battle retention is still not automatic');
@@ -86,13 +88,13 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.32 live logs, QA artifact, and sync Alfredo');
+  inc(ui, 'Verify v2.1.33 live logs and QA artifact');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
   inc(ui, 'Group mechanics parity work by battle system');
   inc(ui, 'Rebuild editor into full Champion team builder');
-  inc(ui, 'Prepare upstream PR to Alfredo after Y fork verification');
+  inc(ui, 'Keep Alfredo and Y fork synced through protected PRs');
   inc(ui, 'Surface source drift as update needed in Overview');
   inc(ui, 'Recent Fix + Issue Snapshot');
   inc(ui, 'recent-fixes-and-open-issues-2026-06-21.md');

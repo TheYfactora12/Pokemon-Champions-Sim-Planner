@@ -1,15 +1,17 @@
 # Recent Fixes and Open Issue Snapshot - 2026-06-21
 
-This snapshot records the current truth after the June 21-22 live-log review and GitHub issue sweep. It is meant to remove stale contradictions before preparing the Alfredo upstream PR.
+This snapshot records the current truth after the June 21-22 live-log review, GitHub issue sweep, and Alfredo sync. It is meant to remove stale contradictions before the next mechanics-parity pass.
 
 ## 2026-06-22 Deployment Update
 
 - The prior Y fork public validation target was commit `7e0deca` (`model champion ability parity`).
-- `v2.1.32-tera-blast-parity` supersedes `v2.1.31-editor-builder-roadmap` for the current GitHub Pages release and bumps the service-worker cache to `champions-sim-v66-tera-blast-parity`.
+- `v2.1.33-log-target-guard` supersedes `v2.1.32-tera-blast-parity` for the current GitHub Pages release and bumps the service-worker cache to `champions-sim-v67-log-target-guard`.
 - `v2.1.29` promotes `Knock Off` from baseline to verified move coverage. The source truth is Pokemon Showdown move/item behavior checked against Bulbapedia: removable held items give the 1.5x base-power boost and are removed after damage; legal no-item targets give no boost and remove nothing; corresponding Mega Stones are not removable and do not give the boost even before Mega Evolution; Sticky Hold blocks removal while the holder is alive but does not suppress the boost when the item is otherwise removable.
 - `v2.1.30` converts shipped inferred Champion archetype spreads from SV-shaped EV values to Champion SP values, hard-rejects over-cap or malformed Champion spreads in imports/editor/DB merges/Supabase upserts, and records the Showdown-vs-preview source conflict on the per-stat cap.
 - `v2.1.31` records that the current edit-team UI is guarded but not fluid enough for fully customizable Champion team building; this is tracked as later UX work after sim-truth gates.
 - `v2.1.32` promotes Tera Blast parity: inactive Tera Blast remains Normal/special, active Tera Blast uses the attacker's Tera type, active Tera Blast ignores Normal-conversion abilities such as Pixilate, active category selects physical only when boosted Attack is greater than boosted Special Attack, and DB-style `tera_type` now hydrates into engine battle state.
+- `v2.1.33` promotes log validation around target safety: terminal `(no valid target)` lines are allowed when an earlier KO emptied the target side, but future logs fail validation if a no-target skip occurs while that target side still has a live active Pokemon.
+- Alfredo PR #245 merged the Champion parity tree after required checks passed; TheYfactora12 main was fast-forwarded to the same merge commit so both repos are 1:1 at the current source tree.
 - The earlier `e5af069` build added `champions-turn-log-v2` export metadata; fresh June 22 logs from `?v=7e0deca` validate structurally cleanly, then deeper replay review exposed the target bridge bug fixed in `v2.1.25`.
 - Supabase migration `2026_06_22_retire_legacy_sv_teams.sql` has run successfully; the two stale v1 teams are retired at the source.
 - Fresh logs from the live URL now validate cleanly for team loading, stable IDs, final alive counts, and stale item absence.
@@ -26,11 +28,12 @@ This snapshot records the current truth after the June 21-22 live-log review and
 | Champion SP spread legality guard | Fixed in `v2.1.30-spread-legality-guard` | The 32 shipped inferred SV-shaped archetype spreads were converted to legal Champion SP spreads; `validateTeam`, Champion import, set editor saves, DB merge, Supabase upsert, and seed tests now block >32 SP per stat, >66 SP total, and malformed spread payloads. |
 | Team editor roadmap note | Tracked in `v2.1.31-editor-builder-roadmap` | The current set editor has Champion SP legality guardrails, but the team identified that it is not fluid enough for full customization. Later work should replace it with a complete builder for add/remove/reorder Pokemon, searchable fields, SP sliders/totals, import/export, Supabase save status, and rollback. |
 | Tera Blast dynamic type/category | Fixed in `v2.1.32-tera-blast-parity` | `engine.js` resolves active Tera Blast from battle state, accepts DB-style `tera_type`, ignores Normal-conversion abilities once Tera is active, records resolved move type/category in damage evidence, and `showdown_damage_oracle_tests.js` covers inactive, special active, physical active, stat-boost-flipped, DB-hydrated, and Pixilate-bypass cases against `@smogon/calc`. |
-| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v66-tera-blast-parity`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.32-tera-blast-parity` after bundle rebuild. |
+| Target-safe log validation | Guarded in `v2.1.33-log-target-guard` | `validate-turn-logs.mjs` now rejects `(no valid target)` skips when the target side still has a live active Pokemon, while preserving legitimate terminal skips after an earlier KO empties that side. |
+| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v67-log-target-guard`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.33-log-target-guard` after bundle rebuild. |
 | Exported-log build drift | Guarded in `e5af069` | Downloaded replay logs now include `schema_version: champions-turn-log-v2`, `exported_at`, `build_id`, and `source_url`, so future debug logs can prove which deployed build produced them. |
 | Showdown static metadata use | Partially fixed | Battle construction and move metadata can use generated Showdown static rows first, then local fallbacks. This is not the same as live DB runtime consumption. |
 | Showdown target category bridge | Fixed and guarded in `v2.1.25-target-parity-guard` | `runtime_data.js` canonicalizes Showdown target categories before engine use; `engine.js` keeps a guarded fallback for engine-only tests; move tests cover Hyper Voice spread targeting and stale opposing-target retargeting. |
-| Overview truth board | Updated in `v2.1.32-tera-blast-parity` | The live Overview tab now names the target bridge fix, DB/runtime source split, capped browser log retention, shipped QA artifact export, type audit, typed held-item boost fix, Knock Off behavior fix, Tera Blast parity, Champion SP spread guard, editor-builder UX gap, stat/speed/export evidence, remaining grouped mechanics gap, and Alfredo sync gap. |
+| Overview truth board | Updated in `v2.1.33-log-target-guard` | The live Overview tab now names the target bridge fix, DB/runtime source split, capped browser log retention, shipped QA artifact export, type audit, typed held-item boost fix, Knock Off behavior fix, Tera Blast parity, no-valid-target guard, Champion SP spread guard, editor-builder UX gap, stat/speed/export evidence, remaining grouped mechanics gap, and completed Alfredo sync. |
 | Large-run QA artifact | Added in `v2.1.27-qa-artifact-export` | Saved Analyses now has a `QA Artifact` export that records build ID, source URL, retention caps, summary counts, retained compact sim-log entries, and retained replay cards. |
 | Type multiplier audit | Added in `v2.1.28-mechanics-stack-guard` | `reports/type_multiplier_audit.md` shows each shipped move user's resolved move type, 4x/2x/1x/0.5x/0.25x/0x target buckets across the shipped roster, declared defensive Tera bucket changes, and dynamic move-type rules. |
 | Typed held-item damage boosts | Fixed in `v2.1.28-mechanics-stack-guard` | `engine.js` now applies legal typed held-item boosts such as Charcoal, Mystic Water, Soft Sand, Black Glasses, Spell Tag, Fairy Feather, and Never-Melt Ice as Showdown-style base-power modifiers. `showdown_damage_oracle_tests.js` covers Charcoal + Blaze + sun + STAB + super-effective Fire damage. |
@@ -193,6 +196,38 @@ Fix from this review:
 - `move_verification_registry_tests.js` covers Hyper Voice spread targeting from Showdown camelCase data and stale opposing-target retargeting.
 - Golden battle hashes were regenerated after confirming the new traces reflect the intentional targeting behavior change.
 
+## 2026-06-22 Late Log Review - v2.1.31 Exports
+
+Reviewed user exports from `https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/poke-sim/pokemon-champion-2026.html?v=e209f3b`:
+
+- `champions-turn-log-3410383494,1684469838,2080849004,3938257855.json`
+- `champions-turn-log-3491800478,1512844493,1474271744,656145414.json`
+- `champions-turn-log-161728751,2826389324,4174458443,2913951381.json`
+- `champions-turn-log-771060722,4210367371,3321910684,2176763678.json`
+
+Structural result:
+
+- All four passed `node poke-sim/tools/validate-turn-logs.mjs --require-stable --json ...` with `0` errors and `0` warnings across `28` turns.
+- The logs are from `v2.1.31-editor-builder-roadmap`, not the current `v2.1.33-log-target-guard`, so they are useful for root-cause review but do not prove the latest deployed bundle.
+- No `team not loaded`, duplicate stable key, invalid HP map, wrong-side stable key, or `NaN` marker appeared.
+
+Mechanics evidence observed:
+
+- `61` structured damage events.
+- `23` super-effective hits and `11` resisted hits.
+- `17` typed held-item boosts, including Soft Sand and Charcoal examples.
+- `5` Knock Off boost rows with `knock_off_boost_mod: 6144`.
+- `16` doubles spread reductions using `spread_mod: 3072`.
+- `7` sun weather damage boosts using `weather_mod: 6144`.
+- `13` stat-stage-aware damage rows and `4` burn/status penalty rows.
+- `0` Tera Blast events appeared in this batch, so Tera Blast still needs a fresh live-log sample when present.
+
+Target/no-target finding:
+
+- One `Incineroar used Knock Off! (no valid target)` line appeared.
+- It was legitimate: Whimsicott KO'd the opponent's final active Milotic earlier in the same turn, so Incineroar's queued Knock Off had no legal opposing active target left.
+- To prevent future regressions, `v2.1.33` adds validator coverage that fails no-target skips only when the target side still has a live active Pokemon after the turn.
+
 ## Large-Run Log Retention Note
 
 - The sim and CI can run thousands of battles for validation, but the browser UI intentionally keeps a bounded amount of replay evidence so local storage, downloads, and the page do not become unusable.
@@ -238,6 +273,8 @@ Use these statements in team updates and PR notes:
 - Fixed for `v2.1.30`: bundled Champion spreads are legal SP values, declared Champion teams with SV-shaped spreads are hard-invalid, stale DB spread payloads cannot replace bundled teams, and set-editor/Supabase saves are blocked before illegal spreads persist.
 - Tracked for later: current edit-team UI is guarded but not fluid; full Champion team-builder UX still needs a separate build.
 - Fixed for `v2.1.32`: Tera Blast now matches Showdown for inactive Normal/special behavior, active Tera type, active Normal-conversion ability bypass, active physical/special category selection from boosted attacking stats, and DB-style `tera_type` hydration into battle state.
+- Guarded for `v2.1.33`: exported-log validation now distinguishes legitimate terminal no-target skips from target failures while a live active target remains.
+- Completed: Alfredo PR #245 merged and both `alfredocox/main` and `TheYfactora12/main` now point to the same source tree.
 - Completed: Supabase cleanup migration retired the stale v1 DB teams.
 - Known limitation: browser replay/log retention is intentionally capped; QA Artifact exports retained evidence and caps, but it still does not preserve every raw battle log from huge runs.
 - Not fixed yet: live DB `showdown_entities` as the battle runtime source.
@@ -247,10 +284,10 @@ Use these statements in team updates and PR notes:
 
 ## Current Next Path
 
-1. Export one fresh single-run log, one fresh Run All log, and one `QA Artifact` from the public URL after `v2.1.32-tera-blast-parity`; verify build/source metadata, stable turn-log fields, legal Champion SP team data, `speed_order_details`, `stat_boosts`, `damage_events`, Tera Blast evidence when present, `knock_off_boost` evidence when Knock Off appears, no team-load failure, no invalid `(no valid target)` lines, and retained-evidence summary counts.
+1. Export one fresh single-run log, one fresh Run All log, and one `QA Artifact` from the public URL after `v2.1.33-log-target-guard`; verify build/source metadata, stable turn-log fields, legal Champion SP team data, `speed_order_details`, `stat_boosts`, `damage_events`, Tera Blast evidence when present, `knock_off_boost` evidence when Knock Off appears, no team-load failure, no live-target `(no valid target)` failures, and retained-evidence summary counts.
 2. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231 so both repos show the same truth.
 3. Continue converting high-usage baseline moves into verified mechanics coverage, grouping them by damage modifiers, item interactions, stat changes, targeting/redirection, protection, switching, and status.
 4. Continue the grouped move/damage/mechanics parity track against Showdown first, with Champions overrides only when explicitly sourced.
 5. Rebuild the edit-team surface into a full Champion team builder after the current sim-truth gates.
 6. Decide whether partners need a full raw battle archive stream beyond the retained-evidence QA artifact.
-7. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.
+7. Keep future Alfredo syncs on the protected-branch path: land in the Y fork, pass live-page checks, open an Alfredo PR, wait for required checks, then fast-forward the fork to the same merge commit.
