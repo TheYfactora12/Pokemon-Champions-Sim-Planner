@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.31-editor-builder-roadmap';
+    return txt || 'v2.1.32-tera-blast-parity';
   } catch (e) {
-    return 'v2.1.31-editor-builder-roadmap';
+    return 'v2.1.32-tera-blast-parity';
   }
 }
 
@@ -6030,12 +6030,17 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.31 Editor Builder Roadmap carries the v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, speed-stack evidence, Knock Off item-state tests, and strict validation are the local release checks for this build.'
+      detail: 'v2.1.32 Tera Blast Parity carries the v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, type multiplier audit, speed-stack evidence, Knock Off item-state tests, and strict validation are the local release checks for this build.'
     },
     {
       status: 'validated',
       title: 'Damage stack oracle is green',
-      detail: 'showdown_damage_oracle_tests.js now covers Charcoal plus Blaze plus sun plus STAB plus super-effective Fire damage, alongside terrain, weather, ability, screen, Tera, immunity, and spread-sensitive damage cases. v2.1.29 exports also carry damage_events with typed-item and Knock Off boost fields so modifier stacks can be audited from live logs.'
+      detail: 'showdown_damage_oracle_tests.js now covers Tera Blast before/after Tera, active Tera type, physical/special category selection from boosted Attack vs Special Attack, and DB-style tera_type hydration, alongside terrain, weather, ability, screen, Tera STAB, immunity, item, and spread-sensitive damage cases.'
+    },
+    {
+      status: 'validated',
+      title: 'Tera Blast parity is green',
+      detail: 'v2.1.32 resolves Tera Blast in the engine from battle state: inactive Tera keeps Normal/special behavior, active Tera uses the attacker Tera type, active Tera Blast ignores Normal-conversion abilities such as Pixilate, and active category selects physical only when boosted Attack is greater than boosted Special Attack. The type multiplier audit now expands shipped Tera Blast rows into before-Tera and active-Tera buckets.'
     },
     {
       status: 'validated',
@@ -6087,12 +6092,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'TheYfactora12 main carries v2.1.31 Editor Builder Roadmap plus v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
+      detail: 'TheYfactora12 main carries v2.1.32 Tera Blast Parity plus v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
       title: 'Mechanics parity is broader than the current ability slice',
-      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, and stale opposing-target retarget slices are covered. Remaining parity work still needs grouped checks for Tera Blast dynamic typing, redirection, Protect, switching, status, items, and Champions overrides.'
+      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, and stale opposing-target retarget slices are covered. Remaining parity work still needs grouped checks for redirection, Protect, switching, secondary stat effects, status, items, and Champions overrides.'
     },
     {
       status: 'gap',
@@ -6113,8 +6118,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.31 live logs, QA artifact, and sync Alfredo',
-      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
+      title: 'Verify v2.1.32 live logs, QA artifact, and sync Alfredo',
+      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Tera Blast damage evidence when present, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
       status: 'next',
@@ -6134,7 +6139,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Group mechanics parity work by battle system',
-      detail: 'Continue from exported-log evidence into Tera Blast dynamic typing, secondary stat effects, move targeting, redirection, Protect family, switching/replacement, status, abilities, and terrain/weather.'
+      detail: 'Continue from exported-log evidence into secondary stat effects, move targeting, redirection, Protect family, switching/replacement, status, abilities, items, and terrain/weather.'
     },
     {
       status: 'next',
@@ -6144,7 +6149,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.31 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, SP legality guard, editor-builder roadmap note, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.32 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, Tera Blast parity, SP legality guard, editor-builder roadmap note, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',

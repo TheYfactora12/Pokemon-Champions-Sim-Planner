@@ -60,7 +60,8 @@
 // v64-spread-legality-guard [2026-06-22] - Champion SP caps enforced across
 // bundled teams, import/editor saves, DB merge, and generated seed artifacts.
 // v65-editor-builder-roadmap [2026-06-22] - Overview note for full team-builder UX.
-const CACHE_NAME = 'champions-sim-v65-editor-builder-roadmap';
+// v66-tera-blast-parity [2026-06-22] - Tera Blast dynamic type/category parity.
+const CACHE_NAME = 'champions-sim-v66-tera-blast-parity';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

@@ -43,12 +43,13 @@ T('3. report includes base and declared Tera defender buckets', () => {
   inc(report, '0x');
 });
 
-T('4. report names dynamic move-type cases and current Tera Blast gap', () => {
+T('4. report names dynamic move-type cases and promoted Tera Blast behavior', () => {
   const report = fs.readFileSync(reportPath, 'utf8');
   inc(report, 'Weather Ball in rain');
   inc(report, 'Terrain Pulse in electric terrain');
   inc(report, 'Pixilate converts Normal damage to Fairy');
-  inc(report, 'Tera Blast type-change behavior still needs a dedicated parity slice');
+  inc(report, 'active Tera Blast uses declared');
+  inc(report, 'Category is chosen in the damage engine from the higher boosted Attack vs Special Attack stat');
 });
 
 T('5. generator keeps the engine-equivalent type chart examples visible', () => {

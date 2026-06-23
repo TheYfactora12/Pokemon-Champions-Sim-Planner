@@ -708,6 +708,55 @@ function _getStabMod(attacker, moveType) {
   return stabMod;
 }
 
+function _boostedAttackSideStat(mon, stat) {
+  if (!mon) return 0;
+  var base = stat === 'atk' ? Number(mon.baseAtk || 0) : Number(mon.baseSpa || 0);
+  var boost = mon.statBoosts ? Number(mon.statBoosts[stat] || 0) : 0;
+  boost = Math.max(-6, Math.min(6, boost));
+  var boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
+  var value = boost >= 0 ? base * boostTable[boost] : base / boostTable[-boost];
+  return Math.floor(value);
+}
+
+function _teraBlastUsesPhysical(attacker) {
+  return _boostedAttackSideStat(attacker, 'atk') > _boostedAttackSideStat(attacker, 'spa');
+}
+
+function _resolveDynamicMoveType(attacker, move, field, baseMoveType) {
+  var moveType = baseMoveType || _moveType(move);
+  var _fieldWeather = _effectiveFieldWeather(field);
+  if (move === 'Weather Ball') {
+    moveType =
+      _fieldWeather === 'sun'  ? 'Fire'
+    : _fieldWeather === 'rain' ? 'Water'
+    : _fieldWeather === 'sand' ? 'Rock'
+    : _fieldWeather === 'snow' ? 'Ice'
+    : 'Normal';
+  }
+  if (move === 'Terrain Pulse' && _isGrounded(attacker)) {
+    moveType =
+      field && field.terrain === 'electric' ? 'Electric'
+    : field && field.terrain === 'grassy'  ? 'Grass'
+    : field && field.terrain === 'misty'   ? 'Fairy'
+    : field && field.terrain === 'psychic' ? 'Psychic'
+    : 'Normal';
+  }
+  if (move === 'Tera Blast' && attacker && attacker.teraActivated && attacker.tera) {
+    moveType = attacker.tera;
+  }
+  return moveType;
+}
+
+function _isActiveTeraBlastContext(ctx) {
+  return !!(
+    ctx &&
+    ctx.move === 'Tera Blast' &&
+    ctx.attacker &&
+    ctx.attacker.teraActivated &&
+    ctx.attacker.tera
+  );
+}
+
 function _applyStatMod(value, mod4096) {
   if (mod4096 === 4096) return value;
   return Math.max(1, _pokeRound(_of32(value * mod4096) / 4096));
@@ -1034,6 +1083,7 @@ function _moveRecoilRule(move) {
 var ABILITIES = {
   'Aerilate': {
     onModifyMove: function(ctx) {
+      if (_isActiveTeraBlastContext(ctx)) return null;
       var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Flying', bpMult: 1.20 };
       return null;
@@ -1051,6 +1101,7 @@ var ABILITIES = {
     // Cite: https://www.serebii.net/pokemonchampions/newabilities.shtml
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Champions
     onModifyMove: function(ctx) {
+      if (_isActiveTeraBlastContext(ctx)) return null;
       var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Dragon', bpMult: 1.20 };
       return null;
@@ -1058,6 +1109,7 @@ var ABILITIES = {
   },
   'Pixilate': {
     onModifyMove: function(ctx) {
+      if (_isActiveTeraBlastContext(ctx)) return null;
       var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Fairy', bpMult: 1.20 };
       return null;
@@ -1084,6 +1136,7 @@ var ABILITIES = {
   },
   'Refrigerate': {
     onModifyMove: function(ctx) {
+      if (_isActiveTeraBlastContext(ctx)) return null;
       var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Ice', bpMult: 1.20 };
       return null;
@@ -1558,7 +1611,7 @@ class Pokemon {
     this.role = data.role || '';
     this.roles = (typeof classifyPokemon === 'function' ? (classifyPokemon(data).roles || []) : []);
     this.teamStyle = teamStyle;
-    this.tera = data.teraType || data.tera || null;
+    this.tera = data.teraType || data.tera_type || data.tera || null;
     // Issue #T1: Champions Stat Point (SP) system support.
     // Champions replaced SV-style EVs with Stat Points:
     //   - Per-stat cap 32 (SV: 252), total cap 66 (SV: 510)
@@ -1884,7 +1937,7 @@ class Pokemon {
       if (_modRes.typeOverride) _typeOverride = _modRes.typeOverride;
       if (_modRes.bpMult) _bpMult = _modRes.bpMult;
     }
-    let moveType = _typeOverride || _moveType(move);
+    let moveType = _resolveDynamicMoveType(this, move, field, _typeOverride || _moveType(move));
 
     // --- T9j.9 (Refs #3) Physical/Special classifier ---
     // Data-driven: MOVE_CATEGORY from data.js is the canonical source of truth.
@@ -1894,7 +1947,9 @@ class Pokemon {
     //   Cite: https://bulbapedia.bulbagarden.net/wiki/Damage_category
     let isPhysical;
     const moveCategory = _moveCategory(move);
-    if (moveCategory) {
+    if (move === 'Tera Blast' && this.teraActivated && this.tera) {
+      isPhysical = _teraBlastUsesPhysical(this);
+    } else if (moveCategory) {
       isPhysical = moveCategory === 'physical';
     } else {
       // Fallback: Gen 1-3 style type-based physical/special split.
@@ -1919,25 +1974,9 @@ class Pokemon {
     const _isCrit = !_critBlocked && (_forceCrit || (!_forceNoCrit && rng() < _critProb));
     if (_isCrit && field && field._ctx) field._ctx.lastWasCrit = true;
 
-    // Weather Ball changes type from actual field weather before STAB, chart,
-    // and weather damage modifiers are resolved.
+    // Weather Ball, Terrain Pulse, and active Tera Blast resolve dynamic type
+    // before STAB, chart, and weather damage modifiers are resolved.
     const _fieldWeather = _effectiveFieldWeather(field);
-    if (move === 'Weather Ball') {
-      moveType =
-        _fieldWeather === 'sun'  ? 'Fire'
-      : _fieldWeather === 'rain' ? 'Water'
-      : _fieldWeather === 'sand' ? 'Rock'
-      : _fieldWeather === 'snow' ? 'Ice'
-      : 'Normal';
-    }
-    if (move === 'Terrain Pulse' && _isGrounded(this)) {
-      moveType =
-        field.terrain === 'electric' ? 'Electric'
-      : field.terrain === 'grassy'  ? 'Grass'
-      : field.terrain === 'misty'   ? 'Fairy'
-      : field.terrain === 'psychic' ? 'Psychic'
-      : 'Normal';
-    }
     const _tryHitPreview = callAbilityHook(target, 'onTryHit', {
       move: move,
       moveType: moveType,
@@ -4365,6 +4404,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       return;
     }
     let _protectMult = 0;
+    const _resolvedMoveType = _resolveDynamicMoveType(attacker, move, field);
     const _isContact = _isContactMove(move);
     const _shieldKind = target.protectKind || 'Protect';
     if (move === 'Phantom Force' && target.protected) {
@@ -4378,7 +4418,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     } else if (target.protected && move !== 'Feint') {
       const _protRes = callAbilityHook(attacker, 'onProtectResolve', {
         attacker: attacker, defender: target, move: move,
-        moveType: _moveType(move), isContact: _isContact, log: log
+        moveType: _resolvedMoveType, isContact: _isContact, log: log
       });
       if (_protRes && _protRes.damageMult > 0) {
         _protectMult = _protRes.damageMult;
@@ -4523,6 +4563,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       attacker.teraActivated = true;
       log.push(`${attacker.name} Terastallized into ${attacker.tera}!`);
     }
+    const _resolvedMoveType = _resolveDynamicMoveType(attacker, move, field);
 
     // T9j.17 (Refs #36) -- Expanding Force x Psychic Terrain dynamic target.
     // When the user is grounded AND Psychic Terrain is active, Expanding Force
@@ -4705,7 +4746,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       } else if (t.protected && move !== 'Feint') {
         const _protRes = callAbilityHook(attacker, 'onProtectResolve', {
           attacker: attacker, defender: t, move: move,
-          moveType: _moveType(move), isContact: _isContact, log: log
+          moveType: _resolvedMoveType, isContact: _isContact, log: log
         });
         if (_protRes && _protRes.damageMult > 0) {
           _protectMult = _protRes.damageMult;
@@ -4754,7 +4795,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         attacker: attacker,
         defender: t,
         move: move,
-        moveType: _moveType(move),
+        moveType: _resolvedMoveType,
         field: field,
         log: log
       });
@@ -4886,6 +4927,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         calc.attacker_key === attackerKey &&
         calc.target_key === targetKey &&
         calc.move === move;
+      const resolvedMoveType = calcMatches && calc && calc.move_type
+        ? calc.move_type
+        : _resolveDynamicMoveType(attacker, move, field);
       const row = Object.assign({
         attacker: attacker ? attacker.name : 'Unknown',
         attacker_key: attackerKey,
@@ -4899,7 +4943,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target_max_hp: Number(target.maxHp || 0),
         target_survived: target.hp > 0
       }, calcMatches ? calc : {
-        move_type: _moveType(move),
+        move_type: resolvedMoveType,
         category: _moveCategory(move) || 'fixed',
         type_effectiveness: null,
         critical: false
@@ -4927,8 +4971,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     // T9j.4 (#41) — Fire-move thaw on hit. Any damaging Fire move thaws target.
     // Cite: Bulbapedia Freeze.
+    const postHitMoveType = field && field._ctx && field._ctx.turnDamageEvents && field._ctx.turnDamageEvents.length
+      ? field._ctx.turnDamageEvents[field._ctx.turnDamageEvents.length - 1].move_type
+      : _resolveDynamicMoveType(attacker, move, field);
     if (target.status === 'frozen' && finalDmg > 0 && target.hp > 0 &&
-        _moveType(move) === 'Fire') {
+        postHitMoveType === 'Fire') {
       target.status = null;
       target.frozenTurns = 0;
       log.push(`${target.name} was thawed out by ${attacker.name}'s ${move}!`);
@@ -4958,7 +5005,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     callAbilityHook(target, 'onDamagingHit', {
       attacker: attacker, defender: target, move: move,
-      moveType: _moveType(move),
+      moveType: postHitMoveType,
       damage: finalDmg, field: field, log: log,
       recordKO: _recordKO
     });
@@ -5007,7 +5054,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (target.alive && finalDmg > 0) {
       callAbilityHook(target, 'onDamageTaken', {
         attacker: attacker, defender: target, move: move,
-        moveType: _moveType(move),
+        moveType: postHitMoveType,
         damage: finalDmg, field: field, log: log
       });
     }

@@ -145,7 +145,24 @@ function moveTypeVariants(member, move, support) {
   }
 
   if (move === 'Tera Blast') {
-    variants[0].condition += '; current engine treats Tera Blast as Normal until a dedicated Tera Blast type-change slice is promoted';
+    const teraType = clean(member.tera || member.teraType || member.tera_type);
+    const teraVariants = [{
+      type: defaultType,
+      condition: defaultCondition + '; before Tera/no active Tera',
+      damaging: true
+    }];
+    if (teraType && TYPE_CHART[teraType]) {
+      teraVariants.push({
+        type: teraType,
+        condition: 'active Tera Blast uses declared ' + teraType + ' Tera type',
+        damaging: true
+      });
+    } else if (teraType) {
+      teraVariants[0].condition += '; declared ' + teraType + ' Tera type needs a type-chart rule before audit expansion';
+    } else {
+      teraVariants[0].condition += '; no declared Tera type in shipped row';
+    }
+    return teraVariants;
   }
 
   return variants;
@@ -172,12 +189,13 @@ function buildTargetRoster() {
   for (const [teamKey, team] of Object.entries(teams || {})) {
     for (const member of team.members || []) {
       const types = resolveTypes(member.name);
-      const key = [member.name, types.join('/'), member.ability || '', member.tera || ''].join('|');
+      const tera = member.tera || member.teraType || member.tera_type || '';
+      const key = [member.name, types.join('/'), member.ability || '', tera].join('|');
       if (!targets.has(key)) {
         targets.set(key, {
           name: member.name,
           types,
-          tera: member.tera || '',
+          tera,
           ability: member.ability || '',
           teams: new Set()
         });
@@ -193,12 +211,14 @@ function buildAttackRows() {
   for (const [teamKey, team] of Object.entries(teams || {})) {
     for (const member of team.members || []) {
       for (const move of member.moves || []) {
-        const key = [member.name, member.ability || '', move].join('|');
+        const tera = member.tera || member.teraType || member.tera_type || '';
+        const key = [member.name, member.ability || '', tera, move].join('|');
         if (!rows.has(key)) {
           rows.set(key, {
             pokemon: member.name,
             ability: member.ability || '',
             item: member.item || '',
+            tera,
             move,
             teams: new Set()
           });
@@ -298,7 +318,7 @@ lines.push('| --- | --- | --- | --- |');
 lines.push('| Weather Ball | Field weather changes the move type. | Normal with no weather; Fire in sun; Water in rain; Rock in sand; Ice in snow. | Report rows expand shipped Weather Ball users into each weather case. |');
 lines.push('| Terrain Pulse | Grounded user plus active terrain changes the move type. | Normal with no terrain; Terrain Pulse in electric terrain = Electric; grassy = Grass; misty = Fairy; psychic = Psychic. | This rule is documented even when no current shipped team uses Terrain Pulse, so future roster changes do not hide the mechanic. |');
 lines.push('| Normal-type conversion abilities | Aerilate, Dragonize, Pixilate, or Refrigerate on a Normal damaging move changes the move type before type-effectiveness. | Aerilate converts Normal damage to Flying; Dragonize converts Normal damage to Dragon; Pixilate converts Normal damage to Fairy; Refrigerate converts Normal damage to Ice. | Rows include the converted type and still leave final BP modifiers to the damage engine tests. |');
-lines.push('| Tera Blast | Tera state can change move type in cartridge/Showdown behavior. | Tera Blast type-change behavior still needs a dedicated parity slice. | Current audit keeps this gap visible until the engine promotes Tera Blast dynamic typing with coverage. |');
+lines.push('| Tera Blast | Active Tera changes the move type; no active Tera keeps Normal. | Before Tera/no active Tera = Normal; active Tera Blast uses the declared Tera type for that team member. | Category is chosen in the damage engine from the higher boosted Attack vs Special Attack stat and is covered by the Showdown damage oracle. |');
 lines.push('');
 lines.push('## High-Risk Watchlist');
 lines.push('');
@@ -312,7 +332,7 @@ for (const item of notableRows(attackRows, targets)) {
   const why = [
     item.max >= 4 ? 'has 4x roster targets' : '',
     item.hasImmune ? 'has 0x roster targets' : '',
-    row.move === 'Tera Blast' ? 'Tera Blast type-change behavior still needs a dedicated parity slice' : ''
+    row.move === 'Tera Blast' ? 'active Tera type expansion covered by engine/oracle tests' : ''
   ].filter(Boolean).join('; ');
   lines.push('| ' + md(row.pokemon) + ' | ' + md(row.move) + ' | ' + md(typeCases) + ' | ' + md(why) + ' |');
 }
@@ -330,6 +350,7 @@ for (const row of attackRows) {
     'category=' + (effective.category || ''),
     'bp=' + (effective.basePower ?? ''),
     'target=' + (effective.target || ''),
+    'tera=' + (row.tera || ''),
     'source=' + (effective.source || '')
   ].join('; ');
   lines.push('| ' +

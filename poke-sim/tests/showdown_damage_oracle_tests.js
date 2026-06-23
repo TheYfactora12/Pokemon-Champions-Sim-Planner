@@ -862,5 +862,124 @@ T('46. Mold Breaker bypasses Levitate immunity like Showdown', () => {
   eqRange(sim, oracle, 'mold breaker levitate');
 });
 
+T('47. Tera Blast before Tera remains Normal and special like Showdown', () => {
+  const sim = simRange(
+    simMon('Raichu', { nature: 'Modest', moves: ['Tera Blast'], evs: { spa: 252 }, teraType: 'Electric' }),
+    simMon('Pelipper'),
+    'Tera Blast',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Raichu', { nature: 'Modest', moves: ['Tera Blast'], evs: { spa: 252 } }),
+    calcMon('Pelipper'),
+    'Tera Blast',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'tera blast inactive');
+});
+
+T('48. Tera Blast uses active Tera type and special category like Showdown', () => {
+  const simAttacker = simMon('Raichu', { nature: 'Modest', moves: ['Tera Blast'], evs: { spa: 252 }, teraType: 'Electric' });
+  simAttacker.teraActivated = true;
+  const field = new Field({ format: 'doubles' });
+  const sim = simRange(
+    simAttacker,
+    simMon('Pelipper'),
+    'Tera Blast',
+    field
+  );
+  const oracle = oracleRange(
+    calcMon('Raichu', { nature: 'Modest', moves: ['Tera Blast'], evs: { spa: 252 }, teraType: 'Electric' }),
+    calcMon('Pelipper'),
+    'Tera Blast',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'tera blast electric special');
+});
+
+T('49. Tera Blast uses active Tera type and physical category like Showdown', () => {
+  const simAttacker = simMon('Garchomp', { nature: 'Adamant', moves: ['Tera Blast'], evs: { atk: 252 }, teraType: 'Ground' });
+  simAttacker.teraActivated = true;
+  const sim = simRange(
+    simAttacker,
+    simMon('Incineroar'),
+    'Tera Blast',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Garchomp', { nature: 'Adamant', moves: ['Tera Blast'], evs: { atk: 252 }, teraType: 'Ground' }),
+    calcMon('Incineroar'),
+    'Tera Blast',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'tera blast ground physical');
+});
+
+T('50. Tera Blast category can flip from stat boosts like Showdown', () => {
+  const simAttacker = simMon('Raichu', { nature: 'Modest', moves: ['Tera Blast'], evs: { spa: 252 }, teraType: 'Electric' });
+  simAttacker.teraActivated = true;
+  simAttacker.statBoosts.atk = 4;
+  const sim = simRange(
+    simAttacker,
+    simMon('Pelipper'),
+    'Tera Blast',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Raichu', { nature: 'Modest', moves: ['Tera Blast'], evs: { spa: 252 }, boosts: { atk: 4 }, teraType: 'Electric' }),
+    calcMon('Pelipper'),
+    'Tera Blast',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'tera blast boost-flipped physical');
+});
+
+T('51. DB-style tera_type feeds Tera Blast type and damage evidence', () => {
+  const simAttacker = simMon('Garchomp', { nature: 'Adamant', moves: ['Tera Blast'], evs: { atk: 252 }, tera_type: 'Ground' });
+  simAttacker.teraActivated = true;
+  const target = simMon('Incineroar');
+  const field = new Field({ format: 'doubles' });
+  simAttacker.side = field.playerSide;
+  target.side = field.oppSide;
+  field.playerSide.activeMons = [simAttacker];
+  field.oppSide.activeMons = [target];
+  field._ctx.forceNoCrit = true;
+  field._ctx.captureDamageCalc = true;
+  const simDamage = simAttacker.calcDamage('Tera Blast', target, field, null, function() { return 0; });
+  const oracle = oracleRange(
+    calcMon('Garchomp', { nature: 'Adamant', moves: ['Tera Blast'], evs: { atk: 252 }, teraType: 'Ground' }),
+    calcMon('Incineroar'),
+    'Tera Blast',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eq(simDamage, oracle[0], 'db tera_type damage min');
+  eq(field._ctx.lastDamageCalc.move_type, 'Ground', 'db tera_type move type evidence');
+  eq(field._ctx.lastDamageCalc.category, 'physical', 'db tera_type category evidence');
+});
+
+T('52. Active Tera Blast ignores Pixilate Normal-conversion boost like Showdown', () => {
+  const simAttacker = simMon('Altaria-Mega', {
+    nature: 'Modest',
+    moves: ['Tera Blast'],
+    evs: { spa: 252 },
+    ability: 'Pixilate',
+    teraType: 'Fire'
+  });
+  simAttacker.teraActivated = true;
+  const sim = simRange(
+    simAttacker,
+    simMon('Amoonguss'),
+    'Tera Blast',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Altaria-Mega', { nature: 'Modest', moves: ['Tera Blast'], evs: { spa: 252 }, ability: 'Pixilate', teraType: 'Fire' }),
+    calcMon('Amoonguss'),
+    'Tera Blast',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eqRange(sim, oracle, 'active tera blast bypasses pixilate');
+});
+
 console.log('\nshowdown damage oracle:', pass + ' pass, ' + fail + ' fail\n');
 process.exit(fail ? 1 : 0);
