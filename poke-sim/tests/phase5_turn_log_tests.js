@@ -166,11 +166,10 @@ T('T5a-1c roster calculated stats include non-HP stats', () => {
 });
 
 T('T5a-1d stable roster identity survives bench to active movement', () => {
-  const battle = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.fire_ice_fullroom, {
+  const battle = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_altaria, {
     format: 'doubles',
-    seed: [3060085469, 1693309830, 2374429629, 716694517],
-    playerBring: ['Incineroar', 'Arcanine', 'Garchomp', 'Whimsicott'],
-    opponentBring: ['Cofagrigus', 'Ursaluna-Bloodmoon', 'Vanilluxe', 'Typhlosion-Hisui']
+    seed: [1, 1015568748, 22695478, 1103527590],
+    playerBring: ['Incineroar', 'Arcanine', 'Garchomp', 'Whimsicott']
   });
   const rows = [];
   for (const turn of battle.turnLog || []) {
@@ -415,7 +414,7 @@ T('T5c-3 JSON download produces valid parseable file', () => {
   ctx.downloadReplayTurnLog({ seed: 'abc', result: 'win', turnLog: battleA.turnLog, position_path: battleA.position_path });
   truthy(parsed && Array.isArray(parsed.turnLog), 'download JSON did not parse');
   eq(parsed.schema_version, 'champions-turn-log-v2', 'download schema version missing');
-  truthy(/^v2\.1\.36-core-move-parity/.test(parsed.build_id || ''), 'download build id missing');
+  truthy(/^v2\.1\.37-damage-log-team-catalog/.test(parsed.build_id || ''), 'download build id missing');
   truthy(typeof parsed.exported_at === 'string' && parsed.exported_at.length > 0, 'download timestamp missing');
 });
 

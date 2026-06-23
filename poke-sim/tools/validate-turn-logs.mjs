@@ -442,9 +442,82 @@ function validateDamageEvents(turn, findings) {
         findings.push(finding('error', 'damage-event-missing-identity', `damage_events row is missing ${key}.`, { turn: turn && turn.turn, index: i }));
       }
     }
-    for (const key of ['damage', 'target_hp_before', 'target_hp_after', 'target_max_hp']) {
+    const damageNumberKeys = [
+      'damage', 'applied_damage', 'hp_delta', 'calculated_damage',
+      'overkill_damage', 'target_hp_before', 'target_hp_after',
+      'target_max_hp'
+    ];
+    const damageNumbers = {};
+    let damageNumbersValid = true;
+    for (const key of damageNumberKeys) {
       if (!Number.isFinite(Number(row[key]))) {
+        damageNumbersValid = false;
         findings.push(finding('error', 'damage-event-missing-number', `damage_events row is missing numeric ${key}.`, { turn: turn && turn.turn, index: i }));
+      } else {
+        damageNumbers[key] = Number(row[key]);
+      }
+    }
+    if (typeof row.damage_capped_by_hp !== 'boolean') {
+      findings.push(finding('error', 'damage-event-missing-flag', 'damage_events row is missing boolean damage_capped_by_hp.', { turn: turn && turn.turn, index: i }));
+    }
+    if (damageNumbersValid) {
+      const expectedApplied = Math.max(0, damageNumbers.target_hp_before - damageNumbers.target_hp_after);
+      const expectedOverkill = Math.max(0, damageNumbers.calculated_damage - damageNumbers.applied_damage);
+      if (damageNumbers.target_hp_after > damageNumbers.target_hp_before) {
+        findings.push(finding('error', 'damage-event-hp-increase', 'damage_events row shows target HP increasing during damage.', {
+          turn: turn && turn.turn,
+          index: i,
+          target_hp_before: damageNumbers.target_hp_before,
+          target_hp_after: damageNumbers.target_hp_after
+        }));
+      }
+      if (damageNumbers.target_hp_after < 0 || damageNumbers.target_hp_after > damageNumbers.target_max_hp) {
+        findings.push(finding('error', 'damage-event-hp-out-of-range', 'damage_events target HP is outside 0..max HP.', {
+          turn: turn && turn.turn,
+          index: i,
+          target_hp_after: damageNumbers.target_hp_after,
+          target_max_hp: damageNumbers.target_max_hp
+        }));
+      }
+      if (damageNumbers.applied_damage !== expectedApplied) {
+        findings.push(finding('error', 'damage-event-applied-mismatch', 'applied_damage must equal target HP lost.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: expectedApplied,
+          actual: damageNumbers.applied_damage
+        }));
+      }
+      if (damageNumbers.damage !== damageNumbers.applied_damage) {
+        findings.push(finding('error', 'damage-event-damage-mismatch', 'damage must equal applied_damage, not raw formula damage.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: damageNumbers.applied_damage,
+          actual: damageNumbers.damage
+        }));
+      }
+      if (damageNumbers.hp_delta !== damageNumbers.applied_damage) {
+        findings.push(finding('error', 'damage-event-hp-delta-mismatch', 'hp_delta must equal applied_damage.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: damageNumbers.applied_damage,
+          actual: damageNumbers.hp_delta
+        }));
+      }
+      if (damageNumbers.overkill_damage !== expectedOverkill) {
+        findings.push(finding('error', 'damage-event-overkill-mismatch', 'overkill_damage must equal calculated_damage minus applied_damage when positive.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: expectedOverkill,
+          actual: damageNumbers.overkill_damage
+        }));
+      }
+      if (typeof row.damage_capped_by_hp === 'boolean' && row.damage_capped_by_hp !== (damageNumbers.calculated_damage !== damageNumbers.applied_damage)) {
+        findings.push(finding('error', 'damage-event-cap-flag-mismatch', 'damage_capped_by_hp must reflect calculated versus applied damage.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: damageNumbers.calculated_damage !== damageNumbers.applied_damage,
+          actual: row.damage_capped_by_hp
+        }));
       }
     }
     if (row.damage_kind === 'calculated') {

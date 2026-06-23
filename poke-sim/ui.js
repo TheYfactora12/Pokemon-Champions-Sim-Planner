@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.36-core-move-parity';
+    return txt || 'v2.1.37-damage-log-team-catalog';
   } catch (e) {
-    return 'v2.1.36-core-move-parity';
+    return 'v2.1.37-damage-log-team-catalog';
   }
 }
 
@@ -539,8 +539,8 @@ function getChampionSpreadErrorsForTeam(team) {
 
 function buildImportedTeamValidation(members, opts) {
   opts = opts || {};
-  // Imports stay usable with warnings, but hard team-rule failures are marked
-  // illegal so they cannot masquerade as reviewed legal teams.
+  // Imports stay usable when source data is unavailable, but known illegal
+  // species/form move rows are hard errors so they cannot enter the sim.
   var team = {
     name: opts.name || 'Imported Team',
     format: opts.format || 'champions',
@@ -578,11 +578,12 @@ function buildImportedTeamValidation(members, opts) {
         if (!out.sourceVersion && row.sourceVersion) out.sourceVersion = row.sourceVersion;
         if (row.legal) return;
         var label = (member && member.name ? member.name : 'Pokemon') + ': ' + (row.moveName || 'unknown move') + ' - ' + (row.notes || row.reason || 'not verified');
-        var isUnchecked = row.reason === 'source_unavailable' || row.reason === 'unknown_species';
-        out.warnings.push(label);
+        var severity = getMoveLegalityIssueSeverity(row.reason);
+        if (severity === 'error') out.errors.push(label);
+        else out.warnings.push(label);
         out.memberWarnings[String(idx)] = out.memberWarnings[String(idx)] || [];
         out.memberWarnings[String(idx)].push({
-          severity: isUnchecked ? 'unchecked' : 'warning',
+          severity: severity,
           text: label
         });
       });
@@ -592,6 +593,16 @@ function buildImportedTeamValidation(members, opts) {
   out.warnings = Array.from(new Set(out.warnings.filter(Boolean)));
   out.valid = out.errors.length === 0;
   return out;
+}
+
+function getMoveLegalityIssueSeverity(reason) {
+  if (reason === 'source_unavailable') return 'unchecked';
+  if (reason === 'unknown_species' ||
+      reason === 'unknown_move' ||
+      reason === 'not_in_species_form_learnset') {
+    return 'error';
+  }
+  return 'warning';
 }
 
 // ============================================================
@@ -727,12 +738,54 @@ function normalizeTeamRecordForSim(teamKey, team) {
   return team;
 }
 
+var CS_REMOVED_TEAM_CATALOG = {};
+
+function removeTeamFromRuntimeCatalog(teamKey, team, verdict, reason) {
+  if (!teamKey || !team || team.source === 'custom') return false;
+  CS_REMOVED_TEAM_CATALOG[teamKey] = {
+    key: teamKey,
+    name: team.name || teamKey,
+    format: team.format || '',
+    legality_status: team.legality_status || '',
+    reason: reason || 'not_approved_champion_legal',
+    errors: verdict && Array.isArray(verdict.errors) ? verdict.errors.slice(0, 8) : [],
+    warnings: verdict && Array.isArray(verdict.warnings) ? verdict.warnings.slice(0, 8) : []
+  };
+  delete TEAMS[teamKey];
+  return true;
+}
+
+function pruneRuntimeTeamCatalog() {
+  if (typeof TEAMS === 'undefined') return 0;
+  var removed = 0;
+  Object.keys(TEAMS).forEach(function(key) {
+    var team = normalizeTeamRecordForSim(key, TEAMS[key]);
+    if (!team || team.source === 'custom') return;
+    var verdict = (typeof getTeamLegalityVerdict === 'function')
+      ? getTeamLegalityVerdict(key, team)
+      : { valid: false, errors: ['Team legality validator is unavailable.'] };
+    if (typeof isApprovedPreloadedChampionTeam === 'function' &&
+        isApprovedPreloadedChampionTeam(key, team, verdict)) {
+      return;
+    }
+    if (removeTeamFromRuntimeCatalog(key, team, verdict, 'not_approved_champion_legal')) removed++;
+  });
+  var root = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : null);
+  var simRoot = (typeof ChampionsSim !== 'undefined') ? ChampionsSim : (root && root.ChampionsSim);
+  if (simRoot) {
+    simRoot.catalog = simRoot.catalog || {};
+    simRoot.catalog.removedTeams = CS_REMOVED_TEAM_CATALOG;
+  }
+  return removed;
+}
+
 function normalizeTeamCatalogForSim() {
   if (typeof TEAMS === 'undefined') return 0;
   var count = 0;
   for (var key in TEAMS) {
     if (normalizeTeamRecordForSim(key, TEAMS[key])) count++;
   }
+  pruneRuntimeTeamCatalog();
   return count;
 }
 
@@ -751,9 +804,14 @@ function isVisibleTeamInCatalog(teamKey, team, opts) {
   if (team.source === 'custom' && opts.includeCustom === false) return false;
   if (team.format !== 'champions') return false;
   if (team.legality_status === 'illegal') return false;
+  var verdict = null;
   if (typeof getTeamLegalityVerdict === 'function') {
-    var verdict = getTeamLegalityVerdict(teamKey, team);
+    verdict = getTeamLegalityVerdict(teamKey, team);
     if (verdict && !verdict.valid) return false;
+  }
+  if (team.source !== 'custom' && typeof isApprovedPreloadedChampionTeam === 'function' &&
+      !isApprovedPreloadedChampionTeam(teamKey, team, verdict)) {
+    return false;
   }
   return true;
 }
@@ -792,12 +850,16 @@ function mergeDbTeamsIntoCatalog(dbTeams) {
     var verdict = (typeof getTeamLegalityVerdict === 'function')
       ? getTeamLegalityVerdict(key, team)
       : { valid: true, errors: [] };
-    if (!team || team.format !== 'champions' || !verdict.valid) {
+    if (!team || team.format !== 'champions' || !verdict.valid ||
+        (typeof isApprovedPreloadedChampionTeam === 'function' &&
+          !isApprovedPreloadedChampionTeam(key, team, verdict))) {
       summary.skipped++;
       summary.blocked.push({
         key: key,
         name: team && team.name,
-        errors: (verdict && verdict.errors) || ['Not a Champion-format legal team']
+        errors: (verdict && verdict.errors && verdict.errors.length)
+          ? verdict.errors
+          : ['Not an approved Champion-legal team']
       });
       continue;
     }
@@ -1186,17 +1248,22 @@ function getTeamLegalityVerdict(teamKey, team) {
       label: 'SV compatibility only'
     };
   }
+  var moveIssues = collectTeamMoveLegalityIssues(team);
+  var hardMoveIssues = moveIssues.filter(function(row) { return row && row.severity === 'error'; });
+  var sourceWarnings = moveIssues.filter(function(row) { return row && row.severity !== 'error'; });
   var fallback = {
-    valid: !!team && (team.legality_status === 'legal' || team.legality_status === 'legal_inferred'),
+    valid: !!team && hardMoveIssues.length === 0 && (team.legality_status === 'legal' || team.legality_status === 'legal_inferred'),
     inferred: !!team && team.legality_status === 'legal_inferred',
-    errors: [],
-    warnings: [],
+    errors: hardMoveIssues.map(function(row) { return row.label; }),
+    warnings: sourceWarnings.map(function(row) { return row.label; }),
     label: team && team.legality_status === 'legal_inferred' ? 'Legal (inferred)' : 'Legal'
   };
   if (!team || typeof validateTeam !== 'function') return fallback;
   var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
   var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
+  hardMoveIssues.forEach(function(row) { errors.push(row.label); });
   var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
+  sourceWarnings.forEach(function(row) { warnings.push(row.label); });
   var valid = errors.length === 0;
   return {
     valid: valid,
@@ -1210,6 +1277,45 @@ function getTeamLegalityVerdict(teamKey, team) {
           : 'Legal')
       : 'Not legal'
   };
+}
+
+function collectTeamMoveLegalityIssues(team) {
+  var out = [];
+  if (!team || !Array.isArray(team.members)) return out;
+  var root = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : null);
+  var simRoot = (typeof ChampionsSim !== 'undefined') ? ChampionsSim : (root && root.ChampionsSim);
+  var api = simRoot && simRoot.moveLegality ? simRoot.moveLegality : null;
+  if (!api || typeof api.validateMovesForSet !== 'function') {
+    out.push({
+      severity: 'unchecked',
+      label: 'Showdown species and move legality data is not loaded.'
+    });
+    return out;
+  }
+  (team.members || []).forEach(function(member) {
+    var checks = api.validateMovesForSet(member || {});
+    checks.forEach(function(row) {
+      if (row.legal) return;
+      var label = (member && member.name ? member.name : 'Pokemon') + ': ' + (row.moveName || 'unknown move') + ' - ' + (row.notes || row.reason || 'not verified');
+      out.push({
+        severity: getMoveLegalityIssueSeverity(row.reason),
+        label: label,
+        reason: row.reason,
+        member: member && member.name,
+        move: row.moveName || ''
+      });
+    });
+  });
+  return out;
+}
+
+function isApprovedPreloadedChampionTeam(teamKey, team, verdict) {
+  team = team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null);
+  if (!team || team.format !== 'champions') return false;
+  if (team.source === 'custom') return false;
+  if (team.legality_status !== 'legal') return false;
+  verdict = verdict || getTeamLegalityVerdict(teamKey, team);
+  return !!(verdict && verdict.valid);
 }
 
 function isLadderLegal(teamKey) {
@@ -2154,7 +2260,7 @@ function buildSetEditorMoveLegalityWarnings(member) {
   return checks.filter(function(row) {
     return !row.legal || row.reason === 'source_unavailable' || row.reason === 'unknown_species';
   }).map(function(row) {
-    var severity = row.reason === 'source_unavailable' || row.reason === 'unknown_species' ? 'unchecked' : 'warning';
+    var severity = getMoveLegalityIssueSeverity(row.reason);
     return {
       severity: severity,
       text: (row.moveName || 'Unknown move') + ' on ' + (row.canonicalSpeciesKey || member.name || 'unknown species') + ': ' + (row.reason || 'unchecked') + '. Source: ' + (row.source || 'unavailable') + ' ' + (row.sourceVersion || '') + '. ' + (row.notes || '')
@@ -3140,7 +3246,7 @@ function csRenderReplayPlayByPlay(turn) {
   function showdownEventText(ev) {
     var text = String((ev && (ev.text || ev.message)) || '').trim();
     if (!text) return '';
-    text = text.replace(/\[(\d+)\s*dmg\]/ig, 'lost $1 HP');
+    text = text.replace(/\[(\d+)\s*dmg(?:,[^\]]*)?\]/ig, 'lost $1 HP');
     text = text.replace(/\[\+(\d+)\]/g, 'restored $1 HP');
     text = text.replace(/\s+/g, ' ');
     return text;
@@ -5884,19 +5990,53 @@ function _escapeHtml(s) {
 var CS_OVERVIEW_DATA = {
   updated: '2026-06-23',
   metrics: [
+    { label: 'Current Truth', value: 'Not 100% yet' },
+    { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
+    { label: 'Release Teams', value: '10 approved runtime rows' },
+    { label: 'Testing Catalog Target', value: 'Top 10 Champion archetypes live' },
+    { label: 'Removed Teams', value: '17 legacy/inferred rows' },
+    { label: 'DB Team Rule', value: 'Approved rows must pass gates' },
+    { label: 'Stress Status', value: 'Focused green; full run pending' },
     { label: 'Sim Truth Gate', value: 'Mechanics first' },
-    { label: 'Live Supabase', value: 'Teams + analyses' },
-    { label: 'Showdown DB', value: 'Checking...' },
+    { label: 'Live Supabase', value: 'Teams + analyses, gated' },
+    { label: 'Showdown DB', value: 'Manual approval only' },
     { label: 'Team Format', value: 'Champion/SP focus' },
-    { label: 'Turn Logs', value: 'v2.1.33 clean' },
+    { label: 'Turn Logs', value: 'Strict applied damage fields' },
     { label: 'Move Support', value: '120 verified / 0 baseline' },
     { label: 'Showdown Oracle', value: '56/56 green' },
-    { label: 'Target Guard', value: 'Canonical bridge' },
-    { label: 'QA Log Retention', value: 'Capped + artifact' },
-    { label: 'Ability Inventory', value: '80/80 modeled' },
-    { label: 'Knock Off', value: 'Verified' }
+    { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Current truth board corrected',
+      detail: 'The Overview top row now states the release truth plainly: the sim is not 100% yet, damage applied-vs-calculated logging is fixed locally, normal selectors are limited to approved Champion-legal teams, legacy/inferred teams are removed from the runtime catalog, and full stress/deployed browser proof is still required before broad accuracy claims.'
+    },
+    {
+      status: 'done',
+      title: 'Damage applied versus calculated logging fixed locally',
+      detail: 'Damage events now separate actual HP loss from raw formula output. Visible logs and the `damage` field use applied HP loss, while `calculated_damage`, `overkill_damage`, and `damage_capped_by_hp` preserve formula evidence for QA. Recoil and drain now use applied damage so overkill cannot inflate downstream effects.'
+    },
+    {
+      status: 'done',
+      title: 'Approved Champion team lane guarded',
+      detail: 'Normal sim selectors and Run All now accept only Champion-format rows that pass current legality checks and are marked approved legal, plus valid custom teams. The runtime catalog now keeps 10 Champion-legal testing archetypes and removes 17 legacy/inferred rows into the removed-team audit object.'
+    },
+    {
+      status: 'done',
+      title: 'Current Champion source sweep recorded',
+      detail: 'The June 23 online sweep found the official Champions site confirming Singles and Doubles, Ranked/Casual/Private modes, Mega Evolution in the first Ranked rules, HOME visitor/training restrictions, and June 17 Regulation Set M-B news. Current meta/build sample signals point at Incineroar, Whimsicott/Tailwind, Sneasler, Mega Charizard Y sun, Garchomp, Eternal Flower Floette, rain, and anti-meta Trick Room, so the runtime sample catalog is intentionally style-balanced instead of claiming exact tournament-sheet provenance.'
+    },
+    {
+      status: 'done',
+      title: 'DB species/move legality view added',
+      detail: 'A Supabase migration adds `approved_species_move_legality`, joining approved species/form learnsets to approved move metadata so DB/editor/QA tooling can inspect legal moves with base power, category, type, target, flags, and source hashes without making the DB an unchecked battle calculator.'
+    },
+    {
+      status: 'done',
+      title: 'Showdown sync approval guard tightened',
+      detail: 'Scheduled Showdown sync can detect reviewable source changes, but approved rows now require manual `workflow_dispatch` approval after human review instead of automatic scheduled approval.'
+    },
     {
       status: 'done',
       title: 'Review tab restored',
@@ -6016,6 +6156,21 @@ var CS_OVERVIEW_DATA = {
   validation: [
     {
       status: 'validated',
+      title: 'Focused local damage-log proof is green',
+      detail: '`recoil_faint_turn_log_tests.js` now proves an overkill hit records applied HP loss in visible logs and damage_events, preserves larger formula output as `calculated_damage`, records `overkill_damage`, marks the HP cap, and bases recoil on applied damage.'
+    },
+    {
+      status: 'validated',
+      title: 'Strict turn-log damage contract is green',
+      detail: '`turn_log_export_validator_tests.js` now requires damage_events to include `damage`, `applied_damage`, `hp_delta`, `calculated_damage`, `overkill_damage`, `damage_capped_by_hp`, and target HP bounds, and rejects rows where applied damage does not equal HP lost.'
+    },
+    {
+      status: 'validated',
+      title: 'Approved-team selector gate is green locally',
+      detail: '`t9j11_tests.js` now proves known illegal imported moves are hard-blocked and the visible runtime selector catalog is the 10 approved Champion-legal test rows. Still-conflicting or inferred rows such as `champions_arena_3rd` and `perish_trap_gengar` are removed from the runtime catalog until reviewed.'
+    },
+    {
+      status: 'validated',
       title: 'Supabase app wiring is live for existing app tables',
       detail: 'The deployed page has runtime Supabase config, and read checks reached teams, team_members, and analyses through the public anon path.'
     },
@@ -6046,8 +6201,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Current release checks are green',
-      detail: 'v2.1.36 Core Move Parity carries v2.1.35 Low Kick Weight Parity, v2.1.34 Live Log Proof, v2.1.33 Log Target Guard, v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, move-support registry, type multiplier audit, speed-stack evidence, Knock Off item-state tests, no-valid-target validation, and strict validation are the local release checks for this build.'
+      title: 'Previous v2.1.36 release checks were green',
+      detail: 'v2.1.36 Core Move Parity carried v2.1.35 Low Kick Weight Parity, v2.1.34 Live Log Proof, v2.1.33 Log Target Guard, v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. The current local damage-log and approved-team-gate slice has focused green checks, but still needs full stress, bundle rebuild, deploy, and browser exports before release proof.'
     },
     {
       status: 'validated',
@@ -6096,8 +6251,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Live preview bundle contains the new safeguards',
-      detail: 'The standalone GitHub Pages bundle is rebuilt from source and the service-worker cache must be bumped for every legality or data-path release.'
+      title: 'Bundle freshness rule remains active',
+      detail: 'The standalone GitHub Pages bundle must be rebuilt from source and the service-worker cache must be bumped for every engine, legality, or data-path release. This current local slice is not release-proven until that bundle and deployed-browser proof are complete.'
     },
     {
       status: 'validated',
@@ -6107,10 +6262,20 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Previous Y/Alfredo source sync completed',
-      detail: 'Alfredo PR #245 merged the prior Champion parity tree after required checks passed, and TheYfactora12 main was fast-forwarded to the same merge commit. The current v2.1.36 core-move-parity slice should prove out on the Y fork first; Alfredo sync is lower priority until the browser proof gate is clean.'
+      detail: 'Alfredo PR #245 merged the prior Champion parity tree after required checks passed, and TheYfactora12 main was fast-forwarded to the same merge commit. The current local damage-log and approved-team-gate slice should prove out on the Y fork first; Alfredo sync is lower priority until the browser proof gate is clean.'
     }
   ],
   gaps: [
+    {
+      status: 'gap',
+      title: 'Most bundled teams are review data, not release-safe opponents',
+      detail: 'The current audit found only `mega_altaria` and `mega_dragonite` are approved Champion-legal fallback rows under the current Showdown-backed move legality gate. Twenty-five legacy, inferred, or move-conflict rows are removed from the runtime catalog until replaced by approved Champion teams or backed by reviewed Champion overrides.'
+    },
+    {
+      status: 'gap',
+      title: 'Damage calculator is improved, not globally proven 100%',
+      detail: 'The confirmed applied-vs-calculated log/recoil bug is fixed locally, and the existing damage oracle remains green for covered cases. Broad damage accuracy still requires more long-tail proof around remaining Champion overrides, redirection, Protect-family interactions, switching/replacement timing, status/item edge cases, and deployed browser logs.'
+    },
     {
       status: 'gap',
       title: 'showdown_entities DB rows are not the battle runtime source yet',
@@ -6145,8 +6310,18 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.36 source URL and QA artifact',
-      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
+      title: 'Stress-test, rebuild, and prove the new truth board',
+      detail: 'Before pushing to GitHub Pages, run focused legality/damage tests, the broader non-DB suite, rebuild `pokemon-champion-2026.html`, check the bundle, then use a fresh deployed URL to export one single-run log, one Run All log, and one QA Artifact.'
+    },
+    {
+      status: 'next',
+      title: 'Replace removed teams with approved Champion teams',
+      detail: 'Move the testing catalog toward roughly 10 current Champion competitive/tournament archetypes in Supabase and bundled fallback: Trick Room, anti-Trick Room, Tailwind/speed, sun, rain, sand or snow, bulky balance, hyper offense, setup/boosting, and control/status/positioning. A DB team is selectable only after Champion SP, item, species/form, move legality, source provenance, and override checks pass; DB existence alone is not enough.'
+    },
+    {
+      status: 'next',
+      title: 'Verify the next deployed source URL and QA artifact',
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, applied/calculated damage fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
@@ -6156,7 +6331,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Apply Champion item cleanup to live Supabase rows',
-      detail: 'Use the v2.1.23 item-block evidence and v2.1.30 SP-spread guard to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
+      detail: 'Use the v2.1.23 item-block evidence and v2.1.30 SP-spread guard to update, reject, or remove stale Supabase team rows so the DB matches Champion source truth instead of relying only on frontend gating.'
     },
     {
       status: 'next',

@@ -332,6 +332,11 @@ function stripStableFields(payload) {
       move: 'Knock Off',
       damage_kind: 'calculated',
       damage: 44,
+      applied_damage: 44,
+      hp_delta: 44,
+      calculated_damage: 44,
+      overkill_damage: 0,
+      damage_capped_by_hp: false,
       target_hp_before: 160,
       target_hp_after: 116,
       target_max_hp: 170,
@@ -375,15 +380,39 @@ function stripStableFields(payload) {
       move: 'Knock Off',
       damage_kind: 'calculated',
       damage: 'big',
+      applied_damage: 50,
+      hp_delta: 43,
+      calculated_damage: 70,
+      overkill_damage: 19,
+      damage_capped_by_hp: false,
       target_hp_before: 160,
       target_hp_after: 116,
       target_max_hp: 170,
       move_type: '',
       category: '',
       type_effectiveness: 'strong'
+    }, {
+      attacker: 'Milotic',
+      target: 'Incineroar',
+      move: 'Scald',
+      damage_kind: 'fixed_or_direct',
+      damage: 70,
+      applied_damage: 50,
+      hp_delta: 43,
+      calculated_damage: 70,
+      overkill_damage: 19,
+      damage_capped_by_hp: false,
+      target_hp_before: 160,
+      target_hp_after: 116,
+      target_max_hp: 170
     }];
     const res = validateTurnLogPayload(payload, { requireStable: true });
     truthy(res.findings.some(f => f.code === 'damage-event-missing-number'), 'missing damage number error');
+    truthy(res.findings.some(f => f.code === 'damage-event-applied-mismatch'), 'missing applied damage mismatch error');
+    truthy(res.findings.some(f => f.code === 'damage-event-damage-mismatch'), 'missing damage mismatch error');
+    truthy(res.findings.some(f => f.code === 'damage-event-hp-delta-mismatch'), 'missing HP delta mismatch error');
+    truthy(res.findings.some(f => f.code === 'damage-event-overkill-mismatch'), 'missing overkill mismatch error');
+    truthy(res.findings.some(f => f.code === 'damage-event-cap-flag-mismatch'), 'missing cap flag mismatch error');
     truthy(res.findings.some(f => f.code === 'damage-calc-missing-number'), 'missing calculated numeric error');
     truthy(res.findings.some(f => f.code === 'damage-calc-missing-field'), 'missing calculated field error');
   });

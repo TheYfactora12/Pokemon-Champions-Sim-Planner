@@ -65,5 +65,27 @@ T('7. gendered forms remain distinct', () => {
   eq(moveLegality.canonicalSpeciesKey('Meowstic-M'), 'Meowstic-M', 'Meowstic-M');
 });
 
+T('8. Rotom appliance forms keep form identity while accepting explicit shared Rotom learnset moves', () => {
+  const exact = moveLegality.isMoveLegalForSpecies('Rotom-Wash', 'Hydro Pump');
+  eq(exact.legal, true, 'Hydro Pump should be legal for exact Rotom-Wash form');
+  eq(exact.canonicalSpeciesKey, 'Rotom-Wash', 'Rotom-Wash identity');
+  eq(exact.inheritedFrom, '', 'form-exclusive move should not be marked inherited');
+
+  const shared = moveLegality.isMoveLegalForSpecies('Rotom-Wash', 'Protect');
+  eq(shared.legal, true, 'Protect should be legal through shared Rotom learnset');
+  eq(shared.canonicalSpeciesKey, 'Rotom-Wash', 'Rotom-Wash should not collapse to Rotom');
+  eq(shared.inheritedFrom, 'Rotom', 'shared move should name base learnset supplement');
+
+  const hisui = moveLegality.isMoveLegalForSpecies('Arcanine', 'Raging Fury');
+  eq(hisui.legal, false, 'regional-form moves must not be globally shared');
+});
+
+T('9. Champion Eternal Flower Mega keeps app form identity for move legality aliases', () => {
+  const out = moveLegality.isMoveLegalForSpecies('Floette (Eternal Flower)-Mega', 'Light of Ruin');
+  eq(out.legal, true, 'Light of Ruin should validate for Champion Eternal Flower Mega');
+  eq(out.canonicalSpeciesKey, 'Floette (Eternal Flower)-Mega', 'Champion Mega form identity should be preserved');
+  eq(out.inheritedFrom, 'Floette-Eternal', 'Light of Ruin should come from Eternal Flower learnset');
+});
+
 console.log(`\nmove legality: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);

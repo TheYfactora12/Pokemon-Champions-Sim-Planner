@@ -29,6 +29,16 @@ T('1. Overview is a top-level tab and mobile picker option', () => {
 
 T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'CS_OVERVIEW_DATA');
+  inc(ui, 'Current Truth');
+  inc(ui, 'Not 100% yet');
+  inc(ui, 'Damage Logs');
+  inc(ui, 'Applied/calc split fixed locally');
+  inc(ui, 'Testing Catalog Target');
+  inc(ui, 'Top 10 Champion archetypes');
+  inc(ui, 'Removed Teams');
+  inc(ui, '17 legacy/inferred rows');
+  inc(ui, '10 approved runtime rows');
+  inc(ui, 'Current Champion source sweep recorded');
   inc(ui, 'Sim Truth Gate');
   inc(ui, 'Knock Off');
   inc(ui, 'Verified');
@@ -64,7 +74,12 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.36 Core Move Parity carries v2.1.35 Low Kick Weight Parity');
+  inc(ui, 'Previous v2.1.36 release checks were green');
+  inc(ui, 'The current local damage-log and approved-team-gate slice has focused green checks');
+  inc(ui, 'Damage applied versus calculated logging fixed locally');
+  inc(ui, 'Approved Champion team lane guarded');
+  inc(ui, 'DB species/move legality view added');
+  inc(ui, 'Showdown sync approval guard tightened');
   inc(ui, 'Low Kick weight-based damage matches Showdown');
   inc(ui, 'Showdown data/moves.ts records Low Kick basePower as 0');
   inc(ui, '100% Champion parity checklist is explicit');
@@ -97,8 +112,16 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'champions_overrides');
 });
 
+T('3b. replay formatter accepts richer applied damage log brackets', () => {
+  inc(ui, 'dmg(?:,[^\\]]*)?');
+  inc(ui, 'lost $1 HP');
+});
+
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.36 source URL and QA artifact');
+  inc(ui, 'Stress-test, rebuild, and prove the new truth board');
+  inc(ui, 'Replace removed teams with approved Champion teams');
+  inc(ui, 'Trick Room, anti-Trick Room, Tailwind/speed, sun, rain, sand or snow');
+  inc(ui, 'Verify the next deployed source URL and QA artifact');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');

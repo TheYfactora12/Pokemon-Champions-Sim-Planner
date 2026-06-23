@@ -173,5 +173,53 @@ T('3. Showdown accuracy metadata wins over local fallback values', () => {
   eq(ctx._moveAccuracy('Never Local Move', 0.42), 0.42, 'missing Showdown rows should use local fallback');
 });
 
+T('4. overkill damage logs applied HP loss and preserves calculated damage evidence', () => {
+  const player = customTeam('Overkill Applied Damage', [{
+    name: 'Arcanine',
+    ability: 'Intimidate',
+    item: '',
+    nature: 'Adamant',
+    level: 50,
+    moves: ['Head Smash'],
+    evs: { hp: 4, atk: 252, def: 0, spa: 0, spd: 0, spe: 252 }
+  }]);
+  const opponent = customTeam('Low HP Target', [{
+    name: 'Torkoal',
+    ability: 'Drought',
+    item: '',
+    nature: 'Relaxed',
+    level: 50,
+    currentHp: 10,
+    moves: ['Tackle'],
+    evs: { hp: 252, atk: 0, def: 252, spa: 0, spd: 0, spe: 0 }
+  }]);
+  const battle = ctx.simulateBattle(player, opponent, {
+    format: 'singles',
+    seed: [101, 103, 107, 109],
+    maxTurns: 1
+  });
+
+  const turn1 = battle.turnLog.find(turn => turn.turn === 1);
+  truthy(turn1, 'expected turn 1 snapshots');
+  const row = ((turn1.damage_events || []).find(item => item && item.move === 'Head Smash')) || null;
+  truthy(row, 'Head Smash damage_events row missing');
+  eq(row.target_hp_before, 10, 'test target should start at 10 HP');
+  eq(row.target_hp_after, 0, 'target should be KOed');
+  eq(row.applied_damage, 10, 'applied damage should be target HP lost');
+  eq(row.damage, row.applied_damage, 'damage field should carry applied damage');
+  eq(row.hp_delta, row.applied_damage, 'hp_delta should carry applied damage');
+  truthy(row.calculated_damage > row.applied_damage, 'calculated damage should preserve overkill formula result');
+  eq(row.overkill_damage, row.calculated_damage - row.applied_damage, 'overkill evidence mismatch');
+  eq(row.damage_capped_by_hp, true, 'HP cap flag missing');
+
+  const t1Events = eventTexts(turn1);
+  const damageLine = t1Events.find(text => text.includes('Arcanine used Head Smash!') && text.includes('dmg'));
+  truthy(damageLine && damageLine.includes('[10 dmg, 0/'), 'visible log should show applied damage');
+  truthy(damageLine.includes('calc ' + row.calculated_damage), 'visible log should preserve formula damage evidence');
+  const recoilLine = t1Events.find(text => text.includes('Arcanine was hurt by recoil!'));
+  truthy(recoilLine, 'recoil line missing');
+  truthy(recoilLine.includes('[5 dmg]'), 'recoil should be based on applied damage, not formula overkill');
+});
+
 console.log('\nrecoil faint turn-log tests:', pass + ' pass, ' + fail + ' fail\n');
 process.exit(fail ? 1 : 0);

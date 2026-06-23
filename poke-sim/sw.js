@@ -65,7 +65,8 @@
 // v68-live-log-proof [2026-06-22] - Overview updated with v2.1.33 live log proof.
 // v69-low-kick-weight-parity [2026-06-23] - Showdown species weights and Low Kick variable base-power parity.
 // v70-core-move-parity [2026-06-23] - Remaining shipped move parity, secondary effects, accuracy, and special-case damage coverage.
-const CACHE_NAME = 'champions-sim-v70-core-move-parity';
+// v71-damage-log-team-catalog [2026-06-23] - Applied-vs-calculated damage logs and approved Champion top-10 runtime catalog.
+const CACHE_NAME = 'champions-sim-v71-damage-log-team-catalog';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

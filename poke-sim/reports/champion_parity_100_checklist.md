@@ -6,19 +6,23 @@ This file defines what we mean by "100% Champion accuracy" for the simulator. It
 
 ## Current Snapshot
 
-- Current local build target: `v2.1.36-core-move-parity`
+- Current local build target: `v2.1.37-damage-log-team-catalog`
 - Primary mechanics source truth: Pokemon Showdown data and behavior, with Champion-specific differences documented as explicit overrides.
 - Showdown source snapshot in generated data: `3f5079d395ad018f13e8f785a675a13bd4cbf59e (2026-05-24)`
 - Showdown damage oracle: `56/56` local cases passing after the core shipped-move parity slice.
 - Move support audit: `120 verified`, `0 baseline`, `0 incomplete` across `120` shipped distinct moves.
 - Ability inventory: `80/80` curated and mega abilities modeled.
 - Latest live logs reviewed: `v2.1.33` exports were structurally clean with no team-load failure and no live-target no-valid-target bug.
-- Fresh live proof still needed after this release: GitHub Pages `?v=<new-sha>`, one single-run log, one Run All log, and one QA Artifact from `v2.1.36`.
+- Damage applied-vs-calculated logging bug: fixed locally. Turn logs now need applied HP loss and formula output as separate fields.
+- Runtime team catalog: only approved Champion-legal rows should remain visible at runtime. Current runtime catalog has 10 approved Champion-legal testing rows and removes 17 legacy/inferred rows into the audit object.
+- Testing catalog target: the first top-10 approved Champion archetype set is populated for runtime testing: anti-Trick Room/speed, weather support, rain, sun, sun + Trick Room, sand, pure Trick Room, balance/setup, snow/Aurora Veil, and arena-style sun. These are testing archetypes unless their source row is explicitly marked exact.
+- Fresh live proof still needed after this release: GitHub Pages `?v=<new-sha>`, one single-run log, one Run All log, and one QA Artifact from `v2.1.37`.
 
 ## Do Not Claim Broad 100% Until
 
 - Shipped moves have `0 incomplete`, `0 baseline`, and every shipped move has explicit regression or oracle coverage.
 - All bundled Champion teams pass legal Champion SP, item, ability, move, species/form, Tera, and import/export checks.
+- The release testing catalog contains only approved Champion-legal rows and intentionally covers the main competitive archetypes instead of a large mixed legacy catalog.
 - Supabase rows cannot replace clean bundled teams with stale SV data, illegal spreads, unsupported items, or malformed payloads.
 - Browser single-run, Run All, exported turn logs, and QA Artifact proof are clean on the deployed GitHub Pages build.
 - `build_id`, `source_url`, service-worker cache, bundle build, and source commit/version all agree.
@@ -56,6 +60,7 @@ For each release that changes engine logic, generated data, legality, runtime da
 - Export one QA Artifact.
 - Validate logs with `tools/validate-turn-logs.mjs`.
 - Check for team-load failures, stale source URLs, illegal Champion spreads, item drift, missing damage evidence, no-valid-target rows while a live target exists, and missing retained-evidence counts.
+- Confirm normal selectors and Run All are using only approved Champion-legal teams, not removed legacy or inferred rows.
 
 ## Source Truth Architecture
 
@@ -71,6 +76,7 @@ For each release that changes engine logic, generated data, legality, runtime da
 - The live battle runtime still does not query approved `showdown_entities` rows directly.
 - Alfredo Pages deployment remains blocked by repo Pages/admin configuration; source parity is separate from deployed Alfredo Pages proof.
 - No fresh browser-exported Tera Blast damage event has been observed yet after the latest Tera Blast release.
-- Fresh `v2.1.36` browser proof is still required after deploy before broad partner-facing accuracy claims.
+- Fresh `v2.1.37` browser proof is still required after deploy before broad partner-facing accuracy claims.
 - Full raw thousand-battle archival is not automatic; current browser retention is capped and QA Artifact exports retained evidence.
 - The edit-team UI is guarded for legality but still needs a fluid full Champion builder.
+- The top-10 approved Champion archetype catalog is populated for runtime testing, but source review should continue before any adjusted row is described as exact tournament provenance.

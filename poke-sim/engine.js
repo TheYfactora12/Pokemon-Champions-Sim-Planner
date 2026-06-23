@@ -5068,16 +5068,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   function applyDamage(attacker, move, target, dmg, field, log, rng) {
     if (dmg <= 0) return;
-    let finalDmg = dmg;
+    const calculatedDamage = Math.max(0, Number(dmg) || 0);
+    let finalDmg = calculatedDamage;
     const DRAIN_MOVES = new Set(['Giga Drain', 'Matcha Gotcha']);
     // Substitute absorb
     if (target.substituteHp > 0 && !(attacker && attacker.ability === 'Infiltrator')) {
+      const substituteHpBefore = target.substituteHp;
+      const substituteDamage = Math.max(0, Math.min(substituteHpBefore, finalDmg));
       target.substituteHp -= finalDmg;
       if (target.substituteHp <= 0) { target.substituteHp = 0; log.push(`${target.name}'s Substitute was destroyed!`); }
-      else log.push(`${attacker.name} used ${move}! (Substitute absorbed ${finalDmg} dmg)`);
+      else log.push(`${attacker.name} used ${move}! (Substitute absorbed ${substituteDamage} dmg${calculatedDamage !== substituteDamage ? `; calc ${calculatedDamage}` : ''})`);
       if (DRAIN_MOVES.has(move) && attacker && attacker.alive) {
         if (_canReceiveHealing(attacker)) {
-          const drainHeal = Math.max(1, Math.floor(finalDmg / 2));
+          const drainHeal = Math.max(1, Math.floor(substituteDamage / 2));
           const healed = Math.max(0, Math.min(attacker.maxHp, attacker.hp + drainHeal) - attacker.hp);
           attacker.hp += healed;
           if (healed > 0) log.push(`${attacker.name} restored HP with ${move}! [${healed} HP]`);
@@ -5085,30 +5088,34 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
       return;
     }
-    if (target.enduring && finalDmg >= target.hp) {
-      target.hp = 1;
-      log.push(`${target.name} endured the hit!`);
-      return;
-    }
     // T9j.6 (#8) — Focus Sash: snapshot full-HP state BEFORE damage mutation.
     // Cite: Bulbapedia Focus Sash.
     const wasFullHp = (target.hp === target.maxHp);
     const hpBeforeDamage = target.hp;
     const wasAboveHalf = target.hp > target.maxHp / 2;
-    target.hp = Math.max(0, target.hp - finalDmg);
+    let enduredHit = false;
+    if (target.enduring && finalDmg >= target.hp) {
+      target.hp = 1;
+      enduredHit = true;
+    } else {
+      target.hp = Math.max(0, target.hp - finalDmg);
+    }
     // T9j.6 (#8) — Focus Sash survives a KO from full HP; consumed.
     let sturdySaved = false;
-    if (target.hp === 0 && _targetAbilityActive(target, attacker, 'Sturdy') && wasFullHp) {
+    if (!enduredHit && target.hp === 0 && _targetAbilityActive(target, attacker, 'Sturdy') && wasFullHp) {
       target.hp = 1;
       sturdySaved = true;
     }
     let sashSaved = false;
-    if (!sturdySaved && target.hp === 0 && target.item === 'Focus Sash' && !target.itemConsumed && wasFullHp) {
+    if (!enduredHit && !sturdySaved && target.hp === 0 && target.item === 'Focus Sash' && !target.itemConsumed && wasFullHp) {
       target.hp = 1;
       target.itemConsumed = true;
       sashSaved = true;
     }
-    log.push(`${attacker.name} used ${move}! → ${target.name} [${finalDmg} dmg, ${target.hp}/${target.maxHp} HP]`);
+    const appliedDamage = Math.max(0, Number(hpBeforeDamage || 0) - Number(target.hp || 0));
+    const overkillDamage = Math.max(0, calculatedDamage - appliedDamage);
+    const damageDetail = calculatedDamage !== appliedDamage ? `; calc ${calculatedDamage}` : '';
+    log.push(`${attacker.name} used ${move}! → ${target.name} [${appliedDamage} dmg, ${target.hp}/${target.maxHp} HP${damageDetail}]`);
     if (field && field._ctx) {
       if (!Array.isArray(field._ctx.turnDamageEvents)) field._ctx.turnDamageEvents = [];
       const attackerSide = attacker && attacker.side === field.playerSide ? 'player' : (attacker && attacker.side === field.oppSide ? 'opponent' : 'unknown');
@@ -5130,7 +5137,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target_key: targetKey,
         move: move,
         damage_kind: calcMatches ? 'calculated' : 'fixed_or_direct',
-        damage: Number(finalDmg || 0),
+        damage: Number(appliedDamage || 0),
+        applied_damage: Number(appliedDamage || 0),
+        hp_delta: Number(appliedDamage || 0),
+        calculated_damage: Number(calculatedDamage || 0),
+        overkill_damage: Number(overkillDamage || 0),
+        damage_capped_by_hp: calculatedDamage !== appliedDamage,
         target_hp_before: Number(hpBeforeDamage || 0),
         target_hp_after: Number(target.hp || 0),
         target_max_hp: Number(target.maxHp || 0),
@@ -5141,7 +5153,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         type_effectiveness: null,
         critical: false
       });
-      row.damage = Number(finalDmg || 0);
+      row.damage = Number(appliedDamage || 0);
+      row.applied_damage = Number(appliedDamage || 0);
+      row.hp_delta = Number(appliedDamage || 0);
+      row.calculated_damage = Number(calculatedDamage || 0);
+      row.overkill_damage = Number(overkillDamage || 0);
+      row.damage_capped_by_hp = calculatedDamage !== appliedDamage;
       row.target_hp_before = Number(hpBeforeDamage || 0);
       row.target_hp_after = Number(target.hp || 0);
       row.target_max_hp = Number(target.maxHp || 0);
@@ -5149,6 +5166,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       field._ctx.turnDamageEvents.push(row);
       field._ctx.lastDamageCalc = null;
     }
+    if (enduredHit) log.push(`${target.name} endured the hit!`);
     if (sturdySaved) log.push(`${target.name} hung on with Sturdy!`);
     if (sashSaved) log.push(`${target.name} hung on with its Focus Sash!`);
     if (target.hp > 0 && target.ability === 'Berserk' && wasAboveHalf && target.hp <= target.maxHp / 2) {
@@ -5156,7 +5174,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     if (DRAIN_MOVES.has(move) && attacker && attacker.alive) {
       if (_canReceiveHealing(attacker)) {
-        const drainHeal = Math.max(1, Math.floor(finalDmg / 2));
+        const drainHeal = Math.max(1, Math.floor(appliedDamage / 2));
         const healed = Math.max(0, Math.min(attacker.maxHp, attacker.hp + drainHeal) - attacker.hp);
         attacker.hp += healed;
         if (healed > 0) log.push(`${attacker.name} restored HP with ${move}! [${healed} HP]`);
@@ -5167,7 +5185,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const postHitMoveType = field && field._ctx && field._ctx.turnDamageEvents && field._ctx.turnDamageEvents.length
       ? field._ctx.turnDamageEvents[field._ctx.turnDamageEvents.length - 1].move_type
       : _resolveDynamicMoveType(attacker, move, field);
-    if (target.status === 'frozen' && finalDmg > 0 && target.hp > 0 &&
+    if (target.status === 'frozen' && appliedDamage > 0 && target.hp > 0 &&
         postHitMoveType === 'Fire') {
       target.status = null;
       target.frozenTurns = 0;
@@ -5199,7 +5217,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     callAbilityHook(target, 'onDamagingHit', {
       attacker: attacker, defender: target, move: move,
       moveType: postHitMoveType,
-      damage: finalDmg, field: field, log: log,
+      damage: appliedDamage, field: field, log: log,
       recordKO: _recordKO
     });
     if (attacker && attacker.alive && attacker.ability === 'Poison Touch' &&
@@ -5211,7 +5229,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Recoil
     const recoilRule = _moveRecoilRule(move);
     if (recoilRule && attacker && attacker.alive) {
-      const recoil = Math.max(1, Math.round(finalDmg * recoilRule.numerator / recoilRule.denominator));
+      const recoil = Math.max(1, Math.round(appliedDamage * recoilRule.numerator / recoilRule.denominator));
       attacker.hp = Math.max(0, attacker.hp - recoil);
       log.push(`${attacker.name} was hurt by recoil! [${recoil} dmg]`);
       if (attacker.hp === 0) {
@@ -5244,11 +5262,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     // T9j.8 (Refs #30) onDamageTaken hook: Spicy Spray burns attacker.
     // Fires only if target still alive AND damage > 0.
-    if (target.alive && finalDmg > 0) {
+    if (target.alive && appliedDamage > 0) {
       callAbilityHook(target, 'onDamageTaken', {
         attacker: attacker, defender: target, move: move,
         moveType: postHitMoveType,
-        damage: finalDmg, field: field, log: log
+        damage: appliedDamage, field: field, log: log
       });
     }
   }

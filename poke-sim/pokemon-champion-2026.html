@@ -2333,7 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.36-core-move-parity</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.37-damage-log-team-catalog</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -3782,10 +3782,10 @@ const TEAMS = {
         "spread_source": "user-authored",
         "author": "user",
         "url": "",
-        "status": "unproven"
+        "status": "testing_archetype"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Champions starter team. Original anti-Trick-Room shell rescaled onto Champions SP values and repaired to the verified Champions item pool for review-mode parity.",
+    "legality_status": "legal",
+    "legality_notes": "Champion testing anti-Trick-Room starter. Moves, items, and Champions SP spreads are pinned to the current Showdown-backed legality gate; this is not an exact tournament export.",
     "assumption_register": [
         "This remains a user-authored starter team, not a pinned event export.",
         "The original anti-Trick-Room shell was preserved while converting its spreads to Champions SP scale."
@@ -3808,14 +3808,14 @@ const TEAMS = {
         "moves": [
           "Fake Out",
           "Flare Blitz",
-          "Parting Shot",
+          "U-turn",
           "Knock Off"
         ],
         "role": "Support / Pivot"
       },
       {
         "name": "Arcanine",
-        "item": "Hard Stone",
+        "item": "Charcoal",
         "ability": "Intimidate",
         "nature": "Adamant",
         "level": 50,
@@ -3828,8 +3828,8 @@ const TEAMS = {
           "spe": 32
         },
         "moves": [
-          "Power Gem",
-          "Head Smash",
+          "Flare Blitz",
+          "Close Combat",
           "Extreme Speed",
           "Will-O-Wisp"
         ],
@@ -4285,7 +4285,7 @@ const TEAMS = {
         },
         "moves": [
           "Protect",
-          "Scorching Sands",
+          "Flamethrower",
           "Dark Pulse",
           "Heat Wave"
         ],
@@ -4444,7 +4444,7 @@ const TEAMS = {
           "Close Combat",
           "Dire Claw",
           "Protect",
-          "Fake Out"
+          "Taunt"
         ],
         "role": "Unburden Attacker"
       },
@@ -4552,7 +4552,7 @@ const TEAMS = {
         "tera": "Fighting",
         "moves": [
           "Solar Beam",
-          "Dazzling Gleam",
+          "Energy Ball",
           "Protect",
           "Weather Ball"
         ],
@@ -4580,10 +4580,10 @@ const TEAMS = {
         "spread_source": "https://pokepast.es/cb48d8b06c73d33b",
         "author": "community",
         "url": "https://pokepast.es/cb48d8b06c73d33b",
-        "status": "exact"
+        "status": "testing_archetype_adjusted"
     },
     "legality_status": "legal",
-    "legality_notes": "",
+    "legality_notes": "Champion sun testing archetype adjusted from the linked paste so all moves pass the current Showdown-backed species/form legality gate.",
     "assumption_register": [
       "2026-05-24 audit: Sinistcha item was recorded as Kouba Berry from the public P08QQ5NU9C rental mirror after a repo transcription error duplicated Sitrus Berry.",
       "2026-06-21 Champion item-pool gate: Kouba Berry is not in the verified Champions item list, so the shipped sim uses Coba Berry until a stronger source proves otherwise."
@@ -4689,7 +4689,7 @@ const TEAMS = {
         "moves": [
           "Throat Chop",
           "Flare Blitz",
-          "Parting Shot",
+          "U-turn",
           "Fake Out"
         ],
         "role": "Support"
@@ -4737,10 +4737,10 @@ const TEAMS = {
         "spread_source": "community",
         "author": "community",
         "url": "",
-        "status": "assumed"
+        "status": "testing_archetype"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Community Trick Room shell repaired to Champions Reg M-A legality by replacing banned Cresselia with Farigiraf and swapping banned item-pool slots to legal alternatives while preserving the same slow-room identity.",
+    "legality_status": "legal",
+    "legality_notes": "Champion Trick Room testing archetype. Team passes the current Champions SP, item, and Showdown-backed move legality gates while preserving the slow-room identity.",
     "assumption_register": [
         "Spreads inferred from meta norms, not a pinned paste."
     ],
@@ -4893,11 +4893,14 @@ const TEAMS = {
         "spread_source": "Victory Road Champions Arena coverage",
         "author": "Hyungwoo Shin",
         "url": "https://victoryroad.pro/champions-regulations/",
-        "status": "exact"
+        "status": "testing_archetype_adjusted"
     },
     "legality_status": "legal",
-    "legality_notes": "Champions Arena Winner.",
-    "assumption_register": [],
+    "legality_notes": "Champion sun testing archetype adjusted from Champions Arena coverage so all moves pass the current Showdown-backed species/form legality gate; do not treat as an exact tournament paste.",
+    "assumption_register": [
+      "2026-06-23 legality repair: Milotic Hypnosis, Incineroar Parting Shot, and Sneasler Fake Out were replaced for current generated legality.",
+      "Original source remains linked for review, but this shipped row is an adjusted testing archetype."
+    ],
     "members": [
       {
         "name": "Charizard-Mega-Y",
@@ -4936,7 +4939,7 @@ const TEAMS = {
         "moves": [
           "Muddy Water",
           "Coil",
-          "Hypnosis",
+          "Haze",
           "Recover"
         ],
         "role": "Utility / Secret Weapon"
@@ -4956,7 +4959,7 @@ const TEAMS = {
         },
         "moves": [
           "Throat Chop",
-          "Parting Shot",
+          "U-turn",
           "Fake Out",
           "Flare Blitz"
         ],
@@ -4976,7 +4979,7 @@ const TEAMS = {
           "spe": 32
         },
         "moves": [
-          "Fake Out",
+          "Taunt",
           "Close Combat",
           "Dire Claw",
           "Protect"
@@ -5047,11 +5050,14 @@ const TEAMS = {
         "spread_source": "Victory Road Champions Arena coverage",
         "author": "Jorge Tabuyo",
         "url": "https://victoryroad.pro/champions-regulations/",
-        "status": "exact"
+        "status": "testing_archetype_adjusted"
     },
     "legality_status": "legal",
-    "legality_notes": "Champions Arena Finalist.",
-    "assumption_register": [],
+    "legality_notes": "Champion balance/setup testing archetype adjusted from Champions Arena coverage so all moves pass the current Showdown-backed species/form legality gate; do not treat as an exact tournament paste.",
+    "assumption_register": [
+      "2026-06-23 legality repair: Incineroar Parting Shot and Sneasler Fake Out were replaced for current generated legality.",
+      "Original source remains linked for review, but this shipped row is an adjusted testing archetype."
+    ],
     "members": [
       {
         "name": "Charizard-Mega-X",
@@ -5154,7 +5160,7 @@ const TEAMS = {
           "Flare Blitz",
           "Throat Chop",
           "Fake Out",
-          "Parting Shot"
+          "U-turn"
         ],
         "role": "Support / Pivot"
       },
@@ -5173,7 +5179,7 @@ const TEAMS = {
         },
         "moves": [
           "Dire Claw",
-          "Fake Out",
+          "Taunt",
           "Close Combat",
           "Coaching"
         ],
@@ -5355,10 +5361,10 @@ const TEAMS = {
         "spread_source": "community",
         "author": "community",
         "url": "",
-        "status": "unproven"
+        "status": "testing_archetype"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Community veil shell repaired to Champions Reg M-A legality by replacing banned item-pool slots with legal alternatives while preserving the same snow/veil structure.",
+    "legality_status": "legal",
+    "legality_notes": "Champion snow and Aurora Veil testing archetype. Team passes the current Champions SP, item, and Showdown-backed move legality gates while preserving the veil/setup identity.",
     "assumption_register": [
         "Froslass Mega form verified via Game8 Items List.",
         "Mega activation consumes team's once-per-match Mega slot."
@@ -5421,7 +5427,7 @@ const TEAMS = {
         },
         "moves": [
           "Kowtow Cleave",
-          "Sucker Punch",
+          "Iron Head",
           "Low Kick",
           "Protect"
         ],
@@ -5463,7 +5469,7 @@ const TEAMS = {
         },
         "moves": [
           "Fake Out",
-          "Parting Shot",
+          "U-turn",
           "Flare Blitz",
           "Knock Off"
         ],
@@ -13361,16 +13367,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   function applyDamage(attacker, move, target, dmg, field, log, rng) {
     if (dmg <= 0) return;
-    let finalDmg = dmg;
+    const calculatedDamage = Math.max(0, Number(dmg) || 0);
+    let finalDmg = calculatedDamage;
     const DRAIN_MOVES = new Set(['Giga Drain', 'Matcha Gotcha']);
     // Substitute absorb
     if (target.substituteHp > 0 && !(attacker && attacker.ability === 'Infiltrator')) {
+      const substituteHpBefore = target.substituteHp;
+      const substituteDamage = Math.max(0, Math.min(substituteHpBefore, finalDmg));
       target.substituteHp -= finalDmg;
       if (target.substituteHp <= 0) { target.substituteHp = 0; log.push(`${target.name}'s Substitute was destroyed!`); }
-      else log.push(`${attacker.name} used ${move}! (Substitute absorbed ${finalDmg} dmg)`);
+      else log.push(`${attacker.name} used ${move}! (Substitute absorbed ${substituteDamage} dmg${calculatedDamage !== substituteDamage ? `; calc ${calculatedDamage}` : ''})`);
       if (DRAIN_MOVES.has(move) && attacker && attacker.alive) {
         if (_canReceiveHealing(attacker)) {
-          const drainHeal = Math.max(1, Math.floor(finalDmg / 2));
+          const drainHeal = Math.max(1, Math.floor(substituteDamage / 2));
           const healed = Math.max(0, Math.min(attacker.maxHp, attacker.hp + drainHeal) - attacker.hp);
           attacker.hp += healed;
           if (healed > 0) log.push(`${attacker.name} restored HP with ${move}! [${healed} HP]`);
@@ -13378,30 +13387,34 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
       return;
     }
-    if (target.enduring && finalDmg >= target.hp) {
-      target.hp = 1;
-      log.push(`${target.name} endured the hit!`);
-      return;
-    }
     // T9j.6 (#8) — Focus Sash: snapshot full-HP state BEFORE damage mutation.
     // Cite: Bulbapedia Focus Sash.
     const wasFullHp = (target.hp === target.maxHp);
     const hpBeforeDamage = target.hp;
     const wasAboveHalf = target.hp > target.maxHp / 2;
-    target.hp = Math.max(0, target.hp - finalDmg);
+    let enduredHit = false;
+    if (target.enduring && finalDmg >= target.hp) {
+      target.hp = 1;
+      enduredHit = true;
+    } else {
+      target.hp = Math.max(0, target.hp - finalDmg);
+    }
     // T9j.6 (#8) — Focus Sash survives a KO from full HP; consumed.
     let sturdySaved = false;
-    if (target.hp === 0 && _targetAbilityActive(target, attacker, 'Sturdy') && wasFullHp) {
+    if (!enduredHit && target.hp === 0 && _targetAbilityActive(target, attacker, 'Sturdy') && wasFullHp) {
       target.hp = 1;
       sturdySaved = true;
     }
     let sashSaved = false;
-    if (!sturdySaved && target.hp === 0 && target.item === 'Focus Sash' && !target.itemConsumed && wasFullHp) {
+    if (!enduredHit && !sturdySaved && target.hp === 0 && target.item === 'Focus Sash' && !target.itemConsumed && wasFullHp) {
       target.hp = 1;
       target.itemConsumed = true;
       sashSaved = true;
     }
-    log.push(`${attacker.name} used ${move}! → ${target.name} [${finalDmg} dmg, ${target.hp}/${target.maxHp} HP]`);
+    const appliedDamage = Math.max(0, Number(hpBeforeDamage || 0) - Number(target.hp || 0));
+    const overkillDamage = Math.max(0, calculatedDamage - appliedDamage);
+    const damageDetail = calculatedDamage !== appliedDamage ? `; calc ${calculatedDamage}` : '';
+    log.push(`${attacker.name} used ${move}! → ${target.name} [${appliedDamage} dmg, ${target.hp}/${target.maxHp} HP${damageDetail}]`);
     if (field && field._ctx) {
       if (!Array.isArray(field._ctx.turnDamageEvents)) field._ctx.turnDamageEvents = [];
       const attackerSide = attacker && attacker.side === field.playerSide ? 'player' : (attacker && attacker.side === field.oppSide ? 'opponent' : 'unknown');
@@ -13423,7 +13436,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target_key: targetKey,
         move: move,
         damage_kind: calcMatches ? 'calculated' : 'fixed_or_direct',
-        damage: Number(finalDmg || 0),
+        damage: Number(appliedDamage || 0),
+        applied_damage: Number(appliedDamage || 0),
+        hp_delta: Number(appliedDamage || 0),
+        calculated_damage: Number(calculatedDamage || 0),
+        overkill_damage: Number(overkillDamage || 0),
+        damage_capped_by_hp: calculatedDamage !== appliedDamage,
         target_hp_before: Number(hpBeforeDamage || 0),
         target_hp_after: Number(target.hp || 0),
         target_max_hp: Number(target.maxHp || 0),
@@ -13434,7 +13452,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         type_effectiveness: null,
         critical: false
       });
-      row.damage = Number(finalDmg || 0);
+      row.damage = Number(appliedDamage || 0);
+      row.applied_damage = Number(appliedDamage || 0);
+      row.hp_delta = Number(appliedDamage || 0);
+      row.calculated_damage = Number(calculatedDamage || 0);
+      row.overkill_damage = Number(overkillDamage || 0);
+      row.damage_capped_by_hp = calculatedDamage !== appliedDamage;
       row.target_hp_before = Number(hpBeforeDamage || 0);
       row.target_hp_after = Number(target.hp || 0);
       row.target_max_hp = Number(target.maxHp || 0);
@@ -13442,6 +13465,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       field._ctx.turnDamageEvents.push(row);
       field._ctx.lastDamageCalc = null;
     }
+    if (enduredHit) log.push(`${target.name} endured the hit!`);
     if (sturdySaved) log.push(`${target.name} hung on with Sturdy!`);
     if (sashSaved) log.push(`${target.name} hung on with its Focus Sash!`);
     if (target.hp > 0 && target.ability === 'Berserk' && wasAboveHalf && target.hp <= target.maxHp / 2) {
@@ -13449,7 +13473,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     if (DRAIN_MOVES.has(move) && attacker && attacker.alive) {
       if (_canReceiveHealing(attacker)) {
-        const drainHeal = Math.max(1, Math.floor(finalDmg / 2));
+        const drainHeal = Math.max(1, Math.floor(appliedDamage / 2));
         const healed = Math.max(0, Math.min(attacker.maxHp, attacker.hp + drainHeal) - attacker.hp);
         attacker.hp += healed;
         if (healed > 0) log.push(`${attacker.name} restored HP with ${move}! [${healed} HP]`);
@@ -13460,7 +13484,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const postHitMoveType = field && field._ctx && field._ctx.turnDamageEvents && field._ctx.turnDamageEvents.length
       ? field._ctx.turnDamageEvents[field._ctx.turnDamageEvents.length - 1].move_type
       : _resolveDynamicMoveType(attacker, move, field);
-    if (target.status === 'frozen' && finalDmg > 0 && target.hp > 0 &&
+    if (target.status === 'frozen' && appliedDamage > 0 && target.hp > 0 &&
         postHitMoveType === 'Fire') {
       target.status = null;
       target.frozenTurns = 0;
@@ -13492,7 +13516,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     callAbilityHook(target, 'onDamagingHit', {
       attacker: attacker, defender: target, move: move,
       moveType: postHitMoveType,
-      damage: finalDmg, field: field, log: log,
+      damage: appliedDamage, field: field, log: log,
       recordKO: _recordKO
     });
     if (attacker && attacker.alive && attacker.ability === 'Poison Touch' &&
@@ -13504,7 +13528,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Recoil
     const recoilRule = _moveRecoilRule(move);
     if (recoilRule && attacker && attacker.alive) {
-      const recoil = Math.max(1, Math.round(finalDmg * recoilRule.numerator / recoilRule.denominator));
+      const recoil = Math.max(1, Math.round(appliedDamage * recoilRule.numerator / recoilRule.denominator));
       attacker.hp = Math.max(0, attacker.hp - recoil);
       log.push(`${attacker.name} was hurt by recoil! [${recoil} dmg]`);
       if (attacker.hp === 0) {
@@ -13537,11 +13561,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     // T9j.8 (Refs #30) onDamageTaken hook: Spicy Spray burns attacker.
     // Fires only if target still alive AND damage > 0.
-    if (target.alive && finalDmg > 0) {
+    if (target.alive && appliedDamage > 0) {
       callAbilityHook(target, 'onDamageTaken', {
         attacker: attacker, defender: target, move: move,
         moveType: postHitMoveType,
-        damage: finalDmg, field: field, log: log
+        damage: appliedDamage, field: field, log: log
       });
     }
   }
@@ -15302,6 +15326,40 @@ if (typeof window !== 'undefined') {
   var speciesIndex = buildSpeciesIndex();
   var moveIndex = buildMoveIndex();
 
+  // These are learnset supplements, not species aliases. Stats, typing,
+  // sprite, Mega state, and display identity remain the exact form row.
+  var FORM_LEARNSET_SUPPLEMENTS = {
+    'Rotom-Fan': ['Rotom'],
+    'Rotom-Frost': ['Rotom'],
+    'Rotom-Heat': ['Rotom'],
+    'Rotom-Mow': ['Rotom'],
+    'Rotom-Wash': ['Rotom']
+  };
+
+  // Champion preview forms that exist in app data before the generated
+  // Showdown snapshot has an exact species key. Keep the app form identity
+  // and only borrow the explicit learnset rows listed here.
+  var CHAMPIONS_VIRTUAL_FORM_LEARNSETS = {
+    'Floette (Eternal Flower)-Mega': {
+      aliases: [
+        'Floette (Eternal Flower)-Mega',
+        'Floette-Eternal-Mega',
+        'Floette-Mega-EF',
+        'Floette-Mega Eternal Flower'
+      ],
+      learnsetKeys: ['Floette-Eternal', 'Floette'],
+      notes: 'Champion-specific Mega Eternal Flower form uses Eternal Flower/Floette learnset rows until the generated source has an exact form key.'
+    }
+  };
+
+  Object.keys(CHAMPIONS_VIRTUAL_FORM_LEARNSETS).forEach(function(key) {
+    var rule = CHAMPIONS_VIRTUAL_FORM_LEARNSETS[key] || {};
+    speciesIndex[toId(key)] = key;
+    (rule.aliases || []).forEach(function(alias) {
+      speciesIndex[toId(alias)] = key;
+    });
+  });
+
   function canonicalSpeciesKey(speciesKey) {
     var raw = clean(speciesKey);
     if (!raw) return '';
@@ -15328,6 +15386,7 @@ if (typeof window !== 'undefined') {
   function learnsetSpeciesKey(speciesKey) {
     var canonical = canonicalSpeciesKey(speciesKey);
     if (!canonical || !data || !data.species) return '';
+    if (CHAMPIONS_VIRTUAL_FORM_LEARNSETS[canonical]) return canonical;
     var row = data.species[canonical];
     if (!row) return '';
     if (row.moves && Object.keys(row.moves).length) return canonical;
@@ -15336,6 +15395,24 @@ if (typeof window !== 'undefined') {
       if (base && data.species[base] && data.species[base].moves) return base;
     }
     return canonical;
+  }
+
+  function candidateLearnsetKeys(species) {
+    var out = [];
+    if (!species) return out;
+    var virtualRule = CHAMPIONS_VIRTUAL_FORM_LEARNSETS[species];
+    if (virtualRule) {
+      (virtualRule.learnsetKeys || []).forEach(function(key) {
+        if (data && data.species && data.species[key]) out.push(key);
+      });
+      return out;
+    }
+    var exact = learnsetSpeciesKey(species);
+    if (exact && data && data.species && data.species[exact]) out.push(exact);
+    (FORM_LEARNSET_SUPPLEMENTS[species] || []).forEach(function(key) {
+      if (data && data.species && data.species[key] && out.indexOf(key) === -1) out.push(key);
+    });
+    return out;
   }
 
   function moveDisplayName(moveId, fallback) {
@@ -15378,11 +15455,31 @@ if (typeof window !== 'undefined') {
         notes: 'Move was not found in Pokemon Showdown moves data.'
       };
     }
-    var learnKey = learnsetSpeciesKey(species);
-    var row = learnKey ? data.species[learnKey] : null;
-    var codes = row && row.moves ? row.moves[moveId] : '';
+    var learnKeys = candidateLearnsetKeys(species);
+    var learnKey = '';
+    var row = null;
+    var codes = '';
+    for (var i = 0; i < learnKeys.length; i++) {
+      var key = learnKeys[i];
+      var candidateRow = data.species[key];
+      var candidateCodes = candidateRow && candidateRow.moves ? candidateRow.moves[moveId] : '';
+      if (candidateCodes) {
+        learnKey = key;
+        row = candidateRow;
+        codes = candidateCodes;
+        break;
+      }
+      if (!row) {
+        learnKey = key;
+        row = candidateRow;
+      }
+    }
     var legal = !!codes;
     var inherited = (row && row.inheritedFrom) || (learnKey && learnKey !== species ? learnKey : '');
+    var virtualNotes = CHAMPIONS_VIRTUAL_FORM_LEARNSETS[species] ? CHAMPIONS_VIRTUAL_FORM_LEARNSETS[species].notes : '';
+    var supplementNotes = FORM_LEARNSET_SUPPLEMENTS[species] && inherited
+      ? ' Form identity remains ' + species + '; move is accepted through an explicit shared learnset supplement.'
+      : '';
     return {
       legal: legal,
       speciesKey: clean(speciesKey),
@@ -15393,7 +15490,7 @@ if (typeof window !== 'undefined') {
       sourceVersion: data.sourceCommitOrVersion,
       reason: legal ? 'learnset_match' : 'not_in_species_form_learnset',
       notes: legal
-        ? (inherited ? 'Legal via ' + inherited + ' learnset.' : 'Legal for exact species/form learnset.')
+        ? ((inherited ? 'Legal via ' + inherited + ' learnset.' : 'Legal for exact species/form learnset.') + supplementNotes + (virtualNotes ? ' ' + virtualNotes : ''))
         : 'Move exists globally but is not present in this species/form learnset.',
       learnMethodCodes: codes,
       inheritedFrom: inherited
@@ -19028,9 +19125,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.36-core-move-parity';
+    return txt || 'v2.1.37-damage-log-team-catalog';
   } catch (e) {
-    return 'v2.1.36-core-move-parity';
+    return 'v2.1.37-damage-log-team-catalog';
   }
 }
 
@@ -19451,8 +19548,8 @@ function getChampionSpreadErrorsForTeam(team) {
 
 function buildImportedTeamValidation(members, opts) {
   opts = opts || {};
-  // Imports stay usable with warnings, but hard team-rule failures are marked
-  // illegal so they cannot masquerade as reviewed legal teams.
+  // Imports stay usable when source data is unavailable, but known illegal
+  // species/form move rows are hard errors so they cannot enter the sim.
   var team = {
     name: opts.name || 'Imported Team',
     format: opts.format || 'champions',
@@ -19490,11 +19587,12 @@ function buildImportedTeamValidation(members, opts) {
         if (!out.sourceVersion && row.sourceVersion) out.sourceVersion = row.sourceVersion;
         if (row.legal) return;
         var label = (member && member.name ? member.name : 'Pokemon') + ': ' + (row.moveName || 'unknown move') + ' - ' + (row.notes || row.reason || 'not verified');
-        var isUnchecked = row.reason === 'source_unavailable' || row.reason === 'unknown_species';
-        out.warnings.push(label);
+        var severity = getMoveLegalityIssueSeverity(row.reason);
+        if (severity === 'error') out.errors.push(label);
+        else out.warnings.push(label);
         out.memberWarnings[String(idx)] = out.memberWarnings[String(idx)] || [];
         out.memberWarnings[String(idx)].push({
-          severity: isUnchecked ? 'unchecked' : 'warning',
+          severity: severity,
           text: label
         });
       });
@@ -19504,6 +19602,16 @@ function buildImportedTeamValidation(members, opts) {
   out.warnings = Array.from(new Set(out.warnings.filter(Boolean)));
   out.valid = out.errors.length === 0;
   return out;
+}
+
+function getMoveLegalityIssueSeverity(reason) {
+  if (reason === 'source_unavailable') return 'unchecked';
+  if (reason === 'unknown_species' ||
+      reason === 'unknown_move' ||
+      reason === 'not_in_species_form_learnset') {
+    return 'error';
+  }
+  return 'warning';
 }
 
 // ============================================================
@@ -19639,12 +19747,54 @@ function normalizeTeamRecordForSim(teamKey, team) {
   return team;
 }
 
+var CS_REMOVED_TEAM_CATALOG = {};
+
+function removeTeamFromRuntimeCatalog(teamKey, team, verdict, reason) {
+  if (!teamKey || !team || team.source === 'custom') return false;
+  CS_REMOVED_TEAM_CATALOG[teamKey] = {
+    key: teamKey,
+    name: team.name || teamKey,
+    format: team.format || '',
+    legality_status: team.legality_status || '',
+    reason: reason || 'not_approved_champion_legal',
+    errors: verdict && Array.isArray(verdict.errors) ? verdict.errors.slice(0, 8) : [],
+    warnings: verdict && Array.isArray(verdict.warnings) ? verdict.warnings.slice(0, 8) : []
+  };
+  delete TEAMS[teamKey];
+  return true;
+}
+
+function pruneRuntimeTeamCatalog() {
+  if (typeof TEAMS === 'undefined') return 0;
+  var removed = 0;
+  Object.keys(TEAMS).forEach(function(key) {
+    var team = normalizeTeamRecordForSim(key, TEAMS[key]);
+    if (!team || team.source === 'custom') return;
+    var verdict = (typeof getTeamLegalityVerdict === 'function')
+      ? getTeamLegalityVerdict(key, team)
+      : { valid: false, errors: ['Team legality validator is unavailable.'] };
+    if (typeof isApprovedPreloadedChampionTeam === 'function' &&
+        isApprovedPreloadedChampionTeam(key, team, verdict)) {
+      return;
+    }
+    if (removeTeamFromRuntimeCatalog(key, team, verdict, 'not_approved_champion_legal')) removed++;
+  });
+  var root = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : null);
+  var simRoot = (typeof ChampionsSim !== 'undefined') ? ChampionsSim : (root && root.ChampionsSim);
+  if (simRoot) {
+    simRoot.catalog = simRoot.catalog || {};
+    simRoot.catalog.removedTeams = CS_REMOVED_TEAM_CATALOG;
+  }
+  return removed;
+}
+
 function normalizeTeamCatalogForSim() {
   if (typeof TEAMS === 'undefined') return 0;
   var count = 0;
   for (var key in TEAMS) {
     if (normalizeTeamRecordForSim(key, TEAMS[key])) count++;
   }
+  pruneRuntimeTeamCatalog();
   return count;
 }
 
@@ -19663,9 +19813,14 @@ function isVisibleTeamInCatalog(teamKey, team, opts) {
   if (team.source === 'custom' && opts.includeCustom === false) return false;
   if (team.format !== 'champions') return false;
   if (team.legality_status === 'illegal') return false;
+  var verdict = null;
   if (typeof getTeamLegalityVerdict === 'function') {
-    var verdict = getTeamLegalityVerdict(teamKey, team);
+    verdict = getTeamLegalityVerdict(teamKey, team);
     if (verdict && !verdict.valid) return false;
+  }
+  if (team.source !== 'custom' && typeof isApprovedPreloadedChampionTeam === 'function' &&
+      !isApprovedPreloadedChampionTeam(teamKey, team, verdict)) {
+    return false;
   }
   return true;
 }
@@ -19704,12 +19859,16 @@ function mergeDbTeamsIntoCatalog(dbTeams) {
     var verdict = (typeof getTeamLegalityVerdict === 'function')
       ? getTeamLegalityVerdict(key, team)
       : { valid: true, errors: [] };
-    if (!team || team.format !== 'champions' || !verdict.valid) {
+    if (!team || team.format !== 'champions' || !verdict.valid ||
+        (typeof isApprovedPreloadedChampionTeam === 'function' &&
+          !isApprovedPreloadedChampionTeam(key, team, verdict))) {
       summary.skipped++;
       summary.blocked.push({
         key: key,
         name: team && team.name,
-        errors: (verdict && verdict.errors) || ['Not a Champion-format legal team']
+        errors: (verdict && verdict.errors && verdict.errors.length)
+          ? verdict.errors
+          : ['Not an approved Champion-legal team']
       });
       continue;
     }
@@ -20098,17 +20257,22 @@ function getTeamLegalityVerdict(teamKey, team) {
       label: 'SV compatibility only'
     };
   }
+  var moveIssues = collectTeamMoveLegalityIssues(team);
+  var hardMoveIssues = moveIssues.filter(function(row) { return row && row.severity === 'error'; });
+  var sourceWarnings = moveIssues.filter(function(row) { return row && row.severity !== 'error'; });
   var fallback = {
-    valid: !!team && (team.legality_status === 'legal' || team.legality_status === 'legal_inferred'),
+    valid: !!team && hardMoveIssues.length === 0 && (team.legality_status === 'legal' || team.legality_status === 'legal_inferred'),
     inferred: !!team && team.legality_status === 'legal_inferred',
-    errors: [],
-    warnings: [],
+    errors: hardMoveIssues.map(function(row) { return row.label; }),
+    warnings: sourceWarnings.map(function(row) { return row.label; }),
     label: team && team.legality_status === 'legal_inferred' ? 'Legal (inferred)' : 'Legal'
   };
   if (!team || typeof validateTeam !== 'function') return fallback;
   var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
   var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
+  hardMoveIssues.forEach(function(row) { errors.push(row.label); });
   var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
+  sourceWarnings.forEach(function(row) { warnings.push(row.label); });
   var valid = errors.length === 0;
   return {
     valid: valid,
@@ -20122,6 +20286,45 @@ function getTeamLegalityVerdict(teamKey, team) {
           : 'Legal')
       : 'Not legal'
   };
+}
+
+function collectTeamMoveLegalityIssues(team) {
+  var out = [];
+  if (!team || !Array.isArray(team.members)) return out;
+  var root = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : null);
+  var simRoot = (typeof ChampionsSim !== 'undefined') ? ChampionsSim : (root && root.ChampionsSim);
+  var api = simRoot && simRoot.moveLegality ? simRoot.moveLegality : null;
+  if (!api || typeof api.validateMovesForSet !== 'function') {
+    out.push({
+      severity: 'unchecked',
+      label: 'Showdown species and move legality data is not loaded.'
+    });
+    return out;
+  }
+  (team.members || []).forEach(function(member) {
+    var checks = api.validateMovesForSet(member || {});
+    checks.forEach(function(row) {
+      if (row.legal) return;
+      var label = (member && member.name ? member.name : 'Pokemon') + ': ' + (row.moveName || 'unknown move') + ' - ' + (row.notes || row.reason || 'not verified');
+      out.push({
+        severity: getMoveLegalityIssueSeverity(row.reason),
+        label: label,
+        reason: row.reason,
+        member: member && member.name,
+        move: row.moveName || ''
+      });
+    });
+  });
+  return out;
+}
+
+function isApprovedPreloadedChampionTeam(teamKey, team, verdict) {
+  team = team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null);
+  if (!team || team.format !== 'champions') return false;
+  if (team.source === 'custom') return false;
+  if (team.legality_status !== 'legal') return false;
+  verdict = verdict || getTeamLegalityVerdict(teamKey, team);
+  return !!(verdict && verdict.valid);
 }
 
 function isLadderLegal(teamKey) {
@@ -21066,7 +21269,7 @@ function buildSetEditorMoveLegalityWarnings(member) {
   return checks.filter(function(row) {
     return !row.legal || row.reason === 'source_unavailable' || row.reason === 'unknown_species';
   }).map(function(row) {
-    var severity = row.reason === 'source_unavailable' || row.reason === 'unknown_species' ? 'unchecked' : 'warning';
+    var severity = getMoveLegalityIssueSeverity(row.reason);
     return {
       severity: severity,
       text: (row.moveName || 'Unknown move') + ' on ' + (row.canonicalSpeciesKey || member.name || 'unknown species') + ': ' + (row.reason || 'unchecked') + '. Source: ' + (row.source || 'unavailable') + ' ' + (row.sourceVersion || '') + '. ' + (row.notes || '')
@@ -22052,7 +22255,7 @@ function csRenderReplayPlayByPlay(turn) {
   function showdownEventText(ev) {
     var text = String((ev && (ev.text || ev.message)) || '').trim();
     if (!text) return '';
-    text = text.replace(/\[(\d+)\s*dmg\]/ig, 'lost $1 HP');
+    text = text.replace(/\[(\d+)\s*dmg(?:,[^\]]*)?\]/ig, 'lost $1 HP');
     text = text.replace(/\[\+(\d+)\]/g, 'restored $1 HP');
     text = text.replace(/\s+/g, ' ');
     return text;
@@ -24796,19 +24999,53 @@ function _escapeHtml(s) {
 var CS_OVERVIEW_DATA = {
   updated: '2026-06-23',
   metrics: [
+    { label: 'Current Truth', value: 'Not 100% yet' },
+    { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
+    { label: 'Release Teams', value: '10 approved runtime rows' },
+    { label: 'Testing Catalog Target', value: 'Top 10 Champion archetypes live' },
+    { label: 'Removed Teams', value: '17 legacy/inferred rows' },
+    { label: 'DB Team Rule', value: 'Approved rows must pass gates' },
+    { label: 'Stress Status', value: 'Focused green; full run pending' },
     { label: 'Sim Truth Gate', value: 'Mechanics first' },
-    { label: 'Live Supabase', value: 'Teams + analyses' },
-    { label: 'Showdown DB', value: 'Checking...' },
+    { label: 'Live Supabase', value: 'Teams + analyses, gated' },
+    { label: 'Showdown DB', value: 'Manual approval only' },
     { label: 'Team Format', value: 'Champion/SP focus' },
-    { label: 'Turn Logs', value: 'v2.1.33 clean' },
+    { label: 'Turn Logs', value: 'Strict applied damage fields' },
     { label: 'Move Support', value: '120 verified / 0 baseline' },
     { label: 'Showdown Oracle', value: '56/56 green' },
-    { label: 'Target Guard', value: 'Canonical bridge' },
-    { label: 'QA Log Retention', value: 'Capped + artifact' },
-    { label: 'Ability Inventory', value: '80/80 modeled' },
-    { label: 'Knock Off', value: 'Verified' }
+    { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Current truth board corrected',
+      detail: 'The Overview top row now states the release truth plainly: the sim is not 100% yet, damage applied-vs-calculated logging is fixed locally, normal selectors are limited to approved Champion-legal teams, legacy/inferred teams are removed from the runtime catalog, and full stress/deployed browser proof is still required before broad accuracy claims.'
+    },
+    {
+      status: 'done',
+      title: 'Damage applied versus calculated logging fixed locally',
+      detail: 'Damage events now separate actual HP loss from raw formula output. Visible logs and the `damage` field use applied HP loss, while `calculated_damage`, `overkill_damage`, and `damage_capped_by_hp` preserve formula evidence for QA. Recoil and drain now use applied damage so overkill cannot inflate downstream effects.'
+    },
+    {
+      status: 'done',
+      title: 'Approved Champion team lane guarded',
+      detail: 'Normal sim selectors and Run All now accept only Champion-format rows that pass current legality checks and are marked approved legal, plus valid custom teams. The runtime catalog now keeps 10 Champion-legal testing archetypes and removes 17 legacy/inferred rows into the removed-team audit object.'
+    },
+    {
+      status: 'done',
+      title: 'Current Champion source sweep recorded',
+      detail: 'The June 23 online sweep found the official Champions site confirming Singles and Doubles, Ranked/Casual/Private modes, Mega Evolution in the first Ranked rules, HOME visitor/training restrictions, and June 17 Regulation Set M-B news. Current meta/build sample signals point at Incineroar, Whimsicott/Tailwind, Sneasler, Mega Charizard Y sun, Garchomp, Eternal Flower Floette, rain, and anti-meta Trick Room, so the runtime sample catalog is intentionally style-balanced instead of claiming exact tournament-sheet provenance.'
+    },
+    {
+      status: 'done',
+      title: 'DB species/move legality view added',
+      detail: 'A Supabase migration adds `approved_species_move_legality`, joining approved species/form learnsets to approved move metadata so DB/editor/QA tooling can inspect legal moves with base power, category, type, target, flags, and source hashes without making the DB an unchecked battle calculator.'
+    },
+    {
+      status: 'done',
+      title: 'Showdown sync approval guard tightened',
+      detail: 'Scheduled Showdown sync can detect reviewable source changes, but approved rows now require manual `workflow_dispatch` approval after human review instead of automatic scheduled approval.'
+    },
     {
       status: 'done',
       title: 'Review tab restored',
@@ -24928,6 +25165,21 @@ var CS_OVERVIEW_DATA = {
   validation: [
     {
       status: 'validated',
+      title: 'Focused local damage-log proof is green',
+      detail: '`recoil_faint_turn_log_tests.js` now proves an overkill hit records applied HP loss in visible logs and damage_events, preserves larger formula output as `calculated_damage`, records `overkill_damage`, marks the HP cap, and bases recoil on applied damage.'
+    },
+    {
+      status: 'validated',
+      title: 'Strict turn-log damage contract is green',
+      detail: '`turn_log_export_validator_tests.js` now requires damage_events to include `damage`, `applied_damage`, `hp_delta`, `calculated_damage`, `overkill_damage`, `damage_capped_by_hp`, and target HP bounds, and rejects rows where applied damage does not equal HP lost.'
+    },
+    {
+      status: 'validated',
+      title: 'Approved-team selector gate is green locally',
+      detail: '`t9j11_tests.js` now proves known illegal imported moves are hard-blocked and the visible runtime selector catalog is the 10 approved Champion-legal test rows. Still-conflicting or inferred rows such as `champions_arena_3rd` and `perish_trap_gengar` are removed from the runtime catalog until reviewed.'
+    },
+    {
+      status: 'validated',
       title: 'Supabase app wiring is live for existing app tables',
       detail: 'The deployed page has runtime Supabase config, and read checks reached teams, team_members, and analyses through the public anon path.'
     },
@@ -24958,8 +25210,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Current release checks are green',
-      detail: 'v2.1.36 Core Move Parity carries v2.1.35 Low Kick Weight Parity, v2.1.34 Live Log Proof, v2.1.33 Log Target Guard, v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, move-support registry, type multiplier audit, speed-stack evidence, Knock Off item-state tests, no-valid-target validation, and strict validation are the local release checks for this build.'
+      title: 'Previous v2.1.36 release checks were green',
+      detail: 'v2.1.36 Core Move Parity carried v2.1.35 Low Kick Weight Parity, v2.1.34 Live Log Proof, v2.1.33 Log Target Guard, v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. The current local damage-log and approved-team-gate slice has focused green checks, but still needs full stress, bundle rebuild, deploy, and browser exports before release proof.'
     },
     {
       status: 'validated',
@@ -25008,8 +25260,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Live preview bundle contains the new safeguards',
-      detail: 'The standalone GitHub Pages bundle is rebuilt from source and the service-worker cache must be bumped for every legality or data-path release.'
+      title: 'Bundle freshness rule remains active',
+      detail: 'The standalone GitHub Pages bundle must be rebuilt from source and the service-worker cache must be bumped for every engine, legality, or data-path release. This current local slice is not release-proven until that bundle and deployed-browser proof are complete.'
     },
     {
       status: 'validated',
@@ -25019,10 +25271,20 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Previous Y/Alfredo source sync completed',
-      detail: 'Alfredo PR #245 merged the prior Champion parity tree after required checks passed, and TheYfactora12 main was fast-forwarded to the same merge commit. The current v2.1.36 core-move-parity slice should prove out on the Y fork first; Alfredo sync is lower priority until the browser proof gate is clean.'
+      detail: 'Alfredo PR #245 merged the prior Champion parity tree after required checks passed, and TheYfactora12 main was fast-forwarded to the same merge commit. The current local damage-log and approved-team-gate slice should prove out on the Y fork first; Alfredo sync is lower priority until the browser proof gate is clean.'
     }
   ],
   gaps: [
+    {
+      status: 'gap',
+      title: 'Most bundled teams are review data, not release-safe opponents',
+      detail: 'The current audit found only `mega_altaria` and `mega_dragonite` are approved Champion-legal fallback rows under the current Showdown-backed move legality gate. Twenty-five legacy, inferred, or move-conflict rows are removed from the runtime catalog until replaced by approved Champion teams or backed by reviewed Champion overrides.'
+    },
+    {
+      status: 'gap',
+      title: 'Damage calculator is improved, not globally proven 100%',
+      detail: 'The confirmed applied-vs-calculated log/recoil bug is fixed locally, and the existing damage oracle remains green for covered cases. Broad damage accuracy still requires more long-tail proof around remaining Champion overrides, redirection, Protect-family interactions, switching/replacement timing, status/item edge cases, and deployed browser logs.'
+    },
     {
       status: 'gap',
       title: 'showdown_entities DB rows are not the battle runtime source yet',
@@ -25057,8 +25319,18 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.36 source URL and QA artifact',
-      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
+      title: 'Stress-test, rebuild, and prove the new truth board',
+      detail: 'Before pushing to GitHub Pages, run focused legality/damage tests, the broader non-DB suite, rebuild `pokemon-champion-2026.html`, check the bundle, then use a fresh deployed URL to export one single-run log, one Run All log, and one QA Artifact.'
+    },
+    {
+      status: 'next',
+      title: 'Replace removed teams with approved Champion teams',
+      detail: 'Move the testing catalog toward roughly 10 current Champion competitive/tournament archetypes in Supabase and bundled fallback: Trick Room, anti-Trick Room, Tailwind/speed, sun, rain, sand or snow, bulky balance, hyper offense, setup/boosting, and control/status/positioning. A DB team is selectable only after Champion SP, item, species/form, move legality, source provenance, and override checks pass; DB existence alone is not enough.'
+    },
+    {
+      status: 'next',
+      title: 'Verify the next deployed source URL and QA artifact',
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, applied/calculated damage fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
@@ -25068,7 +25340,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Apply Champion item cleanup to live Supabase rows',
-      detail: 'Use the v2.1.23 item-block evidence and v2.1.30 SP-spread guard to update or quarantine stale Supabase team rows so the DB matches the bundled Champion source truth instead of relying only on frontend gating.'
+      detail: 'Use the v2.1.23 item-block evidence and v2.1.30 SP-spread guard to update, reject, or remove stale Supabase team rows so the DB matches Champion source truth instead of relying only on frontend gating.'
     },
     {
       status: 'next',

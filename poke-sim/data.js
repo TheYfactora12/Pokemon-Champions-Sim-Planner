@@ -868,10 +868,10 @@ const TEAMS = {
         "spread_source": "user-authored",
         "author": "user",
         "url": "",
-        "status": "unproven"
+        "status": "testing_archetype"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Champions starter team. Original anti-Trick-Room shell rescaled onto Champions SP values and repaired to the verified Champions item pool for review-mode parity.",
+    "legality_status": "legal",
+    "legality_notes": "Champion testing anti-Trick-Room starter. Moves, items, and Champions SP spreads are pinned to the current Showdown-backed legality gate; this is not an exact tournament export.",
     "assumption_register": [
         "This remains a user-authored starter team, not a pinned event export.",
         "The original anti-Trick-Room shell was preserved while converting its spreads to Champions SP scale."
@@ -894,14 +894,14 @@ const TEAMS = {
         "moves": [
           "Fake Out",
           "Flare Blitz",
-          "Parting Shot",
+          "U-turn",
           "Knock Off"
         ],
         "role": "Support / Pivot"
       },
       {
         "name": "Arcanine",
-        "item": "Hard Stone",
+        "item": "Charcoal",
         "ability": "Intimidate",
         "nature": "Adamant",
         "level": 50,
@@ -914,8 +914,8 @@ const TEAMS = {
           "spe": 32
         },
         "moves": [
-          "Power Gem",
-          "Head Smash",
+          "Flare Blitz",
+          "Close Combat",
           "Extreme Speed",
           "Will-O-Wisp"
         ],
@@ -1371,7 +1371,7 @@ const TEAMS = {
         },
         "moves": [
           "Protect",
-          "Scorching Sands",
+          "Flamethrower",
           "Dark Pulse",
           "Heat Wave"
         ],
@@ -1530,7 +1530,7 @@ const TEAMS = {
           "Close Combat",
           "Dire Claw",
           "Protect",
-          "Fake Out"
+          "Taunt"
         ],
         "role": "Unburden Attacker"
       },
@@ -1638,7 +1638,7 @@ const TEAMS = {
         "tera": "Fighting",
         "moves": [
           "Solar Beam",
-          "Dazzling Gleam",
+          "Energy Ball",
           "Protect",
           "Weather Ball"
         ],
@@ -1666,10 +1666,10 @@ const TEAMS = {
         "spread_source": "https://pokepast.es/cb48d8b06c73d33b",
         "author": "community",
         "url": "https://pokepast.es/cb48d8b06c73d33b",
-        "status": "exact"
+        "status": "testing_archetype_adjusted"
     },
     "legality_status": "legal",
-    "legality_notes": "",
+    "legality_notes": "Champion sun testing archetype adjusted from the linked paste so all moves pass the current Showdown-backed species/form legality gate.",
     "assumption_register": [
       "2026-05-24 audit: Sinistcha item was recorded as Kouba Berry from the public P08QQ5NU9C rental mirror after a repo transcription error duplicated Sitrus Berry.",
       "2026-06-21 Champion item-pool gate: Kouba Berry is not in the verified Champions item list, so the shipped sim uses Coba Berry until a stronger source proves otherwise."
@@ -1775,7 +1775,7 @@ const TEAMS = {
         "moves": [
           "Throat Chop",
           "Flare Blitz",
-          "Parting Shot",
+          "U-turn",
           "Fake Out"
         ],
         "role": "Support"
@@ -1823,10 +1823,10 @@ const TEAMS = {
         "spread_source": "community",
         "author": "community",
         "url": "",
-        "status": "assumed"
+        "status": "testing_archetype"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Community Trick Room shell repaired to Champions Reg M-A legality by replacing banned Cresselia with Farigiraf and swapping banned item-pool slots to legal alternatives while preserving the same slow-room identity.",
+    "legality_status": "legal",
+    "legality_notes": "Champion Trick Room testing archetype. Team passes the current Champions SP, item, and Showdown-backed move legality gates while preserving the slow-room identity.",
     "assumption_register": [
         "Spreads inferred from meta norms, not a pinned paste."
     ],
@@ -1979,11 +1979,14 @@ const TEAMS = {
         "spread_source": "Victory Road Champions Arena coverage",
         "author": "Hyungwoo Shin",
         "url": "https://victoryroad.pro/champions-regulations/",
-        "status": "exact"
+        "status": "testing_archetype_adjusted"
     },
     "legality_status": "legal",
-    "legality_notes": "Champions Arena Winner.",
-    "assumption_register": [],
+    "legality_notes": "Champion sun testing archetype adjusted from Champions Arena coverage so all moves pass the current Showdown-backed species/form legality gate; do not treat as an exact tournament paste.",
+    "assumption_register": [
+      "2026-06-23 legality repair: Milotic Hypnosis, Incineroar Parting Shot, and Sneasler Fake Out were replaced for current generated legality.",
+      "Original source remains linked for review, but this shipped row is an adjusted testing archetype."
+    ],
     "members": [
       {
         "name": "Charizard-Mega-Y",
@@ -2022,7 +2025,7 @@ const TEAMS = {
         "moves": [
           "Muddy Water",
           "Coil",
-          "Hypnosis",
+          "Haze",
           "Recover"
         ],
         "role": "Utility / Secret Weapon"
@@ -2042,7 +2045,7 @@ const TEAMS = {
         },
         "moves": [
           "Throat Chop",
-          "Parting Shot",
+          "U-turn",
           "Fake Out",
           "Flare Blitz"
         ],
@@ -2062,7 +2065,7 @@ const TEAMS = {
           "spe": 32
         },
         "moves": [
-          "Fake Out",
+          "Taunt",
           "Close Combat",
           "Dire Claw",
           "Protect"
@@ -2133,11 +2136,14 @@ const TEAMS = {
         "spread_source": "Victory Road Champions Arena coverage",
         "author": "Jorge Tabuyo",
         "url": "https://victoryroad.pro/champions-regulations/",
-        "status": "exact"
+        "status": "testing_archetype_adjusted"
     },
     "legality_status": "legal",
-    "legality_notes": "Champions Arena Finalist.",
-    "assumption_register": [],
+    "legality_notes": "Champion balance/setup testing archetype adjusted from Champions Arena coverage so all moves pass the current Showdown-backed species/form legality gate; do not treat as an exact tournament paste.",
+    "assumption_register": [
+      "2026-06-23 legality repair: Incineroar Parting Shot and Sneasler Fake Out were replaced for current generated legality.",
+      "Original source remains linked for review, but this shipped row is an adjusted testing archetype."
+    ],
     "members": [
       {
         "name": "Charizard-Mega-X",
@@ -2240,7 +2246,7 @@ const TEAMS = {
           "Flare Blitz",
           "Throat Chop",
           "Fake Out",
-          "Parting Shot"
+          "U-turn"
         ],
         "role": "Support / Pivot"
       },
@@ -2259,7 +2265,7 @@ const TEAMS = {
         },
         "moves": [
           "Dire Claw",
-          "Fake Out",
+          "Taunt",
           "Close Combat",
           "Coaching"
         ],
@@ -2441,10 +2447,10 @@ const TEAMS = {
         "spread_source": "community",
         "author": "community",
         "url": "",
-        "status": "unproven"
+        "status": "testing_archetype"
     },
-    "legality_status": "legal_inferred",
-    "legality_notes": "Community veil shell repaired to Champions Reg M-A legality by replacing banned item-pool slots with legal alternatives while preserving the same snow/veil structure.",
+    "legality_status": "legal",
+    "legality_notes": "Champion snow and Aurora Veil testing archetype. Team passes the current Champions SP, item, and Showdown-backed move legality gates while preserving the veil/setup identity.",
     "assumption_register": [
         "Froslass Mega form verified via Game8 Items List.",
         "Mega activation consumes team's once-per-match Mega slot."
@@ -2507,7 +2513,7 @@ const TEAMS = {
         },
         "moves": [
           "Kowtow Cleave",
-          "Sucker Punch",
+          "Iron Head",
           "Low Kick",
           "Protect"
         ],
@@ -2549,7 +2555,7 @@ const TEAMS = {
         },
         "moves": [
           "Fake Out",
-          "Parting Shot",
+          "U-turn",
           "Flare Blitz",
           "Knock Off"
         ],
