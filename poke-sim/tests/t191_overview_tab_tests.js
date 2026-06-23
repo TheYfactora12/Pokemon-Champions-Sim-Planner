@@ -56,7 +56,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.30 Spread Legality Guard carries the v2.1.29 Knock Off guard');
+  inc(ui, 'v2.1.31 Editor Builder Roadmap carries the v2.1.30 Spread Legality Guard');
   inc(ui, 'Damage stack oracle is green');
   inc(ui, 'Knock Off source-truth behavior is documented');
   inc(ui, 'Turn-order stack evidence is green');
@@ -76,6 +76,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Mechanics parity is broader than the current ability slice');
   inc(ui, 'Source refresh needed must be visible before trust claims');
   inc(ui, 'Full raw thousand-battle retention is still not automatic');
+  inc(ui, 'Team editor is guarded but not a fluid full builder yet');
   inc(ui, 'Alfredo #241');
   inc(ui, 'Life Orb');
   inc(ui, 'showdown_sync_runs');
@@ -84,11 +85,12 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.30 live logs, QA artifact, and sync Alfredo');
+  inc(ui, 'Verify v2.1.31 live logs, QA artifact, and sync Alfredo');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
   inc(ui, 'Group mechanics parity work by battle system');
+  inc(ui, 'Rebuild editor into full Champion team builder');
   inc(ui, 'Prepare upstream PR to Alfredo after Y fork verification');
   inc(ui, 'Surface source drift as update needed in Overview');
   inc(ui, 'Recent Fix + Issue Snapshot');

@@ -59,7 +59,8 @@
 // corresponding Mega Stone protection, no-item guard, and Sticky Hold coverage.
 // v64-spread-legality-guard [2026-06-22] - Champion SP caps enforced across
 // bundled teams, import/editor saves, DB merge, and generated seed artifacts.
-const CACHE_NAME = 'champions-sim-v64-spread-legality-guard';
+// v65-editor-builder-roadmap [2026-06-22] - Overview note for full team-builder UX.
+const CACHE_NAME = 'champions-sim-v65-editor-builder-roadmap';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

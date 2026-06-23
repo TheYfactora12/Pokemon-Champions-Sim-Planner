@@ -5,9 +5,10 @@ This snapshot records the current truth after the June 21-22 live-log review and
 ## 2026-06-22 Deployment Update
 
 - The prior Y fork public validation target was commit `7e0deca` (`model champion ability parity`).
-- `v2.1.30-spread-legality-guard` supersedes `v2.1.29-knock-off-guard` for the current GitHub Pages release and bumps the service-worker cache to `champions-sim-v64-spread-legality-guard`.
+- `v2.1.31-editor-builder-roadmap` supersedes `v2.1.30-spread-legality-guard` for the current GitHub Pages release and bumps the service-worker cache to `champions-sim-v65-editor-builder-roadmap`.
 - `v2.1.29` promotes `Knock Off` from baseline to verified move coverage. The source truth is Pokemon Showdown move/item behavior checked against Bulbapedia: removable held items give the 1.5x base-power boost and are removed after damage; legal no-item targets give no boost and remove nothing; corresponding Mega Stones are not removable and do not give the boost even before Mega Evolution; Sticky Hold blocks removal while the holder is alive but does not suppress the boost when the item is otherwise removable.
 - `v2.1.30` converts shipped inferred Champion archetype spreads from SV-shaped EV values to Champion SP values, hard-rejects over-cap or malformed Champion spreads in imports/editor/DB merges/Supabase upserts, and records the Showdown-vs-preview source conflict on the per-stat cap.
+- `v2.1.31` records that the current edit-team UI is guarded but not fluid enough for fully customizable Champion team building; this is tracked as later UX work after sim-truth gates.
 - The earlier `e5af069` build added `champions-turn-log-v2` export metadata; fresh June 22 logs from `?v=7e0deca` validate structurally cleanly, then deeper replay review exposed the target bridge bug fixed in `v2.1.25`.
 - Supabase migration `2026_06_22_retire_legacy_sv_teams.sql` has run successfully; the two stale v1 teams are retired at the source.
 - Fresh logs from the live URL now validate cleanly for team loading, stable IDs, final alive counts, and stale item absence.
@@ -22,11 +23,12 @@ This snapshot records the current truth after the June 21-22 live-log review and
 | Golden battle trace drift from intentional mechanics fixes | Updated | Earlier `gb_001` and `gb_002` hashes were refreshed for the lethal-berry fix; `v2.1.28` refreshed all three golden trace hashes after typed held-item damage boosts and structured damage evidence changed deterministic traces; `v2.1.29` refreshes `gb_001` and `gb_003` after Knock Off now boosts/removes removable held items in those traces while preserving expected winners. |
 | Champion item/SP gate | Fixed and deployed in `v2.1.23-champion-item-sp-gate` | `legality.js` now uses a positive Champions item allowlist; imports reject raw EV/IV lines; exports use `SPs:`; illegal teams are hidden from selectors; stale DB teams cannot replace legal bundled teams. |
 | Champion SP spread legality guard | Fixed in `v2.1.30-spread-legality-guard` | The 32 shipped inferred SV-shaped archetype spreads were converted to legal Champion SP spreads; `validateTeam`, Champion import, set editor saves, DB merge, Supabase upsert, and seed tests now block >32 SP per stat, >66 SP total, and malformed spread payloads. |
-| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v64-spread-legality-guard`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.30-spread-legality-guard` after bundle rebuild. |
+| Team editor roadmap note | Tracked in `v2.1.31-editor-builder-roadmap` | The current set editor has Champion SP legality guardrails, but the team identified that it is not fluid enough for full customization. Later work should replace it with a complete builder for add/remove/reorder Pokemon, searchable fields, SP sliders/totals, import/export, Supabase save status, and rollback. |
+| GitHub Pages cache drift | Guarded for this release | `sw.js` cache bumped to `champions-sim-v65-editor-builder-roadmap`; `index.html`, `ui.js`, and bundled `pokemon-champion-2026.html` carry `v2.1.31-editor-builder-roadmap` after bundle rebuild. |
 | Exported-log build drift | Guarded in `e5af069` | Downloaded replay logs now include `schema_version: champions-turn-log-v2`, `exported_at`, `build_id`, and `source_url`, so future debug logs can prove which deployed build produced them. |
 | Showdown static metadata use | Partially fixed | Battle construction and move metadata can use generated Showdown static rows first, then local fallbacks. This is not the same as live DB runtime consumption. |
 | Showdown target category bridge | Fixed and guarded in `v2.1.25-target-parity-guard` | `runtime_data.js` canonicalizes Showdown target categories before engine use; `engine.js` keeps a guarded fallback for engine-only tests; move tests cover Hyper Voice spread targeting and stale opposing-target retargeting. |
-| Overview truth board | Updated in `v2.1.30-spread-legality-guard` | The live Overview tab now names the target bridge fix, DB/runtime source split, capped browser log retention, shipped QA artifact export, type audit, typed held-item boost fix, Knock Off behavior fix, Champion SP spread guard, stat/speed/export evidence, remaining Tera Blast/mechanics gap, and Alfredo sync gap. |
+| Overview truth board | Updated in `v2.1.31-editor-builder-roadmap` | The live Overview tab now names the target bridge fix, DB/runtime source split, capped browser log retention, shipped QA artifact export, type audit, typed held-item boost fix, Knock Off behavior fix, Champion SP spread guard, editor-builder UX gap, stat/speed/export evidence, remaining Tera Blast/mechanics gap, and Alfredo sync gap. |
 | Large-run QA artifact | Added in `v2.1.27-qa-artifact-export` | Saved Analyses now has a `QA Artifact` export that records build ID, source URL, retention caps, summary counts, retained compact sim-log entries, and retained replay cards. |
 | Type multiplier audit | Added in `v2.1.28-mechanics-stack-guard` | `reports/type_multiplier_audit.md` shows each shipped move user's resolved move type, 4x/2x/1x/0.5x/0.25x/0x target buckets across the shipped roster, declared defensive Tera bucket changes, and dynamic move-type rules. |
 | Typed held-item damage boosts | Fixed in `v2.1.28-mechanics-stack-guard` | `engine.js` now applies legal typed held-item boosts such as Charcoal, Mystic Water, Soft Sand, Black Glasses, Spell Tag, Fairy Feather, and Never-Melt Ice as Showdown-style base-power modifiers. `showdown_damage_oracle_tests.js` covers Charcoal + Blaze + sun + STAB + super-effective Fire damage. |
@@ -232,18 +234,21 @@ Use these statements in team updates and PR notes:
 - Added for `v2.1.28`: turn-log snapshots expose stat boosts, effective-speed details, and structured `damage_events` so SP/nature/stage/item/ability/weather/Tailwind/Trick Room/tie-break and damage-modifier effects can be audited from exported logs.
 - Fixed for `v2.1.29`: Knock Off now handles removable held-item boost/removal, legal no-item targets, corresponding Mega Stone protection before Mega activation, Mega metadata rows, Sticky Hold blocking, and live-log damage-event evidence.
 - Fixed for `v2.1.30`: bundled Champion spreads are legal SP values, declared Champion teams with SV-shaped spreads are hard-invalid, stale DB spread payloads cannot replace bundled teams, and set-editor/Supabase saves are blocked before illegal spreads persist.
+- Tracked for later: current edit-team UI is guarded but not fluid; full Champion team-builder UX still needs a separate build.
 - Completed: Supabase cleanup migration retired the stale v1 DB teams.
 - Known limitation: browser replay/log retention is intentionally capped; QA Artifact exports retained evidence and caps, but it still does not preserve every raw battle log from huge runs.
 - Not fixed yet: live DB `showdown_entities` as the battle runtime source.
+- Not fixed yet: fully fluid, fully customizable Champion team-builder UI.
 - Not fixed yet: Tera Blast dynamic typing, full move/damage/regional-form parity audit, and remaining grouped battle mechanics.
 - Not ready for broad accuracy claims: sim still needs grouped mechanics parity work and Showdown/Champions oracle gates.
 
 ## Current Next Path
 
-1. Export one fresh single-run log, one fresh Run All log, and one `QA Artifact` from the public URL after `v2.1.30-spread-legality-guard`; verify build/source metadata, stable turn-log fields, legal Champion SP team data, `speed_order_details`, `stat_boosts`, `damage_events`, `knock_off_boost` evidence when Knock Off appears, no team-load failure, no invalid `(no valid target)` lines, and retained-evidence summary counts.
+1. Export one fresh single-run log, one fresh Run All log, and one `QA Artifact` from the public URL after `v2.1.31-editor-builder-roadmap`; verify build/source metadata, stable turn-log fields, legal Champion SP team data, `speed_order_details`, `stat_boosts`, `damage_events`, `knock_off_boost` evidence when Knock Off appears, no team-load failure, no invalid `(no valid target)` lines, and retained-evidence summary counts.
 2. Mirror/update issue notes in the Y fork for Alfredo #241, #240, and #231 so both repos show the same truth.
 3. Promote `Tera Blast` dynamic typing because the type multiplier audit keeps it visible as the next concrete move gap after Knock Off.
 4. Continue converting high-usage baseline moves into verified mechanics coverage, grouping them by damage modifiers, item interactions, stat changes, targeting/redirection, protection, switching, and status.
 5. Continue the grouped move/damage/mechanics parity track against Showdown first, with Champions overrides only when explicitly sourced.
-6. Decide whether partners need a full raw battle archive stream beyond the retained-evidence QA artifact.
-7. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.
+6. Rebuild the edit-team surface into a full Champion team builder after the current sim-truth gates.
+7. Decide whether partners need a full raw battle archive stream beyond the retained-evidence QA artifact.
+8. Prepare a reviewed upstream PR to Alfredo after live Y verification remains clean.

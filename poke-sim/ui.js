@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.30-spread-legality-guard';
+    return txt || 'v2.1.31-editor-builder-roadmap';
   } catch (e) {
-    return 'v2.1.30-spread-legality-guard';
+    return 'v2.1.31-editor-builder-roadmap';
   }
 }
 
@@ -6030,7 +6030,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.30 Spread Legality Guard carries the v2.1.29 Knock Off guard and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, speed-stack evidence, Knock Off item-state tests, and strict validation are the local release checks for this build.'
+      detail: 'v2.1.31 Editor Builder Roadmap carries the v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, speed-stack evidence, Knock Off item-state tests, and strict validation are the local release checks for this build.'
     },
     {
       status: 'validated',
@@ -6087,7 +6087,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Current Y fork changes are not pushed upstream to Alfredo yet',
-      detail: 'TheYfactora12 main carries v2.1.30 Spread Legality Guard plus v2.1.29 Knock Off guard, v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
+      detail: 'TheYfactora12 main carries v2.1.31 Editor Builder Roadmap plus v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, v2.1.28 mechanics stack guard, v2.1.27 QA artifact export, v2.1.25 target parity guard, and v2.1.26 overview truth notes. Alfredo still needs a reviewed sync PR so both repos stay 1:1.'
     },
     {
       status: 'gap',
@@ -6103,12 +6103,17 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Full raw thousand-battle retention is still not automatic',
       detail: 'The sim can run thousands of battles, but normal UI retention is bounded: replay cards cap at 240, raw replay display shows the last 200 lines, stored sim logs cap at 500 total and 100 per matchup pair. The QA artifact now exports retained evidence plus caps; a later artifact-stream mode is still needed if every raw battle log must be preserved.'
+    },
+    {
+      status: 'gap',
+      title: 'Team editor is guarded but not a fluid full builder yet',
+      detail: 'The current edit-team surface now blocks illegal Champion SP saves, but it is still a clunky set editor rather than a fully customizable Champion team builder. Later UX work should support fast add/remove/reorder Pokemon, searchable species/forms/items/abilities/moves, SP sliders with live legality totals, import/export, DB save status, and rollback without breaking sim source truth.'
     }
   ],
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.30 live logs, QA artifact, and sync Alfredo',
+      title: 'Verify v2.1.31 live logs, QA artifact, and sync Alfredo',
       detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, and Knock Off boost evidence, then prepare the reviewed upstream sync to Alfredo.'
     },
     {
@@ -6133,8 +6138,13 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
+      title: 'Rebuild editor into full Champion team builder',
+      detail: 'After the current sim-truth gates, replace the clunky set editor with a fluid team builder that lets users customize complete Champion teams while preserving legality guardrails, source-truth validation, Supabase persistence, and clean rollback paths.'
+    },
+    {
+      status: 'next',
       title: 'Prepare upstream PR to Alfredo after Y fork verification',
-      detail: 'Once the live Y test page shows v2.1.30 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, SP legality guard, load-path proof, overview alignment, and issue notes.'
+      detail: 'Once the live Y test page shows v2.1.31 and fresh logs plus QA artifact pass, open a clean upstream PR with the target parity guard, ability parity slice, mechanics stack guard, Knock Off guard, SP legality guard, editor-builder roadmap note, load-path proof, overview alignment, and issue notes.'
     },
     {
       status: 'next',
