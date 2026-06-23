@@ -33,9 +33,9 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Knock Off');
   inc(ui, 'Verified');
   inc(ui, 'Move Support');
-  inc(ui, '85 verified / 35 baseline');
+  inc(ui, '120 verified / 0 baseline');
   inc(ui, 'Showdown Oracle');
-  inc(ui, '54/54 green');
+  inc(ui, '56/56 green');
   inc(ui, 'Review tab restored');
   inc(ui, 'Live team-load simulation failure fixed');
   inc(ui, 'Lethal Sitrus and Oran timing fixed');
@@ -48,6 +48,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Large-run QA artifact export added');
   inc(ui, 'Type multiplier audit added');
   inc(ui, 'Low Kick weight source added');
+  inc(ui, 'Core shipped move parity closed');
   inc(ui, 'Typed held-item damage boosts fixed');
   inc(ui, 'Stat and effective-speed evidence added to exports');
   inc(ui, 'Knock Off item behavior guarded');
@@ -63,7 +64,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.35 Low Kick Weight Parity carries v2.1.34 Live Log Proof');
+  inc(ui, 'v2.1.36 Core Move Parity carries v2.1.35 Low Kick Weight Parity');
   inc(ui, 'Low Kick weight-based damage matches Showdown');
   inc(ui, 'Showdown data/moves.ts records Low Kick basePower as 0');
   inc(ui, '100% Champion parity checklist is explicit');
@@ -72,7 +73,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Knock Off source-truth behavior is documented');
   inc(ui, 'Turn-order stack evidence is green');
   inc(ui, 'GitHub issue sweep completed');
-  inc(ui, 'Y fork and Alfredo main are synced');
+  inc(ui, 'Previous Y/Alfredo source sync completed');
 });
 
 T('3. Overview names current Supabase and Showdown DB alignment state', () => {
@@ -84,8 +85,8 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'showdown_entities DB rows are not the battle runtime source yet');
   inc(ui, 'Live logs exposed stale DB item drift');
   inc(ui, 'Pokemon data audit has unresolved reviewer risk');
-  inc(ui, 'Mechanics parity is broader than the current ability slice');
-  inc(ui, 'Move support is 85 verified / 35 baseline / 0 incomplete');
+  inc(ui, '100% parity still has non-move gates');
+  inc(ui, 'Move support is 120 verified / 0 baseline / 0 incomplete');
   inc(ui, 'Source refresh needed must be visible before trust claims');
   inc(ui, 'Full raw thousand-battle retention is still not automatic');
   inc(ui, 'Team editor is guarded but not a fluid full builder yet');
@@ -97,12 +98,12 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.35 source URL and QA artifact');
+  inc(ui, 'Verify v2.1.36 source URL and QA artifact');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
-  inc(ui, 'Group mechanics parity work by battle system');
-  inc(ui, '35 remaining baseline moves');
+  inc(ui, 'Prove post-move mechanics by battle system');
+  inc(ui, 'With the shipped move audit at 120 verified / 0 baseline / 0 incomplete');
   inc(ui, 'Rebuild editor into full Champion team builder');
   inc(ui, 'Keep Alfredo and Y fork synced through protected PRs');
   inc(ui, 'Surface source drift as update needed in Overview');

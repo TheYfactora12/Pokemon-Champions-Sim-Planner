@@ -64,7 +64,8 @@
 // v67-log-target-guard [2026-06-22] - No-valid-target log guard and Overview sync status.
 // v68-live-log-proof [2026-06-22] - Overview updated with v2.1.33 live log proof.
 // v69-low-kick-weight-parity [2026-06-23] - Showdown species weights and Low Kick variable base-power parity.
-const CACHE_NAME = 'champions-sim-v69-low-kick-weight-parity';
+// v70-core-move-parity [2026-06-23] - Remaining shipped move parity, secondary effects, accuracy, and special-case damage coverage.
+const CACHE_NAME = 'champions-sim-v70-core-move-parity';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

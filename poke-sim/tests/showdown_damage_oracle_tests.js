@@ -64,12 +64,13 @@ function calcMon(name, overrides) {
   return new calc.Pokemon(gen, name, Object.assign({ level: 50 }, overrides || {}));
 }
 
-function simRange(attacker, target, move, field) {
+function simRange(attacker, target, move, field, opts) {
   attacker.side = field.playerSide;
   target.side = field.oppSide;
   field.playerSide.activeMons = [attacker];
   field.oppSide.activeMons = [target];
   field._ctx.forceNoCrit = true;
+  if (opts && opts.spread) field._ctx.isSpread = true;
   return [
     attacker.calcDamage(move, target, field, null, function() { return 0; }),
     attacker.calcDamage(move, target, field, null, function() { return 1; })
@@ -1014,6 +1015,93 @@ T('54. Low Kick mid-weight base power matches Showdown exactly', () => {
   );
   eq(simMon('Froslass').weightkg, 26.6, 'Froslass Showdown weight');
   eqRange(sim, oracle, 'low kick mid-weight target');
+});
+
+T('55. former baseline direct and spread damage ranges match Showdown', () => {
+  const cases = [
+    ['Aura Sphere', 'Lucario', { nature: 'Modest', evs: { spa: 252 } }, 'Tyranitar', {}, {}],
+    ['Blizzard', 'Vanilluxe', { nature: 'Modest', evs: { spa: 252 } }, 'Garchomp', {}, { spread: true }],
+    ['Crunch', 'Tyranitar', { nature: 'Adamant', evs: { atk: 252 } }, 'Cresselia', {}, {}],
+    ['Dazzling Gleam', 'Gardevoir', { nature: 'Modest', evs: { spa: 252 } }, 'Garchomp', {}, { spread: true }],
+    ['Dragon Pulse', 'Dragalge', { nature: 'Modest', evs: { spa: 252 } }, 'Pelipper', {}, {}],
+    ['Earth Power', 'Landorus', { nature: 'Modest', evs: { spa: 252 } }, 'Incineroar', {}, {}],
+    ['Energy Ball', 'Venusaur', { nature: 'Modest', evs: { spa: 252 } }, 'Pelipper', {}, {}],
+    ['Fire Punch', 'Dragonite', { nature: 'Adamant', evs: { atk: 252 } }, 'Kingambit', {}, {}],
+    ['Flamethrower', 'Charizard', { nature: 'Modest', evs: { spa: 252 } }, 'Amoonguss', {}, {}],
+    ['Flash Cannon', 'Archaludon', { nature: 'Modest', evs: { spa: 252 } }, 'Flutter Mane', {}, {}],
+    ['Focus Blast', 'Gengar', { nature: 'Modest', evs: { spa: 252 } }, 'Tyranitar', {}, {}],
+    ['Gunk Shot', 'Sneasler', { nature: 'Adamant', evs: { atk: 252 } }, 'Flutter Mane', {}, {}],
+    ['Heat Wave', 'Charizard', { nature: 'Modest', evs: { spa: 252 } }, 'Amoonguss', {}, { spread: true }],
+    ['Hurricane', 'Pelipper', { nature: 'Modest', evs: { spa: 252 } }, 'Amoonguss', {}, {}],
+    ['Hydro Pump', 'Rotom-Wash', { nature: 'Modest', evs: { spa: 252 } }, 'Incineroar', {}, {}],
+    ['Ice Beam', 'Porygon2', { nature: 'Modest', evs: { spa: 252 } }, 'Garchomp', {}, {}],
+    ['Ice Punch', 'Dragonite', { nature: 'Adamant', evs: { atk: 252 } }, 'Garchomp', {}, {}],
+    ['Ice Shard', 'Weavile', { nature: 'Adamant', evs: { atk: 252 } }, 'Garchomp', {}, {}],
+    ['Kowtow Cleave', 'Kingambit', { nature: 'Adamant', evs: { atk: 252 } }, 'Gholdengo', {}, {}],
+    ['Leaf Storm', 'Serperior', { nature: 'Modest', evs: { spa: 252 } }, 'Gastrodon', {}, {}],
+    ['Light of Ruin', 'Floette-Eternal', { nature: 'Modest', evs: { spa: 252 } }, 'Garchomp', {}, {}],
+    ['Liquidation', 'Basculegion', { nature: 'Adamant', evs: { atk: 252 } }, 'Incineroar', {}, {}],
+    ['Poison Jab', 'Sneasler', { nature: 'Adamant', evs: { atk: 252 } }, 'Flutter Mane', {}, {}],
+    ['Poltergeist', 'Aegislash-Blade', { nature: 'Adamant', evs: { atk: 252 } }, 'Cresselia', { item: 'Sitrus Berry' }, {}],
+    ['Power Gem', 'Glimmora', { nature: 'Modest', evs: { spa: 252 } }, 'Charizard', {}, {}],
+    ['Psychic', 'Hatterene', { nature: 'Modest', evs: { spa: 252 } }, 'Sneasler', {}, {}],
+    ['Scald', 'Milotic', { nature: 'Modest', evs: { spa: 252 } }, 'Incineroar', {}, {}],
+    ['Scorching Sands', 'Houndoom', { nature: 'Modest', evs: { spa: 252 } }, 'Kingambit', {}, {}],
+    ['Sludge Wave', 'Gengar', { nature: 'Modest', evs: { spa: 252 } }, 'Flutter Mane', {}, { spread: true }],
+    ['Stomping Tantrum', 'Incineroar', { nature: 'Adamant', evs: { atk: 252 } }, 'Kingambit', {}, {}],
+    ['Throat Chop', 'Incineroar', { nature: 'Adamant', evs: { atk: 252 } }, 'Gholdengo', {}, {}],
+    ['Thunder', 'Raichu', { nature: 'Modest', evs: { spa: 252 } }, 'Pelipper', {}, {}]
+  ];
+  for (const row of cases) {
+    const [move, attackerName, attackerOpts, targetName, targetOpts, opts] = row;
+    const sim = simRange(
+      simMon(attackerName, Object.assign({ moves: [move] }, attackerOpts)),
+      simMon(targetName, targetOpts),
+      move,
+      new Field({ format: 'doubles' }),
+      opts
+    );
+    const oracle = oracleRange(
+      calcMon(attackerName, attackerOpts),
+      calcMon(targetName, targetOpts),
+      move,
+      new calc.Field({ gameType: 'Doubles' })
+    );
+    eqRange(sim, oracle, move);
+  }
+});
+
+T('56. baseline special-case damage rules match Showdown', () => {
+  eqRange(
+    simRange(
+      simMon('Incineroar', { nature: 'Adamant', moves: ['Darkest Lariat'], evs: { atk: 252 } }),
+      Object.assign(simMon('Snorlax'), { statBoosts: { atk: 0, def: 2, spa: 0, spd: 0, spe: 0, acc: 0, eva: 0 } }),
+      'Darkest Lariat',
+      new Field({ format: 'doubles' })
+    ),
+    oracleRange(
+      calcMon('Incineroar', { nature: 'Adamant', evs: { atk: 252 } }),
+      calcMon('Snorlax', { boosts: { def: 2 } }),
+      'Darkest Lariat',
+      new calc.Field({ gameType: 'Doubles' })
+    ),
+    'Darkest Lariat ignores target Defense boosts'
+  );
+  eqRange(
+    simRange(
+      simMon('Mandibuzz', { nature: 'Bold', moves: ['Foul Play'], evs: { atk: 0 } }),
+      Object.assign(simMon('Dragonite', { nature: 'Adamant', evs: { atk: 252 } }), { statBoosts: { atk: 2, def: 0, spa: 0, spd: 0, spe: 0, acc: 0, eva: 0 } }),
+      'Foul Play',
+      new Field({ format: 'doubles' })
+    ),
+    oracleRange(
+      calcMon('Mandibuzz', { nature: 'Bold', evs: { atk: 0 } }),
+      calcMon('Dragonite', { nature: 'Adamant', evs: { atk: 252 }, boosts: { atk: 2 } }),
+      'Foul Play',
+      new calc.Field({ gameType: 'Doubles' })
+    ),
+    'Foul Play uses target Attack boosts'
+  );
 });
 
 console.log('\nshowdown damage oracle:', pass + ' pass, ' + fail + ' fail\n');

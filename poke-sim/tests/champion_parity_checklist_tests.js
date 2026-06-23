@@ -20,10 +20,10 @@ T('1. checklist defines practical 100 percent gate and current status', () => {
   const report = fs.readFileSync(reportPath, 'utf8');
   inc(report, '# Champion Parity 100 Checklist');
   inc(report, 'release gate, not a claim');
-  inc(report, 'v2.1.35-low-kick-weight-parity');
-  inc(report, '54/54');
-  inc(report, '85 verified');
-  inc(report, '35 baseline');
+  inc(report, 'v2.1.36-core-move-parity');
+  inc(report, '56/56');
+  inc(report, '120 verified');
+  inc(report, '0 baseline');
   inc(report, '0 incomplete');
 });
 

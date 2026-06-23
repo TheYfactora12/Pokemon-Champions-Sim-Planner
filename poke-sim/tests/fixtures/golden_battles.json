@@ -28,7 +28,7 @@
       ],
       "format": "doubles",
       "description": "Player (speed) vs Sand Bulky Offense — seed 2024",
-      "expected_trace_hash": "986c58992ab88acfa0e3fbf775e7fce7b1ff805a3814060c8b5192645608c363",
+      "expected_trace_hash": "5e6a524bfdbba997225996ee2b437aca00170f5483cb6cc34a78dfd11ed2e11b",
       "expected_winner": "loss"
     },
     {

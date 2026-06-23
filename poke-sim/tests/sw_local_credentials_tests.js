@@ -40,7 +40,7 @@ T('3. missing local-credentials.js returns empty JavaScript instead of cached ap
 });
 
 T('4. service worker cache is bumped for stale app-shell release fix', () => {
-  truthy(sw.includes('champions-sim-v69-low-kick-weight-parity'), 'CACHE_NAME should be v69 Low Kick Weight Parity');
+  truthy(sw.includes('champions-sim-v70-core-move-parity'), 'CACHE_NAME should be v70 Core Move Parity');
   truthy(sw.includes('./generated/pokemon_showdown_species_weights.js'), 'weight companion file should be pre-cached');
 });
 

@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.35-low-kick-weight-parity';
+    return txt || 'v2.1.36-core-move-parity';
   } catch (e) {
-    return 'v2.1.35-low-kick-weight-parity';
+    return 'v2.1.36-core-move-parity';
   }
 }
 
@@ -5889,8 +5889,8 @@ var CS_OVERVIEW_DATA = {
     { label: 'Showdown DB', value: 'Checking...' },
     { label: 'Team Format', value: 'Champion/SP focus' },
     { label: 'Turn Logs', value: 'v2.1.33 clean' },
-    { label: 'Move Support', value: '85 verified / 35 baseline' },
-    { label: 'Showdown Oracle', value: '54/54 green' },
+    { label: 'Move Support', value: '120 verified / 0 baseline' },
+    { label: 'Showdown Oracle', value: '56/56 green' },
     { label: 'Target Guard', value: 'Canonical bridge' },
     { label: 'QA Log Retention', value: 'Capped + artifact' },
     { label: 'Ability Inventory', value: '80/80 modeled' },
@@ -5961,6 +5961,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Low Kick weight source added',
       detail: 'v2.1.35 adds generated/pokemon_showdown_species_weights.js from Pokemon Showdown data/pokedex.ts so variable base-power moves can use target species weight without hard-coding battle data in the engine.'
+    },
+    {
+      status: 'done',
+      title: 'Core shipped move parity closed',
+      detail: 'v2.1.36 promotes the remaining shipped baseline moves to verified coverage: weather and true-accuracy rules, spread damage ranges, Dual Wingbeat two-hit behavior, Poltergeist no-item failure, Foul Play target-Attack damage, Darkest Lariat defense-stage bypass, Stomping Tantrum prior-fail boost, Leaf Storm self-drop, Light of Ruin recoil, Throat Chop sound lock, Hurricane confusion, and common damaging secondary effects now have local source-truth tests.'
     },
     {
       status: 'done',
@@ -6042,7 +6047,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.35 Low Kick Weight Parity carries v2.1.34 Live Log Proof, v2.1.33 Log Target Guard, v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, type multiplier audit, speed-stack evidence, Knock Off item-state tests, no-valid-target validation, and strict validation are the local release checks for this build.'
+      detail: 'v2.1.36 Core Move Parity carries v2.1.35 Low Kick Weight Parity, v2.1.34 Live Log Proof, v2.1.33 Log Target Guard, v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, move-support registry, type multiplier audit, speed-stack evidence, Knock Off item-state tests, no-valid-target validation, and strict validation are the local release checks for this build.'
     },
     {
       status: 'validated',
@@ -6052,12 +6057,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Damage stack oracle is green',
-      detail: 'showdown_damage_oracle_tests.js now reports 54/54 green and covers Low Kick target-weight base power, Tera Blast before/after Tera, active Tera type, physical/special category selection from boosted Attack vs Special Attack, and DB-style tera_type hydration, alongside terrain, weather, ability, screen, Tera STAB, immunity, item, and spread-sensitive damage cases.'
+      detail: 'showdown_damage_oracle_tests.js now reports 56/56 green and covers Low Kick target-weight base power, Tera Blast before/after Tera, active Tera type, physical/special category selection from boosted Attack vs Special Attack, DB-style tera_type hydration, former baseline direct/spread damage ranges, Foul Play target-Attack damage, and Darkest Lariat defense-stage bypass, alongside terrain, weather, ability, screen, Tera STAB, immunity, item, and spread-sensitive damage cases.'
     },
     {
       status: 'validated',
       title: '100% Champion parity checklist is explicit',
-      detail: 'reports/champion_parity_100_checklist.md defines the practical 100% gate: zero incomplete shipped moves, high-impact baseline moves verified, legal Champion teams, DB rows unable to override clean bundled data, browser single-run/Run All/QA artifact proof, current source versions, and every known gap labeled before accuracy claims.'
+      detail: 'reports/champion_parity_100_checklist.md defines the practical 100% gate: 120 shipped moves verified with zero baseline/incomplete rows, legal Champion teams, DB rows unable to override clean bundled data, browser single-run/Run All/QA artifact proof, current source versions, and every known gap labeled before accuracy claims.'
     },
     {
       status: 'validated',
@@ -6101,8 +6106,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Y fork and Alfredo main are synced',
-      detail: 'Alfredo PR #245 merged the Champion parity tree after required checks passed, and TheYfactora12 main was fast-forwarded to the same merge commit so both repos are 1:1 at the current source tree.'
+      title: 'Previous Y/Alfredo source sync completed',
+      detail: 'Alfredo PR #245 merged the prior Champion parity tree after required checks passed, and TheYfactora12 main was fast-forwarded to the same merge commit. The current v2.1.36 core-move-parity slice should prove out on the Y fork first; Alfredo sync is lower priority until the browser proof gate is clean.'
     }
   ],
   gaps: [
@@ -6118,8 +6123,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
-      title: 'Mechanics parity is broader than the current ability slice',
-      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, and stale opposing-target retarget slices are covered. Move support is 85 verified / 35 baseline / 0 incomplete; remaining parity work still needs grouped checks for spread/weather accuracy, variable base-power/item-state moves, redirection, Protect, switching, secondary stat effects, status, items, and Champions overrides.'
+      title: '100% parity still has non-move gates',
+      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
     },
     {
       status: 'gap',
@@ -6140,8 +6145,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.35 source URL and QA artifact',
-      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Low Kick damage evidence when present, Tera Blast damage evidence when present, Knock Off boost evidence, and no live-target no-valid-target skips.'
+      title: 'Verify v2.1.36 source URL and QA artifact',
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
@@ -6160,8 +6165,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
-      title: 'Group mechanics parity work by battle system',
-      detail: 'Continue from exported-log evidence into the 35 remaining baseline moves, prioritizing spread/weather accuracy, variable base-power and item-state moves, secondary stat/status effects, move targeting, redirection, Protect family, switching/replacement, abilities, items, and terrain/weather.'
+      title: 'Prove post-move mechanics by battle system',
+      detail: 'With the shipped move audit at 120 verified / 0 baseline / 0 incomplete, continue from exported-log evidence into deployed-browser proof, DB approved-runtime promotion, long-run/golden trace auditing, source-drift guardrails, and battle-system slices for redirection, Protect family, switching/replacement, status, abilities, items, terrain/weather, and Champion-only overrides.'
     },
     {
       status: 'next',

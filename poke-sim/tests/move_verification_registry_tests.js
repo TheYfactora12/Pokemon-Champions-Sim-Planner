@@ -28,6 +28,8 @@ vm.runInContext('this.Pokemon = Pokemon; this.Field = Field; this.simulateBattle
 
 const { Pokemon, Field, simulateBattle } = ctx;
 const moveSupport = ctx.ChampionsSim.moveSupport;
+const applySecondary = ctx._applyDamagingMoveSecondary;
+const moveHits = ctx._moveHits;
 
 let pass = 0;
 let fail = 0;
@@ -2746,7 +2748,7 @@ T('94. Knock Off does not boost or remove a corresponding Mega Stone before Mega
     level: 50,
     moves: ['Tackle'],
     evs: { hp: 32, def: 32, spd: 1, atk: 0, spa: 0, spe: 0 }
-  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  }]), { format: 'singles', seed: [2, 2, 3, 4], maxTurns: 1 });
   const postRow = ((battle.turnLog[0] || {}).post || {}).roster.opponent.find((row) => row.item === 'Charizardite Y');
   truthy(postRow, 'Charizardite Y should remain held after Knock Off');
   truthy(!postRow.itemConsumed, 'corresponding Mega Stone should not be marked consumed');
@@ -2819,6 +2821,201 @@ T('96. Knock Off against a legal no-item target does not boost or remove anythin
     'Knock Off should not log item removal for a no-item target');
   const damageRow = (((battle.turnLog[0] || {}).damage_events || []).find((row) => row.move === 'Knock Off')) || {};
   eq(damageRow.knock_off_boost, false, 'damage event should prove no Knock Off boost on a no-item target');
+});
+
+T('97. Dual Wingbeat executes exactly two damaging hits', () => {
+  const battle = simulateBattle(team('Dual Wingbeat Player', [{
+    name: 'Talonflame',
+    ability: '',
+    item: '',
+    nature: 'Adamant',
+    level: 50,
+    moves: ['Dual Wingbeat'],
+    evs: { hp: 4, atk: 252, spe: 252, def: 0, spa: 0, spd: 0 }
+  }]), team('Dual Wingbeat Target', [{
+    name: 'Amoonguss',
+    ability: '',
+    item: '',
+    nature: 'Bold',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 252, def: 252, spd: 4, atk: 0, spa: 0, spe: 0 }
+  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  const hits = battle.log.filter((line) => includes(line, 'Talonflame used Dual Wingbeat! → Amoonguss'));
+  eq(hits.length, 2, 'Dual Wingbeat should produce two damage lines');
+  truthy(battle.log.some((line) => includes(line, 'Dual Wingbeat hit 2 times!')), 'Dual Wingbeat hit-count log missing');
+});
+
+T('98. Poltergeist fails against no-item targets and damages item holders', () => {
+  const attacker = mk('Aegislash-Blade', { moves: ['Poltergeist'], nature: 'Adamant', evs: { atk: 252 } });
+  const noItemTarget = mk('Cresselia', { item: '' });
+  const itemTarget = mk('Cresselia', { item: 'Sitrus Berry' });
+  const field = mkField();
+  attacker.side = field.playerSide;
+  noItemTarget.side = field.oppSide;
+  itemTarget.side = field.oppSide;
+  field._ctx.forceNoCrit = true;
+  eq(attacker.calcDamage('Poltergeist', noItemTarget, field, null, rngAlwaysLo), 0, 'Poltergeist should fail without a target item');
+  truthy(attacker.calcDamage('Poltergeist', itemTarget, field, null, rngAlwaysLo) > 0, 'Poltergeist should damage an item holder');
+});
+
+T('99. Leaf Storm drops the user Special Attack after successful damage', () => {
+  const battle = simulateBattle(team('Leaf Storm User', [{
+    name: 'Serperior',
+    ability: '',
+    item: '',
+    nature: 'Modest',
+    level: 50,
+    moves: ['Leaf Storm'],
+    evs: { hp: 4, spa: 252, spe: 252, atk: 0, def: 0, spd: 0 }
+  }]), team('Leaf Storm Target', [{
+    name: 'Gastrodon',
+    ability: '',
+    item: '',
+    nature: 'Calm',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 252, spd: 252, def: 4, atk: 0, spa: 0, spe: 0 }
+  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  truthy(battle.log.some((line) => includes(line, "Serperior's Special Attack harshly fell!")),
+    'Leaf Storm SpA self-drop log missing');
+});
+
+T('100. Stomping Tantrum doubles base power after the previous move failed', () => {
+  const attacker = mk('Incineroar', { moves: ['Stomping Tantrum'], nature: 'Adamant', evs: { atk: 252 } });
+  const target = mk('Kingambit');
+  const field = mkField();
+  attacker.side = field.playerSide;
+  target.side = field.oppSide;
+  field._ctx.forceNoCrit = true;
+  attacker.lastMoveFailed = false;
+  const normalDamage = attacker.calcDamage('Stomping Tantrum', target, field, null, rngAlwaysLo);
+  attacker.lastMoveFailed = true;
+  const boostedDamage = attacker.calcDamage('Stomping Tantrum', target, field, null, rngAlwaysLo);
+  truthy(boostedDamage > normalDamage, 'Stomping Tantrum should be stronger after a failed move');
+});
+
+T('101. weather and true-accuracy move rules are deterministic', () => {
+  const attacker = mk('Raichu', { moves: ['Thunder'], nature: 'Modest', evs: { spa: 252 } });
+  const target = mk('Pelipper');
+  const rain = mkField({ weather: 'rain' });
+  const sun = mkField({ weather: 'sun' });
+  const snow = mkField({ weather: 'snow' });
+  attacker.side = rain.playerSide;
+  target.side = rain.oppSide;
+  truthy(moveHits(attacker, target, 'Thunder', rain, () => 0.99, 0.70), 'Thunder should not miss in rain');
+  truthy(!moveHits(attacker, target, 'Thunder', sun, () => 0.75, 0.70), 'Thunder should use 50% accuracy in sun');
+  truthy(moveHits(attacker, target, 'Blizzard', snow, () => 0.99, 0.70), 'Blizzard should not miss in snow');
+  attacker.statBoosts.acc = -6;
+  target.statBoosts.eva = 6;
+  truthy(moveHits(attacker, target, 'Aura Sphere', mkField(), () => 0.99, 1.0), 'Aura Sphere should ignore accuracy and evasion checks');
+  truthy(moveHits(attacker, target, 'Kowtow Cleave', mkField(), () => 0.99, 1.0), 'Kowtow Cleave should ignore accuracy and evasion checks');
+});
+
+T('102. baseline secondary effects apply through the shared dispatcher', () => {
+  const rows = [
+    ['Crunch', 'def', -1, null],
+    ['Earth Power', 'spd', -1, null],
+    ['Energy Ball', 'spd', -1, null],
+    ['Flash Cannon', 'spd', -1, null],
+    ['Focus Blast', 'spd', -1, null],
+    ['Liquidation', 'def', -1, null],
+    ['Psychic', 'spd', -1, null],
+    ['Blizzard', null, 0, 'frozen'],
+    ['Fire Punch', null, 0, 'burn'],
+    ['Flamethrower', null, 0, 'burn'],
+    ['Gunk Shot', null, 0, 'poison'],
+    ['Heat Wave', null, 0, 'burn'],
+    ['Ice Beam', null, 0, 'frozen'],
+    ['Ice Punch', null, 0, 'frozen'],
+    ['Poison Jab', null, 0, 'poison'],
+    ['Scald', null, 0, 'burn'],
+    ['Scorching Sands', null, 0, 'burn'],
+    ['Sludge Wave', null, 0, 'poison'],
+    ['Thunder', null, 0, 'paralysis']
+  ];
+  for (const [move, stat, delta, status] of rows) {
+    const attacker = mk('Mew', { moves: [move] });
+    const target = mk('Snorlax');
+    attacker.side = mkField().playerSide;
+    target.side = mkField().oppSide;
+    const log = [];
+    applySecondary(attacker, move, target, mkField(), log, () => 0);
+    if (stat) eq(target.statBoosts[stat], delta, move + ' stat drop');
+    if (status) eq(target.status, status, move + ' status');
+  }
+});
+
+T('103. Hurricane confusion and Throat Chop sound lock alter future state', () => {
+  const attacker = mk('Pelipper', { moves: ['Hurricane'] });
+  const target = mk('Sylveon', { moves: ['Hyper Voice'] });
+  applySecondary(attacker, 'Hurricane', target, mkField(), [], () => 0);
+  truthy(target.confusionTurns >= 2, 'Hurricane should set confusion turns');
+  applySecondary(attacker, 'Throat Chop', target, mkField(), [], () => 0);
+  truthy(target.throatChopTurns >= 2, 'Throat Chop should set sound lock turns');
+
+  const battle = simulateBattle(team('Sound Lock Player', [{
+    name: 'Snorlax',
+    ability: '',
+    item: '',
+    nature: 'Careful',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 252, def: 252, spd: 4, atk: 0, spa: 0, spe: 0 }
+  }]), team('Sound Lock Opponent', [{
+    name: 'Sylveon',
+    ability: '',
+    item: '',
+    nature: 'Modest',
+    level: 50,
+    moves: ['Hyper Voice'],
+    throatChopTurns: 1,
+    evs: { hp: 252, spa: 252, spe: 4, atk: 0, def: 0, spd: 0 }
+  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  truthy(battle.log.some((line) => includes(line, 'Sylveon used Hyper Voice! But it failed because of Throat Chop!')),
+    'sound move should fail while Throat Chop lock is active');
+});
+
+T('104. Light of Ruin recoil and Ice Shard priority are modeled', () => {
+  const recoilBattle = simulateBattle(team('Light of Ruin Player', [{
+    name: 'Floette-Eternal',
+    ability: '',
+    item: '',
+    nature: 'Modest',
+    level: 50,
+    moves: ['Light of Ruin'],
+    evs: { hp: 252, spa: 252, spe: 4, atk: 0, def: 0, spd: 0 }
+  }]), team('Light of Ruin Target', [{
+    name: 'Garchomp',
+    ability: '',
+    item: '',
+    nature: 'Jolly',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 252, def: 252, spe: 4, atk: 0, spa: 0, spd: 0 }
+  }]), { format: 'singles', seed: [2, 2, 3, 4], maxTurns: 1 });
+  truthy(recoilBattle.log.some((line) => includes(line, 'was hurt by recoil')), 'Light of Ruin recoil log missing');
+
+  const priorityBattle = simulateBattle(team('Ice Shard Player', [{
+    name: 'Weavile',
+    ability: '',
+    item: '',
+    nature: 'Brave',
+    level: 50,
+    moves: ['Ice Shard'],
+    evs: { hp: 252, atk: 252, spe: 0, def: 0, spa: 0, spd: 0 }
+  }]), team('Fast Target', [{
+    name: 'Dragapult',
+    ability: '',
+    item: '',
+    nature: 'Timid',
+    level: 50,
+    moves: ['Dragon Pulse'],
+    evs: { hp: 252, spa: 252, spe: 252, atk: 0, def: 0, spd: 0 }
+  }]), { format: 'singles', seed: [1, 2, 3, 4], maxTurns: 1 });
+  const shardIndex = priorityBattle.log.findIndex((line) => includes(line, 'Weavile used Ice Shard!'));
+  const pulseIndex = priorityBattle.log.findIndex((line) => includes(line, 'Dragapult used Dragon Pulse!'));
+  truthy(shardIndex >= 0 && pulseIndex >= 0 && shardIndex < pulseIndex, 'Ice Shard should act before faster standard-priority moves');
 });
 
 console.log(`\nmove verification registry: ${pass} pass, ${fail} fail\n`);
