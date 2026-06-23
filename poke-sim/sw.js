@@ -63,7 +63,8 @@
 // v66-tera-blast-parity [2026-06-22] - Tera Blast dynamic type/category parity.
 // v67-log-target-guard [2026-06-22] - No-valid-target log guard and Overview sync status.
 // v68-live-log-proof [2026-06-22] - Overview updated with v2.1.33 live log proof.
-const CACHE_NAME = 'champions-sim-v68-live-log-proof';
+// v69-low-kick-weight-parity [2026-06-23] - Showdown species weights and Low Kick variable base-power parity.
+const CACHE_NAME = 'champions-sim-v69-low-kick-weight-parity';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
@@ -75,6 +76,7 @@ const APP_ASSETS = [
   './data.js',
   './logger.js',
   './generated/pokemon_showdown_legal_data.js',
+  './generated/pokemon_showdown_species_weights.js',
   './runtime_data.js',
   './engine.js',
   './move_legality.js',

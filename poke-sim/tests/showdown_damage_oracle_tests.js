@@ -17,6 +17,7 @@ function load(file) {
 
 load('data.js');
 load('generated/pokemon_showdown_legal_data.js');
+load('generated/pokemon_showdown_species_weights.js');
 load('runtime_data.js');
 load('engine.js');
 vm.runInContext('this.Pokemon = Pokemon; this.Field = Field;', ctx);
@@ -979,6 +980,40 @@ T('52. Active Tera Blast ignores Pixilate Normal-conversion boost like Showdown'
     new calc.Field({ gameType: 'Doubles' })
   );
   eqRange(sim, oracle, 'active tera blast bypasses pixilate');
+});
+
+T('53. Low Kick heavy-target base power matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Infernape', { nature: 'Adamant', moves: ['Low Kick'], evs: { atk: 252 } }),
+    simMon('Tyranitar'),
+    'Low Kick',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Infernape', { nature: 'Adamant', moves: ['Low Kick'], evs: { atk: 252 } }),
+    calcMon('Tyranitar'),
+    'Low Kick',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eq(simMon('Tyranitar').weightkg, 202, 'Tyranitar Showdown weight');
+  eqRange(sim, oracle, 'low kick heavy target');
+});
+
+T('54. Low Kick mid-weight base power matches Showdown exactly', () => {
+  const sim = simRange(
+    simMon('Lopunny-Mega', { nature: 'Adamant', moves: ['Low Kick'], evs: { atk: 252 }, ability: 'Scrappy' }),
+    simMon('Froslass'),
+    'Low Kick',
+    new Field({ format: 'doubles' })
+  );
+  const oracle = oracleRange(
+    calcMon('Lopunny-Mega', { nature: 'Adamant', moves: ['Low Kick'], evs: { atk: 252 }, ability: 'Scrappy' }),
+    calcMon('Froslass'),
+    'Low Kick',
+    new calc.Field({ gameType: 'Doubles' })
+  );
+  eq(simMon('Froslass').weightkg, 26.6, 'Froslass Showdown weight');
+  eqRange(sim, oracle, 'low kick mid-weight target');
 });
 
 console.log('\nshowdown damage oracle:', pass + ' pass, ' + fail + ' fail\n');

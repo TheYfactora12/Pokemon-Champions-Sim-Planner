@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.34-live-log-proof';
+    return txt || 'v2.1.35-low-kick-weight-parity';
   } catch (e) {
-    return 'v2.1.34-live-log-proof';
+    return 'v2.1.35-low-kick-weight-parity';
   }
 }
 
@@ -5882,13 +5882,15 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-06-22',
+  updated: '2026-06-23',
   metrics: [
     { label: 'Sim Truth Gate', value: 'Mechanics first' },
     { label: 'Live Supabase', value: 'Teams + analyses' },
     { label: 'Showdown DB', value: 'Checking...' },
     { label: 'Team Format', value: 'Champion/SP focus' },
     { label: 'Turn Logs', value: 'v2.1.33 clean' },
+    { label: 'Move Support', value: '85 verified / 35 baseline' },
+    { label: 'Showdown Oracle', value: '54/54 green' },
     { label: 'Target Guard', value: 'Canonical bridge' },
     { label: 'QA Log Retention', value: 'Capped + artifact' },
     { label: 'Ability Inventory', value: '80/80 modeled' },
@@ -5954,6 +5956,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Type multiplier audit added',
       detail: 'v2.1.28 adds reports/type_multiplier_audit.md so reviewers can inspect each shipped move user, resolved move type, 4x/2x/1x/0.5x/0.25x/0x roster buckets, declared defensive Tera buckets, and dynamic move-type rules.'
+    },
+    {
+      status: 'done',
+      title: 'Low Kick weight source added',
+      detail: 'v2.1.35 adds generated/pokemon_showdown_species_weights.js from Pokemon Showdown data/pokedex.ts so variable base-power moves can use target species weight without hard-coding battle data in the engine.'
     },
     {
       status: 'done',
@@ -6035,12 +6042,22 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.34 Live Log Proof carries v2.1.33 Log Target Guard, v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, type multiplier audit, speed-stack evidence, Knock Off item-state tests, no-valid-target validation, and strict validation are the local release checks for this build.'
+      detail: 'v2.1.35 Low Kick Weight Parity carries v2.1.34 Live Log Proof, v2.1.33 Log Target Guard, v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, type multiplier audit, speed-stack evidence, Knock Off item-state tests, no-valid-target validation, and strict validation are the local release checks for this build.'
+    },
+    {
+      status: 'validated',
+      title: 'Low Kick weight-based damage matches Showdown',
+      detail: 'Showdown data/moves.ts records Low Kick basePower as 0 because it is target-weight based. The engine now reads target species weight from the generated Showdown pokedex weight companion file, selects the official weight tier, and has oracle cases for Tyranitar and Froslass so Low Kick no longer becomes zero damage.'
     },
     {
       status: 'validated',
       title: 'Damage stack oracle is green',
-      detail: 'showdown_damage_oracle_tests.js now covers Tera Blast before/after Tera, active Tera type, physical/special category selection from boosted Attack vs Special Attack, and DB-style tera_type hydration, alongside terrain, weather, ability, screen, Tera STAB, immunity, item, and spread-sensitive damage cases.'
+      detail: 'showdown_damage_oracle_tests.js now reports 54/54 green and covers Low Kick target-weight base power, Tera Blast before/after Tera, active Tera type, physical/special category selection from boosted Attack vs Special Attack, and DB-style tera_type hydration, alongside terrain, weather, ability, screen, Tera STAB, immunity, item, and spread-sensitive damage cases.'
+    },
+    {
+      status: 'validated',
+      title: '100% Champion parity checklist is explicit',
+      detail: 'reports/champion_parity_100_checklist.md defines the practical 100% gate: zero incomplete shipped moves, high-impact baseline moves verified, legal Champion teams, DB rows unable to override clean bundled data, browser single-run/Run All/QA artifact proof, current source versions, and every known gap labeled before accuracy claims.'
     },
     {
       status: 'validated',
@@ -6102,7 +6119,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Mechanics parity is broader than the current ability slice',
-      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, and stale opposing-target retarget slices are covered. Remaining parity work still needs grouped checks for redirection, Protect, switching, secondary stat effects, status, items, and Champions overrides.'
+      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, and stale opposing-target retarget slices are covered. Move support is 85 verified / 35 baseline / 0 incomplete; remaining parity work still needs grouped checks for spread/weather accuracy, variable base-power/item-state moves, redirection, Protect, switching, secondary stat effects, status, items, and Champions overrides.'
     },
     {
       status: 'gap',
@@ -6123,8 +6140,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.34 source URL and QA artifact',
-      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Tera Blast damage evidence when present, Knock Off boost evidence, and no live-target no-valid-target skips.'
+      title: 'Verify v2.1.35 source URL and QA artifact',
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Low Kick damage evidence when present, Tera Blast damage evidence when present, Knock Off boost evidence, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
@@ -6144,7 +6161,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Group mechanics parity work by battle system',
-      detail: 'Continue from exported-log evidence into secondary stat effects, move targeting, redirection, Protect family, switching/replacement, status, abilities, items, and terrain/weather.'
+      detail: 'Continue from exported-log evidence into the 35 remaining baseline moves, prioritizing spread/weather accuracy, variable base-power and item-state moves, secondary stat/status effects, move targeting, redirection, Protect family, switching/replacement, abilities, items, and terrain/weather.'
     },
     {
       status: 'next',
@@ -6196,6 +6213,7 @@ var CS_OVERVIEW_DATA = {
   ],
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
+    { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },
     { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },
     { label: 'Type Multiplier Audit', href: 'reports/type_multiplier_audit.md' },
     { label: 'Simulation First', href: '../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md' },

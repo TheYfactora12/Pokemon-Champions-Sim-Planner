@@ -87,6 +87,7 @@ function fixtureRows() {
           baseSpecies: 'Charizard',
           stats: { hp: 78, atk: 84, def: 78, spa: 109, spd: 85, spe: 100 },
           types: ['Fire', 'Flying'],
+          weightkg: 90.5,
           moves: { bravebird: '9M' }
         }
       }
@@ -198,6 +199,7 @@ T('3. generator emits approved runtime data and excludes unapproved rows', () =>
   eq(runtime.moves.bravebird.flags, 'contact|protect', 'flags should be deterministic');
   eq(runtime.moves.bravebird.recoil[0], 33, 'recoil numerator');
   truthy(runtime.species.Charizard, 'Charizard species missing');
+  eq(runtime.species.Charizard.weightkg, 90.5, 'Charizard weight should survive approved generation');
   eq(runtime.meta.appliedOverrideCount, 1, 'applied override count');
   eq(runtime.meta.activeOverrideCount, 2, 'active override count includes missing-row warning');
   truthy(runtime.meta.warnings.some((line) => line.includes('missingmove')), 'missing override warning absent');

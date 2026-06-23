@@ -35,6 +35,78 @@
       tests: ['tests/move_verification_registry_tests.js'],
       sources: ['Bulbapedia: Rock Tomb move page']
     },
+    'Dragon Claw': {
+      supportLevel: 'verified',
+      summary: 'Standard physical Dragon damage matches the Showdown damage oracle, including STAB and burn/crit stat-stage interactions.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/t9j8_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Earthquake': {
+      supportLevel: 'verified',
+      summary: 'Ground damage and Ground immunities match the Showdown damage oracle, including Earth Eater and Levitate interactions.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/ability_damage_parity_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Moonblast': {
+      supportLevel: 'verified',
+      summary: 'Standard special Fairy damage matches the Showdown damage oracle, including sand special-defense and Fairy Aura modifier cases.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Thunderbolt': {
+      supportLevel: 'verified',
+      summary: 'Standard special Electric damage matches the Showdown damage oracle, including Electric Terrain and Tera STAB cases.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/runtime_data_bridge_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Shadow Ball': {
+      supportLevel: 'verified',
+      summary: 'Special Ghost damage through the damage pipeline matches the Showdown oracle, including Infiltrator screen bypass.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Sludge Bomb': {
+      supportLevel: 'verified',
+      summary: 'Special Poison damage with Sheer Force matches the Showdown damage oracle.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'High Horsepower': {
+      supportLevel: 'verified',
+      summary: 'Ground damage with Mold Breaker bypassing Levitate matches the Showdown damage oracle.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Hyper Voice': {
+      supportLevel: 'verified',
+      summary: 'Uses Showdown all-adjacent-foes target data so doubles spread targeting hits both adjacent foes.',
+      tests: ['tests/move_verification_registry_tests.js', 'tests/runtime_data_bridge_tests.js'],
+      sources: ['Pokemon Showdown data/moves.ts target field']
+    },
+    'Last Respects': {
+      supportLevel: 'verified',
+      summary: 'Scales base power from the attacker side fainted count only.',
+      tests: ['tests/move_verification_registry_tests.js'],
+      sources: ['Bulbapedia: Last Respects move page']
+    },
+    'Icy Wind': {
+      supportLevel: 'verified',
+      summary: 'Deals spread damage and lowers Speed on all hit foes through the secondary-effect path.',
+      tests: ['tests/t155_speed_control_secondary_tests.js'],
+      sources: ['Bulbapedia: Icy Wind move page']
+    },
+    'Low Kick': {
+      supportLevel: 'verified',
+      summary: 'Uses target Showdown species weight to select the official weight-based base-power tier.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown data/moves.ts lowkick', 'Pokemon Showdown data/pokedex.ts weightkg']
+    },
+    'Tera Blast': {
+      supportLevel: 'verified',
+      summary: 'Inactive Tera Blast stays Normal/special; active Tera Blast uses active Tera type, chooses category from boosted attacking stats, and bypasses Normal-conversion abilities.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
     'Light Screen': {
       supportLevel: 'verified',
       summary: 'Reduces incoming special damage for the side while active.',

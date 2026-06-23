@@ -28,11 +28,13 @@ vm.createContext(ctx);
 
 loadVm('data.js', ctx);
 loadVm('generated/pokemon_showdown_legal_data.js', ctx);
+loadVm('generated/pokemon_showdown_species_weights.js', ctx);
 loadVm('move_support.js', ctx);
 
 const teams = vm.runInContext('TEAMS', ctx);
 const localTypes = vm.runInContext('POKEMON_TYPES_DB', ctx);
 const showdownData = ctx.ChampionsSim.pokemonDataAudit || require(path.join(ROOT, 'generated', 'pokemon_showdown_legal_data.js'));
+const weightData = ctx.ChampionsSim.pokemonShowdownWeights || {};
 const moveSupport = ctx.ChampionsSim.moveSupport;
 
 const TYPE_CHART = {
@@ -63,6 +65,7 @@ const NORMAL_CONVERSION = {
   Pixilate: 'Fairy',
   Refrigerate: 'Ice'
 };
+const VARIABLE_BASE_POWER_DAMAGE = new Set(['Low Kick', 'Grass Knot']);
 
 function clean(value) {
   return String(value == null ? '' : value).trim();
@@ -101,22 +104,34 @@ function resolveMoveSupport(move) {
   return moveSupport.getLocalMoveSupport(move);
 }
 
+function isVariableBasePowerDamage(move, category, bp) {
+  return category !== 'status' && bp <= 0 && VARIABLE_BASE_POWER_DAMAGE.has(move);
+}
+
+function formatBasePowerForReport(move, category, bp) {
+  if (isVariableBasePowerDamage(move, category, bp)) return 'variable(weight; showdown row 0)';
+  return bp ?? '';
+}
+
 function moveTypeVariants(member, move, support) {
   const effective = support && support.effective ? support.effective : {};
   const category = clean(effective.category).toLowerCase();
   const bp = Number(effective.basePower || 0);
   let baseType = clean(effective.type);
   if (!baseType) return [];
-  if (category === 'status' || bp <= 0) {
+  if (category === 'status' || (bp <= 0 && !isVariableBasePowerDamage(move, category, bp))) {
     return [{type: baseType, condition: 'status/no direct damage', damaging: false}];
   }
   const abilityType = NORMAL_CONVERSION[member.ability] && baseType === 'Normal'
     ? NORMAL_CONVERSION[member.ability]
     : null;
   const defaultType = abilityType || baseType;
-  const defaultCondition = abilityType
+  let defaultCondition = abilityType
     ? member.ability + ' converts Normal damage to ' + abilityType
     : 'standard';
+  if (isVariableBasePowerDamage(move, category, bp)) {
+    defaultCondition += '; base power selected from target Showdown weight in engine';
+  }
   const variants = [{type: defaultType, condition: defaultCondition, damaging: true}];
 
   if (move === 'Weather Ball') {
@@ -287,6 +302,8 @@ const targets = buildTargetRoster();
 const attackRows = buildAttackRows();
 const source = showdownData.source || 'unavailable';
 const sourceVersion = showdownData.sourceCommitOrVersion || 'unavailable';
+const weightSource = weightData.source || 'unavailable';
+const weightSourceVersion = weightData.sourceCommitOrVersion || 'unavailable';
 
 const lines = [];
 lines.push('# Type Multiplier Audit');
@@ -294,6 +311,8 @@ lines.push('');
 lines.push('- Generated at: ' + new Date().toISOString());
 lines.push('- Source: ' + source);
 lines.push('- Source version: ' + sourceVersion);
+lines.push('- Species weight source: ' + weightSource);
+lines.push('- Species weight source version: ' + weightSourceVersion);
 lines.push('- Shipped move-user rows audited: ' + attackRows.length);
 lines.push('- Unique target profiles audited: ' + targets.length);
 lines.push('');
@@ -319,6 +338,7 @@ lines.push('| Weather Ball | Field weather changes the move type. | Normal with 
 lines.push('| Terrain Pulse | Grounded user plus active terrain changes the move type. | Normal with no terrain; Terrain Pulse in electric terrain = Electric; grassy = Grass; misty = Fairy; psychic = Psychic. | This rule is documented even when no current shipped team uses Terrain Pulse, so future roster changes do not hide the mechanic. |');
 lines.push('| Normal-type conversion abilities | Aerilate, Dragonize, Pixilate, or Refrigerate on a Normal damaging move changes the move type before type-effectiveness. | Aerilate converts Normal damage to Flying; Dragonize converts Normal damage to Dragon; Pixilate converts Normal damage to Fairy; Refrigerate converts Normal damage to Ice. | Rows include the converted type and still leave final BP modifiers to the damage engine tests. |');
 lines.push('| Tera Blast | Active Tera changes the move type; no active Tera keeps Normal. | Before Tera/no active Tera = Normal; active Tera Blast uses the declared Tera type for that team member. | Category is chosen in the damage engine from the higher boosted Attack vs Special Attack stat and is covered by the Showdown damage oracle. |');
+lines.push('| Low Kick / Grass Knot | Showdown move rows have basePower 0 because power is target-weight dependent. | Fighting or Grass type still uses normal type-effectiveness; final base power is selected from the target species weight tier in the engine. | Report rows keep these moves damaging and show `bp=variable(weight; showdown row 0)` so reviewers do not read them as status/no-damage moves. |');
 lines.push('');
 lines.push('## High-Risk Watchlist');
 lines.push('');
@@ -348,7 +368,7 @@ for (const row of attackRows) {
   const metadata = [
     'type=' + (effective.type || ''),
     'category=' + (effective.category || ''),
-    'bp=' + (effective.basePower ?? ''),
+    'bp=' + formatBasePowerForReport(row.move, clean(effective.category).toLowerCase(), Number(effective.basePower || 0)),
     'target=' + (effective.target || ''),
     'tera=' + (row.tera || ''),
     'source=' + (effective.source || '')

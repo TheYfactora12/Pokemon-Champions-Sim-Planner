@@ -415,6 +415,45 @@ function _showdownSpeciesBase(species) {
   return base;
 }
 
+function _showdownSpeciesWeightKg(species, seen) {
+  var id = _moveId(species);
+  seen = seen || new Set();
+  if (!id || seen.has(id)) return 0;
+  seen.add(id);
+  try {
+    var root = (typeof globalThis !== 'undefined') ? globalThis
+      : ((typeof window !== 'undefined') ? window : null);
+    var weights = root && root.ChampionsSim && root.ChampionsSim.pokemonShowdownWeights;
+    var weightRows = weights && weights.species ? weights.species : null;
+    if (weightRows) {
+      var direct = Number(weightRows[id]);
+      if (Number.isFinite(direct) && direct > 0) return direct;
+    }
+  } catch (_e) {}
+  var row = _showdownSpeciesRow(species);
+  var rowWeight = Number(row && row.weightkg);
+  if (Number.isFinite(rowWeight) && rowWeight > 0) return rowWeight;
+  if (row && row.baseSpecies && _moveId(row.baseSpecies) !== id) {
+    var baseWeight = _showdownSpeciesWeightKg(row.baseSpecies, seen);
+    if (Number.isFinite(baseWeight) && baseWeight > 0) return baseWeight;
+  }
+  return 0;
+}
+
+function _targetWeightBasePower(target) {
+  var weight = Number(target && target.weightkg);
+  if (!Number.isFinite(weight) || weight <= 0) {
+    weight = _showdownSpeciesWeightKg(target && target.name);
+  }
+  if (!Number.isFinite(weight) || weight <= 0) return 60;
+  if (weight < 10) return 20;
+  if (weight < 25) return 40;
+  if (weight < 50) return 60;
+  if (weight < 100) return 80;
+  if (weight < 200) return 100;
+  return 120;
+}
+
 function _moveType(move) {
   var api = _runtimeDataApi();
   if (api && typeof api.getMoveType === 'function') return api.getMoveType(move);
@@ -1673,6 +1712,8 @@ class Pokemon {
     const _aegislashShieldBase = _isAegislashStanceMon ? (_showdownSpeciesBase('Aegislash') || BASE_STATS.Aegislash || null) : null;
     const _aegislashBladeBase = _isAegislashStanceMon ? (_showdownSpeciesBase('Aegislash-Blade') || BASE_STATS['Aegislash-Blade'] || null) : null;
     const _baseStats = _showdownBaseStats || BASE_STATS[this.name] || { hp:80,atk:80,def:80,spa:80,spd:80,spe:80, types:['Normal'] };
+    const _sourceWeightKg = Number(data.weightkg != null ? data.weightkg : _showdownSpeciesWeightKg(this.name));
+    this.weightkg = Number.isFinite(_sourceWeightKg) && _sourceWeightKg > 0 ? _sourceWeightKg : 0;
     // Use POKEMON_TYPES_DB for more accurate type coverage on imported Pokémon
     const _types = (_showdownBaseStats && Array.isArray(_showdownBaseStats.types) && _showdownBaseStats.types.length)
       ? _showdownBaseStats.types
@@ -2095,6 +2136,9 @@ class Pokemon {
         globalThis._WARNED_MOVE_BP.add(move);
         engineLogWarn('Missing move base power; defaulting to 60', { move: move });
       }
+    }
+    if (move === 'Low Kick' || move === 'Grass Knot') {
+      bp = _targetWeightBasePower(target);
     }
     const _basePowerBeforeModifiers = bp;
     // T9j.8 Dragonize BP multiplier applied after base lookup so spread / screens
