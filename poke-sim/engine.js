@@ -564,6 +564,32 @@ function _applyBasePowerMods(basePower, modifiers) {
   return Math.max(1, _pokeRound((basePower * _chain4096Mods(modifiers)) / 4096));
 }
 
+var TYPE_BOOSTING_ITEMS = {
+  'Black Belt': 'Fighting',
+  'Black Glasses': 'Dark',
+  'Charcoal': 'Fire',
+  'Dragon Fang': 'Dragon',
+  'Fairy Feather': 'Fairy',
+  'Hard Stone': 'Rock',
+  'Magnet': 'Electric',
+  'Metal Coat': 'Steel',
+  'Miracle Seed': 'Grass',
+  'Mystic Water': 'Water',
+  'Never-Melt Ice': 'Ice',
+  'Poison Barb': 'Poison',
+  'Sharp Beak': 'Flying',
+  'Silk Scarf': 'Normal',
+  'Silver Powder': 'Bug',
+  'Soft Sand': 'Ground',
+  'Spell Tag': 'Ghost',
+  'Twisted Spoon': 'Psychic'
+};
+
+function _heldItemTypeBoostMod(mon, moveType) {
+  if (!mon || !mon.item || mon.itemConsumed) return 4096;
+  return TYPE_BOOSTING_ITEMS[mon.item] === moveType ? 4915 : 4096;
+}
+
 function _applyBaseDamageMod(baseDamage, mod4096) {
   if (mod4096 === 4096) return baseDamage;
   return _pokeRound(_of32(baseDamage * mod4096) / 4096);
@@ -1946,6 +1972,7 @@ class Pokemon {
         engineLogWarn('Missing move base power; defaulting to 60', { move: move });
       }
     }
+    const _basePowerBeforeModifiers = bp;
     // T9j.8 Dragonize BP multiplier applied after base lookup so spread / screens
     // all see the boosted value.
     if (_bpMult !== 1) bp = Math.floor(bp * _bpMult);
@@ -1991,6 +2018,8 @@ class Pokemon {
       field: field
     });
     if (_abilityBpRes && _abilityBpRes.bpMod) bpMods.push(_abilityBpRes.bpMod);
+    const _itemTypeBoostMod = _heldItemTypeBoostMod(this, moveType);
+    if (_itemTypeBoostMod !== 4096) bpMods.push(_itemTypeBoostMod);
     if (this.helpingHand) bpMods.push(6144);
     if (_isGrounded(this)) {
       if (field.terrain === 'electric' && moveType === 'Electric') bpMods.push(5325);
@@ -2116,7 +2145,51 @@ class Pokemon {
     const finalMods = [screenMod, loMod, supremeOverlordMod];
     if (_attackerDamageRes && _attackerDamageRes.finalMod) finalMods.push(_attackerDamageRes.finalMod);
     if (_defenderDamageRes && _defenderDamageRes.finalMod) finalMods.push(_defenderDamageRes.finalMod);
-    return _finalizeDamage(baseDamage, roll, typeEff, applyStatusPenalty, stabMod, _chain4096Mods(finalMods));
+    const finalMod = _chain4096Mods(finalMods);
+    const finalDamage = _finalizeDamage(baseDamage, roll, typeEff, applyStatusPenalty, stabMod, finalMod);
+    if (_ctx && _ctx.captureDamageCalc) {
+      const attackerSide = this.side === (field && field.playerSide) ? 'player' : (this.side === (field && field.oppSide) ? 'opponent' : 'unknown');
+      const targetSide = target.side === (field && field.playerSide) ? 'player' : (target.side === (field && field.oppSide) ? 'opponent' : 'unknown');
+      _ctx.lastDamageCalc = {
+        attacker: this.name,
+        attacker_key: _snapshotMonStableKey(attackerSide, this),
+        target: target.name,
+        target_key: _snapshotMonStableKey(targetSide, target),
+        move: move,
+        move_type: moveType,
+        category: isPhysical ? 'physical' : 'special',
+        type_effectiveness: typeEff,
+        critical: !!_isCrit,
+        base_power_initial: Number(_basePowerBeforeModifiers || 0),
+        base_power_modified: Number(bp || 0),
+        attack_stat_key: aStatKey,
+        defense_stat_key: dStatKey,
+        attack_stat_stage: Number(aBoost || 0),
+        defense_stat_stage: Number(dBoost || 0),
+        attack_stat_stage_used: Number(aOverride || 0),
+        defense_stat_stage_used: Number(dOverride || 0),
+        attack_stat_value: Number(atk || 0),
+        defense_stat_value: Number(def || 0),
+        attacker_stat_format: this.statFormat || '',
+        defender_stat_format: target.statFormat || '',
+        attacker_item: this.item || '',
+        defender_item: target.item || '',
+        attacker_ability: this.ability || '',
+        defender_ability: target.ability || '',
+        typed_item_boost: _itemTypeBoostMod !== 4096,
+        typed_item_boost_mod: Number(_itemTypeBoostMod || 4096),
+        spread_mod: Number(spreadMod || 4096),
+        weather_mod: Number(weatherMod || 4096),
+        screen_mod: Number(screenMod || 4096),
+        stab_mod: Number(stabMod || 4096),
+        final_mod: Number(finalMod || 4096),
+        status_penalty: !!applyStatusPenalty,
+        roll: Number(roll || 0),
+        weather: _effWeather,
+        terrain: field && field.terrain || 'none'
+      };
+    }
+    return finalDamage;
   }
 
   applyItem(trigger, field) {
@@ -2218,7 +2291,16 @@ class Field {
     // T9j.2 (#26) — spread context sidecar. Set per-hit by executeMove, read by calcDamage.
     // T9j.8 (Refs #27/#30): lastWasCrit (for log/test assertion), bpMult
     // (Parental Bond 2nd hit), forceCrit/forceNoCrit (test harness overrides).
-    this._ctx = { isSpread:false, lastWasCrit:false, bpMult:1, forceCrit:false, forceNoCrit:false };
+    this._ctx = {
+      isSpread:false,
+      lastWasCrit:false,
+      bpMult:1,
+      forceCrit:false,
+      forceNoCrit:false,
+      captureDamageCalc:false,
+      lastDamageCalc:null,
+      turnDamageEvents:[]
+    };
     // T9j.7 — One Mega per team per match flags. Once set, no further Megas
     // fire for that side for the remainder of the battle.
     this.playerMegaUsed = false;
@@ -2456,6 +2538,42 @@ function _hpPctStableSnapshot(playerActive, playerBench, oppActive, oppBench) {
   return out;
 }
 
+function _statBoostSnapshot(playerActive, playerBench, oppActive, oppBench, stableKeys) {
+  const out = {};
+  const groups = stableKeys ? [
+    { side: 'player', mons: playerActive || [] },
+    { side: 'player', mons: playerBench || [] },
+    { side: 'opponent', mons: oppActive || [] },
+    { side: 'opponent', mons: oppBench || [] }
+  ] : [
+    { side: 'player', zone: 'active', mons: playerActive || [] },
+    { side: 'player', zone: 'bench', mons: playerBench || [] },
+    { side: 'opponent', zone: 'active', mons: oppActive || [] },
+    { side: 'opponent', zone: 'bench', mons: oppBench || [] }
+  ];
+  for (const group of groups) {
+    for (let i = 0; i < group.mons.length; i += 1) {
+      const m = group.mons[i];
+      if (!m || !m.statBoosts) continue;
+      const boosts = {
+        atk: Number(m.statBoosts.atk || 0),
+        def: Number(m.statBoosts.def || 0),
+        spa: Number(m.statBoosts.spa || 0),
+        spd: Number(m.statBoosts.spd || 0),
+        spe: Number(m.statBoosts.spe || 0),
+        acc: Number(m.statBoosts.acc || 0),
+        eva: Number(m.statBoosts.eva || 0)
+      };
+      if (!Object.values(boosts).some(v => v !== 0)) continue;
+      const key = stableKeys
+        ? _snapshotMonStableKey(group.side, m)
+        : _snapshotMonKey(group.side, group.zone, i, m);
+      out[key] = boosts;
+    }
+  }
+  return out;
+}
+
 function _statsLabel(stats) {
   stats = stats || {};
   return ['hp','atk','def','spa','spd','spe'].map(k => Number(stats[k] || 0)).join('/');
@@ -2541,6 +2659,50 @@ function _speedOrderStableSnapshot(playerActive, oppActive, field) {
     });
 }
 
+function _speedOrderDetailsSnapshot(playerActive, oppActive, field) {
+  const active = (playerActive || []).concat(oppActive || []).filter(m => m && m.alive);
+  const rows = active.map(m => {
+    const sideName = m && m.side === (field && field.playerSide) ? 'player' : 'opponent';
+    const sideActive = sideName === 'player' ? (playerActive || []) : (oppActive || []);
+    const idx = sideActive.indexOf(m);
+    const side = m ? m.side : null;
+    const effectiveSpeed = m && m.getEffSpeed ? m.getEffSpeed(field) : 0;
+    return {
+      side: sideName,
+      key: _snapshotMonKey(sideName, 'active', Math.max(0, idx), m),
+      stableKey: _snapshotMonStableKey(sideName, m),
+      pokemon: m.name,
+      stat_format: m.statFormat || '',
+      nature: m.nature || '',
+      speed_points: Number((m.evs && m.evs.spe) || 0),
+      species_base_speed: Number((m._base && m._base.spe) || 0),
+      base_speed: Number(m.baseSpe || 0),
+      calculated_speed: Number(m.baseSpe || 0),
+      speed_stage: Number((m.statBoosts && m.statBoosts.spe) || 0),
+      effective_speed: Number(effectiveSpeed || 0),
+      item: m.item || '',
+      ability: m.ability || '',
+      status: m.status || '',
+      tailwind: !!(side && side.tailwind),
+      trick_room: !!(field && field.trickRoom),
+      weather: _effectiveFieldWeather(field)
+    };
+  });
+  const speedCounts = {};
+  for (const row of rows) speedCounts[row.effective_speed] = (speedCounts[row.effective_speed] || 0) + 1;
+  rows.sort((a, b) => {
+    if (a.effective_speed !== b.effective_speed) {
+      return field && field.trickRoom
+        ? a.effective_speed - b.effective_speed
+        : b.effective_speed - a.effective_speed;
+    }
+    return 0;
+  });
+  return rows.map(row => Object.assign({}, row, {
+    exact_speed_tie: speedCounts[row.effective_speed] > 1
+  }));
+}
+
 function _legalOptionsSnapshot(active, enemies) {
   const liveTargets = (enemies || []).filter(e => e && e.alive);
   const targetName = liveTargets[0] ? liveTargets[0].name : 'none';
@@ -2562,6 +2724,7 @@ function _buildPositionState(playerActive, playerBench, oppActive, oppBench, fie
     speed_order: _speedOrderSnapshot(playerActive, oppActive, field, false),
     speed_order_keys: _speedOrderSnapshot(playerActive, oppActive, field, true),
     speed_order_stable_keys: _speedOrderStableSnapshot(playerActive, oppActive, field),
+    speed_order_details: _speedOrderDetailsSnapshot(playerActive, oppActive, field),
     status: _statusSnapshot(playerActive, playerBench, oppActive, oppBench)
   };
 }
@@ -2669,11 +2832,14 @@ function _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field
     },
     status: state.status,
     status_stable: _statusStableSnapshot(playerActive, playerBench, oppActive, oppBench),
+    stat_boosts: _statBoostSnapshot(playerActive, playerBench, oppActive, oppBench, false),
+    stat_boosts_stable: _statBoostSnapshot(playerActive, playerBench, oppActive, oppBench, true),
     field: state.field,
     speed_control: state.speed_control,
     speed_order: state.speed_order,
     speed_order_keys: state.speed_order_keys,
     speed_order_stable_keys: state.speed_order_stable_keys,
+    speed_order_details: state.speed_order_details,
     legal_options: includeLegal ? _legalOptionsSnapshot(playerActive, oppActive) : {},
     position_score: positionScore(state),
     win_probability: null
@@ -4090,6 +4256,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
   }
 
+  function captureBattleDamage(attacker, move, target, field, rng) {
+    const ctx = field && field._ctx;
+    if (!ctx) return attacker.calcDamage(move, target, field, null, rng);
+    const prevCapture = !!ctx.captureDamageCalc;
+    ctx.captureDamageCalc = true;
+    ctx.lastDamageCalc = null;
+    try {
+      return attacker.calcDamage(move, target, field, null, rng);
+    } finally {
+      ctx.captureDamageCalc = prevCapture;
+    }
+  }
+
   function applySingleTargetHit(attacker, move, target, field, log, rng) {
     if (!target || !target.alive) return;
     if (target.concealedByMove && move !== 'Phantom Force') {
@@ -4149,7 +4328,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     field._ctx.isSpread = false;
     field._ctx.lastWasCrit = false;
-    let dmg = attacker.calcDamage(move, target, field, null, rng);
+    let dmg = captureBattleDamage(attacker, move, target, field, rng);
     const _wasCrit = !!field._ctx.lastWasCrit;
     field._ctx.isSpread = false;
     field._ctx.lastWasCrit = false;
@@ -4507,7 +4686,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // Set spread context for calcDamage
       field._ctx.isSpread = applySpreadMod;
       field._ctx.lastWasCrit = false;
-      let dmg = attacker.calcDamage(move, t, field, null, rng);
+      let dmg = captureBattleDamage(attacker, move, t, field, rng);
       if (move === 'Super Fang') {
         dmg = Math.max(1, Math.floor(t.hp / 2));
       }
@@ -4607,6 +4786,43 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       sashSaved = true;
     }
     log.push(`${attacker.name} used ${move}! → ${target.name} [${finalDmg} dmg, ${target.hp}/${target.maxHp} HP]`);
+    if (field && field._ctx) {
+      if (!Array.isArray(field._ctx.turnDamageEvents)) field._ctx.turnDamageEvents = [];
+      const attackerSide = attacker && attacker.side === field.playerSide ? 'player' : (attacker && attacker.side === field.oppSide ? 'opponent' : 'unknown');
+      const targetSide = target && target.side === field.playerSide ? 'player' : (target && target.side === field.oppSide ? 'opponent' : 'unknown');
+      const attackerKey = _snapshotMonStableKey(attackerSide, attacker);
+      const targetKey = _snapshotMonStableKey(targetSide, target);
+      const calc = field._ctx.lastDamageCalc;
+      const calcMatches = calc &&
+        calc.attacker_key === attackerKey &&
+        calc.target_key === targetKey &&
+        calc.move === move;
+      const row = Object.assign({
+        attacker: attacker ? attacker.name : 'Unknown',
+        attacker_key: attackerKey,
+        target: target ? target.name : 'Unknown',
+        target_key: targetKey,
+        move: move,
+        damage_kind: calcMatches ? 'calculated' : 'fixed_or_direct',
+        damage: Number(finalDmg || 0),
+        target_hp_before: Number(hpBeforeDamage || 0),
+        target_hp_after: Number(target.hp || 0),
+        target_max_hp: Number(target.maxHp || 0),
+        target_survived: target.hp > 0
+      }, calcMatches ? calc : {
+        move_type: _moveType(move),
+        category: _moveCategory(move) || 'fixed',
+        type_effectiveness: null,
+        critical: false
+      });
+      row.damage = Number(finalDmg || 0);
+      row.target_hp_before = Number(hpBeforeDamage || 0);
+      row.target_hp_after = Number(target.hp || 0);
+      row.target_max_hp = Number(target.maxHp || 0);
+      row.target_survived = target.hp > 0;
+      field._ctx.turnDamageEvents.push(row);
+      field._ctx.lastDamageCalc = null;
+    }
     if (sturdySaved) log.push(`${target.name} hung on with Sturdy!`);
     if (sashSaved) log.push(`${target.name} hung on with its Focus Sash!`);
     if (target.hp > 0 && target.ability === 'Berserk' && wasAboveHalf && target.hp <= target.maxHp / 2) {
@@ -4800,6 +5016,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     turn++;
     log.push(`--- Turn ${turn} ---`);
     const _turnLogStart = log.length;
+    field._ctx.turnDamageEvents = [];
+    field._ctx.lastDamageCalc = null;
 
     // Clear per-turn flags
     for (const m of [...playerActive, ...oppActive]) {
@@ -4886,6 +5104,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       pre: _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, true, _orderedPlayer, _orderedOpp),
       actions: _actionSummary(actions),
       events: [],
+      damage_events: [],
       post: null,
       delta: { position_score: 0, win_probability: null, primary_cause: 'none', explanation: '' }
     };
@@ -5165,6 +5384,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (field.clockPlayer <= 0 || field.clockOpp <= 0) {
       log.push(`[TIMER] Clock expired at turn ${turn}. Resolving via tiebreaker.`);
       _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
+      _turnEntry.damage_events = (field._ctx.turnDamageEvents || []).slice();
       _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false, _orderedPlayer, _orderedOpp);
       _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
       _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';
@@ -5172,6 +5392,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       break;
     }
     _turnEntry.events = _eventsFromLog(log.slice(_turnLogStart));
+    _turnEntry.damage_events = (field._ctx.turnDamageEvents || []).slice();
     _turnEntry.post = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false, _orderedPlayer, _orderedOpp);
     _turnEntry.delta.position_score = Math.round((_turnEntry.post.position_score - _turnEntry.pre.position_score) * 1000) / 1000;
     _turnEntry.delta.primary_cause = _turnEntry.delta.position_score >= 0 ? 'position_improved' : 'position_lost';

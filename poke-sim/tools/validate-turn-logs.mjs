@@ -190,6 +190,17 @@ function validateSnapshot(snapshot, turnNo, snapName, state, findings) {
       findings.push(finding('error', 'speed-key-not-live', `speed_order_keys contains non-active key ${key}.`, { turn: turnNo, snapshot: snapName }));
     }
   }
+
+  const speedDetails = Array.isArray(snapshot.speed_order_details) ? snapshot.speed_order_details : [];
+  for (const row of speedDetails) {
+    if (!row || typeof row !== 'object') continue;
+    if (row.key && !liveKeys.has(String(row.key))) {
+      findings.push(finding('error', 'speed-detail-key-not-live', `speed_order_details contains non-active key ${row.key}.`, { turn: turnNo, snapshot: snapName }));
+    }
+    if (!Number.isFinite(Number(row.effective_speed))) {
+      findings.push(finding('error', 'speed-detail-missing-effective-speed', 'speed_order_details row is missing numeric effective_speed.', { turn: turnNo, snapshot: snapName, row }));
+    }
+  }
 }
 
 function actorOrderFromEvents(events) {
@@ -218,6 +229,15 @@ function rosterByName(snapshot) {
   return out;
 }
 
+function speedDetailsByName(snapshot) {
+  const out = new Map();
+  for (const row of (Array.isArray(snapshot && snapshot.speed_order_details) ? snapshot.speed_order_details : [])) {
+    if (!row || !row.pokemon) continue;
+    out.set(String(row.pokemon), row);
+  }
+  return out;
+}
+
 function movePriority(move, row) {
   let p = Object.prototype.hasOwnProperty.call(PRIORITY, move) ? PRIORITY[move] : 0;
   if (row && row.ability === 'Prankster' && STATUS_MOVES.has(move)) p += 1;
@@ -239,6 +259,11 @@ function parsedCalculatedSpeed(row) {
 }
 
 function snapshotEffectiveSpeed(row, snapshot) {
+  const detail = row && speedDetailsByName(snapshot).get(rowName(row));
+  if (detail && Number.isFinite(Number(detail.effective_speed))) {
+    return Math.floor(Number(detail.effective_speed));
+  }
+
   const baseSpeed = parsedCalculatedSpeed(row);
   if (!row || baseSpeed == null) return null;
 
@@ -276,7 +301,10 @@ function validateObservedActionOrder(turn, findings) {
   if (actionRows.length < 2) return;
 
   const roster = rosterByName(turn.pre);
-  const speedOrder = Array.isArray(turn.pre.speed_order) ? turn.pre.speed_order.map(String) : [];
+  const detailOrder = Array.isArray(turn.pre.speed_order_details)
+    ? turn.pre.speed_order_details.map(row => row && row.pokemon).filter(Boolean).map(String)
+    : [];
+  const speedOrder = detailOrder.length ? detailOrder : (Array.isArray(turn.pre.speed_order) ? turn.pre.speed_order.map(String) : []);
   const speedIndex = new Map(speedOrder.map((name, index) => [name, index]));
 
   const actionByKey = new Map(actionRows.map(a => [`${a.actor}|${a.move}`, a]));
@@ -325,6 +353,46 @@ function validateObservedActionOrder(turn, findings) {
 
       failOrder('speed', second.key, first.key);
       return;
+    }
+  }
+}
+
+function validateDamageEvents(turn, findings) {
+  const rows = Array.isArray(turn && turn.damage_events) ? turn.damage_events : [];
+  for (let i = 0; i < rows.length; i += 1) {
+    const row = rows[i];
+    if (!row || typeof row !== 'object') {
+      findings.push(finding('error', 'damage-event-malformed', 'damage_events contains a non-object row.', { turn: turn && turn.turn, index: i }));
+      continue;
+    }
+    for (const key of ['attacker', 'target', 'move']) {
+      if (!row[key]) {
+        findings.push(finding('error', 'damage-event-missing-identity', `damage_events row is missing ${key}.`, { turn: turn && turn.turn, index: i }));
+      }
+    }
+    for (const key of ['damage', 'target_hp_before', 'target_hp_after', 'target_max_hp']) {
+      if (!Number.isFinite(Number(row[key]))) {
+        findings.push(finding('error', 'damage-event-missing-number', `damage_events row is missing numeric ${key}.`, { turn: turn && turn.turn, index: i }));
+      }
+    }
+    if (row.damage_kind === 'calculated') {
+      const numericKeys = [
+        'type_effectiveness', 'base_power_initial', 'base_power_modified',
+        'attack_stat_stage', 'defense_stat_stage', 'attack_stat_stage_used',
+        'defense_stat_stage_used', 'attack_stat_value', 'defense_stat_value',
+        'typed_item_boost_mod', 'spread_mod', 'weather_mod', 'screen_mod',
+        'stab_mod', 'final_mod', 'roll'
+      ];
+      for (const key of numericKeys) {
+        if (!Number.isFinite(Number(row[key]))) {
+          findings.push(finding('error', 'damage-calc-missing-number', `calculated damage row is missing numeric ${key}.`, { turn: turn && turn.turn, index: i }));
+        }
+      }
+      for (const key of ['move_type', 'category', 'attack_stat_key', 'defense_stat_key']) {
+        if (!row[key]) {
+          findings.push(finding('error', 'damage-calc-missing-field', `calculated damage row is missing ${key}.`, { turn: turn && turn.turn, index: i }));
+        }
+      }
     }
   }
 }
@@ -379,6 +447,7 @@ export function validateTurnLogPayload(payload, options = {}) {
       validateSnapshot(snapshot, turnNo, snapName, state, findings);
     }
     validateObservedActionOrder(turn || {}, findings);
+    validateDamageEvents(turn || {}, findings);
   }
 
   finalizeIdentityChecks(state, findings);

@@ -40,6 +40,11 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Target category bridge and stale-target retargeting guarded');
   inc(ui, 'Runtime naming cheat sheet added');
   inc(ui, 'Large-run QA artifact export added');
+  inc(ui, 'Type multiplier audit added');
+  inc(ui, 'Typed held-item damage boosts fixed');
+  inc(ui, 'Stat and effective-speed evidence added to exports');
+  inc(ui, 'Champions SP/SV stat format');
+  inc(ui, 'damage_events');
   inc(ui, 'Showdown sync and DB writer staged');
   inc(ui, 'Curated ability inventory modeled');
   inc(ui, 'Simulation-first direction documented');
@@ -48,7 +53,9 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.27 QA artifact export carries the v2.1.25 target parity guard and v2.1.26 overview truth notes');
+  inc(ui, 'v2.1.28 mechanics stack guard carries the v2.1.27 QA artifact export');
+  inc(ui, 'Damage stack oracle is green');
+  inc(ui, 'Turn-order stack evidence is green');
   inc(ui, 'GitHub issue sweep completed');
 });
 
@@ -73,7 +80,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.27 live logs, QA artifact, and sync Alfredo');
+  inc(ui, 'Verify v2.1.28 live logs, QA artifact, and sync Alfredo');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');

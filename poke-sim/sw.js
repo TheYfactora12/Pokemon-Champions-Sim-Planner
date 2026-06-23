@@ -53,7 +53,9 @@
 // current build state, known gaps, and large-run QA log-retention limits.
 // v61-qa-artifact-export [2026-06-22] - Retained-evidence QA artifact export
 // with build/source metadata and explicit browser retention caps.
-const CACHE_NAME = 'champions-sim-v61-qa-artifact-export';
+// v62-mechanics-stack-guard [2026-06-22] - Type multiplier audit, typed held-item
+// damage boosts, and stat/effective-speed turn-log evidence.
+const CACHE_NAME = 'champions-sim-v62-mechanics-stack-guard';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

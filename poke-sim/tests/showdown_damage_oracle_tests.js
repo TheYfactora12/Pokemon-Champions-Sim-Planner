@@ -561,7 +561,46 @@ T('29. Blaze low-HP Fire boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'blaze');
 });
 
-T('30. Overgrow low-HP Grass boost matches Showdown exactly', () => {
+T('30. Charcoal stacks with Blaze, sun, STAB, and super-effective Fire damage like Showdown', () => {
+  const simAttacker = simMon('Charizard', {
+    nature: 'Adamant',
+    moves: ['Flare Blitz'],
+    evs: { atk: 252 },
+    ability: 'Blaze',
+    item: 'Charcoal'
+  });
+  const oracleBase = calcMon('Charizard', {
+    nature: 'Adamant',
+    moves: ['Flare Blitz'],
+    evs: { atk: 252 },
+    ability: 'Blaze',
+    item: 'Charcoal'
+  });
+  const lowHp = Math.floor(simAttacker.maxHp / 3);
+  simAttacker.hp = lowHp;
+  const sim = simRange(
+    simAttacker,
+    simMon('Meganium'),
+    'Flare Blitz',
+    new Field({ format: 'doubles', weather: 'sun' })
+  );
+  const oracle = oracleRange(
+    calcMon('Charizard', {
+      nature: 'Adamant',
+      moves: ['Flare Blitz'],
+      evs: { atk: 252 },
+      ability: 'Blaze',
+      item: 'Charcoal',
+      curHP: Math.floor(oracleBase.maxHP() / 3)
+    }),
+    calcMon('Meganium'),
+    'Flare Blitz',
+    new calc.Field({ gameType: 'Doubles', weather: 'Sun' })
+  );
+  eqRange(sim, oracle, 'charcoal blaze sun fire stack');
+});
+
+T('31. Overgrow low-HP Grass boost matches Showdown exactly', () => {
   const simAttacker = simMon('Venusaur', { nature: 'Modest', moves: ['Energy Ball'], evs: { spa: 252 }, ability: 'Overgrow' });
   const oracleBase = calcMon('Venusaur', { nature: 'Modest', moves: ['Energy Ball'], evs: { spa: 252 }, ability: 'Overgrow' });
   const lowHp = Math.floor(simAttacker.maxHp / 3);
@@ -581,7 +620,7 @@ T('30. Overgrow low-HP Grass boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'overgrow');
 });
 
-T('31. Iron Fist punch boost matches Showdown exactly', () => {
+T('32. Iron Fist punch boost matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Golurk', { nature: 'Adamant', moves: ['Ice Punch'], evs: { atk: 252 }, ability: 'Iron Fist' }),
     simMon('Garchomp'),
@@ -597,7 +636,7 @@ T('31. Iron Fist punch boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'iron fist');
 });
 
-T('32. Technician low-BP boost matches Showdown exactly', () => {
+T('33. Technician low-BP boost matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Scizor-Mega', { nature: 'Adamant', moves: ['Bullet Punch'], evs: { atk: 252 }, ability: 'Technician' }),
     simMon('Tyranitar'),
@@ -613,7 +652,7 @@ T('32. Technician low-BP boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'technician');
 });
 
-T('33. Huge Power Attack boost matches Showdown exactly', () => {
+T('34. Huge Power Attack boost matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Azumarill', { nature: 'Adamant', moves: ['Liquidation'], evs: { atk: 252 }, ability: 'Huge Power' }),
     simMon('Incineroar'),
@@ -629,7 +668,7 @@ T('33. Huge Power Attack boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'huge power');
 });
 
-T('34. Pure Power Attack boost matches Showdown exactly', () => {
+T('35. Pure Power Attack boost matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Medicham-Mega', { nature: 'Adamant', moves: ['Drain Punch'], evs: { atk: 252 }, ability: 'Pure Power' }),
     simMon('Incineroar'),
@@ -645,7 +684,7 @@ T('34. Pure Power Attack boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'pure power');
 });
 
-T('35. Sand Force sand boost matches Showdown exactly', () => {
+T('36. Sand Force sand boost matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Steelix-Mega', { nature: 'Adamant', moves: ['Iron Head'], evs: { atk: 252 }, ability: 'Sand Force' }),
     simMon('Pelipper'),
@@ -661,7 +700,7 @@ T('35. Sand Force sand boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'sand force');
 });
 
-T('36. Thick Fat Fire reduction matches Showdown exactly', () => {
+T('37. Thick Fat Fire reduction matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Charizard', { nature: 'Modest', moves: ['Flamethrower'], evs: { spa: 252 } }),
     simMon('Venusaur-Mega', { ability: 'Thick Fat' }),
@@ -677,7 +716,7 @@ T('36. Thick Fat Fire reduction matches Showdown exactly', () => {
   eqRange(sim, oracle, 'thick fat');
 });
 
-T('37. Filter super-effective reduction matches Showdown exactly', () => {
+T('38. Filter super-effective reduction matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Infernape', { nature: 'Adamant', moves: ['Close Combat'], evs: { atk: 252 } }),
     simMon('Aggron-Mega', { ability: 'Filter' }),
@@ -693,7 +732,7 @@ T('37. Filter super-effective reduction matches Showdown exactly', () => {
   eqRange(sim, oracle, 'filter');
 });
 
-T('38. Tinted Lens resisted-hit boost matches Showdown exactly', () => {
+T('39. Tinted Lens resisted-hit boost matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Yanmega', { nature: 'Modest', moves: ['Bug Buzz'], evs: { spa: 252 }, ability: 'Tinted Lens' }),
     simMon('Charizard'),
@@ -709,7 +748,7 @@ T('38. Tinted Lens resisted-hit boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'tinted lens');
 });
 
-T('39. Earth Eater Ground immunity matches Showdown zero damage', () => {
+T('40. Earth Eater Ground immunity matches Showdown zero damage', () => {
   const sim = simRange(
     simMon('Garchomp', { nature: 'Adamant', moves: ['Earthquake'], evs: { atk: 252 } }),
     simMon('Orthworm', { ability: 'Earth Eater' }),
@@ -725,7 +764,7 @@ T('39. Earth Eater Ground immunity matches Showdown zero damage', () => {
   eqRange(sim, oracle, 'earth eater');
 });
 
-T('40. Levitate Ground immunity matches Showdown zero damage', () => {
+T('41. Levitate Ground immunity matches Showdown zero damage', () => {
   const sim = simRange(
     simMon('Garchomp', { nature: 'Adamant', moves: ['Earthquake'], evs: { atk: 252 } }),
     simMon('Cresselia', { ability: 'Levitate' }),
@@ -741,7 +780,7 @@ T('40. Levitate Ground immunity matches Showdown zero damage', () => {
   eqRange(sim, oracle, 'levitate');
 });
 
-T('41. Sheer Force damage boost matches Showdown exactly', () => {
+T('42. Sheer Force damage boost matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Nidoking', { nature: 'Modest', moves: ['Sludge Bomb'], evs: { spa: 252 }, ability: 'Sheer Force' }),
     simMon('Pelipper'),
@@ -757,7 +796,7 @@ T('41. Sheer Force damage boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'sheer force');
 });
 
-T('42. Fairy Aura damage boost matches Showdown exactly', () => {
+T('43. Fairy Aura damage boost matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Xerneas', { nature: 'Modest', moves: ['Moonblast'], evs: { spa: 252 }, ability: 'Fairy Aura' }),
     simMon('Incineroar'),
@@ -773,7 +812,7 @@ T('42. Fairy Aura damage boost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'fairy aura');
 });
 
-T('43. Scrappy Normal damage into Ghost matches Showdown exactly', () => {
+T('44. Scrappy Normal damage into Ghost matches Showdown exactly', () => {
   const sim = simRange(
     simMon('Lopunny-Mega', { nature: 'Adamant', moves: ['Tackle'], evs: { atk: 252 }, ability: 'Scrappy' }),
     simMon('Gengar'),
@@ -789,7 +828,7 @@ T('43. Scrappy Normal damage into Ghost matches Showdown exactly', () => {
   eqRange(sim, oracle, 'scrappy ghost bypass');
 });
 
-T('44. Infiltrator bypasses Light Screen damage reduction like Showdown', () => {
+T('45. Infiltrator bypasses Light Screen damage reduction like Showdown', () => {
   const field = new Field({ format: 'doubles' });
   field.oppSide.lightScreen = true;
   const sim = simRange(
@@ -807,7 +846,7 @@ T('44. Infiltrator bypasses Light Screen damage reduction like Showdown', () => 
   eqRange(sim, oracle, 'infiltrator screens');
 });
 
-T('45. Mold Breaker bypasses Levitate immunity like Showdown', () => {
+T('46. Mold Breaker bypasses Levitate immunity like Showdown', () => {
   const sim = simRange(
     simMon('Haxorus', { nature: 'Adamant', moves: ['High Horsepower'], evs: { atk: 252 }, ability: 'Mold Breaker' }),
     simMon('Cresselia', { ability: 'Levitate' }),

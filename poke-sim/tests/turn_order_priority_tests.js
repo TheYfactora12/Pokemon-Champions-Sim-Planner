@@ -19,7 +19,14 @@ function load(file) {
 load('data.js');
 load('engine.js');
 vm.runInContext(
-  'this.Pokemon = Pokemon; this.Field = Field; this.simulateBattle = simulateBattle; this._compareTurnActionOrder = _compareTurnActionOrder;',
+  [
+    'this.Pokemon = Pokemon;',
+    'this.Field = Field;',
+    'this.simulateBattle = simulateBattle;',
+    'this._compareTurnActionOrder = _compareTurnActionOrder;',
+    'this._speedOrderDetailsSnapshot = _speedOrderDetailsSnapshot;',
+    'this._statBoostSnapshot = _statBoostSnapshot;'
+  ].join('\n'),
   ctx
 );
 
@@ -27,6 +34,8 @@ const Pokemon = ctx.Pokemon;
 const Field = ctx.Field;
 const simulateBattle = ctx.simulateBattle;
 const compareTurnActionOrder = ctx._compareTurnActionOrder;
+const speedOrderDetailsSnapshot = ctx._speedOrderDetailsSnapshot;
+const statBoostSnapshot = ctx._statBoostSnapshot;
 
 let pass = 0;
 let fail = 0;
@@ -127,7 +136,66 @@ T('5. exact Speed ties use seeded RNG as the final tiebreak', function() {
     'high RNG roll should put second action first');
 });
 
-T('6. live battle order respects Trick Room after it is set', function() {
+T('6. speed snapshots expose SP-aware effective Speed stacks and exact ties', function() {
+  const field = new Field();
+  const boosted = mk('Garchomp', { item: 'Choice Scarf', evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } });
+  const baseline = mk('Dragapult', { nature: 'Jolly', evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } });
+  boosted.side = field.playerSide;
+  baseline.side = field.oppSide;
+  field.playerSide.tailwind = true;
+  boosted.statBoosts.spe = 1;
+  const details = speedOrderDetailsSnapshot([boosted], [baseline], field);
+  const row = details.find(r => r.pokemon === 'Garchomp');
+  truthy(row, 'boosted row missing from speed details');
+  truthy(row.effective_speed > baseline.getEffSpeed(field), 'stacked Speed should outrun baseline Dragapult');
+  eq(row.stat_format, 'champions', 'Champions stat format should be exported');
+  eq(row.nature, 'Hardy', 'nature should be exported');
+  eq(row.speed_points, 32, 'Champions Speed points should be exported');
+  truthy(row.species_base_speed > 0, 'species base Speed should be exported');
+  eq(row.calculated_speed, row.base_speed, 'calculated Speed alias should match legacy base_speed');
+  eq(row.speed_stage, 1, 'speed stage should be exported');
+  eq(row.item, 'Choice Scarf', 'Choice Scarf should be exported');
+  eq(row.tailwind, true, 'Tailwind state should be exported');
+
+  const tieA = mk('Garchomp', { evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } });
+  const tieB = mk('Garchomp', { evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } });
+  tieA.side = field.playerSide;
+  tieB.side = field.oppSide;
+  field.playerSide.tailwind = false;
+  const tieRows = speedOrderDetailsSnapshot([tieA], [tieB], field);
+  truthy(tieRows.length === 2 && tieRows.every(r => r.exact_speed_tie), 'exact Speed ties should be marked');
+});
+
+T('7. Champions SP and nature differences break same-species Speed ties before RNG', function() {
+  const field = new Field();
+  const fast = mk('Garchomp', { nature: 'Jolly', evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } });
+  const slow = mk('Garchomp', { nature: 'Hardy', evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 0 } });
+  fast.side = field.playerSide;
+  slow.side = field.oppSide;
+  truthy(fast.getEffSpeed(field) > slow.getEffSpeed(field), 'SP/nature-adjusted Speed should break the tie');
+  truthy(compareTurnActionOrder(action(fast, 0), action(slow, 0), field, function() { return 0.99; }) < 0,
+    'faster same-species Pokemon should act first before RNG tie-break');
+  const rows = speedOrderDetailsSnapshot([fast], [slow], field);
+  truthy(rows.length === 2 && rows.every(r => !r.exact_speed_tie), 'non-equal calculated Speed rows should not be exact ties');
+});
+
+T('8. stat-stage snapshots expose later damage and turn-order state', function() {
+  const field = new Field();
+  const dancer = mk('Charizard', { evs: { hp: 0, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 } });
+  dancer.side = field.playerSide;
+  dancer.statBoosts.atk = 1;
+  dancer.statBoosts.spe = 1;
+  const keyed = statBoostSnapshot([dancer], [], [], [], false);
+  const stable = statBoostSnapshot([dancer], [], [], [], true);
+  const key = Object.keys(keyed)[0];
+  const stableKey = Object.keys(stable)[0];
+  truthy(key && stableKey, 'stat boost snapshot keys missing');
+  eq(keyed[key].atk, 1, 'Attack boost should be exported');
+  eq(keyed[key].spe, 1, 'Speed boost should be exported');
+  eq(stable[stableKey].atk, 1, 'stable Attack boost should be exported');
+});
+
+T('9. live battle order respects Trick Room after it is set', function() {
   const playerTeam = team([{
     name: 'Cofagrigus',
     item: '',
@@ -169,6 +237,45 @@ T('6. live battle order respects Trick Room after it is set', function() {
   truthy(trIdx >= 0, 'Trick Room should be set on turn 1');
   truthy(slowIdx >= 0 && fastIdx >= 0, 'both same-priority attackers should move after Trick Room is set');
   truthy(slowIdx < fastIdx, 'Torkoal should move before Garchomp under Trick Room');
+});
+
+T('10. turn logs expose structured stacked damage evidence', function() {
+  const playerTeam = team([{
+    name: 'Charizard',
+    item: 'Charcoal',
+    ability: 'Blaze',
+    nature: 'Adamant',
+    level: 50,
+    hp: 30,
+    moves: ['Flare Blitz'],
+    evs: { hp: 0, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 }
+  }]);
+  const oppTeam = team([{
+    name: 'Meganium',
+    item: '',
+    ability: 'Overgrow',
+    nature: 'Hardy',
+    level: 50,
+    moves: ['Tackle'],
+    evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 0, spe: 0 }
+  }]);
+  const battle = simulateBattle(playerTeam, oppTeam, { format: 'singles', seed: [301, 302, 303, 304], maxTurns: 1 });
+  const damageRows = (((battle.turnLog || [])[0] || {}).damage_events) || [];
+  const row = damageRows.find(r => r.move === 'Flare Blitz' && r.attacker === 'Charizard' && r.target === 'Meganium');
+  truthy(row, 'Flare Blitz damage event missing');
+  eq(row.damage_kind, 'calculated', 'damage should be marked calculated');
+  eq(row.move_type, 'Fire', 'resolved move type should be exported');
+  eq(row.category, 'physical', 'damage category should be exported');
+  eq(row.type_effectiveness, 2, 'Fire into Meganium should be super effective');
+  eq(row.typed_item_boost, true, 'Charcoal typed item boost should be exported');
+  eq(row.typed_item_boost_mod, 4915, 'Charcoal boost should use Showdown fixed-point mod');
+  truthy(row.base_power_modified > row.base_power_initial, 'modified BP should include Charcoal');
+  truthy(row.stab_mod > 4096, 'STAB modifier should be exported');
+  eq(row.spread_mod, 4096, 'singles should not apply doubles spread modifier');
+  eq(row.attack_stat_key, 'atk', 'physical attack stat key should be exported');
+  eq(row.defense_stat_key, 'def', 'physical defense stat key should be exported');
+  eq(row.attacker_stat_format, 'champions', 'attacker Champions stat format should be exported');
+  truthy(row.damage > 0 && row.target_hp_after < row.target_hp_before, 'damage event should include HP delta');
 });
 
 console.log('\nturn order / priority:', pass + ' pass, ' + fail + ' fail\n');
