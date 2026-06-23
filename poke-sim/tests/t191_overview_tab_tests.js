@@ -59,6 +59,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Target category bridge and stale-target retargeting guarded');
   inc(ui, 'Runtime naming cheat sheet added');
   inc(ui, 'Large-run QA artifact export added');
+  inc(ui, 'QA coverage summary added to exports');
   inc(ui, 'Type multiplier audit added');
   inc(ui, 'Low Kick weight source added');
   inc(ui, 'Core shipped move parity closed');
@@ -68,6 +69,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Champions SP/SV stat format');
   inc(ui, 'damage_events');
   inc(ui, 'effect_events');
+  inc(ui, 'qa_coverage_summary');
   inc(ui, 'Effect math evidence added to turn logs');
   inc(ui, 'Shed Tail now follows Showdown context: 1/2 max HP cost rounded up');
   inc(ui, 'Architecture and evidence map added');
@@ -103,6 +105,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
 T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Supabase app wiring is live for existing app tables');
   inc(ui, 'Local DB contract suite is green');
+  inc(ui, 'Latest v2.1.42 browser logs validate and expose effect evidence');
   inc(ui, 'Live Supabase freshness checks require `RUN_LIVE_DB=1`');
   inc(ui, 'overview-showdown-db-inspect');
   inc(ui, 'loadShowdownDbSnapshot');

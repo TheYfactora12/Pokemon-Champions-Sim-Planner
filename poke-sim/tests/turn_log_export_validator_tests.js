@@ -616,6 +616,48 @@ function stripStableFields(payload) {
     truthy(res.findings.some(f => f.code === 'effect-event-context-malformed'), 'missing effect context malformed error');
   });
 
+  T('15. qa_coverage_summary passes when totals match turnLog evidence', () => {
+    const payload = stableFixture();
+    payload.qa_coverage_summary = {
+      schema_version: 'champions-qa-coverage-v1',
+      totals: {
+        turns: 1,
+        action_rows: 2,
+        damage_events: 0,
+        effect_events: 0,
+        turns_with_damage_events: 0,
+        turns_with_effect_events: 0
+      },
+      mechanics_seen: { damage_events: 0, effect_events: 0 },
+      source_truth_versions: { pokemon_showdown: { source_repository: 'https://github.com/smogon/pokemon-showdown' } },
+      missing_targeted_proof: [],
+      moves_seen: { damage: {}, effects: {} },
+      effect_kinds: {}
+    };
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+  });
+
+  T('16. qa_coverage_summary fails when totals drift from turnLog evidence', () => {
+    const payload = stableFixture();
+    payload.qa_coverage_summary = {
+      schema_version: 'champions-qa-coverage-v1',
+      totals: {
+        turns: 2,
+        damage_events: 1,
+        effect_events: 0,
+        turns_with_damage_events: 0,
+        turns_with_effect_events: 0
+      },
+      mechanics_seen: {},
+      source_truth_versions: {},
+      missing_targeted_proof: []
+    };
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'qa-coverage-total-mismatch' && f.field === 'turns'), 'missing QA coverage turn mismatch');
+    truthy(res.findings.some(f => f.code === 'qa-coverage-total-mismatch' && f.field === 'damage_events'), 'missing QA coverage damage mismatch');
+  });
+
   console.log('\nturn log export validator:', pass + ' pass, ' + fail + ' fail\n');
   process.exit(fail ? 1 : 0);
 })().catch(err => {

@@ -431,13 +431,17 @@ T('T5c-3 JSON download produces valid parseable file', () => {
   ctx.downloadReplayTurnLog({ seed: 'abc', result: 'win', playerKey: 'player', oppKey: 'mega_altaria', turnLog: battleA.turnLog, position_path: battleA.position_path });
   truthy(parsed && Array.isArray(parsed.turnLog), 'download JSON did not parse');
   eq(parsed.schema_version, 'champions-turn-log-v2', 'download schema version missing');
-  truthy(/^v2\.1\.42-effect-math-context/.test(parsed.build_id || ''), 'download build id missing');
+  truthy(/^v2\.1\.43-qa-coverage-summary/.test(parsed.build_id || ''), 'download build id missing');
   truthy(typeof parsed.exported_at === 'string' && parsed.exported_at.length > 0, 'download timestamp missing');
   eq(parsed.player_team_id, 'player', 'download player team id missing');
   eq(parsed.opponent_team_id, 'mega_altaria', 'download opponent team id missing');
   truthy(parsed.player_team && parsed.player_team.members && parsed.player_team.members.length === 6, 'download full player team missing');
   truthy(parsed.opponent_team && parsed.opponent_team.members && parsed.opponent_team.members.length === 6, 'download full opponent team missing');
   truthy(parsed.team_preview && parsed.team_preview.player_brought_count >= 1, 'download brought team preview missing');
+  eq(parsed.qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'QA coverage schema missing');
+  eq(parsed.qa_coverage_summary.totals.turns, parsed.turnLog.length, 'QA coverage turn count mismatch');
+  truthy(parsed.qa_coverage_summary.source_truth_versions && parsed.qa_coverage_summary.source_truth_versions.pokemon_showdown, 'QA source truth versions missing');
+  truthy(Array.isArray(parsed.qa_coverage_summary.missing_targeted_proof), 'QA missing proof list missing');
 });
 
 T('T5c-4 Sparkline renders without error on 1-turn game', () => {

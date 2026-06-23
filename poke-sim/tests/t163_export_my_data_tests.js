@@ -266,7 +266,7 @@ async function main() {
     const payload = await csBuildQaArtifactExport('player');
     eq(payload.schema_version, 'champions-qa-artifact-v1');
     eq(payload.artifact_type, 'large-run-qa-retained-evidence');
-    truthy(/^v2\.1\.42-effect-math-context/.test(payload.build_id || ''), 'QA build id missing');
+    truthy(/^v2\.1\.43-qa-coverage-summary/.test(payload.build_id || ''), 'QA build id missing');
     eq(payload.source_url, 'http://localhost/');
     eq(payload.retention.max_replay_cards, 240);
     eq(payload.retention.max_replay_log_lines, 200);
@@ -274,9 +274,13 @@ async function main() {
     eq(payload.retention.max_simlog_per_pair, 100);
     truthy(payload.summary && payload.summary.total_retained_simlog_entries >= 1, 'sim log summary missing');
     truthy(payload.summary.retained_replay_cards >= 1, 'replay summary missing');
+    eq(payload.qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'QA artifact coverage schema missing');
+    eq(payload.qa_coverage_summary.totals.replay_cards_scanned, 1, 'QA artifact coverage replay count mismatch');
+    eq(payload.qa_coverage_summary.totals.turns, 1, 'QA artifact coverage turn count mismatch');
     truthy(payload.retained && payload.retained.sim_log.length >= 1, 'retained sim log missing');
     truthy(payload.retained && payload.retained.replay_cards.length >= 1, 'retained replay cards missing');
     eq(payload.retained.replay_cards[0].seed, 'qa-seed-1');
+    eq(payload.retained.replay_cards[0].qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'retained replay coverage missing');
   });
 
   await T('7. QA artifact click downloads a JSON file with the expected prefix', async () => {

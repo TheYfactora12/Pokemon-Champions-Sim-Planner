@@ -70,8 +70,8 @@
 // v73-stable-action-identity [2026-06-23] - Turn-log actions export stable actor/target keys for mirror-species validation.
 // v74-turn-log-team-roster [2026-06-23] - Turn-log exports include full team roster metadata for QA review.
 // v75-recoil-showdown-context [2026-06-23] - QA baseline exposes Showdown recoil metadata and move text.
-// v76-effect-math-context [2026-06-23] - Turn logs expose structured effect_events and effect-math context.
-const CACHE_NAME = 'champions-sim-v76-effect-math-context';
+// v77-qa-coverage-summary [2026-06-23] - Turn logs and QA artifacts expose mechanics coverage summaries.
+const CACHE_NAME = 'champions-sim-v77-qa-coverage-summary';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

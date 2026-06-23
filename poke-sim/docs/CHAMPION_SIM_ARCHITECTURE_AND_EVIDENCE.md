@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.42-effect-math-context` on 2026-06-23.
+Status: current for `v2.1.43-qa-coverage-summary` on 2026-06-23.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -38,6 +38,7 @@ Deterministic engine
 QA evidence outputs
   downloaded turn-log JSON
   QA Artifact export
+  qa_coverage_summary coverage counters
   Overview linked reports and local/CI test output
         |
         v
@@ -132,6 +133,24 @@ Important fields:
 
 QA should compare `hp_delta` to `hp_after - hp_before`, then compare the `rule` basis to the source-truth wording.
 
+## QA Coverage Summary
+
+`v2.1.43` adds `qa_coverage_summary` to:
+
+- downloaded turn-log JSON
+- each retained QA replay card
+- the top-level QA Artifact export
+
+The summary is a coverage index, not a replacement for the raw turn log. It counts what the exported evidence actually triggered:
+
+- total turns, action rows, `damage_events`, and `effect_events`
+- super-effective, resisted, immune, crit, spread, HP-cap, screen, weather-modified, typed-item, Knock Off, stat-stage, base-power-modified, priority, Tailwind, Trick Room, recoil, drain, recovery, HP-cost, delayed-recovery, residual-drain, and item-recovery evidence
+- damage/effect moves seen
+- source truth versions from the generated Pokemon Showdown audit data
+- `missing_targeted_proof`, which names mechanics not proven by that export
+
+Important limitation: a clean log can only prove the mechanics that occurred. For example, a log with no Leech Seed row cannot prove Leech Seed, even if the validator passes.
+
 ## Team and Legality Evidence
 
 Turn-log exports include team metadata so QA can audit legality without guessing from the four active Pokemon.
@@ -177,7 +196,7 @@ For every public-site validation pass:
 5. Export one QA Artifact.
 6. Validate logs with `node tools/validate-turn-logs.mjs <files>`.
 7. Confirm no `player team not loaded` or live-target `(no valid target)` failures.
-8. Inspect `player_team`, `opponent_team`, `damage_events`, `effect_events`, `speed_order_details`, and `stat_boosts`.
+8. Inspect `qa_coverage_summary`, `player_team`, `opponent_team`, `damage_events`, `effect_events`, `speed_order_details`, and `stat_boosts`.
 9. Record whether the sample includes the mechanic being claimed fixed. A green log that never used recoil does not prove recoil.
 
 ## Local Gates
@@ -217,7 +236,7 @@ Only use the live mode when valid anon credentials are present and it is accepta
 
 Do not claim broad 100% accuracy until these are closed or explicitly accepted:
 
-- Fresh deployed-browser `v2.1.42` single-run, Run All, and QA Artifact proof.
+- Fresh deployed-browser `v2.1.43` single-run, Run All, and QA Artifact proof with `qa_coverage_summary`.
 - Live DB runtime-source promotion or explicit static fallback signoff.
 - Full DB forensic-log retention design if Supabase must be the long-term audit store.
 - Remaining grouped battle-system mechanics beyond shipped move coverage: redirection, Protect family, switching/replacement, status, item edge cases, terrain/weather edge cases, and Champion-specific overrides.

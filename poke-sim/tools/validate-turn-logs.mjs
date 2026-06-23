@@ -715,6 +715,60 @@ function validateEffectEvents(turn, findings) {
   }
 }
 
+function validateQaCoverageSummary(payload, turnLog, findings) {
+  const summary = payload && payload.qa_coverage_summary;
+  if (summary == null) return;
+  if (!summary || typeof summary !== 'object' || Array.isArray(summary)) {
+    findings.push(finding('error', 'qa-coverage-malformed', 'qa_coverage_summary must be an object when present.'));
+    return;
+  }
+  if (summary.schema_version !== 'champions-qa-coverage-v1') {
+    findings.push(finding('error', 'qa-coverage-schema', 'qa_coverage_summary has an unexpected schema_version.', {
+      actual: summary.schema_version || null
+    }));
+  }
+  if (!summary.totals || typeof summary.totals !== 'object') {
+    findings.push(finding('error', 'qa-coverage-totals-missing', 'qa_coverage_summary is missing totals.'));
+    return;
+  }
+  if (!summary.mechanics_seen || typeof summary.mechanics_seen !== 'object') {
+    findings.push(finding('error', 'qa-coverage-mechanics-missing', 'qa_coverage_summary is missing mechanics_seen.'));
+  }
+  if (!summary.source_truth_versions || typeof summary.source_truth_versions !== 'object') {
+    findings.push(finding('error', 'qa-coverage-source-truth-missing', 'qa_coverage_summary is missing source_truth_versions.'));
+  }
+  if (!Array.isArray(summary.missing_targeted_proof)) {
+    findings.push(finding('error', 'qa-coverage-missing-proof-malformed', 'qa_coverage_summary missing_targeted_proof must be an array.'));
+  }
+
+  const expected = {
+    turns: turnLog.length,
+    damage_events: 0,
+    effect_events: 0,
+    turns_with_damage_events: 0,
+    turns_with_effect_events: 0
+  };
+  for (const turn of turnLog) {
+    const damageRows = Array.isArray(turn && turn.damage_events) ? turn.damage_events : [];
+    const effectRows = Array.isArray(turn && turn.effect_events) ? turn.effect_events : [];
+    expected.damage_events += damageRows.length;
+    expected.effect_events += effectRows.length;
+    if (damageRows.length) expected.turns_with_damage_events += 1;
+    if (effectRows.length) expected.turns_with_effect_events += 1;
+  }
+
+  for (const [key, expectedValue] of Object.entries(expected)) {
+    const actual = Number(summary.totals[key]);
+    if (!Number.isFinite(actual) || actual !== expectedValue) {
+      findings.push(finding('error', 'qa-coverage-total-mismatch', `qa_coverage_summary totals.${key} does not match the turnLog evidence.`, {
+        field: key,
+        expected: expectedValue,
+        actual: summary.totals[key]
+      }));
+    }
+  }
+}
+
 function finalizeIdentityChecks(state, findings) {
   for (const id of state.identities.values()) {
     const moves = Array.from(id.moves).filter(Boolean);
@@ -770,6 +824,7 @@ export function validateTurnLogPayload(payload, options = {}) {
     validateEffectEvents(turn || {}, findings);
   }
 
+  validateQaCoverageSummary(payload, turnLog, findings);
   finalizeIdentityChecks(state, findings);
 
   const stableFieldsPresent = state.rowsMissingStableKey === 0 && state.missingStableMaps.size === 0;
@@ -828,8 +883,8 @@ function usage() {
     '',
     'Checks exported battle logs for roster identity, item drift, active/bench key mapping,',
     'HP key coverage, speed-order key coverage, observed priority/speed event order,',
-    'damage/effect evidence shape, and no-valid-target skips while a target side still has',
-    'a live active Pokemon.'
+    'damage/effect evidence shape, qa_coverage_summary totals when present, and',
+    'no-valid-target skips while a target side still has a live active Pokemon.'
   ].join('\n');
 }
 

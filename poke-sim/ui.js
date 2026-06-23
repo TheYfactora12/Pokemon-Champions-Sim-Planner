@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.42-effect-math-context';
+    return txt || 'v2.1.43-qa-coverage-summary';
   } catch (e) {
-    return 'v2.1.42-effect-math-context';
+    return 'v2.1.43-qa-coverage-summary';
   }
 }
 
@@ -3586,6 +3586,350 @@ function csTurnLogBroughtSnapshot(turnLog, side) {
   });
 }
 
+function csQaInc(bucket, key, amount) {
+  if (!bucket) return;
+  var label = key == null || key === '' ? 'unknown' : String(key);
+  bucket[label] = (bucket[label] || 0) + (Number.isFinite(Number(amount)) ? Number(amount) : 1);
+}
+
+function csQaNonNeutralMod(value) {
+  if (value == null || value === '') return false;
+  var n = Number(value);
+  if (!Number.isFinite(n)) return false;
+  return n !== 1 && n !== 4096;
+}
+
+function csQaSourceTruthVersions() {
+  var audit = (typeof ChampionsSim !== 'undefined' && ChampionsSim && ChampionsSim.pokemonDataAudit) ? ChampionsSim.pokemonDataAudit : null;
+  return {
+    pokemon_showdown: {
+      source: audit && audit.source ? audit.source : 'generated Pokemon Showdown audit data',
+      source_repository: audit && audit.sourceRepository ? audit.sourceRepository : null,
+      source_commit_or_version: audit && audit.sourceCommitOrVersion ? audit.sourceCommitOrVersion : null,
+      generated_at: audit && audit.generatedAt ? audit.generatedAt : null
+    },
+    champions_runtime: {
+      source: 'poke-sim/data.js + poke-sim/runtime_data.js + poke-sim/move_support.js',
+      note: 'Champion overrides and runtime fallback data live in repo assets until a reviewed DB runtime-source promotion is complete.'
+    }
+  };
+}
+
+function csQaBlankMechanicsSeen() {
+  return {
+    damage_events: 0,
+    effect_events: 0,
+    super_effective_damage: 0,
+    resisted_damage: 0,
+    immunity_rows: 0,
+    critical_hits: 0,
+    spread_damage: 0,
+    hp_cap: 0,
+    recoil: 0,
+    drain_heal: 0,
+    recovery: 0,
+    hp_cost: 0,
+    delayed_recovery: 0,
+    residual_drain: 0,
+    item_recovery: 0,
+    knock_off_boost: 0,
+    typed_item_boost: 0,
+    stat_stage_damage: 0,
+    base_power_modified: 0,
+    weather_damage_modifier: 0,
+    screen_reduction: 0,
+    priority_actions: 0,
+    speed_order_details: 0,
+    stat_boost_snapshots: 0,
+    weather_active: 0,
+    trick_room_active: 0,
+    tailwind_active: 0
+  };
+}
+
+function csQaSnapshotHasNonzeroStatBoosts(snapshot) {
+  function hasNonzero(obj) {
+    if (!obj || typeof obj !== 'object') return false;
+    if (Array.isArray(obj)) {
+      for (var i = 0; i < obj.length; i++) {
+        if (hasNonzero(obj[i])) return true;
+      }
+      return false;
+    }
+    for (var key in obj) {
+      if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+      var value = obj[key];
+      if (value && typeof value === 'object') {
+        if (hasNonzero(value)) return true;
+      } else if (value !== '' && value != null && Number.isFinite(Number(value)) && Number(value) !== 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+  return hasNonzero(snapshot && (snapshot.stat_boosts_stable || snapshot.stat_boosts));
+}
+
+function csQaSnapshotWeather(snapshot) {
+  var field = snapshot && snapshot.field ? snapshot.field : {};
+  var weather = field.weather || field.weather_name || null;
+  var text = String(weather || '').toLowerCase();
+  return !!(text && text !== 'none' && text !== 'clear' && text !== 'null');
+}
+
+function csQaSnapshotTrickRoom(snapshot) {
+  var field = snapshot && snapshot.field ? snapshot.field : {};
+  return Number(field.trick_room || field.trickRoom || 0) > 0;
+}
+
+function csQaSnapshotTailwind(snapshot) {
+  var speedControl = snapshot && snapshot.speed_control ? snapshot.speed_control : null;
+  if (speedControl) {
+    for (var side in speedControl) {
+      if (!Object.prototype.hasOwnProperty.call(speedControl, side)) continue;
+      var row = speedControl[side] || {};
+      if (Number(row.tailwind_turns || row.tailwind || 0) > 0) return true;
+    }
+  }
+  var details = Array.isArray(snapshot && snapshot.speed_order_details) ? snapshot.speed_order_details : [];
+  for (var i = 0; i < details.length; i++) {
+    if (details[i] && details[i].tailwind) return true;
+  }
+  return false;
+}
+
+function csQaCountSnapshotCoverage(snapshot, mechanics) {
+  if (!snapshot || typeof snapshot !== 'object') return;
+  if (Array.isArray(snapshot.speed_order_details) && snapshot.speed_order_details.length) mechanics.speed_order_details += 1;
+  if (csQaSnapshotHasNonzeroStatBoosts(snapshot)) mechanics.stat_boost_snapshots += 1;
+  if (csQaSnapshotWeather(snapshot)) mechanics.weather_active += 1;
+  if (csQaSnapshotTrickRoom(snapshot)) mechanics.trick_room_active += 1;
+  if (csQaSnapshotTailwind(snapshot)) mechanics.tailwind_active += 1;
+}
+
+function csQaActionLooksPriority(action) {
+  if (!action || typeof action !== 'object') return false;
+  if (Number.isFinite(Number(action.priority)) && Number(action.priority) !== 0) return true;
+  var priorityMoves = {
+    'Helping Hand': true,
+    'Protect': true,
+    'Detect': true,
+    'Endure': true,
+    'Fake Out': true,
+    'Wide Guard': true,
+    'Quick Guard': true,
+    'Extreme Speed': true,
+    'Ally Switch': true,
+    'Follow Me': true,
+    'Rage Powder': true,
+    'Aqua Jet': true,
+    'Ice Shard': true,
+    'Shadow Sneak': true,
+    'Sucker Punch': true,
+    'Vacuum Wave': true,
+    'Quick Attack': true,
+    'Feint': true,
+    "King's Shield": true,
+    'Spiky Shield': true,
+    'Baneful Bunker': true,
+    'Obstruct': true,
+    'Trick Room': true
+  };
+  return !!priorityMoves[action.move];
+}
+
+function csQaEffectKindMatches(kind, token) {
+  return String(kind || '').toLowerCase().indexOf(token) >= 0;
+}
+
+function csQaIsDirectRecoveryKind(kind) {
+  var text = String(kind || '').toLowerCase();
+  return text === 'recovery' ||
+    text === 'full-recovery-status' ||
+    text === 'ally-recovery' ||
+    text === 'target-recovery' ||
+    text === 'ally-recovery-status';
+}
+
+function csQaTagsInclude(tags, token) {
+  if (!Array.isArray(tags)) return false;
+  for (var i = 0; i < tags.length; i++) {
+    if (String(tags[i] || '').toLowerCase().indexOf(token) >= 0) return true;
+  }
+  return false;
+}
+
+function csQaMissingTargetedProof(mechanics) {
+  var checks = [
+    ['spread_damage', 'spread damage rows'],
+    ['screen_reduction', 'screen or Aurora Veil damage reduction'],
+    ['weather_damage_modifier', 'non-neutral weather damage modifier'],
+    ['trick_room_active', 'Trick Room active state'],
+    ['tailwind_active', 'Tailwind active state'],
+    ['stat_stage_damage', 'stat-stage damage calculation'],
+    ['priority_actions', 'priority move ordering'],
+    ['recoil', 'recoil effect math'],
+    ['drain_heal', 'drain healing'],
+    ['recovery', 'direct recovery'],
+    ['hp_cost', 'HP-cost moves'],
+    ['delayed_recovery', 'delayed recovery'],
+    ['residual_drain', 'residual drain'],
+    ['item_recovery', 'item recovery']
+  ];
+  var out = [];
+  for (var i = 0; i < checks.length; i++) {
+    if (!Number(mechanics && mechanics[checks[i][0]] || 0)) out.push(checks[i][1]);
+  }
+  return out;
+}
+
+function csBuildQaCoverageSummary(turnLog, opts) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var options = opts || {};
+  var qaSides = ['player', 'opponent'];
+  var totals = {
+    turns: rows.length,
+    action_rows: 0,
+    damage_events: 0,
+    effect_events: 0,
+    turns_with_damage_events: 0,
+    turns_with_effect_events: 0
+  };
+  var mechanics = csQaBlankMechanicsSeen();
+  var damageMoves = {};
+  var effectMoves = {};
+  var effectKinds = {};
+
+  for (var t = 0; t < rows.length; t++) {
+    var turn = rows[t] || {};
+    csQaCountSnapshotCoverage(turn.pre, mechanics);
+    csQaCountSnapshotCoverage(turn.post, mechanics);
+
+    for (var s = 0; s < qaSides.length; s++) {
+      var actions = turn.actions && Array.isArray(turn.actions[qaSides[s]]) ? turn.actions[qaSides[s]] : [];
+      totals.action_rows += actions.length;
+      for (var a = 0; a < actions.length; a++) {
+        if (csQaActionLooksPriority(actions[a])) mechanics.priority_actions += 1;
+      }
+    }
+
+    var damageRows = Array.isArray(turn.damage_events) ? turn.damage_events : [];
+    var effectRows = Array.isArray(turn.effect_events) ? turn.effect_events : [];
+    totals.damage_events += damageRows.length;
+    totals.effect_events += effectRows.length;
+    mechanics.damage_events += damageRows.length;
+    mechanics.effect_events += effectRows.length;
+    if (damageRows.length) totals.turns_with_damage_events += 1;
+    if (effectRows.length) totals.turns_with_effect_events += 1;
+
+    for (var d = 0; d < damageRows.length; d++) {
+      var row = damageRows[d] || {};
+      csQaInc(damageMoves, row.move || 'unknown');
+      var typeEffectiveness = Number(row.type_effectiveness);
+      if (Number.isFinite(typeEffectiveness)) {
+        if (typeEffectiveness > 1) mechanics.super_effective_damage += 1;
+        else if (typeEffectiveness > 0 && typeEffectiveness < 1) mechanics.resisted_damage += 1;
+        else if (typeEffectiveness === 0) mechanics.immunity_rows += 1;
+      }
+      if (row.critical || row.crit || row.is_critical) mechanics.critical_hits += 1;
+      if (csQaNonNeutralMod(row.spread_mod)) mechanics.spread_damage += 1;
+      if (csQaNonNeutralMod(row.screen_mod)) mechanics.screen_reduction += 1;
+      if (csQaNonNeutralMod(row.weather_mod)) mechanics.weather_damage_modifier += 1;
+      if (row.damage_capped_by_hp) mechanics.hp_cap += 1;
+      if (row.recoil_rule || row.recoil_damage != null || csQaTagsInclude(row.effect_tags, 'recoil')) mechanics.recoil += 1;
+      if (row.drain_rule || row.drain_heal_candidate != null || csQaTagsInclude(row.effect_tags, 'drain')) mechanics.drain_heal += 1;
+      if (row.knock_off_boost || csQaNonNeutralMod(row.knock_off_boost_mod)) mechanics.knock_off_boost += 1;
+      if (row.typed_item_boost || csQaNonNeutralMod(row.typed_item_boost_mod)) mechanics.typed_item_boost += 1;
+      if (Number(row.attack_stat_stage_used || row.attack_stat_stage || 0) !== 0 || Number(row.defense_stat_stage_used || row.defense_stat_stage || 0) !== 0) {
+        mechanics.stat_stage_damage += 1;
+      }
+      if (Number.isFinite(Number(row.base_power_initial)) && Number.isFinite(Number(row.base_power_modified)) && Number(row.base_power_initial) !== Number(row.base_power_modified)) {
+        mechanics.base_power_modified += 1;
+      }
+    }
+
+    for (var e = 0; e < effectRows.length; e++) {
+      var effect = effectRows[e] || {};
+      var kind = effect.effect_kind || 'unknown';
+      csQaInc(effectKinds, kind);
+      csQaInc(effectMoves, effect.move || 'unknown');
+      if (csQaEffectKindMatches(kind, 'recoil')) mechanics.recoil += 1;
+      if (csQaEffectKindMatches(kind, 'drain-heal')) mechanics.drain_heal += 1;
+      if (csQaIsDirectRecoveryKind(kind)) mechanics.recovery += 1;
+      if (csQaEffectKindMatches(kind, 'hp-cost')) mechanics.hp_cost += 1;
+      if (csQaEffectKindMatches(kind, 'delayed-recovery')) mechanics.delayed_recovery += 1;
+      if (csQaEffectKindMatches(kind, 'residual-drain')) mechanics.residual_drain += 1;
+      if (csQaEffectKindMatches(kind, 'item-recovery')) mechanics.item_recovery += 1;
+    }
+  }
+
+  return {
+    schema_version: 'champions-qa-coverage-v1',
+    generated_at: options.generated_at || new Date().toISOString(),
+    scope: options.scope || 'single-turn-log',
+    source: {
+      build_id: options.build_id || ((typeof csGetBuildId === 'function') ? csGetBuildId() : null),
+      source_url: options.source_url || ((typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null),
+      format: options.format || null,
+      player_team_id: options.player_team_id || null,
+      opponent_team_id: options.opponent_team_id || null
+    },
+    source_truth_versions: csQaSourceTruthVersions(),
+    totals: totals,
+    mechanics_seen: mechanics,
+    moves_seen: {
+      damage: damageMoves,
+      effects: effectMoves
+    },
+    effect_kinds: effectKinds,
+    missing_targeted_proof: csQaMissingTargetedProof(mechanics),
+    notes: [
+      'This summary only proves mechanics that occurred in this exported evidence.',
+      'Use targeted scenario logs for mechanics listed in missing_targeted_proof.'
+    ]
+  };
+}
+
+function csMergeQaCoverageSummaries(summaries, opts) {
+  var options = opts || {};
+  var valid = Array.isArray(summaries) ? summaries.filter(function(summary) {
+    return summary && summary.schema_version === 'champions-qa-coverage-v1';
+  }) : [];
+  var merged = csBuildQaCoverageSummary([], Object.assign({}, options, {
+    scope: options.scope || 'qa-artifact-retained-replay-cards'
+  }));
+  merged.totals.replay_cards_scanned = valid.length;
+
+  for (var i = 0; i < valid.length; i++) {
+    var summary = valid[i] || {};
+    var totals = summary.totals || {};
+    for (var key in totals) {
+      if (!Object.prototype.hasOwnProperty.call(totals, key)) continue;
+      merged.totals[key] = (merged.totals[key] || 0) + (Number.isFinite(Number(totals[key])) ? Number(totals[key]) : 0);
+    }
+    var mechanics = summary.mechanics_seen || {};
+    for (var m in mechanics) {
+      if (!Object.prototype.hasOwnProperty.call(mechanics, m)) continue;
+      merged.mechanics_seen[m] = (merged.mechanics_seen[m] || 0) + (Number.isFinite(Number(mechanics[m])) ? Number(mechanics[m]) : 0);
+    }
+    var damageMoves = summary.moves_seen && summary.moves_seen.damage ? summary.moves_seen.damage : {};
+    for (var d in damageMoves) {
+      if (Object.prototype.hasOwnProperty.call(damageMoves, d)) csQaInc(merged.moves_seen.damage, d, damageMoves[d]);
+    }
+    var effectMoves = summary.moves_seen && summary.moves_seen.effects ? summary.moves_seen.effects : {};
+    for (var e in effectMoves) {
+      if (Object.prototype.hasOwnProperty.call(effectMoves, e)) csQaInc(merged.moves_seen.effects, e, effectMoves[e]);
+    }
+    var effectKinds = summary.effect_kinds || {};
+    for (var k in effectKinds) {
+      if (Object.prototype.hasOwnProperty.call(effectKinds, k)) csQaInc(merged.effect_kinds, k, effectKinds[k]);
+    }
+  }
+
+  merged.missing_targeted_proof = csQaMissingTargetedProof(merged.mechanics_seen);
+  return merged;
+}
+
 function downloadReplayTurnLog(replay, opts) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
   opts = opts || {};
@@ -3593,14 +3937,18 @@ function downloadReplayTurnLog(replay, opts) {
   var oppKey = opts.oppKey || replay.oppKey || null;
   var playerTeam = csTurnLogTeamSnapshot(playerKey);
   var opponentTeam = csTurnLogTeamSnapshot(oppKey);
+  var exportedAt = new Date().toISOString();
+  var buildId = (typeof csGetBuildId === 'function') ? csGetBuildId() : null;
+  var sourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null;
+  var format = replay.format || (typeof currentFormat !== 'undefined' ? currentFormat : null);
   var payload = {
     schema_version: 'champions-turn-log-v2',
-    exported_at: new Date().toISOString(),
-    build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
-    source_url: (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null,
+    exported_at: exportedAt,
+    build_id: buildId,
+    source_url: sourceUrl,
     seed: replay.seed || null,
     result: replay.result || null,
-    format: replay.format || (typeof currentFormat !== 'undefined' ? currentFormat : null),
+    format: format,
     player_team_id: playerKey || null,
     opponent_team_id: oppKey || null,
     player_team: playerTeam,
@@ -3616,6 +3964,14 @@ function downloadReplayTurnLog(replay, opts) {
     winCondition: replay.winCondition || null,
     turning_point: replay.turning_point || null,
     position_path: replay.position_path || [],
+    qa_coverage_summary: csBuildQaCoverageSummary(replay.turnLog, {
+      generated_at: exportedAt,
+      build_id: buildId,
+      source_url: sourceUrl,
+      format: format,
+      player_team_id: playerKey || null,
+      opponent_team_id: oppKey || null
+    }),
     turnLog: replay.turnLog
   };
   var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -4560,6 +4916,8 @@ function csCompactQaReplayCard(replay, playerKey) {
   var r = replay || {};
   var log = Array.isArray(r.log) ? r.log : [];
   var turnLog = Array.isArray(r.turnLog) ? r.turnLog : [];
+  var buildId = (typeof csGetBuildId === 'function') ? csGetBuildId() : null;
+  var sourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null;
   return {
     id: r.id || null,
     seed: r.seed || null,
@@ -4575,6 +4933,14 @@ function csCompactQaReplayCard(replay, playerKey) {
     logTruncated: !!r.logTruncated,
     turning_point: r.turning_point || null,
     position_path: Array.isArray(r.position_path) ? r.position_path : [],
+    qa_coverage_summary: csBuildQaCoverageSummary(turnLog, {
+      build_id: buildId,
+      source_url: sourceUrl,
+      format: r.format || (typeof currentFormat !== 'undefined' ? currentFormat : null),
+      player_team_id: r.playerKey || playerKey || null,
+      opponent_team_id: r.oppKey || null,
+      scope: 'retained-replay-card'
+    }),
     turnLog: turnLog,
     log: log
   };
@@ -4590,13 +4956,20 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   var replayCards = (Array.isArray(allReplays) ? allReplays : []).map(function(replay) {
     return csCompactQaReplayCard(replay, key);
   });
+  var exportedAt = new Date().toISOString();
+  var buildId = (typeof csGetBuildId === 'function') ? csGetBuildId() : null;
+  var sourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null;
+  var coverageReplayCards = options.includeReplayCards === false ? [] : replayCards;
+  var coverageSummaries = coverageReplayCards.map(function(card) {
+    return card && card.qa_coverage_summary;
+  });
 
   return {
     schema_version: 'champions-qa-artifact-v1',
     artifact_type: 'large-run-qa-retained-evidence',
-    exported_at: new Date().toISOString(),
-    build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
-    source_url: (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null,
+    exported_at: exportedAt,
+    build_id: buildId,
+    source_url: sourceUrl,
     player_team_id: key,
     player_team_name: team && team.name ? team.name : null,
     current_format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
@@ -4611,6 +4984,14 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       include_sim_log: options.includeSimLog !== false
     },
     summary: csBuildQaArtifactSummary(localSimLog, replayCards, key),
+    qa_coverage_summary: csMergeQaCoverageSummaries(coverageSummaries, {
+      generated_at: exportedAt,
+      build_id: buildId,
+      source_url: sourceUrl,
+      format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
+      player_team_id: key,
+      scope: 'qa-artifact-retained-replay-cards'
+    }),
     retained: {
       sim_log: options.includeSimLog === false ? [] : localSimLog,
       team_history: options.includeSimLog === false ? [] : localTeamHistory,
@@ -4659,6 +5040,8 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.renderHistorySection = renderHistorySection;
   ChampionsSim.history.buildMyDataExport = csBuildMyDataExport;
   ChampionsSim.history.exportMyDataJson = csExportMyDataJson;
+  ChampionsSim.history.buildQaCoverageSummary = csBuildQaCoverageSummary;
+  ChampionsSim.history.mergeQaCoverageSummaries = csMergeQaCoverageSummaries;
   ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
   ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
 }
@@ -6196,6 +6579,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'QA coverage summary added to exports',
+      detail: 'v2.1.43 adds qa_coverage_summary to downloaded turn-log JSON, retained QA replay cards, and top-level QA Artifact exports. The summary counts the mechanics actually seen in the evidence, lists source-truth versions from the generated Pokemon Showdown audit data, and names missing targeted proof so QA does not infer 100% coverage from logs that never triggered a mechanic.'
+    },
+    {
+      status: 'done',
       title: 'Type multiplier audit added',
       detail: 'v2.1.28 adds reports/type_multiplier_audit.md so reviewers can inspect each shipped move user, resolved move type, 4x/2x/1x/0.5x/0.25x/0x roster buckets, declared defensive Tera buckets, and dynamic move-type rules.'
     },
@@ -6295,6 +6683,11 @@ var CS_OVERVIEW_DATA = {
       status: 'validated',
       title: 'Local DB contract suite is green',
       detail: '`bash tests/_run_all_db.sh` passes the local DB adapter/schema contract suites in mock/offline mode. Live Supabase freshness checks require `RUN_LIVE_DB=1` and valid anon credentials, so this proves the repo-side DB contract, not that every remote row is current.'
+    },
+    {
+      status: 'validated',
+      title: 'Latest v2.1.42 browser logs validate and expose effect evidence',
+      detail: 'Six fresh GitHub Pages exports from v2.1.42 validate with zero errors and zero warnings across 34 turns, 124 action rows, 98 damage events, and 18 effect_events. They prove stable IDs, super-effective/resisted damage, crits, HP caps, recoil rows, Knock Off boost evidence, typed held-item boost evidence, stat-stage damage rows, priority actions, and Leftovers item recovery. They do not prove drain, Shed Tail, Wish, Leech Seed, spread rows, or screen reduction in that batch because those mechanics did not occur.'
     },
     {
       status: 'validated',
@@ -6463,7 +6856,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Verify the next deployed source URL and QA artifact',
-      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, applied/calculated damage fields, effect_events for HP-changing effects, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, qa_coverage_summary, applied/calculated damage fields, effect_events for HP-changing effects, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
