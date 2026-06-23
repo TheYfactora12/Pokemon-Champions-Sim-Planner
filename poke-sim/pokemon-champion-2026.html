@@ -2333,7 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.33-log-target-guard</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.34-live-log-proof</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -18512,9 +18512,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.33-log-target-guard';
+    return txt || 'v2.1.34-live-log-proof';
   } catch (e) {
-    return 'v2.1.33-log-target-guard';
+    return 'v2.1.34-live-log-proof';
   }
 }
 
@@ -24284,7 +24284,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Live Supabase', value: 'Teams + analyses' },
     { label: 'Showdown DB', value: 'Checking...' },
     { label: 'Team Format', value: 'Champion/SP focus' },
-    { label: 'Turn Logs', value: 'Strict + target guard' },
+    { label: 'Turn Logs', value: 'v2.1.33 clean' },
     { label: 'Target Guard', value: 'Canonical bridge' },
     { label: 'QA Log Retention', value: 'Capped + artifact' },
     { label: 'Ability Inventory', value: '80/80 modeled' },
@@ -24410,8 +24410,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Latest v2.1.31 logs pass strict structure and expose stacked mechanics evidence',
-      detail: 'Four June 22 logs from ?v=e209f3b pass strict validation with zero warnings across 28 turns. They include super-effective and resisted damage, typed held-item boosts, Knock Off boosts, doubles spread reduction, sun weather boosts, stat-stage damage evidence, and burn/status penalties. Their lone no-valid-target line is terminal after the last opposing active faints, so v2.1.33 adds a validator guard that only fails no-target skips when a target side still has a live active Pokemon.'
+      title: 'Latest v2.1.33 logs pass strict structure and expose stacked mechanics evidence',
+      detail: 'Five June 22 exports carry build_id v2.1.33-log-target-guard and pass strict validation with zero warnings across 27 turns. They include 67 damage events, 31 super-effective hits, 14 resisted hits, 20 typed held-item boosts, 5 Knock Off boosts, 28 spread reductions, 8 sun weather boosts, 5 stat-stage damage rows, and 8 exact-speed-tie markers. The only no-valid-target line is terminal after the player side is empty, consecutive Torkoal Protect failures are expected, and no Tera Blast event appeared in this batch. The source_url query still showed ?v=e209f3b, so build_id is the authoritative bundle proof for these files.'
     },
     {
       status: 'validated',
@@ -24431,7 +24431,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Current release checks are green',
-      detail: 'v2.1.33 Log Target Guard carries v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, type multiplier audit, speed-stack evidence, Knock Off item-state tests, no-valid-target validation, and strict validation are the local release checks for this build.'
+      detail: 'v2.1.34 Live Log Proof carries v2.1.33 Log Target Guard, v2.1.32 Tera Blast Parity, v2.1.31 Editor Builder Roadmap, v2.1.30 Spread Legality Guard, v2.1.29 Knock Off guard, and v2.1.28 mechanics stack guard. Source-truth tests, target bridge coverage, DB seed SP caps, preloaded team legality, custom import/DB merge guards, service-worker cache guard, damage-stack oracle, type multiplier audit, speed-stack evidence, Knock Off item-state tests, no-valid-target validation, and strict validation are the local release checks for this build.'
     },
     {
       status: 'validated',
@@ -24519,8 +24519,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Verify v2.1.33 live logs and QA artifact',
-      detail: 'Use fresh GitHub Pages logs and the QA Artifact export to confirm the build label, source URL, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Tera Blast damage evidence when present, Knock Off boost evidence, and no live-target no-valid-target skips.'
+      title: 'Verify v2.1.34 source URL and QA artifact',
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, damage_events snapshots, legal Champion SP team data, Tera Blast damage evidence when present, Knock Off boost evidence, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
