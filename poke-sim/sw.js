@@ -62,7 +62,8 @@
 // v65-editor-builder-roadmap [2026-06-22] - Overview note for full team-builder UX.
 // v66-tera-blast-parity [2026-06-22] - Tera Blast dynamic type/category parity.
 // v67-log-target-guard [2026-06-22] - No-valid-target log guard and Overview sync status.
-const CACHE_NAME = 'champions-sim-v67-log-target-guard';
+// v68-live-log-proof [2026-06-22] - Overview updated with v2.1.33 live log proof.
+const CACHE_NAME = 'champions-sim-v68-live-log-proof';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

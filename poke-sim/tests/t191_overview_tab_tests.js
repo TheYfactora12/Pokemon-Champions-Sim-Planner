@@ -53,12 +53,12 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Simulation-first direction documented');
   inc(ui, 'Public release milestone map documented');
   inc(ui, 'Live exported logs prove the sim now runs');
-  inc(ui, 'Latest v2.1.31 logs pass strict structure and expose stacked mechanics evidence');
-  inc(ui, 'only fails no-target skips when a target side still has a live active Pokemon');
+  inc(ui, 'Latest v2.1.33 logs pass strict structure and expose stacked mechanics evidence');
+  inc(ui, 'The only no-valid-target line is terminal after the player side is empty');
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.33 Log Target Guard carries v2.1.32 Tera Blast Parity');
+  inc(ui, 'v2.1.34 Live Log Proof carries v2.1.33 Log Target Guard');
   inc(ui, 'Damage stack oracle is green');
   inc(ui, 'Tera Blast parity is green');
   inc(ui, 'Knock Off source-truth behavior is documented');
@@ -88,7 +88,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.33 live logs and QA artifact');
+  inc(ui, 'Verify v2.1.34 source URL and QA artifact');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
