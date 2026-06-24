@@ -2333,7 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.45-targeted-qa-proof</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.46-targeted-qa-sweep</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -19473,9 +19473,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.45-targeted-qa-proof';
+    return txt || 'v2.1.46-targeted-qa-sweep';
   } catch (e) {
-    return 'v2.1.45-targeted-qa-proof';
+    return 'v2.1.46-targeted-qa-sweep';
   }
 }
 
@@ -23289,6 +23289,193 @@ function csMergeQaCoverageSummaries(summaries, opts) {
   return merged;
 }
 
+function csQaProofMon(name, moves, extra) {
+  return Object.assign({
+    name: name,
+    ability: '',
+    item: '',
+    nature: 'Calm',
+    level: 50,
+    moves: moves || ['Tackle'],
+    evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 0 }
+  }, extra || {});
+}
+
+function csQaProofTeam(name, members) {
+  return {
+    name: name,
+    format: 'champions',
+    legality_status: 'legal',
+    members: members || []
+  };
+}
+
+function csRunTargetedQaProofBattle(config) {
+  config = config || {};
+  var seeds = config.seeds || [[1, 2, 3, 4], [100, 200, 300, 400], [10, 20, 30, 40], [123, 456, 789, 1011]];
+  var selected = null;
+  var selectedSummary = null;
+  for (var i = 0; i < seeds.length; i++) {
+    var result = simulateBattle(config.playerTeam, config.opponentTeam, {
+      format: config.format || 'singles',
+      seed: seeds[i],
+      maxTurns: config.maxTurns || 2,
+      playerBring: config.playerBring || null,
+      opponentBring: config.opponentBring || null
+    });
+    var summary = csBuildQaCoverageSummary(result && result.turnLog, {
+      scope: 'targeted-qa-sweep-' + (config.id || 'proof'),
+      build_id: config.build_id || ((typeof csGetBuildId === 'function') ? csGetBuildId() : null),
+      source_url: config.source_url || ((typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null),
+      format: config.format || 'singles',
+      player_team_id: config.playerTeamId || null,
+      opponent_team_id: config.opponentTeamId || null
+    });
+    selected = result;
+    selectedSummary = summary;
+    if (!config.requireMechanic || Number(summary.mechanics_seen && summary.mechanics_seen[config.requireMechanic] || 0) > 0) break;
+  }
+  return {
+    id: config.id || 'proof',
+    label: config.label || config.id || 'Targeted QA proof',
+    required_mechanic: config.requireMechanic || null,
+    format: config.format || 'singles',
+    seed: selected && selected.seed ? selected.seed : null,
+    result: selected && selected.result ? selected.result : null,
+    turns: selected && selected.turns ? selected.turns : 0,
+    qa_coverage_summary: selectedSummary,
+    turnLog: selected && Array.isArray(selected.turnLog) ? selected.turnLog : [],
+    log: selected && Array.isArray(selected.log) ? selected.log : []
+  };
+}
+
+function csBuildTargetedQaSweepEvidence(opts) {
+  var options = opts || {};
+  var buildId = options.build_id || ((typeof csGetBuildId === 'function') ? csGetBuildId() : null);
+  var sourceUrl = options.source_url || ((typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null);
+  var runs = [
+    csRunTargetedQaProofBattle({
+      id: 'hp_cost_clangorous_soul',
+      label: 'HP-cost proof: Clangorous Soul',
+      requireMechanic: 'hp_cost',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_hp_cost_player',
+      opponentTeamId: 'targeted_qa_hp_cost_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA HP Cost Player', [
+        csQaProofMon('Kommo-o', ['Clangorous Soul'], {
+          ability: 'Overcoat',
+          nature: 'Modest',
+          evs: { hp: 32, atk: 0, def: 0, spa: 32, spd: 0, spe: 2 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA HP Cost Opponent', [
+        csQaProofMon('Pelipper', ['Tackle'])
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'hp_cost_shed_tail',
+      label: 'HP-cost proof: Shed Tail pivot',
+      requireMechanic: 'hp_cost',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_shed_tail_player',
+      opponentTeamId: 'targeted_qa_shed_tail_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Shed Tail Player', [
+        csQaProofMon('Orthworm', ['Shed Tail'], {
+          ability: 'Earth Eater',
+          nature: 'Careful',
+          evs: { hp: 32, atk: 1, def: 1, spa: 0, spd: 32, spe: 0 }
+        }),
+        csQaProofMon('Garchomp', ['Tackle'], {
+          ability: 'Rough Skin',
+          nature: 'Jolly',
+          evs: { hp: 2, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Shed Tail Opponent', [
+        csQaProofMon('Pelipper', ['Tackle'])
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'delayed_recovery_wish',
+      label: 'Delayed recovery proof: Wish',
+      requireMechanic: 'delayed_recovery',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_wish_player',
+      opponentTeamId: 'targeted_qa_wish_opponent',
+      maxTurns: 2,
+      playerTeam: csQaProofTeam('Targeted QA Wish Player', [
+        csQaProofMon('Kangaskhan', ['Wish'], {
+          ability: 'Scrappy',
+          nature: 'Careful',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Wish Opponent', [
+        csQaProofMon('Jolteon', ['Tackle'], {
+          nature: 'Timid',
+          evs: { hp: 2, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'residual_drain_leech_seed',
+      label: 'Residual drain proof: Leech Seed',
+      requireMechanic: 'residual_drain',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_leech_seed_player',
+      opponentTeamId: 'targeted_qa_leech_seed_opponent',
+      maxTurns: 2,
+      playerTeam: csQaProofTeam('Targeted QA Leech Seed Player', [
+        csQaProofMon('Meganium', ['Leech Seed'], {
+          ability: 'Overgrow',
+          nature: 'Calm',
+          evs: { hp: 32, atk: 0, def: 1, spa: 0, spd: 32, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Leech Seed Opponent', [
+        csQaProofMon('Pelipper', ['Tackle'])
+      ])
+    })
+  ];
+  var summary = csMergeQaCoverageSummaries(runs.map(function(run) {
+    return run && run.qa_coverage_summary;
+  }), {
+    generated_at: options.generated_at || new Date().toISOString(),
+    build_id: buildId,
+    source_url: sourceUrl,
+    format: 'targeted-sweep',
+    player_team_id: 'targeted_qa_sweep',
+    scope: 'targeted-qa-sweep'
+  });
+  summary.totals.targeted_sweep_runs = runs.length;
+  var missingRequiredMechanics = runs.filter(function(run) {
+    var key = run && run.required_mechanic;
+    return key && !Number(run.qa_coverage_summary && run.qa_coverage_summary.mechanics_seen && run.qa_coverage_summary.mechanics_seen[key] || 0);
+  }).map(function(run) {
+    return run.required_mechanic;
+  });
+  return {
+    schema_version: 'champions-targeted-qa-sweep-v1',
+    generated_at: options.generated_at || new Date().toISOString(),
+    build_id: buildId,
+    source_url: sourceUrl,
+    status: missingRequiredMechanics.length ? 'incomplete' : 'complete',
+    missing_required_mechanics: missingRequiredMechanics,
+    qa_coverage_summary: summary,
+    runs: runs,
+    notes: [
+      'Normal battle simulation is greedy/sampled, not an exhaustive game-tree traversal.',
+      'This targeted sweep deliberately forces known long-tail mechanics so QA artifacts can prove those branches occurred in browser evidence.'
+    ]
+  };
+}
+
 function downloadReplayTurnLog(replay, opts) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
   opts = opts || {};
@@ -24322,6 +24509,24 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   var coverageSummaries = coverageReplayCards.map(function(card) {
     return card && card.qa_coverage_summary;
   });
+  var targetedSweep = options.includeTargetedSweep === false ? null : csBuildTargetedQaSweepEvidence({
+    generated_at: exportedAt,
+    build_id: buildId,
+    source_url: sourceUrl
+  });
+  if (targetedSweep && targetedSweep.qa_coverage_summary) {
+    coverageSummaries.push(targetedSweep.qa_coverage_summary);
+  }
+  var mergedCoverage = csMergeQaCoverageSummaries(coverageSummaries, {
+    generated_at: exportedAt,
+    build_id: buildId,
+    source_url: sourceUrl,
+    format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
+    player_team_id: key,
+    scope: targetedSweep ? 'qa-artifact-retained-replay-cards-plus-targeted-sweep' : 'qa-artifact-retained-replay-cards'
+  });
+  mergedCoverage.totals.replay_cards_scanned = coverageReplayCards.length;
+  mergedCoverage.totals.targeted_sweep_runs = targetedSweep && Array.isArray(targetedSweep.runs) ? targetedSweep.runs.length : 0;
 
   return {
     schema_version: 'champions-qa-artifact-v1',
@@ -24340,17 +24545,12 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       max_simlog_total: CS_SIMLOG_MAX_TOTAL,
       max_simlog_per_pair: CS_SIMLOG_MAX_PER_PAIR,
       include_replay_cards: options.includeReplayCards !== false,
-      include_sim_log: options.includeSimLog !== false
+      include_sim_log: options.includeSimLog !== false,
+      include_targeted_sweep: !!targetedSweep
     },
     summary: csBuildQaArtifactSummary(localSimLog, replayCards, key),
-    qa_coverage_summary: csMergeQaCoverageSummaries(coverageSummaries, {
-      generated_at: exportedAt,
-      build_id: buildId,
-      source_url: sourceUrl,
-      format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
-      player_team_id: key,
-      scope: 'qa-artifact-retained-replay-cards'
-    }),
+    qa_coverage_summary: mergedCoverage,
+    targeted_qa_sweep: targetedSweep,
     retained: {
       sim_log: options.includeSimLog === false ? [] : localSimLog,
       team_history: options.includeSimLog === false ? [] : localTeamHistory,
@@ -24401,6 +24601,7 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.exportMyDataJson = csExportMyDataJson;
   ChampionsSim.history.buildQaCoverageSummary = csBuildQaCoverageSummary;
   ChampionsSim.history.mergeQaCoverageSummaries = csMergeQaCoverageSummaries;
+  ChampionsSim.history.buildTargetedQaSweepEvidence = csBuildTargetedQaSweepEvidence;
   ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
   ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
 }

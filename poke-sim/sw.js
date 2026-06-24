@@ -72,7 +72,8 @@
 // v75-recoil-showdown-context [2026-06-23] - QA baseline exposes Showdown recoil metadata and move text.
 // v78-recoil-applied-evidence [2026-06-23] - Recoil effect events separate calculated recoil from actual HP lost.
 // v79-targeted-qa-proof [2026-06-24] - Targeted QA proof artifact clears named missing_targeted_proof gates.
-const CACHE_NAME = 'champions-sim-v79-targeted-qa-proof';
+// v80-targeted-qa-sweep [2026-06-24] - QA artifact includes forced long-tail mechanics sweep alongside retained normal sim evidence.
+const CACHE_NAME = 'champions-sim-v80-targeted-qa-sweep';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

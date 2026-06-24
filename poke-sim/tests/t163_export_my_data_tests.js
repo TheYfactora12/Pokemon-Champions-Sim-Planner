@@ -267,7 +267,7 @@ async function main() {
     const payload = await csBuildQaArtifactExport('player');
     eq(payload.schema_version, 'champions-qa-artifact-v1');
     eq(payload.artifact_type, 'large-run-qa-retained-evidence');
-    truthy(/^v2\.1\.45-targeted-qa-proof/.test(payload.build_id || ''), 'QA build id missing');
+    truthy(/^v2\.1\.46-targeted-qa-sweep/.test(payload.build_id || ''), 'QA build id missing');
     eq(payload.source_url, 'http://localhost/');
     eq(payload.retention.max_replay_cards, 240);
     eq(payload.retention.max_replay_log_lines, 200);
@@ -277,7 +277,12 @@ async function main() {
     truthy(payload.summary.retained_replay_cards >= 1, 'replay summary missing');
     eq(payload.qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'QA artifact coverage schema missing');
     eq(payload.qa_coverage_summary.totals.replay_cards_scanned, 1, 'QA artifact coverage replay count mismatch');
-    eq(payload.qa_coverage_summary.totals.turns, 1, 'QA artifact coverage turn count mismatch');
+    eq(payload.qa_coverage_summary.totals.targeted_sweep_runs, 4, 'QA artifact targeted sweep count mismatch');
+    truthy(payload.qa_coverage_summary.totals.turns > 1, 'QA artifact merged coverage should include targeted sweep turns');
+    truthy(payload.targeted_qa_sweep && payload.targeted_qa_sweep.status === 'complete', 'targeted QA sweep should be complete');
+    truthy(payload.qa_coverage_summary.mechanics_seen.hp_cost > 0, 'targeted sweep should add HP-cost proof');
+    truthy(payload.qa_coverage_summary.mechanics_seen.delayed_recovery > 0, 'targeted sweep should add delayed recovery proof');
+    truthy(payload.qa_coverage_summary.mechanics_seen.residual_drain > 0, 'targeted sweep should add residual drain proof');
     truthy(payload.retained && payload.retained.sim_log.length >= 1, 'retained sim log missing');
     truthy(payload.retained && payload.retained.replay_cards.length >= 1, 'retained replay cards missing');
     eq(payload.retained.replay_cards[0].seed, 'qa-seed-1');
