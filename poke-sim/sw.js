@@ -71,7 +71,8 @@
 // v74-turn-log-team-roster [2026-06-23] - Turn-log exports include full team roster metadata for QA review.
 // v75-recoil-showdown-context [2026-06-23] - QA baseline exposes Showdown recoil metadata and move text.
 // v78-recoil-applied-evidence [2026-06-23] - Recoil effect events separate calculated recoil from actual HP lost.
-const CACHE_NAME = 'champions-sim-v78-recoil-applied-evidence';
+// v79-targeted-qa-proof [2026-06-24] - Targeted QA proof artifact clears named missing_targeted_proof gates.
+const CACHE_NAME = 'champions-sim-v79-targeted-qa-proof';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

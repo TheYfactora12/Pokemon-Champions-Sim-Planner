@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.44-recoil-applied-evidence';
+    return txt || 'v2.1.45-targeted-qa-proof';
   } catch (e) {
-    return 'v2.1.44-recoil-applied-evidence';
+    return 'v2.1.45-targeted-qa-proof';
   }
 }
 
