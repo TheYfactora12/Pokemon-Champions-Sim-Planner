@@ -116,9 +116,26 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.56-branch-progress-counters';
+    return txt || 'v2.1.57-cache-refresh-reload';
   } catch (e) {
-    return 'v2.1.56-branch-progress-counters';
+    return 'v2.1.57-cache-refresh-reload';
+  }
+}
+
+function csReloadAfterBuildCacheReset(buildId) {
+  if (typeof window === 'undefined' || !window.location) return false;
+  try {
+    var guardKey = 'champions:build-reload:' + String(buildId || 'unknown');
+    if (window.sessionStorage && window.sessionStorage.getItem(guardKey)) return false;
+    if (window.sessionStorage) window.sessionStorage.setItem(guardKey, '1');
+    var url = new URL(window.location.href);
+    url.searchParams.set('v', String(buildId || Date.now()));
+    url.searchParams.set('fresh', '1');
+    window.location.replace(url.toString());
+    return true;
+  } catch (e) {
+    UILog.warn('build refresh reload skipped', e);
+    return false;
   }
 }
 
@@ -8054,6 +8071,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Cache refresh reload added',
+      detail: 'v2.1.57 reloads once after build-change cache cleanup so a tester does not keep running the just-cleaned older bundle. This prevents old Tactical Sweep UI code from continuing to show 0W / 0L after the fixed branch counters are deployed.'
+    },
+    {
+      status: 'done',
       title: 'Branch progress counters added',
       detail: 'v2.1.56 changes Tactical Sweep from normal sim W/L counters to branch-specific progress counters. The progress area now shows opponent index, saved branch rows, and percent complete instead of 0W / 0L / 0%.'
     },
@@ -14255,7 +14277,8 @@ if (typeof window !== 'undefined') {
 
   // Hook the existing tab-nav click and player-select change after DOM is ready
   document.addEventListener('DOMContentLoaded', async function(){
-    await csHardenClientState();
+    var didHardenClientState = await csHardenClientState();
+    if (didHardenClientState && csReloadAfterBuildCacheReset(csGetBuildId())) return;
     _csInitEvidenceToggle();
     csInitReplayCoachUi();
     renderOverviewTab();
