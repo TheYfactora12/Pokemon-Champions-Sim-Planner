@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.55-tactical-sweep-progress';
+    return txt || 'v2.1.56-branch-progress-counters';
   } catch (e) {
-    return 'v2.1.55-tactical-sweep-progress';
+    return 'v2.1.56-branch-progress-counters';
   }
 }
 
@@ -6990,11 +6990,36 @@ function setProgress(pct, label, w, l) {
   document.getElementById('progress-fill').style.width=pct+'%';
   document.getElementById('progress-label').textContent=label;
   if (w!==undefined) {
-    document.getElementById('live-wins').textContent=w+'W';
-    document.getElementById('live-losses').textContent=l+'L';
+    var winsEl = document.getElementById('live-wins');
+    var lossesEl = document.getElementById('live-losses');
+    winsEl.textContent=w+'W';
+    lossesEl.textContent=l+'L';
+    winsEl.style.color = 'var(--green)';
+    lossesEl.style.color = 'var(--red)';
     const total=w+l;
     document.getElementById('live-pct').textContent=total?Math.round(w/total*100)+'%':'—';
   }
+}
+
+function setBranchProgress(pct, label, meta) {
+  meta = meta || {};
+  var safePct = Math.max(0, Math.min(100, Math.round(Number(pct) || 0)));
+  document.getElementById('progress-fill').style.width = safePct + '%';
+  document.getElementById('progress-label').textContent = label;
+  var left = document.getElementById('live-wins');
+  var mid = document.getElementById('live-losses');
+  var right = document.getElementById('live-pct');
+  if (left) {
+    var idx = Number(meta.opponent_index || 0);
+    var count = Number(meta.opponent_count || 0);
+    left.textContent = count ? (idx ? idx + '/' + count : '0/' + count) : '0/0';
+    left.style.color = 'var(--blue)';
+  }
+  if (mid) {
+    mid.textContent = Number(meta.saved_rows || 0) + ' rows';
+    mid.style.color = 'var(--green)';
+  }
+  if (right) right.textContent = safePct + '%';
 }
 
 function setSimError(err) {
@@ -7174,9 +7199,11 @@ document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', asyn
   if (qaRunBtn) qaRunBtn.disabled = true;
   try {
     document.getElementById('progress-wrap').style.display = '';
-    setProgress(0, 'Starting tactical sweep...', 0, 0);
+    setBranchProgress(0, 'Starting tactical sweep...', { opponent_count: 0, saved_rows: 0 });
     var simCtx = resolveSimContext();
-    setProgress(35, 'Building unseen branch coverage for ' + getSimScopeLabel(simCtx.simScope) + '...', 0, 0);
+    setBranchProgress(2, 'Building unseen branch coverage for ' + getSimScopeLabel(simCtx.simScope) + '...', { opponent_count: 0, saved_rows: 0 });
+    var tacticalSavedRows = 0;
+    var tacticalOpponentCount = 0;
     await csExportQaArtifactJson(simCtx.playerKey, {
       branchMatrixUseScope: true,
       branchMatrixScope: simCtx.simScope,
@@ -7186,27 +7213,61 @@ document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', asyn
         var count = Number(event.opponent_count || 0);
         var idx = Number(event.opponent_index || 0);
         var basePct = count && idx ? Math.round(8 + ((idx - 1) / count) * 82) : 5;
+        if (count) tacticalOpponentCount = count;
         var teamName = event.opponent_team_id && TEAMS[event.opponent_team_id] && TEAMS[event.opponent_team_id].name
           ? TEAMS[event.opponent_team_id].name
           : (event.opponent_team_id || 'opponent');
         if (event.phase === 'start') {
-          setProgress(5, 'Preparing tactical sweep for ' + count + ' opponent' + (count === 1 ? '' : 's') + '...', 0, 0);
+          setBranchProgress(5, 'Preparing tactical sweep for ' + count + ' opponent' + (count === 1 ? '' : 's') + '...', {
+            opponent_count: count,
+            saved_rows: tacticalSavedRows
+          });
         } else if (event.phase === 'load') {
-          setProgress(basePct, 'Loading branch memory ' + idx + ' / ' + count + ': ' + teamName + '...', 0, 0);
+          setBranchProgress(basePct, 'Loading branch memory ' + idx + ' / ' + count + ': ' + teamName + '...', {
+            opponent_index: idx,
+            opponent_count: count,
+            saved_rows: tacticalSavedRows
+          });
         } else if (event.phase === 'build') {
-          setProgress(Math.min(92, basePct + 3), 'Testing unseen branches ' + idx + ' / ' + count + ': ' + teamName + ' (' + Number(event.loaded_rows || 0) + ' prior rows)...', 0, 0);
+          setBranchProgress(Math.min(92, basePct + 3), 'Testing unseen branches ' + idx + ' / ' + count + ': ' + teamName + ' (' + Number(event.loaded_rows || 0) + ' prior rows)...', {
+            opponent_index: idx,
+            opponent_count: count,
+            saved_rows: tacticalSavedRows
+          });
         } else if (event.phase === 'save') {
-          setProgress(Math.min(94, basePct + 6), 'Saving ' + Number(event.executed_runs || 0) + ' branch runs for ' + teamName + '...', 0, 0);
+          setBranchProgress(Math.min(94, basePct + 6), 'Saving ' + Number(event.executed_runs || 0) + ' branch runs for ' + teamName + '...', {
+            opponent_index: idx,
+            opponent_count: count,
+            saved_rows: tacticalSavedRows
+          });
         } else if (event.phase === 'done') {
-          setProgress(Math.min(96, basePct + 8), 'Done ' + idx + ' / ' + count + ': ' + teamName + ' · saved ' + Number(event.saved_rows || 0) + ' rows', 0, 0);
+          tacticalSavedRows += Number(event.saved_rows || 0);
+          setBranchProgress(Math.min(96, basePct + 8), 'Done ' + idx + ' / ' + count + ': ' + teamName + ' · saved ' + Number(event.saved_rows || 0) + ' rows', {
+            opponent_index: idx,
+            opponent_count: count,
+            saved_rows: tacticalSavedRows
+          });
         } else if (event.phase === 'analyze') {
-          setProgress(96, 'Analyzing ' + Number(event.executed_runs || 0) + ' tactical branch runs...', 0, 0);
+          setBranchProgress(96, 'Analyzing ' + Number(event.executed_runs || 0) + ' tactical branch runs...', {
+            opponent_index: count,
+            opponent_count: count,
+            saved_rows: tacticalSavedRows
+          });
         } else if (event.phase === 'complete') {
-          setProgress(98, 'Sweep complete: saved ' + Number(event.saved_rows || 0) + ' rows. Preparing download...', 0, 0);
+          tacticalSavedRows = Number(event.saved_rows || tacticalSavedRows || 0);
+          setBranchProgress(98, 'Sweep complete: saved ' + tacticalSavedRows + ' rows. Preparing download...', {
+            opponent_index: count,
+            opponent_count: count,
+            saved_rows: tacticalSavedRows
+          });
         }
       }
     });
-    setProgress(100, 'Tactical Sweep QA Artifact downloaded.', 0, 0);
+    setBranchProgress(100, 'Tactical Sweep QA Artifact downloaded.', {
+      opponent_index: tacticalOpponentCount,
+      opponent_count: tacticalOpponentCount,
+      saved_rows: tacticalSavedRows
+    });
   } catch (e) {
     setSimError(e);
   } finally {
@@ -7991,6 +8052,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Branch progress counters added',
+      detail: 'v2.1.56 changes Tactical Sweep from normal sim W/L counters to branch-specific progress counters. The progress area now shows opponent index, saved branch rows, and percent complete instead of 0W / 0L / 0%.'
+    },
     {
       status: 'done',
       title: 'Tactical Sweep progress added',

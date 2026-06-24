@@ -250,6 +250,9 @@ async function main() {
     truthy(/id="sim-scope"/.test(html), 'Test Scope selector missing');
     truthy(/Selected matchup/.test(html), 'Selected matchup scope option missing');
     truthy(/10,000 series \(full team stress\)/.test(html), '10,000 stress sample option missing');
+    const ui = fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8');
+    truthy(/function setBranchProgress/.test(ui), 'branch progress helper missing');
+    truthy(/saved_rows/.test(ui), 'branch progress saved-row counter missing');
   });
 
   await T('6. QA artifact includes retention caps, build, source, and retained evidence', async () => {
@@ -274,7 +277,7 @@ async function main() {
     const payload = await csBuildQaArtifactExport('player');
     eq(payload.schema_version, 'champions-qa-artifact-v1');
     eq(payload.artifact_type, 'large-run-qa-retained-evidence');
-    truthy(/^v2\.1\.55-tactical-sweep-progress/.test(payload.build_id || ''), 'QA build id missing');
+    truthy(/^v2\.1\.56-branch-progress-counters/.test(payload.build_id || ''), 'QA build id missing');
     eq(payload.source_url, 'http://localhost/');
     eq(payload.retention.max_replay_cards, 240);
     eq(payload.retention.max_replay_log_lines, 200);
