@@ -532,10 +532,14 @@
         };
       });
 
+      var rowsToWrite = [];
+      var seenInBatch = Object.create(null);
       var inserted = 0;
       var updated = 0;
       for (var i = 0; i < runs.length; i++) {
         var run = runs[i];
+        if (seenInBatch[run.branch_key]) continue;
+        seenInBatch[run.branch_key] = true;
         var row = {
           branch_key: run.branch_key,
           ruleset_id: payload.ruleset_id || DEFAULT_RULESET_ID,
@@ -555,25 +559,29 @@
           source_url: payload.source_url || null,
           last_seen_at: new Date().toISOString()
         };
+        var prior = existing[run.branch_key] || {};
+        var priorOutcome = prior.outcome_signature || null;
+        var changed = !!(priorOutcome && row.outcome_signature && priorOutcome !== row.outcome_signature);
         if (Object.prototype.hasOwnProperty.call(existing, run.branch_key)) {
-          var prior = existing[run.branch_key] || {};
-          var changed = !!(prior.outcome_signature && row.outcome_signature && prior.outcome_signature !== row.outcome_signature);
           row.run_count = Number(prior.run_count || 0) + 1;
           row.outcome_drift_count = Number(prior.outcome_drift_count || 0) + (changed ? 1 : 0);
-          var updateResult = await sb
-            .from('branch_coverage_runs')
-            .update(row)
-            .eq('branch_key', run.branch_key);
-          if (updateResult.error) throw updateResult.error;
           updated++;
         } else {
           row.run_count = 1;
-          var insertResult = await sb.from('branch_coverage_runs').insert(row);
-          if (insertResult.error) throw insertResult.error;
+          row.outcome_drift_count = 0;
           inserted++;
         }
+        rowsToWrite.push(row);
       }
-      return { enabled: true, saved: runs.length, updated: updated, inserted: inserted };
+      if (!rowsToWrite.length) {
+        return { enabled: true, saved: 0, updated: 0, inserted: 0 };
+      }
+      var saveResult = await sb
+        .from('branch_coverage_runs')
+        .upsert(rowsToWrite, { onConflict: 'branch_key' });
+      if (saveResult && saveResult.error) throw saveResult.error;
+
+      return { enabled: true, saved: rowsToWrite.length, updated: updated, inserted: inserted };
     } catch (err) {
       log.warn('saveBranchCoverageRuns failed', err);
       return { enabled: true, saved: 0, updated: 0, inserted: 0, error: err && err.message ? err.message : String(err) };

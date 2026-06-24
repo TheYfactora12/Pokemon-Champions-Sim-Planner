@@ -931,9 +931,22 @@ function getSimScopeLabel(mode) {
 
 function getTacticalDepthMaxRuns() {
   var el = (typeof document !== 'undefined') ? document.getElementById('tactical-depth') : null;
-  var value = el && typeof el.value === 'string' ? Number(el.value) : 100;
-  if (value === 24 || value === 100 || value === 250) return value;
+  var value = el && typeof el.value === 'string' ? el.value : '';
+  if (value === 'all') return -1;
+  value = Number(value);
+  if (Number.isFinite(value) && value > 0) return Math.floor(value);
   return 100;
+}
+
+function normalizeBranchMaxRuns(maxRuns) {
+  if (maxRuns === -1 || maxRuns === 'all' || maxRuns === 'ALL' || maxRuns === 'All') return -1;
+  var parsed = Number(maxRuns);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 100;
+}
+
+function resolveBranchRunLimit(candidateCount, maxRuns) {
+  if (maxRuns === -1) return candidateCount;
+  return Math.min(candidateCount, normalizeBranchMaxRuns(maxRuns));
 }
 
 function isPreloadedSimTeam(teamKey, team) {
@@ -4452,7 +4465,7 @@ function csSummarizeBranchTactics(turnLog, forcedActions, opts) {
   return summary;
 }
 
-function csBuildForcedBranchMatrixSweepEvidence(opts) {
+async function csBuildForcedBranchMatrixSweepEvidence(opts) {
   var options = opts || {};
   var buildId = options.build_id || ((typeof csGetBuildId === 'function') ? csGetBuildId() : null);
   var sourceUrl = options.source_url || ((typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null);
@@ -4461,7 +4474,7 @@ function csBuildForcedBranchMatrixSweepEvidence(opts) {
   var playerTeam = (typeof TEAMS !== 'undefined' && TEAMS[playerTeamId]) ? TEAMS[playerTeamId] : null;
   var opponentTeam = (typeof TEAMS !== 'undefined' && TEAMS[opponentTeamId]) ? TEAMS[opponentTeamId] : null;
   var maxLeadPairsPerSide = Number.isFinite(Number(options.maxLeadPairsPerSide)) ? Math.max(1, Number(options.maxLeadPairsPerSide)) : 3;
-  var maxRuns = Number.isFinite(Number(options.maxRuns)) ? Math.max(1, Number(options.maxRuns)) : 24;
+  var maxRuns = normalizeBranchMaxRuns(options.maxRuns);
   var maxTurns = Number.isFinite(Number(options.maxTurns)) ? Math.max(1, Number(options.maxTurns)) : 3;
   var generatedAt = options.generated_at || new Date().toISOString();
 
@@ -4524,8 +4537,10 @@ function csBuildForcedBranchMatrixSweepEvidence(opts) {
     if (a.seen_before !== b.seen_before) return a.seen_before ? 1 : -1;
     return a.branch_key.localeCompare(b.branch_key);
   });
-  candidates.slice(0, maxRuns).forEach(function(candidate) {
-    var seedBase = runs.length + 1;
+  var maxPlannedRuns = resolveBranchRunLimit(candidates.length, maxRuns);
+  for (var i = 0; i < maxPlannedRuns; i++) {
+    var candidate = candidates[i];
+    var seedBase = i + 1;
     var battle = simulateBattle(playerTeam, opponentTeam, {
       format: 'doubles',
       seed: [seedBase, seedBase + 101, seedBase + 202, seedBase + 303],
@@ -4560,7 +4575,16 @@ function csBuildForcedBranchMatrixSweepEvidence(opts) {
       }),
       turnLog: turnLog
     });
-  });
+    if (typeof options.onProgress === 'function' && (i + 1 === maxPlannedRuns || (i + 1) % 5 === 0)) {
+      options.onProgress({
+        executed_runs: i + 1,
+        total_planned_runs: maxPlannedRuns,
+        unseen_candidate_runs: maxPlannedRuns
+      });
+      var paintWait = csYieldForProgressPaint();
+      if (paintWait) await paintWait;
+    }
+  }
 
   var summary = csMergeQaCoverageSummaries(runs.map(function(run) {
     return run && run.qa_coverage_summary;
@@ -4602,7 +4626,7 @@ function csBuildForcedBranchMatrixSweepEvidence(opts) {
       executed_runs: runs.length,
       newly_executed_runs: newlyExecuted,
       capped: runs.length < candidateRuns,
-      max_runs: maxRuns,
+      max_runs: maxPlannedRuns,
       max_turns: maxTurns
     },
     qa_coverage_summary: summary,
@@ -6200,7 +6224,7 @@ async function csBuildBranchMatrixForOpponent(args) {
     opponent_count: args.opponent_count,
     loaded_rows: loadedRows.length
   });
-  matrix = csBuildForcedBranchMatrixSweepEvidence({
+  matrix = await csBuildForcedBranchMatrixSweepEvidence({
     generated_at: exportedAt,
     build_id: buildId,
     source_url: sourceUrl,
@@ -6213,11 +6237,27 @@ async function csBuildBranchMatrixForOpponent(args) {
     seenBranchKeys: loadedRows.map(function(row) {
       return row && row.branch_key && !Number(row.outcome_drift_count || 0) ? row.branch_key : null;
     }).filter(Boolean),
-    maxRuns: options.branchMatrixMaxRunsPerOpponent || options.branchMatrixMaxRuns || 24,
+    maxRuns: Object.prototype.hasOwnProperty.call(options, 'branchMatrixMaxRunsPerOpponent')
+      ? normalizeBranchMaxRuns(options.branchMatrixMaxRunsPerOpponent)
+      : (Object.prototype.hasOwnProperty.call(options, 'branchMatrixMaxRuns')
+          ? normalizeBranchMaxRuns(options.branchMatrixMaxRuns)
+          : getTacticalDepthMaxRuns()),
     maxLeadPairsPerSide: options.branchMatrixMaxLeadPairsPerSide || 3,
     maxMovesPerMon: options.branchMatrixMaxMovesPerMon || 2,
     maxTargetsPerMove: options.branchMatrixMaxTargetsPerMove || 2,
-    maxTurns: options.branchMatrixMaxTurns || 3
+    maxTurns: options.branchMatrixMaxTurns || 3,
+    onProgress: function(event) {
+      csReportBranchMatrixProgress(options, {
+        phase: 'build-progress',
+        opponent_team_id: branchOpponentKey,
+        opponent_index: args.opponent_index,
+        opponent_count: args.opponent_count,
+        loaded_rows: loadedRows.length,
+        executed_runs: event && event.executed_runs || 0,
+        total_planned_runs: event && event.total_planned_runs || 0,
+        unseen_candidate_runs: event && event.unseen_candidate_runs || 0
+      });
+    }
   });
   csReportBranchMatrixProgress(options, {
     phase: 'save',
@@ -6397,7 +6437,11 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     player_team_id: options.branchPlayerTeamId || key,
     opponent_count: tacticalSweepOpponentKeys.length,
     opponent_team_ids: tacticalSweepOpponentKeys,
-    max_runs_per_opponent: options.branchMatrixMaxRunsPerOpponent || options.branchMatrixMaxRuns || 24,
+    max_runs_per_opponent: Object.prototype.hasOwnProperty.call(options, 'branchMatrixMaxRunsPerOpponent')
+      ? normalizeBranchMaxRuns(options.branchMatrixMaxRunsPerOpponent)
+      : (Object.prototype.hasOwnProperty.call(options, 'branchMatrixMaxRuns')
+          ? normalizeBranchMaxRuns(options.branchMatrixMaxRuns)
+          : getTacticalDepthMaxRuns()),
     matrices: tacticalSweepMatrices.map(function(entry) {
       return {
         opponent_team_id: entry.opponent_team_id,
@@ -7042,7 +7086,17 @@ function setBranchProgress(pct, label, meta) {
     left.style.color = 'var(--blue)';
   }
   if (mid) {
-    mid.textContent = Number(meta.saved_rows || 0) + ' rows';
+    var savedRows = Number(meta.saved_rows || 0);
+    var testedRows = Number(meta.executed_runs || 0);
+    if (savedRows && testedRows && savedRows !== testedRows) {
+      mid.textContent = savedRows + ' saved · ' + testedRows + ' runs';
+    } else if (savedRows) {
+      mid.textContent = savedRows + ' rows';
+    } else if (testedRows) {
+      mid.textContent = testedRows + ' runs';
+    } else {
+      mid.textContent = '0 rows';
+    }
     mid.style.color = 'var(--green)';
   }
   if (right) right.textContent = safePct + '%';
@@ -7259,8 +7313,23 @@ document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', asyn
           setBranchProgress(Math.min(92, basePct + 3), 'Testing unseen branches ' + idx + ' / ' + count + ': ' + teamName + ' (' + Number(event.loaded_rows || 0) + ' prior rows)...', {
             opponent_index: idx,
             opponent_count: count,
-            saved_rows: tacticalSavedRows
+            saved_rows: tacticalSavedRows,
+            executed_runs: 0
           });
+        } else if (event.phase === 'build-progress') {
+          var runIndex = Number(event.executed_runs || 0);
+          var runTotal = Number(event.total_planned_runs || 0);
+          var runPct = runTotal ? Math.round((runIndex / Math.max(1, runTotal)) * 85) : 0;
+          setBranchProgress(
+            Math.min(92, basePct + runPct),
+            'Testing unseen branches ' + idx + ' / ' + count + ': ' + teamName + ' (' + runIndex + ' / ' + (runTotal || '?') + ' runs)...',
+            {
+              opponent_index: idx,
+              opponent_count: count,
+              saved_rows: tacticalSavedRows,
+              executed_runs: runIndex
+            }
+          );
         } else if (event.phase === 'save') {
           setBranchProgress(Math.min(94, basePct + 6), 'Saving ' + Number(event.executed_runs || 0) + ' branch runs for ' + teamName + '...', {
             opponent_index: idx,
@@ -8087,7 +8156,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Tactical Depth selector added',
-      detail: 'v2.1.58 adds Quick 24, Deep 100, and Full 250 branch-depth choices for Tactical Sweep + QA so players can choose between fast proof and faster DB learning while preserving browser safety caps.'
+      detail: 'v2.1.58 adds Quick 24, Deep 100, Deep 250, and All candidate branches for Tactical Sweep + QA so players can choose between fast proof and full tactical coverage.'
     },
     {
       status: 'done',
