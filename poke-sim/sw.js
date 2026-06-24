@@ -73,7 +73,8 @@
 // v78-recoil-applied-evidence [2026-06-23] - Recoil effect events separate calculated recoil from actual HP lost.
 // v79-targeted-qa-proof [2026-06-24] - Targeted QA proof artifact clears named missing_targeted_proof gates.
 // v80-targeted-qa-sweep [2026-06-24] - QA artifact includes forced long-tail mechanics sweep alongside retained normal sim evidence.
-const CACHE_NAME = 'champions-sim-v80-targeted-qa-sweep';
+// v81-forced-branch-sweep [2026-06-24] - Engine supports forced move/target branches for exhaustive QA sweeps.
+const CACHE_NAME = 'champions-sim-v81-forced-branch-sweep';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

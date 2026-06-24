@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.46-targeted-qa-sweep';
+    return txt || 'v2.1.47-forced-branch-sweep';
   } catch (e) {
-    return 'v2.1.46-targeted-qa-sweep';
+    return 'v2.1.47-forced-branch-sweep';
   }
 }
 

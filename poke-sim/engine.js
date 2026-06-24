@@ -5588,6 +5588,45 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     return true;
   }
 
+  function _forcedActionFor(side, mon, allies, enemies) {
+    const forced = Array.isArray(opts && opts.forcedActions) ? opts.forcedActions : [];
+    if (!forced.length || !mon) return null;
+    const sideAliases = side === 'opp' ? ['opp', 'opponent'] : [side];
+    const activeSlot = allies.indexOf(mon);
+    const entry = forced.find(function(row) {
+      if (!row || typeof row !== 'object') return false;
+      if (Number.isFinite(Number(row.turn)) && Number(row.turn) !== turn) return false;
+      if (row.side && sideAliases.indexOf(String(row.side)) < 0) return false;
+      if (Number.isFinite(Number(row.slot)) && Number(row.slot) !== activeSlot) return false;
+      if (row.pokemon && row.pokemon !== mon.name) return false;
+      return !!row.move;
+    });
+    if (!entry || mon.moves.indexOf(entry.move) < 0) return null;
+
+    function byName(list, name) {
+      return list.find(function(candidate) { return candidate && candidate.alive && candidate.name === name; }) || null;
+    }
+
+    const targetSide = String(entry.targetSide || entry.target_side || '').toLowerCase();
+    let target = null;
+    if (entry.target === 'self' || targetSide === 'self') {
+      target = mon;
+    } else if (entry.targetPokemon || entry.target_pokemon) {
+      target = byName(enemies, entry.targetPokemon || entry.target_pokemon) ||
+        byName(allies, entry.targetPokemon || entry.target_pokemon);
+    } else if (Number.isFinite(Number(entry.targetSlot)) || Number.isFinite(Number(entry.target_slot))) {
+      const slot = Number.isFinite(Number(entry.targetSlot)) ? Number(entry.targetSlot) : Number(entry.target_slot);
+      if (targetSide === 'ally' || targetSide === 'allies') target = allies[slot] || null;
+      else target = enemies[slot] || null;
+    } else if (targetSide === 'ally' || targetSide === 'allies') {
+      target = allies.find(function(candidate) { return candidate && candidate !== mon && candidate.alive; }) || mon;
+    } else {
+      target = enemies.find(function(candidate) { return candidate && candidate.alive; }) || null;
+    }
+
+    return { move: entry.move, target: target };
+  }
+
   while (turn < MAX_TURNS) {
     turn++;
     log.push(`--- Turn ${turn} ---`);
@@ -5643,7 +5682,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const actions = [];
 
     for (const mon of playerActive.filter(m => m.alive)) {
-      const { move, target } = selectMove(mon, playerActive, oppActive, field);
+      const { move, target } = _forcedActionFor('player', mon, playerActive, oppActive) ||
+        selectMove(mon, playerActive, oppActive, field);
       const _act = {
         attacker: mon,
         move,
@@ -5657,7 +5697,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       actions.push(_act);
     }
     for (const mon of oppActive.filter(m => m.alive)) {
-      const { move, target } = selectMove(mon, oppActive, playerActive, field);
+      const { move, target } = _forcedActionFor('opp', mon, oppActive, playerActive) ||
+        selectMove(mon, oppActive, playerActive, field);
       const _act = {
         attacker: mon,
         move,
