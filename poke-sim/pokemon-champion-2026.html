@@ -15232,6 +15232,42 @@ if (typeof window !== 'undefined') {
     });
   }
 
+  function normalizeDbError(err) {
+    if (!err) return null;
+    if (typeof err === 'string') return err;
+
+    var details = {
+      name: err.name || null,
+      message: err.message || null,
+      code: err.code || null,
+      details: err.details || null,
+      hint: err.hint || null,
+      status: err.status || null,
+      statusText: err.statusText || null
+    };
+
+    if (err.cause) {
+      details.cause = normalizeDbError(err.cause);
+    }
+    if (typeof err.stack === 'string') {
+      details.stack = err.stack;
+    }
+
+    var hasValue = false;
+    Object.keys(details).forEach(function(key) {
+      if (details[key] !== null && details[key] !== undefined && details[key] !== '') {
+        hasValue = true;
+      }
+    });
+    if (hasValue) return details;
+
+    try {
+      return JSON.parse(JSON.stringify(err));
+    } catch (_e) {
+      return String(err);
+    }
+  }
+
   // ── loadTeamsFromDB ───────────────────────────────────────────────────────
   // Returns {[team_id]: {team_id, name, label, description, source, metadata, members[]}}
   // or null if disabled / errored. NEVER throws.
@@ -15695,10 +15731,14 @@ if (typeof window !== 'undefined') {
         };
       });
 
+      var rowsToWrite = [];
+      var seenInBatch = Object.create(null);
       var inserted = 0;
       var updated = 0;
       for (var i = 0; i < runs.length; i++) {
         var run = runs[i];
+        if (seenInBatch[run.branch_key]) continue;
+        seenInBatch[run.branch_key] = true;
         var row = {
           branch_key: run.branch_key,
           ruleset_id: payload.ruleset_id || DEFAULT_RULESET_ID,
@@ -15718,28 +15758,38 @@ if (typeof window !== 'undefined') {
           source_url: payload.source_url || null,
           last_seen_at: new Date().toISOString()
         };
+        var prior = existing[run.branch_key] || {};
+        var priorOutcome = prior.outcome_signature || null;
+        var changed = !!(priorOutcome && row.outcome_signature && priorOutcome !== row.outcome_signature);
         if (Object.prototype.hasOwnProperty.call(existing, run.branch_key)) {
-          var prior = existing[run.branch_key] || {};
-          var changed = !!(prior.outcome_signature && row.outcome_signature && prior.outcome_signature !== row.outcome_signature);
           row.run_count = Number(prior.run_count || 0) + 1;
           row.outcome_drift_count = Number(prior.outcome_drift_count || 0) + (changed ? 1 : 0);
-          var updateResult = await sb
-            .from('branch_coverage_runs')
-            .update(row)
-            .eq('branch_key', run.branch_key);
-          if (updateResult.error) throw updateResult.error;
           updated++;
         } else {
           row.run_count = 1;
-          var insertResult = await sb.from('branch_coverage_runs').insert(row);
-          if (insertResult.error) throw insertResult.error;
+          row.outcome_drift_count = 0;
           inserted++;
         }
+        rowsToWrite.push(row);
       }
-      return { enabled: true, saved: runs.length, updated: updated, inserted: inserted };
+      if (!rowsToWrite.length) {
+        return { enabled: true, saved: 0, updated: 0, inserted: 0 };
+      }
+      var saveResult = await sb
+        .from('branch_coverage_runs')
+        .upsert(rowsToWrite, { onConflict: 'branch_key' });
+      if (saveResult && saveResult.error) throw saveResult.error;
+
+      return { enabled: true, saved: rowsToWrite.length, updated: updated, inserted: inserted };
     } catch (err) {
       log.warn('saveBranchCoverageRuns failed', err);
-      return { enabled: true, saved: 0, updated: 0, inserted: 0, error: err && err.message ? err.message : String(err) };
+      return {
+        enabled: true,
+        saved: 0,
+        updated: 0,
+        inserted: 0,
+        error: normalizeDbError(err)
+      };
     }
   }
 
@@ -19657,9 +19707,15 @@ function csReloadAfterBuildCacheReset(buildId) {
 
 function csGetSourceUrl() {
   try {
-    return (typeof location !== 'undefined' && location.href)
+    var href = (typeof location !== 'undefined' && location.href)
       || (typeof window !== 'undefined' && window.location && window.location.href)
       || null;
+    if (!href) return null;
+    var url = new URL(href);
+    var buildId = (typeof csGetBuildId === 'function') ? csGetBuildId() : null;
+    if (buildId) url.searchParams.set('v', String(buildId));
+    url.searchParams.set('fresh', '1');
+    return url.toString();
   } catch (_e) {
     return null;
   }
@@ -24031,6 +24087,7 @@ async function csBuildForcedBranchMatrixSweepEvidence(opts) {
     if (key) seenKeys[key] = true;
   });
   var candidates = [];
+  var seenCandidateKeys = Object.create(null);
   var runs = [];
   var lastPaintAt = 0;
   playerLeadPairs.forEach(function(playerPair) {
@@ -24040,6 +24097,8 @@ async function csBuildForcedBranchMatrixSweepEvidence(opts) {
       var forcedSets = csBuildBranchMatrixForcedActionSets(playerTeam, opponentTeam, playerBring, opponentBring, options);
       forcedSets.forEach(function(forcedActions) {
         var branchKey = csBranchMatrixRunKey(playerTeamId, opponentTeamId, playerBring, opponentBring, forcedActions, maxTurns);
+        if (seenCandidateKeys[branchKey]) return;
+        seenCandidateKeys[branchKey] = true;
         candidates.push({
           branch_key: branchKey,
           seen_before: !!seenKeys[branchKey],
@@ -25677,6 +25736,18 @@ function csResolveTacticalSweepOpponentKeys(playerKey, options) {
   }
 }
 
+function csCreateTimedFallbackFallback(ms, fallback) {
+  return new Promise(function(resolve) {
+    setTimeout(function() { resolve(fallback); }, Math.max(1, Number(ms) || 1000));
+  });
+}
+
+function csWithTimeout(workPromise, ms, fallback) {
+  if (!workPromise || !ms || ms <= 0) return workPromise;
+  var fallbackPromise = csCreateTimedFallbackFallback(ms, fallback);
+  return Promise.race([workPromise, fallbackPromise]);
+}
+
 function csAggregateBranchSaveResults(results) {
   var out = { enabled: false, saved: 0, updated: 0, inserted: 0, errors: [] };
   (Array.isArray(results) ? results : []).forEach(function(result) {
@@ -25685,10 +25756,33 @@ function csAggregateBranchSaveResults(results) {
     out.saved += Number(result.saved || 0);
     out.updated += Number(result.updated || 0);
     out.inserted += Number(result.inserted || 0);
-    if (result.error) out.errors.push(result.error);
+    if (result.error) out.errors.push(csNormalizeEvidenceError(result.error));
   });
   if (!out.errors.length) delete out.errors;
   return out;
+}
+
+function csNormalizeEvidenceError(err) {
+  if (!err) return err;
+  if (typeof err === 'string') {
+    if (err === '[object Object]') {
+      return {
+        message: 'Error object was string-coerced before export',
+        raw: err
+      };
+    }
+    return err;
+  }
+  if (typeof err === 'object') {
+    try {
+      var probe = JSON.parse(JSON.stringify(err));
+      if (probe && typeof probe === 'object') return probe;
+    } catch (_e) {
+      // keep object shape when JSON-safe copy is unavailable
+      return err;
+    }
+  }
+  return String(err);
 }
 
 function csReportBranchMatrixProgress(options, event) {
@@ -25703,18 +25797,6 @@ function csReportBranchMatrixProgress(options, event) {
 function csYieldForProgressPaint() {
   if (typeof Promise === 'undefined' || typeof setTimeout !== 'function') return null;
   return new Promise(function(resolve) { setTimeout(resolve, 0); });
-}
-
-function csCreateTimedFallbackFallback(ms, fallback) {
-  return new Promise(function(resolve) {
-    setTimeout(function() { resolve(fallback); }, Math.max(1, Number(ms) || 1000));
-  });
-}
-
-function csWithTimeout(workPromise, ms, fallback) {
-  if (!workPromise || !ms || ms <= 0) return workPromise;
-  var fallbackPromise = csCreateTimedFallbackFallback(ms, fallback);
-  return Promise.race([workPromise, fallbackPromise]);
 }
 
 async function csBuildBranchMatrixForOpponent(args) {
@@ -25741,8 +25823,8 @@ async function csBuildBranchMatrixForOpponent(args) {
     opponent_count: args.opponent_count
   });
   if (adapter && typeof adapter.loadBranchCoverageSummary === 'function') {
+    var loadLimit = adapter && adapter.loadBranchCoverageSummary ? (options.branchMatrixLoadLimit || 5000) : 5000;
     try {
-      var loadLimit = adapter && adapter.loadBranchCoverageSummary ? (options.branchMatrixLoadLimit || 5000) : 5000;
       loadedRows = await csWithTimeout(adapter.loadBranchCoverageSummary({
         player_team_id: branchPlayerKey,
         opponent_team_id: branchOpponentKey,
@@ -25823,6 +25905,9 @@ async function csBuildBranchMatrixForOpponent(args) {
         inserted: 0,
         error: 'branch_coverage_save_timed_out'
       });
+      if (saveResult && saveResult.error) {
+        saveResult.error = csNormalizeEvidenceError(saveResult.error);
+      }
       hadWarning = hadWarning || !!(saveResult && saveResult.error);
     } catch (e) {
       UILog.warn('QA branch matrix saveBranchCoverageRuns failed', e);
@@ -26043,7 +26128,9 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       enabled: !!(adapter && adapter.enabled),
       branch_coverage: {
         loaded_rows: branchMatrixDbRows.length,
-        save_result: branchMatrixDbSave
+        save_result: branchMatrixDbSave && branchMatrixDbSave.error
+          ? Object.assign({}, branchMatrixDbSave, { error: csNormalizeEvidenceError(branchMatrixDbSave.error) })
+          : branchMatrixDbSave
       },
       note: 'Supabase stores approved source data, teams, overrides, and saved analysis history. The deterministic browser runtime still uses generated/static data plus runtime_data.js for battle execution.'
     }
@@ -26633,7 +26720,17 @@ function setBranchProgress(pct, label, meta) {
     left.style.color = 'var(--blue)';
   }
   if (mid) {
-    mid.textContent = Number(meta.saved_rows || 0) + ' rows';
+    var savedRows = Number(meta.saved_rows || 0);
+    var testedRows = Number(meta.executed_runs || 0);
+    if (savedRows && testedRows && savedRows !== testedRows) {
+      mid.textContent = savedRows + ' saved · ' + testedRows + ' runs';
+    } else if (savedRows) {
+      mid.textContent = savedRows + ' rows';
+    } else if (testedRows) {
+      mid.textContent = testedRows + ' runs';
+    } else {
+      mid.textContent = '0 rows';
+    }
     mid.style.color = 'var(--green)';
   }
   if (right) right.textContent = safePct + '%';
@@ -26850,7 +26947,8 @@ document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', asyn
           setBranchProgress(Math.min(92, basePct + 3), 'Testing unseen branches ' + idx + ' / ' + count + ': ' + teamName + ' (' + Number(event.loaded_rows || 0) + ' prior rows)...', {
             opponent_index: idx,
             opponent_count: count,
-            saved_rows: tacticalSavedRows
+            saved_rows: tacticalSavedRows,
+            executed_runs: 0
           });
         } else if (event.phase === 'build-progress') {
           var runIndex = Number(event.executed_runs || 0);

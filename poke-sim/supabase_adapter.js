@@ -69,6 +69,42 @@
     });
   }
 
+  function normalizeDbError(err) {
+    if (!err) return null;
+    if (typeof err === 'string') return err;
+
+    var details = {
+      name: err.name || null,
+      message: err.message || null,
+      code: err.code || null,
+      details: err.details || null,
+      hint: err.hint || null,
+      status: err.status || null,
+      statusText: err.statusText || null
+    };
+
+    if (err.cause) {
+      details.cause = normalizeDbError(err.cause);
+    }
+    if (typeof err.stack === 'string') {
+      details.stack = err.stack;
+    }
+
+    var hasValue = false;
+    Object.keys(details).forEach(function(key) {
+      if (details[key] !== null && details[key] !== undefined && details[key] !== '') {
+        hasValue = true;
+      }
+    });
+    if (hasValue) return details;
+
+    try {
+      return JSON.parse(JSON.stringify(err));
+    } catch (_e) {
+      return String(err);
+    }
+  }
+
   // ── loadTeamsFromDB ───────────────────────────────────────────────────────
   // Returns {[team_id]: {team_id, name, label, description, source, metadata, members[]}}
   // or null if disabled / errored. NEVER throws.
@@ -584,7 +620,13 @@
       return { enabled: true, saved: rowsToWrite.length, updated: updated, inserted: inserted };
     } catch (err) {
       log.warn('saveBranchCoverageRuns failed', err);
-      return { enabled: true, saved: 0, updated: 0, inserted: 0, error: err && err.message ? err.message : String(err) };
+      return {
+        enabled: true,
+        saved: 0,
+        updated: 0,
+        inserted: 0,
+        error: normalizeDbError(err)
+      };
     }
   }
 

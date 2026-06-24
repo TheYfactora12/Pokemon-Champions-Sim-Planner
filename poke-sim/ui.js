@@ -141,9 +141,15 @@ function csReloadAfterBuildCacheReset(buildId) {
 
 function csGetSourceUrl() {
   try {
-    return (typeof location !== 'undefined' && location.href)
+    var href = (typeof location !== 'undefined' && location.href)
       || (typeof window !== 'undefined' && window.location && window.location.href)
       || null;
+    if (!href) return null;
+    var url = new URL(href);
+    var buildId = (typeof csGetBuildId === 'function') ? csGetBuildId() : null;
+    if (buildId) url.searchParams.set('v', String(buildId));
+    url.searchParams.set('fresh', '1');
+    return url.toString();
   } catch (_e) {
     return null;
   }
@@ -4515,6 +4521,7 @@ async function csBuildForcedBranchMatrixSweepEvidence(opts) {
     if (key) seenKeys[key] = true;
   });
   var candidates = [];
+  var seenCandidateKeys = Object.create(null);
   var runs = [];
   var lastPaintAt = 0;
   playerLeadPairs.forEach(function(playerPair) {
@@ -4524,6 +4531,8 @@ async function csBuildForcedBranchMatrixSweepEvidence(opts) {
       var forcedSets = csBuildBranchMatrixForcedActionSets(playerTeam, opponentTeam, playerBring, opponentBring, options);
       forcedSets.forEach(function(forcedActions) {
         var branchKey = csBranchMatrixRunKey(playerTeamId, opponentTeamId, playerBring, opponentBring, forcedActions, maxTurns);
+        if (seenCandidateKeys[branchKey]) return;
+        seenCandidateKeys[branchKey] = true;
         candidates.push({
           branch_key: branchKey,
           seen_before: !!seenKeys[branchKey],
@@ -6181,10 +6190,33 @@ function csAggregateBranchSaveResults(results) {
     out.saved += Number(result.saved || 0);
     out.updated += Number(result.updated || 0);
     out.inserted += Number(result.inserted || 0);
-    if (result.error) out.errors.push(result.error);
+    if (result.error) out.errors.push(csNormalizeEvidenceError(result.error));
   });
   if (!out.errors.length) delete out.errors;
   return out;
+}
+
+function csNormalizeEvidenceError(err) {
+  if (!err) return err;
+  if (typeof err === 'string') {
+    if (err === '[object Object]') {
+      return {
+        message: 'Error object was string-coerced before export',
+        raw: err
+      };
+    }
+    return err;
+  }
+  if (typeof err === 'object') {
+    try {
+      var probe = JSON.parse(JSON.stringify(err));
+      if (probe && typeof probe === 'object') return probe;
+    } catch (_e) {
+      // keep object shape when JSON-safe copy is unavailable
+      return err;
+    }
+  }
+  return String(err);
 }
 
 function csReportBranchMatrixProgress(options, event) {
@@ -6307,6 +6339,9 @@ async function csBuildBranchMatrixForOpponent(args) {
         inserted: 0,
         error: 'branch_coverage_save_timed_out'
       });
+      if (saveResult && saveResult.error) {
+        saveResult.error = csNormalizeEvidenceError(saveResult.error);
+      }
       hadWarning = hadWarning || !!(saveResult && saveResult.error);
     } catch (e) {
       UILog.warn('QA branch matrix saveBranchCoverageRuns failed', e);
@@ -6527,7 +6562,9 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       enabled: !!(adapter && adapter.enabled),
       branch_coverage: {
         loaded_rows: branchMatrixDbRows.length,
-        save_result: branchMatrixDbSave
+        save_result: branchMatrixDbSave && branchMatrixDbSave.error
+          ? Object.assign({}, branchMatrixDbSave, { error: csNormalizeEvidenceError(branchMatrixDbSave.error) })
+          : branchMatrixDbSave
       },
       note: 'Supabase stores approved source data, teams, overrides, and saved analysis history. The deterministic browser runtime still uses generated/static data plus runtime_data.js for battle execution.'
     }
