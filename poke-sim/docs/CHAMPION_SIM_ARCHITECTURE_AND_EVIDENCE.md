@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.58-tactical-depth-selector` on 2026-06-24.
+Status: current for `v2.1.59-team-evidence-dashboard` on 2026-06-24.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -62,6 +62,8 @@ Optional persistence
 `v2.1.57-cache-refresh-reload` reloads once after build-change cache cleanup so testers land on the fresh bundle instead of continuing to run the old page code that was just cleaned up.
 
 `v2.1.58-tactical-depth-selector` adds Quick 24, Deep 100, and Full 250 branch-depth caps for Tactical Sweep + QA. The selected cap is saved into `tactical_sweep.max_runs_per_opponent` and controls how quickly DB branch memory fills.
+
+`v2.1.59-team-evidence-dashboard` folds shared evidence into the Strategy Priority Board per selected team: normal sim samples, tactical branch samples, best-case, worst-case, likely-case, confidence, set-change comparison, and next-test guidance render together. Same team IDs keep continuity, but changed sets are version-compared by team signature.
 
 ## Layer Responsibilities
 

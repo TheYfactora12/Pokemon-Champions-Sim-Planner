@@ -189,6 +189,10 @@ T('8. strategy priority board puts player action before evidence rollup', () => 
     lead_performance_v2: [{ lead: ['Incineroar', 'Arcanine'], n: 16, w: 8, l: 8, win_rate: 0.5, confidence: 'high' }]
   }, out);
   truthy(/Coach call/.test(html), 'missing coach call');
+  truthy(/Team evidence/.test(html), 'missing shared team evidence dashboard');
+  truthy(/Best case/.test(html), 'missing best-case row');
+  truthy(/Worst case/.test(html), 'missing worst-case row');
+  truthy(/Set changes/.test(html), 'missing set-change row');
   truthy(html.indexOf('1. Click plan') >= 0, 'missing click plan priority');
   truthy(html.indexOf('1. Click plan') < html.indexOf('5. Matchup health'), 'record appeared before action plan');
   truthy(/Next test/.test(html), 'missing next test');

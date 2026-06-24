@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.58-tactical-depth-selector';
+    return txt || 'v2.1.59-team-evidence-dashboard';
   } catch (e) {
-    return 'v2.1.58-tactical-depth-selector';
+    return 'v2.1.59-team-evidence-dashboard';
   }
 }
 
@@ -5063,9 +5063,6 @@ function csRememberBranchMoveAnalysis(analysis, opts) {
 }
 
 function csLatestBranchMoveAnalysisForTeam(teamKey) {
-  if (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastBranchMoveAnalysis) {
-    return ChampionsSim.state.lastBranchMoveAnalysis;
-  }
   var memory = (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastBranchStrategyMemory) || csLoadBranchStrategyMemory();
   var analyses = Array.isArray(memory && memory.analyses) ? memory.analyses : [];
   if (!teamKey) return analyses[0] || null;
@@ -5073,6 +5070,11 @@ function csLatestBranchMoveAnalysisForTeam(teamKey) {
   try {
     if (typeof TEAMS !== 'undefined' && TEAMS[teamKey] && typeof teamSignature === 'function') sig = teamSignature(TEAMS[teamKey]);
   } catch (_e) {}
+  var live = ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastBranchMoveAnalysis;
+  if (live) {
+    var liveLine = (live.best_lines_overall || [])[0] || (live.avoid_moves || [])[0] || (live.move_replacement_candidates || [])[0] || null;
+    if (!teamKey || (liveLine && liveLine.player_team_id === teamKey)) return live;
+  }
   return analyses.find(function(entry) {
     return entry && entry.player_team_id === teamKey && (!entry.player_team_signature || entry.player_team_signature === sig);
   }) || analyses.find(function(entry) { return entry && entry.player_team_id === teamKey; }) || analyses[0] || null;
@@ -8077,6 +8079,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Team evidence dashboard added',
+      detail: 'v2.1.59 folds shared evidence into the Strategy Priority Board per selected team. Normal sim samples, tactical branch samples, best-case, worst-case, likely-case, confidence, set-change comparison, and next-test guidance now render together instead of living as separate QA concepts.'
+    },
     {
       status: 'done',
       title: 'Tactical Depth selector added',
@@ -11609,7 +11616,117 @@ function csPctLabel(value) {
   return Math.round(n * 1000) / 10 + '%';
 }
 
-function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis) {
+function csBuildTeamEvidenceDashboard(teamKey, history, branchAnalysis, report) {
+  history = history || {};
+  branchAnalysis = branchAnalysis || null;
+  report = report || null;
+  var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+  var record = history.record_total || { n: 0, w: 0, l: 0, win_rate: 0 };
+  var tacticalTotals = branchAnalysis && branchAnalysis.totals ? branchAnalysis.totals : {};
+  var tacticalSamples = Number(tacticalTotals.weighted_samples || tacticalTotals.unique_rows_analyzed || tacticalTotals.rows_read || 0);
+  var normalSamples = Number(record.n || history.total_battles || 0);
+  var confidenceScore = 0;
+  if (normalSamples >= 1000) confidenceScore += 2;
+  else if (normalSamples >= 100) confidenceScore += 1;
+  if (tacticalSamples >= 1000) confidenceScore += 2;
+  else if (tacticalSamples >= 100) confidenceScore += 1;
+  var confidence = confidenceScore >= 3 ? 'high' : confidenceScore >= 1 ? 'medium' : 'low';
+
+  var archetypes = (history.record_by_archetype || []).slice().filter(function(row) { return row && row.n; });
+  var bestCase = archetypes.length ? archetypes.slice().sort(function(a, b) { return b.win_rate - a.win_rate; })[0] : null;
+  var worstCase = null;
+  if (history.matchup_failures && history.matchup_failures.length) {
+    worstCase = history.matchup_failures[0];
+  } else if (archetypes.length) {
+    worstCase = archetypes.slice().sort(function(a, b) { return a.win_rate - b.win_rate; })[0];
+  }
+  var likely = record.n
+    ? ((record.win_rate >= 0.55 ? 'Winning baseline' : record.win_rate >= 0.45 ? 'Even baseline' : 'Losing baseline') + ' at ' + csPctLabel(record.win_rate))
+    : 'No normal sim sample yet';
+
+  var nextTest = 'Run All + QA Artifact for this team, then run Tactical Sweep on its worst selected matchup.';
+  if (!normalSamples) {
+    nextTest = 'Run Sim or Run All first so this team gets outcome evidence.';
+  } else if (!tacticalSamples) {
+    nextTest = 'Run Tactical Sweep + QA so this team gets branch and move-choice evidence.';
+  } else if (confidence !== 'high') {
+    nextTest = 'Increase Tactical Depth or run another 10,000 QA Artifact before treating recommendations as high confidence.';
+  } else if (worstCase) {
+    nextTest = 'Focus selected Tactical Sweep on the worst-case matchup until avoid lines stabilize.';
+  }
+
+  var changeNote = 'No prior set version saved for this team ID.';
+  try {
+    var currentSig = team && typeof teamSignature === 'function' ? teamSignature(team) : null;
+    var store = (typeof _csPersistRead === 'function') ? _csPersistRead() : null;
+    var reports = store && store.reports ? store.reports : {};
+    var prior = Object.keys(reports).map(function(sig) {
+      var entry = reports[sig] || {};
+      return {
+        sig: sig,
+        entry: entry,
+        built: entry.last_built_at || '',
+        score: entry.theory_report && entry.theory_report.team_report_card ? Number(entry.theory_report.team_report_card.score || 0) : null,
+        sample: entry.simulation_overlay ? Number(entry.simulation_overlay.sample_size || 0) : Number(entry.theory_report && entry.theory_report.sim_data_version || 0)
+      };
+    }).filter(function(row) {
+      return row.entry && row.entry.team_key === teamKey && row.sig !== currentSig;
+    }).sort(function(a, b) {
+      return String(b.built).localeCompare(String(a.built));
+    })[0];
+    var currentScore = report && report.team_report_card ? Number(report.team_report_card.score || 0) : null;
+    if (prior && currentScore !== null && prior.score !== null) {
+      var delta = currentScore - prior.score;
+      var label = delta > 2 ? 'Improved' : delta < -2 ? 'Regressed' : 'Changed';
+      changeNote = label + ' vs prior saved set version: ' + (delta >= 0 ? '+' : '') + delta + ' score points. Prior sample ' + prior.sample + '; current sample ' + normalSamples + '.';
+    } else if (prior) {
+      changeNote = 'Team set changed from a prior saved version. Run the same matchup suite before calling improvement or regression.';
+    }
+  } catch (_e) {}
+
+  return {
+    team_name: team && team.name ? team.name : (teamKey || 'selected team'),
+    team_key: teamKey || null,
+    custom_team: !!(team && team.source === 'custom'),
+    normal_samples: normalSamples,
+    tactical_samples: tacticalSamples,
+    confidence: confidence,
+    best_case: bestCase ? ((bestCase.archetype || bestCase.oppKey || 'best matchup') + ' · ' + csPctLabel(bestCase.win_rate) + ' over ' + bestCase.n) : 'Needs matchup sample',
+    worst_case: worstCase ? ((worstCase.archetype || worstCase.oppKey || 'worst matchup') + ' · ' + csPctLabel(worstCase.win_rate) + ' over ' + worstCase.n) : 'Needs matchup sample',
+    likely_case: likely,
+    change_note: changeNote,
+    next_test: nextTest
+  };
+}
+
+function csRenderTeamEvidenceDashboard(teamKey, history, branchAnalysis, report) {
+  var dash = csBuildTeamEvidenceDashboard(teamKey, history, branchAnalysis, report);
+  var html = '';
+  html += '<div class="cs-team-evidence-dashboard">';
+  html += '<div class="cs-detector-row cs-detector-head"><span>Team evidence</span><span>Sample</span><span>Battle outlook</span><span>Trust</span></div>';
+  html += '<div class="cs-detector-row">';
+  html += '<span>' + _csEsc(dash.team_name) + (dash.custom_team ? ' · custom' : '') + '</span>';
+  html += '<span>' + _csEsc(String(dash.normal_samples)) + ' sim · ' + _csEsc(String(dash.tactical_samples)) + ' tactical</span>';
+  html += '<span>' + _csEsc(dash.likely_case) + '</span>';
+  html += '<span>' + _csEsc(dash.confidence) + '</span>';
+  html += '</div>';
+  html += '<div class="cs-detector-row">';
+  html += '<span>Best case</span><span>' + _csEsc(dash.best_case) + '</span><span>Use this to learn what the team wants to repeat.</span><span>evidence</span>';
+  html += '</div>';
+  html += '<div class="cs-detector-row">';
+  html += '<span>Worst case</span><span>' + _csEsc(dash.worst_case) + '</span><span>Use this to decide the next selected Tactical Sweep.</span><span>evidence</span>';
+  html += '</div>';
+  html += '<div class="cs-detector-row">';
+  html += '<span>Set changes</span><span>' + _csEsc(dash.change_note) + '</span><span>Same team ID keeps history, but changed sets are version-compared by signature.</span><span>versioned</span>';
+  html += '</div>';
+  html += '<div class="cs-detector-row">';
+  html += '<span>Next test</span><span>' + _csEsc(dash.next_test) + '</span><span>Normal sim proves outcomes; Tactical Sweep proves decision branches.</span><span>action</span>';
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis, report) {
   history = history || null;
   branchAnalysis = branchAnalysis || null;
   var record = history && history.record_total ? history.record_total : null;
@@ -11643,6 +11760,7 @@ function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis) {
   var html = '';
   html += '<section class="cs-section cs-strategy-priority-board">';
   html += '<h3 class="cs-h3">Strategy Priority Board</h3>';
+  html += csRenderTeamEvidenceDashboard(teamKey, history, branchAnalysis, report);
   html += '<p class="cs-summary-line"><strong>Coach call:</strong> ' + _csEsc(primaryCall) + '</p>';
   html += '<div class="cs-detector-table">';
   html += '<div class="cs-detector-row cs-detector-head"><span>Priority</span><span>Evidence</span><span>Player action</span><span>Trust</span></div>';
@@ -11778,7 +11896,7 @@ function renderStrategyTab(teamKey) {
     var _history = (typeof computeTeamHistory === 'function') ? computeTeamHistory(teamKey) : null;
     var _branchAnalysis = (typeof csLatestBranchMoveAnalysisForTeam === 'function') ? csLatestBranchMoveAnalysisForTeam(teamKey) : null;
     if (typeof csRenderStrategyPriorityBoard === 'function') {
-      html += csRenderStrategyPriorityBoard(teamKey, _history, _branchAnalysis);
+      html += csRenderStrategyPriorityBoard(teamKey, _history, _branchAnalysis, report);
     }
     if (_history) html += csRenderAdaptiveBanner(_history);
     if (_history) html += csRenderRecordBar(_history);

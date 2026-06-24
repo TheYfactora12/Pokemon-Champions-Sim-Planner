@@ -79,7 +79,8 @@
 // v90-branch-progress-counters [2026-06-24] - Tactical Sweep progress uses branch counters instead of W/L zeroes.
 // v91-cache-refresh-reload [2026-06-24] - Reload once after build cache cleanup so testers land on the fresh bundle.
 // v92-tactical-depth-selector [2026-06-24] - Tactical Sweep exposes Quick/Deep/Full branch-depth caps.
-const CACHE_NAME = 'champions-sim-v92-tactical-depth-selector';
+// v93-team-evidence-dashboard [2026-06-24] - Strategy Dashboard merges per-team sim and tactical evidence.
+const CACHE_NAME = 'champions-sim-v93-team-evidence-dashboard';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
