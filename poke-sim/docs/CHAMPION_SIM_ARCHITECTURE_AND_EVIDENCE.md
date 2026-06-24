@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.54-download-ready-fallback` on 2026-06-24.
+Status: current for `v2.1.55-tactical-sweep-progress` on 2026-06-24.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -54,6 +54,8 @@ Optional persistence
 `v2.1.53-tactical-sweep-qa` adds the `Tactical Sweep + QA` path. It uses the Simulator Test Scope to build branch coverage for either the selected matchup or every approved preloaded opponent, saves unseen branches to `branch_coverage_runs`, and exports a `tactical_sweep` block with per-opponent coverage and combined `branch_move_analysis`.
 
 `v2.1.54-download-ready-fallback` keeps QA exports inspectable when the browser blocks delayed automatic downloads. `_downloadBlob` still attempts the normal save, then leaves a visible `Download ready` link in the Simulator progress area that points at the generated artifact.
+
+`v2.1.55-tactical-sweep-progress` adds progress callbacks to tactical branch export. The Simulator can now report opponent index, branch-memory load, unseen-branch testing, saved rows, and final analysis while a preloaded-suite sweep is running.
 
 ## Layer Responsibilities
 

@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.54-download-ready-fallback';
+    return txt || 'v2.1.55-tactical-sweep-progress';
   } catch (e) {
-    return 'v2.1.54-download-ready-fallback';
+    return 'v2.1.55-tactical-sweep-progress';
   }
 }
 
@@ -6118,6 +6118,20 @@ function csAggregateBranchSaveResults(results) {
   return out;
 }
 
+function csReportBranchMatrixProgress(options, event) {
+  if (!options || typeof options.onBranchMatrixProgress !== 'function') return;
+  try {
+    options.onBranchMatrixProgress(event || {});
+  } catch (e) {
+    UILog.warn('QA tactical sweep progress callback failed', e);
+  }
+}
+
+function csYieldForProgressPaint() {
+  if (typeof Promise === 'undefined' || typeof setTimeout !== 'function') return null;
+  return new Promise(function(resolve) { setTimeout(resolve, 0); });
+}
+
 async function csBuildBranchMatrixForOpponent(args) {
   args = args || {};
   var adapter = args.adapter || null;
@@ -6134,6 +6148,12 @@ async function csBuildBranchMatrixForOpponent(args) {
   if (!branchPlayerKey || !branchOpponentKey || typeof csBuildForcedBranchMatrixSweepEvidence !== 'function') {
     return null;
   }
+  csReportBranchMatrixProgress(options, {
+    phase: 'load',
+    opponent_team_id: branchOpponentKey,
+    opponent_index: args.opponent_index,
+    opponent_count: args.opponent_count
+  });
   if (adapter && typeof adapter.loadBranchCoverageSummary === 'function') {
     try {
       loadedRows = await adapter.loadBranchCoverageSummary({
@@ -6147,6 +6167,13 @@ async function csBuildBranchMatrixForOpponent(args) {
   }
   var playerMode = (typeof getBringMode === 'function') ? getBringMode(branchPlayerKey) : 'random';
   var opponentMode = (typeof getBringMode === 'function') ? getBringMode(branchOpponentKey) : 'random';
+  csReportBranchMatrixProgress(options, {
+    phase: 'build',
+    opponent_team_id: branchOpponentKey,
+    opponent_index: args.opponent_index,
+    opponent_count: args.opponent_count,
+    loaded_rows: loadedRows.length
+  });
   matrix = csBuildForcedBranchMatrixSweepEvidence({
     generated_at: exportedAt,
     build_id: buildId,
@@ -6166,6 +6193,16 @@ async function csBuildBranchMatrixForOpponent(args) {
     maxTargetsPerMove: options.branchMatrixMaxTargetsPerMove || 2,
     maxTurns: options.branchMatrixMaxTurns || 3
   });
+  csReportBranchMatrixProgress(options, {
+    phase: 'save',
+    opponent_team_id: branchOpponentKey,
+    opponent_index: args.opponent_index,
+    opponent_count: args.opponent_count,
+    loaded_rows: loadedRows.length,
+    executed_runs: matrix && matrix.coverage_space ? matrix.coverage_space.executed_runs : 0,
+    unseen_candidate_runs: matrix && matrix.coverage_space ? matrix.coverage_space.unseen_candidate_runs : 0,
+    candidate_runs: matrix && matrix.coverage_space ? matrix.coverage_space.candidate_runs : 0
+  });
   if (adapter && typeof adapter.saveBranchCoverageRuns === 'function' && matrix && Array.isArray(matrix.runs)) {
     try {
       saveResult = await adapter.saveBranchCoverageRuns({
@@ -6179,6 +6216,17 @@ async function csBuildBranchMatrixForOpponent(args) {
       UILog.warn('QA branch matrix saveBranchCoverageRuns failed', e);
     }
   }
+  csReportBranchMatrixProgress(options, {
+    phase: 'done',
+    opponent_team_id: branchOpponentKey,
+    opponent_index: args.opponent_index,
+    opponent_count: args.opponent_count,
+    loaded_rows: loadedRows.length,
+    saved_rows: saveResult && saveResult.saved || 0,
+    inserted_rows: saveResult && saveResult.inserted || 0,
+    updated_rows: saveResult && saveResult.updated || 0,
+    executed_runs: matrix && matrix.coverage_space ? matrix.coverage_space.executed_runs : 0
+  });
   return {
     opponent_team_id: branchOpponentKey,
     loaded_rows: loadedRows,
@@ -6222,13 +6270,22 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   if (options.includeBranchMatrix !== false) {
     var branchPlayerKey = options.branchPlayerTeamId || key;
     tacticalSweepOpponentKeys = csResolveTacticalSweepOpponentKeys(branchPlayerKey, options);
+    csReportBranchMatrixProgress(options, {
+      phase: 'start',
+      opponent_count: tacticalSweepOpponentKeys.length,
+      opponent_team_ids: tacticalSweepOpponentKeys
+    });
     for (var bmIdx = 0; bmIdx < tacticalSweepOpponentKeys.length; bmIdx++) {
       var branchOpponentKey = tacticalSweepOpponentKeys[bmIdx];
+      var paintWait = csYieldForProgressPaint();
+      if (paintWait) await paintWait;
       var builtMatrix = await csBuildBranchMatrixForOpponent({
         adapter: adapter,
         options: options,
         playerTeamId: branchPlayerKey,
         opponentTeamId: branchOpponentKey,
+        opponent_index: bmIdx + 1,
+        opponent_count: tacticalSweepOpponentKeys.length,
         generated_at: exportedAt,
         build_id: buildId,
         source_url: sourceUrl
@@ -6245,6 +6302,14 @@ async function csBuildQaArtifactExport(teamKey, opts) {
         coverageSummaries.push(builtMatrix.branch_matrix.qa_coverage_summary);
       }
     }
+    csReportBranchMatrixProgress(options, {
+      phase: 'analyze',
+      opponent_count: tacticalSweepMatrices.length,
+      executed_runs: tacticalSweepMatrices.reduce(function(sum, entry) {
+        var space = entry.branch_matrix && entry.branch_matrix.coverage_space;
+        return sum + Number(space && space.executed_runs || 0);
+      }, 0)
+    });
     if (tacticalSweepMatrices.length && typeof csAnalyzeBranchCoverageRows === 'function') {
       var combinedBranchRows = [];
       tacticalSweepMatrices.forEach(function(entry) {
@@ -6272,6 +6337,13 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     } else {
       branchMatrixDbSave = csAggregateBranchSaveResults(branchMatrixDbSaves);
     }
+    csReportBranchMatrixProgress(options, {
+      phase: 'complete',
+      opponent_count: tacticalSweepMatrices.length,
+      saved_rows: branchMatrixDbSaves.reduce(function(sum, result) { return sum + Number(result && result.saved || 0); }, 0),
+      inserted_rows: branchMatrixDbSaves.reduce(function(sum, result) { return sum + Number(result && result.inserted || 0); }, 0),
+      updated_rows: branchMatrixDbSaves.reduce(function(sum, result) { return sum + Number(result && result.updated || 0); }, 0)
+    });
   }
   var mergedCoverage = csMergeQaCoverageSummaries(coverageSummaries, {
     generated_at: exportedAt,
@@ -7108,7 +7180,31 @@ document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', asyn
     await csExportQaArtifactJson(simCtx.playerKey, {
       branchMatrixUseScope: true,
       branchMatrixScope: simCtx.simScope,
-      branchMatrixMaxRunsPerOpponent: 24
+      branchMatrixMaxRunsPerOpponent: 24,
+      onBranchMatrixProgress: function(event) {
+        event = event || {};
+        var count = Number(event.opponent_count || 0);
+        var idx = Number(event.opponent_index || 0);
+        var basePct = count && idx ? Math.round(8 + ((idx - 1) / count) * 82) : 5;
+        var teamName = event.opponent_team_id && TEAMS[event.opponent_team_id] && TEAMS[event.opponent_team_id].name
+          ? TEAMS[event.opponent_team_id].name
+          : (event.opponent_team_id || 'opponent');
+        if (event.phase === 'start') {
+          setProgress(5, 'Preparing tactical sweep for ' + count + ' opponent' + (count === 1 ? '' : 's') + '...', 0, 0);
+        } else if (event.phase === 'load') {
+          setProgress(basePct, 'Loading branch memory ' + idx + ' / ' + count + ': ' + teamName + '...', 0, 0);
+        } else if (event.phase === 'build') {
+          setProgress(Math.min(92, basePct + 3), 'Testing unseen branches ' + idx + ' / ' + count + ': ' + teamName + ' (' + Number(event.loaded_rows || 0) + ' prior rows)...', 0, 0);
+        } else if (event.phase === 'save') {
+          setProgress(Math.min(94, basePct + 6), 'Saving ' + Number(event.executed_runs || 0) + ' branch runs for ' + teamName + '...', 0, 0);
+        } else if (event.phase === 'done') {
+          setProgress(Math.min(96, basePct + 8), 'Done ' + idx + ' / ' + count + ': ' + teamName + ' · saved ' + Number(event.saved_rows || 0) + ' rows', 0, 0);
+        } else if (event.phase === 'analyze') {
+          setProgress(96, 'Analyzing ' + Number(event.executed_runs || 0) + ' tactical branch runs...', 0, 0);
+        } else if (event.phase === 'complete') {
+          setProgress(98, 'Sweep complete: saved ' + Number(event.saved_rows || 0) + ' rows. Preparing download...', 0, 0);
+        }
+      }
     });
     setProgress(100, 'Tactical Sweep QA Artifact downloaded.', 0, 0);
   } catch (e) {
@@ -7895,6 +7991,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Tactical Sweep progress added',
+      detail: 'v2.1.55 makes Deep/Tactical Sweep progress visible while it runs. The Simulator progress bar now reports branch-memory load, unseen branch testing, saved rows, and opponent count instead of sitting on one static message during preloaded-suite sweeps.'
+    },
     {
       status: 'done',
       title: 'QA download fallback added',
