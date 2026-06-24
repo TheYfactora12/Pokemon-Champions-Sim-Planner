@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.52-tactical-branch-memory` on 2026-06-24.
+Status: current for `v2.1.53-tactical-sweep-qa` on 2026-06-24.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -51,6 +51,8 @@ Optional persistence
 
 `v2.1.52-tactical-branch-memory` extends forced branch rows with `tactical_summary`: Protect timing, pivot/switch timing, speed control, setup/redirection, first-KO timing, and early position delta. This lets the Strategy guide coach battle tactics from repeated branch evidence instead of only comparing move names.
 
+`v2.1.53-tactical-sweep-qa` adds the `Tactical Sweep + QA` path. It uses the Simulator Test Scope to build branch coverage for either the selected matchup or every approved preloaded opponent, saves unseen branches to `branch_coverage_runs`, and exports a `tactical_sweep` block with per-opponent coverage and combined `branch_move_analysis`.
+
 ## Layer Responsibilities
 
 | Layer | Owns | Does not own | Current evidence |
@@ -66,6 +68,8 @@ Optional persistence
 ## Branch Strategy Memory
 
 `branch_coverage_runs` stores deterministic branch matrix rows keyed by player team, opponent team, player lead pair, opponent lead pair, and forced turn-1 move/target choices. This lets QA see which combinations have already been tested and which combinations still need coverage.
+
+The Tactical Sweep QA button is the accumulation path for this table. In Selected matchup scope it keeps drilling the current opponent. In Preloaded team suite scope it rotates through approved opponents and only prioritizes unseen branch keys unless a prior row has outcome drift. The result is not a blanket 100% claim; it is measurable coverage that improves as more branch chunks are run.
 
 `v2.1.49` adds a strategy analysis layer on top of those rows:
 

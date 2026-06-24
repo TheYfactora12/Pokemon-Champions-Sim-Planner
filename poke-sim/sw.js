@@ -76,8 +76,8 @@
 // v81-forced-branch-sweep [2026-06-24] - Engine supports forced move/target branches for exhaustive QA sweeps.
 // v84-strategy-priority-board [2026-06-24] - Strategy tab prioritizes coach calls before evidence tables.
 // v85-sim-test-scope [2026-06-24] - Simulator can scope Run All to selected matchup or the preloaded suite.
-// v86-tactical-branch-memory [2026-06-24] - Branch QA stores early tactical timing summaries.
-const CACHE_NAME = 'champions-sim-v86-tactical-branch-memory';
+// v87-tactical-sweep-qa [2026-06-24] - Tactical Sweep QA fans branch coverage across Test Scope opponents.
+const CACHE_NAME = 'champions-sim-v87-tactical-sweep-qa';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

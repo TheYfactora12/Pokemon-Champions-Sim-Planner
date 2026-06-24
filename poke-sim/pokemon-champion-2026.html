@@ -2333,7 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.52-tactical-branch-memory</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.53-tactical-sweep-qa</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -2515,6 +2515,7 @@ table{border-collapse:collapse;width:100%}
       <button class="btn-primary" id="run-sim-btn">▶ Run Simulation</button>
       <button class="btn-secondary" id="run-all-btn">⚡ Run All Matchups</button>
       <button class="btn-secondary" id="run-all-export-qa-btn" title="Run all matchups, then download one retained-evidence QA Artifact JSON">Run All + QA Artifact</button>
+      <button class="btn-secondary" id="tactical-sweep-qa-btn" title="Run tactical branch coverage using Test Scope, save unseen branches, then download QA Artifact JSON">Tactical Sweep + QA</button>
 
       <div class="progress-wrap" id="progress-wrap" style="display:none">
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
@@ -19621,9 +19622,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.52-tactical-branch-memory';
+    return txt || 'v2.1.53-tactical-sweep-qa';
   } catch (e) {
-    return 'v2.1.52-tactical-branch-memory';
+    return 'v2.1.53-tactical-sweep-qa';
   }
 }
 
@@ -25554,6 +25555,123 @@ function csCompactQaReplayCard(replay, playerKey) {
   };
 }
 
+function csUniqueTeamKeys(keys) {
+  var seen = {};
+  return (Array.isArray(keys) ? keys : []).filter(function(key) {
+    if (!key || seen[key]) return false;
+    seen[key] = true;
+    return true;
+  });
+}
+
+function csResolveTacticalSweepOpponentKeys(playerKey, options) {
+  options = options || {};
+  if (Array.isArray(options.branchOpponentTeamIds) && options.branchOpponentTeamIds.length) {
+    return csUniqueTeamKeys(options.branchOpponentTeamIds).filter(function(key) {
+      return key !== playerKey && typeof TEAMS !== 'undefined' && TEAMS[key];
+    });
+  }
+  if (options.branchOpponentTeamId) return [options.branchOpponentTeamId].filter(function(key) { return key && key !== playerKey; });
+  var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+  if (!options.branchMatrixUseScope) {
+    var selectedKey = (oppSelect && oppSelect.value) || null;
+    return selectedKey && selectedKey !== playerKey ? [selectedKey] : [];
+  }
+  try {
+    var simCtx = (typeof resolveSimContext === 'function')
+      ? resolveSimContext({ playerKey: playerKey, simScope: options.branchMatrixScope || getSimScopeMode() })
+      : { playerKey: playerKey, oppKey: (oppSelect && oppSelect.value) || null, simScope: options.branchMatrixScope || 'selected' };
+    return csUniqueTeamKeys(getRunAllOpponentKeys(playerKey, simCtx));
+  } catch (e) {
+    UILog.warn('QA tactical sweep opponent resolution failed', e);
+    var fallbackKey = (oppSelect && oppSelect.value) || null;
+    return fallbackKey && fallbackKey !== playerKey ? [fallbackKey] : [];
+  }
+}
+
+function csAggregateBranchSaveResults(results) {
+  var out = { enabled: false, saved: 0, updated: 0, inserted: 0, errors: [] };
+  (Array.isArray(results) ? results : []).forEach(function(result) {
+    if (!result) return;
+    if (result.enabled) out.enabled = true;
+    out.saved += Number(result.saved || 0);
+    out.updated += Number(result.updated || 0);
+    out.inserted += Number(result.inserted || 0);
+    if (result.error) out.errors.push(result.error);
+  });
+  if (!out.errors.length) delete out.errors;
+  return out;
+}
+
+async function csBuildBranchMatrixForOpponent(args) {
+  args = args || {};
+  var adapter = args.adapter || null;
+  var options = args.options || {};
+  var branchPlayerKey = args.playerTeamId;
+  var branchOpponentKey = args.opponentTeamId;
+  var exportedAt = args.generated_at;
+  var buildId = args.build_id;
+  var sourceUrl = args.source_url;
+  var loadedRows = [];
+  var saveResult = null;
+  var matrix = null;
+
+  if (!branchPlayerKey || !branchOpponentKey || typeof csBuildForcedBranchMatrixSweepEvidence !== 'function') {
+    return null;
+  }
+  if (adapter && typeof adapter.loadBranchCoverageSummary === 'function') {
+    try {
+      loadedRows = await adapter.loadBranchCoverageSummary({
+        player_team_id: branchPlayerKey,
+        opponent_team_id: branchOpponentKey,
+        limit: options.branchMatrixLoadLimit || 5000
+      }) || [];
+    } catch (e) {
+      UILog.warn('QA branch matrix loadBranchCoverageSummary failed', e);
+    }
+  }
+  var playerMode = (typeof getBringMode === 'function') ? getBringMode(branchPlayerKey) : 'random';
+  var opponentMode = (typeof getBringMode === 'function') ? getBringMode(branchOpponentKey) : 'random';
+  matrix = csBuildForcedBranchMatrixSweepEvidence({
+    generated_at: exportedAt,
+    build_id: buildId,
+    source_url: sourceUrl,
+    playerTeamId: branchPlayerKey,
+    opponentTeamId: branchOpponentKey,
+    playerLeadMode: playerMode === 'manual' ? 'selected' : 'random',
+    opponentLeadMode: opponentMode === 'manual' ? 'selected' : 'random',
+    playerLeadNames: (typeof getBringFor === 'function') ? getBringFor(branchPlayerKey).slice(0, 2) : [],
+    opponentLeadNames: (typeof getBringFor === 'function') ? getBringFor(branchOpponentKey).slice(0, 2) : [],
+    seenBranchKeys: loadedRows.map(function(row) {
+      return row && row.branch_key && !Number(row.outcome_drift_count || 0) ? row.branch_key : null;
+    }).filter(Boolean),
+    maxRuns: options.branchMatrixMaxRunsPerOpponent || options.branchMatrixMaxRuns || 24,
+    maxLeadPairsPerSide: options.branchMatrixMaxLeadPairsPerSide || 3,
+    maxMovesPerMon: options.branchMatrixMaxMovesPerMon || 2,
+    maxTargetsPerMove: options.branchMatrixMaxTargetsPerMove || 2,
+    maxTurns: options.branchMatrixMaxTurns || 3
+  });
+  if (adapter && typeof adapter.saveBranchCoverageRuns === 'function' && matrix && Array.isArray(matrix.runs)) {
+    try {
+      saveResult = await adapter.saveBranchCoverageRuns({
+        build_id: buildId,
+        source_url: sourceUrl,
+        player_team_id: branchPlayerKey,
+        opponent_team_id: branchOpponentKey,
+        runs: matrix.runs
+      });
+    } catch (e) {
+      UILog.warn('QA branch matrix saveBranchCoverageRuns failed', e);
+    }
+  }
+  return {
+    opponent_team_id: branchOpponentKey,
+    loaded_rows: loadedRows,
+    save_result: saveResult,
+    branch_matrix: matrix
+  };
+}
+
 async function csBuildQaArtifactExport(teamKey, opts) {
   var key = teamKey || csGetActivePlayerKey();
   var options = opts || {};
@@ -25580,63 +25698,45 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     coverageSummaries.push(targetedSweep.qa_coverage_summary);
   }
   var branchMatrixDbRows = [];
+  var branchMatrixDbSaves = [];
   var branchMatrixDbSave = null;
   var branchMatrix = null;
+  var tacticalSweepMatrices = [];
+  var tacticalSweepOpponentKeys = [];
   var branchMoveAnalysis = null;
   if (options.includeBranchMatrix !== false) {
-    var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
     var branchPlayerKey = options.branchPlayerTeamId || key;
-    var branchOpponentKey = options.branchOpponentTeamId || (oppSelect && oppSelect.value) || null;
-    if (branchPlayerKey && branchOpponentKey && typeof csBuildForcedBranchMatrixSweepEvidence === 'function') {
-      if (adapter && typeof adapter.loadBranchCoverageSummary === 'function') {
-        try {
-          branchMatrixDbRows = await adapter.loadBranchCoverageSummary({
-            player_team_id: branchPlayerKey,
-            opponent_team_id: branchOpponentKey,
-            limit: 5000
-          }) || [];
-        } catch (e) {
-          UILog.warn('QA branch matrix loadBranchCoverageSummary failed', e);
-        }
-      }
-      var playerMode = (typeof getBringMode === 'function') ? getBringMode(branchPlayerKey) : 'random';
-      var opponentMode = (typeof getBringMode === 'function') ? getBringMode(branchOpponentKey) : 'random';
-      branchMatrix = csBuildForcedBranchMatrixSweepEvidence({
-        generated_at: exportedAt,
-        build_id: buildId,
-        source_url: sourceUrl,
+    tacticalSweepOpponentKeys = csResolveTacticalSweepOpponentKeys(branchPlayerKey, options);
+    for (var bmIdx = 0; bmIdx < tacticalSweepOpponentKeys.length; bmIdx++) {
+      var branchOpponentKey = tacticalSweepOpponentKeys[bmIdx];
+      var builtMatrix = await csBuildBranchMatrixForOpponent({
+        adapter: adapter,
+        options: options,
         playerTeamId: branchPlayerKey,
         opponentTeamId: branchOpponentKey,
-        playerLeadMode: playerMode === 'manual' ? 'selected' : 'random',
-        opponentLeadMode: opponentMode === 'manual' ? 'selected' : 'random',
-        playerLeadNames: (typeof getBringFor === 'function') ? getBringFor(branchPlayerKey).slice(0, 2) : [],
-        opponentLeadNames: (typeof getBringFor === 'function') ? getBringFor(branchOpponentKey).slice(0, 2) : [],
-        seenBranchKeys: branchMatrixDbRows.map(function(row) {
-          return row && row.branch_key && !Number(row.outcome_drift_count || 0) ? row.branch_key : null;
-        }).filter(Boolean),
-        maxRuns: options.branchMatrixMaxRuns || 24,
-        maxLeadPairsPerSide: options.branchMatrixMaxLeadPairsPerSide || 3,
-        maxMovesPerMon: options.branchMatrixMaxMovesPerMon || 2,
-        maxTargetsPerMove: options.branchMatrixMaxTargetsPerMove || 2,
-        maxTurns: options.branchMatrixMaxTurns || 3
+        generated_at: exportedAt,
+        build_id: buildId,
+        source_url: sourceUrl
       });
-      if (branchMatrix && branchMatrix.qa_coverage_summary) {
-        coverageSummaries.push(branchMatrix.qa_coverage_summary);
+      if (!builtMatrix || !builtMatrix.branch_matrix) continue;
+      tacticalSweepMatrices.push(builtMatrix);
+      branchMatrixDbRows = branchMatrixDbRows.concat(builtMatrix.loaded_rows || []);
+      if (builtMatrix.save_result) branchMatrixDbSaves.push(builtMatrix.save_result);
+      if (!branchMatrix) {
+        branchMatrix = builtMatrix.branch_matrix;
+        branchMatrixDbSave = builtMatrix.save_result;
       }
-      if (adapter && typeof adapter.saveBranchCoverageRuns === 'function' && branchMatrix && Array.isArray(branchMatrix.runs)) {
-        try {
-          branchMatrixDbSave = await adapter.saveBranchCoverageRuns({
-            build_id: buildId,
-            source_url: sourceUrl,
-            player_team_id: branchPlayerKey,
-            opponent_team_id: branchOpponentKey,
-            runs: branchMatrix.runs
-          });
-        } catch (e) {
-          UILog.warn('QA branch matrix saveBranchCoverageRuns failed', e);
-        }
+      if (builtMatrix.branch_matrix && builtMatrix.branch_matrix.qa_coverage_summary) {
+        coverageSummaries.push(builtMatrix.branch_matrix.qa_coverage_summary);
       }
-      branchMoveAnalysis = csAnalyzeBranchCoverageRows([].concat(branchMatrixDbRows || [], branchMatrix && Array.isArray(branchMatrix.runs) ? branchMatrix.runs : []), {
+    }
+    if (tacticalSweepMatrices.length && typeof csAnalyzeBranchCoverageRows === 'function') {
+      var combinedBranchRows = [];
+      tacticalSweepMatrices.forEach(function(entry) {
+        combinedBranchRows = combinedBranchRows.concat(entry.loaded_rows || []);
+        combinedBranchRows = combinedBranchRows.concat(entry.branch_matrix && Array.isArray(entry.branch_matrix.runs) ? entry.branch_matrix.runs : []);
+      });
+      branchMoveAnalysis = csAnalyzeBranchCoverageRows(combinedBranchRows, {
         minStrongSamples: options.branchMoveAnalysisMinStrongSamples || 8,
         avoidWinRate: options.branchMoveAnalysisAvoidWinRate == null ? 0.35 : options.branchMoveAnalysisAvoidWinRate,
         limit: options.branchMoveAnalysisLimit || 12
@@ -25650,9 +25750,12 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       } catch (_e) {}
       csRememberBranchMoveAnalysis(branchMoveAnalysis, {
         player_team_id: branchPlayerKey,
-        opponent_team_id: branchOpponentKey,
+        opponent_team_id: tacticalSweepOpponentKeys.length === 1 ? tacticalSweepOpponentKeys[0] : 'tactical-sweep:' + tacticalSweepOpponentKeys.length,
         player_team_signature: branchTeamSig
       });
+      branchMatrixDbSave = tacticalSweepMatrices.length === 1 ? branchMatrixDbSave : csAggregateBranchSaveResults(branchMatrixDbSaves);
+    } else {
+      branchMatrixDbSave = csAggregateBranchSaveResults(branchMatrixDbSaves);
     }
   }
   var mergedCoverage = csMergeQaCoverageSummaries(coverageSummaries, {
@@ -25665,8 +25768,39 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   });
   mergedCoverage.totals.replay_cards_scanned = coverageReplayCards.length;
   mergedCoverage.totals.targeted_sweep_runs = targetedSweep && Array.isArray(targetedSweep.runs) ? targetedSweep.runs.length : 0;
-  mergedCoverage.totals.branch_matrix_runs = branchMatrix && branchMatrix.coverage_space ? branchMatrix.coverage_space.executed_runs : 0;
-  mergedCoverage.totals.branch_matrix_newly_executed = branchMatrix && branchMatrix.coverage_space ? branchMatrix.coverage_space.newly_executed_runs : 0;
+  var branchMatrixRunsTotal = tacticalSweepMatrices.reduce(function(sum, entry) {
+    var space = entry.branch_matrix && entry.branch_matrix.coverage_space;
+    return sum + Number(space && space.executed_runs || 0);
+  }, 0);
+  var branchMatrixNewTotal = tacticalSweepMatrices.reduce(function(sum, entry) {
+    var space = entry.branch_matrix && entry.branch_matrix.coverage_space;
+    return sum + Number(space && space.newly_executed_runs || 0);
+  }, 0);
+  mergedCoverage.totals.branch_matrix_runs = branchMatrixRunsTotal;
+  mergedCoverage.totals.branch_matrix_newly_executed = branchMatrixNewTotal;
+  var tacticalSweep = {
+    enabled: !!tacticalSweepMatrices.length,
+    scope: options.branchMatrixUseScope ? (options.branchMatrixScope || (typeof getSimScopeMode === 'function' ? getSimScopeMode() : 'selected')) : 'selected',
+    player_team_id: options.branchPlayerTeamId || key,
+    opponent_count: tacticalSweepOpponentKeys.length,
+    opponent_team_ids: tacticalSweepOpponentKeys,
+    max_runs_per_opponent: options.branchMatrixMaxRunsPerOpponent || options.branchMatrixMaxRuns || 24,
+    matrices: tacticalSweepMatrices.map(function(entry) {
+      return {
+        opponent_team_id: entry.opponent_team_id,
+        loaded_rows: (entry.loaded_rows || []).length,
+        save_result: entry.save_result,
+        coverage_space: entry.branch_matrix && entry.branch_matrix.coverage_space ? entry.branch_matrix.coverage_space : null,
+        analysis_totals: branchMoveAnalysis && branchMoveAnalysis.totals ? branchMoveAnalysis.totals : null
+      };
+    }),
+    total_loaded_rows: branchMatrixDbRows.length,
+    total_saved_rows: branchMatrixDbSaves.reduce(function(sum, result) { return sum + Number(result && result.saved || 0); }, 0),
+    total_inserted_rows: branchMatrixDbSaves.reduce(function(sum, result) { return sum + Number(result && result.inserted || 0); }, 0),
+    total_updated_rows: branchMatrixDbSaves.reduce(function(sum, result) { return sum + Number(result && result.updated || 0); }, 0),
+    total_executed_runs: branchMatrixRunsTotal,
+    total_newly_executed_runs: branchMatrixNewTotal
+  };
 
   return {
     schema_version: 'champions-qa-artifact-v1',
@@ -25687,12 +25821,14 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       include_replay_cards: options.includeReplayCards !== false,
       include_sim_log: options.includeSimLog !== false,
       include_targeted_sweep: !!targetedSweep,
-      include_branch_matrix: !!branchMatrix
+      include_branch_matrix: !!branchMatrix,
+      include_tactical_sweep: !!tacticalSweepMatrices.length
     },
     summary: csBuildQaArtifactSummary(localSimLog, replayCards, key),
     qa_coverage_summary: mergedCoverage,
     targeted_qa_sweep: targetedSweep,
     forced_branch_matrix: branchMatrix,
+    tactical_sweep: tacticalSweep,
     branch_move_analysis: branchMoveAnalysis,
     retained: {
       sim_log: options.includeSimLog === false ? [] : localSimLog,
@@ -25710,8 +25846,8 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   };
 }
 
-async function csExportQaArtifactJson(teamKey) {
-  var payload = await csBuildQaArtifactExport(teamKey);
+async function csExportQaArtifactJson(teamKey, opts) {
+  var payload = await csBuildQaArtifactExport(teamKey, opts);
   var ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   _downloadBlob('champions-sim-qa-artifact-' + ts + '.json', 'application/json', JSON.stringify(payload, null, 2));
   return payload;
@@ -26290,7 +26426,8 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
   var runBtn = this;
   var allBtn = document.getElementById('run-all-btn');
   var qaRunBtn = document.getElementById('run-all-export-qa-btn');
-  simRunning=true; runBtn.disabled=true; if (allBtn) allBtn.disabled=true; if (qaRunBtn) qaRunBtn.disabled=true;
+  var tacticalSweepBtn = document.getElementById('tactical-sweep-qa-btn');
+  simRunning=true; runBtn.disabled=true; if (allBtn) allBtn.disabled=true; if (qaRunBtn) qaRunBtn.disabled=true; if (tacticalSweepBtn) tacticalSweepBtn.disabled=true;
   try {
     document.getElementById('results-section').style.display='none';
     document.getElementById('progress-wrap').style.display='';
@@ -26334,7 +26471,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
   } catch (e) {
     setSimError(e);
   } finally {
-    simRunning=false; runBtn.disabled=false; if (allBtn) allBtn.disabled=false; if (qaRunBtn) qaRunBtn.disabled=false;
+    simRunning=false; runBtn.disabled=false; if (allBtn) allBtn.disabled=false; if (qaRunBtn) qaRunBtn.disabled=false; if (tacticalSweepBtn) tacticalSweepBtn.disabled=false;
   }
 });
 
@@ -26355,10 +26492,12 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
   opts = opts || {};
   var runBtn = document.getElementById('run-sim-btn');
   var qaRunBtn = document.getElementById('run-all-export-qa-btn');
+  var tacticalSweepBtn = document.getElementById('tactical-sweep-qa-btn');
   simRunning=true;
   if (allBtn) allBtn.disabled=true;
   if (runBtn) runBtn.disabled=true;
   if (qaRunBtn) qaRunBtn.disabled=true;
+  if (tacticalSweepBtn) tacticalSweepBtn.disabled=true;
   try {
     document.getElementById('matchup-table-wrap').style.display='';
     document.getElementById('results-section').style.display='none';
@@ -26423,6 +26562,7 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
     if (allBtn) allBtn.disabled=false;
     if (runBtn) runBtn.disabled=false;
     if (qaRunBtn) qaRunBtn.disabled=false;
+    if (tacticalSweepBtn) tacticalSweepBtn.disabled=false;
   }
 }
 
@@ -26432,6 +26572,39 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
 
 document.getElementById('run-all-export-qa-btn')?.addEventListener('click', async function() {
   await csRunAllMatchupsFromButton(this, { autoExportQaArtifact: true });
+});
+
+document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', async function() {
+  if (simRunning) return;
+  var sweepBtn = this;
+  var runBtn = document.getElementById('run-sim-btn');
+  var allBtn = document.getElementById('run-all-btn');
+  var qaRunBtn = document.getElementById('run-all-export-qa-btn');
+  simRunning = true;
+  sweepBtn.disabled = true;
+  if (runBtn) runBtn.disabled = true;
+  if (allBtn) allBtn.disabled = true;
+  if (qaRunBtn) qaRunBtn.disabled = true;
+  try {
+    document.getElementById('progress-wrap').style.display = '';
+    setProgress(0, 'Starting tactical sweep...', 0, 0);
+    var simCtx = resolveSimContext();
+    setProgress(35, 'Building unseen branch coverage for ' + getSimScopeLabel(simCtx.simScope) + '...', 0, 0);
+    await csExportQaArtifactJson(simCtx.playerKey, {
+      branchMatrixUseScope: true,
+      branchMatrixScope: simCtx.simScope,
+      branchMatrixMaxRunsPerOpponent: 24
+    });
+    setProgress(100, 'Tactical Sweep QA Artifact downloaded.', 0, 0);
+  } catch (e) {
+    setSimError(e);
+  } finally {
+    simRunning = false;
+    sweepBtn.disabled = false;
+    if (runBtn) runBtn.disabled = false;
+    if (allBtn) allBtn.disabled = false;
+    if (qaRunBtn) qaRunBtn.disabled = false;
+  }
 });
 
 if (typeof ChampionsSim !== 'undefined') {
@@ -27207,6 +27380,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Tactical Sweep QA added',
+      detail: 'v2.1.53 adds a Tactical Sweep + QA control that uses Test Scope to build unseen branch coverage for the selected matchup or the approved preloaded team suite. The QA Artifact now includes tactical_sweep with per-opponent branch coverage, DB save totals, and combined branch_move_analysis so repeated runs fill coverage instead of replaying the same tactical branches.'
+    },
     {
       status: 'done',
       title: 'Tactical Branch Memory added',

@@ -1,6 +1,6 @@
 // T163 — Export My Data as JSON
 //
-// Coverage targets (7 cases):
+// Coverage targets (8 cases):
 //   1. HTML exposes the export button in the Saved Analyses header.
 //   2. Local export payload includes sim log + cached reports for the active team.
 //   3. DB-backed export payload includes analyses + nested analysis logs.
@@ -8,6 +8,7 @@
 //   5. HTML exposes the QA artifact export button in the Saved Analyses header.
 //   6. QA artifact documents retention caps, build ID, source URL, and retained evidence.
 //   7. QA artifact click handler downloads a JSON file with the expected prefix.
+//   8. Tactical Sweep QA can fan branch coverage across multiple opponents.
 
 const fs = require('fs');
 const vm = require('vm');
@@ -243,6 +244,8 @@ async function main() {
     truthy(/id="export-qa-artifact-json-btn"/.test(html), 'QA artifact button missing');
     truthy(/QA Artifact/.test(html), 'QA artifact label missing');
     truthy(/id="run-all-export-qa-btn"/.test(html), 'Run All + QA Artifact button missing');
+    truthy(/id="tactical-sweep-qa-btn"/.test(html), 'Tactical Sweep + QA button missing');
+    truthy(/Tactical Sweep \+ QA/.test(html), 'Tactical Sweep + QA label missing');
     truthy(/id="sim-scope"/.test(html), 'Test Scope selector missing');
     truthy(/Selected matchup/.test(html), 'Selected matchup scope option missing');
     truthy(/10,000 series \(full team stress\)/.test(html), '10,000 stress sample option missing');
@@ -270,7 +273,7 @@ async function main() {
     const payload = await csBuildQaArtifactExport('player');
     eq(payload.schema_version, 'champions-qa-artifact-v1');
     eq(payload.artifact_type, 'large-run-qa-retained-evidence');
-    truthy(/^v2\.1\.52-tactical-branch-memory/.test(payload.build_id || ''), 'QA build id missing');
+    truthy(/^v2\.1\.53-tactical-sweep-qa/.test(payload.build_id || ''), 'QA build id missing');
     eq(payload.source_url, 'http://localhost/');
     eq(payload.retention.max_replay_cards, 240);
     eq(payload.retention.max_replay_log_lines, 200);
@@ -308,6 +311,26 @@ async function main() {
     eq(parsed.schema_version, 'champions-qa-artifact-v1');
     eq(parsed.player_team_id, 'player');
     truthy(payload.summary && payload.retention, 'returned QA payload malformed');
+  });
+
+  await T('8. Tactical Sweep QA covers multiple branch opponents', async () => {
+    seedLocalHistory();
+    ctx.window.SupabaseAdapter = { enabled: false };
+    const payload = await csBuildQaArtifactExport('player', {
+      branchMatrixUseScope: true,
+      branchOpponentTeamIds: ['mega_altaria', 'mega_dragonite'],
+      branchMatrixMaxRunsPerOpponent: 1,
+      includeReplayCards: false,
+      includeSimLog: false,
+      includeTargetedSweep: false
+    });
+    truthy(payload.tactical_sweep && payload.tactical_sweep.enabled, 'tactical sweep block missing');
+    eq(payload.tactical_sweep.opponent_count, 2, 'opponent count');
+    eq(payload.tactical_sweep.matrices.length, 2, 'matrix count');
+    eq(payload.tactical_sweep.total_executed_runs, 2, 'executed branch total');
+    eq(payload.qa_coverage_summary.totals.branch_matrix_runs, 2, 'coverage branch run total');
+    truthy(payload.forced_branch_matrix && payload.forced_branch_matrix.coverage_space.executed_runs === 1, 'compat forced_branch_matrix missing');
+    truthy(payload.branch_move_analysis && payload.branch_move_analysis.totals.rows_read >= 2, 'combined branch move analysis missing');
   });
 }
 
