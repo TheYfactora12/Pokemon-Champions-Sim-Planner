@@ -7417,6 +7417,86 @@ const TEAMS = {
         "role": "Utility / Secret Weapon"
       }
     ]
+  },
+  "targeted_proof_legal": {
+    "name": "Targeted Proof Legal",
+    "label": "QA PROOF",
+    "style": "balance",
+    "description": "Legal Champions QA proof team for targeted evidence: Shed Tail or Clangorous Soul HP cost, Wish delayed recovery, and Leech Seed residual drain.",
+    "champion_pack_id": "targeted_proof_legal_champions_regma_v1",
+    "format": "champions",
+    "formatid": "champions-vgc-2026-regma",
+    "gametype": "doubles",
+    "ruleset": ["Species Clause", "Item Clause", "Bring 6 Pick 4", "Level 50"],
+    "provenance": {
+      "roster_source": "repo QA targeted proof coverage",
+      "spread_source": "legal Champions SP proof spreads",
+      "author": "qa",
+      "url": "",
+      "status": "proof-team"
+    },
+    "legality_status": "legal",
+    "legality_notes": "Purpose-built legal Champions proof team. All species are allowed in Reg M-A, items are in the verified Champions pool, SP spreads obey 32-per-stat/66-total caps, and moves pass the generated Showdown-backed species/form legality gate.",
+    "assumption_register": [
+      "This is a QA proof team, not a tournament paste.",
+      "Use Orthworm or Kommo-o for HP-cost proof, Kangaskhan for Wish delayed recovery proof, and Meganium for Leech Seed residual drain proof."
+    ],
+    "members": [
+      {
+        "name": "Orthworm",
+        "item": "Sitrus Berry",
+        "ability": "Earth Eater",
+        "nature": "Careful",
+        "evs": {"hp": 32, "atk": 1, "def": 1, "spa": 0, "spd": 32, "spe": 0},
+        "moves": ["Shed Tail", "Protect", "Helping Hand", "Iron Head"],
+        "role": "HP-Cost Proof"
+      },
+      {
+        "name": "Kangaskhan",
+        "item": "Leftovers",
+        "ability": "Scrappy",
+        "nature": "Careful",
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 2, "spe": 0},
+        "moves": ["Wish", "Protect", "Fake Out", "Body Slam"],
+        "role": "Delayed Recovery Proof"
+      },
+      {
+        "name": "Meganium",
+        "item": "Miracle Seed",
+        "ability": "Overgrow",
+        "nature": "Calm",
+        "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 0, "spd": 32, "spe": 0},
+        "moves": ["Leech Seed", "Protect", "Giga Drain", "Synthesis"],
+        "role": "Residual Drain Proof"
+      },
+      {
+        "name": "Garchomp",
+        "item": "Soft Sand",
+        "ability": "Rough Skin",
+        "nature": "Jolly",
+        "evs": {"hp": 2, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
+        "moves": ["Tackle", "Protect", "Dragon Claw", "Earthquake"],
+        "role": "Legal Target / Damage Probe"
+      },
+      {
+        "name": "Kommo-o",
+        "item": "Dragon Fang",
+        "ability": "Overcoat",
+        "nature": "Modest",
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
+        "moves": ["Clangorous Soul", "Protect", "Aura Sphere", "Clanging Scales"],
+        "role": "Alternate HP-Cost Proof"
+      },
+      {
+        "name": "Pelipper",
+        "item": "Mystic Water",
+        "ability": "Drizzle",
+        "nature": "Calm",
+        "evs": {"hp": 32, "atk": 0, "def": 2, "spa": 0, "spd": 32, "spe": 0},
+        "moves": ["Protect", "Tailwind", "Weather Ball", "U-turn"],
+        "role": "Weather / Speed Support"
+      }
+    ]
   }
 
 };
