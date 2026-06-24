@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.44-recoil-applied-evidence` on 2026-06-23.
+Status: current for `v2.1.49-branch-move-analysis` on 2026-06-24.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -58,6 +58,19 @@ Optional persistence
 | `engine.js` | Deterministic battle mechanics and damage/effect execution | Long-term source data governance | Damage oracle tests, move registry tests, exported turn logs |
 | `ui.js` | User workflows, selector gating, exports, Overview, QA Artifact | Final battle authority | Browser logs, QA Artifact metadata, Overview tests |
 | Validators/tests | Contract checks for logs, source data, legality, bundle freshness, mechanics | Proof of every Pokemon edge case unless covered by a named test | `_run_all.sh --skip-db`, `_run_all_db.sh`, focused oracle suites |
+
+## Branch Strategy Memory
+
+`branch_coverage_runs` stores deterministic branch matrix rows keyed by player team, opponent team, player lead pair, opponent lead pair, and forced turn-1 move/target choices. This lets QA see which combinations have already been tested and which combinations still need coverage.
+
+`v2.1.49` adds a strategy analysis layer on top of those rows:
+
+- `branch_move_analysis.avoid_moves` flags low-result moves by matchup and actor.
+- `branch_move_analysis.move_replacement_candidates` suggests legal swaps only when a better move has already been observed on the same set in the same lead/matchup context.
+- `branch_move_analysis.suggested_lines` ranks better turn-1 lines against specific teams and leads.
+- Every row carries confidence. `early_signal` means "test this more"; `strong` requires repeated samples and is the only tier intended for meta/team decisions.
+
+This does not change the simulator. It changes how the Strategy guide consumes saved evidence. The player-facing language should stay close to competitive doubles/VGC vocabulary: team preview, lead pair, opposing lead, game plan, Protect, switching, pivoting, speed control, Trick Room, pressure, positioning, win condition, consistency, cores/modes, and matchup prep.
 
 ## Supabase Boundary
 

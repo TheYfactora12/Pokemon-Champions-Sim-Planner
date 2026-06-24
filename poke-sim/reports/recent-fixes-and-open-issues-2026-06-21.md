@@ -2,6 +2,12 @@
 
 This snapshot records the current truth after the June 21-23 live-log review, GitHub issue sweep, Alfredo sync, Low Kick weight-parity pass, and core shipped-move parity pass. It is meant to remove stale contradictions before the next mechanics-parity pass.
 
+## 2026-06-24 Strategy Memory Update
+
+- `v2.1.49-branch-move-analysis` adds branch move analysis to the QA Artifact and Strategy guide. Saved branch coverage rows now produce confidence-rated avoid moves, legal swaps already observed on the same set, and suggested move lines by matchup/lead context.
+- This is trainer/strategy analysis, not a battle-engine mechanics change. `early_signal` rows guide the next stress tests; only repeated `strong` rows should drive meta replacement decisions.
+- The Strategy guide wording is now intentionally closer to competitive doubles/VGC language: team preview, lead pair, opposing lead, game plan, Protect, switching, pivoting, speed control, Trick Room, pressure, positioning, win condition, consistency, cores/modes, and matchup prep.
+
 ## 2026-06-23 Deployment Update
 
 - The prior Y fork public validation target was commit `7e0deca` (`model champion ability parity`).
@@ -67,6 +73,7 @@ This snapshot records the current truth after the June 21-23 live-log review, Gi
 | Approved runtime testing catalog | Fixed locally | Runtime selectors and Run All now keep 10 approved Champion-legal testing archetypes and remove 17 legacy/inferred rows. Illegal known moves are hard import/editor errors, and adjusted source rows are labeled as testing archetypes instead of exact tournament pastes. |
 | Large-run QA artifact | Added in `v2.1.27-qa-artifact-export` | Saved Analyses now has a `QA Artifact` export that records build ID, source URL, retention caps, summary counts, retained compact sim-log entries, and retained replay cards. |
 | QA coverage summary | Added in `v2.1.43-qa-coverage-summary` | Downloaded turn logs, retained QA replay cards, and top-level QA Artifact exports now include `qa_coverage_summary` with source-truth versions, seen-mechanic counts, moves/effects seen, and missing targeted proof. `validate-turn-logs.mjs` checks coverage totals when the block is present. |
+| Branch move coach | Added in `v2.1.49-branch-move-analysis` | QA Artifact exports now include `branch_move_analysis`; the Strategy guide can render avoid clicks, legal swaps seen on the current set, and suggested lines with confidence labels. Competitive-language guardrails keep guidance framed around lead pairs, matchup context, Protect/switching/positioning, speed control, Trick Room, win conditions, and game plans. |
 | Recoil applied HP evidence | Fixed in `v2.1.44-recoil-applied-evidence` | Recoil rules still come from generated Pokemon Showdown metadata. Exported `effect_events` now keep the formula recoil as `calculated_effect_damage`, store actual capped user HP loss as `damage_applied_to_user`, and validator checks that `damage_applied_to_user` equals `hp_before - hp_after`. |
 | Type multiplier audit | Added in `v2.1.28-mechanics-stack-guard` | `reports/type_multiplier_audit.md` shows each shipped move user's resolved move type, 4x/2x/1x/0.5x/0.25x/0x target buckets across the shipped roster, declared defensive Tera bucket changes, and dynamic move-type rules. |
 | Typed held-item damage boosts | Fixed in `v2.1.28-mechanics-stack-guard` | `engine.js` now applies legal typed held-item boosts such as Charcoal, Mystic Water, Soft Sand, Black Glasses, Spell Tag, Fairy Feather, and Never-Melt Ice as Showdown-style base-power modifiers. `showdown_damage_oracle_tests.js` covers Charcoal + Blaze + sun + STAB + super-effective Fire damage. |

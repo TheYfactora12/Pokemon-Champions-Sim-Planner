@@ -492,7 +492,7 @@
     try {
       var query = sb
         .from('branch_coverage_runs')
-        .select('branch_key,player_team_id,opponent_team_id,player_leads,opponent_leads,run_count,last_seen_at,result,turns,outcome_signature,outcome_drift_count')
+        .select('branch_key,player_team_id,opponent_team_id,player_leads,opponent_leads,player_bring,opponent_bring,forced_actions,run_count,last_seen_at,result,turns,outcome_signature,outcome_drift_count')
         .order('last_seen_at', { ascending: false })
         .limit(filters.limit || 5000);
       if (filters.player_team_id) query = query.eq('player_team_id', filters.player_team_id);

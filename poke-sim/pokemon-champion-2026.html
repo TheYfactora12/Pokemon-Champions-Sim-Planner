@@ -2333,7 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.48-branch-coverage-memory</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.49-branch-move-analysis</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -15634,7 +15634,7 @@ if (typeof window !== 'undefined') {
     try {
       var query = sb
         .from('branch_coverage_runs')
-        .select('branch_key,player_team_id,opponent_team_id,player_leads,opponent_leads,run_count,last_seen_at,result,turns,outcome_signature,outcome_drift_count')
+        .select('branch_key,player_team_id,opponent_team_id,player_leads,opponent_leads,player_bring,opponent_bring,forced_actions,run_count,last_seen_at,result,turns,outcome_signature,outcome_drift_count')
         .order('last_seen_at', { ascending: false })
         .limit(filters.limit || 5000);
       if (filters.player_team_id) query = query.eq('player_team_id', filters.player_team_id);
@@ -19610,9 +19610,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.48-branch-coverage-memory';
+    return txt || 'v2.1.49-branch-move-analysis';
   } catch (e) {
-    return 'v2.1.48-branch-coverage-memory';
+    return 'v2.1.49-branch-move-analysis';
   }
 }
 
@@ -23918,6 +23918,402 @@ function csBuildForcedBranchMatrixSweepEvidence(opts) {
   };
 }
 
+function csBranchMoveResultScore(result) {
+  if (result === 'win') return 1;
+  if (result === 'draw') return 0.5;
+  return 0;
+}
+
+function csBranchMoveRate(wins, total) {
+  return total > 0 ? wins / total : 0;
+}
+
+function csBranchMovePct(value) {
+  return Math.round(value * 1000) / 10;
+}
+
+function csBranchMoveSortedValues(map) {
+  return Object.keys(map || {}).map(function(key) { return map[key]; });
+}
+
+function csBranchMoveActionLabel(action) {
+  var target = action.targetSide ? String(action.targetSide) : '';
+  if (target && Number.isFinite(Number(action.targetSlot))) target += ':' + Number(action.targetSlot);
+  return [action.actor || ('slot' + action.slot), action.move || 'Unknown', target].filter(Boolean).join(' -> ');
+}
+
+function csBranchMoveRowWeight(row) {
+  var n = Number(row && row.run_count);
+  return Number.isFinite(n) && n > 0 ? Math.min(100, Math.floor(n)) : 1;
+}
+
+function csBranchMoveNormalizeRow(row) {
+  if (!row || !Array.isArray(row.forced_actions)) return null;
+  var playerLeads = Array.isArray(row.player_leads) ? row.player_leads
+    : Array.isArray(row.player_bring) ? row.player_bring.slice(0, 2) : [];
+  var opponentLeads = Array.isArray(row.opponent_leads) ? row.opponent_leads
+    : Array.isArray(row.opponent_bring) ? row.opponent_bring.slice(0, 2) : [];
+  var playerActions = row.forced_actions.filter(function(action) {
+    return action && action.side === 'player' && action.move;
+  }).map(function(action) {
+    var slot = Number.isFinite(Number(action.slot)) ? Number(action.slot) : 0;
+    return {
+      side: 'player',
+      slot: slot,
+      actor: playerLeads[slot] || ('slot' + slot),
+      move: action.move,
+      targetSide: action.targetSide || '',
+      targetSlot: Number.isFinite(Number(action.targetSlot)) ? Number(action.targetSlot) : null
+    };
+  });
+  if (!playerActions.length) return null;
+  playerActions.sort(function(a, b) {
+    if (a.slot !== b.slot) return a.slot - b.slot;
+    return String(a.move).localeCompare(String(b.move));
+  });
+  return {
+    branch_key: row.branch_key || null,
+    player_team_id: row.player_team_id || null,
+    opponent_team_id: row.opponent_team_id || null,
+    player_leads: playerLeads.slice(0, 2),
+    opponent_leads: opponentLeads.slice(0, 2),
+    result: row.result || null,
+    turns: row.turns || 0,
+    run_count: csBranchMoveRowWeight(row),
+    player_actions: playerActions
+  };
+}
+
+function csBranchMoveBucketAdd(bucket, row) {
+  var weight = row.run_count || 1;
+  bucket.samples += weight;
+  bucket.weighted_score += csBranchMoveResultScore(row.result) * weight;
+  if (row.result === 'win') bucket.wins += weight;
+  else if (row.result === 'loss') bucket.losses += weight;
+  else if (row.result === 'draw') bucket.draws += weight;
+}
+
+function csBranchMoveConfidence(samples, minStrongSamples) {
+  return samples >= minStrongSamples ? 'strong' : 'early_signal';
+}
+
+function csAnalyzeBranchCoverageRows(rows, opts) {
+  var options = opts || {};
+  var minStrongSamples = Number.isFinite(Number(options.minStrongSamples)) ? Math.max(1, Number(options.minStrongSamples)) : 8;
+  var avoidWinRate = Number.isFinite(Number(options.avoidWinRate)) ? Math.max(0, Math.min(1, Number(options.avoidWinRate))) : 0.35;
+  var limit = Number.isFinite(Number(options.limit)) ? Math.max(1, Number(options.limit)) : 12;
+  var normalized = (Array.isArray(rows) ? rows : []).map(csBranchMoveNormalizeRow).filter(Boolean);
+  var byLine = {};
+  var byMove = {};
+  var byContextActorMove = {};
+  var seen = {};
+
+  normalized.forEach(function(row) {
+    if (row.branch_key && seen[row.branch_key]) return;
+    if (row.branch_key) seen[row.branch_key] = true;
+    var matchupKey = [row.player_team_id || 'player', row.opponent_team_id || 'opponent'].join('::');
+    var leadKey = [row.player_leads.join('+'), row.opponent_leads.join('+')].join(' vs ');
+    var contextKey = [matchupKey, leadKey].join('::');
+    var lineKey = row.player_actions.map(csBranchMoveActionLabel).join(' | ');
+    var fullLineKey = [contextKey, lineKey].join('::');
+    if (!byLine[fullLineKey]) {
+      byLine[fullLineKey] = {
+        matchup_key: matchupKey,
+        player_team_id: row.player_team_id,
+        opponent_team_id: row.opponent_team_id,
+        player_leads: row.player_leads,
+        opponent_leads: row.opponent_leads,
+        context_key: contextKey,
+        line_key: lineKey,
+        samples: 0,
+        wins: 0,
+        losses: 0,
+        draws: 0,
+        weighted_score: 0
+      };
+    }
+    csBranchMoveBucketAdd(byLine[fullLineKey], row);
+
+    row.player_actions.forEach(function(action) {
+      var moveKey = [matchupKey, action.actor, action.move].join('::');
+      if (!byMove[moveKey]) {
+        byMove[moveKey] = {
+          matchup_key: matchupKey,
+          player_team_id: row.player_team_id,
+          opponent_team_id: row.opponent_team_id,
+          actor: action.actor,
+          move: action.move,
+          samples: 0,
+          wins: 0,
+          losses: 0,
+          draws: 0,
+          weighted_score: 0
+        };
+      }
+      csBranchMoveBucketAdd(byMove[moveKey], row);
+
+      var actorContextKey = [contextKey, action.actor, action.move].join('::');
+      if (!byContextActorMove[actorContextKey]) {
+        byContextActorMove[actorContextKey] = {
+          context_key: contextKey,
+          matchup_key: matchupKey,
+          player_team_id: row.player_team_id,
+          opponent_team_id: row.opponent_team_id,
+          player_leads: row.player_leads,
+          opponent_leads: row.opponent_leads,
+          actor: action.actor,
+          move: action.move,
+          samples: 0,
+          wins: 0,
+          losses: 0,
+          draws: 0,
+          weighted_score: 0
+        };
+      }
+      csBranchMoveBucketAdd(byContextActorMove[actorContextKey], row);
+    });
+  });
+
+  var lineRankings = csBranchMoveSortedValues(byLine).map(function(line) {
+    line.win_rate = csBranchMoveRate(line.weighted_score, line.samples);
+    line.win_rate_pct = csBranchMovePct(line.win_rate);
+    line.confidence = csBranchMoveConfidence(line.samples, minStrongSamples);
+    return line;
+  }).sort(function(a, b) {
+    if (b.win_rate !== a.win_rate) return b.win_rate - a.win_rate;
+    return b.samples - a.samples;
+  }).slice(0, limit);
+
+  var avoidMoves = csBranchMoveSortedValues(byMove).map(function(move) {
+    move.win_rate = csBranchMoveRate(move.weighted_score, move.samples);
+    move.win_rate_pct = csBranchMovePct(move.win_rate);
+    move.confidence = csBranchMoveConfidence(move.samples, minStrongSamples);
+    move.reason = move.confidence === 'strong'
+      ? 'Low weighted win rate across repeated branch runs.'
+      : 'Early low-result signal; run more branches before replacing this move.';
+    return move;
+  }).filter(function(move) {
+    return move.samples > 0 && move.win_rate <= avoidWinRate;
+  }).sort(function(a, b) {
+    if (a.confidence !== b.confidence) return a.confidence === 'strong' ? -1 : 1;
+    if (a.win_rate !== b.win_rate) return a.win_rate - b.win_rate;
+    return b.samples - a.samples;
+  }).slice(0, limit);
+
+  var contextMoves = {};
+  csBranchMoveSortedValues(byContextActorMove).forEach(function(move) {
+    move.win_rate = csBranchMoveRate(move.weighted_score, move.samples);
+    move.win_rate_pct = csBranchMovePct(move.win_rate);
+    move.confidence = csBranchMoveConfidence(move.samples, minStrongSamples);
+    var key = [move.context_key, move.actor].join('::');
+    if (!contextMoves[key]) contextMoves[key] = [];
+    contextMoves[key].push(move);
+  });
+
+  var replacementCandidates = [];
+  Object.keys(contextMoves).forEach(function(key) {
+    var moves = contextMoves[key].slice().sort(function(a, b) {
+      if (b.win_rate !== a.win_rate) return b.win_rate - a.win_rate;
+      return b.samples - a.samples;
+    });
+    var best = moves[0];
+    moves.forEach(function(move) {
+      if (!best || move.move === best.move) return;
+      if (move.win_rate > avoidWinRate && move.confidence !== 'strong') return;
+      var lift = best.win_rate - move.win_rate;
+      if (lift < 0.2) return;
+      replacementCandidates.push({
+        player_team_id: move.player_team_id,
+        opponent_team_id: move.opponent_team_id,
+        player_leads: move.player_leads,
+        opponent_leads: move.opponent_leads,
+        actor: move.actor,
+        avoid_move: move.move,
+        better_legal_move_seen: best.move,
+        avoid_samples: move.samples,
+        better_samples: best.samples,
+        avoid_win_rate_pct: move.win_rate_pct,
+        better_win_rate_pct: best.win_rate_pct,
+        lift_pct: csBranchMovePct(lift),
+        confidence: (move.confidence === 'strong' && best.confidence === 'strong') ? 'strong' : 'early_signal',
+        note: 'Replacement is limited to legal moves already observed on this set in the same lead/matchup context.'
+      });
+    });
+  });
+  replacementCandidates.sort(function(a, b) {
+    if (a.confidence !== b.confidence) return a.confidence === 'strong' ? -1 : 1;
+    if (b.lift_pct !== a.lift_pct) return b.lift_pct - a.lift_pct;
+    return b.avoid_samples - a.avoid_samples;
+  });
+
+  var betterLines = [];
+  var linesByContext = {};
+  csBranchMoveSortedValues(byLine).forEach(function(line) {
+    line.win_rate = csBranchMoveRate(line.weighted_score, line.samples);
+    line.win_rate_pct = csBranchMovePct(line.win_rate);
+    line.confidence = csBranchMoveConfidence(line.samples, minStrongSamples);
+    if (!linesByContext[line.context_key]) linesByContext[line.context_key] = [];
+    linesByContext[line.context_key].push(line);
+  });
+  Object.keys(linesByContext).forEach(function(contextKey) {
+    var lines = linesByContext[contextKey].slice().sort(function(a, b) {
+      if (b.win_rate !== a.win_rate) return b.win_rate - a.win_rate;
+      return b.samples - a.samples;
+    });
+    var best = lines[0];
+    if (!best) return;
+    lines.slice(1).forEach(function(line) {
+      var lift = best.win_rate - line.win_rate;
+      if (lift < 0.2) return;
+      betterLines.push({
+        player_team_id: line.player_team_id,
+        opponent_team_id: line.opponent_team_id,
+        player_leads: line.player_leads,
+        opponent_leads: line.opponent_leads,
+        avoid_line: line.line_key,
+        suggested_line: best.line_key,
+        avoid_samples: line.samples,
+        suggested_samples: best.samples,
+        avoid_win_rate_pct: line.win_rate_pct,
+        suggested_win_rate_pct: best.win_rate_pct,
+        lift_pct: csBranchMovePct(lift),
+        confidence: (line.confidence === 'strong' && best.confidence === 'strong') ? 'strong' : 'early_signal'
+      });
+    });
+  });
+  betterLines.sort(function(a, b) {
+    if (a.confidence !== b.confidence) return a.confidence === 'strong' ? -1 : 1;
+    if (b.lift_pct !== a.lift_pct) return b.lift_pct - a.lift_pct;
+    return b.suggested_samples - a.suggested_samples;
+  });
+
+  var totalWeight = normalized.reduce(function(sum, row) { return sum + (row.run_count || 1); }, 0);
+  var strongAvoids = avoidMoves.filter(function(m) { return m.confidence === 'strong'; }).length;
+  var analysis = {
+    schema_version: 'champions-branch-move-analysis-v1',
+    generated_at: new Date().toISOString(),
+    thresholds: {
+      min_strong_samples: minStrongSamples,
+      avoid_win_rate_pct: csBranchMovePct(avoidWinRate),
+      note: 'Early signals are useful for QA targeting, but only strong rows should drive meta replacement calls.'
+    },
+    totals: {
+      rows_read: Array.isArray(rows) ? rows.length : 0,
+      unique_rows_analyzed: normalized.length,
+      weighted_samples: totalWeight,
+      line_contexts: Object.keys(byLine).length,
+      move_contexts: Object.keys(byMove).length,
+      strong_avoid_moves: strongAvoids,
+      early_avoid_moves: avoidMoves.length - strongAvoids,
+      replacement_candidates: replacementCandidates.length,
+      suggested_line_swaps: betterLines.length
+    },
+    overview: [
+      'This is QA/meta analysis on saved branch coverage rows; it does not alter battle mechanics.',
+      'Highest priority is to keep running branch matrix exports until the same matchup has repeated samples per move and lead context.',
+      'Use strong avoid/replacement rows for meta decisions; use early_signal rows to choose the next stress tests.'
+    ],
+    trainer_report: [],
+    avoid_moves: avoidMoves,
+    move_replacement_candidates: replacementCandidates.slice(0, limit),
+    suggested_lines: betterLines.slice(0, limit),
+    best_lines_overall: lineRankings
+  };
+  analysis.trainer_report = csBranchMoveTrainerSummary(analysis);
+  return analysis;
+}
+
+function csBranchMoveTrainerSummary(analysis) {
+  if (!analysis) return [];
+  var lines = [];
+  var strongAvoids = (analysis.avoid_moves || []).filter(function(row) { return row.confidence === 'strong'; });
+  var earlyAvoids = (analysis.avoid_moves || []).filter(function(row) { return row.confidence !== 'strong'; });
+  var strongSwaps = (analysis.move_replacement_candidates || []).filter(function(row) { return row.confidence === 'strong'; });
+  lines.push(strongAvoids.length
+    ? 'Strong avoid signals found: ' + strongAvoids.length + '. Stop autopiloting those clicks in the listed lead and matchup context.'
+    : 'No strong avoid signal yet. Keep collecting lead pair and opposing lead samples before cutting a move from the game plan.');
+  lines.push(strongSwaps.length
+    ? 'Strong legal swap signals found: ' + strongSwaps.length + '. Prefer those moves when the same lead pair and opposing lead show up.'
+    : 'No strong legal swap signal yet. Early signals are for stress testing, not final meta calls.');
+  if (earlyAvoids.length) lines.push('Early avoid signals: ' + earlyAvoids.length + '. Re-run that matchup branch until it becomes a real read or disappears.');
+  return lines;
+}
+
+var CS_BRANCH_STRATEGY_MEMORY_KEY = 'champions_branch_strategy_memory_v1';
+var CS_BRANCH_STRATEGY_MEMORY_LIMIT = 12;
+
+function csLoadBranchStrategyMemory() {
+  try {
+    var raw = localStorage && localStorage.getItem(CS_BRANCH_STRATEGY_MEMORY_KEY);
+    var parsed = raw ? JSON.parse(raw) : null;
+    return parsed && Array.isArray(parsed.analyses) ? parsed : { schema_version: 1, analyses: [] };
+  } catch (_e) {
+    return { schema_version: 1, analyses: [] };
+  }
+}
+
+function csSaveBranchStrategyMemory(memory) {
+  try {
+    if (!localStorage) return false;
+    localStorage.setItem(CS_BRANCH_STRATEGY_MEMORY_KEY, JSON.stringify(memory));
+    return true;
+  } catch (_e) {
+    return false;
+  }
+}
+
+function csRememberBranchMoveAnalysis(analysis, opts) {
+  if (!analysis || !analysis.totals || !analysis.totals.weighted_samples) return null;
+  opts = opts || {};
+  var memory = csLoadBranchStrategyMemory();
+  var keyParts = [];
+  var firstLine = (analysis.best_lines_overall || [])[0] || (analysis.avoid_moves || [])[0] || (analysis.move_replacement_candidates || [])[0] || null;
+  keyParts.push(opts.player_team_id || firstLine && firstLine.player_team_id || 'player');
+  keyParts.push(opts.opponent_team_id || firstLine && firstLine.opponent_team_id || 'opponent');
+  var customSignature = opts.player_team_signature || null;
+  var memoryKey = [keyParts[0], keyParts[1], customSignature || 'static'].join('::');
+  var entry = {
+    saved_at: new Date().toISOString(),
+    memory_key: memoryKey,
+    player_team_id: keyParts[0],
+    opponent_team_id: keyParts[1],
+    player_team_signature: customSignature,
+    custom_team: !!customSignature,
+    build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
+    totals: analysis.totals,
+    trainer_report: analysis.trainer_report || [],
+    avoid_moves: (analysis.avoid_moves || []).slice(0, 8),
+    move_replacement_candidates: (analysis.move_replacement_candidates || []).slice(0, 8),
+    suggested_lines: (analysis.suggested_lines || []).slice(0, 8),
+    best_lines_overall: (analysis.best_lines_overall || []).slice(0, 8)
+  };
+  memory.analyses = (memory.analyses || []).filter(function(item) {
+    return item && item.memory_key !== entry.memory_key;
+  });
+  memory.analyses.unshift(entry);
+  memory.analyses = memory.analyses.slice(0, CS_BRANCH_STRATEGY_MEMORY_LIMIT);
+  memory.updated_at = entry.saved_at;
+  csSaveBranchStrategyMemory(memory);
+  ChampionsSim.state.lastBranchStrategyMemory = memory;
+  return memory;
+}
+
+function csLatestBranchMoveAnalysisForTeam(teamKey) {
+  if (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastBranchMoveAnalysis) {
+    return ChampionsSim.state.lastBranchMoveAnalysis;
+  }
+  var memory = (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastBranchStrategyMemory) || csLoadBranchStrategyMemory();
+  var analyses = Array.isArray(memory && memory.analyses) ? memory.analyses : [];
+  if (!teamKey) return analyses[0] || null;
+  var sig = null;
+  try {
+    if (typeof TEAMS !== 'undefined' && TEAMS[teamKey] && typeof teamSignature === 'function') sig = teamSignature(TEAMS[teamKey]);
+  } catch (_e) {}
+  return analyses.find(function(entry) {
+    return entry && entry.player_team_id === teamKey && (!entry.player_team_signature || entry.player_team_signature === sig);
+  }) || analyses.find(function(entry) { return entry && entry.player_team_id === teamKey; }) || analyses[0] || null;
+}
+
 function downloadReplayTurnLog(replay, opts) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
   opts = opts || {};
@@ -24962,6 +25358,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   var branchMatrixDbRows = [];
   var branchMatrixDbSave = null;
   var branchMatrix = null;
+  var branchMoveAnalysis = null;
   if (options.includeBranchMatrix !== false) {
     var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
     var branchPlayerKey = options.branchPlayerTeamId || key;
@@ -25015,6 +25412,23 @@ async function csBuildQaArtifactExport(teamKey, opts) {
           UILog.warn('QA branch matrix saveBranchCoverageRuns failed', e);
         }
       }
+      branchMoveAnalysis = csAnalyzeBranchCoverageRows([].concat(branchMatrixDbRows || [], branchMatrix && Array.isArray(branchMatrix.runs) ? branchMatrix.runs : []), {
+        minStrongSamples: options.branchMoveAnalysisMinStrongSamples || 8,
+        avoidWinRate: options.branchMoveAnalysisAvoidWinRate == null ? 0.35 : options.branchMoveAnalysisAvoidWinRate,
+        limit: options.branchMoveAnalysisLimit || 12
+      });
+      ChampionsSim.state.lastBranchMoveAnalysis = branchMoveAnalysis;
+      var branchTeamSig = null;
+      try {
+        if (typeof TEAMS !== 'undefined' && TEAMS[branchPlayerKey] && typeof teamSignature === 'function') {
+          branchTeamSig = teamSignature(TEAMS[branchPlayerKey]);
+        }
+      } catch (_e) {}
+      csRememberBranchMoveAnalysis(branchMoveAnalysis, {
+        player_team_id: branchPlayerKey,
+        opponent_team_id: branchOpponentKey,
+        player_team_signature: branchTeamSig
+      });
     }
   }
   var mergedCoverage = csMergeQaCoverageSummaries(coverageSummaries, {
@@ -25055,6 +25469,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     qa_coverage_summary: mergedCoverage,
     targeted_qa_sweep: targetedSweep,
     forced_branch_matrix: branchMatrix,
+    branch_move_analysis: branchMoveAnalysis,
     retained: {
       sim_log: options.includeSimLog === false ? [] : localSimLog,
       team_history: options.includeSimLog === false ? [] : localTeamHistory,
@@ -25111,6 +25526,9 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.mergeQaCoverageSummaries = csMergeQaCoverageSummaries;
   ChampionsSim.history.buildTargetedQaSweepEvidence = csBuildTargetedQaSweepEvidence;
   ChampionsSim.history.buildForcedBranchMatrixSweepEvidence = csBuildForcedBranchMatrixSweepEvidence;
+  ChampionsSim.history.analyzeBranchCoverageRows = csAnalyzeBranchCoverageRows;
+  ChampionsSim.history.rememberBranchMoveAnalysis = csRememberBranchMoveAnalysis;
+  ChampionsSim.history.loadBranchStrategyMemory = csLoadBranchStrategyMemory;
   ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
   ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
 }
@@ -25120,6 +25538,8 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBu
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportMyDataJson', csExportMyDataJson);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaArtifactExport', csBuildQaArtifactExport);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportQaArtifactJson', csExportQaArtifactJson);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csAnalyzeBranchCoverageRows', csAnalyzeBranchCoverageRows);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csLoadBranchStrategyMemory', csLoadBranchStrategyMemory);
 // __M6_HISTORY_END__
 
 // ============================================================
@@ -26562,6 +26982,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Branch move coach feeds the Strategy guide',
+      detail: 'v2.1.49 turns saved branch coverage rows into trainer-facing confidence-rated avoid moves, legal move swaps already seen on the set, and suggested lead/move lines. Every recommendation carries confidence: early_signal rows are stress-test targets, while strong rows require repeated samples before they should drive meta calls. This is strategy analysis on top of the branch database, not a battle-engine mechanics change.'
+    },
     {
       status: 'done',
       title: 'Current truth board corrected',
@@ -31624,6 +32049,9 @@ function csRenderPhase4cSections(history, teamKey, team) {
   function _emptyHtml(label) {
     return '<div class="cs-detector-empty">' + _csEsc(label) + '</div>';
   }
+  function _branchConfidenceTier(conf) {
+    return conf === 'strong' ? 'high' : conf === 'early_signal' ? 'low' : 'none';
+  }
   function _section(title, headerExtra, bodyHtml) {
     var h = '';
     h += '<details class="cs-detector-section" open>';
@@ -31753,6 +32181,67 @@ function csRenderPhase4cSections(history, teamKey, team) {
     deadBody += '</div>';
   }
   html += _section('Dead Moves', deadHeader, deadBody);
+
+  // ---- Section 3b: Branch Move Coach ------------------------------------
+  var branchAnalysis = (typeof csLatestBranchMoveAnalysisForTeam === 'function') ? csLatestBranchMoveAnalysisForTeam(teamKey) : null;
+  var branchHeader = '';
+  var branchBody = '';
+  if (!branchAnalysis || !branchAnalysis.totals || !branchAnalysis.totals.weighted_samples) {
+    branchHeader = _badgeHtml('none', 'run QA artifact');
+    branchBody = _emptyHtml('Run QA Artifact after branch matrix sims to unlock avoid moves, legal swaps, and suggested lines.');
+  } else {
+    var strongCount = (branchAnalysis.totals.strong_avoid_moves || 0);
+    branchHeader = '<span class="cs-detector-count">' + (branchAnalysis.totals.weighted_samples || 0) + ' branch samples</span>' +
+      _badgeHtml(strongCount ? 'high' : 'low', strongCount ? 'strong reads ready' : 'early reads only');
+    branchBody += '<ul class="cs-list cs-detector-roles">';
+    (branchAnalysis.trainer_report || []).forEach(function(line) {
+      branchBody += '<li>' + _csEsc(line) + '</li>';
+    });
+    branchBody += '</ul>';
+    var avoidRows = (branchAnalysis.avoid_moves || []).slice(0, 4);
+    var swapRows = (branchAnalysis.move_replacement_candidates || []).slice(0, 4);
+    var lineRows = (branchAnalysis.suggested_lines || []).slice(0, 3);
+    if (avoidRows.length) {
+      branchBody += '<div class="cs-detector-table">';
+      branchBody += '<div class="cs-detector-row cs-detector-head"><span>Avoid click</span><span>Matchup</span><span>WR</span><span>Confidence</span></div>';
+      avoidRows.forEach(function(r) {
+        branchBody += '<div class="cs-detector-row">';
+        branchBody += '<span><strong>' + _csEsc(r.actor || '-') + '</strong> - ' + _csEsc(r.move || '-') + '</span>';
+        branchBody += '<span>' + _csEsc(r.opponent_team_id || '-') + '</span>';
+        branchBody += '<span>' + _csEsc(String(r.win_rate_pct)) + '% over ' + _csEsc(String(r.samples)) + '</span>';
+        branchBody += '<span>' + _badgeHtml(_branchConfidenceTier(r.confidence), r.confidence === 'strong' ? 'strong' : 'early') + '</span>';
+        branchBody += '</div>';
+      });
+      branchBody += '</div>';
+    }
+    if (swapRows.length) {
+      branchBody += '<div class="cs-detector-table">';
+      branchBody += '<div class="cs-detector-row cs-detector-head"><span>Legal swap</span><span>Lead context</span><span>Lift</span><span>Confidence</span></div>';
+      swapRows.forEach(function(r) {
+        branchBody += '<div class="cs-detector-row">';
+        branchBody += '<span><strong>' + _csEsc(r.actor || '-') + '</strong>: ' + _csEsc(r.avoid_move || '-') + ' -> ' + _csEsc(r.better_legal_move_seen || '-') + '</span>';
+        branchBody += '<span>' + _csEsc((r.player_leads || []).join(' + ')) + ' vs ' + _csEsc((r.opponent_leads || []).join(' + ')) + '</span>';
+        branchBody += '<span>+' + _csEsc(String(r.lift_pct)) + '%</span>';
+        branchBody += '<span>' + _badgeHtml(_branchConfidenceTier(r.confidence), r.confidence === 'strong' ? 'strong' : 'early') + '</span>';
+        branchBody += '</div>';
+      });
+      branchBody += '</div>';
+    }
+    if (lineRows.length) {
+      branchBody += '<div class="cs-detector-table">';
+      branchBody += '<div class="cs-detector-row cs-detector-head"><span>Suggested line</span><span>Into</span><span>Lift</span><span>Confidence</span></div>';
+      lineRows.forEach(function(r) {
+        branchBody += '<div class="cs-detector-row">';
+        branchBody += '<span class="cs-detector-cell-desc">' + _csEsc(r.suggested_line || '-') + '</span>';
+        branchBody += '<span>' + _csEsc(r.opponent_team_id || '-') + '</span>';
+        branchBody += '<span>+' + _csEsc(String(r.lift_pct)) + '%</span>';
+        branchBody += '<span>' + _badgeHtml(_branchConfidenceTier(r.confidence), r.confidence === 'strong' ? 'strong' : 'early') + '</span>';
+        branchBody += '</div>';
+      });
+      branchBody += '</div>';
+    }
+  }
+  html += _section('Branch Move Coach', branchHeader, branchBody);
 
   // ---- Section 4: Coverage and Roles (read-only TEAM_META summary) ------
   var covHeader = _badgeHtml('high', 'team composition');
