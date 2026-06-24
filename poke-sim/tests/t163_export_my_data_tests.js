@@ -242,6 +242,7 @@ async function main() {
     const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
     truthy(/id="export-qa-artifact-json-btn"/.test(html), 'QA artifact button missing');
     truthy(/QA Artifact/.test(html), 'QA artifact label missing');
+    truthy(/id="run-all-export-qa-btn"/.test(html), 'Run All + QA Artifact button missing');
   });
 
   await T('6. QA artifact includes retention caps, build, source, and retained evidence', async () => {

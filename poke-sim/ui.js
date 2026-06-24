@@ -5582,7 +5582,8 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
   if (simRunning) return;
   var runBtn = this;
   var allBtn = document.getElementById('run-all-btn');
-  simRunning=true; runBtn.disabled=true; if (allBtn) allBtn.disabled=true;
+  var qaRunBtn = document.getElementById('run-all-export-qa-btn');
+  simRunning=true; runBtn.disabled=true; if (allBtn) allBtn.disabled=true; if (qaRunBtn) qaRunBtn.disabled=true;
   try {
     document.getElementById('results-section').style.display='none';
     document.getElementById('progress-wrap').style.display='';
@@ -5626,7 +5627,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
   } catch (e) {
     setSimError(e);
   } finally {
-    simRunning=false; runBtn.disabled=false; if (allBtn) allBtn.disabled=false;
+    simRunning=false; runBtn.disabled=false; if (allBtn) allBtn.disabled=false; if (qaRunBtn) qaRunBtn.disabled=false;
   }
 });
 
@@ -5638,11 +5639,15 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('enfo
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('resolveSimContext', resolveSimContext);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('normalizeTeamCatalogForSim', normalizeTeamCatalogForSim);
 
-document.getElementById('run-all-btn')?.addEventListener('click', async function() {
+async function csRunAllMatchupsFromButton(allBtn, opts) {
   if (simRunning) return;
-  var allBtn = this;
+  opts = opts || {};
   var runBtn = document.getElementById('run-sim-btn');
-  simRunning=true; allBtn.disabled=true; if (runBtn) runBtn.disabled=true;
+  var qaRunBtn = document.getElementById('run-all-export-qa-btn');
+  simRunning=true;
+  if (allBtn) allBtn.disabled=true;
+  if (runBtn) runBtn.disabled=true;
+  if (qaRunBtn) qaRunBtn.disabled=true;
   try {
     document.getElementById('matchup-table-wrap').style.display='';
     document.getElementById('results-section').style.display='none';
@@ -5694,12 +5699,33 @@ document.getElementById('run-all-btn')?.addEventListener('click', async function
     try { if (typeof t9j16AutoSave === 'function') t9j16AutoSave(); } catch(e) { UILog.warn('autosave skipped', e); }
     // Phase 2 (Refs #46 #49) - rebuild Strategy tab now that fresh sim data is available.
     try { if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild(); } catch(e) { UILog.warn('strategy rebuild skipped', e); }
+    if (opts.autoExportQaArtifact) {
+      setProgress(100, 'Run All complete. Exporting QA Artifact...', totalW, totalL);
+      await csExportQaArtifactJson(playerKey);
+      setProgress(100, 'Run All complete. QA Artifact downloaded.', totalW, totalL);
+    }
   } catch (e) {
     setSimError(e);
   } finally {
-    simRunning=false; allBtn.disabled=false; if (runBtn) runBtn.disabled=false;
+    simRunning=false;
+    if (allBtn) allBtn.disabled=false;
+    if (runBtn) runBtn.disabled=false;
+    if (qaRunBtn) qaRunBtn.disabled=false;
   }
+}
+
+document.getElementById('run-all-btn')?.addEventListener('click', async function() {
+  await csRunAllMatchupsFromButton(this);
 });
+
+document.getElementById('run-all-export-qa-btn')?.addEventListener('click', async function() {
+  await csRunAllMatchupsFromButton(this, { autoExportQaArtifact: true });
+});
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.battle.runAllMatchupsFromButton = csRunAllMatchupsFromButton;
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRunAllMatchupsFromButton', csRunAllMatchupsFromButton);
 
 // ============================================================
 // PART 2: PILOT GUIDE GENERATOR
