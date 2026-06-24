@@ -3998,6 +3998,29 @@ function csBuildTargetedQaSweepEvidence(opts) {
   var sourceUrl = options.source_url || ((typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null);
   var runs = [
     csRunTargetedQaProofBattle({
+      id: 'screen_reduction_aurora_veil',
+      label: 'Screen reduction proof: Aurora Veil',
+      requireMechanic: 'screen_reduction',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_screen_player',
+      opponentTeamId: 'targeted_qa_screen_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Screen Player', [
+        csQaProofMon('Ninetales-Alola', ['Aurora Veil'], {
+          ability: 'Snow Warning',
+          nature: 'Timid',
+          evs: { hp: 32, atk: 0, def: 0, spa: 2, spd: 0, spe: 32 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Screen Opponent', [
+        csQaProofMon('Gardevoir', ['Moonblast'], {
+          nature: 'Modest',
+          evs: { hp: 32, atk: 0, def: 0, spa: 32, spd: 2, spe: 0 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
       id: 'hp_cost_clangorous_soul',
       label: 'HP-cost proof: Clangorous Soul',
       requireMechanic: 'hp_cost',
