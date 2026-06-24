@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.49-branch-move-analysis';
+    return txt || 'v2.1.50-strategy-priority-board';
   } catch (e) {
-    return 'v2.1.49-branch-move-analysis';
+    return 'v2.1.50-strategy-priority-board';
   }
 }
 
@@ -7490,6 +7490,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Strategy Priority Board added',
+      detail: 'v2.1.50 updates the Strategy tab around player decision order: coach call first, then click plan, move swap, avoid trap, lead mode, matchup health, confidence, and next test. The layout uses player psychology from competitive doubles: show the action before the evidence, then explain trust and what to run next.'
+    },
+    {
+      status: 'done',
       title: 'Branch move coach feeds the Strategy guide',
       detail: 'v2.1.49 turns saved branch coverage rows into trainer-facing confidence-rated avoid moves, legal move swaps already seen on the set, and suggested lead/move lines. Every recommendation carries confidence: early_signal rows are stress-test targets, while strong rows require repeated samples before they should drive meta calls. This is strategy analysis on top of the branch database, not a battle-engine mechanics change.'
     },
@@ -10970,6 +10975,106 @@ function _csSourceChip(sourceLabel) {
     '</span>';
 }
 
+function csPctLabel(value) {
+  var n = Number(value || 0);
+  return Math.round(n * 1000) / 10 + '%';
+}
+
+function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis) {
+  history = history || null;
+  branchAnalysis = branchAnalysis || null;
+  var record = history && history.record_total ? history.record_total : null;
+  var lead = history && history.lead_performance_v2 && history.lead_performance_v2[0] ? history.lead_performance_v2[0] : null;
+  var swap = branchAnalysis && branchAnalysis.move_replacement_candidates && branchAnalysis.move_replacement_candidates[0] ? branchAnalysis.move_replacement_candidates[0] : null;
+  var avoid = branchAnalysis && branchAnalysis.avoid_moves && branchAnalysis.avoid_moves[0] ? branchAnalysis.avoid_moves[0] : null;
+  var line = branchAnalysis && branchAnalysis.suggested_lines && branchAnalysis.suggested_lines[0] ? branchAnalysis.suggested_lines[0] : null;
+  var trainer = branchAnalysis && Array.isArray(branchAnalysis.trainer_report) ? branchAnalysis.trainer_report : [];
+
+  var primaryCall = 'Run a sim set, then export QA Artifact to unlock matchup-specific click advice.';
+  if (line) {
+    primaryCall = 'Primary line to test: ' + (line.suggested_line || 'current best line') + '.';
+  } else if (swap) {
+    primaryCall = 'Primary adjustment: use ' + (swap.better_legal_move_seen || 'the better observed move') + ' over ' + (swap.avoid_move || 'the weak click') + ' in the listed context.';
+  } else if (lead) {
+    primaryCall = 'Primary lead mode: ' + (lead.lead || []).join(' + ') + '.';
+  }
+
+  var nextTest = 'Run a QA Artifact branch matrix after your next sim set so move-line advice can update.';
+  if (line && line.confidence !== 'strong') {
+    nextTest = 'Repeat this branch context until the suggested line reaches strong confidence: ' + (line.suggested_line || 'current best line') + '.';
+  } else if (swap && swap.confidence === 'strong') {
+    nextTest = 'Stress-test the strong swap into a different opposing lead before making it a permanent meta rule.';
+  } else if (record && record.n >= 500 && (!branchAnalysis || !(branchAnalysis.totals && branchAnalysis.totals.weighted_samples))) {
+    nextTest = 'You have a strong matchup sample. Next run the QA branch matrix so the guide learns the move clicks behind it.';
+  }
+
+  var html = '';
+  html += '<section class="cs-section cs-strategy-priority-board">';
+  html += '<h3 class="cs-h3">Strategy Priority Board</h3>';
+  html += '<p class="cs-summary-line"><strong>Coach call:</strong> ' + _csEsc(primaryCall) + '</p>';
+  html += '<div class="cs-detector-table">';
+  html += '<div class="cs-detector-row cs-detector-head"><span>Priority</span><span>Evidence</span><span>Player action</span><span>Trust</span></div>';
+
+  if (line) {
+    html += '<div class="cs-detector-row">';
+    html += '<span>1. Click plan</span>';
+    html += '<span class="cs-detector-cell-desc">' + _csEsc(line.suggested_line || '-') + '</span>';
+    html += '<span>Test this line first; early reads need repeat samples before becoming rules.</span>';
+    html += '<span>' + _csEsc(line.confidence || 'early') + '</span>';
+    html += '</div>';
+  }
+
+  if (swap) {
+    html += '<div class="cs-detector-row">';
+    html += '<span>2. Move swap</span>';
+    html += '<span><strong>' + _csEsc(swap.actor || '-') + '</strong>: ' + _csEsc(swap.avoid_move || '-') + ' -> ' + _csEsc(swap.better_legal_move_seen || '-') + ' · +' + _csEsc(String(swap.lift_pct)) + '%</span>';
+    html += '<span>Prefer the better move when the same lead pair and opposing lead show up.</span>';
+    html += '<span>' + _csEsc(swap.confidence || 'early') + '</span>';
+    html += '</div>';
+  }
+
+  if (avoid) {
+    html += '<div class="cs-detector-row">';
+    html += '<span>3. Avoid trap</span>';
+    html += '<span><strong>' + _csEsc(avoid.actor || '-') + '</strong> - ' + _csEsc(avoid.move || '-') + ' · ' + _csEsc(String(avoid.win_rate_pct)) + '% over ' + _csEsc(String(avoid.samples)) + '</span>';
+    html += '<span>Do not autopilot this move in the listed lead and matchup context.</span>';
+    html += '<span>' + _csEsc(avoid.confidence || 'early') + '</span>';
+    html += '</div>';
+  }
+
+  if (lead) {
+    html += '<div class="cs-detector-row">';
+    html += '<span>4. Lead mode</span>';
+    html += '<span>' + _csEsc((lead.lead || []).join(' + ')) + ' · ' + lead.w + '-' + lead.l + ' · ' + csPctLabel(lead.win_rate) + '</span>';
+    html += '<span>Use this as the default preview mode until a matchup-specific branch read beats it.</span>';
+    html += '<span>' + _csEsc(lead.confidence || 'sample') + '</span>';
+    html += '</div>';
+  }
+
+  if (record) {
+    html += '<div class="cs-detector-row">';
+    html += '<span>5. Matchup health</span>';
+    html += '<span>' + record.w + '-' + record.l + ' over ' + record.n + ' games</span>';
+    html += '<span>' + _csEsc(record.win_rate >= 0.55 ? 'The plan is winning; optimize clicks and avoid leaks.' : 'The plan is shaky; fix preview/lead before polishing clicks.') + '</span>';
+    html += '<span>' + _csEsc(history.team_confidence_v2 ? history.team_confidence_v2.tier : 'sample') + '</span>';
+    html += '</div>';
+  }
+
+  if (!record && !lead && !avoid && !swap && !line) {
+    html += '<div class="cs-detector-row"><span>No strategy memory yet</span><span>-</span><span>Run one matchup sim, then export QA Artifact.</span><span>none</span></div>';
+  }
+  html += '</div>';
+
+  if (trainer.length) {
+    html += '<ul class="cs-list cs-detector-roles">';
+    trainer.slice(0, 3).forEach(function(row) { html += '<li>' + _csEsc(row) + '</li>'; });
+    html += '</ul>';
+  }
+  html += '<p class="cs-explain"><strong>Next test:</strong> ' + _csEsc(nextTest) + '</p>';
+  html += '</section>';
+  return html;
+}
+
 function getStrategyContentHost() {
   return document.getElementById('strategy-content') ||
     document.getElementById('strategy-panel') ||
@@ -11030,6 +11135,10 @@ function renderStrategyTab(teamKey) {
   // Inserted above Section 1 so the user sees the state before reading anything.
   try {
     var _history = (typeof computeTeamHistory === 'function') ? computeTeamHistory(teamKey) : null;
+    var _branchAnalysis = (typeof csLatestBranchMoveAnalysisForTeam === 'function') ? csLatestBranchMoveAnalysisForTeam(teamKey) : null;
+    if (typeof csRenderStrategyPriorityBoard === 'function') {
+      html += csRenderStrategyPriorityBoard(teamKey, _history, _branchAnalysis);
+    }
     if (_history) html += csRenderAdaptiveBanner(_history);
     if (_history) html += csRenderRecordBar(_history);
     // Phase 4c (Refs PHASE4C_DETECTORS_SPEC.md): 5 collapsible detector

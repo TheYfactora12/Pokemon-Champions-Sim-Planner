@@ -89,6 +89,8 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Previous v2.1.36 release checks were green');
   inc(ui, 'The current local damage-log and approved-team-gate slice has focused green checks');
   inc(ui, 'Damage applied versus calculated logging fixed locally');
+  inc(ui, 'Strategy Priority Board added');
+  inc(ui, 'coach call first');
   inc(ui, 'Branch move coach feeds the Strategy guide');
   inc(ui, 'confidence-rated avoid moves');
   inc(ui, 'Approved Champion team lane guarded');

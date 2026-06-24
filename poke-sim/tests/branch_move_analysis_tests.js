@@ -67,7 +67,7 @@ load('engine.js');
 load('ui.js');
 
 vm.runInContext('this.csAnalyzeBranchCoverageRows = csAnalyzeBranchCoverageRows;', ctx);
-vm.runInContext('this.csRememberBranchMoveAnalysis = csRememberBranchMoveAnalysis; this.csLoadBranchStrategyMemory = csLoadBranchStrategyMemory;', ctx);
+vm.runInContext('this.csRememberBranchMoveAnalysis = csRememberBranchMoveAnalysis; this.csLoadBranchStrategyMemory = csLoadBranchStrategyMemory; this.csRenderStrategyPriorityBoard = csRenderStrategyPriorityBoard;', ctx);
 
 let pass = 0;
 let fail = 0;
@@ -175,6 +175,22 @@ T('7. remembers branch strategy analysis for later Strategy guide rollup', () =>
   truthy(memory.analyses.length >= 1, 'missing memory entry');
   eq(memory.analyses[0].player_team_id, 'player', 'memory player key');
   truthy(memory.analyses[0].avoid_moves.some((m) => m.move === 'Parting Shot'), 'missing avoid row in memory');
+});
+
+T('8. strategy priority board puts player action before evidence rollup', () => {
+  const out = ctx.csAnalyzeBranchCoverageRows([
+    row('bad-8', 'loss', 8, 'Parting Shot', 'Flare Blitz'),
+    row('good-8', 'win', 8, 'Fake Out', 'Flare Blitz')
+  ], { minStrongSamples: 8, avoidWinRate: 0.35 });
+  const html = ctx.csRenderStrategyPriorityBoard('player', {
+    record_total: { n: 16, w: 8, l: 8, win_rate: 0.5 },
+    team_confidence_v2: { tier: 'high' },
+    lead_performance_v2: [{ lead: ['Incineroar', 'Arcanine'], n: 16, w: 8, l: 8, win_rate: 0.5, confidence: 'high' }]
+  }, out);
+  truthy(/Coach call/.test(html), 'missing coach call');
+  truthy(html.indexOf('1. Click plan') >= 0, 'missing click plan priority');
+  truthy(html.indexOf('1. Click plan') < html.indexOf('5. Matchup health'), 'record appeared before action plan');
+  truthy(/Next test/.test(html), 'missing next test');
 });
 
 console.log(`\nbranch move analysis tests: ${pass} pass, ${fail} fail\n`);

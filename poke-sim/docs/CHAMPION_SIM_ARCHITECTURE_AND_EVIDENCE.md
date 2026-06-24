@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.49-branch-move-analysis` on 2026-06-24.
+Status: current for `v2.1.50-strategy-priority-board` on 2026-06-24.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -71,6 +71,8 @@ Optional persistence
 - Every row carries confidence. `early_signal` means "test this more"; `strong` requires repeated samples and is the only tier intended for meta/team decisions.
 
 This does not change the simulator. It changes how the Strategy guide consumes saved evidence. The player-facing language should stay close to competitive doubles/VGC vocabulary: team preview, lead pair, opposing lead, game plan, Protect, switching, pivoting, speed control, Trick Room, pressure, positioning, win condition, consistency, cores/modes, and matchup prep.
+
+The Strategy tab now presents branch and sim evidence in player decision order: coach call first, then click plan, move swap, avoid trap, lead mode, matchup health, confidence, and next test. Evidence tables support the call; they should not bury the call.
 
 ## Supabase Boundary
 

@@ -74,8 +74,8 @@
 // v79-targeted-qa-proof [2026-06-24] - Targeted QA proof artifact clears named missing_targeted_proof gates.
 // v80-targeted-qa-sweep [2026-06-24] - QA artifact includes forced long-tail mechanics sweep alongside retained normal sim evidence.
 // v81-forced-branch-sweep [2026-06-24] - Engine supports forced move/target branches for exhaustive QA sweeps.
-// v83-branch-move-analysis [2026-06-24] - QA branch rows feed move avoid/swap/line strategy advice.
-const CACHE_NAME = 'champions-sim-v83-branch-move-analysis';
+// v84-strategy-priority-board [2026-06-24] - Strategy tab prioritizes coach calls before evidence tables.
+const CACHE_NAME = 'champions-sim-v84-strategy-priority-board';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
