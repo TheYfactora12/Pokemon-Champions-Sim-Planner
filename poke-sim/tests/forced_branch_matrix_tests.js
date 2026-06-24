@@ -73,7 +73,8 @@ vm.runInContext('TEAMS.targeted_proof_legal = this.__branchTestTeams.targeted_pr
 
 vm.runInContext([
   'this.csBuildForcedBranchMatrixSweepEvidence = csBuildForcedBranchMatrixSweepEvidence;',
-  'this.csBranchMatrixRunKey = csBranchMatrixRunKey;'
+  'this.csBranchMatrixRunKey = csBranchMatrixRunKey;',
+  'this.csSummarizeBranchTactics = csSummarizeBranchTactics;'
 ].join(' '), ctx);
 
 let pass = 0;
@@ -114,6 +115,8 @@ T('1. selected lead mode locks the lead pair', () => {
   eq(sweep.coverage_space.opponent_lead_pairs_considered, 1, 'opponent lead pair count');
   truthy(sweep.runs.every((run) => run.player_bring[0] === 'Orthworm' && run.player_bring[1] === 'Kangaskhan'), 'player lead not locked');
   truthy(sweep.runs.every((run) => run.opponent_bring[0] === 'Cofagrigus' && run.opponent_bring[1] === 'Sinistcha'), 'opponent lead not locked');
+  truthy(sweep.runs.every((run) => run.tactical_summary && run.tactical_summary.schema_version === 'champions-branch-tactics-v1'), 'missing tactical summary');
+  truthy(sweep.runs.every((run) => run.tactical_summary.horizon_turns === 3), 'default tactical horizon should be 3 turns');
 });
 
 T('2. random lead mode rotates ordered lead combinations', () => {
@@ -160,6 +163,32 @@ T('3. seen branch keys are deprioritized and counted', () => {
   });
   eq(second.coverage_space.unseen_candidate_runs, 0, 'unseen count');
   eq(second.runs[0].seen_before, true, 'seen flag');
+});
+
+T('4. tactical summary extracts protect, pivot, speed control, and position timing', () => {
+  const summary = ctx.csSummarizeBranchTactics([
+    {
+      turn: 1,
+      actions: {
+        player: [{ actor: 'A', move: 'Protect' }, { actor: 'B', move: 'U-turn' }],
+        opponent: [{ actor: 'C', move: 'Tailwind' }]
+      },
+      events: [{ text: 'B pivoted out!' }],
+      pre: { position_score: 0.4 },
+      post: { position_score: 0.45 }
+    },
+    {
+      turn: 2,
+      actions: { player: [{ actor: 'D', move: 'Dragon Dance' }], opponent: [] },
+      events: [{ text: 'A fainted!' }],
+      post: { position_score: 0.1 }
+    }
+  ], [{ turn: 1, side: 'player', slot: 0, move: 'Protect' }], { horizonTurns: 3 });
+  truthy(summary.timing_tags.includes('player_protect_t1'), 'missing protect timing tag');
+  truthy(summary.timing_tags.includes('player_pivot_t1'), 'missing pivot timing tag');
+  truthy(summary.timing_tags.includes('opponent_speed_control_t1'), 'missing speed control timing tag');
+  truthy(summary.timing_tags.includes('first_ko_t2'), 'missing first KO timing tag');
+  truthy(summary.timing_tags.includes('early_position_loss'), 'missing position-loss tag');
 });
 
 console.log(`\nforced branch matrix tests: ${pass} pass, ${fail} fail\n`);

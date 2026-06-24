@@ -116,6 +116,7 @@ CREATE TABLE branch_coverage_runs (
   player_bring        JSONB NOT NULL DEFAULT '[]'::jsonb,
   opponent_bring      JSONB NOT NULL DEFAULT '[]'::jsonb,
   forced_actions      JSONB NOT NULL DEFAULT '[]'::jsonb,
+  tactical_summary    JSONB NOT NULL DEFAULT '{}'::jsonb,
   qa_coverage_summary JSONB NOT NULL DEFAULT '{}'::jsonb,
   result              TEXT,
   turns               INT NOT NULL DEFAULT 0,

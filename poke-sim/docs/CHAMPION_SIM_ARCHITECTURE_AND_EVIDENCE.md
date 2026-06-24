@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.51-sim-test-scope` on 2026-06-24.
+Status: current for `v2.1.52-tactical-branch-memory` on 2026-06-24.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -48,6 +48,8 @@ Optional persistence
 ```
 
 `v2.1.51-sim-test-scope` separates two player testing jobs in the Simulator UI: a selected-matchup drill for deep tactical coverage, and a preloaded-suite sweep for broader team validation. The high-volume 1,000 and 10,000 series options are stress tiers for collecting more lead-pair, move-line, target, switch, and timing evidence; they are not a claim of exhaustive game-tree proof.
+
+`v2.1.52-tactical-branch-memory` extends forced branch rows with `tactical_summary`: Protect timing, pivot/switch timing, speed control, setup/redirection, first-KO timing, and early position delta. This lets the Strategy guide coach battle tactics from repeated branch evidence instead of only comparing move names.
 
 ## Layer Responsibilities
 

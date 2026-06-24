@@ -88,7 +88,7 @@ function truthy(value, msg) {
   if (!value) throw new Error(msg || 'expected truthy');
 }
 
-function row(key, result, runCount, move0, move1, opponent) {
+function row(key, result, runCount, move0, move1, opponent, tacticalSummary) {
   return {
     branch_key: key,
     player_team_id: 'player',
@@ -103,7 +103,8 @@ function row(key, result, runCount, move0, move1, opponent) {
       { turn: 1, side: 'player', slot: 1, move: move1, targetSide: 'opponent', targetSlot: 1 },
       { turn: 1, side: 'opponent', slot: 0, move: 'Hyper Voice', targetSide: 'player', targetSlot: 0 },
       { turn: 1, side: 'opponent', slot: 1, move: 'Tailwind', targetSide: 'self', targetSlot: 1 }
-    ]
+    ],
+    tactical_summary: tacticalSummary || null
   };
 }
 
@@ -191,6 +192,32 @@ T('8. strategy priority board puts player action before evidence rollup', () => 
   truthy(html.indexOf('1. Click plan') >= 0, 'missing click plan priority');
   truthy(html.indexOf('1. Click plan') < html.indexOf('5. Matchup health'), 'record appeared before action plan');
   truthy(/Next test/.test(html), 'missing next test');
+});
+
+T('9. analyzes tactical timing tags beside move lines', () => {
+  const out = ctx.csAnalyzeBranchCoverageRows([
+    row('tactic-bad', 'loss', 8, 'Protect', 'Flare Blitz', 'mega_altaria', {
+      timing_tags: ['player_protect_t1', 'early_position_loss', 'first_ko_t2'],
+      early_position_delta: -0.4,
+      first_ko_turn: 2
+    }),
+    row('tactic-good', 'win', 8, 'Fake Out', 'Flare Blitz', 'mega_altaria', {
+      timing_tags: ['player_speed_control_t1', 'early_position_gain'],
+      early_position_delta: 0.3
+    })
+  ], { minStrongSamples: 8, avoidWinRate: 0.35 });
+  const protect = out.tactical_signals.find((t) => t.tactic_tag === 'player_protect_t1');
+  truthy(protect, 'missing tactical Protect signal');
+  eq(protect.confidence, 'strong', 'tactical confidence');
+  eq(protect.win_rate_pct, 0, 'tactical win rate');
+  truthy(out.trainer_report.some((line) => /tactical timing/.test(line)), 'missing tactical trainer summary');
+  const html = ctx.csRenderStrategyPriorityBoard('player', {
+    record_total: { n: 16, w: 8, l: 8, win_rate: 0.5 },
+    team_confidence_v2: { tier: 'high' },
+    lead_performance_v2: [{ lead: ['Incineroar', 'Arcanine'], n: 16, w: 8, l: 8, win_rate: 0.5, confidence: 'high' }]
+  }, out);
+  truthy(/Tactical timing/.test(html), 'strategy board missing tactical timing table');
+  truthy(/player_protect_t1/.test(html), 'strategy board missing tactical tag');
 });
 
 console.log(`\nbranch move analysis tests: ${pass} pass, ${fail} fail\n`);

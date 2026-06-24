@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS branch_coverage_runs (
   player_bring        JSONB NOT NULL DEFAULT '[]'::jsonb,
   opponent_bring      JSONB NOT NULL DEFAULT '[]'::jsonb,
   forced_actions      JSONB NOT NULL DEFAULT '[]'::jsonb,
+  tactical_summary    JSONB NOT NULL DEFAULT '{}'::jsonb,
   qa_coverage_summary JSONB NOT NULL DEFAULT '{}'::jsonb,
   result              TEXT,
   turns               INT NOT NULL DEFAULT 0,
@@ -23,6 +24,9 @@ CREATE TABLE IF NOT EXISTS branch_coverage_runs (
   first_seen_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   last_seen_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE branch_coverage_runs
+  ADD COLUMN IF NOT EXISTS tactical_summary JSONB NOT NULL DEFAULT '{}'::jsonb;
 
 CREATE INDEX IF NOT EXISTS idx_branch_coverage_pair
   ON branch_coverage_runs(player_team_id, opponent_team_id);

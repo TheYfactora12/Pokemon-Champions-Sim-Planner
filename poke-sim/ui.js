@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.51-sim-test-scope';
+    return txt || 'v2.1.52-tactical-branch-memory';
   } catch (e) {
-    return 'v2.1.51-sim-test-scope';
+    return 'v2.1.52-tactical-branch-memory';
   }
 }
 
@@ -4296,10 +4296,11 @@ function csBranchMatrixStableActionKey(action) {
   ].join(':');
 }
 
-function csBranchMatrixRunKey(playerTeamId, opponentTeamId, playerBring, opponentBring, forcedActions) {
+function csBranchMatrixRunKey(playerTeamId, opponentTeamId, playerBring, opponentBring, forcedActions, horizonTurns) {
   return [
     playerTeamId,
     opponentTeamId,
+    'h' + (Number.isFinite(Number(horizonTurns)) ? Math.max(1, Number(horizonTurns)) : 1),
     (playerBring || []).slice(0, 2).join('+'),
     (opponentBring || []).slice(0, 2).join('+'),
     (forcedActions || []).map(csBranchMatrixStableActionKey).join('|')
@@ -4318,6 +4319,94 @@ function csBranchMatrixOutcomeSignature(battle, turnLog) {
   ].join(':');
 }
 
+function csBranchTacticalMoveTags(move) {
+  var m = String(move || '');
+  return {
+    protect: ['Protect', 'Detect', 'Wide Guard', 'Quick Guard', 'Endure', 'King\'s Shield', 'Spiky Shield', 'Baneful Bunker', 'Obstruct'].indexOf(m) >= 0,
+    switch_or_pivot: ['U-turn', 'Volt Switch', 'Flip Turn', 'Parting Shot', 'Shed Tail', 'Teleport', 'Baton Pass'].indexOf(m) >= 0,
+    speed_control: ['Tailwind', 'Trick Room', 'Icy Wind', 'Thunder Wave', 'Rock Tomb', 'Electroweb'].indexOf(m) >= 0,
+    redirection: ['Follow Me', 'Rage Powder', 'Ally Switch'].indexOf(m) >= 0,
+    setup: ['Swords Dance', 'Dragon Dance', 'Calm Mind', 'Nasty Plot', 'Bulk Up', 'Clangorous Soul', 'Meteor Beam', 'Electro Shot'].indexOf(m) >= 0,
+    recovery: ['Protect', 'Detect', 'Recover', 'Roost', 'Shore Up', 'Life Dew', 'Heal Pulse', 'Wish', 'Rest'].indexOf(m) >= 0
+  };
+}
+
+function csSummarizeBranchTactics(turnLog, forcedActions, opts) {
+  opts = opts || {};
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var forced = Array.isArray(forcedActions) ? forcedActions : [];
+  var summary = {
+    schema_version: 'champions-branch-tactics-v1',
+    horizon_turns: Number.isFinite(Number(opts.horizonTurns)) ? Math.max(1, Number(opts.horizonTurns)) : rows.length,
+    turn_count: rows.length,
+    first_ko_turn: null,
+    early_position_delta: null,
+    player: { protect_turns: [], pivot_turns: [], speed_control_turns: [], redirection_turns: [], setup_turns: [], forced_turn1_line: [] },
+    opponent: { protect_turns: [], pivot_turns: [], speed_control_turns: [], redirection_turns: [], setup_turns: [], forced_turn1_line: [] },
+    timing_tags: [],
+    switch_events: [],
+    protect_events: []
+  };
+  forced.filter(function(action) {
+    return action && Number(action.turn || 1) === 1 && action.move;
+  }).forEach(function(action) {
+    var side = action.side === 'opponent' || action.side === 'opp' ? 'opponent' : 'player';
+    summary[side].forced_turn1_line.push({
+      slot: Number.isFinite(Number(action.slot)) ? Number(action.slot) : null,
+      move: action.move,
+      targetSide: action.targetSide || '',
+      targetSlot: Number.isFinite(Number(action.targetSlot)) ? Number(action.targetSlot) : null
+    });
+  });
+  rows.forEach(function(row) {
+    var turn = Number(row && row.turn) || 0;
+    var actionGroups = row && row.actions ? row.actions : {};
+    ['player', 'opponent'].forEach(function(side) {
+      var actions = Array.isArray(actionGroups[side]) ? actionGroups[side] : [];
+      actions.forEach(function(action) {
+        var tags = csBranchTacticalMoveTags(action && action.move);
+        if (tags.protect) {
+          summary[side].protect_turns.push(turn);
+          summary.protect_events.push({ turn: turn, side: side, actor: action.actor || null, move: action.move || null });
+        }
+        if (tags.switch_or_pivot) summary[side].pivot_turns.push(turn);
+        if (tags.speed_control) summary[side].speed_control_turns.push(turn);
+        if (tags.redirection) summary[side].redirection_turns.push(turn);
+        if (tags.setup) summary[side].setup_turns.push(turn);
+      });
+    });
+    var events = Array.isArray(row && row.events) ? row.events : [];
+    events.forEach(function(event) {
+      var text = String(event && event.text || '');
+      if (!summary.first_ko_turn && /fainted/i.test(text)) summary.first_ko_turn = turn || null;
+      if (/pivoted out|switched out|switched in|was dragged out|Shed Tail|Baton Pass|Parting Shot/i.test(text)) {
+        summary.switch_events.push({ turn: turn, text: text.slice(0, 180) });
+      }
+    });
+  });
+  var first = rows[0] || null;
+  var last = rows.length ? rows[rows.length - 1] : null;
+  if (first && first.pre && last && last.post &&
+      typeof first.pre.position_score === 'number' && typeof last.post.position_score === 'number') {
+    summary.early_position_delta = Math.round((last.post.position_score - first.pre.position_score) * 1000) / 1000;
+  }
+  ['player', 'opponent'].forEach(function(side) {
+    if (summary[side].protect_turns.length) summary.timing_tags.push(side + '_protect_t' + summary[side].protect_turns[0]);
+    if (summary[side].pivot_turns.length) summary.timing_tags.push(side + '_pivot_t' + summary[side].pivot_turns[0]);
+    if (summary[side].speed_control_turns.length) summary.timing_tags.push(side + '_speed_control_t' + summary[side].speed_control_turns[0]);
+    if (summary[side].redirection_turns.length) summary.timing_tags.push(side + '_redirection_t' + summary[side].redirection_turns[0]);
+    if (summary[side].setup_turns.length) summary.timing_tags.push(side + '_setup_t' + summary[side].setup_turns[0]);
+  });
+  if (summary.first_ko_turn) summary.timing_tags.push('first_ko_t' + summary.first_ko_turn);
+  if (typeof summary.early_position_delta === 'number') {
+    if (summary.early_position_delta >= 0.2) summary.timing_tags.push('early_position_gain');
+    else if (summary.early_position_delta <= -0.2) summary.timing_tags.push('early_position_loss');
+    else summary.timing_tags.push('early_position_even');
+  }
+  summary.timing_tags = Array.from(new Set(summary.timing_tags));
+  return summary;
+}
+
 function csBuildForcedBranchMatrixSweepEvidence(opts) {
   var options = opts || {};
   var buildId = options.build_id || ((typeof csGetBuildId === 'function') ? csGetBuildId() : null);
@@ -4328,7 +4417,7 @@ function csBuildForcedBranchMatrixSweepEvidence(opts) {
   var opponentTeam = (typeof TEAMS !== 'undefined' && TEAMS[opponentTeamId]) ? TEAMS[opponentTeamId] : null;
   var maxLeadPairsPerSide = Number.isFinite(Number(options.maxLeadPairsPerSide)) ? Math.max(1, Number(options.maxLeadPairsPerSide)) : 3;
   var maxRuns = Number.isFinite(Number(options.maxRuns)) ? Math.max(1, Number(options.maxRuns)) : 24;
-  var maxTurns = Number.isFinite(Number(options.maxTurns)) ? Math.max(1, Number(options.maxTurns)) : 1;
+  var maxTurns = Number.isFinite(Number(options.maxTurns)) ? Math.max(1, Number(options.maxTurns)) : 3;
   var generatedAt = options.generated_at || new Date().toISOString();
 
   function empty(status, reason) {
@@ -4375,7 +4464,7 @@ function csBuildForcedBranchMatrixSweepEvidence(opts) {
       var opponentBring = csBranchMatrixBringFromLeadPair(opponentNames, opponentPair);
       var forcedSets = csBuildBranchMatrixForcedActionSets(playerTeam, opponentTeam, playerBring, opponentBring, options);
       forcedSets.forEach(function(forcedActions) {
-        var branchKey = csBranchMatrixRunKey(playerTeamId, opponentTeamId, playerBring, opponentBring, forcedActions);
+        var branchKey = csBranchMatrixRunKey(playerTeamId, opponentTeamId, playerBring, opponentBring, forcedActions, maxTurns);
         candidates.push({
           branch_key: branchKey,
           seen_before: !!seenKeys[branchKey],
@@ -4401,6 +4490,7 @@ function csBuildForcedBranchMatrixSweepEvidence(opts) {
       forcedActions: candidate.forced_actions
     });
     var turnLog = Array.isArray(battle && battle.turnLog) ? battle.turnLog : [];
+    var tacticalSummary = csSummarizeBranchTactics(turnLog, candidate.forced_actions, { horizonTurns: maxTurns });
     runs.push({
       id: 'branch_matrix_' + runs.length,
       branch_key: candidate.branch_key,
@@ -4411,6 +4501,7 @@ function csBuildForcedBranchMatrixSweepEvidence(opts) {
       player_bring: candidate.player_bring,
       opponent_bring: candidate.opponent_bring,
       forced_actions: candidate.forced_actions,
+      tactical_summary: tacticalSummary,
       result: battle && battle.result || null,
       turns: battle && battle.turns || turnLog.length,
       qa_coverage_summary: csBuildQaCoverageSummary(turnLog, {
@@ -4541,7 +4632,8 @@ function csBranchMoveNormalizeRow(row) {
     result: row.result || null,
     turns: row.turns || 0,
     run_count: csBranchMoveRowWeight(row),
-    player_actions: playerActions
+    player_actions: playerActions,
+    tactical_summary: row.tactical_summary && typeof row.tactical_summary === 'object' ? row.tactical_summary : null
   };
 }
 
@@ -4552,6 +4644,15 @@ function csBranchMoveBucketAdd(bucket, row) {
   if (row.result === 'win') bucket.wins += weight;
   else if (row.result === 'loss') bucket.losses += weight;
   else if (row.result === 'draw') bucket.draws += weight;
+}
+
+function csBranchTacticalBucketAdd(bucket, row) {
+  csBranchMoveBucketAdd(bucket, row);
+  var ts = row && row.tactical_summary ? row.tactical_summary : {};
+  if (typeof ts.early_position_delta === 'number') {
+    bucket.position_delta_total += ts.early_position_delta * (row.run_count || 1);
+  }
+  if (ts.first_ko_turn) bucket.first_ko_turn_total += Number(ts.first_ko_turn) * (row.run_count || 1);
 }
 
 function csBranchMoveConfidence(samples, minStrongSamples) {
@@ -4567,6 +4668,7 @@ function csAnalyzeBranchCoverageRows(rows, opts) {
   var byLine = {};
   var byMove = {};
   var byContextActorMove = {};
+  var byTactic = {};
   var seen = {};
 
   normalized.forEach(function(row) {
@@ -4594,6 +4696,32 @@ function csAnalyzeBranchCoverageRows(rows, opts) {
       };
     }
     csBranchMoveBucketAdd(byLine[fullLineKey], row);
+
+    var tacticTags = row.tactical_summary && Array.isArray(row.tactical_summary.timing_tags)
+      ? row.tactical_summary.timing_tags
+      : [];
+    tacticTags.forEach(function(tag) {
+      var tacticKey = [contextKey, tag].join('::');
+      if (!byTactic[tacticKey]) {
+        byTactic[tacticKey] = {
+          context_key: contextKey,
+          matchup_key: matchupKey,
+          player_team_id: row.player_team_id,
+          opponent_team_id: row.opponent_team_id,
+          player_leads: row.player_leads,
+          opponent_leads: row.opponent_leads,
+          tactic_tag: tag,
+          samples: 0,
+          wins: 0,
+          losses: 0,
+          draws: 0,
+          weighted_score: 0,
+          position_delta_total: 0,
+          first_ko_turn_total: 0
+        };
+      }
+      csBranchTacticalBucketAdd(byTactic[tacticKey], row);
+    });
 
     row.player_actions.forEach(function(action) {
       var moveKey = [matchupKey, action.actor, action.move].join('::');
@@ -4748,10 +4876,31 @@ function csAnalyzeBranchCoverageRows(rows, opts) {
     return b.suggested_samples - a.suggested_samples;
   });
 
+  var tacticalSignals = csBranchMoveSortedValues(byTactic).map(function(tactic) {
+    tactic.win_rate = csBranchMoveRate(tactic.weighted_score, tactic.samples);
+    tactic.win_rate_pct = csBranchMovePct(tactic.win_rate);
+    tactic.confidence = csBranchMoveConfidence(tactic.samples, minStrongSamples);
+    tactic.avg_position_delta = tactic.samples > 0 ? Math.round((tactic.position_delta_total / tactic.samples) * 1000) / 1000 : 0;
+    tactic.avg_first_ko_turn = tactic.first_ko_turn_total > 0 && tactic.samples > 0 ? Math.round((tactic.first_ko_turn_total / tactic.samples) * 10) / 10 : null;
+    tactic.coach_note = tactic.win_rate <= avoidWinRate
+      ? 'Avoid or re-time this tactical pattern in the listed lead context.'
+      : tactic.win_rate >= 0.6
+        ? 'This tactical pattern is winning enough to rehearse in the listed lead context.'
+        : 'Mixed result; keep sampling before making it a rule.';
+    return tactic;
+  }).filter(function(tactic) {
+    return tactic.samples > 0 && (tactic.win_rate <= avoidWinRate || tactic.win_rate >= 0.6 || Math.abs(tactic.avg_position_delta) >= 0.2);
+  }).sort(function(a, b) {
+    if (a.confidence !== b.confidence) return a.confidence === 'strong' ? -1 : 1;
+    if (a.win_rate !== b.win_rate) return a.win_rate - b.win_rate;
+    return b.samples - a.samples;
+  }).slice(0, limit);
+
   var totalWeight = normalized.reduce(function(sum, row) { return sum + (row.run_count || 1); }, 0);
   var strongAvoids = avoidMoves.filter(function(m) { return m.confidence === 'strong'; }).length;
+  var strongTactics = tacticalSignals.filter(function(t) { return t.confidence === 'strong'; }).length;
   var analysis = {
-    schema_version: 'champions-branch-move-analysis-v1',
+    schema_version: 'champions-branch-tactical-analysis-v2',
     generated_at: new Date().toISOString(),
     thresholds: {
       min_strong_samples: minStrongSamples,
@@ -4764,20 +4913,24 @@ function csAnalyzeBranchCoverageRows(rows, opts) {
       weighted_samples: totalWeight,
       line_contexts: Object.keys(byLine).length,
       move_contexts: Object.keys(byMove).length,
+      tactical_contexts: Object.keys(byTactic).length,
       strong_avoid_moves: strongAvoids,
       early_avoid_moves: avoidMoves.length - strongAvoids,
       replacement_candidates: replacementCandidates.length,
-      suggested_line_swaps: betterLines.length
+      suggested_line_swaps: betterLines.length,
+      tactical_signals: tacticalSignals.length,
+      strong_tactical_signals: strongTactics
     },
     overview: [
       'This is QA/meta analysis on saved branch coverage rows; it does not alter battle mechanics.',
-      'Highest priority is to keep running branch matrix exports until the same matchup has repeated samples per move and lead context.',
+      'Highest priority is to keep running branch matrix exports until the same matchup has repeated samples per move, target, lead, and early tactical timing context.',
       'Use strong avoid/replacement rows for meta decisions; use early_signal rows to choose the next stress tests.'
     ],
     trainer_report: [],
     avoid_moves: avoidMoves,
     move_replacement_candidates: replacementCandidates.slice(0, limit),
     suggested_lines: betterLines.slice(0, limit),
+    tactical_signals: tacticalSignals,
     best_lines_overall: lineRankings
   };
   analysis.trainer_report = csBranchMoveTrainerSummary(analysis);
@@ -4790,12 +4943,16 @@ function csBranchMoveTrainerSummary(analysis) {
   var strongAvoids = (analysis.avoid_moves || []).filter(function(row) { return row.confidence === 'strong'; });
   var earlyAvoids = (analysis.avoid_moves || []).filter(function(row) { return row.confidence !== 'strong'; });
   var strongSwaps = (analysis.move_replacement_candidates || []).filter(function(row) { return row.confidence === 'strong'; });
+  var strongTactics = (analysis.tactical_signals || []).filter(function(row) { return row.confidence === 'strong'; });
   lines.push(strongAvoids.length
     ? 'Strong avoid signals found: ' + strongAvoids.length + '. Stop autopiloting those clicks in the listed lead and matchup context.'
     : 'No strong avoid signal yet. Keep collecting lead pair and opposing lead samples before cutting a move from the game plan.');
   lines.push(strongSwaps.length
     ? 'Strong legal swap signals found: ' + strongSwaps.length + '. Prefer those moves when the same lead pair and opposing lead show up.'
     : 'No strong legal swap signal yet. Early signals are for stress testing, not final meta calls.');
+  lines.push(strongTactics.length
+    ? 'Strong tactical timing signals found: ' + strongTactics.length + '. Review Protect, pivot, speed-control, first-KO, and early-position tags before locking your game plan.'
+    : 'No strong tactical timing signal yet. Keep sampling Protect timing, pivots, speed control, first-KO timing, and early board position.');
   if (earlyAvoids.length) lines.push('Early avoid signals: ' + earlyAvoids.length + '. Re-run that matchup branch until it becomes a real read or disappears.');
   return lines;
 }
@@ -4846,6 +5003,7 @@ function csRememberBranchMoveAnalysis(analysis, opts) {
     avoid_moves: (analysis.avoid_moves || []).slice(0, 8),
     move_replacement_candidates: (analysis.move_replacement_candidates || []).slice(0, 8),
     suggested_lines: (analysis.suggested_lines || []).slice(0, 8),
+    tactical_signals: (analysis.tactical_signals || []).slice(0, 8),
     best_lines_overall: (analysis.best_lines_overall || []).slice(0, 8)
   };
   memory.analyses = (memory.analyses || []).filter(function(item) {
@@ -5955,7 +6113,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
         maxLeadPairsPerSide: options.branchMatrixMaxLeadPairsPerSide || 3,
         maxMovesPerMon: options.branchMatrixMaxMovesPerMon || 2,
         maxTargetsPerMove: options.branchMatrixMaxTargetsPerMove || 2,
-        maxTurns: options.branchMatrixMaxTurns || 1
+        maxTurns: options.branchMatrixMaxTurns || 3
       });
       if (branchMatrix && branchMatrix.qa_coverage_summary) {
         coverageSummaries.push(branchMatrix.qa_coverage_summary);
@@ -6088,6 +6246,7 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.buildTargetedQaSweepEvidence = csBuildTargetedQaSweepEvidence;
   ChampionsSim.history.buildForcedBranchMatrixSweepEvidence = csBuildForcedBranchMatrixSweepEvidence;
   ChampionsSim.history.analyzeBranchCoverageRows = csAnalyzeBranchCoverageRows;
+  ChampionsSim.history.summarizeBranchTactics = csSummarizeBranchTactics;
   ChampionsSim.history.rememberBranchMoveAnalysis = csRememberBranchMoveAnalysis;
   ChampionsSim.history.loadBranchStrategyMemory = csLoadBranchStrategyMemory;
   ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
@@ -6100,6 +6259,7 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csEx
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaArtifactExport', csBuildQaArtifactExport);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportQaArtifactJson', csExportQaArtifactJson);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csAnalyzeBranchCoverageRows', csAnalyzeBranchCoverageRows);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSummarizeBranchTactics', csSummarizeBranchTactics);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csLoadBranchStrategyMemory', csLoadBranchStrategyMemory);
 // __M6_HISTORY_END__
 
@@ -7542,6 +7702,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Tactical Branch Memory added',
+      detail: 'v2.1.52 extends branch matrix QA from first-click move coverage into early battle tactics. Branch rows now store tactical summaries for Protect timing, pivot/switch timing, speed control, setup/redirection, first-KO timing, and early board-position change, and the Strategy guide can render those timing signals with confidence labels.'
+    },
     {
       status: 'done',
       title: 'Simulator Test Scope added',
@@ -11047,6 +11212,7 @@ function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis) {
   var swap = branchAnalysis && branchAnalysis.move_replacement_candidates && branchAnalysis.move_replacement_candidates[0] ? branchAnalysis.move_replacement_candidates[0] : null;
   var avoid = branchAnalysis && branchAnalysis.avoid_moves && branchAnalysis.avoid_moves[0] ? branchAnalysis.avoid_moves[0] : null;
   var line = branchAnalysis && branchAnalysis.suggested_lines && branchAnalysis.suggested_lines[0] ? branchAnalysis.suggested_lines[0] : null;
+  var tactic = branchAnalysis && branchAnalysis.tactical_signals && branchAnalysis.tactical_signals[0] ? branchAnalysis.tactical_signals[0] : null;
   var trainer = branchAnalysis && Array.isArray(branchAnalysis.trainer_report) ? branchAnalysis.trainer_report : [];
 
   var primaryCall = 'Run a sim set, then export QA Artifact to unlock matchup-specific click advice.';
@@ -11061,6 +11227,8 @@ function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis) {
   var nextTest = 'Run a QA Artifact branch matrix after your next sim set so move-line advice can update.';
   if (line && line.confidence !== 'strong') {
     nextTest = 'Repeat this branch context until the suggested line reaches strong confidence: ' + (line.suggested_line || 'current best line') + '.';
+  } else if (tactic && tactic.confidence !== 'strong') {
+    nextTest = 'Repeat the tactical timing branch until ' + (tactic.tactic_tag || 'the timing pattern') + ' is either strong or disappears.';
   } else if (swap && swap.confidence === 'strong') {
     nextTest = 'Stress-test the strong swap into a different opposing lead before making it a permanent meta rule.';
   } else if (record && record.n >= 500 && (!branchAnalysis || !(branchAnalysis.totals && branchAnalysis.totals.weighted_samples))) {
@@ -11103,16 +11271,25 @@ function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis) {
 
   if (lead) {
     html += '<div class="cs-detector-row">';
-    html += '<span>4. Lead mode</span>';
+    html += '<span>' + (tactic ? '5. Lead mode' : '4. Lead mode') + '</span>';
     html += '<span>' + _csEsc((lead.lead || []).join(' + ')) + ' · ' + lead.w + '-' + lead.l + ' · ' + csPctLabel(lead.win_rate) + '</span>';
     html += '<span>Use this as the default preview mode until a matchup-specific branch read beats it.</span>';
     html += '<span>' + _csEsc(lead.confidence || 'sample') + '</span>';
     html += '</div>';
   }
 
+  if (tactic) {
+    html += '<div class="cs-detector-row">';
+    html += '<span>4. Tactical timing</span>';
+    html += '<span>' + _csEsc(tactic.tactic_tag || '-') + ' · ' + _csEsc(String(tactic.win_rate_pct)) + '% / position ' + _csEsc(String(tactic.avg_position_delta || 0)) + '</span>';
+    html += '<span>Review Protect, pivot, speed-control, first-KO, and board-position timing before locking the line.</span>';
+    html += '<span>' + _csEsc(tactic.confidence || 'early') + '</span>';
+    html += '</div>';
+  }
+
   if (record) {
     html += '<div class="cs-detector-row">';
-    html += '<span>5. Matchup health</span>';
+    html += '<span>' + (tactic ? '6. Matchup health' : '5. Matchup health') + '</span>';
     html += '<span>' + record.w + '-' + record.l + ' over ' + record.n + ' games</span>';
     html += '<span>' + _csEsc(record.win_rate >= 0.55 ? 'The plan is winning; optimize clicks and avoid leaks.' : 'The plan is shaky; fix preview/lead before polishing clicks.') + '</span>';
     html += '<span>' + _csEsc(history.team_confidence_v2 ? history.team_confidence_v2.tier : 'sample') + '</span>';
@@ -12875,6 +13052,7 @@ function csRenderPhase4cSections(history, teamKey, team) {
     var avoidRows = (branchAnalysis.avoid_moves || []).slice(0, 4);
     var swapRows = (branchAnalysis.move_replacement_candidates || []).slice(0, 4);
     var lineRows = (branchAnalysis.suggested_lines || []).slice(0, 3);
+    var tacticRows = (branchAnalysis.tactical_signals || []).slice(0, 4);
     if (avoidRows.length) {
       branchBody += '<div class="cs-detector-table">';
       branchBody += '<div class="cs-detector-row cs-detector-head"><span>Avoid click</span><span>Matchup</span><span>WR</span><span>Confidence</span></div>';
@@ -12909,6 +13087,19 @@ function csRenderPhase4cSections(history, teamKey, team) {
         branchBody += '<span class="cs-detector-cell-desc">' + _csEsc(r.suggested_line || '-') + '</span>';
         branchBody += '<span>' + _csEsc(r.opponent_team_id || '-') + '</span>';
         branchBody += '<span>+' + _csEsc(String(r.lift_pct)) + '%</span>';
+        branchBody += '<span>' + _badgeHtml(_branchConfidenceTier(r.confidence), r.confidence === 'strong' ? 'strong' : 'early') + '</span>';
+        branchBody += '</div>';
+      });
+      branchBody += '</div>';
+    }
+    if (tacticRows.length) {
+      branchBody += '<div class="cs-detector-table">';
+      branchBody += '<div class="cs-detector-row cs-detector-head"><span>Tactical timing</span><span>Lead context</span><span>WR / position</span><span>Confidence</span></div>';
+      tacticRows.forEach(function(r) {
+        branchBody += '<div class="cs-detector-row">';
+        branchBody += '<span class="cs-detector-cell-desc">' + _csEsc(r.tactic_tag || '-') + '</span>';
+        branchBody += '<span>' + _csEsc((r.player_leads || []).join(' + ')) + ' vs ' + _csEsc((r.opponent_leads || []).join(' + ')) + '</span>';
+        branchBody += '<span>' + _csEsc(String(r.win_rate_pct)) + '% / ' + _csEsc(String(r.avg_position_delta || 0)) + '</span>';
         branchBody += '<span>' + _badgeHtml(_branchConfidenceTier(r.confidence), r.confidence === 'strong' ? 'strong' : 'early') + '</span>';
         branchBody += '</div>';
       });
