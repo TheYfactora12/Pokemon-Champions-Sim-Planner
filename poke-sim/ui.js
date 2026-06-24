@@ -4516,6 +4516,7 @@ async function csBuildForcedBranchMatrixSweepEvidence(opts) {
   });
   var candidates = [];
   var runs = [];
+  var lastPaintAt = 0;
   playerLeadPairs.forEach(function(playerPair) {
     opponentLeadPairs.forEach(function(opponentPair) {
       var playerBring = csBranchMatrixBringFromLeadPair(playerNames, playerPair);
@@ -4575,14 +4576,20 @@ async function csBuildForcedBranchMatrixSweepEvidence(opts) {
       }),
       turnLog: turnLog
     });
-    if (typeof options.onProgress === 'function' && (i + 1 === maxPlannedRuns || (i + 1) % 5 === 0)) {
-      options.onProgress({
-        executed_runs: i + 1,
-        total_planned_runs: maxPlannedRuns,
-        unseen_candidate_runs: maxPlannedRuns
-      });
-      var paintWait = csYieldForProgressPaint();
-      if (paintWait) await paintWait;
+    if (typeof options.onProgress === 'function') {
+      var paintNow = (i + 1 === maxPlannedRuns) || (i + 1) % 5 === 0;
+      var now = Date.now();
+      if (!paintNow && lastPaintAt && (now - lastPaintAt) >= 150) paintNow = true;
+      if (paintNow) {
+        lastPaintAt = now;
+        options.onProgress({
+          executed_runs: i + 1,
+          total_planned_runs: maxPlannedRuns,
+          unseen_candidate_runs: maxPlannedRuns
+        });
+        var paintWait = csYieldForProgressPaint();
+        if (paintWait) await paintWait;
+      }
     }
   }
 
@@ -6154,6 +6161,18 @@ function csResolveTacticalSweepOpponentKeys(playerKey, options) {
   }
 }
 
+function csCreateTimedFallbackFallback(ms, fallback) {
+  return new Promise(function(resolve) {
+    setTimeout(function() { resolve(fallback); }, Math.max(1, Number(ms) || 1000));
+  });
+}
+
+function csWithTimeout(workPromise, ms, fallback) {
+  if (!workPromise || !ms || ms <= 0) return workPromise;
+  var fallbackPromise = csCreateTimedFallbackFallback(ms, fallback);
+  return Promise.race([workPromise, fallbackPromise]);
+}
+
 function csAggregateBranchSaveResults(results) {
   var out = { enabled: false, saved: 0, updated: 0, inserted: 0, errors: [] };
   (Array.isArray(results) ? results : []).forEach(function(result) {
@@ -6194,6 +6213,7 @@ async function csBuildBranchMatrixForOpponent(args) {
   var loadedRows = [];
   var saveResult = null;
   var matrix = null;
+  var hadWarning = false;
 
   if (!branchPlayerKey || !branchOpponentKey || typeof csBuildForcedBranchMatrixSweepEvidence !== 'function') {
     return null;
@@ -6205,14 +6225,17 @@ async function csBuildBranchMatrixForOpponent(args) {
     opponent_count: args.opponent_count
   });
   if (adapter && typeof adapter.loadBranchCoverageSummary === 'function') {
+    var loadLimit = adapter && adapter.loadBranchCoverageSummary ? (options.branchMatrixLoadLimit || 5000) : 5000;
     try {
-      loadedRows = await adapter.loadBranchCoverageSummary({
+      loadedRows = await csWithTimeout(adapter.loadBranchCoverageSummary({
         player_team_id: branchPlayerKey,
         opponent_team_id: branchOpponentKey,
-        limit: options.branchMatrixLoadLimit || 5000
-      }) || [];
+        limit: loadLimit
+      }), 9000, []);
+      if (!Array.isArray(loadedRows)) loadedRows = [];
     } catch (e) {
       UILog.warn('QA branch matrix loadBranchCoverageSummary failed', e);
+      hadWarning = true;
     }
   }
   var playerMode = (typeof getBringMode === 'function') ? getBringMode(branchPlayerKey) : 'random';
@@ -6271,15 +6294,23 @@ async function csBuildBranchMatrixForOpponent(args) {
   });
   if (adapter && typeof adapter.saveBranchCoverageRuns === 'function' && matrix && Array.isArray(matrix.runs)) {
     try {
-      saveResult = await adapter.saveBranchCoverageRuns({
+      saveResult = await csWithTimeout(adapter.saveBranchCoverageRuns({
         build_id: buildId,
         source_url: sourceUrl,
         player_team_id: branchPlayerKey,
         opponent_team_id: branchOpponentKey,
         runs: matrix.runs
+      }), 14000, {
+        enabled: true,
+        saved: 0,
+        updated: 0,
+        inserted: 0,
+        error: 'branch_coverage_save_timed_out'
       });
+      hadWarning = hadWarning || !!(saveResult && saveResult.error);
     } catch (e) {
       UILog.warn('QA branch matrix saveBranchCoverageRuns failed', e);
+      hadWarning = true;
     }
   }
   csReportBranchMatrixProgress(options, {

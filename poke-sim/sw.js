@@ -80,7 +80,8 @@
 // v91-cache-refresh-reload [2026-06-24] - Reload once after build cache cleanup so testers land on the fresh bundle.
 // v92-tactical-depth-selector [2026-06-24] - Tactical Sweep exposes Quick/Deep/Full branch-depth caps.
 // v93-team-evidence-dashboard [2026-06-24] - Strategy Dashboard merges per-team sim and tactical evidence.
-const CACHE_NAME = 'champions-sim-v93-team-evidence-dashboard';
+// v94-tactical-sweep-watchdog [2026-06-24] - Prevent single-opponent tactical sweep from stalling on DB reads/writes.
+const CACHE_NAME = 'champions-sim-v94-tactical-sweep-watchdog';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
