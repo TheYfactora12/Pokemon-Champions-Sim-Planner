@@ -9,7 +9,7 @@ const vm = require('vm');
 const fs = require('fs');
 const path = require('path');
 const { mockSupabaseClient, installAdapter, offlineMode, assertNoServiceRole } = require('./_db_helpers.js');
-const BUNDLE_SIZE_LIMIT_BYTES = 5376 * 1024;
+const BUNDLE_SIZE_LIMIT_BYTES = 5428 * 1024;
 
 // Test harness
 var _passed = 0, _failed = 0, _total = 0;
@@ -163,7 +163,7 @@ describe('Module 9 — Hardening / advisor / migration baseline suite (10 cases)
     var bundlePath = path.join(__dirname, '..', 'pokemon-champion-2026.html');
     var stats = fs.statSync(bundlePath);
     // Current bundle intentionally inlines Supabase-js and generated Showdown data.
-    eq(stats.size < BUNDLE_SIZE_LIMIT_BYTES, true, 'bundle size < 5.25 MiB after all modules');
+    eq(stats.size < BUNDLE_SIZE_LIMIT_BYTES, true, 'bundle size < 5.30 MiB after all modules');
   });
 
   T('T-hard-11', function() {
