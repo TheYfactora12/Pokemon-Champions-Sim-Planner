@@ -40,7 +40,7 @@ T('3. missing local-credentials.js returns empty JavaScript instead of cached ap
 });
 
 T('4. service worker cache is bumped for stale app-shell release fix', () => {
-  truthy(sw.includes('champions-sim-v87-tactical-sweep-qa'), 'CACHE_NAME should be v87 Tactical Sweep QA');
+  truthy(sw.includes('champions-sim-v88-download-ready-fallback'), 'CACHE_NAME should be v88 Download Ready Fallback');
   truthy(sw.includes('./generated/pokemon_showdown_species_weights.js'), 'weight companion file should be pre-cached');
 });
 

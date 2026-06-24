@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.53-tactical-sweep-qa';
+    return txt || 'v2.1.54-download-ready-fallback';
   } catch (e) {
-    return 'v2.1.53-tactical-sweep-qa';
+    return 'v2.1.54-download-ready-fallback';
   }
 }
 
@@ -2041,13 +2041,34 @@ function exportAllCustomAsShowdown() {
   return parts.join('\n').trim() + '\n';
 }
 
+var CS_LAST_DOWNLOAD_URL = null;
 function _downloadBlob(filename, mime, text) {
   try {
+    if (CS_LAST_DOWNLOAD_URL && typeof URL !== 'undefined' && typeof URL.revokeObjectURL === 'function') {
+      try { URL.revokeObjectURL(CS_LAST_DOWNLOAD_URL); } catch (_e) {}
+      CS_LAST_DOWNLOAD_URL = null;
+    }
     var blob = new Blob([text], { type: mime });
     var url = URL.createObjectURL(blob);
+    CS_LAST_DOWNLOAD_URL = url;
     var a = document.createElement('a');
     a.href = url; a.download = filename; document.body.appendChild(a); a.click();
-    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+    setTimeout(function(){ try { document.body.removeChild(a); } catch (_e) {} }, 100);
+    var wrap = document.getElementById('progress-wrap') || document.body;
+    var fallback = document.getElementById('download-ready-link');
+    if (!fallback) {
+      fallback = document.createElement('a');
+      fallback.id = 'download-ready-link';
+      fallback.className = 'btn-secondary';
+      fallback.style.display = 'inline-flex';
+      fallback.style.marginTop = '8px';
+      fallback.style.width = 'fit-content';
+      fallback.style.textDecoration = 'none';
+      wrap.appendChild(fallback);
+    }
+    fallback.href = url;
+    fallback.download = filename;
+    fallback.textContent = 'Download ready: ' + filename;
   } catch (e) { UILog.warn('Download failed', e); alert('Could not download file: ' + e.message); }
 }
 
@@ -7874,6 +7895,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'QA download fallback added',
+      detail: 'v2.1.54 keeps the Tactical Sweep + QA export reliable when the browser blocks delayed automatic downloads. Every JSON export still attempts the normal download, then leaves a visible Download ready link in the Simulator progress area so the player can manually save the artifact.'
+    },
     {
       status: 'done',
       title: 'Tactical Sweep QA added',
