@@ -75,7 +75,8 @@
 // v80-targeted-qa-sweep [2026-06-24] - QA artifact includes forced long-tail mechanics sweep alongside retained normal sim evidence.
 // v81-forced-branch-sweep [2026-06-24] - Engine supports forced move/target branches for exhaustive QA sweeps.
 // v84-strategy-priority-board [2026-06-24] - Strategy tab prioritizes coach calls before evidence tables.
-const CACHE_NAME = 'champions-sim-v84-strategy-priority-board';
+// v85-sim-test-scope [2026-06-24] - Simulator can scope Run All to selected matchup or the preloaded suite.
+const CACHE_NAME = 'champions-sim-v85-sim-test-scope';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

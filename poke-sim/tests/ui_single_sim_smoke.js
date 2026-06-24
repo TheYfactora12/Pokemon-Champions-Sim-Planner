@@ -187,6 +187,23 @@ async function main() {
     throw new Error('run-all DB-style missing-format team recovery failed: ' + dbRunAllProgress);
   }
 
+  ids['player-select'].value = stablePlayerKey;
+  ids['opponent-select'].value = 'mega_altaria';
+  ids['sim-scope'].value = 'selected';
+  const selectedOpps = vm.runInContext('getRunAllOpponentKeys(getActivePlayerTeamKey(), resolveSimContext())', ctx);
+  if (!Array.isArray(selectedOpps) || selectedOpps.length !== 1 || selectedOpps[0] !== 'mega_altaria') {
+    throw new Error('selected matchup scope did not resolve exactly one opponent: ' + JSON.stringify(selectedOpps));
+  }
+  ids['matchup-tbody'].children = [];
+  await runAllBtn.onclick.call(runAllBtn, { target: runAllBtn });
+  await new Promise(resolve => setTimeout(resolve, 80));
+  if (!ids['matrix-badge'].textContent || !/Selected matchup/.test(ids['matrix-badge'].textContent)) {
+    throw new Error('selected matchup scope badge did not render');
+  }
+  if (!ids['matchup-tbody'].children || ids['matchup-tbody'].children.length !== 1) {
+    throw new Error('selected matchup run-all should render one matchup row');
+  }
+
   console.log('  PASS UI Run Simulation smoke rendered', winPct);
 }
 

@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.50-strategy-priority-board';
+    return txt || 'v2.1.51-sim-test-scope';
   } catch (e) {
-    return 'v2.1.50-strategy-priority-board';
+    return 'v2.1.51-sim-test-scope';
   }
 }
 
@@ -902,6 +902,58 @@ function syncActivePlayerTeamKey() {
   return resolvedKey;
 }
 
+function getSimScopeMode() {
+  var el = (typeof document !== 'undefined') ? document.getElementById('sim-scope') : null;
+  var mode = el && typeof el.value === 'string' ? el.value : 'preloaded';
+  return mode === 'selected' ? 'selected' : 'preloaded';
+}
+
+function getSimScopeLabel(mode) {
+  return mode === 'selected' ? 'Selected matchup' : 'Preloaded team suite';
+}
+
+function isPreloadedSimTeam(teamKey, team) {
+  team = normalizeTeamRecordForSim(teamKey, team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null));
+  if (!team) return false;
+  return !team.source || team.source === 'preloaded' || team.source === 'bundled';
+}
+
+function getRunAllOpponentKeys(playerKey, simCtx) {
+  simCtx = simCtx || {};
+  var scope = simCtx.simScope || getSimScopeMode();
+  var includeCustom = scope === 'selected';
+  if (scope === 'selected') {
+    var selectedOpp = simCtx.oppKey || getDefaultVisibleOpponentTeamKey(playerKey);
+    if (selectedOpp
+        && selectedOpp !== playerKey
+        && isSimReadyTeam(selectedOpp, TEAMS[selectedOpp], { includeCustom: true })) {
+      return [selectedOpp];
+    }
+    return [];
+  }
+  return Object.keys(TEAMS).filter(function(k) {
+    if (k === playerKey) return false;
+    if (!isSimReadyTeam(k, TEAMS[k], { includeCustom: includeCustom })) return false;
+    if (!isPreloadedSimTeam(k, TEAMS[k])) return false;
+    if (typeof LADDER_MODE !== 'undefined' && LADDER_MODE && typeof isLadderLegal === 'function') {
+      return isLadderLegal(k);
+    }
+    return true;
+  });
+}
+
+function formatSeriesCount(n) {
+  n = Number(n) || 0;
+  return n.toLocaleString ? n.toLocaleString('en-US') : String(n);
+}
+
+function getRunScopeBadgeText(simCtx, opponentCount) {
+  simCtx = simCtx || {};
+  var perOpponent = Number(simCtx.numSeries) || 0;
+  var totalSeries = Math.max(0, opponentCount || 0) * perOpponent;
+  return getSimScopeLabel(simCtx.simScope) + ' · ' + formatSeriesCount(totalSeries) + ' total series';
+}
+
 function resolveSimContext(opts) {
   opts = opts || {};
   normalizeTeamCatalogForSim();
@@ -933,6 +985,7 @@ function resolveSimContext(opts) {
   var countEl = (typeof document !== 'undefined') ? document.getElementById('sim-count') : null;
   var n = opts.numSeries != null ? Number(opts.numSeries) : parseInt(countEl && countEl.value, 10);
   var bo = opts.bo || currentBo;
+  var simScope = opts.simScope || getSimScopeMode();
   return {
     playerKey: playerKey,
     oppKey: oppKey,
@@ -940,6 +993,8 @@ function resolveSimContext(opts) {
     oppTeam: TEAMS[oppKey],
     numSeries: n,
     bo: bo,
+    simScope: simScope,
+    simScopeLabel: getSimScopeLabel(simScope),
     format: currentFormat,
     formatLabel: currentFormat === 'doubles' ? 'Doubles' : 'Singles',
     boLabel: 'Bo' + bo
@@ -6294,14 +6349,8 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
 async function runAllMatchupsUI(numSeries, bo, onProgress, onDone, simCtx) {
   simCtx = simCtx || resolveSimContext({ numSeries: numSeries, bo: bo });
   var playerKey = simCtx.playerKey;
-  const opps = Object.keys(TEAMS).filter(k => {
-    if (k === playerKey) return false;
-    if (!isSimReadyTeam(k, TEAMS[k], { includeCustom: true })) return false;
-    if (typeof LADDER_MODE !== 'undefined' && LADDER_MODE && typeof isLadderLegal === 'function') {
-      return isLadderLegal(k);
-    }
-    return true;
-  });
+  const opps = getRunAllOpponentKeys(playerKey, simCtx);
+  if (!opps.length) throw new Error('no opponents available for ' + getSimScopeLabel(simCtx.simScope || getSimScopeMode()));
   let done=0;
   for (const opp of opps) {
     const res = await runBoSeries(numSeries,playerKey,opp,bo,(cur,tot,w,l)=>{
@@ -6595,7 +6644,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     const bo=simCtx.bo;
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
     const matBadge=document.getElementById('matrix-badge');
-    if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${n} series`;
+    if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${formatSeriesCount(n)} series`;
 
     const res = await runBoSeries(n,playerKey,oppKey,bo,(cur,tot,w,l)=>{
       setProgress(Math.round(cur/tot*100),`Running… ${cur} / ${tot}`,w,l);
@@ -6628,9 +6677,13 @@ ChampionsSim.battle = ChampionsSim.battle || {};
 ChampionsSim.battle.enforceDistinctBattleTeams = enforceDistinctBattleTeams;
 ChampionsSim.battle.resolveSimContext = resolveSimContext;
 ChampionsSim.battle.normalizeTeamCatalogForSim = normalizeTeamCatalogForSim;
+ChampionsSim.battle.getRunAllOpponentKeys = getRunAllOpponentKeys;
+ChampionsSim.battle.getSimScopeMode = getSimScopeMode;
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('enforceDistinctBattleTeams', enforceDistinctBattleTeams);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('resolveSimContext', resolveSimContext);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('normalizeTeamCatalogForSim', normalizeTeamCatalogForSim);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('getRunAllOpponentKeys', getRunAllOpponentKeys);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('getSimScopeMode', getSimScopeMode);
 
 async function csRunAllMatchupsFromButton(allBtn, opts) {
   if (simRunning) return;
@@ -6650,11 +6703,12 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
     const n=simCtx.numSeries;
     const bo=simCtx.bo;
     var playerKey = simCtx.playerKey;
+    var runOpps = getRunAllOpponentKeys(playerKey, simCtx);
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
     document.getElementById('progress-wrap').style.display='';
     setProgress(0,'Starting…',0,0);
     const matBadge=document.getElementById('matrix-badge');
-    if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${n} series`;
+    if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${getRunScopeBadgeText(simCtx, runOpps.length)}`;
 
     const tbody=document.getElementById('matchup-tbody');
     tbody.innerHTML='';
@@ -7468,7 +7522,7 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-06-23',
+  updated: '2026-06-24',
   metrics: [
     { label: 'Current Truth', value: 'Not 100% yet' },
     { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
@@ -7488,6 +7542,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Simulator Test Scope added',
+      detail: 'v2.1.51 adds a Test Scope selector so players can run either a focused selected matchup or the approved preloaded team suite. Sample size now includes 1,000-series deep matchup and 10,000-series full-team stress options. This improves tactical coverage collection for lead pairs, move lines, targets, switching, and timing; it does not claim exhaustive proof by itself.'
+    },
     {
       status: 'done',
       title: 'Strategy Priority Board added',

@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.50-strategy-priority-board` on 2026-06-24.
+Status: current for `v2.1.51-sim-test-scope` on 2026-06-24.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -46,6 +46,8 @@ Optional persistence
   Supabase analyses/history stores bounded summaries and capped logs
   until a reviewed forensic-log retention upgrade is added
 ```
+
+`v2.1.51-sim-test-scope` separates two player testing jobs in the Simulator UI: a selected-matchup drill for deep tactical coverage, and a preloaded-suite sweep for broader team validation. The high-volume 1,000 and 10,000 series options are stress tiers for collecting more lead-pair, move-line, target, switch, and timing evidence; they are not a claim of exhaustive game-tree proof.
 
 ## Layer Responsibilities
 
