@@ -4,6 +4,7 @@ This snapshot records the current truth after the June 21-23 live-log review, Gi
 
 ## 2026-06-24 Strategy Memory Update
 
+- `v2.1.58-tactical-depth-selector` adds Quick 24, Deep 100, and Full 250 branch-depth choices so Tactical Sweep + QA can fill shared DB branch memory faster when the tester wants deeper learning.
 - `v2.1.57-cache-refresh-reload` reloads once after build-change service-worker/cache cleanup so live testers land on the fresh bundle instead of continuing to run an older page after the cache was cleared.
 - `v2.1.56-branch-progress-counters` fixes the remaining Tactical Sweep progress confusion by replacing normal sim W/L counters with branch-specific opponent, saved-row, and percent counters while a sweep runs.
 - `v2.1.55-tactical-sweep-progress` makes Tactical Sweep progress visible while preloaded-suite coverage runs. The progress bar now reports opponent index, branch-memory load, unseen branch testing, saved rows, and final analysis instead of holding one static label.

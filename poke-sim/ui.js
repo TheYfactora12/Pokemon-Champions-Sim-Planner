@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.57-cache-refresh-reload';
+    return txt || 'v2.1.58-tactical-depth-selector';
   } catch (e) {
-    return 'v2.1.57-cache-refresh-reload';
+    return 'v2.1.58-tactical-depth-selector';
   }
 }
 
@@ -927,6 +927,13 @@ function getSimScopeMode() {
 
 function getSimScopeLabel(mode) {
   return mode === 'selected' ? 'Selected matchup' : 'Preloaded team suite';
+}
+
+function getTacticalDepthMaxRuns() {
+  var el = (typeof document !== 'undefined') ? document.getElementById('tactical-depth') : null;
+  var value = el && typeof el.value === 'string' ? Number(el.value) : 100;
+  if (value === 24 || value === 100 || value === 250) return value;
+  return 100;
 }
 
 function isPreloadedSimTeam(teamKey, team) {
@@ -7221,10 +7228,11 @@ document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', asyn
     setBranchProgress(2, 'Building unseen branch coverage for ' + getSimScopeLabel(simCtx.simScope) + '...', { opponent_count: 0, saved_rows: 0 });
     var tacticalSavedRows = 0;
     var tacticalOpponentCount = 0;
+    var tacticalDepthMaxRuns = getTacticalDepthMaxRuns();
     await csExportQaArtifactJson(simCtx.playerKey, {
       branchMatrixUseScope: true,
       branchMatrixScope: simCtx.simScope,
-      branchMatrixMaxRunsPerOpponent: 24,
+      branchMatrixMaxRunsPerOpponent: tacticalDepthMaxRuns,
       onBranchMatrixProgress: function(event) {
         event = event || {};
         var count = Number(event.opponent_count || 0);
@@ -8069,6 +8077,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Tactical Depth selector added',
+      detail: 'v2.1.58 adds Quick 24, Deep 100, and Full 250 branch-depth choices for Tactical Sweep + QA so players can choose between fast proof and faster DB learning while preserving browser safety caps.'
+    },
     {
       status: 'done',
       title: 'Cache refresh reload added',

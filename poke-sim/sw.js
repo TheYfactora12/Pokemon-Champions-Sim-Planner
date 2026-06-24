@@ -78,7 +78,8 @@
 // v85-sim-test-scope [2026-06-24] - Simulator can scope Run All to selected matchup or the preloaded suite.
 // v90-branch-progress-counters [2026-06-24] - Tactical Sweep progress uses branch counters instead of W/L zeroes.
 // v91-cache-refresh-reload [2026-06-24] - Reload once after build cache cleanup so testers land on the fresh bundle.
-const CACHE_NAME = 'champions-sim-v91-cache-refresh-reload';
+// v92-tactical-depth-selector [2026-06-24] - Tactical Sweep exposes Quick/Deep/Full branch-depth caps.
+const CACHE_NAME = 'champions-sim-v92-tactical-depth-selector';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

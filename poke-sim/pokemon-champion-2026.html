@@ -2333,7 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.57-cache-refresh-reload</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.58-tactical-depth-selector</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -2504,6 +2504,15 @@ table{border-collapse:collapse;width:100%}
           <option value="500">500 series (matchup read)</option>
           <option value="1000">1,000 series (deep matchup)</option>
           <option value="10000">10,000 series (full team stress)</option>
+        </select>
+      </div>
+
+      <div class="control-block">
+        <label class="control-label">Tactical Depth</label>
+        <select class="select-input" id="tactical-depth">
+          <option value="24">Quick 24 branches</option>
+          <option value="100" selected>Deep 100 branches</option>
+          <option value="250">Full 250 branches</option>
         </select>
       </div>
 
@@ -19622,9 +19631,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.57-cache-refresh-reload';
+    return txt || 'v2.1.58-tactical-depth-selector';
   } catch (e) {
-    return 'v2.1.57-cache-refresh-reload';
+    return 'v2.1.58-tactical-depth-selector';
   }
 }
 
@@ -20433,6 +20442,13 @@ function getSimScopeMode() {
 
 function getSimScopeLabel(mode) {
   return mode === 'selected' ? 'Selected matchup' : 'Preloaded team suite';
+}
+
+function getTacticalDepthMaxRuns() {
+  var el = (typeof document !== 'undefined') ? document.getElementById('tactical-depth') : null;
+  var value = el && typeof el.value === 'string' ? Number(el.value) : 100;
+  if (value === 24 || value === 100 || value === 250) return value;
+  return 100;
 }
 
 function isPreloadedSimTeam(teamKey, team) {
@@ -26727,10 +26743,11 @@ document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', asyn
     setBranchProgress(2, 'Building unseen branch coverage for ' + getSimScopeLabel(simCtx.simScope) + '...', { opponent_count: 0, saved_rows: 0 });
     var tacticalSavedRows = 0;
     var tacticalOpponentCount = 0;
+    var tacticalDepthMaxRuns = getTacticalDepthMaxRuns();
     await csExportQaArtifactJson(simCtx.playerKey, {
       branchMatrixUseScope: true,
       branchMatrixScope: simCtx.simScope,
-      branchMatrixMaxRunsPerOpponent: 24,
+      branchMatrixMaxRunsPerOpponent: tacticalDepthMaxRuns,
       onBranchMatrixProgress: function(event) {
         event = event || {};
         var count = Number(event.opponent_count || 0);
@@ -27575,6 +27592,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Tactical Depth selector added',
+      detail: 'v2.1.58 adds Quick 24, Deep 100, and Full 250 branch-depth choices for Tactical Sweep + QA so players can choose between fast proof and faster DB learning while preserving browser safety caps.'
+    },
     {
       status: 'done',
       title: 'Cache refresh reload added',

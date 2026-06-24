@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.57-cache-refresh-reload` on 2026-06-24.
+Status: current for `v2.1.58-tactical-depth-selector` on 2026-06-24.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -60,6 +60,8 @@ Optional persistence
 `v2.1.56-branch-progress-counters` changes the visible Tactical Sweep counter area from normal W/L fields to branch-specific counters: opponent index, saved branch rows, and percent complete.
 
 `v2.1.57-cache-refresh-reload` reloads once after build-change cache cleanup so testers land on the fresh bundle instead of continuing to run the old page code that was just cleaned up.
+
+`v2.1.58-tactical-depth-selector` adds Quick 24, Deep 100, and Full 250 branch-depth caps for Tactical Sweep + QA. The selected cap is saved into `tactical_sweep.max_runs_per_opponent` and controls how quickly DB branch memory fills.
 
 ## Layer Responsibilities
 
