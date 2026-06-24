@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.47-forced-branch-sweep';
+    return txt || 'v2.1.48-branch-coverage-memory';
   } catch (e) {
-    return 'v2.1.47-forced-branch-sweep';
+    return 'v2.1.48-branch-coverage-memory';
   }
 }
 
@@ -4142,6 +4142,288 @@ function csBuildTargetedQaSweepEvidence(opts) {
   };
 }
 
+function csBranchMatrixMemberNames(team) {
+  return team && Array.isArray(team.members) ? team.members.map(function(member) {
+    return member && member.name;
+  }).filter(Boolean) : [];
+}
+
+function csBranchMatrixOrderedLeadPairs(names, limit) {
+  var out = [];
+  var cap = Number.isFinite(Number(limit)) ? Math.max(1, Number(limit)) : names.length * Math.max(0, names.length - 1);
+  for (var i = 0; i < names.length && out.length < cap; i++) {
+    for (var j = 0; j < names.length && out.length < cap; j++) {
+      if (i === j) continue;
+      out.push([names[i], names[j]]);
+    }
+  }
+  return out;
+}
+
+function csBranchMatrixLeadPairsForMode(team, mode, selectedNames, limit) {
+  var names = csBranchMatrixMemberNames(team);
+  var selected = Array.isArray(selectedNames) ? selectedNames.filter(function(name) {
+    return names.indexOf(name) >= 0;
+  }) : [];
+  if (mode === 'selected' && selected.length >= 2) return [selected.slice(0, 2)];
+  return csBranchMatrixOrderedLeadPairs(names, limit);
+}
+
+function csBranchMatrixBringFromLeadPair(names, pair) {
+  var bring = (pair || []).filter(Boolean);
+  names.forEach(function(name) {
+    if (bring.length < 4 && bring.indexOf(name) < 0) bring.push(name);
+  });
+  return bring.slice(0, 4);
+}
+
+function csBranchMatrixMemberByName(team, name) {
+  var members = team && Array.isArray(team.members) ? team.members : [];
+  return members.find(function(member) { return member && member.name === name; }) || null;
+}
+
+function csBranchMatrixTargetsForMove(move) {
+  var target = (typeof MOVE_TARGETS !== 'undefined' && MOVE_TARGETS && MOVE_TARGETS[move]) || 'normal';
+  if (target === 'self' || target === 'all-allies') return [{ targetSide: 'self' }];
+  if (target === 'all-adjacent' || target === 'all-adjacent-foes' || target === 'all-foes' || target === 'random-foe') {
+    return [{ targetSide: 'enemy', targetSlot: 0 }];
+  }
+  if (target === 'ally' || target === 'adjacentAlly') return [{ targetSide: 'ally', targetSlot: 1 }];
+  return [
+    { targetSide: 'enemy', targetSlot: 0 },
+    { targetSide: 'enemy', targetSlot: 1 }
+  ];
+}
+
+function csBranchMatrixAlternatives(side, slot, mon, maxMovesPerMon, maxTargetsPerMove) {
+  var moves = mon && Array.isArray(mon.moves) ? mon.moves.filter(Boolean).slice(0, maxMovesPerMon) : [];
+  var out = [];
+  moves.forEach(function(move) {
+    csBranchMatrixTargetsForMove(move).slice(0, maxTargetsPerMove).forEach(function(target) {
+      out.push(Object.assign({ turn: 1, side: side, slot: slot, move: move }, target));
+    });
+  });
+  return out;
+}
+
+function csBuildBranchMatrixForcedActionSets(playerTeam, opponentTeam, playerBring, opponentBring, options) {
+  options = options || {};
+  var maxMovesPerMon = Number.isFinite(Number(options.maxMovesPerMon)) ? Math.max(1, Number(options.maxMovesPerMon)) : 2;
+  var maxTargetsPerMove = Number.isFinite(Number(options.maxTargetsPerMove)) ? Math.max(1, Number(options.maxTargetsPerMove)) : 2;
+  var actors = [
+    { side: 'player', slot: 0, mon: csBranchMatrixMemberByName(playerTeam, playerBring[0]) },
+    { side: 'player', slot: 1, mon: csBranchMatrixMemberByName(playerTeam, playerBring[1]) },
+    { side: 'opponent', slot: 0, mon: csBranchMatrixMemberByName(opponentTeam, opponentBring[0]) },
+    { side: 'opponent', slot: 1, mon: csBranchMatrixMemberByName(opponentTeam, opponentBring[1]) }
+  ];
+  var sets = [[]];
+  actors.forEach(function(actor) {
+    var alternatives = csBranchMatrixAlternatives(actor.side, actor.slot, actor.mon, maxMovesPerMon, maxTargetsPerMove);
+    if (!alternatives.length) return;
+    var next = [];
+    sets.forEach(function(prefix) {
+      alternatives.forEach(function(action) {
+        next.push(prefix.concat([action]));
+      });
+    });
+    sets = next;
+  });
+  return sets;
+}
+
+function csBranchMatrixStableActionKey(action) {
+  return [
+    action.side || '',
+    action.slot,
+    action.move || '',
+    action.targetSide || '',
+    Number.isFinite(Number(action.targetSlot)) ? Number(action.targetSlot) : ''
+  ].join(':');
+}
+
+function csBranchMatrixRunKey(playerTeamId, opponentTeamId, playerBring, opponentBring, forcedActions) {
+  return [
+    playerTeamId,
+    opponentTeamId,
+    (playerBring || []).slice(0, 2).join('+'),
+    (opponentBring || []).slice(0, 2).join('+'),
+    (forcedActions || []).map(csBranchMatrixStableActionKey).join('|')
+  ].join('::');
+}
+
+function csBranchMatrixOutcomeSignature(battle, turnLog) {
+  var last = Array.isArray(turnLog) && turnLog.length ? turnLog[turnLog.length - 1] : null;
+  var playerAlive = last && last.summary ? last.summary.player_alive : null;
+  var opponentAlive = last && last.summary ? last.summary.opponent_alive : null;
+  return [
+    battle && battle.result || 'unknown',
+    battle && battle.turns || (Array.isArray(turnLog) ? turnLog.length : 0),
+    playerAlive == null ? '' : playerAlive,
+    opponentAlive == null ? '' : opponentAlive
+  ].join(':');
+}
+
+function csBuildForcedBranchMatrixSweepEvidence(opts) {
+  var options = opts || {};
+  var buildId = options.build_id || ((typeof csGetBuildId === 'function') ? csGetBuildId() : null);
+  var sourceUrl = options.source_url || ((typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null);
+  var playerTeamId = options.playerTeamId || 'targeted_proof_legal';
+  var opponentTeamId = options.opponentTeamId || 'cofagrigus_tr';
+  var playerTeam = (typeof TEAMS !== 'undefined' && TEAMS[playerTeamId]) ? TEAMS[playerTeamId] : null;
+  var opponentTeam = (typeof TEAMS !== 'undefined' && TEAMS[opponentTeamId]) ? TEAMS[opponentTeamId] : null;
+  var maxLeadPairsPerSide = Number.isFinite(Number(options.maxLeadPairsPerSide)) ? Math.max(1, Number(options.maxLeadPairsPerSide)) : 3;
+  var maxRuns = Number.isFinite(Number(options.maxRuns)) ? Math.max(1, Number(options.maxRuns)) : 24;
+  var maxTurns = Number.isFinite(Number(options.maxTurns)) ? Math.max(1, Number(options.maxTurns)) : 1;
+  var generatedAt = options.generated_at || new Date().toISOString();
+
+  function empty(status, reason) {
+    return {
+      schema_version: 'champions-forced-branch-matrix-v1',
+      generated_at: generatedAt,
+      build_id: buildId,
+      source_url: sourceUrl,
+      status: status,
+      reason: reason,
+      runs: [],
+      qa_coverage_summary: csMergeQaCoverageSummaries([], {
+        generated_at: generatedAt,
+        build_id: buildId,
+        source_url: sourceUrl,
+        format: 'forced-branch-matrix',
+        player_team_id: playerTeamId,
+        opponent_team_id: opponentTeamId,
+        scope: 'forced-branch-matrix'
+      })
+    };
+  }
+  if (!playerTeam || !opponentTeam || typeof simulateBattle !== 'function') {
+    return empty('unavailable', 'Required runtime teams or simulateBattle were not available.');
+  }
+
+  var playerNames = csBranchMatrixMemberNames(playerTeam);
+  var opponentNames = csBranchMatrixMemberNames(opponentTeam);
+  var playerLeadMode = options.playerLeadMode === 'selected' ? 'selected' : 'random';
+  var opponentLeadMode = options.opponentLeadMode === 'selected' ? 'selected' : 'random';
+  var playerLeadPairs = csBranchMatrixLeadPairsForMode(playerTeam, playerLeadMode, options.playerLeadNames, maxLeadPairsPerSide);
+  var opponentLeadPairs = csBranchMatrixLeadPairsForMode(opponentTeam, opponentLeadMode, options.opponentLeadNames, maxLeadPairsPerSide);
+  if (!playerLeadPairs.length || !opponentLeadPairs.length) return empty('empty', 'No legal lead pairs were available for the requested branch matrix.');
+
+  var seenKeys = {};
+  (Array.isArray(options.seenBranchKeys) ? options.seenBranchKeys : []).forEach(function(key) {
+    if (key) seenKeys[key] = true;
+  });
+  var candidates = [];
+  var runs = [];
+  playerLeadPairs.forEach(function(playerPair) {
+    opponentLeadPairs.forEach(function(opponentPair) {
+      var playerBring = csBranchMatrixBringFromLeadPair(playerNames, playerPair);
+      var opponentBring = csBranchMatrixBringFromLeadPair(opponentNames, opponentPair);
+      var forcedSets = csBuildBranchMatrixForcedActionSets(playerTeam, opponentTeam, playerBring, opponentBring, options);
+      forcedSets.forEach(function(forcedActions) {
+        var branchKey = csBranchMatrixRunKey(playerTeamId, opponentTeamId, playerBring, opponentBring, forcedActions);
+        candidates.push({
+          branch_key: branchKey,
+          seen_before: !!seenKeys[branchKey],
+          player_bring: playerBring,
+          opponent_bring: opponentBring,
+          forced_actions: forcedActions
+        });
+      });
+    });
+  });
+  candidates.sort(function(a, b) {
+    if (a.seen_before !== b.seen_before) return a.seen_before ? 1 : -1;
+    return a.branch_key.localeCompare(b.branch_key);
+  });
+  candidates.slice(0, maxRuns).forEach(function(candidate) {
+    var seedBase = runs.length + 1;
+    var battle = simulateBattle(playerTeam, opponentTeam, {
+      format: 'doubles',
+      seed: [seedBase, seedBase + 101, seedBase + 202, seedBase + 303],
+      maxTurns: maxTurns,
+      playerBring: candidate.player_bring,
+      opponentBring: candidate.opponent_bring,
+      forcedActions: candidate.forced_actions
+    });
+    var turnLog = Array.isArray(battle && battle.turnLog) ? battle.turnLog : [];
+    runs.push({
+      id: 'branch_matrix_' + runs.length,
+      branch_key: candidate.branch_key,
+      outcome_signature: csBranchMatrixOutcomeSignature(battle, turnLog),
+      seen_before: candidate.seen_before,
+      player_team_id: playerTeamId,
+      opponent_team_id: opponentTeamId,
+      player_bring: candidate.player_bring,
+      opponent_bring: candidate.opponent_bring,
+      forced_actions: candidate.forced_actions,
+      result: battle && battle.result || null,
+      turns: battle && battle.turns || turnLog.length,
+      qa_coverage_summary: csBuildQaCoverageSummary(turnLog, {
+        generated_at: generatedAt,
+        build_id: buildId,
+        source_url: sourceUrl,
+        format: 'forced-branch-matrix',
+        player_team_id: playerTeamId,
+        opponent_team_id: opponentTeamId,
+        scope: 'forced-branch-matrix-run'
+      }),
+      turnLog: turnLog
+    });
+  });
+
+  var summary = csMergeQaCoverageSummaries(runs.map(function(run) {
+    return run && run.qa_coverage_summary;
+  }), {
+    generated_at: generatedAt,
+    build_id: buildId,
+    source_url: sourceUrl,
+    format: 'forced-branch-matrix',
+    player_team_id: playerTeamId,
+    opponent_team_id: opponentTeamId,
+    scope: 'forced-branch-matrix'
+  });
+  var candidateRuns = candidates.length;
+  var unseenCandidates = candidates.filter(function(candidate) { return !candidate.seen_before; }).length;
+  var newlyExecuted = runs.filter(function(run) { return !run.seen_before; }).length;
+  summary.totals.branch_matrix_candidate_runs = candidateRuns;
+  summary.totals.branch_matrix_runs = runs.length;
+  summary.totals.branch_matrix_unseen_candidates = unseenCandidates;
+  summary.totals.branch_matrix_newly_executed = newlyExecuted;
+  return {
+    schema_version: 'champions-forced-branch-matrix-v1',
+    generated_at: generatedAt,
+    build_id: buildId,
+    source_url: sourceUrl,
+    status: runs.length ? 'complete' : 'empty',
+    player_team_id: playerTeamId,
+    opponent_team_id: opponentTeamId,
+    lead_policy: {
+      player: playerLeadMode,
+      opponent: opponentLeadMode,
+      selected_player_leads: playerLeadMode === 'selected' ? playerLeadPairs[0] : [],
+      selected_opponent_leads: opponentLeadMode === 'selected' ? opponentLeadPairs[0] : []
+    },
+    coverage_space: {
+      player_lead_pairs_considered: playerLeadPairs.length,
+      opponent_lead_pairs_considered: opponentLeadPairs.length,
+      candidate_runs: candidateRuns,
+      unseen_candidate_runs: unseenCandidates,
+      executed_runs: runs.length,
+      newly_executed_runs: newlyExecuted,
+      capped: runs.length < candidateRuns,
+      max_runs: maxRuns,
+      max_turns: maxTurns
+    },
+    qa_coverage_summary: summary,
+    runs: runs,
+    notes: [
+      'Selected lead mode locks the lead pair. Random lead mode rotates through ordered legal lead combinations.',
+      'Each branch run calls the real simulateBattle engine with legal brings and forced legal turn-1 choices.',
+      'The sweep is capped by default for browser safety; candidate_runs reports the enumerated space before the cap.'
+    ]
+  };
+}
+
 function downloadReplayTurnLog(replay, opts) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
   opts = opts || {};
@@ -5183,6 +5465,64 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   if (targetedSweep && targetedSweep.qa_coverage_summary) {
     coverageSummaries.push(targetedSweep.qa_coverage_summary);
   }
+  var branchMatrixDbRows = [];
+  var branchMatrixDbSave = null;
+  var branchMatrix = null;
+  if (options.includeBranchMatrix !== false) {
+    var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
+    var branchPlayerKey = options.branchPlayerTeamId || key;
+    var branchOpponentKey = options.branchOpponentTeamId || (oppSelect && oppSelect.value) || null;
+    if (branchPlayerKey && branchOpponentKey && typeof csBuildForcedBranchMatrixSweepEvidence === 'function') {
+      if (adapter && typeof adapter.loadBranchCoverageSummary === 'function') {
+        try {
+          branchMatrixDbRows = await adapter.loadBranchCoverageSummary({
+            player_team_id: branchPlayerKey,
+            opponent_team_id: branchOpponentKey,
+            limit: 5000
+          }) || [];
+        } catch (e) {
+          UILog.warn('QA branch matrix loadBranchCoverageSummary failed', e);
+        }
+      }
+      var playerMode = (typeof getBringMode === 'function') ? getBringMode(branchPlayerKey) : 'random';
+      var opponentMode = (typeof getBringMode === 'function') ? getBringMode(branchOpponentKey) : 'random';
+      branchMatrix = csBuildForcedBranchMatrixSweepEvidence({
+        generated_at: exportedAt,
+        build_id: buildId,
+        source_url: sourceUrl,
+        playerTeamId: branchPlayerKey,
+        opponentTeamId: branchOpponentKey,
+        playerLeadMode: playerMode === 'manual' ? 'selected' : 'random',
+        opponentLeadMode: opponentMode === 'manual' ? 'selected' : 'random',
+        playerLeadNames: (typeof getBringFor === 'function') ? getBringFor(branchPlayerKey).slice(0, 2) : [],
+        opponentLeadNames: (typeof getBringFor === 'function') ? getBringFor(branchOpponentKey).slice(0, 2) : [],
+        seenBranchKeys: branchMatrixDbRows.map(function(row) {
+          return row && row.branch_key && !Number(row.outcome_drift_count || 0) ? row.branch_key : null;
+        }).filter(Boolean),
+        maxRuns: options.branchMatrixMaxRuns || 24,
+        maxLeadPairsPerSide: options.branchMatrixMaxLeadPairsPerSide || 3,
+        maxMovesPerMon: options.branchMatrixMaxMovesPerMon || 2,
+        maxTargetsPerMove: options.branchMatrixMaxTargetsPerMove || 2,
+        maxTurns: options.branchMatrixMaxTurns || 1
+      });
+      if (branchMatrix && branchMatrix.qa_coverage_summary) {
+        coverageSummaries.push(branchMatrix.qa_coverage_summary);
+      }
+      if (adapter && typeof adapter.saveBranchCoverageRuns === 'function' && branchMatrix && Array.isArray(branchMatrix.runs)) {
+        try {
+          branchMatrixDbSave = await adapter.saveBranchCoverageRuns({
+            build_id: buildId,
+            source_url: sourceUrl,
+            player_team_id: branchPlayerKey,
+            opponent_team_id: branchOpponentKey,
+            runs: branchMatrix.runs
+          });
+        } catch (e) {
+          UILog.warn('QA branch matrix saveBranchCoverageRuns failed', e);
+        }
+      }
+    }
+  }
   var mergedCoverage = csMergeQaCoverageSummaries(coverageSummaries, {
     generated_at: exportedAt,
     build_id: buildId,
@@ -5193,6 +5533,8 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   });
   mergedCoverage.totals.replay_cards_scanned = coverageReplayCards.length;
   mergedCoverage.totals.targeted_sweep_runs = targetedSweep && Array.isArray(targetedSweep.runs) ? targetedSweep.runs.length : 0;
+  mergedCoverage.totals.branch_matrix_runs = branchMatrix && branchMatrix.coverage_space ? branchMatrix.coverage_space.executed_runs : 0;
+  mergedCoverage.totals.branch_matrix_newly_executed = branchMatrix && branchMatrix.coverage_space ? branchMatrix.coverage_space.newly_executed_runs : 0;
 
   return {
     schema_version: 'champions-qa-artifact-v1',
@@ -5212,11 +5554,13 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       max_simlog_per_pair: CS_SIMLOG_MAX_PER_PAIR,
       include_replay_cards: options.includeReplayCards !== false,
       include_sim_log: options.includeSimLog !== false,
-      include_targeted_sweep: !!targetedSweep
+      include_targeted_sweep: !!targetedSweep,
+      include_branch_matrix: !!branchMatrix
     },
     summary: csBuildQaArtifactSummary(localSimLog, replayCards, key),
     qa_coverage_summary: mergedCoverage,
     targeted_qa_sweep: targetedSweep,
+    forced_branch_matrix: branchMatrix,
     retained: {
       sim_log: options.includeSimLog === false ? [] : localSimLog,
       team_history: options.includeSimLog === false ? [] : localTeamHistory,
@@ -5224,6 +5568,10 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     },
     db: {
       enabled: !!(adapter && adapter.enabled),
+      branch_coverage: {
+        loaded_rows: branchMatrixDbRows.length,
+        save_result: branchMatrixDbSave
+      },
       note: 'Supabase stores approved source data, teams, overrides, and saved analysis history. The deterministic browser runtime still uses generated/static data plus runtime_data.js for battle execution.'
     }
   };
@@ -5268,6 +5616,7 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.buildQaCoverageSummary = csBuildQaCoverageSummary;
   ChampionsSim.history.mergeQaCoverageSummaries = csMergeQaCoverageSummaries;
   ChampionsSim.history.buildTargetedQaSweepEvidence = csBuildTargetedQaSweepEvidence;
+  ChampionsSim.history.buildForcedBranchMatrixSweepEvidence = csBuildForcedBranchMatrixSweepEvidence;
   ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
   ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
 }

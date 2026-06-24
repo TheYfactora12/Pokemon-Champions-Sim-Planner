@@ -105,3 +105,25 @@ CREATE TABLE analysis_logs (
   log          JSONB NOT NULL,
   PRIMARY KEY (analysis_id, log_index)
 );
+
+CREATE TABLE branch_coverage_runs (
+  branch_key          TEXT PRIMARY KEY,
+  ruleset_id          TEXT NOT NULL DEFAULT 'champions_reg_m_doubles_bo3',
+  player_team_id      TEXT,
+  opponent_team_id    TEXT,
+  player_leads        JSONB NOT NULL DEFAULT '[]'::jsonb,
+  opponent_leads      JSONB NOT NULL DEFAULT '[]'::jsonb,
+  player_bring        JSONB NOT NULL DEFAULT '[]'::jsonb,
+  opponent_bring      JSONB NOT NULL DEFAULT '[]'::jsonb,
+  forced_actions      JSONB NOT NULL DEFAULT '[]'::jsonb,
+  qa_coverage_summary JSONB NOT NULL DEFAULT '{}'::jsonb,
+  result              TEXT,
+  turns               INT NOT NULL DEFAULT 0,
+  outcome_signature   TEXT,
+  outcome_drift_count INT NOT NULL DEFAULT 0,
+  run_count           INT NOT NULL DEFAULT 1,
+  build_id            TEXT,
+  source_url          TEXT,
+  first_seen_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  last_seen_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

@@ -1,0 +1,159 @@
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
+
+const ROOT = path.resolve(__dirname, '..');
+function makeStubEl() {
+  return {
+    style: {},
+    dataset: {},
+    classList: { add(){}, remove(){}, toggle(){}, contains(){ return false; } },
+    addEventListener(){},
+    removeEventListener(){},
+    querySelector(){ return null; },
+    querySelectorAll(){ return []; },
+    setAttribute(){},
+    getAttribute(){ return null; },
+    appendChild(){},
+    click(){},
+    value: '',
+    options: [],
+    selectedIndex: 0,
+    innerHTML: '',
+    textContent: ''
+  };
+}
+
+const document = {
+  documentElement: makeStubEl(),
+  body: makeStubEl(),
+  getElementById(){ return makeStubEl(); },
+  querySelector(){ return makeStubEl(); },
+  querySelectorAll(){ return []; },
+  createElement(){ return makeStubEl(); },
+  addEventListener(){},
+  removeEventListener(){}
+};
+
+const ctx = {
+  console, Math, Object, Array, Set, Map, JSON, Date, String, Number, Boolean, RegExp, Error, Symbol, parseFloat, parseInt, isFinite,
+  document,
+  window: {
+    document,
+    addEventListener(){},
+    removeEventListener(){},
+    matchMedia(){ return { matches: false, addEventListener(){}, removeEventListener(){} }; }
+  },
+  matchMedia(){ return { matches: false, addEventListener(){}, removeEventListener(){} }; },
+  localStorage: {
+    getItem(){ return null; },
+    setItem(){},
+    removeItem(){}
+  }
+};
+ctx.window.localStorage = ctx.localStorage;
+vm.createContext(ctx);
+
+function load(file) {
+  vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+}
+
+load('data.js');
+load('engine.js');
+load('ui.js');
+
+vm.runInContext([
+  'this.csBuildForcedBranchMatrixSweepEvidence = csBuildForcedBranchMatrixSweepEvidence;',
+  'this.csBranchMatrixRunKey = csBranchMatrixRunKey;'
+].join(' '), ctx);
+
+let pass = 0;
+let fail = 0;
+function T(name, fn) {
+  try {
+    fn();
+    pass++;
+    console.log('  PASS', name);
+  } catch (err) {
+    fail++;
+    console.log('  FAIL', name, '-', err.message);
+  }
+}
+function eq(actual, expected, msg) {
+  if (actual !== expected) throw new Error((msg || 'mismatch') + ': expected ' + JSON.stringify(expected) + ', got ' + JSON.stringify(actual));
+}
+function truthy(value, msg) {
+  if (!value) throw new Error(msg || 'expected truthy');
+}
+
+console.log('\n=== forced branch matrix tests ===\n');
+
+T('1. selected lead mode locks the lead pair', () => {
+  const sweep = ctx.csBuildForcedBranchMatrixSweepEvidence({
+    playerTeamId: 'targeted_proof_legal',
+    opponentTeamId: 'cofagrigus_tr',
+    playerLeadMode: 'selected',
+    opponentLeadMode: 'selected',
+    playerLeadNames: ['Orthworm', 'Kangaskhan'],
+    opponentLeadNames: ['Cofagrigus', 'Sinistcha'],
+    maxRuns: 2,
+    maxMovesPerMon: 1,
+    maxTargetsPerMove: 1
+  });
+  eq(sweep.status, 'complete', 'status');
+  eq(sweep.coverage_space.player_lead_pairs_considered, 1, 'player lead pair count');
+  eq(sweep.coverage_space.opponent_lead_pairs_considered, 1, 'opponent lead pair count');
+  truthy(sweep.runs.every((run) => run.player_bring[0] === 'Orthworm' && run.player_bring[1] === 'Kangaskhan'), 'player lead not locked');
+  truthy(sweep.runs.every((run) => run.opponent_bring[0] === 'Cofagrigus' && run.opponent_bring[1] === 'Sinistcha'), 'opponent lead not locked');
+});
+
+T('2. random lead mode rotates ordered lead combinations', () => {
+  const sweep = ctx.csBuildForcedBranchMatrixSweepEvidence({
+    playerTeamId: 'targeted_proof_legal',
+    opponentTeamId: 'cofagrigus_tr',
+    playerLeadMode: 'random',
+    opponentLeadMode: 'random',
+    maxLeadPairsPerSide: 2,
+    maxRuns: 8,
+    maxMovesPerMon: 1,
+    maxTargetsPerMove: 1
+  });
+  eq(sweep.coverage_space.player_lead_pairs_considered, 2, 'player random lead pair count');
+  eq(sweep.coverage_space.opponent_lead_pairs_considered, 2, 'opponent random lead pair count');
+  truthy(sweep.coverage_space.candidate_runs >= 4, 'candidate branch count too small');
+  truthy(new Set(sweep.runs.map((run) => run.player_bring.slice(0, 2).join('+'))).size > 1, 'random mode did not rotate player leads');
+});
+
+T('3. seen branch keys are deprioritized and counted', () => {
+  const first = ctx.csBuildForcedBranchMatrixSweepEvidence({
+    playerTeamId: 'targeted_proof_legal',
+    opponentTeamId: 'cofagrigus_tr',
+    playerLeadMode: 'selected',
+    opponentLeadMode: 'selected',
+    playerLeadNames: ['Orthworm', 'Kangaskhan'],
+    opponentLeadNames: ['Cofagrigus', 'Sinistcha'],
+    maxRuns: 1,
+    maxMovesPerMon: 1,
+    maxTargetsPerMove: 1
+  });
+  const key = first.runs[0].branch_key;
+  const second = ctx.csBuildForcedBranchMatrixSweepEvidence({
+    playerTeamId: 'targeted_proof_legal',
+    opponentTeamId: 'cofagrigus_tr',
+    playerLeadMode: 'selected',
+    opponentLeadMode: 'selected',
+    playerLeadNames: ['Orthworm', 'Kangaskhan'],
+    opponentLeadNames: ['Cofagrigus', 'Sinistcha'],
+    seenBranchKeys: [key],
+    maxRuns: 1,
+    maxMovesPerMon: 1,
+    maxTargetsPerMove: 1
+  });
+  eq(second.coverage_space.unseen_candidate_runs, 0, 'unseen count');
+  eq(second.runs[0].seen_before, true, 'seen flag');
+});
+
+console.log(`\nforced branch matrix tests: ${pass} pass, ${fail} fail\n`);
+process.exit(fail ? 1 : 0);

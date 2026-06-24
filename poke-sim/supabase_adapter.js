@@ -485,6 +485,100 @@
     }
   }
 
+  async function loadBranchCoverageSummary(filters) {
+    var sb = getClient();
+    if (!sb) return [];
+    filters = filters || {};
+    try {
+      var query = sb
+        .from('branch_coverage_runs')
+        .select('branch_key,player_team_id,opponent_team_id,player_leads,opponent_leads,run_count,last_seen_at,result,turns,outcome_signature,outcome_drift_count')
+        .order('last_seen_at', { ascending: false })
+        .limit(filters.limit || 5000);
+      if (filters.player_team_id) query = query.eq('player_team_id', filters.player_team_id);
+      if (filters.opponent_team_id) query = query.eq('opponent_team_id', filters.opponent_team_id);
+      var result = await query;
+      if (result.error) throw result.error;
+      return result.data || [];
+    } catch (err) {
+      log.warn('loadBranchCoverageSummary failed', err);
+      return [];
+    }
+  }
+
+  async function saveBranchCoverageRuns(payload) {
+    var sb = getClient();
+    if (!sb) return { enabled: false, saved: 0, updated: 0, inserted: 0 };
+    payload = payload || {};
+    var runs = Array.isArray(payload.runs) ? payload.runs.filter(function(run) {
+      return run && run.branch_key;
+    }) : [];
+    if (!runs.length) return { enabled: true, saved: 0, updated: 0, inserted: 0 };
+
+    try {
+      var keys = runs.map(function(run) { return run.branch_key; });
+      var existingResult = await sb
+        .from('branch_coverage_runs')
+        .select('branch_key,run_count,outcome_signature,outcome_drift_count')
+        .in('branch_key', keys);
+      if (existingResult.error) throw existingResult.error;
+
+      var existing = {};
+      (existingResult.data || []).forEach(function(row) {
+        existing[row.branch_key] = {
+          run_count: Number(row.run_count || 0),
+          outcome_signature: row.outcome_signature || null,
+          outcome_drift_count: Number(row.outcome_drift_count || 0)
+        };
+      });
+
+      var inserted = 0;
+      var updated = 0;
+      for (var i = 0; i < runs.length; i++) {
+        var run = runs[i];
+        var row = {
+          branch_key: run.branch_key,
+          ruleset_id: payload.ruleset_id || DEFAULT_RULESET_ID,
+          player_team_id: payload.player_team_id || run.player_team_id || null,
+          opponent_team_id: payload.opponent_team_id || run.opponent_team_id || null,
+          player_leads: Array.isArray(run.player_bring) ? run.player_bring.slice(0, 2) : [],
+          opponent_leads: Array.isArray(run.opponent_bring) ? run.opponent_bring.slice(0, 2) : [],
+          player_bring: run.player_bring || [],
+          opponent_bring: run.opponent_bring || [],
+          forced_actions: run.forced_actions || [],
+          qa_coverage_summary: run.qa_coverage_summary || {},
+          result: run.result || null,
+          turns: run.turns || 0,
+          outcome_signature: run.outcome_signature || null,
+          build_id: payload.build_id || null,
+          source_url: payload.source_url || null,
+          last_seen_at: new Date().toISOString()
+        };
+        if (Object.prototype.hasOwnProperty.call(existing, run.branch_key)) {
+          var prior = existing[run.branch_key] || {};
+          var changed = !!(prior.outcome_signature && row.outcome_signature && prior.outcome_signature !== row.outcome_signature);
+          row.run_count = Number(prior.run_count || 0) + 1;
+          row.outcome_drift_count = Number(prior.outcome_drift_count || 0) + (changed ? 1 : 0);
+          var updateResult = await sb
+            .from('branch_coverage_runs')
+            .update(row)
+            .eq('branch_key', run.branch_key);
+          if (updateResult.error) throw updateResult.error;
+          updated++;
+        } else {
+          row.run_count = 1;
+          var insertResult = await sb.from('branch_coverage_runs').insert(row);
+          if (insertResult.error) throw insertResult.error;
+          inserted++;
+        }
+      }
+      return { enabled: true, saved: runs.length, updated: updated, inserted: inserted };
+    } catch (err) {
+      log.warn('saveBranchCoverageRuns failed', err);
+      return { enabled: true, saved: 0, updated: 0, inserted: 0, error: err && err.message ? err.message : String(err) };
+    }
+  }
+
   // ── Public API ────────────────────────────────────────────────────────────
   window.SupabaseAdapter = {
     enabled:            ENABLED,
@@ -498,7 +592,9 @@
     loadAnalysisLogs,
     loadPriorSnapshot,
     loadShowdownDbStatus,
-    loadShowdownDbSnapshot
+    loadShowdownDbSnapshot,
+    loadBranchCoverageSummary,
+    saveBranchCoverageRuns
   };
 
   // M3 NOTE: Auto-merge of DB teams into TEAMS has moved to ui.js's
