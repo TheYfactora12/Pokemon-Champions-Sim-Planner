@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.59-team-evidence-dashboard';
+    return txt || 'v2.1.60-team-evidence-dashboard';
   } catch (e) {
-    return 'v2.1.59-team-evidence-dashboard';
+    return 'v2.1.60-team-evidence-dashboard';
   }
 }
 
@@ -6326,13 +6326,16 @@ async function csBuildBranchMatrixForOpponent(args) {
   });
   if (adapter && typeof adapter.saveBranchCoverageRuns === 'function' && matrix && Array.isArray(matrix.runs)) {
     try {
+      var branchSaveTimeoutMs = Number.isFinite(Number(options.branchMatrixSaveTimeoutMs))
+        ? Math.max(30000, Number(options.branchMatrixSaveTimeoutMs))
+        : 120000;
       saveResult = await csWithTimeout(adapter.saveBranchCoverageRuns({
         build_id: buildId,
         source_url: sourceUrl,
         player_team_id: branchPlayerKey,
         opponent_team_id: branchOpponentKey,
         runs: matrix.runs
-      }), 30000, {
+      }), branchSaveTimeoutMs, {
         enabled: true,
         saved: 0,
         updated: 0,
