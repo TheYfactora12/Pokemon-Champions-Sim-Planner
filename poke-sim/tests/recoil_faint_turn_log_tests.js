@@ -123,7 +123,16 @@ T('1. recoil KO marks attacker fainted before replacement snapshots', () => {
   const faintIdx = t1Events.findIndex(text => text === 'Arcanine fainted!');
   const replaceIdx = t1Events.findIndex(text => text === 'Whimsicott was sent out!');
   truthy(recoilIdx >= 0, 'Arcanine recoil event missing');
-  truthy(t1Events[recoilIdx].includes('[' + expectedRecoil + ' dmg]'), 'Head Smash should use 1/2 damage recoil');
+  const recoilRow = ((turn1.effect_events || []).find(item => item && item.move === 'Head Smash' && item.effect_kind === 'recoil')) || null;
+  truthy(recoilRow, 'Head Smash recoil effect event missing');
+  const expectedAppliedRecoil = Math.max(0, recoilRow.hp_before - recoilRow.hp_after);
+  eq(recoilRow.calculated_effect_damage, expectedRecoil, 'recoil effect should preserve Showdown formula amount');
+  eq(recoilRow.damage_applied_to_user, expectedAppliedRecoil, 'recoil effect should record actual HP lost');
+  eq(-recoilRow.hp_delta, expectedAppliedRecoil, 'recoil hp_delta should match actual HP lost');
+  truthy(t1Events[recoilIdx].includes('[' + expectedAppliedRecoil + ' dmg'), 'visible recoil log should show actual HP lost');
+  if (expectedRecoil !== expectedAppliedRecoil) {
+    truthy(t1Events[recoilIdx].includes('calc ' + expectedRecoil), 'visible recoil log should preserve formula recoil when HP-capped');
+  }
   truthy(faintIdx > recoilIdx, 'Arcanine should faint immediately after recoil reaches 0 HP');
   truthy(replaceIdx > faintIdx, 'replacement should happen after recoil faint cleanup');
 
@@ -219,6 +228,10 @@ T('4. overkill damage logs applied HP loss and preserves calculated damage evide
   const recoilLine = t1Events.find(text => text.includes('Arcanine was hurt by recoil!'));
   truthy(recoilLine, 'recoil line missing');
   truthy(recoilLine.includes('[5 dmg]'), 'recoil should be based on applied damage, not formula overkill');
+  const recoilRow = ((turn1.effect_events || []).find(item => item && item.move === 'Head Smash' && item.effect_kind === 'recoil')) || null;
+  truthy(recoilRow, 'Head Smash recoil effect event missing');
+  eq(recoilRow.calculated_effect_damage, 5, 'effect row should preserve calculated recoil');
+  eq(recoilRow.damage_applied_to_user, 5, 'effect row should record actual recoil HP lost');
 });
 
 console.log('\nrecoil faint turn-log tests:', pass + ' pass, ' + fail + ' fail\n');

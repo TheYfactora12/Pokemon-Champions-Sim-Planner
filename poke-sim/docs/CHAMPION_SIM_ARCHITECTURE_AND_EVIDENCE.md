@@ -1,6 +1,6 @@
 # Champion Sim Architecture and Evidence Map
 
-Status: current for `v2.1.43-qa-coverage-summary` on 2026-06-23.
+Status: current for `v2.1.44-recoil-applied-evidence` on 2026-06-23.
 
 Use this file when QA, data reviewers, or repo maintainers need to understand how the simulator works, where source truth enters the system, what Supabase does, and what evidence proves a battle result.
 
@@ -101,7 +101,7 @@ Important fields:
 | `recoil_rule`, `drain_rule` | Structured effect math tied to applied target HP loss |
 | `move_context` | Showdown description context when generated data has it |
 
-Current rule: downstream recoil and modeled drain healing must use `applied_damage`, not raw overkill damage.
+Current rule: downstream recoil and modeled drain healing must use `applied_damage`, not raw overkill damage. If recoil would deal more HP than the user has left, keep the Showdown formula amount as `calculated_effect_damage` and report actual HP lost as `damage_applied_to_user`.
 
 ## Effect Evidence
 
@@ -129,6 +129,8 @@ Important fields:
 | `effect_kind` | Recovery, HP cost, drain heal, residual drain, item recovery, recoil, etc. |
 | `hp_before`, `hp_after`, `hp_delta`, `max_hp` | Exact HP movement |
 | `rule` | Ratio/basis/rounding when the effect uses structured math |
+| `calculated_effect_damage` | Formula amount before the affected Pokemon's HP cap, when relevant |
+| `damage_applied_to_user` | Actual user HP lost after the HP cap, when relevant |
 | `move_context` | Showdown text context when available |
 
 QA should compare `hp_delta` to `hp_after - hp_before`, then compare the `rule` basis to the source-truth wording.
@@ -236,7 +238,7 @@ Only use the live mode when valid anon credentials are present and it is accepta
 
 Do not claim broad 100% accuracy until these are closed or explicitly accepted:
 
-- Fresh deployed-browser `v2.1.43` single-run, Run All, and QA Artifact proof with `qa_coverage_summary`.
+- Fresh deployed-browser `v2.1.44` single-run, Run All, and QA Artifact proof with corrected recoil applied-HP evidence.
 - Live DB runtime-source promotion or explicit static fallback signoff.
 - Full DB forensic-log retention design if Supabase must be the long-term audit store.
 - Remaining grouped battle-system mechanics beyond shipped move coverage: redirection, Protect family, switching/replacement, status, item edge cases, terrain/weather edge cases, and Champion-specific overrides.

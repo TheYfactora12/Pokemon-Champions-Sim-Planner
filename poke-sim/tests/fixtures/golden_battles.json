@@ -13,7 +13,7 @@
       ],
       "format": "doubles",
       "description": "Player (speed) vs Cofagrigus TR — seed 1337",
-      "expected_trace_hash": "bafa7978c3d84e3bb6b81e97484d8e756d61d59edf522667022be4dfe4a473d7",
+      "expected_trace_hash": "43d31810aeb64411f7a30e1f1230127c17bee5c844ebc9b7b6f570f6e4b1d713",
       "expected_winner": "win"
     },
     {

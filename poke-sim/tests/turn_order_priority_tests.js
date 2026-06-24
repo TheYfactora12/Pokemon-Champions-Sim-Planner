@@ -284,6 +284,9 @@ T('10. turn logs expose structured stacked damage evidence', function() {
   const recoilRow = effectRows.find(r => r.move === 'Flare Blitz' && r.effect_kind === 'recoil');
   truthy(recoilRow, 'recoil effect event missing');
   eq(recoilRow.source_damage, row.applied_damage, 'recoil effect event should reference applied target damage');
+  eq(recoilRow.calculated_effect_damage, row.recoil_damage, 'recoil effect should preserve calculated recoil amount');
+  eq(recoilRow.damage_applied_to_user, Math.max(0, recoilRow.hp_before - recoilRow.hp_after),
+    'recoil effect should record actual HP lost by the user');
 });
 
 console.log('\nturn order / priority:', pass + ' pass, ' + fail + ' fail\n');

@@ -4556,10 +4556,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         const _stRecoil = Math.max(1, Math.floor(attacker.maxHp * 0.25));
         const _stHpBeforeRecoil = attacker.hp;
         attacker.hp = Math.max(0, attacker.hp - _stRecoil);
-        log.push(`${attacker.name} is hit by Struggle recoil! [${_stRecoil} dmg]`);
+        const _stAppliedRecoil = Math.max(0, _stHpBeforeRecoil - attacker.hp);
+        log.push(`${attacker.name} is hit by Struggle recoil! [${_stAppliedRecoil} dmg${_stRecoil !== _stAppliedRecoil ? ', calc ' + _stRecoil : ''}]`);
         _recordEffectEvent(field, attacker, 'Struggle', 'recoil', _stHpBeforeRecoil, attacker.hp, {
           rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
-          damage_applied_to_user: _stRecoil
+          calculated_effect_damage: _stRecoil,
+          damage_applied_to_user: _stAppliedRecoil
         });
         if (attacker.hp === 0) {
           attacker.alive = false;
@@ -4598,10 +4600,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       const _stRecoil = Math.max(1, Math.floor(attacker.maxHp * 0.25));
       const _stHpBeforeRecoil = attacker.hp;
       attacker.hp = Math.max(0, attacker.hp - _stRecoil);
-      log.push(`${attacker.name} is hit by Struggle recoil! [${_stRecoil} dmg]`);
+      const _stAppliedRecoil = Math.max(0, _stHpBeforeRecoil - attacker.hp);
+      log.push(`${attacker.name} is hit by Struggle recoil! [${_stAppliedRecoil} dmg${_stRecoil !== _stAppliedRecoil ? ', calc ' + _stRecoil : ''}]`);
       _recordEffectEvent(field, attacker, 'Struggle', 'recoil', _stHpBeforeRecoil, attacker.hp, {
         rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
-        damage_applied_to_user: _stRecoil
+        calculated_effect_damage: _stRecoil,
+        damage_applied_to_user: _stAppliedRecoil
       });
       if (attacker.hp === 0) {
         attacker.alive = false;
@@ -5439,7 +5443,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       const hpBeforeRecoil = attacker.hp;
       const recoil = _ratioAmount(appliedDamage, recoilRule);
       attacker.hp = Math.max(0, attacker.hp - recoil);
-      log.push(`${attacker.name} was hurt by recoil! [${recoil} dmg]`);
+      const appliedRecoil = Math.max(0, hpBeforeRecoil - attacker.hp);
+      log.push(`${attacker.name} was hurt by recoil! [${appliedRecoil} dmg${recoil !== appliedRecoil ? ', calc ' + recoil : ''}]`);
       if (damageRow) {
         damageRow.recoil_damage = Number(recoil || 0);
         damageRow.recoil_hp_before = Number(hpBeforeRecoil || 0);
@@ -5448,7 +5453,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       _recordEffectEvent(field, attacker, move, 'recoil', hpBeforeRecoil, attacker.hp, {
         rule: _ratioRuleObject(recoilRule, 'applied_damage', 'half_up'),
         source_damage: appliedDamage,
-        damage_applied_to_user: recoil,
+        calculated_effect_damage: recoil,
+        damage_applied_to_user: appliedRecoil,
         damage_event_index: field && field._ctx && Array.isArray(field._ctx.turnDamageEvents)
           ? field._ctx.turnDamageEvents.length - 1
           : null,

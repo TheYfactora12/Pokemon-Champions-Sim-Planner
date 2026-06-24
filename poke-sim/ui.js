@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.43-qa-coverage-summary';
+    return txt || 'v2.1.44-recoil-applied-evidence';
   } catch (e) {
-    return 'v2.1.43-qa-coverage-summary';
+    return 'v2.1.44-recoil-applied-evidence';
   }
 }
 
@@ -3626,7 +3626,9 @@ function csQaBlankMechanicsSeen() {
     spread_damage: 0,
     hp_cap: 0,
     recoil: 0,
+    recoil_damage_rows: 0,
     drain_heal: 0,
+    drain_damage_rows: 0,
     recovery: 0,
     hp_cost: 0,
     delayed_recovery: 0,
@@ -3836,8 +3838,8 @@ function csBuildQaCoverageSummary(turnLog, opts) {
       if (csQaNonNeutralMod(row.screen_mod)) mechanics.screen_reduction += 1;
       if (csQaNonNeutralMod(row.weather_mod)) mechanics.weather_damage_modifier += 1;
       if (row.damage_capped_by_hp) mechanics.hp_cap += 1;
-      if (row.recoil_rule || row.recoil_damage != null || csQaTagsInclude(row.effect_tags, 'recoil')) mechanics.recoil += 1;
-      if (row.drain_rule || row.drain_heal_candidate != null || csQaTagsInclude(row.effect_tags, 'drain')) mechanics.drain_heal += 1;
+      if (row.recoil_rule || row.recoil_damage != null || csQaTagsInclude(row.effect_tags, 'recoil')) mechanics.recoil_damage_rows += 1;
+      if (row.drain_rule || row.drain_heal_candidate != null || csQaTagsInclude(row.effect_tags, 'drain')) mechanics.drain_damage_rows += 1;
       if (row.knock_off_boost || csQaNonNeutralMod(row.knock_off_boost_mod)) mechanics.knock_off_boost += 1;
       if (row.typed_item_boost || csQaNonNeutralMod(row.typed_item_boost_mod)) mechanics.typed_item_boost += 1;
       if (Number(row.attack_stat_stage_used || row.attack_stat_stage || 0) !== 0 || Number(row.defense_stat_stage_used || row.defense_stat_stage || 0) !== 0) {
@@ -6584,6 +6586,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Recoil applied HP evidence corrected',
+      detail: 'v2.1.44 keeps the Pokemon Showdown recoil formula amount as calculated_effect_damage, but damage_applied_to_user and visible recoil log damage now mean actual HP lost after the user HP cap. QA coverage also separates recoil effect occurrences from recoil damage-row evidence so one recoil is not counted twice.'
+    },
+    {
+      status: 'done',
       title: 'Type multiplier audit added',
       detail: 'v2.1.28 adds reports/type_multiplier_audit.md so reviewers can inspect each shipped move user, resolved move type, 4x/2x/1x/0.5x/0.25x/0x roster buckets, declared defensive Tera buckets, and dynamic move-type rules.'
     },
@@ -6688,6 +6695,11 @@ var CS_OVERVIEW_DATA = {
       status: 'validated',
       title: 'Latest v2.1.42 browser logs validate and expose effect evidence',
       detail: 'Six fresh GitHub Pages exports from v2.1.42 validate with zero errors and zero warnings across 34 turns, 124 action rows, 98 damage events, and 18 effect_events. They prove stable IDs, super-effective/resisted damage, crits, HP caps, recoil rows, Knock Off boost evidence, typed held-item boost evidence, stat-stage damage rows, priority actions, and Leftovers item recovery. They do not prove drain, Shed Tail, Wish, Leech Seed, spread rows, or screen reduction in that batch because those mechanics did not occur.'
+    },
+    {
+      status: 'validated',
+      title: 'Fresh v2.1.43 single logs exposed recoil evidence naming drift',
+      detail: 'Two fresh singles exports from the v2.1.43 public page validate structurally with zero errors and zero warnings across 20 turns. They confirm the new qa_coverage_summary is present, but they also exposed an export-evidence issue: when recoil KOed the user, hp_delta showed the actual HP lost while damage_applied_to_user still carried the uncapped formula recoil. v2.1.44 fixes that naming drift and adds validator coverage.'
     },
     {
       status: 'validated',

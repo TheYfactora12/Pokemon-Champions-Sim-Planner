@@ -703,6 +703,17 @@ function validateEffectEvents(turn, findings) {
           max_hp: numbers.max_hp
         }));
       }
+      if (row.damage_applied_to_user != null) {
+        const expectedAppliedToUser = Math.max(0, numbers.hp_before - numbers.hp_after);
+        if (Number(row.damage_applied_to_user) !== expectedAppliedToUser) {
+          findings.push(finding('error', 'effect-event-applied-user-damage-mismatch', 'damage_applied_to_user must equal actual HP lost by the affected Pokemon.', {
+            turn: turn && turn.turn,
+            index: i,
+            expected: expectedAppliedToUser,
+            actual: row.damage_applied_to_user
+          }));
+        }
+      }
     }
     if (row.rule != null && typeof row.rule !== 'object') {
       findings.push(finding('error', 'effect-event-rule-malformed', 'effect_events rule must be an object when present.', { turn: turn && turn.turn, index: i }));

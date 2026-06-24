@@ -606,12 +606,14 @@ function stripStableFields(payload) {
       hp_after: 90,
       hp_delta: -29,
       max_hp: 170,
+      damage_applied_to_user: 31,
       rule: {},
       move_context: { text: 'bad' }
     }];
     const res = validateTurnLogPayload(bad, { requireStable: true });
     truthy(res.findings.some(f => f.code === 'effect-event-missing-identity'), 'missing effect identity error');
     truthy(res.findings.some(f => f.code === 'effect-event-hp-delta-mismatch'), 'missing effect delta mismatch error');
+    truthy(res.findings.some(f => f.code === 'effect-event-applied-user-damage-mismatch'), 'missing applied user damage mismatch error');
     truthy(res.findings.some(f => f.code === 'effect-event-rule-missing-basis'), 'missing effect rule basis error');
     truthy(res.findings.some(f => f.code === 'effect-event-context-malformed'), 'missing effect context malformed error');
   });

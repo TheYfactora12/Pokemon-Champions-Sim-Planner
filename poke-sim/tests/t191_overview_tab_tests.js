@@ -60,6 +60,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Runtime naming cheat sheet added');
   inc(ui, 'Large-run QA artifact export added');
   inc(ui, 'QA coverage summary added to exports');
+  inc(ui, 'Recoil applied HP evidence corrected');
   inc(ui, 'Type multiplier audit added');
   inc(ui, 'Low Kick weight source added');
   inc(ui, 'Core shipped move parity closed');
@@ -106,6 +107,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Supabase app wiring is live for existing app tables');
   inc(ui, 'Local DB contract suite is green');
   inc(ui, 'Latest v2.1.42 browser logs validate and expose effect evidence');
+  inc(ui, 'Fresh v2.1.43 single logs exposed recoil evidence naming drift');
   inc(ui, 'Live Supabase freshness checks require `RUN_LIVE_DB=1`');
   inc(ui, 'overview-showdown-db-inspect');
   inc(ui, 'loadShowdownDbSnapshot');
