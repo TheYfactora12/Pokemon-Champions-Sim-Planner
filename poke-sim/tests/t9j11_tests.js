@@ -554,9 +554,10 @@ T('15g2. visible preloaded sim teams are approved Champion legal rows only', () 
     'cofagrigus_tr',
     'champions_arena_1st',
     'champions_arena_2nd',
-    'aurora_veil_froslass'
+    'aurora_veil_froslass',
+    'targeted_proof_legal'
   ];
-  eq(visible.length, expected.length, 'top-10 Champion testing catalog should be visible');
+  eq(visible.length, expected.length, 'approved Champion testing catalog should be visible');
   expected.forEach(key => truthy(visible.includes(key), key + ' should remain visible'));
   truthy(!TEAMS.champions_arena_3rd, 'still-conflicting tournament row should be removed from runtime catalog');
   truthy(!TEAMS.perish_trap_gengar, 'inferred perish-trap row should be removed from runtime catalog');

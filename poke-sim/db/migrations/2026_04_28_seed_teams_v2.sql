@@ -1,11 +1,11 @@
 -- Champions Sim seed data v2 (auto-generated)
--- Source: poke-sim/data.js (TEAMS literal, 27 teams)
+-- Source: poke-sim/data.js (TEAMS literal, 28 teams)
 -- Generator: poke-sim/tools/generate_seed_from_data.py
 -- DO NOT EDIT BY HAND. Re-run the generator and commit the diff.
 -- Run order: schema_v1.sql -> 2026_04_28_add_teams_metadata_column.sql -> THIS FILE -> rls_policies_v1.sql
 
 -- ============================================================
--- CLEAN SLATE: delete in reverse FK order (all 27 team IDs)
+-- CLEAN SLATE: delete in reverse FK order (all 28 team IDs)
 -- ============================================================
 DELETE FROM team_members WHERE team_id IN (
   'player',
@@ -34,7 +34,8 @@ DELETE FROM team_members WHERE team_id IN (
   'fabulous_sunroom',
   'sand_bulky_offense',
   'fire_ice_fullroom',
-  'zardx_snow_setup'
+  'zardx_snow_setup',
+  'targeted_proof_legal'
 );
 DELETE FROM teams WHERE team_id IN (
   'player',
@@ -63,7 +64,8 @@ DELETE FROM teams WHERE team_id IN (
   'fabulous_sunroom',
   'sand_bulky_offense',
   'fire_ice_fullroom',
-  'zardx_snow_setup'
+  'zardx_snow_setup',
+  'targeted_proof_legal'
 );
 DELETE FROM rulesets WHERE ruleset_id = 'champions_reg_m_doubles_bo3';
 
@@ -80,7 +82,7 @@ VALUES (
 );
 
 -- ============================================================
--- TEAMS (all 27)
+-- TEAMS (all 28)
 -- ============================================================
 INSERT INTO teams (team_id, name, label, mode, ruleset_id, source, source_ref, description, metadata)
 VALUES
@@ -110,7 +112,8 @@ VALUES
   ('fabulous_sunroom', 'Fabulous Sunroom', 'SAMPLE TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'fabulous_sunroom_champions_regma_v1', 'Calibration sunroom built from public sample-team archetypes and shipped legal catalog sets.', '{"assumption_register":["Roster was assembled from already-shipped legal sets to widen calibration coverage.","This is a calibration shell, not a pinned public paste."],"champion_pack_id":"fabulous_sunroom_champions_regma_v1","format":"champions","formatid":"champions-vgc-2026-regma","gametype":"doubles","legality_notes":"Derived sample shell repaired to Champions Reg M-A legality by replacing the banned Arcanine Life Orb slot with a legal berry item while preserving the same sunroom structure.","legality_status":"legal_inferred","provenance":{"author":"calibration","roster_source":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/","spread_source":"archetype-derived from shipped catalog","status":"derived","url":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/"},"ruleset":["Species Clause","Item Clause","Bring 6 Pick 4","Level 50"],"style":"sun"}'::jsonb),
   ('sand_bulky_offense', 'Sand Bulky Offense', 'SAMPLE TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'sand_bulky_offense_champions_regma_v1', 'Calibration sand offense built from shipped legal catalog sets and public sample-team archetypes.', '{"assumption_register":["Roster was assembled from already-shipped legal sets to widen calibration coverage.","This is a calibration shell, not a pinned public paste."],"champion_pack_id":"sand_bulky_offense_champions_regma_v1","format":"champions","formatid":"champions-vgc-2026-regma","gametype":"doubles","legality_notes":"Derived sample shell repaired to Champions Reg M-A legality by replacing the banned Gholdengo Choice Specs slot with a legal held item while preserving the same sand-offense role mix.","legality_status":"legal_inferred","provenance":{"author":"calibration","roster_source":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/","spread_source":"archetype-derived from shipped catalog","status":"derived","url":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/"},"ruleset":["Species Clause","Item Clause","Bring 6 Pick 4","Level 50"],"style":"sand"}'::jsonb),
   ('fire_ice_fullroom', 'Fire and Ice Fullroom', 'SAMPLE TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'fire_ice_fullroom_champions_regma_v1', 'Calibration room team built from shipped legal catalog sets and public sample-team archetypes.', '{"assumption_register":["Roster was assembled from already-shipped legal sets to widen calibration coverage.","This is a calibration shell, not a pinned public paste."],"champion_pack_id":"fire_ice_fullroom_champions_regma_v1","format":"champions","formatid":"champions-vgc-2026-regma","gametype":"doubles","legality_notes":"Derived sample shell repaired to Champions Reg M-A legality by replacing the banned Ursaluna-Bloodmoon Assault Vest slot with a legal held item while preserving the same fullroom structure.","legality_status":"legal_inferred","provenance":{"author":"calibration","roster_source":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/","spread_source":"archetype-derived from shipped catalog","status":"derived","url":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/"},"ruleset":["Species Clause","Item Clause","Bring 6 Pick 4","Level 50"],"style":"trick_room"}'::jsonb),
-  ('zardx_snow_setup', 'ZardX Snow Setup', 'SAMPLE TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'zardx_snow_setup_champions_regma_v1', 'Calibration snow offense built from shipped legal catalog sets and public sample-team archetypes.', '{"assumption_register":["Roster was assembled from already-shipped legal sets to widen calibration coverage.","This is a calibration shell, not a pinned public paste."],"champion_pack_id":"zardx_snow_setup_champions_regma_v1","format":"champions","formatid":"champions-vgc-2026-regma","gametype":"doubles","legality_notes":"Derived sample shell repaired to Champions Reg M-A legality by replacing the banned Milotic Life Orb slot with a legal held item while preserving the same Zard X snow setup shell.","legality_status":"legal_inferred","provenance":{"author":"calibration","roster_source":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/","spread_source":"archetype-derived from shipped catalog","status":"derived","url":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/"},"ruleset":["Species Clause","Item Clause","Bring 6 Pick 4","Level 50"],"style":"snow_mega"}'::jsonb);
+  ('zardx_snow_setup', 'ZardX Snow Setup', 'SAMPLE TEAM', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'zardx_snow_setup_champions_regma_v1', 'Calibration snow offense built from shipped legal catalog sets and public sample-team archetypes.', '{"assumption_register":["Roster was assembled from already-shipped legal sets to widen calibration coverage.","This is a calibration shell, not a pinned public paste."],"champion_pack_id":"zardx_snow_setup_champions_regma_v1","format":"champions","formatid":"champions-vgc-2026-regma","gametype":"doubles","legality_notes":"Derived sample shell repaired to Champions Reg M-A legality by replacing the banned Milotic Life Orb slot with a legal held item while preserving the same Zard X snow setup shell.","legality_status":"legal_inferred","provenance":{"author":"calibration","roster_source":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/","spread_source":"archetype-derived from shipped catalog","status":"derived","url":"https://www.smogon.com/forums/threads/4v4-doubles-uu-regulation-m-a.3774137/"},"ruleset":["Species Clause","Item Clause","Bring 6 Pick 4","Level 50"],"style":"snow_mega"}'::jsonb),
+  ('targeted_proof_legal', 'Targeted Proof Legal', 'QA PROOF', 'opponent', 'champions_reg_m_doubles_bo3', 'builtin', 'targeted_proof_legal_champions_regma_v1', 'Legal Champions QA proof team for targeted evidence: Shed Tail or Clangorous Soul HP cost, Wish delayed recovery, and Leech Seed residual drain.', '{"assumption_register":["This is a QA proof team, not a tournament paste.","Use Orthworm or Kommo-o for HP-cost proof, Kangaskhan for Wish delayed recovery proof, and Meganium for Leech Seed residual drain proof."],"champion_pack_id":"targeted_proof_legal_champions_regma_v1","format":"champions","formatid":"champions-vgc-2026-regma","gametype":"doubles","legality_notes":"Purpose-built legal Champions proof team. All species are allowed in Reg M-A, items are in the verified Champions pool, SP spreads obey 32-per-stat/66-total caps, and moves pass the generated Showdown-backed species/form legality gate.","legality_status":"legal","provenance":{"author":"qa","roster_source":"repo QA targeted proof coverage","spread_source":"legal Champions SP proof spreads","status":"proof-team","url":""},"ruleset":["Species Clause","Item Clause","Bring 6 Pick 4","Level 50"],"style":"balance"}'::jsonb);
 
 -- ============================================================
 -- TEAM MEMBERS
@@ -358,3 +361,12 @@ INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, 
   ('zardx_snow_setup', 4, 'Dragonite', 'Lum Berry', 'Multiscale', 'Adamant', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Extreme Speed","Dragon Dance","Fire Punch","Protect"]'::jsonb, NULL, 'Multiscale Setup Sweeper'),
   ('zardx_snow_setup', 5, 'Kingambit', 'Chople Berry', 'Supreme Overlord', 'Adamant', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Kowtow Cleave","Sucker Punch","Low Kick","Protect"]'::jsonb, NULL, 'Supreme Overlord Sweeper'),
   ('zardx_snow_setup', 6, 'Milotic', 'Leftovers', 'Competitive', 'Modest', 50, '{"atk":0,"def":0,"hp":2,"spa":32,"spd":32,"spe":0}'::jsonb, '["Blizzard","Scald","Weather Ball","Life Dew"]'::jsonb, NULL, 'Utility / Secret Weapon');
+
+-- targeted_proof_legal
+INSERT INTO team_members (team_id, slot, species, item, ability, nature, level, evs, moves, tera_type, role_tag) VALUES
+  ('targeted_proof_legal', 1, 'Orthworm', 'Sitrus Berry', 'Earth Eater', 'Careful', 50, '{"atk":1,"def":1,"hp":32,"spa":0,"spd":32,"spe":0}'::jsonb, '["Shed Tail","Protect","Helping Hand","Iron Head"]'::jsonb, NULL, 'HP-Cost Proof'),
+  ('targeted_proof_legal', 2, 'Kangaskhan', 'Leftovers', 'Scrappy', 'Careful', 50, '{"atk":0,"def":32,"hp":32,"spa":0,"spd":2,"spe":0}'::jsonb, '["Wish","Protect","Fake Out","Body Slam"]'::jsonb, NULL, 'Delayed Recovery Proof'),
+  ('targeted_proof_legal', 3, 'Meganium', 'Miracle Seed', 'Overgrow', 'Calm', 50, '{"atk":0,"def":1,"hp":32,"spa":0,"spd":32,"spe":0}'::jsonb, '["Leech Seed","Protect","Giga Drain","Synthesis"]'::jsonb, NULL, 'Residual Drain Proof'),
+  ('targeted_proof_legal', 4, 'Garchomp', 'Soft Sand', 'Rough Skin', 'Jolly', 50, '{"atk":32,"def":0,"hp":2,"spa":0,"spd":0,"spe":32}'::jsonb, '["Tackle","Protect","Dragon Claw","Earthquake"]'::jsonb, NULL, 'Legal Target / Damage Probe'),
+  ('targeted_proof_legal', 5, 'Kommo-o', 'Dragon Fang', 'Overcoat', 'Modest', 50, '{"atk":0,"def":0,"hp":1,"spa":32,"spd":0,"spe":32}'::jsonb, '["Clangorous Soul","Protect","Aura Sphere","Clanging Scales"]'::jsonb, NULL, 'Alternate HP-Cost Proof'),
+  ('targeted_proof_legal', 6, 'Pelipper', 'Mystic Water', 'Drizzle', 'Calm', 50, '{"atk":0,"def":2,"hp":32,"spa":0,"spd":32,"spe":0}'::jsonb, '["Protect","Tailwind","Weather Ball","U-turn"]'::jsonb, NULL, 'Weather / Speed Support');
