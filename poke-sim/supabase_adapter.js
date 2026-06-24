@@ -612,12 +612,36 @@
       if (!rowsToWrite.length) {
         return { enabled: true, saved: 0, updated: 0, inserted: 0 };
       }
-      var saveResult = await sb
-        .from('branch_coverage_runs')
-        .upsert(rowsToWrite, { onConflict: 'branch_key' });
-      if (saveResult && saveResult.error) throw saveResult.error;
+      var saveChunkSize = 80;
+      var saveResult = { enabled: true, saved: 0, updated: 0, inserted: 0, errors: [] };
 
-      return { enabled: true, saved: rowsToWrite.length, updated: updated, inserted: inserted };
+      for (var i = 0; i < rowsToWrite.length; i += saveChunkSize) {
+        var chunk = rowsToWrite.slice(i, i + saveChunkSize);
+        if (!chunk.length) continue;
+        var chunkUpdated = 0;
+        var chunkInserted = 0;
+        for (var c = 0; c < chunk.length; c++) {
+          var row = chunk[c] || {};
+          if (existing[row.branch_key]) chunkUpdated += 1;
+          else chunkInserted += 1;
+        }
+        var upsertResult = await sb
+          .from('branch_coverage_runs')
+          .upsert(chunk, { onConflict: 'branch_key' });
+        if (upsertResult && upsertResult.error) {
+          saveResult.errors.push(normalizeDbError(upsertResult.error));
+        } else {
+          saveResult.saved += chunk.length;
+          saveResult.updated += chunkUpdated;
+          saveResult.inserted += chunkInserted;
+        }
+      }
+
+      if (saveResult.errors.length) {
+        saveResult.error = 'one_or_more_branch_coverage_chunk_writes_failed';
+        return saveResult;
+      }
+      return saveResult;
     } catch (err) {
       log.warn('saveBranchCoverageRuns failed', err);
       return {

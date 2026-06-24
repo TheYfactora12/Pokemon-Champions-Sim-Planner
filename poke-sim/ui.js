@@ -6332,7 +6332,7 @@ async function csBuildBranchMatrixForOpponent(args) {
         player_team_id: branchPlayerKey,
         opponent_team_id: branchOpponentKey,
         runs: matrix.runs
-      }), 14000, {
+      }), 30000, {
         enabled: true,
         saved: 0,
         updated: 0,
