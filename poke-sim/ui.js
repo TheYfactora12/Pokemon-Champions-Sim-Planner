@@ -8652,6 +8652,16 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Team editor is guarded but not a fluid full builder yet',
       detail: 'The current edit-team surface now blocks illegal Champion SP saves, but it is still a clunky set editor rather than a fully customizable Champion team builder. Later UX work should support fast add/remove/reorder Pokemon, searchable species/forms/items/abilities/moves, SP sliders with live legality totals, import/export, DB save status, and rollback without breaking sim source truth.'
+    },
+    {
+      status: 'gap',
+      title: 'Misty Terrain does not block status infliction in the engine',
+      detail: 'Diagnostic test T8 in screens_terrain_item_tests.js confirmed that canInflictStatus has no terrain check. Sleep Powder, Will-O-Wisp, and other status moves freely land on grounded targets even when Misty Terrain is active. The fix requires adding a field.terrain === "misty" && isGrounded(target) guard inside canInflictStatus, mirroring the existing type-immunity and ability-immunity pattern.'
+    },
+    {
+      status: 'gap',
+      title: 'Grassy Surge ability and Grassy Terrain end-of-turn recovery not wired',
+      detail: 'Diagnostic test T9 in screens_terrain_item_tests.js confirmed two missing pieces: (a) the Grassy Surge ability does not set field.terrain on entry via the on-entry ability hook, so terrain is never established in live battles; (b) even if terrain were set manually, there is no end-of-turn healing loop for grounded mons under Grassy Terrain (the Grassy power-boost and Earthquake-weakening modifiers in calcDamage are present and working). Both pieces need implementation before Grassy Terrain is considered functional.'
     }
   ],
   next: [
