@@ -71,6 +71,7 @@ strategy = read('strategy-injectable.js')
 storage = read('storage_adapter.js')
 supabase = read('supabase_adapter.js')
 pokemon_legal_data = read('generated/pokemon_showdown_legal_data.js')
+pokemon_weight_data = read('generated/pokemon_showdown_species_weights.js')
 move_legality = read('move_legality.js')
 move_support = read('move_support.js')
 replay_coach = read('replay_coach.js')
@@ -85,6 +86,7 @@ html = html.replace('<script src="ui.js"></script>', '')
 html = html.replace('<script src="storage_adapter.js"></script>', '')
 html = html.replace('<script src="supabase_adapter.js"></script>', '')
 html = html.replace('<script src="generated/pokemon_showdown_legal_data.js"></script>', '')
+html = html.replace('<script src="generated/pokemon_showdown_species_weights.js"></script>', '')
 html = html.replace('<script src="move_legality.js"></script>', '')
 html = html.replace('<script src="move_support.js"></script>', '')
 html = html.replace('<script src="replay_coach.js"></script>', '')
@@ -124,6 +126,7 @@ inline_js = (
     + sanitize_inline_js(data) + '\n\n'
     + sanitize_inline_js(logger) + '\n\n'
     + sanitize_inline_js(pokemon_legal_data) + '\n\n'
+    + sanitize_inline_js(pokemon_weight_data) + '\n\n'
     + sanitize_inline_js(runtime_data) + '\n\n'
     + sanitize_inline_js(engine) + '\n\n'
     + sanitize_inline_js(storage) + '\n\n'

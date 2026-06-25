@@ -298,7 +298,20 @@ T('31. showInlinePilotCard falls back to raw opponent key for unknown team', () 
   inc(document._els['results-section'].children[0].innerHTML, 'unknown_team');
 });
 T('32. showInlinePilotCard escapes opponent team names', () => {
-  TEAMS.__analytics_xss__ = { name: '<img src=x onerror=alert(1)>', members: [] };
+  TEAMS.__analytics_xss__ = {
+    name: '<img src=x onerror=alert(1)>',
+    source: 'custom',
+    format: 'champions',
+    legality_status: 'legal',
+    members: [{
+      name: 'Pikachu',
+      item: '',
+      ability: 'Static',
+      nature: 'Timid',
+      evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+      moves: ['Thunderbolt']
+    }]
+  };
   delete document._els['inline-pilot-card'];
   document._els['results-section'] = makeStubEl('results-section');
   showInlinePilotCard('__analytics_xss__', fixture.weakResult);

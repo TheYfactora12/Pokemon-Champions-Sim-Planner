@@ -37,6 +37,7 @@ git push --force
 
 | Date | Who | Action | Notes |
 |---|---|---|---|
+| 2026-06-25 | @alfredocox | Created merge-candidate/yfactora-main-2026-06-25 | Fetched yfactora/main (71 files, 0 conflicts — clean fast-forward). Fixed 3 CI failures in `forced_branch_matrix_tests.js` (async test runner) and 1 in `phase5_turn_log_tests.js` (build id v2.1.59 → v2.1.60 drift). Bundle and sw.js were fresh from yfactora commits — no rebuild needed. PR open for review. |
 | 2026-05-15 | @TheYfactora12 | Mobile results stats fix | Collapsed the results summary and stat cards into a narrow-window stack so the win/loss bar and outcome metrics no longer run too long in half-screen or phone views. Added a regression for the results stats grid. |
 | 2026-05-15 | @TheYfactora12 | Mobile breakpoint correction | Narrowed the mobile-only tab picker so split-screen desktop widths keep the standard tab row, while true phone widths still get the compact picker. |
 | 2026-05-15 | @TheYfactora12 | Mobile tab picker follow-up | Replaced the phone-width tab strip with a compact section picker and wired the active tab state to stay synced with the picker so narrow mobile views stop relying on desktop-style tab navigation. |

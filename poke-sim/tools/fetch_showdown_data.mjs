@@ -140,6 +140,7 @@ function normalizeSpecies(rawPokedex, learnsets) {
     const types = inheritedSpeciesValue(rawPokedex, id, row || {}, 'types', []);
     const stats = inheritedSpeciesValue(rawPokedex, id, row || {}, 'baseStats', {});
     const abilities = inheritedSpeciesValue(rawPokedex, id, row || {}, 'abilities', {});
+    const weightkg = inheritedSpeciesValue(rawPokedex, id, row || {}, 'weightkg', 0);
     species[id] = {
       id,
       speciesKey: row.name || id,
@@ -151,6 +152,7 @@ function normalizeSpecies(rawPokedex, learnsets) {
       types: Array.isArray(types) ? types.slice() : [],
       stats,
       abilities,
+      weightkg,
       requiredItem: row.requiredItem || '',
       requiredMove: row.requiredMove || '',
       battleOnly: row.battleOnly || '',

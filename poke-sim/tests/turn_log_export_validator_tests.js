@@ -322,6 +322,167 @@ function stripStableFields(payload) {
     truthy(res.findings.some(f => f.code === 'no-valid-target-with-live-target'), 'missing live-target no-valid-target error');
   });
 
+  T('11b. no-valid-target skips ignore post-turn replacements sent after the skip', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    const milotic = turn.pre.roster.opponent[0];
+    const oppIncin = baseRow('opponent', 'active', 1, 'Incineroar', 'Sitrus Berry', 'Intimidate', 1);
+    const garchompBench = baseRow('opponent', 'bench', 0, 'Garchomp', 'Soft Sand', 'Rough Skin', 2);
+    const kingambitBench = baseRow('opponent', 'bench', 1, 'Kingambit', 'Black Glasses', 'Defiant', 3);
+    const faintedMilotic = Object.assign({}, milotic, {
+      key: 'opponent:fainted:0:Milotic',
+      zone: 'fainted',
+      status: 'fainted',
+      hp: 0,
+      hpLabel: '0%'
+    });
+    const faintedIncin = Object.assign({}, oppIncin, {
+      key: 'opponent:fainted:1:Incineroar',
+      zone: 'fainted',
+      status: 'fainted',
+      hp: 0,
+      hpLabel: '0%'
+    });
+    const garchompActive = Object.assign({}, garchompBench, {
+      key: 'opponent:active:0:Garchomp',
+      zone: 'active',
+      status: 'active',
+      zoneIndex: 0
+    });
+    const kingambitActive = Object.assign({}, kingambitBench, {
+      key: 'opponent:active:1:Kingambit',
+      zone: 'active',
+      status: 'active',
+      zoneIndex: 1
+    });
+
+    turn.actions.player = [
+      { actor: 'Incineroar', kind: 'move', move: 'Knock Off', target: 'Milotic' }
+    ];
+    turn.actions.opponent = [];
+    turn.events = [
+      { type: 'damage', text: 'Garchomp used Earthquake! -> Milotic [100 dmg, 0/100 HP]' },
+      { type: 'ko', text: 'Milotic fainted!' },
+      { type: 'damage', text: 'Garchomp used Earthquake! -> Incineroar [100 dmg, 0/100 HP]' },
+      { type: 'ko', text: 'Incineroar fainted!' },
+      { type: 'log', text: 'Incineroar used Knock Off! (no valid target)' },
+      { type: 'log', text: 'Garchomp was sent out!' },
+      { type: 'log', text: 'Kingambit was sent out!' }
+    ];
+    turn.pre.active.opponent = ['Milotic', 'Incineroar'];
+    turn.pre.bench.opponent = ['Garchomp', 'Kingambit'];
+    turn.pre.active_keys.opponent = [milotic.key, oppIncin.key];
+    turn.pre.bench_keys.opponent = [garchompBench.key, kingambitBench.key];
+    turn.pre.active_stable_keys.opponent = [milotic.stableKey, oppIncin.stableKey];
+    turn.pre.bench_stable_keys.opponent = [garchompBench.stableKey, kingambitBench.stableKey];
+    turn.pre.roster.opponent = [milotic, oppIncin, garchompBench, kingambitBench];
+    turn.pre.hp_pct[oppIncin.key] = 1;
+    turn.pre.hp_pct[garchompBench.key] = 1;
+    turn.pre.hp_pct[kingambitBench.key] = 1;
+    turn.pre.hp_pct_stable[oppIncin.stableKey] = 1;
+    turn.pre.hp_pct_stable[garchompBench.stableKey] = 1;
+    turn.pre.hp_pct_stable[kingambitBench.stableKey] = 1;
+    turn.post.active.opponent = ['Garchomp', 'Kingambit'];
+    turn.post.bench.opponent = [];
+    turn.post.active_keys.opponent = [garchompActive.key, kingambitActive.key];
+    turn.post.bench_keys.opponent = [];
+    turn.post.active_stable_keys.opponent = [garchompActive.stableKey, kingambitActive.stableKey];
+    turn.post.bench_stable_keys.opponent = [];
+    turn.post.roster.opponent = [faintedMilotic, faintedIncin, garchompActive, kingambitActive];
+    turn.post.hp_pct = {
+      [turn.post.active_keys.player[0]]: 1,
+      [garchompActive.key]: 1,
+      [kingambitActive.key]: 1
+    };
+    turn.post.hp_pct_stable = {
+      [turn.post.active_stable_keys.player[0]]: 1,
+      [milotic.stableKey]: 0,
+      [oppIncin.stableKey]: 0,
+      [garchompActive.stableKey]: 1,
+      [kingambitActive.stableKey]: 1
+    };
+    turn.post.speed_order = ['Garchomp', 'Kingambit'];
+    turn.post.speed_order_keys = [garchompActive.key, kingambitActive.key];
+    turn.post.speed_order_stable_keys = [garchompActive.stableKey, kingambitActive.stableKey];
+
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+    truthy(!res.findings.some(f => f.code === 'no-valid-target-with-live-target'), 'post-turn replacements should not make the earlier skip invalid');
+  });
+
+  T('11c. observed action order uses side and stable keys for mirror species', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    const playerIncin = Object.assign({}, baseRow('player', 'active', 0, 'Incineroar', 'Sitrus Berry', 'Intimidate', 0), {
+      calculatedStats: '202/157/110/90/128/88'
+    });
+    const playerWhim = Object.assign({}, baseRow('player', 'active', 1, 'Whimsicott', 'Focus Sash', 'Prankster', 3), {
+      calculatedStats: '137/78/95/121/96/184'
+    });
+    const oppZard = Object.assign({}, baseRow('opponent', 'active', 0, 'Charizard-Mega-X', 'Charizardite X', 'Tough Claws', 0), {
+      calculatedStats: '167/177/131/135/105/149'
+    });
+    const oppIncin = Object.assign({}, baseRow('opponent', 'active', 1, 'Incineroar', 'Sitrus Berry', 'Intimidate', 4), {
+      calculatedStats: '202/157/110/90/128/91'
+    });
+    const activePlayer = [playerIncin, playerWhim];
+    const activeOpponent = [oppZard, oppIncin];
+    const hpPct = {};
+    const hpPctStable = {};
+    for (const row of activePlayer.concat(activeOpponent)) {
+      hpPct[row.key] = 1;
+      hpPctStable[row.stableKey] = 1;
+    }
+    const snapshot = {
+      active: { player: ['Incineroar', 'Whimsicott'], opponent: ['Charizard-Mega-X', 'Incineroar'] },
+      bench: { player: [], opponent: [] },
+      active_keys: { player: activePlayer.map(row => row.key), opponent: activeOpponent.map(row => row.key) },
+      bench_keys: { player: [], opponent: [] },
+      active_stable_keys: { player: activePlayer.map(row => row.stableKey), opponent: activeOpponent.map(row => row.stableKey) },
+      bench_stable_keys: { player: [], opponent: [] },
+      hp_pct: hpPct,
+      hp_pct_stable: hpPctStable,
+      roster: { player: activePlayer, opponent: activeOpponent },
+      status: {},
+      field: { trick_room: 0 },
+      speed_control: { player: { tailwind_turns: 2 }, opponent: {} },
+      speed_order: ['Whimsicott', 'Incineroar', 'Charizard-Mega-X', 'Incineroar'],
+      speed_order_keys: [playerWhim.key, playerIncin.key, oppZard.key, oppIncin.key],
+      speed_order_stable_keys: [playerWhim.stableKey, playerIncin.stableKey, oppZard.stableKey, oppIncin.stableKey],
+      speed_order_details: [
+        { side: 'player', key: playerWhim.key, stableKey: playerWhim.stableKey, pokemon: 'Whimsicott', effective_speed: 368 },
+        { side: 'player', key: playerIncin.key, stableKey: playerIncin.stableKey, pokemon: 'Incineroar', effective_speed: 176 },
+        { side: 'opponent', key: oppZard.key, stableKey: oppZard.stableKey, pokemon: 'Charizard-Mega-X', effective_speed: 149 },
+        { side: 'opponent', key: oppIncin.key, stableKey: oppIncin.stableKey, pokemon: 'Incineroar', effective_speed: 91 }
+      ]
+    };
+    turn.pre = clone(snapshot);
+    turn.post = clone(snapshot);
+    turn.actions = {
+      player: [
+        { actor: 'Incineroar', kind: 'move', move: 'Knock Off', target: 'Charizard-Mega-X' },
+        { actor: 'Whimsicott', kind: 'move', move: 'Protect', target: 'Incineroar' }
+      ],
+      opponent: [
+        { actor: 'Charizard-Mega-X', kind: 'move', move: 'Flare Blitz', target: 'Whimsicott' },
+        { actor: 'Incineroar', kind: 'move', move: 'Flare Blitz', target: 'Whimsicott' }
+      ]
+    };
+    turn.events = [
+      { type: 'log', text: 'Whimsicott used Protect!' },
+      { type: 'log', text: 'Incineroar used Knock Off!' },
+      { type: 'damage', text: 'Incineroar used Knock Off! -> Charizard-Mega-X [30 dmg, 67/167 HP]' },
+      { type: 'log', text: 'Charizard-Mega-X used Flare Blitz!' },
+      { type: 'log', text: 'Whimsicott protected itself!' },
+      { type: 'log', text: 'Incineroar used Flare Blitz!' },
+      { type: 'log', text: 'Whimsicott protected itself!' }
+    ];
+
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+    truthy(!res.findings.some(f => f.code === 'observed-action-order-mismatch'), 'mirror Incineroar names should not corrupt speed order');
+  });
+
   T('12. calculated damage_events pass validation with modifier evidence', () => {
     const payload = stableFixture();
     payload.turnLog[0].damage_events = [{
@@ -332,6 +493,11 @@ function stripStableFields(payload) {
       move: 'Knock Off',
       damage_kind: 'calculated',
       damage: 44,
+      applied_damage: 44,
+      hp_delta: 44,
+      calculated_damage: 44,
+      overkill_damage: 0,
+      damage_capped_by_hp: false,
       target_hp_before: 160,
       target_hp_after: 116,
       target_max_hp: 170,
@@ -375,17 +541,123 @@ function stripStableFields(payload) {
       move: 'Knock Off',
       damage_kind: 'calculated',
       damage: 'big',
+      applied_damage: 50,
+      hp_delta: 43,
+      calculated_damage: 70,
+      overkill_damage: 19,
+      damage_capped_by_hp: false,
       target_hp_before: 160,
       target_hp_after: 116,
       target_max_hp: 170,
       move_type: '',
       category: '',
       type_effectiveness: 'strong'
+    }, {
+      attacker: 'Milotic',
+      target: 'Incineroar',
+      move: 'Scald',
+      damage_kind: 'fixed_or_direct',
+      damage: 70,
+      applied_damage: 50,
+      hp_delta: 43,
+      calculated_damage: 70,
+      overkill_damage: 19,
+      damage_capped_by_hp: false,
+      target_hp_before: 160,
+      target_hp_after: 116,
+      target_max_hp: 170
     }];
     const res = validateTurnLogPayload(payload, { requireStable: true });
     truthy(res.findings.some(f => f.code === 'damage-event-missing-number'), 'missing damage number error');
+    truthy(res.findings.some(f => f.code === 'damage-event-applied-mismatch'), 'missing applied damage mismatch error');
+    truthy(res.findings.some(f => f.code === 'damage-event-damage-mismatch'), 'missing damage mismatch error');
+    truthy(res.findings.some(f => f.code === 'damage-event-hp-delta-mismatch'), 'missing HP delta mismatch error');
+    truthy(res.findings.some(f => f.code === 'damage-event-overkill-mismatch'), 'missing overkill mismatch error');
+    truthy(res.findings.some(f => f.code === 'damage-event-cap-flag-mismatch'), 'missing cap flag mismatch error');
     truthy(res.findings.some(f => f.code === 'damage-calc-missing-number'), 'missing calculated numeric error');
     truthy(res.findings.some(f => f.code === 'damage-calc-missing-field'), 'missing calculated field error');
+  });
+
+  T('14. effect_events pass validation and malformed effect math fails', () => {
+    const valid = stableFixture();
+    valid.turnLog[0].effect_events = [{
+      actor: 'Incineroar',
+      actor_key: 'player:slot:0:Incineroar',
+      side: 'player',
+      move: 'Flare Blitz',
+      effect_kind: 'recoil',
+      hp_before: 120,
+      hp_after: 90,
+      hp_delta: -30,
+      max_hp: 170,
+      rule: { numerator: 33, denominator: 100, basis: 'applied_damage', rounding: 'half_up' },
+      source_damage: 91,
+      damage_applied_to_user: 30,
+      move_context: 'Has 33% recoil.'
+    }];
+    eq(validateTurnLogPayload(valid, { requireStable: true }).summary.errors, 0, 'valid effect row should pass');
+
+    const bad = stableFixture();
+    bad.turnLog[0].effect_events = [{
+      actor: 'Incineroar',
+      move: 'Flare Blitz',
+      effect_kind: '',
+      hp_before: 120,
+      hp_after: 90,
+      hp_delta: -29,
+      max_hp: 170,
+      damage_applied_to_user: 31,
+      rule: {},
+      move_context: { text: 'bad' }
+    }];
+    const res = validateTurnLogPayload(bad, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'effect-event-missing-identity'), 'missing effect identity error');
+    truthy(res.findings.some(f => f.code === 'effect-event-hp-delta-mismatch'), 'missing effect delta mismatch error');
+    truthy(res.findings.some(f => f.code === 'effect-event-applied-user-damage-mismatch'), 'missing applied user damage mismatch error');
+    truthy(res.findings.some(f => f.code === 'effect-event-rule-missing-basis'), 'missing effect rule basis error');
+    truthy(res.findings.some(f => f.code === 'effect-event-context-malformed'), 'missing effect context malformed error');
+  });
+
+  T('15. qa_coverage_summary passes when totals match turnLog evidence', () => {
+    const payload = stableFixture();
+    payload.qa_coverage_summary = {
+      schema_version: 'champions-qa-coverage-v1',
+      totals: {
+        turns: 1,
+        action_rows: 2,
+        damage_events: 0,
+        effect_events: 0,
+        turns_with_damage_events: 0,
+        turns_with_effect_events: 0
+      },
+      mechanics_seen: { damage_events: 0, effect_events: 0 },
+      source_truth_versions: { pokemon_showdown: { source_repository: 'https://github.com/smogon/pokemon-showdown' } },
+      missing_targeted_proof: [],
+      moves_seen: { damage: {}, effects: {} },
+      effect_kinds: {}
+    };
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    eq(res.summary.errors, 0, JSON.stringify(res.findings));
+  });
+
+  T('16. qa_coverage_summary fails when totals drift from turnLog evidence', () => {
+    const payload = stableFixture();
+    payload.qa_coverage_summary = {
+      schema_version: 'champions-qa-coverage-v1',
+      totals: {
+        turns: 2,
+        damage_events: 1,
+        effect_events: 0,
+        turns_with_damage_events: 0,
+        turns_with_effect_events: 0
+      },
+      mechanics_seen: {},
+      source_truth_versions: {},
+      missing_targeted_proof: []
+    };
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'qa-coverage-total-mismatch' && f.field === 'turns'), 'missing QA coverage turn mismatch');
+    truthy(res.findings.some(f => f.code === 'qa-coverage-total-mismatch' && f.field === 'damage_events'), 'missing QA coverage damage mismatch');
   });
 
   console.log('\nturn log export validator:', pass + ' pass, ' + fail + ' fail\n');

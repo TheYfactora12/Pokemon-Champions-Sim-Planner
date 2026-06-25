@@ -56,6 +56,40 @@
   var speciesIndex = buildSpeciesIndex();
   var moveIndex = buildMoveIndex();
 
+  // These are learnset supplements, not species aliases. Stats, typing,
+  // sprite, Mega state, and display identity remain the exact form row.
+  var FORM_LEARNSET_SUPPLEMENTS = {
+    'Rotom-Fan': ['Rotom'],
+    'Rotom-Frost': ['Rotom'],
+    'Rotom-Heat': ['Rotom'],
+    'Rotom-Mow': ['Rotom'],
+    'Rotom-Wash': ['Rotom']
+  };
+
+  // Champion preview forms that exist in app data before the generated
+  // Showdown snapshot has an exact species key. Keep the app form identity
+  // and only borrow the explicit learnset rows listed here.
+  var CHAMPIONS_VIRTUAL_FORM_LEARNSETS = {
+    'Floette (Eternal Flower)-Mega': {
+      aliases: [
+        'Floette (Eternal Flower)-Mega',
+        'Floette-Eternal-Mega',
+        'Floette-Mega-EF',
+        'Floette-Mega Eternal Flower'
+      ],
+      learnsetKeys: ['Floette-Eternal', 'Floette'],
+      notes: 'Champion-specific Mega Eternal Flower form uses Eternal Flower/Floette learnset rows until the generated source has an exact form key.'
+    }
+  };
+
+  Object.keys(CHAMPIONS_VIRTUAL_FORM_LEARNSETS).forEach(function(key) {
+    var rule = CHAMPIONS_VIRTUAL_FORM_LEARNSETS[key] || {};
+    speciesIndex[toId(key)] = key;
+    (rule.aliases || []).forEach(function(alias) {
+      speciesIndex[toId(alias)] = key;
+    });
+  });
+
   function canonicalSpeciesKey(speciesKey) {
     var raw = clean(speciesKey);
     if (!raw) return '';
@@ -82,6 +116,7 @@
   function learnsetSpeciesKey(speciesKey) {
     var canonical = canonicalSpeciesKey(speciesKey);
     if (!canonical || !data || !data.species) return '';
+    if (CHAMPIONS_VIRTUAL_FORM_LEARNSETS[canonical]) return canonical;
     var row = data.species[canonical];
     if (!row) return '';
     if (row.moves && Object.keys(row.moves).length) return canonical;
@@ -90,6 +125,24 @@
       if (base && data.species[base] && data.species[base].moves) return base;
     }
     return canonical;
+  }
+
+  function candidateLearnsetKeys(species) {
+    var out = [];
+    if (!species) return out;
+    var virtualRule = CHAMPIONS_VIRTUAL_FORM_LEARNSETS[species];
+    if (virtualRule) {
+      (virtualRule.learnsetKeys || []).forEach(function(key) {
+        if (data && data.species && data.species[key]) out.push(key);
+      });
+      return out;
+    }
+    var exact = learnsetSpeciesKey(species);
+    if (exact && data && data.species && data.species[exact]) out.push(exact);
+    (FORM_LEARNSET_SUPPLEMENTS[species] || []).forEach(function(key) {
+      if (data && data.species && data.species[key] && out.indexOf(key) === -1) out.push(key);
+    });
+    return out;
   }
 
   function moveDisplayName(moveId, fallback) {
@@ -132,11 +185,31 @@
         notes: 'Move was not found in Pokemon Showdown moves data.'
       };
     }
-    var learnKey = learnsetSpeciesKey(species);
-    var row = learnKey ? data.species[learnKey] : null;
-    var codes = row && row.moves ? row.moves[moveId] : '';
+    var learnKeys = candidateLearnsetKeys(species);
+    var learnKey = '';
+    var row = null;
+    var codes = '';
+    for (var i = 0; i < learnKeys.length; i++) {
+      var key = learnKeys[i];
+      var candidateRow = data.species[key];
+      var candidateCodes = candidateRow && candidateRow.moves ? candidateRow.moves[moveId] : '';
+      if (candidateCodes) {
+        learnKey = key;
+        row = candidateRow;
+        codes = candidateCodes;
+        break;
+      }
+      if (!row) {
+        learnKey = key;
+        row = candidateRow;
+      }
+    }
     var legal = !!codes;
     var inherited = (row && row.inheritedFrom) || (learnKey && learnKey !== species ? learnKey : '');
+    var virtualNotes = CHAMPIONS_VIRTUAL_FORM_LEARNSETS[species] ? CHAMPIONS_VIRTUAL_FORM_LEARNSETS[species].notes : '';
+    var supplementNotes = FORM_LEARNSET_SUPPLEMENTS[species] && inherited
+      ? ' Form identity remains ' + species + '; move is accepted through an explicit shared learnset supplement.'
+      : '';
     return {
       legal: legal,
       speciesKey: clean(speciesKey),
@@ -147,7 +220,7 @@
       sourceVersion: data.sourceCommitOrVersion,
       reason: legal ? 'learnset_match' : 'not_in_species_form_learnset',
       notes: legal
-        ? (inherited ? 'Legal via ' + inherited + ' learnset.' : 'Legal for exact species/form learnset.')
+        ? ((inherited ? 'Legal via ' + inherited + ' learnset.' : 'Legal for exact species/form learnset.') + supplementNotes + (virtualNotes ? ' ' + virtualNotes : ''))
         : 'Move exists globally but is not present in this species/form learnset.',
       learnMethodCodes: codes,
       inheritedFrom: inherited

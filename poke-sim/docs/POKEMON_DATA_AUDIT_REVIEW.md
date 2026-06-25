@@ -29,11 +29,12 @@ node poke-sim/tools/generate-pokemon-data-audit.js \
   --pokedex /private/tmp/pokedex.ts \
   --learnsets /private/tmp/learnsets.ts \
   --moves /private/tmp/moves.ts \
+  --move-text /private/tmp/text-moves.ts \
   --source-commit 3f5079d395ad018f13e8f785a675a13bd4cbf59e \
   --source-date 2026-05-24
 ```
 
-The source commit/date must be updated when the upstream Pokemon Showdown source files are refreshed.
+The source commit/date must be updated when the upstream Pokemon Showdown source files are refreshed. `--move-text` should point at Pokemon Showdown `data/text/moves.ts`; it supplies official move descriptions such as recoil wording for QA review.
 
 After regeneration, run the focused drift guardrail suite:
 

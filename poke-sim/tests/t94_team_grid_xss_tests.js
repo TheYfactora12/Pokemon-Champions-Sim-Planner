@@ -185,10 +185,11 @@ T('2. renderTeamsGrid hides invalid teams from the runnable catalog', () => {
   falsy(teamsGrid.innerHTML.includes('Item Clause violation: duplicate items: Sitrus Berry'), 'hidden legality reason leaked');
 });
 
-T('3. renderTeamsGrid labels inferred Champions teams without SV fallback copy', () => {
+T('3. renderTeamsGrid removes inferred preloaded teams instead of showing SV fallback copy', () => {
   vm.runInContext('TEAMS_FILTER = "all";', ctx);
   renderTeamsGrid();
-  inc(teamsGrid.innerHTML, 'Legal (inferred)', 'inferred legality label');
+  falsy(teamsGrid.innerHTML.includes('Inferred Champions Fixture'), 'inferred preloaded team should be removed from runnable grid');
+  falsy(teamsGrid.innerHTML.includes('Legal (inferred)'), 'inferred legality label should not render for removed rows');
   falsy(teamsGrid.innerHTML.includes('Legal (inferred SV spreads)'), 'stale SV fallback label leaked');
 });
 

@@ -63,7 +63,25 @@
 // v66-tera-blast-parity [2026-06-22] - Tera Blast dynamic type/category parity.
 // v67-log-target-guard [2026-06-22] - No-valid-target log guard and Overview sync status.
 // v68-live-log-proof [2026-06-22] - Overview updated with v2.1.33 live log proof.
-const CACHE_NAME = 'champions-sim-v68-live-log-proof';
+// v69-low-kick-weight-parity [2026-06-23] - Showdown species weights and Low Kick variable base-power parity.
+// v70-core-move-parity [2026-06-23] - Remaining shipped move parity, secondary effects, accuracy, and special-case damage coverage.
+// v71-damage-log-team-catalog [2026-06-23] - Applied-vs-calculated damage logs and approved Champion top-10 runtime catalog.
+// v72-log-validator-replacement [2026-06-23] - No-valid-target validator ignores post-turn replacements not available at skip time.
+// v73-stable-action-identity [2026-06-23] - Turn-log actions export stable actor/target keys for mirror-species validation.
+// v74-turn-log-team-roster [2026-06-23] - Turn-log exports include full team roster metadata for QA review.
+// v75-recoil-showdown-context [2026-06-23] - QA baseline exposes Showdown recoil metadata and move text.
+// v78-recoil-applied-evidence [2026-06-23] - Recoil effect events separate calculated recoil from actual HP lost.
+// v79-targeted-qa-proof [2026-06-24] - Targeted QA proof artifact clears named missing_targeted_proof gates.
+// v80-targeted-qa-sweep [2026-06-24] - QA artifact includes forced long-tail mechanics sweep alongside retained normal sim evidence.
+// v81-forced-branch-sweep [2026-06-24] - Engine supports forced move/target branches for exhaustive QA sweeps.
+// v84-strategy-priority-board [2026-06-24] - Strategy tab prioritizes coach calls before evidence tables.
+// v85-sim-test-scope [2026-06-24] - Simulator can scope Run All to selected matchup or the preloaded suite.
+// v90-branch-progress-counters [2026-06-24] - Tactical Sweep progress uses branch counters instead of W/L zeroes.
+// v91-cache-refresh-reload [2026-06-24] - Reload once after build cache cleanup so testers land on the fresh bundle.
+// v92-tactical-depth-selector [2026-06-24] - Tactical Sweep exposes Quick/Deep/Full branch-depth caps.
+// v93-team-evidence-dashboard [2026-06-24] - Strategy Dashboard merges per-team sim and tactical evidence.
+// v94-tactical-sweep-watchdog [2026-06-24] - Prevent single-opponent tactical sweep from stalling on DB reads/writes.
+const CACHE_NAME = 'champions-sim-v94-tactical-sweep-watchdog';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
@@ -75,6 +93,7 @@ const APP_ASSETS = [
   './data.js',
   './logger.js',
   './generated/pokemon_showdown_legal_data.js',
+  './generated/pokemon_showdown_species_weights.js',
   './runtime_data.js',
   './engine.js',
   './move_legality.js',

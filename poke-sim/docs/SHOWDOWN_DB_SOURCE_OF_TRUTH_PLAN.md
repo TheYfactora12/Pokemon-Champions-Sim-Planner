@@ -27,7 +27,7 @@ The browser may still receive generated JS for offline GitHub Pages support. The
 
 ## Current Runtime Bridge
 
-As of 2026-06-06, the battle engine treats generated Pokemon Showdown move rows as the primary metadata layer for imported/custom moves. Move type, category, base power, accuracy, priority, target, and contact flags read from `generated/pokemon_showdown_legal_data.js` first when a row exists; local JS tables remain as a fallback for Champions-only/custom gaps until Supabase approved views are live.
+As of 2026-06-06, the battle engine treats generated Pokemon Showdown move rows as the primary metadata layer for imported/custom moves. Move type, category, base power, accuracy, priority, target, and contact flags read from `generated/pokemon_showdown_legal_data.js` first when a row exists; local JS tables remain as a fallback for Champions-only/custom gaps until Supabase approved views are live. As of 2026-06-23, generated move rows also preserve official Pokemon Showdown `data/text/moves.ts` `shortDesc`/`desc` text for QA review context.
 
 As of 2026-06-22, generated Showdown move `target` values are not consumed raw by battle logic. `runtime_data.js` canonicalizes upstream names such as `allAdjacentFoes` into engine categories such as `all-adjacent-foes`; `engine.js` normalizes again at the execution boundary and keeps a tested fallback only for engine-only VM harnesses. This prevents a DB/generated vocabulary change from silently becoming a targeting behavior bug.
 
@@ -43,7 +43,7 @@ This is not the final DB state. As of 2026-06-07, the repo has a migration candi
 
 These should be stored exactly as normalized Showdown-derived rows:
 
-- moves: `priority`, `target`, `flags`, `type`, `category`, `basePower`, `accuracy`, `pp`, `status`, `volatileStatus`, `sideCondition`, `slotCondition`, `pseudoWeather`, `boosts`, `secondary`, `secondaries`, `self`, `drain`, `recoil`, `multihit`, `critRatio`, `selfSwitch`
+- moves: `priority`, `target`, `flags`, `type`, `category`, `basePower`, `accuracy`, `pp`, `status`, `volatileStatus`, `sideCondition`, `slotCondition`, `pseudoWeather`, `boosts`, `secondary`, `secondaries`, `self`, `drain`, `recoil`, `multihit`, `critRatio`, `selfSwitch`, `shortDesc`, `desc`
 - species/forms: names, ids, base species, formes, required items, types, base stats, abilities, aliases, learnsets
 - items: ids, names, fling data, berry flags, mega stone fields, descriptions
 - abilities: ids, names, ratings, descriptions, nonstandard flags

@@ -9,7 +9,7 @@ const vm = require('vm');
 const fs = require('fs');
 const path = require('path');
 const { mockSupabaseClient, installAdapter, offlineMode, assertNoServiceRole } = require('./_db_helpers.js');
-const BUNDLE_SIZE_LIMIT_BYTES = 5376 * 1024;
+const BUNDLE_SIZE_LIMIT_BYTES = 5428 * 1024;
 
 // Test harness
 var _passed = 0, _failed = 0, _total = 0;
@@ -163,7 +163,19 @@ describe('Module 9 — Hardening / advisor / migration baseline suite (10 cases)
     var bundlePath = path.join(__dirname, '..', 'pokemon-champion-2026.html');
     var stats = fs.statSync(bundlePath);
     // Current bundle intentionally inlines Supabase-js and generated Showdown data.
-    eq(stats.size < BUNDLE_SIZE_LIMIT_BYTES, true, 'bundle size < 5.25 MiB after all modules');
+    eq(stats.size < BUNDLE_SIZE_LIMIT_BYTES, true, 'bundle size < 5.30 MiB after all modules');
+  });
+
+  T('T-hard-11', function() {
+    var schemaPath = path.join(__dirname, '..', 'db', 'schema_v1.sql');
+    var migrationPath = path.join(__dirname, '..', 'db', 'migrations', '2026_06_24_branch_coverage_runs.sql');
+    var adapterPath = path.join(__dirname, '..', 'supabase_adapter.js');
+    var schema = fs.readFileSync(schemaPath, 'utf8');
+    var migration = fs.readFileSync(migrationPath, 'utf8');
+    var adapter = fs.readFileSync(adapterPath, 'utf8');
+    truthy(/branch_coverage_runs[\s\S]*tactical_summary\s+JSONB/.test(schema), 'schema_v1 branch coverage tactical_summary missing');
+    truthy(/ADD COLUMN IF NOT EXISTS tactical_summary/.test(migration), 'branch coverage migration tactical_summary missing');
+    truthy(/tactical_summary/.test(adapter), 'adapter does not load/save tactical_summary');
   });
 
   // Summary

@@ -220,24 +220,6 @@ function actorOrderFromEvents(events) {
   return out;
 }
 
-function rosterByName(snapshot) {
-  const out = new Map();
-  for (const side of SIDES) {
-    const rows = ((snapshot && snapshot.roster && snapshot.roster[side]) || []);
-    for (const row of rows) out.set(rowName(row), row);
-  }
-  return out;
-}
-
-function speedDetailsByName(snapshot) {
-  const out = new Map();
-  for (const row of (Array.isArray(snapshot && snapshot.speed_order_details) ? snapshot.speed_order_details : [])) {
-    if (!row || !row.pokemon) continue;
-    out.set(String(row.pokemon), row);
-  }
-  return out;
-}
-
 function movePriority(move, row) {
   let p = Object.prototype.hasOwnProperty.call(PRIORITY, move) ? PRIORITY[move] : 0;
   if (row && row.ability === 'Prankster' && STATUS_MOVES.has(move)) p += 1;
@@ -258,8 +240,75 @@ function parsedCalculatedSpeed(row) {
   return null;
 }
 
+function speedDetailForRow(row, snapshot) {
+  const rows = Array.isArray(snapshot && snapshot.speed_order_details) ? snapshot.speed_order_details : [];
+  if (!row || !rows.length) return null;
+  if (row.stableKey) {
+    const byStable = rows.find(detail => detail && String(detail.stableKey || '') === String(row.stableKey));
+    if (byStable) return byStable;
+  }
+  if (row.key) {
+    const byKey = rows.find(detail => detail && String(detail.key || '') === String(row.key));
+    if (byKey) return byKey;
+  }
+  const name = rowName(row);
+  const byName = rows.filter(detail => detail && String(detail.pokemon || '') === name);
+  return byName.length === 1 ? byName[0] : null;
+}
+
+function speedOrderIndexForRow(row, snapshot) {
+  if (!row || !snapshot) return null;
+  const details = Array.isArray(snapshot.speed_order_details) ? snapshot.speed_order_details : [];
+  if (row.stableKey && details.length) {
+    const idx = details.findIndex(detail => detail && String(detail.stableKey || '') === String(row.stableKey));
+    if (idx >= 0) return idx;
+  }
+  if (row.key && details.length) {
+    const idx = details.findIndex(detail => detail && String(detail.key || '') === String(row.key));
+    if (idx >= 0) return idx;
+  }
+  const stableKeys = Array.isArray(snapshot.speed_order_stable_keys) ? snapshot.speed_order_stable_keys.map(String) : [];
+  if (row.stableKey && stableKeys.length) {
+    const idx = stableKeys.indexOf(String(row.stableKey));
+    if (idx >= 0) return idx;
+  }
+  const keys = Array.isArray(snapshot.speed_order_keys) ? snapshot.speed_order_keys.map(String) : [];
+  if (row.key && keys.length) {
+    const idx = keys.indexOf(String(row.key));
+    if (idx >= 0) return idx;
+  }
+  const names = Array.isArray(snapshot.speed_order) ? snapshot.speed_order.map(String) : [];
+  const name = rowName(row);
+  const matches = [];
+  names.forEach((candidate, idx) => {
+    if (candidate === name) matches.push(idx);
+  });
+  return matches.length === 1 ? matches[0] : null;
+}
+
+function activeRowForAction(snapshot, actionRecord) {
+  const actorKey = actionRecord && actionRecord.action && actionRecord.action.actor_key;
+  if (actorKey) {
+    for (const row of ((snapshot && snapshot.roster && snapshot.roster[actionRecord.side]) || [])) {
+      if (!row || row.status !== 'active') continue;
+      if (String(row.stableKey || '') === String(actorKey) || String(row.key || '') === String(actorKey)) return row;
+    }
+  }
+  const rows = ((snapshot && snapshot.roster && snapshot.roster[actionRecord.side]) || [])
+    .filter(row => row && row.status === 'active')
+    .filter(row => rowName(row) === actionRecord.action.actor || row.species === actionRecord.action.actor);
+  return rows.length === 1 ? rows[0] : null;
+}
+
+function sideFromStableKey(key) {
+  const text = String(key || '');
+  if (text.startsWith('player:')) return 'player';
+  if (text.startsWith('opponent:')) return 'opponent';
+  return null;
+}
+
 function snapshotEffectiveSpeed(row, snapshot) {
-  const detail = row && speedDetailsByName(snapshot).get(rowName(row));
+  const detail = speedDetailForRow(row, snapshot);
   if (detail && Number.isFinite(Number(detail.effective_speed))) {
     return Math.floor(Number(detail.effective_speed));
   }
@@ -294,25 +343,37 @@ function validateObservedActionOrder(turn, findings) {
   const observed = actorOrderFromEvents(turn.events);
   if (observed.length < 2 || !turn.pre || !turn.actions) return;
 
-  const actionRows = []
-    .concat(Array.isArray(turn.actions.player) ? turn.actions.player : [])
-    .concat(Array.isArray(turn.actions.opponent) ? turn.actions.opponent : [])
-    .filter(a => a && a.actor && a.move);
+  const actionRows = [];
+  for (const side of SIDES) {
+    const rows = Array.isArray(turn.actions[side]) ? turn.actions[side] : [];
+    for (const action of rows) {
+      if (action && action.actor && action.move) actionRows.push({ side, action });
+    }
+  }
   if (actionRows.length < 2) return;
 
-  const roster = rosterByName(turn.pre);
-  const detailOrder = Array.isArray(turn.pre.speed_order_details)
-    ? turn.pre.speed_order_details.map(row => row && row.pokemon).filter(Boolean).map(String)
-    : [];
-  const speedOrder = detailOrder.length ? detailOrder : (Array.isArray(turn.pre.speed_order) ? turn.pre.speed_order.map(String) : []);
-  const speedIndex = new Map(speedOrder.map((name, index) => [name, index]));
-
-  const actionByKey = new Map(actionRows.map(a => [`${a.actor}|${a.move}`, a]));
+  const actionsByObservedKey = new Map();
+  for (const row of actionRows) {
+    const key = `${row.action.actor}|${row.action.move}`;
+    if (!actionsByObservedKey.has(key)) actionsByObservedKey.set(key, []);
+    actionsByObservedKey.get(key).push(row);
+  }
   const actual = observed
     .map(o => {
       const key = `${o.actor}|${o.move}`;
-      const action = actionByKey.get(key);
-      return action ? { key, actor: o.actor, move: o.move, action } : null;
+      const matches = actionsByObservedKey.get(key) || [];
+      if (matches.length !== 1) return null;
+      const row = activeRowForAction(turn.pre, matches[0]);
+      if (!row) return null;
+      return {
+        key,
+        actor: o.actor,
+        move: o.move,
+        side: matches[0].side,
+        action: matches[0].action,
+        row,
+        speedIndex: speedOrderIndexForRow(row, turn.pre)
+      };
     })
     .filter(Boolean);
 
@@ -332,8 +393,8 @@ function validateObservedActionOrder(turn, findings) {
     for (let j = i + 1; j < actual.length; j += 1) {
       const first = actual[i];
       const second = actual[j];
-      const firstPriority = movePriority(first.move, roster.get(first.actor));
-      const secondPriority = movePriority(second.move, roster.get(second.actor));
+      const firstPriority = movePriority(first.move, first.row);
+      const secondPriority = movePriority(second.move, second.row);
 
       if (firstPriority < secondPriority) {
         failOrder('priority', second.key, first.key);
@@ -341,15 +402,13 @@ function validateObservedActionOrder(turn, findings) {
       }
 
       if (firstPriority !== secondPriority) continue;
-      if (!speedIndex.has(first.actor) || !speedIndex.has(second.actor)) continue;
+      if (first.speedIndex == null || second.speedIndex == null) continue;
 
-      const firstSpeedIndex = speedIndex.get(first.actor);
-      const secondSpeedIndex = speedIndex.get(second.actor);
+      const firstSpeedIndex = first.speedIndex;
+      const secondSpeedIndex = second.speedIndex;
       if (firstSpeedIndex <= secondSpeedIndex) continue;
 
-      const firstRow = roster.get(first.actor);
-      const secondRow = roster.get(second.actor);
-      if (isSameEffectiveSpeedTie(firstRow, secondRow, turn.pre)) continue;
+      if (isSameEffectiveSpeedTie(first.row, second.row, turn.pre)) continue;
 
       failOrder('speed', second.key, first.key);
       return;
@@ -388,9 +447,17 @@ function activeTargetKeys(snapshot, side) {
   return stable.length ? stable : getSideKeys(snapshot, side, 'active_keys');
 }
 
+function hasSwitchInAfterEvent(events, index) {
+  for (let i = index + 1; i < events.length; i += 1) {
+    if (/ was sent out!$/.test(cleanText(events[i] && events[i].text))) return true;
+  }
+  return false;
+}
+
 function validateNoValidTargetSkips(turn, findings) {
   const events = Array.isArray(turn && turn.events) ? turn.events : [];
-  for (const event of events) {
+  for (let eventIndex = 0; eventIndex < events.length; eventIndex += 1) {
+    const event = events[eventIndex];
     const text = cleanText(event && event.text);
     const match = text.match(/^(.+?) used (.+?)! \(no valid target\)$/);
     if (!match) continue;
@@ -409,21 +476,32 @@ function validateNoValidTargetSkips(turn, findings) {
     }
 
     const actionTarget = resolved.action && resolved.action.target;
-    const targetSide = actionTarget
-      ? (activeSideForName(turn && turn.pre, actionTarget) || activeSideForName(turn && turn.post, actionTarget))
-      : null;
+    const targetSide = resolved.action && (resolved.action.target_side || sideFromStableKey(resolved.action.target_key))
+      ? (resolved.action.target_side || sideFromStableKey(resolved.action.target_key))
+      : (actionTarget
+          ? (activeSideForName(turn && turn.pre, actionTarget) || activeSideForName(turn && turn.post, actionTarget))
+          : null);
     const checkedSide = targetSide || (resolved.side === 'player' ? 'opponent' : 'player');
+    const preActive = activeTargetKeys(turn && turn.pre, checkedSide);
     const postActive = activeTargetKeys(turn && turn.post, checkedSide);
+    const originalActiveStillPresent = postActive.filter(key => preActive.includes(key));
+    const onlyPostTurnReplacementsLive = (
+      postActive.length > 0 &&
+      preActive.length > 0 &&
+      originalActiveStillPresent.length === 0 &&
+      hasSwitchInAfterEvent(events, eventIndex)
+    );
 
-    if (postActive.length) {
+    if (postActive.length && !onlyPostTurnReplacementsLive) {
       findings.push(finding('error', 'no-valid-target-with-live-target', 'A no-valid-target action resolved while the intended target side still had a live active Pokemon.', {
         turn: turn && turn.turn,
         actor,
         move,
         target: actionTarget || '',
         targetSide: checkedSide,
-        preActiveTargetKeys: activeTargetKeys(turn && turn.pre, checkedSide),
-        postActiveTargetKeys: postActive
+        preActiveTargetKeys: preActive,
+        postActiveTargetKeys: postActive,
+        originalActiveStillPresentKeys: originalActiveStillPresent
       }));
     }
   }
@@ -442,9 +520,124 @@ function validateDamageEvents(turn, findings) {
         findings.push(finding('error', 'damage-event-missing-identity', `damage_events row is missing ${key}.`, { turn: turn && turn.turn, index: i }));
       }
     }
-    for (const key of ['damage', 'target_hp_before', 'target_hp_after', 'target_max_hp']) {
+    const damageNumberKeys = [
+      'damage', 'applied_damage', 'hp_delta', 'calculated_damage',
+      'overkill_damage', 'target_hp_before', 'target_hp_after',
+      'target_max_hp'
+    ];
+    const damageNumbers = {};
+    let damageNumbersValid = true;
+    for (const key of damageNumberKeys) {
       if (!Number.isFinite(Number(row[key]))) {
+        damageNumbersValid = false;
         findings.push(finding('error', 'damage-event-missing-number', `damage_events row is missing numeric ${key}.`, { turn: turn && turn.turn, index: i }));
+      } else {
+        damageNumbers[key] = Number(row[key]);
+      }
+    }
+    if (typeof row.damage_capped_by_hp !== 'boolean') {
+      findings.push(finding('error', 'damage-event-missing-flag', 'damage_events row is missing boolean damage_capped_by_hp.', { turn: turn && turn.turn, index: i }));
+    }
+    if (row.move_context != null && typeof row.move_context !== 'string') {
+      findings.push(finding('error', 'damage-event-context-malformed', 'damage_events move_context must be a string when present.', { turn: turn && turn.turn, index: i }));
+    }
+    if (row.effect_tags != null) {
+      if (!Array.isArray(row.effect_tags) || row.effect_tags.some(tag => typeof tag !== 'string' || !tag)) {
+        findings.push(finding('error', 'damage-event-effect-tags-malformed', 'damage_events effect_tags must be an array of strings.', { turn: turn && turn.turn, index: i }));
+      }
+    }
+    if (damageNumbersValid) {
+      const expectedApplied = Math.max(0, damageNumbers.target_hp_before - damageNumbers.target_hp_after);
+      const expectedOverkill = Math.max(0, damageNumbers.calculated_damage - damageNumbers.applied_damage);
+      if (damageNumbers.target_hp_after > damageNumbers.target_hp_before) {
+        findings.push(finding('error', 'damage-event-hp-increase', 'damage_events row shows target HP increasing during damage.', {
+          turn: turn && turn.turn,
+          index: i,
+          target_hp_before: damageNumbers.target_hp_before,
+          target_hp_after: damageNumbers.target_hp_after
+        }));
+      }
+      if (damageNumbers.target_hp_after < 0 || damageNumbers.target_hp_after > damageNumbers.target_max_hp) {
+        findings.push(finding('error', 'damage-event-hp-out-of-range', 'damage_events target HP is outside 0..max HP.', {
+          turn: turn && turn.turn,
+          index: i,
+          target_hp_after: damageNumbers.target_hp_after,
+          target_max_hp: damageNumbers.target_max_hp
+        }));
+      }
+      if (damageNumbers.applied_damage !== expectedApplied) {
+        findings.push(finding('error', 'damage-event-applied-mismatch', 'applied_damage must equal target HP lost.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: expectedApplied,
+          actual: damageNumbers.applied_damage
+        }));
+      }
+      if (damageNumbers.damage !== damageNumbers.applied_damage) {
+        findings.push(finding('error', 'damage-event-damage-mismatch', 'damage must equal applied_damage, not raw formula damage.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: damageNumbers.applied_damage,
+          actual: damageNumbers.damage
+        }));
+      }
+      if (damageNumbers.hp_delta !== damageNumbers.applied_damage) {
+        findings.push(finding('error', 'damage-event-hp-delta-mismatch', 'hp_delta must equal applied_damage.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: damageNumbers.applied_damage,
+          actual: damageNumbers.hp_delta
+        }));
+      }
+      if (damageNumbers.overkill_damage !== expectedOverkill) {
+        findings.push(finding('error', 'damage-event-overkill-mismatch', 'overkill_damage must equal calculated_damage minus applied_damage when positive.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: expectedOverkill,
+          actual: damageNumbers.overkill_damage
+        }));
+      }
+      if (typeof row.damage_capped_by_hp === 'boolean' && row.damage_capped_by_hp !== (damageNumbers.calculated_damage !== damageNumbers.applied_damage)) {
+        findings.push(finding('error', 'damage-event-cap-flag-mismatch', 'damage_capped_by_hp must reflect calculated versus applied damage.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: damageNumbers.calculated_damage !== damageNumbers.applied_damage,
+          actual: row.damage_capped_by_hp
+        }));
+      }
+    }
+    if (row.recoil_rule) {
+      const num = Number(row.recoil_rule.numerator);
+      const den = Number(row.recoil_rule.denominator);
+      if (!Number.isFinite(num) || !Number.isFinite(den) || num <= 0 || den <= 0 || row.recoil_rule.basis !== 'applied_damage') {
+        findings.push(finding('error', 'damage-event-recoil-rule-malformed', 'recoil_rule must use a positive applied_damage ratio.', { turn: turn && turn.turn, index: i }));
+      } else if (row.recoil_damage != null) {
+        const expected = Math.max(1, Math.round(Number(row.applied_damage || 0) * num / den));
+        if (Number(row.recoil_damage) !== expected) {
+          findings.push(finding('error', 'damage-event-recoil-mismatch', 'recoil_damage must match the applied damage ratio.', {
+            turn: turn && turn.turn,
+            index: i,
+            expected,
+            actual: row.recoil_damage
+          }));
+        }
+      }
+    }
+    if (row.drain_rule) {
+      const num = Number(row.drain_rule.numerator);
+      const den = Number(row.drain_rule.denominator);
+      if (!Number.isFinite(num) || !Number.isFinite(den) || num <= 0 || den <= 0 || row.drain_rule.basis !== 'applied_damage') {
+        findings.push(finding('error', 'damage-event-drain-rule-malformed', 'drain_rule must use a positive applied_damage ratio.', { turn: turn && turn.turn, index: i }));
+      } else if (row.drain_heal_candidate != null) {
+        const expected = Math.max(1, Math.round(Number(row.applied_damage || 0) * num / den));
+        if (Number(row.drain_heal_candidate) !== expected) {
+          findings.push(finding('error', 'damage-event-drain-mismatch', 'drain_heal_candidate must match the applied damage ratio.', {
+            turn: turn && turn.turn,
+            index: i,
+            expected,
+            actual: row.drain_heal_candidate
+          }));
+        }
       }
     }
     if (row.damage_kind === 'calculated') {
@@ -465,6 +658,124 @@ function validateDamageEvents(turn, findings) {
           findings.push(finding('error', 'damage-calc-missing-field', `calculated damage row is missing ${key}.`, { turn: turn && turn.turn, index: i }));
         }
       }
+    }
+  }
+}
+
+function validateEffectEvents(turn, findings) {
+  const rows = Array.isArray(turn && turn.effect_events) ? turn.effect_events : [];
+  for (let i = 0; i < rows.length; i += 1) {
+    const row = rows[i];
+    if (!row || typeof row !== 'object') {
+      findings.push(finding('error', 'effect-event-malformed', 'effect_events contains a non-object row.', { turn: turn && turn.turn, index: i }));
+      continue;
+    }
+    for (const key of ['actor', 'move', 'effect_kind']) {
+      if (!row[key]) {
+        findings.push(finding('error', 'effect-event-missing-identity', `effect_events row is missing ${key}.`, { turn: turn && turn.turn, index: i }));
+      }
+    }
+    const numericKeys = ['hp_before', 'hp_after', 'hp_delta', 'max_hp'];
+    const numbers = {};
+    let ok = true;
+    for (const key of numericKeys) {
+      if (!Number.isFinite(Number(row[key]))) {
+        ok = false;
+        findings.push(finding('error', 'effect-event-missing-number', `effect_events row is missing numeric ${key}.`, { turn: turn && turn.turn, index: i }));
+      } else {
+        numbers[key] = Number(row[key]);
+      }
+    }
+    if (ok) {
+      if (numbers.hp_delta !== numbers.hp_after - numbers.hp_before) {
+        findings.push(finding('error', 'effect-event-hp-delta-mismatch', 'hp_delta must equal hp_after minus hp_before.', {
+          turn: turn && turn.turn,
+          index: i,
+          expected: numbers.hp_after - numbers.hp_before,
+          actual: numbers.hp_delta
+        }));
+      }
+      if (numbers.hp_after < 0 || numbers.hp_after > numbers.max_hp) {
+        findings.push(finding('error', 'effect-event-hp-out-of-range', 'effect_events hp_after is outside 0..max HP.', {
+          turn: turn && turn.turn,
+          index: i,
+          hp_after: numbers.hp_after,
+          max_hp: numbers.max_hp
+        }));
+      }
+      if (row.damage_applied_to_user != null) {
+        const expectedAppliedToUser = Math.max(0, numbers.hp_before - numbers.hp_after);
+        if (Number(row.damage_applied_to_user) !== expectedAppliedToUser) {
+          findings.push(finding('error', 'effect-event-applied-user-damage-mismatch', 'damage_applied_to_user must equal actual HP lost by the affected Pokemon.', {
+            turn: turn && turn.turn,
+            index: i,
+            expected: expectedAppliedToUser,
+            actual: row.damage_applied_to_user
+          }));
+        }
+      }
+    }
+    if (row.rule != null && typeof row.rule !== 'object') {
+      findings.push(finding('error', 'effect-event-rule-malformed', 'effect_events rule must be an object when present.', { turn: turn && turn.turn, index: i }));
+    } else if (row.rule && !row.rule.basis) {
+      findings.push(finding('error', 'effect-event-rule-missing-basis', 'effect_events rule is missing basis.', { turn: turn && turn.turn, index: i }));
+    }
+    if (row.move_context != null && typeof row.move_context !== 'string') {
+      findings.push(finding('error', 'effect-event-context-malformed', 'effect_events move_context must be a string when present.', { turn: turn && turn.turn, index: i }));
+    }
+  }
+}
+
+function validateQaCoverageSummary(payload, turnLog, findings) {
+  const summary = payload && payload.qa_coverage_summary;
+  if (summary == null) return;
+  if (!summary || typeof summary !== 'object' || Array.isArray(summary)) {
+    findings.push(finding('error', 'qa-coverage-malformed', 'qa_coverage_summary must be an object when present.'));
+    return;
+  }
+  if (summary.schema_version !== 'champions-qa-coverage-v1') {
+    findings.push(finding('error', 'qa-coverage-schema', 'qa_coverage_summary has an unexpected schema_version.', {
+      actual: summary.schema_version || null
+    }));
+  }
+  if (!summary.totals || typeof summary.totals !== 'object') {
+    findings.push(finding('error', 'qa-coverage-totals-missing', 'qa_coverage_summary is missing totals.'));
+    return;
+  }
+  if (!summary.mechanics_seen || typeof summary.mechanics_seen !== 'object') {
+    findings.push(finding('error', 'qa-coverage-mechanics-missing', 'qa_coverage_summary is missing mechanics_seen.'));
+  }
+  if (!summary.source_truth_versions || typeof summary.source_truth_versions !== 'object') {
+    findings.push(finding('error', 'qa-coverage-source-truth-missing', 'qa_coverage_summary is missing source_truth_versions.'));
+  }
+  if (!Array.isArray(summary.missing_targeted_proof)) {
+    findings.push(finding('error', 'qa-coverage-missing-proof-malformed', 'qa_coverage_summary missing_targeted_proof must be an array.'));
+  }
+
+  const expected = {
+    turns: turnLog.length,
+    damage_events: 0,
+    effect_events: 0,
+    turns_with_damage_events: 0,
+    turns_with_effect_events: 0
+  };
+  for (const turn of turnLog) {
+    const damageRows = Array.isArray(turn && turn.damage_events) ? turn.damage_events : [];
+    const effectRows = Array.isArray(turn && turn.effect_events) ? turn.effect_events : [];
+    expected.damage_events += damageRows.length;
+    expected.effect_events += effectRows.length;
+    if (damageRows.length) expected.turns_with_damage_events += 1;
+    if (effectRows.length) expected.turns_with_effect_events += 1;
+  }
+
+  for (const [key, expectedValue] of Object.entries(expected)) {
+    const actual = Number(summary.totals[key]);
+    if (!Number.isFinite(actual) || actual !== expectedValue) {
+      findings.push(finding('error', 'qa-coverage-total-mismatch', `qa_coverage_summary totals.${key} does not match the turnLog evidence.`, {
+        field: key,
+        expected: expectedValue,
+        actual: summary.totals[key]
+      }));
     }
   }
 }
@@ -521,8 +832,10 @@ export function validateTurnLogPayload(payload, options = {}) {
     validateObservedActionOrder(turn || {}, findings);
     validateNoValidTargetSkips(turn || {}, findings);
     validateDamageEvents(turn || {}, findings);
+    validateEffectEvents(turn || {}, findings);
   }
 
+  validateQaCoverageSummary(payload, turnLog, findings);
   finalizeIdentityChecks(state, findings);
 
   const stableFieldsPresent = state.rowsMissingStableKey === 0 && state.missingStableMaps.size === 0;
@@ -581,7 +894,8 @@ function usage() {
     '',
     'Checks exported battle logs for roster identity, item drift, active/bench key mapping,',
     'HP key coverage, speed-order key coverage, observed priority/speed event order,',
-    'and no-valid-target skips while a target side still has a live active Pokemon.'
+    'damage/effect evidence shape, qa_coverage_summary totals when present, and',
+    'no-valid-target skips while a target side still has a live active Pokemon.'
   ].join('\n');
 }
 

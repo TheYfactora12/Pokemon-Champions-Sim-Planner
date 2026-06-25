@@ -35,6 +35,288 @@
       tests: ['tests/move_verification_registry_tests.js'],
       sources: ['Bulbapedia: Rock Tomb move page']
     },
+    'Dragon Claw': {
+      supportLevel: 'verified',
+      summary: 'Standard physical Dragon damage matches the Showdown damage oracle, including STAB and burn/crit stat-stage interactions.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/t9j8_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Earthquake': {
+      supportLevel: 'verified',
+      summary: 'Ground damage and Ground immunities match the Showdown damage oracle, including Earth Eater and Levitate interactions.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/ability_damage_parity_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Moonblast': {
+      supportLevel: 'verified',
+      summary: 'Standard special Fairy damage matches the Showdown damage oracle, including sand special-defense and Fairy Aura modifier cases.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Thunderbolt': {
+      supportLevel: 'verified',
+      summary: 'Standard special Electric damage matches the Showdown damage oracle, including Electric Terrain and Tera STAB cases.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/runtime_data_bridge_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Shadow Ball': {
+      supportLevel: 'verified',
+      summary: 'Special Ghost damage through the damage pipeline matches the Showdown oracle, including Infiltrator screen bypass.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Sludge Bomb': {
+      supportLevel: 'verified',
+      summary: 'Special Poison damage with Sheer Force matches the Showdown damage oracle.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'High Horsepower': {
+      supportLevel: 'verified',
+      summary: 'Ground damage with Mold Breaker bypassing Levitate matches the Showdown damage oracle.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Hyper Voice': {
+      supportLevel: 'verified',
+      summary: 'Uses Showdown all-adjacent-foes target data so doubles spread targeting hits both adjacent foes.',
+      tests: ['tests/move_verification_registry_tests.js', 'tests/runtime_data_bridge_tests.js'],
+      sources: ['Pokemon Showdown data/moves.ts target field']
+    },
+    'Last Respects': {
+      supportLevel: 'verified',
+      summary: 'Scales base power from the attacker side fainted count only.',
+      tests: ['tests/move_verification_registry_tests.js'],
+      sources: ['Bulbapedia: Last Respects move page']
+    },
+    'Icy Wind': {
+      supportLevel: 'verified',
+      summary: 'Deals spread damage and lowers Speed on all hit foes through the secondary-effect path.',
+      tests: ['tests/t155_speed_control_secondary_tests.js'],
+      sources: ['Bulbapedia: Icy Wind move page']
+    },
+    'Low Kick': {
+      supportLevel: 'verified',
+      summary: 'Uses target Showdown species weight to select the official weight-based base-power tier.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown data/moves.ts lowkick', 'Pokemon Showdown data/pokedex.ts weightkg']
+    },
+    'Tera Blast': {
+      supportLevel: 'verified',
+      summary: 'Inactive Tera Blast stays Normal/special; active Tera Blast uses active Tera type, chooses category from boosted attacking stats, and bypasses Normal-conversion abilities.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Aura Sphere': {
+      supportLevel: 'verified',
+      summary: 'Special Fighting damage matches the Showdown oracle and true-accuracy moves ignore accuracy/evasion checks.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Pokemon Showdown data/moves.ts accuracy']
+    },
+    'Blizzard': {
+      supportLevel: 'verified',
+      summary: 'Spread Ice damage matches the Showdown oracle, cannot miss in snow, and can freeze the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Blizzard move page']
+    },
+    'Crunch': {
+      supportLevel: 'verified',
+      summary: 'Physical Dark damage matches the Showdown oracle and can lower the target Defense.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Crunch move page']
+    },
+    'Darkest Lariat': {
+      supportLevel: 'verified',
+      summary: 'Physical Dark damage matches Showdown while ignoring target defensive stat-stage changes.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Darkest Lariat move page']
+    },
+    'Dazzling Gleam': {
+      supportLevel: 'verified',
+      summary: 'Fairy spread damage matches the Showdown oracle with the doubles spread modifier.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Dragon Pulse': {
+      supportLevel: 'verified',
+      summary: 'Standard special Dragon damage matches the Showdown oracle.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Dual Wingbeat': {
+      supportLevel: 'verified',
+      summary: 'Executes as a two-hit physical Flying move through the multi-hit battle path.',
+      tests: ['tests/move_verification_registry_tests.js'],
+      sources: ['Bulbapedia: Dual Wingbeat move page', 'Pokemon Showdown data/moves.ts dualwingbeat']
+    },
+    'Earth Power': {
+      supportLevel: 'verified',
+      summary: 'Special Ground damage matches the Showdown oracle and can lower Special Defense.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Earth Power move page']
+    },
+    'Energy Ball': {
+      supportLevel: 'verified',
+      summary: 'Special Grass damage matches the Showdown oracle and can lower Special Defense.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Energy Ball move page']
+    },
+    'Fire Punch': {
+      supportLevel: 'verified',
+      summary: 'Physical Fire damage matches the Showdown oracle and can burn the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Fire Punch move page']
+    },
+    'Flamethrower': {
+      supportLevel: 'verified',
+      summary: 'Special Fire damage matches the Showdown oracle and can burn the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Flamethrower move page']
+    },
+    'Flash Cannon': {
+      supportLevel: 'verified',
+      summary: 'Special Steel damage matches the Showdown oracle and can lower Special Defense.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Flash Cannon move page']
+    },
+    'Focus Blast': {
+      supportLevel: 'verified',
+      summary: 'Special Fighting damage matches the Showdown oracle, uses low-accuracy resolution, and can lower Special Defense.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Focus Blast move page']
+    },
+    'Foul Play': {
+      supportLevel: 'verified',
+      summary: 'Uses the target Attack stat and target Attack stages for damage, matching the Showdown oracle.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Foul Play move page']
+    },
+    'Gunk Shot': {
+      supportLevel: 'verified',
+      summary: 'Physical Poison damage matches the Showdown oracle and can poison the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Gunk Shot move page']
+    },
+    'Heat Wave': {
+      supportLevel: 'verified',
+      summary: 'Fire spread damage matches the Showdown oracle and can burn each hit target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Heat Wave move page']
+    },
+    'Hurricane': {
+      supportLevel: 'verified',
+      summary: 'Special Flying damage matches the Showdown oracle, rain/sun accuracy is modeled, and it can confuse the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Hurricane move page']
+    },
+    'Hydro Pump': {
+      supportLevel: 'verified',
+      summary: 'Special Water damage and low-accuracy resolution match the Showdown oracle path.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Ice Beam': {
+      supportLevel: 'verified',
+      summary: 'Special Ice damage matches the Showdown oracle and can freeze the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Ice Beam move page']
+    },
+    'Ice Punch': {
+      supportLevel: 'verified',
+      summary: 'Physical Ice damage matches the Showdown oracle and can freeze the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Ice Punch move page']
+    },
+    'Ice Shard': {
+      supportLevel: 'verified',
+      summary: 'Physical Ice damage matches the Showdown oracle and its positive priority acts before faster standard-priority moves.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Ice Shard move page']
+    },
+    'Kowtow Cleave': {
+      supportLevel: 'verified',
+      summary: 'Physical Dark damage matches the Showdown oracle and true-accuracy resolution ignores accuracy/evasion checks.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Pokemon Showdown data/moves.ts kowtowcleave']
+    },
+    'Leaf Storm': {
+      supportLevel: 'verified',
+      summary: 'Special Grass damage matches the Showdown oracle and harshly lowers the user Special Attack after a successful hit.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Leaf Storm move page']
+    },
+    'Light of Ruin': {
+      supportLevel: 'verified',
+      summary: 'Special Fairy damage matches the Showdown oracle and applies half-damage recoil after a successful hit.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Light of Ruin move page']
+    },
+    'Liquidation': {
+      supportLevel: 'verified',
+      summary: 'Physical Water damage matches the Showdown oracle and can lower the target Defense.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Liquidation move page']
+    },
+    'Poison Jab': {
+      supportLevel: 'verified',
+      summary: 'Physical Poison damage matches the Showdown oracle and can poison the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Poison Jab move page']
+    },
+    'Poltergeist': {
+      supportLevel: 'verified',
+      summary: 'Damages item holders and fails against legal no-item targets.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Poltergeist move page']
+    },
+    'Power Gem': {
+      supportLevel: 'verified',
+      summary: 'Standard special Rock damage matches the Showdown oracle.',
+      tests: ['tests/showdown_damage_oracle_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc']
+    },
+    'Psychic': {
+      supportLevel: 'verified',
+      summary: 'Special Psychic damage matches the Showdown oracle and can lower Special Defense.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Psychic move page']
+    },
+    'Scald': {
+      supportLevel: 'verified',
+      summary: 'Special Water damage matches the Showdown oracle and can burn the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Scald move page']
+    },
+    'Scorching Sands': {
+      supportLevel: 'verified',
+      summary: 'Special Ground damage matches the Showdown oracle and can burn the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Scorching Sands move page']
+    },
+    'Sludge Wave': {
+      supportLevel: 'verified',
+      summary: 'Poison all-adjacent spread damage matches the Showdown oracle and can poison each hit target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Sludge Wave move page']
+    },
+    'Stomping Tantrum': {
+      supportLevel: 'verified',
+      summary: 'Physical Ground damage matches the Showdown oracle and doubles base power after the previous move failed.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Stomping Tantrum move page']
+    },
+    'Throat Chop': {
+      supportLevel: 'verified',
+      summary: 'Physical Dark damage matches the Showdown oracle and prevents the target from using sound-based moves while active.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Throat Chop move page']
+    },
+    'Thunder': {
+      supportLevel: 'verified',
+      summary: 'Special Electric damage matches the Showdown oracle, rain/sun accuracy is modeled, and it can paralyse the target.',
+      tests: ['tests/showdown_damage_oracle_tests.js', 'tests/move_verification_registry_tests.js'],
+      sources: ['Pokemon Showdown damage calculation via @smogon/calc', 'Bulbapedia: Thunder move page']
+    },
     'Light Screen': {
       supportLevel: 'verified',
       summary: 'Reduces incoming special damage for the side while active.',
@@ -73,7 +355,7 @@
     },
     'Shed Tail': {
       supportLevel: 'verified',
-      summary: 'Consumes the user HP, switches out immediately, and leaves the Substitute with the incoming replacement.',
+      summary: 'Consumes 1/2 max HP rounded up, switches out immediately, and passes a 1/4 max HP rounded-down Substitute to the replacement.',
       tests: ['tests/move_verification_registry_tests.js'],
       sources: ['Bulbapedia: Shed Tail move page']
     },
@@ -518,7 +800,10 @@
         category: row.category || '',
         basePower: showdownBasePower,
         target: row.target || '',
-        flags: row.flags || ''
+        flags: row.flags || '',
+        recoil: row.recoil || null,
+        shortDesc: row.shortDesc || row.short_desc || '',
+        desc: row.desc || ''
       } : null,
       local: {
         type: localType,
@@ -531,6 +816,9 @@
         category: row && row.category ? String(row.category).toLowerCase() : localCategory,
         basePower: hasShowdownBasePower ? showdownBasePower : localBasePower,
         target: row && row.target ? row.target : localTarget,
+        recoil: row && row.recoil ? row.recoil : null,
+        shortDesc: row && (row.shortDesc || row.short_desc) ? (row.shortDesc || row.short_desc) : '',
+        desc: row && row.desc ? row.desc : '',
         source: row ? 'showdown' : (localType || localCategory || localBasePower !== '' || localTarget ? 'local' : 'missing')
       },
       registryComplete: registryComplete,
