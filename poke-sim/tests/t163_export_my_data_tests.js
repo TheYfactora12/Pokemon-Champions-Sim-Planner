@@ -14,6 +14,7 @@
 const fs = require('fs');
 const vm = require('vm');
 const path = require('path');
+const { URL: NativeURL } = require('url');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -78,7 +79,7 @@ const ctx = {
     removeItem(k) { delete this._s[k]; },
     clear() { this._s = {}; }
   },
-  URL: { createObjectURL() { return 'blob:stub'; }, revokeObjectURL() {} },
+  URL: Object.assign(class extends NativeURL {}, { createObjectURL() { return 'blob:stub'; }, revokeObjectURL() {} }),
   Blob: function(parts) { this.parts = parts; },
   alert(msg) { ctx._lastAlert = msg; },
   location: { href: 'http://localhost/' }
@@ -283,8 +284,8 @@ async function main() {
     const payload = await csBuildQaArtifactExport('player');
     eq(payload.schema_version, 'champions-qa-artifact-v1');
     eq(payload.artifact_type, 'large-run-qa-retained-evidence');
-    truthy(/^v2\.1\.59-team-evidence-dashboard/.test(payload.build_id || ''), 'QA build id missing');
-    eq(payload.source_url, 'http://localhost/');
+    truthy(/^v2\.1\.60-team-evidence-dashboard/.test(payload.build_id || ''), 'QA build id missing');
+    eq(payload.source_url, 'http://localhost/?v=v2.1.60-team-evidence-dashboard&fresh=1');
     eq(payload.retention.max_replay_cards, 240);
     eq(payload.retention.max_replay_log_lines, 200);
     eq(payload.retention.max_simlog_total, 500);
