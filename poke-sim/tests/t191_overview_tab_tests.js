@@ -29,9 +29,26 @@ T('1. Overview is a top-level tab and mobile picker option', () => {
 
 T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'CS_OVERVIEW_DATA');
+  inc(ui, 'Current Truth');
+  inc(ui, 'Not 100% yet');
+  inc(ui, 'Damage Logs');
+  inc(ui, 'Applied/calc split fixed locally');
+  inc(ui, 'Testing Catalog Target');
+  inc(ui, 'Top 10 Champion archetypes');
+  inc(ui, 'Removed Teams');
+  inc(ui, '17 legacy/inferred rows');
+  inc(ui, '10 approved runtime rows');
+  inc(ui, 'Full local non-DB + DB contracts green');
+  inc(ui, 'DB Log Detail');
+  inc(ui, 'Summary/capped; exports are forensic proof');
+  inc(ui, 'Current Champion source sweep recorded');
   inc(ui, 'Sim Truth Gate');
   inc(ui, 'Knock Off');
   inc(ui, 'Verified');
+  inc(ui, 'Move Support');
+  inc(ui, '120 verified / 0 baseline');
+  inc(ui, 'Showdown Oracle');
+  inc(ui, '56/56 green');
   inc(ui, 'Review tab restored');
   inc(ui, 'Live team-load simulation failure fixed');
   inc(ui, 'Lethal Sitrus and Oran timing fixed');
@@ -42,12 +59,23 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Target category bridge and stale-target retargeting guarded');
   inc(ui, 'Runtime naming cheat sheet added');
   inc(ui, 'Large-run QA artifact export added');
+  inc(ui, 'QA coverage summary added to exports');
+  inc(ui, 'Recoil applied HP evidence corrected');
   inc(ui, 'Type multiplier audit added');
+  inc(ui, 'Low Kick weight source added');
+  inc(ui, 'Core shipped move parity closed');
   inc(ui, 'Typed held-item damage boosts fixed');
   inc(ui, 'Stat and effective-speed evidence added to exports');
   inc(ui, 'Knock Off item behavior guarded');
   inc(ui, 'Champions SP/SV stat format');
   inc(ui, 'damage_events');
+  inc(ui, 'effect_events');
+  inc(ui, 'qa_coverage_summary');
+  inc(ui, 'Effect math evidence added to turn logs');
+  inc(ui, 'Shed Tail now follows Showdown context: 1/2 max HP cost rounded up');
+  inc(ui, 'Architecture and evidence map added');
+  inc(ui, 'source-to-engine-to-export map');
+  inc(ui, 'DB history limits');
   inc(ui, 'Showdown sync and DB writer staged');
   inc(ui, 'Curated ability inventory modeled');
   inc(ui, 'Simulation-first direction documented');
@@ -58,17 +86,33 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Item timing regression reproduced and covered');
   inc(ui, 'Fresh logs exposed a targeting boundary bug');
   inc(ui, 'Ability coverage guard is green');
-  inc(ui, 'v2.1.34 Live Log Proof carries v2.1.33 Log Target Guard');
+  inc(ui, 'Previous v2.1.36 release checks were green');
+  inc(ui, 'The current local damage-log and approved-team-gate slice has focused green checks');
+  inc(ui, 'Damage applied versus calculated logging fixed locally');
+  inc(ui, 'Strategy Priority Board added');
+  inc(ui, 'coach call first');
+  inc(ui, 'Branch move coach feeds the Strategy guide');
+  inc(ui, 'confidence-rated avoid moves');
+  inc(ui, 'Approved Champion team lane guarded');
+  inc(ui, 'DB species/move legality view added');
+  inc(ui, 'Showdown sync approval guard tightened');
+  inc(ui, 'Low Kick weight-based damage matches Showdown');
+  inc(ui, 'Showdown data/moves.ts records Low Kick basePower as 0');
+  inc(ui, '100% Champion parity checklist is explicit');
   inc(ui, 'Damage stack oracle is green');
   inc(ui, 'Tera Blast parity is green');
   inc(ui, 'Knock Off source-truth behavior is documented');
   inc(ui, 'Turn-order stack evidence is green');
   inc(ui, 'GitHub issue sweep completed');
-  inc(ui, 'Y fork and Alfredo main are synced');
+  inc(ui, 'Previous Y/Alfredo source sync completed');
 });
 
 T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Supabase app wiring is live for existing app tables');
+  inc(ui, 'Local DB contract suite is green');
+  inc(ui, 'Latest v2.1.42 browser logs validate and expose effect evidence');
+  inc(ui, 'Fresh v2.1.43 single logs exposed recoil evidence naming drift');
+  inc(ui, 'Live Supabase freshness checks require `RUN_LIVE_DB=1`');
   inc(ui, 'overview-showdown-db-inspect');
   inc(ui, 'loadShowdownDbSnapshot');
   inc(ui, 'approvedCounts');
@@ -76,9 +120,12 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'showdown_entities DB rows are not the battle runtime source yet');
   inc(ui, 'Live logs exposed stale DB item drift');
   inc(ui, 'Pokemon data audit has unresolved reviewer risk');
-  inc(ui, 'Mechanics parity is broader than the current ability slice');
+  inc(ui, '100% parity still has non-move gates');
+  inc(ui, 'Move support is 120 verified / 0 baseline / 0 incomplete');
   inc(ui, 'Source refresh needed must be visible before trust claims');
   inc(ui, 'Full raw thousand-battle retention is still not automatic');
+  inc(ui, 'Supabase history is not full forensic turn-log storage yet');
+  inc(ui, 'downloaded turn-log JSON and QA Artifact export');
   inc(ui, 'Team editor is guarded but not a fluid full builder yet');
   inc(ui, 'Alfredo #241');
   inc(ui, 'Life Orb');
@@ -87,17 +134,32 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'champions_overrides');
 });
 
+T('3b. replay formatter accepts richer applied damage log brackets', () => {
+  inc(ui, 'dmg(?:,[^\\]]*)?');
+  inc(ui, 'lost $1 HP');
+});
+
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Verify v2.1.34 source URL and QA artifact');
+  inc(ui, 'Stress-test, rebuild, and prove the new truth board');
+  inc(ui, 'Replace removed teams with approved Champion teams');
+  inc(ui, 'Trick Room, anti-Trick Room, Tailwind/speed, sun, rain, sand or snow');
+  inc(ui, 'Verify the next deployed source URL and QA artifact');
   inc(ui, 'Mirror or update JD issue alignment in the Y fork');
   inc(ui, 'Apply Champion item cleanup to live Supabase rows');
   inc(ui, 'Wire approved Showdown DB data into generated runtime assets');
-  inc(ui, 'Group mechanics parity work by battle system');
+  inc(ui, 'Design DB forensic log retention before relying on saved history');
+  inc(ui, 'build_id, source_url, and retention metadata');
+  inc(ui, 'Prove post-move mechanics by battle system');
+  inc(ui, 'With the shipped move audit at 120 verified / 0 baseline / 0 incomplete');
   inc(ui, 'Rebuild editor into full Champion team builder');
   inc(ui, 'Keep Alfredo and Y fork synced through protected PRs');
   inc(ui, 'Surface source drift as update needed in Overview');
   inc(ui, 'Recent Fix + Issue Snapshot');
   inc(ui, 'recent-fixes-and-open-issues-2026-06-21.md');
+  inc(ui, 'Architecture + Evidence Map');
+  inc(ui, 'CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md');
+  inc(ui, 'Champion Parity 100 Checklist');
+  inc(ui, 'champion_parity_100_checklist.md');
   inc(ui, 'Move Support Audit');
   inc(ui, 'move_support_audit.md');
   inc(ui, 'Type Multiplier Audit');
@@ -121,6 +183,21 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Runtime Naming Cheat Sheet');
   inc(ui, 'SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md');
   inc(ui, 'SHOWDOWN_SYNC_ARCHITECTURE.md');
+});
+
+T('4b. Architecture evidence map documents the QA proof contract', () => {
+  const doc = fs.readFileSync(path.join(ROOT, 'docs', 'CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md'), 'utf8');
+  inc(doc, 'Source truth');
+  inc(doc, 'Review and approval layer');
+  inc(doc, 'Generated runtime assets');
+  inc(doc, 'Deterministic engine');
+  inc(doc, 'QA evidence outputs');
+  inc(doc, 'Supabase Boundary');
+  inc(doc, 'Damage Calculation Evidence');
+  inc(doc, 'Effect Evidence');
+  inc(doc, 'Shed Tail has two different HP values');
+  inc(doc, 'Required QA Proof Workflow');
+  inc(doc, 'Current Non-100% Gaps');
 });
 
 T('5. Overview styles are responsive and scan-friendly', () => {

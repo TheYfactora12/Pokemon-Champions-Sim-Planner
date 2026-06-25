@@ -166,11 +166,10 @@ T('T5a-1c roster calculated stats include non-HP stats', () => {
 });
 
 T('T5a-1d stable roster identity survives bench to active movement', () => {
-  const battle = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.fire_ice_fullroom, {
+  const battle = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_altaria, {
     format: 'doubles',
-    seed: [3060085469, 1693309830, 2374429629, 716694517],
-    playerBring: ['Incineroar', 'Arcanine', 'Garchomp', 'Whimsicott'],
-    opponentBring: ['Cofagrigus', 'Ursaluna-Bloodmoon', 'Vanilluxe', 'Typhlosion-Hisui']
+    seed: [1, 1015568748, 22695478, 1103527590],
+    playerBring: ['Incineroar', 'Arcanine', 'Garchomp', 'Whimsicott']
   });
   const rows = [];
   for (const turn of battle.turnLog || []) {
@@ -192,6 +191,23 @@ T('T5a-1d stable roster identity survives bench to active movement', () => {
   const firstPre = ((battle.turnLog[0] || {}).pre || {});
   truthy(firstPre.hp_pct_stable && Object.prototype.hasOwnProperty.call(firstPre.hp_pct_stable, first.stableKey), 'stable HP map missing Garchomp');
   truthy(Array.isArray(firstPre.bench_stable_keys.player) && firstPre.bench_stable_keys.player.includes(first.stableKey), 'stable bench keys missing Garchomp');
+});
+
+T('T5a-1e action summaries export stable actor and target identity', () => {
+  const rows = [];
+  for (const turn of battleA.turnLog || []) {
+    const actions = turn.actions || {};
+    (actions.player || []).forEach(row => rows.push(Object.assign({ side: 'player' }, row)));
+    (actions.opponent || []).forEach(row => rows.push(Object.assign({ side: 'opponent' }, row)));
+  }
+  truthy(rows.length > 0, 'expected action summary rows');
+  rows.forEach(row => {
+    truthy(row.actor_key && row.actor_key.indexOf(row.side + ':slot:') === 0, 'action actor_key missing stable side/slot identity');
+    if (row.target) {
+      truthy(row.target_key && /^(player|opponent):slot:/.test(row.target_key), 'targeted action missing stable target_key');
+      truthy(row.target_side === 'player' || row.target_side === 'opponent', 'targeted action missing target_side');
+    }
+  });
 });
 
 T('T5a-2 turnLog clears on new sim run', () => {
@@ -412,11 +428,46 @@ T('T5c-2 swing turn row is highlighted', () => {
 T('T5c-3 JSON download produces valid parseable file', () => {
   let parsed = null;
   ctx.Blob = function(parts) { parsed = JSON.parse(parts[0]); };
-  ctx.downloadReplayTurnLog({ seed: 'abc', result: 'win', turnLog: battleA.turnLog, position_path: battleA.position_path });
+  ctx.downloadReplayTurnLog({ seed: 'abc', result: 'win', playerKey: 'player', oppKey: 'mega_altaria', turnLog: battleA.turnLog, position_path: battleA.position_path });
   truthy(parsed && Array.isArray(parsed.turnLog), 'download JSON did not parse');
   eq(parsed.schema_version, 'champions-turn-log-v2', 'download schema version missing');
-  truthy(/^v2\.1\.34-live-log-proof/.test(parsed.build_id || ''), 'download build id missing');
+  truthy(/^v2\.1\.59-team-evidence-dashboard/.test(parsed.build_id || ''), 'download build id missing');
   truthy(typeof parsed.exported_at === 'string' && parsed.exported_at.length > 0, 'download timestamp missing');
+  eq(parsed.player_team_id, 'player', 'download player team id missing');
+  eq(parsed.opponent_team_id, 'mega_altaria', 'download opponent team id missing');
+  truthy(parsed.player_team && parsed.player_team.members && parsed.player_team.members.length === 6, 'download full player team missing');
+  truthy(parsed.opponent_team && parsed.opponent_team.members && parsed.opponent_team.members.length === 6, 'download full opponent team missing');
+  truthy(parsed.team_preview && parsed.team_preview.player_brought_count >= 1, 'download brought team preview missing');
+  eq(parsed.qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'QA coverage schema missing');
+  eq(parsed.qa_coverage_summary.totals.turns, parsed.turnLog.length, 'QA coverage turn count mismatch');
+  truthy(parsed.qa_coverage_summary.source_truth_versions && parsed.qa_coverage_summary.source_truth_versions.pokemon_showdown, 'QA source truth versions missing');
+  truthy(Array.isArray(parsed.qa_coverage_summary.missing_targeted_proof), 'QA missing proof list missing');
+});
+
+T('T5c-3a QA coverage counts recoil occurrences once and keeps damage-row evidence separate', () => {
+  const summary = ctx.csBuildQaCoverageSummary([{
+    turn: 1,
+    actions: { player: [], opponent: [] },
+    damage_events: [{
+      move: 'Flare Blitz',
+      type_effectiveness: 1,
+      effect_tags: ['recoil'],
+      recoil_rule: { numerator: 33, denominator: 100, basis: 'applied_damage' },
+      recoil_damage: 20
+    }],
+    effect_events: [{
+      move: 'Flare Blitz',
+      effect_kind: 'recoil',
+      hp_before: 10,
+      hp_after: 0,
+      hp_delta: -10,
+      max_hp: 100,
+      damage_applied_to_user: 10,
+      calculated_effect_damage: 20
+    }]
+  }]);
+  eq(summary.mechanics_seen.recoil, 1, 'QA coverage should count recoil effect occurrences once');
+  eq(summary.mechanics_seen.recoil_damage_rows, 1, 'QA coverage should keep separate recoil damage-row evidence');
 });
 
 T('T5c-4 Sparkline renders without error on 1-turn game', () => {

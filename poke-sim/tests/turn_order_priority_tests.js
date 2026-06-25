@@ -276,6 +276,17 @@ T('10. turn logs expose structured stacked damage evidence', function() {
   eq(row.defense_stat_key, 'def', 'physical defense stat key should be exported');
   eq(row.attacker_stat_format, 'champions', 'attacker Champions stat format should be exported');
   truthy(row.damage > 0 && row.target_hp_after < row.target_hp_before, 'damage event should include HP delta');
+  truthy(Array.isArray(row.effect_tags) && row.effect_tags.includes('recoil'), 'recoil effect tag should be exported');
+  eq(row.recoil_rule.basis, 'applied_damage', 'recoil should declare applied-damage basis');
+  eq(row.recoil_damage, Math.max(1, Math.round(row.applied_damage * row.recoil_rule.numerator / row.recoil_rule.denominator)),
+    'recoil evidence should match applied damage ratio');
+  const effectRows = (((battle.turnLog || [])[0] || {}).effect_events) || [];
+  const recoilRow = effectRows.find(r => r.move === 'Flare Blitz' && r.effect_kind === 'recoil');
+  truthy(recoilRow, 'recoil effect event missing');
+  eq(recoilRow.source_damage, row.applied_damage, 'recoil effect event should reference applied target damage');
+  eq(recoilRow.calculated_effect_damage, row.recoil_damage, 'recoil effect should preserve calculated recoil amount');
+  eq(recoilRow.damage_applied_to_user, Math.max(0, recoilRow.hp_before - recoilRow.hp_after),
+    'recoil effect should record actual HP lost by the user');
 });
 
 console.log('\nturn order / priority:', pass + ' pass, ' + fail + ' fail\n');

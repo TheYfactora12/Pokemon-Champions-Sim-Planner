@@ -52,5 +52,21 @@ T('5. XLSX has a valid zip container signature', () => {
   truthy(buf[0] === 0x50 && buf[1] === 0x4b, 'xlsx missing PK signature');
 });
 
+T('6. runtime move metadata preserves Showdown recoil and descriptions', () => {
+  const runtime = require(runtimePath);
+  const braveBird = runtime.moves && runtime.moves.bravebird;
+  const flareBlitz = runtime.moves && runtime.moves.flareblitz;
+  truthy(braveBird, 'Brave Bird row missing');
+  truthy(flareBlitz, 'Flare Blitz row missing');
+  truthy(Array.isArray(braveBird.recoil) && braveBird.recoil[0] === 33 && braveBird.recoil[1] === 100,
+    'Brave Bird recoil metadata missing');
+  truthy(Array.isArray(flareBlitz.recoil) && flareBlitz.recoil[0] === 33 && flareBlitz.recoil[1] === 100,
+    'Flare Blitz recoil metadata missing');
+  truthy(String(braveBird.shortDesc || braveBird.short_desc || '').toLowerCase().includes('recoil'),
+    'Brave Bird short description should mention recoil');
+  truthy(String(flareBlitz.shortDesc || flareBlitz.short_desc || '').toLowerCase().includes('recoil'),
+    'Flare Blitz short description should mention recoil');
+});
+
 console.log(`\nPokemon data audit: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);

@@ -14,6 +14,7 @@ ALTER TABLE golden_battles          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analyses                ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analysis_win_conditions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analysis_logs           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE branch_coverage_runs    ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================
 -- REFERENCE TABLES: anon READ-ONLY
@@ -61,6 +62,15 @@ CREATE POLICY "anon_read_analysis_logs"
 
 CREATE POLICY "anon_insert_analysis_logs"
   ON analysis_logs FOR INSERT TO anon WITH CHECK (true);
+
+CREATE POLICY "anon_read_branch_coverage_runs"
+  ON branch_coverage_runs FOR SELECT TO anon USING (true);
+
+CREATE POLICY "anon_insert_branch_coverage_runs"
+  ON branch_coverage_runs FOR INSERT TO anon WITH CHECK (true);
+
+CREATE POLICY "anon_update_branch_coverage_runs"
+  ON branch_coverage_runs FOR UPDATE TO anon USING (true) WITH CHECK (true);
 
 -- ============================================================
 -- FUTURE: authenticated user policies (scaffold, inactive)

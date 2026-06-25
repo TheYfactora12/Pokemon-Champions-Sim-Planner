@@ -9,6 +9,7 @@ const vm = require('vm');
 const ROOT = path.resolve(__dirname, '..');
 const auditMigrationPath = path.join(ROOT, 'db', 'migrations', '2026_06_06_showdown_sync_audit_tables.sql');
 const migrationPath = path.join(ROOT, 'db', 'migrations', '2026_06_07_showdown_entities_approved_views.sql');
+const speciesMoveViewPath = path.join(ROOT, 'db', 'migrations', '2026_06_23_approved_species_move_legality_view.sql');
 const generatorPath = path.join(ROOT, 'tools', 'generate-approved-data-from-db.mjs');
 
 let pass = 0;
@@ -53,7 +54,9 @@ function fixtureRows() {
           priority: 0,
           target: 'any',
           flags: { contact: 1, protect: 1 },
-          recoil: [33, 100]
+          recoil: [33, 100],
+          shortDesc: 'Has 33% recoil.',
+          desc: 'Has 33% recoil.'
         }
       },
       {
@@ -87,6 +90,7 @@ function fixtureRows() {
           baseSpecies: 'Charizard',
           stats: { hp: 78, atk: 84, def: 78, spa: 109, spd: 85, spe: 100 },
           types: ['Fire', 'Flying'],
+          weightkg: 90.5,
           moves: { bravebird: '9M' }
         }
       }
@@ -187,7 +191,23 @@ T('2. migration allows anon reads only through approved/active RLS paths', () =>
   truthy(!/GRANT\s+SELECT\s+ON\s+showdown_entity_diffs\s+TO\s+anon/i.test(sql), 'diff rows should not be publicly granted');
 });
 
-T('3. generator emits approved runtime data and excludes unapproved rows', () => {
+T('3. species move legality view joins exact species/form learnsets to approved move metadata', () => {
+  const sql = fs.readFileSync(speciesMoveViewPath, 'utf8');
+  [
+    'CREATE OR REPLACE VIEW approved_species_move_legality',
+    'FROM approved_showdown_entities',
+    "WHERE entity_kind = 'species'",
+    "WHERE entity_kind = 'move'",
+    'jsonb_each_text',
+    'base_power',
+    'move_type',
+    'learn_method_codes',
+    'GRANT SELECT ON approved_species_move_legality TO anon, authenticated'
+  ].forEach((needle) => truthy(sql.includes(needle), 'missing SQL: ' + needle));
+  truthy(!/CREATE\s+TABLE/i.test(sql), 'legality lookup should be a view over approved truth, not a duplicate table');
+});
+
+T('4. generator emits approved runtime data and excludes unapproved rows', () => {
   const generated = generateFixtureRuntime();
   const runtime = generated.runtime;
   truthy(runtime.moves.bravebird, 'Brave Bird missing');
@@ -197,13 +217,17 @@ T('3. generator emits approved runtime data and excludes unapproved rows', () =>
   eq(runtime.moves.bravebird.priority, 1, 'active Champions override should apply');
   eq(runtime.moves.bravebird.flags, 'contact|protect', 'flags should be deterministic');
   eq(runtime.moves.bravebird.recoil[0], 33, 'recoil numerator');
+  eq(runtime.moves.bravebird.shortDesc, 'Has 33% recoil.', 'shortDesc should survive approved generation');
+  eq(runtime.moves.bravebird.short_desc, 'Has 33% recoil.', 'short_desc should survive approved generation');
+  eq(runtime.moves.bravebird.desc, 'Has 33% recoil.', 'desc should survive approved generation');
   truthy(runtime.species.Charizard, 'Charizard species missing');
+  eq(runtime.species.Charizard.weightkg, 90.5, 'Charizard weight should survive approved generation');
   eq(runtime.meta.appliedOverrideCount, 1, 'applied override count');
   eq(runtime.meta.activeOverrideCount, 2, 'active override count includes missing-row warning');
   truthy(runtime.meta.warnings.some((line) => line.includes('missingmove')), 'missing override warning absent');
 });
 
-T('4. generated DB-style rows are compatible with the battle engine helpers', () => {
+T('5. generated DB-style rows are compatible with the battle engine helpers', () => {
   const generated = generateFixtureRuntime();
   const ctx = {
     console,

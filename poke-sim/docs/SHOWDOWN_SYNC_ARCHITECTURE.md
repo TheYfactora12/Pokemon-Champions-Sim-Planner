@@ -73,7 +73,7 @@ The long-term goal is to make Showdown the canonical upstream mirror for static 
 
 Static data that should mirror Showdown 1:1:
 
-- move identity, priority, target, flags, type, category, base power, accuracy, PP, status, volatile status, boosts, secondaries, drain/recoil, terrain/weather/field markers
+- move identity, priority, target, flags, type, category, base power, accuracy, PP, status, volatile status, boosts, secondaries, drain/recoil, terrain/weather/field markers, and official move descriptions
 - species/forms, typing, stats, aliases, learnsets, required item/form metadata
 - item and ability metadata, including berries, mega stones, fling data, short descriptions, and nonstandard flags
 - type chart and format metadata
@@ -107,6 +107,7 @@ Primary source: `https://play.pokemonshowdown.com/data/`
 |---|---|
 | `pokedex.js` | Species, forms, typing, base stats, forme metadata |
 | `moves.js` | BP, accuracy, category, priority, flags, target rules |
+| `data/text/moves.ts` | Official move descriptions/short descriptions for QA context, including recoil wording |
 | `abilities.js` | Ability names, descriptions, ratings, metadata |
 | `items.js` | Item names, descriptions, berry data, fling data |
 | `typechart.js` | Type effectiveness table |
@@ -116,14 +117,14 @@ Primary source: `https://play.pokemonshowdown.com/data/`
 
 Secondary source:
 
-- `smogon/pokemon-showdown` repo for simulator code, protocol docs, and exact git commit references.
+- `smogon/pokemon-showdown` repo for simulator code, protocol docs, exact git commit references, and `data/text/moves.ts` when description text is needed.
 - `@pkmn/sim` for typed/package-based local simulator usage when browser or CI packaging matters.
 - `@smogon/calc` for targeted damage-range checks where a full battle stream is heavier than needed.
 
 Current local guardrail:
 
 - `tests/showdown_priority_drift_tests.js` compares local `getPriority()` for every shipped move against generated Showdown move metadata, with a Champions override allowlist for intentional differences.
-- `tools/validate-turn-logs.mjs` uses the same corrected priority assumptions to audit exported battle logs.
+- `tools/validate-turn-logs.mjs` uses the same corrected priority assumptions to audit exported battle logs, and validates structured `damage_events`/`effect_events` so recoil, drain, HP-cost, recovery, and delayed effect math remain auditable.
 
 ---
 

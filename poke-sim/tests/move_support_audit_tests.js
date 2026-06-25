@@ -63,13 +63,13 @@ T('2. key verified edge-case moves stay tagged verified', () => {
   eq(protect.supportLevel, 'verified', 'Protect support');
 });
 
-T('3. metadata-complete but not explicitly covered moves stay baseline', () => {
+T('3. former baseline shipped moves are now verified', () => {
   const voltSwitch = summary.find((row) => row.moveName === 'Volt Switch');
   const auraSphere = summary.find((row) => row.moveName === 'Aura Sphere');
   truthy(voltSwitch, 'Volt Switch summary missing');
   truthy(auraSphere, 'Aura Sphere summary missing');
   eq(voltSwitch.supportLevel, 'verified', 'Volt Switch support');
-  eq(auraSphere.supportLevel, 'baseline', 'Aura Sphere support');
+  eq(auraSphere.supportLevel, 'verified', 'Aura Sphere support');
 });
 
 T('4. audit report exists and names the shipped move count', () => {
@@ -77,8 +77,12 @@ T('4. audit report exists and names the shipped move count', () => {
   const report = fs.readFileSync(reportPath, 'utf8');
   truthy(report.includes('# Move Support Audit'), 'report header missing');
   truthy(report.includes('Shipped distinct moves audited:'), 'report summary missing');
+  truthy(report.includes('Verified: 120'), 'verified move count should include the full shipped move surface');
+  truthy(report.includes('Baseline: 0'), 'baseline move count should be closed for shipped moves');
   truthy(report.includes('Verification | Tests | Sources'), 'verification columns missing');
   truthy(report.includes('Freeze-Dry | verified | yes'), 'promoted verified move row missing');
+  truthy(report.includes('Low Kick | verified | yes'), 'Low Kick verified row missing');
+  truthy(report.includes('Tera Blast | verified | yes'), 'Tera Blast verified row missing');
 });
 
 T('5. imported Showdown moves can be baseline-supported without local table rows', () => {
@@ -86,6 +90,10 @@ T('5. imported Showdown moves can be baseline-supported without local table rows
   truthy(braveBird, 'Brave Bird summary missing');
   eq(braveBird.supportLevel, 'baseline', 'Brave Bird support');
   truthy(braveBird.showdown && braveBird.showdown.basePower === 120, 'Brave Bird Showdown BP missing');
+  truthy(braveBird.showdown && Array.isArray(braveBird.showdown.recoil) && braveBird.showdown.recoil[0] === 33,
+    'Brave Bird Showdown recoil missing');
+  truthy(braveBird.showdown && String(braveBird.showdown.shortDesc || '').toLowerCase().includes('recoil'),
+    'Brave Bird Showdown short description missing');
   truthy(braveBird.effective && braveBird.effective.source === 'showdown', 'Brave Bird should be sourced from Showdown');
 });
 

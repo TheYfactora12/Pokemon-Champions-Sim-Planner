@@ -50,6 +50,9 @@ T('4. report names dynamic move-type cases and promoted Tera Blast behavior', ()
   inc(report, 'Pixilate converts Normal damage to Fairy');
   inc(report, 'active Tera Blast uses declared');
   inc(report, 'Category is chosen in the damage engine from the higher boosted Attack vs Special Attack stat');
+  inc(report, 'Low Kick / Grass Knot');
+  inc(report, 'bp=variable(weight; showdown row 0)');
+  inc(report, 'base power selected from target Showdown weight in engine');
 });
 
 T('5. generator keeps the engine-equivalent type chart examples visible', () => {
@@ -57,6 +60,7 @@ T('5. generator keeps the engine-equivalent type chart examples visible', () => 
   inc(tool, 'Electric: {Electric: 0.5, Grass: 0.5, Dragon: 0.5, Ground: 0, Flying: 2, Water: 2}');
   inc(tool, "if (move === 'Freeze-Dry' && targetType === 'Water') eff = 2;");
   inc(tool, "NORMAL_CONVERSION");
+  inc(tool, "VARIABLE_BASE_POWER_DAMAGE");
 });
 
 console.log(`\ntype multiplier audit: ${pass} pass, ${fail} fail\n`);

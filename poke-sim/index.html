@@ -66,7 +66,7 @@
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.34-live-log-proof</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+        <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.60-team-evidence-dashboard</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -221,12 +221,32 @@
       </div>
 
       <div class="control-block">
+        <label class="control-label">Test Scope</label>
+        <select class="select-input" id="sim-scope">
+          <option value="preloaded" selected>Preloaded team suite</option>
+          <option value="selected">Selected matchup</option>
+        </select>
+      </div>
+
+      <div class="control-block">
         <label class="control-label">Simulated Series</label>
         <select class="select-input" id="sim-count">
           <option value="10">10 series (fast)</option>
           <option value="50" selected>50 series</option>
           <option value="100">100 series</option>
-          <option value="500">500 series (max)</option>
+          <option value="500">500 series (matchup read)</option>
+          <option value="1000">1,000 series (deep matchup)</option>
+          <option value="10000">10,000 series (full team stress)</option>
+        </select>
+      </div>
+
+      <div class="control-block">
+        <label class="control-label">Tactical Depth</label>
+        <select class="select-input" id="tactical-depth">
+          <option value="24">Quick 24 branches</option>
+          <option value="100" selected>Deep 100 branches</option>
+          <option value="250">Deep 250 branches</option>
+          <option value="all">All candidate branches (full coverage)</option>
         </select>
       </div>
 
@@ -237,6 +257,8 @@
 
       <button class="btn-primary" id="run-sim-btn">▶ Run Simulation</button>
       <button class="btn-secondary" id="run-all-btn">⚡ Run All Matchups</button>
+      <button class="btn-secondary" id="run-all-export-qa-btn" title="Run all matchups, then download one retained-evidence QA Artifact JSON">Run All + QA Artifact</button>
+      <button class="btn-secondary" id="tactical-sweep-qa-btn" title="Run tactical branch coverage using Test Scope, save unseen branches, then download QA Artifact JSON">Tactical Sweep + QA</button>
 
       <div class="progress-wrap" id="progress-wrap" style="display:none">
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
@@ -594,17 +616,20 @@
   5. storage_adapter.js  — localStorage wrapper (Storage.*)
   6. supabase_adapter.js — SupabaseAdapter.* (needs supabase-js + Storage)
   7. generated/pokemon_showdown_legal_data.js — Showdown-derived stats/learnsets
-  8. move_legality.js    — species/form move legality helper
-  9. move_support.js     — local move support confidence helper
- 10. replay_coach.js     — Battle Sensei replay parser
- 11. replay_learning.js  — Battle Sensei learning layer
- 12. legality.js         — VGC legality checker
- 13. ui.js               — all UI logic (needs everything above)
- 14. strategy-injectable.js — injectable coaching layer
+  8. generated/pokemon_showdown_species_weights.js — Showdown-derived species weights
+  9. runtime_data.js     — runtime Showdown/generated data accessors
+ 10. move_legality.js    — species/form move legality helper
+ 11. move_support.js     — local move support confidence helper
+ 12. replay_coach.js     — Battle Sensei replay parser
+ 13. replay_learning.js  — Battle Sensei learning layer
+ 14. legality.js         — VGC legality checker
+ 15. ui.js               — all UI logic (needs everything above)
+ 16. strategy-injectable.js — injectable coaching layer
 -->
 <script src="data.js"></script>
 <script src="logger.js"></script>
 <script src="generated/pokemon_showdown_legal_data.js"></script>
+<script src="generated/pokemon_showdown_species_weights.js"></script>
 <script src="runtime_data.js"></script>
 <script src="engine.js"></script>
 <script src="storage_adapter.js"></script>

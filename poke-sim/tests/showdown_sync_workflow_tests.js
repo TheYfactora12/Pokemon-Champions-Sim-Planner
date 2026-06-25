@@ -40,13 +40,14 @@ T('2. workflow evaluates change summary before any Supabase write', () => {
   truthy(yaml.includes('change_summary.json'), 'change summary artifact missing');
 });
 
-T('3. scheduled runs auto-promote approved rows after change checks', () => {
+T('3. approved rows require manual human-reviewed dispatch', () => {
   const yaml = fs.readFileSync(workflowPath, 'utf8');
-  truthy(yaml.includes('github.event_name == \'schedule\''), 'scheduled approved path missing');
+  truthy(!yaml.includes('github.event_name == \'schedule\' ||'), 'scheduled sync must not auto-approve rows');
   truthy(yaml.includes('steps.change_check.outputs.has_changes == \'true\''), 'approved write should still require changes');
   truthy(yaml.includes('github.event.inputs.approve == \'true\''), 'manual approve gate missing');
   truthy(yaml.includes('--approve'), 'approved promotion should use approved writer path');
   truthy(yaml.includes('github.event_name == \'workflow_dispatch\' && github.event.inputs.write_db == \'true\' && github.event.inputs.approve != \'true\''), 'manual unapproved path missing');
+  truthy(yaml.includes('github.event_name == \'workflow_dispatch\' && github.event.inputs.write_db == \'true\' && github.event.inputs.approve == \'true\''), 'manual approved path missing');
 });
 
 console.log('\nShowdown sync workflow:', pass + ' pass, ' + fail + ' fail\n');

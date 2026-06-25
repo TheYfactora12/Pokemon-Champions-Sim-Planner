@@ -69,6 +69,42 @@
     });
   }
 
+  function normalizeDbError(err) {
+    if (!err) return null;
+    if (typeof err === 'string') return err;
+
+    var details = {
+      name: err.name || null,
+      message: err.message || null,
+      code: err.code || null,
+      details: err.details || null,
+      hint: err.hint || null,
+      status: err.status || null,
+      statusText: err.statusText || null
+    };
+
+    if (err.cause) {
+      details.cause = normalizeDbError(err.cause);
+    }
+    if (typeof err.stack === 'string') {
+      details.stack = err.stack;
+    }
+
+    var hasValue = false;
+    Object.keys(details).forEach(function(key) {
+      if (details[key] !== null && details[key] !== undefined && details[key] !== '') {
+        hasValue = true;
+      }
+    });
+    if (hasValue) return details;
+
+    try {
+      return JSON.parse(JSON.stringify(err));
+    } catch (_e) {
+      return String(err);
+    }
+  }
+
   // ── loadTeamsFromDB ───────────────────────────────────────────────────────
   // Returns {[team_id]: {team_id, name, label, description, source, metadata, members[]}}
   // or null if disabled / errored. NEVER throws.
@@ -485,6 +521,139 @@
     }
   }
 
+  async function loadBranchCoverageSummary(filters) {
+    var sb = getClient();
+    if (!sb) return [];
+    filters = filters || {};
+    try {
+      var query = sb
+        .from('branch_coverage_runs')
+        .select('branch_key,player_team_id,opponent_team_id,player_leads,opponent_leads,player_bring,opponent_bring,forced_actions,tactical_summary,run_count,last_seen_at,result,turns,outcome_signature,outcome_drift_count')
+        .order('last_seen_at', { ascending: false })
+        .limit(filters.limit || 5000);
+      if (filters.player_team_id) query = query.eq('player_team_id', filters.player_team_id);
+      if (filters.opponent_team_id) query = query.eq('opponent_team_id', filters.opponent_team_id);
+      var result = await query;
+      if (result.error) throw result.error;
+      return result.data || [];
+    } catch (err) {
+      log.warn('loadBranchCoverageSummary failed', err);
+      return [];
+    }
+  }
+
+  async function saveBranchCoverageRuns(payload) {
+    var sb = getClient();
+    if (!sb) return { enabled: false, saved: 0, updated: 0, inserted: 0 };
+    payload = payload || {};
+    var runs = Array.isArray(payload.runs) ? payload.runs.filter(function(run) {
+      return run && run.branch_key;
+    }) : [];
+    if (!runs.length) return { enabled: true, saved: 0, updated: 0, inserted: 0 };
+
+    try {
+      var keys = runs.map(function(run) { return run.branch_key; });
+      var existingResult = await sb
+        .from('branch_coverage_runs')
+        .select('branch_key,run_count,outcome_signature,outcome_drift_count')
+        .in('branch_key', keys);
+      if (existingResult.error) throw existingResult.error;
+
+      var existing = {};
+      (existingResult.data || []).forEach(function(row) {
+        existing[row.branch_key] = {
+          run_count: Number(row.run_count || 0),
+          outcome_signature: row.outcome_signature || null,
+          outcome_drift_count: Number(row.outcome_drift_count || 0)
+        };
+      });
+
+      var rowsToWrite = [];
+      var seenInBatch = Object.create(null);
+      var inserted = 0;
+      var updated = 0;
+      for (var i = 0; i < runs.length; i++) {
+        var run = runs[i];
+        if (seenInBatch[run.branch_key]) continue;
+        seenInBatch[run.branch_key] = true;
+        var row = {
+          branch_key: run.branch_key,
+          ruleset_id: payload.ruleset_id || DEFAULT_RULESET_ID,
+          player_team_id: payload.player_team_id || run.player_team_id || null,
+          opponent_team_id: payload.opponent_team_id || run.opponent_team_id || null,
+          player_leads: Array.isArray(run.player_bring) ? run.player_bring.slice(0, 2) : [],
+          opponent_leads: Array.isArray(run.opponent_bring) ? run.opponent_bring.slice(0, 2) : [],
+          player_bring: run.player_bring || [],
+          opponent_bring: run.opponent_bring || [],
+          forced_actions: run.forced_actions || [],
+          tactical_summary: run.tactical_summary || {},
+          qa_coverage_summary: run.qa_coverage_summary || {},
+          result: run.result || null,
+          turns: run.turns || 0,
+          outcome_signature: run.outcome_signature || null,
+          build_id: payload.build_id || null,
+          source_url: payload.source_url || null,
+          last_seen_at: new Date().toISOString()
+        };
+        var prior = existing[run.branch_key] || {};
+        var priorOutcome = prior.outcome_signature || null;
+        var changed = !!(priorOutcome && row.outcome_signature && priorOutcome !== row.outcome_signature);
+        if (Object.prototype.hasOwnProperty.call(existing, run.branch_key)) {
+          row.run_count = Number(prior.run_count || 0) + 1;
+          row.outcome_drift_count = Number(prior.outcome_drift_count || 0) + (changed ? 1 : 0);
+          updated++;
+        } else {
+          row.run_count = 1;
+          row.outcome_drift_count = 0;
+          inserted++;
+        }
+        rowsToWrite.push(row);
+      }
+      if (!rowsToWrite.length) {
+        return { enabled: true, saved: 0, updated: 0, inserted: 0 };
+      }
+      var saveChunkSize = 80;
+      var saveResult = { enabled: true, saved: 0, updated: 0, inserted: 0, errors: [] };
+
+      for (var i = 0; i < rowsToWrite.length; i += saveChunkSize) {
+        var chunk = rowsToWrite.slice(i, i + saveChunkSize);
+        if (!chunk.length) continue;
+        var chunkUpdated = 0;
+        var chunkInserted = 0;
+        for (var c = 0; c < chunk.length; c++) {
+          var row = chunk[c] || {};
+          if (existing[row.branch_key]) chunkUpdated += 1;
+          else chunkInserted += 1;
+        }
+        var upsertResult = await sb
+          .from('branch_coverage_runs')
+          .upsert(chunk, { onConflict: 'branch_key' });
+        if (upsertResult && upsertResult.error) {
+          saveResult.errors.push(normalizeDbError(upsertResult.error));
+        } else {
+          saveResult.saved += chunk.length;
+          saveResult.updated += chunkUpdated;
+          saveResult.inserted += chunkInserted;
+        }
+      }
+
+      if (saveResult.errors.length) {
+        saveResult.error = 'one_or_more_branch_coverage_chunk_writes_failed';
+        return saveResult;
+      }
+      return saveResult;
+    } catch (err) {
+      log.warn('saveBranchCoverageRuns failed', err);
+      return {
+        enabled: true,
+        saved: 0,
+        updated: 0,
+        inserted: 0,
+        error: normalizeDbError(err)
+      };
+    }
+  }
+
   // ── Public API ────────────────────────────────────────────────────────────
   window.SupabaseAdapter = {
     enabled:            ENABLED,
@@ -498,7 +667,9 @@
     loadAnalysisLogs,
     loadPriorSnapshot,
     loadShowdownDbStatus,
-    loadShowdownDbSnapshot
+    loadShowdownDbSnapshot,
+    loadBranchCoverageSummary,
+    saveBranchCoverageRuns
   };
 
   // M3 NOTE: Auto-merge of DB teams into TEAMS has moved to ui.js's

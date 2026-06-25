@@ -177,7 +177,10 @@ function normalizeMove(key, displayName, data) {
     priority: firstDefined(data.priority, 0),
     target: firstDefined(data.target, ''),
     flags: normalizeFlags(data.flags),
-    recoil: firstDefined(data.recoil, null)
+    recoil: firstDefined(data.recoil, null),
+    shortDesc: firstDefined(data.shortDesc, data.short_desc, ''),
+    short_desc: firstDefined(data.short_desc, data.shortDesc, ''),
+    desc: firstDefined(data.desc, '')
   }));
 }
 
@@ -195,6 +198,7 @@ function normalizeSpecies(key, displayName, data) {
     inheritedFrom: firstDefined(data.inheritedFrom, data.inherited_from, ''),
     stats: firstDefined(data.stats, null),
     types: normalizeArray(data.types),
+    weightkg: firstDefined(data.weightkg, data.weight_kg, data.weightKg, ''),
     requiredItem: firstDefined(data.requiredItem, data.required_item, ''),
     moves: firstDefined(data.moves, {})
   }));
