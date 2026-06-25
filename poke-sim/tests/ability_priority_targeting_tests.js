@@ -25,8 +25,11 @@ vm.runInContext([
   'this.getPriority = getPriority;',
   'this._moveHits = _moveHits;',
   'this.canInflictStatus = canInflictStatus;',
-  'this._applyTargetStageMap = _applyTargetStageMap;'
+  'this._applyTargetStageMap = _applyTargetStageMap;',
+  'this._compareTurnActionOrder = _compareTurnActionOrder;'
 ].join('\n'), ctx);
+
+const compareTurnActionOrder = ctx._compareTurnActionOrder;
 
 let pass = 0;
 let fail = 0;
@@ -557,6 +560,70 @@ T('21. Trace copies the first eligible opposing active ability', function() {
   );
   truthy(battle.log.some(line => String(line).includes("Alakazam traced Rotom-Wash's Levitate!")),
     'Trace copy log missing');
+});
+
+T('22. Prankster boosts Tailwind to +1 and Trick Room from -7 to -6', function() {
+  eq(ctx.getPriority('Tailwind', { ability: 'Prankster' }), 1, 'Prankster Tailwind priority = +1');
+  eq(ctx.getPriority('Tailwind', { ability: '' }), 0, 'non-Prankster Tailwind priority = 0');
+  eq(ctx.getPriority('Trick Room', { ability: 'Prankster' }), -6, 'Prankster Trick Room = -7 + 1 = -6');
+  eq(ctx.getPriority('Trick Room', { ability: '' }), -7, 'non-Prankster Trick Room stays -7');
+});
+
+T('23. Prankster Tailwind fires before a faster opponent using a normal-priority move', function() {
+  const battle = ctx.simulateBattle(
+    team([member('Sableye', {
+      ability: 'Prankster',
+      moves: ['Tailwind'],
+      evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
+    })]),
+    team([member('Dragapult', {
+      ability: 'Clear Body',
+      moves: ['Tackle'],
+      evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 }
+    })]),
+    { format: 'singles', seed: [101, 102, 103, 104], maxTurns: 1 }
+  );
+  const tailwindIdx = battle.log.findIndex(function(l) { return String(l).includes('Sableye used Tailwind!'); });
+  const tackleIdx = battle.log.findIndex(function(l) { return String(l).includes('Dragapult used Tackle!'); });
+  truthy(tailwindIdx >= 0, 'Tailwind should appear in battle log');
+  truthy(tackleIdx >= 0, 'Tackle should appear in battle log');
+  truthy(tailwindIdx < tackleIdx, 'Prankster Tailwind (+1 priority) should fire before Dragapult Tackle (0 priority) even though Sableye is slower');
+});
+
+T('24. Under Trick Room, Prankster Tailwind (+1) still acts before normal priority moves (0)', function() {
+  const field = new ctx.Field({ format: 'doubles' });
+  field.trickRoom = true;
+  field.trickRoomTurns = 5;
+  const rng = function() { return 0.75; };
+  const prankMon = new ctx.Pokemon(member('Sableye', { ability: 'Prankster' }), '', 'champions');
+  const fastMon = new ctx.Pokemon(member('Dragapult', { ability: 'Clear Body', evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } }), '', 'champions');
+  const twPriority = ctx.getPriority('Tailwind', prankMon);
+  const tckPriority = ctx.getPriority('Tackle', fastMon);
+  eq(twPriority, 1, 'Prankster Tailwind should resolve to priority +1');
+  eq(tckPriority, 0, 'Tackle should resolve to priority 0');
+  const twAction = { attacker: prankMon, move: 'Tailwind', priority: twPriority };
+  const tckAction = { attacker: fastMon, move: 'Tackle', priority: tckPriority };
+  truthy(compareTurnActionOrder(twAction, tckAction, field, rng) < 0,
+    'under Trick Room, Prankster Tailwind (+1) must still act before normal Tackle (0): TR only reverses speed within a bracket');
+});
+
+T('25. Fake Out (+3) acts before Prankster-boosted Tailwind (+1), including under Trick Room', function() {
+  const field = new ctx.Field({ format: 'doubles' });
+  const rng = function() { return 0.75; };
+  const fakerMon = new ctx.Pokemon(member('Incineroar', { ability: 'Intimidate' }), '', 'champions');
+  const prankMon = new ctx.Pokemon(member('Sableye', { ability: 'Prankster' }), '', 'champions');
+  const fakePriority = ctx.getPriority('Fake Out', fakerMon);
+  const twPriority = ctx.getPriority('Tailwind', prankMon);
+  eq(fakePriority, 3, 'Fake Out priority');
+  eq(twPriority, 1, 'Prankster Tailwind priority');
+  const fakeAction = { attacker: fakerMon, move: 'Fake Out', priority: fakePriority };
+  const twAction = { attacker: prankMon, move: 'Tailwind', priority: twPriority };
+  truthy(compareTurnActionOrder(fakeAction, twAction, field, rng) < 0,
+    'Fake Out (+3) should act before Prankster Tailwind (+1)');
+  field.trickRoom = true;
+  field.trickRoomTurns = 5;
+  truthy(compareTurnActionOrder(fakeAction, twAction, field, rng) < 0,
+    'under Trick Room, Fake Out (+3) still acts before Prankster Tailwind (+1)');
 });
 
 console.log('\nability priority / targeting:', pass + ' pass, ' + fail + ' fail\n');
