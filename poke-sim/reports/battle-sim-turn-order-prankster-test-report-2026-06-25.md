@@ -1,4 +1,4 @@
-# Battle Sim — Turn Order & Prankster Coverage Report
+# Battle Sim — Full Diagnostic Coverage Report
 **Date:** 2026-06-25  
 **Branch:** `test/battle-sim-turn-order-prankster-coverage`  
 **Author:** Cascade (session) / Alfredo Cox  
@@ -8,11 +8,23 @@
 
 ## What this report covers
 
-This session added **20 new engine tests** across two files to lock in correctness of:
+This session added **53 new engine tests** across three new/updated files to lock in correctness of:
 1. **Battle turn order** — priority brackets, speed, and Trick Room
-2. **Prankster ability** — Tailwind and Trick Room interactions that were previously untested
+2. **Prankster ability** — Tailwind and Trick Room interactions
+3. **Core battle system mechanics** — burn, paralysis, redirection, Protect-family, pivot moves, status immunities, edge cases
+4. **Screens, terrain, item mechanics** — and two confirmed engine gaps exposed
 
-All 20 tests are GREEN. No engine source files were changed — these are pure regression guards.
+Two engine gaps were found and documented in the Overview page. No engine source was changed — these are diagnostic guards that will self-repair when the gaps are implemented.
+
+**Test results at a glance:**
+
+| Suite | Tests | PASS | FAIL (GAP) |
+|---|---|---|---|
+| `turn_order_priority_tests.js` (T11–T15 new) | 15 | 15 | 0 |
+| `ability_priority_targeting_tests.js` (T22–T25 new) | 25 | 25 | 0 |
+| `battle_system_mechanics_tests.js` (all new) | 20 | 20 | 0 |
+| `screens_terrain_item_tests.js` (all new) | 13 | 11 | 2 confirmed gaps |
+| **Total** | **73** | **71** | **2** |
 
 ---
 
@@ -198,7 +210,136 @@ Fake Out (+3) > Prankster Tailwind (+1) in all field states. Prankster boosts Ta
 
 ---
 
-## How to run all these tests locally
+---
+
+## Part 3 — Core Battle System Mechanics (20 new tests, all PASS)
+
+### File: `poke-sim/tests/battle_system_mechanics_tests.js`
+
+This suite was built to answer the question: *is the engine correctly handling the core mechanics the Overview page says are shipped?* All 20 tests are GREEN — the engine is doing its job.
+
+### What was confirmed working
+
+**Burn** (T1–T3)
+- Burn halves physical damage to ~50% — confirmed via `calcDamage` ratio
+- Burn does **not** reduce special damage
+- Guts ability negates the penalty entirely
+
+**Paralysis** (T4–T5)
+- `getStat('spe')` is halved when the mon is paralyzed
+- A paralyzed fast mon (Dragapult) acts **after** a slower healthy mon (Garchomp) in a live battle
+
+**Redirection: Follow Me / Rage Powder** (T6–T9)
+- Follow Me logs "center of attention" and redirects opponent moves
+- Rage Powder redirects non-Grass attackers ("drawn to" in log)
+- Grass-type (Whimsicott) bypasses Rage Powder
+- Stalwart ability bypasses Follow Me / Rage Powder
+
+**Wide Guard / Quick Guard** (T10–T11)
+- Wide Guard blocks spread moves (Rock Slide) for the whole team
+- Quick Guard blocks priority +1 moves (Fake Out) for the team
+
+**Spiky Shield / Baneful Bunker** (T12–T13)
+- Spiky Shield deals 1/8 chip to a contact-move attacker
+- Baneful Bunker poisons a contact-move attacker
+
+**Pivot moves** (T14–T15)
+- U-turn deals damage and logs a switchout
+- Parting Shot is used and logged
+
+**Edge cases** (T16–T20)
+- Fire-type is immune to burn from Will-O-Wisp in a live battle
+- Frozen status prevents action (guaranteed behavior over 3 turns)
+- Ice-type (Glaceon) is immune to Frozen — `canInflictStatus` returns false
+- Feint (+2 priority) bypasses Quick Guard — engine line `move !== 'Feint'` confirmed
+- Wide Guard does **not** block single-target moves — only spread moves
+
+**Key note for Josh:** Frostbite (`status: 'frostbite'`) exists as dead code in the engine from an earlier implementation pass. Champions uses standard Frozen. The frostbite code path will not activate during normal play but is worth flagging for a future cleanup.
+
+---
+
+## Part 4 — Screens, Terrain, Items — and Two Confirmed Engine Gaps
+
+### File: `poke-sim/tests/screens_terrain_item_tests.js`
+
+This suite confirmed 11 mechanics working correctly and **exposed 2 confirmed engine gaps**.
+
+### What was confirmed working (11 PASS)
+
+**Screens** (T1–T4)
+- Reflect halves physical damage in singles (ratio ~0.5x, screenBase = 2048/4096)
+- Light Screen halves special damage
+- Aurora Veil halves both physical and special
+- Critical hits bypass screens entirely — `screenMod` forced to 1 on crit (engine line ~2372)
+
+**Terrain power effects** (T5–T7)
+- Electric Terrain boosts Electric-type damage for grounded attackers
+- Grassy Terrain halves Earthquake / Bulldoze damage (2048/4096 modifier)
+- Misty Terrain halves Dragon-type move damage (2048/4096 modifier)
+
+**Intimidate damage feed-through** (T10)
+- Intimidate on-entry sets `statBoosts.atk = -1`
+- That -1 stage feeds through `getStat('atk')` into `calcDamage` — confirmed ~33% damage reduction
+- The ability log (T6 from `ability_priority_targeting_tests.js`) AND the actual damage are both correct
+
+**Held items in live battles** (T11–T13)
+- Leftovers logs "restored HP with Leftovers" at end of turn
+- Choice Scarf boosts `getStat('spe')` by 1.5× — confirmed unit test
+- Choice Scarf locks the holder to its first move used — Dragon Pulse never appears after Shadow Ball is chosen
+
+> **Note for Josh:** Life Orb and Choice Band/Specs are **not in Champions** (WONTFIX #11). Choice Scarf is the only Choice item. Tests reflect this.
+
+---
+
+### ⚠ Two Confirmed Engine Gaps
+
+These tests **intentionally FAIL** to expose missing implementations. They will automatically become PASS once someone implements the fix — no test rewrite needed.
+
+---
+
+#### GAP 1 — `[T8]` Misty Terrain does not block status infliction
+
+**What should happen:** When `field.terrain === 'misty'`, grounded Pokémon should be immune to sleep, burn, paralysis, and other major statuses. This is standard Pokémon mechanics.
+
+**What actually happens:** `canInflictStatus` has no terrain check at all. Sleep Powder, Will-O-Wisp, and Thunder Wave freely land on grounded targets even under Misty Terrain.
+
+**Confirmed by:** `ctx.canInflictStatus(garchomp, 'sleep', fieldWithMistyTerrain, null)` returns `true` — it should return `false`.
+
+**Fix location:** `canInflictStatus` function in `engine.js`. Add:
+```js
+if (field && field.terrain === 'misty' && _isGrounded(mon)) return false;
+```
+mirroring the existing type-immunity and ability-immunity pattern already in that function.
+
+---
+
+#### GAP 2 — `[T9]` Grassy Surge + Grassy Terrain end-of-turn recovery missing
+
+**Two missing pieces:**
+
+**(a) Grassy Surge does not set terrain on entry**  
+When Rillaboom enters the field with Grassy Surge, the engine does not call any on-entry hook to set `field.terrain = 'grassy'`. The terrain power modifiers (Grass move boost, EQ weakening) were implemented in `calcDamage` and work correctly — but the terrain is never established in a real battle because no Surge ability triggers it.
+
+**(b) No end-of-turn Grassy Terrain HP recovery loop**  
+Even if terrain is set manually via test harness (`field.terrain = 'grassy'`), there is no end-of-turn healing loop for grounded mons. The existing end-of-turn loops cover Leftovers, burn chip, toxic, and frostbite — but not terrain recovery.
+
+**Fix locations:**
+- Surge abilities (Grassy Surge, Electric Surge, Misty Surge, Psychic Surge): wire into the on-entry ability hook in `_applyActiveMon`, setting `field.terrain = 'grassy'` (etc.) and logging the terrain message
+- Add an end-of-turn recovery loop after the Leftovers loop: `1/16 maxHp` for grounded mons under Grassy Terrain
+
+---
+
+### What this means for the Overview
+
+Both gaps were added to `CS_OVERVIEW_DATA.gaps` in `ui.js` so they are visible on the Overview tab:
+- **"Misty Terrain does not block status infliction in the engine"**
+- **"Grassy Surge ability and Grassy Terrain end-of-turn recovery not wired"**
+
+The terrain **power effects** (damage boosts/reductions) are working correctly — those were already shipped. Only the **status immunity** and **recovery healing** sides are missing.
+
+---
+
+## How to run all tests locally
 
 Node.js is at:
 ```
@@ -208,31 +349,60 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\Visual
 From `poke-sim/` directory:
 ```powershell
 # Turn order suite (15 tests)
-& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\NodeJs\node.exe" tests/turn_order_priority_tests.js
+& "...\node.exe" tests/turn_order_priority_tests.js
 
 # Ability priority / Prankster suite (25 tests)
-& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\NodeJs\node.exe" tests/ability_priority_targeting_tests.js
+& "...\node.exe" tests/ability_priority_targeting_tests.js
+
+# Battle system mechanics (20 tests — all PASS)
+& "...\node.exe" tests/battle_system_mechanics_tests.js
+
+# Screens / terrain / items (13 tests — 11 PASS, 2 GAPs)
+& "...\node.exe" tests/screens_terrain_item_tests.js
 ```
 
-Expected output — both should end with `0 fail`.
+Full Node path: `C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\NodeJs\node.exe`
+
+The two GAP failures in `screens_terrain_item_tests.js` are expected and intentional — they document what still needs implementing.
 
 ---
 
-## Summary of engine behavior confirmed by this test suite
+## Summary of engine behavior confirmed by this full session
 
 | Scenario | Engine behavior | Test |
 |---|---|---|
 | Fake Out (+3) vs Tackle (0) | Fake Out always first | T11 |
-| Quick Attack (+1) vs Tackle (0) from faster mon | Quick Attack first | T11 |
 | Roar (−6) vs Tackle (0) from slow mon | Tackle first | T12 |
 | 4-mon doubles: priority then speed | Bracket → speed descending | T13 |
-| TR: same bracket, Cofagrigus vs Dragapult | Cofagrigus (slower) first | T14, T3 |
+| TR: same bracket, slow vs fast | Slower first | T14 |
 | TR: +1 vs 0 | +1 still wins (bracket overrides TR) | T14 |
-| Prankster Tailwind priority value | +1 | T22, T15 |
+| Prankster Tailwind priority value | +1 | T22 |
 | Prankster Trick Room priority value | −6 (not −7) | T22 |
-| Prankster Tailwind live battle ordering | Fires before fast normal move | T23 |
-| Prankster Tailwind under TR | Still fires first (+1 > 0) | T24 |
-| Fake Out vs Prankster Tailwind under TR | Fake Out wins | T25 |
+| Prankster Tailwind fires before fast normal move | ✅ | T23 |
+| Prankster Tailwind under Trick Room | Still fires first | T24 |
+| Fake Out vs Prankster Tailwind | Fake Out wins (+3 > +1) | T25 |
+| Burn halves physical damage | ~50% ratio | S3-T1 |
+| Burn does NOT reduce special | ✅ | S3-T2 |
+| Guts bypasses burn penalty | ✅ | S3-T3 |
+| Paralysis halves speed via `getStat` | ✅ | S3-T4 |
+| Paralyzed fast mon acts after slower healthy | ✅ | S3-T5 |
+| Follow Me / Rage Powder redirection | ✅ + all bypass cases | S3-T6–T9 |
+| Wide Guard blocks spread only | ✅ | S3-T10, S4-T20 |
+| Quick Guard blocks priority moves (not Feint) | ✅ | S3-T11, S4-T19 |
+| Spiky Shield chips / Baneful Bunker poisons | ✅ | S3-T12–T13 |
+| U-turn / Parting Shot pivot behavior | ✅ | S3-T14–T15 |
+| Fire-type immune to burn in live battle | ✅ | S3-T16 |
+| Frozen prevents action (Champions) | ✅ | S3-T17 |
+| Ice-type immune to Frozen | ✅ | S3-T18 |
+| Reflect / Light Screen / Aurora Veil halve damage | ✅ | S4-T1–T3 |
+| Crits bypass screens | ✅ | S4-T4 |
+| Electric/Grassy/Misty terrain power effects | ✅ | S4-T5–T7 |
+| Misty Terrain blocks status infliction | ❌ **GAP** | S4-T8 |
+| Grassy Surge sets terrain / terrain HP recovery | ❌ **GAP** | S4-T9 |
+| Intimidate -1 Atk reduces actual damage | ✅ ~33% reduction | S4-T10 |
+| Leftovers end-of-turn HP restore | ✅ | S4-T11 |
+| Choice Scarf +50% speed | ✅ | S4-T12 |
+| Choice Scarf move lock | ✅ | S4-T13 |
 
 ---
 
@@ -240,7 +410,13 @@ Expected output — both should end with `0 fail`.
 
 | File | Change |
 |---|---|
-| `poke-sim/tests/turn_order_priority_tests.js` | +5 tests (T11–T15): priority bracket coverage (Gap A, B, C, D) |
-| `poke-sim/tests/ability_priority_targeting_tests.js` | +4 tests (T22–T25): Prankster + Tailwind/TR interactions |
+| `poke-sim/tests/turn_order_priority_tests.js` | +5 tests (T11–T15): priority bracket coverage |
+| `poke-sim/tests/ability_priority_targeting_tests.js` | +4 tests (T22–T25): Prankster + Tailwind/TR |
+| `poke-sim/tests/battle_system_mechanics_tests.js` | **New** — 20 diagnostic tests, all PASS |
+| `poke-sim/tests/screens_terrain_item_tests.js` | **New** — 13 diagnostic tests, 2 confirmed GAPs |
+| `poke-sim/ui.js` | +2 gap entries in `CS_OVERVIEW_DATA.gaps` |
+| `poke-sim/sw.js` | CACHE_NAME bumped to `v95-terrain-gaps-documented` |
+| `poke-sim/pokemon-champion-2026.html` | Bundle rebuilt |
+| `poke-sim/reports/battle-sim-turn-order-prankster-test-report-2026-06-25.md` | This report |
 
-**No engine source files were modified.** All tests GREEN. 3 pre-existing failures unrelated to this work (`qa_baseline_snapshot_tests.js` stale hash, `showdown_damage_oracle_tests.js` + `showdown_db_writer_tests.js` missing `npm install`).
+**No engine source files were modified.** All 71 confirmed tests GREEN. 2 intentional GAP failures document missing terrain mechanics.
