@@ -23640,6 +23640,36 @@ function csReplaySparkline(turnLog) {
     '</svg>';
 }
 
+function csReplayPositionScore(row) {
+  if (!row) return null;
+  if (typeof row.positionScore === 'number') return row.positionScore;
+  if (row.post && typeof row.post.position_score === 'number') return row.post.position_score;
+  return null;
+}
+
+function csIsClutchReplay(replay) {
+  replay = replay || {};
+  var turns = Number(replay.turns || 0);
+  var turnLog = Array.isArray(replay.turnLog) ? replay.turnLog : [];
+  var turning = replay.turning_point || null;
+  var finalTurn = turnLog.length ? turnLog[turnLog.length - 1] : null;
+  var finalScore = csReplayPositionScore(finalTurn);
+  var minScore = turnLog.reduce(function(min, row) {
+    var score = csReplayPositionScore(row);
+    return score == null ? min : Math.min(min, score);
+  }, 1);
+  var maxDelta = turnLog.reduce(function(max, row) {
+    var d = row && row.delta && typeof row.delta.position_score === 'number' ? Math.abs(row.delta.position_score) : 0;
+    return Math.max(max, d);
+  }, 0);
+  var comebackWin = replay.result === 'win' && minScore <= 0.42 && finalScore != null && finalScore >= 0.58;
+  var lateSwing = turning && turning.turn != null && turns >= 5 && turning.turn >= Math.max(3, turns - 2);
+  var majorSwing = maxDelta >= 0.18;
+  var closeEndgame = finalScore != null && finalScore >= 0.35 && finalScore <= 0.65 && turns >= 5 && (majorSwing || lateSwing);
+  var fieldReversalWin = replay.result === 'win' && ((replay.trTurns || 0) > 0 || (replay.twTurns || 0) > 0) && (lateSwing || comebackWin || majorSwing);
+  return !!(comebackWin || closeEndgame || (lateSwing && majorSwing) || fieldReversalWin);
+}
+
 function csRenderHpBars(turn) {
   var hp = (turn && turn.post && turn.post.hp_pct) || {};
   var names = Object.keys(hp).slice(0, 8);
@@ -26267,7 +26297,7 @@ function renderReplays() {
     if (replayFilter==='all') return true;
     if (replayFilter==='win') return r.result==='win';
     if (replayFilter==='loss') return r.result==='loss';
-    if (replayFilter==='clutch') return r.turns>=8||(r.result==='win'&&r.trTurns>0);
+    if (replayFilter==='clutch') return csIsClutchReplay(r);
     return true;
   }).slice(0,60);
 
