@@ -2333,7 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.65-series-lineup-matrix</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.66-html-replay-upload</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -2705,8 +2705,8 @@ table{border-collapse:collapse;width:100%}
             <div>1. Open your replay in Pokémon Showdown.</div>
             <div>2. Copy the full replay log text, or save it as a plain <code>.txt</code>/<code>.log</code> file.</div>
             <div>3. You can also paste a replay URL from <code>replay.pokemonshowdown.com</code> and let Battle Sensei load the raw log.</div>
-            <div>4. Paste it here or upload the file, choose your side, then run analysis.</div>
-            <small>Replay HTML, screenshots, and team exports are still not the primary input path in this build.</small>
+            <div>4. Paste it here or upload the replay file, choose your side, then run analysis.</div>
+            <small>Battle Sensei accepts raw logs, pasted replay-page text, replay URLs, and exported Showdown HTML. Screenshots and team exports are not replay inputs.</small>
           </div>
         </div>
         <div class="replay-coach-url-row">
@@ -2730,8 +2730,8 @@ table{border-collapse:collapse;width:100%}
             <option value="mistakes">Mistake Finder</option>
             <option value="sim">Sim Comparison Prep</option>
           </select>
-          <input type="file" id="replay-coach-file" accept=".txt,.log" hidden/>
-          <button class="btn-secondary" id="replay-coach-upload-btn" type="button">Upload .txt</button>
+          <input type="file" id="replay-coach-file" accept=".txt,.log,.html,.htm,text/plain,text/html" hidden/>
+          <button class="btn-secondary" id="replay-coach-upload-btn" type="button">Upload Replay</button>
           <button class="btn-primary" id="replay-coach-run-btn" type="button">Analyze Replay</button>
         </div>
         <div id="replay-coach-status" class="replay-coach-status" aria-live="polite"></div>
@@ -17875,7 +17875,7 @@ if (typeof window !== 'undefined') {
       .replace(/\u00a0/g, ' ')
       .replace(/\r\n?/g, '\n');
     if (!text.trim()) return '';
-    if (text.indexOf('\n') < 0 && text.indexOf('\\n|') >= 0) {
+    if (text.indexOf('\\n|') >= 0 || text.indexOf('|\\n') >= 0) {
       text = text.replace(/\\n/g, '\n');
     }
     var directLines = [];
@@ -20555,9 +20555,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.65-series-lineup-matrix';
+    return txt || 'v2.1.66-html-replay-upload';
   } catch (e) {
-    return 'v2.1.65-series-lineup-matrix';
+    return 'v2.1.66-html-replay-upload';
   }
 }
 
@@ -26257,7 +26257,10 @@ function csInitReplayCoachUi() {
       if (!file) return;
       var reader = new FileReader();
       reader.onload = function() {
-        logEl.value = String(reader.result || '');
+        var api = ChampionsSim && ChampionsSim.replayCoach;
+        var raw = String(reader.result || '');
+        var normalized = api && typeof api.normalizeReplayLogInput === 'function' ? api.normalizeReplayLogInput(raw) : raw;
+        logEl.value = normalized;
         setStatus('Loaded ' + file.name + '. Run analysis when ready.');
       };
       reader.onerror = function() { setStatus('Could not read that file.', true); };

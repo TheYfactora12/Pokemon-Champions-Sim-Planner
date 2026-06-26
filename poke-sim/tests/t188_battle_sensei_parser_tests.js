@@ -171,13 +171,13 @@ T('8. accepts replay-only visible four without full six overclaiming', () => {
   const analysis = replayCoach.analyzeShowdownReplay(visibleFourOnly, { selectedSide: 'p1' });
   const ids = analysis.review.coachingTags.map((t) => t.id);
   eq(analysis.review.summary.selectedFourConfidence.level, 'medium', 'visible four confidence should stay medium without preview');
-  eq(analysis.review.summary.selectedFourConfidence.label, 'Visible four inferred', 'visible four label');
+  eq(analysis.review.summary.selectedFourConfidence.label, 'Visible lineup inferred', 'visible lineup label');
   eq(analysis.review.summary.selectedFourConfidence.previewCount, 0, 'no full preview count');
   eq(analysis.review.summary.selectedFourConfidence.selectedCount, 4, 'four visible selected count');
   eq(analysis.review.summary.selectedFourConfidence.fullRosterKnown, false, 'full roster not known');
   eq(analysis.review.summary.selectedFourConfidence.selectedFourKnown, true, 'selected four known');
   eq(analysis.review.summary.selectedFourConfidence.bringChoiceReviewable, false, 'bring choice not reviewable without full six');
-  truthy(/full six/i.test(analysis.review.summary.selectedFourConfidence.limitation), 'full six limitation');
+  truthy(/registered six/i.test(analysis.review.summary.selectedFourConfidence.limitation), 'registered six limitation');
   if (ids.includes('questionable_bring')) throw new Error('visible four should not be blocked by questionable_bring');
 });
 
@@ -197,7 +197,24 @@ T('9. normalizes copied replay page text down to raw log lines', () => {
   truthy(normalized.indexOf('|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F') >= 0, 'move line preserved');
 });
 
-T('10. converts replay URLs to .log endpoints and fetches them through the helper', async () => {
+T('10. extracts pipe-delimited log lines from exported replay HTML', () => {
+  const replayHtml = [
+    '<!doctype html>',
+    '<html><body>',
+    '<script>',
+    'var replayLog = "|player|p1|Alice\\n|player|p2|Bob\\n|turn|1\\n|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F";',
+    '</script>',
+    '<div>Download replay</div>',
+    '</body></html>'
+  ].join('\n');
+  const normalized = replayCoach.normalizeReplayLogInput(replayHtml);
+  eq(normalized.split('\n').length, 4, 'html normalized replay line count');
+  truthy(normalized.indexOf('<script>') < 0, 'html chrome removed');
+  truthy(normalized.indexOf('|player|p1|Alice') >= 0, 'player line preserved');
+  truthy(normalized.indexOf('|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F') >= 0, 'html move line preserved');
+});
+
+T('11. converts replay URLs to .log endpoints and fetches them through the helper', async () => {
   const logUrl = replayCoach.replayUrlToLogUrl('https://replay.pokemonshowdown.com/gen9vgc2026-123456');
   eq(logUrl, 'https://replay.pokemonshowdown.com/gen9vgc2026-123456.log', 'log endpoint');
   let fetched = '';

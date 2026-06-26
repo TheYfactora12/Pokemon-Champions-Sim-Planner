@@ -302,7 +302,7 @@
       .replace(/\u00a0/g, ' ')
       .replace(/\r\n?/g, '\n');
     if (!text.trim()) return '';
-    if (text.indexOf('\n') < 0 && text.indexOf('\\n|') >= 0) {
+    if (text.indexOf('\\n|') >= 0 || text.indexOf('|\\n') >= 0) {
       text = text.replace(/\\n/g, '\n');
     }
     var directLines = [];

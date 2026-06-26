@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.65-series-lineup-matrix';
+    return txt || 'v2.1.66-html-replay-upload';
   } catch (e) {
-    return 'v2.1.65-series-lineup-matrix';
+    return 'v2.1.66-html-replay-upload';
   }
 }
 
@@ -5818,7 +5818,10 @@ function csInitReplayCoachUi() {
       if (!file) return;
       var reader = new FileReader();
       reader.onload = function() {
-        logEl.value = String(reader.result || '');
+        var api = ChampionsSim && ChampionsSim.replayCoach;
+        var raw = String(reader.result || '');
+        var normalized = api && typeof api.normalizeReplayLogInput === 'function' ? api.normalizeReplayLogInput(raw) : raw;
+        logEl.value = normalized;
         setStatus('Loaded ' + file.name + '. Run analysis when ready.');
       };
       reader.onerror = function() { setStatus('Could not read that file.', true); };
