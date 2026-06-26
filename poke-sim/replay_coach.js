@@ -632,6 +632,7 @@
       turns: [],
       warnings: [],
       turn0: null,
+      expectedLineupSize: opts.lineupSize || opts.bringCount || null,
       manualTeamPreview: { p1: [], p2: [] },
       rawLineCount: text ? text.split(/\r?\n/).length : 0,
       rawPreviewLines: []
@@ -998,11 +999,14 @@
     var selected = parsed.selectedPokemon && parsed.selectedPokemon[side] ? parsed.selectedPokemon[side] : [];
     var previewCount = preview.length;
     var selectedCount = selected.length;
+    var format = cleanText(parsed.format || '').toLowerCase();
+    var expectedLineupSize = parsed.expectedLineupSize || (/singles|1v1|battle stadium singles|bss/.test(format) ? 3 : 4);
     var fullRosterKnown = previewCount >= 6;
-    var selectedFourKnown = selectedCount >= 4;
+    var selectedFourKnown = selectedCount >= expectedLineupSize;
     var base = {
       previewCount: previewCount,
       selectedCount: selectedCount,
+      expectedLineupSize: expectedLineupSize,
       fullRosterKnown: fullRosterKnown,
       selectedFourKnown: selectedFourKnown,
       bringChoiceReviewable: fullRosterKnown && selectedFourKnown,
@@ -1011,24 +1015,24 @@
     if (fullRosterKnown && selectedFourKnown) {
       return Object.assign(base, {
         level: 'high',
-        label: 'Full preview + four inferred',
-        reason: 'Team preview showed the registered six and at least four selected Pokemon appeared in the log, so the game-specific squad choice can be reviewed.'
+        label: 'Full preview + lineup inferred',
+        reason: 'Team preview showed the registered six and the expected game-specific lineup appeared in the log, so the squad choice can be reviewed.'
       });
     }
     if (selectedFourKnown) {
       return Object.assign(base, {
         level: 'medium',
-        label: 'Visible four inferred',
-        reason: 'At least four brought Pokemon appeared in the log, so replay review can continue.',
-        limitation: 'Bring-4 analysis is limited — the registered six were not fully revealed, so benched swap options are unknown.'
+        label: 'Visible lineup inferred',
+        reason: 'The expected brought Pokemon count appeared in the log, so replay review can continue.',
+        limitation: 'Lineup analysis is limited — the registered six were not fully revealed, so benched swap options are unknown.'
       });
     }
     if (fullRosterKnown && selectedCount > 0) {
       return Object.assign(base, {
         level: 'medium',
         label: 'Partial bring',
-        reason: 'Team preview showed the registered six, but fewer than four brought Pokemon were revealed.',
-        limitation: 'Bring-four analysis is limited until the missing game-specific squad Pokemon appear in the log or are entered manually.'
+        reason: 'Team preview showed the registered six, but fewer than the expected brought Pokemon were revealed.',
+        limitation: 'Lineup analysis is limited until the missing game-specific squad Pokemon appear in the log or are entered manually.'
       });
     }
     if (selectedCount > 0) {
@@ -1212,10 +1216,10 @@
       });
     }
     if (bringConfidence.selectedFourKnown && !bringConfidence.fullRosterKnown) {
-      addIssue(issues, 'Bring-4 Limited', 'low', null, bringConfidence.limitation, 'medium', 'Add the registered six in the optional roster field after upload when Showdown does not expose team preview.', {
+      addIssue(issues, 'Lineup Limited', 'low', null, bringConfidence.limitation, 'medium', 'Add the registered six in the optional roster field after upload when Showdown does not expose team preview.', {
         id: 'bring_four_limited',
         category: 'bring_four',
-        whatHappened: 'The replay exposed at least four brought Pokemon, but did not reveal the full registered six.',
+        whatHappened: 'The replay exposed the game-specific lineup, but did not reveal the full registered six.',
         whyMattered: 'In best-of-three, you can change the game-specific lineup from the same registered six between games, so coaching needs the benched swap options to judge the squad choice.',
         doInstead: 'Paste the registered six into the optional roster completion field before analysis when the replay log only exposes selected Pokemon.',
         evidence: 'Preview count ' + bringConfidence.previewCount + ', revealed selected count ' + bringConfidence.selectedCount

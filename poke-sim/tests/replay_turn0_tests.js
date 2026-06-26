@@ -184,5 +184,38 @@ T('9. Manual full roster completion makes bring-choice reviewable', () => {
   truthy(!analysis.review.coachingTags.some((tag) => tag.id === 'bring_four_limited'), 'limited tag should clear with full roster');
 });
 
+T('10. Singles three-of-six lineup is reviewable when registered roster is known', () => {
+  const singlesLog = [
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|gametype|singles',
+    '|start',
+    '|switch|p1a: Dragonite|Dragonite, L50, M|100/100',
+    '|switch|p2a: Rotom|Rotom-Wash, L50|100/100',
+    '|turn|1',
+    '|switch|p1a: Gholdengo|Gholdengo, L50|100/100',
+    '|move|p2a: Rotom|Thunderbolt|p1a: Gholdengo',
+    '|turn|2',
+    '|switch|p1a: Chien-Pao|Chien-Pao, L50|100/100',
+    '|move|p2a: Rotom|Hydro Pump|p1a: Chien-Pao',
+    '|win|Alice'
+  ].join('\n');
+  const analysis = replayCoach.analyzeShowdownReplay(singlesLog, {
+    selectedSide: 'p1',
+    manualTeamPreview: [
+      'Dragonite',
+      'Gholdengo',
+      'Chien-Pao',
+      'Ursaluna-Bloodmoon',
+      'Amoonguss',
+      'Incineroar'
+    ].join('\n')
+  });
+  const confidence = analysis.review.summary.selectedFourConfidence;
+  eq(confidence.expectedLineupSize, 3, 'singles expected lineup size');
+  eq(confidence.selectedCount, 3, 'singles selected count');
+  eq(confidence.bringChoiceReviewable, true, 'singles lineup should be reviewable');
+});
+
 console.log(`\nreplay Turn 0: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);
