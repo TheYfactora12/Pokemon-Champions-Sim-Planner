@@ -5569,6 +5569,7 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Four match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Registered roster</strong><span>' + _escapeHtml((simComparison.registeredRoster || []).join(', ') || 'Needs full six') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Series format</strong><span>' + _escapeHtml((simComparison.seriesFormat || 'bo3').toUpperCase()) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>BO3 swap options</strong><span>' + _escapeHtml((simComparison.actualSwapOptions || []).join(', ') || 'No hidden swaps known') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Lineup matrix</strong><span>' + _escapeHtml(simComparison.lineupCoverageLabel || 'Needs registered-roster combo sims') + '</span></div>' +
       '</div>' +

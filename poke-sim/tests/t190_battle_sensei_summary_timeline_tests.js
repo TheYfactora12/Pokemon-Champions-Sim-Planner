@@ -30,7 +30,8 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'id="replay-coach-fetch-btn"');
   inc(html, 'id="replay-coach-full-roster"');
   inc(html, 'Know the full 6?');
-  inc(html, 'In best-of-three');
+  inc(html, 'In series play');
+  if (/Bo10|data-bo="10"/.test(html)) throw new Error('Bo10 should not be exposed as a series format');
 });
 
 T('2. summary renders selected-four confidence and team preview read', () => {
@@ -86,6 +87,7 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, '<strong>Opponent plan evidence</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Sim Comparison</h3>');
   inc(ui, '<strong>BO3 swap options</strong>');
+  inc(ui, '<strong>Series format</strong>');
   inc(ui, '<strong>Lineup matrix</strong>');
   inc(ui, '<strong>Series lineup context</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Sim Feedback Packet</h3>');

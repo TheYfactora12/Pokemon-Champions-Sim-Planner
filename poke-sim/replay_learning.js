@@ -548,6 +548,79 @@
     return out;
   }
 
+  function lineupKey(lineup) {
+    return normalizeNames(lineup).sort().join('|');
+  }
+
+  function lineupNames(row) {
+    if (Array.isArray(row)) return row.slice();
+    return (row && (row.lineup || row.four || row.bring || row.pokemon || row.team)) || [];
+  }
+
+  function lineupScore(row) {
+    if (!row || Array.isArray(row)) return null;
+    if (typeof row.winRate === 'number') return row.winRate;
+    if (typeof row.win_rate === 'number') return row.win_rate;
+    if (typeof row.score === 'number') return row.score;
+    if (typeof row.expectedWinRate === 'number') return row.expectedWinRate;
+    if (typeof row.wins === 'number' && typeof row.losses === 'number' && row.wins + row.losses > 0) return row.wins / (row.wins + row.losses);
+    return null;
+  }
+
+  function buildLineupMatrixReport(ctx) {
+    ctx = ctx || {};
+    var seriesFormat = String(ctx.seriesFormat || 'bo3').toLowerCase();
+    var seriesGames = seriesFormat === 'bo1' ? 1 : seriesFormat === 'bo5' ? 5 : 3;
+    var adaptationNote = seriesGames === 1
+      ? 'Best-of-one context: choose the highest-confidence game-one lineup because there is no in-series swap chance.'
+      : 'Series context: rank opening lineup plus swap options because players can adapt between games.';
+    var matrix = ctx.lineupMatrix || [];
+    var scored = (ctx.evaluatedLineups || []).map(function(row) {
+      return {
+        lineup: lineupNames(row),
+        score: lineupScore(row),
+        wins: row && typeof row.wins === 'number' ? row.wins : null,
+        losses: row && typeof row.losses === 'number' ? row.losses : null,
+        note: row && row.note ? row.note : ''
+      };
+    }).filter(function(row) { return row.lineup.length && row.score != null; });
+    scored.sort(function(a, b) { return b.score - a.score; });
+    var actualKey = lineupKey(ctx.actualFour || []);
+    var actualIndex = scored.findIndex(function(row) { return lineupKey(row.lineup) === actualKey; });
+    var best = scored[0] || null;
+    var worst = scored.length ? scored[scored.length - 1] : null;
+    var actual = actualIndex >= 0 ? scored[actualIndex] : null;
+    var recommendation = '';
+    if (!ctx.registeredRoster || ctx.registeredRoster.length < (ctx.lineupSize || 4)) {
+      recommendation = 'Enter the registered six before trusting lineup recommendations.';
+    } else if (!ctx.lineupMatrixComplete) {
+      recommendation = 'Run the missing lineup-matrix sims before calling any lineup the best.';
+    } else if (best) {
+      recommendation = 'Use the top scored lineup first, then compare the replay lineup against its win path and switch options.';
+    } else {
+      recommendation = 'Lineup matrix is enumerated, but scored win-rate results are still needed to choose the best lineup.';
+    }
+    return {
+      status: ctx.lineupMatrixComplete && scored.length ? 'ranked' : (ctx.lineupMatrixComplete ? 'needs_scores' : 'incomplete'),
+      expectedLineupCount: matrix.length,
+      scoredLineupCount: scored.length,
+      actualRank: actualIndex >= 0 ? actualIndex + 1 : null,
+      actualLineup: ctx.actualFour || [],
+      actualScore: actual ? actual.score : null,
+      bestLineup: best ? best.lineup : (ctx.bestFour || []),
+      bestScore: best ? best.score : null,
+      worstLineup: worst ? worst.lineup : [],
+      worstScore: worst ? worst.score : null,
+      topLineups: scored.slice(0, 3),
+      avoidLineups: scored.slice(-3).reverse(),
+      seriesFormat: seriesFormat,
+      seriesGames: seriesGames,
+      adaptationNote: adaptationNote,
+      recommendation: recommendation,
+      playerNeed: 'Find the best lineup from the registered roster for the selected series format, then explain whether the loss came from lineup choice, lead choice, move choice, switch timing, or execution.'
+    };
+  }
+
   function buildSimComparison(parsed, review, opts) {
     opts = opts || {};
     var plan = opts.simPlan || opts.simRecommendation || opts.simComparison || null;
@@ -576,6 +649,7 @@
     var bestLead = plan.bestLead || plan.recommendedLead || plan.bestSimLead || [];
     var bestFour = plan.bestFour || plan.recommendedFour || plan.bestSimFour || [];
     var expectedWinPath = plan.expectedWinPath || plan.winPath || plan.safestLine || '';
+    var seriesFormat = plan.seriesFormat || plan.matchType || plan.series || opts.seriesFormat || opts.matchType || 'bo3';
     var leadOverlap = overlapScore(actualLead, bestLead);
     var fourOverlap = overlapScore(actualFour, bestFour);
     var confidence = confidenceFor(parsed, (review && review.coachingTags) || []);
@@ -592,6 +666,16 @@
     var lineupCoverageLabel = expectedLineupCount
       ? (lineupMatrixComplete ? 'All ' + expectedLineupCount + ' registered-roster lineups evaluated' : evaluatedLineupCount + '/' + expectedLineupCount + ' registered-roster lineups evaluated')
       : 'Registered roster incomplete; lineup matrix unavailable';
+    var lineupMatrixReport = buildLineupMatrixReport({
+      registeredRoster: registeredRoster,
+      lineupSize: lineupSize,
+      lineupMatrix: lineupMatrix,
+      evaluatedLineups: evaluatedLineups,
+      lineupMatrixComplete: lineupMatrixComplete,
+      actualFour: actualFour,
+      bestFour: bestFour,
+      seriesFormat: seriesFormat
+    });
     var evidenceCount = 1 + (leadOverlap != null ? 1 : 0) + (fourOverlap != null ? 1 : 0) + (expectedWinPath ? 1 : 0) + (registeredCount >= lineupSize ? 1 : 0) + (lineupMatrixComplete ? 1 : 0);
     var tier = evidenceTier(confidence, evidenceCount);
     var firstDeviation = 'Needs more data';
@@ -616,9 +700,12 @@
       evaluatedLineupCount: evaluatedLineupCount,
       lineupMatrixComplete: lineupMatrixComplete,
       lineupCoverageLabel: lineupCoverageLabel,
+      lineupMatrixReport: lineupMatrixReport,
+      seriesFormat: lineupMatrixReport.seriesFormat,
+      seriesGames: lineupMatrixReport.seriesGames,
       bo3SwapContext: registeredCount >= lineupSize
-        ? 'Best-of-three context: evaluate this game lineup as one selectable squad from the registered roster, not as the whole team. Sim coverage should include every legal lineup combination.'
-        : 'Best-of-three lineup swap analysis is limited because the registered roster is incomplete.',
+        ? lineupMatrixReport.adaptationNote + ' Evaluate this game lineup as one selectable squad from the registered roster, not as the whole team. Sim coverage should include every legal lineup combination.'
+        : 'Series lineup swap analysis is limited because the registered roster is incomplete.',
       leadMatch: leadOverlap == null ? 'unknown' : Math.round(leadOverlap * 100),
       fourMatch: fourOverlap == null ? 'unknown' : Math.round(fourOverlap * 100),
       expectedWinPath: expectedWinPath || 'Needs sim win-path data',
@@ -720,6 +807,7 @@
         bo3SwapContext: simComparison.bo3SwapContext || '',
         lineupCoverageLabel: simComparison.lineupCoverageLabel || '',
         lineupMatrixComplete: !!simComparison.lineupMatrixComplete,
+        lineupMatrixReport: simComparison.lineupMatrixReport || null,
         actualSwapOptions: simComparison.actualSwapOptions || [],
         simBenchOptions: simComparison.simBenchOptions || [],
         issueIds: ids.slice(0, 8),
@@ -1107,6 +1195,7 @@
 
   ChampionsSim.replayLearning.buildLearningReport = buildLearningReport;
   ChampionsSim.replayLearning.lineupCombinations = lineupCombinations;
+  ChampionsSim.replayLearning.buildLineupMatrixReport = buildLineupMatrixReport;
   ChampionsSim.replayLearning.buildCriticalTurns = buildCriticalTurns;
   ChampionsSim.replayLearning.buildDecisionQuality = buildDecisionQuality;
   ChampionsSim.replayLearning.buildPracticePlan = buildPracticePlan;

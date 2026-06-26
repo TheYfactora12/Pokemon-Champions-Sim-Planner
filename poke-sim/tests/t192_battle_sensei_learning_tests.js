@@ -163,12 +163,13 @@ T('8. sim comparison stays low confidence until matched sim data exists', () => 
       bestFour: analysis.review.summary.yourFour,
       registeredRoster: analysis.review.summary.yourPreview,
       lineupSize: 4,
+      seriesFormat: 'bo3',
       expectedWinPath: 'Set speed control, preserve cleaner, and convert pressure.'
     }
   }).review.learningReport.simComparison;
   eq(matched.status, 'matched', 'matched status');
   eq(matched.leadMatch, 100, 'lead match score');
-  inc(matched.bo3SwapContext, 'Best-of-three context', 'bo3 swap context');
+  inc(matched.bo3SwapContext, 'Series context', 'series swap context');
   truthy(matched.evidenceLabel !== 'Needs more data', 'matched evidence improves');
 });
 
@@ -181,6 +182,7 @@ T('8b. sim feedback packet emits calibration signals without auto-updating model
       bestFour: base.review.summary.yourFour,
       registeredRoster: base.review.summary.yourPreview,
       lineupSize: 4,
+      seriesFormat: 'bo3',
       expectedWinPath: 'Set speed control, preserve cleaner, and convert pressure.',
       matchConfidence: 'medium'
     }
@@ -208,6 +210,7 @@ T('8c. sim comparison treats selected lineup as a BO3 swap choice from registere
       registeredRoster: registeredRoster,
       lineupSize: 4,
       lineupMatrixComplete: true,
+      seriesFormat: 'bo3',
       expectedWinPath: 'Swap one bench option into game two if the first lineup loses tempo.',
       matchConfidence: 'medium'
     }
@@ -234,6 +237,7 @@ T('8d. incomplete sim lineup matrix is explicit before model calibration', () =>
       registeredRoster: registeredRoster,
       lineupSize: 4,
       evaluatedLineups: [actual],
+      seriesFormat: 'bo3',
       matchConfidence: 'medium'
     }
   });
@@ -244,6 +248,27 @@ T('8d. incomplete sim lineup matrix is explicit before model calibration', () =>
   eq(sim.lineupMatrixComplete, false, 'matrix should be incomplete');
   inc(sim.lineupCoverageLabel, '1/15', 'coverage label');
   eq(packet.evidence.lineupMatrixComplete, false, 'feedback carries incomplete matrix');
+});
+
+T('8e. lineup matrix report supports BO1, BO3, and BO5 series options', () => {
+  const roster = ['A', 'B', 'C', 'D', 'E', 'F'];
+  const matrix = globalThis.ChampionsSim.replayLearning.lineupCombinations(roster, 4);
+  const evaluatedLineups = matrix.map((lineup, idx) => ({ lineup, winRate: 0.4 + idx / 100 }));
+  ['bo1', 'bo3', 'bo5'].forEach((seriesFormat) => {
+    const report = globalThis.ChampionsSim.replayLearning.buildLineupMatrixReport({
+      registeredRoster: roster,
+      lineupSize: 4,
+      lineupMatrix: matrix,
+      evaluatedLineups,
+      lineupMatrixComplete: true,
+      actualFour: matrix[0],
+      seriesFormat
+    });
+    eq(report.status, 'ranked', seriesFormat + ' ranked status');
+    eq(report.seriesFormat, seriesFormat, seriesFormat + ' format');
+    truthy(report.topLineups.length === 3, seriesFormat + ' top lineups');
+    truthy(report.adaptationNote.length > 0, seriesFormat + ' adaptation note');
+  });
 });
 
 T('9. trend dashboard stays cautious for a single review', () => {
