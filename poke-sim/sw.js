@@ -83,7 +83,7 @@
 // v94-tactical-sweep-watchdog [2026-06-24] - Prevent single-opponent tactical sweep from stalling on DB reads/writes.
 // v95-terrain-gaps-documented [2026-06-25] - Overview/docs keep terrain gap notes visible.
 // v96-approved-db-runtime-contract [2026-06-25] - Narrow Alfredo #241 after live approved DB generation, alias bridge, and source-truth proof.
-const CACHE_NAME = 'champions-sim-v97-html-replay-upload';
+const CACHE_NAME = 'champions-sim-v98-speed-payoff';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

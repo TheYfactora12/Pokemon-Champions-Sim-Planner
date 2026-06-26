@@ -357,6 +357,14 @@
       } else if (id === 'speed_control_without_pressure') {
         add('speed_control_iq', -12, 'Speed control was used without immediate pressure or conversion.');
         add('turn_1_iq', -6, 'Early speed control did not create a clear follow-up.');
+      } else if (id === 'speed_control_reversal') {
+        add('speed_control_iq', 12, 'Trick Room or a reversal line answered the opponent speed plan.');
+        add('turn_1_iq', 6, 'The opening speed contest was handled with a concrete answer.');
+      } else if (id === 'speed_control_neutralized') {
+        add('speed_control_iq', 4, 'Opponent speed control was matched, making the next board decision more important than raw speed.');
+      } else if (id === 'speed_control_converted' || id === 'deferred_payoff') {
+        add('speed_control_iq', 10, 'Speed control converted into immediate or short-window payoff.');
+        add('resource_iq', 4, 'The setup turn produced value instead of becoming a passive tempo loss.');
       } else if (id === 'field_control_failure') {
         add('speed_control_iq', -15, 'Opponent field or speed control advanced without a meaningful trade.');
         add('threat_recognition_iq', -12, 'The must-answer field threat was not denied or punished.');

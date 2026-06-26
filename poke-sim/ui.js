@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.66-html-replay-upload';
+    return txt || 'v2.1.67-speed-payoff';
   } catch (e) {
-    return 'v2.1.66-html-replay-upload';
+    return 'v2.1.67-speed-payoff';
   }
 }
 
@@ -8719,6 +8719,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
+      title: 'Battle Sensei tactical learning is still being built',
+      detail: 'Replay upload friction is fixed, but number-one coaching needs the brain layer: speed-control reversal/neutralization, deferred payoff, move/target alternatives, switch preservation, decision-opportunity denominators, and repeated matchup learning. Manual team selection must lock the registered team for the sim scope; BO3/BO5 may only swap selected game lineups from that same six.'
+    },
+    {
+      status: 'gap',
       title: 'Supabase history is not full forensic turn-log storage yet',
       detail: 'Saved analysis history keeps bounded matchup summaries and capped log rows. The current source of truth for structured QA evidence is the downloaded turn-log JSON and QA Artifact export, which carry full turn snapshots, damage_events, and effect_events. Treat DB history as replay/navigation support until a reviewed DB retention upgrade preserves detailed turn logs intentionally.'
     },
@@ -8743,6 +8748,16 @@ var CS_OVERVIEW_DATA = {
       status: 'next',
       title: 'Stress-test, rebuild, and prove the new truth board',
       detail: 'Before pushing to GitHub Pages, run focused legality/damage tests, the broader non-DB suite, rebuild `pokemon-champion-2026.html`, check the bundle, then use a fresh deployed URL to export one single-run log, one Run All log, and one QA Artifact. This also feeds Y #105/#104 and Alfredo #216 for replay/artifact proof.'
+    },
+    {
+      status: 'next',
+      title: '#223 Battle Sensei speed-control payoff interpreter',
+      detail: 'Active brain-layer work: classify Trick Room/Tailwind reversal, dual-speed neutralization, immediate conversion, and T+1 to T+3 deferred payoff before the Decision Opportunity Ledger scores decisions.'
+    },
+    {
+      status: 'next',
+      title: '#224 Decision Opportunity Ledger after #223',
+      detail: 'Later layer: add opportunity denominators, positive execution notes, four-quadrant decision outcomes, and denominator-weighted Battle IQ after tactical interpretation is reliable.'
     },
     {
       status: 'next',

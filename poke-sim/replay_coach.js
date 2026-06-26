@@ -1097,6 +1097,7 @@
       var oppSwitches = turn.switches.filter(function(s) { return s.side === names.opp; });
       var userSpeed = userMoves.filter(function(m) { return classifyMove(m.move) === 'speed_control'; });
       var oppSpeed = oppMoves.filter(function(m) { return classifyMove(m.move) === 'speed_control'; });
+      var tactical = turn.tacticalRead || {};
       var userProtect = userMoves.filter(function(m) { return classifyMove(m.move) === 'protection'; });
       var fieldEvents = turn.field || [];
       var rngEvents = turn.rng || [];
@@ -1124,24 +1125,30 @@
         stateShift = 'Material trade';
         coachingRead = 'Both sides lost a Pokemon. The key question is whether your fainted Pokemon was more important to the matchup plan than the one you removed.';
       }
-      if (userSpeed.length && !oppFaints.length) {
+      if (tactical.stateShift) {
+        severity = tactical.severity || severity;
+        confidence = tactical.confidence || confidence;
+        stateShift = tactical.stateShift;
+        coachingRead = tactical.coachingRead || coachingRead;
+        betterLine = tactical.betterLine || betterLine;
+      } else if (userSpeed.length && !oppFaints.length) {
         severity = severity === 'high' ? severity : 'medium';
         stateShift = 'Speed control set without clear payoff';
         coachingRead = 'You used speed control. The next coaching check is whether it created immediate pressure, protected a win condition, or just spent a turn.';
         betterLine = betterLine || 'After setting speed control, plan the next two turns before clicking it: target, forced Protect, or preserved closer.';
       }
-      if (oppSpeed.length) {
+      if (!tactical.stateShift && oppSpeed.length) {
         severity = severity === 'high' ? severity : 'medium';
         stateShift = 'Opponent advanced speed control';
         coachingRead = 'The opponent advanced speed control. If this was not denied or punished, your next turns may be played from behind.';
       }
-      if (userProtect.length && (oppSpeed.length || fieldEvents.length)) {
+      if (!tactical.stateShift && userProtect.length && (oppSpeed.length || fieldEvents.length)) {
         severity = severity === 'high' ? severity : 'medium';
         stateShift = 'Protect gave space';
         coachingRead = 'Your Protect may have preserved HP, but the opponent also improved the field or speed state. That trade needs a clear reason.';
         betterLine = betterLine || 'Use Protect when it preserves the actual win condition or stalls a limited field turn, not as a default pause.';
       }
-      if (userSwitches.length && !oppFaints.length && (oppSpeed.length || fieldEvents.length || oppSwitches.length)) {
+      if (!tactical.stateShift && userSwitches.length && !oppFaints.length && (oppSpeed.length || fieldEvents.length || oppSwitches.length)) {
         severity = severity === 'high' ? severity : 'medium';
         stateShift = 'Positioning risk';
         coachingRead = 'You changed position while the opponent also improved theirs. The switch needs to either preserve a key piece or deny their next payoff.';
@@ -1181,6 +1188,146 @@
     });
   }
 
+  function replayMoveName(move) {
+    return cleanText((move && move.move) || move || '');
+  }
+
+  function isTailwindMove(move) {
+    return /^tailwind$/i.test(replayMoveName(move));
+  }
+
+  function isTrickRoomMove(move) {
+    return /^trick room$/i.test(replayMoveName(move));
+  }
+
+  function isSpeedControlMove(move) {
+    return classifyMove(replayMoveName(move)) === 'speed_control';
+  }
+
+  function turnSideMoves(turn, side) {
+    return ((turn && turn.moves) || []).filter(function(m) { return m.side === side; });
+  }
+
+  function turnSideFaints(turn, side) {
+    return ((turn && turn.faints) || []).filter(function(f) { return f.side === side; });
+  }
+
+  function turnSideTookMajorDamage(turn, side) {
+    return ((turn && turn.damage) || []).some(function(d) {
+      return d.side === side && d.hp != null && Number(d.hp) <= 70;
+    });
+  }
+
+  function turnSideGainedMaterial(turn, side, opp) {
+    return turnSideFaints(turn, opp).length > turnSideFaints(turn, side).length ||
+      (turnSideTookMajorDamage(turn, opp) && !turnSideFaints(turn, side).length);
+  }
+
+  function buildSpeedControlInsights(parsed, side) {
+    var opp = side === 'p1' ? 'p2' : 'p1';
+    var turns = (parsed && parsed.turns) || [];
+    var byTurn = {};
+    turns.forEach(function(turn, idx) {
+      var userSpeed = turnSideMoves(turn, side).filter(isSpeedControlMove);
+      var oppSpeed = turnSideMoves(turn, opp).filter(isSpeedControlMove);
+      if (!userSpeed.length && !oppSpeed.length) return;
+      var userTR = userSpeed.some(isTrickRoomMove);
+      var oppTR = oppSpeed.some(isTrickRoomMove);
+      var userTW = userSpeed.some(isTailwindMove);
+      var oppTW = oppSpeed.some(isTailwindMove);
+      var userSpeedNames = userSpeed.map(replayMoveName).filter(Boolean).join(', ');
+      var oppSpeedNames = oppSpeed.map(replayMoveName).filter(Boolean).join(', ');
+      var immediatePayoff = turnSideGainedMaterial(turn, side, opp);
+      var deferredPayoffTurn = null;
+      turns.slice(idx + 1, idx + 4).some(function(future) {
+        if (turnSideGainedMaterial(future, side, opp)) {
+          deferredPayoffTurn = future.number;
+          return true;
+        }
+        return false;
+      });
+      var insight = {
+        turn: turn.number,
+        userSpeed: userSpeed,
+        oppSpeed: oppSpeed,
+        immediatePayoff: immediatePayoff,
+        deferredPayoffTurn: deferredPayoffTurn,
+        suppressSpeedNoPressure: false,
+        suppressFieldFailure: false,
+        notes: []
+      };
+
+      if (userTR && oppTW) {
+        insight.stateShift = 'Speed control reversed';
+        insight.severity = 'good';
+        insight.confidence = 'high';
+        insight.coachingRead = 'You answered Tailwind with Trick Room, flipping the move-order plan instead of trying to race it.';
+        insight.suppressSpeedNoPressure = true;
+        insight.suppressFieldFailure = true;
+        insight.notes.push({
+          id: 'speed_control_reversal',
+          tag: 'Speed Control Reversal',
+          category: 'speed_control',
+          severity: 'good',
+          confidence: 'high',
+          message: 'Trick Room reversed the opponent Tailwind plan.',
+          whatHappened: 'You used Trick Room into opposing Tailwind.',
+          whyMattered: 'Trick Room overrides the normal speed race, so their Tailwind plan no longer gives the same offensive tempo.',
+          doInstead: 'When the opponent commits Tailwind, either reverse it with Trick Room or punish the setter immediately.',
+          evidence: userSpeedNames + ' into ' + oppSpeedNames
+        });
+      } else if (oppTR && userTW) {
+        insight.stateShift = 'Speed control got reversed';
+        insight.severity = 'high';
+        insight.confidence = 'high';
+        insight.coachingRead = 'Your Tailwind line ran into Trick Room, so the speed advantage likely flipped against the intended plan.';
+        insight.betterLine = 'When Trick Room is available, pressure or deny the setter before spending a turn on Tailwind.';
+      } else if (userTW && oppTW) {
+        insight.stateShift = 'Speed control neutralized';
+        insight.severity = 'medium';
+        insight.confidence = 'high';
+        insight.coachingRead = 'Both sides used Tailwind, so the speed plan became closer to neutral instead of a clean advantage.';
+        insight.suppressSpeedNoPressure = true;
+        insight.notes.push({
+          id: 'speed_control_neutralized',
+          tag: 'Speed Control Neutralized',
+          category: 'speed_control',
+          severity: 'low',
+          confidence: 'high',
+          message: 'Tailwind was matched by opposing Tailwind.',
+          whatHappened: 'Both sides established Tailwind on the same turn.',
+          whyMattered: 'Dual Tailwind removes the clean move-order edge; the next decision should be target pressure, preservation, or stalling their window.',
+          doInstead: 'After neutralized Tailwind, switch from speed racing to board pressure: force Protect, remove the setter, or preserve the closer.',
+          evidence: userSpeedNames + ' vs ' + oppSpeedNames
+        });
+      } else if (userSpeed.length && (immediatePayoff || deferredPayoffTurn)) {
+        insight.stateShift = immediatePayoff ? 'Speed control converted' : 'Setup paid off later';
+        insight.severity = 'good';
+        insight.confidence = deferredPayoffTurn ? 'medium' : 'high';
+        insight.coachingRead = immediatePayoff
+          ? 'Your speed-control turn converted into immediate pressure or material.'
+          : 'This speed-control turn paid off within the next three turns, so it should not be graded as a passive setup turn.';
+        insight.suppressSpeedNoPressure = true;
+        insight.notes.push({
+          id: deferredPayoffTurn ? 'deferred_payoff' : 'speed_control_converted',
+          tag: deferredPayoffTurn ? 'Deferred Payoff Recognized' : 'Speed Control Converted',
+          category: 'speed_control',
+          severity: 'good',
+          confidence: deferredPayoffTurn ? 'medium' : 'high',
+          message: deferredPayoffTurn ? 'Setup paid off on turn ' + deferredPayoffTurn + '.' : 'Speed control created immediate pressure.',
+          whatHappened: 'You used ' + userSpeedNames + (deferredPayoffTurn ? ' and gained payoff by turn ' + deferredPayoffTurn + '.' : ' and gained pressure immediately.'),
+          whyMattered: 'Good speed control is not just the field state; it must become damage, a KO, forced Protect, or preserved win condition.',
+          doInstead: 'Keep this pattern: name the next two turns before setting speed control, then convert the window before it expires.',
+          evidence: deferredPayoffTurn ? 'Payoff detected within T+3' : 'Immediate material or damage pressure'
+        });
+      }
+
+      byTurn[turn.number] = insight;
+      turn.tacticalRead = insight;
+    });
+    return byTurn;
+  }
+
   function buildReplayCoachReview(parsed, opts) {
     opts = opts || {};
     var side = normalizeSide(opts.selectedSide || parsed.selectedSide || 'p1');
@@ -1194,6 +1341,7 @@
     var oppSelected = parsed.selectedPokemon[opp] || [];
     var bringConfidence = selectedFourConfidence(parsed, side);
     var speedControlPieces = {};
+    var speedInsights = buildSpeedControlInsights(parsed, side);
 
     if (!userLead.length || !oppLead.length) {
       addIssue(issues, 'Lead Unclear', 'medium', null, 'The log does not expose a complete opening board.', 'medium', 'Use a full Showdown replay export when possible so lead coaching can be more precise.', {
@@ -1247,11 +1395,16 @@
       var userMoveText = moveNames(userMoves);
       var oppMoveText = moveNames(oppMoves);
       var turnEvidence = [userMoveText, oppMoveText, fieldNames(turn.field)].filter(Boolean).join(' | ');
+      var speedInsight = speedInsights[turn.number] || {};
+
+      (speedInsight.notes || []).forEach(function(note) {
+        addIssue(issues, note.tag, note.severity || 'low', turn.number, note.message || note.whatHappened, note.confidence || 'medium', note.doInstead, note);
+      });
 
       if (userSpeed.length) {
         speedTurns.push(turn.number);
         userSpeed.forEach(function(move) { if (move.pokemon) speedControlPieces[move.pokemon] = true; });
-        if (!oppFaints.length && !turn.damage.some(function(d) { return d.side === opp && d.hp != null && d.hp < 75; })) {
+        if (!speedInsight.suppressSpeedNoPressure && !oppFaints.length && !turn.damage.some(function(d) { return d.side === opp && d.hp != null && d.hp < 75; })) {
           addIssue(issues, 'Speed Control Without Pressure', 'high', turn.number, 'You used speed control but did not immediately create clear damage or KO pressure.', 'medium', 'After Tailwind, Trick Room, Icy Wind, or Electroweb, convert the speed edge into a KO, forced Protect, or preserved win condition.', {
             id: 'speed_control_without_pressure',
             category: 'speed_control',
@@ -1314,12 +1467,12 @@
         });
       }
       if (opponentProgress && !oppFaints.length && !userField.length) {
-        addIssue(issues, 'Field Control Failure', turn.number === 1 ? 'high' : 'medium', turn.number, 'The opponent advanced field control or setup without being punished.', 'medium', 'When the opponent sets Trick Room, Tailwind, terrain, weather, or redirection, answer it immediately or use the turn to take a meaningful trade.', {
+        addIssue(issues, 'Field Control Failure', speedInsight.suppressFieldFailure ? 'low' : (turn.number === 1 ? 'high' : 'medium'), turn.number, speedInsight.suppressFieldFailure ? 'The opponent advanced field control, but your line also reversed or answered the speed state.' : 'The opponent advanced field control or setup without being punished.', speedInsight.suppressFieldFailure ? 'low' : 'medium', speedInsight.suppressFieldFailure ? 'Do not over-penalize this turn; check whether the reversal converted into pressure before the field window expired.' : 'When the opponent sets Trick Room, Tailwind, terrain, weather, or redirection, answer it immediately or use the turn to take a meaningful trade.', {
           id: 'field_control_failure',
           category: 'field_control',
-          whatHappened: 'The opponent gained setup, redirection, speed control, or field control and you did not take a knockout back.',
-          whyMattered: 'Field control changes what moves first, what survives, and which side gets to dictate defensive choices on the next turn.',
-          doInstead: 'Deny the field effect when possible; if denial is impossible, punish the setter or switch into a board that can stall or reverse the field state.',
+          whatHappened: speedInsight.suppressFieldFailure ? 'The opponent advanced a field or speed state, but your response created a speed-state answer.' : 'The opponent gained setup, redirection, speed control, or field control and you did not take a knockout back.',
+          whyMattered: speedInsight.suppressFieldFailure ? 'A field-control tag should not stay high confidence when the same turn or short window contains the answer.' : 'Field control changes what moves first, what survives, and which side gets to dictate defensive choices on the next turn.',
+          doInstead: speedInsight.suppressFieldFailure ? 'Judge this as a speed-control contest: did your answer convert into material, preservation, or a forced defensive turn?' : 'Deny the field effect when possible; if denial is impossible, punish the setter or switch into a board that can stall or reverse the field state.',
           evidence: turnEvidence
         });
       }

@@ -112,6 +112,32 @@ The next coaching expansion should follow this sequence:
 6. `Practice Drill Generator`
    Convert the main loss cause into one drill and one next-game instruction.
 
+## Current Tactical Interpreter Build: Speed Control + Deferred Payoff
+
+The current priority is `#223`, because Battle Sensei cannot score decisions correctly until it understands speed-control contests.
+
+This layer should classify:
+
+- `speed_control_reversal`: Trick Room or another answer flips the opponent speed plan.
+- `speed_control_neutralized`: both sides establish matching speed control, so the advantage becomes neutral.
+- `speed_control_converted`: Tailwind, Trick Room, Icy Wind, or similar speed control creates immediate pressure.
+- `deferred_payoff`: a setup turn pays off within the next three turns and should not be treated as passive.
+- `speed_control_without_pressure`: speed control was used but did not become damage, a KO, a forced Protect, or preservation.
+
+Guardrail:
+
+- Manual team selection locks the registered team identity for the sim scope.
+- In BO3/BO5, only the selected game lineup may change from that same registered six.
+- The tactical interpreter may compare lineups and moves, but it must not silently swap to a different registered team during one sim run.
+
+Later aligned items:
+
+- `#224` Decision Opportunity Ledger with denominators and positive execution recognition.
+- Move/target alternative comparison for critical turns.
+- Switch and preservation scoring.
+- Lineup and lead matrix recommendations across BO1/BO3/BO5.
+- Practice drill generation from repeated tactical patterns.
+
 ## Analysis Flow
 
 When analyzing one replay or a group of replays, run this flow:

@@ -231,6 +231,83 @@ T('11. converts replay URLs to .log endpoints and fetches them through the helpe
   eq(text, '|player|p1|Alice\n|turn|1', 'fetched log normalized');
 });
 
+T('12. recognizes Trick Room reversing opposing Tailwind without false speed penalty', () => {
+  const log = [
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|gametype|doubles',
+    '|start',
+    '|switch|p1a: Hatterene|Hatterene, L50, F|100/100',
+    '|switch|p1b: Incineroar|Incineroar, L50, M|100/100',
+    '|switch|p2a: Whimsicott|Whimsicott, L50, F|100/100',
+    '|switch|p2b: Garchomp|Garchomp, L50, M|100/100',
+    '|turn|1',
+    '|move|p2a: Whimsicott|Tailwind|p2a: Whimsicott',
+    '|move|p1a: Hatterene|Trick Room|p1a: Hatterene',
+    '|turn|2',
+    '|move|p1a: Hatterene|Psychic|p2a: Whimsicott',
+    '|faint|p2a: Whimsicott',
+    '|win|Alice'
+  ].join('\n');
+  const analysis = replayCoach.analyzeShowdownReplay(log, { selectedSide: 'p1' });
+  const ids = analysis.review.coachingTags.map((tag) => tag.id);
+  includes(ids, 'speed_control_reversal', 'speed reversal tag');
+  if (ids.includes('speed_control_without_pressure')) throw new Error('reversal should not be penalized as no-pressure speed control');
+  const turn = analysis.review.turnTimeline.find((row) => row.turn === 1);
+  eq(turn.stateShift, 'Speed control reversed', 'turn state shift');
+});
+
+T('13. recognizes same-turn Tailwind neutralization', () => {
+  const log = [
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|gametype|doubles',
+    '|start',
+    '|switch|p1a: Whimsicott|Whimsicott, L50, F|100/100',
+    '|switch|p1b: Garchomp|Garchomp, L50, M|100/100',
+    '|switch|p2a: Talonflame|Talonflame, L50, M|100/100',
+    '|switch|p2b: Rotom-Wash|Rotom-Wash, L50|100/100',
+    '|turn|1',
+    '|move|p1a: Whimsicott|Tailwind|p1a: Whimsicott',
+    '|move|p2a: Talonflame|Tailwind|p2a: Talonflame',
+    '|win|Bob'
+  ].join('\n');
+  const analysis = replayCoach.analyzeShowdownReplay(log, { selectedSide: 'p1' });
+  const ids = analysis.review.coachingTags.map((tag) => tag.id);
+  includes(ids, 'speed_control_neutralized', 'speed neutralized tag');
+  const turn = analysis.review.turnTimeline.find((row) => row.turn === 1);
+  eq(turn.stateShift, 'Speed control neutralized', 'turn state shift');
+});
+
+T('14. recognizes deferred payoff within three turns', () => {
+  const log = [
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|gametype|doubles',
+    '|start',
+    '|switch|p1a: Whimsicott|Whimsicott, L50, F|100/100',
+    '|switch|p1b: Garchomp|Garchomp, L50, M|100/100',
+    '|switch|p2a: Rotom-Wash|Rotom-Wash, L50|100/100',
+    '|switch|p2b: Altaria|Altaria, L50|100/100',
+    '|turn|1',
+    '|move|p1a: Whimsicott|Tailwind|p1a: Whimsicott',
+    '|move|p2a: Rotom-Wash|Protect|p2a: Rotom-Wash',
+    '|turn|2',
+    '|move|p1b: Garchomp|Earthquake|p2a: Rotom-Wash',
+    '|-damage|p2a: Rotom-Wash|65/100',
+    '|turn|3',
+    '|move|p1b: Garchomp|Dragon Claw|p2a: Rotom-Wash',
+    '|faint|p2a: Rotom-Wash',
+    '|win|Alice'
+  ].join('\n');
+  const analysis = replayCoach.analyzeShowdownReplay(log, { selectedSide: 'p1' });
+  const ids = analysis.review.coachingTags.map((tag) => tag.id);
+  includes(ids, 'deferred_payoff', 'deferred payoff tag');
+  if (ids.includes('speed_control_without_pressure')) throw new Error('deferred payoff should not be penalized as no-pressure speed control');
+  const turn = analysis.review.turnTimeline.find((row) => row.turn === 1);
+  eq(turn.stateShift, 'Setup paid off later', 'turn state shift');
+});
+
 runTests().then(() => {
   console.log(`\nBattle Sensei parser: ${pass} pass, ${fail} fail\n`);
   process.exit(fail ? 1 : 0);
