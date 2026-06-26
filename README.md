@@ -74,7 +74,7 @@ Pokemon-Champions-Sim-Planner/
 
 ## Features
 
-- Bo1 / Bo3 / Bo5 / Bo10 Monte Carlo simulation
+- Bo1 / Bo3 / Bo5 Monte Carlo simulation
 - Doubles and Singles format toggle
 - 29 curated teams preloaded (Champions Arena, Chuppa, Rin Sand, Suica Sun, Mega variants, and review imports)
 - Poképaste + Showdown import/export

@@ -31,7 +31,7 @@ Every reviewed replay should produce:
 
 - match summary
 - team preview review
-- bring-four / selected Pokemon analysis where inferable
+- registered-six / selected-lineup analysis where inferable
 - lead grade
 - turn timeline
 - critical turn
@@ -54,6 +54,78 @@ Every recommendation must include:
 - why it mattered
 - what to do instead
 - confidence level
+
+## Player Learning Contract
+
+Battle Sensei must teach competitive decisions, not only summarize battle logs. Every analysis pass should try to answer five player questions:
+
+- Which registered roster should I use for this matchup?
+- Which game-specific lineup should I select for BO1, BO3, or BO5?
+- Which lead should I choose and what does it beat or lose to?
+- Which moves, targets, protects, and switches created the win or caused the loss?
+- What should I change next game or next practice block?
+
+The tool should separate team-building truth from piloting truth:
+
+- `lineup_choice`: selected Pokemon from the registered roster were wrong or incomplete for the matchup.
+- `lead_choice`: lineup was playable, but the opening pair/lead created a bad first board.
+- `move_choice`: the player clicked a move that lost pressure, missed a KO, enabled setup, or failed to preserve the win condition.
+- `target_choice`: the move was reasonable, but the target was wrong.
+- `switch_timing`: a switch/pivot either preserved the win condition or gave up tempo.
+- `speed_control`: Tailwind, Trick Room, priority, weather, or speed order decided the line.
+- `resource_trade`: Protect, Fake Out, Sash, berry, HP, or key Pokemon was spent well or badly.
+- `variance`: RNG materially changed the line; only use this when the log proves it.
+
+## Data-to-Coaching Claim Matrix
+
+No coaching claim should ship without the data needed to support it.
+
+| Coaching claim | Required data | Minimum confidence |
+|---|---|---|
+| Best lineup from six | full registered roster, selected lineup, format, series format, lineup matrix coverage, scored/evaluated lineups | medium if matrix incomplete, high only when all legal lineup combos are evaluated |
+| Best lead | selected lineup, opening active Pokemon, opponent lead, turn-one board, speed order, field state, first-turn result | medium from one replay, high from repeated matchup samples |
+| Best move or target | legal options, actual actions, targets, damage/effect events, KOs, post-turn position score, alternative branch score | low until alternatives are simulated |
+| Correct switch or pivot | pre/post roster state, HP, field state, threats, speed order, win-condition preservation, tempo delta | medium when post-turn position improves |
+| Why the player lost | result, turning point, position-score path, key faint/field event, selected issue tag, confidence boundary | medium from one clean replay |
+| What to use next game | series format, current game lineup, bench/swap options, sim lineup ranking, opponent revealed plan | medium if roster known, high only with matrix + repeated evidence |
+| Clutch classification | turn count, position-score path, late turning point, max swing delta, final score, field reversal state | must include comeback, late swing, or close endgame with meaningful movement |
+
+## Build Items: Lineup, Move, Switch, Loss-Cause Flow
+
+The next coaching expansion should follow this sequence:
+
+1. `Lineup Matrix Report`
+   Generate and score every legal lineup from the registered roster for BO1/BO3/BO5. Doubles uses 4-of-6, singles uses 3-of-6.
+
+2. `Lead Matrix Report`
+   For each legal lineup, rank legal leads by matchup result, first-turn position score, speed-control plan, and risk.
+
+3. `Move Tree Turning-Point Report`
+   On the critical turn, compare the actual move/target/protect/switch against a bounded set of alternatives.
+
+4. `Switch and Preservation Report`
+   Identify when a player should preserve a win condition, pivot, sacrifice support, or stay in to trade.
+
+5. `Loss Cause Classifier`
+   Label the primary loss cause as lineup, lead, move, target, switch timing, speed control, resource trade, variance, or matchup disadvantage.
+
+6. `Practice Drill Generator`
+   Convert the main loss cause into one drill and one next-game instruction.
+
+## Analysis Flow
+
+When analyzing one replay or a group of replays, run this flow:
+
+1. Parse source and evidence quality.
+2. Determine format and expected lineup size.
+3. Resolve registered roster, selected lineup, leads, and bench options.
+4. Compare selected lineup against the lineup matrix for the chosen series format.
+5. Compare lead against lead matrix.
+6. Walk turn timeline for speed control, field control, Protect/Fake Out, switch timing, KOs, and position-score deltas.
+7. Identify first mistake, fatal mistake, and biggest swing.
+8. Classify loss cause or win driver.
+9. Produce next-game recommendation and practice drill.
+10. Attach confidence and missing-data notes.
 
 ## Evidence Standard
 
