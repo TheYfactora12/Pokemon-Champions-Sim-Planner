@@ -1622,6 +1622,31 @@ function applyWeatherAbility(mon, field, log) {
   return false;
 }
 
+function applyTerrainAbility(mon, field, log) {
+  if (!mon || !mon.alive || !field) return false;
+  if (mon.ability === 'Grassy Surge') {
+    field.terrain = 'grassy'; field.terrainTurns = 5;
+    if (log) log.push(`${mon.name}'s Grassy Surge set Grassy Terrain!`);
+    return true;
+  }
+  if (mon.ability === 'Electric Surge') {
+    field.terrain = 'electric'; field.terrainTurns = 5;
+    if (log) log.push(`${mon.name}'s Electric Surge set Electric Terrain!`);
+    return true;
+  }
+  if (mon.ability === 'Misty Surge') {
+    field.terrain = 'misty'; field.terrainTurns = 5;
+    if (log) log.push(`${mon.name}'s Misty Surge set Misty Terrain!`);
+    return true;
+  }
+  if (mon.ability === 'Psychic Surge') {
+    field.terrain = 'psychic'; field.terrainTurns = 5;
+    if (log) log.push(`${mon.name}'s Psychic Surge set Psychic Terrain!`);
+    return true;
+  }
+  return false;
+}
+
 // T9j.8 — Ability hook dispatcher. Safe call: returns null when no ability or
 // no matching hook. Invoked from engine trigger points.
 function callAbilityHook(mon, hookName, ctx) {
@@ -2518,6 +2543,10 @@ function canInflictStatus(mon, status, field, source) {
   const effectiveWeather = _effectiveFieldWeather(field);
   const types = mon.types || [];
   if (_isFlowerVeilProtected(mon, source)) return false;
+  // Misty Terrain blocks all major status conditions on grounded mons.
+  if (field && field.terrain === 'misty' && _isGrounded(mon)) return false;
+  // Electric Terrain blocks sleep on grounded mons.
+  if (field && field.terrain === 'electric' && status === 'sleep' && _isGrounded(mon)) return false;
   if (status === 'burn'      && (types.includes('Fire')     || mon.ability === 'Water Veil')) return false;
   if (status === 'paralysis' && (types.includes('Electric') || mon.ability === 'Limber')) return false;
   if ((status === 'poison' || status === 'toxic') &&
@@ -3443,6 +3472,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
     }
     applyWeatherAbility(mon, field, log);
+    applyTerrainAbility(mon, field, log);
     if (mon.ability === 'Hospitality' && side === 'player') {
       const ally = playerActive.find(a => a !== mon && a.alive);
       if (ally) { ally.hp = Math.min(ally.maxHp, ally.hp + Math.floor(ally.maxHp * 0.25)); log.push(`${mon.name}'s Hospitality restored ${ally.name}'s HP!`); }
@@ -5029,6 +5059,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           log.push(`Armor Tail blocked ${move} on ${t.name}!`);
           return false;
         }
+        // Psychic Terrain blocks priority moves from hitting grounded mons.
+        if (field && field.terrain === 'psychic' && _isGrounded(t)) {
+          log.push(`Psychic Terrain blocked ${move} on ${t.name}!`);
+          return false;
+        }
         return true;
       });
       if (targets.length === 0) {
@@ -6018,6 +6053,23 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         heal_candidate: heal,
         heal_applied: Math.max(0, mon.hp - hpBeforeHeal)
       });
+    }
+
+    // Grassy Terrain: heal grounded mons 1/16 maxHp at end of turn.
+    if (field.terrain === 'grassy') {
+      for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && _isGrounded(m) && m.hp < m.maxHp)) {
+        if (!_canReceiveHealing(mon)) continue;
+        const heal = Math.max(1, Math.floor(mon.maxHp / 16));
+        const hpBefore = mon.hp;
+        mon.hp = Math.min(mon.maxHp, mon.hp + heal);
+        log.push(`${mon.name} restored HP with Grassy Terrain! [+${heal}]`);
+        _recordEffectEvent(field, mon, 'Grassy Terrain', 'terrain-recovery', hpBefore, mon.hp, {
+          source: 'engine terrain rule',
+          rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
+          heal_candidate: heal,
+          heal_applied: Math.max(0, mon.hp - hpBefore)
+        });
+      }
     }
 
     // Field upkeep

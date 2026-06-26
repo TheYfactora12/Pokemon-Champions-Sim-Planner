@@ -428,6 +428,46 @@ $node = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microso
 
 ---
 
+## SESSION LOG — 2026-06-26 (Engine Terrain Gaps — TDD Fix)
+
+### Branch
+`fix/engine-terrain-gaps`
+
+### Outcome
+- **+9 new engine tests** (T28–T30 in `status_tests.js`, T1–T7 in `engine_terrain_tests.js`) — all GREEN, zero regressions in 4,500-battle audit
+- Closed 2 terrain GAPs (T8, T9 in `screens_terrain_item_tests.js`) — both flipped to `[IMPLEMENTED]`
+- `engine.js` modified: all 4 terrain rules (status block, priority block, HP recovery, Surge wiring)
+- Bundle rebuilt: 10,433,996 bytes; `CACHE_NAME` → `champions-sim-v100-terrain-gaps-fixed`
+
+### What was done
+
+| Fix | Location | Description |
+|---|---|---|
+| A | `canInflictStatus` | Misty Terrain blocks ALL major statuses on grounded mons |
+| B | After `applyWeatherAbility` | New `applyTerrainAbility(mon, field, log)` for Grassy/Electric/Misty/Psychic Surge |
+| C | `applyEntryAbility` | Call `applyTerrainAbility` after `applyWeatherAbility` on switch-in |
+| D | End-of-turn loop | Grassy Terrain heals grounded mons floor(maxHp/16)/turn |
+| E | `canInflictStatus` | Electric Terrain blocks sleep on grounded mons |
+| F | Priority move target filter | Psychic Terrain blocks priority moves from hitting grounded mons |
+
+### Tests added
+| File | Tests | Status |
+|---|---|---|
+| `status_tests.js` | T28 (Misty blocks all/grounded), T29 (flying unaffected), T30 (Electric blocks sleep only) | GREEN |
+| `engine_terrain_tests.js` (new) | T1–T5: Surge on-entry + unit + Grassy heal; T6: Electric sleep block; T7: Psychic priority block | GREEN |
+| `screens_terrain_item_tests.js` | T8, T9 relabelled `[IMPLEMENTED]` | GREEN |
+
+### Test verification commands
+```powershell
+$node = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\NodeJs\node.exe"
+& $node poke-sim/tests/status_tests.js
+& $node poke-sim/tests/engine_terrain_tests.js
+& $node poke-sim/tests/screens_terrain_item_tests.js
+& $node poke-sim/tests/audit.js
+```
+
+---
+
 ## SESSION LOG — 2026-04-27 (M1 landing)
 
 ### Outcome
