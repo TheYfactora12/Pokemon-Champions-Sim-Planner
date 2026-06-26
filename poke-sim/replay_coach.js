@@ -588,6 +588,30 @@
     };
   }
 
+  function parseManualReplayRoster(input) {
+    var text = String(input || '').trim();
+    if (!text) return [];
+    var chunks = text.split(/\r?\n|;/);
+    if (chunks.length === 1 && text.indexOf(',') >= 0 && !/\bL(?:evel)?\s*\d+\b/i.test(text)) {
+      chunks = text.split(',');
+    }
+    var out = [];
+    chunks.forEach(function(chunk) {
+      var line = cleanText(chunk);
+      if (!line) return;
+      if (line.indexOf('|poke|') >= 0) {
+        var parts = line.split('|');
+        line = cleanText(parts[3] || '');
+      }
+      line = line.replace(/^[\s*#\-\d.)]+/, '');
+      line = line.replace(/\s+\((?:M|F|N)\)\s*$/i, '');
+      if (line.indexOf('@') >= 0) line = line.split('@')[0];
+      var details = normalizeReplayPokemonDetails('', line);
+      addUnique(out, details.species || line);
+    });
+    return out.slice(0, 6);
+  }
+
   function parseShowdownLog(rawLog, opts) {
     opts = opts || {};
     var selectedSide = normalizeSide(opts.selectedSide || 'p1');
@@ -608,6 +632,7 @@
       turns: [],
       warnings: [],
       turn0: null,
+      manualTeamPreview: { p1: [], p2: [] },
       rawLineCount: text ? text.split(/\r?\n/).length : 0,
       rawPreviewLines: []
     };
@@ -876,6 +901,33 @@
     if (!model.players.p1 && !model.players.p2) model.warnings.push('Player names were not found in the log.');
     if (!model.leads.p1.length || !model.leads.p2.length) model.warnings.push('Lead Pokemon could not be fully inferred.');
     if (!model.teamPreview.p1.length && !model.teamPreview.p2.length) model.warnings.push('Team preview was not present; selected Pokemon are inferred from revealed actions.');
+    var manualRoster = parseManualReplayRoster(opts.manualTeamPreview || opts.manualFullRoster || opts.fullRoster || '');
+    if (manualRoster.length) {
+      model.manualTeamPreview[selectedSide] = manualRoster.slice();
+      manualRoster.forEach(function(species) {
+        var details = normalizeReplayPokemonDetails('', species);
+        var mon = details.species || species;
+        addUnique(model.teamPreview[selectedSide], mon);
+        if (!previewDetails[selectedSide].some(function(row) { return row && row.species === mon; })) {
+          previewDetails[selectedSide].push(details);
+        }
+        if (model.selectedPokemon[selectedSide].indexOf(mon) < 0) {
+          ensureRosterEntry(rosterState, selectedSide, mon, {
+            side: selectedSide,
+            status: 'bench',
+            hp: 100,
+            displayName: mon,
+            baseSpecies: details.baseSpecies || replayBaseSpecies(mon),
+            gender: details.gender,
+            level: details.level,
+            item: details.item,
+            ability: details.ability,
+            source: 'manual-full-roster'
+          });
+        }
+      });
+      addReplayWarning(parserWarnings, 'Manual full roster was used to complete missing replay preview data.');
+    }
     model.turn0 = buildReplayTurn0Snapshot(model, {
       previewDetails: previewDetails,
       startingSlots: startingSlots,
@@ -960,7 +1012,7 @@
       return Object.assign(base, {
         level: 'high',
         label: 'Full preview + four inferred',
-        reason: 'Team preview showed the full six and at least four selected Pokemon appeared in the log.'
+        reason: 'Team preview showed the registered six and at least four selected Pokemon appeared in the log, so the game-specific squad choice can be reviewed.'
       });
     }
     if (selectedFourKnown) {
@@ -968,15 +1020,15 @@
         level: 'medium',
         label: 'Visible four inferred',
         reason: 'At least four brought Pokemon appeared in the log, so replay review can continue.',
-        limitation: 'Bring-choice analysis is limited because the full six were not available from this replay.'
+        limitation: 'Bring-4 analysis is limited — the registered six were not fully revealed, so benched swap options are unknown.'
       });
     }
     if (fullRosterKnown && selectedCount > 0) {
       return Object.assign(base, {
         level: 'medium',
         label: 'Partial bring',
-        reason: 'Team preview showed the full six, but fewer than four brought Pokemon were revealed.',
-        limitation: 'Bring-four analysis is limited until the missing brought Pokemon appear in the log or are entered manually.'
+        reason: 'Team preview showed the registered six, but fewer than four brought Pokemon were revealed.',
+        limitation: 'Bring-four analysis is limited until the missing game-specific squad Pokemon appear in the log or are entered manually.'
       });
     }
     if (selectedCount > 0) {
@@ -1157,6 +1209,16 @@
         whyMattered: 'Bring-four coaching can overclaim when the backline is hidden, especially in VGC-style games where the benched two explain the matchup plan.',
         doInstead: 'Use the bring-four read as provisional until the full selected four are visible or entered manually.',
         evidence: 'Preview count ' + parsed.teamPreview[side].length + ', revealed selected count ' + userSelected.length
+      });
+    }
+    if (bringConfidence.selectedFourKnown && !bringConfidence.fullRosterKnown) {
+      addIssue(issues, 'Bring-4 Limited', 'low', null, bringConfidence.limitation, 'medium', 'Add the registered six in the optional roster field after upload when Showdown does not expose team preview.', {
+        id: 'bring_four_limited',
+        category: 'bring_four',
+        whatHappened: 'The replay exposed at least four brought Pokemon, but did not reveal the full registered six.',
+        whyMattered: 'In best-of-three, you can change the game-specific lineup from the same registered six between games, so coaching needs the benched swap options to judge the squad choice.',
+        doInstead: 'Paste the registered six into the optional roster completion field before analysis when the replay log only exposes selected Pokemon.',
+        evidence: 'Preview count ' + bringConfidence.previewCount + ', revealed selected count ' + bringConfidence.selectedCount
       });
     }
 
@@ -1360,6 +1422,7 @@
   ChampionsSim.replayCoach.normalizeReplayPokemonDetails = normalizeReplayPokemonDetails;
   ChampionsSim.replayCoach.resolveReplayMegaSpecies = resolveReplayMegaSpecies;
   ChampionsSim.replayCoach.normalizeReplayLogInput = normalizeReplayLogInput;
+  ChampionsSim.replayCoach.parseManualReplayRoster = parseManualReplayRoster;
   ChampionsSim.replayCoach.replayUrlToLogUrl = replayUrlToLogUrl;
   ChampionsSim.replayCoach.fetchReplayLog = fetchReplayLog;
   ChampionsSim.replayCoach.buildReplayCoachReview = buildReplayCoachReview;

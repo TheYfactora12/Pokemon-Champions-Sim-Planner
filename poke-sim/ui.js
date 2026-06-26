@@ -5568,10 +5568,14 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Four match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Registered roster</strong><span>' + _escapeHtml((simComparison.registeredRoster || []).join(', ') || 'Needs full six') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>BO3 swap options</strong><span>' + _escapeHtml((simComparison.actualSwapOptions || []).join(', ') || 'No hidden swaps known') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Lineup matrix</strong><span>' + _escapeHtml(simComparison.lineupCoverageLabel || 'Needs registered-roster combo sims') + '</span></div>' +
       '</div>' +
       '<div class="replay-coach-list">' +
         '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>First deviation</strong>' + _escapeHtml(simComparison.firstDeviation || simComparison.note || 'Needs sim data') + '<small>' + _escapeHtml(simComparison.decisionChange || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Series lineup context</strong>' + _escapeHtml(simComparison.bo3SwapContext || 'Best-of-three lineup swap context needs the registered roster.') + '<small>Sim bench options: ' + _escapeHtml((simComparison.simBenchOptions || []).join(', ') || 'Needs sim data') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>Diagnosis boundary</strong>' + _escapeHtml(simComparison.teamVsPilotDiagnosis || 'Do not judge team vs pilot until sim and replay data are matched.') + '</div>' +
       '</div>' +
     '</div>' : '') +
@@ -5703,6 +5707,11 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
     source: 'latest in-app simulation strategy report',
     matchedOpponentKey: best.key,
     matchedOpponentName: TEAMS[best.key] && TEAMS[best.key].name ? TEAMS[best.key].name : best.key,
+    registeredRoster: parsed.teamPreview && parsed.teamPreview[selectedSide] ? parsed.teamPreview[selectedSide] : [],
+    lineupSize: getBringCount(),
+    lineupMatrix: (ChampionsSim.replayLearning && typeof ChampionsSim.replayLearning.lineupCombinations === 'function' && parsed.teamPreview && parsed.teamPreview[selectedSide])
+      ? ChampionsSim.replayLearning.lineupCombinations(parsed.teamPreview[selectedSide], getBringCount())
+      : [],
     matchConfidence: matchConfidence,
     bestLead: bestLead,
     bestFour: bestFour,
@@ -5715,6 +5724,7 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
 
 function csInitReplayCoachUi() {
   var logEl = document.getElementById('replay-coach-log');
+  var rosterEl = document.getElementById('replay-coach-full-roster');
   var urlEl = document.getElementById('replay-coach-url');
   var sideEl = document.getElementById('replay-coach-side');
   var runBtn = document.getElementById('replay-coach-run-btn');
@@ -5744,7 +5754,7 @@ function csInitReplayCoachUi() {
     }
     try {
       var selectedSide = sideEl.value || 'p1';
-      var opts = { selectedSide: selectedSide };
+      var opts = { selectedSide: selectedSide, manualTeamPreview: rosterEl ? rosterEl.value : '' };
       var analysis;
       if (typeof api.parseShowdownLog === 'function' && typeof api.buildReplayCoachReview === 'function') {
         var parsed = api.parseShowdownLog(raw, opts);
@@ -5764,6 +5774,7 @@ function csInitReplayCoachUi() {
 
   if (clearBtn) clearBtn.addEventListener('click', function() {
     logEl.value = '';
+    if (rosterEl) rosterEl.value = '';
     setStatus('');
     var host = document.getElementById('replay-coach-results');
     if (host) host.innerHTML = '<div class="replay-coach-empty">Paste a log and run analysis to see result, leads, critical turn, coaching tags, and a readable turn timeline.</div>';

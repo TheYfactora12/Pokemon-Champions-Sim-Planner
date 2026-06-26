@@ -2715,6 +2715,9 @@ table{border-collapse:collapse;width:100%}
           <button class="btn-secondary" id="replay-coach-fetch-btn" type="button">Load Replay URL</button>
         </div>
         <textarea id="replay-coach-log" class="replay-coach-textarea" rows="14" spellcheck="false" placeholder="Paste a Pokemon Showdown battle log here."></textarea>
+        <label class="form-label" for="replay-coach-full-roster">Know the full 6?</label>
+        <textarea id="replay-coach-full-roster" class="replay-coach-textarea" rows="4" spellcheck="false" placeholder="Optional: paste your registered six, one Pokemon per line, when the replay only reveals the brought four."></textarea>
+        <small>Optional roster completion only affects your selected side. In best-of-three, Battle Sensei needs the registered six to judge why this game used this selected lineup.</small>
         <div class="replay-coach-controls">
           <label class="form-label" for="replay-coach-side">Your side</label>
           <select class="select-input" id="replay-coach-side">
@@ -18159,6 +18162,30 @@ if (typeof window !== 'undefined') {
     };
   }
 
+  function parseManualReplayRoster(input) {
+    var text = String(input || '').trim();
+    if (!text) return [];
+    var chunks = text.split(/\r?\n|;/);
+    if (chunks.length === 1 && text.indexOf(',') >= 0 && !/\bL(?:evel)?\s*\d+\b/i.test(text)) {
+      chunks = text.split(',');
+    }
+    var out = [];
+    chunks.forEach(function(chunk) {
+      var line = cleanText(chunk);
+      if (!line) return;
+      if (line.indexOf('|poke|') >= 0) {
+        var parts = line.split('|');
+        line = cleanText(parts[3] || '');
+      }
+      line = line.replace(/^[\s*#\-\d.)]+/, '');
+      line = line.replace(/\s+\((?:M|F|N)\)\s*$/i, '');
+      if (line.indexOf('@') >= 0) line = line.split('@')[0];
+      var details = normalizeReplayPokemonDetails('', line);
+      addUnique(out, details.species || line);
+    });
+    return out.slice(0, 6);
+  }
+
   function parseShowdownLog(rawLog, opts) {
     opts = opts || {};
     var selectedSide = normalizeSide(opts.selectedSide || 'p1');
@@ -18179,6 +18206,7 @@ if (typeof window !== 'undefined') {
       turns: [],
       warnings: [],
       turn0: null,
+      manualTeamPreview: { p1: [], p2: [] },
       rawLineCount: text ? text.split(/\r?\n/).length : 0,
       rawPreviewLines: []
     };
@@ -18447,6 +18475,33 @@ if (typeof window !== 'undefined') {
     if (!model.players.p1 && !model.players.p2) model.warnings.push('Player names were not found in the log.');
     if (!model.leads.p1.length || !model.leads.p2.length) model.warnings.push('Lead Pokemon could not be fully inferred.');
     if (!model.teamPreview.p1.length && !model.teamPreview.p2.length) model.warnings.push('Team preview was not present; selected Pokemon are inferred from revealed actions.');
+    var manualRoster = parseManualReplayRoster(opts.manualTeamPreview || opts.manualFullRoster || opts.fullRoster || '');
+    if (manualRoster.length) {
+      model.manualTeamPreview[selectedSide] = manualRoster.slice();
+      manualRoster.forEach(function(species) {
+        var details = normalizeReplayPokemonDetails('', species);
+        var mon = details.species || species;
+        addUnique(model.teamPreview[selectedSide], mon);
+        if (!previewDetails[selectedSide].some(function(row) { return row && row.species === mon; })) {
+          previewDetails[selectedSide].push(details);
+        }
+        if (model.selectedPokemon[selectedSide].indexOf(mon) < 0) {
+          ensureRosterEntry(rosterState, selectedSide, mon, {
+            side: selectedSide,
+            status: 'bench',
+            hp: 100,
+            displayName: mon,
+            baseSpecies: details.baseSpecies || replayBaseSpecies(mon),
+            gender: details.gender,
+            level: details.level,
+            item: details.item,
+            ability: details.ability,
+            source: 'manual-full-roster'
+          });
+        }
+      });
+      addReplayWarning(parserWarnings, 'Manual full roster was used to complete missing replay preview data.');
+    }
     model.turn0 = buildReplayTurn0Snapshot(model, {
       previewDetails: previewDetails,
       startingSlots: startingSlots,
@@ -18531,7 +18586,7 @@ if (typeof window !== 'undefined') {
       return Object.assign(base, {
         level: 'high',
         label: 'Full preview + four inferred',
-        reason: 'Team preview showed the full six and at least four selected Pokemon appeared in the log.'
+        reason: 'Team preview showed the registered six and at least four selected Pokemon appeared in the log, so the game-specific squad choice can be reviewed.'
       });
     }
     if (selectedFourKnown) {
@@ -18539,15 +18594,15 @@ if (typeof window !== 'undefined') {
         level: 'medium',
         label: 'Visible four inferred',
         reason: 'At least four brought Pokemon appeared in the log, so replay review can continue.',
-        limitation: 'Bring-choice analysis is limited because the full six were not available from this replay.'
+        limitation: 'Bring-4 analysis is limited — the registered six were not fully revealed, so benched swap options are unknown.'
       });
     }
     if (fullRosterKnown && selectedCount > 0) {
       return Object.assign(base, {
         level: 'medium',
         label: 'Partial bring',
-        reason: 'Team preview showed the full six, but fewer than four brought Pokemon were revealed.',
-        limitation: 'Bring-four analysis is limited until the missing brought Pokemon appear in the log or are entered manually.'
+        reason: 'Team preview showed the registered six, but fewer than four brought Pokemon were revealed.',
+        limitation: 'Bring-four analysis is limited until the missing game-specific squad Pokemon appear in the log or are entered manually.'
       });
     }
     if (selectedCount > 0) {
@@ -18728,6 +18783,16 @@ if (typeof window !== 'undefined') {
         whyMattered: 'Bring-four coaching can overclaim when the backline is hidden, especially in VGC-style games where the benched two explain the matchup plan.',
         doInstead: 'Use the bring-four read as provisional until the full selected four are visible or entered manually.',
         evidence: 'Preview count ' + parsed.teamPreview[side].length + ', revealed selected count ' + userSelected.length
+      });
+    }
+    if (bringConfidence.selectedFourKnown && !bringConfidence.fullRosterKnown) {
+      addIssue(issues, 'Bring-4 Limited', 'low', null, bringConfidence.limitation, 'medium', 'Add the registered six in the optional roster field after upload when Showdown does not expose team preview.', {
+        id: 'bring_four_limited',
+        category: 'bring_four',
+        whatHappened: 'The replay exposed at least four brought Pokemon, but did not reveal the full registered six.',
+        whyMattered: 'In best-of-three, you can change the game-specific lineup from the same registered six between games, so coaching needs the benched swap options to judge the squad choice.',
+        doInstead: 'Paste the registered six into the optional roster completion field before analysis when the replay log only exposes selected Pokemon.',
+        evidence: 'Preview count ' + bringConfidence.previewCount + ', revealed selected count ' + bringConfidence.selectedCount
       });
     }
 
@@ -18931,6 +18996,7 @@ if (typeof window !== 'undefined') {
   ChampionsSim.replayCoach.normalizeReplayPokemonDetails = normalizeReplayPokemonDetails;
   ChampionsSim.replayCoach.resolveReplayMegaSpecies = resolveReplayMegaSpecies;
   ChampionsSim.replayCoach.normalizeReplayLogInput = normalizeReplayLogInput;
+  ChampionsSim.replayCoach.parseManualReplayRoster = parseManualReplayRoster;
   ChampionsSim.replayCoach.replayUrlToLogUrl = replayUrlToLogUrl;
   ChampionsSim.replayCoach.fetchReplayLog = fetchReplayLog;
   ChampionsSim.replayCoach.buildReplayCoachReview = buildReplayCoachReview;
@@ -19466,12 +19532,43 @@ if (typeof window !== 'undefined') {
     return hits / Math.max(aa.length, bb.length);
   }
 
+  function namesNotIn(pool, used) {
+    var usedNames = normalizeNames(used);
+    return (pool || []).filter(function(name) {
+      return usedNames.indexOf(escText(name).toLowerCase()) < 0;
+    });
+  }
+
+  function lineupCombinations(roster, size) {
+    roster = (roster || []).slice(0, 6);
+    size = Math.max(1, Math.min(size || 4, roster.length));
+    var out = [];
+    function walk(start, picked) {
+      if (picked.length === size) {
+        out.push(picked.slice());
+        return;
+      }
+      for (var i = start; i < roster.length; i++) {
+        picked.push(roster[i]);
+        walk(i + 1, picked);
+        picked.pop();
+      }
+    }
+    walk(0, []);
+    return out;
+  }
+
   function buildSimComparison(parsed, review, opts) {
     opts = opts || {};
     var plan = opts.simPlan || opts.simRecommendation || opts.simComparison || null;
     var summary = (review && review.summary) || {};
     var actualLead = summary.yourLead || [];
     var actualFour = summary.yourFour || [];
+    var registeredRoster = (plan && (plan.registeredRoster || plan.fullRoster || plan.teamPreview)) ||
+      summary.yourPreview ||
+      (parsed && parsed.teamPreview && parsed.teamPreview[summary.yourSide || parsed.selectedSide || 'p1']) ||
+      [];
+    var lineupSize = plan && (plan.lineupSize || plan.bringCount) ? (plan.lineupSize || plan.bringCount) : Math.max(actualFour.length || 0, 4);
     var noData = {
       status: 'needs_sim_data',
       evidenceTier: 'needs_more_data',
@@ -19480,7 +19577,10 @@ if (typeof window !== 'undefined') {
       note: 'No matched simulation recommendation was provided for this replay yet.',
       decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/four/path against the trainer’s real replay choices.',
       actualLead: actualLead,
-      actualFour: actualFour
+      actualFour: actualFour,
+      registeredRoster: registeredRoster,
+      lineupSize: lineupSize,
+      bo3SwapContext: registeredRoster.length >= lineupSize ? 'Registered roster known; compare each game-specific lineup against the available swap options.' : 'Registered roster incomplete; lineup swap analysis is limited.'
     };
     if (!plan) return noData;
     var bestLead = plan.bestLead || plan.recommendedLead || plan.bestSimLead || [];
@@ -19490,11 +19590,23 @@ if (typeof window !== 'undefined') {
     var fourOverlap = overlapScore(actualFour, bestFour);
     var confidence = confidenceFor(parsed, (review && review.coachingTags) || []);
     if (plan.matchConfidence === 'low' || plan.confidence === 'low') confidence = 'low';
-    var evidenceCount = 1 + (leadOverlap != null ? 1 : 0) + (fourOverlap != null ? 1 : 0) + (expectedWinPath ? 1 : 0);
+    var registeredCount = registeredRoster.length;
+    var swapOptions = namesNotIn(registeredRoster, actualFour);
+    var simBenchOptions = namesNotIn(registeredRoster, bestFour);
+    var lineupMatrix = (plan.lineupMatrix || plan.lineupCombos || plan.allLineupCombos || []);
+    if (!lineupMatrix.length && registeredCount >= lineupSize) lineupMatrix = lineupCombinations(registeredRoster, lineupSize);
+    var evaluatedLineups = plan.evaluatedLineups || plan.scoredLineups || [];
+    var expectedLineupCount = lineupMatrix.length;
+    var evaluatedLineupCount = evaluatedLineups.length || (plan.lineupMatrixComplete ? expectedLineupCount : 0);
+    var lineupMatrixComplete = !!plan.lineupMatrixComplete || (expectedLineupCount > 0 && evaluatedLineupCount >= expectedLineupCount);
+    var lineupCoverageLabel = expectedLineupCount
+      ? (lineupMatrixComplete ? 'All ' + expectedLineupCount + ' registered-roster lineups evaluated' : evaluatedLineupCount + '/' + expectedLineupCount + ' registered-roster lineups evaluated')
+      : 'Registered roster incomplete; lineup matrix unavailable';
+    var evidenceCount = 1 + (leadOverlap != null ? 1 : 0) + (fourOverlap != null ? 1 : 0) + (expectedWinPath ? 1 : 0) + (registeredCount >= lineupSize ? 1 : 0) + (lineupMatrixComplete ? 1 : 0);
     var tier = evidenceTier(confidence, evidenceCount);
     var firstDeviation = 'Needs more data';
     if (leadOverlap != null && leadOverlap < 1) firstDeviation = 'Actual lead differed from the sim-recommended lead.';
-    else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual selected four differed from the sim-recommended four.';
+    else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual game-specific lineup differed from the sim-recommended lineup from the registered roster.';
     else if (expectedWinPath) firstDeviation = 'Lead/four matched; compare turn sequencing against expected win path.';
     return {
       status: 'matched',
@@ -19505,13 +19617,25 @@ if (typeof window !== 'undefined') {
       bestSimLead: bestLead,
       actualFour: actualFour,
       bestSimFour: bestFour,
+      registeredRoster: registeredRoster,
+      lineupSize: lineupSize,
+      actualSwapOptions: swapOptions,
+      simBenchOptions: simBenchOptions,
+      lineupMatrix: lineupMatrix.slice(0, 30),
+      expectedLineupCount: expectedLineupCount,
+      evaluatedLineupCount: evaluatedLineupCount,
+      lineupMatrixComplete: lineupMatrixComplete,
+      lineupCoverageLabel: lineupCoverageLabel,
+      bo3SwapContext: registeredCount >= lineupSize
+        ? 'Best-of-three context: evaluate this game lineup as one selectable squad from the registered roster, not as the whole team. Sim coverage should include every legal lineup combination.'
+        : 'Best-of-three lineup swap analysis is limited because the registered roster is incomplete.',
       leadMatch: leadOverlap == null ? 'unknown' : Math.round(leadOverlap * 100),
       fourMatch: fourOverlap == null ? 'unknown' : Math.round(fourOverlap * 100),
       expectedWinPath: expectedWinPath || 'Needs sim win-path data',
       actualPath: summary.mainIssue || 'Needs turn review',
       firstDeviation: firstDeviation,
-      teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/four matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/bring selection may have diverged from the simulated plan; verify with more battles before changing the team.',
-      decisionChange: 'Use this comparison to decide whether the trainer should test a different lead/four, practice the same sim plan with cleaner sequencing, or collect more logs before changing the team.',
+      teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/four matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/lineup selection may have diverged from the simulated plan; verify across best-of-three games before changing the team.',
+      decisionChange: 'Use this comparison to decide whether the trainer should swap to a different game-specific lineup from the registered roster, practice the same sim plan with cleaner sequencing, or run the missing lineup-matrix sims before changing the team.',
       source: plan.source || 'matched simulation plan',
       matchedOpponentKey: plan.matchedOpponentKey || '',
       matchedOpponentName: plan.matchedOpponentName || '',
@@ -19603,6 +19727,11 @@ if (typeof window !== 'undefined') {
         simMatched: !!matched,
         leadMatch: simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch,
         fourMatch: simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch,
+        bo3SwapContext: simComparison.bo3SwapContext || '',
+        lineupCoverageLabel: simComparison.lineupCoverageLabel || '',
+        lineupMatrixComplete: !!simComparison.lineupMatrixComplete,
+        actualSwapOptions: simComparison.actualSwapOptions || [],
+        simBenchOptions: simComparison.simBenchOptions || [],
         issueIds: ids.slice(0, 8),
         firstDeviation: simComparison.firstDeviation || '',
         note: 'Replay-derived calibration signal only. Do not automatically rewrite sim models from one replay.'
@@ -19987,6 +20116,7 @@ if (typeof window !== 'undefined') {
   }
 
   ChampionsSim.replayLearning.buildLearningReport = buildLearningReport;
+  ChampionsSim.replayLearning.lineupCombinations = lineupCombinations;
   ChampionsSim.replayLearning.buildCriticalTurns = buildCriticalTurns;
   ChampionsSim.replayLearning.buildDecisionQuality = buildDecisionQuality;
   ChampionsSim.replayLearning.buildPracticePlan = buildPracticePlan;
@@ -25785,10 +25915,14 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<div class="replay-coach-metric"><strong>Evidence</strong><span>' + _escapeHtml(simComparison.evidenceLabel || 'Needs more data') + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Lead match</strong><span>' + _escapeHtml(String(simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch)) + '</span></div>' +
         '<div class="replay-coach-metric"><strong>Four match</strong><span>' + _escapeHtml(String(simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch)) + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Registered roster</strong><span>' + _escapeHtml((simComparison.registeredRoster || []).join(', ') || 'Needs full six') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>BO3 swap options</strong><span>' + _escapeHtml((simComparison.actualSwapOptions || []).join(', ') || 'No hidden swaps known') + '</span></div>' +
+        '<div class="replay-coach-metric"><strong>Lineup matrix</strong><span>' + _escapeHtml(simComparison.lineupCoverageLabel || 'Needs registered-roster combo sims') + '</span></div>' +
       '</div>' +
       '<div class="replay-coach-list">' +
         '<div class="replay-coach-list-row"><strong>Actual lead</strong>' + _escapeHtml((simComparison.actualLead || []).join(' + ') || 'Needs data') + '<small>Best sim lead: ' + _escapeHtml((simComparison.bestSimLead || []).join(' + ') || 'Needs sim data') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>First deviation</strong>' + _escapeHtml(simComparison.firstDeviation || simComparison.note || 'Needs sim data') + '<small>' + _escapeHtml(simComparison.decisionChange || '') + '</small></div>' +
+        '<div class="replay-coach-list-row"><strong>Series lineup context</strong>' + _escapeHtml(simComparison.bo3SwapContext || 'Best-of-three lineup swap context needs the registered roster.') + '<small>Sim bench options: ' + _escapeHtml((simComparison.simBenchOptions || []).join(', ') || 'Needs sim data') + '</small></div>' +
         '<div class="replay-coach-list-row"><strong>Diagnosis boundary</strong>' + _escapeHtml(simComparison.teamVsPilotDiagnosis || 'Do not judge team vs pilot until sim and replay data are matched.') + '</div>' +
       '</div>' +
     '</div>' : '') +
@@ -25920,6 +26054,11 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
     source: 'latest in-app simulation strategy report',
     matchedOpponentKey: best.key,
     matchedOpponentName: TEAMS[best.key] && TEAMS[best.key].name ? TEAMS[best.key].name : best.key,
+    registeredRoster: parsed.teamPreview && parsed.teamPreview[selectedSide] ? parsed.teamPreview[selectedSide] : [],
+    lineupSize: getBringCount(),
+    lineupMatrix: (ChampionsSim.replayLearning && typeof ChampionsSim.replayLearning.lineupCombinations === 'function' && parsed.teamPreview && parsed.teamPreview[selectedSide])
+      ? ChampionsSim.replayLearning.lineupCombinations(parsed.teamPreview[selectedSide], getBringCount())
+      : [],
     matchConfidence: matchConfidence,
     bestLead: bestLead,
     bestFour: bestFour,
@@ -25932,6 +26071,7 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
 
 function csInitReplayCoachUi() {
   var logEl = document.getElementById('replay-coach-log');
+  var rosterEl = document.getElementById('replay-coach-full-roster');
   var urlEl = document.getElementById('replay-coach-url');
   var sideEl = document.getElementById('replay-coach-side');
   var runBtn = document.getElementById('replay-coach-run-btn');
@@ -25961,7 +26101,7 @@ function csInitReplayCoachUi() {
     }
     try {
       var selectedSide = sideEl.value || 'p1';
-      var opts = { selectedSide: selectedSide };
+      var opts = { selectedSide: selectedSide, manualTeamPreview: rosterEl ? rosterEl.value : '' };
       var analysis;
       if (typeof api.parseShowdownLog === 'function' && typeof api.buildReplayCoachReview === 'function') {
         var parsed = api.parseShowdownLog(raw, opts);
@@ -25981,6 +26121,7 @@ function csInitReplayCoachUi() {
 
   if (clearBtn) clearBtn.addEventListener('click', function() {
     logEl.value = '';
+    if (rosterEl) rosterEl.value = '';
     setStatus('');
     var host = document.getElementById('replay-coach-results');
     if (host) host.innerHTML = '<div class="replay-coach-empty">Paste a log and run analysis to see result, leads, critical turn, coaching tags, and a readable turn timeline.</div>';

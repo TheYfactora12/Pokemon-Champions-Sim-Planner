@@ -161,11 +161,14 @@ T('8. sim comparison stays low confidence until matched sim data exists', () => 
     simPlan: {
       bestLead: analysis.review.summary.yourLead,
       bestFour: analysis.review.summary.yourFour,
+      registeredRoster: analysis.review.summary.yourPreview,
+      lineupSize: 4,
       expectedWinPath: 'Set speed control, preserve cleaner, and convert pressure.'
     }
   }).review.learningReport.simComparison;
   eq(matched.status, 'matched', 'matched status');
   eq(matched.leadMatch, 100, 'lead match score');
+  inc(matched.bo3SwapContext, 'Best-of-three context', 'bo3 swap context');
   truthy(matched.evidenceLabel !== 'Needs more data', 'matched evidence improves');
 });
 
@@ -176,6 +179,8 @@ T('8b. sim feedback packet emits calibration signals without auto-updating model
     simPlan: {
       bestLead: ['Wrong Lead A', 'Wrong Lead B'],
       bestFour: base.review.summary.yourFour,
+      registeredRoster: base.review.summary.yourPreview,
+      lineupSize: 4,
       expectedWinPath: 'Set speed control, preserve cleaner, and convert pressure.',
       matchConfidence: 'medium'
     }
@@ -188,6 +193,57 @@ T('8b. sim feedback packet emits calibration signals without auto-updating model
   truthy(mismatch.scenarioType && mismatch.scenarioType !== 'none', 'scenario type');
   truthy(['none', 'minor', 'moderate'].includes(mismatch.rngContamination), 'rng contamination label');
   inc(mismatch.evidence.note, 'Do not automatically rewrite sim models', 'auto-update guardrail');
+});
+
+T('8c. sim comparison treats selected lineup as a BO3 swap choice from registered six', () => {
+  const base = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const actual = base.review.summary.yourFour;
+  const registeredRoster = actual.concat(['Bench Option A', 'Bench Option B']).slice(0, 6);
+  const sim = replayCoach.analyzeShowdownReplay(sample, {
+    selectedSide: 'p1',
+    manualTeamPreview: registeredRoster.join('\n'),
+    simPlan: {
+      bestLead: base.review.summary.yourLead,
+      bestFour: actual.slice(0, 3).concat(['Bench Option A']),
+      registeredRoster: registeredRoster,
+      lineupSize: 4,
+      lineupMatrixComplete: true,
+      expectedWinPath: 'Swap one bench option into game two if the first lineup loses tempo.',
+      matchConfidence: 'medium'
+    }
+  }).review.learningReport.simComparison;
+  eq(sim.status, 'matched', 'sim matched');
+  truthy(sim.fourMatch < 100, 'lineup mismatch should be visible');
+  inc(sim.firstDeviation, 'game-specific lineup', 'lineup deviation wording');
+  inc(sim.decisionChange, 'registered roster', 'registered roster decision wording');
+  eq(sim.expectedLineupCount, 15, 'six choose four lineup count');
+  eq(sim.lineupMatrixComplete, true, 'complete matrix flag');
+  truthy(sim.actualSwapOptions.includes('Bench Option A'), 'actual swap option missing');
+  truthy(sim.simBenchOptions.includes(actual[3]), 'sim bench option missing');
+});
+
+T('8d. incomplete sim lineup matrix is explicit before model calibration', () => {
+  const base = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const actual = base.review.summary.yourFour;
+  const registeredRoster = actual.concat(['Bench Option A', 'Bench Option B']).slice(0, 6);
+  const analysis = replayCoach.analyzeShowdownReplay(sample, {
+    selectedSide: 'p1',
+    simPlan: {
+      bestLead: base.review.summary.yourLead,
+      bestFour: actual,
+      registeredRoster: registeredRoster,
+      lineupSize: 4,
+      evaluatedLineups: [actual],
+      matchConfidence: 'medium'
+    }
+  });
+  const sim = analysis.review.learningReport.simComparison;
+  const packet = analysis.review.learningReport.simFeedback;
+  eq(sim.expectedLineupCount, 15, 'expected full lineup matrix count');
+  eq(sim.evaluatedLineupCount, 1, 'evaluated lineup count');
+  eq(sim.lineupMatrixComplete, false, 'matrix should be incomplete');
+  inc(sim.lineupCoverageLabel, '1/15', 'coverage label');
+  eq(packet.evidence.lineupMatrixComplete, false, 'feedback carries incomplete matrix');
 });
 
 T('9. trend dashboard stays cautious for a single review', () => {

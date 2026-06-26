@@ -28,6 +28,9 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, '<script src="replay_learning.js"></script>');
   inc(html, 'id="replay-coach-url"');
   inc(html, 'id="replay-coach-fetch-btn"');
+  inc(html, 'id="replay-coach-full-roster"');
+  inc(html, 'Know the full 6?');
+  inc(html, 'In best-of-three');
 });
 
 T('2. summary renders selected-four confidence and team preview read', () => {
@@ -44,6 +47,7 @@ T('2. summary renders selected-four confidence and team preview read', () => {
   inc(ui, '<strong>Limit</strong>');
   inc(ui, 'bringChoiceReviewable');
   inc(ui, 'selectedFourConfidence');
+  inc(ui, 'manualTeamPreview: rosterEl ? rosterEl.value :');
 });
 
 T('3. timeline renders coaching read, better line, severity, and confidence', () => {
@@ -81,6 +85,9 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, '<h3 class="replay-coach-h3">Win Path + Opponent Plan</h3>');
   inc(ui, '<strong>Opponent plan evidence</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Sim Comparison</h3>');
+  inc(ui, '<strong>BO3 swap options</strong>');
+  inc(ui, '<strong>Lineup matrix</strong>');
+  inc(ui, '<strong>Series lineup context</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Sim Feedback Packet</h3>');
   inc(ui, 'Single replay signals do not automatically rewrite sim models.');
   inc(ui, 'Scenario queue');

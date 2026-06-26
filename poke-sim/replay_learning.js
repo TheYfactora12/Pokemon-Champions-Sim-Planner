@@ -522,12 +522,43 @@
     return hits / Math.max(aa.length, bb.length);
   }
 
+  function namesNotIn(pool, used) {
+    var usedNames = normalizeNames(used);
+    return (pool || []).filter(function(name) {
+      return usedNames.indexOf(escText(name).toLowerCase()) < 0;
+    });
+  }
+
+  function lineupCombinations(roster, size) {
+    roster = (roster || []).slice(0, 6);
+    size = Math.max(1, Math.min(size || 4, roster.length));
+    var out = [];
+    function walk(start, picked) {
+      if (picked.length === size) {
+        out.push(picked.slice());
+        return;
+      }
+      for (var i = start; i < roster.length; i++) {
+        picked.push(roster[i]);
+        walk(i + 1, picked);
+        picked.pop();
+      }
+    }
+    walk(0, []);
+    return out;
+  }
+
   function buildSimComparison(parsed, review, opts) {
     opts = opts || {};
     var plan = opts.simPlan || opts.simRecommendation || opts.simComparison || null;
     var summary = (review && review.summary) || {};
     var actualLead = summary.yourLead || [];
     var actualFour = summary.yourFour || [];
+    var registeredRoster = (plan && (plan.registeredRoster || plan.fullRoster || plan.teamPreview)) ||
+      summary.yourPreview ||
+      (parsed && parsed.teamPreview && parsed.teamPreview[summary.yourSide || parsed.selectedSide || 'p1']) ||
+      [];
+    var lineupSize = plan && (plan.lineupSize || plan.bringCount) ? (plan.lineupSize || plan.bringCount) : Math.max(actualFour.length || 0, 4);
     var noData = {
       status: 'needs_sim_data',
       evidenceTier: 'needs_more_data',
@@ -536,7 +567,10 @@
       note: 'No matched simulation recommendation was provided for this replay yet.',
       decisionChange: 'Run this matchup in Sim Mode or upload more logs so Battle Sensei can compare the best sim lead/four/path against the trainer’s real replay choices.',
       actualLead: actualLead,
-      actualFour: actualFour
+      actualFour: actualFour,
+      registeredRoster: registeredRoster,
+      lineupSize: lineupSize,
+      bo3SwapContext: registeredRoster.length >= lineupSize ? 'Registered roster known; compare each game-specific lineup against the available swap options.' : 'Registered roster incomplete; lineup swap analysis is limited.'
     };
     if (!plan) return noData;
     var bestLead = plan.bestLead || plan.recommendedLead || plan.bestSimLead || [];
@@ -546,11 +580,23 @@
     var fourOverlap = overlapScore(actualFour, bestFour);
     var confidence = confidenceFor(parsed, (review && review.coachingTags) || []);
     if (plan.matchConfidence === 'low' || plan.confidence === 'low') confidence = 'low';
-    var evidenceCount = 1 + (leadOverlap != null ? 1 : 0) + (fourOverlap != null ? 1 : 0) + (expectedWinPath ? 1 : 0);
+    var registeredCount = registeredRoster.length;
+    var swapOptions = namesNotIn(registeredRoster, actualFour);
+    var simBenchOptions = namesNotIn(registeredRoster, bestFour);
+    var lineupMatrix = (plan.lineupMatrix || plan.lineupCombos || plan.allLineupCombos || []);
+    if (!lineupMatrix.length && registeredCount >= lineupSize) lineupMatrix = lineupCombinations(registeredRoster, lineupSize);
+    var evaluatedLineups = plan.evaluatedLineups || plan.scoredLineups || [];
+    var expectedLineupCount = lineupMatrix.length;
+    var evaluatedLineupCount = evaluatedLineups.length || (plan.lineupMatrixComplete ? expectedLineupCount : 0);
+    var lineupMatrixComplete = !!plan.lineupMatrixComplete || (expectedLineupCount > 0 && evaluatedLineupCount >= expectedLineupCount);
+    var lineupCoverageLabel = expectedLineupCount
+      ? (lineupMatrixComplete ? 'All ' + expectedLineupCount + ' registered-roster lineups evaluated' : evaluatedLineupCount + '/' + expectedLineupCount + ' registered-roster lineups evaluated')
+      : 'Registered roster incomplete; lineup matrix unavailable';
+    var evidenceCount = 1 + (leadOverlap != null ? 1 : 0) + (fourOverlap != null ? 1 : 0) + (expectedWinPath ? 1 : 0) + (registeredCount >= lineupSize ? 1 : 0) + (lineupMatrixComplete ? 1 : 0);
     var tier = evidenceTier(confidence, evidenceCount);
     var firstDeviation = 'Needs more data';
     if (leadOverlap != null && leadOverlap < 1) firstDeviation = 'Actual lead differed from the sim-recommended lead.';
-    else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual selected four differed from the sim-recommended four.';
+    else if (fourOverlap != null && fourOverlap < 1) firstDeviation = 'Actual game-specific lineup differed from the sim-recommended lineup from the registered roster.';
     else if (expectedWinPath) firstDeviation = 'Lead/four matched; compare turn sequencing against expected win path.';
     return {
       status: 'matched',
@@ -561,13 +607,25 @@
       bestSimLead: bestLead,
       actualFour: actualFour,
       bestSimFour: bestFour,
+      registeredRoster: registeredRoster,
+      lineupSize: lineupSize,
+      actualSwapOptions: swapOptions,
+      simBenchOptions: simBenchOptions,
+      lineupMatrix: lineupMatrix.slice(0, 30),
+      expectedLineupCount: expectedLineupCount,
+      evaluatedLineupCount: evaluatedLineupCount,
+      lineupMatrixComplete: lineupMatrixComplete,
+      lineupCoverageLabel: lineupCoverageLabel,
+      bo3SwapContext: registeredCount >= lineupSize
+        ? 'Best-of-three context: evaluate this game lineup as one selectable squad from the registered roster, not as the whole team. Sim coverage should include every legal lineup combination.'
+        : 'Best-of-three lineup swap analysis is limited because the registered roster is incomplete.',
       leadMatch: leadOverlap == null ? 'unknown' : Math.round(leadOverlap * 100),
       fourMatch: fourOverlap == null ? 'unknown' : Math.round(fourOverlap * 100),
       expectedWinPath: expectedWinPath || 'Needs sim win-path data',
       actualPath: summary.mainIssue || 'Needs turn review',
       firstDeviation: firstDeviation,
-      teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/four matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/bring selection may have diverged from the simulated plan; verify with more battles before changing the team.',
-      decisionChange: 'Use this comparison to decide whether the trainer should test a different lead/four, practice the same sim plan with cleaner sequencing, or collect more logs before changing the team.',
+      teamVsPilotDiagnosis: firstDeviation.indexOf('Lead/four matched') === 0 ? 'Pilot or sequencing issue is more likely than team selection, but this remains provisional.' : 'Lead/lineup selection may have diverged from the simulated plan; verify across best-of-three games before changing the team.',
+      decisionChange: 'Use this comparison to decide whether the trainer should swap to a different game-specific lineup from the registered roster, practice the same sim plan with cleaner sequencing, or run the missing lineup-matrix sims before changing the team.',
       source: plan.source || 'matched simulation plan',
       matchedOpponentKey: plan.matchedOpponentKey || '',
       matchedOpponentName: plan.matchedOpponentName || '',
@@ -659,6 +717,11 @@
         simMatched: !!matched,
         leadMatch: simComparison.leadMatch == null ? 'unknown' : simComparison.leadMatch,
         fourMatch: simComparison.fourMatch == null ? 'unknown' : simComparison.fourMatch,
+        bo3SwapContext: simComparison.bo3SwapContext || '',
+        lineupCoverageLabel: simComparison.lineupCoverageLabel || '',
+        lineupMatrixComplete: !!simComparison.lineupMatrixComplete,
+        actualSwapOptions: simComparison.actualSwapOptions || [],
+        simBenchOptions: simComparison.simBenchOptions || [],
         issueIds: ids.slice(0, 8),
         firstDeviation: simComparison.firstDeviation || '',
         note: 'Replay-derived calibration signal only. Do not automatically rewrite sim models from one replay.'
@@ -1043,6 +1106,7 @@
   }
 
   ChampionsSim.replayLearning.buildLearningReport = buildLearningReport;
+  ChampionsSim.replayLearning.lineupCombinations = lineupCombinations;
   ChampionsSim.replayLearning.buildCriticalTurns = buildCriticalTurns;
   ChampionsSim.replayLearning.buildDecisionQuality = buildDecisionQuality;
   ChampionsSim.replayLearning.buildPracticePlan = buildPracticePlan;
