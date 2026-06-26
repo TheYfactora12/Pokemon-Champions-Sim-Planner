@@ -6,6 +6,8 @@
 > Owner split: product / coaching rules by @TheYfactora12, architecture / persistence by @alfredocox, fixtures / a11y by @Jdoutt38.
 > Direction note, 2026-06-06: replay coaching remains useful for QA and evidence capture, but new coaching expansion is paused until the simulator truth gate in ../../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md passes.
 
+Plain-English source-truth companion: `BATTLE_SENSEI_EXPLAINED_SIMPLY.md`.
+
 ## Product Definition
 
 Battle Sensei turns pasted or uploaded Pokemon Showdown battle logs into matchup coaching, mistake diagnosis, player-pattern analysis, and replay-calibrated simulation feedback.
