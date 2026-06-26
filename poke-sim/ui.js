@@ -8295,6 +8295,16 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Source-truth document audit added',
+      detail: 'v2.1.69-source-truth-audit adds docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md, cataloguing Showdown, Champion, and DB source-truth references so QA has a single canonical map of every approved data source used by the sim.'
+    },
+    {
+      status: 'done',
+      title: 'Battle Sensei speed-transition payoff reads added',
+      detail: 'v2.1.68-speed-transition implements speed-control payoff classification in replay_coach.js: Trick Room/Tailwind reversal, dual-speed neutralization, immediate conversion, T+1 to T+3 deferred payoff, planned speed transitions, and complementary setup/protection payoff. Covered by t188 tests 12-16 and t190 structure guard.'
+    },
+    {
+      status: 'done',
       title: 'Team evidence dashboard added',
       detail: 'v2.1.59 folds shared evidence into the Strategy Priority Board per selected team. Normal sim samples, tactical branch samples, best-case, worst-case, likely-case, confidence, set-change comparison, and next-test guidance now render together instead of living as separate QA concepts.'
     },
