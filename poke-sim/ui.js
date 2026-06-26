@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.64-branch-save-harden';
+    return txt || 'v2.1.65-series-lineup-matrix';
   } catch (e) {
-    return 'v2.1.64-branch-save-harden';
+    return 'v2.1.65-series-lineup-matrix';
   }
 }
 
@@ -12662,7 +12662,7 @@ function _csSimLogCapPerPair(entries) {
 // Append a series entry.
 //   playerKey, oppKey: TEAMS keys
 //   format: 'doubles' | 'singles'
-//   bo: 1/3/5/10
+//   bo: 1/3/5
 //   battleResults: array of simulateBattle return objects from the series
 //   seriesResult: 'win' | 'loss' | 'draw' (series-level outcome)
 function csSimLogAppendSeries(opts) {
