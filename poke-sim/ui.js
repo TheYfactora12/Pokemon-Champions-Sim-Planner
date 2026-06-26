@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.67-speed-payoff';
+    return txt || 'v2.1.68-speed-transition';
   } catch (e) {
-    return 'v2.1.67-speed-payoff';
+    return 'v2.1.68-speed-transition';
   }
 }
 
@@ -8752,7 +8752,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: '#223 Battle Sensei speed-control payoff interpreter',
-      detail: 'Active brain-layer work: classify Trick Room/Tailwind reversal, dual-speed neutralization, immediate conversion, and T+1 to T+3 deferred payoff before the Decision Opportunity Ledger scores decisions.'
+      detail: 'Active brain-layer work: classify Trick Room/Tailwind reversal, dual-speed neutralization, immediate conversion, T+1 to T+3 deferred payoff, planned speed transitions, and complementary setup/protection payoff before the Decision Opportunity Ledger scores decisions.'
     },
     {
       status: 'next',

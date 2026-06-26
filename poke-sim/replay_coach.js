@@ -1204,6 +1204,11 @@
     return classifyMove(replayMoveName(move)) === 'speed_control';
   }
 
+  function isSetupOrProtectionMove(move) {
+    var kind = classifyMove(replayMoveName(move));
+    return kind === 'setup' || kind === 'protection' || kind === 'redirection';
+  }
+
   function turnSideMoves(turn, side) {
     return ((turn && turn.moves) || []).filter(function(m) { return m.side === side; });
   }
@@ -1223,6 +1228,27 @@
       (turnSideTookMajorDamage(turn, opp) && !turnSideFaints(turn, side).length);
   }
 
+  function sideHasNaturalSpeedLead(turn, side, opp) {
+    var details = (((turn || {}).pre || {}).speed_order_details) || (((turn || {}).post || {}).speed_order_details) || [];
+    if (!details.length) return false;
+    var firstUser = null;
+    var firstOpp = null;
+    details.forEach(function(row) {
+      if (!row) return;
+      var rowSide = row.side;
+      var base = row.calculated_speed != null ? Number(row.calculated_speed) : Number(row.base_speed || row.effective_speed || 0);
+      if (rowSide === side && (firstUser == null || base > firstUser)) firstUser = base;
+      if (rowSide === opp && (firstOpp == null || base > firstOpp)) firstOpp = base;
+    });
+    return firstUser != null && firstOpp != null && firstUser > firstOpp;
+  }
+
+  function trickRoomActive(turn) {
+    var pre = (((turn || {}).pre || {}).field || {}).trick_room || 0;
+    var post = (((turn || {}).post || {}).field || {}).trick_room || 0;
+    return Number(pre) > 0 || Number(post) > 0;
+  }
+
   function buildSpeedControlInsights(parsed, side) {
     var opp = side === 'p1' ? 'p2' : 'p1';
     var turns = (parsed && parsed.turns) || [];
@@ -1230,7 +1256,7 @@
     turns.forEach(function(turn, idx) {
       var userSpeed = turnSideMoves(turn, side).filter(isSpeedControlMove);
       var oppSpeed = turnSideMoves(turn, opp).filter(isSpeedControlMove);
-      if (!userSpeed.length && !oppSpeed.length) return;
+      var userSetup = turnSideMoves(turn, side).filter(isSetupOrProtectionMove);
       var userTR = userSpeed.some(isTrickRoomMove);
       var oppTR = oppSpeed.some(isTrickRoomMove);
       var userTW = userSpeed.some(isTailwindMove);
@@ -1256,8 +1282,31 @@
         suppressFieldFailure: false,
         notes: []
       };
+      var previousTurn = idx > 0 ? turns[idx - 1] : null;
+      var previousTrickRoom = previousTurn && trickRoomActive(previousTurn);
+      var currentTrickRoom = trickRoomActive(turn);
+      var plannedTransition = previousTrickRoom && !currentTrickRoom && sideHasNaturalSpeedLead(turn, side, opp);
 
-      if (userTR && oppTW) {
+      if (!userSpeed.length && !oppSpeed.length && !userSetup.length && !plannedTransition) return;
+
+      if (plannedTransition) {
+        insight.stateShift = 'Planned speed transition';
+        insight.severity = 'good';
+        insight.confidence = 'medium';
+        insight.coachingRead = 'Trick Room was no longer active and your visible natural speed order was favorable, so the line transitioned back into normal speed advantage.';
+        insight.notes.push({
+          id: 'planned_speed_transition',
+          tag: 'Planned Speed Transition',
+          category: 'speed_control',
+          severity: 'good',
+          confidence: 'medium',
+          message: 'Trick Room ended and the visible natural speed order favored your side.',
+          whatHappened: 'The turn after Trick Room ended, your side appeared to hold the faster visible board.',
+          whyMattered: 'A good speed plan includes the turn after the field state ends; preserving fast attackers can convert the transition instead of losing tempo.',
+          doInstead: 'When Trick Room is expiring, preserve or bring in the Pokemon that wins normal speed order.',
+          evidence: 'Trick Room inactive after previous active state; visible speed order favors selected side'
+        });
+      } else if (userTR && oppTW) {
         insight.stateShift = 'Speed control reversed';
         insight.severity = 'good';
         insight.confidence = 'high';
@@ -1319,6 +1368,23 @@
           whyMattered: 'Good speed control is not just the field state; it must become damage, a KO, forced Protect, or preserved win condition.',
           doInstead: 'Keep this pattern: name the next two turns before setting speed control, then convert the window before it expires.',
           evidence: deferredPayoffTurn ? 'Payoff detected within T+3' : 'Immediate material or damage pressure'
+        });
+      } else if (userSetup.length && deferredPayoffTurn) {
+        insight.stateShift = 'Complementary turn paid off';
+        insight.severity = 'good';
+        insight.confidence = 'medium';
+        insight.coachingRead = 'This setup or protection turn enabled material within the next three turns, so it should be credited as part of the line.';
+        insight.notes.push({
+          id: 'complementary_turn_payoff',
+          tag: 'Complementary Turn Payoff',
+          category: 'turn_execution',
+          severity: 'good',
+          confidence: 'medium',
+          message: 'Setup or protection paid off on turn ' + deferredPayoffTurn + '.',
+          whatHappened: 'You used ' + userSetup.map(replayMoveName).filter(Boolean).join(', ') + ' and gained payoff by turn ' + deferredPayoffTurn + '.',
+          whyMattered: 'Some correct turns are enabling turns, not immediate damage turns. They should be credited when the next board proves the payoff.',
+          doInstead: 'Keep linking setup/protection turns to a concrete next-turn conversion instead of treating them as isolated pauses.',
+          evidence: 'Payoff detected within T+3'
         });
       }
 

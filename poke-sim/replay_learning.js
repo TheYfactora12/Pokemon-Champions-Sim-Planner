@@ -365,6 +365,12 @@
       } else if (id === 'speed_control_converted' || id === 'deferred_payoff') {
         add('speed_control_iq', 10, 'Speed control converted into immediate or short-window payoff.');
         add('resource_iq', 4, 'The setup turn produced value instead of becoming a passive tempo loss.');
+      } else if (id === 'planned_speed_transition') {
+        add('speed_control_iq', 8, 'The line preserved normal-speed advantage after Trick Room ended.');
+        add('endgame_iq', 4, 'The transition window was handled with a clearer closer plan.');
+      } else if (id === 'complementary_turn_payoff') {
+        add('resource_iq', 8, 'A setup/protection turn enabled payoff instead of wasting tempo.');
+        add('turn_1_iq', 3, 'The turn sequence showed multi-turn planning.');
       } else if (id === 'field_control_failure') {
         add('speed_control_iq', -15, 'Opponent field or speed control advanced without a meaningful trade.');
         add('threat_recognition_iq', -12, 'The must-answer field threat was not denied or punished.');

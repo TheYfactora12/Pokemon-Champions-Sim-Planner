@@ -122,6 +122,8 @@ This layer should classify:
 - `speed_control_neutralized`: both sides establish matching speed control, so the advantage becomes neutral.
 - `speed_control_converted`: Tailwind, Trick Room, Icy Wind, or similar speed control creates immediate pressure.
 - `deferred_payoff`: a setup turn pays off within the next three turns and should not be treated as passive.
+- `planned_speed_transition`: Trick Room or a similar speed state ends and the visible natural speed order favors the player's next board.
+- `complementary_turn_payoff`: a setup/protection/redirection turn enables material within the next three turns.
 - `speed_control_without_pressure`: speed control was used but did not become damage, a KO, a forced Protect, or preservation.
 
 Guardrail:

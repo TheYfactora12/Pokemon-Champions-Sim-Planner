@@ -308,6 +308,66 @@ T('14. recognizes deferred payoff within three turns', () => {
   eq(turn.stateShift, 'Setup paid off later', 'turn state shift');
 });
 
+T('15. recognizes complementary setup turn payoff', () => {
+  const log = [
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|gametype|doubles',
+    '|start',
+    '|switch|p1a: Amoonguss|Amoonguss, L50, F|100/100',
+    '|switch|p1b: Garchomp|Garchomp, L50, M|100/100',
+    '|switch|p2a: Rotom-Wash|Rotom-Wash, L50|100/100',
+    '|switch|p2b: Altaria|Altaria, L50|100/100',
+    '|turn|1',
+    '|move|p1a: Amoonguss|Protect|p1a: Amoonguss',
+    '|move|p2a: Rotom-Wash|Hydro Pump|p1a: Amoonguss',
+    '|turn|2',
+    '|move|p1b: Garchomp|Earthquake|p2a: Rotom-Wash',
+    '|faint|p2a: Rotom-Wash',
+    '|win|Alice'
+  ].join('\n');
+  const analysis = replayCoach.analyzeShowdownReplay(log, { selectedSide: 'p1' });
+  const ids = analysis.review.coachingTags.map((tag) => tag.id);
+  includes(ids, 'complementary_turn_payoff', 'complementary payoff tag');
+  const turn = analysis.review.turnTimeline.find((row) => row.turn === 1);
+  eq(turn.stateShift, 'Complementary turn paid off', 'turn state shift');
+});
+
+T('16. recognizes planned speed transition after Trick Room ends from structured speed evidence', () => {
+  const parsed = replayCoach.parseShowdownLog([
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|gametype|doubles',
+    '|start',
+    '|switch|p1a: Dragapult|Dragapult, L50|100/100',
+    '|switch|p2a: Torkoal|Torkoal, L50|100/100',
+    '|turn|1',
+    '|move|p2a: Torkoal|Protect|p2a: Torkoal',
+    '|turn|2',
+    '|move|p1a: Dragapult|Dragon Darts|p2a: Torkoal',
+    '|win|Alice'
+  ].join('\n'), { selectedSide: 'p1' });
+  parsed.turns[0].post = {
+    field: { trick_room: 1 },
+    speed_order_details: [
+      { side: 'p2', calculated_speed: 40 },
+      { side: 'p1', calculated_speed: 213 }
+    ]
+  };
+  parsed.turns[1].pre = {
+    field: { trick_room: 0 },
+    speed_order_details: [
+      { side: 'p1', calculated_speed: 213 },
+      { side: 'p2', calculated_speed: 40 }
+    ]
+  };
+  const review = replayCoach.buildReplayCoachReview(parsed, { selectedSide: 'p1' });
+  const ids = review.coachingTags.map((tag) => tag.id);
+  includes(ids, 'planned_speed_transition', 'planned transition tag');
+  const turn = review.turnTimeline.find((row) => row.turn === 2);
+  eq(turn.stateShift, 'Planned speed transition', 'turn state shift');
+});
+
 runTests().then(() => {
   console.log(`\nBattle Sensei parser: ${pass} pass, ${fail} fail\n`);
   process.exit(fail ? 1 : 0);
