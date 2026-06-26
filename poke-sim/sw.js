@@ -78,10 +78,11 @@
 // v85-sim-test-scope [2026-06-24] - Simulator can scope Run All to selected matchup or the preloaded suite.
 // v90-branch-progress-counters [2026-06-24] - Tactical Sweep progress uses branch counters instead of W/L zeroes.
 // v91-cache-refresh-reload [2026-06-24] - Reload once after build cache cleanup so testers land on the fresh bundle.
+// v95-approved-db-runtime-contract [2026-06-25] - Narrow Alfredo #241 to live generation proof after adding the approved DB generator alias and browser read helper.
 // v92-tactical-depth-selector [2026-06-24] - Tactical Sweep exposes Quick/Deep/Full branch-depth caps.
 // v93-team-evidence-dashboard [2026-06-24] - Strategy Dashboard merges per-team sim and tactical evidence.
 // v94-tactical-sweep-watchdog [2026-06-24] - Prevent single-opponent tactical sweep from stalling on DB reads/writes.
-const CACHE_NAME = 'champions-sim-v94-tactical-sweep-watchdog';
+const CACHE_NAME = 'champions-sim-v95-approved-db-runtime-contract';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

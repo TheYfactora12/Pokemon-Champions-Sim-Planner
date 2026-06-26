@@ -78,7 +78,7 @@
         'Floette-Mega Eternal Flower'
       ],
       learnsetKeys: ['Floette-Eternal', 'Floette'],
-      notes: 'Champion-specific Mega Eternal Flower form uses Eternal Flower/Floette learnset rows until the generated source has an exact form key.'
+      notes: 'Champion-specific Mega Eternal Flower app identity uses the generated Floette-Mega stat row and Eternal Flower/Floette learnset rows until the generated source has an exact Eternal-Mega form key.'
     }
   };
 
