@@ -958,7 +958,10 @@
     var whatHappened = extra.whatHappened || message || 'The replay showed a coaching-relevant event.';
     var whyMattered = extra.whyMattered || 'This can change tempo, board position, or the path to your win condition.';
     var doInstead = extra.doInstead || recommendation || 'Review the board state and choose the line that preserves your win condition.';
-    issues.push({
+    var knownExtraKeys = { id: 1, category: 1, whatHappened: 1, whyMattered: 1, doInstead: 1, evidence: 1 };
+    var customFields = {};
+    Object.keys(extra).forEach(function(k) { if (!knownExtraKeys[k]) customFields[k] = extra[k]; });
+    issues.push(Object.assign({
       id: id,
       tag: tag,
       category: extra.category || id,
@@ -971,7 +974,7 @@
       whyMattered: whyMattered,
       doInstead: doInstead,
       recommendation: recommendation || doInstead
-    });
+    }, customFields));
   }
 
   function moveNames(moves) {
@@ -1406,8 +1409,28 @@
     var userSelected = parsed.selectedPokemon[side] || [];
     var oppSelected = parsed.selectedPokemon[opp] || [];
     var bringConfidence = selectedFourConfidence(parsed, side);
+    var benchedTwo = bringConfidence.bringChoiceReviewable
+      ? (parsed.teamPreview[side] || []).filter(function(s) { return userSelected.indexOf(s) < 0; })
+      : [];
     var speedControlPieces = {};
     var speedInsights = buildSpeedControlInsights(parsed, side);
+
+    if (bringConfidence.bringChoiceReviewable && benchedTwo.length) {
+      addIssue(issues, 'Bring Choice Review', 'low', null,
+        'You left ' + benchedTwo.join(' and ') + ' on the bench.',
+        'medium',
+        'After each game, ask whether either benched Pokemon would have answered a key threat you struggled to handle.',
+        {
+          id: 'bring_choice_review',
+          category: 'bring_four',
+          benchedSpecies: benchedTwo.slice(),
+          whatHappened: 'You brought ' + userSelected.join(', ') + ' and left ' + benchedTwo.join(' and ') + ' on the bench.',
+          whyMattered: 'In VGC doubles, the bring-four choice shapes every matchup plan. The two mons you left behind could have offered different speed control, redirection, or win conditions against this opponent.',
+          doInstead: 'After each game, check whether either benched Pokemon would have handled a key threat better than one of your brought four.',
+          evidence: 'Preview: ' + (parsed.teamPreview[side] || []).join(', ')
+        }
+      );
+    }
 
     if (!userLead.length || !oppLead.length) {
       addIssue(issues, 'Lead Unclear', 'medium', null, 'The log does not expose a complete opening board.', 'medium', 'Use a full Showdown replay export when possible so lead coaching can be more precise.', {
@@ -1601,6 +1624,7 @@
         opponentFour: oppSelected,
         yourPreview: parsed.teamPreview[side] || [],
         opponentPreview: parsed.teamPreview[opp] || [],
+        benchedTwo: benchedTwo.slice(),
         selectedFourConfidence: bringConfidence,
         leadGrade: userLead.length && oppLead.length ? 'Reviewable' : 'Unknown',
         criticalTurn: criticalTurn,

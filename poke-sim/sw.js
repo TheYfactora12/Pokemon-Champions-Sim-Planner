@@ -85,7 +85,8 @@
 // v96-approved-db-runtime-contract [2026-06-25] - Narrow Alfredo #241 after live approved DB generation, alias bridge, and source-truth proof.
 // v100-terrain-gaps-fixed [2026-06-26] - All 4 terrain mechanics wired (PR #141); sw_local_credentials test updated.
 // v101-v2.1.70-release [2026-06-26] - Close stale terrain gap entries in Overview; bump build version to v2.1.70.
-const CACHE_NAME = 'champions-sim-v101-v2.1.70-release';
+// v102-bring-choice-coaching [2026-06-26] - #220: expose benchedTwo in review summary + bring_choice_review coaching tag.
+const CACHE_NAME = 'champions-sim-v102-bring-choice-coaching';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

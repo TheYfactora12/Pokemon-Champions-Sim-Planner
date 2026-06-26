@@ -18584,7 +18584,10 @@ if (typeof window !== 'undefined') {
     var whatHappened = extra.whatHappened || message || 'The replay showed a coaching-relevant event.';
     var whyMattered = extra.whyMattered || 'This can change tempo, board position, or the path to your win condition.';
     var doInstead = extra.doInstead || recommendation || 'Review the board state and choose the line that preserves your win condition.';
-    issues.push({
+    var knownExtraKeys = { id: 1, category: 1, whatHappened: 1, whyMattered: 1, doInstead: 1, evidence: 1 };
+    var customFields = {};
+    Object.keys(extra).forEach(function(k) { if (!knownExtraKeys[k]) customFields[k] = extra[k]; });
+    issues.push(Object.assign({
       id: id,
       tag: tag,
       category: extra.category || id,
@@ -18597,7 +18600,7 @@ if (typeof window !== 'undefined') {
       whyMattered: whyMattered,
       doInstead: doInstead,
       recommendation: recommendation || doInstead
-    });
+    }, customFields));
   }
 
   function moveNames(moves) {
@@ -19032,8 +19035,28 @@ if (typeof window !== 'undefined') {
     var userSelected = parsed.selectedPokemon[side] || [];
     var oppSelected = parsed.selectedPokemon[opp] || [];
     var bringConfidence = selectedFourConfidence(parsed, side);
+    var benchedTwo = bringConfidence.bringChoiceReviewable
+      ? (parsed.teamPreview[side] || []).filter(function(s) { return userSelected.indexOf(s) < 0; })
+      : [];
     var speedControlPieces = {};
     var speedInsights = buildSpeedControlInsights(parsed, side);
+
+    if (bringConfidence.bringChoiceReviewable && benchedTwo.length) {
+      addIssue(issues, 'Bring Choice Review', 'low', null,
+        'You left ' + benchedTwo.join(' and ') + ' on the bench.',
+        'medium',
+        'After each game, ask whether either benched Pokemon would have answered a key threat you struggled to handle.',
+        {
+          id: 'bring_choice_review',
+          category: 'bring_four',
+          benchedSpecies: benchedTwo.slice(),
+          whatHappened: 'You brought ' + userSelected.join(', ') + ' and left ' + benchedTwo.join(' and ') + ' on the bench.',
+          whyMattered: 'In VGC doubles, the bring-four choice shapes every matchup plan. The two mons you left behind could have offered different speed control, redirection, or win conditions against this opponent.',
+          doInstead: 'After each game, check whether either benched Pokemon would have handled a key threat better than one of your brought four.',
+          evidence: 'Preview: ' + (parsed.teamPreview[side] || []).join(', ')
+        }
+      );
+    }
 
     if (!userLead.length || !oppLead.length) {
       addIssue(issues, 'Lead Unclear', 'medium', null, 'The log does not expose a complete opening board.', 'medium', 'Use a full Showdown replay export when possible so lead coaching can be more precise.', {
@@ -19227,6 +19250,7 @@ if (typeof window !== 'undefined') {
         opponentFour: oppSelected,
         yourPreview: parsed.teamPreview[side] || [],
         opponentPreview: parsed.teamPreview[opp] || [],
+        benchedTwo: benchedTwo.slice(),
         selectedFourConfidence: bringConfidence,
         leadGrade: userLead.length && oppLead.length ? 'Reviewable' : 'Unknown',
         criticalTurn: criticalTurn,
@@ -29020,6 +29044,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Bring-choice coaching added — benchedTwo + bring_choice_review tag (#220)',
+      detail: 'When the full six-mon roster and the brought four are both known (bringChoiceReviewable=true), review.summary.benchedTwo now contains the two not-brought mons and a bring_choice_review coaching tag fires with benchedSpecies, whatHappened, whyMattered, and doInstead fields. Covered by 4 new tests in t220_bring_choice_tests.js. Also updated addIssue to forward unrecognized extra fields so future coaching tags can carry custom domain-specific properties.'
+    },
+    {
+      status: 'done',
       title: 'All 4 terrain mechanics wired (PR #141)',
       detail: 'v2.1.70-terrain-gaps-fixed closes all 4 terrain engine gaps: A) Misty Terrain blocks all major status on grounded mons in canInflictStatus; B) new applyTerrainAbility wires all 4 Surge abilities (Grassy/Electric/Misty/Psychic) on entry; C) Grassy Terrain heals grounded mons floor(maxHp/16) per end-of-turn; D) Electric Terrain blocks sleep on grounded mons; E) Psychic Terrain blocks priority moves from hitting grounded mons. Covered by 9 new tests: T28-T30 in status_tests.js, T1-T7 in engine_terrain_tests.js.'
     },
@@ -29431,11 +29460,6 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Pokemon data audit has unresolved reviewer risk',
       detail: 'Josh/JD notes on Alfredo #231 flag that Showdown data is present but not fully used for every move calculation and regional forms such as Arcanine may still need targeted review.'
-    },
-    {
-      status: 'gap',
-      title: 'Replay parser full-roster gap remains open',
-      detail: 'Alfredo #220 says Battle Sensei replay parsing only sees the four brought Pokemon instead of the full six-mon team. That does not block the battle simulator catalog directly, but it can corrupt replay-derived QA, matchup scouting, and future calibration if treated as complete team truth.'
     },
     {
       status: 'gap',

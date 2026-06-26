@@ -8295,6 +8295,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Bring-choice coaching added — benchedTwo + bring_choice_review tag (#220)',
+      detail: 'When the full six-mon roster and the brought four are both known (bringChoiceReviewable=true), review.summary.benchedTwo now contains the two not-brought mons and a bring_choice_review coaching tag fires with benchedSpecies, whatHappened, whyMattered, and doInstead fields. Covered by 4 new tests in t220_bring_choice_tests.js. Also updated addIssue to forward unrecognized extra fields so future coaching tags can carry custom domain-specific properties.'
+    },
+    {
+      status: 'done',
       title: 'All 4 terrain mechanics wired (PR #141)',
       detail: 'v2.1.70-terrain-gaps-fixed closes all 4 terrain engine gaps: A) Misty Terrain blocks all major status on grounded mons in canInflictStatus; B) new applyTerrainAbility wires all 4 Surge abilities (Grassy/Electric/Misty/Psychic) on entry; C) Grassy Terrain heals grounded mons floor(maxHp/16) per end-of-turn; D) Electric Terrain blocks sleep on grounded mons; E) Psychic Terrain blocks priority moves from hitting grounded mons. Covered by 9 new tests: T28-T30 in status_tests.js, T1-T7 in engine_terrain_tests.js.'
     },
@@ -8706,11 +8711,6 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Pokemon data audit has unresolved reviewer risk',
       detail: 'Josh/JD notes on Alfredo #231 flag that Showdown data is present but not fully used for every move calculation and regional forms such as Arcanine may still need targeted review.'
-    },
-    {
-      status: 'gap',
-      title: 'Replay parser full-roster gap remains open',
-      detail: 'Alfredo #220 says Battle Sensei replay parsing only sees the four brought Pokemon instead of the full six-mon team. That does not block the battle simulator catalog directly, but it can corrupt replay-derived QA, matchup scouting, and future calibration if treated as complete team truth.'
     },
     {
       status: 'gap',
