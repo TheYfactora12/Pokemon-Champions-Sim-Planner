@@ -2333,6 +2333,7 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit -->
       <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.69-source-truth-audit</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
@@ -29019,6 +29020,16 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Source-truth document audit added',
+      detail: 'v2.1.69-source-truth-audit adds docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md, cataloguing Showdown, Champion, and DB source-truth references so QA has a single canonical map of every approved data source used by the sim.'
+    },
+    {
+      status: 'done',
+      title: 'Battle Sensei speed-transition payoff reads added',
+      detail: 'v2.1.68-speed-transition implements speed-control payoff classification in replay_coach.js: Trick Room/Tailwind reversal, dual-speed neutralization, immediate conversion, T+1 to T+3 deferred payoff, planned speed transitions, and complementary setup/protection payoff. Covered by t188 tests 12-16 and t190 structure guard.'
+    },
+    {
+      status: 'done',
       title: 'Team evidence dashboard added',
       detail: 'v2.1.59 folds shared evidence into the Strategy Priority Board per selected team. Normal sim samples, tactical branch samples, best-case, worst-case, likely-case, confidence, set-change comparison, and next-test guidance now render together instead of living as separate QA concepts.'
     },
@@ -29573,7 +29584,8 @@ var CS_OVERVIEW_DATA = {
   ],
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
-        { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
+    { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
+    { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
     { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },
     { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },
@@ -29585,7 +29597,8 @@ var CS_OVERVIEW_DATA = {
     { label: 'Closure Confidence', href: '../docs/release/CLOSURE_CONFIDENCE_2026-06-06.md' },
     { label: 'Repo Parity Report', href: '../docs/release/REPO_PARITY_REPORT_2026-06-06.md' },
     { label: 'Closeout Note', href: '../docs/release/CLOSEOUT_2026-06-06.md' },
-        { label: 'Battle Sensei Simple Source Truth', href: 'docs/BATTLE_SENSEI_EXPLAINED_SIMPLY.md' },
+    { label: 'Showdown DB Plan', href: 'docs/SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md' },
+    { label: 'Battle Sensei Simple Source Truth', href: 'docs/BATTLE_SENSEI_EXPLAINED_SIMPLY.md' },
     { label: 'Runtime Naming Cheat Sheet', href: 'docs/SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md' },
     { label: 'Showdown Sync Architecture', href: 'docs/SHOWDOWN_SYNC_ARCHITECTURE.md' },
     { label: 'Spec Index', href: 'docs/SPECS_INDEX.md' }
