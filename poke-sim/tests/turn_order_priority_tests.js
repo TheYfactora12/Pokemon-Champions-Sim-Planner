@@ -25,7 +25,8 @@ vm.runInContext(
     'this.simulateBattle = simulateBattle;',
     'this._compareTurnActionOrder = _compareTurnActionOrder;',
     'this._speedOrderDetailsSnapshot = _speedOrderDetailsSnapshot;',
-    'this._statBoostSnapshot = _statBoostSnapshot;'
+    'this._statBoostSnapshot = _statBoostSnapshot;',
+    'this._getPriority = getPriority;'
   ].join('\n'),
   ctx
 );
@@ -36,6 +37,7 @@ const simulateBattle = ctx.simulateBattle;
 const compareTurnActionOrder = ctx._compareTurnActionOrder;
 const speedOrderDetailsSnapshot = ctx._speedOrderDetailsSnapshot;
 const statBoostSnapshot = ctx._statBoostSnapshot;
+const getPriority = ctx._getPriority;
 
 let pass = 0;
 let fail = 0;
@@ -287,6 +289,86 @@ T('10. turn logs expose structured stacked damage evidence', function() {
   eq(recoilRow.calculated_effect_damage, row.recoil_damage, 'recoil effect should preserve calculated recoil amount');
   eq(recoilRow.damage_applied_to_user, Math.max(0, recoilRow.hp_before - recoilRow.hp_after),
     'recoil effect should record actual HP lost by the user');
+});
+
+T('11. Gap-A: higher priority brackets always act first regardless of attacker speed', function() {
+  const field = new Field();
+  const slow = mk('Cofagrigus', { evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 0 } });
+  const fast = mk('Dragapult', { nature: 'Jolly', evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } });
+  const rng = function() { return 0.75; };
+  truthy(compareTurnActionOrder(action(slow, 3), action(fast, 0), field, rng) < 0,
+    'Fake Out-tier (+3) from slow mon beats normal (0) from fast mon');
+  truthy(compareTurnActionOrder(action(slow, 1), action(fast, 0), field, rng) < 0,
+    'Quick Attack-tier (+1) from slow mon beats normal (0) from fast mon');
+  truthy(compareTurnActionOrder(action(slow, 3), action(fast, 1), field, rng) < 0,
+    'Fake Out-tier (+3) beats Quick Attack-tier (+1) from faster mon');
+  truthy(compareTurnActionOrder(action(fast, 0), action(slow, -6), field, rng) < 0,
+    'Normal (0) from any mon beats Roar-tier (-6)');
+});
+
+T('12. Gap-A: negative priority tiers lose to zero and positive regardless of speed', function() {
+  const field = new Field();
+  const fast = mk('Dragapult', { nature: 'Jolly', evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } });
+  const slow = mk('Cofagrigus', { evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 0 } });
+  const rng = function() { return 0.25; };
+  truthy(compareTurnActionOrder(action(slow, 0), action(fast, -6), field, rng) < 0,
+    'normal (0) from slow mon beats Roar-tier (-6) from fast mon');
+  truthy(compareTurnActionOrder(action(slow, 1), action(fast, -6), field, rng) < 0,
+    'priority +1 from slow mon beats -6 from fast mon');
+  truthy(compareTurnActionOrder(action(fast, 0), action(slow, -1), field, rng) < 0,
+    'normal (0) beats -1 priority regardless of relative speed');
+});
+
+T('13. Gap-B: 4-action doubles sort resolves priority bracket then speed descending', function() {
+  const field = new Field();
+  const rng = function() { return 0.75; };
+  const slugP1 = mk('Cofagrigus', { evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 } });  // base spe 30, priority 1
+  const fastP0 = mk('Dragapult', { nature: 'Jolly', evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } }); // base spe 142
+  const medP0  = mk('Arcanine',  { evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 } });  // base spe 95
+  const slowP0 = mk('Torkoal',   { evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 } });  // base spe 20
+  truthy(fastP0.getEffSpeed(field) > medP0.getEffSpeed(field),  'Dragapult should be faster than Arcanine');
+  truthy(medP0.getEffSpeed(field)  > slowP0.getEffSpeed(field), 'Arcanine should be faster than Torkoal');
+  const acts = [
+    action(fastP0, 0),
+    action(slowP0, 0),
+    action(slugP1, 1),
+    action(medP0, 0)
+  ];
+  acts.sort(function(a, b) { return compareTurnActionOrder(a, b, field, rng); });
+  eq(acts[0].attacker.name, 'Cofagrigus', 'priority +1 mon acts first regardless of speed');
+  eq(acts[1].attacker.name, 'Dragapult',  'fastest priority-0 mon acts second');
+  eq(acts[2].attacker.name, 'Arcanine',   'medium-speed priority-0 mon acts third');
+  eq(acts[3].attacker.name, 'Torkoal',    'slowest priority-0 mon acts last');
+});
+
+T('14. Gap-C: Trick Room reverses speed within a bracket but does not override bracket order', function() {
+  const field = new Field();
+  field.trickRoom = true;
+  field.trickRoomTurns = 5;
+  const slow = mk('Cofagrigus', { evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 0 } });
+  const fast = mk('Dragapult', { nature: 'Jolly', evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 } });
+  const rng = function() { return 0.75; };
+  truthy(compareTurnActionOrder(action(slow, 3), action(fast, 0), field, rng) < 0,
+    'under TR, Fake Out-tier (+3) from slow mon still acts before normal (0) from fast mon');
+  truthy(compareTurnActionOrder(action(slow, 1), action(fast, 0), field, rng) < 0,
+    'under TR, +1 from slow mon still acts before normal (0) from fast mon');
+  truthy(compareTurnActionOrder(action(slow, 0), action(fast, 0), field, rng) < 0,
+    'under TR, same-bracket: slow mon acts before fast mon');
+  truthy(compareTurnActionOrder(action(fast, 0), action(slow, 1), field, rng) > 0,
+    'under TR, fast mon with normal priority still loses to slow mon with +1 priority');
+});
+
+T('15. Gap-D: getPriority returns correct bracket values for shipped priority moves', function() {
+  eq(getPriority('Fake Out'), 3, 'Fake Out should be priority +3');
+  eq(getPriority('Extreme Speed'), 2, 'Extreme Speed should be priority +2');
+  eq(getPriority('Quick Attack'), 1, 'Quick Attack should be priority +1');
+  eq(getPriority('Ice Shard'), 1, 'Ice Shard should be priority +1');
+  eq(getPriority('Aqua Jet'), 1, 'Aqua Jet should be priority +1');
+  eq(getPriority('Sucker Punch'), 1, 'Sucker Punch should be priority +1');
+  eq(getPriority('Tackle'), 0, 'Tackle should be priority 0');
+  eq(getPriority('Trick Room'), -7, 'Trick Room should be priority -7');
+  eq(getPriority('Protect'), 4, 'Protect should be priority +4');
+  eq(getPriority('Helping Hand'), 5, 'Helping Hand should be priority +5');
 });
 
 console.log('\nturn order / priority:', pass + ' pass, ' + fail + ' fail\n');
