@@ -35,13 +35,10 @@ Keep mirror repos aligned with one validated sync PR instead of stacking many na
 
 Regenerate only what the copied fix actually invalidates.
 
-- Bundle:
-  - `python3 poke-sim/tools/build-bundle.py`
-  - `bash poke-sim/tools/check-bundle.sh`
-- Seed artifacts:
-  - `python3 poke-sim/tools/generate_seed_from_data.py`
-- Deterministic engine fixtures:
-  - `node poke-sim/tests/golden_battles_runner.js --generate`
+- Bundle: `cd poke-sim && python3 tools/build-bundle.py`
+- Bundle check: `bash poke-sim/tools/check-bundle.sh`
+- Seed artifacts: `python3 poke-sim/tools/generate_seed_from_data.py`
+- Deterministic engine fixtures: `node poke-sim/tests/golden_battles_runner.js --generate`
 
 ## Minimum Validation
 
@@ -50,7 +47,7 @@ Run the narrowest set that proves the sync is real, then the fast suite.
 - changed focused tests
 - `git diff --check`
 - bundle freshness check if source files affect shipped bundle
-- `npm run test:fast`
+- `npm --prefix poke-sim run test:fast`
 
 If the sync touches DB/data-sensitive files, also run the relevant DB suites.
 
@@ -61,7 +58,7 @@ Not every mirror sync needs a full stress test.
 Use this rule:
 
 - Docs-only sync: no stress test
-- Test-only sync: rerun the touched tests plus `npm run test:fast`
+- Test-only sync: rerun the touched tests plus `npm --prefix poke-sim run test:fast`
 - UI-only sync with no engine/data change: rerun focused UI tests plus bundle check
 - Engine, battle-log, replay, legality, stats, seeded-team, or generated-data sync: run a real stress pass
 
@@ -69,12 +66,12 @@ For simulator-affecting syncs, use this order:
 
 1. Validate the fix in this repo first.
 2. Run focused changed tests here.
-3. Run `npm run test:fast` here.
+3. Run `npm --prefix poke-sim run test:fast` here.
 4. Run `node poke-sim/tests/audit.js` here if engine or data changed.
 5. Mirror the validated change.
 6. Regenerate artifacts in the mirror repo.
 7. Rerun focused tests in the mirror repo.
-8. Run `npm run test:fast` in the mirror repo.
+8. Run `npm --prefix poke-sim run test:fast` in the mirror repo.
 9. Let mirror CI confirm the sync.
 
 If the change affects shipped bundle output, always rebuild and run the bundle freshness check on both sides.

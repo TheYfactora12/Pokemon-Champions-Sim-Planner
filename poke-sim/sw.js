@@ -81,7 +81,9 @@
 // v92-tactical-depth-selector [2026-06-24] - Tactical Sweep exposes Quick/Deep/Full branch-depth caps.
 // v93-team-evidence-dashboard [2026-06-24] - Strategy Dashboard merges per-team sim and tactical evidence.
 // v94-tactical-sweep-watchdog [2026-06-24] - Prevent single-opponent tactical sweep from stalling on DB reads/writes.
-const CACHE_NAME = 'champions-sim-v95-terrain-gaps-documented';
+// v95-terrain-gaps-documented [2026-06-25] - Overview/docs keep terrain gap notes visible.
+// v96-approved-db-runtime-contract [2026-06-25] - Narrow Alfredo #241 after live approved DB generation, alias bridge, and source-truth proof.
+const CACHE_NAME = 'champions-sim-v96-approved-db-runtime-contract';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

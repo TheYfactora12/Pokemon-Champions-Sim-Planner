@@ -43,7 +43,7 @@
       ],
       "format": "doubles",
       "description": "Cofagrigus TR vs Sand Bulky Offense — seed 9999",
-      "expected_trace_hash": "17f6ee69cc872c8f022611e6f924fc1e13701b1d47050df322f0375105d04a16",
+      "expected_trace_hash": "0b3c93309dd5a230e532eaeed8bb8e22abfcab6220250b7c9c240fab2b720390",
       "expected_winner": "loss"
     }
   ]

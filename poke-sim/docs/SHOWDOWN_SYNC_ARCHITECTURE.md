@@ -258,7 +258,7 @@ Default behavior should be "detect and open/report", not "auto-merge". Showdown 
 - [x] Add indexes on run IDs, entity kind/key, source hash, status, and severity.
 - [x] Add unique constraints that make repeated sync writes idempotent.
 
-Repo note: the migrations and tests are staged in source. Live Supabase still needs the migration workflow to apply them.
+Repo note: the migrations and tests are staged in source, and the live Supabase approved views generated the runtime asset with 8,653 approved entities and 0 active overrides. Release proof still needs reviewed Champions override seed rows where needed and browser evidence.
 
 ### Phase 4: Generated Assets
 
@@ -354,4 +354,4 @@ create table if not exists mechanics_validation_findings (
 );
 ```
 
-Follow-up migration `2026_06_07_showdown_entities_approved_views.sql` now adds the heavier `showdown_entities`, `showdown_entity_diffs`, and `champions_overrides` tables plus approved read views. The remaining work is applying it to live Supabase and wiring sync output into those rows.
+Follow-up migration `2026_06_07_showdown_entities_approved_views.sql` adds the heavier `showdown_entities`, `showdown_entity_diffs`, and `champions_overrides` tables plus approved read views. The committed generated runtime asset now comes from live approved views; the remaining work is seeding/reviewing Champions-specific overrides.

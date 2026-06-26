@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.60-team-evidence-dashboard';
+    return txt || 'v2.1.64-branch-save-harden';
   } catch (e) {
-    return 'v2.1.60-team-evidence-dashboard';
+    return 'v2.1.64-branch-save-harden';
   }
 }
 
@@ -6207,16 +6207,34 @@ function csNormalizeEvidenceError(err) {
     }
     return err;
   }
+  var fallbackMessage = null;
   if (typeof err === 'object') {
     try {
       var probe = JSON.parse(JSON.stringify(err));
-      if (probe && typeof probe === 'object') return probe;
+      if (probe && typeof probe === 'object') {
+        if (!probe.message || (typeof probe.message === 'string' && !probe.message.trim())) {
+          fallbackMessage = String(err);
+          if (!fallbackMessage || !fallbackMessage.trim()) {
+            fallbackMessage = null;
+          }
+          probe.message = fallbackMessage || 'Error object missing message';
+        }
+        return probe;
+      }
     } catch (_e) {
       // keep object shape when JSON-safe copy is unavailable
-      return err;
+      fallbackMessage = String(err);
+      if (!fallbackMessage || !fallbackMessage.trim()) {
+        fallbackMessage = 'Error object is not JSON-safe';
+      }
+      return {
+        message: fallbackMessage,
+        raw: err
+      };
     }
   }
-  return String(err);
+  fallbackMessage = String(err);
+  return fallbackMessage && fallbackMessage.trim() ? fallbackMessage : 'Unknown error';
 }
 
 function csReportBranchMatrixProgress(options, event) {
@@ -6334,7 +6352,18 @@ async function csBuildBranchMatrixForOpponent(args) {
         source_url: sourceUrl,
         player_team_id: branchPlayerKey,
         opponent_team_id: branchOpponentKey,
-        runs: matrix.runs
+        runs: matrix.runs,
+        onProgress: function(event) {
+          event = event || {};
+          setBranchProgress(94, 'Saving branch runs for ' + branchOpponentKey + ' (' + Number(event.saved_rows || 0) + ' rows saved)...', {
+            opponent_index: args.opponent_index,
+            opponent_count: args.opponent_count,
+            saved_rows: Number(event.saved_rows || 0),
+            inserted_rows: Number(event.inserted_rows || 0),
+            updated_rows: Number(event.updated_rows || 0),
+            attempted_rows: Number(event.attempted_rows || 0)
+          });
+        }
       }), branchSaveTimeoutMs, {
         enabled: true,
         saved: 0,
@@ -8427,7 +8456,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Showdown sync and DB writer staged',
-      detail: 'The repo has migrations and writer tooling for showdown_sync_runs, showdown_source_files, showdown_entities, and champions_overrides, plus approved-view tests and generated static Showdown assets; runtime consumption of live DB rows remains tracked separately as an open gap.'
+      detail: 'The repo has migrations and writer tooling for showdown_sync_runs, showdown_source_files, showdown_entities, and champions_overrides, approved-view tests, generate-approved-data-from-db.mjs, the Phase 4 compatibility alias generate_showdown_data.mjs, and generated static Showdown runtime assets. Battle runtime reads generated data first with local fallback; live DB reads stay inspector/team-builder scoped.'
     },
     {
       status: 'done',
@@ -8589,7 +8618,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'GitHub issue sweep completed',
-      detail: 'Open issues were checked in TheYfactora12 and alfredocox repos on June 23. Active sim-truth trackers are Alfredo #241/#239 and Y #137 for DB runtime-source wiring, Alfredo #231 and Y #123 for Josh/JD data audit risk, Alfredo #220 for full six-mon replay parsing, Alfredo #213 and Y #103 for deployment/cache hardening, Alfredo #206/#204 and Y #96/#94 for stress/legal-set automation, and Alfredo #35/Y #4 for the public Champions damage oracle. Alfredo #240 is closed and should not be treated as an active blocker.'
+      detail: 'Open issues were checked in TheYfactora12 and alfredocox repos on June 25. Active sim-truth trackers are Alfredo #241 and Y #137 for live approved-DB generation/override proof, Alfredo #231 and Y #123 for Josh/JD data audit risk, Alfredo #220 for full six-mon replay parsing, Alfredo #213 and Y #103 for deployment/cache hardening, Alfredo #206/#204 and Y #96/#94 for stress/legal-set automation, and Alfredo #35/Y #4 for the public Champions damage oracle. Alfredo #239 and #240 are closed and should not be treated as active blockers.'
     },
     {
       status: 'validated',
@@ -8610,8 +8639,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
-      title: 'showdown_entities DB rows are not the battle runtime source yet',
-      detail: 'Alfredo #241 says 8,651 showdown_entities rows exist in Supabase, but the battle runtime still uses generated/static bundle data plus local fallbacks. This is the top source-of-truth gap.'
+      title: 'Champions override seed/review remains open',
+      detail: 'Alfredo #241 is partly closed in repo: live approved_showdown_entities plus approved_champions_data generated pokemon_showdown_legal_data.js on June 25 with 8,653 approved entities and 0 active overrides, source-truth tests passed, runtime bridge and battle helpers prefer generated data, legality reads generated learnsets, and SupabaseAdapter exposes read-only loadShowdownEntities. Remaining risk is seeding/reviewing Champions overrides and keeping source drift visible before release.'
     },
     {
       status: 'gap',
@@ -8688,7 +8717,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Mirror or update JD issue alignment in the Y fork',
-      detail: 'The Y fork has #137 and #123 for the current source-truth/data-audit mirrors. Alfredo #241 and #239 should stay linked there; Alfredo #240 is closed, so do not list it as an active blocker.'
+      detail: 'The Y fork has #137 and #123 for the current source-truth/data-audit mirrors. Alfredo #241 should stay linked there; Alfredo #239 and #240 are closed, so do not list either as an active blocker.'
     },
     {
       status: 'next',
@@ -8697,8 +8726,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
-      title: 'Wire approved Showdown DB data into generated runtime assets',
-      detail: 'Close Alfredo #241 by generating/reading runtime data from approved showdown_entities plus champions_overrides while preserving static offline fallback.'
+      title: 'Seed and review Champions overrides',
+      detail: 'Live approved DB generation is now proven with 8,653 approved entities and 0 active overrides. Keep Alfredo #241 and Y #137 open until Champions-specific deltas are either seeded into champions_overrides with source notes or explicitly signed off as not needed, then rebuild, rerun source-truth tests, and capture browser proof.'
     },
     {
       status: 'next',
@@ -8782,9 +8811,9 @@ var CS_OVERVIEW_DATA = {
 function csOverviewStatusLabel(status) {
   var labels = {
     done: 'Done',
-    validated: 'Verified',
+    validated: 'Closed',
     next: 'Next',
-    gap: 'Gap',
+    gap: 'Open',
     decision: 'Decision'
   };
   return labels[status] || status || 'Open';
@@ -8904,12 +8933,12 @@ function renderOverviewTab() {
     '<div class="overview-metrics">' + metrics + '</div>' +
     '<div class="overview-grid">' +
       '<div class="overview-list">' +
-        csRenderOverviewSection('Already Accomplished', 'shipped', data.shipped) +
-        csRenderOverviewSection('Validation Record', 'proof', data.validation) +
+        csRenderOverviewSection('Completed Work', 'shipped', data.shipped) +
+        csRenderOverviewSection('Closed Proof', 'closed', data.validation) +
       '</div>' +
       '<div class="overview-list">' +
-        csRenderOverviewSection('Current Alignment Gaps', 'not done yet', data.gaps) +
-        csRenderOverviewSection('Next Milestones', 'roadmap', data.next) +
+        csRenderOverviewSection('Open Issues', 'not done yet', data.gaps) +
+        csRenderOverviewSection('Milestones', 'roadmap', data.next) +
         csRenderOverviewSection('Open Decisions', 'team review', data.decisions) +
         '<div class="overview-section">' +
           '<div class="overview-section-head"><h3>Source Of Truth Flow</h3><span class="overview-kicker">target</span></div>' +
