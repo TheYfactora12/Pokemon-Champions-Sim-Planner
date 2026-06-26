@@ -7,6 +7,7 @@ const ROOT = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(ROOT, 'style.css'), 'utf8');
 const ui = fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8');
+const engine = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
 
 let pass = 0;
 let fail = 0;
@@ -32,6 +33,8 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'Know the full 6?');
   inc(html, 'In series play');
   if (/Bo10|data-bo="10"/.test(html)) throw new Error('Bo10 should not be exposed as a series format');
+  if (/Bo10/.test(ui)) throw new Error('Bo10 should not be referenced in UI guidance');
+  if (/Bo10/.test(engine)) throw new Error('Bo10 should not be referenced in engine guidance');
 });
 
 T('2. summary renders selected-four confidence and team preview read', () => {

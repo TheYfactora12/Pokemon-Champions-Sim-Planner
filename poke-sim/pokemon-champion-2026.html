@@ -14745,7 +14745,7 @@ async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress) 
   results.avgTrTurns = validBattles > 0 ? results.totalTrTurns / validBattles : 0;
   results.avgTwTurns = validBattles > 0 ? results.totalTwTurns / validBattles : 0;  // T9j.3 (#38)
   // Issue #6: confidence tier label
-  results.confidenceNote = numBattles < 20  ? 'Low confidence — run more simulations (Bo10+)' :
+  results.confidenceNote = numBattles < 20  ? 'Low confidence — run more simulations or increase sample size' :
                            numBattles < 100 ? 'Moderate confidence' : 'High confidence';
   return results;
 }
@@ -14869,7 +14869,7 @@ function buildAnalysisPayload(rawResult, ctx = {}) {
     confidence_interval: ci,
     confidence_tier:     tier,
     confidence_note:     rawResult.confidenceNote ||
-      (tier === 'Low'      ? 'Low confidence — run Bo10+ or increase sample size' :
+      (tier === 'Low'      ? 'Low confidence — run more series or increase sample size' :
        tier === 'Moderate' ? 'Moderate confidence' : 'High confidence'),
     top_win_paths:        topWinPaths,
     top_loss_paths:       [], // TODO: requires per-loss winCondition tracking
