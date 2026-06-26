@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.69-source-truth-audit';
+    return txt || 'v2.1.70-terrain-gaps-fixed';
   } catch (e) {
-    return 'v2.1.69-source-truth-audit';
+    return 'v2.1.70-terrain-gaps-fixed';
   }
 }
 
@@ -8295,6 +8295,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'All 4 terrain mechanics wired (PR #141)',
+      detail: 'v2.1.70-terrain-gaps-fixed closes all 4 terrain engine gaps: A) Misty Terrain blocks all major status on grounded mons in canInflictStatus; B) new applyTerrainAbility wires all 4 Surge abilities (Grassy/Electric/Misty/Psychic) on entry; C) Grassy Terrain heals grounded mons floor(maxHp/16) per end-of-turn; D) Electric Terrain blocks sleep on grounded mons; E) Psychic Terrain blocks priority moves from hitting grounded mons. Covered by 9 new tests: T28-T30 in status_tests.js, T1-T7 in engine_terrain_tests.js.'
+    },
+    {
+      status: 'done',
       title: 'Source-truth document audit added',
       detail: 'v2.1.69-source-truth-audit adds docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md, cataloguing Showdown, Champion, and DB source-truth references so QA has a single canonical map of every approved data source used by the sim.'
     },
@@ -8742,16 +8747,6 @@ var CS_OVERVIEW_DATA = {
       title: 'Team editor is guarded but not a fluid full builder yet',
       detail: 'The current edit-team surface now blocks illegal Champion SP saves, but it is still a clunky set editor rather than a fully customizable Champion team builder. Later UX work should support fast add/remove/reorder Pokemon, searchable species/forms/items/abilities/moves, SP sliders with live legality totals, import/export, DB save status, and rollback without breaking sim source truth.'
     },
-    {
-      status: 'gap',
-      title: 'Misty Terrain does not block status infliction in the engine',
-      detail: 'Diagnostic test T8 in screens_terrain_item_tests.js confirmed that canInflictStatus has no terrain check. Sleep Powder, Will-O-Wisp, and other status moves freely land on grounded targets even when Misty Terrain is active. The fix requires adding a field.terrain === "misty" && isGrounded(target) guard inside canInflictStatus, mirroring the existing type-immunity and ability-immunity pattern.'
-    },
-    {
-      status: 'gap',
-      title: 'Grassy Surge ability and Grassy Terrain end-of-turn recovery not wired',
-      detail: 'Diagnostic test T9 in screens_terrain_item_tests.js confirmed two missing pieces: (a) the Grassy Surge ability does not set field.terrain on entry via the on-entry ability hook, so terrain is never established in live battles; (b) even if terrain were set manually, there is no end-of-turn healing loop for grounded mons under Grassy Terrain (the Grassy power-boost and Earthquake-weakening modifiers in calcDamage are present and working). Both pieces need implementation before Grassy Terrain is considered functional.'
-    }
   ],
   next: [
     {
