@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.68-speed-transition';
+    return txt || 'v2.1.69-source-truth-audit';
   } catch (e) {
-    return 'v2.1.68-speed-transition';
+    return 'v2.1.69-source-truth-audit';
   }
 }
 
@@ -8850,6 +8850,7 @@ var CS_OVERVIEW_DATA = {
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
     { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
+    { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
     { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },
     { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },
@@ -8862,6 +8863,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Repo Parity Report', href: '../docs/release/REPO_PARITY_REPORT_2026-06-06.md' },
     { label: 'Closeout Note', href: '../docs/release/CLOSEOUT_2026-06-06.md' },
     { label: 'Showdown DB Plan', href: 'docs/SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md' },
+    { label: 'Battle Sensei Simple Source Truth', href: 'docs/BATTLE_SENSEI_EXPLAINED_SIMPLY.md' },
     { label: 'Runtime Naming Cheat Sheet', href: 'docs/SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md' },
     { label: 'Showdown Sync Architecture', href: 'docs/SHOWDOWN_SYNC_ARCHITECTURE.md' },
     { label: 'Spec Index', href: 'docs/SPECS_INDEX.md' }
