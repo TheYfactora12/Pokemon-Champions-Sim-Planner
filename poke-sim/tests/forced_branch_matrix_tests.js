@@ -79,14 +79,24 @@ vm.runInContext([
 
 let pass = 0;
 let fail = 0;
+const pendingTests = [];
 function T(name, fn) {
+  let result;
   try {
-    fn();
-    pass++;
-    console.log('  PASS', name);
+    result = fn();
   } catch (err) {
     fail++;
     console.log('  FAIL', name, '-', err.message);
+    return;
+  }
+  if (result && typeof result.then === 'function') {
+    pendingTests.push(
+      result.then(() => { pass++; console.log('  PASS', name); })
+             .catch((err) => { fail++; console.log('  FAIL', name, '-', err.message); })
+    );
+  } else {
+    pass++;
+    console.log('  PASS', name);
   }
 }
 function eq(actual, expected, msg) {
@@ -98,8 +108,8 @@ function truthy(value, msg) {
 
 console.log('\n=== forced branch matrix tests ===\n');
 
-T('1. selected lead mode locks the lead pair', () => {
-  const sweep = ctx.csBuildForcedBranchMatrixSweepEvidence({
+T('1. selected lead mode locks the lead pair', async () => {
+  const sweep = await ctx.csBuildForcedBranchMatrixSweepEvidence({
     playerTeamId: 'targeted_proof_legal',
     opponentTeamId: 'cofagrigus_tr',
     playerLeadMode: 'selected',
@@ -119,8 +129,8 @@ T('1. selected lead mode locks the lead pair', () => {
   truthy(sweep.runs.every((run) => run.tactical_summary.horizon_turns === 3), 'default tactical horizon should be 3 turns');
 });
 
-T('2. random lead mode rotates ordered lead combinations', () => {
-  const sweep = ctx.csBuildForcedBranchMatrixSweepEvidence({
+T('2. random lead mode rotates ordered lead combinations', async () => {
+  const sweep = await ctx.csBuildForcedBranchMatrixSweepEvidence({
     playerTeamId: 'targeted_proof_legal',
     opponentTeamId: 'cofagrigus_tr',
     playerLeadMode: 'random',
@@ -136,8 +146,8 @@ T('2. random lead mode rotates ordered lead combinations', () => {
   truthy(new Set(sweep.runs.map((run) => run.player_bring.slice(0, 2).join('+'))).size > 1, 'random mode did not rotate player leads');
 });
 
-T('3. seen branch keys are deprioritized and counted', () => {
-  const first = ctx.csBuildForcedBranchMatrixSweepEvidence({
+T('3. seen branch keys are deprioritized and counted', async () => {
+  const first = await ctx.csBuildForcedBranchMatrixSweepEvidence({
     playerTeamId: 'targeted_proof_legal',
     opponentTeamId: 'cofagrigus_tr',
     playerLeadMode: 'selected',
@@ -149,7 +159,7 @@ T('3. seen branch keys are deprioritized and counted', () => {
     maxTargetsPerMove: 1
   });
   const key = first.runs[0].branch_key;
-  const second = ctx.csBuildForcedBranchMatrixSweepEvidence({
+  const second = await ctx.csBuildForcedBranchMatrixSweepEvidence({
     playerTeamId: 'targeted_proof_legal',
     opponentTeamId: 'cofagrigus_tr',
     playerLeadMode: 'selected',
@@ -191,5 +201,7 @@ T('4. tactical summary extracts protect, pivot, speed control, and position timi
   truthy(summary.timing_tags.includes('early_position_loss'), 'missing position-loss tag');
 });
 
-console.log(`\nforced branch matrix tests: ${pass} pass, ${fail} fail\n`);
-process.exit(fail ? 1 : 0);
+Promise.all(pendingTests).then(() => {
+  console.log(`\nforced branch matrix tests: ${pass} pass, ${fail} fail\n`);
+  process.exit(fail ? 1 : 0);
+});

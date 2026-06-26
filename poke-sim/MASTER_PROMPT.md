@@ -372,6 +372,62 @@ Referenced during init before declaration. `const`/`let` causes TDZ ReferenceErr
 
 ---
 
+## SESSION LOG — 2026-06-25 (Turn Order & Prankster test coverage)
+
+### Branch
+`test/battle-sim-turn-order-prankster-coverage` → PR targeting `main`
+
+### Outcome
+- **+20 new engine tests** across two test files — all GREEN, zero regressions
+- Confirmed all damage-calculation fixes from PR #249 (yfactora merge) via existing passing tests
+- Closed 4 untested gaps in turn order and Prankster priority mechanics
+- No engine source files modified — pure test additions
+
+### What was done
+
+#### Turn order priority (5 new tests in `turn_order_priority_tests.js`)
+| Test | Gap covered |
+|---|---|
+| T11 | Priority brackets (+3/+1/0/−6) always resolve correctly regardless of speed |
+| T12 | Negative tiers (−6, −1) always lose to 0 and positive |
+| T13 | 4-action doubles sort: bracket → speed descending |
+| T14 | Trick Room reverses speed within a bracket but CANNOT override bracket order |
+| T15 | `getPriority()` returns correct values for Fake Out=+3, Quick Attack=+1, Protect=+4, Trick Room=−7, Tackle=0 |
+
+#### Prankster + Tailwind/Trick Room (4 new tests in `ability_priority_targeting_tests.js`)
+| Test | What was verified |
+|---|---|
+| T22 | Prankster Tailwind = +1; Prankster Trick Room = −6 (not −7) |
+| T23 | Live battle: slow Prankster Tailwind fires BEFORE fast opponent's normal move |
+| T24 | Under Trick Room: Prankster Tailwind (+1) still acts before normal (0) moves |
+| T25 | Fake Out (+3) beats Prankster Tailwind (+1) even under TR |
+
+### Key engine facts confirmed
+- `_compareTurnActionOrder` (commit `2e3fbf5`) correctly separates speed comparison from priority comparison — TR cannot override brackets
+- `STATUS_MOVE_NAMES` includes `Trick Room`, so Prankster does apply (+1), giving it priority −6
+- `getEffSpeed()` no longer inverts for TR (fix from `2e3fbf5`) — inversion lives only in `_comparePokemonSpeedOrder`
+
+### Files added/changed
+| File | Change |
+|---|---|
+| `poke-sim/tests/turn_order_priority_tests.js` | +5 tests (T11–T15), exported `getPriority` from vm context |
+| `poke-sim/tests/ability_priority_targeting_tests.js` | +4 tests (T22–T25), exported `_compareTurnActionOrder` from vm context |
+| `poke-sim/reports/battle-sim-turn-order-prankster-test-report-2026-06-25.md` | New — Josh-readable visual test reference |
+
+### Test run commands (Windows PowerShell, Node at VS path)
+```powershell
+$node = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\NodeJs\node.exe"
+& $node poke-sim/tests/turn_order_priority_tests.js
+& $node poke-sim/tests/ability_priority_targeting_tests.js
+```
+
+### Pre-existing failures (unrelated to this PR)
+- `qa_baseline_snapshot_tests.js` T7 — stale snapshot hash
+- `showdown_damage_oracle_tests.js` — requires `npm install` (@smogon/calc)
+- `showdown_db_writer_tests.js` — requires `npm install` + DB credentials
+
+---
+
 ## SESSION LOG — 2026-04-27 (M1 landing)
 
 ### Outcome
