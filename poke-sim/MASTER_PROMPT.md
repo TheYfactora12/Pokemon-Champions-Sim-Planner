@@ -428,6 +428,42 @@ $node = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microso
 
 ---
 
+## SESSION LOG — 2026-06-26 (Bring-Choice Coaching — #220 TDD Fix)
+
+### Branch
+`feat/bring-choice-coaching-220`
+
+### Outcome
+- **+4 new coaching tests** (T1–T4 in `t220_bring_choice_tests.js`) — all GREEN, zero regressions in 98 test files
+- Closed the `Replay parser full-roster gap (#220)` entry in the Overview
+- `replay_coach.js` modified: `benchedTwo` computation + `bring_choice_review` tag + `addIssue` custom-field forwarding
+- `CACHE_NAME` → `champions-sim-v102-bring-choice-coaching`
+
+### What was done
+
+| Fix | Location | Description |
+|---|---|---|
+| A | `buildReplayCoachReview` | Compute `benchedTwo` = preview − selected when `bringChoiceReviewable` |
+| B | `buildReplayCoachReview` | Fire `bring_choice_review` tag with `benchedSpecies`, `whatHappened`, `whyMattered`, `doInstead` |
+| C | `review.summary` | Expose `benchedTwo` array in summary output |
+| D | `addIssue` | Forward unrecognized `extra` keys onto pushed issue object (enables future custom coaching fields) |
+
+### Tests added
+| File | Tests | Status |
+|---|---|---|
+| `t220_bring_choice_tests.js` (new) | T1: benchedTwo array correct; T2: tag fires with all fields; T3: no overclaim without preview; T4: no overclaim with partial bring | GREEN |
+
+### Test verification commands
+```powershell
+$node = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\NodeJs\node.exe"
+& $node poke-sim/tests/t220_bring_choice_tests.js
+& $node poke-sim/tests/t188_battle_sensei_parser_tests.js
+& $node poke-sim/tests/t192_battle_sensei_learning_tests.js
+& $node poke-sim/tests/sw_local_credentials_tests.js
+```
+
+---
+
 ## SESSION LOG — 2026-06-26 (Engine Terrain Gaps — TDD Fix)
 
 ### Branch
