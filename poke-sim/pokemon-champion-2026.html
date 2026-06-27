@@ -28420,21 +28420,23 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   var buildId = (typeof csGetBuildId === 'function') ? csGetBuildId() : null;
   var sourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null;
   var coverageReplayCards = options.includeReplayCards === false ? [] : replayCards;
-  var coverageSummaries = coverageReplayCards.map(function(card) {
+  var retainedReplayCoverageSummaries = coverageReplayCards.map(function(card) {
     return card && card.qa_coverage_summary;
   });
+  var fullArtifactCoverageSummaries = retainedReplayCoverageSummaries.slice();
   var targetedSweep = options.includeTargetedSweep === false ? null : csBuildTargetedQaSweepEvidence({
     generated_at: exportedAt,
     build_id: buildId,
     source_url: sourceUrl
   });
   if (targetedSweep && targetedSweep.qa_coverage_summary) {
-    coverageSummaries.push(targetedSweep.qa_coverage_summary);
+    fullArtifactCoverageSummaries.push(targetedSweep.qa_coverage_summary);
   }
   var branchMatrixDbRows = [];
   var branchMatrixDbSaves = [];
   var branchMatrixDbSave = null;
   var branchMatrix = null;
+  var branchMatrixCoverageSummaries = [];
   var tacticalSweepMatrices = [];
   var tacticalSweepOpponentKeys = [];
   var branchMoveAnalysis = null;
@@ -28470,7 +28472,8 @@ async function csBuildQaArtifactExport(teamKey, opts) {
         branchMatrixDbSave = builtMatrix.save_result;
       }
       if (builtMatrix.branch_matrix && builtMatrix.branch_matrix.qa_coverage_summary) {
-        coverageSummaries.push(builtMatrix.branch_matrix.qa_coverage_summary);
+        branchMatrixCoverageSummaries.push(builtMatrix.branch_matrix.qa_coverage_summary);
+        fullArtifactCoverageSummaries.push(builtMatrix.branch_matrix.qa_coverage_summary);
       }
     }
     csReportBranchMatrixProgress(options, {
@@ -28516,13 +28519,32 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       updated_rows: branchMatrixDbSaves.reduce(function(sum, result) { return sum + Number(result && result.updated || 0); }, 0)
     });
   }
-  var mergedCoverage = csMergeQaCoverageSummaries(coverageSummaries, {
+  var retainedReplayCardSummary = csMergeQaCoverageSummaries(retainedReplayCoverageSummaries, {
     generated_at: exportedAt,
     build_id: buildId,
     source_url: sourceUrl,
     format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
     player_team_id: key,
-    scope: targetedSweep ? 'qa-artifact-retained-replay-cards-plus-targeted-sweep' : 'qa-artifact-retained-replay-cards'
+    scope: 'qa-artifact-retained-replay-cards'
+  });
+  retainedReplayCardSummary.totals.replay_cards_scanned = coverageReplayCards.length;
+  var tacticalSweepCoverageSummary = branchMatrixCoverageSummaries.length
+    ? csMergeQaCoverageSummaries(branchMatrixCoverageSummaries, {
+        generated_at: exportedAt,
+        build_id: buildId,
+        source_url: sourceUrl,
+        format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
+        player_team_id: key,
+        scope: 'qa-artifact-tactical-sweep'
+      })
+    : null;
+  var mergedCoverage = csMergeQaCoverageSummaries(fullArtifactCoverageSummaries, {
+    generated_at: exportedAt,
+    build_id: buildId,
+    source_url: sourceUrl,
+    format: (typeof currentFormat !== 'undefined') ? currentFormat : null,
+    player_team_id: key,
+    scope: 'qa-artifact-full-evidence'
   });
   mergedCoverage.totals.replay_cards_scanned = coverageReplayCards.length;
   mergedCoverage.totals.targeted_sweep_runs = targetedSweep && Array.isArray(targetedSweep.runs) ? targetedSweep.runs.length : 0;
@@ -28536,6 +28558,10 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   }, 0);
   mergedCoverage.totals.branch_matrix_runs = branchMatrixRunsTotal;
   mergedCoverage.totals.branch_matrix_newly_executed = branchMatrixNewTotal;
+  if (tacticalSweepCoverageSummary) {
+    tacticalSweepCoverageSummary.totals.branch_matrix_runs = branchMatrixRunsTotal;
+    tacticalSweepCoverageSummary.totals.branch_matrix_newly_executed = branchMatrixNewTotal;
+  }
   var tacticalSweep = {
     enabled: !!tacticalSweepMatrices.length,
     scope: options.branchMatrixUseScope ? (options.branchMatrixScope || (typeof getSimScopeMode === 'function' ? getSimScopeMode() : 'selected')) : 'selected',
@@ -28588,6 +28614,14 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     },
     summary: csBuildQaArtifactSummary(localSimLog, replayCards, key),
     qa_coverage_summary: mergedCoverage,
+    coverage_breakdown: {
+      retained_replay_card_summary: retainedReplayCardSummary,
+      full_artifact_summary: mergedCoverage,
+      targeted_sweep_summary: targetedSweep && targetedSweep.qa_coverage_summary ? targetedSweep.qa_coverage_summary : null,
+      forced_branch_matrix_summary: branchMatrix && branchMatrix.qa_coverage_summary ? branchMatrix.qa_coverage_summary : null,
+      tactical_sweep_summary: tacticalSweepCoverageSummary,
+      note: 'qa_coverage_summary is the full-artifact summary. Use retained_replay_card_summary for the 240 retained replay cards only; targeted and tactical sweep evidence may add extra totals.'
+    },
     targeted_qa_sweep: targetedSweep,
     forced_branch_matrix: branchMatrix,
     tactical_sweep: tacticalSweep,
