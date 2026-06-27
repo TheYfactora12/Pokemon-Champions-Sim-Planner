@@ -374,3 +374,24 @@ Example in plain English: "Tailwind was used while Trick Room was active. That m
 This is the bridge from replay labels to real coaching memory. Labels detect the event. Event rows explain the event. Later, database aggregates can compare many users' non-personal rows to learn which choices usually work in the same matchup.
 
 Guardrail: a single row is evidence, not a final truth. Strong recommendations require repeated rows, sample size, confidence, and comparison against alternative branches.
+
+## Faint Cause Evidence
+
+The replay coach must explain why a Pokemon went down. If a Pokemon had 1 HP and then fainted, the export should say what caused it: attack damage, recoil, burn, poison, sandstorm, Leech Seed, Spiky Shield contact damage, Perish Song, or another tracked effect.
+
+The source-of-truth field is `faint_cause_summary`. It counts total faints, explained faints, unexplained faints, HP drops, and unexplained HP drops. A clean replay should drive unexplained counts toward zero.
+
+## Contact Move Audit
+
+Some effects only happen when a move makes contact. Rough Skin and Spiky Shield are good examples: the damage is not just random chip; it happens because the attacker touched the opponent with a contact move.
+
+The source-of-truth field is `contact_move_audit_summary`. It records which moves were seen, whether the sim classified each move as contact, and where that answer came from:
+
+- `showdown_flag`: trusted Pokemon Showdown move metadata says the move has the contact flag.
+- `local_contact_override`: local fallback data was used because the move needs a known override.
+- `showdown_no_contact_flag`: trusted move metadata was found and the move is not contact.
+- `missing_move_metadata`: the sim could not prove the move's contact status.
+
+The coaching rule is simple: if contact damage happened, the replay should show the trigger, the effect, the damage dealt, and the HP before/after. If a physical move has missing metadata, QA should treat that as a data gap before trusting contact-based coaching.
+
+This matters because coaching cannot be trusted if it says a Pokemon fainted without saying what triggered the HP loss.

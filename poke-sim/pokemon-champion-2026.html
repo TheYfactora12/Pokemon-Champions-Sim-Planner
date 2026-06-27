@@ -2333,8 +2333,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.78-coach-event-rows -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.78-coach-event-rows</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.79-faint-cause-evidence -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.79-faint-cause-evidence</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -8754,7 +8754,7 @@ var CONTACT_MOVES = new Set([
   'Crunch','Stomping Tantrum','Liquidation','Fire Punch','Thunder Punch',
   'Psyshield Bash','High Horsepower','Body Press','Zen Headbutt',
   'Bite','Waterfall','Headbutt','Rolling Kick','Stomp','Needle Arm',
-  'Heart Stamp','Bone Club','Heracross','Wicked Blow','Surging Strikes',
+  'Heart Stamp','Bone Club','Wicked Blow','Surging Strikes',
   'Low Kick','Throat Chop','Scale Shot','Darkest Lariat','Tackle',
   'Beak Blast','Brave Bird','Double-Edge','Wild Charge','Volt Tackle',
   'Wood Hammer','Take Down','Submission','Head Charge'
@@ -9513,6 +9513,20 @@ function _isContactMove(move) {
   return CONTACT_MOVES.has(move) || _moveHasFlag(move, 'contact');
 }
 
+function getMoveContactInfo(move) {
+  var name = String(move || '');
+  var row = _showdownMoveRow(name);
+  var showdownContact = !!(row && _moveHasFlag(name, 'contact'));
+  var fallbackContact = CONTACT_MOVES.has(name);
+  return {
+    move: name,
+    is_contact: !!(showdownContact || fallbackContact),
+    source: showdownContact ? 'showdown_flag' : (fallbackContact ? 'local_contact_override' : (row ? 'showdown_no_contact_flag' : 'missing_move_metadata')),
+    has_showdown_row: !!row,
+    has_local_override: fallbackContact
+  };
+}
+
 function _normalizeRecoilRule(value) {
   if (!value) return null;
   if (Array.isArray(value) && value.length >= 2) {
@@ -9837,8 +9851,15 @@ var ABILITIES = {
       if (!ctx.damage || ctx.damage <= 0) return;
       if (!_isContactMove(ctx.move)) return;
       var chip = Math.max(1, Math.floor(attacker.maxHp / 8));
+      var hpBeforeRoughSkin = attacker.hp;
       attacker.hp = Math.max(0, attacker.hp - chip);
       if (ctx.log) ctx.log.push(attacker.name + " was hurt by " + defender.name + "'s Rough Skin! [" + chip + " dmg]");
+      _recordEffectEvent(ctx.field, attacker, 'Rough Skin', 'ability-contact-damage', hpBeforeRoughSkin, attacker.hp, {
+        source: 'engine ability contact rule',
+        source_actor: defender.name || '',
+        rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforeRoughSkin - attacker.hp)
+      });
       if (attacker.hp === 0) {
         attacker.alive = false;
         if (ctx.log) ctx.log.push(attacker.name + ' fainted!');
@@ -13205,8 +13226,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           }
           if (_shieldKind === 'Spiky Shield') {
             const recoil = Math.max(1, Math.floor(attacker.maxHp / 8));
+            const hpBeforeShield = attacker.hp;
             attacker.hp = Math.max(0, attacker.hp - recoil);
             log.push(`${attacker.name} was hurt by Spiky Shield! [${recoil} dmg]`);
+            _recordEffectEvent(field, attacker, 'Spiky Shield', 'protect-contact-damage', hpBeforeShield, attacker.hp, {
+              source: 'engine protect contact rule',
+              rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+              damage_applied: Math.max(0, hpBeforeShield - attacker.hp)
+            });
             if (attacker.hp === 0) {
               attacker.alive = false;
               log.push(`${attacker.name} fainted!`);
@@ -13560,8 +13587,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
             }
             if (_shieldKind === 'Spiky Shield') {
               const recoil = Math.max(1, Math.floor(attacker.maxHp / 8));
+              const hpBeforeShield = attacker.hp;
               attacker.hp = Math.max(0, attacker.hp - recoil);
               log.push(`${attacker.name} was hurt by Spiky Shield! [${recoil} dmg]`);
+              _recordEffectEvent(field, attacker, 'Spiky Shield', 'protect-contact-damage', hpBeforeShield, attacker.hp, {
+                source: 'engine protect contact rule',
+                rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+                damage_applied: Math.max(0, hpBeforeShield - attacker.hp)
+              });
               if (attacker.hp === 0) {
                 attacker.alive = false;
                 log.push(`${attacker.name} fainted!`);
@@ -14267,8 +14300,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (!['Rock','Steel','Ground'].includes(mon.types[0]) &&
             !['Rock','Steel','Ground'].includes(mon.types[1] || '')) {
           const sandDmg = Math.floor(mon.maxHp / 16);
+          const hpBeforeSand = mon.hp;
           mon.hp = Math.max(0, mon.hp - sandDmg);
           log.push(`${mon.name} is buffeted by the sandstorm! [${sandDmg} dmg]`);
+          _recordEffectEvent(field, mon, 'Sandstorm', 'weather-damage', hpBeforeSand, mon.hp, {
+            source: 'engine weather rule',
+            rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
+            damage_applied: Math.max(0, hpBeforeSand - mon.hp)
+          });
           if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'sandstorm' }); }
         }
       }
@@ -14278,8 +14317,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (_effectiveFieldWeather(field) === 'sun') {
       for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.ability === 'Solar Power')) {
         const solarPowerDmg = Math.floor(mon.maxHp / 8);
+        const hpBeforeSolar = mon.hp;
         mon.hp = Math.max(0, mon.hp - solarPowerDmg);
         log.push(`${mon.name} is hurt by its Solar Power! [${solarPowerDmg} dmg]`);
+        _recordEffectEvent(field, mon, 'Solar Power', 'ability-recoil', hpBeforeSolar, mon.hp, {
+          source: 'engine ability rule',
+          rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+          damage_applied: Math.max(0, hpBeforeSolar - mon.hp)
+        });
         if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'Solar Power' }); }
       }
     }
@@ -14287,8 +14332,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Burn damage
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.status === 'burn')) {
       const burnDmg = Math.floor(mon.maxHp / 16);
+      const hpBeforeBurn = mon.hp;
       mon.hp = Math.max(0, mon.hp - burnDmg);
       log.push(`${mon.name} is hurt by its burn! [${burnDmg} dmg]`);
+      _recordEffectEvent(field, mon, 'Burn', 'status-damage', hpBeforeBurn, mon.hp, {
+        source: 'engine status rule',
+        rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforeBurn - mon.hp)
+      });
       if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'burn' }); }
     }
 
@@ -14298,16 +14349,28 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Frostbite_(status_condition)
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.status === 'frostbite')) {
       const frostDmg = Math.max(1, Math.floor(mon.maxHp / 16));
+      const hpBeforeFrost = mon.hp;
       mon.hp = Math.max(0, mon.hp - frostDmg);
       log.push(`${mon.name} is hurt by frostbite! [${frostDmg} dmg]`);
+      _recordEffectEvent(field, mon, 'Frostbite', 'status-damage', hpBeforeFrost, mon.hp, {
+        source: 'engine status rule',
+        rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforeFrost - mon.hp)
+      });
       if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'frostbite' }); }
     }
 
     // T9j.4 (#41) — Poison residual (1/8 max HP). Cite: Bulbapedia Status; Spec §1.6.
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.status === 'poison')) {
       const poisonDmg = Math.max(1, Math.floor(mon.maxHp / 8));
+      const hpBeforePoison = mon.hp;
       mon.hp = Math.max(0, mon.hp - poisonDmg);
       log.push(`${mon.name} is hurt by poison! [${poisonDmg} dmg]`);
+      _recordEffectEvent(field, mon, 'Poison', 'status-damage', hpBeforePoison, mon.hp, {
+        source: 'engine status rule',
+        rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforePoison - mon.hp)
+      });
       if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'poison' }); }
     }
 
@@ -14317,8 +14380,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (!mon.toxicCounter || mon.toxicCounter < 1) mon.toxicCounter = 1;
       const n = Math.min(15, mon.toxicCounter);
       const toxicDmg = Math.max(1, Math.floor(mon.maxHp * n / 16));
+      const hpBeforeToxic = mon.hp;
       mon.hp = Math.max(0, mon.hp - toxicDmg);
       log.push(`${mon.name} is hurt by toxic! [${toxicDmg} dmg] (tick ${n}/16)`);
+      _recordEffectEvent(field, mon, 'Toxic', 'status-damage', hpBeforeToxic, mon.hp, {
+        source: 'engine status rule',
+        rule: { numerator: n, denominator: 16, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforeToxic - mon.hp)
+      });
       mon.toxicCounter++;
       if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'toxic' }); }
     }
@@ -14437,9 +14506,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.perishSongTurns > 0)) {
       mon.perishSongTurns--;
       if (mon.perishSongTurns <= 0) {
+        const hpBeforePerish = mon.hp;
         mon.hp = 0;
         mon.alive = false;
         log.push(`${mon.name} perished due to Perish Song!`);
+        _recordEffectEvent(field, mon, 'Perish Song', 'perish-song-faint', hpBeforePerish, mon.hp, {
+          source: 'engine field-effect rule',
+          damage_applied: Math.max(0, hpBeforePerish - mon.hp)
+        });
         _recordKO(mon, { move: 'Perish Song', attacker: null, reason: 'perish' });
       }
     }
@@ -15036,10 +15110,12 @@ function runMegaTriggerSweep(teamA, teamB, bo, opts) {
 
 if (typeof window !== 'undefined') {
   window.ChampionsSim = window.ChampionsSim || {};
+  window.ChampionsSim.battle = window.ChampionsSim.battle || {};
   window.ChampionsSim.turnLog = window.ChampionsSim.turnLog || [];
   window.ChampionsSim.positionScore = positionScore;
   window.ChampionsSim.winProbabilityDelta = winProbabilityDelta;
   window.ChampionsSim.isRNGBlame = isRNGBlame;
+  window.ChampionsSim.battle.getMoveContactInfo = getMoveContactInfo;
 }
 
 
@@ -20865,9 +20941,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.78-coach-event-rows';
+    return txt || 'v2.1.79-faint-cause-evidence';
   } catch (e) {
-    return 'v2.1.78-coach-event-rows';
+    return 'v2.1.79-faint-cause-evidence';
   }
 }
 
@@ -25319,6 +25395,254 @@ function csSummarizeCoachEventRows(rows) {
   return summary;
 }
 
+function csSnapshotHpMap(snapshot) {
+  return snapshot && snapshot.hp_pct_stable ? snapshot.hp_pct_stable : {};
+}
+
+function csSnapshotNameMap(snapshot) {
+  var out = {};
+    var roster = snapshot && snapshot.roster ? snapshot.roster : {};
+  ['player', 'opponent'].forEach(function(side) {
+    var rows = Array.isArray(roster[side]) ? roster[side] : [];
+    rows.forEach(function(row) {
+      var key = row && (row.stable_key || row.stableKey);
+      if (key) out[key] = row.name || row.displayName || row.species || key;
+    });
+  });
+  return out;
+}
+
+function csSnapshotStatusMap(snapshot) {
+  var out = {};
+  var roster = snapshot && snapshot.roster ? snapshot.roster : {};
+  ['player', 'opponent'].forEach(function(side) {
+    var rows = Array.isArray(roster[side]) ? roster[side] : [];
+    rows.forEach(function(row) {
+      var key = row && (row.stable_key || row.stableKey);
+      if (key) out[key] = row.status || '';
+    });
+  });
+  return out;
+}
+
+function csHpEvidenceRows(turn) {
+  var rows = [];
+  (Array.isArray(turn && turn.damage_events) ? turn.damage_events : []).forEach(function(row) {
+    rows.push({
+      kind: 'damage',
+      key: row && row.target_key,
+      name: row && row.target,
+      source: row && row.attacker,
+      move: row && row.move,
+      amount: Number(row && (row.applied_damage != null ? row.applied_damage : row.damage) || 0),
+      hp_before: Number(row && row.target_hp_before || 0),
+      hp_after: Number(row && row.target_hp_after || 0),
+      explanation: (row && row.target || 'Pokemon') + ' took ' + Number(row && (row.applied_damage != null ? row.applied_damage : row.damage) || 0) + ' damage from ' + (row && row.move || 'an attack') + '.'
+    });
+    if (row && row.recoil_damage != null) {
+      rows.push({
+        kind: 'effect',
+        key: row.attacker_key,
+        name: row.attacker,
+        source: row.attacker,
+        move: row.move,
+        effect_kind: 'recoil',
+        amount: Number(row.recoil_hp_before || 0) - Number(row.recoil_hp_after || 0),
+        hp_before: Number(row.recoil_hp_before || 0),
+        hp_after: Number(row.recoil_hp_after || 0),
+        explanation: (row.attacker || 'Pokemon') + ' took ' + (Number(row.recoil_hp_before || 0) - Number(row.recoil_hp_after || 0)) + ' recoil damage from ' + (row.move || 'its move') + '.'
+      });
+    }
+  });
+  (Array.isArray(turn && turn.effect_events) ? turn.effect_events : []).forEach(function(row) {
+    var before = Number(row && row.hp_before || 0);
+    var after = Number(row && row.hp_after || 0);
+    var amount = Math.max(0, before - after);
+    if (!amount) return;
+    rows.push({
+      kind: 'effect',
+      key: row && row.actor_key,
+      name: row && row.actor,
+      source: row && (row.source_actor || row.source || row.move),
+      move: row && row.move,
+      effect_kind: row && row.effect_kind,
+      amount: amount,
+      hp_before: before,
+      hp_after: after,
+      explanation: (row && row.actor || 'Pokemon') + ' took ' + amount + ' damage from ' + (row && (row.move || row.effect_kind) || 'an effect') + '.'
+    });
+  });
+  return rows;
+}
+
+function csBuildFaintCauseSummary(turnLog) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var out = {
+    schema_version: 'champions-faint-cause-summary-v1',
+    total_faints: 0,
+    explained_faints: 0,
+    unexplained_faints: 0,
+    hp_drops: 0,
+    unexplained_hp_drops: 0,
+    faint_causes: [],
+    unexplained: []
+  };
+  for (var i = 0; i < rows.length; i++) {
+    var turn = rows[i] || {};
+    var preHp = csSnapshotHpMap(turn.pre);
+    var postHp = csSnapshotHpMap(turn.post);
+    var names = Object.assign({}, csSnapshotNameMap(turn.pre), csSnapshotNameMap(turn.post));
+    var postStatus = csSnapshotStatusMap(turn.post);
+    var evidence = csHpEvidenceRows(turn);
+    Object.keys(preHp || {}).forEach(function(key) {
+      var beforePct = Number(preHp[key]);
+      if (!Number.isFinite(beforePct)) return;
+      var hasPostHp = Object.prototype.hasOwnProperty.call(postHp, key);
+      if (!hasPostHp && postStatus[key] !== 'fainted') return;
+      var afterPct = hasPostHp ? Number(postHp[key]) : 0;
+      if (!Number.isFinite(afterPct) || afterPct >= beforePct) return;
+      out.hp_drops += 1;
+      var match = evidence.filter(function(row) { return row && row.key === key && Number(row.amount || 0) > 0; })[0] || null;
+      if (afterPct <= 0) {
+        out.total_faints += 1;
+        if (match) {
+          out.explained_faints += 1;
+          out.faint_causes.push(Object.assign({
+            turn: turn.turn || i + 1,
+            pokemon: names[key] || key,
+            stable_key: key,
+            hp_pct_before: beforePct,
+            hp_pct_after: afterPct,
+            cause_text: (names[key] || key) + ' fainted because ' + match.explanation
+          }, match));
+        } else {
+          out.unexplained_faints += 1;
+          out.unexplained.push({
+            turn: turn.turn || i + 1,
+            pokemon: names[key] || key,
+            stable_key: key,
+            hp_pct_before: beforePct,
+            hp_pct_after: afterPct,
+            issue: 'faint_without_damage_or_effect_evidence'
+          });
+        }
+      } else if (!match) {
+        out.unexplained_hp_drops += 1;
+        out.unexplained.push({
+          turn: turn.turn || i + 1,
+          pokemon: names[key] || key,
+          stable_key: key,
+          hp_pct_before: beforePct,
+          hp_pct_after: afterPct,
+          issue: 'hp_drop_without_damage_or_effect_evidence'
+        });
+      }
+    });
+  }
+  return out;
+}
+
+function csQaMoveContactInfo(move) {
+  try {
+    if (typeof ChampionsSim !== 'undefined' &&
+        ChampionsSim.battle &&
+        typeof ChampionsSim.battle.getMoveContactInfo === 'function') {
+      return ChampionsSim.battle.getMoveContactInfo(move);
+    }
+  } catch (_e) {}
+  return {
+    move: String(move || ''),
+    is_contact: null,
+    source: 'contact_helper_unavailable',
+    has_showdown_row: null,
+    has_local_override: null
+  };
+}
+
+function csBuildContactMoveAuditSummary(turnLog) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var summary = {
+    schema_version: 'champions-contact-move-audit-v1',
+    moves: {},
+    totals: {
+      action_moves: 0,
+      damaging_moves: 0,
+      contact_true: 0,
+      contact_false: 0,
+      unknown_contact: 0,
+      missing_move_metadata: 0,
+      local_contact_override: 0,
+      showdown_contact_flag: 0,
+      contact_damage_events: 0
+    },
+    unknown_physical_moves: [],
+    contact_damage_events: []
+  };
+  function remember(move, info, extra) {
+    var name = String(move || 'unknown');
+    var row = summary.moves[name] || {
+      move: name,
+      seen: 0,
+      damaging_seen: 0,
+      category: null,
+      contact: info && info.is_contact,
+      contact_source: info && info.source || 'unknown',
+      has_showdown_row: info && info.has_showdown_row,
+      has_local_override: info && info.has_local_override
+    };
+    row.seen += 1;
+    if (extra && extra.damaging) row.damaging_seen += 1;
+    if (extra && extra.category) row.category = extra.category;
+    if (info && info.source) row.contact_source = info.source;
+    if (info && info.is_contact !== null) row.contact = info.is_contact;
+    summary.moves[name] = row;
+  }
+  rows.forEach(function(turn) {
+    ['player', 'opponent'].forEach(function(side) {
+      var actions = turn && turn.actions && Array.isArray(turn.actions[side]) ? turn.actions[side] : [];
+      actions.forEach(function(action) {
+        if (!action || !action.move) return;
+        var info = csQaMoveContactInfo(action.move);
+        summary.totals.action_moves += 1;
+        if (info.source === 'missing_move_metadata') summary.totals.missing_move_metadata += 1;
+        if (info.source === 'local_contact_override') summary.totals.local_contact_override += 1;
+        if (info.source === 'showdown_flag') summary.totals.showdown_contact_flag += 1;
+        if (info.is_contact === true) summary.totals.contact_true += 1;
+        else if (info.is_contact === false) summary.totals.contact_false += 1;
+        else summary.totals.unknown_contact += 1;
+        remember(action.move, info, {});
+      });
+    });
+    (Array.isArray(turn && turn.damage_events) ? turn.damage_events : []).forEach(function(row) {
+      if (!row || !row.move) return;
+      var info = csQaMoveContactInfo(row.move);
+      summary.totals.damaging_moves += 1;
+      remember(row.move, info, { damaging: true, category: row.category || null });
+      if ((row.category === 'physical' || row.category === 'Physical') && info.is_contact === null && summary.unknown_physical_moves.indexOf(row.move) < 0) {
+        summary.unknown_physical_moves.push(row.move);
+      }
+    });
+    (Array.isArray(turn && turn.effect_events) ? turn.effect_events : []).forEach(function(row) {
+      var kind = String(row && row.effect_kind || '');
+      if (kind.indexOf('contact-damage') < 0) return;
+      summary.totals.contact_damage_events += 1;
+      summary.contact_damage_events.push({
+        turn: turn.turn || null,
+        actor: row.actor || null,
+        actor_key: row.actor_key || null,
+        move: row.move || null,
+        effect_kind: row.effect_kind || null,
+        hp_before: row.hp_before,
+        hp_after: row.hp_after,
+        damage_applied: row.damage_applied
+      });
+    });
+  });
+  summary.unknown_physical_moves = summary.unknown_physical_moves.slice(0, 50);
+  summary.contact_damage_events = summary.contact_damage_events.slice(0, 120);
+  return summary;
+}
+
 function csQaCountSnapshotCoverage(snapshot, mechanics) {
   if (!snapshot || typeof snapshot !== 'object') return;
   if (Array.isArray(snapshot.speed_order_details) && snapshot.speed_order_details.length) mechanics.speed_order_details += 1;
@@ -25420,6 +25744,8 @@ function csBuildQaCoverageSummary(turnLog, opts) {
   var tacticalSpeedSummary = csBuildTacticalSpeedSummary(rows, { scope: options.scope || 'single-turn-log' });
   var durationEffectSummary = csBuildDurationEffectSummary(rows, { scope: options.scope || 'single-turn-log' });
   var decisionLedger = csBuildDecisionOpportunityLedger(tacticalSpeedSummary, { scope: options.scope || 'single-turn-log' });
+  var faintCauseSummary = csBuildFaintCauseSummary(rows);
+  var contactMoveAuditSummary = csBuildContactMoveAuditSummary(rows);
   var coachEventRows = csBuildCoachEventRows(tacticalSpeedSummary, durationEffectSummary, {
     scope: options.scope || 'single-turn-log',
     player_team_id: options.player_team_id || null,
@@ -25527,6 +25853,8 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     tactical_speed_summary: tacticalSpeedSummary,
     duration_effect_summary: durationEffectSummary,
     decision_opportunity_ledger: decisionLedger,
+    faint_cause_summary: faintCauseSummary,
+    contact_move_audit_summary: contactMoveAuditSummary,
     coach_event_rows: coachEventRows,
     coach_event_summary: csSummarizeCoachEventRows(coachEventRows),
     coach_brain_summary: csBuildCoachBrainSummary(decisionLedger, {
@@ -25558,6 +25886,8 @@ function csMergeQaCoverageSummaries(summaries, opts) {
   }));
   merged.totals.replay_cards_scanned = valid.length;
   var mergedCoachEventRows = [];
+  var mergedFaintCauseSummary = csBuildFaintCauseSummary([]);
+  var mergedContactAudit = csBuildContactMoveAuditSummary([]);
 
   for (var i = 0; i < valid.length; i++) {
     var summary = valid[i] || {};
@@ -25611,6 +25941,37 @@ function csMergeQaCoverageSummaries(summaries, opts) {
     if (Array.isArray(summary.coach_event_rows)) {
       mergedCoachEventRows = mergedCoachEventRows.concat(summary.coach_event_rows.slice(0, 24));
     }
+    var faintCause = summary.faint_cause_summary || {};
+    mergedFaintCauseSummary.total_faints += Number(faintCause.total_faints || 0);
+    mergedFaintCauseSummary.explained_faints += Number(faintCause.explained_faints || 0);
+    mergedFaintCauseSummary.unexplained_faints += Number(faintCause.unexplained_faints || 0);
+    mergedFaintCauseSummary.hp_drops += Number(faintCause.hp_drops || 0);
+    mergedFaintCauseSummary.unexplained_hp_drops += Number(faintCause.unexplained_hp_drops || 0);
+    if (Array.isArray(faintCause.faint_causes)) mergedFaintCauseSummary.faint_causes = mergedFaintCauseSummary.faint_causes.concat(faintCause.faint_causes.slice(0, 12));
+    if (Array.isArray(faintCause.unexplained)) mergedFaintCauseSummary.unexplained = mergedFaintCauseSummary.unexplained.concat(faintCause.unexplained.slice(0, 12));
+    var contactAudit = summary.contact_move_audit_summary || {};
+    var contactTotals = contactAudit.totals || {};
+    for (var ct in contactTotals) {
+      if (Object.prototype.hasOwnProperty.call(contactTotals, ct)) {
+        mergedContactAudit.totals[ct] = Number(mergedContactAudit.totals[ct] || 0) + Number(contactTotals[ct] || 0);
+      }
+    }
+    var contactMoves = contactAudit.moves || {};
+    for (var cm in contactMoves) {
+      if (!Object.prototype.hasOwnProperty.call(contactMoves, cm)) continue;
+      var existingContactMove = mergedContactAudit.moves[cm] || Object.assign({}, contactMoves[cm], { seen: 0, damaging_seen: 0 });
+      existingContactMove.seen += Number(contactMoves[cm].seen || 0);
+      existingContactMove.damaging_seen += Number(contactMoves[cm].damaging_seen || 0);
+      mergedContactAudit.moves[cm] = existingContactMove;
+    }
+    if (Array.isArray(contactAudit.unknown_physical_moves)) {
+      contactAudit.unknown_physical_moves.forEach(function(move) {
+        if (mergedContactAudit.unknown_physical_moves.indexOf(move) < 0) mergedContactAudit.unknown_physical_moves.push(move);
+      });
+    }
+    if (Array.isArray(contactAudit.contact_damage_events)) {
+      mergedContactAudit.contact_damage_events = mergedContactAudit.contact_damage_events.concat(contactAudit.contact_damage_events.slice(0, 12));
+    }
     var activeTurns = duration.active_turns || {};
     for (var at in activeTurns) {
       if (Object.prototype.hasOwnProperty.call(activeTurns, at)) csQaInc(merged.duration_effect_summary.active_turns, at, activeTurns[at]);
@@ -25621,6 +25982,14 @@ function csMergeQaCoverageSummaries(summaries, opts) {
   merged.decision_opportunity_ledger = csBuildDecisionOpportunityLedger(merged.tactical_speed_summary, { scope: options.scope || 'qa-artifact-retained-replay-cards' });
   merged.coach_event_rows = mergedCoachEventRows.slice(0, 240);
   merged.coach_event_summary = csSummarizeCoachEventRows(merged.coach_event_rows);
+  merged.faint_cause_summary = Object.assign({}, mergedFaintCauseSummary, {
+    faint_causes: mergedFaintCauseSummary.faint_causes.slice(0, 240),
+    unexplained: mergedFaintCauseSummary.unexplained.slice(0, 240)
+  });
+  merged.contact_move_audit_summary = Object.assign({}, mergedContactAudit, {
+    unknown_physical_moves: mergedContactAudit.unknown_physical_moves.slice(0, 50),
+    contact_damage_events: mergedContactAudit.contact_damage_events.slice(0, 240)
+  });
   merged.coach_brain_summary = csBuildCoachBrainSummary(merged.decision_opportunity_ledger, {
     scope: options.scope || 'qa-artifact-retained-replay-cards',
     player_team_id: options.player_team_id || null,
@@ -26736,6 +27105,8 @@ function downloadReplayTurnLog(replay, opts) {
     tactical_speed_summary: csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
     duration_effect_summary: csBuildDurationEffectSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
     decision_opportunity_ledger: csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }),
+    faint_cause_summary: csBuildFaintCauseSummary(replay.turnLog),
+    contact_move_audit_summary: csBuildContactMoveAuditSummary(replay.turnLog),
     coach_event_rows: csBuildCoachEventRows(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), csBuildDurationEffectSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), {
       scope: 'downloaded-turn-log',
       player_team_id: playerKey || null,
@@ -27753,6 +28124,8 @@ function csCompactQaReplayCard(replay, playerKey) {
     tactical_speed_summary: compactTacticalSpeedSummary,
     duration_effect_summary: compactDurationEffectSummary,
     decision_opportunity_ledger: compactDecisionLedger,
+    faint_cause_summary: csBuildFaintCauseSummary(turnLog),
+    contact_move_audit_summary: csBuildContactMoveAuditSummary(turnLog),
     coach_event_rows: compactCoachEventRows,
     coach_event_summary: csSummarizeCoachEventRows(compactCoachEventRows),
     coach_brain_summary: csBuildCoachBrainSummary(compactDecisionLedger, {
@@ -29896,6 +30269,16 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Faint cause evidence added',
+      detail: 'v2.1.79 adds faint_cause_summary and contact_move_audit_summary to turn logs, replay cards, and QA artifacts. It explains which attack, status, recoil, weather, shield, drain, item, or field effect caused HP loss or a faint, audits contact-move metadata for Rough Skin/Spiky Shield style effects, and flags unexplained HP drops/faints for QA.'
+    },
+    {
+      status: 'done',
+      title: 'Coach event rows added',
+      detail: 'v2.1.78 adds coach_event_rows and coach_event_summary to turn logs, retained replay cards, and QA artifacts. These rows translate tactical and duration labels into DB-ready coaching facts with outcome, confidence, why-it-matters, and next-test guidance.'
+    },
     {
       status: 'done',
       title: 'Run All QA replay export hardened',

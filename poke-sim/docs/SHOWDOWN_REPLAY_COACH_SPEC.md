@@ -803,3 +803,44 @@ Guardrails:
 - Rows are evidence units, not final recommendations.
 - Shared DB learning should aggregate by matchup, decision type, event label, outcome, sample size, and confidence.
 - Recommendations must still show the branch evidence and sample size.
+
+## Faint Cause Summary
+
+Schema: `champions-faint-cause-summary-v1`
+
+Purpose: prove every HP drop and faint has structured evidence.
+
+Fields:
+
+- `total_faints`: count of Pokemon that crossed to 0 HP in the turn-log snapshots.
+- `explained_faints`: faints with matching `damage_events` or HP-losing `effect_events`.
+- `unexplained_faints`: faints without matching structured evidence.
+- `hp_drops`: non-faint HP drops between pre and post snapshots.
+- `unexplained_hp_drops`: HP drops without matching structured evidence.
+- `faint_causes`: human-readable cause rows, including move/effect, damage amount, HP before, and HP after.
+- `unexplained`: QA rows that must be fixed before trusting coaching for that replay.
+
+Acceptance rule: QA artifacts should trend toward `unexplained_faints: 0` and `unexplained_hp_drops: 0`. Any nonzero row is a replay-truth bug or an unsupported effect path that needs structured logging.
+
+## Contact Move Audit
+
+Schema: `champions-contact-move-audit-v1`
+
+Purpose: prove contact-triggered effects are based on move metadata, not guesswork. Rough Skin, Spiky Shield, Iron Barbs-style hooks, and similar future mechanics must be explainable from the move selected, the contact classification, and the resulting effect event.
+
+Fields:
+
+- `totals.action_moves`: count of selected action moves inspected.
+- `totals.damaging_moves`: count of damage-event moves inspected.
+- `totals.contact_true`: move rows proven to be contact.
+- `totals.contact_false`: move rows proven to be non-contact.
+- `totals.unknown_contact`: move rows where contact status could not be proven.
+- `totals.missing_move_metadata`: move rows missing trusted move metadata.
+- `totals.local_contact_override`: rows relying on local fallback contact data.
+- `totals.showdown_contact_flag`: rows backed by Pokemon Showdown contact flags.
+- `totals.contact_damage_events`: Rough Skin, Spiky Shield, or similar contact-triggered effect rows.
+- `moves`: per-move contact classification, metadata source, use count, and damaging use count.
+- `unknown_physical_moves`: QA list for physical moves whose contact status could not be proven.
+- `contact_damage_events`: sampled contact-triggered damage rows with turn, actor, source, move, and effect kind.
+
+Acceptance rule: contact damage must have an effect row with HP before/after and the triggering move. `missing_move_metadata` should be 0 for moves that matter to contact coaching. Any unknown physical contact status should become a data task before using that replay as trusted coaching evidence.

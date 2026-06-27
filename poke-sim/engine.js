@@ -349,7 +349,7 @@ var CONTACT_MOVES = new Set([
   'Crunch','Stomping Tantrum','Liquidation','Fire Punch','Thunder Punch',
   'Psyshield Bash','High Horsepower','Body Press','Zen Headbutt',
   'Bite','Waterfall','Headbutt','Rolling Kick','Stomp','Needle Arm',
-  'Heart Stamp','Bone Club','Heracross','Wicked Blow','Surging Strikes',
+  'Heart Stamp','Bone Club','Wicked Blow','Surging Strikes',
   'Low Kick','Throat Chop','Scale Shot','Darkest Lariat','Tackle',
   'Beak Blast','Brave Bird','Double-Edge','Wild Charge','Volt Tackle',
   'Wood Hammer','Take Down','Submission','Head Charge'
@@ -1108,6 +1108,20 @@ function _isContactMove(move) {
   return CONTACT_MOVES.has(move) || _moveHasFlag(move, 'contact');
 }
 
+function getMoveContactInfo(move) {
+  var name = String(move || '');
+  var row = _showdownMoveRow(name);
+  var showdownContact = !!(row && _moveHasFlag(name, 'contact'));
+  var fallbackContact = CONTACT_MOVES.has(name);
+  return {
+    move: name,
+    is_contact: !!(showdownContact || fallbackContact),
+    source: showdownContact ? 'showdown_flag' : (fallbackContact ? 'local_contact_override' : (row ? 'showdown_no_contact_flag' : 'missing_move_metadata')),
+    has_showdown_row: !!row,
+    has_local_override: fallbackContact
+  };
+}
+
 function _normalizeRecoilRule(value) {
   if (!value) return null;
   if (Array.isArray(value) && value.length >= 2) {
@@ -1432,8 +1446,15 @@ var ABILITIES = {
       if (!ctx.damage || ctx.damage <= 0) return;
       if (!_isContactMove(ctx.move)) return;
       var chip = Math.max(1, Math.floor(attacker.maxHp / 8));
+      var hpBeforeRoughSkin = attacker.hp;
       attacker.hp = Math.max(0, attacker.hp - chip);
       if (ctx.log) ctx.log.push(attacker.name + " was hurt by " + defender.name + "'s Rough Skin! [" + chip + " dmg]");
+      _recordEffectEvent(ctx.field, attacker, 'Rough Skin', 'ability-contact-damage', hpBeforeRoughSkin, attacker.hp, {
+        source: 'engine ability contact rule',
+        source_actor: defender.name || '',
+        rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforeRoughSkin - attacker.hp)
+      });
       if (attacker.hp === 0) {
         attacker.alive = false;
         if (ctx.log) ctx.log.push(attacker.name + ' fainted!');
@@ -4800,8 +4821,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           }
           if (_shieldKind === 'Spiky Shield') {
             const recoil = Math.max(1, Math.floor(attacker.maxHp / 8));
+            const hpBeforeShield = attacker.hp;
             attacker.hp = Math.max(0, attacker.hp - recoil);
             log.push(`${attacker.name} was hurt by Spiky Shield! [${recoil} dmg]`);
+            _recordEffectEvent(field, attacker, 'Spiky Shield', 'protect-contact-damage', hpBeforeShield, attacker.hp, {
+              source: 'engine protect contact rule',
+              rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+              damage_applied: Math.max(0, hpBeforeShield - attacker.hp)
+            });
             if (attacker.hp === 0) {
               attacker.alive = false;
               log.push(`${attacker.name} fainted!`);
@@ -5155,8 +5182,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
             }
             if (_shieldKind === 'Spiky Shield') {
               const recoil = Math.max(1, Math.floor(attacker.maxHp / 8));
+              const hpBeforeShield = attacker.hp;
               attacker.hp = Math.max(0, attacker.hp - recoil);
               log.push(`${attacker.name} was hurt by Spiky Shield! [${recoil} dmg]`);
+              _recordEffectEvent(field, attacker, 'Spiky Shield', 'protect-contact-damage', hpBeforeShield, attacker.hp, {
+                source: 'engine protect contact rule',
+                rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+                damage_applied: Math.max(0, hpBeforeShield - attacker.hp)
+              });
               if (attacker.hp === 0) {
                 attacker.alive = false;
                 log.push(`${attacker.name} fainted!`);
@@ -5862,8 +5895,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (!['Rock','Steel','Ground'].includes(mon.types[0]) &&
             !['Rock','Steel','Ground'].includes(mon.types[1] || '')) {
           const sandDmg = Math.floor(mon.maxHp / 16);
+          const hpBeforeSand = mon.hp;
           mon.hp = Math.max(0, mon.hp - sandDmg);
           log.push(`${mon.name} is buffeted by the sandstorm! [${sandDmg} dmg]`);
+          _recordEffectEvent(field, mon, 'Sandstorm', 'weather-damage', hpBeforeSand, mon.hp, {
+            source: 'engine weather rule',
+            rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
+            damage_applied: Math.max(0, hpBeforeSand - mon.hp)
+          });
           if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'sandstorm' }); }
         }
       }
@@ -5873,8 +5912,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (_effectiveFieldWeather(field) === 'sun') {
       for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.ability === 'Solar Power')) {
         const solarPowerDmg = Math.floor(mon.maxHp / 8);
+        const hpBeforeSolar = mon.hp;
         mon.hp = Math.max(0, mon.hp - solarPowerDmg);
         log.push(`${mon.name} is hurt by its Solar Power! [${solarPowerDmg} dmg]`);
+        _recordEffectEvent(field, mon, 'Solar Power', 'ability-recoil', hpBeforeSolar, mon.hp, {
+          source: 'engine ability rule',
+          rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+          damage_applied: Math.max(0, hpBeforeSolar - mon.hp)
+        });
         if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'Solar Power' }); }
       }
     }
@@ -5882,8 +5927,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Burn damage
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.status === 'burn')) {
       const burnDmg = Math.floor(mon.maxHp / 16);
+      const hpBeforeBurn = mon.hp;
       mon.hp = Math.max(0, mon.hp - burnDmg);
       log.push(`${mon.name} is hurt by its burn! [${burnDmg} dmg]`);
+      _recordEffectEvent(field, mon, 'Burn', 'status-damage', hpBeforeBurn, mon.hp, {
+        source: 'engine status rule',
+        rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforeBurn - mon.hp)
+      });
       if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'burn' }); }
     }
 
@@ -5893,16 +5944,28 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Frostbite_(status_condition)
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.status === 'frostbite')) {
       const frostDmg = Math.max(1, Math.floor(mon.maxHp / 16));
+      const hpBeforeFrost = mon.hp;
       mon.hp = Math.max(0, mon.hp - frostDmg);
       log.push(`${mon.name} is hurt by frostbite! [${frostDmg} dmg]`);
+      _recordEffectEvent(field, mon, 'Frostbite', 'status-damage', hpBeforeFrost, mon.hp, {
+        source: 'engine status rule',
+        rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforeFrost - mon.hp)
+      });
       if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'frostbite' }); }
     }
 
     // T9j.4 (#41) — Poison residual (1/8 max HP). Cite: Bulbapedia Status; Spec §1.6.
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.status === 'poison')) {
       const poisonDmg = Math.max(1, Math.floor(mon.maxHp / 8));
+      const hpBeforePoison = mon.hp;
       mon.hp = Math.max(0, mon.hp - poisonDmg);
       log.push(`${mon.name} is hurt by poison! [${poisonDmg} dmg]`);
+      _recordEffectEvent(field, mon, 'Poison', 'status-damage', hpBeforePoison, mon.hp, {
+        source: 'engine status rule',
+        rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforePoison - mon.hp)
+      });
       if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'poison' }); }
     }
 
@@ -5912,8 +5975,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (!mon.toxicCounter || mon.toxicCounter < 1) mon.toxicCounter = 1;
       const n = Math.min(15, mon.toxicCounter);
       const toxicDmg = Math.max(1, Math.floor(mon.maxHp * n / 16));
+      const hpBeforeToxic = mon.hp;
       mon.hp = Math.max(0, mon.hp - toxicDmg);
       log.push(`${mon.name} is hurt by toxic! [${toxicDmg} dmg] (tick ${n}/16)`);
+      _recordEffectEvent(field, mon, 'Toxic', 'status-damage', hpBeforeToxic, mon.hp, {
+        source: 'engine status rule',
+        rule: { numerator: n, denominator: 16, basis: 'max_hp', rounding: 'down' },
+        damage_applied: Math.max(0, hpBeforeToxic - mon.hp)
+      });
       mon.toxicCounter++;
       if (mon.hp === 0) { mon.alive = false; log.push(`${mon.name} fainted!`); _recordKO(mon, { reason: 'toxic' }); }
     }
@@ -6032,9 +6101,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.perishSongTurns > 0)) {
       mon.perishSongTurns--;
       if (mon.perishSongTurns <= 0) {
+        const hpBeforePerish = mon.hp;
         mon.hp = 0;
         mon.alive = false;
         log.push(`${mon.name} perished due to Perish Song!`);
+        _recordEffectEvent(field, mon, 'Perish Song', 'perish-song-faint', hpBeforePerish, mon.hp, {
+          source: 'engine field-effect rule',
+          damage_applied: Math.max(0, hpBeforePerish - mon.hp)
+        });
         _recordKO(mon, { move: 'Perish Song', attacker: null, reason: 'perish' });
       }
     }
@@ -6631,8 +6705,10 @@ function runMegaTriggerSweep(teamA, teamB, bo, opts) {
 
 if (typeof window !== 'undefined') {
   window.ChampionsSim = window.ChampionsSim || {};
+  window.ChampionsSim.battle = window.ChampionsSim.battle || {};
   window.ChampionsSim.turnLog = window.ChampionsSim.turnLog || [];
   window.ChampionsSim.positionScore = positionScore;
   window.ChampionsSim.winProbabilityDelta = winProbabilityDelta;
   window.ChampionsSim.isRNGBlame = isRNGBlame;
+  window.ChampionsSim.battle.getMoveContactInfo = getMoveContactInfo;
 }
