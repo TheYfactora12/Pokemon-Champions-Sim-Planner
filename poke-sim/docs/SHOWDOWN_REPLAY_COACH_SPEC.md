@@ -844,3 +844,19 @@ Fields:
 - `contact_damage_events`: sampled contact-triggered damage rows with turn, actor, source, move, and effect kind.
 
 Acceptance rule: contact damage must have an effect row with HP before/after and the triggering move. `missing_move_metadata` should be 0 for moves that matter to contact coaching. Any unknown physical contact status should become a data task before using that replay as trusted coaching evidence.
+
+## QA Artifact Coverage Breakdown
+
+Schema addition: `coverage_breakdown`
+
+Purpose: prevent full-artifact QA totals from being confused with retained replay-card totals.
+
+The top-level `qa_coverage_summary` remains the full artifact summary for backward compatibility. New consumers should prefer the explicit breakdown:
+
+- `coverage_breakdown.retained_replay_card_summary`: only the retained replay cards exported under `retained.replay_cards`.
+- `coverage_breakdown.full_artifact_summary`: all included evidence, including retained replay cards plus targeted QA and tactical/branch sweep evidence.
+- `coverage_breakdown.targeted_sweep_summary`: only targeted QA sweep evidence.
+- `coverage_breakdown.forced_branch_matrix_summary`: the first forced branch matrix summary, kept for compatibility with existing single-opponent tooling.
+- `coverage_breakdown.tactical_sweep_summary`: all tactical sweep branch matrix summaries merged together.
+
+Acceptance rule: replay-card validation must use `retained_replay_card_summary`. Broader coverage claims can use `full_artifact_summary`, but reports must say that targeted and tactical sweep evidence may add totals beyond the retained replay-card count.

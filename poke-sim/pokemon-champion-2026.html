@@ -2333,8 +2333,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.79-faint-cause-evidence -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.79-faint-cause-evidence</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.80-artifact-summary-split -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.80-artifact-summary-split</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -2515,11 +2515,6 @@ table{border-collapse:collapse;width:100%}
           <option value="250">Deep 250 branches</option>
           <option value="all">All candidate branches (full coverage)</option>
         </select>
-      </div>
-
-      <div class="control-block">
-        <label class="control-label">Lead Pair</label>
-        <select class="select-input" id="lead-select"></select>
       </div>
 
       <button class="btn-primary" id="run-sim-btn">▶ Run Simulation</button>
@@ -20941,9 +20936,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.79-faint-cause-evidence';
+    return txt || 'v2.1.80-artifact-summary-split';
   } catch (e) {
-    return 'v2.1.79-faint-cause-evidence';
+    return 'v2.1.80-artifact-summary-split';
   }
 }
 
@@ -30269,6 +30264,16 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Legacy lead dropdown removed',
+      detail: 'v2.1.80 removes the unused Lead Pair dropdown from the main controls. Lead and bench selection now routes through the Bring picker only: Manual locks the selected lineup for the series, while Random explores legal bring combinations.'
+    },
+    {
+      status: 'done',
+      title: 'QA artifact summaries split',
+      detail: 'v2.1.80 adds coverage_breakdown so retained replay-card validation, full-artifact totals, targeted sweep evidence, and tactical sweep evidence are separated. qa_coverage_summary stays as the full-artifact summary for compatibility, while retained_replay_card_summary is the source of truth for the 240 replay-card totals.'
+    },
     {
       status: 'done',
       title: 'Faint cause evidence added',
