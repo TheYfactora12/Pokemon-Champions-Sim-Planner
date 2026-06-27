@@ -2333,8 +2333,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.80-artifact-summary-split -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.80-artifact-summary-split</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.81-lethal-faint-cause -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.81-lethal-faint-cause</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -9602,6 +9602,16 @@ function _recordEffectEvent(field, mon, move, kind, hpBefore, hpAfter, details) 
   return row;
 }
 
+function _recordActionDenialEvent(field, mon, move, kind, reason, details) {
+  return _recordEffectEvent(field, mon, move || reason || 'action-denial', kind || 'action-denial', mon && mon.hp, mon && mon.hp, Object.assign({
+    source: 'engine action gate',
+    action_denial: true,
+    skipped_move: true,
+    skipped_action_move: move || null,
+    volatile_status: reason || kind || 'action-denial'
+  }, details || {}));
+}
+
 // ============================================================
 // ABILITIES REGISTRY — T9j.8
 // Each entry declares the hooks an ability participates in. Handlers return
@@ -13679,7 +13689,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           const _flinch = FLINCH_MOVES[move];
           if (!_suppressSecondary && _flinch && !t.hasActed && rng() < _flinch.chance) {
             t._flinched = true;
-            log.push(`${t.name} flinched and couldn't move!`);
+            t._flinchSource = {
+              actor: attacker.name || null,
+              actor_key: _snapshotMonStableKey(attacker.side === field.playerSide ? 'player' : 'opponent', attacker),
+              move: move
+            };
+            _recordEffectEvent(field, t, move, 'flinch-applied', t.hp, t.hp, {
+              source: 'pokemon-showdown move metadata + engine rule',
+              source_actor: attacker.name || null,
+              source_actor_key: _snapshotMonStableKey(attacker.side === field.playerSide ? 'player' : 'opponent', attacker),
+              volatile_status: 'flinch',
+              action_denial: true,
+              skipped_move: false,
+              note: 'Flinch was applied. It only skips the target action if the target is still alive and has not moved when its action resolves.'
+            });
+            log.push(`${t.name} flinched!`);
           }
         }
       } else {
@@ -14116,6 +14140,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.8 (Refs #19) Flinch flag resets at top of turn so last-turn flinch
       // cannot bleed into this turn's action.
       m._flinched = false;
+      m._flinchSource = null;
     }
 
     // Check win condition
@@ -14217,6 +14242,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         } else {
           _cancelInterruptedCharge(action.attacker, action.move, 'frozen');
           log.push(`${action.attacker.name} is frozen solid!`);
+          _recordActionDenialEvent(field, action.attacker, action.move, 'frozen-skip', 'frozen', {
+            note: 'The Pokemon lost its action because it was frozen solid.'
+          });
           continue;
         }
       }
@@ -14240,6 +14268,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         } else {
           _cancelInterruptedCharge(action.attacker, action.move, 'sleep');
           log.push(`${action.attacker.name} is fast asleep!`);
+          _recordActionDenialEvent(field, action.attacker, action.move, 'sleep-skip', 'sleep', {
+            sleep_turns: action.attacker.sleepTurns || 0,
+            status_turns_remaining: action.attacker.statusTurns || 0,
+            note: 'The Pokemon lost its action because it remained asleep.'
+          });
           continue;
         }
       }
@@ -14248,6 +14281,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (action.attacker.status === 'paralysis' && rng() < 0.125) {
         _cancelInterruptedCharge(action.attacker, action.move, 'paralysis');
         log.push(`${action.attacker.name} is fully paralysed and can't move!`);
+        _recordActionDenialEvent(field, action.attacker, action.move, 'paralysis-skip', 'paralysis', {
+          note: 'The Pokemon lost its action because paralysis triggered a full-skip.'
+        });
         continue;
       }
       // T9j.8 (Refs #19) Flinch consumption: _flinched was set in a prior
@@ -14255,9 +14291,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // skips the action. Cleared on use; clearing of stale values happens in
       // the per-turn reset loop (m._flinched = false).
       if (action.attacker._flinched) {
+        const _flinchSource = action.attacker._flinchSource || {};
         _cancelInterruptedCharge(action.attacker, action.move, 'flinch');
         log.push(`${action.attacker.name} flinched and couldn't move!`);
+        _recordEffectEvent(field, action.attacker, _flinchSource.move || action.move || 'Flinch', 'flinch-skip', action.attacker.hp, action.attacker.hp, {
+          source: 'volatile flinch state',
+          source_actor: _flinchSource.actor || null,
+          source_actor_key: _flinchSource.actor_key || null,
+          volatile_status: 'flinch',
+          action_denial: true,
+          skipped_move: true,
+          skipped_action_move: action.move || null,
+          note: 'The Pokemon lost its action this turn because it flinched.'
+        });
         action.attacker._flinched = false;
+        action.attacker._flinchSource = null;
         action.attacker.hasActed = true;
         continue;
       }
@@ -14266,8 +14314,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (rng() < (1 / 3)) {
           _cancelInterruptedCharge(action.attacker, action.move, 'confusion');
           const confusionDmg = _confusionSelfHitDamage(action.attacker, field, rng);
+          const hpBeforeConfusion = action.attacker.hp;
           action.attacker.hp = Math.max(0, action.attacker.hp - confusionDmg);
           log.push(`${action.attacker.name} hurt itself in its confusion! [${confusionDmg} dmg]`);
+          _recordEffectEvent(field, action.attacker, 'Confusion', 'confusion-self-hit', hpBeforeConfusion, action.attacker.hp, {
+            source: 'volatile confusion state',
+            action_denial: true,
+            skipped_move: true,
+            skipped_action_move: action.move || null,
+            volatile_status: 'confusion',
+            damage_applied: confusionDmg,
+            calculated_effect_damage: confusionDmg,
+            note: 'The Pokemon lost its selected action and damaged itself because confusion triggered.'
+          });
           if (action.attacker.hp === 0) {
             action.attacker.alive = false;
             log.push(`${action.attacker.name} fainted!`);
@@ -20936,9 +20995,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.80-artifact-summary-split';
+    return txt || 'v2.1.81-lethal-faint-cause';
   } catch (e) {
-    return 'v2.1.80-artifact-summary-split';
+    return 'v2.1.81-lethal-faint-cause';
   }
 }
 
@@ -24611,6 +24670,13 @@ function csQaBlankMechanicsSeen() {
     screen_reduction: 0,
     priority_actions: 0,
     speed_order_details: 0,
+    action_denial_events: 0,
+    flinch_applied: 0,
+    flinch_skip: 0,
+    frozen_skip: 0,
+    sleep_skip: 0,
+    paralysis_skip: 0,
+    confusion_self_hit: 0,
     stat_boost_snapshots: 0,
     weather_active: 0,
     trick_room_active: 0,
@@ -25497,10 +25563,13 @@ function csBuildFaintCauseSummary(turnLog) {
       var afterPct = hasPostHp ? Number(postHp[key]) : 0;
       if (!Number.isFinite(afterPct) || afterPct >= beforePct) return;
       out.hp_drops += 1;
-      var match = evidence.filter(function(row) { return row && row.key === key && Number(row.amount || 0) > 0; })[0] || null;
+      var matches = evidence.filter(function(row) { return row && row.key === key && Number(row.amount || 0) > 0; });
       if (afterPct <= 0) {
+        var lethalMatch = matches.filter(function(row) {
+          return Number(row.hp_after || 0) <= 0;
+        })[0] || null;
         out.total_faints += 1;
-        if (match) {
+        if (lethalMatch) {
           out.explained_faints += 1;
           out.faint_causes.push(Object.assign({
             turn: turn.turn || i + 1,
@@ -25508,8 +25577,8 @@ function csBuildFaintCauseSummary(turnLog) {
             stable_key: key,
             hp_pct_before: beforePct,
             hp_pct_after: afterPct,
-            cause_text: (names[key] || key) + ' fainted because ' + match.explanation
-          }, match));
+            cause_text: (names[key] || key) + ' fainted because ' + lethalMatch.explanation
+          }, lethalMatch));
         } else {
           out.unexplained_faints += 1;
           out.unexplained.push({
@@ -25518,10 +25587,10 @@ function csBuildFaintCauseSummary(turnLog) {
             stable_key: key,
             hp_pct_before: beforePct,
             hp_pct_after: afterPct,
-            issue: 'faint_without_damage_or_effect_evidence'
+            issue: matches.length ? 'faint_without_lethal_damage_or_effect_evidence' : 'faint_without_damage_or_effect_evidence'
           });
         }
-      } else if (!match) {
+      } else if (!matches.length) {
         out.unexplained_hp_drops += 1;
         out.unexplained.push({
           turn: turn.turn || i + 1,
@@ -25821,6 +25890,14 @@ function csBuildQaCoverageSummary(turnLog, opts) {
       var kind = effect.effect_kind || 'unknown';
       csQaInc(effectKinds, kind);
       csQaInc(effectMoves, effect.move || 'unknown');
+      var lowerKind = String(kind || '').toLowerCase();
+      if (effect.action_denial) mechanics.action_denial_events += 1;
+      if (lowerKind === 'flinch-applied') mechanics.flinch_applied += 1;
+      else if (lowerKind === 'flinch-skip') mechanics.flinch_skip += 1;
+      else if (lowerKind === 'frozen-skip') mechanics.frozen_skip += 1;
+      else if (lowerKind === 'sleep-skip') mechanics.sleep_skip += 1;
+      else if (lowerKind === 'paralysis-skip') mechanics.paralysis_skip += 1;
+      else if (lowerKind === 'confusion-self-hit') mechanics.confusion_self_hit += 1;
       if (csQaEffectKindMatches(kind, 'recoil')) mechanics.recoil += 1;
       if (csQaEffectKindMatches(kind, 'drain-heal')) mechanics.drain_heal += 1;
       if (csQaIsDirectRecoveryKind(kind)) mechanics.recovery += 1;
@@ -30298,6 +30375,16 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Lethal faint cause matching fixed',
+      detail: 'v2.1.81 requires faint_cause_summary to match the lethal damage/effect row that actually reaches 0 HP. Earlier chip on the same Pokemon can explain HP loss, but it cannot be reported as the faint cause. The same fix records action-denial evidence for flinch, sleep, freeze, paralysis, and confusion self-hit, including applied state versus actually skipped move.'
+    },
+    {
+      status: 'planned',
+      title: 'Replay board-state badges',
+      detail: 'Next replay UI pass should show field setup and Pokemon conditions as visible timeline chips/badges: Tailwind, Trick Room, weather, terrain, screens, Protect/Guard, major status, volatile/action-denial states such as flinch, and remaining turns. Players should not need raw JSON to know board condition on each turn.'
+    },
     {
       status: 'done',
       title: 'Legacy lead dropdown removed',

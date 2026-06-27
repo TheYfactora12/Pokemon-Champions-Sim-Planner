@@ -381,6 +381,25 @@ The replay coach must explain why a Pokemon went down. If a Pokemon had 1 HP and
 
 The source-of-truth field is `faint_cause_summary`. It counts total faints, explained faints, unexplained faints, HP drops, and unexplained HP drops. A clean replay should drive unexplained counts toward zero.
 
+For faint explanations, the matching evidence must be lethal. If a Pokemon took chip damage and then later fainted on the same turn, the coach must name the damage or effect row that actually reached 0 HP. Nonlethal chip can explain an HP drop, but it cannot be used as the faint cause.
+
+Flinch is different from burn, poison, paralysis, sleep, or frostbite. It is a one-turn action-denial condition. The replay should separate two facts:
+
+- `flinch-applied`: a move such as Fake Out successfully applied the flinch state.
+- `flinch-skip`: the target was still alive when its action resolved, so it actually lost its move that turn.
+
+If the flinched Pokemon faints before its action, the replay can say the flinch was applied, but it should not claim the Pokemon skipped a move.
+
+## Replay Board-State Badges
+
+Players should be able to understand the board by looking at the replay, not by reading raw JSON. Each replay turn should visibly show:
+
+- field setup: Tailwind, Trick Room, weather, terrain, screens, Protect, Guard moves, and remaining turns when known.
+- Pokemon conditions: burn, poison, toxic, paralysis, sleep, frozen/frostbite, confusion, flinch, Perish Song, Leech Seed, Substitute, and similar visible state.
+- action denial: why a Pokemon did not move, such as flinch, sleep, full paralysis, freeze, no valid target, Protect, or fainted before action.
+
+The coaching standard is: if a condition changed the turn, the replay timeline should show it as a readable badge or chip.
+
 ## Contact Move Audit
 
 Some effects only happen when a move makes contact. Rough Skin and Spiky Shield are good examples: the damage is not just random chip; it happens because the attacker touched the opponent with a contact move.

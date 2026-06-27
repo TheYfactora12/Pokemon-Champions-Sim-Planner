@@ -820,7 +820,34 @@ Fields:
 - `faint_causes`: human-readable cause rows, including move/effect, damage amount, HP before, and HP after.
 - `unexplained`: QA rows that must be fixed before trusting coaching for that replay.
 
-Acceptance rule: QA artifacts should trend toward `unexplained_faints: 0` and `unexplained_hp_drops: 0`. Any nonzero row is a replay-truth bug or an unsupported effect path that needs structured logging.
+Acceptance rule: QA artifacts should trend toward `unexplained_faints: 0` and `unexplained_hp_drops: 0`. Any nonzero row is a replay-truth bug or an unsupported effect path that needs structured logging. A faint explanation must match lethal structured evidence where HP reaches 0. Earlier nonlethal chip on the same Pokemon can explain an HP drop, but it must not be used as the faint cause.
+
+## Action-Denial Evidence
+
+Purpose: prove why a Pokemon did or did not act on a turn.
+
+Required structured rows:
+
+- `flinch-applied`: a move or effect applied flinch to the target.
+- `flinch-skip`: the target was still alive when its action resolved and actually lost its move.
+- `sleep-skip`: the selected action was skipped because the Pokemon remained asleep.
+- `frozen-skip`: the selected action was skipped because the Pokemon stayed frozen.
+- `paralysis-skip`: the selected action was skipped because full paralysis triggered.
+- `confusion-self-hit`: the selected action was skipped and the Pokemon damaged itself.
+
+Acceptance rule: action denial must not exist only as replay text. Every skipped selected action should have an `effect_events` row with `action_denial: true`, `skipped_move: true`, `skipped_action_move`, `volatile_status`, and any HP delta caused by the denial. State application and action loss must stay separate: a Pokemon can be flinched and then faint before acting, so `flinch-applied` alone must not be reported as a skipped move.
+
+## Replay Board-State Visibility
+
+Purpose: let QA and players challenge the board condition after any play without reading raw JSON.
+
+Replay turns should expose:
+
+- field state: Tailwind, Trick Room, weather, terrain, screens, Protect-family states, Guard-family states, and remaining turns where known.
+- Pokemon state: HP, major status, volatile/action-denial status, stat stages, speed-control modifiers, and recent effect tags for that turn.
+- evidence access: compact chips on Pokemon cards plus hover/click detail, backed by the same downloaded JSON rows.
+
+Acceptance rule: a replay card should make the visible board state explainable from the turn snapshot and structured event rows. If a player asks "why did this Pokemon move slower, skip, survive, faint, or lose HP?", the answer should be visible in the replay UI and reproducible from the exported artifact.
 
 ## Contact Move Audit
 

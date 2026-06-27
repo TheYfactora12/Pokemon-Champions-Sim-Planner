@@ -1202,6 +1202,16 @@ function _recordEffectEvent(field, mon, move, kind, hpBefore, hpAfter, details) 
   return row;
 }
 
+function _recordActionDenialEvent(field, mon, move, kind, reason, details) {
+  return _recordEffectEvent(field, mon, move || reason || 'action-denial', kind || 'action-denial', mon && mon.hp, mon && mon.hp, Object.assign({
+    source: 'engine action gate',
+    action_denial: true,
+    skipped_move: true,
+    skipped_action_move: move || null,
+    volatile_status: reason || kind || 'action-denial'
+  }, details || {}));
+}
+
 // ============================================================
 // ABILITIES REGISTRY — T9j.8
 // Each entry declares the hooks an ability participates in. Handlers return
@@ -5279,7 +5289,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           const _flinch = FLINCH_MOVES[move];
           if (!_suppressSecondary && _flinch && !t.hasActed && rng() < _flinch.chance) {
             t._flinched = true;
-            log.push(`${t.name} flinched and couldn't move!`);
+            t._flinchSource = {
+              actor: attacker.name || null,
+              actor_key: _snapshotMonStableKey(attacker.side === field.playerSide ? 'player' : 'opponent', attacker),
+              move: move
+            };
+            _recordEffectEvent(field, t, move, 'flinch-applied', t.hp, t.hp, {
+              source: 'pokemon-showdown move metadata + engine rule',
+              source_actor: attacker.name || null,
+              source_actor_key: _snapshotMonStableKey(attacker.side === field.playerSide ? 'player' : 'opponent', attacker),
+              volatile_status: 'flinch',
+              action_denial: true,
+              skipped_move: false,
+              note: 'Flinch was applied. It only skips the target action if the target is still alive and has not moved when its action resolves.'
+            });
+            log.push(`${t.name} flinched!`);
           }
         }
       } else {
@@ -5716,6 +5740,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // T9j.8 (Refs #19) Flinch flag resets at top of turn so last-turn flinch
       // cannot bleed into this turn's action.
       m._flinched = false;
+      m._flinchSource = null;
     }
 
     // Check win condition
@@ -5817,6 +5842,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         } else {
           _cancelInterruptedCharge(action.attacker, action.move, 'frozen');
           log.push(`${action.attacker.name} is frozen solid!`);
+          _recordActionDenialEvent(field, action.attacker, action.move, 'frozen-skip', 'frozen', {
+            note: 'The Pokemon lost its action because it was frozen solid.'
+          });
           continue;
         }
       }
@@ -5840,6 +5868,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         } else {
           _cancelInterruptedCharge(action.attacker, action.move, 'sleep');
           log.push(`${action.attacker.name} is fast asleep!`);
+          _recordActionDenialEvent(field, action.attacker, action.move, 'sleep-skip', 'sleep', {
+            sleep_turns: action.attacker.sleepTurns || 0,
+            status_turns_remaining: action.attacker.statusTurns || 0,
+            note: 'The Pokemon lost its action because it remained asleep.'
+          });
           continue;
         }
       }
@@ -5848,6 +5881,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (action.attacker.status === 'paralysis' && rng() < 0.125) {
         _cancelInterruptedCharge(action.attacker, action.move, 'paralysis');
         log.push(`${action.attacker.name} is fully paralysed and can't move!`);
+        _recordActionDenialEvent(field, action.attacker, action.move, 'paralysis-skip', 'paralysis', {
+          note: 'The Pokemon lost its action because paralysis triggered a full-skip.'
+        });
         continue;
       }
       // T9j.8 (Refs #19) Flinch consumption: _flinched was set in a prior
@@ -5855,9 +5891,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // skips the action. Cleared on use; clearing of stale values happens in
       // the per-turn reset loop (m._flinched = false).
       if (action.attacker._flinched) {
+        const _flinchSource = action.attacker._flinchSource || {};
         _cancelInterruptedCharge(action.attacker, action.move, 'flinch');
         log.push(`${action.attacker.name} flinched and couldn't move!`);
+        _recordEffectEvent(field, action.attacker, _flinchSource.move || action.move || 'Flinch', 'flinch-skip', action.attacker.hp, action.attacker.hp, {
+          source: 'volatile flinch state',
+          source_actor: _flinchSource.actor || null,
+          source_actor_key: _flinchSource.actor_key || null,
+          volatile_status: 'flinch',
+          action_denial: true,
+          skipped_move: true,
+          skipped_action_move: action.move || null,
+          note: 'The Pokemon lost its action this turn because it flinched.'
+        });
         action.attacker._flinched = false;
+        action.attacker._flinchSource = null;
         action.attacker.hasActed = true;
         continue;
       }
@@ -5866,8 +5914,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (rng() < (1 / 3)) {
           _cancelInterruptedCharge(action.attacker, action.move, 'confusion');
           const confusionDmg = _confusionSelfHitDamage(action.attacker, field, rng);
+          const hpBeforeConfusion = action.attacker.hp;
           action.attacker.hp = Math.max(0, action.attacker.hp - confusionDmg);
           log.push(`${action.attacker.name} hurt itself in its confusion! [${confusionDmg} dmg]`);
+          _recordEffectEvent(field, action.attacker, 'Confusion', 'confusion-self-hit', hpBeforeConfusion, action.attacker.hp, {
+            source: 'volatile confusion state',
+            action_denial: true,
+            skipped_move: true,
+            skipped_action_move: action.move || null,
+            volatile_status: 'confusion',
+            damage_applied: confusionDmg,
+            calculated_effect_damage: confusionDmg,
+            note: 'The Pokemon lost its selected action and damaged itself because confusion triggered.'
+          });
           if (action.attacker.hp === 0) {
             action.attacker.alive = false;
             log.push(`${action.attacker.name} fainted!`);

@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.80-artifact-summary-split';
+    return txt || 'v2.1.81-lethal-faint-cause';
   } catch (e) {
-    return 'v2.1.80-artifact-summary-split';
+    return 'v2.1.81-lethal-faint-cause';
   }
 }
 
@@ -3791,6 +3791,13 @@ function csQaBlankMechanicsSeen() {
     screen_reduction: 0,
     priority_actions: 0,
     speed_order_details: 0,
+    action_denial_events: 0,
+    flinch_applied: 0,
+    flinch_skip: 0,
+    frozen_skip: 0,
+    sleep_skip: 0,
+    paralysis_skip: 0,
+    confusion_self_hit: 0,
     stat_boost_snapshots: 0,
     weather_active: 0,
     trick_room_active: 0,
@@ -4677,10 +4684,13 @@ function csBuildFaintCauseSummary(turnLog) {
       var afterPct = hasPostHp ? Number(postHp[key]) : 0;
       if (!Number.isFinite(afterPct) || afterPct >= beforePct) return;
       out.hp_drops += 1;
-      var match = evidence.filter(function(row) { return row && row.key === key && Number(row.amount || 0) > 0; })[0] || null;
+      var matches = evidence.filter(function(row) { return row && row.key === key && Number(row.amount || 0) > 0; });
       if (afterPct <= 0) {
+        var lethalMatch = matches.filter(function(row) {
+          return Number(row.hp_after || 0) <= 0;
+        })[0] || null;
         out.total_faints += 1;
-        if (match) {
+        if (lethalMatch) {
           out.explained_faints += 1;
           out.faint_causes.push(Object.assign({
             turn: turn.turn || i + 1,
@@ -4688,8 +4698,8 @@ function csBuildFaintCauseSummary(turnLog) {
             stable_key: key,
             hp_pct_before: beforePct,
             hp_pct_after: afterPct,
-            cause_text: (names[key] || key) + ' fainted because ' + match.explanation
-          }, match));
+            cause_text: (names[key] || key) + ' fainted because ' + lethalMatch.explanation
+          }, lethalMatch));
         } else {
           out.unexplained_faints += 1;
           out.unexplained.push({
@@ -4698,10 +4708,10 @@ function csBuildFaintCauseSummary(turnLog) {
             stable_key: key,
             hp_pct_before: beforePct,
             hp_pct_after: afterPct,
-            issue: 'faint_without_damage_or_effect_evidence'
+            issue: matches.length ? 'faint_without_lethal_damage_or_effect_evidence' : 'faint_without_damage_or_effect_evidence'
           });
         }
-      } else if (!match) {
+      } else if (!matches.length) {
         out.unexplained_hp_drops += 1;
         out.unexplained.push({
           turn: turn.turn || i + 1,
@@ -5001,6 +5011,14 @@ function csBuildQaCoverageSummary(turnLog, opts) {
       var kind = effect.effect_kind || 'unknown';
       csQaInc(effectKinds, kind);
       csQaInc(effectMoves, effect.move || 'unknown');
+      var lowerKind = String(kind || '').toLowerCase();
+      if (effect.action_denial) mechanics.action_denial_events += 1;
+      if (lowerKind === 'flinch-applied') mechanics.flinch_applied += 1;
+      else if (lowerKind === 'flinch-skip') mechanics.flinch_skip += 1;
+      else if (lowerKind === 'frozen-skip') mechanics.frozen_skip += 1;
+      else if (lowerKind === 'sleep-skip') mechanics.sleep_skip += 1;
+      else if (lowerKind === 'paralysis-skip') mechanics.paralysis_skip += 1;
+      else if (lowerKind === 'confusion-self-hit') mechanics.confusion_self_hit += 1;
       if (csQaEffectKindMatches(kind, 'recoil')) mechanics.recoil += 1;
       if (csQaEffectKindMatches(kind, 'drain-heal')) mechanics.drain_heal += 1;
       if (csQaIsDirectRecoveryKind(kind)) mechanics.recovery += 1;
@@ -9478,6 +9496,16 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Lethal faint cause matching fixed',
+      detail: 'v2.1.81 requires faint_cause_summary to match the lethal damage/effect row that actually reaches 0 HP. Earlier chip on the same Pokemon can explain HP loss, but it cannot be reported as the faint cause. The same fix records action-denial evidence for flinch, sleep, freeze, paralysis, and confusion self-hit, including applied state versus actually skipped move.'
+    },
+    {
+      status: 'planned',
+      title: 'Replay board-state badges',
+      detail: 'Next replay UI pass should show field setup and Pokemon conditions as visible timeline chips/badges: Tailwind, Trick Room, weather, terrain, screens, Protect/Guard, major status, volatile/action-denial states such as flinch, and remaining turns. Players should not need raw JSON to know board condition on each turn.'
+    },
     {
       status: 'done',
       title: 'Legacy lead dropdown removed',
