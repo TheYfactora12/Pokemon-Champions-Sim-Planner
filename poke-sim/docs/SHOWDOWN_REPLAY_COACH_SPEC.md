@@ -192,6 +192,9 @@ The first `coach_brain_summary` output contract:
     "positive_rate_pct": null,
     "read": "Tailwind is available, but too many windows are not becoming pressure."
   },
+  "observed_pattern": "Tailwind is available, but too many windows are not becoming pressure.",
+  "root_problem": "Speed is being created, but the next actions are not consistently turning it into material, pressure, or preservation.",
+  "risk_if_unchanged": "If nothing changes, the player may keep spending turns on Tailwind while opponents trade damage, Protect, or reposition through it.",
   "best_strength": {
     "category": "speed_control_contest",
     "label": "Speed-Control Contest",
@@ -202,8 +205,15 @@ The first `coach_brain_summary` output contract:
     "positive_rate_pct": null,
     "read": "Speed-control answers are a current strength."
   },
+  "recommended_solution": "Only commit Tailwind when the next two turns can create damage, a KO, a forced Protect, or preservation of a win condition.",
   "next_game_plan": "Only commit Tailwind when the next two turns can create damage, a KO, a forced Protect, or preservation of a win condition.",
+  "expected_result_if_fixed": "If fixed, Tailwind conversion rate should rise and more games should show early pressure after speed is established.",
   "practice_drill": "Play 10 reps where every Tailwind must be followed by a planned two-turn pressure sequence.",
+  "learning_direction": {
+    "next_layer": "coach_memory",
+    "purpose": "Compare this summary against future sessions and broader shared sim evidence before recommending move, lineup, or team changes.",
+    "shared_data_boundary": "Use aggregated, non-personal sim evidence and matchup patterns; do not expose another player private team or identity."
+  },
   "boundary": "Evidence-bound speed-control coaching. This does not claim best move or best team until alternative branches are compared."
 }
 ```
@@ -225,6 +235,17 @@ Memory requirements for later builds:
 - Track whether a tactical category is improving, stable, or getting worse.
 - Prefer repeated evidence over one-game conclusions.
 - Separate team weakness from pilot execution weakness.
+- Learn from aggregated shared sim evidence without exposing private user identity or hidden custom teams.
+- Use shared evidence to propose tests, not absolute prescriptions.
+
+Shared learning recommendation rules:
+
+- Recommend a move change only when legal move alternatives have branch evidence.
+- Recommend a lineup change only when same-six lineup matrix evidence exists.
+- Recommend a lead change only when lead matrix evidence exists.
+- Recommend a strategy change when tactical windows repeatedly fail or convert.
+- Show sample size and confidence beside every recommendation.
+- Keep "try this next" separate from "this is proven best."
 
 Example memory read:
 

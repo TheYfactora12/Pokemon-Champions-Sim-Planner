@@ -232,6 +232,17 @@ The coaching brain should be strict:
 - It must explain confidence.
 - It must not say "this was the best possible move" until alternative branches were checked.
 
+The coaching brain should follow this learning loop:
+
+- `Observe`: collect sim logs, replay logs, QA artifacts, turn states, damage, speed states, KOs, and position changes.
+- `Structure`: turn raw events into tactical labels.
+- `Count`: turn labels into denominators and rates.
+- `Diagnose`: name the repeated pattern.
+- `Predict Risk`: explain what keeps happening if nothing changes.
+- `Prescribe`: give one next-game solution.
+- `Drill`: turn the solution into practice reps.
+- `Remember`: compare future sessions against the current pattern.
+
 The first coaching brain scope is speed control:
 
 - Player Tailwind
@@ -255,12 +266,30 @@ Later coaching brain layers should add:
 
 Memory should help the app learn from repeated use.
 
+The long-term product goal is shared learning from simulator data.
+
+That means the app can learn from many simulations across many users, but it must do that safely:
+
+- use aggregated matchup and archetype patterns
+- do not expose another player's private team or identity
+- separate public/preloaded team data from private custom team data
+- use shared evidence to improve recommendations, not to copy hidden teams
+- label recommendations by confidence and sample size
+
 It should remember patterns like:
 
 - "This team keeps setting Trick Room but not converting it."
 - "This player defends opponent Tailwind well."
 - "This matchup keeps punishing the same lead."
 - "Across three sessions, Tailwind conversion improved from 36% to 52%."
+
+Shared learning can later support recommendations like:
+
+- move options to test
+- lineup swaps to try
+- lead pairs that perform better into an archetype
+- speed-control plans that convert more often
+- practice drills based on repeated mistakes
 
 Memory should be grouped by:
 

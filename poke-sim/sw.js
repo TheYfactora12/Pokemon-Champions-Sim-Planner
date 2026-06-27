@@ -90,7 +90,8 @@
 // v104-tailwind-window-labels [2026-06-27] - Classify first visible active Tailwind windows as converted or without pressure.
 // v105-decision-ledger [2026-06-27] - Add first Decision Opportunity Ledger export from tactical speed labels.
 // v106-coach-brain-summary [2026-06-27] - Add evidence-bound coach brain summary over decision ledger.
-const CACHE_NAME = 'champions-sim-v106-coach-brain-summary';
+// v107-coach-brain-loop [2026-06-27] - Add observed pattern, root problem, risk, solution, expected result, and shared-learning direction.
+const CACHE_NAME = 'champions-sim-v107-coach-brain-loop';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

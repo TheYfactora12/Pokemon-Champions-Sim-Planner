@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.74-coach-brain-summary';
+    return txt || 'v2.1.75-coach-brain-loop';
   } catch (e) {
-    return 'v2.1.74-coach-brain-summary';
+    return 'v2.1.75-coach-brain-loop';
   }
 }
 
@@ -4176,6 +4176,33 @@ function csCoachBrainIssueText(row) {
   return row.label + ' is the highest-risk tactical category.';
 }
 
+function csCoachBrainRootProblem(row) {
+  if (!row) return 'Not enough structured evidence yet.';
+  if (row.id === 'player_tailwind') return 'Speed is being created, but the next actions are not consistently turning it into material, pressure, or preservation.';
+  if (row.id === 'opponent_tailwind_defense') return 'The team needs a clearer plan for the turns after the opponent wins speed.';
+  if (row.id === 'trick_room') return 'The setup turn is not consistently paired with a safe slow attacker or immediate payoff.';
+  if (row.id === 'speed_control_contest') return 'The answer to speed control is being found, but the follow-up conversion still needs proof.';
+  return 'The measured tactical category is producing too many negative outcomes.';
+}
+
+function csCoachBrainRisk(row) {
+  if (!row) return 'If no more data is collected, the app should not make a confident coaching claim.';
+  if (row.id === 'player_tailwind') return 'If nothing changes, the player may keep spending turns on Tailwind while opponents trade damage, Protect, or reposition through it.';
+  if (row.id === 'opponent_tailwind_defense') return 'If nothing changes, fast opposing teams can keep using Tailwind windows to force bad trades before the player stabilizes.';
+  if (row.id === 'trick_room') return 'If nothing changes, Trick Room turns can keep being spent without enough damage, KOs, or preserved win conditions.';
+  if (row.id === 'speed_control_contest') return 'If nothing changes, speed-control answers may stop the opponent temporarily without creating a winning board.';
+  return 'If nothing changes, this pattern can continue costing tempo and win condition clarity.';
+}
+
+function csCoachBrainExpectedResult(row) {
+  if (!row) return 'More structured samples should make the next recommendation more reliable.';
+  if (row.id === 'player_tailwind') return 'If fixed, Tailwind conversion rate should rise and more games should show early pressure after speed is established.';
+  if (row.id === 'opponent_tailwind_defense') return 'If fixed, opponent Tailwind windows should create fewer negative position swings.';
+  if (row.id === 'trick_room') return 'If fixed, Trick Room windows should show more immediate material gain or safer preservation of the slow attacker.';
+  if (row.id === 'speed_control_contest') return 'If fixed, reversals and neutralizations should be followed by damage, KOs, or safer board states.';
+  return 'If fixed, the category positive rate should improve in later sessions.';
+}
+
 function csCoachBrainStrengthText(row) {
   if (!row) return 'No clear strength yet.';
   if (row.id === 'player_tailwind') return 'Player Tailwind is the cleanest current speed-control win path.';
@@ -4238,6 +4265,9 @@ function csBuildCoachBrainSummary(ledger, opts) {
       positive_rate_pct: issue.positive_rate_pct,
       read: csCoachBrainIssueText(issue)
     } : null,
+    observed_pattern: issue ? csCoachBrainIssueText(issue) : 'No reliable repeated tactical pattern yet.',
+    root_problem: csCoachBrainRootProblem(issue),
+    risk_if_unchanged: csCoachBrainRisk(issue),
     best_strength: strength ? {
       category: strength.id,
       label: strength.label,
@@ -4248,8 +4278,15 @@ function csBuildCoachBrainSummary(ledger, opts) {
       positive_rate_pct: strength.positive_rate_pct,
       read: csCoachBrainStrengthText(strength)
     } : null,
+    recommended_solution: csCoachBrainNextPlan(issue),
     next_game_plan: csCoachBrainNextPlan(issue),
+    expected_result_if_fixed: csCoachBrainExpectedResult(issue),
     practice_drill: csCoachBrainDrill(issue),
+    learning_direction: {
+      next_layer: 'coach_memory',
+      purpose: 'Compare this summary against future sessions and broader shared sim evidence before recommending move, lineup, or team changes.',
+      shared_data_boundary: 'Use aggregated, non-personal sim evidence and matchup patterns; do not expose another player private team or identity.'
+    },
     boundary: 'Evidence-bound speed-control coaching. This does not claim best move or best team until alternative branches are compared.'
   };
 }
@@ -8755,6 +8792,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Coach Brain strategic loop added',
+      detail: 'v2.1.75 extends coach_brain_summary with observed_pattern, root_problem, risk_if_unchanged, recommended_solution, expected_result_if_fixed, and learning_direction so the sim can explain what is happening, what risk repeats, what to change, and what improvement should look like.'
+    },
     {
       status: 'done',
       title: 'Coach Brain Summary added',
