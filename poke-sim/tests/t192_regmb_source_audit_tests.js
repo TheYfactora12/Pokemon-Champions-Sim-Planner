@@ -177,6 +177,31 @@ T('10. analysis payload carries ruleset poisoning guard metadata', () => {
   inc(ui, 'unknown_ruleset_do_not_train_or_rank');
 });
 
+T('11. Reg M-B review coverage sections remain blocked from runtime learning', () => {
+  truthy(Array.isArray(conversion.coverageSections), 'missing Reg M-B coverage sections');
+  truthy(conversion.coverageSections.length === 4, 'expected four coverage sections');
+  const covered = [];
+  conversion.coverageSections.forEach((section) => {
+    truthy(section.rulesetId === 'champions_reg_m_b_doubles_bo3_source_review', 'coverage section has wrong ruleset');
+    truthy(section.runtimePromotable === false, 'coverage section should not be runtime-promotable');
+    truthy(section.learningEligible === false, 'coverage section should block learning');
+    truthy(section.poisoningGuard === 'review_only_do_not_train_or_rank', 'coverage section missing poisoning guard');
+    truthy(section.selectorPolicy === 'hidden_from_legal_sim', 'coverage section should stay hidden from legal sim');
+    section.coveredMegaForms.forEach((name) => covered.push(name));
+  });
+  REGMB_NEW_MEGAS.forEach((name) => truthy(covered.includes(name), 'coverage sections missing ' + name));
+});
+
+T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
+  inc(ui, 'function csTeamRulesetEvidence');
+  inc(ui, 'function csTeamRulesetTags');
+  inc(ui, 'function csRenderTeamRulesetBadges');
+  inc(ui, "filter === 'regmb_review'");
+  inc(ui, "label:'Reg M-B Review'");
+  inc(ui, 'team.metadata.poisoning_guard');
+  inc(ui, 'not-runtime-promoted');
+});
+
 if (fail) {
   console.error('\nReg M-B source audit: ' + pass + ' pass, ' + fail + ' fail');
   process.exit(1);

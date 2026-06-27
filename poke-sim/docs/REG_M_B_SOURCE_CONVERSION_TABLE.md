@@ -89,6 +89,19 @@ Ruleset data must protect downstream learning.
 - Historical implemented lanes can remain replayable, but coaching must label them as historical so current-meta recommendations do not silently mix seasons.
 - No aggregate matchup stat, Battle Sensei trend, or branch-memory recommendation should combine rows from different implemented rulesets unless the report explicitly asks for cross-regulation comparison.
 
+## Review-Only Coverage Sections
+
+Reg M-B coverage sections are planning fixtures, not playable trusted teams. They exist so contributors can see which new Mega rows still need stones, stats, typing, abilities, sprites, learnsets, and positive/negative fixtures.
+
+| Section | Covered new Mega rows | Runtime policy |
+|---|---|---|
+| Reg M-B review: Raichu plus starter Megas | Raichu-Mega-X, Raichu-Mega-Y, Sceptile-Mega, Blaziken-Mega, Swampert-Mega | Hidden from legal sim; do not train/rank |
+| Reg M-B review: Steel and physical pressure Megas | Mawile-Mega, Metagross-Mega, Staraptor-Mega, Scolipede-Mega | Hidden from legal sim; do not train/rank |
+| Reg M-B review: unusual matchup Megas | Scrafty-Mega, Eelektross-Mega, Pyroar-Mega, Malamar-Mega | Hidden from legal sim; do not train/rank |
+| Reg M-B review: poison and formation-pressure Megas | Barbaracle-Mega, Dragalge-Mega, Falinks-Mega | Hidden from legal sim; do not train/rank |
+
+The UI can show regulation tags and review lanes, but source-review rows must remain blocked from normal selectors, DB learning, and coaching recommendations until promotion gates pass.
+
 ## Next Implementation Slices
 
 1. Convert `Reg-M-B-Pokemon1.jpg` and `Reg-M-B-Pokemon2.jpg` into explicit species/form rows with reviewer notes.

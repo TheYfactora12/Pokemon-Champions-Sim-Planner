@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.87-ruleset-lifecycle';
+    return txt || 'v2.1.88-ruleset-team-sections';
   } catch (e) {
-    return 'v2.1.87-ruleset-lifecycle';
+    return 'v2.1.88-ruleset-team-sections';
   }
 }
 
@@ -733,6 +733,31 @@ function normalizeTeamRecordForSim(teamKey, team) {
   var rulesetId = team.ruleset_id || team.metadata.ruleset_id || 'champions_reg_m_doubles_bo3';
   team.ruleset_id = team.ruleset_id || rulesetId;
   team.metadata.ruleset_id = team.metadata.ruleset_id || rulesetId;
+  var rulesetEvidence = typeof getRulesetEvidencePolicy === 'function'
+    ? getRulesetEvidencePolicy(rulesetId)
+    : null;
+  if (rulesetEvidence) {
+    team.metadata.ruleset_label = team.metadata.ruleset_label || rulesetEvidence.ruleset_label;
+    team.metadata.ruleset_status = team.metadata.ruleset_status || rulesetEvidence.ruleset_status;
+    team.metadata.runtime_promotable = (team.metadata.runtime_promotable !== undefined)
+      ? team.metadata.runtime_promotable
+      : rulesetEvidence.runtime_promotable;
+    team.metadata.learning_eligibility = team.metadata.learning_eligibility || rulesetEvidence.learning_eligibility;
+    team.metadata.data_policy = team.metadata.data_policy || rulesetEvidence.data_policy;
+    team.metadata.coaching_policy = team.metadata.coaching_policy || rulesetEvidence.coaching_policy;
+    team.metadata.poisoning_guard = team.metadata.poisoning_guard || rulesetEvidence.poisoning_guard;
+    team.metadata.source_checked_at_utc = team.metadata.source_checked_at_utc || rulesetEvidence.source_checked_at_utc;
+  }
+  var normalizedTags = Array.isArray(team.tags) ? team.tags.slice() : [];
+  function addTeamTag(tag) {
+    if (tag && normalizedTags.indexOf(tag) === -1) normalizedTags.push(tag);
+  }
+  addTeamTag(team.source === 'custom' ? 'custom' : 'preloaded');
+  if (rulesetId.indexOf('reg_m_a') >= 0 || rulesetId.indexOf('regma') >= 0 || rulesetId === 'champions_reg_m_doubles_bo3') addTeamTag('reg-m-a');
+  if (rulesetId.indexOf('reg_m_b') >= 0) addTeamTag('reg-m-b');
+  if (team.metadata.ruleset_status) addTeamTag(team.metadata.ruleset_status.replace(/_/g, '-'));
+  if (team.metadata.runtime_promotable === false) addTeamTag('not-runtime-promoted');
+  team.tags = normalizedTags;
   if (!team.format) {
     team.format = 'champions';
   }
@@ -1774,20 +1799,76 @@ function renderSimBringPickers() {
 // Cite: Smogon export convention   -- https://www.smogon.com/forums/threads/3587177/
 // Cite: MDN File API (reader)      -- https://developer.mozilla.org/en-US/docs/Web/API/File_API
 // ============================================================
-var TEAMS_FILTER = 'all'; // 'all' | 'preloaded' | 'custom' | 'tournament' | 'mega'
+var TEAMS_FILTER = 'all'; // 'all' | 'preloaded' | 'custom' | 'tournament' | 'mega' | 'regma' | 'historical' | 'regmb_review'
 var TOURNAMENT_TEAM_KEYS = {
   champions_arena_1st:1, champions_arena_2nd:1, champions_arena_3rd:1,
   aurora_veil_froslass:1, cofagrigus_tr:1, rin_sand:1, suica_sun:1
 };
+function csTeamRulesetEvidence(team) {
+  team = team || {};
+  var meta = team.metadata || {};
+  var rulesetId = team.ruleset_id || meta.ruleset_id || 'champions_reg_m_doubles_bo3';
+  var evidence = typeof getRulesetEvidencePolicy === 'function'
+    ? getRulesetEvidencePolicy(rulesetId)
+    : {
+      ruleset_id: rulesetId,
+      ruleset_label: meta.ruleset_label || rulesetId,
+      ruleset_status: meta.ruleset_status || 'unknown',
+      runtime_promotable: meta.runtime_promotable !== false,
+      learning_eligibility: meta.learning_eligibility || 'unknown',
+      data_policy: meta.data_policy || 'unknown',
+      coaching_policy: meta.coaching_policy || 'unknown',
+      poisoning_guard: meta.poisoning_guard || 'unknown_ruleset_do_not_train_or_rank',
+      source_checked_at_utc: meta.source_checked_at_utc || null
+    };
+  return {
+    ruleset_id: evidence.ruleset_id || rulesetId,
+    ruleset_label: meta.ruleset_label || evidence.ruleset_label || rulesetId,
+    ruleset_status: meta.ruleset_status || evidence.ruleset_status || 'unknown',
+    runtime_promotable: meta.runtime_promotable !== undefined ? meta.runtime_promotable : !!evidence.runtime_promotable,
+    learning_eligibility: meta.learning_eligibility || evidence.learning_eligibility || 'unknown',
+    data_policy: meta.data_policy || evidence.data_policy || 'unknown',
+    coaching_policy: meta.coaching_policy || evidence.coaching_policy || 'unknown',
+    poisoning_guard: meta.poisoning_guard || evidence.poisoning_guard || 'unknown_ruleset_do_not_train_or_rank',
+    source_checked_at_utc: meta.source_checked_at_utc || evidence.source_checked_at_utc || null
+  };
+}
+function csTeamRulesetTags(key, team) {
+  var evidence = csTeamRulesetEvidence(team);
+  var tags = Array.isArray(team && team.tags) ? team.tags.slice() : [];
+  function add(tag) { if (tag && tags.indexOf(tag) === -1) tags.push(tag); }
+  add(team && team.source === 'custom' ? 'custom' : 'preloaded');
+  if (String(evidence.ruleset_id).indexOf('reg_m_a') >= 0 || String(evidence.ruleset_id).indexOf('regma') >= 0 || evidence.ruleset_id === 'champions_reg_m_doubles_bo3') add('reg-m-a');
+  if (String(evidence.ruleset_id).indexOf('reg_m_b') >= 0) add('reg-m-b');
+  add(String(evidence.ruleset_status || '').replace(/_/g, '-'));
+  if (evidence.runtime_promotable === false) add('not-runtime-promoted');
+  if (key && /^mega_/.test(key)) add('mega');
+  return tags;
+}
+function csRenderTeamRulesetBadges(key, team) {
+  var evidence = csTeamRulesetEvidence(team);
+  var label = evidence.ruleset_label || evidence.ruleset_id || 'Ruleset unknown';
+  var status = evidence.ruleset_status || 'unknown';
+  var guard = evidence.poisoning_guard || 'unknown_ruleset_do_not_train_or_rank';
+  var statusClass = evidence.runtime_promotable ? 'badge-legal' : 'badge-warn';
+  var title = 'Ruleset: ' + label + ' | data policy: ' + (evidence.data_policy || 'unknown') + ' | coaching: ' + (evidence.coaching_policy || 'unknown');
+  return '<span class="' + statusClass + '" title="' + _escapeHtml(title) + '">' + _escapeHtml(label) + '</span>' +
+    '<span class="' + statusClass + '" title="' + _escapeHtml(guard) + '">' + _escapeHtml(String(status).replace(/_/g, ' ').toUpperCase()) + '</span>';
+}
 function teamMatchesFilter(key, team, filter) {
   if (!team) return false;
   if (!isVisibleTeamInCatalog(key, team, { includeCustom: true })) return false;
   var isCustom = team.source === 'custom';
+  var evidence = csTeamRulesetEvidence(team);
+  var tags = csTeamRulesetTags(key, team);
   if (filter === 'all') return true;
   if (filter === 'custom') return isCustom;
   if (filter === 'preloaded') return !isCustom;
   if (filter === 'tournament') return !isCustom && !!TOURNAMENT_TEAM_KEYS[key];
   if (filter === 'mega') return /^mega_/.test(key);
+  if (filter === 'regma') return tags.indexOf('reg-m-a') >= 0;
+  if (filter === 'historical') return evidence.ruleset_status === 'historical';
+  if (filter === 'regmb_review') return tags.indexOf('reg-m-b') >= 0 || evidence.ruleset_status === 'source_review';
   return true;
 }
 function countTeamsByFilter(filter) {
@@ -1816,7 +1897,10 @@ function renderTeamsFilterRow() {
     { id:'preloaded',  label:'Preloaded' },
     { id:'custom',     label:'Custom' },
     { id:'tournament', label:'Tournament' },
-    { id:'mega',       label:'Mega' }
+    { id:'mega',       label:'Mega' },
+    { id:'regma',      label:'Reg M-A' },
+    { id:'historical', label:'Historical' },
+    { id:'regmb_review', label:'Reg M-B Review' }
   ];
   row.innerHTML = chips.map(function(c){
     var count = countTeamsByFilter(c.id);
@@ -1866,6 +1950,7 @@ function renderTeamsGrid() {
         </div>
         <div class="tfcard-badges">
           <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
+          ${csRenderTeamRulesetBadges(key, team)}
           ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
             var st = team.legality_status; var fmt = team.format;
             if (!legalityVerdict.valid && fmt === 'sv') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.errors || []).join('; ')) + '">\u26A0 SV COMPAT ONLY</span>';
@@ -9659,6 +9744,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Ruleset lifecycle guard added',
       detail: 'v2.1.87 adds a versioned ruleset registry and validation wrapper so source-review formats cannot be treated as legal sim evidence. Analysis payloads now carry ruleset status, learning eligibility, data policy, coaching policy, and a poisoning guard before DB/coaching stats consume results.'
+    },
+    {
+      status: 'done',
+      title: 'Ruleset-aware team sections and tags added',
+      detail: 'v2.1.88 labels team cards by regulation lane, adds Reg M-A/Historical/Reg M-B Review filters, and keeps Reg M-B coverage sections review-only so future team experiments cannot train matchup recommendations until the ruleset is promoted.'
     },
     {
       status: 'done',

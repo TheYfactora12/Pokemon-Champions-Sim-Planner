@@ -109,6 +109,56 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     ];
     return row;
   }),
+  coverageSections: [
+    {
+      sectionId: 'regmb_review_raichu_starters',
+      label: 'Reg M-B review: Raichu plus starter Megas',
+      rulesetId: 'champions_reg_m_b_doubles_bo3_source_review',
+      status: 'source_review_fixture',
+      runtimePromotable: false,
+      learningEligible: false,
+      poisoningGuard: 'review_only_do_not_train_or_rank',
+      selectorPolicy: 'hidden_from_legal_sim',
+      tags: ['reg-m-b', 'source-review', 'new-mega', 'coverage-fixture'],
+      coveredMegaForms: ['Raichu-Mega-X', 'Raichu-Mega-Y', 'Sceptile-Mega', 'Blaziken-Mega', 'Swampert-Mega']
+    },
+    {
+      sectionId: 'regmb_review_steel_physical_pressure',
+      label: 'Reg M-B review: Steel and physical pressure Megas',
+      rulesetId: 'champions_reg_m_b_doubles_bo3_source_review',
+      status: 'source_review_fixture',
+      runtimePromotable: false,
+      learningEligible: false,
+      poisoningGuard: 'review_only_do_not_train_or_rank',
+      selectorPolicy: 'hidden_from_legal_sim',
+      tags: ['reg-m-b', 'source-review', 'new-mega', 'coverage-fixture'],
+      coveredMegaForms: ['Mawile-Mega', 'Metagross-Mega', 'Staraptor-Mega', 'Scolipede-Mega']
+    },
+    {
+      sectionId: 'regmb_review_unusual_matchup_coverage',
+      label: 'Reg M-B review: unusual matchup Megas',
+      rulesetId: 'champions_reg_m_b_doubles_bo3_source_review',
+      status: 'source_review_fixture',
+      runtimePromotable: false,
+      learningEligible: false,
+      poisoningGuard: 'review_only_do_not_train_or_rank',
+      selectorPolicy: 'hidden_from_legal_sim',
+      tags: ['reg-m-b', 'source-review', 'new-mega', 'coverage-fixture'],
+      coveredMegaForms: ['Scrafty-Mega', 'Eelektross-Mega', 'Pyroar-Mega', 'Malamar-Mega']
+    },
+    {
+      sectionId: 'regmb_review_poison_formation_pressure',
+      label: 'Reg M-B review: poison and formation-pressure Megas',
+      rulesetId: 'champions_reg_m_b_doubles_bo3_source_review',
+      status: 'source_review_fixture',
+      runtimePromotable: false,
+      learningEligible: false,
+      poisoningGuard: 'review_only_do_not_train_or_rank',
+      selectorPolicy: 'hidden_from_legal_sim',
+      tags: ['reg-m-b', 'source-review', 'new-mega', 'coverage-fixture'],
+      coveredMegaForms: ['Barbaracle-Mega', 'Dragalge-Mega', 'Falinks-Mega']
+    }
+  ],
   promotionGates: [
     'Allowed Pokemon image sheets converted into explicit reviewed species/form rows.',
     'Every new Mega row has stone, stats, typing, ability, sprite, and fixture evidence.',

@@ -40,8 +40,10 @@ T('3. missing local-credentials.js returns empty JavaScript instead of cached ap
 });
 
 T('4. service worker cache is bumped for current source-registry release', () => {
-  truthy(sw.includes("const CACHE_NAME = 'champions-sim-v119-ruleset-lifecycle'"), 'CACHE_NAME should be v119-ruleset-lifecycle');
+  truthy(sw.includes("const CACHE_NAME = 'champions-sim-v120-ruleset-team-sections'"), 'CACHE_NAME should be v120-ruleset-team-sections');
   truthy(sw.includes('./generated/pokemon_showdown_species_weights.js'), 'weight companion file should be pre-cached');
+  truthy(sw.includes("'./rulesets.js'"), 'rulesets.js should be pre-cached');
+  truthy(sw.includes("'./regmb_source_conversion.js'"), 'regmb_source_conversion.js should be pre-cached');
 });
 
 T('5. app shell includes pokemon-champion bundle in network-first detection', () => {
