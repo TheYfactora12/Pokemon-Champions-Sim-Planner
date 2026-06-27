@@ -86,7 +86,8 @@
 // v100-terrain-gaps-fixed [2026-06-26] - All 4 terrain mechanics wired (PR #141); sw_local_credentials test updated.
 // v101-v2.1.70-release [2026-06-26] - Close stale terrain gap entries in Overview; bump build version to v2.1.70.
 // v102-bring-choice-coaching [2026-06-26] - #220: expose benchedTwo in review summary + bring_choice_review coaching tag.
-const CACHE_NAME = 'champions-sim-v102-bring-choice-coaching';
+// v103-tactical-turn-log-labels [2026-06-27] - Add tactical_speed_summary labels to turn-log and QA exports.
+const CACHE_NAME = 'champions-sim-v103-tactical-turn-log-labels';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

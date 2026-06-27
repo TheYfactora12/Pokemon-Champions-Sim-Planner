@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.70-terrain-gaps-fixed';
+    return txt || 'v2.1.71-tactical-turn-log-labels';
   } catch (e) {
-    return 'v2.1.70-terrain-gaps-fixed';
+    return 'v2.1.71-tactical-turn-log-labels';
   }
 }
 
@@ -3794,7 +3794,18 @@ function csQaBlankMechanicsSeen() {
     stat_boost_snapshots: 0,
     weather_active: 0,
     trick_room_active: 0,
-    tailwind_active: 0
+    tailwind_active: 0,
+    tactical_speed_labels: 0,
+    speed_state_active: 0,
+    speed_order_reversed: 0,
+    trick_room_established: 0,
+    trick_room_converted: 0,
+    trick_room_failed_to_convert: 0,
+    tailwind_established: 0,
+    tailwind_converted: 0,
+    tailwind_without_pressure: 0,
+    speed_control_neutralized: 0,
+    speed_control_reversal: 0
   };
 }
 
@@ -3847,6 +3858,155 @@ function csQaSnapshotTailwind(snapshot) {
     if (details[i] && details[i].tailwind) return true;
   }
   return false;
+}
+
+function csQaSnapshotTailwindTurns(snapshot, side) {
+  var speedControl = snapshot && snapshot.speed_control ? snapshot.speed_control : null;
+  var row = speedControl && speedControl[side] ? speedControl[side] : {};
+  return Number(row.tailwind_turns || row.tailwind || 0) || 0;
+}
+
+function csQaTurnPosition(row, point) {
+  var snap = row && row[point || 'post'] ? row[point || 'post'] : null;
+  return snap && typeof snap.position_score === 'number' ? snap.position_score : null;
+}
+
+function csQaActionMoveSide(turn, side, moveName) {
+  var actions = turn && turn.actions && Array.isArray(turn.actions[side]) ? turn.actions[side] : [];
+  for (var i = 0; i < actions.length; i++) {
+    if (String(actions[i] && actions[i].move || '') === moveName) return true;
+  }
+  return false;
+}
+
+function csQaFuturePositionDelta(rows, idx, horizon) {
+  var start = csQaTurnPosition(rows[idx], 'pre');
+  if (typeof start !== 'number') start = csQaTurnPosition(rows[idx], 'post');
+  if (typeof start !== 'number') return null;
+  var best = start;
+  var last = start;
+  var end = Math.min(rows.length - 1, idx + (horizon || 3));
+  for (var i = idx; i <= end; i++) {
+    var pos = csQaTurnPosition(rows[i], 'post');
+    if (typeof pos !== 'number') continue;
+    if (pos > best) best = pos;
+    last = pos;
+  }
+  return {
+    best: Math.round((best - start) * 1000) / 1000,
+    final: Math.round((last - start) * 1000) / 1000
+  };
+}
+
+function csQaSpeedOrderLooksReversed(snapshot) {
+  var details = Array.isArray(snapshot && snapshot.speed_order_details) ? snapshot.speed_order_details : [];
+  if (details.length < 2 || !csQaSnapshotTrickRoom(snapshot)) return false;
+  var first = Number(details[0] && details[0].effective_speed);
+  var last = Number(details[details.length - 1] && details[details.length - 1].effective_speed);
+  return Number.isFinite(first) && Number.isFinite(last) && first <= last;
+}
+
+function csAddTacticalSpeedLabel(summary, label, turn, detail) {
+  summary.label_counts[label] = (summary.label_counts[label] || 0) + 1;
+  if (summary.labels.indexOf(label) < 0) summary.labels.push(label);
+  summary.events.push(Object.assign({ label: label, turn: turn || null }, detail || {}));
+}
+
+function csBuildTacticalSpeedSummary(turnLog, opts) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var summary = {
+    schema_version: 'champions-tactical-speed-summary-v1',
+    scope: opts && opts.scope || 'turn-log',
+    horizon_turns: 3,
+    labels: [],
+    label_counts: {},
+    events: [],
+    windows: [],
+    notes: [
+      'Labels are evidence reads from exported turn logs, not proof that a move was the best possible choice.',
+      'Converted means player position improved within the next three turns while the speed plan was active or newly established.'
+    ]
+  };
+
+  for (var i = 0; i < rows.length; i++) {
+    var turn = rows[i] || {};
+    var pre = turn.pre || {};
+    var post = turn.post || {};
+    var turnNo = Number(turn.turn || (i + 1));
+    var preTr = csQaSnapshotTrickRoom(pre);
+    var postTr = csQaSnapshotTrickRoom(post);
+    var prePlayerTw = csQaSnapshotTailwindTurns(pre, 'player');
+    var postPlayerTw = csQaSnapshotTailwindTurns(post, 'player');
+    var preOppTw = csQaSnapshotTailwindTurns(pre, 'opponent');
+    var postOppTw = csQaSnapshotTailwindTurns(post, 'opponent');
+    var delta = csQaFuturePositionDelta(rows, i, 3);
+
+    if (postTr || postPlayerTw || postOppTw) {
+      csAddTacticalSpeedLabel(summary, 'speed_state_active', turnNo, {
+        trick_room_turns: post && post.field ? Number(post.field.trick_room || 0) : 0,
+        player_tailwind_turns: postPlayerTw,
+        opponent_tailwind_turns: postOppTw
+      });
+    }
+    if (postTr && csQaSpeedOrderLooksReversed(post)) {
+      csAddTacticalSpeedLabel(summary, 'speed_order_reversed', turnNo, {
+        evidence: 'post.speed_order_details sorted lower effective Speed first under Trick Room'
+      });
+    }
+    if (!preTr && postTr) {
+      csAddTacticalSpeedLabel(summary, 'trick_room_established', turnNo, {
+        actor_side: csQaActionMoveSide(turn, 'player', 'Trick Room') ? 'player' : (csQaActionMoveSide(turn, 'opponent', 'Trick Room') ? 'opponent' : 'unknown')
+      });
+      if (prePlayerTw || preOppTw || postPlayerTw || postOppTw) {
+        csAddTacticalSpeedLabel(summary, 'speed_control_reversal', turnNo, {
+          evidence: 'Trick Room became active while Tailwind was visible in the speed state.'
+        });
+      }
+      if (delta) {
+        var trLabel = delta.best >= 0.05 ? 'trick_room_converted' : (delta.final <= -0.05 ? 'trick_room_failed_to_convert' : null);
+        if (trLabel) {
+          csAddTacticalSpeedLabel(summary, trLabel, turnNo, {
+            position_delta_best_next_3: delta.best,
+            position_delta_final_next_3: delta.final
+          });
+        }
+        summary.windows.push({
+          label: trLabel || 'trick_room_window_even',
+          turn: turnNo,
+          kind: 'trick_room',
+          position_delta_best_next_3: delta.best,
+          position_delta_final_next_3: delta.final
+        });
+      }
+    }
+    if (!prePlayerTw && postPlayerTw) {
+      csAddTacticalSpeedLabel(summary, 'tailwind_established', turnNo, { side: 'player' });
+      if (delta) {
+        var twLabel = delta.best >= 0.05 ? 'tailwind_converted' : (delta.final <= 0.03 ? 'tailwind_without_pressure' : null);
+        if (twLabel) {
+          csAddTacticalSpeedLabel(summary, twLabel, turnNo, {
+            position_delta_best_next_3: delta.best,
+            position_delta_final_next_3: delta.final
+          });
+        }
+        summary.windows.push({
+          label: twLabel || 'tailwind_window_even',
+          turn: turnNo,
+          kind: 'tailwind',
+          side: 'player',
+          position_delta_best_next_3: delta.best,
+          position_delta_final_next_3: delta.final
+        });
+      }
+    }
+    if (postPlayerTw && postOppTw) {
+      csAddTacticalSpeedLabel(summary, 'speed_control_neutralized', turnNo, {
+        evidence: 'Both sides had Tailwind active in the exported speed state.'
+      });
+    }
+  }
+
+  return summary;
 }
 
 function csQaCountSnapshotCoverage(snapshot, mechanics) {
@@ -3947,6 +4107,15 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     turns_with_effect_events: 0
   };
   var mechanics = csQaBlankMechanicsSeen();
+  var tacticalSpeedSummary = csBuildTacticalSpeedSummary(rows, { scope: options.scope || 'single-turn-log' });
+  var tacticalLabels = tacticalSpeedSummary.label_counts || {};
+  for (var tacticalLabel in tacticalLabels) {
+    if (!Object.prototype.hasOwnProperty.call(tacticalLabels, tacticalLabel)) continue;
+    mechanics.tactical_speed_labels += Number(tacticalLabels[tacticalLabel] || 0);
+    if (Object.prototype.hasOwnProperty.call(mechanics, tacticalLabel)) {
+      mechanics[tacticalLabel] += Number(tacticalLabels[tacticalLabel] || 0);
+    }
+  }
   var damageMoves = {};
   var effectMoves = {};
   var effectKinds = {};
@@ -4028,6 +4197,7 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     source_truth_versions: csQaSourceTruthVersions(),
     totals: totals,
     mechanics_seen: mechanics,
+    tactical_speed_summary: tacticalSpeedSummary,
     moves_seen: {
       damage: damageMoves,
       effects: effectMoves
@@ -4074,6 +4244,20 @@ function csMergeQaCoverageSummaries(summaries, opts) {
     var effectKinds = summary.effect_kinds || {};
     for (var k in effectKinds) {
       if (Object.prototype.hasOwnProperty.call(effectKinds, k)) csQaInc(merged.effect_kinds, k, effectKinds[k]);
+    }
+    var tactical = summary.tactical_speed_summary || {};
+    var labelCounts = tactical.label_counts || {};
+    merged.tactical_speed_summary = merged.tactical_speed_summary || csBuildTacticalSpeedSummary([], { scope: options.scope || 'qa-artifact-retained-replay-cards' });
+    for (var tl in labelCounts) {
+      if (!Object.prototype.hasOwnProperty.call(labelCounts, tl)) continue;
+      csQaInc(merged.tactical_speed_summary.label_counts, tl, labelCounts[tl]);
+      if (merged.tactical_speed_summary.labels.indexOf(tl) < 0) merged.tactical_speed_summary.labels.push(tl);
+    }
+    if (Array.isArray(tactical.events)) {
+      merged.tactical_speed_summary.events = merged.tactical_speed_summary.events.concat(tactical.events.slice(0, 12));
+    }
+    if (Array.isArray(tactical.windows)) {
+      merged.tactical_speed_summary.windows = merged.tactical_speed_summary.windows.concat(tactical.windows.slice(0, 12));
     }
   }
 
@@ -5184,6 +5368,7 @@ function downloadReplayTurnLog(replay, opts) {
     winCondition: replay.winCondition || null,
     turning_point: replay.turning_point || null,
     position_path: replay.position_path || [],
+    tactical_speed_summary: csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
     qa_coverage_summary: csBuildQaCoverageSummary(replay.turnLog, {
       generated_at: exportedAt,
       build_id: buildId,
@@ -6168,6 +6353,7 @@ function csCompactQaReplayCard(replay, playerKey) {
     logTruncated: !!r.logTruncated,
     turning_point: r.turning_point || null,
     position_path: Array.isArray(r.position_path) ? r.position_path : [],
+    tactical_speed_summary: csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' }),
     qa_coverage_summary: csBuildQaCoverageSummary(turnLog, {
       build_id: buildId,
       source_url: sourceUrl,
@@ -8293,6 +8479,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Tactical speed labels added to turn-log exports',
+      detail: 'v2.1.71 adds tactical_speed_summary to downloaded turn logs, retained replay cards, and QA coverage summaries. The export now labels speed_state_active, speed_order_reversed, Trick Room established/converted/failed-to-convert, Tailwind established/converted/without-pressure, neutralized speed control, and speed-control reversal from exported evidence instead of asking QA to infer those reads by hand.'
+    },
     {
       status: 'done',
       title: 'Bring-choice coaching added — benchedTwo + bring_choice_review tag (#220)',
