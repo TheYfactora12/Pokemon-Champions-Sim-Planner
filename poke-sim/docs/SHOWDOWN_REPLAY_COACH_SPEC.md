@@ -772,3 +772,34 @@ Roadmap:
 - Expand duration tracking beyond Tailwind and Trick Room into weather, terrain, screens, speed drops, priority pressure, Protect/guard windows, and matchup-specific setup timing.
 - Compare the active duration window against outcome evidence: damage, KOs, protected allies, forced switches, preserved win condition, or lost tempo.
 - Feed repeated timing patterns into the shared coach memory only as aggregate, non-personal evidence.
+
+## Coach Event Rows
+
+Schema: `champions-coach-event-row-v1`
+
+Purpose: convert tactical labels and duration labels into DB-ready coaching facts.
+
+Each row includes:
+
+- `event_label`: the detected tactical event.
+- `decision_type`: the coaching category, such as `speed_control_tailwind`, `speed_control_trick_room`, `speed_control_contest`, or `duration_timing`.
+- `outcome`: `positive`, `negative`, or `neutral` based on current evidence.
+- `confidence`: current confidence for this one row.
+- `situation`: plain-English explanation of what happened.
+- `why_it_matters`: coaching reason this event can affect the battle.
+- `next_test`: the next branch the player or Tactical QA should compare.
+- `evidence`: the original tactical/duration event payload.
+- `privacy_boundary`: shared learning must aggregate rows without exposing another player's private identity.
+
+Export surfaces:
+
+- downloaded turn logs
+- retained replay cards
+- `qa_coverage_summary`
+- merged Run All QA / Tactical QA artifacts
+
+Guardrails:
+
+- Rows are evidence units, not final recommendations.
+- Shared DB learning should aggregate by matchup, decision type, event label, outcome, sample size, and confidence.
+- Recommendations must still show the branch evidence and sample size.

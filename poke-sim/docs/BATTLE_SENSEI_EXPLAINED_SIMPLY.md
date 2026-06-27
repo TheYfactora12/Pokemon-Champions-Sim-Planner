@@ -362,3 +362,15 @@ The source-of-truth output for this is `duration_effect_summary`. It labels acti
 For a 10-year-old: this is like timing a power-up in a race. If you use the speed boost while the track is blocked, you wasted it. If you wait until the block is gone and then use the boost, that can be smart. The sim is learning the difference.
 
 Later, the same idea should expand to weather, terrain, screens, Protect/guard turns, priority turns, and other effects where timing changes whether a move is good or bad.
+
+## Coach Event Rows
+
+The coach brain now writes small coaching facts called `coach_event_rows`.
+
+A row is one important moment from a battle. It says what happened, why it matters, whether it looked positive, negative, or neutral, how confident the app is, and what branch should be tested next.
+
+Example in plain English: "Tailwind was used while Trick Room was active. That may waste the speed boost. Next test: wait until Trick Room has 1 or 0 turns left before using Tailwind."
+
+This is the bridge from replay labels to real coaching memory. Labels detect the event. Event rows explain the event. Later, database aggregates can compare many users' non-personal rows to learn which choices usually work in the same matchup.
+
+Guardrail: a single row is evidence, not a final truth. Strong recommendations require repeated rows, sample size, confidence, and comparison against alternative branches.

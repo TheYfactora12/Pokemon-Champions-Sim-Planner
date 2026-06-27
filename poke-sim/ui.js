@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.77-run-all-qa-replay-export';
+    return txt || 'v2.1.78-coach-event-rows';
   } catch (e) {
-    return 'v2.1.77-run-all-qa-replay-export';
+    return 'v2.1.78-coach-event-rows';
   }
 }
 
@@ -4423,6 +4423,153 @@ function csBuildCoachBrainSummary(ledger, opts) {
   };
 }
 
+function csCoachEventOutcome(label) {
+  var good = {
+    tailwind_converted: true,
+    opponent_tailwind_without_pressure: true,
+    trick_room_converted: true,
+    speed_control_reversal: true,
+    tailwind_delayed_until_trick_room_end: true
+  };
+  var bad = {
+    tailwind_without_pressure: true,
+    opponent_tailwind_converted: true,
+    trick_room_failed_to_convert: true,
+    tailwind_reused_while_active: true,
+    tailwind_into_active_trick_room: true
+  };
+  if (good[label]) return 'positive';
+  if (bad[label]) return 'negative';
+  return 'neutral';
+}
+
+function csCoachEventDecisionType(label) {
+  if (String(label || '').indexOf('tailwind') >= 0) return 'speed_control_tailwind';
+  if (String(label || '').indexOf('trick_room') >= 0) return 'speed_control_trick_room';
+  if (String(label || '').indexOf('speed_control') >= 0 || String(label || '').indexOf('speed_state') >= 0) return 'speed_control_contest';
+  if (String(label || '').indexOf('field_effect') >= 0) return 'duration_timing';
+  return 'tactical_timing';
+}
+
+function csCoachEventPlainEnglish(label) {
+  var text = {
+    speed_state_active: 'A speed-control state was active on this turn.',
+    speed_order_reversed: 'Trick Room made slower Pokemon move before faster Pokemon.',
+    trick_room_established: 'Trick Room was established.',
+    trick_room_converted: 'Trick Room created a favorable position window.',
+    trick_room_failed_to_convert: 'Trick Room did not create enough value in the next turns.',
+    tailwind_established: 'Tailwind was established.',
+    tailwind_converted: 'Tailwind turned into pressure or position gain.',
+    tailwind_without_pressure: 'Tailwind was active but did not create enough pressure.',
+    opponent_tailwind_established: 'The opponent established Tailwind.',
+    opponent_tailwind_converted: 'The opponent converted Tailwind into pressure.',
+    opponent_tailwind_without_pressure: 'The player held position through the opponent Tailwind window.',
+    speed_control_neutralized: 'Both sides had speed control, so the speed advantage was neutralized.',
+    speed_control_reversal: 'One speed plan reversed or disrupted the other speed plan.',
+    field_effect_expired: 'A multi-turn field effect expired.',
+    field_effect_reissued_after_expiry: 'A multi-turn effect was used again after a visible expiry.',
+    tailwind_reused_while_active: 'Tailwind was selected while Tailwind was already active.',
+    tailwind_into_active_trick_room: 'Tailwind was selected while Trick Room was active.',
+    tailwind_delayed_until_trick_room_end: 'Tailwind was selected after Trick Room ended.'
+  };
+  return text[label] || ('Tactical event detected: ' + label + '.');
+}
+
+function csCoachEventNextTest(label) {
+  var text = {
+    trick_room_failed_to_convert: 'Test Trick Room only when a slow attacker can act safely on the next turn.',
+    tailwind_without_pressure: 'Test Tailwind only when the next two turns create damage, KO pressure, forced Protect, or preservation.',
+    opponent_tailwind_converted: 'Test Protect, priority, switching, or speed reversal on the first two opponent Tailwind turns.',
+    tailwind_reused_while_active: 'Do not retest Tailwind until the active Tailwind window expires unless the branch proves a specific payoff.',
+    tailwind_into_active_trick_room: 'Test waiting until Trick Room has 1 or 0 turns left before committing Tailwind.',
+    tailwind_delayed_until_trick_room_end: 'Keep testing this timing branch against Trick Room teams because it may preserve the Tailwind payoff.',
+    field_effect_reissued_after_expiry: 'Compare the reissue turn against attacking, switching, or Protect to prove the effect was worth the tempo.',
+    speed_control_reversal: 'After reversing speed control, test immediate target pressure so the answer becomes a win path.'
+  };
+  return text[label] || 'Compare the next branch against attacking, protecting, switching, or delaying the setup turn.';
+}
+
+function csCoachEventConfidence(label, detail) {
+  if (label === 'tailwind_into_active_trick_room' || label === 'tailwind_reused_while_active') return 'medium';
+  if (label === 'tailwind_converted' || label === 'trick_room_converted' || label === 'trick_room_failed_to_convert') return 'medium';
+  if (detail && (detail.position_delta_best_next_3 != null || detail.position_delta_final_next_3 != null)) return 'medium';
+  return 'low';
+}
+
+function csCoachEventRowsFromEvents(events, family, opts) {
+  var options = opts || {};
+  var rows = [];
+  var sourceEvents = Array.isArray(events) ? events : [];
+  for (var i = 0; i < sourceEvents.length; i++) {
+    var event = sourceEvents[i] || {};
+    var label = event.label || 'unknown';
+    var outcome = csCoachEventOutcome(label);
+    rows.push({
+      schema_version: 'champions-coach-event-row-v1',
+      event_id: [
+        options.scope || 'scope',
+        options.player_team_id || 'player',
+        options.opponent_team_id || 'opponent',
+        family || 'family',
+        label,
+        event.turn || i + 1,
+        i
+      ].join('::'),
+      scope: options.scope || 'turn-log',
+      family: family || 'tactical',
+      event_label: label,
+      turn: event.turn || null,
+      decision_type: csCoachEventDecisionType(label),
+      outcome: outcome,
+      confidence: csCoachEventConfidence(label, event),
+      player_team_id: options.player_team_id || null,
+      opponent_team_id: options.opponent_team_id || null,
+      format: options.format || null,
+      situation: csCoachEventPlainEnglish(label),
+      why_it_matters: outcome === 'negative'
+        ? 'This pattern can spend tempo without creating pressure or preserving the win condition.'
+        : (outcome === 'positive'
+          ? 'This pattern is evidence that the decision created pressure, preserved position, or answered the opponent plan.'
+          : 'This is a timing marker that needs outcome comparison before calling it good or bad.'),
+      next_test: csCoachEventNextTest(label),
+      evidence: Object.assign({}, event),
+      sample_size: 1,
+      db_ready: true,
+      privacy_boundary: 'Aggregate this as non-personal matchup evidence before using it for shared recommendations.'
+    });
+  }
+  return rows;
+}
+
+function csBuildCoachEventRows(tacticalSpeedSummary, durationEffectSummary, opts) {
+  var options = opts || {};
+  var maxRows = Number.isFinite(Number(options.maxRows)) ? Math.max(0, Number(options.maxRows)) : 120;
+  var rows = [];
+  rows = rows.concat(csCoachEventRowsFromEvents(tacticalSpeedSummary && tacticalSpeedSummary.events, 'tactical_speed', options));
+  rows = rows.concat(csCoachEventRowsFromEvents(durationEffectSummary && durationEffectSummary.events, 'duration_timing', options));
+  return maxRows ? rows.slice(0, maxRows) : rows;
+}
+
+function csSummarizeCoachEventRows(rows) {
+  var list = Array.isArray(rows) ? rows : [];
+  var summary = {
+    schema_version: 'champions-coach-event-row-summary-v1',
+    total_rows: list.length,
+    by_outcome: {},
+    by_decision_type: {},
+    by_label: {},
+    confidence: {}
+  };
+  for (var i = 0; i < list.length; i++) {
+    var row = list[i] || {};
+    csQaInc(summary.by_outcome, row.outcome || 'unknown');
+    csQaInc(summary.by_decision_type, row.decision_type || 'unknown');
+    csQaInc(summary.by_label, row.event_label || 'unknown');
+    csQaInc(summary.confidence, row.confidence || 'unknown');
+  }
+  return summary;
+}
+
 function csQaCountSnapshotCoverage(snapshot, mechanics) {
   if (!snapshot || typeof snapshot !== 'object') return;
   if (Array.isArray(snapshot.speed_order_details) && snapshot.speed_order_details.length) mechanics.speed_order_details += 1;
@@ -4524,6 +4671,13 @@ function csBuildQaCoverageSummary(turnLog, opts) {
   var tacticalSpeedSummary = csBuildTacticalSpeedSummary(rows, { scope: options.scope || 'single-turn-log' });
   var durationEffectSummary = csBuildDurationEffectSummary(rows, { scope: options.scope || 'single-turn-log' });
   var decisionLedger = csBuildDecisionOpportunityLedger(tacticalSpeedSummary, { scope: options.scope || 'single-turn-log' });
+  var coachEventRows = csBuildCoachEventRows(tacticalSpeedSummary, durationEffectSummary, {
+    scope: options.scope || 'single-turn-log',
+    player_team_id: options.player_team_id || null,
+    opponent_team_id: options.opponent_team_id || null,
+    format: options.format || null,
+    maxRows: 120
+  });
   var tacticalLabels = tacticalSpeedSummary.label_counts || {};
   for (var tacticalLabel in tacticalLabels) {
     if (!Object.prototype.hasOwnProperty.call(tacticalLabels, tacticalLabel)) continue;
@@ -4624,6 +4778,8 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     tactical_speed_summary: tacticalSpeedSummary,
     duration_effect_summary: durationEffectSummary,
     decision_opportunity_ledger: decisionLedger,
+    coach_event_rows: coachEventRows,
+    coach_event_summary: csSummarizeCoachEventRows(coachEventRows),
     coach_brain_summary: csBuildCoachBrainSummary(decisionLedger, {
       scope: options.scope || 'single-turn-log',
       player_team_id: options.player_team_id || null,
@@ -4652,6 +4808,7 @@ function csMergeQaCoverageSummaries(summaries, opts) {
     scope: options.scope || 'qa-artifact-retained-replay-cards'
   }));
   merged.totals.replay_cards_scanned = valid.length;
+  var mergedCoachEventRows = [];
 
   for (var i = 0; i < valid.length; i++) {
     var summary = valid[i] || {};
@@ -4702,6 +4859,9 @@ function csMergeQaCoverageSummaries(summaries, opts) {
     if (Array.isArray(duration.events)) {
       merged.duration_effect_summary.events = merged.duration_effect_summary.events.concat(duration.events.slice(0, 12));
     }
+    if (Array.isArray(summary.coach_event_rows)) {
+      mergedCoachEventRows = mergedCoachEventRows.concat(summary.coach_event_rows.slice(0, 24));
+    }
     var activeTurns = duration.active_turns || {};
     for (var at in activeTurns) {
       if (Object.prototype.hasOwnProperty.call(activeTurns, at)) csQaInc(merged.duration_effect_summary.active_turns, at, activeTurns[at]);
@@ -4710,6 +4870,8 @@ function csMergeQaCoverageSummaries(summaries, opts) {
 
   merged.missing_targeted_proof = csQaMissingTargetedProof(merged.mechanics_seen);
   merged.decision_opportunity_ledger = csBuildDecisionOpportunityLedger(merged.tactical_speed_summary, { scope: options.scope || 'qa-artifact-retained-replay-cards' });
+  merged.coach_event_rows = mergedCoachEventRows.slice(0, 240);
+  merged.coach_event_summary = csSummarizeCoachEventRows(merged.coach_event_rows);
   merged.coach_brain_summary = csBuildCoachBrainSummary(merged.decision_opportunity_ledger, {
     scope: options.scope || 'qa-artifact-retained-replay-cards',
     player_team_id: options.player_team_id || null,
@@ -5825,6 +5987,20 @@ function downloadReplayTurnLog(replay, opts) {
     tactical_speed_summary: csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
     duration_effect_summary: csBuildDurationEffectSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
     decision_opportunity_ledger: csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }),
+    coach_event_rows: csBuildCoachEventRows(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), csBuildDurationEffectSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), {
+      scope: 'downloaded-turn-log',
+      player_team_id: playerKey || null,
+      opponent_team_id: oppKey || null,
+      format: format,
+      maxRows: 120
+    }),
+    coach_event_summary: csSummarizeCoachEventRows(csBuildCoachEventRows(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), csBuildDurationEffectSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), {
+      scope: 'downloaded-turn-log',
+      player_team_id: playerKey || null,
+      opponent_team_id: oppKey || null,
+      format: format,
+      maxRows: 120
+    })),
     coach_brain_summary: csBuildCoachBrainSummary(csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }), {
       scope: 'downloaded-turn-log',
       player_team_id: playerKey || null,
@@ -6803,6 +6979,13 @@ function csCompactQaReplayCard(replay, playerKey) {
   var compactTacticalSpeedSummary = csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' });
   var compactDurationEffectSummary = csBuildDurationEffectSummary(turnLog, { scope: 'retained-replay-card' });
   var compactDecisionLedger = csBuildDecisionOpportunityLedger(compactTacticalSpeedSummary, { scope: 'retained-replay-card' });
+  var compactCoachEventRows = csBuildCoachEventRows(compactTacticalSpeedSummary, compactDurationEffectSummary, {
+    scope: 'retained-replay-card',
+    player_team_id: r.playerKey || playerKey || null,
+    opponent_team_id: r.oppKey || null,
+    format: r.format || (typeof currentFormat !== 'undefined' ? currentFormat : null),
+    maxRows: 120
+  });
   return {
     id: r.id || null,
     seed: r.seed || null,
@@ -6821,6 +7004,8 @@ function csCompactQaReplayCard(replay, playerKey) {
     tactical_speed_summary: compactTacticalSpeedSummary,
     duration_effect_summary: compactDurationEffectSummary,
     decision_opportunity_ledger: compactDecisionLedger,
+    coach_event_rows: compactCoachEventRows,
+    coach_event_summary: csSummarizeCoachEventRows(compactCoachEventRows),
     coach_brain_summary: csBuildCoachBrainSummary(compactDecisionLedger, {
       scope: 'retained-replay-card',
       player_team_id: r.playerKey || playerKey || null,
