@@ -46,6 +46,29 @@ var FAKEMON_BLOCKLIST = new Set([
   // empty; add only truly fabricated forms here
 ]);
 
+// Source-reviewed Reg M-B deltas that are NOT runtime-promoted yet.
+// Victory Road states Reg M-B adds 16 new Mega Evolutions over Reg M-A.
+// Keep this as audit evidence until each base species, Mega form, stone/item,
+// stats, ability, move data, and fixtures are promoted together.
+var CHAMPIONS_REGMB_REVIEW_NEW_MEGAS = [
+  'Raichu-Mega-X',
+  'Raichu-Mega-Y',
+  'Sceptile-Mega',
+  'Blaziken-Mega',
+  'Swampert-Mega',
+  'Mawile-Mega',
+  'Metagross-Mega',
+  'Staraptor-Mega',
+  'Scolipede-Mega',
+  'Scrafty-Mega',
+  'Eelektross-Mega',
+  'Pyroar-Mega',
+  'Malamar-Mega',
+  'Barbaracle-Mega',
+  'Dragalge-Mega',
+  'Falinks-Mega'
+];
+
 // Items verified in the Champions launch item pool. Implemented Champions teams may carry
 // only this pool until a newer source confirms additions. Item effects still
 // come from Showdown/generated runtime data; this list is only the Champions
@@ -239,6 +262,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     CHAMPIONS_BANNED_POKEMON: CHAMPIONS_BANNED_POKEMON,
     FAKEMON_BLOCKLIST: FAKEMON_BLOCKLIST,
+    CHAMPIONS_REGMB_REVIEW_NEW_MEGAS: CHAMPIONS_REGMB_REVIEW_NEW_MEGAS,
     CHAMPIONS_LEGAL_ITEMS: CHAMPIONS_LEGAL_ITEMS,
     CHAMPIONS_BANNED_ITEMS: CHAMPIONS_BANNED_ITEMS,
     CHAMPIONS_BANNED_MECHANIC_MOVES: CHAMPIONS_BANNED_MECHANIC_MOVES,

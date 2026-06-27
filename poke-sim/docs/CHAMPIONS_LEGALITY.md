@@ -20,6 +20,13 @@ Reg M-B is the active external season window after June 17, 2026, but this valid
 
 Passing this validator proves compatibility with the implemented historical lane. It does not prove full Reg M-B legality. Reg M-B promotion must update source rows, fixtures, QA artifacts, generated bundle/cache guards, and the browser QA artifact before the UI can claim Reg M-B as the implemented ruleset.
 
+Verified June 27, 2026 Reg M-B source facts:
+
+- Victory Road lists Regulation Set M-B as June 17 to September 2, 2026.
+- Victory Road states Reg M-B allows Mega Evolutions and keeps all Reg M-A Mega Evolutions allowed.
+- Victory Road states Reg M-B adds 16 new Mega Evolutions: Mega Raichu X, Mega Raichu Y, Mega Sceptile, Mega Blaziken, Mega Swampert, Mega Mawile, Mega Metagross, Mega Staraptor, Mega Scolipede, Mega Scrafty, Mega Eelektross, Mega Pyroar, Mega Malamar, Mega Barbaracle, Mega Dragalge, and Mega Falinks.
+- The full Reg M-B Pokemon allowlist is source-visible as image sheets, so it must be converted into explicit reviewed rows before runtime promotion.
+
 ---
 
 ## Team Engineering Rule
@@ -198,6 +205,7 @@ Species Clause and Item Clause are enforced separately in `engine.js::validateTe
 Not enforced by `legality.js` yet; filed as follow-up tickets:
 
 - Legal-item allowlist maintenance on patch notes
-- Mewtwo X/Y, Latias, Latios — stones not in Game8 item list as of April 2026; may become Reg M-B content
-- Mega Raichu — Beebom tier list reference unverified; stone not confirmed in item pool
+- Reg M-B full Pokemon allowlist extraction from Victory Road image sheets
+- Reg M-B new Mega implementation for Raichu X/Y, Sceptile, Blaziken, Swampert, Mawile, Metagross, Staraptor, Scolipede, Scrafty, Eelektross, Pyroar, Malamar, Barbaracle, Dragalge, and Falinks after stone/item names, stats, abilities, typing, sprites, and fixtures are sourced
+- Mewtwo X/Y, Latias, Latios — stones not in Game8 item list as of April 2026 and not part of the June 27 verified Reg M-B new-Mega list
 - Broader ruleset matrix: if Champion modes later enable Omni Ring mechanics such as Tera, add a separate ruleset flag instead of loosening current Reg M-A validation.

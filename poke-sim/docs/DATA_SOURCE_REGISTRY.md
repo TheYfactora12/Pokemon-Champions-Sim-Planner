@@ -18,9 +18,23 @@ Status: active external season, not yet promoted as the implemented simulator le
 
 As of June 27, 2026, the app exposes Reg M-B as the active source-review lane while keeping deterministic battle validation on the historical Reg M-A implementation. This avoids silently allowing or banning Pokemon, moves, items, forms, abilities, or battle mechanics without a trusted source trail.
 
+Verified June 27, 2026 source facts:
+
+- Victory Road lists Regulation Set M-B from June 17 to September 2, 2026.
+- Victory Road states Reg M-B is the official in-game Ranked Battle format and is used for VGC events on the same dates, including the 2026 World Championships.
+- Victory Road states Mega Evolutions are allowed in Reg M-B.
+- Victory Road provides the full Reg M-B allowed-Pokemon list as image sheets:
+- `https://victoryroad.pro/wp-content/uploads/2026/06/Reg-M-B-Pokemon1.jpg`
+- `https://victoryroad.pro/wp-content/uploads/2026/06/Reg-M-B-Pokemon2.jpg`
+- Victory Road states all Reg M-A Mega Evolutions remain allowed and Reg M-B adds 16 new Mega Evolutions.
+- The Reg M-B new Mega image is `https://victoryroad.pro/wp-content/uploads/2026/06/NewMegasRMB.png`.
+- The source-reviewed new Mega list is: Mega Raichu X, Mega Raichu Y, Mega Sceptile, Mega Blaziken, Mega Swampert, Mega Mawile, Mega Metagross, Mega Staraptor, Mega Scolipede, Mega Scrafty, Mega Eelektross, Mega Pyroar, Mega Malamar, Mega Barbaracle, Mega Dragalge, and Mega Falinks.
+
 Promotion checklist before Reg M-B can become the default implemented lane:
 
 - Add authoritative Reg M-B source rows with `checked_at_utc` timestamps.
+- Convert the image-sheet allowed-Pokemon source into explicit species/form rows with review proof; do not manually guess from sprites in runtime code.
+- Add the 16 Reg M-B Mega forms only after stone/item names, stats, abilities, typing, sprites, and Showdown/Champion override behavior are source-backed.
 - Compare source data against the supported Pokemon Showdown format or document an explicit Champion override.
 - Update species, item, form, move, ability, and mechanic gates from source-backed data only.
 - Add legality fixtures for accepted and rejected Reg M-B cases.
@@ -111,7 +125,7 @@ When sources disagree:
 
 ## Current Open Source Questions
 
-- Reg M-B migration: decide whether the default live simulator lane should move from historical Reg M-A to Reg M-B after source review.
+- Reg M-B migration: source facts are recorded, but runtime promotion is blocked until image-sheet Pokemon allowlists and the 16 new Mega forms are converted into explicit reviewed data.
 - Champion Omni Ring and Tera-like mechanics: document only after an active ruleset source enables them; do not let Scarlet/Violet Tera data leak into Reg M-A/Reg M-B by default.
 - Champion SP cap conflict: Showdown currently supports the `32` per-stat / `66` total guardrail, while at least one public preview conflicts. Keep the source conflict documented until a stronger Champion source resolves it.
 - Champion-specific damage roll window: keep any confirmed Champion delta as an override with oracle tests, not a hand-edited hidden constant.

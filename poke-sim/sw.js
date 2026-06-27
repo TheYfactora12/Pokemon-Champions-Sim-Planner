@@ -91,7 +91,7 @@
 // v105-decision-ledger [2026-06-27] - Add first Decision Opportunity Ledger export from tactical speed labels.
 // v106-coach-brain-summary [2026-06-27] - Add evidence-bound coach brain summary over decision ledger.
 // v107-coach-brain-loop [2026-06-27] - Add observed pattern, root problem, risk, solution, expected result, and shared-learning direction.
-const CACHE_NAME = 'champions-sim-v117-regmb-source-lane';
+const CACHE_NAME = 'champions-sim-v118-regmb-source-audit';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

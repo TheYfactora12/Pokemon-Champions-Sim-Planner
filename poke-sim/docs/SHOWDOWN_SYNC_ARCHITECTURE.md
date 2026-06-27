@@ -10,6 +10,8 @@
 
 Showdown sync must record which ruleset window it is validating against and when that source was checked. Reg M-B is currently a source-review lane, not a promoted simulator legality lane, so sync output should identify source drift instead of overwriting historical Reg M-A fixtures without an explicit migration.
 
+For Reg M-B, the current blocker is source conversion, not just fetching. Victory Road exposes the full allowed-Pokemon list as image sheets and the new Mega list as an image. Sync/promotion must turn those into explicit reviewed rows before generated data, legality gates, or DB seeds can claim Reg M-B runtime support.
+
 ---
 
 ## Problem

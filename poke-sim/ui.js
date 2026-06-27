@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.85-regmb-source-lane';
+    return txt || 'v2.1.86-regmb-source-audit';
   } catch (e) {
-    return 'v2.1.85-regmb-source-lane';
+    return 'v2.1.86-regmb-source-audit';
   }
 }
 
@@ -9630,6 +9630,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Reg M-B source audit recorded',
+      detail: 'v2.1.86 records the June 27 Victory Road Reg M-B facts: June 17 to September 2 window, Worlds usage, Mega Evolution allowed, full allowed-Pokemon image sheets, and 16 source-reviewed new Mega names. Runtime promotion remains blocked until those image sources become explicit reviewed data rows with fixtures.'
+    },
+    {
+      status: 'done',
       title: 'Replay Pokemon effect tags added',
       detail: 'v2.1.82 adds compact Pokemon-card effect tags in replay turns. Structured effect_events such as flinch-applied, flinch-skip, sleep/freeze/paralysis skips, confusion self-hit, recoil, item recovery, and contact damage now surface as visible chips so players and QA can identify status/effect tech without opening raw JSON.'
     },
@@ -10130,7 +10135,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Reg M-B source review is now a ruleset migration blocker',
-      detail: 'The June 27 source review now exposes Reg M-B as the active source-review lane while keeping the implemented validator on the historical Reg M-A lane. Next work is source-backed Reg M-B promotion: confirm legal species, items, forms, moves, abilities, mechanics, Champion overrides, and refreshed QA artifacts before changing runtime legality.'
+      detail: 'The June 27 source review now exposes Reg M-B as the active source-review lane while keeping the implemented validator on the historical Reg M-A lane. Victory Road confirms the Reg M-B window, Worlds usage, Mega Evolution support, full Pokemon image sheets, and 16 new Mega names. Next work is source-backed data conversion: explicit species/form rows, Mega stone/item names, stats, abilities, typing, Champion overrides, and refreshed QA artifacts before changing runtime legality.'
     },
     {
       status: 'gap',
