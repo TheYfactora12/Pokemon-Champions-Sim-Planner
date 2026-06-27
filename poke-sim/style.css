@@ -737,6 +737,11 @@ table{border-collapse:collapse;width:100%}
 .replay-roster-status.bench{color:var(--text-m)}
 .replay-roster-status.fainted{border-color:rgba(240,84,100,.55);color:var(--red)}
 .replay-roster-meta{font-size:11px;line-height:1.45;color:var(--text);margin-top:4px}
+.replay-effect-tags{display:flex;flex-wrap:wrap;gap:5px;margin:3px 0 6px}
+.replay-effect-tag{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:var(--r-full);padding:2px 7px;font-size:9px;font-weight:900;letter-spacing:.02em;text-transform:uppercase;background:var(--surface);color:var(--text-m)}
+.replay-effect-tag.high{border-color:rgba(240,84,100,.6);background:rgba(240,84,100,.12);color:var(--red)}
+.replay-effect-tag.medium{border-color:rgba(245,197,66,.55);background:rgba(245,197,66,.12);color:var(--gold)}
+.replay-effect-tag.low{border-color:rgba(91,164,245,.5);background:rgba(91,164,245,.12);color:var(--blue)}
 .replay-hp-track{height:7px;border-radius:var(--r-full);background:rgba(148,163,184,.22);overflow:hidden;margin-bottom:6px}
 .replay-hp-track span{display:block;height:100%;border-radius:inherit;background:var(--green)}
 .replay-hp-track.bench span{background:var(--text-m)}

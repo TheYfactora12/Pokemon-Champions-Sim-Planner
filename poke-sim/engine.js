@@ -5245,10 +5245,32 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           ? Math.max(0, Math.min(t.maxHp, t.hp + healAmount) - t.hp)
           : 0;
         if (healed > 0) {
+          const hpBeforeImmuneHeal = t.hp;
           t.hp += healed;
           log.push(`${t.name}'s ${t.ability} restored HP! [+${healed} HP]`);
+          _recordEffectEvent(field, t, move, 'ability-immunity-heal', hpBeforeImmuneHeal, t.hp, {
+            source: 'ability onTryHit immunity',
+            source_actor: attacker.name || null,
+            source_actor_key: _snapshotMonStableKey(attacker.side === field.playerSide ? 'player' : 'opponent', attacker),
+            blocked_move: move,
+            blocked_move_type: _resolvedMoveType,
+            ability: t.ability || null,
+            immune: true,
+            heal_amount: healed,
+            note: t.name + ' was immune to ' + move + ' because of ' + (t.ability || 'its ability') + ' and restored HP.'
+          });
         } else {
           log.push(`${t.name} is immune to ${move} because of ${t.ability}!`);
+          _recordEffectEvent(field, t, move, 'ability-immunity', t.hp, t.hp, {
+            source: 'ability onTryHit immunity',
+            source_actor: attacker.name || null,
+            source_actor_key: _snapshotMonStableKey(attacker.side === field.playerSide ? 'player' : 'opponent', attacker),
+            blocked_move: move,
+            blocked_move_type: _resolvedMoveType,
+            ability: t.ability || null,
+            immune: true,
+            note: t.name + ' was immune to ' + move + ' because of ' + (t.ability || 'its ability') + '.'
+          });
         }
         continue;
       }
@@ -5307,6 +5329,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           }
         }
       } else {
+        const typeImmune = typeof getEffectiveness === 'function'
+          && Array.isArray(t.types)
+          && getEffectiveness(_resolvedMoveType, t.types) === 0;
+        if (typeImmune) {
+          _recordEffectEvent(field, t, move, 'type-immunity', t.hp, t.hp, {
+            source: 'type chart immunity',
+            source_actor: attacker.name || null,
+            source_actor_key: _snapshotMonStableKey(attacker.side === field.playerSide ? 'player' : 'opponent', attacker),
+            blocked_move: move,
+            blocked_move_type: _resolvedMoveType,
+            defender_types: Array.isArray(t.types) ? t.types.slice() : [],
+            immune: true,
+            note: t.name + ' was immune to ' + move + ' because ' + _resolvedMoveType + ' does not affect ' + (Array.isArray(t.types) ? t.types.join('/') : 'that typing') + '.'
+          });
+        }
         log.push(`${move} had no effect on ${t.name}!`);
       }
       if (!attacker.alive) break;

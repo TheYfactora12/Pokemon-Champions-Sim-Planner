@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.81-lethal-faint-cause';
+    return txt || 'v2.1.82-replay-effect-tags';
   } catch (e) {
-    return 'v2.1.81-lethal-faint-cause';
+    return 'v2.1.82-replay-effect-tags';
   }
 }
 
@@ -3275,6 +3275,7 @@ function _csSnapshotSideRows(snapshot, side) {
     if (pct == null) pct = hp[name];
     var pct100 = pct == null ? null : Math.round(Math.max(0, Math.min(1, Number(pct) || 0)) * 100);
     return {
+      stable_key: key || name,
       status: status,
       displayName: _csSnapshotDisplayName(key || name),
       species: _csSnapshotDisplayName(key || name),
@@ -3287,6 +3288,109 @@ function _csSnapshotSideRows(snapshot, side) {
   }).concat(benchNames.map(function(name, i) {
     return rowFrom(name, benchKeys[i] || name, 'bench');
   }));
+}
+
+function csReplayTagClass(kind) {
+  kind = String(kind || '').toLowerCase();
+  if (kind.indexOf('skip') >= 0 || kind.indexOf('self-hit') >= 0 || kind.indexOf('faint') >= 0) return 'high';
+  if (kind.indexOf('immunity') >= 0 || kind.indexOf('immune') >= 0) return 'low';
+  if (kind.indexOf('flinch') >= 0 || kind.indexOf('sleep') >= 0 || kind.indexOf('frozen') >= 0 || kind.indexOf('paralysis') >= 0 || kind.indexOf('confusion') >= 0) return 'medium';
+  return 'low';
+}
+
+function csReplayEffectTagLabel(kind, effect) {
+  kind = String(kind || '').toLowerCase();
+  if (kind === 'flinch-applied') return 'Flinch tech used';
+  if (kind === 'flinch-skip') return 'Flinch skipped move';
+  if (kind === 'sleep-skip') return 'Sleep skipped move';
+  if (kind === 'frozen-skip') return 'Frozen skipped move';
+  if (kind === 'paralysis-skip') return 'Full paralysis';
+  if (kind === 'confusion-self-hit') return 'Confusion self-hit';
+  if (kind === 'ability-immunity') return 'Immune: ' + String((effect && effect.ability) || 'Ability');
+  if (kind === 'ability-immunity-heal') return 'Absorbed: ' + String((effect && effect.ability) || 'Ability');
+  if (kind === 'type-immunity') return 'Immune: ' + String((effect && effect.blocked_move_type) || 'Type');
+  if (kind === 'recoil') return 'Recoil damage';
+  if (kind === 'item-recovery') return 'Item recovery';
+  if (kind === 'drain-heal') return 'Drain heal';
+  if (kind === 'hp-cost') return 'HP cost';
+  if (kind === 'contact-damage' || kind.indexOf('contact-damage') >= 0) return 'Contact damage';
+  return String((effect && effect.volatile_status) || (effect && effect.effect_kind) || 'Effect');
+}
+
+function csReplayBuildEffectTagMap(turn) {
+  var out = {};
+  (Array.isArray(turn && turn.effect_events) ? turn.effect_events : []).forEach(function(effect) {
+    if (!effect || !effect.actor_key) return;
+    var kind = String(effect.effect_kind || 'effect');
+    var tag = {
+      label: csReplayEffectTagLabel(kind, effect),
+      kind: kind,
+      cls: csReplayTagClass(kind),
+      title: [
+        effect.actor || 'Pokemon',
+        effect.move ? 'via ' + effect.move : '',
+        effect.skipped_action_move ? 'skipped ' + effect.skipped_action_move : '',
+        effect.hp_delta ? 'HP ' + effect.hp_before + ' -> ' + effect.hp_after : '',
+        effect.note || ''
+      ].filter(Boolean).join(' · ')
+    };
+    if (!out[effect.actor_key]) out[effect.actor_key] = [];
+    out[effect.actor_key].push(tag);
+  });
+  return out;
+}
+
+function csReplayBuildSnapshotTags(row) {
+  row = row || {};
+  var tags = Array.isArray(row.replayTags) ? row.replayTags.slice() : [];
+  var majorStatus = row.major_status || row.majorStatus || row.condition || row.status_condition || row.statusEffect || null;
+  if (majorStatus) {
+    tags.push({
+      label: String(majorStatus),
+      kind: 'major-status',
+      cls: 'medium',
+      title: 'Major status on this Pokemon: ' + String(majorStatus)
+    });
+  }
+  var volatile = row.volatile_status || row.volatileStatus || row.volatile || null;
+  if (volatile) {
+    tags.push({
+      label: String(volatile),
+      kind: 'volatile-status',
+      cls: 'medium',
+      title: 'Volatile state on this Pokemon: ' + String(volatile)
+    });
+  }
+  var boosts = row.stat_boosts || row.boosts || null;
+  if (boosts && typeof boosts === 'object') {
+    Object.keys(boosts).forEach(function(stat) {
+      var value = Number(boosts[stat] || 0);
+      if (!value) return;
+      tags.push({
+        label: stat.toUpperCase() + ' ' + (value > 0 ? '+' : '') + value,
+        kind: 'stat-boost',
+        cls: value > 0 ? 'low' : 'medium',
+        title: 'Stat stage on this turn: ' + stat + ' ' + (value > 0 ? '+' : '') + value
+      });
+    });
+  }
+  var seen = {};
+  return tags.filter(function(tag) {
+    var key = String((tag && tag.label) || '') + '|' + String((tag && tag.kind) || '');
+    if (!key || seen[key]) return false;
+    seen[key] = true;
+    return true;
+  }).slice(0, 8);
+}
+
+function csRenderReplayEffectTags(row) {
+  var tags = csReplayBuildSnapshotTags(row);
+  if (!tags.length) return '';
+  return '<div class="replay-effect-tags">' + tags.map(function(tag) {
+    return '<span class="replay-effect-tag ' + _escapeHtml(tag.cls || csReplayTagClass(tag.kind)) + '" title="' + _escapeHtml(tag.title || tag.label || '') + '">' +
+      _escapeHtml(tag.label || 'Effect') +
+    '</span>';
+  }).join('') + '</div>';
 }
 
 function csRenderReplayStadiumMon(row) {
@@ -3310,6 +3414,7 @@ function csRenderReplayStadiumMon(row) {
           '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
           '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
         '</div>' +
+        csRenderReplayEffectTags(row) +
         '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
         '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(row.hpLabel || (hp == null ? 'unknown' : hp + '%')) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
         (meta.length ? '<div class="replay-roster-meta">' + _escapeHtml(meta.join(' · ')) + '</div>' : '') +
@@ -3363,11 +3468,19 @@ function csRenderReplayStadium(rowsBySide, title, labels) {
   '</div>';
 }
 
-function csRenderReplayLogSnapshot(snapshot, title, compact) {
+function csRenderReplayLogSnapshot(snapshot, title, compact, turn) {
   if (!snapshot) return '';
+  var effectTags = csReplayBuildEffectTagMap(turn);
+  function withEffectTags(rows) {
+    return rows.map(function(row) {
+      var key = row && (row.stable_key || row.stableKey || row.key);
+      var tags = key && effectTags[key] ? effectTags[key] : [];
+      return tags.length ? Object.assign({}, row, { replayTags: (row.replayTags || []).concat(tags) }) : row;
+    });
+  }
   return csRenderReplayStadium({
-    left: _csSnapshotSideRows(snapshot, 'player'),
-    right: _csSnapshotSideRows(snapshot, 'opponent')
+    left: withEffectTags(_csSnapshotSideRows(snapshot, 'player')),
+    right: withEffectTags(_csSnapshotSideRows(snapshot, 'opponent'))
   }, title || '', {
     left: 'Your team',
     right: 'Their team'
@@ -3671,7 +3784,7 @@ function csRenderTurnLogRows(turnLog, opts) {
       '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
       csRenderDecisionAuditChip(turnAudit) +
       csRenderReplayPlayByPlay(t) +
-      csRenderReplayLogSnapshot(t && t.post, 'After T' + (t && t.turn), true) +
+      csRenderReplayLogSnapshot(t && t.post, 'After T' + (t && t.turn), true, t) +
       csRenderHpBars(t) +
       (inCoach ? '<pre class="replay-turn-coach">' + _escapeHtml(inCoach) + '</pre>' : '') +
     '</div>';
@@ -6432,6 +6545,7 @@ function csRenderReplayRosterMon(row, compact) {
           '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
           '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
         '</div>' +
+        csRenderReplayEffectTags(row) +
         '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
         '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(hpLabel) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
         '<div class="replay-roster-meta"><b>Species/form:</b> ' + _escapeHtml(row.species || 'unknown') + ' · <b>Gender:</b> ' + _escapeHtml(row.gender || 'unknown') + ' · <b>Level:</b> ' + _escapeHtml(String(row.level || 'unknown')) + '</div>' +
@@ -9496,6 +9610,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Replay Pokemon effect tags added',
+      detail: 'v2.1.82 adds compact Pokemon-card effect tags in replay turns. Structured effect_events such as flinch-applied, flinch-skip, sleep/freeze/paralysis skips, confusion self-hit, recoil, item recovery, and contact damage now surface as visible chips so players and QA can identify status/effect tech without opening raw JSON.'
+    },
     {
       status: 'done',
       title: 'Lethal faint cause matching fixed',
