@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.82-replay-effect-tags';
+    return txt || 'v2.1.83-champions-tera-gate';
   } catch (e) {
-    return 'v2.1.82-replay-effect-tags';
+    return 'v2.1.83-champions-tera-gate';
   }
 }
 
@@ -642,7 +642,7 @@ function exportTeamToPaste(team) {
     lines.push(`${m.name}${itemStr}`);
     if (m.ability) lines.push(`Ability: ${m.ability}`);
     lines.push(`Level: ${m.level || 50}`);
-    if (m.tera) lines.push(`Tera Type: ${m.tera}`);
+    if (team.format !== 'champions' && m.tera) lines.push(`Tera Type: ${m.tera}`);
     // SPs — only non-zero
     const evs = m.evs || {};
     const evParts = [];
@@ -740,9 +740,15 @@ function normalizeTeamRecordForSim(teamKey, team) {
     team.legality_status = team.source === 'custom' ? 'unverified' : 'legal_inferred';
   }
 
+  var championFormat = team.format === 'champions';
   team.members = team.members.map(function(member) {
     member = member || {};
     var name = member.name || member.species || 'Unknown';
+    var moves = Array.isArray(member.moves) ? member.moves.slice() : [];
+    if (championFormat) {
+      moves = moves.filter(function(move) { return move !== 'Tera Blast'; });
+    }
+    var teraType = championFormat ? '' : (member.teraType || member.tera_type || '');
     return {
       name: name,
       species: member.species || name,
@@ -752,9 +758,9 @@ function normalizeTeamRecordForSim(teamKey, team) {
       level: member.level || 50,
       evs: member.evs || {},
       ivs: member.ivs || {},
-      moves: Array.isArray(member.moves) ? member.moves : [],
-      teraType: member.teraType || member.tera_type || '',
-      tera_type: member.tera_type || member.teraType || '',
+      moves: moves,
+      teraType: teraType,
+      tera_type: teraType,
       role: member.role || member.role_tag || ''
     };
   });
@@ -8473,9 +8479,11 @@ function _upsertTeamToDB(teamId, team, source) {
           nature:    m.nature    || null,
           evs:       m.evs       || null,
           ivs:       m.ivs       || null,
-          moves:     m.moves     || [],
+          moves:     ((team && team.format) === 'champions' && Array.isArray(m.moves))
+            ? m.moves.filter(function(move) { return move !== 'Tera Blast'; })
+            : (m.moves || []),
           level:     m.level     || 50,
-          tera_type: m.tera_type || m.teraType || null
+          tera_type: (team && team.format) === 'champions' ? null : (m.tera_type || m.teraType || null)
         };
       })
     };
@@ -9612,6 +9620,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Champion-format Tera leak gated off',
+      detail: 'v2.1.83 prevents Champion-format battles from auto-Terastallizing legacy Scarlet/Violet team data. Tera support remains available only for explicit non-Champion/SV parity contexts; Champion exports no longer write Tera Type lines. The same audit removed active strategy copy that taught Protosynthesis as Champion coaching without source approval.'
+    },
+    {
+      status: 'done',
       title: 'Replay Pokemon effect tags added',
       detail: 'v2.1.82 adds compact Pokemon-card effect tags in replay turns. Structured effect_events such as flinch-applied, flinch-skip, sleep/freeze/paralysis skips, confusion self-hit, recoil, item recovery, and contact damage now surface as visible chips so players and QA can identify status/effect tech without opening raw JSON.'
     },
@@ -10019,8 +10032,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Damage stack oracle is green',
-      detail: 'showdown_damage_oracle_tests.js now reports 56/56 green and covers Low Kick target-weight base power, Tera Blast before/after Tera, active Tera type, physical/special category selection from boosted Attack vs Special Attack, DB-style tera_type hydration, former baseline direct/spread damage ranges, Foul Play target-Attack damage, and Darkest Lariat defense-stage bypass, alongside terrain, weather, ability, screen, Tera STAB, immunity, item, and spread-sensitive damage cases.'
+      title: 'Damage stack oracle is green for covered mechanics',
+      detail: 'showdown_damage_oracle_tests.js covers Low Kick target-weight base power, legacy/SV Tera Blast parity, former baseline direct/spread damage ranges, Foul Play target-Attack damage, and Darkest Lariat defense-stage bypass, alongside terrain, weather, ability, screen, immunity, item, and spread-sensitive damage cases. Champion-format battle runs now gate Tera off by default.'
     },
     {
       status: 'validated',
@@ -10029,8 +10042,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Tera Blast parity is green',
-      detail: 'v2.1.32 resolves Tera Blast in the engine from battle state: inactive Tera keeps Normal/special behavior, active Tera uses the attacker Tera type, active Tera Blast ignores Normal-conversion abilities such as Pixilate, and active category selects physical only when boosted Attack is greater than boosted Special Attack. The type multiplier audit now expands shipped Tera Blast rows into before-Tera and active-Tera buckets.'
+      title: 'Legacy/SV Tera Blast parity is isolated from Champion format',
+      detail: 'v2.1.32 kept Tera Blast parity for explicit non-Champion/SV test contexts. v2.1.83 gates Champion-format battles so legacy Tera fields and Tera Blast data do not auto-activate Terastallization or create Champion replay logs that teach Scarlet/Violet mechanics.'
     },
     {
       status: 'validated',
@@ -10097,7 +10110,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: '100% parity still has non-move gates',
-      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
+      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Champion-gated legacy Tera data, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
     },
     {
       status: 'gap',
@@ -10159,7 +10172,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Verify the next deployed source URL and QA artifact',
-      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, qa_coverage_summary, applied/calculated damage fields, effect_events for HP-changing effects, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, qa_coverage_summary, applied/calculated damage fields, effect_events for HP-changing effects, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, no Champion-format Terastallized lines, Low Kick/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',

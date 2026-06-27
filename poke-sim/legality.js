@@ -97,6 +97,17 @@ var CHAMPIONS_BANNED_ITEMS = new Set([
   'Booster Energy','Loaded Dice'
 ]);
 
+// Scarlet/Violet battle mechanics that must not appear in active Champion
+// teams unless a reviewed Champion source explicitly adds them later.
+var CHAMPIONS_BANNED_MECHANIC_MOVES = new Set([
+  'Tera Blast'
+]);
+
+var CHAMPIONS_BANNED_MECHANIC_ABILITIES = new Set([
+  'Protosynthesis',
+  'Quark Drive'
+]);
+
 // Mega Stone -> required base species. Built from CHAMPIONS_MEGAS at load.
 // Enables "wrong species holding stone" validation.
 var CHAMPIONS_STONE_TO_SPECIES = {};
@@ -170,6 +181,35 @@ function validateChampionsLegality(team) {
       });
     }
 
+    var tera = mon && (mon.tera || mon.teraType || mon.tera_type);
+    if (tera) {
+      violations.push({
+        severity: 'error',
+        code: 'TERA_NOT_CHAMPIONS_LEGAL',
+        message: name + ': Tera type "' + tera + '" is not legal in Champion-format teams'
+      });
+    }
+
+    var ability = mon && mon.ability ? mon.ability : '';
+    if (ability && CHAMPIONS_BANNED_MECHANIC_ABILITIES.has(ability)) {
+      violations.push({
+        severity: 'error',
+        code: 'ABILITY_NOT_CHAMPIONS_LEGAL',
+        message: name + ': ability "' + ability + '" belongs to an unapproved non-Champion mechanic'
+      });
+    }
+
+    var moves = mon && Array.isArray(mon.moves) ? mon.moves : [];
+    for (var mv = 0; mv < moves.length; mv++) {
+      if (CHAMPIONS_BANNED_MECHANIC_MOVES.has(moves[mv])) {
+        violations.push({
+          severity: 'error',
+          code: 'MOVE_NOT_CHAMPIONS_LEGAL',
+          message: name + ': move "' + moves[mv] + '" belongs to an unapproved non-Champion mechanic'
+        });
+      }
+    }
+
     // Mega stone must match holder species
     if (item && CHAMPIONS_STONE_TO_SPECIES[item]) {
       var required = CHAMPIONS_STONE_TO_SPECIES[item];
@@ -201,6 +241,8 @@ if (typeof module !== 'undefined' && module.exports) {
     FAKEMON_BLOCKLIST: FAKEMON_BLOCKLIST,
     CHAMPIONS_LEGAL_ITEMS: CHAMPIONS_LEGAL_ITEMS,
     CHAMPIONS_BANNED_ITEMS: CHAMPIONS_BANNED_ITEMS,
+    CHAMPIONS_BANNED_MECHANIC_MOVES: CHAMPIONS_BANNED_MECHANIC_MOVES,
+    CHAMPIONS_BANNED_MECHANIC_ABILITIES: CHAMPIONS_BANNED_MECHANIC_ABILITIES,
     CHAMPIONS_STONE_TO_SPECIES: CHAMPIONS_STONE_TO_SPECIES,
     CHAMPIONS_HOME_TRANSFER_MEGAS: CHAMPIONS_HOME_TRANSFER_MEGAS,
     validateChampionsLegality: validateChampionsLegality

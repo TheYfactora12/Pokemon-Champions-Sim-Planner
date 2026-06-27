@@ -1832,6 +1832,9 @@ class Pokemon {
     this.teamFormat = _declaredFmt;
     this.statFormat = _resolvedStatFormat.statFormat;
     this.formatMismatch = _resolvedStatFormat.formatMismatch;
+    if (_declaredFmt === 'champions') {
+      this.tera = null;
+    }
 
     // T9j.7 — Mega form resolution.
     // If this is a -Mega name and we have a CHAMPIONS_MEGAS entry AND the
@@ -4966,7 +4969,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const isDoubles = (format !== 'singles');
     let targetCat = _moveTargetCategory(move);
 
-    if (attacker.tera && !attacker.teraActivated) {
+    const teraAllowed = attacker.teamFormat !== 'champions' && opts && opts.allowTera === true;
+    if (teraAllowed && attacker.tera && !attacker.teraActivated) {
       attacker.teraActivated = true;
       log.push(`${attacker.name} Terastallized into ${attacker.tera}!`);
     }

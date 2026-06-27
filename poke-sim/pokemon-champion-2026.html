@@ -2338,8 +2338,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.82-replay-effect-tags -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.82-replay-effect-tags</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.83-champions-tera-gate</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -3930,7 +3930,6 @@ const TEAMS = {
         "name": "Dragapult",
         "item": "Choice Scarf",
         "ability": "Clear Body",
-        "teraType": "Fairy",
         "nature": "Jolly",
         "level": 50,
         "evs": {
@@ -3944,7 +3943,7 @@ const TEAMS = {
         "moves": [
           "Dragon Darts",
           "U-turn",
-          "Tera Blast",
+          "Phantom Force",
           "Sucker Punch"
         ],
         "role": "Speed Control / Scarf Revenge"
@@ -4486,7 +4485,6 @@ const TEAMS = {
           "spd": 2,
           "spe": 4
         },
-        "tera": "Rock",
         "moves": [
           "Rock Slide",
           "Knock Off",
@@ -4508,7 +4506,6 @@ const TEAMS = {
           "spd": 17,
           "spe": 12
         },
-        "tera": "Electric",
         "moves": [
           "Thunderbolt",
           "Hydro Pump",
@@ -4530,7 +4527,6 @@ const TEAMS = {
           "spd": 1,
           "spe": 32
         },
-        "tera": "Ground",
         "moves": [
           "High Horsepower",
           "Iron Head",
@@ -4552,7 +4548,6 @@ const TEAMS = {
           "spd": 0,
           "spe": 32
         },
-        "tera": "Dragon",
         "moves": [
           "Dragon Darts",
           "Phantom Force",
@@ -4574,7 +4569,6 @@ const TEAMS = {
           "spd": 0,
           "spe": 8
         },
-        "tera": "Fighting",
         "moves": [
           "Solar Beam",
           "Energy Ball",
@@ -5549,8 +5543,7 @@ const TEAMS = {
           "Aurora Veil",
           "Protect"
         ],
-        "role": "",
-        "tera": null
+        "role": ""
       },
       {
         "name": "Glaceon",
@@ -5572,8 +5565,7 @@ const TEAMS = {
           "Protect",
           "Calm Mind"
         ],
-        "role": "",
-        "tera": null
+        "role": ""
       },
       {
         "name": "Ninetales-Alola",
@@ -5595,8 +5587,7 @@ const TEAMS = {
           "Moonblast",
           "Encore"
         ],
-        "role": "",
-        "tera": null
+        "role": ""
       },
       {
         "name": "Milotic",
@@ -5618,8 +5609,7 @@ const TEAMS = {
           "Weather Ball",
           "Life Dew"
         ],
-        "role": "",
-        "tera": null
+        "role": ""
       },
       {
         "name": "Sneasler",
@@ -5641,8 +5631,7 @@ const TEAMS = {
           "Close Combat",
           "Rock Tomb"
         ],
-        "role": "",
-        "tera": null
+        "role": ""
       },
       {
         "name": "Farigiraf",
@@ -5664,8 +5653,7 @@ const TEAMS = {
           "Trick Room",
           "Protect"
         ],
-        "role": "",
-        "tera": null
+        "role": ""
       }
     ]
   },
@@ -5709,7 +5697,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Shadow Ball", "Sludge Bomb", "Perish Song", "Protect"],
-        "tera": "Ghost",
         "role": "Mega Trapper"
       },
       {
@@ -5721,7 +5708,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Low Kick", "Protect"],
-        "tera": "Dark",
         "role": "Late-Game Sweeper"
       },
       {
@@ -5734,7 +5720,6 @@ const TEAMS = {
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Matcha Gotcha", "Trick Room", "Rage Powder", "Protect"],
-        "tera": "Dark",
         "role": "Redirection Support"
       },
       {
@@ -5746,7 +5731,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Flare Blitz", "Protect", "Parting Shot", "Fake Out"],
-        "tera": "Ghost",
         "role": "Pivot / Fake Out"
       },
       {
@@ -5758,7 +5742,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Clanging Scales", "Aura Sphere", "Clangorous Soul", "Protect"],
-        "tera": "Fairy",
         "role": "Late Cleaner"
       },
       {
@@ -5770,7 +5753,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Tailwind", "Dual Wingbeat", "Rock Slide", "Protect"],
-        "tera": "Flying",
         "role": "Speed Control"
       }
     ]
@@ -5815,7 +5797,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Solar Beam", "Weather Ball", "Dazzling Gleam", "Protect"],
-        "tera": "Fairy",
         "role": "Mega Attacker"
       },
       {
@@ -5827,7 +5808,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Foul Play", "Rain Dance", "Light Screen", "Encore"],
-        "tera": "Normal",
         "role": "Prankster Support"
       },
       {
@@ -5839,7 +5819,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Electro Shot", "Draco Meteor", "Flash Cannon", "Protect"],
-        "tera": "Fairy",
         "role": "Rain SpA"
       },
       {
@@ -5851,7 +5830,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Flip Turn", "Aqua Jet", "Last Respects"],
-        "tera": "Ghost",
         "role": "Scarf Sweeper"
       },
       {
@@ -5863,7 +5841,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Weather Ball", "Hurricane", "Tailwind", "Protect"],
-        "tera": "Ghost",
         "role": "Weather Setter"
       },
       {
@@ -5875,7 +5852,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
-        "tera": "Stellar",
         "role": "Unburden Sweeper"
       }
     ]
@@ -5920,7 +5896,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Flare Blitz", "Throat Chop", "Parting Shot", "Fake Out"],
-        "tera": "Fire",
         "role": "Pivot"
       },
       {
@@ -5933,7 +5908,6 @@ const TEAMS = {
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Hyper Voice", "Psychic", "Helping Hand", "Trick Room"],
-        "tera": "Normal",
         "role": "TR Setter"
       },
       {
@@ -5946,7 +5920,6 @@ const TEAMS = {
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Protect", "Headlong Rush", "Poltergeist", "Ice Punch"],
-        "tera": "Ground",
         "role": "Mega TR Sweeper"
       },
       {
@@ -5958,7 +5931,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Coaching"],
-        "tera": "Fighting",
         "role": "Unburden"
       },
       {
@@ -5971,7 +5943,6 @@ const TEAMS = {
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Protect", "Heat Wave", "Eruption", "Weather Ball"],
-        "tera": "Fire",
         "role": "TR Attacker"
       },
       {
@@ -5983,7 +5954,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Leaf Storm", "Sludge Bomb", "Sleep Powder"],
-        "tera": "Grass",
         "role": "Sun Abuser / Sash"
       }
     ]
@@ -6028,7 +5998,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Flare Blitz", "Darkest Lariat", "Close Combat", "Fake Out"],
-        "tera": "Fire",
         "role": "Pivot"
       },
       {
@@ -6041,7 +6010,6 @@ const TEAMS = {
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Psychic", "Trick Room", "Dazzling Gleam", "Protect"],
-        "tera": "Psychic",
         "role": "TR Setter"
       },
       {
@@ -6054,7 +6022,6 @@ const TEAMS = {
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Hyper Voice", "Trick Room", "Psychic", "Protect"],
-        "tera": "Normal",
         "role": "TR Setter 2"
       },
       {
@@ -6066,7 +6033,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Eruption", "Weather Ball", "Earth Power", "Protect"],
-        "tera": "Fire",
         "role": "Sun Setter"
       },
       {
@@ -6078,7 +6044,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Iron Head", "Swords Dance"],
-        "tera": "Dark",
         "role": "Sweeper"
       },
       {
@@ -6090,7 +6055,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Heat Wave", "Overheat", "Solar Beam", "Protect"],
-        "tera": "Fire",
         "role": "Mega Attacker"
       }
     ]
@@ -6135,7 +6099,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Dual Wingbeat", "Flare Blitz", "Tailwind"],
-        "tera": "Flying",
         "role": "Priority Tailwind"
       },
       {
@@ -6147,7 +6110,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Rock Slide", "Earthquake", "Dragon Claw"],
-        "tera": "Steel",
         "role": "Physical Attacker"
       },
       {
@@ -6159,7 +6121,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Liquidation", "Last Respects", "Aqua Jet"],
-        "tera": "Water",
         "role": "Revenge Killer"
       },
       {
@@ -6171,7 +6132,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Sucker Punch", "Iron Head", "Kowtow Cleave"],
-        "tera": "Dark",
         "role": "Late-Game Cleaner"
       },
       {
@@ -6183,7 +6143,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Close Combat", "Gunk Shot", "Fake Out"],
-        "tera": "Fighting",
         "role": "Fast Attacker"
       },
       {
@@ -6195,7 +6154,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Protect", "Light of Ruin", "Dazzling Gleam", "Moonblast"],
-        "tera": "Fairy",
         "role": "Mega Special Wall-Breaker"
       }
     ]
@@ -6240,7 +6198,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Icy Wind", "Flip Turn"],
-        "tera": "Water",
         "role": "Scarf Sweeper"
       },
       {
@@ -6252,7 +6209,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Swords Dance", "Protect"],
-        "tera": "Dark",
         "role": "Late-Game Cleaner"
       },
       {
@@ -6264,7 +6220,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 1, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Thunderbolt", "Overheat", "Will-O-Wisp", "Protect"],
-        "tera": "Water",
         "role": "Burn Support"
       },
       {
@@ -6276,7 +6231,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Blizzard", "Shadow Ball", "Taunt", "Protect"],
-        "tera": "Ghost",
         "role": "Mega Snow Attacker"
       },
       {
@@ -6288,7 +6242,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
-        "tera": "Fighting",
         "role": "Fake Out + Sash"
       },
       {
@@ -6300,7 +6253,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Moonblast", "Follow Me", "Helping Hand", "Protect"],
-        "tera": "Fairy",
         "role": "Redirection"
       }
     ]
@@ -6345,7 +6297,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Earthquake", "Dragon Claw", "Rock Slide", "Protect"],
-        "tera": "Ground",
         "role": "Sand Attacker"
       },
       {
@@ -6357,7 +6308,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Rock Slide", "Low Kick", "Ice Punch", "Protect"],
-        "tera": "Rock",
         "role": "Sand Setter"
       },
       {
@@ -6369,7 +6319,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Shadow Ball", "Sludge Wave", "Focus Blast", "Protect"],
-        "tera": "Ghost",
         "role": "Mega Trapper"
       },
       {
@@ -6381,7 +6330,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Moonblast", "Protect", "Tailwind", "Fake Tears"],
-        "tera": "Grass",
         "role": "Prankster Support"
       },
       {
@@ -6393,7 +6341,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 1, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Hydro Pump", "Volt Switch", "Will-O-Wisp", "Protect"],
-        "tera": "Water",
         "role": "Burn Pivot"
       },
       {
@@ -6405,7 +6352,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
-        "tera": "Fighting",
         "role": "Unburden Sweeper"
       }
     ]
@@ -6450,7 +6396,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Fake Out", "Encore", "Protect"],
-        "tera": "Normal",
         "role": "Mega Fake Out"
       },
       {
@@ -6463,7 +6408,6 @@ const TEAMS = {
         "ev_source": "archetype_default",
         "ivs": { "hp":31, "atk":31, "def":31, "spa":31, "spd":31, "spe":0 },
         "moves": ["Poltergeist", "Close Combat", "Shadow Sneak", "King's Shield"],
-        "tera": "Ghost",
         "role": "Stance Attacker"
       },
       {
@@ -6475,7 +6419,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Blizzard", "Icy Wind", "Freeze-Dry", "Ice Shard"],
-        "tera": "Ice",
         "role": "Snow Setter / Scarf"
       },
       {
@@ -6487,7 +6430,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Dragon Claw", "Earthquake", "Rock Slide", "Protect"],
-        "tera": "Ground",
         "role": "Physical Attacker"
       },
       {
@@ -6499,7 +6441,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Low Kick", "Protect"],
-        "tera": "Dark",
         "role": "Late-Game Cleaner"
       },
       {
@@ -6511,7 +6452,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Protect"],
-        "tera": "Water",
         "role": "Revenge Killer"
       }
     ]
@@ -6556,7 +6496,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Lunge", "Poison Jab", "Sucker Punch", "Protect"],
-        "tera": "Poison",
         "role": "Utility Pressure"
       },
       {
@@ -6568,7 +6507,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Tailwind", "Dual Wingbeat", "Rock Slide", "Protect"],
-        "tera": "Flying",
         "role": "Mega Speed Control"
       },
       {
@@ -6580,7 +6518,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Heat Wave", "Solar Beam", "Overheat", "Protect"],
-        "tera": "Fire",
         "role": "Sun Breaker"
       },
       {
@@ -6592,7 +6529,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Flip Turn"],
-        "tera": "Ghost",
         "role": "Scarf Cleaner"
       },
       {
@@ -6604,7 +6540,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 32, "spd": 0, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Hyper Voice", "Moonblast", "Helping Hand", "Protect"],
-        "tera": "Fairy",
         "role": "Fairy Support"
       },
       {
@@ -6616,7 +6551,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
-        "tera": "Fighting",
         "role": "Unburden Sweeper"
       }
     ]
@@ -6661,7 +6595,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
-        "tera": "Fighting",
         "role": "Unburden Sweeper"
       },
       {
@@ -6673,7 +6606,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Protect"],
-        "tera": "Water",
         "role": "Physical Cleaner"
       },
       {
@@ -6685,7 +6617,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Fake Out", "Parting Shot", "Flare Blitz", "Knock Off"],
-        "tera": "Ghost",
         "role": "Pivot"
       },
       {
@@ -6697,7 +6628,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Kowtow Cleave", "Sucker Punch", "Low Kick", "Protect"],
-        "tera": "Dark",
         "role": "Late-Game Cleaner"
       },
       {
@@ -6709,7 +6639,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 0, "def": 1, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Giga Drain", "Dazzling Gleam", "Leech Seed", "Protect"],
-        "tera": "Fairy",
         "role": "Bulky Support"
       },
       {
@@ -6721,7 +6650,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Sleep Powder", "Hurricane", "Tailwind", "Protect"],
-        "tera": "Flying",
         "role": "Fast Utility"
       }
     ]
@@ -6766,7 +6694,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Light of Ruin", "Dazzling Gleam", "Moonblast", "Protect"],
-        "tera": "Fairy",
         "role": "Fairy Breaker"
       },
       {
@@ -6778,7 +6705,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Tailwind", "Dual Wingbeat", "Rock Slide", "Protect"],
-        "tera": "Flying",
         "role": "Speed Control"
       },
       {
@@ -6790,7 +6716,6 @@ const TEAMS = {
         "evs": {"hp": 32, "atk": 1, "def": 0, "spa": 0, "spd": 32, "spe": 0},
         "ev_source": "archetype_default",
         "moves": ["Fake Out", "Parting Shot", "Flare Blitz", "Darkest Lariat"],
-        "tera": "Ghost",
         "role": "Pivot"
       },
       {
@@ -6802,7 +6727,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Earthquake", "Dragon Claw", "Rock Slide", "Protect"],
-        "tera": "Ground",
         "role": "Physical Pressure"
       },
       {
@@ -6814,7 +6738,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Close Combat", "Dire Claw", "Fake Out", "Protect"],
-        "tera": "Fighting",
         "role": "Unburden Sweeper"
       },
       {
@@ -6826,7 +6749,6 @@ const TEAMS = {
         "evs": {"hp": 1, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
         "ev_source": "archetype_default",
         "moves": ["Wave Crash", "Last Respects", "Aqua Jet", "Flip Turn"],
-        "tera": "Ghost",
         "role": "Scarf Cleaner"
       }
     ]
@@ -7020,7 +6942,6 @@ const TEAMS = {
           "spd": 2,
           "spe": 4
         },
-        "tera": "Rock",
         "moves": [
           "Rock Slide",
           "Knock Off",
@@ -7042,7 +6963,6 @@ const TEAMS = {
           "spd": 1,
           "spe": 32
         },
-        "tera": "Ground",
         "moves": [
           "High Horsepower",
           "Iron Head",
@@ -7237,7 +7157,6 @@ const TEAMS = {
           "spd": 0,
           "spe": 30
         },
-        "tera": "Ice",
         "moves": [
           "Blizzard",
           "Icy Wind",
@@ -10237,6 +10156,9 @@ class Pokemon {
     this.teamFormat = _declaredFmt;
     this.statFormat = _resolvedStatFormat.statFormat;
     this.formatMismatch = _resolvedStatFormat.formatMismatch;
+    if (_declaredFmt === 'champions') {
+      this.tera = null;
+    }
 
     // T9j.7 — Mega form resolution.
     // If this is a -Mega name and we have a CHAMPIONS_MEGAS entry AND the
@@ -13371,7 +13293,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const isDoubles = (format !== 'singles');
     let targetCat = _moveTargetCategory(move);
 
-    if (attacker.tera && !attacker.teraActivated) {
+    const teraAllowed = attacker.teamFormat !== 'champions' && opts && opts.allowTera === true;
+    if (teraAllowed && attacker.tera && !attacker.teraActivated) {
       attacker.teraActivated = true;
       log.push(`${attacker.name} Terastallized into ${attacker.tera}!`);
     }
@@ -20808,6 +20731,17 @@ var CHAMPIONS_BANNED_ITEMS = new Set([
   'Booster Energy','Loaded Dice'
 ]);
 
+// Scarlet/Violet battle mechanics that must not appear in active Champion
+// teams unless a reviewed Champion source explicitly adds them later.
+var CHAMPIONS_BANNED_MECHANIC_MOVES = new Set([
+  'Tera Blast'
+]);
+
+var CHAMPIONS_BANNED_MECHANIC_ABILITIES = new Set([
+  'Protosynthesis',
+  'Quark Drive'
+]);
+
 // Mega Stone -> required base species. Built from CHAMPIONS_MEGAS at load.
 // Enables "wrong species holding stone" validation.
 var CHAMPIONS_STONE_TO_SPECIES = {};
@@ -20881,6 +20815,35 @@ function validateChampionsLegality(team) {
       });
     }
 
+    var tera = mon && (mon.tera || mon.teraType || mon.tera_type);
+    if (tera) {
+      violations.push({
+        severity: 'error',
+        code: 'TERA_NOT_CHAMPIONS_LEGAL',
+        message: name + ': Tera type "' + tera + '" is not legal in Champion-format teams'
+      });
+    }
+
+    var ability = mon && mon.ability ? mon.ability : '';
+    if (ability && CHAMPIONS_BANNED_MECHANIC_ABILITIES.has(ability)) {
+      violations.push({
+        severity: 'error',
+        code: 'ABILITY_NOT_CHAMPIONS_LEGAL',
+        message: name + ': ability "' + ability + '" belongs to an unapproved non-Champion mechanic'
+      });
+    }
+
+    var moves = mon && Array.isArray(mon.moves) ? mon.moves : [];
+    for (var mv = 0; mv < moves.length; mv++) {
+      if (CHAMPIONS_BANNED_MECHANIC_MOVES.has(moves[mv])) {
+        violations.push({
+          severity: 'error',
+          code: 'MOVE_NOT_CHAMPIONS_LEGAL',
+          message: name + ': move "' + moves[mv] + '" belongs to an unapproved non-Champion mechanic'
+        });
+      }
+    }
+
     // Mega stone must match holder species
     if (item && CHAMPIONS_STONE_TO_SPECIES[item]) {
       var required = CHAMPIONS_STONE_TO_SPECIES[item];
@@ -20912,6 +20875,8 @@ if (typeof module !== 'undefined' && module.exports) {
     FAKEMON_BLOCKLIST: FAKEMON_BLOCKLIST,
     CHAMPIONS_LEGAL_ITEMS: CHAMPIONS_LEGAL_ITEMS,
     CHAMPIONS_BANNED_ITEMS: CHAMPIONS_BANNED_ITEMS,
+    CHAMPIONS_BANNED_MECHANIC_MOVES: CHAMPIONS_BANNED_MECHANIC_MOVES,
+    CHAMPIONS_BANNED_MECHANIC_ABILITIES: CHAMPIONS_BANNED_MECHANIC_ABILITIES,
     CHAMPIONS_STONE_TO_SPECIES: CHAMPIONS_STONE_TO_SPECIES,
     CHAMPIONS_HOME_TRANSFER_MEGAS: CHAMPIONS_HOME_TRANSFER_MEGAS,
     validateChampionsLegality: validateChampionsLegality
@@ -21037,9 +21002,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.82-replay-effect-tags';
+    return txt || 'v2.1.83-champions-tera-gate';
   } catch (e) {
-    return 'v2.1.82-replay-effect-tags';
+    return 'v2.1.83-champions-tera-gate';
   }
 }
 
@@ -21563,7 +21528,7 @@ function exportTeamToPaste(team) {
     lines.push(`${m.name}${itemStr}`);
     if (m.ability) lines.push(`Ability: ${m.ability}`);
     lines.push(`Level: ${m.level || 50}`);
-    if (m.tera) lines.push(`Tera Type: ${m.tera}`);
+    if (team.format !== 'champions' && m.tera) lines.push(`Tera Type: ${m.tera}`);
     // SPs — only non-zero
     const evs = m.evs || {};
     const evParts = [];
@@ -21661,9 +21626,15 @@ function normalizeTeamRecordForSim(teamKey, team) {
     team.legality_status = team.source === 'custom' ? 'unverified' : 'legal_inferred';
   }
 
+  var championFormat = team.format === 'champions';
   team.members = team.members.map(function(member) {
     member = member || {};
     var name = member.name || member.species || 'Unknown';
+    var moves = Array.isArray(member.moves) ? member.moves.slice() : [];
+    if (championFormat) {
+      moves = moves.filter(function(move) { return move !== 'Tera Blast'; });
+    }
+    var teraType = championFormat ? '' : (member.teraType || member.tera_type || '');
     return {
       name: name,
       species: member.species || name,
@@ -21673,9 +21644,9 @@ function normalizeTeamRecordForSim(teamKey, team) {
       level: member.level || 50,
       evs: member.evs || {},
       ivs: member.ivs || {},
-      moves: Array.isArray(member.moves) ? member.moves : [],
-      teraType: member.teraType || member.tera_type || '',
-      tera_type: member.tera_type || member.teraType || '',
+      moves: moves,
+      teraType: teraType,
+      tera_type: teraType,
       role: member.role || member.role_tag || ''
     };
   });
@@ -29394,9 +29365,11 @@ function _upsertTeamToDB(teamId, team, source) {
           nature:    m.nature    || null,
           evs:       m.evs       || null,
           ivs:       m.ivs       || null,
-          moves:     m.moves     || [],
+          moves:     ((team && team.format) === 'champions' && Array.isArray(m.moves))
+            ? m.moves.filter(function(move) { return move !== 'Tera Blast'; })
+            : (m.moves || []),
           level:     m.level     || 50,
-          tera_type: m.tera_type || m.teraType || null
+          tera_type: (team && team.format) === 'champions' ? null : (m.tera_type || m.teraType || null)
         };
       })
     };
@@ -30533,6 +30506,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Champion-format Tera leak gated off',
+      detail: 'v2.1.83 prevents Champion-format battles from auto-Terastallizing legacy Scarlet/Violet team data. Tera support remains available only for explicit non-Champion/SV parity contexts; Champion exports no longer write Tera Type lines. The same audit removed active strategy copy that taught Protosynthesis as Champion coaching without source approval.'
+    },
+    {
+      status: 'done',
       title: 'Replay Pokemon effect tags added',
       detail: 'v2.1.82 adds compact Pokemon-card effect tags in replay turns. Structured effect_events such as flinch-applied, flinch-skip, sleep/freeze/paralysis skips, confusion self-hit, recoil, item recovery, and contact damage now surface as visible chips so players and QA can identify status/effect tech without opening raw JSON.'
     },
@@ -30940,8 +30918,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Damage stack oracle is green',
-      detail: 'showdown_damage_oracle_tests.js now reports 56/56 green and covers Low Kick target-weight base power, Tera Blast before/after Tera, active Tera type, physical/special category selection from boosted Attack vs Special Attack, DB-style tera_type hydration, former baseline direct/spread damage ranges, Foul Play target-Attack damage, and Darkest Lariat defense-stage bypass, alongside terrain, weather, ability, screen, Tera STAB, immunity, item, and spread-sensitive damage cases.'
+      title: 'Damage stack oracle is green for covered mechanics',
+      detail: 'showdown_damage_oracle_tests.js covers Low Kick target-weight base power, legacy/SV Tera Blast parity, former baseline direct/spread damage ranges, Foul Play target-Attack damage, and Darkest Lariat defense-stage bypass, alongside terrain, weather, ability, screen, immunity, item, and spread-sensitive damage cases. Champion-format battle runs now gate Tera off by default.'
     },
     {
       status: 'validated',
@@ -30950,8 +30928,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Tera Blast parity is green',
-      detail: 'v2.1.32 resolves Tera Blast in the engine from battle state: inactive Tera keeps Normal/special behavior, active Tera uses the attacker Tera type, active Tera Blast ignores Normal-conversion abilities such as Pixilate, and active category selects physical only when boosted Attack is greater than boosted Special Attack. The type multiplier audit now expands shipped Tera Blast rows into before-Tera and active-Tera buckets.'
+      title: 'Legacy/SV Tera Blast parity is isolated from Champion format',
+      detail: 'v2.1.32 kept Tera Blast parity for explicit non-Champion/SV test contexts. v2.1.83 gates Champion-format battles so legacy Tera fields and Tera Blast data do not auto-activate Terastallization or create Champion replay logs that teach Scarlet/Violet mechanics.'
     },
     {
       status: 'validated',
@@ -31018,7 +30996,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: '100% parity still has non-move gates',
-      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
+      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Champion-gated legacy Tera data, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
     },
     {
       status: 'gap',
@@ -31080,7 +31058,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Verify the next deployed source URL and QA artifact',
-      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, qa_coverage_summary, applied/calculated damage fields, effect_events for HP-changing effects, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, qa_coverage_summary, applied/calculated damage fields, effect_events for HP-changing effects, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, no Champion-format Terastallized lines, Low Kick/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
@@ -37275,7 +37253,7 @@ const POKEMON_MOVE_LOG = {
     keyInteractions: 'Prankster Tailwind is the strongest speed control tool in VGC. Encore can lock TR for a dead turn. Fairy STAB hard-checks Dragon Mega leads.'
   },
   'Flutter Mane': {
-    role: 'Paradox Sweeper', tags: ['Protosynthesis','Fairy STAB','Ghost STAB','Ultra Fast'],
+    role: 'Special Attacker', tags: ['Fairy STAB','Ghost STAB','Ultra Fast'],
     moves: {
       'Moonblast': { purpose:'95 BP Fairy STAB. 30% SpA drop. Hits Dragon/Dark/Fighting.', useWhen:'Primary coverage vs most of meta.' },
       'Shadow Ball': { purpose:'80 BP Ghost STAB. Hits Ghost/Psychic.', useWhen:'Mirror matches, TR setters, Gholdengo.' },
@@ -37283,7 +37261,7 @@ const POKEMON_MOVE_LOG = {
       'Psyshock': { purpose:'80 BP Psychic hits Defense not SpDef.', useWhen:'vs specially bulky mons (Cresselia, Blissey).' },
     },
     counters: ['Kingambit (Steel+Dark resists Fairy+Ghost)','Incineroar (Dark immune Ghost)','Amoonguss (Rage Powder)','Iron Hands'],
-    keyInteractions: 'Protosynthesis under Sun boosts SpA 1.3x. 135 SpA + Protosynthesis rivals Choice Specs without the lock. 135 Spe outspeeds almost everything except Dragapult/Sneasler.'
+    keyInteractions: 'Fast Fairy/Ghost pressure. Use as a matchup reference only after its ability, item, and Champion legality are source-approved for the current ruleset.'
   },
   'Tyranitar': {
     role: 'Sand Setter + Physical Tank', tags: ['Sand Stream','Rock STAB','Dark STAB','Specially Bulky'],
