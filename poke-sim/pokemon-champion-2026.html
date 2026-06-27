@@ -2338,8 +2338,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.84-source-registry -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.84-source-registry</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.85-regmb-source-lane -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.85-regmb-source-lane</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -8389,7 +8389,9 @@ if (typeof module !== 'undefined' && module.exports) {
 // ============================================================
 
 var CHAMPIONS_FORMAT_ID = 'champions-vgc-2026-regma';
-var CHAMPIONS_FORMAT_LABEL = 'Champions Reg M-A (Apr 8 - Jun 17, 2026)';
+var CHAMPIONS_ACTIVE_SOURCE_RULESET_ID = 'champions_reg_m_b_doubles_bo3_source_review';
+var CHAMPIONS_ACTIVE_SOURCE_FORMAT_LABEL = 'Champions Reg M-B Source Review (Jun 17 - Sep 2, 2026)';
+var CHAMPIONS_FORMAT_LABEL = 'Champions Reg M-A Historical Lane (Apr 8 - Jun 17, 2026)';
 
 // ============================================================
 // SEEDED PRNG — Issue #2 FIX
@@ -20629,7 +20631,7 @@ if (typeof window !== 'undefined') {
 })(typeof globalThis !== 'undefined' ? globalThis : (typeof window !== 'undefined' ? window : this));
 
 
-// legality.js - Pokemon Champions Reg M-A legality checks (Issue #T4)
+// legality.js - Pokemon Champions Reg M-A historical legality checks with Reg M-B source-review guard (Issue #T4)
 // Loaded before engine.js. Exposes globals:
 //   CHAMPIONS_BANNED_POKEMON  - ban list (Legendary/Mythical/Restricted/Paradox/sub-legends)
 //   FAKEMON_BLOCKLIST         - known fabricated/non-existent forms
@@ -20677,7 +20679,7 @@ var FAKEMON_BLOCKLIST = new Set([
   // empty; add only truly fabricated forms here
 ]);
 
-// Items verified in the Champions launch item pool. Reg M-A teams may carry
+// Items verified in the Champions launch item pool. Implemented Champions teams may carry
 // only this pool until a newer source confirms additions. Item effects still
 // come from Showdown/generated runtime data; this list is only the Champions
 // availability gate. Source:
@@ -20797,7 +20799,7 @@ function validateChampionsLegality(team) {
       violations.push({
         severity: 'error',
         code: 'BANNED',
-        message: name + ': banned in Reg M-A (Legendary/Mythical/Restricted/Paradox)'
+        message: name + ': banned in the implemented Champions ruleset lane (Legendary/Mythical/Restricted/Paradox)'
       });
     }
 
@@ -20808,7 +20810,7 @@ function validateChampionsLegality(team) {
       violations.push({
         severity: 'error',
         code: knownAbsent ? 'ITEM_ABSENT' : 'ITEM_NOT_IN_CHAMPIONS_POOL',
-        message: name + ': item "' + item + '" is not in verified Champions Reg M-A item pool'
+        message: name + ': item "' + item + '" is not in verified implemented Champions item pool'
       });
     }
 
@@ -20817,7 +20819,7 @@ function validateChampionsLegality(team) {
       violations.push({
         severity: 'error',
         code: 'TERA_NOT_CHAMPIONS_LEGAL',
-        message: name + ': Tera type "' + tera + '" is not legal in current Champions Reg M-A teams'
+        message: name + ': Tera type "' + tera + '" is not legal in current implemented Champions teams'
       });
     }
 
@@ -20999,9 +21001,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.84-source-registry';
+    return txt || 'v2.1.85-regmb-source-lane';
   } catch (e) {
-    return 'v2.1.84-source-registry';
+    return 'v2.1.85-regmb-source-lane';
   }
 }
 
@@ -31013,7 +31015,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Reg M-B source review is now a ruleset migration blocker',
-      detail: 'The June 27 source review indicates Reg M-A should be treated as a named historical lane unless deliberately selected. The next ruleset work is to review Reg M-B sources, decide the default live lane, add Champion overrides where needed, and keep the source registry timestamped.'
+      detail: 'The June 27 source review now exposes Reg M-B as the active source-review lane while keeping the implemented validator on the historical Reg M-A lane. Next work is source-backed Reg M-B promotion: confirm legal species, items, forms, moves, abilities, mechanics, Champion overrides, and refreshed QA artifacts before changing runtime legality.'
     },
     {
       status: 'gap',

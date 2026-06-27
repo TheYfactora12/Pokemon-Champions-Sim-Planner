@@ -10,7 +10,24 @@ Purpose: give the team one place to inspect, challenge, replace, and improve the
 
 As of the June 27, 2026 repo review, Champion regulation sources must be treated as ruleset-sensitive. Victory Road lists Reg M-A as April 8, 2026 to June 17, 2026 and Reg M-B as June 17, 2026 to September 2, 2026.
 
-Do not casually call Reg M-A the live ladder unless a current source confirms it. The next ruleset task is to source-review Reg M-B, decide whether the default sim lane should migrate, and keep Reg M-A as a named historical lane if it remains useful for QA.
+Do not casually call Reg M-A the live ladder unless a current source confirms it. The simulator now treats Reg M-B as the active source-review lane while keeping Reg M-A as the implemented historical runtime lane until source-backed legality and mechanic deltas are promoted.
+
+## Reg M-B Source-Review Lane
+
+Status: active external season, not yet promoted as the implemented simulator legality lane.
+
+As of June 27, 2026, the app exposes Reg M-B as the active source-review lane while keeping deterministic battle validation on the historical Reg M-A implementation. This avoids silently allowing or banning Pokemon, moves, items, forms, abilities, or battle mechanics without a trusted source trail.
+
+Promotion checklist before Reg M-B can become the default implemented lane:
+
+- Add authoritative Reg M-B source rows with `checked_at_utc` timestamps.
+- Compare source data against the supported Pokemon Showdown format or document an explicit Champion override.
+- Update species, item, form, move, ability, and mechanic gates from source-backed data only.
+- Add legality fixtures for accepted and rejected Reg M-B cases.
+- Regenerate seed SQL, QA baseline, golden battle hashes, bundle, cache guard, and browser QA artifact.
+- Keep historical Reg M-A artifacts labeled as historical instead of rewriting old replay/team provenance.
+
+Non-goal: do not enable Tera, Omni Ring, legendary forms, items, or moves from assumption alone.
 
 ## Source Priority
 

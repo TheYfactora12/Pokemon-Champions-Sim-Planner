@@ -65,7 +65,9 @@
 // ============================================================
 
 var CHAMPIONS_FORMAT_ID = 'champions-vgc-2026-regma';
-var CHAMPIONS_FORMAT_LABEL = 'Champions Reg M-A (Apr 8 - Jun 17, 2026)';
+var CHAMPIONS_ACTIVE_SOURCE_RULESET_ID = 'champions_reg_m_b_doubles_bo3_source_review';
+var CHAMPIONS_ACTIVE_SOURCE_FORMAT_LABEL = 'Champions Reg M-B Source Review (Jun 17 - Sep 2, 2026)';
+var CHAMPIONS_FORMAT_LABEL = 'Champions Reg M-A Historical Lane (Apr 8 - Jun 17, 2026)';
 
 // ============================================================
 // SEEDED PRNG — Issue #2 FIX

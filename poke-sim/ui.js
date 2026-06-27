@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.84-source-registry';
+    return txt || 'v2.1.85-regmb-source-lane';
   } catch (e) {
-    return 'v2.1.84-source-registry';
+    return 'v2.1.85-regmb-source-lane';
   }
 }
 
@@ -10130,7 +10130,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Reg M-B source review is now a ruleset migration blocker',
-      detail: 'The June 27 source review indicates Reg M-A should be treated as a named historical lane unless deliberately selected. The next ruleset work is to review Reg M-B sources, decide the default live lane, add Champion overrides where needed, and keep the source registry timestamped.'
+      detail: 'The June 27 source review now exposes Reg M-B as the active source-review lane while keeping the implemented validator on the historical Reg M-A lane. Next work is source-backed Reg M-B promotion: confirm legal species, items, forms, moves, abilities, mechanics, Champion overrides, and refreshed QA artifacts before changing runtime legality.'
     },
     {
       status: 'gap',

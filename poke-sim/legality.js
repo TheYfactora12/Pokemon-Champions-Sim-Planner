@@ -1,4 +1,4 @@
-// legality.js - Pokemon Champions Reg M-A legality checks (Issue #T4)
+// legality.js - Pokemon Champions Reg M-A historical legality checks with Reg M-B source-review guard (Issue #T4)
 // Loaded before engine.js. Exposes globals:
 //   CHAMPIONS_BANNED_POKEMON  - ban list (Legendary/Mythical/Restricted/Paradox/sub-legends)
 //   FAKEMON_BLOCKLIST         - known fabricated/non-existent forms
@@ -46,7 +46,7 @@ var FAKEMON_BLOCKLIST = new Set([
   // empty; add only truly fabricated forms here
 ]);
 
-// Items verified in the Champions launch item pool. Reg M-A teams may carry
+// Items verified in the Champions launch item pool. Implemented Champions teams may carry
 // only this pool until a newer source confirms additions. Item effects still
 // come from Showdown/generated runtime data; this list is only the Champions
 // availability gate. Source:
@@ -166,7 +166,7 @@ function validateChampionsLegality(team) {
       violations.push({
         severity: 'error',
         code: 'BANNED',
-        message: name + ': banned in Reg M-A (Legendary/Mythical/Restricted/Paradox)'
+        message: name + ': banned in the implemented Champions ruleset lane (Legendary/Mythical/Restricted/Paradox)'
       });
     }
 
@@ -177,7 +177,7 @@ function validateChampionsLegality(team) {
       violations.push({
         severity: 'error',
         code: knownAbsent ? 'ITEM_ABSENT' : 'ITEM_NOT_IN_CHAMPIONS_POOL',
-        message: name + ': item "' + item + '" is not in verified Champions Reg M-A item pool'
+        message: name + ': item "' + item + '" is not in verified implemented Champions item pool'
       });
     }
 
@@ -186,7 +186,7 @@ function validateChampionsLegality(team) {
       violations.push({
         severity: 'error',
         code: 'TERA_NOT_CHAMPIONS_LEGAL',
-        message: name + ': Tera type "' + tera + '" is not legal in current Champions Reg M-A teams'
+        message: name + ': Tera type "' + tera + '" is not legal in current implemented Champions teams'
       });
     }
 

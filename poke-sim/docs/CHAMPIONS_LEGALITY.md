@@ -14,6 +14,14 @@ Source freshness note: the June 27, 2026 review found that Reg M-A should be tre
 
 ---
 
+## Reg M-B Source-Review Boundary
+
+Reg M-B is the active external season window after June 17, 2026, but this validator remains the implemented Reg M-A historical lane until Reg M-B species, item, form, move, ability, and mechanic differences are source-confirmed.
+
+Passing this validator proves compatibility with the implemented historical lane. It does not prove full Reg M-B legality. Reg M-B promotion must update source rows, fixtures, QA artifacts, generated bundle/cache guards, and the browser QA artifact before the UI can claim Reg M-B as the implemented ruleset.
+
+---
+
 ## Team Engineering Rule
 
 Champion legality is ruleset-gated.

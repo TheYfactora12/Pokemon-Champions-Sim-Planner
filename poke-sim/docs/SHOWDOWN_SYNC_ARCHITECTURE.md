@@ -6,6 +6,12 @@
 
 ---
 
+## Ruleset Lifecycle Guard
+
+Showdown sync must record which ruleset window it is validating against and when that source was checked. Reg M-B is currently a source-review lane, not a promoted simulator legality lane, so sync output should identify source drift instead of overwriting historical Reg M-A fixtures without an explicit migration.
+
+---
+
 ## Problem
 
 The simulator currently has useful Showdown-derived assets and replay tooling, but the update path is not yet a full live pipeline. That creates two separate risks:
