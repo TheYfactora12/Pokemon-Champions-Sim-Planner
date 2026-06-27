@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.76-duration-timing';
+    return txt || 'v2.1.77-run-all-qa-replay-export';
   } catch (e) {
-    return 'v2.1.76-duration-timing';
+    return 'v2.1.77-run-all-qa-replay-export';
   }
 }
 
@@ -6381,9 +6381,6 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
   var bestFour = csUniquePokemonNames(bestLead.concat(preserveNames), playerKey, getBringCount());
   var matchConfidence = best.previewScore >= 0.5 && best.hasResult ? 'medium' : 'low';
 
-  var compactTacticalSpeedSummary = csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' });
-  var compactDurationEffectSummary = csBuildDurationEffectSummary(turnLog, { scope: 'retained-replay-card' });
-  var compactDecisionLedger = csBuildDecisionOpportunityLedger(compactTacticalSpeedSummary, { scope: 'retained-replay-card' });
   return {
     source: 'latest in-app simulation strategy report',
     matchedOpponentKey: best.key,
@@ -6803,6 +6800,9 @@ function csCompactQaReplayCard(replay, playerKey) {
   var turnLog = Array.isArray(r.turnLog) ? r.turnLog : [];
   var buildId = (typeof csGetBuildId === 'function') ? csGetBuildId() : null;
   var sourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null;
+  var compactTacticalSpeedSummary = csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' });
+  var compactDurationEffectSummary = csBuildDurationEffectSummary(turnLog, { scope: 'retained-replay-card' });
+  var compactDecisionLedger = csBuildDecisionOpportunityLedger(compactTacticalSpeedSummary, { scope: 'retained-replay-card' });
   return {
     id: r.id || null,
     seed: r.seed || null,
@@ -7110,7 +7110,8 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   var adapter = getWindowValue('SupabaseAdapter', null);
   var localSimLog = (typeof csSimLogGetAll === 'function') ? csSimLogGetAll() : [];
   var localTeamHistory = (typeof csSimLogForTeamBothSides === 'function') ? csSimLogForTeamBothSides(key) : [];
-  var replayCards = (Array.isArray(allReplays) ? allReplays : []).map(function(replay) {
+  var replaySource = Array.isArray(options.replayCardsOverride) ? options.replayCardsOverride : (Array.isArray(allReplays) ? allReplays : []);
+  var replayCards = replaySource.map(function(replay) {
     return csCompactQaReplayCard(replay, key);
   });
   var exportedAt = new Date().toISOString();
@@ -8013,6 +8014,7 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
     const tbody=document.getElementById('matchup-tbody');
     tbody.innerHTML='';
     let totalW=0,totalL=0;
+    var runAllQaReplayCards = [];
 
     await runAllMatchupsUI(n,bo,(cur,tot,w,l)=>{
       totalW=w; totalL=l;
@@ -8033,6 +8035,14 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
         <td style="font-family:var(--font-mono)">${res.avgTrTurns.toFixed(1)}</td>
         <td><span class="assess-chip ${aCls}">${aLbl}</span></td>`;
       tbody.appendChild(tr);
+      (res.allLogs || []).forEach(function(b) {
+        runAllQaReplayCards.unshift(Object.assign({}, csCapBattleReplay(b), {
+          playerKey: b.playerKey || playerKey,
+          oppKey: opp,
+          id: Math.random()
+        }));
+      });
+      if (runAllQaReplayCards.length > MAX_REPLAY_CARDS) runAllQaReplayCards.length = MAX_REPLAY_CARDS;
       addReplays(res.allLogs||[], opp, playerKey);
       generatePilotGuide(opp, res, Object.assign({}, simCtx, { oppKey: opp, oppTeam: TEAMS[opp] }));
     }, simCtx);
@@ -8048,7 +8058,7 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
     try { if (typeof csScheduleStrategyRebuild === 'function') csScheduleStrategyRebuild(); } catch(e) { UILog.warn('strategy rebuild skipped', e); }
     if (opts.autoExportQaArtifact) {
       setProgress(100, 'Run All complete. Exporting QA Artifact...', totalW, totalL);
-      await csExportQaArtifactJson(playerKey);
+      await csExportQaArtifactJson(playerKey, { replayCardsOverride: runAllQaReplayCards });
       setProgress(100, 'Run All complete. QA Artifact downloaded.', totalW, totalL);
     }
   } catch (e) {
@@ -8952,6 +8962,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Run All QA replay export hardened',
+      detail: 'v2.1.77 makes Run All QA export replay-card evidence from the just-finished run and rebuilds tactical, duration, ledger, and coach summaries safely for each retained replay card.'
+    },
     {
       status: 'done',
       title: 'Duration timing summary added',
