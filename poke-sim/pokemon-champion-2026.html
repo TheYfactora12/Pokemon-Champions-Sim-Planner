@@ -2338,8 +2338,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.86-regmb-source-audit</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.87-ruleset-lifecycle</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -2896,6 +2896,8 @@ table{border-collapse:collapse;width:100%}
  15. ui.js               — all UI logic (needs everything above)
  16. strategy-injectable.js — injectable coaching layer
 -->
+
+
 
 
 
@@ -15137,6 +15139,235 @@ if (typeof window !== 'undefined') {
 }
 
 
+// rulesets.js
+// Versioned legality profiles for Pokemon Champions simulator lanes.
+// Rulesets prevent source-review data from poisoning sim, DB, and coaching stats.
+
+var CHAMPIONS_RULESET_STATUS = {
+  SOURCE_REVIEW: 'source_review',
+  DATA_CONVERTED: 'data_converted',
+  TESTED: 'tested',
+  IMPLEMENTED: 'implemented',
+  HISTORICAL: 'historical'
+};
+
+var CHAMPIONS_RULESETS = {
+  champions_reg_m_a_2026: {
+    id: 'champions_reg_m_a_2026',
+    legacyIds: ['champions_reg_m_doubles_bo3', 'champions-vgc-2026-regma'],
+    label: 'Champions Reg M-A Historical Lane',
+    startsAt: '2026-04-08',
+    endsAt: '2026-06-17',
+    status: CHAMPIONS_RULESET_STATUS.HISTORICAL,
+    runtimePromotable: true,
+    validator: 'validateChampionsLegality',
+    engineFormatId: 'champions-vgc-2026-regma',
+    learningEligibility: 'trusted_historical',
+    dataPolicy: 'legal_sim_allowed',
+    coachingPolicy: 'eligible_with_historical_label',
+    sourceCheckedAtUtc: '2026-06-27T23:20:00Z'
+  },
+  champions_reg_m_b_2026: {
+    id: 'champions_reg_m_b_2026',
+    legacyIds: ['champions_reg_m_b_doubles_bo3_source_review'],
+    label: 'Champions Reg M-B Source Review',
+    startsAt: '2026-06-17',
+    endsAt: '2026-09-02',
+    status: CHAMPIONS_RULESET_STATUS.SOURCE_REVIEW,
+    inheritsFrom: 'champions_reg_m_a_2026',
+    runtimePromotable: false,
+    validator: null,
+    engineFormatId: null,
+    learningEligibility: 'blocked_source_review',
+    dataPolicy: 'do_not_write_trusted_stats',
+    coachingPolicy: 'review_only_no_matchup_learning',
+    sourceCheckedAtUtc: '2026-06-27T23:20:00Z',
+    blocker: 'Reg M-B allowed-Pokemon image sheets and new Mega implementation fields are not converted into reviewed runtime data.'
+  }
+};
+
+function getChampionsRuleset(rulesetId) {
+  var id = String(rulesetId || '');
+  if (CHAMPIONS_RULESETS[id]) return CHAMPIONS_RULESETS[id];
+  for (var key in CHAMPIONS_RULESETS) {
+    var row = CHAMPIONS_RULESETS[key];
+    if (row && Array.isArray(row.legacyIds) && row.legacyIds.indexOf(id) >= 0) return row;
+  }
+  return CHAMPIONS_RULESETS.champions_reg_m_a_2026;
+}
+
+function isRulesetRuntimeLegal(rulesetId) {
+  var row = getChampionsRuleset(rulesetId);
+  return !!(row && row.runtimePromotable && row.status !== CHAMPIONS_RULESET_STATUS.SOURCE_REVIEW);
+}
+
+function getRulesetEvidencePolicy(rulesetId) {
+  var row = getChampionsRuleset(rulesetId);
+  return {
+    ruleset_id: row.id,
+    ruleset_label: row.label,
+    ruleset_status: row.status,
+    runtime_promotable: !!row.runtimePromotable,
+    learning_eligibility: row.learningEligibility,
+    data_policy: row.dataPolicy,
+    coaching_policy: row.coachingPolicy,
+    source_checked_at_utc: row.sourceCheckedAtUtc || null,
+    poisoning_guard: row.runtimePromotable ? 'trusted_stats_allowed' : 'review_only_do_not_train_or_rank',
+    blocker: row.blocker || null
+  };
+}
+
+if (typeof window !== 'undefined') {
+  window.CHAMPIONS_RULESET_STATUS = CHAMPIONS_RULESET_STATUS;
+  window.CHAMPIONS_RULESETS = CHAMPIONS_RULESETS;
+  window.getChampionsRuleset = getChampionsRuleset;
+  window.isRulesetRuntimeLegal = isRulesetRuntimeLegal;
+  window.getRulesetEvidencePolicy = getRulesetEvidencePolicy;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    CHAMPIONS_RULESET_STATUS: CHAMPIONS_RULESET_STATUS,
+    CHAMPIONS_RULESETS: CHAMPIONS_RULESETS,
+    getChampionsRuleset: getChampionsRuleset,
+    isRulesetRuntimeLegal: isRulesetRuntimeLegal,
+    getRulesetEvidencePolicy: getRulesetEvidencePolicy
+  };
+}
+
+
+// regmb_source_conversion.js
+// Source conversion ledger for Pokemon Champions Regulation Set M-B.
+// This file is source-review data, not runtime legality data.
+
+var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
+  rulesetId: 'champions_reg_m_b_doubles_bo3_source_review',
+  rulesetLabel: 'Champions Reg M-B Source Review (Jun 17 - Sep 2, 2026)',
+  checkedAtUtc: '2026-06-27T23:20:00Z',
+  implementationStatus: 'source_review_not_runtime_promoted',
+  runtimePromotionAllowed: false,
+  sourceFacts: [
+    {
+      claim: 'Regulation Set M-B runs from June 17 to September 2, 2026.',
+      sourceTier: 1,
+      sourceName: 'Victory Road Champion regulations',
+      sourceUrl: 'https://victoryroad.pro/champions-regulations/',
+      status: 'verified'
+    },
+    {
+      claim: 'Regulation Set M-B is the in-game Ranked Battles format and is used for VGC events on the same dates, including the 2026 World Championships.',
+      sourceTier: 1,
+      sourceName: 'Victory Road Champion regulations',
+      sourceUrl: 'https://victoryroad.pro/champions-regulations/',
+      status: 'verified'
+    },
+    {
+      claim: 'Mega Evolutions are allowed in Regulation Set M-B.',
+      sourceTier: 1,
+      sourceName: 'Victory Road Champion regulations',
+      sourceUrl: 'https://victoryroad.pro/champions-regulations/',
+      status: 'verified'
+    },
+    {
+      claim: 'All Regulation Set M-A Mega Evolutions remain allowed and Regulation Set M-B adds 16 new Mega Evolutions.',
+      sourceTier: 1,
+      sourceName: 'Victory Road Champion regulations',
+      sourceUrl: 'https://victoryroad.pro/champions-regulations/',
+      status: 'verified'
+    }
+  ],
+  sourceImages: [
+    {
+      kind: 'allowed_pokemon_sheet',
+      url: 'https://victoryroad.pro/wp-content/uploads/2026/06/Reg-M-B-Pokemon1.jpg',
+      status: 'needs_explicit_species_form_extraction',
+      runtimePromotable: false,
+      blocker: 'Image sheet must be converted into reviewed species/form rows before legality can use it.'
+    },
+    {
+      kind: 'allowed_pokemon_sheet',
+      url: 'https://victoryroad.pro/wp-content/uploads/2026/06/Reg-M-B-Pokemon2.jpg',
+      status: 'needs_explicit_species_form_extraction',
+      runtimePromotable: false,
+      blocker: 'Image sheet must be converted into reviewed species/form rows before legality can use it.'
+    },
+    {
+      kind: 'new_mega_names',
+      url: 'https://victoryroad.pro/wp-content/uploads/2026/06/NewMegasRMB.png',
+      status: 'names_verified_only',
+      runtimePromotable: false,
+      blocker: 'Mega names are verified, but stone names, stats, abilities, typing, sprite handling, and fixtures are not fully promoted.'
+    }
+  ],
+  requiredPromotionFields: [
+    'baseSpecies',
+    'megaForm',
+    'megaStone',
+    'megaBaseStats',
+    'types',
+    'ability',
+    'spriteFallback',
+    'itemSourceUrl',
+    'statsSourceUrl',
+    'abilitySourceUrl',
+    'typeSourceUrl',
+    'learnsetPolicy',
+    'positiveFixture',
+    'negativeFixture'
+  ],
+  newMegaRows: [
+    { baseSpecies: 'Raichu', megaForm: 'Raichu-Mega-X', sourceName: 'Mega Raichu X' },
+    { baseSpecies: 'Raichu', megaForm: 'Raichu-Mega-Y', sourceName: 'Mega Raichu Y' },
+    { baseSpecies: 'Sceptile', megaForm: 'Sceptile-Mega', sourceName: 'Mega Sceptile' },
+    { baseSpecies: 'Blaziken', megaForm: 'Blaziken-Mega', sourceName: 'Mega Blaziken' },
+    { baseSpecies: 'Swampert', megaForm: 'Swampert-Mega', sourceName: 'Mega Swampert' },
+    { baseSpecies: 'Mawile', megaForm: 'Mawile-Mega', sourceName: 'Mega Mawile' },
+    { baseSpecies: 'Metagross', megaForm: 'Metagross-Mega', sourceName: 'Mega Metagross' },
+    { baseSpecies: 'Staraptor', megaForm: 'Staraptor-Mega', sourceName: 'Mega Staraptor' },
+    { baseSpecies: 'Scolipede', megaForm: 'Scolipede-Mega', sourceName: 'Mega Scolipede' },
+    { baseSpecies: 'Scrafty', megaForm: 'Scrafty-Mega', sourceName: 'Mega Scrafty' },
+    { baseSpecies: 'Eelektross', megaForm: 'Eelektross-Mega', sourceName: 'Mega Eelektross' },
+    { baseSpecies: 'Pyroar', megaForm: 'Pyroar-Mega', sourceName: 'Mega Pyroar' },
+    { baseSpecies: 'Malamar', megaForm: 'Malamar-Mega', sourceName: 'Mega Malamar' },
+    { baseSpecies: 'Barbaracle', megaForm: 'Barbaracle-Mega', sourceName: 'Mega Barbaracle' },
+    { baseSpecies: 'Dragalge', megaForm: 'Dragalge-Mega', sourceName: 'Mega Dragalge' },
+    { baseSpecies: 'Falinks', megaForm: 'Falinks-Mega', sourceName: 'Mega Falinks' }
+  ].map(function(row) {
+    row.rulesetId = 'champions_reg_m_b_doubles_bo3_source_review';
+    row.sourceUrl = 'https://victoryroad.pro/wp-content/uploads/2026/06/NewMegasRMB.png';
+    row.reviewStatus = 'name_verified_fields_blocked';
+    row.runtimePromotable = false;
+    row.blockers = [
+      'megaStone unconfirmed',
+      'megaBaseStats unconfirmed',
+      'types unconfirmed for Champions form',
+      'ability unconfirmed for Champions form',
+      'spriteFallback unconfirmed',
+      'positive and negative fixtures missing'
+    ];
+    return row;
+  }),
+  promotionGates: [
+    'Allowed Pokemon image sheets converted into explicit reviewed species/form rows.',
+    'Every new Mega row has stone, stats, typing, ability, sprite, and fixture evidence.',
+    'Reg M-B accepted and rejected legality fixtures pass.',
+    'Reg M-A historical fixtures remain stable.',
+    'Bundle/cache/version guards are bumped.',
+    'Browser QA artifact confirms the promoted build.'
+  ]
+};
+
+if (typeof window !== 'undefined') {
+  window.CHAMPIONS_REGMB_SOURCE_CONVERSION = CHAMPIONS_REGMB_SOURCE_CONVERSION;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    CHAMPIONS_REGMB_SOURCE_CONVERSION: CHAMPIONS_REGMB_SOURCE_CONVERSION
+  };
+}
+
+
 // storage_adapter.js — Unified localStorage adapter for Champions Sim
 // Issue #79: Option B — champions:* key schema, migration, CRUD, clearAll.
 //
@@ -20890,6 +21121,41 @@ function validateChampionsLegality(team) {
   return { violations: violations };
 }
 
+function validateTeamForRuleset(team, rulesetId) {
+  var ruleset = typeof getChampionsRuleset === 'function' ? getChampionsRuleset(rulesetId) : null;
+  var violations = [];
+  if (ruleset && !ruleset.runtimePromotable) {
+    violations.push({
+      severity: 'error',
+      code: 'RULESET_NOT_RUNTIME_PROMOTED',
+      message: ruleset.label + ': source-review ruleset is blocked from legal sim until source conversion, fixtures, and runtime promotion are complete',
+      ruleset_id: ruleset.id,
+      ruleset_status: ruleset.status,
+      data_policy: ruleset.dataPolicy || 'do_not_write_trusted_stats',
+      coaching_policy: ruleset.coachingPolicy || 'review_only_no_matchup_learning',
+      blocker: ruleset.blocker || null
+    });
+    return {
+      ruleset_id: ruleset.id,
+      ruleset_status: ruleset.status,
+      allowed: false,
+      learning_eligible: false,
+      poisoning_guard: 'review_only_do_not_train_or_rank',
+      violations: violations
+    };
+  }
+  var base = validateChampionsLegality(team);
+  var hardErrors = (base.violations || []).filter(function(v){ return v && v.severity === 'error'; });
+  return {
+    ruleset_id: ruleset && ruleset.id || 'champions_reg_m_a_2026',
+    ruleset_status: ruleset && ruleset.status || 'historical',
+    allowed: hardErrors.length === 0,
+    learning_eligible: hardErrors.length === 0,
+    poisoning_guard: hardErrors.length === 0 ? 'trusted_stats_allowed' : 'illegal_team_do_not_train_or_rank',
+    violations: base.violations || []
+  };
+}
+
 // CommonJS export for Node tests; harmless in browser.
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
@@ -20902,7 +21168,8 @@ if (typeof module !== 'undefined' && module.exports) {
     CHAMPIONS_BANNED_MECHANIC_ABILITIES: CHAMPIONS_BANNED_MECHANIC_ABILITIES,
     CHAMPIONS_STONE_TO_SPECIES: CHAMPIONS_STONE_TO_SPECIES,
     CHAMPIONS_HOME_TRANSFER_MEGAS: CHAMPIONS_HOME_TRANSFER_MEGAS,
-    validateChampionsLegality: validateChampionsLegality
+    validateChampionsLegality: validateChampionsLegality,
+    validateTeamForRuleset: validateTeamForRuleset
   };
 }
 
@@ -21025,9 +21292,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.86-regmb-source-audit';
+    return txt || 'v2.1.87-ruleset-lifecycle';
   } catch (e) {
-    return 'v2.1.86-regmb-source-audit';
+    return 'v2.1.87-ruleset-lifecycle';
   }
 }
 
@@ -29246,6 +29513,17 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   if (typeof TEAMS !== 'undefined' && TEAMS[playerKey] && TEAMS[playerKey].metadata && TEAMS[playerKey].metadata.ruleset_id) {
     rulesetId = TEAMS[playerKey].metadata.ruleset_id;
   }
+  var rulesetEvidence = typeof getRulesetEvidencePolicy === 'function'
+    ? getRulesetEvidencePolicy(rulesetId)
+    : {
+      ruleset_id: rulesetId,
+      ruleset_status: 'unknown',
+      runtime_promotable: false,
+      learning_eligibility: 'unknown',
+      data_policy: 'unknown',
+      coaching_policy: 'unknown',
+      poisoning_guard: 'unknown_ruleset_do_not_train_or_rank'
+    };
 
   var engineVersion = (typeof window === 'undefined') ? '1.0.0' : (window['ENGINE_VERSION'] || '1.0.0');
 
@@ -29297,6 +29575,12 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   return {
     engine_version:    engineVersion,
     ruleset_id:        rulesetId,
+    ruleset_status:    rulesetEvidence.ruleset_status,
+    learning_eligibility: rulesetEvidence.learning_eligibility,
+    data_policy:       rulesetEvidence.data_policy,
+    coaching_policy:   rulesetEvidence.coaching_policy,
+    poisoning_guard:   rulesetEvidence.poisoning_guard,
+    source_checked_at_utc: rulesetEvidence.source_checked_at_utc,
     player_team_id:    playerKey,
     opp_team_id:       oppKey,
     prior_id:          (res && res.prior_id) || null,
@@ -30541,6 +30825,16 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B source audit recorded',
       detail: 'v2.1.86 records the June 27 Victory Road Reg M-B facts: June 17 to September 2 window, Worlds usage, Mega Evolution allowed, full allowed-Pokemon image sheets, and 16 source-reviewed new Mega names. Runtime promotion remains blocked until those image sources become explicit reviewed data rows with fixtures.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B conversion ledger added',
+      detail: 'v2.1.87 adds a structured Reg M-B conversion table and JS ledger. The 16 new Mega names are explicit rows with source URLs, required promotion fields, and blockers, while runtimePromotable remains false until stones, stats, typing, abilities, sprites, species/form rows, and fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Ruleset lifecycle guard added',
+      detail: 'v2.1.87 adds a versioned ruleset registry and validation wrapper so source-review formats cannot be treated as legal sim evidence. Analysis payloads now carry ruleset status, learning eligibility, data policy, coaching policy, and a poisoning guard before DB/coaching stats consume results.'
     },
     {
       status: 'done',

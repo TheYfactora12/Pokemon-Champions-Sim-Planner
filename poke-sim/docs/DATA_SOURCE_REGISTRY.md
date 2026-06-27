@@ -18,6 +18,8 @@ Status: active external season, not yet promoted as the implemented simulator le
 
 As of June 27, 2026, the app exposes Reg M-B as the active source-review lane while keeping deterministic battle validation on the historical Reg M-A implementation. This avoids silently allowing or banning Pokemon, moves, items, forms, abilities, or battle mechanics without a trusted source trail.
 
+Structured conversion ledger: [`REG_M_B_SOURCE_CONVERSION_TABLE.md`](REG_M_B_SOURCE_CONVERSION_TABLE.md) and `../regmb_source_conversion.js`.
+
 Verified June 27, 2026 source facts:
 
 - Victory Road lists Regulation Set M-B from June 17 to September 2, 2026.
@@ -42,6 +44,12 @@ Promotion checklist before Reg M-B can become the default implemented lane:
 - Keep historical Reg M-A artifacts labeled as historical instead of rewriting old replay/team provenance.
 
 Non-goal: do not enable Tera, Omni Ring, legendary forms, items, or moves from assumption alone.
+
+Dataset poisoning guard:
+
+- Source-review rulesets are not legal sim lanes.
+- Analysis rows must carry ruleset status and poisoning policy before DB or coaching systems aggregate them.
+- Future coaching reports must not mix Reg M-A, Reg M-B, and later regulations unless the report explicitly requests cross-regulation comparison.
 
 ## Source Priority
 

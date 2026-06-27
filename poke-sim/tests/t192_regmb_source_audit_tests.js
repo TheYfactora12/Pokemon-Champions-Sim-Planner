@@ -7,9 +7,14 @@ const ROOT = path.resolve(__dirname, '..');
 const registry = fs.readFileSync(path.join(ROOT, 'docs', 'DATA_SOURCE_REGISTRY.md'), 'utf8');
 const legalityDoc = fs.readFileSync(path.join(ROOT, 'docs', 'CHAMPIONS_LEGALITY.md'), 'utf8');
 const syncDoc = fs.readFileSync(path.join(ROOT, 'docs', 'SHOWDOWN_SYNC_ARCHITECTURE.md'), 'utf8');
+const conversionDoc = fs.readFileSync(path.join(ROOT, 'docs', 'REG_M_B_SOURCE_CONVERSION_TABLE.md'), 'utf8');
 const ui = fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8');
 const engine = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
+const rulesets = require(path.join(ROOT, 'rulesets.js'));
+global.getChampionsRuleset = rulesets.getChampionsRuleset;
+global.getRulesetEvidencePolicy = rulesets.getRulesetEvidencePolicy;
 const legality = require(path.join(ROOT, 'legality.js'));
+const conversion = require(path.join(ROOT, 'regmb_source_conversion.js')).CHAMPIONS_REGMB_SOURCE_CONVERSION;
 
 let pass = 0;
 let fail = 0;
@@ -85,6 +90,7 @@ T('3. Reg M-B audit is not silently promoted to runtime legality', () => {
 
 T('4. Overview tells contributors the Reg M-B blocker clearly', () => {
   inc(ui, 'Reg M-B source audit recorded');
+  inc(ui, 'Reg M-B conversion ledger added');
   inc(ui, '16 source-reviewed new Mega names');
   inc(ui, 'Runtime promotion remains blocked');
   inc(ui, 'source-backed data conversion');
@@ -111,6 +117,64 @@ T('5. unreviewed Reg M-B stones are not added by assumption', () => {
   ].forEach((stone) => {
     truthy(!legality.CHAMPIONS_LEGAL_ITEMS.has(stone), 'unreviewed Reg M-B stone enabled: ' + stone);
   });
+});
+
+T('6. structured conversion ledger keeps Reg M-B rows blocked until fully sourced', () => {
+  truthy(conversion.rulesetId === 'champions_reg_m_b_doubles_bo3_source_review', 'wrong ruleset id');
+  truthy(conversion.runtimePromotionAllowed === false, 'Reg M-B should not be runtime-promotable yet');
+  truthy(conversion.newMegaRows.length === 16, 'conversion ledger should carry 16 new Mega rows');
+  REGMB_NEW_MEGAS.forEach((name) => {
+    const row = conversion.newMegaRows.find((entry) => entry.megaForm === name);
+    truthy(row, 'missing conversion row for ' + name);
+    truthy(row.runtimePromotable === false, name + ' should not be runtime-promotable');
+    truthy(row.reviewStatus === 'name_verified_fields_blocked', name + ' should be fields-blocked');
+    truthy(row.blockers.includes('megaStone unconfirmed'), name + ' missing stone blocker');
+    truthy(row.blockers.includes('positive and negative fixtures missing'), name + ' missing fixture blocker');
+  });
+});
+
+T('7. conversion docs are linked and name required promotion fields', () => {
+  inc(registry, 'REG_M_B_SOURCE_CONVERSION_TABLE.md');
+  inc(legalityDoc, 'REG_M_B_SOURCE_CONVERSION_TABLE.md');
+  inc(conversionDoc, 'Required Promotion Fields');
+  [
+    'megaStone',
+    'megaBaseStats',
+    'types',
+    'ability',
+    'spriteFallback',
+    'positiveFixture',
+    'negativeFixture'
+  ].forEach((field) => inc(conversionDoc, field, 'conversion doc missing ' + field));
+});
+
+T('8. ruleset lifecycle blocks source-review teams from trusted legality', () => {
+  const policy = rulesets.getRulesetEvidencePolicy('champions_reg_m_b_2026');
+  truthy(policy.ruleset_status === 'source_review', 'Reg M-B should be source_review');
+  truthy(policy.runtime_promotable === false, 'Reg M-B should not be runtime-promotable');
+  truthy(policy.poisoning_guard === 'review_only_do_not_train_or_rank', 'Reg M-B needs poisoning guard');
+  const result = legality.validateTeamForRuleset({ members: [] }, 'champions_reg_m_b_2026');
+  truthy(result.allowed === false, 'source-review ruleset should block legal sim');
+  truthy(result.learning_eligible === false, 'source-review ruleset should block learning');
+  truthy(result.violations.some((v) => v.code === 'RULESET_NOT_RUNTIME_PROMOTED'), 'missing source-review violation');
+});
+
+T('9. implemented historical lane remains legal-sim eligible when team passes', () => {
+  const policy = rulesets.getRulesetEvidencePolicy('champions_reg_m_a_2026');
+  truthy(policy.runtime_promotable === true, 'Reg M-A historical lane should remain replay/sim eligible');
+  truthy(policy.poisoning_guard === 'trusted_stats_allowed', 'historical lane should allow labeled trusted stats');
+  const result = legality.validateTeamForRuleset({ members: [] }, 'champions_reg_m_a_2026');
+  truthy(result.allowed === true, 'empty valid team fixture should pass historical wrapper');
+  truthy(result.poisoning_guard === 'trusted_stats_allowed', 'historical wrapper should allow trusted stats');
+});
+
+T('10. analysis payload carries ruleset poisoning guard metadata', () => {
+  inc(ui, 'ruleset_status:    rulesetEvidence.ruleset_status');
+  inc(ui, 'learning_eligibility: rulesetEvidence.learning_eligibility');
+  inc(ui, 'data_policy:       rulesetEvidence.data_policy');
+  inc(ui, 'coaching_policy:   rulesetEvidence.coaching_policy');
+  inc(ui, 'poisoning_guard:   rulesetEvidence.poisoning_guard');
+  inc(ui, 'unknown_ruleset_do_not_train_or_rank');
 });
 
 if (fail) {

@@ -20,6 +20,8 @@ Reg M-B is the active external season window after June 17, 2026, but this valid
 
 Passing this validator proves compatibility with the implemented historical lane. It does not prove full Reg M-B legality. Reg M-B promotion must update source rows, fixtures, QA artifacts, generated bundle/cache guards, and the browser QA artifact before the UI can claim Reg M-B as the implemented ruleset.
 
+Structured conversion ledger: [`REG_M_B_SOURCE_CONVERSION_TABLE.md`](REG_M_B_SOURCE_CONVERSION_TABLE.md) and `../regmb_source_conversion.js`.
+
 Verified June 27, 2026 Reg M-B source facts:
 
 - Victory Road lists Regulation Set M-B as June 17 to September 2, 2026.
@@ -53,6 +55,13 @@ Showdown is still useful, but its role is source data, not automatic permission:
 - Use Champion sources and reviewed overrides to decide whether a Pokemon, item, ability, move, or mechanic is allowed in the active Champion ruleset.
 - If Showdown and Champion sources conflict, do not silently pick one. Add a source-review note, test, and Overview entry.
 - Use [`DATA_SOURCE_REGISTRY.md`](DATA_SOURCE_REGISTRY.md) to decide which source can prove legality, mechanics, coaching usage, or app evidence.
+
+Ruleset lifecycle guard:
+
+- `rulesets.js` owns whether a ruleset is `source_review`, `implemented`, or `historical`.
+- `validateTeamForRuleset(team, rulesetId)` is the builder/sim entry point.
+- Source-review rulesets return `RULESET_NOT_RUNTIME_PROMOTED` and `review_only_do_not_train_or_rank`.
+- DB/coaching payloads must preserve ruleset status so future learning does not mix illegal, review-only, historical, and current-implemented rows.
 
 ## June 27, 2026 Ruleset Drift Fix
 

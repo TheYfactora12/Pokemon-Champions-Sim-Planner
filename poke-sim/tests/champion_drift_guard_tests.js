@@ -92,9 +92,13 @@ T('3. active Champion strategy copy does not teach unapproved Scarlet/Violet mec
   });
 });
 
-T('4. bundle and cache drift workflows treat legality.js as app source', () => {
+T('4. bundle and cache drift workflows treat legality/ruleset files as app source', () => {
   inc(bundleWorkflow, 'legality', 'bundle freshness workflow must watch legality.js');
   inc(cacheWorkflow, 'legality', 'cache bump workflow must watch legality.js');
+  inc(bundleWorkflow, 'rulesets', 'bundle freshness workflow must watch rulesets.js');
+  inc(cacheWorkflow, 'rulesets', 'cache bump workflow must watch rulesets.js');
+  inc(bundleWorkflow, 'regmb_source_conversion', 'bundle freshness workflow must watch Reg M-B source conversion');
+  inc(cacheWorkflow, 'regmb_source_conversion', 'cache bump workflow must watch Reg M-B source conversion');
 });
 
 T('5. Pages deploy runs Champion source-of-truth checks before publishing', () => {

@@ -257,6 +257,41 @@ function validateChampionsLegality(team) {
   return { violations: violations };
 }
 
+function validateTeamForRuleset(team, rulesetId) {
+  var ruleset = typeof getChampionsRuleset === 'function' ? getChampionsRuleset(rulesetId) : null;
+  var violations = [];
+  if (ruleset && !ruleset.runtimePromotable) {
+    violations.push({
+      severity: 'error',
+      code: 'RULESET_NOT_RUNTIME_PROMOTED',
+      message: ruleset.label + ': source-review ruleset is blocked from legal sim until source conversion, fixtures, and runtime promotion are complete',
+      ruleset_id: ruleset.id,
+      ruleset_status: ruleset.status,
+      data_policy: ruleset.dataPolicy || 'do_not_write_trusted_stats',
+      coaching_policy: ruleset.coachingPolicy || 'review_only_no_matchup_learning',
+      blocker: ruleset.blocker || null
+    });
+    return {
+      ruleset_id: ruleset.id,
+      ruleset_status: ruleset.status,
+      allowed: false,
+      learning_eligible: false,
+      poisoning_guard: 'review_only_do_not_train_or_rank',
+      violations: violations
+    };
+  }
+  var base = validateChampionsLegality(team);
+  var hardErrors = (base.violations || []).filter(function(v){ return v && v.severity === 'error'; });
+  return {
+    ruleset_id: ruleset && ruleset.id || 'champions_reg_m_a_2026',
+    ruleset_status: ruleset && ruleset.status || 'historical',
+    allowed: hardErrors.length === 0,
+    learning_eligible: hardErrors.length === 0,
+    poisoning_guard: hardErrors.length === 0 ? 'trusted_stats_allowed' : 'illegal_team_do_not_train_or_rank',
+    violations: base.violations || []
+  };
+}
+
 // CommonJS export for Node tests; harmless in browser.
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
@@ -269,6 +304,7 @@ if (typeof module !== 'undefined' && module.exports) {
     CHAMPIONS_BANNED_MECHANIC_ABILITIES: CHAMPIONS_BANNED_MECHANIC_ABILITIES,
     CHAMPIONS_STONE_TO_SPECIES: CHAMPIONS_STONE_TO_SPECIES,
     CHAMPIONS_HOME_TRANSFER_MEGAS: CHAMPIONS_HOME_TRANSFER_MEGAS,
-    validateChampionsLegality: validateChampionsLegality
+    validateChampionsLegality: validateChampionsLegality,
+    validateTeamForRuleset: validateTeamForRuleset
   };
 }

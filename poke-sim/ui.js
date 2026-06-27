@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.86-regmb-source-audit';
+    return txt || 'v2.1.87-ruleset-lifecycle';
   } catch (e) {
-    return 'v2.1.86-regmb-source-audit';
+    return 'v2.1.87-ruleset-lifecycle';
   }
 }
 
@@ -8337,6 +8337,17 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   if (typeof TEAMS !== 'undefined' && TEAMS[playerKey] && TEAMS[playerKey].metadata && TEAMS[playerKey].metadata.ruleset_id) {
     rulesetId = TEAMS[playerKey].metadata.ruleset_id;
   }
+  var rulesetEvidence = typeof getRulesetEvidencePolicy === 'function'
+    ? getRulesetEvidencePolicy(rulesetId)
+    : {
+      ruleset_id: rulesetId,
+      ruleset_status: 'unknown',
+      runtime_promotable: false,
+      learning_eligibility: 'unknown',
+      data_policy: 'unknown',
+      coaching_policy: 'unknown',
+      poisoning_guard: 'unknown_ruleset_do_not_train_or_rank'
+    };
 
   var engineVersion = (typeof window === 'undefined') ? '1.0.0' : (window['ENGINE_VERSION'] || '1.0.0');
 
@@ -8388,6 +8399,12 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   return {
     engine_version:    engineVersion,
     ruleset_id:        rulesetId,
+    ruleset_status:    rulesetEvidence.ruleset_status,
+    learning_eligibility: rulesetEvidence.learning_eligibility,
+    data_policy:       rulesetEvidence.data_policy,
+    coaching_policy:   rulesetEvidence.coaching_policy,
+    poisoning_guard:   rulesetEvidence.poisoning_guard,
+    source_checked_at_utc: rulesetEvidence.source_checked_at_utc,
     player_team_id:    playerKey,
     opp_team_id:       oppKey,
     prior_id:          (res && res.prior_id) || null,
@@ -9632,6 +9649,16 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B source audit recorded',
       detail: 'v2.1.86 records the June 27 Victory Road Reg M-B facts: June 17 to September 2 window, Worlds usage, Mega Evolution allowed, full allowed-Pokemon image sheets, and 16 source-reviewed new Mega names. Runtime promotion remains blocked until those image sources become explicit reviewed data rows with fixtures.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B conversion ledger added',
+      detail: 'v2.1.87 adds a structured Reg M-B conversion table and JS ledger. The 16 new Mega names are explicit rows with source URLs, required promotion fields, and blockers, while runtimePromotable remains false until stones, stats, typing, abilities, sprites, species/form rows, and fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Ruleset lifecycle guard added',
+      detail: 'v2.1.87 adds a versioned ruleset registry and validation wrapper so source-review formats cannot be treated as legal sim evidence. Analysis payloads now carry ruleset status, learning eligibility, data policy, coaching policy, and a poisoning guard before DB/coaching stats consume results.'
     },
     {
       status: 'done',
