@@ -196,8 +196,10 @@ T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
   inc(ui, 'function csTeamRulesetEvidence');
   inc(ui, 'function csTeamRulesetTags');
   inc(ui, 'function csRenderTeamRulesetBadges');
+  inc(ui, 'function csRenderRegmbCoverageCards');
   inc(ui, "filter === 'regmb_review'");
   inc(ui, "label:'Reg M-B Review'");
+  inc(ui, "if (TEAMS_FILTER === 'regmb_review')");
   inc(ui, 'team.metadata.poisoning_guard');
   inc(ui, 'not-runtime-promoted');
 });

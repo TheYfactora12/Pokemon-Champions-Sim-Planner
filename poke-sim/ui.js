@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.88-ruleset-team-sections';
+    return txt || 'v2.1.89-regmb-review-cards';
   } catch (e) {
-    return 'v2.1.88-ruleset-team-sections';
+    return 'v2.1.89-regmb-review-cards';
   }
 }
 
@@ -1855,6 +1855,38 @@ function csRenderTeamRulesetBadges(key, team) {
   return '<span class="' + statusClass + '" title="' + _escapeHtml(title) + '">' + _escapeHtml(label) + '</span>' +
     '<span class="' + statusClass + '" title="' + _escapeHtml(guard) + '">' + _escapeHtml(String(status).replace(/_/g, ' ').toUpperCase()) + '</span>';
 }
+function csGetRegmbCoverageSections() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && Array.isArray(source.coverageSections) ? source.coverageSections : [];
+}
+function csRenderRegmbCoverageCards(grid) {
+  if (!grid) return 0;
+  var sections = csGetRegmbCoverageSections();
+  sections.forEach(function(section) {
+    var forms = Array.isArray(section.coveredMegaForms) ? section.coveredMegaForms : [];
+    var card = document.createElement('div');
+    card.className = 'team-full-card';
+    if (card.dataset) card.dataset.reviewSection = section.sectionId || '';
+    card.innerHTML =
+      '<div class="tfcard-header">' +
+        '<div>' +
+          '<div class="tfcard-name">' + _escapeHtml(section.label || 'Reg M-B review section') + '</div>' +
+          '<div class="tfcard-meta">SOURCE REVIEW · Hidden from legal sim selectors · ' + _escapeHtml(forms.length + ' new Mega rows') + '</div>' +
+        '</div>' +
+        '<div class="tfcard-badges">' +
+          '<span class="badge-warn">REG M-B REVIEW</span>' +
+          '<span class="badge-warn" title="' + _escapeHtml(section.poisoningGuard || 'review_only_do_not_train_or_rank') + '">DO NOT TRAIN/RANK</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="team-legality-note"><strong>Review-only coverage fixture</strong><span>' +
+        _escapeHtml(forms.join(', ')) +
+      '</span><small>These rows are visible for source conversion planning only. They are not playable teams until stones, stats, typing, abilities, sprites, learnsets, and fixtures are promoted.</small></div>';
+    grid.appendChild(card);
+  });
+  return sections.length;
+}
 function teamMatchesFilter(key, team, filter) {
   if (!team) return false;
   if (!isVisibleTeamInCatalog(key, team, { includeCustom: true })) return false;
@@ -1874,6 +1906,7 @@ function teamMatchesFilter(key, team, filter) {
 function countTeamsByFilter(filter) {
   var n = 0;
   for (var k in TEAMS) if (teamMatchesFilter(k, TEAMS[k], filter)) n++;
+  if (filter === 'regmb_review') n += csGetRegmbCoverageSections().length;
   return n;
 }
 function renderTeamsPersistenceBanner() {
@@ -1974,6 +2007,9 @@ function renderTeamsGrid() {
       ${legalityNote}
       ${buildBringPickerHtml(key, { compact: compactTeamsPicker })}`;
     grid.appendChild(card);
+  }
+  if (TEAMS_FILTER === 'regmb_review') {
+    csRenderRegmbCoverageCards(grid);
   }
   // Export buttons
   grid.querySelectorAll('.export-card-btn').forEach(btn => {
@@ -9749,6 +9785,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Ruleset-aware team sections and tags added',
       detail: 'v2.1.88 labels team cards by regulation lane, adds Reg M-A/Historical/Reg M-B Review filters, and keeps Reg M-B coverage sections review-only so future team experiments cannot train matchup recommendations until the ruleset is promoted.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B review cards made visible',
+      detail: 'v2.1.89 renders the Reg M-B source-review coverage sections inside the Teams tab filter. These are planning cards, not legal sim teams, so testers can see the new Mega coverage without poisoning selectors, DB learning, or coaching stats.'
     },
     {
       status: 'done',

@@ -92,7 +92,8 @@
 // v106-coach-brain-summary [2026-06-27] - Add evidence-bound coach brain summary over decision ledger.
 // v107-coach-brain-loop [2026-06-27] - Add observed pattern, root problem, risk, solution, expected result, and shared-learning direction.
 // v120-ruleset-team-sections [2026-06-27] - Add regulation-aware team filters and review-only Reg M-B coverage sections.
-const CACHE_NAME = 'champions-sim-v120-ruleset-team-sections';
+// v121-regmb-review-cards [2026-06-27] - Render Reg M-B coverage sections as review-only Teams tab cards.
+const CACHE_NAME = 'champions-sim-v121-regmb-review-cards';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
