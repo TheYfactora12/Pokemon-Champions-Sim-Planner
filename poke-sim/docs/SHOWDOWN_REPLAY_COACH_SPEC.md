@@ -745,3 +745,30 @@ V2 is complete when:
 9. `#195` Replay persistence schema and privacy controls.
 10. `#196` Multi-log player pattern dashboard.
 11. `#197` Supabase replay schema migration.
+
+## Duration Effect Summary
+
+Schema: `champions-duration-effect-summary-v1`
+
+Purpose: convert multi-turn battle effects into coaching evidence. The coach should understand not only whether a move was used, but whether the move was timed into a useful window.
+
+Current labels:
+
+- `field_effect_expired`: a tracked duration effect reached zero or disappeared after being active.
+- `field_effect_reissued_after_expiry`: a tracked effect became active again after the log already showed that same effect expire.
+- `tailwind_reused_while_active`: Tailwind was selected while that side already had Tailwind turns remaining.
+- `tailwind_into_active_trick_room`: Tailwind was selected while Trick Room was active before or after the turn.
+- `tailwind_delayed_until_trick_room_end`: Tailwind was selected after the log showed Trick Room expire.
+
+Guardrails:
+
+- A duration label is evidence for coaching review, not automatic proof that a move was wrong.
+- Recommendations must include sample size and confidence when aggregated across sims.
+- Tailwind into Trick Room can be correct if the player is intentionally bridging into the post-Trick Room turn; the coach must explain that as a branch, not a blanket mistake.
+- Reissuing an effect after expiry can be correct if the next turns produce damage, KOs, forced Protects, or preserve a win condition.
+
+Roadmap:
+
+- Expand duration tracking beyond Tailwind and Trick Room into weather, terrain, screens, speed drops, priority pressure, Protect/guard windows, and matchup-specific setup timing.
+- Compare the active duration window against outcome evidence: damage, KOs, protected allies, forced switches, preserved win condition, or lost tempo.
+- Feed repeated timing patterns into the shared coach memory only as aggregate, non-personal evidence.

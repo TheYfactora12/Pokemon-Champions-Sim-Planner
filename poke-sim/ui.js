@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.75-coach-brain-loop';
+    return txt || 'v2.1.76-duration-timing';
   } catch (e) {
-    return 'v2.1.75-coach-brain-loop';
+    return 'v2.1.76-duration-timing';
   }
 }
 
@@ -3808,7 +3808,13 @@ function csQaBlankMechanicsSeen() {
     opponent_tailwind_converted: 0,
     opponent_tailwind_without_pressure: 0,
     speed_control_neutralized: 0,
-    speed_control_reversal: 0
+    speed_control_reversal: 0,
+    duration_timing_labels: 0,
+    tailwind_reused_while_active: 0,
+    tailwind_into_active_trick_room: 0,
+    tailwind_delayed_until_trick_room_end: 0,
+    field_effect_expired: 0,
+    field_effect_reissued_after_expiry: 0
   };
 }
 
@@ -4037,6 +4043,132 @@ function csBuildTacticalSpeedSummary(turnLog, opts) {
         });
       }
     }
+  }
+
+  return summary;
+}
+
+function csAddDurationTimingLabel(summary, label, turn, detail) {
+  summary.label_counts[label] = (summary.label_counts[label] || 0) + 1;
+  if (summary.labels.indexOf(label) < 0) summary.labels.push(label);
+  summary.events.push(Object.assign({ label: label, turn: turn || null }, detail || {}));
+}
+
+function csDurationSideScreens(snapshot, side) {
+  var speedControl = snapshot && snapshot.speed_control ? snapshot.speed_control : null;
+  var row = speedControl && speedControl[side] ? speedControl[side] : {};
+  var screens = row.screens || {};
+  return {
+    reflect: Number(screens.reflect || 0),
+    light: Number(screens.light || 0),
+    aurora: Number(screens.aurora || 0)
+  };
+}
+
+function csDurationFieldTurns(snapshot, key) {
+  var field = snapshot && snapshot.field ? snapshot.field : {};
+  if (key === 'trick_room') return Number(field.trick_room || field.trickRoom || 0) || 0;
+  if (key === 'weather') return Number(field.weather_turns || field.weatherTurns || 0) || 0;
+  if (key === 'terrain') return Number(field.terrain_turns || field.terrainTurns || 0) || 0;
+  return 0;
+}
+
+function csDurationEffectRows(snapshot) {
+  var rows = [];
+  ['player', 'opponent'].forEach(function(side) {
+    rows.push({ effect: 'tailwind', side: side, turns: csQaSnapshotTailwindTurns(snapshot, side) });
+    var screens = csDurationSideScreens(snapshot, side);
+    rows.push({ effect: 'reflect', side: side, turns: screens.reflect });
+    rows.push({ effect: 'light_screen', side: side, turns: screens.light });
+    rows.push({ effect: 'aurora_veil', side: side, turns: screens.aurora });
+  });
+  rows.push({ effect: 'trick_room', side: 'field', turns: csDurationFieldTurns(snapshot, 'trick_room') });
+  rows.push({ effect: 'weather', side: 'field', turns: csDurationFieldTurns(snapshot, 'weather') });
+  rows.push({ effect: 'terrain', side: 'field', turns: csDurationFieldTurns(snapshot, 'terrain') });
+  return rows;
+}
+
+function csBuildDurationEffectSummary(turnLog, opts) {
+  var rows = Array.isArray(turnLog) ? turnLog : [];
+  var summary = {
+    schema_version: 'champions-duration-effect-summary-v1',
+    scope: opts && opts.scope || 'turn-log',
+    labels: [],
+    label_counts: {},
+    events: [],
+    active_turns: {},
+    notes: [
+      'Duration timing is based on exported remaining-turn counters and action rows.',
+      'A timing label is a coaching risk signal, not proof of the best possible move.'
+    ]
+  };
+  var prevPost = null;
+  var seenTrickRoomExpired = false;
+  var seenExpired = {};
+
+  for (var i = 0; i < rows.length; i++) {
+    var turn = rows[i] || {};
+    var pre = turn.pre || {};
+    var post = turn.post || {};
+    var turnNo = Number(turn.turn || (i + 1));
+    csDurationEffectRows(post).forEach(function(effectRow) {
+      if (effectRow.turns > 0) {
+        var key = effectRow.side + ':' + effectRow.effect;
+        summary.active_turns[key] = (summary.active_turns[key] || 0) + 1;
+      }
+    });
+
+    if (prevPost) {
+      csDurationEffectRows(prevPost).forEach(function(prevEffect) {
+        var current = csDurationEffectRows(post).filter(function(row) {
+          return row.effect === prevEffect.effect && row.side === prevEffect.side;
+        })[0] || { turns: 0 };
+        if (prevEffect.turns > 0 && current.turns <= 0) {
+          csAddDurationTimingLabel(summary, 'field_effect_expired', turnNo, {
+            effect: prevEffect.effect,
+            side: prevEffect.side
+          });
+          seenExpired[prevEffect.side + ':' + prevEffect.effect] = true;
+          if (prevEffect.effect === 'trick_room') seenTrickRoomExpired = true;
+        }
+        if (prevEffect.turns <= 0 && current.turns > 0 && seenExpired[current.side + ':' + current.effect]) {
+          csAddDurationTimingLabel(summary, 'field_effect_reissued_after_expiry', turnNo, {
+            effect: current.effect,
+            side: current.side,
+            turns_remaining: current.turns
+          });
+        }
+      });
+    }
+
+    ['player', 'opponent'].forEach(function(side) {
+      var tailwindMove = csQaActionMoveSide(turn, side, 'Tailwind');
+      if (!tailwindMove) return;
+      var preTailwind = csQaSnapshotTailwindTurns(pre, side);
+      var postTailwind = csQaSnapshotTailwindTurns(post, side);
+      var trActive = csQaSnapshotTrickRoom(pre) || csQaSnapshotTrickRoom(post);
+      if (preTailwind > 0) {
+        csAddDurationTimingLabel(summary, 'tailwind_reused_while_active', turnNo, {
+          side: side,
+          turns_remaining_before_use: preTailwind
+        });
+      }
+      if (trActive) {
+        csAddDurationTimingLabel(summary, 'tailwind_into_active_trick_room', turnNo, {
+          side: side,
+          trick_room_turns: Math.max(csDurationFieldTurns(pre, 'trick_room'), csDurationFieldTurns(post, 'trick_room')),
+          tailwind_turns_after_use: postTailwind
+        });
+      }
+      if (!trActive && seenTrickRoomExpired) {
+        csAddDurationTimingLabel(summary, 'tailwind_delayed_until_trick_room_end', turnNo, {
+          side: side,
+          evidence: 'Tailwind was used after a visible Trick Room expiration in this log.'
+        });
+      }
+    });
+
+    prevPost = post;
   }
 
   return summary;
@@ -4390,6 +4522,7 @@ function csBuildQaCoverageSummary(turnLog, opts) {
   };
   var mechanics = csQaBlankMechanicsSeen();
   var tacticalSpeedSummary = csBuildTacticalSpeedSummary(rows, { scope: options.scope || 'single-turn-log' });
+  var durationEffectSummary = csBuildDurationEffectSummary(rows, { scope: options.scope || 'single-turn-log' });
   var decisionLedger = csBuildDecisionOpportunityLedger(tacticalSpeedSummary, { scope: options.scope || 'single-turn-log' });
   var tacticalLabels = tacticalSpeedSummary.label_counts || {};
   for (var tacticalLabel in tacticalLabels) {
@@ -4397,6 +4530,14 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     mechanics.tactical_speed_labels += Number(tacticalLabels[tacticalLabel] || 0);
     if (Object.prototype.hasOwnProperty.call(mechanics, tacticalLabel)) {
       mechanics[tacticalLabel] += Number(tacticalLabels[tacticalLabel] || 0);
+    }
+  }
+  var durationLabels = durationEffectSummary.label_counts || {};
+  for (var durationLabel in durationLabels) {
+    if (!Object.prototype.hasOwnProperty.call(durationLabels, durationLabel)) continue;
+    mechanics.duration_timing_labels += Number(durationLabels[durationLabel] || 0);
+    if (Object.prototype.hasOwnProperty.call(mechanics, durationLabel)) {
+      mechanics[durationLabel] += Number(durationLabels[durationLabel] || 0);
     }
   }
   var damageMoves = {};
@@ -4481,6 +4622,7 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     totals: totals,
     mechanics_seen: mechanics,
     tactical_speed_summary: tacticalSpeedSummary,
+    duration_effect_summary: durationEffectSummary,
     decision_opportunity_ledger: decisionLedger,
     coach_brain_summary: csBuildCoachBrainSummary(decisionLedger, {
       scope: options.scope || 'single-turn-log',
@@ -4548,6 +4690,21 @@ function csMergeQaCoverageSummaries(summaries, opts) {
     }
     if (Array.isArray(tactical.windows)) {
       merged.tactical_speed_summary.windows = merged.tactical_speed_summary.windows.concat(tactical.windows.slice(0, 12));
+    }
+    var duration = summary.duration_effect_summary || {};
+    var durationCounts = duration.label_counts || {};
+    merged.duration_effect_summary = merged.duration_effect_summary || csBuildDurationEffectSummary([], { scope: options.scope || 'qa-artifact-retained-replay-cards' });
+    for (var dl in durationCounts) {
+      if (!Object.prototype.hasOwnProperty.call(durationCounts, dl)) continue;
+      csQaInc(merged.duration_effect_summary.label_counts, dl, durationCounts[dl]);
+      if (merged.duration_effect_summary.labels.indexOf(dl) < 0) merged.duration_effect_summary.labels.push(dl);
+    }
+    if (Array.isArray(duration.events)) {
+      merged.duration_effect_summary.events = merged.duration_effect_summary.events.concat(duration.events.slice(0, 12));
+    }
+    var activeTurns = duration.active_turns || {};
+    for (var at in activeTurns) {
+      if (Object.prototype.hasOwnProperty.call(activeTurns, at)) csQaInc(merged.duration_effect_summary.active_turns, at, activeTurns[at]);
     }
   }
 
@@ -5666,6 +5823,7 @@ function downloadReplayTurnLog(replay, opts) {
     turning_point: replay.turning_point || null,
     position_path: replay.position_path || [],
     tactical_speed_summary: csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
+    duration_effect_summary: csBuildDurationEffectSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
     decision_opportunity_ledger: csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }),
     coach_brain_summary: csBuildCoachBrainSummary(csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }), {
       scope: 'downloaded-turn-log',
@@ -6224,6 +6382,7 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
   var matchConfidence = best.previewScore >= 0.5 && best.hasResult ? 'medium' : 'low';
 
   var compactTacticalSpeedSummary = csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' });
+  var compactDurationEffectSummary = csBuildDurationEffectSummary(turnLog, { scope: 'retained-replay-card' });
   var compactDecisionLedger = csBuildDecisionOpportunityLedger(compactTacticalSpeedSummary, { scope: 'retained-replay-card' });
   return {
     source: 'latest in-app simulation strategy report',
@@ -6660,6 +6819,7 @@ function csCompactQaReplayCard(replay, playerKey) {
     turning_point: r.turning_point || null,
     position_path: Array.isArray(r.position_path) ? r.position_path : [],
     tactical_speed_summary: compactTacticalSpeedSummary,
+    duration_effect_summary: compactDurationEffectSummary,
     decision_opportunity_ledger: compactDecisionLedger,
     coach_brain_summary: csBuildCoachBrainSummary(compactDecisionLedger, {
       scope: 'retained-replay-card',
@@ -8792,6 +8952,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Duration timing summary added',
+      detail: 'v2.1.76 adds duration_effect_summary to turn-log and QA exports. It tracks active multi-turn effect windows, expirations, reissues after expiry, Tailwind used while already active, Tailwind into active Trick Room, and Tailwind delayed until after Trick Room ends.'
+    },
     {
       status: 'done',
       title: 'Coach Brain strategic loop added',

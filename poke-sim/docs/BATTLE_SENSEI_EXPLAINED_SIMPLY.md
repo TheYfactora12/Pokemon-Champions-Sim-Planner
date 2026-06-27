@@ -350,3 +350,15 @@ It should say:
 > Here is how confident we are.
 
 If the app cannot prove something, it should not pretend.
+
+## Duration and Timing Windows
+
+Some moves do not just happen once. They create a temporary window. The coach brain must track when that window starts, how long it stays active, when it ends, and whether the player wasted a turn by using it at the wrong time.
+
+Tailwind is the first priority example. It gives a speed window for a limited number of turns, so the tool should not only ask, "Did you use Tailwind?" It should ask, "Did Tailwind create pressure before it ended?" Reusing Tailwind while it is already active can waste a turn. Using Tailwind into active Trick Room can also be bad unless the player is intentionally preparing for the turn Trick Room ends.
+
+The source-of-truth output for this is `duration_effect_summary`. It labels active multi-turn effects, expirations, reissues after a visible expiry, Tailwind while already active, Tailwind into active Trick Room, and Tailwind delayed until after Trick Room ends.
+
+For a 10-year-old: this is like timing a power-up in a race. If you use the speed boost while the track is blocked, you wasted it. If you wait until the block is gone and then use the boost, that can be smart. The sim is learning the difference.
+
+Later, the same idea should expand to weather, terrain, screens, Protect/guard turns, priority turns, and other effects where timing changes whether a move is good or bad.
