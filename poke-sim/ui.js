@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.73-decision-ledger';
+    return txt || 'v2.1.74-coach-brain-summary';
   } catch (e) {
-    return 'v2.1.73-decision-ledger';
+    return 'v2.1.74-coach-brain-summary';
   }
 }
 
@@ -4147,6 +4147,113 @@ function csBuildDecisionOpportunityLedger(tacticalSpeedSummary, opts) {
   };
 }
 
+function csCoachBrainBestCategory(categories, mode) {
+  var rows = Array.isArray(categories) ? categories.filter(function(row) {
+    return row && Number(row.opportunities || 0) > 0;
+  }) : [];
+  if (!rows.length) return null;
+  rows.sort(function(a, b) {
+    if (mode === 'weakness') {
+      var an = Number(a.negative || 0);
+      var bn = Number(b.negative || 0);
+      if (bn !== an) return bn - an;
+      return Number(a.positive_rate_pct || 0) - Number(b.positive_rate_pct || 0);
+    }
+    var ar = Number(a.positive_rate_pct || 0);
+    var br = Number(b.positive_rate_pct || 0);
+    if (br !== ar) return br - ar;
+    return Number(b.positive || 0) - Number(a.positive || 0);
+  });
+  return rows[0] || null;
+}
+
+function csCoachBrainIssueText(row) {
+  if (!row) return 'Needs more tactical samples before naming a primary issue.';
+  if (row.id === 'player_tailwind') return 'Tailwind is available, but too many windows are not becoming pressure.';
+  if (row.id === 'opponent_tailwind_defense') return 'Opponent Tailwind is creating too much value against this plan.';
+  if (row.id === 'trick_room') return 'Trick Room windows are not converting reliably enough.';
+  if (row.id === 'speed_control_contest') return 'Speed-control contests need cleaner conversion after the answer is found.';
+  return row.label + ' is the highest-risk tactical category.';
+}
+
+function csCoachBrainStrengthText(row) {
+  if (!row) return 'No clear strength yet.';
+  if (row.id === 'player_tailwind') return 'Player Tailwind is the cleanest current speed-control win path.';
+  if (row.id === 'opponent_tailwind_defense') return 'Opponent Tailwind defense is holding up well.';
+  if (row.id === 'trick_room') return 'Trick Room is producing the best current conversion windows.';
+  if (row.id === 'speed_control_contest') return 'Speed-control answers are a current strength.';
+  return row.label + ' is the strongest measured category.';
+}
+
+function csCoachBrainNextPlan(row) {
+  if (!row) return 'Run more BO1/BO3 samples with retained turn logs before changing the team.';
+  if (row.id === 'player_tailwind') return 'Only commit Tailwind when the next two turns can create damage, a KO, a forced Protect, or preservation of a win condition.';
+  if (row.id === 'opponent_tailwind_defense') return 'When the opponent gets Tailwind, play the next two turns around survival, Protect timing, priority, or reversing the speed state instead of trading blindly.';
+  if (row.id === 'trick_room') return 'Before setting Trick Room, confirm the next board has a slow attacker ready to act safely; otherwise trade or reposition first.';
+  if (row.id === 'speed_control_contest') return 'After reversing or neutralizing speed control, immediately convert with target pressure instead of spending the window passively.';
+  return 'Focus the next set on improving ' + row.label + ' conversion.';
+}
+
+function csCoachBrainDrill(row) {
+  if (!row) return 'Run 5 more games and export turn logs with tactical summaries enabled.';
+  if (row.id === 'player_tailwind') return 'Play 10 reps where every Tailwind must be followed by a planned two-turn pressure sequence.';
+  if (row.id === 'opponent_tailwind_defense') return 'Play 10 reps starting from opponent Tailwind active; score the rep only if you preserve a key Pokemon or reverse tempo.';
+  if (row.id === 'trick_room') return 'Play 10 reps where the goal is not setting Trick Room, but getting value during turns 1-3 after it starts.';
+  if (row.id === 'speed_control_contest') return 'Play 10 reps focused on the turn after speed control is answered: choose the target that turns tempo into material.';
+  return 'Run focused reps for ' + row.label + ' and compare the next ledger.';
+}
+
+function csBuildCoachBrainSummary(ledger, opts) {
+  var options = opts || {};
+  var categories = Array.isArray(ledger && ledger.categories) ? ledger.categories : [];
+  var totals = ledger && ledger.totals ? ledger.totals : {};
+  var opportunities = Number(totals.opportunities || 0);
+  var issue = csCoachBrainBestCategory(categories, 'weakness');
+  var strength = csCoachBrainBestCategory(categories, 'strength');
+  var confidence = opportunities >= 100 ? 'high' : (opportunities >= 20 ? 'medium' : (opportunities > 0 ? 'low' : 'needs_more_data'));
+  return {
+    schema_version: 'champions-coach-brain-summary-v1',
+    scope: options.scope || (ledger && ledger.scope) || 'decision-ledger',
+    memory_key: [
+      options.player_team_id || 'player',
+      options.opponent_team_id || 'opponent',
+      options.format || 'format',
+      'speed-control-ledger'
+    ].join('::'),
+    confidence: confidence,
+    sample: {
+      opportunities: opportunities,
+      positive: Number(totals.positive || 0),
+      negative: Number(totals.negative || 0),
+      neutral: Number(totals.neutral || 0),
+      positive_rate_pct: totals.positive_rate_pct == null ? null : Number(totals.positive_rate_pct)
+    },
+    primary_issue: issue ? {
+      category: issue.id,
+      label: issue.label,
+      opportunities: issue.opportunities,
+      positive: issue.positive,
+      negative: issue.negative,
+      neutral: issue.neutral,
+      positive_rate_pct: issue.positive_rate_pct,
+      read: csCoachBrainIssueText(issue)
+    } : null,
+    best_strength: strength ? {
+      category: strength.id,
+      label: strength.label,
+      opportunities: strength.opportunities,
+      positive: strength.positive,
+      negative: strength.negative,
+      neutral: strength.neutral,
+      positive_rate_pct: strength.positive_rate_pct,
+      read: csCoachBrainStrengthText(strength)
+    } : null,
+    next_game_plan: csCoachBrainNextPlan(issue),
+    practice_drill: csCoachBrainDrill(issue),
+    boundary: 'Evidence-bound speed-control coaching. This does not claim best move or best team until alternative branches are compared.'
+  };
+}
+
 function csQaCountSnapshotCoverage(snapshot, mechanics) {
   if (!snapshot || typeof snapshot !== 'object') return;
   if (Array.isArray(snapshot.speed_order_details) && snapshot.speed_order_details.length) mechanics.speed_order_details += 1;
@@ -4246,6 +4353,7 @@ function csBuildQaCoverageSummary(turnLog, opts) {
   };
   var mechanics = csQaBlankMechanicsSeen();
   var tacticalSpeedSummary = csBuildTacticalSpeedSummary(rows, { scope: options.scope || 'single-turn-log' });
+  var decisionLedger = csBuildDecisionOpportunityLedger(tacticalSpeedSummary, { scope: options.scope || 'single-turn-log' });
   var tacticalLabels = tacticalSpeedSummary.label_counts || {};
   for (var tacticalLabel in tacticalLabels) {
     if (!Object.prototype.hasOwnProperty.call(tacticalLabels, tacticalLabel)) continue;
@@ -4336,7 +4444,13 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     totals: totals,
     mechanics_seen: mechanics,
     tactical_speed_summary: tacticalSpeedSummary,
-    decision_opportunity_ledger: csBuildDecisionOpportunityLedger(tacticalSpeedSummary, { scope: options.scope || 'single-turn-log' }),
+    decision_opportunity_ledger: decisionLedger,
+    coach_brain_summary: csBuildCoachBrainSummary(decisionLedger, {
+      scope: options.scope || 'single-turn-log',
+      player_team_id: options.player_team_id || null,
+      opponent_team_id: options.opponent_team_id || null,
+      format: options.format || null
+    }),
     moves_seen: {
       damage: damageMoves,
       effects: effectMoves
@@ -4402,6 +4516,12 @@ function csMergeQaCoverageSummaries(summaries, opts) {
 
   merged.missing_targeted_proof = csQaMissingTargetedProof(merged.mechanics_seen);
   merged.decision_opportunity_ledger = csBuildDecisionOpportunityLedger(merged.tactical_speed_summary, { scope: options.scope || 'qa-artifact-retained-replay-cards' });
+  merged.coach_brain_summary = csBuildCoachBrainSummary(merged.decision_opportunity_ledger, {
+    scope: options.scope || 'qa-artifact-retained-replay-cards',
+    player_team_id: options.player_team_id || null,
+    opponent_team_id: options.opponent_team_id || null,
+    format: options.format || null
+  });
   return merged;
 }
 
@@ -5510,6 +5630,12 @@ function downloadReplayTurnLog(replay, opts) {
     position_path: replay.position_path || [],
     tactical_speed_summary: csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
     decision_opportunity_ledger: csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }),
+    coach_brain_summary: csBuildCoachBrainSummary(csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }), {
+      scope: 'downloaded-turn-log',
+      player_team_id: playerKey || null,
+      opponent_team_id: oppKey || null,
+      format: format
+    }),
     qa_coverage_summary: csBuildQaCoverageSummary(replay.turnLog, {
       generated_at: exportedAt,
       build_id: buildId,
@@ -6060,6 +6186,8 @@ function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
   var bestFour = csUniquePokemonNames(bestLead.concat(preserveNames), playerKey, getBringCount());
   var matchConfidence = best.previewScore >= 0.5 && best.hasResult ? 'medium' : 'low';
 
+  var compactTacticalSpeedSummary = csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' });
+  var compactDecisionLedger = csBuildDecisionOpportunityLedger(compactTacticalSpeedSummary, { scope: 'retained-replay-card' });
   return {
     source: 'latest in-app simulation strategy report',
     matchedOpponentKey: best.key,
@@ -6494,8 +6622,14 @@ function csCompactQaReplayCard(replay, playerKey) {
     logTruncated: !!r.logTruncated,
     turning_point: r.turning_point || null,
     position_path: Array.isArray(r.position_path) ? r.position_path : [],
-    tactical_speed_summary: csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' }),
-    decision_opportunity_ledger: csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' }), { scope: 'retained-replay-card' }),
+    tactical_speed_summary: compactTacticalSpeedSummary,
+    decision_opportunity_ledger: compactDecisionLedger,
+    coach_brain_summary: csBuildCoachBrainSummary(compactDecisionLedger, {
+      scope: 'retained-replay-card',
+      player_team_id: r.playerKey || playerKey || null,
+      opponent_team_id: r.oppKey || null,
+      format: r.format || (typeof currentFormat !== 'undefined' ? currentFormat : null)
+    }),
     qa_coverage_summary: csBuildQaCoverageSummary(turnLog, {
       build_id: buildId,
       source_url: sourceUrl,
@@ -8621,6 +8755,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Coach Brain Summary added',
+      detail: 'v2.1.74 adds coach_brain_summary on top of the Decision Opportunity Ledger. It names the primary tactical issue, best measured strength, next-game plan, practice drill, confidence, and memory key while staying evidence-bound.'
+    },
     {
       status: 'done',
       title: 'Decision Opportunity Ledger added',

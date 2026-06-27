@@ -142,6 +142,94 @@ Later aligned items:
 - Lineup and lead matrix recommendations across BO1/BO3/BO5.
 - Practice drill generation from repeated tactical patterns.
 
+## Coach Brain Layer: From Counts To Strategy
+
+The Coach Brain is the strategic layer above tactical labels and the Decision Opportunity Ledger.
+
+Layer order:
+
+1. `tactical_speed_summary`
+   Labels evidence-backed speed-control events such as Tailwind converted, Trick Room failed to convert, speed-control reversal, and speed-control neutralization.
+
+2. `decision_opportunity_ledger`
+   Counts opportunities, positive outcomes, negative outcomes, neutral outcomes, and positive rate by tactical category.
+
+3. `coach_brain_summary`
+   Converts the ledger into a player-facing diagnosis, next-game plan, and practice drill.
+
+4. Future `coach_memory`
+   Tracks repeated patterns by player team, opponent team/archetype, format, series format, and tactical category.
+
+The first Coach Brain scope is speed-control coaching:
+
+- `player_tailwind`
+- `opponent_tailwind_defense`
+- `trick_room`
+- `speed_control_contest`
+
+The first `coach_brain_summary` output contract:
+
+```json
+{
+  "schema_version": "champions-coach-brain-summary-v1",
+  "scope": "downloaded-turn-log | retained-replay-card | qa-artifact",
+  "memory_key": "player::opponent::format::speed-control-ledger",
+  "confidence": "needs_more_data | low | medium | high",
+  "sample": {
+    "opportunities": 0,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "positive_rate_pct": null
+  },
+  "primary_issue": {
+    "category": "player_tailwind",
+    "label": "Player Tailwind",
+    "opportunities": 0,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "positive_rate_pct": null,
+    "read": "Tailwind is available, but too many windows are not becoming pressure."
+  },
+  "best_strength": {
+    "category": "speed_control_contest",
+    "label": "Speed-Control Contest",
+    "opportunities": 0,
+    "positive": 0,
+    "negative": 0,
+    "neutral": 0,
+    "positive_rate_pct": null,
+    "read": "Speed-control answers are a current strength."
+  },
+  "next_game_plan": "Only commit Tailwind when the next two turns can create damage, a KO, a forced Protect, or preservation of a win condition.",
+  "practice_drill": "Play 10 reps where every Tailwind must be followed by a planned two-turn pressure sequence.",
+  "boundary": "Evidence-bound speed-control coaching. This does not claim best move or best team until alternative branches are compared."
+}
+```
+
+Coach Brain guardrails:
+
+- It must explain what data produced the read.
+- It must use confidence based on opportunity count.
+- It must produce one primary issue, not a noisy list of every possible issue.
+- It must produce one best measured strength so the player knows what to preserve.
+- It must produce one next-game plan and one practice drill.
+- It must not claim a best move, best target, best lineup, or best team until alternative branch comparisons exist.
+- It must not infer hidden opponent intent as fact.
+
+Memory requirements for later builds:
+
+- Store summaries by `memory_key`.
+- Compare current session against prior sessions.
+- Track whether a tactical category is improving, stable, or getting worse.
+- Prefer repeated evidence over one-game conclusions.
+- Separate team weakness from pilot execution weakness.
+
+Example memory read:
+
+> Across three sessions, Player Tailwind improved from 36% to 52% positive conversion, but Trick Room stayed under 35%. Keep the current Tailwind plan and practice Trick Room conversion before changing the six.
+
 ## Analysis Flow
 
 When analyzing one replay or a group of replays, run this flow:

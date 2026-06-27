@@ -89,7 +89,8 @@
 // v103-tactical-turn-log-labels [2026-06-27] - Add tactical_speed_summary labels to turn-log and QA exports.
 // v104-tailwind-window-labels [2026-06-27] - Classify first visible active Tailwind windows as converted or without pressure.
 // v105-decision-ledger [2026-06-27] - Add first Decision Opportunity Ledger export from tactical speed labels.
-const CACHE_NAME = 'champions-sim-v105-decision-ledger';
+// v106-coach-brain-summary [2026-06-27] - Add evidence-bound coach brain summary over decision ledger.
+const CACHE_NAME = 'champions-sim-v106-coach-brain-summary';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

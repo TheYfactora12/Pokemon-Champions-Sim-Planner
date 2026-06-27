@@ -202,6 +202,80 @@ The app is being taught these labels:
 - `complementary_turn_payoff`: a helper turn, like Protect or setup, helped create later value.
 - `speed_control_without_pressure`: speed control happened but did not create enough value.
 
+## The Coaching Brain
+
+The coaching brain is the next layer above labels.
+
+Think of it like this:
+
+- Labels say what happened.
+- The Decision Ledger counts how often it happened.
+- The coaching brain says what the pattern means.
+- Memory should remember whether the same pattern keeps happening over time.
+
+Example:
+
+- Label: `tailwind_without_pressure`
+- Ledger: Player Tailwind had 10 chances, 3 good, 6 bad, 1 neutral.
+- Coaching Brain: "Tailwind is available, but too many windows are not becoming pressure."
+- Next Game Plan: "Only use Tailwind when the next two turns can create damage, a KO, a forced Protect, or save a key Pokemon."
+- Practice Drill: "Play 10 reps where every Tailwind must be followed by a planned two-turn pressure sequence."
+
+This is the difference between a stat sheet and a coach.
+
+The coaching brain should be strict:
+
+- It can name a primary issue when the ledger has enough evidence.
+- It can name a best measured strength.
+- It can give one next-game plan.
+- It can give one practice drill.
+- It must explain confidence.
+- It must not say "this was the best possible move" until alternative branches were checked.
+
+The first coaching brain scope is speed control:
+
+- Player Tailwind
+- Opponent Tailwind Defense
+- Trick Room
+- Speed-Control Contest
+
+Later coaching brain layers should add:
+
+- lineup choice
+- lead choice
+- Protect timing
+- switch timing
+- target choice
+- move sequencing
+- resource trades
+- loss-cause classification
+- repeated player memory by team and matchup
+
+## What Memory Should Do
+
+Memory should help the app learn from repeated use.
+
+It should remember patterns like:
+
+- "This team keeps setting Trick Room but not converting it."
+- "This player defends opponent Tailwind well."
+- "This matchup keeps punishing the same lead."
+- "Across three sessions, Tailwind conversion improved from 36% to 52%."
+
+Memory should be grouped by:
+
+- player team
+- opponent team or archetype
+- format
+- BO1 / BO3 / BO5
+- tactical category
+
+Memory should not overwrite truth after one game.
+
+One battle can suggest a pattern.
+
+Many battles can confirm a pattern.
+
 ## What We Still Need
 
 The next source-truth work is to make structured sim turn logs teach the same lessons as replay parsing.
@@ -225,6 +299,15 @@ That means the app should count decisions like:
 
 This should come after the tactical interpreter is solid.
 
+After the ledger, the coaching brain should turn repeated counts into coaching:
+
+- Primary issue
+- Best measured strength
+- Next-game plan
+- Practice drill
+- Confidence
+- Memory key
+
 ## Simple Summary
 
 Battle Sensei should be like a coach.
@@ -238,4 +321,3 @@ It should say:
 > Here is how confident we are.
 
 If the app cannot prove something, it should not pretend.
-
