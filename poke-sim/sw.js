@@ -88,7 +88,8 @@
 // v102-bring-choice-coaching [2026-06-26] - #220: expose benchedTwo in review summary + bring_choice_review coaching tag.
 // v103-tactical-turn-log-labels [2026-06-27] - Add tactical_speed_summary labels to turn-log and QA exports.
 // v104-tailwind-window-labels [2026-06-27] - Classify first visible active Tailwind windows as converted or without pressure.
-const CACHE_NAME = 'champions-sim-v104-tailwind-window-labels';
+// v105-decision-ledger [2026-06-27] - Add first Decision Opportunity Ledger export from tactical speed labels.
+const CACHE_NAME = 'champions-sim-v105-decision-ledger';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

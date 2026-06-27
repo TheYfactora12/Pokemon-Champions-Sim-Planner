@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.72-tailwind-window-labels';
+    return txt || 'v2.1.73-decision-ledger';
   } catch (e) {
-    return 'v2.1.72-tailwind-window-labels';
+    return 'v2.1.73-decision-ledger';
   }
 }
 
@@ -4042,6 +4042,111 @@ function csBuildTacticalSpeedSummary(turnLog, opts) {
   return summary;
 }
 
+function csLedgerRate(good, total) {
+  total = Number(total || 0);
+  if (!total) return null;
+  return Math.round((Number(good || 0) / total) * 1000) / 10;
+}
+
+function csLedgerCategory(id, label, opportunities, positive, negative, neutral, evidenceLabels, coachingRead) {
+  opportunities = Number(opportunities || 0);
+  positive = Number(positive || 0);
+  negative = Number(negative || 0);
+  neutral = Number(neutral || 0);
+  if (opportunities && positive + negative + neutral < opportunities) {
+    neutral += opportunities - positive - negative - neutral;
+  }
+  return {
+    id: id,
+    label: label,
+    opportunities: opportunities,
+    positive: positive,
+    negative: negative,
+    neutral: neutral,
+    positive_rate_pct: csLedgerRate(positive, opportunities),
+    evidence_labels: evidenceLabels || [],
+    coaching_read: coachingRead
+  };
+}
+
+function csBuildDecisionOpportunityLedger(tacticalSpeedSummary, opts) {
+  var options = opts || {};
+  var counts = tacticalSpeedSummary && tacticalSpeedSummary.label_counts ? tacticalSpeedSummary.label_counts : {};
+  var playerTailwindOpp = Number(counts.tailwind_established || 0);
+  var playerTailwindGood = Number(counts.tailwind_converted || 0);
+  var playerTailwindBad = Number(counts.tailwind_without_pressure || 0);
+  var opponentTailwindOpp = Number(counts.opponent_tailwind_established || 0);
+  var opponentTailwindGood = Number(counts.opponent_tailwind_without_pressure || 0);
+  var opponentTailwindBad = Number(counts.opponent_tailwind_converted || 0);
+  var trickRoomOpp = Number(counts.trick_room_established || 0);
+  var trickRoomGood = Number(counts.trick_room_converted || 0);
+  var trickRoomBad = Number(counts.trick_room_failed_to_convert || 0);
+  var contestOpp = Number(counts.speed_control_reversal || 0) + Number(counts.speed_control_neutralized || 0);
+  var contestGood = Number(counts.speed_control_reversal || 0);
+  var contestNeutral = Number(counts.speed_control_neutralized || 0);
+  var categories = [
+    csLedgerCategory(
+      'player_tailwind',
+      'Player Tailwind',
+      playerTailwindOpp,
+      playerTailwindGood,
+      playerTailwindBad,
+      0,
+      ['tailwind_established', 'tailwind_converted', 'tailwind_without_pressure'],
+      'Counts visible player Tailwind windows and whether they converted into position within the next three turns.'
+    ),
+    csLedgerCategory(
+      'opponent_tailwind_defense',
+      'Opponent Tailwind Defense',
+      opponentTailwindOpp,
+      opponentTailwindGood,
+      opponentTailwindBad,
+      0,
+      ['opponent_tailwind_established', 'opponent_tailwind_converted', 'opponent_tailwind_without_pressure'],
+      'Counts opponent Tailwind windows. Positive means the player prevented their Tailwind from creating pressure.'
+    ),
+    csLedgerCategory(
+      'trick_room',
+      'Trick Room',
+      trickRoomOpp,
+      trickRoomGood,
+      trickRoomBad,
+      0,
+      ['trick_room_established', 'trick_room_converted', 'trick_room_failed_to_convert'],
+      'Counts Trick Room windows and whether the player position improved while the inverted speed state was active.'
+    ),
+    csLedgerCategory(
+      'speed_control_contest',
+      'Speed-Control Contest',
+      contestOpp,
+      contestGood,
+      0,
+      contestNeutral,
+      ['speed_control_reversal', 'speed_control_neutralized'],
+      'Counts speed-control answers. Reversal is positive; neutralization is tracked separately as a held-position outcome.'
+    )
+  ];
+  var totals = categories.reduce(function(acc, row) {
+    acc.opportunities += row.opportunities;
+    acc.positive += row.positive;
+    acc.negative += row.negative;
+    acc.neutral += row.neutral;
+    return acc;
+  }, { opportunities: 0, positive: 0, negative: 0, neutral: 0 });
+  totals.positive_rate_pct = csLedgerRate(totals.positive, totals.opportunities);
+  return {
+    schema_version: 'champions-decision-opportunity-ledger-v1',
+    scope: options.scope || (tacticalSpeedSummary && tacticalSpeedSummary.scope) || 'turn-log',
+    source: 'tactical_speed_summary.label_counts',
+    totals: totals,
+    categories: categories,
+    notes: [
+      'This ledger counts evidence-backed opportunities. It does not claim the best possible move until alternative branches are compared.',
+      'Positive means the exported position score moved in the player-favorable direction for that tactical window.'
+    ]
+  };
+}
+
 function csQaCountSnapshotCoverage(snapshot, mechanics) {
   if (!snapshot || typeof snapshot !== 'object') return;
   if (Array.isArray(snapshot.speed_order_details) && snapshot.speed_order_details.length) mechanics.speed_order_details += 1;
@@ -4231,6 +4336,7 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     totals: totals,
     mechanics_seen: mechanics,
     tactical_speed_summary: tacticalSpeedSummary,
+    decision_opportunity_ledger: csBuildDecisionOpportunityLedger(tacticalSpeedSummary, { scope: options.scope || 'single-turn-log' }),
     moves_seen: {
       damage: damageMoves,
       effects: effectMoves
@@ -4295,6 +4401,7 @@ function csMergeQaCoverageSummaries(summaries, opts) {
   }
 
   merged.missing_targeted_proof = csQaMissingTargetedProof(merged.mechanics_seen);
+  merged.decision_opportunity_ledger = csBuildDecisionOpportunityLedger(merged.tactical_speed_summary, { scope: options.scope || 'qa-artifact-retained-replay-cards' });
   return merged;
 }
 
@@ -5402,6 +5509,7 @@ function downloadReplayTurnLog(replay, opts) {
     turning_point: replay.turning_point || null,
     position_path: replay.position_path || [],
     tactical_speed_summary: csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
+    decision_opportunity_ledger: csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }),
     qa_coverage_summary: csBuildQaCoverageSummary(replay.turnLog, {
       generated_at: exportedAt,
       build_id: buildId,
@@ -6387,6 +6495,7 @@ function csCompactQaReplayCard(replay, playerKey) {
     turning_point: r.turning_point || null,
     position_path: Array.isArray(r.position_path) ? r.position_path : [],
     tactical_speed_summary: csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' }),
+    decision_opportunity_ledger: csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(turnLog, { scope: 'retained-replay-card' }), { scope: 'retained-replay-card' }),
     qa_coverage_summary: csBuildQaCoverageSummary(turnLog, {
       build_id: buildId,
       source_url: sourceUrl,
@@ -8512,6 +8621,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Decision Opportunity Ledger added',
+      detail: 'v2.1.73 adds decision_opportunity_ledger to turn-log exports, retained replay cards, and QA coverage summaries. The first ledger pass converts tactical speed labels into counted opportunities for Player Tailwind, Opponent Tailwind Defense, Trick Room, and Speed-Control Contest without claiming best-move certainty.'
+    },
     {
       status: 'done',
       title: 'Tactical speed labels added to turn-log exports',
