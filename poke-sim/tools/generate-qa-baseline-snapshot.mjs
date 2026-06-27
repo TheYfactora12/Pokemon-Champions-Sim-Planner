@@ -309,7 +309,7 @@ lines.push('');
 fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 const output = lines.join('\n') + '\n';
 if (checkMode) {
-  const current = fs.existsSync(reportPath) ? fs.readFileSync(reportPath, 'utf8') : '';
+  const current = fs.existsSync(reportPath) ? fs.readFileSync(reportPath, 'utf8').replace(/\r\n/g, '\n') : '';
   if (current !== output) {
     console.error('QA baseline snapshot is stale. Run `node tools/generate-qa-baseline-snapshot.mjs`.');
     process.exit(1);

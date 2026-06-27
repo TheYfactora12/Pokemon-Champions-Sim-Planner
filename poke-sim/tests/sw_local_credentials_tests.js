@@ -39,8 +39,8 @@ T('3. missing local-credentials.js returns empty JavaScript instead of cached ap
     'missing local credentials should return empty JS response');
 });
 
-T('4. service worker cache is bumped for bring-choice coaching', () => {
-  truthy(sw.includes('champions-sim-v102-bring-choice-coaching'), 'CACHE_NAME should be v102-bring-choice-coaching');
+T('4. service worker cache is current', () => {
+  truthy(sw.includes('champions-sim-v112-artifact-summary-split'), 'CACHE_NAME should be v112-artifact-summary-split');
   truthy(sw.includes('./generated/pokemon_showdown_species_weights.js'), 'weight companion file should be pre-cached');
 });
 

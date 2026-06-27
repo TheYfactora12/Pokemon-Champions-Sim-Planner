@@ -428,6 +428,52 @@ $node = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microso
 
 ---
 
+## SESSION LOG — 2026-06-27 (Battle Audit Verification)
+
+### Branch
+`audit/battle-audit-verification-2026-06-27`
+
+### Outcome
+- **4 → 2 failing test files** — fixed `qa_baseline_snapshot_tests.js` T7 (Windows PATH) and `sw_local_credentials_tests.js` T4 (stale CACHE_NAME)
+- **4,500-battle audit**: 0 JS errors, all 15 teams legality CLEAN, no hard mirror-match failures
+- **3 reporting gaps** documented for Josh in `reports/battle-audit-findings-2026-06-27.md`
+- **QA baseline snapshot** regenerated (hash: `a009c1022a21751a` → `4c489bd573de29a2`)
+- **Gap A fix**: soft `[FLAG]` mirror warnings now written to `audit_matrix.json` (not just console)
+
+### What was done
+
+| Fix | Location | Description |
+|---|---|---|
+| A | `tests/audit.js` | Soft FLAGs now captured in `mirrorFlags[]` with `severity: 'flag'`; hard-fail exit only triggers on `severity: 'fail'` entries |
+| B | `tests/qa_baseline_snapshot_tests.js` T7 | `spawnSync('node', ...)` → `spawnSync(process.execPath, ...)` — cross-platform fix |
+| C | `tests/sw_local_credentials_tests.js` T4 | Updated to expect `champions-sim-v112-artifact-summary-split` |
+| D | `reports/champion_qa_baseline_snapshot.md` | Regenerated from current source (hash updated) |
+
+### Key findings for Josh
+
+| Finding | Type | Severity |
+|---|---|---|
+| All terrain engine fixes pass (Grassy/Electric/Misty/Psychic Surge) | ✅ Logic correct | — |
+| `cofagrigus_tr` mirror: 20% (4w/2l/14d) — 70% draw rate | ⚠️ Soft FLAG, expected | Low |
+| `aurora_veil_froslass` mirror: 25% (5w/15l/0d) | 👀 Watch | Low |
+| Soft FLAGs not in JSON before this fix | 🐛 Reporting gap | Medium |
+| QA snapshot was stale after PRs #141, #143 | 🐛 Reporting gap | Low |
+| T7 `spawnSync('node')` fails on Windows | 🐛 Environment issue | Low |
+
+### Test verification commands
+```powershell
+$node = "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\NodeJs\node.exe"
+& $node poke-sim/tests/qa_baseline_snapshot_tests.js
+& $node poke-sim/tests/sw_local_credentials_tests.js
+& $node poke-sim/tests/audit.js
+```
+
+### Pre-existing failures (unrelated to this branch)
+- `showdown_damage_oracle_tests.js` — requires `npm install` (@smogon/calc)
+- `showdown_db_writer_tests.js` — requires `npm install` + DB credentials
+
+---
+
 ## SESSION LOG — 2026-06-26 (Bring-Choice Coaching — #220 TDD Fix)
 
 ### Branch
