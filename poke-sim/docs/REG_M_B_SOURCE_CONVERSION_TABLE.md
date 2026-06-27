@@ -26,7 +26,37 @@ The top-1% simulator standard is:
 | Mega Evolutions are allowed | Victory Road Champion regulations | Verified |
 | All Reg M-A Mega Evolutions remain allowed | Victory Road Champion regulations | Verified |
 | Reg M-B adds 16 new Mega Evolutions | Victory Road Champion regulations + `NewMegasRMB.png` | Names verified only |
+| Reg M-B adds 22 Pokemon versus Reg M-A | Victory Road Champion regulations + `NewPokemonRMB.png` | Names extracted, review-only |
 | Full allowed-Pokemon list exists | Victory Road image sheets `Reg-M-B-Pokemon1.jpg` and `Reg-M-B-Pokemon2.jpg` | Needs extraction |
+
+## Reg M-B Addition Rows
+
+These rows are the 22 additions Victory Road lists with respect to Reg M-A. They are explicit source-review rows, not runtime legality rows. Runtime promotion still needs full allowlist conversion, accepted/rejected fixtures, and implementation checks.
+
+| Species | Source | Runtime status |
+|---|---|---|
+| Vileplume | `NewPokemonRMB.png` | Review-only |
+| Qwilfish | `NewPokemonRMB.png` | Review-only |
+| Sceptile | `NewPokemonRMB.png` | Review-only |
+| Blaziken | `NewPokemonRMB.png` | Review-only |
+| Swampert | `NewPokemonRMB.png` | Review-only |
+| Mawile | `NewPokemonRMB.png` | Review-only |
+| Metagross | `NewPokemonRMB.png` | Review-only |
+| Staraptor | `NewPokemonRMB.png` | Review-only |
+| Musharna | `NewPokemonRMB.png` | Review-only |
+| Scolipede | `NewPokemonRMB.png` | Review-only |
+| Scrafty | `NewPokemonRMB.png` | Review-only |
+| Eelektross | `NewPokemonRMB.png` | Review-only |
+| Pyroar | `NewPokemonRMB.png` | Review-only |
+| Malamar | `NewPokemonRMB.png` | Review-only |
+| Barbaracle | `NewPokemonRMB.png` | Review-only |
+| Dragalge | `NewPokemonRMB.png` | Review-only |
+| Grimmsnarl | `NewPokemonRMB.png` | Review-only |
+| Falinks | `NewPokemonRMB.png` | Review-only |
+| Overqwil | `NewPokemonRMB.png` | Review-only |
+| Houndstone | `NewPokemonRMB.png` | Review-only |
+| Annihilape | `NewPokemonRMB.png` | Review-only |
+| Gholdengo | `NewPokemonRMB.png` | Review-only |
 
 ## New Mega Name Rows
 
@@ -73,6 +103,7 @@ Each Reg M-B Mega row must carry:
 ## Runtime Promotion Blockers
 
 - The full allowed-Pokemon list is still image-sheet source data, not explicit species/form rows.
+- The 22 Reg M-B additions are explicit review-only rows, but are not runtime-promoted.
 - The 16 new Mega names are verified, but stone/item names are not source-promoted.
 - Mega stats, typing, abilities, and sprite handling are not source-promoted.
 - No accepted/rejected Reg M-B legality fixtures exist yet.

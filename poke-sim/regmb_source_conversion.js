@@ -36,6 +36,13 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
       sourceName: 'Victory Road Champion regulations',
       sourceUrl: 'https://victoryroad.pro/champions-regulations/',
       status: 'verified'
+    },
+    {
+      claim: 'Regulation Set M-B adds 22 Pokemon with respect to Regulation Set M-A.',
+      sourceTier: 1,
+      sourceName: 'Victory Road Champion regulations',
+      sourceUrl: 'https://victoryroad.pro/wp-content/uploads/2026/06/NewPokemonRMB.png',
+      status: 'verified_text_image'
     }
   ],
   sourceImages: [
@@ -52,6 +59,13 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
       status: 'needs_explicit_species_form_extraction',
       runtimePromotable: false,
       blocker: 'Image sheet must be converted into reviewed species/form rows before legality can use it.'
+    },
+    {
+      kind: 'new_pokemon_additions',
+      url: 'https://victoryroad.pro/wp-content/uploads/2026/06/NewPokemonRMB.png',
+      status: 'text_rows_extracted_review_only',
+      runtimePromotable: false,
+      blocker: 'Addition names are extracted, but full Reg M-B runtime promotion still needs the complete allowlist rows, legality fixtures, and per-form implementation checks.'
     },
     {
       kind: 'new_mega_names',
@@ -109,6 +123,47 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     ];
     return row;
   }),
+  additionRows: [
+    'Vileplume',
+    'Qwilfish',
+    'Sceptile',
+    'Blaziken',
+    'Swampert',
+    'Mawile',
+    'Metagross',
+    'Staraptor',
+    'Musharna',
+    'Scolipede',
+    'Scrafty',
+    'Eelektross',
+    'Pyroar',
+    'Malamar',
+    'Barbaracle',
+    'Dragalge',
+    'Grimmsnarl',
+    'Falinks',
+    'Overqwil',
+    'Houndstone',
+    'Annihilape',
+    'Gholdengo'
+  ].map(function(species) {
+    return {
+      species: species,
+      rulesetId: 'champions_reg_m_b_doubles_bo3_source_review',
+      sourceUrl: 'https://victoryroad.pro/wp-content/uploads/2026/06/NewPokemonRMB.png',
+      sourceName: 'Victory Road Reg M-B additions image',
+      reviewStatus: 'addition_name_verified_review_only',
+      runtimePromotable: false,
+      learningEligible: false,
+      poisoningGuard: 'review_only_do_not_train_or_rank',
+      blockers: [
+        'full Reg M-B allowlist row not yet converted',
+        'accepted and rejected Reg M-B legality fixtures missing',
+        'species/form implementation audit pending',
+        'normal selector promotion blocked'
+      ]
+    };
+  }),
   coverageSections: [
     {
       sectionId: 'regmb_review_raichu_starters',
@@ -161,6 +216,7 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
   ],
   promotionGates: [
     'Allowed Pokemon image sheets converted into explicit reviewed species/form rows.',
+    '22 Reg M-B addition rows reviewed against NewPokemonRMB.png.',
     'Every new Mega row has stone, stats, typing, ability, sprite, and fixture evidence.',
     'Reg M-B accepted and rejected legality fixtures pass.',
     'Reg M-A historical fixtures remain stable.',

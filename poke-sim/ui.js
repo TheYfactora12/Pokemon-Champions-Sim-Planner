@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.89-regmb-review-cards';
+    return txt || 'v2.1.90-regmb-addition-rows';
   } catch (e) {
-    return 'v2.1.89-regmb-review-cards';
+    return 'v2.1.90-regmb-addition-rows';
   }
 }
 
@@ -9790,6 +9790,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B review cards made visible',
       detail: 'v2.1.89 renders the Reg M-B source-review coverage sections inside the Teams tab filter. These are planning cards, not legal sim teams, so testers can see the new Mega coverage without poisoning selectors, DB learning, or coaching stats.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B addition rows extracted',
+      detail: 'v2.1.90 converts the Victory Road NewPokemonRMB source image into 22 explicit review-only addition rows. These rows improve the source-conversion ledger while staying blocked from legal selectors and trusted coaching until full allowlist rows and fixtures are reviewed.'
     },
     {
       status: 'done',

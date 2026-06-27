@@ -61,6 +61,31 @@ const REGMB_NEW_MEGAS = [
   'Falinks-Mega'
 ];
 
+const REGMB_ADDITIONS = [
+  'Vileplume',
+  'Qwilfish',
+  'Sceptile',
+  'Blaziken',
+  'Swampert',
+  'Mawile',
+  'Metagross',
+  'Staraptor',
+  'Musharna',
+  'Scolipede',
+  'Scrafty',
+  'Eelektross',
+  'Pyroar',
+  'Malamar',
+  'Barbaracle',
+  'Dragalge',
+  'Grimmsnarl',
+  'Falinks',
+  'Overqwil',
+  'Houndstone',
+  'Annihilape',
+  'Gholdengo'
+];
+
 console.log('\n=== Reg M-B source audit tests ===\n');
 
 T('1. Reg M-B source facts are documented with source URLs', () => {
@@ -146,6 +171,20 @@ T('7. conversion docs are linked and name required promotion fields', () => {
     'positiveFixture',
     'negativeFixture'
   ].forEach((field) => inc(conversionDoc, field, 'conversion doc missing ' + field));
+});
+
+T('7b. Reg M-B addition rows are explicit but review-only', () => {
+  truthy(Array.isArray(conversion.additionRows), 'missing Reg M-B addition rows');
+  truthy(conversion.additionRows.length === 22, 'expected 22 Reg M-B addition rows');
+  REGMB_ADDITIONS.forEach((name) => {
+    const row = conversion.additionRows.find((entry) => entry.species === name);
+    truthy(row, 'missing addition row for ' + name);
+    truthy(row.runtimePromotable === false, name + ' should remain review-only');
+    truthy(row.learningEligible === false, name + ' should block learning');
+    truthy(row.poisoningGuard === 'review_only_do_not_train_or_rank', name + ' missing poisoning guard');
+  });
+  inc(conversionDoc, 'Reg M-B Addition Rows');
+  inc(conversionDoc, 'Gholdengo');
 });
 
 T('8. ruleset lifecycle blocks source-review teams from trusted legality', () => {
