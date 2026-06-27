@@ -1,0 +1,101 @@
+# Data Source Registry
+
+Status: active source-truth control page.
+
+Last repo source review: June 27, 2026.
+
+Purpose: give the team one place to inspect, challenge, replace, and improve the sources used by the Champion simulator. If a source is stale, weak, contradicted, or not allowed to prove the claim it is being used for, update this page before changing runtime behavior.
+
+## Current Ruleset Alert
+
+As of the June 27, 2026 repo review, Champion regulation sources must be treated as ruleset-sensitive. Victory Road lists Reg M-A as April 8, 2026 to June 17, 2026 and Reg M-B as June 17, 2026 to September 2, 2026.
+
+Do not casually call Reg M-A the live ladder unless a current source confirms it. The next ruleset task is to source-review Reg M-B, decide whether the default sim lane should migrate, and keep Reg M-A as a named historical lane if it remains useful for QA.
+
+## Source Priority
+
+| Tier | Source type | Allowed to prove | Not allowed to prove alone |
+|---|---|---|---|
+| 0 | Official Pokemon, Play! Pokemon, or Pokemon Champions notices, rules, patch notes, and event pages | Active ruleset, tournament structure, official mechanics when stated directly | Detailed simulator edge behavior when the official text is ambiguous |
+| 1 | Champion regulation and Champion availability pages from Serebii, Victory Road, Game8, and equivalent reviewed Champion pages | Champion legality, item availability, ranked regulation dates, format deltas | Full engine implementation without executable or test proof |
+| 2 | Pokemon Showdown upstream, Pokemon Showdown data CDN, `@pkmn/sim`, and `@smogon/calc` | Standard Pokemon data, move metadata, type chart, learnsets, target flags, baseline battle behavior, damage oracle checks | Champion legality when Champion sources say the active lane differs |
+| 3 | Human-readable cross-checkers such as Bulbapedia, Serebii dex pages, Smogon strategy pages, RotomLabs, OP.GG, Pikalytics-style usage sources, and community tournament reports | Plain-English confirmation, move wording, common usage, archetypes, coaching context, meta pressure | Hard legality, exact runtime behavior, or active ruleset by itself |
+| 4 | Repo QA artifacts, turn logs, branch-memory rows, source-truth tests, and browser exports | What this app actually executed and proved | External game truth if the app is already wrong |
+
+## Golden Source Links
+
+| Area | Primary source | Cross-check source | Repo owner area |
+|---|---|---|---|
+| Active Champion regulation | Victory Road Champion regulations and official Champion/TPC notices when available | Serebii regulation pages and Game8 Champion regulation pages | `docs/CHAMPIONS_LEGALITY.md`, `legality.js`, Overview |
+| Champion item pool | Champion-specific item pages such as Game8 items list | Serebii and Bulbapedia item pages for descriptions/effects | `CHAMPIONS_LEGAL_ITEMS`, item legality tests |
+| Species, forms, stats, types | Pokemon Showdown `pokedex.js` | Bulbapedia and Serebii dex pages | generated Showdown data, `runtime_data.js` |
+| Moves | Pokemon Showdown `moves.js` and `data/text/moves.ts` | Bulbapedia and Serebii move pages | move registry, move-support audit, engine tests |
+| Abilities | Pokemon Showdown `abilities.js` | Serebii and Bulbapedia ability pages | ability inventory, ability parity tests |
+| Items and berries | Pokemon Showdown `items.js` | Champion item pages, Bulbapedia, Serebii | generated data, item effect tests |
+| Type chart | Pokemon Showdown `typechart.js` | Bulbapedia and Serebii type charts | damage oracle tests |
+| Learnsets | Pokemon Showdown `learnsets.js` | Official availability notes when available, Serebii, Game8 | `approved_species_move_legality`, team gates |
+| Damage math | Pokemon Showdown simulator, `@smogon/calc` | Champion override notes when Champion differs | damage oracle tests, turn-log validator |
+| Meta/team coaching | User sim evidence and branch-memory rows first | Victory Road teams/articles, Smogon usage context, RotomLabs, OP.GG, Pikalytics-style data | Battle Sensei, Tactical Sweep QA, Meta Stress Lab |
+
+## Pull And Check Areas
+
+| Repo area | What it does | Required source stamp |
+|---|---|---|
+| `tools/showdown_sources.json` | Lists Showdown source files to fetch | source URL and source kind |
+| `tools/fetch_showdown_data.mjs` | Fetches, parses, hashes, and normalizes upstream data | `checked_at`, URL, hash, parse status |
+| `showdown_sync_runs` | One row per source sync attempt | UTC `started_at`, UTC `finished_at`, source version/commit when available |
+| `showdown_source_files` | One row per fetched source file | source URL, hash, byte size, parse status |
+| `showdown_entities` | Normalized source rows | source kind, entity key, source hash |
+| `approved_showdown_entities` | Reviewed rows promoted for app use | approval status, source hash, reviewer/process |
+| `champions_overrides` | Champion-specific differences from Showdown | Champion source URL, review date, status, test reference |
+| `generated/pokemon_showdown_legal_data.js` | Offline GitHub Pages runtime data | generated timestamp, source hashes, approved counts |
+| `legality.js` | Champion ruleset gate | ruleset ID, source review date, violation codes |
+| `engine.js` | Deterministic execution | tests proving behavior against source/oracle |
+| `ui.js` Overview | Human-visible status, docs, source inspector, QA path | build ID and source URL in exported artifacts |
+
+## Timestamp Contract
+
+Every automated or manual source check must record:
+
+- `checked_at` in UTC.
+- Source URL.
+- Source owner or upstream project.
+- Source type: official, Champion regulation, Showdown mirror, oracle, readable cross-checker, usage/meta, or repo QA evidence.
+- Source version, commit, page last-updated date, or fetched hash when available.
+- Ruleset ID being checked, for example `champions_reg_m_doubles_bo3`.
+- Decision: `approved`, `blocked`, `needs_review`, `historical`, or `override_required`.
+- Related commit SHA, workflow run ID, PR, issue, or QA artifact path.
+
+If a source has no visible last-updated date, store the fetch/check timestamp and mark freshness as `checked_not_source_dated`.
+
+## Challenge Process
+
+To challenge a source or propose a better one, include:
+
+- The current source being challenged.
+- The stronger replacement source URL.
+- What claim changes.
+- Why the new source is higher-trust or more current.
+- Which runtime areas are impacted.
+- Which tests or QA artifacts must prove the change.
+
+Do not update runtime behavior from a lower-tier source when a higher-tier source is available and contradicts it. Create a source-review finding first.
+
+## Conflict Handling
+
+When sources disagree:
+
+- Do not silently pick the convenient answer.
+- Keep Showdown mirror rows unchanged.
+- Add or update a `champions_overrides` row if the Champion source is stronger for the active Champion lane.
+- Add a focused test proving the intended runtime behavior.
+- Add an Overview note if the conflict affects player-facing trust.
+- Mark the source status as `needs_review` if no source clearly wins.
+
+## Current Open Source Questions
+
+- Reg M-B migration: decide whether the default live simulator lane should move from historical Reg M-A to Reg M-B after source review.
+- Champion Omni Ring and Tera-like mechanics: document only after an active ruleset source enables them; do not let Scarlet/Violet Tera data leak into Reg M-A/Reg M-B by default.
+- Champion SP cap conflict: Showdown currently supports the `32` per-stat / `66` total guardrail, while at least one public preview conflicts. Keep the source conflict documented until a stronger Champion source resolves it.
+- Champion-specific damage roll window: keep any confirmed Champion delta as an override with oracle tests, not a hand-edited hidden constant.
+- Usage/meta sources: use them to guide coaching and team archetype testing, not as legality proof.

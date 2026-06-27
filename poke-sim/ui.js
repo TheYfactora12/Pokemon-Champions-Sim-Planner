@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.83-champions-tera-gate';
+    return txt || 'v2.1.84-source-registry';
   } catch (e) {
-    return 'v2.1.83-champions-tera-gate';
+    return 'v2.1.84-source-registry';
   }
 }
 
@@ -9625,6 +9625,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Data source registry added',
+      detail: 'v2.1.84 adds docs/DATA_SOURCE_REGISTRY.md as the team challenge page for source tiers, golden links, pull/check areas, timestamp rules, conflict handling, and the June 27 Reg M-A versus Reg M-B source warning.'
+    },
+    {
+      status: 'done',
       title: 'Replay Pokemon effect tags added',
       detail: 'v2.1.82 adds compact Pokemon-card effect tags in replay turns. Structured effect_events such as flinch-applied, flinch-skip, sleep/freeze/paralysis skips, confusion self-hit, recoil, item recovery, and contact damage now surface as visible chips so players and QA can identify status/effect tech without opening raw JSON.'
     },
@@ -10124,6 +10129,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
+      title: 'Reg M-B source review is now a ruleset migration blocker',
+      detail: 'The June 27 source review indicates Reg M-A should be treated as a named historical lane unless deliberately selected. The next ruleset work is to review Reg M-B sources, decide the default live lane, add Champion overrides where needed, and keep the source registry timestamped.'
+    },
+    {
+      status: 'gap',
       title: 'Full raw thousand-battle retention is still not automatic',
       detail: 'The sim can run thousands of battles, but normal UI retention is bounded: replay cards cap at 240, raw replay display shows the last 200 lines, stored sim logs cap at 500 total and 100 per matchup pair. The QA artifact now exports retained evidence plus caps; a later artifact-stream mode is still needed if every raw battle log must be preserved.'
     },
@@ -10235,6 +10245,11 @@ var CS_OVERVIEW_DATA = {
       status: 'decision',
       title: 'Damage oracle source order',
       detail: 'Keep Pokemon Showdown and Smogon calc as baseline oracles, but require explicit source notes and tests for Champions-specific differences.'
+    },
+    {
+      status: 'decision',
+      title: 'Source challenge process',
+      detail: 'Use docs/DATA_SOURCE_REGISTRY.md as the page to challenge stale or weak sources. Showdown proves baseline data and mechanics, Champion regulation sources prove active legality, usage/meta pages inform coaching, and QA artifacts prove what this app actually executed.'
     }
   ],
   flow: [
@@ -10250,6 +10265,7 @@ var CS_OVERVIEW_DATA = {
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
     { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
+    { label: 'Data Source Registry', href: 'docs/DATA_SOURCE_REGISTRY.md' },
     { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
     { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },
