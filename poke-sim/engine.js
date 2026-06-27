@@ -1832,9 +1832,6 @@ class Pokemon {
     this.teamFormat = _declaredFmt;
     this.statFormat = _resolvedStatFormat.statFormat;
     this.formatMismatch = _resolvedStatFormat.formatMismatch;
-    if (_declaredFmt === 'champions') {
-      this.tera = null;
-    }
 
     // T9j.7 — Mega form resolution.
     // If this is a -Mega name and we have a CHAMPIONS_MEGAS entry AND the

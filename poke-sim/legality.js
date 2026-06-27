@@ -97,8 +97,8 @@ var CHAMPIONS_BANNED_ITEMS = new Set([
   'Booster Energy','Loaded Dice'
 ]);
 
-// Scarlet/Violet battle mechanics that must not appear in active Champion
-// teams unless a reviewed Champion source explicitly adds them later.
+// Battle mechanics that must not appear in the current active Champions
+// Reg M-A lane unless a reviewed ruleset source explicitly enables them.
 var CHAMPIONS_BANNED_MECHANIC_MOVES = new Set([
   'Tera Blast'
 ]);
@@ -186,7 +186,7 @@ function validateChampionsLegality(team) {
       violations.push({
         severity: 'error',
         code: 'TERA_NOT_CHAMPIONS_LEGAL',
-        message: name + ': Tera type "' + tera + '" is not legal in Champion-format teams'
+        message: name + ': Tera type "' + tera + '" is not legal in current Champions Reg M-A teams'
       });
     }
 
@@ -195,7 +195,7 @@ function validateChampionsLegality(team) {
       violations.push({
         severity: 'error',
         code: 'ABILITY_NOT_CHAMPIONS_LEGAL',
-        message: name + ': ability "' + ability + '" belongs to an unapproved non-Champion mechanic'
+        message: name + ': ability "' + ability + '" belongs to an unapproved mechanic for current Champions Reg M-A'
       });
     }
 
@@ -205,7 +205,7 @@ function validateChampionsLegality(team) {
         violations.push({
           severity: 'error',
           code: 'MOVE_NOT_CHAMPIONS_LEGAL',
-          message: name + ': move "' + moves[mv] + '" belongs to an unapproved non-Champion mechanic'
+          message: name + ': move "' + moves[mv] + '" belongs to an unapproved mechanic for current Champions Reg M-A'
         });
       }
     }

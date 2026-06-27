@@ -9621,7 +9621,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Champion-format Tera leak gated off',
-      detail: 'v2.1.83 prevents Champion-format battles from auto-Terastallizing legacy Scarlet/Violet team data. Tera support remains available only for explicit non-Champion/SV parity contexts; Champion exports no longer write Tera Type lines. The same audit removed active strategy copy that taught Protosynthesis as Champion coaching without source approval.'
+      detail: 'v2.1.83 prevents the current Champions Reg M-A sim lane from auto-Terastallizing stale team data. Tera support remains isolated behind explicit ruleset/test contexts so future Champion rules can opt in if source-approved; current Reg M-A exports no longer write Tera Type lines. The same audit removed active strategy copy that taught Protosynthesis without source approval.'
     },
     {
       status: 'done',
@@ -10033,7 +10033,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'Damage stack oracle is green for covered mechanics',
-      detail: 'showdown_damage_oracle_tests.js covers Low Kick target-weight base power, legacy/SV Tera Blast parity, former baseline direct/spread damage ranges, Foul Play target-Attack damage, and Darkest Lariat defense-stage bypass, alongside terrain, weather, ability, screen, immunity, item, and spread-sensitive damage cases. Champion-format battle runs now gate Tera off by default.'
+      detail: 'showdown_damage_oracle_tests.js covers Low Kick target-weight base power, isolated Tera Blast parity, former baseline direct/spread damage ranges, Foul Play target-Attack damage, and Darkest Lariat defense-stage bypass, alongside terrain, weather, ability, screen, immunity, item, and spread-sensitive damage cases. Current Champions Reg M-A battle runs gate Tera off by default.'
     },
     {
       status: 'validated',
@@ -10042,8 +10042,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Legacy/SV Tera Blast parity is isolated from Champion format',
-      detail: 'v2.1.32 kept Tera Blast parity for explicit non-Champion/SV test contexts. v2.1.83 gates Champion-format battles so legacy Tera fields and Tera Blast data do not auto-activate Terastallization or create Champion replay logs that teach Scarlet/Violet mechanics.'
+      title: 'Tera Blast parity is isolated from current Reg M-A',
+      detail: 'v2.1.32 kept Tera Blast parity for explicit ruleset/test contexts. v2.1.83 gates current Champions Reg M-A battles so stale Tera fields and Tera Blast data do not auto-activate Terastallization or create Reg M-A replay logs that teach mechanics not enabled for that ruleset.'
     },
     {
       status: 'validated',
