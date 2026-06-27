@@ -2333,8 +2333,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.71-tactical-turn-log-labels -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.71-tactical-turn-log-labels</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.72-tailwind-window-labels -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.72-tailwind-window-labels</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -20865,9 +20865,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.71-tactical-turn-log-labels';
+    return txt || 'v2.1.72-tailwind-window-labels';
   } catch (e) {
-    return 'v2.1.71-tactical-turn-log-labels';
+    return 'v2.1.72-tailwind-window-labels';
   }
 }
 
@@ -24553,6 +24553,9 @@ function csQaBlankMechanicsSeen() {
     tailwind_established: 0,
     tailwind_converted: 0,
     tailwind_without_pressure: 0,
+    opponent_tailwind_established: 0,
+    opponent_tailwind_converted: 0,
+    opponent_tailwind_without_pressure: 0,
     speed_control_neutralized: 0,
     speed_control_reversal: 0
   };
@@ -24676,6 +24679,8 @@ function csBuildTacticalSpeedSummary(turnLog, opts) {
       'Converted means player position improved within the next three turns while the speed plan was active or newly established.'
     ]
   };
+  var playerTailwindWindowSeen = false;
+  var opponentTailwindWindowSeen = false;
 
   for (var i = 0; i < rows.length; i++) {
     var turn = rows[i] || {};
@@ -24728,8 +24733,12 @@ function csBuildTacticalSpeedSummary(turnLog, opts) {
         });
       }
     }
-    if (!prePlayerTw && postPlayerTw) {
-      csAddTacticalSpeedLabel(summary, 'tailwind_established', turnNo, { side: 'player' });
+    if ((prePlayerTw || postPlayerTw) && !playerTailwindWindowSeen) {
+      playerTailwindWindowSeen = true;
+      csAddTacticalSpeedLabel(summary, 'tailwind_established', turnNo, {
+        side: 'player',
+        evidence: prePlayerTw ? 'Tailwind was already active in the first visible speed window.' : 'Tailwind became active this turn.'
+      });
       if (delta) {
         var twLabel = delta.best >= 0.05 ? 'tailwind_converted' : (delta.final <= 0.03 ? 'tailwind_without_pressure' : null);
         if (twLabel) {
@@ -24752,6 +24761,30 @@ function csBuildTacticalSpeedSummary(turnLog, opts) {
       csAddTacticalSpeedLabel(summary, 'speed_control_neutralized', turnNo, {
         evidence: 'Both sides had Tailwind active in the exported speed state.'
       });
+    }
+    if ((preOppTw || postOppTw) && !opponentTailwindWindowSeen) {
+      opponentTailwindWindowSeen = true;
+      csAddTacticalSpeedLabel(summary, 'opponent_tailwind_established', turnNo, {
+        side: 'opponent',
+        evidence: preOppTw ? 'Opponent Tailwind was already active in the first visible speed window.' : 'Opponent Tailwind became active this turn.'
+      });
+      if (delta) {
+        var oppTwLabel = delta.final <= -0.05 ? 'opponent_tailwind_converted' : (delta.best >= 0.03 ? 'opponent_tailwind_without_pressure' : null);
+        if (oppTwLabel) {
+          csAddTacticalSpeedLabel(summary, oppTwLabel, turnNo, {
+            position_delta_best_next_3: delta.best,
+            position_delta_final_next_3: delta.final
+          });
+        }
+        summary.windows.push({
+          label: oppTwLabel || 'opponent_tailwind_window_even',
+          turn: turnNo,
+          kind: 'tailwind',
+          side: 'opponent',
+          position_delta_best_next_3: delta.best,
+          position_delta_final_next_3: delta.final
+        });
+      }
     }
   }
 

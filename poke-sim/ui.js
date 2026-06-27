@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.71-tactical-turn-log-labels';
+    return txt || 'v2.1.72-tailwind-window-labels';
   } catch (e) {
-    return 'v2.1.71-tactical-turn-log-labels';
+    return 'v2.1.72-tailwind-window-labels';
   }
 }
 
@@ -3804,6 +3804,9 @@ function csQaBlankMechanicsSeen() {
     tailwind_established: 0,
     tailwind_converted: 0,
     tailwind_without_pressure: 0,
+    opponent_tailwind_established: 0,
+    opponent_tailwind_converted: 0,
+    opponent_tailwind_without_pressure: 0,
     speed_control_neutralized: 0,
     speed_control_reversal: 0
   };
@@ -3927,6 +3930,8 @@ function csBuildTacticalSpeedSummary(turnLog, opts) {
       'Converted means player position improved within the next three turns while the speed plan was active or newly established.'
     ]
   };
+  var playerTailwindWindowSeen = false;
+  var opponentTailwindWindowSeen = false;
 
   for (var i = 0; i < rows.length; i++) {
     var turn = rows[i] || {};
@@ -3979,8 +3984,12 @@ function csBuildTacticalSpeedSummary(turnLog, opts) {
         });
       }
     }
-    if (!prePlayerTw && postPlayerTw) {
-      csAddTacticalSpeedLabel(summary, 'tailwind_established', turnNo, { side: 'player' });
+    if ((prePlayerTw || postPlayerTw) && !playerTailwindWindowSeen) {
+      playerTailwindWindowSeen = true;
+      csAddTacticalSpeedLabel(summary, 'tailwind_established', turnNo, {
+        side: 'player',
+        evidence: prePlayerTw ? 'Tailwind was already active in the first visible speed window.' : 'Tailwind became active this turn.'
+      });
       if (delta) {
         var twLabel = delta.best >= 0.05 ? 'tailwind_converted' : (delta.final <= 0.03 ? 'tailwind_without_pressure' : null);
         if (twLabel) {
@@ -4003,6 +4012,30 @@ function csBuildTacticalSpeedSummary(turnLog, opts) {
       csAddTacticalSpeedLabel(summary, 'speed_control_neutralized', turnNo, {
         evidence: 'Both sides had Tailwind active in the exported speed state.'
       });
+    }
+    if ((preOppTw || postOppTw) && !opponentTailwindWindowSeen) {
+      opponentTailwindWindowSeen = true;
+      csAddTacticalSpeedLabel(summary, 'opponent_tailwind_established', turnNo, {
+        side: 'opponent',
+        evidence: preOppTw ? 'Opponent Tailwind was already active in the first visible speed window.' : 'Opponent Tailwind became active this turn.'
+      });
+      if (delta) {
+        var oppTwLabel = delta.final <= -0.05 ? 'opponent_tailwind_converted' : (delta.best >= 0.03 ? 'opponent_tailwind_without_pressure' : null);
+        if (oppTwLabel) {
+          csAddTacticalSpeedLabel(summary, oppTwLabel, turnNo, {
+            position_delta_best_next_3: delta.best,
+            position_delta_final_next_3: delta.final
+          });
+        }
+        summary.windows.push({
+          label: oppTwLabel || 'opponent_tailwind_window_even',
+          turn: turnNo,
+          kind: 'tailwind',
+          side: 'opponent',
+          position_delta_best_next_3: delta.best,
+          position_delta_final_next_3: delta.final
+        });
+      }
     }
   }
 
