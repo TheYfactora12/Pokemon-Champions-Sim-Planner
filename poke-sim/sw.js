@@ -112,8 +112,8 @@
 // v143-codex-qa-context-drop [2026-06-27] - Add Codex-ready QA artifact handoff context.
 // v144-codex-qa-drop-folder [2026-06-27] - Save QA artifacts to a user-approved local drop folder when supported.
 // v145-tactical-sweep-schema [2026-06-28] - Add explicit Tactical Sweep schema/status/opponent metadata to QA artifacts.
-// v149-stress-lite-qa [2026-06-28] - Add browser-safe capped stress QA artifact path.
-const CACHE_NAME = 'champions-sim-v149-stress-lite-qa';
+// v150-stress-lite-summary [2026-06-28] - Surface Stress Lite totals/coaching summary and force fresh app-shell cache.
+const CACHE_NAME = 'champions-sim-v150-stress-lite-summary';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
