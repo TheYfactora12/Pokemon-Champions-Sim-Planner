@@ -5251,8 +5251,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           return false;
         }
         const defenders = (t.side === field.playerSide) ? playerActive : oppActive;
-        if (defenders.some(m => m.alive && m.ability === 'Armor Tail')) {
-          log.push(`Armor Tail blocked ${move} on ${t.name}!`);
+        const priorityBlocker = defenders.find(function(m) {
+          return m.alive && (m.ability === 'Armor Tail' || m.ability === 'Dazzling' || m.ability === 'Queenly Majesty');
+        });
+        if (priorityBlocker) {
+          log.push(`${priorityBlocker.ability} blocked ${move} on ${t.name}!`);
           return false;
         }
         // Psychic Terrain blocks priority moves from hitting grounded mons.

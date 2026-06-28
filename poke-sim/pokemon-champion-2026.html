@@ -13919,8 +13919,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           return false;
         }
         const defenders = (t.side === field.playerSide) ? playerActive : oppActive;
-        if (defenders.some(m => m.alive && m.ability === 'Armor Tail')) {
-          log.push(`Armor Tail blocked ${move} on ${t.name}!`);
+        const priorityBlocker = defenders.find(function(m) {
+          return m.alive && (m.ability === 'Armor Tail' || m.ability === 'Dazzling' || m.ability === 'Queenly Majesty');
+        });
+        if (priorityBlocker) {
+          log.push(`${priorityBlocker.ability} blocked ${move} on ${t.name}!`);
           return false;
         }
         // Psychic Terrain blocks priority moves from hitting grounded mons.
@@ -36146,6 +36149,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
+      title: 'Priority-suppression family now has same-rule regression proof',
+      detail: 'Issue #149 raised the long-tail risk that Armor Tail could be covered while same-family blockers drifted. ability_priority_targeting_tests.js now keeps Armor Tail, Dazzling, and Queenly Majesty on the same Fake Out suppression contract so coaching and QA do not learn a false opening-turn line from an omitted sibling ability.'
+    },
+    {
+      status: 'validated',
       title: 'Bundle freshness rule remains active',
       detail: 'The standalone GitHub Pages bundle must be rebuilt from source and the service-worker cache must be bumped for every engine, legality, or data-path release. This current local slice is not release-proven until that bundle and deployed-browser proof are complete.'
     },
@@ -36185,6 +36193,11 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: '100% parity still has non-move gates',
       detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Champion-gated legacy Tera data, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
+    },
+    {
+      status: 'gap',
+      title: 'Mechanics truth beta gate remains open',
+      detail: 'Issue #149 stays open until the long-tail mechanics inventory is explicit and source-backed: same-family priority suppression, multi-effect move stacks, field/state legality shifts, Fake Out windows, flinch/status action denial, and replay/QA evidence all need deterministic proof before broader coaching trust claims.'
     },
     {
       status: 'gap',
@@ -36277,6 +36290,11 @@ var CS_OVERVIEW_DATA = {
       status: 'next',
       title: 'Prove post-move mechanics by battle system',
       detail: 'With the shipped move audit at 120 verified / 0 baseline / 0 incomplete, continue from exported-log evidence into deployed-browser proof, DB approved-runtime promotion, long-run/golden trace auditing, source-drift guardrails, and battle-system slices for redirection, Protect family, switching/replacement, status, abilities, items, terrain/weather, and Champion-only overrides.'
+    },
+    {
+      status: 'next',
+      title: 'Close the mechanics truth beta gate',
+      detail: 'Build the issue #149 inventory as a real checklist, not a vibe: cover same-family priority blockers, multi-effect moves that change stats/status/HP in one window, field-state move failures, and visible replay/QA evidence so the Overview tab can close that gate with proof instead of memory.'
     },
     {
       status: 'next',
