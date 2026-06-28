@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.28-move-failure-evidence';
+    return txt || 'v2.2.29-replay-log-dedupe';
   } catch (e) {
-    return 'v2.2.28-move-failure-evidence';
+    return 'v2.2.29-replay-log-dedupe';
   }
 }
 
@@ -4259,7 +4259,19 @@ function csRenderReplayPlayByPlay(turn) {
     text = text.replace(/\s+/g, ' ');
     return text;
   }
-  if (turn.actions) {
+  var eventRows = [];
+  (turn.events || []).forEach(function(ev) {
+    if (!ev) return;
+    var text = showdownEventText(ev);
+    if (!text) return;
+    eventRows.push(text);
+  });
+  var eventRowsHaveMoves = eventRows.some(function(text) {
+    return /\bused\b/.test(String(text || ''));
+  });
+  if (eventRows.length && eventRowsHaveMoves) {
+    rows = eventRows;
+  } else {
     (turn.actions.player || []).forEach(function(action) {
       if (!action) return;
       var line = showdownMoveText(action);
@@ -4270,12 +4282,14 @@ function csRenderReplayPlayByPlay(turn) {
       var line = showdownMoveText(action);
       if (line) rows.push(line);
     });
+    rows = rows.concat(eventRows);
   }
-  (turn.events || []).forEach(function(ev) {
-    if (!ev) return;
-    var text = showdownEventText(ev);
-    if (!text) return;
-    rows.push(text);
+  var seen = {};
+  rows = rows.filter(function(text) {
+    var key = String(text || '').trim();
+    if (!key || seen[key]) return false;
+    seen[key] = true;
+    return true;
   });
   if (!rows.length) return '';
   return '<div class="replay-play-by-play"><strong>Battle log</strong>' +
@@ -4522,13 +4536,15 @@ function csRenderTurnLogRows(turnLog, opts) {
         return [a.actor, a.move, a.target ? '-> ' + a.target : ''].filter(Boolean).join(' ');
       });
     }
+    var playByPlayHtml = csRenderReplayPlayByPlay(t);
+    var headerText = playByPlayHtml ? 'Resolved action order shown below' : (actions.join(' | ') || t.action || '-');
     var inCoach = (typeof coachIn === 'function') ? coachIn(rows, t && t.turn) : '';
     var turnAudit = audit && audit.byTurn ? audit.byTurn[t && t.turn] : null;
     return '<div class="replay-turn-row' + (t && t.swingTurn ? ' swing' : '') + (turnAudit ? ' decision-gap' : '') + '"' + (turnAudit ? ' style="border-left:4px solid var(--gold);"' : '') + '>' +
-      '<div class="replay-turn-main"><strong>T' + _escapeHtml(t && t.turn) + '</strong><span>' + _escapeHtml(actions.join(' | ') || t.action || '-') + '</span></div>' +
+      '<div class="replay-turn-main"><strong>T' + _escapeHtml(t && t.turn) + '</strong><span>' + _escapeHtml(headerText) + '</span></div>' +
       '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
       csRenderDecisionAuditChip(turnAudit) +
-      csRenderReplayPlayByPlay(t) +
+      playByPlayHtml +
       csRenderReplayLogSnapshot(t && t.post, 'After T' + (t && t.turn), true, t) +
       csRenderHpBars(t) +
       (inCoach ? '<pre class="replay-turn-coach">' + _escapeHtml(inCoach) + '</pre>' : '') +
@@ -8145,6 +8161,7 @@ function renderReplays() {
     const logCapActive = !!r.logTruncated ||
       (typeof r.logLineCount === 'number' && r.logLineCount > logLen) ||
       logLen > MAX_REPLAY_LOG_LINES;
+    const rawLogHtml = (r.log || []).join('<br>');
     const turning = r.turning_point ? 'Swing T' + r.turning_point.turn : 'No swing';
     const card=document.createElement('div');
     card.className='replay-card';
@@ -8166,7 +8183,9 @@ function renderReplays() {
       <div class="replay-expanded">
         ${showCoachingSummary ? csRenderReplayCoachingSummary(coachingSummary) : ''}
         ${hasTurnLog ? `<div class="replay-v2-tools">${csReplaySparkline(r.turnLog)}<button class="btn-secondary replay-json-btn" type="button">Download JSON</button></div>${csRenderTurnLogRows(r.turnLog, { playerKey: r.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'), oppKey: r.oppKey || null })}` : ''}
-        <div class="battle-log">${(r.log||[]).join('<br>')}</div>
+        ${hasTurnLog
+          ? `<details class="battle-log-raw"><summary>Raw engine log</summary><div class="battle-log">${rawLogHtml}</div></details>`
+          : `<div class="battle-log">${rawLogHtml}</div>`}
       </div>`;
     const dlBtn = card.querySelector('.replay-json-btn');
     if (dlBtn) dlBtn.addEventListener('click', (ev)=>{ ev.stopPropagation(); downloadReplayTurnLog(r); });
