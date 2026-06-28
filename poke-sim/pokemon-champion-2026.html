@@ -2550,12 +2550,12 @@ table{border-collapse:collapse;width:100%}
         </select>
       </div>
 
-      <button class="btn-primary" id="run-sim-btn">▶ Run Simulation</button>
-      <button class="btn-secondary" id="run-all-btn">⚡ Run All Matchups</button>
-      <button class="btn-secondary" id="qa-drop-folder-btn" title="Choose a local folder for QA Artifact saves when your browser supports folder write access">Set QA Drop Folder</button>
-      <button class="btn-secondary" id="run-all-export-qa-btn" title="Run all matchups, then download one retained-evidence QA Artifact JSON">Run All + QA Artifact</button>
-      <button class="btn-secondary" id="stress-lite-qa-btn" title="Run capped stress proof with safety limits, then download one QA Artifact JSON">Stress Lite + QA</button>
-      <button class="btn-secondary" id="tactical-sweep-qa-btn" title="Run tactical branch coverage using Test Scope, save unseen branches, then download QA Artifact JSON">Tactical Sweep + QA</button>
+      <button class="btn-primary" id="run-sim-btn" title="Quick check: runs one matchup using the selected teams and settings. Collects one result, replay turns, damage events, effect events, field states, status, and faint causes.">▶ Run Simulation</button>
+      <button class="btn-secondary" id="run-all-btn" title="Broad release check: runs many matchups to find big broken patterns. Collects win/loss totals, matchup stats, replay samples, damage/effect coverage, and crash/error signals. Heavier on your computer.">⚡ Run All Matchups</button>
+      <button class="btn-secondary" id="qa-drop-folder-btn" title="Workflow helper: choose a local folder for QA Artifact saves when your browser supports folder write access. It helps keep artifacts organized for Codex review.">Set QA Drop Folder</button>
+      <button class="btn-secondary" id="run-all-export-qa-btn" title="Release evidence: runs all matchups, then downloads one QA Artifact JSON with build_id, source_url, summary, retained replays, damage_events, effect_events, qa_coverage_summary, codex_context, and DB status.">Run All + QA Artifact</button>
+      <button class="btn-secondary" id="stress-lite-qa-btn" title="Safe stress check: runs capped lower-load coverage for phones or weaker computers. Collects enough replay, damage, effect, and summary evidence without trying to be exhaustive Run All proof.">Stress Lite + QA</button>
+      <button class="btn-secondary" id="tactical-sweep-qa-btn" title="Coaching and strategy check: tests branches for the selected scope. Collects speed control, Trick Room, Tailwind, decision opportunities, move/lineup patterns, coaching rows, DB branch saves, and next_missing_proof.">Tactical Sweep + QA</button>
       <div class="settings-note" id="beta-guard-note" style="display:none"></div>
 
       <div class="progress-wrap" id="progress-wrap" style="display:none">

@@ -254,6 +254,12 @@ async function main() {
     truthy(/id="run-all-export-qa-btn"/.test(html), 'Run All + QA Artifact button missing');
     truthy(/id="stress-lite-qa-btn"/.test(html), 'Stress Lite + QA button missing');
     truthy(/id="tactical-sweep-qa-btn"/.test(html), 'Tactical Sweep + QA button missing');
+    truthy(/Quick check: runs one matchup/.test(html), 'Run Simulation hover help missing');
+    truthy(/Broad release check: runs many matchups/.test(html), 'Run All hover help missing');
+    truthy(/Release evidence: runs all matchups/.test(html), 'Run All + QA hover help missing');
+    truthy(/Safe stress check: runs capped lower-load coverage/.test(html), 'Stress Lite hover help missing');
+    truthy(/Coaching and strategy check: tests branches/.test(html), 'Tactical Sweep hover help missing');
+    truthy(/Workflow helper: choose a local folder/.test(html), 'QA drop folder hover help missing');
     truthy(/id="beta-guard-note"/.test(html), 'beta guard note missing');
     truthy(/id="qa-drop-folder-btn"/.test(html), 'QA drop folder button missing');
     truthy(/Tactical Sweep \+ QA/.test(html), 'Tactical Sweep + QA label missing');
