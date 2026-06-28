@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.95-sprite-fallback-chain';
+    return txt || 'v2.1.96-alola-raichu-sprite-fallbacks';
   } catch (e) {
-    return 'v2.1.95-sprite-fallback-chain';
+    return 'v2.1.96-alola-raichu-sprite-fallbacks';
   }
 }
 
@@ -1612,7 +1612,7 @@ function buildBringPickerHtml(teamKey, opts) {
       '" title="' + label + (!manualMode ? ' (random mode)' : '') + '">' +
       '<div class="bring-slot-label">' + label + '</div>' +
       (monName
-        ? '<img class="bring-slot-sprite" src="' + sprite + '" alt="' + _escapeHtml(monName) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        ? '<img class="bring-slot-sprite" src="' + sprite + '" alt="' + _escapeHtml(monName) + '" loading="lazy" ' + csSpriteFallbackAttrs(monName) + '/>' +
           '<div class="bring-slot-name">' + _escapeHtml(monName) + '</div>'
         : '<div class="bring-slot-empty">\u2014</div>') +
       '</div>';
@@ -1629,7 +1629,7 @@ function buildBringPickerHtml(teamKey, opts) {
         '" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) +
         '" draggable="' + (manualMode ? 'true' : 'false') +
         '" title="' + _escapeHtml(m.name) + (inBring ? ' (' + _escapeHtml(pos) + ')' : '') + '">' +
-        '<img class="bring-pool-chip-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        '<img class="bring-pool-chip-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" ' + csSpriteFallbackAttrs(m.name) + '/>' +
         '<span class="bring-pool-chip-name">' + _escapeHtml(m.name) + '</span>' +
         (inBring ? '<span class="bring-pool-chip-pos">' + _escapeHtml(pos) + '</span>' : '') +
         '</div>';
@@ -1640,7 +1640,7 @@ function buildBringPickerHtml(teamKey, opts) {
       return '<div class="bring-pool-row ' + (inBring ? 'bring-in' : 'bring-out') +
         '" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) +
         '" draggable="' + (manualMode ? 'true' : 'false') + '">' +
-        '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" ' + csSpriteFallbackAttrs(m.name) + '/>' +
         '<div class="poke-full-info">' +
           '<div class="poke-full-name">' +
             '<span class="poke-full-name-main">' + _escapeHtml(m.name) + '</span>' +
@@ -1958,7 +1958,7 @@ function csRenderRegmbVisualReviewGrid(grid) {
       var badge = confidence === 'verified_visual' ? 'badge-legal' : 'badge-warn';
       var title = (row.sheetId || '') + ' row ' + (row.sheetRow || '?') + ', col ' + (row.sheetColumn || '?');
       return '<div class="regmb-visual-card" title="' + _escapeHtml(title) + '">' +
-        '<img src="' + _escapeHtml(csRegmbSpriteUrl(row.species)) + '" alt="' + _escapeHtml(row.species) + ' sprite" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.classList.add(\'missing\')"/>' +
+        '<img src="' + _escapeHtml(csRegmbSpriteUrl(row.species)) + '" alt="' + _escapeHtml(row.species) + ' sprite" loading="lazy" ' + csSpriteFallbackAttrs(row.species) + '/>' +
         '<div class="regmb-visual-fallback">?</div>' +
         '<strong>' + _escapeHtml(row.species) + '</strong>' +
         '<span>' + _escapeHtml((row.sheetId || '').replace('.jpg', '') + ' R' + row.sheetRow + ' C' + row.sheetColumn) + '</span>' +
@@ -3642,7 +3642,7 @@ function csRenderReplayStadiumMon(row) {
   return '<div class="replay-stadium-mon ' + _escapeHtml(status) + '">' +
     '<div class="replay-stadium-mon-shell">' +
       (spriteUrl
-        ? '<img class="replay-stadium-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>'
+        ? '<img class="replay-stadium-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" ' + csSpriteFallbackAttrs(species) + '/>'
         : '<div class="replay-stadium-sprite replay-mon-sprite-fallback" aria-hidden="true"></div>') +
       '<div class="replay-stadium-mon-body">' +
         '<div class="replay-roster-mon-head">' +
@@ -6773,7 +6773,7 @@ function csRenderReplayRosterMon(row, compact) {
   return '<div class="replay-roster-mon ' + _escapeHtml(status) + '">' +
     '<div class="replay-roster-mon-shell">' +
       (spriteUrl
-        ? '<img class="replay-roster-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>'
+        ? '<img class="replay-roster-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" ' + csSpriteFallbackAttrs(species) + '/>'
         : '<div class="replay-roster-sprite replay-mon-sprite-fallback" aria-hidden="true"></div>') +
       '<div class="replay-roster-mon-body">' +
         '<div class="replay-roster-mon-head">' +
@@ -9903,6 +9903,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Sprite fallback chain added',
       detail: 'v2.1.95 adds a shared sprite fallback chain so animated Showdown sprites can fall back to static Showdown sprites instead of blanking. Lycanroc forms are now explicit aliases and all major card surfaces share the same fallback handler.'
+    },
+    {
+      status: 'done',
+      title: 'Alolan Raichu sprite alias and fallback coverage',
+      detail: 'v2.1.96 maps Raichu-Alola to the verified Showdown surfing-style animated sprite and extends the shared sprite fallback helper into bring-selection, replay, and Reg M-B visual-review surfaces.'
     },
     {
       status: 'done',

@@ -807,6 +807,7 @@ const CUSTOM_FORM_SPRITES = {
   'Tauros-Paldea-Combat':           'https://play.pokemonshowdown.com/sprites/ani/tauros-paldeacombat.gif',
   'Tauros-Paldea-Blaze':            'https://play.pokemonshowdown.com/sprites/ani/tauros-paldeablaze.gif',
   'Tauros-Paldea-Aqua':             'https://play.pokemonshowdown.com/sprites/ani/tauros-paldeaaqua.gif',
+  'Raichu-Alola':                   'https://play.pokemonshowdown.com/sprites/ani/raichu-alola.gif',
   'Meowstic-M':                     'https://play.pokemonshowdown.com/sprites/ani/meowstic.gif',
   'Meowstic-F':                     'https://play.pokemonshowdown.com/sprites/ani/meowstic-f.gif',
   'Gourgeist-Small':                'https://play.pokemonshowdown.com/sprites/ani/gourgeist-small.gif',

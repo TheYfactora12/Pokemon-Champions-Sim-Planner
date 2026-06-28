@@ -99,7 +99,8 @@
 // v125-shared-sprite-aliases [2026-06-27] - Share form sprite aliases across Teams, Simulator, and replay cards.
 // v126-paldea-tauros-sprites [2026-06-27] - Correct Paldean Tauros Showdown sprite slugs.
 // v127-sprite-fallback-chain [2026-06-27] - Add shared animated-to-static sprite fallback handler.
-const CACHE_NAME = 'champions-sim-v127-sprite-fallback-chain';
+// v128-alola-raichu-sprite-fallbacks [2026-06-27] - Add Alolan Raichu animated sprite and cover bring/replay fallbacks.
+const CACHE_NAME = 'champions-sim-v128-alola-raichu-sprite-fallbacks';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
