@@ -106,6 +106,8 @@ The Stress Lite artifact must also stay readable at a glance. The export now mir
 - slowest or heaviest capped matchup
 - best observed line, avoid move, and next coaching focus
 
+`v2.2.19-hard-beta-guard` adds public-device guardrails for release safety. Mobile/coarse-pointer and low-memory browsers are forced toward `Stress Lite + QA`; `Run All` and `Run All + QA Artifact` are disabled on those risky public devices; large series counts and full branch-coverage depth are capped so phone users do not become accidental load tests.
+
 Process challenge for coach-memory work:
 
 - Do not let the app sound smarter than the evidence. Coach memory may summarize repeated patterns, but it must keep confidence, sample size, matchup scope, and ruleset scope visible.

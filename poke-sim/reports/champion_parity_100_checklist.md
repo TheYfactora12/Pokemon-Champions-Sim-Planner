@@ -6,21 +6,21 @@ This file defines what we mean by "100% Champion accuracy" for the simulator. It
 
 ## Current Snapshot
 
-- Current deployed proof baseline: `v2.2.15-live-db-pages-guard`.
-- Current local candidate: `v2.2.16-coach-sequence-why`.
-- Important status: `v2.2.16` is not deployed proof until CI, Pages, and a fresh browser QA Artifact pass.
+- Current deployed proof baseline: `v2.2.18-stress-lite-summary`.
+- Current local candidate: `v2.2.19-hard-beta-guard`.
+- Important status: `v2.2.19` is not deployed proof until CI, Pages, and a fresh browser QA Artifact pass.
 - Previous shipped proof anchor retained for audit: `v2.1.37-damage-log-team-catalog`.
 - Primary mechanics source truth: Pokemon Showdown data and behavior, with Champion-specific differences documented as explicit overrides.
 - Showdown source snapshot in generated data: `3f5079d395ad018f13e8f785a675a13bd4cbf59e (2026-05-24)`
 - Showdown damage oracle: `56/56` local cases passing after the core shipped-move parity slice.
 - Move support audit: `120 verified`, `0 baseline`, `0 incomplete` across `120` shipped distinct moves.
 - Ability inventory: `80/80` curated and mega abilities modeled.
-- Latest live QA Artifact reviewed: `v2.2.15-live-db-pages-guard` tactical sweep exported `ready_for_codex: true` and `next_missing_proof: []`.
+- Latest live QA Artifact reviewed: `v2.2.17-stress-lite-qa` Stress Lite export was Codex-ready and kept the capped-proof boundary visible.
 - Damage applied-vs-calculated logging bug: fixed. Turn logs keep applied HP loss and formula output as separate fields.
 - Runtime team catalog: only approved Champion-legal rows should remain visible at runtime. Current runtime catalog has 10 approved Champion-legal testing rows and removes 17 legacy/inferred rows into the audit object.
 - Testing catalog target: the first top-10 approved Champion archetype set is populated for runtime testing: anti-Trick Room/speed, weather support, rain, sun, sun + Trick Room, sand, pure Trick Room, balance/setup, snow/Aurora Veil, and arena-style sun. These are testing archetypes unless their source row is explicitly marked exact.
-- Fresh live proof still needed after this release: GitHub Pages `?v=<new-sha>`, one single-run log, one Run All log, one Tactical Sweep, and one QA Artifact from `v2.2.16`.
-- If full Run All is unsafe on the tester machine, `v2.2.17` Stress Lite QA may be used as capped stress evidence only when the artifact says `qa_run_type: "stress_lite_qa"`, includes a `stress_lite` block, and keeps the non-exhaustive boundary visible.
+- Fresh live proof still needed after this release: GitHub Pages `?v=<new-sha>`, one single-run log, one phone/device-safe Stress Lite QA artifact, and one desktop Tactical Sweep from `v2.2.19`.
+- If full Run All is unsafe on the tester machine, `v2.2.19` hard-beta guardrails should push the user onto Stress Lite QA. Treat that as capped stress evidence only when the artifact says `qa_run_type: "stress_lite_qa"`, includes `stress_lite.summary`, and keeps the non-exhaustive boundary visible.
 
 ## What Is Proven Now
 
@@ -29,12 +29,14 @@ This file defines what we mean by "100% Champion accuracy" for the simulator. It
 - The `v2.2.15` deployed QA Artifact proved the browser export contract was Codex-ready for that build, with no missing proof listed by the artifact.
 - Pages deployment now has a live DB seed-parity guard when Supabase anon secrets are present.
 - Generated QA baseline drift is guarded so the Overview-linked report cannot silently lag behind approved catalog changes.
-- `v2.2.16` adds evidence-bound coach memory and sequence explanation fields, including `coach_brain_summary.tactical_interpretation`, but that is a local candidate until deployed browser proof exists.
+- `v2.2.16` added evidence-bound coach memory and sequence explanation fields, including `coach_brain_summary.tactical_interpretation`.
+- `v2.2.18` added readable Stress Lite summary totals and coaching signal.
+- `v2.2.19` adds public-device safety guardrails, but that remains a local candidate until deployed browser proof exists.
 
 ## What Is Not Proven Yet
 
 - Do not claim global 100% or 1000% simulation accuracy.
-- `v2.2.16` still needs the full local suite after the latest candidate, then push, CI, Pages, and a fresh deployed QA Artifact before it can replace `v2.2.15` as live proof.
+- `v2.2.19` still needs the full local suite after the latest candidate, then push, CI, Pages, and a fresh deployed QA Artifact before it can replace `v2.2.18` as live proof.
 - The long-tail battle-system slices still need named proof coverage before broad claims: redirection, Protect-family timing, switching/replacement, status edge cases, item edge cases, terrain/weather interactions, ability immunities, and Champion-specific overrides as new sources appear.
 - Live DB runtime-source promotion still needs either direct runtime use of approved source rows or an explicit static-fallback signoff with parity proof.
 - Source-drift visibility still needs a user-facing update-needed state when Showdown or Champion source truth changes.
@@ -47,6 +49,7 @@ This file defines what we mean by "100% Champion accuracy" for the simulator. It
 - The release testing catalog contains only approved Champion-legal rows and intentionally covers the main competitive archetypes instead of a large mixed legacy catalog.
 - Supabase rows cannot replace clean bundled teams with stale SV data, illegal spreads, unsupported items, or malformed payloads.
 - Browser single-run, Run All, exported turn logs, and QA Artifact proof are clean on the deployed GitHub Pages build.
+- Mobile/coarse-pointer and low-memory browsers are guarded away from risky public Run All flows and visibly routed toward Stress Lite.
 - `build_id`, `source_url`, service-worker cache, bundle build, and source commit/version all agree.
 - Known gaps are visible in the Overview and reports instead of hidden behind a readiness claim.
 - Showdown source drift or Champion source conflicts show an update-needed state until reviewed and either promoted or documented as an override.
@@ -63,6 +66,7 @@ The release may be described as meeting the current Champion truth gate only whe
 - Single-run, Run All, and Tactical Sweep exports include the mechanic being claimed fixed.
 - Stress Lite may substitute only for device-safe stress evidence, not for an exhaustive Run All claim.
 - `build_id`, cache label, source URL, Overview label, and source commit agree.
+- Public-risk devices do not expose unrestricted Run All or full branch coverage.
 - Every remaining gap is either closed with evidence or explicitly listed as an accepted non-100% gap.
 
 ## Confirmed Closed In This Slice

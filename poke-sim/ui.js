@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.18-stress-lite-summary';
+    return txt || 'v2.2.19-hard-beta-guard';
   } catch (e) {
-    return 'v2.2.18-stress-lite-summary';
+    return 'v2.2.19-hard-beta-guard';
   }
 }
 
@@ -9583,6 +9583,85 @@ function setSimError(err) {
   if (label) label.textContent = 'Simulation failed: ' + msg;
 }
 
+function csGetPublicBetaGuardProfile() {
+  var matchMediaFn = getWindowValue('matchMedia', null);
+  var isCoarsePointer = false;
+  var isNarrowViewport = false;
+  try {
+    isCoarsePointer = !!(matchMediaFn && matchMediaFn('(hover: none) and (pointer: coarse)').matches);
+    isNarrowViewport = !!(matchMediaFn && matchMediaFn('(max-width: 760px)').matches);
+  } catch (_e) {}
+  var deviceMemory = 0;
+  try {
+    deviceMemory = Number(navigator && navigator.deviceMemory || 0);
+  } catch (_e2) {}
+  var isLowMemory = !!(deviceMemory && deviceMemory <= 4);
+  var shouldForceStressLite = isLowMemory || (isCoarsePointer && isNarrowViewport);
+  return {
+    is_coarse_pointer: isCoarsePointer,
+    is_narrow_viewport: isNarrowViewport,
+    device_memory_gb: deviceMemory || null,
+    is_low_memory: isLowMemory,
+    should_force_stress_lite: shouldForceStressLite,
+    max_series_value: shouldForceStressLite ? 500 : 10000,
+    max_tactical_depth_value: shouldForceStressLite ? 250 : null
+  };
+}
+
+function csApplyPublicBetaGuardrails() {
+  var profile = csGetPublicBetaGuardProfile();
+  var noteEl = document.getElementById('beta-guard-note');
+  var runAllBtn = document.getElementById('run-all-btn');
+  var qaRunBtn = document.getElementById('run-all-export-qa-btn');
+  var simCountEl = document.getElementById('sim-count');
+  var tacticalDepthEl = document.getElementById('tactical-depth');
+  if (!profile.should_force_stress_lite) {
+    if (runAllBtn) {
+      runAllBtn.disabled = false;
+      runAllBtn.title = 'Run all matchups across the current scope';
+    }
+    if (qaRunBtn) {
+      qaRunBtn.disabled = false;
+      qaRunBtn.title = 'Run all matchups, then download one retained-evidence QA Artifact JSON';
+    }
+    if (noteEl) noteEl.style.display = 'none';
+    return profile;
+  }
+  if (runAllBtn) {
+    runAllBtn.disabled = true;
+    runAllBtn.title = 'Hard beta guard: Run All is disabled on mobile/low-memory devices. Use Stress Lite + QA.';
+  }
+  if (qaRunBtn) {
+    qaRunBtn.disabled = true;
+    qaRunBtn.title = 'Hard beta guard: Run All + QA is disabled on mobile/low-memory devices. Use Stress Lite + QA.';
+  }
+  if (simCountEl && simCountEl.options) {
+    for (var i = 0; i < simCountEl.options.length; i++) {
+      var simOpt = simCountEl.options[i];
+      var simValue = Number(simOpt && simOpt.value || 0);
+      if (!simValue) continue;
+      simOpt.disabled = simValue > profile.max_series_value;
+    }
+    if (Number(simCountEl.value || 0) > profile.max_series_value) simCountEl.value = String(profile.max_series_value);
+  }
+  if (tacticalDepthEl && tacticalDepthEl.options) {
+    for (var j = 0; j < tacticalDepthEl.options.length; j++) {
+      var depthOpt = tacticalDepthEl.options[j];
+      var depthValue = depthOpt && depthOpt.value;
+      if (!depthValue) continue;
+      depthOpt.disabled = depthValue === 'all' || Number(depthValue) > Number(profile.max_tactical_depth_value || 999999);
+    }
+    if (tacticalDepthEl.value === 'all' || Number(tacticalDepthEl.value || 0) > Number(profile.max_tactical_depth_value || 999999)) {
+      tacticalDepthEl.value = String(profile.max_tactical_depth_value);
+    }
+  }
+  if (noteEl) {
+    noteEl.textContent = 'Hard beta guard active on this device: Run All is disabled, Stress Lite + QA is the safe path, series are capped at 500, and full branch coverage is blocked to protect phones and low-memory browsers.';
+    noteEl.style.display = '';
+  }
+  return profile;
+}
+
 document.getElementById('run-sim-btn')?.addEventListener('click', async function() {
   if (simRunning) return;
   var runBtn = this;
@@ -9742,10 +9821,12 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
 }
 
 document.getElementById('run-all-btn')?.addEventListener('click', async function() {
+  if (csGetPublicBetaGuardProfile().should_force_stress_lite) return;
   await csRunAllMatchupsFromButton(this);
 });
 
 document.getElementById('run-all-export-qa-btn')?.addEventListener('click', async function() {
+  if (csGetPublicBetaGuardProfile().should_force_stress_lite) return;
   await csRunAllMatchupsFromButton(this, { autoExportQaArtifact: true });
 });
 
@@ -10041,7 +10122,7 @@ function generatePilotGuide(oppKey, results, simCtx) {
       threatResponseHtml = renderThreatResponseCard(solveThreatResponse(playerKey, oppKey, {
         simsPerBranch: 30,
         rngSeed: 'pilot-guide'
-      }));
+    }));
     }
   } catch (e) {
     UILog.warn('Threat response render skipped', e);
@@ -10559,8 +10640,15 @@ function analyzeLossTrends(results, playerMembers) {
             }
           }
         }
-      }
-    });
+  }
+});
+
+try { csApplyPublicBetaGuardrails(); } catch (_betaGuardErr) {}
+if (typeof ChampionsSim !== 'undefined') ChampionsSim.publicBeta = ChampionsSim.publicBeta || {};
+if (typeof ChampionsSim !== 'undefined') ChampionsSim.publicBeta.getGuardProfile = csGetPublicBetaGuardProfile;
+if (typeof ChampionsSim !== 'undefined') ChampionsSim.publicBeta.applyGuardrails = csApplyPublicBetaGuardrails;
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csGetPublicBetaGuardProfile', csGetPublicBetaGuardProfile);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csApplyPublicBetaGuardrails', csApplyPublicBetaGuardrails);
   });
   var avgFirstKo = firstKoTurns.length ? (firstKoTurns.reduce(function(s,x){return s+x;},0)/firstKoTurns.length) : 0;
   var topPlayerLost = Object.entries(playerKoCounts).sort(function(a,b){return b[1]-a[1];}).slice(0,2).map(function(e){return e[0];});
@@ -10839,6 +10927,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Stress Lite summary made readable',
       detail: 'v2.2.18 mirrors QA totals at the artifact top level and adds stress_lite.summary so testers, Codex, and the team can immediately see capped run volume, result counts, replay and damage evidence weight, the slowest capped matchup, and the best or riskiest tactical signals without re-reading the full coverage tree.'
+    },
+    {
+      status: 'done',
+      title: 'Hard beta device guardrails added',
+      detail: 'v2.2.19 disables Run All on mobile/coarse-pointer and low-memory devices, caps public phone series volume, blocks full branch-coverage depth on risky browsers, and pushes users toward Stress Lite + QA so public testers do not become accidental load tests.'
     },
     {
       status: 'done',
