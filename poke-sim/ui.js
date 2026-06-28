@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.97-hisui-zoroark-gif';
+    return txt || 'v2.1.98-gif-primary-sprite-audit';
   } catch (e) {
-    return 'v2.1.97-hisui-zoroark-gif';
+    return 'v2.1.98-gif-primary-sprite-audit';
   }
 }
 
@@ -664,6 +664,10 @@ function exportTeamToPaste(team) {
 function csSpriteStaticFallbackUrl(name) {
   var raw = String(name || '');
   var aliases = {
+    'Mr. Rime': 'mrrime',
+    'Kommo-o': 'kommoo',
+    'Ninetales-Alola': 'ninetales-alola',
+    'Arcanine-Hisui': 'arcanine-hisui',
     'Tauros-Paldea-Combat': 'tauros-paldeacombat',
     'Tauros-Paldea-Blaze': 'tauros-paldeablaze',
     'Tauros-Paldea-Aqua': 'tauros-paldeaaqua',
@@ -9915,6 +9919,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Hisuian Zoroark animated sprite alias',
       detail: 'v2.1.97 maps Zoroark-Hisui to the verified Showdown animated GIF and static fallback slug so Hisuian Zoroark no longer renders as regular Zoroark on shared Pokemon card surfaces.'
+    },
+    {
+      status: 'done',
+      title: 'GIF-primary sprite resolver',
+      detail: 'v2.1.98 makes Showdown animated GIFs the primary sprite source for standard Pokemon rendering, adds explicit Alolan Ninetales and Hisuian Arcanine form slugs, and keeps static Showdown fallback for missing GIFs.'
     },
     {
       status: 'done',

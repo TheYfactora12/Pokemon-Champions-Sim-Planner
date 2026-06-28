@@ -251,6 +251,12 @@ T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
   inc(ui, 'function csSpriteFallbackAttrs');
   inc(data, 'raichu-alola.gif');
   inc(data, 'zoroark-hisui.gif');
+  inc(data, 'SHOWDOWN_SPRITE_BASE');
+  inc(data, "'Ninetales-Alola': 'ninetales-alola'");
+  inc(data, "'Arcanine-Hisui': 'arcanine-hisui'");
+  inc(data, 'return showdownAnimatedSpriteUrl(name)');
+  inc(ui, "'Ninetales-Alola': 'ninetales-alola'");
+  inc(ui, "'Arcanine-Hisui': 'arcanine-hisui'");
   inc(ui, "'Zoroark-Hisui': 'zoroark-hisui'");
   inc(ui, 'lycanroc-midnight');
   inc(ui, 'lycanroc-dusk');

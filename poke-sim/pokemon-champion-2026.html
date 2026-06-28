@@ -2348,8 +2348,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.97-hisui-zoroark-gif</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.98-gif-primary-sprite-audit</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -3774,6 +3774,41 @@ const CUSTOM_FORM_SPRITES = {
   'Lycanroc-Dusk':                  'https://play.pokemonshowdown.com/sprites/ani/lycanroc-dusk.gif'
 };
 
+const SHOWDOWN_SPRITE_BASE = 'https://play.pokemonshowdown.com/sprites/ani';
+const SHOWDOWN_SPRITE_SLUG_ALIASES = {
+  'Mr. Rime': 'mrrime',
+  'Kommo-o': 'kommoo',
+  'Ninetales-Alola': 'ninetales-alola',
+  'Arcanine-Hisui': 'arcanine-hisui',
+  'Raichu-Alola': 'raichu-alola',
+  'Zoroark-Hisui': 'zoroark-hisui',
+  'Tauros-Paldea-Combat': 'tauros-paldeacombat',
+  'Tauros-Paldea-Blaze': 'tauros-paldeablaze',
+  'Tauros-Paldea-Aqua': 'tauros-paldeaaqua',
+  'Meowstic-M': 'meowstic',
+  'Meowstic-F': 'meowstic-f',
+  'Gourgeist-Small': 'gourgeist-small',
+  'Gourgeist-Average': 'gourgeist',
+  'Gourgeist-Large': 'gourgeist-large',
+  'Gourgeist-Super': 'gourgeist-super',
+  'Basculegion-M': 'basculegion',
+  'Basculegion-F': 'basculegion-f',
+  'Sinistcha': 'sinistcha',
+  'Lycanroc-Midday': 'lycanroc',
+  'Lycanroc-Midnight': 'lycanroc-midnight',
+  'Lycanroc-Dusk': 'lycanroc-dusk'
+};
+
+function showdownSpriteSlug(name) {
+  const raw = String(name || '').trim();
+  return SHOWDOWN_SPRITE_SLUG_ALIASES[raw] ||
+    raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function showdownAnimatedSpriteUrl(name) {
+  return SHOWDOWN_SPRITE_BASE + '/' + showdownSpriteSlug(name) + '.gif';
+}
+
 // Suffixes we strip when falling back to the base-form dex sprite.
 // Order matters: longer / more specific variants first (Mega-X before Mega).
 const SPRITE_STRIP_SUFFIXES = [
@@ -3785,34 +3820,39 @@ const SPRITE_STRIP_SUFFIXES = [
 function getSpriteUrl(name) {
   if (!name) return SPRITE_URL_BASE + '/0.png';
 
-  // 1. Explicit override wins every time (custom megas, numeric form IDs).
+  // 1. Prefer Showdown animated sprites for every normal/form species so visual
+  //    review pages show Pokemon in motion. The UI onerror chain falls back to
+  //    static Showdown sprites, then dimmed degraded state if both fail.
+  if (SHOWDOWN_SPRITE_SLUG_ALIASES[name]) return showdownAnimatedSpriteUrl(name);
+
+  // 2. Explicit override wins for custom megas / numeric form IDs that do not
+  //    have an exact Showdown animated sprite.
   if (CUSTOM_FORM_SPRITES[name]) return CUSTOM_FORM_SPRITES[name];
 
-  // 2. Direct lookup by exact name.
+  // 3. Direct lookup by exact name.
   const num = DEX_NUM_MAP[name];
-  if (num) return SPRITE_URL_BASE + '/' + num + '.png';
+  if (num) return showdownAnimatedSpriteUrl(name);
 
-  // 3. Strip a known form suffix and retry the dex lookup.
+  // 4. Strip a known form suffix and retry the dex lookup.
   //    Example: Golurk-Mega -> Golurk -> 623. Prevents the bad slug-URL path
   //    that was producing 404s before the sprite audit.
   for (let i = 0; i < SPRITE_STRIP_SUFFIXES.length; i++) {
     const suffix = SPRITE_STRIP_SUFFIXES[i];
     if (name.endsWith(suffix)) {
       const base = name.slice(0, -suffix.length);
-      if (DEX_NUM_MAP[base]) return SPRITE_URL_BASE + '/' + DEX_NUM_MAP[base] + '.png';
+      if (DEX_NUM_MAP[base]) return showdownAnimatedSpriteUrl(base);
     }
   }
 
-  // 4. Strip a parenthetical form tag: 'Floette (Eternal Flower)' -> 'Floette'.
+  // 5. Strip a parenthetical form tag: 'Floette (Eternal Flower)' -> 'Floette'.
   //    Covers compound form names that still fail the stripped-suffix retry.
   const parenStripped = name.replace(/\s*\([^)]*\)\s*/g, '').trim();
   if (parenStripped !== name && DEX_NUM_MAP[parenStripped]) {
-    return SPRITE_URL_BASE + '/' + DEX_NUM_MAP[parenStripped] + '.png';
+    return showdownAnimatedSpriteUrl(parenStripped);
   }
 
-  // 5. Last-ditch slug path (preserves legacy behavior for anything unknown).
-  const slug = name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-  return SPRITE_URL_BASE + '/' + slug + '.png';
+  // 6. Last-ditch Showdown animated slug path.
+  return showdownAnimatedSpriteUrl(name);
 }
 
 // ============================================================
@@ -24251,9 +24291,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.97-hisui-zoroark-gif';
+    return txt || 'v2.1.98-gif-primary-sprite-audit';
   } catch (e) {
-    return 'v2.1.97-hisui-zoroark-gif';
+    return 'v2.1.98-gif-primary-sprite-audit';
   }
 }
 
@@ -24799,6 +24839,10 @@ function exportTeamToPaste(team) {
 function csSpriteStaticFallbackUrl(name) {
   var raw = String(name || '');
   var aliases = {
+    'Mr. Rime': 'mrrime',
+    'Kommo-o': 'kommoo',
+    'Ninetales-Alola': 'ninetales-alola',
+    'Arcanine-Hisui': 'arcanine-hisui',
     'Tauros-Paldea-Combat': 'tauros-paldeacombat',
     'Tauros-Paldea-Blaze': 'tauros-paldeablaze',
     'Tauros-Paldea-Aqua': 'tauros-paldeaaqua',
@@ -34050,6 +34094,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Hisuian Zoroark animated sprite alias',
       detail: 'v2.1.97 maps Zoroark-Hisui to the verified Showdown animated GIF and static fallback slug so Hisuian Zoroark no longer renders as regular Zoroark on shared Pokemon card surfaces.'
+    },
+    {
+      status: 'done',
+      title: 'GIF-primary sprite resolver',
+      detail: 'v2.1.98 makes Showdown animated GIFs the primary sprite source for standard Pokemon rendering, adds explicit Alolan Ninetales and Hisuian Arcanine form slugs, and keeps static Showdown fallback for missing GIFs.'
     },
     {
       status: 'done',

@@ -823,6 +823,41 @@ const CUSTOM_FORM_SPRITES = {
   'Lycanroc-Dusk':                  'https://play.pokemonshowdown.com/sprites/ani/lycanroc-dusk.gif'
 };
 
+const SHOWDOWN_SPRITE_BASE = 'https://play.pokemonshowdown.com/sprites/ani';
+const SHOWDOWN_SPRITE_SLUG_ALIASES = {
+  'Mr. Rime': 'mrrime',
+  'Kommo-o': 'kommoo',
+  'Ninetales-Alola': 'ninetales-alola',
+  'Arcanine-Hisui': 'arcanine-hisui',
+  'Raichu-Alola': 'raichu-alola',
+  'Zoroark-Hisui': 'zoroark-hisui',
+  'Tauros-Paldea-Combat': 'tauros-paldeacombat',
+  'Tauros-Paldea-Blaze': 'tauros-paldeablaze',
+  'Tauros-Paldea-Aqua': 'tauros-paldeaaqua',
+  'Meowstic-M': 'meowstic',
+  'Meowstic-F': 'meowstic-f',
+  'Gourgeist-Small': 'gourgeist-small',
+  'Gourgeist-Average': 'gourgeist',
+  'Gourgeist-Large': 'gourgeist-large',
+  'Gourgeist-Super': 'gourgeist-super',
+  'Basculegion-M': 'basculegion',
+  'Basculegion-F': 'basculegion-f',
+  'Sinistcha': 'sinistcha',
+  'Lycanroc-Midday': 'lycanroc',
+  'Lycanroc-Midnight': 'lycanroc-midnight',
+  'Lycanroc-Dusk': 'lycanroc-dusk'
+};
+
+function showdownSpriteSlug(name) {
+  const raw = String(name || '').trim();
+  return SHOWDOWN_SPRITE_SLUG_ALIASES[raw] ||
+    raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function showdownAnimatedSpriteUrl(name) {
+  return SHOWDOWN_SPRITE_BASE + '/' + showdownSpriteSlug(name) + '.gif';
+}
+
 // Suffixes we strip when falling back to the base-form dex sprite.
 // Order matters: longer / more specific variants first (Mega-X before Mega).
 const SPRITE_STRIP_SUFFIXES = [
@@ -834,34 +869,39 @@ const SPRITE_STRIP_SUFFIXES = [
 function getSpriteUrl(name) {
   if (!name) return SPRITE_URL_BASE + '/0.png';
 
-  // 1. Explicit override wins every time (custom megas, numeric form IDs).
+  // 1. Prefer Showdown animated sprites for every normal/form species so visual
+  //    review pages show Pokemon in motion. The UI onerror chain falls back to
+  //    static Showdown sprites, then dimmed degraded state if both fail.
+  if (SHOWDOWN_SPRITE_SLUG_ALIASES[name]) return showdownAnimatedSpriteUrl(name);
+
+  // 2. Explicit override wins for custom megas / numeric form IDs that do not
+  //    have an exact Showdown animated sprite.
   if (CUSTOM_FORM_SPRITES[name]) return CUSTOM_FORM_SPRITES[name];
 
-  // 2. Direct lookup by exact name.
+  // 3. Direct lookup by exact name.
   const num = DEX_NUM_MAP[name];
-  if (num) return SPRITE_URL_BASE + '/' + num + '.png';
+  if (num) return showdownAnimatedSpriteUrl(name);
 
-  // 3. Strip a known form suffix and retry the dex lookup.
+  // 4. Strip a known form suffix and retry the dex lookup.
   //    Example: Golurk-Mega -> Golurk -> 623. Prevents the bad slug-URL path
   //    that was producing 404s before the sprite audit.
   for (let i = 0; i < SPRITE_STRIP_SUFFIXES.length; i++) {
     const suffix = SPRITE_STRIP_SUFFIXES[i];
     if (name.endsWith(suffix)) {
       const base = name.slice(0, -suffix.length);
-      if (DEX_NUM_MAP[base]) return SPRITE_URL_BASE + '/' + DEX_NUM_MAP[base] + '.png';
+      if (DEX_NUM_MAP[base]) return showdownAnimatedSpriteUrl(base);
     }
   }
 
-  // 4. Strip a parenthetical form tag: 'Floette (Eternal Flower)' -> 'Floette'.
+  // 5. Strip a parenthetical form tag: 'Floette (Eternal Flower)' -> 'Floette'.
   //    Covers compound form names that still fail the stripped-suffix retry.
   const parenStripped = name.replace(/\s*\([^)]*\)\s*/g, '').trim();
   if (parenStripped !== name && DEX_NUM_MAP[parenStripped]) {
-    return SPRITE_URL_BASE + '/' + DEX_NUM_MAP[parenStripped] + '.png';
+    return showdownAnimatedSpriteUrl(parenStripped);
   }
 
-  // 5. Last-ditch slug path (preserves legacy behavior for anything unknown).
-  const slug = name.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-  return SPRITE_URL_BASE + '/' + slug + '.png';
+  // 6. Last-ditch Showdown animated slug path.
+  return showdownAnimatedSpriteUrl(name);
 }
 
 // ============================================================
