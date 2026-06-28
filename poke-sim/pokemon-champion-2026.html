@@ -686,6 +686,8 @@ table{border-collapse:collapse;width:100%}
 .editor-builder-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp4);margin-bottom:var(--sp4);padding-bottom:var(--sp4);border-bottom:1px solid var(--border)}
 .editor-team-kicker{font-family:var(--font-mono);font-size:10px;color:var(--text-m);margin-bottom:4px}
 .editor-save-note{max-width:260px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface2);color:var(--text-m);font-size:10px;line-height:1.45}
+.editor-save-note.dirty{border-color:rgba(245,197,66,.55);background:rgba(245,197,66,.1);color:var(--gold)}
+.btn-secondary.dirty{border-color:rgba(245,197,66,.55);color:var(--gold)}
 .editor-poke-name{font-size:var(--text-xl);font-weight:900}
 .editor-2col{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp4)}
 .form-group{display:flex;flex-direction:column;gap:3px}
@@ -2391,8 +2393,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.25-editor-import-flow -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.25-editor-import-flow</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.26-editor-save-cancel</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -25324,9 +25326,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.25-editor-import-flow';
+    return txt || 'v2.2.26-editor-save-cancel';
   } catch (e) {
-    return 'v2.2.25-editor-import-flow';
+    return 'v2.2.26-editor-save-cancel';
   }
 }
 
@@ -28188,7 +28190,7 @@ function openEditorForm(idx) {
         <div class="editor-team-kicker">Editing ${_escapeHtml(team.name || currentPlayerKey)} · Slot ${idx + 1}</div>
         <div class="editor-poke-name">${_escapeHtml(m.name || '')}</div>
       </div>
-      <div class="editor-save-note">Save validates Champion item pool, SP caps, and species-specific moves.</div>
+      <div class="editor-save-note" id="editor-save-note">Draft mode: changes are local until you click Save. Save validates Champion item pool, SP caps, and species-specific moves.</div>
     </div>
     <div class="editor-2col">
       <div class="form-group"><label class="form-label">Pokémon</label><input class="form-input" id="ed-name" value="${_escapeHtml(m.name||'')}" placeholder="Exact species/form name"/></div>
@@ -28207,20 +28209,22 @@ function openEditorForm(idx) {
     <div class="sp-guard-row"><span id="sp-total-chip">SP ${currentSpTotal}/66</span><span id="sp-guard-status"></span></div></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
       <button class="btn-save" id="save-edits">Save Changes</button>
+      <button class="btn-secondary" style="font-size:11px" id="cancel-edits" title="Discard unsaved field changes and restore the saved set">Cancel</button>
       <button class="btn-secondary" style="font-size:11px" id="export-this-mon" title="Export full team">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Export Team
       </button>
       <button class="btn-secondary" style="font-size:11px" id="remove-this-mon" title="Remove this Pokemon from the current editable team">Remove</button>
     </div>
-    <p style="font-size:10px;color:var(--text-m);margin-top:6px">Changes apply to all future simulations immediately.</p>`;
+    <p style="font-size:10px;color:var(--text-m);margin-top:6px">Save applies changes to future simulations. Cancel restores the last saved set.</p>`;
   document.getElementById('save-edits').addEventListener('click', saveEdits);
+  document.getElementById('cancel-edits').addEventListener('click', cancelEditorDraft);
   document.getElementById('export-this-mon').addEventListener('click', () => openExportModal(currentPlayerKey));
   document.getElementById('remove-this-mon').addEventListener('click', removeEditorPokemonSlot);
   [0,1,2,3].forEach(function(i) {
     var el = document.getElementById('ed-mv-' + i);
     if (el) {
-      el.addEventListener('input', function() { refreshEditorMoveLegality(m); csRenderMoveSearchMenu(el); });
+      el.addEventListener('input', function() { markEditorDraftDirty(); refreshEditorMoveLegality(m); csRenderMoveSearchMenu(el); });
       el.addEventListener('focus', function() { refreshEditorMoveLegality(m); csRenderMoveSearchMenu(el); });
       el.addEventListener('blur', function() { csHideMoveSearchMenu(el); });
       el.addEventListener('keydown', function(ev) {
@@ -28240,14 +28244,39 @@ function openEditorForm(idx) {
   });
   ['ed-name','ed-item','ed-ability'].forEach(function(id) {
     var el = document.getElementById(id);
-    if (el) el.addEventListener('input', function() { refreshEditorMoveLegality(m); });
+    if (el) el.addEventListener('input', function() { markEditorDraftDirty(); refreshEditorMoveLegality(m); });
   });
   ['hp','atk','def','spa','spd','spe'].forEach(function(stat) {
     var el = document.getElementById('ev-' + stat);
-    if (el) el.addEventListener('input', refreshEditorSpreadGuard);
+    if (el) el.addEventListener('input', function() { markEditorDraftDirty(); refreshEditorSpreadGuard(); });
   });
   refreshEditorSpreadGuard();
   refreshEditorMoveLegality(m);
+}
+
+function markEditorDraftDirty() {
+  var note = document.getElementById('editor-save-note');
+  var cancelBtn = document.getElementById('cancel-edits');
+  if (note) {
+    note.classList.add('dirty');
+    note.textContent = 'Unsaved draft: click Save to apply this set, or Cancel to restore the last saved version.';
+  }
+  if (cancelBtn) cancelBtn.classList.add('dirty');
+}
+
+function clearEditorDraftDirty() {
+  var note = document.getElementById('editor-save-note');
+  var cancelBtn = document.getElementById('cancel-edits');
+  if (note) {
+    note.classList.remove('dirty');
+    note.textContent = 'Draft mode: changes are local until you click Save. Save validates Champion item pool, SP caps, and species-specific moves.';
+  }
+  if (cancelBtn) cancelBtn.classList.remove('dirty');
+}
+
+function cancelEditorDraft() {
+  if (editingIdx === null) return;
+  openEditorForm(editingIdx);
 }
 
 function getEditorSpreadFromInputs() {
@@ -28317,6 +28346,7 @@ function saveEdits() {
   csRefreshEditorTeamViews(team);
   const btn = document.getElementById('save-edits');
   const orig = btn.textContent;
+  clearEditorDraftDirty();
   btn.textContent = '✓ Saved!'; btn.style.background='var(--green)';
   setTimeout(()=>{ btn.textContent=orig; btn.style.background=''; }, 1500);
   // Update coverage widget when player team changes
