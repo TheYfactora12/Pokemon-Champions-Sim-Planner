@@ -103,7 +103,7 @@ function sourceHash() {
   for (const file of SOURCE_FILES) {
     h.update(file);
     h.update('\0');
-    h.update(fs.readFileSync(path.join(ROOT, file), 'utf8'));
+    h.update(fs.readFileSync(path.join(ROOT, file), 'utf8').replace(/\r\n/g, '\n'));
     h.update('\0');
   }
   return h.digest('hex').slice(0, 16);
