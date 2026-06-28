@@ -315,9 +315,11 @@ Recent learned failure modes:
 
 Do not claim broad 100% accuracy until these are closed or explicitly accepted:
 
-- Fresh deployed-browser `v2.1.44` single-run, Run All, and QA Artifact proof with corrected recoil applied-HP evidence.
+- Fresh deployed-browser `v2.2.16` single-run, Run All, Tactical Sweep, and QA Artifact proof for the coach-memory/sequence-why candidate.
+- The deployed QA Artifact must report `ready_for_codex: true` and `next_missing_proof: []` before `v2.2.16` replaces `v2.2.15` as the live proof baseline.
 - Live DB runtime-source promotion or explicit static fallback signoff.
 - Full DB forensic-log retention design if Supabase must be the long-term audit store.
 - Remaining grouped battle-system mechanics beyond shipped move coverage: redirection, Protect family, switching/replacement, status, item edge cases, terrain/weather edge cases, and Champion-specific overrides.
 - Source-drift visibility that marks the Overview as update-needed when upstream data changes.
 - Long stress automation with preserved failing seeds.
+- Coach-memory and Strategy-page recommendations must keep confidence, sample size, source age, and evidence boundaries visible so coaching output cannot outrank mechanics proof.
