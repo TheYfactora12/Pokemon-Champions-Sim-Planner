@@ -114,8 +114,8 @@
 // v145-tactical-sweep-schema [2026-06-28] - Add explicit Tactical Sweep schema/status/opponent metadata to QA artifacts.
 // v155-sources-ui-polish [2026-06-28] - Tighten the Sources dashboard layout and refresh the app-shell cache.
 // v156-kevin-team-qa [2026-06-28] - Add coached Kevin baseline team, approved team QA matrix, and Seed Sower terrain evidence.
-// v157-editor-import-flow [2026-06-28] - Refresh app shell for custom team editor and import checker UX.
-const CACHE_NAME = 'champions-sim-v157-editor-import-flow';
+// v158-editor-save-cancel [2026-06-28] - Refresh app shell for explicit editor save and cancel draft controls.
+const CACHE_NAME = 'champions-sim-v158-editor-save-cancel';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

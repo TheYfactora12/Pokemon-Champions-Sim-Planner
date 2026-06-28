@@ -648,6 +648,8 @@ table{border-collapse:collapse;width:100%}
 .editor-builder-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp4);margin-bottom:var(--sp4);padding-bottom:var(--sp4);border-bottom:1px solid var(--border)}
 .editor-team-kicker{font-family:var(--font-mono);font-size:10px;color:var(--text-m);margin-bottom:4px}
 .editor-save-note{max-width:260px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface2);color:var(--text-m);font-size:10px;line-height:1.45}
+.editor-save-note.dirty{border-color:rgba(245,197,66,.55);background:rgba(245,197,66,.1);color:var(--gold)}
+.btn-secondary.dirty{border-color:rgba(245,197,66,.55);color:var(--gold)}
 .editor-poke-name{font-size:var(--text-xl);font-weight:900}
 .editor-2col{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp4)}
 .form-group{display:flex;flex-direction:column;gap:3px}

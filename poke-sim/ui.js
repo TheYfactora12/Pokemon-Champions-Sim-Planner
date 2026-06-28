@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.25-editor-import-flow';
+    return txt || 'v2.2.26-editor-save-cancel';
   } catch (e) {
-    return 'v2.2.25-editor-import-flow';
+    return 'v2.2.26-editor-save-cancel';
   }
 }
 
@@ -2980,7 +2980,7 @@ function openEditorForm(idx) {
         <div class="editor-team-kicker">Editing ${_escapeHtml(team.name || currentPlayerKey)} · Slot ${idx + 1}</div>
         <div class="editor-poke-name">${_escapeHtml(m.name || '')}</div>
       </div>
-      <div class="editor-save-note">Save validates Champion item pool, SP caps, and species-specific moves.</div>
+      <div class="editor-save-note" id="editor-save-note">Draft mode: changes are local until you click Save. Save validates Champion item pool, SP caps, and species-specific moves.</div>
     </div>
     <div class="editor-2col">
       <div class="form-group"><label class="form-label">Pokémon</label><input class="form-input" id="ed-name" value="${_escapeHtml(m.name||'')}" placeholder="Exact species/form name"/></div>
@@ -2999,20 +2999,22 @@ function openEditorForm(idx) {
     <div class="sp-guard-row"><span id="sp-total-chip">SP ${currentSpTotal}/66</span><span id="sp-guard-status"></span></div></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
       <button class="btn-save" id="save-edits">Save Changes</button>
+      <button class="btn-secondary" style="font-size:11px" id="cancel-edits" title="Discard unsaved field changes and restore the saved set">Cancel</button>
       <button class="btn-secondary" style="font-size:11px" id="export-this-mon" title="Export full team">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Export Team
       </button>
       <button class="btn-secondary" style="font-size:11px" id="remove-this-mon" title="Remove this Pokemon from the current editable team">Remove</button>
     </div>
-    <p style="font-size:10px;color:var(--text-m);margin-top:6px">Changes apply to all future simulations immediately.</p>`;
+    <p style="font-size:10px;color:var(--text-m);margin-top:6px">Save applies changes to future simulations. Cancel restores the last saved set.</p>`;
   document.getElementById('save-edits').addEventListener('click', saveEdits);
+  document.getElementById('cancel-edits').addEventListener('click', cancelEditorDraft);
   document.getElementById('export-this-mon').addEventListener('click', () => openExportModal(currentPlayerKey));
   document.getElementById('remove-this-mon').addEventListener('click', removeEditorPokemonSlot);
   [0,1,2,3].forEach(function(i) {
     var el = document.getElementById('ed-mv-' + i);
     if (el) {
-      el.addEventListener('input', function() { refreshEditorMoveLegality(m); csRenderMoveSearchMenu(el); });
+      el.addEventListener('input', function() { markEditorDraftDirty(); refreshEditorMoveLegality(m); csRenderMoveSearchMenu(el); });
       el.addEventListener('focus', function() { refreshEditorMoveLegality(m); csRenderMoveSearchMenu(el); });
       el.addEventListener('blur', function() { csHideMoveSearchMenu(el); });
       el.addEventListener('keydown', function(ev) {
@@ -3032,14 +3034,39 @@ function openEditorForm(idx) {
   });
   ['ed-name','ed-item','ed-ability'].forEach(function(id) {
     var el = document.getElementById(id);
-    if (el) el.addEventListener('input', function() { refreshEditorMoveLegality(m); });
+    if (el) el.addEventListener('input', function() { markEditorDraftDirty(); refreshEditorMoveLegality(m); });
   });
   ['hp','atk','def','spa','spd','spe'].forEach(function(stat) {
     var el = document.getElementById('ev-' + stat);
-    if (el) el.addEventListener('input', refreshEditorSpreadGuard);
+    if (el) el.addEventListener('input', function() { markEditorDraftDirty(); refreshEditorSpreadGuard(); });
   });
   refreshEditorSpreadGuard();
   refreshEditorMoveLegality(m);
+}
+
+function markEditorDraftDirty() {
+  var note = document.getElementById('editor-save-note');
+  var cancelBtn = document.getElementById('cancel-edits');
+  if (note) {
+    note.classList.add('dirty');
+    note.textContent = 'Unsaved draft: click Save to apply this set, or Cancel to restore the last saved version.';
+  }
+  if (cancelBtn) cancelBtn.classList.add('dirty');
+}
+
+function clearEditorDraftDirty() {
+  var note = document.getElementById('editor-save-note');
+  var cancelBtn = document.getElementById('cancel-edits');
+  if (note) {
+    note.classList.remove('dirty');
+    note.textContent = 'Draft mode: changes are local until you click Save. Save validates Champion item pool, SP caps, and species-specific moves.';
+  }
+  if (cancelBtn) cancelBtn.classList.remove('dirty');
+}
+
+function cancelEditorDraft() {
+  if (editingIdx === null) return;
+  openEditorForm(editingIdx);
 }
 
 function getEditorSpreadFromInputs() {
@@ -3109,6 +3136,7 @@ function saveEdits() {
   csRefreshEditorTeamViews(team);
   const btn = document.getElementById('save-edits');
   const orig = btn.textContent;
+  clearEditorDraftDirty();
   btn.textContent = '✓ Saved!'; btn.style.background='var(--green)';
   setTimeout(()=>{ btn.textContent=orig; btn.style.background=''; }, 1500);
   // Update coverage widget when player team changes
