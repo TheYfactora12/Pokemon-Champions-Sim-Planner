@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.23-sources-ui-polish';
+    return txt || 'v2.2.24-kevin-team-qa';
   } catch (e) {
-    return 'v2.2.23-sources-ui-polish';
+    return 'v2.2.24-kevin-team-qa';
   }
 }
 
@@ -3745,6 +3745,71 @@ function csRenderReplayEffectTags(row) {
   }).join('') + '</div>';
 }
 
+function csReplayFieldTags(snapshot) {
+  var tags = [];
+  var field = snapshot && snapshot.field ? snapshot.field : {};
+  var speed = snapshot && snapshot.speed_control ? snapshot.speed_control : {};
+  function add(label, cls, title) {
+    tags.push({
+      label: label,
+      cls: cls || 'low',
+      title: title || label
+    });
+  }
+  if (field.weather) {
+    add(String(field.weather) + (field.weather_turns ? ' ' + field.weather_turns + 'T' : ''), 'low', 'Weather on this board');
+  }
+  if (field.terrain) {
+    add(String(field.terrain) + (field.terrain_turns ? ' ' + field.terrain_turns + 'T' : ''), 'low', 'Terrain on this board');
+  }
+  if (Number(field.trick_room || field.trickRoom || 0) > 0) {
+    add('Trick Room ' + Number(field.trick_room || field.trickRoom || 0) + 'T', 'medium', 'Trick Room is active on this board');
+  }
+  ['player', 'opponent'].forEach(function(side) {
+    var row = speed && speed[side] ? speed[side] : {};
+    var tailwindTurns = Number(row.tailwind || 0);
+    if (tailwindTurns > 0) {
+      add((side === 'player' ? 'Your Tailwind ' : 'Their Tailwind ') + tailwindTurns + 'T', 'low', 'Tailwind is active for ' + side);
+    }
+    var screens = row.screens || {};
+    if (Number(screens.reflect || 0) > 0) add((side === 'player' ? 'Your Reflect ' : 'Their Reflect ') + Number(screens.reflect || 0) + 'T', 'low', 'Reflect is active for ' + side);
+    if (Number(screens.light || 0) > 0) add((side === 'player' ? 'Your Light Screen ' : 'Their Light Screen ') + Number(screens.light || 0) + 'T', 'low', 'Light Screen is active for ' + side);
+    if (Number(screens.aurora || 0) > 0) add((side === 'player' ? 'Your Aurora Veil ' : 'Their Aurora Veil ') + Number(screens.aurora || 0) + 'T', 'low', 'Aurora Veil is active for ' + side);
+  });
+  if (!tags.length) return '';
+  return '<div class="replay-effect-tags replay-field-tags">' + tags.map(function(tag) {
+    return '<span class="replay-effect-tag ' + _escapeHtml(tag.cls || 'low') + '" title="' + _escapeHtml(tag.title || tag.label || '') + '">' +
+      _escapeHtml(tag.label || 'Field') +
+    '</span>';
+  }).join('') + '</div>';
+}
+
+function csReplayBuildImpactMap(turn) {
+  var out = {};
+  var rows = csHpEvidenceRows(turn);
+  rows.forEach(function(row) {
+    if (!row || !row.key) return;
+    if (!out[row.key]) out[row.key] = [];
+    if (row.kind === 'damage') {
+      out[row.key].push((row.name || 'Pokemon') + ' lost ' + row.amount + ' HP to ' + (row.move || 'an attack'));
+    } else if (row.effect_kind === 'recoil') {
+      out[row.key].push((row.name || 'Pokemon') + ' lost ' + row.amount + ' HP to recoil');
+    } else {
+      out[row.key].push((row.name || 'Pokemon') + ' lost ' + row.amount + ' HP to ' + (row.effect_kind || row.move || 'an effect'));
+    }
+  });
+  (Array.isArray(turn && turn.effect_events) ? turn.effect_events : []).forEach(function(effect) {
+    if (!effect || !effect.actor_key || !effect.skipped_move) return;
+    if (!out[effect.actor_key]) out[effect.actor_key] = [];
+    var reason = csReplayEffectTagLabel(effect.effect_kind, effect);
+    out[effect.actor_key].push((effect.actor || 'Pokemon') + ' lost its move: ' + reason.toLowerCase());
+  });
+  Object.keys(out).forEach(function(key) {
+    out[key] = out[key].filter(Boolean).slice(0, 2);
+  });
+  return out;
+}
+
 function csRenderReplayStadiumMon(row) {
   row = row || {};
   var status = String(row.status || 'bench').toLowerCase();
@@ -3769,6 +3834,9 @@ function csRenderReplayStadiumMon(row) {
         csRenderReplayEffectTags(row) +
         '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
         '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(row.hpLabel || (hp == null ? 'unknown' : hp + '%')) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
+        (Array.isArray(row.replayImpact) && row.replayImpact.length
+          ? '<div class="replay-roster-meta"><b>Impact:</b> ' + _escapeHtml(row.replayImpact.join(' · ')) + '</div>'
+          : '') +
         (meta.length ? '<div class="replay-roster-meta">' + _escapeHtml(meta.join(' · ')) + '</div>' : '') +
         '<div class="replay-roster-meta"><b>Moves:</b> ' + _escapeHtml(moves || 'unknown') + '</div>' +
       '</div>' +
@@ -3806,8 +3874,10 @@ function csRenderReplayStadium(rowsBySide, title, labels) {
   labels = labels || {};
   var yourSide = csRenderReplayStadiumSide(rowsBySide.left || [], labels.left || 'Your team');
   var theirSide = csRenderReplayStadiumSide(rowsBySide.right || [], labels.right || 'Their team');
+  var fieldTags = rowsBySide.fieldTags || '';
   return '<div class="replay-stadium">' +
     (title ? '<div class="replay-stadium-title">' + _escapeHtml(title) + '</div>' : '') +
+    fieldTags +
     '<div class="replay-stadium-field">' +
       csRenderReplayStadiumActive(theirSide, 'opponent') +
       '<div class="replay-stadium-vs">VS</div>' +
@@ -3823,16 +3893,23 @@ function csRenderReplayStadium(rowsBySide, title, labels) {
 function csRenderReplayLogSnapshot(snapshot, title, compact, turn) {
   if (!snapshot) return '';
   var effectTags = csReplayBuildEffectTagMap(turn);
+  var impactMap = csReplayBuildImpactMap(turn);
   function withEffectTags(rows) {
     return rows.map(function(row) {
       var key = row && (row.stable_key || row.stableKey || row.key);
       var tags = key && effectTags[key] ? effectTags[key] : [];
-      return tags.length ? Object.assign({}, row, { replayTags: (row.replayTags || []).concat(tags) }) : row;
+      var impact = key && impactMap[key] ? impactMap[key] : [];
+      if (!tags.length && !impact.length) return row;
+      return Object.assign({}, row, {
+        replayTags: (row.replayTags || []).concat(tags),
+        replayImpact: impact
+      });
     });
   }
   return csRenderReplayStadium({
     left: withEffectTags(_csSnapshotSideRows(snapshot, 'player')),
-    right: withEffectTags(_csSnapshotSideRows(snapshot, 'opponent'))
+    right: withEffectTags(_csSnapshotSideRows(snapshot, 'opponent')),
+    fieldTags: csReplayFieldTags(snapshot)
   }, title || '', {
     left: 'Your team',
     right: 'Their team'
@@ -10797,7 +10874,7 @@ var CS_OVERVIEW_DATA = {
   metrics: [
     { label: 'Current Truth', value: 'Not 100% yet' },
     { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
-    { label: 'Release Teams', value: '10 approved runtime rows' },
+    { label: 'Release Teams', value: '15 approved runtime rows' },
     { label: 'Testing Catalog Target', value: 'Top 10 Champion archetypes live' },
     { label: 'Removed Teams', value: '17 legacy/inferred rows' },
     { label: 'DB Team Rule', value: 'Approved rows must pass gates' },
@@ -10912,6 +10989,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Stat-source proof team and targeted QA',
       detail: 'v2.2.14 adds a legal Targeted Stat Source Proof team plus forced targeted QA battles for Foul Play, Body Press, Psyshock, and the Foul Play Pure Power guard so QA Artifacts can deterministically clear non-standard stat-source proof gaps.'
+    },
+    {
+      status: 'done',
+      title: 'Kevin coached baseline team added',
+      detail: 'v2.2.24 adds Kevin Meta Sun as the first named coached baseline team and documents the approved runtime team test matrix so QA knows which teams prove terrain, weather, Trick Room, replay evidence, and future saved-team recommendation work.'
     },
     {
       status: 'done',
@@ -11422,6 +11504,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
+      title: 'Priority-suppression family now has same-rule regression proof',
+      detail: 'Issue #149 raised the long-tail risk that Armor Tail could be covered while same-family blockers drifted. ability_priority_targeting_tests.js now keeps Armor Tail, Dazzling, and Queenly Majesty on the same Fake Out suppression contract so coaching and QA do not learn a false opening-turn line from an omitted sibling ability.'
+    },
+    {
+      status: 'validated',
       title: 'Bundle freshness rule remains active',
       detail: 'The standalone GitHub Pages bundle must be rebuilt from source and the service-worker cache must be bumped for every engine, legality, or data-path release. This current local slice is not release-proven until that bundle and deployed-browser proof are complete.'
     },
@@ -11461,6 +11548,11 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: '100% parity still has non-move gates',
       detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Champion-gated legacy Tera data, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
+    },
+    {
+      status: 'gap',
+      title: 'Mechanics truth beta gate remains open',
+      detail: 'Issue #149 stays open until the long-tail mechanics inventory is explicit and source-backed: same-family priority suppression, multi-effect move stacks, field/state legality shifts, Fake Out windows, flinch/status action denial, and replay/QA evidence all need deterministic proof before broader coaching trust claims.'
     },
     {
       status: 'gap',
@@ -11556,6 +11648,16 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
+      title: 'Close the mechanics truth beta gate',
+      detail: 'Build the issue #149 inventory as a real checklist, not a vibe: cover same-family priority blockers, multi-effect moves that change stats/status/HP in one window, field-state move failures, and visible replay/QA evidence so the Overview tab can close that gate with proof instead of memory.'
+    },
+    {
+      status: 'next',
+      title: 'Make replay and QA transparency strong enough for coaching trust',
+      detail: 'Before heavier coaching expansion, the replay/export layer should make field state, volatile/action-denial reasons, HP-loss causes, and move-failure causes obvious enough that a player or reviewer can challenge the sim without reading raw engine code.'
+    },
+    {
+      status: 'next',
       title: 'Rebuild editor into full Champion team builder',
       detail: 'After the current sim-truth gates, replace the clunky set editor with a fluid team builder that lets users customize complete Champion teams while preserving legality guardrails, source-truth validation, Supabase persistence, and clean rollback paths.'
     },
@@ -11613,6 +11715,8 @@ var CS_OVERVIEW_DATA = {
     { label: 'Data Source Registry', href: 'docs/DATA_SOURCE_REGISTRY.md' },
     { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
+    { label: 'Approved Runtime Team Test Matrix', href: 'reports/approved_runtime_team_test_matrix.md' },
+    { label: 'Mechanics Truth Beta Gate Checklist', href: 'reports/mechanics_truth_beta_gate_checklist.md' },
     { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },
     { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },
     { label: 'Type Multiplier Audit', href: 'reports/type_multiplier_audit.md' },

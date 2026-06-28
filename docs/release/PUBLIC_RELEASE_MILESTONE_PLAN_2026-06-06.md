@@ -122,7 +122,7 @@ Current release checklist:
 | Expand turn order gate | Engineering | Priority, Trick Room, Tailwind, paralysis, stat boosts, Choice Scarf, and speed ties pass |
 | Expand damage gate | Engineering | Damage formula and Champions damage override path are covered |
 | Expand battlefield gate | Engineering | Terrain, weather, status, Protect-family, Quick Guard, spread, and target behavior pass |
-| Add long-tail public-beta mechanics gate | Engineering | Multi-effect moves, field/state legality shifts, status interactions, and Fake Out suppression have deterministic tests and visible QA proof |
+| Add long-tail public-beta mechanics gate | Engineering | Multi-effect moves, same-family priority suppression, field/state legality shifts, status interactions, and Fake Out suppression have deterministic tests and visible QA proof |
 | Expand Pokemon identity gate | Engineering | Switches, faints, bench movement, leads, item ownership, and consumed items stay stable |
 | Add Showdown oracle smoke harness | Engineering | Selected scenarios compare our behavior to Showdown or `@pkmn/sim` outputs |
 | Require strict fresh live logs | Josh / Kevin | New exported logs pass `tools/validate-turn-logs.mjs --require-stable` |

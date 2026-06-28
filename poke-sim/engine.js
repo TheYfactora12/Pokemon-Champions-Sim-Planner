@@ -1727,6 +1727,21 @@ function applyTerrainAbility(mon, field, log) {
   return false;
 }
 
+function applySeedSowerOnHit(target, field, log) {
+  if (!target || !target.alive || !field || target.ability !== 'Seed Sower') return false;
+  field.terrain = 'grassy';
+  field.terrainTurns = 5;
+  if (log) log.push(`${target.name}'s Seed Sower set Grassy Terrain!`);
+  _recordEffectEvent(field, target, 'Seed Sower', 'ability-terrain-set', target.hp, target.hp, {
+    source: 'pokemon-showdown ability metadata + engine rule',
+    ability: 'Seed Sower',
+    terrain: 'grassy',
+    terrain_turns: field.terrainTurns,
+    note: 'Seed Sower activated after the Pokemon was hit by a damaging attack.'
+  });
+  return true;
+}
+
 // T9j.8 — Ability hook dispatcher. Safe call: returns null when no ability or
 // no matching hook. Invoked from engine trigger points.
 function callAbilityHook(mon, hookName, ctx) {
@@ -5251,8 +5266,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           return false;
         }
         const defenders = (t.side === field.playerSide) ? playerActive : oppActive;
-        if (defenders.some(m => m.alive && m.ability === 'Armor Tail')) {
-          log.push(`Armor Tail blocked ${move} on ${t.name}!`);
+        const priorityBlocker = defenders.find(function(m) {
+          return m.alive && (m.ability === 'Armor Tail' || m.ability === 'Dazzling' || m.ability === 'Queenly Majesty');
+        });
+        if (priorityBlocker) {
+          log.push(`${priorityBlocker.ability} blocked ${move} on ${t.name}!`);
           return false;
         }
         // Psychic Terrain blocks priority moves from hitting grounded mons.
@@ -5643,6 +5661,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (enduredHit) log.push(`${target.name} endured the hit!`);
     if (sturdySaved) log.push(`${target.name} hung on with Sturdy!`);
     if (sashSaved) log.push(`${target.name} hung on with its Focus Sash!`);
+    if (appliedDamage > 0) applySeedSowerOnHit(target, field, log);
     if (target.hp > 0 && target.ability === 'Berserk' && wasAboveHalf && target.hp <= target.maxHp / 2) {
       _applyStageMap(target, { spa: 1 }, log);
     }

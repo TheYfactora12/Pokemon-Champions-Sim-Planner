@@ -417,6 +417,38 @@ T('T5c-1b Battle Sensei renders Turn 0 and both side boards', () => {
   truthy(turnHtml.includes('0%'), 'Battle Sensei zero HP missing');
 });
 
+T('T5c-1c replay snapshot surfaces field-state chips and impact summaries', () => {
+  const html = ctx.csRenderReplayLogSnapshot({
+    roster: {
+      player: [
+        { stable_key: 'p1a', displayName: 'Incineroar', species: 'Incineroar', status: 'active', hp: 82, hpLabel: '82%', moves: ['Fake Out'] }
+      ],
+      opponent: [
+        { stable_key: 'p2a', displayName: 'Farigiraf', species: 'Farigiraf', status: 'active', hp: 100, hpLabel: '100%', moves: ['Trick Room'] }
+      ]
+    },
+    field: { weather: 'sun', weather_turns: 3, terrain: 'psychic', terrain_turns: 2, trick_room: 4 },
+    speed_control: {
+      player: { tailwind: 2, screens: { reflect: 1 } },
+      opponent: { tailwind: 0, screens: {} }
+    }
+  }, 'Turn 1', false, {
+    damage_events: [
+      { target_key: 'p1a', target: 'Incineroar', attacker: 'Farigiraf', move: 'Psychic', applied_damage: 18, target_hp_before: 100, target_hp_after: 82 }
+    ],
+    effect_events: [
+      { actor_key: 'p1a', actor: 'Incineroar', effect_kind: 'flinch-skip', skipped_move: true, skipped_action_move: 'Fake Out' }
+    ]
+  });
+  truthy(html.includes('sun 3T'), 'weather chip missing');
+  truthy(html.includes('psychic 2T'), 'terrain chip missing');
+  truthy(html.includes('Trick Room 4T'), 'Trick Room chip missing');
+  truthy(html.includes('Your Tailwind 2T'), 'Tailwind chip missing');
+  truthy(html.includes('Impact:'), 'impact summary missing');
+  truthy(html.includes('lost 18 HP to Psychic'), 'damage reason summary missing');
+  truthy(html.includes('lost its move: flinch skipped move'), 'skip reason summary missing');
+});
+
 T('T5c-2 swing turn row is highlighted', () => {
   const rows = [
     { turn: 1, post: { position_score: 0.5 }, delta: { position_score: 0 }, actions: { player: [], opponent: [] } },
