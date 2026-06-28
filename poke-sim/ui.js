@@ -664,6 +664,10 @@ function exportTeamToPaste(team) {
 function csSpriteStaticFallbackUrl(name) {
   var raw = String(name || '');
   var aliases = {
+    'Charizard-Mega-X': 'charizard-megax',
+    'Charizard-Mega-Y': 'charizard-megay',
+    'Mewtwo-Mega-X': 'mewtwo-megax',
+    'Mewtwo-Mega-Y': 'mewtwo-megay',
     'Mr. Rime': 'mrrime',
     'Kommo-o': 'kommoo',
     'Ninetales-Alola': 'ninetales-alola',
