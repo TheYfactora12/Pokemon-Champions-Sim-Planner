@@ -34888,7 +34888,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Pages deploy now gates live DB team parity',
-      detail: 'v2.2.15 makes GitHub Pages run live Supabase seed parity when anon secrets are available, so bundled teams, generated SQL, and live DB team IDs must stay aligned before publish. This prevents a clean local bundle from deploying while remote Supabase is still missing a newly approved team.'
+      detail: 'v2.2.15 makes GitHub Pages run live Supabase seed parity when anon secrets are available, so bundled teams, generated SQL, and live DB team IDs must stay aligned before publish. The follow-up CI repair also refreshed the generated QA baseline snapshot, documenting the broader upgrade rule: approved data changes must update runtime data, seed SQL, live DB, generated reports, bundle, Overview, and QA artifacts together.'
     },
     {
       status: 'done',

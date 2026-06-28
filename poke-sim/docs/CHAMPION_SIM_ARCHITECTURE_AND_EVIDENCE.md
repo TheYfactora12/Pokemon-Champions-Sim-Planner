@@ -268,11 +268,17 @@ Approved team/data upgrade checklist:
 
 - Update the source-backed runtime data or team catalog.
 - Regenerate seed SQL and any generated runtime artifacts that derive from it.
+- Regenerate Overview-linked QA reports such as `reports/champion_qa_baseline_snapshot.md` when approved teams, moves, items, rulesets, or proof targets change.
 - Apply or trigger the matching live Supabase migration when the deployed site reads the table.
 - Run local legality/seed/bundle validators.
 - Run the live DB parity path before Pages publish when Supabase anon credentials are present.
 - Bump the visible build label/cache when the browser-facing app or Overview changes.
 - Capture a fresh QA Artifact so Codex and team review can confirm the deployed build, source URL, ruleset, coverage gaps, and next missing proof.
+
+Recent learned failure modes:
+
+- `Deploy-order drift`: the app bundle can be correct while live Supabase is missing the newly approved team. Guard: Pages now runs live seed parity before publish when Supabase anon secrets exist.
+- `Generated-report drift`: the app and seed SQL can be correct while the Overview-linked QA baseline snapshot is stale. Guard: `qa_baseline_snapshot_tests.js` fails until the generated report includes the current approved catalog and move baseline.
 
 ## How To Classify A New QA Finding
 
@@ -281,6 +287,7 @@ Approved team/data upgrade checklist:
 | Source-data drift | Upstream data changed or generated assets are stale | Showdown sync docs, generated data, source hashes |
 | DB-source drift | Supabase row differs from bundled approved data | DB views, team gates, `approved_species_move_legality` |
 | Deploy-order drift | Local/generated assets are correct, but live DB migration or remote parity was missed before publish | Pages workflow, `RUN_LIVE_DB=1` seed test, DB migration workflow |
+| Generated-report drift | Runtime and DB are current, but Overview-linked reports or QA snapshots still describe the prior catalog | `reports/`, report generator, `qa_baseline_snapshot_tests.js` |
 | Engine bug | Deterministic mechanics disagree with source truth | `engine.js`, oracle tests, move registry tests |
 | Export bug | Sim result may be right, but logs are missing/wrong evidence | `ui.js`, turn-log serializer, validator |
 | Validator false positive | Export is right, validator assumes wrong identity/timing | `tools/validate-turn-logs.mjs` |
