@@ -331,6 +331,35 @@ T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
   truthy(html.includes('0%'), 'zero HP missing');
 });
 
+T('T5c-1ab Replay Log v2 does not duplicate planned move lines when resolved events exist', () => {
+  const html = ctx.csRenderTurnLogRows([{
+    turn: 1,
+    pre: {
+      roster: {
+        player: [{ displayName: 'Kangaskhan', species: 'Kangaskhan', status: 'active', hp: 100, hpLabel: '100%', moves: ['Fake Out'] }],
+        opponent: [{ displayName: 'Tyranitar', species: 'Tyranitar', status: 'active', hp: 100, hpLabel: '100%', moves: ['Rock Slide'] }]
+      }
+    },
+    post: {
+      roster: {
+        player: [{ displayName: 'Kangaskhan', species: 'Kangaskhan', status: 'active', hp: 100, hpLabel: '100%', moves: ['Fake Out'] }],
+        opponent: [{ displayName: 'Tyranitar', species: 'Tyranitar', status: 'active', hp: 82, hpLabel: '82%', moves: ['Rock Slide'] }]
+      },
+      position_score: 0.55
+    },
+    actions: { player: [{ actor: 'Kangaskhan', move: 'Fake Out', target: 'Tyranitar' }], opponent: [] },
+    events: [
+      { type: 'log', text: 'Kangaskhan used Fake Out! -> Tyranitar [18 dmg, 82/100 HP]' },
+      { type: 'log', text: 'Kangaskhan used Fake Out! -> Tyranitar [18 dmg, 82/100 HP]' }
+    ],
+    delta: { position_score: 0.05 }
+  }]);
+  const matches = html.match(/Kangaskhan used Fake Out!/g) || [];
+  eq(matches.length, 1, 'resolved move line should render once');
+  truthy(html.includes('Resolved action order shown below'), 'turn header should not repeat planned actions');
+  truthy(html.includes('lost 18 HP'), 'damage text should stay attached to resolved move line');
+});
+
 T('T5c-1aa Replay Log v2 supports singles and doubles field visibility', () => {
   const singles = ctx.csRenderTurnLogRows([{
     turn: 1,

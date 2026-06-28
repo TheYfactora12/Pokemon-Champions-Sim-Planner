@@ -117,7 +117,8 @@
 // v158-editor-save-cancel [2026-06-28] - Refresh app shell for explicit editor save and cancel draft controls.
 // v159-import-file-feedback [2026-06-28] - Refresh app shell for file import parser feedback and exporter syntax guard.
 // v160-move-failure-evidence [2026-06-28] - Refresh app shell for structured move-failure evidence rows.
-const CACHE_NAME = 'champions-sim-v160-move-failure-evidence';
+// v161-replay-log-dedupe [2026-06-28] - Refresh app shell for cleaner resolved replay log display.
+const CACHE_NAME = 'champions-sim-v161-replay-log-dedupe';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
