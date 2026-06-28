@@ -20,6 +20,7 @@ This file defines what we mean by "100% Champion accuracy" for the simulator. It
 - Runtime team catalog: only approved Champion-legal rows should remain visible at runtime. Current runtime catalog has 10 approved Champion-legal testing rows and removes 17 legacy/inferred rows into the audit object.
 - Testing catalog target: the first top-10 approved Champion archetype set is populated for runtime testing: anti-Trick Room/speed, weather support, rain, sun, sun + Trick Room, sand, pure Trick Room, balance/setup, snow/Aurora Veil, and arena-style sun. These are testing archetypes unless their source row is explicitly marked exact.
 - Fresh live proof still needed after this release: GitHub Pages `?v=<new-sha>`, one single-run log, one Run All log, one Tactical Sweep, and one QA Artifact from `v2.2.16`.
+- If full Run All is unsafe on the tester machine, `v2.2.17` Stress Lite QA may be used as capped stress evidence only when the artifact says `qa_run_type: "stress_lite_qa"`, includes a `stress_lite` block, and keeps the non-exhaustive boundary visible.
 
 ## What Is Proven Now
 
@@ -60,6 +61,7 @@ The release may be described as meeting the current Champion truth gate only whe
 - GitHub CI and Pages deploy pass on the exact commit.
 - The deployed browser QA Artifact has `ready_for_codex: true` and `next_missing_proof: []`.
 - Single-run, Run All, and Tactical Sweep exports include the mechanic being claimed fixed.
+- Stress Lite may substitute only for device-safe stress evidence, not for an exhaustive Run All claim.
 - `build_id`, cache label, source URL, Overview label, and source commit agree.
 - Every remaining gap is either closed with evidence or explicitly listed as an accepted non-100% gap.
 

@@ -248,6 +248,7 @@ async function main() {
     truthy(/id="export-qa-artifact-json-btn"/.test(html), 'QA artifact button missing');
     truthy(/QA Artifact/.test(html), 'QA artifact label missing');
     truthy(/id="run-all-export-qa-btn"/.test(html), 'Run All + QA Artifact button missing');
+    truthy(/id="stress-lite-qa-btn"/.test(html), 'Stress Lite + QA button missing');
     truthy(/id="tactical-sweep-qa-btn"/.test(html), 'Tactical Sweep + QA button missing');
     truthy(/id="qa-drop-folder-btn"/.test(html), 'QA drop folder button missing');
     truthy(/Tactical Sweep \+ QA/.test(html), 'Tactical Sweep + QA label missing');
@@ -260,6 +261,8 @@ async function main() {
     truthy(/function setBranchProgress/.test(ui), 'branch progress helper missing');
     truthy(/saved_rows/.test(ui), 'branch progress saved-row counter missing');
     truthy(/function getTacticalDepthMaxRuns/.test(ui), 'tactical depth helper missing');
+    truthy(/function csBuildStressLiteOptions/.test(ui), 'Stress Lite options helper missing');
+    truthy(/qaRunType = stressLite \? 'stress_lite_qa'/.test(ui), 'Stress Lite QA run type missing');
     truthy(/branchMatrixMaxRunsPerOpponent:\s*tacticalDepthMaxRuns/.test(ui), 'Tactical Sweep should use selected depth');
     truthy(/function csReloadAfterBuildCacheReset/.test(ui), 'build cache refresh reload helper missing');
     truthy(/location\.replace/.test(ui), 'build cache refresh should replace stale page after cleanup');
@@ -393,7 +396,24 @@ async function main() {
     truthy(events.includes('complete'), 'progress complete missing');
   });
 
-  await T('10. QA Artifact targeted sweep clears stat-source proof gaps', async () => {
+  await T('10. Stress Lite QA is capped and explicitly labeled', async () => {
+    ctx.window.SupabaseAdapter = { enabled: false };
+    const payload = await csBuildQaArtifactExport('player', Object.assign(ctx.csBuildStressLiteOptions({ simScope: 'preloaded' }), {
+      branchOpponentTeamIds: ['mega_altaria', 'mega_dragonite', 'mega_gengar', 'mega_lapras'],
+      includeReplayCards: false,
+      includeSimLog: false
+    }));
+    eq(payload.qa_run_type, 'stress_lite_qa', 'stress lite run type');
+    truthy(payload.stress_lite && payload.stress_lite.schema_version === 'champions-stress-lite-qa-v1', 'stress lite block missing');
+    truthy(payload.stress_lite.max_runs_per_opponent <= 12, 'stress lite per-opponent cap should not exceed default');
+    truthy(payload.stress_lite.opponent_count <= 4, 'stress lite opponent cap count should not exceed default');
+    truthy(payload.stress_lite.opponent_count >= 1, 'stress lite should keep at least one opponent when available');
+    eq(payload.retention.include_stress_lite, true, 'stress lite retention flag');
+    truthy(payload.stress_lite.boundary.indexOf('not exhaustive Run All proof') >= 0, 'stress lite boundary missing');
+    eq(payload.tactical_sweep.total_executed_runs <= (payload.stress_lite.opponent_count * payload.stress_lite.max_runs_per_opponent), true, 'stress lite should cap total branch runs');
+  });
+
+  await T('11. QA Artifact targeted sweep clears stat-source proof gaps', async () => {
     ctx.window.SupabaseAdapter = { enabled: false };
     const payload = await csBuildQaArtifactExport('player', {
       includeReplayCards: false,
