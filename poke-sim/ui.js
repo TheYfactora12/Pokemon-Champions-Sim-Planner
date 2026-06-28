@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.91-regmb-visual-review-grid';
+    return txt || 'v2.1.92-regmb-sprite-aliases';
   } catch (e) {
-    return 'v2.1.91-regmb-visual-review-grid';
+    return 'v2.1.92-regmb-sprite-aliases';
   }
 }
 
@@ -1868,7 +1868,43 @@ function csGetRegmbVisualRows() {
   return source && Array.isArray(source.visualAllowlistRows) ? source.visualAllowlistRows : [];
 }
 function csRegmbSpriteUrl(species) {
-  var clean = String(species || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  var raw = String(species || '');
+  var aliases = {
+    'Arcanine-Hisui': 'arcanine-hisui',
+    'Ninetales-Alola': 'ninetales-alola',
+    'Raichu-Alola': 'raichu-alola',
+    'Slowbro-Galar': 'slowbro-galar',
+    'Slowking-Galar': 'slowking-galar',
+    'Samurott-Hisui': 'samurott-hisui',
+    'Typhlosion-Hisui': 'typhlosion-hisui',
+    'Zoroark-Hisui': 'zoroark-hisui',
+    'Stunfisk-Galar': 'stunfisk-galar',
+    'Goodra-Hisui': 'goodra-hisui',
+    'Avalugg-Hisui': 'avalugg-hisui',
+    'Decidueye-Hisui': 'decidueye-hisui',
+    'Tauros-Paldea-Combat': 'tauros-paldea-combat',
+    'Tauros-Paldea-Blaze': 'tauros-paldea-blaze',
+    'Tauros-Paldea-Aqua': 'tauros-paldea-aqua',
+    'Meowstic-M': 'meowstic',
+    'Meowstic-F': 'meowstic-f',
+    'Gourgeist-Small': 'gourgeist-small',
+    'Gourgeist-Average': 'gourgeist',
+    'Gourgeist-Large': 'gourgeist-large',
+    'Gourgeist-Super': 'gourgeist-super',
+    'Basculegion-M': 'basculegion',
+    'Basculegion-F': 'basculegion-f',
+    'Rotom-Heat': 'rotom-heat',
+    'Rotom-Wash': 'rotom-wash',
+    'Rotom-Frost': 'rotom-frost',
+    'Rotom-Fan': 'rotom-fan',
+    'Rotom-Mow': 'rotom-mow',
+    'Lycanroc-Midday': 'lycanroc',
+    'Lycanroc-Midnight': 'lycanroc-midnight',
+    'Lycanroc-Dusk': 'lycanroc-dusk',
+    'Maushold': 'maushold',
+    'Sinistcha': 'sinistcha'
+  };
+  var clean = aliases[raw] || raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   return 'https://play.pokemonshowdown.com/sprites/ani/' + clean + '.gif';
 }
 function csRenderRegmbVisualReviewGrid(grid) {
@@ -9827,8 +9863,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
-      title: 'Reg M-B visual review grid added',
-      detail: 'v2.1.91 renders the Victory Road Reg M-B sprite-sheet mapping inside the Reg M-B Review filter. The grid shows sheet row, column, confidence, and sprites for human review while keeping every row blocked from selectors, DB learning, and trusted coaching.'
+      title: 'Reg M-B sprite aliases added',
+      detail: 'v2.1.92 adds explicit sprite aliases for risky form rows in the Reg M-B visual review grid, including Paldean Tauros, regional forms, Rotom forms, Meowstic, Gourgeist, Basculegion, and other form-sensitive sprites.'
     },
     {
       status: 'done',

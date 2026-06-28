@@ -2348,8 +2348,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.91-regmb-visual-review-grid -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.91-regmb-visual-review-grid</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.92-regmb-sprite-aliases -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.92-regmb-sprite-aliases</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -24230,9 +24230,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.91-regmb-visual-review-grid';
+    return txt || 'v2.1.92-regmb-sprite-aliases';
   } catch (e) {
-    return 'v2.1.91-regmb-visual-review-grid';
+    return 'v2.1.92-regmb-sprite-aliases';
   }
 }
 
@@ -25982,7 +25982,43 @@ function csGetRegmbVisualRows() {
   return source && Array.isArray(source.visualAllowlistRows) ? source.visualAllowlistRows : [];
 }
 function csRegmbSpriteUrl(species) {
-  var clean = String(species || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  var raw = String(species || '');
+  var aliases = {
+    'Arcanine-Hisui': 'arcanine-hisui',
+    'Ninetales-Alola': 'ninetales-alola',
+    'Raichu-Alola': 'raichu-alola',
+    'Slowbro-Galar': 'slowbro-galar',
+    'Slowking-Galar': 'slowking-galar',
+    'Samurott-Hisui': 'samurott-hisui',
+    'Typhlosion-Hisui': 'typhlosion-hisui',
+    'Zoroark-Hisui': 'zoroark-hisui',
+    'Stunfisk-Galar': 'stunfisk-galar',
+    'Goodra-Hisui': 'goodra-hisui',
+    'Avalugg-Hisui': 'avalugg-hisui',
+    'Decidueye-Hisui': 'decidueye-hisui',
+    'Tauros-Paldea-Combat': 'tauros-paldea-combat',
+    'Tauros-Paldea-Blaze': 'tauros-paldea-blaze',
+    'Tauros-Paldea-Aqua': 'tauros-paldea-aqua',
+    'Meowstic-M': 'meowstic',
+    'Meowstic-F': 'meowstic-f',
+    'Gourgeist-Small': 'gourgeist-small',
+    'Gourgeist-Average': 'gourgeist',
+    'Gourgeist-Large': 'gourgeist-large',
+    'Gourgeist-Super': 'gourgeist-super',
+    'Basculegion-M': 'basculegion',
+    'Basculegion-F': 'basculegion-f',
+    'Rotom-Heat': 'rotom-heat',
+    'Rotom-Wash': 'rotom-wash',
+    'Rotom-Frost': 'rotom-frost',
+    'Rotom-Fan': 'rotom-fan',
+    'Rotom-Mow': 'rotom-mow',
+    'Lycanroc-Midday': 'lycanroc',
+    'Lycanroc-Midnight': 'lycanroc-midnight',
+    'Lycanroc-Dusk': 'lycanroc-dusk',
+    'Maushold': 'maushold',
+    'Sinistcha': 'sinistcha'
+  };
+  var clean = aliases[raw] || raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   return 'https://play.pokemonshowdown.com/sprites/ani/' + clean + '.gif';
 }
 function csRenderRegmbVisualReviewGrid(grid) {
@@ -33941,8 +33977,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
-      title: 'Reg M-B visual review grid added',
-      detail: 'v2.1.91 renders the Victory Road Reg M-B sprite-sheet mapping inside the Reg M-B Review filter. The grid shows sheet row, column, confidence, and sprites for human review while keeping every row blocked from selectors, DB learning, and trusted coaching.'
+      title: 'Reg M-B sprite aliases added',
+      detail: 'v2.1.92 adds explicit sprite aliases for risky form rows in the Reg M-B visual review grid, including Paldean Tauros, regional forms, Rotom forms, Meowstic, Gourgeist, Basculegion, and other form-sensitive sprites.'
     },
     {
       status: 'done',

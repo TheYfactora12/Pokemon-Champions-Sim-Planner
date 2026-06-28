@@ -246,6 +246,9 @@ T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
   inc(ui, 'function csRenderRegmbCoverageCards');
   inc(ui, 'function csRenderRegmbVisualReviewGrid');
   inc(ui, 'function csRegmbSpriteUrl');
+  inc(ui, "'Tauros-Paldea-Combat': 'tauros-paldea-combat'");
+  inc(ui, "'Tauros-Paldea-Blaze': 'tauros-paldea-blaze'");
+  inc(ui, "'Tauros-Paldea-Aqua': 'tauros-paldea-aqua'");
   inc(ui, "filter === 'regmb_review'");
   inc(ui, "label:'Reg M-B Review'");
   inc(ui, "if (TEAMS_FILTER === 'regmb_review')");
