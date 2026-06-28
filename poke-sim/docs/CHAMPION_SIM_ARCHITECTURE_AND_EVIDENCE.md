@@ -116,6 +116,7 @@ Current DB limitations:
 - `showdown_entities` rows are not yet the direct battle runtime source.
 - Saved analysis history is summary/capped storage, not full forensic turn-log storage.
 - Live DB freshness is separate from local DB contract tests. Run live checks only with `RUN_LIVE_DB=1` and valid anon credentials.
+- GitHub Pages deploy enables `RUN_LIVE_DB=1` when Supabase anon secrets are present. That means bundled teams, generated seed SQL, and live Supabase team IDs must match before publish. If a new approved team is added locally, the matching DB migration must be applied before the site can deploy.
 
 Practical QA rule: for detailed math proof, use downloaded turn-log JSON or QA Artifact exports. Do not rely on saved Supabase history as the complete audit trail until the DB forensic-retention work is explicitly shipped.
 
@@ -263,12 +264,23 @@ RUN_LIVE_DB=1 bash tests/_run_all_db.sh --live
 
 Only use the live mode when valid anon credentials are present and it is acceptable to test against remote Supabase.
 
+Approved team/data upgrade checklist:
+
+- Update the source-backed runtime data or team catalog.
+- Regenerate seed SQL and any generated runtime artifacts that derive from it.
+- Apply or trigger the matching live Supabase migration when the deployed site reads the table.
+- Run local legality/seed/bundle validators.
+- Run the live DB parity path before Pages publish when Supabase anon credentials are present.
+- Bump the visible build label/cache when the browser-facing app or Overview changes.
+- Capture a fresh QA Artifact so Codex and team review can confirm the deployed build, source URL, ruleset, coverage gaps, and next missing proof.
+
 ## How To Classify A New QA Finding
 
 | Finding type | Meaning | First place to inspect |
 | --- | --- | --- |
 | Source-data drift | Upstream data changed or generated assets are stale | Showdown sync docs, generated data, source hashes |
 | DB-source drift | Supabase row differs from bundled approved data | DB views, team gates, `approved_species_move_legality` |
+| Deploy-order drift | Local/generated assets are correct, but live DB migration or remote parity was missed before publish | Pages workflow, `RUN_LIVE_DB=1` seed test, DB migration workflow |
 | Engine bug | Deterministic mechanics disagree with source truth | `engine.js`, oracle tests, move registry tests |
 | Export bug | Sim result may be right, but logs are missing/wrong evidence | `ui.js`, turn-log serializer, validator |
 | Validator false positive | Export is right, validator assumes wrong identity/timing | `tools/validate-turn-logs.mjs` |

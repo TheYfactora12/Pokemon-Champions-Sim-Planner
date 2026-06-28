@@ -51,6 +51,13 @@ Dataset poisoning guard:
 - Analysis rows must carry ruleset status and poisoning policy before DB or coaching systems aggregate them.
 - Future coaching reports must not mix Reg M-A, Reg M-B, and later regulations unless the report explicitly requests cross-regulation comparison.
 
+Smooth-upgrade guard:
+
+- Any approved team/data change must move as one unit: source note, `data.js` or generated runtime asset, generated seed SQL, live Supabase migration, legality tests, bundle rebuild, Overview/build label, and fresh QA artifact.
+- A local-only pass is not enough when the site reads live Supabase. If preloaded team IDs change, run or trigger the live DB parity path before treating the deployed page as validated.
+- Do not add a team purely to force a test if that team is not legal in the active runtime lane. Add targeted QA instrumentation instead, or mark the row review-only so it cannot train coaching data.
+- When a mistake is found, add the failure mode to docs and a drift guard test in the same change whenever practical. The goal is not just to fix the symptom; it is to make the same class of partial upgrade harder to repeat.
+
 ## Source Priority
 
 | Tier | Source type | Allowed to prove | Not allowed to prove alone |
@@ -88,6 +95,7 @@ Dataset poisoning guard:
 | `approved_showdown_entities` | Reviewed rows promoted for app use | approval status, source hash, reviewer/process |
 | `champions_overrides` | Champion-specific differences from Showdown | Champion source URL, review date, status, test reference |
 | `generated/pokemon_showdown_legal_data.js` | Offline GitHub Pages runtime data | generated timestamp, source hashes, approved counts |
+| `db/seed_teams_v2.sql` and DB migrations | Approved team catalog seed and live DB alignment | generated from the same reviewed team catalog; live parity checked before Pages publish |
 | `legality.js` | Champion ruleset gate | ruleset ID, source review date, violation codes |
 | `engine.js` | Deterministic execution | tests proving behavior against source/oracle |
 | `ui.js` Overview | Human-visible status, docs, source inspector, QA path | build ID and source URL in exported artifacts |

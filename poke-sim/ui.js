@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.14-stat-source-proof-team';
+    return txt || 'v2.2.15-live-db-pages-guard';
   } catch (e) {
-    return 'v2.2.14-stat-source-proof-team';
+    return 'v2.2.15-live-db-pages-guard';
   }
 }
 
@@ -10349,6 +10349,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Stat-source proof team and targeted QA',
       detail: 'v2.2.14 adds a legal Targeted Stat Source Proof team plus forced targeted QA battles for Foul Play, Body Press, Psyshock, and the Foul Play Pure Power guard so QA Artifacts can deterministically clear non-standard stat-source proof gaps.'
+    },
+    {
+      status: 'done',
+      title: 'Pages deploy now gates live DB team parity',
+      detail: 'v2.2.15 makes GitHub Pages run live Supabase seed parity when anon secrets are available, so bundled teams, generated SQL, and live DB team IDs must stay aligned before publish. This prevents a clean local bundle from deploying while remote Supabase is still missing a newly approved team.'
     },
     {
       status: 'done',
