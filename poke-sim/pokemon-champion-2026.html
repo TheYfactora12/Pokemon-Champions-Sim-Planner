@@ -2348,8 +2348,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.13-tactical-sweep-schema</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.14-stat-source-proof-team</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -7432,6 +7432,87 @@ const TEAMS = {
           "Life Dew"
         ],
         "role": "Utility / Secret Weapon"
+      }
+    ]
+  },
+  "targeted_stat_source_proof": {
+    "name": "Targeted Stat Source Proof",
+    "label": "QA STAT",
+    "style": "qa_proof",
+    "description": "Legal Champions QA proof team for non-standard damage stat-source evidence: Foul Play uses the target Attack, Body Press uses the user's Defense, and Psyshock-style special damage targets Defense.",
+    "champion_pack_id": "targeted_stat_source_proof_champions_regma_v1",
+    "format": "champions",
+    "formatid": "champions-vgc-2026-regma",
+    "gametype": "doubles",
+    "ruleset": ["Species Clause", "Item Clause", "Bring 6 Pick 4", "Level 50"],
+    "source": "preloaded",
+    "provenance": {
+      "roster_source": "repo QA targeted proof coverage",
+      "spread_source": "legal Champions SP proof spreads",
+      "author": "qa",
+      "url": "",
+      "status": "proof-team"
+    },
+    "legality_status": "legal",
+    "legality_notes": "Purpose-built legal Champions proof team. Species are active runtime-supported Reg M-A entries, moves are already represented in the generated Showdown-backed move tables, items are in the verified Champions pool, and SP spreads obey 32-per-stat/66-total caps.",
+    "assumption_register": [
+      "This is a QA proof team, not a tournament paste.",
+      "Use Sableye to force Foul Play target-Attack traces, Orthworm or Kommo-o to force Body Press user-Defense traces, and Cresselia to force Psyshock target-Defense traces."
+    ],
+    "members": [
+      {
+        "name": "Sableye",
+        "item": "Black Glasses",
+        "ability": "Prankster",
+        "nature": "Impish",
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 2, "spe": 0},
+        "moves": ["Foul Play", "Recover", "Reflect", "Protect"],
+        "role": "Foul Play Stat-Source Proof"
+      },
+      {
+        "name": "Orthworm",
+        "item": "Sitrus Berry",
+        "ability": "Earth Eater",
+        "nature": "Impish",
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 2, "spe": 0},
+        "moves": ["Body Press", "Shed Tail", "Protect", "Helping Hand"],
+        "role": "Body Press Stat-Source Proof"
+      },
+      {
+        "name": "Cresselia",
+        "item": "Leftovers",
+        "ability": "Levitate",
+        "nature": "Bold",
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 2, "spd": 0, "spe": 0},
+        "moves": ["Psyshock", "Trick Room", "Recover", "Protect"],
+        "role": "Psyshock Defense-Target Proof"
+      },
+      {
+        "name": "Kommo-o",
+        "item": "Dragon Fang",
+        "ability": "Overcoat",
+        "nature": "Impish",
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 2, "spe": 0},
+        "moves": ["Body Press", "Clangorous Soul", "Protect", "Clanging Scales"],
+        "role": "Alternate Body Press Proof"
+      },
+      {
+        "name": "Garchomp",
+        "item": "Soft Sand",
+        "ability": "Rough Skin",
+        "nature": "Adamant",
+        "evs": {"hp": 2, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
+        "moves": ["Earthquake", "Dragon Claw", "Rock Slide", "Protect"],
+        "role": "High-Attack Foul Play Target"
+      },
+      {
+        "name": "Pelipper",
+        "item": "Focus Sash",
+        "ability": "Drizzle",
+        "nature": "Calm",
+        "evs": {"hp": 32, "atk": 0, "def": 2, "spa": 0, "spd": 32, "spe": 0},
+        "moves": ["Tailwind", "Weather Ball", "U-turn", "Protect"],
+        "role": "Weather / Speed Support"
       }
     ]
   },
@@ -24570,9 +24651,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.13-tactical-sweep-schema';
+    return txt || 'v2.2.14-stat-source-proof-team';
   } catch (e) {
-    return 'v2.2.13-tactical-sweep-schema';
+    return 'v2.2.14-stat-source-proof-team';
   }
 }
 
@@ -30304,6 +30385,104 @@ function csBuildTargetedQaSweepEvidence(opts) {
       opponentTeam: csQaProofTeam('Targeted QA Leech Seed Opponent', [
         csQaProofMon('Pelipper', ['Tackle'])
       ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'stat_source_foul_play',
+      label: 'Stat-source proof: Foul Play target Attack',
+      requireMechanic: 'foul_play_trace',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_foul_play_player',
+      opponentTeamId: 'targeted_qa_foul_play_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Foul Play Player', [
+        csQaProofMon('Sableye', ['Foul Play'], {
+          ability: 'Prankster',
+          item: 'Black Glasses',
+          nature: 'Impish',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Foul Play Opponent', [
+        csQaProofMon('Garchomp', ['Tackle'], {
+          ability: 'Rough Skin',
+          nature: 'Adamant',
+          evs: { hp: 2, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'stat_source_body_press',
+      label: 'Stat-source proof: Body Press user Defense',
+      requireMechanic: 'body_press_trace',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_body_press_player',
+      opponentTeamId: 'targeted_qa_body_press_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Body Press Player', [
+        csQaProofMon('Orthworm', ['Body Press'], {
+          ability: 'Earth Eater',
+          nature: 'Impish',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Body Press Opponent', [
+        csQaProofMon('Tyranitar', ['Tackle'], {
+          ability: 'Sand Stream',
+          nature: 'Careful',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'stat_source_psyshock',
+      label: 'Stat-source proof: Psyshock targets Defense',
+      requireMechanic: 'psyshock_trace',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_psyshock_player',
+      opponentTeamId: 'targeted_qa_psyshock_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Psyshock Player', [
+        csQaProofMon('Cresselia', ['Psyshock'], {
+          ability: 'Levitate',
+          nature: 'Modest',
+          evs: { hp: 32, atk: 0, def: 0, spa: 32, spd: 2, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Psyshock Opponent', [
+        csQaProofMon('Amoonguss', ['Tackle'], {
+          ability: 'Regenerator',
+          nature: 'Calm',
+          evs: { hp: 32, atk: 0, def: 2, spa: 0, spd: 32, spe: 0 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'stat_source_foul_play_power_ability_guard',
+      label: 'Stat-source proof: Foul Play ignores target power ability',
+      requireMechanic: 'ignored_target_power_ability_trace',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_foul_play_power_guard_player',
+      opponentTeamId: 'targeted_qa_foul_play_power_guard_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Foul Play Power Guard Player', [
+        csQaProofMon('Sableye', ['Foul Play'], {
+          ability: 'Prankster',
+          item: 'Black Glasses',
+          nature: 'Impish',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Foul Play Power Guard Opponent', [
+        csQaProofMon('Medicham', ['Tackle'], {
+          ability: 'Pure Power',
+          nature: 'Adamant',
+          evs: { hp: 32, atk: 32, def: 2, spa: 0, spd: 0, spe: 0 }
+        })
+      ])
     })
   ];
   var summary = csMergeQaCoverageSummaries(runs.map(function(run) {
@@ -34700,6 +34879,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Tactical Sweep schema handoff',
       detail: 'v2.2.13 gives QA Artifact exports explicit qa_run_type, ready_for_codex, next_missing_proof, recommended_next_test, and non-null tactical_sweep schema/status/opponent metadata so Codex and team review can distinguish completed tactical evidence from missing proof.'
+    },
+    {
+      status: 'done',
+      title: 'Stat-source proof team and targeted QA',
+      detail: 'v2.2.14 adds a legal Targeted Stat Source Proof team plus forced targeted QA battles for Foul Play, Body Press, Psyshock, and the Foul Play Pure Power guard so QA Artifacts can deterministically clear non-standard stat-source proof gaps.'
     },
     {
       status: 'done',

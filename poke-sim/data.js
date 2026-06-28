@@ -4483,6 +4483,87 @@ const TEAMS = {
       }
     ]
   },
+  "targeted_stat_source_proof": {
+    "name": "Targeted Stat Source Proof",
+    "label": "QA STAT",
+    "style": "qa_proof",
+    "description": "Legal Champions QA proof team for non-standard damage stat-source evidence: Foul Play uses the target Attack, Body Press uses the user's Defense, and Psyshock-style special damage targets Defense.",
+    "champion_pack_id": "targeted_stat_source_proof_champions_regma_v1",
+    "format": "champions",
+    "formatid": "champions-vgc-2026-regma",
+    "gametype": "doubles",
+    "ruleset": ["Species Clause", "Item Clause", "Bring 6 Pick 4", "Level 50"],
+    "source": "preloaded",
+    "provenance": {
+      "roster_source": "repo QA targeted proof coverage",
+      "spread_source": "legal Champions SP proof spreads",
+      "author": "qa",
+      "url": "",
+      "status": "proof-team"
+    },
+    "legality_status": "legal",
+    "legality_notes": "Purpose-built legal Champions proof team. Species are active runtime-supported Reg M-A entries, moves are already represented in the generated Showdown-backed move tables, items are in the verified Champions pool, and SP spreads obey 32-per-stat/66-total caps.",
+    "assumption_register": [
+      "This is a QA proof team, not a tournament paste.",
+      "Use Sableye to force Foul Play target-Attack traces, Orthworm or Kommo-o to force Body Press user-Defense traces, and Cresselia to force Psyshock target-Defense traces."
+    ],
+    "members": [
+      {
+        "name": "Sableye",
+        "item": "Black Glasses",
+        "ability": "Prankster",
+        "nature": "Impish",
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 2, "spe": 0},
+        "moves": ["Foul Play", "Recover", "Reflect", "Protect"],
+        "role": "Foul Play Stat-Source Proof"
+      },
+      {
+        "name": "Orthworm",
+        "item": "Sitrus Berry",
+        "ability": "Earth Eater",
+        "nature": "Impish",
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 2, "spe": 0},
+        "moves": ["Body Press", "Shed Tail", "Protect", "Helping Hand"],
+        "role": "Body Press Stat-Source Proof"
+      },
+      {
+        "name": "Cresselia",
+        "item": "Leftovers",
+        "ability": "Levitate",
+        "nature": "Bold",
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 2, "spd": 0, "spe": 0},
+        "moves": ["Psyshock", "Trick Room", "Recover", "Protect"],
+        "role": "Psyshock Defense-Target Proof"
+      },
+      {
+        "name": "Kommo-o",
+        "item": "Dragon Fang",
+        "ability": "Overcoat",
+        "nature": "Impish",
+        "evs": {"hp": 32, "atk": 0, "def": 32, "spa": 0, "spd": 2, "spe": 0},
+        "moves": ["Body Press", "Clangorous Soul", "Protect", "Clanging Scales"],
+        "role": "Alternate Body Press Proof"
+      },
+      {
+        "name": "Garchomp",
+        "item": "Soft Sand",
+        "ability": "Rough Skin",
+        "nature": "Adamant",
+        "evs": {"hp": 2, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
+        "moves": ["Earthquake", "Dragon Claw", "Rock Slide", "Protect"],
+        "role": "High-Attack Foul Play Target"
+      },
+      {
+        "name": "Pelipper",
+        "item": "Focus Sash",
+        "ability": "Drizzle",
+        "nature": "Calm",
+        "evs": {"hp": 32, "atk": 0, "def": 2, "spa": 0, "spd": 32, "spe": 0},
+        "moves": ["Tailwind", "Weather Ball", "U-turn", "Protect"],
+        "role": "Weather / Speed Support"
+      }
+    ]
+  },
   "targeted_proof_legal": {
     "name": "Targeted Proof Legal",
     "label": "QA PROOF",

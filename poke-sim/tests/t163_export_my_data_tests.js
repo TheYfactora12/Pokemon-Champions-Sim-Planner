@@ -1,6 +1,6 @@
 // T163 — Export My Data as JSON
 //
-// Coverage targets (9 cases):
+// Coverage targets (10 cases):
 //   1. HTML exposes the export button in the Saved Analyses header.
 //   2. Local export payload includes sim log + cached reports for the active team.
 //   3. DB-backed export payload includes analyses + nested analysis logs.
@@ -10,6 +10,7 @@
 //   7. QA artifact click handler downloads a JSON file with the expected prefix.
 //   8. Tactical Sweep QA can fan branch coverage across multiple opponents.
 //   9. Tactical Sweep QA emits progress callbacks while running.
+//   10. QA Artifact targeted sweep clears stat-source proof gaps.
 
 const fs = require('fs');
 const vm = require('vm');
@@ -295,13 +296,17 @@ async function main() {
     truthy(payload.summary.retained_replay_cards >= 1, 'replay summary missing');
     eq(payload.qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'QA artifact coverage schema missing');
     eq(payload.qa_coverage_summary.totals.replay_cards_scanned, 1, 'QA artifact coverage replay count mismatch');
-    eq(payload.qa_coverage_summary.totals.targeted_sweep_runs, 5, 'QA artifact targeted sweep count mismatch');
+    eq(payload.qa_coverage_summary.totals.targeted_sweep_runs, 9, 'QA artifact targeted sweep count mismatch');
     truthy(payload.qa_coverage_summary.totals.turns > 1, 'QA artifact merged coverage should include targeted sweep turns');
     truthy(payload.targeted_qa_sweep && payload.targeted_qa_sweep.status === 'complete', 'targeted QA sweep should be complete');
     truthy(payload.qa_coverage_summary.mechanics_seen.screen_reduction > 0, 'targeted sweep should add screen reduction proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.hp_cost > 0, 'targeted sweep should add HP-cost proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.delayed_recovery > 0, 'targeted sweep should add delayed recovery proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.residual_drain > 0, 'targeted sweep should add residual drain proof');
+    truthy(payload.qa_coverage_summary.mechanics_seen.nonstandard_stat_source_trace > 0, 'targeted sweep should add stat-source proof');
+    truthy(payload.qa_coverage_summary.mechanics_seen.foul_play_trace > 0, 'targeted sweep should add Foul Play proof');
+    truthy(payload.qa_coverage_summary.mechanics_seen.body_press_trace > 0, 'targeted sweep should add Body Press proof');
+    truthy(payload.qa_coverage_summary.mechanics_seen.psyshock_trace > 0, 'targeted sweep should add Psyshock proof');
     truthy(payload.retained && payload.retained.sim_log.length >= 1, 'retained sim log missing');
     truthy(payload.retained && payload.retained.replay_cards.length >= 1, 'retained replay cards missing');
     eq(payload.retained.replay_cards[0].seed, 'qa-seed-1');
@@ -378,6 +383,23 @@ async function main() {
     truthy(events.includes('save'), 'progress save missing');
     truthy(events.includes('done'), 'progress done missing');
     truthy(events.includes('complete'), 'progress complete missing');
+  });
+
+  await T('10. QA Artifact targeted sweep clears stat-source proof gaps', async () => {
+    ctx.window.SupabaseAdapter = { enabled: false };
+    const payload = await csBuildQaArtifactExport('player', {
+      includeReplayCards: false,
+      includeSimLog: false,
+      includeBranchMatrix: false
+    });
+    const mechanics = payload.qa_coverage_summary && payload.qa_coverage_summary.mechanics_seen || {};
+    truthy(TEAMS.targeted_stat_source_proof, 'targeted stat-source proof team missing');
+    truthy(mechanics.nonstandard_stat_source_trace > 0, 'nonstandard stat-source trace missing');
+    truthy(mechanics.foul_play_trace > 0, 'foul play trace missing');
+    truthy(mechanics.body_press_trace > 0, 'body press trace missing');
+    truthy(mechanics.psyshock_trace > 0, 'psyshock trace missing');
+    truthy(mechanics.ignored_target_power_ability_trace > 0, 'Foul Play target power ability guard missing');
+    eq((payload.next_missing_proof || []).includes('non-standard stat-source move trace'), false, 'stat-source proof should not be missing');
   });
 }
 

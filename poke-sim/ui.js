@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.13-tactical-sweep-schema';
+    return txt || 'v2.2.14-stat-source-proof-team';
   } catch (e) {
-    return 'v2.2.13-tactical-sweep-schema';
+    return 'v2.2.14-stat-source-proof-team';
   }
 }
 
@@ -5850,6 +5850,104 @@ function csBuildTargetedQaSweepEvidence(opts) {
       opponentTeam: csQaProofTeam('Targeted QA Leech Seed Opponent', [
         csQaProofMon('Pelipper', ['Tackle'])
       ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'stat_source_foul_play',
+      label: 'Stat-source proof: Foul Play target Attack',
+      requireMechanic: 'foul_play_trace',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_foul_play_player',
+      opponentTeamId: 'targeted_qa_foul_play_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Foul Play Player', [
+        csQaProofMon('Sableye', ['Foul Play'], {
+          ability: 'Prankster',
+          item: 'Black Glasses',
+          nature: 'Impish',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Foul Play Opponent', [
+        csQaProofMon('Garchomp', ['Tackle'], {
+          ability: 'Rough Skin',
+          nature: 'Adamant',
+          evs: { hp: 2, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'stat_source_body_press',
+      label: 'Stat-source proof: Body Press user Defense',
+      requireMechanic: 'body_press_trace',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_body_press_player',
+      opponentTeamId: 'targeted_qa_body_press_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Body Press Player', [
+        csQaProofMon('Orthworm', ['Body Press'], {
+          ability: 'Earth Eater',
+          nature: 'Impish',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Body Press Opponent', [
+        csQaProofMon('Tyranitar', ['Tackle'], {
+          ability: 'Sand Stream',
+          nature: 'Careful',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'stat_source_psyshock',
+      label: 'Stat-source proof: Psyshock targets Defense',
+      requireMechanic: 'psyshock_trace',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_psyshock_player',
+      opponentTeamId: 'targeted_qa_psyshock_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Psyshock Player', [
+        csQaProofMon('Cresselia', ['Psyshock'], {
+          ability: 'Levitate',
+          nature: 'Modest',
+          evs: { hp: 32, atk: 0, def: 0, spa: 32, spd: 2, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Psyshock Opponent', [
+        csQaProofMon('Amoonguss', ['Tackle'], {
+          ability: 'Regenerator',
+          nature: 'Calm',
+          evs: { hp: 32, atk: 0, def: 2, spa: 0, spd: 32, spe: 0 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'stat_source_foul_play_power_ability_guard',
+      label: 'Stat-source proof: Foul Play ignores target power ability',
+      requireMechanic: 'ignored_target_power_ability_trace',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_foul_play_power_guard_player',
+      opponentTeamId: 'targeted_qa_foul_play_power_guard_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Foul Play Power Guard Player', [
+        csQaProofMon('Sableye', ['Foul Play'], {
+          ability: 'Prankster',
+          item: 'Black Glasses',
+          nature: 'Impish',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Foul Play Power Guard Opponent', [
+        csQaProofMon('Medicham', ['Tackle'], {
+          ability: 'Pure Power',
+          nature: 'Adamant',
+          evs: { hp: 32, atk: 32, def: 2, spa: 0, spd: 0, spe: 0 }
+        })
+      ])
     })
   ];
   var summary = csMergeQaCoverageSummaries(runs.map(function(run) {
@@ -10246,6 +10344,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Tactical Sweep schema handoff',
       detail: 'v2.2.13 gives QA Artifact exports explicit qa_run_type, ready_for_codex, next_missing_proof, recommended_next_test, and non-null tactical_sweep schema/status/opponent metadata so Codex and team review can distinguish completed tactical evidence from missing proof.'
+    },
+    {
+      status: 'done',
+      title: 'Stat-source proof team and targeted QA',
+      detail: 'v2.2.14 adds a legal Targeted Stat Source Proof team plus forced targeted QA battles for Foul Play, Body Press, Psyshock, and the Foul Play Pure Power guard so QA Artifacts can deterministically clear non-standard stat-source proof gaps.'
     },
     {
       status: 'done',
