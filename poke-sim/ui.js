@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.80-artifact-summary-split';
+    return txt || 'v2.1.98-gif-primary-sprite-audit';
   } catch (e) {
-    return 'v2.1.80-artifact-summary-split';
+    return 'v2.1.98-gif-primary-sprite-audit';
   }
 }
 
@@ -642,7 +642,7 @@ function exportTeamToPaste(team) {
     lines.push(`${m.name}${itemStr}`);
     if (m.ability) lines.push(`Ability: ${m.ability}`);
     lines.push(`Level: ${m.level || 50}`);
-    if (m.tera) lines.push(`Tera Type: ${m.tera}`);
+    if (team.format !== 'champions' && m.tera) lines.push(`Tera Type: ${m.tera}`);
     // SPs — only non-zero
     const evs = m.evs || {};
     const evParts = [];
@@ -661,6 +661,49 @@ function exportTeamToPaste(team) {
 
 // ---- Helper: sprite URL (defined in data.js; safe no-op re-export for ui.js compat) ----
 // getSpriteUrl is already defined in data.js — do not redefine here
+function csSpriteStaticFallbackUrl(name) {
+  var raw = String(name || '');
+  var aliases = {
+    'Mr. Rime': 'mrrime',
+    'Kommo-o': 'kommoo',
+    'Ninetales-Alola': 'ninetales-alola',
+    'Arcanine-Hisui': 'arcanine-hisui',
+    'Tauros-Paldea-Combat': 'tauros-paldeacombat',
+    'Tauros-Paldea-Blaze': 'tauros-paldeablaze',
+    'Tauros-Paldea-Aqua': 'tauros-paldeaaqua',
+    'Raichu-Alola': 'raichu-alola',
+    'Zoroark-Hisui': 'zoroark-hisui',
+    'Lycanroc-Midday': 'lycanroc',
+    'Lycanroc-Midnight': 'lycanroc-midnight',
+    'Lycanroc-Dusk': 'lycanroc-dusk',
+    'Meowstic-M': 'meowstic',
+    'Meowstic-F': 'meowstic-f',
+    'Gourgeist-Small': 'gourgeist-small',
+    'Gourgeist-Average': 'gourgeist',
+    'Gourgeist-Large': 'gourgeist-large',
+    'Gourgeist-Super': 'gourgeist-super',
+    'Basculegion-M': 'basculegion',
+    'Basculegion-F': 'basculegion-f'
+  };
+  var slug = aliases[raw] || raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'https://play.pokemonshowdown.com/sprites/gen5/' + slug + '.png';
+}
+function csSpriteFallbackAttrs(name) {
+  return ' data-fallback-src="' + _escapeHtml(csSpriteStaticFallbackUrl(name)) + '" data-fallback-stage="0" onerror="csHandleSpriteError(this)"';
+}
+function csHandleSpriteError(img) {
+  if (!img) return;
+  var stage = Number(img.getAttribute('data-fallback-stage') || '0');
+  var fallback = img.getAttribute('data-fallback-src') || '';
+  if (stage === 0 && fallback && img.src !== fallback) {
+    img.setAttribute('data-fallback-stage', '1');
+    img.src = fallback;
+    return;
+  }
+  img.setAttribute('data-fallback-stage', '2');
+  img.style.opacity = '.3';
+}
+
 
 // ---- Type color ----
 function typeColor(type) { return TYPE_COLORS[type] || '#888'; }
@@ -694,7 +737,7 @@ function renderRoster(containerId, members) {
     const row = document.createElement('div');
     row.className = 'poke-row';
     row.innerHTML = `
-      <img class="poke-sprite" src="${getSpriteUrl(m.name)}" alt="${escName}" loading="lazy" onerror="this.style.opacity='.3'"/>
+      <img class="poke-sprite" src="${getSpriteUrl(m.name)}" alt="${escName}" loading="lazy" ${csSpriteFallbackAttrs(m.name)}/>
       <div class="poke-info">
         <div class="poke-name">${escName}</div>
         <div class="poke-item">${escItem} · ${escAbility}</div>
@@ -733,6 +776,31 @@ function normalizeTeamRecordForSim(teamKey, team) {
   var rulesetId = team.ruleset_id || team.metadata.ruleset_id || 'champions_reg_m_doubles_bo3';
   team.ruleset_id = team.ruleset_id || rulesetId;
   team.metadata.ruleset_id = team.metadata.ruleset_id || rulesetId;
+  var rulesetEvidence = typeof getRulesetEvidencePolicy === 'function'
+    ? getRulesetEvidencePolicy(rulesetId)
+    : null;
+  if (rulesetEvidence) {
+    team.metadata.ruleset_label = team.metadata.ruleset_label || rulesetEvidence.ruleset_label;
+    team.metadata.ruleset_status = team.metadata.ruleset_status || rulesetEvidence.ruleset_status;
+    team.metadata.runtime_promotable = (team.metadata.runtime_promotable !== undefined)
+      ? team.metadata.runtime_promotable
+      : rulesetEvidence.runtime_promotable;
+    team.metadata.learning_eligibility = team.metadata.learning_eligibility || rulesetEvidence.learning_eligibility;
+    team.metadata.data_policy = team.metadata.data_policy || rulesetEvidence.data_policy;
+    team.metadata.coaching_policy = team.metadata.coaching_policy || rulesetEvidence.coaching_policy;
+    team.metadata.poisoning_guard = team.metadata.poisoning_guard || rulesetEvidence.poisoning_guard;
+    team.metadata.source_checked_at_utc = team.metadata.source_checked_at_utc || rulesetEvidence.source_checked_at_utc;
+  }
+  var normalizedTags = Array.isArray(team.tags) ? team.tags.slice() : [];
+  function addTeamTag(tag) {
+    if (tag && normalizedTags.indexOf(tag) === -1) normalizedTags.push(tag);
+  }
+  addTeamTag(team.source === 'custom' ? 'custom' : 'preloaded');
+  if (rulesetId.indexOf('reg_m_a') >= 0 || rulesetId.indexOf('regma') >= 0 || rulesetId === 'champions_reg_m_doubles_bo3') addTeamTag('reg-m-a');
+  if (rulesetId.indexOf('reg_m_b') >= 0) addTeamTag('reg-m-b');
+  if (team.metadata.ruleset_status) addTeamTag(team.metadata.ruleset_status.replace(/_/g, '-'));
+  if (team.metadata.runtime_promotable === false) addTeamTag('not-runtime-promoted');
+  team.tags = normalizedTags;
   if (!team.format) {
     team.format = 'champions';
   }
@@ -740,9 +808,15 @@ function normalizeTeamRecordForSim(teamKey, team) {
     team.legality_status = team.source === 'custom' ? 'unverified' : 'legal_inferred';
   }
 
+  var championFormat = team.format === 'champions';
   team.members = team.members.map(function(member) {
     member = member || {};
     var name = member.name || member.species || 'Unknown';
+    var moves = Array.isArray(member.moves) ? member.moves.slice() : [];
+    if (championFormat) {
+      moves = moves.filter(function(move) { return move !== 'Tera Blast'; });
+    }
+    var teraType = championFormat ? '' : (member.teraType || member.tera_type || '');
     return {
       name: name,
       species: member.species || name,
@@ -752,9 +826,9 @@ function normalizeTeamRecordForSim(teamKey, team) {
       level: member.level || 50,
       evs: member.evs || {},
       ivs: member.ivs || {},
-      moves: Array.isArray(member.moves) ? member.moves : [],
-      teraType: member.teraType || member.tera_type || '',
-      tera_type: member.tera_type || member.teraType || '',
+      moves: moves,
+      teraType: teraType,
+      tera_type: teraType,
       role: member.role || member.role_tag || ''
     };
   });
@@ -1544,7 +1618,7 @@ function buildBringPickerHtml(teamKey, opts) {
       '" title="' + label + (!manualMode ? ' (random mode)' : '') + '">' +
       '<div class="bring-slot-label">' + label + '</div>' +
       (monName
-        ? '<img class="bring-slot-sprite" src="' + sprite + '" alt="' + _escapeHtml(monName) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        ? '<img class="bring-slot-sprite" src="' + sprite + '" alt="' + _escapeHtml(monName) + '" loading="lazy" ' + csSpriteFallbackAttrs(monName) + '/>' +
           '<div class="bring-slot-name">' + _escapeHtml(monName) + '</div>'
         : '<div class="bring-slot-empty">\u2014</div>') +
       '</div>';
@@ -1561,7 +1635,7 @@ function buildBringPickerHtml(teamKey, opts) {
         '" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) +
         '" draggable="' + (manualMode ? 'true' : 'false') +
         '" title="' + _escapeHtml(m.name) + (inBring ? ' (' + _escapeHtml(pos) + ')' : '') + '">' +
-        '<img class="bring-pool-chip-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        '<img class="bring-pool-chip-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" ' + csSpriteFallbackAttrs(m.name) + '/>' +
         '<span class="bring-pool-chip-name">' + _escapeHtml(m.name) + '</span>' +
         (inBring ? '<span class="bring-pool-chip-pos">' + _escapeHtml(pos) + '</span>' : '') +
         '</div>';
@@ -1572,7 +1646,7 @@ function buildBringPickerHtml(teamKey, opts) {
       return '<div class="bring-pool-row ' + (inBring ? 'bring-in' : 'bring-out') +
         '" data-team="' + teamKey + '" data-mon="' + _escapeHtml(m.name) +
         '" draggable="' + (manualMode ? 'true' : 'false') + '">' +
-        '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>' +
+        '<img class="poke-full-sprite" src="' + getSpriteUrl(m.name) + '" alt="' + _escapeHtml(m.name) + '" loading="lazy" ' + csSpriteFallbackAttrs(m.name) + '/>' +
         '<div class="poke-full-info">' +
           '<div class="poke-full-name">' +
             '<span class="poke-full-name-main">' + _escapeHtml(m.name) + '</span>' +
@@ -1768,25 +1842,184 @@ function renderSimBringPickers() {
 // Cite: Smogon export convention   -- https://www.smogon.com/forums/threads/3587177/
 // Cite: MDN File API (reader)      -- https://developer.mozilla.org/en-US/docs/Web/API/File_API
 // ============================================================
-var TEAMS_FILTER = 'all'; // 'all' | 'preloaded' | 'custom' | 'tournament' | 'mega'
+var TEAMS_FILTER = 'all'; // 'all' | 'preloaded' | 'custom' | 'tournament' | 'mega' | 'regma' | 'historical' | 'regmb_review'
 var TOURNAMENT_TEAM_KEYS = {
   champions_arena_1st:1, champions_arena_2nd:1, champions_arena_3rd:1,
   aurora_veil_froslass:1, cofagrigus_tr:1, rin_sand:1, suica_sun:1
 };
+function csTeamRulesetEvidence(team) {
+  team = team || {};
+  var meta = team.metadata || {};
+  var rulesetId = team.ruleset_id || meta.ruleset_id || 'champions_reg_m_doubles_bo3';
+  var evidence = typeof getRulesetEvidencePolicy === 'function'
+    ? getRulesetEvidencePolicy(rulesetId)
+    : {
+      ruleset_id: rulesetId,
+      ruleset_label: meta.ruleset_label || rulesetId,
+      ruleset_status: meta.ruleset_status || 'unknown',
+      runtime_promotable: meta.runtime_promotable !== false,
+      learning_eligibility: meta.learning_eligibility || 'unknown',
+      data_policy: meta.data_policy || 'unknown',
+      coaching_policy: meta.coaching_policy || 'unknown',
+      poisoning_guard: meta.poisoning_guard || 'unknown_ruleset_do_not_train_or_rank',
+      source_checked_at_utc: meta.source_checked_at_utc || null
+    };
+  return {
+    ruleset_id: evidence.ruleset_id || rulesetId,
+    ruleset_label: meta.ruleset_label || evidence.ruleset_label || rulesetId,
+    ruleset_status: meta.ruleset_status || evidence.ruleset_status || 'unknown',
+    runtime_promotable: meta.runtime_promotable !== undefined ? meta.runtime_promotable : !!evidence.runtime_promotable,
+    learning_eligibility: meta.learning_eligibility || evidence.learning_eligibility || 'unknown',
+    data_policy: meta.data_policy || evidence.data_policy || 'unknown',
+    coaching_policy: meta.coaching_policy || evidence.coaching_policy || 'unknown',
+    poisoning_guard: meta.poisoning_guard || evidence.poisoning_guard || 'unknown_ruleset_do_not_train_or_rank',
+    source_checked_at_utc: meta.source_checked_at_utc || evidence.source_checked_at_utc || null
+  };
+}
+function csTeamRulesetTags(key, team) {
+  var evidence = csTeamRulesetEvidence(team);
+  var tags = Array.isArray(team && team.tags) ? team.tags.slice() : [];
+  function add(tag) { if (tag && tags.indexOf(tag) === -1) tags.push(tag); }
+  add(team && team.source === 'custom' ? 'custom' : 'preloaded');
+  if (String(evidence.ruleset_id).indexOf('reg_m_a') >= 0 || String(evidence.ruleset_id).indexOf('regma') >= 0 || evidence.ruleset_id === 'champions_reg_m_doubles_bo3') add('reg-m-a');
+  if (String(evidence.ruleset_id).indexOf('reg_m_b') >= 0) add('reg-m-b');
+  add(String(evidence.ruleset_status || '').replace(/_/g, '-'));
+  if (evidence.runtime_promotable === false) add('not-runtime-promoted');
+  if (key && /^mega_/.test(key)) add('mega');
+  return tags;
+}
+function csRenderTeamRulesetBadges(key, team) {
+  var evidence = csTeamRulesetEvidence(team);
+  var label = evidence.ruleset_label || evidence.ruleset_id || 'Ruleset unknown';
+  var status = evidence.ruleset_status || 'unknown';
+  var guard = evidence.poisoning_guard || 'unknown_ruleset_do_not_train_or_rank';
+  var statusClass = evidence.runtime_promotable ? 'badge-legal' : 'badge-warn';
+  var title = 'Ruleset: ' + label + ' | data policy: ' + (evidence.data_policy || 'unknown') + ' | coaching: ' + (evidence.coaching_policy || 'unknown');
+  return '<span class="' + statusClass + '" title="' + _escapeHtml(title) + '">' + _escapeHtml(label) + '</span>' +
+    '<span class="' + statusClass + '" title="' + _escapeHtml(guard) + '">' + _escapeHtml(String(status).replace(/_/g, ' ').toUpperCase()) + '</span>';
+}
+function csGetRegmbCoverageSections() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && Array.isArray(source.coverageSections) ? source.coverageSections : [];
+}
+function csGetRegmbVisualRows() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && Array.isArray(source.visualAllowlistRows) ? source.visualAllowlistRows : [];
+}
+function csRegmbSpriteUrl(species) {
+  if (typeof getSpriteUrl === 'function') return getSpriteUrl(species);
+  var raw = String(species || '');
+  var aliases = {
+    'Arcanine-Hisui': 'arcanine-hisui',
+    'Ninetales-Alola': 'ninetales-alola',
+    'Raichu-Alola': 'raichu-alola',
+    'Slowbro-Galar': 'slowbro-galar',
+    'Slowking-Galar': 'slowking-galar',
+    'Samurott-Hisui': 'samurott-hisui',
+    'Typhlosion-Hisui': 'typhlosion-hisui',
+    'Zoroark-Hisui': 'zoroark-hisui',
+    'Stunfisk-Galar': 'stunfisk-galar',
+    'Goodra-Hisui': 'goodra-hisui',
+    'Avalugg-Hisui': 'avalugg-hisui',
+    'Decidueye-Hisui': 'decidueye-hisui',
+    'Tauros-Paldea-Combat': 'tauros-paldea-combat',
+    'Tauros-Paldea-Blaze': 'tauros-paldea-blaze',
+    'Tauros-Paldea-Aqua': 'tauros-paldea-aqua',
+    'Meowstic-M': 'meowstic',
+    'Meowstic-F': 'meowstic-f',
+    'Gourgeist-Small': 'gourgeist-small',
+    'Gourgeist-Average': 'gourgeist',
+    'Gourgeist-Large': 'gourgeist-large',
+    'Gourgeist-Super': 'gourgeist-super',
+    'Basculegion-M': 'basculegion',
+    'Basculegion-F': 'basculegion-f',
+    'Rotom-Heat': 'rotom-heat',
+    'Rotom-Wash': 'rotom-wash',
+    'Rotom-Frost': 'rotom-frost',
+    'Rotom-Fan': 'rotom-fan',
+    'Rotom-Mow': 'rotom-mow',
+    'Lycanroc-Midday': 'lycanroc',
+    'Lycanroc-Midnight': 'lycanroc-midnight',
+    'Lycanroc-Dusk': 'lycanroc-dusk',
+    'Maushold': 'maushold',
+    'Sinistcha': 'sinistcha'
+  };
+  var clean = aliases[raw] || raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'https://play.pokemonshowdown.com/sprites/ani/' + clean + '.gif';
+}
+function csRenderRegmbVisualReviewGrid(grid) {
+  if (!grid) return 0;
+  var rows = csGetRegmbVisualRows();
+  if (!rows.length) return 0;
+  var host = document.createElement('div');
+  host.className = 'team-full-card';
+  host.innerHTML = '<div class="tfcard-header"><div><div class="tfcard-name">Reg M-B visual allowlist review</div><div class="tfcard-meta">Sprite-sheet mapping · source-review only · ' + _escapeHtml(rows.length + ' rows') + '</div></div><div class="tfcard-badges"><span class="badge-warn">DO NOT TRAIN/RANK</span><span class="badge-warn">VISUAL REVIEW</span></div></div>' +
+    '<div class="team-legality-note"><strong>Human review needed before promotion</strong><span>Compare these rows against the Victory Road source sheets. Rows marked NEEDS REVIEW should be challenged before runtime legality.</span><small>These are not playable teams and do not write trusted coaching stats.</small></div>' +
+    '<div class="regmb-visual-grid">' + rows.map(function(row) {
+      var confidence = row.confidence || 'needs_human_review';
+      var badge = confidence === 'verified_visual' ? 'badge-legal' : 'badge-warn';
+      var title = (row.sheetId || '') + ' row ' + (row.sheetRow || '?') + ', col ' + (row.sheetColumn || '?');
+      return '<div class="regmb-visual-card" title="' + _escapeHtml(title) + '">' +
+        '<img src="' + _escapeHtml(csRegmbSpriteUrl(row.species)) + '" alt="' + _escapeHtml(row.species) + ' sprite" loading="lazy" ' + csSpriteFallbackAttrs(row.species) + '/>' +
+        '<div class="regmb-visual-fallback">?</div>' +
+        '<strong>' + _escapeHtml(row.species) + '</strong>' +
+        '<span>' + _escapeHtml((row.sheetId || '').replace('.jpg', '') + ' R' + row.sheetRow + ' C' + row.sheetColumn) + '</span>' +
+        '<em class="' + badge + '">' + _escapeHtml(confidence.replace(/_/g, ' ').toUpperCase()) + '</em>' +
+      '</div>';
+    }).join('') + '</div>';
+  grid.appendChild(host);
+  return rows.length;
+}
+function csRenderRegmbCoverageCards(grid) {
+  if (!grid) return 0;
+  var sections = csGetRegmbCoverageSections();
+  sections.forEach(function(section) {
+    var forms = Array.isArray(section.coveredMegaForms) ? section.coveredMegaForms : [];
+    var card = document.createElement('div');
+    card.className = 'team-full-card';
+    if (card.dataset) card.dataset.reviewSection = section.sectionId || '';
+    card.innerHTML =
+      '<div class="tfcard-header">' +
+        '<div>' +
+          '<div class="tfcard-name">' + _escapeHtml(section.label || 'Reg M-B review section') + '</div>' +
+          '<div class="tfcard-meta">SOURCE REVIEW · Hidden from legal sim selectors · ' + _escapeHtml(forms.length + ' new Mega rows') + '</div>' +
+        '</div>' +
+        '<div class="tfcard-badges">' +
+          '<span class="badge-warn">REG M-B REVIEW</span>' +
+          '<span class="badge-warn" title="' + _escapeHtml(section.poisoningGuard || 'review_only_do_not_train_or_rank') + '">DO NOT TRAIN/RANK</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="team-legality-note"><strong>Review-only coverage fixture</strong><span>' +
+        _escapeHtml(forms.join(', ')) +
+      '</span><small>These rows are visible for source conversion planning only. They are not playable teams until stones, stats, typing, abilities, sprites, learnsets, and fixtures are promoted.</small></div>';
+    grid.appendChild(card);
+  });
+  return sections.length;
+}
 function teamMatchesFilter(key, team, filter) {
   if (!team) return false;
   if (!isVisibleTeamInCatalog(key, team, { includeCustom: true })) return false;
   var isCustom = team.source === 'custom';
+  var evidence = csTeamRulesetEvidence(team);
+  var tags = csTeamRulesetTags(key, team);
   if (filter === 'all') return true;
   if (filter === 'custom') return isCustom;
   if (filter === 'preloaded') return !isCustom;
   if (filter === 'tournament') return !isCustom && !!TOURNAMENT_TEAM_KEYS[key];
   if (filter === 'mega') return /^mega_/.test(key);
+  if (filter === 'regma') return tags.indexOf('reg-m-a') >= 0;
+  if (filter === 'historical') return evidence.ruleset_status === 'historical';
+  if (filter === 'regmb_review') return tags.indexOf('reg-m-b') >= 0 || evidence.ruleset_status === 'source_review';
   return true;
 }
 function countTeamsByFilter(filter) {
   var n = 0;
   for (var k in TEAMS) if (teamMatchesFilter(k, TEAMS[k], filter)) n++;
+  if (filter === 'regmb_review') n += csGetRegmbCoverageSections().length;
   return n;
 }
 function renderTeamsPersistenceBanner() {
@@ -1810,7 +2043,10 @@ function renderTeamsFilterRow() {
     { id:'preloaded',  label:'Preloaded' },
     { id:'custom',     label:'Custom' },
     { id:'tournament', label:'Tournament' },
-    { id:'mega',       label:'Mega' }
+    { id:'mega',       label:'Mega' },
+    { id:'regma',      label:'Reg M-A' },
+    { id:'historical', label:'Historical' },
+    { id:'regmb_review', label:'Reg M-B Review' }
   ];
   row.innerHTML = chips.map(function(c){
     var count = countTeamsByFilter(c.id);
@@ -1860,6 +2096,7 @@ function renderTeamsGrid() {
         </div>
         <div class="tfcard-badges">
           <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
+          ${csRenderTeamRulesetBadges(key, team)}
           ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
             var st = team.legality_status; var fmt = team.format;
             if (!legalityVerdict.valid && fmt === 'sv') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.errors || []).join('; ')) + '">\u26A0 SV COMPAT ONLY</span>';
@@ -1883,6 +2120,10 @@ function renderTeamsGrid() {
       ${legalityNote}
       ${buildBringPickerHtml(key, { compact: compactTeamsPicker })}`;
     grid.appendChild(card);
+  }
+  if (TEAMS_FILTER === 'regmb_review') {
+    csRenderRegmbCoverageCards(grid);
+    csRenderRegmbVisualReviewGrid(grid);
   }
   // Export buttons
   grid.querySelectorAll('.export-card-btn').forEach(btn => {
@@ -2360,7 +2601,7 @@ function renderEditorRoster() {
   team.members.forEach((m, i) => {
     const btn = document.createElement('button');
     btn.className = 'editor-poke-btn';
-    btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/><span>${_escapeHtml(m.name || '')}</span>`;
+    btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" ${csSpriteFallbackAttrs(m.name)}/><span>${_escapeHtml(m.name || '')}</span>`;
     btn.addEventListener('click', () => { document.querySelectorAll('.editor-poke-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); openEditorForm(i); });
     el.appendChild(btn);
   });
@@ -2683,7 +2924,7 @@ function showImportPreview(members) {
       : '<div class="preview-ok">Showdown species and moves checked</div>';
     return `
     <div class="preview-row">
-      <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/>
+      <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" ${csSpriteFallbackAttrs(m.name)}/>
       <div class="preview-main">
         <span class="preview-name">${_escapeHtml(m.name || '')}</span>
         <span class="preview-item">${_escapeHtml(m.item||'No item')} · ${_escapeHtml(m.ability||'?')}</span>
@@ -3275,6 +3516,7 @@ function _csSnapshotSideRows(snapshot, side) {
     if (pct == null) pct = hp[name];
     var pct100 = pct == null ? null : Math.round(Math.max(0, Math.min(1, Number(pct) || 0)) * 100);
     return {
+      stable_key: key || name,
       status: status,
       displayName: _csSnapshotDisplayName(key || name),
       species: _csSnapshotDisplayName(key || name),
@@ -3287,6 +3529,109 @@ function _csSnapshotSideRows(snapshot, side) {
   }).concat(benchNames.map(function(name, i) {
     return rowFrom(name, benchKeys[i] || name, 'bench');
   }));
+}
+
+function csReplayTagClass(kind) {
+  kind = String(kind || '').toLowerCase();
+  if (kind.indexOf('skip') >= 0 || kind.indexOf('self-hit') >= 0 || kind.indexOf('faint') >= 0) return 'high';
+  if (kind.indexOf('immunity') >= 0 || kind.indexOf('immune') >= 0) return 'low';
+  if (kind.indexOf('flinch') >= 0 || kind.indexOf('sleep') >= 0 || kind.indexOf('frozen') >= 0 || kind.indexOf('paralysis') >= 0 || kind.indexOf('confusion') >= 0) return 'medium';
+  return 'low';
+}
+
+function csReplayEffectTagLabel(kind, effect) {
+  kind = String(kind || '').toLowerCase();
+  if (kind === 'flinch-applied') return 'Flinch tech used';
+  if (kind === 'flinch-skip') return 'Flinch skipped move';
+  if (kind === 'sleep-skip') return 'Sleep skipped move';
+  if (kind === 'frozen-skip') return 'Frozen skipped move';
+  if (kind === 'paralysis-skip') return 'Full paralysis';
+  if (kind === 'confusion-self-hit') return 'Confusion self-hit';
+  if (kind === 'ability-immunity') return 'Immune: ' + String((effect && effect.ability) || 'Ability');
+  if (kind === 'ability-immunity-heal') return 'Absorbed: ' + String((effect && effect.ability) || 'Ability');
+  if (kind === 'type-immunity') return 'Immune: ' + String((effect && effect.blocked_move_type) || 'Type');
+  if (kind === 'recoil') return 'Recoil damage';
+  if (kind === 'item-recovery') return 'Item recovery';
+  if (kind === 'drain-heal') return 'Drain heal';
+  if (kind === 'hp-cost') return 'HP cost';
+  if (kind === 'contact-damage' || kind.indexOf('contact-damage') >= 0) return 'Contact damage';
+  return String((effect && effect.volatile_status) || (effect && effect.effect_kind) || 'Effect');
+}
+
+function csReplayBuildEffectTagMap(turn) {
+  var out = {};
+  (Array.isArray(turn && turn.effect_events) ? turn.effect_events : []).forEach(function(effect) {
+    if (!effect || !effect.actor_key) return;
+    var kind = String(effect.effect_kind || 'effect');
+    var tag = {
+      label: csReplayEffectTagLabel(kind, effect),
+      kind: kind,
+      cls: csReplayTagClass(kind),
+      title: [
+        effect.actor || 'Pokemon',
+        effect.move ? 'via ' + effect.move : '',
+        effect.skipped_action_move ? 'skipped ' + effect.skipped_action_move : '',
+        effect.hp_delta ? 'HP ' + effect.hp_before + ' -> ' + effect.hp_after : '',
+        effect.note || ''
+      ].filter(Boolean).join(' · ')
+    };
+    if (!out[effect.actor_key]) out[effect.actor_key] = [];
+    out[effect.actor_key].push(tag);
+  });
+  return out;
+}
+
+function csReplayBuildSnapshotTags(row) {
+  row = row || {};
+  var tags = Array.isArray(row.replayTags) ? row.replayTags.slice() : [];
+  var majorStatus = row.major_status || row.majorStatus || row.condition || row.status_condition || row.statusEffect || null;
+  if (majorStatus) {
+    tags.push({
+      label: String(majorStatus),
+      kind: 'major-status',
+      cls: 'medium',
+      title: 'Major status on this Pokemon: ' + String(majorStatus)
+    });
+  }
+  var volatile = row.volatile_status || row.volatileStatus || row.volatile || null;
+  if (volatile) {
+    tags.push({
+      label: String(volatile),
+      kind: 'volatile-status',
+      cls: 'medium',
+      title: 'Volatile state on this Pokemon: ' + String(volatile)
+    });
+  }
+  var boosts = row.stat_boosts || row.boosts || null;
+  if (boosts && typeof boosts === 'object') {
+    Object.keys(boosts).forEach(function(stat) {
+      var value = Number(boosts[stat] || 0);
+      if (!value) return;
+      tags.push({
+        label: stat.toUpperCase() + ' ' + (value > 0 ? '+' : '') + value,
+        kind: 'stat-boost',
+        cls: value > 0 ? 'low' : 'medium',
+        title: 'Stat stage on this turn: ' + stat + ' ' + (value > 0 ? '+' : '') + value
+      });
+    });
+  }
+  var seen = {};
+  return tags.filter(function(tag) {
+    var key = String((tag && tag.label) || '') + '|' + String((tag && tag.kind) || '');
+    if (!key || seen[key]) return false;
+    seen[key] = true;
+    return true;
+  }).slice(0, 8);
+}
+
+function csRenderReplayEffectTags(row) {
+  var tags = csReplayBuildSnapshotTags(row);
+  if (!tags.length) return '';
+  return '<div class="replay-effect-tags">' + tags.map(function(tag) {
+    return '<span class="replay-effect-tag ' + _escapeHtml(tag.cls || csReplayTagClass(tag.kind)) + '" title="' + _escapeHtml(tag.title || tag.label || '') + '">' +
+      _escapeHtml(tag.label || 'Effect') +
+    '</span>';
+  }).join('') + '</div>';
 }
 
 function csRenderReplayStadiumMon(row) {
@@ -3303,13 +3648,14 @@ function csRenderReplayStadiumMon(row) {
   return '<div class="replay-stadium-mon ' + _escapeHtml(status) + '">' +
     '<div class="replay-stadium-mon-shell">' +
       (spriteUrl
-        ? '<img class="replay-stadium-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>'
+        ? '<img class="replay-stadium-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" ' + csSpriteFallbackAttrs(species) + '/>'
         : '<div class="replay-stadium-sprite replay-mon-sprite-fallback" aria-hidden="true"></div>') +
       '<div class="replay-stadium-mon-body">' +
         '<div class="replay-roster-mon-head">' +
           '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
           '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
         '</div>' +
+        csRenderReplayEffectTags(row) +
         '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
         '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(row.hpLabel || (hp == null ? 'unknown' : hp + '%')) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
         (meta.length ? '<div class="replay-roster-meta">' + _escapeHtml(meta.join(' · ')) + '</div>' : '') +
@@ -3363,11 +3709,19 @@ function csRenderReplayStadium(rowsBySide, title, labels) {
   '</div>';
 }
 
-function csRenderReplayLogSnapshot(snapshot, title, compact) {
+function csRenderReplayLogSnapshot(snapshot, title, compact, turn) {
   if (!snapshot) return '';
+  var effectTags = csReplayBuildEffectTagMap(turn);
+  function withEffectTags(rows) {
+    return rows.map(function(row) {
+      var key = row && (row.stable_key || row.stableKey || row.key);
+      var tags = key && effectTags[key] ? effectTags[key] : [];
+      return tags.length ? Object.assign({}, row, { replayTags: (row.replayTags || []).concat(tags) }) : row;
+    });
+  }
   return csRenderReplayStadium({
-    left: _csSnapshotSideRows(snapshot, 'player'),
-    right: _csSnapshotSideRows(snapshot, 'opponent')
+    left: withEffectTags(_csSnapshotSideRows(snapshot, 'player')),
+    right: withEffectTags(_csSnapshotSideRows(snapshot, 'opponent'))
   }, title || '', {
     left: 'Your team',
     right: 'Their team'
@@ -3671,7 +4025,7 @@ function csRenderTurnLogRows(turnLog, opts) {
       '<div class="replay-turn-score">Score ' + Math.round(score * 100) + '% · ' + (delta >= 0 ? '+' : '') + Math.round(delta * 100) + '</div>' +
       csRenderDecisionAuditChip(turnAudit) +
       csRenderReplayPlayByPlay(t) +
-      csRenderReplayLogSnapshot(t && t.post, 'After T' + (t && t.turn), true) +
+      csRenderReplayLogSnapshot(t && t.post, 'After T' + (t && t.turn), true, t) +
       csRenderHpBars(t) +
       (inCoach ? '<pre class="replay-turn-coach">' + _escapeHtml(inCoach) + '</pre>' : '') +
     '</div>';
@@ -3791,6 +4145,13 @@ function csQaBlankMechanicsSeen() {
     screen_reduction: 0,
     priority_actions: 0,
     speed_order_details: 0,
+    action_denial_events: 0,
+    flinch_applied: 0,
+    flinch_skip: 0,
+    frozen_skip: 0,
+    sleep_skip: 0,
+    paralysis_skip: 0,
+    confusion_self_hit: 0,
     stat_boost_snapshots: 0,
     weather_active: 0,
     trick_room_active: 0,
@@ -4677,10 +5038,13 @@ function csBuildFaintCauseSummary(turnLog) {
       var afterPct = hasPostHp ? Number(postHp[key]) : 0;
       if (!Number.isFinite(afterPct) || afterPct >= beforePct) return;
       out.hp_drops += 1;
-      var match = evidence.filter(function(row) { return row && row.key === key && Number(row.amount || 0) > 0; })[0] || null;
+      var matches = evidence.filter(function(row) { return row && row.key === key && Number(row.amount || 0) > 0; });
       if (afterPct <= 0) {
+        var lethalMatch = matches.filter(function(row) {
+          return Number(row.hp_after || 0) <= 0;
+        })[0] || null;
         out.total_faints += 1;
-        if (match) {
+        if (lethalMatch) {
           out.explained_faints += 1;
           out.faint_causes.push(Object.assign({
             turn: turn.turn || i + 1,
@@ -4688,8 +5052,8 @@ function csBuildFaintCauseSummary(turnLog) {
             stable_key: key,
             hp_pct_before: beforePct,
             hp_pct_after: afterPct,
-            cause_text: (names[key] || key) + ' fainted because ' + match.explanation
-          }, match));
+            cause_text: (names[key] || key) + ' fainted because ' + lethalMatch.explanation
+          }, lethalMatch));
         } else {
           out.unexplained_faints += 1;
           out.unexplained.push({
@@ -4698,10 +5062,10 @@ function csBuildFaintCauseSummary(turnLog) {
             stable_key: key,
             hp_pct_before: beforePct,
             hp_pct_after: afterPct,
-            issue: 'faint_without_damage_or_effect_evidence'
+            issue: matches.length ? 'faint_without_lethal_damage_or_effect_evidence' : 'faint_without_damage_or_effect_evidence'
           });
         }
-      } else if (!match) {
+      } else if (!matches.length) {
         out.unexplained_hp_drops += 1;
         out.unexplained.push({
           turn: turn.turn || i + 1,
@@ -5001,6 +5365,14 @@ function csBuildQaCoverageSummary(turnLog, opts) {
       var kind = effect.effect_kind || 'unknown';
       csQaInc(effectKinds, kind);
       csQaInc(effectMoves, effect.move || 'unknown');
+      var lowerKind = String(kind || '').toLowerCase();
+      if (effect.action_denial) mechanics.action_denial_events += 1;
+      if (lowerKind === 'flinch-applied') mechanics.flinch_applied += 1;
+      else if (lowerKind === 'flinch-skip') mechanics.flinch_skip += 1;
+      else if (lowerKind === 'frozen-skip') mechanics.frozen_skip += 1;
+      else if (lowerKind === 'sleep-skip') mechanics.sleep_skip += 1;
+      else if (lowerKind === 'paralysis-skip') mechanics.paralysis_skip += 1;
+      else if (lowerKind === 'confusion-self-hit') mechanics.confusion_self_hit += 1;
       if (csQaEffectKindMatches(kind, 'recoil')) mechanics.recoil += 1;
       if (csQaEffectKindMatches(kind, 'drain-heal')) mechanics.drain_heal += 1;
       if (csQaIsDirectRecoveryKind(kind)) mechanics.recovery += 1;
@@ -6407,13 +6779,14 @@ function csRenderReplayRosterMon(row, compact) {
   return '<div class="replay-roster-mon ' + _escapeHtml(status) + '">' +
     '<div class="replay-roster-mon-shell">' +
       (spriteUrl
-        ? '<img class="replay-roster-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" onerror="this.style.opacity=\'.3\'"/>'
+        ? '<img class="replay-roster-sprite" src="' + _escapeHtml(spriteUrl) + '" alt="' + _escapeHtml((row.displayName || species) + ' sprite') + '" loading="lazy" ' + csSpriteFallbackAttrs(species) + '/>'
         : '<div class="replay-roster-sprite replay-mon-sprite-fallback" aria-hidden="true"></div>') +
       '<div class="replay-roster-mon-body">' +
         '<div class="replay-roster-mon-head">' +
           '<strong>' + _escapeHtml(row.displayName || row.species || 'unknown') + '</strong>' +
           '<span class="replay-roster-status ' + _escapeHtml(hpClass) + '">' + _escapeHtml(status || 'bench') + '</span>' +
         '</div>' +
+        csRenderReplayEffectTags(row) +
         '<div class="replay-hp-track ' + _escapeHtml(hpClass) + '"><span style="width:' + _escapeHtml(String(hp == null ? 0 : hp)) + '%"></span></div>' +
         '<div class="replay-roster-meta"><b>HP:</b> ' + _escapeHtml(hpLabel) + (row.faintTurn ? ' · <b>Fainted:</b> Turn ' + _escapeHtml(String(row.faintTurn)) : '') + '</div>' +
         '<div class="replay-roster-meta"><b>Species/form:</b> ' + _escapeHtml(row.species || 'unknown') + ' · <b>Gender:</b> ' + _escapeHtml(row.gender || 'unknown') + ' · <b>Level:</b> ' + _escapeHtml(String(row.level || 'unknown')) + '</div>' +
@@ -8199,6 +8572,17 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   if (typeof TEAMS !== 'undefined' && TEAMS[playerKey] && TEAMS[playerKey].metadata && TEAMS[playerKey].metadata.ruleset_id) {
     rulesetId = TEAMS[playerKey].metadata.ruleset_id;
   }
+  var rulesetEvidence = typeof getRulesetEvidencePolicy === 'function'
+    ? getRulesetEvidencePolicy(rulesetId)
+    : {
+      ruleset_id: rulesetId,
+      ruleset_status: 'unknown',
+      runtime_promotable: false,
+      learning_eligibility: 'unknown',
+      data_policy: 'unknown',
+      coaching_policy: 'unknown',
+      poisoning_guard: 'unknown_ruleset_do_not_train_or_rank'
+    };
 
   var engineVersion = (typeof window === 'undefined') ? '1.0.0' : (window['ENGINE_VERSION'] || '1.0.0');
 
@@ -8250,6 +8634,12 @@ function _buildAnalysisPayload(playerKey, oppKey, bo, res) {
   return {
     engine_version:    engineVersion,
     ruleset_id:        rulesetId,
+    ruleset_status:    rulesetEvidence.ruleset_status,
+    learning_eligibility: rulesetEvidence.learning_eligibility,
+    data_policy:       rulesetEvidence.data_policy,
+    coaching_policy:   rulesetEvidence.coaching_policy,
+    poisoning_guard:   rulesetEvidence.poisoning_guard,
+    source_checked_at_utc: rulesetEvidence.source_checked_at_utc,
     player_team_id:    playerKey,
     opp_team_id:       oppKey,
     prior_id:          (res && res.prior_id) || null,
@@ -8341,9 +8731,11 @@ function _upsertTeamToDB(teamId, team, source) {
           nature:    m.nature    || null,
           evs:       m.evs       || null,
           ivs:       m.ivs       || null,
-          moves:     m.moves     || [],
+          moves:     ((team && team.format) === 'champions' && Array.isArray(m.moves))
+            ? m.moves.filter(function(move) { return move !== 'Tera Blast'; })
+            : (m.moves || []),
           level:     m.level     || 50,
-          tera_type: m.tera_type || m.teraType || null
+          tera_type: (team && team.format) === 'champions' ? null : (m.tera_type || m.teraType || null)
         };
       })
     };
@@ -9480,6 +9872,76 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Champion-format Tera leak gated off',
+      detail: 'v2.1.83 prevents the current Champions Reg M-A sim lane from auto-Terastallizing stale team data. Tera support remains isolated behind explicit ruleset/test contexts so future Champion rules can opt in if source-approved; current Reg M-A exports no longer write Tera Type lines. The same audit removed active strategy copy that taught Protosynthesis without source approval.'
+    },
+    {
+      status: 'done',
+      title: 'Data source registry added',
+      detail: 'v2.1.84 adds docs/DATA_SOURCE_REGISTRY.md as the team challenge page for source tiers, golden links, pull/check areas, timestamp rules, conflict handling, and the June 27 Reg M-A versus Reg M-B source warning.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B source audit recorded',
+      detail: 'v2.1.86 records the June 27 Victory Road Reg M-B facts: June 17 to September 2 window, Worlds usage, Mega Evolution allowed, full allowed-Pokemon image sheets, and 16 source-reviewed new Mega names. Runtime promotion remains blocked until those image sources become explicit reviewed data rows with fixtures.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B conversion ledger added',
+      detail: 'v2.1.87 adds a structured Reg M-B conversion table and JS ledger. The 16 new Mega names are explicit rows with source URLs, required promotion fields, and blockers, while runtimePromotable remains false until stones, stats, typing, abilities, sprites, species/form rows, and fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Ruleset lifecycle guard added',
+      detail: 'v2.1.87 adds a versioned ruleset registry and validation wrapper so source-review formats cannot be treated as legal sim evidence. Analysis payloads now carry ruleset status, learning eligibility, data policy, coaching policy, and a poisoning guard before DB/coaching stats consume results.'
+    },
+    {
+      status: 'done',
+      title: 'Ruleset-aware team sections and tags added',
+      detail: 'v2.1.88 labels team cards by regulation lane, adds Reg M-A/Historical/Reg M-B Review filters, and keeps Reg M-B coverage sections review-only so future team experiments cannot train matchup recommendations until the ruleset is promoted.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B review cards made visible',
+      detail: 'v2.1.89 renders the Reg M-B source-review coverage sections inside the Teams tab filter. These are planning cards, not legal sim teams, so testers can see the new Mega coverage without poisoning selectors, DB learning, or coaching stats.'
+    },
+    {
+      status: 'done',
+      title: 'Sprite fallback chain added',
+      detail: 'v2.1.95 adds a shared sprite fallback chain so animated Showdown sprites can fall back to static Showdown sprites instead of blanking. Lycanroc forms are now explicit aliases and all major card surfaces share the same fallback handler.'
+    },
+    {
+      status: 'done',
+      title: 'Alolan Raichu sprite alias and fallback coverage',
+      detail: 'v2.1.96 maps Raichu-Alola to the verified Showdown surfing-style animated sprite and extends the shared sprite fallback helper into bring-selection, replay, and Reg M-B visual-review surfaces.'
+    },
+    {
+      status: 'done',
+      title: 'Hisuian Zoroark animated sprite alias',
+      detail: 'v2.1.97 maps Zoroark-Hisui to the verified Showdown animated GIF and static fallback slug so Hisuian Zoroark no longer renders as regular Zoroark on shared Pokemon card surfaces.'
+    },
+    {
+      status: 'done',
+      title: 'GIF-primary sprite resolver',
+      detail: 'v2.1.98 makes Showdown animated GIFs the primary sprite source for standard Pokemon rendering, adds explicit Alolan Ninetales and Hisuian Arcanine form slugs, and keeps static Showdown fallback for missing GIFs.'
+    },
+    {
+      status: 'done',
+      title: 'Replay Pokemon effect tags added',
+      detail: 'v2.1.82 adds compact Pokemon-card effect tags in replay turns. Structured effect_events such as flinch-applied, flinch-skip, sleep/freeze/paralysis skips, confusion self-hit, recoil, item recovery, and contact damage now surface as visible chips so players and QA can identify status/effect tech without opening raw JSON.'
+    },
+    {
+      status: 'done',
+      title: 'Lethal faint cause matching fixed',
+      detail: 'v2.1.81 requires faint_cause_summary to match the lethal damage/effect row that actually reaches 0 HP. Earlier chip on the same Pokemon can explain HP loss, but it cannot be reported as the faint cause. The same fix records action-denial evidence for flinch, sleep, freeze, paralysis, and confusion self-hit, including applied state versus actually skipped move.'
+    },
+    {
+      status: 'planned',
+      title: 'Replay board-state badges',
+      detail: 'Next replay UI pass should show field setup and Pokemon conditions as visible timeline chips/badges: Tailwind, Trick Room, weather, terrain, screens, Protect/Guard, major status, volatile/action-denial states such as flinch, and remaining turns. Players should not need raw JSON to know board condition on each turn.'
+    },
+    {
+      status: 'done',
       title: 'Legacy lead dropdown removed',
       detail: 'v2.1.80 removes the unused Lead Pair dropdown from the main controls. Lead and bench selection now routes through the Bring picker only: Manual locks the selected lineup for the series, while Random explores legal bring combinations.'
     },
@@ -9872,8 +10334,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Damage stack oracle is green',
-      detail: 'showdown_damage_oracle_tests.js now reports 56/56 green and covers Low Kick target-weight base power, Tera Blast before/after Tera, active Tera type, physical/special category selection from boosted Attack vs Special Attack, DB-style tera_type hydration, former baseline direct/spread damage ranges, Foul Play target-Attack damage, and Darkest Lariat defense-stage bypass, alongside terrain, weather, ability, screen, Tera STAB, immunity, item, and spread-sensitive damage cases.'
+      title: 'Damage stack oracle is green for covered mechanics',
+      detail: 'showdown_damage_oracle_tests.js covers Low Kick target-weight base power, isolated Tera Blast parity, former baseline direct/spread damage ranges, Foul Play target-Attack damage, and Darkest Lariat defense-stage bypass, alongside terrain, weather, ability, screen, immunity, item, and spread-sensitive damage cases. Current Champions Reg M-A battle runs gate Tera off by default.'
     },
     {
       status: 'validated',
@@ -9882,8 +10344,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
-      title: 'Tera Blast parity is green',
-      detail: 'v2.1.32 resolves Tera Blast in the engine from battle state: inactive Tera keeps Normal/special behavior, active Tera uses the attacker Tera type, active Tera Blast ignores Normal-conversion abilities such as Pixilate, and active category selects physical only when boosted Attack is greater than boosted Special Attack. The type multiplier audit now expands shipped Tera Blast rows into before-Tera and active-Tera buckets.'
+      title: 'Tera Blast parity is isolated from current Reg M-A',
+      detail: 'v2.1.32 kept Tera Blast parity for explicit ruleset/test contexts. v2.1.83 gates current Champions Reg M-A battles so stale Tera fields and Tera Blast data do not auto-activate Terastallization or create Reg M-A replay logs that teach mechanics not enabled for that ruleset.'
     },
     {
       status: 'validated',
@@ -9950,7 +10412,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: '100% parity still has non-move gates',
-      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Tera Blast dynamic typing/category, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
+      detail: 'The team-load, item timing, ability inventory, typed held-item damage boosts, Champion-gated legacy Tera data, Low Kick target-weight base power, Knock Off removable-item behavior, stat/speed snapshot evidence, target category bridge, stale opposing-target retarget, and shipped move-support slices are covered. Move support is 120 verified / 0 baseline / 0 incomplete. Remaining 100% proof still needs deployed-browser single/Run All/QA artifacts, DB runtime-source promotion or explicit static fallback signoff, source-drift visibility, and deeper long-tail checks for redirection, Protect-family interactions, switching/replacement, status, items, and Champion overrides as sources change.'
     },
     {
       status: 'gap',
@@ -9961,6 +10423,11 @@ var CS_OVERVIEW_DATA = {
       status: 'gap',
       title: 'Source refresh needed must be visible before trust claims',
       detail: 'If Showdown sync hashes or Champion secondary sources change, the site should show an update-needed state until the change is reviewed, tested, and either promoted into generated data or documented as a Champions override.'
+    },
+    {
+      status: 'gap',
+      title: 'Reg M-B source review is now a ruleset migration blocker',
+      detail: 'The June 27 source review now exposes Reg M-B as the active source-review lane while keeping the implemented validator on the historical Reg M-A lane. Victory Road confirms the Reg M-B window, Worlds usage, Mega Evolution support, full Pokemon image sheets, and 16 new Mega names. Next work is source-backed data conversion: explicit species/form rows, Mega stone/item names, stats, abilities, typing, Champion overrides, and refreshed QA artifacts before changing runtime legality.'
     },
     {
       status: 'gap',
@@ -10012,7 +10479,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Verify the next deployed source URL and QA artifact',
-      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, qa_coverage_summary, applied/calculated damage fields, effect_events for HP-changing effects, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, Low Kick/Tera Blast/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
+      detail: 'Use the newest GitHub Pages commit URL, fresh logs, and the QA Artifact export to confirm the build label, source URL query, stable turn-log fields, qa_coverage_summary, applied/calculated damage fields, effect_events for HP-changing effects, no team-load failure, retained-evidence summary, speed_order_details, stat_boosts, legal Champion SP team data, no Champion-format Terastallized lines, Low Kick/Knock Off evidence when present, move-secondary evidence when present, and no live-target no-valid-target skips.'
     },
     {
       status: 'next',
@@ -10075,6 +10542,11 @@ var CS_OVERVIEW_DATA = {
       status: 'decision',
       title: 'Damage oracle source order',
       detail: 'Keep Pokemon Showdown and Smogon calc as baseline oracles, but require explicit source notes and tests for Champions-specific differences.'
+    },
+    {
+      status: 'decision',
+      title: 'Source challenge process',
+      detail: 'Use docs/DATA_SOURCE_REGISTRY.md as the page to challenge stale or weak sources. Showdown proves baseline data and mechanics, Champion regulation sources prove active legality, usage/meta pages inform coaching, and QA artifacts prove what this app actually executed.'
     }
   ],
   flow: [
@@ -10090,6 +10562,7 @@ var CS_OVERVIEW_DATA = {
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
     { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
+    { label: 'Data Source Registry', href: 'docs/DATA_SOURCE_REGISTRY.md' },
     { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
     { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },

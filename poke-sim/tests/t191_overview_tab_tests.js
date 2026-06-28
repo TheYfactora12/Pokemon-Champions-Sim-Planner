@@ -100,7 +100,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Showdown data/moves.ts records Low Kick basePower as 0');
   inc(ui, '100% Champion parity checklist is explicit');
   inc(ui, 'Damage stack oracle is green');
-  inc(ui, 'Tera Blast parity is green');
+  inc(ui, 'Tera Blast parity is isolated from current Reg M-A');
   inc(ui, 'Knock Off source-truth behavior is documented');
   inc(ui, 'Turn-order stack evidence is green');
   inc(ui, 'GitHub issue sweep completed');
