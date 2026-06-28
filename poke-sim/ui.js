@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.7-secondary-table-consolidation';
+    return txt || 'v2.2.8-drain-rule-source-audit';
   } catch (e) {
-    return 'v2.2.7-secondary-table-consolidation';
+    return 'v2.2.8-drain-rule-source-audit';
   }
 }
 
@@ -9984,6 +9984,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B stats/types/abilities source pass',
       detail: 'v2.2.1 source-verifies all 16 Reg M-B new Mega base stats, types, and abilities against Pokemon Showdown pokedex.ts while keeping the rows review-only and blocked from runtime legality until base/form implementation, learnset policy, and positive/negative fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Drain rule source audit',
+      detail: 'v2.2.8 reads generated Pokemon Showdown drain metadata before manual fallbacks, so every locally supported drain move with source data, including Parabolic Charge, emits drain healing and replay evidence from the same rule path.'
     },
     {
       status: 'done',

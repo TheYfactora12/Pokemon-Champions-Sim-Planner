@@ -106,7 +106,8 @@
 // v132-regmb-stone-source-pass [2026-06-27] - Source-verify Reg M-B Mega stone names, review-only.
 // v133-regmb-stats-types-abilities-source-pass [2026-06-27] - Source-verify Reg M-B Mega stats/types/abilities, review-only.
 // v139-secondary-table-consolidation [2026-06-27] - Consolidate simple Showdown secondary effects into one audited table.
-const CACHE_NAME = 'champions-sim-v139-secondary-table-consolidation';
+// v140-drain-rule-source-audit [2026-06-27] - Read generated Showdown drain metadata for all supported drain moves.
+const CACHE_NAME = 'champions-sim-v140-drain-rule-source-audit';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

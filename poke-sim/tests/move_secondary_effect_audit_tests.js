@@ -19,9 +19,9 @@ load('generated/pokemon_showdown_legal_data.js');
 load('generated/pokemon_showdown_species_weights.js');
 load('runtime_data.js');
 load('engine.js');
-vm.runInContext('this.Pokemon = Pokemon; this.Field = Field; this.applySecondary = _applyDamagingMoveSecondary; this.applyStageMap = _applyStageMap; this.simulateBattle = simulateBattle;', ctx);
+vm.runInContext('this.Pokemon = Pokemon; this.Field = Field; this.applySecondary = _applyDamagingMoveSecondary; this.applyStageMap = _applyStageMap; this.simulateBattle = simulateBattle; this.moveDrainRule = _moveDrainRule;', ctx);
 
-const { Pokemon, Field, applySecondary, applyStageMap, simulateBattle } = ctx;
+const { Pokemon, Field, applySecondary, applyStageMap, simulateBattle, moveDrainRule } = ctx;
 let pass = 0;
 let fail = 0;
 
@@ -213,6 +213,30 @@ T('8. local supported secondary table has no uncovered simple Showdown effects',
     })()
   `, ctx);
   eq(gaps.length, 0, 'uncovered simple secondary gaps: ' + JSON.stringify(gaps));
+});
+
+T('9. local supported drain moves use generated Showdown drain rules', () => {
+  const gaps = vm.runInContext(`
+    (function() {
+      var data = ChampionsSim.pokemonDataAudit;
+      var localMoves = Array.from(new Set([].concat(Object.keys(MOVE_CATEGORY || {}), Object.keys(MOVE_BP || {}), Object.keys(MOVE_TARGETS || {})))).sort();
+      function toId(value) { return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+      var gaps = [];
+      for (var i = 0; i < localMoves.length; i++) {
+        var name = localMoves[i];
+        var row = data.moves[toId(name)];
+        if (!row || !row.drain) continue;
+        var rule = _moveDrainRule(name);
+        if (!rule || Number(rule.numerator) !== Number(row.drain[0]) || Number(rule.denominator) !== Number(row.drain[1])) {
+          gaps.push({ name: name, showdown: row.drain, local: rule });
+        }
+      }
+      return gaps;
+    })()
+  `, ctx);
+  eq(gaps.length, 0, 'drain rule gaps: ' + JSON.stringify(gaps));
+  eq(moveDrainRule('Parabolic Charge').numerator, 1, 'Parabolic Charge drain numerator');
+  eq(moveDrainRule('Parabolic Charge').denominator, 2, 'Parabolic Charge drain denominator');
 });
 
 console.log('\nmove secondary effect audit:', pass + ' pass, ' + fail + ' fail\n');

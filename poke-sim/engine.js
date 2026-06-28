@@ -1199,6 +1199,9 @@ var MODELED_DRAIN_BY_ID = {
 };
 
 function _moveDrainRule(move) {
+  var row = _showdownMoveRow(move);
+  var rowRule = _normalizeRecoilRule(row && row.drain);
+  if (rowRule) return rowRule;
   var rule = MODELED_DRAIN_BY_ID[_moveId(move)];
   return rule ? { numerator: rule.numerator, denominator: rule.denominator } : null;
 }
