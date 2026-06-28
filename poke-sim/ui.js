@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.15-live-db-pages-guard';
+    return txt || 'v2.2.16-coach-sequence-why';
   } catch (e) {
-    return 'v2.2.15-live-db-pages-guard';
+    return 'v2.2.16-coach-sequence-why';
   }
 }
 
@@ -4837,6 +4837,77 @@ function csCoachBrainDrill(row) {
   return 'Run focused reps for ' + row.label + ' and compare the next ledger.';
 }
 
+function csCoachBrainTacticalInterpretation(row, strength) {
+  var id = row && row.id;
+  var strengthId = strength && strength.id;
+  var base = {
+    schema_version: 'champions-coach-tactical-interpretation-v1',
+    primary_category: id || null,
+    strength_category: strengthId || null,
+    player_question: 'What changed because of this decision, and what happens if the player does nothing different next time?',
+    evidence_boundary: 'This explains observed sim evidence. It does not claim a universal best move until alternative branches and matchup samples agree.'
+  };
+  if (!row) {
+    base.why_good_windows_worked = 'No repeated positive tactical window is proven yet.';
+    base.why_bad_windows_failed = 'No repeated negative tactical window is proven yet.';
+    base.turn_sequence_rule = 'Collect more retained turn logs before changing team structure.';
+    base.coach_checklist = [
+      'Identify the speed-control state.',
+      'Compare the next one to three turns.',
+      'Only call the decision good if it created pressure, material, preservation, or a safer win condition.'
+    ];
+    base.data_to_watch_next = ['opportunities', 'positive_rate_pct', 'negative', 'neutral'];
+    return base;
+  }
+  if (id === 'player_tailwind') {
+    base.why_good_windows_worked = 'Tailwind worked when the next turns converted speed into pressure: damage, KO threat, forced Protect, safer positioning, or preserved win condition.';
+    base.why_bad_windows_failed = 'Tailwind failed when it spent a turn creating speed but the following turns did not change board pressure enough; opponents could trade damage, Protect, reposition, or let Trick Room blunt the payoff.';
+    base.turn_sequence_rule = 'Before clicking Tailwind, name the two-turn payoff: which Pokemon moves first, which target is pressured, what Protect/switch is forced, and what win condition is preserved.';
+    base.coach_checklist = [
+      'Do not click Tailwind just because it is available.',
+      'Check whether Trick Room is active or likely before committing the speed turn.',
+      'Plan the next two attacks or preservation moves before setting Tailwind.',
+      'Score the window by conversion, not by whether Tailwind was successfully set.'
+    ];
+    base.data_to_watch_next = ['tailwind_converted', 'tailwind_without_pressure', 'tailwind_into_active_trick_room', 'field_effect_expired'];
+    return base;
+  }
+  if (id === 'opponent_tailwind_defense') {
+    base.why_good_windows_worked = 'The defense worked when the opponent gained speed but the player preserved material, denied pressure, reversed tempo, or forced low-value attacks.';
+    base.why_bad_windows_failed = 'The defense failed when the opponent used the speed window to force damage before the player could stabilize.';
+    base.turn_sequence_rule = 'When the opponent sets Tailwind, the next two turns should prioritize survival, Protect timing, priority pressure, switching, or speed reversal over blind trades.';
+    base.coach_checklist = [
+      'Identify the fastest opposing threat under Tailwind.',
+      'Protect or reposition the Pokemon that loses the game if it falls.',
+      'Use priority, Fake Out, switching, or reverse speed control to shorten the opponent payoff.'
+    ];
+    base.data_to_watch_next = ['opponent_tailwind_converted', 'opponent_tailwind_without_pressure', 'speed_control_reversal', 'speed_control_neutralized'];
+    return base;
+  }
+  if (id === 'trick_room') {
+    base.why_good_windows_worked = 'Trick Room worked when the setup turn led into safe slow-attacker pressure or immediate material gain.';
+    base.why_bad_windows_failed = 'Trick Room failed when turns were spent setting the room without a protected attacker, clear target, or enough damage during the inverted-speed window.';
+    base.turn_sequence_rule = 'Before setting Trick Room, confirm the next board has a slow attacker ready, a protected setter or pivot path, and a target that creates material or win-condition pressure.';
+    base.coach_checklist = [
+      'Confirm the slow attacker survives the setup turn.',
+      'Avoid setting Trick Room if the opponent can stall all payoff turns with Protect or switches.',
+      'Use the first two Trick Room turns for material, not passive setup.'
+    ];
+    base.data_to_watch_next = ['trick_room_converted', 'trick_room_failed_to_convert', 'speed_order_reversed', 'tailwind_into_active_trick_room'];
+    return base;
+  }
+  base.why_good_windows_worked = 'Speed-control answers worked when they immediately became pressure, material, or safer board position.';
+  base.why_bad_windows_failed = 'Speed-control answers failed when they stopped the opponent temporarily but did not create a useful follow-up.';
+  base.turn_sequence_rule = 'After answering speed control, spend the next action on the target or switch that converts tempo into a measurable board advantage.';
+  base.coach_checklist = [
+    'Name the opposing speed plan.',
+    'Pick the answer: reverse it, neutralize it, stall it, or attack through it.',
+    'Use the next turn to create pressure instead of resetting passively.'
+  ];
+  base.data_to_watch_next = ['speed_control_reversal', 'speed_control_neutralized', 'tailwind_converted', 'trick_room_converted'];
+  return base;
+}
+
 function csBuildCoachBrainSummary(ledger, opts) {
   var options = opts || {};
   var categories = Array.isArray(ledger && ledger.categories) ? ledger.categories : [];
@@ -4889,6 +4960,7 @@ function csBuildCoachBrainSummary(ledger, opts) {
     next_game_plan: csCoachBrainNextPlan(issue),
     expected_result_if_fixed: csCoachBrainExpectedResult(issue),
     practice_drill: csCoachBrainDrill(issue),
+    tactical_interpretation: csCoachBrainTacticalInterpretation(issue, strength),
     learning_direction: {
       next_layer: 'coach_memory',
       purpose: 'Compare this summary against future sessions and broader shared sim evidence before recommending move, lineup, or team changes.',
@@ -7932,6 +8004,8 @@ function csBuildCodexQaContext(args) {
   var tactical = args.tactical_sweep || {};
   var retained = args.retained || {};
   var replayCards = Array.isArray(retained.replay_cards) ? retained.replay_cards : [];
+  var coachBrain = coverage.coach_brain_summary || {};
+  var coachInterp = coachBrain.tactical_interpretation || {};
   var moveTraceRows = Number(mechanics.move_rule_trace_rows || 0);
   var damageEvents = Number(mechanics.damage_events || 0);
   var effectEvents = Number(mechanics.effect_events || 0);
@@ -7944,7 +8018,7 @@ function csBuildCodexQaContext(args) {
         : (!moveTraceRows
             ? 'Run targeted damage QA so move_rule_trace rows are exported for damage math review.'
             : (qaRunType === 'tactical_sweep'
-                ? 'Artifact is Codex-ready; inspect branch_move_analysis for the next tactical coaching implementation target.'
+                ? 'Artifact is Codex-ready; inspect qa_coverage_summary.coach_brain_summary.tactical_interpretation first, then branch_move_analysis for the next tactical coaching implementation target.'
                 : 'Run Tactical Sweep + QA to add branch learning coverage across lineups, moves, and targets.')));
   var readiness = [];
   function addReadiness(id, label, status, detail) {
@@ -8025,9 +8099,22 @@ function csBuildCodexQaContext(args) {
       tactical_sweep_total_executed_runs: Number(tactical && tactical.total_executed_runs || 0),
       branch_analysis_rows: Number(branchTotals.rows || branchTotals.total_rows || 0)
     },
+    coach_focus: {
+      confidence: coachBrain.confidence || null,
+      primary_issue: coachBrain.primary_issue && coachBrain.primary_issue.category || null,
+      observed_pattern: coachBrain.observed_pattern || null,
+      root_problem: coachBrain.root_problem || null,
+      recommended_solution: coachBrain.recommended_solution || null,
+      practice_drill: coachBrain.practice_drill || null,
+      tactical_interpretation_schema: coachInterp.schema_version || null,
+      tactical_player_question: coachInterp.player_question || null,
+      tactical_turn_rule: coachInterp.turn_sequence_rule || null,
+      tactical_watch_next: Array.isArray(coachInterp.data_to_watch_next) ? coachInterp.data_to_watch_next.slice(0, 8) : []
+    },
     recommended_codex_prompt: [
-      'Use this QA artifact as evidence. First inspect codex_context.qa_readiness and qa_coverage_summary.mechanics_seen.',
+      'Use this QA artifact as evidence. First inspect codex_context.qa_readiness, codex_context.coach_focus, and qa_coverage_summary.mechanics_seen.',
       'If a mechanic is yellow/red, locate the retained replay card or tactical_sweep run with the missing/weak evidence before changing engine code.',
+      'For coaching work, start from codex_context.coach_focus and qa_coverage_summary.coach_brain_summary.tactical_interpretation before writing new advice.',
       'For damage issues, inspect turnLog[].damage_events[].move_rule_trace before editing calcDamage.',
       'Keep fixes source-truth aligned with Pokemon Showdown/Champion rules and add or update targeted QA proof when closing a mechanic gap.'
     ].join(' '),
@@ -10354,6 +10441,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Pages deploy now gates live DB team parity',
       detail: 'v2.2.15 makes GitHub Pages run live Supabase seed parity when anon secrets are available, so bundled teams, generated SQL, and live DB team IDs must stay aligned before publish. The follow-up CI repair also refreshed the generated QA baseline snapshot, documenting the broader upgrade rule: approved data changes must update runtime data, seed SQL, live DB, generated reports, bundle, Overview, and QA artifacts together.'
+    },
+    {
+      status: 'done',
+      title: 'Coach brain now explains speed-control sequence quality',
+      detail: 'v2.2.16 adds a structured tactical_interpretation block to coach_brain_summary and renders it in the Strategy Priority Board when available. Tactical Sweep QA can now explain why Tailwind, Trick Room, or speed-control answers worked or failed, what the player should check before clicking the setup move, what sequence to practice, and which counters should improve next. If full coach brain data is absent, the board falls back to conservative branch timing signals.'
     },
     {
       status: 'done',
@@ -14145,6 +14237,60 @@ function csRenderTeamEvidenceDashboard(teamKey, history, branchAnalysis, report)
   return html;
 }
 
+function csCoachSequenceWhyFromBranch(branchAnalysis) {
+  var tactic = branchAnalysis && Array.isArray(branchAnalysis.tactical_signals) ? branchAnalysis.tactical_signals[0] : null;
+  if (!tactic) return null;
+  var tag = tactic.tactic_tag || 'tactical timing';
+  var delta = Number(tactic.avg_position_delta || 0);
+  var positive = delta >= 0.2 || Number(tactic.win_rate_pct || 0) >= 60;
+  var negative = delta <= -0.2 || Number(tactic.win_rate_pct || 0) <= 35;
+  return {
+    schema_version: 'champions-coach-tactical-interpretation-v1',
+    primary_category: 'branch_tactical_timing',
+    strength_category: positive ? 'branch_tactical_timing' : null,
+    player_question: 'What changed after this timing choice in the branch matrix?',
+    why_good_windows_worked: positive
+      ? tag + ' tended to create pressure or position gain in this matchup branch.'
+      : 'No strong positive timing window is proven from the top branch signal yet.',
+    why_bad_windows_failed: negative
+      ? tag + ' tended to lose position or fail to convert in this matchup branch.'
+      : 'No strong negative timing window is proven from the top branch signal yet.',
+    turn_sequence_rule: 'Use the branch timing signal as a test target: repeat the same lead and opposing lead, then compare attacking, protecting, switching, or delaying the timing move.',
+    coach_checklist: [
+      'Keep the same lead pair and opposing lead when retesting this timing read.',
+      'Compare the branch against an attack, Protect, switch, or delayed setup option.',
+      'Promote the advice only when repeat samples keep the same direction.'
+    ],
+    data_to_watch_next: [tag, 'win_rate_pct', 'avg_position_delta', 'confidence'],
+    evidence_boundary: 'Derived from branch_move_analysis.tactical_signals, not a full coach brain ledger.'
+  };
+}
+
+function csRenderCoachSequenceWhy(report, branchAnalysis) {
+  var brain = report && report.coach_brain_summary ? report.coach_brain_summary : null;
+  var interp = brain && brain.tactical_interpretation ? brain.tactical_interpretation : csCoachSequenceWhyFromBranch(branchAnalysis);
+  if (!interp) return '';
+  var checklist = Array.isArray(interp.coach_checklist) ? interp.coach_checklist : [];
+  var watch = Array.isArray(interp.data_to_watch_next) ? interp.data_to_watch_next : [];
+  var html = '';
+  html += '<div class="cs-coach-sequence-why">';
+  html += '<h4 class="cs-h4">Coach sequence why</h4>';
+  html += '<p><strong>Player question:</strong> ' + _csEsc(interp.player_question || 'What changed because of this decision?') + '</p>';
+  html += '<p><strong>Why good windows worked:</strong> ' + _csEsc(interp.why_good_windows_worked || '-') + '</p>';
+  html += '<p><strong>Why bad windows failed:</strong> ' + _csEsc(interp.why_bad_windows_failed || '-') + '</p>';
+  html += '<p><strong>Turn rule:</strong> ' + _csEsc(interp.turn_sequence_rule || '-') + '</p>';
+  if (checklist.length) {
+    html += '<ul class="cs-list cs-coach-checklist">';
+    checklist.slice(0, 4).forEach(function(item) { html += '<li>' + _csEsc(item) + '</li>'; });
+    html += '</ul>';
+  }
+  if (watch.length) {
+    html += '<p class="cs-explain"><strong>Watch next:</strong> ' + _csEsc(watch.slice(0, 6).join(', ')) + '</p>';
+  }
+  html += '</div>';
+  return html;
+}
+
 function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis, report) {
   history = history || null;
   branchAnalysis = branchAnalysis || null;
@@ -14181,6 +14327,7 @@ function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis, report)
   html += '<h3 class="cs-h3">Strategy Priority Board</h3>';
   html += csRenderTeamEvidenceDashboard(teamKey, history, branchAnalysis, report);
   html += '<p class="cs-summary-line"><strong>Coach call:</strong> ' + _csEsc(primaryCall) + '</p>';
+  html += csRenderCoachSequenceWhy(report, branchAnalysis);
   html += '<div class="cs-detector-table">';
   html += '<div class="cs-detector-row cs-detector-head"><span>Priority</span><span>Evidence</span><span>Player action</span><span>Trust</span></div>';
 

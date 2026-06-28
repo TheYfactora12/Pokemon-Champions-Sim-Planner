@@ -198,6 +198,30 @@ T('8. strategy priority board puts player action before evidence rollup', () => 
   truthy(/Next test/.test(html), 'missing next test');
 });
 
+T('8b. strategy priority board renders coach sequence why when coach brain exists', () => {
+  const html = ctx.csRenderStrategyPriorityBoard('player', {
+    record_total: { n: 20, w: 10, l: 10, win_rate: 0.5 },
+    team_confidence_v2: { tier: 'high' }
+  }, null, {
+    coach_brain_summary: {
+      tactical_interpretation: {
+        schema_version: 'champions-coach-tactical-interpretation-v1',
+        player_question: 'What changed because of this decision?',
+        why_good_windows_worked: 'Tailwind worked when the next turns converted speed into pressure.',
+        why_bad_windows_failed: 'Tailwind failed when it spent a turn creating speed without pressure.',
+        turn_sequence_rule: 'Name the two-turn payoff before clicking Tailwind.',
+        coach_checklist: ['Do not click Tailwind just because it is available.', 'Plan the next two attacks.'],
+        data_to_watch_next: ['tailwind_converted', 'tailwind_without_pressure']
+      }
+    }
+  });
+  truthy(/Coach sequence why/.test(html), 'missing coach sequence section');
+  truthy(/What changed because of this decision/.test(html), 'missing player question');
+  truthy(/creating speed without pressure/.test(html), 'missing failure explanation');
+  truthy(/Do not click Tailwind/.test(html), 'missing coach checklist');
+  truthy(/tailwind_converted/.test(html), 'missing watch-next counters');
+});
+
 T('9. analyzes tactical timing tags beside move lines', () => {
   const out = ctx.csAnalyzeBranchCoverageRows([
     row('tactic-bad', 'loss', 8, 'Protect', 'Flare Blitz', 'mega_altaria', {
@@ -222,6 +246,8 @@ T('9. analyzes tactical timing tags beside move lines', () => {
   }, out);
   truthy(/Tactical timing/.test(html), 'strategy board missing tactical timing table');
   truthy(/player_protect_t1/.test(html), 'strategy board missing tactical tag');
+  truthy(/Coach sequence why/.test(html), 'strategy board missing branch-derived coach sequence');
+  truthy(/branch matrix/.test(html), 'branch-derived sequence should explain its evidence source');
 });
 
 console.log(`\nbranch move analysis tests: ${pass} pass, ${fail} fail\n`);
