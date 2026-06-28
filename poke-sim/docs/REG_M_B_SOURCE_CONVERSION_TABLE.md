@@ -231,3 +231,42 @@ Gate movement after this pass:
 | itemSourceUrl | blocked, missing URL | source-verified review-only |
 
 Promotion remains blocked. Current gate count: `2` source-verified review-only fields, `12` blocked fields, `0` promoted fields.
+
+## Mega stats, typing, and ability source pass - v2.2.1
+
+Source checked: Pokemon Showdown `data/pokedex.ts` on June 27, 2026.
+Source URL: https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/pokedex.ts
+
+The following Mega form implementation facts are source-verified for review, but they are not runtime-promoted. They must not enter legal selectors, ranking, DB learning, or trusted coaching until base/form implementation, learnset policy, and positive/negative fixtures pass.
+
+| Mega form | Types | Ability | Base stats HP/Atk/Def/SpA/SpD/Spe | Runtime policy |
+| --- | --- | --- | --- | --- |
+| Raichu-Mega-X | Electric | Electric Surge | 60/135/95/90/95/110 | review-only |
+| Raichu-Mega-Y | Electric | No Guard | 60/100/55/160/80/130 | review-only |
+| Sceptile-Mega | Grass / Dragon | Lightning Rod | 70/110/75/145/85/145 | review-only |
+| Blaziken-Mega | Fire / Fighting | Speed Boost | 80/160/80/130/80/100 | review-only |
+| Swampert-Mega | Water / Ground | Swift Swim | 100/150/110/95/110/70 | review-only |
+| Mawile-Mega | Steel / Fairy | Huge Power | 50/105/125/55/95/50 | review-only |
+| Metagross-Mega | Steel / Psychic | Tough Claws | 80/145/150/105/110/110 | review-only |
+| Staraptor-Mega | Fighting / Flying | Contrary | 85/140/100/60/90/110 | review-only |
+| Scolipede-Mega | Bug / Poison | Shell Armor | 60/140/149/75/99/62 | review-only |
+| Scrafty-Mega | Dark / Fighting | Intimidate | 65/130/135/55/135/68 | review-only |
+| Eelektross-Mega | Electric | Eelevate | 85/145/80/135/90/80 | review-only |
+| Pyroar-Mega | Fire / Normal | Fire Mane | 86/88/92/129/86/126 | review-only |
+| Malamar-Mega | Dark / Psychic | Contrary | 86/102/88/98/120/88 | review-only |
+| Barbaracle-Mega | Rock / Fighting | Tough Claws | 72/140/130/64/106/88 | review-only |
+| Dragalge-Mega | Poison / Dragon | Regenerator | 65/85/105/132/163/44 | review-only |
+| Falinks-Mega | Fighting | Defiant | 65/135/135/70/65/100 | review-only |
+
+Gate movement after this pass:
+
+| Field | Previous status | New status |
+| --- | --- | --- |
+| megaBaseStats | blocked, missing stats source | source-verified review-only |
+| statsSourceUrl | blocked, missing URL | source-verified review-only |
+| types | blocked, missing form type source | source-verified review-only |
+| typeSourceUrl | blocked, missing URL | source-verified review-only |
+| ability | blocked, missing form ability source | source-verified review-only |
+| abilitySourceUrl | blocked, missing URL | source-verified review-only |
+
+Promotion remains blocked. Current gate count: `8` source-verified review-only fields, `6` blocked fields, `0` promoted fields.

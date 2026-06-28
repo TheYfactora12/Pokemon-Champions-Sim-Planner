@@ -104,7 +104,8 @@
 // v130-gif-primary-sprite-audit [2026-06-27] - Prefer Showdown animated GIFs across standard Pokemon sprite rendering.
 // v131-regmb-promotion-gate [2026-06-27] - Surface Reg M-B promotion checklist and data-trust gate.
 // v132-regmb-stone-source-pass [2026-06-27] - Source-verify Reg M-B Mega stone names, review-only.
-const CACHE_NAME = 'champions-sim-v132-regmb-stone-source-pass';
+// v133-regmb-stats-types-abilities-source-pass [2026-06-27] - Source-verify Reg M-B Mega stats/types/abilities, review-only.
+const CACHE_NAME = 'champions-sim-v133-regmb-stats-types-abilities-source-pass';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

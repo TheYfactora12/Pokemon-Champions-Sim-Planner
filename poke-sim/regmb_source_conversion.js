@@ -95,14 +95,14 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     { field: 'baseSpecies', status: 'visual_reviewed_not_runtime_promoted', source: 'Victory Road allowed Pokemon sheets', blocksRuntime: true },
     { field: 'megaForm', status: 'name_verified_not_implemented', source: 'Victory Road NewMegasRMB.png', blocksRuntime: true },
     { field: 'megaStone', status: 'source_verified_review_only', source: 'Pokemon Showdown items.ts', blocksRuntime: false },
-    { field: 'megaBaseStats', status: 'blocked_missing_stats_source', source: 'not yet sourced', blocksRuntime: true },
-    { field: 'types', status: 'blocked_missing_form_type_source', source: 'not yet sourced', blocksRuntime: true },
-    { field: 'ability', status: 'blocked_missing_form_ability_source', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'megaBaseStats', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
+    { field: 'types', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
+    { field: 'ability', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
     { field: 'spriteFallback', status: 'visual_reviewed_gif_primary', source: 'Pokemon Showdown sprite CDN', blocksRuntime: true },
     { field: 'itemSourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown items.ts', blocksRuntime: false },
-    { field: 'statsSourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
-    { field: 'abilitySourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
-    { field: 'typeSourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'statsSourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
+    { field: 'abilitySourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
+    { field: 'typeSourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
     { field: 'learnsetPolicy', status: 'blocked_missing_policy_review', source: 'not yet sourced', blocksRuntime: true },
     { field: 'positiveFixture', status: 'blocked_missing_accepted_fixture', source: 'not yet implemented', blocksRuntime: true },
     { field: 'negativeFixture', status: 'blocked_missing_rejected_fixture', source: 'not yet implemented', blocksRuntime: true }
@@ -113,13 +113,12 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     additionRowsTotal: 22,
     newMegaRowsTotal: 16,
     fieldChecklistTotal: 14,
-    fieldsReadyForRuntime: 2,
-    fieldsBlockedForRuntime: 12,
+    fieldsReadyForRuntime: 8,
+    fieldsBlockedForRuntime: 6,
     selectorPolicy: 'hidden_from_legal_sim',
     learningPolicy: 'do_not_train_or_rank',
     coachingPolicy: 'do_not_recommend_as_trusted_reg_m_b',
     nextHumanActions: [
-      'source Mega stats, typing, and abilities from approved sources',
       'define learnset inheritance policy for every new Mega form',
       'add accepted and rejected legality fixtures before selector promotion',
       'rerun Reg M-A regression fixtures before changing active runtime legality'
@@ -151,6 +150,34 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     row.learningEligible = false;
     row.poisoningGuard = 'review_only_do_not_train_or_rank';
     row.promotionPolicy = 'item name can inform review UI, but runtime legality remains blocked until stats, typing, abilities, learnset policy, and positive/negative fixtures are reviewed';
+    return row;
+  }),
+  megaImplementationRows: [
+    { baseSpecies: 'Raichu', megaForm: 'Raichu-Mega-X', requiredItem: 'Raichunite X', types: ["Electric"], baseStats: {"hp":60,"atk":135,"def":95,"spa":90,"spd":95,"spe":110}, ability: 'Electric Surge' },
+    { baseSpecies: 'Raichu', megaForm: 'Raichu-Mega-Y', requiredItem: 'Raichunite Y', types: ["Electric"], baseStats: {"hp":60,"atk":100,"def":55,"spa":160,"spd":80,"spe":130}, ability: 'No Guard' },
+    { baseSpecies: 'Sceptile', megaForm: 'Sceptile-Mega', requiredItem: 'Sceptilite', types: ["Grass","Dragon"], baseStats: {"hp":70,"atk":110,"def":75,"spa":145,"spd":85,"spe":145}, ability: 'Lightning Rod' },
+    { baseSpecies: 'Blaziken', megaForm: 'Blaziken-Mega', requiredItem: 'Blazikenite', types: ["Fire","Fighting"], baseStats: {"hp":80,"atk":160,"def":80,"spa":130,"spd":80,"spe":100}, ability: 'Speed Boost' },
+    { baseSpecies: 'Swampert', megaForm: 'Swampert-Mega', requiredItem: 'Swampertite', types: ["Water","Ground"], baseStats: {"hp":100,"atk":150,"def":110,"spa":95,"spd":110,"spe":70}, ability: 'Swift Swim' },
+    { baseSpecies: 'Mawile', megaForm: 'Mawile-Mega', requiredItem: 'Mawilite', types: ["Steel","Fairy"], baseStats: {"hp":50,"atk":105,"def":125,"spa":55,"spd":95,"spe":50}, ability: 'Huge Power' },
+    { baseSpecies: 'Metagross', megaForm: 'Metagross-Mega', requiredItem: 'Metagrossite', types: ["Steel","Psychic"], baseStats: {"hp":80,"atk":145,"def":150,"spa":105,"spd":110,"spe":110}, ability: 'Tough Claws' },
+    { baseSpecies: 'Staraptor', megaForm: 'Staraptor-Mega', requiredItem: 'Staraptite', types: ["Fighting","Flying"], baseStats: {"hp":85,"atk":140,"def":100,"spa":60,"spd":90,"spe":110}, ability: 'Contrary' },
+    { baseSpecies: 'Scolipede', megaForm: 'Scolipede-Mega', requiredItem: 'Scolipite', types: ["Bug","Poison"], baseStats: {"hp":60,"atk":140,"def":149,"spa":75,"spd":99,"spe":62}, ability: 'Shell Armor' },
+    { baseSpecies: 'Scrafty', megaForm: 'Scrafty-Mega', requiredItem: 'Scraftinite', types: ["Dark","Fighting"], baseStats: {"hp":65,"atk":130,"def":135,"spa":55,"spd":135,"spe":68}, ability: 'Intimidate' },
+    { baseSpecies: 'Eelektross', megaForm: 'Eelektross-Mega', requiredItem: 'Eelektrossite', types: ["Electric"], baseStats: {"hp":85,"atk":145,"def":80,"spa":135,"spd":90,"spe":80}, ability: 'Eelevate' },
+    { baseSpecies: 'Pyroar', megaForm: 'Pyroar-Mega', requiredItem: 'Pyroarite', types: ["Fire","Normal"], baseStats: {"hp":86,"atk":88,"def":92,"spa":129,"spd":86,"spe":126}, ability: 'Fire Mane' },
+    { baseSpecies: 'Malamar', megaForm: 'Malamar-Mega', requiredItem: 'Malamarite', types: ["Dark","Psychic"], baseStats: {"hp":86,"atk":102,"def":88,"spa":98,"spd":120,"spe":88}, ability: 'Contrary' },
+    { baseSpecies: 'Barbaracle', megaForm: 'Barbaracle-Mega', requiredItem: 'Barbaracite', types: ["Rock","Fighting"], baseStats: {"hp":72,"atk":140,"def":130,"spa":64,"spd":106,"spe":88}, ability: 'Tough Claws' },
+    { baseSpecies: 'Dragalge', megaForm: 'Dragalge-Mega', requiredItem: 'Dragalgite', types: ["Poison","Dragon"], baseStats: {"hp":65,"atk":85,"def":105,"spa":132,"spd":163,"spe":44}, ability: 'Regenerator' },
+    { baseSpecies: 'Falinks', megaForm: 'Falinks-Mega', requiredItem: 'Falinksite', types: ["Fighting"], baseStats: {"hp":65,"atk":135,"def":135,"spa":70,"spd":65,"spe":100}, ability: 'Defiant' }
+  ].map(function(row) {
+    row.rulesetId = 'champions_reg_m_b_doubles_bo3_source_review';
+    row.sourceName = 'Pokemon Showdown pokedex.ts';
+    row.sourceUrl = 'https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/pokedex.ts';
+    row.reviewStatus = 'stats_types_ability_source_verified_review_only';
+    row.runtimePromotable = false;
+    row.learningEligible = false;
+    row.poisoningGuard = 'review_only_do_not_train_or_rank';
+    row.promotionPolicy = 'stats/types/ability can inform review UI, but runtime legality remains blocked until base/form implementation, learnset policy, and positive/negative fixtures are reviewed';
     return row;
   }),
   newMegaRows: [
@@ -3100,8 +3127,8 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
   ],
   promotionStatusBuckets: [
     { id: 'visual_reviewed', label: 'Visual reviewed', count: 235, runtimePromotable: false },
-    { id: 'data_incomplete', label: 'Data incomplete', count: 12, runtimePromotable: false },
-    { id: 'ready_for_runtime_review', label: 'Ready for runtime review', count: 2, runtimePromotable: false },
+    { id: 'data_incomplete', label: 'Data incomplete', count: 6, runtimePromotable: false },
+    { id: 'ready_for_runtime_review', label: 'Ready for runtime review', count: 8, runtimePromotable: false },
     { id: 'promoted', label: 'Promoted', count: 0, runtimePromotable: false }
   ],
   promotionGates: [

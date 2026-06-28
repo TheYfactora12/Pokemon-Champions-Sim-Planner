@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.0-regmb-stone-source-pass';
+    return txt || 'v2.2.1-regmb-stats-types-abilities-source-pass';
   } catch (e) {
-    return 'v2.2.0-regmb-stone-source-pass';
+    return 'v2.2.1-regmb-stats-types-abilities-source-pass';
   }
 }
 
@@ -9979,6 +9979,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B stone source pass',
       detail: 'v2.2.0 source-verifies all 16 Reg M-B new Mega stone item names against Pokemon Showdown items.ts while keeping the rows review-only and blocked from runtime legality, ranking, DB learning, and trusted coaching until the remaining source fields and fixtures are complete.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B stats/types/abilities source pass',
+      detail: 'v2.2.1 source-verifies all 16 Reg M-B new Mega base stats, types, and abilities against Pokemon Showdown pokedex.ts while keeping the rows review-only and blocked from runtime legality until base/form implementation, learnset policy, and positive/negative fixtures are reviewed.'
     },
     {
       status: 'done',
