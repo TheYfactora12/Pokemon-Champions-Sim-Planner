@@ -101,6 +101,9 @@ T('3. standard stat-drop secondaries use the correct target stat', () => {
   forceSecondary('Moonblast', 'Snorlax', (_attacker, target) => eq(target.statBoosts.spa, -1, 'Moonblast SpA drop'));
   forceSecondary('Play Rough', 'Snorlax', (_attacker, target) => eq(target.statBoosts.atk, -1, 'Play Rough Attack drop'));
   forceSecondary('Night Daze', 'Snorlax', (_attacker, target) => eq(target.statBoosts.acc, -1, 'Night Daze accuracy drop'));
+  forceSecondary('Rock Tomb', 'Snorlax', (_attacker, target) => eq(target.statBoosts.spe, -1, 'Rock Tomb Speed drop'));
+  forceSecondary('Snarl', 'Snorlax', (_attacker, target) => eq(target.statBoosts.spa, -1, 'Snarl SpA drop'));
+  forceSecondary('Breaking Swipe', 'Snorlax', (_attacker, target) => eq(target.statBoosts.atk, -1, 'Breaking Swipe Attack drop'));
 });
 
 T('4. guaranteed self secondary boosts apply to the user', () => {
@@ -148,6 +151,68 @@ T('7. Sparkling Aria cures burn after a successful damaging hit', () => {
   const battle = simulateBattle(player, opp, { format: 'singles', seed: [0, 0, 0, 0], maxTurns: 1 });
   truthy(battle.log.some((line) => String(line).includes("Snorlax's burn was healed by Primarina's Sparkling Aria!")),
     'Sparkling Aria burn-cure log missing');
+});
+
+T('8. local supported secondary table has no uncovered simple Showdown effects', () => {
+  const gaps = vm.runInContext(`
+    (function() {
+      var data = ChampionsSim.pokemonDataAudit;
+      var localMoves = Array.from(new Set([].concat(Object.keys(MOVE_CATEGORY || {}), Object.keys(MOVE_BP || {}), Object.keys(MOVE_TARGETS || {})))).sort();
+      function toId(value) { return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+      function normStatus(s) { return s === 'brn' ? 'burn' : s === 'frz' ? 'frozen' : s === 'par' ? 'paralysis' : s === 'psn' ? 'poison' : s || ''; }
+      function normBoosts(boosts) {
+        if (!boosts) return null;
+        var out = {};
+        Object.keys(boosts).sort().forEach(function(stat) {
+          out[stat === 'accuracy' ? 'acc' : stat] = boosts[stat];
+        });
+        return out;
+      }
+      var ignoredVolatiles = { flinch: true };
+      var complexCovered = {
+        psychicnoise: true,
+        sparklingaria: true,
+        spiritshackle: true,
+        burningjealousy: true,
+        direclaw: true,
+        matchagotcha: true
+      };
+      var gaps = [];
+      function same(a, b) { return JSON.stringify(a || null) === JSON.stringify(b || null); }
+      function addEffect(row, sec, effects) {
+        if (!sec) return;
+        effects.push({
+          status: normStatus(sec.status || ''),
+          volatileStatus: sec.volatileStatus || '',
+          boosts: normBoosts(sec.boosts || null),
+          selfBoosts: normBoosts(sec.self && sec.self.boosts || null)
+        });
+      }
+      for (var i = 0; i < localMoves.length; i++) {
+        var name = localMoves[i];
+        var id = toId(name);
+        var row = data.moves[id];
+        if (!row || complexCovered[id]) continue;
+        var local = SECONDARY_EFFECTS[name] || null;
+        var effects = [];
+        addEffect(row, row.secondary, effects);
+        if (Array.isArray(row.secondaries)) row.secondaries.forEach(function(sec) { addEffect(row, sec, effects); });
+        for (var j = 0; j < effects.length; j++) {
+          var eff = effects[j];
+          if (eff.volatileStatus && ignoredVolatiles[eff.volatileStatus]) continue;
+          if (!eff.status && !eff.volatileStatus && !eff.boosts && !eff.selfBoosts) continue;
+          var covered = false;
+          if (eff.status && local && local.status === eff.status) covered = true;
+          if (eff.volatileStatus && local && local.volatile === eff.volatileStatus) covered = true;
+          if (eff.boosts && local && same(local.targetStages, eff.boosts)) covered = true;
+          if (eff.selfBoosts && local && same(local.selfStages, eff.selfBoosts)) covered = true;
+          if (!covered) gaps.push({ name: name, effect: eff, local: local });
+        }
+      }
+      return gaps;
+    })()
+  `, ctx);
+  eq(gaps.length, 0, 'uncovered simple secondary gaps: ' + JSON.stringify(gaps));
 });
 
 console.log('\nmove secondary effect audit:', pass + ' pass, ' + fail + ' fail\n');

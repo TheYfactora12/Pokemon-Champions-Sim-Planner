@@ -315,7 +315,9 @@ var SHEER_FORCE_MOVES = new Set([
 ]);
 
 var SECONDARY_EFFECTS = {
+  'Breaking Swipe':   { chance: 1.00, targetStages: { atk: -1 } },
   'Blizzard':         { chance: 0.10, status: 'frozen' },
+  'Bulldoze':         { chance: 1.00, targetStages: { spe: -1 } },
   'Burning Jealousy': { chance: 1.00, conditionalStatus: 'burn', condition: 'targetStatsRaisedThisTurn' },
   'Crunch':           { chance: 0.20, targetStages: { def: -1 } },
   'Diamond Storm':    { chance: 0.50, selfStages: { def: 2 } },
@@ -335,21 +337,26 @@ var SECONDARY_EFFECTS = {
   'Ice Beam':         { chance: 0.10, status: 'frozen' },
   'Ice Fang':         { chance: 0.10, status: 'frozen' },
   'Ice Punch':        { chance: 0.10, status: 'frozen' },
+  'Icy Wind':         { chance: 1.00, targetStages: { spe: -1 } },
   'Infernal Parade':  { chance: 0.30, status: 'burn' },
   'Lava Plume':       { chance: 0.30, status: 'burn' },
   'Liquidation':      { chance: 0.20, targetStages: { def: -1 } },
+  'Lunge':            { chance: 1.00, targetStages: { atk: -1 } },
   'Moonblast':        { chance: 0.30, targetStages: { spa: -1 } },
+  'Muddy Water':      { chance: 0.30, targetStages: { acc: -1 } },
   'Mystical Fire':    { chance: 1.00, targetStages: { spa: -1 } },
   'Night Daze':       { chance: 0.40, targetStages: { acc: -1 } },
   'Play Rough':       { chance: 0.10, targetStages: { atk: -1 } },
   'Poison Jab':       { chance: 0.30, status: 'poison' },
   'Psychic':          { chance: 0.10, targetStages: { spd: -1 } },
   'Psyshield Bash':   { chance: 1.00, selfStages: { def: 1 } },
+  'Rock Tomb':        { chance: 1.00, targetStages: { spe: -1 } },
   'Scald':            { chance: 0.30, status: 'burn' },
   'Scorching Sands':  { chance: 0.30, status: 'burn' },
   'Shadow Ball':      { chance: 0.20, targetStages: { spd: -1 } },
   'Sludge Bomb':      { chance: 0.30, status: 'poison' },
   'Sludge Wave':      { chance: 0.10, status: 'poison' },
+  'Snarl':            { chance: 1.00, targetStages: { spa: -1 } },
   'Spirit Shackle':   { chance: 1.00, volatile: 'trapped' },
   'Throat Chop':      { chance: 1.00, volatile: 'throatChop' },
   'Thunder':          { chance: 0.30, status: 'paralysis' },
@@ -5185,7 +5192,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
 
     const applySpreadMod = isSpread && isDoubles && targets.length > 1;
-    const SPEED_DROP_MOVES = new Set(['Icy Wind', 'Electroweb', 'Bulldoze', 'Rock Tomb']);
 
     // Miss check — single roll for whole move (VGC spread behavior)
     const ACC_MAP = { 'Focus Blast':0.70, 'Hydro Pump':0.80, 'Blizzard':0.70,
@@ -5365,17 +5371,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         applyDamage(attacker, move, t, dmg, field, log, rng);
         resolution.didDamage = true;
         const _suppressSecondary = attacker.ability === 'Sheer Force' && SHEER_FORCE_MOVES.has(move);
-        if (!_suppressSecondary && SPEED_DROP_MOVES.has(move)) {
-          _applyTargetStageMap(attacker, t, { spe: -1 }, log);
-        }
-        if (!_suppressSecondary && move === 'Snarl' && t.alive && !_hadSubstitute) _applyTargetStageMap(attacker, t, { spa: -1 }, log);
-        if (!_suppressSecondary && move === 'Lunge' && t.alive && !_hadSubstitute) _applyTargetStageMap(attacker, t, { atk: -1 }, log);
         if (!_suppressSecondary && move === 'Psychic Noise' && t.alive) {
           t.healBlockedTurns = Math.max(t.healBlockedTurns || 0, 2);
           log.push(`${t.name} can no longer recover HP because of Psychic Noise!`);
-        }
-        if (!_suppressSecondary && move === 'Muddy Water' && rng() < 0.30) {
-          _applyTargetStageMap(attacker, t, { acc: -1 }, log);
         }
         if (!_suppressSecondary && !_hadSubstitute) {
           _applyDamagingMoveSecondary(attacker, move, t, field, log, rng);

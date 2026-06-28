@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.6-complex-secondary-state';
+    return txt || 'v2.2.7-secondary-table-consolidation';
   } catch (e) {
-    return 'v2.2.6-complex-secondary-state';
+    return 'v2.2.7-secondary-table-consolidation';
   }
 }
 
@@ -9984,6 +9984,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B stats/types/abilities source pass',
       detail: 'v2.2.1 source-verifies all 16 Reg M-B new Mega base stats, types, and abilities against Pokemon Showdown pokedex.ts while keeping the rows review-only and blocked from runtime legality until base/form implementation, learnset policy, and positive/negative fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Secondary table consolidation',
+      detail: 'v2.2.7 consolidates remaining simple damaging secondaries into the source-audited SECONDARY_EFFECTS table, including Breaking Swipe, Bulldoze, Icy Wind, Rock Tomb, Snarl, Lunge, and Muddy Water, and adds an audit guard for uncovered simple Showdown secondary effects.'
     },
     {
       status: 'done',
