@@ -316,7 +316,9 @@ var SHEER_FORCE_MOVES = new Set([
 
 var SECONDARY_EFFECTS = {
   'Blizzard':         { chance: 0.10, status: 'frozen' },
+  'Burning Jealousy': { chance: 1.00, conditionalStatus: 'burn', condition: 'targetStatsRaisedThisTurn' },
   'Crunch':           { chance: 0.20, targetStages: { def: -1 } },
+  'Diamond Storm':    { chance: 0.50, selfStages: { def: 2 } },
   'Earth Power':      { chance: 0.10, targetStages: { spd: -1 } },
   'Energy Ball':      { chance: 0.10, targetStages: { spd: -1 } },
   'Discharge':        { chance: 0.30, status: 'paralysis' },
@@ -348,6 +350,7 @@ var SECONDARY_EFFECTS = {
   'Shadow Ball':      { chance: 0.20, targetStages: { spd: -1 } },
   'Sludge Bomb':      { chance: 0.30, status: 'poison' },
   'Sludge Wave':      { chance: 0.10, status: 'poison' },
+  'Spirit Shackle':   { chance: 1.00, volatile: 'trapped' },
   'Throat Chop':      { chance: 1.00, volatile: 'throatChop' },
   'Thunder':          { chance: 0.30, status: 'paralysis' },
   'Thunder Fang':     { chance: 0.10, status: 'paralysis' },
@@ -909,6 +912,7 @@ function _applyStageMap(mon, deltas, log) {
     const actual = _applyStageDelta(mon, stat, delta);
     if (actual) {
       applied++;
+      if (actual > 0) mon._statsRaisedThisTurn = true;
       _logStageDelta(log, mon, stat, actual);
     }
   }
@@ -958,6 +962,7 @@ function _applyTargetStageMap(source, target, deltas, log) {
     if (actual) {
       applied++;
       if (actual < 0) negativeApplied = true;
+      if (actual > 0) target._statsRaisedThisTurn = true;
       _logStageDelta(log, target, stat, actual);
     }
   }
@@ -993,6 +998,10 @@ function _isGrounded(mon) {
 
 function _canReceiveHealing(mon) {
   return !!(mon && mon.alive && (!mon.healBlockedTurns || mon.healBlockedTurns <= 0));
+}
+
+function _isTrappedByMove(mon) {
+  return !!(mon && mon.trappedByMove && mon.trappedByMon && mon.trappedByMon.alive);
 }
 
 function _sideActiveMons(side) {
@@ -1981,6 +1990,9 @@ class Pokemon {
     this.healBlockedTurns = data.healBlockedTurns || 0;
     this.throatChopTurns = data.throatChopTurns || 0;
     this.confusionTurns = data.confusionTurns || 0;
+    this.trappedByMove = data.trappedByMove || null;
+    this.trappedByMon = data.trappedByMon || null;
+    this._statsRaisedThisTurn = false;
     this.lastMoveFailed = !!data.lastMoveFailed;
     this.alive = true;
     this.hasActed = false;
@@ -2661,6 +2673,14 @@ function _applyDamagingMoveSecondary(attacker, move, target, field, log, rng) {
     if (log) log.push(`${target.name} was ${statusLabel} by ${attacker.name}'s ${move}!`);
     applied = true;
   }
+  if (effect.conditionalStatus === 'burn' &&
+      effect.condition === 'targetStatsRaisedThisTurn' &&
+      target._statsRaisedThisTurn &&
+      canInflictStatus(target, 'burn', field, attacker)) {
+    target.status = 'burn';
+    if (log) log.push(`${target.name} was burned by ${attacker.name}'s ${move}!`);
+    applied = true;
+  }
   if (effect.volatile === 'confusion') {
     target.confusionTurns = Math.max(target.confusionTurns || 0, 2 + Math.floor(rng() * 4));
     if (log) log.push(`${target.name} became confused!`);
@@ -2669,6 +2689,12 @@ function _applyDamagingMoveSecondary(attacker, move, target, field, log, rng) {
   if (effect.volatile === 'throatChop') {
     target.throatChopTurns = Math.max(target.throatChopTurns || 0, 2);
     if (log) log.push(`${target.name} cannot use sound-based moves after Throat Chop!`);
+    applied = true;
+  }
+  if (effect.volatile === 'trapped') {
+    target.trappedByMove = move;
+    target.trappedByMon = attacker;
+    if (log) log.push(`${target.name} can no longer escape because of ${move}!`);
     applied = true;
   }
   return applied;
@@ -3596,6 +3622,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     replacement.healBlockedTurns = 0;
     replacement.throatChopTurns = 0;
     replacement.confusionTurns = 0;
+    replacement.trappedByMove = null;
+    replacement.trappedByMon = null;
+    replacement._statsRaisedThisTurn = false;
     replacement.lastMoveFailed = false;
     replacement.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
     replacement.choiceLock = null;
@@ -3624,6 +3653,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (log) log.push(`${mon.name} is trapped by Shadow Tag!`);
       return false;
     }
+    if (_isTrappedByMove(mon)) {
+      if (log) log.push(`${mon.name} is trapped by ${mon.trappedByMove}!`);
+      return false;
+    }
     const replacement = _chooseBenchReplacement(bench);
     if (!replacement) return false;
     bench.splice(bench.indexOf(replacement), 1);
@@ -3637,6 +3670,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     mon.substituteHp = 0;
     mon.leechSeededBy = null;
     mon.perishSongTurns = 0;
+    mon.trappedByMove = null;
+    mon.trappedByMon = null;
     _resetSwitchInState(replacement);
     _applyIncomingSwitchState(replacement, opts && opts.incomingState);
     if (opts && opts.incomingSubstituteHp > 0) replacement.substituteHp = opts.incomingSubstituteHp;
@@ -5579,6 +5614,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         log.push(`${target.name} was burned by ${attacker.name}'s Matcha Gotcha!`);
       }
     }
+    if (move === 'Sparkling Aria' && target.status === 'burn' && target.alive && target.hp > 0) {
+      target.status = null;
+      log.push(`${target.name}'s burn was healed by ${attacker.name}'s Sparkling Aria!`);
+    }
     if (!suppressSecondary && move === 'Dire Claw' && target.alive && target.hp > 0 && !target.status) {
       if (rng() < 0.5) {
         const options = ['poison', 'paralysis', 'sleep'].filter((status) => canInflictStatus(target, status, field, attacker));
@@ -6156,6 +6195,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         mon.healBlockedTurns = 0;
         log.push(`${mon.name} can recover HP again.`);
       }
+    }
+    for (const mon of [...playerActive, ...oppActive]) {
+      mon._statsRaisedThisTurn = false;
     }
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.throatChopTurns > 0)) {
       mon.throatChopTurns--;

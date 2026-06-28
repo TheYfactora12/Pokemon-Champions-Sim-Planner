@@ -2348,8 +2348,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.5-secondary-effect-audit</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.6-complex-secondary-state</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -8713,7 +8713,9 @@ var SHEER_FORCE_MOVES = new Set([
 
 var SECONDARY_EFFECTS = {
   'Blizzard':         { chance: 0.10, status: 'frozen' },
+  'Burning Jealousy': { chance: 1.00, conditionalStatus: 'burn', condition: 'targetStatsRaisedThisTurn' },
   'Crunch':           { chance: 0.20, targetStages: { def: -1 } },
+  'Diamond Storm':    { chance: 0.50, selfStages: { def: 2 } },
   'Earth Power':      { chance: 0.10, targetStages: { spd: -1 } },
   'Energy Ball':      { chance: 0.10, targetStages: { spd: -1 } },
   'Discharge':        { chance: 0.30, status: 'paralysis' },
@@ -8745,6 +8747,7 @@ var SECONDARY_EFFECTS = {
   'Shadow Ball':      { chance: 0.20, targetStages: { spd: -1 } },
   'Sludge Bomb':      { chance: 0.30, status: 'poison' },
   'Sludge Wave':      { chance: 0.10, status: 'poison' },
+  'Spirit Shackle':   { chance: 1.00, volatile: 'trapped' },
   'Throat Chop':      { chance: 1.00, volatile: 'throatChop' },
   'Thunder':          { chance: 0.30, status: 'paralysis' },
   'Thunder Fang':     { chance: 0.10, status: 'paralysis' },
@@ -9306,6 +9309,7 @@ function _applyStageMap(mon, deltas, log) {
     const actual = _applyStageDelta(mon, stat, delta);
     if (actual) {
       applied++;
+      if (actual > 0) mon._statsRaisedThisTurn = true;
       _logStageDelta(log, mon, stat, actual);
     }
   }
@@ -9355,6 +9359,7 @@ function _applyTargetStageMap(source, target, deltas, log) {
     if (actual) {
       applied++;
       if (actual < 0) negativeApplied = true;
+      if (actual > 0) target._statsRaisedThisTurn = true;
       _logStageDelta(log, target, stat, actual);
     }
   }
@@ -9390,6 +9395,10 @@ function _isGrounded(mon) {
 
 function _canReceiveHealing(mon) {
   return !!(mon && mon.alive && (!mon.healBlockedTurns || mon.healBlockedTurns <= 0));
+}
+
+function _isTrappedByMove(mon) {
+  return !!(mon && mon.trappedByMove && mon.trappedByMon && mon.trappedByMon.alive);
 }
 
 function _sideActiveMons(side) {
@@ -10378,6 +10387,9 @@ class Pokemon {
     this.healBlockedTurns = data.healBlockedTurns || 0;
     this.throatChopTurns = data.throatChopTurns || 0;
     this.confusionTurns = data.confusionTurns || 0;
+    this.trappedByMove = data.trappedByMove || null;
+    this.trappedByMon = data.trappedByMon || null;
+    this._statsRaisedThisTurn = false;
     this.lastMoveFailed = !!data.lastMoveFailed;
     this.alive = true;
     this.hasActed = false;
@@ -11058,6 +11070,14 @@ function _applyDamagingMoveSecondary(attacker, move, target, field, log, rng) {
     if (log) log.push(`${target.name} was ${statusLabel} by ${attacker.name}'s ${move}!`);
     applied = true;
   }
+  if (effect.conditionalStatus === 'burn' &&
+      effect.condition === 'targetStatsRaisedThisTurn' &&
+      target._statsRaisedThisTurn &&
+      canInflictStatus(target, 'burn', field, attacker)) {
+    target.status = 'burn';
+    if (log) log.push(`${target.name} was burned by ${attacker.name}'s ${move}!`);
+    applied = true;
+  }
   if (effect.volatile === 'confusion') {
     target.confusionTurns = Math.max(target.confusionTurns || 0, 2 + Math.floor(rng() * 4));
     if (log) log.push(`${target.name} became confused!`);
@@ -11066,6 +11086,12 @@ function _applyDamagingMoveSecondary(attacker, move, target, field, log, rng) {
   if (effect.volatile === 'throatChop') {
     target.throatChopTurns = Math.max(target.throatChopTurns || 0, 2);
     if (log) log.push(`${target.name} cannot use sound-based moves after Throat Chop!`);
+    applied = true;
+  }
+  if (effect.volatile === 'trapped') {
+    target.trappedByMove = move;
+    target.trappedByMon = attacker;
+    if (log) log.push(`${target.name} can no longer escape because of ${move}!`);
     applied = true;
   }
   return applied;
@@ -11993,6 +12019,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     replacement.healBlockedTurns = 0;
     replacement.throatChopTurns = 0;
     replacement.confusionTurns = 0;
+    replacement.trappedByMove = null;
+    replacement.trappedByMon = null;
+    replacement._statsRaisedThisTurn = false;
     replacement.lastMoveFailed = false;
     replacement.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
     replacement.choiceLock = null;
@@ -12021,6 +12050,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (log) log.push(`${mon.name} is trapped by Shadow Tag!`);
       return false;
     }
+    if (_isTrappedByMove(mon)) {
+      if (log) log.push(`${mon.name} is trapped by ${mon.trappedByMove}!`);
+      return false;
+    }
     const replacement = _chooseBenchReplacement(bench);
     if (!replacement) return false;
     bench.splice(bench.indexOf(replacement), 1);
@@ -12034,6 +12067,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     mon.substituteHp = 0;
     mon.leechSeededBy = null;
     mon.perishSongTurns = 0;
+    mon.trappedByMove = null;
+    mon.trappedByMon = null;
     _resetSwitchInState(replacement);
     _applyIncomingSwitchState(replacement, opts && opts.incomingState);
     if (opts && opts.incomingSubstituteHp > 0) replacement.substituteHp = opts.incomingSubstituteHp;
@@ -13976,6 +14011,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         log.push(`${target.name} was burned by ${attacker.name}'s Matcha Gotcha!`);
       }
     }
+    if (move === 'Sparkling Aria' && target.status === 'burn' && target.alive && target.hp > 0) {
+      target.status = null;
+      log.push(`${target.name}'s burn was healed by ${attacker.name}'s Sparkling Aria!`);
+    }
     if (!suppressSecondary && move === 'Dire Claw' && target.alive && target.hp > 0 && !target.status) {
       if (rng() < 0.5) {
         const options = ['poison', 'paralysis', 'sleep'].filter((status) => canInflictStatus(target, status, field, attacker));
@@ -14553,6 +14592,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         mon.healBlockedTurns = 0;
         log.push(`${mon.name} can recover HP again.`);
       }
+    }
+    for (const mon of [...playerActive, ...oppActive]) {
+      mon._statsRaisedThisTurn = false;
     }
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.throatChopTurns > 0)) {
       mon.throatChopTurns--;
@@ -24452,9 +24494,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.5-secondary-effect-audit';
+    return txt || 'v2.2.6-complex-secondary-state';
   } catch (e) {
-    return 'v2.2.5-secondary-effect-audit';
+    return 'v2.2.6-complex-secondary-state';
   }
 }
 
@@ -34320,6 +34362,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B stats/types/abilities source pass',
       detail: 'v2.2.1 source-verifies all 16 Reg M-B new Mega base stats, types, and abilities against Pokemon Showdown pokedex.ts while keeping the rows review-only and blocked from runtime legality until base/form implementation, learnset policy, and positive/negative fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Complex secondary state pass',
+      detail: 'v2.2.6 starts the complex secondary-effect layer: Burning Jealousy burns targets that raised stats that turn, Diamond Storm can self-boost Defense, Spirit Shackle traps pivot/switch attempts while the trapper is alive, and Sparkling Aria cures burn after a successful hit.'
     },
     {
       status: 'done',
