@@ -38,7 +38,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Removed Teams');
   inc(ui, '17 legacy/inferred rows');
   inc(ui, '10 approved runtime rows');
-  inc(ui, 'Full local non-DB + DB contracts green');
+  inc(ui, 'Stress Lite totals + coaching summary live');
   inc(ui, 'DB Log Detail');
   inc(ui, 'Summary/capped; exports are forensic proof');
   inc(ui, 'Current Champion source sweep recorded');
