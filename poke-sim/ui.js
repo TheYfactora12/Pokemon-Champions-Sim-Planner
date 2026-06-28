@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.99-regmb-promotion-gate';
+    return txt || 'v2.2.0-regmb-stone-source-pass';
   } catch (e) {
-    return 'v2.1.99-regmb-promotion-gate';
+    return 'v2.2.0-regmb-stone-source-pass';
   }
 }
 
@@ -9974,6 +9974,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B promotion gate added',
       detail: 'v2.1.99 adds explicit Reg M-B promotion buckets, required-field readiness counts, and Teams-page gate visibility so source-review rows stay blocked from legal selectors, trusted coaching, and DB learning until every source field and fixture is reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B stone source pass',
+      detail: 'v2.2.0 source-verifies all 16 Reg M-B new Mega stone item names against Pokemon Showdown items.ts while keeping the rows review-only and blocked from runtime legality, ranking, DB learning, and trusted coaching until the remaining source fields and fixtures are complete.'
     },
     {
       status: 'done',

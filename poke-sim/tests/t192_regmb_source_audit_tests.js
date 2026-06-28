@@ -231,15 +231,33 @@ T('10c. Reg M-B promotion gate blocks runtime, learning, and trusted coaching', 
   conversion.requiredPromotionFields.forEach((field) => {
     truthy(conversion.promotionFieldChecklist.some((row) => row.field === field), 'missing promotion field ' + field);
   });
-  truthy(conversion.promotionFieldChecklist.every((row) => row.blocksRuntime === true), 'all Reg M-B fields should still block runtime');
+  truthy(conversion.promotionFieldChecklist.filter((row) => row.blocksRuntime === true).length === 12, '12 Reg M-B fields should still block runtime');
+  truthy(conversion.promotionFieldChecklist.some((row) => row.field === 'megaStone' && row.status === 'source_verified_review_only'), 'megaStone should be source-verified review-only');
+  truthy(conversion.promotionFieldChecklist.some((row) => row.field === 'itemSourceUrl' && row.status === 'source_verified_review_only'), 'itemSourceUrl should be source-verified review-only');
   truthy(conversion.promotionReadiness.status === 'blocked_not_runtime_promotable', 'promotion readiness should remain blocked');
-  truthy(conversion.promotionReadiness.fieldsReadyForRuntime === 0, 'no fields should be runtime-ready yet');
+  truthy(conversion.promotionReadiness.fieldsReadyForRuntime === 2, 'two fields should be source-verified but review-only');
+  truthy(conversion.promotionReadiness.fieldsBlockedForRuntime === 12, '12 fields should remain blocked');
   truthy(conversion.promotionReadiness.selectorPolicy === 'hidden_from_legal_sim', 'selector policy should stay hidden');
   truthy(conversion.promotionReadiness.learningPolicy === 'do_not_train_or_rank', 'learning policy should block training');
   truthy(conversion.promotionReadiness.coachingPolicy === 'do_not_recommend_as_trusted_reg_m_b', 'coaching policy should block trusted recommendations');
   truthy(Array.isArray(conversion.promotionStatusBuckets), 'missing promotion status buckets');
   truthy(conversion.promotionStatusBuckets.some((row) => row.id === 'visual_reviewed' && row.count === 235), 'visual reviewed bucket should show 235 rows');
+  truthy(conversion.promotionStatusBuckets.some((row) => row.id === 'ready_for_runtime_review' && row.count === 2), 'ready-for-review bucket should show two sourced fields');
   truthy(conversion.promotionStatusBuckets.some((row) => row.id === 'promoted' && row.count === 0), 'promoted bucket should stay zero');
+});
+
+T('10d. Reg M-B Mega stone rows are source-verified but not runtime-promoted', () => {
+  truthy(Array.isArray(conversion.megaStoneRows), 'missing Reg M-B stone rows');
+  truthy(conversion.megaStoneRows.length === REGMB_NEW_MEGAS.length, 'expected one stone row per new Mega');
+  REGMB_NEW_MEGAS.forEach((megaForm) => {
+    truthy(conversion.megaStoneRows.some((row) => row.megaForm === megaForm), 'missing stone row for ' + megaForm);
+  });
+  ['Raichunite X', 'Raichunite Y', 'Staraptite', 'Scolipite', 'Scraftinite', 'Barbaracite', 'Dragalgite', 'Falinksite'].forEach((itemName) => {
+    truthy(conversion.megaStoneRows.some((row) => row.itemName === itemName), 'missing sourced item ' + itemName);
+  });
+  truthy(conversion.megaStoneRows.every((row) => row.sourceUrl.includes('pokemon-showdown/master/data/items.ts')), 'stone rows should cite Pokemon Showdown item data');
+  truthy(conversion.megaStoneRows.every((row) => row.runtimePromotable === false), 'stone rows must remain review-only');
+  truthy(conversion.megaStoneRows.every((row) => row.learningEligible === false), 'stone rows must not train learning');
 });
 
 T('11. Reg M-B review coverage sections remain blocked from runtime learning', () => {

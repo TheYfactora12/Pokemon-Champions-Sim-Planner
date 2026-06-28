@@ -196,3 +196,38 @@ Next human source actions:
 5. Rerun Reg M-A regression fixtures before changing active runtime legality.
 
 Do not promote Reg M-B into selectors, training data, coaching stats, or recommendation logic until every row above is reviewed and the promotion bucket `Promoted` is non-zero by explicit implementation change.
+
+## Mega stone source pass - v2.2.0
+
+Source checked: Pokemon Showdown `data/items.ts` on June 27, 2026.
+Source URL: https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/items.ts
+
+The following item names are source-verified for review, but they are not runtime-promoted. They must not enter legal selectors, ranking, DB learning, or trusted coaching until the remaining fields and fixtures pass.
+
+| Mega form | Source-backed item name | Item id | Runtime policy |
+| --- | --- | --- | --- |
+| Raichu-Mega-X | Raichunite X | raichunitex | review-only |
+| Raichu-Mega-Y | Raichunite Y | raichunitey | review-only |
+| Sceptile-Mega | Sceptilite | sceptilite | review-only |
+| Blaziken-Mega | Blazikenite | blazikenite | review-only |
+| Swampert-Mega | Swampertite | swampertite | review-only |
+| Mawile-Mega | Mawilite | mawilite | review-only |
+| Metagross-Mega | Metagrossite | metagrossite | review-only |
+| Staraptor-Mega | Staraptite | staraptite | review-only |
+| Scolipede-Mega | Scolipite | scolipite | review-only |
+| Scrafty-Mega | Scraftinite | scraftinite | review-only |
+| Eelektross-Mega | Eelektrossite | eelektrossite | review-only |
+| Pyroar-Mega | Pyroarite | pyroarite | review-only |
+| Malamar-Mega | Malamarite | malamarite | review-only |
+| Barbaracle-Mega | Barbaracite | barbaracite | review-only |
+| Dragalge-Mega | Dragalgite | dragalgite | review-only |
+| Falinks-Mega | Falinksite | falinksite | review-only |
+
+Gate movement after this pass:
+
+| Field | Previous status | New status |
+| --- | --- | --- |
+| megaStone | blocked, missing item source | source-verified review-only |
+| itemSourceUrl | blocked, missing URL | source-verified review-only |
+
+Promotion remains blocked. Current gate count: `2` source-verified review-only fields, `12` blocked fields, `0` promoted fields.
