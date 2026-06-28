@@ -254,7 +254,7 @@ def render_live_alignment(teams: dict) -> str:
     team_rows = [canonical_team_row(tid, teams[tid]) for tid in team_ids]
     id_list = ",\n  ".join("'" + tid + "'" for tid in team_ids)
 
-    w("-- Align shared 27-team catalog across Y Factor, Alfredo, and live Supabase. (auto-generated)\n")
+    w("-- Align shared " + str(len(team_ids)) + "-team catalog across Y Factor, Alfredo, and live Supabase. (auto-generated)\n")
     w("-- Source: poke-sim/data.js TEAMS literal and poke-sim/tools/generate_seed_from_data.py\n")
     w("-- Preferred live-DB catalog alignment path. Re-run the generator instead of editing by hand.\n")
     w("-- Safe shape: transaction + ruleset/team UPSERTs + team_members replace for canonical team IDs only.\n")

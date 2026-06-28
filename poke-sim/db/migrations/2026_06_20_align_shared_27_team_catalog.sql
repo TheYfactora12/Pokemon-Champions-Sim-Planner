@@ -1,4 +1,4 @@
--- Align shared 27-team catalog across Y Factor, Alfredo, and live Supabase. (auto-generated)
+-- Align shared 34-team catalog across Y Factor, Alfredo, and live Supabase. (auto-generated)
 -- Source: poke-sim/data.js TEAMS literal and poke-sim/tools/generate_seed_from_data.py
 -- Preferred live-DB catalog alignment path. Re-run the generator instead of editing by hand.
 -- Safe shape: transaction + ruleset/team UPSERTs + team_members replace for canonical team IDs only.
