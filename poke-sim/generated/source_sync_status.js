@@ -2,8 +2,8 @@
   'use strict';
   root.ChampionsSim = root.ChampionsSim || {};
   root.ChampionsSim.sourceSyncStatus = {
-  "buildId": "v2.2.22-source-sync-runtime",
-  "generatedAt": "2026-06-28T14:12:13.561Z",
+  "buildId": "v2.2.23-sources-ui-polish",
+  "generatedAt": "2026-06-28T14:20:47.521Z",
   "sourcesPageReviewedAt": "2026-06-28T00:00:00Z",
   "generatedShowdown": {
     "source": "Supabase approved Showdown entities + Champions overrides",

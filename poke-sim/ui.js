@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.22-source-sync-runtime';
+    return txt || 'v2.2.23-sources-ui-polish';
   } catch (e) {
-    return 'v2.2.22-source-sync-runtime';
+    return 'v2.2.23-sources-ui-polish';
   }
 }
 
@@ -11870,11 +11870,11 @@ function csRenderSourceSyncCards(status, dbSnapshot) {
   var db = status && status.approvedDb ? status.approvedDb : {};
   var dbRun = dbSnapshot && dbSnapshot.latestRun ? dbSnapshot.latestRun : null;
   var dbStatus = dbSnapshot && dbSnapshot.available ? (dbSnapshot.message || dbSnapshot.mode || 'DB reachable') : 'Static bundle / DB unavailable';
-  return '<div class="overview-metrics" style="margin:0 0 16px 0">' +
-    '<div class="overview-metric"><strong>Generated source</strong><span>' + _escapeHtml(generated.source || 'Unknown') + '</span></div>' +
-    '<div class="overview-metric"><strong>Generated at</strong><span>' + _escapeHtml(csFormatSourceStamp(generated.generatedAt)) + '</span></div>' +
-    '<div class="overview-metric"><strong>Approved DB</strong><span>' + _escapeHtml(dbStatus) + '</span></div>' +
-    '<div class="overview-metric"><strong>Latest DB run</strong><span>' + _escapeHtml(dbRun && dbRun.sync_run_id ? dbRun.sync_run_id : (db.syncRunId || 'None visible')) + '</span></div>' +
+  return '<div class="sources-summary-grid">' +
+    '<div class="sources-summary-card"><strong>Generated source</strong><span>' + _escapeHtml(generated.source || 'Unknown') + '</span></div>' +
+    '<div class="sources-summary-card"><strong>Generated at</strong><span>' + _escapeHtml(csFormatSourceStamp(generated.generatedAt)) + '</span></div>' +
+    '<div class="sources-summary-card"><strong>Approved DB</strong><span>' + _escapeHtml(dbStatus) + '</span></div>' +
+    '<div class="sources-summary-card"><strong>Latest DB run</strong><span>' + _escapeHtml(dbRun && dbRun.sync_run_id ? dbRun.sync_run_id : (db.syncRunId || 'None visible')) + '</span></div>' +
   '</div>';
 }
 
@@ -11886,26 +11886,50 @@ function csRenderSourceSyncTables(status, dbSnapshot) {
       '<td>' + _escapeHtml(csShortHash(file.source_hash || file.normalized_hash || '')) + '</td>' +
       '<td>' + _escapeHtml(csFormatSourceStamp(file.fetched_at)) + '</td></tr>';
   }).join('');
-  return '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">' +
-      '<table class="series-summary-table" style="min-width:860px"><thead><tr><th>Source track</th><th>Last synced or reviewed</th><th>Current visible marker</th><th>Why it matters</th></tr></thead><tbody>' +
+  return '<div class="sources-table-card">' +
+      '<div class="sources-table-head"><div><span class="badge badge-blue">SOURCE TRACKS</span><h3>Current sync and review state</h3></div><p>Automated source stamps and human review checkpoints shown for this build.</p></div>' +
+      '<div class="sources-table-wrap"><table class="series-summary-table sources-table"><thead><tr><th>Source track</th><th>Last synced or reviewed</th><th>Current visible marker</th><th>Why it matters</th></tr></thead><tbody>' +
       rows +
-      '</tbody></table></div>' +
+      '</tbody></table></div></div>' +
+      '<div class="sources-table-card">' +
+      '<div class="sources-table-head"><div><span class="badge badge-blue">LIVE DB FILES</span><h3>Readable upstream file snapshot</h3></div><p>Shown when the approved Supabase views are reachable from the browser.</p></div>' +
       '<div class="overview-db-table-wrap"><table class="overview-db-table"><thead><tr><th>Live source file</th><th>Parse</th><th>Hash</th><th>Fetched</th></tr></thead><tbody>' +
       (files || '<tr><td colspan="4">No live source-file rows readable yet</td></tr>') +
-      '</tbody></table></div>';
+      '</tbody></table></div></div>';
 }
 
 function renderSourcesTab() {
   var host = document.getElementById('sources-list');
   if (!host) return false;
   var status = csGetGeneratedSourceSyncStatus() || {};
-  host.innerHTML = csRenderSourceSyncCards(status, null) + csRenderSourceSyncTables(status, null);
+  host.innerHTML = '<div class="sources-dashboard">' +
+    '<div class="sources-dashboard-head">' +
+      '<div><span class="badge badge-blue">SOURCE DASHBOARD</span><h3>Freshness, release watch, and trust boundaries</h3></div>' +
+      '<p>Readable source-of-truth view for players, QA, and release review.</p>' +
+    '</div>' +
+    csRenderSourceSyncCards(status, null) +
+    csRenderSourceSyncTables(status, null) +
+  '</div>';
   var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
   if (!adapter || !adapter.enabled || typeof adapter.loadShowdownDbSnapshot !== 'function') return true;
   adapter.loadShowdownDbSnapshot().then(function(snapshot) {
-    host.innerHTML = csRenderSourceSyncCards(status, snapshot) + csRenderSourceSyncTables(status, snapshot);
+    host.innerHTML = '<div class="sources-dashboard">' +
+      '<div class="sources-dashboard-head">' +
+        '<div><span class="badge badge-blue">SOURCE DASHBOARD</span><h3>Freshness, release watch, and trust boundaries</h3></div>' +
+        '<p>Readable source-of-truth view for players, QA, and release review.</p>' +
+      '</div>' +
+      csRenderSourceSyncCards(status, snapshot) +
+      csRenderSourceSyncTables(status, snapshot) +
+    '</div>';
   }).catch(function() {
-    host.innerHTML = csRenderSourceSyncCards(status, null) + csRenderSourceSyncTables(status, null);
+    host.innerHTML = '<div class="sources-dashboard">' +
+      '<div class="sources-dashboard-head">' +
+        '<div><span class="badge badge-blue">SOURCE DASHBOARD</span><h3>Freshness, release watch, and trust boundaries</h3></div>' +
+        '<p>Readable source-of-truth view for players, QA, and release review.</p>' +
+      '</div>' +
+      csRenderSourceSyncCards(status, null) +
+      csRenderSourceSyncTables(status, null) +
+    '</div>';
   });
   return true;
 }
