@@ -119,6 +119,8 @@ vm.runInContext([
   'this.csExportMyDataJson = csExportMyDataJson;',
   'this.csBuildQaArtifactExport = csBuildQaArtifactExport;',
   'this.csExportQaArtifactJson = csExportQaArtifactJson;',
+  'this.csGetPublicBetaGuardProfile = csGetPublicBetaGuardProfile;',
+  'this.csApplyPublicBetaGuardrails = csApplyPublicBetaGuardrails;',
   'this.csLoadCoachBrainMemory = csLoadCoachBrainMemory;',
   'this.addReplays = addReplays;'
 ].join(' '), ctx);
@@ -131,6 +133,8 @@ const {
   csExportMyDataJson,
   csBuildQaArtifactExport,
   csExportQaArtifactJson,
+  csGetPublicBetaGuardProfile,
+  csApplyPublicBetaGuardrails,
   addReplays
 } = ctx;
 
@@ -250,6 +254,7 @@ async function main() {
     truthy(/id="run-all-export-qa-btn"/.test(html), 'Run All + QA Artifact button missing');
     truthy(/id="stress-lite-qa-btn"/.test(html), 'Stress Lite + QA button missing');
     truthy(/id="tactical-sweep-qa-btn"/.test(html), 'Tactical Sweep + QA button missing');
+    truthy(/id="beta-guard-note"/.test(html), 'beta guard note missing');
     truthy(/id="qa-drop-folder-btn"/.test(html), 'QA drop folder button missing');
     truthy(/Tactical Sweep \+ QA/.test(html), 'Tactical Sweep + QA label missing');
     truthy(/id="sim-scope"/.test(html), 'Test Scope selector missing');
@@ -438,6 +443,36 @@ async function main() {
     truthy(mechanics.psyshock_trace > 0, 'psyshock trace missing');
     truthy(mechanics.ignored_target_power_ability_trace > 0, 'Foul Play target power ability guard missing');
     eq((payload.next_missing_proof || []).includes('non-standard stat-source move trace'), false, 'stat-source proof should not be missing');
+  });
+
+  await T('12. hard beta guardrails force Stress Lite on mobile or low-memory devices', async () => {
+    document.getElementById('sim-count').options = [
+      { value: '10', disabled: false },
+      { value: '50', disabled: false },
+      { value: '100', disabled: false },
+      { value: '500', disabled: false },
+      { value: '1000', disabled: false },
+      { value: '10000', disabled: false }
+    ];
+    document.getElementById('sim-count').value = '10000';
+    document.getElementById('tactical-depth').options = [
+      { value: '24', disabled: false },
+      { value: '100', disabled: false },
+      { value: '250', disabled: false },
+      { value: 'all', disabled: false }
+    ];
+    document.getElementById('tactical-depth').value = 'all';
+    ctx.window.matchMedia = (query) => ({ matches: query.indexOf('pointer: coarse') >= 0 || query.indexOf('max-width: 760px') >= 0, addEventListener(){}, removeEventListener(){} });
+    ctx.matchMedia = ctx.window.matchMedia;
+    ctx.navigator.deviceMemory = 4;
+    const profile = csGetPublicBetaGuardProfile();
+    truthy(profile.should_force_stress_lite, 'hard beta profile should force Stress Lite');
+    csApplyPublicBetaGuardrails();
+    truthy(document.getElementById('run-all-btn').disabled, 'Run All should be disabled by hard beta guard');
+    truthy(document.getElementById('run-all-export-qa-btn').disabled, 'Run All + QA should be disabled by hard beta guard');
+    truthy(document.getElementById('beta-guard-note').textContent.indexOf('Hard beta guard active') >= 0, 'hard beta note missing');
+    eq(document.getElementById('sim-count').value, '500', 'hard beta should cap series count');
+    eq(document.getElementById('tactical-depth').value, '250', 'hard beta should cap tactical depth');
   });
 }
 
