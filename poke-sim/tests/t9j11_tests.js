@@ -462,6 +462,23 @@ T('15c. imported teams with hard rule errors are rejected', () => {
   eq(res.keys.length, 0, 'hard invalid import should not return a team key');
 });
 
+T('15c2. skipped bulk import returns actionable validation errors', () => {
+  resetTeams();
+  const members = parseShowdownPaste([
+    'Garchomp @ Life Orb',
+    'Ability: Rough Skin',
+    'Level: 50',
+    'EVs: 252 Atk / 252 Spe / 4 HP',
+    'Jolly Nature',
+    '- Earthquake'
+  ].join('\n'));
+  const res = importCustomTeamsBulk([{ name: 'Bad Upload', members }]);
+  eq(res.added, 0, 'invalid upload should not import');
+  eq(res.skipped, 1, 'invalid upload should be skipped');
+  truthy(res.skippedErrors && res.skippedErrors.length === 1, 'skipped error details should be returned');
+  truthy(res.skippedErrors[0].errors.some(e => /raw Showdown EVs|Life Orb|SP/.test(e)), 'skipped error should explain validation blocker');
+});
+
 T('15d. Champion SP import parses SPs and validates without EV/IV gate errors', () => {
   resetTeams();
   const text = [
@@ -556,6 +573,76 @@ T('15f2. user-facing Showdown export uses EVs and re-imports when within Champio
   eq(parsed.length, 1, 'Showdown export should parse back as one team');
   const validation = buildImportedTeamValidation(parsed[0].members, { format: 'champions' });
   truthy(validation.valid, 'Champion-capped Showdown EV export should re-import');
+});
+
+T('15f3. single uploaded Showdown txt with six Pokemon parses as one team with moves', () => {
+  const text = [
+    'Charizard @ Charizardite Y',
+    'Ability: Solar Power',
+    'Level: 50',
+    'EVs: 1 HP / 32 SpA / 1 SpD / 32 Spe',
+    'Timid Nature',
+    '- Heat Wave',
+    '- Solar Beam',
+    '- Weather Ball',
+    '- Protect',
+    '',
+    'Venusaur @ Black Sludge',
+    'Ability: Chlorophyll',
+    'Level: 50',
+    'EVs: 2 HP / 32 SpA / 32 Spe',
+    'Modest Nature',
+    '- Sleep Powder',
+    '- Sludge Bomb',
+    '- Giga Drain',
+    '- Protect',
+    '',
+    'Garchomp @ Soft Sand',
+    'Ability: Rough Skin',
+    'Level: 50',
+    'EVs: 2 HP / 32 Atk / 32 Spe',
+    'Jolly Nature',
+    '- Earthquake',
+    '- Dragon Claw',
+    '- Rock Slide',
+    '- Protect',
+    '',
+    'Sneasler @ Focus Sash',
+    'Ability: Unburden',
+    'Level: 50',
+    'EVs: 2 HP / 32 Atk / 32 Spe',
+    'Jolly Nature',
+    '- Fake Out',
+    '- Close Combat',
+    '- Dire Claw',
+    '- Protect',
+    '',
+    'Incineroar @ Sitrus Berry',
+    'Ability: Intimidate',
+    'Level: 50',
+    'EVs: 32 HP / 1 Atk / 1 Def / 32 SpD',
+    'Careful Nature',
+    '- Fake Out',
+    '- Parting Shot',
+    '- Knock Off',
+    '- Flare Blitz',
+    '',
+    'Whimsicott @ Covert Cloak',
+    'Ability: Prankster',
+    'Level: 50',
+    'EVs: 2 HP / 32 SpA / 32 Spe',
+    'Timid Nature',
+    '- Tailwind',
+    '- Moonblast',
+    '- Encore',
+    '- Protect'
+  ].join('\n');
+  const teams = parseMultiTeamShowdown(text);
+  eq(teams.length, 1, 'one normal Showdown team file should import as one team');
+  eq(teams[0].members.length, 6, 'all six Pokemon should stay together');
+  truthy(teams[0].members.every(m => (m.moves || []).length > 0), 'every Pokemon should keep move lines');
+  eq(teams[0].members[0].moves[0], 'Heat Wave', 'first move parsed');
+  eq(teams[0].members[5].moves[0], 'Tailwind', 'last Pokemon move parsed');
 });
 
 T('15g. illegal existing custom teams are hidden from visible sim selectors', () => {

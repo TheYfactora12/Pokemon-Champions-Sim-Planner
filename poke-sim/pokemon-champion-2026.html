@@ -2393,8 +2393,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.26-editor-save-cancel</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.27-import-file-feedback</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -25326,9 +25326,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.26-editor-save-cancel';
+    return txt || 'v2.2.27-import-file-feedback';
   } catch (e) {
-    return 'v2.2.26-editor-save-cancel';
+    return 'v2.2.27-import-file-feedback';
   }
 }
 
@@ -27517,17 +27517,23 @@ function _uniqueTeamName(wanted) {
 }
 
 function importCustomTeamsBulk(teams /* [{name, members}] */) {
-  // Returns { added, skipped, keys:[...] }
-  var added = 0, skipped = 0, keys = [];
-  if (!Array.isArray(teams)) return { added: 0, skipped: 0, keys: [] };
+  // Returns { added, skipped, keys:[...], skippedErrors:[...] } so file-upload
+  // imports can tell users exactly why a parsed team did not enter the sim.
+  var added = 0, skipped = 0, keys = [], skippedErrors = [];
+  if (!Array.isArray(teams)) return { added: 0, skipped: 0, keys: [], skippedErrors: [] };
   for (var i = 0; i < teams.length; i++) {
     var t = teams[i];
-    if (!t || !Array.isArray(t.members) || t.members.length === 0) { skipped++; continue; }
+    if (!t || !Array.isArray(t.members) || t.members.length === 0) {
+      skipped++;
+      skippedErrors.push({ name: (t && t.name) || 'Imported Team', errors: ['No Pokemon or moves were parsed from this team.'], warnings: [] });
+      continue;
+    }
     var key = _uniqueCustomKey(t.name);
     var name = _uniqueTeamName(t.name || 'Imported Team');
     var validation = buildImportedTeamValidation(t.members, { name: name, format: 'champions' });
     if (!validation.valid) {
       skipped++;
+      skippedErrors.push({ name: name, errors: validation.errors.slice(0), warnings: validation.warnings.slice(0) });
       continue;
     }
     TEAMS[key] = {
@@ -27550,7 +27556,7 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
     if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(key, TEAMS[key], 'bulk_import');
   }
   if (added > 0 && typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
-  return { added: added, skipped: skipped, keys: keys };
+  return { added: added, skipped: skipped, keys: keys, skippedErrors: skippedErrors };
 }
 
 function importFromJsonText(jsonText) {
@@ -27730,7 +27736,14 @@ document.getElementById('bulk-import-file')?.addEventListener('change', function
     if (typeof rebuildTeamSelects === 'function') rebuildTeamSelects();
     renderTeamsGrid();
     var msg = 'Imported ' + result.added + ' team' + (result.added === 1 ? '' : 's');
-    if (result.skipped > 0) msg += ' (' + result.skipped + ' skipped)';
+    if (result.skipped > 0) {
+      msg += ' (' + result.skipped + ' skipped)';
+      if (result.skippedErrors && result.skippedErrors.length) {
+        var firstSkip = result.skippedErrors[0] || {};
+        var firstErrors = (firstSkip.errors || []).slice(0, 3).join('; ');
+        if (firstErrors) msg += '\n\nFirst skipped team: ' + (firstSkip.name || 'Imported Team') + '\n' + firstErrors;
+      }
+    }
     alert(msg + '.');
   };
   reader.readAsText(file);
