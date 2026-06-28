@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.19-hard-beta-guard';
+    return txt || 'v2.2.20-data-sources-matrix';
   } catch (e) {
-    return 'v2.2.19-hard-beta-guard';
+    return 'v2.2.20-data-sources-matrix';
   }
 }
 
