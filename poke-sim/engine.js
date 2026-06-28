@@ -846,6 +846,16 @@ function _applyStatMod(value, mod4096) {
   return Math.max(1, _pokeRound(_of32(value * mod4096) / 4096));
 }
 
+function _moveOverrideOffensiveStat(move, isPhysical) {
+  if (move === 'Body Press') return 'def';
+  return isPhysical ? 'atk' : 'spa';
+}
+
+function _moveOverrideDefensiveStat(move, isPhysical) {
+  if (move === 'Psyshock' || move === 'Psystrike' || move === 'Secret Sword') return 'def';
+  return isPhysical ? 'def' : 'spd';
+}
+
 function _preDamageSpaBoostDelta(mon, move) {
   if (move !== 'Electro Shot' && move !== 'Meteor Beam') return 0;
   if (mon && mon.ability === 'Simple') return 2;
@@ -2066,11 +2076,17 @@ class Pokemon {
   _statRaw(base, ev, stat) {
     // Nature / Stat Alignment table is identical in both systems (0.9 / 1.0 / 1.1).
     const natureBonus = {
-      Adamant:{atk:1.1,spa:0.9}, Modest:{spa:1.1,atk:0.9}, Jolly:{spe:1.1,spa:0.9},
-      Timid:{spe:1.1,atk:0.9}, Bold:{def:1.1,atk:0.9}, Calm:{spd:1.1,atk:0.9},
-      Careful:{spd:1.1,spa:0.9}, Quiet:{spa:1.1,spe:0.9}, Relaxed:{def:1.1,spe:0.9},
-      Sassy:{spd:1.1,spe:0.9}, Serious:{}, Hasty:{spe:1.1,def:0.9},
-      Naive:{spe:1.1,spd:0.9}, Hardy:{}
+      Hardy:{}, Docile:{}, Serious:{}, Bashful:{}, Quirky:{},
+      Lonely:{atk:1.1,def:0.9}, Brave:{atk:1.1,spe:0.9},
+      Adamant:{atk:1.1,spa:0.9}, Naughty:{atk:1.1,spd:0.9},
+      Bold:{def:1.1,atk:0.9}, Relaxed:{def:1.1,spe:0.9},
+      Impish:{def:1.1,spa:0.9}, Lax:{def:1.1,spd:0.9},
+      Timid:{spe:1.1,atk:0.9}, Hasty:{spe:1.1,def:0.9},
+      Jolly:{spe:1.1,spa:0.9}, Naive:{spe:1.1,spd:0.9},
+      Modest:{spa:1.1,atk:0.9}, Mild:{spa:1.1,def:0.9},
+      Quiet:{spa:1.1,spe:0.9}, Rash:{spa:1.1,spd:0.9},
+      Calm:{spd:1.1,atk:0.9}, Gentle:{spd:1.1,def:0.9},
+      Sassy:{spd:1.1,spe:0.9}, Careful:{spd:1.1,spa:0.9}
     };
     const nm = (natureBonus[this.nature] || {})[stat] || 1;
     if (this.statFormat === 'champions') {
@@ -2209,8 +2225,8 @@ class Pokemon {
     //         defender ignores positive Def/SpD stages (takes 0 instead).
     //         Burn still halves physical Atk (Gen 6+).
     let atk, def;
-    const aStatKey = isPhysical ? 'atk' : 'spa';
-    const dStatKey = isPhysical ? 'def' : 'spd';
+    const aStatKey = _moveOverrideOffensiveStat(move, isPhysical);
+    const dStatKey = _moveOverrideDefensiveStat(move, isPhysical);
     const attackStatSource = move === 'Foul Play' ? target : this;
     const aBoost = attackStatSource.statBoosts[aStatKey] || 0;
     const dBoost = target.statBoosts[dStatKey] || 0;
@@ -2231,8 +2247,8 @@ class Pokemon {
         attackStatSource.statBoosts[aStatKey] = aOverride;
         target.statBoosts[dStatKey] = dOverride;
       }
-      atk = isPhysical ? attackStatSource.getStat('atk', field) : attackStatSource.getStat('spa', field);
-      def = isPhysical ? target.getStat('def', field) : target.getStat('spd', field);
+      atk = attackStatSource.getStat(aStatKey, field);
+      def = target.getStat(dStatKey, field);
     } finally {
       if (_stageOverrideApplied) {
         attackStatSource.statBoosts[aStatKey] = _aSaved;

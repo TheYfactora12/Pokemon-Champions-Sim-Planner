@@ -103,7 +103,7 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     { field: 'statsSourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
     { field: 'abilitySourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
     { field: 'typeSourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
-    { field: 'learnsetPolicy', status: 'blocked_missing_policy_review', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'learnsetPolicy', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts + local move_legality.js Mega fallback', blocksRuntime: false },
     { field: 'positiveFixture', status: 'blocked_missing_accepted_fixture', source: 'not yet implemented', blocksRuntime: true },
     { field: 'negativeFixture', status: 'blocked_missing_rejected_fixture', source: 'not yet implemented', blocksRuntime: true }
   ],
@@ -113,13 +113,12 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     additionRowsTotal: 22,
     newMegaRowsTotal: 16,
     fieldChecklistTotal: 14,
-    fieldsReadyForRuntime: 8,
-    fieldsBlockedForRuntime: 6,
+    fieldsReadyForRuntime: 9,
+    fieldsBlockedForRuntime: 5,
     selectorPolicy: 'hidden_from_legal_sim',
     learningPolicy: 'do_not_train_or_rank',
     coachingPolicy: 'do_not_recommend_as_trusted_reg_m_b',
     nextHumanActions: [
-      'define learnset inheritance policy for every new Mega form',
       'add accepted and rejected legality fixtures before selector promotion',
       'rerun Reg M-A regression fixtures before changing active runtime legality'
     ]
@@ -178,6 +177,36 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     row.learningEligible = false;
     row.poisoningGuard = 'review_only_do_not_train_or_rank';
     row.promotionPolicy = 'stats/types/ability can inform review UI, but runtime legality remains blocked until base/form implementation, learnset policy, and positive/negative fixtures are reviewed';
+    return row;
+  }),
+  learnsetPolicyRows: [
+    { megaForm: 'Raichu-Mega-X', baseSpecies: 'Raichu', requiredItem: 'Raichunite X' },
+    { megaForm: 'Raichu-Mega-Y', baseSpecies: 'Raichu', requiredItem: 'Raichunite Y' },
+    { megaForm: 'Sceptile-Mega', baseSpecies: 'Sceptile', requiredItem: 'Sceptilite' },
+    { megaForm: 'Blaziken-Mega', baseSpecies: 'Blaziken', requiredItem: 'Blazikenite' },
+    { megaForm: 'Swampert-Mega', baseSpecies: 'Swampert', requiredItem: 'Swampertite' },
+    { megaForm: 'Mawile-Mega', baseSpecies: 'Mawile', requiredItem: 'Mawilite' },
+    { megaForm: 'Metagross-Mega', baseSpecies: 'Metagross', requiredItem: 'Metagrossite' },
+    { megaForm: 'Staraptor-Mega', baseSpecies: 'Staraptor', requiredItem: 'Staraptite' },
+    { megaForm: 'Scolipede-Mega', baseSpecies: 'Scolipede', requiredItem: 'Scolipite' },
+    { megaForm: 'Scrafty-Mega', baseSpecies: 'Scrafty', requiredItem: 'Scraftinite' },
+    { megaForm: 'Eelektross-Mega', baseSpecies: 'Eelektross', requiredItem: 'Eelektrossite' },
+    { megaForm: 'Pyroar-Mega', baseSpecies: 'Pyroar', requiredItem: 'Pyroarite' },
+    { megaForm: 'Malamar-Mega', baseSpecies: 'Malamar', requiredItem: 'Malamarite' },
+    { megaForm: 'Barbaracle-Mega', baseSpecies: 'Barbaracle', requiredItem: 'Barbaracite' },
+    { megaForm: 'Dragalge-Mega', baseSpecies: 'Dragalge', requiredItem: 'Dragalgite' },
+    { megaForm: 'Falinks-Mega', baseSpecies: 'Falinks', requiredItem: 'Falinksite' }
+  ].map(function(row) {
+    row.rulesetId = 'champions_reg_m_b_doubles_bo3_source_review';
+    row.sourceName = 'Pokemon Showdown pokedex.ts + local move_legality.js Mega fallback';
+    row.sourceUrl = 'https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/pokedex.ts';
+    row.localPolicySource = 'poke-sim/move_legality.js learnsetSpeciesKey Mega fallback';
+    row.policy = 'mega_inherits_base_species_learnset';
+    row.reviewStatus = 'learnset_policy_source_verified_review_only';
+    row.runtimePromotable = false;
+    row.learningEligible = false;
+    row.poisoningGuard = 'review_only_do_not_train_or_rank';
+    row.promotionPolicy = 'policy can inform review UI, but runtime legality remains blocked until accepted and rejected fixture coverage proves each new Mega form uses the intended base learnset';
     return row;
   }),
   newMegaRows: [
@@ -3127,8 +3156,8 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
   ],
   promotionStatusBuckets: [
     { id: 'visual_reviewed', label: 'Visual reviewed', count: 235, runtimePromotable: false },
-    { id: 'data_incomplete', label: 'Data incomplete', count: 6, runtimePromotable: false },
-    { id: 'ready_for_runtime_review', label: 'Ready for runtime review', count: 8, runtimePromotable: false },
+    { id: 'data_incomplete', label: 'Data incomplete', count: 5, runtimePromotable: false },
+    { id: 'ready_for_runtime_review', label: 'Ready for runtime review', count: 9, runtimePromotable: false },
     { id: 'promoted', label: 'Promoted', count: 0, runtimePromotable: false }
   ],
   promotionGates: [

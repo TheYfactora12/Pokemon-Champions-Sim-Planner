@@ -105,7 +105,8 @@
 // v131-regmb-promotion-gate [2026-06-27] - Surface Reg M-B promotion checklist and data-trust gate.
 // v132-regmb-stone-source-pass [2026-06-27] - Source-verify Reg M-B Mega stone names, review-only.
 // v133-regmb-stats-types-abilities-source-pass [2026-06-27] - Source-verify Reg M-B Mega stats/types/abilities, review-only.
-const CACHE_NAME = 'champions-sim-v133-regmb-stats-types-abilities-source-pass';
+// v135-damage-stat-override-audit [2026-06-27] - Fix Showdown-aligned Body Press/Psyshock stat override damage gaps.
+const CACHE_NAME = 'champions-sim-v135-damage-stat-override-audit';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

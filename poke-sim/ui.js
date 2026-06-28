@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.1-regmb-stats-types-abilities-source-pass';
+    return txt || 'v2.2.3-damage-stat-override-audit';
   } catch (e) {
-    return 'v2.2.1-regmb-stats-types-abilities-source-pass';
+    return 'v2.2.3-damage-stat-override-audit';
   }
 }
 
@@ -9984,6 +9984,16 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B stats/types/abilities source pass',
       detail: 'v2.2.1 source-verifies all 16 Reg M-B new Mega base stats, types, and abilities against Pokemon Showdown pokedex.ts while keeping the rows review-only and blocked from runtime legality until base/form implementation, learnset policy, and positive/negative fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Damage stat override audit',
+      detail: 'v2.2.3 audits Showdown damage stat override semantics after a Foul Play report. Foul Play remains oracle-aligned, including burned-user behavior; confirmed local gaps are fixed for Body Press using user Defense as offense and Psyshock targeting Defense instead of Special Defense.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B learnset policy source pass',
+      detail: 'v2.2.2 records the source-backed learnset policy for all 16 Reg M-B new Megas: Mega forms inherit their base species learnset through the existing move_legality.js Mega fallback. The policy remains review-only until accepted and rejected fixtures prove the behavior.'
     },
     {
       status: 'done',

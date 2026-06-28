@@ -2348,8 +2348,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.1-regmb-stats-types-abilities-source-pass</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.3-damage-stat-override-audit</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -9243,6 +9243,16 @@ function _applyStatMod(value, mod4096) {
   return Math.max(1, _pokeRound(_of32(value * mod4096) / 4096));
 }
 
+function _moveOverrideOffensiveStat(move, isPhysical) {
+  if (move === 'Body Press') return 'def';
+  return isPhysical ? 'atk' : 'spa';
+}
+
+function _moveOverrideDefensiveStat(move, isPhysical) {
+  if (move === 'Psyshock' || move === 'Psystrike' || move === 'Secret Sword') return 'def';
+  return isPhysical ? 'def' : 'spd';
+}
+
 function _preDamageSpaBoostDelta(mon, move) {
   if (move !== 'Electro Shot' && move !== 'Meteor Beam') return 0;
   if (mon && mon.ability === 'Simple') return 2;
@@ -10463,11 +10473,17 @@ class Pokemon {
   _statRaw(base, ev, stat) {
     // Nature / Stat Alignment table is identical in both systems (0.9 / 1.0 / 1.1).
     const natureBonus = {
-      Adamant:{atk:1.1,spa:0.9}, Modest:{spa:1.1,atk:0.9}, Jolly:{spe:1.1,spa:0.9},
-      Timid:{spe:1.1,atk:0.9}, Bold:{def:1.1,atk:0.9}, Calm:{spd:1.1,atk:0.9},
-      Careful:{spd:1.1,spa:0.9}, Quiet:{spa:1.1,spe:0.9}, Relaxed:{def:1.1,spe:0.9},
-      Sassy:{spd:1.1,spe:0.9}, Serious:{}, Hasty:{spe:1.1,def:0.9},
-      Naive:{spe:1.1,spd:0.9}, Hardy:{}
+      Hardy:{}, Docile:{}, Serious:{}, Bashful:{}, Quirky:{},
+      Lonely:{atk:1.1,def:0.9}, Brave:{atk:1.1,spe:0.9},
+      Adamant:{atk:1.1,spa:0.9}, Naughty:{atk:1.1,spd:0.9},
+      Bold:{def:1.1,atk:0.9}, Relaxed:{def:1.1,spe:0.9},
+      Impish:{def:1.1,spa:0.9}, Lax:{def:1.1,spd:0.9},
+      Timid:{spe:1.1,atk:0.9}, Hasty:{spe:1.1,def:0.9},
+      Jolly:{spe:1.1,spa:0.9}, Naive:{spe:1.1,spd:0.9},
+      Modest:{spa:1.1,atk:0.9}, Mild:{spa:1.1,def:0.9},
+      Quiet:{spa:1.1,spe:0.9}, Rash:{spa:1.1,spd:0.9},
+      Calm:{spd:1.1,atk:0.9}, Gentle:{spd:1.1,def:0.9},
+      Sassy:{spd:1.1,spe:0.9}, Careful:{spd:1.1,spa:0.9}
     };
     const nm = (natureBonus[this.nature] || {})[stat] || 1;
     if (this.statFormat === 'champions') {
@@ -10606,8 +10622,8 @@ class Pokemon {
     //         defender ignores positive Def/SpD stages (takes 0 instead).
     //         Burn still halves physical Atk (Gen 6+).
     let atk, def;
-    const aStatKey = isPhysical ? 'atk' : 'spa';
-    const dStatKey = isPhysical ? 'def' : 'spd';
+    const aStatKey = _moveOverrideOffensiveStat(move, isPhysical);
+    const dStatKey = _moveOverrideDefensiveStat(move, isPhysical);
     const attackStatSource = move === 'Foul Play' ? target : this;
     const aBoost = attackStatSource.statBoosts[aStatKey] || 0;
     const dBoost = target.statBoosts[dStatKey] || 0;
@@ -10628,8 +10644,8 @@ class Pokemon {
         attackStatSource.statBoosts[aStatKey] = aOverride;
         target.statBoosts[dStatKey] = dOverride;
       }
-      atk = isPhysical ? attackStatSource.getStat('atk', field) : attackStatSource.getStat('spa', field);
-      def = isPhysical ? target.getStat('def', field) : target.getStat('spd', field);
+      atk = attackStatSource.getStat(aStatKey, field);
+      def = target.getStat(dStatKey, field);
     } finally {
       if (_stageOverrideApplied) {
         attackStatSource.statBoosts[aStatKey] = _aSaved;
@@ -15412,7 +15428,7 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     { field: 'statsSourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
     { field: 'abilitySourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
     { field: 'typeSourceUrl', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts', blocksRuntime: false },
-    { field: 'learnsetPolicy', status: 'blocked_missing_policy_review', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'learnsetPolicy', status: 'source_verified_review_only', source: 'Pokemon Showdown pokedex.ts + local move_legality.js Mega fallback', blocksRuntime: false },
     { field: 'positiveFixture', status: 'blocked_missing_accepted_fixture', source: 'not yet implemented', blocksRuntime: true },
     { field: 'negativeFixture', status: 'blocked_missing_rejected_fixture', source: 'not yet implemented', blocksRuntime: true }
   ],
@@ -15422,13 +15438,12 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     additionRowsTotal: 22,
     newMegaRowsTotal: 16,
     fieldChecklistTotal: 14,
-    fieldsReadyForRuntime: 8,
-    fieldsBlockedForRuntime: 6,
+    fieldsReadyForRuntime: 9,
+    fieldsBlockedForRuntime: 5,
     selectorPolicy: 'hidden_from_legal_sim',
     learningPolicy: 'do_not_train_or_rank',
     coachingPolicy: 'do_not_recommend_as_trusted_reg_m_b',
     nextHumanActions: [
-      'define learnset inheritance policy for every new Mega form',
       'add accepted and rejected legality fixtures before selector promotion',
       'rerun Reg M-A regression fixtures before changing active runtime legality'
     ]
@@ -15487,6 +15502,36 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     row.learningEligible = false;
     row.poisoningGuard = 'review_only_do_not_train_or_rank';
     row.promotionPolicy = 'stats/types/ability can inform review UI, but runtime legality remains blocked until base/form implementation, learnset policy, and positive/negative fixtures are reviewed';
+    return row;
+  }),
+  learnsetPolicyRows: [
+    { megaForm: 'Raichu-Mega-X', baseSpecies: 'Raichu', requiredItem: 'Raichunite X' },
+    { megaForm: 'Raichu-Mega-Y', baseSpecies: 'Raichu', requiredItem: 'Raichunite Y' },
+    { megaForm: 'Sceptile-Mega', baseSpecies: 'Sceptile', requiredItem: 'Sceptilite' },
+    { megaForm: 'Blaziken-Mega', baseSpecies: 'Blaziken', requiredItem: 'Blazikenite' },
+    { megaForm: 'Swampert-Mega', baseSpecies: 'Swampert', requiredItem: 'Swampertite' },
+    { megaForm: 'Mawile-Mega', baseSpecies: 'Mawile', requiredItem: 'Mawilite' },
+    { megaForm: 'Metagross-Mega', baseSpecies: 'Metagross', requiredItem: 'Metagrossite' },
+    { megaForm: 'Staraptor-Mega', baseSpecies: 'Staraptor', requiredItem: 'Staraptite' },
+    { megaForm: 'Scolipede-Mega', baseSpecies: 'Scolipede', requiredItem: 'Scolipite' },
+    { megaForm: 'Scrafty-Mega', baseSpecies: 'Scrafty', requiredItem: 'Scraftinite' },
+    { megaForm: 'Eelektross-Mega', baseSpecies: 'Eelektross', requiredItem: 'Eelektrossite' },
+    { megaForm: 'Pyroar-Mega', baseSpecies: 'Pyroar', requiredItem: 'Pyroarite' },
+    { megaForm: 'Malamar-Mega', baseSpecies: 'Malamar', requiredItem: 'Malamarite' },
+    { megaForm: 'Barbaracle-Mega', baseSpecies: 'Barbaracle', requiredItem: 'Barbaracite' },
+    { megaForm: 'Dragalge-Mega', baseSpecies: 'Dragalge', requiredItem: 'Dragalgite' },
+    { megaForm: 'Falinks-Mega', baseSpecies: 'Falinks', requiredItem: 'Falinksite' }
+  ].map(function(row) {
+    row.rulesetId = 'champions_reg_m_b_doubles_bo3_source_review';
+    row.sourceName = 'Pokemon Showdown pokedex.ts + local move_legality.js Mega fallback';
+    row.sourceUrl = 'https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/pokedex.ts';
+    row.localPolicySource = 'poke-sim/move_legality.js learnsetSpeciesKey Mega fallback';
+    row.policy = 'mega_inherits_base_species_learnset';
+    row.reviewStatus = 'learnset_policy_source_verified_review_only';
+    row.runtimePromotable = false;
+    row.learningEligible = false;
+    row.poisoningGuard = 'review_only_do_not_train_or_rank';
+    row.promotionPolicy = 'policy can inform review UI, but runtime legality remains blocked until accepted and rejected fixture coverage proves each new Mega form uses the intended base learnset';
     return row;
   }),
   newMegaRows: [
@@ -18436,8 +18481,8 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
   ],
   promotionStatusBuckets: [
     { id: 'visual_reviewed', label: 'Visual reviewed', count: 235, runtimePromotable: false },
-    { id: 'data_incomplete', label: 'Data incomplete', count: 6, runtimePromotable: false },
-    { id: 'ready_for_runtime_review', label: 'Ready for runtime review', count: 8, runtimePromotable: false },
+    { id: 'data_incomplete', label: 'Data incomplete', count: 5, runtimePromotable: false },
+    { id: 'ready_for_runtime_review', label: 'Ready for runtime review', count: 9, runtimePromotable: false },
     { id: 'promoted', label: 'Promoted', count: 0, runtimePromotable: false }
   ],
   promotionGates: [
@@ -24386,9 +24431,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.1-regmb-stats-types-abilities-source-pass';
+    return txt || 'v2.2.3-damage-stat-override-audit';
   } catch (e) {
-    return 'v2.2.1-regmb-stats-types-abilities-source-pass';
+    return 'v2.2.3-damage-stat-override-audit';
   }
 }
 
@@ -34254,6 +34299,16 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B stats/types/abilities source pass',
       detail: 'v2.2.1 source-verifies all 16 Reg M-B new Mega base stats, types, and abilities against Pokemon Showdown pokedex.ts while keeping the rows review-only and blocked from runtime legality until base/form implementation, learnset policy, and positive/negative fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Damage stat override audit',
+      detail: 'v2.2.3 audits Showdown damage stat override semantics after a Foul Play report. Foul Play remains oracle-aligned, including burned-user behavior; confirmed local gaps are fixed for Body Press using user Defense as offense and Psyshock targeting Defense instead of Special Defense.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B learnset policy source pass',
+      detail: 'v2.2.2 records the source-backed learnset policy for all 16 Reg M-B new Megas: Mega forms inherit their base species learnset through the existing move_legality.js Mega fallback. The policy remains review-only until accepted and rejected fixtures prove the behavior.'
     },
     {
       status: 'done',

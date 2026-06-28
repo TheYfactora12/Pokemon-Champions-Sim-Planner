@@ -11,6 +11,7 @@ const conversionDoc = fs.readFileSync(path.join(ROOT, 'docs', 'REG_M_B_SOURCE_CO
 const ui = fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8');
 const engine = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
 const data = fs.readFileSync(path.join(ROOT, 'data.js'), 'utf8');
+const moveLegalitySource = fs.readFileSync(path.join(ROOT, 'move_legality.js'), 'utf8');
 const rulesets = require(path.join(ROOT, 'rulesets.js'));
 global.getChampionsRuleset = rulesets.getChampionsRuleset;
 global.getRulesetEvidencePolicy = rulesets.getRulesetEvidencePolicy;
@@ -231,21 +232,22 @@ T('10c. Reg M-B promotion gate blocks runtime, learning, and trusted coaching', 
   conversion.requiredPromotionFields.forEach((field) => {
     truthy(conversion.promotionFieldChecklist.some((row) => row.field === field), 'missing promotion field ' + field);
   });
-  truthy(conversion.promotionFieldChecklist.filter((row) => row.blocksRuntime === true).length === 6, '6 Reg M-B fields should still block runtime');
+  truthy(conversion.promotionFieldChecklist.filter((row) => row.blocksRuntime === true).length === 5, '5 Reg M-B fields should still block runtime');
   truthy(conversion.promotionFieldChecklist.some((row) => row.field === 'megaStone' && row.status === 'source_verified_review_only'), 'megaStone should be source-verified review-only');
   truthy(conversion.promotionFieldChecklist.some((row) => row.field === 'itemSourceUrl' && row.status === 'source_verified_review_only'), 'itemSourceUrl should be source-verified review-only');
   ['megaBaseStats', 'statsSourceUrl', 'types', 'typeSourceUrl', 'ability', 'abilitySourceUrl'].forEach((field) => {
     truthy(conversion.promotionFieldChecklist.some((row) => row.field === field && row.status === 'source_verified_review_only'), field + ' should be source-verified review-only');
   });
+  truthy(conversion.promotionFieldChecklist.some((row) => row.field === 'learnsetPolicy' && row.status === 'source_verified_review_only'), 'learnsetPolicy should be source-verified review-only');
   truthy(conversion.promotionReadiness.status === 'blocked_not_runtime_promotable', 'promotion readiness should remain blocked');
-  truthy(conversion.promotionReadiness.fieldsReadyForRuntime === 8, 'eight fields should be source-verified but review-only');
-  truthy(conversion.promotionReadiness.fieldsBlockedForRuntime === 6, '6 fields should remain blocked');
+  truthy(conversion.promotionReadiness.fieldsReadyForRuntime === 9, 'nine fields should be source-verified but review-only');
+  truthy(conversion.promotionReadiness.fieldsBlockedForRuntime === 5, '5 fields should remain blocked');
   truthy(conversion.promotionReadiness.selectorPolicy === 'hidden_from_legal_sim', 'selector policy should stay hidden');
   truthy(conversion.promotionReadiness.learningPolicy === 'do_not_train_or_rank', 'learning policy should block training');
   truthy(conversion.promotionReadiness.coachingPolicy === 'do_not_recommend_as_trusted_reg_m_b', 'coaching policy should block trusted recommendations');
   truthy(Array.isArray(conversion.promotionStatusBuckets), 'missing promotion status buckets');
   truthy(conversion.promotionStatusBuckets.some((row) => row.id === 'visual_reviewed' && row.count === 235), 'visual reviewed bucket should show 235 rows');
-  truthy(conversion.promotionStatusBuckets.some((row) => row.id === 'ready_for_runtime_review' && row.count === 8), 'ready-for-review bucket should show eight sourced fields');
+  truthy(conversion.promotionStatusBuckets.some((row) => row.id === 'ready_for_runtime_review' && row.count === 9), 'ready-for-review bucket should show nine sourced fields');
   truthy(conversion.promotionStatusBuckets.some((row) => row.id === 'promoted' && row.count === 0), 'promoted bucket should stay zero');
 });
 
@@ -278,6 +280,22 @@ T('10e. Reg M-B Mega implementation rows source stats, types, and abilities with
   truthy(conversion.megaImplementationRows.every((row) => row.sourceUrl.includes('pokemon-showdown/master/data/pokedex.ts')), 'implementation rows should cite Pokemon Showdown pokedex data');
   truthy(conversion.megaImplementationRows.every((row) => row.runtimePromotable === false), 'implementation rows must remain review-only');
   truthy(conversion.megaImplementationRows.every((row) => row.learningEligible === false), 'implementation rows must not train learning');
+});
+
+T('10f. Reg M-B learnset policy inherits base species but stays review-only', () => {
+  truthy(Array.isArray(conversion.learnsetPolicyRows), 'missing Reg M-B learnset policy rows');
+  truthy(conversion.learnsetPolicyRows.length === REGMB_NEW_MEGAS.length, 'expected one learnset policy row per new Mega');
+  REGMB_NEW_MEGAS.forEach((megaForm) => {
+    const row = conversion.learnsetPolicyRows.find((entry) => entry.megaForm === megaForm);
+    truthy(row, 'missing learnset policy row for ' + megaForm);
+    truthy(row.policy === 'mega_inherits_base_species_learnset', 'wrong learnset policy for ' + megaForm);
+    truthy(row.localPolicySource.includes('move_legality.js'), 'learnset policy should cite local Mega fallback');
+    truthy(row.runtimePromotable === false, 'learnset policy should stay review-only for ' + megaForm);
+    truthy(row.learningEligible === false, 'learnset policy should not train learning for ' + megaForm);
+  });
+  const raichuY = conversion.learnsetPolicyRows.find((row) => row.megaForm === 'Raichu-Mega-Y');
+  truthy(raichuY && raichuY.baseSpecies === 'Raichu' && raichuY.requiredItem === 'Raichunite Y', 'Raichu-Mega-Y learnset policy mismatch');
+  inc(moveLegalitySource, 'if (/-Mega(?:-[XY])?$/i.test(canonical) && row.baseSpecies)');
 });
 
 T('11. Reg M-B review coverage sections remain blocked from runtime learning', () => {

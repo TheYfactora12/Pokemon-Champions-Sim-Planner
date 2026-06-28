@@ -270,3 +270,39 @@ Gate movement after this pass:
 | abilitySourceUrl | blocked, missing URL | source-verified review-only |
 
 Promotion remains blocked. Current gate count: `8` source-verified review-only fields, `6` blocked fields, `0` promoted fields.
+
+## Mega learnset policy source pass - v2.2.2
+
+Source checked: Pokemon Showdown `data/pokedex.ts` plus local `poke-sim/move_legality.js` on June 27, 2026.
+Source URL: https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/pokedex.ts
+
+Policy: every Reg M-B new Mega form inherits its base species learnset. The Showdown Pokedex rows identify `baseSpecies` and `requiredItem` for each Mega form, and the local move legality helper already routes `*-Mega`, `*-Mega-X`, and `*-Mega-Y` forms back to the base species learnset.
+
+This is source-verified for review only. It is not runtime-promoted until accepted and rejected fixtures prove every new Mega form uses the intended inherited learnset behavior.
+
+| Mega form | Base species learnset | Required item | Runtime policy |
+| --- | --- | --- | --- |
+| Raichu-Mega-X | Raichu | Raichunite X | review-only |
+| Raichu-Mega-Y | Raichu | Raichunite Y | review-only |
+| Sceptile-Mega | Sceptile | Sceptilite | review-only |
+| Blaziken-Mega | Blaziken | Blazikenite | review-only |
+| Swampert-Mega | Swampert | Swampertite | review-only |
+| Mawile-Mega | Mawile | Mawilite | review-only |
+| Metagross-Mega | Metagross | Metagrossite | review-only |
+| Staraptor-Mega | Staraptor | Staraptite | review-only |
+| Scolipede-Mega | Scolipede | Scolipite | review-only |
+| Scrafty-Mega | Scrafty | Scraftinite | review-only |
+| Eelektross-Mega | Eelektross | Eelektrossite | review-only |
+| Pyroar-Mega | Pyroar | Pyroarite | review-only |
+| Malamar-Mega | Malamar | Malamarite | review-only |
+| Barbaracle-Mega | Barbaracle | Barbaracite | review-only |
+| Dragalge-Mega | Dragalge | Dragalgite | review-only |
+| Falinks-Mega | Falinks | Falinksite | review-only |
+
+Gate movement after this pass:
+
+| Field | Previous status | New status |
+| --- | --- | --- |
+| learnsetPolicy | blocked, missing policy review | source-verified review-only |
+
+Promotion remains blocked. Current gate count: `9` source-verified review-only fields, `5` blocked fields, `0` promoted fields.
