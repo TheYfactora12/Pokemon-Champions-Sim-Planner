@@ -251,7 +251,9 @@ T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
   inc(data, "'Mr. Rime':");
   inc(data, "'Kommo-o':");
   inc(data, "'Tauros-Paldea-Combat':");
-  inc(data, 'tauros-paldea-combat.gif');
+  inc(data, 'tauros-paldeacombat.gif');
+  inc(data, 'tauros-paldeablaze.gif');
+  inc(data, 'tauros-paldeaaqua.gif');
   inc(data, "'Tauros-Paldea-Blaze':");
   inc(data, "'Tauros-Paldea-Aqua':");
   inc(ui, "filter === 'regmb_review'");

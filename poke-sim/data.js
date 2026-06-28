@@ -804,9 +804,9 @@ const CUSTOM_FORM_SPRITES = {
   // they do not affect legality, runtime promotion, or training data.
   'Mr. Rime':                       SPRITE_URL_BASE + '/866.png',
   'Kommo-o':                        SPRITE_URL_BASE + '/784.png',
-  'Tauros-Paldea-Combat':           'https://play.pokemonshowdown.com/sprites/ani/tauros-paldea-combat.gif',
-  'Tauros-Paldea-Blaze':            'https://play.pokemonshowdown.com/sprites/ani/tauros-paldea-blaze.gif',
-  'Tauros-Paldea-Aqua':             'https://play.pokemonshowdown.com/sprites/ani/tauros-paldea-aqua.gif',
+  'Tauros-Paldea-Combat':           'https://play.pokemonshowdown.com/sprites/ani/tauros-paldeacombat.gif',
+  'Tauros-Paldea-Blaze':            'https://play.pokemonshowdown.com/sprites/ani/tauros-paldeablaze.gif',
+  'Tauros-Paldea-Aqua':             'https://play.pokemonshowdown.com/sprites/ani/tauros-paldeaaqua.gif',
   'Meowstic-M':                     'https://play.pokemonshowdown.com/sprites/ani/meowstic.gif',
   'Meowstic-F':                     'https://play.pokemonshowdown.com/sprites/ani/meowstic-f.gif',
   'Gourgeist-Small':                'https://play.pokemonshowdown.com/sprites/ani/gourgeist-small.gif',

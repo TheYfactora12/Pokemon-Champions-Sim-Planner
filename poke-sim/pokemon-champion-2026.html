@@ -2348,8 +2348,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.93-shared-sprite-aliases -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.93-shared-sprite-aliases</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.94-paldea-tauros-sprites</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -3755,9 +3755,9 @@ const CUSTOM_FORM_SPRITES = {
   // they do not affect legality, runtime promotion, or training data.
   'Mr. Rime':                       SPRITE_URL_BASE + '/866.png',
   'Kommo-o':                        SPRITE_URL_BASE + '/784.png',
-  'Tauros-Paldea-Combat':           'https://play.pokemonshowdown.com/sprites/ani/tauros-paldea-combat.gif',
-  'Tauros-Paldea-Blaze':            'https://play.pokemonshowdown.com/sprites/ani/tauros-paldea-blaze.gif',
-  'Tauros-Paldea-Aqua':             'https://play.pokemonshowdown.com/sprites/ani/tauros-paldea-aqua.gif',
+  'Tauros-Paldea-Combat':           'https://play.pokemonshowdown.com/sprites/ani/tauros-paldeacombat.gif',
+  'Tauros-Paldea-Blaze':            'https://play.pokemonshowdown.com/sprites/ani/tauros-paldeablaze.gif',
+  'Tauros-Paldea-Aqua':             'https://play.pokemonshowdown.com/sprites/ani/tauros-paldeaaqua.gif',
   'Meowstic-M':                     'https://play.pokemonshowdown.com/sprites/ani/meowstic.gif',
   'Meowstic-F':                     'https://play.pokemonshowdown.com/sprites/ani/meowstic-f.gif',
   'Gourgeist-Small':                'https://play.pokemonshowdown.com/sprites/ani/gourgeist-small.gif',
@@ -24246,9 +24246,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.93-shared-sprite-aliases';
+    return txt || 'v2.1.94-paldea-tauros-sprites';
   } catch (e) {
-    return 'v2.1.93-shared-sprite-aliases';
+    return 'v2.1.94-paldea-tauros-sprites';
   }
 }
 

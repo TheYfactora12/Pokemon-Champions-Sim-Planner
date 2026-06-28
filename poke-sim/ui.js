@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.93-shared-sprite-aliases';
+    return txt || 'v2.1.94-paldea-tauros-sprites';
   } catch (e) {
-    return 'v2.1.93-shared-sprite-aliases';
+    return 'v2.1.94-paldea-tauros-sprites';
   }
 }
 
