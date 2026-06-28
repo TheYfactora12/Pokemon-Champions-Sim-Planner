@@ -250,6 +250,8 @@ T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
   inc(ui, 'function csHandleSpriteError');
   inc(ui, 'function csSpriteFallbackAttrs');
   inc(data, 'raichu-alola.gif');
+  inc(data, 'zoroark-hisui.gif');
+  inc(ui, "'Zoroark-Hisui': 'zoroark-hisui'");
   inc(ui, 'lycanroc-midnight');
   inc(ui, 'lycanroc-dusk');
   inc(ui, 'if (typeof getSpriteUrl ===');

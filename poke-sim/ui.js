@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.96-alola-raichu-sprite-fallbacks';
+    return txt || 'v2.1.97-hisui-zoroark-gif';
   } catch (e) {
-    return 'v2.1.96-alola-raichu-sprite-fallbacks';
+    return 'v2.1.97-hisui-zoroark-gif';
   }
 }
 
@@ -667,6 +667,8 @@ function csSpriteStaticFallbackUrl(name) {
     'Tauros-Paldea-Combat': 'tauros-paldeacombat',
     'Tauros-Paldea-Blaze': 'tauros-paldeablaze',
     'Tauros-Paldea-Aqua': 'tauros-paldeaaqua',
+    'Raichu-Alola': 'raichu-alola',
+    'Zoroark-Hisui': 'zoroark-hisui',
     'Lycanroc-Midday': 'lycanroc',
     'Lycanroc-Midnight': 'lycanroc-midnight',
     'Lycanroc-Dusk': 'lycanroc-dusk',
@@ -9908,6 +9910,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Alolan Raichu sprite alias and fallback coverage',
       detail: 'v2.1.96 maps Raichu-Alola to the verified Showdown surfing-style animated sprite and extends the shared sprite fallback helper into bring-selection, replay, and Reg M-B visual-review surfaces.'
+    },
+    {
+      status: 'done',
+      title: 'Hisuian Zoroark animated sprite alias',
+      detail: 'v2.1.97 maps Zoroark-Hisui to the verified Showdown animated GIF and static fallback slug so Hisuian Zoroark no longer renders as regular Zoroark on shared Pokemon card surfaces.'
     },
     {
       status: 'done',

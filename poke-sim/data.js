@@ -817,6 +817,7 @@ const CUSTOM_FORM_SPRITES = {
   'Basculegion-M':                  'https://play.pokemonshowdown.com/sprites/ani/basculegion.gif',
   'Basculegion-F':                  'https://play.pokemonshowdown.com/sprites/ani/basculegion-f.gif',
   'Sinistcha':                      'https://play.pokemonshowdown.com/sprites/ani/sinistcha.gif',
+  'Zoroark-Hisui':                  'https://play.pokemonshowdown.com/sprites/ani/zoroark-hisui.gif',
   'Lycanroc-Midday':                'https://play.pokemonshowdown.com/sprites/ani/lycanroc.gif',
   'Lycanroc-Midnight':              'https://play.pokemonshowdown.com/sprites/ani/lycanroc-midnight.gif',
   'Lycanroc-Dusk':                  'https://play.pokemonshowdown.com/sprites/ani/lycanroc-dusk.gif'
