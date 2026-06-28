@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.26-editor-save-cancel';
+    return txt || 'v2.2.27-import-file-feedback';
   } catch (e) {
-    return 'v2.2.26-editor-save-cancel';
+    return 'v2.2.27-import-file-feedback';
   }
 }
 
@@ -2307,17 +2307,23 @@ function _uniqueTeamName(wanted) {
 }
 
 function importCustomTeamsBulk(teams /* [{name, members}] */) {
-  // Returns { added, skipped, keys:[...] }
-  var added = 0, skipped = 0, keys = [];
-  if (!Array.isArray(teams)) return { added: 0, skipped: 0, keys: [] };
+  // Returns { added, skipped, keys:[...], skippedErrors:[...] } so file-upload
+  // imports can tell users exactly why a parsed team did not enter the sim.
+  var added = 0, skipped = 0, keys = [], skippedErrors = [];
+  if (!Array.isArray(teams)) return { added: 0, skipped: 0, keys: [], skippedErrors: [] };
   for (var i = 0; i < teams.length; i++) {
     var t = teams[i];
-    if (!t || !Array.isArray(t.members) || t.members.length === 0) { skipped++; continue; }
+    if (!t || !Array.isArray(t.members) || t.members.length === 0) {
+      skipped++;
+      skippedErrors.push({ name: (t && t.name) || 'Imported Team', errors: ['No Pokemon or moves were parsed from this team.'], warnings: [] });
+      continue;
+    }
     var key = _uniqueCustomKey(t.name);
     var name = _uniqueTeamName(t.name || 'Imported Team');
     var validation = buildImportedTeamValidation(t.members, { name: name, format: 'champions' });
     if (!validation.valid) {
       skipped++;
+      skippedErrors.push({ name: name, errors: validation.errors.slice(0), warnings: validation.warnings.slice(0) });
       continue;
     }
     TEAMS[key] = {
@@ -2340,7 +2346,7 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
     if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(key, TEAMS[key], 'bulk_import');
   }
   if (added > 0 && typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
-  return { added: added, skipped: skipped, keys: keys };
+  return { added: added, skipped: skipped, keys: keys, skippedErrors: skippedErrors };
 }
 
 function importFromJsonText(jsonText) {
@@ -2520,7 +2526,14 @@ document.getElementById('bulk-import-file')?.addEventListener('change', function
     if (typeof rebuildTeamSelects === 'function') rebuildTeamSelects();
     renderTeamsGrid();
     var msg = 'Imported ' + result.added + ' team' + (result.added === 1 ? '' : 's');
-    if (result.skipped > 0) msg += ' (' + result.skipped + ' skipped)';
+    if (result.skipped > 0) {
+      msg += ' (' + result.skipped + ' skipped)';
+      if (result.skippedErrors && result.skippedErrors.length) {
+        var firstSkip = result.skippedErrors[0] || {};
+        var firstErrors = (firstSkip.errors || []).slice(0, 3).join('; ');
+        if (firstErrors) msg += '\n\nFirst skipped team: ' + (firstSkip.name || 'Imported Team') + '\n' + firstErrors;
+      }
+    }
     alert(msg + '.');
   };
   reader.readAsText(file);

@@ -115,7 +115,8 @@
 // v155-sources-ui-polish [2026-06-28] - Tighten the Sources dashboard layout and refresh the app-shell cache.
 // v156-kevin-team-qa [2026-06-28] - Add coached Kevin baseline team, approved team QA matrix, and Seed Sower terrain evidence.
 // v158-editor-save-cancel [2026-06-28] - Refresh app shell for explicit editor save and cancel draft controls.
-const CACHE_NAME = 'champions-sim-v158-editor-save-cancel';
+// v159-import-file-feedback [2026-06-28] - Refresh app shell for file import parser feedback and exporter syntax guard.
+const CACHE_NAME = 'champions-sim-v159-import-file-feedback';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
