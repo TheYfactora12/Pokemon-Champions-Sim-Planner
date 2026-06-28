@@ -4971,6 +4971,87 @@ const TEAMS = {
         "role": "Disruption / Sustain"
       }
     ]
+  },
+  "kevin_meta_sun": {
+    "name": "Kevin Meta Sun",
+    "label": "KEVIN",
+    "style": "weather",
+    "description": "High-floor current-meta sun offense for real-play testing: Mega Charizard Y pressure, Venusaur sleep control, Garchomp spread pressure, Sneasler disruption, Incineroar pivoting, and Whimsicott speed control.",
+    "champion_pack_id": "kevin_meta_sun_champions_regma_v1",
+    "format": "champions",
+    "formatid": "champions-vgc-2026-regma",
+    "gametype": "doubles",
+    "ruleset": ["Species Clause", "Item Clause", "Bring 6 Pick 4", "Level 50"],
+    "source": "preloaded",
+    "provenance": {
+      "roster_source": "current meta adaptation from Game8 doubles best teams + doubles tier list",
+      "spread_source": "Game8 listed Champions spreads adapted only where current runtime-supported move legality required it",
+      "author": "codex",
+      "url": "https://game8.co/games/Pokemon-Champions/archives/593949",
+      "status": "approved-runtime"
+    },
+    "legality_status": "legal",
+    "legality_notes": "Built to stay inside the verified Champions item pool and current runtime-supported move/species lane. The shell follows the current Charizard Y sun direction surfaced by Game8 and the current doubles tier list, but uses only moves the app can validate today.",
+    "assumption_register": [
+      "This is a real-play legal Champions team recommendation, not a claim of absolute solved best six.",
+      "The closest public meta source shell was Aaron Zheng's Charizard Y sun team on Game8, but Whimsicott replaces the weaker current runtime Rotom-Wash lane to keep both real-play direction and in-app legality clean."
+    ],
+    "members": [
+      {
+        "name": "Charizard",
+        "item": "Charizardite Y",
+        "ability": "Solar Power",
+        "nature": "Timid",
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 1, "spe": 32},
+        "moves": ["Heat Wave", "Solar Beam", "Weather Ball", "Protect"],
+        "role": "Primary Sun Breaker"
+      },
+      {
+        "name": "Venusaur",
+        "item": "Focus Sash",
+        "ability": "Chlorophyll",
+        "nature": "Modest",
+        "evs": {"hp": 1, "atk": 0, "def": 0, "spa": 32, "spd": 1, "spe": 32},
+        "moves": ["Sleep Powder", "Leaf Storm", "Sludge Bomb", "Protect"],
+        "role": "Sun Speed Control / Sleep Pressure"
+      },
+      {
+        "name": "Garchomp",
+        "item": "Choice Scarf",
+        "ability": "Rough Skin",
+        "nature": "Adamant",
+        "evs": {"hp": 1, "atk": 32, "def": 1, "spa": 0, "spd": 0, "spe": 32},
+        "moves": ["Rock Slide", "Dragon Claw", "Earthquake", "Bulldoze"],
+        "role": "Fast Spread Pressure"
+      },
+      {
+        "name": "Sneasler",
+        "item": "White Herb",
+        "ability": "Unburden",
+        "nature": "Jolly",
+        "evs": {"hp": 0, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 32},
+        "moves": ["Dire Claw", "Close Combat", "Rock Slide", "Coaching"],
+        "role": "Fast Disruption / Cleanup"
+      },
+      {
+        "name": "Incineroar",
+        "item": "Sitrus Berry",
+        "ability": "Intimidate",
+        "nature": "Adamant",
+        "evs": {"hp": 32, "atk": 32, "def": 0, "spa": 0, "spd": 0, "spe": 2},
+        "moves": ["Darkest Lariat", "Flare Blitz", "Fake Out", "Knock Off"],
+        "role": "Pivot / Tempo Control"
+      },
+      {
+        "name": "Whimsicott",
+        "item": "Mental Herb",
+        "ability": "Prankster",
+        "nature": "Timid",
+        "evs": {"hp": 32, "atk": 0, "def": 2, "spa": 0, "spd": 0, "spe": 32},
+        "moves": ["Tailwind", "Encore", "Moonblast", "Protect"],
+        "role": "Speed Control / Disruption"
+      }
+    ]
   }
 
 };

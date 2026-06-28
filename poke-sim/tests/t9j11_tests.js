@@ -559,7 +559,8 @@ T('15g2. visible preloaded sim teams are approved Champion legal rows only', () 
     'indeedee_hatterene_tr',
     'rillaboom_archaludon_balance',
     'arboliva_seed_sower_balance',
-    'pelipper_basculegion_rain'
+    'pelipper_basculegion_rain',
+    'kevin_meta_sun'
   ];
   eq(visible.length, expected.length, 'approved Champion testing catalog should be visible');
   expected.forEach(key => truthy(visible.includes(key), key + ' should remain visible'));

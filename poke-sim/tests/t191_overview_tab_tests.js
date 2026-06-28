@@ -37,7 +37,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Top 10 Champion archetypes');
   inc(ui, 'Removed Teams');
   inc(ui, '17 legacy/inferred rows');
-  inc(ui, '14 approved runtime rows');
+  inc(ui, '15 approved runtime rows');
   inc(ui, 'Stress Lite totals + coaching summary live');
   inc(ui, 'DB Log Detail');
   inc(ui, 'Summary/capped; exports are forensic proof');
@@ -191,6 +191,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md');
   inc(ui, 'Mechanics Truth Beta Gate Checklist');
   inc(ui, 'mechanics_truth_beta_gate_checklist.md');
+  inc(ui, 'Approved Runtime Team Test Matrix');
+  inc(ui, 'approved_runtime_team_test_matrix.md');
   inc(ui, 'Runtime Naming Cheat Sheet');
   inc(ui, 'SHOWDOWN_RUNTIME_NAMING_CHEATSHEET.md');
   inc(ui, 'SHOWDOWN_SYNC_ARCHITECTURE.md');

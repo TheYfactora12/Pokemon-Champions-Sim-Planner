@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.23-sources-ui-polish';
+    return txt || 'v2.2.24-kevin-team-qa';
   } catch (e) {
-    return 'v2.2.23-sources-ui-polish';
+    return 'v2.2.24-kevin-team-qa';
   }
 }
 
@@ -10874,7 +10874,7 @@ var CS_OVERVIEW_DATA = {
   metrics: [
     { label: 'Current Truth', value: 'Not 100% yet' },
     { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
-    { label: 'Release Teams', value: '14 approved runtime rows' },
+    { label: 'Release Teams', value: '15 approved runtime rows' },
     { label: 'Testing Catalog Target', value: 'Top 10 Champion archetypes live' },
     { label: 'Removed Teams', value: '17 legacy/inferred rows' },
     { label: 'DB Team Rule', value: 'Approved rows must pass gates' },
@@ -10989,6 +10989,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Stat-source proof team and targeted QA',
       detail: 'v2.2.14 adds a legal Targeted Stat Source Proof team plus forced targeted QA battles for Foul Play, Body Press, Psyshock, and the Foul Play Pure Power guard so QA Artifacts can deterministically clear non-standard stat-source proof gaps.'
+    },
+    {
+      status: 'done',
+      title: 'Kevin coached baseline team added',
+      detail: 'v2.2.24 adds Kevin Meta Sun as the first named coached baseline team and documents the approved runtime team test matrix so QA knows which teams prove terrain, weather, Trick Room, replay evidence, and future saved-team recommendation work.'
     },
     {
       status: 'done',
@@ -11710,6 +11715,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Data Source Registry', href: 'docs/DATA_SOURCE_REGISTRY.md' },
     { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
+    { label: 'Approved Runtime Team Test Matrix', href: 'reports/approved_runtime_team_test_matrix.md' },
     { label: 'Mechanics Truth Beta Gate Checklist', href: 'reports/mechanics_truth_beta_gate_checklist.md' },
     { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },
     { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },

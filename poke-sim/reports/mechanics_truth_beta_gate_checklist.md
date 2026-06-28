@@ -179,6 +179,18 @@ Recommended order:
 4. Switching/replacement timing inventory
 5. Decision Opportunity Ledger on top of those proven mechanics
 
+## Approved runtime teams used for proof
+
+Use `approved_runtime_team_test_matrix.md` to pick matchups that intentionally exercise the open mechanics families.
+
+Current proof teams:
+
+- `indeedee_hatterene_tr`: Psychic Terrain, priority blocking, redirection, Trick Room, Expanding Force
+- `rillaboom_archaludon_balance`: Grassy Terrain, rain pressure, Tailwind, Electro Shot, Body Press
+- `arboliva_seed_sower_balance`: reactive terrain, sustain, Terrain Pulse, healing evidence
+- `pelipper_basculegion_rain`: rain offense, Swift Swim pressure, terrain-weather pivoting
+- `kevin_meta_sun`: coached baseline sun team for matchup tuning and future saved-team version analysis
+
 ## What should not happen
 
 Do not:
