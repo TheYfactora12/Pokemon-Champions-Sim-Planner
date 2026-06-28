@@ -247,6 +247,10 @@ T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
   inc(ui, 'function csRenderRegmbCoverageCards');
   inc(ui, 'function csRenderRegmbVisualReviewGrid');
   inc(ui, 'function csRegmbSpriteUrl');
+  inc(ui, 'function csHandleSpriteError');
+  inc(ui, 'function csSpriteFallbackAttrs');
+  inc(ui, 'lycanroc-midnight');
+  inc(ui, 'lycanroc-dusk');
   inc(ui, 'if (typeof getSpriteUrl ===');
   inc(data, "'Mr. Rime':");
   inc(data, "'Kommo-o':");

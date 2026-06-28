@@ -815,7 +815,10 @@ const CUSTOM_FORM_SPRITES = {
   'Gourgeist-Super':                'https://play.pokemonshowdown.com/sprites/ani/gourgeist-super.gif',
   'Basculegion-M':                  'https://play.pokemonshowdown.com/sprites/ani/basculegion.gif',
   'Basculegion-F':                  'https://play.pokemonshowdown.com/sprites/ani/basculegion-f.gif',
-  'Sinistcha':                      'https://play.pokemonshowdown.com/sprites/ani/sinistcha.gif'
+  'Sinistcha':                      'https://play.pokemonshowdown.com/sprites/ani/sinistcha.gif',
+  'Lycanroc-Midday':                'https://play.pokemonshowdown.com/sprites/ani/lycanroc.gif',
+  'Lycanroc-Midnight':              'https://play.pokemonshowdown.com/sprites/ani/lycanroc-midnight.gif',
+  'Lycanroc-Dusk':                  'https://play.pokemonshowdown.com/sprites/ani/lycanroc-dusk.gif'
 };
 
 // Suffixes we strip when falling back to the base-form dex sprite.

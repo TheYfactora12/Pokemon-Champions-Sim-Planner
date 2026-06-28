@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.94-paldea-tauros-sprites';
+    return txt || 'v2.1.95-sprite-fallback-chain';
   } catch (e) {
-    return 'v2.1.94-paldea-tauros-sprites';
+    return 'v2.1.95-sprite-fallback-chain';
   }
 }
 
@@ -661,6 +661,43 @@ function exportTeamToPaste(team) {
 
 // ---- Helper: sprite URL (defined in data.js; safe no-op re-export for ui.js compat) ----
 // getSpriteUrl is already defined in data.js — do not redefine here
+function csSpriteStaticFallbackUrl(name) {
+  var raw = String(name || '');
+  var aliases = {
+    'Tauros-Paldea-Combat': 'tauros-paldeacombat',
+    'Tauros-Paldea-Blaze': 'tauros-paldeablaze',
+    'Tauros-Paldea-Aqua': 'tauros-paldeaaqua',
+    'Lycanroc-Midday': 'lycanroc',
+    'Lycanroc-Midnight': 'lycanroc-midnight',
+    'Lycanroc-Dusk': 'lycanroc-dusk',
+    'Meowstic-M': 'meowstic',
+    'Meowstic-F': 'meowstic-f',
+    'Gourgeist-Small': 'gourgeist-small',
+    'Gourgeist-Average': 'gourgeist',
+    'Gourgeist-Large': 'gourgeist-large',
+    'Gourgeist-Super': 'gourgeist-super',
+    'Basculegion-M': 'basculegion',
+    'Basculegion-F': 'basculegion-f'
+  };
+  var slug = aliases[raw] || raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'https://play.pokemonshowdown.com/sprites/gen5/' + slug + '.png';
+}
+function csSpriteFallbackAttrs(name) {
+  return ' data-fallback-src="' + _escapeHtml(csSpriteStaticFallbackUrl(name)) + '" data-fallback-stage="0" onerror="csHandleSpriteError(this)"';
+}
+function csHandleSpriteError(img) {
+  if (!img) return;
+  var stage = Number(img.getAttribute('data-fallback-stage') || '0');
+  var fallback = img.getAttribute('data-fallback-src') || '';
+  if (stage === 0 && fallback && img.src !== fallback) {
+    img.setAttribute('data-fallback-stage', '1');
+    img.src = fallback;
+    return;
+  }
+  img.setAttribute('data-fallback-stage', '2');
+  img.style.opacity = '.3';
+}
+
 
 // ---- Type color ----
 function typeColor(type) { return TYPE_COLORS[type] || '#888'; }
@@ -694,7 +731,7 @@ function renderRoster(containerId, members) {
     const row = document.createElement('div');
     row.className = 'poke-row';
     row.innerHTML = `
-      <img class="poke-sprite" src="${getSpriteUrl(m.name)}" alt="${escName}" loading="lazy" onerror="this.style.opacity='.3'"/>
+      <img class="poke-sprite" src="${getSpriteUrl(m.name)}" alt="${escName}" loading="lazy" ${csSpriteFallbackAttrs(m.name)}/>
       <div class="poke-info">
         <div class="poke-name">${escName}</div>
         <div class="poke-item">${escItem} · ${escAbility}</div>
@@ -2558,7 +2595,7 @@ function renderEditorRoster() {
   team.members.forEach((m, i) => {
     const btn = document.createElement('button');
     btn.className = 'editor-poke-btn';
-    btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/><span>${_escapeHtml(m.name || '')}</span>`;
+    btn.innerHTML = `<img class="editor-poke-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" ${csSpriteFallbackAttrs(m.name)}/><span>${_escapeHtml(m.name || '')}</span>`;
     btn.addEventListener('click', () => { document.querySelectorAll('.editor-poke-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); openEditorForm(i); });
     el.appendChild(btn);
   });
@@ -2881,7 +2918,7 @@ function showImportPreview(members) {
       : '<div class="preview-ok">Showdown species and moves checked</div>';
     return `
     <div class="preview-row">
-      <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" onerror="this.style.opacity='.3'"/>
+      <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" ${csSpriteFallbackAttrs(m.name)}/>
       <div class="preview-main">
         <span class="preview-name">${_escapeHtml(m.name || '')}</span>
         <span class="preview-item">${_escapeHtml(m.item||'No item')} · ${_escapeHtml(m.ability||'?')}</span>
@@ -9864,8 +9901,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
-      title: 'Shared sprite aliases added',
-      detail: 'v2.1.93 moves key Reg M-B form sprite fixes into the shared getSpriteUrl path so Teams, Simulator rosters, bring pickers, replay cards, and the Reg M-B visual review grid all use the same image aliases.'
+      title: 'Sprite fallback chain added',
+      detail: 'v2.1.95 adds a shared sprite fallback chain so animated Showdown sprites can fall back to static Showdown sprites instead of blanking. Lycanroc forms are now explicit aliases and all major card surfaces share the same fallback handler.'
     },
     {
       status: 'done',
