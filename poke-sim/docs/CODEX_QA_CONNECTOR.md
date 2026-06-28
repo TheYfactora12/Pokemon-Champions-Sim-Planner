@@ -35,7 +35,9 @@ On browsers with File System Access support:
 
 1. Click `Set QA Drop Folder`.
 2. Pick `/Users/kevinmedeiros/Champions-QA-Drops`.
-3. Run `Run All + QA Artifact`, `Tactical Sweep + QA`, or `QA Artifact`.
+3. Run `Stress Lite + QA`, `Tactical Sweep + QA`, `Run All + QA Artifact`, or `QA Artifact`.
+
+Use `Stress Lite + QA` when full Run All may overload the tester machine. It exports a normal QA Artifact with `qa_run_type: "stress_lite_qa"` plus a `stress_lite` block that records the opponent cap, branch-run cap, memory guard, and boundary that this is capped stress evidence, not exhaustive Run All proof.
 
 The page writes the artifact JSON directly into the chosen folder for the current browser session. If the browser does not support folder write access, it falls back to normal download; move the file into the drop folder manually.
 

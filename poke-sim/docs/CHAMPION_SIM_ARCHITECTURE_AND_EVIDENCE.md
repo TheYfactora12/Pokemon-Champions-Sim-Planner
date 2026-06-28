@@ -97,6 +97,8 @@ The Tactical Sweep QA button is the accumulation path for this table. In Selecte
 
 `v2.2.16-coach-sequence-why` adds `coach_brain_summary.tactical_interpretation`. This is the structured coaching contract for speed-control sequence quality: why positive Tailwind/Trick Room/speed-answer windows worked, why negative windows failed, the pre-click player question, the turn-sequence rule, a coach checklist, and the next counters to watch. Future UI and DB memory work should consume this object before writing new free-text coaching logic.
 
+`v2.2.17-stress-lite-qa` adds a browser-safe stress proof path for testers who should not run full Run All locally. `Stress Lite + QA` reuses Tactical Sweep branch evidence with hard caps, includes targeted proof, exports `qa_run_type: "stress_lite_qa"`, and writes a `stress_lite` block that records the cap and boundary. This is valid stress evidence, but it is not exhaustive Run All proof.
+
 Process challenge for coach-memory work:
 
 - Do not let the app sound smarter than the evidence. Coach memory may summarize repeated patterns, but it must keep confidence, sample size, matchup scope, and ruleset scope visible.

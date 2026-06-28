@@ -38,6 +38,8 @@ T('2. checklist keeps source-truth architecture and open proof gaps visible', ()
   inc(report, 'single-run log');
   inc(report, 'Run All log');
   inc(report, 'QA Artifact');
+  inc(report, 'qa_run_type: "stress_lite_qa"');
+  inc(report, 'Stress Lite may substitute only for device-safe stress evidence');
   inc(report, 'ready_for_codex: true');
   inc(report, 'next_missing_proof: []');
   inc(report, 'coach_brain_summary.tactical_interpretation');

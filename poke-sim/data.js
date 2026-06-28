@@ -825,6 +825,10 @@ const CUSTOM_FORM_SPRITES = {
 
 const SHOWDOWN_SPRITE_BASE = 'https://play.pokemonshowdown.com/sprites/ani';
 const SHOWDOWN_SPRITE_SLUG_ALIASES = {
+  'Charizard-Mega-X': 'charizard-megax',
+  'Charizard-Mega-Y': 'charizard-megay',
+  'Mewtwo-Mega-X': 'mewtwo-megax',
+  'Mewtwo-Mega-Y': 'mewtwo-megay',
   'Mr. Rime': 'mrrime',
   'Kommo-o': 'kommoo',
   'Ninetales-Alola': 'ninetales-alola',

@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.16-coach-sequence-why';
+    return txt || 'v2.2.17-stress-lite-qa';
   } catch (e) {
-    return 'v2.2.16-coach-sequence-why';
+    return 'v2.2.17-stress-lite-qa';
   }
 }
 
@@ -664,6 +664,10 @@ function exportTeamToPaste(team) {
 function csSpriteStaticFallbackUrl(name) {
   var raw = String(name || '');
   var aliases = {
+    'Charizard-Mega-X': 'charizard-megax',
+    'Charizard-Mega-Y': 'charizard-megay',
+    'Mewtwo-Mega-X': 'mewtwo-megax',
+    'Mewtwo-Mega-Y': 'mewtwo-megay',
     'Mr. Rime': 'mrrime',
     'Kommo-o': 'kommoo',
     'Ninetales-Alola': 'ninetales-alola',
@@ -8206,27 +8210,77 @@ function csUniqueTeamKeys(keys) {
 
 function csResolveTacticalSweepOpponentKeys(playerKey, options) {
   options = options || {};
+  var resolvedKeys = [];
   if (Array.isArray(options.branchOpponentTeamIds) && options.branchOpponentTeamIds.length) {
-    return csUniqueTeamKeys(options.branchOpponentTeamIds).filter(function(key) {
+    resolvedKeys = csUniqueTeamKeys(options.branchOpponentTeamIds).filter(function(key) {
       return key !== playerKey && typeof TEAMS !== 'undefined' && TEAMS[key];
     });
+    return csLimitTacticalOpponentKeys(resolvedKeys, options);
   }
-  if (options.branchOpponentTeamId) return [options.branchOpponentTeamId].filter(function(key) { return key && key !== playerKey; });
+  if (options.branchOpponentTeamId) {
+    resolvedKeys = [options.branchOpponentTeamId].filter(function(key) { return key && key !== playerKey; });
+    return csLimitTacticalOpponentKeys(resolvedKeys, options);
+  }
   var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
   if (!options.branchMatrixUseScope) {
     var selectedKey = (oppSelect && oppSelect.value) || null;
-    return selectedKey && selectedKey !== playerKey ? [selectedKey] : [];
+    resolvedKeys = selectedKey && selectedKey !== playerKey ? [selectedKey] : [];
+    return csLimitTacticalOpponentKeys(resolvedKeys, options);
   }
   try {
     var simCtx = (typeof resolveSimContext === 'function')
       ? resolveSimContext({ playerKey: playerKey, simScope: options.branchMatrixScope || getSimScopeMode() })
       : { playerKey: playerKey, oppKey: (oppSelect && oppSelect.value) || null, simScope: options.branchMatrixScope || 'selected' };
-    return csUniqueTeamKeys(getRunAllOpponentKeys(playerKey, simCtx));
+    resolvedKeys = csUniqueTeamKeys(getRunAllOpponentKeys(playerKey, simCtx));
+    return csLimitTacticalOpponentKeys(resolvedKeys, options);
   } catch (e) {
     UILog.warn('QA tactical sweep opponent resolution failed', e);
     var fallbackKey = (oppSelect && oppSelect.value) || null;
-    return fallbackKey && fallbackKey !== playerKey ? [fallbackKey] : [];
+    resolvedKeys = fallbackKey && fallbackKey !== playerKey ? [fallbackKey] : [];
+    return csLimitTacticalOpponentKeys(resolvedKeys, options);
   }
+}
+
+function csLimitTacticalOpponentKeys(keys, options) {
+  var out = csUniqueTeamKeys(keys || []);
+  var limit = Number(options && options.branchMatrixOpponentLimit);
+  if (Number.isFinite(limit) && limit > 0 && out.length > limit) return out.slice(0, Math.floor(limit));
+  return out;
+}
+
+function csBuildStressLiteOptions(simCtx) {
+  simCtx = simCtx || {};
+  var opponentLimit = 4;
+  var maxRunsPerOpponent = 12;
+  var memoryNote = 'safe-default';
+  try {
+    var deviceMemory = Number(navigator && navigator.deviceMemory || 0);
+    if (deviceMemory && deviceMemory <= 4) {
+      opponentLimit = 2;
+      maxRunsPerOpponent = 8;
+      memoryNote = 'low-memory-device';
+    }
+  } catch (_e) {}
+  return {
+    stressLite: {
+      schema_version: 'champions-stress-lite-qa-v1',
+      reason: 'Safe stress proof for browsers where full Run All may overload the device.',
+      opponent_limit: opponentLimit,
+      max_runs_per_opponent: maxRunsPerOpponent,
+      branch_scope: simCtx.simScope || 'selected',
+      includes_targeted_sweep: true,
+      memory_guard: memoryNote,
+      boundary: 'This is capped stress evidence, not exhaustive Run All proof.'
+    },
+    branchMatrixUseScope: true,
+    branchMatrixScope: simCtx.simScope || 'selected',
+    branchMatrixOpponentLimit: opponentLimit,
+    branchMatrixMaxRunsPerOpponent: maxRunsPerOpponent,
+    branchMatrixMaxLeadPairsPerSide: 2,
+    branchMatrixMaxMovesPerMon: 2,
+    branchMatrixMaxTargetsPerMove: 2,
+    branchMatrixMaxTurns: 3
+  };
 }
 
 function csCreateTimedFallbackFallback(ms, fallback) {
@@ -8649,9 +8703,17 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     total_executed_runs: branchMatrixRunsTotal,
     total_newly_executed_runs: branchMatrixNewTotal
   };
+  var stressLite = options.stressLite ? Object.assign({}, options.stressLite, {
+    status: tacticalSweepMatrices.length ? 'complete' : tacticalSweepStatus,
+    opponent_count: tacticalSweepOpponentKeys.length,
+    opponent_team_ids: tacticalSweepOpponentKeys,
+    total_executed_runs: branchMatrixRunsTotal,
+    total_newly_executed_runs: branchMatrixNewTotal,
+    targeted_sweep_runs: targetedSweep && Array.isArray(targetedSweep.runs) ? targetedSweep.runs.length : 0
+  }) : null;
 
   var artifactSummary = csBuildQaArtifactSummary(localSimLog, replayCards, key);
-  var qaRunType = tacticalSweepMatrices.length ? 'tactical_sweep' : (targetedSweep ? 'qa_artifact_with_targeted_sweep' : 'qa_artifact');
+  var qaRunType = stressLite ? 'stress_lite_qa' : (tacticalSweepMatrices.length ? 'tactical_sweep' : (targetedSweep ? 'qa_artifact_with_targeted_sweep' : 'qa_artifact'));
   var payload = {
     schema_version: 'champions-qa-artifact-v1',
     artifact_type: 'large-run-qa-retained-evidence',
@@ -8673,7 +8735,8 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       include_sim_log: options.includeSimLog !== false,
       include_targeted_sweep: !!targetedSweep,
       include_branch_matrix: !!branchMatrix,
-      include_tactical_sweep: !!tacticalSweepMatrices.length
+      include_tactical_sweep: !!tacticalSweepMatrices.length,
+      include_stress_lite: !!stressLite
     },
     summary: artifactSummary,
     qa_coverage_summary: mergedCoverage,
@@ -8688,6 +8751,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     targeted_qa_sweep: targetedSweep,
     forced_branch_matrix: branchMatrix,
     tactical_sweep: tacticalSweep,
+    stress_lite: stressLite,
     branch_move_analysis: branchMoveAnalysis,
     retained: {
       sim_log: options.includeSimLog === false ? [] : localSimLog,
@@ -8718,6 +8782,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     summary: artifactSummary,
     retained: payload.retained,
     tactical_sweep: tacticalSweep,
+    stress_lite: stressLite,
     branch_move_analysis: branchMoveAnalysis
   });
   payload.ready_for_codex = payload.codex_context.ready_for_codex;
@@ -8791,6 +8856,7 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
   ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
   ChampionsSim.history.buildCodexQaContext = csBuildCodexQaContext;
+  ChampionsSim.history.buildStressLiteOptions = csBuildStressLiteOptions;
   ChampionsSim.history.chooseQaDropFolder = csChooseQaDropFolder;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('loadAnalysisHistory', loadAnalysisHistory);
@@ -8800,6 +8866,7 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csEx
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaArtifactExport', csBuildQaArtifactExport);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportQaArtifactJson', csExportQaArtifactJson);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildCodexQaContext', csBuildCodexQaContext);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildStressLiteOptions', csBuildStressLiteOptions);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csAnalyzeBranchCoverageRows', csAnalyzeBranchCoverageRows);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSummarizeBranchTactics', csSummarizeBranchTactics);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csLoadBranchStrategyMemory', csLoadBranchStrategyMemory);
@@ -9385,7 +9452,8 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
   var allBtn = document.getElementById('run-all-btn');
   var qaRunBtn = document.getElementById('run-all-export-qa-btn');
   var tacticalSweepBtn = document.getElementById('tactical-sweep-qa-btn');
-  simRunning=true; runBtn.disabled=true; if (allBtn) allBtn.disabled=true; if (qaRunBtn) qaRunBtn.disabled=true; if (tacticalSweepBtn) tacticalSweepBtn.disabled=true;
+  var stressLiteBtn = document.getElementById('stress-lite-qa-btn');
+  simRunning=true; runBtn.disabled=true; if (allBtn) allBtn.disabled=true; if (qaRunBtn) qaRunBtn.disabled=true; if (tacticalSweepBtn) tacticalSweepBtn.disabled=true; if (stressLiteBtn) stressLiteBtn.disabled=true;
   try {
     document.getElementById('results-section').style.display='none';
     document.getElementById('progress-wrap').style.display='';
@@ -9429,7 +9497,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
   } catch (e) {
     setSimError(e);
   } finally {
-    simRunning=false; runBtn.disabled=false; if (allBtn) allBtn.disabled=false; if (qaRunBtn) qaRunBtn.disabled=false; if (tacticalSweepBtn) tacticalSweepBtn.disabled=false;
+    simRunning=false; runBtn.disabled=false; if (allBtn) allBtn.disabled=false; if (qaRunBtn) qaRunBtn.disabled=false; if (tacticalSweepBtn) tacticalSweepBtn.disabled=false; if (stressLiteBtn) stressLiteBtn.disabled=false;
   }
 });
 
@@ -9451,11 +9519,13 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
   var runBtn = document.getElementById('run-sim-btn');
   var qaRunBtn = document.getElementById('run-all-export-qa-btn');
   var tacticalSweepBtn = document.getElementById('tactical-sweep-qa-btn');
+  var stressLiteBtn = document.getElementById('stress-lite-qa-btn');
   simRunning=true;
   if (allBtn) allBtn.disabled=true;
   if (runBtn) runBtn.disabled=true;
   if (qaRunBtn) qaRunBtn.disabled=true;
   if (tacticalSweepBtn) tacticalSweepBtn.disabled=true;
+  if (stressLiteBtn) stressLiteBtn.disabled=true;
   try {
     document.getElementById('matchup-table-wrap').style.display='';
     document.getElementById('results-section').style.display='none';
@@ -9530,6 +9600,7 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
     if (runBtn) runBtn.disabled=false;
     if (qaRunBtn) qaRunBtn.disabled=false;
     if (tacticalSweepBtn) tacticalSweepBtn.disabled=false;
+    if (stressLiteBtn) stressLiteBtn.disabled=false;
   }
 }
 
@@ -9541,17 +9612,110 @@ document.getElementById('run-all-export-qa-btn')?.addEventListener('click', asyn
   await csRunAllMatchupsFromButton(this, { autoExportQaArtifact: true });
 });
 
+document.getElementById('stress-lite-qa-btn')?.addEventListener('click', async function() {
+  if (simRunning) return;
+  var stressBtn = this;
+  var runBtn = document.getElementById('run-sim-btn');
+  var allBtn = document.getElementById('run-all-btn');
+  var qaRunBtn = document.getElementById('run-all-export-qa-btn');
+  var tacticalSweepBtn = document.getElementById('tactical-sweep-qa-btn');
+  simRunning = true;
+  stressBtn.disabled = true;
+  if (runBtn) runBtn.disabled = true;
+  if (allBtn) allBtn.disabled = true;
+  if (qaRunBtn) qaRunBtn.disabled = true;
+  if (tacticalSweepBtn) tacticalSweepBtn.disabled = true;
+  try {
+    document.getElementById('progress-wrap').style.display = '';
+    var simCtx = resolveSimContext();
+    var stressOptions = csBuildStressLiteOptions(simCtx);
+    var stressSavedRows = 0;
+    var stressOpponentCount = 0;
+    setBranchProgress(0, 'Starting Stress Lite QA with capped browser-safe limits...', { opponent_count: 0, saved_rows: 0 });
+    await csExportQaArtifactJson(simCtx.playerKey, Object.assign({}, stressOptions, {
+      onBranchMatrixProgress: function(event) {
+        event = event || {};
+        var count = Number(event.opponent_count || 0);
+        var idx = Number(event.opponent_index || 0);
+        if (count) stressOpponentCount = count;
+        var basePct = count && idx ? Math.round(10 + ((idx - 1) / count) * 78) : 5;
+        var teamName = event.opponent_team_id && TEAMS[event.opponent_team_id] && TEAMS[event.opponent_team_id].name
+          ? TEAMS[event.opponent_team_id].name
+          : (event.opponent_team_id || 'opponent');
+        if (event.phase === 'start') {
+          setBranchProgress(5, 'Stress Lite planning ' + count + ' capped opponent' + (count === 1 ? '' : 's') + '...', {
+            opponent_count: count,
+            saved_rows: stressSavedRows
+          });
+        } else if (event.phase === 'load') {
+          setBranchProgress(basePct, 'Stress Lite loading memory ' + idx + ' / ' + count + ': ' + teamName + '...', {
+            opponent_index: idx,
+            opponent_count: count,
+            saved_rows: stressSavedRows
+          });
+        } else if (event.phase === 'build-progress') {
+          var runIndex = Number(event.executed_runs || 0);
+          var runTotal = Number(event.total_planned_runs || 0);
+          var runPct = runTotal ? Math.round((runIndex / Math.max(1, runTotal)) * 70) : 0;
+          setBranchProgress(Math.min(92, basePct + runPct), 'Stress Lite testing ' + idx + ' / ' + count + ': ' + teamName + ' (' + runIndex + ' / ' + (runTotal || '?') + ' capped runs)...', {
+            opponent_index: idx,
+            opponent_count: count,
+            saved_rows: stressSavedRows,
+            executed_runs: runIndex
+          });
+        } else if (event.phase === 'done') {
+          stressSavedRows += Number(event.saved_rows || 0);
+          setBranchProgress(Math.min(96, basePct + 8), 'Stress Lite done ' + idx + ' / ' + count + ': saved ' + Number(event.saved_rows || 0) + ' rows', {
+            opponent_index: idx,
+            opponent_count: count,
+            saved_rows: stressSavedRows
+          });
+        } else if (event.phase === 'analyze') {
+          setBranchProgress(96, 'Stress Lite analyzing ' + Number(event.executed_runs || 0) + ' capped branch runs...', {
+            opponent_index: count,
+            opponent_count: count,
+            saved_rows: stressSavedRows
+          });
+        } else if (event.phase === 'complete') {
+          stressSavedRows = Number(event.saved_rows || stressSavedRows || 0);
+          setBranchProgress(98, 'Stress Lite complete. Preparing QA artifact...', {
+            opponent_index: count,
+            opponent_count: count,
+            saved_rows: stressSavedRows
+          });
+        }
+      }
+    }));
+    setBranchProgress(100, 'Stress Lite QA Artifact downloaded.', {
+      opponent_index: stressOpponentCount,
+      opponent_count: stressOpponentCount,
+      saved_rows: stressSavedRows
+    });
+  } catch (e) {
+    setSimError(e);
+  } finally {
+    simRunning = false;
+    stressBtn.disabled = false;
+    if (runBtn) runBtn.disabled = false;
+    if (allBtn) allBtn.disabled = false;
+    if (qaRunBtn) qaRunBtn.disabled = false;
+    if (tacticalSweepBtn) tacticalSweepBtn.disabled = false;
+  }
+});
+
 document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', async function() {
   if (simRunning) return;
   var sweepBtn = this;
   var runBtn = document.getElementById('run-sim-btn');
   var allBtn = document.getElementById('run-all-btn');
   var qaRunBtn = document.getElementById('run-all-export-qa-btn');
+  var stressLiteBtn = document.getElementById('stress-lite-qa-btn');
   simRunning = true;
   sweepBtn.disabled = true;
   if (runBtn) runBtn.disabled = true;
   if (allBtn) allBtn.disabled = true;
   if (qaRunBtn) qaRunBtn.disabled = true;
+  if (stressLiteBtn) stressLiteBtn.disabled = true;
   try {
     document.getElementById('progress-wrap').style.display = '';
     setBranchProgress(0, 'Starting tactical sweep...', { opponent_count: 0, saved_rows: 0 });
@@ -9647,6 +9811,7 @@ document.getElementById('tactical-sweep-qa-btn')?.addEventListener('click', asyn
     if (runBtn) runBtn.disabled = false;
     if (allBtn) allBtn.disabled = false;
     if (qaRunBtn) qaRunBtn.disabled = false;
+    if (stressLiteBtn) stressLiteBtn.disabled = false;
   }
 });
 
@@ -10527,6 +10692,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Pages deploy now gates live DB team parity',
       detail: 'v2.2.15 makes GitHub Pages run live Supabase seed parity when anon secrets are available, so bundled teams, generated SQL, and live DB team IDs must stay aligned before publish. The follow-up CI repair also refreshed the generated QA baseline snapshot, documenting the broader upgrade rule: approved data changes must update runtime data, seed SQL, live DB, generated reports, bundle, Overview, and QA artifacts together.'
+    },
+    {
+      status: 'done',
+      title: 'Stress Lite QA added',
+      detail: 'v2.2.17 adds a browser-safe Stress Lite + QA path for testers who should not run full Run All on a local machine. It uses capped Tactical Sweep branch coverage, targeted proof, memory-aware limits, and an explicit stress_lite artifact block so the team can collect stress evidence without confusing it with exhaustive Run All proof.'
     },
     {
       status: 'done',
