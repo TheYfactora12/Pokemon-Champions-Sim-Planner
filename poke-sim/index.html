@@ -66,8 +66,8 @@
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.20-data-sources-matrix</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.22-source-sync-runtime</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -533,6 +533,44 @@
       </div>
     </div>
     <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">
+      <table class="series-summary-table" style="min-width:860px">
+        <thead>
+          <tr>
+            <th>Source track</th>
+            <th>Last synced or reviewed</th>
+            <th>Current visible marker</th>
+            <th>Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Generated Showdown runtime snapshot</strong></td>
+            <td style="font-size:12px">May 24, 2026</td>
+            <td style="font-size:12px">Commit <code>3f5079d395ad018f13e8f785a675a13bd4cbf59e</code></td>
+            <td style="font-size:12px">Baseline for species stats, learnsets, move metadata, target categories, and legal runtime assets.</td>
+          </tr>
+          <tr>
+            <td><strong>Approved Showdown DB generation</strong></td>
+            <td style="font-size:12px">June 25, 2026</td>
+            <td style="font-size:12px">8,653 approved entities, 0 active overrides</td>
+            <td style="font-size:12px">Shows what the reviewed DB layer had approved when the runtime-source proof slice was last aligned.</td>
+          </tr>
+          <tr>
+            <td><strong>Reg M-B source-review lane</strong></td>
+            <td style="font-size:12px">June 27, 2026</td>
+            <td style="font-size:12px">Victory Road review notes and blocked promotion cards</td>
+            <td style="font-size:12px">Keeps upcoming Champion roster changes visible without poisoning current legal/runtime truth.</td>
+          </tr>
+          <tr>
+            <td><strong>Current UI source matrix</strong></td>
+            <td style="font-size:12px">June 28, 2026</td>
+            <td style="font-size:12px">Build <code>v2.2.21-source-sync-stamps</code></td>
+            <td style="font-size:12px">Tells users which source assumptions this exact build is presenting and what should trigger a follow-up update.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">
       <table class="series-summary-table" style="min-width:920px">
         <thead>
           <tr>
@@ -757,6 +795,7 @@
 <script src="logger.js"></script>
 <script src="generated/pokemon_showdown_legal_data.js"></script>
 <script src="generated/pokemon_showdown_species_weights.js"></script>
+<script src="generated/source_sync_status.js"></script>
 <script src="runtime_data.js"></script>
 <script src="engine.js"></script>
 <script src="rulesets.js"></script>

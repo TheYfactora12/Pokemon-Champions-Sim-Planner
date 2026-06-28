@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.20-data-sources-matrix';
+    return txt || 'v2.2.22-source-sync-runtime';
   } catch (e) {
-    return 'v2.2.20-data-sources-matrix';
+    return 'v2.2.22-source-sync-runtime';
   }
 }
 
@@ -11809,6 +11809,114 @@ if (typeof ChampionsSim !== 'undefined') {
   };
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderOverviewTab', renderOverviewTab);
+
+function csGetGeneratedSourceSyncStatus() {
+  if (typeof window === 'undefined' || !window.ChampionsSim) return null;
+  return window.ChampionsSim.sourceSyncStatus || null;
+}
+
+function csFormatSourceStamp(value) {
+  if (!value) return 'Unknown';
+  if (typeof value === 'string' && /T\d{2}:\d{2}:\d{2}/.test(value)) return csFormatOverviewDate(value);
+  return String(value);
+}
+
+function csRenderSourceSyncRows(status, dbSnapshot) {
+  var generated = status && status.generatedShowdown ? status.generatedShowdown : {};
+  var review = status && status.reviewTracks ? status.reviewTracks : {};
+  var db = status && status.approvedDb ? status.approvedDb : {};
+  var dbLiveRun = dbSnapshot && dbSnapshot.latestRun ? dbSnapshot.latestRun : null;
+  var dbApprovedCounts = dbSnapshot && Array.isArray(dbSnapshot.approvedCounts) ? dbSnapshot.approvedCounts : [];
+  var dbApprovedTotal = dbApprovedCounts.reduce(function(sum, row) {
+    return sum + (Number(row && row.count) || 0);
+  }, 0);
+  return [
+    {
+      track: 'Generated Showdown runtime snapshot',
+      stamp: csFormatSourceStamp(generated.generatedAt),
+      marker: generated.sourceCommitOrVersion || generated.source || 'Unknown',
+      why: 'Offline-safe baseline for runtime species, moves, learnsets, target categories, and legality metadata.'
+    },
+    {
+      track: 'Approved Showdown DB generation',
+      stamp: dbLiveRun && dbLiveRun.finished_at ? csFormatSourceStamp(dbLiveRun.finished_at) : csFormatSourceStamp(db.generatedAt),
+      marker: dbLiveRun && dbLiveRun.sync_run_id
+        ? dbLiveRun.sync_run_id + ' · ' + (dbApprovedTotal || db.approvedEntityCount || 0) + ' approved'
+        : (db.approvedEntityCount || 0) + ' approved · ' + (db.activeOverrideCount || 0) + ' active overrides',
+      why: 'Read-only approved DB snapshot used to inspect live source freshness and promotion state when Supabase is reachable.'
+    },
+    {
+      track: 'Champion regulation review lane',
+      stamp: csFormatSourceStamp(review.regulationReviewAt),
+      marker: review.regulationLabel || 'Review lane',
+      why: 'Human-reviewed regulation and Champion-only source notes that stay blocked until the team approves promotion.'
+    },
+    {
+      track: 'Sources page release snapshot',
+      stamp: csFormatSourceStamp(status && status.sourcesPageReviewedAt),
+      marker: (status && status.buildId) || ((typeof csGetBuildId === 'function') ? csGetBuildId() : 'Unknown build'),
+      why: 'Shows which source assumptions this exact browser build is presenting to users.'
+    }
+  ].map(function(row) {
+    return '<tr><td><strong>' + _escapeHtml(row.track) + '</strong></td>' +
+      '<td style="font-size:12px">' + _escapeHtml(row.stamp) + '</td>' +
+      '<td style="font-size:12px">' + _escapeHtml(row.marker) + '</td>' +
+      '<td style="font-size:12px">' + _escapeHtml(row.why) + '</td></tr>';
+  }).join('');
+}
+
+function csRenderSourceSyncCards(status, dbSnapshot) {
+  var generated = status && status.generatedShowdown ? status.generatedShowdown : {};
+  var db = status && status.approvedDb ? status.approvedDb : {};
+  var dbRun = dbSnapshot && dbSnapshot.latestRun ? dbSnapshot.latestRun : null;
+  var dbStatus = dbSnapshot && dbSnapshot.available ? (dbSnapshot.message || dbSnapshot.mode || 'DB reachable') : 'Static bundle / DB unavailable';
+  return '<div class="overview-metrics" style="margin:0 0 16px 0">' +
+    '<div class="overview-metric"><strong>Generated source</strong><span>' + _escapeHtml(generated.source || 'Unknown') + '</span></div>' +
+    '<div class="overview-metric"><strong>Generated at</strong><span>' + _escapeHtml(csFormatSourceStamp(generated.generatedAt)) + '</span></div>' +
+    '<div class="overview-metric"><strong>Approved DB</strong><span>' + _escapeHtml(dbStatus) + '</span></div>' +
+    '<div class="overview-metric"><strong>Latest DB run</strong><span>' + _escapeHtml(dbRun && dbRun.sync_run_id ? dbRun.sync_run_id : (db.syncRunId || 'None visible')) + '</span></div>' +
+  '</div>';
+}
+
+function csRenderSourceSyncTables(status, dbSnapshot) {
+  var rows = csRenderSourceSyncRows(status, dbSnapshot);
+  var files = (dbSnapshot && dbSnapshot.sourceFiles || []).map(function(file) {
+    return '<tr><td>' + _escapeHtml(file.source_name || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(file.parse_status || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(csShortHash(file.source_hash || file.normalized_hash || '')) + '</td>' +
+      '<td>' + _escapeHtml(csFormatSourceStamp(file.fetched_at)) + '</td></tr>';
+  }).join('');
+  return '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">' +
+      '<table class="series-summary-table" style="min-width:860px"><thead><tr><th>Source track</th><th>Last synced or reviewed</th><th>Current visible marker</th><th>Why it matters</th></tr></thead><tbody>' +
+      rows +
+      '</tbody></table></div>' +
+      '<div class="overview-db-table-wrap"><table class="overview-db-table"><thead><tr><th>Live source file</th><th>Parse</th><th>Hash</th><th>Fetched</th></tr></thead><tbody>' +
+      (files || '<tr><td colspan="4">No live source-file rows readable yet</td></tr>') +
+      '</tbody></table></div>';
+}
+
+function renderSourcesTab() {
+  var host = document.getElementById('sources-list');
+  if (!host) return false;
+  var status = csGetGeneratedSourceSyncStatus() || {};
+  host.innerHTML = csRenderSourceSyncCards(status, null) + csRenderSourceSyncTables(status, null);
+  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  if (!adapter || !adapter.enabled || typeof adapter.loadShowdownDbSnapshot !== 'function') return true;
+  adapter.loadShowdownDbSnapshot().then(function(snapshot) {
+    host.innerHTML = csRenderSourceSyncCards(status, snapshot) + csRenderSourceSyncTables(status, snapshot);
+  }).catch(function() {
+    host.innerHTML = csRenderSourceSyncCards(status, null) + csRenderSourceSyncTables(status, null);
+  });
+  return true;
+}
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.sources = {
+    renderSourcesTab: renderSourcesTab
+  };
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderSourcesTab', renderSourcesTab);
+renderSourcesTab();
 
 function generatePDFReport() {
   var container = document.getElementById('pdf-report-container');

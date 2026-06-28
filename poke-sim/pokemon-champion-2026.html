@@ -2348,8 +2348,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.20-data-sources-matrix</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.22-source-sync-runtime</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -2815,6 +2815,44 @@ table{border-collapse:collapse;width:100%}
       </div>
     </div>
     <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">
+      <table class="series-summary-table" style="min-width:860px">
+        <thead>
+          <tr>
+            <th>Source track</th>
+            <th>Last synced or reviewed</th>
+            <th>Current visible marker</th>
+            <th>Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Generated Showdown runtime snapshot</strong></td>
+            <td style="font-size:12px">May 24, 2026</td>
+            <td style="font-size:12px">Commit <code>3f5079d395ad018f13e8f785a675a13bd4cbf59e</code></td>
+            <td style="font-size:12px">Baseline for species stats, learnsets, move metadata, target categories, and legal runtime assets.</td>
+          </tr>
+          <tr>
+            <td><strong>Approved Showdown DB generation</strong></td>
+            <td style="font-size:12px">June 25, 2026</td>
+            <td style="font-size:12px">8,653 approved entities, 0 active overrides</td>
+            <td style="font-size:12px">Shows what the reviewed DB layer had approved when the runtime-source proof slice was last aligned.</td>
+          </tr>
+          <tr>
+            <td><strong>Reg M-B source-review lane</strong></td>
+            <td style="font-size:12px">June 27, 2026</td>
+            <td style="font-size:12px">Victory Road review notes and blocked promotion cards</td>
+            <td style="font-size:12px">Keeps upcoming Champion roster changes visible without poisoning current legal/runtime truth.</td>
+          </tr>
+          <tr>
+            <td><strong>Current UI source matrix</strong></td>
+            <td style="font-size:12px">June 28, 2026</td>
+            <td style="font-size:12px">Build <code>v2.2.21-source-sync-stamps</code></td>
+            <td style="font-size:12px">Tells users which source assumptions this exact build is presenting and what should trigger a follow-up update.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">
       <table class="series-summary-table" style="min-width:920px">
         <thead>
           <tr>
@@ -3039,6 +3077,7 @@ table{border-collapse:collapse;width:100%}
 
 
 
+<script src="generated/source_sync_status.js"></script>
 
 
 
@@ -24783,9 +24822,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.20-data-sources-matrix';
+    return txt || 'v2.2.22-source-sync-runtime';
   } catch (e) {
-    return 'v2.2.20-data-sources-matrix';
+    return 'v2.2.22-source-sync-runtime';
   }
 }
 
@@ -36476,6 +36515,114 @@ if (typeof ChampionsSim !== 'undefined') {
   };
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderOverviewTab', renderOverviewTab);
+
+function csGetGeneratedSourceSyncStatus() {
+  if (typeof window === 'undefined' || !window.ChampionsSim) return null;
+  return window.ChampionsSim.sourceSyncStatus || null;
+}
+
+function csFormatSourceStamp(value) {
+  if (!value) return 'Unknown';
+  if (typeof value === 'string' && /T\d{2}:\d{2}:\d{2}/.test(value)) return csFormatOverviewDate(value);
+  return String(value);
+}
+
+function csRenderSourceSyncRows(status, dbSnapshot) {
+  var generated = status && status.generatedShowdown ? status.generatedShowdown : {};
+  var review = status && status.reviewTracks ? status.reviewTracks : {};
+  var db = status && status.approvedDb ? status.approvedDb : {};
+  var dbLiveRun = dbSnapshot && dbSnapshot.latestRun ? dbSnapshot.latestRun : null;
+  var dbApprovedCounts = dbSnapshot && Array.isArray(dbSnapshot.approvedCounts) ? dbSnapshot.approvedCounts : [];
+  var dbApprovedTotal = dbApprovedCounts.reduce(function(sum, row) {
+    return sum + (Number(row && row.count) || 0);
+  }, 0);
+  return [
+    {
+      track: 'Generated Showdown runtime snapshot',
+      stamp: csFormatSourceStamp(generated.generatedAt),
+      marker: generated.sourceCommitOrVersion || generated.source || 'Unknown',
+      why: 'Offline-safe baseline for runtime species, moves, learnsets, target categories, and legality metadata.'
+    },
+    {
+      track: 'Approved Showdown DB generation',
+      stamp: dbLiveRun && dbLiveRun.finished_at ? csFormatSourceStamp(dbLiveRun.finished_at) : csFormatSourceStamp(db.generatedAt),
+      marker: dbLiveRun && dbLiveRun.sync_run_id
+        ? dbLiveRun.sync_run_id + ' · ' + (dbApprovedTotal || db.approvedEntityCount || 0) + ' approved'
+        : (db.approvedEntityCount || 0) + ' approved · ' + (db.activeOverrideCount || 0) + ' active overrides',
+      why: 'Read-only approved DB snapshot used to inspect live source freshness and promotion state when Supabase is reachable.'
+    },
+    {
+      track: 'Champion regulation review lane',
+      stamp: csFormatSourceStamp(review.regulationReviewAt),
+      marker: review.regulationLabel || 'Review lane',
+      why: 'Human-reviewed regulation and Champion-only source notes that stay blocked until the team approves promotion.'
+    },
+    {
+      track: 'Sources page release snapshot',
+      stamp: csFormatSourceStamp(status && status.sourcesPageReviewedAt),
+      marker: (status && status.buildId) || ((typeof csGetBuildId === 'function') ? csGetBuildId() : 'Unknown build'),
+      why: 'Shows which source assumptions this exact browser build is presenting to users.'
+    }
+  ].map(function(row) {
+    return '<tr><td><strong>' + _escapeHtml(row.track) + '</strong></td>' +
+      '<td style="font-size:12px">' + _escapeHtml(row.stamp) + '</td>' +
+      '<td style="font-size:12px">' + _escapeHtml(row.marker) + '</td>' +
+      '<td style="font-size:12px">' + _escapeHtml(row.why) + '</td></tr>';
+  }).join('');
+}
+
+function csRenderSourceSyncCards(status, dbSnapshot) {
+  var generated = status && status.generatedShowdown ? status.generatedShowdown : {};
+  var db = status && status.approvedDb ? status.approvedDb : {};
+  var dbRun = dbSnapshot && dbSnapshot.latestRun ? dbSnapshot.latestRun : null;
+  var dbStatus = dbSnapshot && dbSnapshot.available ? (dbSnapshot.message || dbSnapshot.mode || 'DB reachable') : 'Static bundle / DB unavailable';
+  return '<div class="overview-metrics" style="margin:0 0 16px 0">' +
+    '<div class="overview-metric"><strong>Generated source</strong><span>' + _escapeHtml(generated.source || 'Unknown') + '</span></div>' +
+    '<div class="overview-metric"><strong>Generated at</strong><span>' + _escapeHtml(csFormatSourceStamp(generated.generatedAt)) + '</span></div>' +
+    '<div class="overview-metric"><strong>Approved DB</strong><span>' + _escapeHtml(dbStatus) + '</span></div>' +
+    '<div class="overview-metric"><strong>Latest DB run</strong><span>' + _escapeHtml(dbRun && dbRun.sync_run_id ? dbRun.sync_run_id : (db.syncRunId || 'None visible')) + '</span></div>' +
+  '</div>';
+}
+
+function csRenderSourceSyncTables(status, dbSnapshot) {
+  var rows = csRenderSourceSyncRows(status, dbSnapshot);
+  var files = (dbSnapshot && dbSnapshot.sourceFiles || []).map(function(file) {
+    return '<tr><td>' + _escapeHtml(file.source_name || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(file.parse_status || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(csShortHash(file.source_hash || file.normalized_hash || '')) + '</td>' +
+      '<td>' + _escapeHtml(csFormatSourceStamp(file.fetched_at)) + '</td></tr>';
+  }).join('');
+  return '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">' +
+      '<table class="series-summary-table" style="min-width:860px"><thead><tr><th>Source track</th><th>Last synced or reviewed</th><th>Current visible marker</th><th>Why it matters</th></tr></thead><tbody>' +
+      rows +
+      '</tbody></table></div>' +
+      '<div class="overview-db-table-wrap"><table class="overview-db-table"><thead><tr><th>Live source file</th><th>Parse</th><th>Hash</th><th>Fetched</th></tr></thead><tbody>' +
+      (files || '<tr><td colspan="4">No live source-file rows readable yet</td></tr>') +
+      '</tbody></table></div>';
+}
+
+function renderSourcesTab() {
+  var host = document.getElementById('sources-list');
+  if (!host) return false;
+  var status = csGetGeneratedSourceSyncStatus() || {};
+  host.innerHTML = csRenderSourceSyncCards(status, null) + csRenderSourceSyncTables(status, null);
+  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  if (!adapter || !adapter.enabled || typeof adapter.loadShowdownDbSnapshot !== 'function') return true;
+  adapter.loadShowdownDbSnapshot().then(function(snapshot) {
+    host.innerHTML = csRenderSourceSyncCards(status, snapshot) + csRenderSourceSyncTables(status, snapshot);
+  }).catch(function() {
+    host.innerHTML = csRenderSourceSyncCards(status, null) + csRenderSourceSyncTables(status, null);
+  });
+  return true;
+}
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.sources = {
+    renderSourcesTab: renderSourcesTab
+  };
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderSourcesTab', renderSourcesTab);
+renderSourcesTab();
 
 function generatePDFReport() {
   var container = document.getElementById('pdf-report-container');
