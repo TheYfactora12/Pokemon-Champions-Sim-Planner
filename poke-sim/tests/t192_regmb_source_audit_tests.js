@@ -216,6 +216,14 @@ T('10. analysis payload carries ruleset poisoning guard metadata', () => {
   inc(ui, 'unknown_ruleset_do_not_train_or_rank');
 });
 
+T('10b. visual allowlist rows are review-only with confidence labels', () => {
+  truthy(Array.isArray(conversion.visualAllowlistRows), 'missing visual allowlist rows');
+  truthy(conversion.visualAllowlistRows.length === 235, 'expected 235 visual rows from both sheets');
+  truthy(conversion.visualAllowlistRows.some((row) => row.confidence === 'needs_human_review'), 'expected human-review rows');
+  truthy(conversion.visualAllowlistRows.every((row) => row.runtimePromotable === false), 'visual rows must not be runtime-promotable');
+  truthy(conversion.visualAllowlistRows.every((row) => row.poisoningGuard === 'review_only_do_not_train_or_rank'), 'visual rows need poisoning guard');
+});
+
 T('11. Reg M-B review coverage sections remain blocked from runtime learning', () => {
   truthy(Array.isArray(conversion.coverageSections), 'missing Reg M-B coverage sections');
   truthy(conversion.coverageSections.length === 4, 'expected four coverage sections');
@@ -236,9 +244,13 @@ T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
   inc(ui, 'function csTeamRulesetTags');
   inc(ui, 'function csRenderTeamRulesetBadges');
   inc(ui, 'function csRenderRegmbCoverageCards');
+  inc(ui, 'function csRenderRegmbVisualReviewGrid');
+  inc(ui, 'function csRegmbSpriteUrl');
   inc(ui, "filter === 'regmb_review'");
   inc(ui, "label:'Reg M-B Review'");
   inc(ui, "if (TEAMS_FILTER === 'regmb_review')");
+  inc(ui, 'regmb-visual-grid');
+  inc(ui, 'DO NOT TRAIN/RANK');
   inc(ui, 'team.metadata.poisoning_guard');
   inc(ui, 'not-runtime-promoted');
 });

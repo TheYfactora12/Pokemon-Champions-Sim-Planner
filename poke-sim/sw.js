@@ -94,7 +94,8 @@
 // v120-ruleset-team-sections [2026-06-27] - Add regulation-aware team filters and review-only Reg M-B coverage sections.
 // v121-regmb-review-cards [2026-06-27] - Render Reg M-B coverage sections as review-only Teams tab cards.
 // v122-regmb-addition-rows [2026-06-27] - Add explicit review-only Reg M-B addition rows from Victory Road.
-const CACHE_NAME = 'champions-sim-v122-regmb-addition-rows';
+// v123-regmb-visual-review-grid [2026-06-27] - Render visual Reg M-B allowlist rows for human review.
+const CACHE_NAME = 'champions-sim-v123-regmb-visual-review-grid';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

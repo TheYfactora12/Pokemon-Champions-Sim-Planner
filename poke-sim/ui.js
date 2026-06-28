@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.90-regmb-addition-rows';
+    return txt || 'v2.1.91-regmb-visual-review-grid';
   } catch (e) {
-    return 'v2.1.90-regmb-addition-rows';
+    return 'v2.1.91-regmb-visual-review-grid';
   }
 }
 
@@ -1861,6 +1861,39 @@ function csGetRegmbCoverageSections() {
     : null;
   return source && Array.isArray(source.coverageSections) ? source.coverageSections : [];
 }
+function csGetRegmbVisualRows() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && Array.isArray(source.visualAllowlistRows) ? source.visualAllowlistRows : [];
+}
+function csRegmbSpriteUrl(species) {
+  var clean = String(species || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return 'https://play.pokemonshowdown.com/sprites/ani/' + clean + '.gif';
+}
+function csRenderRegmbVisualReviewGrid(grid) {
+  if (!grid) return 0;
+  var rows = csGetRegmbVisualRows();
+  if (!rows.length) return 0;
+  var host = document.createElement('div');
+  host.className = 'team-full-card';
+  host.innerHTML = '<div class="tfcard-header"><div><div class="tfcard-name">Reg M-B visual allowlist review</div><div class="tfcard-meta">Sprite-sheet mapping · source-review only · ' + _escapeHtml(rows.length + ' rows') + '</div></div><div class="tfcard-badges"><span class="badge-warn">DO NOT TRAIN/RANK</span><span class="badge-warn">VISUAL REVIEW</span></div></div>' +
+    '<div class="team-legality-note"><strong>Human review needed before promotion</strong><span>Compare these rows against the Victory Road source sheets. Rows marked NEEDS REVIEW should be challenged before runtime legality.</span><small>These are not playable teams and do not write trusted coaching stats.</small></div>' +
+    '<div class="regmb-visual-grid">' + rows.map(function(row) {
+      var confidence = row.confidence || 'needs_human_review';
+      var badge = confidence === 'verified_visual' ? 'badge-legal' : 'badge-warn';
+      var title = (row.sheetId || '') + ' row ' + (row.sheetRow || '?') + ', col ' + (row.sheetColumn || '?');
+      return '<div class="regmb-visual-card" title="' + _escapeHtml(title) + '">' +
+        '<img src="' + _escapeHtml(csRegmbSpriteUrl(row.species)) + '" alt="' + _escapeHtml(row.species) + ' sprite" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.classList.add(\'missing\')"/>' +
+        '<div class="regmb-visual-fallback">?</div>' +
+        '<strong>' + _escapeHtml(row.species) + '</strong>' +
+        '<span>' + _escapeHtml((row.sheetId || '').replace('.jpg', '') + ' R' + row.sheetRow + ' C' + row.sheetColumn) + '</span>' +
+        '<em class="' + badge + '">' + _escapeHtml(confidence.replace(/_/g, ' ').toUpperCase()) + '</em>' +
+      '</div>';
+    }).join('') + '</div>';
+  grid.appendChild(host);
+  return rows.length;
+}
 function csRenderRegmbCoverageCards(grid) {
   if (!grid) return 0;
   var sections = csGetRegmbCoverageSections();
@@ -2010,6 +2043,7 @@ function renderTeamsGrid() {
   }
   if (TEAMS_FILTER === 'regmb_review') {
     csRenderRegmbCoverageCards(grid);
+    csRenderRegmbVisualReviewGrid(grid);
   }
   // Export buttons
   grid.querySelectorAll('.export-card-btn').forEach(btn => {
@@ -9793,8 +9827,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
-      title: 'Reg M-B addition rows extracted',
-      detail: 'v2.1.90 converts the Victory Road NewPokemonRMB source image into 22 explicit review-only addition rows. These rows improve the source-conversion ledger while staying blocked from legal selectors and trusted coaching until full allowlist rows and fixtures are reviewed.'
+      title: 'Reg M-B visual review grid added',
+      detail: 'v2.1.91 renders the Victory Road Reg M-B sprite-sheet mapping inside the Reg M-B Review filter. The grid shows sheet row, column, confidence, and sprites for human review while keeping every row blocked from selectors, DB learning, and trusted coaching.'
     },
     {
       status: 'done',

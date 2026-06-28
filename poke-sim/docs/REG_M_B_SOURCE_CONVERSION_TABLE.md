@@ -100,6 +100,20 @@ Each Reg M-B Mega row must carry:
 - `positiveFixture`
 - `negativeFixture`
 
+## Visual Allowlist Review Grid
+
+The two Victory Road full-allowlist sheets are sprite-only, so the first complete mapping is a visual review ledger. The app renders these rows in the Teams tab under Reg M-B Review so humans can compare sprites against source sheets before promotion.
+
+Current extraction status:
+
+- `Reg-M-B-Pokemon1.jpg`: 120 visual rows.
+- `Reg-M-B-Pokemon2.jpg`: 115 visual rows.
+- Total: 235 visual review rows.
+- Confidence labels: `verified_visual` for straightforward sprites and `needs_human_review` for ambiguous forms.
+- All rows remain `review_only_do_not_train_or_rank`.
+
+Known rows requiring human review before runtime promotion include Tauros Paldea forms, Meowstic forms, Gourgeist sizes, Basculegion forms, and Sinistcha-style form identification.
+
 ## Runtime Promotion Blockers
 
 - The full allowed-Pokemon list is still image-sheet source data, not explicit species/form rows.
