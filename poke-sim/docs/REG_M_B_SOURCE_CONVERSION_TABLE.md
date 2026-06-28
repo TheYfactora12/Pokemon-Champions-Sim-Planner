@@ -154,3 +154,45 @@ The UI can show regulation tags and review lanes, but source-review rows must re
 3. Source-confirm stats, typing, and abilities for each new Mega.
 4. Add Reg M-B legality fixtures.
 5. Only then promote runtime legality from source-review to implemented Reg M-B.
+
+## Runtime promotion gate - v2.1.99
+
+Reg M-B source-review data is still blocked from runtime legality, DB learning, ranking, and trusted coaching recommendations.
+
+Current promotion buckets:
+
+| Bucket | Count | Runtime policy |
+| --- | ---: | --- |
+| Visual reviewed | 235 | Review-only, hidden from legal sim |
+| Data incomplete | 14 required fields | Blocks runtime promotion |
+| Ready for runtime review | 0 | No rows ready yet |
+| Promoted | 0 | Nothing promoted |
+
+Required fields that must be source-reviewed before promotion:
+
+| Field | Current status |
+| --- | --- |
+| baseSpecies | visual reviewed, not runtime-promoted |
+| megaForm | name verified, not implemented |
+| megaStone | blocked, missing item source |
+| megaBaseStats | blocked, missing stats source |
+| types | blocked, missing form type source |
+| ability | blocked, missing form ability source |
+| spriteFallback | visual reviewed with GIF-primary fallback, still not a legality source |
+| itemSourceUrl | blocked, missing URL |
+| statsSourceUrl | blocked, missing URL |
+| abilitySourceUrl | blocked, missing URL |
+| typeSourceUrl | blocked, missing URL |
+| learnsetPolicy | blocked, missing policy review |
+| positiveFixture | blocked, missing accepted fixture |
+| negativeFixture | blocked, missing rejected fixture |
+
+Next human source actions:
+
+1. Source item and stone names for every new Mega.
+2. Source Mega stats, typing, and abilities from approved sources.
+3. Define learnset inheritance policy for every new Mega form.
+4. Add accepted and rejected legality fixtures before selector promotion.
+5. Rerun Reg M-A regression fixtures before changing active runtime legality.
+
+Do not promote Reg M-B into selectors, training data, coaching stats, or recommendation logic until every row above is reviewed and the promotion bucket `Promoted` is non-zero by explicit implementation change.

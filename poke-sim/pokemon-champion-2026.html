@@ -2348,8 +2348,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.98-gif-primary-sprite-audit</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.1.99-regmb-promotion-gate</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -15400,6 +15400,41 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     'positiveFixture',
     'negativeFixture'
   ],
+  promotionFieldChecklist: [
+    { field: 'baseSpecies', status: 'visual_reviewed_not_runtime_promoted', source: 'Victory Road allowed Pokemon sheets', blocksRuntime: true },
+    { field: 'megaForm', status: 'name_verified_not_implemented', source: 'Victory Road NewMegasRMB.png', blocksRuntime: true },
+    { field: 'megaStone', status: 'blocked_missing_item_source', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'megaBaseStats', status: 'blocked_missing_stats_source', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'types', status: 'blocked_missing_form_type_source', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'ability', status: 'blocked_missing_form_ability_source', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'spriteFallback', status: 'visual_reviewed_gif_primary', source: 'Pokemon Showdown sprite CDN', blocksRuntime: true },
+    { field: 'itemSourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'statsSourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'abilitySourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'typeSourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'learnsetPolicy', status: 'blocked_missing_policy_review', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'positiveFixture', status: 'blocked_missing_accepted_fixture', source: 'not yet implemented', blocksRuntime: true },
+    { field: 'negativeFixture', status: 'blocked_missing_rejected_fixture', source: 'not yet implemented', blocksRuntime: true }
+  ],
+  promotionReadiness: {
+    status: 'blocked_not_runtime_promotable',
+    visualRowsTotal: 235,
+    additionRowsTotal: 22,
+    newMegaRowsTotal: 16,
+    fieldChecklistTotal: 14,
+    fieldsReadyForRuntime: 0,
+    fieldsBlockedForRuntime: 14,
+    selectorPolicy: 'hidden_from_legal_sim',
+    learningPolicy: 'do_not_train_or_rank',
+    coachingPolicy: 'do_not_recommend_as_trusted_reg_m_b',
+    nextHumanActions: [
+      'source item and stone names for every new Mega',
+      'source Mega stats, typing, and abilities from approved sources',
+      'define learnset inheritance policy for every new Mega form',
+      'add accepted and rejected legality fixtures before selector promotion',
+      'rerun Reg M-A regression fixtures before changing active runtime legality'
+    ]
+  },
   newMegaRows: [
     { baseSpecies: 'Raichu', megaForm: 'Raichu-Mega-X', sourceName: 'Mega Raichu X' },
     { baseSpecies: 'Raichu', megaForm: 'Raichu-Mega-Y', sourceName: 'Mega Raichu Y' },
@@ -18344,6 +18379,12 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
       tags: ['reg-m-b', 'source-review', 'new-mega', 'coverage-fixture'],
       coveredMegaForms: ['Barbaracle-Mega', 'Dragalge-Mega', 'Falinks-Mega']
     }
+  ],
+  promotionStatusBuckets: [
+    { id: 'visual_reviewed', label: 'Visual reviewed', count: 235, runtimePromotable: false },
+    { id: 'data_incomplete', label: 'Data incomplete', count: 14, runtimePromotable: false },
+    { id: 'ready_for_runtime_review', label: 'Ready for runtime review', count: 0, runtimePromotable: false },
+    { id: 'promoted', label: 'Promoted', count: 0, runtimePromotable: false }
   ],
   promotionGates: [
     'Allowed Pokemon image sheets converted into explicit reviewed species/form rows with confidence labels.',
@@ -24291,9 +24332,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.98-gif-primary-sprite-audit';
+    return txt || 'v2.1.99-regmb-promotion-gate';
   } catch (e) {
-    return 'v2.1.98-gif-primary-sprite-audit';
+    return 'v2.1.99-regmb-promotion-gate';
   }
 }
 
@@ -26084,6 +26125,51 @@ function csGetRegmbVisualRows() {
     ? CHAMPIONS_REGMB_SOURCE_CONVERSION
     : null;
   return source && Array.isArray(source.visualAllowlistRows) ? source.visualAllowlistRows : [];
+}
+function csGetRegmbPromotionReadiness() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && source.promotionReadiness ? source.promotionReadiness : null;
+}
+function csGetRegmbPromotionBuckets() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && Array.isArray(source.promotionStatusBuckets) ? source.promotionStatusBuckets : [];
+}
+function csGetRegmbPromotionChecklist() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && Array.isArray(source.promotionFieldChecklist) ? source.promotionFieldChecklist : [];
+}
+function csRenderRegmbPromotionGateCard(grid) {
+  if (!grid) return 0;
+  var readiness = csGetRegmbPromotionReadiness();
+  var buckets = csGetRegmbPromotionBuckets();
+  var checklist = csGetRegmbPromotionChecklist();
+  if (!readiness || !checklist.length) return 0;
+  var bucketHtml = buckets.map(function(bucket) {
+    var cls = bucket.runtimePromotable ? 'badge-legal' : 'badge-warn';
+    return '<span class="' + cls + '" title="runtimePromotable=' + _escapeHtml(String(!!bucket.runtimePromotable)) + '">' + _escapeHtml(bucket.label + ': ' + bucket.count) + '</span>';
+  }).join('');
+  var blocked = checklist.filter(function(row) { return row.blocksRuntime; });
+  var sample = blocked.slice(0, 6).map(function(row) {
+    return '<span class="replay-coach-tag high">' + _escapeHtml(row.field) + ': ' + _escapeHtml(row.status.replace(/_/g, ' ')) + '</span>';
+  }).join('');
+  var actions = (readiness.nextHumanActions || []).slice(0, 5).map(function(action) {
+    return '<li>' + _escapeHtml(action) + '</li>';
+  }).join('');
+  var card = document.createElement('div');
+  card.className = 'team-full-card';
+  card.innerHTML = '<div class="tfcard-header"><div><div class="tfcard-name">Reg M-B runtime promotion gate</div><div class="tfcard-meta">DATA TRUST · ' + _escapeHtml(readiness.status.replace(/_/g, ' ').toUpperCase()) + ' · ' + _escapeHtml(String(readiness.fieldsBlockedForRuntime)) + ' blocked fields</div></div><div class="tfcard-badges"><span class="badge-warn">HIDDEN FROM LEGAL SIM</span><span class="badge-warn">DO NOT TRAIN/RANK</span></div></div>' +
+    '<div class="team-legality-note"><strong>Promotion is blocked until every field is source-reviewed</strong><span>Visual review is complete enough to inspect sprites, but Reg M-B still cannot power selectors, training data, coaching recommendations, or trusted matchup stats.</span><small>Selector policy: ' + _escapeHtml(readiness.selectorPolicy) + ' · learning policy: ' + _escapeHtml(readiness.learningPolicy) + ' · coaching policy: ' + _escapeHtml(readiness.coachingPolicy) + '</small></div>' +
+    '<div class="tfcard-badges">' + bucketHtml + '</div>' +
+    '<div class="replay-coach-tags">' + sample + '</div>' +
+    '<div class="team-legality-note"><strong>Next human source actions</strong><ul>' + actions + '</ul></div>';
+  grid.appendChild(card);
+  return 1;
 }
 function csRegmbSpriteUrl(species) {
   if (typeof getSpriteUrl === 'function') return getSpriteUrl(species);
@@ -34099,6 +34185,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'GIF-primary sprite resolver',
       detail: 'v2.1.98 makes Showdown animated GIFs the primary sprite source for standard Pokemon rendering, adds explicit Alolan Ninetales and Hisuian Arcanine form slugs, and keeps static Showdown fallback for missing GIFs.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B promotion gate added',
+      detail: 'v2.1.99 adds explicit Reg M-B promotion buckets, required-field readiness counts, and Teams-page gate visibility so source-review rows stay blocked from legal selectors, trusted coaching, and DB learning until every source field and fixture is reviewed.'
     },
     {
       status: 'done',

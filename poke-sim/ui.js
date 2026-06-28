@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.98-gif-primary-sprite-audit';
+    return txt || 'v2.1.99-regmb-promotion-gate';
   } catch (e) {
-    return 'v2.1.98-gif-primary-sprite-audit';
+    return 'v2.1.99-regmb-promotion-gate';
   }
 }
 
@@ -1909,6 +1909,51 @@ function csGetRegmbVisualRows() {
     ? CHAMPIONS_REGMB_SOURCE_CONVERSION
     : null;
   return source && Array.isArray(source.visualAllowlistRows) ? source.visualAllowlistRows : [];
+}
+function csGetRegmbPromotionReadiness() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && source.promotionReadiness ? source.promotionReadiness : null;
+}
+function csGetRegmbPromotionBuckets() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && Array.isArray(source.promotionStatusBuckets) ? source.promotionStatusBuckets : [];
+}
+function csGetRegmbPromotionChecklist() {
+  var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
+    ? CHAMPIONS_REGMB_SOURCE_CONVERSION
+    : null;
+  return source && Array.isArray(source.promotionFieldChecklist) ? source.promotionFieldChecklist : [];
+}
+function csRenderRegmbPromotionGateCard(grid) {
+  if (!grid) return 0;
+  var readiness = csGetRegmbPromotionReadiness();
+  var buckets = csGetRegmbPromotionBuckets();
+  var checklist = csGetRegmbPromotionChecklist();
+  if (!readiness || !checklist.length) return 0;
+  var bucketHtml = buckets.map(function(bucket) {
+    var cls = bucket.runtimePromotable ? 'badge-legal' : 'badge-warn';
+    return '<span class="' + cls + '" title="runtimePromotable=' + _escapeHtml(String(!!bucket.runtimePromotable)) + '">' + _escapeHtml(bucket.label + ': ' + bucket.count) + '</span>';
+  }).join('');
+  var blocked = checklist.filter(function(row) { return row.blocksRuntime; });
+  var sample = blocked.slice(0, 6).map(function(row) {
+    return '<span class="replay-coach-tag high">' + _escapeHtml(row.field) + ': ' + _escapeHtml(row.status.replace(/_/g, ' ')) + '</span>';
+  }).join('');
+  var actions = (readiness.nextHumanActions || []).slice(0, 5).map(function(action) {
+    return '<li>' + _escapeHtml(action) + '</li>';
+  }).join('');
+  var card = document.createElement('div');
+  card.className = 'team-full-card';
+  card.innerHTML = '<div class="tfcard-header"><div><div class="tfcard-name">Reg M-B runtime promotion gate</div><div class="tfcard-meta">DATA TRUST · ' + _escapeHtml(readiness.status.replace(/_/g, ' ').toUpperCase()) + ' · ' + _escapeHtml(String(readiness.fieldsBlockedForRuntime)) + ' blocked fields</div></div><div class="tfcard-badges"><span class="badge-warn">HIDDEN FROM LEGAL SIM</span><span class="badge-warn">DO NOT TRAIN/RANK</span></div></div>' +
+    '<div class="team-legality-note"><strong>Promotion is blocked until every field is source-reviewed</strong><span>Visual review is complete enough to inspect sprites, but Reg M-B still cannot power selectors, training data, coaching recommendations, or trusted matchup stats.</span><small>Selector policy: ' + _escapeHtml(readiness.selectorPolicy) + ' · learning policy: ' + _escapeHtml(readiness.learningPolicy) + ' · coaching policy: ' + _escapeHtml(readiness.coachingPolicy) + '</small></div>' +
+    '<div class="tfcard-badges">' + bucketHtml + '</div>' +
+    '<div class="replay-coach-tags">' + sample + '</div>' +
+    '<div class="team-legality-note"><strong>Next human source actions</strong><ul>' + actions + '</ul></div>';
+  grid.appendChild(card);
+  return 1;
 }
 function csRegmbSpriteUrl(species) {
   if (typeof getSpriteUrl === 'function') return getSpriteUrl(species);
@@ -9924,6 +9969,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'GIF-primary sprite resolver',
       detail: 'v2.1.98 makes Showdown animated GIFs the primary sprite source for standard Pokemon rendering, adds explicit Alolan Ninetales and Hisuian Arcanine form slugs, and keeps static Showdown fallback for missing GIFs.'
+    },
+    {
+      status: 'done',
+      title: 'Reg M-B promotion gate added',
+      detail: 'v2.1.99 adds explicit Reg M-B promotion buckets, required-field readiness counts, and Teams-page gate visibility so source-review rows stay blocked from legal selectors, trusted coaching, and DB learning until every source field and fixture is reviewed.'
     },
     {
       status: 'done',

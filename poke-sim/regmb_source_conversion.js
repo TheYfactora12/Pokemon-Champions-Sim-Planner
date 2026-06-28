@@ -91,6 +91,41 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
     'positiveFixture',
     'negativeFixture'
   ],
+  promotionFieldChecklist: [
+    { field: 'baseSpecies', status: 'visual_reviewed_not_runtime_promoted', source: 'Victory Road allowed Pokemon sheets', blocksRuntime: true },
+    { field: 'megaForm', status: 'name_verified_not_implemented', source: 'Victory Road NewMegasRMB.png', blocksRuntime: true },
+    { field: 'megaStone', status: 'blocked_missing_item_source', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'megaBaseStats', status: 'blocked_missing_stats_source', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'types', status: 'blocked_missing_form_type_source', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'ability', status: 'blocked_missing_form_ability_source', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'spriteFallback', status: 'visual_reviewed_gif_primary', source: 'Pokemon Showdown sprite CDN', blocksRuntime: true },
+    { field: 'itemSourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'statsSourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'abilitySourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'typeSourceUrl', status: 'blocked_missing_url', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'learnsetPolicy', status: 'blocked_missing_policy_review', source: 'not yet sourced', blocksRuntime: true },
+    { field: 'positiveFixture', status: 'blocked_missing_accepted_fixture', source: 'not yet implemented', blocksRuntime: true },
+    { field: 'negativeFixture', status: 'blocked_missing_rejected_fixture', source: 'not yet implemented', blocksRuntime: true }
+  ],
+  promotionReadiness: {
+    status: 'blocked_not_runtime_promotable',
+    visualRowsTotal: 235,
+    additionRowsTotal: 22,
+    newMegaRowsTotal: 16,
+    fieldChecklistTotal: 14,
+    fieldsReadyForRuntime: 0,
+    fieldsBlockedForRuntime: 14,
+    selectorPolicy: 'hidden_from_legal_sim',
+    learningPolicy: 'do_not_train_or_rank',
+    coachingPolicy: 'do_not_recommend_as_trusted_reg_m_b',
+    nextHumanActions: [
+      'source item and stone names for every new Mega',
+      'source Mega stats, typing, and abilities from approved sources',
+      'define learnset inheritance policy for every new Mega form',
+      'add accepted and rejected legality fixtures before selector promotion',
+      'rerun Reg M-A regression fixtures before changing active runtime legality'
+    ]
+  },
   newMegaRows: [
     { baseSpecies: 'Raichu', megaForm: 'Raichu-Mega-X', sourceName: 'Mega Raichu X' },
     { baseSpecies: 'Raichu', megaForm: 'Raichu-Mega-Y', sourceName: 'Mega Raichu Y' },
@@ -3035,6 +3070,12 @@ var CHAMPIONS_REGMB_SOURCE_CONVERSION = {
       tags: ['reg-m-b', 'source-review', 'new-mega', 'coverage-fixture'],
       coveredMegaForms: ['Barbaracle-Mega', 'Dragalge-Mega', 'Falinks-Mega']
     }
+  ],
+  promotionStatusBuckets: [
+    { id: 'visual_reviewed', label: 'Visual reviewed', count: 235, runtimePromotable: false },
+    { id: 'data_incomplete', label: 'Data incomplete', count: 14, runtimePromotable: false },
+    { id: 'ready_for_runtime_review', label: 'Ready for runtime review', count: 0, runtimePromotable: false },
+    { id: 'promoted', label: 'Promoted', count: 0, runtimePromotable: false }
   ],
   promotionGates: [
     'Allowed Pokemon image sheets converted into explicit reviewed species/form rows with confidence labels.',

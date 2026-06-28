@@ -102,7 +102,8 @@
 // v128-alola-raichu-sprite-fallbacks [2026-06-27] - Add Alolan Raichu animated sprite and cover bring/replay fallbacks.
 // v129-hisui-zoroark-gif [2026-06-27] - Map Hisuian Zoroark to verified animated and static Showdown sprites.
 // v130-gif-primary-sprite-audit [2026-06-27] - Prefer Showdown animated GIFs across standard Pokemon sprite rendering.
-const CACHE_NAME = 'champions-sim-v130-gif-primary-sprite-audit';
+// v131-regmb-promotion-gate [2026-06-27] - Surface Reg M-B promotion checklist and data-trust gate.
+const CACHE_NAME = 'champions-sim-v131-regmb-promotion-gate';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

@@ -225,6 +225,23 @@ T('10b. visual allowlist rows are review-only with confidence labels', () => {
   truthy(conversion.visualAllowlistRows.every((row) => row.poisoningGuard === 'review_only_do_not_train_or_rank'), 'visual rows need poisoning guard');
 });
 
+T('10c. Reg M-B promotion gate blocks runtime, learning, and trusted coaching', () => {
+  truthy(Array.isArray(conversion.promotionFieldChecklist), 'missing promotion field checklist');
+  truthy(conversion.promotionFieldChecklist.length === conversion.requiredPromotionFields.length, 'promotion checklist should cover every required field');
+  conversion.requiredPromotionFields.forEach((field) => {
+    truthy(conversion.promotionFieldChecklist.some((row) => row.field === field), 'missing promotion field ' + field);
+  });
+  truthy(conversion.promotionFieldChecklist.every((row) => row.blocksRuntime === true), 'all Reg M-B fields should still block runtime');
+  truthy(conversion.promotionReadiness.status === 'blocked_not_runtime_promotable', 'promotion readiness should remain blocked');
+  truthy(conversion.promotionReadiness.fieldsReadyForRuntime === 0, 'no fields should be runtime-ready yet');
+  truthy(conversion.promotionReadiness.selectorPolicy === 'hidden_from_legal_sim', 'selector policy should stay hidden');
+  truthy(conversion.promotionReadiness.learningPolicy === 'do_not_train_or_rank', 'learning policy should block training');
+  truthy(conversion.promotionReadiness.coachingPolicy === 'do_not_recommend_as_trusted_reg_m_b', 'coaching policy should block trusted recommendations');
+  truthy(Array.isArray(conversion.promotionStatusBuckets), 'missing promotion status buckets');
+  truthy(conversion.promotionStatusBuckets.some((row) => row.id === 'visual_reviewed' && row.count === 235), 'visual reviewed bucket should show 235 rows');
+  truthy(conversion.promotionStatusBuckets.some((row) => row.id === 'promoted' && row.count === 0), 'promoted bucket should stay zero');
+});
+
 T('11. Reg M-B review coverage sections remain blocked from runtime learning', () => {
   truthy(Array.isArray(conversion.coverageSections), 'missing Reg M-B coverage sections');
   truthy(conversion.coverageSections.length === 4, 'expected four coverage sections');
@@ -245,6 +262,11 @@ T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
   inc(ui, 'function csTeamRulesetTags');
   inc(ui, 'function csRenderTeamRulesetBadges');
   inc(ui, 'function csRenderRegmbCoverageCards');
+  inc(ui, 'function csRenderRegmbPromotionGateCard');
+  inc(ui, 'csGetRegmbPromotionReadiness');
+  inc(ui, 'Reg M-B runtime promotion gate');
+  inc(ui, 'HIDDEN FROM LEGAL SIM');
+  inc(ui, 'fieldsBlockedForRuntime');
   inc(ui, 'function csRenderRegmbVisualReviewGrid');
   inc(ui, 'function csRegmbSpriteUrl');
   inc(ui, 'function csHandleSpriteError');
