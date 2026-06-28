@@ -305,6 +305,14 @@ def render_live_alignment(teams: dict) -> str:
     w("  description = EXCLUDED.description,\n")
     w("  metadata = EXCLUDED.metadata;\n\n")
 
+    w("-- Retire stale built-in rows that are no longer part of the reviewed repo catalog.\n")
+    w("-- They stay available for historical FK references but cannot remain active selector/training rows.\n")
+    w("UPDATE teams\n")
+    w("SET metadata = COALESCE(metadata, '{}'::jsonb) || '{\"retired\":true,\"retired_reason\":\"not_in_current_legal_repo_catalog\"}'::jsonb\n")
+    w("WHERE team_id NOT IN (\n  " + id_list + "\n)\n")
+    w("  AND source = 'builtin'\n")
+    w("  AND COALESCE(metadata->>'retired', 'false') <> 'true';\n\n")
+
     w("-- Replace normalized members for shared canonical repo teams only.\n")
     w("DELETE FROM team_members WHERE team_id IN (\n  " + id_list + "\n);\n\n")
 
