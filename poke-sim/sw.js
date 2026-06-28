@@ -111,7 +111,8 @@
 // v142-move-rule-trace-qa [2026-06-27] - Expose move rule traces in QA/replay damage events.
 // v143-codex-qa-context-drop [2026-06-27] - Add Codex-ready QA artifact handoff context.
 // v144-codex-qa-drop-folder [2026-06-27] - Save QA artifacts to a user-approved local drop folder when supported.
-const CACHE_NAME = 'champions-sim-v144-codex-qa-drop-folder';
+// v145-tactical-sweep-schema [2026-06-28] - Add explicit Tactical Sweep schema/status/opponent metadata to QA artifacts.
+const CACHE_NAME = 'champions-sim-v145-tactical-sweep-schema';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

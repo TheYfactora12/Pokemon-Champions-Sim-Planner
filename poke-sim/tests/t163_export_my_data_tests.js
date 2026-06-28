@@ -338,9 +338,21 @@ async function main() {
       includeTargetedSweep: false
     });
     truthy(payload.tactical_sweep && payload.tactical_sweep.enabled, 'tactical sweep block missing');
+    eq(payload.qa_run_type, 'tactical_sweep', 'qa run type');
+    eq(payload.tactical_sweep.schema_version, 'champions-tactical-sweep-v1', 'tactical schema version');
+    eq(payload.tactical_sweep.status, 'complete', 'tactical status');
     eq(payload.tactical_sweep.opponent_count, 2, 'opponent count');
+    eq(payload.tactical_sweep.opponents.length, 2, 'opponent metadata count');
     eq(payload.tactical_sweep.matrices.length, 2, 'matrix count');
     eq(payload.tactical_sweep.total_executed_runs, 2, 'executed branch total');
+    truthy(payload.tactical_sweep.opponents[0].opponent_team_id, 'opponent id missing');
+    truthy(typeof payload.ready_for_codex === 'boolean', 'ready_for_codex missing');
+    truthy(Array.isArray(payload.next_missing_proof), 'next_missing_proof missing');
+    truthy(typeof payload.recommended_next_test === 'string' && payload.recommended_next_test.length, 'recommended_next_test missing');
+    truthy(payload.codex_context && payload.codex_context.qa_run_type === 'tactical_sweep', 'codex qa run type missing');
+    truthy(typeof payload.codex_context.ready_for_codex === 'boolean', 'codex readiness missing');
+    eq(payload.codex_context.retained_evidence.tactical_sweep_opponents, 2, 'codex tactical opponent count');
+    eq(payload.codex_context.retained_evidence.tactical_sweep_status, 'complete', 'codex tactical status');
     eq(payload.qa_coverage_summary.totals.branch_matrix_runs, 2, 'coverage branch run total');
     truthy(payload.forced_branch_matrix && payload.forced_branch_matrix.coverage_space.executed_runs === 1, 'compat forced_branch_matrix missing');
     truthy(payload.branch_move_analysis && payload.branch_move_analysis.totals.rows_read >= 2, 'combined branch move analysis missing');
