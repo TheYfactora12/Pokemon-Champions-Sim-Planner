@@ -799,7 +799,23 @@ const CUSTOM_FORM_SPRITES = {
   'Golurk-Mega':                    SPRITE_URL_BASE + '/623.png',
   'Floette (Eternal Flower)-Mega':  SPRITE_URL_BASE + '/670.png',
   // Form variants stored under numeric form IDs on the CDN.
-  'Ursaluna-Bloodmoon':             SPRITE_URL_BASE + '/10272.png'
+  'Ursaluna-Bloodmoon':             SPRITE_URL_BASE + '/10272.png',
+  // Reg M-B visual/source-review form aliases. These are image-only helpers;
+  // they do not affect legality, runtime promotion, or training data.
+  'Mr. Rime':                       SPRITE_URL_BASE + '/866.png',
+  'Kommo-o':                        SPRITE_URL_BASE + '/784.png',
+  'Tauros-Paldea-Combat':           'https://play.pokemonshowdown.com/sprites/ani/tauros-paldea-combat.gif',
+  'Tauros-Paldea-Blaze':            'https://play.pokemonshowdown.com/sprites/ani/tauros-paldea-blaze.gif',
+  'Tauros-Paldea-Aqua':             'https://play.pokemonshowdown.com/sprites/ani/tauros-paldea-aqua.gif',
+  'Meowstic-M':                     'https://play.pokemonshowdown.com/sprites/ani/meowstic.gif',
+  'Meowstic-F':                     'https://play.pokemonshowdown.com/sprites/ani/meowstic-f.gif',
+  'Gourgeist-Small':                'https://play.pokemonshowdown.com/sprites/ani/gourgeist-small.gif',
+  'Gourgeist-Average':              'https://play.pokemonshowdown.com/sprites/ani/gourgeist.gif',
+  'Gourgeist-Large':                'https://play.pokemonshowdown.com/sprites/ani/gourgeist-large.gif',
+  'Gourgeist-Super':                'https://play.pokemonshowdown.com/sprites/ani/gourgeist-super.gif',
+  'Basculegion-M':                  'https://play.pokemonshowdown.com/sprites/ani/basculegion.gif',
+  'Basculegion-F':                  'https://play.pokemonshowdown.com/sprites/ani/basculegion-f.gif',
+  'Sinistcha':                      'https://play.pokemonshowdown.com/sprites/ani/sinistcha.gif'
 };
 
 // Suffixes we strip when falling back to the base-form dex sprite.

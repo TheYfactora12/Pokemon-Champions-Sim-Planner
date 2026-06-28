@@ -96,7 +96,8 @@
 // v122-regmb-addition-rows [2026-06-27] - Add explicit review-only Reg M-B addition rows from Victory Road.
 // v123-regmb-visual-review-grid [2026-06-27] - Render visual Reg M-B allowlist rows for human review.
 // v124-regmb-sprite-aliases [2026-06-27] - Add explicit form sprite aliases for Reg M-B visual review.
-const CACHE_NAME = 'champions-sim-v124-regmb-sprite-aliases';
+// v125-shared-sprite-aliases [2026-06-27] - Share form sprite aliases across Teams, Simulator, and replay cards.
+const CACHE_NAME = 'champions-sim-v125-shared-sprite-aliases';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [

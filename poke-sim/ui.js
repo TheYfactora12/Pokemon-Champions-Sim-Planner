@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.1.92-regmb-sprite-aliases';
+    return txt || 'v2.1.93-shared-sprite-aliases';
   } catch (e) {
-    return 'v2.1.92-regmb-sprite-aliases';
+    return 'v2.1.93-shared-sprite-aliases';
   }
 }
 
@@ -1868,6 +1868,7 @@ function csGetRegmbVisualRows() {
   return source && Array.isArray(source.visualAllowlistRows) ? source.visualAllowlistRows : [];
 }
 function csRegmbSpriteUrl(species) {
+  if (typeof getSpriteUrl === 'function') return getSpriteUrl(species);
   var raw = String(species || '');
   var aliases = {
     'Arcanine-Hisui': 'arcanine-hisui',
@@ -9863,8 +9864,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
-      title: 'Reg M-B sprite aliases added',
-      detail: 'v2.1.92 adds explicit sprite aliases for risky form rows in the Reg M-B visual review grid, including Paldean Tauros, regional forms, Rotom forms, Meowstic, Gourgeist, Basculegion, and other form-sensitive sprites.'
+      title: 'Shared sprite aliases added',
+      detail: 'v2.1.93 moves key Reg M-B form sprite fixes into the shared getSpriteUrl path so Teams, Simulator rosters, bring pickers, replay cards, and the Reg M-B visual review grid all use the same image aliases.'
     },
     {
       status: 'done',

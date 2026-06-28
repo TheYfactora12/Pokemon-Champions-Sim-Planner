@@ -10,6 +10,7 @@ const syncDoc = fs.readFileSync(path.join(ROOT, 'docs', 'SHOWDOWN_SYNC_ARCHITECT
 const conversionDoc = fs.readFileSync(path.join(ROOT, 'docs', 'REG_M_B_SOURCE_CONVERSION_TABLE.md'), 'utf8');
 const ui = fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8');
 const engine = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
+const data = fs.readFileSync(path.join(ROOT, 'data.js'), 'utf8');
 const rulesets = require(path.join(ROOT, 'rulesets.js'));
 global.getChampionsRuleset = rulesets.getChampionsRuleset;
 global.getRulesetEvidencePolicy = rulesets.getRulesetEvidencePolicy;
@@ -246,9 +247,13 @@ T('12. Teams UI exposes ruleset sections, tags, and badges', () => {
   inc(ui, 'function csRenderRegmbCoverageCards');
   inc(ui, 'function csRenderRegmbVisualReviewGrid');
   inc(ui, 'function csRegmbSpriteUrl');
-  inc(ui, "'Tauros-Paldea-Combat': 'tauros-paldea-combat'");
-  inc(ui, "'Tauros-Paldea-Blaze': 'tauros-paldea-blaze'");
-  inc(ui, "'Tauros-Paldea-Aqua': 'tauros-paldea-aqua'");
+  inc(ui, 'if (typeof getSpriteUrl ===');
+  inc(data, "'Mr. Rime':");
+  inc(data, "'Kommo-o':");
+  inc(data, "'Tauros-Paldea-Combat':");
+  inc(data, 'tauros-paldea-combat.gif');
+  inc(data, "'Tauros-Paldea-Blaze':");
+  inc(data, "'Tauros-Paldea-Aqua':");
   inc(ui, "filter === 'regmb_review'");
   inc(ui, "label:'Reg M-B Review'");
   inc(ui, "if (TEAMS_FILTER === 'regmb_review')");
