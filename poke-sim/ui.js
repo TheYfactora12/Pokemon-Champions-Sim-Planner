@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.24-kevin-team-qa';
+    return txt || 'v2.2.25-editor-import-flow';
   } catch (e) {
-    return 'v2.2.24-kevin-team-qa';
+    return 'v2.2.25-editor-import-flow';
   }
 }
 
