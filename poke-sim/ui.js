@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.4-contact-flag-audit';
+    return txt || 'v2.2.5-secondary-effect-audit';
   } catch (e) {
-    return 'v2.2.4-contact-flag-audit';
+    return 'v2.2.5-secondary-effect-audit';
   }
 }
 
@@ -9984,6 +9984,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B stats/types/abilities source pass',
       detail: 'v2.2.1 source-verifies all 16 Reg M-B new Mega base stats, types, and abilities against Pokemon Showdown pokedex.ts while keeping the rows review-only and blocked from runtime legality until base/form implementation, learnset policy, and positive/negative fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Secondary effect source audit',
+      detail: 'v2.2.5 fills straightforward Showdown-backed damaging move secondaries that were missing from runtime: paralysis, burn, freeze, poison, target stat drops, and Psyshield Bash self-Defense. Complex state effects remain explicit follow-up work instead of hidden assumptions.'
     },
     {
       status: 'done',

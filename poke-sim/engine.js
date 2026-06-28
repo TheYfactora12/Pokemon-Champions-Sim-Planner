@@ -319,23 +319,41 @@ var SECONDARY_EFFECTS = {
   'Crunch':           { chance: 0.20, targetStages: { def: -1 } },
   'Earth Power':      { chance: 0.10, targetStages: { spd: -1 } },
   'Energy Ball':      { chance: 0.10, targetStages: { spd: -1 } },
+  'Discharge':        { chance: 0.30, status: 'paralysis' },
+  'Fire Fang':        { chance: 0.10, status: 'burn' },
   'Fire Punch':       { chance: 0.10, status: 'burn' },
   'Flamethrower':     { chance: 0.10, status: 'burn' },
+  'Flare Blitz':      { chance: 0.10, status: 'burn' },
   'Flash Cannon':     { chance: 0.10, targetStages: { spd: -1 } },
   'Focus Blast':      { chance: 0.10, targetStages: { spd: -1 } },
+  'Freeze-Dry':       { chance: 0.10, status: 'frozen' },
   'Gunk Shot':        { chance: 0.30, status: 'poison' },
   'Heat Wave':        { chance: 0.10, status: 'burn' },
   'Hurricane':        { chance: 0.30, volatile: 'confusion' },
   'Ice Beam':         { chance: 0.10, status: 'frozen' },
+  'Ice Fang':         { chance: 0.10, status: 'frozen' },
   'Ice Punch':        { chance: 0.10, status: 'frozen' },
+  'Infernal Parade':  { chance: 0.30, status: 'burn' },
+  'Lava Plume':       { chance: 0.30, status: 'burn' },
   'Liquidation':      { chance: 0.20, targetStages: { def: -1 } },
+  'Moonblast':        { chance: 0.30, targetStages: { spa: -1 } },
+  'Mystical Fire':    { chance: 1.00, targetStages: { spa: -1 } },
+  'Night Daze':       { chance: 0.40, targetStages: { acc: -1 } },
+  'Play Rough':       { chance: 0.10, targetStages: { atk: -1 } },
   'Poison Jab':       { chance: 0.30, status: 'poison' },
   'Psychic':          { chance: 0.10, targetStages: { spd: -1 } },
+  'Psyshield Bash':   { chance: 1.00, selfStages: { def: 1 } },
   'Scald':            { chance: 0.30, status: 'burn' },
   'Scorching Sands':  { chance: 0.30, status: 'burn' },
+  'Shadow Ball':      { chance: 0.20, targetStages: { spd: -1 } },
+  'Sludge Bomb':      { chance: 0.30, status: 'poison' },
   'Sludge Wave':      { chance: 0.10, status: 'poison' },
   'Throat Chop':      { chance: 1.00, volatile: 'throatChop' },
-  'Thunder':          { chance: 0.30, status: 'paralysis' }
+  'Thunder':          { chance: 0.30, status: 'paralysis' },
+  'Thunder Fang':     { chance: 0.10, status: 'paralysis' },
+  'Thunder Punch':    { chance: 0.10, status: 'paralysis' },
+  'Thunderbolt':      { chance: 0.10, status: 'paralysis' },
+  'Trop Kick':        { chance: 1.00, targetStages: { atk: -1 } }
 };
 
 // Contact moves — Champions/Gen 9 contact list used by Piercing Drill,
@@ -2622,6 +2640,9 @@ function _applyDamagingMoveSecondary(attacker, move, target, field, log, rng) {
   let applied = false;
   if (effect.targetStages) {
     applied = _applyTargetStageMap(attacker, target, effect.targetStages, log) > 0 || applied;
+  }
+  if (effect.selfStages) {
+    applied = _applyStageMap(attacker, effect.selfStages, log) > 0 || applied;
   }
   if (effect.status && canInflictStatus(target, effect.status, field, attacker)) {
     target.status = effect.status;

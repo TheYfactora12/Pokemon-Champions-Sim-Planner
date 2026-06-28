@@ -1,0 +1,112 @@
+const fs = require('fs');
+const vm = require('vm');
+const path = require('path');
+
+const ROOT = path.resolve(__dirname, '..');
+const ctx = {
+  console, require, module: {}, exports: {}, Math, Object, Array, Set, JSON,
+  Number, String, Boolean, RegExp, Date
+};
+ctx.globalThis = ctx;
+vm.createContext(ctx);
+
+function load(file) {
+  vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+}
+
+load('data.js');
+load('generated/pokemon_showdown_legal_data.js');
+load('generated/pokemon_showdown_species_weights.js');
+load('runtime_data.js');
+load('engine.js');
+vm.runInContext('this.Pokemon = Pokemon; this.Field = Field; this.applySecondary = _applyDamagingMoveSecondary;', ctx);
+
+const { Pokemon, Field, applySecondary } = ctx;
+let pass = 0;
+let fail = 0;
+
+function T(name, fn) {
+  try {
+    fn();
+    console.log('  PASS', name);
+    pass++;
+  } catch (err) {
+    console.log('  FAIL', name, '-', err.message);
+    fail++;
+  }
+}
+
+function eq(actual, expected, msg) {
+  if (actual !== expected) throw new Error((msg || 'not equal') + ' expected=' + JSON.stringify(expected) + ' got=' + JSON.stringify(actual));
+}
+
+function truthy(value, msg) {
+  if (!value) throw new Error(msg || 'expected truthy value');
+}
+
+function mk(name, overrides) {
+  return new Pokemon(Object.assign({
+    name,
+    level: 50,
+    item: '',
+    ability: '',
+    nature: 'Hardy',
+    moves: ['Tackle'],
+    evs: {}
+  }, overrides || {}), '', 'sv');
+}
+
+function setup(attacker, target) {
+  const field = new Field({ format: 'doubles' });
+  attacker.side = field.playerSide;
+  target.side = field.oppSide;
+  field.playerSide.activeMons = [attacker];
+  field.oppSide.activeMons = [target];
+  return field;
+}
+
+function forceSecondary(move, targetName, assertFn) {
+  const attacker = mk('Raichu', { moves: [move] });
+  const target = mk(targetName || 'Snorlax');
+  const field = setup(attacker, target);
+  const log = [];
+  const applied = applySecondary(attacker, move, target, field, log, () => 0);
+  truthy(applied, move + ' secondary should apply');
+  assertFn(attacker, target, log);
+}
+
+console.log('\n=== Move secondary effect audit tests ===\n');
+
+T('1. electric damaging secondaries can paralyze', () => {
+  forceSecondary('Thunderbolt', 'Snorlax', (_attacker, target) => {
+    eq(target.status, 'paralysis', 'Thunderbolt paralysis');
+  });
+  forceSecondary('Thunder Punch', 'Snorlax', (_attacker, target) => {
+    eq(target.status, 'paralysis', 'Thunder Punch paralysis');
+  });
+});
+
+T('2. standard damaging secondaries apply status ailments', () => {
+  forceSecondary('Fire Fang', 'Snorlax', (_attacker, target) => eq(target.status, 'burn', 'Fire Fang burn'));
+  forceSecondary('Freeze-Dry', 'Snorlax', (_attacker, target) => eq(target.status, 'frozen', 'Freeze-Dry freeze'));
+  forceSecondary('Sludge Bomb', 'Snorlax', (_attacker, target) => eq(target.status, 'poison', 'Sludge Bomb poison'));
+});
+
+T('3. standard stat-drop secondaries use the correct target stat', () => {
+  forceSecondary('Shadow Ball', 'Snorlax', (_attacker, target) => eq(target.statBoosts.spd, -1, 'Shadow Ball SpD drop'));
+  forceSecondary('Moonblast', 'Snorlax', (_attacker, target) => eq(target.statBoosts.spa, -1, 'Moonblast SpA drop'));
+  forceSecondary('Play Rough', 'Snorlax', (_attacker, target) => eq(target.statBoosts.atk, -1, 'Play Rough Attack drop'));
+  forceSecondary('Night Daze', 'Snorlax', (_attacker, target) => eq(target.statBoosts.acc, -1, 'Night Daze accuracy drop'));
+});
+
+T('4. guaranteed self secondary boosts apply to the user', () => {
+  const attacker = mk('Wyrdeer', { moves: ['Psyshield Bash'] });
+  const target = mk('Snorlax');
+  const field = setup(attacker, target);
+  const applied = applySecondary(attacker, 'Psyshield Bash', target, field, [], () => 0);
+  truthy(applied, 'Psyshield Bash secondary should apply');
+  eq(attacker.statBoosts.def, 1, 'Psyshield Bash user Defense boost');
+});
+
+console.log('\nmove secondary effect audit:', pass + ' pass, ' + fail + ' fail\n');
+process.exit(fail ? 1 : 0);

@@ -105,8 +105,8 @@
 // v131-regmb-promotion-gate [2026-06-27] - Surface Reg M-B promotion checklist and data-trust gate.
 // v132-regmb-stone-source-pass [2026-06-27] - Source-verify Reg M-B Mega stone names, review-only.
 // v133-regmb-stats-types-abilities-source-pass [2026-06-27] - Source-verify Reg M-B Mega stats/types/abilities, review-only.
-// v136-contact-flag-audit [2026-06-27] - Align contact move overrides with generated Showdown flags.
-const CACHE_NAME = 'champions-sim-v136-contact-flag-audit';
+// v137-secondary-effect-audit [2026-06-27] - Fill straightforward Showdown-backed damaging move secondaries.
+const CACHE_NAME = 'champions-sim-v137-secondary-effect-audit';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
