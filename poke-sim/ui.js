@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.10-move-rule-trace-qa';
+    return txt || 'v2.2.12-codex-qa-drop-folder';
   } catch (e) {
-    return 'v2.2.10-move-rule-trace-qa';
+    return 'v2.2.12-codex-qa-drop-folder';
   }
 }
 
@@ -2371,6 +2371,40 @@ function exportAllCustomAsShowdown() {
 }
 
 var CS_LAST_DOWNLOAD_URL = null;
+var CS_QA_DROP_DIR_HANDLE = null;
+function csQaDropFolderSupported() {
+  return typeof window !== 'undefined' && typeof window.showDirectoryPicker === 'function';
+}
+async function csChooseQaDropFolder() {
+  if (!csQaDropFolderSupported()) {
+    alert('This browser cannot write directly to a Mac folder from the page. Use normal download, then move the JSON into /Users/kevinmedeiros/Champions-QA-Drops.');
+    return null;
+  }
+  CS_QA_DROP_DIR_HANDLE = await window.showDirectoryPicker({
+    id: 'champions-qa-drops',
+    mode: 'readwrite',
+    startIn: 'downloads'
+  });
+  try {
+    var btn = document.getElementById('qa-drop-folder-btn');
+    if (btn) btn.textContent = 'QA Drop Folder Set';
+  } catch (_e) {}
+  return CS_QA_DROP_DIR_HANDLE;
+}
+async function csSaveTextToQaDropFolder(filename, mime, text) {
+  if (!csQaDropFolderSupported()) return false;
+  var handle = CS_QA_DROP_DIR_HANDLE || await csChooseQaDropFolder();
+  if (!handle) return false;
+  if (handle.requestPermission) {
+    var perm = await handle.requestPermission({ mode: 'readwrite' });
+    if (perm !== 'granted') return false;
+  }
+  var fileHandle = await handle.getFileHandle(filename, { create: true });
+  var writable = await fileHandle.createWritable();
+  await writable.write(new Blob([text], { type: mime }));
+  await writable.close();
+  return true;
+}
 function _downloadBlob(filename, mime, text) {
   try {
     if (CS_LAST_DOWNLOAD_URL && typeof URL !== 'undefined' && typeof URL.revokeObjectURL === 'function') {
@@ -2399,6 +2433,34 @@ function _downloadBlob(filename, mime, text) {
     fallback.download = filename;
     fallback.textContent = 'Download ready: ' + filename;
   } catch (e) { UILog.warn('Download failed', e); alert('Could not download file: ' + e.message); }
+}
+
+async function _saveQaArtifactBlob(filename, mime, text, opts) {
+  opts = opts || {};
+  if (opts.preferDropFolder !== false && csQaDropFolderSupported()) {
+    try {
+      var saved = await csSaveTextToQaDropFolder(filename, mime, text);
+      if (saved) {
+        var fallback = document.getElementById('download-ready-link');
+        if (!fallback) {
+          var wrap = document.getElementById('progress-wrap') || document.body;
+          fallback = document.createElement('span');
+          fallback.id = 'download-ready-link';
+          fallback.className = 'btn-secondary';
+          fallback.style.display = 'inline-flex';
+          fallback.style.marginTop = '8px';
+          fallback.style.width = 'fit-content';
+          wrap.appendChild(fallback);
+        }
+        fallback.textContent = 'Saved to QA drop folder: ' + filename;
+        return 'drop-folder';
+      }
+    } catch (e) {
+      UILog.warn('QA drop folder save failed; falling back to browser download', e);
+    }
+  }
+  _downloadBlob(filename, mime, text);
+  return 'download';
 }
 
 document.getElementById('bulk-export-json-btn')?.addEventListener('click', function(){
@@ -7762,6 +7824,102 @@ function csCompactQaReplayCard(replay, playerKey) {
   };
 }
 
+function csBuildCodexQaContext(args) {
+  args = args || {};
+  var coverage = args.qa_coverage_summary || {};
+  var mechanics = coverage.mechanics_seen || {};
+  var missing = Array.isArray(coverage.missing_targeted_proof) ? coverage.missing_targeted_proof : [];
+  var branch = args.branch_move_analysis || {};
+  var branchTotals = branch.totals || {};
+  var tactical = args.tactical_sweep || {};
+  var retained = args.retained || {};
+  var replayCards = Array.isArray(retained.replay_cards) ? retained.replay_cards : [];
+  var moveTraceRows = Number(mechanics.move_rule_trace_rows || 0);
+  var damageEvents = Number(mechanics.damage_events || 0);
+  var effectEvents = Number(mechanics.effect_events || 0);
+  var readiness = [];
+  function addReadiness(id, label, status, detail) {
+    readiness.push({ id: id, label: label, status: status, detail: detail });
+  }
+  addReadiness(
+    'move_rule_trace',
+    'Move rule trace layer',
+    moveTraceRows > 0 ? 'green' : 'yellow',
+    moveTraceRows > 0
+      ? moveTraceRows + ' damage rows include move_rule_trace evidence.'
+      : 'No move_rule_trace rows were observed in this artifact; run a damage-focused QA set or targeted proof.'
+  );
+  addReadiness(
+    'damage_events',
+    'Damage transparency',
+    damageEvents > 0 ? 'green' : 'red',
+    damageEvents > 0
+      ? damageEvents + ' structured damage_events are available.'
+      : 'No damage_events were retained; Codex cannot audit damage math from this artifact.'
+  );
+  addReadiness(
+    'effect_events',
+    'Effect transparency',
+    effectEvents > 0 ? 'green' : 'yellow',
+    effectEvents > 0
+      ? effectEvents + ' structured effect_events are available.'
+      : 'No effect_events were observed; run scenarios with recoil, drain, recovery, status, or field effects.'
+  );
+  addReadiness(
+    'targeted_proof',
+    'Named targeted proof gaps',
+    missing.length === 0 ? 'green' : 'yellow',
+    missing.length === 0
+      ? 'No named targeted proof gaps remain in this artifact.'
+      : 'Missing proof: ' + missing.slice(0, 12).join(', ')
+  );
+  return {
+    schema_version: 'champions-codex-qa-context-v1',
+    purpose: 'Compact handoff for Codex/local agents. Keep this object with QA artifacts so implementation work can start from evidence instead of re-reading raw logs.',
+    generated_at: args.exported_at || new Date().toISOString(),
+    artifact_identity: {
+      schema_version: args.schema_version || 'champions-qa-artifact-v1',
+      build_id: args.build_id || null,
+      source_url: args.source_url || null,
+      player_team_id: args.player_team_id || null,
+      player_team_name: args.player_team_name || null,
+      current_format: args.current_format || null
+    },
+    qa_readiness: readiness,
+    mechanics_seen: {
+      damage_events: damageEvents,
+      effect_events: effectEvents,
+      move_rule_trace_rows: moveTraceRows,
+      nonstandard_stat_source_trace: Number(mechanics.nonstandard_stat_source_trace || 0),
+      foul_play_trace: Number(mechanics.foul_play_trace || 0),
+      ignored_target_power_ability_trace: Number(mechanics.ignored_target_power_ability_trace || 0),
+      applied_user_power_ability_trace: Number(mechanics.applied_user_power_ability_trace || 0),
+      recoil: Number(mechanics.recoil || 0),
+      drain_heal: Number(mechanics.drain_heal || 0),
+      flinch_applied: Number(mechanics.flinch_applied || 0),
+      speed_control_neutralized: Number(mechanics.speed_control_neutralized || 0),
+      trick_room_active: Number(mechanics.trick_room_active || 0),
+      tailwind_active: Number(mechanics.tailwind_active || 0)
+    },
+    missing_targeted_proof: missing,
+    retained_evidence: {
+      replay_cards: replayCards.length,
+      replay_cards_with_turn_logs: replayCards.filter(function(card) {
+        return card && Array.isArray(card.turnLog) && card.turnLog.length;
+      }).length,
+      tactical_sweep_opponents: tactical && Array.isArray(tactical.opponents) ? tactical.opponents.length : 0,
+      branch_analysis_rows: Number(branchTotals.rows || branchTotals.total_rows || 0)
+    },
+    recommended_codex_prompt: [
+      'Use this QA artifact as evidence. First inspect codex_context.qa_readiness and qa_coverage_summary.mechanics_seen.',
+      'If a mechanic is yellow/red, locate the retained replay card or tactical_sweep run with the missing/weak evidence before changing engine code.',
+      'For damage issues, inspect turnLog[].damage_events[].move_rule_trace before editing calcDamage.',
+      'Keep fixes source-truth aligned with Pokemon Showdown/Champion rules and add or update targeted QA proof when closing a mechanic gap.'
+    ].join(' '),
+    local_ingest_hint: 'Drop downloaded champions-sim-qa-artifact-*.json or champions-turn-log-*.json into a known folder, then run: cd poke-sim && npm run codex:qa -- <paths>'
+  };
+}
+
 function csUniqueTeamKeys(keys) {
   var seen = {};
   return (Array.isArray(keys) ? keys : []).filter(function(key) {
@@ -8210,7 +8368,8 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     total_newly_executed_runs: branchMatrixNewTotal
   };
 
-  return {
+  var artifactSummary = csBuildQaArtifactSummary(localSimLog, replayCards, key);
+  var payload = {
     schema_version: 'champions-qa-artifact-v1',
     artifact_type: 'large-run-qa-retained-evidence',
     exported_at: exportedAt,
@@ -8232,7 +8391,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       include_branch_matrix: !!branchMatrix,
       include_tactical_sweep: !!tacticalSweepMatrices.length
     },
-    summary: csBuildQaArtifactSummary(localSimLog, replayCards, key),
+    summary: artifactSummary,
     qa_coverage_summary: mergedCoverage,
     coverage_breakdown: {
       retained_replay_card_summary: retainedReplayCardSummary,
@@ -8262,12 +8421,28 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       note: 'Supabase stores approved source data, teams, overrides, and saved analysis history. The deterministic browser runtime still uses generated/static data plus runtime_data.js for battle execution.'
     }
   };
+  payload.codex_context = csBuildCodexQaContext({
+    schema_version: payload.schema_version,
+    exported_at: exportedAt,
+    build_id: buildId,
+    source_url: sourceUrl,
+    player_team_id: key,
+    player_team_name: team && team.name ? team.name : null,
+    current_format: payload.current_format,
+    qa_coverage_summary: mergedCoverage,
+    summary: artifactSummary,
+    retained: payload.retained,
+    tactical_sweep: tacticalSweep,
+    branch_move_analysis: branchMoveAnalysis
+  });
+  return payload;
 }
 
 async function csExportQaArtifactJson(teamKey, opts) {
+  opts = opts || {};
   var payload = await csBuildQaArtifactExport(teamKey, opts);
   var ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-  _downloadBlob('champions-sim-qa-artifact-' + ts + '.json', 'application/json', JSON.stringify(payload, null, 2));
+  await _saveQaArtifactBlob('champions-sim-qa-artifact-' + ts + '.json', 'application/json', JSON.stringify(payload, null, 2), opts);
   return payload;
 }
 
@@ -8295,6 +8470,13 @@ document.getElementById('export-qa-artifact-json-btn')?.addEventListener('click'
   });
 });
 
+document.getElementById('qa-drop-folder-btn')?.addEventListener('click', function() {
+  csChooseQaDropFolder().catch(function(e) {
+    UILog.warn('QA drop folder selection failed', e);
+    alert('Could not set QA drop folder: ' + (e && e.message ? e.message : 'unknown error'));
+  });
+});
+
 if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.loadAnalysisHistory = loadAnalysisHistory;
   ChampionsSim.history.renderHistorySection = renderHistorySection;
@@ -8310,6 +8492,8 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.loadBranchStrategyMemory = csLoadBranchStrategyMemory;
   ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
   ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
+  ChampionsSim.history.buildCodexQaContext = csBuildCodexQaContext;
+  ChampionsSim.history.chooseQaDropFolder = csChooseQaDropFolder;
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('loadAnalysisHistory', loadAnalysisHistory);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderHistorySection', renderHistorySection);
@@ -8317,6 +8501,7 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBu
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportMyDataJson', csExportMyDataJson);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaArtifactExport', csBuildQaArtifactExport);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportQaArtifactJson', csExportQaArtifactJson);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildCodexQaContext', csBuildCodexQaContext);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csAnalyzeBranchCoverageRows', csAnalyzeBranchCoverageRows);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSummarizeBranchTactics', csSummarizeBranchTactics);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csLoadBranchStrategyMemory', csLoadBranchStrategyMemory);
@@ -10016,6 +10201,16 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Move rule trace QA layer',
       detail: 'v2.2.10 adds structured move_rule_trace evidence to damage_events so downloaded replay logs, Run All QA, Tactical Sweep QA, and targeted proof artifacts show the stat source, ability modifier decisions, base-power modifiers, screen/weather/spread/STAB/final modifiers, and fixed ruleset flags for Foul Play, Body Press, and Psyshock-style edge cases.'
+    },
+    {
+      status: 'done',
+      title: 'Codex QA context drop connector',
+      detail: 'v2.2.11 adds a compact codex_context block to QA Artifact exports and a local ingest workflow so downloaded QA files can be dropped into the repo and summarized for Codex without a backend bridge from GitHub Pages.'
+    },
+    {
+      status: 'done',
+      title: 'Codex QA drop-folder save',
+      detail: 'v2.2.12 adds a Set QA Drop Folder control. Supported browsers can save QA Artifact exports directly into the local Champions-QA-Drops folder after user folder permission; unsupported browsers fall back to normal JSON download.'
     },
     {
       status: 'done',

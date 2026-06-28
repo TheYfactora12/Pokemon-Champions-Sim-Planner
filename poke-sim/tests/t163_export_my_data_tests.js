@@ -247,6 +247,7 @@ async function main() {
     truthy(/QA Artifact/.test(html), 'QA artifact label missing');
     truthy(/id="run-all-export-qa-btn"/.test(html), 'Run All + QA Artifact button missing');
     truthy(/id="tactical-sweep-qa-btn"/.test(html), 'Tactical Sweep + QA button missing');
+    truthy(/id="qa-drop-folder-btn"/.test(html), 'QA drop folder button missing');
     truthy(/Tactical Sweep \+ QA/.test(html), 'Tactical Sweep + QA label missing');
     truthy(/id="sim-scope"/.test(html), 'Test Scope selector missing');
     truthy(/Selected matchup/.test(html), 'Selected matchup scope option missing');
@@ -311,6 +312,7 @@ async function main() {
     seedLocalHistory();
     ctx.window.SupabaseAdapter = { enabled: false };
     ctx._downloaded = null;
+    ctx.window.showDirectoryPicker = null;
     ctx._downloadBlob = function(filename, mime, text) {
       ctx._downloaded = { filename: filename, mime: mime, text: text };
     };

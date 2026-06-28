@@ -1,0 +1,74 @@
+# Codex QA Connector
+
+This workflow lets downloaded QA evidence feed future Codex work without a backend bridge from GitHub Pages.
+
+## Site export
+
+QA Artifact exports include `codex_context`, a compact summary of:
+
+- build and source URL
+- QA readiness
+- damage/event/trace counts
+- missing targeted proof
+- Codex prompt guidance
+
+## Local drop workflow
+
+Default Mac drop folder:
+
+```text
+/Users/kevinmedeiros/Champions-QA-Drops
+```
+
+1. Download a QA Artifact or turn-log JSON from the site.
+2. Move it into the default drop folder.
+3. Run:
+
+```bash
+cd poke-sim
+npm run codex:qa
+```
+
+## Page one-click folder save
+
+On browsers with File System Access support:
+
+1. Click `Set QA Drop Folder`.
+2. Pick `/Users/kevinmedeiros/Champions-QA-Drops`.
+3. Run `Run All + QA Artifact`, `Tactical Sweep + QA`, or `QA Artifact`.
+
+The page writes the artifact JSON directly into the chosen folder for the current browser session. If the browser does not support folder write access, it falls back to normal download; move the file into the drop folder manually.
+
+Only ingest the newest file:
+
+```bash
+npm run codex:qa -- --latest
+```
+
+Use another folder:
+
+```bash
+npm run codex:qa -- --drop-dir /path/to/qa-folder
+```
+
+Multiple files are allowed:
+
+```bash
+npm run codex:qa -- /path/to/champions-sim-qa-artifact-1.json /path/to/champions-turn-log-2.json
+```
+
+The command writes:
+
+- `reports/codex-qa-context-latest.json`
+- `reports/codex-qa-context-latest.md`
+
+Codex should read the markdown first, then inspect the source artifact if a readiness item is yellow or red.
+
+## Boundary
+
+Raw QA artifacts should stay in the Mac drop folder, not GitHub. Commit only compact summaries when the team needs handoff context:
+
+- `reports/codex-qa-context-latest.md`
+- `reports/codex-qa-context-latest.json`
+
+This does not automatically upload private battle data. The user chooses which downloaded files to ingest.

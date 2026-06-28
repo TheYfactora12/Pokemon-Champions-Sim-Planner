@@ -109,7 +109,9 @@
 // v140-drain-rule-source-audit [2026-06-27] - Read generated Showdown drain metadata for all supported drain moves.
 // v141-foul-play-stat-source-audit [2026-06-27] - Correct unusual physical stat-source ability modifiers.
 // v142-move-rule-trace-qa [2026-06-27] - Expose move rule traces in QA/replay damage events.
-const CACHE_NAME = 'champions-sim-v142-move-rule-trace-qa';
+// v143-codex-qa-context-drop [2026-06-27] - Add Codex-ready QA artifact handoff context.
+// v144-codex-qa-drop-folder [2026-06-27] - Save QA artifacts to a user-approved local drop folder when supported.
+const CACHE_NAME = 'champions-sim-v144-codex-qa-drop-folder';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
