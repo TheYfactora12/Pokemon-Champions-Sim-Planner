@@ -8,6 +8,22 @@
 
 ---
 
+## Legal-only live catalog rule
+
+The live Supabase `teams` table is not allowed to be a loose archive of every team we have ever tested. Active rows are part of the runtime selector/training surface, so active live DB rows must exactly match the current approved, legal `poke-sim/data.js` catalog.
+
+When adding or removing approved teams:
+
+1. Update `poke-sim/data.js`.
+2. Run `python3 poke-sim/tools/generate_seed_from_data.py`.
+3. Commit the regenerated `db/seed_teams_v2.sql`, `db/migrations/2026_04_28_seed_teams_v2.sql`, and `db/migrations/2026_06_20_align_shared_27_team_catalog.sql`.
+4. Apply `2026_06_20_align_shared_27_team_catalog.sql` with the `Supabase DB Migration` workflow before expecting PR CI or Pages deploy to pass.
+5. Run or confirm `RUN_LIVE_DB=1 node tests/db_m2_seed_tests.js`.
+
+Old, non-legal, or superseded teams must be marked retired, for example with `metadata.retired = true`, instead of remaining as active rows. The live DB seed test ignores retired rows and fails if active rows are missing legal catalog teams or include extra active teams. This is intentional: it prevents stale/non-legal teams from appearing in selectors, poisoning sim QA, or contaminating future coaching/training stats.
+
+---
+
 ## Stack
 Supabase (Postgres + RLS) + `supabase-js` v2
 
