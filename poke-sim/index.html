@@ -66,8 +66,8 @@
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.24-kevin-team-qa -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.24-kevin-team-qa</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.25-editor-import-flow -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.25-editor-import-flow</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -250,12 +250,12 @@
         </select>
       </div>
 
-      <button class="btn-primary" id="run-sim-btn">▶ Run Simulation</button>
-      <button class="btn-secondary" id="run-all-btn">⚡ Run All Matchups</button>
-      <button class="btn-secondary" id="qa-drop-folder-btn" title="Choose a local folder for QA Artifact saves when your browser supports folder write access">Set QA Drop Folder</button>
-      <button class="btn-secondary" id="run-all-export-qa-btn" title="Run all matchups, then download one retained-evidence QA Artifact JSON">Run All + QA Artifact</button>
-      <button class="btn-secondary" id="stress-lite-qa-btn" title="Run capped stress proof with safety limits, then download one QA Artifact JSON">Stress Lite + QA</button>
-      <button class="btn-secondary" id="tactical-sweep-qa-btn" title="Run tactical branch coverage using Test Scope, save unseen branches, then download QA Artifact JSON">Tactical Sweep + QA</button>
+      <button class="btn-primary" id="run-sim-btn" title="Quick check: runs one matchup using the selected teams and settings. Collects one result, replay turns, damage events, effect events, field states, status, and faint causes.">▶ Run Simulation</button>
+      <button class="btn-secondary" id="run-all-btn" title="Broad release check: runs many matchups to find big broken patterns. Collects win/loss totals, matchup stats, replay samples, damage/effect coverage, and crash/error signals. Heavier on your computer.">⚡ Run All Matchups</button>
+      <button class="btn-secondary" id="qa-drop-folder-btn" title="Workflow helper: choose a local folder for QA Artifact saves when your browser supports folder write access. It helps keep artifacts organized for Codex review.">Set QA Drop Folder</button>
+      <button class="btn-secondary" id="run-all-export-qa-btn" title="Release evidence: runs all matchups, then downloads one QA Artifact JSON with build_id, source_url, summary, retained replays, damage_events, effect_events, qa_coverage_summary, codex_context, and DB status.">Run All + QA Artifact</button>
+      <button class="btn-secondary" id="stress-lite-qa-btn" title="Safe stress check: runs capped lower-load coverage for phones or weaker computers. Keeps the QA artifact under 50 MB while preserving Josh-ready damage, effect, contact, move-rule, branch, and summary proof. Not exhaustive Run All proof.">Stress Lite + QA</button>
+      <button class="btn-secondary" id="tactical-sweep-qa-btn" title="Coaching and strategy check: tests branches for the selected scope. Collects speed control, Trick Room, Tailwind, decision opportunities, move/lineup patterns, coaching rows, DB branch saves, and next_missing_proof.">Tactical Sweep + QA</button>
       <div class="settings-note" id="beta-guard-note" style="display:none"></div>
 
       <div class="progress-wrap" id="progress-wrap" style="display:none">
@@ -397,8 +397,16 @@
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Import
         </button>
+        <button class="btn-secondary" id="add-team-mon" style="font-size:11px" title="Add one editable Pokemon slot to the current team, up to six.">
+          + Add
+        </button>
       </div>
+      <div class="editor-team-status" id="editor-team-status"></div>
       <div id="editor-roster" class="editor-roster"></div>
+      <datalist id="editor-species-list"></datalist>
+      <datalist id="editor-item-list"></datalist>
+      <datalist id="editor-ability-list"></datalist>
+      <datalist id="editor-move-list"></datalist>
     </div>
     <div id="editor-form" class="editor-form">
       <p style="color:var(--text-m);font-size:13px">Select a Pokémon to edit its set.</p>
@@ -718,12 +726,20 @@
       <span class="modal-title" id="import-modal-title">Import Team from Showdown Paste</span>
       <button class="modal-close" id="close-import">✕</button>
     </div>
-    <p class="modal-hint">Paste Showdown-format text directly from <strong>PS! Teambuilder → Export</strong> or from a pokepast.es page. All 6 Pokémon will be parsed automatically.</p>
+    <p class="modal-hint">Paste or fetch a team, then review the Champion legality check before loading. Invalid moves, items, IVs, or over-cap spreads are blocked before they can enter sim data.</p>
+    <div class="import-flow-card" id="import-flow-card">
+      <strong>Upload checker ready</strong>
+      <span>Paste a Showdown team to see parsed Pokémon, item legality, move legality, warnings, and the destination slot.</span>
+    </div>
     <div class="import-tabs">
       <button class="import-tab active" data-itab="paste">Paste Text</button>
       <button class="import-tab" data-itab="url">pokepast.es URL</button>
     </div>
     <div id="itab-paste">
+      <div class="import-helper-row">
+        <button class="btn-secondary" id="load-sample-import-team" type="button">Try legal sample team</button>
+        <span>Loads Kevin Meta Sun so you can test upload, edit, and sim flow.</span>
+      </div>
       <textarea class="export-textarea" id="showdown-paste" placeholder="Paste Showdown export here…" rows="10"></textarea>
     </div>
     <div id="itab-url" style="display:none">
@@ -750,6 +766,7 @@
         <option value="aurora_veil_froslass">Aurora Veil Froslass</option>
       </select>
     </div>
+    <div class="import-destination-card" id="import-destination-card"></div>
     <div id="import-status" class="modal-status"></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
       <button class="btn-primary" id="do-import-btn">Load Team</button>

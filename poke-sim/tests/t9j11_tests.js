@@ -533,6 +533,31 @@ T('15f. Champion text export uses SPs, not EVs', () => {
   truthy(text.indexOf('EVs:') === -1, 'Champion export should not emit EVs');
 });
 
+T('15f2. user-facing Showdown export uses EVs and re-imports when within Champion caps', () => {
+  resetTeams();
+  TEAMS.custom_showdown_export = {
+    name: 'Showdown Export Test',
+    source: 'custom',
+    format: 'champions',
+    members: [{
+      name: 'Garchomp',
+      item: 'Soft Sand',
+      ability: 'Rough Skin',
+      level: 50,
+      nature: 'Jolly',
+      evs: { hp: 2, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 },
+      moves: ['Earthquake', 'Protect']
+    }]
+  };
+  const text = exportAllCustomAsShowdown();
+  deepInc(text, 'EVs: 2 HP / 32 Atk / 32 Spe', 'Showdown export should emit EVs');
+  truthy(text.indexOf('SPs:') === -1, 'Showdown export should not emit SPs');
+  const parsed = parseMultiTeamShowdown(text);
+  eq(parsed.length, 1, 'Showdown export should parse back as one team');
+  const validation = buildImportedTeamValidation(parsed[0].members, { format: 'champions' });
+  truthy(validation.valid, 'Champion-capped Showdown EV export should re-import');
+});
+
 T('15g. illegal existing custom teams are hidden from visible sim selectors', () => {
   resetTeams();
   TEAMS.custom_bad_item = mkTeam('Bad Item', ['Garchomp']);
