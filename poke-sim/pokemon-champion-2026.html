@@ -31373,6 +31373,8 @@ function csBranchMoveTrainerSummary(analysis) {
 
 var CS_BRANCH_STRATEGY_MEMORY_KEY = 'champions_branch_strategy_memory_v1';
 var CS_BRANCH_STRATEGY_MEMORY_LIMIT = 12;
+var CS_COACH_BRAIN_MEMORY_KEY = 'champions_coach_brain_memory_v1';
+var CS_COACH_BRAIN_MEMORY_LIMIT = 12;
 
 function csLoadBranchStrategyMemory() {
   try {
@@ -31447,6 +31449,77 @@ function csLatestBranchMoveAnalysisForTeam(teamKey) {
   return analyses.find(function(entry) {
     return entry && entry.player_team_id === teamKey && (!entry.player_team_signature || entry.player_team_signature === sig);
   }) || analyses.find(function(entry) { return entry && entry.player_team_id === teamKey; }) || analyses[0] || null;
+}
+
+function csLoadCoachBrainMemory() {
+  try {
+    var raw = localStorage && localStorage.getItem(CS_COACH_BRAIN_MEMORY_KEY);
+    var parsed = raw ? JSON.parse(raw) : null;
+    return parsed && Array.isArray(parsed.summaries) ? parsed : { schema_version: 1, summaries: [] };
+  } catch (_e) {
+    return { schema_version: 1, summaries: [] };
+  }
+}
+
+function csSaveCoachBrainMemory(memory) {
+  try {
+    if (!localStorage) return false;
+    localStorage.setItem(CS_COACH_BRAIN_MEMORY_KEY, JSON.stringify(memory));
+    return true;
+  } catch (_e) {
+    return false;
+  }
+}
+
+function csRememberCoachBrainSummary(summary, opts) {
+  if (!summary || !summary.tactical_interpretation) return null;
+  opts = opts || {};
+  var playerKey = opts.player_team_id || 'player';
+  var customSignature = opts.player_team_signature || null;
+  var memoryKey = [playerKey, customSignature || 'static', opts.format || 'format', 'coach-brain'].join('::');
+  var entry = {
+    saved_at: new Date().toISOString(),
+    memory_key: memoryKey,
+    player_team_id: playerKey,
+    player_team_signature: customSignature,
+    custom_team: !!customSignature,
+    format: opts.format || null,
+    build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
+    confidence: summary.confidence || null,
+    primary_issue: summary.primary_issue || null,
+    observed_pattern: summary.observed_pattern || null,
+    root_problem: summary.root_problem || null,
+    risk_if_unchanged: summary.risk_if_unchanged || null,
+    recommended_solution: summary.recommended_solution || null,
+    expected_result_if_fixed: summary.expected_result_if_fixed || null,
+    practice_drill: summary.practice_drill || null,
+    tactical_interpretation: summary.tactical_interpretation,
+    sample: summary.sample || null,
+    boundary: summary.boundary || null
+  };
+  var memory = csLoadCoachBrainMemory();
+  memory.summaries = (memory.summaries || []).filter(function(item) {
+    return item && item.memory_key !== entry.memory_key;
+  });
+  memory.summaries.unshift(entry);
+  memory.summaries = memory.summaries.slice(0, CS_COACH_BRAIN_MEMORY_LIMIT);
+  memory.updated_at = entry.saved_at;
+  csSaveCoachBrainMemory(memory);
+  ChampionsSim.state.lastCoachBrainMemory = memory;
+  return memory;
+}
+
+function csLatestCoachBrainForTeam(teamKey) {
+  var memory = (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastCoachBrainMemory) || csLoadCoachBrainMemory();
+  var summaries = Array.isArray(memory && memory.summaries) ? memory.summaries : [];
+  if (!teamKey) return summaries[0] || null;
+  var sig = null;
+  try {
+    if (typeof TEAMS !== 'undefined' && TEAMS[teamKey] && typeof teamSignature === 'function') sig = teamSignature(TEAMS[teamKey]);
+  } catch (_e) {}
+  return summaries.find(function(entry) {
+    return entry && entry.player_team_id === teamKey && (!entry.player_team_signature || entry.player_team_signature === sig);
+  }) || summaries.find(function(entry) { return entry && entry.player_team_id === teamKey; }) || null;
 }
 
 function downloadReplayTurnLog(replay, opts) {
@@ -33185,6 +33258,13 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   payload.ready_for_codex = payload.codex_context.ready_for_codex;
   payload.next_missing_proof = payload.codex_context.next_missing_proof;
   payload.recommended_next_test = payload.codex_context.recommended_next_test;
+  try {
+    csRememberCoachBrainSummary(mergedCoverage && mergedCoverage.coach_brain_summary, {
+      player_team_id: key,
+      player_team_signature: team && typeof teamSignature === 'function' ? teamSignature(team) : null,
+      format: payload.current_format
+    });
+  } catch (_coachMemoryErr) {}
   return payload;
 }
 
@@ -33240,6 +33320,9 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.summarizeBranchTactics = csSummarizeBranchTactics;
   ChampionsSim.history.rememberBranchMoveAnalysis = csRememberBranchMoveAnalysis;
   ChampionsSim.history.loadBranchStrategyMemory = csLoadBranchStrategyMemory;
+  ChampionsSim.history.rememberCoachBrainSummary = csRememberCoachBrainSummary;
+  ChampionsSim.history.loadCoachBrainMemory = csLoadCoachBrainMemory;
+  ChampionsSim.history.latestCoachBrainForTeam = csLatestCoachBrainForTeam;
   ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
   ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
   ChampionsSim.history.buildCodexQaContext = csBuildCodexQaContext;
@@ -33255,6 +33338,9 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBu
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csAnalyzeBranchCoverageRows', csAnalyzeBranchCoverageRows);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSummarizeBranchTactics', csSummarizeBranchTactics);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csLoadBranchStrategyMemory', csLoadBranchStrategyMemory);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csRememberCoachBrainSummary', csRememberCoachBrainSummary);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csLoadCoachBrainMemory', csLoadCoachBrainMemory);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csLatestCoachBrainForTeam', csLatestCoachBrainForTeam);
 // __M6_HISTORY_END__
 
 // ============================================================
@@ -38801,8 +38887,9 @@ function csCoachSequenceWhyFromBranch(branchAnalysis) {
   };
 }
 
-function csRenderCoachSequenceWhy(report, branchAnalysis) {
+function csRenderCoachSequenceWhy(report, branchAnalysis, teamKey) {
   var brain = report && report.coach_brain_summary ? report.coach_brain_summary : null;
+  if (!brain && typeof csLatestCoachBrainForTeam === 'function') brain = csLatestCoachBrainForTeam(teamKey);
   var interp = brain && brain.tactical_interpretation ? brain.tactical_interpretation : csCoachSequenceWhyFromBranch(branchAnalysis);
   if (!interp) return '';
   var checklist = Array.isArray(interp.coach_checklist) ? interp.coach_checklist : [];
@@ -38862,7 +38949,7 @@ function csRenderStrategyPriorityBoard(teamKey, history, branchAnalysis, report)
   html += '<h3 class="cs-h3">Strategy Priority Board</h3>';
   html += csRenderTeamEvidenceDashboard(teamKey, history, branchAnalysis, report);
   html += '<p class="cs-summary-line"><strong>Coach call:</strong> ' + _csEsc(primaryCall) + '</p>';
-  html += csRenderCoachSequenceWhy(report, branchAnalysis);
+  html += csRenderCoachSequenceWhy(report, branchAnalysis, teamKey);
   html += '<div class="cs-detector-table">';
   html += '<div class="cs-detector-row cs-detector-head"><span>Priority</span><span>Evidence</span><span>Player action</span><span>Trust</span></div>';
 

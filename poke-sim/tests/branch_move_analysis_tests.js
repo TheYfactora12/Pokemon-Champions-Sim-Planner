@@ -67,7 +67,7 @@ load('engine.js');
 load('ui.js');
 
 vm.runInContext('this.csAnalyzeBranchCoverageRows = csAnalyzeBranchCoverageRows;', ctx);
-vm.runInContext('this.csRememberBranchMoveAnalysis = csRememberBranchMoveAnalysis; this.csLoadBranchStrategyMemory = csLoadBranchStrategyMemory; this.csRenderStrategyPriorityBoard = csRenderStrategyPriorityBoard;', ctx);
+vm.runInContext('this.csRememberBranchMoveAnalysis = csRememberBranchMoveAnalysis; this.csLoadBranchStrategyMemory = csLoadBranchStrategyMemory; this.csRememberCoachBrainSummary = csRememberCoachBrainSummary; this.csLoadCoachBrainMemory = csLoadCoachBrainMemory; this.csRenderStrategyPriorityBoard = csRenderStrategyPriorityBoard;', ctx);
 
 let pass = 0;
 let fail = 0;
@@ -222,7 +222,35 @@ T('8b. strategy priority board renders coach sequence why when coach brain exist
   truthy(/tailwind_converted/.test(html), 'missing watch-next counters');
 });
 
+T('8c. strategy priority board reuses saved coach brain memory for the team', () => {
+  ctx.csRememberCoachBrainSummary({
+    confidence: 'high',
+    observed_pattern: 'Tailwind is not converting.',
+    recommended_solution: 'Plan the next two attacks before Tailwind.',
+    tactical_interpretation: {
+      schema_version: 'champions-coach-tactical-interpretation-v1',
+      player_question: 'What changes after Tailwind?',
+      why_good_windows_worked: 'Tailwind worked when pressure followed.',
+      why_bad_windows_failed: 'Tailwind failed when speed did not become pressure.',
+      turn_sequence_rule: 'Declare the two-turn payoff before Tailwind.',
+      coach_checklist: ['Name the target before Tailwind.'],
+      data_to_watch_next: ['tailwind_converted']
+    }
+  }, { player_team_id: 'player', format: 'doubles' });
+  const memory = ctx.csLoadCoachBrainMemory();
+  truthy(memory.summaries.length >= 1, 'coach brain memory missing');
+  const html = ctx.csRenderStrategyPriorityBoard('player', {
+    record_total: { n: 12, w: 6, l: 6, win_rate: 0.5 },
+    team_confidence_v2: { tier: 'medium' }
+  }, null, {});
+  truthy(/Coach sequence why/.test(html), 'strategy board missing saved coach memory section');
+  truthy(/What changes after Tailwind/.test(html), 'strategy board did not use saved coach memory');
+  truthy(/Declare the two-turn payoff/.test(html), 'strategy board missing saved turn rule');
+});
+
 T('9. analyzes tactical timing tags beside move lines', () => {
+  ctx.localStorage.removeItem('champions_coach_brain_memory_v1');
+  ctx.ChampionsSim.state.lastCoachBrainMemory = null;
   const out = ctx.csAnalyzeBranchCoverageRows([
     row('tactic-bad', 'loss', 8, 'Protect', 'Flare Blitz', 'mega_altaria', {
       timing_tags: ['player_protect_t1', 'early_position_loss', 'first_ko_t2'],

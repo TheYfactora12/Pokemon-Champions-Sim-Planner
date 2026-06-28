@@ -119,6 +119,7 @@ vm.runInContext([
   'this.csExportMyDataJson = csExportMyDataJson;',
   'this.csBuildQaArtifactExport = csBuildQaArtifactExport;',
   'this.csExportQaArtifactJson = csExportQaArtifactJson;',
+  'this.csLoadCoachBrainMemory = csLoadCoachBrainMemory;',
   'this.addReplays = addReplays;'
 ].join(' '), ctx);
 
@@ -357,6 +358,7 @@ async function main() {
     truthy(payload.qa_coverage_summary.coach_brain_summary && payload.qa_coverage_summary.coach_brain_summary.tactical_interpretation, 'coach tactical interpretation missing');
     eq(payload.qa_coverage_summary.coach_brain_summary.tactical_interpretation.schema_version, 'champions-coach-tactical-interpretation-v1', 'coach tactical interpretation schema');
     truthy(Array.isArray(payload.qa_coverage_summary.coach_brain_summary.tactical_interpretation.coach_checklist), 'coach tactical checklist missing');
+    truthy(ctx.csLoadCoachBrainMemory().summaries.length >= 1, 'QA artifact should save compact coach brain memory');
     truthy(payload.codex_context && payload.codex_context.qa_run_type === 'tactical_sweep', 'codex qa run type missing');
     truthy(typeof payload.codex_context.ready_for_codex === 'boolean', 'codex readiness missing');
     truthy(payload.codex_context.coach_focus, 'codex coach focus missing');
