@@ -531,8 +531,15 @@ function buildChampionImportGateErrors(members) {
   (members || []).forEach(function(member) {
     var name = member && member.name ? member.name : 'Pokemon';
     var signals = (member && member.import_format_signals) || {};
-    if (signals.sawEvsLine) {
-      errors.push(name + ': raw Showdown EVs are SV-format data; use Champion SPs instead.');
+    var spreadOk = true;
+    if (typeof spreadFitsChampions === 'function') spreadOk = spreadFitsChampions((member && member.evs) || {});
+    else {
+      var evsForCheck = (member && member.evs) || {};
+      var totalForCheck = ['hp','atk','def','spa','spd','spe'].reduce(function(sum, stat) { return sum + (parseInt(evsForCheck[stat], 10) || 0); }, 0);
+      spreadOk = totalForCheck <= 66 && ['hp','atk','def','spa','spd','spe'].every(function(stat) { return (parseInt(evsForCheck[stat], 10) || 0) <= 32; });
+    }
+    if (signals.sawEvsLine && !spreadOk) {
+      errors.push(name + ': raw Showdown EVs are SV-format data; use Champion SPs or EV values within Champion SP caps.');
     }
     if (signals.sawIvsLine) {
       errors.push(name + ': IVs are not configurable in Champions; remove IVs before import.');
@@ -634,8 +641,14 @@ function getMoveLegalityIssueSeverity(reason) {
 // round-tripping does not re-import SV-format spread lines by mistake.
 // ============================================================
 function exportTeamToPaste(team) {
+  return exportTeamToPasteWithOptions(team, {});
+}
+
+function exportTeamToPasteWithOptions(team, opts) {
+  opts = opts || {};
   if (!team || !team.members) return '';
   const lines = [];
+  var spreadLabel = opts.showdownCompatible ? 'EVs' : 'SPs';
   for (const m of team.members) {
     // Line 1
     const itemStr = m.item ? ` @ ${m.item}` : '';
@@ -651,7 +664,7 @@ function exportTeamToPaste(team) {
       const v = evs[k] || 0;
       if (v > 0) evParts.push(`${v} ${label}`);
     }
-    if (evParts.length) lines.push(`SPs: ${evParts.join(' / ')}`);
+    if (evParts.length) lines.push(`${spreadLabel}: ${evParts.join(' / ')}`);
     if (m.nature) lines.push(`${m.nature} Nature`);
     for (const mv of (m.moves || [])) lines.push(`- ${mv}`);
     lines.push(''); // blank line between mons
@@ -2367,7 +2380,7 @@ function exportAllCustomAsShowdown() {
   for (var k in TEAMS) {
     if (TEAMS[k] && TEAMS[k].source === 'custom') {
       parts.push('=== [' + (TEAMS[k].name || k) + '] ===');
-      parts.push(exportTeamToPaste(TEAMS[k]));
+      parts.push(exportTeamToPasteWithOptions(TEAMS[k], { showdownCompatible: true }));
       parts.push('');
     }
   }
@@ -2706,6 +2719,14 @@ function openTeamStatDetailPanel(teamKey, monName, triggerEl) {
 function renderEditorRoster() {
   const el = document.getElementById('editor-roster');
   const team = getEditablePlayerTeam();
+  const status = document.getElementById('editor-team-status');
+  if (status) {
+    var count = team && Array.isArray(team.members) ? team.members.length : 0;
+    var sourceLabel = team && team.source === 'custom' ? 'Custom team' : 'Preloaded override';
+    status.innerHTML = team
+      ? '<strong>Editing: ' + _escapeHtml(team.name || currentPlayerKey) + '</strong><span>' + _escapeHtml(sourceLabel) + ' · ' + count + '/6 Pokemon · saves affect future sims</span>'
+      : '<strong>No team loaded</strong><span>Select a player team first.</span>';
+  }
   if (!el) return;
   el.innerHTML = '';
   if (!team || !Array.isArray(team.members)) return;
@@ -2716,6 +2737,66 @@ function renderEditorRoster() {
     btn.addEventListener('click', () => { document.querySelectorAll('.editor-poke-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); openEditorForm(i); });
     el.appendChild(btn);
   });
+}
+
+function csBlankChampionMember() {
+  return {
+    name: 'Pikachu',
+    item: '',
+    ability: 'Static',
+    level: 50,
+    nature: 'Hardy',
+    role: '',
+    moves: ['Protect'],
+    evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
+  };
+}
+
+function csPersistEditedTeam(team, sourceTag) {
+  if (!team) return;
+  if (team.source === 'custom' && typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
+  else if (team.source !== 'custom' && typeof savePreloadedOverride === 'function') savePreloadedOverride(currentPlayerKey);
+  if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(currentPlayerKey, team, sourceTag || 'set_editor');
+}
+
+function csRefreshEditorTeamViews(team) {
+  if (!team) return;
+  renderRoster('player-roster', team.members || []);
+  renderEditorRoster();
+  renderTeamsGrid();
+  if (typeof renderCoverageWidget === 'function') renderCoverageWidget();
+}
+
+function addEditorPokemonSlot() {
+  const team = getEditablePlayerTeam();
+  if (!team) return;
+  team.members = Array.isArray(team.members) ? team.members : [];
+  if (team.members.length >= 6) {
+    alert('Champion teams are capped at 6 Pokemon.');
+    return;
+  }
+  team.members.push(csBlankChampionMember());
+  csPersistEditedTeam(team, 'set_editor_add_slot');
+  csRefreshEditorTeamViews(team);
+  openEditorForm(team.members.length - 1);
+}
+
+function removeEditorPokemonSlot() {
+  if (editingIdx === null) return;
+  const team = getEditablePlayerTeam();
+  if (!team || !Array.isArray(team.members) || !team.members[editingIdx]) return;
+  if (team.members.length <= 1) {
+    alert('Keep at least one Pokemon on the team.');
+    return;
+  }
+  var removed = team.members[editingIdx].name || 'this Pokemon';
+  if (!confirm('Remove ' + removed + ' from this team?')) return;
+  team.members.splice(editingIdx, 1);
+  var nextIdx = Math.min(editingIdx, team.members.length - 1);
+  editingIdx = null;
+  csPersistEditedTeam(team, 'set_editor_remove_slot');
+  csRefreshEditorTeamViews(team);
+  if (nextIdx >= 0) openEditorForm(nextIdx);
 }
 
 function buildSetEditorMoveLegalityWarnings(member) {
@@ -2749,18 +2830,134 @@ function renderSetEditorMoveLegalityHtml(member) {
   }).join('') + '</div>';
 }
 
+function csRenderEditorItemDatalist() {
+  var list = document.getElementById('editor-item-list');
+  if (!list || typeof CHAMPIONS_LEGAL_ITEMS === 'undefined' || !CHAMPIONS_LEGAL_ITEMS) return 0;
+  var items = Array.from(CHAMPIONS_LEGAL_ITEMS).sort(function(a, b) { return a.localeCompare(b); });
+  list.innerHTML = items.map(function(item) {
+    return '<option value="' + _escapeHtml(item) + '"></option>';
+  }).join('');
+  return items.length;
+}
+
+function csRenderEditorItemLegalityHtml(member) {
+  var item = member && member.item ? String(member.item).trim() : '';
+  if (!item) return '<div class="editor-legality-ok">No held item selected.</div>';
+  if (typeof CHAMPIONS_LEGAL_ITEMS !== 'undefined' && CHAMPIONS_LEGAL_ITEMS && CHAMPIONS_LEGAL_ITEMS.has(item)) {
+    return '<div class="editor-legality-ok">Item checked against the current Champions item pool.</div>';
+  }
+  var knownAbsent = typeof CHAMPIONS_BANNED_ITEMS !== 'undefined' && CHAMPIONS_BANNED_ITEMS && CHAMPIONS_BANNED_ITEMS.has(item);
+  return '<div class="editor-legality-warnings"><div class="editor-legality-warning error">' +
+    _escapeHtml(item + ': not legal for the current implemented Champions item pool' + (knownAbsent ? ' (confirmed absent).' : '.')) +
+    '</div></div>';
+}
+
+function csRenderEditorMoveDatalist(speciesName) {
+  var list = document.getElementById('editor-move-list');
+  if (!list) return 0;
+  var api = ChampionsSim && ChampionsSim.moveLegality;
+  var moves = api && typeof api.legalMoveDisplayNamesForSpecies === 'function'
+    ? api.legalMoveDisplayNamesForSpecies(speciesName)
+    : [];
+  list.setAttribute('data-moves', JSON.stringify(moves));
+  list.innerHTML = moves.slice(0, 450).map(function(move) {
+    return '<option value="' + _escapeHtml(move) + '"></option>';
+  }).join('');
+  return moves.length;
+}
+
+function csGetEditorLegalMoves() {
+  var list = document.getElementById('editor-move-list');
+  if (!list) return [];
+  try {
+    var parsed = JSON.parse(list.getAttribute('data-moves') || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_e) {
+    return [];
+  }
+}
+
+function csScoreMoveSearch(move, query) {
+  var m = String(move || '').toLowerCase();
+  var q = String(query || '').toLowerCase().trim();
+  if (!q) return 1;
+  if (m === q) return 100;
+  if (m.indexOf(q) === 0) return 80;
+  if (m.indexOf(q) >= 0) return 60;
+  var parts = q.split(/\s+/).filter(Boolean);
+  var matched = parts.filter(function(part) { return m.indexOf(part) >= 0; }).length;
+  return matched ? 30 + matched : 0;
+}
+
+function csRenderMoveSearchMenu(input) {
+  if (!input) return;
+  var idx = input.getAttribute('data-move-index');
+  var menu = document.getElementById('ed-mv-menu-' + idx);
+  if (!menu) return;
+  var query = input.value || '';
+  var moves = csGetEditorLegalMoves();
+  var ranked = moves.map(function(move) {
+    return { move: move, score: csScoreMoveSearch(move, query) };
+  }).filter(function(row) {
+    return row.score > 0;
+  }).sort(function(a, b) {
+    return b.score - a.score || a.move.localeCompare(b.move);
+  }).slice(0, 12);
+  if (!ranked.length) {
+    menu.innerHTML = '<div class="editor-move-empty">No legal move matches. Save will block illegal moves.</div>';
+    menu.style.display = 'block';
+    return;
+  }
+  menu.innerHTML = ranked.map(function(row) {
+    return '<button type="button" class="editor-move-option" data-move="' + _escapeHtml(row.move) + '">' + _escapeHtml(row.move) + '</button>';
+  }).join('');
+  menu.style.display = 'block';
+  menu.querySelectorAll('.editor-move-option').forEach(function(btn) {
+    btn.addEventListener('mousedown', function(ev) {
+      ev.preventDefault();
+      input.value = btn.getAttribute('data-move') || '';
+      menu.style.display = 'none';
+      refreshEditorMoveLegality();
+      input.focus();
+    });
+  });
+}
+
+function csHideMoveSearchMenu(input) {
+  if (!input) return;
+  var idx = input.getAttribute('data-move-index');
+  var menu = document.getElementById('ed-mv-menu-' + idx);
+  if (menu) setTimeout(function() { menu.style.display = 'none'; }, 120);
+}
+
 function currentEditorMemberForLegality(baseMember) {
   var moves = [0,1,2,3].map(function(i) {
     var el = document.getElementById('ed-mv-' + i);
     return el ? (el.value || '').trim() : '';
   }).filter(Boolean);
-  return Object.assign({}, baseMember || {}, { moves: moves });
+  var nameEl = document.getElementById('ed-name');
+  var itemEl = document.getElementById('ed-item');
+  var abilityEl = document.getElementById('ed-ability');
+  return Object.assign({}, baseMember || {}, {
+    name: nameEl ? (nameEl.value || '').trim() : ((baseMember && baseMember.name) || ''),
+    item: itemEl ? (itemEl.value || '').trim() : ((baseMember && baseMember.item) || ''),
+    ability: abilityEl ? (abilityEl.value || '').trim() : ((baseMember && baseMember.ability) || ''),
+    moves: moves
+  });
 }
 
 function refreshEditorMoveLegality(baseMember) {
   var host = document.getElementById('editor-move-legality');
   if (!host) return;
-  host.innerHTML = renderSetEditorMoveLegalityHtml(currentEditorMemberForLegality(baseMember));
+  var current = currentEditorMemberForLegality(baseMember);
+  var legalMoveCount = csRenderEditorMoveDatalist(current.name);
+  csRenderEditorItemDatalist();
+  host.innerHTML = csRenderEditorItemLegalityHtml(current) + renderSetEditorMoveLegalityHtml(current) +
+    '<div class="editor-move-source">' +
+      (legalMoveCount
+        ? _escapeHtml(String(legalMoveCount)) + ' legal move suggestions loaded for ' + _escapeHtml(current.name || 'this Pokemon') + '. You can type a move manually, but Save blocks moves outside this learnset.'
+        : 'No legal move suggestions found for this species/form. Check the spelling or source data before saving.') +
+    '</div>';
 }
 
 function openEditorForm(idx) {
@@ -2778,15 +2975,23 @@ function openEditorForm(idx) {
       <input class="form-input" id="ev-${s}" value="${_escapeHtml(String(m.evs?.[s]||0))}" type="number" min="0" max="32"/>
     </div>`).join('');
   form.innerHTML = `
-    <div class="editor-poke-name">${_escapeHtml(m.name || '')}</div>
+    <div class="editor-builder-head">
+      <div>
+        <div class="editor-team-kicker">Editing ${_escapeHtml(team.name || currentPlayerKey)} · Slot ${idx + 1}</div>
+        <div class="editor-poke-name">${_escapeHtml(m.name || '')}</div>
+      </div>
+      <div class="editor-save-note">Save validates Champion item pool, SP caps, and species-specific moves.</div>
+    </div>
     <div class="editor-2col">
-      <div class="form-group"><label class="form-label">Item</label><input class="form-input" id="ed-item" value="${_escapeHtml(m.item||'')}"/></div>
+      <div class="form-group"><label class="form-label">Pokémon</label><input class="form-input" id="ed-name" value="${_escapeHtml(m.name||'')}" placeholder="Exact species/form name"/></div>
+      <div class="form-group"><label class="form-label">Item</label><input class="form-input" id="ed-item" list="editor-item-list" value="${_escapeHtml(m.item||'')}" placeholder="Legal held item"/></div>
       <div class="form-group"><label class="form-label">Ability</label><input class="form-input" id="ed-ability" value="${_escapeHtml(m.ability||'')}"/></div>
       <div class="form-group"><label class="form-label">Nature</label><input class="form-input" id="ed-nature" value="${_escapeHtml(m.nature||'Hardy')}"/></div>
+      <div class="form-group"><label class="form-label">Level</label><input class="form-input" id="ed-level" value="${_escapeHtml(String(m.level||50))}" type="number" min="1" max="100"/></div>
       <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="ed-role" value="${_escapeHtml(m.role||'')}"/></div>
     </div>
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">Moves</label>
-    <div class="moves-2col">${(m.moves||[]).map((mv,i)=>`<input class="form-input" id="ed-mv-${i}" value="${_escapeHtml(mv)}"/>`).join('')}</div></div>
+    <div class="moves-2col">${[0,1,2,3].map((i)=>`<div class="editor-move-combobox"><input class="form-input" id="ed-mv-${i}" data-move-index="${i}" value="${_escapeHtml((m.moves||[])[i] || '')}" placeholder="Search legal move ${i + 1}"/><div class="editor-move-menu" id="ed-mv-menu-${i}" style="display:none"></div></div>`).join('')}</div></div>
     <div id="editor-move-legality">${renderSetEditorMoveLegalityHtml(m)}</div>
     ${renderStatPanelHtml(m)}
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">SPs (max 66 total, 32 per stat)</label>
@@ -2798,12 +3003,35 @@ function openEditorForm(idx) {
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Export Team
       </button>
+      <button class="btn-secondary" style="font-size:11px" id="remove-this-mon" title="Remove this Pokemon from the current editable team">Remove</button>
     </div>
     <p style="font-size:10px;color:var(--text-m);margin-top:6px">Changes apply to all future simulations immediately.</p>`;
   document.getElementById('save-edits').addEventListener('click', saveEdits);
   document.getElementById('export-this-mon').addEventListener('click', () => openExportModal(currentPlayerKey));
+  document.getElementById('remove-this-mon').addEventListener('click', removeEditorPokemonSlot);
   [0,1,2,3].forEach(function(i) {
     var el = document.getElementById('ed-mv-' + i);
+    if (el) {
+      el.addEventListener('input', function() { refreshEditorMoveLegality(m); csRenderMoveSearchMenu(el); });
+      el.addEventListener('focus', function() { refreshEditorMoveLegality(m); csRenderMoveSearchMenu(el); });
+      el.addEventListener('blur', function() { csHideMoveSearchMenu(el); });
+      el.addEventListener('keydown', function(ev) {
+        var menu = document.getElementById('ed-mv-menu-' + i);
+        if (ev.key === 'Escape' && menu) menu.style.display = 'none';
+        if (ev.key === 'Enter' && menu && menu.style.display !== 'none') {
+          var first = menu.querySelector('.editor-move-option');
+          if (first) {
+            ev.preventDefault();
+            el.value = first.getAttribute('data-move') || '';
+            menu.style.display = 'none';
+            refreshEditorMoveLegality(m);
+          }
+        }
+      });
+    }
+  });
+  ['ed-name','ed-item','ed-ability'].forEach(function(id) {
+    var el = document.getElementById(id);
     if (el) el.addEventListener('input', function() { refreshEditorMoveLegality(m); });
   });
   ['hp','atk','def','spa','spd','spe'].forEach(function(stat) {
@@ -2811,6 +3039,7 @@ function openEditorForm(idx) {
     if (el) el.addEventListener('input', refreshEditorSpreadGuard);
   });
   refreshEditorSpreadGuard();
+  refreshEditorMoveLegality(m);
 }
 
 function getEditorSpreadFromInputs() {
@@ -2852,9 +3081,11 @@ function saveEdits() {
   var spreadGuard = refreshEditorSpreadGuard();
   if (spreadGuard.errors.length) return;
   const editedMember = Object.assign({}, team.members[editingIdx], {
+    name: (document.getElementById('ed-name').value.trim() || team.members[editingIdx].name),
     item: document.getElementById('ed-item').value.trim(),
     ability: document.getElementById('ed-ability').value.trim(),
     nature: document.getElementById('ed-nature').value.trim(),
+    level: Math.max(1, Math.min(100, parseInt(document.getElementById('ed-level').value, 10) || 50)),
     role: document.getElementById('ed-role').value.trim(),
     moves: [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean),
     evs: spreadGuard.evs
@@ -2874,23 +3105,20 @@ function saveEdits() {
   team.import_warnings = validation.warnings;
   team.import_errors = validation.errors;
   team.showdown_source_version = validation.sourceVersion;
-  if (team.source === 'custom' && typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
-  else if (team.source !== 'custom' && typeof savePreloadedOverride === 'function') savePreloadedOverride(currentPlayerKey);
-  if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(currentPlayerKey, team, 'set_editor');
-  renderRoster('player-roster', team.members);
-  renderTeamsGrid();
+  csPersistEditedTeam(team, 'set_editor');
+  csRefreshEditorTeamViews(team);
   const btn = document.getElementById('save-edits');
   const orig = btn.textContent;
   btn.textContent = '✓ Saved!'; btn.style.background='var(--green)';
   setTimeout(()=>{ btn.textContent=orig; btn.style.background=''; }, 1500);
   // Update coverage widget when player team changes
-  if (typeof renderCoverageWidget === 'function') renderCoverageWidget();
 }
 
 renderEditorRoster();
 
 document.getElementById('export-team-editor')?.addEventListener('click', ()=>openExportModal(currentPlayerKey));
 document.getElementById('import-team-editor')?.addEventListener('click', ()=>{ openImportModal(); var imp=document.getElementById('import-slot'); if(imp) imp.value=currentPlayerKey; });
+document.getElementById('add-team-mon')?.addEventListener('click', addEditorPokemonSlot);
 
 // ============================================================
 // EXPORT MODAL
@@ -2898,7 +3126,7 @@ document.getElementById('import-team-editor')?.addEventListener('click', ()=>{ o
 function openExportModal(teamKey) {
   const team = TEAMS[teamKey];
   if (!team) return;
-  const paste = exportTeamToPaste(team);
+  const paste = exportTeamToPasteWithOptions(team, { showdownCompatible: true });
   document.getElementById('export-text').value = paste;
   _openModalOverlay('export-modal', { focusSelector: '#export-text', labelledbyId: 'export-modal-title' });
 }
@@ -3024,10 +3252,57 @@ document.getElementById('showdown-paste')?.addEventListener('input', function() 
   else document.getElementById('import-preview').style.display = 'none';
 });
 
+document.getElementById('load-sample-import-team')?.addEventListener('click', function() {
+  var sample = TEAMS.kevin_meta_sun || TEAMS.targeted_proof_legal || TEAMS.player;
+  var ta = document.getElementById('showdown-paste');
+  if (!sample || !ta) return;
+  ta.value = exportTeamToPasteWithOptions(sample, { showdownCompatible: true });
+  var pasteTab = document.querySelector('.import-tab[data-itab="paste"]');
+  if (pasteTab) pasteTab.click();
+  var slot = document.getElementById('import-slot');
+  if (slot) slot.value = '__new__';
+  ta.dispatchEvent(new Event('input'));
+  var statusEl = document.getElementById('import-status');
+  if (statusEl) {
+    statusEl.textContent = 'Sample loaded. Review the checker, then click Load Team.';
+    statusEl.className = 'modal-status ok';
+  }
+});
+
+document.getElementById('import-slot')?.addEventListener('change', function() {
+  var ta = document.getElementById('showdown-paste');
+  if (ta && ta.value.trim()) {
+    var parsed = parseShowdownPaste(ta.value);
+    if (parsed.length) showImportPreview(parsed);
+  }
+});
+
 function showImportPreview(members) {
   const preview = document.getElementById('import-preview');
   const roster = document.getElementById('preview-roster');
   const validation = buildImportedTeamValidation(members, { format: 'champions' });
+  const flow = document.getElementById('import-flow-card');
+  const dest = document.getElementById('import-destination-card');
+  const slotEl = document.getElementById('import-slot');
+  const slot = slotEl ? slotEl.value : '__new__';
+  const destination = slot === '__new__' ? 'New custom team' : ((TEAMS[slot] && TEAMS[slot].name) || slot || 'Selected slot');
+  const memberWarningsTotal = Object.keys(validation.memberWarnings || {}).reduce(function(sum, key) {
+    return sum + ((validation.memberWarnings[key] || []).length);
+  }, 0);
+  if (flow) {
+    flow.innerHTML = '<strong>' + (validation.valid ? 'Ready to load' : 'Blocked until fixed') + '</strong>' +
+      '<span>' + members.length + '/6 Pokemon parsed · ' + validation.errors.length + ' errors · ' + validation.warnings.length + ' warnings · ' + memberWarningsTotal + ' move checks flagged</span>' +
+      '<div class="import-check-chips">' +
+        '<span class="' + (members.length >= 1 && members.length <= 6 ? 'ok' : 'bad') + '">Roster ' + members.length + '/6</span>' +
+        '<span class="' + (validation.errors.length ? 'bad' : 'ok') + '">' + (validation.errors.length ? 'Fix errors' : 'No hard errors') + '</span>' +
+        '<span class="' + (memberWarningsTotal ? 'warn' : 'ok') + '">' + (memberWarningsTotal ? memberWarningsTotal + ' move flags' : 'Moves checked') + '</span>' +
+      '</div>';
+  }
+  if (dest) {
+    dest.innerHTML = '<strong>Destination</strong><span>' + _escapeHtml(destination) + '</span><small>' +
+      _escapeHtml(slot === '__new__' ? 'Creates a saved custom team you can edit and sim.' : 'Replaces this slot after validation; preloaded teams save as overrides.') +
+      '</small>';
+  }
   roster.innerHTML = members.map((m, idx) => {
     const warnings = validation.memberWarnings[String(idx)] || [];
     const warningHtml = warnings.length
@@ -8448,6 +8723,91 @@ function csLimitTacticalOpponentKeys(keys, options) {
   return out;
 }
 
+var CS_QA_STRESS_LITE_MAX_BYTES = 50 * 1024 * 1024;
+var CS_QA_STRESS_LITE_TARGET_BYTES = 45 * 1024 * 1024;
+var CS_QA_STRESS_LITE_REPLAY_CARD_LIMIT = 80;
+var CS_QA_STRESS_LITE_SIM_LOG_LIMIT = 240;
+var CS_QA_STRESS_LITE_TEAM_HISTORY_LIMIT = 240;
+
+function csEstimateJsonBytes(value) {
+  var json = '';
+  try {
+    json = JSON.stringify(value || {});
+  } catch (_e) {
+    json = '';
+  }
+  try {
+    if (typeof TextEncoder === 'function') return new TextEncoder().encode(json).length;
+  } catch (_e2) {}
+  try {
+    if (typeof Blob === 'function') return new Blob([json]).size;
+  } catch (_e3) {}
+  return json.length;
+}
+
+function csApplyStressLiteArtifactBudget(payload, options) {
+  if (!payload || !payload.stress_lite) return payload;
+  options = options || {};
+  var maxBytes = Number(options.qaArtifactMaxBytes || CS_QA_STRESS_LITE_MAX_BYTES);
+  var targetBytes = Number(options.qaArtifactTargetBytes || CS_QA_STRESS_LITE_TARGET_BYTES);
+  var retained = payload.retained || {};
+  var trimReport = {
+    schema_version: 'champions-stress-lite-artifact-budget-v1',
+    purpose: 'Keep Stress Lite QA export browser-safe while preserving calculation and logic proof.',
+    max_bytes: maxBytes,
+    target_bytes: targetBytes,
+    initial_bytes: csEstimateJsonBytes(payload),
+    trimming_applied: false,
+    preserved_for_josh: [
+      'build_id and source_url',
+      'qa coverage summary',
+      'damage and effect event totals',
+      'contact move audit',
+      'move rule trace coverage',
+      'decision opportunity ledger',
+      'targeted sweep and branch matrix summaries',
+      'database save status'
+    ]
+  };
+  function trimArray(key, limit) {
+    if (!Array.isArray(retained[key])) return;
+    if (retained[key].length > limit) {
+      retained[key] = retained[key].slice(0, limit);
+      trimReport.trimming_applied = true;
+    }
+  }
+  trimArray('replay_cards', Number(options.stressLiteReplayCardLimit || CS_QA_STRESS_LITE_REPLAY_CARD_LIMIT));
+  trimArray('sim_log', Number(options.stressLiteSimLogLimit || CS_QA_STRESS_LITE_SIM_LOG_LIMIT));
+  trimArray('team_history', Number(options.stressLiteTeamHistoryLimit || CS_QA_STRESS_LITE_TEAM_HISTORY_LIMIT));
+  var finalBytes = csEstimateJsonBytes(payload);
+  var replayFallbacks = [40, 20, 10, 0];
+  for (var i = 0; finalBytes > targetBytes && i < replayFallbacks.length; i++) {
+    trimArray('replay_cards', replayFallbacks[i]);
+    finalBytes = csEstimateJsonBytes(payload);
+  }
+  if (finalBytes > targetBytes) {
+    trimArray('sim_log', 120);
+    trimArray('team_history', 120);
+    finalBytes = csEstimateJsonBytes(payload);
+  }
+  if (finalBytes > targetBytes) {
+    trimArray('sim_log', 40);
+    trimArray('team_history', 40);
+    finalBytes = csEstimateJsonBytes(payload);
+  }
+  trimReport.final_bytes = finalBytes;
+  trimReport.under_max_bytes = finalBytes <= maxBytes;
+  trimReport.retained_counts = {
+    replay_cards: Array.isArray(retained.replay_cards) ? retained.replay_cards.length : 0,
+    sim_log: Array.isArray(retained.sim_log) ? retained.sim_log.length : 0,
+    team_history: Array.isArray(retained.team_history) ? retained.team_history.length : 0
+  };
+  payload.retained = retained;
+  payload.artifact_size_guard = trimReport;
+  payload.stress_lite.artifact_budget = trimReport;
+  return payload;
+}
+
 function csBuildStressLiteOptions(simCtx) {
   simCtx = simCtx || {};
   var opponentLimit = 4;
@@ -8467,11 +8827,28 @@ function csBuildStressLiteOptions(simCtx) {
       reason: 'Safe stress proof for browsers where full Run All may overload the device.',
       opponent_limit: opponentLimit,
       max_runs_per_opponent: maxRunsPerOpponent,
+      max_artifact_bytes: CS_QA_STRESS_LITE_MAX_BYTES,
+      target_artifact_bytes: CS_QA_STRESS_LITE_TARGET_BYTES,
       branch_scope: simCtx.simScope || 'selected',
       includes_targeted_sweep: true,
       memory_guard: memoryNote,
-      boundary: 'This is capped stress evidence, not exhaustive Run All proof.'
+      boundary: 'This is capped stress evidence, not exhaustive Run All proof.',
+      size_budget_note: 'Stress Lite QA is designed to stay under 50 MB while keeping the calculation and logic proof needed for review.',
+      josh_validation_data: [
+        'damage totals and retained damage event samples',
+        'effect/status/weather/field event totals',
+        'contact move metadata audit',
+        'move rule trace coverage',
+        'decision opportunity ledger',
+        'targeted sweep and branch matrix summaries',
+        'database save proof'
+      ]
     },
+    qaArtifactMaxBytes: CS_QA_STRESS_LITE_MAX_BYTES,
+    qaArtifactTargetBytes: CS_QA_STRESS_LITE_TARGET_BYTES,
+    stressLiteReplayCardLimit: CS_QA_STRESS_LITE_REPLAY_CARD_LIMIT,
+    stressLiteSimLogLimit: CS_QA_STRESS_LITE_SIM_LOG_LIMIT,
+    stressLiteTeamHistoryLimit: CS_QA_STRESS_LITE_TEAM_HISTORY_LIMIT,
     branchMatrixUseScope: true,
     branchMatrixScope: simCtx.simScope || 'selected',
     branchMatrixOpponentLimit: opponentLimit,
@@ -8916,6 +9293,14 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     matrices: tacticalSweepMatrices
   }, branchMoveAnalysis);
   if (stressLite && stressLiteSummary) stressLite.summary = stressLiteSummary;
+  var retainedSimLog = options.includeSimLog === false ? [] : localSimLog;
+  var retainedTeamHistory = options.includeSimLog === false ? [] : localTeamHistory;
+  var retainedReplayCards = options.includeReplayCards === false ? [] : replayCards;
+  if (stressLite) {
+    retainedReplayCards = retainedReplayCards.slice(0, Number(options.stressLiteReplayCardLimit || CS_QA_STRESS_LITE_REPLAY_CARD_LIMIT));
+    retainedSimLog = retainedSimLog.slice(0, Number(options.stressLiteSimLogLimit || CS_QA_STRESS_LITE_SIM_LOG_LIMIT));
+    retainedTeamHistory = retainedTeamHistory.slice(0, Number(options.stressLiteTeamHistoryLimit || CS_QA_STRESS_LITE_TEAM_HISTORY_LIMIT));
+  }
 
   var artifactSummary = csBuildQaArtifactSummary(localSimLog, replayCards, key);
   var qaRunType = stressLite ? 'stress_lite_qa' : (tacticalSweepMatrices.length ? 'tactical_sweep' : (targetedSweep ? 'qa_artifact_with_targeted_sweep' : 'qa_artifact'));
@@ -8967,9 +9352,9 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     stress_lite_summary: stressLiteSummary,
     branch_move_analysis: branchMoveAnalysis,
     retained: {
-      sim_log: options.includeSimLog === false ? [] : localSimLog,
-      team_history: options.includeSimLog === false ? [] : localTeamHistory,
-      replay_cards: options.includeReplayCards === false ? [] : replayCards
+      sim_log: retainedSimLog,
+      team_history: retainedTeamHistory,
+      replay_cards: retainedReplayCards
     },
     db: {
       enabled: !!(adapter && adapter.enabled),
@@ -9002,6 +9387,32 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   payload.ready_for_codex = payload.codex_context.ready_for_codex;
   payload.next_missing_proof = payload.codex_context.next_missing_proof;
   payload.recommended_next_test = payload.codex_context.recommended_next_test;
+  payload.stress_lite_josh_validation = stressLite ? {
+    schema_version: 'champions-stress-lite-josh-validation-v1',
+    purpose: 'Compact proof that the sim is making the right calculations and applying expected battle logic without requiring a massive file.',
+    calculation_proof: {
+      damage_events_total: csSafeNumber(mergedCoverage.totals.damage_events),
+      effect_events_total: csSafeNumber(mergedCoverage.totals.effect_events),
+      move_rule_trace_rows: csSafeNumber(mergedCoverage.totals.move_rule_trace_rows),
+      replay_cards_retained_for_sampling: retainedReplayCards.length,
+      sim_log_rows_retained_for_sampling: retainedSimLog.length,
+      team_history_rows_retained_for_sampling: retainedTeamHistory.length
+    },
+    logic_proof: {
+      contact_move_audit_summary: mergedCoverage.contact_move_audit_summary || null,
+      decision_opportunity_summary: mergedCoverage.decision_opportunity_summary || null,
+      branch_move_analysis_totals: branchMoveAnalysis && branchMoveAnalysis.totals ? branchMoveAnalysis.totals : null,
+      next_missing_proof: payload.next_missing_proof,
+      ready_for_codex: payload.ready_for_codex
+    },
+    review_notes: [
+      'Use qa_coverage_summary for totals and missing-proof gates.',
+      'Use retained replay cards for concrete damage/effect examples.',
+      'Use contact audit and move rule trace totals to catch bad move metadata.',
+      'Use branch matrix and targeted sweep summaries to verify tactical coverage.'
+    ]
+  } : null;
+  payload = csApplyStressLiteArtifactBudget(payload, options);
   try {
     csRememberCoachBrainSummary(mergedCoverage && mergedCoverage.coach_brain_summary, {
       player_team_id: key,

@@ -254,7 +254,7 @@
       <button class="btn-secondary" id="run-all-btn" title="Broad release check: runs many matchups to find big broken patterns. Collects win/loss totals, matchup stats, replay samples, damage/effect coverage, and crash/error signals. Heavier on your computer.">⚡ Run All Matchups</button>
       <button class="btn-secondary" id="qa-drop-folder-btn" title="Workflow helper: choose a local folder for QA Artifact saves when your browser supports folder write access. It helps keep artifacts organized for Codex review.">Set QA Drop Folder</button>
       <button class="btn-secondary" id="run-all-export-qa-btn" title="Release evidence: runs all matchups, then downloads one QA Artifact JSON with build_id, source_url, summary, retained replays, damage_events, effect_events, qa_coverage_summary, codex_context, and DB status.">Run All + QA Artifact</button>
-      <button class="btn-secondary" id="stress-lite-qa-btn" title="Safe stress check: runs capped lower-load coverage for phones or weaker computers. Collects enough replay, damage, effect, and summary evidence without trying to be exhaustive Run All proof.">Stress Lite + QA</button>
+      <button class="btn-secondary" id="stress-lite-qa-btn" title="Safe stress check: runs capped lower-load coverage for phones or weaker computers. Keeps the QA artifact under 50 MB while preserving Josh-ready damage, effect, contact, move-rule, branch, and summary proof. Not exhaustive Run All proof.">Stress Lite + QA</button>
       <button class="btn-secondary" id="tactical-sweep-qa-btn" title="Coaching and strategy check: tests branches for the selected scope. Collects speed control, Trick Room, Tailwind, decision opportunities, move/lineup patterns, coaching rows, DB branch saves, and next_missing_proof.">Tactical Sweep + QA</button>
       <div class="settings-note" id="beta-guard-note" style="display:none"></div>
 
@@ -397,8 +397,16 @@
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Import
         </button>
+        <button class="btn-secondary" id="add-team-mon" style="font-size:11px" title="Add one editable Pokemon slot to the current team, up to six.">
+          + Add
+        </button>
       </div>
+      <div class="editor-team-status" id="editor-team-status"></div>
       <div id="editor-roster" class="editor-roster"></div>
+      <datalist id="editor-species-list"></datalist>
+      <datalist id="editor-item-list"></datalist>
+      <datalist id="editor-ability-list"></datalist>
+      <datalist id="editor-move-list"></datalist>
     </div>
     <div id="editor-form" class="editor-form">
       <p style="color:var(--text-m);font-size:13px">Select a Pokémon to edit its set.</p>
@@ -718,12 +726,20 @@
       <span class="modal-title" id="import-modal-title">Import Team from Showdown Paste</span>
       <button class="modal-close" id="close-import">✕</button>
     </div>
-    <p class="modal-hint">Paste Showdown-format text directly from <strong>PS! Teambuilder → Export</strong> or from a pokepast.es page. All 6 Pokémon will be parsed automatically.</p>
+    <p class="modal-hint">Paste or fetch a team, then review the Champion legality check before loading. Invalid moves, items, IVs, or over-cap spreads are blocked before they can enter sim data.</p>
+    <div class="import-flow-card" id="import-flow-card">
+      <strong>Upload checker ready</strong>
+      <span>Paste a Showdown team to see parsed Pokémon, item legality, move legality, warnings, and the destination slot.</span>
+    </div>
     <div class="import-tabs">
       <button class="import-tab active" data-itab="paste">Paste Text</button>
       <button class="import-tab" data-itab="url">pokepast.es URL</button>
     </div>
     <div id="itab-paste">
+      <div class="import-helper-row">
+        <button class="btn-secondary" id="load-sample-import-team" type="button">Try legal sample team</button>
+        <span>Loads Kevin Meta Sun so you can test upload, edit, and sim flow.</span>
+      </div>
       <textarea class="export-textarea" id="showdown-paste" placeholder="Paste Showdown export here…" rows="10"></textarea>
     </div>
     <div id="itab-url" style="display:none">
@@ -750,6 +766,7 @@
         <option value="aurora_veil_froslass">Aurora Veil Froslass</option>
       </select>
     </div>
+    <div class="import-destination-card" id="import-destination-card"></div>
     <div id="import-status" class="modal-status"></div>
     <div style="display:flex;gap:var(--sp3);margin-top:var(--sp4)">
       <button class="btn-primary" id="do-import-btn">Load Team</button>
