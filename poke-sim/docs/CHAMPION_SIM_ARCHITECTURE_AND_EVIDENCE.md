@@ -95,6 +95,16 @@ The Tactical Sweep QA button is the accumulation path for this table. In Selecte
 - `branch_move_analysis.suggested_lines` ranks better turn-1 lines against specific teams and leads.
 - Every row carries confidence. `early_signal` means "test this more"; `strong` requires repeated samples and is the only tier intended for meta/team decisions.
 
+`v2.2.16-coach-sequence-why` adds `coach_brain_summary.tactical_interpretation`. This is the structured coaching contract for speed-control sequence quality: why positive Tailwind/Trick Room/speed-answer windows worked, why negative windows failed, the pre-click player question, the turn-sequence rule, a coach checklist, and the next counters to watch. Future UI and DB memory work should consume this object before writing new free-text coaching logic.
+
+Process challenge for coach-memory work:
+
+- Do not let the app sound smarter than the evidence. Coach memory may summarize repeated patterns, but it must keep confidence, sample size, matchup scope, and ruleset scope visible.
+- Do not store raw private replay logs as "shared learning" without an explicit reviewed retention/privacy design. Use compact aggregate coach facts first.
+- Do not promote a branch timing signal into a universal recommendation. It is a test target until repeated samples across matching team, lead, opposing lead, and ruleset keep the same direction.
+- Do not add new advice text without either a structured source field or a test that proves where the advice came from.
+- When Strategy UI consumes saved coach brain memory, it must prefer the latest same-team/signature summary, fall back conservatively, and never override current legality/ruleset gates.
+
 This does not change the simulator. It changes how the Strategy guide consumes saved evidence. The player-facing language should stay close to competitive doubles/VGC vocabulary: team preview, lead pair, opposing lead, game plan, Protect, switching, pivoting, speed control, Trick Room, pressure, positioning, win condition, consistency, cores/modes, and matchup prep.
 
 The Strategy tab now presents branch and sim evidence in player decision order: coach call first, then click plan, move swap, avoid trap, lead mode, matchup health, confidence, and next test. Evidence tables support the call; they should not bury the call.
@@ -275,6 +285,14 @@ Approved team/data upgrade checklist:
 - Bump the visible build label/cache when the browser-facing app or Overview changes.
 - Capture a fresh QA Artifact so Codex and team review can confirm the deployed build, source URL, ruleset, coverage gaps, and next missing proof.
 
+Coach-memory upgrade checklist:
+
+- Add or reuse a structured field first, such as `coach_brain_summary.tactical_interpretation` or `codex_context.coach_focus`.
+- Keep raw logs out of compact memory unless a reviewed forensic-retention design explicitly requires them.
+- Persist only bounded summaries keyed by team, team signature, format, ruleset, and build.
+- Render the memory in Strategy only with confidence/sample/evidence boundaries visible.
+- Prove the export contract, Strategy render path, bundle freshness, and local suites before release.
+
 Recent learned failure modes:
 
 - `Deploy-order drift`: the app bundle can be correct while live Supabase is missing the newly approved team. Guard: Pages now runs live seed parity before publish when Supabase anon secrets exist.
@@ -297,9 +315,11 @@ Recent learned failure modes:
 
 Do not claim broad 100% accuracy until these are closed or explicitly accepted:
 
-- Fresh deployed-browser `v2.1.44` single-run, Run All, and QA Artifact proof with corrected recoil applied-HP evidence.
+- Fresh deployed-browser `v2.2.16` single-run, Run All, Tactical Sweep, and QA Artifact proof for the coach-memory/sequence-why candidate.
+- The deployed QA Artifact must report `ready_for_codex: true` and `next_missing_proof: []` before `v2.2.16` replaces `v2.2.15` as the live proof baseline.
 - Live DB runtime-source promotion or explicit static fallback signoff.
 - Full DB forensic-log retention design if Supabase must be the long-term audit store.
 - Remaining grouped battle-system mechanics beyond shipped move coverage: redirection, Protect family, switching/replacement, status, item edge cases, terrain/weather edge cases, and Champion-specific overrides.
 - Source-drift visibility that marks the Overview as update-needed when upstream data changes.
 - Long stress automation with preserved failing seeds.
+- Coach-memory and Strategy-page recommendations must keep confidence, sample size, source age, and evidence boundaries visible so coaching output cannot outrank mechanics proof.
