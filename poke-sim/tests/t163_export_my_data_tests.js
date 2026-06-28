@@ -411,6 +411,16 @@ async function main() {
     eq(payload.retention.include_stress_lite, true, 'stress lite retention flag');
     truthy(payload.stress_lite.boundary.indexOf('not exhaustive Run All proof') >= 0, 'stress lite boundary missing');
     eq(payload.tactical_sweep.total_executed_runs <= (payload.stress_lite.opponent_count * payload.stress_lite.max_runs_per_opponent), true, 'stress lite should cap total branch runs');
+    truthy(payload.stress_lite.summary && payload.stress_lite.summary.schema_version === 'champions-stress-lite-summary-v1', 'stress lite summary missing');
+    truthy(payload.stress_lite.summary.totals.branch_runs_executed >= 1, 'stress lite summary run total missing');
+    truthy(typeof payload.stress_lite.summary.totals.damage_events === 'number', 'stress lite summary damage total missing');
+    truthy(typeof payload.stress_lite.summary.totals.effect_events === 'number', 'stress lite summary effect total missing');
+    truthy(payload.stress_lite.summary.coaching_signal, 'stress lite coaching signal missing');
+    eq(payload.turns_total, payload.qa_coverage_summary.totals.turns, 'top-level turns total mismatch');
+    eq(payload.action_rows_total, payload.qa_coverage_summary.totals.action_rows, 'top-level action row total mismatch');
+    eq(payload.damage_events_total, payload.qa_coverage_summary.totals.damage_events, 'top-level damage total mismatch');
+    eq(payload.effect_events_total, payload.qa_coverage_summary.totals.effect_events, 'top-level effect total mismatch');
+    eq(payload.branch_matrix_runs, payload.qa_coverage_summary.totals.branch_matrix_runs, 'top-level branch runs mismatch');
   });
 
   await T('11. QA Artifact targeted sweep clears stat-source proof gaps', async () => {

@@ -99,6 +99,13 @@ The Tactical Sweep QA button is the accumulation path for this table. In Selecte
 
 `v2.2.17-stress-lite-qa` adds a browser-safe stress proof path for testers who should not run full Run All locally. `Stress Lite + QA` reuses Tactical Sweep branch evidence with hard caps, includes targeted proof, exports `qa_run_type: "stress_lite_qa"`, and writes a `stress_lite` block that records the cap and boundary. This is valid stress evidence, but it is not exhaustive Run All proof.
 
+The Stress Lite artifact must also stay readable at a glance. The export now mirrors normalized totals at the top level (`turns_total`, `action_rows_total`, `damage_events_total`, `effect_events_total`, `branch_matrix_runs`) and includes `stress_lite.summary`, a compact block for:
+
+- capped run totals and result counts
+- replay / damage / effect evidence volume
+- slowest or heaviest capped matchup
+- best observed line, avoid move, and next coaching focus
+
 Process challenge for coach-memory work:
 
 - Do not let the app sound smarter than the evidence. Coach memory may summarize repeated patterns, but it must keep confidence, sample size, matchup scope, and ruleset scope visible.

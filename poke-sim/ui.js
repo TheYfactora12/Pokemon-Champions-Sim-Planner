@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.17-stress-lite-qa';
+    return txt || 'v2.2.18-stress-lite-summary';
   } catch (e) {
-    return 'v2.2.17-stress-lite-qa';
+    return 'v2.2.18-stress-lite-summary';
   }
 }
 
@@ -8014,6 +8014,129 @@ function csBuildQaArtifactSummary(simLog, replayCards, teamKey) {
   };
 }
 
+function csSafeNumber(value) {
+  var n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function csBuildStressLiteSummary(stressLite, mergedCoverage, tacticalSweep, branchMoveAnalysis) {
+  if (!stressLite) return null;
+  var coverageTotals = mergedCoverage && mergedCoverage.totals ? mergedCoverage.totals : {};
+  var opponentRows = tacticalSweep && Array.isArray(tacticalSweep.opponents) ? tacticalSweep.opponents : [];
+  var branchRows = [];
+  var results = { win: 0, loss: 0, draw: 0, other: 0 };
+  var slowestMatchup = null;
+  var heaviestMatchup = null;
+  var i;
+  for (i = 0; i < opponentRows.length; i++) {
+    var opponent = opponentRows[i] || {};
+    var space = opponent.coverage_space || {};
+    var turns = csSafeNumber(space.executed_runs) * csSafeNumber(space.max_turns);
+    var density = csSafeNumber(space.executed_runs) + csSafeNumber(opponent.loaded_rows);
+    var opponentSummary = {
+      opponent_team_id: opponent.opponent_team_id || null,
+      executed_runs: csSafeNumber(space.executed_runs),
+      newly_executed_runs: csSafeNumber(space.newly_executed_runs),
+      candidate_runs: csSafeNumber(space.candidate_runs),
+      max_turns: csSafeNumber(space.max_turns),
+      estimated_turn_volume: turns,
+      loaded_rows: csSafeNumber(opponent.loaded_rows)
+    };
+    branchRows.push(opponentSummary);
+    if (!slowestMatchup || opponentSummary.estimated_turn_volume > slowestMatchup.estimated_turn_volume) slowestMatchup = opponentSummary;
+    if (!heaviestMatchup || density > heaviestMatchup.evidence_density) {
+      heaviestMatchup = {
+        opponent_team_id: opponentSummary.opponent_team_id,
+        evidence_density: density,
+        executed_runs: opponentSummary.executed_runs,
+        loaded_rows: opponentSummary.loaded_rows
+      };
+    }
+  }
+  if (tacticalSweep && tacticalSweep.matrices && tacticalSweep.matrices.length) {
+    tacticalSweep.matrices.forEach(function(entry) {
+      var matrix = entry && entry.branch_matrix;
+      var runs = matrix && Array.isArray(matrix.runs) ? matrix.runs : [];
+      runs.forEach(function(run) {
+        var result = run && run.result;
+        if (result === 'win' || result === 'loss' || result === 'draw') results[result]++;
+        else results.other++;
+      });
+    });
+  }
+  var totalRuns = csSafeNumber(stressLite.total_executed_runs);
+  var winRatePct = totalRuns > 0 ? Math.round(((results.win + (results.draw * 0.5)) / totalRuns) * 1000) / 10 : null;
+  var coachBrain = mergedCoverage && mergedCoverage.coach_brain_summary ? mergedCoverage.coach_brain_summary : {};
+  var tacticalInterpretation = coachBrain.tactical_interpretation || {};
+  var bestLine = branchMoveAnalysis && Array.isArray(branchMoveAnalysis.best_lines_overall) && branchMoveAnalysis.best_lines_overall[0]
+    ? branchMoveAnalysis.best_lines_overall[0]
+    : null;
+  var avoidMove = branchMoveAnalysis && Array.isArray(branchMoveAnalysis.avoid_moves) && branchMoveAnalysis.avoid_moves[0]
+    ? branchMoveAnalysis.avoid_moves[0]
+    : null;
+  var tacticalSignal = branchMoveAnalysis && Array.isArray(branchMoveAnalysis.tactical_signals) && branchMoveAnalysis.tactical_signals[0]
+    ? branchMoveAnalysis.tactical_signals[0]
+    : null;
+  return {
+    schema_version: 'champions-stress-lite-summary-v1',
+    status: stressLite.status || null,
+    proof_boundary: stressLite.boundary || null,
+    caps: {
+      opponent_limit: csSafeNumber(stressLite.opponent_limit),
+      opponent_count: csSafeNumber(stressLite.opponent_count),
+      max_runs_per_opponent: csSafeNumber(stressLite.max_runs_per_opponent),
+      branch_scope: stressLite.branch_scope || null,
+      memory_guard: stressLite.memory_guard || null
+    },
+    totals: {
+      branch_runs_executed: totalRuns,
+      branch_runs_newly_executed: csSafeNumber(stressLite.total_newly_executed_runs),
+      targeted_sweep_runs: csSafeNumber(stressLite.targeted_sweep_runs),
+      replay_cards_scanned: csSafeNumber(coverageTotals.replay_cards_scanned),
+      turns: csSafeNumber(coverageTotals.turns),
+      action_rows: csSafeNumber(coverageTotals.action_rows),
+      damage_events: csSafeNumber(coverageTotals.damage_events),
+      effect_events: csSafeNumber(coverageTotals.effect_events),
+      results: results,
+      win_rate_pct: winRatePct
+    },
+    coverage_signal: {
+      slowest_matchup: slowestMatchup,
+      heaviest_evidence_matchup: heaviestMatchup,
+      opponent_breakdown: branchRows
+    },
+    coaching_signal: {
+      best_line: bestLine ? {
+        player_leads: bestLine.player_leads || [],
+        opponent_leads: bestLine.opponent_leads || [],
+        line_key: bestLine.line_key || null,
+        win_rate_pct: bestLine.win_rate_pct || null,
+        confidence: bestLine.confidence || null
+      } : null,
+      avoid_move: avoidMove ? {
+        actor: avoidMove.actor || null,
+        move: avoidMove.move || null,
+        player_leads: avoidMove.player_leads || [],
+        opponent_leads: avoidMove.opponent_leads || [],
+        win_rate_pct: avoidMove.win_rate_pct || null,
+        confidence: avoidMove.confidence || null,
+        reason: avoidMove.reason || null
+      } : null,
+      tactical_pattern: tacticalSignal ? {
+        tactic_tag: tacticalSignal.tactic_tag || null,
+        player_leads: tacticalSignal.player_leads || [],
+        opponent_leads: tacticalSignal.opponent_leads || [],
+        win_rate_pct: tacticalSignal.win_rate_pct || null,
+        confidence: tacticalSignal.confidence || null,
+        coach_note: tacticalSignal.coach_note || null
+      } : null,
+      recommended_focus: coachBrain.recommended_solution || tacticalInterpretation.turn_sequence_rule || null,
+      risk_if_unchanged: coachBrain.risk_if_unchanged || null,
+      practice_drill: coachBrain.practice_drill || null
+    }
+  };
+}
+
 function csCompactQaReplayCard(replay, playerKey) {
   var r = replay || {};
   var log = Array.isArray(r.log) ? r.log : [];
@@ -8711,6 +8834,11 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     total_newly_executed_runs: branchMatrixNewTotal,
     targeted_sweep_runs: targetedSweep && Array.isArray(targetedSweep.runs) ? targetedSweep.runs.length : 0
   }) : null;
+  var stressLiteSummary = csBuildStressLiteSummary(stressLite, mergedCoverage, {
+    opponents: tacticalSweepOpponents,
+    matrices: tacticalSweepMatrices
+  }, branchMoveAnalysis);
+  if (stressLite && stressLiteSummary) stressLite.summary = stressLiteSummary;
 
   var artifactSummary = csBuildQaArtifactSummary(localSimLog, replayCards, key);
   var qaRunType = stressLite ? 'stress_lite_qa' : (tacticalSweepMatrices.length ? 'tactical_sweep' : (targetedSweep ? 'qa_artifact_with_targeted_sweep' : 'qa_artifact'));
@@ -8739,6 +8867,13 @@ async function csBuildQaArtifactExport(teamKey, opts) {
       include_stress_lite: !!stressLite
     },
     summary: artifactSummary,
+    turns_total: csSafeNumber(mergedCoverage.totals.turns),
+    action_rows_total: csSafeNumber(mergedCoverage.totals.action_rows),
+    damage_events_total: csSafeNumber(mergedCoverage.totals.damage_events),
+    effect_events_total: csSafeNumber(mergedCoverage.totals.effect_events),
+    replay_cards_scanned: csSafeNumber(mergedCoverage.totals.replay_cards_scanned),
+    targeted_sweep_runs: csSafeNumber(mergedCoverage.totals.targeted_sweep_runs),
+    branch_matrix_runs: csSafeNumber(mergedCoverage.totals.branch_matrix_runs),
     qa_coverage_summary: mergedCoverage,
     coverage_breakdown: {
       retained_replay_card_summary: retainedReplayCardSummary,
@@ -8752,6 +8887,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     forced_branch_matrix: branchMatrix,
     tactical_sweep: tacticalSweep,
     stress_lite: stressLite,
+    stress_lite_summary: stressLiteSummary,
     branch_move_analysis: branchMoveAnalysis,
     retained: {
       sim_log: options.includeSimLog === false ? [] : localSimLog,
@@ -8783,6 +8919,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     retained: payload.retained,
     tactical_sweep: tacticalSweep,
     stress_lite: stressLite,
+    stress_lite_summary: stressLiteSummary,
     branch_move_analysis: branchMoveAnalysis
   });
   payload.ready_for_codex = payload.codex_context.ready_for_codex;
@@ -10568,7 +10705,7 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-06-24',
+  updated: '2026-06-28',
   metrics: [
     { label: 'Current Truth', value: 'Not 100% yet' },
     { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
@@ -10576,7 +10713,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Testing Catalog Target', value: 'Top 10 Champion archetypes live' },
     { label: 'Removed Teams', value: '17 legacy/inferred rows' },
     { label: 'DB Team Rule', value: 'Approved rows must pass gates' },
-    { label: 'Stress Status', value: 'Full local non-DB + DB contracts green' },
+    { label: 'Stress Status', value: 'Stress Lite totals + coaching summary live' },
     { label: 'Sim Truth Gate', value: 'Mechanics first' },
     { label: 'Live Supabase', value: 'Teams + analyses, gated' },
     { label: 'DB Log Detail', value: 'Summary/capped; exports are forensic proof' },
@@ -10697,6 +10834,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Stress Lite QA added',
       detail: 'v2.2.17 adds a browser-safe Stress Lite + QA path for testers who should not run full Run All on a local machine. It uses capped Tactical Sweep branch coverage, targeted proof, memory-aware limits, and an explicit stress_lite artifact block so the team can collect stress evidence without confusing it with exhaustive Run All proof.'
+    },
+    {
+      status: 'done',
+      title: 'Stress Lite summary made readable',
+      detail: 'v2.2.18 mirrors QA totals at the artifact top level and adds stress_lite.summary so testers, Codex, and the team can immediately see capped run volume, result counts, replay and damage evidence weight, the slowest capped matchup, and the best or riskiest tactical signals without re-reading the full coverage tree.'
     },
     {
       status: 'done',

@@ -39,6 +39,8 @@ On browsers with File System Access support:
 
 Use `Stress Lite + QA` when full Run All may overload the tester machine. It exports a normal QA Artifact with `qa_run_type: "stress_lite_qa"` plus a `stress_lite` block that records the opponent cap, branch-run cap, memory guard, and boundary that this is capped stress evidence, not exhaustive Run All proof.
 
+`v2.2.18` and later also surface a compact `stress_lite.summary` block and top-level totals such as `turns_total`, `action_rows_total`, `damage_events_total`, and `effect_events_total`. That lets Codex and the team judge run size, evidence weight, and coaching signal without re-walking the full `qa_coverage_summary`.
+
 The page writes the artifact JSON directly into the chosen folder for the current browser session. If the browser does not support folder write access, it falls back to normal download; move the file into the drop folder manually.
 
 Only ingest the newest file:
