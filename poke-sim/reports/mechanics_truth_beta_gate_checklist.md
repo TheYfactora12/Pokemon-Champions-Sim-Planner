@@ -62,11 +62,12 @@ Covered:
 - Poltergeist failing into no item
 - Psychic Terrain blocking grounded priority targets
 - Quick Guard blocking positive-priority attacks except Feint
+- structured `move-failure` `effect_events` for the first high-value failure gates: Throat Chop, Taunt, Protect-family consecutive failure, Substitute block, Prankster Dark immunity, Good as Gold, Imprison, accuracy miss, no valid target, and Poltergeist no item
 
 Still open:
 
 - explicit inventory of all move-failure reasons we surface in replay/QA
-- proof that every failure reason is visible enough for coaching and QA
+- proof that every remaining failure reason is visible enough for coaching and QA
 
 ### 3. Protect-family interactions
 
@@ -162,6 +163,7 @@ Covered:
 - effect_events
 - qa_coverage_summary
 - source/build metadata
+- replay UI impact summaries can consume structured HP-loss and action-denial rows; v2.2.28 starts exporting structured move-failure rows so QA can challenge failed actions without parsing free text
 
 Still open:
 
