@@ -351,9 +351,9 @@ var CONTACT_MOVES = new Set([
   'Crunch','Stomping Tantrum','Liquidation','Fire Punch','Thunder Punch',
   'Psyshield Bash','High Horsepower','Body Press','Zen Headbutt',
   'Bite','Waterfall','Headbutt','Rolling Kick','Stomp','Needle Arm',
-  'Heart Stamp','Bone Club','Wicked Blow','Surging Strikes',
-  'Low Kick','Throat Chop','Scale Shot','Darkest Lariat','Tackle',
-  'Beak Blast','Brave Bird','Double-Edge','Wild Charge','Volt Tackle',
+  'Heart Stamp','Wicked Blow','Surging Strikes',
+  'Low Kick','Throat Chop','Darkest Lariat','Tackle',
+  'Brave Bird','Double-Edge','Wild Charge','Volt Tackle',
   'Wood Hammer','Take Down','Submission','Head Charge'
 ]);
 

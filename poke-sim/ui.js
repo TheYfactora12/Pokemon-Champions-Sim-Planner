@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.3-damage-stat-override-audit';
+    return txt || 'v2.2.4-contact-flag-audit';
   } catch (e) {
-    return 'v2.2.3-damage-stat-override-audit';
+    return 'v2.2.4-contact-flag-audit';
   }
 }
 
@@ -9984,6 +9984,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'Reg M-B stats/types/abilities source pass',
       detail: 'v2.2.1 source-verifies all 16 Reg M-B new Mega base stats, types, and abilities against Pokemon Showdown pokedex.ts while keeping the rows review-only and blocked from runtime legality until base/form implementation, learnset policy, and positive/negative fixtures are reviewed.'
+    },
+    {
+      status: 'done',
+      title: 'Contact flag source audit',
+      detail: 'v2.2.4 audits local contact move overrides against generated Pokemon Showdown flags. Beak Blast, Bone Club, and Scale Shot are now treated as non-contact so Rough Skin, shield riders, replay tags, and coaching evidence do not fire false contact events.'
     },
     {
       status: 'done',
