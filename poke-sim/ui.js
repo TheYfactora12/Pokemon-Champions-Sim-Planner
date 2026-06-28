@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.27-import-file-feedback';
+    return txt || 'v2.2.28-move-failure-evidence';
   } catch (e) {
-    return 'v2.2.27-import-file-feedback';
+    return 'v2.2.28-move-failure-evidence';
   }
 }
 

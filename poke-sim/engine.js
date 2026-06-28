@@ -1261,6 +1261,17 @@ function _recordActionDenialEvent(field, mon, move, kind, reason, details) {
   }, details || {}));
 }
 
+function _recordMoveFailureEvent(field, mon, move, reason, details) {
+  return _recordEffectEvent(field, mon, move || 'move-failure', 'move-failure', mon && mon.hp, mon && mon.hp, Object.assign({
+    source: 'engine move failure gate',
+    move_failed: true,
+    failed_move: move || null,
+    failure_reason: reason || 'unknown',
+    skipped_move: false,
+    action_denial: false
+  }, details || {}));
+}
+
 // ============================================================
 // ABILITIES REGISTRY — T9j.8
 // Each entry declares the hooks an ability participates in. Handlers return
@@ -3990,6 +4001,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     if (attacker.throatChopTurns > 0 && _isSoundMove(move)) {
       log.push(`${attacker.name} used ${move}! But it failed because of Throat Chop!`);
+      _recordMoveFailureEvent(field, attacker, move, 'throat-chop', {
+        note: 'The selected sound move failed because the user was under Throat Chop.'
+      });
       attacker.lastMoveFailed = true;
       return;
     }
@@ -4077,6 +4091,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     if (attacker.tauntedTurns > 0 && _moveCategory(move) === 'status' && move !== 'Sleep Talk') {
       log.push(`${attacker.name} used ${move}! But it failed because of Taunt!`);
+      _recordMoveFailureEvent(field, attacker, move, 'taunt', {
+        note: 'The selected status move failed because the user was taunted.'
+      });
+      attacker.lastMoveFailed = true;
       return;
     }
 
@@ -4086,8 +4104,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const enemySide = (allies === playerActive) ? field.oppSide : field.playerSide;
     const _protectFail = () => {
       log.push(`${attacker.name} used ${move}! But it failed!`);
+      _recordMoveFailureEvent(field, attacker, move, 'protect-consecutive-fail', {
+        note: 'The Protect-family move failed its consecutive-use check.'
+      });
       attacker.protectChain = 0;
       attacker.protectKind = null;
+      attacker.lastMoveFailed = true;
       return;
     };
 
@@ -4125,14 +4147,33 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       ]);
       if (target && target.alive && target.substituteHp > 0 && attacker.ability !== 'Infiltrator' && blockedBySubstitute.has(move)) {
         log.push(`${attacker.name} used ${move}! But it failed because of Substitute!`);
+        _recordMoveFailureEvent(field, attacker, move, 'substitute-block', {
+          target: target.name || null,
+          target_key: _snapshotMonStableKey(target.side === field.playerSide ? 'player' : 'opponent', target),
+          note: 'The selected move failed because the target was protected by Substitute.'
+        });
+        attacker.lastMoveFailed = true;
         return;
       }
       if (target && target.alive && shouldPranksterFailOnTarget(attacker, move, target)) {
         log.push(`${target.name} is immune to Prankster-boosted ${move}!`);
+        _recordMoveFailureEvent(field, attacker, move, 'prankster-dark-immunity', {
+          target: target.name || null,
+          target_key: _snapshotMonStableKey(target.side === field.playerSide ? 'player' : 'opponent', target),
+          note: 'The Prankster-boosted status move failed into a Dark-type target.'
+        });
+        attacker.lastMoveFailed = true;
         return;
       }
       if (target && target.alive && isBlockedByGoodAsGold(target, move)) {
         log.push(`${target.name}'s Good as Gold blocked ${move}!`);
+        _recordMoveFailureEvent(field, attacker, move, 'good-as-gold', {
+          target: target.name || null,
+          target_key: _snapshotMonStableKey(target.side === field.playerSide ? 'player' : 'opponent', target),
+          ability: 'Good as Gold',
+          note: 'The status move failed because Good as Gold blocked it.'
+        });
+        attacker.lastMoveFailed = true;
         return;
       }
       if (target && target.alive && shouldReflectByMagicBounce(attacker, target, move)) {
@@ -4861,6 +4902,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     if (enemySide && enemySide.imprisonedMoves && enemySide.imprisonedMoves.has(move) && !fromSleepTalk) {
       log.push(`${attacker.name} used ${move}! But it failed because of Imprison!`);
+      _recordMoveFailureEvent(field, attacker, move, 'imprison', {
+        note: 'The selected move failed because an opposing Imprison effect blocked shared moves.'
+      });
+      attacker.lastMoveFailed = true;
       return;
     }
 
@@ -4871,6 +4916,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const acc = _moveAccuracy(move, ACC_MAP[move]);
     if (!_moveHits(attacker, target, move, field, rng, acc)) {
       log.push(`${attacker.name} used ${move}! It missed!`);
+      _recordMoveFailureEvent(field, attacker, move, 'accuracy-miss', {
+        target: target && target.name || null,
+        target_key: target ? _snapshotMonStableKey(target.side === field.playerSide ? 'player' : 'opponent', target) : null,
+        accuracy: acc,
+        note: 'The selected move failed because the accuracy check missed.'
+      });
       attacker.lastMoveFailed = true;
       return;
     }
@@ -5054,6 +5105,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const liveEnemies = enemies.filter(function(e) { return e.alive; });
     if (!liveEnemies.length) {
       log.push(`${attacker.name} used Dragon Darts! (no valid target)`);
+      _recordMoveFailureEvent(field, attacker, 'Dragon Darts', 'no-valid-target', {
+        note: 'Dragon Darts failed because no opposing target was alive.'
+      });
       return;
     }
 
@@ -5121,6 +5175,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     if (!target || !target.alive) {
       log.push(`${attacker.name} used ${move}! (no valid target)`);
+      _recordMoveFailureEvent(field, attacker, move, 'no-valid-target', {
+        note: 'The multi-hit move failed because no valid target remained.'
+      });
       return { didDamage: false };
     }
     const hitCount = _multiHitCount(attacker, move, rng);
@@ -5217,6 +5274,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     if (targets.length === 0) {
       log.push(`${attacker.name} used ${move}! (no valid target)`);
+      _recordMoveFailureEvent(field, attacker, move, 'no-valid-target', {
+        note: 'The selected move failed because no valid target remained after targeting and redirection resolution.'
+      });
       attacker.lastMoveFailed = true;
       return resolution;
     }
@@ -5225,6 +5285,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       targets = targets.filter(t => {
         if (_hasUsableHeldItem(t)) return true;
         log.push(`${attacker.name} used Poltergeist! But it failed because ${t.name} has no item!`);
+        _recordMoveFailureEvent(field, attacker, move, 'poltergeist-no-item', {
+          target: t.name || null,
+          target_key: _snapshotMonStableKey(t.side === field.playerSide ? 'player' : 'opponent', t),
+          note: 'Poltergeist failed because the target had no usable held item.'
+        });
         return false;
       });
       if (targets.length === 0) {
