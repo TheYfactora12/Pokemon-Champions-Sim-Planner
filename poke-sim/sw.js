@@ -112,8 +112,8 @@
 // v143-codex-qa-context-drop [2026-06-27] - Add Codex-ready QA artifact handoff context.
 // v144-codex-qa-drop-folder [2026-06-27] - Save QA artifacts to a user-approved local drop folder when supported.
 // v145-tactical-sweep-schema [2026-06-28] - Add explicit Tactical Sweep schema/status/opponent metadata to QA artifacts.
-// v151-hard-beta-guard [2026-06-28] - Force mobile/public browsers onto safer capped paths and refresh the app-shell cache.
-const CACHE_NAME = 'champions-sim-v151-hard-beta-guard';
+// v155-sources-ui-polish [2026-06-28] - Tighten the Sources dashboard layout and refresh the app-shell cache.
+const CACHE_NAME = 'champions-sim-v155-sources-ui-polish';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
@@ -126,6 +126,7 @@ const APP_ASSETS = [
   './logger.js',
   './generated/pokemon_showdown_legal_data.js',
   './generated/pokemon_showdown_species_weights.js',
+  './generated/source_sync_status.js',
   './runtime_data.js',
   './engine.js',
   './rulesets.js',

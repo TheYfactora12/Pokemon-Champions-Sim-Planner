@@ -860,6 +860,24 @@ table{border-collapse:collapse;width:100%}
 .source-table tr:hover td{background:var(--surface2)}
 .sources-content{max-width:100%}
 .sources-content #sources-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.sources-dashboard{display:grid;gap:16px}
+.sources-dashboard-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:0 2px}
+.sources-dashboard-head h3{margin:6px 0 0;font-size:22px;line-height:1.1;letter-spacing:-.02em}
+.sources-dashboard-head p{margin:0;max-width:520px;color:var(--text-m);font-size:13px;line-height:1.6}
+.sources-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.sources-summary-card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 14px 16px;box-shadow:var(--sh-sm);min-width:0}
+.sources-summary-card strong{display:block;font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:8px}
+.sources-summary-card span{display:block;font-size:15px;font-weight:800;line-height:1.35;overflow-wrap:anywhere}
+.sources-table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.sources-table-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 16px 12px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(103,232,249,.05),rgba(103,232,249,0))}
+.sources-table-head h3{margin:8px 0 0;font-size:16px;line-height:1.2}
+.sources-table-head p{margin:0;max-width:440px;color:var(--text-m);font-size:12px;line-height:1.6}
+.sources-table-wrap{overflow:auto;-webkit-overflow-scrolling:touch}
+.sources-table{min-width:860px}
+.sources-table td{vertical-align:top;line-height:1.55}
+.sources-table td strong{font-size:12px}
+@media(max-width:900px){.sources-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.sources-dashboard-head{align-items:flex-start}.sources-dashboard-head h3{font-size:18px}.sources-summary-grid{grid-template-columns:1fr}.sources-table-head{padding:14px}.sources-table-head h3{font-size:15px}}
 .mono{font-family:var(--font-mono);font-size:11px;color:var(--text-m)}
 .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp4)}
 @media(max-width:700px){.steps-grid{grid-template-columns:1fr}}

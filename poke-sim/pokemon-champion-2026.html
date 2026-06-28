@@ -898,6 +898,24 @@ table{border-collapse:collapse;width:100%}
 .source-table tr:hover td{background:var(--surface2)}
 .sources-content{max-width:100%}
 .sources-content #sources-list{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.sources-dashboard{display:grid;gap:16px}
+.sources-dashboard-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:0 2px}
+.sources-dashboard-head h3{margin:6px 0 0;font-size:22px;line-height:1.1;letter-spacing:-.02em}
+.sources-dashboard-head p{margin:0;max-width:520px;color:var(--text-m);font-size:13px;line-height:1.6}
+.sources-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.sources-summary-card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 14px 16px;box-shadow:var(--sh-sm);min-width:0}
+.sources-summary-card strong{display:block;font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:8px}
+.sources-summary-card span{display:block;font-size:15px;font-weight:800;line-height:1.35;overflow-wrap:anywhere}
+.sources-table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.sources-table-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 16px 12px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(103,232,249,.05),rgba(103,232,249,0))}
+.sources-table-head h3{margin:8px 0 0;font-size:16px;line-height:1.2}
+.sources-table-head p{margin:0;max-width:440px;color:var(--text-m);font-size:12px;line-height:1.6}
+.sources-table-wrap{overflow:auto;-webkit-overflow-scrolling:touch}
+.sources-table{min-width:860px}
+.sources-table td{vertical-align:top;line-height:1.55}
+.sources-table td strong{font-size:12px}
+@media(max-width:900px){.sources-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.sources-dashboard-head{align-items:flex-start}.sources-dashboard-head h3{font-size:18px}.sources-summary-grid{grid-template-columns:1fr}.sources-table-head{padding:14px}.sources-table-head h3{font-size:15px}}
 .mono{font-family:var(--font-mono);font-size:11px;color:var(--text-m)}
 .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp4)}
 @media(max-width:700px){.steps-grid{grid-template-columns:1fr}}
@@ -2348,8 +2366,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.19-hard-beta-guard</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-regmb-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version - bumps on every commit so you can confirm which build you are testing">v2.2.23-sources-ui-polish</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · VGC Doubles Simulator</p>
       </div>
     </div>
@@ -2796,6 +2814,170 @@ table{border-collapse:collapse;width:100%}
 <section class="tab-panel" id="tab-sources">
   <div class="sources-content">
     <h2 class="section-title">Data Sources</h2>
+    <p style="color:var(--text-m);font-size:13px;margin-bottom:var(--sp4)">This page shows what the sim actually reads from each outside source, what is only used as a cross-check, and how source drift is detected before trust claims are made.</p>
+    <div style="display:grid;gap:12px;margin-bottom:16px">
+      <div class="sim-result-card">
+        <div style="font-weight:700;margin-bottom:6px">Truth policy</div>
+        <div style="color:var(--text-m);font-size:13px;line-height:1.6">
+          Pokemon Showdown is the main upstream baseline for species data, move metadata, learnsets, target categories, and generated runtime legality assets.
+          Champion-specific regulation differences stay separate as reviewed overrides or source-review rows until they are tested and promoted.
+          User imports, replay logs, and QA artifacts are evidence inputs, not source truth.
+        </div>
+      </div>
+      <div class="sim-result-card">
+        <div style="font-weight:700;margin-bottom:6px">Last source sweep</div>
+        <div style="color:var(--text-m);font-size:13px;line-height:1.6">
+          Current UI source matrix refreshed on <strong>June 28, 2026</strong>.
+          If a source changes upstream, the release gate is to update generated assets, approved DB rows, targeted tests, QA proof, and the Overview notes together.
+        </div>
+      </div>
+    </div>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">
+      <table class="series-summary-table" style="min-width:860px">
+        <thead>
+          <tr>
+            <th>Source track</th>
+            <th>Last synced or reviewed</th>
+            <th>Current visible marker</th>
+            <th>Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Generated Showdown runtime snapshot</strong></td>
+            <td style="font-size:12px">May 24, 2026</td>
+            <td style="font-size:12px">Commit <code>3f5079d395ad018f13e8f785a675a13bd4cbf59e</code></td>
+            <td style="font-size:12px">Baseline for species stats, learnsets, move metadata, target categories, and legal runtime assets.</td>
+          </tr>
+          <tr>
+            <td><strong>Approved Showdown DB generation</strong></td>
+            <td style="font-size:12px">June 25, 2026</td>
+            <td style="font-size:12px">8,653 approved entities, 0 active overrides</td>
+            <td style="font-size:12px">Shows what the reviewed DB layer had approved when the runtime-source proof slice was last aligned.</td>
+          </tr>
+          <tr>
+            <td><strong>Reg M-B source-review lane</strong></td>
+            <td style="font-size:12px">June 27, 2026</td>
+            <td style="font-size:12px">Victory Road review notes and blocked promotion cards</td>
+            <td style="font-size:12px">Keeps upcoming Champion roster changes visible without poisoning current legal/runtime truth.</td>
+          </tr>
+          <tr>
+            <td><strong>Current UI source matrix</strong></td>
+            <td style="font-size:12px">June 28, 2026</td>
+            <td style="font-size:12px">Build <code>v2.2.21-source-sync-stamps</code></td>
+            <td style="font-size:12px">Tells users which source assumptions this exact build is presenting and what should trigger a follow-up update.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px">
+      <table class="series-summary-table" style="min-width:920px">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Used for</th>
+            <th>Not used for</th>
+            <th>How drift is checked</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Pokemon Showdown data</strong><br/><span style="color:var(--text-m);font-size:12px">GitHub/CDN upstream baseline</span></td>
+            <td style="font-size:12px">Species stats, typings, abilities, move metadata, priority, target categories, learnsets, species weights, sprite slugs, and generated legality/runtime assets.</td>
+            <td style="font-size:12px">Not the final word on Champion-only regulation differences unless the repo has accepted that behavior for the current lane.</td>
+            <td style="font-size:12px">Showdown sync workflow, generated asset rebuilds, priority drift tests, runtime bridge tests, move support audits, and approved entity review.</td>
+          </tr>
+          <tr>
+            <td><strong>Champion rules / regulation sources</strong><br/><span style="color:var(--text-m);font-size:12px">Ruleset-specific source review</span></td>
+            <td style="font-size:12px">Regulation windows, allowed roster deltas, Champion-only policy differences, and whether a lane is review-only or playable.</td>
+            <td style="font-size:12px">Not a direct replacement for the engine or generated Showdown legality data without explicit conversion and tests.</td>
+            <td style="font-size:12px">Ruleset registry, review-only sections, conversion rows, legality gating, and Overview release notes.</td>
+          </tr>
+          <tr>
+            <td><strong>Victory Road</strong><br/><span style="color:var(--text-m);font-size:12px">Competitive event context</span></td>
+            <td style="font-size:12px">Current regulation dates, event usage context, image-sheet roster review, and source-review discovery for new legal roster slices.</td>
+            <td style="font-size:12px">Not the live battle calculator and not enough on its own to promote runtime legality.</td>
+            <td style="font-size:12px">Manual source-review cards, Reg M-B review rows, and promotion gates before selectors or coaching can trust the data.</td>
+          </tr>
+          <tr>
+            <td><strong>Bulbapedia</strong><br/><span style="color:var(--text-m);font-size:12px">Mechanics citation layer</span></td>
+            <td style="font-size:12px">Move, item, ability, terrain, weather, and status behavior citations when static data does not fully explain the resolution rule.</td>
+            <td style="font-size:12px">Not a generated runtime asset source and not used as a raw import feed.</td>
+            <td style="font-size:12px">Targeted engine tests, mechanics audit cases, turn-log evidence, and source notes in code/docs when behavior is claimed fixed.</td>
+          </tr>
+          <tr>
+            <td><strong>@smogon/calc / Showdown oracle slices</strong><br/><span style="color:var(--text-m);font-size:12px">Behavior cross-check</span></td>
+            <td style="font-size:12px">Selected damage and mechanic parity proofs where static rows alone are not enough.</td>
+            <td style="font-size:12px">Not the full live engine and not a substitute for Champion-specific override review.</td>
+            <td style="font-size:12px">Oracle tests, damage parity slices, move verification registry, and named release proof for the exact mechanic audited.</td>
+          </tr>
+          <tr>
+            <td><strong>Smogon format/meta pages</strong><br/><span style="color:var(--text-m);font-size:12px">Cross-check and meta context</span></td>
+            <td style="font-size:12px">Import/export conventions, archetype language, and current competitive context for team-review notes.</td>
+            <td style="font-size:12px">Not the primary legality calculator for Champion data and not the source of damage logic.</td>
+            <td style="font-size:12px">Manual review, archetype catalog updates, and explicit notes when a page is contextual rather than authoritative.</td>
+          </tr>
+          <tr>
+            <td><strong>Supabase approved rows</strong><br/><span style="color:var(--text-m);font-size:12px">Reviewed storage layer</span></td>
+            <td style="font-size:12px">Approved teams, approved Showdown entities, overrides, audits, and saved analysis history.</td>
+            <td style="font-size:12px">Not the browser damage calculator and not trusted automatically just because a row exists in DB.</td>
+            <td style="font-size:12px">Approved views, runtime DB inspector, source hashes, approved counts, seed parity checks, and local-vs-live drift review.</td>
+          </tr>
+          <tr>
+            <td><strong>User imports / replays / QA artifacts</strong><br/><span style="color:var(--text-m);font-size:12px">Evidence tier</span></td>
+            <td style="font-size:12px">Testing inputs, replay review, retained proof, coaching evidence, and bug reproduction artifacts.</td>
+            <td style="font-size:12px">Not upstream source truth and not trusted meta data until validated against legal/runtime gates.</td>
+            <td style="font-size:12px">Turn-log validator, QA artifact schema, build/source labels, retained evidence counts, and targeted proof checks.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sim-result-card" style="margin-bottom:16px">
+      <div style="font-weight:700;margin-bottom:6px">What changes should trigger a review?</div>
+      <ul style="margin:0;padding-left:18px;color:var(--text-m);font-size:13px;line-height:1.7">
+        <li>Showdown updates move priority, target type, recoil/drain data, learnsets, species stats, typings, or abilities.</li>
+        <li>Champion regulation windows, legal roster rules, or Champion-only mechanics guidance change.</li>
+        <li>Victory Road or equivalent source-review sheets add new legal roster rows or event-usage context.</li>
+        <li>Approved DB rows no longer match generated assets, seeded teams, or live browser selectors.</li>
+        <li>QA artifacts expose a mechanic the source matrix says is trusted, but the replay evidence disagrees.</li>
+      </ul>
+    </div>
+    <div class="sim-result-card" style="margin-bottom:16px">
+      <div style="font-weight:700;margin-bottom:6px">Release watch and game news</div>
+      <div style="color:var(--text-m);font-size:13px;line-height:1.7;margin-bottom:8px">
+        This section is the user-facing reminder of which outside changes matter. If one of these changes lands upstream, the simulator should treat it as a release-note event and update the relevant rules, data, tests, QA proof, and Overview notes together.
+      </div>
+      <table class="series-summary-table" style="width:100%">
+        <thead>
+          <tr>
+            <th>Change type</th>
+            <th>What users should expect us to update</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Regulation / format update</strong></td>
+            <td style="font-size:12px">Allowed species/forms/items/mechanics, team legality lanes, team filters, source-review cards, and current testing catalog.</td>
+          </tr>
+          <tr>
+            <td><strong>Move or ability behavior update</strong></td>
+            <td style="font-size:12px">Engine logic, move support registry, targeted mechanics tests, QA proof teams, replay evidence wording, and coaching trust level.</td>
+          </tr>
+          <tr>
+            <td><strong>Meta shift or tournament trend change</strong></td>
+            <td style="font-size:12px">Testing catalog priorities, matchup proof teams, strategy notes, and which archetypes we stress first. This should not silently rewrite legality truth.</td>
+          </tr>
+          <tr>
+            <td><strong>Source conflict between trusted sites</strong></td>
+            <td style="font-size:12px">Overview gap note, explicit temporary policy, blocked promotion if needed, and a named follow-up issue until the conflict is resolved.</td>
+          </tr>
+          <tr>
+            <td><strong>DB/source drift</strong></td>
+            <td style="font-size:12px">Generated assets, seed SQL, approved DB rows, live selectors, and browser QA artifacts must be re-aligned before the change is treated as shipped truth.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <p style="color:var(--text-m);font-size:13px;margin-bottom:var(--sp6)">Bundled teams may come from official tournament results, community pastes, or maintained local reconstructions. Custom imports and local simulations are separate evidence tiers, not official event records.</p>
     <div id="sources-list"></div>
   </div>
@@ -2913,6 +3095,7 @@ table{border-collapse:collapse;width:100%}
 
 
 
+<script src="generated/source_sync_status.js"></script>
 
 
 
@@ -24657,9 +24840,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.19-hard-beta-guard';
+    return txt || 'v2.2.23-sources-ui-polish';
   } catch (e) {
-    return 'v2.2.19-hard-beta-guard';
+    return 'v2.2.23-sources-ui-polish';
   }
 }
 
@@ -36350,6 +36533,138 @@ if (typeof ChampionsSim !== 'undefined') {
   };
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderOverviewTab', renderOverviewTab);
+
+function csGetGeneratedSourceSyncStatus() {
+  if (typeof window === 'undefined' || !window.ChampionsSim) return null;
+  return window.ChampionsSim.sourceSyncStatus || null;
+}
+
+function csFormatSourceStamp(value) {
+  if (!value) return 'Unknown';
+  if (typeof value === 'string' && /T\d{2}:\d{2}:\d{2}/.test(value)) return csFormatOverviewDate(value);
+  return String(value);
+}
+
+function csRenderSourceSyncRows(status, dbSnapshot) {
+  var generated = status && status.generatedShowdown ? status.generatedShowdown : {};
+  var review = status && status.reviewTracks ? status.reviewTracks : {};
+  var db = status && status.approvedDb ? status.approvedDb : {};
+  var dbLiveRun = dbSnapshot && dbSnapshot.latestRun ? dbSnapshot.latestRun : null;
+  var dbApprovedCounts = dbSnapshot && Array.isArray(dbSnapshot.approvedCounts) ? dbSnapshot.approvedCounts : [];
+  var dbApprovedTotal = dbApprovedCounts.reduce(function(sum, row) {
+    return sum + (Number(row && row.count) || 0);
+  }, 0);
+  return [
+    {
+      track: 'Generated Showdown runtime snapshot',
+      stamp: csFormatSourceStamp(generated.generatedAt),
+      marker: generated.sourceCommitOrVersion || generated.source || 'Unknown',
+      why: 'Offline-safe baseline for runtime species, moves, learnsets, target categories, and legality metadata.'
+    },
+    {
+      track: 'Approved Showdown DB generation',
+      stamp: dbLiveRun && dbLiveRun.finished_at ? csFormatSourceStamp(dbLiveRun.finished_at) : csFormatSourceStamp(db.generatedAt),
+      marker: dbLiveRun && dbLiveRun.sync_run_id
+        ? dbLiveRun.sync_run_id + ' · ' + (dbApprovedTotal || db.approvedEntityCount || 0) + ' approved'
+        : (db.approvedEntityCount || 0) + ' approved · ' + (db.activeOverrideCount || 0) + ' active overrides',
+      why: 'Read-only approved DB snapshot used to inspect live source freshness and promotion state when Supabase is reachable.'
+    },
+    {
+      track: 'Champion regulation review lane',
+      stamp: csFormatSourceStamp(review.regulationReviewAt),
+      marker: review.regulationLabel || 'Review lane',
+      why: 'Human-reviewed regulation and Champion-only source notes that stay blocked until the team approves promotion.'
+    },
+    {
+      track: 'Sources page release snapshot',
+      stamp: csFormatSourceStamp(status && status.sourcesPageReviewedAt),
+      marker: (status && status.buildId) || ((typeof csGetBuildId === 'function') ? csGetBuildId() : 'Unknown build'),
+      why: 'Shows which source assumptions this exact browser build is presenting to users.'
+    }
+  ].map(function(row) {
+    return '<tr><td><strong>' + _escapeHtml(row.track) + '</strong></td>' +
+      '<td style="font-size:12px">' + _escapeHtml(row.stamp) + '</td>' +
+      '<td style="font-size:12px">' + _escapeHtml(row.marker) + '</td>' +
+      '<td style="font-size:12px">' + _escapeHtml(row.why) + '</td></tr>';
+  }).join('');
+}
+
+function csRenderSourceSyncCards(status, dbSnapshot) {
+  var generated = status && status.generatedShowdown ? status.generatedShowdown : {};
+  var db = status && status.approvedDb ? status.approvedDb : {};
+  var dbRun = dbSnapshot && dbSnapshot.latestRun ? dbSnapshot.latestRun : null;
+  var dbStatus = dbSnapshot && dbSnapshot.available ? (dbSnapshot.message || dbSnapshot.mode || 'DB reachable') : 'Static bundle / DB unavailable';
+  return '<div class="sources-summary-grid">' +
+    '<div class="sources-summary-card"><strong>Generated source</strong><span>' + _escapeHtml(generated.source || 'Unknown') + '</span></div>' +
+    '<div class="sources-summary-card"><strong>Generated at</strong><span>' + _escapeHtml(csFormatSourceStamp(generated.generatedAt)) + '</span></div>' +
+    '<div class="sources-summary-card"><strong>Approved DB</strong><span>' + _escapeHtml(dbStatus) + '</span></div>' +
+    '<div class="sources-summary-card"><strong>Latest DB run</strong><span>' + _escapeHtml(dbRun && dbRun.sync_run_id ? dbRun.sync_run_id : (db.syncRunId || 'None visible')) + '</span></div>' +
+  '</div>';
+}
+
+function csRenderSourceSyncTables(status, dbSnapshot) {
+  var rows = csRenderSourceSyncRows(status, dbSnapshot);
+  var files = (dbSnapshot && dbSnapshot.sourceFiles || []).map(function(file) {
+    return '<tr><td>' + _escapeHtml(file.source_name || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(file.parse_status || 'unknown') + '</td>' +
+      '<td>' + _escapeHtml(csShortHash(file.source_hash || file.normalized_hash || '')) + '</td>' +
+      '<td>' + _escapeHtml(csFormatSourceStamp(file.fetched_at)) + '</td></tr>';
+  }).join('');
+  return '<div class="sources-table-card">' +
+      '<div class="sources-table-head"><div><span class="badge badge-blue">SOURCE TRACKS</span><h3>Current sync and review state</h3></div><p>Automated source stamps and human review checkpoints shown for this build.</p></div>' +
+      '<div class="sources-table-wrap"><table class="series-summary-table sources-table"><thead><tr><th>Source track</th><th>Last synced or reviewed</th><th>Current visible marker</th><th>Why it matters</th></tr></thead><tbody>' +
+      rows +
+      '</tbody></table></div></div>' +
+      '<div class="sources-table-card">' +
+      '<div class="sources-table-head"><div><span class="badge badge-blue">LIVE DB FILES</span><h3>Readable upstream file snapshot</h3></div><p>Shown when the approved Supabase views are reachable from the browser.</p></div>' +
+      '<div class="overview-db-table-wrap"><table class="overview-db-table"><thead><tr><th>Live source file</th><th>Parse</th><th>Hash</th><th>Fetched</th></tr></thead><tbody>' +
+      (files || '<tr><td colspan="4">No live source-file rows readable yet</td></tr>') +
+      '</tbody></table></div></div>';
+}
+
+function renderSourcesTab() {
+  var host = document.getElementById('sources-list');
+  if (!host) return false;
+  var status = csGetGeneratedSourceSyncStatus() || {};
+  host.innerHTML = '<div class="sources-dashboard">' +
+    '<div class="sources-dashboard-head">' +
+      '<div><span class="badge badge-blue">SOURCE DASHBOARD</span><h3>Freshness, release watch, and trust boundaries</h3></div>' +
+      '<p>Readable source-of-truth view for players, QA, and release review.</p>' +
+    '</div>' +
+    csRenderSourceSyncCards(status, null) +
+    csRenderSourceSyncTables(status, null) +
+  '</div>';
+  var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
+  if (!adapter || !adapter.enabled || typeof adapter.loadShowdownDbSnapshot !== 'function') return true;
+  adapter.loadShowdownDbSnapshot().then(function(snapshot) {
+    host.innerHTML = '<div class="sources-dashboard">' +
+      '<div class="sources-dashboard-head">' +
+        '<div><span class="badge badge-blue">SOURCE DASHBOARD</span><h3>Freshness, release watch, and trust boundaries</h3></div>' +
+        '<p>Readable source-of-truth view for players, QA, and release review.</p>' +
+      '</div>' +
+      csRenderSourceSyncCards(status, snapshot) +
+      csRenderSourceSyncTables(status, snapshot) +
+    '</div>';
+  }).catch(function() {
+    host.innerHTML = '<div class="sources-dashboard">' +
+      '<div class="sources-dashboard-head">' +
+        '<div><span class="badge badge-blue">SOURCE DASHBOARD</span><h3>Freshness, release watch, and trust boundaries</h3></div>' +
+        '<p>Readable source-of-truth view for players, QA, and release review.</p>' +
+      '</div>' +
+      csRenderSourceSyncCards(status, null) +
+      csRenderSourceSyncTables(status, null) +
+    '</div>';
+  });
+  return true;
+}
+
+if (typeof ChampionsSim !== 'undefined') {
+  ChampionsSim.sources = {
+    renderSourcesTab: renderSourcesTab
+  };
+}
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderSourcesTab', renderSourcesTab);
+renderSourcesTab();
 
 function generatePDFReport() {
   var container = document.getElementById('pdf-report-container');
