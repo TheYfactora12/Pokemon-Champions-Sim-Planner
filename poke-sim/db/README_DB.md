@@ -22,6 +22,8 @@ When adding or removing approved teams:
 
 Old, non-legal, or superseded teams must be marked retired, for example with `metadata.retired = true`, instead of remaining as active rows. The live DB seed test ignores retired rows and fails if active rows are missing legal catalog teams or include extra active teams. This is intentional: it prevents stale/non-legal teams from appearing in selectors, poisoning sim QA, or contaminating future coaching/training stats.
 
+The generated live alignment migration now enforces this for built-in rows: any `source = 'builtin'` team not in the current legal repo catalog is marked retired with `retired_reason = "not_in_current_legal_repo_catalog"`. Do not remove that clause unless another reviewed active-row gate replaces it.
+
 ---
 
 ## Stack

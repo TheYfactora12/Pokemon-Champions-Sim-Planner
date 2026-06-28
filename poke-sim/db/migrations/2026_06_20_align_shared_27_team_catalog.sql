@@ -66,6 +66,49 @@ ON CONFLICT (team_id) DO UPDATE SET
   description = EXCLUDED.description,
   metadata = EXCLUDED.metadata;
 
+-- Retire stale built-in rows that are no longer part of the reviewed repo catalog.
+-- They stay available for historical FK references but cannot remain active selector/training rows.
+UPDATE teams
+SET metadata = COALESCE(metadata, '{}'::jsonb) || '{"retired":true,"retired_reason":"not_in_current_legal_repo_catalog"}'::jsonb
+WHERE team_id NOT IN (
+  'player',
+  'mega_altaria',
+  'mega_dragonite',
+  'mega_houndoom',
+  'rin_sand',
+  'suica_sun',
+  'cofagrigus_tr',
+  'champions_arena_1st',
+  'champions_arena_2nd',
+  'champions_arena_3rd',
+  'aurora_veil_froslass',
+  'custom_1776995210260',
+  'perish_trap_gengar',
+  'rain_offense',
+  'trick_room_golurk',
+  'sun_offense_charizard',
+  'z2r_feitosa_mega_floette',
+  'benny_v_mega_froslass',
+  'lukasjoel1_sand_gengar',
+  'hiroto_imai_snow',
+  'fedecampovgc_aerodactyl_ariados',
+  'swirlingroses_meganium_vivillon',
+  'prro_t_floette_aerodactyl',
+  'fabulous_sunroom',
+  'sand_bulky_offense',
+  'fire_ice_fullroom',
+  'zardx_snow_setup',
+  'targeted_stat_source_proof',
+  'targeted_proof_legal',
+  'indeedee_hatterene_tr',
+  'rillaboom_archaludon_balance',
+  'arboliva_seed_sower_balance',
+  'pelipper_basculegion_rain',
+  'kevin_meta_sun'
+)
+  AND source = 'builtin'
+  AND COALESCE(metadata->>'retired', 'false') <> 'true';
+
 -- Replace normalized members for shared canonical repo teams only.
 DELETE FROM team_members WHERE team_id IN (
   'player',
