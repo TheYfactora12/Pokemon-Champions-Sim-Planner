@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.39-app-shell-security-split'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.40-sprite-fallback-chain'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -11569,6 +11569,11 @@ var CS_OVERVIEW_DATA = {
       status: 'planned',
       title: 'Future login and saved profile boundary documented',
       detail: 'Login remains gated until simulator math and exported coaching outputs are trusted. Saved teams, personal sim history, replay summaries, and cross-device profile learning will require Supabase Auth, RLS ownership checks, per-user data separation, export/delete controls, and consent-safe aggregation before launch.'
+    },
+    {
+      status: 'done',
+      title: 'Sprite fallback chain hardened after live GIF report',
+      detail: 'v2.2.40 keeps GIFs as the first visual path but adds a multi-stage fallback chain: exact static Showdown PNG, base-form animated GIF, then base-form static PNG. Live check found Charizard-Mega-X animated GIF returns 404 while exact static charizard-megax.png succeeds, so broken form GIFs should recover instead of staying visually broken.'
     },
     {
       status: 'done',

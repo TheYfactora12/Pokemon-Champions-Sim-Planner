@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.39-app-shell-security-split';
+      return txt || 'v2.2.40-sprite-fallback-chain';
     } catch (e) {
-      return 'v2.2.39-app-shell-security-split';
+      return 'v2.2.40-sprite-fallback-chain';
     }
   }
 
@@ -120,52 +120,97 @@
     }
   }
 
-  function csSpriteStaticFallbackUrl(name) {
-    var raw = String(name || '');
-    var aliases = {
-      'Charizard-Mega-X': 'charizard-megax',
-      'Charizard-Mega-Y': 'charizard-megay',
-      'Mewtwo-Mega-X': 'mewtwo-megax',
-      'Mewtwo-Mega-Y': 'mewtwo-megay',
-      'Mr. Rime': 'mrrime',
-      'Kommo-o': 'kommoo',
-      'Ninetales-Alola': 'ninetales-alola',
-      'Arcanine-Hisui': 'arcanine-hisui',
-      'Tauros-Paldea-Combat': 'tauros-paldeacombat',
-      'Tauros-Paldea-Blaze': 'tauros-paldeablaze',
-      'Tauros-Paldea-Aqua': 'tauros-paldeaaqua',
-      'Raichu-Alola': 'raichu-alola',
-      'Zoroark-Hisui': 'zoroark-hisui',
-      'Lycanroc-Midday': 'lycanroc',
-      'Lycanroc-Midnight': 'lycanroc-midnight',
-      'Lycanroc-Dusk': 'lycanroc-dusk',
-      'Meowstic-M': 'meowstic',
-      'Meowstic-F': 'meowstic-f',
-      'Gourgeist-Small': 'gourgeist-small',
-      'Gourgeist-Average': 'gourgeist',
-      'Gourgeist-Large': 'gourgeist-large',
-      'Gourgeist-Super': 'gourgeist-super',
-      'Basculegion-M': 'basculegion',
-      'Basculegion-F': 'basculegion-f'
-    };
-    var slug = aliases[raw] || raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  var CS_SPRITE_SLUG_ALIASES = {
+    'Charizard-Mega-X': 'charizard-megax',
+    'Charizard-Mega-Y': 'charizard-megay',
+    'Mewtwo-Mega-X': 'mewtwo-megax',
+    'Mewtwo-Mega-Y': 'mewtwo-megay',
+    'Mr. Rime': 'mrrime',
+    'Kommo-o': 'kommoo',
+    'Ninetales-Alola': 'ninetales-alola',
+    'Arcanine-Hisui': 'arcanine-hisui',
+    'Tauros-Paldea-Combat': 'tauros-paldeacombat',
+    'Tauros-Paldea-Blaze': 'tauros-paldeablaze',
+    'Tauros-Paldea-Aqua': 'tauros-paldeaaqua',
+    'Raichu-Alola': 'raichu-alola',
+    'Zoroark-Hisui': 'zoroark-hisui',
+    'Lycanroc-Midday': 'lycanroc',
+    'Lycanroc-Midnight': 'lycanroc-midnight',
+    'Lycanroc-Dusk': 'lycanroc-dusk',
+    'Meowstic-M': 'meowstic',
+    'Meowstic-F': 'meowstic-f',
+    'Gourgeist-Small': 'gourgeist-small',
+    'Gourgeist-Average': 'gourgeist',
+    'Gourgeist-Large': 'gourgeist-large',
+    'Gourgeist-Super': 'gourgeist-super',
+    'Basculegion-M': 'basculegion',
+    'Basculegion-F': 'basculegion-f',
+    'Sinistcha': 'sinistcha'
+  };
+  var CS_SPRITE_STRIP_SUFFIXES = ['-Mega-X', '-Mega-Y', '-Mega', '-Alola', '-Galar', '-Hisui', '-Paldea', '-Gmax'];
+
+  function csSpriteSlug(name) {
+    var raw = String(name || '').trim();
+    return CS_SPRITE_SLUG_ALIASES[raw] || raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  function csSpriteBaseName(name) {
+    var raw = String(name || '').trim();
+    for (var i = 0; i < CS_SPRITE_STRIP_SUFFIXES.length; i++) {
+      var suffix = CS_SPRITE_STRIP_SUFFIXES[i];
+      if (raw.endsWith && raw.endsWith(suffix)) return raw.slice(0, -suffix.length);
+    }
+    return raw.replace(/\s*\([^)]*\)\s*/g, '').trim();
+  }
+
+  function csSpriteAniUrlFromSlug(slug) {
+    return 'https://play.pokemonshowdown.com/sprites/ani/' + slug + '.gif';
+  }
+
+  function csSpriteStaticUrlFromSlug(slug) {
     return 'https://play.pokemonshowdown.com/sprites/gen5/' + slug + '.png';
   }
 
+  function csSpriteStaticFallbackUrl(name) {
+    return csSpriteStaticUrlFromSlug(csSpriteSlug(name));
+  }
+
+  function csSpriteFallbackUrls(name) {
+    var urls = [];
+    var exactSlug = csSpriteSlug(name);
+    var baseName = csSpriteBaseName(name);
+    var baseSlug = baseName && baseName !== String(name || '').trim() ? csSpriteSlug(baseName) : '';
+    function add(url) {
+      if (url && urls.indexOf(url) === -1) urls.push(url);
+    }
+    add(csSpriteStaticUrlFromSlug(exactSlug));
+    if (baseSlug) add(csSpriteAniUrlFromSlug(baseSlug));
+    if (baseSlug) add(csSpriteStaticUrlFromSlug(baseSlug));
+    return urls;
+  }
+
   function csSpriteFallbackAttrs(name) {
-    return ' data-fallback-src="' + csShellEscapeHtml(csSpriteStaticFallbackUrl(name)) + '" data-fallback-stage="0"';
+    var urls = csSpriteFallbackUrls(name);
+    return ' data-fallback-src="' + csShellEscapeHtml(urls[0] || '') + '" data-fallback-srcs="' + csShellEscapeHtml(JSON.stringify(urls)) + '" data-fallback-stage="0"';
   }
 
   function csHandleSpriteError(img) {
     if (!img) return;
     var stage = Number(img.getAttribute('data-fallback-stage') || '0');
-    var fallback = img.getAttribute('data-fallback-src') || '';
-    if (stage === 0 && fallback && img.src !== fallback) {
-      img.setAttribute('data-fallback-stage', '1');
-      img.src = fallback;
-      return;
+    var fallbacks = [];
+    try { fallbacks = JSON.parse(img.getAttribute('data-fallback-srcs') || '[]') || []; } catch (_e) {}
+    var legacyFallback = img.getAttribute('data-fallback-src') || '';
+    if (legacyFallback && fallbacks.indexOf(legacyFallback) === -1) fallbacks.unshift(legacyFallback);
+    while (stage < fallbacks.length) {
+      var nextUrl = fallbacks[stage];
+      stage += 1;
+      if (nextUrl && img.src !== nextUrl) {
+        img.setAttribute('data-fallback-stage', String(stage));
+        img.src = nextUrl;
+        return;
+      }
     }
-    img.setAttribute('data-fallback-stage', '2');
+    img.setAttribute('data-fallback-stage', String(stage));
     img.style.opacity = '.3';
   }
 
