@@ -116,9 +116,9 @@ function csGetBuildId() {
   try {
     var el = document.getElementById('build-version');
     var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-    return txt || 'v2.2.29-replay-log-dedupe';
+    return txt || 'v2.2.30-replay-detail-rows';
   } catch (e) {
-    return 'v2.2.29-replay-log-dedupe';
+    return 'v2.2.30-replay-detail-rows';
   }
 }
 
@@ -4245,6 +4245,78 @@ function csRenderReplayLogTurnZero(turnLog) {
 function csRenderReplayPlayByPlay(turn) {
   turn = turn || {};
   var rows = [];
+  function hpText(row) {
+    var after = row && row.target_hp_after != null ? row.target_hp_after : row && row.hp_after;
+    var max = row && row.target_max_hp != null ? row.target_max_hp : row && row.max_hp;
+    return after != null && max != null ? ' (' + after + '/' + max + ' HP)' : '';
+  }
+  function damageNote(row) {
+    var bits = [];
+    if (row.critical || row.crit || row.is_critical) bits.push('critical');
+    var eff = Number(row.type_effectiveness);
+    if (Number.isFinite(eff)) {
+      if (eff > 1) bits.push('super effective');
+      else if (eff > 0 && eff < 1) bits.push('resisted');
+      else if (eff === 0) bits.push('immune');
+    }
+    if (row.spread_mod && Number(row.spread_mod) !== 4096 && Number(row.spread_mod) !== 1) bits.push('spread');
+    if (row.damage_capped_by_hp) bits.push('HP capped');
+    return bits.length ? ' [' + bits.join(', ') + ']' : '';
+  }
+  function failureReasonText(reason) {
+    return String(reason || 'failed').replace(/-/g, ' ');
+  }
+  function structuredDamageRows() {
+    var damage = Array.isArray(turn.damage_events) ? turn.damage_events : [];
+    if (!damage.length) return [];
+    var grouped = [];
+    var byKey = {};
+    damage.forEach(function(row) {
+      if (!row) return;
+      var key = [row.attacker_key || row.attacker || 'Pokemon', row.move || 'Move'].join('|');
+      if (!byKey[key]) {
+        byKey[key] = {
+          attacker: row.attacker || 'Pokemon',
+          move: row.move || 'Move',
+          targets: []
+        };
+        grouped.push(byKey[key]);
+      }
+      byKey[key].targets.push(row);
+    });
+    return grouped.map(function(group) {
+      var targetText = group.targets.map(function(row) {
+        return (row.target || 'target') + ' lost ' + (row.applied_damage != null ? row.applied_damage : row.damage || 0) + ' HP' +
+          hpText(row) + damageNote(row);
+      }).join('; ');
+      return group.attacker + ' used ' + group.move + '! ' + targetText;
+    });
+  }
+  function structuredEffectRows() {
+    var effects = Array.isArray(turn.effect_events) ? turn.effect_events : [];
+    var out = [];
+    effects.forEach(function(effect) {
+      if (!effect) return;
+      var kind = String(effect.effect_kind || '');
+      if (kind === 'move-failure') {
+        var miss = effect.failure_reason === 'accuracy-miss';
+        var target = effect.target ? ' → ' + effect.target : '';
+        var acc = effect.accuracy != null ? ' Accuracy ' + Math.round(Number(effect.accuracy) * 100) + '%.' : '';
+        out.push((effect.actor || 'Pokemon') + ' used ' + (effect.failed_move || effect.move || 'a move') + '!' + target + ' ' +
+          (miss ? 'It missed.' : 'It failed: ' + failureReasonText(effect.failure_reason) + '.') + acc);
+      } else if (kind === 'type-immunity' || kind === 'ability-immunity' || kind === 'ability-immunity-heal') {
+        out.push(effect.note || ((effect.actor || 'Pokemon') + ' was immune to ' + (effect.blocked_move || effect.move || 'the move') + '.'));
+      } else if (effect.action_denial && effect.skipped_move) {
+        out.push((effect.actor || 'Pokemon') + ' could not use ' + (effect.skipped_action_move || 'its move') + ': ' + csReplayEffectTagLabel(kind, effect) + '.');
+      } else if (kind === 'flinch-applied') {
+        out.push((effect.actor || 'Pokemon') + ' flinched from ' + (effect.move || 'the move') + '.');
+      } else if ((effect.hp_delta || 0) !== 0 && (kind === 'recoil' || kind === 'weather-damage' || kind === 'status-damage' || kind === 'ability-recoil' || kind === 'protect-contact-damage' || kind === 'ability-contact-damage')) {
+        var lost = Math.abs(Number(effect.hp_delta || 0));
+        out.push((effect.actor || 'Pokemon') + ' lost ' + lost + ' HP from ' + (effect.move || failureReasonText(kind)) + hpText(effect) + '.');
+      }
+    });
+    return out;
+  }
   function showdownMoveText(action) {
     if (!action || !action.actor || !action.move) return '';
     var text = action.actor + ' used ' + action.move + '!';
@@ -4259,6 +4331,7 @@ function csRenderReplayPlayByPlay(turn) {
     text = text.replace(/\s+/g, ' ');
     return text;
   }
+  var structuredRows = structuredDamageRows().concat(structuredEffectRows());
   var eventRows = [];
   (turn.events || []).forEach(function(ev) {
     if (!ev) return;
@@ -4269,7 +4342,9 @@ function csRenderReplayPlayByPlay(turn) {
   var eventRowsHaveMoves = eventRows.some(function(text) {
     return /\bused\b/.test(String(text || ''));
   });
-  if (eventRows.length && eventRowsHaveMoves) {
+  if (structuredRows.length) {
+    rows = structuredRows;
+  } else if (eventRows.length && eventRowsHaveMoves) {
     rows = eventRows;
   } else {
     (turn.actions.player || []).forEach(function(action) {
@@ -4293,7 +4368,7 @@ function csRenderReplayPlayByPlay(turn) {
   });
   if (!rows.length) return '';
   return '<div class="replay-play-by-play"><strong>Battle log</strong>' +
-    rows.slice(0, 14).map(function(text, idx) {
+    rows.slice(0, 20).map(function(text, idx) {
       return '<div class="replay-play-row">' +
         '<span>' + _escapeHtml(String(idx + 1).padStart(2, '0')) + '</span>' +
         '<b>' + _escapeHtml(text || '') + '</b>' +
