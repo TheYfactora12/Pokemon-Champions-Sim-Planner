@@ -360,6 +360,51 @@ T('T5c-1ab Replay Log v2 does not duplicate planned move lines when resolved eve
   truthy(html.includes('lost 18 HP'), 'damage text should stay attached to resolved move line');
 });
 
+T('T5c-1ac Replay Log v2 groups spread damage and surfaces miss/failure details', () => {
+  const html = ctx.csRenderTurnLogRows([{
+    turn: 1,
+    pre: {
+      roster: {
+        player: [{ displayName: 'Charizard', species: 'Charizard', status: 'active', hp: 100, hpLabel: '100%', moves: ['Heat Wave'] }],
+        opponent: [
+          { displayName: 'Tyranitar', species: 'Tyranitar', status: 'active', hp: 100, hpLabel: '100%', moves: ['Rock Slide'] },
+          { displayName: 'Indeedee-F', species: 'Indeedee-F', status: 'active', hp: 100, hpLabel: '100%', moves: ['Follow Me'] }
+        ]
+      }
+    },
+    post: {
+      roster: {
+        player: [{ displayName: 'Charizard', species: 'Charizard', status: 'active', hp: 100, hpLabel: '100%', moves: ['Heat Wave'] }],
+        opponent: [
+          { displayName: 'Tyranitar', species: 'Tyranitar', status: 'active', hp: 76, hpLabel: '76%', moves: ['Rock Slide'] },
+          { displayName: 'Indeedee-F', species: 'Indeedee-F', status: 'active', hp: 69, hpLabel: '69%', moves: ['Follow Me'] }
+        ]
+      },
+      position_score: 0.6
+    },
+    actions: { player: [{ actor: 'Charizard', move: 'Heat Wave' }], opponent: [{ actor: 'Tyranitar', move: 'Stone Edge', target: 'Charizard' }] },
+    events: [{ type: 'log', text: 'Charizard used Heat Wave!' }],
+    damage_events: [
+      { attacker: 'Charizard', attacker_key: 'player:slot:0:Charizard', move: 'Heat Wave', target: 'Tyranitar', target_key: 'opponent:slot:0:Tyranitar', applied_damage: 24, target_hp_after: 76, target_max_hp: 100, type_effectiveness: 0.5, spread_mod: 3072 },
+      { attacker: 'Charizard', attacker_key: 'player:slot:0:Charizard', move: 'Heat Wave', target: 'Indeedee-F', target_key: 'opponent:slot:1:Indeedee-F', applied_damage: 31, target_hp_after: 69, target_max_hp: 100, type_effectiveness: 1, spread_mod: 3072 }
+    ],
+    effect_events: [{
+      actor: 'Tyranitar',
+      actor_key: 'opponent:slot:0:Tyranitar',
+      effect_kind: 'move-failure',
+      failed_move: 'Stone Edge',
+      failure_reason: 'accuracy-miss',
+      target: 'Charizard',
+      accuracy: 0.8,
+      hp_before: 100,
+      hp_after: 100
+    }],
+    delta: { position_score: 0.1 }
+  }]);
+  truthy(html.includes('Charizard used Heat Wave! Tyranitar lost 24 HP (76/100 HP) [resisted, spread]; Indeedee-F lost 31 HP (69/100 HP) [spread]'), 'spread damage should show both targets in one resolved row');
+  truthy(html.includes('Tyranitar used Stone Edge! → Charizard It missed. Accuracy 80%.'), 'accuracy miss detail missing');
+});
+
 T('T5c-1aa Replay Log v2 supports singles and doubles field visibility', () => {
   const singles = ctx.csRenderTurnLogRows([{
     turn: 1,
