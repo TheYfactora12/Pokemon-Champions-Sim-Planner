@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.39-app-shell-security-split',
+    build_id: 'v2.2.40-sprite-fallback-chain',
     release_date: '2026-06-29',
-    service_worker_cache: 'champions-sim-v171-app-shell-security-split',
+    service_worker_cache: 'champions-sim-v172-sprite-fallback-chain',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
