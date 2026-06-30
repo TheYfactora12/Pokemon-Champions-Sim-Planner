@@ -277,7 +277,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Team Lab / Leaderboard Plan');
   inc(ui, 'function csRenderTeamLabNewsroomHub');
   inc(ui, 'function renderTeamLabHomeHub');
-  inc(ui, 'Welcome to Battle Labs');
+  inc(ui, 'Battle Labs');
   inc(ui, 'Start Simulating');
   inc(ui, 'Test teams. Learn the swing turn. Win smarter.');
   inc(ui, 'See the battle like a coach would.');
