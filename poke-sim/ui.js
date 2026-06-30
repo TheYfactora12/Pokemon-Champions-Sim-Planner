@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.64-team-lab-ranking-policy'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.65-team-lab-admin-reset'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13184,13 +13184,18 @@ function csRenderTeamLabRankingGates() {
 }
 
 function csRenderTeamLabAdminControls() {
+  var lastReset = '';
+  try { lastReset = localStorage.getItem('team_lab:qa_reset_at') || ''; } catch (e) {}
+  var status = lastReset ? 'Last local QA reset: ' + lastReset : 'No local QA reset recorded on this device.';
   return '<section class="team-lab-admin-controls" aria-label="Team Lab admin controls">' +
     '<div>' +
       '<span class="overview-kicker">Admin QA controls</span>' +
       '<h4>Ranking reset must stay trusted.</h4>' +
-      '<p>During testing, admins need a way to reset stale or poisoned ranking rows. Public browser users should never mutate leaderboard evidence directly; reset actions must run through an authenticated trusted workflow and leave an audit reason.</p>' +
+      '<p>During testing, use local QA reset to clear this browser&apos;s Team Lab ranking test state before running fresh sims. Shared/global ranking resets still require authenticated admin service logic and an audit reason.</p>' +
+      '<label class="team-lab-admin-reason"><span>Audit reason</span><input type="text" data-team-lab-reset-reason value="QA reset before fresh sim run" maxlength="140"></label>' +
+      '<p class="team-lab-admin-status" data-team-lab-reset-status>' + _escapeHtml(status) + '</p>' +
     '</div>' +
-    '<button type="button" disabled title="Planned trusted-admin action: reset leaderboard rows by scope, regulation, engine version, ruleset version, or test batch.">Reset rankings</button>' +
+    '<button type="button" data-team-lab-local-reset title="Local QA reset only. Shared ranking rows require trusted admin service reset.">Reset local QA rankings</button>' +
   '</section>';
 }
 
@@ -13252,6 +13257,32 @@ function renderTeamLabHomeHub() {
   host.innerHTML = csRenderTeamLabNewsroomHub();
   csInitHomeTabActions(host);
   csInitPokemonNewsCarousel(host);
+  csInitTeamLabAdminControls(host);
+  return true;
+}
+
+function csInitTeamLabAdminControls(root) {
+  if (!root || typeof root.querySelector !== 'function') return false;
+  var btn = root.querySelector('[data-team-lab-local-reset]');
+  var reasonInput = root.querySelector('[data-team-lab-reset-reason]');
+  var status = root.querySelector('[data-team-lab-reset-status]');
+  if (!btn) return false;
+  btn.addEventListener('click', function() {
+    var reason = reasonInput && reasonInput.value ? reasonInput.value.trim() : '';
+    if (reason.length < 8) {
+      if (status) status.textContent = 'Reset blocked: enter an audit reason of at least 8 characters.';
+      return;
+    }
+    var now = new Date().toISOString();
+    try {
+      localStorage.setItem('team_lab:qa_reset_at', now);
+      localStorage.setItem('team_lab:qa_reset_reason', reason);
+      localStorage.removeItem('team_lab:leaderboard_preview');
+      localStorage.removeItem('team_lab:ranking_preview');
+      localStorage.removeItem('team_lab:sim_evidence_preview');
+    } catch (e) {}
+    if (status) status.textContent = 'Local QA rankings reset at ' + now + '. Shared/global rankings unchanged until trusted admin reset runs.';
+  });
   return true;
 }
 

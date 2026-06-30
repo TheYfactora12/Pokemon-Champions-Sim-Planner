@@ -7,6 +7,7 @@ const TeamLab = require('../team_lab.js');
 const ROOT = path.resolve(__dirname, '..');
 const migration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_29_team_lab_foundation.sql'), 'utf8');
 const rankingMigration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_30_team_lab_ranking_quality.sql'), 'utf8');
+const adminMigration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_30_team_lab_admin_actions.sql'), 'utf8');
 
 let pass = 0;
 let fail = 0;
@@ -65,6 +66,18 @@ T('2b. ranking quality migration stores composite evidence metadata', () => {
     'source_gaps text[]',
     'idx_team_lab_leaderboard_quality'
   ].forEach((needle) => truthy(rankingMigration.includes(needle), `${needle} missing`));
+});
+
+T('2c. admin reset migration stores private audit records', () => {
+  [
+    'CREATE TABLE IF NOT EXISTS team_lab_admin_actions',
+    "action text NOT NULL CHECK (action IN ('team_lab_ranking_reset'))",
+    "mode text NOT NULL CHECK (mode IN ('mark_stale', 'delete_dev_seed'))",
+    'reason text NOT NULL CHECK (length(trim(reason)) >= 8)',
+    'ALTER TABLE team_lab_admin_actions ENABLE ROW LEVEL SECURITY',
+    'team_lab_admin_actions_no_public_read',
+    'USING (false)'
+  ].forEach((needle) => truthy(adminMigration.includes(needle), `${needle} missing`));
 });
 
 const baseTeam = {
@@ -184,6 +197,26 @@ T('9. stale marking and filters keep current rankings distinct from old evidence
   eq(TeamLab.filterLeaderboard(marked, { stale: false }).length, 1, 'current filter should remove stale rows');
   eq(TeamLab.isEntryCurrent(marked[0], { engine_version: 'eng-1', ruleset_version: 'rules-1' }), true, 'current row should be current');
   eq(TeamLab.isEntryCurrent(marked[1], { engine_version: 'eng-1', ruleset_version: 'rules-1' }), false, 'stale row should not be current');
+});
+
+T('9b. admin ranking reset requires admin and audit reason before stale marking', () => {
+  const rows = [
+    { team_id: 'a', regulation_id: 'reg-m-b', format: 'doubles', leaderboard_scope: 'community_candidate', engine_version: 'eng-1', ruleset_version: 'rules-1', stale: false },
+    { team_id: 'b', regulation_id: 'reg-m-b', format: 'singles', leaderboard_scope: 'community_candidate', engine_version: 'eng-1', ruleset_version: 'rules-1', stale: false }
+  ];
+  const blocked = TeamLab.resetLeaderboardRankings(rows, { reason: 'QA reset before fresh sim run', regulation_id: 'reg-m-b', format: 'doubles' }, { is_admin: false });
+  eq(blocked.ok, false, 'non-admin reset should be blocked');
+  eq(blocked.error, 'ADMIN_REQUIRED', 'non-admin error mismatch');
+  const noReason = TeamLab.resetLeaderboardRankings(rows, { reason: 'short', regulation_id: 'reg-m-b', format: 'doubles' }, { is_admin: true, user_id: 'admin-1' });
+  eq(noReason.ok, false, 'short reason should be blocked');
+  eq(noReason.error, 'REASON_REQUIRED', 'reason error mismatch');
+  const reset = TeamLab.resetLeaderboardRankings(rows, { reason: 'QA reset before fresh sim run', regulation_id: 'reg-m-b', format: 'doubles' }, { is_admin: true, user_id: 'admin-1' });
+  eq(reset.ok, true, 'admin reset should pass');
+  eq(reset.changed_count, 1, 'reset should only affect matching scope');
+  eq(reset.entries[0].stale, true, 'matching row should be stale');
+  eq(reset.entries[1].stale, false, 'nonmatching row should stay current');
+  eq(reset.audit.action, 'team_lab_ranking_reset', 'audit action missing');
+  eq(reset.audit.reason, 'QA reset before fresh sim run', 'audit reason missing');
 });
 
 T('10. hidden-detail teams do not leak hidden moves/items/EVs to non-owners', () => {

@@ -14,6 +14,7 @@
   /** @typedef {'low'|'medium'|'high'|'experimental'} TeamLabConfidence */
   /** @typedef {'official_sim_top_25'|'community_candidate'|'personal'|'experimental'|'stale'} TeamLabRankingScope */
   /** @typedef {'official_ready'|'community_safe'|'personal_only'|'experimental'|'blocked'} TeamLabEvidenceQuality */
+  /** @typedef {'mark_stale'|'delete_dev_seed'} TeamLabAdminResetMode */
   /** @typedef {'error'|'warning'|'needs_source'} LegalityIssueSeverity */
   /**
    * @typedef {Object} LegalityIssue
@@ -332,6 +333,57 @@
     });
   }
 
+  function resetLeaderboardRankings(entries, params, actor) {
+    var input = params || {};
+    var reason = String(input.reason || '').trim();
+    var admin = actor || {};
+    if (!admin.is_admin) {
+      return { ok: false, error: 'ADMIN_REQUIRED', message: 'Team Lab ranking reset requires trusted admin authorization.', entries: entries || [], audit: null };
+    }
+    if (reason.length < 8) {
+      return { ok: false, error: 'REASON_REQUIRED', message: 'Team Lab ranking reset requires an audit reason of at least 8 characters.', entries: entries || [], audit: null };
+    }
+
+    var mode = input.mode || 'mark_stale';
+    var changed = 0;
+    var next = (entries || []).filter(function(entry) {
+      if (!entry) return false;
+      var match = true;
+      if (input.regulation_id && entry.regulation_id !== input.regulation_id) match = false;
+      if (input.format && entry.format !== input.format) match = false;
+      if (input.leaderboard_scope && entry.leaderboard_scope !== input.leaderboard_scope) match = false;
+      if (input.engine_version && entry.engine_version !== input.engine_version) match = false;
+      if (input.ruleset_version && entry.ruleset_version !== input.ruleset_version) match = false;
+      if (input.team_id && entry.team_id !== input.team_id) match = false;
+      if (!match) return true;
+      changed += 1;
+      if (mode === 'delete_dev_seed' && entry.source_type === 'dev_seed') return false;
+      entry.stale = true;
+      entry.stale_reason = reason;
+      return true;
+    }).map(function(entry) { return Object.assign({}, entry); });
+
+    return {
+      ok: true,
+      entries: next,
+      changed_count: changed,
+      audit: {
+        action: 'team_lab_ranking_reset',
+        mode: mode,
+        reason: reason,
+        actor_user_id: admin.user_id || null,
+        regulation_id: input.regulation_id || null,
+        format: input.format || null,
+        leaderboard_scope: input.leaderboard_scope || null,
+        engine_version: input.engine_version || null,
+        ruleset_version: input.ruleset_version || null,
+        team_id: input.team_id || null,
+        changed_count: changed,
+        created_at: input.created_at || new Date().toISOString()
+      }
+    };
+  }
+
   function buildLeaderboardEntries(teams, simRuns, options) {
     var opts = options || {};
     var minSampleSize = opts.min_sample_size == null ? DEFAULT_MIN_SAMPLE_SIZE : Number(opts.min_sample_size);
@@ -581,6 +633,18 @@
       },
       markLeaderboardStale: function(reason, engineVersion, rulesetVersion, teamId) {
         return db.markLeaderboardStale ? db.markLeaderboardStale(reason, engineVersion, rulesetVersion, teamId) : Promise.resolve({ reason: reason, engine_version: engineVersion, ruleset_version: rulesetVersion, team_id: teamId });
+      },
+      resetTeamLabRankings: function(input, adminUserId) {
+        var params = input || {};
+        var isAdmin = db.isTeamLabAdmin ? !!db.isTeamLabAdmin(adminUserId) : false;
+        if (!isAdmin) return Promise.resolve({ ok: false, error: 'ADMIN_REQUIRED', message: 'Team Lab ranking reset requires trusted admin authorization.' });
+        if (db.resetTeamLabRankings) return Promise.resolve(db.resetTeamLabRankings(params, adminUserId));
+        var rows = db.listLeaderboard ? db.listLeaderboard(params) : [];
+        return Promise.resolve(rows).then(function(resolvedRows) {
+          var result = resetLeaderboardRankings(resolvedRows, params, { is_admin: true, user_id: adminUserId });
+          if (result.ok && db.recordAdminAction) db.recordAdminAction(result.audit);
+          return result;
+        });
       }
     };
   }
@@ -602,6 +666,7 @@
     scopeForEvidenceQuality: scopeForEvidenceQuality,
     isEntryCurrent: isEntryCurrent,
     markLeaderboardEntriesStale: markLeaderboardEntriesStale,
+    resetLeaderboardRankings: resetLeaderboardRankings,
     buildLeaderboardEntries: buildLeaderboardEntries,
     filterLeaderboard: filterLeaderboard,
     applyTeamVisibility: applyTeamVisibility,

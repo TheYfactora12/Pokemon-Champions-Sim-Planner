@@ -234,6 +234,8 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.team-lab-gate-grid');
   inc(css, '.team-lab-gate-actions');
   inc(css, '.team-lab-admin-controls');
+  inc(css, '.team-lab-admin-reason');
+  inc(css, '.team-lab-admin-status');
   inc(css, '.home-landing-hero');
   inc(css, 'text-transform:uppercase;color:#fff06a;-webkit-text-stroke:3px');
   inc(css, '.home-landing-hero h2:before');
@@ -311,6 +313,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function csTeamLabRankingGates');
   inc(ui, 'function csRenderTeamLabRankingGates');
   inc(ui, 'function csRenderTeamLabAdminControls');
+  inc(ui, 'function csInitTeamLabAdminControls');
   inc(ui, 'Ranking trust gates');
   inc(ui, 'Top teams stay locked until the evidence is safe.');
   inc(ui, 'Validated teams');
@@ -323,8 +326,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Score');
   inc(ui, 'Quality');
   inc(ui, 'Admin QA controls');
-  inc(ui, 'Reset rankings');
-  inc(ui, 'trusted-admin action');
+  inc(ui, 'Reset local QA rankings');
+  inc(ui, 'team_lab:qa_reset_at');
+  inc(ui, 'Shared/global rankings unchanged until trusted admin reset runs.');
   inc(ui, 'Latest Champion Updates');
   inc(ui, 'Pokemon Champions Is Available Now on iOS and Android Devices');
   inc(ui, 'Regulation Set M-B Kicks off a New Ranked Battles Season');

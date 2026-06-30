@@ -505,7 +505,11 @@ table{border-collapse:collapse;width:100%}
 .team-lab-admin-controls{display:flex;align-items:center;justify-content:space-between;gap:var(--sp4);border:1px solid rgba(255,85,59,.32);border-radius:var(--r-md);background:linear-gradient(135deg,rgba(255,85,59,.075),rgba(255,255,255,.025));padding:var(--sp4);margin-bottom:var(--sp4)}
 .team-lab-admin-controls h4{font-size:18px;font-weight:950;letter-spacing:-.03em;margin-top:5px}
 .team-lab-admin-controls p{color:var(--text-m);font-size:12px;line-height:1.5;margin-top:7px;max-width:820px}
-.team-lab-admin-controls button{min-height:38px;border:1px solid rgba(255,85,59,.4);background:rgba(255,85,59,.12);color:var(--text-m);border-radius:var(--r-full);padding:7px 13px;font-size:11px;font-weight:950;cursor:not-allowed;opacity:.72;white-space:nowrap}
+.team-lab-admin-reason{display:grid;gap:5px;max-width:420px;margin-top:10px;color:var(--text-m);font-size:10px;font-family:var(--font-mono);font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.team-lab-admin-reason input{min-height:38px;border:1px solid rgba(255,85,59,.32);background:rgba(0,0,0,.16);color:var(--text);border-radius:var(--r-sm);padding:8px 10px;font-size:12px;font-family:var(--font-display),system-ui,sans-serif;font-weight:700;text-transform:none;letter-spacing:0}
+.team-lab-admin-status{font-family:var(--font-mono);font-size:10px!important;color:var(--gold)!important}
+.team-lab-admin-controls button{min-height:38px;border:1px solid rgba(255,85,59,.46);background:linear-gradient(135deg,rgba(255,85,59,.18),rgba(245,197,66,.1));color:var(--text);border-radius:var(--r-full);padding:7px 13px;font-size:11px;font-weight:950;cursor:pointer;white-space:nowrap}
+.team-lab-admin-controls button:hover,.team-lab-admin-controls button:focus-visible{transform:translateY(-1px);border-color:var(--orange);outline:none}
 .team-lab-news-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp3);margin-bottom:var(--sp4)}
 .team-lab-news-card{border:1px solid rgba(91,164,245,.28);border-radius:var(--r-md);background:rgba(255,255,255,.035);padding:var(--sp3);min-width:0;box-shadow:var(--sh-sm)}
 .team-lab-news-card span{display:block;font-family:var(--font-mono);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:8px}
