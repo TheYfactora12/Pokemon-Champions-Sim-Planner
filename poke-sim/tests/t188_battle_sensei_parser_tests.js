@@ -214,7 +214,26 @@ T('10. extracts pipe-delimited log lines from exported replay HTML', () => {
   truthy(normalized.indexOf('|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F') >= 0, 'html move line preserved');
 });
 
-T('11. converts replay URLs to .log endpoints and fetches them through the helper', async () => {
+T('11. extracts entity-escaped Showdown HTML replay logs', () => {
+  const replayHtml = [
+    '<!doctype html>',
+    '<html><body>',
+    '<pre class="battle-log-data">',
+    '&#124;player&#124;p1&#124;Alice<br>',
+    '&#124;player&#124;p2&#124;Bob<br>',
+    '&#124;turn&#124;1<br>',
+    '&#124;move&#124;p1a: Incineroar&#124;Fake Out&#124;p2a: Indeedee-F',
+    '</pre>',
+    '</body></html>'
+  ].join('');
+  const normalized = replayCoach.normalizeReplayLogInput(replayHtml);
+  eq(normalized.split('\n').length, 4, 'entity html normalized replay line count');
+  truthy(normalized.indexOf('&#124;') < 0, 'entity pipes decoded');
+  truthy(normalized.indexOf('|player|p1|Alice') >= 0, 'entity player line preserved');
+  truthy(normalized.indexOf('|move|p1a: Incineroar|Fake Out|p2a: Indeedee-F') >= 0, 'entity html move line preserved');
+});
+
+T('12. converts replay URLs to .log endpoints and fetches them through the helper', async () => {
   const logUrl = replayCoach.replayUrlToLogUrl('https://replay.pokemonshowdown.com/gen9vgc2026-123456');
   eq(logUrl, 'https://replay.pokemonshowdown.com/gen9vgc2026-123456.log', 'log endpoint');
   let fetched = '';
@@ -231,7 +250,7 @@ T('11. converts replay URLs to .log endpoints and fetches them through the helpe
   eq(text, '|player|p1|Alice\n|turn|1', 'fetched log normalized');
 });
 
-T('12. recognizes Trick Room reversing opposing Tailwind without false speed penalty', () => {
+T('13. recognizes Trick Room reversing opposing Tailwind without false speed penalty', () => {
   const log = [
     '|player|p1|Alice',
     '|player|p2|Bob',
@@ -257,7 +276,7 @@ T('12. recognizes Trick Room reversing opposing Tailwind without false speed pen
   eq(turn.stateShift, 'Speed control reversed', 'turn state shift');
 });
 
-T('13. recognizes same-turn Tailwind neutralization', () => {
+T('14. recognizes same-turn Tailwind neutralization', () => {
   const log = [
     '|player|p1|Alice',
     '|player|p2|Bob',
@@ -279,7 +298,7 @@ T('13. recognizes same-turn Tailwind neutralization', () => {
   eq(turn.stateShift, 'Speed control neutralized', 'turn state shift');
 });
 
-T('14. recognizes deferred payoff within three turns', () => {
+T('15. recognizes deferred payoff within three turns', () => {
   const log = [
     '|player|p1|Alice',
     '|player|p2|Bob',
@@ -308,7 +327,7 @@ T('14. recognizes deferred payoff within three turns', () => {
   eq(turn.stateShift, 'Setup paid off later', 'turn state shift');
 });
 
-T('15. recognizes complementary setup turn payoff', () => {
+T('16. recognizes complementary setup turn payoff', () => {
   const log = [
     '|player|p1|Alice',
     '|player|p2|Bob',
@@ -333,7 +352,7 @@ T('15. recognizes complementary setup turn payoff', () => {
   eq(turn.stateShift, 'Complementary turn paid off', 'turn state shift');
 });
 
-T('16. recognizes planned speed transition after Trick Room ends from structured speed evidence', () => {
+T('17. recognizes planned speed transition after Trick Room ends from structured speed evidence', () => {
   const parsed = replayCoach.parseShowdownLog([
     '|player|p1|Alice',
     '|player|p2|Bob',

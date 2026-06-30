@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.66-team-lab-local-top25';
+      return txt || 'v2.2.67-showdown-html-upload';
     } catch (e) {
-      return 'v2.2.66-team-lab-local-top25';
+      return 'v2.2.67-showdown-html-upload';
     }
   }
 

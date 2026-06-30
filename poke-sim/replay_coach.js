@@ -296,11 +296,43 @@
     return /^(player|teamsize|gametype|gen|tier|rule|rated|poke|teampreview|start|turn|upkeep|move|switch|drag|replace|faint|win|tie|-damage|-heal|-status|-curestatus|-boost|-unboost|-mega|-weather|-fieldstart|-fieldend|-sidestart|-sideend|-crit|-miss|-fail|-immune|-message|j|c)$/i.test(tag || '');
   }
 
+  function decodeReplayHtmlEntities(text) {
+    return String(text == null ? '' : text).replace(/&(#x?[0-9a-f]+|amp|lt|gt|quot|apos|nbsp);/gi, function(match, token) {
+      var key = String(token || '').toLowerCase();
+      if (key === 'amp') return '&';
+      if (key === 'lt') return '<';
+      if (key === 'gt') return '>';
+      if (key === 'quot') return '"';
+      if (key === 'apos') return "'";
+      if (key === 'nbsp') return ' ';
+      if (key.charAt(0) === '#') {
+        var n = key.charAt(1) === 'x' ? parseInt(key.slice(2), 16) : parseInt(key.slice(1), 10);
+        if (Number.isFinite(n) && n >= 0) return String.fromCharCode(n);
+      }
+      return match;
+    });
+  }
+
+  function normalizeReplayHtmlText(text) {
+    var out = String(text == null ? '' : text);
+    if (!/<[a-z][\s\S]*>/i.test(out) && out.indexOf('&') < 0) return out;
+    out = decodeReplayHtmlEntities(out);
+    out = out
+      .replace(/\\u007c/gi, '|')
+      .replace(/\\x7c/gi, '|')
+      .replace(/\\r\\n|\\r|\\n/g, '\n')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/(?:div|p|li|pre|textarea|script)>/gi, '\n')
+      .replace(/<[^>]+>/g, '');
+    return decodeReplayHtmlEntities(out);
+  }
+
   function normalizeReplayLogInput(rawInput) {
     var text = String(rawInput == null ? '' : rawInput)
       .replace(/^\uFEFF/, '')
       .replace(/\u00a0/g, ' ')
       .replace(/\r\n?/g, '\n');
+    text = normalizeReplayHtmlText(text);
     if (!text.trim()) return '';
     if (text.indexOf('\\n|') >= 0 || text.indexOf('|\\n') >= 0) {
       text = text.replace(/\\n/g, '\n');
