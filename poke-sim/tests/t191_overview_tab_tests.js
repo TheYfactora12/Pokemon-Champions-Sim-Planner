@@ -231,7 +231,9 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.overview-qa-josh-issues');
   inc(css, '.team-lab-newsroom');
   inc(css, '.home-landing-hero');
-  inc(css, 'text-transform:uppercase;color:#fff7d6;text-shadow:3px 3px 0');
+  inc(css, 'text-transform:uppercase;color:#fff3a8;-webkit-text-stroke:2px');
+  inc(css, '.home-landing-hero h2:before');
+  inc(css, '.home-landing-hero h2:after');
   inc(css, '.home-sim-preview');
   inc(css, '.home-sim-output-card');
   inc(css, '.home-start-cycle');
@@ -273,7 +275,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Team Lab / Leaderboard Plan');
   inc(ui, 'function csRenderTeamLabNewsroomHub');
   inc(ui, 'function renderTeamLabHomeHub');
-  inc(ui, 'The Pokemon Champion battle lab for testing teams before you play.');
+  inc(ui, 'Welcome to Battle Labs');
   inc(ui, 'Start Simulating');
   inc(ui, 'Test teams. Learn the swing turn. Win smarter.');
   inc(ui, 'See the battle like a coach would.');
