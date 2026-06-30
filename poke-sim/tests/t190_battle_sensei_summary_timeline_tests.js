@@ -34,8 +34,8 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'accept=".txt,.log,.html,.htm,text/plain,text/html"');
   inc(html, 'Upload Replay');
   inc(html, 'In series play');
-  inc(html, 'v2.2.53-home-roadmap-split');
-  inc(ui, 'v2.2.53-home-roadmap-split');
+  inc(html, 'v2.2.54-home-news-carousel');
+  inc(ui, 'v2.2.54-home-news-carousel');
   if (/Bo10|data-bo="10"/.test(html)) throw new Error('Bo10 should not be exposed as a series format');
   if (/Bo10/.test(ui)) throw new Error('Bo10 should not be referenced in UI guidance');
   if (/Bo10/.test(engine)) throw new Error('Bo10 should not be referenced in engine guidance');

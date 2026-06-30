@@ -444,6 +444,30 @@ table{border-collapse:collapse;width:100%}
 .overview-team-lab-plan>.overview-source-note{padding:0 var(--sp4);margin:0 0 var(--sp3)}
 .overview-team-lab-plan>.overview-list{padding:0 var(--sp4) var(--sp4)}
 .team-lab-newsroom{border-color:rgba(91,164,245,.42);background:radial-gradient(circle at 12% 0%,rgba(91,164,245,.18),transparent 34%),linear-gradient(135deg,rgba(18,25,38,.98),rgba(12,18,29,.96))}
+.pokemon-news-feed{border:1px solid rgba(91,164,245,.32);border-radius:var(--r-md);background:linear-gradient(135deg,rgba(91,164,245,.11),rgba(255,255,255,.035));padding:var(--sp4);margin-bottom:var(--sp4);overflow:hidden}
+.pokemon-news-feed-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp4);margin-bottom:var(--sp3)}
+.pokemon-news-feed-head h3{font-size:clamp(22px,2.5vw,34px);font-weight:950;letter-spacing:-.04em;line-height:1;margin-top:5px}
+.pokemon-news-feed-head p{color:var(--text-m);font-size:12px;line-height:1.5;margin-top:8px;max-width:760px}
+.pokemon-news-controls{display:flex;gap:8px;flex-shrink:0}
+.pokemon-news-controls button{min-height:34px;border:1px solid rgba(91,164,245,.4);background:rgba(91,164,245,.1);color:var(--blue);border-radius:var(--r-full);padding:6px 11px;font-size:11px;font-weight:900;cursor:pointer}
+.pokemon-news-controls button:hover,.pokemon-news-controls button:focus-visible{border-color:var(--blue);color:var(--text);outline:none}
+.pokemon-news-slides{position:relative;min-height:280px}
+.pokemon-news-slide{display:none;grid-template-columns:minmax(240px,.82fr) minmax(0,1fr);gap:var(--sp4);align-items:stretch}
+.pokemon-news-slide.active{display:grid;animation:pokemonNewsReveal .28s ease-out}
+.pokemon-news-image-link{display:block;border-radius:var(--r-md);overflow:hidden;min-height:260px;border:1px solid rgba(255,255,255,.08);background:var(--surface2)}
+.pokemon-news-image-link img{width:100%;height:100%;min-height:260px;object-fit:cover;display:block;transform:scale(1.01)}
+.pokemon-news-copy{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.pokemon-news-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.pokemon-news-meta span{display:inline-flex;border:1px solid rgba(78,201,148,.36);background:rgba(78,201,148,.08);color:var(--green);border-radius:var(--r-full);padding:4px 8px;font-family:var(--font-mono);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.pokemon-news-copy h4{font-size:clamp(22px,3vw,40px);font-weight:950;line-height:1.02;letter-spacing:-.04em}
+.pokemon-news-copy h4 a{color:var(--text);text-decoration:none}
+.pokemon-news-copy h4 a:hover{color:var(--blue)}
+.pokemon-news-copy p{color:var(--text-m);font-size:14px;line-height:1.55;margin-top:12px}
+.pokemon-news-copy small{color:var(--text-d);font-size:11px;margin-top:14px}
+.pokemon-news-dots{display:flex;gap:7px;margin-top:var(--sp3)}
+.pokemon-news-dot{width:28px;height:6px;border:0;border-radius:var(--r-full);background:rgba(255,255,255,.16);cursor:pointer}
+.pokemon-news-dot.active{background:var(--blue)}
+@keyframes pokemonNewsReveal{from{opacity:.45;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .team-lab-hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(220px,.6fr);gap:var(--sp4);align-items:start;margin-bottom:var(--sp4)}
 .team-lab-hero h3{font-size:clamp(24px,3vw,38px);font-weight:950;letter-spacing:-.04em;line-height:.98;margin-top:6px}
 .team-lab-hero p{color:var(--text-m);font-size:13px;line-height:1.55;margin-top:10px;max-width:760px}
@@ -463,8 +487,8 @@ table{border-collapse:collapse;width:100%}
 @media(max-width:700px){.overview-milestone-summary{flex-direction:column}.overview-milestone-counts{justify-content:flex-start;min-width:0}.overview-buckets{padding:0 var(--sp3) var(--sp3)}}
 
 @media(max-width:1100px){.team-lab-news-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.team-lab-hero{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}}
-@media(max-width:560px){.overview-header{gap:var(--sp3)}.overview-updated{white-space:normal}.overview-metrics{grid-template-columns:1fr}.overview-section{padding:var(--sp3)}.overview-item{grid-template-columns:1fr;gap:6px}.overview-status{justify-self:start}.overview-section-head{align-items:flex-start;flex-direction:column;gap:6px}.overview-kicker{white-space:normal}.overview-db-summary,.overview-db-counts{grid-template-columns:1fr}.team-lab-news-grid{grid-template-columns:1fr}.team-lab-leaderboard-head{flex-direction:column}}
+@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.team-lab-hero,.pokemon-news-slide.active{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:220px}}
+@media(max-width:560px){.overview-header{gap:var(--sp3)}.overview-updated{white-space:normal}.overview-metrics{grid-template-columns:1fr}.overview-section{padding:var(--sp3)}.overview-item{grid-template-columns:1fr;gap:6px}.overview-status{justify-self:start}.overview-section-head,.pokemon-news-feed-head{align-items:flex-start;flex-direction:column;gap:6px}.overview-kicker{white-space:normal}.overview-db-summary,.overview-db-counts{grid-template-columns:1fr}.team-lab-news-grid{grid-template-columns:1fr}.team-lab-leaderboard-head{flex-direction:column}.pokemon-news-controls{width:100%;justify-content:flex-start}.pokemon-news-copy h4{font-size:24px}}
 
 /* ===== SIM LAYOUT ===== */
 .sim-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px minmax(0,1fr);gap:var(--sp4);align-items:start;margin-bottom:var(--sp6)}
@@ -2447,8 +2471,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.53-home-roadmap-split</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.54-home-news-carousel</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -3253,9 +3277,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.53-home-roadmap-split',
+    build_id: 'v2.2.54-home-news-carousel',
     release_date: '2026-06-29',
-    service_worker_cache: 'champions-sim-v185-home-roadmap-split',
+    service_worker_cache: 'champions-sim-v186-home-news-carousel',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3329,9 +3353,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.53-home-roadmap-split';
+      return txt || 'v2.2.54-home-news-carousel';
     } catch (e) {
-      return 'v2.2.53-home-roadmap-split';
+      return 'v2.2.54-home-news-carousel';
     }
   }
 
@@ -27219,7 +27243,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.53-home-roadmap-split'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.54-home-news-carousel'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -40112,6 +40136,81 @@ function csTeamLabNewsCards() {
   ];
 }
 
+function csPokemonNewsFeedItems() {
+  return [
+    {
+      category: 'Official news',
+      date: 'June 17, 2026',
+      title: 'Pokemon Champions Is Available Now on iOS and Android Devices',
+      detail: 'Mobile launch and cross-platform access are the top player-facing update for the current Champion season.',
+      source: 'Pokemon.com via Champions latest news',
+      url: 'https://www.pokemon.com/us/pokemon-news/pokemon-champions-is-available-now-on-ios-and-android-devices',
+      image: 'https://champions.pokemon.com/_images/home/mar24_thumbnail.jpg',
+      alt: 'Pokemon Champions key art with trainers and Pokemon in a stadium.'
+    },
+    {
+      category: 'Regulations',
+      date: 'June 17, 2026',
+      title: 'Regulation Set M-B Kicks off a New Ranked Battles Season',
+      detail: 'Regulation changes are source-truth events for legality, team ranking, and stale leaderboard warnings.',
+      source: 'Pokemon.com via Champions latest news',
+      url: 'https://www.pokemon.com/us/pokemon-news/regulation-set-m-b-kicks-off-a-new-ranked-battles-season-and-battle-pass-in-pokemon-champions',
+      image: 'https://champions.pokemon.com/_images/home/overview/game-screenshot-1.png',
+      alt: 'Pokemon Champions battle screenshot inside an arena.'
+    },
+    {
+      category: 'Online competition',
+      date: 'June 17, 2026',
+      title: 'Pokemon Champions Monthly Challenge Series June 2026',
+      detail: 'Competition news should feed future event context, format tags, and ranked-team benchmark pools.',
+      source: 'Pokemon.com via Champions latest news',
+      url: 'https://www.pokemon.com/us/pokemon-news/sign-up-for-the-pokemon-champions-monthly-challenge-series-june-2026',
+      image: 'https://champions.pokemon.com/_images/home/battle-focused/champ-emblem.png',
+      alt: 'Pokemon Champions emblem.'
+    },
+    {
+      category: 'Championships',
+      date: 'June 10, 2026',
+      title: 'Relive the Eras of Pokemon VGC',
+      detail: 'Championship/VGC context belongs beside Team Lab so players understand format history and meta changes.',
+      source: 'Pokemon.com via Champions latest news',
+      url: 'https://www.pokemon.com/us/pokemon-news/relive-the-eras-of-pokemon-vgc',
+      image: 'https://champions.pokemon.com/_images/pokemon/ideal-team/en/featured-main.jpg',
+      alt: 'Pokemon Champions team menu screenshot featuring Hydrapple.'
+    }
+  ];
+}
+
+function csRenderPokemonNewsFeed() {
+  var cards = csPokemonNewsFeedItems().map(function(item, index) {
+    return '<article class="pokemon-news-slide' + (index === 0 ? ' active' : '') + '" data-news-slide="' + index + '">' +
+      '<a class="pokemon-news-image-link" href="' + _escapeHtml(item.url) + '" target="_blank" rel="noopener">' +
+        '<img src="' + _escapeHtml(item.image) + '" alt="' + _escapeHtml(item.alt) + '" loading="' + (index === 0 ? 'eager' : 'lazy') + '">' +
+      '</a>' +
+      '<div class="pokemon-news-copy">' +
+        '<div class="pokemon-news-meta"><span>' + _escapeHtml(item.category) + '</span><span>' + _escapeHtml(item.date) + '</span></div>' +
+        '<h4><a href="' + _escapeHtml(item.url) + '" target="_blank" rel="noopener">' + _escapeHtml(item.title) + '</a></h4>' +
+        '<p>' + _escapeHtml(item.detail) + '</p>' +
+        '<small>' + _escapeHtml(item.source) + '</small>' +
+      '</div>' +
+    '</article>';
+  }).join('');
+  var dots = csPokemonNewsFeedItems().map(function(_item, index) {
+    return '<button type="button" class="pokemon-news-dot' + (index === 0 ? ' active' : '') + '" data-news-dot="' + index + '" aria-label="Show news item ' + (index + 1) + '"></button>';
+  }).join('');
+  return '<section class="pokemon-news-feed" aria-label="Pokemon news feed">' +
+    '<div class="pokemon-news-feed-head">' +
+      '<div><span class="overview-kicker">Official Pokemon news</span><h3>Latest Champion Updates</h3><p>Source-linked articles and official Champions imagery. Use this as player-facing news, not as mechanics truth until source rows are reviewed.</p></div>' +
+      '<div class="pokemon-news-controls">' +
+        '<button type="button" data-news-prev aria-label="Previous news">Prev</button>' +
+        '<button type="button" data-news-next aria-label="Next news">Next</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="pokemon-news-slides">' + cards + '</div>' +
+    '<div class="pokemon-news-dots">' + dots + '</div>' +
+  '</section>';
+}
+
 function csRenderTeamLabNewsCards() {
   return csTeamLabNewsCards().map(function(card) {
     return '<article class="team-lab-news-card">' +
@@ -40155,6 +40254,7 @@ function csRenderTeamLabTop25Rows() {
 
 function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
+    csRenderPokemonNewsFeed() +
     '<div class="team-lab-hero">' +
       '<div>' +
         '<span class="overview-kicker">Team Lab home</span>' +
@@ -40184,7 +40284,43 @@ function renderTeamLabHomeHub() {
   var host = document.getElementById('team-lab-home-hub');
   if (!host) return false;
   host.innerHTML = csRenderTeamLabNewsroomHub();
+  csInitPokemonNewsCarousel(host);
   return true;
+}
+
+function csInitPokemonNewsCarousel(root) {
+  if (!root || typeof root.querySelectorAll !== 'function') return;
+  var slides = Array.prototype.slice.call(root.querySelectorAll('[data-news-slide]'));
+  var dots = Array.prototype.slice.call(root.querySelectorAll('[data-news-dot]'));
+  if (!slides.length) return;
+  var active = 0;
+  var timer = null;
+  function paint(next) {
+    active = (next + slides.length) % slides.length;
+    slides.forEach(function(slide, index) {
+      slide.classList.toggle('active', index === active);
+    });
+    dots.forEach(function(dot, index) {
+      dot.classList.toggle('active', index === active);
+      dot.setAttribute('aria-current', index === active ? 'true' : 'false');
+    });
+  }
+  function restart() {
+    if (timer) clearInterval(timer);
+    timer = setInterval(function() { paint(active + 1); }, 8000);
+  }
+  dots.forEach(function(dot, index) {
+    dot.addEventListener('click', function() {
+      paint(index);
+      restart();
+    });
+  });
+  var prev = root.querySelector('[data-news-prev]');
+  var next = root.querySelector('[data-news-next]');
+  if (prev) prev.addEventListener('click', function() { paint(active - 1); restart(); });
+  if (next) next.addEventListener('click', function() { paint(active + 1); restart(); });
+  paint(0);
+  restart();
 }
 
 function csRenderOverviewClosedProofArchive(data) {

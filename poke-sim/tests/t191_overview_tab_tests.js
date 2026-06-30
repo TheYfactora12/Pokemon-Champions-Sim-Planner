@@ -230,13 +230,15 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.overview-closed-proof-archive');
   inc(css, '.overview-qa-josh-issues');
   inc(css, '.team-lab-newsroom');
+  inc(css, '.pokemon-news-feed');
+  inc(css, '.pokemon-news-slide.active');
   inc(css, '.team-lab-news-grid');
   inc(css, '.team-lab-top25-table');
   inc(css, '.overview-db-counts');
   inc(css, '.overview-db-table');
   inc(css, '.overview-status.done');
   inc(css, '.overview-status.gap');
-  inc(css, '@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.team-lab-hero{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}}');
+  inc(css, '@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.team-lab-hero,.pokemon-news-slide.active{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:220px}}');
 });
 
 T('6. Overview renders through a reusable function for future growth', () => {
@@ -263,7 +265,15 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Team Lab / Leaderboard Plan');
   inc(ui, 'function csRenderTeamLabNewsroomHub');
   inc(ui, 'function renderTeamLabHomeHub');
+  inc(ui, 'function csPokemonNewsFeedItems');
+  inc(ui, 'function csInitPokemonNewsCarousel');
   inc(ui, 'Champion Newsroom + Top 25 Teams');
+  inc(ui, 'Latest Champion Updates');
+  inc(ui, 'Pokemon Champions Is Available Now on iOS and Android Devices');
+  inc(ui, 'Regulation Set M-B Kicks off a New Ranked Battles Season');
+  inc(ui, 'Pokemon Champions Monthly Challenge Series June 2026');
+  inc(ui, 'Relive the Eras of Pokemon VGC');
+  inc(ui, 'data-news-slide');
   inc(ui, 'Top 25 Simulator Teams');
   inc(ui, 'No fake rankings');
   inc(ui, 'Evidence locked');

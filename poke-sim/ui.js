@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.53-home-roadmap-split'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.54-home-news-carousel'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -12933,6 +12933,81 @@ function csTeamLabNewsCards() {
   ];
 }
 
+function csPokemonNewsFeedItems() {
+  return [
+    {
+      category: 'Official news',
+      date: 'June 17, 2026',
+      title: 'Pokemon Champions Is Available Now on iOS and Android Devices',
+      detail: 'Mobile launch and cross-platform access are the top player-facing update for the current Champion season.',
+      source: 'Pokemon.com via Champions latest news',
+      url: 'https://www.pokemon.com/us/pokemon-news/pokemon-champions-is-available-now-on-ios-and-android-devices',
+      image: 'https://champions.pokemon.com/_images/home/mar24_thumbnail.jpg',
+      alt: 'Pokemon Champions key art with trainers and Pokemon in a stadium.'
+    },
+    {
+      category: 'Regulations',
+      date: 'June 17, 2026',
+      title: 'Regulation Set M-B Kicks off a New Ranked Battles Season',
+      detail: 'Regulation changes are source-truth events for legality, team ranking, and stale leaderboard warnings.',
+      source: 'Pokemon.com via Champions latest news',
+      url: 'https://www.pokemon.com/us/pokemon-news/regulation-set-m-b-kicks-off-a-new-ranked-battles-season-and-battle-pass-in-pokemon-champions',
+      image: 'https://champions.pokemon.com/_images/home/overview/game-screenshot-1.png',
+      alt: 'Pokemon Champions battle screenshot inside an arena.'
+    },
+    {
+      category: 'Online competition',
+      date: 'June 17, 2026',
+      title: 'Pokemon Champions Monthly Challenge Series June 2026',
+      detail: 'Competition news should feed future event context, format tags, and ranked-team benchmark pools.',
+      source: 'Pokemon.com via Champions latest news',
+      url: 'https://www.pokemon.com/us/pokemon-news/sign-up-for-the-pokemon-champions-monthly-challenge-series-june-2026',
+      image: 'https://champions.pokemon.com/_images/home/battle-focused/champ-emblem.png',
+      alt: 'Pokemon Champions emblem.'
+    },
+    {
+      category: 'Championships',
+      date: 'June 10, 2026',
+      title: 'Relive the Eras of Pokemon VGC',
+      detail: 'Championship/VGC context belongs beside Team Lab so players understand format history and meta changes.',
+      source: 'Pokemon.com via Champions latest news',
+      url: 'https://www.pokemon.com/us/pokemon-news/relive-the-eras-of-pokemon-vgc',
+      image: 'https://champions.pokemon.com/_images/pokemon/ideal-team/en/featured-main.jpg',
+      alt: 'Pokemon Champions team menu screenshot featuring Hydrapple.'
+    }
+  ];
+}
+
+function csRenderPokemonNewsFeed() {
+  var cards = csPokemonNewsFeedItems().map(function(item, index) {
+    return '<article class="pokemon-news-slide' + (index === 0 ? ' active' : '') + '" data-news-slide="' + index + '">' +
+      '<a class="pokemon-news-image-link" href="' + _escapeHtml(item.url) + '" target="_blank" rel="noopener">' +
+        '<img src="' + _escapeHtml(item.image) + '" alt="' + _escapeHtml(item.alt) + '" loading="' + (index === 0 ? 'eager' : 'lazy') + '">' +
+      '</a>' +
+      '<div class="pokemon-news-copy">' +
+        '<div class="pokemon-news-meta"><span>' + _escapeHtml(item.category) + '</span><span>' + _escapeHtml(item.date) + '</span></div>' +
+        '<h4><a href="' + _escapeHtml(item.url) + '" target="_blank" rel="noopener">' + _escapeHtml(item.title) + '</a></h4>' +
+        '<p>' + _escapeHtml(item.detail) + '</p>' +
+        '<small>' + _escapeHtml(item.source) + '</small>' +
+      '</div>' +
+    '</article>';
+  }).join('');
+  var dots = csPokemonNewsFeedItems().map(function(_item, index) {
+    return '<button type="button" class="pokemon-news-dot' + (index === 0 ? ' active' : '') + '" data-news-dot="' + index + '" aria-label="Show news item ' + (index + 1) + '"></button>';
+  }).join('');
+  return '<section class="pokemon-news-feed" aria-label="Pokemon news feed">' +
+    '<div class="pokemon-news-feed-head">' +
+      '<div><span class="overview-kicker">Official Pokemon news</span><h3>Latest Champion Updates</h3><p>Source-linked articles and official Champions imagery. Use this as player-facing news, not as mechanics truth until source rows are reviewed.</p></div>' +
+      '<div class="pokemon-news-controls">' +
+        '<button type="button" data-news-prev aria-label="Previous news">Prev</button>' +
+        '<button type="button" data-news-next aria-label="Next news">Next</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="pokemon-news-slides">' + cards + '</div>' +
+    '<div class="pokemon-news-dots">' + dots + '</div>' +
+  '</section>';
+}
+
 function csRenderTeamLabNewsCards() {
   return csTeamLabNewsCards().map(function(card) {
     return '<article class="team-lab-news-card">' +
@@ -12976,6 +13051,7 @@ function csRenderTeamLabTop25Rows() {
 
 function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
+    csRenderPokemonNewsFeed() +
     '<div class="team-lab-hero">' +
       '<div>' +
         '<span class="overview-kicker">Team Lab home</span>' +
@@ -13005,7 +13081,43 @@ function renderTeamLabHomeHub() {
   var host = document.getElementById('team-lab-home-hub');
   if (!host) return false;
   host.innerHTML = csRenderTeamLabNewsroomHub();
+  csInitPokemonNewsCarousel(host);
   return true;
+}
+
+function csInitPokemonNewsCarousel(root) {
+  if (!root || typeof root.querySelectorAll !== 'function') return;
+  var slides = Array.prototype.slice.call(root.querySelectorAll('[data-news-slide]'));
+  var dots = Array.prototype.slice.call(root.querySelectorAll('[data-news-dot]'));
+  if (!slides.length) return;
+  var active = 0;
+  var timer = null;
+  function paint(next) {
+    active = (next + slides.length) % slides.length;
+    slides.forEach(function(slide, index) {
+      slide.classList.toggle('active', index === active);
+    });
+    dots.forEach(function(dot, index) {
+      dot.classList.toggle('active', index === active);
+      dot.setAttribute('aria-current', index === active ? 'true' : 'false');
+    });
+  }
+  function restart() {
+    if (timer) clearInterval(timer);
+    timer = setInterval(function() { paint(active + 1); }, 8000);
+  }
+  dots.forEach(function(dot, index) {
+    dot.addEventListener('click', function() {
+      paint(index);
+      restart();
+    });
+  });
+  var prev = root.querySelector('[data-news-prev]');
+  var next = root.querySelector('[data-news-next]');
+  if (prev) prev.addEventListener('click', function() { paint(active - 1); restart(); });
+  if (next) next.addEventListener('click', function() { paint(active + 1); restart(); });
+  paint(0);
+  restart();
 }
 
 function csRenderOverviewClosedProofArchive(data) {

@@ -172,3 +172,14 @@ This is intentionally a first read-UI shell. It should evolve into the Team Lab 
 - Simulator is again the battle workspace only.
 
 This keeps player-facing discovery separate from contributor/project-management tracking.
+
+## 2026-06-29 implementation update: Home news carousel
+
+`v2.2.54-home-news-carousel` adds the first real Pokemon news surface to Home:
+
+- Home now includes a source-linked slideshow for official Pokemon Champions news articles.
+- Cards use official Champions imagery and link out to Pokemon.com article URLs.
+- The feed is static/curated for now because a CORS-safe official live feed is not established in the app.
+- The UI states that news is player-facing context, not mechanics truth until source rows are reviewed.
+
+Future improvement: replace the curated list with a reviewed source-sync/news ingestion path that stores article title, URL, source tier, image URL, fetched_at, and verification status.
