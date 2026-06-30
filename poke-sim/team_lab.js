@@ -596,6 +596,130 @@
     };
   }
 
+  function resolveTeamKeyMapping(sourceTeamKey, mappings, filters) {
+    var f = filters || {};
+    var rows = (mappings || []).filter(function(row) {
+      if (!row || row.source_team_key !== sourceTeamKey) return false;
+      if (f.source_system && row.source_system !== f.source_system) return false;
+      if (f.regulation_id && row.regulation_id !== f.regulation_id) return false;
+      if (f.format && row.format && row.format !== f.format) return false;
+      return true;
+    }).sort(function(a, b) {
+      var rank = { verified: 4, pending: 3, stale: 2, rejected: 1 };
+      var ar = rank[a.mapping_status] || 0;
+      var br = rank[b.mapping_status] || 0;
+      if (br !== ar) return br - ar;
+      return String(b.updated_at || b.verified_at || '').localeCompare(String(a.updated_at || a.verified_at || ''));
+    });
+    var best = rows[0] || null;
+    if (!best) {
+      return {
+        ok: false,
+        status: 'missing',
+        team_lab_team_id: null,
+        mapping: null,
+        source_gap: 'TEAM_KEY_MAPPING_MISSING'
+      };
+    }
+    if (best.mapping_status !== 'verified' || !best.team_id) {
+      return {
+        ok: false,
+        status: best.mapping_status || 'pending',
+        team_lab_team_id: best.team_id || null,
+        mapping: best,
+        source_gap: 'TEAM_KEY_MAPPING_' + String(best.mapping_status || 'pending').toUpperCase()
+      };
+    }
+    return {
+      ok: true,
+      status: 'verified',
+      team_lab_team_id: best.team_id,
+      mapping: best,
+      source_gap: null
+    };
+  }
+
+  function defaultPromotionRule(input) {
+    var opts = input || {};
+    return {
+      regulation_id: opts.regulation_id || null,
+      format: opts.format || null,
+      leaderboard_scope: opts.leaderboard_scope || 'official_sim_top_25',
+      min_sample_size: opts.min_sample_size == null ? 200 : Number(opts.min_sample_size),
+      require_verified_legality: opts.require_verified_legality !== false,
+      require_current_engine: opts.require_current_engine !== false,
+      require_current_ruleset: opts.require_current_ruleset !== false,
+      require_verified_team_mapping: opts.require_verified_team_mapping !== false,
+      require_approved_benchmark_pool: opts.require_approved_benchmark_pool !== false,
+      allowed_evidence_qualities: Array.isArray(opts.allowed_evidence_qualities) ? opts.allowed_evidence_qualities : ['official_ready']
+    };
+  }
+
+  function evaluateLeaderboardPromotion(entry, context) {
+    var row = entry || {};
+    var ctx = context || {};
+    var rule = defaultPromotionRule(ctx.rule || ctx);
+    var mapping = ctx.mapping || null;
+    var reasons = [];
+    var sourceGaps = unique((row.source_gaps || []).concat(ctx.source_gaps || []));
+
+    if (row.stale) reasons.push('STALE_ENTRY');
+    if (rule.regulation_id && row.regulation_id !== rule.regulation_id) reasons.push('REGULATION_MISMATCH');
+    if (rule.format && row.format !== rule.format) reasons.push('FORMAT_MISMATCH');
+    if (rule.require_current_engine && ctx.current_engine_version && row.engine_version !== ctx.current_engine_version) reasons.push('ENGINE_VERSION_STALE');
+    if (rule.require_current_ruleset && ctx.current_ruleset_version && row.ruleset_version !== ctx.current_ruleset_version) reasons.push('RULESET_VERSION_STALE');
+    if (rule.require_verified_legality && row.legality_status !== 'verified') reasons.push('LEGALITY_NOT_VERIFIED');
+    if (Number(row.games_played || 0) < Number(rule.min_sample_size || DEFAULT_MIN_SAMPLE_SIZE)) reasons.push('INSUFFICIENT_SAMPLE_SIZE');
+    if (rule.require_approved_benchmark_pool && !ctx.approved_benchmark_pool) reasons.push('BENCHMARK_POOL_NOT_APPROVED');
+    if (rule.allowed_evidence_qualities.indexOf(row.evidence_quality || '') === -1) reasons.push('EVIDENCE_QUALITY_NOT_ALLOWED');
+    if (rule.require_verified_team_mapping) {
+      if (!mapping || mapping.status !== 'verified' || !mapping.team_lab_team_id) {
+        reasons.push(mapping && mapping.source_gap ? mapping.source_gap : 'TEAM_KEY_MAPPING_MISSING');
+      }
+    }
+    if (sourceGaps.length) reasons.push('UNRESOLVED_SOURCE_GAPS');
+
+    var decision = 'approved';
+    if (row.stale || row.legality_status === 'stale') decision = 'stale';
+    else if (row.legality_status === 'needs_verification' || sourceGaps.length || (mapping && mapping.status && mapping.status !== 'verified')) decision = 'experimental';
+    if (reasons.length && decision === 'approved') decision = 'blocked';
+    var approved = decision === 'approved' && reasons.length === 0;
+
+    return {
+      approved: approved,
+      decision: approved ? 'approved' : decision,
+      reasons: unique(reasons),
+      promotion_status: approved ? 'approved' : decision,
+      leaderboard_scope: approved ? (rule.leaderboard_scope || 'official_sim_top_25') : (decision === 'experimental' ? 'experimental' : 'stale'),
+      source_gaps: sourceGaps,
+      rule: rule,
+      mapping: mapping || null
+    };
+  }
+
+  function applyPromotionDecision(entry, decision) {
+    var row = Object.assign({}, entry || {});
+    var d = decision || {};
+    row.promotion_status = d.promotion_status || d.decision || 'blocked';
+    row.promotion_reasons = unique(d.reasons || []);
+    if (d.mapping && d.mapping.mapping && d.mapping.mapping.id) row.team_key_mapping_id = d.mapping.mapping.id;
+    if (d.approved) {
+      row.leaderboard_scope = d.leaderboard_scope || 'official_sim_top_25';
+      row.evidence_quality = 'official_ready';
+      row.stale = false;
+      row.stale_reason = null;
+    } else if (d.decision === 'experimental') {
+      row.leaderboard_scope = 'experimental';
+      row.confidence = 'experimental';
+      row.evidence_quality = 'experimental';
+    } else if (d.decision === 'stale') {
+      row.leaderboard_scope = 'stale';
+      row.stale = true;
+      row.stale_reason = row.stale_reason || 'promotion_stale';
+    }
+    return row;
+  }
+
   function createTeamService(adapter) {
     var db = adapter || {};
     return {
@@ -671,6 +795,10 @@
     filterLeaderboard: filterLeaderboard,
     applyTeamVisibility: applyTeamVisibility,
     compareTeamToLeaderboard: compareTeamToLeaderboard,
+    resolveTeamKeyMapping: resolveTeamKeyMapping,
+    defaultPromotionRule: defaultPromotionRule,
+    evaluateLeaderboardPromotion: evaluateLeaderboardPromotion,
+    applyPromotionDecision: applyPromotionDecision,
     createTeamService: createTeamService
   };
 

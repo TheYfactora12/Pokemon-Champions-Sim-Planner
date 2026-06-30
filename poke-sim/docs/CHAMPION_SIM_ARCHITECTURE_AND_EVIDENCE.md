@@ -112,6 +112,10 @@ The Stress Lite artifact must also stay readable at a glance. The export now mir
 
 `v2.2.43-move-effect-logic-matrix` adds a QA coverage matrix for the next simulator-accuracy gate. Every QA coverage summary now reports move/effect families as `proven`, `partial`, or `missing` for damage math, non-standard stat-source moves, HP-changing effects, status/action denial, move-failure prevention, priority prevention, field-duration speed control, contact/item damage, and faint transparency. This is deliberately conservative: a missing family is a next QA target, not an automatic engine bug, and coaching should not make strong claims from a partial/missing family without a caveat.
 
+`v2.2.70-team-lab-db-preview` connects saved `branch_coverage_runs` evidence to the Home Team Lab table as an experimental preview. This makes DB-backed branch learning visible, but rows remain labeled as preview evidence and are not official global rankings.
+
+`v2.2.71-team-lab-mapping-promotion` adds the DB trust layer required before preview evidence can become official Team Lab leaderboard evidence. Local/source keys must resolve through `team_lab_team_key_mappings`, promotion gates live in `team_lab_promotion_rules`, and trusted-worker decisions are recorded in `team_lab_promotion_audits`. Official promotion is blocked unless legality, team identity, sample size, engine/ruleset freshness, benchmark approval, and source-gap checks all pass.
+
 Process challenge for coach-memory work:
 
 - Do not let the app sound smarter than the evidence. Coach memory may summarize repeated patterns, but it must keep confidence, sample size, matchup scope, and ruleset scope visible.
@@ -132,6 +136,8 @@ Current DB-backed responsibilities:
 
 - Load approved/gated teams when live DB is available.
 - Persist analyses and bounded history rows.
+- Store tactical branch coverage rows used by Stress Lite and Tactical Sweep QA.
+- Store Team Lab team-key mappings and promotion-rule/audit metadata for trusted leaderboard promotion.
 - Store and expose approved source-data paths such as `approved_species_move_legality`.
 - Support future promotion of `showdown_entities` plus `champions_overrides` into generated runtime assets.
 - Reject or prevent stale/illegal team rows from replacing clean bundled data.
@@ -140,6 +146,7 @@ Current DB limitations:
 
 - `showdown_entities` rows are not yet the direct battle runtime source.
 - Saved analysis history is summary/capped storage, not full forensic turn-log storage.
+- Branch evidence can power experimental previews, but official Team Lab rank requires reviewed mapping and promotion gates.
 - Live DB freshness is separate from local DB contract tests. Run live checks only with `RUN_LIVE_DB=1` and valid anon credentials.
 - GitHub Pages deploy enables `RUN_LIVE_DB=1` when Supabase anon secrets are present. That means bundled teams, generated seed SQL, and live Supabase team IDs must match before publish. If a new approved team is added locally, the matching DB migration must be applied before the site can deploy.
 

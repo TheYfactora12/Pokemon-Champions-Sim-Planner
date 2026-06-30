@@ -8,6 +8,7 @@ const ROOT = path.resolve(__dirname, '..');
 const migration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_29_team_lab_foundation.sql'), 'utf8');
 const rankingMigration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_30_team_lab_ranking_quality.sql'), 'utf8');
 const adminMigration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_30_team_lab_admin_actions.sql'), 'utf8');
+const mappingPromotionMigration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_30_team_lab_mapping_promotion.sql'), 'utf8');
 
 let pass = 0;
 let fail = 0;
@@ -78,6 +79,25 @@ T('2c. admin reset migration stores private audit records', () => {
     'team_lab_admin_actions_no_public_read',
     'USING (false)'
   ].forEach((needle) => truthy(adminMigration.includes(needle), `${needle} missing`));
+});
+
+T('2d. mapping and promotion migration protects team identity and official ranking gates', () => {
+  [
+    'CREATE TABLE IF NOT EXISTS team_lab_team_key_mappings',
+    "source_system text NOT NULL CHECK (source_system IN ('local_qa', 'branch_coverage', 'showdown_import', 'qa_artifact', 'manual_admin'))",
+    "mapping_status text NOT NULL DEFAULT 'pending' CHECK (mapping_status IN ('pending', 'verified', 'rejected', 'stale'))",
+    'UNIQUE(source_system, source_team_key, regulation_id, format)',
+    'CREATE TABLE IF NOT EXISTS team_lab_promotion_rules',
+    'require_verified_team_mapping boolean NOT NULL DEFAULT true',
+    'require_approved_benchmark_pool boolean NOT NULL DEFAULT true',
+    'CREATE TABLE IF NOT EXISTS team_lab_promotion_audits',
+    "decision text NOT NULL CHECK (decision IN ('approved', 'blocked', 'experimental', 'stale'))",
+    'team_key_mapping_id uuid NULL REFERENCES team_lab_team_key_mappings(id) ON DELETE SET NULL',
+    'promotion_status text NULL CHECK',
+    'team_lab_key_mappings_no_public_read',
+    'team_lab_promotion_rules_read_active',
+    'team_lab_promotion_audits_no_public_read'
+  ].forEach((needle) => truthy(mappingPromotionMigration.includes(needle), `${needle} missing`));
 });
 
 const baseTeam = {
@@ -245,6 +265,78 @@ T('12. compare output is explicitly simulator-derived and carries stale/source w
   truthy(result.label.includes('Simulator-derived evidence'), 'compare label should prevent ladder-truth overclaim');
   truthy(result.stale_warnings.includes('rules_updated'), 'stale warning missing');
   truthy(result.unresolved_source_gaps.includes('MOVE_SOURCE_GAP'), 'source gap missing');
+});
+
+T('13. team key mapping must be verified before official promotion', () => {
+  const missing = TeamLab.resolveTeamKeyMapping('player', [], { source_system: 'branch_coverage', regulation_id: 'reg-m-b', format: 'doubles' });
+  eq(missing.ok, false, 'missing mapping should not resolve');
+  eq(missing.source_gap, 'TEAM_KEY_MAPPING_MISSING', 'missing mapping gap mismatch');
+  const pending = TeamLab.resolveTeamKeyMapping('player', [
+    { id: 'map-1', source_system: 'branch_coverage', source_team_key: 'player', team_id: 'team-a', regulation_id: 'reg-m-b', format: 'doubles', mapping_status: 'pending' }
+  ], { source_system: 'branch_coverage', regulation_id: 'reg-m-b', format: 'doubles' });
+  eq(pending.ok, false, 'pending mapping should not verify');
+  eq(pending.source_gap, 'TEAM_KEY_MAPPING_PENDING', 'pending mapping gap mismatch');
+  const verified = TeamLab.resolveTeamKeyMapping('player', [
+    { id: 'map-2', source_system: 'branch_coverage', source_team_key: 'player', team_id: 'team-a', regulation_id: 'reg-m-b', format: 'doubles', mapping_status: 'verified' }
+  ], { source_system: 'branch_coverage', regulation_id: 'reg-m-b', format: 'doubles' });
+  eq(verified.ok, true, 'verified mapping should resolve');
+  eq(verified.team_lab_team_id, 'team-a', 'verified mapping team mismatch');
+});
+
+T('14. promotion gate blocks unsafe evidence and approves only fully mapped current verified rows', () => {
+  const baseEntry = {
+    team_id: 'team-a',
+    regulation_id: 'reg-m-b',
+    format: 'doubles',
+    leaderboard_scope: 'community_candidate',
+    engine_version: 'eng-1',
+    ruleset_version: 'rules-1',
+    legality_status: 'verified',
+    evidence_quality: 'official_ready',
+    games_played: 240,
+    confidence: 'high',
+    stale: false,
+    source_gaps: []
+  };
+  const rule = TeamLab.defaultPromotionRule({ regulation_id: 'reg-m-b', format: 'doubles', min_sample_size: 200 });
+  const blocked = TeamLab.evaluateLeaderboardPromotion(baseEntry, {
+    rule,
+    current_engine_version: 'eng-1',
+    current_ruleset_version: 'rules-1',
+    approved_benchmark_pool: false,
+    mapping: { status: 'verified', team_lab_team_id: 'team-a', mapping: { id: 'map-1' } }
+  });
+  eq(blocked.approved, false, 'unapproved benchmark pool should block promotion');
+  truthy(blocked.reasons.includes('BENCHMARK_POOL_NOT_APPROVED'), 'benchmark reason missing');
+
+  const experimental = TeamLab.evaluateLeaderboardPromotion(Object.assign({}, baseEntry, {
+    legality_status: 'needs_verification',
+    evidence_quality: 'experimental',
+    source_gaps: ['REGULATION_SOURCE_MISSING']
+  }), {
+    rule,
+    current_engine_version: 'eng-1',
+    current_ruleset_version: 'rules-1',
+    approved_benchmark_pool: true,
+    mapping: { status: 'pending', team_lab_team_id: 'team-a', source_gap: 'TEAM_KEY_MAPPING_PENDING' }
+  });
+  eq(experimental.decision, 'experimental', 'unverified legality/source gaps should stay experimental');
+  truthy(experimental.reasons.includes('LEGALITY_NOT_VERIFIED'), 'legality reason missing');
+  truthy(experimental.reasons.includes('TEAM_KEY_MAPPING_PENDING'), 'mapping reason missing');
+
+  const approved = TeamLab.evaluateLeaderboardPromotion(baseEntry, {
+    rule,
+    current_engine_version: 'eng-1',
+    current_ruleset_version: 'rules-1',
+    approved_benchmark_pool: true,
+    mapping: { status: 'verified', team_lab_team_id: 'team-a', mapping: { id: 'map-1' } }
+  });
+  eq(approved.approved, true, 'fully gated row should approve');
+  eq(approved.leaderboard_scope, 'official_sim_top_25', 'approved scope mismatch');
+  const promoted = TeamLab.applyPromotionDecision(baseEntry, approved);
+  eq(promoted.promotion_status, 'approved', 'promotion status mismatch');
+  eq(promoted.leaderboard_scope, 'official_sim_top_25', 'promoted scope mismatch');
+  eq(promoted.team_key_mapping_id, 'map-1', 'mapping id should attach to promoted row');
 });
 
 console.log(`\nTeam Lab foundation: ${pass} pass, ${fail} fail\n`);

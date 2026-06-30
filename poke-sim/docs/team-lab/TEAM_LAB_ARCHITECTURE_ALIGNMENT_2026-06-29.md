@@ -152,6 +152,32 @@ Current M15 GitHub issue map:
 
 Do not close the Team Lab milestone while the UI is empty. The current backend work is valid only as foundation until the read UI, trusted writer, mapping resolver, and promotion rules are implemented and tested.
 
+## 2026-06-30 implementation update: Team Lab DB preview and promotion trust layer
+
+`v2.2.70-team-lab-db-preview` makes saved branch evidence visible on Home without promoting it to official ranking truth:
+
+- Home loads recent `branch_coverage_runs` rows through `SupabaseAdapter.loadBranchCoverageSummary`.
+- The Top 25 table can show an experimental DB branch-evidence preview when saved rows exist.
+- Preview scoring uses adjusted win rate, branch sample weight, opponent coverage, confidence, and outcome-drift penalty.
+- Rows are explicitly labeled `experimental DB preview` / `Saved branch rows - not official global rank`.
+- This preview is useful player feedback, but it is not the official leaderboard path.
+
+`v2.2.71-team-lab-mapping-promotion` adds the DB engineering layer needed before official promotion:
+
+- `team_lab_team_key_mappings` maps local/source keys such as `player`, bundled team IDs, QA artifact keys, and branch-coverage keys to durable `team_lab_teams.id` values.
+- Mappings have `pending`, `verified`, `rejected`, and `stale` states so ambiguous identity never silently becomes leaderboard truth.
+- `team_lab_promotion_rules` stores versioned promotion gates by regulation, format, scope, sample size, legality requirement, current engine/ruleset requirement, verified mapping requirement, and approved benchmark-pool requirement.
+- `team_lab_promotion_audits` records private trusted-worker decisions for approved, blocked, experimental, or stale promotion outcomes.
+- `team_lab_leaderboard_entries` now has optional `team_key_mapping_id`, `promotion_status`, and `promotion_reasons` fields.
+- `team_lab.js` exposes deterministic helpers for mapping resolution and promotion decisions before any trusted worker writes shared ranking state.
+
+Security/trust stance:
+
+- Public browser code may preview branch evidence, but it must not write official promotion decisions.
+- Mapping and promotion audit tables are private under RLS; active promotion rules may be public-readable.
+- Official Top 25 promotion requires verified legality, verified team mapping, current engine/ruleset versions, approved benchmark pool, sufficient samples, and no unresolved source gaps.
+- `needs_verification` or unresolved source gaps route to experimental evidence, not official leaderboard scope.
+
 ## 2026-06-29 implementation update: Team Lab newsroom hub
 
 `v2.2.52-team-lab-newsroom-hub` starts the read UI direction for #179 without inventing rankings:
