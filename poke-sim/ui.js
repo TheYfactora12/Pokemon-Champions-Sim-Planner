@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.54-home-news-carousel'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.55-home-value-proposition'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13008,6 +13008,73 @@ function csRenderPokemonNewsFeed() {
   '</section>';
 }
 
+function csHomeValueCards() {
+  return [
+    {
+      label: 'Start here',
+      title: 'Run matchups before you lock a team',
+      detail: 'Pick your six, choose an opponent archetype, then run Bo1, Bo3, or Bo5 sims to see which lines, leads, and selected four keep winning.',
+      action: 'Open Simulator',
+      tab: 'simulator'
+    },
+    {
+      label: 'Competitive tip',
+      title: 'Test speed control, not just damage',
+      detail: 'Tailwind, Trick Room, Fake Out, flinch, priority, and action denial can decide games before raw damage matters. Use replay logs to prove why a turn changed.',
+      action: 'Review Strategy',
+      tab: 'strategy'
+    },
+    {
+      label: 'Replay learning',
+      title: 'Turn logs explain the why',
+      detail: 'Replay evidence shows move order, damage rows, effects, status denials, recoil, items, and field logic so players can challenge the sim instead of guessing.',
+      action: 'Analyze Replay',
+      tab: 'replay-coach'
+    },
+    {
+      label: 'Team building',
+      title: 'Import, edit, and stress test teams',
+      detail: 'Use the team editor to adjust sets, then compare results against legal benchmark teams. Unknown Champion legality stays flagged until sourced.',
+      action: 'Open Teams',
+      tab: 'teams'
+    }
+  ];
+}
+
+function csRenderHomeValueCards() {
+  return '<section class="home-value-grid" aria-label="How to use this simulator">' + csHomeValueCards().map(function(card) {
+    return '<article class="home-value-card">' +
+      '<span>' + _escapeHtml(card.label) + '</span>' +
+      '<h4>' + _escapeHtml(card.title) + '</h4>' +
+      '<p>' + _escapeHtml(card.detail) + '</p>' +
+      '<button type="button" data-home-tab="' + _escapeHtml(card.tab) + '">' + _escapeHtml(card.action) + '</button>' +
+    '</article>';
+  }).join('') + '</section>';
+}
+
+function csRenderHomeHowToUse() {
+  var steps = [
+    ['1', 'Choose or import a team', 'Start with a bundled Champion test team or import a custom Showdown-style team, then check legality warnings before trusting results.'],
+    ['2', 'Run real series formats', 'Use Bo1, Bo3, or Bo5 to test lineups. For doubles, selected four can change between games while the registered six stays stable.'],
+    ['3', 'Read replay evidence', 'Open the replay log to inspect move order, damage, effects, field state, status denials, and why a Pokemon fainted.'],
+    ['4', 'Improve the team', 'Change leads, moves, items, or selected four, then rerun the same matchup to see whether the evidence improves.']
+  ];
+  return '<section class="home-howto overview-section">' +
+    '<div class="overview-section-head"><div><span class="overview-kicker">How to use it</span><h3>From team idea to tested battle plan</h3></div><span class="overview-status next">Player guide</span></div>' +
+    '<div class="home-howto-steps">' + steps.map(function(step) {
+      return '<div class="home-howto-step"><strong>' + _escapeHtml(step[0]) + '</strong><div><h4>' + _escapeHtml(step[1]) + '</h4><p>' + _escapeHtml(step[2]) + '</p></div></div>';
+    }).join('') + '</div>' +
+  '</section>';
+}
+
+function csRenderHomeTrustStrip() {
+  return '<section class="home-trust-strip" aria-label="Simulator trust gates">' +
+    '<div><strong>Evidence-bound rankings</strong><span>No team becomes “Top 25” without regulation, ruleset version, engine version, sample size, legality, and stale checks.</span></div>' +
+    '<div><strong>Champion-source guardrails</strong><span>Unknown Pokemon Champion data stays needs_verification instead of being silently treated as legal.</span></div>' +
+    '<div><strong>Replay-verifiable coaching</strong><span>Advice should point back to turn logs, damage/effect rows, source gaps, and matchup evidence.</span></div>' +
+  '</section>';
+}
+
 function csRenderTeamLabNewsCards() {
   return csTeamLabNewsCards().map(function(card) {
     return '<article class="team-lab-news-card">' +
@@ -13051,6 +13118,26 @@ function csRenderTeamLabTop25Rows() {
 
 function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
+    '<div class="home-landing-hero">' +
+      '<div>' +
+        '<span class="overview-kicker">Pokemon Champion competitive lab</span>' +
+        '<h2>Build better teams. Test smarter lines. Learn why battles swing.</h2>' +
+        '<p>This sim turns Champion battles into evidence: matchup results, selected-four logic, replay logs, damage/effect proof, and coaching notes that separate verified facts from assumptions.</p>' +
+        '<div class="home-landing-actions">' +
+          '<button type="button" data-home-tab="simulator">Start Simulating</button>' +
+          '<button type="button" data-home-tab="replay-coach">Analyze a Replay</button>' +
+          '<button type="button" data-home-tab="overview">View Roadmap</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="home-landing-proof">' +
+        '<span>Current focus</span><strong>Regulation-aware evidence</strong>' +
+        '<span>Build</span><strong>' + _escapeHtml((typeof csGetBuildId === 'function') ? csGetBuildId() : 'current') + '</strong>' +
+        '<span>Leaderboard</span><strong>Top 25 locked until trusted promotion</strong>' +
+      '</div>' +
+    '</div>' +
+    csRenderHomeValueCards() +
+    csRenderHomeHowToUse() +
+    csRenderHomeTrustStrip() +
     csRenderPokemonNewsFeed() +
     '<div class="team-lab-hero">' +
       '<div>' +
@@ -13081,6 +13168,7 @@ function renderTeamLabHomeHub() {
   var host = document.getElementById('team-lab-home-hub');
   if (!host) return false;
   host.innerHTML = csRenderTeamLabNewsroomHub();
+  csInitHomeTabActions(host);
   csInitPokemonNewsCarousel(host);
   return true;
 }
@@ -13118,6 +13206,16 @@ function csInitPokemonNewsCarousel(root) {
   if (next) next.addEventListener('click', function() { paint(active + 1); restart(); });
   paint(0);
   restart();
+}
+
+function csInitHomeTabActions(root) {
+  if (!root || typeof root.querySelectorAll !== 'function') return;
+  root.querySelectorAll('[data-home-tab]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tab = btn.getAttribute('data-home-tab');
+      if (tab && typeof _activateTab === 'function') _activateTab(tab, { focus: true });
+    });
+  });
 }
 
 function csRenderOverviewClosedProofArchive(data) {

@@ -183,3 +183,15 @@ This keeps player-facing discovery separate from contributor/project-management 
 - The UI states that news is player-facing context, not mechanics truth until source rows are reviewed.
 
 Future improvement: replace the curated list with a reviewed source-sync/news ingestion path that stores article title, URL, source tier, image URL, fetched_at, and verification status.
+
+## 2026-06-29 implementation update: Home value proposition
+
+`v2.2.55-home-value-proposition` turns Home into a clearer player landing page:
+
+- Adds a hero that explains the simulator value: build better teams, test smarter lines, and learn why battles swing.
+- Adds quick actions into Simulator, Replay Review, and Roadmap.
+- Adds competitive tips for speed control, replay evidence, team importing/editing, and series testing.
+- Adds a how-to-use path from team idea to tested battle plan.
+- Adds trust gates explaining why rankings stay evidence-bound and unknown Champion data stays `needs_verification`.
+
+This is user-facing promotion, but it remains evidence-bound and avoids claiming real ladder truth before Team Lab trusted imports and promotion rules are complete.

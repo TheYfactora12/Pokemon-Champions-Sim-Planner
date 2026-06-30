@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.54-home-news-carousel';
+      return txt || 'v2.2.55-home-value-proposition';
     } catch (e) {
-      return 'v2.2.54-home-news-carousel';
+      return 'v2.2.55-home-value-proposition';
     }
   }
 
