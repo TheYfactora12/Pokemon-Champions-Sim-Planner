@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.69-lock-priority-proof'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.70-team-lab-db-preview'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13196,6 +13196,8 @@ function csRenderTeamLabNewsCards() {
 }
 
 function csTeamLabTop25Rows() {
+  var dbRows = csBuildTeamLabDbBranchTop25Rows();
+  if (dbRows.length) return dbRows;
   var localRows = csBuildTeamLabLocalTop25Rows();
   if (localRows.length) return localRows;
   return [
@@ -13211,6 +13213,29 @@ function csTeamLabTop25Rows() {
       status: 'Needs trusted import + promotion rules'
     }
   ];
+}
+
+function csTeamLabStoreDbBranchRows(rows) {
+  try {
+    var safeRows = Array.isArray(rows) ? rows.slice(0, 2500) : [];
+    localStorage.setItem('team_lab:db_branch_rows', JSON.stringify({
+      schema_version: 'team-lab-db-branch-preview-v1',
+      stored_at: new Date().toISOString(),
+      build_id: (typeof csGetBuildId === 'function') ? csGetBuildId() : null,
+      rows: safeRows
+    }));
+  } catch (e) {}
+}
+
+function csTeamLabLoadDbBranchRows() {
+  try {
+    var raw = localStorage.getItem('team_lab:db_branch_rows');
+    if (!raw) return [];
+    var parsed = JSON.parse(raw);
+    return parsed && Array.isArray(parsed.rows) ? parsed.rows : [];
+  } catch (e) {
+    return [];
+  }
 }
 
 function csTeamLabPrettyKey(key) {
@@ -13299,8 +13324,101 @@ function csBuildTeamLabLocalTop25Rows() {
   });
 }
 
-function csRenderTeamLabTop25Rows() {
-  return csTeamLabTop25Rows().map(function(row) {
+function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
+  var rows = Array.isArray(rowsOverride) ? rowsOverride : csTeamLabLoadDbBranchRows();
+  if (!Array.isArray(rows) || !rows.length) return [];
+  var resetTs = csTeamLabLocalResetTimestamp();
+  var stats = {};
+  function ensure(teamKey) {
+    if (!stats[teamKey]) {
+      stats[teamKey] = {
+        teamKey: teamKey,
+        games: 0,
+        wins: 0,
+        losses: 0,
+        draws: 0,
+        opponents: {},
+        lastSeen: null,
+        drift: 0
+      };
+    }
+    return stats[teamKey];
+  }
+  rows.forEach(function(row) {
+    if (!row || !row.player_team_id) return;
+    var seenAt = row.last_seen_at ? Date.parse(row.last_seen_at) || 0 : 0;
+    if (resetTs && seenAt && seenAt <= resetTs) return;
+    var teamKey = row.player_team_id;
+    var opponentKey = row.opponent_team_id || 'unknown-opponent';
+    var weight = Math.max(1, Number(row.run_count || 1));
+    var result = row.result === 'win' || row.result === 'loss' || row.result === 'draw' ? row.result : null;
+    if (!result && row.tactical_summary && typeof row.tactical_summary === 'object') {
+      result = row.tactical_summary.result === 'win' || row.tactical_summary.result === 'loss' || row.tactical_summary.result === 'draw'
+        ? row.tactical_summary.result
+        : null;
+    }
+    if (!result) return;
+    var s = ensure(teamKey);
+    s.games += weight;
+    if (result === 'win') s.wins += weight;
+    else if (result === 'loss') s.losses += weight;
+    else s.draws += weight;
+    s.opponents[opponentKey] = true;
+    s.drift += Number(row.outcome_drift_count || 0);
+    if (row.last_seen_at && (!s.lastSeen || String(row.last_seen_at) > String(s.lastSeen))) s.lastSeen = row.last_seen_at;
+  });
+
+  return Object.keys(stats).map(function(teamKey) {
+    var s = stats[teamKey];
+    var raw = s.games ? (s.wins + s.draws * 0.5) / s.games : 0;
+    var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
+    var legality = team && team.legality_status === 'verified' ? 'verified' : 'needs_verification';
+    var adjusted = (typeof TeamLab !== 'undefined' && TeamLab.adjustedWinRate)
+      ? TeamLab.adjustedWinRate(s.wins, s.losses, s.draws, 0.5, 30)
+      : (s.wins + s.draws * 0.5 + 15) / (s.games + 30 || 1);
+    var confidence = (typeof TeamLab !== 'undefined' && TeamLab.confidenceForSample)
+      ? TeamLab.confidenceForSample(s.games, legality)
+      : (legality === 'verified' && s.games >= 200 ? 'high' : legality === 'verified' && s.games >= 60 ? 'medium' : 'experimental');
+    var opponentCount = Object.keys(s.opponents).length;
+    var coverageBonus = Math.min(0.055, opponentCount * 0.006);
+    var driftPenalty = Math.min(0.08, Number(s.drift || 0) * 0.004);
+    var score = (typeof TeamLab !== 'undefined' && TeamLab.rankingScore)
+      ? TeamLab.rankingScore({
+          adjusted_win_rate: adjusted,
+          matchup_coverage_bonus: coverageBonus,
+          confidence: confidence,
+          source_gaps: legality === 'verified' ? [] : ['TEAM_LAB_TEAM_ID_MAPPING_UNVERIFIED'],
+          volatility_penalty: driftPenalty
+        })
+      : Math.max(0, Math.min(1, adjusted + coverageBonus - driftPenalty));
+    return {
+      rank: 0,
+      team: csTeamLabPrettyKey(teamKey),
+      archetype: team && team.tags && team.tags.length ? team.tags.slice(0, 2).join(', ') : 'DB branch evidence',
+      score: Number(score || 0).toFixed(3),
+      quality: legality === 'verified' ? 'DB evidence preview' : 'experimental DB preview',
+      winRate: (raw * 100).toFixed(1) + '%',
+      games: String(Math.round(s.games)),
+      confidence: confidence,
+      status: 'Saved branch rows - not official global rank',
+      _score: Number(score || 0),
+      _games: s.games,
+      _lastSeen: s.lastSeen || ''
+    };
+  }).filter(function(row) {
+    return row._games > 0;
+  }).sort(function(a, b) {
+    if (b._score !== a._score) return b._score - a._score;
+    if (b._games !== a._games) return b._games - a._games;
+    return String(b._lastSeen).localeCompare(String(a._lastSeen));
+  }).slice(0, 25).map(function(row, index) {
+    row.rank = String(index + 1);
+    return row;
+  });
+}
+
+function csRenderTeamLabTop25Rows(rows) {
+  return (Array.isArray(rows) ? rows : csTeamLabTop25Rows()).map(function(row) {
     return '<tr>' +
       '<td>' + _escapeHtml(row.rank) + '</td>' +
       '<td><strong>' + _escapeHtml(row.team) + '</strong></td>' +
@@ -13376,6 +13494,8 @@ function csRenderTeamLabAdminControls() {
 }
 
 function csRenderTeamLabNewsroomHub() {
+  var previewRows = csTeamLabTop25Rows();
+  var hasEvidenceRows = previewRows.length && previewRows[0] && previewRows[0].rank !== 'locked';
   return '<section class="team-lab-newsroom overview-section">' +
     '<div class="home-landing-hero">' +
       '<div>' +
@@ -13403,11 +13523,11 @@ function csRenderTeamLabNewsroomHub() {
     '<div class="team-lab-hero">' +
       '<div>' +
         '<span class="overview-kicker">Team Lab home</span>' +
-        '<h3>Top 25 Teams are locked on purpose.</h3>' +
-        '<p>Team Lab will rank simulator teams only when the team, run, replay, legality, sample size, engine version, and ruleset version all line up. Until then this page explains the gates instead of inventing rankings.</p>' +
+        '<h3>' + (hasEvidenceRows ? 'Top 25 has evidence preview rows.' : 'Top 25 Teams are locked on purpose.') + '</h3>' +
+        '<p>Team Lab ranks simulator teams only when the team, run, replay, legality, sample size, engine version, and ruleset version all line up. Saved DB branch rows can appear as an experimental preview, but official promotion remains locked until trusted team-ID mapping and promotion rules are complete.</p>' +
       '</div>' +
       '<div class="team-lab-hero-badges">' +
-        '<span>Top 25 locked</span>' +
+        '<span>' + (hasEvidenceRows ? 'DB evidence preview' : 'Top 25 locked') + '</span>' +
         '<span>Simulator evidence only</span>' +
         '<span>No ladder-truth overclaim</span>' +
       '</div>' +
@@ -13417,11 +13537,11 @@ function csRenderTeamLabNewsroomHub() {
     '<div class="team-lab-news-grid">' + csRenderTeamLabNewsCards() + '</div>' +
     '<div class="team-lab-leaderboard-head">' +
       '<div><h4>Top 25 Simulator Teams</h4><p>Ranking uses composite evidence: adjusted win rate, opponent strength, matchup coverage, confidence, source gaps, stale state, legality, regulation, engine version, and ruleset version.</p></div>' +
-      '<span class="overview-status gap">Evidence locked</span>' +
+      '<span class="overview-status ' + (hasEvidenceRows ? 'warn' : 'gap') + '">' + (hasEvidenceRows ? 'Experimental preview' : 'Evidence locked') + '</span>' +
     '</div>' +
     '<div class="overview-db-table-wrap team-lab-top25-wrap"><table class="overview-db-table team-lab-top25-table">' +
       '<thead><tr><th>Rank</th><th>Team</th><th>Archetype</th><th>Score</th><th>Quality</th><th>Adj. win rate</th><th>Games</th><th>Confidence</th><th>Status</th></tr></thead>' +
-      '<tbody data-team-lab-top25-body>' + csRenderTeamLabTop25Rows() + '</tbody>' +
+      '<tbody data-team-lab-top25-body>' + csRenderTeamLabTop25Rows(previewRows) + '</tbody>' +
     '</table></div>' +
     '<p class="overview-source-note">Future news cards can pull from the source registry and release notes. Until then, they show build/source readiness instead of pretending to be live Pokemon news.</p>' +
   '</section>';
@@ -13434,7 +13554,29 @@ function renderTeamLabHomeHub() {
   csInitHomeTabActions(host);
   csInitPokemonNewsCarousel(host);
   csInitTeamLabAdminControls(host);
+  csRefreshTeamLabDbBranchPreview(host);
   return true;
+}
+
+async function csRefreshTeamLabDbBranchPreview(root) {
+  var adapter = getWindowValue('SupabaseAdapter', null);
+  if (!adapter || !adapter.enabled || typeof adapter.loadBranchCoverageSummary !== 'function') return false;
+  try {
+    var rows = await adapter.loadBranchCoverageSummary({ limit: 2500 });
+    if (!Array.isArray(rows) || !rows.length) return false;
+    csTeamLabStoreDbBranchRows(rows);
+    var tableBody = root && root.querySelector ? root.querySelector('[data-team-lab-top25-body]') : null;
+    if (tableBody) tableBody.innerHTML = csRenderTeamLabTop25Rows();
+    var status = root && root.querySelector ? root.querySelector('.team-lab-leaderboard-head .overview-status') : null;
+    if (status) {
+      status.className = 'overview-status warn';
+      status.textContent = 'Experimental preview';
+    }
+    return true;
+  } catch (e) {
+    UILog.warn('Team Lab DB branch preview load failed', e);
+    return false;
+  }
 }
 
 function csInitTeamLabAdminControls(root) {

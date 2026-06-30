@@ -315,6 +315,11 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function csRenderTeamLabAdminControls');
   inc(ui, 'function csInitTeamLabAdminControls');
   inc(ui, 'function csBuildTeamLabLocalTop25Rows');
+  inc(ui, 'function csBuildTeamLabDbBranchTop25Rows');
+  inc(ui, 'function csRefreshTeamLabDbBranchPreview');
+  inc(ui, 'loadBranchCoverageSummary({ limit: 2500 })');
+  inc(ui, 'Saved branch rows - not official global rank');
+  inc(ui, 'TEAM_LAB_TEAM_ID_MAPPING_UNVERIFIED');
   inc(ui, 'function csTeamLabLocalResetTimestamp');
   inc(ui, 'data-team-lab-top25-body');
   inc(ui, 'Ranking trust gates');
