@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.62-battle-labs-clean-hero",
+  "build_id": "v2.2.63-team-lab-gates",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "8825a86f3aaa8ea38b24a21a999b3f36a77dd730427c0d790dda332fa52eb5a3",
-  "bundle_bytes": 10994698,
+  "bundle_sha256": "bed028c3d7369bf214be374cae63ea96c64587c927bd54519d4762beb17a2565",
+  "bundle_bytes": 10999062,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }

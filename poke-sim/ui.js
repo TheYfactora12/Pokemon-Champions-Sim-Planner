@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.62-battle-labs-clean-hero'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.63-team-lab-gates'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13137,6 +13137,50 @@ function csRenderTeamLabTop25Rows() {
   }).join('');
 }
 
+function csTeamLabRankingGates() {
+  return [
+    {
+      label: 'Gate 1',
+      title: 'Validated teams',
+      detail: 'Teams must carry regulation_id, format, legality_status, and source gaps before they can enter any ranking pool.',
+      status: 'foundation built'
+    },
+    {
+      label: 'Gate 2',
+      title: 'Replay-backed sim evidence',
+      detail: 'Runs need engine_version, ruleset_version, sample size, result reason, and replay/effect proof before aggregation.',
+      status: 'evidence model built'
+    },
+    {
+      label: 'Gate 3',
+      title: 'Trusted import worker',
+      detail: 'QA artifacts still need reviewed team-ID mapping and server-side writes before they can become leaderboard evidence.',
+      status: 'open blocker'
+    },
+    {
+      label: 'Gate 4',
+      title: 'Promotion rules',
+      detail: 'Minimum sample size, current versions, verified legality, confidence, and stale checks decide whether a row can rank.',
+      status: 'open blocker'
+    }
+  ];
+}
+
+function csRenderTeamLabRankingGates() {
+  return '<section class="team-lab-gates" aria-label="Team Lab ranking gates">' +
+    '<div class="team-lab-gates-head">' +
+      '<div><span class="overview-kicker">Ranking trust gates</span><h4>Top teams stay locked until the evidence is safe.</h4><p>This prevents placeholder teams, old-engine results, unverified legality, or tiny samples from being shown as “best.”</p></div>' +
+      '<div class="team-lab-gate-actions">' +
+        '<button type="button" data-home-tab="simulator">Generate sim evidence</button>' +
+        '<button type="button" data-home-tab="replay-coach">Review replay proof</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="team-lab-gate-grid">' + csTeamLabRankingGates().map(function(gate) {
+      return '<article><span>' + _escapeHtml(gate.label) + '</span><h5>' + _escapeHtml(gate.title) + '</h5><p>' + _escapeHtml(gate.detail) + '</p><strong>' + _escapeHtml(gate.status) + '</strong></article>';
+    }).join('') + '</div>' +
+  '</section>';
+}
+
 function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
     '<div class="home-landing-hero">' +
@@ -13165,15 +13209,16 @@ function csRenderTeamLabNewsroomHub() {
     '<div class="team-lab-hero">' +
       '<div>' +
         '<span class="overview-kicker">Team Lab home</span>' +
-        '<h3>Champion Newsroom + Top 25 Teams</h3>' +
-        '<p>Team Lab should read like the sim home page: source updates first, then clean simulator-derived team rankings. Rankings are intentionally locked until trusted evidence import and promotion rules are finished.</p>' +
+        '<h3>Top 25 Teams are locked on purpose.</h3>' +
+        '<p>Team Lab will rank simulator teams only when the team, run, replay, legality, sample size, engine version, and ruleset version all line up. Until then this page explains the gates instead of inventing rankings.</p>' +
       '</div>' +
       '<div class="team-lab-hero-badges">' +
-        '<span>Top 25 Teams</span>' +
+        '<span>Top 25 locked</span>' +
         '<span>Simulator evidence only</span>' +
         '<span>No ladder-truth overclaim</span>' +
       '</div>' +
     '</div>' +
+    csRenderTeamLabRankingGates() +
     '<div class="team-lab-news-grid">' + csRenderTeamLabNewsCards() + '</div>' +
     '<div class="team-lab-leaderboard-head">' +
       '<div><h4>Top 25 Simulator Teams</h4><p>Will rank by regulation, format, engine version, ruleset version, sample size, legality, confidence, and stale status.</p></div>' +
