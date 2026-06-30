@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.74-mega-runtime-guard-tests',
+    build_id: 'v2.2.75-mega-battle-effect-proof',
     release_date: '2026-06-29',
-    service_worker_cache: 'champions-sim-v206-mega-runtime-guard-tests',
+    service_worker_cache: 'champions-sim-v207-mega-battle-effect-proof',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
