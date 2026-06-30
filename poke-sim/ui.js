@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.72-charizard-y-sun-guard'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.73-mega-editor-guard'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -532,6 +532,16 @@ function buildImportedTeamValidation(members, opts) {
   if ((opts.format || 'champions') === 'champions') {
     out.errors = out.errors.concat(buildChampionImportGateErrors(members));
   }
+  (members || []).forEach(function(member, idx) {
+    var megaWarning = csBuildMegaRuntimeWarning(member);
+    if (!megaWarning) return;
+    out.warnings.push(megaWarning.text);
+    out.memberWarnings[String(idx)] = out.memberWarnings[String(idx)] || [];
+    out.memberWarnings[String(idx)].push({
+      severity: megaWarning.severity,
+      text: megaWarning.text
+    });
+  });
   if (typeof validateTeam === 'function') {
     try {
       var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
@@ -568,6 +578,50 @@ function buildImportedTeamValidation(members, opts) {
   out.warnings = Array.from(new Set(out.warnings.filter(Boolean)));
   out.valid = out.errors.length === 0;
   return out;
+}
+
+function csFindMegaRuntimeTarget(member) {
+  if (!member || !member.item || typeof CHAMPIONS_MEGAS === 'undefined' || !CHAMPIONS_MEGAS) return null;
+  var item = String(member.item || '').trim();
+  if (!item) return null;
+  var name = String(member.name || '').trim();
+  for (var megaName in CHAMPIONS_MEGAS) {
+    if (!Object.prototype.hasOwnProperty.call(CHAMPIONS_MEGAS, megaName)) continue;
+    var row = CHAMPIONS_MEGAS[megaName];
+    if (!row || row.megaStone !== item) continue;
+    if (name === row.baseSpecies || name === megaName) {
+      return {
+        megaName: megaName,
+        baseSpecies: row.baseSpecies,
+        ability: row.ability || '',
+        item: item
+      };
+    }
+  }
+  return null;
+}
+
+function csBuildMegaRuntimeWarning(member) {
+  var target = csFindMegaRuntimeTarget(member);
+  if (!target) return null;
+  var name = String((member && member.name) || '').trim();
+  var ability = String((member && member.ability) || '').trim();
+  if (name === target.megaName && ability === target.ability) return null;
+  return {
+    severity: 'warning',
+    code: 'MEGA_RUNTIME_FORM_MISMATCH',
+    text: target.item + ': current simulator uses active ' + target.megaName + ' with ' + target.ability + ' for Mega-form battle effects. This custom set can stay editable, but ' + name + (ability ? ' / ' + ability : '') + ' may not show the expected Mega ability/field effect until normalized.'
+  };
+}
+
+function csNormalizeMegaRuntimeMember(member) {
+  var target = csFindMegaRuntimeTarget(member);
+  if (!target) return Object.assign({}, member || {});
+  return Object.assign({}, member || {}, {
+    name: target.megaName,
+    ability: target.ability,
+    item: target.item
+  });
 }
 
 function getMoveLegalityIssueSeverity(reason) {
@@ -2764,6 +2818,19 @@ function csRenderEditorItemLegalityHtml(member) {
     '</div></div>';
 }
 
+function csRenderEditorMegaRuntimeHtml(member) {
+  var warning = csBuildMegaRuntimeWarning(member);
+  if (!warning) return '';
+  var target = csFindMegaRuntimeTarget(member);
+  var btn = target
+    ? '<button type="button" class="btn-secondary editor-mega-normalize-btn" id="editor-mega-normalize" data-mega-name="' + _escapeHtml(target.megaName) + '" data-mega-ability="' + _escapeHtml(target.ability) + '">Convert to active Mega form for sim</button>'
+    : '';
+  return '<div class="editor-legality-warnings editor-mega-runtime-warning">' +
+    '<div class="editor-legality-warning warning">' + _escapeHtml(warning.text) + '</div>' +
+    btn +
+    '</div>';
+}
+
 function csRenderEditorMoveDatalist(speciesName) {
   var list = document.getElementById('editor-move-list');
   if (!list) return 0;
@@ -2865,11 +2932,26 @@ function refreshEditorMoveLegality(baseMember) {
   var legalMoveCount = csRenderEditorMoveDatalist(current.name);
   csRenderEditorItemDatalist();
   host.innerHTML = csRenderEditorItemLegalityHtml(current) + renderSetEditorMoveLegalityHtml(current) +
+    csRenderEditorMegaRuntimeHtml(current) +
     '<div class="editor-move-source">' +
       (legalMoveCount
         ? _escapeHtml(String(legalMoveCount)) + ' legal move suggestions loaded for ' + _escapeHtml(current.name || 'this Pokemon') + '. You can type a move manually, but Save blocks moves outside this learnset.'
         : 'No legal move suggestions found for this species/form. Check the spelling or source data before saving.') +
     '</div>';
+  var normalizeBtn = document.getElementById('editor-mega-normalize');
+  if (normalizeBtn) {
+    normalizeBtn.addEventListener('click', function() {
+      var normalized = csNormalizeMegaRuntimeMember(currentEditorMemberForLegality(baseMember));
+      var nameEl = document.getElementById('ed-name');
+      var abilityEl = document.getElementById('ed-ability');
+      var itemEl = document.getElementById('ed-item');
+      if (nameEl) nameEl.value = normalized.name || '';
+      if (abilityEl) abilityEl.value = normalized.ability || '';
+      if (itemEl) itemEl.value = normalized.item || '';
+      markEditorDraftDirty();
+      refreshEditorMoveLegality(normalized);
+    });
+  }
 }
 
 function openEditorForm(idx) {
@@ -12481,6 +12563,11 @@ var CS_OVERVIEW_DATA = {
       status: 'validated',
       title: 'Previous Y/Alfredo source sync completed',
       detail: 'Alfredo PR #245 merged the prior Champion parity tree after required checks passed, and TheYfactora12 main was fast-forwarded to the same merge commit. The current local damage-log and approved-team-gate slice should prove out on the Y fork first; Alfredo sync is lower priority until the browser proof gate is clean.'
+    },
+    {
+      status: 'validated',
+      title: 'Mega editor guard keeps custom teams flexible',
+      detail: 'v2.2.73 keeps custom teams editable while warning when a Mega Stone set is not using the active Mega form/ability expected by the simulator. The set editor can normalize a Charizardite Y-style mismatch to the source-backed active Mega row, while uploaded/custom teams remain warnings unless another legality gate finds a hard error.'
     }
   ],
   gaps: [
@@ -12547,7 +12634,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'gap',
       title: 'Team editor is guarded but not a fluid full builder yet',
-      detail: 'The current edit-team surface now blocks illegal Champion SP saves, but it is still a clunky set editor rather than a fully customizable Champion team builder. Later UX work should support fast add/remove/reorder Pokemon, searchable species/forms/items/abilities/moves, SP sliders with live legality totals, import/export, DB save status, and rollback without breaking sim source truth.'
+      detail: 'The current edit-team surface now blocks illegal Champion SP saves and warns on Mega Stone/form/ability runtime mismatches without blocking custom teams, but it is still a clunky set editor rather than a fully customizable Champion team builder. Later UX work should support fast add/remove/reorder Pokemon, searchable species/forms/items/abilities/moves, SP sliders with live legality totals, import/export, DB save status, and rollback without breaking sim source truth.'
     },
   ],
   next: [
