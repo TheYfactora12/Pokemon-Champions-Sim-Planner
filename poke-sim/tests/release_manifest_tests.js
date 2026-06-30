@@ -31,8 +31,8 @@ console.log('\n=== release manifest tests ===\n');
 
 T('1. manifest exposes canonical build and cache identity', () => {
   truthy(manifest.schema_version === 'champions-release-manifest-v1', 'schema mismatch');
-  truthy(manifest.build_id === 'v2.2.55-home-value-proposition', 'build id mismatch');
-  truthy(manifest.service_worker_cache === 'champions-sim-v187-home-value-proposition', 'cache id mismatch');
+  truthy(manifest.build_id === 'v2.2.57-home-battle-lab', 'build id mismatch');
+  truthy(manifest.service_worker_cache === 'champions-sim-v189-home-battle-lab', 'cache id mismatch');
   truthy(manifest.artifact_manifest === 'generated/release_artifact.json', 'artifact manifest path mismatch');
 });
 

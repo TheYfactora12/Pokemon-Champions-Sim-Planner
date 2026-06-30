@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.55-home-value-proposition",
+  "build_id": "v2.2.57-home-battle-lab",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "b4e9096f579a8a9676f88af1db68ead7fe66da7a07ac4cf4cede139cfd6e6d63",
-  "bundle_bytes": 10986860,
+  "bundle_sha256": "e24f12e5385f699f489e1a0bf797342e189c3d0867886bd1c4a0d6f6b5064d87",
+  "bundle_bytes": 10994132,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }

@@ -13008,61 +13008,53 @@ function csRenderPokemonNewsFeed() {
   '</section>';
 }
 
-function csHomeValueCards() {
-  return [
-    {
-      label: 'Start here',
-      title: 'Run matchups before you lock a team',
-      detail: 'Pick your six, choose an opponent archetype, then run Bo1, Bo3, or Bo5 sims to see which lines, leads, and selected four keep winning.',
-      action: 'Open Simulator',
-      tab: 'simulator'
-    },
-    {
-      label: 'Competitive tip',
-      title: 'Test speed control, not just damage',
-      detail: 'Tailwind, Trick Room, Fake Out, flinch, priority, and action denial can decide games before raw damage matters. Use replay logs to prove why a turn changed.',
-      action: 'Review Strategy',
-      tab: 'strategy'
-    },
-    {
-      label: 'Replay learning',
-      title: 'Turn logs explain the why',
-      detail: 'Replay evidence shows move order, damage rows, effects, status denials, recoil, items, and field logic so players can challenge the sim instead of guessing.',
-      action: 'Analyze Replay',
-      tab: 'replay-coach'
-    },
-    {
-      label: 'Team building',
-      title: 'Import, edit, and stress test teams',
-      detail: 'Use the team editor to adjust sets, then compare results against legal benchmark teams. Unknown Champion legality stays flagged until sourced.',
-      action: 'Open Teams',
-      tab: 'teams'
-    }
-  ];
-}
-
-function csRenderHomeValueCards() {
-  return '<section class="home-value-grid" aria-label="How to use this simulator">' + csHomeValueCards().map(function(card) {
-    return '<article class="home-value-card">' +
-      '<span>' + _escapeHtml(card.label) + '</span>' +
-      '<h4>' + _escapeHtml(card.title) + '</h4>' +
-      '<p>' + _escapeHtml(card.detail) + '</p>' +
-      '<button type="button" data-home-tab="' + _escapeHtml(card.tab) + '">' + _escapeHtml(card.action) + '</button>' +
-    '</article>';
-  }).join('') + '</section>';
-}
-
-function csRenderHomeHowToUse() {
+function csRenderHomeStartCycle() {
   var steps = [
-    ['1', 'Choose or import a team', 'Start with a bundled Champion test team or import a custom Showdown-style team, then check legality warnings before trusting results.'],
-    ['2', 'Run real series formats', 'Use Bo1, Bo3, or Bo5 to test lineups. For doubles, selected four can change between games while the registered six stays stable.'],
-    ['3', 'Read replay evidence', 'Open the replay log to inspect move order, damage, effects, field state, status denials, and why a Pokemon fainted.'],
-    ['4', 'Improve the team', 'Change leads, moves, items, or selected four, then rerun the same matchup to see whether the evidence improves.']
+    ['1', 'Choose or import a team', 'Start with a bundled Champion test team or import a custom team, then check legality warnings before trusting results.', 'Open Teams', 'teams'],
+    ['2', 'Run the matchup', 'Pick an opponent, format, and series length. Test leads, selected four, speed control, and swaps before you lock a plan.', 'Start Simulating', 'simulator'],
+    ['3', 'Read the swing turn', 'Open replay evidence for move order, damage rows, status denials, recoil, field state, and why a Pokemon fainted.', 'Analyze Replay', 'replay-coach'],
+    ['4', 'Change one thing and rerun', 'Edit one move, item, lead, or lineup, then repeat the same benchmark so improvement is measurable.', 'Review Strategy', 'strategy']
   ];
-  return '<section class="home-howto overview-section">' +
-    '<div class="overview-section-head"><div><span class="overview-kicker">How to use it</span><h3>From team idea to tested battle plan</h3></div><span class="overview-status next">Player guide</span></div>' +
-    '<div class="home-howto-steps">' + steps.map(function(step) {
-      return '<div class="home-howto-step"><strong>' + _escapeHtml(step[0]) + '</strong><div><h4>' + _escapeHtml(step[1]) + '</h4><p>' + _escapeHtml(step[2]) + '</p></div></div>';
+  return '<section class="home-start-cycle overview-section" aria-label="Start here cycle">' +
+    '<div class="overview-section-head"><div><span class="overview-kicker">Start here</span><h3>The 4-step testing cycle</h3></div><span class="overview-status next">Player guide</span></div>' +
+    '<div class="home-start-steps">' + steps.map(function(step) {
+      return '<article class="home-start-step"><strong>' + _escapeHtml(step[0]) + '</strong><div><h4>' + _escapeHtml(step[1]) + '</h4><p>' + _escapeHtml(step[2]) + '</p><button type="button" data-home-tab="' + _escapeHtml(step[4]) + '">' + _escapeHtml(step[3]) + '</button></div></article>';
+    }).join('') + '</div>' +
+  '</section>';
+}
+
+function csRenderHomeSimPreview() {
+  return '<section class="home-sim-preview" aria-label="Example simulator output">' +
+    '<div class="home-sim-preview-copy">' +
+      '<span class="overview-kicker">Example output</span>' +
+      '<h3>See the battle like a coach would.</h3>' +
+      '<p>The goal is not just “Team A won.” The useful answer is what changed the game, how confident the evidence is, and whether the run is still current for the active ruleset.</p>' +
+    '</div>' +
+    '<div class="home-sim-output-card">' +
+      '<div class="home-sim-output-head"><span>BO3 Matchup</span><strong>Rain Balance vs Speed Control</strong></div>' +
+      '<div class="home-sim-score"><strong>2-1</strong><span>sim-derived result</span></div>' +
+      '<dl>' +
+        '<div><dt>Swing turn</dt><dd>Turn 4: Tailwind expired before the knockout plan resolved.</dd></div>' +
+        '<div><dt>Coaching read</dt><dd>Preserve speed control or switch to a safer selected-four line.</dd></div>' +
+        '<div><dt>Trust state</dt><dd>Reg M-B · current engine · replay evidence required</dd></div>' +
+      '</dl>' +
+    '</div>' +
+  '</section>';
+}
+
+function csRenderHomeQuestionCards() {
+  var cards = [
+    ['Which lead should I bring?', 'Test opening pairs into common pressure and compare who controls turn one.'],
+    ['Which four should I select?', 'For doubles BO3/BO5, keep the registered six stable while comparing selected-four plans.'],
+    ['Why did I lose?', 'Use replay evidence to find damage, status, field, recoil, item, or speed-control causes.'],
+    ['Is this team safe to trust?', 'Check legality, source gaps, stale results, and whether Champion-specific data is verified.'],
+    ['What matchup is bad?', 'Compare results by archetype and look for repeated losing patterns before changing sets.'],
+    ['What should I change first?', 'Change one move, item, lead, or lineup at a time so the next result teaches something.']
+  ];
+  return '<section class="home-question-entry overview-section">' +
+    '<div class="overview-section-head"><div><span class="overview-kicker">Pick the question</span><h3>Start with the decision you need to improve.</h3></div><span class="overview-status next">Competitive guide</span></div>' +
+    '<div class="home-question-grid">' + cards.map(function(card) {
+      return '<article><strong>' + _escapeHtml(card[0]) + '</strong><span>' + _escapeHtml(card[1]) + '</span></article>';
     }).join('') + '</div>' +
   '</section>';
 }
@@ -13072,6 +13064,35 @@ function csRenderHomeTrustStrip() {
     '<div><strong>Evidence-bound rankings</strong><span>No team becomes “Top 25” without regulation, ruleset version, engine version, sample size, legality, and stale checks.</span></div>' +
     '<div><strong>Champion-source guardrails</strong><span>Unknown Pokemon Champion data stays needs_verification instead of being silently treated as legal.</span></div>' +
     '<div><strong>Replay-verifiable coaching</strong><span>Advice should point back to turn logs, damage/effect rows, source gaps, and matchup evidence.</span></div>' +
+  '</section>';
+}
+
+function csRenderHomePlayerOutcomes() {
+  var outcomes = [
+    ['Pick better leads', 'Compare opening pairs, selected-four choices, and series swaps before you commit to a tournament plan.'],
+    ['Find the swing turn', 'Replay review highlights speed control, protection, status denial, field effects, and the damage source that changed the game.'],
+    ['Improve one change at a time', 'Edit a move, item, lead, or lineup, then rerun the same benchmark so the result is attributable instead of random noise.'],
+    ['Know what is not proven yet', 'Champion legality gaps stay visible, stale runs stay marked, and leaderboard rows remain locked until evidence is strong enough.']
+  ];
+  return '<section class="home-player-outcomes overview-section">' +
+    '<div class="overview-section-head"><div><span class="overview-kicker">Why players should use it</span><h3>Less guessing. More battle evidence.</h3></div><span class="overview-status next">Player value</span></div>' +
+    '<div class="home-player-outcome-grid">' + outcomes.map(function(item) {
+      return '<article><strong>' + _escapeHtml(item[0]) + '</strong><span>' + _escapeHtml(item[1]) + '</span></article>';
+    }).join('') + '</div>' +
+  '</section>';
+}
+
+function csRenderHomeQuickPlan() {
+  var rows = [
+    ['1 minute', 'Open Simulator', 'Run one Bo1 or Bo3 matchup and see whether the lead plan survives common pressure.'],
+    ['3 minutes', 'Analyze Replay', 'Check the turn log for exact damage, status, field, item, recoil, and faint triggers.'],
+    ['5 minutes', 'Edit Team', 'Change one set or selected-four plan, rerun, and compare whether the evidence actually improved.']
+  ];
+  return '<section class="home-quick-plan" aria-label="Fast ways to use the simulator">' +
+    '<div><span class="overview-kicker">Use it today</span><h3>A 60-second path from question to answer</h3><p>Start with one matchup question, not a full meta claim. The sim is strongest when each run answers a specific decision: lead, switch, speed control, target, move, or selected-four choice.</p></div>' +
+    '<div class="home-quick-plan-rows">' + rows.map(function(row) {
+      return '<article><span>' + _escapeHtml(row[0]) + '</span><strong>' + _escapeHtml(row[1]) + '</strong><p>' + _escapeHtml(row[2]) + '</p></article>';
+    }).join('') + '</div>' +
   '</section>';
 }
 
@@ -13121,8 +13142,8 @@ function csRenderTeamLabNewsroomHub() {
     '<div class="home-landing-hero">' +
       '<div>' +
         '<span class="overview-kicker">Pokemon Champion competitive lab</span>' +
-        '<h2>Build better teams. Test smarter lines. Learn why battles swing.</h2>' +
-        '<p>This sim turns Champion battles into evidence: matchup results, selected-four logic, replay logs, damage/effect proof, and coaching notes that separate verified facts from assumptions.</p>' +
+        '<h2>The Pokemon Champion battle lab for testing teams before you play.</h2>' +
+        '<p>Build a team, simulate the matchup, find the swing turn, and rerun one change at a time. Every useful answer should point back to regulation, engine, ruleset, legality, sample size, and replay evidence.</p>' +
         '<div class="home-landing-actions">' +
           '<button type="button" data-home-tab="simulator">Start Simulating</button>' +
           '<button type="button" data-home-tab="replay-coach">Analyze a Replay</button>' +
@@ -13130,13 +13151,17 @@ function csRenderTeamLabNewsroomHub() {
         '</div>' +
       '</div>' +
       '<div class="home-landing-proof">' +
+        '<span>Tagline</span><strong>Test teams. Learn the swing turn. Win smarter.</strong>' +
         '<span>Current focus</span><strong>Regulation-aware evidence</strong>' +
         '<span>Build</span><strong>' + _escapeHtml((typeof csGetBuildId === 'function') ? csGetBuildId() : 'current') + '</strong>' +
         '<span>Leaderboard</span><strong>Top 25 locked until trusted promotion</strong>' +
       '</div>' +
     '</div>' +
-    csRenderHomeValueCards() +
-    csRenderHomeHowToUse() +
+    csRenderHomeSimPreview() +
+    csRenderHomeStartCycle() +
+    csRenderHomeQuestionCards() +
+    csRenderHomePlayerOutcomes() +
+    csRenderHomeQuickPlan() +
     csRenderHomeTrustStrip() +
     csRenderPokemonNewsFeed() +
     '<div class="team-lab-hero">' +

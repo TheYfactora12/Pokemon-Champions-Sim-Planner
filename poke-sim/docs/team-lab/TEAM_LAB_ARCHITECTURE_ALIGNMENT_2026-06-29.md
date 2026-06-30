@@ -186,7 +186,7 @@ Future improvement: replace the curated list with a reviewed source-sync/news in
 
 ## 2026-06-29 implementation update: Home value proposition
 
-`v2.2.55-home-value-proposition` turns Home into a clearer player landing page:
+`v2.2.57-home-battle-lab` turns Home into a clearer player landing page:
 
 - Adds a hero that explains the simulator value: build better teams, test smarter lines, and learn why battles swing.
 - Adds quick actions into Simulator, Replay Review, and Roadmap.
@@ -195,3 +195,25 @@ Future improvement: replace the curated list with a reviewed source-sync/news in
 - Adds trust gates explaining why rankings stay evidence-bound and unknown Champion data stays `needs_verification`.
 
 This is user-facing promotion, but it remains evidence-bound and avoids claiming real ladder truth before Team Lab trusted imports and promotion rules are complete.
+
+## 2026-06-29 implementation update: Home start cycle
+
+`v2.2.57-home-battle-lab` consolidates the previous Start Here and How To Use sections into one 4-step player cycle:
+
+- Choose or import a team.
+- Run the matchup.
+- Read the swing turn.
+- Change one thing and rerun.
+
+This keeps Home focused on player value instead of duplicated feature cards, and it supports the product direction that the simulator should answer specific competitive questions with replay-verifiable evidence.
+
+## 2026-06-29 implementation update: Home battle lab framing
+
+`v2.2.57-home-battle-lab` moves Home closer to a top-tier simulator landing page:
+
+- Leads with a direct product promise: a Pokemon Champion battle lab for testing teams before play.
+- Adds a sample sim output card so users see the kind of evidence the tool should produce: result, swing turn, coaching read, and trust state.
+- Adds question-based entry points for common player needs: lead choice, selected-four choice, loss review, legality trust, bad matchups, and first change to test.
+- Keeps official news useful but below the product value, so Home explains the simulator before acting like a news page.
+
+This aligns Home with the evidence-bound product strategy: users should understand what decision the sim helps improve, what proof supports the answer, and what remains unverified.
