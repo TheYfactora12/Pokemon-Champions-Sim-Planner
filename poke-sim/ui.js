@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.52-team-lab-newsroom-hub'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.53-home-roadmap-split'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -227,7 +227,7 @@ function initTabA11y() {
   if (tablist) tablist.setAttribute('aria-label', 'Main sections');
   var mobileTabSelect = document.getElementById('mobile-tab-select');
   if (mobileTabSelect) {
-    mobileTabSelect.value = (_activeA11yTabId || 'simulator');
+    mobileTabSelect.value = (_activeA11yTabId || 'home');
     mobileTabSelect.addEventListener('change', function() {
       _activateTab(this.value, { focus: true });
     });
@@ -13001,6 +13001,13 @@ function csRenderTeamLabNewsroomHub() {
   '</section>';
 }
 
+function renderTeamLabHomeHub() {
+  var host = document.getElementById('team-lab-home-hub');
+  if (!host) return false;
+  host.innerHTML = csRenderTeamLabNewsroomHub();
+  return true;
+}
+
 function csRenderOverviewClosedProofArchive(data) {
   var rows = data && Array.isArray(data.validation) ? data.validation : [];
   return '<details class="overview-section overview-closed-proof-archive">' +
@@ -13136,7 +13143,6 @@ function renderOverviewTab() {
   }).join('');
   host.innerHTML =
     '<div class="overview-metrics">' + metrics + '</div>' +
-    csRenderTeamLabNewsroomHub() +
     '<div class="overview-milestone-board">' +
       '<div class="overview-section overview-board-intro">' +
         '<div class="overview-section-head"><h3>Milestone Board</h3><span class="overview-kicker">Done / Open / Next</span></div>' +
@@ -13194,10 +13200,12 @@ function csUpdateShowdownDbStatus() {
 if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.overview = {
     data: CS_OVERVIEW_DATA,
-    renderOverviewTab: renderOverviewTab
+    renderOverviewTab: renderOverviewTab,
+    renderTeamLabHomeHub: renderTeamLabHomeHub
   };
 }
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderOverviewTab', renderOverviewTab);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderTeamLabHomeHub', renderTeamLabHomeHub);
 
 function csGetGeneratedSourceSyncStatus() {
   if (typeof window === 'undefined' || !window.ChampionsSim) return null;
@@ -19023,6 +19031,7 @@ if (typeof window !== 'undefined') {
     if (didHardenClientState && csReloadAfterBuildCacheReset(csGetBuildId())) return;
     _csInitEvidenceToggle();
     csInitReplayCoachUi();
+    renderTeamLabHomeHub();
     renderOverviewTab();
 
     // ── M3 — DB init: source-of-truth merge ────────────────────────────────

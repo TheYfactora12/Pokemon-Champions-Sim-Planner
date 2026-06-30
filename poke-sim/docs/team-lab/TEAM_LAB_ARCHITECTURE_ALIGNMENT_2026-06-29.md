@@ -162,3 +162,13 @@ Do not close the Team Lab milestone while the UI is empty. The current backend w
 - The UI states that future news cards can pull from the source registry and release notes, but today they show build/source readiness instead of pretending to be live Pokemon news.
 
 This is intentionally a first read-UI shell. It should evolve into the Team Lab page after #187, #188, and #189 protect data quality.
+
+## 2026-06-29 implementation update: Home/Roadmap split
+
+`v2.2.53-home-roadmap-split` corrects the product IA:
+
+- Home is the default landing page for Team Lab, leaderboard/news, and future player-facing updates.
+- Roadmap is the renamed former Overview tab and should stay focused on milestones, open tasks, closed proof, and issue alignment.
+- Simulator is again the battle workspace only.
+
+This keeps player-facing discovery separate from contributor/project-management tracking.

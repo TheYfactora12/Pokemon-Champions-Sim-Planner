@@ -1,4 +1,4 @@
-// Project Overview tab should track shipped work, validation, gaps, and milestones.
+// Project Roadmap tab should track shipped work, validation, gaps, and milestones.
 
 const fs = require('fs');
 const path = require('path');
@@ -18,13 +18,19 @@ function inc(hay, needle, msg='') {
   if (String(hay).indexOf(needle) < 0) throw new Error((msg || 'missing') + ': ' + needle);
 }
 
-console.log('\n=== project overview tab tests ===\n');
+console.log('\n=== project roadmap tab tests ===\n');
 
-T('1. Overview is a top-level tab and mobile picker option', () => {
-  inc(html, 'data-tab="overview">Overview');
-  inc(html, '<option value="overview">Overview</option>');
+T('1. Roadmap is a top-level tab and mobile picker option', () => {
+  inc(html, 'data-tab="home">Home');
+  inc(html, '<option value="home">Home</option>');
+  inc(html, '<section class="tab-panel active" id="tab-home">');
+  inc(html, 'id="team-lab-home-hub"');
+  inc(html, 'data-tab="overview">Roadmap');
+  inc(html, '<option value="overview">Roadmap</option>');
   inc(html, '<section class="tab-panel" id="tab-overview">');
   inc(html, 'id="overview-content"');
+  inc(html, '<h2 class="section-title">Roadmap</h2>');
+  inc(html, '<section class="tab-panel" id="tab-simulator">');
 });
 
 T('2. Overview tracks accomplished work and validation proof', () => {
@@ -256,6 +262,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Mechanics truth audit beta gate (#149)');
   inc(ui, 'Team Lab / Leaderboard Plan');
   inc(ui, 'function csRenderTeamLabNewsroomHub');
+  inc(ui, 'function renderTeamLabHomeHub');
   inc(ui, 'Champion Newsroom + Top 25 Teams');
   inc(ui, 'Top 25 Simulator Teams');
   inc(ui, 'No fake rankings');
@@ -270,9 +277,10 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Global vs personal analytics boundary');
   inc(ui, 'Canonical Team Lab trust roadmap');
   inc(ui, 'ChampionsSim.overview');
+  inc(ui, 'renderTeamLabHomeHub();');
   inc(ui, 'renderOverviewTab();');
   inc(ui, '.tab-btn[data-tab="overview"]');
 });
 
-console.log(`\nproject overview tab: ${pass} pass, ${fail} fail\n`);
+console.log(`\nproject roadmap tab: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);
