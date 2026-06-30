@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.71-team-lab-mapping-promotion",
+  "build_id": "v2.2.72-charizard-y-sun-guard",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "e11016c5698bc55159f3784bb621e7a8e14631c3ff078819ac5f2ac45a4461c3",
-  "bundle_bytes": 11033317,
+  "bundle_sha256": "48090a80c8ddf1c8f20751b331b0596d648efe9b8e1db4607dec192a87abbd22",
+  "bundle_bytes": 11033290,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }
