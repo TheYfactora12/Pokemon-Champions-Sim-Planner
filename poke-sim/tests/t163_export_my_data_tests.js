@@ -314,11 +314,12 @@ async function main() {
     truthy(payload.summary.retained_replay_cards >= 1, 'replay summary missing');
     eq(payload.qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'QA artifact coverage schema missing');
     eq(payload.qa_coverage_summary.totals.replay_cards_scanned, 1, 'QA artifact coverage replay count mismatch');
-    eq(payload.qa_coverage_summary.totals.targeted_sweep_runs, 9, 'QA artifact targeted sweep count mismatch');
+    eq(payload.qa_coverage_summary.totals.targeted_sweep_runs, 10, 'QA artifact targeted sweep count mismatch');
     truthy(payload.qa_coverage_summary.totals.turns > 1, 'QA artifact merged coverage should include targeted sweep turns');
     truthy(payload.targeted_qa_sweep && payload.targeted_qa_sweep.status === 'complete', 'targeted QA sweep should be complete');
     truthy(payload.qa_coverage_summary.mechanics_seen.screen_reduction > 0, 'targeted sweep should add screen reduction proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.hp_cost > 0, 'targeted sweep should add HP-cost proof');
+    truthy(payload.qa_coverage_summary.mechanics_seen.recovery > 0, 'targeted sweep should add direct recovery proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.delayed_recovery > 0, 'targeted sweep should add delayed recovery proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.residual_drain > 0, 'targeted sweep should add residual drain proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.nonstandard_stat_source_trace > 0, 'targeted sweep should add stat-source proof');

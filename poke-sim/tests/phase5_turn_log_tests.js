@@ -897,6 +897,7 @@ T('T5c-12 QA coverage counts status denial and move-lock families separately', (
   eq(summary.mechanics_seen.no_valid_target_failures, 1, 'no-valid-target count mismatch');
   eq(summary.mechanics_seen.target_resolution_failures, 1, 'target-resolution count mismatch');
   eq(summary.mechanics_seen.protect_consecutive_failures, 1, 'Protect consecutive failure count mismatch');
+  eq(summary.mechanics_seen.protect_consecutive_unexpected_failures, 1, 'Protect unexpected failure count mismatch');
 });
 
 T('T5c-13 QA coverage counts status resolution pass-through families separately', () => {

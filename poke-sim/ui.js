@@ -4666,6 +4666,8 @@ function csQaBlankMechanicsSeen() {
     no_valid_target_failures: 0,
     accuracy_misses: 0,
     protect_consecutive_failures: 0,
+    protect_consecutive_expected_failures: 0,
+    protect_consecutive_unexpected_failures: 0,
     status_resolution_events: 0,
     frozen_thaws: 0,
     sleep_wakes: 0,
@@ -6160,6 +6162,8 @@ function csBuildQaCoverageSummary(turnLog, opts) {
           mechanics.accuracy_misses += 1;
         } else if (failureReasonId === 'protect_consecutive_fail' || failureReasonId === 'protect-consecutive-fail') {
           mechanics.protect_consecutive_failures += 1;
+          if (/consecutive-use check/i.test(String(effect.note || ''))) mechanics.protect_consecutive_expected_failures += 1;
+          else mechanics.protect_consecutive_unexpected_failures += 1;
         }
       }
       if (effect.status_resolution || effect.status_exception) {
@@ -6500,6 +6504,30 @@ function csBuildTargetedQaSweepEvidence(opts) {
       ]),
       opponentTeam: csQaProofTeam('Targeted QA Shed Tail Opponent', [
         csQaProofMon('Pelipper', ['Tackle'])
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'direct_recovery_recover',
+      label: 'Direct recovery proof: Recover',
+      requireMechanic: 'recovery',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_direct_recovery_player',
+      opponentTeamId: 'targeted_qa_direct_recovery_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Direct Recovery Player', [
+        csQaProofMon('Latias', ['Recover'], {
+          ability: 'Levitate',
+          nature: 'Calm',
+          hp: 60,
+          evs: { hp: 32, atk: 0, def: 0, spa: 0, spd: 32, spe: 32 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Direct Recovery Opponent', [
+        csQaProofMon('Snorlax', ['Tackle'], {
+          nature: 'Brave',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 0, spe: 0 }
+        })
       ])
     }),
     csRunTargetedQaProofBattle({
