@@ -186,7 +186,7 @@ Future improvement: replace the curated list with a reviewed source-sync/news in
 
 ## 2026-06-29 implementation update: Home value proposition
 
-`v2.2.61-battle-labs-title` turns Home into a clearer player landing page:
+`v2.2.62-battle-labs-clean-hero` turns Home into a clearer player landing page:
 
 - Adds a hero that explains the simulator value: build better teams, test smarter lines, and learn why battles swing.
 - Adds quick actions into Simulator, Replay Review, and Roadmap.
@@ -198,7 +198,7 @@ This is user-facing promotion, but it remains evidence-bound and avoids claiming
 
 ## 2026-06-29 implementation update: Home start cycle
 
-`v2.2.61-battle-labs-title` consolidates the previous Start Here and How To Use sections into one 4-step player cycle:
+`v2.2.62-battle-labs-clean-hero` consolidates the previous Start Here and How To Use sections into one 4-step player cycle:
 
 - Choose or import a team.
 - Run the matchup.
@@ -209,7 +209,7 @@ This keeps Home focused on player value instead of duplicated feature cards, and
 
 ## 2026-06-29 implementation update: Home battle lab framing
 
-`v2.2.61-battle-labs-title` moves Home closer to a top-tier simulator landing page:
+`v2.2.62-battle-labs-clean-hero` moves Home closer to a top-tier simulator landing page:
 
 - Leads with a direct product promise: a Pokemon Champion battle lab for testing teams before play.
 - Adds a sample sim output card so users see the kind of evidence the tool should produce: result, swing turn, coaching read, and trust state.
@@ -220,16 +220,20 @@ This aligns Home with the evidence-bound product strategy: users should understa
 
 ## 2026-06-29 implementation update: Home graffiti-print title
 
-`v2.2.61-battle-labs-title` adds a graffiti-print hero title treatment to make Home feel more like a memorable competitive gaming landing page while keeping the underlying product message evidence-bound and readable.
+`v2.2.62-battle-labs-clean-hero` adds a graffiti-print hero title treatment to make Home feel more like a memorable competitive gaming landing page while keeping the underlying product message evidence-bound and readable.
 
 ## 2026-06-29 implementation update: Battle Labs graffiti title
 
-`v2.2.61-battle-labs-title` changes the Home hero title to `Battle Labs` and strengthens the visual treatment from a simple skewed headline into a graffiti-print tag with heavy outline, layered spray colors, irregular backing, and underline paint stroke.
+`v2.2.62-battle-labs-clean-hero` changes the Home hero title to `Battle Labs` and strengthens the visual treatment from a simple skewed headline into a graffiti-print tag with heavy outline, layered spray colors, irregular backing, and underline paint stroke.
 
 ## 2026-06-29 implementation update: 90s Battle Labs title
 
-`v2.2.61-battle-labs-title` pushes the Home hero toward a louder 90s arcade/skate/anime-magazine print style: neon offset shadows, halftone backing, heavy sticker outline, and a `BATTLE MODE` tag. The visual goal is more memorable first impression without changing the evidence-bound simulator claims.
+`v2.2.62-battle-labs-clean-hero` pushes the Home hero toward a louder 90s arcade/skate/anime-magazine print style: neon offset shadows, halftone backing, heavy sticker outline, and a `isolation:isolate` tag. The visual goal is more memorable first impression without changing the evidence-bound simulator claims.
 
 ## 2026-06-29 implementation update: Battle Labs title cleanup
 
-`v2.2.61-battle-labs-title` simplifies the Home hero from `Welcome to Battle Labs` to `Battle Labs` so the brand mark is shorter, punchier, and easier to read in the 90s graffiti-print treatment.
+`v2.2.62-battle-labs-clean-hero` simplifies the Home hero from `Welcome to Battle Labs` to `Battle Labs` so the brand mark is shorter, punchier, and easier to read in the 90s graffiti-print treatment.
+
+## 2026-06-29 implementation update: clean Battle Labs hero
+
+`v2.2.62-battle-labs-clean-hero` tightens the Home hero after visual review: the title stays 90s-inspired, but the decorative plate is contained so it cannot cover the wording, the extra badge text is removed, and the hero message is reduced to one clear player promise plus two primary actions.

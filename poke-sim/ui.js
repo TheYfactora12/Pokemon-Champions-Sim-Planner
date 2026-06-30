@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.61-battle-labs-title'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.62-battle-labs-clean-hero'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13141,20 +13141,18 @@ function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
     '<div class="home-landing-hero">' +
       '<div>' +
-        '<span class="overview-kicker">Pokemon Champion competitive lab</span>' +
+        '<span class="overview-kicker">Pokemon Champion simulator</span>' +
         '<h2>Battle Labs</h2>' +
-        '<p>Build a team, simulate the matchup, find the swing turn, and rerun one change at a time. Every useful answer should point back to regulation, engine, ruleset, legality, sample size, and replay evidence.</p>' +
+        '<p>Test a team, find the swing turn, and improve one decision at a time.</p>' +
         '<div class="home-landing-actions">' +
           '<button type="button" data-home-tab="simulator">Start Simulating</button>' +
           '<button type="button" data-home-tab="replay-coach">Analyze a Replay</button>' +
-          '<button type="button" data-home-tab="overview">View Roadmap</button>' +
         '</div>' +
       '</div>' +
       '<div class="home-landing-proof">' +
-        '<span>Tagline</span><strong>Test teams. Learn the swing turn. Win smarter.</strong>' +
-        '<span>Current focus</span><strong>Regulation-aware evidence</strong>' +
-        '<span>Build</span><strong>' + _escapeHtml((typeof csGetBuildId === 'function') ? csGetBuildId() : 'current') + '</strong>' +
-        '<span>Leaderboard</span><strong>Top 25 locked until trusted promotion</strong>' +
+        '<span>1</span><strong>Run the matchup</strong>' +
+        '<span>2</span><strong>Read the replay</strong>' +
+        '<span>3</span><strong>Change one thing</strong>' +
       '</div>' +
     '</div>' +
     csRenderHomeSimPreview() +

@@ -234,8 +234,8 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, 'text-transform:uppercase;color:#fff06a;-webkit-text-stroke:3px');
   inc(css, '.home-landing-hero h2:before');
   inc(css, '.home-landing-hero h2:after');
-  inc(css, 'BATTLE MODE');
-  inc(css, 'radial-gradient(circle at 12px 12px');
+  inc(css, 'isolation:isolate');
+  inc(css, 'radial-gradient(circle at 10px 10px');
   inc(css, '.home-sim-preview');
   inc(css, '.home-sim-output-card');
   inc(css, '.home-start-cycle');
@@ -279,7 +279,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function renderTeamLabHomeHub');
   inc(ui, 'Battle Labs');
   inc(ui, 'Start Simulating');
-  inc(ui, 'Test teams. Learn the swing turn. Win smarter.');
+  inc(ui, 'Test a team, find the swing turn, and improve one decision at a time.');
   inc(ui, 'See the battle like a coach would.');
   inc(ui, 'Rain Balance vs Speed Control');
   inc(ui, 'Pick the question');

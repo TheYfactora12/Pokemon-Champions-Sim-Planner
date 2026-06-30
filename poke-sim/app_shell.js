@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.61-battle-labs-title';
+      return txt || 'v2.2.62-battle-labs-clean-hero';
     } catch (e) {
-      return 'v2.2.61-battle-labs-title';
+      return 'v2.2.62-battle-labs-clean-hero';
     }
   }
 

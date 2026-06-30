@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.61-battle-labs-title',
+    build_id: 'v2.2.62-battle-labs-clean-hero',
     release_date: '2026-06-29',
-    service_worker_cache: 'champions-sim-v193-battle-labs-title',
+    service_worker_cache: 'champions-sim-v194-battle-labs-clean-hero',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

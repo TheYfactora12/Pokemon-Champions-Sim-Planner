@@ -445,10 +445,10 @@ table{border-collapse:collapse;width:100%}
 .overview-team-lab-plan>.overview-list{padding:0 var(--sp4) var(--sp4)}
 .team-lab-newsroom{border-color:rgba(91,164,245,.42);background:radial-gradient(circle at 12% 0%,rgba(91,164,245,.18),transparent 34%),linear-gradient(135deg,rgba(18,25,38,.98),rgba(12,18,29,.96))}
 .home-landing-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr);gap:var(--sp5);align-items:stretch;margin-bottom:var(--sp4);padding:var(--sp5);border:1px solid rgba(91,164,245,.34);border-radius:var(--r-lg);background:radial-gradient(circle at 10% 10%,rgba(78,201,148,.2),transparent 30%),linear-gradient(135deg,rgba(91,164,245,.12),rgba(255,255,255,.035))}
-.home-landing-hero h2{position:relative;display:inline-block;font-size:clamp(44px,7.8vw,112px);font-weight:1000;letter-spacing:-.09em;line-height:.78;margin:12px 0 2px;max-width:980px;text-transform:uppercase;color:#fff06a;-webkit-text-stroke:3px #070b18;font-style:italic;transform:rotate(-3deg) skew(-9deg);text-shadow:4px 4px 0 #070b18,8px 8px 0 #ff2f7d,13px 13px 0 #21d6ff,18px 18px 0 #35e57b,-5px -4px 0 #ff7a18,0 26px 48px rgba(0,0,0,.55);filter:saturate(1.22) contrast(1.05) drop-shadow(0 0 18px rgba(255,47,125,.24))}
-.home-landing-hero h2:before{content:"";position:absolute;inset:-18px -22px -20px -18px;z-index:-2;border:5px solid #070b18;border-radius:26px 10px 32px 14px;background:radial-gradient(circle at 12px 12px,rgba(7,11,24,.32) 0 3px,transparent 4px) 0 0/18px 18px,linear-gradient(135deg,#ff2f7d 0 18%,#fff06a 18% 36%,#21d6ff 36% 58%,#35e57b 58% 78%,#8b5cf6 78% 100%);clip-path:polygon(0 18%,11% 5%,78% 0,100% 12%,96% 76%,84% 100%,10% 91%,3% 65%);box-shadow:10px 12px 0 #070b18,16px 18px 0 rgba(255,122,24,.82)}
-.home-landing-hero h2:after{content:"BATTLE MODE";position:absolute;right:3%;bottom:-28px;padding:5px 14px 4px;border:3px solid #070b18;border-radius:999px;background:#21d6ff;color:#070b18;font-family:var(--font-mono);font-size:clamp(10px,1.1vw,15px);font-weight:1000;letter-spacing:.08em;line-height:1;box-shadow:5px 5px 0 #ff2f7d,9px 9px 0 #070b18;transform:rotate(4deg) skew(7deg)}
-.home-landing-hero p{color:var(--text-m);font-size:clamp(14px,1.4vw,18px);line-height:1.55;margin-top:var(--sp3);max-width:820px}
+.home-landing-hero h2{position:relative;display:inline-block;isolation:isolate;font-size:clamp(46px,8vw,112px);font-weight:1000;letter-spacing:-.085em;line-height:.82;margin:14px 0 18px;padding:4px 10px 8px 0;max-width:760px;text-transform:uppercase;color:#fff06a;-webkit-text-stroke:3px #070b18;font-style:italic;transform:rotate(-2deg) skew(-7deg);text-shadow:4px 4px 0 #070b18,8px 8px 0 #ff2f7d,12px 12px 0 #21d6ff,0 22px 38px rgba(0,0,0,.48);filter:saturate(1.16) contrast(1.04)}
+.home-landing-hero h2:before{content:"";position:absolute;left:-12px;right:-12px;top:8px;bottom:0;z-index:-1;border:4px solid #070b18;border-radius:20px 10px 24px 12px;background:radial-gradient(circle at 10px 10px,rgba(7,11,24,.32) 0 2px,transparent 3px) 0 0/16px 16px,linear-gradient(135deg,#ff2f7d 0 24%,#fff06a 24% 45%,#21d6ff 45% 70%,#35e57b 70% 100%);clip-path:polygon(0 18%,91% 2%,100% 70%,86% 100%,8% 88%);box-shadow:8px 10px 0 #070b18}
+.home-landing-hero h2:after{content:"";position:absolute;left:3%;right:14%;bottom:-10px;height:8px;border-radius:999px;background:#ff7a18;box-shadow:0 0 0 3px #070b18,6px 6px 0 #21d6ff;transform:rotate(-1deg)}
+.home-landing-hero p{position:relative;z-index:2;color:var(--text-m);font-size:clamp(15px,1.5vw,20px);line-height:1.5;margin-top:var(--sp2);max-width:640px}
 .home-landing-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:var(--sp4)}
 .home-landing-actions button,.home-start-step button{min-height:42px;border:1px solid rgba(91,164,245,.42);background:rgba(91,164,245,.12);color:var(--text);border-radius:var(--r-full);padding:8px 14px;font-size:12px;font-weight:950;cursor:pointer}
 .home-landing-actions button:first-child{background:linear-gradient(135deg,var(--blue),var(--primary));border-color:transparent;color:white}
@@ -2525,8 +2525,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.61-battle-labs-title -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.61-battle-labs-title</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.62-battle-labs-clean-hero -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.62-battle-labs-clean-hero</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -3331,9 +3331,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.61-battle-labs-title',
+    build_id: 'v2.2.62-battle-labs-clean-hero',
     release_date: '2026-06-29',
-    service_worker_cache: 'champions-sim-v193-battle-labs-title',
+    service_worker_cache: 'champions-sim-v194-battle-labs-clean-hero',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3407,9 +3407,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.61-battle-labs-title';
+      return txt || 'v2.2.62-battle-labs-clean-hero';
     } catch (e) {
-      return 'v2.2.61-battle-labs-title';
+      return 'v2.2.62-battle-labs-clean-hero';
     }
   }
 
@@ -27297,7 +27297,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.61-battle-labs-title'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.62-battle-labs-clean-hero'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -40398,20 +40398,18 @@ function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
     '<div class="home-landing-hero">' +
       '<div>' +
-        '<span class="overview-kicker">Pokemon Champion competitive lab</span>' +
+        '<span class="overview-kicker">Pokemon Champion simulator</span>' +
         '<h2>Battle Labs</h2>' +
-        '<p>Build a team, simulate the matchup, find the swing turn, and rerun one change at a time. Every useful answer should point back to regulation, engine, ruleset, legality, sample size, and replay evidence.</p>' +
+        '<p>Test a team, find the swing turn, and improve one decision at a time.</p>' +
         '<div class="home-landing-actions">' +
           '<button type="button" data-home-tab="simulator">Start Simulating</button>' +
           '<button type="button" data-home-tab="replay-coach">Analyze a Replay</button>' +
-          '<button type="button" data-home-tab="overview">View Roadmap</button>' +
         '</div>' +
       '</div>' +
       '<div class="home-landing-proof">' +
-        '<span>Tagline</span><strong>Test teams. Learn the swing turn. Win smarter.</strong>' +
-        '<span>Current focus</span><strong>Regulation-aware evidence</strong>' +
-        '<span>Build</span><strong>' + _escapeHtml((typeof csGetBuildId === 'function') ? csGetBuildId() : 'current') + '</strong>' +
-        '<span>Leaderboard</span><strong>Top 25 locked until trusted promotion</strong>' +
+        '<span>1</span><strong>Run the matchup</strong>' +
+        '<span>2</span><strong>Read the replay</strong>' +
+        '<span>3</span><strong>Change one thing</strong>' +
       '</div>' +
     '</div>' +
     csRenderHomeSimPreview() +

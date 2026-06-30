@@ -134,7 +134,7 @@
 // v181-qa-artifact-evidence-intake [2026-06-29] - Convert QA artifacts into Team Lab sim evidence and collapse Overview proof archive.
 try { importScripts('./release_manifest.js'); } catch (e) { /* fallback below */ }
 const RELEASE_MANIFEST = (typeof self !== 'undefined' && self.CHAMPIONS_RELEASE_MANIFEST) ? self.CHAMPIONS_RELEASE_MANIFEST : {};
-const CACHE_NAME = RELEASE_MANIFEST.service_worker_cache || 'champions-sim-v193-battle-labs-title';
+const CACHE_NAME = RELEASE_MANIFEST.service_worker_cache || 'champions-sim-v194-battle-labs-clean-hero';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
