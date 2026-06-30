@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.63-team-lab-gates'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.64-team-lab-ranking-policy'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13113,11 +13113,12 @@ function csTeamLabTop25Rows() {
       rank: 'locked',
       team: 'Top 25 opens after trusted evidence promotion',
       archetype: 'No fake rankings',
-      rating: 'pending',
+      score: 'pending',
+      quality: 'blocked',
       winRate: 'pending',
       games: '0 trusted',
       confidence: 'not ranked',
-      status: 'Needs #187/#188/#189'
+      status: 'Needs trusted import + promotion rules'
     }
   ];
 }
@@ -13128,7 +13129,8 @@ function csRenderTeamLabTop25Rows() {
       '<td>' + _escapeHtml(row.rank) + '</td>' +
       '<td><strong>' + _escapeHtml(row.team) + '</strong></td>' +
       '<td>' + _escapeHtml(row.archetype) + '</td>' +
-      '<td>' + _escapeHtml(row.rating) + '</td>' +
+      '<td>' + _escapeHtml(row.score) + '</td>' +
+      '<td>' + _escapeHtml(row.quality) + '</td>' +
       '<td>' + _escapeHtml(row.winRate) + '</td>' +
       '<td>' + _escapeHtml(row.games) + '</td>' +
       '<td>' + _escapeHtml(row.confidence) + '</td>' +
@@ -13181,6 +13183,17 @@ function csRenderTeamLabRankingGates() {
   '</section>';
 }
 
+function csRenderTeamLabAdminControls() {
+  return '<section class="team-lab-admin-controls" aria-label="Team Lab admin controls">' +
+    '<div>' +
+      '<span class="overview-kicker">Admin QA controls</span>' +
+      '<h4>Ranking reset must stay trusted.</h4>' +
+      '<p>During testing, admins need a way to reset stale or poisoned ranking rows. Public browser users should never mutate leaderboard evidence directly; reset actions must run through an authenticated trusted workflow and leave an audit reason.</p>' +
+    '</div>' +
+    '<button type="button" disabled title="Planned trusted-admin action: reset leaderboard rows by scope, regulation, engine version, ruleset version, or test batch.">Reset rankings</button>' +
+  '</section>';
+}
+
 function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
     '<div class="home-landing-hero">' +
@@ -13219,13 +13232,14 @@ function csRenderTeamLabNewsroomHub() {
       '</div>' +
     '</div>' +
     csRenderTeamLabRankingGates() +
+    csRenderTeamLabAdminControls() +
     '<div class="team-lab-news-grid">' + csRenderTeamLabNewsCards() + '</div>' +
     '<div class="team-lab-leaderboard-head">' +
-      '<div><h4>Top 25 Simulator Teams</h4><p>Will rank by regulation, format, engine version, ruleset version, sample size, legality, confidence, and stale status.</p></div>' +
+      '<div><h4>Top 25 Simulator Teams</h4><p>Ranking uses composite evidence: adjusted win rate, opponent strength, matchup coverage, confidence, source gaps, stale state, legality, regulation, engine version, and ruleset version.</p></div>' +
       '<span class="overview-status gap">Evidence locked</span>' +
     '</div>' +
     '<div class="overview-db-table-wrap team-lab-top25-wrap"><table class="overview-db-table team-lab-top25-table">' +
-      '<thead><tr><th>Rank</th><th>Team</th><th>Archetype</th><th>Rating</th><th>Adj. win rate</th><th>Games</th><th>Confidence</th><th>Status</th></tr></thead>' +
+      '<thead><tr><th>Rank</th><th>Team</th><th>Archetype</th><th>Score</th><th>Quality</th><th>Adj. win rate</th><th>Games</th><th>Confidence</th><th>Status</th></tr></thead>' +
       '<tbody>' + csRenderTeamLabTop25Rows() + '</tbody>' +
     '</table></div>' +
     '<p class="overview-source-note">Future news cards can pull from the source registry and release notes. Until then, they show build/source readiness instead of pretending to be live Pokemon news.</p>' +

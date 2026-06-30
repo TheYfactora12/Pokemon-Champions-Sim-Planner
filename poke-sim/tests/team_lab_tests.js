@@ -6,6 +6,7 @@ const TeamLab = require('../team_lab.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const migration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_29_team_lab_foundation.sql'), 'utf8');
+const rankingMigration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_30_team_lab_ranking_quality.sql'), 'utf8');
 
 let pass = 0;
 let fail = 0;
@@ -52,6 +53,18 @@ T('2. migration includes requested indexes and hidden-detail RLS policy', () => 
     'idx_team_lab_matchups_pair'
   ].forEach((idx) => truthy(migration.includes(idx), `${idx} missing`));
   truthy(migration.includes("t.visibility = 'hidden_details' AND team_lab_team_members.is_hidden_publicly = false"), 'hidden-details member policy missing');
+});
+
+T('2b. ranking quality migration stores composite evidence metadata', () => {
+  [
+    'ranking_score numeric',
+    'evidence_quality text',
+    'matchup_coverage jsonb',
+    'opponent_strength_delta numeric',
+    'volatility_penalty numeric',
+    'source_gaps text[]',
+    'idx_team_lab_leaderboard_quality'
+  ].forEach((needle) => truthy(rankingMigration.includes(needle), `${needle} missing`));
 });
 
 const baseTeam = {
@@ -112,6 +125,8 @@ T('5. validator marks known illegal data illegal instead of provisional', () => 
 T('6. raw win rate and adjusted win rate are sample-size aware', () => {
   eq(TeamLab.rawWinRate(7, 2, 1), 0.75, 'raw win rate should count draws as half win');
   approx(TeamLab.adjustedWinRate(1, 0, 0, 0.5, 30), 0.516129, 0.000001, 'adjusted win rate should shrink low sample toward prior');
+  const score = TeamLab.rankingScore({ adjusted_win_rate: 0.6, opponent_strength_delta: 0.02, matchup_coverage_bonus: 0.02, confidence: 'medium', source_gaps: [], volatility_penalty: 0 });
+  truthy(score > 0.6, 'ranking score should include more than raw/adjusted win rate');
 });
 
 T('7. confidence assignment uses sample size and verification state', () => {
@@ -133,10 +148,29 @@ T('8. leaderboard excludes illegal teams and treats needs_verification as experi
   const entries = TeamLab.buildLeaderboardEntries(teams, runs, { regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', min_sample_size: 30 });
   truthy(entries.some((entry) => entry.team_id === 'a'), 'verified team missing');
   truthy(!entries.some((entry) => entry.team_id === 'b'), 'illegal team should be excluded');
+  const a = entries.find((entry) => entry.team_id === 'a');
+  eq(a.leaderboard_scope, 'community_candidate', 'verified non-benchmark team should stay community candidate by default');
+  eq(a.evidence_quality, 'community_safe', 'verified non-benchmark team should be community_safe');
+  truthy(typeof a.ranking_score === 'number', 'ranking score missing');
+  truthy(a.matchup_coverage.unique_opponents >= 1, 'matchup coverage missing opponents');
   const c = entries.find((entry) => entry.team_id === 'c');
   truthy(c, 'needs_verification team should appear as experimental evidence');
   eq(c.confidence, 'experimental', 'needs_verification confidence should be experimental');
   eq(c.leaderboard_scope, 'experimental', 'needs_verification scope should be experimental');
+  eq(c.evidence_quality, 'experimental', 'needs_verification evidence quality should be experimental');
+});
+
+T('8b. official Top 25 promotion requires benchmark-approved current verified evidence', () => {
+  const teams = [
+    { id: 'a', name: 'Verified A', format: 'doubles', regulation_id: 'reg-m-b', visibility: 'public', legality_status: 'verified', archetype_tags: ['sun'] },
+    { id: 'b', name: 'Verified B', format: 'doubles', regulation_id: 'reg-m-b', visibility: 'public', legality_status: 'verified', archetype_tags: ['rain'] }
+  ];
+  const runs = [];
+  for (let i = 0; i < 80; i += 1) runs.push({ team_a_id: 'a', team_b_id: 'b', regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', winner_team_id: i < 50 ? 'a' : 'b', result_reason: 'ko' });
+  const entries = TeamLab.buildLeaderboardEntries(teams, runs, { regulation_id: 'reg-m-b', format: 'doubles', engine_version: 'eng-1', ruleset_version: 'rules-1', min_sample_size: 30, approved_benchmark_pool: true });
+  const a = entries.find((entry) => entry.team_id === 'a');
+  eq(a.leaderboard_scope, 'official_sim_top_25', 'approved verified evidence should promote to official scope');
+  eq(a.evidence_quality, 'official_ready', 'approved verified evidence should be official_ready');
 });
 
 T('9. stale marking and filters keep current rankings distinct from old evidence', () => {

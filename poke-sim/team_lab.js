@@ -12,6 +12,8 @@
   /** @typedef {'user_custom'|'official_event'|'community_meta'|'engine_generated'|'dev_seed'} TeamLabSourceType */
   /** @typedef {'verified'|'needs_verification'|'illegal'|'stale'} TeamLabLegalityStatus */
   /** @typedef {'low'|'medium'|'high'|'experimental'} TeamLabConfidence */
+  /** @typedef {'official_sim_top_25'|'community_candidate'|'personal'|'experimental'|'stale'} TeamLabRankingScope */
+  /** @typedef {'official_ready'|'community_safe'|'personal_only'|'experimental'|'blocked'} TeamLabEvidenceQuality */
   /** @typedef {'error'|'warning'|'needs_source'} LegalityIssueSeverity */
   /**
    * @typedef {Object} LegalityIssue
@@ -255,6 +257,58 @@
     return Math.round(1000 + (Number(adjustedRate || 0) - 0.5) * 900 + sampleBonus + confidenceBonus);
   }
 
+  function teamSourceGaps(team) {
+    var gaps = [];
+    if (!team) return gaps;
+    if (Array.isArray(team.source_gaps)) gaps = gaps.concat(team.source_gaps);
+    if (team.legality_report && Array.isArray(team.legality_report.source_gaps)) {
+      gaps = gaps.concat(team.legality_report.source_gaps.map(function(gap) { return gap.code || gap.message || 'SOURCE_GAP'; }));
+    }
+    return unique(gaps);
+  }
+
+  function evidenceQualityForRanking(input) {
+    var row = input || {};
+    var legality = row.legality_status || 'needs_verification';
+    var games = Number(row.games_played || 0);
+    var sourceGaps = row.source_gaps || [];
+    if (legality === 'illegal') return 'blocked';
+    if (row.stale) return 'blocked';
+    if (legality === 'stale') return 'blocked';
+    if (legality === 'needs_verification' || sourceGaps.length) return 'experimental';
+    if (row.visibility === 'private') return 'personal_only';
+    if (games < Number(row.min_sample_size || DEFAULT_MIN_SAMPLE_SIZE)) return 'community_safe';
+    if (row.approved_benchmark_pool && row.current_versions) return 'official_ready';
+    return 'community_safe';
+  }
+
+  function scopeForEvidenceQuality(quality, requestedScope) {
+    if (quality === 'official_ready') return requestedScope === 'personal' ? 'personal' : 'official_sim_top_25';
+    if (quality === 'personal_only') return 'personal';
+    if (quality === 'experimental') return 'experimental';
+    if (quality === 'blocked') return 'stale';
+    return requestedScope === 'personal' ? 'personal' : 'community_candidate';
+  }
+
+  function rankingScore(parts) {
+    var p = parts || {};
+    var adjusted = Number(p.adjusted_win_rate || 0.5);
+    var opponent = Number(p.opponent_strength_delta || 0);
+    var coverage = Number(p.matchup_coverage_bonus || 0);
+    var confidence = p.confidence === 'high' ? 0.035 : p.confidence === 'medium' ? 0.018 : p.confidence === 'experimental' ? -0.05 : 0;
+    var stale = p.stale ? 0.12 : 0;
+    var sourceGapPenalty = Math.min(0.12, Number((p.source_gaps || []).length) * 0.025);
+    var volatilityPenalty = Number(p.volatility_penalty || 0);
+    var score = adjusted + opponent + coverage + confidence - stale - sourceGapPenalty - volatilityPenalty;
+    return Number(Math.max(0, Math.min(1, score)).toFixed(4));
+  }
+
+  function ratingFromRankingScore(score, gamesPlayed, quality) {
+    var qualityBonus = quality === 'official_ready' ? 80 : quality === 'community_safe' ? 25 : quality === 'experimental' ? -90 : quality === 'blocked' ? -180 : 0;
+    var sampleBonus = Math.min(70, Math.log(Math.max(1, Number(gamesPlayed || 0))) * 15);
+    return Math.round(1000 + (Number(score || 0) - 0.5) * 1000 + sampleBonus + qualityBonus);
+  }
+
   function isEntryCurrent(entry, current) {
     if (!entry) return false;
     if (entry.stale) return false;
@@ -287,7 +341,7 @@
 
     var stats = {};
     function ensure(teamId) {
-      if (!stats[teamId]) stats[teamId] = { wins: 0, losses: 0, draws: 0 };
+      if (!stats[teamId]) stats[teamId] = { wins: 0, losses: 0, draws: 0, opponents: {}, opponent_archetypes: {} };
       return stats[teamId];
     }
 
@@ -303,6 +357,10 @@
       if (a.legality_status === 'illegal' || b.legality_status === 'illegal') return;
       var as = ensure(run.team_a_id);
       var bs = ensure(run.team_b_id);
+      as.opponents[run.team_b_id] = true;
+      bs.opponents[run.team_a_id] = true;
+      (b.archetype_tags || []).forEach(function(tag) { as.opponent_archetypes[tag] = true; });
+      (a.archetype_tags || []).forEach(function(tag) { bs.opponent_archetypes[tag] = true; });
       if (!run.winner_team_id || run.result_reason === 'draw') {
         as.draws += 1;
         bs.draws += 1;
@@ -328,7 +386,22 @@
       if (legality === 'verified' && games < minSampleSize) return;
       var raw = rawWinRate(row.wins, row.losses, row.draws);
       var adjusted = adjustedWinRate(row.wins, row.losses, row.draws, opts.prior_win_rate, opts.prior_games);
-      var scope = legality === 'needs_verification' ? 'experimental' : (opts.leaderboard_scope || 'overall');
+      var sourceGaps = teamSourceGaps(team);
+      var uniqueOpponents = Object.keys(row.opponents || {}).length;
+      var uniqueArchetypes = Object.keys(row.opponent_archetypes || {}).length;
+      var coverageBonus = Math.min(0.055, uniqueOpponents * 0.006 + uniqueArchetypes * 0.008);
+      var volatilityPenalty = games < minSampleSize ? Math.min(0.08, (minSampleSize - games) / Math.max(1, minSampleSize) * 0.08) : 0;
+      var quality = evidenceQualityForRanking({
+        legality_status: legality,
+        visibility: team.visibility,
+        games_played: games,
+        min_sample_size: minSampleSize,
+        source_gaps: sourceGaps,
+        stale: false,
+        approved_benchmark_pool: !!opts.approved_benchmark_pool,
+        current_versions: current.engine_version !== 'unknown' && current.ruleset_version !== 'unknown'
+      });
+      var scope = scopeForEvidenceQuality(quality, opts.leaderboard_scope);
       var entry = {
         team_id: teamId,
         team_name: team.name,
@@ -340,6 +413,7 @@
         rating: ratingFromAdjusted(adjusted, games, confidence),
         raw_win_rate: Number(raw.toFixed(4)),
         adjusted_win_rate: Number(adjusted.toFixed(4)),
+        ranking_score: 0,
         games_played: games,
         wins: row.wins,
         losses: row.losses,
@@ -349,12 +423,47 @@
         stale_reason: null,
         legality_status: legality,
         visibility: team.visibility,
-        archetype_tags: (team.archetype_tags || []).slice()
+        archetype_tags: (team.archetype_tags || []).slice(),
+        source_gaps: sourceGaps,
+        evidence_quality: quality,
+        matchup_coverage: {
+          unique_opponents: uniqueOpponents,
+          unique_archetypes: uniqueArchetypes,
+          bonus: Number(coverageBonus.toFixed(4))
+        },
+        opponent_strength_delta: 0,
+        volatility_penalty: Number(volatilityPenalty.toFixed(4))
       };
       entries.push(entry);
     });
 
+    var adjustedByTeam = {};
+    entries.forEach(function(entry) { adjustedByTeam[entry.team_id] = entry.adjusted_win_rate; });
+    entries.forEach(function(entry) {
+      var row = stats[entry.team_id] || {};
+      var opponentIds = Object.keys(row.opponents || {});
+      var opponentStrength = 0;
+      if (opponentIds.length) {
+        opponentStrength = opponentIds.reduce(function(sum, id) {
+          return sum + ((adjustedByTeam[id] == null ? 0.5 : adjustedByTeam[id]) - 0.5);
+        }, 0) / opponentIds.length;
+      }
+      opponentStrength = Math.max(-0.04, Math.min(0.04, opponentStrength * 0.35));
+      entry.opponent_strength_delta = Number(opponentStrength.toFixed(4));
+      entry.ranking_score = rankingScore({
+        adjusted_win_rate: entry.adjusted_win_rate,
+        opponent_strength_delta: entry.opponent_strength_delta,
+        matchup_coverage_bonus: entry.matchup_coverage.bonus,
+        confidence: entry.confidence,
+        stale: entry.stale,
+        source_gaps: entry.source_gaps,
+        volatility_penalty: entry.volatility_penalty
+      });
+      entry.rating = ratingFromRankingScore(entry.ranking_score, entry.games_played, entry.evidence_quality);
+    });
+
     entries.sort(function(a, b) {
+      if (b.ranking_score !== a.ranking_score) return b.ranking_score - a.ranking_score;
       if (b.rating !== a.rating) return b.rating - a.rating;
       if (b.adjusted_win_rate !== a.adjusted_win_rate) return b.adjusted_win_rate - a.adjusted_win_rate;
       return b.games_played - a.games_played;
@@ -374,6 +483,7 @@
       if (f.engine_version && entry.engine_version !== f.engine_version) return false;
       if (f.ruleset_version && entry.ruleset_version !== f.ruleset_version) return false;
       if (f.visibility && entry.visibility !== f.visibility) return false;
+      if (f.evidence_quality && entry.evidence_quality !== f.evidence_quality) return false;
       if (f.stale === true && !entry.stale) return false;
       if (f.stale === false && entry.stale) return false;
       return true;
@@ -486,6 +596,10 @@
     adjustedWinRate: adjustedWinRate,
     confidenceForSample: confidenceForSample,
     ratingFromAdjusted: ratingFromAdjusted,
+    rankingScore: rankingScore,
+    ratingFromRankingScore: ratingFromRankingScore,
+    evidenceQualityForRanking: evidenceQualityForRanking,
+    scopeForEvidenceQuality: scopeForEvidenceQuality,
     isEntryCurrent: isEntryCurrent,
     markLeaderboardEntriesStale: markLeaderboardEntriesStale,
     buildLeaderboardEntries: buildLeaderboardEntries,

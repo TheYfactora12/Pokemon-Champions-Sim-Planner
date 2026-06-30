@@ -186,7 +186,7 @@ Future improvement: replace the curated list with a reviewed source-sync/news in
 
 ## 2026-06-29 implementation update: Home value proposition
 
-`v2.2.63-team-lab-gates` turns Home into a clearer player landing page:
+`v2.2.64-team-lab-ranking-policy` turns Home into a clearer player landing page:
 
 - Adds a hero that explains the simulator value: build better teams, test smarter lines, and learn why battles swing.
 - Adds quick actions into Simulator, Replay Review, and Roadmap.
@@ -198,7 +198,7 @@ This is user-facing promotion, but it remains evidence-bound and avoids claiming
 
 ## 2026-06-29 implementation update: Home start cycle
 
-`v2.2.63-team-lab-gates` consolidates the previous Start Here and How To Use sections into one 4-step player cycle:
+`v2.2.64-team-lab-ranking-policy` consolidates the previous Start Here and How To Use sections into one 4-step player cycle:
 
 - Choose or import a team.
 - Run the matchup.
@@ -209,7 +209,7 @@ This keeps Home focused on player value instead of duplicated feature cards, and
 
 ## 2026-06-29 implementation update: Home battle lab framing
 
-`v2.2.63-team-lab-gates` moves Home closer to a top-tier simulator landing page:
+`v2.2.64-team-lab-ranking-policy` moves Home closer to a top-tier simulator landing page:
 
 - Leads with a direct product promise: a Pokemon Champion battle lab for testing teams before play.
 - Adds a sample sim output card so users see the kind of evidence the tool should produce: result, swing turn, coaching read, and trust state.
@@ -220,29 +220,52 @@ This aligns Home with the evidence-bound product strategy: users should understa
 
 ## 2026-06-29 implementation update: Home graffiti-print title
 
-`v2.2.63-team-lab-gates` adds a graffiti-print hero title treatment to make Home feel more like a memorable competitive gaming landing page while keeping the underlying product message evidence-bound and readable.
+`v2.2.64-team-lab-ranking-policy` adds a graffiti-print hero title treatment to make Home feel more like a memorable competitive gaming landing page while keeping the underlying product message evidence-bound and readable.
 
 ## 2026-06-29 implementation update: Battle Labs graffiti title
 
-`v2.2.63-team-lab-gates` changes the Home hero title to `Battle Labs` and strengthens the visual treatment from a simple skewed headline into a graffiti-print tag with heavy outline, layered spray colors, irregular backing, and underline paint stroke.
+`v2.2.64-team-lab-ranking-policy` changes the Home hero title to `Battle Labs` and strengthens the visual treatment from a simple skewed headline into a graffiti-print tag with heavy outline, layered spray colors, irregular backing, and underline paint stroke.
 
 ## 2026-06-29 implementation update: 90s Battle Labs title
 
-`v2.2.63-team-lab-gates` pushes the Home hero toward a louder 90s arcade/skate/anime-magazine print style: neon offset shadows, halftone backing, heavy sticker outline, and a `isolation:isolate` tag. The visual goal is more memorable first impression without changing the evidence-bound simulator claims.
+`v2.2.64-team-lab-ranking-policy` pushes the Home hero toward a louder 90s arcade/skate/anime-magazine print style: neon offset shadows, halftone backing, heavy sticker outline, and a `isolation:isolate` tag. The visual goal is more memorable first impression without changing the evidence-bound simulator claims.
 
 ## 2026-06-29 implementation update: Battle Labs title cleanup
 
-`v2.2.63-team-lab-gates` simplifies the Home hero from `Welcome to Battle Labs` to `Battle Labs` so the brand mark is shorter, punchier, and easier to read in the 90s graffiti-print treatment.
+`v2.2.64-team-lab-ranking-policy` simplifies the Home hero from `Welcome to Battle Labs` to `Battle Labs` so the brand mark is shorter, punchier, and easier to read in the 90s graffiti-print treatment.
 
 ## 2026-06-29 implementation update: clean Battle Labs hero
 
-`v2.2.63-team-lab-gates` tightens the Home hero after visual review: the title stays 90s-inspired, but the decorative plate is contained so it cannot cover the wording, the extra badge text is removed, and the hero message is reduced to one clear player promise plus two primary actions.
+`v2.2.64-team-lab-ranking-policy` tightens the Home hero after visual review: the title stays 90s-inspired, but the decorative plate is contained so it cannot cover the wording, the extra badge text is removed, and the hero message is reduced to one clear player promise plus two primary actions.
 
 ## 2026-06-29 implementation update: Team Lab ranking gates
 
-`v2.2.63-team-lab-gates` turns the empty/locked Team Lab surface into an explicit product workflow:
+`v2.2.64-team-lab-ranking-policy` turns the empty/locked Team Lab surface into an explicit product workflow:
 
 - Shows the four gates required before Top 25 teams can rank: validated teams, replay-backed sim evidence, trusted import worker, and promotion rules.
 - Keeps public rankings locked instead of inventing placeholder teams or fake win rates.
 - Adds direct actions into Simulator and Replay Review so testers can generate the evidence the ranking system needs.
 - Reinforces that leaderboard rows require regulation, format, engine version, ruleset version, sample size, legality, confidence, and stale-state checks.
+
+## 2026-06-29 implementation update: Team Lab ranking policy
+
+`v2.2.64-team-lab-ranking-policy` defines Team Lab ranking as a composite evidence score, not raw win/loss ratio.
+
+Ranking rows can now carry:
+
+- `ranking_score`: adjusted win rate plus opponent strength, matchup coverage, confidence, freshness, source-gap, and volatility effects.
+- `evidence_quality`: `official_ready`, `community_safe`, `personal_only`, `experimental`, or `blocked`.
+- `matchup_coverage`: unique opponent/archetype coverage and coverage bonus.
+- `opponent_strength_delta`: strength-of-schedule adjustment.
+- `volatility_penalty`: low-sample penalty.
+- `source_gaps`: unresolved source gaps that block official promotion.
+
+Default policy:
+
+- Verified teams with normal user/community sim evidence become `community_candidate` rows.
+- Verified teams only become `official_sim_top_25` when current versions, minimum sample, and approved benchmark pool requirements are met.
+- `needs_verification` teams stay `experimental`.
+- Illegal or stale evidence is blocked from current ranking.
+- Private teams stay personal-only.
+
+A disabled admin QA reset control is visible in Team Lab so the test workflow is planned, but public browser users still cannot mutate ranking evidence. The real reset action must run through a trusted admin/server workflow and record an audit reason.
