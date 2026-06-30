@@ -314,12 +314,14 @@ async function main() {
     truthy(payload.summary.retained_replay_cards >= 1, 'replay summary missing');
     eq(payload.qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'QA artifact coverage schema missing');
     eq(payload.qa_coverage_summary.totals.replay_cards_scanned, 1, 'QA artifact coverage replay count mismatch');
-    eq(payload.qa_coverage_summary.totals.targeted_sweep_runs, 10, 'QA artifact targeted sweep count mismatch');
+    eq(payload.qa_coverage_summary.totals.targeted_sweep_runs, 12, 'QA artifact targeted sweep count mismatch');
     truthy(payload.qa_coverage_summary.totals.turns > 1, 'QA artifact merged coverage should include targeted sweep turns');
     truthy(payload.targeted_qa_sweep && payload.targeted_qa_sweep.status === 'complete', 'targeted QA sweep should be complete');
     truthy(payload.qa_coverage_summary.mechanics_seen.screen_reduction > 0, 'targeted sweep should add screen reduction proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.hp_cost > 0, 'targeted sweep should add HP-cost proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.recovery > 0, 'targeted sweep should add direct recovery proof');
+    truthy(payload.qa_coverage_summary.mechanics_seen.move_lock_failures > 0, 'targeted sweep should add move-lock proof');
+    truthy(payload.qa_coverage_summary.mechanics_seen.blocked_priority_events > 0, 'targeted sweep should add blocked-priority proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.delayed_recovery > 0, 'targeted sweep should add delayed recovery proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.residual_drain > 0, 'targeted sweep should add residual drain proof');
     truthy(payload.qa_coverage_summary.mechanics_seen.nonstandard_stat_source_trace > 0, 'targeted sweep should add stat-source proof');
@@ -330,6 +332,7 @@ async function main() {
     eq(payload.qa_coverage_summary.move_effect_logic_matrix.schema_version, 'champions-move-effect-logic-matrix-v1', 'move/effect logic matrix schema');
     truthy(Array.isArray(payload.qa_coverage_summary.move_effect_logic_matrix.families), 'move/effect logic matrix families missing');
     truthy(payload.qa_coverage_summary.move_effect_logic_matrix.families.some(row => row.id === 'damage_math' && row.status !== 'missing'), 'damage math matrix family should have evidence');
+    truthy(payload.qa_coverage_summary.move_effect_logic_matrix.families.some(row => row.id === 'priority_prevention' && row.status === 'proven'), 'priority-prevention matrix family should be proven by targeted sweep');
     truthy(payload.qa_coverage_summary.move_effect_logic_matrix.families.some(row => row.id === 'nonstandard_stat_source' && row.status === 'proven'), 'stat-source matrix family should be proven by targeted sweep');
     truthy(payload.retained && payload.retained.sim_log.length >= 1, 'retained sim log missing');
     truthy(payload.retained && payload.retained.replay_cards.length >= 1, 'retained replay cards missing');

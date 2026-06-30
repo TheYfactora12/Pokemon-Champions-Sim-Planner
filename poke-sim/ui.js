@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.68-direct-recovery-proof'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.69-lock-priority-proof'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -6405,7 +6405,8 @@ function csRunTargetedQaProofBattle(config) {
       seed: seeds[i],
       maxTurns: config.maxTurns || 2,
       playerBring: config.playerBring || null,
-      opponentBring: config.opponentBring || null
+      opponentBring: config.opponentBring || null,
+      forcedActions: Array.isArray(config.forcedActions) ? config.forcedActions : null
     });
     var summary = csBuildQaCoverageSummary(result && result.turnLog, {
       scope: 'targeted-qa-sweep-' + (config.id || 'proof'),
@@ -6528,6 +6529,65 @@ function csBuildTargetedQaSweepEvidence(opts) {
           nature: 'Brave',
           evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 0, spe: 0 }
         })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'move_lock_taunt_status_fail',
+      label: 'Move-lock proof: Taunt blocks status move',
+      requireMechanic: 'move_lock_failures',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_taunt_lock_player',
+      opponentTeamId: 'targeted_qa_taunt_lock_opponent',
+      maxTurns: 1,
+      forcedActions: [
+        { turn: 1, side: 'player', slot: 0, move: 'Taunt', targetSide: 'enemy', targetSlot: 0 },
+        { turn: 1, side: 'opponent', slot: 0, move: 'Haze', targetSide: 'self' }
+      ],
+      playerTeam: csQaProofTeam('Targeted QA Taunt Lock Player', [
+        csQaProofMon('Whimsicott', ['Taunt'], {
+          ability: 'Prankster',
+          nature: 'Timid',
+          evs: { hp: 2, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Taunt Lock Opponent', [
+        csQaProofMon('Cresselia', ['Haze'], {
+          ability: 'Levitate',
+          nature: 'Calm',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 32, spe: 0 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'blocked_priority_quick_guard_fake_out',
+      label: 'Blocked-priority proof: Quick Guard blocks Fake Out',
+      requireMechanic: 'blocked_priority_events',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_quick_guard_player',
+      opponentTeamId: 'targeted_qa_quick_guard_opponent',
+      format: 'doubles',
+      maxTurns: 1,
+      forcedActions: [
+        { turn: 1, side: 'player', slot: 0, move: 'Quick Guard', targetSide: 'self' },
+        { turn: 1, side: 'opponent', slot: 0, move: 'Fake Out', targetSide: 'enemy', targetSlot: 0 }
+      ],
+      playerTeam: csQaProofTeam('Targeted QA Quick Guard Player', [
+        csQaProofMon('Whimsicott', ['Quick Guard'], {
+          ability: 'Prankster',
+          nature: 'Timid',
+          evs: { hp: 2, atk: 0, def: 0, spa: 0, spd: 0, spe: 32 }
+        }),
+        csQaProofMon('Pelipper', ['Tackle'])
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Quick Guard Opponent', [
+        csQaProofMon('Incineroar', ['Fake Out'], {
+          ability: 'Intimidate',
+          nature: 'Adamant',
+          evs: { hp: 32, atk: 32, def: 2, spa: 0, spd: 0, spe: 0 }
+        }),
+        csQaProofMon('Tauros-Paldea-Combat', ['Tackle'])
       ])
     }),
     csRunTargetedQaProofBattle({
