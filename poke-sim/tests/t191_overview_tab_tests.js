@@ -231,9 +231,11 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.overview-qa-josh-issues');
   inc(css, '.team-lab-newsroom');
   inc(css, '.home-landing-hero');
-  inc(css, 'text-transform:uppercase;color:#fff3a8;-webkit-text-stroke:2px');
+  inc(css, 'text-transform:uppercase;color:#fff06a;-webkit-text-stroke:3px');
   inc(css, '.home-landing-hero h2:before');
   inc(css, '.home-landing-hero h2:after');
+  inc(css, 'BATTLE MODE');
+  inc(css, 'radial-gradient(circle at 12px 12px');
   inc(css, '.home-sim-preview');
   inc(css, '.home-sim-output-card');
   inc(css, '.home-start-cycle');
