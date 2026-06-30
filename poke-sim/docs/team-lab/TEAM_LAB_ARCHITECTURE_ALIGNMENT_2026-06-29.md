@@ -186,7 +186,7 @@ Future improvement: replace the curated list with a reviewed source-sync/news in
 
 ## 2026-06-29 implementation update: Home value proposition
 
-`v2.2.57-home-battle-lab` turns Home into a clearer player landing page:
+`v2.2.58-home-graffiti-title` turns Home into a clearer player landing page:
 
 - Adds a hero that explains the simulator value: build better teams, test smarter lines, and learn why battles swing.
 - Adds quick actions into Simulator, Replay Review, and Roadmap.
@@ -198,7 +198,7 @@ This is user-facing promotion, but it remains evidence-bound and avoids claiming
 
 ## 2026-06-29 implementation update: Home start cycle
 
-`v2.2.57-home-battle-lab` consolidates the previous Start Here and How To Use sections into one 4-step player cycle:
+`v2.2.58-home-graffiti-title` consolidates the previous Start Here and How To Use sections into one 4-step player cycle:
 
 - Choose or import a team.
 - Run the matchup.
@@ -209,7 +209,7 @@ This keeps Home focused on player value instead of duplicated feature cards, and
 
 ## 2026-06-29 implementation update: Home battle lab framing
 
-`v2.2.57-home-battle-lab` moves Home closer to a top-tier simulator landing page:
+`v2.2.58-home-graffiti-title` moves Home closer to a top-tier simulator landing page:
 
 - Leads with a direct product promise: a Pokemon Champion battle lab for testing teams before play.
 - Adds a sample sim output card so users see the kind of evidence the tool should produce: result, swing turn, coaching read, and trust state.
@@ -217,3 +217,7 @@ This keeps Home focused on player value instead of duplicated feature cards, and
 - Keeps official news useful but below the product value, so Home explains the simulator before acting like a news page.
 
 This aligns Home with the evidence-bound product strategy: users should understand what decision the sim helps improve, what proof supports the answer, and what remains unverified.
+
+## 2026-06-29 implementation update: Home graffiti-print title
+
+`v2.2.58-home-graffiti-title` adds a graffiti-print hero title treatment to make Home feel more like a memorable competitive gaming landing page while keeping the underlying product message evidence-bound and readable.

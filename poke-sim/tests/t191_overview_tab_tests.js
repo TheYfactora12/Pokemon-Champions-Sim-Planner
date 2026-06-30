@@ -231,6 +231,7 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.overview-qa-josh-issues');
   inc(css, '.team-lab-newsroom');
   inc(css, '.home-landing-hero');
+  inc(css, 'text-transform:uppercase;color:#fff7d6;text-shadow:3px 3px 0');
   inc(css, '.home-sim-preview');
   inc(css, '.home-sim-output-card');
   inc(css, '.home-start-cycle');
