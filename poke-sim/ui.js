@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.65-team-lab-admin-reset'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.66-team-lab-local-top25'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13108,6 +13108,8 @@ function csRenderTeamLabNewsCards() {
 }
 
 function csTeamLabTop25Rows() {
+  var localRows = csBuildTeamLabLocalTop25Rows();
+  if (localRows.length) return localRows;
   return [
     {
       rank: 'locked',
@@ -13121,6 +13123,92 @@ function csTeamLabTop25Rows() {
       status: 'Needs trusted import + promotion rules'
     }
   ];
+}
+
+function csTeamLabPrettyKey(key) {
+  return String(key || 'unknown team')
+    .replace(/^player$/, 'My active team')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, function(ch) { return ch.toUpperCase(); });
+}
+
+function csTeamLabLocalResetTimestamp() {
+  try {
+    var resetAt = localStorage.getItem('team_lab:qa_reset_at');
+    return resetAt ? Date.parse(resetAt) || 0 : 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
+function csBuildTeamLabLocalTop25Rows() {
+  var entries = [];
+  try {
+    if (typeof csSimLogGetAll === 'function') entries = csSimLogGetAll();
+    else if (typeof Storage !== 'undefined' && typeof CS_SIMLOG_KEY !== 'undefined') {
+      var store = Storage.get(CS_SIMLOG_KEY);
+      entries = store && Array.isArray(store.entries) ? store.entries : [];
+    }
+  } catch (e) {
+    entries = [];
+  }
+  if (!Array.isArray(entries) || !entries.length) return [];
+
+  var resetTs = csTeamLabLocalResetTimestamp();
+  var stats = {};
+  function ensure(teamKey) {
+    if (!stats[teamKey]) stats[teamKey] = { teamKey: teamKey, games: 0, wins: 0, losses: 0, draws: 0, opponents: {}, formats: {} };
+    return stats[teamKey];
+  }
+  function addGame(teamKey, opponentKey, result, format) {
+    var s = ensure(teamKey);
+    s.games += 1;
+    s.formats[format || 'doubles'] = true;
+    if (opponentKey) s.opponents[opponentKey] = true;
+    if (result === 'win') s.wins += 1;
+    else if (result === 'loss') s.losses += 1;
+    else s.draws += 1;
+  }
+  entries.forEach(function(entry) {
+    if (!entry || !entry.playerKey || !entry.oppKey) return;
+    if (resetTs && Number(entry.ts || 0) <= resetTs) return;
+    (entry.games || []).forEach(function(game) {
+      var result = game && game.result ? game.result : null;
+      if (!result) return;
+      addGame(entry.playerKey, entry.oppKey, result, entry.format);
+      addGame(entry.oppKey, entry.playerKey, result === 'win' ? 'loss' : result === 'loss' ? 'win' : 'draw', entry.format);
+    });
+  });
+
+  return Object.keys(stats).map(function(teamKey) {
+    var s = stats[teamKey];
+    var raw = s.games ? (s.wins + s.draws * 0.5) / s.games : 0;
+    var adjusted = (s.wins + s.draws * 0.5 + 15) / (s.games + 30 || 1);
+    var opponentCount = Object.keys(s.opponents).length;
+    var score = Math.max(0, Math.min(1, adjusted + Math.min(0.05, opponentCount * 0.006)));
+    var confidence = s.games >= 200 ? 'high' : s.games >= 60 ? 'medium' : 'low';
+    return {
+      rank: 0,
+      team: csTeamLabPrettyKey(teamKey),
+      archetype: teamKey === 'player' ? 'Local player evidence' : 'Benchmark opponent',
+      score: score.toFixed(3),
+      quality: 'local QA preview',
+      winRate: (raw * 100).toFixed(1) + '%',
+      games: String(s.games),
+      confidence: confidence,
+      status: 'Local only - not official global rank',
+      _score: score,
+      _games: s.games
+    };
+  }).filter(function(row) {
+    return row._games > 0;
+  }).sort(function(a, b) {
+    if (b._score !== a._score) return b._score - a._score;
+    return b._games - a._games;
+  }).slice(0, 25).map(function(row, index) {
+    row.rank = String(index + 1);
+    return row;
+  });
 }
 
 function csRenderTeamLabTop25Rows() {
@@ -13245,7 +13333,7 @@ function csRenderTeamLabNewsroomHub() {
     '</div>' +
     '<div class="overview-db-table-wrap team-lab-top25-wrap"><table class="overview-db-table team-lab-top25-table">' +
       '<thead><tr><th>Rank</th><th>Team</th><th>Archetype</th><th>Score</th><th>Quality</th><th>Adj. win rate</th><th>Games</th><th>Confidence</th><th>Status</th></tr></thead>' +
-      '<tbody>' + csRenderTeamLabTop25Rows() + '</tbody>' +
+      '<tbody data-team-lab-top25-body>' + csRenderTeamLabTop25Rows() + '</tbody>' +
     '</table></div>' +
     '<p class="overview-source-note">Future news cards can pull from the source registry and release notes. Until then, they show build/source readiness instead of pretending to be live Pokemon news.</p>' +
   '</section>';
@@ -13281,6 +13369,8 @@ function csInitTeamLabAdminControls(root) {
       localStorage.removeItem('team_lab:ranking_preview');
       localStorage.removeItem('team_lab:sim_evidence_preview');
     } catch (e) {}
+    var tableBody = root.querySelector('[data-team-lab-top25-body]');
+    if (tableBody) tableBody.innerHTML = csRenderTeamLabTop25Rows();
     if (status) status.textContent = 'Local QA rankings reset at ' + now + '. Shared/global rankings unchanged until trusted admin reset runs.';
   });
   return true;

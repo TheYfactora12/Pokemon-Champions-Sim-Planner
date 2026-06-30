@@ -314,6 +314,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function csRenderTeamLabRankingGates');
   inc(ui, 'function csRenderTeamLabAdminControls');
   inc(ui, 'function csInitTeamLabAdminControls');
+  inc(ui, 'function csBuildTeamLabLocalTop25Rows');
+  inc(ui, 'function csTeamLabLocalResetTimestamp');
+  inc(ui, 'data-team-lab-top25-body');
   inc(ui, 'Ranking trust gates');
   inc(ui, 'Top teams stay locked until the evidence is safe.');
   inc(ui, 'Validated teams');
@@ -337,6 +340,8 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'data-news-slide');
   inc(ui, 'Top 25 Simulator Teams');
   inc(ui, 'No fake rankings');
+  inc(ui, 'local QA preview');
+  inc(ui, 'Local only - not official global rank');
   inc(ui, 'Evidence locked');
   inc(ui, 'Team Lab read UI (#179)');
   inc(ui, 'Custom team submission and validation (#180)');
