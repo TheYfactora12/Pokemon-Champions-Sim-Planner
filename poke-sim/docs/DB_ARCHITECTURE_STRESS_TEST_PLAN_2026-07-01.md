@@ -113,13 +113,14 @@ Owns:
 
 - trainer profile
 - private rooms
-- the Pilot area/profile workspace on the site
+- the Trainer Room/account workspace on the site
 - saved private teams
 - uploaded battle files
 - private sim history
 - personal Battle Sensei memory
 - practice drills
 - future bot sessions
+- regulation-scoped improvement metrics, skill trends, loss diagnosis, team degradation, and "what worked" notes
 
 Existing foundation:
 
@@ -137,10 +138,12 @@ Stress test:
 Decision:
 
 - Keep trainer rooms private-first and owner-scoped.
-- Treat the site Pilot area as the user-facing trainer room: one place for personal custom teams, sim battles, uploaded Showdown battles, stats, coaching context, and future practice history.
-- A Showdown replay/log filename that matches a personal/custom team name may attach that import to the matching private team for Pilot-room analysis.
+- Treat the site Trainer Room as the user-facing account workspace: one place for personal custom teams, sim battles, uploaded Showdown battles, stats, coaching context, future bot practice, improvement metrics, loss diagnosis, team degradation, and "what worked" notes.
+- Trainer Room data must be saved by regulation. Saved teams, replay imports, sim jobs, coaching facts, bot-practice turns, and improvement metrics must carry `regulation_id`, `ruleset_version`, and `engine_version`.
+- Historical regulation data can inform long-term player history, but active recommendations must default to the selected/current regulation and flag stale or cross-reg evidence.
+- A Showdown replay/log filename that matches a personal/custom team name may attach that import to the matching private team for Trainer Room analysis.
 - A Review upload Reference team dropdown may manually attach a replay to a private/custom team when filename matching is unclear.
-- Every uploaded replay can improve that player's private Pilot-room coaching context, but global learning/published ranking updates require consent, trusted mapping, legality checks, parser confidence, dedupe, and stale-version review.
+- Every uploaded replay can improve that player's private Trainer Room coaching context for the matching regulation, but global learning/published ranking updates require consent, trusted mapping, legality checks, parser confidence, dedupe, and stale-version review.
 - Public showcase, replay imports, personal coaching facts, global learning, and bot sessions require separate reviewed migrations.
 
 ### 5. Global learning truth
@@ -285,13 +288,13 @@ DB/service requirement:
 - wire upload/review controls to `replay_import_service.js`
 - expose an explicit Save Private Import action that calls `SupabaseAdapter.saveReplayImport`
 - show parser status, mapping status, source gaps, and saved/private state to the user
-- map similarly named Showdown logs to the matching private custom team when the filename matches the Pilot-room team name
+- map similarly named Showdown logs to the matching private custom team when the filename matches the Trainer Room team name
 - allow the player to choose an optional Reference team from their uploaded/custom teams when filename matching is not enough
 - keep local-only fallback when Supabase/Auth is unavailable
 
 Pass/fail:
 
-- Private save path is wired for the Review flow, but it should not claim durable account history until real Auth/Pilot-room selection replaces placeholder local room/user ids and saved import history is visible in the Pilot area.
+- Private save path is wired for the Review flow, but it should not claim durable account history until real Auth/Trainer Room selection replaces placeholder local room/user ids and saved import history is visible in the Trainer Room.
 
 ### Later priority: personal coaching memory
 

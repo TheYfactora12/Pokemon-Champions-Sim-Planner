@@ -195,8 +195,10 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'parent first, remaps child');
   inc(ui, 'Review private replay save added');
   inc(ui, 'Save Private Import button');
-  inc(ui, 'Pilot-room team filename mapping added');
-  inc(ui, 'Pilot area is the trainer room');
+  inc(ui, 'Trainer Room team filename mapping added');
+  inc(ui, 'Trainer Room is the future logged-in account workspace');
+  inc(ui, 'regulation-scoped by regulation_id, ruleset_version, and engine_version');
+  inc(ui, 'improvement metrics, loss diagnosis, team degradation');
   inc(ui, 'filename matches a personal/custom team name');
   inc(ui, 'Reference team in Review upload');
   inc(ui, 'Wire replay import UI to private persistence');

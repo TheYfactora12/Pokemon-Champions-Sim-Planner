@@ -61,16 +61,17 @@ Minimum metadata for future learning rows:
 - `source_snapshot_id`
 - `user_scope` or equivalent privacy boundary
 
-## 3b. Trainer rooms and future learning boundary
+## 3b. Trainer Room and future learning boundary
 
 Future personal coaching, uploaded battle review, and bot practice should be built around a trainer-owned workspace, not around shared global tables.
 
 Product language:
 
-- The user-facing Pilot area is the trainer room.
-- The Pilot area should hold the player's custom teams, sim battle history, uploaded Showdown battles, stats, coaching context, and future practice history.
+- The user-facing account workspace is the Trainer Room.
+- The Trainer Room should hold the player's custom teams, sim battle history, uploaded Showdown battles, stats, coaching context, future bot practice history, improvement metrics, loss diagnosis, team degradation signals, and "what worked" notes.
+- Trainer Room history must be regulation-scoped. Saved teams, replay imports, sim results, coaching metrics, bot practice sessions, and improvement trends must carry `regulation_id`, `ruleset_version`, and `engine_version` so old-reg evidence remains useful history but does not pollute current-reg recommendations.
 - If an uploaded Showdown log/replay filename matches a personal/custom team name, the import can be grouped with that private team for analysis.
-- If the filename is unclear, the Review upload flow may expose an optional Reference team dropdown so the player can manually attach the replay to one of their private/custom Pilot teams.
+- If the filename is unclear, the Review upload flow may expose an optional Reference team dropdown so the player can manually attach the replay to one of their private/custom Trainer Room teams.
 - Filename and Reference team mapping are private player evidence. They do not prove legality, public ranking value, or global bot-learning truth without a later trusted promotion workflow.
 
 Current foundation:
@@ -81,16 +82,16 @@ Current foundation:
 - Room teams can reference Team Lab teams, but Team Lab hidden details remain protected by Team Lab policies and API response filtering.
 - `trainer_replay_imports`, `trainer_replay_import_refs`, and `trainer_replay_import_events` record private uploaded replay/file evidence with parser version, source hash, parse status, team mapping status, source gaps, confidence flags, and owner-scoped RLS.
 - `replay_import_service.js` converts Showdown HTML/text, Champions turn-log JSON, and QA artifact JSON into those private governance payload shapes without writing global learning or official ranking rows.
-- Filename-to-team matching is allowed only as private Pilot-room mapping evidence; it is not official legality, global learning, or public ranking proof.
+- Filename-to-team matching is allowed only as private Trainer Room mapping evidence; it is not official legality, global learning, or public ranking proof.
 - `SupabaseAdapter.saveReplayImport` persists those private payloads by inserting the parent import first, then refs/events with the returned import id.
 - The Review page exposes an explicit Save Private Import action. If Supabase/Auth is unavailable or RLS rejects the write, the UI must report local-only status rather than implying account history was saved.
 
 Required direction:
 
 - Add a trainer/profile layer before public account features.
-- Store a private trainer room for saved teams, uploaded replays, sim jobs, coaching facts, and practice drills.
+- Store a private Trainer Room for saved teams, uploaded replays, sim jobs, coaching facts, practice drills, bot sessions, improvement metrics, loss diagnosis, team degradation, and matchup notes.
 - Keep real replay imports private until parser status, team mapping, regulation, format, and source gaps are reviewed.
-- Replace placeholder local room/user ids with authenticated Pilot-room ids before claiming durable account history.
+- Replace placeholder local room/user ids with authenticated Trainer Room ids before claiming durable account history.
 - Let players explicitly choose whether anonymized signals can contribute to global learning.
 - Store global learning as aggregate signals, not raw private teams, raw private replays, or hidden tech choices.
 - Require `regulation_id`, `format`, `engine_version`, `ruleset_version`, source status, sample size, and stale status on every promoted learning row.

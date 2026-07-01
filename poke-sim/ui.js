@@ -8132,7 +8132,7 @@ function csUpdateReplayImportSaveButton(message) {
   var hasPayload = !!(CS_LAST_REPLAY_IMPORT_PAYLOAD && (CS_LAST_REPLAY_IMPORT_PAYLOAD.import_row || CS_LAST_REPLAY_IMPORT_PAYLOAD.importRow));
   btn.disabled = !hasPayload;
   btn.title = hasPayload
-    ? (message || 'Save this replay as private Pilot-room evidence.')
+    ? (message || 'Save this replay as private Trainer Room evidence.')
     : 'Upload or paste a replay first.';
 }
 
@@ -8956,7 +8956,7 @@ function csInitReplayCoachUi() {
         CS_LAST_REPLAY_IMPORT_SOURCE_FILE = CS_LAST_REPLAY_IMPORT_SOURCE_FILE || 'manual-replay-input.log';
         CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(raw, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
       }
-      csUpdateReplayImportSaveButton('Save analyzed replay as private Pilot-room evidence.');
+      csUpdateReplayImportSaveButton('Save analyzed replay as private Trainer Room evidence.');
       setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only unless you export or save it later.' + csReplayImportStatusText(CS_LAST_REPLAY_IMPORT_PAYLOAD));
     } catch (e) {
       setStatus('Could not analyze replay: ' + (e && e.message ? e.message : 'unknown error'), true);
@@ -8977,16 +8977,16 @@ function csInitReplayCoachUi() {
         CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(logEl.value, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
       }
     }
-    csUpdateReplayImportSaveButton('Saving private Pilot-room import...');
+    csUpdateReplayImportSaveButton('Saving private Trainer Room import...');
     saveImportBtn.disabled = true;
-    setStatus('Saving private Pilot-room replay import...');
+    setStatus('Saving private Trainer Room replay import...');
     try {
       var result = await csSaveReplayPrivateImportPayload(CS_LAST_REPLAY_IMPORT_PAYLOAD);
       setStatus(result.message, !result.ok && !result.local_only);
     } catch (e) {
       setStatus('Private replay import save failed: ' + (e && e.message ? e.message : 'unknown error'), true);
     } finally {
-      csUpdateReplayImportSaveButton('Save this replay as private Pilot-room evidence.');
+      csUpdateReplayImportSaveButton('Save this replay as private Trainer Room evidence.');
     }
   });
 
@@ -9018,7 +9018,7 @@ function csInitReplayCoachUi() {
         logEl.value = normalized;
         CS_LAST_REPLAY_IMPORT_SOURCE_FILE = file.name || '';
         CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(raw, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
-        csUpdateReplayImportSaveButton('Save loaded replay as private Pilot-room evidence.');
+        csUpdateReplayImportSaveButton('Save loaded replay as private Trainer Room evidence.');
         CS_LAST_REPLAY_SCENARIO_QUEUE = [];
         CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
         csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
@@ -9049,7 +9049,7 @@ function csInitReplayCoachUi() {
         logEl.value = normalized;
         CS_LAST_REPLAY_IMPORT_SOURCE_FILE = rawUrl || 'replay-url.log';
         CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(normalized, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
-        csUpdateReplayImportSaveButton('Save loaded replay URL as private Pilot-room evidence.');
+        csUpdateReplayImportSaveButton('Save loaded replay URL as private Trainer Room evidence.');
         CS_LAST_REPLAY_SCENARIO_QUEUE = [];
         CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
         csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
@@ -13200,12 +13200,12 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Review private replay save added',
-      detail: 'v2.2.108 wires the Review upload flow to private replay persistence through an explicit Save Private Import button. The button saves only trainer_replay_imports, trainer_replay_import_refs, and trainer_replay_import_events through SupabaseAdapter.saveReplayImport when Supabase/Auth is available, and otherwise reports local-only status. It still blocks public Team Lab rankings, official legality claims, global learning, and bot memory promotion.'
+      detail: 'v2.2.108 wires the Review upload flow to private replay persistence through an explicit Save Private Import button. The button saves only trainer_replay_imports, trainer_replay_import_refs, and trainer_replay_import_events through SupabaseAdapter.saveReplayImport when Supabase/Auth is available, and otherwise reports local-only status. Saved evidence belongs in the future Trainer Room and must remain regulation-scoped by regulation_id, ruleset_version, and engine_version. It still blocks public Team Lab rankings, official legality claims, global learning, and bot memory promotion.'
     },
     {
       status: 'done',
-      title: 'Pilot-room team filename mapping added',
-      detail: 'v2.2.107 aligns product language: the Pilot area is the trainer room. replay_import_service.js now maps an uploaded Showdown replay/log to a private personal team when the filename matches a personal/custom team name or when the player selects a Reference team in Review upload, stores that match in personal_team_match metadata, marks team_mapping_status as mapped, and adds a private team_lab_team ref when available. This is private Pilot-room evidence only; it does not prove official legality, public ranking, global learning, or bot memory.'
+      title: 'Trainer Room team filename mapping added',
+      detail: 'v2.2.107 aligns product language: the Trainer Room is the future logged-in account workspace. replay_import_service.js now maps an uploaded Showdown replay/log to a private personal team when the filename matches a personal/custom team name or when the player selects a Reference team in Review upload, stores that match in personal_team_match metadata, marks team_mapping_status as mapped, and adds a private team_lab_team ref when available. This is private Trainer Room evidence only; it does not prove official legality, public ranking, global learning, or bot memory.'
     },
     {
       status: 'done',
@@ -13225,7 +13225,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Trainer-room schema foundation added',
-      detail: 'v2.2.103 adds the private trainer-room database frame for future accounts and personal coaching: trainer_profiles, trainer_rooms, trainer_room_teams, owner-scoped RLS, no anon read/write policies, and Team Lab team links that do not expose hidden moves/items/EVs. This is only a privacy container; replay imports, personal coaching facts, global learning, and bot sessions remain separate future slices.'
+      detail: 'v2.2.103 adds the private Trainer Room database frame for future accounts and personal coaching: trainer_profiles, trainer_rooms, trainer_room_teams, owner-scoped RLS, no anon read/write policies, and Team Lab team links that do not expose hidden moves/items/EVs. Trainer Room will hold long-term saved teams, regulation-scoped sim data, Showdown logs, improvement metrics, loss diagnosis, team degradation, what-worked notes, and future turn-by-turn bot training. This is only a privacy container; replay imports, personal coaching facts, global learning, and bot sessions remain separate future slices.'
     },
     {
       status: 'done',
@@ -14111,7 +14111,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Wire replay import UI to private persistence',
-      detail: 'Next implementation should replace local placeholder room/user ids with real authenticated Pilot-room context, then show saved import history in the Pilot area. The save path must continue showing parse status, team mapping status, filename/manual Reference team match, source gaps, private saved state, and local-only fallback instead of implying the upload improved official rankings or global learning.'
+      detail: 'Next implementation should replace local placeholder room/user ids with real authenticated Trainer Room context, then show saved import history by regulation in the Trainer Room. The save path must continue showing parse status, team mapping status, filename/manual Reference team match, source gaps, private saved state, and local-only fallback instead of implying the upload improved official rankings or global learning.'
     },
     {
       status: 'next',
