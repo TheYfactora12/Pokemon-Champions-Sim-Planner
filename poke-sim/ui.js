@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.87-replay-qa-claim-payload'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.88-qa-artifact-claim-boundary'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -9369,6 +9369,7 @@ function csBuildCodexQaContext(args) {
   var qaRunType = args.qa_run_type || 'manual_export';
   var branchRows = Number(branchTotals.rows_read || branchTotals.rows || branchTotals.total_rows || 0);
   var branchWeak = qaRunType === 'tactical_sweep' && branchRows <= 0;
+  var qaClaimSourceGaps = [];
   var actionPlan = [];
   function addActionPlan(id, priority, status, detail, nextStep) {
     actionPlan.push({
@@ -9394,6 +9395,44 @@ function csBuildCodexQaContext(args) {
     });
   }
   var readyForCodex = damageEvents > 0 && moveTraceRows > 0 && missing.length === 0;
+  if (!args.build_id) qaClaimSourceGaps.push({ code: 'BUILD_ID_MISSING', message: 'Artifact does not expose a canonical build_id.', pointer: 'build_id' });
+  if (!args.source_url) qaClaimSourceGaps.push({ code: 'SOURCE_URL_MISSING', message: 'Artifact does not expose the page/source URL used for export.', pointer: 'source_url' });
+  if (!damageEvents) qaClaimSourceGaps.push({ code: 'DAMAGE_EVENTS_MISSING', message: 'Artifact cannot prove damage transparency without retained damage_events.', pointer: 'qa_coverage_summary.mechanics_seen.damage_events' });
+  if (!moveTraceRows) qaClaimSourceGaps.push({ code: 'MOVE_RULE_TRACE_MISSING', message: 'Artifact cannot audit damage math without move_rule_trace rows.', pointer: 'qa_coverage_summary.mechanics_seen.move_rule_trace_rows' });
+  if (missing.length) qaClaimSourceGaps.push({ code: 'TARGETED_PROOF_GAPS_REMAIN', message: 'Named targeted proof gaps remain: ' + missing.slice(0, 8).join(', ') + '.', pointer: 'qa_coverage_summary.missing_targeted_proof' });
+  if (branchWeak) qaClaimSourceGaps.push({ code: 'TACTICAL_BRANCH_ROWS_MISSING', message: 'Tactical Sweep ran but exported no branch_move_analysis rows for concrete decision ranking.', pointer: 'branch_move_analysis.totals.rows_read' });
+  if (!replayCards.length) qaClaimSourceGaps.push({ code: 'RETAINED_REPLAY_CARDS_MISSING', message: 'Artifact has no retained replay cards, so replay-level review is limited.', pointer: 'retained.replay_cards' });
+  var qaClaimAudit = {
+    schema_version: 'champions-qa-artifact-claim-audit-v1',
+    source_boundary: 'QA artifacts prove what this app exported for this build and run. They do not become official Pokemon Champion legality, full battle-engine truth, or real ladder truth by themselves.',
+    evidence_scope: {
+      build_id: args.build_id || null,
+      source_url: args.source_url || null,
+      qa_run_type: qaRunType,
+      sample_size: replayCards.length || Number(args.replay_cards_scanned || 0) || 0,
+      branch_analysis_rows: branchRows,
+      damage_events: damageEvents,
+      effect_events: effectEvents,
+      move_rule_trace_rows: moveTraceRows
+    },
+    observed_claims: [
+      'This artifact can show exported QA coverage counts for the captured build.',
+      'This artifact can show retained replay, damage, effect, and move-rule trace evidence when those rows are present.',
+      'This artifact can show tactical branch evidence only when branch_move_analysis rows are present.'
+    ],
+    inferred_claims: [
+      'Release readiness is inferred from QA gates and should stay scoped to this artifact.',
+      'Coaching usefulness is inferred from coach_focus plus branch evidence and should not be presented as ladder truth.',
+      'Battle-engine confidence is bounded by retained evidence and targeted proof coverage.'
+    ],
+    source_gaps: qaClaimSourceGaps,
+    forbidden_claims: [
+      'Do not claim this artifact proves complete Pokemon Champion legality.',
+      'Do not claim this artifact proves every battle mechanic unless the targeted proof and retained evidence cover that mechanic.',
+      'Do not use meta, replay, or QA sample results as official rules.',
+      'Do not rank teams as globally best without regulation_id, ruleset_version, engine_version, sample size, confidence, and stale checks.'
+    ]
+  };
   var recommendedNextTest = missing.length
     ? 'Run targeted QA proof for: ' + missing.slice(0, 8).join(', ') + '.'
     : (!damageEvents
@@ -9546,6 +9585,7 @@ function csBuildCodexQaContext(args) {
     qa_release_blockers: qaGateResults.filter(function(row) {
       return row && row.release_blocking;
     }),
+    claim_audit: qaClaimAudit,
     qa_action_plan: actionPlan,
     mechanics_seen: {
       damage_events: damageEvents,
@@ -9611,6 +9651,7 @@ function csBuildQaDashboard(payload) {
   var dbErrors = Array.isArray(dbSave.errors) ? dbSave.errors : [];
   var branchRows = Number(ctx.retained_evidence && ctx.retained_evidence.branch_analysis_rows || 0);
   var coachFocus = ctx.coach_focus || {};
+  var claimAudit = ctx.claim_audit || {};
   var missing = Array.isArray(ctx.next_missing_proof) ? ctx.next_missing_proof : [];
   var damageGate = gates.find(function(gate) { return gate && gate.id === 'damage-events-present'; });
   var traceGate = gates.find(function(gate) { return gate && gate.id === 'move-rule-trace-present'; });
@@ -9732,6 +9773,12 @@ function csBuildQaDashboard(payload) {
     release_blockers: blockers,
     critical_bugs: releaseBugs,
     recommended_fix_order: fixOrder,
+    claim_boundary: {
+      schema_version: claimAudit.schema_version || 'champions-qa-artifact-claim-audit-v1',
+      source_boundary: claimAudit.source_boundary || 'QA artifact claim boundary unavailable.',
+      source_gaps: Array.isArray(claimAudit.source_gaps) ? claimAudit.source_gaps : [],
+      forbidden_claims: Array.isArray(claimAudit.forbidden_claims) ? claimAudit.forbidden_claims : []
+    },
     evidence_counts: {
       damage_events: Number(ctx.mechanics_seen && ctx.mechanics_seen.damage_events || payload.damage_events_total || 0),
       effect_events: Number(ctx.mechanics_seen && ctx.mechanics_seen.effect_events || payload.effect_events_total || 0),

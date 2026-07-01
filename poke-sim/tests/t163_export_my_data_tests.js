@@ -349,6 +349,14 @@ async function main() {
     truthy(payload.proof_manifest.coverage_flags.has_targeted_sweep, 'proof manifest targeted flag missing');
     eq(payload.proof_manifest.evidence_counts.retained_replay_cards, payload.retained.replay_cards.length, 'proof manifest replay count mismatch');
     eq(payload.proof_manifest.evidence_counts.targeted_sweep_runs, payload.qa_coverage_summary.totals.targeted_sweep_runs, 'proof manifest targeted count mismatch');
+    truthy(payload.codex_context && payload.codex_context.claim_audit, 'QA claim audit missing');
+    eq(payload.codex_context.claim_audit.schema_version, 'champions-qa-artifact-claim-audit-v1', 'QA claim audit schema');
+    truthy(/do not become official Pokemon Champion legality/i.test(payload.codex_context.claim_audit.source_boundary), 'QA claim boundary should block legality overclaiming');
+    truthy(payload.codex_context.claim_audit.evidence_scope.build_id === payload.build_id, 'QA claim audit build scope mismatch');
+    truthy(payload.codex_context.claim_audit.forbidden_claims.some(claim => /complete Pokemon Champion legality/i.test(claim)), 'QA claim audit legality guard missing');
+    truthy(payload.qa_dashboard && payload.qa_dashboard.claim_boundary, 'QA dashboard claim boundary missing');
+    eq(payload.qa_dashboard.claim_boundary.schema_version, 'champions-qa-artifact-claim-audit-v1', 'QA dashboard claim boundary schema');
+    truthy(payload.qa_dashboard.claim_boundary.forbidden_claims.some(claim => /regulation_id, ruleset_version, engine_version/i.test(claim)), 'QA dashboard ranking guard missing');
   });
 
   await T('7. QA artifact click downloads a JSON file with the expected prefix', async () => {
