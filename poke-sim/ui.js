@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.88-qa-artifact-claim-boundary'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.89-qa-claim-review'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -10607,6 +10607,18 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   payload = csApplyStressLiteArtifactBudget(payload, options);
   payload.proof_manifest = csBuildQaProofManifest(payload);
   payload.qa_dashboard = csBuildQaDashboard(payload);
+  payload.qa_claim_review = {
+    schema_version: 'champions-qa-claim-review-v1',
+    purpose: 'Plain-English trust boundary for QA reviewers. Read this before treating the artifact as release, battle-engine, coaching, or leaderboard proof.',
+    verdict: payload.qa_dashboard && payload.qa_dashboard.can_ship
+      ? 'This artifact has release/battle proof for its captured scope, but still cannot prove official Champion legality or global team rankings.'
+      : 'This artifact has incomplete proof; do not use it as clean release or battle-engine proof until listed gaps are closed.',
+    evidence_scope: payload.codex_context && payload.codex_context.claim_audit ? payload.codex_context.claim_audit.evidence_scope : {},
+    source_boundary: payload.qa_dashboard && payload.qa_dashboard.claim_boundary ? payload.qa_dashboard.claim_boundary.source_boundary : null,
+    source_gaps: payload.qa_dashboard && payload.qa_dashboard.claim_boundary ? payload.qa_dashboard.claim_boundary.source_gaps : [],
+    forbidden_claims: payload.qa_dashboard && payload.qa_dashboard.claim_boundary ? payload.qa_dashboard.claim_boundary.forbidden_claims : [],
+    reviewer_next_step: payload.recommended_next_test || (payload.proof_manifest && payload.proof_manifest.next_action) || 'Review qa_dashboard.recommended_fix_order before changing code.'
+  };
   payload.qa_gate_results = payload.codex_context.qa_gate_results;
   payload.qa_release_blockers = payload.codex_context.qa_release_blockers;
   payload.recommended_fix_order = payload.qa_dashboard.recommended_fix_order;

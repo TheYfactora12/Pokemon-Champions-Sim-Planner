@@ -357,6 +357,13 @@ async function main() {
     truthy(payload.qa_dashboard && payload.qa_dashboard.claim_boundary, 'QA dashboard claim boundary missing');
     eq(payload.qa_dashboard.claim_boundary.schema_version, 'champions-qa-artifact-claim-audit-v1', 'QA dashboard claim boundary schema');
     truthy(payload.qa_dashboard.claim_boundary.forbidden_claims.some(claim => /regulation_id, ruleset_version, engine_version/i.test(claim)), 'QA dashboard ranking guard missing');
+    truthy(payload.qa_claim_review, 'top-level QA claim review missing');
+    eq(payload.qa_claim_review.schema_version, 'champions-qa-claim-review-v1', 'QA claim review schema');
+    truthy(/Plain-English trust boundary/i.test(payload.qa_claim_review.purpose), 'QA claim review purpose missing');
+    truthy(/official Champion legality|incomplete proof/i.test(payload.qa_claim_review.verdict), 'QA claim review verdict should prevent overclaiming');
+    truthy(payload.qa_claim_review.evidence_scope.build_id === payload.build_id, 'QA claim review build scope mismatch');
+    truthy(Array.isArray(payload.qa_claim_review.forbidden_claims), 'QA claim review forbidden claims missing');
+    truthy(typeof payload.qa_claim_review.reviewer_next_step === 'string' && payload.qa_claim_review.reviewer_next_step.length, 'QA claim review next step missing');
   });
 
   await T('7. QA artifact click downloads a JSON file with the expected prefix', async () => {
@@ -423,6 +430,7 @@ async function main() {
     eq(payload.codex_context.retained_evidence.tactical_sweep_status, 'complete', 'codex tactical status');
     truthy(payload.codex_context.retained_evidence.branch_analysis_rows >= 2, 'codex branch rows should count rows_read');
     truthy(payload.qa_dashboard && payload.qa_dashboard.schema_version === 'champions-qa-dashboard-v1', 'top-level QA dashboard missing');
+    truthy(payload.qa_claim_review && payload.qa_claim_review.schema_version === 'champions-qa-claim-review-v1', 'top-level QA claim review missing');
     truthy(Array.isArray(payload.qa_dashboard.qa_lanes), 'QA dashboard lanes missing');
     truthy(payload.qa_dashboard.qa_lanes.some(row => row.id === 'release'), 'release QA lane missing');
     truthy(payload.qa_dashboard.qa_lanes.some(row => row.id === 'battle_engine'), 'battle engine QA lane missing');
