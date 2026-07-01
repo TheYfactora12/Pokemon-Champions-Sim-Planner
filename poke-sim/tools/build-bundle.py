@@ -93,6 +93,7 @@ source_registry = read('generated/source_registry.js')
 move_legality = read('move_legality.js')
 move_support = read('move_support.js')
 replay_coach = read('replay_coach.js')
+replay_import_service = read('replay_import_service.js')
 replay_learning = read('replay_learning.js')
 supabase_umd = fetch_supabase_umd()
 
@@ -118,6 +119,7 @@ html = html.replace('<script src="generated/source_registry.js"></script>', '')
 html = html.replace('<script src="move_legality.js"></script>', '')
 html = html.replace('<script src="move_support.js"></script>', '')
 html = html.replace('<script src="replay_coach.js"></script>', '')
+html = html.replace('<script src="replay_import_service.js"></script>', '')
 html = html.replace('<script src="replay_learning.js"></script>', '')
 html = html.replace('<script src="legality.js"></script>', '')
 html = html.replace('<script src="strategy-injectable.js"></script>', '')
@@ -172,6 +174,7 @@ inline_js = (
     + sanitize_inline_js(move_legality) + '\n\n'
     + sanitize_inline_js(move_support) + '\n\n'
     + sanitize_inline_js(replay_coach) + '\n\n'
+    + sanitize_inline_js(replay_import_service) + '\n\n'
     + sanitize_inline_js(replay_learning) + '\n\n'
     + sanitize_inline_js(legality) + '\n\n'
     + sanitize_inline_js(ui) + '\n\n'

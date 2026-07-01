@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.104-replay-import-governance'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.105-private-replay-import-service'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13011,6 +13011,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Private replay parser service added',
+      detail: 'v2.2.105 adds replay_import_service.js, a private parser adapter that turns Showdown HTML/text, Champions turn-log JSON, and QA artifact JSON into trainer_replay_imports, trainer_replay_import_refs, and trainer_replay_import_events shaped payloads. It preserves parser_version, source_hash, source gaps, parser confidence, source-line/event pointers, regulation, format, engine_version, and ruleset_version while failing closed on unknown files. It does not write to Supabase, Team Lab official rankings, global learning, or bot memory.'
+    },
+    {
+      status: 'done',
       title: 'Replay import governance added',
       detail: 'v2.2.104 adds private replay import governance for future Showdown HTML/text uploads, QA artifacts, and turn logs: trainer_replay_imports, trainer_replay_import_refs, trainer_replay_import_events, parser_version, source_hash, parse_status, team_mapping_status, source_gaps, confidence_flags, regulation/format/version scope, and owner-scoped RLS. These rows are private parser evidence only and cannot promote to official Team Lab rankings, global learning, or bot memory in this slice.'
     },
@@ -13902,8 +13907,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Build private replay parser service after governance tables',
-      detail: 'Next implementation should parse uploaded Showdown HTML/text and existing QA/turn-log JSON into trainer_replay_imports and trainer_replay_import_events with source-line pointers, parser confidence, partial/failure status, and source gaps. Keep it private to the trainer room; no Team Lab promotion, global learning, or bot-memory writes until trusted worker review exists.'
+      title: 'Wire private replay imports to Supabase adapter',
+      detail: 'Next implementation should connect replay_import_service.js to an owner-scoped Supabase adapter path that inserts trainer_replay_imports first, then child refs/events with the returned import_id. Keep writes private to the trainer room; do not update official Team Lab rankings, global learning, or bot memory from this browser path.'
     },
     {
       status: 'next',

@@ -187,8 +187,10 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'owner-scoped RLS');
   inc(ui, 'Replay import governance added');
   inc(ui, 'trainer_replay_imports, trainer_replay_import_refs, trainer_replay_import_events');
-  inc(ui, 'Build private replay parser service after governance tables');
-  inc(ui, 'Build private replay parser service after governance tables');
+  inc(ui, 'Private replay parser service added');
+  inc(ui, 'replay_import_service.js');
+  inc(ui, 'Showdown HTML/text, Champions turn-log JSON, and QA artifact JSON');
+  inc(ui, 'Wire private replay imports to Supabase adapter');
   inc(ui, 'Legality 99 Target Plan');
   inc(ui, 'LEGALITY_99_TARGET_PLAN.md');
   inc(ui, 'Champion Parity 100 Checklist');
@@ -513,9 +515,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'DB architecture stress-test plan added');
   inc(ui, 'source truth, runtime catalog, evidence truth, trainer rooms, global aggregate learning, and future bot practice');
   inc(ui, 'browser writes, personal-versus-global evidence, simulator-bug poisoning, replay parser partials, and Team Lab overclaiming');
-  inc(ui, 'Build private replay parser service after governance tables');
+  inc(ui, 'Wire private replay imports to Supabase adapter');
   inc(ui, 'trainer_profiles, trainer_rooms, trainer_room_teams, owner-scoped RLS');
-  inc(ui, 'no Team Lab promotion, global learning, or bot-memory writes until trusted worker review exists');
+  inc(ui, 'do not update official Team Lab rankings, global learning, or bot memory from this browser path');
   inc(ui, 'shipped move registry coverage plus live mechanic-family proof');
   inc(ui, 'Run non-standard stat-source targeted proof first');
   inc(ui, 'nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace');

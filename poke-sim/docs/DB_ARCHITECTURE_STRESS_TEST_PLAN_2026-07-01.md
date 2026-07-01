@@ -222,7 +222,7 @@ Pass/fail:
 - Backend-only foundation is implemented in `2026_07_01_trainer_room_foundation.sql`.
 - It remains a privacy boundary only; it does not make coaching, replay parsing, global learning, or bot-play claims.
 
-### Next priority: replay import governance
+### Completed priority: replay import governance
 
 DB requirement:
 
@@ -239,6 +239,37 @@ Pass/fail:
 - Implemented as private governance tables in `2026_07_01_replay_import_governance.sql`.
 - Safe for private parser review and future personal coaching inputs.
 - Not safe for global learning until parser/mapping is verified by a future trusted worker and consent gate.
+
+### Completed priority: private replay parser service
+
+DB/service requirement:
+
+- detect Showdown HTML/text, Champions turn-log JSON, and QA artifact JSON
+- normalize parser output into `trainer_replay_imports`, `trainer_replay_import_refs`, and `trainer_replay_import_events` shaped payloads
+- preserve source hash, parser version, source gaps, parser confidence, source-line/event pointers, regulation, format, engine version, and ruleset version
+- fail closed on unknown files
+- keep all rows private and unpromoted
+
+Pass/fail:
+
+- Implemented as `replay_import_service.js`.
+- It reuses `replay_coach.js` for Showdown parsing and `sim_evidence.js` for QA/turn-log artifact intake.
+- It returns payloads ready for a DB adapter but does not write to Supabase or promote rows by itself.
+- Global learning, Team Lab official ranking promotion, and bot memory remain blocked until trusted-worker review exists.
+
+### Next priority: private replay import persistence
+
+DB/service requirement:
+
+- insert parent import row first
+- insert child refs/events with returned import id
+- preserve owner-scoped trainer-room RLS
+- keep failures partial and reviewable instead of dropping evidence
+- do not promote rows to official rankings or global learning
+
+Pass/fail:
+
+- Ready to implement as a Supabase adapter/service slice.
 
 ### Later priority: personal coaching memory
 
