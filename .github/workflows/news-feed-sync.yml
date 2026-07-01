@@ -31,6 +31,8 @@ jobs:
       - name: Validate news feed and release artifact
         run: |
           node -e "const fs=require('fs'); const text=fs.readFileSync('poke-sim/generated/news_feed.js','utf8'); if(!text.includes('champions-news-feed-v1')) throw new Error('news feed schema missing');"
+          node poke-sim/tools/check-news-image-health.mjs
+          node poke-sim/tests/news_source_trust_guard_tests.js
           node poke-sim/tests/release_manifest_tests.js
           node poke-sim/tests/t191_overview_tab_tests.js
 
