@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.89-qa-claim-review'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.90-qa-slice-readout'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -10637,7 +10637,65 @@ async function csExportQaArtifactJson(teamKey, opts) {
   var payload = await csBuildQaArtifactExport(teamKey, opts);
   var ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   await _saveQaArtifactBlob('champions-sim-qa-artifact-' + ts + '.json', 'application/json', JSON.stringify(payload, null, 2), opts);
+  csRenderQaClaimReviewReadout(payload);
   return payload;
+}
+
+function csQaClaimReadoutHost() {
+  if (typeof document === 'undefined') return null;
+  var existing = document.getElementById('qa-claim-review-readout');
+  if (existing) return existing;
+  var el = document.createElement('div');
+  el.id = 'qa-claim-review-readout';
+  el.className = 'qa-claim-review-readout';
+  var anchor = document.getElementById('beta-guard-note') || document.getElementById('progress-wrap');
+  var parent = anchor && anchor.parentNode ? anchor.parentNode : (document.body || null);
+  if (parent && parent.insertBefore && anchor && anchor.nextSibling) parent.insertBefore(el, anchor.nextSibling);
+  else if (parent && parent.appendChild) parent.appendChild(el);
+  return el;
+}
+
+function csRenderQaClaimReviewReadout(payload) {
+  var host = csQaClaimReadoutHost();
+  if (!host || !payload) return;
+  var review = payload.qa_claim_review || {};
+  var dashboard = payload.qa_dashboard || {};
+  var scope = review.evidence_scope || {};
+  var gaps = Array.isArray(review.source_gaps) ? review.source_gaps : [];
+  var forbidden = Array.isArray(review.forbidden_claims) ? review.forbidden_claims : [];
+  var blockers = Array.isArray(payload.qa_release_blockers) ? payload.qa_release_blockers : [];
+  var status = dashboard.can_ship ? 'PASS WITH BOUNDARIES' : 'BLOCKED / PARTIAL';
+  var statusClass = dashboard.can_ship ? 'low' : 'high';
+  var qaRunType = String(payload.qa_run_type || '').toLowerCase();
+  var qaSliceTitle = qaRunType === 'stress_lite_qa'
+    ? 'Device-Safe Stress QA'
+    : (qaRunType === 'tactical_sweep'
+      ? 'Tactical Coaching QA'
+      : (qaRunType === 'qa_artifact_with_targeted_sweep' || qaRunType === 'qa_artifact'
+        ? 'Current Evidence QA'
+        : 'Release Matrix QA'));
+  var forbiddenRows = forbidden.slice(0, 3).map(function(claim) {
+    return '<span class="replay-coach-tag medium">' + _escapeHtml(claim) + '</span>';
+  }).join('');
+  var gapRows = gaps.slice(0, 4).map(function(gap) {
+    return '<div class="replay-coach-list-row"><strong>' + _escapeHtml(gap.code || 'SOURCE_GAP') + '</strong>' + _escapeHtml(gap.message || '') + '</div>';
+  }).join('');
+  host.innerHTML = '<div class="replay-coach-card qa-claim-review-card">' +
+    '<div class="replay-coach-card-head"><h3 class="replay-coach-h3">QA Claim Review - ' + _escapeHtml(qaSliceTitle) + '</h3><span class="replay-coach-tag ' + _escapeHtml(statusClass) + '">' + _escapeHtml(status) + '</span></div>' +
+    '<p class="replay-coach-turn-read">' + _escapeHtml(review.verdict || 'QA artifact exported. Review source gaps before treating it as proof.') + '</p>' +
+    '<div class="replay-coach-summary-grid">' +
+      '<div class="replay-coach-metric"><strong>Release blockers</strong><span>' + _escapeHtml(String(blockers.length)) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Source gaps</strong><span>' + _escapeHtml(String(gaps.length)) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Damage events</strong><span>' + _escapeHtml(String(scope.damage_events || 0)) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Branch rows</strong><span>' + _escapeHtml(String(scope.branch_analysis_rows || 0)) + '</span></div>' +
+    '</div>' +
+    '<div class="replay-coach-list">' +
+      '<div class="replay-coach-list-row"><strong>Source boundary</strong>' + _escapeHtml(review.source_boundary || 'This artifact is scoped evidence, not official game truth.') + '</div>' +
+      '<div class="replay-coach-list-row"><strong>Next QA move</strong>' + _escapeHtml(review.reviewer_next_step || payload.recommended_next_test || 'Review qa_dashboard.recommended_fix_order.') + '</div>' +
+      (gapRows ? '<div class="replay-coach-list-row"><strong>Top source gaps</strong>' + gapRows + '</div>' : '') +
+    '</div>' +
+    '<div class="replay-coach-tags"><span class="replay-coach-tag high">Forbidden claims</span>' + forbiddenRows + '</div>' +
+  '</div>';
 }
 
 // Wire history filter buttons

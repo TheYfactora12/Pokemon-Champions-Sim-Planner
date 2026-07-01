@@ -121,6 +121,7 @@ vm.runInContext([
   'this.csExportMyDataJson = csExportMyDataJson;',
   'this.csBuildQaArtifactExport = csBuildQaArtifactExport;',
   'this.csExportQaArtifactJson = csExportQaArtifactJson;',
+  'this.csRenderQaClaimReviewReadout = csRenderQaClaimReviewReadout;',
   'this.csGetPublicBetaGuardProfile = csGetPublicBetaGuardProfile;',
   'this.csApplyPublicBetaGuardrails = csApplyPublicBetaGuardrails;',
   'this.csLoadCoachBrainMemory = csLoadCoachBrainMemory;',
@@ -135,6 +136,7 @@ const {
   csExportMyDataJson,
   csBuildQaArtifactExport,
   csExportQaArtifactJson,
+  csRenderQaClaimReviewReadout,
   csGetPublicBetaGuardProfile,
   csApplyPublicBetaGuardrails,
   addReplays
@@ -252,19 +254,19 @@ async function main() {
   await T('5. index.html exposes the QA artifact export button', () => {
     const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
     truthy(/id="export-qa-artifact-json-btn"/.test(html), 'QA artifact button missing');
-    truthy(/QA Artifact/.test(html), 'QA artifact label missing');
-    truthy(/id="run-all-export-qa-btn"/.test(html), 'Run All + QA Artifact button missing');
-    truthy(/id="stress-lite-qa-btn"/.test(html), 'Stress Lite + QA button missing');
-    truthy(/id="tactical-sweep-qa-btn"/.test(html), 'Tactical Sweep + QA button missing');
+    truthy(/Current Evidence QA/.test(html), 'Current Evidence QA label missing');
+    truthy(/id="run-all-export-qa-btn"/.test(html), 'Release Matrix QA button missing');
+    truthy(/id="stress-lite-qa-btn"/.test(html), 'Device-Safe Stress QA button missing');
+    truthy(/id="tactical-sweep-qa-btn"/.test(html), 'Tactical Coaching QA button missing');
     truthy(/Quick check: runs one matchup/.test(html), 'Run Simulation hover help missing');
     truthy(/Broad release check: runs many matchups/.test(html), 'Run All hover help missing');
-    truthy(/Release evidence: runs all matchups/.test(html), 'Run All + QA hover help missing');
-    truthy(/Safe stress check: runs capped lower-load coverage/.test(html), 'Stress Lite hover help missing');
-    truthy(/Coaching and strategy check: tests branches/.test(html), 'Tactical Sweep hover help missing');
+    truthy(/Release Matrix QA: runs all matchups/.test(html), 'Release Matrix QA hover help missing');
+    truthy(/Device-Safe Stress QA: runs capped lower-load coverage/.test(html), 'Device-Safe Stress QA hover help missing');
+    truthy(/Tactical Coaching QA: tests branches/.test(html), 'Tactical Coaching QA hover help missing');
     truthy(/Workflow helper: choose a local folder/.test(html), 'QA drop folder hover help missing');
     truthy(/id="beta-guard-note"/.test(html), 'beta guard note missing');
     truthy(/id="qa-drop-folder-btn"/.test(html), 'QA drop folder button missing');
-    truthy(/Tactical Sweep \+ QA/.test(html), 'Tactical Sweep + QA label missing');
+    truthy(/Tactical Coaching QA/.test(html), 'Tactical Coaching QA label missing');
     truthy(/id="sim-scope"/.test(html), 'Test Scope selector missing');
     truthy(/Selected matchup/.test(html), 'Selected matchup scope option missing');
     truthy(/10,000 series \(full team stress\)/.test(html), '10,000 stress sample option missing');
@@ -374,6 +376,7 @@ async function main() {
     ctx._downloadBlob = function(filename, mime, text) {
       ctx._downloaded = { filename: filename, mime: mime, text: text };
     };
+    document._els['qa-claim-review-readout'] = makeStubEl('qa-claim-review-readout');
     const payload = await csExportQaArtifactJson('player');
     truthy(ctx._downloaded, 'download not triggered');
     truthy(/^champions-sim-qa-artifact-/.test(ctx._downloaded.filename), 'unexpected filename');
@@ -382,6 +385,10 @@ async function main() {
     eq(parsed.schema_version, 'champions-qa-artifact-v1');
     eq(parsed.player_team_id, 'player');
     truthy(payload.summary && payload.retention, 'returned QA payload malformed');
+    const readout = document.getElementById('qa-claim-review-readout').innerHTML;
+    truthy(/QA Claim Review - Tactical Coaching QA/.test(readout), 'QA claim review slice title missing');
+    truthy(/Forbidden claims/.test(readout), 'QA claim forbidden-claims readout missing');
+    truthy(/Source boundary/.test(readout), 'QA claim source-boundary readout missing');
   });
 
   await T('8. Tactical Sweep QA covers multiple branch opponents', async () => {
