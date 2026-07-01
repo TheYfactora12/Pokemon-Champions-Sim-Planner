@@ -237,7 +237,7 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.team-lab-admin-reason');
   inc(css, '.team-lab-admin-status');
   inc(css, '.home-landing-hero');
-  inc(css, 'font-size:clamp(48px,8.5vw,112px)');
+  inc(css, 'font-size:clamp(44px,7.2vw,92px)');
   inc(css, '.home-landing-hero h2:after');
   inc(css, 'linear-gradient(90deg,var(--blue),var(--green),var(--gold))');
   inc(css, '.home-landing-chips');
