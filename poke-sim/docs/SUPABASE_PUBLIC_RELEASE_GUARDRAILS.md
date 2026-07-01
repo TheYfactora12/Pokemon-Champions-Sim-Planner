@@ -81,7 +81,7 @@ Blocked behavior:
 - Do not use private trainer data in public rankings without consent, verified mapping, legality status, and trusted-worker promotion.
 - Do not let bot memory learn from rows with unresolved source gaps as if they were real-game truth.
 
-See `docs/DB_ARCHITECTURE_GROWTH_AUDIT_2026-07-01.md` for the full target schema and slice order.
+See `docs/DB_ARCHITECTURE_GROWTH_AUDIT_2026-07-01.md` for the target schema and `docs/DB_ARCHITECTURE_STRESS_TEST_PLAN_2026-07-01.md` for the challenged slice order.
 
 ## 4. Public release gate
 

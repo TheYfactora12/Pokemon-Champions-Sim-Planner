@@ -180,6 +180,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'ACTIVE_SLICE_CLOSEOUT_STATUS.md');
   inc(ui, 'DB Architecture Growth Audit');
   inc(ui, 'DB_ARCHITECTURE_GROWTH_AUDIT_2026-07-01.md');
+  inc(ui, 'DB Architecture Stress-Test Plan');
+  inc(ui, 'DB_ARCHITECTURE_STRESS_TEST_PLAN_2026-07-01.md');
   inc(ui, 'Legality 99 Target Plan');
   inc(ui, 'LEGALITY_99_TARGET_PLAN.md');
   inc(ui, 'Champion Parity 100 Checklist');
@@ -501,8 +503,12 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, '100% readiness');
   inc(ui, 'DB architecture growth audit added');
   inc(ui, 'trainer rooms, private replay imports, personal coaching memory, anonymized global learning, trusted promotion, and future bot practice sessions');
+  inc(ui, 'DB architecture stress-test plan added');
+  inc(ui, 'source truth, runtime catalog, evidence truth, trainer rooms, global aggregate learning, and future bot practice');
+  inc(ui, 'browser writes, personal-versus-global evidence, simulator-bug poisoning, replay parser partials, and Team Lab overclaiming');
   inc(ui, 'Build trainer-room schema before public personal coaching');
-  inc(ui, 'trainer_profiles, trainer_rooms, room teams, private replay imports, owner-scoped RLS, and consent boundaries');
+  inc(ui, 'trainer_profiles, trainer_rooms, trainer_room_teams, owner-scoped RLS');
+  inc(ui, 'Replay imports, personal coaching facts, global learning, and bot sessions stay deferred');
   inc(ui, 'shipped move registry coverage plus live mechanic-family proof');
   inc(ui, 'Run non-standard stat-source targeted proof first');
   inc(ui, 'nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace');

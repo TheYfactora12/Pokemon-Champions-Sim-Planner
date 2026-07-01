@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.100-qa-100-readiness'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.102-db-architecture-stress-plan'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13011,6 +13011,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'DB architecture stress-test plan added',
+      detail: 'v2.2.102 stress-tests the database split against the full roadmap before migrations: source truth, runtime catalog, evidence truth, trainer rooms, global aggregate learning, and future bot practice. The plan challenges browser writes, personal-versus-global evidence, simulator-bug poisoning, replay parser partials, and Team Lab overclaiming, then frames trainer rooms as the first safe migration slice.'
+    },
+    {
+      status: 'done',
       title: 'DB architecture growth audit added',
       detail: 'v2.2.101 documents the database future-state needed after simulator truth improves: source truth, evidence truth, trainer rooms, private replay imports, personal coaching memory, anonymized global learning, trusted promotion, and future bot practice sessions. The audit also flags broad anon DB writes and branch-memory promotion as risks before public scale.'
     },
@@ -13888,7 +13893,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Build trainer-room schema before public personal coaching',
-      detail: 'Next DB product slice should add trainer_profiles, trainer_rooms, room teams, private replay imports, owner-scoped RLS, and consent boundaries. This gives each player a private testing room for their teams, Showdown/Champion battle files, sim runs, coaching facts, and future bot sessions without poisoning global rankings or leaking hidden tech.'
+      detail: 'Next DB product slice should implement only the first safe frame from the stress-test plan: trainer_profiles, trainer_rooms, trainer_room_teams, owner-scoped RLS, and tests proving private room data is not public. Replay imports, personal coaching facts, global learning, and bot sessions stay deferred until their own slices.'
     },
     {
       status: 'next',
@@ -14054,6 +14059,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Release Discipline + Cleanup Gates', href: 'docs/RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md' },
     { label: 'Active Slice Closeout Status', href: 'docs/ACTIVE_SLICE_CLOSEOUT_STATUS.md' },
     { label: 'DB Architecture Growth Audit', href: 'docs/DB_ARCHITECTURE_GROWTH_AUDIT_2026-07-01.md' },
+    { label: 'DB Architecture Stress-Test Plan', href: 'docs/DB_ARCHITECTURE_STRESS_TEST_PLAN_2026-07-01.md' },
     { label: 'Legality 99 Target Plan', href: 'docs/LEGALITY_99_TARGET_PLAN.md' },
     { label: 'Data Source Registry', href: 'docs/DATA_SOURCE_REGISTRY.md' },
     { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
@@ -14112,6 +14118,13 @@ var CS_OVERVIEW_DATA = {
       role: 'Trainer-room, personal coaching, global learning, and bot-practice database plan',
       status: 'canonical for DB product growth',
       notes: 'Use before adding account, training-room, replay-import, global learning, or bot-session tables so private player data does not poison shared rankings or coaching.'
+    },
+    {
+      label: 'DB Architecture Stress-Test Plan',
+      href: 'docs/DB_ARCHITECTURE_STRESS_TEST_PLAN_2026-07-01.md',
+      role: 'Stress-tested DB slice order before migrations',
+      status: 'canonical for DB slice sequencing',
+      notes: 'Challenges source truth, runtime catalog, evidence truth, trainer rooms, global learning, and bot practice before the trainer-room migration starts.'
     },
     {
       label: 'Legality 99 Target Plan',
