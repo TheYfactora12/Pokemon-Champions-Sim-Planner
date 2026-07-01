@@ -52,6 +52,8 @@ What this still does not prove:
 
 The turn-log files supplied with the same proof pass remain useful targeted evidence, but they also correctly expose missing targeted proof families. The current next targeted proof list includes Trick Room active state, non-standard stat-source move traces such as Foul Play/Body Press/Psyshock-style behavior, priority/prevention cases, status/action denial, drain/recovery/HP-cost/residual/item-recovery cases, and broader field-duration coverage.
 
+The all-move QA approach is now defined in `docs/MOVE_MECHANICS_QA_CLOSEOUT_PLAN.md`. The important boundary is that `120 verified / 0 baseline / 0 incomplete` proves registry/test coverage for the shipped move surface, not exhaustive live browser proof for every possible move interaction. Live QA closeout must happen by mechanic family and by high-risk representative moves.
+
 ## 100% closed right now
 
 No active strategic slice should be marked `100% closed` today. Several are deployed and CI-green, but the correct engineering claim is `99% closed` until fresh live artifacts and issue/milestone closeout proof are attached.
@@ -64,7 +66,8 @@ This is intentional. It protects the project from overstating Pokemon Champion l
 2. Run one fresh replay upload artifact from real battle files and verify `claim_audit`, hidden source gaps, field/move failures, and team mapping are understandable.
 3. Update GitHub milestones/issues using this status map: close only what is proven, mark `99%` items with residual risk, and keep blockers open.
 4. Start the next sim-truth slice: replay transparency and QA usefulness, specifically miss/accuracy, field state, volatile state, multi-target damage, and residual/contact damage visibility.
-5. Plan the first `ui.js` module split before adding more QA or Team Lab UI.
+5. Run the move-mechanics QA closeout plan, starting with non-standard stat-source proof for Foul Play, Body Press, Psyshock, and Foul Play/Pure Power guard.
+6. Plan the first `ui.js` module split before adding more QA or Team Lab UI.
 
 ## Closeout rule for the next work item
 

@@ -180,6 +180,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'ACTIVE_SLICE_CLOSEOUT_STATUS.md');
   inc(ui, 'Champion Parity 100 Checklist');
   inc(ui, 'champion_parity_100_checklist.md');
+  inc(ui, 'Move Mechanics QA Closeout Plan');
+  inc(ui, 'MOVE_MECHANICS_QA_CLOSEOUT_PLAN.md');
   inc(ui, 'Move Support Audit');
   inc(ui, 'move_support_audit.md');
   inc(ui, 'Type Multiplier Audit');
@@ -251,7 +253,19 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(closeout, 'complete Pokemon Champion legality');
   inc(closeout, 'Trick Room active state');
   inc(closeout, 'non-standard stat-source move traces');
+  inc(closeout, 'MOVE_MECHANICS_QA_CLOSEOUT_PLAN.md');
+  inc(closeout, 'Live QA closeout must happen by mechanic family');
   inc(closeout, 'What exact claim did we prove?');
+  const moveQa = fs.readFileSync(path.join(ROOT, 'docs', 'MOVE_MECHANICS_QA_CLOSEOUT_PLAN.md'), 'utf8');
+  inc(moveQa, 'Move Mechanics QA Closeout Plan');
+  inc(moveQa, 'Move registry support');
+  inc(moveQa, 'Live mechanic-family proof');
+  inc(moveQa, '120 verified / 0 baseline / 0 incomplete');
+  inc(moveQa, 'It does not prove every move appeared in fresh live browser QA evidence.');
+  inc(moveQa, 'Non-standard stat source');
+  inc(moveQa, 'Foul Play, Body Press, Psyshock-style defense targeting');
+  inc(moveQa, 'Do not brute-force all legal game trees in the browser.');
+  inc(moveQa, 'A move family can be marked `100% closed` only when');
 });
 
 T('5. Overview styles are responsive and scan-friendly', () => {
@@ -420,6 +434,12 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Closeout discipline before new work');
   inc(ui, 'Active slice closeout map added');
   inc(ui, 'Fresh live closeout QA artifacts recorded');
+  inc(ui, 'Move mechanics QA closeout plan added');
+  inc(ui, 'shipped move registry coverage plus live mechanic-family proof');
+  inc(ui, 'Run non-standard stat-source targeted proof first');
+  inc(ui, 'nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace');
+  inc(ui, 'All-move QA boundary and targeted proof plan');
+  inc(ui, 'canonical for move QA closeout');
   inc(ui, 'Tactical Sweep and Stress Lite exports both captured build_id, source_url, qa_claim_review');
   inc(ui, 'full Champion legality, complete mechanics coverage, and official/global rankings out of scope');
   inc(ui, '100% closed, 99% closed with named residual risk, open blocker, or next priority');

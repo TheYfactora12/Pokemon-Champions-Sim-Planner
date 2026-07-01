@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.93-live-closeout-proof'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.94-move-qa-closeout-plan'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -12570,6 +12570,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Move mechanics QA closeout plan added',
+      detail: 'v2.2.94 defines all-move QA as two layers: shipped move registry coverage plus live mechanic-family proof. The plan prevents the team from treating 120 verified registry rows as exhaustive browser proof and prioritizes Foul Play, Body Press, Psyshock, HP effects, action denial, priority prevention, and field-duration scenarios.'
+    },
+    {
+      status: 'done',
       title: 'Fresh live closeout QA artifacts recorded',
       detail: 'v2.2.93 records the July 1 live artifacts from v2.2.92: Tactical Sweep and Stress Lite exports both captured build_id, source_url, qa_claim_review, qa_dashboard.claim_boundary, forbidden claims, zero release blockers, and scoped battle/coaching evidence. The same proof keeps full Champion legality, complete mechanics coverage, and official/global rankings out of scope.'
     },
@@ -13406,6 +13411,11 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
+      title: 'Run non-standard stat-source targeted proof first',
+      detail: 'Next move-mechanics slice should force Foul Play, Body Press, Psyshock, and the Foul Play/Pure Power guard through Targeted QA, then require fresh live artifacts to show nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace, and ignored_target_power_ability_trace before moving the family toward 99% closed.'
+    },
+    {
+      status: 'next',
       title: 'Use the active slice closeout map before starting new work',
       detail: 'The current closeout map says no active strategic slice is honestly 100% closed yet. QA naming, release cleanup, replay claim audit, Team Lab preview, home page, and replay intake are 99% closed with named residual risks; Champion legality, official rankings, Battle Sensei brain, global learning, replay transparency, and UI modularization stay open blockers.'
     },
@@ -13548,6 +13558,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Approved Runtime Team Test Matrix', href: 'reports/approved_runtime_team_test_matrix.md' },
     { label: 'Mechanics Truth Beta Gate Checklist', href: 'reports/mechanics_truth_beta_gate_checklist.md' },
     { label: 'Champion Parity 100 Checklist', href: 'reports/champion_parity_100_checklist.md' },
+    { label: 'Move Mechanics QA Closeout Plan', href: 'docs/MOVE_MECHANICS_QA_CLOSEOUT_PLAN.md' },
     { label: 'Move Support Audit', href: 'reports/move_support_audit.md' },
     { label: 'Type Multiplier Audit', href: 'reports/type_multiplier_audit.md' },
     { label: 'Simulation First', href: '../docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md' },
@@ -13591,6 +13602,13 @@ var CS_OVERVIEW_DATA = {
       role: 'Current 99% / 100% / blocker map',
       status: 'canonical for active closeout',
       notes: 'Use to decide what can close, what stays open, and what the next priority is before adding more features.'
+    },
+    {
+      label: 'Move Mechanics QA Closeout Plan',
+      href: 'docs/MOVE_MECHANICS_QA_CLOSEOUT_PLAN.md',
+      role: 'All-move QA boundary and targeted proof plan',
+      status: 'canonical for move QA closeout',
+      notes: 'Defines why shipped move registry verification is not the same as exhaustive live browser proof, and which mechanic families must be proven before coaching trusts them.'
     },
     {
       label: 'Team Lab Architecture Alignment',
