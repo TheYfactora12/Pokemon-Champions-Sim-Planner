@@ -240,6 +240,11 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, 'font-size:clamp(52px,10vw,132px)');
   inc(css, '.home-landing-hero h2:after');
   inc(css, 'linear-gradient(90deg,var(--blue),var(--green),var(--gold))');
+  inc(css, '.home-landing-chips');
+  inc(css, '.home-value-strip');
+  inc(css, '.home-landing-chips span{display:inline-flex;align-items:center;min-height:30px');
+  inc(css, '.home-landing-proof span{font-family:var(--font-mono);font-size:11px');
+  inc(css, '.home-value-strip p{color:var(--text-m);font-size:15px');
   inc(css, '.home-sim-preview');
   inc(css, '.home-sim-output-card');
   inc(css, '.home-start-cycle');
@@ -282,7 +287,12 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function renderTeamLabHomeHub');
   inc(ui, 'Battle Labs');
   inc(ui, 'Start Simulating');
-  inc(ui, 'Test one matchup. Find the swing turn. Change one thing. Rerun with evidence.');
+  inc(ui, 'Build stronger teams by testing real matchups, reading the swing turn, and changing one thing with proof.');
+  inc(ui, 'Champion rules guarded');
+  inc(ui, 'Which lead, four, move, or switch gives me the best line?');
+  inc(ui, 'Sim the matchup');
+  inc(ui, 'Review the battle');
+  inc(ui, 'Improve cleanly');
   inc(ui, 'See the battle like a coach would.');
   inc(ui, 'Rain Balance vs Speed Control');
   inc(ui, 'The 4-step testing cycle');
@@ -297,7 +307,8 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function csInitHomeTabActions');
   inc(ui, 'function csPokemonNewsFeedItems');
   inc(ui, 'function csInitPokemonNewsCarousel');
-  inc(ui, 'Top 25 Teams are locked on purpose.');
+  inc(ui, 'Top 25 waits for proof.');
+  inc(ui, 'The leaderboard is not a hype list.');
   inc(ui, 'function csTeamLabRankingGates');
   inc(ui, 'function csRenderTeamLabRankingGates');
   inc(ui, 'function csRenderTeamLabAdminControls');

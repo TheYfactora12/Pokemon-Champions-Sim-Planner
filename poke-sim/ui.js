@@ -13895,19 +13895,30 @@ function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
     '<div class="home-landing-hero">' +
       '<div>' +
-        '<span class="overview-kicker">Pokemon Champion simulator</span>' +
+        '<span class="overview-kicker">Pokemon Champion battle lab</span>' +
         '<h2>Battle Labs</h2>' +
-        '<p>Test one matchup. Find the swing turn. Change one thing. Rerun with evidence.</p>' +
+        '<p>Build stronger teams by testing real matchups, reading the swing turn, and changing one thing with proof.</p>' +
         '<div class="home-landing-actions">' +
           '<button type="button" data-home-tab="simulator">Start Simulating</button>' +
           '<button type="button" data-home-tab="replay-coach">Analyze a Replay</button>' +
+          '<button type="button" data-home-tab="teams">Edit a Team</button>' +
+        '</div>' +
+        '<div class="home-landing-chips" aria-label="Battle Labs trust promises">' +
+          '<span>Champion rules guarded</span>' +
+          '<span>Replay evidence</span>' +
+          '<span>Versioned rankings</span>' +
         '</div>' +
       '</div>' +
       '<div class="home-landing-proof">' +
-        '<span>1</span><strong>Run the matchup</strong>' +
-        '<span>2</span><strong>Read the replay</strong>' +
-        '<span>3</span><strong>Change one thing</strong>' +
+        '<span>Question</span><strong>Which lead, four, move, or switch gives me the best line?</strong>' +
+        '<span>Answer</span><strong>Run the matchup, inspect the replay, and compare evidence.</strong>' +
+        '<span>Guardrail</span><strong>Unknown Champion data stays marked needs verification.</strong>' +
       '</div>' +
+    '</div>' +
+    '<div class="home-value-strip" aria-label="Why Battle Labs matters">' +
+      '<article><span>01</span><strong>Sim the matchup</strong><p>Run singles or doubles into benchmark teams and see which plans keep pressure.</p></article>' +
+      '<article><span>02</span><strong>Review the battle</strong><p>Upload real Showdown logs to expose speed control, damage, status, field, item, and faint causes.</p></article>' +
+      '<article><span>03</span><strong>Improve cleanly</strong><p>Change one move, item, lead, or lineup at a time so the next result teaches something real.</p></article>' +
     '</div>' +
     csRenderHomeStartCycle() +
     csRenderHomeSimPreview() +
@@ -13916,8 +13927,8 @@ function csRenderTeamLabNewsroomHub() {
     '<div class="team-lab-hero">' +
       '<div>' +
         '<span class="overview-kicker">Team Lab home</span>' +
-        '<h3>' + (hasEvidenceRows ? 'Top 25 has evidence preview rows.' : 'Top 25 Teams are locked on purpose.') + '</h3>' +
-        '<p>Team Lab ranks simulator teams only when the team, run, replay, legality, sample size, engine version, and ruleset version all line up. Saved DB branch rows can appear as an experimental preview, but official promotion remains locked until trusted team-ID mapping and promotion rules are complete.</p>' +
+        '<h3>' + (hasEvidenceRows ? 'Top 25 has evidence preview rows.' : 'Top 25 waits for proof.') + '</h3>' +
+        '<p>The leaderboard is not a hype list. Teams rank only when legality, sample size, engine version, ruleset version, matchup spread, and stale checks line up.</p>' +
       '</div>' +
       '<div class="team-lab-hero-badges">' +
         '<span>' + (hasEvidenceRows ? 'DB evidence preview' : 'Top 25 locked') + '</span>' +

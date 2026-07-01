@@ -449,12 +449,19 @@ table{border-collapse:collapse;width:100%}
 .home-landing-hero h2:after{content:"";display:block;width:min(260px,55vw);height:6px;margin-top:18px;border-radius:var(--r-full);background:linear-gradient(90deg,var(--blue),var(--green),var(--gold))}
 .home-landing-hero p{position:relative;z-index:2;color:var(--text-m);font-size:clamp(18px,2vw,26px);line-height:1.35;margin-top:var(--sp2);max-width:720px}
 .home-landing-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:var(--sp4)}
-.home-landing-actions button,.home-start-step button{min-height:42px;border:1px solid rgba(91,164,245,.42);background:rgba(91,164,245,.12);color:var(--text);border-radius:var(--r-full);padding:8px 14px;font-size:12px;font-weight:950;cursor:pointer}
+.home-landing-actions button,.home-start-step button{min-height:42px;border:1px solid rgba(91,164,245,.42);background:rgba(91,164,245,.12);color:var(--text);border-radius:var(--r-full);padding:8px 14px;font-size:13px;font-weight:950;cursor:pointer}
 .home-landing-actions button:first-child{background:linear-gradient(135deg,var(--blue),var(--primary));border-color:transparent;color:white}
 .home-landing-actions button:hover,.home-landing-actions button:focus-visible,.home-start-step button:hover,.home-start-step button:focus-visible{transform:translateY(-1px);border-color:var(--blue);outline:none}
-.home-landing-proof{display:grid;gap:8px;align-content:center;border:1px solid rgba(255,255,255,.08);border-radius:var(--r-md);background:rgba(0,0,0,.2);padding:var(--sp4);min-width:0;box-shadow:var(--sh-sm)}
-.home-landing-proof span{font-family:var(--font-mono);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m)}
-.home-landing-proof strong{font-size:13px;font-weight:950;color:var(--text);overflow-wrap:anywhere;margin-bottom:4px}
+.home-landing-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--sp4)}
+.home-landing-chips span{display:inline-flex;align-items:center;min-height:30px;border:1px solid rgba(78,201,148,.28);background:rgba(78,201,148,.08);color:var(--green);border-radius:var(--r-full);padding:6px 11px;font-family:var(--font-mono);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
+.home-landing-proof{display:grid;gap:10px;align-content:center;border:1px solid rgba(255,255,255,.08);border-radius:var(--r-md);background:linear-gradient(135deg,rgba(0,0,0,.28),rgba(91,164,245,.06));padding:var(--sp4);min-width:0;box-shadow:var(--sh-sm)}
+.home-landing-proof span{font-family:var(--font-mono);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--text-m)}
+.home-landing-proof strong{font-size:clamp(16px,1.6vw,20px);font-weight:950;color:var(--text);overflow-wrap:anywhere;margin-bottom:8px;line-height:1.25}
+.home-value-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp3);margin-bottom:var(--sp4)}
+.home-value-strip article{border:1px solid rgba(91,164,245,.22);border-radius:var(--r-md);background:linear-gradient(135deg,rgba(91,164,245,.075),rgba(255,255,255,.025));padding:var(--sp4);min-width:0}
+.home-value-strip span{display:block;font-family:var(--font-mono);font-size:12px;font-weight:900;color:var(--gold);letter-spacing:.06em;margin-bottom:10px}
+.home-value-strip strong{display:block;font-size:clamp(18px,2vw,23px);font-weight:950;letter-spacing:-.025em;margin-bottom:7px}
+.home-value-strip p{color:var(--text-m);font-size:15px;line-height:1.45;margin:0}
 .home-start-cycle{border-color:rgba(245,197,66,.28);background:linear-gradient(135deg,rgba(245,197,66,.08),rgba(255,255,255,.025));margin-bottom:var(--sp4)}
 .home-start-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp3)}
 .home-start-step{display:grid;grid-template-columns:38px minmax(0,1fr);gap:10px;border:1px solid var(--border);border-radius:var(--r-sm);background:rgba(0,0,0,.12);padding:var(--sp3);min-width:0}
@@ -561,9 +568,9 @@ table{border-collapse:collapse;width:100%}
 .team-lab-top25-table td:first-child,.team-lab-top25-table th:first-child{font-family:var(--font-mono);font-weight:900;text-transform:uppercase}
 @media(max-width:700px){.overview-milestone-summary{flex-direction:column}.overview-milestone-counts{justify-content:flex-start;min-width:0}.overview-buckets{padding:0 var(--sp3) var(--sp3)}}
 
-@media(max-width:1100px){.team-lab-news-grid,.team-lab-gate-grid,.home-start-steps,.home-player-outcome-grid,.home-question-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1100px){.team-lab-news-grid,.team-lab-gate-grid,.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-hero,.pokemon-news-slide.active{grid-template-columns:1fr}.home-trust-strip{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:220px}}
-@media(max-width:560px){.overview-header{gap:var(--sp3)}.overview-updated{white-space:normal}.overview-metrics{grid-template-columns:1fr}.overview-section{padding:var(--sp3)}.overview-item{grid-template-columns:1fr;gap:6px}.overview-status{justify-self:start}.overview-section-head,.pokemon-news-feed-head,.team-lab-gates-head,.team-lab-admin-controls{align-items:flex-start;flex-direction:column;gap:6px}.overview-kicker{white-space:normal}.overview-db-summary,.overview-db-counts{grid-template-columns:1fr}.home-start-steps,.home-player-outcome-grid,.home-question-grid,.team-lab-news-grid,.team-lab-gate-grid{grid-template-columns:1fr}.home-quick-plan-rows article{grid-template-columns:1fr;align-items:start}.home-sim-output-head{display:grid;text-align:left}.home-sim-output-head strong{text-align:left}.team-lab-leaderboard-head{flex-direction:column}.team-lab-gate-actions{justify-content:flex-start;width:100%}.team-lab-gate-actions button,.team-lab-admin-controls button{width:100%}.pokemon-news-controls{width:100%;justify-content:flex-start}.pokemon-news-copy h4{font-size:24px}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-gates,.team-lab-admin-controls{padding:var(--sp3)}.home-landing-actions button{width:100%}}
+@media(max-width:560px){.overview-header{gap:var(--sp3)}.overview-updated{white-space:normal}.overview-metrics{grid-template-columns:1fr}.overview-section{padding:var(--sp3)}.overview-item{grid-template-columns:1fr;gap:6px}.overview-status{justify-self:start}.overview-section-head,.pokemon-news-feed-head,.team-lab-gates-head,.team-lab-admin-controls{align-items:flex-start;flex-direction:column;gap:6px}.overview-kicker{white-space:normal}.overview-db-summary,.overview-db-counts{grid-template-columns:1fr}.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip,.team-lab-news-grid,.team-lab-gate-grid{grid-template-columns:1fr}.home-quick-plan-rows article{grid-template-columns:1fr;align-items:start}.home-sim-output-head{display:grid;text-align:left}.home-sim-output-head strong{text-align:left}.team-lab-leaderboard-head{flex-direction:column}.team-lab-gate-actions{justify-content:flex-start;width:100%}.team-lab-gate-actions button,.team-lab-admin-controls button{width:100%}.pokemon-news-controls{width:100%;justify-content:flex-start}.pokemon-news-copy h4{font-size:24px}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-gates,.team-lab-admin-controls{padding:var(--sp3)}.home-landing-actions button{width:100%}}
 
 /* ===== SIM LAYOUT ===== */
 .sim-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px minmax(0,1fr);gap:var(--sp4);align-items:start;margin-bottom:var(--sp6)}
@@ -42178,19 +42185,30 @@ function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
     '<div class="home-landing-hero">' +
       '<div>' +
-        '<span class="overview-kicker">Pokemon Champion simulator</span>' +
+        '<span class="overview-kicker">Pokemon Champion battle lab</span>' +
         '<h2>Battle Labs</h2>' +
-        '<p>Test one matchup. Find the swing turn. Change one thing. Rerun with evidence.</p>' +
+        '<p>Build stronger teams by testing real matchups, reading the swing turn, and changing one thing with proof.</p>' +
         '<div class="home-landing-actions">' +
           '<button type="button" data-home-tab="simulator">Start Simulating</button>' +
           '<button type="button" data-home-tab="replay-coach">Analyze a Replay</button>' +
+          '<button type="button" data-home-tab="teams">Edit a Team</button>' +
+        '</div>' +
+        '<div class="home-landing-chips" aria-label="Battle Labs trust promises">' +
+          '<span>Champion rules guarded</span>' +
+          '<span>Replay evidence</span>' +
+          '<span>Versioned rankings</span>' +
         '</div>' +
       '</div>' +
       '<div class="home-landing-proof">' +
-        '<span>1</span><strong>Run the matchup</strong>' +
-        '<span>2</span><strong>Read the replay</strong>' +
-        '<span>3</span><strong>Change one thing</strong>' +
+        '<span>Question</span><strong>Which lead, four, move, or switch gives me the best line?</strong>' +
+        '<span>Answer</span><strong>Run the matchup, inspect the replay, and compare evidence.</strong>' +
+        '<span>Guardrail</span><strong>Unknown Champion data stays marked needs verification.</strong>' +
       '</div>' +
+    '</div>' +
+    '<div class="home-value-strip" aria-label="Why Battle Labs matters">' +
+      '<article><span>01</span><strong>Sim the matchup</strong><p>Run singles or doubles into benchmark teams and see which plans keep pressure.</p></article>' +
+      '<article><span>02</span><strong>Review the battle</strong><p>Upload real Showdown logs to expose speed control, damage, status, field, item, and faint causes.</p></article>' +
+      '<article><span>03</span><strong>Improve cleanly</strong><p>Change one move, item, lead, or lineup at a time so the next result teaches something real.</p></article>' +
     '</div>' +
     csRenderHomeStartCycle() +
     csRenderHomeSimPreview() +
@@ -42199,8 +42217,8 @@ function csRenderTeamLabNewsroomHub() {
     '<div class="team-lab-hero">' +
       '<div>' +
         '<span class="overview-kicker">Team Lab home</span>' +
-        '<h3>' + (hasEvidenceRows ? 'Top 25 has evidence preview rows.' : 'Top 25 Teams are locked on purpose.') + '</h3>' +
-        '<p>Team Lab ranks simulator teams only when the team, run, replay, legality, sample size, engine version, and ruleset version all line up. Saved DB branch rows can appear as an experimental preview, but official promotion remains locked until trusted team-ID mapping and promotion rules are complete.</p>' +
+        '<h3>' + (hasEvidenceRows ? 'Top 25 has evidence preview rows.' : 'Top 25 waits for proof.') + '</h3>' +
+        '<p>The leaderboard is not a hype list. Teams rank only when legality, sample size, engine version, ruleset version, matchup spread, and stale checks line up.</p>' +
       '</div>' +
       '<div class="team-lab-hero-badges">' +
         '<span>' + (hasEvidenceRows ? 'DB evidence preview' : 'Top 25 locked') + '</span>' +
