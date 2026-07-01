@@ -50,6 +50,17 @@ T('1b. generated homepage news does not use known-broken Champion image paths', 
   }
 });
 
+T('1c. generated homepage news prefers source-backed article thumbnails over local fallback', () => {
+  const items = feed.items || [];
+  truthy(items.length > 0, 'feed items missing');
+  const enriched = items.filter(item => item.image_source === 'wordpress_featured_media' || item.image_source === 'article_metadata' || item.image_source === 'rss_media');
+  truthy(enriched.length >= 1, 'expected at least one source-backed article thumbnail');
+  for (const item of enriched) {
+    truthy(/^https?:\/\//i.test(String(item.image || '')), 'source-backed thumbnail should be remote article media: ' + item.image);
+    truthy(!/assets\/news-card\.svg/i.test(String(item.image || '')), 'source-backed thumbnail should not be local fallback');
+  }
+});
+
 T('2. enabled RSS sources must carry Champion include filters and non-Champion excludes', () => {
   const enabledRss = (newsSources.sources || []).filter(source => source.enabled && (source.type === 'rss' || source.type === 'atom'));
   truthy(enabledRss.length >= 1, 'expected at least one enabled RSS/Atom source');

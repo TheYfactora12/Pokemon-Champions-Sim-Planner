@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.82-news-slide-images'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.83-source-backed-news-thumbs'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13795,7 +13795,7 @@ function csRenderPokemonNewsFeed() {
   }).join('');
   return '<section class="pokemon-news-feed" aria-label="Pokemon news feed">' +
     '<div class="pokemon-news-feed-head">' +
-      '<div><span class="overview-kicker">News + source watch</span><h3>Latest Champion Updates</h3><p>Player news, regulation signals, and source-status cards. Mechanics truth still requires reviewed source rows.</p></div>' +
+      '<div><span class="overview-kicker">Source-backed news watch</span><h3>Latest Champion Updates</h3><p>Article thumbnails come from approved feed metadata when available. News and meta inform context; mechanics truth still requires reviewed source rows.</p></div>' +
       '<div class="pokemon-news-controls">' +
         '<button type="button" data-news-prev aria-label="Previous news">Prev</button>' +
         '<button type="button" data-news-next aria-label="Next news">Next</button>' +

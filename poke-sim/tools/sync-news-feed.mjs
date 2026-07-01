@@ -6,6 +6,10 @@ const ROOT = path.resolve(new URL('.', import.meta.url).pathname, '..');
 const SOURCES_PATH = path.join(ROOT, 'tools', 'news_sources.json');
 const OUT_PATH = path.join(ROOT, 'generated', 'news_feed.js');
 const DEFAULT_IMAGE = 'assets/news-card.svg';
+const FALLBACK_IMAGE_KIND = 'local_fallback';
+const RSS_IMAGE_KIND = 'rss_media';
+const ARTICLE_IMAGE_KIND = 'article_metadata';
+const WORDPRESS_IMAGE_KIND = 'wordpress_featured_media';
 
 function escapeJs(value) {
   return JSON.stringify(value).replace(/<\//g, '<\\/');
@@ -19,9 +23,21 @@ function stripTags(value) {
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/&#038;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function decodeXmlEntities(value) {
+  return String(value || '')
+    .replace(/&amp;/g, '&')
+    .replace(/&#038;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
     .trim();
 }
 
@@ -34,7 +50,142 @@ function readTag(block, tag) {
 function readAttr(block, tag, attr) {
   const re = new RegExp(`<${tag}[^>]*\\s${attr}=["']([^"']+)["'][^>]*>`, 'i');
   const match = block.match(re);
-  return match ? match[1] : '';
+  return match ? decodeXmlEntities(match[1]) : '';
+}
+
+function readMetaContent(html, names) {
+  const doc = String(html || '');
+  for (const name of names) {
+    const escaped = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const propertyFirst = new RegExp(`<meta[^>]*(?:property|name)=["']${escaped}["'][^>]*content=["']([^"']+)["'][^>]*>`, 'i');
+    const contentFirst = new RegExp(`<meta[^>]*content=["']([^"']+)["'][^>]*(?:property|name)=["']${escaped}["'][^>]*>`, 'i');
+    const match = doc.match(propertyFirst) || doc.match(contentFirst);
+    if (match && match[1]) return decodeXmlEntities(match[1]);
+  }
+  return '';
+}
+
+function isLocalFallbackImage(value) {
+  return !value || String(value).trim() === DEFAULT_IMAGE;
+}
+
+function isUsableImage(value) {
+  const src = String(value || '').trim();
+  if (!src) return false;
+  if (/battle-stadium\.jpg|game-screenshot-2\.png/i.test(src)) return false;
+  if (/^https?:\/\//i.test(src)) return true;
+  return src === DEFAULT_IMAGE || src.startsWith('assets/');
+}
+
+async function enrichArticleImage(item, timeoutMs = 8000) {
+  if (!item || !isLocalFallbackImage(item.image)) return item;
+  if (!/^https?:\/\//i.test(String(item.url || ''))) return item;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(item.url, {
+      headers: { 'user-agent': 'battle-labs-news-sync/1.1' },
+      signal: controller.signal
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const html = await res.text();
+    const image = readMetaContent(html, ['og:image', 'twitter:image', 'twitter:image:src']);
+    if (isUsableImage(image) && !isLocalFallbackImage(image)) {
+      return {
+        ...item,
+        image,
+        image_source: ARTICLE_IMAGE_KIND
+      };
+    }
+  } catch {
+    // Keep local fallback. News artwork is UX enrichment, not source truth.
+  } finally {
+    clearTimeout(timer);
+  }
+  return item;
+}
+
+function sameCanonicalPath(a, b) {
+  try {
+    return new URL(a).pathname.replace(/\/+$/, '') === new URL(b).pathname.replace(/\/+$/, '');
+  } catch {
+    return false;
+  }
+}
+
+function wpSearchUrl(item) {
+  try {
+    const url = new URL(item.url);
+    if (!/victoryroad\.pro$/i.test(url.hostname)) return '';
+    url.pathname = '/wp-json/wp/v2/posts';
+    url.search = new URLSearchParams({
+      search: item.title || '',
+      _fields: 'link,title,featured_media'
+    }).toString();
+    return url.toString();
+  } catch {
+    return '';
+  }
+}
+
+function wpMediaUrl(item, mediaId) {
+  try {
+    const url = new URL(item.url);
+    if (!/victoryroad\.pro$/i.test(url.hostname)) return '';
+    url.pathname = `/wp-json/wp/v2/media/${mediaId}`;
+    url.search = '_fields=source_url,media_details.sizes';
+    return url.toString();
+  } catch {
+    return '';
+  }
+}
+
+function pickWordPressMediaSource(media) {
+  if (!media || typeof media !== 'object') return '';
+  const sizes = media.media_details && media.media_details.sizes ? media.media_details.sizes : {};
+  const preferred = sizes.large || sizes.medium_large || sizes.medium || null;
+  return (preferred && preferred.source_url) || media.source_url || '';
+}
+
+async function enrichWordPressFeaturedImage(item, timeoutMs = 8000) {
+  if (!item || !isLocalFallbackImage(item.image)) return item;
+  const searchUrl = wpSearchUrl(item);
+  if (!searchUrl) return item;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(searchUrl, {
+      headers: { 'user-agent': 'battle-labs-news-sync/1.1' },
+      signal: controller.signal
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const posts = await res.json();
+    const post = (Array.isArray(posts) ? posts : []).find(candidate => {
+      return candidate && candidate.featured_media && sameCanonicalPath(candidate.link, item.url);
+    }) || (Array.isArray(posts) ? posts : []).find(candidate => candidate && candidate.featured_media);
+    if (!post || !post.featured_media) return item;
+    const mediaEndpoint = wpMediaUrl(item, post.featured_media);
+    if (!mediaEndpoint) return item;
+    const mediaRes = await fetch(mediaEndpoint, {
+      headers: { 'user-agent': 'battle-labs-news-sync/1.1' },
+      signal: controller.signal
+    });
+    if (!mediaRes.ok) throw new Error(`HTTP ${mediaRes.status}`);
+    const media = await mediaRes.json();
+    const image = pickWordPressMediaSource(media);
+    if (isUsableImage(image) && !isLocalFallbackImage(image)) {
+      return {
+        ...item,
+        image,
+        image_source: WORDPRESS_IMAGE_KIND
+      };
+    }
+  } catch {
+    // Keep local fallback. Featured media is display enrichment, not rules evidence.
+  } finally {
+    clearTimeout(timer);
+  }
+  return item;
 }
 
 function normalizeDate(value) {
@@ -54,10 +205,11 @@ function parseRss(xml, source) {
   const atomBlocks = blocks.length ? [] : [...String(xml || '').matchAll(/<entry\b[\s\S]*?<\/entry>/gi)].map(m => m[0]);
   return (blocks.length ? blocks : atomBlocks).map(block => {
     const title = readTag(block, 'title');
-    const link = readTag(block, 'link') || readAttr(block, 'link', 'href');
+    const link = decodeXmlEntities(readTag(block, 'link') || readAttr(block, 'link', 'href'));
     const rawDate = readTag(block, 'pubDate') || readTag(block, 'updated') || readTag(block, 'published');
     const desc = readTag(block, 'description') || readTag(block, 'summary') || readTag(block, 'content:encoded');
-    const image = readAttr(block, 'media:content', 'url') || readAttr(block, 'media:thumbnail', 'url') || readAttr(block, 'enclosure', 'url') || DEFAULT_IMAGE;
+    const mediaImage = readAttr(block, 'media:content', 'url') || readAttr(block, 'media:thumbnail', 'url') || readAttr(block, 'enclosure', 'url');
+    const image = isUsableImage(mediaImage) ? mediaImage : DEFAULT_IMAGE;
     if (!title || !link) return null;
     return {
       category: source.category || 'News',
@@ -68,6 +220,7 @@ function parseRss(xml, source) {
       source_tier: source.tier,
       url: link,
       image,
+      image_source: image === DEFAULT_IMAGE ? FALLBACK_IMAGE_KIND : RSS_IMAGE_KIND,
       alt: `${title} news image`,
       synced_at: new Date().toISOString()
     };
@@ -113,14 +266,18 @@ async function main() {
     })
     .sort((a, b) => Date.parse(b.synced_at || 0) - Date.parse(a.synced_at || 0))
     .slice(0, Number(config.max_items || 25));
+  const enriched = await Promise.all(deduped.map(async item => {
+    const withWpImage = await enrichWordPressFeaturedImage(item);
+    return enrichArticleImage(withWpImage);
+  }));
   const payload = {
     schema_version: 'champions-news-feed-v1',
     generated_at: new Date().toISOString(),
     source_mode: 'rss_sync',
     source_count: (config.sources || []).filter(s => s.enabled).length,
-    item_count: deduped.length,
+    item_count: enriched.length,
     errors,
-    items: deduped
+    items: enriched
   };
   await fs.mkdir(path.dirname(OUT_PATH), { recursive: true });
   await fs.writeFile(OUT_PATH, `// Generated by tools/sync-news-feed.mjs. Do not edit by hand.\n(function(root) {\n  root.CHAMPIONS_NEWS_FEED = ${escapeJs(payload)};\n})(typeof self !== 'undefined' ? self : (typeof window !== 'undefined' ? window : globalThis));\n`, 'utf8');

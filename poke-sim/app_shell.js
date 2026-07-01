@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.82-news-slide-images';
+      return txt || 'v2.2.83-source-backed-news-thumbs';
     } catch (e) {
-      return 'v2.2.82-news-slide-images';
+      return 'v2.2.83-source-backed-news-thumbs';
     }
   }
 
