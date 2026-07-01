@@ -44,6 +44,9 @@
   const DEFAULT_RULESET_ID = 'champions_reg_m_doubles_bo3';
   const TEAM_LAB_SIM_JOBS_TABLE = 'team_lab_sim_jobs';
   const TEAM_LAB_REPLAYS_TABLE = 'team_lab_replays';
+  const TRAINER_REPLAY_IMPORTS_TABLE = 'trainer_replay_imports';
+  const TRAINER_REPLAY_IMPORT_REFS_TABLE = 'trainer_replay_import_refs';
+  const TRAINER_REPLAY_IMPORT_EVENTS_TABLE = 'trainer_replay_import_events';
 
   if (!ENABLED) {
     log.info('No credentials; running in local-only mode');
@@ -1426,6 +1429,78 @@
     }
   }
 
+  function normalizeReplayImportChildRows(rows, importId) {
+    return (Array.isArray(rows) ? rows : []).map(function(row) {
+      var copy = Object.assign({}, row || {});
+      copy.import_id = importId;
+      return copy;
+    });
+  }
+
+  function sanitizeReplayImportPayload(payload) {
+    payload = payload || {};
+    var importRow = Object.assign({}, payload.import_row || payload.import || {});
+    if (!importRow.id) importRow.id = uuid();
+    importRow.metadata = stripJsonbForDb(importRow.metadata, {});
+    importRow.source_gaps = Array.isArray(importRow.source_gaps) ? importRow.source_gaps : [];
+    importRow.confidence_flags = Array.isArray(importRow.confidence_flags) ? importRow.confidence_flags : [];
+    importRow.source_type = safeTextForDb(importRow.source_type, 'unknown');
+    importRow.parser_version = safeTextForDb(importRow.parser_version, 'trainer-replay-import-parser-v1');
+    importRow.parse_status = safeTextForDb(importRow.parse_status, 'needs_review');
+    importRow.team_mapping_status = safeTextForDb(importRow.team_mapping_status, 'pending');
+    return {
+      import_row: importRow,
+      refs: normalizeReplayImportChildRows(payload.refs || payload.import_refs, importRow.id),
+      events: normalizeReplayImportChildRows(payload.events || payload.import_events, importRow.id)
+    };
+  }
+
+  async function saveReplayImport(payload) {
+    const sb = getClient();
+    if (!sb) return null;
+    var normalized = sanitizeReplayImportPayload(payload);
+    var importRow = normalized.import_row;
+    try {
+      const { data, error } = await sb
+        .from(TRAINER_REPLAY_IMPORTS_TABLE)
+        .insert(importRow)
+        .select('*')
+        .single();
+      if (error) throw error;
+      var savedImport = data || importRow;
+      var importId = savedImport.id || importRow.id;
+      var refs = normalizeReplayImportChildRows(normalized.refs, importId);
+      var events = normalizeReplayImportChildRows(normalized.events, importId);
+
+      if (refs.length) {
+        const { error: refsError } = await sb
+          .from(TRAINER_REPLAY_IMPORT_REFS_TABLE)
+          .insert(refs);
+        if (refsError) throw refsError;
+      }
+
+      if (events.length) {
+        const { error: eventsError } = await sb
+          .from(TRAINER_REPLAY_IMPORT_EVENTS_TABLE)
+          .insert(events);
+        if (eventsError) throw eventsError;
+      }
+
+      return {
+        import_row: savedImport,
+        refs: refs,
+        events: events,
+        saved_counts: {
+          refs: refs.length,
+          events: events.length
+        }
+      };
+    } catch (err) {
+      log.warn('saveReplayImport failed; private replay import not persisted', err);
+      return null;
+    }
+  }
+
   async function listSimJobs(filters) {
     const sb = getClient();
     if (!sb) return [];
@@ -1485,6 +1560,7 @@
     createSimJob,
     updateSimJobStatus,
     saveReplayRecord,
+    saveReplayImport,
     listSimJobs,
     listReplays
   };

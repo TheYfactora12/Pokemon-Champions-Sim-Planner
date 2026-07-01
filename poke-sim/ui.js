@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.105-private-replay-import-service'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.106-private-replay-import-persistence'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13011,6 +13011,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Private replay import persistence added',
+      detail: 'v2.2.106 adds SupabaseAdapter.saveReplayImport for trainer-owned replay imports. The adapter inserts the trainer_replay_imports parent first, remaps child trainer_replay_import_refs and trainer_replay_import_events to the returned import id, returns saved counts, and fails soft when Supabase is disabled or RLS rejects the write. It does not write Team Lab official rankings, global learning, promotion audits, or bot memory.'
+    },
+    {
+      status: 'done',
       title: 'Private replay parser service added',
       detail: 'v2.2.105 adds replay_import_service.js, a private parser adapter that turns Showdown HTML/text, Champions turn-log JSON, and QA artifact JSON into trainer_replay_imports, trainer_replay_import_refs, and trainer_replay_import_events shaped payloads. It preserves parser_version, source_hash, source gaps, parser confidence, source-line/event pointers, regulation, format, engine_version, and ruleset_version while failing closed on unknown files. It does not write to Supabase, Team Lab official rankings, global learning, or bot memory.'
     },
@@ -13907,8 +13912,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Wire private replay imports to Supabase adapter',
-      detail: 'Next implementation should connect replay_import_service.js to an owner-scoped Supabase adapter path that inserts trainer_replay_imports first, then child refs/events with the returned import_id. Keep writes private to the trainer room; do not update official Team Lab rankings, global learning, or bot memory from this browser path.'
+      title: 'Wire replay import UI to private persistence',
+      detail: 'Next implementation should connect the Review upload flow to replay_import_service.js and SupabaseAdapter.saveReplayImport only when a trainer room/account context exists. The UI must show parse status, team mapping status, source gaps, private saved state, and local-only fallback instead of implying the upload improved official rankings or global learning.'
     },
     {
       status: 'next',

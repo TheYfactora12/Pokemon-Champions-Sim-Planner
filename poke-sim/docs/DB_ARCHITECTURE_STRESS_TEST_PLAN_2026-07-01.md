@@ -257,7 +257,7 @@ Pass/fail:
 - It returns payloads ready for a DB adapter but does not write to Supabase or promote rows by itself.
 - Global learning, Team Lab official ranking promotion, and bot memory remain blocked until trusted-worker review exists.
 
-### Next priority: private replay import persistence
+### Completed priority: private replay import persistence
 
 DB/service requirement:
 
@@ -269,7 +269,22 @@ DB/service requirement:
 
 Pass/fail:
 
-- Ready to implement as a Supabase adapter/service slice.
+- Implemented as `SupabaseAdapter.saveReplayImport`.
+- The browser path inserts the parent import first, then child refs/events with the returned import id.
+- Rows remain owner-scoped by trainer-room RLS and are not promoted to official rankings or global learning.
+
+### Next priority: replay import UI integration
+
+DB/service requirement:
+
+- wire upload/review controls to `replay_import_service.js`
+- call `SupabaseAdapter.saveReplayImport` only after a trainer room/account context exists
+- show parser status, mapping status, source gaps, and saved/private state to the user
+- keep local-only fallback when Supabase/Auth is unavailable
+
+Pass/fail:
+
+- Ready for UI/service integration, but should not claim account history until Auth and room selection are live.
 
 ### Later priority: personal coaching memory
 

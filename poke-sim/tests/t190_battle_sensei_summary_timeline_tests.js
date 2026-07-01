@@ -40,8 +40,8 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'id="replay-coach-scenario-status"');
   inc(html, 'Upload and analyze a replay to enable Tactical QA payload export.');
   inc(html, 'In series play');
-  inc(html, 'v2.2.105-private-replay-import-service');
-  inc(ui, 'v2.2.105-private-replay-import-service');
+  inc(html, 'v2.2.106-private-replay-import-persistence');
+  inc(ui, 'v2.2.106-private-replay-import-persistence');
   if (/Bo10|data-bo="10"/.test(html)) throw new Error('Bo10 should not be exposed as a series format');
   if (/Bo10/.test(ui)) throw new Error('Bo10 should not be referenced in UI guidance');
   if (/Bo10/.test(engine)) throw new Error('Bo10 should not be referenced in engine guidance');
