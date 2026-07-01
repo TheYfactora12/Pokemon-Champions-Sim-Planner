@@ -2577,7 +2577,7 @@ table{border-collapse:collapse;width:100%}
       </svg>
       <div>
       <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.80-replay-scenario-export-ux</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">battle-labs-beta-2026-07-01-qa-proof</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -3337,15 +3337,16 @@ table{border-collapse:collapse;width:100%}
   6. supabase_adapter.js — SupabaseAdapter.* (needs supabase-js + Storage)
   7. generated/pokemon_showdown_legal_data.js — Showdown-derived stats/learnsets
   8. generated/pokemon_showdown_species_weights.js — Showdown-derived species weights
-  9. runtime_data.js     — runtime Showdown/generated data accessors
- 10. move_legality.js    — species/form move legality helper
- 11. move_support.js     — local move support confidence helper
- 12. replay_coach.js     — Battle Sensei replay parser
- 13. replay_learning.js  — Battle Sensei learning layer
- 14. legality.js         — VGC legality checker
- 15. app_shell.js        — release identity, runtime error, cache refresh, delegated public-security handlers
- 16. ui.js               — all UI logic (needs everything above)
- 17. strategy-injectable.js — injectable coaching layer
+  9. generated/news_feed.js — synced homepage news feed with static fallback
+ 10. runtime_data.js     — runtime Showdown/generated data accessors
+ 11. move_legality.js    — species/form move legality helper
+ 12. move_support.js     — local move support confidence helper
+ 13. replay_coach.js     — Battle Sensei replay parser
+ 14. replay_learning.js  — Battle Sensei learning layer
+ 15. legality.js         — VGC legality checker
+ 16. app_shell.js        — release identity, runtime error, cache refresh, delegated public-security handlers
+ 17. ui.js               — all UI logic (needs everything above)
+ 18. strategy-injectable.js — injectable coaching layer
 -->
 
 
@@ -3354,6 +3355,7 @@ table{border-collapse:collapse;width:100%}
 
 
 <script src="generated/source_sync_status.js"></script>
+
 
 
 
@@ -3403,9 +3405,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.80-replay-scenario-export-ux',
+    build_id: 'battle-labs-beta-2026-07-01-qa-proof',
     release_date: '2026-07-01',
-    service_worker_cache: 'champions-sim-v212-replay-scenario-export-ux',
+    service_worker_cache: 'champions-sim-battle-labs-beta-20260701-qa-proof',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3479,9 +3481,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.80-replay-scenario-export-ux';
+      return txt || 'battle-labs-beta-2026-07-01-qa-proof';
     } catch (e) {
-      return 'v2.2.80-replay-scenario-export-ux';
+      return 'battle-labs-beta-2026-07-01-qa-proof';
     }
   }
 
@@ -3682,7 +3684,6 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
   csExposeGlobal('csHandleSpriteError', csHandleSpriteError);
   csExposeGlobal('csInitPublicSecurityDelegates', csInitPublicSecurityDelegates);
 })(typeof window !== 'undefined' ? window : globalThis);
-
 
 
 // ============================================================
@@ -9387,6 +9388,12 @@ if (typeof module !== 'undefined' && module.exports) {
   root.ChampionsSim.pokemonShowdownWeights = data;
   if (typeof module !== "undefined" && module.exports) module.exports = data;
 })(typeof globalThis !== "undefined" ? globalThis : (typeof window !== "undefined" ? window : this));
+
+
+// Generated by tools/sync-news-feed.mjs. Do not edit by hand.
+(function(root) {
+  root.CHAMPIONS_NEWS_FEED = {"schema_version":"champions-news-feed-v1","generated_at":"2026-07-01T04:37:24.641Z","source_mode":"rss_sync","source_count":1,"item_count":5,"errors":[],"items":[{"category":"Competitive meta","date":"Jun 26, 2026","title":"Battles in the Monthly Challenge Series June 2026 are live. Sign-ups are still open!","detail":"This online competition, featuring single battles, lasts until 29 June at 02:00 UTC. It awards a Tyranitar, 100 Quick Coupons and trainer titles to...","source":"Victory Road · competitive_secondary","source_tier":"competitive_secondary","url":"https://victoryroad.pro/mcs-jun26/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=battles-in-the-monthly-challenge-series-june-2026-are-live-sign-ups-are-still-open","image":"https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg","alt":"Battles in the Monthly Challenge Series June 2026 are live. Sign-ups are still open! news image","synced_at":"2026-07-01T04:37:24.641Z"},{"category":"Competitive meta","date":"Jun 26, 2026","title":"A new wave of the Hisuian Decidueye the Unrivaled 7★ Tera Raid Battle event is live!","detail":"This Tera Raid Battle event lasts until 2 July. Hisuian Decidueye the Unrivaled was last featured in October 2023, so take this chance to catch it...","source":"Victory Road · competitive_secondary","source_tier":"competitive_secondary","url":"https://victoryroad.pro/sv-events/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=a-new-wave-of-the-hisuian-decidueye-the-unrivaled-7%25e2%2598%2585-tera-raid-battle-event-is-live","image":"https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg","alt":"A new wave of the Hisuian Decidueye the Unrivaled 7★ Tera Raid Battle event is live! news image","synced_at":"2026-07-01T04:37:24.641Z"},{"category":"Competitive meta","date":"Jun 21, 2026","title":"Teams, results and all info from the VR June Challenge #2!","detail":"2026 Utrecht Regional finalist Louis Markl has won his first VR tournament! Louis defeated 2022 Bremen Regional finalist Giovanni Piscitelli in the...","source":"Victory Road · competitive_secondary","source_tier":"competitive_secondary","url":"https://victoryroad.pro/vr-jun26-2/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=teams-results-and-all-info-from-the-vr-june-challenge-2-2","image":"https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg","alt":"Teams, results and all info from the VR June Challenge #2! news image","synced_at":"2026-07-01T04:37:24.641Z"},{"category":"Competitive meta","date":"Jun 19, 2026","title":"The Monthly Challenge Series June 2026 has been announced, and sign-ups open on 19 June!","detail":"All you need to know about the Monthly Challenge Series June 2026, a single-battle online competition, held on 26–29 June 2026!","source":"Victory Road · competitive_secondary","source_tier":"competitive_secondary","url":"https://victoryroad.pro/mcs-jun26/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=the-monthly-challenge-series-june-2026-has-been-announced-and-sign-ups-open-on-19-june","image":"https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg","alt":"The Monthly Challenge Series June 2026 has been announced, and sign-ups open on 19 June! news image","synced_at":"2026-07-01T04:37:24.641Z"},{"category":"Competitive meta","date":"Jun 29, 2026","title":"The Champions Arena II has been announced, and sign-ups are open!","detail":"All you need to know about The Champions Arena II, our next tournament, played with the Regulation Set M-B and held online on 4–5 July 2026, in col...","source":"Victory Road · competitive_secondary","source_tier":"competitive_secondary","url":"https://victoryroad.pro/vr-champions-arena-2/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=the-champions-arena-ii-has-been-announced-and-sign-ups-are-open","image":"https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg","alt":"The Champions Arena II has been announced, and sign-ups are open! news image","synced_at":"2026-07-01T04:37:24.638Z"}]};
+})(typeof self !== 'undefined' ? self : (typeof window !== 'undefined' ? window : globalThis));
 
 
 (function(root) {
@@ -28343,7 +28350,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.80-replay-scenario-export-ux'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'battle-labs-beta-2026-07-01-qa-proof'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -41984,6 +41991,23 @@ function csRenderOverviewTeamLabPlan() {
 }
 
 function csPokemonNewsFeedItems() {
+  var synced = (typeof CHAMPIONS_NEWS_FEED !== 'undefined' && CHAMPIONS_NEWS_FEED && Array.isArray(CHAMPIONS_NEWS_FEED.items))
+    ? CHAMPIONS_NEWS_FEED.items
+    : [];
+  if (synced.length) {
+    return synced.slice(0, 8).map(function(item) {
+      return {
+        category: item.category || 'News',
+        date: item.date || 'Recently synced',
+        title: item.title || 'Pokemon news update',
+        detail: item.detail || 'Synced Pokemon news. Treat meta/news context separately from rules truth.',
+        source: item.source || 'Synced news feed',
+        url: item.url || 'https://www.pokemon.com/us/pokemon-news',
+        image: item.image || 'https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg',
+        alt: item.alt || 'Pokemon news image.'
+      };
+    });
+  }
   return [
     {
       category: 'Official news',

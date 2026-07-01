@@ -304,8 +304,8 @@ async function main() {
     const payload = await csBuildQaArtifactExport('player');
     eq(payload.schema_version, 'champions-qa-artifact-v1');
     eq(payload.artifact_type, 'large-run-qa-retained-evidence');
-    truthy(/^v2\.\d+\.\d+-[a-z0-9-]+$/.test(payload.build_id || ''), 'QA build id missing');
-    truthy(/^http:\/\/localhost\/\?v=v2\.\d+\.\d+-[a-z0-9-]+&fresh=1$/.test(payload.source_url || ''), 'QA source URL missing build cache buster');
+    truthy(/^(v2\.\d+\.\d+-[a-z0-9-]+|battle-labs-beta-\d{4}-\d{2}-\d{2}-[a-z0-9-]+)$/.test(payload.build_id || ''), 'QA build id missing');
+    truthy(/^http:\/\/localhost\/\?v=(v2\.\d+\.\d+-[a-z0-9-]+|battle-labs-beta-\d{4}-\d{2}-\d{2}-[a-z0-9-]+)&fresh=1$/.test(payload.source_url || ''), 'QA source URL missing build cache buster');
     eq(payload.retention.max_replay_cards, 240);
     eq(payload.retention.max_replay_log_lines, 200);
     eq(payload.retention.max_simlog_total, 500);

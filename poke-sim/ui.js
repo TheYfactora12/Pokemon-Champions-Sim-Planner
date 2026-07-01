@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.80-replay-scenario-export-ux'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'battle-labs-beta-2026-07-01-qa-proof'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13681,6 +13681,23 @@ function csRenderOverviewTeamLabPlan() {
 }
 
 function csPokemonNewsFeedItems() {
+  var synced = (typeof CHAMPIONS_NEWS_FEED !== 'undefined' && CHAMPIONS_NEWS_FEED && Array.isArray(CHAMPIONS_NEWS_FEED.items))
+    ? CHAMPIONS_NEWS_FEED.items
+    : [];
+  if (synced.length) {
+    return synced.slice(0, 8).map(function(item) {
+      return {
+        category: item.category || 'News',
+        date: item.date || 'Recently synced',
+        title: item.title || 'Pokemon news update',
+        detail: item.detail || 'Synced Pokemon news. Treat meta/news context separately from rules truth.',
+        source: item.source || 'Synced news feed',
+        url: item.url || 'https://www.pokemon.com/us/pokemon-news',
+        image: item.image || 'https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg',
+        alt: item.alt || 'Pokemon news image.'
+      };
+    });
+  }
   return [
     {
       category: 'Official news',

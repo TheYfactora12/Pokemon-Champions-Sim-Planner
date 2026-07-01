@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.80-replay-scenario-export-ux',
+    build_id: 'battle-labs-beta-2026-07-01-qa-proof',
     release_date: '2026-07-01',
-    service_worker_cache: 'champions-sim-v212-replay-scenario-export-ux',
+    service_worker_cache: 'champions-sim-battle-labs-beta-20260701-qa-proof',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
