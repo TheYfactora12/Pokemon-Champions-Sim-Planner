@@ -1,6 +1,6 @@
 # Showdown Replay Context Latest
 
-- Generated at: 2026-07-01T01:24:17.374Z
+- Generated at: 2026-07-01T01:37:50.139Z
 - Boundary: Showdown HTML replays are replay/meta/coaching evidence. They do not overwrite official Champion legality or mechanic truth.
 - Files: 39
 - Successful: 39
