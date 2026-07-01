@@ -8120,7 +8120,7 @@ function csReplayImportStatusText(payload) {
   var match = row.metadata && row.metadata.personal_team_match;
   var gaps = Array.isArray(row.source_gaps) ? row.source_gaps.length : 0;
   if (match) {
-    return ' Private Pilot mapping: ' + (match.team_name || match.team_key || 'selected team') +
+    return ' Private Trainer Room mapping: ' + (match.team_name || match.team_key || 'selected team') +
       ' (' + match.match_type + '). Parse: ' + row.parse_status + '; source gaps: ' + gaps + '.';
   }
   return ' Private import is unmapped; filename/team mapping needs review. Parse: ' + row.parse_status + '; source gaps: ' + gaps + '.';
@@ -8163,7 +8163,7 @@ async function csSaveReplayPrivateImportPayload(payload) {
   return {
     ok: true,
     saved: saved,
-    message: 'Saved private Pilot replay import: ' +
+    message: 'Saved private Trainer Room replay import: ' +
       ((saved.import_row && saved.import_row.id) ? saved.import_row.id : 'saved') +
       ' · refs ' + ((saved.saved_counts && saved.saved_counts.refs) || 0) +
       ' · events ' + ((saved.saved_counts && saved.saved_counts.events) || 0) + '.'
@@ -14110,8 +14110,13 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Wire replay import UI to private persistence',
-      detail: 'Next implementation should replace local placeholder room/user ids with real authenticated Trainer Room context, then show saved import history by regulation in the Trainer Room. The save path must continue showing parse status, team mapping status, filename/manual Reference team match, source gaps, private saved state, and local-only fallback instead of implying the upload improved official rankings or global learning.'
+      title: 'Sim truth gates return to active priority',
+      detail: 'Current focus returns to 99-100% simulation truth before login expansion: Regulation M-B legality proof, move mechanics parity, replay transparency, damage/status/field-effect auditability, and QA evidence that singles/doubles behavior matches trusted Champion evidence. Trainer Room login, saved long-term account history, and bot-practice memory stay future-gated until these sim-truth gates are reliable.'
+    },
+    {
+      status: 'future',
+      title: 'Future-gated Trainer Room login and saved history',
+      detail: 'After sim truth is trusted, replace local placeholder room/user ids with real authenticated Trainer Room context, then show saved import history by regulation. Logged-in sessions should save teams, sims, Showdown logs, replay reviews, bot practice, improvement metrics, skill trends, loss diagnosis, team degradation, and what-worked notes by regulation_id, ruleset_version, and engine_version. This must not launch before privacy, RLS, export/delete, consent, and stale-version controls are validated.'
     },
     {
       status: 'next',

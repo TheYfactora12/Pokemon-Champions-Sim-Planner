@@ -89,6 +89,7 @@ Current foundation:
 Required direction:
 
 - Add a trainer/profile layer before public account features.
+- Keep Trainer Room login and durable saved account history future-gated until simulator truth is strong enough to preserve useful long-term data.
 - Store a private Trainer Room for saved teams, uploaded replays, sim jobs, coaching facts, practice drills, bot sessions, improvement metrics, loss diagnosis, team degradation, and matchup notes.
 - Keep real replay imports private until parser status, team mapping, regulation, format, and source gaps are reviewed.
 - Replace placeholder local room/user ids with authenticated Trainer Room ids before claiming durable account history.
