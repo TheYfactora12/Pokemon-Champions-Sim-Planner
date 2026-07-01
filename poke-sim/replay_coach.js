@@ -1735,6 +1735,108 @@
     return cards;
   }
 
+  function buildReplayScenarioQueue(parsed, side, ctx) {
+    ctx = ctx || {};
+    var summary = {
+      yourLead: ((parsed.leads && parsed.leads[side]) || []).slice(),
+      opponentLead: ((parsed.leads && parsed.leads[side === 'p1' ? 'p2' : 'p1']) || []).slice(),
+      yourFour: ((parsed.selectedPokemon && parsed.selectedPokemon[side]) || []).slice(),
+      opponentFour: ((parsed.selectedPokemon && parsed.selectedPokemon[side === 'p1' ? 'p2' : 'p1']) || []).slice()
+    };
+    var queue = [];
+    var seen = {};
+    function push(row) {
+      if (!row || !row.title) return;
+      var key = [row.title, row.turn || '', row.evidence || ''].join('|');
+      if (seen[key]) return;
+      seen[key] = true;
+      queue.push(Object.assign({
+        id: 'scenario_' + String(queue.length + 1).padStart(2, '0'),
+        source: 'showdown_replay_import',
+        regulationStatus: 'not_rule_truth',
+        confidence: 'medium',
+        sourceGaps: [
+          'Replay data is player-match evidence, not official Pokemon Champion rule truth.',
+          'Use simulator output to compare candidate lines; do not promote results without engine/ruleset/version metadata.'
+        ],
+        boardContext: {
+          yourLead: summary.yourLead,
+          opponentLead: summary.opponentLead,
+          yourFour: summary.yourFour,
+          opponentFour: summary.opponentFour
+        }
+      }, row));
+    }
+
+    (ctx.issues || []).filter(function(issue) {
+      return issue && (issue.severity === 'high' || issue.turn != null);
+    }).slice(0, 5).forEach(function(issue) {
+      push({
+        priority: issue.severity === 'high' ? 'high' : 'medium',
+        turn: issue.turn || null,
+        title: 'Replay coaching check: ' + (issue.tag || issue.category || 'decision point'),
+        setup: 'Recreate the visible board around ' + (issue.turn ? 'turn ' + issue.turn : 'the opening preview') + ' and compare at least three legal candidate lines.',
+        testGoal: issue.doInstead || issue.recommendation || 'Compare the chosen line against safer preservation, pressure, and switch lines.',
+        why: issue.whyMattered || issue.message || 'This decision may affect tempo, material, or the win condition.',
+        evidence: issue.evidence || issue.whatHappened || issue.message || 'coaching tag',
+        confidence: issue.confidence || 'medium'
+      });
+    });
+
+    (ctx.actionDenialCards || []).slice(0, 4).forEach(function(card) {
+      push({
+        priority: card.severity === 'high' ? 'high' : 'medium',
+        turn: card.turn || null,
+        title: 'Action-denial branch: ' + (card.reason || card.label || 'blocked action'),
+        setup: 'Run branches where the denied Pokemon acts normally, gets denied again, or the player targets the support slot instead.',
+        testGoal: 'Measure whether the replay line only worked because of denial, or whether it still wins if the denied action succeeds.',
+        why: card.whyItMattered || 'Action denial can decide a full turn of tempo.',
+        evidence: card.evidence || card.whatHappened || 'action denial row',
+        confidence: card.confidence || 'high'
+      });
+    });
+
+    (ctx.megaTimingCards || []).slice(0, 3).forEach(function(card) {
+      push({
+        priority: 'medium',
+        turn: card.turn || null,
+        title: 'Mega timing branch: ' + (card.pokemon || card.baseSpecies || 'Mega form'),
+        setup: 'Compare Mega-now, Mega-later, and no-Mega fallback lines from the same visible board.',
+        testGoal: 'Check whether Mega timing changed ability value, damage ranges, speed order, or survival thresholds.',
+        why: card.whyItMattered || 'Mega timing can change ability, stats, type, and pressure immediately.',
+        evidence: card.evidence || 'Mega/form-change row',
+        confidence: card.confidence || 'high'
+      });
+    });
+
+    (ctx.damageContextCards || []).slice(0, 4).forEach(function(card) {
+      push({
+        priority: card.severity === 'high' ? 'high' : 'medium',
+        turn: card.turn || null,
+        title: 'Damage threshold branch: ' + (card.pokemon || 'target'),
+        setup: 'Replay the turn with alternate target choices, Protect, switch, or preservation line.',
+        testGoal: 'Find whether this HP threshold created a forced KO, forced Protect, or avoidable loss of a win condition.',
+        why: card.whyItMattered || 'Damage thresholds decide whether the next turn is forced or flexible.',
+        evidence: card.evidence || 'damage context row',
+        confidence: card.confidence || 'medium'
+      });
+    });
+
+    if (!queue.length) {
+      push({
+        priority: 'low',
+        turn: null,
+        title: 'Baseline replay reconstruction',
+        setup: 'Recreate the opening leads and selected Pokemon, then run a small branch sweep from turn one.',
+        testGoal: 'Confirm the parser has enough data before making coaching claims.',
+        why: 'No strong tactical trigger was parsed, but the match can still validate replay intake and lineup handling.',
+        evidence: 'No high-priority replay trigger detected.',
+        confidence: 'low'
+      });
+    }
+    return queue.slice(0, 12);
+  }
+
   function buildReplayCoachReview(parsed, opts) {
     opts = opts || {};
     var side = normalizeSide(opts.selectedSide || parsed.selectedSide || 'p1');
@@ -1951,6 +2053,13 @@
     var abilityItemImpactCards = buildAbilityItemImpactCards(parsed, side);
     var megaTimingCards = buildMegaTimingCards(parsed, side);
     var damageContextCards = buildDamageContextCards(parsed, side);
+    var scenarioQueue = buildReplayScenarioQueue(parsed, side, {
+      issues: issues,
+      actionDenialCards: actionDenialCards,
+      abilityItemImpactCards: abilityItemImpactCards,
+      megaTimingCards: megaTimingCards,
+      damageContextCards: damageContextCards
+    });
 
     var review = {
       summary: {
@@ -1979,6 +2088,7 @@
       abilityItemImpactCards: abilityItemImpactCards.slice(0, 12),
       megaTimingCards: megaTimingCards.slice(0, 12),
       damageContextCards: damageContextCards.slice(0, 12),
+      scenarioQueue: scenarioQueue,
       criticalTurn: {
         turn: criticalTurn,
         firstMistake: firstMistake,
@@ -2019,6 +2129,7 @@
   ChampionsSim.replayCoach.replayUrlToLogUrl = replayUrlToLogUrl;
   ChampionsSim.replayCoach.fetchReplayLog = fetchReplayLog;
   ChampionsSim.replayCoach.buildReplayCoachReview = buildReplayCoachReview;
+  ChampionsSim.replayCoach.buildReplayScenarioQueue = buildReplayScenarioQueue;
   ChampionsSim.replayCoach.analyzeShowdownReplay = analyzeShowdownReplay;
 
   if (typeof module !== 'undefined' && module.exports) {

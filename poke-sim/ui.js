@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.76-battle-sensei-html-replay-coaching'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.77-battle-sensei-scenario-queue'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8063,6 +8063,20 @@ function csReplayCoachRenderAnalysis(analysis) {
   var abilityItemRows = csRenderEvidenceCardRows(review.abilityItemImpactCards || []);
   var megaTimingRows = csRenderEvidenceCardRows(review.megaTimingCards || []);
   var damageContextRows = csRenderEvidenceCardRows(review.damageContextCards || []);
+  var scenarioRows = (review.scenarioQueue || []).map(function(row) {
+    var priorityClass = row.priority === 'high' ? 'high' : (row.priority === 'low' ? 'low' : 'medium');
+    var sourceGaps = (row.sourceGaps || []).slice(0, 2).map(function(gap) {
+      return '<span class="replay-coach-tag medium">' + _escapeHtml(gap) + '</span>';
+    }).join('');
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(row.title || 'Replay-derived sim scenario') + (row.turn ? ' · Turn ' + _escapeHtml(String(row.turn)) : '') + '</strong>' +
+      '<div><b>Setup:</b> ' + _escapeHtml(row.setup || '') + '</div>' +
+      '<div><b>Test goal:</b> ' + _escapeHtml(row.testGoal || '') + '</div>' +
+      '<div><b>Why:</b> ' + _escapeHtml(row.why || '') + '</div>' +
+      '<small><span class="replay-coach-tag ' + _escapeHtml(priorityClass) + '">' + _escapeHtml(row.priority || 'medium') + '</span> Evidence: ' + _escapeHtml(row.evidence || 'replay evidence') + ' · Confidence: ' + _escapeHtml(row.confidence || 'medium') + '</small>' +
+      (sourceGaps ? '<div class="replay-coach-tags">' + sourceGaps + '</div>' : '') +
+      '</div>';
+  }).join('');
   var turns = (review.turnTimeline || []).slice(0, 80).map(function(turn) {
     var events = (turn.events || []).slice(0, 8).map(function(ev) { return _escapeHtml(ev); }).filter(Boolean);
     var tags = (turn.tags || []).map(function(tag) {
@@ -8224,6 +8238,11 @@ function csReplayCoachRenderAnalysis(analysis) {
     '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Damage Context Review</h3>' +
       '<div class="replay-coach-list">' + (damageContextRows || '<div class="replay-coach-list-row"><strong>No major damage-context rows found</strong>This replay did not expose super-effective, resisted, or major HP-threshold rows for this review.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Replay-Derived Sim Scenario Queue</h3>' +
+      '<div class="replay-coach-list">' + (scenarioRows || '<div class="replay-coach-list-row"><strong>No scenario queue generated</strong>Upload a fuller replay to create branch tests from real match evidence.</div>') + '</div>' +
+      '<small>These are simulator test targets from the replay. They do not overwrite Champion legality, mechanics truth, or leaderboard data.</small>' +
     '</div>' +
     (evidenceStandard ? '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Evidence Standard</h3>' +

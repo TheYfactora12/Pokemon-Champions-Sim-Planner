@@ -437,6 +437,36 @@ Supported MVP tags:
 }
 ```
 
+### Replay-Derived Sim Scenario Queue
+
+Schema: `champions-replay-scenario-queue-v1`
+
+Purpose: turn a real uploaded replay into concrete simulator branch tests without claiming the replay is official rule truth.
+
+Each queue row should include:
+
+- `title`: player-readable scenario name.
+- `priority`: `high`, `medium`, or `low`.
+- `turn`: replay turn if known.
+- `setup`: board or branch to recreate in the simulator.
+- `testGoal`: what the branch sweep should compare.
+- `why`: coaching reason this branch matters.
+- `evidence`: replay protocol row, coaching tag, or damage/effect row that triggered it.
+- `confidence`: confidence in the scenario trigger, not confidence that one line is best.
+- `sourceGaps`: explicit warnings that replay evidence does not overwrite Champion legality, mechanics truth, or leaderboard rankings.
+
+Current triggers:
+
+- high/medium coaching tags
+- action-denial rows such as flinch, miss, fail, and immunity
+- Mega/form-change timing
+- ability/item activation timing
+- super-effective, resisted, and major HP-threshold damage rows
+
+DB mapping: store this under `replay_sim_feedback.payload.scenarioQueue` until the dedicated scenario runner table exists.
+
+Guardrail: scenario rows are test targets. They may create tactical QA work, but they must not promote a move, legality rule, team ranking, or coaching claim without simulator evidence tied to `engine_version`, `ruleset_version`, `regulation_id`, `format`, and sample size.
+
 ## Sim Comparison Fields
 
 When replay data exists, matchup coaching can add:

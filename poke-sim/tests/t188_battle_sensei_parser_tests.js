@@ -438,6 +438,12 @@ T('18. structures real-match protocol rows used by coaching feed', () => {
   truthy(review.abilityItemImpactCards.some((row) => row.kind === 'item' && row.sourceName === 'Sitrus Berry'), 'item impact card missing');
   truthy(review.megaTimingCards.some((row) => row.pokemon === 'Manectric-Mega'), 'mega timing card missing');
   truthy(review.damageContextCards.some((row) => row.pokemon === 'Manectric-Mega' && row.effects.includes('supereffective')), 'damage context card missing');
+  truthy(Array.isArray(review.scenarioQueue) && review.scenarioQueue.length >= 3, 'scenario queue missing');
+  truthy(review.scenarioQueue.some((row) => /Action-denial branch/.test(row.title)), 'action-denial scenario missing');
+  truthy(review.scenarioQueue.some((row) => /Mega timing branch/.test(row.title)), 'mega timing scenario missing');
+  truthy(review.scenarioQueue.some((row) => /Damage threshold branch/.test(row.title)), 'damage threshold scenario missing');
+  truthy(review.scenarioQueue.every((row) => row.regulationStatus === 'not_rule_truth'), 'scenario queue must not become rule truth');
+  truthy(review.scenarioQueue.every((row) => Array.isArray(row.sourceGaps) && row.sourceGaps.length), 'scenario source gaps missing');
 });
 
 runTests().then(() => {

@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.76-battle-sensei-html-replay-coaching",
+  "build_id": "v2.2.77-battle-sensei-scenario-queue",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "cd9d3b1d11890d105577d75dccdb15a5ab21f0be6c8fa34b3bed7aee4b09b687",
-  "bundle_bytes": 11065304,
+  "bundle_sha256": "a3001ede7bf197c9ff7441f081f4c306acb9ae4e4525ade724f5ce00f1264fa8",
+  "bundle_bytes": 11072488,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }
