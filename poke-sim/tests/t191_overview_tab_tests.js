@@ -174,6 +174,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'recent-fixes-and-open-issues-2026-06-21.md');
   inc(ui, 'Architecture + Evidence Map');
   inc(ui, 'CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md');
+  inc(ui, 'Release Discipline + Cleanup Gates');
+  inc(ui, 'RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md');
   inc(ui, 'Champion Parity 100 Checklist');
   inc(ui, 'champion_parity_100_checklist.md');
   inc(ui, 'Move Support Audit');
@@ -218,6 +220,19 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(doc, 'Shed Tail has two different HP values');
   inc(doc, 'Required QA Proof Workflow');
   inc(doc, 'Current Non-100% Gaps');
+  inc(doc, 'v2.2.90-qa-slice-readout');
+  inc(doc, 'Current Evidence QA');
+  inc(doc, 'Release Matrix QA');
+  inc(doc, 'Device-Safe Stress QA');
+  inc(doc, 'Tactical Coaching QA');
+  inc(doc, 'No QA artifact may be used as complete Champion legality');
+  const cleanup = fs.readFileSync(path.join(ROOT, 'docs', 'RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md'), 'utf8');
+  inc(cleanup, '99% closed');
+  inc(cleanup, '100% closed');
+  inc(cleanup, 'What exact problem did this solve?');
+  inc(cleanup, 'Which QA slice proves it?');
+  inc(cleanup, 'Do not leave it implicit in chat.');
+  inc(cleanup, 'UI/runtime modularization pressure');
 });
 
 T('5. Overview styles are responsive and scan-friendly', () => {
@@ -382,6 +397,8 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Account profile analytics (#185)');
   inc(ui, 'Global vs personal analytics boundary');
   inc(ui, 'Canonical Team Lab trust roadmap');
+  inc(ui, '99% versus 100% closeout');
+  inc(ui, 'Closeout discipline before new work');
   inc(ui, 'ChampionsSim.overview');
   inc(ui, 'renderTeamLabHomeHub();');
   inc(ui, 'renderOverviewTab();');

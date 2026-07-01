@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.90-qa-slice-readout'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.91-release-cleanup-gates'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -12800,6 +12800,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'QA slice naming and claim-review discipline added',
+      detail: 'v2.2.90 renames the QA controls by evidence slice: Current Evidence QA, Release Matrix QA, Device-Safe Stress QA, and Tactical Coaching QA. After export, the page now renders a QA Claim Review that names the slice, blockers, source gaps, evidence counts, forbidden claims, and next QA move so testers know what the artifact proves before using it as release, battle-engine, coaching, or leaderboard proof.'
+    },
+    {
+      status: 'done',
       title: 'Coach brain now explains speed-control sequence quality',
       detail: 'v2.2.16 adds a structured tactical_interpretation block to coach_brain_summary and renders it in the Strategy Priority Board when available. Tactical Sweep QA can now explain why Tailwind, Trick Room, or speed-control answers worked or failed, what the player should check before clicking the setup move, what sequence to practice, and which counters should improve next. If full coach brain data is absent, the board falls back to conservative branch timing signals.'
     },
@@ -13520,6 +13525,7 @@ var CS_OVERVIEW_DATA = {
   docs: [
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
     { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
+    { label: 'Release Discipline + Cleanup Gates', href: 'docs/RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md' },
     { label: 'Data Source Registry', href: 'docs/DATA_SOURCE_REGISTRY.md' },
     { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
@@ -13555,6 +13561,13 @@ var CS_OVERVIEW_DATA = {
       role: 'Canonical architecture and QA evidence contract',
       status: 'canonical',
       notes: 'Owns source-to-engine-to-export boundaries and proof workflow.'
+    },
+    {
+      label: 'Release Discipline + Cleanup Gates',
+      href: 'docs/RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md',
+      role: 'Closeout discipline before new work',
+      status: 'canonical for release cleanup',
+      notes: 'Use before starting a new slice. Defines 99% versus 100% closeout, proof questions, QA slice boundaries, and generated-file/repo-sync safety.'
     },
     {
       label: 'Team Lab Architecture Alignment',
