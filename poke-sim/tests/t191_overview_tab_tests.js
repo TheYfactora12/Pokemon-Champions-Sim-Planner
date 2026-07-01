@@ -178,6 +178,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md');
   inc(ui, 'Active Slice Closeout Status');
   inc(ui, 'ACTIVE_SLICE_CLOSEOUT_STATUS.md');
+  inc(ui, 'Legality 99 Target Plan');
+  inc(ui, 'LEGALITY_99_TARGET_PLAN.md');
   inc(ui, 'Champion Parity 100 Checklist');
   inc(ui, 'champion_parity_100_checklist.md');
   inc(ui, 'Move Mechanics QA Closeout Plan');
@@ -268,6 +270,18 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(moveQa, 'Foul Play, Body Press, Psyshock-style defense targeting');
   inc(moveQa, 'Do not brute-force all legal game trees in the browser.');
   inc(moveQa, 'A move family can be marked `100% closed` only when');
+  const legality99 = fs.readFileSync(path.join(ROOT, 'docs', 'LEGALITY_99_TARGET_PLAN.md'), 'utf8');
+  inc(legality99, 'Legality 99 Target Plan');
+  inc(legality99, 'true 99% legality');
+  inc(legality99, '`100% legality` requires complete official or in-game verified proof');
+  inc(legality99, 'unknown Champion legality returns `needs_verification`, never `verified`');
+  inc(legality99, 'one known legal team accepted by Pokemon Champions');
+  inc(legality99, 'one known illegal team rejected by Pokemon Champions');
+  inc(legality99, 'stale ruleset');
+  inc(legality99, 'Team Lab/global rankings cannot use `needs_verification` teams in official scopes');
+  inc(closeout, 'LEGALITY_99_TARGET_PLAN.md');
+  inc(closeout, 'true 99% legality');
+  inc(closeout, 'Build the Regulation M-B legality evidence package');
 });
 
 T('5. Overview styles are responsive and scan-friendly', () => {
@@ -437,6 +451,13 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Active slice closeout map added');
   inc(ui, 'Fresh live closeout QA artifacts recorded');
   inc(ui, 'Move mechanics QA closeout plan added');
+  inc(ui, 'Legality 99 target plan added');
+  inc(ui, 'Build Regulation M-B legality evidence package');
+  inc(ui, 'source-backed active regulation package');
+  inc(ui, 'known legal/illegal fixtures');
+  inc(ui, 'stale ruleset guards');
+  inc(ui, 'Active legality source package gate');
+  inc(ui, 'canonical for legality closeout');
   inc(ui, 'Replay logic QA audit added');
   inc(ui, 'replay_logic_audit to QA artifacts');
   inc(ui, 'Replay Logic QA dashboard lane');

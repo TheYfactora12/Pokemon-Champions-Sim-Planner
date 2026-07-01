@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.95-replay-logic-audit'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.96-legality-99-target'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -12713,6 +12713,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Legality 99 target plan added',
+      detail: 'v2.2.96 defines true 99% legality as a source-backed active regulation package, preloaded-team gates, unknown-as-needs_verification validation, known legal/illegal fixtures, stale ruleset guards, QA artifact metadata, and Team Lab promotion rules that keep needs_verification teams out of official rankings.'
+    },
+    {
+      status: 'done',
       title: 'Replay logic QA audit added',
       detail: 'v2.2.95 adds replay_logic_audit to QA artifacts and a Replay Logic QA dashboard lane. The audit scans retained replay cards at a high level for structured turn logs, damage_events, move_rule_trace rows, effect_events, faint/HP-drop explanations, and missing or partial mechanic-family evidence so reviewers can spot replay logic gaps before trusting damage or move claims.'
     },
@@ -13564,6 +13569,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'next',
+      title: 'Build Regulation M-B legality evidence package',
+      detail: 'Convert official or in-game Regulation M-B source captures into versioned legality rows with regulation_id, ruleset_version, source tier, source pointer, known legal/illegal fixtures, stale-ruleset tests, and Team Lab promotion guards. Unknown Champion data must remain needs_verification until the source package proves it.'
+    },
+    {
+      status: 'next',
       title: 'Use the active slice closeout map before starting new work',
       detail: 'The current closeout map says no active strategic slice is honestly 100% closed yet. QA naming, release cleanup, replay claim audit, Team Lab preview, home page, and replay intake are 99% closed with named residual risks; Champion legality, official rankings, Battle Sensei brain, global learning, replay transparency, and UI modularization stay open blockers.'
     },
@@ -13700,6 +13710,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
     { label: 'Release Discipline + Cleanup Gates', href: 'docs/RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md' },
     { label: 'Active Slice Closeout Status', href: 'docs/ACTIVE_SLICE_CLOSEOUT_STATUS.md' },
+    { label: 'Legality 99 Target Plan', href: 'docs/LEGALITY_99_TARGET_PLAN.md' },
     { label: 'Data Source Registry', href: 'docs/DATA_SOURCE_REGISTRY.md' },
     { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
@@ -13750,6 +13761,13 @@ var CS_OVERVIEW_DATA = {
       role: 'Current 99% / 100% / blocker map',
       status: 'canonical for active closeout',
       notes: 'Use to decide what can close, what stays open, and what the next priority is before adding more features.'
+    },
+    {
+      label: 'Legality 99 Target Plan',
+      href: 'docs/LEGALITY_99_TARGET_PLAN.md',
+      role: 'Active legality source package gate',
+      status: 'canonical for legality closeout',
+      notes: 'Defines true 99% legality, source capture requirements, known legal/illegal fixtures, stale ruleset checks, and why unknown Champion rows stay needs_verification.'
     },
     {
       label: 'Move Mechanics QA Closeout Plan',
