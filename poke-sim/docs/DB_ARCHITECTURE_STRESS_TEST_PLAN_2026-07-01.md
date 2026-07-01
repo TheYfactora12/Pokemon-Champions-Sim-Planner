@@ -90,6 +90,9 @@ Existing foundation:
 - `team_lab_sim_jobs`
 - `team_lab_sim_runs`
 - `team_lab_replays`
+- `trainer_replay_imports`
+- `trainer_replay_import_refs`
+- `trainer_replay_import_events`
 - `branch_coverage_runs`
 - QA artifact export/import normalization
 
@@ -97,7 +100,7 @@ Stress test:
 
 - Can every evidence row be tied to `regulation_id`, `format`, `engine_version`, and `ruleset_version`? Team Lab yes; legacy tables only partially.
 - Can evidence be replay-verifiable? Partially; QA artifacts are stronger than current DB history.
-- Can bad browser evidence become official? It should not, but trusted import worker is not built yet.
+- Can bad browser evidence become official? No in the current schema path; private replay imports record parser/mapping status and source gaps, but trusted promotion/global learning writes are not created yet.
 
 Decision:
 
@@ -233,8 +236,9 @@ DB requirement:
 
 Pass/fail:
 
-- Needed before Showdown battle uploads can train personal coaching.
-- Not safe for global learning until parser/mapping is verified.
+- Implemented as private governance tables in `2026_07_01_replay_import_governance.sql`.
+- Safe for private parser review and future personal coaching inputs.
+- Not safe for global learning until parser/mapping is verified by a future trusted worker and consent gate.
 
 ### Later priority: personal coaching memory
 
@@ -364,6 +368,30 @@ Implementation update:
 - `db/migrations/2026_07_01_trainer_room_foundation.sql`
 - `tests/trainer_room_tests.js`
 - Public read is disabled by default, including for `public_showcase`, until an explicit API/filtering slice exists.
+
+## Second implementation frame
+
+The second migration slice creates only replay import governance:
+
+- `trainer_replay_imports`
+- `trainer_replay_import_refs`
+- `trainer_replay_import_events`
+- parser/source/mapping status fields
+- source gaps and confidence flags
+- owner-scoped RLS
+- public read disabled by default
+
+Do not include yet:
+
+- global learning writes
+- official Team Lab promotion
+- bot sessions
+- personal coaching memory
+- raw public replay browsing
+
+Reason:
+
+- This lets uploaded Showdown HTML/text, QA artifacts, and turn logs become auditable private evidence without letting partial parser results poison public rankings or coaching claims.
 
 ## Acceptance criteria for next DB slice
 

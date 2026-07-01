@@ -71,6 +71,7 @@ Current foundation:
 - The first migration is owner-scoped through Supabase Auth RLS.
 - Public read is disabled by default, including for future `public_showcase` rows, until a separate API/filtering slice protects hidden team details.
 - Room teams can reference Team Lab teams, but Team Lab hidden details remain protected by Team Lab policies and API response filtering.
+- `trainer_replay_imports`, `trainer_replay_import_refs`, and `trainer_replay_import_events` record private uploaded replay/file evidence with parser version, source hash, parse status, team mapping status, source gaps, confidence flags, and owner-scoped RLS.
 
 Required direction:
 
@@ -87,6 +88,7 @@ Blocked behavior:
 - Do not train global recommendations directly from browser anon writes.
 - Do not use private trainer data in public rankings without consent, verified mapping, legality status, and trusted-worker promotion.
 - Do not let bot memory learn from rows with unresolved source gaps as if they were real-game truth.
+- Do not treat private replay import rows as official Team Lab evidence until a trusted worker verifies parser status, team mapping, regulation, format, legality, and stale/version state.
 
 See `docs/DB_ARCHITECTURE_GROWTH_AUDIT_2026-07-01.md` for the target schema and `docs/DB_ARCHITECTURE_STRESS_TEST_PLAN_2026-07-01.md` for the challenged slice order.
 

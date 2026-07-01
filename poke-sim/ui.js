@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.103-trainer-room-foundation'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.104-replay-import-governance'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13011,6 +13011,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Replay import governance added',
+      detail: 'v2.2.104 adds private replay import governance for future Showdown HTML/text uploads, QA artifacts, and turn logs: trainer_replay_imports, trainer_replay_import_refs, trainer_replay_import_events, parser_version, source_hash, parse_status, team_mapping_status, source_gaps, confidence_flags, regulation/format/version scope, and owner-scoped RLS. These rows are private parser evidence only and cannot promote to official Team Lab rankings, global learning, or bot memory in this slice.'
+    },
+    {
+      status: 'done',
       title: 'Trainer-room schema foundation added',
       detail: 'v2.2.103 adds the private trainer-room database frame for future accounts and personal coaching: trainer_profiles, trainer_rooms, trainer_room_teams, owner-scoped RLS, no anon read/write policies, and Team Lab team links that do not expose hidden moves/items/EVs. This is only a privacy container; replay imports, personal coaching facts, global learning, and bot sessions remain separate future slices.'
     },
@@ -13897,8 +13902,8 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Add replay import governance after trainer-room schema',
-      detail: 'Trainer rooms now provide the private container. The next DB slice should add private replay import governance only: parser version, source hash, parse status, team mapping status, source gaps, and owner-scoped evidence refs. It should not promote imports to global learning or official rankings until trusted worker review exists.'
+      title: 'Build private replay parser service after governance tables',
+      detail: 'Next implementation should parse uploaded Showdown HTML/text and existing QA/turn-log JSON into trainer_replay_imports and trainer_replay_import_events with source-line pointers, parser confidence, partial/failure status, and source gaps. Keep it private to the trainer room; no Team Lab promotion, global learning, or bot-memory writes until trusted worker review exists.'
     },
     {
       status: 'next',

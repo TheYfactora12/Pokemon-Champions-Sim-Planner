@@ -185,7 +185,10 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Trainer-room schema foundation added');
   inc(ui, 'trainer_profiles, trainer_rooms, trainer_room_teams');
   inc(ui, 'owner-scoped RLS');
-  inc(ui, 'Add replay import governance after trainer-room schema');
+  inc(ui, 'Replay import governance added');
+  inc(ui, 'trainer_replay_imports, trainer_replay_import_refs, trainer_replay_import_events');
+  inc(ui, 'Build private replay parser service after governance tables');
+  inc(ui, 'Build private replay parser service after governance tables');
   inc(ui, 'Legality 99 Target Plan');
   inc(ui, 'LEGALITY_99_TARGET_PLAN.md');
   inc(ui, 'Champion Parity 100 Checklist');
@@ -510,9 +513,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'DB architecture stress-test plan added');
   inc(ui, 'source truth, runtime catalog, evidence truth, trainer rooms, global aggregate learning, and future bot practice');
   inc(ui, 'browser writes, personal-versus-global evidence, simulator-bug poisoning, replay parser partials, and Team Lab overclaiming');
-  inc(ui, 'Add replay import governance after trainer-room schema');
+  inc(ui, 'Build private replay parser service after governance tables');
   inc(ui, 'trainer_profiles, trainer_rooms, trainer_room_teams, owner-scoped RLS');
-  inc(ui, 'It should not promote imports to global learning or official rankings until trusted worker review exists');
+  inc(ui, 'no Team Lab promotion, global learning, or bot-memory writes until trusted worker review exists');
   inc(ui, 'shipped move registry coverage plus live mechanic-family proof');
   inc(ui, 'Run non-standard stat-source targeted proof first');
   inc(ui, 'nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace');
