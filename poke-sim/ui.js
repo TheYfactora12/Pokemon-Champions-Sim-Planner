@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.108-review-private-import-save'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.109-qa-readiness-next-gate'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -9779,6 +9779,52 @@ function csBuildQaHundredReadiness(payload) {
   );
   var blocked = gates.filter(function(gate) { return gate.status === 'blocked'; });
   var partial = gates.filter(function(gate) { return gate.status === 'partial'; });
+  var firstBlockingGate = blocked[0] || null;
+  var firstPartialGate = partial[0] || null;
+  var activeGate = firstBlockingGate || firstPartialGate || null;
+  var priorityLaneMap = {
+    release_identity: 'release_provenance',
+    legality_truth: 'regulation_legality',
+    damage_math_trace: 'damage_math_trace',
+    mechanic_family_breadth: 'move_mechanics',
+    replay_transparency: 'replay_transparency',
+    scenario_breadth: 'scenario_breadth',
+    real_replay_parity: 'real_replay_parity',
+    singles_doubles_coverage: 'format_coverage',
+    source_gap_boundary: 'source_gap_boundary'
+  };
+  var recommendedTestMap = {
+    release_identity: 'Release Matrix QA',
+    legality_truth: 'Regulation M-B legality evidence package',
+    damage_math_trace: 'Current Evidence QA with damage trace',
+    mechanic_family_breadth: 'Targeted QA / Tactical Sweep for missing mechanic families',
+    replay_transparency: 'Replay Logic QA with retained turn logs',
+    scenario_breadth: 'Tactical Sweep / Stress Lite branch coverage',
+    real_replay_parity: 'Real replay upload review with mapped teams',
+    singles_doubles_coverage: 'Paired singles and doubles QA artifacts',
+    source_gap_boundary: 'Source-truth review before promotion'
+  };
+  var nextEvidenceRequest = activeGate ? {
+    gate_id: activeGate.id,
+    gate_label: activeGate.label,
+    gate_status: activeGate.status,
+    priority_lane: priorityLaneMap[activeGate.id] || 'qa_review',
+    recommended_test: recommendedTestMap[activeGate.id] || 'Focused QA artifact',
+    missing: activeGate.missing || [],
+    next_step: activeGate.next_step || null,
+    why_first: firstBlockingGate
+      ? 'This gate is blocked, so later partial gates cannot justify a 100% claim yet.'
+      : 'No blocked gates remain, so this is the first partial gate to close.'
+  } : {
+    gate_id: null,
+    gate_label: 'No blocked or partial QA 100 gate in this artifact scope',
+    gate_status: 'ready',
+    priority_lane: 'human_source_review',
+    recommended_test: 'Human source review and issue closeout',
+    missing: [],
+    next_step: 'Attach human-reviewed source proof and close the matching GitHub issue.',
+    why_first: 'Tracked QA 100 gates passed for this artifact scope.'
+  };
   return {
     schema_version: 'champions-qa-100-readiness-v1',
     verdict: blocked.length ? 'not_ready' : (partial.length ? 'partial_not_100' : 'ready_for_100_claim_review'),
@@ -9788,6 +9834,11 @@ function csBuildQaHundredReadiness(payload) {
     gates: gates,
     blockers: blocked,
     partials: partial,
+    first_blocking_gate: firstBlockingGate,
+    first_partial_gate: firstPartialGate,
+    active_priority_lane: nextEvidenceRequest.priority_lane,
+    recommended_test: nextEvidenceRequest.recommended_test,
+    next_evidence_request: nextEvidenceRequest,
     next_priority: blocked.length
       ? blocked[0].next_step
       : (partial.length ? partial[0].next_step : 'Attach human-reviewed source proof and close the matching GitHub issue.')
@@ -11229,7 +11280,13 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   payload.qa_release_blockers = payload.codex_context.qa_release_blockers;
   payload.qa_100_readiness = csBuildQaHundredReadiness(payload);
   if (payload.qa_dashboard) payload.qa_dashboard.qa_100_readiness = payload.qa_100_readiness;
-  if (payload.qa_claim_review) payload.qa_claim_review.qa_100_readiness = payload.qa_100_readiness;
+  if (payload.qa_claim_review) {
+    payload.qa_claim_review.qa_100_readiness = payload.qa_100_readiness;
+    payload.qa_claim_review.next_evidence_request = payload.qa_100_readiness.next_evidence_request;
+    if (payload.qa_100_readiness && payload.qa_100_readiness.next_evidence_request) {
+      payload.qa_claim_review.reviewer_next_step = payload.qa_100_readiness.next_evidence_request.next_step || payload.qa_claim_review.reviewer_next_step;
+    }
+  }
   payload.recommended_fix_order = payload.qa_dashboard.recommended_fix_order;
   try {
     csRememberCoachBrainSummary(mergedCoverage && mergedCoverage.coach_brain_summary, {
@@ -13199,6 +13256,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'QA 100 next-gate guidance added',
+      detail: 'v2.2.109 strengthens qa_100_readiness so every QA artifact names first_blocking_gate, first_partial_gate, active_priority_lane, recommended_test, and next_evidence_request. This keeps the team from jumping around: if legality is blocked, work the Regulation M-B evidence package first; if no blockers remain, close the first partial gate such as move mechanics, replay transparency, scenario breadth, real replay parity, or singles/doubles proof.'
+    },
+    {
+      status: 'done',
       title: 'Review private replay save added',
       detail: 'v2.2.108 wires the Review upload flow to private replay persistence through an explicit Save Private Import button. The button saves only trainer_replay_imports, trainer_replay_import_refs, and trainer_replay_import_events through SupabaseAdapter.saveReplayImport when Supabase/Auth is available, and otherwise reports local-only status. Saved evidence belongs in the future Trainer Room and must remain regulation-scoped by regulation_id, ruleset_version, and engine_version. It still blocks public Team Lab rankings, official legality claims, global learning, and bot memory promotion.'
     },
@@ -14121,7 +14183,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Use QA 100 readiness to drive the next fixes',
-      detail: 'Fresh artifacts should now be read through qa_100_readiness first. If the verdict is not_ready or partial_not_100, work the first blocked/partial gate before claiming the sim plays like the real game across all possibilities. Expected open gates are Regulation M-B legality package, partial mechanic families, replay transparency warnings, scenario breadth, real replay parity, and paired singles/doubles proof.'
+      detail: 'Fresh artifacts should now be read through qa_100_readiness first. If the verdict is not_ready or partial_not_100, work qa_100_readiness.next_evidence_request before claiming the sim plays like the real game across all possibilities. Expected open gates are Regulation M-B legality package, partial mechanic families, replay transparency warnings, scenario breadth, real replay parity, and paired singles/doubles proof.'
     },
     {
       status: 'next',

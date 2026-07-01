@@ -515,7 +515,11 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Not for');
   inc(ui, 'This QA slice validates only the named purpose for this artifact');
   inc(ui, 'QA 100 readiness gate added');
+  inc(ui, 'QA 100 next-gate guidance added');
   inc(ui, 'qa_100_readiness to QA artifacts');
+  inc(ui, 'first_blocking_gate');
+  inc(ui, 'next_evidence_request');
+  inc(ui, 'recommended_test');
   inc(ui, 'official Champion legality source proof, damage trace evidence, mechanic-family breadth, replay transparency, scenario breadth, real-replay parity, singles/doubles coverage');
   inc(ui, 'Use QA 100 readiness to drive the next fixes');
   inc(ui, 'not_ready or partial_not_100');
