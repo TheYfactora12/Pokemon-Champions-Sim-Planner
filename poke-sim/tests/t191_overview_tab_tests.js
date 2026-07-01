@@ -319,6 +319,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function csInitHomeTabActions');
   inc(ui, 'function csPokemonNewsFeedItems');
   inc(ui, 'function csInitPokemonNewsCarousel');
+  inc(ui, 'assets/news-card.svg');
+  inc(ui, 'data-news-fallback-src');
+  inc(ui, "addEventListener('error'");
   inc(ui, 'Top 25 waits for proof');
   inc(ui, 'Experimental rows are visible. Official rankings still require verified legality and promotion rules.');
   inc(ui, 'function csTeamLabRankingGates');

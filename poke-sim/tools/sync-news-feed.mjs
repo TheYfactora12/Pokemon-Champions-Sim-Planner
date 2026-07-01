@@ -5,7 +5,7 @@ import path from 'node:path';
 const ROOT = path.resolve(new URL('.', import.meta.url).pathname, '..');
 const SOURCES_PATH = path.join(ROOT, 'tools', 'news_sources.json');
 const OUT_PATH = path.join(ROOT, 'generated', 'news_feed.js');
-const DEFAULT_IMAGE = 'https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg';
+const DEFAULT_IMAGE = 'assets/news-card.svg';
 
 function escapeJs(value) {
   return JSON.stringify(value).replace(/<\//g, '<\\/');

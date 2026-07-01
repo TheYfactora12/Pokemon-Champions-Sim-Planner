@@ -45,6 +45,9 @@ T('4. service worker cache is bumped for current source-registry release', () =>
   truthy(sw.includes('./release_manifest.js'), 'release manifest should be pre-cached');
   truthy(sw.includes('./generated/pokemon_showdown_species_weights.js'), 'weight companion file should be pre-cached');
   truthy(sw.includes('./generated/source_sync_status.js'), 'source sync status companion file should be pre-cached');
+  truthy(sw.includes('./generated/news_feed.js'), 'news feed companion file should be pre-cached');
+  truthy(sw.includes('./generated/source_registry.js'), 'source registry companion file should be pre-cached');
+  truthy(sw.includes('./assets/news-card.svg'), 'news card artwork should be pre-cached');
   truthy(sw.includes("'./rulesets.js'"), 'rulesets.js should be pre-cached');
   truthy(sw.includes("'./regmb_source_conversion.js'"), 'regmb_source_conversion.js should be pre-cached');
   truthy(sw.includes("'./team_lab.js'"), 'team_lab.js should be pre-cached');

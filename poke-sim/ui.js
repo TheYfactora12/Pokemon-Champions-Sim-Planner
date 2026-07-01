@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.81-source-trust-guard'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.82-news-slide-images'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13681,6 +13681,13 @@ function csRenderOverviewTeamLabPlan() {
 }
 
 function csPokemonNewsFeedItems() {
+  var localNewsImage = 'assets/news-card.svg';
+  function safeNewsImage(value) {
+    var src = String(value || '').trim();
+    if (!src) return localNewsImage;
+    if (/battle-stadium\.jpg|game-screenshot-2\.png/i.test(src)) return localNewsImage;
+    return src;
+  }
   var synced = (typeof CHAMPIONS_NEWS_FEED !== 'undefined' && CHAMPIONS_NEWS_FEED && Array.isArray(CHAMPIONS_NEWS_FEED.items))
     ? CHAMPIONS_NEWS_FEED.items
     : [];
@@ -13693,7 +13700,7 @@ function csPokemonNewsFeedItems() {
         detail: item.detail || 'Synced Pokemon news. Treat meta/news context separately from rules truth.',
         source: item.source || 'Synced news feed',
         url: item.url || 'https://www.pokemon.com/us/pokemon-news',
-        image: item.image || 'https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg',
+        image: safeNewsImage(item.image),
         alt: item.alt || 'Pokemon news image.'
       };
     });
@@ -13746,7 +13753,7 @@ function csPokemonNewsFeedItems() {
       detail: 'Official pages, release notes, regulation checks, replay evidence, and source gaps decide what the simulator may claim.',
       source: 'Battle Labs source-truth registry',
       url: 'https://champions.pokemon.com/',
-      image: 'https://champions.pokemon.com/_images/home/overview/game-screenshot-2.png',
+      image: localNewsImage,
       alt: 'Pokemon Champions overview screenshot.'
     },
     {
@@ -13756,7 +13763,7 @@ function csPokemonNewsFeedItems() {
       detail: 'Top teams stay experimental until legality, sample size, engine version, ruleset version, and stale checks line up.',
       source: 'Battle Labs release and Team Lab gate',
       url: 'https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/',
-      image: 'https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg',
+      image: localNewsImage,
       alt: 'Pokemon Champions battle stadium.'
     }
   ];
@@ -13764,9 +13771,10 @@ function csPokemonNewsFeedItems() {
 
 function csRenderPokemonNewsFeed() {
   var cards = csPokemonNewsFeedItems().map(function(item, index) {
+    var fallback = 'assets/news-card.svg';
     return '<article class="pokemon-news-slide' + (index === 0 ? ' active' : '') + '" data-news-slide="' + index + '">' +
       '<a class="pokemon-news-image-link" href="' + _escapeHtml(item.url) + '" target="_blank" rel="noopener">' +
-        '<img src="' + _escapeHtml(item.image) + '" alt="' + _escapeHtml(item.alt) + '" loading="' + (index === 0 ? 'eager' : 'lazy') + '">' +
+        '<img src="' + _escapeHtml(item.image) + '" data-news-fallback-src="' + _escapeHtml(fallback) + '" alt="' + _escapeHtml(item.alt) + '" loading="' + (index === 0 ? 'eager' : 'lazy') + '">' +
       '</a>' +
       '<div class="pokemon-news-copy">' +
         '<div class="pokemon-news-meta"><span>' + _escapeHtml(item.category) + '</span><span>' + _escapeHtml(item.date) + '</span></div>' +
@@ -14326,6 +14334,12 @@ function csInitPokemonNewsCarousel(root) {
   var slides = Array.prototype.slice.call(root.querySelectorAll('[data-news-slide]'));
   var dots = Array.prototype.slice.call(root.querySelectorAll('[data-news-dot]'));
   if (!slides.length) return;
+  Array.prototype.slice.call(root.querySelectorAll('img[data-news-fallback-src]')).forEach(function(img) {
+    img.addEventListener('error', function() {
+      var fallback = img.getAttribute('data-news-fallback-src') || 'assets/news-card.svg';
+      if (img.getAttribute('src') !== fallback) img.setAttribute('src', fallback);
+    });
+  });
   var active = 0;
   var timer = null;
   function paint(next) {

@@ -42,6 +42,14 @@ T('1. generated homepage news blocks non-Champion Scarlet/Violet/Tera Raid terms
   }
 });
 
+T('1b. generated homepage news does not use known-broken Champion image paths', () => {
+  const blockedImages = /battle-stadium\.jpg|game-screenshot-2\.png/i;
+  for (const item of feed.items || []) {
+    truthy(item.image, 'feed item image missing: ' + item.title);
+    truthy(!blockedImages.test(String(item.image)), 'known-broken news image leaked into feed: ' + item.image);
+  }
+});
+
 T('2. enabled RSS sources must carry Champion include filters and non-Champion excludes', () => {
   const enabledRss = (newsSources.sources || []).filter(source => source.enabled && (source.type === 'rss' || source.type === 'atom'));
   truthy(enabledRss.length >= 1, 'expected at least one enabled RSS/Atom source');
