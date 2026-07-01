@@ -303,7 +303,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Top 25 is locked until enough verified simulator evidence exists.');
   inc(ui, 'pokemon-news-headline');
   inc(ui, 'Source-backed news watch');
-  inc(ui, 'Source hub');
+  inc(ui, 'Official source watch');
   inc(ui, 'Release status');
   inc(ui, 'See the battle like a coach would.');
   inc(ui, 'Rain Balance vs Speed Control');
@@ -322,6 +322,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'assets/news-card.svg');
   inc(ui, 'Source-backed news watch');
   inc(ui, 'Article thumbnails come from approved feed metadata when available.');
+  inc(ui, 'Official source watch');
+  inc(ui, 'Pokemon Champions Official Source Hub');
+  inc(ui, 'Evidence-First Rankings Stay Gated');
   inc(ui, 'data-news-fallback-src');
   inc(ui, "addEventListener('error'");
   inc(ui, 'Top 25 waits for proof');

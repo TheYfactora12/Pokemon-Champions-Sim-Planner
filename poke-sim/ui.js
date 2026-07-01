@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.84-news-health-sync'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.85-news-source-watch'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13691,8 +13691,30 @@ function csPokemonNewsFeedItems() {
   var synced = (typeof CHAMPIONS_NEWS_FEED !== 'undefined' && CHAMPIONS_NEWS_FEED && Array.isArray(CHAMPIONS_NEWS_FEED.items))
     ? CHAMPIONS_NEWS_FEED.items
     : [];
+  var sourceWatchCards = [
+    {
+      category: 'Official source watch',
+      date: 'Live source watch',
+      title: 'Pokemon Champions Official Source Hub',
+      detail: 'Use official Champion pages for game availability, modes, regulation announcements, and source-truth checks before changing legality claims.',
+      source: 'Pokemon Champions official site',
+      url: 'https://champions.pokemon.com/',
+      image: 'https://champions.pokemon.com/_images/home/mar24_thumbnail.jpg',
+      alt: 'Pokemon Champions official key art.'
+    },
+    {
+      category: 'Release status',
+      date: 'Current build',
+      title: 'Evidence-First Rankings Stay Gated',
+      detail: 'Top teams stay experimental until legality, sample size, engine version, ruleset version, and stale checks line up.',
+      source: 'Battle Labs release and Team Lab gate',
+      url: 'https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/',
+      image: localNewsImage,
+      alt: 'Battle Labs source-truth card.'
+    }
+  ];
   if (synced.length) {
-    return synced.slice(0, 8).map(function(item) {
+    var syncedCards = synced.map(function(item) {
       return {
         category: item.category || 'News',
         date: item.date || 'Recently synced',
@@ -13704,6 +13726,7 @@ function csPokemonNewsFeedItems() {
         alt: item.alt || 'Pokemon news image.'
       };
     });
+    return syncedCards.concat(sourceWatchCards).slice(0, 8);
   }
   return [
     {
@@ -13746,26 +13769,8 @@ function csPokemonNewsFeedItems() {
       image: 'https://champions.pokemon.com/_images/pokemon/ideal-team/en/featured-main.jpg',
       alt: 'Pokemon Champions team menu screenshot featuring Hydrapple.'
     },
-    {
-      category: 'Source hub',
-      date: 'Live source watch',
-      title: 'Champion Sources Drive the Sim Trust Layer',
-      detail: 'Official pages, release notes, regulation checks, replay evidence, and source gaps decide what the simulator may claim.',
-      source: 'Battle Labs source-truth registry',
-      url: 'https://champions.pokemon.com/',
-      image: localNewsImage,
-      alt: 'Pokemon Champions overview screenshot.'
-    },
-    {
-      category: 'Release status',
-      date: 'Current build',
-      title: 'Evidence-First Rankings Are Locked Until Proven',
-      detail: 'Top teams stay experimental until legality, sample size, engine version, ruleset version, and stale checks line up.',
-      source: 'Battle Labs release and Team Lab gate',
-      url: 'https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/',
-      image: localNewsImage,
-      alt: 'Pokemon Champions battle stadium.'
-    }
+    sourceWatchCards[0],
+    sourceWatchCards[1]
   ];
 }
 
