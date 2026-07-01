@@ -6614,6 +6614,30 @@ function csBuildTargetedQaSweepEvidence(opts) {
       ])
     }),
     csRunTargetedQaProofBattle({
+      id: 'item_recovery_leftovers',
+      label: 'Item recovery proof: Leftovers',
+      requireMechanic: 'item_recovery',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_item_recovery_player',
+      opponentTeamId: 'targeted_qa_item_recovery_opponent',
+      maxTurns: 1,
+      playerTeam: csQaProofTeam('Targeted QA Item Recovery Player', [
+        csQaProofMon('Garchomp', ['Tackle'], {
+          ability: 'Rough Skin',
+          item: 'Leftovers',
+          nature: 'Jolly',
+          evs: { hp: 32, atk: 32, def: 0, spa: 0, spd: 0, spe: 2 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Item Recovery Opponent', [
+        csQaProofMon('Pelipper', ['Tackle'], {
+          nature: 'Calm',
+          evs: { hp: 32, atk: 32, def: 0, spa: 0, spd: 0, spe: 2 }
+        })
+      ])
+    }),
+    csRunTargetedQaProofBattle({
       id: 'move_lock_taunt_status_fail',
       label: 'Move-lock proof: Taunt blocks status move',
       requireMechanic: 'move_lock_failures',
