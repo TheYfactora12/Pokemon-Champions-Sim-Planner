@@ -41655,6 +41655,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'DB architecture growth audit added',
+      detail: 'v2.2.101 documents the database future-state needed after simulator truth improves: source truth, evidence truth, trainer rooms, private replay imports, personal coaching memory, anonymized global learning, trusted promotion, and future bot practice sessions. The audit also flags broad anon DB writes and branch-memory promotion as risks before public scale.'
+    },
+    {
+      status: 'done',
       title: 'QA 100 readiness gate added',
       detail: 'v2.2.100 adds qa_100_readiness to QA artifacts and the visible QA readout. The artifact now separates useful slice evidence from 100% simulator readiness by checking release identity, official Champion legality source proof, damage trace evidence, mechanic-family breadth, replay transparency, scenario breadth, real-replay parity, singles/doubles coverage, and source-gap boundaries.'
     },
@@ -42526,6 +42531,11 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
+      title: 'Build trainer-room schema before public personal coaching',
+      detail: 'Next DB product slice should add trainer_profiles, trainer_rooms, room teams, private replay imports, owner-scoped RLS, and consent boundaries. This gives each player a private testing room for their teams, Showdown/Champion battle files, sim runs, coaching facts, and future bot sessions without poisoning global rankings or leaking hidden tech.'
+    },
+    {
+      status: 'next',
       title: 'Use QA 100 readiness to drive the next fixes',
       detail: 'Fresh artifacts should now be read through qa_100_readiness first. If the verdict is not_ready or partial_not_100, work the first blocked/partial gate before claiming the sim plays like the real game across all possibilities. Expected open gates are Regulation M-B legality package, partial mechanic families, replay transparency warnings, scenario breadth, real replay parity, and paired singles/doubles proof.'
     },
@@ -42687,6 +42697,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
     { label: 'Release Discipline + Cleanup Gates', href: 'docs/RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md' },
     { label: 'Active Slice Closeout Status', href: 'docs/ACTIVE_SLICE_CLOSEOUT_STATUS.md' },
+    { label: 'DB Architecture Growth Audit', href: 'docs/DB_ARCHITECTURE_GROWTH_AUDIT_2026-07-01.md' },
     { label: 'Legality 99 Target Plan', href: 'docs/LEGALITY_99_TARGET_PLAN.md' },
     { label: 'Data Source Registry', href: 'docs/DATA_SOURCE_REGISTRY.md' },
     { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
@@ -42738,6 +42749,13 @@ var CS_OVERVIEW_DATA = {
       role: 'Current 99% / 100% / blocker map',
       status: 'canonical for active closeout',
       notes: 'Use to decide what can close, what stays open, and what the next priority is before adding more features.'
+    },
+    {
+      label: 'DB Architecture Growth Audit',
+      href: 'docs/DB_ARCHITECTURE_GROWTH_AUDIT_2026-07-01.md',
+      role: 'Trainer-room, personal coaching, global learning, and bot-practice database plan',
+      status: 'canonical for DB product growth',
+      notes: 'Use before adding account, training-room, replay-import, global learning, or bot-session tables so private player data does not poison shared rankings or coaching.'
     },
     {
       label: 'Legality 99 Target Plan',

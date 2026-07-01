@@ -178,6 +178,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md');
   inc(ui, 'Active Slice Closeout Status');
   inc(ui, 'ACTIVE_SLICE_CLOSEOUT_STATUS.md');
+  inc(ui, 'DB Architecture Growth Audit');
+  inc(ui, 'DB_ARCHITECTURE_GROWTH_AUDIT_2026-07-01.md');
   inc(ui, 'Legality 99 Target Plan');
   inc(ui, 'LEGALITY_99_TARGET_PLAN.md');
   inc(ui, 'Champion Parity 100 Checklist');
@@ -497,6 +499,10 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'csBuildQaHundredReadiness');
   inc(ui, '100% gate');
   inc(ui, '100% readiness');
+  inc(ui, 'DB architecture growth audit added');
+  inc(ui, 'trainer rooms, private replay imports, personal coaching memory, anonymized global learning, trusted promotion, and future bot practice sessions');
+  inc(ui, 'Build trainer-room schema before public personal coaching');
+  inc(ui, 'trainer_profiles, trainer_rooms, room teams, private replay imports, owner-scoped RLS, and consent boundaries');
   inc(ui, 'shipped move registry coverage plus live mechanic-family proof');
   inc(ui, 'Run non-standard stat-source targeted proof first');
   inc(ui, 'nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace');

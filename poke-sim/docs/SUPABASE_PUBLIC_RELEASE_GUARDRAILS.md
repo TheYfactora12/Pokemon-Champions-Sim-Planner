@@ -61,6 +61,28 @@ Minimum metadata for future learning rows:
 - `source_snapshot_id`
 - `user_scope` or equivalent privacy boundary
 
+## 3b. Trainer rooms and future learning boundary
+
+Future personal coaching, uploaded battle review, and bot practice should be built around a trainer-owned workspace, not around shared global tables.
+
+Required direction:
+
+- Add a trainer/profile layer before public account features.
+- Store a private trainer room for saved teams, uploaded replays, sim jobs, coaching facts, and practice drills.
+- Keep real replay imports private until parser status, team mapping, regulation, format, and source gaps are reviewed.
+- Let players explicitly choose whether anonymized signals can contribute to global learning.
+- Store global learning as aggregate signals, not raw private teams, raw private replays, or hidden tech choices.
+- Require `regulation_id`, `format`, `engine_version`, `ruleset_version`, source status, sample size, and stale status on every promoted learning row.
+- Future bot-play sessions must store bot version, policy version, board states, actions, and evidence summaries so bad advice can be audited after engine/rules updates.
+
+Blocked behavior:
+
+- Do not train global recommendations directly from browser anon writes.
+- Do not use private trainer data in public rankings without consent, verified mapping, legality status, and trusted-worker promotion.
+- Do not let bot memory learn from rows with unresolved source gaps as if they were real-game truth.
+
+See `docs/DB_ARCHITECTURE_GROWTH_AUDIT_2026-07-01.md` for the full target schema and slice order.
+
 ## 4. Public release gate
 
 Before inviting broad testers:
