@@ -13470,6 +13470,12 @@ function csRenderPokemonNewsFeed() {
   var dots = csPokemonNewsFeedItems().map(function(_item, index) {
     return '<button type="button" class="pokemon-news-dot' + (index === 0 ? ' active' : '') + '" data-news-dot="' + index + '" aria-label="Show news item ' + (index + 1) + '"></button>';
   }).join('');
+  var headlines = csPokemonNewsFeedItems().map(function(item, index) {
+    return '<button type="button" class="pokemon-news-headline' + (index === 0 ? ' active' : '') + '" data-news-dot="' + index + '">' +
+      '<span>' + _escapeHtml(item.category) + '</span>' +
+      '<strong>' + _escapeHtml(item.title) + '</strong>' +
+    '</button>';
+  }).join('');
   return '<section class="pokemon-news-feed" aria-label="Pokemon news feed">' +
     '<div class="pokemon-news-feed-head">' +
       '<div><span class="overview-kicker">News + source watch</span><h3>Latest Champion Updates</h3><p>Player news, regulation signals, and source-status cards. Mechanics truth still requires reviewed source rows.</p></div>' +
@@ -13479,7 +13485,35 @@ function csRenderPokemonNewsFeed() {
       '</div>' +
     '</div>' +
     '<div class="pokemon-news-slides">' + cards + '</div>' +
+    '<div class="pokemon-news-headlines" aria-label="News headlines">' + headlines + '</div>' +
     '<div class="pokemon-news-dots">' + dots + '</div>' +
+  '</section>';
+}
+
+function csRenderHomeStartRail() {
+  return '<section class="home-start-rail" aria-label="Quick start">' +
+    '<div><span class="overview-kicker">New here?</span><strong>Start with one decision.</strong></div>' +
+    '<ol>' +
+      '<li><span>1</span>Pick a team</li>' +
+      '<li><span>2</span>Run one matchup</li>' +
+      '<li><span>3</span>Upload a replay</li>' +
+      '<li><span>4</span>Improve one choice</li>' +
+    '</ol>' +
+    '<button type="button" data-home-tab="simulator">Start now</button>' +
+  '</section>';
+}
+
+function csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) {
+  var rowCount = Array.isArray(previewRows) ? previewRows.length : 0;
+  var rankingState = hasEvidenceRows ? 'Experimental preview' : 'Locked until proven';
+  return '<section class="home-proof-snapshot" aria-label="Current proof snapshot">' +
+    '<div><span class="overview-kicker">Current proof</span><h4>Evidence snapshot</h4></div>' +
+    '<dl>' +
+      '<div><dt>Replay feed</dt><dd>39 real-battle files ingested</dd></div>' +
+      '<div><dt>QA status</dt><dd>Focused checks passing</dd></div>' +
+      '<div><dt>Ranking state</dt><dd>' + _escapeHtml(rankingState) + '</dd></div>' +
+      '<div><dt>Visible rows</dt><dd>' + _escapeHtml(String(rowCount)) + ' current preview row' + (rowCount === 1 ? '' : 's') + '</dd></div>' +
+    '</dl>' +
   '</section>';
 }
 
@@ -13900,11 +13934,13 @@ function csRenderTeamLabNewsroomHub() {
       '<article><span>02</span><strong>Review the battle</strong><p>Upload real Showdown logs to expose speed control, damage, status, field, item, and faint causes.</p></article>' +
       '<article><span>03</span><strong>Improve cleanly</strong><p>Change one move, item, lead, or lineup at a time so the next result teaches something real.</p></article>' +
     '</div>' +
+    csRenderHomeStartRail() +
     csRenderPokemonNewsFeed() +
     '<div class="team-lab-leaderboard-head">' +
-      '<div><span class="overview-kicker">Team Lab leaderboard</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>Teams rank only when legality, sample size, engine/ruleset version, matchup spread, and stale checks line up.</p></div>' +
-      '<span class="overview-status ' + (hasEvidenceRows ? 'warn' : 'gap') + '">' + (hasEvidenceRows ? 'Experimental preview' : 'Evidence locked') + '</span>' +
+      '<div><span class="overview-kicker">Team Lab leaderboard</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>' + (hasEvidenceRows ? 'Experimental rows are visible. Official rankings still require verified legality and promotion rules.' : 'Top 25 is locked until enough verified simulator evidence exists.') + '</p></div>' +
+      '<span class="overview-status ' + (hasEvidenceRows ? 'warn' : 'gap') + '">' + (hasEvidenceRows ? 'Experimental preview' : 'Locked until proven') + '</span>' +
     '</div>' +
+    csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) +
     '<div class="overview-db-table-wrap team-lab-top25-wrap"><table class="overview-db-table team-lab-top25-table">' +
       '<thead><tr><th>Rank</th><th>Team</th><th>Archetype</th><th>Score</th><th>Quality</th><th>Adj. win rate</th><th>Games</th><th>Confidence</th><th>Status</th></tr></thead>' +
       '<tbody data-team-lab-top25-body>' + csRenderTeamLabTop25Rows(previewRows) + '</tbody>' +

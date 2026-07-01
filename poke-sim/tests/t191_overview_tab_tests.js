@@ -245,6 +245,9 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.home-landing-chips span{display:inline-flex;align-items:center;min-height:30px');
   inc(css, '.home-landing-proof span{font-family:var(--font-mono);font-size:11px');
   inc(css, '.home-value-strip p{color:var(--text-m);font-size:15px');
+  inc(css, '.home-start-rail');
+  inc(css, '.pokemon-news-headlines');
+  inc(css, '.home-proof-snapshot');
   inc(css, '.home-sim-preview');
   inc(css, '.home-sim-output-card');
   inc(css, '.home-start-cycle');
@@ -257,7 +260,7 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.overview-db-table');
   inc(css, '.overview-status.done');
   inc(css, '.overview-status.gap');
-  inc(css, '@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-hero,.pokemon-news-slide.active{grid-template-columns:1fr}.home-trust-strip{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:220px}}');
+  inc(css, '@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-hero,.pokemon-news-slide.active,.home-proof-snapshot{grid-template-columns:1fr}.home-trust-strip{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:220px}}');
 });
 
 T('6. Overview renders through a reusable function for future growth', () => {
@@ -292,6 +295,15 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Sim the matchup');
   inc(ui, 'Review the battle');
   inc(ui, 'Improve cleanly');
+  inc(ui, 'function csRenderHomeStartRail');
+  inc(ui, 'Start with one decision.');
+  inc(ui, 'function csRenderHomeProofSnapshot');
+  inc(ui, '39 real-battle files ingested');
+  inc(ui, 'Top 25 is locked until enough verified simulator evidence exists.');
+  inc(ui, 'pokemon-news-headline');
+  inc(ui, 'News + source watch');
+  inc(ui, 'Source hub');
+  inc(ui, 'Release status');
   inc(ui, 'See the battle like a coach would.');
   inc(ui, 'Rain Balance vs Speed Control');
   inc(ui, 'The 4-step testing cycle');
@@ -307,7 +319,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function csPokemonNewsFeedItems');
   inc(ui, 'function csInitPokemonNewsCarousel');
   inc(ui, 'Top 25 waits for proof');
-  inc(ui, 'Teams rank only when legality, sample size, engine/ruleset version, matchup spread, and stale checks line up.');
+  inc(ui, 'Experimental rows are visible. Official rankings still require verified legality and promotion rules.');
   inc(ui, 'function csTeamLabRankingGates');
   inc(ui, 'function csRenderTeamLabRankingGates');
   inc(ui, 'function csRenderTeamLabAdminControls');
@@ -345,7 +357,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'No fake rankings');
   inc(ui, 'local QA preview');
   inc(ui, 'Local only - not official global rank');
-  inc(ui, 'Evidence locked');
+  inc(ui, 'Locked until proven');
   inc(ui, 'Team Lab read UI (#179)');
   inc(ui, 'Custom team submission and validation (#180)');
   inc(ui, 'Leaderboard recalculation and stale guards (#181)');

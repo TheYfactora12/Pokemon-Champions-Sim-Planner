@@ -462,6 +462,13 @@ table{border-collapse:collapse;width:100%}
 .home-value-strip span{display:block;font-family:var(--font-mono);font-size:12px;font-weight:900;color:var(--gold);letter-spacing:.06em;margin-bottom:10px}
 .home-value-strip strong{display:block;font-size:clamp(18px,2vw,23px);font-weight:950;letter-spacing:-.025em;margin-bottom:7px}
 .home-value-strip p{color:var(--text-m);font-size:15px;line-height:1.45;margin:0}
+.home-start-rail{display:grid;grid-template-columns:minmax(190px,.55fr) minmax(0,1.45fr) auto;gap:var(--sp3);align-items:center;border:1px solid rgba(245,197,66,.26);border-radius:var(--r-md);background:linear-gradient(135deg,rgba(245,197,66,.08),rgba(91,164,245,.045));padding:var(--sp4);margin-bottom:var(--sp4)}
+.home-start-rail strong{display:block;font-size:20px;font-weight:950;letter-spacing:-.03em;margin-top:4px}
+.home-start-rail ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;list-style:none;margin:0;padding:0}
+.home-start-rail li{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.08);border-radius:var(--r-full);background:rgba(0,0,0,.16);padding:8px 10px;color:var(--text);font-size:13px;font-weight:900;white-space:nowrap}
+.home-start-rail li span{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.34);color:var(--gold);font-family:var(--font-mono);font-size:10px;flex:0 0 auto}
+.home-start-rail button{min-height:40px;border:1px solid transparent;background:linear-gradient(135deg,var(--gold),#ff7a18);color:#0b1020;border-radius:var(--r-full);padding:8px 14px;font-size:12px;font-weight:950;cursor:pointer;white-space:nowrap}
+.home-start-rail button:hover,.home-start-rail button:focus-visible{transform:translateY(-1px);outline:none}
 .home-start-cycle{border-color:rgba(245,197,66,.28);background:linear-gradient(135deg,rgba(245,197,66,.08),rgba(255,255,255,.025));margin-bottom:var(--sp4)}
 .home-start-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp3)}
 .home-start-step{display:grid;grid-template-columns:38px minmax(0,1fr);gap:10px;border:1px solid var(--border);border-radius:var(--r-sm);background:rgba(0,0,0,.12);padding:var(--sp3);min-width:0}
@@ -524,6 +531,11 @@ table{border-collapse:collapse;width:100%}
 .pokemon-news-copy h4 a:hover{color:var(--blue)}
 .pokemon-news-copy p{color:var(--text-m);font-size:14px;line-height:1.55;margin-top:12px}
 .pokemon-news-copy small{color:var(--text-d);font-size:11px;margin-top:14px}
+.pokemon-news-headlines{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:var(--sp3)}
+.pokemon-news-headline{border:1px solid rgba(91,164,245,.2);border-radius:var(--r-sm);background:rgba(0,0,0,.12);color:var(--text);text-align:left;padding:10px;cursor:pointer;min-width:0}
+.pokemon-news-headline span{display:block;font-family:var(--font-mono);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:5px}
+.pokemon-news-headline strong{display:block;font-size:13px;font-weight:950;line-height:1.2}
+.pokemon-news-headline.active{border-color:rgba(91,164,245,.58);background:rgba(91,164,245,.13)}
 .pokemon-news-dots{display:flex;gap:7px;margin-top:var(--sp3)}
 .pokemon-news-dot{width:28px;height:6px;border:0;border-radius:var(--r-full);background:rgba(255,255,255,.16);cursor:pointer}
 .pokemon-news-dot.active{background:var(--blue)}
@@ -557,14 +569,20 @@ table{border-collapse:collapse;width:100%}
 .team-lab-admin-controls button:hover,.team-lab-admin-controls button:focus-visible{transform:translateY(-1px);border-color:var(--orange);outline:none}
 .team-lab-leaderboard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp3);margin:var(--sp2) 0 var(--sp3)}
 .team-lab-leaderboard-head h4{font-size:var(--text-lg);font-weight:950;letter-spacing:-.02em}
-.team-lab-leaderboard-head p{color:var(--text-m);font-size:12px;line-height:1.45;margin-top:4px}
+.team-lab-leaderboard-head p{color:var(--text-m);font-size:14px;line-height:1.45;margin-top:4px}
+.home-proof-snapshot{display:grid;grid-template-columns:minmax(180px,.45fr) minmax(0,1.55fr);gap:var(--sp3);align-items:center;border:1px solid rgba(78,201,148,.26);border-radius:var(--r-md);background:linear-gradient(135deg,rgba(78,201,148,.075),rgba(91,164,245,.045));padding:var(--sp4);margin-bottom:var(--sp3)}
+.home-proof-snapshot h4{font-size:22px;font-weight:950;letter-spacing:-.035em;margin-top:4px}
+.home-proof-snapshot dl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}
+.home-proof-snapshot dl div{border:1px solid rgba(255,255,255,.08);border-radius:var(--r-sm);background:rgba(0,0,0,.13);padding:10px;min-width:0}
+.home-proof-snapshot dt{font-family:var(--font-mono);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:5px}
+.home-proof-snapshot dd{font-size:13px;font-weight:900;color:var(--text);line-height:1.25}
 .team-lab-top25-table{min-width:860px}
 .team-lab-top25-table td:first-child,.team-lab-top25-table th:first-child{font-family:var(--font-mono);font-weight:900;text-transform:uppercase}
 @media(max-width:700px){.overview-milestone-summary{flex-direction:column}.overview-milestone-counts{justify-content:flex-start;min-width:0}.overview-buckets{padding:0 var(--sp3) var(--sp3)}}
 
-@media(max-width:1100px){.team-lab-gate-grid,.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-hero,.pokemon-news-slide.active{grid-template-columns:1fr}.home-trust-strip{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:220px}}
-@media(max-width:560px){.overview-header{gap:var(--sp3)}.overview-updated{white-space:normal}.overview-metrics{grid-template-columns:1fr}.overview-section{padding:var(--sp3)}.overview-item{grid-template-columns:1fr;gap:6px}.overview-status{justify-self:start}.overview-section-head,.pokemon-news-feed-head,.team-lab-gates-head,.team-lab-admin-controls{align-items:flex-start;flex-direction:column;gap:6px}.overview-kicker{white-space:normal}.overview-db-summary,.overview-db-counts{grid-template-columns:1fr}.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip,.team-lab-gate-grid{grid-template-columns:1fr}.home-quick-plan-rows article{grid-template-columns:1fr;align-items:start}.home-sim-output-head{display:grid;text-align:left}.home-sim-output-head strong{text-align:left}.team-lab-leaderboard-head{flex-direction:column}.team-lab-gate-actions{justify-content:flex-start;width:100%}.team-lab-gate-actions button,.team-lab-admin-controls button{width:100%}.pokemon-news-controls{width:100%;justify-content:flex-start}.pokemon-news-copy h4{font-size:24px}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-gates,.team-lab-admin-controls{padding:var(--sp3)}.home-landing-actions button{width:100%}}
+@media(max-width:1100px){.team-lab-gate-grid,.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip,.home-proof-snapshot dl{grid-template-columns:repeat(2,minmax(0,1fr))}.home-start-rail{grid-template-columns:1fr}.home-start-rail ol{grid-template-columns:repeat(2,minmax(0,1fr))}.home-start-rail button{justify-self:start}.pokemon-news-headlines{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-hero,.pokemon-news-slide.active,.home-proof-snapshot{grid-template-columns:1fr}.home-trust-strip{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:220px}}
+@media(max-width:560px){.overview-header{gap:var(--sp3)}.overview-updated{white-space:normal}.overview-metrics{grid-template-columns:1fr}.overview-section{padding:var(--sp3)}.overview-item{grid-template-columns:1fr;gap:6px}.overview-status{justify-self:start}.overview-section-head,.pokemon-news-feed-head,.team-lab-gates-head,.team-lab-admin-controls{align-items:flex-start;flex-direction:column;gap:6px}.overview-kicker{white-space:normal}.overview-db-summary,.overview-db-counts{grid-template-columns:1fr}.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip,.home-start-rail ol,.pokemon-news-headlines,.home-proof-snapshot dl,.team-lab-gate-grid{grid-template-columns:1fr}.home-quick-plan-rows article{grid-template-columns:1fr;align-items:start}.home-sim-output-head{display:grid;text-align:left}.home-sim-output-head strong{text-align:left}.team-lab-leaderboard-head{flex-direction:column}.team-lab-gate-actions{justify-content:flex-start;width:100%}.team-lab-gate-actions button,.team-lab-admin-controls button,.home-start-rail button{width:100%}.pokemon-news-controls{width:100%;justify-content:flex-start}.pokemon-news-copy h4{font-size:24px}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-gates,.team-lab-admin-controls,.home-start-rail,.home-proof-snapshot{padding:var(--sp3)}.home-landing-actions button{width:100%}.home-start-rail li{white-space:normal}.pokemon-news-headline strong{font-size:14px}}
 
 /* ===== SIM LAYOUT ===== */
 .sim-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px minmax(0,1fr);gap:var(--sp4);align-items:start;margin-bottom:var(--sp6)}
@@ -41754,6 +41772,12 @@ function csRenderPokemonNewsFeed() {
   var dots = csPokemonNewsFeedItems().map(function(_item, index) {
     return '<button type="button" class="pokemon-news-dot' + (index === 0 ? ' active' : '') + '" data-news-dot="' + index + '" aria-label="Show news item ' + (index + 1) + '"></button>';
   }).join('');
+  var headlines = csPokemonNewsFeedItems().map(function(item, index) {
+    return '<button type="button" class="pokemon-news-headline' + (index === 0 ? ' active' : '') + '" data-news-dot="' + index + '">' +
+      '<span>' + _escapeHtml(item.category) + '</span>' +
+      '<strong>' + _escapeHtml(item.title) + '</strong>' +
+    '</button>';
+  }).join('');
   return '<section class="pokemon-news-feed" aria-label="Pokemon news feed">' +
     '<div class="pokemon-news-feed-head">' +
       '<div><span class="overview-kicker">News + source watch</span><h3>Latest Champion Updates</h3><p>Player news, regulation signals, and source-status cards. Mechanics truth still requires reviewed source rows.</p></div>' +
@@ -41763,7 +41787,35 @@ function csRenderPokemonNewsFeed() {
       '</div>' +
     '</div>' +
     '<div class="pokemon-news-slides">' + cards + '</div>' +
+    '<div class="pokemon-news-headlines" aria-label="News headlines">' + headlines + '</div>' +
     '<div class="pokemon-news-dots">' + dots + '</div>' +
+  '</section>';
+}
+
+function csRenderHomeStartRail() {
+  return '<section class="home-start-rail" aria-label="Quick start">' +
+    '<div><span class="overview-kicker">New here?</span><strong>Start with one decision.</strong></div>' +
+    '<ol>' +
+      '<li><span>1</span>Pick a team</li>' +
+      '<li><span>2</span>Run one matchup</li>' +
+      '<li><span>3</span>Upload a replay</li>' +
+      '<li><span>4</span>Improve one choice</li>' +
+    '</ol>' +
+    '<button type="button" data-home-tab="simulator">Start now</button>' +
+  '</section>';
+}
+
+function csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) {
+  var rowCount = Array.isArray(previewRows) ? previewRows.length : 0;
+  var rankingState = hasEvidenceRows ? 'Experimental preview' : 'Locked until proven';
+  return '<section class="home-proof-snapshot" aria-label="Current proof snapshot">' +
+    '<div><span class="overview-kicker">Current proof</span><h4>Evidence snapshot</h4></div>' +
+    '<dl>' +
+      '<div><dt>Replay feed</dt><dd>39 real-battle files ingested</dd></div>' +
+      '<div><dt>QA status</dt><dd>Focused checks passing</dd></div>' +
+      '<div><dt>Ranking state</dt><dd>' + _escapeHtml(rankingState) + '</dd></div>' +
+      '<div><dt>Visible rows</dt><dd>' + _escapeHtml(String(rowCount)) + ' current preview row' + (rowCount === 1 ? '' : 's') + '</dd></div>' +
+    '</dl>' +
   '</section>';
 }
 
@@ -42184,11 +42236,13 @@ function csRenderTeamLabNewsroomHub() {
       '<article><span>02</span><strong>Review the battle</strong><p>Upload real Showdown logs to expose speed control, damage, status, field, item, and faint causes.</p></article>' +
       '<article><span>03</span><strong>Improve cleanly</strong><p>Change one move, item, lead, or lineup at a time so the next result teaches something real.</p></article>' +
     '</div>' +
+    csRenderHomeStartRail() +
     csRenderPokemonNewsFeed() +
     '<div class="team-lab-leaderboard-head">' +
-      '<div><span class="overview-kicker">Team Lab leaderboard</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>Teams rank only when legality, sample size, engine/ruleset version, matchup spread, and stale checks line up.</p></div>' +
-      '<span class="overview-status ' + (hasEvidenceRows ? 'warn' : 'gap') + '">' + (hasEvidenceRows ? 'Experimental preview' : 'Evidence locked') + '</span>' +
+      '<div><span class="overview-kicker">Team Lab leaderboard</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>' + (hasEvidenceRows ? 'Experimental rows are visible. Official rankings still require verified legality and promotion rules.' : 'Top 25 is locked until enough verified simulator evidence exists.') + '</p></div>' +
+      '<span class="overview-status ' + (hasEvidenceRows ? 'warn' : 'gap') + '">' + (hasEvidenceRows ? 'Experimental preview' : 'Locked until proven') + '</span>' +
     '</div>' +
+    csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) +
     '<div class="overview-db-table-wrap team-lab-top25-wrap"><table class="overview-db-table team-lab-top25-table">' +
       '<thead><tr><th>Rank</th><th>Team</th><th>Archetype</th><th>Score</th><th>Quality</th><th>Adj. win rate</th><th>Games</th><th>Confidence</th><th>Status</th></tr></thead>' +
       '<tbody data-team-lab-top25-body>' + csRenderTeamLabTop25Rows(previewRows) + '</tbody>' +
