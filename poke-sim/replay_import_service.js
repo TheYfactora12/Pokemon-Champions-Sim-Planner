@@ -85,10 +85,115 @@
     };
   }
 
+  function normalizeTeamName(value) {
+    return clean(value)
+      .replace(/\.[a-z0-9]+$/i, '')
+      .replace(/^champions[-_\s]*/i, '')
+      .replace(/^showdown[-_\s]*/i, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim()
+      .replace(/\s+/g, ' ');
+  }
+
+  function personalTeamsFromOpts(opts) {
+    opts = opts || {};
+    var raw = opts.personal_teams || opts.personalTeams || opts.custom_teams || opts.customTeams || [];
+    if (Array.isArray(raw)) return raw;
+    if (raw && typeof raw === 'object') {
+      return Object.keys(raw).map(function(key) {
+        var team = raw[key] || {};
+        return Object.assign({ key: key }, team);
+      });
+    }
+    return [];
+  }
+
+  function findPersonalTeamMatch(filename, opts) {
+    var fileToken = normalizeTeamName(filename);
+    if (!fileToken) return null;
+    var teams = personalTeamsFromOpts(opts);
+    for (var i = 0; i < teams.length; i += 1) {
+      var team = teams[i] || {};
+      var candidates = [
+        team.name,
+        team.label,
+        team.team_name,
+        team.team_id,
+        team.teamId,
+        team.team_lab_team_id,
+        team.id,
+        team.key
+      ];
+      for (var c = 0; c < candidates.length; c += 1) {
+        if (normalizeTeamName(candidates[c]) && normalizeTeamName(candidates[c]) === fileToken) {
+          return {
+            match_type: 'filename_team_name',
+            source_filename: clean(filename),
+            team_name: clean(team.name || team.label || team.team_name || candidates[c]),
+            team_key: clean(team.key || team.team_id || team.teamId || team.id || ''),
+            team_lab_team_id: clean(team.team_lab_team_id || team.teamLabTeamId || team.id || team.team_id || ''),
+            visibility: clean(team.visibility || 'private'),
+            verification_status: 'needs_review',
+            note: 'Filename matched a personal/custom team name. This is private Pilot-room mapping evidence, not global truth.'
+          };
+        }
+      }
+    }
+    return null;
+  }
+
+  function findExplicitPersonalTeamMatch(opts) {
+    opts = opts || {};
+    var selected = clean(opts.reference_team_id || opts.referenceTeamId || opts.selected_team_id || opts.selectedTeamId);
+    if (!selected) return null;
+    var teams = personalTeamsFromOpts(opts);
+    for (var i = 0; i < teams.length; i += 1) {
+      var team = teams[i] || {};
+      var ids = [
+        team.key,
+        team.id,
+        team.team_id,
+        team.teamId,
+        team.team_lab_team_id,
+        team.teamLabTeamId
+      ].map(clean).filter(Boolean);
+      if (ids.indexOf(selected) >= 0) {
+        return {
+          match_type: 'manual_reference_team',
+          source_filename: clean(opts.filename || opts.source_filename || ''),
+          team_name: clean(team.name || team.label || team.team_name || selected),
+          team_key: clean(team.key || team.team_id || team.teamId || team.id || ''),
+          team_lab_team_id: clean(team.team_lab_team_id || team.teamLabTeamId || team.id || team.team_id || selected),
+          visibility: clean(team.visibility || 'private'),
+          verification_status: 'needs_review',
+          note: 'User selected this reference team in the Pilot-room replay upload flow. This is private mapping evidence, not global truth.'
+        };
+      }
+    }
+    return {
+      match_type: 'manual_reference_team',
+      source_filename: clean(opts.filename || opts.source_filename || ''),
+      team_name: selected,
+      team_key: selected,
+      team_lab_team_id: selected,
+      visibility: 'private',
+      verification_status: 'needs_review',
+      note: 'User selected a reference team id. This is private mapping evidence, not global truth.'
+    };
+  }
+
   function baseImportRow(text, opts, sourceType, sourceGaps, warnings, eventCount, hardFailed) {
     opts = opts || {};
     var parseStatus = statusFromCounts(eventCount, warnings, hardFailed);
-    var mappingStatus = eventCount > 0 ? 'needs_review' : 'pending';
+    var personalTeamMatch = opts._personal_team_match || null;
+    var mappingStatus = personalTeamMatch ? 'mapped' : (eventCount > 0 ? 'needs_review' : 'pending');
+    var pilotRoomContext = 'unmapped_private_import';
+    if (personalTeamMatch && personalTeamMatch.match_type === 'manual_reference_team') {
+      pilotRoomContext = 'manual_reference_team';
+    } else if (personalTeamMatch) {
+      pilotRoomContext = 'filename_matched_personal_team';
+    }
     return {
       room_id: clean(opts.room_id || opts.roomId || 'room-id-required'),
       uploaded_by_user_id: clean(opts.uploaded_by_user_id || opts.user_id || opts.userId || 'user-id-required'),
@@ -110,6 +215,8 @@
       metadata: {
         source_gaps_detail: sourceGaps || [],
         warnings: warnings || [],
+        personal_team_match: personalTeamMatch,
+        pilot_room_context: pilotRoomContext,
         import_policy: 'private_only_no_global_learning',
         promotion_blocked_until: 'trusted_worker_mapping_legality_consent_review',
         event_count: eventCount || 0
@@ -158,6 +265,17 @@
       });
     }
     return refs;
+  }
+
+  function personalTeamRefs(importId, match) {
+    if (!match || !match.team_lab_team_id) return [];
+    return [{
+      import_id: importId || 'import-id-after-insert',
+      ref_type: 'team_lab_team',
+      ref_id: String(match.team_lab_team_id),
+      verification_status: 'needs_review',
+      notes: 'Private Pilot-room filename match for personal team: ' + (match.team_name || match.team_lab_team_id)
+    }];
   }
 
   function showdownEventsFromParsed(parsed, importId) {
@@ -224,6 +342,15 @@
       warnings.push(sourceGap('SIM_EVIDENCE_ADAPTER_MISSING', 'SimEvidence adapter is not loaded.', 'SimEvidence.createSimEvidenceFromArtifact'));
     }
     var events = evidence && evidence.ok ? artifactEventsFromEvidence(evidence, 'import-id-after-insert') : [];
+    if (opts && opts._personal_team_match) {
+      sourceGaps.push(sourceGap(
+        opts._personal_team_match.match_type === 'manual_reference_team' ? 'PERSONAL_TEAM_MANUAL_REFERENCE' : 'PERSONAL_TEAM_FILENAME_MATCH',
+        opts._personal_team_match.match_type === 'manual_reference_team'
+          ? 'User selected a personal/custom team for private Pilot-room grouping only.'
+          : 'Import filename matched a personal/custom team name for private Pilot-room grouping only.',
+        opts._personal_team_match.source_filename
+      ));
+    }
     var row = baseImportRow(text, opts, sourceType || sourceTypeForText(text, opts && opts.filename), sourceGaps, warnings, events.length, evidence && !evidence.ok);
     row.regulation_id = row.regulation_id || (evidence && evidence.sim_job && evidence.sim_job.regulation_id) || (evidence && evidence.replay_records && evidence.replay_records[0] && evidence.replay_records[0].regulation_id) || '';
     row.format = row.format || (evidence && evidence.sim_job && evidence.sim_job.format) || (evidence && evidence.replay_records && evidence.replay_records[0] && evidence.replay_records[0].format) || '';
@@ -232,7 +359,7 @@
     return {
       ok: !!(evidence && evidence.ok),
       import_row: row,
-      refs: refsForImport('import-id-after-insert', evidence),
+      refs: refsForImport('import-id-after-insert', evidence).concat(personalTeamRefs('import-id-after-insert', opts && opts._personal_team_match)),
       events: events,
       source_gaps: sourceGaps,
       warnings: warnings,
@@ -254,7 +381,17 @@
     } else {
       warnings.push(sourceGap('REPLAY_COACH_PARSER_MISSING', 'Battle Sensei replay parser is not loaded.', 'replay_coach.js'));
     }
-    sourceGaps.push(sourceGap('TEAM_MAPPING_NEEDS_REVIEW', 'Replay player/team identities must be mapped to trainer/team records before aggregation.', 'team_mapping_status'));
+    if (opts && opts._personal_team_match) {
+      sourceGaps.push(sourceGap(
+        opts._personal_team_match.match_type === 'manual_reference_team' ? 'PERSONAL_TEAM_MANUAL_REFERENCE' : 'PERSONAL_TEAM_FILENAME_MATCH',
+        opts._personal_team_match.match_type === 'manual_reference_team'
+          ? 'User selected a personal/custom team for private Pilot-room grouping only.'
+          : 'Import filename matched a personal/custom team name for private Pilot-room grouping only.',
+        opts._personal_team_match.source_filename
+      ));
+    } else {
+      sourceGaps.push(sourceGap('TEAM_MAPPING_NEEDS_REVIEW', 'Replay player/team identities must be mapped to trainer/team records before aggregation.', 'team_mapping_status'));
+    }
     sourceGaps.push(sourceGap('SHOWDOWN_REPLAY_NOT_CHAMPION_RULE_TRUTH', 'Showdown replay imports are review evidence, not official Champion legality or mechanics truth.', 'source_type'));
     var events = parsed ? showdownEventsFromParsed(parsed, 'import-id-after-insert') : [];
     var row = baseImportRow(text, opts, sourceType || sourceTypeForText(text, opts && opts.filename), sourceGaps, warnings, events.length, parsed && !parsed.ok);
@@ -262,7 +399,7 @@
     return {
       ok: !!(parsed && parsed.ok),
       import_row: row,
-      refs: [],
+      refs: personalTeamRefs('import-id-after-insert', opts && opts._personal_team_match),
       events: events,
       source_gaps: sourceGaps,
       warnings: warnings,
@@ -276,6 +413,7 @@
     var filename = clean(opts.filename || opts.source_filename || (input && input.filename));
     var sourceType = clean(opts.source_type || sourceTypeForText(text, filename));
     opts = Object.assign({}, opts, { filename: filename, source_filename: filename });
+    opts._personal_team_match = findExplicitPersonalTeamMatch(opts) || findPersonalTeamMatch(filename, opts);
     if (sourceType === 'qa_artifact' || sourceType === 'champions_turn_log') return parseJsonArtifact(text, opts, sourceType);
     if (sourceType === 'showdown_html' || sourceType === 'showdown_text') return parseShowdown(text, opts, sourceType);
     var sourceGaps = [
@@ -304,6 +442,9 @@
     PARSER_VERSION: PARSER_VERSION,
     PROMOTION_BLOCK: PROMOTION_BLOCK,
     sourceTypeForText: sourceTypeForText,
+    normalizeTeamName: normalizeTeamName,
+    findPersonalTeamMatch: findPersonalTeamMatch,
+    findExplicitPersonalTeamMatch: findExplicitPersonalTeamMatch,
     buildReplayImportPayload: buildReplayImportPayload,
     createReplayImportService: createReplayImportService
   };

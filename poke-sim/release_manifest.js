@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.106-private-replay-import-persistence',
+    build_id: 'v2.2.107-pilot-team-log-mapping',
     release_date: '2026-07-01',
-    service_worker_cache: 'champions-sim-v2-2-106-private-replay-import-persistence',
+    service_worker_cache: 'champions-sim-v2-2-107-pilot-team-log-mapping',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

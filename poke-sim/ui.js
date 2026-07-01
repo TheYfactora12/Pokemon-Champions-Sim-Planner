@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.106-private-replay-import-persistence'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.107-pilot-team-log-mapping'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8033,6 +8033,99 @@ function csRenderReplayTurn0(turn0, selectedSide) {
 
 var CS_LAST_REPLAY_SCENARIO_QUEUE = [];
 var CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
+var CS_LAST_REPLAY_IMPORT_PAYLOAD = null;
+var CS_LAST_REPLAY_IMPORT_SOURCE_FILE = '';
+
+function csReplayPersonalTeamsForImport() {
+  var out = [];
+  if (typeof TEAMS === 'undefined' || !TEAMS) return out;
+  Object.keys(TEAMS).forEach(function(key) {
+    var team = TEAMS[key];
+    if (!team) return;
+    var isCustom = team.source === 'custom' || /^custom_/.test(key);
+    if (!isCustom) return;
+    out.push({
+      key: key,
+      id: team.team_lab_team_id || team.id || key,
+      team_id: key,
+      team_lab_team_id: team.team_lab_team_id || team.id || key,
+      name: team.name || key,
+      label: team.label || '',
+      visibility: team.visibility || 'private'
+    });
+  });
+  return out.sort(function(a, b) {
+    return String(a.name || '').localeCompare(String(b.name || ''));
+  });
+}
+
+function csPopulateReplayReferenceTeamSelect(selectEl) {
+  if (!selectEl) return [];
+  var teams = csReplayPersonalTeamsForImport();
+  var selected = selectEl.value || '';
+  selectEl.innerHTML = '<option value="">Auto-match by filename or leave unmapped</option>';
+  teams.forEach(function(team) {
+    var opt = document.createElement('option');
+    opt.value = team.team_lab_team_id || team.team_id || team.key || team.name;
+    opt.textContent = (team.name || team.key || 'Custom team') + ' · private Pilot team';
+    selectEl.appendChild(opt);
+  });
+  if (selected) selectEl.value = selected;
+  return teams;
+}
+
+function csSelectedReplayReferenceTeam(selectEl) {
+  if (!selectEl || !selectEl.value) return null;
+  var selected = selectEl.value;
+  var teams = csReplayPersonalTeamsForImport();
+  for (var i = 0; i < teams.length; i += 1) {
+    var team = teams[i];
+    var ids = [team.key, team.id, team.team_id, team.team_lab_team_id].map(function(value) {
+      return String(value || '');
+    });
+    if (ids.indexOf(selected) >= 0) return team;
+  }
+  return {
+    key: selected,
+    id: selected,
+    team_id: selected,
+    team_lab_team_id: selected,
+    name: selected,
+    visibility: 'private'
+  };
+}
+
+function csBuildReplayPrivateImportPreview(raw, sourceFile, selectEl) {
+  var service = (typeof ChampionsSim !== 'undefined' && ChampionsSim) ? ChampionsSim.replayImportService : null;
+  if (!service || typeof service.buildReplayImportPayload !== 'function') return null;
+  var selected = csSelectedReplayReferenceTeam(selectEl);
+  var teams = csReplayPersonalTeamsForImport();
+  return service.buildReplayImportPayload(raw || '', {
+    filename: sourceFile || '',
+    source_filename: sourceFile || '',
+    personal_teams: teams,
+    reference_team_id: selected ? (selected.team_lab_team_id || selected.team_id || selected.key || selected.id) : '',
+    room_id: 'pilot-local-room',
+    uploaded_by_user_id: 'pilot-local-user',
+    regulation_id: 'champions_reg_m_b_2026',
+    format: (typeof currentFormat !== 'undefined' && currentFormat) ? currentFormat : 'doubles',
+    engine_version: (typeof csGetBuildId === 'function') ? csGetBuildId() : '',
+    ruleset_version: 'pilot-private-import-preview'
+  });
+}
+
+function csReplayImportStatusText(payload) {
+  if (!payload || !payload.importRow) return '';
+  var row = payload.importRow;
+  var match = row.metadata && row.metadata.personal_team_match;
+  var gaps = Array.isArray(row.source_gaps) ? row.source_gaps.length : 0;
+  if (match) {
+    return ' Private Pilot mapping: ' + (match.team_name || match.team_key || 'selected team') +
+      ' (' + match.match_type + '). Parse: ' + row.parse_status + '; source gaps: ' + gaps + '.';
+  }
+  return ' Private import is unmapped; filename/team mapping needs review. Parse: ' + row.parse_status + '; source gaps: ' + gaps + '.';
+}
+
 function csReplaySpeciesId(name) {
   return String(name || '')
     .replace(/-Mega(?:-[XY])?$/i, '')
@@ -8771,8 +8864,10 @@ function csInitReplayCoachUi() {
   var uploadBtn = document.getElementById('replay-coach-upload-btn');
   var fetchBtn = document.getElementById('replay-coach-fetch-btn');
   var fileEl = document.getElementById('replay-coach-file');
+  var refTeamEl = document.getElementById('replay-coach-reference-team');
   var statusEl = document.getElementById('replay-coach-status');
   if (!logEl || !sideEl || !runBtn) return;
+  csPopulateReplayReferenceTeamSelect(refTeamEl);
   csUpdateReplayScenarioExportButton('Upload and analyze a replay to enable Tactical QA payload export.');
 
   function setStatus(msg, isError) {
@@ -8794,7 +8889,12 @@ function csInitReplayCoachUi() {
     }
     try {
       var selectedSide = sideEl.value || 'p1';
-      var opts = { selectedSide: selectedSide, manualTeamPreview: rosterEl ? rosterEl.value : '' };
+      var opts = {
+        selectedSide: selectedSide,
+        manualTeamPreview: rosterEl ? rosterEl.value : '',
+        referenceTeam: csSelectedReplayReferenceTeam(refTeamEl),
+        privateImport: CS_LAST_REPLAY_IMPORT_PAYLOAD
+      };
       var analysis;
       if (typeof api.parseShowdownLog === 'function' && typeof api.buildReplayCoachReview === 'function') {
         var parsed = api.parseShowdownLog(raw, opts);
@@ -8806,15 +8906,24 @@ function csInitReplayCoachUi() {
       }
       csReplayCoachRenderAnalysis(analysis);
       var parsedTurns = analysis && analysis.parsed ? analysis.parsed.totalTurns : 0;
-      setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only unless you export or save it later.');
+      setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only unless you export or save it later.' + csReplayImportStatusText(CS_LAST_REPLAY_IMPORT_PAYLOAD));
     } catch (e) {
       setStatus('Could not analyze replay: ' + (e && e.message ? e.message : 'unknown error'), true);
     }
   });
 
+  if (refTeamEl) refTeamEl.addEventListener('change', function() {
+    if (!logEl.value && !CS_LAST_REPLAY_IMPORT_SOURCE_FILE) return;
+    CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(logEl.value || '', CS_LAST_REPLAY_IMPORT_SOURCE_FILE || 'manual-replay-input.log', refTeamEl);
+    setStatus('Reference team updated.' + csReplayImportStatusText(CS_LAST_REPLAY_IMPORT_PAYLOAD));
+  });
+
   if (clearBtn) clearBtn.addEventListener('click', function() {
     logEl.value = '';
     if (rosterEl) rosterEl.value = '';
+    if (refTeamEl) refTeamEl.value = '';
+    CS_LAST_REPLAY_IMPORT_PAYLOAD = null;
+    CS_LAST_REPLAY_IMPORT_SOURCE_FILE = '';
     CS_LAST_REPLAY_SCENARIO_QUEUE = [];
     CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
     csUpdateReplayScenarioExportButton('Upload and analyze a replay to enable Tactical QA payload export.');
@@ -8834,11 +8943,13 @@ function csInitReplayCoachUi() {
         var raw = String(reader.result || '');
         var normalized = api && typeof api.normalizeReplayLogInput === 'function' ? api.normalizeReplayLogInput(raw) : raw;
         logEl.value = normalized;
+        CS_LAST_REPLAY_IMPORT_SOURCE_FILE = file.name || '';
+        CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(raw, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
         CS_LAST_REPLAY_SCENARIO_QUEUE = [];
         CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
         csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
         var htmlReplay = /\.html?$/i.test(file.name || '') || /^text\/html/i.test(file.type || '');
-        setStatus('Loaded ' + file.name + (htmlReplay ? ' as Showdown HTML replay evidence.' : '.') + ' Run analysis when ready.');
+        setStatus('Loaded ' + file.name + (htmlReplay ? ' as Showdown HTML replay evidence.' : '.') + ' Run analysis when ready.' + csReplayImportStatusText(CS_LAST_REPLAY_IMPORT_PAYLOAD));
       };
       reader.onerror = function() { setStatus('Could not read that file.', true); };
       reader.readAsText(file);
@@ -8862,10 +8973,12 @@ function csInitReplayCoachUi() {
         var normalized = await api.fetchReplayLog(rawUrl);
         if (!normalized) throw new Error('Replay log was empty.');
         logEl.value = normalized;
+        CS_LAST_REPLAY_IMPORT_SOURCE_FILE = rawUrl || 'replay-url.log';
+        CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(normalized, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
         CS_LAST_REPLAY_SCENARIO_QUEUE = [];
         CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
         csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
-        setStatus('Loaded replay URL into the log box. Run analysis when ready.');
+        setStatus('Loaded replay URL into the log box. Run analysis when ready.' + csReplayImportStatusText(CS_LAST_REPLAY_IMPORT_PAYLOAD));
       } catch (e) {
         setStatus((e && e.message) ? e.message : 'Could not load that replay URL.', true);
       }
@@ -13011,6 +13124,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Pilot-room team filename mapping added',
+      detail: 'v2.2.107 aligns product language: the Pilot area is the trainer room. replay_import_service.js now maps an uploaded Showdown replay/log to a private personal team when the filename matches a personal/custom team name or when the player selects a Reference team in Review upload, stores that match in personal_team_match metadata, marks team_mapping_status as mapped, and adds a private team_lab_team ref when available. This is private Pilot-room evidence only; it does not prove official legality, public ranking, global learning, or bot memory.'
+    },
+    {
+      status: 'done',
       title: 'Private replay import persistence added',
       detail: 'v2.2.106 adds SupabaseAdapter.saveReplayImport for trainer-owned replay imports. The adapter inserts the trainer_replay_imports parent first, remaps child trainer_replay_import_refs and trainer_replay_import_events to the returned import id, returns saved counts, and fails soft when Supabase is disabled or RLS rejects the write. It does not write Team Lab official rankings, global learning, promotion audits, or bot memory.'
     },
@@ -13913,7 +14031,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Wire replay import UI to private persistence',
-      detail: 'Next implementation should connect the Review upload flow to replay_import_service.js and SupabaseAdapter.saveReplayImport only when a trainer room/account context exists. The UI must show parse status, team mapping status, source gaps, private saved state, and local-only fallback instead of implying the upload improved official rankings or global learning.'
+      detail: 'Next implementation should connect the Review upload flow to replay_import_service.js and SupabaseAdapter.saveReplayImport through the Pilot area, which is the trainer room. The UI must show parse status, team mapping status, filename/manual Reference team match, source gaps, private saved state, and local-only fallback instead of implying the upload improved official rankings or global learning.'
     },
     {
       status: 'next',

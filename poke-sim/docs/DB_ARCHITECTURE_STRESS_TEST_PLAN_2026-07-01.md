@@ -113,6 +113,7 @@ Owns:
 
 - trainer profile
 - private rooms
+- the Pilot area/profile workspace on the site
 - saved private teams
 - uploaded battle files
 - private sim history
@@ -136,6 +137,10 @@ Stress test:
 Decision:
 
 - Keep trainer rooms private-first and owner-scoped.
+- Treat the site Pilot area as the user-facing trainer room: one place for personal custom teams, sim battles, uploaded Showdown battles, stats, coaching context, and future practice history.
+- A Showdown replay/log filename that matches a personal/custom team name may attach that import to the matching private team for Pilot-room analysis.
+- A Review upload Reference team dropdown may manually attach a replay to a private/custom team when filename matching is unclear.
+- Every uploaded replay can improve that player's private Pilot-room coaching context, but global learning/published ranking updates require consent, trusted mapping, legality checks, parser confidence, dedupe, and stale-version review.
 - Public showcase, replay imports, personal coaching facts, global learning, and bot sessions require separate reviewed migrations.
 
 ### 5. Global learning truth
@@ -280,6 +285,8 @@ DB/service requirement:
 - wire upload/review controls to `replay_import_service.js`
 - call `SupabaseAdapter.saveReplayImport` only after a trainer room/account context exists
 - show parser status, mapping status, source gaps, and saved/private state to the user
+- map similarly named Showdown logs to the matching private custom team when the filename matches the Pilot-room team name
+- allow the player to choose an optional Reference team from their uploaded/custom teams when filename matching is not enough
 - keep local-only fallback when Supabase/Auth is unavailable
 
 Pass/fail:

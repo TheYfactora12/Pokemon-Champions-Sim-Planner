@@ -65,6 +65,14 @@ Minimum metadata for future learning rows:
 
 Future personal coaching, uploaded battle review, and bot practice should be built around a trainer-owned workspace, not around shared global tables.
 
+Product language:
+
+- The user-facing Pilot area is the trainer room.
+- The Pilot area should hold the player's custom teams, sim battle history, uploaded Showdown battles, stats, coaching context, and future practice history.
+- If an uploaded Showdown log/replay filename matches a personal/custom team name, the import can be grouped with that private team for analysis.
+- If the filename is unclear, the Review upload flow may expose an optional Reference team dropdown so the player can manually attach the replay to one of their private/custom Pilot teams.
+- Filename and Reference team mapping are private player evidence. They do not prove legality, public ranking value, or global bot-learning truth without a later trusted promotion workflow.
+
 Current foundation:
 
 - `trainer_profiles`, `trainer_rooms`, and `trainer_room_teams` are the first private workspace tables.
@@ -73,6 +81,7 @@ Current foundation:
 - Room teams can reference Team Lab teams, but Team Lab hidden details remain protected by Team Lab policies and API response filtering.
 - `trainer_replay_imports`, `trainer_replay_import_refs`, and `trainer_replay_import_events` record private uploaded replay/file evidence with parser version, source hash, parse status, team mapping status, source gaps, confidence flags, and owner-scoped RLS.
 - `replay_import_service.js` converts Showdown HTML/text, Champions turn-log JSON, and QA artifact JSON into those private governance payload shapes without writing global learning or official ranking rows.
+- Filename-to-team matching is allowed only as private Pilot-room mapping evidence; it is not official legality, global learning, or public ranking proof.
 - `SupabaseAdapter.saveReplayImport` persists those private payloads by inserting the parent import first, then refs/events with the returned import id.
 
 Required direction:

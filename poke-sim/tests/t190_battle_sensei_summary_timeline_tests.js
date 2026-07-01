@@ -30,6 +30,8 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'id="replay-coach-url"');
   inc(html, 'id="replay-coach-fetch-btn"');
   inc(html, 'id="replay-coach-full-roster"');
+  inc(html, 'id="replay-coach-reference-team"');
+  inc(html, 'Auto-match by filename or leave unmapped');
   inc(html, 'Battle Sensei replay lab');
   inc(html, 'turn replay evidence into coaching and simulator test targets');
   inc(html, 'matchup drills, and sim calibration');
@@ -40,8 +42,13 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'id="replay-coach-scenario-status"');
   inc(html, 'Upload and analyze a replay to enable Tactical QA payload export.');
   inc(html, 'In series play');
-  inc(html, 'v2.2.106-private-replay-import-persistence');
-  inc(ui, 'v2.2.106-private-replay-import-persistence');
+  inc(html, 'v2.2.107-pilot-team-log-mapping');
+  inc(ui, 'v2.2.107-pilot-team-log-mapping');
+  inc(ui, 'CS_LAST_REPLAY_IMPORT_PAYLOAD');
+  inc(ui, 'csPopulateReplayReferenceTeamSelect');
+  inc(ui, 'csBuildReplayPrivateImportPreview');
+  inc(ui, 'referenceTeam: csSelectedReplayReferenceTeam');
+  inc(ui, 'privateImport: CS_LAST_REPLAY_IMPORT_PAYLOAD');
   if (/Bo10|data-bo="10"/.test(html)) throw new Error('Bo10 should not be exposed as a series format');
   if (/Bo10/.test(ui)) throw new Error('Bo10 should not be referenced in UI guidance');
   if (/Bo10/.test(engine)) throw new Error('Bo10 should not be referenced in engine guidance');

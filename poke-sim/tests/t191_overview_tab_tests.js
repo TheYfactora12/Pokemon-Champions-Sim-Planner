@@ -193,6 +193,10 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Private replay import persistence added');
   inc(ui, 'SupabaseAdapter.saveReplayImport');
   inc(ui, 'parent first, remaps child');
+  inc(ui, 'Pilot-room team filename mapping added');
+  inc(ui, 'Pilot area is the trainer room');
+  inc(ui, 'filename matches a personal/custom team name');
+  inc(ui, 'Reference team in Review upload');
   inc(ui, 'Wire replay import UI to private persistence');
   inc(ui, 'Legality 99 Target Plan');
   inc(ui, 'LEGALITY_99_TARGET_PLAN.md');

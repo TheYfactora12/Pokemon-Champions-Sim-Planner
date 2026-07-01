@@ -136,4 +136,39 @@ T('6. service wrapper returns built payload when no DB adapter is supplied', () 
   });
 });
 
+T('7. filename can map Showdown imports to a personal Pilot-room team without making it global truth', () => {
+  const payload = ReplayImportService.buildReplayImportPayload(sample, Object.assign({}, baseOpts, {
+    filename: 'Kevin Rain Room.txt',
+    personal_teams: [
+      { id: 'team-lab-kevin-rain', name: 'Kevin Rain Room', visibility: 'private' }
+    ]
+  }));
+  eq(payload.ok, true, 'mapped import ok');
+  eq(payload.import_row.team_mapping_status, 'mapped', 'mapping status');
+  truthy(payload.import_row.metadata.personal_team_match, 'personal team match metadata');
+  eq(payload.import_row.metadata.personal_team_match.team_lab_team_id, 'team-lab-kevin-rain', 'team lab team id');
+  eq(payload.import_row.metadata.pilot_room_context, 'filename_matched_personal_team', 'pilot room context');
+  truthy(payload.import_row.source_gaps.includes('PERSONAL_TEAM_FILENAME_MATCH'), 'filename match source gap');
+  truthy(payload.import_row.source_gaps.includes('PRIVATE_IMPORT_NOT_PROMOTED'), 'promotion block still present');
+  truthy(!payload.import_row.source_gaps.includes('TEAM_MAPPING_NEEDS_REVIEW'), 'generic mapping gap should be cleared by filename match');
+  truthy(payload.refs.some((row) => row.ref_type === 'team_lab_team' && row.ref_id === 'team-lab-kevin-rain'), 'team ref generated');
+});
+
+T('8. manual reference team dropdown can override filename matching privately', () => {
+  const payload = ReplayImportService.buildReplayImportPayload(sample, Object.assign({}, baseOpts, {
+    filename: 'random ladder game.txt',
+    reference_team_id: 'team-lab-kevin-rain',
+    personal_teams: [
+      { id: 'team-lab-kevin-rain', name: 'Kevin Rain Room', visibility: 'private' }
+    ]
+  }));
+  eq(payload.ok, true, 'manual mapped import ok');
+  eq(payload.import_row.team_mapping_status, 'mapped', 'mapping status');
+  eq(payload.import_row.metadata.personal_team_match.match_type, 'manual_reference_team', 'match type');
+  eq(payload.import_row.metadata.pilot_room_context, 'manual_reference_team', 'pilot room context');
+  truthy(payload.import_row.source_gaps.includes('PERSONAL_TEAM_MANUAL_REFERENCE'), 'manual reference source gap');
+  truthy(payload.import_row.source_gaps.includes('PRIVATE_IMPORT_NOT_PROMOTED'), 'promotion block still present');
+  truthy(payload.refs.some((row) => row.ref_type === 'team_lab_team' && row.ref_id === 'team-lab-kevin-rain'), 'team ref generated');
+});
+
 run();
