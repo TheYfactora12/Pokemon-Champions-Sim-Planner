@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.79-replay-team-mapping'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.80-replay-scenario-export-ux'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8168,25 +8168,61 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
         ]
   };
 }
-function csHandleReplayScenarioTacticalQa(index) {
+function csReplayScenarioTopStatus(message, isError) {
+  var statusEl = document.getElementById('replay-coach-scenario-status');
+  if (!statusEl) return;
+  statusEl.textContent = message || '';
+  statusEl.classList.toggle('error', !!isError);
+}
+function csUpdateReplayScenarioExportButton(message) {
+  var btn = document.getElementById('replay-coach-export-scenario-btn');
+  var count = CS_LAST_REPLAY_SCENARIO_QUEUE.length;
+  if (btn) {
+    btn.disabled = count <= 0;
+    btn.textContent = count > 0 ? 'Prepare Tactical QA Payload' : 'Analyze Replay First';
+    btn.title = count > 0
+      ? 'Export the top replay-derived scenario as a Tactical QA payload.'
+      : 'Upload and analyze a replay first.';
+  }
+  if (message) csReplayScenarioTopStatus(message, false);
+}
+function csHandleReplayScenarioTacticalQa(index, opts) {
+  opts = opts || {};
   var idx = parseInt(index, 10);
   var row = CS_LAST_REPLAY_SCENARIO_QUEUE[idx];
-  var statusEl = document.getElementById('replay-scenario-status-' + idx);
+  var statusEl = opts.statusTargetId
+    ? document.getElementById(opts.statusTargetId)
+    : document.getElementById('replay-scenario-status-' + idx);
   if (!row) {
-    if (statusEl) statusEl.textContent = 'Scenario not found. Re-run replay analysis.';
+    var missingMsg = 'Scenario not found. Upload and analyze a replay first.';
+    if (statusEl) statusEl.textContent = missingMsg;
+    csReplayScenarioTopStatus(missingMsg, true);
     return;
   }
   var payload = csBuildReplayScenarioTacticalQaPayload(row, idx, CS_LAST_REPLAY_SCENARIO_CONTEXT || {});
   var filename = 'champions-replay-scenario-tactical-qa-' + String(idx + 1).padStart(2, '0') + '-' + new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19) + '.json';
+  var downloaded = false;
   if (typeof _downloadBlob === 'function') {
     _downloadBlob(filename, 'application/json', JSON.stringify(payload, null, 2));
+    downloaded = true;
   }
+  var msg = (downloaded ? 'Payload downloaded: ' + filename + '. ' : 'Payload prepared, but browser download is unavailable. ') +
+    (payload.status === 'needs_more_data'
+      ? 'Trusted branch run is blocked until: ' + payload.missing_for_trusted_run.join(', ') + '.'
+      : 'Ready for Tactical QA branch execution.');
   if (statusEl) {
     statusEl.innerHTML = '<span class="replay-coach-tag ' + (payload.status === 'needs_more_data' ? 'medium' : 'low') + '">' + _escapeHtml(payload.status) + '</span> ' +
-      _escapeHtml(payload.status === 'needs_more_data'
-        ? 'Payload exported. Trusted branch run is blocked until: ' + payload.missing_for_trusted_run.join(', ') + '.'
-        : 'Payload exported and ready for Tactical QA branch execution.');
+      _escapeHtml(msg);
   }
+  csReplayScenarioTopStatus(msg, false);
+}
+function csExportTopReplayScenarioPayload() {
+  if (!CS_LAST_REPLAY_SCENARIO_QUEUE.length) {
+    csReplayScenarioTopStatus('Upload and analyze a replay first. The Tactical QA payload needs a generated scenario queue.', true);
+    csUpdateReplayScenarioExportButton();
+    return;
+  }
+  csHandleReplayScenarioTacticalQa(0, { statusTargetId: 'replay-coach-scenario-status' });
 }
 function csReplayCoachRenderAnalysis(analysis) {
   var host = document.getElementById('replay-coach-results');
@@ -8555,6 +8591,16 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<pre class="battle-log replay-coach-raw-log">' + (rawLines || 'No raw log lines available.') + '</pre>' +
       '</details>' +
     '</div>';
+  CS_LAST_REPLAY_SCENARIO_QUEUE = (review.scenarioQueue || []).slice();
+  CS_LAST_REPLAY_SCENARIO_CONTEXT = { parsed: parsed, review: review };
+  host.querySelectorAll('.replay-scenario-run-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      csHandleReplayScenarioTacticalQa(btn.dataset.scenarioIndex);
+    });
+  });
+  csUpdateReplayScenarioExportButton(CS_LAST_REPLAY_SCENARIO_QUEUE.length
+    ? 'Scenario queue ready. Use the button above to export the top Tactical QA payload.'
+    : 'No replay scenario queue was generated. Upload a fuller replay or add the registered six.');
 }
 
 function csNormalizeReplayName(name) {
@@ -8670,6 +8716,7 @@ function csInitReplayCoachUi() {
   var fileEl = document.getElementById('replay-coach-file');
   var statusEl = document.getElementById('replay-coach-status');
   if (!logEl || !sideEl || !runBtn) return;
+  csUpdateReplayScenarioExportButton('Upload and analyze a replay to enable Tactical QA payload export.');
 
   function setStatus(msg, isError) {
     if (!statusEl) return;
@@ -8711,6 +8758,9 @@ function csInitReplayCoachUi() {
   if (clearBtn) clearBtn.addEventListener('click', function() {
     logEl.value = '';
     if (rosterEl) rosterEl.value = '';
+    CS_LAST_REPLAY_SCENARIO_QUEUE = [];
+    CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
+    csUpdateReplayScenarioExportButton('Upload and analyze a replay to enable Tactical QA payload export.');
     setStatus('');
     var host = document.getElementById('replay-coach-results');
     if (host) host.innerHTML = '<div class="replay-coach-empty"><strong>Ready for match review.</strong><span>Upload a Showdown HTML replay or paste a log to see result, leads, critical turn, coaching tags, and a readable turn timeline.</span></div>';
@@ -8727,6 +8777,9 @@ function csInitReplayCoachUi() {
         var raw = String(reader.result || '');
         var normalized = api && typeof api.normalizeReplayLogInput === 'function' ? api.normalizeReplayLogInput(raw) : raw;
         logEl.value = normalized;
+        CS_LAST_REPLAY_SCENARIO_QUEUE = [];
+        CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
+        csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
         var htmlReplay = /\.html?$/i.test(file.name || '') || /^text\/html/i.test(file.type || '');
         setStatus('Loaded ' + file.name + (htmlReplay ? ' as Showdown HTML replay evidence.' : '.') + ' Run analysis when ready.');
       };
@@ -8752,12 +8805,17 @@ function csInitReplayCoachUi() {
         var normalized = await api.fetchReplayLog(rawUrl);
         if (!normalized) throw new Error('Replay log was empty.');
         logEl.value = normalized;
+        CS_LAST_REPLAY_SCENARIO_QUEUE = [];
+        CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
+        csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
         setStatus('Loaded replay URL into the log box. Run analysis when ready.');
       } catch (e) {
         setStatus((e && e.message) ? e.message : 'Could not load that replay URL.', true);
       }
     });
   }
+  var scenarioBtn = document.getElementById('replay-coach-export-scenario-btn');
+  if (scenarioBtn) scenarioBtn.addEventListener('click', csExportTopReplayScenarioPayload);
 }
 
 function renderReplays() {
@@ -13183,13 +13241,6 @@ function csRenderOverviewBucket(group, bucket) {
     '<summary><span>' + _escapeHtml(csOverviewBucketLabel(bucket)) + '</span><strong>' + rows.length + '</strong></summary>' +
     '<div class="overview-list">' + csRenderOverviewRows(rows) + '</div>' +
       '</details>';
-  CS_LAST_REPLAY_SCENARIO_QUEUE = (review.scenarioQueue || []).slice();
-  CS_LAST_REPLAY_SCENARIO_CONTEXT = { parsed: parsed, review: review };
-  host.querySelectorAll('.replay-scenario-run-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      csHandleReplayScenarioTacticalQa(btn.dataset.scenarioIndex);
-    });
-  });
 }
 
 function csRenderOverviewMilestoneSection(group) {
@@ -13846,7 +13897,7 @@ function csRenderTeamLabNewsroomHub() {
       '<div>' +
         '<span class="overview-kicker">Pokemon Champion simulator</span>' +
         '<h2>Battle Labs</h2>' +
-        '<p>Test a team, find the swing turn, and improve one decision at a time.</p>' +
+        '<p>Test one matchup. Find the swing turn. Change one thing. Rerun with evidence.</p>' +
         '<div class="home-landing-actions">' +
           '<button type="button" data-home-tab="simulator">Start Simulating</button>' +
           '<button type="button" data-home-tab="replay-coach">Analyze a Replay</button>' +
@@ -13858,11 +13909,8 @@ function csRenderTeamLabNewsroomHub() {
         '<span>3</span><strong>Change one thing</strong>' +
       '</div>' +
     '</div>' +
-    csRenderHomeSimPreview() +
     csRenderHomeStartCycle() +
-    csRenderHomeQuestionCards() +
-    csRenderHomePlayerOutcomes() +
-    csRenderHomeQuickPlan() +
+    csRenderHomeSimPreview() +
     csRenderHomeTrustStrip() +
     csRenderPokemonNewsFeed() +
     '<div class="team-lab-hero">' +

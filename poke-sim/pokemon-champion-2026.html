@@ -444,16 +444,15 @@ table{border-collapse:collapse;width:100%}
 .overview-team-lab-plan>.overview-source-note{padding:0 var(--sp4);margin:0 0 var(--sp3)}
 .overview-team-lab-plan>.overview-list{padding:0 var(--sp4) var(--sp4)}
 .team-lab-newsroom{border-color:rgba(91,164,245,.42);background:radial-gradient(circle at 12% 0%,rgba(91,164,245,.18),transparent 34%),linear-gradient(135deg,rgba(18,25,38,.98),rgba(12,18,29,.96))}
-.home-landing-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr);gap:var(--sp5);align-items:stretch;margin-bottom:var(--sp4);padding:var(--sp5);border:1px solid rgba(91,164,245,.34);border-radius:var(--r-lg);background:radial-gradient(circle at 10% 10%,rgba(78,201,148,.2),transparent 30%),linear-gradient(135deg,rgba(91,164,245,.12),rgba(255,255,255,.035))}
-.home-landing-hero h2{position:relative;display:inline-block;isolation:isolate;font-size:clamp(46px,8vw,112px);font-weight:1000;letter-spacing:-.085em;line-height:.82;margin:14px 0 18px;padding:4px 10px 8px 0;max-width:760px;text-transform:uppercase;color:#fff06a;-webkit-text-stroke:3px #070b18;font-style:italic;transform:rotate(-2deg) skew(-7deg);text-shadow:4px 4px 0 #070b18,8px 8px 0 #ff2f7d,12px 12px 0 #21d6ff,0 22px 38px rgba(0,0,0,.48);filter:saturate(1.16) contrast(1.04)}
-.home-landing-hero h2:before{content:"";position:absolute;left:-12px;right:-12px;top:8px;bottom:0;z-index:-1;border:4px solid #070b18;border-radius:20px 10px 24px 12px;background:radial-gradient(circle at 10px 10px,rgba(7,11,24,.32) 0 2px,transparent 3px) 0 0/16px 16px,linear-gradient(135deg,#ff2f7d 0 24%,#fff06a 24% 45%,#21d6ff 45% 70%,#35e57b 70% 100%);clip-path:polygon(0 18%,91% 2%,100% 70%,86% 100%,8% 88%);box-shadow:8px 10px 0 #070b18}
-.home-landing-hero h2:after{content:"";position:absolute;left:3%;right:14%;bottom:-10px;height:8px;border-radius:999px;background:#ff7a18;box-shadow:0 0 0 3px #070b18,6px 6px 0 #21d6ff;transform:rotate(-1deg)}
-.home-landing-hero p{position:relative;z-index:2;color:var(--text-m);font-size:clamp(15px,1.5vw,20px);line-height:1.5;margin-top:var(--sp2);max-width:640px}
+.home-landing-hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(250px,.75fr);gap:var(--sp5);align-items:center;margin-bottom:var(--sp4);padding:clamp(24px,5vw,56px);border:1px solid rgba(91,164,245,.28);border-radius:var(--r-lg);background:radial-gradient(circle at 80% 0,rgba(91,164,245,.22),transparent 34%),radial-gradient(circle at 10% 100%,rgba(78,201,148,.16),transparent 28%),linear-gradient(135deg,rgba(12,18,29,.98),rgba(18,25,38,.94))}
+.home-landing-hero h2{font-size:clamp(52px,10vw,132px);font-weight:1000;letter-spacing:-.09em;line-height:.82;margin:14px 0 18px;max-width:820px;text-transform:uppercase;color:var(--text);text-shadow:0 1px 0 rgba(255,255,255,.2),0 22px 70px rgba(91,164,245,.28)}
+.home-landing-hero h2:after{content:"";display:block;width:min(260px,55vw);height:6px;margin-top:18px;border-radius:var(--r-full);background:linear-gradient(90deg,var(--blue),var(--green),var(--gold))}
+.home-landing-hero p{position:relative;z-index:2;color:var(--text-m);font-size:clamp(18px,2vw,26px);line-height:1.35;margin-top:var(--sp2);max-width:720px}
 .home-landing-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:var(--sp4)}
 .home-landing-actions button,.home-start-step button{min-height:42px;border:1px solid rgba(91,164,245,.42);background:rgba(91,164,245,.12);color:var(--text);border-radius:var(--r-full);padding:8px 14px;font-size:12px;font-weight:950;cursor:pointer}
 .home-landing-actions button:first-child{background:linear-gradient(135deg,var(--blue),var(--primary));border-color:transparent;color:white}
 .home-landing-actions button:hover,.home-landing-actions button:focus-visible,.home-start-step button:hover,.home-start-step button:focus-visible{transform:translateY(-1px);border-color:var(--blue);outline:none}
-.home-landing-proof{display:grid;gap:8px;align-content:center;border:1px solid rgba(255,255,255,.08);border-radius:var(--r-md);background:rgba(0,0,0,.18);padding:var(--sp4);min-width:0}
+.home-landing-proof{display:grid;gap:8px;align-content:center;border:1px solid rgba(255,255,255,.08);border-radius:var(--r-md);background:rgba(0,0,0,.2);padding:var(--sp4);min-width:0;box-shadow:var(--sh-sm)}
 .home-landing-proof span{font-family:var(--font-mono);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m)}
 .home-landing-proof strong{font-size:13px;font-weight:950;color:var(--text);overflow-wrap:anywhere;margin-bottom:4px}
 .home-start-cycle{border-color:rgba(245,197,66,.28);background:linear-gradient(135deg,rgba(245,197,66,.08),rgba(255,255,255,.025));margin-bottom:var(--sp4)}
@@ -2557,8 +2556,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.79-replay-team-mapping -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.79-replay-team-mapping</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.80-replay-scenario-export-ux</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -2988,8 +2987,10 @@ table{border-collapse:collapse;width:100%}
             <option value="sim">Sim Comparison Prep</option>
           </select>
           <button class="btn-primary" id="replay-coach-run-btn" type="button">Analyze Replay</button>
+          <button class="btn-secondary" id="replay-coach-export-scenario-btn" type="button" disabled title="Upload and analyze a replay first.">Prepare Tactical QA Payload</button>
           <div class="replay-coach-source-note">Replay evidence can guide coaching and sim calibration. It cannot overwrite official Champion legality or mechanics.</div>
         </div>
+        <div id="replay-coach-scenario-status" class="replay-coach-status" aria-live="polite">Upload and analyze a replay to enable Tactical QA payload export.</div>
         <div id="replay-coach-status" class="replay-coach-status" aria-live="polite"></div>
       </div>
 
@@ -3382,9 +3383,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.79-replay-team-mapping',
+    build_id: 'v2.2.80-replay-scenario-export-ux',
     release_date: '2026-07-01',
-    service_worker_cache: 'champions-sim-v211-replay-team-mapping',
+    service_worker_cache: 'champions-sim-v212-replay-scenario-export-ux',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3458,9 +3459,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.79-replay-team-mapping';
+      return txt || 'v2.2.80-replay-scenario-export-ux';
     } catch (e) {
-      return 'v2.2.79-replay-team-mapping';
+      return 'v2.2.80-replay-scenario-export-ux';
     }
   }
 
@@ -28322,7 +28323,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.79-replay-team-mapping'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.80-replay-scenario-export-ux'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -36450,25 +36451,61 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
         ]
   };
 }
-function csHandleReplayScenarioTacticalQa(index) {
+function csReplayScenarioTopStatus(message, isError) {
+  var statusEl = document.getElementById('replay-coach-scenario-status');
+  if (!statusEl) return;
+  statusEl.textContent = message || '';
+  statusEl.classList.toggle('error', !!isError);
+}
+function csUpdateReplayScenarioExportButton(message) {
+  var btn = document.getElementById('replay-coach-export-scenario-btn');
+  var count = CS_LAST_REPLAY_SCENARIO_QUEUE.length;
+  if (btn) {
+    btn.disabled = count <= 0;
+    btn.textContent = count > 0 ? 'Prepare Tactical QA Payload' : 'Analyze Replay First';
+    btn.title = count > 0
+      ? 'Export the top replay-derived scenario as a Tactical QA payload.'
+      : 'Upload and analyze a replay first.';
+  }
+  if (message) csReplayScenarioTopStatus(message, false);
+}
+function csHandleReplayScenarioTacticalQa(index, opts) {
+  opts = opts || {};
   var idx = parseInt(index, 10);
   var row = CS_LAST_REPLAY_SCENARIO_QUEUE[idx];
-  var statusEl = document.getElementById('replay-scenario-status-' + idx);
+  var statusEl = opts.statusTargetId
+    ? document.getElementById(opts.statusTargetId)
+    : document.getElementById('replay-scenario-status-' + idx);
   if (!row) {
-    if (statusEl) statusEl.textContent = 'Scenario not found. Re-run replay analysis.';
+    var missingMsg = 'Scenario not found. Upload and analyze a replay first.';
+    if (statusEl) statusEl.textContent = missingMsg;
+    csReplayScenarioTopStatus(missingMsg, true);
     return;
   }
   var payload = csBuildReplayScenarioTacticalQaPayload(row, idx, CS_LAST_REPLAY_SCENARIO_CONTEXT || {});
   var filename = 'champions-replay-scenario-tactical-qa-' + String(idx + 1).padStart(2, '0') + '-' + new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19) + '.json';
+  var downloaded = false;
   if (typeof _downloadBlob === 'function') {
     _downloadBlob(filename, 'application/json', JSON.stringify(payload, null, 2));
+    downloaded = true;
   }
+  var msg = (downloaded ? 'Payload downloaded: ' + filename + '. ' : 'Payload prepared, but browser download is unavailable. ') +
+    (payload.status === 'needs_more_data'
+      ? 'Trusted branch run is blocked until: ' + payload.missing_for_trusted_run.join(', ') + '.'
+      : 'Ready for Tactical QA branch execution.');
   if (statusEl) {
     statusEl.innerHTML = '<span class="replay-coach-tag ' + (payload.status === 'needs_more_data' ? 'medium' : 'low') + '">' + _escapeHtml(payload.status) + '</span> ' +
-      _escapeHtml(payload.status === 'needs_more_data'
-        ? 'Payload exported. Trusted branch run is blocked until: ' + payload.missing_for_trusted_run.join(', ') + '.'
-        : 'Payload exported and ready for Tactical QA branch execution.');
+      _escapeHtml(msg);
   }
+  csReplayScenarioTopStatus(msg, false);
+}
+function csExportTopReplayScenarioPayload() {
+  if (!CS_LAST_REPLAY_SCENARIO_QUEUE.length) {
+    csReplayScenarioTopStatus('Upload and analyze a replay first. The Tactical QA payload needs a generated scenario queue.', true);
+    csUpdateReplayScenarioExportButton();
+    return;
+  }
+  csHandleReplayScenarioTacticalQa(0, { statusTargetId: 'replay-coach-scenario-status' });
 }
 function csReplayCoachRenderAnalysis(analysis) {
   var host = document.getElementById('replay-coach-results');
@@ -36837,6 +36874,16 @@ function csReplayCoachRenderAnalysis(analysis) {
         '<pre class="battle-log replay-coach-raw-log">' + (rawLines || 'No raw log lines available.') + '</pre>' +
       '</details>' +
     '</div>';
+  CS_LAST_REPLAY_SCENARIO_QUEUE = (review.scenarioQueue || []).slice();
+  CS_LAST_REPLAY_SCENARIO_CONTEXT = { parsed: parsed, review: review };
+  host.querySelectorAll('.replay-scenario-run-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      csHandleReplayScenarioTacticalQa(btn.dataset.scenarioIndex);
+    });
+  });
+  csUpdateReplayScenarioExportButton(CS_LAST_REPLAY_SCENARIO_QUEUE.length
+    ? 'Scenario queue ready. Use the button above to export the top Tactical QA payload.'
+    : 'No replay scenario queue was generated. Upload a fuller replay or add the registered six.');
 }
 
 function csNormalizeReplayName(name) {
@@ -36952,6 +36999,7 @@ function csInitReplayCoachUi() {
   var fileEl = document.getElementById('replay-coach-file');
   var statusEl = document.getElementById('replay-coach-status');
   if (!logEl || !sideEl || !runBtn) return;
+  csUpdateReplayScenarioExportButton('Upload and analyze a replay to enable Tactical QA payload export.');
 
   function setStatus(msg, isError) {
     if (!statusEl) return;
@@ -36993,6 +37041,9 @@ function csInitReplayCoachUi() {
   if (clearBtn) clearBtn.addEventListener('click', function() {
     logEl.value = '';
     if (rosterEl) rosterEl.value = '';
+    CS_LAST_REPLAY_SCENARIO_QUEUE = [];
+    CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
+    csUpdateReplayScenarioExportButton('Upload and analyze a replay to enable Tactical QA payload export.');
     setStatus('');
     var host = document.getElementById('replay-coach-results');
     if (host) host.innerHTML = '<div class="replay-coach-empty"><strong>Ready for match review.</strong><span>Upload a Showdown HTML replay or paste a log to see result, leads, critical turn, coaching tags, and a readable turn timeline.</span></div>';
@@ -37009,6 +37060,9 @@ function csInitReplayCoachUi() {
         var raw = String(reader.result || '');
         var normalized = api && typeof api.normalizeReplayLogInput === 'function' ? api.normalizeReplayLogInput(raw) : raw;
         logEl.value = normalized;
+        CS_LAST_REPLAY_SCENARIO_QUEUE = [];
+        CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
+        csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
         var htmlReplay = /\.html?$/i.test(file.name || '') || /^text\/html/i.test(file.type || '');
         setStatus('Loaded ' + file.name + (htmlReplay ? ' as Showdown HTML replay evidence.' : '.') + ' Run analysis when ready.');
       };
@@ -37034,12 +37088,17 @@ function csInitReplayCoachUi() {
         var normalized = await api.fetchReplayLog(rawUrl);
         if (!normalized) throw new Error('Replay log was empty.');
         logEl.value = normalized;
+        CS_LAST_REPLAY_SCENARIO_QUEUE = [];
+        CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
+        csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
         setStatus('Loaded replay URL into the log box. Run analysis when ready.');
       } catch (e) {
         setStatus((e && e.message) ? e.message : 'Could not load that replay URL.', true);
       }
     });
   }
+  var scenarioBtn = document.getElementById('replay-coach-export-scenario-btn');
+  if (scenarioBtn) scenarioBtn.addEventListener('click', csExportTopReplayScenarioPayload);
 }
 
 function renderReplays() {
@@ -41465,13 +41524,6 @@ function csRenderOverviewBucket(group, bucket) {
     '<summary><span>' + _escapeHtml(csOverviewBucketLabel(bucket)) + '</span><strong>' + rows.length + '</strong></summary>' +
     '<div class="overview-list">' + csRenderOverviewRows(rows) + '</div>' +
       '</details>';
-  CS_LAST_REPLAY_SCENARIO_QUEUE = (review.scenarioQueue || []).slice();
-  CS_LAST_REPLAY_SCENARIO_CONTEXT = { parsed: parsed, review: review };
-  host.querySelectorAll('.replay-scenario-run-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      csHandleReplayScenarioTacticalQa(btn.dataset.scenarioIndex);
-    });
-  });
 }
 
 function csRenderOverviewMilestoneSection(group) {
@@ -42128,7 +42180,7 @@ function csRenderTeamLabNewsroomHub() {
       '<div>' +
         '<span class="overview-kicker">Pokemon Champion simulator</span>' +
         '<h2>Battle Labs</h2>' +
-        '<p>Test a team, find the swing turn, and improve one decision at a time.</p>' +
+        '<p>Test one matchup. Find the swing turn. Change one thing. Rerun with evidence.</p>' +
         '<div class="home-landing-actions">' +
           '<button type="button" data-home-tab="simulator">Start Simulating</button>' +
           '<button type="button" data-home-tab="replay-coach">Analyze a Replay</button>' +
@@ -42140,11 +42192,8 @@ function csRenderTeamLabNewsroomHub() {
         '<span>3</span><strong>Change one thing</strong>' +
       '</div>' +
     '</div>' +
-    csRenderHomeSimPreview() +
     csRenderHomeStartCycle() +
-    csRenderHomeQuestionCards() +
-    csRenderHomePlayerOutcomes() +
-    csRenderHomeQuickPlan() +
+    csRenderHomeSimPreview() +
     csRenderHomeTrustStrip() +
     csRenderPokemonNewsFeed() +
     '<div class="team-lab-hero">' +

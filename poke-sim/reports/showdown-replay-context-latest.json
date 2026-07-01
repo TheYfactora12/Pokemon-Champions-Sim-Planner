@@ -1,6 +1,6 @@
 {
   "schema_version": "champions-showdown-replay-ingest-v1",
-  "generated_at": "2026-07-01T02:43:43.903Z",
+  "generated_at": "2026-07-01T03:07:50.594Z",
   "boundary": "Showdown HTML replays are replay/meta/coaching evidence. They do not overwrite official Champion legality or mechanic truth.",
   "totals": {
     "files": 39,
@@ -2004,7 +2004,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.883Z"
+      "created_at": "2026-07-01T03:07:50.578Z"
     },
     {
       "id": "showdown-html:30c5148d",
@@ -4301,7 +4301,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.884Z"
+      "created_at": "2026-07-01T03:07:50.580Z"
     },
     {
       "id": "showdown-html:2100298b",
@@ -5570,7 +5570,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.885Z"
+      "created_at": "2026-07-01T03:07:50.580Z"
     },
     {
       "id": "showdown-html:c1e5500b",
@@ -7329,7 +7329,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.886Z"
+      "created_at": "2026-07-01T03:07:50.581Z"
     },
     {
       "id": "showdown-html:4dc3f33b",
@@ -8468,7 +8468,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.887Z"
+      "created_at": "2026-07-01T03:07:50.581Z"
     },
     {
       "id": "showdown-html:4966f335",
@@ -9813,7 +9813,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.887Z"
+      "created_at": "2026-07-01T03:07:50.581Z"
     },
     {
       "id": "showdown-html:92e84967",
@@ -11560,7 +11560,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.888Z"
+      "created_at": "2026-07-01T03:07:50.582Z"
     },
     {
       "id": "showdown-html:c8f11c02",
@@ -13071,7 +13071,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.888Z"
+      "created_at": "2026-07-01T03:07:50.582Z"
     },
     {
       "id": "showdown-html:646c9932",
@@ -14868,7 +14868,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.888Z"
+      "created_at": "2026-07-01T03:07:50.582Z"
     },
     {
       "id": "showdown-html:f1da3b23",
@@ -16284,7 +16284,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.889Z"
+      "created_at": "2026-07-01T03:07:50.583Z"
     },
     {
       "id": "showdown-html:9045c0fd",
@@ -17772,7 +17772,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.889Z"
+      "created_at": "2026-07-01T03:07:50.584Z"
     },
     {
       "id": "showdown-html:bd2387c2",
@@ -18894,7 +18894,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.889Z"
+      "created_at": "2026-07-01T03:07:50.584Z"
     },
     {
       "id": "showdown-html:0065a62f",
@@ -20193,7 +20193,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.890Z"
+      "created_at": "2026-07-01T03:07:50.584Z"
     },
     {
       "id": "showdown-html:43222f1e",
@@ -21527,7 +21527,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.890Z"
+      "created_at": "2026-07-01T03:07:50.585Z"
     },
     {
       "id": "showdown-html:4bdf5695",
@@ -23335,7 +23335,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.891Z"
+      "created_at": "2026-07-01T03:07:50.585Z"
     },
     {
       "id": "showdown-html:e88426cd",
@@ -25170,7 +25170,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.891Z"
+      "created_at": "2026-07-01T03:07:50.585Z"
     },
     {
       "id": "showdown-html:b7755a3a",
@@ -26386,7 +26386,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.892Z"
+      "created_at": "2026-07-01T03:07:50.586Z"
     },
     {
       "id": "showdown-html:d6be1b04",
@@ -28268,7 +28268,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.893Z"
+      "created_at": "2026-07-01T03:07:50.586Z"
     },
     {
       "id": "showdown-html:ec557b8e",
@@ -30610,7 +30610,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.894Z"
+      "created_at": "2026-07-01T03:07:50.587Z"
     },
     {
       "id": "showdown-html:a4974a14",
@@ -32880,7 +32880,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.895Z"
+      "created_at": "2026-07-01T03:07:50.587Z"
     },
     {
       "id": "showdown-html:12b140e5",
@@ -34098,7 +34098,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.895Z"
+      "created_at": "2026-07-01T03:07:50.588Z"
     },
     {
       "id": "showdown-html:4bb59c67",
@@ -35448,7 +35448,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.895Z"
+      "created_at": "2026-07-01T03:07:50.588Z"
     },
     {
       "id": "showdown-html:996c7829",
@@ -38274,7 +38274,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.896Z"
+      "created_at": "2026-07-01T03:07:50.589Z"
     },
     {
       "id": "showdown-html:c4488c12",
@@ -40195,7 +40195,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.897Z"
+      "created_at": "2026-07-01T03:07:50.589Z"
     },
     {
       "id": "showdown-html:1b6c766a",
@@ -42049,7 +42049,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.898Z"
+      "created_at": "2026-07-01T03:07:50.589Z"
     },
     {
       "id": "showdown-html:20ab8bcc",
@@ -43990,7 +43990,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.898Z"
+      "created_at": "2026-07-01T03:07:50.589Z"
     },
     {
       "id": "showdown-html:843498dc",
@@ -45463,7 +45463,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.898Z"
+      "created_at": "2026-07-01T03:07:50.590Z"
     },
     {
       "id": "showdown-html:24754d1c",
@@ -47079,7 +47079,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.899Z"
+      "created_at": "2026-07-01T03:07:50.590Z"
     },
     {
       "id": "showdown-html:56527d8e",
@@ -48938,7 +48938,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.899Z"
+      "created_at": "2026-07-01T03:07:50.590Z"
     },
     {
       "id": "showdown-html:0a901f81",
@@ -51171,7 +51171,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.900Z"
+      "created_at": "2026-07-01T03:07:50.591Z"
     },
     {
       "id": "showdown-html:1e0ddb26",
@@ -53154,7 +53154,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.900Z"
+      "created_at": "2026-07-01T03:07:50.591Z"
     },
     {
       "id": "showdown-html:1e0ddb26",
@@ -55137,7 +55137,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.901Z"
+      "created_at": "2026-07-01T03:07:50.592Z"
     },
     {
       "id": "showdown-html:2179602a",
@@ -56288,7 +56288,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.901Z"
+      "created_at": "2026-07-01T03:07:50.592Z"
     },
     {
       "id": "showdown-html:5d308d2c",
@@ -58132,7 +58132,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.901Z"
+      "created_at": "2026-07-01T03:07:50.592Z"
     },
     {
       "id": "showdown-html:f92b629c",
@@ -59686,7 +59686,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.902Z"
+      "created_at": "2026-07-01T03:07:50.592Z"
     },
     {
       "id": "showdown-html:1bcc7cbe",
@@ -61292,7 +61292,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.902Z"
+      "created_at": "2026-07-01T03:07:50.592Z"
     },
     {
       "id": "showdown-html:c65d79f2",
@@ -62449,7 +62449,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.902Z"
+      "created_at": "2026-07-01T03:07:50.593Z"
     },
     {
       "id": "showdown-html:c65d79f2",
@@ -63606,7 +63606,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.903Z"
+      "created_at": "2026-07-01T03:07:50.593Z"
     },
     {
       "id": "showdown-html:c65d79f2",
@@ -64763,7 +64763,7 @@
           "STRUCTURED_DAMAGE_ROWS_NOT_IMPORTED"
         ]
       },
-      "created_at": "2026-07-01T02:43:43.903Z"
+      "created_at": "2026-07-01T03:07:50.593Z"
     }
   ]
 }

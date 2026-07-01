@@ -27,6 +27,20 @@ The feedback loop is:
 
 Simulate -> Play -> Upload Replay -> Diagnose -> Update Coaching -> Improve Sim Assumptions -> Practice Better Lines -> Repeat.
 
+## Replay-Derived Tactical QA Payload UX
+
+The Review/Battle Sensei input card must expose the Tactical QA payload action near the replay upload/analyze controls, not only inside lower result cards.
+
+Expected flow:
+
+1. Player uploads a Showdown `.html`, `.txt`, `.log`, pasted log, or replay URL.
+2. The payload button remains disabled until replay analysis creates a scenario queue.
+3. After analysis, the top-level button exports the highest-priority replay-derived scenario as a versioned Tactical QA JSON payload.
+4. Per-scenario buttons in the generated queue can still export a specific scenario.
+5. The UI must explain whether the payload is ready for branch execution or blocked by missing team mapping, regulation mapping, or board-state evidence.
+
+This payload is evidence intake only. It does not overwrite Champion legality, mechanics truth, leaderboard rankings, or official source-truth rows.
+
 ## Core Outputs
 
 Every reviewed replay should produce:

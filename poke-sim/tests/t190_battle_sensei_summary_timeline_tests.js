@@ -33,9 +33,12 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'Know the full 6?');
   inc(html, 'accept=".txt,.log,.html,.htm,text/plain,text/html"');
   inc(html, 'Upload Showdown Replay');
+  inc(html, 'id="replay-coach-export-scenario-btn"');
+  inc(html, 'id="replay-coach-scenario-status"');
+  inc(html, 'Upload and analyze a replay to enable Tactical QA payload export.');
   inc(html, 'In series play');
-  inc(html, 'v2.2.79-replay-team-mapping');
-  inc(ui, 'v2.2.79-replay-team-mapping');
+  inc(html, 'v2.2.80-replay-scenario-export-ux');
+  inc(ui, 'v2.2.80-replay-scenario-export-ux');
   if (/Bo10|data-bo="10"/.test(html)) throw new Error('Bo10 should not be exposed as a series format');
   if (/Bo10/.test(ui)) throw new Error('Bo10 should not be referenced in UI guidance');
   if (/Bo10/.test(engine)) throw new Error('Bo10 should not be referenced in engine guidance');
@@ -81,6 +84,9 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, '<b>Test goal:</b>');
   inc(ui, 'These are simulator test targets from the replay.');
   inc(ui, 'Prepare Tactical QA Payload');
+  inc(ui, 'csUpdateReplayScenarioExportButton');
+  inc(ui, 'csExportTopReplayScenarioPayload');
+  inc(ui, 'Scenario queue ready. Use the button above to export the top Tactical QA payload.');
   inc(ui, 'champions-replay-scenario-tactical-qa-payload-v1');
   inc(ui, 'needs_regulation_mapping');
   inc(ui, 'missing_for_trusted_run');
