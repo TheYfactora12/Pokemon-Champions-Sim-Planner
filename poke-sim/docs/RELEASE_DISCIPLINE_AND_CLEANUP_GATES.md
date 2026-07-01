@@ -99,6 +99,15 @@ Closeout proof:
 - bundle regenerated after conflict resolution
 - no force push unless explicitly approved
 
+When the conflict is only in generated files such as `poke-sim/pokemon-champion-2026.html`, `poke-sim/generated/release_artifact.json`, or `poke-sim/generated/news_feed.js`, do not hand-edit the bundle. Inspect the remote commit, keep the source changes from both sides, rerun `python3 poke-sim/tools/build-bundle.py`, rerun focused release tests, then continue the rebase or merge. This is the safe path for News Feed Sync versus feature-release races.
+
+Preferred GitHub process:
+
+- scheduled source/news sync should use a branch or PR when it changes generated deploy artifacts near active feature work
+- release pushes should treat direct workflow commits to `main` as expected and rebase before push
+- CI should keep bundle freshness, release manifest, and Pages artifact checks as required gates
+- any force push, generated artifact overwrite, or branch protection bypass needs explicit human approval and a short audit note
+
 ### Gate 6: UI/runtime modularization pressure
 
 Do not keep growing `ui.js` forever. If a slice adds a new subsystem, ask whether it belongs in a module.
@@ -132,8 +141,9 @@ Do not leave it implicit in chat.
 
 The next cleanup pass should focus on:
 
-1. Roadmap alignment for the QA slice naming and claim-review system.
-2. QA connector docs matching the new button names.
-3. Architecture docs explaining what each QA slice proves.
-4. Tests that prevent the old vague QA labels from returning.
-5. A short module-split plan for QA export/readout code before adding more QA UI.
+1. Keep the generated-artifact conflict guard active for News Feed Sync and feature-release races.
+2. Roadmap alignment for the QA slice naming and claim-review system.
+3. QA connector docs matching the new button names.
+4. Architecture docs explaining what each QA slice proves.
+5. Tests that prevent the old vague QA labels from returning.
+6. A short module-split plan for QA export/readout code before adding more QA UI.

@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.97-legality-evidence-package'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.98-github-release-guard'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -12713,6 +12713,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'GitHub generated-artifact release guard documented',
+      detail: 'v2.2.98 tightens the release engineering process after a News Feed Sync race: inspect remote-only commits, preserve source changes, regenerate pokemon-champion-2026.html and generated/release_artifact.json instead of hand-editing bundles, rerun release tests, and only then continue the rebase/merge and push.'
+    },
+    {
+      status: 'done',
       title: 'Legality evidence package foundation added',
       detail: 'v2.2.97 adds legality_evidence_package.js as the first source-package gate for true 99% legality. It validates package metadata, trusted source captures, complete allowlists, known legal/illegal/stale/needs_verification fixtures, and promotion readiness before any Regulation M-B data can move toward runtime or Team Lab official ranking use.'
     },
@@ -13571,6 +13576,11 @@ var CS_OVERVIEW_DATA = {
       status: 'next',
       title: 'Run non-standard stat-source targeted proof first',
       detail: 'Next move-mechanics slice should force Foul Play, Body Press, Psyshock, and the Foul Play/Pure Power guard through Targeted QA, then require fresh live artifacts to show nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace, and ignored_target_power_ability_trace before moving the family toward 99% closed.'
+    },
+    {
+      status: 'next',
+      title: 'Move scheduled source/news sync to branch or PR mode',
+      detail: 'GitHub process optimization: scheduled sync jobs that touch generated deploy artifacts should open a branch/PR or clearly report their generated-file impact before active feature releases push to main. This reduces generated bundle conflicts without distracting from the higher-priority Regulation M-B legality evidence package.'
     },
     {
       status: 'next',

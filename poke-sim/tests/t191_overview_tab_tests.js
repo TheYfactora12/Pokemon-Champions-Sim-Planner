@@ -239,6 +239,10 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(cleanup, 'Which QA slice proves it?');
   inc(cleanup, 'Do not leave it implicit in chat.');
   inc(cleanup, 'UI/runtime modularization pressure');
+  inc(cleanup, 'News Feed Sync versus feature-release races');
+  inc(cleanup, 'do not hand-edit the bundle');
+  inc(cleanup, 'rerun `python3 poke-sim/tools/build-bundle.py`');
+  inc(cleanup, 'scheduled source/news sync should use a branch or PR');
   const closeout = fs.readFileSync(path.join(ROOT, 'docs', 'ACTIVE_SLICE_CLOSEOUT_STATUS.md'), 'utf8');
   inc(closeout, '100% closed');
   inc(closeout, '99% closed');
@@ -247,6 +251,8 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(closeout, 'QA slice naming and claim review');
   inc(closeout, 'Full Pokemon Champions legality / Regulation M-B runtime promotion');
   inc(closeout, 'Battle Sensei true coaching brain');
+  inc(closeout, 'GitHub generated-artifact release hygiene');
+  inc(closeout, 'News Feed Sync versus feature-release conflict path');
   inc(closeout, 'UI/runtime modularization');
   inc(closeout, 'Fresh live proof attached on 2026-07-01');
   inc(closeout, 'champions-sim-qa-artifact-2026-07-01T14-02-36.json');
@@ -451,6 +457,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Active slice closeout map added');
   inc(ui, 'Fresh live closeout QA artifacts recorded');
   inc(ui, 'Move mechanics QA closeout plan added');
+  inc(ui, 'GitHub generated-artifact release guard documented');
+  inc(ui, 'Move scheduled source/news sync to branch or PR mode');
+  inc(ui, 'regenerate pokemon-champion-2026.html and generated/release_artifact.json');
   inc(ui, 'Legality evidence package foundation added');
   inc(ui, 'legality_evidence_package.js');
   inc(ui, 'trusted source captures');
