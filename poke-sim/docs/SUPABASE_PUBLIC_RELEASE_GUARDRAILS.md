@@ -1,6 +1,6 @@
 # Supabase Public Release Guardrails
 
-Last updated: 2026-06-28
+Last updated: 2026-07-01
 
 This document defines the Supabase safety gates required before broader public testing.
 
@@ -64,6 +64,13 @@ Minimum metadata for future learning rows:
 ## 3b. Trainer rooms and future learning boundary
 
 Future personal coaching, uploaded battle review, and bot practice should be built around a trainer-owned workspace, not around shared global tables.
+
+Current foundation:
+
+- `trainer_profiles`, `trainer_rooms`, and `trainer_room_teams` are the first private workspace tables.
+- The first migration is owner-scoped through Supabase Auth RLS.
+- Public read is disabled by default, including for future `public_showcase` rows, until a separate API/filtering slice protects hidden team details.
+- Room teams can reference Team Lab teams, but Team Lab hidden details remain protected by Team Lab policies and API response filtering.
 
 Required direction:
 

@@ -119,18 +119,21 @@ Owns:
 
 Existing foundation:
 
-- Not built yet.
+- `trainer_profiles`
+- `trainer_rooms`
+- `trainer_room_teams`
+- owner-scoped RLS migration added in `db/migrations/2026_07_01_trainer_room_foundation.sql`
 
 Stress test:
 
-- Can a player upload Showdown battles and test against their own team without leaking data? Not yet.
-- Can a trainer have team variants, matchup notes, and private coaching history? Not yet.
-- Can we separate personal analytics from global aggregate analytics? Not yet.
+- Can a player upload Showdown battles and test against their own team without leaking data? Partially; the private room container now exists, but replay import governance is not built yet.
+- Can a trainer have team variants, matchup notes, and private coaching history? Partially; room team links and notes exist, but coaching memory is still deferred.
+- Can we separate personal analytics from global aggregate analytics? Yes at the schema boundary; no global aggregate writes are created in this slice.
 
 Decision:
 
-- This is the next DB schema slice after the plan.
-- Start with owner-scoped trainer rooms before any public account UX or global learning.
+- Keep trainer rooms private-first and owner-scoped.
+- Public showcase, replay imports, personal coaching facts, global learning, and bot sessions require separate reviewed migrations.
 
 ### 5. Global learning truth
 
@@ -213,8 +216,8 @@ DB requirement:
 
 Pass/fail:
 
-- This is ready to implement as backend-only framing.
-- It should not wait for perfect simulator truth because it is a privacy boundary, not a coaching claim.
+- Backend-only foundation is implemented in `2026_07_01_trainer_room_foundation.sql`.
+- It remains a privacy boundary only; it does not make coaching, replay parsing, global learning, or bot-play claims.
 
 ### Next priority: replay import governance
 
@@ -334,14 +337,14 @@ Answer:
 
 ## First implementation frame
 
-The first migration slice should create only the trainer-room foundation:
+The first migration slice creates only the trainer-room foundation:
 
 - `trainer_profiles`
 - `trainer_rooms`
 - `trainer_room_teams`
 - owner RLS
 - public read disabled by default
-- tests proving owner-only access logic in service helpers or migration text
+- tests proving owner-only access logic in migration text
 
 Do not include yet:
 
@@ -355,6 +358,12 @@ Do not include yet:
 Reason:
 
 - This gives the product a safe private container without overbuilding future systems before sim truth is ready.
+
+Implementation update:
+
+- `db/migrations/2026_07_01_trainer_room_foundation.sql`
+- `tests/trainer_room_tests.js`
+- Public read is disabled by default, including for `public_showcase`, until an explicit API/filtering slice exists.
 
 ## Acceptance criteria for next DB slice
 
