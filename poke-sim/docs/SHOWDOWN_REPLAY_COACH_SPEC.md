@@ -488,6 +488,19 @@ Required fields:
 
 Current UI behavior: each replay scenario card can prepare a Tactical QA payload JSON. The payload is intentionally blocked from trusted branch execution when it is missing team-id mapping, regulation confirmation, or board reconstruction.
 
+Replay team mapping:
+
+- Compare replay `yourPreview` first when full six exists.
+- Fall back to visible `yourFour` / `opponentFour` when full preview is unavailable.
+- Match against saved/imported in-app teams by normalized species identity.
+- Mega forms may match their base species for team identity.
+- Confidence labels:
+  - `exact_full_six`
+  - `visible_four_match`
+  - `partial_match`
+  - `no_match`
+- Payload should include `player_team_id`, `opponent_team_id`, matched species, missing species, and mapping confidence when available.
+
 Future promotion path:
 
 - map replay Pokemon to imported/saved teams

@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.78-replay-scenario-tactical-qa-payload';
+      return txt || 'v2.2.79-replay-team-mapping';
     } catch (e) {
-      return 'v2.2.78-replay-scenario-tactical-qa-payload';
+      return 'v2.2.79-replay-team-mapping';
     }
   }
 

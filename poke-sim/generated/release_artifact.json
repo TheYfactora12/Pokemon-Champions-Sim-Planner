@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.78-replay-scenario-tactical-qa-payload",
+  "build_id": "v2.2.79-replay-team-mapping",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "2e0df224a566af1fba28284f4ba76fe1f1d2cc519465c8e6d8d224238ca6f990",
-  "bundle_bytes": 11077491,
+  "bundle_sha256": "6cea3c30858eb0a61d5ff3d74154686dfe7493f5e3346ffcb28348e1dc1cf45e",
+  "bundle_bytes": 11082216,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }

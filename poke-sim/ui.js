@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.78-replay-scenario-tactical-qa-payload'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.79-replay-team-mapping'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8009,8 +8009,99 @@ function csRenderReplayTurn0(turn0, selectedSide) {
 
 var CS_LAST_REPLAY_SCENARIO_QUEUE = [];
 var CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
+function csReplaySpeciesId(name) {
+  return String(name || '')
+    .replace(/-Mega(?:-[XY])?$/i, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+}
+function csReplayUniqueSpecies(list) {
+  var seen = {};
+  return (Array.isArray(list) ? list : []).map(function(name) {
+    return String(name || '').trim();
+  }).filter(function(name) {
+    var id = csReplaySpeciesId(name);
+    if (!id || seen[id]) return false;
+    seen[id] = true;
+    return true;
+  });
+}
+function csReplayTeamSpeciesList(team) {
+  return csReplayUniqueSpecies((team && Array.isArray(team.members) ? team.members : []).map(function(member) {
+    return member && (member.name || member.species || member.displayName);
+  }));
+}
+function csReplaySpeciesSet(list) {
+  var out = {};
+  csReplayUniqueSpecies(list).forEach(function(name) { out[csReplaySpeciesId(name)] = name; });
+  return out;
+}
+function csReplayMatchSpeciesCount(needed, teamSet) {
+  var count = 0;
+  Object.keys(needed || {}).forEach(function(id) { if (teamSet[id]) count++; });
+  return count;
+}
+function csReplayFindBestTeamMatch(preview, visible, opts) {
+  opts = opts || {};
+  var previewList = csReplayUniqueSpecies(preview);
+  var visibleList = csReplayUniqueSpecies(visible);
+  var required = previewList.length >= 6 ? previewList : visibleList;
+  var requiredSet = csReplaySpeciesSet(required);
+  var rows = [];
+  if (typeof TEAMS === 'undefined' || !TEAMS) {
+    return { status: 'no_match', confidence: 'none', reason: 'TEAMS catalog unavailable', requiredSpecies: required };
+  }
+  Object.keys(TEAMS).forEach(function(teamId) {
+    var team = TEAMS[teamId];
+    if (!team || !Array.isArray(team.members)) return;
+    var teamSpecies = csReplayTeamSpeciesList(team);
+    var teamSet = csReplaySpeciesSet(teamSpecies);
+    var matched = csReplayMatchSpeciesCount(requiredSet, teamSet);
+    if (!matched) return;
+    var confidence = 'partial_match';
+    if (previewList.length >= 6 && matched >= 6) confidence = 'exact_full_six';
+    else if (visibleList.length >= 4 && csReplayMatchSpeciesCount(csReplaySpeciesSet(visibleList), teamSet) >= 4) confidence = 'visible_four_match';
+    var missing = required.filter(function(name) { return !teamSet[csReplaySpeciesId(name)]; });
+    rows.push({
+      team_id: teamId,
+      team_name: team.name || teamId,
+      confidence: confidence,
+      matched_count: matched,
+      required_count: required.length,
+      matched_species: required.filter(function(name) { return !!teamSet[csReplaySpeciesId(name)]; }),
+      missing_species: missing,
+      team_species: teamSpecies,
+      regulation_id: team.regulation_id || team.ruleset || team.champion_ruleset || null,
+      legality_status: team.legality_status || null
+    });
+  });
+  rows.sort(function(a, b) {
+    var rank = { exact_full_six: 4, visible_four_match: 3, partial_match: 2, no_match: 1 };
+    var ar = rank[a.confidence] || 0;
+    var br = rank[b.confidence] || 0;
+    if (br !== ar) return br - ar;
+    if (b.matched_count !== a.matched_count) return b.matched_count - a.matched_count;
+    return String(a.team_name || '').localeCompare(String(b.team_name || ''));
+  });
+  return rows[0] || { status: 'no_match', confidence: 'no_match', reason: 'No saved/imported team matched replay species.', requiredSpecies: required };
+}
+function csReplayScenarioResolveTeamMappings(row, context) {
+  row = row || {};
+  context = context || {};
+  var board = row.boardContext || {};
+  var summary = (context.review && context.review.summary) || {};
+  var player = csReplayFindBestTeamMatch(summary.yourPreview || [], board.yourFour || [], { side: 'player' });
+  var opponent = csReplayFindBestTeamMatch(summary.opponentPreview || [], board.opponentFour || [], { side: 'opponent' });
+  return {
+    player: player,
+    opponent: opponent,
+    status: (player.team_id && opponent.team_id) ? 'mapped' : (player.team_id || opponent.team_id ? 'partial_mapping' : 'no_match')
+  };
+}
 function csReplayScenarioTeamMapStatus(row) {
   row = row || {};
+  var context = CS_LAST_REPLAY_SCENARIO_CONTEXT || {};
+  var mappings = csReplayScenarioResolveTeamMappings(row, context);
   var board = row.boardContext || {};
   var yourLead = Array.isArray(board.yourLead) ? board.yourLead : [];
   var opponentLead = Array.isArray(board.opponentLead) ? board.opponentLead : [];
@@ -8019,11 +8110,12 @@ function csReplayScenarioTeamMapStatus(row) {
   var missing = [];
   if (!yourLead.length || !opponentLead.length) missing.push('opening leads');
   if (yourFour.length < 2 || opponentFour.length < 2) missing.push('visible brought Pokemon');
-  missing.push('in-app team id mapping');
+  if (!mappings.player.team_id || !mappings.opponent.team_id) missing.push('in-app team id mapping');
   missing.push('regulation confirmation');
   return {
     status: missing.length ? 'needs_more_data' : 'ready_for_tactical_qa_payload',
-    missing: missing
+    missing: missing,
+    mappings: mappings
   };
 }
 function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
@@ -8033,6 +8125,7 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
   var review = context.review || {};
   var map = csReplayScenarioTeamMapStatus(row);
   var buildId = typeof csGetBuildId === 'function' ? csGetBuildId() : 'unknown-engine';
+  var mappings = map.mappings || csReplayScenarioResolveTeamMappings(row, context);
   return {
     schema_version: 'champions-replay-scenario-tactical-qa-payload-v1',
     status: map.status,
@@ -8044,6 +8137,9 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
     regulation_id: 'needs_regulation_mapping',
     format: parsed.format || 'unknown',
     sample_size: 1,
+    team_mapping: mappings,
+    player_team_id: mappings.player && mappings.player.team_id || null,
+    opponent_team_id: mappings.opponent && mappings.opponent.team_id || null,
     scenario: {
       id: row.id || null,
       title: row.title || 'Replay-derived scenario',
@@ -8152,6 +8248,10 @@ function csReplayCoachRenderAnalysis(analysis) {
     var idx = (review.scenarioQueue || []).indexOf(row);
     var priorityClass = row.priority === 'high' ? 'high' : (row.priority === 'low' ? 'low' : 'medium');
     var mapStatus = csReplayScenarioTeamMapStatus(row);
+    var mappings = mapStatus.mappings || {};
+    var mappingLabel = mappings.status === 'mapped'
+      ? 'Mapped: ' + ((mappings.player && mappings.player.team_name) || 'player') + ' vs ' + ((mappings.opponent && mappings.opponent.team_name) || 'opponent')
+      : (mappings.status === 'partial_mapping' ? 'Partial team mapping found' : 'No saved-team mapping yet');
     var sourceGaps = (row.sourceGaps || []).slice(0, 2).map(function(gap) {
       return '<span class="replay-coach-tag medium">' + _escapeHtml(gap) + '</span>';
     }).join('');
@@ -8162,7 +8262,7 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<div><b>Why:</b> ' + _escapeHtml(row.why || '') + '</div>' +
       '<small><span class="replay-coach-tag ' + _escapeHtml(priorityClass) + '">' + _escapeHtml(row.priority || 'medium') + '</span> Evidence: ' + _escapeHtml(row.evidence || 'replay evidence') + ' · Confidence: ' + _escapeHtml(row.confidence || 'medium') + '</small>' +
       (sourceGaps ? '<div class="replay-coach-tags">' + sourceGaps + '</div>' : '') +
-      '<div class="replay-coach-tags"><span class="replay-coach-tag ' + _escapeHtml(mapStatus.status === 'needs_more_data' ? 'medium' : 'low') + '">' + _escapeHtml(mapStatus.status) + '</span></div>' +
+      '<div class="replay-coach-tags"><span class="replay-coach-tag ' + _escapeHtml(mapStatus.status === 'needs_more_data' ? 'medium' : 'low') + '">' + _escapeHtml(mapStatus.status) + '</span><span class="replay-coach-tag medium">' + _escapeHtml(mappingLabel) + '</span></div>' +
       '<button class="btn-secondary replay-scenario-run-btn" type="button" data-scenario-index="' + _escapeHtml(String(idx)) + '">Prepare Tactical QA Payload</button>' +
       '<div class="replay-coach-turn-read" id="replay-scenario-status-' + _escapeHtml(String(idx)) + '"></div>' +
       '</div>';
