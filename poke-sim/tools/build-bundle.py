@@ -25,6 +25,12 @@ def read(path):
     with open(os.path.join(BASE, path), 'r', encoding='utf-8') as f:
         return f.read()
 
+def manifest_value(manifest_js, key):
+    match = re.search(r"%s:\s*'([^']+)'" % re.escape(key), manifest_js)
+    if not match:
+        raise RuntimeError('release_manifest.js missing %s' % key)
+    return match.group(1)
+
 # Sanity floor: a real supabase-js UMD is ~190 KB. Anything smaller means a
 # truncated/corrupt download or a Windows codec abort mid-write. Refuse to
 # build with a bad cache so we never ship an empty <script> block.
@@ -181,10 +187,10 @@ else:
     bundle_sha256 = hashlib.sha256(bundle_bytes).hexdigest()
     artifact = {
         'schema_version': 'champions-release-artifact-v1',
-        'build_id': 'v2.2.75-mega-battle-effect-proof',
+        'build_id': manifest_value(release_manifest, 'build_id'),
         'release_manifest': 'release_manifest.js',
-        'bundle_name': 'pokemon-champion-2026.html',
-        'pages_path': 'poke-sim/pokemon-champion-2026.html',
+        'bundle_name': manifest_value(release_manifest, 'bundle_name'),
+        'pages_path': manifest_value(release_manifest, 'pages_path'),
         'bundle_sha256': bundle_sha256,
         'bundle_bytes': len(bundle_bytes),
         'hash_scope': 'sha256 of committed poke-sim/pokemon-champion-2026.html bytes'

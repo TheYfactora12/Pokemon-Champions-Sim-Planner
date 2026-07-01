@@ -70,8 +70,20 @@ function opponent() {
   }));
 }
 
+function opponentWith(member) {
+  return team('Ability Proof Opponent', member);
+}
+
 function runOne(member) {
   return ctx.simulateBattle(team('Mega Weather Proof', member), opponent(), {
+    format: 'singles',
+    seed: [17, 31, 47, 63],
+    maxTurns: 1
+  });
+}
+
+function runOneAgainst(member, oppMember) {
+  return ctx.simulateBattle(team('Mega Ability Proof', member), opponentWith(oppMember), {
     format: 'singles',
     seed: [17, 31, 47, 63],
     maxTurns: 1
@@ -126,6 +138,16 @@ T('5. base Charizard with Charizardite Y does not claim immediate Drought in cur
   const field = firstPostField(battle);
   eq(field.weather || null, null, 'base-form custom set should not silently claim sun');
   truthy(!logIncludes(battle, 'Drought summoned harsh sunlight'), 'base-form custom set should not log Drought');
+});
+
+T('6. Manectric-Mega re-fires Intimidate after Mega ability swap', () => {
+  const battle = runOneAgainst(
+    mon('Manectric-Mega', 'Manectite', 'Lightning Rod', ['Protect']),
+    mon('Garchomp', '', 'Rough Skin', ['Protect'], { hp: 32, atk: 32, def: 0, spa: 0, spd: 0, spe: 2 })
+  );
+  truthy(logIncludes(battle, 'Manectric-Mega Mega Evolved!'), 'Mega log missing');
+  truthy(logIncludes(battle, "Manectric-Mega's Intimidate activated!"), 'Intimidate activation missing');
+  truthy(logIncludes(battle, "Manectric-Mega's Intimidate lowered Garchomp's Attack!"), 'Intimidate attack-drop log missing');
 });
 
 console.log(`\nMega runtime battle effects: ${pass} pass, ${fail} fail\n`);

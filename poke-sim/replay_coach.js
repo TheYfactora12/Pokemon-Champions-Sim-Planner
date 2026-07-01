@@ -281,7 +281,13 @@
         healing: [],
         field: [],
         status: [],
-        rng: []
+        rng: [],
+        abilities: [],
+        items: [],
+        actionDenials: [],
+        effectiveness: [],
+        singleTurn: [],
+        formChanges: []
       });
     }
     return model.turns[model.turns.length - 1];
@@ -293,7 +299,7 @@
   }
 
   function looksLikeReplayTag(tag) {
-    return /^(player|teamsize|gametype|gen|tier|rule|rated|poke|teampreview|start|turn|upkeep|move|switch|drag|replace|faint|win|tie|-damage|-heal|-status|-curestatus|-boost|-unboost|-mega|-weather|-fieldstart|-fieldend|-sidestart|-sideend|-crit|-miss|-fail|-immune|-message|j|c)$/i.test(tag || '');
+    return /^(player|teamsize|gametype|gen|tier|rule|rated|poke|teampreview|start|turn|upkeep|move|switch|drag|replace|faint|win|tie|cant|detailschange|formechange|-damage|-heal|-status|-curestatus|-boost|-unboost|-mega|-weather|-fieldstart|-fieldend|-fieldactivate|-sidestart|-sideend|-sideactivate|-crit|-miss|-fail|-immune|-message|-ability|-item|-enditem|-activate|-singleturn|-supereffective|-resisted|-start|-end|j|c)$/i.test(tag || '');
   }
 
   function decodeReplayHtmlEntities(text) {
@@ -841,6 +847,44 @@
           item: cleanText(megaItem),
           text: raw
         });
+        currentTurn.formChanges.push({
+          type: 'mega',
+          side: megaSide,
+          pokemon: megaSpecies || baseSpecies,
+          baseSpecies: baseSpecies,
+          item: cleanText(megaItem),
+          text: raw
+        });
+        return;
+      }
+
+      if (tag === 'detailschange' || tag === 'formechange') {
+        var formSlot = parts[2];
+        var formSide = sideOf(formSlot);
+        var formKey = slotKey(formSlot);
+        var nextDetails = normalizeReplayPokemonDetails(formSlot, parts[3] || '');
+        var nextSpecies = nextDetails.species || speciesForSlot(activeSpeciesBySlot, formSlot) || nameFromSlot(formSlot);
+        var previousSpecies = speciesForSlot(activeSpeciesBySlot, formSlot);
+        if (formKey && nextSpecies) activeSpeciesBySlot[formKey] = nextSpecies;
+        if (formSide && previousSpecies && nextSpecies && previousSpecies !== nextSpecies) {
+          replaceUniquePokemon(model.selectedPokemon[formSide], previousSpecies, nextSpecies);
+          replaceRosterSpecies(rosterState, formSide, previousSpecies, nextSpecies, {
+            side: formSide,
+            slot: formKey,
+            status: 'active',
+            warnings: ['Form changed from ' + previousSpecies + ' to ' + nextSpecies]
+          });
+        }
+        currentTurn.formChanges.push({
+          type: tag,
+          side: formSide,
+          pokemon: nextSpecies,
+          previousPokemon: previousSpecies,
+          details: cleanText(parts[3]),
+          hp: hpPercent(parts[4] || ''),
+          text: raw
+        });
+        currentTurn.events.push({ type: tag, side: formSide, pokemon: nextSpecies, text: raw });
         return;
       }
 
@@ -900,7 +944,7 @@
         return;
       }
 
-      if (tag === '-weather' || tag === '-fieldstart' || tag === '-fieldend' || tag === '-sidestart' || tag === '-sideend') {
+      if (tag === '-weather' || tag === '-fieldstart' || tag === '-fieldend' || tag === '-fieldactivate' || tag === '-sidestart' || tag === '-sideend' || tag === '-sideactivate') {
         currentTurn.field.push({ type: tag.slice(1), value: cleanText(parts[2]), side: sideOf(parts[3] || '') });
         currentTurn.events.push({ type: tag.slice(1), text: raw });
         return;
@@ -910,6 +954,74 @@
         var rngSlot = parts[2];
         currentTurn.rng.push({ type: tag.slice(1), side: sideOf(rngSlot), pokemon: speciesForSlot(activeSpeciesBySlot, rngSlot), value: cleanText(parts[3]) });
         currentTurn.events.push({ type: tag.slice(1), side: sideOf(rngSlot), pokemon: speciesForSlot(activeSpeciesBySlot, rngSlot), text: raw });
+        return;
+      }
+
+      if (tag === 'cant') {
+        var cantSlot = parts[2];
+        currentTurn.actionDenials.push({
+          type: 'cant',
+          side: sideOf(cantSlot),
+          pokemon: speciesForSlot(activeSpeciesBySlot, cantSlot),
+          reason: cleanText(parts[3]),
+          move: cleanText(parts[4]),
+          text: raw
+        });
+        currentTurn.events.push({ type: 'cant', side: sideOf(cantSlot), pokemon: speciesForSlot(activeSpeciesBySlot, cantSlot), reason: cleanText(parts[3]), text: raw });
+        return;
+      }
+
+      if (tag === '-ability') {
+        var abilitySlot = parts[2];
+        currentTurn.abilities.push({
+          type: 'ability',
+          side: sideOf(abilitySlot),
+          pokemon: speciesForSlot(activeSpeciesBySlot, abilitySlot),
+          ability: cleanText(parts[3]),
+          detail: cleanText(parts.slice(4).join('|')),
+          text: raw
+        });
+        currentTurn.events.push({ type: 'ability', side: sideOf(abilitySlot), pokemon: speciesForSlot(activeSpeciesBySlot, abilitySlot), ability: cleanText(parts[3]), text: raw });
+        return;
+      }
+
+      if (tag === '-item' || tag === '-enditem' || tag === '-activate') {
+        var itemSlot = parts[2];
+        currentTurn.items.push({
+          type: tag.slice(1),
+          side: sideOf(itemSlot),
+          pokemon: speciesForSlot(activeSpeciesBySlot, itemSlot),
+          item: cleanText(parts[3]),
+          detail: cleanText(parts.slice(4).join('|')),
+          text: raw
+        });
+        currentTurn.events.push({ type: tag.slice(1), side: sideOf(itemSlot), pokemon: speciesForSlot(activeSpeciesBySlot, itemSlot), item: cleanText(parts[3]), text: raw });
+        return;
+      }
+
+      if (tag === '-singleturn') {
+        var singleSlot = parts[2];
+        currentTurn.singleTurn.push({
+          type: 'singleturn',
+          side: sideOf(singleSlot),
+          pokemon: speciesForSlot(activeSpeciesBySlot, singleSlot),
+          effect: cleanText(parts[3]),
+          text: raw
+        });
+        currentTurn.events.push({ type: 'singleturn', side: sideOf(singleSlot), pokemon: speciesForSlot(activeSpeciesBySlot, singleSlot), effect: cleanText(parts[3]), text: raw });
+        return;
+      }
+
+      if (tag === '-supereffective' || tag === '-resisted') {
+        var effSlot = parts[2];
+        currentTurn.effectiveness.push({
+          type: tag.slice(1),
+          side: sideOf(effSlot),
+          pokemon: speciesForSlot(activeSpeciesBySlot, effSlot),
+          text: raw
+        });
+        currentTurn.events.push({ type: tag.slice(1), side: sideOf(effSlot), pokemon: speciesForSlot(activeSpeciesBySlot, effSlot), text: raw });
+        return;
       }
     });
 
@@ -1429,6 +1541,200 @@
     return byTurn;
   }
 
+  function buildActionDenialCards(parsed, side) {
+    var opp = side === 'p1' ? 'p2' : 'p1';
+    var cards = [];
+    (parsed.turns || []).forEach(function(turn) {
+      var rows = [];
+      (turn.actionDenials || []).forEach(function(row) {
+        rows.push({
+          turn: turn.number,
+          side: row.side,
+          pokemon: row.pokemon,
+          move: row.move || '',
+          reason: row.reason || 'blocked',
+          type: 'cant',
+          text: row.text || ''
+        });
+      });
+      (turn.rng || []).forEach(function(row) {
+        if (row.type === 'miss' || row.type === 'fail' || row.type === 'immune') {
+          rows.push({
+            turn: turn.number,
+            side: row.side,
+            pokemon: row.pokemon,
+            move: row.value || '',
+            reason: row.type,
+            type: row.type,
+            text: row.text || ''
+          });
+        }
+      });
+      rows.forEach(function(row) {
+        var playerOwned = row.side === side;
+        var opponentOwned = row.side === opp;
+        var reason = cleanText(row.reason || row.type || 'blocked');
+        var moveText = row.move ? ' while trying to use ' + row.move : '';
+        var subject = (playerOwned ? 'Your ' : (opponentOwned ? 'Their ' : '')) + (row.pokemon || 'Pokemon');
+        var label = reason === 'flinch' ? 'Flinch skipped action'
+          : reason === 'miss' ? 'Move missed'
+          : reason === 'immune' ? 'Target was immune'
+          : reason === 'fail' ? 'Move failed'
+          : 'Action denied';
+        cards.push({
+          turn: row.turn,
+          side: row.side,
+          pokemon: row.pokemon || '',
+          move: row.move || '',
+          reason: reason,
+          label: label,
+          severity: playerOwned ? 'high' : (opponentOwned ? 'good' : 'medium'),
+          confidence: 'high',
+          whatHappened: subject + ' could not complete its action' + moveText + ' because of ' + reason + '.',
+          whyItMattered: playerOwned
+            ? 'A skipped or failed action can give the opponent a free setup, damage, switch, or speed-control turn.'
+            : 'Denying an opposing action is real tempo. The next check is whether you converted that denied turn into damage, positioning, or preservation.',
+          doNext: playerOwned
+            ? 'Check whether the denial was preventable: Fake Out timing, flinch risk, immunity, Protect, terrain, priority blocking, typing, or targeting.'
+            : 'When you deny an action, plan the follow-up before the opponent resets position.',
+          evidence: row.text || (reason + ' on turn ' + row.turn)
+        });
+      });
+    });
+    return cards;
+  }
+
+  function buildAbilityItemImpactCards(parsed, side) {
+    var opp = side === 'p1' ? 'p2' : 'p1';
+    var cards = [];
+    (parsed.turns || []).forEach(function(turn) {
+      var rows = [];
+      (turn.abilities || []).forEach(function(row) {
+        rows.push({
+          kind: 'ability',
+          turn: turn.number,
+          side: row.side,
+          pokemon: row.pokemon,
+          name: row.ability || '',
+          detail: row.detail || '',
+          text: row.text || ''
+        });
+      });
+      (turn.items || []).forEach(function(row) {
+        rows.push({
+          kind: row.type || 'item',
+          turn: turn.number,
+          side: row.side,
+          pokemon: row.pokemon,
+          name: row.item || '',
+          detail: row.detail || '',
+          text: row.text || ''
+        });
+      });
+      rows.forEach(function(row) {
+        var playerOwned = row.side === side;
+        var opponentOwned = row.side === opp;
+        var source = (playerOwned ? 'Your ' : (opponentOwned ? 'Their ' : '')) + (row.pokemon || 'Pokemon');
+        var kindLabel = row.kind === 'ability' ? 'Ability activation'
+          : row.kind === 'enditem' ? 'Item consumed'
+          : row.kind === 'activate' ? 'Effect activation'
+          : 'Item revealed';
+        cards.push({
+          turn: row.turn,
+          side: row.side,
+          pokemon: row.pokemon || '',
+          sourceName: row.name || '',
+          kind: row.kind,
+          label: kindLabel,
+          severity: playerOwned ? 'medium' : 'low',
+          confidence: 'high',
+          whatHappened: source + ' triggered or revealed ' + (row.name || 'an effect') + '.',
+          whyItMattered: row.kind === 'ability'
+            ? 'Ability timing can change stats, weather, targeting, damage, or whether a plan is safe.'
+            : 'Item timing can change survival math, contact punishment, damage thresholds, or whether the next attack still KOs.',
+          doNext: playerOwned
+            ? 'Track whether this effect preserved your win condition or created the next turn you wanted.'
+            : 'Ask whether your line accounted for that ability/item before committing damage, Fake Out, or a target.'
+          ,
+          evidence: row.text || (row.name + ' on turn ' + row.turn)
+        });
+      });
+    });
+    return cards;
+  }
+
+  function buildMegaTimingCards(parsed, side) {
+    var opp = side === 'p1' ? 'p2' : 'p1';
+    var cards = [];
+    (parsed.turns || []).forEach(function(turn) {
+      (turn.formChanges || []).forEach(function(row) {
+        var isMega = row.type === 'mega' || /-Mega/i.test(row.pokemon || row.details || '');
+        if (!isMega) return;
+        var playerOwned = row.side === side;
+        var opponentOwned = row.side === opp;
+        var source = (playerOwned ? 'Your ' : (opponentOwned ? 'Their ' : '')) + (row.baseSpecies || row.previousPokemon || row.pokemon || 'Pokemon');
+        cards.push({
+          turn: row.turn || turn.number,
+          side: row.side,
+          pokemon: row.pokemon || '',
+          baseSpecies: row.baseSpecies || row.previousPokemon || '',
+          item: row.item || '',
+          label: 'Mega timing',
+          severity: playerOwned ? 'medium' : 'low',
+          confidence: 'high',
+          whatHappened: source + ' changed into ' + (row.pokemon || 'a Mega form') + (row.item ? ' with ' + row.item : '') + '.',
+          whyItMattered: 'Mega timing can change stats, type, ability, weather, damage ranges, and whether the opponent can safely target or outspeed it.',
+          doNext: playerOwned
+            ? 'Check whether the Mega turn immediately created pressure, weather, Intimidate-style value, or a safer endgame.'
+            : 'Check whether your turn respected the new form, typing, ability, and damage thresholds after Mega Evolution.',
+          evidence: row.text || 'Mega/form change protocol row'
+        });
+      });
+    });
+    return cards;
+  }
+
+  function buildDamageContextCards(parsed, side) {
+    var opp = side === 'p1' ? 'p2' : 'p1';
+    var cards = [];
+    (parsed.turns || []).forEach(function(turn) {
+      var effectivenessByPokemon = {};
+      (turn.effectiveness || []).forEach(function(row) {
+        if (!row || !row.pokemon) return;
+        (effectivenessByPokemon[row.pokemon] = effectivenessByPokemon[row.pokemon] || []).push(row.type);
+      });
+      (turn.damage || []).forEach(function(row) {
+        if (!row || !row.pokemon) return;
+        var effects = effectivenessByPokemon[row.pokemon] || [];
+        if (!effects.length && !(row.hp != null && Number(row.hp) <= 50)) return;
+        var playerOwned = row.side === side;
+        var opponentOwned = row.side === opp;
+        var label = effects.indexOf('supereffective') >= 0 ? 'Super-effective pressure'
+          : effects.indexOf('resisted') >= 0 ? 'Resisted damage'
+          : 'Major damage threshold';
+        cards.push({
+          turn: turn.number,
+          side: row.side,
+          pokemon: row.pokemon || '',
+          hp: row.hp,
+          effects: effects,
+          label: label,
+          severity: playerOwned ? 'high' : 'good',
+          confidence: effects.length ? 'high' : 'medium',
+          whatHappened: (playerOwned ? 'Your ' : (opponentOwned ? 'Their ' : '')) + (row.pokemon || 'Pokemon') + ' was left at ' + (row.hp == null ? 'unknown HP' : row.hp + '%') + (effects.length ? ' after ' + effects.join(' / ') + ' damage context.' : '.'),
+          whyItMattered: playerOwned
+            ? 'Taking large or super-effective damage changes whether that Pokemon can still preserve the win condition or safely stay in.'
+            : 'Meaningful damage only matters if it creates a KO threat, forces Protect, or changes the opponent switch/target decision.',
+          doNext: playerOwned
+            ? 'Check whether a switch, Protect, redirection, or target change would have preserved this Pokemon.'
+            : 'Check whether you converted this damage into a KO, forced Protect, or better board position before they recovered or switched.',
+          evidence: row.cause || row.text || 'damage/effectiveness protocol rows'
+        });
+      });
+    });
+    return cards;
+  }
+
   function buildReplayCoachReview(parsed, opts) {
     opts = opts || {};
     var side = normalizeSide(opts.selectedSide || parsed.selectedSide || 'p1');
@@ -1641,6 +1947,10 @@
     var confidence = parsed.warnings.length ? 'medium' : 'high';
     if (!parsed.ok) confidence = 'low';
     var turnTimeline = buildTurnTimeline(parsed, side, issues);
+    var actionDenialCards = buildActionDenialCards(parsed, side);
+    var abilityItemImpactCards = buildAbilityItemImpactCards(parsed, side);
+    var megaTimingCards = buildMegaTimingCards(parsed, side);
+    var damageContextCards = buildDamageContextCards(parsed, side);
 
     var review = {
       summary: {
@@ -1665,6 +1975,10 @@
         confidence: confidence
       },
       coachingTags: issues.slice(0, 12),
+      actionDenialCards: actionDenialCards.slice(0, 12),
+      abilityItemImpactCards: abilityItemImpactCards.slice(0, 12),
+      megaTimingCards: megaTimingCards.slice(0, 12),
+      damageContextCards: damageContextCards.slice(0, 12),
       criticalTurn: {
         turn: criticalTurn,
         firstMistake: firstMistake,

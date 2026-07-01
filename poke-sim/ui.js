@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.75-mega-battle-effect-proof'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.76-battle-sensei-html-replay-coaching'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8038,6 +8038,31 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<small>' + (tag.evidence ? 'Evidence: ' + _escapeHtml(tag.evidence) + ' · ' : '') + 'Confidence: ' + _escapeHtml(tag.confidence || 'medium') + (tag.turn ? ' · Turn ' + _escapeHtml(String(tag.turn)) : '') + '</small>' +
       '</div>';
   }).join('');
+  var actionDenialRows = (review.actionDenialCards || []).map(function(card) {
+    var cls = card.severity === 'good' ? 'low' : csReplayCoachSeverityClass(card.severity);
+    return '<div class="replay-coach-list-row">' +
+      '<strong>' + _escapeHtml(card.label || 'Action denied') + ' · Turn ' + _escapeHtml(String(card.turn || '?')) + '</strong>' +
+      '<div><b>What happened:</b> ' + _escapeHtml(card.whatHappened || '') + '</div>' +
+      '<div><b>Why it mattered:</b> ' + _escapeHtml(card.whyItMattered || '') + '</div>' +
+      '<div><b>Next check:</b> ' + _escapeHtml(card.doNext || '') + '</div>' +
+      '<small><span class="replay-coach-tag ' + _escapeHtml(cls) + '">' + _escapeHtml(card.severity || 'medium') + '</span> Evidence: ' + _escapeHtml(card.evidence || 'replay protocol row') + ' · Confidence: ' + _escapeHtml(card.confidence || 'medium') + '</small>' +
+      '</div>';
+  }).join('');
+  function csRenderEvidenceCardRows(cards) {
+    return (cards || []).map(function(card) {
+      var cls = card.severity === 'good' ? 'low' : csReplayCoachSeverityClass(card.severity);
+      return '<div class="replay-coach-list-row">' +
+        '<strong>' + _escapeHtml(card.label || 'Evidence') + ' · Turn ' + _escapeHtml(String(card.turn || '?')) + '</strong>' +
+        '<div><b>What happened:</b> ' + _escapeHtml(card.whatHappened || '') + '</div>' +
+        '<div><b>Why it mattered:</b> ' + _escapeHtml(card.whyItMattered || '') + '</div>' +
+        '<div><b>Next check:</b> ' + _escapeHtml(card.doNext || '') + '</div>' +
+        '<small><span class="replay-coach-tag ' + _escapeHtml(cls) + '">' + _escapeHtml(card.severity || 'medium') + '</span> Evidence: ' + _escapeHtml(card.evidence || 'replay protocol row') + ' · Confidence: ' + _escapeHtml(card.confidence || 'medium') + '</small>' +
+        '</div>';
+    }).join('');
+  }
+  var abilityItemRows = csRenderEvidenceCardRows(review.abilityItemImpactCards || []);
+  var megaTimingRows = csRenderEvidenceCardRows(review.megaTimingCards || []);
+  var damageContextRows = csRenderEvidenceCardRows(review.damageContextCards || []);
   var turns = (review.turnTimeline || []).slice(0, 80).map(function(turn) {
     var events = (turn.events || []).slice(0, 8).map(function(ev) { return _escapeHtml(ev); }).filter(Boolean);
     var tags = (turn.tags || []).map(function(tag) {
@@ -8183,6 +8208,22 @@ function csReplayCoachRenderAnalysis(analysis) {
     '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Coaching Tags</h3>' +
       '<div class="replay-coach-list">' + (tags || '<div class="replay-coach-list-row"><strong>No major issue detected</strong>Upload more complete logs to build stronger coaching confidence.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Action Denial Review</h3>' +
+      '<div class="replay-coach-list">' + (actionDenialRows || '<div class="replay-coach-list-row"><strong>No skipped or blocked actions found</strong>This replay did not expose flinch, miss, fail, or immunity rows in the parsed protocol.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Ability / Item Impact Review</h3>' +
+      '<div class="replay-coach-list">' + (abilityItemRows || '<div class="replay-coach-list-row"><strong>No ability or item impact rows found</strong>This replay did not expose ability, item, consumption, or activation rows in the parsed protocol.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Mega Timing Review</h3>' +
+      '<div class="replay-coach-list">' + (megaTimingRows || '<div class="replay-coach-list-row"><strong>No Mega timing rows found</strong>This replay did not expose Mega or form-change rows in the parsed protocol.</div>') + '</div>' +
+    '</div>' +
+    '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Damage Context Review</h3>' +
+      '<div class="replay-coach-list">' + (damageContextRows || '<div class="replay-coach-list-row"><strong>No major damage-context rows found</strong>This replay did not expose super-effective, resisted, or major HP-threshold rows for this review.</div>') + '</div>' +
     '</div>' +
     (evidenceStandard ? '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Evidence Standard</h3>' +
@@ -8452,7 +8493,7 @@ function csInitReplayCoachUi() {
       }
       csReplayCoachRenderAnalysis(analysis);
       var parsedTurns = analysis && analysis.parsed ? analysis.parsed.totalTurns : 0;
-      setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only and not saved.');
+      setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only unless you export or save it later.');
     } catch (e) {
       setStatus('Could not analyze replay: ' + (e && e.message ? e.message : 'unknown error'), true);
     }
@@ -8463,7 +8504,7 @@ function csInitReplayCoachUi() {
     if (rosterEl) rosterEl.value = '';
     setStatus('');
     var host = document.getElementById('replay-coach-results');
-    if (host) host.innerHTML = '<div class="replay-coach-empty">Paste a log and run analysis to see result, leads, critical turn, coaching tags, and a readable turn timeline.</div>';
+    if (host) host.innerHTML = '<div class="replay-coach-empty"><strong>Ready for match review.</strong><span>Upload a Showdown HTML replay or paste a log to see result, leads, critical turn, coaching tags, and a readable turn timeline.</span></div>';
   });
 
   if (uploadBtn && fileEl) {
@@ -8477,7 +8518,8 @@ function csInitReplayCoachUi() {
         var raw = String(reader.result || '');
         var normalized = api && typeof api.normalizeReplayLogInput === 'function' ? api.normalizeReplayLogInput(raw) : raw;
         logEl.value = normalized;
-        setStatus('Loaded ' + file.name + '. Run analysis when ready.');
+        var htmlReplay = /\.html?$/i.test(file.name || '') || /^text\/html/i.test(file.type || '');
+        setStatus('Loaded ' + file.name + (htmlReplay ? ' as Showdown HTML replay evidence.' : '.') + ' Run analysis when ready.');
       };
       reader.onerror = function() { setStatus('Could not read that file.', true); };
       reader.readAsText(file);

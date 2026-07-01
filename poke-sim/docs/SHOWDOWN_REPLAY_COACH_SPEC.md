@@ -474,7 +474,9 @@ Definitions:
 Battle Sensei page:
 
 - paste log
-- upload `.txt`
+- upload Showdown replay `.html` as the preferred player-match feed
+- upload `.txt` / `.log` raw logs as fallback inputs
+- load replay URL
 - select side
 - select review mode
 - hide raw log by default
@@ -536,6 +538,29 @@ Recommended entities:
 - player_pattern_snapshots
 
 Raw logs are optional and should be user-controlled because they may contain usernames or private notes.
+
+Showdown HTML replay files are also user-controlled raw evidence. They may be used for local feedback, sim calibration targets, and future profile history when the user explicitly saves them. They must not automatically rewrite official Champion legality, mechanics truth, or global leaderboard rankings.
+
+Current protocol bridge:
+
+- `-ability` rows become structured ability evidence.
+- `-item`, `-enditem`, and `-activate` rows become structured item/activation evidence.
+- `cant` rows become structured action-denial evidence.
+- `detailschange`, `formechange`, and `-mega` rows become structured form-change evidence.
+- `-singleturn` rows become structured single-turn protection/effect evidence.
+- `-supereffective` and `-resisted` rows become structured matchup/effectiveness evidence.
+
+These rows are the next feed for explaining why a real match turn worked or failed: blocked moves, flinch turns, Mega timing, item activation, ability activation, spread pressure, and matchup damage context.
+
+Visible cards shipped from this bridge:
+
+- `Action Denial Review` explains `cant`, miss, fail, and immunity rows.
+- It separates player-side denied actions from opponent-side denied actions.
+- It tells the player what happened, why the skipped/blocked action mattered, and what to check next.
+- It remains replay-evidence only; it does not infer hidden opponent intent or rewrite simulator rules.
+- `Ability / Item Impact Review` explains ability, item, consumption, and activation rows.
+- `Mega Timing Review` explains Mega/form-change timing and why the new form can change the board.
+- `Damage Context Review` explains super-effective, resisted, and major HP-threshold damage context.
 
 Data retention policy:
 

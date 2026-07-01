@@ -876,18 +876,28 @@ table{border-collapse:collapse;width:100%}
 .replay-coach-shell{display:flex;flex-direction:column;gap:var(--sp4)}
 .replay-coach-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp3)}
 .replay-coach-privacy{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(78,201,148,.35);background:rgba(78,201,148,.08);color:var(--green);border-radius:var(--r-full);padding:5px 10px;font-size:10px;font-weight:800;font-family:var(--font-mono);letter-spacing:.04em;white-space:nowrap}
+.replay-coach-intake-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp3);padding:var(--sp3);border:1px solid rgba(91,164,245,.24);border-radius:var(--r-lg);background:linear-gradient(135deg,rgba(91,164,245,.09),rgba(78,201,148,.055))}
+.replay-coach-intake-strip div{padding:var(--sp3);border:1px solid rgba(255,255,255,.06);border-radius:var(--r-md);background:rgba(8,14,24,.16);min-width:0}
+.replay-coach-intake-strip strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-family:var(--font-mono);color:var(--blue);margin-bottom:5px}
+.replay-coach-intake-strip span{display:block;color:var(--text-m);font-size:12px;line-height:1.45}
 .replay-coach-grid{display:grid;grid-template-columns:minmax(320px,420px) minmax(0,1fr);gap:var(--sp4);align-items:start}
 .replay-coach-input-card,.replay-coach-summary-card,.replay-coach-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp4);box-shadow:var(--sh-sm);min-width:0}
 .replay-coach-card-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp2);margin-bottom:var(--sp3)}
+.replay-coach-upload-panel{display:grid;gap:8px;padding:var(--sp3);margin-bottom:var(--sp3);border:1px dashed rgba(91,164,245,.44);border-radius:var(--r-md);background:linear-gradient(135deg,rgba(91,164,245,.08),rgba(245,197,66,.045))}
+.replay-coach-upload-panel .btn-primary{width:100%;justify-content:center}
+.replay-coach-upload-panel span{font-size:11px;line-height:1.45;color:var(--text-m)}
 .replay-coach-url-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sp2);align-items:center;margin-bottom:var(--sp3)}
 .replay-coach-textarea{width:100%;min-height:260px;padding:var(--sp3);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);font-family:var(--font-mono),monospace;font-size:11px;line-height:1.65;resize:vertical;transition:border-color var(--tr);-webkit-appearance:none;overflow-wrap:normal;word-break:normal;white-space:pre;overflow:auto}
 .replay-coach-textarea:focus{outline:none;border-color:var(--primary)}
 .replay-coach-controls{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp2);align-items:end;margin-top:var(--sp3)}
 .replay-coach-controls .btn-primary,.replay-coach-controls .btn-secondary{width:100%;justify-content:center}
+.replay-coach-source-note{grid-column:1/-1;padding:9px 10px;border:1px solid rgba(245,197,66,.28);border-radius:var(--r-md);background:rgba(245,197,66,.06);color:var(--text-m);font-size:11px;line-height:1.45}
 .replay-coach-status{min-height:18px;margin-top:var(--sp2);font-size:11px;color:var(--text-m)}
 .replay-coach-status.error{color:var(--red)}
 .replay-coach-results{display:flex;flex-direction:column;gap:var(--sp3);min-width:0}
-.replay-coach-empty{border:1px dashed var(--border);border-radius:var(--r-lg);padding:var(--sp8);color:var(--text-m);font-size:var(--text-sm);text-align:center;background:var(--surface)}
+.replay-coach-empty{display:grid;gap:8px;border:1px dashed var(--border);border-radius:var(--r-lg);padding:var(--sp8);color:var(--text-m);font-size:var(--text-sm);text-align:center;background:linear-gradient(135deg,var(--surface),rgba(91,164,245,.045))}
+.replay-coach-empty strong{display:block;color:var(--text);font-size:18px}
+.replay-coach-empty span{display:block;line-height:1.5}
 .replay-coach-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp2)}
 .replay-coach-turn0-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp3);margin-top:var(--sp3)}
 .replay-roster-grid{display:grid;gap:8px;margin-top:var(--sp3)}
@@ -1009,7 +1019,7 @@ table{border-collapse:collapse;width:100%}
 .team-legality-note strong{display:block;color:var(--red);font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-family:var(--font-mono);margin-bottom:4px}
 .team-legality-note span{display:block;overflow-wrap:anywhere}
 .team-legality-note small{display:block;color:var(--text-m);margin-top:4px}
-@media(max-width:900px){.replay-coach-grid{grid-template-columns:1fr}.replay-coach-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.replay-coach-turn0-grid,.replay-turn-roster{grid-template-columns:1fr}}
+@media(max-width:900px){.replay-coach-grid,.replay-coach-intake-strip{grid-template-columns:1fr}.replay-coach-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.replay-coach-turn0-grid,.replay-turn-roster{grid-template-columns:1fr}}
 @media(max-width:560px){
   .replay-coach-input-card,.replay-coach-summary-card,.replay-coach-card{padding:var(--sp3)}
   .replay-coach-url-row{grid-template-columns:1fr}

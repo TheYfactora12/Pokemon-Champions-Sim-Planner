@@ -387,6 +387,59 @@ T('17. recognizes planned speed transition after Trick Room ends from structured
   eq(turn.stateShift, 'Planned speed transition', 'turn state shift');
 });
 
+T('18. structures real-match protocol rows used by coaching feed', () => {
+  const replay = [
+    '|player|p1|Alice',
+    '|player|p2|Bob',
+    '|gametype|doubles',
+    '|poke|p1|Manectric, L50, M|',
+    '|poke|p1|Sneasler, L50, M|',
+    '|poke|p2|Garchomp, L50, M|',
+    '|poke|p2|Torkoal, L50, M|',
+    '|start',
+    '|switch|p1a: Manectric|Manectric, L50, M|100/100',
+    '|switch|p1b: Sneasler|Sneasler, L50, M|100/100',
+    '|switch|p2a: Garchomp|Garchomp, L50, M|100/100',
+    '|switch|p2b: Torkoal|Torkoal, L50, M|100/100',
+    '|turn|1',
+    '|-mega|p1a: Manectric|Manectric|Manectite',
+    '|detailschange|p1a: Manectric|Manectric-Mega, L50, M|100/100',
+    '|-ability|p1a: Manectric|Intimidate|boost',
+    '|-unboost|p2a: Garchomp|atk|1',
+    '|move|p1b: Sneasler|Fake Out|p2b: Torkoal',
+    '|-singleturn|p2b: Torkoal|move: Protect',
+    '|cant|p2b: Torkoal|flinch|Eruption',
+    '|move|p2a: Garchomp|Earthquake|p1a: Manectric|[spread] p1b',
+    '|-supereffective|p1a: Manectric',
+    '|-resisted|p1b: Sneasler',
+    '|-damage|p1a: Manectric|40/100',
+    '|-item|p1a: Manectric|Sitrus Berry',
+    '|-heal|p1a: Manectric|65/100|[from] item: Sitrus Berry',
+    '|-enditem|p1a: Manectric|Sitrus Berry',
+    '|-activate|p2a: Garchomp|ability: Rough Skin',
+    '|win|Alice'
+  ].join('\n');
+  const parsed = replayCoach.parseShowdownLog(replay, { selectedSide: 'p1' });
+  const turn1 = parsed.turns.find((t) => t.number === 1);
+  truthy(turn1, 'turn 1 missing');
+  truthy(turn1.formChanges.some((row) => row.type === 'mega' && row.pokemon === 'Manectric-Mega'), 'mega form row missing');
+  truthy(turn1.formChanges.some((row) => row.type === 'detailschange' && row.pokemon === 'Manectric-Mega'), 'detailschange row missing');
+  truthy(turn1.abilities.some((row) => row.ability === 'Intimidate' && row.pokemon === 'Manectric-Mega'), 'ability row missing');
+  truthy(turn1.actionDenials.some((row) => row.reason === 'flinch' && row.move === 'Eruption'), 'cant/action denial row missing');
+  truthy(turn1.singleTurn.some((row) => row.effect === 'move: Protect'), 'single-turn row missing');
+  truthy(turn1.effectiveness.some((row) => row.type === 'supereffective' && row.pokemon === 'Manectric-Mega'), 'supereffective row missing');
+  truthy(turn1.effectiveness.some((row) => row.type === 'resisted' && row.pokemon === 'Sneasler'), 'resisted row missing');
+  truthy(turn1.items.some((row) => row.type === 'item' && row.item === 'Sitrus Berry'), 'item row missing');
+  truthy(turn1.items.some((row) => row.type === 'enditem' && row.item === 'Sitrus Berry'), 'enditem row missing');
+  truthy(turn1.items.some((row) => row.type === 'activate' && /Rough Skin/.test(row.item)), 'activate row missing');
+  const review = replayCoach.buildReplayCoachReview(parsed, { selectedSide: 'p1' });
+  truthy(review.actionDenialCards.some((row) => row.reason === 'flinch' && row.move === 'Eruption'), 'action denial card missing');
+  truthy(review.abilityItemImpactCards.some((row) => row.kind === 'ability' && row.sourceName === 'Intimidate'), 'ability impact card missing');
+  truthy(review.abilityItemImpactCards.some((row) => row.kind === 'item' && row.sourceName === 'Sitrus Berry'), 'item impact card missing');
+  truthy(review.megaTimingCards.some((row) => row.pokemon === 'Manectric-Mega'), 'mega timing card missing');
+  truthy(review.damageContextCards.some((row) => row.pokemon === 'Manectric-Mega' && row.effects.includes('supereffective')), 'damage context card missing');
+});
+
 runTests().then(() => {
   console.log(`\nBattle Sensei parser: ${pass} pass, ${fail} fail\n`);
   process.exit(fail ? 1 : 0);

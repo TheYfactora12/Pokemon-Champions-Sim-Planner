@@ -77,6 +77,48 @@ The command writes:
 
 Codex should read the markdown first, then inspect `proof_manifest` and `codex_context` in the source artifact if a readiness item is yellow or red.
 
+## Showdown HTML replay workflow
+
+Downloaded Showdown replay HTML files are first-class player-match evidence for coaching, match review, and sim calibration.
+
+Default Mac replay folder:
+
+```text
+/Users/kevinmedeiros/Downloads/battles
+```
+
+Run:
+
+```bash
+cd poke-sim
+npm run showdown:replays
+```
+
+Use another folder:
+
+```bash
+npm run showdown:replays -- --replay-dir /path/to/battles
+```
+
+Only ingest the newest replay:
+
+```bash
+npm run showdown:replays -- --latest
+```
+
+The command writes:
+
+- `reports/showdown-replay-context-latest.json`
+- `reports/showdown-replay-context-latest.md`
+
+Boundary:
+
+- Showdown HTML replays are replay/meta/coaching evidence.
+- They can teach what happened in real matches, reveal common lines, and generate sim calibration targets.
+- They must not overwrite official Champion legality or mechanic truth.
+- Unknown team IDs stay mapped as `showdown:p1:*` / `showdown:p2:*` until linked to Team Lab teams.
+- Structured app-specific `damage_events` are not reconstructed by the importer yet; raw Showdown protocol events are preserved for the next parser layer.
+
 ## Boundary
 
 Raw QA artifacts should stay in the Mac drop folder, not GitHub. Commit only compact summaries when the team needs handoff context:
