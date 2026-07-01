@@ -555,12 +555,6 @@ table{border-collapse:collapse;width:100%}
 .team-lab-admin-status{font-family:var(--font-mono);font-size:10px!important;color:var(--gold)!important}
 .team-lab-admin-controls button{min-height:38px;border:1px solid rgba(255,85,59,.46);background:linear-gradient(135deg,rgba(255,85,59,.18),rgba(245,197,66,.1));color:var(--text);border-radius:var(--r-full);padding:7px 13px;font-size:11px;font-weight:950;cursor:pointer;white-space:nowrap}
 .team-lab-admin-controls button:hover,.team-lab-admin-controls button:focus-visible{transform:translateY(-1px);border-color:var(--orange);outline:none}
-.team-lab-news-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp3);margin-bottom:var(--sp4)}
-.team-lab-news-card{border:1px solid rgba(91,164,245,.28);border-radius:var(--r-md);background:rgba(255,255,255,.035);padding:var(--sp3);min-width:0;box-shadow:var(--sh-sm)}
-.team-lab-news-card span{display:block;font-family:var(--font-mono);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:8px}
-.team-lab-news-card h4{font-size:14px;font-weight:950;line-height:1.18}
-.team-lab-news-card p{color:var(--text-m);font-size:12px;line-height:1.45;margin-top:7px}
-.team-lab-news-card strong{display:inline-flex;margin-top:10px;border:1px solid rgba(245,197,66,.38);background:rgba(245,197,66,.08);color:var(--gold);border-radius:var(--r-full);padding:4px 8px;font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em}
 .team-lab-leaderboard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp3);margin:var(--sp2) 0 var(--sp3)}
 .team-lab-leaderboard-head h4{font-size:var(--text-lg);font-weight:950;letter-spacing:-.02em}
 .team-lab-leaderboard-head p{color:var(--text-m);font-size:12px;line-height:1.45;margin-top:4px}
@@ -568,9 +562,9 @@ table{border-collapse:collapse;width:100%}
 .team-lab-top25-table td:first-child,.team-lab-top25-table th:first-child{font-family:var(--font-mono);font-weight:900;text-transform:uppercase}
 @media(max-width:700px){.overview-milestone-summary{flex-direction:column}.overview-milestone-counts{justify-content:flex-start;min-width:0}.overview-buckets{padding:0 var(--sp3) var(--sp3)}}
 
-@media(max-width:1100px){.team-lab-news-grid,.team-lab-gate-grid,.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1100px){.team-lab-gate-grid,.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-hero,.pokemon-news-slide.active{grid-template-columns:1fr}.home-trust-strip{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:220px}}
-@media(max-width:560px){.overview-header{gap:var(--sp3)}.overview-updated{white-space:normal}.overview-metrics{grid-template-columns:1fr}.overview-section{padding:var(--sp3)}.overview-item{grid-template-columns:1fr;gap:6px}.overview-status{justify-self:start}.overview-section-head,.pokemon-news-feed-head,.team-lab-gates-head,.team-lab-admin-controls{align-items:flex-start;flex-direction:column;gap:6px}.overview-kicker{white-space:normal}.overview-db-summary,.overview-db-counts{grid-template-columns:1fr}.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip,.team-lab-news-grid,.team-lab-gate-grid{grid-template-columns:1fr}.home-quick-plan-rows article{grid-template-columns:1fr;align-items:start}.home-sim-output-head{display:grid;text-align:left}.home-sim-output-head strong{text-align:left}.team-lab-leaderboard-head{flex-direction:column}.team-lab-gate-actions{justify-content:flex-start;width:100%}.team-lab-gate-actions button,.team-lab-admin-controls button{width:100%}.pokemon-news-controls{width:100%;justify-content:flex-start}.pokemon-news-copy h4{font-size:24px}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-gates,.team-lab-admin-controls{padding:var(--sp3)}.home-landing-actions button{width:100%}}
+@media(max-width:560px){.overview-header{gap:var(--sp3)}.overview-updated{white-space:normal}.overview-metrics{grid-template-columns:1fr}.overview-section{padding:var(--sp3)}.overview-item{grid-template-columns:1fr;gap:6px}.overview-status{justify-self:start}.overview-section-head,.pokemon-news-feed-head,.team-lab-gates-head,.team-lab-admin-controls{align-items:flex-start;flex-direction:column;gap:6px}.overview-kicker{white-space:normal}.overview-db-summary,.overview-db-counts{grid-template-columns:1fr}.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip,.team-lab-gate-grid{grid-template-columns:1fr}.home-quick-plan-rows article{grid-template-columns:1fr;align-items:start}.home-sim-output-head{display:grid;text-align:left}.home-sim-output-head strong{text-align:left}.team-lab-leaderboard-head{flex-direction:column}.team-lab-gate-actions{justify-content:flex-start;width:100%}.team-lab-gate-actions button,.team-lab-admin-controls button{width:100%}.pokemon-news-controls{width:100%;justify-content:flex-start}.pokemon-news-copy h4{font-size:24px}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-gates,.team-lab-admin-controls{padding:var(--sp3)}.home-landing-actions button{width:100%}}
 
 /* ===== SIM LAYOUT ===== */
 .sim-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px minmax(0,1fr);gap:var(--sp4);align-items:start;margin-bottom:var(--sp6)}
@@ -41678,35 +41672,6 @@ function csRenderOverviewTeamLabPlan() {
   '</details>';
 }
 
-function csTeamLabNewsCards() {
-  return [
-    {
-      label: 'Regulation watch',
-      title: 'Reg M-B evidence gate',
-      detail: 'Champion regulation, ruleset, and source-package status must stay visible before any team can rank as current.',
-      status: 'Source-truth first'
-    },
-    {
-      label: 'QA signal',
-      title: 'Stress Lite proof is usable, not final',
-      detail: 'Latest tester artifact proved replay/damage/effect evidence on v2.2.50, but Stress Lite remains capped evidence, not exhaustive ladder truth.',
-      status: 'Needs promotion'
-    },
-    {
-      label: 'Build lane',
-      title: 'Top 25 requires trusted import',
-      detail: 'QA artifacts can normalize into sim_jobs/replays, but protected leaderboard storage still needs #187, #188, and #189.',
-      status: 'Open M15'
-    },
-    {
-      label: 'Player value',
-      title: 'Future home for teams and news',
-      detail: 'This hub should become the clean front page for Champion updates, source changes, top simulator teams, and safe compare-my-team entry points.',
-      status: 'UI direction'
-    }
-  ];
-}
-
 function csPokemonNewsFeedItems() {
   return [
     {
@@ -41748,6 +41713,26 @@ function csPokemonNewsFeedItems() {
       url: 'https://www.pokemon.com/us/pokemon-news/relive-the-eras-of-pokemon-vgc',
       image: 'https://champions.pokemon.com/_images/pokemon/ideal-team/en/featured-main.jpg',
       alt: 'Pokemon Champions team menu screenshot featuring Hydrapple.'
+    },
+    {
+      category: 'Source hub',
+      date: 'Live source watch',
+      title: 'Champion Sources Drive the Sim Trust Layer',
+      detail: 'Official pages, release notes, regulation checks, replay evidence, and source gaps decide what the simulator may claim.',
+      source: 'Battle Labs source-truth registry',
+      url: 'https://champions.pokemon.com/',
+      image: 'https://champions.pokemon.com/_images/home/overview/game-screenshot-2.png',
+      alt: 'Pokemon Champions overview screenshot.'
+    },
+    {
+      category: 'Release status',
+      date: 'Current build',
+      title: 'Evidence-First Rankings Are Locked Until Proven',
+      detail: 'Top teams stay experimental until legality, sample size, engine version, ruleset version, and stale checks line up.',
+      source: 'Battle Labs release and Team Lab gate',
+      url: 'https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/',
+      image: 'https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg',
+      alt: 'Pokemon Champions battle stadium.'
     }
   ];
 }
@@ -41771,7 +41756,7 @@ function csRenderPokemonNewsFeed() {
   }).join('');
   return '<section class="pokemon-news-feed" aria-label="Pokemon news feed">' +
     '<div class="pokemon-news-feed-head">' +
-      '<div><span class="overview-kicker">Official Pokemon news</span><h3>Latest Champion Updates</h3><p>Source-linked articles and official Champions imagery. Use this as player-facing news, not as mechanics truth until source rows are reviewed.</p></div>' +
+      '<div><span class="overview-kicker">News + source watch</span><h3>Latest Champion Updates</h3><p>Player news, regulation signals, and source-status cards. Mechanics truth still requires reviewed source rows.</p></div>' +
       '<div class="pokemon-news-controls">' +
         '<button type="button" data-news-prev aria-label="Previous news">Prev</button>' +
         '<button type="button" data-news-next aria-label="Next news">Next</button>' +
@@ -41868,17 +41853,6 @@ function csRenderHomeQuickPlan() {
       return '<article><span>' + _escapeHtml(row[0]) + '</span><strong>' + _escapeHtml(row[1]) + '</strong><p>' + _escapeHtml(row[2]) + '</p></article>';
     }).join('') + '</div>' +
   '</section>';
-}
-
-function csRenderTeamLabNewsCards() {
-  return csTeamLabNewsCards().map(function(card) {
-    return '<article class="team-lab-news-card">' +
-      '<span>' + _escapeHtml(card.label) + '</span>' +
-      '<h4>' + _escapeHtml(card.title) + '</h4>' +
-      '<p>' + _escapeHtml(card.detail) + '</p>' +
-      '<strong>' + _escapeHtml(card.status) + '</strong>' +
-    '</article>';
-  }).join('');
 }
 
 function csTeamLabTop25Rows() {
@@ -42210,34 +42184,20 @@ function csRenderTeamLabNewsroomHub() {
       '<article><span>02</span><strong>Review the battle</strong><p>Upload real Showdown logs to expose speed control, damage, status, field, item, and faint causes.</p></article>' +
       '<article><span>03</span><strong>Improve cleanly</strong><p>Change one move, item, lead, or lineup at a time so the next result teaches something real.</p></article>' +
     '</div>' +
-    csRenderHomeStartCycle() +
-    csRenderHomeSimPreview() +
-    csRenderHomeTrustStrip() +
     csRenderPokemonNewsFeed() +
-    '<div class="team-lab-hero">' +
-      '<div>' +
-        '<span class="overview-kicker">Team Lab home</span>' +
-        '<h3>' + (hasEvidenceRows ? 'Top 25 has evidence preview rows.' : 'Top 25 waits for proof.') + '</h3>' +
-        '<p>The leaderboard is not a hype list. Teams rank only when legality, sample size, engine version, ruleset version, matchup spread, and stale checks line up.</p>' +
-      '</div>' +
-      '<div class="team-lab-hero-badges">' +
-        '<span>' + (hasEvidenceRows ? 'DB evidence preview' : 'Top 25 locked') + '</span>' +
-        '<span>Simulator evidence only</span>' +
-        '<span>No ladder-truth overclaim</span>' +
-      '</div>' +
-    '</div>' +
-    csRenderTeamLabRankingGates() +
-    csRenderTeamLabAdminControls() +
-    '<div class="team-lab-news-grid">' + csRenderTeamLabNewsCards() + '</div>' +
     '<div class="team-lab-leaderboard-head">' +
-      '<div><h4>Top 25 Simulator Teams</h4><p>Ranking uses composite evidence: adjusted win rate, opponent strength, matchup coverage, confidence, source gaps, stale state, legality, regulation, engine version, and ruleset version.</p></div>' +
+      '<div><span class="overview-kicker">Team Lab leaderboard</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>Teams rank only when legality, sample size, engine/ruleset version, matchup spread, and stale checks line up.</p></div>' +
       '<span class="overview-status ' + (hasEvidenceRows ? 'warn' : 'gap') + '">' + (hasEvidenceRows ? 'Experimental preview' : 'Evidence locked') + '</span>' +
     '</div>' +
     '<div class="overview-db-table-wrap team-lab-top25-wrap"><table class="overview-db-table team-lab-top25-table">' +
       '<thead><tr><th>Rank</th><th>Team</th><th>Archetype</th><th>Score</th><th>Quality</th><th>Adj. win rate</th><th>Games</th><th>Confidence</th><th>Status</th></tr></thead>' +
       '<tbody data-team-lab-top25-body>' + csRenderTeamLabTop25Rows(previewRows) + '</tbody>' +
     '</table></div>' +
-    '<p class="overview-source-note">Future news cards can pull from the source registry and release notes. Until then, they show build/source readiness instead of pretending to be live Pokemon news.</p>' +
+    csRenderHomeStartCycle() +
+    csRenderHomeSimPreview() +
+    csRenderHomeTrustStrip() +
+    csRenderTeamLabRankingGates() +
+    csRenderTeamLabAdminControls() +
   '</section>';
 }
 

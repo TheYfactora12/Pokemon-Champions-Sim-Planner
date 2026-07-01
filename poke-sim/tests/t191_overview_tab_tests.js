@@ -252,7 +252,6 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.home-trust-strip');
   inc(css, '.pokemon-news-feed');
   inc(css, '.pokemon-news-slide.active');
-  inc(css, '.team-lab-news-grid');
   inc(css, '.team-lab-top25-table');
   inc(css, '.overview-db-counts');
   inc(css, '.overview-db-table');
@@ -307,8 +306,8 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function csInitHomeTabActions');
   inc(ui, 'function csPokemonNewsFeedItems');
   inc(ui, 'function csInitPokemonNewsCarousel');
-  inc(ui, 'Top 25 waits for proof.');
-  inc(ui, 'The leaderboard is not a hype list.');
+  inc(ui, 'Top 25 waits for proof');
+  inc(ui, 'Teams rank only when legality, sample size, engine/ruleset version, matchup spread, and stale checks line up.');
   inc(ui, 'function csTeamLabRankingGates');
   inc(ui, 'function csRenderTeamLabRankingGates');
   inc(ui, 'function csRenderTeamLabAdminControls');
@@ -329,7 +328,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Promotion rules');
   inc(ui, 'Generate sim evidence');
   inc(ui, 'Review replay proof');
-  inc(ui, 'Ranking uses composite evidence');
+  inc(ui, 'Team Lab leaderboard');
   inc(ui, 'Score');
   inc(ui, 'Quality');
   inc(ui, 'Admin QA controls');

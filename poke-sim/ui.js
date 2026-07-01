@@ -13388,35 +13388,6 @@ function csRenderOverviewTeamLabPlan() {
   '</details>';
 }
 
-function csTeamLabNewsCards() {
-  return [
-    {
-      label: 'Regulation watch',
-      title: 'Reg M-B evidence gate',
-      detail: 'Champion regulation, ruleset, and source-package status must stay visible before any team can rank as current.',
-      status: 'Source-truth first'
-    },
-    {
-      label: 'QA signal',
-      title: 'Stress Lite proof is usable, not final',
-      detail: 'Latest tester artifact proved replay/damage/effect evidence on v2.2.50, but Stress Lite remains capped evidence, not exhaustive ladder truth.',
-      status: 'Needs promotion'
-    },
-    {
-      label: 'Build lane',
-      title: 'Top 25 requires trusted import',
-      detail: 'QA artifacts can normalize into sim_jobs/replays, but protected leaderboard storage still needs #187, #188, and #189.',
-      status: 'Open M15'
-    },
-    {
-      label: 'Player value',
-      title: 'Future home for teams and news',
-      detail: 'This hub should become the clean front page for Champion updates, source changes, top simulator teams, and safe compare-my-team entry points.',
-      status: 'UI direction'
-    }
-  ];
-}
-
 function csPokemonNewsFeedItems() {
   return [
     {
@@ -13458,6 +13429,26 @@ function csPokemonNewsFeedItems() {
       url: 'https://www.pokemon.com/us/pokemon-news/relive-the-eras-of-pokemon-vgc',
       image: 'https://champions.pokemon.com/_images/pokemon/ideal-team/en/featured-main.jpg',
       alt: 'Pokemon Champions team menu screenshot featuring Hydrapple.'
+    },
+    {
+      category: 'Source hub',
+      date: 'Live source watch',
+      title: 'Champion Sources Drive the Sim Trust Layer',
+      detail: 'Official pages, release notes, regulation checks, replay evidence, and source gaps decide what the simulator may claim.',
+      source: 'Battle Labs source-truth registry',
+      url: 'https://champions.pokemon.com/',
+      image: 'https://champions.pokemon.com/_images/home/overview/game-screenshot-2.png',
+      alt: 'Pokemon Champions overview screenshot.'
+    },
+    {
+      category: 'Release status',
+      date: 'Current build',
+      title: 'Evidence-First Rankings Are Locked Until Proven',
+      detail: 'Top teams stay experimental until legality, sample size, engine version, ruleset version, and stale checks line up.',
+      source: 'Battle Labs release and Team Lab gate',
+      url: 'https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/',
+      image: 'https://champions.pokemon.com/_images/home/battle-focused/battle-stadium.jpg',
+      alt: 'Pokemon Champions battle stadium.'
     }
   ];
 }
@@ -13481,7 +13472,7 @@ function csRenderPokemonNewsFeed() {
   }).join('');
   return '<section class="pokemon-news-feed" aria-label="Pokemon news feed">' +
     '<div class="pokemon-news-feed-head">' +
-      '<div><span class="overview-kicker">Official Pokemon news</span><h3>Latest Champion Updates</h3><p>Source-linked articles and official Champions imagery. Use this as player-facing news, not as mechanics truth until source rows are reviewed.</p></div>' +
+      '<div><span class="overview-kicker">News + source watch</span><h3>Latest Champion Updates</h3><p>Player news, regulation signals, and source-status cards. Mechanics truth still requires reviewed source rows.</p></div>' +
       '<div class="pokemon-news-controls">' +
         '<button type="button" data-news-prev aria-label="Previous news">Prev</button>' +
         '<button type="button" data-news-next aria-label="Next news">Next</button>' +
@@ -13578,17 +13569,6 @@ function csRenderHomeQuickPlan() {
       return '<article><span>' + _escapeHtml(row[0]) + '</span><strong>' + _escapeHtml(row[1]) + '</strong><p>' + _escapeHtml(row[2]) + '</p></article>';
     }).join('') + '</div>' +
   '</section>';
-}
-
-function csRenderTeamLabNewsCards() {
-  return csTeamLabNewsCards().map(function(card) {
-    return '<article class="team-lab-news-card">' +
-      '<span>' + _escapeHtml(card.label) + '</span>' +
-      '<h4>' + _escapeHtml(card.title) + '</h4>' +
-      '<p>' + _escapeHtml(card.detail) + '</p>' +
-      '<strong>' + _escapeHtml(card.status) + '</strong>' +
-    '</article>';
-  }).join('');
 }
 
 function csTeamLabTop25Rows() {
@@ -13920,34 +13900,20 @@ function csRenderTeamLabNewsroomHub() {
       '<article><span>02</span><strong>Review the battle</strong><p>Upload real Showdown logs to expose speed control, damage, status, field, item, and faint causes.</p></article>' +
       '<article><span>03</span><strong>Improve cleanly</strong><p>Change one move, item, lead, or lineup at a time so the next result teaches something real.</p></article>' +
     '</div>' +
-    csRenderHomeStartCycle() +
-    csRenderHomeSimPreview() +
-    csRenderHomeTrustStrip() +
     csRenderPokemonNewsFeed() +
-    '<div class="team-lab-hero">' +
-      '<div>' +
-        '<span class="overview-kicker">Team Lab home</span>' +
-        '<h3>' + (hasEvidenceRows ? 'Top 25 has evidence preview rows.' : 'Top 25 waits for proof.') + '</h3>' +
-        '<p>The leaderboard is not a hype list. Teams rank only when legality, sample size, engine version, ruleset version, matchup spread, and stale checks line up.</p>' +
-      '</div>' +
-      '<div class="team-lab-hero-badges">' +
-        '<span>' + (hasEvidenceRows ? 'DB evidence preview' : 'Top 25 locked') + '</span>' +
-        '<span>Simulator evidence only</span>' +
-        '<span>No ladder-truth overclaim</span>' +
-      '</div>' +
-    '</div>' +
-    csRenderTeamLabRankingGates() +
-    csRenderTeamLabAdminControls() +
-    '<div class="team-lab-news-grid">' + csRenderTeamLabNewsCards() + '</div>' +
     '<div class="team-lab-leaderboard-head">' +
-      '<div><h4>Top 25 Simulator Teams</h4><p>Ranking uses composite evidence: adjusted win rate, opponent strength, matchup coverage, confidence, source gaps, stale state, legality, regulation, engine version, and ruleset version.</p></div>' +
+      '<div><span class="overview-kicker">Team Lab leaderboard</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>Teams rank only when legality, sample size, engine/ruleset version, matchup spread, and stale checks line up.</p></div>' +
       '<span class="overview-status ' + (hasEvidenceRows ? 'warn' : 'gap') + '">' + (hasEvidenceRows ? 'Experimental preview' : 'Evidence locked') + '</span>' +
     '</div>' +
     '<div class="overview-db-table-wrap team-lab-top25-wrap"><table class="overview-db-table team-lab-top25-table">' +
       '<thead><tr><th>Rank</th><th>Team</th><th>Archetype</th><th>Score</th><th>Quality</th><th>Adj. win rate</th><th>Games</th><th>Confidence</th><th>Status</th></tr></thead>' +
       '<tbody data-team-lab-top25-body>' + csRenderTeamLabTop25Rows(previewRows) + '</tbody>' +
     '</table></div>' +
-    '<p class="overview-source-note">Future news cards can pull from the source registry and release notes. Until then, they show build/source readiness instead of pretending to be live Pokemon news.</p>' +
+    csRenderHomeStartCycle() +
+    csRenderHomeSimPreview() +
+    csRenderHomeTrustStrip() +
+    csRenderTeamLabRankingGates() +
+    csRenderTeamLabAdminControls() +
   '</section>';
 }
 
