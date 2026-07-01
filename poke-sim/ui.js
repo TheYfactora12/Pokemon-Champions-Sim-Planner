@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.77-battle-sensei-scenario-queue'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.78-replay-scenario-tactical-qa-payload'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8007,6 +8007,91 @@ function csRenderReplayTurn0(turn0, selectedSide) {
   '</div>';
 }
 
+var CS_LAST_REPLAY_SCENARIO_QUEUE = [];
+var CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
+function csReplayScenarioTeamMapStatus(row) {
+  row = row || {};
+  var board = row.boardContext || {};
+  var yourLead = Array.isArray(board.yourLead) ? board.yourLead : [];
+  var opponentLead = Array.isArray(board.opponentLead) ? board.opponentLead : [];
+  var yourFour = Array.isArray(board.yourFour) ? board.yourFour : [];
+  var opponentFour = Array.isArray(board.opponentFour) ? board.opponentFour : [];
+  var missing = [];
+  if (!yourLead.length || !opponentLead.length) missing.push('opening leads');
+  if (yourFour.length < 2 || opponentFour.length < 2) missing.push('visible brought Pokemon');
+  missing.push('in-app team id mapping');
+  missing.push('regulation confirmation');
+  return {
+    status: missing.length ? 'needs_more_data' : 'ready_for_tactical_qa_payload',
+    missing: missing
+  };
+}
+function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
+  row = row || {};
+  context = context || {};
+  var parsed = context.parsed || {};
+  var review = context.review || {};
+  var map = csReplayScenarioTeamMapStatus(row);
+  var buildId = typeof csGetBuildId === 'function' ? csGetBuildId() : 'unknown-engine';
+  return {
+    schema_version: 'champions-replay-scenario-tactical-qa-payload-v1',
+    status: map.status,
+    scenario_index: index,
+    source: 'battle_sensei_replay_scenario_queue',
+    source_boundary: 'Replay-derived Tactical QA payload. This is player-match evidence and does not overwrite Champion legality, mechanics truth, or leaderboard rankings.',
+    engine_version: buildId,
+    ruleset_version: buildId,
+    regulation_id: 'needs_regulation_mapping',
+    format: parsed.format || 'unknown',
+    sample_size: 1,
+    scenario: {
+      id: row.id || null,
+      title: row.title || 'Replay-derived scenario',
+      priority: row.priority || 'medium',
+      turn: row.turn || null,
+      setup: row.setup || '',
+      test_goal: row.testGoal || '',
+      why: row.why || '',
+      evidence: row.evidence || '',
+      confidence: row.confidence || 'medium',
+      source_gaps: row.sourceGaps || []
+    },
+    board_context: row.boardContext || {},
+    replay_summary: review.summary || {},
+    missing_for_trusted_run: map.missing,
+    next_actions: map.missing.length
+      ? [
+          'Map replay Pokemon to a saved in-app team or imported custom team.',
+          'Confirm regulation_id and format before running branch evidence.',
+          'Reconstruct the visible board state for the scenario turn.'
+        ]
+      : [
+          'Run a capped branch matrix from this payload.',
+          'Write results with engine_version, ruleset_version, regulation_id, format, and sample size.',
+          'Keep output marked simulator-derived until repeated samples support the read.'
+        ]
+  };
+}
+function csHandleReplayScenarioTacticalQa(index) {
+  var idx = parseInt(index, 10);
+  var row = CS_LAST_REPLAY_SCENARIO_QUEUE[idx];
+  var statusEl = document.getElementById('replay-scenario-status-' + idx);
+  if (!row) {
+    if (statusEl) statusEl.textContent = 'Scenario not found. Re-run replay analysis.';
+    return;
+  }
+  var payload = csBuildReplayScenarioTacticalQaPayload(row, idx, CS_LAST_REPLAY_SCENARIO_CONTEXT || {});
+  var filename = 'champions-replay-scenario-tactical-qa-' + String(idx + 1).padStart(2, '0') + '-' + new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19) + '.json';
+  if (typeof _downloadBlob === 'function') {
+    _downloadBlob(filename, 'application/json', JSON.stringify(payload, null, 2));
+  }
+  if (statusEl) {
+    statusEl.innerHTML = '<span class="replay-coach-tag ' + (payload.status === 'needs_more_data' ? 'medium' : 'low') + '">' + _escapeHtml(payload.status) + '</span> ' +
+      _escapeHtml(payload.status === 'needs_more_data'
+        ? 'Payload exported. Trusted branch run is blocked until: ' + payload.missing_for_trusted_run.join(', ') + '.'
+        : 'Payload exported and ready for Tactical QA branch execution.');
+  }
+}
 function csReplayCoachRenderAnalysis(analysis) {
   var host = document.getElementById('replay-coach-results');
   if (!host || !analysis) return;
@@ -8064,7 +8149,9 @@ function csReplayCoachRenderAnalysis(analysis) {
   var megaTimingRows = csRenderEvidenceCardRows(review.megaTimingCards || []);
   var damageContextRows = csRenderEvidenceCardRows(review.damageContextCards || []);
   var scenarioRows = (review.scenarioQueue || []).map(function(row) {
+    var idx = (review.scenarioQueue || []).indexOf(row);
     var priorityClass = row.priority === 'high' ? 'high' : (row.priority === 'low' ? 'low' : 'medium');
+    var mapStatus = csReplayScenarioTeamMapStatus(row);
     var sourceGaps = (row.sourceGaps || []).slice(0, 2).map(function(gap) {
       return '<span class="replay-coach-tag medium">' + _escapeHtml(gap) + '</span>';
     }).join('');
@@ -8075,6 +8162,9 @@ function csReplayCoachRenderAnalysis(analysis) {
       '<div><b>Why:</b> ' + _escapeHtml(row.why || '') + '</div>' +
       '<small><span class="replay-coach-tag ' + _escapeHtml(priorityClass) + '">' + _escapeHtml(row.priority || 'medium') + '</span> Evidence: ' + _escapeHtml(row.evidence || 'replay evidence') + ' · Confidence: ' + _escapeHtml(row.confidence || 'medium') + '</small>' +
       (sourceGaps ? '<div class="replay-coach-tags">' + sourceGaps + '</div>' : '') +
+      '<div class="replay-coach-tags"><span class="replay-coach-tag ' + _escapeHtml(mapStatus.status === 'needs_more_data' ? 'medium' : 'low') + '">' + _escapeHtml(mapStatus.status) + '</span></div>' +
+      '<button class="btn-secondary replay-scenario-run-btn" type="button" data-scenario-index="' + _escapeHtml(String(idx)) + '">Prepare Tactical QA Payload</button>' +
+      '<div class="replay-coach-turn-read" id="replay-scenario-status-' + _escapeHtml(String(idx)) + '"></div>' +
       '</div>';
   }).join('');
   var turns = (review.turnTimeline || []).slice(0, 80).map(function(turn) {
@@ -12992,7 +13082,14 @@ function csRenderOverviewBucket(group, bucket) {
   return '<details class="overview-bucket"' + (bucket === 'open' || bucket === 'next' ? ' open' : '') + '>' +
     '<summary><span>' + _escapeHtml(csOverviewBucketLabel(bucket)) + '</span><strong>' + rows.length + '</strong></summary>' +
     '<div class="overview-list">' + csRenderOverviewRows(rows) + '</div>' +
-  '</details>';
+      '</details>';
+  CS_LAST_REPLAY_SCENARIO_QUEUE = (review.scenarioQueue || []).slice();
+  CS_LAST_REPLAY_SCENARIO_CONTEXT = { parsed: parsed, review: review };
+  host.querySelectorAll('.replay-scenario-run-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      csHandleReplayScenarioTacticalQa(btn.dataset.scenarioIndex);
+    });
+  });
 }
 
 function csRenderOverviewMilestoneSection(group) {

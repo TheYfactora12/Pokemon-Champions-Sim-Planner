@@ -467,6 +467,35 @@ DB mapping: store this under `replay_sim_feedback.payload.scenarioQueue` until t
 
 Guardrail: scenario rows are test targets. They may create tactical QA work, but they must not promote a move, legality rule, team ranking, or coaching claim without simulator evidence tied to `engine_version`, `ruleset_version`, `regulation_id`, `format`, and sample size.
 
+### Replay Scenario to Tactical QA Payload
+
+Schema: `champions-replay-scenario-tactical-qa-payload-v1`
+
+Purpose: let a player export a replay-derived scenario into a Tactical QA-ready payload without pretending the replay can already run a trusted branch matrix.
+
+Required fields:
+
+- `status`: `needs_more_data` until replay Pokemon are mapped to saved in-app teams, regulation is confirmed, and the scenario board is reconstructed.
+- `engine_version`
+- `ruleset_version`
+- `regulation_id`
+- `format`
+- `sample_size`
+- `scenario`
+- `board_context`
+- `missing_for_trusted_run`
+- `next_actions`
+
+Current UI behavior: each replay scenario card can prepare a Tactical QA payload JSON. The payload is intentionally blocked from trusted branch execution when it is missing team-id mapping, regulation confirmation, or board reconstruction.
+
+Future promotion path:
+
+- map replay Pokemon to imported/saved teams
+- confirm `regulation_id`
+- reconstruct turn-specific active board, HP, field, item/ability state, and known moves
+- run capped branch matrix
+- save branch output as simulator-derived evidence with version fields and sample size
+
 ## Sim Comparison Fields
 
 When replay data exists, matchup coaching can add:
