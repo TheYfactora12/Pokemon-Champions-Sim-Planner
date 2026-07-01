@@ -74,6 +74,19 @@ function parseRss(xml, source) {
   }).filter(Boolean);
 }
 
+function keywordList(value) {
+  return Array.isArray(value) ? value.map(v => String(v || '').toLowerCase()).filter(Boolean) : [];
+}
+
+function matchesSourceFilters(item, source) {
+  const haystack = `${item.title || ''} ${item.detail || ''} ${item.url || ''}`.toLowerCase();
+  const include = keywordList(source.include_keywords);
+  const exclude = keywordList(source.exclude_keywords);
+  if (exclude.some(word => haystack.includes(word))) return false;
+  if (include.length && !include.some(word => haystack.includes(word))) return false;
+  return true;
+}
+
 async function main() {
   const config = JSON.parse(await fs.readFile(SOURCES_PATH, 'utf8'));
   const items = [];
@@ -85,7 +98,7 @@ async function main() {
       const res = await fetch(source.url, { headers: { 'user-agent': 'battle-labs-news-sync/1.0' } });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
-      items.push(...parseRss(text, source));
+      items.push(...parseRss(text, source).filter(item => matchesSourceFilters(item, source)));
     } catch (err) {
       errors.push({ source_id: source.id, url: source.url, error: String(err && err.message || err) });
     }

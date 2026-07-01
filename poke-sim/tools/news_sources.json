@@ -20,6 +20,20 @@
       "url": "https://victoryroadvgc.com/feed/",
       "type": "rss",
       "enabled": true,
+      "include_keywords": [
+        "Champion",
+        "Champions",
+        "Regulation",
+        "VGC",
+        "Monthly Challenge",
+        "Champions Arena"
+      ],
+      "exclude_keywords": [
+        "Scarlet",
+        "Violet",
+        "Tera Raid",
+        "Unrivaled"
+      ],
       "note": "Meta/tournament signal only. Never source mechanics truth from this feed."
     }
   ]
