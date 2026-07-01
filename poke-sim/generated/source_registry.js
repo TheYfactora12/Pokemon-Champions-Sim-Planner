@@ -5,7 +5,7 @@
   root.CHAMPIONS_SOURCE_REGISTRY = {
     schema_version: 'champions-source-registry-v1',
     last_reviewed: '2026-07-01',
-    policy: 'Official and in-game sources define Champion truth. Showdown is a baseline/reference oracle, not Champion truth. Competitive sources inform meta and coaching hypotheses only.',
+    policy: 'Official and in-game sources define Champion truth. Unknown Champion-specific truth remains needs_verification. Showdown is a baseline/reference oracle, not Champion truth. Competitive sources inform meta and coaching hypotheses only.',
     tiers: [
       {
         id: 'official_champions',
