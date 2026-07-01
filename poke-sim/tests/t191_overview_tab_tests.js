@@ -451,6 +451,10 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Active slice closeout map added');
   inc(ui, 'Fresh live closeout QA artifacts recorded');
   inc(ui, 'Move mechanics QA closeout plan added');
+  inc(ui, 'Legality evidence package foundation added');
+  inc(ui, 'legality_evidence_package.js');
+  inc(ui, 'trusted source captures');
+  inc(ui, 'promotion readiness');
   inc(ui, 'Legality 99 target plan added');
   inc(ui, 'Build Regulation M-B legality evidence package');
   inc(ui, 'source-backed active regulation package');

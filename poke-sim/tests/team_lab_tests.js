@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const TeamLab = require('../team_lab.js');
+const LegalityEvidencePackage = require('../legality_evidence_package.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const migration = fs.readFileSync(path.join(ROOT, 'db', 'migrations', '2026_06_29_team_lab_foundation.sql'), 'utf8');
@@ -153,6 +154,135 @@ T('5. validator marks known illegal data illegal instead of provisional', () => 
   const report = TeamLab.validateTeamForRegulation(baseTeam, regulation);
   eq(report.status, 'illegal', 'known illegal move should fail');
   truthy(report.errors.some((err) => err.code === 'MOVE_ILLEGAL'), 'illegal move error missing');
+});
+
+T('5b. legality evidence package keeps incomplete source data as needs_verification', () => {
+  const pkg = {
+    schema_version: 'champions-legality-evidence-package-v1',
+    package_id: 'dev-regmb-incomplete',
+    regulation_id: 'champions_reg_m_b_2026',
+    ruleset_version: 'regmb-dev-source-package-v1',
+    format: 'doubles',
+    verification_status: 'needs_verification',
+    source_captures: [
+      {
+        id: 'community-note-not-authoritative',
+        source_tier: 'community_secondary',
+        verification_status: 'unverified',
+        pointer: 'dev fixture only'
+      }
+    ],
+    allowlists: {
+      legal_pokemon_ids: ['charizard']
+    },
+    allowlist_completeness: {
+      legal_pokemon_ids: false
+    }
+  };
+  const report = LegalityEvidencePackage.validateLegalityEvidencePackage(pkg);
+  eq(report.status, 'needs_verification', 'incomplete package must not verify');
+  truthy(report.source_gaps.some((gap) => gap.code === 'TRUSTED_SOURCE_CAPTURE_MISSING'), 'trusted source gap missing');
+  truthy(report.source_gaps.some((gap) => gap.code === 'ALLOWLIST_INCOMPLETE_LEGAL_POKEMON_IDS'), 'incomplete allowlist gap missing');
+  const regulation = LegalityEvidencePackage.regulationFromEvidencePackage(pkg);
+  eq(regulation.verification_status, 'needs_verification', 'derived regulation must stay unverified');
+  const packageTeam = JSON.parse(JSON.stringify(baseTeam));
+  packageTeam.regulation_id = 'champions_reg_m_b_2026';
+  const teamReport = TeamLab.validateTeamForRegulation(packageTeam, regulation);
+  eq(teamReport.status, 'needs_verification', 'team should remain needs_verification when package is incomplete');
+});
+
+T('5c. legality evidence package can prove dev fixtures without inventing Champion data', () => {
+  const pkg = {
+    schema_version: 'champions-legality-evidence-package-v1',
+    package_id: 'dev-regmb-complete',
+    regulation_id: 'champions_reg_m_b_2026',
+    ruleset_version: 'regmb-dev-source-package-v1',
+    format: 'doubles',
+    verification_status: 'verified',
+    source_captures: [
+      {
+        id: 'in-game-capture-dev-001',
+        source_tier: 'in_game_verified',
+        verification_status: 'verified',
+        pointer: 'dev fixture standing in for future in-game capture'
+      }
+    ],
+    allowlists: {
+      legal_pokemon_ids: ['charizard'],
+      legal_form_ids: ['charizard-mega-y'],
+      legal_item_ids: ['charizardite-y'],
+      legal_ability_ids: ['drought'],
+      legal_move_ids: ['heat-wave', 'protect']
+    },
+    allowlist_completeness: {
+      legal_pokemon_ids: true,
+      legal_form_ids: true,
+      legal_item_ids: true,
+      legal_ability_ids: true,
+      legal_move_ids: true
+    }
+  };
+  const packageTeam = JSON.parse(JSON.stringify(baseTeam));
+  packageTeam.regulation_id = 'champions_reg_m_b_2026';
+  const illegalMoveTeam = JSON.parse(JSON.stringify(baseTeam));
+  illegalMoveTeam.regulation_id = 'champions_reg_m_b_2026';
+  illegalMoveTeam.members[0].moves = ['blast-burn'];
+  const unknownTeam = JSON.parse(JSON.stringify(baseTeam));
+  unknownTeam.regulation_id = 'champions_reg_m_b_2026';
+  unknownTeam.members[0].pokemon_id = 'unknown-champion-row';
+  const fixtures = [
+    { id: 'known-legal-dev', fixture_type: 'known_legal', expected_status: 'verified', team: packageTeam, source_pointer: 'dev accepted-team placeholder' },
+    { id: 'known-illegal-dev', fixture_type: 'known_illegal', expected_status: 'illegal', team: illegalMoveTeam, source_pointer: 'dev rejected-team placeholder' },
+    { id: 'stale-dev', fixture_type: 'stale_ruleset', expected_status: 'stale', ruleset_version: 'old-ruleset', team: baseTeam },
+    { id: 'needs-source-dev', fixture_type: 'needs_verification', expected_status: 'needs_verification', team: unknownTeam, use_missing_source: true }
+  ];
+  const packageReport = LegalityEvidencePackage.validateLegalityEvidencePackage(pkg);
+  eq(packageReport.status, 'verified', 'complete dev package should validate structurally');
+  const fixtureReport = LegalityEvidencePackage.evaluateLegalityFixtures(pkg, fixtures);
+  eq(fixtureReport.all_passed, true, 'fixture statuses should match expected results');
+  eq(fixtureReport.counts.verified, 1, 'known legal fixture count missing');
+  eq(fixtureReport.counts.illegal, 1, 'known illegal fixture count missing');
+  eq(fixtureReport.counts.stale, 1, 'stale fixture count missing');
+  eq(fixtureReport.counts.needs_verification, 1, 'needs_verification fixture count missing');
+  const readiness = LegalityEvidencePackage.promotionReadinessFromEvidencePackage(pkg, fixtures);
+  eq(readiness.ready_for_runtime_promotion, true, 'complete package plus all fixture classes should be promotion-ready');
+  eq(readiness.status, 'verified', 'promotion readiness should be verified');
+});
+
+T('5d. legality evidence package blocks promotion when fixture classes are missing', () => {
+  const pkg = {
+    schema_version: 'champions-legality-evidence-package-v1',
+    package_id: 'dev-regmb-complete-no-negative-fixtures',
+    regulation_id: 'champions_reg_m_b_2026',
+    ruleset_version: 'regmb-dev-source-package-v1',
+    format: 'doubles',
+    verification_status: 'verified',
+    source_captures: [
+      { id: 'in-game-capture-dev-001', source_tier: 'in_game_verified', verification_status: 'verified', pointer: 'dev fixture only' }
+    ],
+    allowlists: {
+      legal_pokemon_ids: ['charizard'],
+      legal_form_ids: ['charizard-mega-y'],
+      legal_item_ids: ['charizardite-y'],
+      legal_ability_ids: ['drought'],
+      legal_move_ids: ['heat-wave', 'protect']
+    },
+    allowlist_completeness: {
+      legal_pokemon_ids: true,
+      legal_form_ids: true,
+      legal_item_ids: true,
+      legal_ability_ids: true,
+      legal_move_ids: true
+    }
+  };
+  const packageTeam = JSON.parse(JSON.stringify(baseTeam));
+  packageTeam.regulation_id = 'champions_reg_m_b_2026';
+  const readiness = LegalityEvidencePackage.promotionReadinessFromEvidencePackage(pkg, [
+    { id: 'known-legal-dev', fixture_type: 'known_legal', expected_status: 'verified', team: packageTeam }
+  ]);
+  eq(readiness.ready_for_runtime_promotion, false, 'missing negative/stale/unknown fixtures should block promotion');
+  eq(readiness.status, 'needs_verification', 'incomplete fixture set should remain needs_verification');
+  truthy(readiness.source_gaps.some((gap) => gap.indexOf('FIXTURE_TYPES_MISSING') === 0), 'missing fixture source gap absent');
 });
 
 T('6. raw win rate and adjusted win rate are sample-size aware', () => {

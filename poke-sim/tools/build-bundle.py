@@ -83,6 +83,7 @@ strategy = read('strategy-injectable.js')
 storage = read('storage_adapter.js')
 supabase = read('supabase_adapter.js')
 team_lab = read('team_lab.js')
+legality_evidence_package = read('legality_evidence_package.js')
 source_truth = read('source_truth.js')
 sim_evidence = read('sim_evidence.js')
 pokemon_legal_data = read('generated/pokemon_showdown_legal_data.js')
@@ -107,6 +108,7 @@ html = html.replace('<script src="regmb_source_conversion.js"></script>', '')
 html = html.replace('<script src="storage_adapter.js"></script>', '')
 html = html.replace('<script src="supabase_adapter.js"></script>', '')
 html = html.replace('<script src="team_lab.js"></script>', '')
+html = html.replace('<script src="legality_evidence_package.js"></script>', '')
 html = html.replace('<script src="source_truth.js"></script>', '')
 html = html.replace('<script src="sim_evidence.js"></script>', '')
 html = html.replace('<script src="generated/pokemon_showdown_legal_data.js"></script>', '')
@@ -164,6 +166,7 @@ inline_js = (
     + sanitize_inline_js(storage) + '\n\n'
     + sanitize_inline_js(supabase) + '\n\n'
     + sanitize_inline_js(team_lab) + '\n\n'
+    + sanitize_inline_js(legality_evidence_package) + '\n\n'
     + sanitize_inline_js(source_truth) + '\n\n'
     + sanitize_inline_js(sim_evidence) + '\n\n'
     + sanitize_inline_js(move_legality) + '\n\n'

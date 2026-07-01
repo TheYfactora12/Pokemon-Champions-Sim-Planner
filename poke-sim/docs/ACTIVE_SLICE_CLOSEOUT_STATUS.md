@@ -56,7 +56,7 @@ The all-move QA approach is now defined in `docs/MOVE_MECHANICS_QA_CLOSEOUT_PLAN
 
 The next QA export layer adds `replay_logic_audit`, a high-level retained-replay health check for turn logs, damage rows, move traces, effect rows, faint causes, and mechanic-family gaps. This audit should help reviewers quickly see whether retained replays are strong enough to support a logic claim, while still keeping targeted/tactical proof separate from full Champion legality or all-move truth.
 
-The legality closeout target is now defined in `docs/LEGALITY_99_TARGET_PLAN.md`. The short version: `100% legality` needs complete official/client-captured proof for the active regulation, while `true 99% legality` means all shipped runtime teams, rankings, QA artifacts, and Team Lab promotion paths are guarded against unknown or stale Champion data. Unknown rows stay `needs_verification`; known illegal rows are rejected; Team Lab/global rankings cannot use `needs_verification` teams in official scopes.
+The legality closeout target is now defined in `docs/LEGALITY_99_TARGET_PLAN.md`. The short version: `100% legality` needs complete official/client-captured proof for the active regulation, while `true 99% legality` means all shipped runtime teams, rankings, QA artifacts, and Team Lab promotion paths are guarded against unknown or stale Champion data. Unknown rows stay `needs_verification`; known illegal rows are rejected; Team Lab/global rankings cannot use `needs_verification` teams in official scopes. The first `legality_evidence_package.js` implementation now exists as the package/fixture gate, but it still uses dev fixtures until real in-game Regulation M-B captures are supplied.
 
 ## 100% closed right now
 

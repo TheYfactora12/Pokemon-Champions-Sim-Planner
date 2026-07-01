@@ -64,4 +64,6 @@ The next implementation should build a `legality_evidence_package` flow:
 - Team Lab promotion checks that exclude illegal teams and route `needs_verification` teams to experimental scopes only
 - Roadmap/QA artifact output that shows which source package and ruleset version were used
 
+Implementation start: `legality_evidence_package.js` now defines the first package contract, package validation, derived regulation conversion, fixture evaluation, and promotion-readiness checks. Current tests use dev fixtures only; they do not claim real Regulation M-B legality. The next pass should replace or extend those fixtures with official/in-game captures from Pokemon Champions.
+
 This is the path to a defensible 99% closeout. Anything less is a confidence label, not legality proof.

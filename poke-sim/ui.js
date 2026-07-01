@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.96-legality-99-target'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.97-legality-evidence-package'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -12713,6 +12713,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Legality evidence package foundation added',
+      detail: 'v2.2.97 adds legality_evidence_package.js as the first source-package gate for true 99% legality. It validates package metadata, trusted source captures, complete allowlists, known legal/illegal/stale/needs_verification fixtures, and promotion readiness before any Regulation M-B data can move toward runtime or Team Lab official ranking use.'
+    },
+    {
+      status: 'done',
       title: 'Legality 99 target plan added',
       detail: 'v2.2.96 defines true 99% legality as a source-backed active regulation package, preloaded-team gates, unknown-as-needs_verification validation, known legal/illegal fixtures, stale ruleset guards, QA artifact metadata, and Team Lab promotion rules that keep needs_verification teams out of official rankings.'
     },
@@ -13570,7 +13575,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Build Regulation M-B legality evidence package',
-      detail: 'Convert official or in-game Regulation M-B source captures into versioned legality rows with regulation_id, ruleset_version, source tier, source pointer, known legal/illegal fixtures, stale-ruleset tests, and Team Lab promotion guards. Unknown Champion data must remain needs_verification until the source package proves it.'
+      detail: 'Replace the current dev legality fixtures with official or in-game Regulation M-B source captures converted into versioned package rows with regulation_id, ruleset_version, source tier, source pointer, known legal/illegal fixtures, stale-ruleset tests, and Team Lab promotion guards. Unknown Champion data must remain needs_verification until the source package proves it.'
     },
     {
       status: 'next',
