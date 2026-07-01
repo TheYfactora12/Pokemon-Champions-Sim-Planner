@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.86-replay-claim-audit'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.87-replay-qa-claim-payload'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8147,6 +8147,7 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
   context = context || {};
   var parsed = context.parsed || {};
   var review = context.review || {};
+  var claimAudit = review.claimAudit || null;
   var map = csReplayScenarioTeamMapStatus(row);
   var buildId = typeof csGetBuildId === 'function' ? csGetBuildId() : 'unknown-engine';
   var mappings = map.mappings || csReplayScenarioResolveTeamMappings(row, context);
@@ -8178,6 +8179,14 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
     },
     board_context: row.boardContext || {},
     replay_summary: review.summary || {},
+    claim_audit: claimAudit,
+    source_gaps: claimAudit && Array.isArray(claimAudit.source_gaps) ? claimAudit.source_gaps : (row.sourceGaps || []).map(function(message) {
+      return { code: 'SCENARIO_SOURCE_GAP', message: message };
+    }),
+    forbidden_claims: claimAudit && Array.isArray(claimAudit.forbidden_claims) ? claimAudit.forbidden_claims : [
+      'Do not treat replay data as official Pokemon Champion legality.',
+      'Do not promote this scenario to best-move or best-lineup truth without simulator branch evidence.'
+    ],
     missing_for_trusted_run: map.missing,
     next_actions: map.missing.length
       ? [
@@ -8232,7 +8241,7 @@ function csHandleReplayScenarioTacticalQa(index, opts) {
   }
   var msg = (downloaded ? 'Payload downloaded: ' + filename + '. ' : 'Payload prepared, but browser download is unavailable. ') +
     (payload.status === 'needs_more_data'
-      ? 'Trusted branch run is blocked until: ' + payload.missing_for_trusted_run.join(', ') + '.'
+      ? 'Trusted branch run is blocked until: ' + payload.missing_for_trusted_run.join(', ') + '. Source gaps and forbidden-claim rules are included in the payload.'
       : 'Ready for Tactical QA branch execution.');
   if (statusEl) {
     statusEl.innerHTML = '<span class="replay-coach-tag ' + (payload.status === 'needs_more_data' ? 'medium' : 'low') + '">' + _escapeHtml(payload.status) + '</span> ' +

@@ -40,8 +40,8 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'id="replay-coach-scenario-status"');
   inc(html, 'Upload and analyze a replay to enable Tactical QA payload export.');
   inc(html, 'In series play');
-  inc(html, 'v2.2.86-replay-claim-audit');
-  inc(ui, 'v2.2.86-replay-claim-audit');
+  inc(html, 'v2.2.87-replay-qa-claim-payload');
+  inc(ui, 'v2.2.87-replay-qa-claim-payload');
   if (/Bo10|data-bo="10"/.test(html)) throw new Error('Bo10 should not be exposed as a series format');
   if (/Bo10/.test(ui)) throw new Error('Bo10 should not be referenced in UI guidance');
   if (/Bo10/.test(engine)) throw new Error('Bo10 should not be referenced in engine guidance');
@@ -93,6 +93,10 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, 'champions-replay-scenario-tactical-qa-payload-v1');
   inc(ui, 'needs_regulation_mapping');
   inc(ui, 'missing_for_trusted_run');
+  inc(ui, 'claim_audit: claimAudit');
+  inc(ui, 'source_gaps: claimAudit');
+  inc(ui, 'forbidden_claims: claimAudit');
+  inc(ui, 'Source gaps and forbidden-claim rules are included in the payload.');
   inc(ui, 'csReplayFindBestTeamMatch');
   inc(ui, 'exact_full_six');
   inc(ui, 'visible_four_match');
