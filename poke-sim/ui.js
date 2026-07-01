@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.85-news-source-watch'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.86-replay-claim-audit'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8256,6 +8256,7 @@ function csReplayCoachRenderAnalysis(analysis) {
   var summary = review.summary || {};
   var learning = review.learningReport || null;
   var evidenceStandard = learning && learning.evidenceStandard ? learning.evidenceStandard : null;
+  var claimAudit = review.claimAudit || null;
   var simComparison = learning && learning.simComparison ? learning.simComparison : null;
   var simFeedback = learning && learning.simFeedback ? learning.simFeedback : null;
   var rawPreview = review.rawLogPreview || {};
@@ -8304,6 +8305,18 @@ function csReplayCoachRenderAnalysis(analysis) {
   var abilityItemRows = csRenderEvidenceCardRows(review.abilityItemImpactCards || []);
   var megaTimingRows = csRenderEvidenceCardRows(review.megaTimingCards || []);
   var damageContextRows = csRenderEvidenceCardRows(review.damageContextCards || []);
+  var claimAuditRows = claimAudit ? [
+    '<div class="replay-coach-metric"><strong>Observed rows</strong><span>' + _escapeHtml(String((claimAudit.observed && claimAudit.observed.count) || 0)) + '</span></div>',
+    '<div class="replay-coach-metric"><strong>Inferred claims</strong><span>' + _escapeHtml(String((claimAudit.inferred && claimAudit.inferred.count) || 0)) + '</span></div>',
+    '<div class="replay-coach-metric"><strong>Scenario targets</strong><span>' + _escapeHtml(String((claimAudit.sim_derived && claimAudit.sim_derived.count) || 0)) + '</span></div>',
+    '<div class="replay-coach-metric"><strong>Source gaps</strong><span>' + _escapeHtml(String((claimAudit.source_gaps || []).length)) + '</span></div>'
+  ].join('') : '';
+  var claimGapRows = claimAudit ? (claimAudit.source_gaps || []).slice(0, 5).map(function(gap) {
+    return '<div class="replay-coach-list-row"><strong>' + _escapeHtml(gap.code || 'SOURCE_GAP') + '</strong>' + _escapeHtml(gap.message || '') + '</div>';
+  }).join('') : '';
+  var claimForbiddenRows = claimAudit ? (claimAudit.forbidden_claims || []).map(function(row) {
+    return '<span class="replay-coach-tag medium">' + _escapeHtml(row) + '</span>';
+  }).join('') : '';
   var scenarioRows = (review.scenarioQueue || []).map(function(row) {
     var idx = (review.scenarioQueue || []).indexOf(row);
     var priorityClass = row.priority === 'high' ? 'high' : (row.priority === 'low' ? 'low' : 'medium');
@@ -8453,6 +8466,17 @@ function csReplayCoachRenderAnalysis(analysis) {
         (bringConfidence.limitation ? '<div class="replay-coach-metric"><strong>Limit</strong><span>' + _escapeHtml(bringConfidence.limitation) + '</span></div>' : '') +
       '</div>' +
     '</div>' +
+    (claimAudit ? '<div class="replay-coach-card">' +
+      '<h3 class="replay-coach-h3">Evidence Claim Audit</h3>' +
+      '<div class="replay-coach-summary-grid">' + claimAuditRows + '</div>' +
+      '<div class="replay-coach-list">' +
+        '<div class="replay-coach-list-row"><strong>Observed</strong>' + _escapeHtml(((claimAudit.observed && claimAudit.observed.claims) || []).join(' ')) + '</div>' +
+        '<div class="replay-coach-list-row"><strong>Inferred with caution</strong>' + _escapeHtml((claimAudit.inferred && claimAudit.inferred.boundary) || '') + '</div>' +
+        '<div class="replay-coach-list-row"><strong>Requires sim proof</strong>' + _escapeHtml((claimAudit.sim_derived && claimAudit.sim_derived.boundary) || '') + '</div>' +
+        claimGapRows +
+      '</div>' +
+      '<div class="replay-coach-tags">' + claimForbiddenRows + '</div>' +
+    '</div>' : '') +
     csRenderReplayTurn0(turn0, parsed.selectedSide || 'p1') +
     (leadLogic ? '<div class="replay-coach-card">' +
       '<h3 class="replay-coach-h3">Lead Logic Read</h3>' +

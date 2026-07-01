@@ -40,8 +40,8 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'id="replay-coach-scenario-status"');
   inc(html, 'Upload and analyze a replay to enable Tactical QA payload export.');
   inc(html, 'In series play');
-  inc(html, 'v2.2.85-news-source-watch');
-  inc(ui, 'v2.2.85-news-source-watch');
+  inc(html, 'v2.2.86-replay-claim-audit');
+  inc(ui, 'v2.2.86-replay-claim-audit');
   if (/Bo10|data-bo="10"/.test(html)) throw new Error('Bo10 should not be exposed as a series format');
   if (/Bo10/.test(ui)) throw new Error('Bo10 should not be referenced in UI guidance');
   if (/Bo10/.test(engine)) throw new Error('Bo10 should not be referenced in engine guidance');
@@ -108,6 +108,13 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, "battleIq && battleIq.displayScore != null ? String(battleIq.displayScore) : 'Needs more data'");
   inc(ui, '<strong>What this means</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Evidence Standard</h3>');
+  inc(ui, '<h3 class="replay-coach-h3">Evidence Claim Audit</h3>');
+  inc(ui, '<strong>Observed rows</strong>');
+  inc(ui, '<strong>Inferred claims</strong>');
+  inc(ui, '<strong>Scenario targets</strong>');
+  inc(ui, '<strong>Source gaps</strong>');
+  inc(ui, "gap.code || 'SOURCE_GAP'");
+  inc(ui, 'claimAudit.forbidden_claims');
   inc(ui, '<strong>Opponent intent boundary</strong>');
   inc(ui, '<h3 class="replay-coach-h3">Critical Turn Engine</h3>');
   inc(ui, '<h3 class="replay-coach-h3">Decision Quality Scorecard</h3>');

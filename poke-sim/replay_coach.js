@@ -1837,6 +1837,64 @@
     return queue.slice(0, 12);
   }
 
+  function buildReplayClaimAudit(parsed, side, ctx) {
+    ctx = ctx || {};
+    var opp = side === 'p1' ? 'p2' : 'p1';
+    var warnings = (parsed && parsed.warnings) || [];
+    var sourceGaps = [];
+    function addGap(code, message) {
+      if (!sourceGaps.some(function(row) { return row.code === code; })) sourceGaps.push({ code: code, message: message });
+    }
+    if (!((parsed.teamPreview && parsed.teamPreview[side] || []).length >= 6)) {
+      addGap('REGISTERED_SIX_MISSING', 'Registered six is missing or incomplete; lineup and BO3/BO5 swap coaching stays limited.');
+    }
+    if (!((parsed.teamPreview && parsed.teamPreview[opp] || []).length >= 6)) {
+      addGap('OPPONENT_PREVIEW_MISSING', 'Opponent full preview is missing or incomplete; opponent-plan reads must stay cautious.');
+    }
+    if (warnings.length) {
+      addGap('PARSER_WARNINGS_PRESENT', warnings.slice(0, 3).join(' '));
+    }
+    addGap('CHAMPION_LEGALITY_NOT_VALIDATED', 'Replay import is player-match evidence only; it does not validate Champion regulation legality.');
+    addGap('ALTERNATIVE_BRANCHES_NOT_EXHAUSTIVE', 'Best-move, best-target, and best-lineup claims require simulator branch comparison before promotion.');
+    return {
+      schema_version: 'champions-replay-claim-audit-v1',
+      source: 'showdown_replay_import',
+      selected_side: side,
+      format: parsed.format || 'unknown',
+      observed: {
+        label: 'Observed from replay log',
+        count: ((parsed.turns || []).length || 0) + ((ctx.actionDenialCards || []).length) + ((ctx.abilityItemImpactCards || []).length) + ((ctx.megaTimingCards || []).length) + ((ctx.damageContextCards || []).length),
+        claims: [
+          'players, winner/result, turns, visible leads, visible moves, switches, faints, damage/status rows, and protocol events when present',
+          'action-denial, ability/item, Mega/form-change, and damage-context cards only when matching replay rows exist'
+        ]
+      },
+      inferred: {
+        label: 'Inferred with caution',
+        count: (ctx.issues || []).length,
+        claims: [
+          'selected lineup from revealed Pokemon',
+          'critical turn, coaching tags, lead logic, Battle IQ, and opponent plan reads'
+        ],
+        boundary: 'Inference must keep confidence visible and must not invent hidden items, EVs, full movesets, or opponent intent.'
+      },
+      sim_derived: {
+        label: 'Requires simulator evidence',
+        count: (ctx.scenarioQueue || []).length,
+        claims: [
+          'better move, better target, better lead, best lineup, model update, and leaderboard impact'
+        ],
+        boundary: 'Replay-derived scenarios are QA targets until run with engine_version, ruleset_version, regulation_id, format, and sample size.'
+      },
+      source_gaps: sourceGaps,
+      forbidden_claims: [
+        'Do not treat Showdown/community replay data as official Pokemon Champion legality.',
+        'Do not say a move or lineup was definitely best until alternatives were simulated.',
+        'Do not store or share raw replay logs without explicit user opt-in.'
+      ]
+    };
+  }
+
   function buildReplayCoachReview(parsed, opts) {
     opts = opts || {};
     var side = normalizeSide(opts.selectedSide || parsed.selectedSide || 'p1');
@@ -2060,6 +2118,14 @@
       megaTimingCards: megaTimingCards,
       damageContextCards: damageContextCards
     });
+    var claimAudit = buildReplayClaimAudit(parsed, side, {
+      issues: issues,
+      actionDenialCards: actionDenialCards,
+      abilityItemImpactCards: abilityItemImpactCards,
+      megaTimingCards: megaTimingCards,
+      damageContextCards: damageContextCards,
+      scenarioQueue: scenarioQueue
+    });
 
     var review = {
       summary: {
@@ -2089,6 +2155,7 @@
       megaTimingCards: megaTimingCards.slice(0, 12),
       damageContextCards: damageContextCards.slice(0, 12),
       scenarioQueue: scenarioQueue,
+      claimAudit: claimAudit,
       criticalTurn: {
         turn: criticalTurn,
         firstMistake: firstMistake,
@@ -2130,6 +2197,7 @@
   ChampionsSim.replayCoach.fetchReplayLog = fetchReplayLog;
   ChampionsSim.replayCoach.buildReplayCoachReview = buildReplayCoachReview;
   ChampionsSim.replayCoach.buildReplayScenarioQueue = buildReplayScenarioQueue;
+  ChampionsSim.replayCoach.buildReplayClaimAudit = buildReplayClaimAudit;
   ChampionsSim.replayCoach.analyzeShowdownReplay = analyzeShowdownReplay;
 
   if (typeof module !== 'undefined' && module.exports) {

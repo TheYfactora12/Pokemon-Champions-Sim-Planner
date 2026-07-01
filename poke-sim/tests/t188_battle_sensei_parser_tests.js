@@ -446,6 +446,21 @@ T('18. structures real-match protocol rows used by coaching feed', () => {
   truthy(review.scenarioQueue.every((row) => Array.isArray(row.sourceGaps) && row.sourceGaps.length), 'scenario source gaps missing');
 });
 
+T('19. builds a source-bound claim audit for every replay review', () => {
+  const analysis = replayCoach.analyzeShowdownReplay(sample, { selectedSide: 'p1' });
+  const audit = analysis.review.claimAudit;
+  truthy(audit, 'claim audit missing');
+  eq(audit.schema_version, 'champions-replay-claim-audit-v1', 'claim audit schema');
+  eq(audit.source, 'showdown_replay_import', 'claim audit source');
+  truthy(audit.observed.count > 0, 'observed count should be positive');
+  truthy(audit.inferred.count >= analysis.review.coachingTags.length, 'inferred count should cover coaching tags');
+  truthy(audit.sim_derived.count === analysis.review.scenarioQueue.length, 'scenario count should match queue');
+  truthy(audit.source_gaps.some((gap) => gap.code === 'CHAMPION_LEGALITY_NOT_VALIDATED'), 'Champion legality source gap missing');
+  truthy(audit.source_gaps.some((gap) => gap.code === 'ALTERNATIVE_BRANCHES_NOT_EXHAUSTIVE'), 'alternative branch source gap missing');
+  truthy(audit.forbidden_claims.some((claim) => /definitely best/i.test(claim)), 'best-claim guard missing');
+  truthy(audit.forbidden_claims.some((claim) => /official Pokemon Champion legality/i.test(claim)), 'legality guard missing');
+});
+
 runTests().then(() => {
   console.log(`\nBattle Sensei parser: ${pass} pass, ${fail} fail\n`);
   process.exit(fail ? 1 : 0);
