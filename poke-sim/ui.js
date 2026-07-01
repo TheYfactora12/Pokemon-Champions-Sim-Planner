@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.91-release-cleanup-gates'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.92-active-closeout-map'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -12548,7 +12548,7 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-06-28',
+  updated: '2026-07-01',
   metrics: [
     { label: 'Current Truth', value: 'Not 100% yet' },
     { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
@@ -12568,6 +12568,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Active slice closeout map added',
+      detail: 'v2.2.92 adds docs/ACTIVE_SLICE_CLOSEOUT_STATUS.md so current work is classified as 100% closed, 99% closed with named residual risk, open blocker, or next priority before the team starts or closes the next feature.'
+    },
     {
       status: 'done',
       title: 'Champion-format Tera leak gated off',
@@ -13396,6 +13401,11 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
+      title: 'Use the active slice closeout map before starting new work',
+      detail: 'The current closeout map says no active strategic slice is honestly 100% closed yet. QA naming, release cleanup, replay claim audit, Team Lab preview, home page, and replay intake are 99% closed with named residual risks; Champion legality, official rankings, Battle Sensei brain, global learning, replay transparency, and UI modularization stay open blockers.'
+    },
+    {
+      status: 'next',
       title: 'Stress-test, rebuild, and prove the new truth board',
       detail: 'After v2.2.31 deploys, use the fresh cache-busted URL to export one single-run log, one Run All or Stress Lite artifact depending on device safety, and one QA Artifact. Confirm build_id/source_url, detailed replay rows, move-failure evidence, retained coverage totals, and no stale cache before using the result as public proof.'
     },
@@ -13526,6 +13536,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
     { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
     { label: 'Release Discipline + Cleanup Gates', href: 'docs/RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md' },
+    { label: 'Active Slice Closeout Status', href: 'docs/ACTIVE_SLICE_CLOSEOUT_STATUS.md' },
     { label: 'Data Source Registry', href: 'docs/DATA_SOURCE_REGISTRY.md' },
     { label: 'Source Truth Document Audit', href: 'docs/SOURCE_TRUTH_DOCUMENT_AUDIT_2026-06-26.md' },
     { label: 'QA Baseline Snapshot', href: 'reports/champion_qa_baseline_snapshot.md' },
@@ -13568,6 +13579,13 @@ var CS_OVERVIEW_DATA = {
       role: 'Closeout discipline before new work',
       status: 'canonical for release cleanup',
       notes: 'Use before starting a new slice. Defines 99% versus 100% closeout, proof questions, QA slice boundaries, and generated-file/repo-sync safety.'
+    },
+    {
+      label: 'Active Slice Closeout Status',
+      href: 'docs/ACTIVE_SLICE_CLOSEOUT_STATUS.md',
+      role: 'Current 99% / 100% / blocker map',
+      status: 'canonical for active closeout',
+      notes: 'Use to decide what can close, what stays open, and what the next priority is before adding more features.'
     },
     {
       label: 'Team Lab Architecture Alignment',

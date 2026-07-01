@@ -1,0 +1,49 @@
+# Active Slice Closeout Status
+
+Last updated: 2026-07-01
+
+This document is the working closeout map for the current Pokemon Champions simulator build. It exists to stop feature jumping and keep every major slice tied to proof, residual risk, open blocker status, and the next action.
+
+Use `100% closed` only when the claim is source-backed, tested, deployed, and has no known residual blocker. Use `99% closed` when the implementation is practically complete but still needs more live artifacts, more devices, more samples, or future source checks.
+
+## Status summary
+
+| Slice | Status | Proof we have | Residual risk / blocker | Next action |
+| --- | --- | --- | --- | --- |
+| QA slice naming and claim review | 99% closed | v2.2.90 and v2.2.91 tests assert directive QA names, `qa_claim_review`, forbidden claims, and source gaps. CI and Pages passed. | Needs one fresh live QA artifact from the deployed page proving the visible readout and downloaded JSON both carry the claim review after cache refresh. | User exports one `Current Evidence QA` or `Tactical Coaching QA` artifact from the latest URL. |
+| Release discipline and cleanup gates | 99% closed | `RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md`, Roadmap links, architecture doc updates, and overview tests are in place. CI and Pages passed for v2.2.91. | Team still needs to use the gates before closing GitHub issues or starting large new slices. | Apply this closeout map to the next issue/milestone sweep. |
+| Replay claim audit / Tactical QA claim boundary | 99% closed | Replay and QA exports now carry claim boundaries, source gaps, forbidden claims, and tactical QA readouts. Focused tests passed across v2.2.87-v2.2.90. | Needs fresh replay-upload artifact proof from live UI with real uploaded logs after the latest bundle. | Capture one live replay artifact and inspect `claim_audit` plus hidden/forbidden claims. |
+| Team Lab ranking preview | 99% closed for local preview, open for official rankings | Local Top 25 preview, reset control, ranking gates, hidden-details policy, Team Lab source docs, and preview UI are shipped. | Official/global ranking is blocked until trusted import worker, verified legality, team-ID mapping, promotion rules, stale recalculation, and enough sample size are proven. | Keep preview labeled experimental; do not promote to official leaderboard yet. |
+| Home page / Battle Labs landing page | 99% closed | Home/Roadmap split, Battle Labs hero, source-backed news watch, Top 25 gated section, and start-cycle UX are shipped and tested. | Visual polish can continue, but it should not block sim-truth work unless usability hides critical actions. | Only do small polish fixes while higher-priority sim correctness work continues. |
+| Showdown/HTML replay intake | 99% closed for import acceptance, open for coaching calibration | Replay upload accepts richer formats and maps uploaded teams/logs into review flow. | Real battle-body training still needs robust parser calibration, replay-to-team mapping proof, and non-poisoning import rules. | Use `/Users/kevinmedeiros/Downloads/battles` as calibration input, but keep outputs labeled evidence, not truth. |
+| Replay transparency and turn-log explainability | Open blocker | Damage/effect events, applied/calculated damage, status/action-denial evidence, and replay dedupe have strong coverage. | Still needs broader move-failure, miss/accuracy, field-state, volatile-state, multi-target, contact, residual, and Pokemon card state tags in replay UI. | Continue replay transparency before expanding coaching certainty. |
+| Full Pokemon Champions legality / Regulation M-B runtime promotion | Open blocker | Source registry, Reg M-B review cards, promotion gates, and source-review ledgers exist. | Complete official/client-captured legal species/forms/moves/items/abilities/Megas are not fully verified as shipping runtime truth. | Keep Reg M-B review-only until source rows and fixtures are complete. |
+| Battle Sensei true coaching brain | Open blocker | Claim-boundary infrastructure, tactical QA payload, and replay review scaffolding are in place. | Real coaching still needs decision opportunity ledger, deferred payoff, speed-control neutralization, counterfactual lines, denominator-aware scoring, and repeated matchup learning. | Build coaching only on source-bound mechanics plus replay-verified evidence. |
+| Supabase/global learning evidence pipeline | Open blocker | Existing app tables and offline DB contract tests are green; local preview can read/write bounded summaries. | Global learning must prevent data poisoning, preserve ruleset/version/sample metadata, respect privacy, and separate personal analytics from global aggregates. | Design trusted import worker and forensic storage before treating uploaded data as global training data. |
+| UI/runtime modularization | Open blocker | Cleanup gate documents the need and identifies candidates. | `ui.js` remains too large and keeps accumulating unrelated concerns. | Split QA export/readout, Battle Sensei replay review, Team Lab home, Roadmap data, and source/news rendering into owned modules. |
+
+## 100% closed right now
+
+No active strategic slice should be marked `100% closed` today. Several are deployed and CI-green, but the correct engineering claim is `99% closed` until fresh live artifacts and issue/milestone closeout proof are attached.
+
+This is intentional. It protects the project from overstating Pokemon Champion legality, real ladder truth, or coaching certainty.
+
+## Current next priority
+
+1. Run one fresh live QA artifact on the latest deployed build and verify `qa_claim_review` appears in the page and JSON.
+2. Run one fresh replay upload artifact from real battle files and verify `claim_audit`, hidden source gaps, field/move failures, and team mapping are understandable.
+3. Update GitHub milestones/issues using this status map: close only what is proven, mark `99%` items with residual risk, and keep blockers open.
+4. Start the next sim-truth slice: replay transparency and QA usefulness, specifically miss/accuracy, field state, volatile state, multi-target damage, and residual/contact damage visibility.
+5. Plan the first `ui.js` module split before adding more QA or Team Lab UI.
+
+## Closeout rule for the next work item
+
+Before starting or closing the next feature, answer:
+
+- What exact claim did we prove?
+- Which artifact or test proves it?
+- Which version proves it?
+- What does it not prove?
+- Which GitHub issue or Roadmap item changed?
+
+If the answer is not clean, the item remains open or `99% closed` with a named residual risk.

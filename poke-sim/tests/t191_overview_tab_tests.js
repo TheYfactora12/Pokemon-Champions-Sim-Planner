@@ -176,6 +176,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md');
   inc(ui, 'Release Discipline + Cleanup Gates');
   inc(ui, 'RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md');
+  inc(ui, 'Active Slice Closeout Status');
+  inc(ui, 'ACTIVE_SLICE_CLOSEOUT_STATUS.md');
   inc(ui, 'Champion Parity 100 Checklist');
   inc(ui, 'champion_parity_100_checklist.md');
   inc(ui, 'Move Support Audit');
@@ -233,6 +235,16 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(cleanup, 'Which QA slice proves it?');
   inc(cleanup, 'Do not leave it implicit in chat.');
   inc(cleanup, 'UI/runtime modularization pressure');
+  const closeout = fs.readFileSync(path.join(ROOT, 'docs', 'ACTIVE_SLICE_CLOSEOUT_STATUS.md'), 'utf8');
+  inc(closeout, '100% closed');
+  inc(closeout, '99% closed');
+  inc(closeout, 'open blocker');
+  inc(closeout, 'No active strategic slice should be marked `100% closed` today.');
+  inc(closeout, 'QA slice naming and claim review');
+  inc(closeout, 'Full Pokemon Champions legality / Regulation M-B runtime promotion');
+  inc(closeout, 'Battle Sensei true coaching brain');
+  inc(closeout, 'UI/runtime modularization');
+  inc(closeout, 'What exact claim did we prove?');
 });
 
 T('5. Overview styles are responsive and scan-friendly', () => {
@@ -399,6 +411,12 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Canonical Team Lab trust roadmap');
   inc(ui, '99% versus 100% closeout');
   inc(ui, 'Closeout discipline before new work');
+  inc(ui, 'Active slice closeout map added');
+  inc(ui, '100% closed, 99% closed with named residual risk, open blocker, or next priority');
+  inc(ui, 'Use the active slice closeout map before starting new work');
+  inc(ui, 'QA naming, release cleanup, replay claim audit, Team Lab preview, home page, and replay intake are 99% closed');
+  inc(ui, 'Current 99% / 100% / blocker map');
+  inc(ui, 'canonical for active closeout');
   inc(ui, 'ChampionsSim.overview');
   inc(ui, 'renderTeamLabHomeHub();');
   inc(ui, 'renderOverviewTab();');
