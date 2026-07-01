@@ -829,15 +829,16 @@
   7. generated/pokemon_showdown_legal_data.js — Showdown-derived stats/learnsets
   8. generated/pokemon_showdown_species_weights.js — Showdown-derived species weights
   9. generated/news_feed.js — synced homepage news feed with static fallback
- 10. runtime_data.js     — runtime Showdown/generated data accessors
- 11. move_legality.js    — species/form move legality helper
- 12. move_support.js     — local move support confidence helper
- 13. replay_coach.js     — Battle Sensei replay parser
- 14. replay_learning.js  — Battle Sensei learning layer
- 15. legality.js         — VGC legality checker
- 16. app_shell.js        — release identity, runtime error, cache refresh, delegated public-security handlers
- 17. ui.js               — all UI logic (needs everything above)
- 18. strategy-injectable.js — injectable coaching layer
+ 10. generated/source_registry.js — source trust registry for UI/source page
+ 11. runtime_data.js     — runtime Showdown/generated data accessors
+ 12. move_legality.js    — species/form move legality helper
+ 13. move_support.js     — local move support confidence helper
+ 14. replay_coach.js     — Battle Sensei replay parser
+ 15. replay_learning.js  — Battle Sensei learning layer
+ 16. legality.js         — VGC legality checker
+ 17. app_shell.js        — release identity, runtime error, cache refresh, delegated public-security handlers
+ 18. ui.js               — all UI logic (needs everything above)
+ 19. strategy-injectable.js — injectable coaching layer
 -->
 <script src="release_manifest.js"></script>
 <script src="app_shell.js"></script>
@@ -847,6 +848,7 @@
 <script src="generated/pokemon_showdown_species_weights.js"></script>
 <script src="generated/source_sync_status.js"></script>
 <script src="generated/news_feed.js"></script>
+<script src="generated/source_registry.js"></script>
 <script src="runtime_data.js"></script>
 <script src="engine.js"></script>
 <script src="rulesets.js"></script>

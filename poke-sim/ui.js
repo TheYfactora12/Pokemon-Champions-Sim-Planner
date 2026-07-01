@@ -14633,6 +14633,28 @@ function csRenderSourceSyncCards(status, dbSnapshot) {
   '</div>';
 }
 
+function csRenderSourceRegistry() {
+  var registry = (typeof CHAMPIONS_SOURCE_REGISTRY !== 'undefined' && CHAMPIONS_SOURCE_REGISTRY) ? CHAMPIONS_SOURCE_REGISTRY : null;
+  if (!registry || !Array.isArray(registry.tiers)) return '';
+  var tiers = registry.tiers.map(function(tier) {
+    var sources = (tier.sources || []).map(function(source) {
+      return '<li><a href="' + _escapeHtml(source.url || '#') + '" target="_blank" rel="noopener">' + _escapeHtml(source.name || 'Source') + '</a><span>' + _escapeHtml(source.status || 'tracked') + '</span></li>';
+    }).join('');
+    return '<article class="sources-table-card">' +
+      '<div class="sources-table-head"><div><span class="badge badge-blue">' + _escapeHtml(tier.trust || 'tracked') + '</span><h3>' + _escapeHtml(tier.label || tier.id || 'Source tier') + '</h3></div><p>Use for: ' + _escapeHtml((tier.use_for || []).join(', ') || 'tracked evidence') + '.</p></div>' +
+      '<p class="overview-source-note"><strong>Do not use for:</strong> ' + _escapeHtml((tier.not_for || []).join(', ') || 'unspecified claims') + '.</p>' +
+      '<ul class="overview-list source-registry-list">' + sources + '</ul>' +
+    '</article>';
+  }).join('');
+  return '<div class="sources-registry">' +
+    '<div class="sources-table-card">' +
+      '<div class="sources-table-head"><div><span class="badge badge-blue">TRUST LADDER</span><h3>Sources used to build the sim</h3></div><p>' + _escapeHtml(registry.policy || 'Source policy tracked by build.') + '</p></div>' +
+      '<p class="overview-source-note">Last reviewed: ' + _escapeHtml(registry.last_reviewed || 'unknown') + '. Unknown Champion-specific truth remains needs_verification until official, in-game, replay, or approved source rows prove it.</p>' +
+    '</div>' +
+    tiers +
+  '</div>';
+}
+
 function csRenderSourceSyncTables(status, dbSnapshot) {
   var rows = csRenderSourceSyncRows(status, dbSnapshot);
   var files = (dbSnapshot && dbSnapshot.sourceFiles || []).map(function(file) {
@@ -14663,6 +14685,7 @@ function renderSourcesTab() {
       '<p>Readable source-of-truth view for players, QA, and release review.</p>' +
     '</div>' +
     csRenderSourceSyncCards(status, null) +
+    csRenderSourceRegistry() +
     csRenderSourceSyncTables(status, null) +
   '</div>';
   var adapter = (typeof window !== 'undefined') ? window.SupabaseAdapter : null;
@@ -14674,6 +14697,7 @@ function renderSourcesTab() {
         '<p>Readable source-of-truth view for players, QA, and release review.</p>' +
       '</div>' +
       csRenderSourceSyncCards(status, snapshot) +
+      csRenderSourceRegistry() +
       csRenderSourceSyncTables(status, snapshot) +
     '</div>';
   }).catch(function() {
@@ -14683,6 +14707,7 @@ function renderSourcesTab() {
         '<p>Readable source-of-truth view for players, QA, and release review.</p>' +
       '</div>' +
       csRenderSourceSyncCards(status, null) +
+      csRenderSourceRegistry() +
       csRenderSourceSyncTables(status, null) +
     '</div>';
   });

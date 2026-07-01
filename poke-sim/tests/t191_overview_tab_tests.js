@@ -349,6 +349,12 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'team_lab:qa_reset_at');
   inc(ui, 'Shared/global rankings unchanged until trusted admin reset runs.');
   inc(ui, 'Latest Champion Updates');
+  inc(ui, 'function csRenderSourceRegistry');
+  inc(ui, 'Sources used to build the sim');
+  inc(ui, 'CHAMPIONS_SOURCE_REGISTRY');
+  inc(ui, 'Source tier');
+  inc(ui, 'Do not use for:');
+  inc(ui, 'needs_verification');
   inc(ui, 'Pokemon Champions Is Available Now on iOS and Android Devices');
   inc(ui, 'Regulation Set M-B Kicks off a New Ranked Battles Season');
   inc(ui, 'Pokemon Champions Monthly Challenge Series June 2026');
