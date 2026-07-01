@@ -37843,6 +37843,152 @@ function csBuildCodexQaContext(args) {
   };
 }
 
+function csBuildQaDashboard(payload) {
+  payload = payload || {};
+  var ctx = payload.codex_context || {};
+  var gates = Array.isArray(ctx.qa_gate_results) ? ctx.qa_gate_results : [];
+  var blockers = Array.isArray(ctx.qa_release_blockers) ? ctx.qa_release_blockers : gates.filter(function(gate) {
+    return gate && gate.release_blocking;
+  });
+  var actionPlan = Array.isArray(ctx.qa_action_plan) ? ctx.qa_action_plan : [];
+  var summary = payload.summary || {};
+  var db = payload.db || {};
+  var dbSave = db.branch_coverage && db.branch_coverage.save_result || {};
+  var dbErrors = Array.isArray(dbSave.errors) ? dbSave.errors : [];
+  var branchRows = Number(ctx.retained_evidence && ctx.retained_evidence.branch_analysis_rows || 0);
+  var coachFocus = ctx.coach_focus || {};
+  var missing = Array.isArray(ctx.next_missing_proof) ? ctx.next_missing_proof : [];
+  var damageGate = gates.find(function(gate) { return gate && gate.id === 'damage-events-present'; });
+  var traceGate = gates.find(function(gate) { return gate && gate.id === 'move-rule-trace-present'; });
+  var targetedGate = gates.find(function(gate) { return gate && gate.id === 'targeted-proof-closed'; });
+  var branchGate = gates.find(function(gate) { return gate && gate.id === 'branch-analysis-usable'; });
+  var releaseBugs = [];
+  function addBug(id, severity, lane, detail, evidencePointer, nextStep) {
+    releaseBugs.push({
+      id: id,
+      severity: severity,
+      lane: lane,
+      detail: detail,
+      evidence_pointer: evidencePointer || null,
+      next_step: nextStep || null
+    });
+  }
+  blockers.forEach(function(gate) {
+    addBug(
+      gate.id,
+      gate.severity || 'blocker',
+      gate.id && gate.id.indexOf('branch') >= 0 ? 'coaching_product' : 'battle_engine',
+      gate.observed || gate.detail || gate.label || 'QA gate did not pass.',
+      gate.evidence_pointer,
+      gate.next_step
+    );
+  });
+  if (dbErrors.length) {
+    addBug(
+      'db-save-errors',
+      'warning',
+      'release',
+      dbErrors.length + ' DB save error(s) were reported during QA artifact export.',
+      'db.branch_coverage.save_result.errors',
+      'Inspect Supabase/runtime write path before treating DB evidence as durable.'
+    );
+  }
+  if (Number(summary.truncated_replay_logs || 0) > 0) {
+    addBug(
+      'truncated-replay-logs',
+      'warning',
+      'product_qa',
+      summary.truncated_replay_logs + ' replay log(s) were truncated.',
+      'summary.truncated_replay_logs',
+      'Use retained structured turnLog rows for QA or increase forensic export path before claiming full replay transparency.'
+    );
+  }
+  var battlePass = (!damageGate || damageGate.status === 'pass') &&
+    (!traceGate || traceGate.status === 'pass') &&
+    (!targetedGate || targetedGate.status === 'pass') &&
+    missing.length === 0;
+  var coachingPass = branchRows > 0 && (!branchGate || branchGate.status === 'pass') && !!coachFocus.recommended_solution;
+  var releasePass = blockers.length === 0 && dbErrors.length === 0;
+  var lanes = [
+    {
+      id: 'release',
+      label: 'Release QA',
+      status: releasePass ? 'pass' : 'warn',
+      can_ship: releasePass,
+      summary: releasePass
+        ? 'No release-blocking QA gates or DB save errors are reported.'
+        : 'Release has blockers or warnings that need review before public proof.',
+      gates: ['build/source captured', 'artifact exported', 'DB save status surfaced', 'cache/version evidence available'],
+      evidence_pointers: ['build_id', 'source_url', 'db.branch_coverage.save_result', 'proof_manifest']
+    },
+    {
+      id: 'battle_engine',
+      label: 'Battle Engine QA',
+      status: battlePass ? 'pass' : 'fail',
+      trust: battlePass ? 'verified_for_this_artifact' : 'blocked_or_partial',
+      summary: battlePass
+        ? 'Damage, move-rule trace, and named targeted proof gates are satisfied for this artifact.'
+        : 'Battle-engine proof is incomplete; do not claim full mechanics trust from this artifact.',
+      gates: gates.filter(function(gate) {
+        return gate && ['damage-events-present', 'move-rule-trace-present', 'targeted-proof-closed'].indexOf(gate.id) >= 0;
+      }),
+      evidence_pointers: ['qa_coverage_summary.mechanics_seen', 'qa_coverage_summary.missing_targeted_proof', 'turnLog[].damage_events[]']
+    },
+    {
+      id: 'coaching_product',
+      label: 'Coaching/Product QA',
+      status: coachingPass ? 'pass' : 'warn',
+      trust: coachingPass ? 'usable_for_next_recommendation' : 'needs_stronger_branch_signal',
+      summary: coachingPass
+        ? 'Coach focus and branch decision evidence are available.'
+        : 'Mechanics may be proven, but coaching needs stronger branch decision evidence before ranking concrete lines.',
+      gates: gates.filter(function(gate) {
+        return gate && gate.id === 'branch-analysis-usable';
+      }),
+      evidence_pointers: ['codex_context.coach_focus', 'branch_move_analysis', 'tactical_sweep']
+    }
+  ];
+  var fixOrder = actionPlan.map(function(item) {
+    return {
+      id: item.id,
+      priority: item.priority,
+      status: item.status,
+      next_step: item.next_step
+    };
+  });
+  if (!fixOrder.length) {
+    fixOrder.push({
+      id: 'continue-battle-sensei',
+      priority: 'P1',
+      status: 'ready',
+      next_step: 'Use this artifact to improve the next Battle Sensei coaching or Team Lab ranking behavior.'
+    });
+  }
+  return {
+    schema_version: 'champions-qa-dashboard-v1',
+    generated_at: payload.exported_at || new Date().toISOString(),
+    qa_run_type: payload.qa_run_type || 'unknown',
+    can_ship: releasePass && battlePass,
+    battle_engine_trust: battlePass ? 'verified_for_this_artifact' : 'blocked_or_partial',
+    coaching_product_trust: coachingPass ? 'usable' : 'partial',
+    headline: releasePass && battlePass
+      ? (coachingPass ? 'Ship/battle proof is clean; coaching signal is usable.' : 'Ship/battle proof is clean; coaching signal needs stronger decision rows.')
+      : 'Do not treat this artifact as clean release proof until blockers are resolved.',
+    qa_lanes: lanes,
+    release_blockers: blockers,
+    critical_bugs: releaseBugs,
+    recommended_fix_order: fixOrder,
+    evidence_counts: {
+      damage_events: Number(ctx.mechanics_seen && ctx.mechanics_seen.damage_events || payload.damage_events_total || 0),
+      effect_events: Number(ctx.mechanics_seen && ctx.mechanics_seen.effect_events || payload.effect_events_total || 0),
+      move_rule_trace_rows: Number(ctx.mechanics_seen && ctx.mechanics_seen.move_rule_trace_rows || 0),
+      replay_cards: Number(ctx.retained_evidence && ctx.retained_evidence.replay_cards || payload.replay_cards_scanned || 0),
+      branch_analysis_rows: branchRows,
+      missing_targeted_proof: missing.length
+    }
+  };
+}
+
 function csBuildQaProofManifest(payload) {
   payload = payload || {};
   var coverage = payload.qa_coverage_summary || {};
@@ -38659,6 +38805,10 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   } : null;
   payload = csApplyStressLiteArtifactBudget(payload, options);
   payload.proof_manifest = csBuildQaProofManifest(payload);
+  payload.qa_dashboard = csBuildQaDashboard(payload);
+  payload.qa_gate_results = payload.codex_context.qa_gate_results;
+  payload.qa_release_blockers = payload.codex_context.qa_release_blockers;
+  payload.recommended_fix_order = payload.qa_dashboard.recommended_fix_order;
   try {
     csRememberCoachBrainSummary(mergedCoverage && mergedCoverage.coach_brain_summary, {
       player_team_id: key,
