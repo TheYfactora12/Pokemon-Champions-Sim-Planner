@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.99-true-qa-slice-contract'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.100-qa-100-readiness'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -9443,8 +9443,10 @@ function csBuildQaSliceContract(payload) {
     addBlocker('BRANCH_ANALYSIS_ROWS_MISSING_FOR_COACHING', 'blocker', 'Tactical coaching QA needs branch rows before ranking concrete lines.', 'branch_move_analysis.totals');
   }
   if (slice.id === 'device-safe-stress') {
-    var budget = payload.artifact_budget || {};
-    if (budget.final_bytes && budget.max_bytes && Number(budget.final_bytes) > Number(budget.max_bytes)) {
+    var budget = payload.artifact_budget || payload.artifact_size_guard || (payload.stress_lite && payload.stress_lite.artifact_budget) || {};
+    if (!budget.schema_version) {
+      addBlocker('STRESS_LITE_BUDGET_MISSING', 'blocker', 'Stress Lite contract requires artifact budget evidence.', 'artifact_budget');
+    } else if (budget.final_bytes && budget.max_bytes && Number(budget.final_bytes) > Number(budget.max_bytes)) {
       addBlocker('STRESS_LITE_BUDGET_EXCEEDED', 'blocker', 'Stress Lite artifact exceeded the browser-safe budget.', 'artifact_budget.final_bytes');
     }
   }
@@ -9482,6 +9484,125 @@ function csBuildQaSliceContract(payload) {
       missing_targeted_proof: missingProof.length
     },
     claim_boundary: 'This QA slice validates only the named purpose for this artifact. It does not become official Pokemon Champion truth or global leaderboard truth.'
+  };
+}
+
+function csBuildQaHundredReadiness(payload) {
+  payload = payload || {};
+  var coverage = payload.qa_coverage_summary || {};
+  var mechanics = coverage.mechanics_seen || {};
+  var totals = coverage.totals || {};
+  var replayAudit = payload.replay_logic_audit || {};
+  var matrix = coverage.move_effect_logic_matrix || {};
+  var families = Array.isArray(matrix.families) ? matrix.families : [];
+  var partialFamilies = families.filter(function(row) { return row && row.status === 'partial'; }).map(function(row) { return row.id || row.label || 'unknown'; });
+  var missingFamilies = families.filter(function(row) { return row && row.status === 'missing'; }).map(function(row) { return row.id || row.label || 'unknown'; });
+  var missingProof = Array.isArray(coverage.missing_targeted_proof) ? coverage.missing_targeted_proof : [];
+  var sourceGaps = payload.qa_claim_review && Array.isArray(payload.qa_claim_review.source_gaps) ? payload.qa_claim_review.source_gaps : [];
+  var branchRuns = Number(totals.branch_matrix_runs || payload.branch_matrix_runs || 0);
+  var branchCandidates = Number(totals.branch_matrix_candidate_runs || 0);
+  var unseenCandidates = Number(totals.branch_matrix_unseen_candidates || 0);
+  var retainedReplayCards = Number(replayAudit.retained_replay_cards || 0);
+  var retainedWithTurnLogs = Number(replayAudit.retained_replay_cards_with_turn_logs || 0);
+  var retainedTotals = replayAudit.retained_totals || {};
+  var releaseBlockers = Array.isArray(payload.qa_release_blockers) ? payload.qa_release_blockers : [];
+  var gates = [];
+  function addGate(id, label, status, evidence, missing, nextStep) {
+    gates.push({
+      id: id,
+      label: label,
+      status: status,
+      evidence: evidence || null,
+      missing: Array.isArray(missing) ? missing : (missing ? [missing] : []),
+      next_step: nextStep || null
+    });
+  }
+  addGate(
+    'release_identity',
+    'Release identity and artifact provenance',
+    payload.build_id && payload.source_url && releaseBlockers.length === 0 ? 'pass' : 'blocked',
+    { build_id: payload.build_id || null, source_url: payload.source_url || null, release_blockers: releaseBlockers.length },
+    releaseBlockers.length ? ['release blockers present'] : (!payload.build_id || !payload.source_url ? ['build_id/source_url missing'] : []),
+    'Do not use QA evidence without build_id and source_url.'
+  );
+  addGate(
+    'legality_truth',
+    'Official Champion legality source package',
+    'blocked',
+    { artifact_scope: 'QA export only' },
+    ['Complete active-regulation source package is not proven by this artifact alone.', 'Need official/client-captured legal species, forms, moves, abilities, held items, Mega rules, clauses, and known legal/illegal fixtures.'],
+    'Build and attach the Regulation M-B legality evidence package before claiming real-game legality.'
+  );
+  addGate(
+    'damage_math_trace',
+    'Damage math and move-rule trace evidence',
+    Number(mechanics.damage_events || totals.damage_events || 0) > 0 && Number(mechanics.move_rule_trace_rows || totals.move_rule_trace_rows || 0) > 0 ? 'pass' : 'blocked',
+    { damage_events: Number(mechanics.damage_events || totals.damage_events || 0), move_rule_trace_rows: Number(mechanics.move_rule_trace_rows || totals.move_rule_trace_rows || 0) },
+    Number(mechanics.move_rule_trace_rows || totals.move_rule_trace_rows || 0) > 0 ? [] : ['move_rule_trace rows missing'],
+    'Every damage bug report should start from turnLog[].damage_events[].move_rule_trace.'
+  );
+  addGate(
+    'mechanic_family_breadth',
+    'Mechanic family breadth',
+    missingFamilies.length || partialFamilies.length || missingProof.length ? 'partial' : 'pass',
+    { proven: matrix.totals && matrix.totals.proven || 0, partial: partialFamilies.length, missing: missingFamilies.length, missing_targeted_proof: missingProof.length },
+    missingFamilies.concat(partialFamilies).concat(missingProof).slice(0, 20),
+    'Run targeted proof for every partial/missing family before saying all gameplay possibilities are covered.'
+  );
+  addGate(
+    'replay_transparency',
+    'Replay transparency and explainability',
+    replayAudit.status === 'pass' && Number(retainedTotals.unexplained_faints || 0) === 0 && Number(retainedTotals.unexplained_hp_drops || 0) === 0 ? 'pass' : 'partial',
+    { replay_status: replayAudit.status || null, retained_replay_cards: retainedReplayCards, retained_with_turn_logs: retainedWithTurnLogs, unexplained_faints: Number(retainedTotals.unexplained_faints || 0), unexplained_hp_drops: Number(retainedTotals.unexplained_hp_drops || 0) },
+    replayAudit.status === 'pass' ? [] : ['Retained Replay Logic QA still has warnings or missing mechanic-family proof.'],
+    'Replay UI/export must explain HP loss, faint causes, misses, field state, status/action denial, and multi-target outcomes.'
+  );
+  addGate(
+    'scenario_breadth',
+    'Scenario breadth across branches and possibilities',
+    branchRuns > 0 && unseenCandidates === 0 ? 'pass' : (branchRuns > 0 ? 'partial' : 'blocked'),
+    { branch_matrix_runs: branchRuns, branch_matrix_candidate_runs: branchCandidates, branch_matrix_unseen_candidates: unseenCandidates },
+    unseenCandidates ? ['Unseen branch candidates remain: ' + unseenCandidates] : (branchRuns ? [] : ['No branch matrix runs in artifact']),
+    'Keep running Tactical Sweep/Stress QA until high-priority branch candidates are exhausted or explicitly scoped out.'
+  );
+  addGate(
+    'real_replay_parity',
+    'Real battle replay parity',
+    'partial',
+    { retained_replay_cards: retainedReplayCards, qa_run_type: payload.qa_run_type || null },
+    ['Need a reviewed set of real Pokemon Champions/Showdown battle logs mapped to teams, turns, field states, and outcomes without parser gaps.'],
+    'Use real uploaded battle files to compare how real matches flow against sim replay output.'
+  );
+  addGate(
+    'singles_doubles_coverage',
+    'Singles and doubles coverage',
+    'partial',
+    { current_format: payload.current_format || null },
+    ['This artifact proves only its captured format/scope. Need paired singles and doubles artifacts for the same release/ruleset.'],
+    'Export one singles and one doubles QA artifact before claiming format-wide readiness.'
+  );
+  addGate(
+    'source_gap_boundary',
+    'Source gap boundary',
+    sourceGaps.length ? 'partial' : 'pass',
+    { source_gaps: sourceGaps.map(function(gap) { return gap.code || 'SOURCE_GAP'; }) },
+    sourceGaps.map(function(gap) { return gap.code || gap.message || 'SOURCE_GAP'; }),
+    'Unknown Champion truth must stay needs_verification and cannot feed official rankings or coaching certainty.'
+  );
+  var blocked = gates.filter(function(gate) { return gate.status === 'blocked'; });
+  var partial = gates.filter(function(gate) { return gate.status === 'partial'; });
+  return {
+    schema_version: 'champions-qa-100-readiness-v1',
+    verdict: blocked.length ? 'not_ready' : (partial.length ? 'partial_not_100' : 'ready_for_100_claim_review'),
+    plain_english: blocked.length || partial.length
+      ? 'This artifact is useful evidence, but it does not prove the simulator is 100% real-game complete across all possibilities yet.'
+      : 'All tracked 100% gates passed for this artifact scope; still require human source review before public claims.',
+    gates: gates,
+    blockers: blocked,
+    partials: partial,
+    next_priority: blocked.length
+      ? blocked[0].next_step
+      : (partial.length ? partial[0].next_step : 'Attach human-reviewed source proof and close the matching GitHub issue.')
   };
 }
 
@@ -10284,6 +10405,7 @@ function csApplyStressLiteArtifactBudget(payload, options) {
   };
   payload.retained = retained;
   payload.artifact_size_guard = trimReport;
+  payload.artifact_budget = trimReport;
   payload.stress_lite.artifact_budget = trimReport;
   return payload;
 }
@@ -10911,10 +11033,15 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     qa_slice_contract: payload.qa_slice_contract,
     reviewer_next_step: payload.qa_slice_contract && payload.qa_slice_contract.status !== 'ready'
       ? payload.qa_slice_contract.next_if_fails
-      : (payload.recommended_next_test || (payload.proof_manifest && payload.proof_manifest.next_action) || 'Review qa_dashboard.recommended_fix_order before changing code.')
+      : (payload.qa_run_type === 'stress_lite_qa'
+        ? ((payload.proof_manifest && payload.proof_manifest.next_action) || payload.recommended_next_test || 'Review qa_dashboard.recommended_fix_order before changing code.')
+        : (payload.recommended_next_test || (payload.proof_manifest && payload.proof_manifest.next_action) || 'Review qa_dashboard.recommended_fix_order before changing code.'))
   };
   payload.qa_gate_results = payload.codex_context.qa_gate_results;
   payload.qa_release_blockers = payload.codex_context.qa_release_blockers;
+  payload.qa_100_readiness = csBuildQaHundredReadiness(payload);
+  if (payload.qa_dashboard) payload.qa_dashboard.qa_100_readiness = payload.qa_100_readiness;
+  if (payload.qa_claim_review) payload.qa_claim_review.qa_100_readiness = payload.qa_100_readiness;
   payload.recommended_fix_order = payload.qa_dashboard.recommended_fix_order;
   try {
     csRememberCoachBrainSummary(mergedCoverage && mergedCoverage.coach_brain_summary, {
@@ -10955,6 +11082,7 @@ function csRenderQaClaimReviewReadout(payload) {
   var review = payload.qa_claim_review || {};
   var dashboard = payload.qa_dashboard || {};
   var slice = payload.qa_slice_contract || review.qa_slice_contract || {};
+  var hundred = payload.qa_100_readiness || review.qa_100_readiness || {};
   var scope = review.evidence_scope || {};
   var gaps = Array.isArray(review.source_gaps) ? review.source_gaps : [];
   var forbidden = Array.isArray(review.forbidden_claims) ? review.forbidden_claims : [];
@@ -10988,6 +11116,7 @@ function csRenderQaClaimReviewReadout(payload) {
     '<div class="replay-coach-summary-grid">' +
       '<div class="replay-coach-metric"><strong>Release blockers</strong><span>' + _escapeHtml(String(blockers.length)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Slice blockers</strong><span>' + _escapeHtml(String(sliceBlockers.length)) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>100% gate</strong><span>' + _escapeHtml(String(hundred.verdict || 'not_checked')) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Source gaps</strong><span>' + _escapeHtml(String(gaps.length)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Damage events</strong><span>' + _escapeHtml(String(scope.damage_events || 0)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Branch rows</strong><span>' + _escapeHtml(String(scope.branch_analysis_rows || 0)) + '</span></div>' +
@@ -10996,6 +11125,7 @@ function csRenderQaClaimReviewReadout(payload) {
       '<div class="replay-coach-list-row"><strong>Source boundary</strong>' + _escapeHtml(review.source_boundary || 'This artifact is scoped evidence, not official game truth.') + '</div>' +
       '<div class="replay-coach-list-row"><strong>Best for</strong>' + _escapeHtml(slice.best_for || 'Scoped QA review for this artifact.') + '</div>' +
       '<div class="replay-coach-list-row"><strong>Not for</strong>' + _escapeHtml(slice.not_for || 'Do not treat one artifact as complete game truth.') + '</div>' +
+      '<div class="replay-coach-list-row"><strong>100% readiness</strong>' + _escapeHtml(hundred.plain_english || '100% readiness was not evaluated for this artifact.') + '</div>' +
       '<div class="replay-coach-list-row"><strong>Next QA move</strong>' + _escapeHtml(review.reviewer_next_step || payload.recommended_next_test || 'Review qa_dashboard.recommended_fix_order.') + '</div>' +
       (sliceBlockerRows ? '<div class="replay-coach-list-row"><strong>Top slice blockers</strong>' + sliceBlockerRows + '</div>' : '') +
       (gapRows ? '<div class="replay-coach-list-row"><strong>Top source gaps</strong>' + gapRows + '</div>' : '') +
@@ -11055,6 +11185,7 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
   ChampionsSim.history.buildCodexQaContext = csBuildCodexQaContext;
   ChampionsSim.history.buildQaSliceContract = csBuildQaSliceContract;
+  ChampionsSim.history.buildQaHundredReadiness = csBuildQaHundredReadiness;
   ChampionsSim.history.buildStressLiteOptions = csBuildStressLiteOptions;
   ChampionsSim.history.chooseQaDropFolder = csChooseQaDropFolder;
 }
@@ -11066,6 +11197,7 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBu
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportQaArtifactJson', csExportQaArtifactJson);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildCodexQaContext', csBuildCodexQaContext);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaSliceContract', csBuildQaSliceContract);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaHundredReadiness', csBuildQaHundredReadiness);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildStressLiteOptions', csBuildStressLiteOptions);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csAnalyzeBranchCoverageRows', csAnalyzeBranchCoverageRows);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSummarizeBranchTactics', csSummarizeBranchTactics);
@@ -12879,6 +13011,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'QA 100 readiness gate added',
+      detail: 'v2.2.100 adds qa_100_readiness to QA artifacts and the visible QA readout. The artifact now separates useful slice evidence from 100% simulator readiness by checking release identity, official Champion legality source proof, damage trace evidence, mechanic-family breadth, replay transparency, scenario breadth, real-replay parity, singles/doubles coverage, and source-gap boundaries.'
+    },
+    {
+      status: 'done',
       title: 'True QA slice contract added',
       detail: 'v2.2.99 adds qa_slice_contract to QA artifacts and the visible claim-review card. Each export now names whether it is Current Evidence QA, Device-Safe Stress QA, Tactical Coaching QA, Targeted Mechanic Proof QA, or Release Matrix QA, then states purpose, best use, not-for boundary, pass criteria, blockers, evidence counts, and next failed-slice action.'
     },
@@ -13743,6 +13880,11 @@ var CS_OVERVIEW_DATA = {
     },
   ],
   next: [
+    {
+      status: 'next',
+      title: 'Use QA 100 readiness to drive the next fixes',
+      detail: 'Fresh artifacts should now be read through qa_100_readiness first. If the verdict is not_ready or partial_not_100, work the first blocked/partial gate before claiming the sim plays like the real game across all possibilities. Expected open gates are Regulation M-B legality package, partial mechanic families, replay transparency warnings, scenario breadth, real replay parity, and paired singles/doubles proof.'
+    },
     {
       status: 'next',
       title: 'Validate true QA slice contract live',

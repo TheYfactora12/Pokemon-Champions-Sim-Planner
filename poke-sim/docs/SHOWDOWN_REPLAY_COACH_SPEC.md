@@ -1029,3 +1029,25 @@ Required fields:
 - `claim_boundary`
 
 Acceptance rule: QA reviews should start from `qa_slice_contract` before interpreting `qa_dashboard`, `qa_coverage_summary`, or replay cards. A ready slice only validates the named purpose for that artifact. It must not be promoted into official Champion legality, complete battle-mechanic truth, coaching certainty, or global leaderboard truth without the separate source/ruleset/sample gates.
+
+## QA 100 Readiness Gate
+
+Schema addition: `qa_100_readiness`
+
+Purpose: answer the harder question: "Does this evidence prove the simulator plays like the real game across all important possibilities?"
+
+This gate is intentionally stricter than `qa_slice_contract`. A slice can be ready while 100% readiness remains blocked.
+
+Required gate categories:
+
+- release identity and artifact provenance
+- official Champion legality source package
+- damage math and move-rule trace evidence
+- mechanic-family breadth
+- replay transparency and explainability
+- scenario breadth across branches and possibilities
+- real battle replay parity
+- singles and doubles coverage
+- source-gap boundary
+
+Acceptance rule: a QA artifact can guide fixes when `qa_slice_contract.status` is ready, but it cannot support a public 100% real-game claim unless `qa_100_readiness.verdict` reaches `ready_for_100_claim_review` and the source/legal gates have human-reviewed proof. Expected normal states before beta are `not_ready` or `partial_not_100`, with the next engineering priority coming from the first blocked or partial gate.

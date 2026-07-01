@@ -248,7 +248,7 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(closeout, '99% closed');
   inc(closeout, 'open blocker');
   inc(closeout, 'No active strategic slice should be marked `100% closed` today.');
-  inc(closeout, 'QA slice naming, claim review, and true-QA contract');
+  inc(closeout, 'QA slice naming, claim review, true-QA contract, and 100% readiness gate');
   inc(closeout, 'Full Pokemon Champions legality / Regulation M-B runtime promotion');
   inc(closeout, 'Battle Sensei true coaching brain');
   inc(closeout, 'GitHub generated-artifact release hygiene');
@@ -488,6 +488,15 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Best for');
   inc(ui, 'Not for');
   inc(ui, 'This QA slice validates only the named purpose for this artifact');
+  inc(ui, 'QA 100 readiness gate added');
+  inc(ui, 'qa_100_readiness to QA artifacts');
+  inc(ui, 'official Champion legality source proof, damage trace evidence, mechanic-family breadth, replay transparency, scenario breadth, real-replay parity, singles/doubles coverage');
+  inc(ui, 'Use QA 100 readiness to drive the next fixes');
+  inc(ui, 'not_ready or partial_not_100');
+  inc(ui, 'champions-qa-100-readiness-v1');
+  inc(ui, 'csBuildQaHundredReadiness');
+  inc(ui, '100% gate');
+  inc(ui, '100% readiness');
   inc(ui, 'shipped move registry coverage plus live mechanic-family proof');
   inc(ui, 'Run non-standard stat-source targeted proof first');
   inc(ui, 'nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace');
