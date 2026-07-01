@@ -260,7 +260,8 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.overview-db-table');
   inc(css, '.overview-status.done');
   inc(css, '.overview-status.gap');
-  inc(css, '@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-hero,.pokemon-news-slide.active,.home-proof-snapshot{grid-template-columns:1fr}.home-trust-strip{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:220px}}');
+  inc(css, '@media(max-width:900px){.overview-grid{grid-template-columns:1fr}.overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-db-summary,.overview-db-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-hero,.home-proof-snapshot{grid-template-columns:1fr}.home-trust-strip{grid-template-columns:1fr}.team-lab-hero-badges{justify-content:flex-start}}');
+  inc(css, '@media(max-width:720px){.pokemon-news-slide.active{grid-template-columns:1fr}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:190px}}');
 });
 
 T('6. Overview renders through a reusable function for future growth', () => {
