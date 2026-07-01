@@ -341,6 +341,12 @@ async function main() {
     truthy(payload.retained && payload.retained.replay_cards.length >= 1, 'retained replay cards missing');
     eq(payload.retained.replay_cards[0].seed, 'qa-seed-1');
     eq(payload.retained.replay_cards[0].qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'retained replay coverage missing');
+    truthy(payload.replay_logic_audit, 'replay logic audit missing');
+    eq(payload.replay_logic_audit.schema_version, 'champions-replay-logic-audit-v1', 'replay logic audit schema');
+    eq(payload.replay_logic_audit.retained_replay_cards, payload.retained.replay_cards.length, 'replay logic audit retained count mismatch');
+    truthy(payload.replay_logic_audit.retained_replay_cards_with_turn_logs >= 1, 'replay logic audit turn-log count missing');
+    truthy(Array.isArray(payload.replay_logic_audit.risks), 'replay logic audit risks missing');
+    truthy(/exported replay evidence quality/i.test(payload.replay_logic_audit.boundary), 'replay logic audit boundary missing');
     truthy(payload.proof_manifest, 'proof manifest missing');
     eq(payload.proof_manifest.schema_version, 'champions-qa-proof-manifest-v1', 'proof manifest schema');
     eq(payload.proof_manifest.build_id, payload.build_id, 'proof manifest build id mismatch');
@@ -359,6 +365,8 @@ async function main() {
     truthy(payload.qa_dashboard && payload.qa_dashboard.claim_boundary, 'QA dashboard claim boundary missing');
     eq(payload.qa_dashboard.claim_boundary.schema_version, 'champions-qa-artifact-claim-audit-v1', 'QA dashboard claim boundary schema');
     truthy(payload.qa_dashboard.claim_boundary.forbidden_claims.some(claim => /regulation_id, ruleset_version, engine_version/i.test(claim)), 'QA dashboard ranking guard missing');
+    truthy(payload.qa_dashboard.qa_lanes.some(row => row.id === 'replay_logic'), 'replay logic QA lane missing');
+    truthy(typeof payload.qa_dashboard.evidence_counts.replay_logic_risks === 'number', 'replay logic risk count missing');
     truthy(payload.qa_claim_review, 'top-level QA claim review missing');
     eq(payload.qa_claim_review.schema_version, 'champions-qa-claim-review-v1', 'QA claim review schema');
     truthy(/Plain-English trust boundary/i.test(payload.qa_claim_review.purpose), 'QA claim review purpose missing');
@@ -442,6 +450,7 @@ async function main() {
     truthy(payload.qa_dashboard.qa_lanes.some(row => row.id === 'release'), 'release QA lane missing');
     truthy(payload.qa_dashboard.qa_lanes.some(row => row.id === 'battle_engine'), 'battle engine QA lane missing');
     truthy(payload.qa_dashboard.qa_lanes.some(row => row.id === 'coaching_product'), 'coaching/product QA lane missing');
+    truthy(payload.qa_dashboard.qa_lanes.some(row => row.id === 'replay_logic'), 'replay logic QA lane missing');
     truthy(typeof payload.qa_dashboard.can_ship === 'boolean', 'QA dashboard ship decision missing');
     truthy(typeof payload.qa_dashboard.battle_engine_trust === 'string', 'battle engine trust missing');
     truthy(typeof payload.qa_dashboard.coaching_product_trust === 'string', 'coaching product trust missing');

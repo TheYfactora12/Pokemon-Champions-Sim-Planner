@@ -54,6 +54,8 @@ The turn-log files supplied with the same proof pass remain useful targeted evid
 
 The all-move QA approach is now defined in `docs/MOVE_MECHANICS_QA_CLOSEOUT_PLAN.md`. The important boundary is that `120 verified / 0 baseline / 0 incomplete` proves registry/test coverage for the shipped move surface, not exhaustive live browser proof for every possible move interaction. Live QA closeout must happen by mechanic family and by high-risk representative moves.
 
+The next QA export layer adds `replay_logic_audit`, a high-level retained-replay health check for turn logs, damage rows, move traces, effect rows, faint causes, and mechanic-family gaps. This audit should help reviewers quickly see whether retained replays are strong enough to support a logic claim, while still keeping targeted/tactical proof separate from full Champion legality or all-move truth.
+
 ## 100% closed right now
 
 No active strategic slice should be marked `100% closed` today. Several are deployed and CI-green, but the correct engineering claim is `99% closed` until fresh live artifacts and issue/milestone closeout proof are attached.

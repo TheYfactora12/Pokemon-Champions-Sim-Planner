@@ -255,6 +255,8 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(closeout, 'non-standard stat-source move traces');
   inc(closeout, 'MOVE_MECHANICS_QA_CLOSEOUT_PLAN.md');
   inc(closeout, 'Live QA closeout must happen by mechanic family');
+  inc(closeout, 'replay_logic_audit');
+  inc(closeout, 'turn logs, damage rows, move traces, effect rows, faint causes');
   inc(closeout, 'What exact claim did we prove?');
   const moveQa = fs.readFileSync(path.join(ROOT, 'docs', 'MOVE_MECHANICS_QA_CLOSEOUT_PLAN.md'), 'utf8');
   inc(moveQa, 'Move Mechanics QA Closeout Plan');
@@ -435,6 +437,10 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Active slice closeout map added');
   inc(ui, 'Fresh live closeout QA artifacts recorded');
   inc(ui, 'Move mechanics QA closeout plan added');
+  inc(ui, 'Replay logic QA audit added');
+  inc(ui, 'replay_logic_audit to QA artifacts');
+  inc(ui, 'Replay Logic QA dashboard lane');
+  inc(ui, 'damage_events, move_rule_trace rows, effect_events');
   inc(ui, 'shipped move registry coverage plus live mechanic-family proof');
   inc(ui, 'Run non-standard stat-source targeted proof first');
   inc(ui, 'nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace');

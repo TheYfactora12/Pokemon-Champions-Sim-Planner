@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.94-move-qa-closeout-plan",
+  "build_id": "v2.2.95-replay-logic-audit",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "e618fc7adc74a2219cc693e8a0402e4c86a0945cb15b37f7e2a9fb723a976482",
-  "bundle_bytes": 11132900,
+  "bundle_sha256": "33fbb8356b43fa695316900d387d091b91ecbcc9f613255be2dbb2ed2b0212e3",
+  "bundle_bytes": 11142241,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }

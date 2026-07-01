@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.94-move-qa-closeout-plan'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.95-replay-logic-audit'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -9743,6 +9743,7 @@ function csBuildQaDashboard(payload) {
       evidence_pointers: ['codex_context.coach_focus', 'branch_move_analysis', 'tactical_sweep']
     }
   ];
+  if (payload.replay_logic_audit) lanes.push(csReplayLogicAuditLane(payload.replay_logic_audit));
   var fixOrder = actionPlan.map(function(item) {
     return {
       id: item.id,
@@ -9784,9 +9785,149 @@ function csBuildQaDashboard(payload) {
       effect_events: Number(ctx.mechanics_seen && ctx.mechanics_seen.effect_events || payload.effect_events_total || 0),
       move_rule_trace_rows: Number(ctx.mechanics_seen && ctx.mechanics_seen.move_rule_trace_rows || 0),
       replay_cards: Number(ctx.retained_evidence && ctx.retained_evidence.replay_cards || payload.replay_cards_scanned || 0),
+      replay_logic_risks: payload.replay_logic_audit && Array.isArray(payload.replay_logic_audit.risks) ? payload.replay_logic_audit.risks.length : 0,
       branch_analysis_rows: branchRows,
       missing_targeted_proof: missing.length
     }
+  };
+}
+
+function csBuildReplayLogicAudit(replayCards, retainedSummary, fullSummary) {
+  var cards = Array.isArray(replayCards) ? replayCards : [];
+  var retained = retainedSummary || {};
+  var full = fullSummary || {};
+  var retainedTotals = retained.totals || {};
+  var fullTotals = full.totals || {};
+  var retainedMechanics = retained.mechanics_seen || {};
+  var fullMechanics = full.mechanics_seen || {};
+  var faint = retained.faint_cause_summary || {};
+  var matrix = retained.move_effect_logic_matrix || {};
+  var families = Array.isArray(matrix.families) ? matrix.families : [];
+  var withTurnLogs = 0;
+  var emptyTurnLogs = 0;
+  var withoutCoverage = 0;
+  var withDamageRows = 0;
+  var withEffectRows = 0;
+  var withMoveTraceRows = 0;
+  cards.forEach(function(card) {
+    var turnLog = card && Array.isArray(card.turnLog) ? card.turnLog : [];
+    var cov = card && card.qa_coverage_summary || {};
+    var totals = cov.totals || {};
+    if (turnLog.length) withTurnLogs += 1;
+    else emptyTurnLogs += 1;
+    if (!cov.schema_version) withoutCoverage += 1;
+    if (Number(totals.damage_events || 0) > 0) withDamageRows += 1;
+    if (Number(totals.effect_events || 0) > 0) withEffectRows += 1;
+    if (Number(totals.move_rule_trace_rows || (cov.mechanics_seen && cov.mechanics_seen.move_rule_trace_rows) || 0) > 0) withMoveTraceRows += 1;
+  });
+  var risks = [];
+  function addRisk(code, severity, message, pointer, nextStep) {
+    risks.push({
+      code: code,
+      severity: severity,
+      message: message,
+      pointer: pointer || null,
+      next_step: nextStep || null
+    });
+  }
+  if (cards.length && !withTurnLogs) {
+    addRisk('NO_RETAINED_TURN_LOGS', 'critical', 'Retained replay cards exist but none include structured turnLog rows.', 'retained.replay_cards[].turnLog', 'Run a fresh sim/export with retained replay cards that include turn logs.');
+  } else if (emptyTurnLogs) {
+    addRisk('SOME_RETAINED_TURN_LOGS_MISSING', 'warning', emptyTurnLogs + ' retained replay card(s) have no structured turnLog rows.', 'retained.replay_cards[].turnLog', 'Prefer replay cards with turnLog rows when reviewing battle logic.');
+  }
+  if (cards.length && !withDamageRows) {
+    addRisk('RETAINED_REPLAY_DAMAGE_ROWS_MISSING', 'warning', 'Retained replay cards did not include damage_events.', 'coverage_breakdown.retained_replay_card_summary.totals.damage_events', 'Use targeted/tactical evidence for damage proof or export after battles with damage rows.');
+  }
+  if (Number(retainedMechanics.move_rule_trace_rows || retainedTotals.move_rule_trace_rows || 0) === 0 && cards.length) {
+    addRisk('RETAINED_REPLAY_MOVE_TRACE_MISSING', 'warning', 'Retained replay cards did not include move_rule_trace rows.', 'coverage_breakdown.retained_replay_card_summary.mechanics_seen.move_rule_trace_rows', 'Use move_rule_trace rows before changing or trusting damage logic from retained replays.');
+  }
+  if (Number(faint.unexplained_faints || 0) > 0 || Number(faint.unexplained_hp_drops || 0) > 0) {
+    addRisk('UNEXPLAINED_FAINT_OR_HP_DROP', 'critical', 'Retained replay evidence has unexplained faint or HP-drop rows.', 'coverage_breakdown.retained_replay_card_summary.faint_cause_summary', 'Fix faint/HP cause mapping before using those replays as proof.');
+  }
+  families.filter(function(row) { return row && (row.status === 'missing' || row.status === 'partial'); }).slice(0, 8).forEach(function(row) {
+    addRisk(
+      'REPLAY_FAMILY_' + String(row.id || 'unknown').toUpperCase(),
+      row.status === 'missing' ? 'info' : 'warning',
+      'Retained replay mechanic family is ' + row.status + ': ' + (row.label || row.id || 'unknown') + '.',
+      'coverage_breakdown.retained_replay_card_summary.move_effect_logic_matrix.families',
+      'Run targeted proof if this family is needed for the next coaching or mechanics claim.'
+    );
+  });
+  var status = risks.some(function(r) { return r.severity === 'critical'; })
+    ? 'fail'
+    : (risks.some(function(r) { return r.severity === 'warning'; }) ? 'warn' : 'pass');
+  var fullMissing = Array.isArray(full.missing_targeted_proof) ? full.missing_targeted_proof : [];
+  return {
+    schema_version: 'champions-replay-logic-audit-v1',
+    purpose: 'High-level retained replay health check for battle logic, damage, move traces, effects, faint causes, and mechanic-family coverage.',
+    status: status,
+    scope: 'retained replay cards with full-artifact context',
+    retained_replay_cards: cards.length,
+    retained_replay_cards_with_turn_logs: withTurnLogs,
+    retained_replay_cards_without_turn_logs: emptyTurnLogs,
+    retained_replay_cards_without_coverage: withoutCoverage,
+    retained_replay_cards_with_damage_rows: withDamageRows,
+    retained_replay_cards_with_effect_rows: withEffectRows,
+    retained_replay_cards_with_move_trace_rows: withMoveTraceRows,
+    retained_totals: {
+      turns: Number(retainedTotals.turns || 0),
+      action_rows: Number(retainedTotals.action_rows || 0),
+      damage_events: Number(retainedTotals.damage_events || retainedMechanics.damage_events || 0),
+      effect_events: Number(retainedTotals.effect_events || retainedMechanics.effect_events || 0),
+      move_rule_trace_rows: Number(retainedTotals.move_rule_trace_rows || retainedMechanics.move_rule_trace_rows || 0),
+      unexplained_faints: Number(faint.unexplained_faints || 0),
+      unexplained_hp_drops: Number(faint.unexplained_hp_drops || 0)
+    },
+    full_artifact_context: {
+      damage_events: Number(fullTotals.damage_events || fullMechanics.damage_events || 0),
+      effect_events: Number(fullTotals.effect_events || fullMechanics.effect_events || 0),
+      move_rule_trace_rows: Number(fullTotals.move_rule_trace_rows || fullMechanics.move_rule_trace_rows || 0),
+      missing_targeted_proof: fullMissing.slice(0, 12)
+    },
+    risks: risks,
+    reviewer_read: status === 'pass'
+      ? 'Retained replay cards have enough structured rows for high-level replay logic review in this artifact.'
+      : 'Replay logic review has warnings. Use targeted/tactical proof for covered mechanics and inspect listed retained-replay risks before making claims.',
+    boundary: 'This audit checks exported replay evidence quality. It does not prove complete Champion legality, complete move coverage, or real ladder truth.'
+  };
+}
+
+function csReplayLogicAuditLane(audit) {
+  audit = audit || {};
+  var risks = Array.isArray(audit.risks) ? audit.risks : [];
+  var status = audit.status || 'warn';
+  return {
+    id: 'replay_logic',
+    label: 'Replay Logic QA',
+    status: status === 'pass' ? 'pass' : (status === 'fail' ? 'fail' : 'warn'),
+    trust: status === 'pass' ? 'retained_replays_structured' : 'retained_replays_need_review',
+    summary: audit.reviewer_read || 'Replay logic audit unavailable.',
+    gates: [
+      {
+        id: 'retained-replay-turnlogs',
+        label: 'Retained replay turn logs',
+        severity: 'warning',
+        status: Number(audit.retained_replay_cards_with_turn_logs || 0) > 0 || Number(audit.retained_replay_cards || 0) === 0 ? 'pass' : 'fail',
+        expected: 'Retained replay cards should include structured turnLog rows.',
+        observed: String(Number(audit.retained_replay_cards_with_turn_logs || 0)) + ' of ' + String(Number(audit.retained_replay_cards || 0)) + ' retained replay card(s) have turn logs.',
+        evidence_pointer: 'replay_logic_audit.retained_replay_cards_with_turn_logs',
+        next_step: 'Export after replay cards with structured turn logs are retained.',
+        release_blocking: false
+      },
+      {
+        id: 'retained-replay-move-traces',
+        label: 'Retained replay move traces',
+        severity: 'warning',
+        status: Number(audit.retained_totals && audit.retained_totals.move_rule_trace_rows || 0) > 0 || Number(audit.retained_replay_cards || 0) === 0 ? 'pass' : 'warn',
+        expected: 'Retained replay damage rows should include move_rule_trace when damage occurred.',
+        observed: String(Number(audit.retained_totals && audit.retained_totals.move_rule_trace_rows || 0)) + ' retained move_rule_trace rows.',
+        evidence_pointer: 'replay_logic_audit.retained_totals.move_rule_trace_rows',
+        next_step: 'Use targeted/tactical proof if retained replays did not hit damage trace rows.',
+        release_blocking: false
+      }
+    ],
+    evidence_pointers: ['replay_logic_audit', 'coverage_breakdown.retained_replay_card_summary', 'retained.replay_cards[].qa_coverage_summary'],
+    risk_count: risks.length
   };
 }
 
@@ -10493,6 +10634,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     retainedSimLog = retainedSimLog.slice(0, Number(options.stressLiteSimLogLimit || CS_QA_STRESS_LITE_SIM_LOG_LIMIT));
     retainedTeamHistory = retainedTeamHistory.slice(0, Number(options.stressLiteTeamHistoryLimit || CS_QA_STRESS_LITE_TEAM_HISTORY_LIMIT));
   }
+  var replayLogicAudit = csBuildReplayLogicAudit(retainedReplayCards, retainedReplayCardSummary, mergedCoverage);
 
   var artifactSummary = csBuildQaArtifactSummary(localSimLog, replayCards, key);
   var qaRunType = stressLite ? 'stress_lite_qa' : (tacticalSweepMatrices.length ? 'tactical_sweep' : (targetedSweep ? 'qa_artifact_with_targeted_sweep' : 'qa_artifact'));
@@ -10543,6 +10685,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     stress_lite: stressLite,
     stress_lite_summary: stressLiteSummary,
     branch_move_analysis: branchMoveAnalysis,
+    replay_logic_audit: replayLogicAudit,
     retained: {
       sim_log: retainedSimLog,
       team_history: retainedTeamHistory,
@@ -12568,6 +12711,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Replay logic QA audit added',
+      detail: 'v2.2.95 adds replay_logic_audit to QA artifacts and a Replay Logic QA dashboard lane. The audit scans retained replay cards at a high level for structured turn logs, damage_events, move_rule_trace rows, effect_events, faint/HP-drop explanations, and missing or partial mechanic-family evidence so reviewers can spot replay logic gaps before trusting damage or move claims.'
+    },
     {
       status: 'done',
       title: 'Move mechanics QA closeout plan added',
