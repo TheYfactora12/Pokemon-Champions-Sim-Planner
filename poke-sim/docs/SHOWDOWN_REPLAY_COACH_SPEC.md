@@ -998,3 +998,34 @@ The top-level `qa_coverage_summary` remains the full artifact summary for backwa
 - `coverage_breakdown.tactical_sweep_summary`: all tactical sweep branch matrix summaries merged together.
 
 Acceptance rule: replay-card validation must use `retained_replay_card_summary`. Broader coverage claims can use `full_artifact_summary`, but reports must say that targeted and tactical sweep evidence may add totals beyond the retained replay-card count.
+
+## QA Slice Contract
+
+Schema addition: `qa_slice_contract`
+
+Purpose: make every QA export state what it is actually testing before the team or Codex uses it to make a fix or claim.
+
+Supported slice labels:
+
+- `Current Evidence QA`: quick review of evidence already retained in the browser.
+- `Device-Safe Stress QA`: capped stress proof intended to stay under the 50 MB artifact budget.
+- `Tactical Coaching QA`: branch/decision evidence for Battle Sensei, not ladder truth.
+- `Targeted Mechanic Proof QA`: forced high-risk mechanics such as Foul Play, Body Press, Psyshock, action denial, priority prevention, field duration, recoil, drain, and faint transparency.
+- `Release Matrix QA`: broad integration/regression coverage, not a complete mechanic oracle.
+
+Required fields:
+
+- `slice_id`
+- `label`
+- `purpose`
+- `best_for`
+- `not_for`
+- `must_have`
+- `pass_when`
+- `status`
+- `blockers`
+- `next_if_fails`
+- `evidence_counts`
+- `claim_boundary`
+
+Acceptance rule: QA reviews should start from `qa_slice_contract` before interpreting `qa_dashboard`, `qa_coverage_summary`, or replay cards. A ready slice only validates the named purpose for that artifact. It must not be promoted into official Champion legality, complete battle-mechanic truth, coaching certainty, or global leaderboard truth without the separate source/ruleset/sample gates.

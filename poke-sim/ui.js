@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.98-github-release-guard'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.99-true-qa-slice-contract'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -9351,6 +9351,140 @@ function csCompactQaReplayCard(replay, playerKey) {
   };
 }
 
+function csBuildQaSliceContract(payload) {
+  payload = payload || {};
+  var qaRunType = String(payload.qa_run_type || 'qa_artifact').toLowerCase();
+  var coverage = payload.qa_coverage_summary || {};
+  var mechanics = coverage.mechanics_seen || {};
+  var totals = coverage.totals || {};
+  var retained = payload.retained || {};
+  var replayCards = Array.isArray(retained.replay_cards) ? retained.replay_cards : [];
+  var branchTotals = payload.branch_move_analysis && payload.branch_move_analysis.totals ? payload.branch_move_analysis.totals : {};
+  var branchRows = Number(branchTotals.rows_read || branchTotals.rows || branchTotals.total_rows || 0);
+  var damageEvents = Number(totals.damage_events || mechanics.damage_events || payload.damage_events_total || 0);
+  var effectEvents = Number(totals.effect_events || mechanics.effect_events || payload.effect_events_total || 0);
+  var moveRuleTraceRows = Number(totals.move_rule_trace_rows || mechanics.move_rule_trace_rows || 0);
+  var missingProof = Array.isArray(coverage.missing_targeted_proof) ? coverage.missing_targeted_proof : [];
+  var dbSave = payload.db && payload.db.branch_coverage ? payload.db.branch_coverage.save_result : null;
+  var dbErrors = dbSave && Array.isArray(dbSave.errors) ? dbSave.errors : [];
+  var replayAudit = payload.replay_logic_audit || {};
+  var hasRetainedReplayRows = replayCards.some(function(card) {
+    return card && Array.isArray(card.turnLog) && card.turnLog.length;
+  });
+  var slice = {
+    id: 'current-evidence',
+    label: 'Current Evidence QA',
+    purpose: 'Checks the exported evidence already retained in the browser.',
+    best_for: 'Quick review of latest retained sim evidence before choosing the next targeted test.',
+    not_for: 'Not a full release gate, not exhaustive move coverage, and not official Champion legality.',
+    must_have: ['build_id and source_url', 'qa_coverage_summary', 'retained replay cards when reviewing replay behavior'],
+    pass_when: ['No release blockers are present', 'Relevant replay cards include structured turnLog rows', 'Yellow/red families are treated as QA targets, not proof'],
+    next_if_fails: 'Run the named targeted proof or export a fresh replay with structured turn logs.'
+  };
+  if (qaRunType === 'stress_lite_qa') {
+    slice = {
+      id: 'device-safe-stress',
+      label: 'Device-Safe Stress QA',
+      purpose: 'Runs capped browser-safe stress evidence under the 50 MB artifact budget.',
+      best_for: 'Phone/laptop validation that calculations, replay cards, targeted proof, and branch summaries are still wired.',
+      not_for: 'Not exhaustive Run All, not complete legality proof, and not a replacement for long CI battle audit.',
+      must_have: ['artifact_budget with final_bytes under max_bytes', 'damage_events or targeted proof evidence', 'stress_lite_josh_validation', 'qa_dashboard with battle/replay/coaching lanes'],
+      pass_when: ['Artifact stays under the Stress Lite byte budget', 'Battle Engine QA lane has no blocker', 'Replay Logic QA has no critical unexplained faint or HP-drop risk'],
+      next_if_fails: 'Use recommended_fix_order first; if size fails, reduce retained replay cards before changing battle logic.'
+    };
+  } else if (qaRunType === 'tactical_sweep') {
+    slice = {
+      id: 'tactical-coaching',
+      label: 'Tactical Coaching QA',
+      purpose: 'Validates branch/decision evidence for Battle Sensei before making coaching claims.',
+      best_for: 'Testing line choice, speed-control payoff, move/target alternatives, and matchup learning signals.',
+      not_for: 'Not a damage-only oracle and not proof that the suggested line is real ladder truth.',
+      must_have: ['tactical_sweep.opponents', 'branch_move_analysis.totals', 'decision_opportunity_ledger', 'coach_brain_summary'],
+      pass_when: ['branch_move_analysis has rows', 'coach_focus has a recommendation with confidence', 'source gaps are disclosed before any coaching claim'],
+      next_if_fails: 'Repair branch coverage/export or lower scope to selected matchup before expanding coaching.'
+    };
+  } else if (qaRunType === 'qa_artifact_with_targeted_sweep') {
+    slice = {
+      id: 'targeted-mechanic-proof',
+      label: 'Targeted Mechanic Proof QA',
+      purpose: 'Forces known high-risk mechanics so missing proof becomes explicit.',
+      best_for: 'Move mechanics like Foul Play, Body Press, Psyshock, action denial, priority blocks, field duration, recoil, drain, and faint transparency.',
+      not_for: 'Not a broad matchup ranking or coaching confidence run.',
+      must_have: ['targeted_qa_sweep.runs', 'qa_coverage_summary.missing_targeted_proof', 'move_rule_trace rows when damage math is involved'],
+      pass_when: ['The targeted mechanic appears in mechanics_seen', 'missing_targeted_proof is empty for the claimed family', 'No unexplained faint or HP-drop appears for the targeted replay cards'],
+      next_if_fails: 'Add or fix the targeted scenario that should trigger the missing mechanic before editing unrelated code.'
+    };
+  } else if (qaRunType === 'release_matrix_qa' || qaRunType === 'run_all_qa') {
+    slice = {
+      id: 'release-matrix',
+      label: 'Release Matrix QA',
+      purpose: 'Runs broad matchup coverage to catch integration regressions before public release.',
+      best_for: 'Deployment confidence, matchup matrix smoke, DB/team-load regressions, and top-level battle invariant failures.',
+      not_for: 'Not a complete mechanics oracle unless targeted proof and replay rows cover the mechanic.',
+      must_have: ['build_id and source_url', 'summary counts', 'qa_dashboard release and battle lanes', 'replay_logic_audit'],
+      pass_when: ['No release blockers', 'No DB save/load errors that affect the claim', 'No critical replay logic risks', 'Generated version surfaces agree'],
+      next_if_fails: 'Fix release/integration blockers before tactical coaching or leaderboard work.'
+    };
+  }
+  var blockers = [];
+  function addBlocker(code, severity, detail, pointer) {
+    blockers.push({ code: code, severity: severity, detail: detail, pointer: pointer || null });
+  }
+  if (!payload.build_id) addBlocker('BUILD_ID_MISSING', 'blocker', 'Artifact cannot be tied to a release build.', 'build_id');
+  if (!payload.source_url) addBlocker('SOURCE_URL_MISSING', 'warning', 'Artifact cannot prove which deployed URL produced it.', 'source_url');
+  if (!coverage.schema_version) addBlocker('COVERAGE_SUMMARY_MISSING', 'blocker', 'Artifact has no qa_coverage_summary.', 'qa_coverage_summary');
+  if ((slice.id === 'targeted-mechanic-proof' || slice.id === 'current-evidence') && damageEvents <= 0) {
+    addBlocker('DAMAGE_EVENTS_MISSING_FOR_SLICE', 'blocker', 'This slice cannot validate damage behavior without damage_events.', 'qa_coverage_summary.mechanics_seen.damage_events');
+  }
+  if ((slice.id === 'targeted-mechanic-proof' || slice.id === 'current-evidence') && moveRuleTraceRows <= 0) {
+    addBlocker('MOVE_RULE_TRACE_MISSING_FOR_SLICE', 'blocker', 'This slice cannot validate damage math without move_rule_trace rows.', 'qa_coverage_summary.mechanics_seen.move_rule_trace_rows');
+  }
+  if (slice.id === 'tactical-coaching' && branchRows <= 0) {
+    addBlocker('BRANCH_ANALYSIS_ROWS_MISSING_FOR_COACHING', 'blocker', 'Tactical coaching QA needs branch rows before ranking concrete lines.', 'branch_move_analysis.totals');
+  }
+  if (slice.id === 'device-safe-stress') {
+    var budget = payload.artifact_budget || {};
+    if (budget.final_bytes && budget.max_bytes && Number(budget.final_bytes) > Number(budget.max_bytes)) {
+      addBlocker('STRESS_LITE_BUDGET_EXCEEDED', 'blocker', 'Stress Lite artifact exceeded the browser-safe budget.', 'artifact_budget.final_bytes');
+    }
+  }
+  if (replayCards.length && !hasRetainedReplayRows) {
+    addBlocker('RETAINED_REPLAY_TURNLOGS_MISSING_FOR_SLICE', 'warning', 'Retained replay cards exist but do not include structured turnLog rows.', 'retained.replay_cards[].turnLog');
+  }
+  if (replayAudit.status === 'fail') {
+    addBlocker('REPLAY_LOGIC_AUDIT_FAILING', 'blocker', 'Replay Logic QA has a critical retained replay risk.', 'replay_logic_audit.risks');
+  }
+  if (dbErrors.length) {
+    addBlocker('DB_EVIDENCE_SAVE_ERRORS', 'warning', 'DB save errors mean database evidence is not durable for this run.', 'db.branch_coverage.save_result.errors');
+  }
+  if (missingProof.length && slice.id !== 'release-matrix') {
+    addBlocker('TARGETED_PROOF_GAPS_REMAIN_FOR_SLICE', 'warning', 'Named targeted proof gaps remain for this slice.', 'qa_coverage_summary.missing_targeted_proof');
+  }
+  return {
+    schema_version: 'champions-qa-slice-contract-v1',
+    qa_run_type: qaRunType,
+    slice_id: slice.id,
+    label: slice.label,
+    purpose: slice.purpose,
+    best_for: slice.best_for,
+    not_for: slice.not_for,
+    must_have: slice.must_have,
+    pass_when: slice.pass_when,
+    status: blockers.some(function(row) { return row.severity === 'blocker'; }) ? 'blocked' : (blockers.length ? 'partial' : 'ready'),
+    blockers: blockers,
+    next_if_fails: slice.next_if_fails,
+    evidence_counts: {
+      replay_cards: replayCards.length,
+      damage_events: damageEvents,
+      effect_events: effectEvents,
+      move_rule_trace_rows: moveRuleTraceRows,
+      branch_move_analysis_rows: branchRows,
+      missing_targeted_proof: missingProof.length
+    },
+    claim_boundary: 'This QA slice validates only the named purpose for this artifact. It does not become official Pokemon Champion truth or global leaderboard truth.'
+  };
+}
+
 function csBuildCodexQaContext(args) {
   args = args || {};
   var coverage = args.qa_coverage_summary || {};
@@ -9744,6 +9878,18 @@ function csBuildQaDashboard(payload) {
     }
   ];
   if (payload.replay_logic_audit) lanes.push(csReplayLogicAuditLane(payload.replay_logic_audit));
+  if (payload.qa_slice_contract) {
+    lanes.unshift({
+      id: 'qa_slice_contract',
+      label: payload.qa_slice_contract.label || 'QA Slice Contract',
+      status: payload.qa_slice_contract.status === 'ready' ? 'pass' : (payload.qa_slice_contract.status === 'blocked' ? 'fail' : 'warn'),
+      trust: payload.qa_slice_contract.status || 'partial',
+      summary: payload.qa_slice_contract.purpose || 'QA slice contract unavailable.',
+      gates: payload.qa_slice_contract.pass_when || [],
+      evidence_pointers: ['qa_slice_contract', 'qa_slice_contract.blockers', 'qa_slice_contract.evidence_counts'],
+      risk_count: Array.isArray(payload.qa_slice_contract.blockers) ? payload.qa_slice_contract.blockers.length : 0
+    });
+  }
   var fixOrder = actionPlan.map(function(item) {
     return {
       id: item.id,
@@ -9764,6 +9910,7 @@ function csBuildQaDashboard(payload) {
     schema_version: 'champions-qa-dashboard-v1',
     generated_at: payload.exported_at || new Date().toISOString(),
     qa_run_type: payload.qa_run_type || 'unknown',
+    qa_slice_contract: payload.qa_slice_contract || null,
     can_ship: releasePass && battlePass,
     battle_engine_trust: battlePass ? 'verified_for_this_artifact' : 'blocked_or_partial',
     coaching_product_trust: coachingPass ? 'usable' : 'partial',
@@ -10748,6 +10895,7 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     ]
   } : null;
   payload = csApplyStressLiteArtifactBudget(payload, options);
+  payload.qa_slice_contract = csBuildQaSliceContract(payload);
   payload.proof_manifest = csBuildQaProofManifest(payload);
   payload.qa_dashboard = csBuildQaDashboard(payload);
   payload.qa_claim_review = {
@@ -10760,7 +10908,10 @@ async function csBuildQaArtifactExport(teamKey, opts) {
     source_boundary: payload.qa_dashboard && payload.qa_dashboard.claim_boundary ? payload.qa_dashboard.claim_boundary.source_boundary : null,
     source_gaps: payload.qa_dashboard && payload.qa_dashboard.claim_boundary ? payload.qa_dashboard.claim_boundary.source_gaps : [],
     forbidden_claims: payload.qa_dashboard && payload.qa_dashboard.claim_boundary ? payload.qa_dashboard.claim_boundary.forbidden_claims : [],
-    reviewer_next_step: payload.recommended_next_test || (payload.proof_manifest && payload.proof_manifest.next_action) || 'Review qa_dashboard.recommended_fix_order before changing code.'
+    qa_slice_contract: payload.qa_slice_contract,
+    reviewer_next_step: payload.qa_slice_contract && payload.qa_slice_contract.status !== 'ready'
+      ? payload.qa_slice_contract.next_if_fails
+      : (payload.recommended_next_test || (payload.proof_manifest && payload.proof_manifest.next_action) || 'Review qa_dashboard.recommended_fix_order before changing code.')
   };
   payload.qa_gate_results = payload.codex_context.qa_gate_results;
   payload.qa_release_blockers = payload.codex_context.qa_release_blockers;
@@ -10803,38 +10954,50 @@ function csRenderQaClaimReviewReadout(payload) {
   if (!host || !payload) return;
   var review = payload.qa_claim_review || {};
   var dashboard = payload.qa_dashboard || {};
+  var slice = payload.qa_slice_contract || review.qa_slice_contract || {};
   var scope = review.evidence_scope || {};
   var gaps = Array.isArray(review.source_gaps) ? review.source_gaps : [];
   var forbidden = Array.isArray(review.forbidden_claims) ? review.forbidden_claims : [];
   var blockers = Array.isArray(payload.qa_release_blockers) ? payload.qa_release_blockers : [];
-  var status = dashboard.can_ship ? 'PASS WITH BOUNDARIES' : 'BLOCKED / PARTIAL';
-  var statusClass = dashboard.can_ship ? 'low' : 'high';
+  var sliceBlockers = Array.isArray(slice.blockers) ? slice.blockers : [];
+  var status = slice.status === 'ready'
+    ? 'SLICE READY'
+    : (dashboard.can_ship ? 'PASS WITH BOUNDARIES' : 'BLOCKED / PARTIAL');
+  var statusClass = slice.status === 'ready' ? 'low' : (slice.status === 'partial' ? 'medium' : 'high');
   var qaRunType = String(payload.qa_run_type || '').toLowerCase();
-  var qaSliceTitle = qaRunType === 'stress_lite_qa'
+  var qaSliceTitle = slice.label || (qaRunType === 'stress_lite_qa'
     ? 'Device-Safe Stress QA'
     : (qaRunType === 'tactical_sweep'
       ? 'Tactical Coaching QA'
       : (qaRunType === 'qa_artifact_with_targeted_sweep' || qaRunType === 'qa_artifact'
         ? 'Current Evidence QA'
-        : 'Release Matrix QA'));
+        : 'Release Matrix QA')));
   var forbiddenRows = forbidden.slice(0, 3).map(function(claim) {
     return '<span class="replay-coach-tag medium">' + _escapeHtml(claim) + '</span>';
   }).join('');
   var gapRows = gaps.slice(0, 4).map(function(gap) {
     return '<div class="replay-coach-list-row"><strong>' + _escapeHtml(gap.code || 'SOURCE_GAP') + '</strong>' + _escapeHtml(gap.message || '') + '</div>';
   }).join('');
+  var sliceBlockerRows = sliceBlockers.slice(0, 4).map(function(blocker) {
+    return '<div class="replay-coach-list-row"><strong>' + _escapeHtml(blocker.code || 'QA_SLICE_BLOCKER') + '</strong>' + _escapeHtml(blocker.detail || '') + '</div>';
+  }).join('');
   host.innerHTML = '<div class="replay-coach-card qa-claim-review-card">' +
     '<div class="replay-coach-card-head"><h3 class="replay-coach-h3">QA Claim Review - ' + _escapeHtml(qaSliceTitle) + '</h3><span class="replay-coach-tag ' + _escapeHtml(statusClass) + '">' + _escapeHtml(status) + '</span></div>' +
     '<p class="replay-coach-turn-read">' + _escapeHtml(review.verdict || 'QA artifact exported. Review source gaps before treating it as proof.') + '</p>' +
+    '<p class="replay-coach-turn-read"><strong>Slice purpose:</strong> ' + _escapeHtml(slice.purpose || 'This QA export is scoped evidence for the selected run type.') + '</p>' +
     '<div class="replay-coach-summary-grid">' +
       '<div class="replay-coach-metric"><strong>Release blockers</strong><span>' + _escapeHtml(String(blockers.length)) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Slice blockers</strong><span>' + _escapeHtml(String(sliceBlockers.length)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Source gaps</strong><span>' + _escapeHtml(String(gaps.length)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Damage events</strong><span>' + _escapeHtml(String(scope.damage_events || 0)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Branch rows</strong><span>' + _escapeHtml(String(scope.branch_analysis_rows || 0)) + '</span></div>' +
     '</div>' +
     '<div class="replay-coach-list">' +
       '<div class="replay-coach-list-row"><strong>Source boundary</strong>' + _escapeHtml(review.source_boundary || 'This artifact is scoped evidence, not official game truth.') + '</div>' +
+      '<div class="replay-coach-list-row"><strong>Best for</strong>' + _escapeHtml(slice.best_for || 'Scoped QA review for this artifact.') + '</div>' +
+      '<div class="replay-coach-list-row"><strong>Not for</strong>' + _escapeHtml(slice.not_for || 'Do not treat one artifact as complete game truth.') + '</div>' +
       '<div class="replay-coach-list-row"><strong>Next QA move</strong>' + _escapeHtml(review.reviewer_next_step || payload.recommended_next_test || 'Review qa_dashboard.recommended_fix_order.') + '</div>' +
+      (sliceBlockerRows ? '<div class="replay-coach-list-row"><strong>Top slice blockers</strong>' + sliceBlockerRows + '</div>' : '') +
       (gapRows ? '<div class="replay-coach-list-row"><strong>Top source gaps</strong>' + gapRows + '</div>' : '') +
     '</div>' +
     '<div class="replay-coach-tags"><span class="replay-coach-tag high">Forbidden claims</span>' + forbiddenRows + '</div>' +
@@ -10891,6 +11054,7 @@ if (typeof ChampionsSim !== 'undefined') {
   ChampionsSim.history.buildQaArtifactExport = csBuildQaArtifactExport;
   ChampionsSim.history.exportQaArtifactJson = csExportQaArtifactJson;
   ChampionsSim.history.buildCodexQaContext = csBuildCodexQaContext;
+  ChampionsSim.history.buildQaSliceContract = csBuildQaSliceContract;
   ChampionsSim.history.buildStressLiteOptions = csBuildStressLiteOptions;
   ChampionsSim.history.chooseQaDropFolder = csChooseQaDropFolder;
 }
@@ -10901,6 +11065,7 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csEx
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaArtifactExport', csBuildQaArtifactExport);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csExportQaArtifactJson', csExportQaArtifactJson);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildCodexQaContext', csBuildCodexQaContext);
+if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildQaSliceContract', csBuildQaSliceContract);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csBuildStressLiteOptions', csBuildStressLiteOptions);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csAnalyzeBranchCoverageRows', csAnalyzeBranchCoverageRows);
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csSummarizeBranchTactics', csSummarizeBranchTactics);
@@ -12700,6 +12865,7 @@ var CS_OVERVIEW_DATA = {
     { label: 'Removed Teams', value: '17 legacy/inferred rows' },
     { label: 'DB Team Rule', value: 'Approved rows must pass gates' },
     { label: 'Stress Status', value: 'Stress Lite totals + coaching summary live' },
+    { label: 'QA Contract', value: 'Slice purpose + blockers exported' },
     { label: 'Sim Truth Gate', value: 'Mechanics first' },
     { label: 'Live Supabase', value: 'Teams + analyses, gated' },
     { label: 'DB Log Detail', value: 'Summary/capped; exports are forensic proof' },
@@ -12711,6 +12877,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'True QA slice contract added',
+      detail: 'v2.2.99 adds qa_slice_contract to QA artifacts and the visible claim-review card. Each export now names whether it is Current Evidence QA, Device-Safe Stress QA, Tactical Coaching QA, Targeted Mechanic Proof QA, or Release Matrix QA, then states purpose, best use, not-for boundary, pass criteria, blockers, evidence counts, and next failed-slice action.'
+    },
     {
       status: 'done',
       title: 'GitHub generated-artifact release guard documented',
@@ -13572,6 +13743,11 @@ var CS_OVERVIEW_DATA = {
     },
   ],
   next: [
+    {
+      status: 'next',
+      title: 'Validate true QA slice contract live',
+      detail: 'After v2.2.99 deploys, export one Current Evidence QA or Stress Lite artifact and confirm qa_slice_contract appears in the JSON and visible QA Claim Review readout. The contract should show slice purpose, best_for, not_for, pass_when, blockers, evidence counts, and the next_if_fails action before using the artifact for fixes.'
+    },
     {
       status: 'next',
       title: 'Run non-standard stat-source targeted proof first',

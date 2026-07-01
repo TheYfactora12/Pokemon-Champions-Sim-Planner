@@ -10,7 +10,7 @@ Use `100% closed` only when the claim is source-backed, tested, deployed, and ha
 
 | Slice | Status | Proof we have | Residual risk / blocker | Next action |
 | --- | --- | --- | --- | --- |
-| QA slice naming and claim review | 99% closed | v2.2.90 and v2.2.91 tests assert directive QA names, `qa_claim_review`, forbidden claims, and source gaps. CI and Pages passed. | Needs one fresh live QA artifact from the deployed page proving the visible readout and downloaded JSON both carry the claim review after cache refresh. | User exports one `Current Evidence QA` or `Tactical Coaching QA` artifact from the latest URL. |
+| QA slice naming, claim review, and true-QA contract | 99% closed | v2.2.90 and v2.2.91 tests assert directive QA names, `qa_claim_review`, forbidden claims, and source gaps. v2.2.99 adds `qa_slice_contract` so each artifact states its exact QA purpose, best use, non-use boundary, pass criteria, blockers, and next failed-slice action. | Needs one fresh live QA artifact from the deployed page proving the visible readout and downloaded JSON both carry `qa_slice_contract` after cache refresh. | User exports one `Current Evidence QA`, `Device-Safe Stress QA`, or `Tactical Coaching QA` artifact from the latest URL. |
 | Release discipline and cleanup gates | 99% closed | `RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md`, Roadmap links, architecture doc updates, and overview tests are in place. CI and Pages passed for v2.2.91. | Team still needs to use the gates before closing GitHub issues or starting large new slices. | Apply this closeout map to the next issue/milestone sweep. |
 | Replay claim audit / Tactical QA claim boundary | 99% closed | Replay and QA exports now carry claim boundaries, source gaps, forbidden claims, and tactical QA readouts. Focused tests passed across v2.2.87-v2.2.90. | Needs fresh replay-upload artifact proof from live UI with real uploaded logs after the latest bundle. | Capture one live replay artifact and inspect `claim_audit` plus hidden/forbidden claims. |
 | Team Lab ranking preview | 99% closed for local preview, open for official rankings | Local Top 25 preview, reset control, ranking gates, hidden-details policy, Team Lab source docs, and preview UI are shipped. | Official/global ranking is blocked until trusted import worker, verified legality, team-ID mapping, promotion rules, stale recalculation, and enough sample size are proven. | Keep preview labeled experimental; do not promote to official leaderboard yet. |
@@ -57,6 +57,8 @@ The all-move QA approach is now defined in `docs/MOVE_MECHANICS_QA_CLOSEOUT_PLAN
 
 The next QA export layer adds `replay_logic_audit`, a high-level retained-replay health check for turn logs, damage rows, move traces, effect rows, faint causes, and mechanic-family gaps. This audit should help reviewers quickly see whether retained replays are strong enough to support a logic claim, while still keeping targeted/tactical proof separate from full Champion legality or all-move truth.
 
+The v2.2.99 true-QA slice contract adds `qa_slice_contract` to exported artifacts and the page readout. It classifies the export as Current Evidence QA, Device-Safe Stress QA, Tactical Coaching QA, Targeted Mechanic Proof QA, or Release Matrix QA, then names the purpose, best use, not-for boundary, pass criteria, blockers, evidence counts, and next action. This prevents QA from being treated as one vague "green button" and keeps release proof, battle-mechanic proof, replay transparency, coaching evidence, and leaderboard/legal claims separated.
+
 The legality closeout target is now defined in `docs/LEGALITY_99_TARGET_PLAN.md`. The short version: `100% legality` needs complete official/client-captured proof for the active regulation, while `true 99% legality` means all shipped runtime teams, rankings, QA artifacts, and Team Lab promotion paths are guarded against unknown or stale Champion data. Unknown rows stay `needs_verification`; known illegal rows are rejected; Team Lab/global rankings cannot use `needs_verification` teams in official scopes. The first `legality_evidence_package.js` implementation now exists as the package/fixture gate, but it still uses dev fixtures until real in-game Regulation M-B captures are supplied.
 
 ## 100% closed right now
@@ -67,7 +69,7 @@ This is intentional. It protects the project from overstating Pokemon Champion l
 
 ## Current next priority
 
-1. Run one fresh live QA artifact on the latest deployed build and verify `qa_claim_review` appears in the page and JSON.
+1. Run one fresh live QA artifact on the latest deployed build and verify `qa_claim_review` and `qa_slice_contract` appear in the page and JSON.
 2. Run one fresh replay upload artifact from real battle files and verify `claim_audit`, hidden source gaps, field/move failures, and team mapping are understandable.
 3. Update GitHub milestones/issues using this status map: close only what is proven, mark `99%` items with residual risk, and keep blockers open.
 4. Start the next sim-truth slice: replay transparency and QA usefulness, specifically miss/accuracy, field state, volatile state, multi-target damage, and residual/contact damage visibility.

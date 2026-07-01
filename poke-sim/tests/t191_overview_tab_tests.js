@@ -248,7 +248,7 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(closeout, '99% closed');
   inc(closeout, 'open blocker');
   inc(closeout, 'No active strategic slice should be marked `100% closed` today.');
-  inc(closeout, 'QA slice naming and claim review');
+  inc(closeout, 'QA slice naming, claim review, and true-QA contract');
   inc(closeout, 'Full Pokemon Champions legality / Regulation M-B runtime promotion');
   inc(closeout, 'Battle Sensei true coaching brain');
   inc(closeout, 'GitHub generated-artifact release hygiene');
@@ -475,6 +475,19 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'replay_logic_audit to QA artifacts');
   inc(ui, 'Replay Logic QA dashboard lane');
   inc(ui, 'damage_events, move_rule_trace rows, effect_events');
+  inc(ui, 'True QA slice contract added');
+  inc(ui, 'qa_slice_contract to QA artifacts');
+  inc(ui, 'Current Evidence QA, Device-Safe Stress QA, Tactical Coaching QA, Targeted Mechanic Proof QA, or Release Matrix QA');
+  inc(ui, 'QA Contract');
+  inc(ui, 'Slice purpose + blockers exported');
+  inc(ui, 'Validate true QA slice contract live');
+  inc(ui, 'best_for, not_for, pass_when, blockers, evidence counts, and the next_if_fails action');
+  inc(ui, 'champions-qa-slice-contract-v1');
+  inc(ui, 'csBuildQaSliceContract');
+  inc(ui, 'Slice blockers');
+  inc(ui, 'Best for');
+  inc(ui, 'Not for');
+  inc(ui, 'This QA slice validates only the named purpose for this artifact');
   inc(ui, 'shipped move registry coverage plus live mechanic-family proof');
   inc(ui, 'Run non-standard stat-source targeted proof first');
   inc(ui, 'nonstandard_stat_source_trace, foul_play_trace, body_press_trace, psyshock_trace');
