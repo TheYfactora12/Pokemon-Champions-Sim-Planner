@@ -9310,6 +9310,32 @@ function csBuildCodexQaContext(args) {
   var damageEvents = Number(mechanics.damage_events || 0);
   var effectEvents = Number(mechanics.effect_events || 0);
   var qaRunType = args.qa_run_type || 'manual_export';
+  var branchRows = Number(branchTotals.rows_read || branchTotals.rows || branchTotals.total_rows || 0);
+  var branchWeak = qaRunType === 'tactical_sweep' && branchRows <= 0;
+  var actionPlan = [];
+  function addActionPlan(id, priority, status, detail, nextStep) {
+    actionPlan.push({
+      id: id,
+      priority: priority,
+      status: status,
+      detail: detail,
+      next_step: nextStep
+    });
+  }
+  var qaGateResults = [];
+  function addQaGate(id, label, severity, status, expected, observed, evidencePointer, nextStep) {
+    qaGateResults.push({
+      id: id,
+      label: label,
+      severity: severity,
+      status: status,
+      expected: expected,
+      observed: observed,
+      evidence_pointer: evidencePointer || null,
+      next_step: nextStep || null,
+      release_blocking: severity === 'blocker' && status !== 'pass'
+    });
+  }
   var readyForCodex = damageEvents > 0 && moveTraceRows > 0 && missing.length === 0;
   var recommendedNextTest = missing.length
     ? 'Run targeted QA proof for: ' + missing.slice(0, 8).join(', ') + '.'
@@ -9317,9 +9343,11 @@ function csBuildCodexQaContext(args) {
         ? 'Run QA Artifact after battles with retained replay cards so damage_events are available.'
         : (!moveTraceRows
             ? 'Run targeted damage QA so move_rule_trace rows are exported for damage math review.'
-            : (qaRunType === 'tactical_sweep'
+            : (branchWeak
+                ? 'Tactical Sweep proof is present, but branch_move_analysis has no rows; run or repair branch coverage so QA ranks concrete move/line choices.'
+                : (qaRunType === 'tactical_sweep'
                 ? 'Artifact is Codex-ready; inspect qa_coverage_summary.coach_brain_summary.tactical_interpretation first, then branch_move_analysis for the next tactical coaching implementation target.'
-                : 'Run Tactical Sweep + QA to add branch learning coverage across lineups, moves, and targets.')));
+                : 'Run Tactical Sweep + QA to add branch learning coverage across lineups, moves, and targets.'))));
   var readiness = [];
   function addReadiness(id, label, status, detail) {
     readiness.push({ id: id, label: label, status: status, detail: detail });
@@ -9356,6 +9384,90 @@ function csBuildCodexQaContext(args) {
       ? 'No named targeted proof gaps remain in this artifact.'
       : 'Missing proof: ' + missing.slice(0, 12).join(', ')
   );
+  addReadiness(
+    'branch_move_analysis',
+    'Branch move analysis',
+    branchWeak ? 'yellow' : (branchRows > 0 ? 'green' : 'yellow'),
+    branchRows > 0
+      ? branchRows + ' branch_move_analysis rows are available for tactical line ranking.'
+      : 'No branch_move_analysis rows were exported; mechanics are proven, but QA cannot yet rank concrete move/line choices.'
+  );
+  addQaGate(
+    'damage-events-present',
+    'Damage event transparency',
+    'blocker',
+    damageEvents > 0 ? 'pass' : 'fail',
+    'Artifact must include structured damage_events.',
+    damageEvents + ' damage_events exported.',
+    'qa_coverage_summary.mechanics_seen.damage_events',
+    damageEvents > 0 ? null : 'Run QA after retained battles with damage rows before reviewing damage logic.'
+  );
+  addQaGate(
+    'move-rule-trace-present',
+    'Move rule trace transparency',
+    'blocker',
+    moveTraceRows > 0 ? 'pass' : 'fail',
+    'Damage rows must include move_rule_trace evidence.',
+    moveTraceRows + ' move_rule_trace rows exported.',
+    'qa_coverage_summary.mechanics_seen.move_rule_trace_rows',
+    moveTraceRows > 0 ? null : 'Run targeted damage proof so each damage row can be tied to move rules.'
+  );
+  addQaGate(
+    'targeted-proof-closed',
+    'Named targeted proof gaps',
+    'blocker',
+    missing.length === 0 ? 'pass' : 'fail',
+    'missing_targeted_proof must be empty for release proof.',
+    missing.length ? missing.slice(0, 12).join(', ') : 'No named targeted proof gaps remain.',
+    'qa_coverage_summary.missing_targeted_proof',
+    missing.length ? 'Run targeted scenarios for each named missing proof before claiming coverage.' : null
+  );
+  addQaGate(
+    'branch-analysis-usable',
+    'Tactical branch decision evidence',
+    qaRunType === 'tactical_sweep' ? 'warning' : 'info',
+    branchWeak ? 'warn' : (branchRows > 0 ? 'pass' : 'not_applicable'),
+    'Tactical Sweep artifacts should include branch_move_analysis rows for decision ranking.',
+    branchRows + ' branch_move_analysis rows exported.',
+    'branch_move_analysis.totals.rows_read',
+    branchWeak ? 'Fix branch coverage/export so QA can rank concrete move lines, not just prove mechanics.' : null
+  );
+  if (missing.length) {
+    addActionPlan(
+      'close-targeted-proof-gaps',
+      'P0',
+      'needs_proof',
+      'Named targeted proof gaps remain: ' + missing.slice(0, 8).join(', ') + '.',
+      'Run targeted scenarios for the listed mechanics before claiming 100% coverage.'
+    );
+  }
+  if (!damageEvents || !moveTraceRows) {
+    addActionPlan(
+      'restore-damage-trace-proof',
+      'P0',
+      'needs_evidence',
+      'Damage transparency is incomplete for Codex review.',
+      'Export a QA Artifact with retained damage_events and move_rule_trace rows before changing damage math.'
+    );
+  }
+  if (branchWeak) {
+    addActionPlan(
+      'populate-branch-move-analysis',
+      'P1',
+      'weak_signal',
+      'Tactical Sweep ran, but branch_move_analysis has no rows, so the artifact cannot rank concrete decisions.',
+      'Repair or rerun branch coverage so the artifact lists suggested lines, avoid moves, payoff scores, and evidence pointers.'
+    );
+  }
+  if (!actionPlan.length) {
+    addActionPlan(
+      'review-coaching-signal',
+      'P1',
+      'ready',
+      'Mechanic proof and branch evidence are available.',
+      'Use coach_focus plus branch_move_analysis to improve the next Battle Sensei coaching recommendation.'
+    );
+  }
   return {
     schema_version: 'champions-codex-qa-context-v1',
     purpose: 'Compact handoff for Codex/local agents. Keep this object with QA artifacts so implementation work can start from evidence instead of re-reading raw logs.',
@@ -9373,6 +9485,11 @@ function csBuildCodexQaContext(args) {
       current_format: args.current_format || null
     },
     qa_readiness: readiness,
+    qa_gate_results: qaGateResults,
+    qa_release_blockers: qaGateResults.filter(function(row) {
+      return row && row.release_blocking;
+    }),
+    qa_action_plan: actionPlan,
     mechanics_seen: {
       damage_events: damageEvents,
       effect_events: effectEvents,
@@ -9397,7 +9514,7 @@ function csBuildCodexQaContext(args) {
       tactical_sweep_opponents: tactical && Array.isArray(tactical.opponents) ? tactical.opponents.length : 0,
       tactical_sweep_status: tactical && tactical.status || null,
       tactical_sweep_total_executed_runs: Number(tactical && tactical.total_executed_runs || 0),
-      branch_analysis_rows: Number(branchTotals.rows || branchTotals.total_rows || 0)
+      branch_analysis_rows: branchRows
     },
     coach_focus: {
       confidence: coachBrain.confidence || null,
@@ -9413,6 +9530,7 @@ function csBuildCodexQaContext(args) {
     },
     recommended_codex_prompt: [
       'Use this QA artifact as evidence. First inspect codex_context.qa_readiness, codex_context.coach_focus, and qa_coverage_summary.mechanics_seen.',
+      'Then inspect codex_context.qa_action_plan; fix P0/P1 weak signals before broadening the simulator.',
       'If a mechanic is yellow/red, locate the retained replay card or tactical_sweep run with the missing/weak evidence before changing engine code.',
       'For coaching work, start from codex_context.coach_focus and qa_coverage_summary.coach_brain_summary.tactical_interpretation before writing new advice.',
       'For damage issues, inspect turnLog[].damage_events[].move_rule_trace before editing calcDamage.',
