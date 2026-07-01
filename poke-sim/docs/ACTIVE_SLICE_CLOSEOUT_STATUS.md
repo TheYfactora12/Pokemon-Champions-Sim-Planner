@@ -22,6 +22,36 @@ Use `100% closed` only when the claim is source-backed, tested, deployed, and ha
 | Supabase/global learning evidence pipeline | Open blocker | Existing app tables and offline DB contract tests are green; local preview can read/write bounded summaries. | Global learning must prevent data poisoning, preserve ruleset/version/sample metadata, respect privacy, and separate personal analytics from global aggregates. | Design trusted import worker and forensic storage before treating uploaded data as global training data. |
 | UI/runtime modularization | Open blocker | Cleanup gate documents the need and identifies candidates. | `ui.js` remains too large and keeps accumulating unrelated concerns. | Split QA export/readout, Battle Sensei replay review, Team Lab home, Roadmap data, and source/news rendering into owned modules. |
 
+## Fresh live proof attached on 2026-07-01
+
+The following user-exported live artifacts are now accepted as proof for the `v2.2.92-active-closeout-map` JSON export contract:
+
+- `/Users/kevinmedeiros/Downloads/champions-sim-qa-artifact-2026-07-01T14-02-36.json`
+- `/Users/kevinmedeiros/Downloads/champions-sim-qa-artifact-2026-07-01T14-03-05.json`
+
+Both artifacts came from:
+
+`https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/poke-sim/pokemon-champion-2026.html?v=v2.2.92-active-closeout-map&fresh=1`
+
+What this proves:
+
+- the deployed build ID and source URL are captured correctly
+- `qa_claim_review` exports in downloaded artifacts
+- `qa_dashboard.claim_boundary` exports source boundaries, source gaps, and forbidden claims
+- release blockers are empty for these captured QA scopes
+- battle-engine evidence rows exist for the captured scopes
+- branch/tactical coaching rows exist where the QA slice generated them
+
+What this still does not prove:
+
+- complete Pokemon Champion legality
+- complete battle-mechanic coverage
+- official/global best-team rankings
+- real ladder truth
+- visual page rendering of every QA readout state on every device
+
+The turn-log files supplied with the same proof pass remain useful targeted evidence, but they also correctly expose missing targeted proof families. The current next targeted proof list includes Trick Room active state, non-standard stat-source move traces such as Foul Play/Body Press/Psyshock-style behavior, priority/prevention cases, status/action denial, drain/recovery/HP-cost/residual/item-recovery cases, and broader field-duration coverage.
+
 ## 100% closed right now
 
 No active strategic slice should be marked `100% closed` today. Several are deployed and CI-green, but the correct engineering claim is `99% closed` until fresh live artifacts and issue/milestone closeout proof are attached.

@@ -244,6 +244,13 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(closeout, 'Full Pokemon Champions legality / Regulation M-B runtime promotion');
   inc(closeout, 'Battle Sensei true coaching brain');
   inc(closeout, 'UI/runtime modularization');
+  inc(closeout, 'Fresh live proof attached on 2026-07-01');
+  inc(closeout, 'champions-sim-qa-artifact-2026-07-01T14-02-36.json');
+  inc(closeout, 'champions-sim-qa-artifact-2026-07-01T14-03-05.json');
+  inc(closeout, 'qa_dashboard.claim_boundary');
+  inc(closeout, 'complete Pokemon Champion legality');
+  inc(closeout, 'Trick Room active state');
+  inc(closeout, 'non-standard stat-source move traces');
   inc(closeout, 'What exact claim did we prove?');
 });
 
@@ -412,6 +419,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, '99% versus 100% closeout');
   inc(ui, 'Closeout discipline before new work');
   inc(ui, 'Active slice closeout map added');
+  inc(ui, 'Fresh live closeout QA artifacts recorded');
+  inc(ui, 'Tactical Sweep and Stress Lite exports both captured build_id, source_url, qa_claim_review');
+  inc(ui, 'full Champion legality, complete mechanics coverage, and official/global rankings out of scope');
   inc(ui, '100% closed, 99% closed with named residual risk, open blocker, or next priority');
   inc(ui, 'Use the active slice closeout map before starting new work');
   inc(ui, 'QA naming, release cleanup, replay claim audit, Team Lab preview, home page, and replay intake are 99% closed');
