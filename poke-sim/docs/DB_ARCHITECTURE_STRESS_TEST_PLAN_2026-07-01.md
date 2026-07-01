@@ -278,12 +278,12 @@ Pass/fail:
 - The browser path inserts the parent import first, then child refs/events with the returned import id.
 - Rows remain owner-scoped by trainer-room RLS and are not promoted to official rankings or global learning.
 
-### Next priority: replay import UI integration
+### Implemented slice: replay import UI integration
 
 DB/service requirement:
 
 - wire upload/review controls to `replay_import_service.js`
-- call `SupabaseAdapter.saveReplayImport` only after a trainer room/account context exists
+- expose an explicit Save Private Import action that calls `SupabaseAdapter.saveReplayImport`
 - show parser status, mapping status, source gaps, and saved/private state to the user
 - map similarly named Showdown logs to the matching private custom team when the filename matches the Pilot-room team name
 - allow the player to choose an optional Reference team from their uploaded/custom teams when filename matching is not enough
@@ -291,7 +291,7 @@ DB/service requirement:
 
 Pass/fail:
 
-- Ready for UI/service integration, but should not claim account history until Auth and room selection are live.
+- Private save path is wired for the Review flow, but it should not claim durable account history until real Auth/Pilot-room selection replaces placeholder local room/user ids and saved import history is visible in the Pilot area.
 
 ### Later priority: personal coaching memory
 

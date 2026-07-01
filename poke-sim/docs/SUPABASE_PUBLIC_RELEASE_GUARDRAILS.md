@@ -83,12 +83,14 @@ Current foundation:
 - `replay_import_service.js` converts Showdown HTML/text, Champions turn-log JSON, and QA artifact JSON into those private governance payload shapes without writing global learning or official ranking rows.
 - Filename-to-team matching is allowed only as private Pilot-room mapping evidence; it is not official legality, global learning, or public ranking proof.
 - `SupabaseAdapter.saveReplayImport` persists those private payloads by inserting the parent import first, then refs/events with the returned import id.
+- The Review page exposes an explicit Save Private Import action. If Supabase/Auth is unavailable or RLS rejects the write, the UI must report local-only status rather than implying account history was saved.
 
 Required direction:
 
 - Add a trainer/profile layer before public account features.
 - Store a private trainer room for saved teams, uploaded replays, sim jobs, coaching facts, and practice drills.
 - Keep real replay imports private until parser status, team mapping, regulation, format, and source gaps are reviewed.
+- Replace placeholder local room/user ids with authenticated Pilot-room ids before claiming durable account history.
 - Let players explicitly choose whether anonymized signals can contribute to global learning.
 - Store global learning as aggregate signals, not raw private teams, raw private replays, or hidden tech choices.
 - Require `regulation_id`, `format`, `engine_version`, `ruleset_version`, source status, sample size, and stale status on every promoted learning row.

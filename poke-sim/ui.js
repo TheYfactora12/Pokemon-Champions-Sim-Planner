@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.107-pilot-team-log-mapping'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.108-review-private-import-save'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8115,8 +8115,8 @@ function csBuildReplayPrivateImportPreview(raw, sourceFile, selectEl) {
 }
 
 function csReplayImportStatusText(payload) {
-  if (!payload || !payload.importRow) return '';
-  var row = payload.importRow;
+  var row = payload && (payload.import_row || payload.importRow);
+  if (!row) return '';
   var match = row.metadata && row.metadata.personal_team_match;
   var gaps = Array.isArray(row.source_gaps) ? row.source_gaps.length : 0;
   if (match) {
@@ -8124,6 +8124,50 @@ function csReplayImportStatusText(payload) {
       ' (' + match.match_type + '). Parse: ' + row.parse_status + '; source gaps: ' + gaps + '.';
   }
   return ' Private import is unmapped; filename/team mapping needs review. Parse: ' + row.parse_status + '; source gaps: ' + gaps + '.';
+}
+
+function csUpdateReplayImportSaveButton(message) {
+  var btn = (typeof document !== 'undefined') ? document.getElementById('replay-coach-save-import-btn') : null;
+  if (!btn) return;
+  var hasPayload = !!(CS_LAST_REPLAY_IMPORT_PAYLOAD && (CS_LAST_REPLAY_IMPORT_PAYLOAD.import_row || CS_LAST_REPLAY_IMPORT_PAYLOAD.importRow));
+  btn.disabled = !hasPayload;
+  btn.title = hasPayload
+    ? (message || 'Save this replay as private Pilot-room evidence.')
+    : 'Upload or paste a replay first.';
+}
+
+async function csSaveReplayPrivateImportPayload(payload) {
+  var adapter = (typeof window !== 'undefined' && window.SupabaseAdapter) ? window.SupabaseAdapter : null;
+  if (!payload || !(payload.import_row || payload.importRow)) {
+    return {
+      ok: false,
+      local_only: true,
+      message: 'No private replay import payload is ready yet.'
+    };
+  }
+  if (!adapter || !adapter.enabled || typeof adapter.saveReplayImport !== 'function') {
+    return {
+      ok: false,
+      local_only: true,
+      message: 'Local-only: private replay import was prepared but not saved because Supabase/Auth is unavailable.'
+    };
+  }
+  var saved = await adapter.saveReplayImport(payload);
+  if (!saved) {
+    return {
+      ok: false,
+      local_only: true,
+      message: 'Private replay import could not be saved. It remains local-only; check Auth/RLS before treating it as account history.'
+    };
+  }
+  return {
+    ok: true,
+    saved: saved,
+    message: 'Saved private Pilot replay import: ' +
+      ((saved.import_row && saved.import_row.id) ? saved.import_row.id : 'saved') +
+      ' · refs ' + ((saved.saved_counts && saved.saved_counts.refs) || 0) +
+      ' · events ' + ((saved.saved_counts && saved.saved_counts.events) || 0) + '.'
+  };
 }
 
 function csReplaySpeciesId(name) {
@@ -8863,11 +8907,13 @@ function csInitReplayCoachUi() {
   var clearBtn = document.getElementById('replay-coach-clear-btn');
   var uploadBtn = document.getElementById('replay-coach-upload-btn');
   var fetchBtn = document.getElementById('replay-coach-fetch-btn');
+  var saveImportBtn = document.getElementById('replay-coach-save-import-btn');
   var fileEl = document.getElementById('replay-coach-file');
   var refTeamEl = document.getElementById('replay-coach-reference-team');
   var statusEl = document.getElementById('replay-coach-status');
   if (!logEl || !sideEl || !runBtn) return;
   csPopulateReplayReferenceTeamSelect(refTeamEl);
+  csUpdateReplayImportSaveButton();
   csUpdateReplayScenarioExportButton('Upload and analyze a replay to enable Tactical QA payload export.');
 
   function setStatus(msg, isError) {
@@ -8906,6 +8952,11 @@ function csInitReplayCoachUi() {
       }
       csReplayCoachRenderAnalysis(analysis);
       var parsedTurns = analysis && analysis.parsed ? analysis.parsed.totalTurns : 0;
+      if (!CS_LAST_REPLAY_IMPORT_PAYLOAD) {
+        CS_LAST_REPLAY_IMPORT_SOURCE_FILE = CS_LAST_REPLAY_IMPORT_SOURCE_FILE || 'manual-replay-input.log';
+        CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(raw, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
+      }
+      csUpdateReplayImportSaveButton('Save analyzed replay as private Pilot-room evidence.');
       setStatus('Parsed ' + parsedTurns + ' turn' + (parsedTurns === 1 ? '' : 's') + '. Review is local-only unless you export or save it later.' + csReplayImportStatusText(CS_LAST_REPLAY_IMPORT_PAYLOAD));
     } catch (e) {
       setStatus('Could not analyze replay: ' + (e && e.message ? e.message : 'unknown error'), true);
@@ -8915,7 +8966,28 @@ function csInitReplayCoachUi() {
   if (refTeamEl) refTeamEl.addEventListener('change', function() {
     if (!logEl.value && !CS_LAST_REPLAY_IMPORT_SOURCE_FILE) return;
     CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(logEl.value || '', CS_LAST_REPLAY_IMPORT_SOURCE_FILE || 'manual-replay-input.log', refTeamEl);
+    csUpdateReplayImportSaveButton('Save private import with this Reference team mapping.');
     setStatus('Reference team updated.' + csReplayImportStatusText(CS_LAST_REPLAY_IMPORT_PAYLOAD));
+  });
+
+  if (saveImportBtn) saveImportBtn.addEventListener('click', async function() {
+    if (!CS_LAST_REPLAY_IMPORT_PAYLOAD) {
+      if (logEl.value && logEl.value.trim()) {
+        CS_LAST_REPLAY_IMPORT_SOURCE_FILE = CS_LAST_REPLAY_IMPORT_SOURCE_FILE || 'manual-replay-input.log';
+        CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(logEl.value, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
+      }
+    }
+    csUpdateReplayImportSaveButton('Saving private Pilot-room import...');
+    saveImportBtn.disabled = true;
+    setStatus('Saving private Pilot-room replay import...');
+    try {
+      var result = await csSaveReplayPrivateImportPayload(CS_LAST_REPLAY_IMPORT_PAYLOAD);
+      setStatus(result.message, !result.ok && !result.local_only);
+    } catch (e) {
+      setStatus('Private replay import save failed: ' + (e && e.message ? e.message : 'unknown error'), true);
+    } finally {
+      csUpdateReplayImportSaveButton('Save this replay as private Pilot-room evidence.');
+    }
   });
 
   if (clearBtn) clearBtn.addEventListener('click', function() {
@@ -8924,6 +8996,7 @@ function csInitReplayCoachUi() {
     if (refTeamEl) refTeamEl.value = '';
     CS_LAST_REPLAY_IMPORT_PAYLOAD = null;
     CS_LAST_REPLAY_IMPORT_SOURCE_FILE = '';
+    csUpdateReplayImportSaveButton();
     CS_LAST_REPLAY_SCENARIO_QUEUE = [];
     CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
     csUpdateReplayScenarioExportButton('Upload and analyze a replay to enable Tactical QA payload export.');
@@ -8945,6 +9018,7 @@ function csInitReplayCoachUi() {
         logEl.value = normalized;
         CS_LAST_REPLAY_IMPORT_SOURCE_FILE = file.name || '';
         CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(raw, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
+        csUpdateReplayImportSaveButton('Save loaded replay as private Pilot-room evidence.');
         CS_LAST_REPLAY_SCENARIO_QUEUE = [];
         CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
         csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
@@ -8975,6 +9049,7 @@ function csInitReplayCoachUi() {
         logEl.value = normalized;
         CS_LAST_REPLAY_IMPORT_SOURCE_FILE = rawUrl || 'replay-url.log';
         CS_LAST_REPLAY_IMPORT_PAYLOAD = csBuildReplayPrivateImportPreview(normalized, CS_LAST_REPLAY_IMPORT_SOURCE_FILE, refTeamEl);
+        csUpdateReplayImportSaveButton('Save loaded replay URL as private Pilot-room evidence.');
         CS_LAST_REPLAY_SCENARIO_QUEUE = [];
         CS_LAST_REPLAY_SCENARIO_CONTEXT = null;
         csUpdateReplayScenarioExportButton('Replay loaded. Click Analyze Replay to create Tactical QA payload scenarios.');
@@ -13124,6 +13199,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Review private replay save added',
+      detail: 'v2.2.108 wires the Review upload flow to private replay persistence through an explicit Save Private Import button. The button saves only trainer_replay_imports, trainer_replay_import_refs, and trainer_replay_import_events through SupabaseAdapter.saveReplayImport when Supabase/Auth is available, and otherwise reports local-only status. It still blocks public Team Lab rankings, official legality claims, global learning, and bot memory promotion.'
+    },
+    {
+      status: 'done',
       title: 'Pilot-room team filename mapping added',
       detail: 'v2.2.107 aligns product language: the Pilot area is the trainer room. replay_import_service.js now maps an uploaded Showdown replay/log to a private personal team when the filename matches a personal/custom team name or when the player selects a Reference team in Review upload, stores that match in personal_team_match metadata, marks team_mapping_status as mapped, and adds a private team_lab_team ref when available. This is private Pilot-room evidence only; it does not prove official legality, public ranking, global learning, or bot memory.'
     },
@@ -14031,7 +14111,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Wire replay import UI to private persistence',
-      detail: 'Next implementation should connect the Review upload flow to replay_import_service.js and SupabaseAdapter.saveReplayImport through the Pilot area, which is the trainer room. The UI must show parse status, team mapping status, filename/manual Reference team match, source gaps, private saved state, and local-only fallback instead of implying the upload improved official rankings or global learning.'
+      detail: 'Next implementation should replace local placeholder room/user ids with real authenticated Pilot-room context, then show saved import history in the Pilot area. The save path must continue showing parse status, team mapping status, filename/manual Reference team match, source gaps, private saved state, and local-only fallback instead of implying the upload improved official rankings or global learning.'
     },
     {
       status: 'next',
