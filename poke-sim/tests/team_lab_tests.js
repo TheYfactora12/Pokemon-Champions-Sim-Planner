@@ -312,6 +312,27 @@ T('5e. Regulation M-B skeleton package is Champion-only and blocked until source
   truthy(readiness.source_gaps.includes('SOURCE_CAPTURE_MISSING'), 'readiness should surface source capture gap');
 });
 
+T('5f. Regulation M-B Codex scaffold preserves TBD/not_captured proof boundaries', () => {
+  const captures = JSON.parse(fs.readFileSync(path.join(ROOT, 'source', 'reg-m-b-capture-records.seed.json'), 'utf8'));
+  const teamCases = JSON.parse(fs.readFileSync(path.join(ROOT, 'source', 'reg-m-b-team-validation-cases.seed.json'), 'utf8'));
+  const policy = JSON.parse(fs.readFileSync(path.join(ROOT, 'source', 'reg-m-b-source-policy.json'), 'utf8'));
+  truthy(Array.isArray(captures) && captures.length >= 8, 'capture scaffold missing');
+  truthy(Array.isArray(teamCases) && teamCases.length === 2, 'team validation seed cases missing');
+  ['primary_official', 'primary_in_game', 'derived_from_primary'].forEach((tier) => {
+    truthy(policy.final_report_allowed_sources.includes(tier), tier + ' should be allowed by policy');
+  });
+  truthy(policy.blocked_as_final_sources.includes('secondary_discovery_only'), 'secondary discovery source must stay blocked as final proof');
+  truthy(policy.hard_rules.some((rule) => /never infer missing/i.test(rule)), 'missing no-inference hard rule');
+  const p0 = captures.filter((row) => row.capture_id && ['C001', 'C002', 'C003', 'C004', 'C005', 'C007', 'C008', 'C009'].includes(row.capture_id));
+  eq(p0.length, 8, 'P0 capture set should have eight required rows');
+  truthy(p0.every((row) => row.status === 'not_captured'), 'P0 rows must remain not_captured until real proof is attached');
+  truthy(captures.some((row) => row.capture_id === 'C012' && row.status === 'pending_primary_captures'), 'derived transcription row must wait on primary captures');
+  truthy(teamCases.every((row) => row.game === 'Pokémon Champions'), 'team cases must target Pokemon Champions');
+  truthy(teamCases.every((row) => row.regulation_set === 'Regulation Set M-B'), 'team cases must target Reg M-B');
+  truthy(teamCases.every((row) => row.current_state === 'fixture_seed_only_not_verified'), 'team cases must remain seed-only until in-game validation');
+  truthy(JSON.stringify(teamCases).includes('TBD'), 'team cases should preserve TBD placeholders');
+});
+
 T('6. raw win rate and adjusted win rate are sample-size aware', () => {
   eq(TeamLab.rawWinRate(7, 2, 1), 0.75, 'raw win rate should count draws as half win');
   approx(TeamLab.adjustedWinRate(1, 0, 0, 0.5, 30), 0.516129, 0.000001, 'adjusted win rate should shrink low sample toward prior');
