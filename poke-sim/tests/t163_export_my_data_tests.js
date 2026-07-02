@@ -384,7 +384,6 @@ async function main() {
     ctx._downloadBlob = function(filename, mime, text) {
       ctx._downloaded = { filename: filename, mime: mime, text: text };
     };
-    document._els['qa-claim-review-readout'] = makeStubEl('qa-claim-review-readout');
     const payload = await csExportQaArtifactJson('player');
     truthy(ctx._downloaded, 'download not triggered');
     truthy(/^champions-sim-qa-artifact-/.test(ctx._downloaded.filename), 'unexpected filename');
@@ -393,6 +392,9 @@ async function main() {
     eq(parsed.schema_version, 'champions-qa-artifact-v1');
     eq(parsed.player_team_id, 'player');
     truthy(payload.summary && payload.retention, 'returned QA payload malformed');
+    truthy(!document._els['qa-claim-review-readout'], 'QA export should not auto-insert claim review into page flow');
+    document._els['qa-claim-review-readout'] = makeStubEl('qa-claim-review-readout');
+    csRenderQaClaimReviewReadout(payload);
     const readout = document.getElementById('qa-claim-review-readout').innerHTML;
     truthy(/QA Claim Review - Tactical Coaching QA/.test(readout), 'QA claim review slice title missing');
     truthy(/Active QA gate/.test(readout), 'QA active gate readout missing');

@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.112-qa-trace-total-align',
+    build_id: 'v2.2.113-qa-no-auto-claim-card',
     release_date: '2026-07-01',
-    service_worker_cache: 'champions-sim-v2-2-112-qa-trace-total-align',
+    service_worker_cache: 'champions-sim-v2-2-113-qa-no-auto-claim-card',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
