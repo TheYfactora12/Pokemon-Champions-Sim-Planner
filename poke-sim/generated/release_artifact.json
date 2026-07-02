@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.113-qa-no-auto-claim-card",
+  "build_id": "v2.2.114-qa-josh-showdown-assignment",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "9aa97d5cef91e8e4a614029e2dc678f5c78c4dedc9c8002275815d62bcffec78",
-  "bundle_bytes": 11227801,
+  "bundle_sha256": "e6caaf4ff82efc8b351225b742acef638f86a9eb541e76c974d2607f8b8e99d8",
+  "bundle_bytes": 11228456,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }

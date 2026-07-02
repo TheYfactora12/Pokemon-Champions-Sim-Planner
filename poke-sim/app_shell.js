@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.113-qa-no-auto-claim-card';
+      return txt || 'v2.2.114-qa-josh-showdown-assignment';
     } catch (e) {
-      return 'v2.2.113-qa-no-auto-claim-card';
+      return 'v2.2.114-qa-josh-showdown-assignment';
     }
   }
 

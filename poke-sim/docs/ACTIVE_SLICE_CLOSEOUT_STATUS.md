@@ -71,6 +71,51 @@ This is intentional. It protects the project from overstating Pokemon Champion l
 
 ## Current next priority
 
+## QA assignment for Josh / QA team: Showdown reference battle review
+
+Plain English: we cannot use downloaded Showdown battles to prove what Pokemon Champions officially allows. We can use them to see how real Champions-format battles flow, then compare those turns against our replay parser, Battle Sensei notes, move/effect logs, and tactical QA.
+
+Input package:
+
+- `source/reg-m-b-showdown-reference-battles.json`
+- Source folder: `/Users/kevinmedeiros/Downloads/battles`
+- Current manifest: 39 Showdown HTML replays, including 5 Reg M-B and 34 Reg M-A logs.
+- GitHub assignment: #190 `QA: Josh/QA Showdown reference battle review`
+
+Allowed QA use:
+
+- Check whether the Review upload/parser reads Showdown HTML cleanly.
+- Check whether team preview, selected 4, turns, switches, moves, damage, misses, weather, Tailwind, Trick Room, Megas, residual effects, and winner are understandable.
+- Compare real battle flow against our replay output and Battle Sensei coaching language.
+- Create parser/coaching bugs when the app loses an important event or gives vague advice.
+- Use Reg M-B logs as reference gameplay evidence for tactical calibration.
+
+Blocked QA use:
+
+- Do not mark Reg M-B legality verified from these logs.
+- Do not promote teams from these logs into official Team Lab rankings.
+- Do not use Showdown logs as accepted/rejected in-game team validation.
+- Do not use them to claim the official eligible Pokemon/form/item/move/Ability allowlist.
+- Do not mix Reg M-A and Reg M-B rows in the same coaching claim unless the report explicitly says it is cross-regulation reference analysis.
+
+Josh/QA checklist:
+
+1. Pick one Reg M-B Showdown HTML replay from the manifest.
+2. Upload it through the Review flow.
+3. Confirm the parser identifies format, players, team preview rosters, selected 4 where visible, turn count, winner, and major field effects.
+4. Confirm replay output shows no unexplained faint or unexplained HP drop.
+5. Confirm Battle Sensei says what happened, why it mattered, and what evidence is missing.
+6. File a bug if the parser loses a move, damage event, miss, weather/field duration, Mega event, status/action denial, or switch.
+7. Keep the result labeled `showdown_reference`, not official Champion truth.
+
+Pass condition:
+
+- At least one Reg M-B Showdown replay produces a readable Review output and QA artifact with source tier `showdown_reference`, no official-legality promotion, and clear parser gaps if any exist.
+
+Fail condition:
+
+- The upload cannot parse the HTML, hides important turn events, loses team mapping, invents official legality, or makes coaching claims without evidence.
+
 1. Run one fresh live QA artifact on the latest deployed build and verify `qa_claim_review`, `qa_slice_contract`, and `qa_100_readiness` appear in the page and JSON.
 2. Run one fresh replay upload artifact from real battle files and verify `claim_audit`, hidden source gaps, field/move failures, and team mapping are understandable.
 3. Update GitHub milestones/issues using this status map: close only what is proven, mark `99%` items with residual risk, and keep blockers open.

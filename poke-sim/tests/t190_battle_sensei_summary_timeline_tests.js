@@ -44,8 +44,8 @@ T('1. Review remains a separate tab from Strategy', () => {
   inc(html, 'id="replay-coach-scenario-status"');
   inc(html, 'Upload and analyze a replay to enable Tactical QA payload export.');
   inc(html, 'In series play');
-  inc(html, 'v2.2.113-qa-no-auto-claim-card');
-  inc(ui, 'v2.2.113-qa-no-auto-claim-card');
+  inc(html, 'v2.2.114-qa-josh-showdown-assignment');
+  inc(ui, 'v2.2.114-qa-josh-showdown-assignment');
   inc(ui, 'CS_LAST_REPLAY_IMPORT_PAYLOAD');
   inc(ui, 'csPopulateReplayReferenceTeamSelect');
   inc(ui, 'csBuildReplayPrivateImportPreview');

@@ -314,6 +314,16 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(closeout, 'LEGALITY_99_TARGET_PLAN.md');
   inc(closeout, 'true 99% legality');
   inc(closeout, 'Build the Regulation M-B legality evidence package');
+  inc(closeout, 'QA assignment for Josh / QA team: Showdown reference battle review');
+  inc(closeout, 'source/reg-m-b-showdown-reference-battles.json');
+  inc(closeout, '/Users/kevinmedeiros/Downloads/battles');
+  inc(closeout, 'GitHub assignment: #190');
+  inc(closeout, 'Keep the result labeled `showdown_reference`');
+  inc(closeout, 'Do not mark Reg M-B legality verified from these logs.');
+  inc(ui, 'Josh/QA assignment: Showdown reference battle review');
+  inc(ui, 'GitHub #190');
+  inc(ui, 'showdown_reference');
+  inc(ui, 'not official Champion legality');
 });
 
 T('5. Overview styles are responsive and scan-friendly', () => {
