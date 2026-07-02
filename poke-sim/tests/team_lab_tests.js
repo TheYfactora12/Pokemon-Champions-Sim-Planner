@@ -285,6 +285,33 @@ T('5d. legality evidence package blocks promotion when fixture classes are missi
   truthy(readiness.source_gaps.some((gap) => gap.indexOf('FIXTURE_TYPES_MISSING') === 0), 'missing fixture source gap absent');
 });
 
+T('5e. Regulation M-B skeleton package is Champion-only and blocked until source captures arrive', () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'source', 'reg-m-b-legality-evidence-package.json'), 'utf8'));
+  const fixtureSet = JSON.parse(fs.readFileSync(path.join(ROOT, 'source', 'reg-m-b-legality-fixtures.json'), 'utf8'));
+  eq(pkg.schema_version, 'champions-legality-evidence-package-v1', 'package schema');
+  eq(pkg.regulation_id, 'champions_reg_m_b_2026', 'package must target Pokemon Champions Reg M-B');
+  eq(pkg.format, 'doubles', 'package format');
+  eq(pkg.verification_status, 'needs_verification', 'skeleton package must not be verified');
+  truthy(/Pokemon Champions|Champion/.test(pkg.status_note), 'package status should name Champion source boundary');
+  truthy(!JSON.stringify(pkg).toLowerCase().includes('scarlet'), 'Reg M-B package must not use Scarlet source scope');
+  truthy(!JSON.stringify(pkg).toLowerCase().includes('tera'), 'Reg M-B package must not promote Tera source scope');
+  const report = LegalityEvidencePackage.validateLegalityEvidencePackage(pkg);
+  eq(report.status, 'needs_verification', 'skeleton package must fail closed');
+  truthy(report.source_gaps.some((gap) => gap.code === 'SOURCE_CAPTURE_MISSING'), 'source capture gap missing');
+  truthy(report.source_gaps.some((gap) => gap.code === 'TRUSTED_SOURCE_CAPTURE_MISSING'), 'trusted source capture gap missing');
+  LegalityEvidencePackage.LIST_KEYS.forEach((key) => {
+    truthy(report.source_gaps.some((gap) => gap.code === 'ALLOWLIST_MISSING_' + key.toUpperCase()), key + ' missing gap absent');
+    truthy(report.source_gaps.some((gap) => gap.code === 'ALLOWLIST_INCOMPLETE_' + key.toUpperCase()), key + ' incomplete gap absent');
+  });
+  eq(fixtureSet.schema_version, 'champions-legality-fixture-set-v1', 'fixture set schema');
+  eq(fixtureSet.regulation_id, pkg.regulation_id, 'fixture regulation should match package');
+  const readiness = LegalityEvidencePackage.promotionReadinessFromEvidencePackage(pkg, fixtureSet.fixtures);
+  eq(readiness.ready_for_runtime_promotion, false, 'skeleton package must not promote');
+  eq(readiness.status, 'needs_verification', 'readiness status should fail closed');
+  eq(readiness.fixture_counts.total, 4, 'placeholder fixture count');
+  truthy(readiness.source_gaps.includes('SOURCE_CAPTURE_MISSING'), 'readiness should surface source capture gap');
+});
+
 T('6. raw win rate and adjusted win rate are sample-size aware', () => {
   eq(TeamLab.rawWinRate(7, 2, 1), 0.75, 'raw win rate should count draws as half win');
   approx(TeamLab.adjustedWinRate(1, 0, 0, 0.5, 30), 0.516129, 0.000001, 'adjusted win rate should shrink low sample toward prior');
