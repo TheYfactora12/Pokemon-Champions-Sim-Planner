@@ -69,4 +69,6 @@ Implementation start: `legality_evidence_package.js` now defines the first packa
 
 Scrape/capture discipline: web scrapes can populate candidate `working_mirror` rows, but official/client captures are required before a row can promote active Regulation M-B legality or Team Lab official ranking eligibility.
 
+Showdown replay pivot: when in-game captures are unavailable, downloaded Pokemon Showdown battle logs may be stored as `showdown_reference` gameplay evidence. The current manifest is `source/reg-m-b-showdown-reference-battles.json`. These rows can harden replay parsing, battle-flow QA, tactical coaching calibration, and Showdown parity checks. They cannot satisfy official Champion legality, active Reg M-B runtime promotion, Team Lab official ranking promotion, or verified global learning by themselves.
+
 This is the path to a defensible 99% closeout. Anything less is a confidence label, not legality proof.

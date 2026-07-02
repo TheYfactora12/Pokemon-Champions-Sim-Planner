@@ -333,6 +333,22 @@ T('5f. Regulation M-B Codex scaffold preserves TBD/not_captured proof boundaries
   truthy(JSON.stringify(teamCases).includes('TBD'), 'team cases should preserve TBD placeholders');
 });
 
+T('5g. Showdown battle folder imports as reference gameplay evidence only', () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'source', 'reg-m-b-showdown-reference-battles.json'), 'utf8'));
+  eq(manifest.schema_version, 'champions-showdown-reference-battle-manifest-v1', 'showdown manifest schema');
+  eq(manifest.source_tier, 'showdown_reference', 'showdown manifest tier');
+  eq(manifest.verification_status, 'reference_only', 'showdown manifest status');
+  truthy(manifest.counts.total >= 1, 'showdown manifest should include battle rows');
+  truthy(manifest.counts.reg_m_b >= 1, 'showdown manifest should include Reg M-B rows');
+  truthy(manifest.rows.every((row) => row.source_tier === 'showdown_reference'), 'all rows must stay showdown_reference');
+  truthy(manifest.rows.every((row) => row.verification_status === 'reference_only'), 'all rows must stay reference_only');
+  truthy(manifest.rows.every((row) => row.blocked_use.includes('official_champion_legality')), 'rows must block official legality use');
+  truthy(manifest.rows.every((row) => row.blocked_use.includes('team_lab_official_ranking')), 'rows must block official ranking use');
+  truthy(manifest.rows.some((row) => row.allowed_use.includes('coaching_calibration')), 'rows should support coaching calibration');
+  const regMbRows = manifest.rows.filter((row) => row.regulation_label === 'Reg M-B');
+  truthy(regMbRows.every((row) => row.tier && row.tier.includes('Champions') && row.tier.includes('Reg M-B')), 'Reg M-B rows should preserve Showdown tier labels');
+});
+
 T('6. raw win rate and adjusted win rate are sample-size aware', () => {
   eq(TeamLab.rawWinRate(7, 2, 1), 0.75, 'raw win rate should count draws as half win');
   approx(TeamLab.adjustedWinRate(1, 0, 0, 0.5, 30), 0.516129, 0.000001, 'adjusted win rate should shrink low sample toward prior');
