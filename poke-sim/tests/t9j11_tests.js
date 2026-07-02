@@ -480,7 +480,8 @@ T('15c2. skipped bulk import returns actionable validation errors', () => {
   eq(res.added, 0, 'invalid upload should not import');
   eq(res.skipped, 1, 'invalid upload should be skipped');
   truthy(res.skippedErrors && res.skippedErrors.length === 1, 'skipped error details should be returned');
-  truthy(res.skippedErrors[0].errors.some(e => /raw Showdown EVs|Life Orb|SP/.test(e)), 'skipped error should explain validation blocker');
+  truthy(res.skippedErrors[0].errors.some(e => /raw Showdown EVs|SP/.test(e)), 'skipped error should explain validation blocker');
+  truthy(res.skippedErrors[0].warnings.some(e => /Life Orb|Reg M-B review candidate/.test(e)), 'review-only item warning should be preserved');
 });
 
 T('15d. Champion SP import parses SPs and validates without EV/IV gate errors', () => {
@@ -518,7 +519,23 @@ T('15e. raw Showdown EV/IV imports are rejected for Champion mode', () => {
   truthy(!validation.valid, 'raw EV/IV import should be invalid');
   truthy(validation.errors.some(e => /raw Showdown EVs/.test(e)), 'EV gate error missing');
   truthy(validation.errors.some(e => /IVs are not configurable/.test(e)), 'IV gate error missing');
-  truthy(validation.errors.some(e => /Life Orb/.test(e)), 'item-pool error missing');
+  truthy(validation.warnings.some(e => /Life Orb|Reg M-B review candidate/.test(e)), 'review-only item warning missing');
+});
+
+T('15e1. Reg M-B review candidate items can be saved for custom testing as warnings', () => {
+  resetTeams();
+  const members = parseShowdownPaste([
+    'Garchomp @ Life Orb',
+    'Ability: Rough Skin',
+    'Level: 50',
+    'SPs: 2 HP / 32 Atk / 32 Spe',
+    'Jolly Nature',
+    '- Earthquake',
+    '- Protect'
+  ].join('\n'));
+  const validation = buildImportedTeamValidation(members, { format: 'champions' });
+  truthy(validation.valid, 'Reg M-B review candidate item should not block custom testing');
+  truthy(validation.warnings.some(e => /Reg M-B review candidate|Life Orb/.test(e)), 'Reg M-B review warning missing');
 });
 
 T('15e2. over-cap Champion SP imports are rejected even when labeled SPs', () => {

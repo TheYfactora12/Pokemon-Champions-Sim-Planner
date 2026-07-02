@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.115-qa-josh-owner-alignment
+// Build marker: v2.2.116-regmb-review-items-abilities
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.115-qa-josh-owner-alignment'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.116-regmb-review-items-abilities'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -2800,11 +2800,60 @@ function renderSetEditorMoveLegalityHtml(member) {
 function csRenderEditorItemDatalist() {
   var list = document.getElementById('editor-item-list');
   if (!list || typeof CHAMPIONS_LEGAL_ITEMS === 'undefined' || !CHAMPIONS_LEGAL_ITEMS) return 0;
-  var items = Array.from(CHAMPIONS_LEGAL_ITEMS).sort(function(a, b) { return a.localeCompare(b); });
+  var seen = {};
+  var items = [];
+  Array.from(CHAMPIONS_LEGAL_ITEMS).forEach(function(item) {
+    if (!seen[item]) { seen[item] = 'verified'; items.push(item); }
+  });
+  if (typeof CHAMPIONS_REGMB_REVIEW_ITEM_CANDIDATES !== 'undefined' && CHAMPIONS_REGMB_REVIEW_ITEM_CANDIDATES) {
+    Array.from(CHAMPIONS_REGMB_REVIEW_ITEM_CANDIDATES).forEach(function(item) {
+      if (!seen[item]) { seen[item] = 'reg-m-b-review'; items.push(item); }
+    });
+  }
+  items.sort(function(a, b) { return a.localeCompare(b); });
   list.innerHTML = items.map(function(item) {
-    return '<option value="' + _escapeHtml(item) + '"></option>';
+    var label = seen[item] === 'reg-m-b-review' ? 'Reg M-B review candidate' : 'Verified implemented pool';
+    return '<option value="' + _escapeHtml(item) + '" label="' + _escapeHtml(label) + '"></option>';
   }).join('');
   return items.length;
+}
+
+function csRenderEditorAbilityDatalist() {
+  var list = document.getElementById('editor-ability-list');
+  if (!list) return 0;
+  var seen = {};
+  function addAbility(ability, label) {
+    ability = String(ability || '').trim();
+    if (!ability || seen[ability]) return;
+    seen[ability] = label || 'Ability';
+  }
+  if (typeof TEAMS !== 'undefined' && TEAMS) {
+    Object.keys(TEAMS).forEach(function(key) {
+      ((TEAMS[key] && TEAMS[key].members) || []).forEach(function(member) {
+        addAbility(member && member.ability, 'Known team ability');
+      });
+    });
+  }
+  if (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS) {
+    Object.keys(CHAMPIONS_MEGAS).forEach(function(key) {
+      addAbility(CHAMPIONS_MEGAS[key] && CHAMPIONS_MEGAS[key].ability, 'Implemented Mega ability');
+    });
+  }
+  if (typeof CHAMPIONS_NEW_ABILITIES !== 'undefined' && CHAMPIONS_NEW_ABILITIES) {
+    Object.keys(CHAMPIONS_NEW_ABILITIES).forEach(function(key) {
+      addAbility(key, CHAMPIONS_NEW_ABILITIES[key] && CHAMPIONS_NEW_ABILITIES[key].reviewOnly ? 'Reg M-B review candidate' : 'Champion ability');
+    });
+  }
+  if (typeof CHAMPIONS_REGMB_REVIEW_ABILITY_CANDIDATES !== 'undefined' && CHAMPIONS_REGMB_REVIEW_ABILITY_CANDIDATES) {
+    Array.from(CHAMPIONS_REGMB_REVIEW_ABILITY_CANDIDATES).forEach(function(key) {
+      addAbility(key, 'Reg M-B review candidate');
+    });
+  }
+  var abilities = Object.keys(seen).sort(function(a, b) { return a.localeCompare(b); });
+  list.innerHTML = abilities.map(function(ability) {
+    return '<option value="' + _escapeHtml(ability) + '" label="' + _escapeHtml(seen[ability]) + '"></option>';
+  }).join('');
+  return abilities.length;
 }
 
 function csRenderEditorItemLegalityHtml(member) {
@@ -2812,6 +2861,11 @@ function csRenderEditorItemLegalityHtml(member) {
   if (!item) return '<div class="editor-legality-ok">No held item selected.</div>';
   if (typeof CHAMPIONS_LEGAL_ITEMS !== 'undefined' && CHAMPIONS_LEGAL_ITEMS && CHAMPIONS_LEGAL_ITEMS.has(item)) {
     return '<div class="editor-legality-ok">Item checked against the current Champions item pool.</div>';
+  }
+  if (typeof CHAMPIONS_REGMB_REVIEW_ITEM_CANDIDATES !== 'undefined' && CHAMPIONS_REGMB_REVIEW_ITEM_CANDIDATES && CHAMPIONS_REGMB_REVIEW_ITEM_CANDIDATES.has(item)) {
+    return '<div class="editor-legality-warnings"><div class="editor-legality-warning warning">' +
+      _escapeHtml(item + ': Reg M-B review candidate. You can save/test this custom team, but it is not verified implemented legality and must not train/rank trusted data until fixtures and item effects are promoted.') +
+      '</div></div>';
   }
   var knownAbsent = typeof CHAMPIONS_BANNED_ITEMS !== 'undefined' && CHAMPIONS_BANNED_ITEMS && CHAMPIONS_BANNED_ITEMS.has(item);
   return '<div class="editor-legality-warnings"><div class="editor-legality-warning error">' +
@@ -2932,6 +2986,7 @@ function refreshEditorMoveLegality(baseMember) {
   var current = currentEditorMemberForLegality(baseMember);
   var legalMoveCount = csRenderEditorMoveDatalist(current.name);
   csRenderEditorItemDatalist();
+  csRenderEditorAbilityDatalist();
   host.innerHTML = csRenderEditorItemLegalityHtml(current) + renderSetEditorMoveLegalityHtml(current) +
     csRenderEditorMegaRuntimeHtml(current) +
     '<div class="editor-move-source">' +
@@ -2980,7 +3035,7 @@ function openEditorForm(idx) {
     <div class="editor-2col">
       <div class="form-group"><label class="form-label">Pokémon</label><input class="form-input" id="ed-name" value="${_escapeHtml(m.name||'')}" placeholder="Exact species/form name"/></div>
       <div class="form-group"><label class="form-label">Item</label><input class="form-input" id="ed-item" list="editor-item-list" value="${_escapeHtml(m.item||'')}" placeholder="Legal held item"/></div>
-      <div class="form-group"><label class="form-label">Ability</label><input class="form-input" id="ed-ability" value="${_escapeHtml(m.ability||'')}"/></div>
+      <div class="form-group"><label class="form-label">Ability</label><input class="form-input" id="ed-ability" list="editor-ability-list" value="${_escapeHtml(m.ability||'')}" placeholder="Search or type ability"/></div>
       <div class="form-group"><label class="form-label">Nature</label><input class="form-input" id="ed-nature" value="${_escapeHtml(m.nature||'Hardy')}"/></div>
       <div class="form-group"><label class="form-label">Level</label><input class="form-input" id="ed-level" value="${_escapeHtml(String(m.level||50))}" type="number" min="1" max="100"/></div>
       <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="ed-role" value="${_escapeHtml(m.role||'')}"/></div>

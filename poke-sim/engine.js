@@ -49,10 +49,10 @@
 //   Terrain Seeds (Grassy/Electric +1 Def, Psychic/Misty +1 SpD): consume
 //     on switch-in to matching terrain. Cite: https://bulbapedia.bulbagarden.net/wiki/Grassy_Seed
 //
-// Items NOT in Champions (enforced in legality.js::CHAMPIONS_BANNED_ITEMS):
-//   Life Orb, Choice Band/Specs, Assault Vest, Rocky Helmet, HDB,
-//   Black Sludge, Eviolite, Light Clay, weather rocks, Terrain Extender,
-//   Toxic Orb, Flame Orb.
+// Items outside implemented runtime truth (see legality.js):
+//   Launch-absent rows such as Life Orb / Light Clay / weather rocks may appear
+//   as Reg M-B review candidates for custom testing, but their effects are not
+//   promoted to trusted simulation/ranking until fixtures and effect tests pass.
 //
 // Sources:
 //   https://www.serebii.net/pokemonchampions/rankedbattle/regulationm-a.shtml
@@ -2557,8 +2557,9 @@ class Pokemon {
       }
     }
 
-    // T9j.6 (#11 WONTFIX) — Life Orb absent from Champions launch (games.gg,
-    // IGN Champions Changes, Game8 item list). No multiplier.
+    // T9j.6 (#11 WONTFIX) — Life Orb was absent from the implemented launch
+    // lane. It may appear as a Reg M-B review candidate, but its damage
+    // multiplier is not promoted until item-effect tests and fixtures pass.
     const loMod = 4096;
     const supremeOverlordMod = this.ability === 'Supreme Overlord'
       ? SUPREME_OVERLORD_MODS[Math.min(this.side?.fainted || 0, 5)]
@@ -5911,7 +5912,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         _recordKO(attacker, { move: move, attacker: attacker, reason: 'recoil' });
       }
     }
-    // T9j.6 (#11 WONTFIX) — Life Orb recoil removed; item absent from Champions.
+    // T9j.6 (#11 WONTFIX) — Life Orb recoil remains unpromoted for trusted
+    // runtime even when the item is allowed into custom Reg M-B review testing.
     // Berry check after damage
     const berryMsg = target.applyItem('damage', field);
     if (berryMsg) log.push(berryMsg);
