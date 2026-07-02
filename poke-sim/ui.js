@@ -40,7 +40,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.109-qa-readiness-next-gate'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.110-regmb-legality-request'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -9695,6 +9695,38 @@ function csBuildQaHundredReadiness(payload) {
   var retainedTotals = replayAudit.retained_totals || {};
   var releaseBlockers = Array.isArray(payload.qa_release_blockers) ? payload.qa_release_blockers : [];
   var gates = [];
+  function buildLegalityEvidenceRequest() {
+    var regulationId = payload.regulation_id || payload.current_regulation_id || 'champions_reg_m_b_2026';
+    var format = payload.current_format || payload.format || 'doubles';
+    var rulesetVersion = payload.ruleset_version || 'needs_source_capture';
+    return {
+      schema_version: 'champions-regulation-legality-evidence-request-v1',
+      regulation_id: regulationId,
+      ruleset_version: rulesetVersion,
+      format: format,
+      package_id: regulationId + '-' + format + '-source-package',
+      status: 'needs_source_capture',
+      purpose: 'Create the source-backed package required before claiming active-regulation legality or using teams in official ranking/coaching lanes.',
+      required_source_captures: [
+        { id: 'official_regulation_notice', source_tier: 'official', required: true, proves: ['effective dates', 'regulation id/name', 'format scope', 'rules overview'] },
+        { id: 'in_game_rules_screen', source_tier: 'in_game_verified', required: true, proves: ['clauses', 'team size', 'bring size', 'level rules', 'timer/open sheet notes when visible'] },
+        { id: 'eligible_species_forms_list', source_tier: 'in_game_verified', required: true, proves: ['legal_pokemon_ids', 'legal_form_ids', 'banned or restricted rows'] },
+        { id: 'mega_eligibility_and_stones', source_tier: 'in_game_verified', required: true, proves: ['legal Mega forms', 'Mega Stone or Omni Ring constraints', 'special mechanic boundary'] },
+        { id: 'held_item_pool', source_tier: 'in_game_verified', required: true, proves: ['legal_item_ids', 'item clause assumptions'] },
+        { id: 'move_ability_training_legality', source_tier: 'in_game_verified', required: true, proves: ['legal_move_ids', 'legal_ability_ids', 'Champion-local training constraints'] }
+      ],
+      required_fixture_types: [
+        { fixture_type: 'known_legal', required: true, proves: 'A team accepted by Pokemon Champions under this regulation.' },
+        { fixture_type: 'known_illegal', required: true, proves: 'A species/form/move/item/Mega rule rejected by Pokemon Champions.' },
+        { fixture_type: 'stale', required: true, proves: 'Wrong-regulation or old-ruleset data is marked stale.' },
+        { fixture_type: 'needs_verification', required: true, proves: 'Unknown Champion data remains needs_verification instead of verified.' }
+      ],
+      allowlists_required: ['legal_pokemon_ids', 'legal_form_ids', 'legal_move_ids', 'legal_item_ids', 'legal_ability_ids'],
+      promotion_rule: 'Do not promote runtime legality, official Team Lab rankings, global learning, or coaching certainty until LegalityEvidencePackage.promotionReadinessFromEvidencePackage returns verified with all fixture types present.',
+      next_human_action: 'Attach official/in-game Regulation M-B captures and known accepted/rejected team fixtures; unknown rows stay needs_verification.'
+    };
+  }
+  var legalityEvidenceRequest = buildLegalityEvidenceRequest();
   function addGate(id, label, status, evidence, missing, nextStep) {
     gates.push({
       id: id,
@@ -9825,6 +9857,9 @@ function csBuildQaHundredReadiness(payload) {
     next_step: 'Attach human-reviewed source proof and close the matching GitHub issue.',
     why_first: 'Tracked QA 100 gates passed for this artifact scope.'
   };
+  if (nextEvidenceRequest.gate_id === 'legality_truth') {
+    nextEvidenceRequest.legality_evidence_request = legalityEvidenceRequest;
+  }
   return {
     schema_version: 'champions-qa-100-readiness-v1',
     verdict: blocked.length ? 'not_ready' : (partial.length ? 'partial_not_100' : 'ready_for_100_claim_review'),
@@ -9838,6 +9873,7 @@ function csBuildQaHundredReadiness(payload) {
     first_partial_gate: firstPartialGate,
     active_priority_lane: nextEvidenceRequest.priority_lane,
     recommended_test: nextEvidenceRequest.recommended_test,
+    legality_evidence_request: legalityEvidenceRequest,
     next_evidence_request: nextEvidenceRequest,
     next_priority: blocked.length
       ? blocked[0].next_step
@@ -13256,6 +13292,11 @@ var CS_OVERVIEW_DATA = {
   shipped: [
     {
       status: 'done',
+      title: 'Regulation legality evidence request added',
+      detail: 'v2.2.110 adds a Regulation M-B legality_evidence_request inside qa_100_readiness and next_evidence_request when legality_truth is the active blocker. It names the required official/in-game captures, allowlists, known legal/illegal/stale/needs_verification fixtures, and promotion rule without inventing Champion data. This turns the current QA blocker into a source-capture checklist instead of a vague legality warning.'
+    },
+    {
+      status: 'done',
       title: 'QA 100 next-gate guidance added',
       detail: 'v2.2.109 strengthens qa_100_readiness so every QA artifact names first_blocking_gate, first_partial_gate, active_priority_lane, recommended_test, and next_evidence_request. This keeps the team from jumping around: if legality is blocked, work the Regulation M-B evidence package first; if no blockers remain, close the first partial gate such as move mechanics, replay transparency, scenario breadth, real replay parity, or singles/doubles proof.'
     },
@@ -14183,7 +14224,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Use QA 100 readiness to drive the next fixes',
-      detail: 'Fresh artifacts should now be read through qa_100_readiness first. If the verdict is not_ready or partial_not_100, work qa_100_readiness.next_evidence_request before claiming the sim plays like the real game across all possibilities. Expected open gates are Regulation M-B legality package, partial mechanic families, replay transparency warnings, scenario breadth, real replay parity, and paired singles/doubles proof.'
+      detail: 'Fresh artifacts should now be read through qa_100_readiness first. If the verdict is not_ready or partial_not_100, work qa_100_readiness.next_evidence_request before claiming the sim plays like the real game across all possibilities. If the active blocker is legality_truth, use qa_100_readiness.legality_evidence_request as the exact Regulation M-B source-capture checklist. Expected later gates are partial mechanic families, replay transparency warnings, scenario breadth, real replay parity, and paired singles/doubles proof.'
     },
     {
       status: 'next',
