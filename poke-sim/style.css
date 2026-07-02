@@ -901,6 +901,15 @@ table{border-collapse:collapse;width:100%}
 .replay-coach-intake-strip span{display:block;color:var(--text-m);font-size:12px;line-height:1.45}
 .replay-coach-grid{display:grid;grid-template-columns:minmax(320px,420px) minmax(0,1fr);gap:var(--sp4);align-items:start}
 .replay-coach-input-card,.replay-coach-summary-card,.replay-coach-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp4);box-shadow:var(--sh-sm);min-width:0}
+.qa-claim-review-readout-inline{margin-top:var(--sp3);clear:both}
+.qa-claim-review-card{border-color:rgba(56,189,248,.28);background:linear-gradient(180deg,rgba(56,189,248,.08),rgba(11,18,32,.92))}
+.qa-readout-next-panel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 12px;padding:10px;border:1px solid rgba(56,189,248,.28);border-radius:var(--r-md);background:rgba(8,13,23,.72)}
+.qa-readout-next-panel div{min-width:0}
+.qa-readout-next-panel strong{display:block;font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-m);margin-bottom:4px}
+.qa-readout-next-panel span{display:block;font-size:12px;font-weight:800;line-height:1.35;color:var(--text);overflow-wrap:anywhere}
+.qa-readout-next-step{grid-column:1/-1}
+.qa-readout-next-step ul{margin:7px 0 0 16px;padding:0;color:var(--text-m);font-size:11px;line-height:1.45}
+.qa-readout-next-step li+li{margin-top:3px}
 .replay-coach-card-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp2);margin-bottom:var(--sp3)}
 .replay-coach-upload-panel{display:grid;gap:8px;padding:var(--sp3);margin-bottom:var(--sp3);border:1px dashed rgba(91,164,245,.44);border-radius:var(--r-md);background:linear-gradient(135deg,rgba(91,164,245,.08),rgba(245,197,66,.045))}
 .replay-coach-upload-panel .btn-primary{width:100%;justify-content:center}
@@ -1041,6 +1050,7 @@ table{border-collapse:collapse;width:100%}
 @media(max-width:900px){.replay-coach-grid,.replay-coach-intake-strip{grid-template-columns:1fr}.replay-coach-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.replay-coach-turn0-grid,.replay-turn-roster{grid-template-columns:1fr}}
 @media(max-width:560px){
   .replay-coach-input-card,.replay-coach-summary-card,.replay-coach-card{padding:var(--sp3)}
+  .qa-readout-next-panel{grid-template-columns:1fr}
   .replay-coach-url-row{grid-template-columns:1fr}
   .replay-coach-controls{grid-template-columns:1fr}
   .replay-coach-summary-grid{grid-template-columns:1fr}

@@ -1,5 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
+// Build marker: v2.2.111-qa-readout-inline
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -11349,8 +11350,8 @@ function csQaClaimReadoutHost() {
   if (existing) return existing;
   var el = document.createElement('div');
   el.id = 'qa-claim-review-readout';
-  el.className = 'qa-claim-review-readout';
-  var anchor = document.getElementById('beta-guard-note') || document.getElementById('progress-wrap');
+  el.className = 'qa-claim-review-readout qa-claim-review-readout-inline';
+  var anchor = document.getElementById('coverage-widget') || document.getElementById('progress-wrap') || document.getElementById('beta-guard-note');
   var parent = anchor && anchor.parentNode ? anchor.parentNode : (document.body || null);
   if (parent && parent.insertBefore && anchor && anchor.nextSibling) parent.insertBefore(el, anchor.nextSibling);
   else if (parent && parent.appendChild) parent.appendChild(el);
@@ -11369,6 +11370,8 @@ function csRenderQaClaimReviewReadout(payload) {
   var forbidden = Array.isArray(review.forbidden_claims) ? review.forbidden_claims : [];
   var blockers = Array.isArray(payload.qa_release_blockers) ? payload.qa_release_blockers : [];
   var sliceBlockers = Array.isArray(slice.blockers) ? slice.blockers : [];
+  var nextEvidence = review.next_evidence_request || hundred.next_evidence_request || {};
+  var nextMissing = Array.isArray(nextEvidence.missing) ? nextEvidence.missing : [];
   var status = slice.status === 'ready'
     ? 'SLICE READY'
     : (dashboard.can_ship ? 'PASS WITH BOUNDARIES' : 'BLOCKED / PARTIAL');
@@ -11390,9 +11393,18 @@ function csRenderQaClaimReviewReadout(payload) {
   var sliceBlockerRows = sliceBlockers.slice(0, 4).map(function(blocker) {
     return '<div class="replay-coach-list-row"><strong>' + _escapeHtml(blocker.code || 'QA_SLICE_BLOCKER') + '</strong>' + _escapeHtml(blocker.detail || '') + '</div>';
   }).join('');
+  var nextMissingRows = nextMissing.slice(0, 3).map(function(item) {
+    return '<li>' + _escapeHtml(typeof item === 'string' ? item : (item && (item.message || item.code || item.id)) || 'Missing evidence') + '</li>';
+  }).join('');
   host.innerHTML = '<div class="replay-coach-card qa-claim-review-card">' +
     '<div class="replay-coach-card-head"><h3 class="replay-coach-h3">QA Claim Review - ' + _escapeHtml(qaSliceTitle) + '</h3><span class="replay-coach-tag ' + _escapeHtml(statusClass) + '">' + _escapeHtml(status) + '</span></div>' +
     '<p class="replay-coach-turn-read">' + _escapeHtml(review.verdict || 'QA artifact exported. Review source gaps before treating it as proof.') + '</p>' +
+    '<div class="qa-readout-next-panel" aria-label="Active QA next step">' +
+      '<div><strong>Active QA gate</strong><span>' + _escapeHtml(nextEvidence.gate_label || 'No active gate reported') + '</span></div>' +
+      '<div><strong>Priority lane</strong><span>' + _escapeHtml(nextEvidence.priority_lane || hundred.active_priority_lane || 'qa_review') + '</span></div>' +
+      '<div><strong>Recommended test</strong><span>' + _escapeHtml(nextEvidence.recommended_test || hundred.recommended_test || payload.recommended_next_test || 'Focused QA artifact') + '</span></div>' +
+      '<div class="qa-readout-next-step"><strong>Next evidence</strong><span>' + _escapeHtml(nextEvidence.next_step || review.reviewer_next_step || 'Review the QA dashboard gaps before changing code.') + '</span>' + (nextMissingRows ? '<ul>' + nextMissingRows + '</ul>' : '') + '</div>' +
+    '</div>' +
     '<p class="replay-coach-turn-read"><strong>Slice purpose:</strong> ' + _escapeHtml(slice.purpose || 'This QA export is scoped evidence for the selected run type.') + '</p>' +
     '<div class="replay-coach-summary-grid">' +
       '<div class="replay-coach-metric"><strong>Release blockers</strong><span>' + _escapeHtml(String(blockers.length)) + '</span></div>' +

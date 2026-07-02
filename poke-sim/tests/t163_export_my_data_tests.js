@@ -395,6 +395,9 @@ async function main() {
     truthy(payload.summary && payload.retention, 'returned QA payload malformed');
     const readout = document.getElementById('qa-claim-review-readout').innerHTML;
     truthy(/QA Claim Review - Tactical Coaching QA/.test(readout), 'QA claim review slice title missing');
+    truthy(/Active QA gate/.test(readout), 'QA active gate readout missing');
+    truthy(/Recommended test/.test(readout), 'QA recommended test readout missing');
+    truthy(!/<details|<summary|<select/i.test(readout), 'QA claim review should render inline, not as a dropdown/disclosure');
     truthy(/Forbidden claims/.test(readout), 'QA claim forbidden-claims readout missing');
     truthy(/Source boundary/.test(readout), 'QA claim source-boundary readout missing');
   });
