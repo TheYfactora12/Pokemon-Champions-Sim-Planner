@@ -318,10 +318,12 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(closeout, 'source/reg-m-b-showdown-reference-battles.json');
   inc(closeout, '/Users/kevinmedeiros/Downloads/battles');
   inc(closeout, 'GitHub assignment: #190');
+  inc(closeout, 'Owner: Josh (`@Jdoutt38`)');
   inc(closeout, 'Keep the result labeled `showdown_reference`');
   inc(closeout, 'Do not mark Reg M-B legality verified from these logs.');
   inc(ui, 'Josh/QA assignment: Showdown reference battle review');
   inc(ui, 'GitHub #190');
+  inc(ui, 'Owner: Josh (@Jdoutt38)');
   inc(ui, 'showdown_reference');
   inc(ui, 'not official Champion legality');
 });

@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.114-qa-josh-showdown-assignment
+// Build marker: v2.2.115-qa-josh-owner-alignment
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.114-qa-josh-showdown-assignment'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.115-qa-josh-owner-alignment'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -14657,7 +14657,7 @@ function csRenderOverviewQaJoshIssues() {
     {
       status: 'next',
       title: 'Josh/QA assignment: Showdown reference battle review',
-      detail: 'GitHub #190. Use source/reg-m-b-showdown-reference-battles.json and /Users/kevinmedeiros/Downloads/battles to test Review upload, parser mapping, turn events, Battle Sensei language, and tactical calibration. Label the evidence showdown_reference. Plain-English rule: Showdown logs are real gameplay reference evidence, not official Champion legality, Team Lab official ranking proof, or accepted/rejected in-game validation.'
+      detail: 'Owner: Josh (@Jdoutt38). GitHub #190. Use source/reg-m-b-showdown-reference-battles.json and /Users/kevinmedeiros/Downloads/battles to test Review upload, parser mapping, turn events, Battle Sensei language, and tactical calibration. Label the evidence showdown_reference. Plain-English rule: Showdown logs are real gameplay reference evidence, not official Champion legality, Team Lab official ranking proof, or accepted/rejected in-game validation.'
     },
     {
       status: 'gap',

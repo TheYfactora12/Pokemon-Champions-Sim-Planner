@@ -81,6 +81,7 @@ Input package:
 - Source folder: `/Users/kevinmedeiros/Downloads/battles`
 - Current manifest: 39 Showdown HTML replays, including 5 Reg M-B and 34 Reg M-A logs.
 - GitHub assignment: #190 `QA: Josh/QA Showdown reference battle review`
+- Owner: Josh (`@Jdoutt38`)
 
 Allowed QA use:
 
