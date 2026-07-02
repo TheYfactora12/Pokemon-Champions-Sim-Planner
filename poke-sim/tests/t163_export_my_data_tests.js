@@ -469,6 +469,8 @@ async function main() {
     truthy(payload.proof_manifest.coverage_flags.has_tactical_sweep, 'proof manifest tactical flag missing');
     eq(payload.proof_manifest.evidence_counts.tactical_sweep_opponents, 2, 'proof manifest tactical opponent count');
     eq(payload.proof_manifest.evidence_counts.branch_matrix_runs, 2, 'proof manifest branch run count');
+    eq(payload.qa_coverage_summary.totals.move_rule_trace_rows, payload.qa_coverage_summary.mechanics_seen.move_rule_trace_rows, 'coverage totals should mirror move_rule_trace_rows mechanics count');
+    eq(payload.qa_coverage_summary.totals.move_rule_trace_rows, payload.proof_manifest.evidence_counts.move_rule_trace_rows, 'proof manifest should mirror coverage move_rule_trace_rows total');
   });
 
   await T('9. Tactical Sweep QA emits progress callbacks', async () => {

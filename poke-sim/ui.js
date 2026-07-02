@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.111-qa-readout-inline
+// Build marker: v2.2.112-qa-trace-total-align
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.111-qa-readout-inline'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.112-qa-trace-total-align'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -6280,6 +6280,7 @@ function csBuildQaCoverageSummary(turnLog, opts) {
       if (csQaEffectKindMatches(kind, 'item-recovery')) mechanics.item_recovery += 1;
     }
   }
+  totals.move_rule_trace_rows = Number(mechanics.move_rule_trace_rows || 0);
 
   var moveEffectLogicMatrix = csBuildMoveEffectLogicMatrix(mechanics, {
     scope: options.scope || 'single-turn-log',
@@ -6430,6 +6431,7 @@ function csMergeQaCoverageSummaries(summaries, opts) {
     }
   }
 
+  merged.totals.move_rule_trace_rows = Number(merged.mechanics_seen && merged.mechanics_seen.move_rule_trace_rows || 0);
   merged.missing_targeted_proof = csQaMissingTargetedProof(merged.mechanics_seen);
   merged.decision_opportunity_ledger = csBuildDecisionOpportunityLedger(merged.tactical_speed_summary, { scope: options.scope || 'qa-artifact-retained-replay-cards' });
   merged.coach_event_rows = mergedCoachEventRows.slice(0, 240);
