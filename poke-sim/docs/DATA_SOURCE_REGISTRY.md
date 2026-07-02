@@ -70,6 +70,62 @@ Promotion checklist before Reg M-B can become the default implemented lane:
 
 Non-goal: do not enable any unapproved Champion mechanic, form, item, or move from assumption alone.
 
+## Regulation M-B Scrape And Capture Targets
+
+Status: source-capture checklist for the legality evidence package. These links help reviewers collect candidate rows, screenshots, hashes, and source pointers. They do not automatically promote runtime legality.
+
+Promotion rule: scraped/web rows are `working_mirror` until matched to official Pokemon, Play! Pokemon, Pokemon Champions, or timestamped in-client evidence. If a source cannot prove a row, the row stays `needs_verification`.
+
+### Tier 0 official/client capture targets
+
+| Target | Link or capture path | Pull/capture goal | Promotion use |
+|---|---|---|---|
+| Pokemon Champions official site | <https://champions.pokemon.com/> | Official product, mode, cross-platform, HOME/training, and news entry points | Rules/policy claims only when the page text directly states them |
+| Official Pokemon news search | <https://www.pokemon.com/us/pokemon-news/> | Pokemon Champions announcements, regulation notices, patch notes, event/news posts | Official source pointer for regulation windows and policy claims |
+| Play! Pokemon rules/resources | <https://www.pokemon.com/us/play-pokemon/about/tournaments-rules-and-resources/> | Tournament structure, match procedure, team-sheet/rules docs, event rules | Official competitive-format source when Champion-specific event rules reference it |
+| In-game Regulation M-B rules screen | Manual capture: screenshot/video/export with UTC timestamp, build/version, format, and account/device context | Clauses, team size, bring size, level rules, timer/open-sheet notes, format scope | Highest-trust legality package evidence |
+| In-game eligible Pokemon/forms list | Manual capture: all pages/screens, stored as reviewed source rows with image/file names and UTC timestamp | `legal_pokemon_ids`, `legal_form_ids`, banned/restricted rows | Required before Reg M-B runtime promotion |
+| In-game moves/Abilities/items/training screens | Manual capture: selected Pokemon examples plus full available lists when possible | `legal_move_ids`, `legal_ability_ids`, `legal_item_ids`, Mega Stone or Omni Ring constraints | Required before verified team validation |
+| Known accepted/rejected Champion teams | Manual capture: accepted team plus rejected species/form/move/item/Mega examples | legal, illegal, stale, and needs-verification fixtures | Required before Team Lab official ranking promotion |
+
+### Champion-specific mirror targets
+
+| Target | Link | Pull/capture goal | Allowed use |
+|---|---|---|---|
+| Victory Road Champions regulations | <https://victoryroad.pro/champions-regulations/> | Regulation dates, allowed Pokemon image sheets, new Mega image/list, event/meta context | Champion-specific mirror; useful for conversion, not final official proof alone |
+| Victory Road Reg M-B allowed Pokemon sheet 1 | <https://victoryroad.pro/wp-content/uploads/2026/06/Reg-M-B-Pokemon1.jpg> | Candidate allowed Pokemon/form OCR/review queue | Working mirror until official/client confirmed |
+| Victory Road Reg M-B allowed Pokemon sheet 2 | <https://victoryroad.pro/wp-content/uploads/2026/06/Reg-M-B-Pokemon2.jpg> | Candidate allowed Pokemon/form OCR/review queue | Working mirror until official/client confirmed |
+| Victory Road Reg M-B new Mega sheet | <https://victoryroad.pro/wp-content/uploads/2026/06/NewMegasRMB.png> | Candidate Mega additions review queue | Working mirror until official/client confirmed |
+| Serebii Pokemon Champions section | <https://www.serebii.net/pokemonchampions/> | Champion-specific regulation, availability, forms, item, and move references | Preferred Champion-specific secondary reference when reachable |
+| Game8 Pokemon Champions pages | <https://game8.co/games/Pokemon-Champions> | Item/move/team-building convenience references and page-date checks | Secondary mirror; cannot override official/client capture |
+| Pokeos Pokemon Champions pages | <https://www.pokeos.com/> | Champion availability cross-checks when exact Champion page is identified | Secondary mirror only |
+| Bulbapedia Pokemon Champions page | <https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Champions> | General background and terminology cross-check | Background only unless no stronger source exists |
+
+### Executable/reference scrape targets
+
+| Target | Link | Pull/capture goal | Allowed use |
+|---|---|---|---|
+| Pokemon Showdown repository | <https://github.com/smogon/pokemon-showdown> | Baseline species, moves, abilities, items, learnsets, simulator behavior | Standard Pokemon/reference baseline, not Champion legality |
+| Pokemon Showdown Champions scripts | <https://github.com/smogon/pokemon-showdown/blob/master/data/mods/champions/scripts.ts> | Champion mod stat formula and battle-behavior reference | Executable baseline unless official/client Champion evidence differs |
+| Pokemon Showdown validator | <https://github.com/smogon/pokemon-showdown/blob/master/sim/team-validator.ts> | Stat Point and team validation behavior reference | Validator parity checks; not final Champion source if contradicted |
+| Pokemon Showdown damage calculator | <https://github.com/smogon/damage-calc> | Damage formula oracle cases | Damage/math baseline only |
+| `@pkmn` modular packages | <https://github.com/pkmn/ps> | Portable Showdown data/sim package references | Oracle harness/reference data |
+
+### Capture output requirements
+
+Every scrape/capture output should save:
+
+- source URL or local capture file path
+- `checked_at_utc`
+- source tier
+- regulation id and format scope
+- source hash or screenshot filename when available
+- extractor/parser version when automated
+- reviewer decision: `candidate`, `needs_verification`, `verified`, `conflicting`, or `rejected`
+- linked fixture or test name when the row affects runtime legality
+
+Do not write scraped rows directly into `legal_pokemon_ids`, `legal_move_ids`, `legal_item_ids`, `legal_ability_ids`, or `legal_form_ids` without a verified source tier and passing legal/illegal/stale/needs-verification fixture coverage.
+
 Dataset poisoning guard:
 
 - Source-review rulesets are not legal sim lanes.

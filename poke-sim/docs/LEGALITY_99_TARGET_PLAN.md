@@ -21,6 +21,7 @@ This document defines what the project means by `true 99% legality` for Pokemon 
 
 The next legality closeout pass needs source captures, not guesses:
 
+- use [`DATA_SOURCE_REGISTRY.md`](DATA_SOURCE_REGISTRY.md#regulation-m-b-scrape-and-capture-targets) as the source-capture/scrape target list
 - official Regulation M-B announcement or rule page URL
 - in-game Regulation M-B rules screenshot or recording
 - in-game eligible Pokemon list for the active regulation
@@ -65,5 +66,7 @@ The next implementation should build a `legality_evidence_package` flow:
 - Roadmap/QA artifact output that shows which source package and ruleset version were used
 
 Implementation start: `legality_evidence_package.js` now defines the first package contract, package validation, derived regulation conversion, fixture evaluation, and promotion-readiness checks. Current tests use dev fixtures only; they do not claim real Regulation M-B legality. The next pass should replace or extend those fixtures with official/in-game captures from Pokemon Champions.
+
+Scrape/capture discipline: web scrapes can populate candidate `working_mirror` rows, but official/client captures are required before a row can promote active Regulation M-B legality or Team Lab official ranking eligibility.
 
 This is the path to a defensible 99% closeout. Anything less is a confidence label, not legality proof.
