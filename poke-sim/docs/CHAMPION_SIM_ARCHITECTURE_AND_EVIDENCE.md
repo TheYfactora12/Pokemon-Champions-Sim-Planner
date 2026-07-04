@@ -393,3 +393,7 @@ Important interpretation rule: a single replay can prove only the mechanics that
 ## 2026-07-04 update: completed turn-count source
 
 v2.2.129 fixes the sim-page turn-count source after fresh `.128` logs showed `turns` one higher than `turnLog.length`. `simulateBattle().turns`, downloaded turn-log JSON, and retained replay-card evidence now use completed `turnLog` rows. The older/internal loop counter is preserved as `simTurnsReported` in engine results and `sim_turns_reported` in exports for debugging, but QA-facing `turns` must match the structured evidence rows.
+
+## 2026-07-04 update: single replay proof boundary
+
+v2.2.130 separates single-replay coverage from release-wide targeted proof. Downloaded `champions-turn-log-v2` files now keep `qa_coverage_summary.missing_targeted_proof` empty for `single-turn-log` scope, because one replay is not expected to hit every mechanic. Mechanics absent from that one battle remain available under `single_replay_missing_mechanics` with `missing_targeted_proof_note` explaining the boundary.

@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.129-completed-turn-count',
+    build_id: 'v2.2.130-single-replay-proof-boundary',
     release_date: '2026-07-04',
-    service_worker_cache: 'champions-sim-v2-2-129-completed-turn-count',
+    service_worker_cache: 'champions-sim-v2-2-130-single-replay-proof-boundary',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

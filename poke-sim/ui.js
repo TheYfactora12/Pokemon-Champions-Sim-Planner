@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.129-completed-turn-count
+// Build marker: v2.2.130-single-replay-proof-boundary
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.129-completed-turn-count'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.130-single-replay-proof-boundary'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8012,6 +8012,13 @@ function downloadReplayTurnLog(replay, opts) {
     scope: qaScope,
     scope_note: qaScopeNote
   });
+  var singleReplayMissingMechanics = Array.isArray(qaCoverageSummary.missing_targeted_proof) ? qaCoverageSummary.missing_targeted_proof.slice() : [];
+  qaCoverageSummary.single_replay_missing_mechanics = singleReplayMissingMechanics;
+  qaCoverageSummary.missing_targeted_proof = [];
+  qaCoverageSummary.missing_targeted_proof_note = 'Suppressed for single-turn-log downloads. Use single_replay_missing_mechanics for mechanics absent from this one replay; use Release Matrix or Targeted Mechanic QA for release-wide missing proof.';
+  if (Array.isArray(qaCoverageSummary.notes)) {
+    qaCoverageSummary.notes.push(qaCoverageSummary.missing_targeted_proof_note);
+  }
   var payload = {
     schema_version: 'champions-turn-log-v2',
     exported_at: exportedAt,
@@ -8066,7 +8073,7 @@ function downloadReplayTurnLog(replay, opts) {
       format: format
     }),
     qa_coverage_summary: qaCoverageSummary,
-    single_replay_missing_mechanics: Array.isArray(qaCoverageSummary.missing_targeted_proof) ? qaCoverageSummary.missing_targeted_proof.slice() : [],
+    single_replay_missing_mechanics: singleReplayMissingMechanics,
     turnLog: turnLog
   };
   var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -13704,6 +13711,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Single replay proof boundary cleaned up',
+      detail: 'v2.2.130 keeps single replay downloads from looking like failed release proof. For champions-turn-log-v2 files, qa_coverage_summary.missing_targeted_proof is empty because one replay is not a release matrix. Mechanics absent from that one battle are still preserved under single_replay_missing_mechanics with an explicit missing_targeted_proof_note.'
+    },
     {
       status: 'done',
       title: 'Completed battle turn count aligned',

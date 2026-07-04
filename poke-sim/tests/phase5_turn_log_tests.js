@@ -557,6 +557,9 @@ T('T5c-3 JSON download produces valid parseable file', () => {
   eq(parsed.qa_coverage_summary.totals.turns, parsed.turnLog.length, 'QA coverage turn count mismatch');
   truthy(parsed.qa_coverage_summary.source_truth_versions && parsed.qa_coverage_summary.source_truth_versions.pokemon_showdown, 'QA source truth versions missing');
   truthy(Array.isArray(parsed.qa_coverage_summary.missing_targeted_proof), 'QA missing proof list missing');
+  eq(parsed.qa_coverage_summary.missing_targeted_proof.length, 0, 'single replay download should not expose release-wide missing proof');
+  truthy(String(parsed.qa_coverage_summary.missing_targeted_proof_note || '').includes('Suppressed for single-turn-log'), 'single replay missing proof note missing');
+  truthy(Array.isArray(parsed.qa_coverage_summary.single_replay_missing_mechanics), 'QA coverage single replay missing mechanics missing');
   truthy(Array.isArray(parsed.single_replay_missing_mechanics), 'single replay missing mechanics list missing');
 });
 

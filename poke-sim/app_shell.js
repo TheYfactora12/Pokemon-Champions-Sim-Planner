@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.129-completed-turn-count';
+      return txt || 'v2.2.130-single-replay-proof-boundary';
     } catch (e) {
-      return 'v2.2.129-completed-turn-count';
+      return 'v2.2.130-single-replay-proof-boundary';
     }
   }
 
