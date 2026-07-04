@@ -379,6 +379,12 @@ async function main() {
     truthy(payload.qa_claim_review.evidence_scope.build_id === payload.build_id, 'QA claim review build scope mismatch');
     truthy(Array.isArray(payload.qa_claim_review.forbidden_claims), 'QA claim review forbidden claims missing');
     truthy(typeof payload.qa_claim_review.reviewer_next_step === 'string' && payload.qa_claim_review.reviewer_next_step.length, 'QA claim review next step missing');
+    truthy(payload.production_readiness_gate, 'production readiness gate missing');
+    eq(payload.production_readiness_gate.schema_version, 'champions-production-readiness-gate-v1', 'production readiness gate schema');
+    eq(payload.production_readiness_gate.can_public_launch, false, 'public launch should stay blocked by source-truth gates');
+    truthy(payload.production_readiness_gate.public_launch_blockers.some(row => row.id === 'legality_truth'), 'production gate should surface legality truth blocker');
+    truthy(payload.qa_dashboard.production_readiness_gate, 'QA dashboard production gate missing');
+    eq(payload.qa_dashboard.can_public_launch, false, 'QA dashboard public launch decision should mirror production gate');
   });
 
   await T('7. QA artifact click downloads a JSON file with the expected prefix', async () => {
@@ -404,6 +410,8 @@ async function main() {
     truthy(/QA Claim Review - Tactical Coaching QA/.test(readout), 'QA claim review slice title missing');
     truthy(/Active QA gate/.test(readout), 'QA active gate readout missing');
     truthy(/Recommended test/.test(readout), 'QA recommended test readout missing');
+    truthy(/Production gate/.test(readout), 'QA production gate readout missing');
+    truthy(/Public launch/.test(readout), 'QA public launch metric missing');
     truthy(!/<details|<summary|<select/i.test(readout), 'QA claim review should render inline, not as a dropdown/disclosure');
     truthy(/Forbidden claims/.test(readout), 'QA claim forbidden-claims readout missing');
     truthy(/Source boundary/.test(readout), 'QA claim source-boundary readout missing');
@@ -462,6 +470,9 @@ async function main() {
     truthy(payload.qa_dashboard.qa_lanes.some(row => row.id === 'coaching_product'), 'coaching/product QA lane missing');
     truthy(payload.qa_dashboard.qa_lanes.some(row => row.id === 'replay_logic'), 'replay logic QA lane missing');
     truthy(typeof payload.qa_dashboard.can_ship === 'boolean', 'QA dashboard ship decision missing');
+    truthy(typeof payload.qa_dashboard.can_public_launch === 'boolean', 'QA dashboard public launch decision missing');
+    truthy(payload.production_readiness_gate && payload.production_readiness_gate.verdict === 'not_ready_for_public_launch', 'production gate should block public launch');
+    truthy(payload.production_readiness_gate.blocked_public_claims.some(claim => /Production-ready public launch/i.test(claim)), 'production gate blocked claims missing');
     truthy(typeof payload.qa_dashboard.battle_engine_trust === 'string', 'battle engine trust missing');
     truthy(typeof payload.qa_dashboard.coaching_product_trust === 'string', 'coaching product trust missing');
     truthy(Array.isArray(payload.qa_dashboard.critical_bugs), 'QA dashboard critical bugs missing');

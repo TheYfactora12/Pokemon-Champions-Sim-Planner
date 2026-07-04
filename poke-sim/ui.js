@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.130-single-replay-proof-boundary
+// Build marker: v2.2.131-production-launch-gate
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.130-single-replay-proof-boundary'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.131-production-launch-gate'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -10087,6 +10087,87 @@ function csBuildQaHundredReadiness(payload) {
   };
 }
 
+function csBuildProductionReadinessGate(payload) {
+  payload = payload || {};
+  var hundred = payload.qa_100_readiness || {};
+  var dashboard = payload.qa_dashboard || {};
+  var gates = Array.isArray(hundred.gates) ? hundred.gates : [];
+  var releaseBlockers = Array.isArray(payload.qa_release_blockers) ? payload.qa_release_blockers : [];
+  var hardPublicGateIds = {
+    release_identity: true,
+    legality_truth: true,
+    damage_math_trace: true,
+    mechanic_family_breadth: true,
+    replay_transparency: true,
+    scenario_breadth: true,
+    real_replay_parity: true,
+    singles_doubles_coverage: true,
+    source_gap_boundary: true
+  };
+  var publicLaunchBlockers = gates.filter(function(gate) {
+    return gate && gate.status !== 'pass';
+  }).map(function(gate) {
+    return {
+      id: gate.id,
+      label: gate.label,
+      status: gate.status,
+      production_blocking: !!hardPublicGateIds[gate.id],
+      missing: Array.isArray(gate.missing) ? gate.missing.slice(0, 12) : [],
+      next_step: gate.next_step || null
+    };
+  });
+  var hardBlockers = publicLaunchBlockers.filter(function(row) {
+    return row.production_blocking || row.status === 'blocked';
+  });
+  var releaseIdentityPass = gates.some(function(gate) {
+    return gate && gate.id === 'release_identity' && gate.status === 'pass';
+  }) && releaseBlockers.length === 0;
+  var battleProofPass = dashboard.can_ship === true && dashboard.battle_engine_trust === 'verified_for_this_artifact';
+  var canInternalQa = releaseIdentityPass && battleProofPass;
+  var canBetaLaunch = canInternalQa && hardBlockers.length === 0 && publicLaunchBlockers.length === 0;
+  var canPublicLaunch = canBetaLaunch && hundred.verdict === 'ready_for_100_claim_review';
+  var nextEvidence = hundred.next_evidence_request || {};
+  var nextAction = hardBlockers.length
+    ? (hardBlockers[0].next_step || nextEvidence.next_step || 'Close the first production-blocking QA 100 gate.')
+    : (publicLaunchBlockers.length
+      ? (publicLaunchBlockers[0].next_step || nextEvidence.next_step || 'Close the first partial production readiness gate.')
+      : 'Run human source review, milestone closeout, and fresh live QA before public launch.');
+  return {
+    schema_version: 'champions-production-readiness-gate-v1',
+    purpose: 'Separates internal QA usefulness from public production readiness so clean battle evidence is not mistaken for complete Pokemon Champion truth.',
+    generated_at: payload.exported_at || new Date().toISOString(),
+    build_id: payload.build_id || null,
+    regulation_id: payload.regulation_id || payload.current_regulation_id || 'champions_reg_m_b_2026',
+    format: payload.current_format || payload.format || null,
+    ruleset_version: payload.ruleset_version || null,
+    engine_version: payload.engine_version || payload.build_id || null,
+    qa_run_type: payload.qa_run_type || 'unknown',
+    verdict: canPublicLaunch
+      ? 'public_launch_candidate'
+      : (canBetaLaunch ? 'limited_beta_candidate' : 'not_ready_for_public_launch'),
+    can_internal_qa: canInternalQa,
+    can_beta_launch: canBetaLaunch,
+    can_public_launch: canPublicLaunch,
+    public_launch_blockers: publicLaunchBlockers,
+    hard_blockers: hardBlockers,
+    next_production_action: nextAction,
+    next_evidence_request: nextEvidence,
+    safe_current_use: [
+      'Internal QA and targeted testing against the captured build.',
+      'Evidence review for damage/replay/coaching slices that the artifact actually contains.',
+      'Experimental Team Lab or coaching previews only when labeled with regulation, engine version, ruleset version, confidence, and sample size.'
+    ],
+    blocked_public_claims: [
+      'Production-ready public launch.',
+      'Complete Pokemon Champion legality.',
+      'Complete all-mechanics real-game parity.',
+      'Official or global best-team leaderboard truth.',
+      'Coaching certainty beyond source-backed and replay-verified evidence.'
+    ],
+    launch_rule: 'Public launch requires every qa_100_readiness gate to pass, no release blockers, current build/source evidence, and human source-review closeout. Unknown Champion facts stay needs_verification.'
+  };
+}
+
 function csBuildCodexQaContext(args) {
   args = args || {};
   var coverage = args.qa_coverage_summary || {};
@@ -11521,9 +11602,16 @@ async function csBuildQaArtifactExport(teamKey, opts) {
   payload.qa_gate_results = payload.codex_context.qa_gate_results;
   payload.qa_release_blockers = payload.codex_context.qa_release_blockers;
   payload.qa_100_readiness = csBuildQaHundredReadiness(payload);
-  if (payload.qa_dashboard) payload.qa_dashboard.qa_100_readiness = payload.qa_100_readiness;
+  payload.production_readiness_gate = csBuildProductionReadinessGate(payload);
+  if (payload.qa_dashboard) {
+    payload.qa_dashboard.qa_100_readiness = payload.qa_100_readiness;
+    payload.qa_dashboard.production_readiness_gate = payload.production_readiness_gate;
+    payload.qa_dashboard.can_public_launch = !!payload.production_readiness_gate.can_public_launch;
+    payload.qa_dashboard.can_internal_qa = !!payload.production_readiness_gate.can_internal_qa;
+  }
   if (payload.qa_claim_review) {
     payload.qa_claim_review.qa_100_readiness = payload.qa_100_readiness;
+    payload.qa_claim_review.production_readiness_gate = payload.production_readiness_gate;
     payload.qa_claim_review.next_evidence_request = payload.qa_100_readiness.next_evidence_request;
     if (payload.qa_100_readiness && payload.qa_100_readiness.next_evidence_request) {
       payload.qa_claim_review.reviewer_next_step = payload.qa_100_readiness.next_evidence_request.next_step || payload.qa_claim_review.reviewer_next_step;
@@ -11569,6 +11657,7 @@ function csRenderQaClaimReviewReadout(payload) {
   var dashboard = payload.qa_dashboard || {};
   var slice = payload.qa_slice_contract || review.qa_slice_contract || {};
   var hundred = payload.qa_100_readiness || review.qa_100_readiness || {};
+  var productionGate = payload.production_readiness_gate || review.production_readiness_gate || dashboard.production_readiness_gate || {};
   var scope = review.evidence_scope || {};
   var gaps = Array.isArray(review.source_gaps) ? review.source_gaps : [];
   var forbidden = Array.isArray(review.forbidden_claims) ? review.forbidden_claims : [];
@@ -11576,10 +11665,12 @@ function csRenderQaClaimReviewReadout(payload) {
   var sliceBlockers = Array.isArray(slice.blockers) ? slice.blockers : [];
   var nextEvidence = review.next_evidence_request || hundred.next_evidence_request || {};
   var nextMissing = Array.isArray(nextEvidence.missing) ? nextEvidence.missing : [];
-  var status = slice.status === 'ready'
-    ? 'SLICE READY'
-    : (dashboard.can_ship ? 'PASS WITH BOUNDARIES' : 'BLOCKED / PARTIAL');
-  var statusClass = slice.status === 'ready' ? 'low' : (slice.status === 'partial' ? 'medium' : 'high');
+  var status = productionGate.can_public_launch
+    ? 'PUBLIC CANDIDATE'
+    : (slice.status === 'ready'
+      ? 'SLICE READY / NOT PUBLIC'
+      : (dashboard.can_ship ? 'PASS WITH BOUNDARIES' : 'BLOCKED / PARTIAL'));
+  var statusClass = productionGate.can_public_launch ? 'low' : (slice.status === 'partial' ? 'medium' : 'high');
   var qaRunType = String(payload.qa_run_type || '').toLowerCase();
   var qaSliceTitle = slice.label || (qaRunType === 'stress_lite_qa'
     ? 'Device-Safe Stress QA'
@@ -11607,6 +11698,7 @@ function csRenderQaClaimReviewReadout(payload) {
       '<div><strong>Active QA gate</strong><span>' + _escapeHtml(nextEvidence.gate_label || 'No active gate reported') + '</span></div>' +
       '<div><strong>Priority lane</strong><span>' + _escapeHtml(nextEvidence.priority_lane || hundred.active_priority_lane || 'qa_review') + '</span></div>' +
       '<div><strong>Recommended test</strong><span>' + _escapeHtml(nextEvidence.recommended_test || hundred.recommended_test || payload.recommended_next_test || 'Focused QA artifact') + '</span></div>' +
+      '<div><strong>Production gate</strong><span>' + _escapeHtml(productionGate.verdict || 'not_checked') + '</span></div>' +
       '<div class="qa-readout-next-step"><strong>Next evidence</strong><span>' + _escapeHtml(nextEvidence.next_step || review.reviewer_next_step || 'Review the QA dashboard gaps before changing code.') + '</span>' + (nextMissingRows ? '<ul>' + nextMissingRows + '</ul>' : '') + '</div>' +
     '</div>' +
     '<p class="replay-coach-turn-read"><strong>Slice purpose:</strong> ' + _escapeHtml(slice.purpose || 'This QA export is scoped evidence for the selected run type.') + '</p>' +
@@ -11614,6 +11706,8 @@ function csRenderQaClaimReviewReadout(payload) {
       '<div class="replay-coach-metric"><strong>Release blockers</strong><span>' + _escapeHtml(String(blockers.length)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Slice blockers</strong><span>' + _escapeHtml(String(sliceBlockers.length)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>100% gate</strong><span>' + _escapeHtml(String(hundred.verdict || 'not_checked')) + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Public launch</strong><span>' + _escapeHtml(productionGate.can_public_launch ? 'Yes' : 'No') + '</span></div>' +
+      '<div class="replay-coach-metric"><strong>Internal QA</strong><span>' + _escapeHtml(productionGate.can_internal_qa ? 'Yes' : 'No') + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Source gaps</strong><span>' + _escapeHtml(String(gaps.length)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Damage events</strong><span>' + _escapeHtml(String(scope.damage_events || 0)) + '</span></div>' +
       '<div class="replay-coach-metric"><strong>Branch rows</strong><span>' + _escapeHtml(String(scope.branch_analysis_rows || 0)) + '</span></div>' +
@@ -11623,6 +11717,8 @@ function csRenderQaClaimReviewReadout(payload) {
       '<div class="replay-coach-list-row"><strong>Best for</strong>' + _escapeHtml(slice.best_for || 'Scoped QA review for this artifact.') + '</div>' +
       '<div class="replay-coach-list-row"><strong>Not for</strong>' + _escapeHtml(slice.not_for || 'Do not treat one artifact as complete game truth.') + '</div>' +
       '<div class="replay-coach-list-row"><strong>100% readiness</strong>' + _escapeHtml(hundred.plain_english || '100% readiness was not evaluated for this artifact.') + '</div>' +
+      '<div class="replay-coach-list-row"><strong>Production gate</strong>' + _escapeHtml(productionGate.purpose || 'Production readiness was not evaluated for this artifact.') + '</div>' +
+      '<div class="replay-coach-list-row"><strong>Production next action</strong>' + _escapeHtml(productionGate.next_production_action || 'Review qa_100_readiness before public launch claims.') + '</div>' +
       '<div class="replay-coach-list-row"><strong>Next QA move</strong>' + _escapeHtml(review.reviewer_next_step || payload.recommended_next_test || 'Review qa_dashboard.recommended_fix_order.') + '</div>' +
       (sliceBlockerRows ? '<div class="replay-coach-list-row"><strong>Top slice blockers</strong>' + sliceBlockerRows + '</div>' : '') +
       (gapRows ? '<div class="replay-coach-list-row"><strong>Top source gaps</strong>' + gapRows + '</div>' : '') +
@@ -13714,7 +13810,10 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Single replay proof boundary cleaned up',
-      detail: 'v2.2.130 keeps single replay downloads from looking like failed release proof. For champions-turn-log-v2 files, qa_coverage_summary.missing_targeted_proof is empty because one replay is not a release matrix. Mechanics absent from that one battle are still preserved under single_replay_missing_mechanics with an explicit missing_targeted_proof_note.'
+      detail: 'v2.2.131-production-launch-gate adds a production readiness gate to QA artifacts and the visible QA Claim Review card. It separates internal QA usefulness from public launch readiness, keeps public/beta launch false while legality truth, replay parity, scenario breadth, singles/doubles coverage, or source boundaries are unresolved, and lists the next production action without inventing Champion data.'
+    },
+    {
+      detail: 'v2.2.130-single-replay-proof-boundary keeps single replay downloads from looking like failed release proof. For champions-turn-log-v2 files, qa_coverage_summary.missing_targeted_proof is empty because one replay is not a release matrix. Mechanics absent from that one battle are still preserved under single_replay_missing_mechanics with an explicit missing_targeted_proof_note.'
     },
     {
       status: 'done',
