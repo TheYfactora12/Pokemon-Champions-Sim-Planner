@@ -352,3 +352,29 @@ Do not use public DB rows to teach the global coach unless all are true:
 - trusted worker accepted the import.
 
 If any condition fails, keep the data private, experimental, or `needs_verification`.
+
+## 2026-07-04 DB structure note: Bo series, game rows, and run budgets
+
+Future persistence should not store a large Bo run as one vague blob. Use separate layers:
+
+- series-level rows: team_a_id, team_b_id, regulation_id, format, bo, engine_version, ruleset_version, series_result, games_played, requested_series, executed_series, run_budget_policy.
+- game-level child rows: series_id, game_number, player_bring, opponent_bring, result, turns, win_condition, seed, replay_ref.
+- evidence aggregates: player_win_lead_counts, player_win_bring_counts, win_conditions_by_player_game_win, matchup confidence, stale flags.
+- source guard fields: source_gaps, legality_status, verification_status, sample_size, stale_reason.
+
+Browser runs should remain capped. Large 10,000+ series jobs belong in a queued QA/DB worker path so they do not freeze the public app or poison leaderboard confidence with partial client-side runs.
+
+## 2026-07-04 learning brain data requirements
+
+The learning layer needs an evidence pipeline, not unfiltered memory.
+
+Required layers:
+- ingestion: sim runs, QA artifacts, Showdown logs, uploaded replays, team edits, and future Trainer Room sessions.
+- normalization: map every row to canonical team_id, pokemon_id, move_id, item_id, ability_id, regulation_id, format, engine_version, ruleset_version, and source_type.
+- privacy boundary: separate personal Trainer Room evidence from global aggregate evidence. Private player/team data must not leak into public leaderboards or coaching examples.
+- feature extraction: leads, selected 3/4 or 1/3, move sequences, switch timing, Protect timing, speed-control windows, damage trades, faint causes, win conditions, matchup archetypes, and unresolved source gaps.
+- confidence model: sample size, source tier, legality status, stale status, matchup coverage, version freshness, and replay completeness.
+- promotion rules: only verified, current-version, adequately sampled evidence can influence official leaderboard/ranking. needs_verification evidence can inform experimental coaching only.
+- stale invalidation: any engine, ruleset, regulation, legality, parser, or major scoring-policy change must mark affected learned rows stale.
+
+The brain should learn patterns like what worked, what failed, what changed the battle, and what to test next. It should not rewrite mechanics or legality truth.

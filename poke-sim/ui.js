@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.123-sim-run-all-mode
+// Build marker: v2.2.126-browser-run-budget
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.123-sim-run-all-mode'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.126-browser-run-budget'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -1030,6 +1030,49 @@ function getRunAllOpponentKeys(playerKey, simCtx) {
 function formatSeriesCount(n) {
   n = Number(n) || 0;
   return n.toLocaleString ? n.toLocaleString('en-US') : String(n);
+}
+
+var CS_BROWSER_SELECTED_MAX_GAMES = 25000;
+var CS_BROWSER_RUN_ALL_MAX_GAMES = 6000;
+var CS_BROWSER_OPTION_MAX_SERIES = 5000;
+
+function csBrowserSafeBo(bo) {
+  bo = Number(bo) || 1;
+  return bo > 0 ? bo : 1;
+}
+
+function csBrowserRunBudget(numSeries, bo, opponentCount, mode) {
+  var series = Math.max(1, Math.floor(Number(numSeries) || 1));
+  var safeBo = csBrowserSafeBo(bo);
+  var opponents = Math.max(1, Math.floor(Number(opponentCount) || 1));
+  var maxGames = mode === 'run_all' ? CS_BROWSER_RUN_ALL_MAX_GAMES : CS_BROWSER_SELECTED_MAX_GAMES;
+  var maxSeries = Math.max(1, Math.floor(maxGames / (safeBo * opponents)));
+  maxSeries = Math.min(maxSeries, CS_BROWSER_OPTION_MAX_SERIES);
+  var cappedSeries = Math.min(series, maxSeries);
+  return {
+    requestedSeries: series,
+    numSeries: cappedSeries,
+    bo: safeBo,
+    opponentCount: opponents,
+    maxGames: maxGames,
+    maxSeries: maxSeries,
+    wasClamped: cappedSeries !== series,
+    estimatedMaxGames: cappedSeries * safeBo * opponents
+  };
+}
+
+function csSetSimBudgetNote(message, tone) {
+  var note = (typeof document !== 'undefined') ? document.getElementById('sim-budget-note') : null;
+  if (!note) return;
+  if (!message) {
+    note.textContent = '';
+    note.style.display = 'none';
+    note.removeAttribute('data-tone');
+    return;
+  }
+  note.textContent = message;
+  note.style.display = '';
+  note.setAttribute('data-tone', tone || 'info');
 }
 
 function getRunScopeBadgeText(simCtx, opponentCount) {
@@ -12364,7 +12407,7 @@ function csGetPublicBetaGuardProfile() {
     device_memory_gb: deviceMemory || null,
     is_low_memory: isLowMemory,
     should_force_stress_lite: shouldForceStressLite,
-    max_series_value: shouldForceStressLite ? 500 : 10000,
+    max_series_value: shouldForceStressLite ? 500 : CS_BROWSER_OPTION_MAX_SERIES,
     max_tactical_depth_value: shouldForceStressLite ? 250 : null
   };
 }
@@ -12434,7 +12477,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
   try {
     document.getElementById('results-section').style.display='none';
     document.getElementById('progress-wrap').style.display='';
-    setProgress(0,'Starting…',0,0);
+    setProgress(0,'0% · Starting simulation...',0,0);
 
     var swappedOpp = enforceDistinctBattleTeams();
     if (swappedOpp && TEAMS[swappedOpp]) {
@@ -12445,14 +12488,23 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     var simCtx = resolveSimContext();
     var playerKey = simCtx.playerKey;
     const oppKey=simCtx.oppKey;
-    const n=simCtx.numSeries;
+    var n=simCtx.numSeries;
     const bo=simCtx.bo;
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
+    var selectedBudget = csBrowserRunBudget(n, bo, 1, 'selected');
+    if (selectedBudget.wasClamped) {
+      n = selectedBudget.numSeries;
+      simCtx.numSeries = n;
+      csSetSimBudgetNote('Browser safety capped this selected BO' + bo + ' run from ' + formatSeriesCount(selectedBudget.requestedSeries) + ' to ' + formatSeriesCount(n) + ' series. Use QA/DB stress tooling for larger evidence jobs.', 'warn');
+    } else {
+      csSetSimBudgetNote('Browser-safe estimate: up to ' + formatSeriesCount(selectedBudget.estimatedMaxGames) + ' games for this selected matchup.', 'info');
+    }
     const matBadge=document.getElementById('matrix-badge');
     if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${formatSeriesCount(n)} series`;
 
     const res = await runBoSeries(n,playerKey,oppKey,bo,(cur,tot,w,l)=>{
-      setProgress(Math.round(cur/tot*100),`Running… ${cur} / ${tot}`,w,l);
+      var pct = Math.round(cur/tot*100);
+      setProgress(pct,`${pct}% · Running selected matchup · ${formatSeriesCount(cur)} / ${formatSeriesCount(tot)} series`,w,l);
     });
 
     document.getElementById('progress-wrap').style.display='none';
@@ -12509,13 +12561,21 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
     document.getElementById('matchup-tbody').innerHTML='<tr><td colspan="7" style="color:var(--text-m);font-size:12px;text-align:center;padding:20px;font-family:var(--font-mono)">Running all matchups…</td></tr>';
 
     var simCtx = resolveSimContext();
-    const n=simCtx.numSeries;
+    var n=simCtx.numSeries;
     const bo=simCtx.bo;
     var playerKey = simCtx.playerKey;
     var runOpps = getRunAllOpponentKeys(playerKey, simCtx);
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
+    var runAllBudget = csBrowserRunBudget(n, bo, runOpps.length, 'run_all');
+    if (runAllBudget.wasClamped) {
+      n = runAllBudget.numSeries;
+      simCtx.numSeries = n;
+      csSetSimBudgetNote('Browser safety capped Run All BO' + bo + ' from ' + formatSeriesCount(runAllBudget.requestedSeries) + ' to ' + formatSeriesCount(n) + ' series per opponent across ' + formatSeriesCount(runOpps.length) + ' opponents. Use QA/DB stress tooling for larger evidence jobs.', 'warn');
+    } else {
+      csSetSimBudgetNote('Browser-safe Run All estimate: up to ' + formatSeriesCount(runAllBudget.estimatedMaxGames) + ' games across loaded opponents.', 'info');
+    }
     document.getElementById('progress-wrap').style.display='';
-    setProgress(0,'Starting…',0,0);
+    setProgress(0,'0% · Starting matchup matrix...',0,0);
     const matBadge=document.getElementById('matrix-badge');
     if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${getRunScopeBadgeText(simCtx, runOpps.length)}`;
 
@@ -12526,7 +12586,8 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
 
     await runAllMatchupsUI(n,bo,(cur,tot,w,l)=>{
       totalW=w; totalL=l;
-      setProgress(Math.round(cur/tot*100),`Running matchups… ${cur} / ${tot}`,w,l);
+      var pct = Math.round(cur/tot*100);
+      setProgress(pct,`${pct}% · Running loaded-team matrix · ${formatSeriesCount(cur)} / ${formatSeriesCount(tot)} series`,w,l);
     },(opp,res)=>{
       ChampionsSim.state.lastResults[opp] = res;
       const winPct=Math.round(res.winRate*100);

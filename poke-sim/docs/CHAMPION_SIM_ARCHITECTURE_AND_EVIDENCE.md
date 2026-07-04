@@ -355,3 +355,25 @@ Do not claim broad 100% accuracy until these are closed or explicitly accepted:
 - Source-drift visibility that marks the Overview as update-needed when upstream data changes.
 - Long stress automation with preserved failing seeds.
 - Coach-memory and Strategy-page recommendations must keep confidence, sample size, source age, and evidence boundaries visible so coaching output cannot outrank mechanics proof.
+
+## 2026-07-04 update: adaptive Bo evidence and browser run budget
+
+- v2.2.125 added adaptive Bo-series evidence: registered six stays locked, while the selected 3/4 can adapt between games in Bo3/Bo5.
+- v2.2.126 adds a browser run budget so normal Simulator clicks stay responsive. Selected-matchup stress supports up to 5,000 series, while oversized BO5 work is treated as QA/DB/job-runner evidence rather than a synchronous page task.
+- Run evidence must keep series count separate from actual game count. A 5,000-series BO5 run can still mean up to 25,000 games.
+- Stored/readout evidence should include regulation_id, ruleset_version, engine_version, format, bo, requested_series, executed_series, estimated_game_budget, adaptive_bring_enabled, and retained_replay_sample_count.
+- UI claims must distinguish complete aggregate counts from retained replay examples.
+
+## 2026-07-04 learning brain boundary
+
+The future learning brain must stay evidence-bound:
+
+- Sim data teaches simulator-derived matchup patterns.
+- Showdown/replay uploads teach real-player decision patterns and common lines.
+- Source-truth files define legality and mechanics; learned data cannot override them.
+- Coaching output must cite whether a recommendation came from verified mechanics, replay evidence, simulator aggregate data, or meta inference.
+- Personal Trainer Room learning and global aggregate learning must remain separate until account privacy, consent, RLS, export/delete, and aggregation rules are implemented.
+
+## 2026-07-04 detailed learning-brain roadmap
+
+See `poke-sim/docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md` for the full architecture plan covering evidence intake, normalized battle rows, feature extraction, aggregate confidence, privacy boundaries, anti-poisoning controls, Trainer Room learning, and future coaching retrieval.

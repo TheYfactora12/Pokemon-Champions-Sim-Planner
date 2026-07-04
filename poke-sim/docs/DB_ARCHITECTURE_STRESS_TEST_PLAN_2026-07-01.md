@@ -471,3 +471,17 @@ The split is sound if we keep the order disciplined:
 6. Add bot practice.
 
 Do not reverse this order. Global learning and bot play are powerful only after source truth, evidence truth, and trainer privacy are enforced.
+
+## 2026-07-04 stress target: browser-safe UI and DB-grade large runs
+
+- Normal Simulator selected matchup: allow fast/deep/stress reads up to 5,000 series, with a visible percent progress label.
+- Normal Simulator Run All: clamp by estimated total game budget because opponent_count x series x Bo can freeze the browser.
+- QA/Stress path: use exported artifacts or future queued jobs for 10,000+ series evidence.
+- Required validation: percent progress updates, no duplicate opponent selector, selected/opponent team controls are symmetrical, retained replay caps remain active, and build_id in QA output matches release_manifest.
+- Future DB worker: persist requested_series and executed_series separately so interrupted or clamped runs cannot be misread as complete evidence.
+
+## 2026-07-04 linked learning-brain plan
+
+Detailed evidence/learning roadmap: `poke-sim/docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md`.
+
+Stress testing should feed the future learning ledger through normalized rows, not one-off localStorage blobs. The immediate DB priority is raw evidence intake, team version hashes, battle_series rows, battle_games rows, event/features rows, and stale-safe aggregate rows.

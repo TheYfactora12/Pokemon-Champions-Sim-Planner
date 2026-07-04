@@ -850,6 +850,8 @@ table{border-collapse:collapse;width:100%}
 .sim-output-guide div{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .sim-output-guide strong{font-size:11px;font-weight:950;color:var(--text);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
 .sim-output-guide span{font-size:12px;line-height:1.35;color:var(--text-m);text-align:right}
+.sim-budget-note{margin-top:7px;padding:8px 10px;border:1px solid rgba(91,164,245,.22);border-radius:var(--r-sm);background:rgba(91,164,245,.07);color:var(--text-m);font-size:11px;line-height:1.35}
+.sim-budget-note[data-tone="warn"]{border-color:rgba(245,197,66,.34);background:rgba(245,197,66,.09);color:#f8d978}
 .vs-badge{text-align:center;font-size:var(--text-xl);font-weight:900;color:var(--primary);letter-spacing:.1em;text-shadow:0 0 16px var(--primary-glow)}
 .control-block{display:flex;flex-direction:column;gap:4px}
 .control-label{font-size:9px;font-weight:700;color:var(--text-m);letter-spacing:.07em;text-transform:uppercase}

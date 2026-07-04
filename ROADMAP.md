@@ -291,3 +291,37 @@ All spec files live in [`poke-sim/docs/`](./poke-sim/docs/).
 
 *© 2026 Alfredo Cox (@alfredocox) and Kevin Medeiros (@TheYfactora12). All Rights Reserved.*
 *Pokémon IP attribution: see `NOTICE.md`. Canonical tagline: "Battle-tested. Always evolving."*
+
+## 2026-07-04 Roadmap update: simulator run budget and evidence reliability
+
+Completed in v2.2.126:
+- Browser run guard added for normal Simulator runs.
+- Selected-matchup stress supports a visible 5,000-series option.
+- Run All remains protected by estimated total game budget because it multiplies series by loaded opponent count and Bo length.
+- Opponent selector moved into the opponent team card for symmetry with Your Team.
+- Progress labels now show clear percentages and current/total series.
+
+Open follow-ups:
+- Build queued QA/DB worker path for 10,000+ series stress jobs.
+- Persist series rows and game rows separately for Team Lab and Trainer Room analytics.
+- Promote only complete, versioned, legality-checked evidence into leaderboard confidence.
+
+## 2026-07-04 Future milestone: learning brain foundation
+
+Build after simulator truth and DB evidence framing are stable:
+- Normalize sim, QA, and Showdown uploads into versioned evidence rows.
+- Build feature extraction for leads, lineup changes, move sequences, switches, Protects, speed control, damage trades, faint causes, and win conditions.
+- Separate private Trainer Room learning from global aggregate learning.
+- Add confidence/stale rules before recommendations can affect Team Lab rankings or coaching.
+- Keep legality and mechanics source-bound; learned patterns can suggest tests and strategies, not invent rules.
+
+## 2026-07-04 Learning brain architecture reference
+
+Detailed plan added: `poke-sim/docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md`.
+
+Roadmap priority:
+- Build raw evidence intake and normalized battle-series storage first.
+- Then feature extraction and confidence scoring.
+- Then Trainer Room private learning.
+- Then evidence-bound coaching retrieval.
+- Public/global learning comes last after privacy, stale, and anti-poisoning controls exist.

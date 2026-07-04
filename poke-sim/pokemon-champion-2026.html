@@ -889,6 +889,8 @@ table{border-collapse:collapse;width:100%}
 .sim-output-guide div{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .sim-output-guide strong{font-size:11px;font-weight:950;color:var(--text);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
 .sim-output-guide span{font-size:12px;line-height:1.35;color:var(--text-m);text-align:right}
+.sim-budget-note{margin-top:7px;padding:8px 10px;border:1px solid rgba(91,164,245,.22);border-radius:var(--r-sm);background:rgba(91,164,245,.07);color:var(--text-m);font-size:11px;line-height:1.35}
+.sim-budget-note[data-tone="warn"]{border-color:rgba(245,197,66,.34);background:rgba(245,197,66,.09);color:#f8d978}
 .vs-badge{text-align:center;font-size:var(--text-xl);font-weight:900;color:var(--primary);letter-spacing:.1em;text-shadow:0 0 16px var(--primary-glow)}
 .control-block{display:flex;flex-direction:column;gap:4px}
 .control-label{font-size:9px;font-weight:700;color:var(--text-m);letter-spacing:.07em;text-transform:uppercase}
@@ -2758,8 +2760,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux v2.2.81-source-trust-guard v2.2.82-news-slide-images v2.2.83-source-backed-news-thumbs v2.2.84-news-health-sync v2.2.85-news-source-watch v2.2.86-replay-claim-audit v2.2.87-replay-qa-claim-payload v2.2.88-qa-artifact-claim-boundary v2.2.89-qa-claim-review v2.2.94-move-qa-closeout-plan v2.2.95-replay-logic-audit v2.2.96-legality-99-target v2.2.97-legality-evidence-package v2.2.98-github-release-guard v2.2.99-true-qa-slice-contract v2.2.100-qa-100-readiness v2.2.101-db-architecture-growth-audit v2.2.102-db-architecture-stress-plan v2.2.103-trainer-room-foundation v2.2.104-replay-import-governance v2.2.105-private-replay-import-service v2.2.106-private-replay-import-persistence v2.2.107-pilot-team-log-mapping v2.2.108-review-private-import-save v2.2.109-qa-readiness-next-gate v2.2.110-regmb-legality-request v2.2.111-qa-readout-inline v2.2.112-qa-trace-total-align v2.2.113-qa-no-auto-claim-card v2.2.114-qa-josh-showdown-assignment v2.2.115-qa-josh-owner-alignment v2.2.116-regmb-review-items-abilities v2.2.117-home-product-reveal v2.2.118-home-cycle-clean v2.2.119-home-cycle-team-names v2.2.120-mad-lab-team-ranks v2.2.121-sim-ux-results v2.2.122-qa-tester-link v2.2.123-sim-run-all-mode v2.2.124-sim-qa-output-clarity v2.2.125-pilot-series-evidence -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.125-pilot-series-evidence</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux v2.2.81-source-trust-guard v2.2.82-news-slide-images v2.2.83-source-backed-news-thumbs v2.2.84-news-health-sync v2.2.85-news-source-watch v2.2.86-replay-claim-audit v2.2.87-replay-qa-claim-payload v2.2.88-qa-artifact-claim-boundary v2.2.89-qa-claim-review v2.2.94-move-qa-closeout-plan v2.2.95-replay-logic-audit v2.2.96-legality-99-target v2.2.97-legality-evidence-package v2.2.98-github-release-guard v2.2.99-true-qa-slice-contract v2.2.100-qa-100-readiness v2.2.101-db-architecture-growth-audit v2.2.102-db-architecture-stress-plan v2.2.103-trainer-room-foundation v2.2.104-replay-import-governance v2.2.105-private-replay-import-service v2.2.106-private-replay-import-persistence v2.2.107-pilot-team-log-mapping v2.2.108-review-private-import-save v2.2.109-qa-readiness-next-gate v2.2.110-regmb-legality-request v2.2.111-qa-readout-inline v2.2.112-qa-trace-total-align v2.2.113-qa-no-auto-claim-card v2.2.114-qa-josh-showdown-assignment v2.2.115-qa-josh-owner-alignment v2.2.116-regmb-review-items-abilities v2.2.117-home-product-reveal v2.2.118-home-cycle-clean v2.2.119-home-cycle-team-names v2.2.120-mad-lab-team-ranks v2.2.121-sim-ux-results v2.2.122-qa-tester-link v2.2.123-sim-run-all-mode v2.2.124-sim-qa-output-clarity v2.2.125-pilot-series-evidence v2.2.126-browser-run-budget -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.126-browser-run-budget</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -2897,22 +2899,6 @@ table{border-collapse:collapse;width:100%}
       </div>
 
       <div class="control-block">
-        <label class="control-label">Opponent</label>
-        <select class="select-input" id="opponent-select">
-          <option value="mega_altaria">Mega Altaria (Hybrid Rainbow)</option>
-          <option value="mega_dragonite">Mega Dragonite (Hybrid Rainbow)</option>
-          <option value="mega_houndoom">Mega Houndoom (Hybrid Rainbow)</option>
-          <option value="rin_sand">Rin Sand</option>
-          <option value="suica_sun">Suica Sun</option>
-          <option value="cofagrigus_tr">Cofagrigus TR</option>
-          <option value="champions_arena_1st">1st Champions Arena (Hyungwoo Shin)</option>
-          <option value="champions_arena_2nd">2nd Champions Arena (Jorge Tabuyo)</option>
-          <option value="champions_arena_3rd">3rd Champions Arena (Juan Benítez)</option>
-          <option value="aurora_veil_froslass">Aurora Veil (Mega Froslass)</option>
-        </select>
-      </div>
-
-      <div class="control-block">
         <label class="control-label">Series Format</label>
         <div class="bo-picker" id="bo-picker" role="group">
           <button class="bo-btn" data-bo="1">Bo1</button>
@@ -2929,8 +2915,9 @@ table{border-collapse:collapse;width:100%}
           <option value="100">100 series</option>
           <option value="500">500 series (matchup read)</option>
           <option value="1000">1,000 series (deep matchup)</option>
-          <option value="10000">10,000 series (full team stress)</option>
+          <option value="5000">5,000 series (selected-team stress)</option>
         </select>
+        <div class="sim-budget-note" id="sim-budget-note" style="display:none"></div>
       </div>
 
       <button class="btn-primary" id="run-sim-btn" title="On-page battle test: runs the selected matchup using Battle Test Size, then fills Results, replay turns, damage events, effect events, field states, status, and faint causes.">Run Selected Matchup</button>
@@ -2955,6 +2942,21 @@ table{border-collapse:collapse;width:100%}
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Export
         </button>
+      </div>
+      <div class="control-block" style="margin:8px 0">
+        <label class="control-label">Opponent Team</label>
+        <select class="select-input" id="opponent-select">
+          <option value="mega_altaria">Mega Altaria (Hybrid Rainbow)</option>
+          <option value="mega_dragonite">Mega Dragonite (Hybrid Rainbow)</option>
+          <option value="mega_houndoom">Mega Houndoom (Hybrid Rainbow)</option>
+          <option value="rin_sand">Rin Sand</option>
+          <option value="suica_sun">Suica Sun</option>
+          <option value="cofagrigus_tr">Cofagrigus TR</option>
+          <option value="champions_arena_1st">1st Champions Arena (Hyungwoo Shin)</option>
+          <option value="champions_arena_2nd">2nd Champions Arena (Jorge Tabuyo)</option>
+          <option value="champions_arena_3rd">3rd Champions Arena (Juan Benitez)</option>
+          <option value="aurora_veil_froslass">Aurora Veil (Mega Froslass)</option>
+        </select>
       </div>
       <div class="roster" id="opp-roster"></div>
       <div class="sim-bring-picker" id="opp-bring-picker"></div>
@@ -3637,9 +3639,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.125-pilot-series-evidence',
+    build_id: 'v2.2.126-browser-run-budget',
     release_date: '2026-07-04',
-    service_worker_cache: 'champions-sim-v2-2-123-sim-run-all-mode',
+    service_worker_cache: 'champions-sim-v2-2-126-browser-run-budget',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3713,9 +3715,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.125-pilot-series-evidence';
+      return txt || 'v2.2.126-browser-run-budget';
     } catch (e) {
-      return 'v2.2.125-pilot-series-evidence';
+      return 'v2.2.126-browser-run-budget';
     }
   }
 
@@ -29466,7 +29468,7 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.123-sim-run-all-mode
+// Build marker: v2.2.126-browser-run-budget
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -29507,7 +29509,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.123-sim-run-all-mode'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.126-browser-run-budget'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -30496,6 +30498,49 @@ function getRunAllOpponentKeys(playerKey, simCtx) {
 function formatSeriesCount(n) {
   n = Number(n) || 0;
   return n.toLocaleString ? n.toLocaleString('en-US') : String(n);
+}
+
+var CS_BROWSER_SELECTED_MAX_GAMES = 25000;
+var CS_BROWSER_RUN_ALL_MAX_GAMES = 6000;
+var CS_BROWSER_OPTION_MAX_SERIES = 5000;
+
+function csBrowserSafeBo(bo) {
+  bo = Number(bo) || 1;
+  return bo > 0 ? bo : 1;
+}
+
+function csBrowserRunBudget(numSeries, bo, opponentCount, mode) {
+  var series = Math.max(1, Math.floor(Number(numSeries) || 1));
+  var safeBo = csBrowserSafeBo(bo);
+  var opponents = Math.max(1, Math.floor(Number(opponentCount) || 1));
+  var maxGames = mode === 'run_all' ? CS_BROWSER_RUN_ALL_MAX_GAMES : CS_BROWSER_SELECTED_MAX_GAMES;
+  var maxSeries = Math.max(1, Math.floor(maxGames / (safeBo * opponents)));
+  maxSeries = Math.min(maxSeries, CS_BROWSER_OPTION_MAX_SERIES);
+  var cappedSeries = Math.min(series, maxSeries);
+  return {
+    requestedSeries: series,
+    numSeries: cappedSeries,
+    bo: safeBo,
+    opponentCount: opponents,
+    maxGames: maxGames,
+    maxSeries: maxSeries,
+    wasClamped: cappedSeries !== series,
+    estimatedMaxGames: cappedSeries * safeBo * opponents
+  };
+}
+
+function csSetSimBudgetNote(message, tone) {
+  var note = (typeof document !== 'undefined') ? document.getElementById('sim-budget-note') : null;
+  if (!note) return;
+  if (!message) {
+    note.textContent = '';
+    note.style.display = 'none';
+    note.removeAttribute('data-tone');
+    return;
+  }
+  note.textContent = message;
+  note.style.display = '';
+  note.setAttribute('data-tone', tone || 'info');
 }
 
 function getRunScopeBadgeText(simCtx, opponentCount) {
@@ -41830,7 +41875,7 @@ function csGetPublicBetaGuardProfile() {
     device_memory_gb: deviceMemory || null,
     is_low_memory: isLowMemory,
     should_force_stress_lite: shouldForceStressLite,
-    max_series_value: shouldForceStressLite ? 500 : 10000,
+    max_series_value: shouldForceStressLite ? 500 : CS_BROWSER_OPTION_MAX_SERIES,
     max_tactical_depth_value: shouldForceStressLite ? 250 : null
   };
 }
@@ -41900,7 +41945,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
   try {
     document.getElementById('results-section').style.display='none';
     document.getElementById('progress-wrap').style.display='';
-    setProgress(0,'Starting…',0,0);
+    setProgress(0,'0% · Starting simulation...',0,0);
 
     var swappedOpp = enforceDistinctBattleTeams();
     if (swappedOpp && TEAMS[swappedOpp]) {
@@ -41911,14 +41956,23 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     var simCtx = resolveSimContext();
     var playerKey = simCtx.playerKey;
     const oppKey=simCtx.oppKey;
-    const n=simCtx.numSeries;
+    var n=simCtx.numSeries;
     const bo=simCtx.bo;
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
+    var selectedBudget = csBrowserRunBudget(n, bo, 1, 'selected');
+    if (selectedBudget.wasClamped) {
+      n = selectedBudget.numSeries;
+      simCtx.numSeries = n;
+      csSetSimBudgetNote('Browser safety capped this selected BO' + bo + ' run from ' + formatSeriesCount(selectedBudget.requestedSeries) + ' to ' + formatSeriesCount(n) + ' series. Use QA/DB stress tooling for larger evidence jobs.', 'warn');
+    } else {
+      csSetSimBudgetNote('Browser-safe estimate: up to ' + formatSeriesCount(selectedBudget.estimatedMaxGames) + ' games for this selected matchup.', 'info');
+    }
     const matBadge=document.getElementById('matrix-badge');
     if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${formatSeriesCount(n)} series`;
 
     const res = await runBoSeries(n,playerKey,oppKey,bo,(cur,tot,w,l)=>{
-      setProgress(Math.round(cur/tot*100),`Running… ${cur} / ${tot}`,w,l);
+      var pct = Math.round(cur/tot*100);
+      setProgress(pct,`${pct}% · Running selected matchup · ${formatSeriesCount(cur)} / ${formatSeriesCount(tot)} series`,w,l);
     });
 
     document.getElementById('progress-wrap').style.display='none';
@@ -41975,13 +42029,21 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
     document.getElementById('matchup-tbody').innerHTML='<tr><td colspan="7" style="color:var(--text-m);font-size:12px;text-align:center;padding:20px;font-family:var(--font-mono)">Running all matchups…</td></tr>';
 
     var simCtx = resolveSimContext();
-    const n=simCtx.numSeries;
+    var n=simCtx.numSeries;
     const bo=simCtx.bo;
     var playerKey = simCtx.playerKey;
     var runOpps = getRunAllOpponentKeys(playerKey, simCtx);
     if (!Number.isFinite(n) || n < 1) throw new Error('invalid simulation count');
+    var runAllBudget = csBrowserRunBudget(n, bo, runOpps.length, 'run_all');
+    if (runAllBudget.wasClamped) {
+      n = runAllBudget.numSeries;
+      simCtx.numSeries = n;
+      csSetSimBudgetNote('Browser safety capped Run All BO' + bo + ' from ' + formatSeriesCount(runAllBudget.requestedSeries) + ' to ' + formatSeriesCount(n) + ' series per opponent across ' + formatSeriesCount(runOpps.length) + ' opponents. Use QA/DB stress tooling for larger evidence jobs.', 'warn');
+    } else {
+      csSetSimBudgetNote('Browser-safe Run All estimate: up to ' + formatSeriesCount(runAllBudget.estimatedMaxGames) + ' games across loaded opponents.', 'info');
+    }
     document.getElementById('progress-wrap').style.display='';
-    setProgress(0,'Starting…',0,0);
+    setProgress(0,'0% · Starting matchup matrix...',0,0);
     const matBadge=document.getElementById('matrix-badge');
     if(matBadge) matBadge.textContent=`${simCtx.formatLabel} · Bo${bo} · ${getRunScopeBadgeText(simCtx, runOpps.length)}`;
 
@@ -41992,7 +42054,8 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
 
     await runAllMatchupsUI(n,bo,(cur,tot,w,l)=>{
       totalW=w; totalL=l;
-      setProgress(Math.round(cur/tot*100),`Running matchups… ${cur} / ${tot}`,w,l);
+      var pct = Math.round(cur/tot*100);
+      setProgress(pct,`${pct}% · Running loaded-team matrix · ${formatSeriesCount(cur)} / ${formatSeriesCount(tot)} series`,w,l);
     },(opp,res)=>{
       ChampionsSim.state.lastResults[opp] = res;
       const winPct=Math.round(res.winRate*100);
