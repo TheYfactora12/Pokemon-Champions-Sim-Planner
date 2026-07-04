@@ -377,3 +377,9 @@ The future learning brain must stay evidence-bound:
 ## 2026-07-04 detailed learning-brain roadmap
 
 See `poke-sim/docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md` for the full architecture plan covering evidence intake, normalized battle rows, feature extraction, aggregate confidence, privacy boundaries, anti-poisoning controls, Trainer Room learning, and future coaching retrieval.
+
+## 2026-07-04 update: exported Trick Room proof
+
+v2.2.127 adds a named targeted QA fixture for Trick Room active-state coverage in browser-exported QA artifacts. This closes the mismatch where standalone targeted proof tests could cover Trick Room, but the exported Tactical Coaching QA artifact still reported `Trick Room active state` as missing.
+
+Required follow-up artifact check: exported `.127` Tactical Coaching QA should show `mechanics_seen.trick_room_active > 0` and should not list `Trick Room active state` under `missing_targeted_proof`.

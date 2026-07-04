@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.126-browser-run-budget';
+      return txt || 'v2.2.127-targeted-trick-room-proof';
     } catch (e) {
-      return 'v2.2.126-browser-run-budget';
+      return 'v2.2.127-targeted-trick-room-proof';
     }
   }
 

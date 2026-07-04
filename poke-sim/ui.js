@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.126-browser-run-budget
+// Build marker: v2.2.127-targeted-trick-room-proof
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.126-browser-run-budget'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.127-targeted-trick-room-proof'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -6831,6 +6831,45 @@ function csBuildTargetedQaSweepEvidence(opts) {
           evs: { hp: 32, atk: 32, def: 2, spa: 0, spd: 0, spe: 0 }
         }),
         csQaProofMon('Tauros-Paldea-Combat', ['Tackle'])
+      ])
+    }),
+    csRunTargetedQaProofBattle({
+      id: 'field_duration_trick_room_active',
+      label: 'Field-duration proof: Trick Room active state',
+      requireMechanic: 'trick_room_active',
+      build_id: buildId,
+      source_url: sourceUrl,
+      playerTeamId: 'targeted_qa_trick_room_player',
+      opponentTeamId: 'targeted_qa_trick_room_opponent',
+      format: 'doubles',
+      maxTurns: 1,
+      forcedActions: [
+        { turn: 1, side: 'player', slot: 0, move: 'Trick Room', targetSide: 'self' },
+        { turn: 1, side: 'opponent', slot: 0, move: 'Tackle', targetSide: 'enemy', targetSlot: 1 }
+      ],
+      playerTeam: csQaProofTeam('Targeted QA Trick Room Player', [
+        csQaProofMon('Cofagrigus', ['Trick Room'], {
+          ability: 'Mummy',
+          nature: 'Relaxed',
+          evs: { hp: 32, atk: 0, def: 32, spa: 0, spd: 32, spe: 0 }
+        }),
+        csQaProofMon('Torkoal', ['Tackle'], {
+          ability: 'Drought',
+          nature: 'Quiet',
+          evs: { hp: 32, atk: 32, def: 2, spa: 0, spd: 0, spe: 0 }
+        })
+      ]),
+      opponentTeam: csQaProofTeam('Targeted QA Trick Room Opponent', [
+        csQaProofMon('Garchomp', ['Tackle'], {
+          ability: 'Rough Skin',
+          nature: 'Jolly',
+          evs: { hp: 32, atk: 32, def: 2, spa: 0, spd: 0, spe: 32 }
+        }),
+        csQaProofMon('Arcanine', ['Tackle'], {
+          ability: 'Intimidate',
+          nature: 'Jolly',
+          evs: { hp: 32, atk: 32, def: 2, spa: 0, spd: 0, spe: 32 }
+        })
       ])
     }),
     csRunTargetedQaProofBattle({

@@ -31,8 +31,8 @@ console.log('\n=== release manifest tests ===\n');
 
 T('1. manifest exposes canonical build and cache identity', () => {
   truthy(manifest.schema_version === 'champions-release-manifest-v1', 'schema mismatch');
-  truthy(manifest.build_id === 'v2.2.126-browser-run-budget', 'build id mismatch');
-  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-126-browser-run-budget', 'cache id mismatch');
+  truthy(manifest.build_id === 'v2.2.127-targeted-trick-room-proof', 'build id mismatch');
+  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-127-targeted-trick-room-proof', 'cache id mismatch');
   truthy(manifest.artifact_manifest === 'generated/release_artifact.json', 'artifact manifest path mismatch');
 });
 

@@ -325,3 +325,13 @@ Roadmap priority:
 - Then Trainer Room private learning.
 - Then evidence-bound coaching retrieval.
 - Public/global learning comes last after privacy, stale, and anti-poisoning controls exist.
+
+## 2026-07-04 Roadmap update: targeted Trick Room proof
+
+Completed in v2.2.127:
+- Added a browser-exported targeted QA scenario for Trick Room active state.
+- QA Artifact targeted sweep now requires `trick_room_active` proof before it can clear named targeted proof gaps.
+- The fix addresses the `.126` tactical artifact gap where `trick_room_active`, `trick_room_established`, and reversed-speed evidence remained at zero.
+
+Next validation:
+- Export a fresh Tactical Coaching QA artifact from `.127` and confirm `ready_for_codex` no longer fails on `Trick Room active state`.
