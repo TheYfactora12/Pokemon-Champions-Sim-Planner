@@ -271,7 +271,7 @@ async function main() {
     truthy(/id="sim-scope"/.test(html), 'Test Scope selector missing');
     truthy(/All loaded teams/.test(html), 'All loaded teams scope option missing');
     truthy(/Selected matchup/.test(html), 'Selected matchup scope option missing');
-    truthy(/10,000 series \(full team stress\)/.test(html), '10,000 stress sample option missing');
+    truthy(/5,000 series \(selected-team stress\)/.test(html), '5,000 selected-team stress sample option missing');
     truthy(/id="tactical-depth"/.test(html), 'Tactical Depth selector missing');
     truthy(/Deep 100 branches/.test(html), 'Tactical Depth deep option missing');
     const ui = fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8');
