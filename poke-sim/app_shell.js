@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.120-mad-lab-team-ranks';
+      return txt || 'v2.2.121-sim-ux-results';
     } catch (e) {
-      return 'v2.2.120-mad-lab-team-ranks';
+      return 'v2.2.121-sim-ux-results';
     }
   }
 

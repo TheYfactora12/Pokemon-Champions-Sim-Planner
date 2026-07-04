@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.120-mad-lab-team-ranks
+// Build marker: v2.2.121-sim-ux-results
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.120-mad-lab-team-ranks'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.121-sim-ux-results'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -3229,6 +3229,19 @@ document.getElementById('copy-export-btn')?.addEventListener('click', function()
 });
 document.getElementById('export-player-btn')?.addEventListener('click', ()=>openExportModal(currentPlayerKey));
 document.getElementById('export-opp-btn')?.addEventListener('click', ()=>{ const oppKey = document.getElementById('opponent-select').value; openExportModal(oppKey); });
+document.getElementById('result-view-replays-btn')?.addEventListener('click', function() {
+  if (typeof _activateTab === 'function') _activateTab('replays', { focus: true });
+});
+document.getElementById('result-fix-team-btn')?.addEventListener('click', function() {
+  if (typeof _activateTab === 'function') _activateTab('editor', { focus: true });
+});
+document.getElementById('result-upload-replay-btn')?.addEventListener('click', function() {
+  if (typeof _activateTab === 'function') _activateTab('replay-coach', { focus: true });
+});
+document.getElementById('result-run-again-btn')?.addEventListener('click', function() {
+  var runBtn = document.getElementById('run-sim-btn');
+  if (runBtn) runBtn.click();
+});
 
 // ============================================================
 // IMPORT MODAL

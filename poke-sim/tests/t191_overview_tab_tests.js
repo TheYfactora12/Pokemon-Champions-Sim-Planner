@@ -25,12 +25,20 @@ T('1. Roadmap is a top-level tab and mobile picker option', () => {
   inc(html, '<option value="home">Home</option>');
   inc(html, '<section class="tab-panel active" id="tab-home">');
   inc(html, 'id="team-lab-home-hub"');
+  inc(html, 'data-tab="qa-tester">QA Tester');
+  inc(html, '<option value="qa-tester">QA Tester</option>');
+  inc(html, '<section class="tab-panel" id="tab-qa-tester">');
   inc(html, 'data-tab="overview">Roadmap');
   inc(html, '<option value="overview">Roadmap</option>');
   inc(html, '<section class="tab-panel" id="tab-overview">');
   inc(html, 'id="overview-content"');
   inc(html, '<h2 class="section-title">Roadmap</h2>');
   inc(html, '<section class="tab-panel" id="tab-simulator">');
+  inc(html, 'id="result-run-again-btn"');
+  inc(html, 'id="result-view-replays-btn"');
+  inc(html, 'id="result-fix-team-btn"');
+  inc(html, 'id="result-upload-replay-btn"');
+  inc(html, 'id="run-all-export-qa-btn"');
 });
 
 T('2. Overview tracks accomplished work and validation proof', () => {
