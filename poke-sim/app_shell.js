@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.121-sim-ux-results';
+      return txt || 'v2.2.123-sim-run-all-mode';
     } catch (e) {
-      return 'v2.2.121-sim-ux-results';
+      return 'v2.2.123-sim-run-all-mode';
     }
   }
 

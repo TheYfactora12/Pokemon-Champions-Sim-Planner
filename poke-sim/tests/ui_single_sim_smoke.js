@@ -130,6 +130,15 @@ async function main() {
   const stablePlayerKey = vm.runInContext('getActivePlayerTeamKey()', ctx);
   const stablePlayerExists = vm.runInContext('!!(TEAMS && TEAMS["' + stablePlayerKey + '"])', ctx);
   if (!stablePlayerKey || !stablePlayerExists) throw new Error('failed to resolve a stable player team key');
+  vm.runInContext(`
+    TEAMS.custom_run_all_probe = JSON.parse(JSON.stringify(TEAMS["${stablePlayerKey}"]));
+    TEAMS.custom_run_all_probe.name = 'Custom Run All Probe';
+    TEAMS.custom_run_all_probe.source = 'custom';
+    TEAMS.custom_run_all_probe.format = 'champions';
+    TEAMS.custom_run_all_probe.legality_status = 'verified';
+    normalizeTeamCatalogForSim();
+    rebuildTeamSelects();
+  `, ctx);
   vm.runInContext('currentPlayerKey = "stale_missing_team_key";', ctx);
   ids['player-select'].value = stablePlayerKey;
   await btn.onclick.call(btn, { target: btn });
@@ -152,6 +161,13 @@ async function main() {
   }
   if (!matchupBody || !Array.isArray(matchupBody.children) || matchupBody.children.length === 0) {
     throw new Error('run-all matchup table did not render');
+  }
+  const allLoadedOpps = vm.runInContext('getRunAllOpponentKeys(getActivePlayerTeamKey(), resolveSimContext())', ctx);
+  if (!Array.isArray(allLoadedOpps) || allLoadedOpps.indexOf('custom_run_all_probe') === -1) {
+    throw new Error('run-all all-loaded scope did not include custom/imported teams: ' + JSON.stringify(allLoadedOpps));
+  }
+  if (allLoadedOpps.indexOf(stablePlayerKey) === -1) {
+    throw new Error('run-all all-loaded scope did not include mirror matchup for selected team: ' + JSON.stringify(allLoadedOpps));
   }
 
   const dbStyleKey = 'db_missing_format_team';

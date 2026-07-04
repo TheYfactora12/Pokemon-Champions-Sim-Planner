@@ -258,8 +258,8 @@ async function main() {
     truthy(/id="run-all-export-qa-btn"/.test(html), 'Release Matrix QA button missing');
     truthy(/id="stress-lite-qa-btn"/.test(html), 'Device-Safe Stress QA button missing');
     truthy(/id="tactical-sweep-qa-btn"/.test(html), 'Tactical Coaching QA button missing');
-    truthy(/Quick check: runs one matchup/.test(html), 'Run Simulation hover help missing');
-    truthy(/Broad release check: runs many matchups/.test(html), 'Run All hover help missing');
+    truthy(/Player battle test: runs the selected matchup/.test(html), 'Run Selected Matchup hover help missing');
+    truthy(/Player matchup sweep: runs your selected team against every loaded opponent/.test(html), 'Run All Loaded Teams hover help missing');
     truthy(/Release Matrix QA: runs all matchups/.test(html), 'Release Matrix QA hover help missing');
     truthy(/Device-Safe Stress QA: runs capped lower-load coverage/.test(html), 'Device-Safe Stress QA hover help missing');
     truthy(/Tactical Coaching QA: tests branches/.test(html), 'Tactical Coaching QA hover help missing');
@@ -268,6 +268,7 @@ async function main() {
     truthy(/id="qa-drop-folder-btn"/.test(html), 'QA drop folder button missing');
     truthy(/Tactical Coaching QA/.test(html), 'Tactical Coaching QA label missing');
     truthy(/id="sim-scope"/.test(html), 'Test Scope selector missing');
+    truthy(/All loaded teams/.test(html), 'All loaded teams scope option missing');
     truthy(/Selected matchup/.test(html), 'Selected matchup scope option missing');
     truthy(/10,000 series \(full team stress\)/.test(html), '10,000 stress sample option missing');
     truthy(/id="tactical-depth"/.test(html), 'Tactical Depth selector missing');

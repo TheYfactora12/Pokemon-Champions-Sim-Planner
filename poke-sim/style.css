@@ -844,6 +844,7 @@ table{border-collapse:collapse;width:100%}
 .qa-progress-wrap{border:1px solid rgba(91,164,245,.2);border-radius:var(--r-md);padding:var(--sp3);background:rgba(91,164,245,.05)}
 .results-actions{display:flex;flex-wrap:wrap;gap:var(--sp3);align-items:center;margin-top:var(--sp4);padding:var(--sp3);border:1px solid rgba(91,164,245,.18);border-radius:var(--r-md);background:linear-gradient(135deg,rgba(91,164,245,.07),rgba(78,201,148,.04))}
 .results-actions .btn-primary,.results-actions .btn-secondary{min-width:140px}
+.sim-qa-tester-link{border-style:dashed;background:rgba(245,197,66,.06);border-color:rgba(245,197,66,.28);color:var(--gold)}
 .vs-badge{text-align:center;font-size:var(--text-xl);font-weight:900;color:var(--primary);letter-spacing:.1em;text-shadow:0 0 16px var(--primary-glow)}
 .control-block{display:flex;flex-direction:column;gap:4px}
 .control-label{font-size:9px;font-weight:700;color:var(--text-m);letter-spacing:.07em;text-transform:uppercase}

@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.121-sim-ux-results
+// Build marker: v2.2.123-sim-run-all-mode
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.121-sim-ux-results'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.123-sim-run-all-mode'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -977,7 +977,7 @@ function getSimScopeMode() {
 }
 
 function getSimScopeLabel(mode) {
-  return mode === 'selected' ? 'Selected matchup' : 'Preloaded team suite';
+  return mode === 'selected' ? 'Selected matchup' : 'All loaded teams';
 }
 
 function getTacticalDepthMaxRuns() {
@@ -1009,7 +1009,6 @@ function isPreloadedSimTeam(teamKey, team) {
 function getRunAllOpponentKeys(playerKey, simCtx) {
   simCtx = simCtx || {};
   var scope = simCtx.simScope || getSimScopeMode();
-  var includeCustom = scope === 'selected';
   if (scope === 'selected') {
     var selectedOpp = simCtx.oppKey || getDefaultVisibleOpponentTeamKey(playerKey);
     if (selectedOpp
@@ -1020,9 +1019,7 @@ function getRunAllOpponentKeys(playerKey, simCtx) {
     return [];
   }
   return Object.keys(TEAMS).filter(function(k) {
-    if (k === playerKey) return false;
-    if (!isSimReadyTeam(k, TEAMS[k], { includeCustom: includeCustom })) return false;
-    if (!isPreloadedSimTeam(k, TEAMS[k])) return false;
+    if (!isSimReadyTeam(k, TEAMS[k], { includeCustom: true })) return false;
     if (typeof LADDER_MODE !== 'undefined' && LADDER_MODE && typeof isLadderLegal === 'function') {
       return isLadderLegal(k);
     }
@@ -3229,6 +3226,14 @@ document.getElementById('copy-export-btn')?.addEventListener('click', function()
 });
 document.getElementById('export-player-btn')?.addEventListener('click', ()=>openExportModal(currentPlayerKey));
 document.getElementById('export-opp-btn')?.addEventListener('click', ()=>{ const oppKey = document.getElementById('opponent-select').value; openExportModal(oppKey); });
+document.getElementById('open-qa-tester-btn')?.addEventListener('click', function() {
+  if (typeof _activateTab === 'function') _activateTab('qa-tester', { focus: true });
+});
+document.getElementById('qa-open-sim-run-all-btn')?.addEventListener('click', function() {
+  if (typeof _activateTab === 'function') _activateTab('simulator', { focus: true });
+  var btn = document.getElementById('run-all-btn');
+  if (btn && typeof btn.focus === 'function') setTimeout(function() { btn.focus(); }, 60);
+});
 document.getElementById('result-view-replays-btn')?.addEventListener('click', function() {
   if (typeof _activateTab === 'function') _activateTab('replays', { focus: true });
 });
