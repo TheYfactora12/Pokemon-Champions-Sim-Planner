@@ -6753,8 +6753,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
   if (timerExpired) log.push(`[TIMER] Resolved ${winCondition} — alive p${pSurvive}/o${oSurvive}, HP p${pHpSum}/o${oHpSum}`);
 
+  const completedTurns = turnLog.length;
   return {
-    result, turns: turn,
+    result,
+    turns: completedTurns,
+    simTurnsReported: turn,
     // T9j.3 (#37) — cumulative active turns, replaces meaningless end-of-battle remaining counter.
     trTurns: field.trickRoomActive,
     // T9j.3 (#38) — Tailwind cumulative active per side and combined.

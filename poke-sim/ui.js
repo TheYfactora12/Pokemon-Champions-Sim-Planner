@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.128-turn-log-export-scope
+// Build marker: v2.2.129-completed-turn-count
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.128-turn-log-export-scope'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.129-completed-turn-count'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -7990,7 +7990,8 @@ function downloadReplayTurnLog(replay, opts) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
   opts = opts || {};
   var turnLog = Array.isArray(replay.turnLog) ? replay.turnLog : [];
-  var turnCount = Number.isFinite(Number(replay.turns)) && Number(replay.turns) > 0 ? Number(replay.turns) : turnLog.length;
+  var turnCount = turnLog.length;
+  var simTurnsReported = Number.isFinite(Number(replay.turns)) && Number(replay.turns) > 0 ? Number(replay.turns) : null;
   var playerKey = opts.playerKey || replay.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
   var oppKey = opts.oppKey || replay.oppKey || null;
   var playerTeam = csTurnLogTeamSnapshot(playerKey);
@@ -8019,6 +8020,8 @@ function downloadReplayTurnLog(replay, opts) {
     qa_scope: qaScope,
     qa_scope_note: qaScopeNote,
     turns: turnCount,
+    sim_turns_reported: simTurnsReported,
+    turn_count_source: 'turnLog.length',
     seed: replay.seed || null,
     result: replay.result || null,
     format: format,
@@ -9698,7 +9701,9 @@ function csCompactQaReplayCard(replay, playerKey) {
     playerKey: r.playerKey || playerKey || null,
     oppKey: r.oppKey || null,
     result: r.result || null,
-    turns: r.turns || 0,
+    turns: turnLog.length ? turnLog.length : (r.turns || 0),
+    sim_turns_reported: Number.isFinite(Number(r.turns)) && Number(r.turns) > 0 ? Number(r.turns) : null,
+    turn_count_source: turnLog.length ? 'turnLog.length' : 'replay.turns_fallback',
     winCondition: r.winCondition || null,
     trTurns: r.trTurns || 0,
     twTurns: r.twTurns || 0,
@@ -13699,6 +13704,11 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Completed battle turn count aligned',
+      detail: 'v2.2.129 fixes the sim-page turn-count source so simulateBattle().turns, downloaded turn-log JSON, and retained replay-card evidence use completed turnLog rows instead of a loop counter that could run one turn high after terminal KO/end conditions. Exports preserve the old/internal count as sim_turns_reported and mark turn_count_source so QA can audit the difference without confusing sim results.'
+    },
     {
       status: 'done',
       title: 'Turn-log export scope and turn count fixed',

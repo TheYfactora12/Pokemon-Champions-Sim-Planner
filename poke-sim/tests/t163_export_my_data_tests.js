@@ -344,6 +344,8 @@ async function main() {
     truthy(payload.retained && payload.retained.replay_cards.length >= 1, 'retained replay cards missing');
     eq(payload.retained.replay_cards[0].seed, 'qa-seed-1');
     eq(payload.retained.replay_cards[0].qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'retained replay coverage missing');
+    eq(payload.retained.replay_cards[0].turns, payload.retained.replay_cards[0].turnLog.length, 'retained replay turns should match turnLog rows');
+    eq(payload.retained.replay_cards[0].turn_count_source, 'turnLog.length', 'retained replay turn count source');
     truthy(payload.replay_logic_audit, 'replay logic audit missing');
     eq(payload.replay_logic_audit.schema_version, 'champions-replay-logic-audit-v1', 'replay logic audit schema');
     eq(payload.replay_logic_audit.retained_replay_cards, payload.retained.replay_cards.length, 'replay logic audit retained count mismatch');

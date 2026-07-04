@@ -389,3 +389,7 @@ Required follow-up artifact check: exported `.127` Tactical Coaching QA should s
 v2.2.128 fixes the downloaded single replay turn-log payload contract after QA logs showed valid `turnLog` rows but top-level `turns: null`. Downloaded `champions-turn-log-v2` files now include `turns`, `qa_scope`, `qa_scope_note`, and `qa_coverage_summary.coverage_scope_note`.
 
 Important interpretation rule: a single replay can prove only the mechanics that occurred in that replay. `single_replay_missing_mechanics` and `qa_coverage_summary.missing_targeted_proof` in a single turn-log export are QA targets for missing coverage, not a release-wide failure by themselves. Use Release Matrix QA or Targeted Mechanic QA artifacts when claiming broad mechanic proof.
+
+## 2026-07-04 update: completed turn-count source
+
+v2.2.129 fixes the sim-page turn-count source after fresh `.128` logs showed `turns` one higher than `turnLog.length`. `simulateBattle().turns`, downloaded turn-log JSON, and retained replay-card evidence now use completed `turnLog` rows. The older/internal loop counter is preserved as `simTurnsReported` in engine results and `sim_turns_reported` in exports for debugging, but QA-facing `turns` must match the structured evidence rows.

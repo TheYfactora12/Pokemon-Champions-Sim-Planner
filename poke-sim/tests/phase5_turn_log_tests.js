@@ -106,6 +106,7 @@ T('T5a-1 turnLog is populated after simulateBattle', () => {
   battleA = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_altaria, {});
   truthy(Array.isArray(battleA.turnLog), 'turnLog array missing');
   truthy(battleA.turnLog.length > 0, 'turnLog empty');
+  eq(battleA.turns, battleA.turnLog.length, 'battle turns should equal completed turnLog rows');
   truthy(battleA.turnLog[0].pre && battleA.turnLog[0].post, 'pre/post state missing');
   truthy(Array.isArray(battleA.turnLog[0].pre.roster.player), 'player roster snapshot missing');
   truthy(Array.isArray(battleA.turnLog[0].pre.roster.opponent), 'opponent roster snapshot missing');
@@ -535,12 +536,14 @@ T('T5c-2 swing turn row is highlighted', () => {
 T('T5c-3 JSON download produces valid parseable file', () => {
   let parsed = null;
   ctx.Blob = function(parts) { parsed = JSON.parse(parts[0]); };
-  ctx.downloadReplayTurnLog({ seed: 'abc', result: 'win', playerKey: 'player', oppKey: 'mega_altaria', turnLog: battleA.turnLog, position_path: battleA.position_path });
+  ctx.downloadReplayTurnLog({ seed: 'abc', result: 'win', turns: battleA.turnLog.length + 1, playerKey: 'player', oppKey: 'mega_altaria', turnLog: battleA.turnLog, position_path: battleA.position_path });
   truthy(parsed && Array.isArray(parsed.turnLog), 'download JSON did not parse');
   eq(parsed.schema_version, 'champions-turn-log-v2', 'download schema version missing');
   eq(parsed.build_id, ctx.window.CHAMPIONS_RELEASE_MANIFEST.build_id, 'download build id must match release manifest');
   truthy(typeof parsed.exported_at === 'string' && parsed.exported_at.length > 0, 'download timestamp missing');
   eq(parsed.turns, parsed.turnLog.length, 'download top-level turns must match turnLog rows');
+  eq(parsed.sim_turns_reported, parsed.turnLog.length + 1, 'download should preserve stale/internal turn counter separately');
+  eq(parsed.turn_count_source, 'turnLog.length', 'download turn count source should be explicit');
   eq(parsed.qa_scope, 'single-turn-log', 'download QA scope should be explicit');
   truthy(String(parsed.qa_scope_note || '').includes('one replay sample'), 'download QA scope note missing');
   eq(parsed.player_team_id, 'player', 'download player team id missing');
