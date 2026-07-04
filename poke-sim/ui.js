@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.116-regmb-review-items-abilities
+// Build marker: v2.2.117-home-product-reveal
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.116-regmb-review-items-abilities'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.117-home-product-reveal'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -14933,7 +14933,7 @@ function csRenderPokemonNewsFeed() {
   }).join('');
   return '<section class="pokemon-news-feed" aria-label="Pokemon news feed">' +
     '<div class="pokemon-news-feed-head">' +
-      '<div><span class="overview-kicker">Source-backed news watch</span><h3>Latest Champion Updates</h3><p>Article thumbnails come from approved feed metadata when available. News and meta inform context; mechanics truth still requires reviewed source rows.</p></div>' +
+      '<div><span class="overview-kicker">Champion news</span><h3>What changed in the game?</h3><p>Regulation and competition updates stay here so players know when a team or replay needs a fresh test.</p></div>' +
       '<div class="pokemon-news-controls">' +
         '<button type="button" data-news-prev aria-label="Previous news">Prev</button>' +
         '<button type="button" data-news-next aria-label="Next news">Next</button>' +
@@ -14947,14 +14947,14 @@ function csRenderPokemonNewsFeed() {
 
 function csRenderHomeStartRail() {
   return '<section class="home-start-rail" aria-label="Quick start">' +
-    '<div><span class="overview-kicker">New here?</span><strong>Start with one decision.</strong></div>' +
+    '<div><span class="overview-kicker">New here?</span><strong>Follow four simple steps.</strong></div>' +
     '<ol>' +
-      '<li><span>1</span>Pick a team</li>' +
-      '<li><span>2</span>Run one matchup</li>' +
-      '<li><span>3</span>Upload a replay</li>' +
-      '<li><span>4</span>Improve one choice</li>' +
+      '<li><span>1</span>Pick your team</li>' +
+      '<li><span>2</span>Pick the opponent</li>' +
+      '<li><span>3</span>Run or upload</li>' +
+      '<li><span>4</span>Try one fix</li>' +
     '</ol>' +
-    '<button type="button" data-home-tab="simulator">Start now</button>' +
+    '<button type="button" data-home-tab="simulator">Start Team Test</button>' +
   '</section>';
 }
 
@@ -14974,13 +14974,13 @@ function csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) {
 
 function csRenderHomeStartCycle() {
   var steps = [
-    ['1', 'Choose or import a team', 'Start with a bundled Champion test team or import a custom team, then check legality warnings before trusting results.', 'Open Teams', 'teams'],
-    ['2', 'Run the matchup', 'Pick an opponent, format, and series length. Test leads, selected four, speed control, and swaps before you lock a plan.', 'Start Simulating', 'simulator'],
-    ['3', 'Read the swing turn', 'Open replay evidence for move order, damage rows, status denials, recoil, field state, and why a Pokemon fainted.', 'Analyze Replay', 'replay-coach'],
-    ['4', 'Change one thing and rerun', 'Edit one move, item, lead, or lineup, then repeat the same benchmark so improvement is measurable.', 'Review Strategy', 'strategy']
+    ['1', 'Pick a team', 'Use a saved team, a test team, or an uploaded team. If legality is unknown, the page says so.', 'Open Teams', 'teams'],
+    ['2', 'Run a battle test', 'Choose Singles or Doubles, pick the opponent, then run the matchup.', 'Start Test', 'simulator'],
+    ['3', 'Read what happened', 'Replay review shows move order, damage, status, field effects, and why a Pokemon went down.', 'Upload Replay', 'replay-coach'],
+    ['4', 'Try one change', 'Change one move, item, lead, or swap plan. Run again and see if it helped.', 'See Strategy', 'strategy']
   ];
   return '<section class="home-start-cycle overview-section" aria-label="Start here cycle">' +
-    '<div class="overview-section-head"><div><span class="overview-kicker">Start here</span><h3>The 4-step testing cycle</h3></div><span class="overview-status next">Player guide</span></div>' +
+    '<div class="overview-section-head"><div><span class="overview-kicker">How to use it</span><h3>Easy enough to start in one minute.</h3></div><span class="overview-status next">Player guide</span></div>' +
     '<div class="home-start-steps">' + steps.map(function(step) {
       return '<article class="home-start-step"><strong>' + _escapeHtml(step[0]) + '</strong><div><h4>' + _escapeHtml(step[1]) + '</h4><p>' + _escapeHtml(step[2]) + '</p><button type="button" data-home-tab="' + _escapeHtml(step[4]) + '">' + _escapeHtml(step[3]) + '</button></div></article>';
     }).join('') + '</div>' +
@@ -15025,9 +15025,9 @@ function csRenderHomeQuestionCards() {
 
 function csRenderHomeTrustStrip() {
   return '<section class="home-trust-strip" aria-label="Simulator trust gates">' +
-    '<div><strong>Evidence-bound rankings</strong><span>No team becomes “Top 25” without regulation, ruleset version, engine version, sample size, legality, and stale checks.</span></div>' +
-    '<div><strong>Champion-source guardrails</strong><span>Unknown Pokemon Champion data stays needs_verification instead of being silently treated as legal.</span></div>' +
-    '<div><strong>Replay-verifiable coaching</strong><span>Advice should point back to turn logs, damage/effect rows, source gaps, and matchup evidence.</span></div>' +
+    '<div><strong>No fake certainty</strong><span>If Champion data is unknown, the app marks it as needs verification instead of pretending it is proven.</span></div>' +
+    '<div><strong>Every result has a label</strong><span>Rankings and replay advice show regulation, engine version, ruleset version, sample size, and stale warnings.</span></div>' +
+    '<div><strong>Replays explain the why</strong><span>Turn logs should show move order, damage, status, field effects, items, recoil, and faint reasons.</span></div>' +
   '</section>';
 }
 
@@ -15364,47 +15364,57 @@ function csRenderTeamLabNewsroomHub() {
   return '<section class="team-lab-newsroom overview-section">' +
     '<div class="home-landing-hero">' +
       '<div>' +
-        '<span class="overview-kicker">Pokemon Champion battle lab</span>' +
+        '<span class="overview-kicker">Pokemon Champions practice lab</span>' +
         '<h2>Battle Labs</h2>' +
-        '<p>Build stronger teams by testing real matchups, reading the swing turn, and changing one thing with proof.</p>' +
+        '<p>Practice smarter. Test teams, study replays, and see what to try next.</p>' +
         '<div class="home-landing-actions">' +
-          '<button type="button" data-home-tab="simulator">Start Simulating</button>' +
-          '<button type="button" data-home-tab="replay-coach">Analyze a Replay</button>' +
+          '<button type="button" data-home-tab="simulator">Start Team Test</button>' +
+          '<button type="button" data-home-tab="replay-coach">Upload Replay</button>' +
           '<button type="button" data-home-tab="teams">Edit a Team</button>' +
         '</div>' +
         '<div class="home-landing-chips" aria-label="Battle Labs trust promises">' +
-          '<span>Champion rules guarded</span>' +
-          '<span>Replay evidence</span>' +
-          '<span>Versioned rankings</span>' +
+          '<span>Singles and Doubles</span>' +
+          '<span>Replay Lessons</span>' +
+          '<span>Safer Team Testing</span>' +
         '</div>' +
       '</div>' +
-      '<div class="home-landing-proof">' +
-        '<span>Question</span><strong>Which lead, four, move, or switch gives me the best line?</strong>' +
-        '<span>Answer</span><strong>Run the matchup, inspect the replay, and compare evidence.</strong>' +
-        '<span>Guardrail</span><strong>Unknown Champion data stays marked needs verification.</strong>' +
+      '<div class="home-product-stage" aria-label="Battle Labs product preview">' +
+        '<div class="home-product-window">' +
+          '<div class="home-product-bar"><span></span><span></span><span></span></div>' +
+          '<div class="home-product-arena">' +
+            '<div class="home-product-team home-product-team-a"><small>Your team</small><strong>Team Test</strong></div>' +
+            '<div class="home-product-vs">VS</div>' +
+            '<div class="home-product-team home-product-team-b"><small>Opponent</small><strong>Benchmark</strong></div>' +
+          '</div>' +
+          '<div class="home-product-result">' +
+            '<span>Replay lesson</span>' +
+            '<strong>Turn 4 changed the game</strong>' +
+            '<em>Try a safer lead next run</em>' +
+          '</div>' +
+        '</div>' +
+        '<div class="home-product-floating home-product-floating-a"><span>1</span><strong>Pick team</strong></div>' +
+        '<div class="home-product-floating home-product-floating-b"><span>2</span><strong>Run battle</strong></div>' +
+        '<div class="home-product-floating home-product-floating-c"><span>3</span><strong>Learn why</strong></div>' +
       '</div>' +
     '</div>' +
     '<div class="home-value-strip" aria-label="Why Battle Labs matters">' +
-      '<article><span>01</span><strong>Sim the matchup</strong><p>Run singles or doubles into benchmark teams and see which plans keep pressure.</p></article>' +
-      '<article><span>02</span><strong>Review the battle</strong><p>Upload real Showdown logs to expose speed control, damage, status, field, item, and faint causes.</p></article>' +
-      '<article><span>03</span><strong>Improve cleanly</strong><p>Change one move, item, lead, or lineup at a time so the next result teaches something real.</p></article>' +
+      '<article><span>01</span><strong>Test the team</strong><p>Pick your team and opponent. Run Singles or Doubles.</p></article>' +
+      '<article><span>02</span><strong>Learn the turn</strong><p>See the move, damage, status, or field effect that changed the battle.</p></article>' +
+      '<article><span>03</span><strong>Try one fix</strong><p>Change one thing. Run it again. Keep what improves.</p></article>' +
     '</div>' +
     csRenderHomeStartRail() +
-    csRenderPokemonNewsFeed() +
+    csRenderHomeStartCycle() +
     '<div class="team-lab-leaderboard-head">' +
-      '<div><span class="overview-kicker">Team Lab leaderboard</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>' + (hasEvidenceRows ? 'Experimental rows are visible. Official rankings still require verified legality and promotion rules.' : 'Top 25 is locked until enough verified simulator evidence exists.') + '</p></div>' +
+      '<div><span class="overview-kicker">Team Lab</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>' + (hasEvidenceRows ? 'These rankings are simulator evidence, not magic. Each row needs enough games, current versions, and legality checks.' : 'No fake leaderboard. Top 25 opens only when the evidence is strong enough.') + '</p></div>' +
       '<span class="overview-status ' + (hasEvidenceRows ? 'warn' : 'gap') + '">' + (hasEvidenceRows ? 'Experimental preview' : 'Locked until proven') + '</span>' +
     '</div>' +
-    csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) +
     '<div class="overview-db-table-wrap team-lab-top25-wrap"><table class="overview-db-table team-lab-top25-table">' +
       '<thead><tr><th>Rank</th><th>Team</th><th>Archetype</th><th>Score</th><th>Quality</th><th>Adj. win rate</th><th>Games</th><th>Confidence</th><th>Status</th></tr></thead>' +
       '<tbody data-team-lab-top25-body>' + csRenderTeamLabTop25Rows(previewRows) + '</tbody>' +
     '</table></div>' +
-    csRenderHomeStartCycle() +
-    csRenderHomeSimPreview() +
+    '<details class="home-admin-details"><summary>Admin QA reset</summary>' + csRenderTeamLabAdminControls() + '</details>' +
+    csRenderPokemonNewsFeed() +
     csRenderHomeTrustStrip() +
-    csRenderTeamLabRankingGates() +
-    csRenderTeamLabAdminControls() +
   '</section>';
 }
 
