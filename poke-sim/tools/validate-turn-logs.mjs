@@ -780,6 +780,29 @@ function validateQaCoverageSummary(payload, turnLog, findings) {
   }
 }
 
+function validateTopLevelTurnMetadata(payload, turnLog, findings) {
+  if (!payload) return;
+  const isTurnLogV2 = payload.schema_version === 'champions-turn-log-v2';
+  if (!Object.prototype.hasOwnProperty.call(payload, 'turns')) {
+    if (isTurnLogV2) {
+      findings.push(finding('error', 'top-level-turn-count-missing', 'champions-turn-log-v2 payloads must include top-level turns.', {
+        field: 'turns',
+        expected: turnLog.length,
+        actual: undefined
+      }));
+    }
+    return;
+  }
+  const actual = Number(payload.turns);
+  if (!Number.isFinite(actual) || actual !== turnLog.length) {
+    findings.push(finding('error', 'top-level-turn-count-mismatch', 'Top-level turns must match the structured turnLog row count.', {
+      field: 'turns',
+      expected: turnLog.length,
+      actual: payload.turns
+    }));
+  }
+}
+
 function finalizeIdentityChecks(state, findings) {
   for (const id of state.identities.values()) {
     const moves = Array.from(id.moves).filter(Boolean);
@@ -836,6 +859,7 @@ export function validateTurnLogPayload(payload, options = {}) {
   }
 
   validateQaCoverageSummary(payload, turnLog, findings);
+  validateTopLevelTurnMetadata(payload, turnLog, findings);
   finalizeIdentityChecks(state, findings);
 
   const stableFieldsPresent = state.rowsMissingStableKey === 0 && state.missingStableMaps.size === 0;

@@ -383,3 +383,9 @@ See `poke-sim/docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md` for the fu
 v2.2.127 adds a named targeted QA fixture for Trick Room active-state coverage in browser-exported QA artifacts. This closes the mismatch where standalone targeted proof tests could cover Trick Room, but the exported Tactical Coaching QA artifact still reported `Trick Room active state` as missing.
 
 Required follow-up artifact check: exported `.127` Tactical Coaching QA should show `mechanics_seen.trick_room_active > 0` and should not list `Trick Room active state` under `missing_targeted_proof`.
+
+## 2026-07-04 update: turn-log export scope and turn count
+
+v2.2.128 fixes the downloaded single replay turn-log payload contract after QA logs showed valid `turnLog` rows but top-level `turns: null`. Downloaded `champions-turn-log-v2` files now include `turns`, `qa_scope`, `qa_scope_note`, and `qa_coverage_summary.coverage_scope_note`.
+
+Important interpretation rule: a single replay can prove only the mechanics that occurred in that replay. `single_replay_missing_mechanics` and `qa_coverage_summary.missing_targeted_proof` in a single turn-log export are QA targets for missing coverage, not a release-wide failure by themselves. Use Release Matrix QA or Targeted Mechanic QA artifacts when claiming broad mechanic proof.

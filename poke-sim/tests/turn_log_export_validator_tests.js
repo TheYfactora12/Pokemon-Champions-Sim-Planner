@@ -660,6 +660,21 @@ function stripStableFields(payload) {
     truthy(res.findings.some(f => f.code === 'qa-coverage-total-mismatch' && f.field === 'damage_events'), 'missing QA coverage damage mismatch');
   });
 
+  T('17. top-level turns fails when it drifts from turnLog evidence', () => {
+    const payload = stableFixture();
+    payload.schema_version = 'champions-turn-log-v2';
+    payload.turns = null;
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'top-level-turn-count-mismatch' && f.field === 'turns'), 'missing top-level turns mismatch');
+  });
+
+  T('18. champions-turn-log-v2 requires top-level turns', () => {
+    const payload = stableFixture();
+    payload.schema_version = 'champions-turn-log-v2';
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(res.findings.some(f => f.code === 'top-level-turn-count-missing' && f.field === 'turns'), 'missing top-level turns required error');
+  });
+
   console.log('\nturn log export validator:', pass + ' pass, ' + fail + ' fail\n');
   process.exit(fail ? 1 : 0);
 })().catch(err => {

@@ -540,15 +540,21 @@ T('T5c-3 JSON download produces valid parseable file', () => {
   eq(parsed.schema_version, 'champions-turn-log-v2', 'download schema version missing');
   eq(parsed.build_id, ctx.window.CHAMPIONS_RELEASE_MANIFEST.build_id, 'download build id must match release manifest');
   truthy(typeof parsed.exported_at === 'string' && parsed.exported_at.length > 0, 'download timestamp missing');
+  eq(parsed.turns, parsed.turnLog.length, 'download top-level turns must match turnLog rows');
+  eq(parsed.qa_scope, 'single-turn-log', 'download QA scope should be explicit');
+  truthy(String(parsed.qa_scope_note || '').includes('one replay sample'), 'download QA scope note missing');
   eq(parsed.player_team_id, 'player', 'download player team id missing');
   eq(parsed.opponent_team_id, 'mega_altaria', 'download opponent team id missing');
   truthy(parsed.player_team && parsed.player_team.members && parsed.player_team.members.length === 6, 'download full player team missing');
   truthy(parsed.opponent_team && parsed.opponent_team.members && parsed.opponent_team.members.length === 6, 'download full opponent team missing');
   truthy(parsed.team_preview && parsed.team_preview.player_brought_count >= 1, 'download brought team preview missing');
   eq(parsed.qa_coverage_summary.schema_version, 'champions-qa-coverage-v1', 'QA coverage schema missing');
+  eq(parsed.qa_coverage_summary.scope, 'single-turn-log', 'QA coverage scope mismatch');
+  truthy(String(parsed.qa_coverage_summary.coverage_scope_note || '').includes('single-replay evidence'), 'QA coverage scope note missing');
   eq(parsed.qa_coverage_summary.totals.turns, parsed.turnLog.length, 'QA coverage turn count mismatch');
   truthy(parsed.qa_coverage_summary.source_truth_versions && parsed.qa_coverage_summary.source_truth_versions.pokemon_showdown, 'QA source truth versions missing');
   truthy(Array.isArray(parsed.qa_coverage_summary.missing_targeted_proof), 'QA missing proof list missing');
+  truthy(Array.isArray(parsed.single_replay_missing_mechanics), 'single replay missing mechanics list missing');
 });
 
 T('T5c-3a QA coverage counts recoil occurrences once and keeps damage-row evidence separate', () => {

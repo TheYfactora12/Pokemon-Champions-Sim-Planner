@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.127-targeted-trick-room-proof",
+  "build_id": "v2.2.128-turn-log-export-scope",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "53ce13bbc7372d53fc4f5c8ff5c6425160c5ddb48dc659b94fbbb70bb59864c8",
-  "bundle_bytes": 11282525,
+  "bundle_sha256": "c56d0ce0c24e920105c3789c2a9835ed4f236c5942b352d41791138f8860e92f",
+  "bundle_bytes": 11284528,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }

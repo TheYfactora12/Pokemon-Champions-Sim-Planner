@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.127-targeted-trick-room-proof
+// Build marker: v2.2.128-turn-log-export-scope
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.127-targeted-trick-room-proof'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.128-turn-log-export-scope'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -6247,6 +6247,12 @@ function csBuildMoveEffectLogicMatrix(mechanics, opts) {
 function csBuildQaCoverageSummary(turnLog, opts) {
   var rows = Array.isArray(turnLog) ? turnLog : [];
   var options = opts || {};
+  var coverageScope = options.scope || 'single-turn-log';
+  var coverageScopeNote = options.scope_note || (
+    /single-turn-log|downloaded-turn-log|retained-replay-card/.test(String(coverageScope || ''))
+      ? 'This is single-replay evidence. It proves only mechanics that occurred in this log; missing_targeted_proof is a list of mechanics absent from this sample, not a release-wide failure by itself.'
+      : 'This summary proves only mechanics that occurred in the exported evidence for this QA slice.'
+  );
   var qaSides = ['player', 'opponent'];
   var totals = {
     turns: rows.length,
@@ -6257,13 +6263,13 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     turns_with_effect_events: 0
   };
   var mechanics = csQaBlankMechanicsSeen();
-  var tacticalSpeedSummary = csBuildTacticalSpeedSummary(rows, { scope: options.scope || 'single-turn-log' });
-  var durationEffectSummary = csBuildDurationEffectSummary(rows, { scope: options.scope || 'single-turn-log' });
-  var decisionLedger = csBuildDecisionOpportunityLedger(tacticalSpeedSummary, { scope: options.scope || 'single-turn-log' });
+  var tacticalSpeedSummary = csBuildTacticalSpeedSummary(rows, { scope: coverageScope });
+  var durationEffectSummary = csBuildDurationEffectSummary(rows, { scope: coverageScope });
+  var decisionLedger = csBuildDecisionOpportunityLedger(tacticalSpeedSummary, { scope: coverageScope });
   var faintCauseSummary = csBuildFaintCauseSummary(rows);
   var contactMoveAuditSummary = csBuildContactMoveAuditSummary(rows);
   var coachEventRows = csBuildCoachEventRows(tacticalSpeedSummary, durationEffectSummary, {
-    scope: options.scope || 'single-turn-log',
+    scope: coverageScope,
     player_team_id: options.player_team_id || null,
     opponent_team_id: options.opponent_team_id || null,
     format: options.format || null,
@@ -6417,7 +6423,7 @@ function csBuildQaCoverageSummary(turnLog, opts) {
   totals.move_rule_trace_rows = Number(mechanics.move_rule_trace_rows || 0);
 
   var moveEffectLogicMatrix = csBuildMoveEffectLogicMatrix(mechanics, {
-    scope: options.scope || 'single-turn-log',
+    scope: coverageScope,
     contact_move_audit_summary: contactMoveAuditSummary,
     faint_cause_summary: faintCauseSummary
   });
@@ -6425,7 +6431,8 @@ function csBuildQaCoverageSummary(turnLog, opts) {
   return {
     schema_version: 'champions-qa-coverage-v1',
     generated_at: options.generated_at || new Date().toISOString(),
-    scope: options.scope || 'single-turn-log',
+    scope: coverageScope,
+    coverage_scope_note: coverageScopeNote,
     source: {
       build_id: options.build_id || ((typeof csGetBuildId === 'function') ? csGetBuildId() : null),
       source_url: options.source_url || ((typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null),
@@ -6445,7 +6452,7 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     coach_event_rows: coachEventRows,
     coach_event_summary: csSummarizeCoachEventRows(coachEventRows),
     coach_brain_summary: csBuildCoachBrainSummary(decisionLedger, {
-      scope: options.scope || 'single-turn-log',
+      scope: coverageScope,
       player_team_id: options.player_team_id || null,
       opponent_team_id: options.opponent_team_id || null,
       format: options.format || null
@@ -6457,8 +6464,8 @@ function csBuildQaCoverageSummary(turnLog, opts) {
     effect_kinds: effectKinds,
     missing_targeted_proof: csQaMissingTargetedProof(mechanics),
     notes: [
-      'This summary only proves mechanics that occurred in this exported evidence.',
-      'Use targeted scenario logs for mechanics listed in missing_targeted_proof.'
+      coverageScopeNote,
+      'Use release-matrix or targeted scenario QA artifacts for release-wide mechanic proof.'
     ]
   };
 }
@@ -7982,6 +7989,8 @@ function csLatestCoachBrainForTeam(teamKey) {
 function downloadReplayTurnLog(replay, opts) {
   if (!replay || !Array.isArray(replay.turnLog)) return;
   opts = opts || {};
+  var turnLog = Array.isArray(replay.turnLog) ? replay.turnLog : [];
+  var turnCount = Number.isFinite(Number(replay.turns)) && Number(replay.turns) > 0 ? Number(replay.turns) : turnLog.length;
   var playerKey = opts.playerKey || replay.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
   var oppKey = opts.oppKey || replay.oppKey || null;
   var playerTeam = csTurnLogTeamSnapshot(playerKey);
@@ -7990,11 +7999,26 @@ function downloadReplayTurnLog(replay, opts) {
   var buildId = (typeof csGetBuildId === 'function') ? csGetBuildId() : null;
   var sourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl() : null;
   var format = replay.format || (typeof currentFormat !== 'undefined' ? currentFormat : null);
+  var qaScope = 'single-turn-log';
+  var qaScopeNote = 'This downloaded turn log is single-replay evidence from one replay sample. It can prove what happened in this battle, but it is not release-wide targeted proof unless paired with Release Matrix or Targeted Mechanic QA.';
+  var qaCoverageSummary = csBuildQaCoverageSummary(turnLog, {
+    generated_at: exportedAt,
+    build_id: buildId,
+    source_url: sourceUrl,
+    format: format,
+    player_team_id: playerKey || null,
+    opponent_team_id: oppKey || null,
+    scope: qaScope,
+    scope_note: qaScopeNote
+  });
   var payload = {
     schema_version: 'champions-turn-log-v2',
     exported_at: exportedAt,
     build_id: buildId,
     source_url: sourceUrl,
+    qa_scope: qaScope,
+    qa_scope_note: qaScopeNote,
+    turns: turnCount,
     seed: replay.seed || null,
     result: replay.result || null,
     format: format,
@@ -8005,48 +8029,42 @@ function downloadReplayTurnLog(replay, opts) {
     team_preview: {
       player_full_count: playerTeam && Array.isArray(playerTeam.members) ? playerTeam.members.length : null,
       opponent_full_count: opponentTeam && Array.isArray(opponentTeam.members) ? opponentTeam.members.length : null,
-      player_brought_count: csTurnLogBroughtSnapshot(replay.turnLog, 'player').length,
-      opponent_brought_count: csTurnLogBroughtSnapshot(replay.turnLog, 'opponent').length,
-      player_brought: csTurnLogBroughtSnapshot(replay.turnLog, 'player'),
-      opponent_brought: csTurnLogBroughtSnapshot(replay.turnLog, 'opponent')
+      player_brought_count: csTurnLogBroughtSnapshot(turnLog, 'player').length,
+      opponent_brought_count: csTurnLogBroughtSnapshot(turnLog, 'opponent').length,
+      player_brought: csTurnLogBroughtSnapshot(turnLog, 'player'),
+      opponent_brought: csTurnLogBroughtSnapshot(turnLog, 'opponent')
     },
     winCondition: replay.winCondition || null,
     turning_point: replay.turning_point || null,
     position_path: replay.position_path || [],
-    tactical_speed_summary: csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
-    duration_effect_summary: csBuildDurationEffectSummary(replay.turnLog, { scope: 'downloaded-turn-log' }),
-    decision_opportunity_ledger: csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }),
-    faint_cause_summary: csBuildFaintCauseSummary(replay.turnLog),
-    contact_move_audit_summary: csBuildContactMoveAuditSummary(replay.turnLog),
-    coach_event_rows: csBuildCoachEventRows(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), csBuildDurationEffectSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), {
+    tactical_speed_summary: csBuildTacticalSpeedSummary(turnLog, { scope: 'downloaded-turn-log' }),
+    duration_effect_summary: csBuildDurationEffectSummary(turnLog, { scope: 'downloaded-turn-log' }),
+    decision_opportunity_ledger: csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }),
+    faint_cause_summary: csBuildFaintCauseSummary(turnLog),
+    contact_move_audit_summary: csBuildContactMoveAuditSummary(turnLog),
+    coach_event_rows: csBuildCoachEventRows(csBuildTacticalSpeedSummary(turnLog, { scope: 'downloaded-turn-log' }), csBuildDurationEffectSummary(turnLog, { scope: 'downloaded-turn-log' }), {
       scope: 'downloaded-turn-log',
       player_team_id: playerKey || null,
       opponent_team_id: oppKey || null,
       format: format,
       maxRows: 120
     }),
-    coach_event_summary: csSummarizeCoachEventRows(csBuildCoachEventRows(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), csBuildDurationEffectSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), {
+    coach_event_summary: csSummarizeCoachEventRows(csBuildCoachEventRows(csBuildTacticalSpeedSummary(turnLog, { scope: 'downloaded-turn-log' }), csBuildDurationEffectSummary(turnLog, { scope: 'downloaded-turn-log' }), {
       scope: 'downloaded-turn-log',
       player_team_id: playerKey || null,
       opponent_team_id: oppKey || null,
       format: format,
       maxRows: 120
     })),
-    coach_brain_summary: csBuildCoachBrainSummary(csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(replay.turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }), {
+    coach_brain_summary: csBuildCoachBrainSummary(csBuildDecisionOpportunityLedger(csBuildTacticalSpeedSummary(turnLog, { scope: 'downloaded-turn-log' }), { scope: 'downloaded-turn-log' }), {
       scope: 'downloaded-turn-log',
       player_team_id: playerKey || null,
       opponent_team_id: oppKey || null,
       format: format
     }),
-    qa_coverage_summary: csBuildQaCoverageSummary(replay.turnLog, {
-      generated_at: exportedAt,
-      build_id: buildId,
-      source_url: sourceUrl,
-      format: format,
-      player_team_id: playerKey || null,
-      opponent_team_id: oppKey || null
-    }),
-    turnLog: replay.turnLog
+    qa_coverage_summary: qaCoverageSummary,
+    single_replay_missing_mechanics: Array.isArray(qaCoverageSummary.missing_targeted_proof) ? qaCoverageSummary.missing_targeted_proof.slice() : [],
+    turnLog: turnLog
   };
   var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   var url = URL.createObjectURL(blob);
@@ -13660,7 +13678,7 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-07-01',
+  updated: '2026-07-04',
   metrics: [
     { label: 'Current Truth', value: 'Not 100% yet' },
     { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
@@ -13681,6 +13699,16 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'Turn-log export scope and turn count fixed',
+      detail: 'v2.2.128 fixes downloaded single replay turn-log exports after QA logs showed valid turnLog rows but top-level turns:null. champions-turn-log-v2 now includes turns, qa_scope, qa_scope_note, qa_coverage_summary.coverage_scope_note, and single_replay_missing_mechanics so Josh/Codex can separate one-replay coverage gaps from release-wide proof failures. The validator now rejects top-level turns that drift from the structured turnLog row count.'
+    },
+    {
+      status: 'done',
+      title: 'Targeted Trick Room active proof exported',
+      detail: 'v2.2.127 adds a named targeted QA fixture for Trick Room active-state coverage in browser-exported QA artifacts. Tactical Coaching QA should now show mechanics_seen.trick_room_active > 0 and should not list Trick Room active state under missing_targeted_proof when using the current targeted sweep bundle.'
+    },
     {
       status: 'done',
       title: 'Regulation legality evidence request added',
