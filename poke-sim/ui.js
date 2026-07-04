@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.117-home-product-reveal
+// Build marker: v2.2.119-home-cycle-team-names
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.117-home-product-reveal'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.119-home-cycle-team-names'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -14973,17 +14973,30 @@ function csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) {
 }
 
 function csRenderHomeStartCycle() {
-  var steps = [
-    ['1', 'Pick a team', 'Use a saved team, a test team, or an uploaded team. If legality is unknown, the page says so.', 'Open Teams', 'teams'],
-    ['2', 'Run a battle test', 'Choose Singles or Doubles, pick the opponent, then run the matchup.', 'Start Test', 'simulator'],
-    ['3', 'Read what happened', 'Replay review shows move order, damage, status, field effects, and why a Pokemon went down.', 'Upload Replay', 'replay-coach'],
-    ['4', 'Try one change', 'Change one move, item, lead, or swap plan. Run again and see if it helped.', 'See Strategy', 'strategy']
+  var links = [
+    ['Test', 'Run a battle', 'simulator'],
+    ['Review', 'Upload replay', 'replay-coach'],
+    ['Build', 'Edit team', 'teams'],
+    ['Rank', 'See Top 25', 'home'],
+    ['Improve', 'Strategy', 'strategy']
   ];
-  return '<section class="home-start-cycle overview-section" aria-label="Start here cycle">' +
-    '<div class="overview-section-head"><div><span class="overview-kicker">How to use it</span><h3>Easy enough to start in one minute.</h3></div><span class="overview-status next">Player guide</span></div>' +
-    '<div class="home-start-steps">' + steps.map(function(step) {
-      return '<article class="home-start-step"><strong>' + _escapeHtml(step[0]) + '</strong><div><h4>' + _escapeHtml(step[1]) + '</h4><p>' + _escapeHtml(step[2]) + '</p><button type="button" data-home-tab="' + _escapeHtml(step[4]) + '">' + _escapeHtml(step[3]) + '</button></div></article>';
-    }).join('') + '</div>' +
+  return '<section class="home-action-cycle overview-section" aria-label="Battle Labs quick links">' +
+    '<div class="home-action-copy">' +
+      '<span class="overview-kicker">How it works</span>' +
+      '<h3>One loop: test, learn, improve.</h3>' +
+      '<p>Pick one team question. Run one test or upload one replay. Change one thing. Run it again.</p>' +
+      '<div class="home-action-buttons">' + links.map(function(link) {
+        return '<button type="button" data-home-tab="' + _escapeHtml(link[2]) + '"><span>' + _escapeHtml(link[0]) + '</span><strong>' + _escapeHtml(link[1]) + '</strong></button>';
+      }).join('') + '</div>' +
+    '</div>' +
+    '<div class="home-cycle-stage" aria-hidden="true">' +
+      '<div class="home-cycle-ring"></div>' +
+      '<div class="home-cycle-center"><strong>Battle Labs</strong><span>Test > Learn > Improve</span></div>' +
+      '<span class="home-cycle-node home-cycle-node-a">Pick</span>' +
+      '<span class="home-cycle-node home-cycle-node-b">Battle</span>' +
+      '<span class="home-cycle-node home-cycle-node-c">Replay</span>' +
+      '<span class="home-cycle-node home-cycle-node-d">Fix</span>' +
+    '</div>' +
   '</section>';
 }
 
@@ -15103,9 +15116,34 @@ function csTeamLabLoadDbBranchRows() {
   }
 }
 
+function csTeamLabCanonicalTeamKey(key) {
+  var raw = String(key || '').trim();
+  if (raw && raw !== 'player' && raw !== 'my_team' && raw !== 'my-active-team') return raw;
+  try {
+    var selected = (typeof currentPlayerKey !== 'undefined' && currentPlayerKey) ? String(currentPlayerKey) : '';
+    if (selected && selected !== 'player' && typeof TEAMS !== 'undefined' && TEAMS[selected]) return selected;
+  } catch (e) {}
+  try {
+    var selectors = ['player-select', 'player-team-select', 'team-select'];
+    for (var i = 0; i < selectors.length; i += 1) {
+      var el = document.getElementById(selectors[i]);
+      if (el && el.value && typeof TEAMS !== 'undefined' && TEAMS[el.value]) return String(el.value);
+    }
+  } catch (e2) {}
+  return raw || 'unknown_team';
+}
+
 function csTeamLabPrettyKey(key) {
-  return String(key || 'unknown team')
-    .replace(/^player$/, 'My active team')
+  var canonical = csTeamLabCanonicalTeamKey(key);
+  try {
+    if (typeof TEAMS !== 'undefined' && TEAMS[canonical]) {
+      var team = TEAMS[canonical];
+      var name = team.name || team.label || team.team_name || '';
+      if (name) return String(name);
+    }
+  } catch (e) {}
+  return String(canonical || key || 'unknown team')
+    .replace(/^player$/, 'Current Team')
     .replace(/_/g, ' ')
     .replace(/\b\w/g, function(ch) { return ch.toUpperCase(); });
 }
@@ -15139,6 +15177,8 @@ function csBuildTeamLabLocalTop25Rows() {
     return stats[teamKey];
   }
   function addGame(teamKey, opponentKey, result, format) {
+    teamKey = csTeamLabCanonicalTeamKey(teamKey);
+    opponentKey = csTeamLabCanonicalTeamKey(opponentKey);
     var s = ensure(teamKey);
     s.games += 1;
     s.formats[format || 'doubles'] = true;
@@ -15214,7 +15254,8 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
     var seenAt = row.last_seen_at ? Date.parse(row.last_seen_at) || 0 : 0;
     if (resetTs && seenAt && seenAt <= resetTs) return;
     var teamKey = row.player_team_id;
-    var opponentKey = row.opponent_team_id || 'unknown-opponent';
+    teamKey = csTeamLabCanonicalTeamKey(teamKey);
+    var opponentKey = csTeamLabCanonicalTeamKey(row.opponent_team_id || 'unknown-opponent');
     var weight = Math.max(1, Number(row.run_count || 1));
     var result = row.result === 'win' || row.result === 'loss' || row.result === 'draw' ? row.result : null;
     if (!result && row.tactical_summary && typeof row.tactical_summary === 'object') {
@@ -15397,12 +15438,6 @@ function csRenderTeamLabNewsroomHub() {
         '<div class="home-product-floating home-product-floating-c"><span>3</span><strong>Learn why</strong></div>' +
       '</div>' +
     '</div>' +
-    '<div class="home-value-strip" aria-label="Why Battle Labs matters">' +
-      '<article><span>01</span><strong>Test the team</strong><p>Pick your team and opponent. Run Singles or Doubles.</p></article>' +
-      '<article><span>02</span><strong>Learn the turn</strong><p>See the move, damage, status, or field effect that changed the battle.</p></article>' +
-      '<article><span>03</span><strong>Try one fix</strong><p>Change one thing. Run it again. Keep what improves.</p></article>' +
-    '</div>' +
-    csRenderHomeStartRail() +
     csRenderHomeStartCycle() +
     '<div class="team-lab-leaderboard-head">' +
       '<div><span class="overview-kicker">Team Lab</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>' + (hasEvidenceRows ? 'These rankings are simulator evidence, not magic. Each row needs enough games, current versions, and legality checks.' : 'No fake leaderboard. Top 25 opens only when the evidence is strong enough.') + '</p></div>' +

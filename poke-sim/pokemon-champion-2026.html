@@ -641,8 +641,30 @@ table{border-collapse:collapse;width:100%}
 .home-product-floating-a{top:4px;left:4px}
 .home-product-floating-b{right:0;top:46%}
 .home-product-floating-c{left:10%;bottom:4px}
+.home-action-cycle{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.72fr);gap:clamp(18px,4vw,56px);align-items:center;border:1px solid rgba(255,255,255,.08);border-radius:32px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.03));padding:clamp(24px,4.6vw,58px);margin-bottom:clamp(22px,3.4vw,44px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 22px 70px rgba(0,0,0,.22)}
+.home-action-copy h3{font-size:clamp(34px,5vw,72px);line-height:.94;letter-spacing:-.075em;color:#fff;margin:8px 0 14px}
+.home-action-copy p{max-width:650px;color:#b8c5d6;font-size:clamp(16px,1.65vw,21px);line-height:1.38;margin:0}
+.home-action-buttons{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:clamp(18px,2.6vw,30px)}
+.home-action-buttons button{min-height:74px;border:1px solid rgba(255,255,255,.1);border-radius:20px;background:rgba(255,255,255,.06);color:#fff;text-align:left;padding:12px 13px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:transform .18s ease,border-color .18s ease,background .18s ease}
+.home-action-buttons button:hover,.home-action-buttons button:focus-visible{transform:translateY(-2px);border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.1);outline:none}
+.home-action-buttons span{display:block;color:#7bb5ff;font-family:var(--font-mono);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.home-action-buttons strong{display:block;font-size:15px;line-height:1.05;letter-spacing:-.02em}
+.home-cycle-stage{position:relative;min-height:360px;border-radius:50%;display:grid;place-items:center}
+.home-cycle-ring{position:absolute;inset:34px;border:1px solid rgba(255,255,255,.12);border-radius:50%;background:radial-gradient(circle,rgba(91,164,245,.10),transparent 56%);animation:homeCycleSpin 18s linear infinite}
+.home-cycle-ring:before{content:"";position:absolute;inset:28px;border-radius:50%;border:1px dashed rgba(255,255,255,.12)}
+.home-cycle-center{position:relative;z-index:2;display:grid;place-items:center;width:172px;height:172px;border-radius:50%;background:#fff;color:#07101b;text-align:center;box-shadow:0 26px 70px rgba(0,0,0,.34)}
+.home-cycle-center strong{display:block;font-size:25px;line-height:.9;letter-spacing:-.06em}
+.home-cycle-center span{display:block;margin-top:6px;color:#48576a;font-size:10px;font-family:var(--font-mono);font-weight:950;text-transform:uppercase;letter-spacing:.05em}
+.home-cycle-node{position:absolute;z-index:3;display:inline-flex;align-items:center;justify-content:center;min-width:78px;min-height:38px;border:1px solid rgba(255,255,255,.13);border-radius:999px;background:rgba(255,255,255,.12);backdrop-filter:blur(14px);color:#fff;font-size:12px;font-weight:950;box-shadow:0 16px 44px rgba(0,0,0,.25);animation:homeCycleFloat 4.6s ease-in-out infinite}
+.home-cycle-node-a{top:12px;left:50%;transform:translateX(-50%)}
+.home-cycle-node-b{right:0;top:50%;animation-delay:.35s}
+.home-cycle-node-c{bottom:12px;left:50%;transform:translateX(-50%);animation-delay:.7s}
+.home-cycle-node-d{left:0;top:50%;animation-delay:1.05s}
+@keyframes homeCycleSpin{to{transform:rotate(360deg)}}
+@keyframes homeCycleFloat{0%,100%{margin-top:0}50%{margin-top:-8px}}
 @media(max-width:900px){.home-landing-hero{min-height:auto;align-items:start}.home-product-stage{min-height:390px}.home-product-window{inset:34px 0 38px}.home-product-floating-b{right:4px}}
-@media(max-width:560px){.home-landing-hero{padding:22px;border-radius:28px}.home-landing-hero h2{font-size:clamp(54px,17vw,86px)}.home-landing-hero p{font-size:clamp(22px,7vw,31px)}.home-product-stage{min-height:360px}.home-product-window{inset:38px 0 36px;border-radius:28px;transform:none}.home-product-arena{grid-template-columns:1fr;gap:10px;padding:24px 14px 12px}.home-product-vs{width:42px;height:42px;margin:0 auto}.home-product-team{min-height:88px}.home-product-team:before{width:38px;height:38px;margin-bottom:8px}.home-product-result{margin:0 14px 16px}.home-product-floating{font-size:11px;padding:7px 9px}.home-product-floating-b{top:48%;right:4px}.home-product-floating-c{left:4px}}
+@media(max-width:900px){.home-action-cycle{grid-template-columns:1fr}.home-action-buttons{grid-template-columns:repeat(3,minmax(0,1fr))}.home-cycle-stage{min-height:300px;max-width:420px;width:100%;justify-self:center}}
+@media(max-width:560px){.home-landing-hero{padding:22px;border-radius:28px}.home-landing-hero h2{font-size:clamp(54px,17vw,86px)}.home-landing-hero p{font-size:clamp(22px,7vw,31px)}.home-product-stage{min-height:360px}.home-product-window{inset:38px 0 36px;border-radius:28px;transform:none}.home-product-arena{grid-template-columns:1fr;gap:10px;padding:24px 14px 12px}.home-product-vs{width:42px;height:42px;margin:0 auto}.home-product-team{min-height:88px}.home-product-team:before{width:38px;height:38px;margin-bottom:8px}.home-product-result{margin:0 14px 16px}.home-product-floating{font-size:11px;padding:7px 9px}.home-product-floating-b{top:48%;right:4px}.home-product-floating-c{left:4px}.home-action-cycle{padding:22px;border-radius:26px}.home-action-buttons{grid-template-columns:1fr}.home-cycle-stage{min-height:240px}.home-cycle-ring{inset:24px}.home-cycle-center{width:138px;height:138px}.home-cycle-center strong{font-size:20px}.home-cycle-node{min-width:64px;min-height:32px;font-size:11px}}
 .home-value-strip{gap:clamp(12px,2vw,20px);margin-bottom:clamp(16px,2.6vw,30px)}
 .home-value-strip article{border-color:rgba(255,255,255,.09);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));padding:clamp(20px,3vw,34px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
 .home-value-strip article span{width:auto;height:auto;border:0;background:transparent;color:#7bb5ff;font-size:12px;margin-bottom:18px}
@@ -2685,8 +2707,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux v2.2.81-source-trust-guard v2.2.82-news-slide-images v2.2.83-source-backed-news-thumbs v2.2.84-news-health-sync v2.2.85-news-source-watch v2.2.86-replay-claim-audit v2.2.87-replay-qa-claim-payload v2.2.88-qa-artifact-claim-boundary v2.2.89-qa-claim-review v2.2.94-move-qa-closeout-plan v2.2.95-replay-logic-audit v2.2.96-legality-99-target v2.2.97-legality-evidence-package v2.2.98-github-release-guard v2.2.99-true-qa-slice-contract v2.2.100-qa-100-readiness v2.2.101-db-architecture-growth-audit v2.2.102-db-architecture-stress-plan v2.2.103-trainer-room-foundation v2.2.104-replay-import-governance v2.2.105-private-replay-import-service v2.2.106-private-replay-import-persistence v2.2.107-pilot-team-log-mapping v2.2.108-review-private-import-save v2.2.109-qa-readiness-next-gate v2.2.110-regmb-legality-request v2.2.111-qa-readout-inline v2.2.112-qa-trace-total-align v2.2.113-qa-no-auto-claim-card v2.2.114-qa-josh-showdown-assignment v2.2.115-qa-josh-owner-alignment v2.2.116-regmb-review-items-abilities v2.2.117-home-product-reveal -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.117-home-product-reveal</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux v2.2.81-source-trust-guard v2.2.82-news-slide-images v2.2.83-source-backed-news-thumbs v2.2.84-news-health-sync v2.2.85-news-source-watch v2.2.86-replay-claim-audit v2.2.87-replay-qa-claim-payload v2.2.88-qa-artifact-claim-boundary v2.2.89-qa-claim-review v2.2.94-move-qa-closeout-plan v2.2.95-replay-logic-audit v2.2.96-legality-99-target v2.2.97-legality-evidence-package v2.2.98-github-release-guard v2.2.99-true-qa-slice-contract v2.2.100-qa-100-readiness v2.2.101-db-architecture-growth-audit v2.2.102-db-architecture-stress-plan v2.2.103-trainer-room-foundation v2.2.104-replay-import-governance v2.2.105-private-replay-import-service v2.2.106-private-replay-import-persistence v2.2.107-pilot-team-log-mapping v2.2.108-review-private-import-save v2.2.109-qa-readiness-next-gate v2.2.110-regmb-legality-request v2.2.111-qa-readout-inline v2.2.112-qa-trace-total-align v2.2.113-qa-no-auto-claim-card v2.2.114-qa-josh-showdown-assignment v2.2.115-qa-josh-owner-alignment v2.2.116-regmb-review-items-abilities v2.2.117-home-product-reveal v2.2.118-home-cycle-clean v2.2.119-home-cycle-team-names -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.119-home-cycle-team-names</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -3525,9 +3547,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.117-home-product-reveal',
+    build_id: 'v2.2.119-home-cycle-team-names',
     release_date: '2026-07-04',
-    service_worker_cache: 'champions-sim-v2-2-117-home-product-reveal',
+    service_worker_cache: 'champions-sim-v2-2-119-home-cycle-team-names',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3601,9 +3623,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.117-home-product-reveal';
+      return txt || 'v2.2.119-home-cycle-team-names';
     } catch (e) {
-      return 'v2.2.117-home-product-reveal';
+      return 'v2.2.119-home-cycle-team-names';
     }
   }
 
@@ -29354,7 +29376,7 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.117-home-product-reveal
+// Build marker: v2.2.119-home-cycle-team-names
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -29395,7 +29417,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.117-home-product-reveal'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.119-home-cycle-team-names'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -44327,17 +44349,30 @@ function csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) {
 }
 
 function csRenderHomeStartCycle() {
-  var steps = [
-    ['1', 'Pick a team', 'Use a saved team, a test team, or an uploaded team. If legality is unknown, the page says so.', 'Open Teams', 'teams'],
-    ['2', 'Run a battle test', 'Choose Singles or Doubles, pick the opponent, then run the matchup.', 'Start Test', 'simulator'],
-    ['3', 'Read what happened', 'Replay review shows move order, damage, status, field effects, and why a Pokemon went down.', 'Upload Replay', 'replay-coach'],
-    ['4', 'Try one change', 'Change one move, item, lead, or swap plan. Run again and see if it helped.', 'See Strategy', 'strategy']
+  var links = [
+    ['Test', 'Run a battle', 'simulator'],
+    ['Review', 'Upload replay', 'replay-coach'],
+    ['Build', 'Edit team', 'teams'],
+    ['Rank', 'See Top 25', 'home'],
+    ['Improve', 'Strategy', 'strategy']
   ];
-  return '<section class="home-start-cycle overview-section" aria-label="Start here cycle">' +
-    '<div class="overview-section-head"><div><span class="overview-kicker">How to use it</span><h3>Easy enough to start in one minute.</h3></div><span class="overview-status next">Player guide</span></div>' +
-    '<div class="home-start-steps">' + steps.map(function(step) {
-      return '<article class="home-start-step"><strong>' + _escapeHtml(step[0]) + '</strong><div><h4>' + _escapeHtml(step[1]) + '</h4><p>' + _escapeHtml(step[2]) + '</p><button type="button" data-home-tab="' + _escapeHtml(step[4]) + '">' + _escapeHtml(step[3]) + '</button></div></article>';
-    }).join('') + '</div>' +
+  return '<section class="home-action-cycle overview-section" aria-label="Battle Labs quick links">' +
+    '<div class="home-action-copy">' +
+      '<span class="overview-kicker">How it works</span>' +
+      '<h3>One loop: test, learn, improve.</h3>' +
+      '<p>Pick one team question. Run one test or upload one replay. Change one thing. Run it again.</p>' +
+      '<div class="home-action-buttons">' + links.map(function(link) {
+        return '<button type="button" data-home-tab="' + _escapeHtml(link[2]) + '"><span>' + _escapeHtml(link[0]) + '</span><strong>' + _escapeHtml(link[1]) + '</strong></button>';
+      }).join('') + '</div>' +
+    '</div>' +
+    '<div class="home-cycle-stage" aria-hidden="true">' +
+      '<div class="home-cycle-ring"></div>' +
+      '<div class="home-cycle-center"><strong>Battle Labs</strong><span>Test > Learn > Improve</span></div>' +
+      '<span class="home-cycle-node home-cycle-node-a">Pick</span>' +
+      '<span class="home-cycle-node home-cycle-node-b">Battle</span>' +
+      '<span class="home-cycle-node home-cycle-node-c">Replay</span>' +
+      '<span class="home-cycle-node home-cycle-node-d">Fix</span>' +
+    '</div>' +
   '</section>';
 }
 
@@ -44457,9 +44492,34 @@ function csTeamLabLoadDbBranchRows() {
   }
 }
 
+function csTeamLabCanonicalTeamKey(key) {
+  var raw = String(key || '').trim();
+  if (raw && raw !== 'player' && raw !== 'my_team' && raw !== 'my-active-team') return raw;
+  try {
+    var selected = (typeof currentPlayerKey !== 'undefined' && currentPlayerKey) ? String(currentPlayerKey) : '';
+    if (selected && selected !== 'player' && typeof TEAMS !== 'undefined' && TEAMS[selected]) return selected;
+  } catch (e) {}
+  try {
+    var selectors = ['player-select', 'player-team-select', 'team-select'];
+    for (var i = 0; i < selectors.length; i += 1) {
+      var el = document.getElementById(selectors[i]);
+      if (el && el.value && typeof TEAMS !== 'undefined' && TEAMS[el.value]) return String(el.value);
+    }
+  } catch (e2) {}
+  return raw || 'unknown_team';
+}
+
 function csTeamLabPrettyKey(key) {
-  return String(key || 'unknown team')
-    .replace(/^player$/, 'My active team')
+  var canonical = csTeamLabCanonicalTeamKey(key);
+  try {
+    if (typeof TEAMS !== 'undefined' && TEAMS[canonical]) {
+      var team = TEAMS[canonical];
+      var name = team.name || team.label || team.team_name || '';
+      if (name) return String(name);
+    }
+  } catch (e) {}
+  return String(canonical || key || 'unknown team')
+    .replace(/^player$/, 'Current Team')
     .replace(/_/g, ' ')
     .replace(/\b\w/g, function(ch) { return ch.toUpperCase(); });
 }
@@ -44493,6 +44553,8 @@ function csBuildTeamLabLocalTop25Rows() {
     return stats[teamKey];
   }
   function addGame(teamKey, opponentKey, result, format) {
+    teamKey = csTeamLabCanonicalTeamKey(teamKey);
+    opponentKey = csTeamLabCanonicalTeamKey(opponentKey);
     var s = ensure(teamKey);
     s.games += 1;
     s.formats[format || 'doubles'] = true;
@@ -44568,7 +44630,8 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
     var seenAt = row.last_seen_at ? Date.parse(row.last_seen_at) || 0 : 0;
     if (resetTs && seenAt && seenAt <= resetTs) return;
     var teamKey = row.player_team_id;
-    var opponentKey = row.opponent_team_id || 'unknown-opponent';
+    teamKey = csTeamLabCanonicalTeamKey(teamKey);
+    var opponentKey = csTeamLabCanonicalTeamKey(row.opponent_team_id || 'unknown-opponent');
     var weight = Math.max(1, Number(row.run_count || 1));
     var result = row.result === 'win' || row.result === 'loss' || row.result === 'draw' ? row.result : null;
     if (!result && row.tactical_summary && typeof row.tactical_summary === 'object') {
@@ -44751,12 +44814,6 @@ function csRenderTeamLabNewsroomHub() {
         '<div class="home-product-floating home-product-floating-c"><span>3</span><strong>Learn why</strong></div>' +
       '</div>' +
     '</div>' +
-    '<div class="home-value-strip" aria-label="Why Battle Labs matters">' +
-      '<article><span>01</span><strong>Test the team</strong><p>Pick your team and opponent. Run Singles or Doubles.</p></article>' +
-      '<article><span>02</span><strong>Learn the turn</strong><p>See the move, damage, status, or field effect that changed the battle.</p></article>' +
-      '<article><span>03</span><strong>Try one fix</strong><p>Change one thing. Run it again. Keep what improves.</p></article>' +
-    '</div>' +
-    csRenderHomeStartRail() +
     csRenderHomeStartCycle() +
     '<div class="team-lab-leaderboard-head">' +
       '<div><span class="overview-kicker">Team Lab</span><h4>' + (hasEvidenceRows ? 'Top 25 Simulator Teams' : 'Top 25 waits for proof') + '</h4><p>' + (hasEvidenceRows ? 'These rankings are simulator evidence, not magic. Each row needs enough games, current versions, and legality checks.' : 'No fake leaderboard. Top 25 opens only when the evidence is strong enough.') + '</p></div>' +
