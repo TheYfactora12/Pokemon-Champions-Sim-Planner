@@ -117,15 +117,19 @@ async function main() {
   const progress = ids['progress-label'] && ids['progress-label'].textContent;
   const winPct = ids['win-pct'] && ids['win-pct'].textContent;
   const resultsDisplay = ids['results-section'] && ids['results-section'].style.display;
+  const resultsSub = ids['results-sub'] && ids['results-sub'].textContent;
 
   if (/^Simulation failed/.test(progress || '')) throw new Error(progress);
   if (!winPct || !/%$/.test(winPct)) throw new Error('win percentage did not render');
   if (resultsDisplay === 'none') throw new Error('results section stayed hidden');
+  if (!/games simulated/.test(resultsSub || '')) throw new Error('results subtitle did not show actual game count');
+  if (!/adaptive lineups/.test(resultsSub || '')) throw new Error('Bo3 results did not show adaptive lineup evidence');
 
   runMechanicsSmoke(ctx.simulateBattle);
 
   const auditPanel = ids['audit-panel'] && ids['audit-panel'].innerHTML;
   if (!auditPanel || !/Battle Audit/.test(auditPanel)) throw new Error('audit panel did not render');
+  if (!/Bo adaptation/.test(auditPanel)) throw new Error('audit panel did not render Bo adaptation evidence');
 
   const stablePlayerKey = vm.runInContext('getActivePlayerTeamKey()', ctx);
   const stablePlayerExists = vm.runInContext('!!(TEAMS && TEAMS["' + stablePlayerKey + '"])', ctx);

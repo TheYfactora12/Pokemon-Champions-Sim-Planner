@@ -3604,7 +3604,8 @@ function drawBarChart(canvasId, labels, values, color) {
 function displayResults(res, oppKey, simCtx) {
   simCtx = simCtx || resolveSimContext({ bo: currentBo, oppKey: oppKey });
   oppKey = oppKey || simCtx.oppKey;
-  const total = res.wins + res.losses + res.draws;
+  const total = csResultSeriesCount(res);
+  const totalGames = csResultGameCount(res);
   const winPct = Math.round(res.winRate * 100);
   const team = simCtx.oppTeam || TEAMS[oppKey];
   const boLabel = simCtx.boLabel || `Bo${currentBo}`;
@@ -3612,7 +3613,9 @@ function displayResults(res, oppKey, simCtx) {
 
   document.getElementById('results-section').style.display='';
   document.getElementById('results-title').textContent = `vs ${team?.name||oppKey}`;
-  document.getElementById('results-sub').textContent = `${total} series · ${boLabel} · ${fmtLabel} · ${new Date().toLocaleTimeString()}`;
+  document.getElementById('results-sub').textContent = `${total} series · ${totalGames} games simulated · ${boLabel} · ${fmtLabel}` +
+    (res.adaptiveBringEnabled ? ` · adaptive lineups (${res.playerBringPoolSize || 0} player options)` : '') +
+    ` · ${new Date().toLocaleTimeString()}`;
   document.getElementById('win-pct').textContent = `${winPct}%`;
   document.getElementById('stat-wins').textContent = res.wins;
   document.getElementById('stat-losses').textContent = res.losses;
@@ -3638,7 +3641,7 @@ function displayResults(res, oppKey, simCtx) {
     const maxWC = wcEntries[0][1];
     for (const [cond,cnt] of wcEntries) {
       const barPct = Math.round(cnt/maxWC*100);
-      const labelPct = Math.min(100, Math.round(cnt/total*100));
+      const labelPct = Math.min(100, csWinConditionPct(res, cnt));
       const d = document.createElement('div');
       d.className='win-cond-row';
       d.innerHTML=`<div style="display:flex;justify-content:space-between"><span>${cond}</span><span style="color:var(--primary);font-family:var(--font-mono);font-weight:700">${labelPct}%</span></div><div class="win-cond-bar" style="width:${barPct}%"></div>`;
@@ -3706,10 +3709,15 @@ function renderAuditPanel(res, oppKey, simCtx) {
   }) || res.allLogs[0] : null;
   const sampleTurnLog = sample && Array.isArray(sample.turnLog) ? sample.turnLog : [];
   const sampleMoves = sample && sample.movesUsed ? sample.movesUsed : {};
+  const totalSeries = csResultSeriesCount(res);
+  const totalGames = csResultGameCount(res);
+  const retainedLogs = Array.isArray(res && res.allLogs) ? res.allLogs.length : 0;
   const metaRows = [
     ['Battle', (playerTeam?.name || playerKey || 'Current Team') + ' vs ' + (TEAMS[oppKey]?.name || oppKey)],
     ['Format', simCtx.formatLabel || (currentFormat === 'doubles' ? 'Doubles' : 'Singles')],
     ['Series', simCtx.boLabel || ('Bo' + currentBo)],
+    ['Evidence', totalSeries + ' series · ' + totalGames + ' games · ' + retainedLogs + ' retained replay samples'],
+    ['Bo adaptation', res && res.adaptiveBringEnabled ? 'On · selected lineup can change between games from the registered six' : 'Off · one lineup used for the battle sample'],
     ['Sample', sample ? ((sample.result || 'unknown') + ' · ' + (sample.turns || 0) + ' turns') : 'No sample battle'],
     ['Win condition', sample && sample.winCondition ? sample.winCondition : '—']
   ];
@@ -3813,7 +3821,8 @@ function showInlinePilotCard(oppKey, res, simCtx) {
     resultsSection.appendChild(container);
   }
 
-  const total = res.wins + res.losses + res.draws;
+  const total = csResultSeriesCount(res);
+  const totalGames = csResultGameCount(res);
   const winPct = Math.round(res.winRate * 100);
   const oppTeam = TEAMS[oppKey];
   const teamName = oppTeam ? oppTeam.name : oppKey;
@@ -3828,17 +3837,24 @@ function showInlinePilotCard(oppKey, res, simCtx) {
 
   // T9j.10 (Refs #16) — Top leads from STRUCTURED battle.leads (post-override team ordering).
   // Old behavior parsed log strings which falsely named fainted or targeted Pokemon as leads.
-  const leadCounts = {};
-  const winLogs = (res.allLogs || []).filter(g => g.result === 'win');
-  for (const game of winLogs) {
-    const names = (game.leads && Array.isArray(game.leads.player)) ? game.leads.player : [];
-    for (const n of names) leadCounts[n] = (leadCounts[n]||0)+1;
+  let leadPairs = csTopCountEntries(res.playerWinLeadCounts, 2).map(e => e[0]);
+  if (!leadPairs.length) {
+    const leadCounts = {};
+    const winLogs = (res.allLogs || []).filter(g => g.result === 'win');
+    for (const game of winLogs) {
+      const leadKey = csCountKey(game.leads && game.leads.player);
+      csAddCount(leadCounts, leadKey);
+    }
+    leadPairs = csTopCountEntries(leadCounts, 2).map(e => e[0]);
   }
-  const leads = Object.entries(leadCounts).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>e[0]);
 
   const tips = [];
-  if (leads.length >= 2) tips.push(`Lead ${leads[0]} + ${leads[1]}`);
-  if (wcEntries.length) tips.push(`Win condition: ${wcEntries[0][0]} (${Math.round(wcEntries[0][1]/total*100)}%)`);
+  tips.push(`Evidence: ${total} Bo${simCtx.bo || currentBo} series / ${totalGames} games; ${res.retainedLogSampleSize || (res.allLogs || []).length} replay samples retained.`);
+  if (res.adaptiveBringEnabled) tips.push(`Bo adaptation active: each game can keep or change the selected ${getBringCount()} from the registered six.`);
+  if (leadPairs.length) tips.push(`Best winning lead: ${leadPairs[0]}`);
+  const bestLineup = csTopCountEntries(res.playerWinBringCounts, 1)[0];
+  if (bestLineup) tips.push(`Best winning lineup: ${bestLineup[0]}`);
+  if (wcEntries.length) tips.push(`Win condition: ${wcEntries[0][0]} (${csWinConditionPct(res, wcEntries[0][1])}% of player game wins)`);
   if (winPct < 45) tips.push('Use speed control to disrupt their gameplan');
 
   // T9j.16 (Refs #65) - inject top critical/high coaching rule for this matchup.
@@ -3862,7 +3878,8 @@ function showInlinePilotCard(oppKey, res, simCtx) {
         <span style="font-weight:700;font-size:13px">📋 Pilot Notes vs ${_escapeHtml(teamName)}</span>
         <span class="pilot-verdict ${verdictClass}" style="font-size:11px;padding:3px 8px;border-radius:4px">${_escapeHtml(verdict)} · ${_escapeHtml(String(winPct))}%</span>
       </div>
-      ${postCoach ? `<pre class="cs-pilot-card-v2">${_escapeHtml(postCoach)}</pre>` : (tips.length ? `<div style="font-size:11px;color:var(--text-m,#888);line-height:1.7">${tips.map(t=>`• ${_escapeHtml(t)}`).join('<br>')}</div>` : '')}
+      ${tips.length ? `<div style="font-size:11px;color:var(--text-m,#888);line-height:1.7">${tips.map(t=>`• ${_escapeHtml(t)}`).join('<br>')}</div>` : ''}
+      ${postCoach ? `<details style="margin-top:10px"><summary style="font-size:11px;color:var(--text-m,#888);cursor:pointer">Coach draft from retained replay sample</summary><pre class="cs-pilot-card-v2">${_escapeHtml(postCoach)}</pre></details>` : ''}
     </div>`;
 }
 
@@ -11682,6 +11699,96 @@ function randomBringFor(teamKey, seed) {
   }
   return pool.slice(0, count);
 }
+function csCountKey(names) {
+  if (!Array.isArray(names)) return '';
+  return names.filter(Boolean).map(String).join(' + ');
+}
+function csAddCount(map, key, amount) {
+  if (!map || !key) return;
+  map[key] = (map[key] || 0) + (Number(amount) || 1);
+}
+function csTopCountEntries(map, limit) {
+  return Object.entries(map || {})
+    .filter(function(entry) { return entry[0] && Number(entry[1]) > 0; })
+    .sort(function(a, b) { return Number(b[1]) - Number(a[1]); })
+    .slice(0, limit || 3);
+}
+function csResultSeriesCount(res) {
+  return Number((res && res.wins) || 0) + Number((res && res.losses) || 0) + Number((res && res.draws) || 0);
+}
+function csResultGameCount(res) {
+  return Number((res && res.totalBattles) || 0) || csResultSeriesCount(res);
+}
+function csResultPlayerBattleWins(res) {
+  return Number((res && res.battleWins) || 0) || Number((res && res.wins) || 0);
+}
+function csWinConditionPct(res, count) {
+  var denom = csResultPlayerBattleWins(res);
+  return denom > 0 ? Math.round((Number(count) || 0) / denom * 100) : 0;
+}
+function csBuildBringCandidatePool(teamKey, preferredBring) {
+  const team = TEAMS[teamKey];
+  const count = getBringCount();
+  const names = team && Array.isArray(team.members) ? team.members.map(function(m) { return m && m.name; }).filter(Boolean) : [];
+  const seen = Object.create(null);
+  const out = [];
+  function addBring(arr) {
+    const bring = _normalizeBringOrder(teamKey, arr);
+    if (bring.length !== count) return;
+    const key = csCountKey(bring);
+    if (!key || seen[key]) return;
+    seen[key] = true;
+    out.push(bring);
+  }
+  addBring(preferredBring);
+  function combos(start, cur) {
+    if (cur.length === count) {
+      for (let i = 0; i < cur.length; i++) {
+        for (let j = i + 1; j < cur.length; j++) {
+          const leads = [cur[i], cur[j]];
+          const back = cur.filter(function(n) { return n !== leads[0] && n !== leads[1]; });
+          addBring(leads.concat(back));
+        }
+      }
+      return;
+    }
+    for (let idx = start; idx < names.length; idx++) {
+      cur.push(names[idx]);
+      combos(idx + 1, cur);
+      cur.pop();
+    }
+  }
+  combos(0, []);
+  return out;
+}
+function csChooseIndexedBring(pool, avoidKey, indexSeed) {
+  if (!Array.isArray(pool) || !pool.length) return [];
+  const start = Math.abs(Number(indexSeed) || 0) % pool.length;
+  for (let i = 0; i < pool.length; i++) {
+    const candidate = pool[(start + i) % pool.length];
+    if (csCountKey(candidate) !== avoidKey) return candidate.slice();
+  }
+  return pool[start].slice();
+}
+function csPickBoGameBring(teamKey, mode, manualBring, pool, prevBattle, prevBring, side, seriesNumber, gameNumber) {
+  const preferred = (mode === 'manual' && Array.isArray(manualBring) && manualBring.length) ? manualBring : null;
+  if (gameNumber <= 1) {
+    if (preferred) return preferred.slice();
+    if (mode === 'random') return randomBringFor(teamKey);
+    return csChooseIndexedBring(pool, '', seriesNumber + gameNumber);
+  }
+  const prevKey = csCountKey(prevBring);
+  const playerWon = prevBattle && prevBattle.result === 'win';
+  const sideWon = side === 'player' ? playerWon : !playerWon;
+  if (sideWon && prevBring && prevBring.length) return prevBring.slice();
+  return csChooseIndexedBring(pool, prevKey, (seriesNumber * 17) + (gameNumber * 31) + (side === 'player' ? 3 : 11));
+}
+function csLineupBacklineLabel(lineupKey) {
+  const parts = String(lineupKey || '').split(' + ').filter(Boolean);
+  const leadCount = getLeadCount();
+  const back = parts.slice(leadCount);
+  return back.length ? back.join(' + ') : lineupKey;
+}
 // Legacy shims — kept in case external callers / saved sessions still reference
 // the pre-T9j.10 lead-only API. Map onto the bring picker (leads = first N).
 function getLeadsFor(teamKey) {
@@ -11725,7 +11832,29 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
   if (!isSimReadyTeam(oppTeamKey, TEAMS[oppTeamKey], { includeCustom: true })) {
     throw new Error('opponent team not loaded: ' + (oppTeamKey || 'none'));
   }
-  const results = { wins:0, losses:0, draws:0, totalTurns:0, totalTrTurns:0, winConditions:{}, allLogs:[], turnDist:{} };
+  const results = {
+    wins:0,
+    losses:0,
+    draws:0,
+    totalTurns:0,
+    totalTrTurns:0,
+    totalTwTurns:0,
+    timerDraws:0,
+    timerWins:0,
+    timerLosses:0,
+    totalBattles:0,
+    battleWins:0,
+    battleLosses:0,
+    battleDraws:0,
+    winConditions:{},
+    playerLeadCounts:{},
+    playerWinLeadCounts:{},
+    playerBringCounts:{},
+    playerWinBringCounts:{},
+    lineupAdjustmentSamples:[],
+    allLogs:[],
+    turnDist:{}
+  };
   let liveW=0, liveL=0;
   const BATCH = 20;
   // T9j.10 — resolve bring picks. Manual mode: resolve ONCE per series (locked).
@@ -11735,40 +11864,99 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
   const oppMode    = getBringMode(oppTeamKey);
   const manualPlayerBring = (playerMode === 'manual') ? getBringFor(playerTeamKey) : null;
   const manualOpponentBring = (oppMode === 'manual') ? getBringFor(oppTeamKey) : null;
+  const playerBringPool = csBuildBringCandidatePool(playerTeamKey, manualPlayerBring);
+  const opponentBringPool = csBuildBringCandidatePool(oppTeamKey, manualOpponentBring);
+  const adaptiveSeries = bo > 1;
 
   for (let i=0; i<numSeries; i+=BATCH) {
     const bSize = Math.min(BATCH, numSeries-i);
     for (let j=0; j<bSize; j++) {
+      const seriesNumber = i + j + 1;
       let seriesW=0, seriesL=0;
       const gamesNeeded = Math.ceil(bo/2);
       let gamesPlayed = 0;
       let seriesTurns=0, seriesTrTurns=0;
+      let seriesTwTurns=0;
 
-      // Per-series bring lock. Re-roll for random teams at each new series.
-      const playerBring   = manualPlayerBring   || randomBringFor(playerTeamKey);
-      const opponentBring = manualOpponentBring || randomBringFor(oppTeamKey);
+      // Bo1 uses one preview choice. Bo3/Bo5 adapts game-to-game: registered
+      // six stay locked, but the chosen 3/4 can change after each game.
+      let playerBring = null;
+      let opponentBring = null;
+      let previousBattle = null;
 
       // Phase 4a (Refs #52) — capture every game of this series so we can
       // append one sim-log entry per series at the end.
       const seriesBattles = [];
 
       while (seriesW<gamesNeeded && seriesL<gamesNeeded && gamesPlayed<bo) {
+        const nextGameNumber = gamesPlayed + 1;
+        playerBring = adaptiveSeries
+          ? csPickBoGameBring(playerTeamKey, playerMode, manualPlayerBring, playerBringPool, previousBattle, playerBring, 'player', seriesNumber, nextGameNumber)
+          : (manualPlayerBring || randomBringFor(playerTeamKey));
+        opponentBring = adaptiveSeries
+          ? csPickBoGameBring(oppTeamKey, oppMode, manualOpponentBring, opponentBringPool, previousBattle, opponentBring, 'opponent', seriesNumber, nextGameNumber)
+          : (manualOpponentBring || randomBringFor(oppTeamKey));
         const battle = simulateBattle(TEAMS[playerTeamKey], TEAMS[oppTeamKey], {
           format: currentFormat,
           playerBring,
           opponentBring,
           roleAwareOpeners: true
         });
+        battle.boGame = nextGameNumber;
+        battle.boSeries = seriesNumber;
+        battle.bring = Object.assign({}, battle.bring || {}, {
+          player: playerBring.slice(),
+          opponent: opponentBring.slice()
+        });
+        battle.boAdjustment = {
+          schema_version: 'champions-bo-adjustment-v1',
+          enabled: adaptiveSeries,
+          game: nextGameNumber,
+          player_lineup: playerBring.slice(),
+          opponent_lineup: opponentBring.slice(),
+          reason: nextGameNumber === 1
+            ? 'team_preview_game_1'
+            : 'between_game_adjustment_after_' + (previousBattle && previousBattle.result ? previousBattle.result : 'unknown')
+        };
+        if (adaptiveSeries && results.lineupAdjustmentSamples.length < 120) {
+          results.lineupAdjustmentSamples.push({
+            series: seriesNumber,
+            game: nextGameNumber,
+            previous_result: previousBattle ? previousBattle.result : null,
+            player_lineup: playerBring.slice(),
+            opponent_lineup: opponentBring.slice(),
+            reason: battle.boAdjustment.reason
+          });
+        }
+        results.totalBattles++;
         if (battle.result==='win') seriesW++;
         else if (battle.result==='loss') seriesL++;
         else { seriesW+=0.5; seriesL+=0.5; }
+        if (battle.result === 'win') results.battleWins++;
+        else if (battle.result === 'loss') results.battleLosses++;
+        else results.battleDraws++;
         seriesTurns+=battle.turns;
         seriesTrTurns+=battle.trTurns;
+        seriesTwTurns+=(battle.twTurns || 0);
         gamesPlayed++;
         results.turnDist[battle.turns]=(results.turnDist[battle.turns]||0)+1;
-        if (battle.winCondition) results.winConditions[battle.winCondition]=(results.winConditions[battle.winCondition]||0)+1;
+        if (battle.timerExpired) {
+          if (battle.result === 'draw') results.timerDraws++;
+          else if (battle.result === 'win') results.timerWins++;
+          else if (battle.result === 'loss') results.timerLosses++;
+        }
+        const leadKey = csCountKey(battle.leads && battle.leads.player);
+        const bringKey = csCountKey(battle.bring && battle.bring.player);
+        csAddCount(results.playerLeadCounts, leadKey);
+        csAddCount(results.playerBringCounts, bringKey);
+        if (battle.result === 'win') {
+          csAddCount(results.playerWinLeadCounts, leadKey);
+          csAddCount(results.playerWinBringCounts, bringKey);
+          if (battle.winCondition) results.winConditions[battle.winCondition]=(results.winConditions[battle.winCondition]||0)+1;
+        }
         if (results.allLogs.length<50) results.allLogs.push({...battle, playerKey:playerTeamKey, oppKey:oppTeamKey, format:currentFormat});
         seriesBattles.push(battle);
+        previousBattle = battle;
       }
 
       const seriesResult = seriesW>seriesL?'wins':seriesW<seriesL?'losses':'draws';
@@ -11777,6 +11965,7 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
       if (seriesResult==='losses') liveL++;
       results.totalTurns += seriesTurns/gamesPlayed;
       results.totalTrTurns += seriesTrTurns/gamesPlayed;
+      results.totalTwTurns += seriesTwTurns/gamesPlayed;
 
       // Phase 4a — append one entry per series to the sim log. Wrapped in
       // try so a storage failure never kills the sim run.
@@ -11806,9 +11995,18 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
   results.allLogs = results.allLogs.map(function(battle) {
     return csCapBattleReplay(battle);
   });
-  results.winRate = results.wins/numSeries;
-  results.avgTurns = results.totalTurns/numSeries;
-  results.avgTrTurns = results.totalTrTurns/numSeries;
+  const validSeries = results.wins + results.losses + results.draws;
+  results.winRate = validSeries ? results.wins/validSeries : 0;
+  results.avgTurns = validSeries ? results.totalTurns/validSeries : 0;
+  results.avgTrTurns = validSeries ? results.totalTrTurns/validSeries : 0;
+  results.avgTwTurns = validSeries ? results.totalTwTurns/validSeries : 0;
+  results.sampleSize = validSeries;
+  results.retainedLogSampleSize = results.allLogs.length;
+  results.adaptiveBringEnabled = adaptiveSeries;
+  results.playerBringPoolSize = playerBringPool.length;
+  results.opponentBringPoolSize = opponentBringPool.length;
+  results.confidenceNote = validSeries < 20 ? 'Low confidence - run more series or increase sample size'
+    : (validSeries < 100 ? 'Moderate confidence' : 'High confidence');
   results.playerKey = playerTeamKey;
   results.oppKey = oppTeamKey;
   results.bo = bo;
@@ -12181,11 +12379,11 @@ function csApplyPublicBetaGuardrails() {
   if (!profile.should_force_stress_lite) {
     if (runAllBtn) {
       runAllBtn.disabled = false;
-      runAllBtn.title = 'Run all matchups across the current scope';
+      runAllBtn.title = 'On-page matchup matrix: runs the selected team against every loaded team, including custom/imported teams and mirror matches.';
     }
     if (qaRunBtn) {
       qaRunBtn.disabled = false;
-      qaRunBtn.title = 'Run all matchups, then download one retained-evidence QA Artifact JSON';
+      qaRunBtn.title = 'QA file export: runs all loaded team matchups, then downloads one retained-evidence QA Artifact JSON.';
     }
     if (noteEl) noteEl.style.display = 'none';
     return profile;
@@ -12613,7 +12811,8 @@ function generatePilotGuide(oppKey, results, simCtx) {
   const emptyEl = el.querySelector('.pilot-empty');
   safeRemoveNode(emptyEl);
 
-  const total = results.wins + results.losses + results.draws;
+  const total = csResultSeriesCount(results);
+  const totalGames = csResultGameCount(results);
   const winPct = Math.round(results.winRate * 100);
 
   let verdict, verdictClass;
@@ -12630,10 +12829,11 @@ function generatePilotGuide(oppKey, results, simCtx) {
   const allLogs = results.allLogs || [];
   const winLogs = allLogs.filter(g => g.result === 'win');
   for (const game of winLogs) {
-    const names = (game.leads && Array.isArray(game.leads.player)) ? game.leads.player : [];
-    for (const n of names) leadCounts[n] = (leadCounts[n] || 0) + 1;
+    const leadKey = csCountKey(game.leads && game.leads.player);
+    csAddCount(leadCounts, leadKey);
   }
-  const leads = Object.entries(leadCounts).sort((a,b) => b[1]-a[1]).slice(0,2).map(e => e[0]);
+  const leadPairs = csTopCountEntries(results.playerWinLeadCounts, 2).map(e => e[0]);
+  const leads = leadPairs.length ? leadPairs : csTopCountEntries(leadCounts, 2).map(e => e[0]);
 
   const lossSeries = allLogs.filter(g => g.result === 'loss');
   const riskCounts = {};
@@ -12655,8 +12855,12 @@ function generatePilotGuide(oppKey, results, simCtx) {
     .map(e => e[0]);
 
   const tips = [];
-  if (leads.length >= 2) tips.push(`Lead ${leads[0]} + ${leads[1]} as the first option.`);
-  if (wcEntries.length) tips.push(`${wcEntries[0][0]} was the top win condition in ${Math.round(wcEntries[0][1]/total*100)}% of all series.`);
+  tips.push(`${total} Bo${simCtx.bo || currentBo} series produced ${totalGames} actual games; win/loss uses all series, while replay examples are retained samples.`);
+  if (results.adaptiveBringEnabled) tips.push(`Bo adaptation was active: game 2/3 lineups could change after the previous game result.`);
+  if (leads.length) tips.push(`Use ${leads[0]} as the first winning lead reference.`);
+  const bestWinningLineup = csTopCountEntries(results.playerWinBringCounts, 1)[0];
+  if (bestWinningLineup) tips.push(`Most common winning lineup: ${bestWinningLineup[0]}.`);
+  if (wcEntries.length) tips.push(`${wcEntries[0][0]} was the top win condition in ${csWinConditionPct(results, wcEntries[0][1])}% of player game wins.`);
   if (risks.length) tips.push(`Watch for ${risks[0]} — it appeared in over 40% of your losses.`);
   else if (winPct > 55) tips.push('Your team has a consistent edge — focus on denying their setup turns.');
   if (winPct < 45) tips.push('Open with Fake Out + speed control to disrupt their gameplan.');
@@ -12710,13 +12914,13 @@ function generatePilotGuide(oppKey, results, simCtx) {
       </div>
       <div class="pilot-details">
         ${preCoach ? `<details class="cs-pre-coach"><summary>PRE coaching</summary><pre>${_escapeHtml(preCoach)}</pre></details>` : ''}
-        ${leads.length ? `<div class="pilot-leads"><span class="pilot-section-label">LEADS</span> ${leads.join(' + ')}</div>` : ''}
+        ${leads.length ? `<div class="pilot-leads"><span class="pilot-section-label">WINNING LEAD EVIDENCE</span> ${leads.join(' · ')}</div>` : ''}
         <div class="pilot-section-label">WIN CONDITIONS</div>
         ${wcEntries.map(([cond,cnt]) => `
           <div class="pilot-wc-row">
             <span>${cond}</span>
             <div class="pilot-wc-bar-wrap"><div class="pilot-wc-bar" style="width:${Math.round(cnt/maxWC*100)}%"></div></div>
-            <span style="font-size:10px;color:var(--primary);font-family:var(--font-mono)">${Math.round(cnt/total*100)}%</span>
+            <span style="font-size:10px;color:var(--primary);font-family:var(--font-mono)">${csWinConditionPct(results, cnt)}%</span>
           </div>`).join('')}
         ${risks.length ? `<div class="pilot-section-label" style="margin-top:8px">RISKS</div>
           ${risks.map(r => `<div class="pilot-risk">⚠ Watch out for: <strong>${r}</strong></div>`).join('')}` : ''}
@@ -16030,9 +16234,11 @@ function generatePDFReport() {
       if (ld.length === 2) { var k = ld.slice().sort().join(' + '); leadCounts[k] = (leadCounts[k]||0)+1; }
       if (back.length) { var kb = back.slice().sort().join(' + '); backCounts[kb] = (backCounts[kb]||0)+1; }
     });
-    var bestLead = Object.entries(leadCounts).sort(function(a,b){return b[1]-a[1];})[0];
-    var bestBack = Object.entries(backCounts).sort(function(a,b){return b[1]-a[1];})[0];
-    var notes = winPct + '% WR — ' + v.label;
+    var bestLead = csTopCountEntries(res.playerWinLeadCounts, 1)[0] || Object.entries(leadCounts).sort(function(a,b){return b[1]-a[1];})[0];
+    var bestLineup = csTopCountEntries(res.playerWinBringCounts, 1)[0];
+    var bestBack = bestLineup ? [csLineupBacklineLabel(bestLineup[0]), bestLineup[1]] : Object.entries(backCounts).sort(function(a,b){return b[1]-a[1];})[0];
+    var notes = winPct + '% WR — ' + v.label + ' · ' + csResultSeriesCount(res) + ' series / ' + csResultGameCount(res) + ' games';
+    if (res.adaptiveBringEnabled) notes += ' · adaptive Bo lineups';
 
     var megaCell = '';
     if (pdfShowMegaCol) {

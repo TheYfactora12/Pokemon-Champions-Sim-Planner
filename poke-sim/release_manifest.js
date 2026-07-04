@@ -5,7 +5,7 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.123-sim-run-all-mode',
+    build_id: 'v2.2.125-pilot-series-evidence',
     release_date: '2026-07-04',
     service_worker_cache: 'champions-sim-v2-2-123-sim-run-all-mode',
     bundle_name: 'pokemon-champion-2026.html',

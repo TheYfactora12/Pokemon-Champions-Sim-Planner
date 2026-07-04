@@ -258,9 +258,10 @@ async function main() {
     truthy(/id="run-all-export-qa-btn"/.test(html), 'Release Matrix QA button missing');
     truthy(/id="stress-lite-qa-btn"/.test(html), 'Device-Safe Stress QA button missing');
     truthy(/id="tactical-sweep-qa-btn"/.test(html), 'Tactical Coaching QA button missing');
-    truthy(/Player battle test: runs the selected matchup/.test(html), 'Run Selected Matchup hover help missing');
-    truthy(/Player matchup sweep: runs your selected team against every loaded opponent/.test(html), 'Run All Loaded Teams hover help missing');
-    truthy(/Release Matrix QA: runs all matchups/.test(html), 'Release Matrix QA hover help missing');
+    truthy(/On-page battle test: runs the selected matchup/.test(html), 'Run Selected Matchup hover help missing');
+    truthy(/On-page matchup matrix: runs your selected team against every loaded team/.test(html), 'Run All Loaded Teams hover help missing');
+    truthy(/Run All \+ Download QA File/.test(html), 'Run All QA file button label missing');
+    truthy(/QA file export \/ Release Matrix QA: runs all loaded team matchups/.test(html), 'Run All QA file hover help missing');
     truthy(/Device-Safe Stress QA: runs capped lower-load coverage/.test(html), 'Device-Safe Stress QA hover help missing');
     truthy(/Tactical Coaching QA: tests branches/.test(html), 'Tactical Coaching QA hover help missing');
     truthy(/Workflow helper: choose a local folder/.test(html), 'QA drop folder hover help missing');

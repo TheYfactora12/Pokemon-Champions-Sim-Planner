@@ -276,7 +276,7 @@ T('27. showInlinePilotCard renders favorable verdict branch', () => {
 });
 T('28. showInlinePilotCard renders lead and win condition tips', () => {
   const card = document._els['results-section'].children[0];
-  inc(card.innerHTML, 'Lead Incineroar + Whimsicott');
+  inc(card.innerHTML, 'Best winning lead: Incineroar + Whimsicott');
   inc(card.innerHTML, 'Win condition: Tailwind Win');
 });
 T('29. showInlinePilotCard renders low-win disruption tip', () => {
