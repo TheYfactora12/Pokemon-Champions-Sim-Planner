@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.119-home-cycle-team-names',
+    build_id: 'v2.2.120-mad-lab-team-ranks',
     release_date: '2026-07-04',
-    service_worker_cache: 'champions-sim-v2-2-119-home-cycle-team-names',
+    service_worker_cache: 'champions-sim-v2-2-120-mad-lab-team-ranks',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

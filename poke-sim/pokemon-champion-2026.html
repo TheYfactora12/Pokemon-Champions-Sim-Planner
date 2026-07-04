@@ -665,6 +665,38 @@ table{border-collapse:collapse;width:100%}
 @media(max-width:900px){.home-landing-hero{min-height:auto;align-items:start}.home-product-stage{min-height:390px}.home-product-window{inset:34px 0 38px}.home-product-floating-b{right:4px}}
 @media(max-width:900px){.home-action-cycle{grid-template-columns:1fr}.home-action-buttons{grid-template-columns:repeat(3,minmax(0,1fr))}.home-cycle-stage{min-height:300px;max-width:420px;width:100%;justify-self:center}}
 @media(max-width:560px){.home-landing-hero{padding:22px;border-radius:28px}.home-landing-hero h2{font-size:clamp(54px,17vw,86px)}.home-landing-hero p{font-size:clamp(22px,7vw,31px)}.home-product-stage{min-height:360px}.home-product-window{inset:38px 0 36px;border-radius:28px;transform:none}.home-product-arena{grid-template-columns:1fr;gap:10px;padding:24px 14px 12px}.home-product-vs{width:42px;height:42px;margin:0 auto}.home-product-team{min-height:88px}.home-product-team:before{width:38px;height:38px;margin-bottom:8px}.home-product-result{margin:0 14px 16px}.home-product-floating{font-size:11px;padding:7px 9px}.home-product-floating-b{top:48%;right:4px}.home-product-floating-c{left:4px}.home-action-cycle{padding:22px;border-radius:26px}.home-action-buttons{grid-template-columns:1fr}.home-cycle-stage{min-height:240px}.home-cycle-ring{inset:24px}.home-cycle-center{width:138px;height:138px}.home-cycle-center strong{font-size:20px}.home-cycle-node{min-width:64px;min-height:32px;font-size:11px}}
+.home-lab-stage{position:relative;min-height:390px;border:1px solid rgba(255,255,255,.09);border-radius:34px;background:radial-gradient(circle at 50% 8%,rgba(91,164,245,.20),transparent 32%),linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 24px 80px rgba(0,0,0,.30);overflow:hidden}
+.home-lab-stage:before{content:"";position:absolute;left:8%;right:8%;bottom:52px;height:16px;border-radius:999px;background:linear-gradient(90deg,rgba(255,255,255,.11),rgba(255,255,255,.035));box-shadow:0 18px 42px rgba(0,0,0,.24)}
+.home-lab-board{position:absolute;left:24px;right:24px;top:22px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid rgba(255,255,255,.10);border-radius:20px;background:rgba(0,0,0,.18);padding:12px 14px;color:#fff}
+.home-lab-board span{color:#7fe0b0;font-family:var(--font-mono);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.10em}
+.home-lab-board strong{font-size:clamp(14px,1.3vw,18px);letter-spacing:-.03em}
+.home-lab-shelf{position:absolute;left:18px;right:18px;bottom:42px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end;gap:14px}
+.home-lab-glass{position:relative;display:grid;align-content:end;min-height:210px;border:0;background:transparent;color:#fff;padding:0 8px 16px;cursor:pointer;filter:drop-shadow(0 24px 32px rgba(0,0,0,.28));transition:transform .18s ease,filter .18s ease}
+.home-lab-glass:hover,.home-lab-glass:focus-visible{transform:translateY(-5px) rotate(-1deg);filter:drop-shadow(0 30px 42px rgba(91,164,245,.24));outline:none}
+.home-lab-glass:before{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(92px,80%);height:150px;border:2px solid rgba(255,255,255,.26);border-top:0;border-radius:8px 8px 30px 30px;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.035));box-shadow:inset 0 1px 18px rgba(255,255,255,.08)}
+.home-lab-beaker:before{border-radius:10px 10px 28px 28px}
+.home-lab-flask:before{width:min(128px,96%);height:128px;border-radius:58px 58px 30px 30px}
+.home-lab-tube:before{width:min(58px,72%);height:176px;border-radius:0 0 26px 26px}
+.home-lab-glass:after{content:"";position:absolute;left:50%;bottom:12px;transform:translateX(-50%);width:min(78px,70%);height:58px;border-radius:8px 8px 24px 24px;background:linear-gradient(180deg,rgba(78,201,148,.58),rgba(91,164,245,.62));animation:homeLabLiquid 3.4s ease-in-out infinite}
+.home-lab-flask:after{width:min(112px,84%);height:64px;border-radius:44px 44px 24px 24px;background:linear-gradient(180deg,rgba(245,197,66,.60),rgba(255,122,24,.48));animation-delay:.3s}
+.home-lab-tube:after{width:min(44px,58%);height:94px;border-radius:0 0 22px 22px;background:linear-gradient(180deg,rgba(91,164,245,.58),rgba(124,106,245,.58));animation-delay:.65s}
+.home-lab-glass span,.home-lab-glass strong{position:relative;z-index:2;display:block;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.home-lab-glass span{color:#d8e7ff;font-family:var(--font-mono);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.09em;margin-bottom:7px}
+.home-lab-glass strong{font-size:clamp(13px,1.16vw,17px);line-height:1.05;letter-spacing:-.025em}
+.home-lab-glass i{position:absolute;z-index:3;left:50%;bottom:86px;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.72);box-shadow:13px -24px 0 rgba(127,224,176,.56),-14px -42px 0 rgba(123,181,255,.52),8px -58px 0 rgba(255,255,255,.38);animation:homeLabBubble 2.6s ease-in-out infinite}
+.home-lab-glass-1 i{animation-delay:.35s}
+.home-lab-glass-2 i{animation-delay:.7s}
+.home-lab-glass-3 i{animation-delay:1.05s}
+.home-lab-bubbles span{position:absolute;width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.42);animation:homeLabDrift 6s ease-in-out infinite}
+.home-lab-bubbles span:nth-child(1){left:18%;top:36%;animation-delay:.2s}
+.home-lab-bubbles span:nth-child(2){left:41%;top:25%;animation-delay:1.2s}
+.home-lab-bubbles span:nth-child(3){right:25%;top:38%;animation-delay:2.1s}
+.home-lab-bubbles span:nth-child(4){right:12%;top:22%;animation-delay:3s}
+@keyframes homeLabLiquid{0%,100%{height:54px}50%{height:68px}}
+@keyframes homeLabBubble{0%{transform:translate(-50%,10px);opacity:.28}50%{opacity:1}100%{transform:translate(-50%,-36px);opacity:.1}}
+@keyframes homeLabDrift{0%,100%{transform:translateY(0);opacity:.28}50%{transform:translateY(-18px);opacity:.8}}
+@media(max-width:900px){.home-lab-stage{min-height:350px}.home-lab-shelf{gap:10px}.home-lab-glass{min-height:190px}.home-lab-board{align-items:flex-start;flex-direction:column}}
+@media(max-width:560px){.home-lab-stage{min-height:auto;padding:86px 12px 24px}.home-lab-shelf{position:relative;left:auto;right:auto;bottom:auto;grid-template-columns:repeat(2,minmax(0,1fr))}.home-lab-glass{min-height:172px}.home-lab-board{left:12px;right:12px;top:12px}.home-lab-glass strong{font-size:13px}}
 .home-value-strip{gap:clamp(12px,2vw,20px);margin-bottom:clamp(16px,2.6vw,30px)}
 .home-value-strip article{border-color:rgba(255,255,255,.09);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035));padding:clamp(20px,3vw,34px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
 .home-value-strip article span{width:auto;height:auto;border:0;background:transparent;color:#7bb5ff;font-size:12px;margin-bottom:18px}
@@ -2707,8 +2739,8 @@ table{border-collapse:collapse;width:100%}
         <path d="M 21 6 L 16.5 16 L 19.5 16 L 15.5 28 L 21.5 15.5 L 18.5 15.5 L 22 6 Z" fill="url(#hBolt)" stroke="#ecfeff" stroke-width="0.5" stroke-linejoin="round"/>
       </svg>
       <div>
-      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux v2.2.81-source-trust-guard v2.2.82-news-slide-images v2.2.83-source-backed-news-thumbs v2.2.84-news-health-sync v2.2.85-news-source-watch v2.2.86-replay-claim-audit v2.2.87-replay-qa-claim-payload v2.2.88-qa-artifact-claim-boundary v2.2.89-qa-claim-review v2.2.94-move-qa-closeout-plan v2.2.95-replay-logic-audit v2.2.96-legality-99-target v2.2.97-legality-evidence-package v2.2.98-github-release-guard v2.2.99-true-qa-slice-contract v2.2.100-qa-100-readiness v2.2.101-db-architecture-growth-audit v2.2.102-db-architecture-stress-plan v2.2.103-trainer-room-foundation v2.2.104-replay-import-governance v2.2.105-private-replay-import-service v2.2.106-private-replay-import-persistence v2.2.107-pilot-team-log-mapping v2.2.108-review-private-import-save v2.2.109-qa-readiness-next-gate v2.2.110-regmb-legality-request v2.2.111-qa-readout-inline v2.2.112-qa-trace-total-align v2.2.113-qa-no-auto-claim-card v2.2.114-qa-josh-showdown-assignment v2.2.115-qa-josh-owner-alignment v2.2.116-regmb-review-items-abilities v2.2.117-home-product-reveal v2.2.118-home-cycle-clean v2.2.119-home-cycle-team-names -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.119-home-cycle-team-names</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux v2.2.81-source-trust-guard v2.2.82-news-slide-images v2.2.83-source-backed-news-thumbs v2.2.84-news-health-sync v2.2.85-news-source-watch v2.2.86-replay-claim-audit v2.2.87-replay-qa-claim-payload v2.2.88-qa-artifact-claim-boundary v2.2.89-qa-claim-review v2.2.94-move-qa-closeout-plan v2.2.95-replay-logic-audit v2.2.96-legality-99-target v2.2.97-legality-evidence-package v2.2.98-github-release-guard v2.2.99-true-qa-slice-contract v2.2.100-qa-100-readiness v2.2.101-db-architecture-growth-audit v2.2.102-db-architecture-stress-plan v2.2.103-trainer-room-foundation v2.2.104-replay-import-governance v2.2.105-private-replay-import-service v2.2.106-private-replay-import-persistence v2.2.107-pilot-team-log-mapping v2.2.108-review-private-import-save v2.2.109-qa-readiness-next-gate v2.2.110-regmb-legality-request v2.2.111-qa-readout-inline v2.2.112-qa-trace-total-align v2.2.113-qa-no-auto-claim-card v2.2.114-qa-josh-showdown-assignment v2.2.115-qa-josh-owner-alignment v2.2.116-regmb-review-items-abilities v2.2.117-home-product-reveal v2.2.118-home-cycle-clean v2.2.119-home-cycle-team-names v2.2.120-mad-lab-team-ranks -->
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.120-mad-lab-team-ranks</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -3547,9 +3579,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.119-home-cycle-team-names',
+    build_id: 'v2.2.120-mad-lab-team-ranks',
     release_date: '2026-07-04',
-    service_worker_cache: 'champions-sim-v2-2-119-home-cycle-team-names',
+    service_worker_cache: 'champions-sim-v2-2-120-mad-lab-team-ranks',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3623,9 +3655,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.119-home-cycle-team-names';
+      return txt || 'v2.2.120-mad-lab-team-ranks';
     } catch (e) {
-      return 'v2.2.119-home-cycle-team-names';
+      return 'v2.2.120-mad-lab-team-ranks';
     }
   }
 
@@ -29376,7 +29408,7 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.119-home-cycle-team-names
+// Build marker: v2.2.120-mad-lab-team-ranks
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -29417,7 +29449,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.119-home-cycle-team-names'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.120-mad-lab-team-ranks'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -33042,6 +33074,7 @@ function displayResults(res, oppKey, simCtx) {
 
   // Auto-show inline pilot card after every single sim
   showInlinePilotCard(oppKey, res, simCtx);
+  if (typeof csRefreshTeamLabTop25Preview === 'function') csRefreshTeamLabTop25Preview();
 
   // PDF progressive reveal (Refs #57) - after ANY single sim, stash the
   // result so the PDF button can build a fresh packet. Each new sim either
@@ -44350,28 +44383,27 @@ function csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) {
 
 function csRenderHomeStartCycle() {
   var links = [
-    ['Test', 'Run a battle', 'simulator'],
-    ['Review', 'Upload replay', 'replay-coach'],
-    ['Build', 'Edit team', 'teams'],
-    ['Rank', 'See Top 25', 'home'],
-    ['Improve', 'Strategy', 'strategy']
+    ['Pick', 'Pick Team', 'teams', 'beaker'],
+    ['Simulate', 'Battle Sim', 'simulator', 'flask'],
+    ['Replay', 'Showdown Replay Analysis', 'replay-coach', 'tube'],
+    ['Fix', 'Fix Your Team', 'editor', 'beaker']
   ];
   return '<section class="home-action-cycle overview-section" aria-label="Battle Labs quick links">' +
     '<div class="home-action-copy">' +
       '<span class="overview-kicker">How it works</span>' +
-      '<h3>One loop: test, learn, improve.</h3>' +
-      '<p>Pick one team question. Run one test or upload one replay. Change one thing. Run it again.</p>' +
-      '<div class="home-action-buttons">' + links.map(function(link) {
-        return '<button type="button" data-home-tab="' + _escapeHtml(link[2]) + '"><span>' + _escapeHtml(link[0]) + '</span><strong>' + _escapeHtml(link[1]) + '</strong></button>';
-      }).join('') + '</div>' +
+      '<h3>A mad scientist lab for better teams.</h3>' +
+      '<p>Pick a team, simulate a battle, study a Showdown replay, then fix the team and test again.</p>' +
     '</div>' +
-    '<div class="home-cycle-stage" aria-hidden="true">' +
-      '<div class="home-cycle-ring"></div>' +
-      '<div class="home-cycle-center"><strong>Battle Labs</strong><span>Test > Learn > Improve</span></div>' +
-      '<span class="home-cycle-node home-cycle-node-a">Pick</span>' +
-      '<span class="home-cycle-node home-cycle-node-b">Battle</span>' +
-      '<span class="home-cycle-node home-cycle-node-c">Replay</span>' +
-      '<span class="home-cycle-node home-cycle-node-d">Fix</span>' +
+    '<div class="home-lab-stage" aria-label="Battle Labs lab actions">' +
+      '<div class="home-lab-board"><span>Battle formula</span><strong>Pick + Sim + Replay + Fix</strong></div>' +
+      '<div class="home-lab-shelf">' + links.map(function(link, index) {
+        return '<button type="button" class="home-lab-glass home-lab-' + _escapeHtml(link[3]) + ' home-lab-glass-' + index + '" data-home-tab="' + _escapeHtml(link[2]) + '">' +
+          '<span>' + _escapeHtml(link[0]) + '</span>' +
+          '<strong>' + _escapeHtml(link[1]) + '</strong>' +
+          '<i></i>' +
+        '</button>';
+      }).join('') + '</div>' +
+      '<div class="home-lab-bubbles"><span></span><span></span><span></span><span></span></div>' +
     '</div>' +
   '</section>';
 }
@@ -44524,6 +44556,12 @@ function csTeamLabPrettyKey(key) {
     .replace(/\b\w/g, function(ch) { return ch.toUpperCase(); });
 }
 
+function csTeamLabDisplayNameForKey(key, fallbackName) {
+  var fallback = String(fallbackName || '').trim();
+  if (fallback && fallback !== 'player' && fallback !== 'my_team') return fallback;
+  return csTeamLabPrettyKey(key);
+}
+
 function csTeamLabLocalResetTimestamp() {
   try {
     var resetAt = localStorage.getItem('team_lab:qa_reset_at');
@@ -44548,17 +44586,19 @@ function csBuildTeamLabLocalTop25Rows() {
 
   var resetTs = csTeamLabLocalResetTimestamp();
   var stats = {};
-  function ensure(teamKey) {
-    if (!stats[teamKey]) stats[teamKey] = { teamKey: teamKey, games: 0, wins: 0, losses: 0, draws: 0, opponents: {}, formats: {} };
+  function ensure(teamKey, displayName) {
+    if (!stats[teamKey]) stats[teamKey] = { teamKey: teamKey, displayName: displayName || '', games: 0, wins: 0, losses: 0, draws: 0, opponents: {}, formats: {} };
+    if (displayName && !stats[teamKey].displayName) stats[teamKey].displayName = displayName;
     return stats[teamKey];
   }
-  function addGame(teamKey, opponentKey, result, format) {
+  function addGame(teamKey, opponentKey, result, format, displayName, opponentDisplayName) {
     teamKey = csTeamLabCanonicalTeamKey(teamKey);
     opponentKey = csTeamLabCanonicalTeamKey(opponentKey);
-    var s = ensure(teamKey);
+    var s = ensure(teamKey, csTeamLabDisplayNameForKey(teamKey, displayName));
     s.games += 1;
     s.formats[format || 'doubles'] = true;
     if (opponentKey) s.opponents[opponentKey] = true;
+    if (opponentKey) ensure(opponentKey, csTeamLabDisplayNameForKey(opponentKey, opponentDisplayName));
     if (result === 'win') s.wins += 1;
     else if (result === 'loss') s.losses += 1;
     else s.draws += 1;
@@ -44566,11 +44606,13 @@ function csBuildTeamLabLocalTop25Rows() {
   entries.forEach(function(entry) {
     if (!entry || !entry.playerKey || !entry.oppKey) return;
     if (resetTs && Number(entry.ts || 0) <= resetTs) return;
+    var playerDisplay = entry.playerTeamName || entry.player_team_name || entry.player_name || entry.playerLabel || '';
+    var opponentDisplay = entry.oppTeamName || entry.opponentTeamName || entry.opp_team_name || entry.opponent_name || entry.oppLabel || '';
     (entry.games || []).forEach(function(game) {
       var result = game && game.result ? game.result : null;
       if (!result) return;
-      addGame(entry.playerKey, entry.oppKey, result, entry.format);
-      addGame(entry.oppKey, entry.playerKey, result === 'win' ? 'loss' : result === 'loss' ? 'win' : 'draw', entry.format);
+      addGame(entry.playerKey, entry.oppKey, result, entry.format, playerDisplay, opponentDisplay);
+      addGame(entry.oppKey, entry.playerKey, result === 'win' ? 'loss' : result === 'loss' ? 'win' : 'draw', entry.format, opponentDisplay, playerDisplay);
     });
   });
 
@@ -44583,7 +44625,7 @@ function csBuildTeamLabLocalTop25Rows() {
     var confidence = s.games >= 200 ? 'high' : s.games >= 60 ? 'medium' : 'low';
     return {
       rank: 0,
-      team: csTeamLabPrettyKey(teamKey),
+      team: s.displayName || csTeamLabPrettyKey(teamKey),
       archetype: teamKey === 'player' ? 'Local player evidence' : 'Benchmark opponent',
       score: score.toFixed(3),
       quality: 'local QA preview',
@@ -44610,10 +44652,11 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
   if (!Array.isArray(rows) || !rows.length) return [];
   var resetTs = csTeamLabLocalResetTimestamp();
   var stats = {};
-  function ensure(teamKey) {
+  function ensure(teamKey, displayName) {
     if (!stats[teamKey]) {
       stats[teamKey] = {
         teamKey: teamKey,
+        displayName: displayName || '',
         games: 0,
         wins: 0,
         losses: 0,
@@ -44623,6 +44666,7 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
         drift: 0
       };
     }
+    if (displayName && !stats[teamKey].displayName) stats[teamKey].displayName = displayName;
     return stats[teamKey];
   }
   rows.forEach(function(row) {
@@ -44640,12 +44684,13 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
         : null;
     }
     if (!result) return;
-    var s = ensure(teamKey);
+    var s = ensure(teamKey, csTeamLabDisplayNameForKey(teamKey, row.player_team_name || row.player_name));
     s.games += weight;
     if (result === 'win') s.wins += weight;
     else if (result === 'loss') s.losses += weight;
     else s.draws += weight;
     s.opponents[opponentKey] = true;
+    ensure(opponentKey, csTeamLabDisplayNameForKey(opponentKey, row.opponent_team_name || row.opponent_name));
     s.drift += Number(row.outcome_drift_count || 0);
     if (row.last_seen_at && (!s.lastSeen || String(row.last_seen_at) > String(s.lastSeen))) s.lastSeen = row.last_seen_at;
   });
@@ -44675,7 +44720,7 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
       : Math.max(0, Math.min(1, adjusted + coverageBonus - driftPenalty));
     return {
       rank: 0,
-      team: csTeamLabPrettyKey(teamKey),
+      team: s.displayName || csTeamLabPrettyKey(teamKey),
       archetype: team && team.tags && team.tags.length ? team.tags.slice(0, 2).join(', ') : 'DB branch evidence',
       score: Number(score || 0).toFixed(3),
       quality: legality === 'verified' ? 'DB evidence preview' : 'experimental DB preview',
@@ -44713,6 +44758,21 @@ function csRenderTeamLabTop25Rows(rows) {
       '<td>' + _escapeHtml(row.status) + '</td>' +
     '</tr>';
   }).join('');
+}
+
+function csRefreshTeamLabTop25Preview(root) {
+  root = root || document.getElementById('team-lab-home-hub');
+  if (!root || !root.querySelector) return false;
+  var rows = csTeamLabTop25Rows();
+  var hasEvidenceRows = rows.length && rows[0] && rows[0].rank !== 'locked';
+  var tableBody = root.querySelector('[data-team-lab-top25-body]');
+  if (tableBody) tableBody.innerHTML = csRenderTeamLabTop25Rows(rows);
+  var status = root.querySelector('.team-lab-leaderboard-head .overview-status');
+  if (status) {
+    status.textContent = hasEvidenceRows ? 'Experimental preview' : 'Locked until proven';
+    status.className = 'overview-status ' + (hasEvidenceRows ? 'warn' : 'gap');
+  }
+  return true;
 }
 
 function csTeamLabRankingGates() {

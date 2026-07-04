@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.119-home-cycle-team-names
+// Build marker: v2.2.120-mad-lab-team-ranks
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.119-home-cycle-team-names'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.120-mad-lab-team-ranks'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -3666,6 +3666,7 @@ function displayResults(res, oppKey, simCtx) {
 
   // Auto-show inline pilot card after every single sim
   showInlinePilotCard(oppKey, res, simCtx);
+  if (typeof csRefreshTeamLabTop25Preview === 'function') csRefreshTeamLabTop25Preview();
 
   // PDF progressive reveal (Refs #57) - after ANY single sim, stash the
   // result so the PDF button can build a fresh packet. Each new sim either
@@ -14974,28 +14975,27 @@ function csRenderHomeProofSnapshot(hasEvidenceRows, previewRows) {
 
 function csRenderHomeStartCycle() {
   var links = [
-    ['Test', 'Run a battle', 'simulator'],
-    ['Review', 'Upload replay', 'replay-coach'],
-    ['Build', 'Edit team', 'teams'],
-    ['Rank', 'See Top 25', 'home'],
-    ['Improve', 'Strategy', 'strategy']
+    ['Pick', 'Pick Team', 'teams', 'beaker'],
+    ['Simulate', 'Battle Sim', 'simulator', 'flask'],
+    ['Replay', 'Showdown Replay Analysis', 'replay-coach', 'tube'],
+    ['Fix', 'Fix Your Team', 'editor', 'beaker']
   ];
   return '<section class="home-action-cycle overview-section" aria-label="Battle Labs quick links">' +
     '<div class="home-action-copy">' +
       '<span class="overview-kicker">How it works</span>' +
-      '<h3>One loop: test, learn, improve.</h3>' +
-      '<p>Pick one team question. Run one test or upload one replay. Change one thing. Run it again.</p>' +
-      '<div class="home-action-buttons">' + links.map(function(link) {
-        return '<button type="button" data-home-tab="' + _escapeHtml(link[2]) + '"><span>' + _escapeHtml(link[0]) + '</span><strong>' + _escapeHtml(link[1]) + '</strong></button>';
-      }).join('') + '</div>' +
+      '<h3>A mad scientist lab for better teams.</h3>' +
+      '<p>Pick a team, simulate a battle, study a Showdown replay, then fix the team and test again.</p>' +
     '</div>' +
-    '<div class="home-cycle-stage" aria-hidden="true">' +
-      '<div class="home-cycle-ring"></div>' +
-      '<div class="home-cycle-center"><strong>Battle Labs</strong><span>Test > Learn > Improve</span></div>' +
-      '<span class="home-cycle-node home-cycle-node-a">Pick</span>' +
-      '<span class="home-cycle-node home-cycle-node-b">Battle</span>' +
-      '<span class="home-cycle-node home-cycle-node-c">Replay</span>' +
-      '<span class="home-cycle-node home-cycle-node-d">Fix</span>' +
+    '<div class="home-lab-stage" aria-label="Battle Labs lab actions">' +
+      '<div class="home-lab-board"><span>Battle formula</span><strong>Pick + Sim + Replay + Fix</strong></div>' +
+      '<div class="home-lab-shelf">' + links.map(function(link, index) {
+        return '<button type="button" class="home-lab-glass home-lab-' + _escapeHtml(link[3]) + ' home-lab-glass-' + index + '" data-home-tab="' + _escapeHtml(link[2]) + '">' +
+          '<span>' + _escapeHtml(link[0]) + '</span>' +
+          '<strong>' + _escapeHtml(link[1]) + '</strong>' +
+          '<i></i>' +
+        '</button>';
+      }).join('') + '</div>' +
+      '<div class="home-lab-bubbles"><span></span><span></span><span></span><span></span></div>' +
     '</div>' +
   '</section>';
 }
@@ -15148,6 +15148,12 @@ function csTeamLabPrettyKey(key) {
     .replace(/\b\w/g, function(ch) { return ch.toUpperCase(); });
 }
 
+function csTeamLabDisplayNameForKey(key, fallbackName) {
+  var fallback = String(fallbackName || '').trim();
+  if (fallback && fallback !== 'player' && fallback !== 'my_team') return fallback;
+  return csTeamLabPrettyKey(key);
+}
+
 function csTeamLabLocalResetTimestamp() {
   try {
     var resetAt = localStorage.getItem('team_lab:qa_reset_at');
@@ -15172,17 +15178,19 @@ function csBuildTeamLabLocalTop25Rows() {
 
   var resetTs = csTeamLabLocalResetTimestamp();
   var stats = {};
-  function ensure(teamKey) {
-    if (!stats[teamKey]) stats[teamKey] = { teamKey: teamKey, games: 0, wins: 0, losses: 0, draws: 0, opponents: {}, formats: {} };
+  function ensure(teamKey, displayName) {
+    if (!stats[teamKey]) stats[teamKey] = { teamKey: teamKey, displayName: displayName || '', games: 0, wins: 0, losses: 0, draws: 0, opponents: {}, formats: {} };
+    if (displayName && !stats[teamKey].displayName) stats[teamKey].displayName = displayName;
     return stats[teamKey];
   }
-  function addGame(teamKey, opponentKey, result, format) {
+  function addGame(teamKey, opponentKey, result, format, displayName, opponentDisplayName) {
     teamKey = csTeamLabCanonicalTeamKey(teamKey);
     opponentKey = csTeamLabCanonicalTeamKey(opponentKey);
-    var s = ensure(teamKey);
+    var s = ensure(teamKey, csTeamLabDisplayNameForKey(teamKey, displayName));
     s.games += 1;
     s.formats[format || 'doubles'] = true;
     if (opponentKey) s.opponents[opponentKey] = true;
+    if (opponentKey) ensure(opponentKey, csTeamLabDisplayNameForKey(opponentKey, opponentDisplayName));
     if (result === 'win') s.wins += 1;
     else if (result === 'loss') s.losses += 1;
     else s.draws += 1;
@@ -15190,11 +15198,13 @@ function csBuildTeamLabLocalTop25Rows() {
   entries.forEach(function(entry) {
     if (!entry || !entry.playerKey || !entry.oppKey) return;
     if (resetTs && Number(entry.ts || 0) <= resetTs) return;
+    var playerDisplay = entry.playerTeamName || entry.player_team_name || entry.player_name || entry.playerLabel || '';
+    var opponentDisplay = entry.oppTeamName || entry.opponentTeamName || entry.opp_team_name || entry.opponent_name || entry.oppLabel || '';
     (entry.games || []).forEach(function(game) {
       var result = game && game.result ? game.result : null;
       if (!result) return;
-      addGame(entry.playerKey, entry.oppKey, result, entry.format);
-      addGame(entry.oppKey, entry.playerKey, result === 'win' ? 'loss' : result === 'loss' ? 'win' : 'draw', entry.format);
+      addGame(entry.playerKey, entry.oppKey, result, entry.format, playerDisplay, opponentDisplay);
+      addGame(entry.oppKey, entry.playerKey, result === 'win' ? 'loss' : result === 'loss' ? 'win' : 'draw', entry.format, opponentDisplay, playerDisplay);
     });
   });
 
@@ -15207,7 +15217,7 @@ function csBuildTeamLabLocalTop25Rows() {
     var confidence = s.games >= 200 ? 'high' : s.games >= 60 ? 'medium' : 'low';
     return {
       rank: 0,
-      team: csTeamLabPrettyKey(teamKey),
+      team: s.displayName || csTeamLabPrettyKey(teamKey),
       archetype: teamKey === 'player' ? 'Local player evidence' : 'Benchmark opponent',
       score: score.toFixed(3),
       quality: 'local QA preview',
@@ -15234,10 +15244,11 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
   if (!Array.isArray(rows) || !rows.length) return [];
   var resetTs = csTeamLabLocalResetTimestamp();
   var stats = {};
-  function ensure(teamKey) {
+  function ensure(teamKey, displayName) {
     if (!stats[teamKey]) {
       stats[teamKey] = {
         teamKey: teamKey,
+        displayName: displayName || '',
         games: 0,
         wins: 0,
         losses: 0,
@@ -15247,6 +15258,7 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
         drift: 0
       };
     }
+    if (displayName && !stats[teamKey].displayName) stats[teamKey].displayName = displayName;
     return stats[teamKey];
   }
   rows.forEach(function(row) {
@@ -15264,12 +15276,13 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
         : null;
     }
     if (!result) return;
-    var s = ensure(teamKey);
+    var s = ensure(teamKey, csTeamLabDisplayNameForKey(teamKey, row.player_team_name || row.player_name));
     s.games += weight;
     if (result === 'win') s.wins += weight;
     else if (result === 'loss') s.losses += weight;
     else s.draws += weight;
     s.opponents[opponentKey] = true;
+    ensure(opponentKey, csTeamLabDisplayNameForKey(opponentKey, row.opponent_team_name || row.opponent_name));
     s.drift += Number(row.outcome_drift_count || 0);
     if (row.last_seen_at && (!s.lastSeen || String(row.last_seen_at) > String(s.lastSeen))) s.lastSeen = row.last_seen_at;
   });
@@ -15299,7 +15312,7 @@ function csBuildTeamLabDbBranchTop25Rows(rowsOverride) {
       : Math.max(0, Math.min(1, adjusted + coverageBonus - driftPenalty));
     return {
       rank: 0,
-      team: csTeamLabPrettyKey(teamKey),
+      team: s.displayName || csTeamLabPrettyKey(teamKey),
       archetype: team && team.tags && team.tags.length ? team.tags.slice(0, 2).join(', ') : 'DB branch evidence',
       score: Number(score || 0).toFixed(3),
       quality: legality === 'verified' ? 'DB evidence preview' : 'experimental DB preview',
@@ -15337,6 +15350,21 @@ function csRenderTeamLabTop25Rows(rows) {
       '<td>' + _escapeHtml(row.status) + '</td>' +
     '</tr>';
   }).join('');
+}
+
+function csRefreshTeamLabTop25Preview(root) {
+  root = root || document.getElementById('team-lab-home-hub');
+  if (!root || !root.querySelector) return false;
+  var rows = csTeamLabTop25Rows();
+  var hasEvidenceRows = rows.length && rows[0] && rows[0].rank !== 'locked';
+  var tableBody = root.querySelector('[data-team-lab-top25-body]');
+  if (tableBody) tableBody.innerHTML = csRenderTeamLabTop25Rows(rows);
+  var status = root.querySelector('.team-lab-leaderboard-head .overview-status');
+  if (status) {
+    status.textContent = hasEvidenceRows ? 'Experimental preview' : 'Locked until proven';
+    status.className = 'overview-status ' + (hasEvidenceRows ? 'warn' : 'gap');
+  }
+  return true;
 }
 
 function csTeamLabRankingGates() {
