@@ -14712,7 +14712,7 @@ function csRenderOverviewQaJoshIssues() {
     {
       status: 'next',
       title: 'Josh/QA assignment: Showdown reference battle review',
-      detail: 'Owner: Josh (@Jdoutt38). GitHub #190. Use source/reg-m-b-showdown-reference-battles.json and /Users/kevinmedeiros/Downloads/battles to test Review upload, parser mapping, turn events, Battle Sensei language, and tactical calibration. Label the evidence showdown_reference. Plain-English rule: Showdown logs are real gameplay reference evidence, not official Champion legality, Team Lab official ranking proof, or accepted/rejected in-game validation.'
+      detail: 'Owner: Josh (@Jdoutt38). GitHub #190. Current handoff build: v2.2.116-regmb-review-items-abilities. Use source/reg-m-b-showdown-reference-battles.json, /Users/kevinmedeiros/Downloads/battles, and QA artifact /Users/kevinmedeiros/Downloads/champions-sim-qa-artifact-2026-07-02T18-13-16.json. First Reg M-B test: Gen9ChampionsVGC2026RegMB-2026-06-24-pcrlbot02888784c1-silvijd.html. Confirm Review upload extracts battle-log-data, parser mapping, turn events, Battle Sensei language, and tactical calibration. Label the evidence showdown_reference. Plain-English rule: Showdown logs are real gameplay reference evidence, not official Champion legality, Team Lab official ranking proof, or accepted/rejected in-game validation.'
     },
     {
       status: 'gap',

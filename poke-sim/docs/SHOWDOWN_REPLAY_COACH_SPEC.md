@@ -999,6 +999,22 @@ The top-level `qa_coverage_summary` remains the full artifact summary for backwa
 
 Acceptance rule: replay-card validation must use `retained_replay_card_summary`. Broader coverage claims can use `full_artifact_summary`, but reports must say that targeted and tactical sweep evidence may add totals beyond the retained replay-card count.
 
+## Josh / QA Showdown Replay Corpus Handoff
+
+Current assignment: GitHub #190, owner Josh (`@Jdoutt38`).
+
+Current live build for the replay-corpus handoff: `v2.2.116-regmb-review-items-abilities`.
+
+Current evidence package:
+
+- Source folder: `/Users/kevinmedeiros/Downloads/battles`
+- Manifest: `source/reg-m-b-showdown-reference-battles.json`
+- Corpus: 39 Showdown HTML replays, including 5 Reg M-B and 34 Reg M-A logs.
+- Latest reviewed QA artifact: `/Users/kevinmedeiros/Downloads/champions-sim-qa-artifact-2026-07-02T18-13-16.json`
+- Recommended first Reg M-B file: `Gen9ChampionsVGC2026RegMB-2026-06-24-pcrlbot02888784c1-silvijd.html`
+
+Josh should test whether the Review upload flow accepts Showdown HTML, extracts embedded `battle-log-data`, maps teams/players/winner/turn events, and keeps every row labeled `showdown_reference`. These logs can calibrate parser behavior, Battle Sensei language, and tactical replay learning. They must not promote Champion legality, official Team Lab rankings, accepted/rejected in-game validation, or verified global learning by themselves.
+
 ## QA Slice Contract
 
 Schema addition: `qa_slice_contract`

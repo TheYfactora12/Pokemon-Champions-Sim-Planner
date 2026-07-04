@@ -80,6 +80,9 @@ Input package:
 - `source/reg-m-b-showdown-reference-battles.json`
 - Source folder: `/Users/kevinmedeiros/Downloads/battles`
 - Current manifest: 39 Showdown HTML replays, including 5 Reg M-B and 34 Reg M-A logs.
+- Current live build for this handoff: `v2.2.116-regmb-review-items-abilities`
+- Latest Codex-reviewed QA artifact: `/Users/kevinmedeiros/Downloads/champions-sim-qa-artifact-2026-07-02T18-13-16.json`
+- Recommended first Reg M-B file: `Gen9ChampionsVGC2026RegMB-2026-06-24-pcrlbot02888784c1-silvijd.html`
 - GitHub assignment: #190 `QA: Josh/QA Showdown reference battle review`
 - Owner: Josh (`@Jdoutt38`)
 
@@ -112,6 +115,7 @@ Josh/QA checklist:
 Pass condition:
 
 - At least one Reg M-B Showdown replay produces a readable Review output and QA artifact with source tier `showdown_reference`, no official-legality promotion, and clear parser gaps if any exist.
+- Josh can confirm the upload path extracts embedded `battle-log-data`, identifies Reg M-B doubles, players, team preview rosters, selected four where visible, winner, turns, moves, damage, misses, weather, abilities/items, faints, and Battle Sensei evidence language.
 
 Fail condition:
 
