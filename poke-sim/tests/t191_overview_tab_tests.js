@@ -55,6 +55,10 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'analysis/no-api-brain-foundation adds the local foundation');
   inc(ui, 'Brain output storage helpers');
   inc(ui, 'fixture seeds');
+  inc(ui, 'Project open-items audit documented');
+  inc(ui, 'audit/project-open-items-2026-07-05 adds docs/release/PROJECT_OPEN_ITEMS_AUDIT_2026-07-05.md');
+  inc(ui, 'Windows Showdown DB writer CLI entrypoint');
+  inc(ui, 'stale M9 bundle-size guard');
   inc(ui, 'Beginner-friendly Brain build plan added');
   inc(ui, 'simulator equals referee');
   inc(ui, 'Damage Logs');
@@ -264,6 +268,8 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'llm-brain-context.md');
   inc(ui, 'No-API Brain Integration Audit');
   inc(ui, 'llm-brain-integration-audit.md');
+  inc(ui, 'Project Open Items Audit');
+  inc(ui, 'PROJECT_OPEN_ITEMS_AUDIT_2026-07-05.md');
   inc(ui, 'Learning Brain Architecture Roadmap');
   inc(ui, 'LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md');
   inc(ui, 'Mechanics Truth Beta Gate Checklist');
@@ -552,6 +558,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'passes 15 checks');
   inc(ui, 'document-listed card types');
   inc(ui, 'node tests/no_api_brain_foundation_tests.js passes 15 checks');
+  inc(ui, 'Project audit local sweeps are green');
+  inc(ui, '122 test files passing');
+  inc(ui, '10 DB test files passing');
   inc(ui, 'Move scheduled source/news sync to branch or PR mode');
   inc(ui, 'regenerate pokemon-champion-2026.html and generated/release_artifact.json');
   inc(ui, 'Legality evidence package foundation added');

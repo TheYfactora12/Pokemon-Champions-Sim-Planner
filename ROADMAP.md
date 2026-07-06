@@ -87,6 +87,7 @@ Canonical docs:
 
 - [`docs/architecture/llm-brain-context.md`](docs/architecture/llm-brain-context.md)
 - [`docs/architecture/llm-brain-integration-audit.md`](docs/architecture/llm-brain-integration-audit.md)
+- [`docs/release/PROJECT_OPEN_ITEMS_AUDIT_2026-07-05.md`](docs/release/PROJECT_OPEN_ITEMS_AUDIT_2026-07-05.md)
 - [`poke-sim/docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md`](poke-sim/docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md)
 
 ---

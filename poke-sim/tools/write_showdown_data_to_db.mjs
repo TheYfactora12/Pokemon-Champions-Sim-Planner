@@ -286,7 +286,12 @@ async function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+function isMainModule() {
+  if (!process.argv[1]) return false;
+  return path.resolve(process.argv[1]) === __filename;
+}
+
+if (isMainModule()) {
   main().catch((error) => {
     console.error(error && error.stack ? error.stack : error);
     process.exitCode = 1;

@@ -43292,6 +43292,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'done',
+      title: 'Project open-items audit documented',
+      detail: 'Branch audit/project-open-items-2026-07-05 adds docs/release/PROJECT_OPEN_ITEMS_AUDIT_2026-07-05.md. The audit groups the live open work into Reg M-B source promotion, Josh/QA review, Team Lab evidence/privacy, Battle Sensei accuracy, deployment hardening, and no-API Brain review. It also fixes the Windows Showdown DB writer CLI entrypoint and aligns the stale M9 bundle-size guard with the current static Pages budget.'
+    },
+    {
+      status: 'done',
       title: 'Beginner-friendly Brain build plan added',
       detail: 'The roadmap now explains the pieces in plain language: simulator equals referee, analysis tools equal stat sheet, EvidenceBundle equals game film, Brain Composer equals coach, validator equals fact checker, and feedback equals the player teaching the coach through reviewed releases.'
     },
@@ -44022,6 +44027,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
+      title: 'Project audit local sweeps are green',
+      detail: 'The audit pass installed declared npm dependencies, then ran a PowerShell non-DB JS sweep with 122 test files passing and 14 intentional skips, plus a PowerShell DB mock sweep with 10 DB test files passing. Focused proof includes showdown_damage_oracle_tests.js at 56/56, showdown_db_writer_tests.js at 3/3, and db_m9_hardening_tests.js at 11/11. Live DB tests remain skipped unless RUN_LIVE_DB=1 and credentials are set.'
+    },
+    {
+      status: 'validated',
       title: 'Focused local damage-log proof is green',
       detail: '`recoil_faint_turn_log_tests.js` now proves an overkill hit records applied HP loss in visible logs and damage_events, preserves larger formula output as `calculated_damage`, records `overkill_damage`, marks the HP cap, and bases recoil on applied damage.'
     },
@@ -44445,6 +44455,7 @@ var CS_OVERVIEW_DATA = {
   docs: [
     { label: 'No-API Brain Context', href: '../docs/architecture/llm-brain-context.md' },
     { label: 'No-API Brain Integration Audit', href: '../docs/architecture/llm-brain-integration-audit.md' },
+    { label: 'Project Open Items Audit', href: '../docs/release/PROJECT_OPEN_ITEMS_AUDIT_2026-07-05.md' },
     { label: 'Learning Brain Architecture Roadmap', href: 'docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md' },
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
     { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
@@ -44517,6 +44528,13 @@ var CS_OVERVIEW_DATA = {
       role: 'Repo-safe audit of source-of-truth boundaries and implementation sequence',
       status: 'audit for Brain MVP',
       notes: 'Use to confirm which files can be touched during the evidence-schema slice and which runtime/source-truth files must stay unchanged.'
+    },
+    {
+      label: 'Project Open Items Audit',
+      href: '../docs/release/PROJECT_OPEN_ITEMS_AUDIT_2026-07-05.md',
+      role: 'Current open issue lanes, audit fixes, and next safe coding targets',
+      status: 'active audit closeout',
+      notes: 'Use when deciding what to tackle next. It records live GitHub issue/PR counts, local test proof, the Windows CLI fix, the stale bundle-budget guard fix, and the safe next-fix queue.'
     },
     {
       label: 'Learning Brain Architecture Roadmap',
