@@ -2,7 +2,7 @@
 
 > **Battle-tested. Always evolving.**
 > Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/TheYfactora12/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
-> **Last updated:** 2026-07-05 | **Baseline:** simulation-truth gate active; no-API Brain roadmap is documentation-ready, implementation not started
+> **Last updated:** 2026-07-05 | **Baseline:** simulation-truth gate active; no-API Brain foundation is implemented on a branch, UI/runtime wiring not started
 
 ---
 
@@ -54,11 +54,11 @@ The Brain may explain team identity, leads, threats, replay turning points, conf
 | Step | Status | Scope | Must not do |
 |---|---|---|---|
 | 0 | Done on `analysis/llm-brain-audit` | Docs, audit, beginner-friendly context, and roadmap alignment | Runtime changes |
-| 1 | Next | `poke-sim/analysis/schemas.js`, `evidence_bundle.js`, `confidence.js`, `provenance.js`, tests | UI, DB writes, LLM calls |
-| 2 | Next after schema | Deterministic tools for legality, speed, damage pressure, threats, leads, replay summary, and critical turns | Final coaching prose |
-| 3 | Next after tools | `brain_schema.js`, `brain_rules.js`, `brain_templates.js`, `brain_composer.js`, `brain_validator.js` | API calls or model calls |
-| 4 | Next after composer | Local feedback plus `improvement_pack.js` export | Silent self-training |
-| 5 | Next after feedback | Regression fixtures for fake evidence IDs, bad confidence, illegal suggestions, replay overstatement, wrong lead, and missed turning point | Untested Brain fixes |
+| 1 | Implemented on `analysis/no-api-brain-foundation` | `poke-sim/analysis/schemas.js`, `evidence_bundle.js`, `confidence.js`, `provenance.js`, tests | UI, DB writes, LLM calls |
+| 2 | Initial contracts implemented | Deterministic tools for legality, speed, damage pressure, threats, leads, replay summary, and critical turns | Final coaching prose |
+| 3 | Implemented locally | `brain_schema.js`, `brain_rules.js`, `brain_templates.js`, `brain_composer.js`, `brain_validator.js` | API calls or model calls |
+| 4 | Implemented locally | Local feedback plus `improvement_pack.js` export | Silent self-training |
+| 5 | Initial tests added | Regression tests for fake evidence IDs, bad confidence, illegal suggestions, replay overstatement, wrong lead, and missed turning point | Untested Brain fixes |
 | 6 | Later | Evidence Mode UI cards with feedback buttons and improvement-pack download | Chat-first UI |
 | 7 | Later | Optional DB persistence after the local loop is proven | Raw unvalidated AI blobs |
 | 8 | Later | Optional real LLM endpoint behind server-side keys and flags | Browser API keys |

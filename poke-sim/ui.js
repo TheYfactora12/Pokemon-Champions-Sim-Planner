@@ -13789,7 +13789,7 @@ var CS_OVERVIEW_DATA = {
   updated: '2026-07-05',
   metrics: [
     { label: 'Current Truth', value: 'Not 100% yet' },
-    { label: 'Brain MVP', value: 'No-API Composer next' },
+    { label: 'Brain MVP', value: 'Core local foundation green' },
     { label: 'Learning Rule', value: 'Evidence -> Tests -> Release' },
     { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
     { label: 'Release Teams', value: '15 approved runtime rows' },
@@ -13813,6 +13813,11 @@ var CS_OVERVIEW_DATA = {
       status: 'done',
       title: 'No-API Brain roadmap organized',
       detail: 'The 2026-07-05 roadmap now defines the Brain as a local deterministic coach, not a live LLM or self-training system. The safe loop is Simulator facts -> EvidenceBundle -> Local Brain Composer -> Brain Validator -> UI Cards -> Feedback -> Improvement Pack -> Codex Regression Loop. Docs added/updated: docs/architecture/llm-brain-context.md, docs/architecture/llm-brain-integration-audit.md, and ROADMAP.md.'
+    },
+    {
+      status: 'done',
+      title: 'No-API Brain foundation implemented locally',
+      detail: 'Branch analysis/no-api-brain-foundation adds the local foundation without changing engine mechanics: EvidenceBundle schema, confidence/provenance helpers, deterministic analysis tool contracts, BrainAnalysis schema, local rules/templates/composer/validator, feedback storage, improvement-pack export, and focused regression tests. No API calls, no LLM calls, no Supabase Edge Functions, no release_manifest.js change, and no chat UI.'
     },
     {
       status: 'done',
@@ -14541,6 +14546,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'validated',
+      title: 'No-API Brain foundation tests are green',
+      detail: 'node tests/no_api_brain_foundation_tests.js passes 12 checks: valid/invalid EvidenceBundle handling, duplicate evidence IDs, deterministic tool contracts, composer output, fake evidence rejection, high-confidence-with-uncertainty rejection, missing legality rejection, illegal-as-legal rejection, replay overstatement rejection, local feedback storage, and improvement-pack export.'
+    },
+    {
+      status: 'validated',
       title: 'Focused local damage-log proof is green',
       detail: '`recoil_faint_turn_log_tests.js` now proves an overkill hit records applied HP loss in visible logs and damage_events, preserves larger formula output as `calculated_damage`, records `overkill_damage`, marks the HP cap, and bases recoil on applied damage.'
     },
@@ -14753,8 +14763,8 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
-      title: 'No-API Brain is planned, not implemented',
-      detail: 'The Brain roadmap is organized, but the code still needs the actual local foundation: EvidenceBundle schema, deterministic analysis tools, BrainAnalysis schema, local Brain Composer, validator, feedback storage, improvement-pack export, and regression fixtures. Until those exist, Brain claims must stay roadmap/planning, not user-facing certainty.'
+      title: 'No-API Brain UI and runtime wiring are not implemented yet',
+      detail: 'The local foundation exists on analysis/no-api-brain-foundation, but the app still does not render Evidence Mode cards or call the composer from the UI. Next work must connect real simulator/replay evidence into the deterministic tool contracts, then add validated UI cards with feedback buttons and improvement-pack export. Brain claims must stay local/test-only until that UI slice is reviewed.'
     },
     {
       status: 'gap',
@@ -14775,23 +14785,23 @@ var CS_OVERVIEW_DATA = {
   next: [
     {
       status: 'next',
-      title: 'Build EvidenceBundle schema before Brain UI',
-      detail: 'First implementation slice after the audit branch: add poke-sim/analysis/schemas.js, evidence_bundle.js, confidence.js, provenance.js, and tests. Required helpers: createEvidenceBundle, addFinding, validateEvidenceBundle, collectEvidenceIds, getFindingsByCategory, and hasEvidence. No UI, no Supabase writes, no API calls, no release bump, and no engine mechanics changes in this slice.'
+      title: 'Review and merge the no-API Brain foundation branch',
+      detail: 'The local foundation branch should be reviewed before UI work: analysis/no-api-brain-foundation includes schemas, evidence bundles, tool contracts, composer, validator, feedback, improvement packs, and tests. Confirm no engine, damage, legality, Supabase Edge Function, release manifest, API key, or chat UI changes slipped in.'
     },
     {
       status: 'next',
-      title: 'Build no-API Brain Composer after deterministic tools',
-      detail: 'After evidence schema and tools exist, add brain_schema.js, brain_rules.js, brain_templates.js, brain_composer.js, and brain_validator.js. The composer should use local rules/templates only. It must reject fake evidence IDs, high confidence with weak evidence, illegal suggestions marked legal, replay-only overstatement, and recommendations without legality_status.'
+      title: 'Wire deterministic Brain tools to real simulator and replay evidence',
+      detail: 'The initial tool contracts are conservative. Next, connect them to validated simulator/replay/source-truth surfaces: legality validators, speed_order_details, damage_events, effect_events, replay parser output, critical turns, and source gaps. Do not duplicate damage or speed mechanics inside the Brain.'
     },
     {
       status: 'next',
-      title: 'Add feedback and Brain Improvement Pack export',
-      detail: 'After the local composer validates, add brain_feedback.js and improvement_pack.js. Store feedback locally with champions:* keys, let users mark Helpful, Wrong Reason, Wrong Lead, Missed Turning Point, Too Vague, Illegal Suggestion, Accepted Suggestion, and Rejected Suggestion, then export JSON cases for Codex to turn into rules/templates/tests.'
+      title: 'Add Evidence Mode UI cards after validator proof',
+      detail: 'Render AI Brain Analysis - Evidence Mode only after BrainAnalysis validates. Cards should show Summary, Team Identity, Win Conditions, Best Leads, Major Threats, Recommended Changes, Replay Turning Point, Confidence, Evidence Used, Uncertainty, feedback buttons, reason tags, correction notes, and Export Brain Improvement Pack.'
     },
     {
       status: 'next',
-      title: 'Turn every Brain fix into a regression test',
-      detail: 'Brain learning means Evidence -> Feedback -> Improvement Pack -> Codex -> Tests -> Release. Every fixed Brain failure needs a benchmark fixture covering missing evidence, fake evidence IDs, weak-evidence confidence, illegal suggestions, replay overstatement, missed turning point, or wrong lead. No test, no learning.'
+      title: 'Keep every Brain improvement tied to a regression test',
+      detail: 'Brain learning means Evidence -> Feedback -> Improvement Pack -> Codex -> Tests -> Release. Every future improvement pack fix needs a benchmark fixture covering missing evidence, fake evidence IDs, weak-evidence confidence, illegal suggestions, replay overstatement, missed turning point, or wrong lead. No test, no learning.'
     },
     {
       status: 'next',

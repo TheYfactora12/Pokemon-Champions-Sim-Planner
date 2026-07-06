@@ -46,11 +46,13 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Current Truth');
   inc(ui, 'Not 100% yet');
   inc(ui, 'Brain MVP');
-  inc(ui, 'No-API Composer next');
+  inc(ui, 'Core local foundation green');
   inc(ui, 'Learning Rule');
   inc(ui, 'Evidence -> Tests -> Release');
   inc(ui, 'No-API Brain roadmap organized');
   inc(ui, 'Simulator facts -> EvidenceBundle -> Local Brain Composer -> Brain Validator -> UI Cards -> Feedback -> Improvement Pack -> Codex Regression Loop');
+  inc(ui, 'No-API Brain foundation implemented locally');
+  inc(ui, 'analysis/no-api-brain-foundation adds the local foundation');
   inc(ui, 'Beginner-friendly Brain build plan added');
   inc(ui, 'simulator equals referee');
   inc(ui, 'Damage Logs');
@@ -167,14 +169,14 @@ T('3b. replay formatter accepts richer applied damage log brackets', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
-  inc(ui, 'Build EvidenceBundle schema before Brain UI');
-  inc(ui, 'createEvidenceBundle');
-  inc(ui, 'getFindingsByCategory');
-  inc(ui, 'Build no-API Brain Composer after deterministic tools');
-  inc(ui, 'brain_schema.js, brain_rules.js, brain_templates.js, brain_composer.js, and brain_validator.js');
-  inc(ui, 'Add feedback and Brain Improvement Pack export');
-  inc(ui, 'Helpful, Wrong Reason, Wrong Lead, Missed Turning Point, Too Vague, Illegal Suggestion, Accepted Suggestion, and Rejected Suggestion');
-  inc(ui, 'Turn every Brain fix into a regression test');
+  inc(ui, 'Review and merge the no-API Brain foundation branch');
+  inc(ui, 'analysis/no-api-brain-foundation includes schemas, evidence bundles, tool contracts, composer, validator, feedback, improvement packs, and tests');
+  inc(ui, 'Wire deterministic Brain tools to real simulator and replay evidence');
+  inc(ui, 'speed_order_details');
+  inc(ui, 'damage_events');
+  inc(ui, 'Add Evidence Mode UI cards after validator proof');
+  inc(ui, 'AI Brain Analysis - Evidence Mode');
+  inc(ui, 'Keep every Brain improvement tied to a regression test');
   inc(ui, 'No test, no learning');
   inc(ui, 'Stress-test, rebuild, and prove the new truth board');
   inc(ui, 'Replace removed teams with approved Champion teams');
@@ -543,6 +545,8 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, '68 open issues in TheYfactora12/Pokemon-Champions-Sim-Planner');
   inc(ui, '56 open issues in alfredocox/Pokemon-Champions-Sim-Planner');
   inc(ui, 'analysis/llm-brain-audit');
+  inc(ui, 'No-API Brain foundation tests are green');
+  inc(ui, 'node tests/no_api_brain_foundation_tests.js passes 12 checks');
   inc(ui, 'Move scheduled source/news sync to branch or PR mode');
   inc(ui, 'regenerate pokemon-champion-2026.html and generated/release_artifact.json');
   inc(ui, 'Legality evidence package foundation added');
