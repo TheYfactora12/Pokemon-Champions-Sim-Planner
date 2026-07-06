@@ -23,9 +23,10 @@ The safest LLM Brain path is therefore:
 deterministic simulator/replay/source evidence
   -> browser-safe analysis evidence bundle
   -> deterministic analysis tools
-  -> mock Brain output validator
+  -> no-API Brain Composer and validator
   -> UI cards
-  -> optional DB persistence
+  -> local feedback and improvement packs
+  -> optional DB persistence later
   -> feature-flagged external LLM endpoint later
 ```
 
@@ -491,10 +492,11 @@ Do not change `index.html` in Phase 1 unless the task explicitly asks for runtim
 ### Later Milestones
 
 11. Draft DB evidence tables only after bundle schema tests pass.
-12. Add Brain output schema and mock adapter before any real LLM endpoint.
-13. Add UI cards only after validator rejects fake evidence IDs and unsupported claims.
-14. Add real LLM endpoint only behind disabled-by-default flags and server-side key storage.
-15. Add benchmarks before treating Brain output as release-safe.
+12. Add Brain output schema, local rules, local templates, no-API composer, and validator before any real LLM endpoint.
+13. Add local feedback and improvement-pack export before DB-backed learning.
+14. Add benchmarks before treating Brain output as release-safe.
+15. Add UI cards only after validator rejects fake evidence IDs and unsupported claims.
+16. Add real LLM endpoint only behind disabled-by-default flags and server-side key storage.
 
 ## Roadmap Translation From The Updated Plan
 
@@ -505,12 +507,12 @@ The uploaded roadmap maps cleanly onto the existing repo:
 | Phase 0 Repo Guardrails | This audit report |
 | Phase 1 Evidence Schema Foundation | `poke-sim/analysis/*.js` plus tests |
 | Phase 2 Deterministic Analysis Tools | `poke-sim/analysis/tools/*` wrappers around existing simulator/replay/source evidence |
-| Phase 3 DB Evidence Tables | migration under `poke-sim/db/migrations/` plus architecture doc, no runtime writes |
-| Phase 4 Brain Output Schema | `poke-sim/analysis/brain/*` with mock adapter and guardrails |
-| Phase 5 UI Cards | Evidence Mode cards, mock only |
-| Phase 6 Replay Review Brain | replay evidence extraction and critical-turn findings |
-| Phase 7 Real LLM Adapter | disabled-by-default endpoint mode, no browser keys |
-| Phase 8 Benchmark Harness | local mock benchmarks and CI-safe guardrails |
+| Phase 3 No-API Brain Composer | `poke-sim/analysis/brain/*` with schema, rules, templates, composer, and validator |
+| Phase 4 Feedback And Improvement Packs | local feedback records plus exportable regression cases |
+| Phase 5 Benchmark Harness | local regression fixtures and CI-safe guardrails |
+| Phase 6 UI Cards | Evidence Mode cards using validated no-API BrainAnalysis |
+| Phase 7 DB Evidence Tables | migration under `poke-sim/db/migrations/` plus architecture doc, no runtime writes until local loop is proven |
+| Phase 8 Real LLM Adapter | disabled-by-default endpoint mode, no browser keys |
 | Phase 9 DB Persistence | existing Supabase/local fallback style |
 | Phase 10 Leaderboard/Meta Brain | explicitly deferred |
 

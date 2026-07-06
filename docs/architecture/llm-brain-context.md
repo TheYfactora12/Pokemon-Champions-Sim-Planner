@@ -13,10 +13,12 @@ The product goal is to make simulator evidence easier for players and the team t
 existing simulator
   -> deterministic analysis tools
   -> evidence bundle
-  -> mock BrainAnalysis output
-  -> validation guardrails
+  -> no-API Brain Composer
+  -> BrainAnalysis validation guardrails
   -> evidence-based UI cards
-  -> optional DB persistence
+  -> feedback and improvement packs
+  -> Codex regression loop
+  -> optional DB persistence later
   -> real LLM endpoint later
 ```
 
@@ -74,19 +76,20 @@ Blocked output:
 
 ## MVP Requires No New Infrastructure
 
-The MVP should not call a real model.
+The MVP should not call a real model, a remote API, or any network dependency.
 
-The first build can use a mock brain adapter:
+The first build should use a deterministic no-API Brain Composer:
 
 ```text
 simulator facts
   -> EvidenceBundle
-  -> mock BrainAnalysis JSON
+  -> local rules and templates
+  -> BrainAnalysis JSON
   -> BrainAnalysis validator
   -> UI cards
 ```
 
-This proves the architecture before adding API keys, paid inference, Supabase Edge Functions, or any other model endpoint.
+This proves the architecture before adding API keys, paid inference, Supabase Edge Functions, or any other model endpoint. The no-API Brain should remain the fallback and baseline even if a real LLM is added later.
 
 ## EvidenceBundle Control Boundary
 
@@ -115,6 +118,15 @@ Every finding must include:
 
 No evidence ID means no major Brain claim.
 
+Required EvidenceBundle helpers:
+
+- `createEvidenceBundle(input)`
+- `addFinding(bundle, finding)`
+- `validateEvidenceBundle(bundle)`
+- `collectEvidenceIds(bundle)`
+- `getFindingsByCategory(bundle, category)`
+- `hasEvidence(bundle, evidenceId)`
+
 Recommended initial files:
 
 ```text
@@ -132,14 +144,39 @@ Recommended initial files:
 
 ```text
 poke-sim/analysis/brain/brain_schema.js
-poke-sim/analysis/brain/brain_prompt.js
-poke-sim/analysis/brain/brain_adapter.js
-poke-sim/analysis/brain/brain_output_validator.js
-poke-sim/analysis/brain/brain_guardrails.js
+poke-sim/analysis/brain/brain_rules.js
+poke-sim/analysis/brain/brain_templates.js
+poke-sim/analysis/brain/brain_composer.js
+poke-sim/analysis/brain/brain_validator.js
 poke-sim/analysis/brain/index.js
 ```
 
-For the MVP, `brain_adapter.js` should run in mock mode only.
+For the MVP, `brain_composer.js` should run locally from rules and templates only.
+
+Initial composer rules:
+
+- `detectTeamIdentity()`
+- `detectSpeedRisk()`
+- `detectLeadPlan()`
+- `detectMajorThreats()`
+- `detectWinConditions()`
+- `detectReplayTurningPoint()`
+- `detectSuggestedChanges()`
+- `calculateBrainConfidence()`
+
+Initial templates:
+
+- team identity
+- speed risk
+- lead reason
+- major threat
+- win condition
+- replay turning point
+- low confidence
+- medium confidence
+- high confidence
+- insufficient evidence
+- unknown legality
 
 The validator must reject output when:
 
@@ -152,6 +189,18 @@ The validator must reject output when:
 - replay-only findings are overstated as global conclusions
 
 Confidence should be validated or downgraded by code. It should not be freely invented by the model.
+
+The main composer function should be:
+
+```js
+composeBrainAnalysis(evidenceBundle)
+```
+
+The main validator function should be:
+
+```js
+validateBrainAnalysis(output, evidenceBundle)
+```
 
 ## UI Direction
 
@@ -173,6 +222,8 @@ Initial cards:
 - Confidence
 - Evidence Used
 - Uncertainty
+- Feedback Buttons
+- Export Improvement Pack
 
 The UI should show evidence IDs and uncertainty clearly. If evidence is missing, the UI should say that directly.
 
@@ -201,16 +252,17 @@ Future model calls should receive validated evidence bundles or cleaned summarie
 
 Supabase is optional persistence and audit infrastructure. It is not the battle engine and should not be required for the first Brain MVP.
 
-Design table concepts can be drafted early, but runtime writes should wait until the evidence schema, BrainAnalysis schema, validator, and mock tests are working.
+Design table concepts can be drafted early, but runtime writes should wait until the evidence schema, BrainAnalysis schema, no-API composer, validator, feedback records, and benchmark tests are working.
 
 Recommended persistence order:
 
 1. evidence schema and local tests
 2. deterministic analysis contracts
-3. BrainAnalysis schema and validator
-4. mock brain adapter and benchmark fixtures
-5. DB tables for requests, bundles, outputs, feedback, and benchmark results
-6. optional Supabase/local adapter methods
+3. BrainAnalysis schema, local composer, and validator
+4. local feedback and improvement-pack export
+5. benchmark fixtures and regression tests
+6. DB tables for requests, bundles, outputs, feedback, and benchmark results
+7. optional Supabase/local adapter methods
 
 Do not store unvalidated AI blobs as trusted analysis.
 
@@ -237,6 +289,54 @@ Every feedback item should eventually answer:
 - which rule, template, validator, test, or fixture changed
 - which release contains the improvement
 - what the improvement still does not prove
+
+### Feedback And Improvement Packs
+
+Feedback should be collected locally first, using the existing `champions:*` storage convention where available.
+
+Suggested local keys:
+
+```text
+champions:brain:feedback:v1
+champions:brain:outputs:v1
+champions:brain:improvement_packs:v1
+```
+
+Initial feedback types:
+
+- `helpful`
+- `not_helpful`
+- `wrong_reason`
+- `wrong_lead`
+- `missed_turning_point`
+- `illegal_suggestion`
+- `too_vague`
+- `accepted_suggestion`
+- `rejected_suggestion`
+
+Recommended files:
+
+```text
+poke-sim/analysis/brain/brain_feedback.js
+poke-sim/analysis/brain/improvement_pack.js
+```
+
+Required feedback functions:
+
+- `recordBrainFeedback(feedback)`
+- `listBrainFeedback()`
+- `getBrainFeedbackByOutput(analysisOutputId)`
+- `deleteBrainFeedback(feedbackId)`
+- `summarizeFeedback()`
+
+Required improvement-pack functions:
+
+- `createImprovementPack(options)`
+- `exportImprovementPackAsJson()`
+- `downloadImprovementPack()`
+- `summarizeImprovementPack()`
+
+Every Brain improvement must include a regression test. No test, no learning.
 
 ## Files That Should Not Change For The MVP Foundation
 
@@ -314,17 +414,24 @@ Initial tools:
 - `lead_recommendations.js`
 - `role_coverage.js`
 - `replay_summary.js`
+- `critical_turns.js`
 - `index.js`
 
 Each tool returns evidence findings and uncertainty, not final coaching prose.
 
-### Phase 3 - BrainAnalysis Schema, Validator, And Mock Adapter
+### Phase 3 - No-API Brain Composer
 
-Add structured BrainAnalysis output, guardrails, and a mock-only adapter.
+Add structured BrainAnalysis output, local rules, local templates, composer, and validator.
 
-Do not call external models.
+Do not call external models, remote APIs, or network dependencies.
 
-### Phase 4 - Benchmarks And Red-Team Fixtures
+### Phase 4 - Feedback And Improvement Packs
+
+Add local feedback collection and JSON improvement-pack export.
+
+Feedback should not directly mutate production behavior. It should create reviewable cases that Codex can turn into rules, templates, guardrails, and tests.
+
+### Phase 5 - Benchmarks And Red-Team Fixtures
 
 Add fixtures for tricky simulator evidence:
 
@@ -337,26 +444,31 @@ Add fixtures for tricky simulator evidence:
 - status and action denial
 - ability and item triggers
 - replay parser gaps
+- fake evidence IDs
+- high confidence with weak evidence
+- illegal suggestion mismatch
+- replay-only overstatement
+- missed turning point feedback
 
-### Phase 5 - UI Cards
+### Phase 6 - UI Cards
 
-Render validated mock BrainAnalysis output in Evidence Mode cards.
+Render validated no-API BrainAnalysis output in Evidence Mode cards.
 
 Do not add open-ended chat in the MVP.
 
-### Phase 6 - Optional DB Persistence
+### Phase 7 - Optional DB Persistence
 
-Add DB tables and adapter methods only after schemas and validators are proven.
+Add DB tables and adapter methods only after schemas, validators, local feedback, improvement packs, and benchmarks are proven.
 
 Store what the Brain saw, what it said, whether validation passed, and what evidence IDs were used.
 
-### Phase 7 - Real LLM Endpoint
+### Phase 8 - Real LLM Endpoint
 
-Add a disabled-by-default server-side endpoint only after the mock pipeline, validator, and benchmarks are stable.
+Add a disabled-by-default server-side endpoint only after the no-API composer, validator, feedback loop, and benchmarks are stable.
 
 No model keys in browser code.
 
-### Phase 8 - Learning And Meta Intelligence
+### Phase 9 - Learning And Meta Intelligence
 
 Defer leaderboard, global meta, and large-scale learning until the simulator truth, evidence ledger, privacy model, and anti-poisoning controls are stronger.
 
@@ -366,8 +478,10 @@ The accepted direction is:
 
 - Evidence Mode Beta first
 - schema before AI UI
-- mock brain before real model
+- no-API Brain Composer before real model
 - validator before persistence
+- feedback and improvement packs before DB learning
+- every Brain improvement requires a regression test
 - privacy-aware LLM use later
 - team-review first before broader matchup and replay coaching
 - Milestone A active work before opening later phases as implementation issues
