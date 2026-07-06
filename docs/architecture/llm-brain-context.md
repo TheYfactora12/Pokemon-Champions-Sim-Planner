@@ -214,6 +214,30 @@ Recommended persistence order:
 
 Do not store unvalidated AI blobs as trusted analysis.
 
+## Release Learning Loop
+
+The Brain should improve through reviewed releases, not silent production self-training.
+
+Recommended loop:
+
+```text
+app collects simulator and replay evidence
+  -> users, QA, and Codex label what was useful, wrong, missing, or confusing
+  -> Codex turns labels into rule updates, templates, guardrails, tests, and fixtures
+  -> CI and benchmark checks prove the change
+  -> a new release ships the improved Brain behavior
+```
+
+This keeps the learning path auditable. User feedback can create evidence for better prompts, templates, validators, and deterministic analysis tools, but it should not directly mutate mechanics, legality, source-truth rows, or production Brain behavior without review.
+
+Every feedback item should eventually answer:
+
+- what evidence was reviewed
+- what the user or reviewer labeled good, bad, missing, or confusing
+- which rule, template, validator, test, or fixture changed
+- which release contains the improvement
+- what the improvement still does not prove
+
 ## Files That Should Not Change For The MVP Foundation
 
 Do not change these during the documentation and schema foundation slices:
