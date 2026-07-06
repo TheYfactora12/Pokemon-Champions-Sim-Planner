@@ -290,6 +290,123 @@ Every feedback item should eventually answer:
 - which release contains the improvement
 - what the improvement still does not prove
 
+### How This Works In Practice
+
+This Brain system does not start as a live LLM or self-training AI. It starts as a controlled, no-API analysis layer that uses the simulator's own evidence to create coaching feedback.
+
+The full loop works like this:
+
+```text
+1. User runs a team review, matchup, or replay review.
+
+2. The simulator and analysis tools extract facts:
+   - legality status
+   - speed relationships
+   - damage pressure
+   - threat indicators
+   - lead candidates
+   - replay events
+   - turning-point candidates
+
+3. These facts are packaged into an EvidenceBundle.
+
+4. The local Brain Composer reads the EvidenceBundle.
+
+5. The Brain Composer applies deterministic rules and templates.
+
+6. The Brain Composer produces BrainAnalysis JSON.
+
+7. The Brain Validator checks the output before the user sees it.
+
+8. The UI renders validated analysis cards:
+   - Summary
+   - Team Identity
+   - Win Conditions
+   - Best Leads
+   - Major Threats
+   - Recommended Changes
+   - Confidence
+   - Evidence Used
+   - Uncertainty
+
+9. The user gives feedback:
+   - Helpful
+   - Wrong Reason
+   - Wrong Lead
+   - Missed Turning Point
+   - Too Vague
+   - Illegal Suggestion
+   - Accepted Suggestion
+   - Rejected Suggestion
+
+10. The app stores the feedback locally first.
+
+11. The user exports a Brain Improvement Pack.
+
+12. Codex reviews the improvement pack.
+
+13. Codex updates:
+   - brain_rules.js
+   - brain_templates.js
+   - brain_composer.js
+   - brain_validator.js
+   - benchmark fixtures
+
+14. Every fix becomes a regression test.
+
+15. The next release has a smarter Brain.
+```
+
+The Brain improves through controlled releases, not live mutation. The app does not secretly rewrite its own rules, retrain itself in production, or let user feedback override simulator truth automatically.
+
+The safe learning loop is:
+
+```text
+Evidence -> Feedback -> Improvement Pack -> Codex -> Tests -> Release
+```
+
+### What Learning Means Here
+
+Learning means the system gets better at:
+
+- identifying common team weaknesses
+- explaining lead choices
+- spotting replay turning points
+- choosing better coaching language
+- avoiding vague advice
+- avoiding illegal suggestions
+- calibrating confidence
+- turning repeated failures into benchmark tests
+
+Learning does not mean:
+
+- the LLM changes mechanics
+- the app invents rules
+- feedback instantly changes production logic
+- a model retrains itself live
+- Codex edits the battle engine without a specific mechanics task
+
+### Why This Is The Best First Version
+
+This approach gives the project the benefits of an AI-style coach without the risk of an uncontrolled LLM.
+
+The first Brain is local, deterministic, testable, and evidence-backed. A real LLM can be added later, but only after the no-API Brain proves the evidence pipeline works.
+
+The correct MVP is:
+
+```text
+Simulator facts
+  -> EvidenceBundle
+  -> Local Brain Composer
+  -> Validator
+  -> UI Cards
+  -> Feedback
+  -> Improvement Pack
+  -> Codex Regression Loop
+```
+
+This creates a domain-specific Pokemon Champion analyst that learns from the actual simulator, actual replays, actual user feedback, and actual benchmark tests.
+
 ### Feedback And Improvement Packs
 
 Feedback should be collected locally first, using the existing `champions:*` storage convention where available.
