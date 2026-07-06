@@ -43288,7 +43288,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'No-API Brain foundation implemented locally',
-      detail: 'Branch analysis/no-api-brain-foundation adds the local foundation without changing engine mechanics: EvidenceBundle schema, confidence/provenance helpers, deterministic analysis tool contracts, BrainAnalysis schema, local rules/templates/composer/validator, feedback storage, improvement-pack export, and focused regression tests. No API calls, no LLM calls, no Supabase Edge Functions, no release_manifest.js change, and no chat UI.'
+      detail: 'Branch analysis/no-api-brain-foundation adds the local foundation without changing engine mechanics: EvidenceBundle schema, confidence/provenance helpers, deterministic analysis tool contracts, BrainAnalysis schema, local rules/templates/composer/validator, feedback storage, Brain output storage helpers, improvement-pack storage/export, fixture seeds, and focused regression tests. No API calls, no LLM calls, no Supabase Edge Functions, no release_manifest.js change, and no chat UI.'
     },
     {
       status: 'done',
@@ -44018,7 +44018,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'validated',
       title: 'No-API Brain foundation tests are green',
-      detail: 'node tests/no_api_brain_foundation_tests.js passes 12 checks: valid/invalid EvidenceBundle handling, duplicate evidence IDs, deterministic tool contracts, composer output, fake evidence rejection, high-confidence-with-uncertainty rejection, missing legality rejection, illegal-as-legal rejection, replay overstatement rejection, local feedback storage, and improvement-pack export.'
+      detail: 'node tests/no_api_brain_foundation_tests.js passes 15 checks: valid/invalid EvidenceBundle handling, duplicate evidence IDs, deterministic tool contracts, composer output, fake evidence rejection, high-confidence-with-uncertainty rejection, missing legality rejection, illegal-as-legal rejection, replay overstatement rejection, local feedback storage, Brain output storage, improvement-pack storage/export, document-listed card types, and benchmark fixture seeds.'
     },
     {
       status: 'validated',
@@ -44257,7 +44257,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Review and merge the no-API Brain foundation branch',
-      detail: 'The local foundation branch should be reviewed before UI work: analysis/no-api-brain-foundation includes schemas, evidence bundles, tool contracts, composer, validator, feedback, improvement packs, and tests. Confirm no engine, damage, legality, Supabase Edge Function, release manifest, API key, or chat UI changes slipped in.'
+      detail: 'The local foundation branch should be reviewed before UI work: analysis/no-api-brain-foundation includes schemas, evidence bundles, tool contracts, composer, validator, feedback, Brain output and improvement-pack storage helpers, benchmark fixture seeds, and tests. Confirm no engine, damage, legality, Supabase Edge Function, release manifest, API key, or chat UI changes slipped in.'
     },
     {
       status: 'next',
@@ -44272,7 +44272,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'next',
       title: 'Keep every Brain improvement tied to a regression test',
-      detail: 'Brain learning means Evidence -> Feedback -> Improvement Pack -> Codex -> Tests -> Release. Every future improvement pack fix needs a benchmark fixture covering missing evidence, fake evidence IDs, weak-evidence confidence, illegal suggestions, replay overstatement, missed turning point, or wrong lead. No test, no learning.'
+      detail: 'Brain learning means Evidence -> Feedback -> Improvement Pack -> Codex -> Tests -> Release. Starter fixture seeds now exist for missing evidence, fake evidence IDs, weak-evidence confidence, illegal suggestions, replay overstatement, missed turning point, and wrong lead. Every future improvement pack fix needs a benchmark fixture update. No test, no learning.'
     },
     {
       status: 'next',

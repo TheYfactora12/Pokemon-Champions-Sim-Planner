@@ -44,7 +44,10 @@
     'recommended_changes',
     'replay_turning_point',
     'confidence',
-    'uncertainty'
+    'evidence_used',
+    'uncertainty',
+    'feedback',
+    'export_improvement_pack'
   ];
   var FEEDBACK_TYPES = [
     'helpful',

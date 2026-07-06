@@ -2,7 +2,7 @@
 
 > **Battle-tested. Always evolving.**
 > Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/TheYfactora12/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
-> **Last updated:** 2026-07-05 | **Baseline:** simulation-truth gate active; no-API Brain foundation is implemented on a branch, UI/runtime wiring not started
+> **Last updated:** 2026-07-05 | **Baseline:** simulation-truth gate active; no-API Brain foundation is implemented on a branch, document alignment hardening added, UI/runtime wiring not started
 
 ---
 
@@ -57,8 +57,8 @@ The Brain may explain team identity, leads, threats, replay turning points, conf
 | 1 | Implemented on `analysis/no-api-brain-foundation` | `poke-sim/analysis/schemas.js`, `evidence_bundle.js`, `confidence.js`, `provenance.js`, tests | UI, DB writes, LLM calls |
 | 2 | Initial contracts implemented | Deterministic tools for legality, speed, damage pressure, threats, leads, replay summary, and critical turns | Final coaching prose |
 | 3 | Implemented locally | `brain_schema.js`, `brain_rules.js`, `brain_templates.js`, `brain_composer.js`, `brain_validator.js` | API calls or model calls |
-| 4 | Implemented locally | Local feedback plus `improvement_pack.js` export | Silent self-training |
-| 5 | Initial tests added | Regression tests for fake evidence IDs, bad confidence, illegal suggestions, replay overstatement, wrong lead, and missed turning point | Untested Brain fixes |
+| 4 | Implemented locally | Local feedback, Brain output storage helpers, improvement-pack storage helpers, and `improvement_pack.js` export | Silent self-training |
+| 5 | Initial tests added | Regression tests and fixture seeds for fake evidence IDs, missing evidence, bad confidence, illegal suggestions, replay overstatement, wrong lead, and missed turning point | Untested Brain fixes |
 | 6 | Later | Evidence Mode UI cards with feedback buttons and improvement-pack download | Chat-first UI |
 | 7 | Later | Optional DB persistence after the local loop is proven | Raw unvalidated AI blobs |
 | 8 | Later | Optional real LLM endpoint behind server-side keys and flags | Browser API keys |
@@ -72,7 +72,7 @@ Checked by GitHub API on 2026-07-05:
 - `TheYfactora12/Pokemon-Champions-Sim-Planner`: 68 open issues.
 - `alfredocox/Pokemon-Champions-Sim-Planner`: 56 open issues.
 - `TheYfactora12/Pokemon-Champions-Sim-Planner`: one open PR, #145, unrelated to the no-API Brain audit branch.
-- Candidate branch for this roadmap/audit work: `analysis/llm-brain-audit`.
+- Candidate implementation branch for this roadmap work: `analysis/no-api-brain-foundation`.
 
 Highest-priority open lanes remain:
 
@@ -81,7 +81,7 @@ Highest-priority open lanes remain:
 - Team Lab evidence import, mapping, promotion, and privacy gates.
 - Mechanics truth and replay transparency.
 - Deployment/cache/security hardening.
-- No-API Brain foundation after the docs/audit branch is reviewed.
+- Review/merge the no-API Brain foundation branch, then wire real simulator/replay evidence into the Brain tools.
 
 Canonical docs:
 

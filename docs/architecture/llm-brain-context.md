@@ -471,7 +471,34 @@ Required improvement-pack functions:
 - `downloadImprovementPack()`
 - `summarizeImprovementPack()`
 
+The local foundation also keeps optional helpers for the other two document keys:
+
+- Brain outputs under `champions:brain:outputs:v1`
+- saved improvement packs under `champions:brain:improvement_packs:v1`
+
+Those helpers are storage plumbing only. They do not make the Brain self-training and they do not promote feedback into production behavior.
+
 Every Brain improvement must include a regression test. No test, no learning.
+
+## Benchmark Fixture Seeds
+
+The first no-API Brain branch includes fixture seeds under:
+
+```text
+poke-sim/tests/fixtures/analysis/brain_cases/
+```
+
+Initial cases:
+
+- missing evidence
+- fake evidence ID
+- bad confidence
+- illegal suggestion
+- replay overstatement
+- wrong lead feedback
+- missed turning point feedback
+
+These fixtures are the start of the Codex improvement-pack loop. When feedback exposes a repeated Brain failure, the next fix should either extend one of these cases or add a new benchmark fixture before changing rules/templates.
 
 ## Files That Should Not Change For The MVP Foundation
 

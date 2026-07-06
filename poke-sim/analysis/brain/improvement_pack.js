@@ -76,6 +76,23 @@
     return { ok: true, downloaded: true };
   }
 
+  function saveImprovementPack(pack, options) {
+    if (!Feedback || !Feedback.saveBrainImprovementPack) {
+      return { ok: false, errors: [Schemas.issue('IMPROVEMENT_PACK_STORAGE_UNAVAILABLE', 'Brain improvement-pack storage is unavailable.', 'storage')] };
+    }
+    return Feedback.saveBrainImprovementPack(pack || createImprovementPack(options || {}), options || {});
+  }
+
+  function listImprovementPacks(options) {
+    if (!Feedback || !Feedback.listBrainImprovementPacks) return [];
+    return Feedback.listBrainImprovementPacks(options || {});
+  }
+
+  function deleteImprovementPack(packId, options) {
+    if (!Feedback || !Feedback.deleteBrainImprovementPack) return { ok: false, deleted: 0 };
+    return Feedback.deleteBrainImprovementPack(packId, options || {});
+  }
+
   function summarizeImprovementPack(pack) {
     var cases = pack && Array.isArray(pack.cases) ? pack.cases : [];
     var byType = {};
@@ -89,6 +106,9 @@
     createImprovementPack: createImprovementPack,
     exportImprovementPackAsJson: exportImprovementPackAsJson,
     downloadImprovementPack: downloadImprovementPack,
+    saveImprovementPack: saveImprovementPack,
+    listImprovementPacks: listImprovementPacks,
+    deleteImprovementPack: deleteImprovementPack,
     summarizeImprovementPack: summarizeImprovementPack
   };
 

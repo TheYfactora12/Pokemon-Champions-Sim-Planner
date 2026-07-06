@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const Schemas = require('../analysis/schemas.js');
 const EvidenceBundle = require('../analysis/evidence_bundle.js');
 require('../analysis/confidence.js');
@@ -262,6 +264,61 @@ T('12. improvement pack export includes correction and suggested benchmark', () 
   truthy(pack.cases[0].suggested_benchmark.name.indexOf('wrong_lead') >= 0, 'benchmark suggestion missing');
   const json = ImprovementPack.exportImprovementPackAsJson({ feedback_records: [feedback] });
   truthy(json.indexOf('champions-brain-improvement-pack-v1') >= 0, 'json export missing schema');
+});
+
+T('13. Brain card schema covers document-listed Evidence Mode cards', () => {
+  truthy(Schemas.isValidBrainCardType('summary'), 'summary card missing');
+  truthy(Schemas.isValidBrainCardType('evidence_used'), 'evidence used card missing');
+  truthy(Schemas.isValidBrainCardType('feedback'), 'feedback card missing');
+  truthy(Schemas.isValidBrainCardType('export_improvement_pack'), 'export pack card missing');
+});
+
+T('14. feedback module stores outputs and improvement packs under document keys', () => {
+  const storage = memoryStorage();
+  const output = Feedback.recordBrainOutput({
+    analysis_output_id: 'analysis_doc_001',
+    schema_version: Schemas.BRAIN_ANALYSIS_SCHEMA_VERSION,
+    analysis_type: 'team-review',
+    evidence_used: ['ev_speed_001']
+  }, { storage });
+  eq(output.ok, true, 'output should store');
+  eq(Feedback.getBrainOutput('analysis_doc_001', { storage }).analysis_output_id, 'analysis_doc_001', 'stored output missing');
+
+  const pack = ImprovementPack.createImprovementPack({
+    evidence_bundle: sampleBundle(),
+    brain_output: Composer.composeBrainAnalysis(sampleBundle()).analysis,
+    feedback_records: [{
+      feedback_id: 'fb_doc_001',
+      analysis_output_id: 'analysis_doc_001',
+      evidence_bundle_id: 'bundle_test_001',
+      scope: 'overall',
+      vote: 'mostly_wrong',
+      feedback_type: 'mostly_wrong',
+      correction: { expected_change: 'Use stronger evidence before confidence.' }
+    }]
+  });
+  const saved = ImprovementPack.saveImprovementPack(pack, { storage });
+  eq(saved.ok, true, 'pack should save');
+  eq(ImprovementPack.listImprovementPacks({ storage }).length, 1, 'saved pack count');
+});
+
+T('15. benchmark fixture cases promised by build document exist', () => {
+  const fixtureDir = path.join(__dirname, 'fixtures', 'analysis', 'brain_cases');
+  [
+    'missing_evidence_case.json',
+    'fake_evidence_id_case.json',
+    'bad_confidence_case.json',
+    'illegal_suggestion_case.json',
+    'replay_overstatement_case.json',
+    'wrong_lead_feedback_case.json',
+    'missed_turning_point_feedback_case.json'
+  ].forEach((file) => {
+    const fullPath = path.join(fixtureDir, file);
+    truthy(fs.existsSync(fullPath), file + ' missing');
+    const parsed = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+    truthy(parsed.case_id, file + ' missing case_id');
+    truthy(parsed.expected_properties, file + ' missing expected_properties');
+  });
 });
 
 console.log('\nno-api brain foundation: ' + pass + ' pass, ' + fail + ' fail\n');

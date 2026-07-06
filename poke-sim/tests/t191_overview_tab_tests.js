@@ -53,6 +53,8 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Simulator facts -> EvidenceBundle -> Local Brain Composer -> Brain Validator -> UI Cards -> Feedback -> Improvement Pack -> Codex Regression Loop');
   inc(ui, 'No-API Brain foundation implemented locally');
   inc(ui, 'analysis/no-api-brain-foundation adds the local foundation');
+  inc(ui, 'Brain output storage helpers');
+  inc(ui, 'fixture seeds');
   inc(ui, 'Beginner-friendly Brain build plan added');
   inc(ui, 'simulator equals referee');
   inc(ui, 'Damage Logs');
@@ -170,13 +172,14 @@ T('3b. replay formatter accepts richer applied damage log brackets', () => {
 
 T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Review and merge the no-API Brain foundation branch');
-  inc(ui, 'analysis/no-api-brain-foundation includes schemas, evidence bundles, tool contracts, composer, validator, feedback, improvement packs, and tests');
+  inc(ui, 'analysis/no-api-brain-foundation includes schemas, evidence bundles, tool contracts, composer, validator, feedback, Brain output and improvement-pack storage helpers, benchmark fixture seeds, and tests');
   inc(ui, 'Wire deterministic Brain tools to real simulator and replay evidence');
   inc(ui, 'speed_order_details');
   inc(ui, 'damage_events');
   inc(ui, 'Add Evidence Mode UI cards after validator proof');
   inc(ui, 'AI Brain Analysis - Evidence Mode');
   inc(ui, 'Keep every Brain improvement tied to a regression test');
+  inc(ui, 'Starter fixture seeds now exist for missing evidence, fake evidence IDs, weak-evidence confidence, illegal suggestions, replay overstatement, missed turning point, and wrong lead');
   inc(ui, 'No test, no learning');
   inc(ui, 'Stress-test, rebuild, and prove the new truth board');
   inc(ui, 'Replace removed teams with approved Champion teams');
@@ -546,7 +549,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, '56 open issues in alfredocox/Pokemon-Champions-Sim-Planner');
   inc(ui, 'analysis/llm-brain-audit');
   inc(ui, 'No-API Brain foundation tests are green');
-  inc(ui, 'node tests/no_api_brain_foundation_tests.js passes 12 checks');
+  inc(ui, 'passes 15 checks');
+  inc(ui, 'document-listed card types');
+  inc(ui, 'node tests/no_api_brain_foundation_tests.js passes 15 checks');
   inc(ui, 'Move scheduled source/news sync to branch or PR mode');
   inc(ui, 'regenerate pokemon-champion-2026.html and generated/release_artifact.json');
   inc(ui, 'Legality evidence package foundation added');

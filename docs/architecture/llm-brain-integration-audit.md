@@ -508,8 +508,8 @@ The uploaded roadmap maps cleanly onto the existing repo:
 | Phase 1 Evidence Schema Foundation | `poke-sim/analysis/*.js` plus tests |
 | Phase 2 Deterministic Analysis Tools | `poke-sim/analysis/tools/*` wrappers around existing simulator/replay/source evidence |
 | Phase 3 No-API Brain Composer | `poke-sim/analysis/brain/*` with schema, rules, templates, composer, and validator |
-| Phase 4 Feedback And Improvement Packs | local feedback records plus exportable regression cases |
-| Phase 5 Benchmark Harness | local regression fixtures and CI-safe guardrails |
+| Phase 4 Feedback And Improvement Packs | local feedback records, output/pack storage helpers, and exportable regression cases |
+| Phase 5 Benchmark Harness | local regression tests plus fixture seeds under `poke-sim/tests/fixtures/analysis/brain_cases/` |
 | Phase 6 UI Cards | Evidence Mode cards using validated no-API BrainAnalysis |
 | Phase 7 DB Evidence Tables | migration under `poke-sim/db/migrations/` plus architecture doc, no runtime writes until local loop is proven |
 | Phase 8 Real LLM Adapter | disabled-by-default endpoint mode, no browser keys |

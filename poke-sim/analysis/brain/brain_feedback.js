@@ -13,7 +13,10 @@
   var FEEDBACK_KEY = 'champions:brain:feedback:v1';
   var OUTPUTS_KEY = 'champions:brain:outputs:v1';
   var IMPROVEMENT_PACKS_KEY = 'champions:brain:improvement_packs:v1';
-  var memory = [];
+  var memory = {};
+  memory[FEEDBACK_KEY] = [];
+  memory[OUTPUTS_KEY] = [];
+  memory[IMPROVEMENT_PACKS_KEY] = [];
 
   function storageFromOptions(options) {
     if (options && options.storage) return options.storage;
@@ -21,24 +24,32 @@
     return null;
   }
 
-  function readRows(options) {
+  function readRowsForKey(key, options) {
     var storage = storageFromOptions(options);
-    if (!storage) return memory.slice();
+    if (!storage) return (memory[key] || []).slice();
     try {
-      var raw = storage.getItem(FEEDBACK_KEY);
+      var raw = storage.getItem(key);
       return raw ? JSON.parse(raw) : [];
     } catch (_e) {
       return [];
     }
   }
 
-  function writeRows(rows, options) {
+  function writeRowsForKey(key, rows, options) {
     var storage = storageFromOptions(options);
     if (!storage) {
-      memory = rows.slice();
+      memory[key] = rows.slice();
       return;
     }
-    storage.setItem(FEEDBACK_KEY, JSON.stringify(rows));
+    storage.setItem(key, JSON.stringify(rows));
+  }
+
+  function readRows(options) {
+    return readRowsForKey(FEEDBACK_KEY, options);
+  }
+
+  function writeRows(rows, options) {
+    writeRowsForKey(FEEDBACK_KEY, rows, options);
   }
 
   function normalizeFeedback(feedback) {
@@ -110,6 +121,66 @@
     return { total: rows.length, by_type: byType, by_card: byCard };
   }
 
+  function recordBrainOutput(output, options) {
+    var source = output || {};
+    var row = Object.assign({}, source);
+    row.analysis_output_id = row.analysis_output_id || Schemas.createId('analysis');
+    row.created_at = row.created_at || Schemas.nowIso();
+    var rows = readRowsForKey(OUTPUTS_KEY, options).filter(function(existing) {
+      return existing.analysis_output_id !== row.analysis_output_id;
+    });
+    rows.push(row);
+    writeRowsForKey(OUTPUTS_KEY, rows, options);
+    return { ok: true, output: row };
+  }
+
+  function listBrainOutputs(options) {
+    return readRowsForKey(OUTPUTS_KEY, options);
+  }
+
+  function getBrainOutput(analysisOutputId, options) {
+    return readRowsForKey(OUTPUTS_KEY, options).filter(function(row) {
+      return row.analysis_output_id === analysisOutputId;
+    })[0] || null;
+  }
+
+  function deleteBrainOutput(analysisOutputId, options) {
+    var rows = readRowsForKey(OUTPUTS_KEY, options);
+    var next = rows.filter(function(row) { return row.analysis_output_id !== analysisOutputId; });
+    writeRowsForKey(OUTPUTS_KEY, next, options);
+    return { ok: next.length !== rows.length, deleted: rows.length - next.length };
+  }
+
+  function saveBrainImprovementPack(pack, options) {
+    var source = pack || {};
+    var row = Object.assign({}, source);
+    row.pack_id = row.pack_id || Schemas.createId('pack');
+    row.created_at = row.created_at || Schemas.nowIso();
+    var rows = readRowsForKey(IMPROVEMENT_PACKS_KEY, options).filter(function(existing) {
+      return existing.pack_id !== row.pack_id;
+    });
+    rows.push(row);
+    writeRowsForKey(IMPROVEMENT_PACKS_KEY, rows, options);
+    return { ok: true, pack: row };
+  }
+
+  function listBrainImprovementPacks(options) {
+    return readRowsForKey(IMPROVEMENT_PACKS_KEY, options);
+  }
+
+  function getBrainImprovementPack(packId, options) {
+    return readRowsForKey(IMPROVEMENT_PACKS_KEY, options).filter(function(row) {
+      return row.pack_id === packId;
+    })[0] || null;
+  }
+
+  function deleteBrainImprovementPack(packId, options) {
+    var rows = readRowsForKey(IMPROVEMENT_PACKS_KEY, options);
+    var next = rows.filter(function(row) { return row.pack_id !== packId; });
+    writeRowsForKey(IMPROVEMENT_PACKS_KEY, next, options);
+    return { ok: next.length !== rows.length, deleted: rows.length - next.length };
+  }
+
   var api = {
     FEEDBACK_KEY: FEEDBACK_KEY,
     OUTPUTS_KEY: OUTPUTS_KEY,
@@ -120,7 +191,15 @@
     listBrainFeedback: listBrainFeedback,
     getBrainFeedbackByOutput: getBrainFeedbackByOutput,
     deleteBrainFeedback: deleteBrainFeedback,
-    summarizeFeedback: summarizeFeedback
+    summarizeFeedback: summarizeFeedback,
+    recordBrainOutput: recordBrainOutput,
+    listBrainOutputs: listBrainOutputs,
+    getBrainOutput: getBrainOutput,
+    deleteBrainOutput: deleteBrainOutput,
+    saveBrainImprovementPack: saveBrainImprovementPack,
+    listBrainImprovementPacks: listBrainImprovementPacks,
+    getBrainImprovementPack: getBrainImprovementPack,
+    deleteBrainImprovementPack: deleteBrainImprovementPack
   };
 
   ChampionsSim.analysis.brain.feedback = api;
