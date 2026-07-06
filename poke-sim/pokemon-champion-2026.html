@@ -43257,9 +43257,11 @@ function _escapeHtml(s) {
 }
 
 var CS_OVERVIEW_DATA = {
-  updated: '2026-07-04',
+  updated: '2026-07-05',
   metrics: [
     { label: 'Current Truth', value: 'Not 100% yet' },
+    { label: 'Brain MVP', value: 'No-API Composer next' },
+    { label: 'Learning Rule', value: 'Evidence -> Tests -> Release' },
     { label: 'Damage Logs', value: 'Applied/calc split fixed locally' },
     { label: 'Release Teams', value: '15 approved runtime rows' },
     { label: 'Testing Catalog Target', value: 'Top 10 Champion archetypes live' },
@@ -43278,6 +43280,16 @@ var CS_OVERVIEW_DATA = {
     { label: 'Ability Inventory', value: '80/80 modeled' }
   ],
   shipped: [
+    {
+      status: 'done',
+      title: 'No-API Brain roadmap organized',
+      detail: 'The 2026-07-05 roadmap now defines the Brain as a local deterministic coach, not a live LLM or self-training system. The safe loop is Simulator facts -> EvidenceBundle -> Local Brain Composer -> Brain Validator -> UI Cards -> Feedback -> Improvement Pack -> Codex Regression Loop. Docs added/updated: docs/architecture/llm-brain-context.md, docs/architecture/llm-brain-integration-audit.md, and ROADMAP.md.'
+    },
+    {
+      status: 'done',
+      title: 'Beginner-friendly Brain build plan added',
+      detail: 'The roadmap now explains the pieces in plain language: simulator equals referee, analysis tools equal stat sheet, EvidenceBundle equals game film, Brain Composer equals coach, validator equals fact checker, and feedback equals the player teaching the coach through reviewed releases.'
+    },
     {
       status: 'done',
       title: 'Single replay proof boundary cleaned up',
@@ -43995,6 +44007,11 @@ var CS_OVERVIEW_DATA = {
   validation: [
     {
       status: 'validated',
+      title: '2026-07-05 open issue snapshot checked',
+      detail: 'GitHub API check found 68 open issues in TheYfactora12/Pokemon-Champions-Sim-Planner and 56 open issues in alfredocox/Pokemon-Champions-Sim-Planner. The Y repo had one open PR (#145) unrelated to the no-API Brain audit branch. Candidate branch for this roadmap work is analysis/llm-brain-audit; create/merge a PR before treating the live Pages site as updated.'
+    },
+    {
+      status: 'validated',
       title: 'Focused local damage-log proof is green',
       detail: '`recoil_faint_turn_log_tests.js` now proves an overkill hit records applied HP loss in visible logs and damage_events, preserves larger formula output as `calculated_damage`, records `overkill_damage`, marks the HP cap, and bases recoil on applied damage.'
     },
@@ -44207,6 +44224,11 @@ var CS_OVERVIEW_DATA = {
     },
     {
       status: 'gap',
+      title: 'No-API Brain is planned, not implemented',
+      detail: 'The Brain roadmap is organized, but the code still needs the actual local foundation: EvidenceBundle schema, deterministic analysis tools, BrainAnalysis schema, local Brain Composer, validator, feedback storage, improvement-pack export, and regression fixtures. Until those exist, Brain claims must stay roadmap/planning, not user-facing certainty.'
+    },
+    {
+      status: 'gap',
       title: 'Battle Sensei tactical learning is still being built',
       detail: 'Replay upload friction is fixed, but number-one coaching needs the brain layer: speed-control reversal/neutralization, deferred payoff, move/target alternatives, switch preservation, decision-opportunity denominators, and repeated matchup learning. Manual team selection must lock the registered team for the sim scope; BO3/BO5 may only swap selected game lineups from that same six.'
     },
@@ -44222,6 +44244,26 @@ var CS_OVERVIEW_DATA = {
     },
   ],
   next: [
+    {
+      status: 'next',
+      title: 'Build EvidenceBundle schema before Brain UI',
+      detail: 'First implementation slice after the audit branch: add poke-sim/analysis/schemas.js, evidence_bundle.js, confidence.js, provenance.js, and tests. Required helpers: createEvidenceBundle, addFinding, validateEvidenceBundle, collectEvidenceIds, getFindingsByCategory, and hasEvidence. No UI, no Supabase writes, no API calls, no release bump, and no engine mechanics changes in this slice.'
+    },
+    {
+      status: 'next',
+      title: 'Build no-API Brain Composer after deterministic tools',
+      detail: 'After evidence schema and tools exist, add brain_schema.js, brain_rules.js, brain_templates.js, brain_composer.js, and brain_validator.js. The composer should use local rules/templates only. It must reject fake evidence IDs, high confidence with weak evidence, illegal suggestions marked legal, replay-only overstatement, and recommendations without legality_status.'
+    },
+    {
+      status: 'next',
+      title: 'Add feedback and Brain Improvement Pack export',
+      detail: 'After the local composer validates, add brain_feedback.js and improvement_pack.js. Store feedback locally with champions:* keys, let users mark Helpful, Wrong Reason, Wrong Lead, Missed Turning Point, Too Vague, Illegal Suggestion, Accepted Suggestion, and Rejected Suggestion, then export JSON cases for Codex to turn into rules/templates/tests.'
+    },
+    {
+      status: 'next',
+      title: 'Turn every Brain fix into a regression test',
+      detail: 'Brain learning means Evidence -> Feedback -> Improvement Pack -> Codex -> Tests -> Release. Every fixed Brain failure needs a benchmark fixture covering missing evidence, fake evidence IDs, weak-evidence confidence, illegal suggestions, replay overstatement, missed turning point, or wrong lead. No test, no learning.'
+    },
     {
       status: 'next',
       title: 'Sim truth gates return to active priority',
@@ -44391,6 +44433,9 @@ var CS_OVERVIEW_DATA = {
     { label: 'release gates', active: true }
   ],
   docs: [
+    { label: 'No-API Brain Context', href: '../docs/architecture/llm-brain-context.md' },
+    { label: 'No-API Brain Integration Audit', href: '../docs/architecture/llm-brain-integration-audit.md' },
+    { label: 'Learning Brain Architecture Roadmap', href: 'docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md' },
     { label: 'Recent Fix + Issue Snapshot', href: 'reports/recent-fixes-and-open-issues-2026-06-21.md' },
     { label: 'Architecture + Evidence Map', href: 'docs/CHAMPION_SIM_ARCHITECTURE_AND_EVIDENCE.md' },
     { label: 'Release Discipline + Cleanup Gates', href: 'docs/RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md' },
@@ -44448,6 +44493,27 @@ var CS_OVERVIEW_DATA = {
       role: 'Current 99% / 100% / blocker map',
       status: 'canonical for active closeout',
       notes: 'Use to decide what can close, what stays open, and what the next priority is before adding more features.'
+    },
+    {
+      label: 'No-API Brain Context',
+      href: '../docs/architecture/llm-brain-context.md',
+      role: 'Beginner-friendly no-API Brain roadmap and learning loop',
+      status: 'canonical for Brain MVP',
+      notes: 'Use before implementing Brain work. It explains that the simulator creates facts, the Brain explains facts, feedback becomes improvement packs, and Codex turns those into rules/templates/tests.'
+    },
+    {
+      label: 'LLM Brain Integration Audit',
+      href: '../docs/architecture/llm-brain-integration-audit.md',
+      role: 'Repo-safe audit of source-of-truth boundaries and implementation sequence',
+      status: 'audit for Brain MVP',
+      notes: 'Use to confirm which files can be touched during the evidence-schema slice and which runtime/source-truth files must stay unchanged.'
+    },
+    {
+      label: 'Learning Brain Architecture Roadmap',
+      href: 'docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md',
+      role: 'Long-term evidence ledger and learning database roadmap',
+      status: 'future architecture',
+      notes: 'Use after the no-API local Brain loop is proven; it covers raw intake, normalized evidence, feature extraction, aggregates, Trainer Room privacy, and global learning gates.'
     },
     {
       label: 'DB Architecture Growth Audit',
@@ -44537,7 +44603,7 @@ function csOverviewMilestoneRules() {
       title: 'Coaching, UX & Player Learning',
       kicker: 'product',
       summary: 'Battle Sensei, tactical sweep, decision ledgers, Strategy flow, editor UX, player-facing explanations, and coaching trust.',
-      match: /coach|sensei|strategy|tactical|decision|battle iq|learning|player|ux|editor|upload|set editor|flow|practice|recommendation/i
+      match: /coach|sensei|strategy|tactical|decision|battle iq|learning|player|ux|editor|upload|set editor|flow|practice|recommendation|brain|evidencebundle|improvement pack|no-api|feedback/i
     }
   ];
 }

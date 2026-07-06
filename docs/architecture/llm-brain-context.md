@@ -24,6 +24,24 @@ existing simulator
 
 The first user-facing version should be labeled as Evidence Mode Beta. It should explain what the simulator saw and what remains uncertain. It should not claim perfect coaching, complete legality proof, or real ladder truth.
 
+## Beginner-Friendly Mental Model
+
+Use this explanation when onboarding the team:
+
+```text
+The sim creates facts.
+The Brain explains the facts.
+```
+
+Think of the system like a tournament review team:
+
+- The simulator is the referee. It decides damage, speed order, priority, legality, weather, terrain, Trick Room, status, abilities, items, KOs, turn results, and replay logs.
+- The analysis tools are the stat sheet. They extract facts like speed relationships, damage pressure, lead candidates, legal/illegal/unknown status, and replay events.
+- The EvidenceBundle is the game film. It is the controlled packet of facts the Brain is allowed to use.
+- The Brain Composer is the coach. It turns evidence into useful feedback using deterministic local rules and templates.
+- The validator is the fact checker. It blocks fake evidence IDs, unsupported claims, illegal suggestions marked legal, fake confidence, and one-replay claims overstated as global truth.
+- Feedback is the player teaching the coach. It becomes an improvement pack for Codex to review, not an automatic production mutation.
+
 ## Source Of Truth
 
 The simulator remains the source of truth for:

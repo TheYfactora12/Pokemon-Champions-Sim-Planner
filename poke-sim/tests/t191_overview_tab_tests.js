@@ -45,6 +45,14 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'CS_OVERVIEW_DATA');
   inc(ui, 'Current Truth');
   inc(ui, 'Not 100% yet');
+  inc(ui, 'Brain MVP');
+  inc(ui, 'No-API Composer next');
+  inc(ui, 'Learning Rule');
+  inc(ui, 'Evidence -> Tests -> Release');
+  inc(ui, 'No-API Brain roadmap organized');
+  inc(ui, 'Simulator facts -> EvidenceBundle -> Local Brain Composer -> Brain Validator -> UI Cards -> Feedback -> Improvement Pack -> Codex Regression Loop');
+  inc(ui, 'Beginner-friendly Brain build plan added');
+  inc(ui, 'simulator equals referee');
   inc(ui, 'Damage Logs');
   inc(ui, 'Applied/calc split fixed locally');
   inc(ui, 'Testing Catalog Target');
@@ -159,6 +167,15 @@ T('3b. replay formatter accepts richer applied damage log brackets', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
+  inc(ui, 'Build EvidenceBundle schema before Brain UI');
+  inc(ui, 'createEvidenceBundle');
+  inc(ui, 'getFindingsByCategory');
+  inc(ui, 'Build no-API Brain Composer after deterministic tools');
+  inc(ui, 'brain_schema.js, brain_rules.js, brain_templates.js, brain_composer.js, and brain_validator.js');
+  inc(ui, 'Add feedback and Brain Improvement Pack export');
+  inc(ui, 'Helpful, Wrong Reason, Wrong Lead, Missed Turning Point, Too Vague, Illegal Suggestion, Accepted Suggestion, and Rejected Suggestion');
+  inc(ui, 'Turn every Brain fix into a regression test');
+  inc(ui, 'No test, no learning');
   inc(ui, 'Stress-test, rebuild, and prove the new truth board');
   inc(ui, 'Replace removed teams with approved Champion teams');
   inc(ui, 'Trick Room, anti-Trick Room, Tailwind/speed, sun, rain, sand or snow');
@@ -238,6 +255,12 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'CLOSEOUT_2026-06-06.md');
   inc(ui, 'Showdown DB Plan');
   inc(ui, 'SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md');
+  inc(ui, 'No-API Brain Context');
+  inc(ui, 'llm-brain-context.md');
+  inc(ui, 'No-API Brain Integration Audit');
+  inc(ui, 'llm-brain-integration-audit.md');
+  inc(ui, 'Learning Brain Architecture Roadmap');
+  inc(ui, 'LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md');
   inc(ui, 'Mechanics Truth Beta Gate Checklist');
   inc(ui, 'mechanics_truth_beta_gate_checklist.md');
   inc(ui, 'Approved Runtime Team Test Matrix');
@@ -516,6 +539,10 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Fresh live closeout QA artifacts recorded');
   inc(ui, 'Move mechanics QA closeout plan added');
   inc(ui, 'GitHub generated-artifact release guard documented');
+  inc(ui, '2026-07-05 open issue snapshot checked');
+  inc(ui, '68 open issues in TheYfactora12/Pokemon-Champions-Sim-Planner');
+  inc(ui, '56 open issues in alfredocox/Pokemon-Champions-Sim-Planner');
+  inc(ui, 'analysis/llm-brain-audit');
   inc(ui, 'Move scheduled source/news sync to branch or PR mode');
   inc(ui, 'regenerate pokemon-champion-2026.html and generated/release_artifact.json');
   inc(ui, 'Legality evidence package foundation added');

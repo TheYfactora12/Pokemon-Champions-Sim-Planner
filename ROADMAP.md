@@ -2,13 +2,13 @@
 
 > **Battle-tested. Always evolving.**
 > Live App: [htmlpreview bundle](https://htmlpreview.github.io/?https://raw.githubusercontent.com/TheYfactora12/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html) | [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
-> **Last updated:** 2026-06-19 | **Baseline:** simulation-truth gate active; `npm run test:fast` green on current Showdown DB review branch
+> **Last updated:** 2026-07-05 | **Baseline:** simulation-truth gate active; no-API Brain roadmap is documentation-ready, implementation not started
 
 ---
 
 ## Current Direction Override - 2026-06-06
 
-Simulation truth is the active product gate. New coaching, premium, Battle IQ, Coach Recommends, and replay-derived claim work is paused until the simulator is accurate enough to safely support those claims.
+Simulation truth is the active product gate. New coaching, premium, Battle IQ, Coach Recommends, and replay-derived claim work remains gated until the simulator evidence is accurate enough to safely support those claims.
 
 Active order:
 
@@ -16,11 +16,78 @@ Active order:
 2. Prove battle mechanics and turn logs against strict tests.
 3. Wire Showdown-mirrored data plus Champions overrides as the source-of-truth path.
 4. Add release gates for unresolved high-severity drift.
-5. Resume coaching expansion only after the sim-truth gate is green.
+5. Build only evidence-backed coaching layers that cannot override simulator truth.
+6. Resume real LLM or global-learning expansion only after the no-API evidence pipeline is proven.
 
 Current direction doc: [`docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md`](docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md).
 
 Older coaching-first roadmap items remain useful product research, but they are not the active build priority until this gate passes.
+
+---
+
+## 2026-07-05 Active Roadmap: No-API Brain Composer
+
+The next Brain path is intentionally not a live LLM. The first build is a local, deterministic, evidence-backed coach:
+
+```text
+Simulator facts
+  -> EvidenceBundle
+  -> Local Brain Composer
+  -> Brain Validator
+  -> UI Cards
+  -> Feedback
+  -> Improvement Pack
+  -> Codex Regression Loop
+```
+
+Plain-English rule:
+
+```text
+The sim creates facts.
+The Brain explains the facts.
+```
+
+The Brain may explain team identity, leads, threats, replay turning points, confidence, uncertainty, and recommended tests. It may not invent legality, damage, speed order, priority, RNG, abilities, items, status, weather, terrain, or battle results.
+
+### Build Order
+
+| Step | Status | Scope | Must not do |
+|---|---|---|---|
+| 0 | Done on `analysis/llm-brain-audit` | Docs, audit, beginner-friendly context, and roadmap alignment | Runtime changes |
+| 1 | Next | `poke-sim/analysis/schemas.js`, `evidence_bundle.js`, `confidence.js`, `provenance.js`, tests | UI, DB writes, LLM calls |
+| 2 | Next after schema | Deterministic tools for legality, speed, damage pressure, threats, leads, replay summary, and critical turns | Final coaching prose |
+| 3 | Next after tools | `brain_schema.js`, `brain_rules.js`, `brain_templates.js`, `brain_composer.js`, `brain_validator.js` | API calls or model calls |
+| 4 | Next after composer | Local feedback plus `improvement_pack.js` export | Silent self-training |
+| 5 | Next after feedback | Regression fixtures for fake evidence IDs, bad confidence, illegal suggestions, replay overstatement, wrong lead, and missed turning point | Untested Brain fixes |
+| 6 | Later | Evidence Mode UI cards with feedback buttons and improvement-pack download | Chat-first UI |
+| 7 | Later | Optional DB persistence after the local loop is proven | Raw unvalidated AI blobs |
+| 8 | Later | Optional real LLM endpoint behind server-side keys and flags | Browser API keys |
+
+Every Brain improvement must become a regression test. No test, no learning.
+
+### Open Issue Snapshot
+
+Checked by GitHub API on 2026-07-05:
+
+- `TheYfactora12/Pokemon-Champions-Sim-Planner`: 68 open issues.
+- `alfredocox/Pokemon-Champions-Sim-Planner`: 56 open issues.
+- `TheYfactora12/Pokemon-Champions-Sim-Planner`: one open PR, #145, unrelated to the no-API Brain audit branch.
+- Candidate branch for this roadmap/audit work: `analysis/llm-brain-audit`.
+
+Highest-priority open lanes remain:
+
+- Regulation M-B legality/source package proof.
+- Josh/JD data audit and Showdown reference replay review.
+- Team Lab evidence import, mapping, promotion, and privacy gates.
+- Mechanics truth and replay transparency.
+- Deployment/cache/security hardening.
+- No-API Brain foundation after the docs/audit branch is reviewed.
+
+Canonical docs:
+
+- [`docs/architecture/llm-brain-context.md`](docs/architecture/llm-brain-context.md)
+- [`docs/architecture/llm-brain-integration-audit.md`](docs/architecture/llm-brain-integration-audit.md)
+- [`poke-sim/docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md`](poke-sim/docs/LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md)
 
 ---
 
