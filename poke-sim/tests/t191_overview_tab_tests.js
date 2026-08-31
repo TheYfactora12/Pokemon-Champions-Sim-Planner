@@ -417,6 +417,7 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Safer Team Testing');
   inc(ui, 'home-product-stage');
   inc(ui, 'No replay selected');
+  inc(ui, 'v2.2.131-production-launch-gate adds a production readiness gate');
   if (ui.includes('Turn 4 changed the game') || ui.includes('Try a safer lead next run')) throw new Error('Home must not invent a replay conclusion');
   inc(ui, 'data-home-tab="editor">Edit a Team');
   inc(ui, 'A mad scientist lab for better teams.');

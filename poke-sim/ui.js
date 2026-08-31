@@ -13811,7 +13811,7 @@ var CS_OVERVIEW_DATA = {
     {
       status: 'done',
       title: 'Single replay proof boundary cleaned up',
-      detail: 'v2.2.138-site-navigation-fixes adds a production readiness gate to QA artifacts and the visible QA Claim Review card. It separates internal QA usefulness from public launch readiness, keeps public/beta launch false while legality truth, replay parity, scenario breadth, singles/doubles coverage, or source boundaries are unresolved, and lists the next production action without inventing Champion data.'
+      detail: 'v2.2.131-production-launch-gate adds a production readiness gate to QA artifacts and the visible QA Claim Review card. It separates internal QA usefulness from public launch readiness, keeps public/beta launch false while legality truth, replay parity, scenario breadth, singles/doubles coverage, or source boundaries are unresolved, and lists the next production action without inventing Champion data.'
     },
     {
       detail: 'v2.2.130-single-replay-proof-boundary keeps single replay downloads from looking like failed release proof. For champions-turn-log-v2 files, qa_coverage_summary.missing_targeted_proof is empty because one replay is not a release matrix. Mechanics absent from that one battle are still preserved under single_replay_missing_mechanics with an explicit missing_targeted_proof_note.'
