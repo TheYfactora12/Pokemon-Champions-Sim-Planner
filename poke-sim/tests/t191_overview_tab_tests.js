@@ -416,7 +416,9 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Replay Lessons');
   inc(ui, 'Safer Team Testing');
   inc(ui, 'home-product-stage');
-  inc(ui, 'Turn 4 changed the game');
+  inc(ui, 'No replay selected');
+  if (ui.includes('Turn 4 changed the game') || ui.includes('Try a safer lead next run')) throw new Error('Home must not invent a replay conclusion');
+  inc(ui, 'data-home-tab="editor">Edit a Team');
   inc(ui, 'A mad scientist lab for better teams.');
   inc(ui, 'Pick a team, simulate a battle, study a Showdown replay, then fix the team and test again.');
   inc(ui, 'Pick Team');
