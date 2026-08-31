@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.131-production-launch-gate
+// Build marker: v2.2.138-site-navigation-fixes
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.131-production-launch-gate'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.138-site-navigation-fixes'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -198,6 +198,7 @@ function _activateTab(tabId, opts) {
   btn.setAttribute('aria-controls', 'tab-' + tabId);
   if (!btn.id) btn.id = 'tab-btn-' + tabId;
   panel.setAttribute('aria-labelledby', btn.id);
+  if (opts && opts.focusPanel && typeof panel.focus === 'function') panel.focus();
   if ((tabId === 'replays' || tabId === 'replay') && typeof loadAnalysisHistory === 'function') {
     loadAnalysisHistory(typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
   }
@@ -15910,7 +15911,7 @@ function csRenderTeamLabNewsroomHub() {
         '<div class="home-landing-actions">' +
           '<button type="button" data-home-tab="simulator">Start Team Test</button>' +
           '<button type="button" data-home-tab="replay-coach">Upload Replay</button>' +
-          '<button type="button" data-home-tab="teams">Edit a Team</button>' +
+          '<button type="button" data-home-tab="editor">Edit a Team</button>' +
         '</div>' +
         '<div class="home-landing-chips" aria-label="Battle Labs trust promises">' +
           '<span>Singles and Doubles</span>' +
@@ -15928,8 +15929,8 @@ function csRenderTeamLabNewsroomHub() {
           '</div>' +
           '<div class="home-product-result">' +
             '<span>Replay lesson</span>' +
-            '<strong>Turn 4 changed the game</strong>' +
-            '<em>Try a safer lead next run</em>' +
+            '<strong>No replay selected</strong>' +
+            '<em>Analysis pending</em>' +
           '</div>' +
         '</div>' +
         '<div class="home-product-floating home-product-floating-a"><span>1</span><strong>Pick team</strong></div>' +
@@ -16057,7 +16058,7 @@ function csInitHomeTabActions(root) {
   root.querySelectorAll('[data-home-tab]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var tab = btn.getAttribute('data-home-tab');
-      if (tab && typeof _activateTab === 'function') _activateTab(tab, { focus: true });
+      if (tab && typeof _activateTab === 'function') _activateTab(tab, { focusPanel: true });
     });
   });
 }

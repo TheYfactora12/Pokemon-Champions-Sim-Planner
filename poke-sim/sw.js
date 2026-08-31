@@ -3,6 +3,7 @@
 // CACHE_NAME scheme: champions-sim-v{major}-{release-tag}
 // MUST be bumped on every release that changes engine.js, data.js, ui.js, or style.css
 // Phase 2 automation tracked in #95 (tools/release.sh)
+// v2.2.138-site-navigation-fixes [2026-08-30]: release_manifest.js supplies the new cache identity.
 //
 // v37-may-meta-roster [2026-05-22] — Added current May 2026 preloaded meta rosters, explicit species coverage, and synced DB seed artifacts.
 // v38-battle-sensei-port [2026-05-24] — Added Battle Sensei replay review tab, replay URL loading, evidence-bound coaching reads, and lead-logic explanations.
@@ -134,7 +135,7 @@
 // v181-qa-artifact-evidence-intake [2026-06-29] - Convert QA artifacts into Team Lab sim evidence and collapse Overview proof archive.
 try { importScripts('./release_manifest.js'); } catch (e) { /* fallback below */ }
 const RELEASE_MANIFEST = (typeof self !== 'undefined' && self.CHAMPIONS_RELEASE_MANIFEST) ? self.CHAMPIONS_RELEASE_MANIFEST : {};
-const CACHE_NAME = RELEASE_MANIFEST.service_worker_cache || 'champions-sim-v207-mega-battle-effect-proof';
+const CACHE_NAME = RELEASE_MANIFEST.service_worker_cache || 'champions-sim-v2-2-138-site-navigation-fixes';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
