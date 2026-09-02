@@ -17,6 +17,7 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 | [IMP-0007](#imp-0007) | Live turn order and per-target stage moves | Local candidate; scoped parity, not Champions certification |
 | [IMP-0008](#imp-0008) | Persistent PP, Pressure and resolved replay identity | Local candidate; 100% clean scoped invariant gate |
 | [IMP-0009](#imp-0009) | Authorized Supabase security readback | Live read-only audit; public launch blocked |
+| [IMP-0010](#imp-0010) | Fresh-user simulator starts in safe Practice lane | Local candidate; browser and export verified |
 
 Historical entries below summarize already-recorded evidence, not new runs. This index is intentionally not an exhaustive reconstruction of older work.
 
@@ -110,6 +111,16 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Evidence: `docs/release/SUPABASE_PUBLIC_LAUNCH_GATE_2026-08-30.md` records the sanitized readback. All 16 public tables have RLS, but production still allows anonymous shared-evidence inserts and unrestricted branch-coverage updates. The live ledger has only four entries, and no owner identity exists in the public schema.
 - Lesson: RLS being enabled is not the same as least privilege, and two-user isolation cannot be tested until ownership exists in the data model. Keep production unchanged until the exact migration and staging denial evidence are reviewed together.
 - Remaining: apply the hardening migration in protected staging, run anonymous HTTP mutation denials, add owner-scoped private persistence, test two real staging users, verify backups/restore and add abuse controls.
+
+<a id="imp-0010"></a>
+## IMP-0010: A Safe Gate Must Still Let A New User Practice
+
+- Recorded: 2026-09-02. Lane: regulation/experience/release. Build `v2.2.142-pp-replay-proof`; local candidate, not published.
+- Before/root cause: a fresh browser selected historical Reg M-A by default. The legality gate correctly blocked bundled teams because regulation-specific species, forms and learnsets are not approved, but a new user could not run the first simulation without understanding that Practice must be selected.
+- Change: default fresh sessions to `champions_custom_practice`. Keep saved user choices, historical/review options and all competitive evidence blocks unchanged.
+- Evidence: a fresh-origin browser opened Start Team Test on `Practice (unverified)`, ran one doubles Bo3 without a preflight block, rendered three retained replay samples and exported JSON. The visible sample (`loss`, seven turns) matched the exported game, which retained build `v2.2.142-pp-replay-proof`, practice ruleset/version, team digests, four stable participants per side and registered items. Regulation selection/execution, release-manifest and bundle load-order tests pass.
+- Lesson: fail-closed competitive rules and a runnable practice experience are separate requirements. The safe default must never imply that practice results are regulation-approved or trusted learning evidence.
+- Remaining: repeat the journey on the hosted candidate and mobile; validate detailed downloaded turn logs against visible events for more teams. This manual path proves usability of one bounded journey, not 99% universal mechanics accuracy.
 
 ## Entry Template
 

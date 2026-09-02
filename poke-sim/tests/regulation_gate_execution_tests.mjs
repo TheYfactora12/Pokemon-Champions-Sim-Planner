@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 const root = new URL('../', import.meta.url);
 const ui = fs.readFileSync(new URL('ui.js', root), 'utf8');
+assert.match(ui, /var selectedRegulationId = 'champions_custom_practice';/, 'fresh users must start in the safe runnable practice lane');
 const ctx = vm.createContext({ console, currentFormat: 'doubles', currentBo: 3,
   TEAMS: { player: { name: 'Player', members: [] }, opponent: { name: 'Opponent', members: [] } },
   getSelectedRegulationId: () => 'champions_reg_m_b_2026',

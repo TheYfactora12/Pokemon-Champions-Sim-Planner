@@ -338,7 +338,7 @@ document.addEventListener('keydown', _handleModalKeydown, true);
 // ---- Format Toggle (Doubles / Singles) ----
 let currentFormat = 'doubles';
 let currentRuleset = 'champions';
-var selectedRegulationId = 'champions_reg_m_a_2026';
+var selectedRegulationId = 'champions_custom_practice';
 var showUnavailableRegulationChoices = false;
 function getSelectedRegulationId() { return selectedRegulationId; }
 function setSelectedRegulationId(id) {

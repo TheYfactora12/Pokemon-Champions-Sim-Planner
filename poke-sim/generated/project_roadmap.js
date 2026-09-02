@@ -158,7 +158,8 @@
       ],
       "completed_locally": [
         "A preliminary agent walkthrough inspected all 11 public sections, three homepage destinations and desktop/mobile homepage layout. Contradictory trust labels, stale source/roadmap copy and navigation friction are documented; the full beginner study remains queued.",
-        "Bounded site quick wins are locally tested: homepage destination focus and editor routing, neutral replay placeholder, clearer and more compact roadmap disclosures. Desktop and 390px checks are not a full user study."
+        "Bounded site quick wins are locally tested: homepage destination focus and editor routing, neutral replay placeholder, clearer and more compact roadmap disclosures. Desktop and 390px checks are not a full user study.",
+        "A fresh browser now defaults to the explicitly unverified Practice lane instead of blocked historical M-A. One local doubles Bo3 rendered replay evidence and exported matching build, ruleset, team-digest, participant and item identity fields."
       ],
       "remaining": [
         "Test fresh-visit comprehension, starter-team-to-result journeys, navigation/back/reload behavior and error recovery.",
