@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Review and apply the existing public-data hardening migration in a protected staging-to-production flow. Complete-game, visible/export replay, PP/Pressure, Tailwind, Growl and Leer now have scoped local proof; next tackle residual ordering, wider imported-team interactions and two-user private persistence. Keep unverified regulations blocked.
+Review and apply the existing public-data hardening migration in a protected staging-to-production flow. The declared 4,624-run accuracy harness is clean and now fails on warnings or regulation drift; next tackle residual ordering, wider imported-team interactions, Champion-specific reference evidence and two-user private persistence. Keep unverified regulations blocked.
 
 ## Milestone Index
 
@@ -45,7 +45,7 @@ Completed locally / recorded:
 - Unknown-ruleset preflight and default bring-four/participant identity fixes have regression coverage.
 - Scoped switching, immunity, grounding, multi-hit and Seismic Toss fixes are tested. One complete-game Showdown comparison includes forced replacements, winner, HP, stages and PP; one seven-turn browser run has matching visible/export logs.
 - Same-turn Tailwind and Growl/Leer now agree with pinned Showdown in scoped synthetic doubles probes, including side swaps, Trick Room, per-target protection and selected ability/item/Substitute gates. PP, single/double Pressure, depletion and Struggle have deterministic boundary coverage.
-- Replay review now rejects absent or structurally empty battle evidence; changed inputs invalidate review actions and unchanged HTML retains original provenance. Local only; partial-log confidence and deployed verification remain open.
+- Replay review rejects absent or structurally empty evidence and preserves stable actor/target identity through mirror-name actions. The declared cross-format harness completes 4,624/4,624 runs without state, validator, warning or repeatability failures. This is scoped invariant proof, not universal accuracy.
 
 Remaining:
 - [ ] Extend complete-game and visible-replay parity beyond the bounded fixtures; resolve Strategy-cache context mixing and misleading coaching.
@@ -67,6 +67,7 @@ Depends on: Independent workstream; readiness still requires the other release g
 Completed locally / recorded:
 - Official-source inventory, daily regulation watcher, exact-digest candidate validation, recurrence-aware alerts and protected staging workflow are prepared.
 - Unsafe approval-time refetch is blocked. Generated offline data remains the browser baseline; official Champions evidence must establish legality.
+- The accuracy harness manifest binds regulation IDs, versions, review/promotion states and format lanes. Catalog drift, unreviewed runnable formats and warnings above the zero-warning budget fail closed.
 
 Remaining:
 - [ ] Resolve blocked/JavaScript official sources and obtain required in-game captures. M-A and M-B remain unverified.

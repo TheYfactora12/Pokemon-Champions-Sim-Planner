@@ -571,7 +571,51 @@ function stripStableFields(payload) {
     truthy(!res.findings.some(f => f.code === 'no-valid-target-with-live-target'), 'post-turn replacements should not make the earlier skip invalid');
   });
 
-  T('11c. observed action order uses side and stable keys for mirror species', () => {
+  T('11c. structured event identity resolves mirror-name no-valid-target actions', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    const player = turn.pre.roster.player[0];
+    const opponent = turn.pre.roster.opponent[0];
+    turn.actions.player = [{
+      actor: player.name,
+      actor_key: player.stableKey,
+      kind: 'move',
+      move: 'Knock Off',
+      target: opponent.name,
+      target_key: opponent.stableKey,
+      target_side: 'opponent'
+    }];
+    turn.actions.opponent = [{
+      actor: player.name,
+      actor_key: opponent.stableKey,
+      kind: 'move',
+      move: 'Knock Off',
+      target: player.name,
+      target_key: player.stableKey,
+      target_side: 'player'
+    }];
+    turn.events = [{
+      type: 'log',
+      text: `${player.name} used Knock Off! (no valid target)`,
+      actor: player.name,
+      actor_key: player.stableKey,
+      side: 'player',
+      move: 'Knock Off',
+      target: opponent.name,
+      target_key: opponent.stableKey,
+      target_side: 'opponent'
+    }];
+
+    const res = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(!res.findings.some(f => f.code === 'no-valid-target-actor-unresolved'), 'structured identity must resolve the acting side');
+    truthy(res.findings.some(f => f.code === 'no-valid-target-with-live-target'), 'resolved event must still be checked for a live target');
+
+    turn.events[0].actor_key = opponent.stableKey;
+    const contradicted = validateTurnLogPayload(payload, { requireStable: true });
+    truthy(contradicted.findings.some(f => f.code === 'no-valid-target-actor-unresolved'), 'contradictory side and actor key must fail closed');
+  });
+
+  T('11d. observed action order uses side and stable keys for mirror species', () => {
     const payload = stableFixture();
     const turn = payload.turnLog[0];
     const playerIncin = Object.assign({}, baseRow('player', 'active', 0, 'Incineroar', 'Sitrus Berry', 'Intimidate', 0), {
@@ -644,7 +688,7 @@ function stripStableFields(payload) {
     truthy(!res.findings.some(f => f.code === 'observed-action-order-mismatch'), 'mirror Incineroar names should not corrupt speed order');
   });
 
-  T('11d. identical mirror actions remain visible as an explicit identity ambiguity', () => {
+  T('11e. identical mirror actions remain visible as an explicit identity ambiguity', () => {
     const payload = stableFixture();
     const turn = payload.turnLog[0];
     const mirror = Object.assign({}, turn.pre.roster.player[0], {
@@ -662,7 +706,7 @@ function stripStableFields(payload) {
     truthy(res.findings.some(f => f.code === 'observed-action-identity-ambiguous'), 'mirror action ambiguity was silently discarded');
   });
 
-  T('11e. stable actor identity resolves identical mirror action text', () => {
+  T('11f. stable actor identity resolves identical mirror action text', () => {
     const payload = stableFixture();
     const turn = payload.turnLog[0];
     const player = turn.pre.roster.player[0];
@@ -681,7 +725,7 @@ function stripStableFields(payload) {
     truthy(!res.findings.some(f => f.code === 'observed-action-identity-ambiguous'), 'stable identity still reported as ambiguous');
   });
 
-  T('11f. structured action identity ignores repeated damage-detail text', () => {
+  T('11g. structured action identity ignores repeated damage-detail text', () => {
     const payload = stableFixture();
     const turn = payload.turnLog[0];
     const playerAction = turn.actions.player[0];

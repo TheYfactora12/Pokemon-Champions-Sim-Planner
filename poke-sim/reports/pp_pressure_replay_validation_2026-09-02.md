@@ -20,7 +20,9 @@ The declared PP/Pressure boundaries are regression-covered locally. The complete
 
 ## Broader Stress Gate
 
-The cross-format invariant harness completed 4,624 battles: zero state failures, zero strict validator errors and zero deterministic replay failures. Twenty-two runs carry the non-fatal `no-valid-target-actor-unresolved` warning, leaving 4,602 warning-free runs (99.52%). This denominator measures state, identity, export and determinism invariants; it is not a complete-game mechanics oracle.
+The cross-format invariant harness completed 4,624 battles: zero state failures, zero strict validator errors, zero audit warnings and zero deterministic replay failures. All 4,624 runs are warning-free in this declared harness (100%). Structured event identity now resolves mirror-name no-valid-target actions without guessing from duplicated narrative text. This denominator measures state, identity, export and determinism invariants; it is not a complete-game mechanics oracle or a claim of universal Pokemon accuracy.
+
+The harness is regulation-drift-aware through `accuracy_harness_manifest.json`; the battle matrix remains a shared-mechanics sweep, not regulation-specific parity proof. Its zero-warning budget fails the command on any warning, and catalog version, review state, promotion state or format-lane drift fails closed. A new or changed regulation must be deliberately added with an evidence lane before CI can accept it; source-review regulations cannot silently become runnable competitive formats.
 
 ## Open Boundaries
 

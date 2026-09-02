@@ -11,6 +11,39 @@ export function seedFor(label) {
   const bytes = createHash('sha256').update(label).digest();
   return Array.from({ length: 4 }, (_, i) => bytes.readUInt32LE(i * 4));
 }
+export function validateRegulationCoverage(catalog, manifest) {
+  const errors = [];
+  if (!manifest || manifest.schema_version !== 'champions-accuracy-harness-v1') errors.push('manifest-schema');
+  if (!Number.isInteger(manifest && manifest.warning_budget) || manifest.warning_budget < 0) errors.push('warning-budget');
+  const rows = manifest && manifest.regulations;
+  if (!Array.isArray(rows)) errors.push('regulations-list');
+  const declared = new Map();
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!row || typeof row.id !== 'string' || !row.id) { errors.push('invalid-regulation-id'); continue; }
+    if (declared.has(row.id)) errors.push(`duplicate-regulation:${row.id}`);
+    else declared.set(row.id, row);
+  }
+  const known = Object.values(catalog || {}).filter(Boolean);
+  for (const rule of known) {
+    const row = declared.get(rule.id);
+    if (!row) { errors.push(`missing-regulation:${rule.id}`); continue; }
+    if (row.version !== rule.version) errors.push(`version-drift:${rule.id}`);
+    if (row.status !== rule.status) errors.push(`status-drift:${rule.id}`);
+    if (row.runtime_promotable !== !!rule.runtimePromotable) errors.push(`promotion-drift:${rule.id}`);
+    const formatsValid = Array.isArray(row.formats) && row.formats.every(format => ['singles', 'doubles'].includes(format));
+    if (!formatsValid || typeof row.harness_lane !== 'string' || !row.harness_lane.trim()) errors.push(`invalid-lane:${rule.id}`);
+    if (rule.status === 'source_review' && Array.isArray(row.formats) && row.formats.length) errors.push(`review-only-format:${rule.id}`);
+    if (rule.runtimePromotable && (!Array.isArray(row.formats) || !row.formats.includes('doubles'))) errors.push(`missing-doubles-lane:${rule.id}`);
+    declared.delete(rule.id);
+  }
+  for (const id of declared.keys()) errors.push(`stale-regulation:${id}`);
+  return errors;
+}
+export function qualityGateFailed(modes, warningBudget = 0) {
+  return Object.values(modes || {}).some(mode => mode && (
+    mode.state_failures || mode.validator_errors || mode.repeat_failures || mode.validator_warnings > warningBudget
+  ));
+}
 export function checkState(result, format, bringCount) {
   assert.ok(['win', 'loss', 'draw'].includes(result.result), 'battle did not finish normally');
   assert.ok(Array.isArray(result.turnLog) && result.turnLog.length > 0, 'missing turn log');
@@ -44,14 +77,21 @@ export function main(argv = process.argv.slice(2)) {
   const seeds = argv.length === 0 ? 2 : Number(argv[0]);
   if (!Number.isInteger(seeds) || seeds < 1 || seeds > 100) throw new Error('Seed count must be 1..100');
   const context = vm.createContext({ console });
-  const files = ['data.js', 'engine.js', 'generated/pokemon_showdown_legal_data.js'];
+  const files = ['data.js', 'engine.js', 'generated/pokemon_showdown_legal_data.js', 'rulesets.js'];
   const provenance = {};
   for (const file of files) {
     const text = readFileSync(new URL(file, root), 'utf8');
     provenance[file] = sha(text);
     vm.runInContext(text, context, { filename: file });
   }
-  vm.runInContext('this.simulateBattle=simulateBattle;this.TEAMS=TEAMS;', context);
+  vm.runInContext('this.simulateBattle=simulateBattle;this.TEAMS=TEAMS;this.CHAMPIONS_RULESETS=CHAMPIONS_RULESETS;', context);
+  const manifestText = readFileSync(new URL('accuracy_harness_manifest.json', root), 'utf8');
+  const manifest = JSON.parse(manifestText);
+  const regulationErrors = validateRegulationCoverage(context.CHAMPIONS_RULESETS, manifest);
+  assert.deepEqual(regulationErrors, [], `Accuracy regulation contract failed: ${regulationErrors.join(', ')}`);
+  const regulationRows = Object.values(context.CHAMPIONS_RULESETS).map(rule => ({
+    id: rule.id, version: rule.version, status: rule.status, runtime_promotable: !!rule.runtimePromotable
+  })).sort((a, b) => a.id.localeCompare(b.id));
   const ids = Object.keys(context.TEAMS).sort();
   const out = new URL('artifacts/accuracy-2026-08-30/cross-format/', root);
   mkdirSync(out, { recursive: true });
@@ -59,6 +99,8 @@ export function main(argv = process.argv.slice(2)) {
     harness_sha256: sha(readFileSync(fileURLToPath(import.meta.url))),
     scope: 'Local runtime teams, explicit bring-four doubles and bring-three singles. Singles results do not establish doubles parity. Runtime availability is not current Champion legality approval.',
     oracle: 'State, identity, export consistency and deterministic replay checks; not an in-game parity oracle',
+    regulation_contract: { manifest_sha256: sha(manifestText), catalog_sha256: sha(JSON.stringify(regulationRows)),
+      warning_budget: manifest.warning_budget, regulations: manifest.regulations },
     team_ids: ids, seeds_per_ordered_pair: seeds, retained_log_limit: 24, retained_logs: [], modes: {}, findings: [], error_runs: [], finding_counts: {} };
   let sequence = 0;
   for (const format of ['doubles', 'singles']) {
@@ -108,10 +150,12 @@ export function main(argv = process.argv.slice(2)) {
     }
     console.log(format + ': ' + JSON.stringify(summary));
   }
-  writeFileSync(new URL('report.json', out), JSON.stringify(report, null, 2) + '\n');
   console.log('Retained logs and report: ' + fileURLToPath(out));
   console.log('Finding counts: ' + JSON.stringify(report.finding_counts));
-  return Object.values(report.modes).some(m => m.state_failures || m.validator_errors || m.repeat_failures) ? 1 : 0;
+  const failed = qualityGateFailed(report.modes, manifest.warning_budget);
+  report.quality_gate = { passed: !failed, warning_budget: manifest.warning_budget };
+  writeFileSync(new URL('report.json', out), JSON.stringify(report, null, 2) + '\n');
+  return failed ? 1 : 0;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) process.exitCode = main();

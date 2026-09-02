@@ -15,7 +15,7 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 | [IMP-0005](#imp-0005) | Replay evidence boundary and player-trust audit | Local candidate; not deployed |
 | [IMP-0006](#imp-0006) | Seismic Toss fixed-damage baseline | Local candidate; scoped parity, not Champions certification |
 | [IMP-0007](#imp-0007) | Live turn order and per-target stage moves | Local candidate; scoped parity, not Champions certification |
-| [IMP-0008](#imp-0008) | Persistent PP, Pressure and resolved replay identity | Local candidate; 99.52% scoped invariant gate |
+| [IMP-0008](#imp-0008) | Persistent PP, Pressure and resolved replay identity | Local candidate; 100% clean scoped invariant gate |
 | [IMP-0009](#imp-0009) | Authorized Supabase security readback | Live read-only audit; public launch blocked |
 
 Historical entries below summarize already-recorded evidence, not new runs. This index is intentionally not an exhaustive reconstruction of older work.
@@ -97,9 +97,9 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Recorded: 2026-09-02. Lane: mechanics/evidence/release. Local engine `1.1.5`, build `v2.2.142-pp-replay-proof`; not published.
 - Before/root cause: move PP did not persist on a Pokemon, Pressure was an explicit no-op and an exhausted move could not drive the normal Struggle path. Replay rendering also discarded some non-damaging action order.
 - Change: store PP by stable Pokemon identity; consume one PP normally and additional PP for each applicable opposing Pressure; derive Champion-effective max PP from the pinned Showdown mirror plus generated overrides; route exhaustion to Struggle. Preserve ordered status/action events in visible replay output.
-- Evidence: `tests/pp_pressure_tests.mjs`, `tests/showdown_complete_game_tests.mjs`, `tests/phase5_turn_log_tests.js`, `tests/turn_log_export_validator_tests.js`, and `reports/pp_pressure_replay_validation_2026-09-02.md`. PP passes 11/11, complete-game comparison passes 4/4, the 155-file fast gate passes, and the final three-turn browser/export pair has zero observable mismatches. The 4,624-battle invariant gate has zero errors and 99.52% warning-free runs.
-- Lesson: resource state follows the registered Pokemon through switching, `BeforeMove` denial must happen before PP deduction, and replay proof needs stable action identity plus exact execution position. Generated overrides make differences inspectable instead of hiding them in hand-maintained code.
-- Remaining: Disable, Encore, Spite, Grudge and wider resource-changing interactions; more complete games, imported teams and official Champion-specific confirmation. The cross-format harness is 100% error-free and 99.52% warning-free in its declared scope, not universal game accuracy.
+- Evidence: `tests/pp_pressure_tests.mjs`, `tests/showdown_complete_game_tests.mjs`, `tests/phase5_turn_log_tests.js`, `tests/turn_log_export_validator_tests.js`, `tests/accuracy_harness_tests.mjs`, and `reports/pp_pressure_replay_validation_2026-09-02.md`. PP passes 11/11, complete-game comparison passes 4/4, the 155-file fast gate passes, and the final three-turn browser/export pair has zero observable mismatches. The 4,624-battle invariant gate has zero errors, warnings and repeatability failures.
+- Lesson: resource state follows the registered Pokemon through switching, `BeforeMove` denial must happen before PP deduction, and replay proof needs stable action identity plus exact execution position. Generated overrides make differences inspectable instead of hiding them in hand-maintained code. Regulation/version/promotion drift must fail the harness until its exact evidence lane is reviewed.
+- Remaining: Disable, Encore, Spite, Grudge and wider resource-changing interactions; more complete games, imported teams and official Champion-specific confirmation. The cross-format harness is 100% clean in its declared scope, not universal game accuracy.
 
 <a id="imp-0009"></a>
 ## IMP-0009: Live Security Readback Replaces Assumptions

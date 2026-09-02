@@ -564,6 +564,14 @@ function sideFromActions(turn, actor, move) {
   return sides.length === 1 ? matches.find(m => m.side === sides[0]) : null;
 }
 
+function sideFromStructuredEvent(event) {
+  const explicitSide = SIDES.includes(event && event.side) ? event.side : null;
+  const keySide = sideFromStableKey(event && event.actor_key);
+  if (explicitSide && keySide && explicitSide !== keySide) return null;
+  const resolvedSide = explicitSide || keySide;
+  return resolvedSide ? { side: resolvedSide, action: event } : null;
+}
+
 function activeSideForName(snapshot, name) {
   const matches = [];
   for (const side of SIDES) {
@@ -599,7 +607,7 @@ function validateNoValidTargetSkips(turn, findings) {
 
     const actor = match[1];
     const move = match[2];
-    const resolved = sideFromActions(turn, actor, move);
+    const resolved = sideFromStructuredEvent(event) || sideFromActions(turn, actor, move);
     if (!resolved) {
       findings.push(finding('warning', 'no-valid-target-actor-unresolved', 'Could not resolve the side for a no-valid-target action.', {
         turn: turn && turn.turn,

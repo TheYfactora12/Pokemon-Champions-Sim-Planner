@@ -8,7 +8,9 @@ Competitive team scope remains doubles. Singles tests exercise shared mechanics 
 
 ## Superseding Verification - 2026-09-02
 
-The current cross-format run completed 4,624 battles with zero state failures, zero validator errors and zero repeatability failures. Doubles produced 19 warnings and singles produced 3, all `no-valid-target-actor-unresolved`; 4,602 runs were warning-free (99.52%). Stable resolved-action IDs removed the earlier mirror-name ambiguity, and explicit causal checks cover mid-turn Tailwind, Trick Room, paralysis and Speed-stage changes. This is the current scoped invariant result and supersedes the older table below; it does not convert this report into a universal game-accuracy claim.
+The current cross-format run completed 4,624 battles with zero state failures, zero validator errors, zero warnings and zero repeatability failures. All 4,624 runs are warning-free in the declared harness (100%). Stable structured event IDs resolve mirror-name no-valid-target actions, and explicit causal checks cover mid-turn Tailwind, Trick Room, paralysis and Speed-stage changes. This is the current scoped invariant result and supersedes the older table below; it does not convert this report into a universal game-accuracy claim.
+
+`accuracy_harness_manifest.json` binds the gate to explicit regulation IDs, versions, review/promotion states and declared evidence lanes. The battle matrix remains shared-mechanics evidence, not regulation-specific parity proof. The runner fails on catalog drift, unreviewed runnable formats and any warning above the zero-warning budget. This makes new-regulation work visible and reviewable instead of silently testing a stale ruleset.
 
 The final project gate ran 155 fast-test files with zero failures. The battle-audit workflow passed its declared scope while still reporting partial/gap families. A fresh local browser/export pair matched all observable fields across three turns. Public release remains blocked by unapplied production hardening, absent owner-scoped persistence and incomplete Champion-specific mechanics/source proof.
 
@@ -28,16 +30,16 @@ Run `npm run test:accuracy` from `poke-sim`. The runner uses 34 local runtime te
 
 | Scope | Battles | Wins / Losses / Draws | State errors | Audit errors | Audit warnings | Repeat checks / failures |
 | --- | ---: | --- | ---: | ---: | ---: | --- |
-| Doubles | 2,312 | 1,142 / 1,151 / 19 | 0 | 0 | 12 | 34 / 0 |
-| Singles | 2,312 | 1,167 / 1,117 / 28 | 0 | 0 | 2 | 34 / 0 |
+| Doubles | 2,312 | 1,126 / 1,176 / 10 | 0 | 0 | 0 | 34 / 0 |
+| Singles | 2,312 | 1,161 / 1,122 / 29 | 0 | 0 | 0 | 34 / 0 |
 
 Checks include stable registered identities, participant counts, active-slot limits, HP bounds, applied-damage deltas, structured export validation and sampled full-result deterministic replay. Winning is not itself a correctness check.
 
-The initial sweep reported 78 audit errors: 54 no-valid-target and 24 observed-order findings. Reproduction exposed Pollen Puff self-target eligibility and missing Gale Wings priority in the auditor, plus the distinct engine protection bug. The corrected runner reports zero hard errors, but **14 unresolved actor warnings remain** where name-based narrative events cannot identify an unambiguous side. They are not silently discarded or counted as fully audited actions.
+The initial sweep reported 78 audit errors: 54 no-valid-target and 24 observed-order findings. Reproduction exposed Pollen Puff self-target eligibility and missing Gale Wings priority in the auditor, plus the distinct engine protection bug. Later mirror-name warnings were traced to the validator ignoring already-exported structured actor identity and falling back to ambiguous narrative text. The corrected runner uses structured identity first and reports zero errors and zero warnings; legacy logs without stable identity remain explicitly ambiguous.
 
-Final engine SHA-256: `a71b6882be398725704a37a8a9e9d3cb4786f015d01b7dad3741d2101a1746ce`.
+Final engine SHA-256: `230fb02348014674b36942283dd38a706b56b62e9fc9d816677d776816a495a9`.
 Local mirror SHA-256: `1f13d6fa5b6340e9db041668bde45d7fc70d137ab15ccbc6f42468471ca26bd0`.
-All input, harness and source hashes are recorded in the local report. Eighteen representative/warning logs are retained; all 4,624 full logs are not retained.
+All input, harness, regulation-contract and source hashes are recorded in the local report. Four representative clean logs are retained; all 4,624 full logs are not retained.
 
 ## Gates
 
@@ -59,10 +61,10 @@ Four prior user exports were checked separately. Three contain historical no-val
 ## Next Release Blockers
 
 1. Fix default bring-four/export consistency: omitted selections and legacy lead-only callers can use six participants while reporting four. Apply a reviewed per-side Champion doubles limit, preserve generic formats and registered IDs, and update golden expectations only after inspecting the resulting semantic differences. Current accuracy sweeps explicitly select four to avoid this known defect.
-2. Give narrative action/failure events stable actor and target identities so mirrored names cannot leave auditing unresolved. Keep legacy ambiguity visible.
-3. Complete entry/residual ordering, PP/Pressure, broader multi-hit per-hit abilities/accuracy, Air Balloon/Gravity and semi-invulnerable grounding cases. Do not equate import acceptance with implemented behavior.
-4. Build a version-pinned differential corpus against Showdown and approved Champion captures, including regulation-specific deviations. Define the exact pass-rate denominator before publishing a percentage.
-5. Reconcile the candidate branch, review CI, deploy the rebuilt artifact through the approved process, and verify the served hash plus an actual refreshed browser session. Investigate live log persistence separately with explicit write approval and schema/RLS readback.
+2. Complete entry/residual ordering, broader multi-hit per-hit abilities/accuracy, Air Balloon/Gravity, semi-invulnerable grounding and resource-changing move cases. Do not equate import acceptance with implemented behavior.
+3. Expand imported-team and complete-game differential coverage against pinned Showdown plus approved Champion captures, including regulation-specific deviations.
+4. Add an evidence lane and explicit manifest review whenever a regulation ID, version, promotion state or runnable format changes. Keep source-review regulations blocked.
+5. Reconcile the candidate branch, review CI, deploy the exact reviewed artifact through the approved process, and verify the served hash plus an actual refreshed browser session. Investigate live log persistence separately with explicit write approval and schema/RLS readback.
 
 Case matrix: **41 named cases, 16 covered / 17 partial / 8 open**. Counts do not measure the fraction of all possible game interactions.
 
