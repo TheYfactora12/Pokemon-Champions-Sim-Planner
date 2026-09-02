@@ -241,6 +241,51 @@
     });
   }
 
+  function isAbilityLegalForSpecies(speciesKey, abilityName) {
+    var requested = clean(abilityName);
+    if (!data || !data.species || !data.abilities) {
+      return unchecked(speciesKey, requested, 'source_unavailable', 'Generated Pokemon Showdown ability data is not loaded.');
+    }
+    var species = canonicalSpeciesKey(speciesKey);
+    if (!species) return unchecked(speciesKey, requested, 'unknown_species', 'Species/form was not found in generated source data.');
+    var abilityId = toId(requested);
+    if (!abilityId || !data.abilities[abilityId]) {
+      return {
+        legal: false,
+        speciesKey: clean(speciesKey),
+        canonicalSpeciesKey: species,
+        abilityName: requested,
+        source: data.source,
+        sourceVersion: data.sourceCommitOrVersion,
+        reason: 'unknown_ability',
+        notes: 'Ability was not found in Pokemon Showdown ability data.'
+      };
+    }
+    var row = data.species[species] || {};
+    var allowed = Object.keys(row.abilities || {}).map(function(slot) { return clean(row.abilities[slot]); }).filter(Boolean);
+    var legal = allowed.some(function(name) { return toId(name) === abilityId; });
+    return {
+      legal: legal,
+      speciesKey: clean(speciesKey),
+      canonicalSpeciesKey: species,
+      abilityName: requested,
+      canonicalAbilityName: data.abilities[abilityId].name || requested,
+      legalAbilities: allowed,
+      source: data.source,
+      sourceVersion: data.sourceCommitOrVersion,
+      reason: legal ? 'species_form_ability_match' : 'not_in_species_form_abilities',
+      notes: legal
+        ? 'Ability matches the exact species/form source row.'
+        : 'Ability exists globally but is not assigned to this species/form.'
+    };
+  }
+
+  function validateAbilityForSet(member) {
+    member = member || {};
+    if (!clean(member.ability)) return null;
+    return isAbilityLegalForSpecies(member.name || member.species || '', member.ability);
+  }
+
   function legalMoveDisplayNamesForSpecies(speciesKey) {
     if (!data || !data.species || !data.moves) return [];
     var species = canonicalSpeciesKey(speciesKey);
@@ -260,6 +305,8 @@
 
   ChampionsSim.moveLegality.isMoveLegalForSpecies = isMoveLegalForSpecies;
   ChampionsSim.moveLegality.validateMovesForSet = validateMovesForSet;
+  ChampionsSim.moveLegality.isAbilityLegalForSpecies = isAbilityLegalForSpecies;
+  ChampionsSim.moveLegality.validateAbilityForSet = validateAbilityForSet;
   ChampionsSim.moveLegality.legalMoveDisplayNamesForSpecies = legalMoveDisplayNamesForSpecies;
   ChampionsSim.moveLegality.canonicalSpeciesKey = canonicalSpeciesKey;
   ChampionsSim.moveLegality.canonicalMoveId = canonicalMoveId;

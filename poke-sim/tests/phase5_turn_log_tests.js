@@ -407,6 +407,67 @@ T('T5c-1ac Replay Log v2 groups spread damage and surfaces miss/failure details'
   truthy(html.includes('Tyranitar used Stone Edge! → Charizard It missed. Accuracy 80%.'), 'accuracy miss detail missing');
 });
 
+T('T5c-1ad Replay Log preserves status moves, resolved move order and Tailwind field tags', () => {
+  const html = ctx.csRenderTurnLogRows([{
+    turn: 1,
+    pre: {
+      roster: {
+        player: [
+          { displayName: 'Whimsicott', species: 'Whimsicott', status: 'active', hp: 100, hpLabel: '100%', moves: ['Tailwind'] },
+          { displayName: 'Incineroar', species: 'Incineroar', status: 'active', hp: 100, hpLabel: '100%', moves: ['Flare Blitz'] }
+        ],
+        opponent: [{ displayName: 'Milotic', species: 'Milotic', status: 'active', hp: 100, hpLabel: '100%', moves: ['Scald'] }]
+      }
+    },
+    post: {
+      roster: {
+        player: [
+          { displayName: 'Whimsicott', species: 'Whimsicott', status: 'active', hp: 100, hpLabel: '100%', moves: ['Tailwind'] },
+          { displayName: 'Incineroar', species: 'Incineroar', status: 'active', hp: 90, hpLabel: '90%', moves: ['Flare Blitz'] }
+        ],
+        opponent: [{ displayName: 'Milotic', species: 'Milotic', status: 'active', hp: 40, hpLabel: '40%', moves: ['Scald'] }]
+      },
+      speed_control: { player: { tailwind_turns: 3 }, opponent: {} },
+      position_score: 0.6
+    },
+    actions: {
+      player: [{ actor: 'Whimsicott', move: 'Tailwind' }, { actor: 'Incineroar', move: 'Flare Blitz', target: 'Milotic' }],
+      opponent: [{ actor: 'Milotic', move: 'Scald', target: 'Incineroar' }]
+    },
+    events: [
+      { type: 'field', text: 'Whimsicott used Tailwind!' },
+      { type: 'log', text: 'Incineroar used Flare Blitz!' },
+      { type: 'damage', text: 'Incineroar used Flare Blitz! → Milotic [60 dmg, 40/100 HP]' },
+      { type: 'log', text: 'Milotic used Scald!' }
+    ],
+    damage_events: [{ attacker: 'Incineroar', attacker_key: 'player:slot:1:Incineroar', move: 'Flare Blitz', target: 'Milotic', applied_damage: 60, target_hp_after: 40, target_max_hp: 100 }],
+    delta: { position_score: 0.1 }
+  }]);
+  const tailwind = html.indexOf('Whimsicott used Tailwind!');
+  const flareBlitz = html.indexOf('Incineroar used Flare Blitz!');
+  const scald = html.indexOf('Milotic used Scald!');
+  truthy(tailwind >= 0 && tailwind < flareBlitz && flareBlitz < scald, 'resolved action order should follow event evidence');
+  truthy(html.includes('Your Tailwind 3T'), 'Tailwind duration tag missing from post-turn board');
+});
+
+T('T5c-1ae Replay Log preserves identical mirror-match move actions', () => {
+  const html = ctx.csRenderTurnLogRows([{
+    turn: 1,
+    pre: { roster: { player: [], opponent: [] } },
+    post: { roster: { player: [], opponent: [] } },
+    actions: {
+      player: [{ actor: 'Incineroar', actor_key: 'player:slot:1:Incineroar', move: 'Protect' }],
+      opponent: [{ actor: 'Incineroar', actor_key: 'opponent:slot:1:Incineroar', move: 'Protect' }]
+    },
+    events: [
+      { type: 'log', text: 'Incineroar used Protect!' },
+      { type: 'log', text: 'Incineroar used Protect!' }
+    ],
+    damage_events: [], effect_events: []
+  }]);
+  eq((html.match(/Incineroar used Protect!/g) || []).length, 2, 'mirror actions were collapsed');
+});
+
 T('T5c-1aa Replay Log v2 supports singles and doubles field visibility', () => {
   const singles = ctx.csRenderTurnLogRows([{
     turn: 1,
@@ -525,6 +586,23 @@ T('T5c-1c replay snapshot surfaces field-state chips and impact summaries', () =
   truthy(html.includes('lost its move: flinch skipped move'), 'skip reason summary missing');
 });
 
+T('T5c-1ca replay impact deduplicates recoil represented by damage and effect evidence', () => {
+  const html = ctx.csRenderReplayLogSnapshot({
+    roster: {
+      player: [{ stable_key: 'p1a', displayName: 'Incineroar', species: 'Incineroar', status: 'active', hp: 82, hpLabel: '41%', moves: ['Flare Blitz'] }],
+      opponent: [{ stable_key: 'p2a', displayName: 'Sableye', species: 'Sableye', status: 'fainted', hp: 0, hpLabel: '0%', moves: ['Recover'] }]
+    }
+  }, 'Turn 6', false, {
+    damage_events: [{
+      attacker_key: 'p1a', attacker: 'Incineroar', target_key: 'p2a', target: 'Sableye', move: 'Flare Blitz',
+      applied_damage: 65, target_hp_before: 65, target_hp_after: 0,
+      recoil_damage: 21, recoil_hp_before: 103, recoil_hp_after: 82
+    }],
+    effect_events: [{ actor_key: 'p1a', actor: 'Incineroar', move: 'Flare Blitz', effect_kind: 'recoil', hp_before: 103, hp_after: 82 }]
+  });
+  eq((html.match(/Incineroar lost 21 HP to recoil/g) || []).length, 1, 'duplicate recoil impact summary');
+});
+
 T('T5c-2 swing turn row is highlighted', () => {
   const rows = [
     { turn: 1, post: { position_score: 0.5 }, delta: { position_score: 0 }, actions: { player: [], opponent: [] } },
@@ -561,6 +639,21 @@ T('T5c-3 JSON download produces valid parseable file', () => {
   truthy(String(parsed.qa_coverage_summary.missing_targeted_proof_note || '').includes('Suppressed for single-turn-log'), 'single replay missing proof note missing');
   truthy(Array.isArray(parsed.qa_coverage_summary.single_replay_missing_mechanics), 'QA coverage single replay missing mechanics missing');
   truthy(Array.isArray(parsed.single_replay_missing_mechanics), 'single replay missing mechanics list missing');
+});
+
+T('T5c-3identity download retains original run identity and snapshots', () => {
+  let parsed = null;
+  ctx.Blob = function(parts) { parsed = JSON.parse(parts[0]); };
+  const provenance = { build_id: 'execution-build', engine_version: 'execution-engine', format: 'doubles', player_team_id: 'original-player', opp_team_id: 'original-opp' };
+  ctx.downloadReplayTurnLog({ seed: 'identity', turnLog: battleA.turnLog, provenance,
+    team_snapshots: { player: { name: 'Original team', members: [{ name: 'Original member' }] }, opponent: { members: [] } },
+    participants: { player: [{ member_id: 'durable-member', item: 'Original item' }], opponent: [] } }, { playerKey: 'changed', oppKey: 'changed' });
+  eq(parsed.build_id, 'execution-build', 'must not relabel with export build');
+  eq(parsed.player_team_id, 'original-player', 'must not relabel with selected team');
+  eq(parsed.player_team.name, 'Original team', 'must not reload edited team');
+  eq(parsed.provenance.engine_version, 'execution-engine', 'execution provenance dropped');
+  eq(parsed.participants.player[0].member_id, 'durable-member', 'participant identity dropped');
+  eq(parsed.team_snapshot_source, 'execution_time', 'snapshot origin missing');
 });
 
 T('T5c-3a QA coverage counts recoil occurrences once and keeps damage-row evidence separate', () => {

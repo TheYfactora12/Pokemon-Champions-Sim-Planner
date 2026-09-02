@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
+const REPO = path.resolve(ROOT, '..');
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(ROOT, 'style.css'), 'utf8');
 const ui = fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8');
@@ -45,13 +46,30 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'CS_OVERVIEW_DATA');
   inc(ui, 'Current Truth');
   inc(ui, 'Not 100% yet');
+  inc(ui, 'Brain MVP');
+  inc(ui, 'Core local foundation green');
+  inc(ui, 'Learning Rule');
+  inc(ui, 'Evidence -> Tests -> Release');
+  inc(ui, 'No-API Brain roadmap organized');
+  inc(ui, 'Simulator facts -> EvidenceBundle -> Local Brain Composer -> Brain Validator -> UI Cards -> Feedback -> Improvement Pack -> Codex Regression Loop');
+  inc(ui, 'No-API Brain foundation implemented locally');
+  inc(ui, 'analysis/no-api-brain-foundation adds the local foundation');
+  inc(ui, 'Brain output storage helpers');
+  inc(ui, 'fixture seeds');
+  inc(ui, 'Project open-items audit documented');
+  inc(ui, 'audit/project-open-items-2026-07-05 adds docs/release/PROJECT_OPEN_ITEMS_AUDIT_2026-07-05.md');
+  inc(ui, 'Windows Showdown DB writer CLI entrypoint');
+  inc(ui, 'stale M9 bundle-size guard');
+  inc(ui, 'Beginner-friendly Brain build plan added');
+  inc(ui, 'simulator equals referee');
   inc(ui, 'Damage Logs');
   inc(ui, 'Applied/calc split fixed locally');
   inc(ui, 'Testing Catalog Target');
   inc(ui, 'Top 10 Champion archetypes');
   inc(ui, 'Removed Teams');
   inc(ui, '17 legacy/inferred rows');
-  inc(ui, '15 approved runtime rows');
+  inc(ui, '15 reference catalog rows');
+  inc(ui, 'M-A / M-B not verified; practice only');
   inc(ui, 'Stress Lite totals + coaching summary live');
   inc(ui, 'DB Log Detail');
   inc(ui, 'Summary/capped; exports are forensic proof');
@@ -60,7 +78,7 @@ T('2. Overview tracks accomplished work and validation proof', () => {
   inc(ui, 'Knock Off');
   inc(ui, 'Verified');
   inc(ui, 'Move Support');
-  inc(ui, '120 verified / 0 baseline');
+  inc(ui, '123 verified / 11 baseline');
   inc(ui, 'Showdown Oracle');
   inc(ui, '56/56 green');
   inc(ui, 'Review tab restored');
@@ -140,7 +158,7 @@ T('3. Overview names current Supabase and Showdown DB alignment state', () => {
   inc(ui, 'Pokemon data audit has unresolved reviewer risk');
   inc(ui, '100% parity still has non-move gates');
   inc(ui, 'Mechanics truth beta gate remains open');
-  inc(ui, 'Move support is 120 verified / 0 baseline / 0 incomplete');
+  inc(ui, 'Current move support is 123 verified / 11 baseline / 0 incomplete');
   inc(ui, 'Source refresh needed must be visible before trust claims');
   inc(ui, 'Full raw thousand-battle retention is still not automatic');
   inc(ui, 'Supabase history is not full forensic turn-log storage yet');
@@ -159,6 +177,16 @@ T('3b. replay formatter accepts richer applied damage log brackets', () => {
 });
 
 T('4. Overview includes next milestones and source docs', () => {
+  inc(ui, 'Review and merge the no-API Brain foundation branch');
+  inc(ui, 'analysis/no-api-brain-foundation includes schemas, evidence bundles, tool contracts, composer, validator, feedback, Brain output and improvement-pack storage helpers, benchmark fixture seeds, and tests');
+  inc(ui, 'Wire deterministic Brain tools to real simulator and replay evidence');
+  inc(ui, 'speed_order_details');
+  inc(ui, 'damage_events');
+  inc(ui, 'Add Evidence Mode UI cards after validator proof');
+  inc(ui, 'AI Brain Analysis - Evidence Mode');
+  inc(ui, 'Keep every Brain improvement tied to a regression test');
+  inc(ui, 'Starter fixture seeds now exist for missing evidence, fake evidence IDs, weak-evidence confidence, illegal suggestions, replay overstatement, missed turning point, and wrong lead');
+  inc(ui, 'No test, no learning');
   inc(ui, 'Stress-test, rebuild, and prove the new truth board');
   inc(ui, 'Replace removed teams with approved Champion teams');
   inc(ui, 'Trick Room, anti-Trick Room, Tailwind/speed, sun, rain, sand or snow');
@@ -169,7 +197,7 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'Design DB forensic log retention before relying on saved history');
   inc(ui, 'build_id, source_url, and retention metadata');
   inc(ui, 'Prove post-move mechanics by battle system');
-  inc(ui, 'With the shipped move audit at 120 verified / 0 baseline / 0 incomplete');
+  inc(ui, 'With the shipped move audit at 123 verified / 11 baseline / 0 incomplete');
   inc(ui, 'Close the mechanics truth beta gate');
   inc(ui, 'Pokemon Champions mechanics truth gate');
   inc(ui, 'finish action-denial and priority-suppression reason inventory for singles and doubles');
@@ -238,6 +266,16 @@ T('4. Overview includes next milestones and source docs', () => {
   inc(ui, 'CLOSEOUT_2026-06-06.md');
   inc(ui, 'Showdown DB Plan');
   inc(ui, 'SHOWDOWN_DB_SOURCE_OF_TRUTH_PLAN.md');
+  inc(ui, 'No-API Brain Context');
+  inc(ui, 'llm-brain-context.md');
+  inc(ui, 'No-API Brain Integration Audit');
+  inc(ui, 'llm-brain-integration-audit.md');
+  inc(ui, 'Project And DB Audit');
+  inc(ui, 'PROJECT_AND_DB_AUDIT_2026-08-29.md');
+  inc(ui, 'Project Open Items Audit');
+  inc(ui, 'PROJECT_OPEN_ITEMS_AUDIT_2026-07-05.md');
+  inc(ui, 'Learning Brain Architecture Roadmap');
+  inc(ui, 'LEARNING_BRAIN_ARCHITECTURE_ROADMAP_2026-07-04.md');
   inc(ui, 'Mechanics Truth Beta Gate Checklist');
   inc(ui, 'mechanics_truth_beta_gate_checklist.md');
   inc(ui, 'Approved Runtime Team Test Matrix');
@@ -304,8 +342,8 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(moveQa, 'Move Mechanics QA Closeout Plan');
   inc(moveQa, 'Move registry support');
   inc(moveQa, 'Live mechanic-family proof');
-  inc(moveQa, '120 verified / 0 baseline / 0 incomplete');
-  inc(moveQa, 'It does not prove every move appeared in fresh live browser QA evidence.');
+  inc(moveQa, '123 verified / 11 baseline / 0 incomplete');
+  inc(moveQa, 'Baseline rows do not have sufficient local behavior proof and block broad parity claims.');
   inc(moveQa, 'Non-standard stat source');
   inc(moveQa, 'Foul Play, Body Press, Psyshock-style defense targeting');
   inc(moveQa, 'Do not brute-force all legal game trees in the browser.');
@@ -334,6 +372,48 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(ui, 'Owner: Josh (@Jdoutt38)');
   inc(ui, 'showdown_reference');
   inc(ui, 'not official Champion legality');
+});
+
+T('4c. Current project and DB audit names the live-proof boundary', () => {
+  const doc = fs.readFileSync(path.join(REPO, 'docs', 'release', 'PROJECT_AND_DB_AUDIT_2026-08-29.md'), 'utf8');
+  inc(doc, 'Local repo = the workshop copy.');
+  inc(doc, 'DB mock contract sweep passed');
+  inc(doc, 'Source-truth suite passed');
+  inc(doc, 'Live Supabase public reads are verified');
+  inc(doc, 'GitHub Pages responded successfully');
+  inc(doc, 'prepareTrustedReplayImport');
+  inc(doc, 'resolveArtifactTeamMappings');
+  inc(doc, 'Showdown mirror = baseline mechanics and data.');
+  inc(doc, 'The simulator decides truth.');
+  inc(doc, 'rebase/merge origin/main');
+});
+
+T('4d. Strategy and agent audit is visible and defines the product wedge', () => {
+  const doc = fs.readFileSync(path.join(REPO, 'docs', 'strategy', 'PRODUCT_STRATEGY_AND_AGENT_AUDIT_2026-08-29.md'), 'utf8');
+  const agents = fs.readFileSync(path.join(REPO, 'AGENTS.md'), 'utf8');
+  inc(doc, 'A replay-verifiable Pokemon Champion battle laboratory');
+  inc(doc, 'Evidence-backed claim survival rate');
+  inc(doc, 'Assumption Register');
+  inc(doc, 'Risk Register');
+  inc(doc, 'Recommended 30-Day Execution Order');
+  inc(agents, 'Strategy Kernel');
+  inc(agents, 'Task Priority Gate');
+  inc(agents, 'Definition Of Done');
+  inc(ui, 'Strategy and agent operating audit added');
+  inc(ui, 'Product Strategy And Agent Audit');
+  inc(ui, 'PRODUCT_STRATEGY_AND_AGENT_AUDIT_2026-08-29.md');
+  inc(ui, 'PROJECT_READINESS_AND_CLEANUP_2026-08-29.md');
+});
+
+T('4e. Full Champion source inventory is visible and preserves proof gaps', () => {
+  const doc = fs.readFileSync(path.join(ROOT, 'docs', 'CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md'), 'utf8');
+  inc(doc, 'Official Champion pages and client captures = Champion facts and legality');
+  inc(doc, 'Pinned Pokemon Showdown data');
+  inc(doc, 'Required In-Game Capture Sets');
+  inc(doc, 'Current status is not complete.');
+  inc(ui, 'Full Champion source inventory framework added');
+  inc(ui, 'Champion Full Source Inventory');
+  inc(ui, 'CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md');
 });
 
 T('5. Overview styles are responsive and scan-friendly', () => {
@@ -417,7 +497,6 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Safer Team Testing');
   inc(ui, 'home-product-stage');
   inc(ui, 'No replay selected');
-  inc(ui, 'v2.2.131-production-launch-gate adds a production readiness gate');
   if (ui.includes('Turn 4 changed the game') || ui.includes('Try a safer lead next run')) throw new Error('Home must not invent a replay conclusion');
   inc(ui, 'data-home-tab="editor">Edit a Team');
   inc(ui, 'A mad scientist lab for better teams.');
@@ -433,8 +512,8 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'No fake leaderboard. Top 25 opens only when the evidence is strong enough.');
   inc(ui, 'pokemon-news-headline');
   inc(ui, 'Champion news');
-  inc(ui, 'Official source watch');
-  inc(ui, 'Release status');
+  inc(ui, 'data-news-filter');
+  inc(ui, 'Last checked');
   inc(ui, 'See the battle like a coach would.');
   inc(ui, 'Rain Balance vs Speed Control');
   inc(ui, 'Pick + Sim + Replay + Fix');
@@ -448,10 +527,10 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'function csInitPokemonNewsCarousel');
   inc(ui, 'assets/news-card.svg');
   inc(ui, 'Champion news');
-  inc(ui, 'What changed in the game?');
-  inc(ui, 'Official source watch');
-  inc(ui, 'Pokemon Champions Official Source Hub');
-  inc(ui, 'Evidence-First Rankings Stay Gated');
+  inc(ui, 'News &amp; competitive coverage');
+  inc(ui, 'Official source');
+  inc(ui, 'Official Champions news');
+  inc(ui, 'Update overdue');
   inc(ui, 'data-news-fallback-src');
   inc(ui, "addEventListener('error'");
   inc(ui, 'Top 25 waits for proof');
@@ -487,17 +566,17 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Reset local QA rankings');
   inc(ui, 'team_lab:qa_reset_at');
   inc(ui, 'Shared/global rankings unchanged until trusted admin reset runs.');
-  inc(ui, 'What changed in the game?');
+  inc(ui, 'News &amp; competitive coverage');
   inc(ui, 'function csRenderSourceRegistry');
   inc(ui, 'Sources used to build the sim');
   inc(ui, 'CHAMPIONS_SOURCE_REGISTRY');
   inc(ui, 'Source tier');
   inc(ui, 'Do not use for:');
   inc(ui, 'needs_verification');
-  inc(ui, 'Pokemon Champions Is Available Now on iOS and Android Devices');
-  inc(ui, 'Regulation Set M-B Kicks off a New Ranked Battles Season');
-  inc(ui, 'Pokemon Champions Monthly Challenge Series June 2026');
-  inc(ui, 'Relive the Eras of Pokemon VGC');
+  inc(ui, 'published_at');
+  inc(ui, 'Worlds broadcasts');
+  inc(ui, 'Player videos');
+  inc(ui, 'Curated channels');
   inc(ui, 'data-news-slide');
   inc(ui, 'Top 25 Simulator Teams');
   inc(ui, 'No fake rankings');
@@ -519,6 +598,17 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Fresh live closeout QA artifacts recorded');
   inc(ui, 'Move mechanics QA closeout plan added');
   inc(ui, 'GitHub generated-artifact release guard documented');
+  inc(ui, '2026-07-05 open issue snapshot checked');
+  inc(ui, '68 open issues in TheYfactora12/Pokemon-Champions-Sim-Planner');
+  inc(ui, '56 open issues in alfredocox/Pokemon-Champions-Sim-Planner');
+  inc(ui, 'analysis/llm-brain-audit');
+  inc(ui, 'No-API Brain foundation tests are green');
+  inc(ui, 'passes 15 checks');
+  inc(ui, 'document-listed card types');
+  inc(ui, 'node tests/no_api_brain_foundation_tests.js passes 15 checks');
+  inc(ui, 'Project audit local sweeps are green');
+  inc(ui, '122 test files passing');
+  inc(ui, '10 DB test files passing');
   inc(ui, 'Move scheduled source/news sync to branch or PR mode');
   inc(ui, 'regenerate pokemon-champion-2026.html and generated/release_artifact.json');
   inc(ui, 'Legality evidence package foundation added');

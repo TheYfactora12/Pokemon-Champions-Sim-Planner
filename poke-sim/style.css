@@ -372,6 +372,24 @@ table{border-collapse:collapse;width:100%}
 .overview-doc-links a{display:inline-flex;align-items:center;min-height:30px;padding:5px 10px;border:1px solid rgba(91,164,245,.35);border-radius:var(--r-full);color:var(--blue);font-size:11px;font-weight:800;text-decoration:none;background:rgba(91,164,245,.07)}
 .overview-doc-links a:hover{border-color:var(--blue);color:var(--text)}
 .overview-milestone-board{display:flex;flex-direction:column;gap:var(--sp3)}
+.roadmap-current{max-width:1100px;margin:0 auto 24px;line-height:1.55;overflow-wrap:anywhere}
+.roadmap-current h3{font-size:20px;line-height:1.3;margin:0 0 10px}
+.roadmap-current h4{font-size:14px;margin:16px 0 6px}
+.roadmap-current p{margin:8px 0}
+.roadmap-current ul{padding-left:22px;margin:6px 0 16px}
+.roadmap-current li{margin:5px 0}
+.roadmap-current-milestone{border-top:1px solid var(--border);padding:12px 0}
+.roadmap-current-milestone>summary{display:list-item;list-style:disclosure-closed inside;min-height:44px;cursor:pointer;line-height:1.6}
+.roadmap-current-milestone[open]>summary{list-style-type:disclosure-open}
+.roadmap-current-milestone>summary strong{font-size:16px}
+.roadmap-current-milestone>summary span{display:inline-block;margin-left:16px;font-size:13px;font-weight:700}
+.roadmap-owner{color:var(--text-m);font-size:13px}
+.roadmap-evidence{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12px;margin:14px 0}
+.roadmap-evidence a{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.roadmap-history{border-top:1px solid var(--border);padding-top:16px;margin-top:24px}
+.roadmap-history>summary{cursor:pointer;min-height:44px;font-weight:700}
+.roadmap-history>p{margin:8px 0 16px}
+.roadmap-current summary:focus-visible,.roadmap-current a:focus-visible,.roadmap-history>summary:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 .overview-board-intro{border-color:rgba(91,164,245,.35);background:linear-gradient(135deg,rgba(91,164,245,.08),rgba(78,201,148,.05))}
 .overview-milestone{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-sm);overflow:hidden;min-width:0}
 .overview-milestone-summary{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp4);padding:var(--sp4);cursor:pointer;list-style:none}
@@ -497,7 +515,7 @@ table{border-collapse:collapse;width:100%}
 .pokemon-news-headline span{display:block;font-family:var(--font-mono);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:5px}
 .pokemon-news-headline strong{display:block;font-size:12px;font-weight:950;line-height:1.18}
 .pokemon-news-headline.active{border-color:rgba(91,164,245,.58);background:rgba(91,164,245,.13)}
-.pokemon-news-dots{display:flex;gap:7px;margin-top:var(--sp3)}
+.pokemon-news-dots{display:flex;flex-wrap:wrap;gap:7px;margin-top:var(--sp3)}
 .pokemon-news-dot{width:28px;height:6px;border:0;border-radius:var(--r-full);background:rgba(255,255,255,.16);cursor:pointer}
 .pokemon-news-dot.active{background:var(--blue)}
 @keyframes pokemonNewsReveal{from{opacity:.45;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -2690,3 +2708,37 @@ table{border-collapse:collapse;width:100%}
 .regmb-visual-card span{font-size:10px;color:var(--muted);font-family:var(--mono)}
 .regmb-visual-card em{font-style:normal;font-size:9px;padding:2px 5px;border-radius:999px}
 @media(max-width:640px){.regmb-visual-grid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}.regmb-visual-card{padding:8px}.regmb-visual-card img,.regmb-visual-fallback{width:48px;height:48px}}
+.regulation-control { min-width: 0; width: 100%; }
+.regulation-control select { width: 100%; min-width: 0; }
+.regulation-status { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; text-align: left; }
+.regulation-status > div { margin-top: 8px; }
+.regulation-mechanics-status { color: var(--text-m); border-top: 1px solid var(--border); padding-top: 8px; }
+.regulation-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
+.regulation-toolbar select { width: 300px; max-width: 100%; }
+.regulation-toolbar label { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+.regulation-toolbar .regulation-status { flex-basis: 100%; }
+.regulation-toolbar input[type="checkbox"], #ladder-mode-toggle { appearance: auto; -webkit-appearance: checkbox; width: 16px; height: 16px; flex: 0 0 16px; accent-color: var(--primary); }
+#sim-run-error { color: var(--red); }
+.sim-controls .sim-output-guide div { display: block; }
+.sim-controls .sim-output-guide span { display: block; text-align: left; margin-top: 3px; }
+/* Curated coverage controls, scoped to avoid changing the surrounding Home layout. */
+.pokemon-news-feed{scroll-margin-top:100px;border-radius:0;background:transparent;box-shadow:none;border:0;border-top:1px solid var(--border)}
+.pokemon-news-feed .pokemon-news-feed-head h3{font-size:26px;letter-spacing:0;line-height:1.2}
+.pokemon-news-feed .pokemon-news-copy h4{font-size:24px;letter-spacing:0;line-height:1.25;overflow-wrap:anywhere}
+.pokemon-news-feed .pokemon-news-controls button{width:44px;height:40px;border-radius:6px;padding:4px}
+.pokemon-news-feed .pokemon-news-controls [data-news-pause]{width:64px}
+.pokemon-news-filters{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.pokemon-news-filters button{border:0;border-bottom:3px solid transparent;background:transparent;color:var(--text-m);padding:10px 12px;font-size:13px;letter-spacing:0;cursor:pointer}
+.pokemon-news-filters button[aria-selected=true]{color:var(--green);border-bottom-color:var(--green)}
+.pokemon-news-filters button:disabled{opacity:.45;cursor:default}
+.pokemon-news-feed [hidden]{display:none!important}
+.pokemon-news-profiles{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:18px;font-size:13px}
+.pokemon-news-profiles a{color:var(--blue);text-underline-offset:3px}
+.pokemon-news-feed .pokemon-news-image-link{aspect-ratio:16/9;min-height:0;border-radius:6px;align-self:center}
+.pokemon-news-feed .pokemon-news-image-link img{height:100%;min-height:0;object-fit:contain;transform:none}
+.pokemon-news-feed .pokemon-news-slide{min-height:320px}
+.pokemon-news-feed .pokemon-news-meta span,.pokemon-news-feed .pokemon-news-headline span{letter-spacing:0}
+.pokemon-news-feed .pokemon-news-headlines{grid-template-columns:repeat(4,minmax(0,1fr))}
+.pokemon-news-feed .pokemon-news-headline{min-height:100px;overflow-wrap:anywhere}
+@media(max-width:720px){.pokemon-news-feed{scroll-margin-top:200px}.pokemon-news-feed .pokemon-news-slide{min-height:520px;align-content:start}.pokemon-news-feed .pokemon-news-headlines{grid-template-columns:repeat(2,minmax(0,1fr))}.pokemon-news-feed .pokemon-news-copy h4{font-size:22px}}
+@media(prefers-reduced-motion:reduce){.pokemon-news-slide.active{animation:none}}

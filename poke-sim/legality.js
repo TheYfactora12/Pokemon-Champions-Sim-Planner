@@ -305,6 +305,16 @@ function validateChampionsLegality(team) {
 function validateTeamForRuleset(team, rulesetId) {
   var ruleset = typeof getChampionsRuleset === 'function' ? getChampionsRuleset(rulesetId) : null;
   var violations = [];
+  if (!ruleset || ruleset.status === 'unknown') {
+    return {
+      ruleset_id: rulesetId == null ? '' : String(rulesetId),
+      ruleset_status: 'unknown',
+      allowed: false,
+      learning_eligible: false,
+      poisoning_guard: 'unknown_ruleset_do_not_train_or_rank',
+      violations: [{ severity: 'error', code: 'UNKNOWN_RULESET', message: 'Select a recognized ruleset before validating this team.' }]
+    };
+  }
   if (ruleset && !ruleset.runtimePromotable) {
     violations.push({
       severity: 'error',
@@ -327,12 +337,14 @@ function validateTeamForRuleset(team, rulesetId) {
   }
   var base = validateChampionsLegality(team);
   var hardErrors = (base.violations || []).filter(function(v){ return v && v.severity === 'error'; });
+  var evidence = typeof getRulesetEvidencePolicy === 'function' ? getRulesetEvidencePolicy(rulesetId) : null;
+  var trusted = !hardErrors.length && evidence && evidence.poisoning_guard === 'trusted_stats_allowed';
   return {
     ruleset_id: ruleset && ruleset.id || 'champions_reg_m_a_2026',
     ruleset_status: ruleset && ruleset.status || 'historical',
     allowed: hardErrors.length === 0,
-    learning_eligible: hardErrors.length === 0,
-    poisoning_guard: hardErrors.length === 0 ? 'trusted_stats_allowed' : 'illegal_team_do_not_train_or_rank',
+    learning_eligible: !!trusted,
+    poisoning_guard: hardErrors.length ? 'illegal_team_do_not_train_or_rank' : (trusted ? 'trusted_stats_allowed' : 'review_only_do_not_train_or_rank'),
     violations: base.violations || []
   };
 }

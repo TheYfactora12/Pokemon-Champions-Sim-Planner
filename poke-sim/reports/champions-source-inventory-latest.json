@@ -1,0 +1,276 @@
+{
+  "schema_version": "champions-source-inventory-audit-v1",
+  "generated_at_utc": "2026-08-29T05:32:39.879Z",
+  "manifest_schema_version": "champions-source-inventory-v1",
+  "manifest_reviewed_at": "2026-08-29",
+  "summary": {
+    "public_source_count": 11,
+    "reachable_count": 9,
+    "required_failure_count": 0,
+    "manual_capture_count": 7,
+    "field_inventory_count": 7
+  },
+  "public_sources": [
+    {
+      "source_id": "champions_official_home",
+      "url": "https://champions.pokemon.com/en-us/",
+      "final_url": "https://champions.pokemon.com/en-us/",
+      "checked_at_utc": "2026-08-29T05:32:38.305Z",
+      "status": "reachable",
+      "http_status": 200,
+      "content_type": "text/html",
+      "byte_size": 94979,
+      "sha256": "5209d919fda1eef28fdd79baf07f7b81d90b651792e3c5d10339f30ff72eda5a",
+      "title": "Pokémon Champions",
+      "source_modified_at": null,
+      "canonical_url": null
+    },
+    {
+      "source_id": "champions_official_gameplay",
+      "url": "https://champions.pokemon.com/en-us/gameplay/",
+      "final_url": "https://champions.pokemon.com/en-us/gameplay/",
+      "checked_at_utc": "2026-08-29T05:32:38.492Z",
+      "status": "reachable",
+      "http_status": 200,
+      "content_type": "text/html",
+      "byte_size": 95419,
+      "sha256": "cbc394e960a8cd30bb56610443341ccbdd7148067507508dbbdd856ca593b303",
+      "title": "Pokémon Champions | Gameplay",
+      "source_modified_at": null,
+      "canonical_url": null
+    },
+    {
+      "source_id": "champions_official_pokemon",
+      "url": "https://champions.pokemon.com/en-us/pokemon/",
+      "final_url": "https://champions.pokemon.com/en-us/pokemon/",
+      "checked_at_utc": "2026-08-29T05:32:38.526Z",
+      "status": "reachable",
+      "http_status": 200,
+      "content_type": "text/html",
+      "byte_size": 94487,
+      "sha256": "1f498680a6e12811b01e85763ed414a97a52ebd0c24a220afec0a7eb868596b4",
+      "title": "Pokémon Champions | Pokémon",
+      "source_modified_at": null,
+      "canonical_url": null
+    },
+    {
+      "source_id": "champions_official_news",
+      "url": "https://champions.pokemon.com/en-us/news/",
+      "final_url": "https://champions.pokemon.com/en-us/news/",
+      "checked_at_utc": "2026-08-29T05:32:38.572Z",
+      "status": "reachable",
+      "http_status": 200,
+      "content_type": "text/html",
+      "byte_size": 107710,
+      "sha256": "7ff23a41b4993766538406095d3eeda9c526549ec5c680e937d0256fc3af665b",
+      "title": "Latest News | Pokémon Champions",
+      "source_modified_at": null,
+      "canonical_url": null
+    },
+    {
+      "source_id": "pokemon_reg_m_b_notice",
+      "url": "https://www.pokemon.com/us/pokemon-news/regulation-set-m-b-kicks-off-a-new-ranked-battles-season-and-battle-pass-in-pokemon-champions",
+      "final_url": "https://www.pokemon.com/us/news/regulation-set-m-b-kicks-off-a-new-ranked-battles-season-and-battle-pass-in-pokemon-champions",
+      "checked_at_utc": "2026-08-29T05:32:38.611Z",
+      "status": "reachable",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "byte_size": 317478,
+      "sha256": "10059f7089bbe8cd7e66cea098ad30d55db38612e135acf48c4a8f224adf4c3e",
+      "title": "Regulation Set M‑B Kicks off a New Ranked Battles Season and Battle Pass in Pokémon Champions",
+      "source_modified_at": "2026-06-15T18:21:26.186Z",
+      "canonical_url": "https://www.pokemon.com/us/news/regulation-set-m-b-kicks-off-a-new-ranked-battles-season-and-battle-pass-in-pokemon-champions"
+    },
+    {
+      "source_id": "pokemon_reg_m_b_strategy",
+      "url": "https://www.pokemon.com/us/features/pokemon-champions-regulation-m-b-double-battles-overview",
+      "final_url": "https://www.pokemon.com/us/features/pokemon-champions-regulation-m-b-double-battles-overview",
+      "checked_at_utc": "2026-08-29T05:32:38.967Z",
+      "status": "reachable",
+      "http_status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "byte_size": 6058,
+      "sha256": "fe956b15a748161d81d296e1432c42465d4eaa6358ea456760668c067b0723f0",
+      "title": "Pardon Our Interruption",
+      "source_modified_at": null,
+      "canonical_url": null
+    },
+    {
+      "source_id": "play_pokemon_vgc_handbook",
+      "url": "https://mcdn.pokemon.com/pokemon-prod/raw/upload/v1/live/static-assets/content-assets/cms2/pdf/play-pokemon/rules/play-pokemon-vgc-tournament-handbook-en.pdf",
+      "final_url": "https://mcdn.pokemon.com/pokemon-prod/raw/upload/v1/live/static-assets/content-assets/cms2/pdf/play-pokemon/rules/play-pokemon-vgc-tournament-handbook-en.pdf",
+      "checked_at_utc": "2026-08-29T05:32:39.003Z",
+      "status": "reachable",
+      "http_status": 200,
+      "content_type": "application/pdf",
+      "byte_size": 598383,
+      "sha256": "152ff4de657ee0f001bd8fd5f1290272782798836701ed72c4b311c974404e24"
+    },
+    {
+      "source_id": "pokemon_home_move",
+      "url": "https://home.pokemon.com/en-us/move/",
+      "final_url": "https://home.pokemon.com/en-us/move/",
+      "checked_at_utc": "2026-08-29T05:32:39.219Z",
+      "status": "reachable",
+      "http_status": 200,
+      "content_type": "text/html",
+      "byte_size": 94596,
+      "sha256": "c65867fb4cb511ffc211a050a81714dd0f77703e107cfdf62236d4d45546fe76",
+      "title": "Move Pokémon to Pokémon HOME | Pokémon HOME",
+      "source_modified_at": null,
+      "canonical_url": null
+    },
+    {
+      "source_id": "pokemon_support_champions",
+      "url": "https://support.pokemon.com/hc/en-us/articles/34698966331668-Pok%C3%A9mon-Champions-Support",
+      "final_url": "https://support.pokemon.com/hc/en-us/articles/34698966331668-Pok%C3%A9mon-Champions-Support",
+      "checked_at_utc": "2026-08-29T05:32:39.358Z",
+      "status": "http_error",
+      "http_status": 403,
+      "content_type": "text/html; charset=UTF-8",
+      "byte_size": 5961,
+      "sha256": "1d30c4ecafbf0d5572c1a2679b77b9d6fe5e7c8886141f0c60f0341565c22cfc",
+      "title": "Just a moment...",
+      "source_modified_at": null,
+      "canonical_url": null
+    },
+    {
+      "source_id": "pokemon_support_home_moves",
+      "url": "https://support.pokemon.com/hc/en-us/articles/6372731346452-Why-did-my-Pok%C3%A9mon-s-moves-change",
+      "final_url": "https://support.pokemon.com/hc/en-us/articles/6372731346452-Why-did-my-Pok%C3%A9mon-s-moves-change",
+      "checked_at_utc": "2026-08-29T05:32:39.473Z",
+      "status": "http_error",
+      "http_status": 403,
+      "content_type": "text/html; charset=UTF-8",
+      "byte_size": 5982,
+      "sha256": "3371f12b4211ff0901cdce9e65b733aae9e70cf52c742aa03df1e644d50b90ed",
+      "title": "Just a moment...",
+      "source_modified_at": null,
+      "canonical_url": null
+    },
+    {
+      "source_id": "championships_official",
+      "url": "https://championships.pokemon.com/",
+      "final_url": "https://championships.pokemon.com/en-us",
+      "checked_at_utc": "2026-08-29T05:32:39.567Z",
+      "status": "reachable",
+      "http_status": 200,
+      "content_type": "text/html;charset=UTF-8",
+      "byte_size": 27494,
+      "sha256": "4eca29c535b747bc92278cb89fe4ba4a1b4769f1a6c943710d0cc70f8963be04",
+      "title": "Pokémon Championship Series",
+      "source_modified_at": null,
+      "canonical_url": null
+    }
+  ],
+  "manual_captures": [
+    {
+      "source_id": "champions_client_build",
+      "status": "manual_capture_required",
+      "required": true,
+      "capture": "Game version/build screen with platform, locale, and UTC timestamp.",
+      "claim_scopes": [
+        "client_version",
+        "effective_data_version"
+      ]
+    },
+    {
+      "source_id": "champions_client_regulation",
+      "status": "manual_capture_required",
+      "required": true,
+      "capture": "Every page of the active regulation details for Singles and Doubles.",
+      "claim_scopes": [
+        "regulation_id",
+        "dates",
+        "team_size",
+        "bring_size",
+        "level",
+        "clauses",
+        "timers",
+        "eligible_roster"
+      ]
+    },
+    {
+      "source_id": "champions_client_roster",
+      "status": "manual_capture_required",
+      "required": true,
+      "capture": "Complete Roster Info/featured Pokemon pages, including forms and Mega forms.",
+      "claim_scopes": [
+        "champion_species",
+        "champion_forms",
+        "recruitment_availability"
+      ]
+    },
+    {
+      "source_id": "champions_client_training",
+      "status": "manual_capture_required",
+      "required": true,
+      "capture": "Per-species training availability for moves and Abilities, sampled exhaustively by roster automation or reviewed capture.",
+      "claim_scopes": [
+        "champion_learnsets",
+        "champion_abilities",
+        "move_availability"
+      ]
+    },
+    {
+      "source_id": "champions_client_items",
+      "status": "manual_capture_required",
+      "required": true,
+      "capture": "Complete held-item, Mega Stone, reward, and item-description inventory.",
+      "claim_scopes": [
+        "champion_items",
+        "item_availability",
+        "mega_stones",
+        "item_descriptions"
+      ]
+    },
+    {
+      "source_id": "champions_client_species_details",
+      "status": "manual_capture_required",
+      "required": true,
+      "capture": "Species/form type, displayed stats, weight, Ability, move, and Mega details with controlled training inputs.",
+      "claim_scopes": [
+        "champion_stats",
+        "types",
+        "weight",
+        "forms",
+        "mega_stats",
+        "mega_types",
+        "mega_abilities"
+      ]
+    },
+    {
+      "source_id": "champions_client_validation_cases",
+      "status": "manual_capture_required",
+      "required": true,
+      "capture": "Known accepted and rejected teams covering species, form, duplicate species/item, move, Ability, and Mega constraints.",
+      "claim_scopes": [
+        "legality_fixtures",
+        "validator_messages"
+      ]
+    }
+  ],
+  "baseline_manifests": [
+    {
+      "source_id": "pokemon_showdown_manifest",
+      "tier": 2,
+      "path": "tools/showdown_sources.json",
+      "kind": "executable_baseline",
+      "required": true,
+      "claim_scopes": [
+        "species",
+        "forms",
+        "stats",
+        "types",
+        "moves",
+        "abilities",
+        "items",
+        "learnsets",
+        "typechart",
+        "aliases",
+        "baseline_mechanics"
+      ]
+    }
+  ],
+  "policy_result": "public_sources_reachable_manual_proof_pending"
+}

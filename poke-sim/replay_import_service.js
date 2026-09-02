@@ -434,6 +434,23 @@
         return db.saveReplayImport(payload).then(function(saved) {
           return Object.assign({}, payload, { saved: saved });
         });
+      },
+      saveTrustedReplayImport: function(input, opts) {
+        var payload = buildReplayImportPayload(input, opts || {});
+        if (db.saveTrustedReplayImport) {
+          return db.saveTrustedReplayImport(payload, opts || {}).then(function(saved) {
+            return Object.assign({}, payload, { saved: saved });
+          });
+        }
+        if (db.prepareTrustedReplayImport) {
+          return db.prepareTrustedReplayImport(payload, opts || {}).then(function(prepared) {
+            if (!db.saveReplayImport) return prepared;
+            return db.saveReplayImport(prepared).then(function(saved) {
+              return Object.assign({}, prepared, { saved: saved });
+            });
+          });
+        }
+        return Promise.resolve(payload);
       }
     };
   }

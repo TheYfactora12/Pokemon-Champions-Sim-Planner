@@ -238,13 +238,13 @@ T('8. ruleset lifecycle blocks source-review teams from trusted legality', () =>
   truthy(result.violations.some((v) => v.code === 'RULESET_NOT_RUNTIME_PROMOTED'), 'missing source-review violation');
 });
 
-T('9. implemented historical lane remains legal-sim eligible when team passes', () => {
+T('9. legacy historical catalog compatibility does not approve regulation evidence', () => {
   const policy = rulesets.getRulesetEvidencePolicy('champions_reg_m_a_2026');
   truthy(policy.runtime_promotable === true, 'Reg M-A historical lane should remain replay/sim eligible');
-  truthy(policy.poisoning_guard === 'trusted_stats_allowed', 'historical lane should allow labeled trusted stats');
+  truthy(policy.poisoning_guard !== 'trusted_stats_allowed', 'unapproved historical package must block trusted stats');
   const result = legality.validateTeamForRuleset({ members: [] }, 'champions_reg_m_a_2026');
   truthy(result.allowed === true, 'empty valid team fixture should pass historical wrapper');
-  truthy(result.poisoning_guard === 'trusted_stats_allowed', 'historical wrapper should allow trusted stats');
+  truthy(result.poisoning_guard !== 'trusted_stats_allowed', 'legacy wrapper must not allow trusted stats');
 });
 
 T('10. analysis payload carries ruleset poisoning guard metadata', () => {

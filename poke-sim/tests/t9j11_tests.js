@@ -455,6 +455,25 @@ T('15b. imported teams block known illegal Showdown-backed moves', () => {
   eq(res.keys.length, 0, 'known illegal move import should not return a key');
 });
 
+T('15b2. imported teams block real abilities assigned to the wrong species', () => {
+  resetTeams();
+  const member = {
+    name: 'Arcanine',
+    item: '',
+    ability: 'Levitate',
+    level: 50,
+    nature: 'Hardy',
+    moves: ['Protect'],
+    evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
+  };
+  const validation = buildImportedTeamValidation([member]);
+  truthy(!validation.valid, 'wrong-species ability should hard-block import');
+  truthy(validation.errors.some(w => /Levitate/.test(w) && /not assigned/.test(w)), 'wrong-species ability error missing');
+  const res = importCustomTeamsBulk([{ name: 'Wrong Ability Import', members: [member] }]);
+  eq(res.added, 0, 'wrong-species ability import should not be added');
+  eq(res.skipped, 1, 'wrong-species ability import should be skipped');
+});
+
 T('15c. imported teams with hard rule errors are rejected', () => {
   resetTeams();
   const res = importCustomTeamsBulk([{ name: 'Illegal Import', members: [

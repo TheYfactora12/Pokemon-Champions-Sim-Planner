@@ -171,4 +171,19 @@ T('8. manual reference team dropdown can override filename matching privately', 
   truthy(payload.refs.some((row) => row.ref_type === 'team_lab_team' && row.ref_id === 'team-lab-kevin-rain'), 'team ref generated');
 });
 
+T('9. service wrapper can route through trusted replay import adapter path', () => {
+  let trustedCalled = false;
+  const service = ReplayImportService.createReplayImportService({
+    saveTrustedReplayImport(payload) {
+      trustedCalled = true;
+      return Promise.resolve({ import_row: payload.import_row, trusted_path: true });
+    }
+  });
+  return service.saveTrustedReplayImport(sample, Object.assign({}, baseOpts, { filename: 'battle.txt' })).then((result) => {
+    eq(trustedCalled, true, 'trusted adapter should be called');
+    truthy(result.saved && result.saved.trusted_path, 'trusted save result missing');
+    eq(result.import_row.source_type, 'showdown_text', 'source type should still be built by service');
+  });
+});
+
 run();

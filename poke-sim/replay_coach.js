@@ -1896,6 +1896,27 @@
   }
 
   function buildReplayCoachReview(parsed, opts) {
+    var hasBattleEvents = parsed && Array.isArray(parsed.turns) && parsed.turns.some(function(turn) {
+      return Number.isFinite(turn.number) && turn.number > 0 && Array.isArray(turn.events) && turn.events.some(function(event) {
+        var fields = String(event && event.text || '').split('|');
+        var required = {
+          move: 3, switch: 4, drag: 4, replace: 3, detailschange: 3, '-formechange': 3,
+          faint: 2, '-damage': 3, '-heal': 3, '-status': 3, '-curestatus': 3,
+          '-boost': 4, '-unboost': 4, '-weather': 2, '-fieldstart': 2,
+          '-fieldend': 2, '-fieldactivate': 2, '-sidestart': 3, '-sideend': 3,
+          '-sideactivate': 3, '-crit': 2, '-miss': 2, '-fail': 2, '-immune': 2,
+          cant: 3, '-ability': 3, '-item': 3, '-enditem': 3, '-activate': 3,
+          '-singleturn': 3, '-supereffective': 2, '-resisted': 2
+        }[fields[1]];
+        if (!required || fields.length <= required) return false;
+        for (var i = 2; i <= required; i++) if (!String(fields[i] || '').trim()) return false;
+        if (/^-(?:weather|fieldstart|fieldend|fieldactivate)$/.test(fields[1])) return true;
+        return /^p[1-4][a-d]?:\s*\S/.test(fields[2]);
+      });
+    });
+    if (!hasBattleEvents) {
+      throw new Error('No battle events were found. Use a replay with observed turns before requesting coaching.');
+    }
     opts = opts || {};
     var side = normalizeSide(opts.selectedSide || parsed.selectedSide || 'p1');
     var opp = side === 'p1' ? 'p2' : 'p1';
