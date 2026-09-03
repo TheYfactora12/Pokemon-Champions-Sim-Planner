@@ -2,15 +2,27 @@
 
 Status: active source-truth control page.
 
-Last repo source review: June 29, 2026.
+Last inventory review: August 29, 2026. Ranked regulation duration rechecked August 30, 2026; this does not refresh every source or promote runtime data.
 
 Purpose: give the team one place to inspect, challenge, replace, and improve the sources used by the Pokemon Champions simulator. If a source is stale, weak, contradicted, or not allowed to prove the claim it is being used for, update this page before changing runtime behavior.
+
+## August 29, 2026 Full Inventory Control
+
+The complete field/source inventory is now machine-readable at `tools/champions_source_inventory.json`. It separates public official pages, required in-game captures, the pinned Showdown baseline manifest, and field-level promotion rules for species/forms, moves, Abilities, items, learnsets, battle rules, and mechanics.
+
+Run `npm run champions:sources` to create the metadata/hash audit at `reports/champions-source-inventory-latest.json`. The collector does not republish full page bodies and does not promote runtime rows.
+
+Review plan: [`CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md`](CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md).
+
+First run: 9 of 11 official public endpoints were reachable; two optional Pokemon Support pages returned HTTP 403 to automation; no required public endpoint failed; seven official in-game capture sets remain required. Public pages do not expose a complete catalog of every Champion species/form/stat/move/item/Ability/learnset/mechanic, so those gaps must stay explicit until client capture or executable Champion evidence exists.
 
 Product scope rule: this project is Pokemon Champions only. Non-Champion legacy mechanics/data may be mentioned only when documenting blocked imports, source drift, or migration hazards. They are not player-facing scope and must not train trusted coaching data.
 
 ## Current Ruleset Alert
 
-As of the June 29, 2026 repo review, Champion regulation sources must be treated as ruleset-sensitive. Current research points to Reg M-B as the active live lane, with official/current-source references placing the M-B window around June 16/17, 2026 through September 1/2, 2026 depending on local timezone representation.
+As checked August 30, 2026, the official Ranked Battle M-B window is June 17, 2026 at 02:00 UTC through September 9, 2026 at 01:59 UTC. The August 5 notice extended the originally announced September 2 end date. Source: [official Regulation Set M-B notice](https://champions-news.pokemon-home.com/en/page/776.html). Event-specific competition regulations must be verified separately; ranked eligibility alone does not establish a tournament's rules.
+
+Runtime drift remains open: `../rulesets.js` still records the original September 2 date. Correcting this documentation does not approve M-B data or change its source-review status. See [the player review](../reports/competitive_player_review_2026-08-30.md).
 
 Do not casually call Reg M-A the live ladder unless a current source confirms it. The simulator now treats Reg M-B as the active source-review lane while keeping Reg M-A as the implemented historical runtime lane until source-backed legality and mechanic deltas are promoted.
 

@@ -31,8 +31,8 @@ console.log('\n=== release manifest tests ===\n');
 
 T('1. manifest exposes canonical build and cache identity', () => {
   truthy(manifest.schema_version === 'champions-release-manifest-v1', 'schema mismatch');
-  truthy(manifest.build_id === 'v2.2.138-site-navigation-fixes', 'build id mismatch');
-  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-138-site-navigation-fixes', 'cache id mismatch');
+  truthy(manifest.build_id === 'v2.2.142-pp-replay-proof', 'build id mismatch');
+  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-142-pp-replay-proof', 'cache id mismatch');
   truthy(manifest.artifact_manifest === 'generated/release_artifact.json', 'artifact manifest path mismatch');
 });
 
@@ -45,6 +45,7 @@ T('2. visible header and app shell fallback mirror manifest build id', () => {
 T('3. service worker derives cache from manifest and precaches manifest', () => {
   truthy(sw.includes("importScripts('./release_manifest.js')"), 'sw should import release manifest');
   truthy(sw.includes('RELEASE_MANIFEST.service_worker_cache'), 'sw should derive cache from manifest');
+  truthy(sw.includes("|| '" + manifest.service_worker_cache + "'"), 'sw fallback must match this release');
   truthy(sw.includes("'./release_manifest.js'"), 'sw should precache release manifest');
   truthy(sw.includes("'./generated/release_artifact.json'"), 'sw should precache release artifact manifest');
 });
@@ -66,6 +67,12 @@ T('5. release artifact records committed bundle sha and mirrors manifest identit
   truthy(artifact.pages_path === manifest.pages_path, 'artifact pages path should mirror manifest');
   truthy(artifact.bundle_sha256 === actualSha, 'artifact sha should match committed bundle');
   truthy(artifact.bundle_bytes === bundle.length, 'artifact byte count should match committed bundle');
+});
+
+T('6. generator stdout reproduces file bytes, including on Windows', () => {
+  const result = require('child_process').spawnSync(process.platform === 'win32' ? 'python' : 'python3', ['tools/build-bundle.py', '--to-stdout'], { cwd: ROOT, maxBuffer: 30 * 1024 * 1024 });
+  truthy(result.status === 0, 'generator failed: ' + String(result.stderr || result.error || ''));
+  truthy(result.stdout.equals(fs.readFileSync(bundlePath)), 'stdout bytes differ from generated file');
 });
 
 console.log(`\nrelease manifest: ${pass} pass, ${fail} fail\n`);

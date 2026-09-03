@@ -87,7 +87,7 @@ T('2d. mapping and promotion migration protects team identity and official ranki
     'CREATE TABLE IF NOT EXISTS team_lab_team_key_mappings',
     "source_system text NOT NULL CHECK (source_system IN ('local_qa', 'branch_coverage', 'showdown_import', 'qa_artifact', 'manual_admin'))",
     "mapping_status text NOT NULL DEFAULT 'pending' CHECK (mapping_status IN ('pending', 'verified', 'rejected', 'stale'))",
-    'UNIQUE(source_system, source_team_key, regulation_id, format)',
+    'UNIQUE NULLS NOT DISTINCT(source_system, source_team_key, regulation_id, format)',
     'CREATE TABLE IF NOT EXISTS team_lab_promotion_rules',
     'require_verified_team_mapping boolean NOT NULL DEFAULT true',
     'require_approved_benchmark_pool boolean NOT NULL DEFAULT true',
@@ -475,6 +475,72 @@ T('13. team key mapping must be verified before official promotion', () => {
   ], { source_system: 'branch_coverage', regulation_id: 'reg-m-b', format: 'doubles' });
   eq(verified.ok, true, 'verified mapping should resolve');
   eq(verified.team_lab_team_id, 'team-a', 'verified mapping team mismatch');
+});
+
+T('13b. artifact resolver maps verified artifact keys to durable Team Lab IDs', () => {
+  const artifact = {
+    schema_version: 'champions-qa-artifact-v1',
+    regulation_id: 'reg-m-b',
+    format: 'doubles',
+    source_gaps: ['TEAM_ID_MAPPING_NEEDED', 'SEED_MISSING_FROM_ARTIFACT'],
+    retained: {
+      replay_cards: [
+        { player_team_id: 'player', opponent_team_id: 'mega_altaria', seed: 'seed-1' }
+      ]
+    }
+  };
+  const resolved = TeamLab.resolveArtifactTeamMappings(artifact, [
+    { id: 'map-player', source_system: 'qa_artifact', source_team_key: 'player', team_id: 'team-player', regulation_id: 'reg-m-b', format: 'doubles', mapping_status: 'verified' },
+    { id: 'map-opp', source_system: 'qa_artifact', source_team_key: 'mega_altaria', team_id: 'team-opp', regulation_id: 'reg-m-b', format: 'doubles', mapping_status: 'verified' }
+  ], { source_system: 'qa_artifact' });
+  eq(resolved.ok, true, 'verified artifact should resolve');
+  eq(resolved.status, 'verified', 'verified artifact status mismatch');
+  eq(resolved.team_id_map.player, 'team-player', 'player role mapping mismatch');
+  eq(resolved.team_id_map.mega_altaria, 'team-opp', 'opponent key mapping mismatch');
+  truthy(!resolved.source_gaps.includes('TEAM_ID_MAPPING_NEEDED'), 'resolved mapping gap should be cleared');
+  truthy(resolved.source_gaps.includes('SEED_MISSING_FROM_ARTIFACT'), 'non-mapping source gap should remain');
+});
+
+T('13c. artifact resolver preserves source gaps when team mapping is missing', () => {
+  const artifact = {
+    regulation_id: 'reg-m-b',
+    format: 'doubles',
+    source_gaps: ['TEAM_ID_MAPPING_NEEDED', 'RULESET_VERSION_INFERRED'],
+    replay_records: [
+      { team_a_id: 'artifact:player:player', team_b_id: 'artifact:opponent:unknown_opp' }
+    ]
+  };
+  const resolved = TeamLab.resolveArtifactTeamMappings(artifact, [
+    { id: 'map-player', source_system: 'qa_artifact', source_team_key: 'player', team_id: 'team-player', regulation_id: 'reg-m-b', format: 'doubles', mapping_status: 'verified' }
+  ], { source_system: 'qa_artifact' });
+  eq(resolved.ok, false, 'missing opponent mapping should block resolution');
+  eq(resolved.status, 'needs_review', 'missing mapping status mismatch');
+  eq(resolved.unresolved_count, 1, 'unresolved mapping count mismatch');
+  truthy(resolved.source_gaps.includes('TEAM_ID_MAPPING_NEEDED'), 'original mapping source gap should remain');
+  truthy(resolved.source_gaps.includes('TEAM_KEY_MAPPING_MISSING'), 'missing mapping source gap should be added');
+  truthy(resolved.source_gaps.includes('RULESET_VERSION_INFERRED'), 'unrelated source gap should be preserved');
+});
+
+T('13d. artifact resolver refuses ambiguous team-key mappings', () => {
+  const artifact = {
+    regulation_id: 'reg-m-b',
+    format: 'doubles',
+    retained: {
+      replay_cards: [
+        { player_team_id: 'player', opponent_team_id: 'opponent' }
+      ]
+    }
+  };
+  const resolved = TeamLab.resolveArtifactTeamMappings(artifact, [
+    { id: 'map-a', source_system: 'qa_artifact', source_team_key: 'player', team_id: 'team-a', regulation_id: 'reg-m-b', format: 'doubles', mapping_status: 'verified' },
+    { id: 'map-b', source_system: 'qa_artifact', source_team_key: 'player', team_id: 'team-b', regulation_id: 'reg-m-b', format: 'doubles', mapping_status: 'verified' },
+    { id: 'map-opp', source_system: 'qa_artifact', source_team_key: 'opponent', team_id: 'team-opp', regulation_id: 'reg-m-b', format: 'doubles', mapping_status: 'verified' }
+  ], { source_system: 'qa_artifact' });
+  eq(resolved.ok, false, 'ambiguous mapping should block resolution');
+  eq(resolved.status, 'ambiguous', 'ambiguous status mismatch');
+  eq(resolved.ambiguous_count, 1, 'ambiguous mapping count mismatch');
+  truthy(resolved.source_gaps.includes('TEAM_KEY_MAPPING_AMBIGUOUS'), 'ambiguous mapping source gap missing');
+  eq(Object.prototype.hasOwnProperty.call(resolved.team_id_map, 'player'), false, 'ambiguous player key should not map');
 });
 
 T('14. promotion gate blocks unsafe evidence and approves only fully mapped current verified rows', () => {

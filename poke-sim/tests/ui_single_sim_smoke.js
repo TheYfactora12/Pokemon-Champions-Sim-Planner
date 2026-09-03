@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { webcrypto } = require('crypto');
 const { runMechanicsSmoke } = require('./mechanics_audit_cases');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -67,6 +68,7 @@ window.window = window;
 window.document = document;
 
 const ctx = {
+  crypto: webcrypto, TextEncoder,
   console, require, module: {}, exports: {}, Math, Object, Array, Set, JSON,
   Promise, setTimeout, clearTimeout, Date, String, Number, Boolean, Map, Error, RegExp,
   Symbol, parseFloat, parseInt, isFinite,
@@ -87,13 +89,20 @@ const ctx = {
 };
 
 vm.createContext(ctx);
+ctx.ChampionsSim = window.ChampionsSim = {};
 
 function load(file) {
   vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
 }
 
 [
+  'rulesets.js',
+  'release_manifest.js',
   'data.js',
+  'generated/pokemon_showdown_legal_data.js',
+  'generated/pokemon_showdown_species_weights.js',
+  'move_legality.js',
+  'runtime_data.js',
   'logger.js',
   'engine.js',
   'storage_adapter.js',
@@ -102,6 +111,9 @@ function load(file) {
   'legality.js',
   'strategy-injectable.js'
 ].forEach(load);
+// This smoke exercises the explicitly unverified practice lane, not M-A approval.
+vm.runInContext('selectedRegulationId = "champions_custom_practice";', ctx);
+ctx.CHAMPIONS_RELEASE_MANIFEST = window.CHAMPIONS_RELEASE_MANIFEST;
 
 vm.runInContext('this.runButton = document.getElementById("run-sim-btn");', ctx);
 vm.runInContext('this.runAllButton = document.getElementById("run-all-btn");', ctx);
@@ -111,6 +123,10 @@ async function main() {
   const runAllBtn = ctx.runAllButton;
   if (!btn || typeof btn.onclick !== 'function') throw new Error('Run Simulation click handler missing');
   if (!runAllBtn || typeof runAllBtn.onclick !== 'function') throw new Error('Run All click handler missing');
+  vm.runInContext('selectedRegulationId = "champions_reg_m_b_2026";', ctx);
+  await btn.onclick.call(btn, { target: btn });
+  if (!/Regulation preflight blocked/.test(ids['sim-run-error'].textContent) || ids['sim-run-error'].hidden) throw new Error('blocked run did not expose simulator error');
+  vm.runInContext('selectedRegulationId = "champions_custom_practice";', ctx);
   await btn.onclick.call(btn, { target: btn });
   await new Promise(resolve => setTimeout(resolve, 80));
 
@@ -126,6 +142,20 @@ async function main() {
   if (!/adaptive lineups/.test(resultsSub || '')) throw new Error('Bo3 results did not show adaptive lineup evidence');
 
   runMechanicsSmoke(ctx.simulateBattle);
+
+  const identityRun = await ctx.runBoSeries(1, 'player', 'mega_altaria', 1);
+  if (identityRun.provenance.engine_version !== vm.runInContext('ENGINE_VERSION', ctx)) throw new Error('wrong captured engine version');
+  if (!/^[a-f0-9]{64}$/.test(identityRun.provenance.player_team_digest)) throw new Error('missing execution team digest');
+  if (identityRun.allLogs.some(g => g.provenance.format !== 'doubles' || g.participants.player.length !== 4)) throw new Error('UI run lost game identity');
+  const identityPayload = ctx._buildAnalysisPayload('player', 'mega_altaria', 1, identityRun);
+  if (identityPayload.poisoning_guard === 'trusted_stats_allowed') throw new Error('practice evidence incorrectly promoted');
+  if (identityRun.provenance.ruleset_id !== 'champions_custom_practice') throw new Error('explicit practice identity lost');
+  const unregistered = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.player))', ctx);
+  delete unregistered.ruleset_id;
+  delete unregistered.metadata.ruleset_id;
+  ctx.normalizeTeamRecordForSim('unregistered', unregistered);
+  const missingOriginal = await ctx._captureSimulationProvenance('unregistered', 'opp', unregistered, unregistered, 'doubles', 1, {}, 'champions_custom_practice');
+  if (missingOriginal.original_player_ruleset_id) throw new Error('normalization invented original registration');
 
   const auditPanel = ids['audit-panel'] && ids['audit-panel'].innerHTML;
   if (!auditPanel || !/Battle Audit/.test(auditPanel)) throw new Error('audit panel did not render');

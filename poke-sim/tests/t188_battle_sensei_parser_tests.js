@@ -111,9 +111,11 @@ T('6. fails soft on empty or incomplete logs', () => {
   const empty = replayCoach.parseShowdownLog('', { selectedSide: 'p1' });
   eq(empty.ok, false, 'empty ok flag');
   truthy(empty.warnings.length > 0, 'empty warnings');
-  const partial = replayCoach.analyzeShowdownReplay('|player|p1|Alice\n|win|Alice', { selectedSide: 'p1' });
-  eq(partial.review.summary.result, 'win', 'partial winner result');
-  eq(partial.review.summary.confidence, 'medium', 'partial confidence');
+  const partial = replayCoach.parseShowdownLog('|player|p1|Alice\n|win|Alice', { selectedSide: 'p1' });
+  eq(partial.result, 'win', 'partial winner metadata is preserved');
+  let rejected = false;
+  try { replayCoach.buildReplayCoachReview(partial); } catch (e) { rejected = /No battle events/.test(e.message); }
+  truthy(rejected, 'winner-only metadata must not produce coaching');
 });
 
 T('7. marks partial bring-four evidence without overclaiming', () => {

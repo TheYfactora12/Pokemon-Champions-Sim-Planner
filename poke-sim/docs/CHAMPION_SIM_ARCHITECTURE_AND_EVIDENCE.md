@@ -143,7 +143,7 @@ The Strategy tab now presents branch and sim evidence in player decision order: 
 
 Supabase is part of source truth and audit, but it is not the live battle calculator in this release.
 
-Current DB-backed responsibilities:
+Designed DB-backed responsibilities (not a live verification checklist):
 
 - Load approved/gated teams when live DB is available.
 - Persist analyses and bounded history rows.
@@ -154,6 +154,8 @@ Current DB-backed responsibilities:
 - Reject or prevent stale/illegal team rows from replacing clean bundled data.
 
 Current DB limitations:
+
+- Verification boundary as of August 30, 2026: the August 29 read audit in `../../STATUS.md` records public source/team reads. August hardening and Team Lab/Trainer Room migrations still need application and readback. Analysis writes, Team Lab persistence, and trusted promotion are not proven by a connected badge or offline contract tests. The August 30 browser review performed no production writes. See [the current review](../reports/competitive_player_review_2026-08-30.md).
 
 - `showdown_entities` rows are not yet the direct battle runtime source.
 - Saved analysis history is summary/capped storage, not full forensic turn-log storage.

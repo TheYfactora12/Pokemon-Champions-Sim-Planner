@@ -128,6 +128,8 @@ vm.runInContext([
   'this.addReplays = addReplays;'
 ].join(' '), ctx);
 
+// Synthetic export/algorithm fixtures only. Production preflight is tested separately.
+ctx.canRunRegulationAnalysis = () => true;
 const {
   TEAMS,
   Storage,
@@ -217,7 +219,9 @@ async function main() {
         eq(playerKey, 'player');
         eq(limit, 500);
         return [
-          { analysis_id: 'a1', created_at: '2026-05-15T10:00:00.000Z', player_team_id: 'player', opp_team_id: 'mega_altaria', bo: 3, win_rate: 0.75, wins: 3, losses: 1, sample_size: 4 }
+          { analysis_id: 'a1', created_at: '2026-05-15T10:00:00.000Z', player_team_id: 'player', opp_team_id: 'mega_altaria', bo: 3, win_rate: 0.75, wins: 3, losses: 1, sample_size: 4,
+            engine_version: '1.1.1', format: 'doubles', evidence_policy: { poisoning_guard: 'identity_mismatch_do_not_train_or_rank' },
+            analysis_json: { provenance: { build_id: 'original-build' }, evidence_policy: { poisoning_guard: 'trusted_stats_allowed' } } }
         ];
       },
       loadAnalysisLogs: async function(analysisId) {
@@ -232,6 +236,11 @@ async function main() {
     eq(payload.db.analyses.length, 1, 'analysis count');
     eq(payload.db.analyses[0].analysis_id, 'a1');
     eq(payload.db.analyses[0].logs.length, 1, 'nested logs missing');
+    eq(payload.db.analyses[0].engine_version, '1.1.1', 'execution engine missing');
+    eq(payload.db.analyses[0].analysis_json.provenance.build_id, 'original-build', 'export dropped provenance');
+    eq(payload.db.analyses[0].evidence_policy.poisoning_guard, 'identity_mismatch_do_not_train_or_rank', 'export dropped recomputed quarantine');
+    eq(payload.db.analyses[0].analysis_json.evidence_policy.poisoning_guard, 'identity_mismatch_do_not_train_or_rank', 'nested policy must not remain trusted');
+    eq(payload.db.analyses[0].stored_evidence_policy.poisoning_guard, 'trusted_stats_allowed', 'original policy retained for inspection');
   });
 
   await T('4. export click downloads a JSON file with the expected prefix', async () => {
