@@ -18,6 +18,7 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 | [IMP-0008](#imp-0008) | Persistent PP, Pressure and resolved replay identity | Local candidate; 100% clean scoped invariant gate |
 | [IMP-0009](#imp-0009) | Authorized Supabase security readback | Live read-only audit; public launch blocked |
 | [IMP-0010](#imp-0010) | Fresh-user simulator starts in safe Practice lane | Local candidate; browser and export verified |
+| [IMP-0011](#imp-0011) | Expired regulation and rejected DB catalog are explicit | Local candidate; live DB read-only diagnosis |
 
 Historical entries below summarize already-recorded evidence, not new runs. This index is intentionally not an exhaustive reconstruction of older work.
 
@@ -121,6 +122,16 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Evidence: a fresh-origin browser opened Start Team Test on `Practice (unverified)`, ran one doubles Bo3 without a preflight block, rendered three retained replay samples and exported JSON. The visible sample (`loss`, seven turns) matched the exported game, which retained build `v2.2.142-pp-replay-proof`, practice ruleset/version, team digests, four stable participants per side and registered items. Regulation selection/execution, release-manifest and bundle load-order tests pass.
 - Lesson: fail-closed competitive rules and a runnable practice experience are separate requirements. The safe default must never imply that practice results are regulation-approved or trusted learning evidence.
 - Remaining: repeat the journey on the hosted candidate and mobile; validate detailed downloaded turn logs against visible events for more teams. This manual path proves usability of one bounded journey, not 99% universal mechanics accuracy.
+
+<a id="imp-0011"></a>
+## IMP-0011: Reachable Data Is Not Approved Data
+
+- Recorded: 2026-09-03. Lane: regulation/database/experience. Local v143 candidate; no production mutation.
+- Before/root cause: after M-B ended, the UI had no explicit current-coverage warning. A successful Supabase request still displayed `[DB connected]` when all 36 returned teams were rejected, hiding catalog and migration drift behind network health.
+- Change: use the recorded M-B UTC end to report `successor_required` without inventing a regulation; classify DB roster rejection reasons and show `[DB review needed]` when zero returned teams pass the catalog gate.
+- Evidence: [regulation and DB diagnosis](release/REGULATION_AND_DB_DIAGNOSIS_2026-09-03.md), deterministic regulation boundary tests, DB status tests, read-only row/migration queries and live Supabase advisors.
+- Lesson: connection health, catalog acceptance, regulation approval and competitive trust are different states. Unknown current rules must fail closed while Practice remains clearly unverified.
+- Remaining: human capture of the post-M-B regulation, digest-bound review, protected DB migration/reseed, anonymous-denial and two-user staging tests. No 99% accuracy or public-launch claim is established.
 
 ## Entry Template
 

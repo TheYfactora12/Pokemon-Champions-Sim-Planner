@@ -44,6 +44,7 @@ var CHAMPIONS_RULESETS = {
     selectorLabel: 'Reg M-B (review)',
     startsAt: '2026-06-17',
     endsAt: '2026-09-02',
+    endsAtUtc: '2026-09-02T01:59:00Z',
     status: CHAMPIONS_RULESET_STATUS.SOURCE_REVIEW,
     inheritsFrom: 'champions_reg_m_a_2026',
     runtimePromotable: false,
@@ -56,6 +57,35 @@ var CHAMPIONS_RULESETS = {
     blocker: 'Reg M-B allowed-Pokemon image sheets and new Mega implementation fields are not converted into reviewed runtime data.'
   }
 };
+
+function getChampionsRegulationCoverage(asOf) {
+  var now = asOf == null ? new Date() : new Date(asOf);
+  if (!Number.isFinite(now.getTime())) {
+    return { status: 'invalid_date', covered: false, regulation_id: null, message: 'Regulation coverage date is invalid.' };
+  }
+  var dated = Object.values(CHAMPIONS_RULESETS).filter(function(row) {
+    return row && row.id !== 'champions_custom_practice' && row.startsAt && (row.endsAtUtc || row.endsAt);
+  });
+  var active = dated.find(function(row) {
+    var start = new Date(row.startsAt + 'T00:00:00Z');
+    var end = new Date(row.endsAtUtc || (row.endsAt + 'T23:59:59Z'));
+    return now >= start && now <= end;
+  });
+  if (active) {
+    return { status: active.runtimePromotable ? 'covered' : 'source_review', covered: !!active.runtimePromotable,
+      regulation_id: active.id, ends_at_utc: active.endsAtUtc || active.endsAt,
+      message: active.runtimePromotable ? 'A dated regulation lane is implemented.' : 'The dated regulation is still in source review.' };
+  }
+  var latest = dated.sort(function(a, b) {
+    return new Date(b.endsAtUtc || (b.endsAt + 'T23:59:59Z')) - new Date(a.endsAtUtc || (a.endsAt + 'T23:59:59Z'));
+  })[0] || null;
+  if (latest && now > new Date(latest.endsAtUtc || (latest.endsAt + 'T23:59:59Z'))) {
+    return { status: 'successor_required', covered: false, regulation_id: null,
+      last_regulation_id: latest.id, coverage_ended_at_utc: latest.endsAtUtc || latest.endsAt,
+      message: 'Official current-regulation evidence is missing after ' + (latest.endsAtUtc || latest.endsAt) + '. Competitive use stays blocked.' };
+  }
+  return { status: 'not_started', covered: false, regulation_id: null, message: 'No reviewed regulation covers this date.' };
+}
 
 function getChampionsRuleset(rulesetId) {
   var id = rulesetId == null ? '' : String(rulesetId);

@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-09-02. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-09-03. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Review and apply the existing public-data hardening migration in a protected staging-to-production flow. The declared 4,624-run accuracy harness is clean and now fails on warnings or regulation drift; next tackle residual ordering, wider imported-team interactions, Champion-specific reference evidence and two-user private persistence. Keep unverified regulations blocked.
+Capture and review the official post-M-B regulation without guessing its identity, then stage a digest-bound package. In parallel, reconcile the live four-migration ledger and 36 legacy team rows in a protected database environment before anonymous-denial and two-user isolation tests. Keep the bundled roster authoritative until live rows pass the current version and legality contract.
 
 ## Milestone Index
 
@@ -68,8 +68,10 @@ Completed locally / recorded:
 - Official-source inventory, daily regulation watcher, exact-digest candidate validation, recurrence-aware alerts and protected staging workflow are prepared.
 - Unsafe approval-time refetch is blocked. Generated offline data remains the browser baseline; official Champions evidence must establish legality.
 - The accuracy harness manifest binds regulation IDs, versions, review/promotion states and format lanes. Catalog drift, unreviewed runnable formats and warnings above the zero-warning budget fail closed.
+- The exact M-B UTC end is modeled; after it, dated coverage reports successor_required and the UI warns that the current regulation is not verified without inventing an ID.
 
 Remaining:
+- [ ] Capture and review the official or in-game successor to M-B; no successor is currently approved in the repository.
 - [ ] Resolve blocked/JavaScript official sources and obtain required in-game captures. M-A and M-B remain unverified.
 - [ ] Activate hosted monitoring and encrypted evidence retention; validate permissions and immutable candidate readback.
 - [ ] Compile complete regulation-specific eligibility packages and implement separate digest-bound human approval and atomic publication, preserving old versions.
@@ -88,11 +90,13 @@ Depends on: Independent workstream; readiness still requires the other release g
 
 Completed locally / recorded:
 - Authorized read-only live metadata was audited on September 2: all 16 public tables have RLS, no public security-definer functions exist, and the Showdown mirror is anonymously readable. The existing local public-data hardening migration matches the anonymous write policies still present in production.
+- September 3 readback confirmed 36 legacy team rows and 204 members with no build/schema/ruleset-version identity. The UI now separates a reachable DB from an accepted catalog and keeps bundled data authoritative when all rows are blocked.
 
 Remaining:
 - [ ] Review and apply the exact hardening migration through protected staging and production, then prove anonymous POST/PATCH/DELETE denial. Production currently permits anonymous analysis/coverage inserts and unrestricted branch-coverage updates.
 - [ ] Create an owner-scoped private-save schema before claiming two-user isolation; the current public schema has no user/owner column. Reconcile the four-entry live migration ledger with repository migrations and record checksums.
-- [ ] Fix paginated roster reads and complete-snapshot promotion/retention semantics; verify trusted import mappings and narrowly scoped staging identities before accepting durable competitive evidence.
+- [ ] Design a reviewed versioned roster migration/reseed for the 36 legacy rows; do not relax runtime acceptance to hide drift.
+- [ ] Review the advisor's missing foreign-key indexes against measured query plans. Fix paginated roster reads and complete-snapshot promotion/retention semantics before accepting durable competitive evidence.
 
 **Exit:** Live allow/deny, completeness, digest, identity and persistence checks pass for the named project/schema; browser clients cannot promote private or unapproved evidence.
 

@@ -2752,6 +2752,7 @@ table{border-collapse:collapse;width:100%}
 .regulation-status { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; text-align: left; }
 .regulation-status > div { margin-top: 8px; }
 .regulation-mechanics-status { color: var(--text-m); border-top: 1px solid var(--border); padding-top: 8px; }
+.regulation-coverage-warning { color: #fef3c7; border-left: 3px solid #f59e0b; padding-left: 8px; }
 .regulation-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
 .regulation-toolbar select { width: 300px; max-width: 100%; }
 .regulation-toolbar label { display: flex; gap: 8px; align-items: center; font-size: 13px; }
@@ -2813,7 +2814,7 @@ table{border-collapse:collapse;width:100%}
       </svg>
       <div>
       <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux v2.2.81-source-trust-guard v2.2.82-news-slide-images v2.2.83-source-backed-news-thumbs v2.2.84-news-health-sync v2.2.85-news-source-watch v2.2.86-replay-claim-audit v2.2.87-replay-qa-claim-payload v2.2.88-qa-artifact-claim-boundary v2.2.89-qa-claim-review v2.2.94-move-qa-closeout-plan v2.2.95-replay-logic-audit v2.2.96-legality-99-target v2.2.97-legality-evidence-package v2.2.98-github-release-guard v2.2.99-true-qa-slice-contract v2.2.100-qa-100-readiness v2.2.101-db-architecture-growth-audit v2.2.102-db-architecture-stress-plan v2.2.103-trainer-room-foundation v2.2.104-replay-import-governance v2.2.105-private-replay-import-service v2.2.106-private-replay-import-persistence v2.2.107-pilot-team-log-mapping v2.2.108-review-private-import-save v2.2.109-qa-readiness-next-gate v2.2.110-regmb-legality-request v2.2.111-qa-readout-inline v2.2.112-qa-trace-total-align v2.2.113-qa-no-auto-claim-card v2.2.114-qa-josh-showdown-assignment v2.2.115-qa-josh-owner-alignment v2.2.116-regmb-review-items-abilities v2.2.117-home-product-reveal v2.2.118-home-cycle-clean v2.2.119-home-cycle-team-names v2.2.120-mad-lab-team-ranks v2.2.121-sim-ux-results v2.2.122-qa-tester-link v2.2.123-sim-run-all-mode v2.2.124-sim-qa-output-clarity v2.2.125-pilot-series-evidence v2.2.126-browser-run-budget v2.2.127-targeted-trick-room-proof v2.2.128-turn-log-export-scope v2.2.129-completed-turn-count v2.2.130-single-replay-proof-boundary v2.2.131-production-launch-gate v2.2.132-project-db-audit -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.142-pp-replay-proof</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.143-regulation-db-truth</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -3708,9 +3709,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.142-pp-replay-proof',
-    release_date: '2026-09-02',
-    service_worker_cache: 'champions-sim-v2-2-142-pp-replay-proof',
+    build_id: 'v2.2.143-regulation-db-truth',
+    release_date: '2026-09-03',
+    service_worker_cache: 'champions-sim-v2-2-143-regulation-db-truth',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3784,9 +3785,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.142-pp-replay-proof';
+      return txt || 'v2.2.143-regulation-db-truth';
     } catch (e) {
-      return 'v2.2.142-pp-replay-proof';
+      return 'v2.2.143-regulation-db-truth';
     }
   }
 
@@ -11125,11 +11126,11 @@ var CS_TOURNAMENT_CATALOG = {
 (function(root) {
   root.CHAMPIONS_PROJECT_ROADMAP = {
   "schema_version": "champions-project-roadmap-v1",
-  "reviewed_at": "2026-09-02",
+  "reviewed_at": "2026-09-03",
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "Review and apply the existing public-data hardening migration in a protected staging-to-production flow. The declared 4,624-run accuracy harness is clean and now fails on warnings or regulation drift; next tackle residual ordering, wider imported-team interactions, Champion-specific reference evidence and two-user private persistence. Keep unverified regulations blocked.",
+  "next_action": "Capture and review the official post-M-B regulation without guessing its identity, then stage a digest-bound package. In parallel, reconcile the live four-migration ledger and 36 legacy team rows in a protected database environment before anonymous-denial and two-user isolation tests. Keep the bundled roster authoritative until live rows pass the current version and legality contract.",
   "milestones": [
     {
       "id": "simulation-truth",
@@ -11174,9 +11175,11 @@ var CS_TOURNAMENT_CATALOG = {
       "completed_locally": [
         "Official-source inventory, daily regulation watcher, exact-digest candidate validation, recurrence-aware alerts and protected staging workflow are prepared.",
         "Unsafe approval-time refetch is blocked. Generated offline data remains the browser baseline; official Champions evidence must establish legality.",
-        "The accuracy harness manifest binds regulation IDs, versions, review/promotion states and format lanes. Catalog drift, unreviewed runnable formats and warnings above the zero-warning budget fail closed."
+        "The accuracy harness manifest binds regulation IDs, versions, review/promotion states and format lanes. Catalog drift, unreviewed runnable formats and warnings above the zero-warning budget fail closed.",
+        "The exact M-B UTC end is modeled; after it, dated coverage reports successor_required and the UI warns that the current regulation is not verified without inventing an ID."
       ],
       "remaining": [
+        "Capture and review the official or in-game successor to M-B; no successor is currently approved in the repository.",
         "Resolve blocked/JavaScript official sources and obtain required in-game captures. M-A and M-B remain unverified.",
         "Activate hosted monitoring and encrypted evidence retention; validate permissions and immutable candidate readback.",
         "Compile complete regulation-specific eligibility packages and implement separate digest-bound human approval and atomic publication, preserving old versions."
@@ -11199,12 +11202,14 @@ var CS_TOURNAMENT_CATALOG = {
       ],
       "depends_on": [],
       "completed_locally": [
-        "Authorized read-only live metadata was audited on September 2: all 16 public tables have RLS, no public security-definer functions exist, and the Showdown mirror is anonymously readable. The existing local public-data hardening migration matches the anonymous write policies still present in production."
+        "Authorized read-only live metadata was audited on September 2: all 16 public tables have RLS, no public security-definer functions exist, and the Showdown mirror is anonymously readable. The existing local public-data hardening migration matches the anonymous write policies still present in production.",
+        "September 3 readback confirmed 36 legacy team rows and 204 members with no build/schema/ruleset-version identity. The UI now separates a reachable DB from an accepted catalog and keeps bundled data authoritative when all rows are blocked."
       ],
       "remaining": [
         "Review and apply the exact hardening migration through protected staging and production, then prove anonymous POST/PATCH/DELETE denial. Production currently permits anonymous analysis/coverage inserts and unrestricted branch-coverage updates.",
         "Create an owner-scoped private-save schema before claiming two-user isolation; the current public schema has no user/owner column. Reconcile the four-entry live migration ledger with repository migrations and record checksums.",
-        "Fix paginated roster reads and complete-snapshot promotion/retention semantics; verify trusted import mappings and narrowly scoped staging identities before accepting durable competitive evidence."
+        "Design a reviewed versioned roster migration/reseed for the 36 legacy rows; do not relax runtime acceptance to hide drift.",
+        "Review the advisor's missing foreign-key indexes against measured query plans. Fix paginated roster reads and complete-snapshot promotion/retention semantics before accepting durable competitive evidence."
       ],
       "exit": "Live allow/deny, completeness, digest, identity and persistence checks pass for the named project/schema; browser clients cannot promote private or unapproved evidence.",
       "evidence": [
@@ -19345,6 +19350,7 @@ var CHAMPIONS_RULESETS = {
     selectorLabel: 'Reg M-B (review)',
     startsAt: '2026-06-17',
     endsAt: '2026-09-02',
+    endsAtUtc: '2026-09-02T01:59:00Z',
     status: CHAMPIONS_RULESET_STATUS.SOURCE_REVIEW,
     inheritsFrom: 'champions_reg_m_a_2026',
     runtimePromotable: false,
@@ -19357,6 +19363,35 @@ var CHAMPIONS_RULESETS = {
     blocker: 'Reg M-B allowed-Pokemon image sheets and new Mega implementation fields are not converted into reviewed runtime data.'
   }
 };
+
+function getChampionsRegulationCoverage(asOf) {
+  var now = asOf == null ? new Date() : new Date(asOf);
+  if (!Number.isFinite(now.getTime())) {
+    return { status: 'invalid_date', covered: false, regulation_id: null, message: 'Regulation coverage date is invalid.' };
+  }
+  var dated = Object.values(CHAMPIONS_RULESETS).filter(function(row) {
+    return row && row.id !== 'champions_custom_practice' && row.startsAt && (row.endsAtUtc || row.endsAt);
+  });
+  var active = dated.find(function(row) {
+    var start = new Date(row.startsAt + 'T00:00:00Z');
+    var end = new Date(row.endsAtUtc || (row.endsAt + 'T23:59:59Z'));
+    return now >= start && now <= end;
+  });
+  if (active) {
+    return { status: active.runtimePromotable ? 'covered' : 'source_review', covered: !!active.runtimePromotable,
+      regulation_id: active.id, ends_at_utc: active.endsAtUtc || active.endsAt,
+      message: active.runtimePromotable ? 'A dated regulation lane is implemented.' : 'The dated regulation is still in source review.' };
+  }
+  var latest = dated.sort(function(a, b) {
+    return new Date(b.endsAtUtc || (b.endsAt + 'T23:59:59Z')) - new Date(a.endsAtUtc || (a.endsAt + 'T23:59:59Z'));
+  })[0] || null;
+  if (latest && now > new Date(latest.endsAtUtc || (latest.endsAt + 'T23:59:59Z'))) {
+    return { status: 'successor_required', covered: false, regulation_id: null,
+      last_regulation_id: latest.id, coverage_ended_at_utc: latest.endsAtUtc || latest.endsAt,
+      message: 'Official current-regulation evidence is missing after ' + (latest.endsAtUtc || latest.endsAt) + '. Competitive use stays blocked.' };
+  }
+  return { status: 'not_started', covered: false, regulation_id: null, message: 'No reviewed regulation covers this date.' };
+}
 
 function getChampionsRuleset(rulesetId) {
   var id = rulesetId == null ? '' : String(rulesetId);
@@ -32291,7 +32326,7 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.142-pp-replay-proof
+// Build marker: v2.2.143-regulation-db-truth
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -32332,7 +32367,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.142-pp-replay-proof'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.143-regulation-db-truth'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -32656,6 +32691,32 @@ function regulationCheckHtml(check) {
     return '<div>' + _escapeHtml(message) + '</div>';
   }).join('');
 }
+function hasDbTeamVersionIdentity(team) {
+  var metadata = team && team.metadata;
+  var profile = typeof getChampionsRuleset === 'function' ? getChampionsRuleset(team && team.ruleset_id) : null;
+  return !!(metadata && typeof metadata.schema_version === 'string' && metadata.schema_version &&
+    typeof metadata.build_id === 'string' && metadata.build_id &&
+    typeof metadata.ruleset_version === 'string' && metadata.ruleset_version &&
+    profile && profile.version && metadata.ruleset_version === profile.version);
+}
+function dbTeamCatalogBlockReasons(team, verdict) {
+  var reasons = [];
+  if (!team) return ['missing_team'];
+  if (team.source === 'retired_legacy' || (team.metadata && team.metadata.retired === true)) reasons.push('retired_row');
+  if (!Array.isArray(team.members) || team.members.length !== 6) reasons.push('incomplete_roster');
+  if (team.format !== 'champions') reasons.push('wrong_format');
+  if (team.legality_status !== 'legal') reasons.push('unapproved_legality_status');
+  if (verdict && !verdict.valid) reasons.push('legality_validation_failed');
+  if (!hasDbTeamVersionIdentity(team)) reasons.push('missing_or_mismatched_version_identity');
+  if (!reasons.length) reasons.push('not_approved_champion_team');
+  return reasons;
+}
+function summarizeDbTeamBlocks(blocked) {
+  return (blocked || []).reduce(function(out, row) {
+    (row.reasons || ['unknown']).forEach(function(reason) { out[reason] = (out[reason] || 0) + 1; });
+    return out;
+  }, {});
+}
 function refreshRegulationControls() {
   if (typeof CHAMPIONS_RULESETS === 'undefined') return;
   if (typeof applyLadderGate === 'function') applyLadderGate();
@@ -32674,6 +32735,9 @@ function refreshRegulationControls() {
   var host = document.getElementById('sim-regulation-status');
   if (host) host.innerHTML = '<div>Your team: ' + regulationCheckHtml(selectedRegulationCheck(player)) + '</div>' +
     '<div>Opponent: ' + regulationCheckHtml(selectedRegulationCheck(opponent)) + '</div>' +
+    (typeof getChampionsRegulationCoverage === 'function' && getChampionsRegulationCoverage().status === 'successor_required'
+      ? '<div class="regulation-coverage-warning"><strong>Current regulation not verified</strong><div>' + _escapeHtml(getChampionsRegulationCoverage().message) + '</div></div>'
+      : '') +
     '<div class="regulation-mechanics-status">Mechanics: not verified against the complete game</div>';
   var editorHost = document.getElementById('editor-regulation-status');
   if (editorHost) editorHost.innerHTML = regulationCheckHtml(selectedRegulationCheck(player));
@@ -33306,7 +33370,7 @@ function getDefaultVisibleOpponentTeamKey(excludeKey) {
 }
 
 function mergeDbTeamsIntoCatalog(dbTeams) {
-  var summary = { added: 0, replaced: 0, skipped: 0, blocked: [] };
+  var summary = { added: 0, replaced: 0, skipped: 0, blocked: [], reason_counts: {} };
   if (!dbTeams || typeof TEAMS === 'undefined') return summary;
   for (var key in dbTeams) {
     if (!Object.prototype.hasOwnProperty.call(dbTeams, key)) continue;
@@ -33315,13 +33379,14 @@ function mergeDbTeamsIntoCatalog(dbTeams) {
     var verdict = (typeof getTeamLegalityVerdict === 'function')
       ? getTeamLegalityVerdict(key, team)
       : { valid: true, errors: [] };
-    if (!team || team.format !== 'champions' || !verdict.valid ||
+    if (!team || team.format !== 'champions' || !verdict.valid || !hasDbTeamVersionIdentity(team) ||
         (typeof isApprovedPreloadedChampionTeam === 'function' &&
           !isApprovedPreloadedChampionTeam(key, team, verdict))) {
       summary.skipped++;
       summary.blocked.push({
         key: key,
         name: team && team.name,
+        reasons: dbTeamCatalogBlockReasons(team, verdict),
         errors: (verdict && verdict.errors && verdict.errors.length)
           ? verdict.errors
           : ['Not an approved Champion-legal team']
@@ -33332,6 +33397,7 @@ function mergeDbTeamsIntoCatalog(dbTeams) {
     else summary.added++;
     TEAMS[key] = team;
   }
+  summary.reason_counts = summarizeDbTeamBlocks(summary.blocked);
   return summary;
 }
 
@@ -54873,6 +54939,7 @@ if (typeof window !== 'undefined') {
     if (!chip) return;
     var states = {
       connected: { text: '[DB connected]', bg: '#064e3b', fg: '#bbf7d0', border: '#10b981', title: 'Live team database connected' },
+      review: { text: '[DB review needed]', bg: '#713f12', fg: '#fef3c7', border: '#f59e0b', title: 'Live database responded, but its roster did not pass the current catalog gate' },
       retrying: { text: '[DB retrying]', bg: '#713f12', fg: '#fef3c7', border: '#f59e0b', title: 'Retrying live team database before falling back' },
       fallback: { text: '[Bundled roster]', bg: '#334155', fg: '#e2e8f0', border: '#94a3b8', title: 'Using bundled roster after live database was unavailable' },
       disabled: { text: '[Local roster]', bg: '#334155', fg: '#e2e8f0', border: '#94a3b8', title: 'Live database disabled or not configured; using bundled roster' },
@@ -54947,7 +55014,10 @@ if (typeof window !== 'undefined') {
           if (typeof mergeDbTeamsIntoCatalog !== 'function') Object.assign(TEAMS, dbTeams);
           if (typeof normalizeTeamCatalogForSim === 'function') normalizeTeamCatalogForSim();
           UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length, merge: dbMerge, attempts: dbLoad.attempts, status: dbLoad.status });
-          setDbChip('connected', 'Live team database connected after ' + dbLoad.attempts + ' attempt(s) - accepted ' + (dbMerge.added + dbMerge.replaced) + ' teams, blocked ' + dbMerge.skipped + ' stale/illegal rows');
+          var acceptedDbTeams = dbMerge.added + dbMerge.replaced;
+          var dbState = acceptedDbTeams === 0 && dbMerge.skipped > 0 ? 'review' : 'connected';
+          setDbChip(dbState, 'Live database responded after ' + dbLoad.attempts + ' attempt(s) - accepted ' + acceptedDbTeams +
+            ' teams, blocked ' + dbMerge.skipped + '. Reasons: ' + JSON.stringify(dbMerge.reason_counts || {}) + '. Bundled roster remains authoritative.');
         } else {
           var status = dbLoad && dbLoad.status ? dbLoad.status : null;
           var reason = status && status.detail ? ' Last DB status: ' + status.detail : '';

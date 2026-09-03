@@ -117,6 +117,7 @@ ctx.ChampionsSim.pokemonDataAudit = require(path.join(ROOT, 'generated', 'pokemo
 load('move_legality.js');
 ctx.window.ChampionsSim = ctx.ChampionsSim;
 load('legality.js');
+load('rulesets.js');
 load('ui.js');
 // Expose ctx-scoped const/let bindings on the context object (vm.createContext
 // does NOT auto-attach top-level const/let to the context, only var). This
@@ -830,6 +831,26 @@ T('15j. malformed DB spread payloads cannot replace approved bundled teams', () 
   eq(res.skipped, 1, 'stale DB team with malformed spread should be blocked');
   eq(TEAMS.mega_altaria.name, before, 'approved bundled team should remain intact');
   truthy(res.blocked[0].errors.some(e => /SP spread must be a stat object/.test(e)), 'blocked summary should name malformed spread');
+});
+
+T('15k. DB rows require exact version identity before replacing bundled teams', () => {
+  resetTeams();
+  const candidate = JSON.parse(JSON.stringify(TEAMS.mega_altaria));
+  candidate.name = 'Versioned DB Team';
+  candidate.metadata = Object.assign({}, candidate.metadata, {
+    schema_version: 'champions-team-catalog-v1',
+    build_id: 'db-catalog-test-v1',
+    ruleset_version: 'champions-reg-ma-2026-v1'
+  });
+  delete candidate.metadata.ruleset_id;
+  candidate.ruleset_id = 'champions_reg_m_doubles_bo3';
+  const accepted = mergeDbTeamsIntoCatalog({ mega_altaria: candidate });
+  eq(accepted.replaced, 1, 'matching ruleset version identity should permit an otherwise approved row: ' + JSON.stringify(accepted.blocked));
+  const stale = JSON.parse(JSON.stringify(candidate));
+  stale.metadata.ruleset_version = 'champions-reg-ma-stale';
+  const blocked = mergeDbTeamsIntoCatalog({ mega_altaria: stale });
+  eq(blocked.skipped, 1, 'mismatched ruleset version must be blocked');
+  truthy(blocked.blocked[0].reasons.includes('missing_or_mismatched_version_identity'), 'blocked reason should name version identity');
 });
 
 // ============================================================

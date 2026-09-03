@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.142-pp-replay-proof
+// Build marker: v2.2.143-regulation-db-truth
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.142-pp-replay-proof'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.143-regulation-db-truth'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -365,6 +365,32 @@ function regulationCheckHtml(check) {
     return '<div>' + _escapeHtml(message) + '</div>';
   }).join('');
 }
+function hasDbTeamVersionIdentity(team) {
+  var metadata = team && team.metadata;
+  var profile = typeof getChampionsRuleset === 'function' ? getChampionsRuleset(team && team.ruleset_id) : null;
+  return !!(metadata && typeof metadata.schema_version === 'string' && metadata.schema_version &&
+    typeof metadata.build_id === 'string' && metadata.build_id &&
+    typeof metadata.ruleset_version === 'string' && metadata.ruleset_version &&
+    profile && profile.version && metadata.ruleset_version === profile.version);
+}
+function dbTeamCatalogBlockReasons(team, verdict) {
+  var reasons = [];
+  if (!team) return ['missing_team'];
+  if (team.source === 'retired_legacy' || (team.metadata && team.metadata.retired === true)) reasons.push('retired_row');
+  if (!Array.isArray(team.members) || team.members.length !== 6) reasons.push('incomplete_roster');
+  if (team.format !== 'champions') reasons.push('wrong_format');
+  if (team.legality_status !== 'legal') reasons.push('unapproved_legality_status');
+  if (verdict && !verdict.valid) reasons.push('legality_validation_failed');
+  if (!hasDbTeamVersionIdentity(team)) reasons.push('missing_or_mismatched_version_identity');
+  if (!reasons.length) reasons.push('not_approved_champion_team');
+  return reasons;
+}
+function summarizeDbTeamBlocks(blocked) {
+  return (blocked || []).reduce(function(out, row) {
+    (row.reasons || ['unknown']).forEach(function(reason) { out[reason] = (out[reason] || 0) + 1; });
+    return out;
+  }, {});
+}
 function refreshRegulationControls() {
   if (typeof CHAMPIONS_RULESETS === 'undefined') return;
   if (typeof applyLadderGate === 'function') applyLadderGate();
@@ -383,6 +409,9 @@ function refreshRegulationControls() {
   var host = document.getElementById('sim-regulation-status');
   if (host) host.innerHTML = '<div>Your team: ' + regulationCheckHtml(selectedRegulationCheck(player)) + '</div>' +
     '<div>Opponent: ' + regulationCheckHtml(selectedRegulationCheck(opponent)) + '</div>' +
+    (typeof getChampionsRegulationCoverage === 'function' && getChampionsRegulationCoverage().status === 'successor_required'
+      ? '<div class="regulation-coverage-warning"><strong>Current regulation not verified</strong><div>' + _escapeHtml(getChampionsRegulationCoverage().message) + '</div></div>'
+      : '') +
     '<div class="regulation-mechanics-status">Mechanics: not verified against the complete game</div>';
   var editorHost = document.getElementById('editor-regulation-status');
   if (editorHost) editorHost.innerHTML = regulationCheckHtml(selectedRegulationCheck(player));
@@ -1015,7 +1044,7 @@ function getDefaultVisibleOpponentTeamKey(excludeKey) {
 }
 
 function mergeDbTeamsIntoCatalog(dbTeams) {
-  var summary = { added: 0, replaced: 0, skipped: 0, blocked: [] };
+  var summary = { added: 0, replaced: 0, skipped: 0, blocked: [], reason_counts: {} };
   if (!dbTeams || typeof TEAMS === 'undefined') return summary;
   for (var key in dbTeams) {
     if (!Object.prototype.hasOwnProperty.call(dbTeams, key)) continue;
@@ -1024,13 +1053,14 @@ function mergeDbTeamsIntoCatalog(dbTeams) {
     var verdict = (typeof getTeamLegalityVerdict === 'function')
       ? getTeamLegalityVerdict(key, team)
       : { valid: true, errors: [] };
-    if (!team || team.format !== 'champions' || !verdict.valid ||
+    if (!team || team.format !== 'champions' || !verdict.valid || !hasDbTeamVersionIdentity(team) ||
         (typeof isApprovedPreloadedChampionTeam === 'function' &&
           !isApprovedPreloadedChampionTeam(key, team, verdict))) {
       summary.skipped++;
       summary.blocked.push({
         key: key,
         name: team && team.name,
+        reasons: dbTeamCatalogBlockReasons(team, verdict),
         errors: (verdict && verdict.errors && verdict.errors.length)
           ? verdict.errors
           : ['Not an approved Champion-legal team']
@@ -1041,6 +1071,7 @@ function mergeDbTeamsIntoCatalog(dbTeams) {
     else summary.added++;
     TEAMS[key] = team;
   }
+  summary.reason_counts = summarizeDbTeamBlocks(summary.blocked);
   return summary;
 }
 
@@ -22582,6 +22613,7 @@ if (typeof window !== 'undefined') {
     if (!chip) return;
     var states = {
       connected: { text: '[DB connected]', bg: '#064e3b', fg: '#bbf7d0', border: '#10b981', title: 'Live team database connected' },
+      review: { text: '[DB review needed]', bg: '#713f12', fg: '#fef3c7', border: '#f59e0b', title: 'Live database responded, but its roster did not pass the current catalog gate' },
       retrying: { text: '[DB retrying]', bg: '#713f12', fg: '#fef3c7', border: '#f59e0b', title: 'Retrying live team database before falling back' },
       fallback: { text: '[Bundled roster]', bg: '#334155', fg: '#e2e8f0', border: '#94a3b8', title: 'Using bundled roster after live database was unavailable' },
       disabled: { text: '[Local roster]', bg: '#334155', fg: '#e2e8f0', border: '#94a3b8', title: 'Live database disabled or not configured; using bundled roster' },
@@ -22656,7 +22688,10 @@ if (typeof window !== 'undefined') {
           if (typeof mergeDbTeamsIntoCatalog !== 'function') Object.assign(TEAMS, dbTeams);
           if (typeof normalizeTeamCatalogForSim === 'function') normalizeTeamCatalogForSim();
           UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length, merge: dbMerge, attempts: dbLoad.attempts, status: dbLoad.status });
-          setDbChip('connected', 'Live team database connected after ' + dbLoad.attempts + ' attempt(s) - accepted ' + (dbMerge.added + dbMerge.replaced) + ' teams, blocked ' + dbMerge.skipped + ' stale/illegal rows');
+          var acceptedDbTeams = dbMerge.added + dbMerge.replaced;
+          var dbState = acceptedDbTeams === 0 && dbMerge.skipped > 0 ? 'review' : 'connected';
+          setDbChip(dbState, 'Live database responded after ' + dbLoad.attempts + ' attempt(s) - accepted ' + acceptedDbTeams +
+            ' teams, blocked ' + dbMerge.skipped + '. Reasons: ' + JSON.stringify(dbMerge.reason_counts || {}) + '. Bundled roster remains authoritative.');
         } else {
           var status = dbLoad && dbLoad.status ? dbLoad.status : null;
           var reason = status && status.detail ? ' Last DB status: ' + status.detail : '';

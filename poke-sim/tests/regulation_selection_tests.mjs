@@ -23,6 +23,18 @@ test('unknown and review-only regulations reject without historical fallback', (
     const result = check(team, id); assert.equal(result.allowed, false); assert.equal(result.status, 'not_verified');
   }
 });
+test('dated coverage fails closed after M-B without inventing a successor', () => {
+  const during = ctx.getChampionsRegulationCoverage('2026-08-30T12:00:00Z');
+  assert.equal(during.status, 'source_review');
+  assert.equal(during.regulation_id, mb);
+  const after = ctx.getChampionsRegulationCoverage('2026-09-03T12:00:00Z');
+  assert.equal(after.status, 'successor_required');
+  assert.equal(after.covered, false);
+  assert.equal(after.regulation_id, null);
+  assert.equal(after.last_regulation_id, mb);
+  assert.match(after.message, /Competitive use stays blocked/);
+  assert.equal(ctx.getChampionsRegulationCoverage('not-a-date').status, 'invalid_date');
+});
 test('rechecking another regulation never rewrites original team identity or items', () => {
   const before = JSON.stringify(team); check(team, mb); check(team, ma);
   assert.equal(JSON.stringify(team), before);
