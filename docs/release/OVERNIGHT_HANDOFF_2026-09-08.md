@@ -5,6 +5,20 @@ Session: September 8, 2026, starting approximately 00:04 Eastern and ending at
 
 ## Completed Evidence
 
+- Later form review resolves the two initial identity gaps: Vivillon-Fancy and
+  Floette-Eternal. The 235-row review artifact now binds official visual evidence
+  and source asset hashes. All mapped baseline stats/types/ability slots/numbers
+  match pinned Champions. Still no human approval, learnset or live DB proof.
+  v157 full gate passes 170 fast and 12 offline/mock DB files, four skips;
+  local version/roadmap smoke has zero page errors and starts no simulations.
+- v153 `e2bc816` passed hosted CI after Perish Song fixes. v154 `d61a441` removed
+  hidden startup games, fixed replay contrast/mobile overflow and added requested
+  matchup/continuity browser contracts. v155 `28454d9` withdrew unsupported
+  decision-audit advice; v156 `9ad8b89` removed generic template overclaims.
+  All three hosted CI/cache/bundle checks passed. Latest local gate: 169 fast,
+  12 offline/mock DB files, four skips. Dated reports retain paired browser
+  evidence and uninspected failed-run remainder. No deployment.
+
 - v151 / 6a88c4e: corrected official M-B extension, captured 235 unique roster IDs,
   exposed duplicate/incorrect visual-ledger entries. All hosted checks passed,
   including Battle Audit; Supabase Preview skipped. No deployment.
@@ -61,8 +75,8 @@ first. No dependency or lockfile change has been made in this intake.
 
 ## Remaining Priority
 
-1. Verify Vivillon 0666-018 and Floette 0670-005 exact form identities with official
-   visual/client evidence. Review all candidate aliases before promotion.
+1. Obtain human approval of the exact 235-row identity candidate and complete
+   field/learnset/rules evidence. Review-only form reconciliation is now recorded.
 2. Prove complete M-B team legality and Champions-specific moves/mechanics rather
    than mistaking roster membership or baseline field agreement for complete truth.
 3. Extend full-battle and paired visible/exported-log comparisons; preserve honest

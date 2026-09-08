@@ -30,11 +30,12 @@ not an executed competitive acceptance result.
 
 ## Remaining Acceptance Work
 
-Overnight progress: the review-only mapper now resolves 233 of 235 official IDs
-to explicit baseline identity candidates. Vivillon 0666-018 and Floette 0670-005
-stay unresolved because the display labels do not identify their exact runtime
-forms. The generated `poke-sim/source/reg-m-b-identity-review.json` binds the
-capture, baseline and mapper hashes; `--check` detects drift. Candidate mapping
+Initial overnight progress resolved 233 of 235 official IDs. A later official
+DOM/sprite review identifies 0666-018 as Vivillon-Fancy and 0670-005 as
+Floette-Eternal. Both now have explicit review-only aliases, supported by named
+official form references and independent visual review. All 235 rows resolve.
+The generated `poke-sim/source/reg-m-b-identity-review.json` binds the
+capture, baseline, form-evidence and mapper hashes; `--check` detects drift. Candidate mapping
 is not approval, a legality validator, or a 99% game-accuracy result.
 
 All 16 Mega implementation rows match the pinned Showdown 0.11.11 Champions mod
@@ -42,7 +43,12 @@ for six base stats, types, primary ability and required stone. The tests also
 verify each stone's owner-to-Mega mapping. This closes the bounded baseline-field
 comparison, not Champions in-game behavior or permitted move combinations.
 
-1. Review an exact official-ID-to-runtime-ID mapping for all 235 rows. Preserve
+All 235 mapped mirrored records also match pinned Champions base stats, types,
+ability slots and National Dex numbers. This compares the generated baseline,
+not every app calculator, approved override, learnset or live database row.
+See [form identity evidence](../../poke-sim/source/reg-m-b-form-identity-evidence.json).
+
+1. Human approval of the exact 235-row candidate mapping remains required. Preserve
    historical visual evidence but never publish its known incorrect eligibility.
 2. Verify every Mega's item, stats, typing, ability and learnset against pinned
    baseline plus Champions-specific evidence; report each disagreement separately.
@@ -58,6 +64,18 @@ blocked. Do not inherit the old visual ledger into M-C or call either regulation
 99% accurate. No production database writes or regulation promotion occurred.
 
 ## Verification Receipt
+
+Later v157 identity candidate: 170 fast files and 12 offline/mock DB files pass,
+with four manual/helper skips. Identity mutation/CRLF checks and 235-row baseline
+field comparisons pass; independent scoped review is clear. Local browser
+version/roadmap smoke confirms the 235-row status with zero page errors and zero
+simulations. A first smoke command used the wrong accessibility role (`button`
+instead of `tab`); corrected to the actual DOM role and rerun successfully.
+Bundle: 11,475,930 bytes, SHA-256
+`a8ae17a49413283c8980b68193860716dff70141fccf6dfa71e8b3ab882225a7`.
+No new full-game or live database proof in this identity batch.
+
+Historical v151 receipt:
 
 Local `npm test`: 161 fast files and 12 offline/mock DB files pass; four
 manual/helper files skipped. Focused selection 15/15, M-C source review 6/6,

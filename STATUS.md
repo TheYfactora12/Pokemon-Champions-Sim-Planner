@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- M-B identity review now resolves all 235 official rows. Two explicit aliases
+  are backed by official sprite/DOM evidence and independent visual review.
+  All mapped baseline stats/types/ability slots/Dex numbers match pinned
+  Showdown Champions. No runtime legality or in-game approval is inferred.
+  [Sign-off audit](docs/release/REG_MB_SIGNOFF_AUDIT.md) retains the remaining gates.
+
 - v156 generic coach templates stop inventing causes, best plans, absent scores
   and confidence from volume. They retain recorded facts and explicit unknowns.
   [Template audit](poke-sim/reports/coach_template_validation_2026-09-08.md)
@@ -39,7 +45,7 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
   manual/helper skips. No deployment or competitive legality approval.
 
 - [One-time overnight handoff](docs/release/OVERNIGHT_HANDOFF_2026-09-08.md):
-  233 review-only official identity candidates, two unresolved forms, and 16
+  initial 233 review-only identity candidates (now 235 after form review), and 16
   pinned-baseline Mega field comparisons. No regulation promotion. Independent
   review caught and verified fixes for form substitution and CRLF artifact drift.
 

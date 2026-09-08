@@ -6,6 +6,19 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0030: Resolve Official Form Identity Without Promoting Legality
+
+Official rendered IDs and sprite positions distinguish Fancy Vivillon and
+Eternal Flower Floette where text labels alone were ambiguous. Explicit aliases
+now complete 235 review-only mappings. Source asset hashes, screenshot hashes,
+named official references and independent visual-review limits are retained.
+The generated artifact binds the added evidence fingerprint and rejects missing
+form records or identity/source drift. All 235 baseline stats/types/ability slots
+and Dex numbers match pinned Champions; this does not test every runtime consumer.
+Lesson: reconcile identity with evidence, then validate fields and combinations
+separately. No human approval or competitive publication. See
+[M-B sign-off audit](release/REG_MB_SIGNOFF_AUDIT.md).
+
 ### IMP-0029: Templates Report Facts Without Inventing Confidence
 
 Separate generic coach templates invented causes, best plans, default scores and

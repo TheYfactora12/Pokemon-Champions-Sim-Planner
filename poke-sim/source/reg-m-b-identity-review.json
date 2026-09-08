@@ -8,13 +8,14 @@
   "official_source_sha256": "8b0c6db8dcd403bb1f5453c1c6f9ac35c80192762219a308c80023375a93d617",
   "tracked_source_hash_scope": "capture: JSON.stringify parsed object; code: UTF-8 with LF line endings",
   "capture_sha256": "0ceb54b4e4d7135db2dabef54db81105419fa5477869953d0831f78bd545bd15",
+  "form_identity_evidence_sha256": "e9f1e4ffd9d392097e77450f3b7ff775cfbe096bb4ed93fb3ffd3039537258a5",
   "baseline_sha256": "d00ab46ddf9d86f87b1848385b7ee0b3ee22ee7419956350d3e955c5d15b108a",
   "baseline_source_version": "approved-db",
-  "mapper_sha256": "a74b861202591e263a1783db5897277993ee16bb7e446880a4b6aec9eba7dcc2",
+  "mapper_sha256": "4d8b42343cbc1323df4bcdfbbfe171f2d43c849499f639c1b9dbfaecb2fd4328",
   "counters": {
     "official_rows": 235,
-    "mapped_candidates": 233,
-    "unresolved": 2
+    "mapped_candidates": 235,
+    "unresolved": 0
   },
   "rows": [
     {
@@ -24,7 +25,14 @@
       "runtime_species_key": "Venusaur",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "venusaur",
+        "base_species": "Venusaur",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0006-000",
@@ -33,7 +41,14 @@
       "runtime_species_key": "Charizard",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "charizard",
+        "base_species": "Charizard",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0009-000",
@@ -42,7 +57,14 @@
       "runtime_species_key": "Blastoise",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "blastoise",
+        "base_species": "Blastoise",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0015-000",
@@ -51,7 +73,14 @@
       "runtime_species_key": "Beedrill",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "beedrill",
+        "base_species": "Beedrill",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0018-000",
@@ -60,7 +89,14 @@
       "runtime_species_key": "Pidgeot",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "pidgeot",
+        "base_species": "Pidgeot",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0024-000",
@@ -69,7 +105,14 @@
       "runtime_species_key": "Arbok",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "arbok",
+        "base_species": "Arbok",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0025-000",
@@ -78,7 +121,14 @@
       "runtime_species_key": "Pikachu",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "pikachu",
+        "base_species": "Pikachu",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0026-000",
@@ -87,7 +137,14 @@
       "runtime_species_key": "Raichu",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "raichu",
+        "base_species": "Raichu",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0026-001",
@@ -96,7 +153,14 @@
       "runtime_species_key": "Raichu-Alola",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "raichualola",
+        "base_species": "Raichu",
+        "forme": "Alola",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0036-000",
@@ -105,7 +169,14 @@
       "runtime_species_key": "Clefable",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "clefable",
+        "base_species": "Clefable",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0038-000",
@@ -114,7 +185,14 @@
       "runtime_species_key": "Ninetales",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "ninetales",
+        "base_species": "Ninetales",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0038-001",
@@ -123,7 +201,14 @@
       "runtime_species_key": "Ninetales-Alola",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "ninetalesalola",
+        "base_species": "Ninetales",
+        "forme": "Alola",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0045-000",
@@ -132,7 +217,14 @@
       "runtime_species_key": "Vileplume",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "vileplume",
+        "base_species": "Vileplume",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0059-000",
@@ -141,7 +233,14 @@
       "runtime_species_key": "Arcanine",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "arcanine",
+        "base_species": "Arcanine",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0059-001",
@@ -150,7 +249,14 @@
       "runtime_species_key": "Arcanine-Hisui",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "arcaninehisui",
+        "base_species": "Arcanine",
+        "forme": "Hisui",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0065-000",
@@ -159,7 +265,14 @@
       "runtime_species_key": "Alakazam",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "alakazam",
+        "base_species": "Alakazam",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0068-000",
@@ -168,7 +281,14 @@
       "runtime_species_key": "Machamp",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "machamp",
+        "base_species": "Machamp",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0071-000",
@@ -177,7 +297,14 @@
       "runtime_species_key": "Victreebel",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "victreebel",
+        "base_species": "Victreebel",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0080-000",
@@ -186,7 +313,14 @@
       "runtime_species_key": "Slowbro",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "slowbro",
+        "base_species": "Slowbro",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0080-002",
@@ -195,7 +329,14 @@
       "runtime_species_key": "Slowbro-Galar",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "slowbrogalar",
+        "base_species": "Slowbro",
+        "forme": "Galar",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0094-000",
@@ -204,7 +345,14 @@
       "runtime_species_key": "Gengar",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "gengar",
+        "base_species": "Gengar",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0115-000",
@@ -213,7 +361,14 @@
       "runtime_species_key": "Kangaskhan",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "kangaskhan",
+        "base_species": "Kangaskhan",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0121-000",
@@ -222,7 +377,14 @@
       "runtime_species_key": "Starmie",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "starmie",
+        "base_species": "Starmie",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0127-000",
@@ -231,7 +393,14 @@
       "runtime_species_key": "Pinsir",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "pinsir",
+        "base_species": "Pinsir",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0128-000",
@@ -240,7 +409,14 @@
       "runtime_species_key": "Tauros",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "tauros",
+        "base_species": "Tauros",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0128-001",
@@ -249,7 +425,14 @@
       "runtime_species_key": "Tauros-Paldea-Combat",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "taurospaldeacombat",
+        "base_species": "Tauros",
+        "forme": "Paldea-Combat",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0128-002",
@@ -258,7 +441,14 @@
       "runtime_species_key": "Tauros-Paldea-Blaze",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "taurospaldeablaze",
+        "base_species": "Tauros",
+        "forme": "Paldea-Blaze",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0128-003",
@@ -267,7 +457,14 @@
       "runtime_species_key": "Tauros-Paldea-Aqua",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "taurospaldeaaqua",
+        "base_species": "Tauros",
+        "forme": "Paldea-Aqua",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0130-000",
@@ -276,7 +473,14 @@
       "runtime_species_key": "Gyarados",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "gyarados",
+        "base_species": "Gyarados",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0132-000",
@@ -285,7 +489,14 @@
       "runtime_species_key": "Ditto",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "ditto",
+        "base_species": "Ditto",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0134-000",
@@ -294,7 +505,14 @@
       "runtime_species_key": "Vaporeon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "vaporeon",
+        "base_species": "Vaporeon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0135-000",
@@ -303,7 +521,14 @@
       "runtime_species_key": "Jolteon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "jolteon",
+        "base_species": "Jolteon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0136-000",
@@ -312,7 +537,14 @@
       "runtime_species_key": "Flareon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "flareon",
+        "base_species": "Flareon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0142-000",
@@ -321,7 +553,14 @@
       "runtime_species_key": "Aerodactyl",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "aerodactyl",
+        "base_species": "Aerodactyl",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0143-000",
@@ -330,7 +569,14 @@
       "runtime_species_key": "Snorlax",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "snorlax",
+        "base_species": "Snorlax",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0149-000",
@@ -339,7 +585,14 @@
       "runtime_species_key": "Dragonite",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "dragonite",
+        "base_species": "Dragonite",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0154-000",
@@ -348,7 +601,14 @@
       "runtime_species_key": "Meganium",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "meganium",
+        "base_species": "Meganium",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0157-000",
@@ -357,7 +617,14 @@
       "runtime_species_key": "Typhlosion",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "typhlosion",
+        "base_species": "Typhlosion",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0157-001",
@@ -366,7 +633,14 @@
       "runtime_species_key": "Typhlosion-Hisui",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "typhlosionhisui",
+        "base_species": "Typhlosion",
+        "forme": "Hisui",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0160-000",
@@ -375,7 +649,14 @@
       "runtime_species_key": "Feraligatr",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "feraligatr",
+        "base_species": "Feraligatr",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0168-000",
@@ -384,7 +665,14 @@
       "runtime_species_key": "Ariados",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "ariados",
+        "base_species": "Ariados",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0181-000",
@@ -393,7 +681,14 @@
       "runtime_species_key": "Ampharos",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "ampharos",
+        "base_species": "Ampharos",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0184-000",
@@ -402,7 +697,14 @@
       "runtime_species_key": "Azumarill",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "azumarill",
+        "base_species": "Azumarill",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0186-000",
@@ -411,7 +713,14 @@
       "runtime_species_key": "Politoed",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "politoed",
+        "base_species": "Politoed",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0196-000",
@@ -420,7 +729,14 @@
       "runtime_species_key": "Espeon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "espeon",
+        "base_species": "Espeon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0197-000",
@@ -429,7 +745,14 @@
       "runtime_species_key": "Umbreon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "umbreon",
+        "base_species": "Umbreon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0199-000",
@@ -438,7 +761,14 @@
       "runtime_species_key": "Slowking",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "slowking",
+        "base_species": "Slowking",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0199-001",
@@ -447,7 +777,14 @@
       "runtime_species_key": "Slowking-Galar",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "slowkinggalar",
+        "base_species": "Slowking",
+        "forme": "Galar",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0205-000",
@@ -456,7 +793,14 @@
       "runtime_species_key": "Forretress",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "forretress",
+        "base_species": "Forretress",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0208-000",
@@ -465,7 +809,14 @@
       "runtime_species_key": "Steelix",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "steelix",
+        "base_species": "Steelix",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0211-000",
@@ -474,7 +825,14 @@
       "runtime_species_key": "Qwilfish",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "qwilfish",
+        "base_species": "Qwilfish",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0212-000",
@@ -483,7 +841,14 @@
       "runtime_species_key": "Scizor",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "scizor",
+        "base_species": "Scizor",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0214-000",
@@ -492,7 +857,14 @@
       "runtime_species_key": "Heracross",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "heracross",
+        "base_species": "Heracross",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0227-000",
@@ -501,7 +873,14 @@
       "runtime_species_key": "Skarmory",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "skarmory",
+        "base_species": "Skarmory",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0229-000",
@@ -510,7 +889,14 @@
       "runtime_species_key": "Houndoom",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "houndoom",
+        "base_species": "Houndoom",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0248-000",
@@ -519,7 +905,14 @@
       "runtime_species_key": "Tyranitar",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "tyranitar",
+        "base_species": "Tyranitar",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0254-000",
@@ -528,7 +921,14 @@
       "runtime_species_key": "Sceptile",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "sceptile",
+        "base_species": "Sceptile",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0257-000",
@@ -537,7 +937,14 @@
       "runtime_species_key": "Blaziken",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "blaziken",
+        "base_species": "Blaziken",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0260-000",
@@ -546,7 +953,14 @@
       "runtime_species_key": "Swampert",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "swampert",
+        "base_species": "Swampert",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0279-000",
@@ -555,7 +969,14 @@
       "runtime_species_key": "Pelipper",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "pelipper",
+        "base_species": "Pelipper",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0282-000",
@@ -564,7 +985,14 @@
       "runtime_species_key": "Gardevoir",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "gardevoir",
+        "base_species": "Gardevoir",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0302-000",
@@ -573,7 +1001,14 @@
       "runtime_species_key": "Sableye",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "sableye",
+        "base_species": "Sableye",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0303-000",
@@ -582,7 +1017,14 @@
       "runtime_species_key": "Mawile",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "mawile",
+        "base_species": "Mawile",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0306-000",
@@ -591,7 +1033,14 @@
       "runtime_species_key": "Aggron",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "aggron",
+        "base_species": "Aggron",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0308-000",
@@ -600,7 +1049,14 @@
       "runtime_species_key": "Medicham",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "medicham",
+        "base_species": "Medicham",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0310-000",
@@ -609,7 +1065,14 @@
       "runtime_species_key": "Manectric",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "manectric",
+        "base_species": "Manectric",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0319-000",
@@ -618,7 +1081,14 @@
       "runtime_species_key": "Sharpedo",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "sharpedo",
+        "base_species": "Sharpedo",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0323-000",
@@ -627,7 +1097,14 @@
       "runtime_species_key": "Camerupt",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "camerupt",
+        "base_species": "Camerupt",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0324-000",
@@ -636,7 +1113,14 @@
       "runtime_species_key": "Torkoal",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "torkoal",
+        "base_species": "Torkoal",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0334-000",
@@ -645,7 +1129,14 @@
       "runtime_species_key": "Altaria",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "altaria",
+        "base_species": "Altaria",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0350-000",
@@ -654,7 +1145,14 @@
       "runtime_species_key": "Milotic",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "milotic",
+        "base_species": "Milotic",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0351-000",
@@ -663,7 +1161,14 @@
       "runtime_species_key": "Castform",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "castform",
+        "base_species": "Castform",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0354-000",
@@ -672,7 +1177,14 @@
       "runtime_species_key": "Banette",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "banette",
+        "base_species": "Banette",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0358-000",
@@ -681,7 +1193,14 @@
       "runtime_species_key": "Chimecho",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "chimecho",
+        "base_species": "Chimecho",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0359-000",
@@ -690,7 +1209,14 @@
       "runtime_species_key": "Absol",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "absol",
+        "base_species": "Absol",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0362-000",
@@ -699,7 +1225,14 @@
       "runtime_species_key": "Glalie",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "glalie",
+        "base_species": "Glalie",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0376-000",
@@ -708,7 +1241,14 @@
       "runtime_species_key": "Metagross",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "metagross",
+        "base_species": "Metagross",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0389-000",
@@ -717,7 +1257,14 @@
       "runtime_species_key": "Torterra",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "torterra",
+        "base_species": "Torterra",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0392-000",
@@ -726,7 +1273,14 @@
       "runtime_species_key": "Infernape",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "infernape",
+        "base_species": "Infernape",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0395-000",
@@ -735,7 +1289,14 @@
       "runtime_species_key": "Empoleon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "empoleon",
+        "base_species": "Empoleon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0398-000",
@@ -744,7 +1305,14 @@
       "runtime_species_key": "Staraptor",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "staraptor",
+        "base_species": "Staraptor",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0405-000",
@@ -753,7 +1321,14 @@
       "runtime_species_key": "Luxray",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "luxray",
+        "base_species": "Luxray",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0407-000",
@@ -762,7 +1337,14 @@
       "runtime_species_key": "Roserade",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "roserade",
+        "base_species": "Roserade",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0409-000",
@@ -771,7 +1353,14 @@
       "runtime_species_key": "Rampardos",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "rampardos",
+        "base_species": "Rampardos",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0411-000",
@@ -780,7 +1369,14 @@
       "runtime_species_key": "Bastiodon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "bastiodon",
+        "base_species": "Bastiodon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0428-000",
@@ -789,7 +1385,14 @@
       "runtime_species_key": "Lopunny",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "lopunny",
+        "base_species": "Lopunny",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0442-000",
@@ -798,7 +1401,14 @@
       "runtime_species_key": "Spiritomb",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "spiritomb",
+        "base_species": "Spiritomb",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0445-000",
@@ -807,7 +1417,14 @@
       "runtime_species_key": "Garchomp",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "garchomp",
+        "base_species": "Garchomp",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0448-000",
@@ -816,7 +1433,14 @@
       "runtime_species_key": "Lucario",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "lucario",
+        "base_species": "Lucario",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0450-000",
@@ -825,7 +1449,14 @@
       "runtime_species_key": "Hippowdon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "hippowdon",
+        "base_species": "Hippowdon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0454-000",
@@ -834,7 +1465,14 @@
       "runtime_species_key": "Toxicroak",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "toxicroak",
+        "base_species": "Toxicroak",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0460-000",
@@ -843,7 +1481,14 @@
       "runtime_species_key": "Abomasnow",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "abomasnow",
+        "base_species": "Abomasnow",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0461-000",
@@ -852,7 +1497,14 @@
       "runtime_species_key": "Weavile",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "weavile",
+        "base_species": "Weavile",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0464-000",
@@ -861,7 +1513,14 @@
       "runtime_species_key": "Rhyperior",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "rhyperior",
+        "base_species": "Rhyperior",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0470-000",
@@ -870,7 +1529,14 @@
       "runtime_species_key": "Leafeon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "leafeon",
+        "base_species": "Leafeon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0471-000",
@@ -879,7 +1545,14 @@
       "runtime_species_key": "Glaceon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "glaceon",
+        "base_species": "Glaceon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0472-000",
@@ -888,7 +1561,14 @@
       "runtime_species_key": "Gliscor",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "gliscor",
+        "base_species": "Gliscor",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0473-000",
@@ -897,7 +1577,14 @@
       "runtime_species_key": "Mamoswine",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "mamoswine",
+        "base_species": "Mamoswine",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0475-000",
@@ -906,7 +1593,14 @@
       "runtime_species_key": "Gallade",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "gallade",
+        "base_species": "Gallade",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0478-000",
@@ -915,7 +1609,14 @@
       "runtime_species_key": "Froslass",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "froslass",
+        "base_species": "Froslass",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0479-000",
@@ -924,7 +1625,14 @@
       "runtime_species_key": "Rotom",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "rotom",
+        "base_species": "Rotom",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0479-001",
@@ -933,7 +1641,14 @@
       "runtime_species_key": "Rotom-Heat",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "rotomheat",
+        "base_species": "Rotom",
+        "forme": "Heat",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0479-002",
@@ -942,7 +1657,14 @@
       "runtime_species_key": "Rotom-Wash",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "rotomwash",
+        "base_species": "Rotom",
+        "forme": "Wash",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0479-003",
@@ -951,7 +1673,14 @@
       "runtime_species_key": "Rotom-Frost",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "rotomfrost",
+        "base_species": "Rotom",
+        "forme": "Frost",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0479-004",
@@ -960,7 +1689,14 @@
       "runtime_species_key": "Rotom-Fan",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "rotomfan",
+        "base_species": "Rotom",
+        "forme": "Fan",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0479-005",
@@ -969,7 +1705,14 @@
       "runtime_species_key": "Rotom-Mow",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "rotommow",
+        "base_species": "Rotom",
+        "forme": "Mow",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0497-000",
@@ -978,7 +1721,14 @@
       "runtime_species_key": "Serperior",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "serperior",
+        "base_species": "Serperior",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0500-000",
@@ -987,7 +1737,14 @@
       "runtime_species_key": "Emboar",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "emboar",
+        "base_species": "Emboar",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0503-000",
@@ -996,7 +1753,14 @@
       "runtime_species_key": "Samurott",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "samurott",
+        "base_species": "Samurott",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0503-001",
@@ -1005,7 +1769,14 @@
       "runtime_species_key": "Samurott-Hisui",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "samurotthisui",
+        "base_species": "Samurott",
+        "forme": "Hisui",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0505-000",
@@ -1014,7 +1785,14 @@
       "runtime_species_key": "Watchog",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "watchog",
+        "base_species": "Watchog",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0510-000",
@@ -1023,7 +1801,14 @@
       "runtime_species_key": "Liepard",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "liepard",
+        "base_species": "Liepard",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0512-000",
@@ -1032,7 +1817,14 @@
       "runtime_species_key": "Simisage",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "simisage",
+        "base_species": "Simisage",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0514-000",
@@ -1041,7 +1833,14 @@
       "runtime_species_key": "Simisear",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "simisear",
+        "base_species": "Simisear",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0516-000",
@@ -1050,7 +1849,14 @@
       "runtime_species_key": "Simipour",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "simipour",
+        "base_species": "Simipour",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0518-000",
@@ -1059,7 +1865,14 @@
       "runtime_species_key": "Musharna",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "musharna",
+        "base_species": "Musharna",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0530-000",
@@ -1068,7 +1881,14 @@
       "runtime_species_key": "Excadrill",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "excadrill",
+        "base_species": "Excadrill",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0531-000",
@@ -1077,7 +1897,14 @@
       "runtime_species_key": "Audino",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "audino",
+        "base_species": "Audino",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0534-000",
@@ -1086,7 +1913,14 @@
       "runtime_species_key": "Conkeldurr",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "conkeldurr",
+        "base_species": "Conkeldurr",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0545-000",
@@ -1095,7 +1929,14 @@
       "runtime_species_key": "Scolipede",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "scolipede",
+        "base_species": "Scolipede",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0547-000",
@@ -1104,7 +1945,14 @@
       "runtime_species_key": "Whimsicott",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "whimsicott",
+        "base_species": "Whimsicott",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0553-000",
@@ -1113,7 +1961,14 @@
       "runtime_species_key": "Krookodile",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "krookodile",
+        "base_species": "Krookodile",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0560-000",
@@ -1122,7 +1977,14 @@
       "runtime_species_key": "Scrafty",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "scrafty",
+        "base_species": "Scrafty",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0563-000",
@@ -1131,7 +1993,14 @@
       "runtime_species_key": "Cofagrigus",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "cofagrigus",
+        "base_species": "Cofagrigus",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0569-000",
@@ -1140,7 +2009,14 @@
       "runtime_species_key": "Garbodor",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "garbodor",
+        "base_species": "Garbodor",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0571-000",
@@ -1149,7 +2025,14 @@
       "runtime_species_key": "Zoroark",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "zoroark",
+        "base_species": "Zoroark",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0571-001",
@@ -1158,7 +2041,14 @@
       "runtime_species_key": "Zoroark-Hisui",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "zoroarkhisui",
+        "base_species": "Zoroark",
+        "forme": "Hisui",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0579-000",
@@ -1167,7 +2057,14 @@
       "runtime_species_key": "Reuniclus",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "reuniclus",
+        "base_species": "Reuniclus",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0584-000",
@@ -1176,7 +2073,14 @@
       "runtime_species_key": "Vanilluxe",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "vanilluxe",
+        "base_species": "Vanilluxe",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0587-000",
@@ -1185,7 +2089,14 @@
       "runtime_species_key": "Emolga",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "emolga",
+        "base_species": "Emolga",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0604-000",
@@ -1194,7 +2105,14 @@
       "runtime_species_key": "Eelektross",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "eelektross",
+        "base_species": "Eelektross",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0609-000",
@@ -1203,7 +2121,14 @@
       "runtime_species_key": "Chandelure",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "chandelure",
+        "base_species": "Chandelure",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0614-000",
@@ -1212,7 +2137,14 @@
       "runtime_species_key": "Beartic",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "beartic",
+        "base_species": "Beartic",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0618-000",
@@ -1221,7 +2153,14 @@
       "runtime_species_key": "Stunfisk",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "stunfisk",
+        "base_species": "Stunfisk",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0618-001",
@@ -1230,7 +2169,14 @@
       "runtime_species_key": "Stunfisk-Galar",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "stunfiskgalar",
+        "base_species": "Stunfisk",
+        "forme": "Galar",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0623-000",
@@ -1239,7 +2185,14 @@
       "runtime_species_key": "Golurk",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "golurk",
+        "base_species": "Golurk",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0635-000",
@@ -1248,7 +2201,14 @@
       "runtime_species_key": "Hydreigon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "hydreigon",
+        "base_species": "Hydreigon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0637-000",
@@ -1257,7 +2217,14 @@
       "runtime_species_key": "Volcarona",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "volcarona",
+        "base_species": "Volcarona",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0652-000",
@@ -1266,7 +2233,14 @@
       "runtime_species_key": "Chesnaught",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "chesnaught",
+        "base_species": "Chesnaught",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0655-000",
@@ -1275,7 +2249,14 @@
       "runtime_species_key": "Delphox",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "delphox",
+        "base_species": "Delphox",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0658-000",
@@ -1284,7 +2265,14 @@
       "runtime_species_key": "Greninja",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "greninja",
+        "base_species": "Greninja",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0660-000",
@@ -1293,7 +2281,14 @@
       "runtime_species_key": "Diggersby",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "diggersby",
+        "base_species": "Diggersby",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0663-000",
@@ -1302,16 +2297,30 @@
       "runtime_species_key": "Talonflame",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "talonflame",
+        "base_species": "Talonflame",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0666-018",
       "official_label": "Vivillon",
       "eligible_in_capture": true,
-      "runtime_species_key": null,
-      "status": "needs_identity_review",
+      "runtime_species_key": "Vivillon-Fancy",
+      "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "reason": "nondefault_form_requires_explicit_mapping"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "vivillonfancy",
+        "base_species": "Vivillon",
+        "forme": "Fancy",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0668-000",
@@ -1320,16 +2329,30 @@
       "runtime_species_key": "Pyroar",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "pyroar",
+        "base_species": "Pyroar",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0670-005",
       "official_label": "Floette",
       "eligible_in_capture": true,
-      "runtime_species_key": null,
-      "status": "needs_identity_review",
+      "runtime_species_key": "Floette-Eternal",
+      "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "reason": "nondefault_form_requires_explicit_mapping"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "floetteeternal",
+        "base_species": "Floette",
+        "forme": "Eternal",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0671-000",
@@ -1338,7 +2361,14 @@
       "runtime_species_key": "Florges",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "florges",
+        "base_species": "Florges",
+        "forme": "Red",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0675-000",
@@ -1347,7 +2377,14 @@
       "runtime_species_key": "Pangoro",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "pangoro",
+        "base_species": "Pangoro",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0676-000",
@@ -1356,7 +2393,14 @@
       "runtime_species_key": "Furfrou",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "furfrou",
+        "base_species": "Furfrou",
+        "forme": "Natural",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0678-000",
@@ -1365,7 +2409,14 @@
       "runtime_species_key": "Meowstic",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "meowstic",
+        "base_species": "Meowstic",
+        "forme": "M",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0678-001",
@@ -1374,7 +2425,14 @@
       "runtime_species_key": "Meowstic-F",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "meowsticf",
+        "base_species": "Meowstic",
+        "forme": "F",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0681-000",
@@ -1383,7 +2441,14 @@
       "runtime_species_key": "Aegislash",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "aegislash",
+        "base_species": "Aegislash",
+        "forme": "Shield",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0683-000",
@@ -1392,7 +2457,14 @@
       "runtime_species_key": "Aromatisse",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "aromatisse",
+        "base_species": "Aromatisse",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0685-000",
@@ -1401,7 +2473,14 @@
       "runtime_species_key": "Slurpuff",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "slurpuff",
+        "base_species": "Slurpuff",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0687-000",
@@ -1410,7 +2489,14 @@
       "runtime_species_key": "Malamar",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "malamar",
+        "base_species": "Malamar",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0689-000",
@@ -1419,7 +2505,14 @@
       "runtime_species_key": "Barbaracle",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "barbaracle",
+        "base_species": "Barbaracle",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0691-000",
@@ -1428,7 +2521,14 @@
       "runtime_species_key": "Dragalge",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "dragalge",
+        "base_species": "Dragalge",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0693-000",
@@ -1437,7 +2537,14 @@
       "runtime_species_key": "Clawitzer",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "clawitzer",
+        "base_species": "Clawitzer",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0695-000",
@@ -1446,7 +2553,14 @@
       "runtime_species_key": "Heliolisk",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "heliolisk",
+        "base_species": "Heliolisk",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0697-000",
@@ -1455,7 +2569,14 @@
       "runtime_species_key": "Tyrantrum",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "tyrantrum",
+        "base_species": "Tyrantrum",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0699-000",
@@ -1464,7 +2585,14 @@
       "runtime_species_key": "Aurorus",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "aurorus",
+        "base_species": "Aurorus",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0700-000",
@@ -1473,7 +2601,14 @@
       "runtime_species_key": "Sylveon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "sylveon",
+        "base_species": "Sylveon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0701-000",
@@ -1482,7 +2617,14 @@
       "runtime_species_key": "Hawlucha",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "hawlucha",
+        "base_species": "Hawlucha",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0702-000",
@@ -1491,7 +2633,14 @@
       "runtime_species_key": "Dedenne",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "dedenne",
+        "base_species": "Dedenne",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0706-000",
@@ -1500,7 +2649,14 @@
       "runtime_species_key": "Goodra",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "goodra",
+        "base_species": "Goodra",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0706-001",
@@ -1509,7 +2665,14 @@
       "runtime_species_key": "Goodra-Hisui",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "goodrahisui",
+        "base_species": "Goodra",
+        "forme": "Hisui",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0707-000",
@@ -1518,7 +2681,14 @@
       "runtime_species_key": "Klefki",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "klefki",
+        "base_species": "Klefki",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0709-000",
@@ -1527,7 +2697,14 @@
       "runtime_species_key": "Trevenant",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "trevenant",
+        "base_species": "Trevenant",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0711-000",
@@ -1536,7 +2713,14 @@
       "runtime_species_key": "Gourgeist",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "gourgeist",
+        "base_species": "Gourgeist",
+        "forme": "Average",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0711-001",
@@ -1545,7 +2729,14 @@
       "runtime_species_key": "Gourgeist-Small",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "gourgeistsmall",
+        "base_species": "Gourgeist",
+        "forme": "Small",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0711-002",
@@ -1554,7 +2745,14 @@
       "runtime_species_key": "Gourgeist-Large",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "gourgeistlarge",
+        "base_species": "Gourgeist",
+        "forme": "Large",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0711-003",
@@ -1563,7 +2761,14 @@
       "runtime_species_key": "Gourgeist-Super",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "gourgeistsuper",
+        "base_species": "Gourgeist",
+        "forme": "Super",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0713-000",
@@ -1572,7 +2777,14 @@
       "runtime_species_key": "Avalugg",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "avalugg",
+        "base_species": "Avalugg",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0713-001",
@@ -1581,7 +2793,14 @@
       "runtime_species_key": "Avalugg-Hisui",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "avalugghisui",
+        "base_species": "Avalugg",
+        "forme": "Hisui",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0715-000",
@@ -1590,7 +2809,14 @@
       "runtime_species_key": "Noivern",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "noivern",
+        "base_species": "Noivern",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0724-000",
@@ -1599,7 +2825,14 @@
       "runtime_species_key": "Decidueye",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "decidueye",
+        "base_species": "Decidueye",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0724-001",
@@ -1608,7 +2841,14 @@
       "runtime_species_key": "Decidueye-Hisui",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "decidueyehisui",
+        "base_species": "Decidueye",
+        "forme": "Hisui",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0727-000",
@@ -1617,7 +2857,14 @@
       "runtime_species_key": "Incineroar",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "incineroar",
+        "base_species": "Incineroar",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0730-000",
@@ -1626,7 +2873,14 @@
       "runtime_species_key": "Primarina",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "primarina",
+        "base_species": "Primarina",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0733-000",
@@ -1635,7 +2889,14 @@
       "runtime_species_key": "Toucannon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "toucannon",
+        "base_species": "Toucannon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0740-000",
@@ -1644,7 +2905,14 @@
       "runtime_species_key": "Crabominable",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "crabominable",
+        "base_species": "Crabominable",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0745-000",
@@ -1653,7 +2921,14 @@
       "runtime_species_key": "Lycanroc",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "lycanroc",
+        "base_species": "Lycanroc",
+        "forme": "Midday",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0745-001",
@@ -1662,7 +2937,14 @@
       "runtime_species_key": "Lycanroc-Midnight",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "lycanrocmidnight",
+        "base_species": "Lycanroc",
+        "forme": "Midnight",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0745-002",
@@ -1671,7 +2953,14 @@
       "runtime_species_key": "Lycanroc-Dusk",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "lycanrocdusk",
+        "base_species": "Lycanroc",
+        "forme": "Dusk",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0748-000",
@@ -1680,7 +2969,14 @@
       "runtime_species_key": "Toxapex",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "toxapex",
+        "base_species": "Toxapex",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0750-000",
@@ -1689,7 +2985,14 @@
       "runtime_species_key": "Mudsdale",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "mudsdale",
+        "base_species": "Mudsdale",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0752-000",
@@ -1698,7 +3001,14 @@
       "runtime_species_key": "Araquanid",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "araquanid",
+        "base_species": "Araquanid",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0758-000",
@@ -1707,7 +3017,14 @@
       "runtime_species_key": "Salazzle",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "salazzle",
+        "base_species": "Salazzle",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0763-000",
@@ -1716,7 +3033,14 @@
       "runtime_species_key": "Tsareena",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "tsareena",
+        "base_species": "Tsareena",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0765-000",
@@ -1725,7 +3049,14 @@
       "runtime_species_key": "Oranguru",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "oranguru",
+        "base_species": "Oranguru",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0766-000",
@@ -1734,7 +3065,14 @@
       "runtime_species_key": "Passimian",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "passimian",
+        "base_species": "Passimian",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0778-000",
@@ -1743,7 +3081,14 @@
       "runtime_species_key": "Mimikyu",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "mimikyu",
+        "base_species": "Mimikyu",
+        "forme": "Disguised",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0780-000",
@@ -1752,7 +3097,14 @@
       "runtime_species_key": "Drampa",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "drampa",
+        "base_species": "Drampa",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0784-000",
@@ -1761,7 +3113,14 @@
       "runtime_species_key": "Kommo-o",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "kommoo",
+        "base_species": "Kommo-o",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0823-000",
@@ -1770,7 +3129,14 @@
       "runtime_species_key": "Corviknight",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "corviknight",
+        "base_species": "Corviknight",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0841-000",
@@ -1779,7 +3145,14 @@
       "runtime_species_key": "Flapple",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "flapple",
+        "base_species": "Flapple",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0842-000",
@@ -1788,7 +3161,14 @@
       "runtime_species_key": "Appletun",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "appletun",
+        "base_species": "Appletun",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0844-000",
@@ -1797,7 +3177,14 @@
       "runtime_species_key": "Sandaconda",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "sandaconda",
+        "base_species": "Sandaconda",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0855-000",
@@ -1806,7 +3193,14 @@
       "runtime_species_key": "Polteageist",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "polteageist",
+        "base_species": "Polteageist",
+        "forme": "Phony",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0858-000",
@@ -1815,7 +3209,14 @@
       "runtime_species_key": "Hatterene",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "hatterene",
+        "base_species": "Hatterene",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0861-000",
@@ -1824,7 +3225,14 @@
       "runtime_species_key": "Grimmsnarl",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "grimmsnarl",
+        "base_species": "Grimmsnarl",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0866-000",
@@ -1833,7 +3241,14 @@
       "runtime_species_key": "Mr. Rime",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "mrrime",
+        "base_species": "Mr. Rime",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0867-000",
@@ -1842,7 +3257,14 @@
       "runtime_species_key": "Runerigus",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "runerigus",
+        "base_species": "Runerigus",
+        "forme": "",
+        "is_nonstandard": "Past"
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0869-000",
@@ -1851,7 +3273,14 @@
       "runtime_species_key": "Alcremie",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "alcremie",
+        "base_species": "Alcremie",
+        "forme": "Vanilla-Cream",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0870-000",
@@ -1860,7 +3289,14 @@
       "runtime_species_key": "Falinks",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "falinks",
+        "base_species": "Falinks",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0877-000",
@@ -1869,7 +3305,14 @@
       "runtime_species_key": "Morpeko",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "morpeko",
+        "base_species": "Morpeko",
+        "forme": "Full-Belly",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0887-000",
@@ -1878,7 +3321,14 @@
       "runtime_species_key": "Dragapult",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "dragapult",
+        "base_species": "Dragapult",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0899-000",
@@ -1887,7 +3337,14 @@
       "runtime_species_key": "Wyrdeer",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "wyrdeer",
+        "base_species": "Wyrdeer",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0900-000",
@@ -1896,7 +3353,14 @@
       "runtime_species_key": "Kleavor",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "kleavor",
+        "base_species": "Kleavor",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0902-000",
@@ -1905,7 +3369,14 @@
       "runtime_species_key": "Basculegion",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "basculegion",
+        "base_species": "Basculegion",
+        "forme": "M",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0902-001",
@@ -1914,7 +3385,14 @@
       "runtime_species_key": "Basculegion-F",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "explicit_id_and_label_alias"
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "basculegionf",
+        "base_species": "Basculegion",
+        "forme": "F",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0903-000",
@@ -1923,7 +3401,14 @@
       "runtime_species_key": "Sneasler",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "sneasler",
+        "base_species": "Sneasler",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0904-000",
@@ -1932,7 +3417,14 @@
       "runtime_species_key": "Overqwil",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "overqwil",
+        "base_species": "Overqwil",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0908-000",
@@ -1941,7 +3433,14 @@
       "runtime_species_key": "Meowscarada",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "meowscarada",
+        "base_species": "Meowscarada",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0911-000",
@@ -1950,7 +3449,14 @@
       "runtime_species_key": "Skeledirge",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "skeledirge",
+        "base_species": "Skeledirge",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0914-000",
@@ -1959,7 +3465,14 @@
       "runtime_species_key": "Quaquaval",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "quaquaval",
+        "base_species": "Quaquaval",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0925-000",
@@ -1968,7 +3481,14 @@
       "runtime_species_key": "Maushold",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "maushold",
+        "base_species": "Maushold",
+        "forme": "Three",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0934-000",
@@ -1977,7 +3497,14 @@
       "runtime_species_key": "Garganacl",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "garganacl",
+        "base_species": "Garganacl",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0936-000",
@@ -1986,7 +3513,14 @@
       "runtime_species_key": "Armarouge",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "armarouge",
+        "base_species": "Armarouge",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0937-000",
@@ -1995,7 +3529,14 @@
       "runtime_species_key": "Ceruledge",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "ceruledge",
+        "base_species": "Ceruledge",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0939-000",
@@ -2004,7 +3545,14 @@
       "runtime_species_key": "Bellibolt",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "bellibolt",
+        "base_species": "Bellibolt",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0952-000",
@@ -2013,7 +3561,14 @@
       "runtime_species_key": "Scovillain",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "scovillain",
+        "base_species": "Scovillain",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0956-000",
@@ -2022,7 +3577,14 @@
       "runtime_species_key": "Espathra",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "espathra",
+        "base_species": "Espathra",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0959-000",
@@ -2031,7 +3593,14 @@
       "runtime_species_key": "Tinkaton",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "tinkaton",
+        "base_species": "Tinkaton",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0964-000",
@@ -2040,7 +3609,14 @@
       "runtime_species_key": "Palafin",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "palafin",
+        "base_species": "Palafin",
+        "forme": "Zero",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0968-000",
@@ -2049,7 +3625,14 @@
       "runtime_species_key": "Orthworm",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "orthworm",
+        "base_species": "Orthworm",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0970-000",
@@ -2058,7 +3641,14 @@
       "runtime_species_key": "Glimmora",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "glimmora",
+        "base_species": "Glimmora",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0972-000",
@@ -2067,7 +3657,14 @@
       "runtime_species_key": "Houndstone",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "houndstone",
+        "base_species": "Houndstone",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0979-000",
@@ -2076,7 +3673,14 @@
       "runtime_species_key": "Annihilape",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "annihilape",
+        "base_species": "Annihilape",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0981-000",
@@ -2085,7 +3689,14 @@
       "runtime_species_key": "Farigiraf",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "farigiraf",
+        "base_species": "Farigiraf",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "0983-000",
@@ -2094,7 +3705,14 @@
       "runtime_species_key": "Kingambit",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "kingambit",
+        "base_species": "Kingambit",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "1000-000",
@@ -2103,7 +3721,14 @@
       "runtime_species_key": "Gholdengo",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "gholdengo",
+        "base_species": "Gholdengo",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "1013-000",
@@ -2112,7 +3737,14 @@
       "runtime_species_key": "Sinistcha",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "sinistcha",
+        "base_species": "Sinistcha",
+        "forme": "Unremarkable",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "1018-000",
@@ -2121,7 +3753,14 @@
       "runtime_species_key": "Archaludon",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "archaludon",
+        "base_species": "Archaludon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
       "official_id": "1019-000",
@@ -2130,7 +3769,14 @@
       "runtime_species_key": "Hydrapple",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "mapping_basis": "exact_label_and_dex_number"
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "hydrapple",
+        "base_species": "Hydrapple",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     }
   ]
 }

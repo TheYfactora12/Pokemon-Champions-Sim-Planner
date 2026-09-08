@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Finish M-B official-ID mapping and per-field mechanics/legality proof before competitive sign-off. Official 235-row roster capture exposes duplicate Hawlucha and incorrect/missing visual-ledger entries; the September 9 extension is fixed and tested locally. Keep M-C preparation separate and do not inherit the old visual ledger. Staging/live security and complete-battle parity remain open. See docs/release/REG_MB_SIGNOFF_AUDIT.md.
+Complete M-B field/learnset/combination and runtime-consumer proof before competitive sign-off. All 235 official identities now have review-only candidates, including two source-linked visual form aliases; baseline stats/types/ability slots/numbers agree with pinned Champions. Human fingerprint approval, live staging/security and complete-battle parity remain open. Keep M-C separate. See docs/release/REG_MB_SIGNOFF_AUDIT.md.
 
 ## Milestone Index
 
@@ -74,6 +74,7 @@ Completed locally / recorded:
 - Unsafe approval-time refetch is blocked. Generated offline data remains the browser baseline; official Champions evidence must establish legality.
 - The accuracy harness manifest binds regulation IDs, versions, review/promotion states and format lanes. Catalog drift, unreviewed runnable formats and warnings above the zero-warning budget fail closed.
 - The official Regulation M-C notice, exact UTC dates, six named Mega additions and Rillaboom example are captured in a versioned source-review package. The active window fails closed; the later M-B audit corrects the supposed pre-start gap using the official September 9 extension, Showdown's still-M-B format state is recorded, and missing exact Mega sprites use a base-form fallback without implying legality.
+- M-B official identity reconciliation covers all 235 rows using source-linked explicit aliases for Fancy Vivillon and Eternal Flower Floette. The review artifact binds visual evidence and preserves baseline metadata; all mapped baseline stats/types/ability slots/numbers agree with pinned Champions. This does not approve learnsets, runtime consumers or legality.
 
 Remaining:
 - [ ] Capture every in-game M-C roster and rules page for Singles and Doubles; the public notice does not enumerate the full 24 newly available Pokemon.

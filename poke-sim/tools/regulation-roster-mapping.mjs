@@ -18,6 +18,9 @@ const FORM_ALIASES = Object.freeze({
   '0503-001': ['Samurott (Hisuian Form)', 'Samurott-Hisui'],
   '0571-001': ['Zoroark (Hisuian Form)', 'Zoroark-Hisui'],
   '0618-001': ['Stunfisk (Galarian Form)', 'Stunfisk-Galar'],
+  // Exact official sprite/label reconciliation: source/reg-m-b-form-identity-evidence.json.
+  '0666-018': ['Vivillon', 'Vivillon-Fancy'],
+  '0670-005': ['Floette', 'Floette-Eternal'],
   '0678-000': ['Meowstic (Male)', 'Meowstic'],
   '0678-001': ['Meowstic (Female)', 'Meowstic-F'],
   '0706-001': ['Goodra (Hisuian Form)', 'Goodra-Hisui'],
@@ -53,6 +56,11 @@ export function mapOfficialRoster(capture, species) {
     if (candidate.battleOnly) return { ...result, reason: 'battle_only_form_cannot_be_registered' };
     if (targets.has(key)) throw new Error('Two official identities collapse into one runtime form');
     targets.add(key);
-    return { ...result, runtime_species_key: key, status: 'baseline_identity_candidate', mapping_basis: alias ? 'explicit_id_and_label_alias' : 'exact_label_and_dex_number' };
+    return {
+      ...result, runtime_species_key: key, status: 'baseline_identity_candidate',
+      mapping_basis: alias ? 'explicit_id_and_label_alias' : 'exact_label_and_dex_number',
+      baseline_metadata: { id: candidate.id, base_species: candidate.baseSpecies, forme: candidate.forme || '', is_nonstandard: candidate.isNonstandard || '' },
+      baseline_metadata_scope: 'Mirrored baseline metadata, not Champions regulation legality'
+    };
   });
 }
