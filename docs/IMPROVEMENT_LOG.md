@@ -19,6 +19,7 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 | [IMP-0009](#imp-0009) | Authorized Supabase security readback | Live read-only audit; public launch blocked |
 | [IMP-0010](#imp-0010) | Fresh-user simulator starts in safe Practice lane | Local candidate; browser and export verified |
 | [IMP-0011](#imp-0011) | Expired regulation and rejected DB catalog are explicit | Local candidate; live DB read-only diagnosis |
+| [IMP-0012](#imp-0012) | Eerie Spell and Spite preserve exact PP state | Local candidate; scoped Showdown parity |
 
 Historical entries below summarize already-recorded evidence, not new runs. This index is intentionally not an exhaustive reconstruction of older work.
 
@@ -132,6 +133,16 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Evidence: [regulation and DB diagnosis](release/REGULATION_AND_DB_DIAGNOSIS_2026-09-03.md), deterministic regulation boundary tests, DB status tests, read-only row/migration queries and live Supabase advisors.
 - Lesson: connection health, catalog acceptance, regulation approval and competitive trust are different states. Unknown current rules must fail closed while Practice remains clearly unverified.
 - Remaining: human capture of the post-M-B regulation, digest-bound review, protected DB migration/reseed, anonymous-denial and two-user staging tests. No 99% accuracy or public-launch claim is established.
+
+<a id="imp-0012"></a>
+## IMP-0012: PP-Draining Moves Use One Auditable Rule
+
+- Recorded: 2026-09-03. Lane: mechanics/evidence/release. Local engine `1.1.6`, build `v2.2.144-pp-drain-proof`; not published.
+- Before/root cause: ordinary PP spending and Pressure were persistent, but Eerie Spell and Spite had no executable drain behavior and the Pressure registry comment still described the old no-op state.
+- Change: add one zero-clamped PP-drain helper with structured before/after evidence; wire Eerie Spell after a successful direct hit and Spite to the target's last used move; preserve Protect, Substitute and missing-history failures.
+- Evidence: [PP-drain validation](../poke-sim/reports/pp_drain_validation_2026-09-03.md), `tests/pp_drain_move_tests.mjs`, and the pinned-reference PP probe in `tests/showdown_reference_tests.mjs`.
+- Lesson: resource-changing moves need exact state evidence and an independent post-turn comparison, not only a matching log sentence. Their state remains attached to stable Pokemon identity.
+- Remaining: Grudge, Disable, Leppa Berry restoration, switching/called-move interactions, complete-game/browser parity and Champion-specific source approval. Scoped agreement is not a 99% or universal accuracy result.
 
 ## Entry Template
 

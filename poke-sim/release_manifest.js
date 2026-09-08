@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.143-regulation-db-truth',
+    build_id: 'v2.2.144-pp-drain-proof',
     release_date: '2026-09-03',
-    service_worker_cache: 'champions-sim-v2-2-143-regulation-db-truth',
+    service_worker_cache: 'champions-sim-v2-2-144-pp-drain-proof',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

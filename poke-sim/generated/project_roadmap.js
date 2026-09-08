@@ -22,11 +22,12 @@
         "Unknown-ruleset preflight and default bring-four/participant identity fixes have regression coverage.",
         "Scoped switching, immunity, grounding, multi-hit and Seismic Toss fixes are tested. One complete-game Showdown comparison includes forced replacements, winner, HP, stages and PP; one seven-turn browser run has matching visible/export logs.",
         "Same-turn Tailwind and Growl/Leer now agree with pinned Showdown in scoped synthetic doubles probes, including side swaps, Trick Room, per-target protection and selected ability/item/Substitute gates. PP, single/double Pressure, depletion and Struggle have deterministic boundary coverage.",
+        "Eerie Spell and Spite now use a shared PP-drain path with exact before/after evidence. Their post-turn PP totals agree with pinned Showdown in one synthetic doubles probe, with local zero-clamp, no-history, Protect and Substitute boundaries.",
         "Replay review rejects absent or structurally empty evidence and preserves stable actor/target identity through mirror-name actions. The declared cross-format harness completes 4,624/4,624 runs without state, validator, warning or repeatability failures. This is scoped invariant proof, not universal accuracy."
       ],
       "remaining": [
         "Extend complete-game and visible-replay parity beyond the bounded fixtures; resolve Strategy-cache context mixing and misleading coaching.",
-        "Test broader mid-turn Speed and stage interactions, Mirror Armor/Contrary, other fixed-damage moves, entry/residual ordering, resource-changing moves and imported-team edge cases.",
+        "Test broader mid-turn Speed and stage interactions, Mirror Armor/Contrary, other fixed-damage moves, entry/residual ordering, Grudge/Disable/berry restoration and imported-team edge cases.",
         "Define the accuracy denominator and human verification gaps; obtain official Champions evidence before promoting Showdown baseline behavior as Champion truth."
       ],
       "exit": "No unresolved critical mechanics, identity or evidence errors in the declared benchmark; every accuracy claim has reference evidence and explicit exclusions.",
@@ -36,7 +37,8 @@
         "poke-sim/reports/identity_validation_2026-08-30.md",
         "docs/release/PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md",
         "poke-sim/reports/seismic_toss_validation_2026-08-30.md",
-        "poke-sim/reports/tailwind_growl_leer_validation_2026-09-01.md"
+        "poke-sim/reports/tailwind_growl_leer_validation_2026-09-01.md",
+        "poke-sim/reports/pp_drain_validation_2026-09-03.md"
       ]
     },
     {

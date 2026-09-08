@@ -1057,6 +1057,28 @@ function _consumeSelectedMovePP(mon, move, target, enemies) {
   return spent;
 }
 
+function _drainMovePP(mon, move, amount, source, field, log) {
+  if (!mon || !move || !mon.movePP || !mon.movePP[move]) return 0;
+  var state = mon.movePP[move];
+  if (!Number.isFinite(state.current) || state.current <= 0) return 0;
+  var requested = Math.max(0, Math.floor(Number(amount) || 0));
+  var before = state.current;
+  var drained = Math.min(before, requested);
+  state.current -= drained;
+  if (drained > 0 && log) log.push(`${mon.name}'s ${move} lost ${drained} PP because of ${source}!`);
+  if (drained > 0) {
+    _recordEffectEvent(field, mon, source, 'pp-drain', mon.hp, mon.hp, {
+      source: 'pokemon-showdown move behavior',
+      drained_move: move,
+      pp_before: before,
+      pp_after: state.current,
+      pp_requested: requested,
+      pp_drained: drained
+    });
+  }
+  return drained;
+}
+
 function _attackerIgnoresTargetAbility(attacker, target) {
   return !!(
     attacker &&
@@ -1709,7 +1731,8 @@ var ABILITIES = {
   'Healer': {},
   // Current sim no-op: item reveal is already visible to the planner.
   'Frisk': {},
-  // Current sim no-op: PP consumption/drain is not modeled.
+  // Inline in selected-move PP consumption: adds one PP for each affected
+  // opposing Pressure holder, capped by the move's remaining PP.
   'Pressure': {},
   // Inline in executeAction/setStanceForm: Aegislash swaps between Shield and Blade.
   'Stance Change': {},
@@ -4317,7 +4340,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       'Recover','Shore Up','Rest','Sleep Talk','Substitute','Imprison','Ally Switch',
       // Stage / pressure moves
       'Swords Dance','Dragon Dance','Calm Mind','Coil','Fake Tears','Coaching','Clangorous Soul',
-      'Heal Bell','Aromatherapy','Jungle Healing','Noble Roar','Growl','Leer']);
+      'Heal Bell','Aromatherapy','Jungle Healing','Noble Roar','Growl','Leer','Spite']);
 
     // Attacker must be alive
     if (!attacker.alive) return;
@@ -4472,7 +4495,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         'Poison Powder',
         'Encore',
         'Parting Shot',
-        'Trick'
+        'Trick',
+        'Spite'
       ]);
       if (target && target.alive && target.substituteHp > 0 && attacker.ability !== 'Infiltrator' && blockedBySubstitute.has(move)) {
         log.push(`${attacker.name} used ${move}! But it failed because of Substitute!`);
@@ -4755,6 +4779,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target.encoredMove = target.lastMoveUsed;
         target.encoredTurns = 3;
         log.push(`${target.name} got an Encore!`);
+        return;
+      }
+      if (move === 'Spite' && target && target.alive) {
+        if (target.protected) {
+          log.push(`${target.name} protected itself!`);
+          attacker.lastMoveFailed = true;
+          return;
+        }
+        const drainedMove = target.lastMoveUsed;
+        if (!drainedMove || !_drainMovePP(target, drainedMove, 4, move, field, log)) {
+          log.push(`${attacker.name} used Spite! But it failed!`);
+          attacker.lastMoveFailed = true;
+        }
         return;
       }
       // T9j.2 (#32) — Follow Me / Rage Powder set side redirect flag.
@@ -5946,6 +5983,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         }
         if (!_suppressSecondary && !_hadSubstitute) {
           _applyDamagingMoveSecondary(attacker, move, t, field, log, rng);
+        }
+        if (move === 'Eerie Spell' && !_hadSubstitute) {
+          _drainMovePP(t, t.lastMoveUsed, 3, move, field, log);
         }
         // T9j.8 (Refs #19) Flinch roll: after damage applied, target alive,
         // target hasn't acted yet. Fang moves roll flinch + status independently.
@@ -7362,7 +7402,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.5'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.6'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
