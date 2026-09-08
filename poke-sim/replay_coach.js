@@ -685,6 +685,9 @@
     var seenFirstTurn = false;
     var activeSeenBeforeTurnOne = { p1: [], p2: [] };
     var activeSpeciesBySlot = {};
+    var faintedSlots = {};
+    var pendingEffectiveness = {};
+    var lastMove = null;
     var previewDetails = { p1: [], p2: [] };
     var startingSlots = { p1: [], p2: [] };
     var startingBySlot = {};
@@ -738,6 +741,8 @@
           currentTurn.rosterState = snapshotRosterState(rosterState, { observedMovesBySpecies: observedMovesBySpecies });
         }
         seenFirstTurn = true;
+        lastMove = null;
+        pendingEffectiveness = {};
         currentTurn = ensureTurn(model, parts[2]);
         model.totalTurns = Math.max(model.totalTurns, currentTurn.number);
         return;
@@ -762,6 +767,10 @@
         var details = parsedMon.species || mon;
         var hp = hpPercent(parts[4] || '');
         var key = slotKey(slot);
+        var forcedReplacement = tag === 'drag' || !!faintedSlots[key];
+        delete faintedSlots[key];
+        pendingEffectiveness = {};
+        lastMove = null;
         var previous = key ? activeSpeciesBySlot[key] : '';
         if (side && previous && previous !== details) benchSlotOccupant(rosterState, side, previous);
         if (key && details) activeSpeciesBySlot[key] = details;
@@ -807,7 +816,8 @@
           gender: parsedMon.gender,
           level: parsedMon.level,
           hp: hp,
-          forced: tag === 'drag'
+          forced: forcedReplacement,
+          voluntary: tag === 'switch' && !forcedReplacement && seenFirstTurn
         });
         currentTurn.events.push({ type: tag, side: side, pokemon: details, text: raw });
         return;
@@ -889,6 +899,7 @@
       }
 
       if (tag === 'move') {
+        pendingEffectiveness = {};
         var actorSlot = parts[2];
         var actorSide = sideOf(actorSlot);
         var actor = speciesForSlot(activeSpeciesBySlot, actorSlot);
@@ -896,6 +907,7 @@
         var targetSlot = parts[4] || '';
         var targetSide = sideOf(targetSlot);
         var target = speciesForSlot(activeSpeciesBySlot, targetSlot);
+        lastMove = { slot: slotKey(actorSlot), move: move, side: actorSide };
         if (actorSide) addUnique(model.selectedPokemon[actorSide], actor);
         if (actor && move) addUnique((observedMovesBySpecies[actor] = observedMovesBySpecies[actor] || []), move);
         currentTurn.moves.push({ side: actorSide, pokemon: actor, move: move, targetSide: targetSide, target: target });
@@ -905,6 +917,7 @@
 
       if (tag === 'faint') {
         var faintSlot = parts[2];
+        faintedSlots[slotKey(faintSlot)] = true;
         var faintSide = sideOf(faintSlot);
         var faintMon = speciesForSlot(activeSpeciesBySlot, faintSlot);
         if (faintSide) addUnique(model.selectedPokemon[faintSide], faintMon);
@@ -925,6 +938,8 @@
         var hpMon = speciesForSlot(activeSpeciesBySlot, hpSlot);
         var hpValue = hpPercent(parts[3] || '');
         var row = { side: hpSide, pokemon: hpMon, hp: hpValue, cause: cleanText(parts.slice(4).join('|')) };
+        row.effects = tag === '-damage' && !row.cause ? (pendingEffectiveness[slotKey(hpSlot)] || []).slice() : [];
+        delete pendingEffectiveness[slotKey(hpSlot)];
         ensureRosterEntry(rosterState, hpSide, hpMon, {
           side: hpSide,
           hp: hpValue,
@@ -945,14 +960,18 @@
       }
 
       if (tag === '-weather' || tag === '-fieldstart' || tag === '-fieldend' || tag === '-fieldactivate' || tag === '-sidestart' || tag === '-sideend' || tag === '-sideactivate') {
-        currentTurn.field.push({ type: tag.slice(1), value: cleanText(parts[2]), side: sideOf(parts[3] || '') });
+        var fieldOwner = parts.find(function(part) { return /^\[of\] /.test(part); });
+        var sideEvent = /^-side/.test(tag);
+        var fieldMatchesMove = lastMove && cleanText(parts[2]).replace(/^move: /, '').replace(/\s/g, '').toLowerCase() === lastMove.move.replace(/\s/g, '').toLowerCase();
+        var fieldSide = sideEvent ? sideOf(parts[2]) : (fieldOwner ? sideOf(fieldOwner.replace(/^\[of\] /, '')) : (fieldMatchesMove ? lastMove.side : ''));
+        currentTurn.field.push({ type: tag.slice(1), value: cleanText(parts[sideEvent ? 3 : 2]), side: fieldSide, upkeep: parts.indexOf('[upkeep]') >= 0 });
         currentTurn.events.push({ type: tag.slice(1), text: raw });
         return;
       }
 
       if (tag === '-crit' || tag === '-miss' || tag === '-fail' || tag === '-immune') {
         var rngSlot = parts[2];
-        currentTurn.rng.push({ type: tag.slice(1), side: sideOf(rngSlot), pokemon: speciesForSlot(activeSpeciesBySlot, rngSlot), value: cleanText(parts[3]) });
+        currentTurn.rng.push({ type: tag.slice(1), side: sideOf(rngSlot), pokemon: speciesForSlot(activeSpeciesBySlot, rngSlot), value: cleanText(parts[3]), move: lastMove && lastMove.slot === slotKey(rngSlot) ? lastMove.move : '' });
         currentTurn.events.push({ type: tag.slice(1), side: sideOf(rngSlot), pokemon: speciesForSlot(activeSpeciesBySlot, rngSlot), text: raw });
         return;
       }
@@ -971,7 +990,7 @@
         return;
       }
 
-      if (tag === '-ability') {
+      if (tag === '-ability' || (tag === '-activate' && /^ability: /.test(parts[3] || ''))) {
         var abilitySlot = parts[2];
         currentTurn.abilities.push({
           type: 'ability',
@@ -982,6 +1001,11 @@
           text: raw
         });
         currentTurn.events.push({ type: 'ability', side: sideOf(abilitySlot), pokemon: speciesForSlot(activeSpeciesBySlot, abilitySlot), ability: cleanText(parts[3]), text: raw });
+        return;
+      }
+
+      if (tag === '-activate' && !/^item: /.test(parts[3] || '')) {
+        currentTurn.events.push({ type: 'activate', side: sideOf(parts[2]), pokemon: speciesForSlot(activeSpeciesBySlot, parts[2]), effect: cleanText(parts[3]), text: raw });
         return;
       }
 
@@ -1014,6 +1038,7 @@
 
       if (tag === '-supereffective' || tag === '-resisted') {
         var effSlot = parts[2];
+        (pendingEffectiveness[slotKey(effSlot)] = pendingEffectiveness[slotKey(effSlot)] || []).push(tag.slice(1));
         currentTurn.effectiveness.push({
           type: tag.slice(1),
           side: sideOf(effSlot),
@@ -1127,7 +1152,7 @@
 
   function hasOpponentFieldProgress(turn, oppSide) {
     return (turn.field || []).some(function(f) {
-      return !f.side || f.side === oppSide || /trick room|weather|terrain|tailwind/i.test(f.value || '');
+      return !f.upkeep && /^(weather|fieldstart|sidestart)$/.test(f.type) && f.value !== 'none' && f.side === oppSide;
     });
   }
 
@@ -1240,8 +1265,8 @@
       var oppMoves = turn.moves.filter(function(m) { return m.side === names.opp; });
       var userFaints = turn.faints.filter(function(f) { return f.side === side; });
       var oppFaints = turn.faints.filter(function(f) { return f.side === names.opp; });
-      var userSwitches = turn.switches.filter(function(s) { return s.side === side; });
-      var oppSwitches = turn.switches.filter(function(s) { return s.side === names.opp; });
+      var userSwitches = turn.switches.filter(function(s) { return s.side === side && s.voluntary; });
+      var oppSwitches = turn.switches.filter(function(s) { return s.side === names.opp && s.voluntary; });
       var userSpeed = userMoves.filter(function(m) { return classifyMove(m.move) === 'speed_control'; });
       var oppSpeed = oppMoves.filter(function(m) { return classifyMove(m.move) === 'speed_control'; });
       var tactical = turn.tacticalRead || {};
@@ -1563,7 +1588,7 @@
             turn: turn.number,
             side: row.side,
             pokemon: row.pokemon,
-            move: row.value || '',
+            move: row.move || '',
             reason: row.type,
             type: row.type,
             text: row.text || ''
@@ -1698,14 +1723,9 @@
     var opp = side === 'p1' ? 'p2' : 'p1';
     var cards = [];
     (parsed.turns || []).forEach(function(turn) {
-      var effectivenessByPokemon = {};
-      (turn.effectiveness || []).forEach(function(row) {
-        if (!row || !row.pokemon) return;
-        (effectivenessByPokemon[row.pokemon] = effectivenessByPokemon[row.pokemon] || []).push(row.type);
-      });
       (turn.damage || []).forEach(function(row) {
         if (!row || !row.pokemon) return;
-        var effects = effectivenessByPokemon[row.pokemon] || [];
+        var effects = row.effects || [];
         if (!effects.length && !(row.hp != null && Number(row.hp) <= 50)) return;
         var playerOwned = row.side === side;
         var opponentOwned = row.side === opp;
@@ -1990,8 +2010,8 @@
       var userSpeed = userMoves.filter(function(m) { return classifyMove(m.move) === 'speed_control'; });
       var userProtect = userMoves.filter(function(m) { return classifyMove(m.move) === 'protection'; });
       var userFakeOut = userMoves.filter(function(m) { return classifyMove(m.move) === 'fake_out'; });
-      var userSwitches = turn.switches.filter(function(s) { return s.side === side; });
-      var userField = turn.field.filter(function(f) { return f.side === side; });
+      var userSwitches = turn.switches.filter(function(s) { return s.side === side && s.voluntary; });
+      var userField = turn.field.filter(function(f) { return f.side === side && !f.upkeep; });
       var userTookDamage = turn.damage.some(function(d) { return d.side === side && d.hp != null && d.hp < 100; });
       var oppSetupOrSpeed = oppMoves.filter(function(m) {
         var kind = classifyMove(m.move);

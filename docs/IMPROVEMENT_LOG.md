@@ -158,6 +158,17 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Lesson: a regulation announcement is enough to create a quarantined candidate, not enough to create an allowlist. Upstream Future rows and base-form sprite fallbacks must remain visibly provisional.
 - Remaining: complete in-game Singles/Doubles roster and rule captures, accepted/rejected teams, exact sprites, Z Mega mechanics fixtures, reviewed Showdown pin, immutable package approval and database publication. No M-C legality or 99% universal accuracy claim is established.
 
+<a id="imp-0015"></a>
+## IMP-0015: Replay Claims Follow Events, Not Turn-Wide Coincidence
+
+- Recorded: September 8 UTC / September 7 EDT. Local candidate `v2.2.147-replay-attribution`; no deployed proof.
+- Before: forced replacements became switch criticism, weather upkeep became fresh control, damage borrowed another hit's effectiveness, and candidate catalog matches became trusted IDs.
+- Root cause: turn/species grouping and implicit/global export identity instead of event/slot and explicit context.
+- Change: event-scoped parser distinctions, cautious field attribution, separated activations, unverified candidate IDs and unknown source versions distinct from exporter build.
+- Evidence: [OODA report](release/OODA_REPLAY_ATTRIBUTION_2026-09-08.md), eight regression groups, 158 fast files passing, and manual local replay review.
+- Lesson: shared species, shared turn and shared catalog membership are not proof of the same event or registered team. Unknown must survive serialization.
+- Remaining: replay URL fetch, physical export readback, unsupported endgame/IQ judgments, extended protocol coverage, full competitive mechanics/security gates and independent review. No 99% claim.
+
 ## Entry Template
 
 ```text

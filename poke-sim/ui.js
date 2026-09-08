@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.146-strategy-identity
+// Build marker: v2.2.147-replay-attribution
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.146-strategy-identity'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.147-replay-attribution'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8636,7 +8636,9 @@ function csReplayFindBestTeamMatch(preview, visible, opts) {
     else if (visibleList.length >= 4 && csReplayMatchSpeciesCount(csReplaySpeciesSet(visibleList), teamSet) >= 4) confidence = 'visible_four_match';
     var missing = required.filter(function(name) { return !teamSet[csReplaySpeciesId(name)]; });
     rows.push({
-      team_id: teamId,
+      team_id: null,
+      candidate_team_id: teamId,
+      status: 'needs_verification',
       team_name: team.name || teamId,
       confidence: confidence,
       matched_count: matched,
@@ -8644,8 +8646,8 @@ function csReplayFindBestTeamMatch(preview, visible, opts) {
       matched_species: required.filter(function(name) { return !!teamSet[csReplaySpeciesId(name)]; }),
       missing_species: missing,
       team_species: teamSpecies,
-      regulation_id: team.regulation_id || team.ruleset || team.champion_ruleset || null,
-      legality_status: team.legality_status || null
+      regulation_id: null,
+      legality_status: 'unknown'
     });
   });
   rows.sort(function(a, b) {
@@ -8668,12 +8670,12 @@ function csReplayScenarioResolveTeamMappings(row, context) {
   return {
     player: player,
     opponent: opponent,
-    status: (player.team_id && opponent.team_id) ? 'mapped' : (player.team_id || opponent.team_id ? 'partial_mapping' : 'no_match')
+    status: (player.candidate_team_id || opponent.candidate_team_id) ? 'needs_verification' : 'no_match'
   };
 }
-function csReplayScenarioTeamMapStatus(row) {
+function csReplayScenarioTeamMapStatus(row, context) {
   row = row || {};
-  var context = CS_LAST_REPLAY_SCENARIO_CONTEXT || {};
+  context = context || CS_LAST_REPLAY_SCENARIO_CONTEXT || {};
   var mappings = csReplayScenarioResolveTeamMappings(row, context);
   var board = row.boardContext || {};
   var yourLead = Array.isArray(board.yourLead) ? board.yourLead : [];
@@ -8697,7 +8699,7 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
   var parsed = context.parsed || {};
   var review = context.review || {};
   var claimAudit = review.claimAudit || null;
-  var map = csReplayScenarioTeamMapStatus(row);
+  var map = csReplayScenarioTeamMapStatus(row, context);
   var buildId = typeof csGetBuildId === 'function' ? csGetBuildId() : 'unknown-engine';
   var mappings = map.mappings || csReplayScenarioResolveTeamMappings(row, context);
   return {
@@ -8706,8 +8708,9 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
     scenario_index: index,
     source: 'battle_sensei_replay_scenario_queue',
     source_boundary: 'Replay-derived Tactical QA payload. This is player-match evidence and does not overwrite Champion legality, mechanics truth, or leaderboard rankings.',
-    engine_version: buildId,
-    ruleset_version: buildId,
+    exporter_build_id: buildId,
+    engine_version: 'unknown',
+    ruleset_version: 'unknown',
     regulation_id: 'needs_regulation_mapping',
     format: parsed.format || 'unknown',
     sample_size: 1,
