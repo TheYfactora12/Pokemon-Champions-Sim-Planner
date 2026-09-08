@@ -6,6 +6,8 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- [Seasonal skill/reviewer readiness](docs/release/SEASONAL_AGENT_READINESS_2026-09-08.md): reusable season skill and read-only reviewer added, locally validated and independently scenario-tested. Existing regulation/staging/selection gates pass. Live Regulation Watch is enabled but its latest three scheduled runs failed; September 7 reports 28 unavailable sources. Source/parser recovery is open, not masked by adding another scheduler. Runtime build remains v148.
+
 - September 8 audit correction: [product trust audit](docs/release/PRODUCT_TRUST_AUDIT_2026-09-08.md) reproduces stale/misattributed Strategy reports and evidence-free advice; unresolved PR #195 mechanics and regulation findings remain release blockers despite green CI. The requested destination now includes both singles and doubles; existing doubles-only roadmap scope requires reconciliation. Do not treat Josh QA as the only remaining release gate.
 
 - Branch: `candidate/v143-regulation-db-diagnosis`, based on merged `origin/main` at `81bb0ef250da`.

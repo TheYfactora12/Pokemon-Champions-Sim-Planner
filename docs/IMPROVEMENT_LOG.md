@@ -179,6 +179,15 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Lesson: an outcome does not prove an avoidable error, and absent findings do not prove skill. Keep historical records separate from revised analysis.
 - Remaining: broader score/confidence calibration, downstream inference audit and public-launch gates. No manual browser or deployed proof for this candidate yet.
 
+<a id="imp-0017"></a>
+## IMP-0017: Seasonal Maintenance Is A Reviewed Evidence Loop
+
+- September 8 UTC: added `$pokemon-season-update`, its impact checklist and read-only `season_reviewer`; routed existing engineering guidance to them.
+- Reuses existing watcher/staging/sync/audit workflows rather than duplicating scheduling or granting production authority to an agent.
+- [Validation and live findings](release/SEASONAL_AGENT_READINESS_2026-09-08.md): skill/TOML validation, byte-identical local installation, independent adversarial scenario test and four existing regulation test files passing.
+- Lesson: workflow enabled, source healthy, candidate reviewed and rules approved are separate states. Unknown registered sets remain unknown.
+- Remaining: three failed scheduled watcher runs require per-source/parser diagnosis and hosted recovery proof. New agent selection by name, actual seasonal promotion and production readiness are not established.
+
 ## Entry Template
 
 ```text

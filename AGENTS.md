@@ -129,6 +129,7 @@ If a task crosses classes, test each class separately and record the dependency.
 
 - Use the shared project skill at `.agents/skills/pokemon-champion-engineering/SKILL.md` to route work to the correct proof lane.
 - Use `.agents/skills/pokemon-battle-audit/SKILL.md` for battle accuracy, mechanics, stats, move, ability, item, gameplay, stress-test, and universal-correctness requests.
+- Use `.agents/skills/pokemon-season-update/SKILL.md` and read-only `season_reviewer` for seasonal regulations, newly eligible entities and historical-team/result compatibility. Reuse existing watchers; enabled is not healthy, and source discovery never grants approval.
 - Assign roles from `docs/agents/ENGINEERING_AGENT_ROSTER.md`; substantial cross-lane changes need one primary owner and named independent review.
 - Delegate boundary-crossing review to the read-only custom agents under `.codex/agents/`; keep routine implementation in the main agent and avoid overlapping write agents.
 - Delegate independent battle coverage review to `battle_auditor` whenever a change alters battle execution or makes a mechanics-accuracy claim.
