@@ -6,6 +6,8 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- September 8 audit correction: [product trust audit](docs/release/PRODUCT_TRUST_AUDIT_2026-09-08.md) reproduces stale/misattributed Strategy reports and evidence-free advice; unresolved PR #195 mechanics and regulation findings remain release blockers despite green CI. The requested destination now includes both singles and doubles; existing doubles-only roadmap scope requires reconciliation. Do not treat Josh QA as the only remaining release gate.
+
 - Branch: `candidate/v143-regulation-db-diagnosis`, based on merged `origin/main` at `81bb0ef250da`.
 - Current candidate: `v2.2.145-reg-mc-source-review`; engine `1.1.6`. Final local bundle: 11,483,930 bytes, SHA-256 `08c7d841bb238a8fce33bdc15c76702ad715d8f5e9c5200d1f0876bd2bd24fcf`. No v145 deployment is claimed.
 - Full project gate: 157 fast files and 12 offline/mock DB files passed. The declared cross-format accuracy harness completed 4,624 battles with zero state failures, validator errors, validator warnings or repeatability failures. The battle audit completed 4,500 matrix battles without JavaScript errors. Live database readback/advisors were read-only; production was not mutated.
