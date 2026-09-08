@@ -7,7 +7,7 @@ for (const file of ['data.js', 'generated/pokemon_showdown_legal_data.js', 'gene
   vm.runInContext(fs.readFileSync(new URL(file, root), 'utf8'), ctx, { filename: file });
 }
 const team = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.player))', ctx);
-const ma = 'champions_reg_m_a_2026', mb = 'champions_reg_m_b_2026', practice = 'champions_custom_practice';
+const ma = 'champions_reg_m_a_2026', mb = 'champions_reg_m_b_2026', mc = 'champions_reg_m_c_2026', practice = 'champions_custom_practice';
 const check = (t, id = ma, opts = { format: 'doubles', bo: 3 }) => ctx.checkTeamForSelectedRegulation(t, id, opts);
 let count = 0;
 function test(name, fn) { fn(); count++; console.log('PASS ' + name); }
@@ -19,20 +19,20 @@ test('historical preflight does not claim complete mechanics verification', () =
   assert.equal(result.mechanics_status, 'not_verified');
 });
 test('unknown and review-only regulations reject without historical fallback', () => {
-  for (const id of [mb, '', 'unknown', 'constructor']) {
+  for (const id of [mb, mc, '', 'unknown', 'constructor']) {
     const result = check(team, id); assert.equal(result.allowed, false); assert.equal(result.status, 'not_verified');
   }
 });
-test('dated coverage fails closed after M-B without inventing a successor', () => {
+test('dated coverage fails closed between M-B and scheduled M-C', () => {
   const during = ctx.getChampionsRegulationCoverage('2026-08-30T12:00:00Z');
   assert.equal(during.status, 'source_review');
   assert.equal(during.regulation_id, mb);
   const after = ctx.getChampionsRegulationCoverage('2026-09-03T12:00:00Z');
-  assert.equal(after.status, 'successor_required');
+  assert.equal(after.status, 'scheduled_source_review');
   assert.equal(after.covered, false);
-  assert.equal(after.regulation_id, null);
-  assert.equal(after.last_regulation_id, mb);
-  assert.match(after.message, /Competitive use stays blocked/);
+  assert.equal(after.regulation_id, mc);
+  assert.equal(after.starts_at_utc, '2026-09-09T02:00:00Z');
+  assert.match(after.message, /remains blocked/);
   assert.equal(ctx.getChampionsRegulationCoverage('not-a-date').status, 'invalid_date');
 });
 test('rechecking another regulation never rewrites original team identity or items', () => {

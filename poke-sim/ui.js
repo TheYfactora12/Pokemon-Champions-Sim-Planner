@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.144-pp-drain-proof
+// Build marker: v2.2.145-reg-mc-source-review
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.144-pp-drain-proof'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.145-reg-mc-source-review'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -409,7 +409,7 @@ function refreshRegulationControls() {
   var host = document.getElementById('sim-regulation-status');
   if (host) host.innerHTML = '<div>Your team: ' + regulationCheckHtml(selectedRegulationCheck(player)) + '</div>' +
     '<div>Opponent: ' + regulationCheckHtml(selectedRegulationCheck(opponent)) + '</div>' +
-    (typeof getChampionsRegulationCoverage === 'function' && getChampionsRegulationCoverage().status === 'successor_required'
+    (typeof getChampionsRegulationCoverage === 'function' && getChampionsRegulationCoverage().status !== 'covered'
       ? '<div class="regulation-coverage-warning"><strong>Current regulation not verified</strong><div>' + _escapeHtml(getChampionsRegulationCoverage().message) + '</div></div>'
       : '') +
     '<div class="regulation-mechanics-status">Mechanics: not verified against the complete game</div>';

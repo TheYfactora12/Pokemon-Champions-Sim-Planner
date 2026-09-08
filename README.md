@@ -1,6 +1,6 @@
 # Pokémon Champion 2026 — VGC Team Simulator
 
-A production-grade VGC competitive team simulator for April 2026 meta play. Built as a fully offline-capable PWA with a static-site deployment path and optional Supabase-backed user features.
+A Pokemon Champions competitive team simulator under evidence-gated development for 2026 doubles play. It is a fully offline-capable PWA with a static-site deployment path and optional Supabase-backed user features; current regulation data remains review-gated rather than advertised as complete.
 
 **Live public site:** https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/
 

@@ -55,6 +55,28 @@ var CHAMPIONS_RULESETS = {
     coachingPolicy: 'review_only_no_matchup_learning',
     sourceCheckedAtUtc: '2026-06-27T23:20:00Z',
     blocker: 'Reg M-B allowed-Pokemon image sheets and new Mega implementation fields are not converted into reviewed runtime data.'
+  },
+  champions_reg_m_c_2026: {
+    id: 'champions_reg_m_c_2026',
+    version: 'champions-reg-mc-source-review-v1',
+    legacyIds: ['champions_reg_m_c_doubles_bo3_source_review'],
+    label: 'Champions Reg M-C Source Review',
+    selectorLabel: 'Reg M-C (review)',
+    startsAt: '2026-09-09',
+    startsAtUtc: '2026-09-09T02:00:00Z',
+    endsAt: '2026-12-02',
+    endsAtUtc: '2026-12-02T01:59:00Z',
+    status: CHAMPIONS_RULESET_STATUS.SOURCE_REVIEW,
+    inheritsFrom: 'champions_reg_m_b_2026',
+    runtimePromotable: false,
+    validator: null,
+    engineFormatId: null,
+    learningEligibility: 'blocked_source_review',
+    dataPolicy: 'do_not_write_trusted_stats',
+    coachingPolicy: 'review_only_no_matchup_learning',
+    sourceCheckedAtUtc: '2026-09-08T00:52:48.095Z',
+    sourceUrl: 'https://www.pokemon.com/us/news/get-ready-for-regulation-set-m-c-in-pokemon-champions',
+    blocker: 'The official M-C dates and named additions are captured, but the complete in-game roster, legality fixtures, move/item/Ability deltas, exact sprites and a reviewed Showdown format are not complete.'
   }
 };
 
@@ -67,7 +89,7 @@ function getChampionsRegulationCoverage(asOf) {
     return row && row.id !== 'champions_custom_practice' && row.startsAt && (row.endsAtUtc || row.endsAt);
   });
   var active = dated.find(function(row) {
-    var start = new Date(row.startsAt + 'T00:00:00Z');
+    var start = new Date(row.startsAtUtc || (row.startsAt + 'T00:00:00Z'));
     var end = new Date(row.endsAtUtc || (row.endsAt + 'T23:59:59Z'));
     return now >= start && now <= end;
   });
@@ -75,6 +97,16 @@ function getChampionsRegulationCoverage(asOf) {
     return { status: active.runtimePromotable ? 'covered' : 'source_review', covered: !!active.runtimePromotable,
       regulation_id: active.id, ends_at_utc: active.endsAtUtc || active.endsAt,
       message: active.runtimePromotable ? 'A dated regulation lane is implemented.' : 'The dated regulation is still in source review.' };
+  }
+  var upcoming = dated.filter(function(row) {
+    return now < new Date(row.startsAtUtc || (row.startsAt + 'T00:00:00Z'));
+  }).sort(function(a, b) {
+    return new Date(a.startsAtUtc || (a.startsAt + 'T00:00:00Z')) - new Date(b.startsAtUtc || (b.startsAt + 'T00:00:00Z'));
+  })[0] || null;
+  if (upcoming) {
+    return { status: 'scheduled_source_review', covered: false, regulation_id: upcoming.id,
+      starts_at_utc: upcoming.startsAtUtc || upcoming.startsAt,
+      message: upcoming.label + ' starts at ' + (upcoming.startsAtUtc || upcoming.startsAt) + ' and remains blocked pending complete source review.' };
   }
   var latest = dated.sort(function(a, b) {
     return new Date(b.endsAtUtc || (b.endsAt + 'T23:59:59Z')) - new Date(a.endsAtUtc || (a.endsAt + 'T23:59:59Z'));

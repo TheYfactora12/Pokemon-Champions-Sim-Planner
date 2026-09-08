@@ -144,6 +144,16 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Lesson: resource-changing moves need exact state evidence and an independent post-turn comparison, not only a matching log sentence. Their state remains attached to stable Pokemon identity.
 - Remaining: Grudge, Disable, Leppa Berry restoration, switching/called-move interactions, complete-game/browser parity and Champion-specific source approval. Scoped agreement is not a 99% or universal accuracy result.
 
+<a id="imp-0013"></a>
+## IMP-0013: Announced Is Not Approved
+
+- Recorded: 2026-09-07 EDT. Lane: regulation/source/experience. Build `v2.2.145-reg-mc-source-review`; candidate only.
+- Before/root cause: M-B had ended and the app correctly required an unknown successor, but the newly published M-C notice was not represented. Adding only the name would have hidden the incomplete roster, absent Showdown M-C format and missing sprites.
+- Change: add M-C as a versioned source-review lane with exact UTC boundaries, official confirmed facts, explicit unknown roster fields, partial Showdown observations and sprite status. The app recognizes scheduled/active M-C but blocks competitive legality, trusted learning and coaching.
+- Evidence: [M-C readiness review](../poke-sim/reports/reg_m_c_readiness_2026-09-07.md), `source/reg-m-c-source-review.json`, six focused M-C tests, regulation-boundary tests, sprite-fallback tests and the refreshed official-source inventory.
+- Lesson: a regulation announcement is enough to create a quarantined candidate, not enough to create an allowlist. Upstream Future rows and base-form sprite fallbacks must remain visibly provisional.
+- Remaining: complete in-game Singles/Doubles roster and rule captures, accepted/rejected teams, exact sprites, Z Mega mechanics fixtures, reviewed Showdown pin, immutable package approval and database publication. No M-C legality or 99% universal accuracy claim is established.
+
 ## Entry Template
 
 ```text

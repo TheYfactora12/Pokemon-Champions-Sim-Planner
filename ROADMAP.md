@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-09-03. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-09-07. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Capture and review the official post-M-B regulation without guessing its identity, then stage a digest-bound package. In parallel, reconcile the live four-migration ledger and 36 legacy team rows in a protected database environment before anonymous-denial and two-user isolation tests. Keep the bundled roster authoritative until live rows pass the current version and legality contract.
+Complete the official in-game Regulation M-C roster and rules captures, normalize every delta against the pinned Showdown baseline, and add accepted/rejected legality plus Z Mega mechanics fixtures. Keep M-C source-review only and the bundled roster authoritative while Showdown lacks an M-C format and the database lacks approved versioned rows.
 
 ## Milestone Index
 
@@ -69,17 +69,18 @@ Completed locally / recorded:
 - Official-source inventory, daily regulation watcher, exact-digest candidate validation, recurrence-aware alerts and protected staging workflow are prepared.
 - Unsafe approval-time refetch is blocked. Generated offline data remains the browser baseline; official Champions evidence must establish legality.
 - The accuracy harness manifest binds regulation IDs, versions, review/promotion states and format lanes. Catalog drift, unreviewed runnable formats and warnings above the zero-warning budget fail closed.
-- The exact M-B UTC end is modeled; after it, dated coverage reports successor_required and the UI warns that the current regulation is not verified without inventing an ID.
+- The official Regulation M-C notice, exact UTC dates, six named Mega additions and Rillaboom example are captured in a versioned source-review package. The pre-start gap and active window fail closed, Showdown's still-M-B format state is recorded, and missing exact Mega sprites use a base-form fallback without implying legality.
 
 Remaining:
-- [ ] Capture and review the official or in-game successor to M-B; no successor is currently approved in the repository.
-- [ ] Resolve blocked/JavaScript official sources and obtain required in-game captures. M-A and M-B remain unverified.
+- [ ] Capture every in-game M-C roster and rules page for Singles and Doubles; the public notice does not enumerate the full 24 newly available Pokemon.
+- [ ] Normalize M-C species/forms, Mega Stones, moves, items and Abilities against an exact pinned Showdown revision. M-A, M-B and M-C remain unverified.
+- [ ] Add accepted/rejected team fixtures and controlled Z Mega mechanics fixtures, including Aura Guard contact boundaries, switching, suppression, multi-hit and spread interactions.
 - [ ] Activate hosted monitoring and encrypted evidence retention; validate permissions and immutable candidate readback.
 - [ ] Compile complete regulation-specific eligibility packages and implement separate digest-bound human approval and atomic publication, preserving old versions.
 
 **Exit:** The selected regulation has complete reviewed eligibility evidence and an immutable published package; source outages and unknown facts cannot silently pass.
 
-Evidence: [REGULATION_WATCH_2026-08-30.md](docs/release/REGULATION_WATCH_2026-08-30.md), [REGULATION_CONTEXT_AND_ELIGIBILITY.md](poke-sim/docs/REGULATION_CONTEXT_AND_ELIGIBILITY.md), [CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md](poke-sim/docs/CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md)
+Evidence: [REGULATION_WATCH_2026-08-30.md](docs/release/REGULATION_WATCH_2026-08-30.md), [REGULATION_CONTEXT_AND_ELIGIBILITY.md](poke-sim/docs/REGULATION_CONTEXT_AND_ELIGIBILITY.md), [CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md](poke-sim/docs/CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md), [reg_m_c_readiness_2026-09-07.md](poke-sim/reports/reg_m_c_readiness_2026-09-07.md)
 
 <a id="database-evidence"></a>
 

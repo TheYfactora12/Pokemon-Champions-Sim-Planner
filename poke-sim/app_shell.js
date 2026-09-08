@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.144-pp-drain-proof';
+      return txt || 'v2.2.145-reg-mc-source-review';
     } catch (e) {
-      return 'v2.2.144-pp-drain-proof';
+      return 'v2.2.145-reg-mc-source-review';
     }
   }
 
@@ -147,7 +147,7 @@
     'Basculegion-F': 'basculegion-f',
     'Sinistcha': 'sinistcha'
   };
-  var CS_SPRITE_STRIP_SUFFIXES = ['-Mega-X', '-Mega-Y', '-Mega', '-Alola', '-Galar', '-Hisui', '-Paldea', '-Gmax'];
+  var CS_SPRITE_STRIP_SUFFIXES = ['-Mega-X', '-Mega-Y', '-Mega-Z', '-Mega', '-Alola', '-Galar', '-Hisui', '-Paldea', '-Gmax'];
 
   function csSpriteSlug(name) {
     var raw = String(name || '').trim();
