@@ -3,6 +3,15 @@
 Date: 2026-09-03  
 Scope: synthetic headless doubles mechanics, not regulation approval or universal game accuracy
 
+## September 8 Correction
+
+This historical result did not prove Substitute correctness. Its local Spite test
+incorrectly expected Substitute to block the move; new pinned-reference probes
+reproduced that error and further defense/secondary-effect disagreements. See
+[current boundary work](pp_substitute_validation_2026-09-08.md). The original
+one-turn PP comparison below remains narrower evidence, not clearance of those
+interactions.
+
 ## Result
 
 The local engine now uses one PP-drain helper for Eerie Spell and Spite. It clamps drain at zero, keeps PP on the registered Pokemon, emits exact before/after structured evidence, and records the affected move and requested/applied drain.

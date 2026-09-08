@@ -139,6 +139,7 @@ export function validateReferenceTeam(team, formatId, side = 'p1', options = {})
 function snapshot(battle) {
   return Object.fromEntries(battle.sides.map(side => [side.id, side.pokemon.map(mon => ({
     key: mon.set.name, species: mon.species.name, hp: mon.hp, maxhp: mon.maxhp, stats: { ...mon.storedStats },
+    substitute_hp: mon.volatiles.substitute?.hp || 0,
     item: mon.item, ability: mon.ability, active: mon.isActive, fainted: mon.fainted, boosts: { ...mon.boosts }, action_speed: mon.getActionSpeed(),
     moves: mon.moveSlots.map(m => ({ id: m.id, pp: m.pp, maxpp: m.maxpp }))
   }))]));

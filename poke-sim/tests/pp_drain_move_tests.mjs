@@ -80,7 +80,7 @@ test('Protect prevents Spite from draining the protected move', () => {
   assert.equal(battle.turnLog[0].effect_events.filter(event => event.effect_kind === 'pp-drain').length, 0);
 });
 
-test('Substitute blocks Spite after the target acts on the next turn', () => {
+test('Spite bypasses Substitute after the target acts on the next turn', () => {
   const battle = context.simulateBattle(
     team('Spite into Substitute', [member('Dusclops', ['Protect', 'Spite']), member('Blissey', ['Protect'])]),
     team('Substitute history', [member('Pikachu', ['Substitute', 'Tackle']), member('Snorlax', ['Protect'])]),
@@ -98,8 +98,8 @@ test('Substitute blocks Spite after the target acts on the next turn', () => {
       ]
     }
   );
-  assert.ok(battle.log.some(line => String(line).includes('failed because of Substitute')));
-  assert.equal(battle.turnLog[1].effect_events.filter(event => event.effect_kind === 'pp-drain').length, 0);
+  assert.ok(!battle.log.some(line => String(line).includes('failed because of Substitute')));
+  assert.equal(battle.turnLog[1].effect_events.filter(event => event.effect_kind === 'pp-drain').length, 1);
   const target = battle.turnLog[1].post.roster.opponent[0];
-  assert.equal(target.move_pp.Tackle.current, target.move_pp.Tackle.max - 1);
+  assert.equal(target.move_pp.Tackle.current, target.move_pp.Tackle.max - 5);
 });

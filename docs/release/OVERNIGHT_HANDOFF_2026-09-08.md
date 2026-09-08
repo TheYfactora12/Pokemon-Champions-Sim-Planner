@@ -19,6 +19,26 @@ Session: September 8, 2026, starting approximately 00:04 Eastern and ending at
   Reviewer rechecked both fixes and reported no remaining findings in that scope.
   Final local `npm test`: 163 fast files and 12 offline/mock DB files pass; four
   manual/helper skips. This batch changes review tooling, not deployed runtime.
+  Pushed as `3763b4b`; hosted run `34186299163` passed the test suite and battle
+  audit. Bundle freshness and cache checks also passed; no deployment.
+
+## Mechanics Candidate
+
+Spite/Substitute and sound-move boundaries exposed incorrect expectations in an
+existing test. New side-swapped reference probes drove shared Substitute bypass,
+Soundproof, Spite defense gates, and Eerie Spell secondary suppression fixes.
+Independent review then reproduced reflected Spite versus Good as Gold and
+Eerie Spell versus Shield Dust/Covert Cloak disagreements. These are being fixed
+with additional regressions; this batch is locally verified, not publicly released.
+A knockout fixture was invalid because Choice Specs locked its first-turn Splash;
+that is a harness defect, not evidence of a battle-engine failure. Corrected it
+and the old Taunt expectation after pinned reference checks. A second reviewer
+found Protect/Taunt/Encore and Soundproof/Parting Shot gaps; shared guards now have
+80 passing reference probes. Independent final review closed its findings;
+Perish Song's older countdown/per-recipient immunity needs the next bounded
+investigation. Final artifact gate passed 164 fast and 12 offline/mock DB files,
+with four manual/helper skips. Local version and
+roadmap browser smoke passed without starting any simulation.
 
 ## Dependency Intake
 

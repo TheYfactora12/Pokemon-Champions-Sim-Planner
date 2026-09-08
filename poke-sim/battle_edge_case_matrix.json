@@ -331,7 +331,7 @@
       "tests": ["tests/move_verification_registry_tests.js"],
       "oracle": "Pokemon Showdown Perish Song residual ordering.",
       "boundary_vectors": ["single-faint", "both-sides-zero", "bench-available"],
-      "known_gap": "Perish Song exists, but simultaneous zero-count winner and replacement fixtures are missing."
+      "known_gap": "Perish Song simultaneous zero-count winner and replacement fixtures are missing. September 8 inspection also found unconditional per-recipient application and a same-turn-decrement countdown that need dedicated Soundproof and timing reference probes. The new field-activation control proves only that a Soundproof foe does not cancel the entire song."
     },
     {
       "id": "RESOURCE-PP-PRESSURE",
@@ -342,6 +342,16 @@
       "oracle": "Pokemon Showdown move-slot and Pressure behavior.",
       "boundary_vectors": ["single-Pressure", "double-Pressure", "last-PP", "all-moves-empty"],
       "known_gap": ""
+    },
+    {
+      "id": "RESOURCE-PP-DRAIN-SUBSTITUTE",
+      "family": "moves-effects",
+      "behavior": "Spite and Eerie Spell respect Substitute bypass and relevant defensive or secondary-effect gates.",
+      "status": "partial",
+      "tests": ["tests/pp_drain_move_tests.mjs", "tests/pp_substitute_reference_tests.mjs"],
+      "oracle": "Pinned pokemon-showdown 0.11.11 gen9championsdoublescustomgame synthetic probes, not Champions legality approval.",
+      "boundary_vectors": ["side-swapped", "Spite-bypass-Substitute", "Protect-before-Magic-Bounce", "Good-as-Gold", "reflected-Good-as-Gold", "Prankster-Dark", "Mold-Breaker", "Ability-Shield", "Infiltrator", "sound-bypass-Substitute", "Substitute-HP-preservation", "Soundproof", "Sheer-Force", "Shield-Dust", "Covert-Cloak", "knockout-suppresses-drain"],
+      "known_gap": "Slot-1 and ally targeting, general reflection recursion, item suppression, exact random damage and complete-game/UI parity are not established by these bounded probes."
     },
     {
       "id": "RESOURCE-STRUGGLE-RESOLUTION",

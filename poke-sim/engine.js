@@ -304,7 +304,7 @@ var SOUND_MOVES = new Set([
 var SHEER_FORCE_MOVES = new Set([
   'Air Slash','Ancient Power','Bite','Blizzard','Body Slam','Bug Buzz',
   'Charge Beam','Crunch','Dark Pulse','Discharge','Dragon Rush','Earth Power',
-  'Energy Ball','Extrasensory','Fire Blast','Fire Fang','Flamethrower',
+  'Energy Ball','Eerie Spell','Extrasensory','Fire Blast','Fire Fang','Flamethrower',
   'Flash Cannon','Focus Blast','Heat Wave','Hurricane','Hyper Fang',
   'Ice Beam','Ice Fang','Icicle Crash','Icy Wind','Iron Head','Lava Plume',
   'Lunge','Meteor Mash','Moonblast','Muddy Water','Needle Arm','Poison Jab',
@@ -640,6 +640,10 @@ function _isBallisticMove(move) {
 
 function _isSoundMove(move) {
   return _moveHasFlag(move, 'sound') || SOUND_MOVES.has(move);
+}
+
+function _moveBypassesSubstitute(attacker, move) {
+  return !!(attacker && attacker.ability === 'Infiltrator') || _moveHasFlag(move, 'bypasssub') || _isSoundMove(move);
 }
 
 var ACC_STAGE_TABLE = [1, 4 / 3, 5 / 3, 2, 7 / 3, 8 / 3, 3];
@@ -1618,6 +1622,12 @@ var ABILITIES = {
     // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onTryHit: function(ctx) {
       if (ctx.defender !== ctx.attacker && _isBallisticMove(ctx.move)) return { immune: true };
+      return null;
+    }
+  },
+  'Soundproof': {
+    onTryHit: function(ctx) {
+      if (ctx.defender !== ctx.attacker && _isSoundMove(ctx.move)) return { immune: true };
       return null;
     }
   },
@@ -3324,6 +3334,7 @@ function _battleRosterSnapshot(active, bench, roster, side) {
       species: mon.name || mon.displayName || 'Unknown',
       hp: hpPct,
       hp_current: mon.hp,
+      substitute_hp: Math.max(0, mon.substituteHp || 0),
       hp_max: mon.maxHp,
       hpLabel: hpPct + '%',
       level: mon.level || 50,
@@ -4498,7 +4509,17 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         'Trick',
         'Spite'
       ]);
-      if (target && target.alive && target.substituteHp > 0 && attacker.ability !== 'Infiltrator' && blockedBySubstitute.has(move)) {
+      if (target && target.alive && target.protected && (move === 'Spite' || _moveHasFlag(move, 'protect'))) {
+        log.push(`${target.name} protected itself!`);
+        attacker.lastMoveFailed = true;
+        return;
+      }
+      if (target && target.alive && target !== attacker && TARGETED_STATUS_MOVES.has(move) && _isSoundMove(move) && _targetAbilityActive(target, attacker, 'Soundproof')) {
+        log.push(`${target.name}'s Soundproof blocked ${move}!`);
+        attacker.lastMoveFailed = true;
+        return;
+      }
+      if (target && target.alive && target.substituteHp > 0 && !_moveBypassesSubstitute(attacker, move) && blockedBySubstitute.has(move)) {
         log.push(`${attacker.name} used ${move}! But it failed because of Substitute!`);
         _recordMoveFailureEvent(field, attacker, move, 'substitute-block', {
           target: target.name || null,
@@ -4518,7 +4539,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         attacker.lastMoveFailed = true;
         return;
       }
-      if (target && target.alive && isBlockedByGoodAsGold(target, move)) {
+      if (target && target.alive && isBlockedByGoodAsGold(target, move, attacker)) {
         log.push(`${target.name}'s Good as Gold blocked ${move}!`);
         _recordMoveFailureEvent(field, attacker, move, 'good-as-gold', {
           target: target.name || null,
@@ -4531,6 +4552,18 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
       if (target && target.alive && shouldReflectByMagicBounce(attacker, target, move)) {
         log.push(`${target.name}'s Magic Bounce reflected ${move}!`);
+        log.push(`${target.name} used ${move}! [reflected by Magic Bounce]`);
+        // The bounced move has a new source and must check its recipient's immunity.
+        if (isBlockedByGoodAsGold(attacker, move, target)) {
+          log.push(`${attacker.name}'s Good as Gold blocked ${move}!`);
+          _recordMoveFailureEvent(field, target, move, 'good-as-gold', {
+            target: attacker.name || null,
+            target_key: _snapshotMonStableKey(attacker.side === field.playerSide ? 'player' : 'opponent', attacker),
+            ability: 'Good as Gold',
+            note: 'The reflected status move failed because Good as Gold blocked it.'
+          });
+          return;
+        }
         target = attacker;
       }
       if (move === 'Trick Room') {
@@ -4782,11 +4815,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Spite' && target && target.alive) {
-        if (target.protected) {
-          log.push(`${target.name} protected itself!`);
-          attacker.lastMoveFailed = true;
-          return;
-        }
         const drainedMove = target.lastMoveUsed;
         if (!drainedMove || !_drainMovePP(target, drainedMove, 4, move, field, log)) {
           log.push(`${attacker.name} used Spite! But it failed!`);
@@ -5065,8 +5093,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Clangorous Soul') {
-        const soulCost = Math.floor(attacker.maxHp / 3);
-        if (attacker.hp <= soulCost) {
+        const soulCost = Math.floor(attacker.maxHp * 33 / 100);
+        if (attacker.hp <= attacker.maxHp * 33 / 100 || attacker.maxHp === 1) {
           log.push(`${attacker.name} used Clangorous Soul! But it failed!`);
           return;
         }
@@ -5079,7 +5107,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         attacker.hp -= soulCost;
         log.push(`${attacker.name} paid ${soulCost} HP for Clangorous Soul!`);
         _recordEffectEvent(field, attacker, move, 'hp-cost-stat-boost', hpBeforeCost, attacker.hp, {
-          rule: { numerator: 1, denominator: 3, basis: 'max_hp', rounding: 'down' },
+          rule: { numerator: 33, denominator: 100, basis: 'max_hp', rounding: 'down' },
           hp_cost: soulCost,
           stat_boosts: { atk: 1, def: 1, spa: 1, spd: 1, spe: 1 }
         });
@@ -5807,7 +5835,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     for (const t of ordered) {
       if (!t.alive) continue;
-      const _hadSubstitute = t.substituteHp > 0 && attacker.ability !== 'Infiltrator';
+      const _hadSubstitute = t.substituteHp > 0 && !_moveBypassesSubstitute(attacker, move);
       if (t.concealedByMove && move !== 'Phantom Force') {
         log.push(`${t.name} avoided the attack while concealed!`);
         continue;
@@ -5984,7 +6012,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (!_suppressSecondary && !_hadSubstitute) {
           _applyDamagingMoveSecondary(attacker, move, t, field, log, rng);
         }
-        if (move === 'Eerie Spell' && !_hadSubstitute) {
+        if (move === 'Eerie Spell' && !_hadSubstitute && !_suppressSecondary && t.alive
+            && !_targetAbilityActive(t, attacker, 'Shield Dust') && t.item !== 'Covert Cloak') {
           _drainMovePP(t, t.lastMoveUsed, 3, move, field, log);
         }
         // T9j.8 (Refs #19) Flinch roll: after damage applied, target alive,
@@ -6043,7 +6072,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const moveContext = _moveContextText(move);
     let damageRow = null;
     // Substitute absorb
-    if (target.substituteHp > 0 && !(attacker && attacker.ability === 'Infiltrator')) {
+    if (target.substituteHp > 0 && !_moveBypassesSubstitute(attacker, move)) {
       const substituteHpBefore = target.substituteHp;
       const substituteDamage = Math.max(0, Math.min(substituteHpBefore, finalDmg));
       target.substituteHp -= finalDmg;
@@ -7220,7 +7249,7 @@ var STATUS_MOVE_NAMES = new Set([
 
 var TARGETED_STATUS_MOVES = new Set([
   'Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder','Hypnosis','Spore','Leech Seed','Toxic',
-  'Poison Powder','Encore','Parting Shot','Fake Tears','Trick','Noble Roar','Growl','Leer'
+  'Poison Powder','Encore','Parting Shot','Fake Tears','Trick','Noble Roar','Growl','Leer','Spite'
 ]);
 
 function isStatusMoveName(move) {
@@ -7270,10 +7299,10 @@ function shouldPranksterFailOnTarget(attacker, move, target) {
     && target.types.indexOf('Dark') !== -1);
 }
 
-function isBlockedByGoodAsGold(target, move) {
+function isBlockedByGoodAsGold(target, move, attacker) {
   return !!(target
     && target.alive
-    && target.ability === 'Good as Gold'
+    && _targetAbilityActive(target, attacker, 'Good as Gold')
     && TARGETED_STATUS_MOVES.has(move));
 }
 
@@ -7281,7 +7310,7 @@ function shouldReflectByMagicBounce(attacker, target, move) {
   return !!(attacker
     && target
     && target.alive
-    && target.ability === 'Magic Bounce'
+    && _targetAbilityActive(target, attacker, 'Magic Bounce')
     && attacker.side
     && target.side
     && attacker.side !== target.side
@@ -7402,7 +7431,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.7'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.8'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

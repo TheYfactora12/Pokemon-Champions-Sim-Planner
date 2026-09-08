@@ -22,7 +22,7 @@
         "Unknown-ruleset preflight and default bring-four/participant identity fixes have regression coverage.",
         "Scoped switching, immunity, grounding, multi-hit and Seismic Toss fixes are tested. One complete-game Showdown comparison includes forced replacements, winner, HP, stages and PP; one seven-turn browser run has matching visible/export logs.",
         "Same-turn Tailwind and Growl/Leer now agree with pinned Showdown in scoped synthetic doubles probes, including side swaps, Trick Room, per-target protection and selected ability/item/Substitute gates. PP, single/double Pressure, depletion and Struggle have deterministic boundary coverage.",
-        "Eerie Spell and Spite now use a shared PP-drain path with exact before/after evidence. Their post-turn PP totals agree with pinned Showdown in one synthetic doubles probe, with local zero-clamp, no-history, Protect and Substitute boundaries.",
+        "September 8 PP/Substitute audit corrects earlier wrong Spite, Taunt and Noble Roar test expectations. Side-swapped synthetic reference probes cover named bypass, reflection, protection, ability, secondary-effect and knockout boundaries, with Substitute HP preservation checks. The dated audit owns exact test counts and outstanding gates: poke-sim/reports/pp_substitute_validation_2026-09-08.md.",
         "Replay review rejects absent or structurally empty evidence and preserves stable actor/target identity through mirror-name actions. The declared cross-format harness completes 4,624/4,624 runs without state, validator, warning or repeatability failures. This is scoped invariant proof, not universal accuracy."
       ],
       "remaining": [

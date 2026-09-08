@@ -6,6 +6,25 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0025: PP Drain And Substitute Defense Boundaries
+
+The old local Spite test asserted the wrong Substitute result. New paired
+reference probes exposed that mistake, sound bypass and immunity gaps, then
+reflection and secondary-effect protections during independent review.
+Candidate engine 1.1.8 uses mirrored bypass flags, protects Eerie Spell's
+secondary from Sheer Force/Shield Dust/Covert Cloak, and checks relevant Spite
+defenses. Additive Substitute HP evidence supports direct preservation checks.
+The knockout fixture also needed correction: Choice Specs had locked Splash.
+Lesson: challenge fixtures against the reference, and assert the intended action
+actually occurred; a passing local expected value is not an oracle.
+Eighty focused reference probes pass. Independent final review rechecked all
+reported fixes and found no remaining findings in that scope. Final artifact gate
+passed 164 fast and 12 offline/mock DB files, with four manual/helper skips.
+Three golden traces remained unchanged and
+4,500 matrix games had zero JS errors. Local browser version/roadmap smoke passes
+with zero page errors; no new interactive simulation or deployed proof claimed.
+See [boundary audit](../poke-sim/reports/pp_substitute_validation_2026-09-08.md).
+
 ### IMP-0024: Explicit Official Roster Identity Candidates
 
 Added a deterministic review-only mapper and hash-bound identity artifact for
