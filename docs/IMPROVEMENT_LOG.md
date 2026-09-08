@@ -6,6 +6,18 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0033: Compare Inherited Runtime Move Pools
+
+Added a separate inherited-pool/runtime acceptance audit without relabeling the
+old direct-row diagnostic. Seven narrowed full-set disagreements are reproduced;
+235-key census differences remain candidates, not an accuracy denominator.
+Five harness tests validate the detector, not the current app's correctness.
+Independent review expanded its move universe and installed-reference fingerprint
+so hidden acceptance and changed dependencies cannot masquerade as agreement.
+See [reproductions and shared-path fix plan](../poke-sim/reports/champions_move_pool_alignment_2026-09-08.md).
+Lesson: historical learn-method presence is not a current-format move pool;
+form traversal must use the pinned reference rather than ad hoc inheritance.
+
 ### IMP-0032: Separate Team Checks From Competitive Approval
 
 The Teams page combined unverified/historical regulation badges with a green

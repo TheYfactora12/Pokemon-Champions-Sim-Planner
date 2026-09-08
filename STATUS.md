@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- New inherited move-pool audit confirms seven narrowed runtime/reference set
+  disagreements, including accepted Incineroar U-turn and rejected Fancy
+  Vivillon Rage Powder. This is an open shared validation-path issue, not fixed
+  by the roster-stat patch. See [evidence and next actions](poke-sim/reports/champions_move_pool_alignment_2026-09-08.md).
+
 - v159 separates team validation from regulation approval and fixes compressed
   mobile roster text. Five browser viewport/input checks cover the actual Teams
   page. [Team review evidence](poke-sim/reports/team_review_clarity_2026-09-08.md)

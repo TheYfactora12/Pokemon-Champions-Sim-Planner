@@ -5,6 +5,12 @@ Session: September 8, 2026, starting approximately 00:04 Eastern and ending at
 
 ## Completed Evidence
 
+- Inherited-pool audit reproduced seven actual helper/pinned set-validator
+  disagreements. Shared move validation must select Champions pools explicitly;
+  a historical learnset match is not sufficient. Census and exact probes live in
+  `poke-sim/reports/champions_move_pool_alignment_2026-09-08.md`.
+  v159 hosted CI/cache/bundle checks passed. No deployment or new legality approval.
+
 - v159 fixes the v158 screenshot findings: contradictory LEGAL shortcut and
   narrow roster text. Five browser viewport/input checks inspect 16 cards each,
   with working Details controls and no simulations. Full gate passes 172 fast
