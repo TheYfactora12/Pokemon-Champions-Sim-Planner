@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Complete M-B field/learnset/combination and runtime-consumer proof before competitive sign-off. All 235 official identities now have review-only candidates, including two source-linked visual form aliases; baseline stats/types/ability slots/numbers agree with pinned Champions. Human fingerprint approval, live staging/security and complete-battle parity remain open. Keep M-C separate. See docs/release/REG_MB_SIGNOFF_AUDIT.md.
+Validate learnsets/combinations and remaining runtime paths before M-B sign-off. All 235 identities and baseline fields have review-only proof; v158 fixes roster type/Speed consumers and Eternal Flower alias fallback. See poke-sim/reports/roster_runtime_validation_2026-09-08.md for current gate evidence. Human fingerprint approval, live staging/security and complete-battle parity remain open. Keep M-C separate.
 
 ## Milestone Index
 

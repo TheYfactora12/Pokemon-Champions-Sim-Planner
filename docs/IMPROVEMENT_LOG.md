@@ -6,6 +6,16 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0031: Check Every Consumer, Not Only Mirrored Rows
+
+Correct database/baseline rows did not guarantee correct roster displays. The UI
+used stale species and nature tables, while an accepted Floette alias missed the
+engine resolver. Runtime-backed types and starting Speed now replace those paths;
+unknown formats remain unknown, and the species-only radar withdraws unsupported
+safety ratings. See [tests, review and limits](../poke-sim/reports/roster_runtime_validation_2026-09-08.md).
+Lesson: prove identity and field parity through each consumer, including imports
+and presentation. A valid source row alone does not prove a valid user experience.
+
 ### IMP-0030: Resolve Official Form Identity Without Promoting Legality
 
 Official rendered IDs and sprite positions distinguish Fancy Vivillon and

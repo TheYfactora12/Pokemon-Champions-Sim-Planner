@@ -10,7 +10,7 @@ import { assertRequestedReplay, assertReplayContinuity } from './browser-replay-
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?browser-audit=v157&fresh=1');
+const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?browser-audit=v158&fresh=1');
 assert(['127.0.0.1', 'localhost'].includes(url.hostname), 'This audit is local-only');
 const artifacts = path.join(root, 'artifacts');
 fs.mkdirSync(artifacts, { recursive: true });

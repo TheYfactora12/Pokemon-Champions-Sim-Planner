@@ -5,6 +5,14 @@ Session: September 8, 2026, starting approximately 00:04 Eastern and ending at
 
 ## Completed Evidence
 
+- v158 runtime consumer fixes align roster types/starting Speed and Eternal
+  Flower alias lookup. Six focused tests pass; battle audit completes 4,500
+  games and three goldens. Two browser games/three visible-export pairs agree.
+  Full gate passes 171 fast and 12 offline/mock DB files, four skips. Mobile
+  inspection found roster text compression and Unknown ruleset/LEGAL conflict;
+  both remain follow-up work, not accepted UX. See
+  `poke-sim/reports/roster_runtime_validation_2026-09-08.md`.
+
 - Later form review resolves the two initial identity gaps: Vivillon-Fancy and
   Floette-Eternal. The 235-row review artifact now binds official visual evidence
   and source asset hashes. All mapped baseline stats/types/ability slots/numbers

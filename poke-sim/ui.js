@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.157-official-form-identities
+// Build marker: v2.2.158-roster-stat-parity
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.157-official-form-identities'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.158-roster-stat-parity'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -807,7 +807,10 @@ function typeColor(type) { return TYPE_COLORS[type] || '#888'; }
 // ROSTER RENDERING
 // ============================================================
 function getPokemonTypes(name) {
-  // Check POKEMON_TYPES_DB first (comprehensive), then BASE_STATS, then fallback
+  const source = typeof _showdownSpeciesBase === 'function' ? _showdownSpeciesBase(name) : null;
+  if (source && Array.isArray(source.types) && source.types.length) return source.types.slice();
+  if (typeof name !== 'string' || !name) return [];
+  // Exact legacy/custom rows may backfill missing generated data, not invent it.
   if (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[name]) return POKEMON_TYPES_DB[name];
   const base = BASE_STATS[name];
   if (base && base.types) return base.types;
@@ -816,7 +819,7 @@ function getPokemonTypes(name) {
     const key = Object.keys(POKEMON_TYPES_DB).find(k => k.toLowerCase() === name.toLowerCase());
     if (key) return POKEMON_TYPES_DB[key];
   }
-  return ['Normal']; // last resort
+  return [];
 }
 
 function renderRoster(containerId, members) {
@@ -839,7 +842,7 @@ function renderRoster(containerId, members) {
         <div class="poke-moves">${escMoves}</div>
       </div>
       <div class="type-chips">
-        ${types.map(t=>`<span class="type-chip" style="background:${typeColor(t)}20;color:${typeColor(t)};border:1px solid ${typeColor(t)}40">${_escapeHtml(t)}</span>`).join('')}
+        ${types.length ? types.map(t=>`<span class="type-chip" style="background:${typeColor(t)}20;color:${typeColor(t)};border:1px solid ${typeColor(t)}40">${_escapeHtml(t)}</span>`).join('') : '<span class="type-chip">Unknown type</span>'}
       </div>
       <button class="team-mon-detail-btn" type="button" data-team="${containerId === 'player-roster' ? currentPlayerKey : (document.getElementById('opponent-select') ? document.getElementById('opponent-select').value : '')}" data-mon="${escName}" title="View full stat details">Stats</button>`;
     el.appendChild(row);
@@ -17099,38 +17102,32 @@ function renderSeriesSummary() {
 // ============================================================
 // PART 5A: SPEED TIER WIDGET (Teams Tab)
 // ============================================================
-const NATURE_SPE = {
-  Timid:1.1, Jolly:1.1, Naive:1.1, Hasty:1.1,
-  Modest:0.9, Adamant:0.9, Bold:0.9, Impish:0.9, Careful:0.9, Calm:0.9,
-  Quiet:0.9, Brave:0.9, Relaxed:0.9, Sassy:0.9, Serious:1, Hardy:1, Bashful:1, Docile:1, Quirky:1
-};
-
-function getEffectiveSpe(member) {
-  const base = BASE_STATS[member.name];
-  if (!base) return 0;
-  const nat = NATURE_SPE[member.nature] || 1;
-  const ev = (member.evs && member.evs.spe) ? member.evs.spe : 0;
-  const raw = Math.floor((2 * base.spe + 31 + Math.floor(ev / 4)) * 50 / 100 + 5);
-  return Math.floor(raw * nat);
+function getEffectiveSpe(member, teamFormat) {
+  if (!member || typeof member.name !== 'string' || typeof Pokemon !== 'function') return null;
+  const format = teamFormat ?? member.format ?? 'champions';
+  if (format !== 'champions' && format !== 'sv') return null;
+  const source = typeof _showdownSpeciesBase === 'function' ? _showdownSpeciesBase(member.name) : null;
+  if (!source && !(typeof BASE_STATS !== 'undefined' && BASE_STATS[member.name])) return null;
+  // This widget shows the unboosted starting-form stat, not battle action order.
+  const mon = new Pokemon(Object.assign({}, member, { moves: Array.isArray(member.moves) ? member.moves : [] }), '', format);
+  return !mon.formatMismatch && Number.isFinite(mon.baseSpe) ? mon.baseSpe : null;
 }
 
-function buildSpeedTierHTML(members) {
+function buildSpeedTierHTML(members, teamFormat) {
   const sorted = [...members].map(m => ({
     name: m.name,
-    spe: getEffectiveSpe(m),
-    item: m.item || '',
-    note: m.item === 'Choice Scarf' ? '×1.5 Scarf' : ''
-  })).sort((a,b) => b.spe - a.spe);
+    spe: getEffectiveSpe(m, teamFormat)
+  })).sort((a,b) => a.spe === null ? (b.spe === null ? 0 : 1) : b.spe === null ? -1 : b.spe - a.spe);
 
   return `<div class="speed-tier-section">
-    <button class="speed-tier-toggle" type="button">
-      ▸ Speed Tiers
+    <button class="speed-tier-toggle" type="button" title="Unboosted starting-form Speed. Item, ability, status, stage and field effects are not included.">
+      ▸ Speed Stats
     </button>
     <div class="speed-tier-list">
       ${sorted.map((s,i) => `<div class="speed-tier-row">
-        <span class="speed-rank">${i+1}</span>
+        <span class="speed-rank">${s.spe === null ? '-' : i+1}</span>
         <span class="speed-name">${_escapeHtml(s.name)}</span>
-        <span class="speed-val">${s.spe}${s.note ? ` <em style="color:var(--text-m);font-size:9px">${s.note}</em>` : ''}</span>
+        <span class="speed-val">${s.spe === null ? 'Unknown' : s.spe}</span>
       </div>`).join('')}
     </div>
   </div>`;
@@ -17146,7 +17143,7 @@ function renderSpeedTiersForGrid() {
     if (!team || !team.members) return;
     const existing = card.querySelector('.speed-tier-section');
     safeRemoveNode(existing);
-    card.insertAdjacentHTML('beforeend', buildSpeedTierHTML(team.members));
+    card.insertAdjacentHTML('beforeend', buildSpeedTierHTML(team.members, team.format));
   });
 }
 
@@ -17292,31 +17289,8 @@ const META_THREATS = [
 ];
 
 function computeThreatLevel(threat) {
-  const playerTeam = getActivePlayerTeam();
-  const playerMembers = (playerTeam && Array.isArray(playerTeam.members)) ? playerTeam.members : [];
-  const playerMoves = playerMembers.flatMap(m => m.moves || []);
-  const playerSpeeds = playerMembers.map(m => getEffectiveSpe(m));
-  const maxPlayerSpe = playerSpeeds.length ? Math.max(...playerSpeeds) : 0;
-
-  let hasSECoverage = false;
-  for (const mv of playerMoves) {
-    const mvType = (typeof MOVE_TYPES !== 'undefined') ? MOVE_TYPES[mv] : null;
-    if (!mvType) continue;
-    let eff = 1;
-    for (const dt of threat.types) {
-      const row = (typeof TYPE_CHART !== 'undefined' && TYPE_CHART[mvType]) ? TYPE_CHART[mvType] : {};
-      eff *= (row[dt] !== undefined ? row[dt] : 1);
-    }
-    if (eff >= 2) { hasSECoverage = true; break; }
-  }
-
-  const threatBase = BASE_STATS[threat.name];
-  const threatSpe = threatBase ? threatBase.spe : 100;
-  const hasSpeedAdv = maxPlayerSpe > threatSpe;
-
-  if (hasSECoverage && hasSpeedAdv) return 'radar-safe';
-  if (hasSECoverage || hasSpeedAdv) return 'radar-neutral';
-  return 'radar-threat';
+  // Species-only entries have no opponent set or battle evidence to rate safety.
+  return 'radar-unknown';
 }
 
 function renderMetaRadar() {
@@ -17324,7 +17298,7 @@ function renderMetaRadar() {
   if (!grid) return;
   grid.innerHTML = META_THREATS.map(t => {
     const lvl = computeThreatLevel(t);
-    const dot = lvl === 'radar-safe' ? '#22c55e' : lvl === 'radar-neutral' ? '#f59e0b' : '#ef4444';
+    const dot = '#6b7280';
     return `<div class="radar-card ${lvl}">
       <div class="radar-card-header">
         <span style="width:10px;height:10px;border-radius:50%;background:${dot};display:inline-block;flex-shrink:0"></span>
@@ -17332,8 +17306,7 @@ function renderMetaRadar() {
       </div>
       <div class="radar-types">${t.types.map(tp => `<span class="type-chip" style="background:${typeColor(tp)}20;color:${typeColor(tp)};border:1px solid ${typeColor(tp)}40">${tp}</span>`).join('')}</div>
       <div class="radar-stats">
-        <span>Usage: <strong>${t.usage}%</strong></span>
-        <span>WR: <strong>${t.winRate}%</strong></span>
+        <span>Matchup unverified</span>
       </div>
     </div>`;
   }).join('');

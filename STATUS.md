@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- v158 aligns roster types and unboosted Speed with generated/runtime data and
+  fixes Eternal Flower Floette alias fallback. Unknown formats stay unknown;
+  species-only radar entries no longer claim matchup safety. Verification and
+  exclusions: [runtime consumer audit](poke-sim/reports/roster_runtime_validation_2026-09-08.md).
+
 - M-B identity review now resolves all 235 official rows. Two explicit aliases
   are backed by official sprite/DOM evidence and independent visual review.
   All mapped baseline stats/types/ability slots/Dex numbers match pinned

@@ -440,7 +440,7 @@ function _showdownSpeciesRow(species) {
     if (!rows) return null;
     if (rows[species]) return rows[species];
     var id = _moveId(species);
-    var altId = id === 'floetteeternalflower' ? 'floetteeternal' : id;
+    var altId = (id === 'floetteeternalflower' || id === 'eternalflowerfloette') ? 'floetteeternal' : id;
     if (id === 'floetteeternalflowermega') altId = 'floettemega';
     for (var key in rows) {
       if (!Object.prototype.hasOwnProperty.call(rows, key)) continue;
@@ -7456,7 +7456,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.9'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.10'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

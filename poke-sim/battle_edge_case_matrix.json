@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "STATS-ROSTER-CONSUMER-PARITY",
+      "family": "stats-forms",
+      "behavior": "Mapped roster types and unboosted Speed agree with runtime stats; supported Eternal Flower aliases preserve species identity.",
+      "status": "partial",
+      "tests": ["tests/roster_runtime_consumer_tests.mjs", "tests/reg_mb_roster_baseline_tests.mjs"],
+      "oracle": "Pinned Champions species baseline plus engine starting-stat contract; not battle ordering or official legality.",
+      "boundary_vectors": ["235-mapped-keys", "champions-SP-vs-SV-EV", "non-Speed-natures", "unknown-format", "alias-with-and-without-bridge", "species-only-radar-unknown"],
+      "known_gap": "All item/ability/field combinations, Mega alias transitions and in-game Champions confirmation remain unproved."
+    },
+    {
       "id": "LIFE-IDENTITY-REPLACEMENT",
       "family": "identity-lifecycle",
       "behavior": "A Pokemon keeps its stable identity when active and bench positions change.",

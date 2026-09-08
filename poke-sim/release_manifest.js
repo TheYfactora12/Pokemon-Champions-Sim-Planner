@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.157-official-form-identities',
+    build_id: 'v2.2.158-roster-stat-parity',
     release_date: '2026-09-08',
-    service_worker_cache: 'champions-sim-v2-2-157-official-form-identities',
+    service_worker_cache: 'champions-sim-v2-2-158-roster-stat-parity',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

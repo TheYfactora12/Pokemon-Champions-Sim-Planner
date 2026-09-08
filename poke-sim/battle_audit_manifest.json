@@ -71,7 +71,7 @@
       "id": "stats-forms",
       "name": "Base stats, Champion SP, natures, stages, forms, and effective battle stats",
       "status": "partial",
-      "tests": ["tests/regional_variant_stats_tests.js", "tests/t9j13_tests.js", "tests/mega_runtime_form_guard_tests.js"],
+      "tests": ["tests/regional_variant_stats_tests.js", "tests/t9j13_tests.js", "tests/mega_runtime_form_guard_tests.js", "tests/roster_runtime_consumer_tests.mjs", "tests/reg_mb_roster_baseline_tests.mjs"],
       "known_gaps": ["The complete legal species and form inventory is not represented by executable stat fixtures."]
     },
     {
