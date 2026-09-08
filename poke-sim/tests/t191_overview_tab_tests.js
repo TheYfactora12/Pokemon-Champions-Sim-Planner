@@ -437,9 +437,10 @@ T('5. Overview styles are responsive and scan-friendly', () => {
   inc(css, '.home-landing-hero h2:after');
   inc(css, 'linear-gradient(90deg,#f5c542,#5ba4f5)');
   inc(css, '.home-landing-chips');
-  inc(css, '.home-product-stage');
-  inc(css, '.home-product-window');
-  inc(css, '.home-product-floating');
+  inc(css, '.retro-screen');
+  inc(css, '@keyframes retro-gengar');
+  inc(css, 'animation-play-state:paused');
+  inc(css, '@media(prefers-reduced-motion:reduce){.retro-fighter{animation:none}');
   inc(css, '.home-action-cycle');
   inc(css, '.home-lab-stage');
   inc(css, '.home-lab-glass');
@@ -495,8 +496,10 @@ T('6. Overview renders through a reusable function for future growth', () => {
   inc(ui, 'Singles and Doubles');
   inc(ui, 'Replay Lessons');
   inc(ui, 'Safer Team Testing');
-  inc(ui, 'home-product-stage');
-  inc(ui, 'No replay selected');
+  inc(ui, 'retro-screen');
+  inc(ui, 'Not a simulated battle.');
+  inc(ui, 'assets/retro-intro/gengar.png');
+  inc(ui, 'assets/retro-intro/nidorino.png');
   if (ui.includes('Turn 4 changed the game') || ui.includes('Try a safer lead next run')) throw new Error('Home must not invent a replay conclusion');
   inc(ui, 'data-home-tab="editor">Edit a Team');
   inc(ui, 'A mad scientist lab for better teams.');

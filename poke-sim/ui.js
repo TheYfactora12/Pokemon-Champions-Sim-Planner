@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.149-audit-trust-boundaries
+// Build marker: v2.2.150-retro-opening
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.149-audit-trust-boundaries'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.150-retro-opening'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -16304,23 +16304,14 @@ function csRenderTeamLabNewsroomHub() {
           '<span>Safer Team Testing</span>' +
         '</div>' +
       '</div>' +
-      '<div class="home-product-stage" aria-label="Battle Labs product preview">' +
-        '<div class="home-product-window">' +
-          '<div class="home-product-bar"><span></span><span></span><span></span></div>' +
-          '<div class="home-product-arena">' +
-            '<div class="home-product-team home-product-team-a"><small>Your team</small><strong>Team Test</strong></div>' +
-            '<div class="home-product-vs">VS</div>' +
-            '<div class="home-product-team home-product-team-b"><small>Opponent</small><strong>Benchmark</strong></div>' +
-          '</div>' +
-          '<div class="home-product-result">' +
-            '<span>Replay lesson</span>' +
-            '<strong>No replay selected</strong>' +
-            '<em>Analysis pending</em>' +
-          '</div>' +
+      '<div class="retro-intro">' +
+        '<input class="retro-pause" type="checkbox" id="retro-intro-pause"><label for="retro-intro-pause">Pause animation</label>' +
+        '<div class="retro-screen" role="img" aria-label="Decorative Game Boy-style opening: Gengar faces Nidorino. Not a simulated battle.">' +
+          '<span class="retro-name retro-name-rival" aria-hidden="true">NIDORINO</span>' +
+          '<img class="retro-fighter retro-nidorino" src="assets/retro-intro/nidorino.png" width="56" height="56" alt="">' +
+          '<img class="retro-fighter retro-gengar" src="assets/retro-intro/gengar.png" width="56" height="56" alt="">' +
+          '<span class="retro-name retro-name-player" aria-hidden="true">GENGAR</span>' +
         '</div>' +
-        '<div class="home-product-floating home-product-floating-a"><span>1</span><strong>Pick team</strong></div>' +
-        '<div class="home-product-floating home-product-floating-b"><span>2</span><strong>Run battle</strong></div>' +
-        '<div class="home-product-floating home-product-floating-c"><span>3</span><strong>Learn why</strong></div>' +
       '</div>' +
     '</div>' +
     csRenderHomeStartCycle() +

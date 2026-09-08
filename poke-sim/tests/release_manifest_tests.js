@@ -31,8 +31,8 @@ console.log('\n=== release manifest tests ===\n');
 
 T('1. manifest exposes canonical build and cache identity', () => {
   truthy(manifest.schema_version === 'champions-release-manifest-v1', 'schema mismatch');
-  truthy(manifest.build_id === 'v2.2.149-audit-trust-boundaries', 'build id mismatch');
-  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-149-audit-trust-boundaries', 'cache id mismatch');
+  truthy(manifest.build_id === 'v2.2.150-retro-opening', 'build id mismatch');
+  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-150-retro-opening', 'cache id mismatch');
   truthy(manifest.artifact_manifest === 'generated/release_artifact.json', 'artifact manifest path mismatch');
 });
 
@@ -47,6 +47,11 @@ T('3. service worker derives cache from manifest and precaches manifest', () => 
   truthy(sw.includes('RELEASE_MANIFEST.service_worker_cache'), 'sw should derive cache from manifest');
   truthy(sw.includes("|| '" + manifest.service_worker_cache + "'"), 'sw fallback must match this release');
   truthy(sw.includes("'./release_manifest.js'"), 'sw should precache release manifest');
+  for (const name of ['gengar', 'nidorino']) {
+    truthy(sw.includes("'./assets/retro-intro/" + name + ".png'"), 'retro sprite missing from precache');
+    const sprite = fs.readFileSync(path.join(ROOT, 'assets', 'retro-intro', name + '.png'));
+    truthy(sprite.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])), 'retro sprite must be a PNG');
+  }
   truthy(sw.includes("'./generated/release_artifact.json'"), 'sw should precache release artifact manifest');
 });
 

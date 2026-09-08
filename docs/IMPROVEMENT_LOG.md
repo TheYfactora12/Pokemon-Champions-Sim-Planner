@@ -6,6 +6,45 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0021: Retro Homepage Battle Opening
+
+Replaced the abstract Team Test/Benchmark preview with a decorative Gengar versus
+Nidorino pixel-sprite opening, authored CSS lunge/dodge motion, a keyboard-accessible
+pause checkbox, and reduced-motion support. Removed the preview's unused base styles.
+This is not engine output and does not affect teams, mechanics, or coaching evidence.
+Overview checks and all 160 fast-gate files pass (four manual/helper skips);
+real Chromium checks at 1440px and 390px prove sprite loading,
+scene bounds, movement, pause and reduced-motion behavior. Screenshots were inspected
+and Nidorino spacing corrected. Reproduce with `tools/verify-retro-intro.cjs` and
+Playwright available through NODE_PATH, against localhost:8770. Sprite provenance and
+artwork-rights caveat are in `poke-sim/assets/retro-intro/README.md`.
+Promoted to v150 candidate identity with sprite precache entries and PNG checks.
+Desktop/mobile browser checks pass again. Offline browser behavior and commercial
+artwork permission remain unverified. No mechanics or deployment claim added.
+
+### IMP-0022: Migration Filename Boundary And Staging Discovery
+
+Moved manual migration input from shell-source interpolation into an environment
+variable, with a restricted SQL filename alphabet; existing traversal and file-existence
+guards remain. Bash execution of the actual workflow validation block accepts the
+existing migration and rejects 11 invalid/injection examples without execution.
+The regression runs inside the workflow governance suite on CI.
+Dispatch still requires repository permissions and production environment handling;
+this is defense in depth, not a claim of an unauthenticated exploit.
+An independent agent could not start due to the session agent limit; the parent
+performed a second source-to-sink review and executable compatibility checks.
+
+Both repositories' GitHub inventories and the connected Supabase project were read
+without mutation. See [staging discovery](release/SUPABASE_STAGING_DISCOVERY.md).
+Live migration ledger still contains four entries; the advisor's informational
+missing-policy notice does not certify application security. Policy/grant readback
+confirms the existing shared-write containment gate remains unresolved. Do not
+publish a production security clearance or run write tests without isolated staging.
+
+v150 local verification: `npm test` passes 160 fast files and 12 offline/mock DB
+files, with four manual/helper skips. Browser checks pass at 1440px and 390px.
+No live write checks ran. Repository push is distinct from a Pages deployment.
+
 ### IMP-0020: Company Audit Trust-Boundary Fixes
 
 Changed: Leftovers precedes status damage; Toxic rounds before tick multiplication; replay plans cannot impersonate verified matches; timing-only coaching stays outside scoring and critical-mistake selection; news discovery uses compatible CLI options. Separate shared-write containment is locally tested but not applied live. Evidence: [OODA remediation](release/OODA_COMPANY_FINDINGS_2026-09-08.md), eight bounded reference probes, six new regression groups, independent review, isolated PostgreSQL denial/positive controls and two manual replay reviews. Lesson: follow incorrect evidence into every downstream consumer and test later turns, not just the reported example. v149 candidate only; live security, verified matching, broader mechanics/coaching and hosted release remain open.
