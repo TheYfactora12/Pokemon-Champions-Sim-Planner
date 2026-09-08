@@ -6,7 +6,7 @@
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "Complete the official in-game Regulation M-C roster and rules captures, normalize every delta against the pinned Showdown baseline, and add accepted/rejected legality plus Z Mega mechanics fixtures. Keep M-C source-review only and the bundled roster authoritative while Showdown lacks an M-C format and the database lacks approved versioned rows.",
+  "next_action": "Continue the product-trust OODA audit: close reproducible replay/coaching evidence defects with regression tests, verify replay URL/import/export paths, and triage dependency alerts. Complete official M-C roster/rule captures and remaining mechanics/security gates in parallel. Keep M-C source-review only; do not promote unverified rules, deployment or accuracy claims. See STATUS.md and the dated OODA reports for scoped completed work.",
   "milestones": [
     {
       "id": "simulation-truth",
@@ -38,7 +38,9 @@
         "docs/release/PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md",
         "poke-sim/reports/seismic_toss_validation_2026-08-30.md",
         "poke-sim/reports/tailwind_growl_leer_validation_2026-09-01.md",
-        "poke-sim/reports/pp_drain_validation_2026-09-03.md"
+        "poke-sim/reports/pp_drain_validation_2026-09-03.md",
+        "docs/release/OODA_REPLAY_ATTRIBUTION_2026-09-08.md",
+        "docs/release/OODA_OUTCOME_CLAIMS_2026-09-08.md"
       ]
     },
     {

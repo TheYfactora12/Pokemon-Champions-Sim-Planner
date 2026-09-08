@@ -399,15 +399,7 @@
       }
     });
 
-    if (!issues.some(function(i) { return i.id === 'speed_control_without_pressure' || i.id === 'field_control_failure'; })) {
-      add('speed_control_iq', 6, 'No major speed-control error was detected from this log.');
-    }
-    if (!issues.some(function(i) { return i.id === 'win_condition_exposed' || i.id === 'endgame_misplay'; })) {
-      add('win_condition_iq', 5, 'No clear win-condition abandonment was detected.');
-    }
-    if (!issues.some(function(i) { return i.id === 'protect_misuse' || i.id === 'switch_tempo_loss'; })) {
-      add('resource_iq', 4, 'No major resource misuse was detected from parsed events.');
-    }
+    // Missing detected errors are not positive evidence of decision quality.
 
     Object.keys(scores).forEach(function(k) { scores[k] = clampScore(scores[k]); });
     var weights = Object.assign({}, BATTLE_IQ_WEIGHTS);

@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.147-replay-attribution';
+      return txt || 'v2.2.148-evidence-not-outcome';
     } catch (e) {
-      return 'v2.2.147-replay-attribution';
+      return 'v2.2.148-evidence-not-outcome';
     }
   }
 

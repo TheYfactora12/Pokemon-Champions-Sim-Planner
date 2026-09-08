@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Complete the official in-game Regulation M-C roster and rules captures, normalize every delta against the pinned Showdown baseline, and add accepted/rejected legality plus Z Mega mechanics fixtures. Keep M-C source-review only and the bundled roster authoritative while Showdown lacks an M-C format and the database lacks approved versioned rows.
+Continue the product-trust OODA audit: close reproducible replay/coaching evidence defects with regression tests, verify replay URL/import/export paths, and triage dependency alerts. Complete official M-C roster/rule captures and remaining mechanics/security gates in parallel. Keep M-C source-review only; do not promote unverified rules, deployment or accuracy claims. See STATUS.md and the dated OODA reports for scoped completed work.
 
 ## Milestone Index
 
@@ -55,7 +55,7 @@ Remaining:
 
 **Exit:** No unresolved critical mechanics, identity or evidence errors in the declared benchmark; every accuracy claim has reference evidence and explicit exclusions.
 
-Evidence: [showdown_reference_validation_2026-08-30.md](poke-sim/reports/showdown_reference_validation_2026-08-30.md), [visual_replay_audit_2026-08-30.md](poke-sim/reports/visual_replay_audit_2026-08-30.md), [identity_validation_2026-08-30.md](poke-sim/reports/identity_validation_2026-08-30.md), [PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md](docs/release/PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md), [seismic_toss_validation_2026-08-30.md](poke-sim/reports/seismic_toss_validation_2026-08-30.md), [tailwind_growl_leer_validation_2026-09-01.md](poke-sim/reports/tailwind_growl_leer_validation_2026-09-01.md), [pp_drain_validation_2026-09-03.md](poke-sim/reports/pp_drain_validation_2026-09-03.md)
+Evidence: [showdown_reference_validation_2026-08-30.md](poke-sim/reports/showdown_reference_validation_2026-08-30.md), [visual_replay_audit_2026-08-30.md](poke-sim/reports/visual_replay_audit_2026-08-30.md), [identity_validation_2026-08-30.md](poke-sim/reports/identity_validation_2026-08-30.md), [PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md](docs/release/PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md), [seismic_toss_validation_2026-08-30.md](poke-sim/reports/seismic_toss_validation_2026-08-30.md), [tailwind_growl_leer_validation_2026-09-01.md](poke-sim/reports/tailwind_growl_leer_validation_2026-09-01.md), [pp_drain_validation_2026-09-03.md](poke-sim/reports/pp_drain_validation_2026-09-03.md), [OODA_REPLAY_ATTRIBUTION_2026-09-08.md](docs/release/OODA_REPLAY_ATTRIBUTION_2026-09-08.md), [OODA_OUTCOME_CLAIMS_2026-09-08.md](docs/release/OODA_OUTCOME_CLAIMS_2026-09-08.md)
 
 <a id="regulation-source-truth"></a>
 

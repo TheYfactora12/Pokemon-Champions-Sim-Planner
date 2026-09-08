@@ -169,6 +169,16 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Lesson: shared species, shared turn and shared catalog membership are not proof of the same event or registered team. Unknown must survive serialization.
 - Remaining: replay URL fetch, physical export readback, unsupported endgame/IQ judgments, extended protocol coverage, full competitive mechanics/security gates and independent review. No 99% claim.
 
+<a id="imp-0016"></a>
+## IMP-0016: Do Not Grade Decisions From Outcomes Or Missing Errors
+
+- Local candidate: `v2.2.148-evidence-not-outcome`, September 8 UTC.
+- Problem: terminal losses automatically generated Endgame Misplay; missing detected errors generated positive IQ evidence.
+- Change: remove both unsupported inference paths without removing observed results or faints.
+- Evidence: [OODA outcome report](release/OODA_OUTCOME_CLAIMS_2026-09-08.md), two failing-then-passing regression groups covering both formats/sides and sparse evidence.
+- Lesson: an outcome does not prove an avoidable error, and absent findings do not prove skill. Keep historical records separate from revised analysis.
+- Remaining: broader score/confidence calibration, downstream inference audit and public-launch gates. No manual browser or deployed proof for this candidate yet.
+
 ## Entry Template
 
 ```text

@@ -2117,21 +2117,7 @@
       turnScores[turn.number] = (turnScores[turn.number] || 0) + userFaints.length * 3 + oppSetupOrSpeed.length + userRngBad.length + oppRngGood.length;
     });
 
-    if (parsed.result === 'loss' && parsed.turns.length) {
-      var finalTurn = parsed.turns[parsed.turns.length - 1];
-      var finalUserFaints = finalTurn.faints.filter(function(f) { return f.side === side; });
-      var finalOppFaints = finalTurn.faints.filter(function(f) { return f.side === opp; });
-      if (finalUserFaints.length && finalUserFaints.length >= finalOppFaints.length && !hasIssue(issues, 'endgame_misplay', finalTurn.number)) {
-        addIssue(issues, 'Endgame Misplay', 'medium', finalTurn.number, 'The final exchange still lost the game even after your side found some pressure.', 'medium', 'In the endgame, preserve the piece that can close and target the Pokemon that prevents that closer from winning.', {
-          id: 'endgame_misplay',
-          category: 'endgame',
-          whatHappened: 'On the last parsed turn, your side lost a key Pokemon and the game ended in a loss.',
-          whyMattered: 'Endgames are often decided by preservation, target priority, remaining speed control, and whether the final attacker survives long enough to convert.',
-          doInstead: 'Before the final turns, identify the exact closer and choose the line that keeps that Pokemon alive or removes its biggest blocker first.',
-          evidence: 'Final turn ' + finalTurn.number + ': ' + moveNames(finalTurn.moves)
-        });
-      }
-    }
+    // A terminal loss records an outcome, not proof that a better legal line existed.
 
     var criticalTurn = null;
     var criticalScore = -1;

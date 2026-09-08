@@ -84,10 +84,11 @@ T('4. builds a coaching review with tags and critical turn', () => {
   includes(tags, 'Speed Control Without Pressure', 'speed control tag');
   includes(tags, 'Win Condition Exposed', 'win condition tag');
   includes(tags, 'RNG Materiality Check', 'rng tag');
-  ['bad_lead', 'speed_control_without_pressure', 'targeting_error', 'protect_misuse', 'switch_tempo_loss', 'win_condition_exposed', 'rng_material', 'endgame_misplay'].forEach((id) => {
+  ['bad_lead', 'speed_control_without_pressure', 'targeting_error', 'protect_misuse', 'switch_tempo_loss', 'win_condition_exposed', 'rng_material'].forEach((id) => {
     includes(ids, id, 'coaching rule id');
   });
   truthy(!ids.includes('field_control_failure'), 'own Tailwind is a recorded field response, not absent field control');
+  truthy(!ids.includes('endgame_misplay'), 'a loss alone does not prove an endgame mistake');
   truthy(ids.length >= 5, 'detects at least five rule ids');
   analysis.review.coachingTags.forEach((tag) => {
     truthy(tag.whatHappened, 'tag what happened');
