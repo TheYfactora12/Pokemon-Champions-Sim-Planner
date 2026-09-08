@@ -4,7 +4,7 @@
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "Validate learnsets/combinations and remaining runtime paths before M-B sign-off. All 235 identities and baseline fields have review-only proof; v158 fixes roster type/Speed consumers and Eternal Flower alias fallback. See poke-sim/reports/roster_runtime_validation_2026-09-08.md for current gate evidence. Human fingerprint approval, live staging/security and complete-battle parity remain open. Keep M-C separate.",
+  "next_action": "Fix unchanged paste-editor saves losing member IDs and align SV preview/save context, then validate complete-set combinations and official Champions eligibility. v160 separates Champions/historical pools; all 235 reviewed pools agree with the pinned reference, not game approval. See poke-sim/reports/champions_move_context_validation_2026-09-08.md. Human fingerprint approval, DB publication/live security and full-battle parity remain open. Keep M-C separate.",
   "milestones": [
     {
       "id": "simulation-truth",

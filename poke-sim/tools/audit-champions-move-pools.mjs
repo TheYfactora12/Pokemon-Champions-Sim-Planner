@@ -29,13 +29,13 @@ export function auditRuntimeMovePools(keys, api, formatId = FORMAT) {
     const chain = dex.species.getFullLearnset(species.id);
     if (!chain.length) return { species_key: key, status: 'unresolved', reason: 'missing_full_reference_learnset' };
     const pool = dex.species.getMovePool(species.id);
-    const listed = api.legalMoveDisplayNamesForSpecies(key);
+    const listed = api.legalMoveDisplayNamesForSpecies(key, { learnsetContext: 'champions' });
     assert(Array.isArray(listed) && listed.every(name => typeof name === 'string'), 'Invalid runtime move list');
     const local = new Set(listed.map(name => dex.toID(name)));
     const union = new Set([...universe, ...pool, ...local]);
     const referenceRejected = [], localAccepted = [], listingDisagreements = [];
     for (const id of [...union].sort()) {
-      const verdict = api.isMoveLegalForSpecies(key, dex.moves.get(id).name || id);
+      const verdict = api.isMoveLegalForSpecies(key, dex.moves.get(id).name || id, { learnsetContext: 'champions' });
       assert(typeof verdict?.legal === 'boolean', 'Missing runtime verdict');
       if (pool.has(id) && !verdict.legal) referenceRejected.push(id);
       if (!pool.has(id) && verdict.legal) localAccepted.push(id);
@@ -93,10 +93,10 @@ export function buildReport() {
     reference: { ...identity, installed_distribution: installedReferenceFingerprint(),
       dex_species_sha256: sha(fs.readFileSync(require.resolve('pokemon-showdown/dist/sim/dex-species.js'))),
       general_learnsets_sha256: sha(fs.readFileSync(require.resolve('pokemon-showdown/dist/data/learnsets.js'))) },
-    source_hashes: Object.fromEntries(['tools/audit-champions-move-pools.mjs', 'tools/showdown-reference.mjs', 'move_legality.js', 'generated/pokemon_showdown_legal_data.js', 'source/reg-m-b-identity-review.json'].map(file => [file, sha(fs.readFileSync(new URL(file, root)))])),
+    source_hashes: Object.fromEntries(['tools/audit-champions-move-pools.mjs', 'tools/showdown-reference.mjs', 'tools/generate-champions-move-pools.mjs', 'move_legality.js', 'generated/champions_move_pools.js', 'generated/pokemon_showdown_legal_data.js', 'source/reg-m-b-identity-review.json'].map(file => [file, sha(fs.readFileSync(new URL(file, root)))])),
     limits: ['Pinned baseline, not official Champions approval', 'Pool differences are candidates, not full-set verdicts', 'Single-move probes do not prove combinations', 'No data, DB, team or regulation mutation'],
     audit, probes: PROBES.map(([species, move, expected]) => ({ species, move, expected_reference_acceptance: expected,
-      runtime: api.isMoveLegalForSpecies(species, move), reference: probeReferenceMove(species, move) })) };
+      runtime: api.isMoveLegalForSpecies(species, move, { learnsetContext: 'champions' }), reference: probeReferenceMove(species, move) })) };
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   assert.equal(process.argv.length, 2, 'This read-only audit accepts no promotion arguments');

@@ -26,7 +26,7 @@ check('Champion-specific generated Mega Ability is accepted', api.isAbilityLegal
 check('set helper validates the member Ability', api.validateAbilityForSet({ name: 'Pikachu', ability: 'Blaze' }).legal === false);
 
 const ui = fs.readFileSync(path.join(ROOT, 'ui.js'), 'utf8');
-check('shared import/editor gate invokes species Ability validation', ui.includes('api.validateAbilityForSet(member || {})'));
+check('shared import/editor gate invokes registration-aware Ability validation', ui.includes('api.validateAbilityForSet(abilityMember || {})'));
 check('species Ability mismatch is a hard import error', ui.includes("abilityCheck.reason === 'not_in_species_form_abilities'"));
 
 console.log(`species Ability legality: ${pass} pass, 0 fail`);

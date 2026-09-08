@@ -6,10 +6,17 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
-- New inherited move-pool audit confirms seven narrowed runtime/reference set
-  disagreements, including accepted Incineroar U-turn and rejected Fancy
-  Vivillon Rage Powder. This is an open shared validation-path issue, not fixed
-  by the roster-stat patch. See [evidence and next actions](poke-sim/reports/champions_move_pool_alignment_2026-09-08.md).
+- v160 fixes the shared Champions move-pool path exposed by the preceding audit.
+  All 235 reviewed identities and eight narrowed set probes agree with pinned
+  Champions. Imports/replays use explicit context; stale teams remain editable
+  under Needs review but cannot enter runnable selections. Full local gate,
+  independent review and browser failure-path checks pass; hosted CI is pending. Complete-set,
+  official approval and DB publication remain open. See
+  [scope and evidence](poke-sim/reports/champions_move_context_validation_2026-09-08.md).
+
+- Next reproduced identity issue: unchanged paste-editor saves lose member IDs
+  while preserving the team ID/format. SV preview also uses the wrong move
+  context. Fix and test reconciliation before extending legality claims.
 
 - v159 separates team validation from regulation approval and fixes compressed
   mobile roster text. Five browser viewport/input checks cover the actual Teams

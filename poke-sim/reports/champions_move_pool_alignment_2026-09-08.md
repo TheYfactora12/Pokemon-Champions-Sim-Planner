@@ -3,6 +3,10 @@
 Status: confirmed open baseline disagreements, not a runtime fix or regulation sign-off.
 Runtime inspected: v2.2.159-team-review-clarity, engine 1.1.10.
 
+Follow-up: [v160 shared-context fix and evidence](champions_move_context_validation_2026-09-08.md)
+addresses these historical observations. The original census below is retained,
+not presented as the current candidate's result.
+
 ## Observation
 
 The generic Showdown mirror contains historical learn-method rows. The runtime

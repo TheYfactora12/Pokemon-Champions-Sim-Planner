@@ -100,12 +100,16 @@ vm.createContext(ctx);
 
 function load(file) {
   vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+  if (file === 'move_legality.js') ctx.window.ChampionsSim = ctx.ChampionsSim;
 }
 
 [
   'release_manifest.js',
   'app_shell.js',
   'data.js',
+  'generated/pokemon_showdown_legal_data.js',
+  'generated/champions_move_pools.js',
+  'move_legality.js',
   'logger.js',
   'engine.js',
   'storage_adapter.js',

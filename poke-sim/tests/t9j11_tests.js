@@ -112,6 +112,7 @@ load('data.js');
 load('engine.js');
 load('storage_adapter.js');
 load('generated/pokemon_showdown_legal_data.js');
+load('generated/champions_move_pools.js');
 ctx.ChampionsSim = ctx.ChampionsSim || {};
 ctx.ChampionsSim.pokemonDataAudit = require(path.join(ROOT, 'generated', 'pokemon_showdown_legal_data.js'));
 load('move_legality.js');
@@ -179,7 +180,7 @@ function deepInc(hay, needle, msg='') { if (String(hay).indexOf(needle) < 0) thr
 const LEGAL_TEST_MOVES_BY_SPECIES = {
   Arcanine: ['Protect', 'Crunch', 'Flamethrower', 'Will-O-Wisp'],
   Garchomp: ['Earthquake', 'Protect', 'Substitute', 'Rest'],
-  Incineroar: ['Fake Out', 'Protect', 'Knock Off', 'Flare Blitz'],
+  Incineroar: ['Fake Out', 'Protect', 'Parting Shot', 'Flare Blitz'],
   Pikachu: ['Thunderbolt', 'Protect', 'Substitute', 'Rest'],
   'Rotom-Wash': ['Hydro Pump', 'Thunderbolt', 'Protect', 'Rest']
 };
@@ -194,7 +195,7 @@ function mkTeam(name, monNames) {
     format: 'champions',
     legality_status: 'unverified',
     members: monNames.map(n => ({
-      name: n, item: '', ability: '', level: 50, nature: 'Hardy',
+      name: n, item: '', ability: ctx.ChampionsSim.pokemonDataAudit.species[n].abilities['0'], level: 50, nature: 'Hardy',
       moves: LEGAL_TEST_MOVES_BY_SPECIES[n] || ['Protect','Substitute','Rest'],
       evs: { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 }
     }))
@@ -268,11 +269,10 @@ T('4. teamMatchesFilter: mega subset is keys starting with mega_', () => {
   truthy(!teamMatchesFilter('player', TEAMS.player, 'mega'));
 });
 
-T('5. teamMatchesFilter: tournament shows Champions tournament teams only', () => {
-  truthy(teamMatchesFilter('champions_arena_1st', TEAMS.champions_arena_1st, 'tournament'),
-    'adjusted champions_arena_1st should remain discoverable as a tournament-inspired sample');
-  truthy(teamMatchesFilter('champions_arena_2nd', TEAMS.champions_arena_2nd, 'tournament'),
-    'adjusted champions_arena_2nd should remain discoverable as a tournament-inspired sample');
+T('5. stale tournament moves remain reviewable but not runnable', () => {
+  truthy(teamMatchesFilter('champions_arena_1st', TEAMS.champions_arena_1st, 'needs_review'), 'stale moves need review');
+  truthy(teamMatchesFilter('champions_arena_2nd', TEAMS.champions_arena_2nd, 'needs_review'), 'stale moves need review');
+  truthy(!teamMatchesFilter('champions_arena_1st', TEAMS.champions_arena_1st, 'tournament'), 'stale moves are not runnable');
   truthy(!teamMatchesFilter('player', TEAMS.player, 'tournament'), 'starter team should stay separate from tournament packs');
   truthy(!teamMatchesFilter('mega_altaria', TEAMS.mega_altaria, 'tournament'), 'mega is not a tournament team');
 });
@@ -729,28 +729,19 @@ T('15g2. visible preloaded sim teams are approved Champion legal rows only', () 
   resetTeams();
   const visible = getVisibleTeamKeys({ includeCustom: false });
   const expected = [
-    'player',
     'mega_altaria',
     'mega_dragonite',
     'mega_houndoom',
     'rin_sand',
-    'suica_sun',
     'cofagrigus_tr',
-    'champions_arena_1st',
-    'champions_arena_2nd',
-    'aurora_veil_froslass',
-    'targeted_proof_legal',
-    'indeedee_hatterene_tr',
-    'rillaboom_archaludon_balance',
-    'arboliva_seed_sower_balance',
-    'pelipper_basculegion_rain',
-    'kevin_meta_sun'
+    'champions_arena_3rd',
   ];
   eq(visible.length, expected.length, 'approved Champion testing catalog should be visible');
   expected.forEach(key => truthy(visible.includes(key), key + ' should remain visible'));
-  truthy(!TEAMS.champions_arena_3rd, 'still-conflicting tournament row should be removed from runtime catalog');
-  truthy(!TEAMS.perish_trap_gengar, 'inferred perish-trap row should be removed from runtime catalog');
-  truthy(CS_REMOVED_TEAM_CATALOG.champions_arena_3rd, 'removed catalog should record champions_arena_3rd');
+  truthy(TEAMS.champions_arena_3rd, 'conflicting tournament row remains editable');
+  truthy(TEAMS.perish_trap_gengar, 'inferred perish-trap row remains editable');
+  truthy(TEAMS.player.members[0].moves.includes('U-turn'), 'quarantine must not rewrite original moves');
+  truthy(!CS_REMOVED_TEAM_CATALOG.champions_arena_3rd, 'newly verified move pool releases champions_arena_3rd from quarantine');
   truthy(CS_REMOVED_TEAM_CATALOG.perish_trap_gengar, 'removed catalog should record perish_trap_gengar');
   const offenders = visible.filter(key => {
     const team = TEAMS[key];

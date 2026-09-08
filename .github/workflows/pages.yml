@@ -153,6 +153,7 @@ jobs:
           mkdir -p pages-dist/poke-sim/generated
           generated_files=(
             news_feed.js pokemon_showdown_legal_data.js champions_move_overrides.js
+            champions_move_pools.js
             pokemon_showdown_species_weights.js release_artifact.json
             source_registry.js source_sync_status.js tournament_catalog.js
             project_roadmap.js

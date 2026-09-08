@@ -6,6 +6,26 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0035: Keep Imported Names Literal In The Edit Dialog
+
+The edit dialog now applies the established output-escaping helper to imported
+names. Stored names, titles, selections and custom/preloaded guidance remain
+unchanged. A negative-control regression, independent boundary review and actual
+local upload/Edit checks pass for both HTML builds. This is scoped local display
+hardening, not a repository-wide or deployed security sign-off.
+Lesson: safe rendering in the catalog must continue into every detail/edit view.
+
+### IMP-0034: Bind Move Validation To Explicit Context
+
+The shared helper now uses a reproducible pinned Champions inherited-pool
+artifact, not historical move presence. Imported formats survive storage;
+missing/conflicting replay context stays unchecked. Stale catalog records remain
+available for repair without entering runnable selections. All 235 reviewed
+identity pools agree locally; separate complete-team and official approval gates
+remain. [Evidence, tests and DB limits](../poke-sim/reports/champions_move_context_validation_2026-09-08.md).
+Lesson: a source is trustworthy only within its named context, and stricter
+validation must not destroy the original data it rejects.
+
 ### IMP-0033: Compare Inherited Runtime Move Pools
 
 Added a separate inherited-pool/runtime acceptance audit without relabeling the

@@ -97,6 +97,18 @@ first. No dependency or lockfile change has been made in this intake.
 
 ## Remaining Priority
 
+v160 local follow-up replaces historical move acceptance with explicit Champions
+inherited pools. All 235 reviewed identities agree with the pinned reference;
+imports preserve format, ambiguous replays stay unchecked, and stale teams are
+retained for repair. Local full gate (179 fast/12 offline DB), paired replay,
+failure-path browser checks and independent review pass. Hosted CI is pending. Detailed scope and DB
+limits: [move context validation](../../poke-sim/reports/champions_move_context_validation_2026-09-08.md).
+
+Next reproducible fix: unchanged paste-editor saves replace member objects and
+lose `member_id`, despite retaining team ID and format. Preview hardcodes
+Champions for existing SV teams. Reconcile unambiguous IDs without positional
+transfer, distinguish new replacements, and test reorder/ambiguous cases.
+
 1. Obtain human approval of the exact 235-row identity candidate and complete
    field/learnset/rules evidence. Review-only form reconciliation is now recorded.
 2. Prove complete M-B team legality and Champions-specific moves/mechanics rather

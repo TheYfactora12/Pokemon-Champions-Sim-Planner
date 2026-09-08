@@ -4,7 +4,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
-const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?team-review=v159&fresh=1');
+const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?team-review=v160&fresh=1');
 assert(['127.0.0.1', 'localhost'].includes(url.hostname), 'Local candidate only');
 const directory = fs.mkdtempSync(path.resolve('artifacts/team-review-'));
 const browser = await chromium.launch({ headless: true });

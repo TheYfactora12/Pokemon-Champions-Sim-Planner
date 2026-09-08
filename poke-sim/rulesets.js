@@ -268,11 +268,11 @@ function checkTeamForSelectedRegulation(team, rulesetId, options) {
     if (mega && member.item === mega.megaStone && typeof api.isAbilityLegalForSpecies === 'function' && api.isAbilityLegalForSpecies(mega.baseSpecies, member.ability).legal) {
       abilityMember = Object.assign({}, member, { name: mega.baseSpecies });
     }
-    var checks = api.validateMovesForSet(member).concat([api.validateAbilityForSet(abilityMember)]).filter(Boolean);
+    var checks = api.validateMovesForSet(member, { learnsetContext: 'champions' }).concat([api.validateAbilityForSet(abilityMember)]).filter(Boolean);
     checks.forEach(function(check) {
       if (check.legal) return;
       var message = member.name + ': ' + (check.moveName || check.abilityName || '') + ' - ' + (check.notes || check.reason);
-      if (['source_unavailable', 'unknown_species', 'unknown_move', 'unknown_ability'].indexOf(check.reason) !== -1) gaps.push(message);
+      if (check.verification_status === 'unchecked' || ['source_unavailable', 'learnset_context_unavailable', 'champions_pool_unavailable', 'unknown_species', 'unknown_move', 'unknown_ability'].indexOf(check.reason) !== -1) gaps.push(message);
       else errors.push(message);
     });
   });
@@ -296,10 +296,12 @@ function getRegulationChoices(kind, speciesName, rulesetId, showUnavailable) {
   var data = sim.pokemonDataAudit, api = sim.moveLegality;
   if (!data || !data.species || !api || typeof api.canonicalSpeciesKey !== 'function') return [];
   var speciesKey = api.canonicalSpeciesKey(speciesName || '');
+  var movePool = kind === 'move' && typeof api.resolveLearnsetPool === 'function'
+    ? api.resolveLearnsetPool(speciesName, { learnsetContext: 'champions' }) : null;
   var names = [], allowedAbilities = [];
   if (kind === 'species') names = Object.keys(data.species || {});
   if (kind === 'item') names = Object.keys(data.items || {}).map(function(k) { return data.items[k].name || k; });
-  if (kind === 'move') names = showUnavailable ? Object.keys(data.moves || {}).map(function(k) { return data.moves[k].name || k; }) : api.legalMoveDisplayNamesForSpecies(speciesName);
+  if (kind === 'move') names = showUnavailable ? Object.keys(data.moves || {}).map(function(k) { return data.moves[k].name || k; }) : api.legalMoveDisplayNamesForSpecies(speciesName, { learnsetContext: 'champions' });
   if (kind === 'ability') {
     allowedAbilities = Object.values((data.species[speciesKey] || {}).abilities || {});
     var mega = typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[speciesName];
@@ -311,13 +313,14 @@ function getRegulationChoices(kind, speciesName, rulesetId, showUnavailable) {
     if (profile.id === 'champions_custom_practice') {
       var allowed = true;
       if (kind === 'item') allowed = typeof CHAMPIONS_LEGAL_ITEMS !== 'undefined' && CHAMPIONS_LEGAL_ITEMS.has(name);
-      if (kind === 'move') allowed = api.isMoveLegalForSpecies(speciesName, name).legal && !(typeof CHAMPIONS_BANNED_MECHANIC_MOVES !== 'undefined' && CHAMPIONS_BANNED_MECHANIC_MOVES.has(name));
+      if (kind === 'move') allowed = api.isMoveLegalForSpecies(speciesName, name, { learnsetContext: 'champions' }).legal && !(typeof CHAMPIONS_BANNED_MECHANIC_MOVES !== 'undefined' && CHAMPIONS_BANNED_MECHANIC_MOVES.has(name));
       if (kind === 'ability') allowed = allowedAbilities.indexOf(name) !== -1 && !(typeof CHAMPIONS_BANNED_MECHANIC_ABILITIES !== 'undefined' && CHAMPIONS_BANNED_MECHANIC_ABILITIES.has(name));
       if (kind === 'species') allowed = typeof validateChampionsLegality === 'function' && !(validateChampionsLegality({ members: [{ name: name, moves: [] }] }).violations || []).some(function(v) { return v.severity === 'error'; });
       status = allowed ? 'reference_only' : 'unavailable';
     }
     return { name: name, status: status, regulation_id: profile.id, ruleset_version: profile.version || null,
-      source_version: data.sourceCommitOrVersion || null };
+      source_version: kind === 'move' ? (movePool && movePool.status === 'known' ? movePool.sourceVersion : null) : (data.sourceCommitOrVersion || null),
+      source: kind === 'move' ? (movePool && movePool.status === 'known' ? movePool.source : 'unavailable') : (data.source || null) };
   }).filter(function(row) { return showUnavailable || row.status === 'reference_only'; });
 }
 

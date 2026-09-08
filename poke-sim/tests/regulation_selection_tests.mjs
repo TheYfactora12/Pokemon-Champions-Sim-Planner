@@ -3,10 +3,13 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 const root = new URL('../', import.meta.url);
 const ctx = vm.createContext({ console });
-for (const file of ['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/pokemon_showdown_species_weights.js', 'runtime_data.js', 'engine.js', 'rulesets.js', 'legality.js', 'move_legality.js']) {
+for (const file of ['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/champions_move_pools.js', 'generated/pokemon_showdown_species_weights.js', 'runtime_data.js', 'engine.js', 'rulesets.js', 'legality.js', 'move_legality.js']) {
   vm.runInContext(fs.readFileSync(new URL(file, root), 'utf8'), ctx, { filename: file });
 }
 const team = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.player))', ctx);
+// Hold move availability constant in regulation/identity contract fixtures.
+// The shipped player's historical Incineroar moves are tested separately below.
+team.members.forEach(member => { member.moves = ['Protect']; });
 const ma = 'champions_reg_m_a_2026', mb = 'champions_reg_m_b_2026', mc = 'champions_reg_m_c_2026', practice = 'champions_custom_practice';
 const check = (t, id = ma, opts = { format: 'doubles', bo: 3 }) => ctx.checkTeamForSelectedRegulation(t, id, opts);
 let count = 0;
@@ -44,6 +47,15 @@ test('moves and abilities must belong to the species', () => {
     const t = structuredClone(team); change(t.members[0]);
     assert.equal(check(t).status, 'illegal');
   }
+});
+test('historical Incineroar moves cannot enter Champions practice through legacy tags', () => {
+  const original = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.player))', ctx);
+  const before = JSON.stringify(original);
+  const result = check(original, practice);
+  assert.equal(result.allowed, false);
+  assert(result.errors.some(error => error.includes('U-turn')));
+  assert(result.errors.some(error => error.includes('Knock Off')));
+  assert.equal(JSON.stringify(original), before);
 });
 test('Mega display names can retain valid pre-Mega registration abilities with their stone', () => {
   const t = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.mega_altaria))', ctx);
@@ -123,5 +135,13 @@ test('Species Clause identifies base, Mega and regional forms by National Dex nu
     assert.equal(result.allowed, false);
     assert.ok(result.errors.some(e => /Species Clause/.test(e)));
   }
+});
+test('move choices name the Champions pool source rather than the historical mirror', () => {
+  const choices = ctx.getRegulationChoices('move', 'Incineroar', practice, false);
+  assert(choices.length > 0);
+  assert(choices.every(row => row.source === 'champions-inherited-move-pools-v1' && row.source_version === '0.11.11'));
+  const unknown = ctx.getRegulationChoices('move', 'No Such Species', mb, true);
+  assert(unknown.length > 0);
+  assert(unknown.every(row => row.source === 'unavailable' && row.source_version === null && row.status === 'not_verified'));
 });
 console.log(`Regulation selection: ${count}/${count} passed`);

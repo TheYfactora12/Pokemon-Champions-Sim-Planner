@@ -66,9 +66,13 @@ vm.createContext(ctx);
 
 function load(file) {
   vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+  if (file === 'move_legality.js') ctx.window.ChampionsSim = ctx.ChampionsSim;
 }
 
 load('data.js');
+load('generated/pokemon_showdown_legal_data.js');
+load('generated/champions_move_pools.js');
+load('move_legality.js');
 load('logger.js');
 try { load('legality.js'); } catch (_) {}
 load('engine.js');

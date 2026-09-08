@@ -414,23 +414,86 @@
     if (text && warnings.indexOf(text) < 0) warnings.push(text);
   }
 
-  function legalityForMoves(species, moves) {
+  // Exact supported tier labels from the pinned Showdown 0.11.11 formats.
+  var CHAMPIONS_REPLAY_TIERS = {
+    '[Gen 9 Champions] BSS Reg M-A': 'singles',
+    '[Gen 9 Champions] BSS Reg M-B': 'singles',
+    '[Gen 9 Champions] VGC 2026 Reg M-A': 'doubles',
+    '[Gen 9 Champions] VGC 2026 Reg M-A (Bo3)': 'doubles',
+    '[Gen 9 Champions] VGC 2026 Reg M-B': 'doubles',
+    '[Gen 9 Champions] VGC 2026 Reg M-B (Bo3)': 'doubles'
+  };
+
+  function replayLearnsetContext(tier) {
+    var name = cleanText(tier);
+    if (Object.prototype.hasOwnProperty.call(CHAMPIONS_REPLAY_TIERS, name)) return 'champions';
+    if (/^\[Gen 9\] (?:OU|Ubers|UU|RU|NU|PU|ZU|LC|Monotype|Doubles OU|Doubles Ubers|VGC 20\d{2}(?: Reg [A-Z])?(?: Bo3)?|Battle Stadium (?:Singles|Doubles)(?: Reg [A-Z])?)$/i.test(name)) return 'historical';
+    return '';
+  }
+
+  function resolveReplayMetadata(lines, model) {
+    var tiers = [], gameTypes = [], generations = [], battleStarted = false;
+    model.metadataConflicts = [];
+    lines.forEach(function(line) {
+      var parts = cleanText(line).split('|');
+      if (parts[0] !== '') return;
+      var tag = parts[1], value = cleanText(parts[2]);
+      if (tag === 'tier' || tag === 'gametype' || tag === 'gen') {
+        if (tag !== 'gen') model.format = model.format || value;
+        var values = tag === 'tier' ? tiers : tag === 'gametype' ? gameTypes : generations;
+        if (values.indexOf(value) < 0) values.push(value);
+        if (battleStarted) addReplayWarning(model.metadataConflicts, 'late ' + tag + ' header');
+        if (tag === 'gen' && (parts.length !== 3 || !/^[1-9]\d*$/.test(value))) {
+          addReplayWarning(model.metadataConflicts, 'malformed gen header');
+        }
+      } else if (/^(start|turn|switch|drag|replace|move|faint|win|tie|cant)$/.test(tag) || /^-/.test(tag)) {
+        battleStarted = true;
+      }
+    });
+    model.tier = tiers[0] || '';
+    model.gameType = gameTypes[0] || '';
+    model.generation = generations[0] || '';
+    if (tiers.length > 1) addReplayWarning(model.metadataConflicts, 'conflicting tier headers');
+    if (gameTypes.length > 1) addReplayWarning(model.metadataConflicts, 'conflicting gametype headers');
+    if (generations.length > 1) addReplayWarning(model.metadataConflicts, 'conflicting gen headers');
+    var context = replayLearnsetContext(model.tier);
+    // Every recognized tier above is Gen 9; absence is allowed, contradiction is not.
+    if (context && generations.length && model.generation !== '9') {
+      addReplayWarning(model.metadataConflicts, 'tier and gen disagree');
+    }
+    var expected = context === 'champions' ? CHAMPIONS_REPLAY_TIERS[model.tier] :
+      context === 'historical' ? (/VGC|Doubles/i.test(model.tier) ? 'doubles' : 'singles') : '';
+    if (gameTypes.length && expected && model.gameType !== expected) {
+      addReplayWarning(model.metadataConflicts, 'tier and gametype disagree');
+    }
+    model.learnsetContext = model.metadataConflicts.length ? '' : context;
+    model.metadataConflicts.forEach(function(reason) {
+      addReplayWarning(model.warnings, 'Replay learnset context unchecked: ' + reason + '.');
+    });
+  }
+
+  function legalityForMoves(species, moves, ctx) {
+    var context = ctx && ctx.learnsetContext;
     var api = ChampionsSim.moveLegality;
-    if (!api || typeof api.isMoveLegalForSpecies !== 'function') {
+    if (!context || !api || typeof api.isMoveLegalForSpecies !== 'function') {
       return (moves || []).map(function(move) {
         return {
           move: move,
           legal: false,
-          reason: 'source_unavailable',
+          reason: !context ? 'learnset_context_unavailable' : 'source_unavailable',
+          verification_status: 'unchecked',
+          learnsetContext: context || '',
           notes: 'unchecked'
         };
       });
     }
     return (moves || []).map(function(move) {
-      var out = api.isMoveLegalForSpecies(species, move);
+      var out = api.isMoveLegalForSpecies(species, move, { learnsetContext: context });
       return {
         move: move,
-        legal: !!out.legal,
+        legal: out.verification_status === 'known' && !!out.legal,
+        verification_status: out.verification_status || 'unchecked',
+        learnsetContext: context,
         reason: out.reason || '',
         notes: out.notes || '',
         source: out.source || '',
@@ -450,8 +513,13 @@
 
   function applyMoveLegalityWarnings(warnings, legality) {
     (legality || []).forEach(function(item) {
-      if (item.reason === 'not_in_species_form_learnset') addReplayWarning(warnings, 'move not legal for this species/form: ' + item.move);
-      if (item.reason === 'source_unavailable' || item.reason === 'unknown_species') addReplayWarning(warnings, 'move legality unchecked: ' + item.move);
+      if (item.verification_status === 'unchecked') {
+        addReplayWarning(warnings, 'move legality unchecked: ' + item.move + ' (' + item.reason + ')');
+      } else if (item.learnsetContext === 'historical') {
+        addReplayWarning(warnings, 'historical learnset membership ' + (item.legal ? 'found' : 'not found') + '; not current Champions legality: ' + item.move);
+      } else if (item.verification_status === 'known' && !item.legal) {
+        addReplayWarning(warnings, 'move not legal for this species/form: ' + item.move);
+      }
     });
   }
 
@@ -475,7 +543,7 @@
     var stats = sourceStatsForSpecies(species);
     var moves = observedMovesForSpecies(ctx, species, [row.postImportSpecies, row.resolvedSpecies, row.baseSpecies]);
     if (!stats) addReplayWarning(warnings, 'stats fallback used or source stats unavailable for ' + species);
-    var legality = legalityForMoves(species, moves);
+    var legality = legalityForMoves(species, moves, ctx);
     var support = supportForMoves(moves);
     applyMoveLegalityWarnings(warnings, legality);
     applyMoveSupportWarnings(warnings, support);
@@ -658,6 +726,9 @@
       ok: false,
       selectedSide: selectedSide,
       format: '',
+      tier: '',
+      gameType: '',
+      learnsetContext: '',
       rated: null,
       players: { p1: '', p2: '' },
       teamPreview: { p1: [], p2: [] },
@@ -695,6 +766,8 @@
     var observedMovesBySpecies = {};
     var parserWarnings = [];
     var lines = text.split(/\r?\n/);
+    // Resolve the complete metadata envelope before producing any roster verdict.
+    resolveReplayMetadata(lines, model);
     model.rawPreviewLines = lines.map(cleanText).filter(Boolean).slice(-250);
 
     lines.forEach(function(line) {
@@ -709,7 +782,6 @@
         return;
       }
       if (tag === 'tier' || tag === 'gametype') {
-        model.format = model.format || cleanText(parts[2]);
         return;
       }
       if (tag === 'rated') {
@@ -738,7 +810,7 @@
       }
       if (tag === 'turn') {
         if (currentTurn && currentTurn.number > 0) {
-          currentTurn.rosterState = snapshotRosterState(rosterState, { observedMovesBySpecies: observedMovesBySpecies });
+          currentTurn.rosterState = snapshotRosterState(rosterState, { observedMovesBySpecies: observedMovesBySpecies, learnsetContext: model.learnsetContext });
         }
         seenFirstTurn = true;
         lastMove = null;
@@ -1051,7 +1123,7 @@
     });
 
     if (currentTurn && currentTurn.number > 0) {
-      currentTurn.rosterState = snapshotRosterState(rosterState, { observedMovesBySpecies: observedMovesBySpecies });
+      currentTurn.rosterState = snapshotRosterState(rosterState, { observedMovesBySpecies: observedMovesBySpecies, learnsetContext: model.learnsetContext });
     }
 
     model.leads.p1 = activeSeenBeforeTurnOne.p1.slice(0, 2);
@@ -1102,6 +1174,7 @@
       previewDetails: previewDetails,
       startingSlots: startingSlots,
       observedMovesBySpecies: observedMovesBySpecies,
+      learnsetContext: model.learnsetContext,
       parserWarnings: parserWarnings
     });
     model.ok = model.turns.length > 0 || !!model.winner;

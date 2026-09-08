@@ -10,7 +10,7 @@ import { assertRequestedReplay, assertReplayContinuity } from './browser-replay-
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?browser-audit=v159&fresh=1');
+const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?browser-audit=v160&fresh=1');
 assert(['127.0.0.1', 'localhost'].includes(url.hostname), 'This audit is local-only');
 const artifacts = path.join(root, 'artifacts');
 fs.mkdirSync(artifacts, { recursive: true });
@@ -144,7 +144,7 @@ try {
   diagnostics.build = await page.locator('#build-version').innerText();
   assert.equal(await page.locator('#replay-list .replay-card').count(), 0, 'Fresh page must not manufacture replay evidence');
   await page.locator('#sim-regulation').selectOption('champions_custom_practice');
-  await page.locator('#player-select').selectOption('player');
+  await page.locator('#player-select').selectOption('mega_dragonite');
   await page.locator('#opponent-select').selectOption('mega_altaria');
   await page.locator('#bo-picker [data-bo="1"]').click();
   await page.locator('#sim-count').selectOption('1');
@@ -152,7 +152,7 @@ try {
   await page.locator('#tab-btn-simulator').click();
   await page.locator('#swap-teams-btn').click();
   assert.equal(await page.locator('#player-select').inputValue(), 'mega_altaria');
-  assert.equal(await page.locator('#opponent-select').inputValue(), 'player');
+  assert.equal(await page.locator('#opponent-select').inputValue(), 'mega_dragonite');
   await page.locator('#tab-btn-replays').click();
   await capture('after-swap-continuity', 'continuity', first);
   await page.locator('#tab-btn-simulator').click();
