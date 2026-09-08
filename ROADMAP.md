@@ -49,6 +49,7 @@ Completed locally / recorded:
 - Replay review rejects absent or structurally empty evidence and preserves stable actor/target identity through mirror-name actions. The declared cross-format harness completes 4,624/4,624 runs without state, validator, warning or repeatability failures. This is scoped invariant proof, not universal accuracy.
 - Perish Song candidate tests correct countdown, recipient immunity, concealment and terminal faint-order/winner handling, including Trick Room. Replacement-choice parity and broader residual interactions remain open. Evidence and final gate status: poke-sim/reports/perish_song_validation_2026-09-08.md.
 - Page startup no longer manufactures hidden simulation games. Paired browser audits bind selected matchup identity and preserve re-downloaded history across swaps; replay contrast and mobile reserve overflow are corrected. Scoped proof and exclusions: poke-sim/reports/intentional_replay_validation_2026-09-08.md.
+- Decision audit no longer promotes move inventories or heuristic score gaps into authoritative alternatives or execution diagnoses. Historical action availability is incomplete; re-enabling requires a versioned evidence contract. See poke-sim/reports/decision_evidence_validation_2026-09-08.md.
 
 Remaining:
 - [ ] Extend complete-game and visible-replay parity beyond the bounded fixtures; resolve Strategy-cache context mixing and misleading coaching.

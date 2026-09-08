@@ -10,7 +10,7 @@ import { assertRequestedReplay, assertReplayContinuity } from './browser-replay-
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?browser-audit=v154&fresh=1');
+const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?browser-audit=v155&fresh=1');
 assert(['127.0.0.1', 'localhost'].includes(url.hostname), 'This audit is local-only');
 const artifacts = path.join(root, 'artifacts');
 fs.mkdirSync(artifacts, { recursive: true });
@@ -43,6 +43,9 @@ async function capture(id, kind, original) {
   const exported = JSON.parse(fs.readFileSync(downloadPath, 'utf8'));
   const log = exported;
   const visual = await page.evaluate(captureVisibleReplay);
+  const coaching = await card.locator('.replay-coach-summary').allTextContents();
+  assert(!coaching.some(text => /execution rather than|clearer line on the turning turn/.test(text)), 'Unsupported causal replay coaching returned');
+  write(`${id}.coaching.json`, { summaries: coaching });
   write(`${id}.log.json`, log);
   write(`${id}.visual.json`, visual);
   inventory.cases.push({ id, kind, seed: log.seed });

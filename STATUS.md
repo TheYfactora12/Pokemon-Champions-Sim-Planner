@@ -6,12 +6,18 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- v155 withdraws unsupported decision-audit alternatives and execution diagnoses.
+  Current snapshots cannot establish full historical action availability; the
+  UI retains actual replay evidence and states this limit. See
+  [regressions and re-enabling gate](poke-sim/reports/decision_evidence_validation_2026-09-08.md).
+  Broader coaching correctness remains open.
+
 - v154 removes hidden startup games and corrects replay contrast/mobile reserve
   overflow. Browser audits download each intentional game, bind requested team
   identity and recheck retained history after swapping. See the
   [scoped audit](poke-sim/reports/intentional_replay_validation_2026-09-08.md).
   Independent review reproduced unsupported causal coaching and zero-PP
-  alternatives; those are open and next, not hidden by passing replay checks.
+  alternatives; the v155 entry records their bounded withdrawal, not full coach approval.
 
 - v153 Perish Song follow-up: 22 independent-review-confirmed probes cover
   countdown, recipient defenses, concealment/No Guard and terminal faint order

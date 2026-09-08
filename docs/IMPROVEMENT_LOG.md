@@ -6,6 +6,19 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0028: Withdraw Unsupported Decision Diagnoses
+
+Independent replay review reproduced a zero-PP Recover recommendation and an
+execution diagnosis from a heuristic score gap, even on a different turn from
+the recorded turning point. Historical move inventories are not action legality.
+The decision audit now preserves its empty API shape without authoritative flags;
+the summary keeps factual replay review and states the evidence limit. Nine
+negative regressions fail before/pass after, and three wrong old expectations
+were corrected. Lesson: positive PP is necessary, not sufficient, and a utility
+score is not a counterfactual outcome. See the
+[evidence and re-enabling gate](../poke-sim/reports/decision_evidence_validation_2026-09-08.md).
+This withdraws unsupported advice; it does not prove the rest of coaching.
+
 ### IMP-0027: Intentional Runs And Readable Replay Evidence
 
 Removed a startup simulation that silently added games before the requested run.

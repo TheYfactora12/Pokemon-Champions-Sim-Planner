@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.154-intentional-replay-evidence
+// Build marker: v2.2.155-decision-evidence-boundary
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.154-intentional-replay-evidence'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.155-decision-evidence-boundary'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -4826,76 +4826,10 @@ function _csDecisionMoveScore(move, actor, target, turn, opts) {
 }
 
 function csBuildDecisionAudit(turnLog, opts) {
-  var rows = Array.isArray(turnLog) ? turnLog : [];
-  var out = { total_flags: 0, flagged_turns: [], byTurn: {}, byKey: {} };
-  if (!rows.length) return out;
-  opts = opts || {};
-  var playerKey = opts.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
-  var oppKey = opts.oppKey || null;
-  var teamLookup = opts.teamLookup || ((typeof TEAMS !== 'undefined' && TEAMS[playerKey] && Array.isArray(TEAMS[playerKey].members)) ? TEAMS[playerKey].members : []);
-  var oppLookup = opts.oppLookup || ((oppKey && typeof TEAMS !== 'undefined' && TEAMS[oppKey] && Array.isArray(TEAMS[oppKey].members)) ? TEAMS[oppKey].members : []);
-  var playerMap = _csDecisionMemberMap(teamLookup);
-  var oppMap = _csDecisionMemberMap(oppLookup);
-  var threshold = typeof opts.threshold === 'number' ? opts.threshold : 12;
-
-  for (var i = 0; i < rows.length; i++) {
-    var turn = rows[i];
-    if (!turn || !turn.pre || !turn.actions) continue;
-    var playerActs = (turn.actions.player || []).slice();
-    if (!playerActs.length) continue;
-    var bestGap = -Infinity;
-    var bestFlag = null;
-
-    for (var a = 0; a < playerActs.length; a++) {
-      var act = playerActs[a];
-      if (!act || !act.actor || !act.move) continue;
-      var actor = playerMap[act.actor] || { name: act.actor, moves: [], types: [] };
-      var legal = (turn.pre.legal_options && turn.pre.legal_options[act.actor]) ? turn.pre.legal_options[act.actor] : [];
-      var candidates = legal.map(function(opt) {
-        return String(opt).split(' -> ')[0];
-      }).filter(function(mv) { return mv && mv.length; });
-      if (!candidates.length && Array.isArray(actor.moves)) candidates = actor.moves.slice();
-      if (!candidates.length) candidates = [act.move];
-      var targetName = act.target || ((turn.pre.active && turn.pre.active.opponent && turn.pre.active.opponent[0]) || null);
-      var target = targetName ? (oppMap[targetName] || { name: targetName, moves: [], types: [] }) : null;
-
-      var chosenScore = _csDecisionMoveScore(act.move, actor, target, turn, { oppLookup: oppMap });
-      var bestMove = act.move;
-      var bestScore = chosenScore;
-      for (var c = 0; c < candidates.length; c++) {
-        var mv = candidates[c];
-        var sc = _csDecisionMoveScore(mv, actor, target, turn, { oppLookup: oppMap });
-        if (sc > bestScore) {
-          bestScore = sc;
-          bestMove = mv;
-        }
-      }
-      var gap = Math.round((bestScore - chosenScore) * 10) / 10;
-      if (bestMove !== act.move && gap >= threshold && gap > bestGap) {
-        bestGap = gap;
-        bestFlag = {
-          turn: turn.turn,
-          actor: act.actor,
-          chosen_move: act.move,
-          best_move: bestMove,
-          chosen_score: Math.round(chosenScore * 10) / 10,
-          best_score: Math.round(bestScore * 10) / 10,
-          score_gap: gap,
-          expected_delta: Math.round(gap),
-          target: targetName,
-          reason: 'A better line was available based on current board state'
-        };
-      }
-    }
-
-    if (bestFlag) {
-      out.total_flags++;
-      out.flagged_turns.push(bestFlag);
-      out.byTurn[turn.turn] = bestFlag;
-      out.byKey[turn.turn + '|' + bestFlag.actor] = bestFlag;
-    }
-  }
-  return out;
+  // Current snapshots contain move inventories, not verified move/target availability.
+  // Positive PP cannot establish missing Disable, Encore, Choice or action-lock state.
+  // Preserve the public shape without turning heuristic scores into battle advice.
+  return { total_flags: 0, flagged_turns: [], byTurn: {}, byKey: {} };
 }
 
 function csRenderDecisionAuditChip(flag) {
@@ -8298,29 +8232,11 @@ function csBuildReplayCoachingSummary(replay, opts) {
   var fallback = {
     issue_category: 'not enough evidence',
     evidence_label: 'not enough evidence',
-    next_action: 'Run another replay with structured turn log so the Replay Log can show a clearer decision review.',
-    detail: 'This replay does not expose enough structured evidence to label the miss confidently.'
+    next_action: 'Inspect the recorded actions and board changes in the Replay Log.',
+    detail: 'This evidence does not establish which alternatives were usable or how they would have changed the outcome.'
   };
   if (!replay || typeof replay !== 'object') return fallback;
 
-  var rows = Array.isArray(replay.turnLog) ? replay.turnLog : [];
-  if (rows.length) {
-    var audit = csBuildDecisionAudit(rows, {
-      playerKey: opts.playerKey || replay.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'),
-      oppKey: opts.oppKey || replay.oppKey || null,
-      teamLookup: opts.teamLookup,
-      oppLookup: opts.oppLookup
-    });
-    if (audit && audit.total_flags && Array.isArray(audit.flagged_turns) && audit.flagged_turns.length) {
-      var flag = audit.flagged_turns[0];
-      return {
-        issue_category: 'execution',
-        evidence_label: 'replay + turn log',
-        next_action: 'Review T' + flag.turn + ': compare ' + flag.chosen_move + ' against ' + flag.best_move + '.',
-        detail: 'The replay shows a clearer line on the turning turn, so the next review target is execution rather than team theory.'
-      };
-    }
-  }
 
   return fallback;
 }
