@@ -6,6 +6,10 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0014: OODA Strategy Identity And Advice
+
+Observed: nature edits and separately registered identical teams reused the wrong Strategy report, while two heuristics invented mistakes. Root cause: incomplete cache identity and advice without action evidence. Changed: canonical full-input Strategy/Mega keys and disabled unsupported Fake Out/redirection predicates. Three regression groups failed before and pass after; all 69 focused Strategy checks pass. See [OODA evidence](release/OODA_STRATEGY_FIX_2026-09-08.md). Lesson: reproduce player-visible correctness separately from existing green suites. Local v146 candidate only; confidence, mechanics, persisted UI and live verification remain open.
+
 | Record | Improvement | Recorded proof state |
 |---|---|---|
 | [IMP-0001](#imp-0001) | Homepage destinations and neutral replay preview | Deployed v138; bounded live verification |

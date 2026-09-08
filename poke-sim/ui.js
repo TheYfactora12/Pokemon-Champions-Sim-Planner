@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.145-reg-mc-source-review
+// Build marker: v2.2.146-strategy-identity
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.145-reg-mc-source-review'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.146-strategy-identity'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13525,7 +13525,8 @@ function teamHasMega(team) {
 }
 
 function megaTriggerCacheKey(playerKey, oppKey, bo, format) {
-  return [playerKey, oppKey, bo || 1, format || 'doubles'].join('|');
+  return _stableResultsStringify([playerKey, TEAMS[playerKey] || null,
+    oppKey, TEAMS[oppKey] || null, bo || 1, format || 'doubles', strategyExecutionContext()]);
 }
 
 function getCachedMegaSweep(playerKey, oppKey, bo, format) {
@@ -17650,11 +17651,19 @@ function _t9j16_hash(s) {
 
 function teamSignature(team) {
   if (!team || !Array.isArray(team.members) || !team.members.length) return 'empty';
-  var parts = team.members.map(function(m){
-    var moves = (m.moves || []).slice().sort().join(',');
-    return [m.name||'', m.item||'', m.ability||'', moves].join('|');
-  }).sort();
-  return _t9j16_hash(parts.join('||'));
+  var snapshot = Object.assign({}, team, { members: team.members.map(function(m) {
+    return Object.assign({}, m, { moves: (m.moves || []).slice().sort() });
+  }) });
+  return _t9j16_hash(_stableResultsStringify(snapshot));
+}
+
+function strategyExecutionContext() {
+  return {
+    regulation: typeof getSelectedRegulationId === 'function' ? getSelectedRegulationId() : 'unknown',
+    rulesets: typeof CHAMPIONS_RULESETS !== 'undefined' ? CHAMPIONS_RULESETS : null,
+    build: typeof CHAMPIONS_RELEASE_MANIFEST !== 'undefined' ? CHAMPIONS_RELEASE_MANIFEST.build_id : 'unknown',
+    engine: typeof ENGINE_VERSION !== 'undefined' ? ENGINE_VERSION : 'unknown'
+  };
 }
 
 function _stableResultsStringify(value) {
@@ -17680,7 +17689,12 @@ var _strategyReportCacheLimit = 32;
 
 function _strategyReportCacheKey(teamKey, results, fmt) {
   var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
-  return [teamSignature(team), strategyResultsHash(results), fmt || 'doubles'].join('::');
+  var opponents = Object.keys(results || {}).sort().map(function(key) {
+    return [key, typeof TEAMS !== 'undefined' ? TEAMS[key] || null : null];
+  });
+  // Exact canonical inputs prevent hash collisions and preserve registered identity.
+  return _stableResultsStringify([teamKey, team, opponents, results || {},
+    fmt || (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles'), strategyExecutionContext()]);
 }
 
 function csClearStrategyReportCache() {
@@ -17812,27 +17826,19 @@ var T9J16_RULES = [
   },
   {
     id: 'fake-out-illegal-timing',
-    when: function(c){
-      var foUsers = (c.members||[]).filter(function(m){ return (m.moves||[]).indexOf('Fake Out') >= 0; });
-      if (!foUsers.length) return false;
-      // Leads aggregated; if no FO user appears in top leads, FO is unused
-      var leadNames = (c.lead_top || []);
-      return !foUsers.some(function(m){ return leadNames.indexOf(m.name) >= 0; });
-    },
+    // Aggregate lead choices do not prove an illegal action or failed Fake Out.
+    when: function(){ return false; },
     severity: function(){ return 'high'; },
-    explain: function(){ return 'Fake Out only works the first turn a Pokemon is out. Your sim shows it never triggering because the user is not leading.'; },
-    correct: function(){ return 'Lead with your Fake Out user, or click it the turn they switch in. Otherwise drop it for coverage.'; }
+    explain: function(){ return 'Action evidence is required to assess Fake Out timing.'; },
+    correct: function(){ return 'Review the action and the user\'s most recent switch-in before changing its set.'; }
   },
   {
     id: 'redirection-vs-spread',
-    when: function(c){
-      var hasSpread = (c.members||[]).some(function(m){ return _pdfHasAny(m, PDF_SPREAD); });
-      var hasRedirect = (c.members||[]).some(function(m){ return _pdfHasAny(m, PDF_REDIRECT); });
-      return hasSpread && !hasRedirect && c.format === 'doubles';
-    },
+    // The retired heuristic incorrectly treated redirection as spread protection.
+    when: function(){ return false; },
     severity: function(){ return 'medium'; },
-    explain: function(){ return 'Your spread damage gets canceled into Follow Me / Rage Powder teams. You have no redirector to mirror it.'; },
-    correct: function(){ return 'Click target-pressure single-target moves into redirection. Save spread for when redirect is gone or off-target.'; }
+    explain: function(){ return 'Team composition alone does not establish a targeting mistake.'; },
+    correct: function(){ return 'Inspect the resolved targets and protection events in the replay.'; }
   },
   {
     id: 'double-switch-over-read',
