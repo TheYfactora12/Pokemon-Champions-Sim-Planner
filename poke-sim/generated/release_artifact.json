@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.155-decision-evidence-boundary",
+  "build_id": "v2.2.156-coaching-template-evidence",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "2aadb38210f6d0173619af888b0cae3ba53f2c87671f0ca80c2d701cd30de28a",
-  "bundle_bytes": 11477850,
+  "bundle_sha256": "6790c626d1460c9760c98ab92e1a254c27c8e8079c701978f5ac276e6dea3e84",
+  "bundle_bytes": 11475575,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }

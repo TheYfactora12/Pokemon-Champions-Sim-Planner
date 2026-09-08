@@ -50,6 +50,7 @@ Completed locally / recorded:
 - Perish Song candidate tests correct countdown, recipient immunity, concealment and terminal faint-order/winner handling, including Trick Room. Replacement-choice parity and broader residual interactions remain open. Evidence and final gate status: poke-sim/reports/perish_song_validation_2026-09-08.md.
 - Page startup no longer manufactures hidden simulation games. Paired browser audits bind selected matchup identity and preserve re-downloaded history across swaps; replay contrast and mobile reserve overflow are corrected. Scoped proof and exclusions: poke-sim/reports/intentional_replay_validation_2026-09-08.md.
 - Decision audit no longer promotes move inventories or heuristic score gaps into authoritative alternatives or execution diagnoses. Historical action availability is incomplete; re-enabling requires a versioned evidence contract. See poke-sim/reports/decision_evidence_validation_2026-09-08.md.
+- Generic pre/in/post coaching templates no longer invent best plans, default scores, causes or confidence from volume. Unknown or ambiguous turn evidence stays unknown; score output is explicitly heuristic. See poke-sim/reports/coach_template_validation_2026-09-08.md.
 
 Remaining:
 - [ ] Extend complete-game and visible-replay parity beyond the bounded fixtures; resolve Strategy-cache context mixing and misleading coaching.

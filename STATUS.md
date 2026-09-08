@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- v156 generic coach templates stop inventing causes, best plans, absent scores
+  and confidence from volume. They retain recorded facts and explicit unknowns.
+  [Template audit](poke-sim/reports/coach_template_validation_2026-09-08.md)
+  records the bounded withdrawal; broader strategy correctness remains open.
+
 - v155 withdraws unsupported decision-audit alternatives and execution diagnoses.
   Current snapshots cannot establish full historical action availability; the
   UI retains actual replay evidence and states this limit. See

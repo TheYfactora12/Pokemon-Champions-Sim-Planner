@@ -6,6 +6,17 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0029: Templates Report Facts Without Inventing Confidence
+
+Separate generic coach templates invented causes, best plans, default scores and
+confidence from volume. They now retain current matchup/recorded row facts and
+explicit uncertainty. Missing turns no longer reuse the last turn; a real zero
+heuristic score stays zero. Removed dead aggregate-inference helpers and an
+unverified performance tagline. Four negative reproductions fail before/pass
+after; the voice suite passes with two incorrect old expectations corrected.
+See [scope and remaining gates](../poke-sim/reports/coach_template_validation_2026-09-08.md).
+Lesson: uncertainty must hold in every presentation path, not just one summary.
+
 ### IMP-0028: Withdraw Unsupported Decision Diagnoses
 
 Independent replay review reproduced a zero-PP Recover recommendation and an

@@ -10,7 +10,7 @@ import { assertRequestedReplay, assertReplayContinuity } from './browser-replay-
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?browser-audit=v155&fresh=1');
+const url = new URL(process.argv[2] || 'http://127.0.0.1:8770/pokemon-champion-2026.html?browser-audit=v156&fresh=1');
 assert(['127.0.0.1', 'localhost'].includes(url.hostname), 'This audit is local-only');
 const artifacts = path.join(root, 'artifacts');
 fs.mkdirSync(artifacts, { recursive: true });
@@ -54,6 +54,16 @@ async function capture(id, kind, original) {
   await page.screenshot({ path: path.join(directory, `${id}-start.png`) });
   await card.locator('.replay-stadium').last().scrollIntoViewIfNeeded();
   await page.screenshot({ path: path.join(directory, `${id}-last.png`) });
+  const fieldIndex = (log.turnLog || []).findIndex(row => {
+    const field = row.post && row.post.field;
+    const speed = row.post && row.post.speed_control;
+    return (field && (field.weather || field.terrain || field.trick_room > 0)) ||
+      (speed && Object.values(speed).some(side => side && (side.tailwind_turns > 0 || Object.values(side.screens || {}).some(turns => turns > 0))));
+  });
+  if (fieldIndex >= 0) {
+    await card.locator('.replay-turn-row').nth(fieldIndex).locator('.replay-turn-main').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: path.join(directory, `${id}-field.png`) });
+  }
   const report = compareVisibleReplay(log, visual);
   write(`${id}.comparison.json`, report);
   if (original) {
