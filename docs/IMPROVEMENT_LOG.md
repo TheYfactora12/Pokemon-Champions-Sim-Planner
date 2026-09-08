@@ -6,6 +6,20 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0023: Official M-B Roster And Extension Audit
+
+Observed: the M-B end date was stale and the visual ledger's 235 rows hid duplicate
+and mismatched species. Captured 235 unique official roster IDs with source hash
+`8b0c6db8dcd403bb1f5453c1c6f9ac35c80192762219a308c80023375a93d617`.
+Corrected the September 9 Ranked deadline, reproduced the old date failure, and
+passed 15 selection, six M-C transition, 20 legacy audit tests plus official
+presence/absence and form-ID checks. Marked the old visual ledger superseded for
+eligibility; kept it as historical evidence. Roadmap source and generated site view
+now prioritize exact mapping and full validation. See
+[M-B sign-off audit](release/REG_MB_SIGNOFF_AUDIT.md).
+Lesson: equal row counts and green review-only tests do not establish roster truth.
+v151 candidate only; no competitive approval, database change, or deployment.
+
 ### IMP-0021: Retro Homepage Battle Opening
 
 Replaced the abstract Team Test/Benchmark preview with a decorative Gengar versus

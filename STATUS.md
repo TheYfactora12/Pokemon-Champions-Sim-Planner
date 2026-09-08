@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- v151 M-B sign-off audit: official deadline correction and 235 unique official
+  roster IDs captured. The old visual ledger has a duplicate and species
+  discrepancies, so full approval remains blocked. See
+  [acceptance work and evidence](docs/release/REG_MB_SIGNOFF_AUDIT.md).
+  Bundle: 11,478,185 bytes, SHA-256
+  `8a9882d50d0a646dc6f0516d777433612a183a27f149c118452550e6e9cdd265`.
+
 - [Staging discovery](docs/release/SUPABASE_STAGING_DISCOVERY.md): GitHub and the
   connected Supabase account checked read-only. Only main is confirmed; CI test
   secret names are absent at repository scope. `_T` alone does not prove isolation.
@@ -22,7 +29,7 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 - September 8 audit correction: [product trust audit](docs/release/PRODUCT_TRUST_AUDIT_2026-09-08.md) reproduces stale/misattributed Strategy reports and evidence-free advice; unresolved PR #195 mechanics and regulation findings remain release blockers despite green CI. The requested destination now includes both singles and doubles; existing doubles-only roadmap scope requires reconciliation. Do not treat Josh QA as the only remaining release gate.
 
 - Branch: `candidate/v143-regulation-db-diagnosis`, based on merged `origin/main` at `81bb0ef250da`.
-- Current candidate: `v2.2.150-retro-opening`; engine `1.1.7` unchanged. The prior v149 audit receipt remains in the dated OODA report. Candidate updates go through PR #195; no Pages deployment is claimed.
+- Current candidate: `v2.2.151-mb-official-audit`; engine `1.1.7` unchanged. Prior candidate receipts remain historical. Candidate updates go through PR #195; no Pages deployment is claimed.
 - [Company-findings OODA cycle](docs/release/OODA_COMPANY_FINDINGS_2026-09-08.md): eight Leftovers/Toxic reference probes pass; replay matching is contained pending a verified identity resolver; timing-only coaching is excluded from scoring and critical-mistake cards. Six new regression groups and manual doubles/p1 plus singles/p2 replay reviews pass. News CLI repair is candidate-only. Shared-write containment passed isolated PostgreSQL controls but is not applied to Supabase; staging and private-schema verification remain open.
 - [Independent company audit](docs/release/INDEPENDENT_COMPANY_AUDIT_2026-09-08.md) preserves the original findings. The linked OODA report owns their subsequent disposition. Live security and watcher health remain release gates; the inspected public site is v142.
 - [Outcome-claim OODA cycle](docs/release/OODA_OUTCOME_CLAIMS_2026-09-08.md): removed automatic endgame-error judgments from final losses and positive IQ evidence from missing errors. Two regression groups pass across both formats/sides and sparse evidence; full fast gate passed 159 files with four manual/helper skips. Roadmap source/browser view regenerated. Broader IQ calibration, downstream inference, URL/download and all independent release/security gates remain open; no manual v148 browser verification is claimed.

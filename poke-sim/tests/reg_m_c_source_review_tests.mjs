@@ -18,11 +18,11 @@ test('official M-C schedule uses exact UTC boundaries', () => {
   assert.equal(review.official_notice.effective_to_utc, row.endsAtUtc);
 });
 
-test('pre-start gap points to scheduled M-C without claiming coverage', () => {
+test('M-B extension covers September 8 without granting competitive approval', () => {
   const gap = ctx.getChampionsRegulationCoverage('2026-09-08T12:00:00Z');
-  assert.equal(gap.status, 'scheduled_source_review');
+  assert.equal(gap.status, 'source_review');
   assert.equal(gap.covered, false);
-  assert.equal(gap.regulation_id, 'champions_reg_m_c_2026');
+  assert.equal(gap.regulation_id, 'champions_reg_m_b_2026');
 });
 
 test('M-C is recognized but blocked at both exact active boundaries', () => {
