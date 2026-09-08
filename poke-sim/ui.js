@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.153-perish-song-boundaries
+// Build marker: v2.2.154-intentional-replay-evidence
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.153-perish-song-boundaries'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.154-intentional-replay-evidence'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -20522,40 +20522,6 @@ function _csSimLogWrite(store) {
   }
 }
 
-function csShouldBootstrapSimulatorBoard() {
-  try {
-    var resultsSection = document.getElementById('results-section');
-    if (resultsSection && resultsSection.style.display !== 'none') return false;
-    if (typeof Storage === 'undefined') return true;
-    var simlog = Storage.get(CS_SIMLOG_KEY);
-    if (simlog && Array.isArray(simlog.entries) && simlog.entries.length) return false;
-    return true;
-  } catch (e) {
-    UILog.warn('bootstrap sim-board check failed', e);
-    return false;
-  }
-}
-
-async function csBootstrapSimulatorBoard() {
-  if (simRunning) return false;
-  if (!csShouldBootstrapSimulatorBoard()) return false;
-  var simCtx = null;
-  try { simCtx = resolveSimContext({ bo: currentBo }); } catch (_ctxErr) { return false; }
-  var oppKey = simCtx.oppKey;
-  var playerKey = simCtx.playerKey;
-  simRunning = true;
-  try {
-    var res = await runBoSeries(1, playerKey, oppKey, currentBo, function(){});
-    displayResults(res, oppKey, simCtx);
-    return true;
-  } catch (e) {
-    UILog.warn('sim-board bootstrap skipped', e);
-    return false;
-  } finally {
-    simRunning = false;
-  }
-}
-
 // Shape a single simulateBattle result into the compact sim-log game form.
 // Keeps the essentials (result/turns/leads/bring/survivors/winCondition
 // /TR+TW turns/koEvents). Drops the big "log" string array — not needed
@@ -22656,10 +22622,6 @@ if (typeof window !== 'undefined') {
     if (typeof rebuildTeamSelects === 'function') {
       try { rebuildTeamSelects(); } catch (_e) { /* fail-soft */ }
     }
-
-    // On fresh origins with no prior local sim history, paint one seeded board
-    // so the first-load website experience matches the local board-first view.
-    try { setTimeout(function(){ csBootstrapSimulatorBoard(); }, 50); } catch (_e) {}
 
     // Render when Strategy tab is opened
     document.querySelectorAll('.tab-btn[data-tab="strategy"]').forEach(function(btn){

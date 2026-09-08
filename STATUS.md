@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- v154 removes hidden startup games and corrects replay contrast/mobile reserve
+  overflow. Browser audits download each intentional game, bind requested team
+  identity and recheck retained history after swapping. See the
+  [scoped audit](poke-sim/reports/intentional_replay_validation_2026-09-08.md).
+  Independent review reproduced unsupported causal coaching and zero-PP
+  alternatives; those are open and next, not hidden by passing replay checks.
+
 - v153 Perish Song follow-up: 22 independent-review-confirmed probes cover
   countdown, recipient defenses, concealment/No Guard and terminal faint order
   with/without Trick Room. Full gate passed 165 fast and 12 offline/mock DB files,

@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.153-perish-song-boundaries",
+  "build_id": "v2.2.154-intentional-replay-evidence",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "29808a41882457256e5f3747421f05e1bca7c2b892f2660ae550e2b105b0c354",
-  "bundle_bytes": 11481778,
+  "bundle_sha256": "643a855b01c2ff49e35759a21e90671fef61964dd9666a28e5b236607432f661",
+  "bundle_bytes": 11481377,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }

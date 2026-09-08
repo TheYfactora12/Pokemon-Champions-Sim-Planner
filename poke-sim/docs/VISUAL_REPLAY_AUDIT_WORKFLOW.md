@@ -4,6 +4,14 @@ Required for agent-operated simulations, team swaps, imports, set edits and lead
 
 ## Per Change And Run
 
+Local repeatable browser check: `node tools/audit-browser-replay.mjs` uses
+Playwright supplied by the test environment (not an application dependency).
+It runs two Bo1 games, downloads both, revisits the first after swapping teams,
+and checks paired evidence plus light/dark desktop/mobile replay layouts.
+It refuses remote target URLs and blocks non-read network requests. Artifacts
+remain in the ignored `artifacts/browser-replay-*` directory. Screenshot review
+is still required; calculated contrast is diagnostic, not accessibility certification.
+
 1. Record URL, visible build, selected teams, format, Bo mode, bring/lead choices and the change made. After changing teams, inspect whether old results remain and whether their labels still identify the original matchup.
 2. Reopen a retained old replay after the change and compare it with its original download. Historical evidence must not inherit the newly selected team's identity, items or moves.
 3. Use a small interactive batch so every retained game can be checked. Download each replay through its own **Download JSON** button. Open exactly one card at a time, capture that visible card, and pair the two immediately; never pair by species names or newest-file guess alone.

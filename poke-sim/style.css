@@ -1165,6 +1165,17 @@ table{border-collapse:collapse;width:100%}
 .replay-play-row{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:start;font-size:12px;line-height:1.45;padding:3px 0;border-top:1px solid rgba(148,163,184,.12)}
 .replay-play-row span{font-family:var(--font-mono);color:var(--text-m);font-size:10px;text-align:right}
 .replay-play-row b{font-weight:700;overflow-wrap:anywhere;color:var(--text)}
+/* Replay evidence must remain readable in both themes, including reserves. */
+.replay-stadium,.replay-play-by-play{--text-m:var(--text)}
+.replay-stadium-field{background:var(--surface)}
+.replay-stadium-zone,.replay-play-by-play{background:var(--surface2)}
+.replay-stadium-mon.bench,.replay-stadium-mon.fainted{opacity:1}
+.replay-stadium-zone{align-content:start}
+.replay-roster-mon-head{flex-wrap:wrap}
+.replay-roster-mon-head>strong{min-width:0;overflow-wrap:anywhere}
+@media(max-width:600px){
+  .replay-stadium-reserves{grid-template-columns:minmax(0,1fr)}
+}
 .replay-coach-metric{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp3);min-width:0}
 .replay-coach-metric strong{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-m);margin-bottom:4px;font-family:var(--font-mono)}
 .replay-coach-metric span{display:block;font-size:var(--text-sm);font-weight:800;overflow-wrap:break-word;word-break:normal}
@@ -2518,14 +2529,14 @@ table{border-collapse:collapse;width:100%}
   margin: 8px 0 10px;
 }
 .replay-turn-row {
-  border-left: 3px solid #334155;
-  background: #0b1220;
+  border-left: 3px solid var(--border);
+  background: var(--surface2);
   border-radius: 6px;
   padding: 8px;
 }
 .replay-turn-row.swing {
-  border-left-color: #f59e0b;
-  background: #2b1d07;
+  border-left-color: var(--gold);
+  background: var(--surface2);
   font-weight: 700;
 }
 .replay-turn-main {
@@ -2533,12 +2544,12 @@ table{border-collapse:collapse;width:100%}
   gap: 8px;
   align-items: baseline;
   font-size: 12px;
-  color: #e2e8f0;
+  color: var(--text);
 }
 .replay-turn-score {
   margin-top: 4px;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--text);
 }
 .replay-hp-bars {
   display: grid;

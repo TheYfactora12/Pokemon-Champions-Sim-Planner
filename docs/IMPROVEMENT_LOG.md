@@ -6,6 +6,20 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0027: Intentional Runs And Readable Replay Evidence
+
+Removed a startup simulation that silently added games before the requested run.
+Paired browser testing exposed it, then screenshots exposed light-theme contrast
+and mobile reserve overflow. Corrected all three without altering mechanics or
+discarding user history. Independent review strengthened the harness: exported
+matchup identity must match the selected teams, and actual re-downloads must
+retain all historical fields, excluding only two documented creation timestamps.
+Lesson: replay/export agreement alone can agree on the wrong requested matchup;
+DOM parity also does not prove readable pixels. Scope and unsuccessful captures
+remain documented in the [replay audit](../poke-sim/reports/intentional_replay_validation_2026-09-08.md).
+Unsupported causal coaching was independently reproduced and remains next.
+No live database changes, deployment, regulation approval or 99% accuracy claim.
+
 ### IMP-0026: Perish Song Countdown, Recipients And Terminal Result
 
 Ten initial probes reproduced an early third-turn KO and missing recipient
