@@ -73,3 +73,13 @@ Bundle: 11,485,741 bytes. SHA-256:
 No battle-engine change, production DB write, merge, deployment or Alfredo
 alignment is established by this pass. Broad green tests do not establish 99%
 competitive accuracy. Keep PR #195 behind its remaining review gates.
+
+## Publication Readback
+
+- Runtime/tests/report committed and pushed as `29fc41f` to the existing
+  candidate branch and PR #195. Hosted checks were pending when inspected;
+  this is not deployment or independent approval.
+- GitHub's push response reported 16 default-branch dependency alerts: seven
+  high, seven moderate and two low. These are untriaged platform-reported
+  alerts, not independently validated exploit paths. Review Dependabot and
+  affected runtime/development scopes before public-launch approval.
