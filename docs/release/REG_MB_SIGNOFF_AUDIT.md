@@ -30,6 +30,18 @@ not an executed competitive acceptance result.
 
 ## Remaining Acceptance Work
 
+Overnight progress: the review-only mapper now resolves 233 of 235 official IDs
+to explicit baseline identity candidates. Vivillon 0666-018 and Floette 0670-005
+stay unresolved because the display labels do not identify their exact runtime
+forms. The generated `poke-sim/source/reg-m-b-identity-review.json` binds the
+capture, baseline and mapper hashes; `--check` detects drift. Candidate mapping
+is not approval, a legality validator, or a 99% game-accuracy result.
+
+All 16 Mega implementation rows match the pinned Showdown 0.11.11 Champions mod
+for six base stats, types, primary ability and required stone. The tests also
+verify each stone's owner-to-Mega mapping. This closes the bounded baseline-field
+comparison, not Champions in-game behavior or permitted move combinations.
+
 1. Review an exact official-ID-to-runtime-ID mapping for all 235 rows. Preserve
    historical visual evidence but never publish its known incorrect eligibility.
 2. Verify every Mega's item, stats, typing, ability and learnset against pinned

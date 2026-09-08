@@ -6,6 +6,21 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0024: Explicit Official Roster Identity Candidates
+
+Added a deterministic review-only mapper and hash-bound identity artifact for
+the official M-B capture. 233 candidates resolve; two nondefault forms fail closed.
+Tests cover altered labels, unknown IDs, dex mismatch, exclusions, duplicates,
+input immutability and generated-artifact freshness. Sixteen Mega records also
+match pinned Showdown Champions fields and each stone's actual owner map.
+The initial test assumed an old Showdown string field; inspection showed the
+pinned API uses an owner-to-form object, so the harness was corrected without
+changing engine data. These are identity/field checks, not live game approval.
+Independent review exposed default-form substitution within one Dex number and
+CRLF false drift. Both were reproduced or exercised in executable regressions
+and corrected before push. Named default states remain supported.
+See [overnight handoff](release/OVERNIGHT_HANDOFF_2026-09-08.md).
+
 ### IMP-0023: Official M-B Roster And Extension Audit
 
 Observed: the M-B end date was stale and the visual ledger's 235 rows hid duplicate

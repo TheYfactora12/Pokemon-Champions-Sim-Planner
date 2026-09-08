@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- [One-time overnight handoff](docs/release/OVERNIGHT_HANDOFF_2026-09-08.md):
+  233 review-only official identity candidates, two unresolved forms, and 16
+  pinned-baseline Mega field comparisons. No regulation promotion. Independent
+  review caught and verified fixes for form substitution and CRLF artifact drift.
+
 - v151 M-B sign-off audit: official deadline correction and 235 unique official
   roster IDs captured. The old visual ledger has a duplicate and species
   discrepancies, so full approval remains blocked. See
