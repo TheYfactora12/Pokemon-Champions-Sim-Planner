@@ -3335,6 +3335,7 @@ function _battleRosterSnapshot(active, bench, roster, side) {
       hp: hpPct,
       hp_current: mon.hp,
       substitute_hp: Math.max(0, mon.substituteHp || 0),
+      perish_song_turns: Math.max(0, mon.perishSongTurns || 0),
       hp_max: mon.maxHp,
       hpLabel: hpPct + '%',
       level: mon.level || 50,
@@ -4397,6 +4398,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         ? enemies.indexOf(target)
         : (attacker.chargingTargetSide === 'ally' ? allies.indexOf(target) : null);
       attacker.concealedByMove = move === 'Phantom Force' ? move : null;
+      log.push(`${attacker.name} used ${move}!`);
       log.push(`${attacker.name} began charging ${move}!`);
       return;
     } else if (_powerHerbSkip) {
@@ -4894,7 +4896,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
       if (move === 'Perish Song') {
         for (const mon of [...playerActive, ...oppActive].filter(m => m.alive)) {
-          mon.perishSongTurns = 3;
+          if (mon.concealedByMove && !_isAccuracyBypassed(attacker, mon)) {
+            log.push(`${mon.name} avoided Perish Song while concealed!`);
+            continue;
+          }
+          if (mon !== attacker && _targetAbilityActive(mon, attacker, 'Soundproof')) {
+            log.push(`${mon.name}'s Soundproof blocked Perish Song!`);
+            continue;
+          }
+          if (!mon.perishSongTurns) mon.perishSongTurns = 4;
         }
         log.push(`${attacker.name} sang a Perish Song!`);
         return;
@@ -7022,7 +7032,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
     }
 
-    for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.perishSongTurns > 0)) {
+    // Match the pinned reference's 13-bit action-speed key for residual handlers.
+    const perishQueue = [...playerActive, ...oppActive].filter(m => m.alive && m.perishSongTurns > 0)
+      .map(mon => {
+        const speed = mon.getEffSpeed(field);
+        return { mon, speed: Math.trunc(field.trickRoom ? 10000 - speed : speed) & 8191 };
+      });
+    _speedSort(perishQueue, (a, b) => b.speed - a.speed, rng);
+    let lastPerishSide = null;
+    for (const { mon } of perishQueue) {
       mon.perishSongTurns--;
       if (mon.perishSongTurns <= 0) {
         const hpBeforePerish = mon.hp;
@@ -7034,7 +7052,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           damage_applied: Math.max(0, hpBeforePerish - mon.hp)
         });
         _recordKO(mon, { move: 'Perish Song', attacker: null, reason: 'perish' });
+        lastPerishSide = mon.side === field.playerSide ? 'player' : 'opponent';
       }
+    }
+    if (lastPerishSide && ![...playerActive, ...playerBench, ...oppActive, ...oppBench].some(mon => mon.alive)) {
+      field.perishTerminalWinner = lastPerishSide;
     }
 
     // Grassy Terrain: heal grounded mons 1/16 maxHp at end of turn.
@@ -7148,7 +7170,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   let result;
   let winCondition = '';
-  if (pSurvive > oSurvive) {
+  if (pSurvive === 0 && oSurvive === 0 && field.perishTerminalWinner) {
+    result = field.perishTerminalWinner === 'player' ? 'win' : 'loss';
+    winCondition = 'Perish Song last-faint resolution';
+  } else if (pSurvive > oSurvive) {
     result = 'win';
     const ko = log.filter(l => l.includes('fainted')).length;
     const trSet = log.some(l => l.includes('Trick Room was set'));
@@ -7431,7 +7456,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.8'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.9'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

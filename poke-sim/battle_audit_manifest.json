@@ -106,7 +106,7 @@
       "id": "status",
       "name": "Major status, volatile status, immunities, duration, denial, and end-of-turn effects",
       "status": "partial",
-      "tests": ["tests/status_tests.js", "tests/battle_system_mechanics_tests.js", "tests/company_audit_regressions.mjs"],
+      "tests": ["tests/status_tests.js", "tests/battle_system_mechanics_tests.js", "tests/company_audit_regressions.mjs", "tests/perish_song_reference_tests.mjs"],
       "known_gaps": ["Leftovers/Toxic ordering and rounding have bounded doubles parity. Full residual event ordering, lethal boundaries, Heal Block expiry and mixed recovery remain unproved."]
     },
     {

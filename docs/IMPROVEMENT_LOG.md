@@ -6,6 +6,26 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0026: Perish Song Countdown, Recipients And Terminal Result
+
+Ten initial probes reproduced an early third-turn KO and missing recipient
+defenses. Candidate v153 / engine 1.1.9 preserves four-turn timing, existing
+countdowns, Soundproof/Mold Breaker/Ability Shield and concealed recipients with
+No Guard exceptions. Two-wave games exposed a false terminal draw; the candidate
+uses pinned residual action-speed order and last-faint resolution. Review then
+caught an initially omitted Trick Room transformation; new fixtures reproduced
+and corrected it. Charge-start actions are now present in logs.
+Independent final review passes 22 probes and has no remaining scoped findings.
+Lesson: duration, recipient selection, action evidence and winner resolution are
+separate contracts. A valid alternative replacement choice is not an engine bug,
+but prevents full trace parity unless both harnesses use the same choices.
+Full local gate passed 165 fast and 12 offline/mock DB files with four skips;
+standing audit passed its selected suites, three unchanged goldens and 4,500
+matrix games with zero JS errors. Local version/roadmap smoke passes with no page
+errors. Hosted CI and paired interactive replay proof remain separate; no
+deployment or regulation promotion.
+See [Perish Song audit](../poke-sim/reports/perish_song_validation_2026-09-08.md).
+
 ### IMP-0025: PP Drain And Substitute Defense Boundaries
 
 The old local Spite test asserted the wrong Substitute result. New paired

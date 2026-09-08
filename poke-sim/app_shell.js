@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.152-pp-substitute-boundaries';
+      return txt || 'v2.2.153-perish-song-boundaries';
     } catch (e) {
-      return 'v2.2.152-pp-substitute-boundaries';
+      return 'v2.2.153-perish-song-boundaries';
     }
   }
 

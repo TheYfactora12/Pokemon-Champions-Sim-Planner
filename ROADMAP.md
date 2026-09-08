@@ -47,6 +47,7 @@ Completed locally / recorded:
 - Same-turn Tailwind and Growl/Leer now agree with pinned Showdown in scoped synthetic doubles probes, including side swaps, Trick Room, per-target protection and selected ability/item/Substitute gates. PP, single/double Pressure, depletion and Struggle have deterministic boundary coverage.
 - September 8 PP/Substitute audit corrects earlier wrong Spite, Taunt and Noble Roar test expectations. Side-swapped synthetic reference probes cover named bypass, reflection, protection, ability, secondary-effect and knockout boundaries, with Substitute HP preservation checks. The dated audit owns exact test counts and outstanding gates: poke-sim/reports/pp_substitute_validation_2026-09-08.md.
 - Replay review rejects absent or structurally empty evidence and preserves stable actor/target identity through mirror-name actions. The declared cross-format harness completes 4,624/4,624 runs without state, validator, warning or repeatability failures. This is scoped invariant proof, not universal accuracy.
+- Perish Song candidate tests correct countdown, recipient immunity, concealment and terminal faint-order/winner handling, including Trick Room. Replacement-choice parity and broader residual interactions remain open. Evidence and final gate status: poke-sim/reports/perish_song_validation_2026-09-08.md.
 
 Remaining:
 - [ ] Extend complete-game and visible-replay parity beyond the bounded fixtures; resolve Strategy-cache context mixing and misleading coaching.

@@ -328,10 +328,10 @@
       "family": "status",
       "behavior": "Perish Song reaching zero on multiple Pokemon resolves all faints and the winner correctly.",
       "status": "partial",
-      "tests": ["tests/move_verification_registry_tests.js"],
+      "tests": ["tests/move_verification_registry_tests.js", "tests/perish_song_reference_tests.mjs"],
       "oracle": "Pokemon Showdown Perish Song residual ordering.",
-      "boundary_vectors": ["single-faint", "both-sides-zero", "bench-available"],
-      "known_gap": "Perish Song simultaneous zero-count winner and replacement fixtures are missing. September 8 inspection also found unconditional per-recipient application and a same-turn-decrement countdown that need dedicated Soundproof and timing reference probes. The new field-activation control proves only that a Soundproof foe does not cancel the entire song."
+      "boundary_vectors": ["single-faint", "both-sides-zero", "bench-available", "fourth-end-of-turn", "side-swapped", "Soundproof-source", "Soundproof-target", "Mold-Breaker", "Ability-Shield", "recast-does-not-reset", "replacement-lifecycle"],
+      "known_gap": "Four-turn reference probes cover countdown, recast and named immunity gates; two-wave terminal winner/faint-order with/without Trick Room and Phantom Force/No Guard controls also pass. Tied residual speeds, voluntary switch/re-entry and other semi-invulnerability remain unproved. Replacement choices differ by policy; matching counts and legal membership do not prove identical tactical continuation."
     },
     {
       "id": "RESOURCE-PP-PRESSURE",

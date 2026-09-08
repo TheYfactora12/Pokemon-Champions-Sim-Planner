@@ -40,6 +40,17 @@ investigation. Final artifact gate passed 164 fast and 12 offline/mock DB files,
 with four manual/helper skips. Local version and
 roadmap browser smoke passed without starting any simulation.
 
+## Next Mechanics Investigation
+
+v152 was pushed as `1088607`; hosted CI `34188336064` passed. No deployment.
+Perish Song follow-up v153 has 22 passing probes after reproducing early faints,
+missing recipient defenses, countdown reset, concealment and terminal result
+defects. Independent final review is clear in scope. Full gate passed 165 fast
+and 12 offline/mock DB files; battle audit passed 4,500 games and three unchanged
+goldens. Local version smoke passes. Hosted CI and paired replay proof remain.
+See
+[Perish Song audit](../../poke-sim/reports/perish_song_validation_2026-09-08.md).
+
 ## Dependency Intake
 
 Fresh candidate `npm audit` reports 11 affected packages (one critical, six high,
