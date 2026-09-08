@@ -1522,41 +1522,41 @@
           evidence: userSpeedNames + ' vs ' + oppSpeedNames
         });
       } else if (userSpeed.length && (immediatePayoff || deferredPayoffTurn)) {
-        insight.stateShift = immediatePayoff ? 'Speed control converted' : 'Setup paid off later';
-        insight.severity = 'good';
-        insight.confidence = deferredPayoffTurn ? 'medium' : 'high';
-        insight.coachingRead = immediatePayoff
-          ? 'Your speed-control turn converted into immediate pressure or material.'
-          : 'This speed-control turn paid off within the next three turns, so it should not be graded as a passive setup turn.';
+        insight.stateShift = 'Speed control and HP changes observed';
+        insight.severity = 'low';
+        insight.confidence = 'low';
+        insight.coachingRead = 'HP or faint events occurred near speed control. These events do not establish that speed control caused an advantage.';
         insight.suppressSpeedNoPressure = true;
         insight.notes.push({
-          id: deferredPayoffTurn ? 'deferred_payoff' : 'speed_control_converted',
-          tag: deferredPayoffTurn ? 'Deferred Payoff Recognized' : 'Speed Control Converted',
+          id: 'speed_control_pressure_observed',
+          observationOnly: true,
+          tag: 'Speed Control Context',
           category: 'speed_control',
-          severity: 'good',
-          confidence: deferredPayoffTurn ? 'medium' : 'high',
-          message: deferredPayoffTurn ? 'Setup paid off on turn ' + deferredPayoffTurn + '.' : 'Speed control created immediate pressure.',
-          whatHappened: 'You used ' + userSpeedNames + (deferredPayoffTurn ? ' and gained payoff by turn ' + deferredPayoffTurn + '.' : ' and gained pressure immediately.'),
-          whyMattered: 'Good speed control is not just the field state; it must become damage, a KO, forced Protect, or preserved win condition.',
-          doInstead: 'Keep this pattern: name the next two turns before setting speed control, then convert the window before it expires.',
-          evidence: deferredPayoffTurn ? 'Payoff detected within T+3' : 'Immediate material or damage pressure'
+          severity: 'low',
+          confidence: 'low',
+          message: 'Speed control and subsequent HP or faint events were observed; causality is unverified.',
+          whatHappened: 'You used ' + userSpeedNames + '. HP or faint events also occurred in this window.',
+          whyMattered: 'Residual damage, existing low HP and unrelated actions can produce the same observation.',
+          doInstead: 'Inspect action order and damage sources before attributing an advantage to speed control.',
+          evidence: deferredPayoffTurn ? 'HP or faint events within T+3; no causal proof' : 'Same-turn HP or faint events; no causal proof'
         });
       } else if (userSetup.length && deferredPayoffTurn) {
-        insight.stateShift = 'Complementary turn paid off';
-        insight.severity = 'good';
-        insight.confidence = 'medium';
-        insight.coachingRead = 'This setup or protection turn enabled material within the next three turns, so it should be credited as part of the line.';
+        insight.stateShift = 'Setup and later HP changes observed';
+        insight.severity = 'low';
+        insight.confidence = 'low';
+        insight.coachingRead = 'HP or faint events followed setup or protection. This does not establish that the earlier action enabled them.';
         insight.notes.push({
-          id: 'complementary_turn_payoff',
-          tag: 'Complementary Turn Payoff',
+          id: 'setup_pressure_observed',
+          observationOnly: true,
+          tag: 'Setup Context',
           category: 'turn_execution',
-          severity: 'good',
-          confidence: 'medium',
-          message: 'Setup or protection paid off on turn ' + deferredPayoffTurn + '.',
-          whatHappened: 'You used ' + userSetup.map(replayMoveName).filter(Boolean).join(', ') + ' and gained payoff by turn ' + deferredPayoffTurn + '.',
-          whyMattered: 'Some correct turns are enabling turns, not immediate damage turns. They should be credited when the next board proves the payoff.',
-          doInstead: 'Keep linking setup/protection turns to a concrete next-turn conversion instead of treating them as isolated pauses.',
-          evidence: 'Payoff detected within T+3'
+          severity: 'low',
+          confidence: 'low',
+          message: 'HP or faint events followed setup or protection; causality is unverified.',
+          whatHappened: 'You used ' + userSetup.map(replayMoveName).filter(Boolean).join(', ') + '. Later HP or faint events were observed by turn ' + deferredPayoffTurn + '.',
+          whyMattered: 'Residual damage and unrelated actions can produce the same sequence.',
+          doInstead: 'Inspect event causes before treating the earlier turn as successful setup.',
+          evidence: 'HP or faint events within T+3; no causal proof'
         });
       }
 
@@ -2026,6 +2026,7 @@
       var speedInsight = speedInsights[turn.number] || {};
 
       (speedInsight.notes || []).forEach(function(note) {
+        if (note.observationOnly) return;
         addIssue(issues, note.tag, note.severity || 'low', turn.number, note.message || note.whatHappened, note.confidence || 'medium', note.doInstead, note);
       });
 

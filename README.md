@@ -34,7 +34,7 @@ This project should ship as a public site first, then add optional accounts, don
 - Subscription: for saved history, deeper analysis, and repeat workflow value, not for basic simulator trust.
 - Coaching: separate premium human service layered on top of replay evidence and Battle Sensei outputs.
 
-See [ROADMAP.md](./ROADMAP.md) `M6 Release Track` for the step-by-step launch, security, ownership, and revenue plan.
+See [ROADMAP.md](./ROADMAP.md#release-alignment) for reviewed release gates; optional revenue features remain deferred behind trust and demonstrated player value.
 
 ---
 
@@ -47,7 +47,7 @@ Pokemon-Champions-Sim-Planner/
 ├── MASTER_PROMPT.md                   ← Copy-paste prompt for new AI sessions
 ├── index.html                         ← Landing redirect to bundle
 └── poke-sim/                          ← App sources + bundle
-    ├── pokemon-champion-2026.html     ← Self-contained single-file bundle (~400 KB)
+    ├── pokemon-champion-2026.html     ← Self-contained single-file bundle (~11.5 MB)
     ├── index.html                     ← App shell, tabs, PWA meta
     ├── style.css                      ← Mobile-first dark theme
     ├── data.js                        ← BASE_STATS, TEAMS (29), POKEMON_TYPES_DB (700+)
@@ -114,7 +114,7 @@ node tests/audit.js            # 5070 battles, 0 errors
 N=500 node tests/nightly_bring_harness.js   # end-to-end bring picker wiring check
 ```
 
-Current review baseline: `npm run test:fast` passes all non-DB suites, with live DB suites skipped unless credentials are explicitly enabled. The latest local Showdown DB review run passed 84 non-DB test files, skipped 14 DB-gated files, and reported 0 failures.
+Current evidence belongs in [STATUS.md](STATUS.md) and its linked dated reports. `npm run test:fast` runs the non-DB gate; `npm test` adds offline/mock DB checks. Live verification requires explicit configuration and cannot be inferred from either command passing.
 
 When a change touches Showdown source data, generated runtime artifacts, fallback stats/types, or DB-generation wiring, also run `npm run test:source-truth` from `poke-sim/`. That is the focused drift guardrail suite for source-truth changes.
 

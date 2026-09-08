@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "matrix_version": "2026-09-02.1",
+  "matrix_version": "2026-09-08.1",
   "scope": "Case-level battle behavior for the currently declared simulator surface",
   "status_policy": {
     "covered": "A named behavior and its listed boundaries have deterministic executable evidence.",
@@ -287,11 +287,11 @@
       "id": "RESIDUAL-GLOBAL-ORDER",
       "family": "status",
       "behavior": "Weather, abilities, status, seeds, delayed healing, items, terrain, and field expiry use the correct end-of-turn order.",
-      "status": "open",
-      "tests": [],
+      "status": "partial",
+      "tests": ["tests/company_audit_regressions.mjs"],
       "oracle": "Pokemon Showdown residual event priorities and suborders.",
       "boundary_vectors": ["weather", "Solar-Power", "status", "Leech-Seed", "Wish", "Leftovers", "terrain", "field-expiry"],
-      "known_gap": "Effects are currently implemented as fixed family loops rather than a parity-verified residual event queue."
+      "known_gap": "Eight side-swapped Leftovers/Toxic probes cover full HP and ticks through five, including rounding before multiplication. Effects still use fixed family loops; mixed recovery, Heal Block expiry, lethal residual boundaries and full queue parity remain unproved."
     },
     {
       "id": "RESIDUAL-SPEED-TIE-ORDER",

@@ -34,7 +34,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          candidates=$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/pulls?state=open&base=main&per_page=100" --jq '[.[][] | select(.head.ref | startswith("automation/home-news-"))]')
+          candidates=$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/pulls?state=open&base=main&per_page=100" | jq '[.[][] | select(.head.ref | startswith("automation/home-news-"))]')
           printf '%s' "$candidates" | node poke-sim/tools/news-review-policy.mjs --prs "$GITHUB_REPOSITORY"
           count=$(jq 'length' <<< "$candidates")
           [ "$count" -le 1 ] || { echo "Multiple news PRs require human reconciliation."; exit 1; }

@@ -6,6 +6,14 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0020: Company Audit Trust-Boundary Fixes
+
+Changed: Leftovers precedes status damage; Toxic rounds before tick multiplication; replay plans cannot impersonate verified matches; timing-only coaching stays outside scoring and critical-mistake selection; news discovery uses compatible CLI options. Separate shared-write containment is locally tested but not applied live. Evidence: [OODA remediation](release/OODA_COMPANY_FINDINGS_2026-09-08.md), eight bounded reference probes, six new regression groups, independent review, isolated PostgreSQL denial/positive controls and two manual replay reviews. Lesson: follow incorrect evidence into every downstream consumer and test later turns, not just the reported example. v149 candidate only; live security, verified matching, broader mechanics/coaching and hosted release remain open.
+
+### IMP-0019: Independent Company Audit
+
+Observed: five focused suites pass while fresh reference, replay-identity and causal-coaching counterexamples fail. Changed: recorded [independent audit and ordered OODA backlog](release/INDEPENDENT_COMPANY_AUDIT_2026-09-08.md), distinguished public v142 from candidate v148, and rechecked release/source/security gates. Verification: parent reproduced three reviewer findings; read-only live metadata and public navigation were inspected. Lesson: test contracts and player decisions, not just battle volume. Documentation only; no finding is closed, no security migration applied and no release deployed. Detailed live authorization evidence remains private.
+
 ### IMP-0014: OODA Strategy Identity And Advice
 
 Observed: nature edits and separately registered identical teams reused the wrong Strategy report, while two heuristics invented mistakes. Root cause: incomplete cache identity and advice without action evidence. Changed: canonical full-input Strategy/Mega keys and disabled unsupported Fake Out/redirection predicates. Three regression groups failed before and pass after; all 69 focused Strategy checks pass. See [OODA evidence](release/OODA_STRATEGY_FIX_2026-09-08.md). Lesson: reproduce player-visible correctness separately from existing green suites. Local v146 candidate only; confidence, mechanics, persisted UI and live verification remain open.

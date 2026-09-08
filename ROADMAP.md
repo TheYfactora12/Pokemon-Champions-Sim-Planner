@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-09-07. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-09-08. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Continue the product-trust OODA audit: close reproducible replay/coaching evidence defects with regression tests, verify replay URL/import/export paths, and triage dependency alerts. Complete official M-C roster/rule captures and remaining mechanics/security gates in parallel. Keep M-C source-review only; do not promote unverified rules, deployment or accuracy claims. See STATUS.md and the dated OODA reports for scoped completed work.
+Verify the v149 audit-fix candidate: Leftovers/Toxic ordering and rounding, reference-only replay plans, noncausal coaching observations and news workflow repair. Apply shared-write containment only after authorized staging tests; live security is not cleared. Then implement verified two-team replay identity, broaden residual-event parity, repair inaccessible regulation sources and triage dependencies. Keep M-C source-review only. See STATUS.md and the OODA company-findings report for tested scope and remaining gates.
 
 ## Milestone Index
 

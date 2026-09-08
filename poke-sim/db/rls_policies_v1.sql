@@ -61,11 +61,5 @@ REVOKE INSERT, UPDATE, DELETE ON
 FROM anon, authenticated;
 
 -- ============================================================
--- FUTURE: authenticated user policies (scaffold, inactive)
--- Uncomment when auth is added
+-- Private saves require separate owner-scoped tables and reviewed policies.
 -- ============================================================
--- CREATE POLICY "auth_all_analyses"
---   ON analyses FOR ALL
---   TO authenticated
---   USING (true)
---   WITH CHECK (true);

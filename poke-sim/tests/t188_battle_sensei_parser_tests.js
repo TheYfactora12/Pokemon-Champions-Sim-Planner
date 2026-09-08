@@ -302,7 +302,7 @@ T('14. recognizes same-turn Tailwind neutralization', () => {
   eq(turn.stateShift, 'Speed control neutralized', 'turn state shift');
 });
 
-T('15. recognizes deferred payoff within three turns', () => {
+T('15. delayed HP events remain observations rather than proven speed-control payoff', () => {
   const log = [
     '|player|p1|Alice',
     '|player|p2|Bob',
@@ -325,10 +325,11 @@ T('15. recognizes deferred payoff within three turns', () => {
   ].join('\n');
   const analysis = replayCoach.analyzeShowdownReplay(log, { selectedSide: 'p1' });
   const ids = analysis.review.coachingTags.map((tag) => tag.id);
-  includes(ids, 'deferred_payoff', 'deferred payoff tag');
+  if (ids.includes('speed_control_pressure_observed')) throw new Error('observations must not become scored coaching issues');
+  if (ids.includes('deferred_payoff')) throw new Error('temporal proximity does not prove payoff');
   if (ids.includes('speed_control_without_pressure')) throw new Error('deferred payoff should not be penalized as no-pressure speed control');
   const turn = analysis.review.turnTimeline.find((row) => row.turn === 1);
-  eq(turn.stateShift, 'Setup paid off later', 'turn state shift');
+  eq(turn.stateShift, 'Speed control and HP changes observed', 'turn state shift');
 });
 
 T('16. recognizes complementary setup turn payoff', () => {
@@ -351,9 +352,10 @@ T('16. recognizes complementary setup turn payoff', () => {
   ].join('\n');
   const analysis = replayCoach.analyzeShowdownReplay(log, { selectedSide: 'p1' });
   const ids = analysis.review.coachingTags.map((tag) => tag.id);
-  includes(ids, 'complementary_turn_payoff', 'complementary payoff tag');
+  if (ids.includes('setup_pressure_observed')) throw new Error('observations must not become scored coaching issues');
+  if (ids.includes('complementary_turn_payoff')) throw new Error('later events do not prove setup payoff');
   const turn = analysis.review.turnTimeline.find((row) => row.turn === 1);
-  eq(turn.stateShift, 'Complementary turn paid off', 'turn state shift');
+  eq(turn.stateShift, 'Setup and later HP changes observed', 'turn state shift');
 });
 
 T('17. recognizes planned speed transition after Trick Room ends from structured speed evidence', () => {

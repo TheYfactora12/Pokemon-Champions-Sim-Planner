@@ -6800,6 +6800,22 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
     }
 
+    // Pinned Showdown: item recovery (order 5.4) precedes status damage (9/10).
+    // Resolve before status/faint processing, including full-HP and lethal boundaries.
+    for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.item === 'Leftovers' && m.hp < m.maxHp)) {
+      if (!_canReceiveHealing(mon)) continue;
+      const heal = Math.max(1, Math.floor(mon.maxHp / 16));
+      const hpBeforeHeal = mon.hp;
+      mon.hp = Math.min(mon.maxHp, mon.hp + heal);
+      log.push(`${mon.name} restored HP with Leftovers! [+${heal}]`);
+      _recordEffectEvent(field, mon, 'Leftovers', 'item-recovery', hpBeforeHeal, mon.hp, {
+        source: 'engine item rule',
+        rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
+        heal_candidate: heal,
+        heal_applied: Math.max(0, mon.hp - hpBeforeHeal)
+      });
+    }
+
     // Burn damage
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.status === 'burn')) {
       const burnDmg = Math.floor(mon.maxHp / 16);
@@ -6850,13 +6866,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.status === 'toxic')) {
       if (!mon.toxicCounter || mon.toxicCounter < 1) mon.toxicCounter = 1;
       const n = Math.min(15, mon.toxicCounter);
-      const toxicDmg = Math.max(1, Math.floor(mon.maxHp * n / 16));
+      const toxicDmg = Math.max(1, Math.floor(mon.maxHp / 16)) * n;
       const hpBeforeToxic = mon.hp;
       mon.hp = Math.max(0, mon.hp - toxicDmg);
       log.push(`${mon.name} is hurt by toxic! [${toxicDmg} dmg] (tick ${n}/16)`);
       _recordEffectEvent(field, mon, 'Toxic', 'status-damage', hpBeforeToxic, mon.hp, {
         source: 'engine status rule',
-        rule: { numerator: n, denominator: 16, basis: 'max_hp', rounding: 'down' },
+        rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down_before_multiplier', multiplier: n },
         damage_applied: Math.max(0, hpBeforeToxic - mon.hp)
       });
       mon.toxicCounter++;
@@ -6990,22 +7006,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         });
         _recordKO(mon, { move: 'Perish Song', attacker: null, reason: 'perish' });
       }
-    }
-
-    // T9j.6 (#29) — Leftovers: heal 1/16 maxHp end of turn. Only while below max HP.
-    // Cite: Game8 Champions item list; Bulbapedia Leftovers.
-    for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.item === 'Leftovers' && m.hp < m.maxHp)) {
-      if (!_canReceiveHealing(mon)) continue;
-      const heal = Math.max(1, Math.floor(mon.maxHp / 16));
-      const hpBeforeHeal = mon.hp;
-      mon.hp = Math.min(mon.maxHp, mon.hp + heal);
-      log.push(`${mon.name} restored HP with Leftovers! [+${heal}]`);
-      _recordEffectEvent(field, mon, 'Leftovers', 'item-recovery', hpBeforeHeal, mon.hp, {
-        source: 'engine item rule',
-        rule: { numerator: 1, denominator: 16, basis: 'max_hp', rounding: 'down' },
-        heal_candidate: heal,
-        heal_applied: Math.max(0, mon.hp - hpBeforeHeal)
-      });
     }
 
     // Grassy Terrain: heal grounded mons 1/16 maxHp at end of turn.
@@ -7402,7 +7402,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.6'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.7'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
