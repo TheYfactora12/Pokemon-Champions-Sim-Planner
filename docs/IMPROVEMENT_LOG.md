@@ -188,6 +188,14 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Lesson: workflow enabled, source healthy, candidate reviewed and rules approved are separate states. Unknown registered sets remain unknown.
 - Remaining: three failed scheduled watcher runs require per-source/parser diagnosis and hosted recovery proof. New agent selection by name, actual seasonal promotion and production readiness are not established.
 
+<a id="imp-0018"></a>
+## IMP-0018: Standing Adversarial Review Mandate
+
+- September 8 UTC: recorded the user's standing request to challenge designs and stress-test material changes in AGENTS.md.
+- Requires risk-scaled failure-path tests, reproducible evidence, scrutiny of the test harness itself, and clear alternatives when assumptions fail.
+- Documentation-only change: checked patch consistency; no new battle, live-service, accuracy or deployment proof claimed.
+- Lesson: useful disagreement and independently grounded acceptance criteria matter more than larger passing test counts. Existing production approval boundaries remain intact.
+
 ## Entry Template
 
 ```text
