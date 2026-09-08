@@ -5,6 +5,14 @@ Session: September 8, 2026, starting approximately 00:04 Eastern and ending at
 
 ## Completed Evidence
 
+- v159 fixes the v158 screenshot findings: contradictory LEGAL shortcut and
+  narrow roster text. Five browser viewport/input checks inspect 16 cards each,
+  with working Details controls and no simulations. Full gate passes 172 fast
+  and 12 offline/mock DB files, four skips; two additional paired browser games
+  match all three captures. v158 hosted CI/cache/bundle checks passed;
+  bring-four label/out-of-bring contrast remains open. See
+  `poke-sim/reports/team_review_clarity_2026-09-08.md`.
+
 - v158 runtime consumer fixes align roster types/starting Speed and Eternal
   Flower alias lookup. Six focused tests pass; battle audit completes 4,500
   games and three goldens. Two browser games/three visible-export pairs agree.

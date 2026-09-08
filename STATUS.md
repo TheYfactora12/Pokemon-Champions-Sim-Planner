@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- v159 separates team validation from regulation approval and fixes compressed
+  mobile roster text. Five browser viewport/input checks cover the actual Teams
+  page. [Team review evidence](poke-sim/reports/team_review_clarity_2026-09-08.md)
+  retains remaining contrast and broader legality-path gaps.
+
 - v158 aligns roster types and unboosted Speed with generated/runtime data and
   fixes Eternal Flower Floette alias fallback. Unknown formats stay unknown;
   species-only radar entries no longer claim matchup safety. Verification and

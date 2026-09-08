@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.158-roster-stat-parity
+// Build marker: v2.2.159-team-review-clarity
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.158-roster-stat-parity'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.159-team-review-clarity'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -2053,6 +2053,21 @@ function csRenderTeamRulesetBadges(key, team) {
   return '<span class="' + statusClass + '" title="' + _escapeHtml(title) + '">' + _escapeHtml(label) + '</span>' +
     '<span class="' + statusClass + '" title="' + _escapeHtml(guard) + '">' + _escapeHtml(String(status).replace(/_/g, ' ').toUpperCase()) + '</span>';
 }
+function csRenderTeamValidationBadge(team, verdict) {
+  team = team || {};
+  verdict = verdict || {};
+  var errors = Array.isArray(verdict.errors) ? verdict.errors : [];
+  if (team.format === 'sv') return '<span class="badge-warn">SV COMPAT ONLY</span>';
+  if (verdict.valid === false) return '<span class="badge-illegal" title="' + _escapeHtml(errors.join('; ')) + '">TEAM CHECK FAILED</span>';
+  var evidence = csTeamRulesetEvidence(team);
+  if (verdict.valid !== true || !evidence.runtime_promotable) {
+    return '<span class="badge-warn" title="Team checks do not establish legality under an unverified or historical ruleset.">LEGALITY UNVERIFIED</span>';
+  }
+  if (verdict.inferred || team.legality_status === 'legal_inferred') {
+    return '<span class="badge-warn" title="Some set details are inferred, not source-confirmed.">INFERRED SET</span>';
+  }
+  return '<span class="badge-warn" title="Local team validation passed; this is not tournament approval.">TEAM CHECK PASSED</span>';
+}
 function csGetRegmbCoverageSections() {
   var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
     ? CHAMPIONS_REGMB_SOURCE_CONVERSION
@@ -2280,7 +2295,7 @@ function renderTeamsGrid() {
           ? '<div class="team-legality-note"><strong>SV compatibility team</strong><span>' +
             _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'This team is outside the Champions review lane.') +
             '</span><small>Keep this visible for legacy comparison only. Live Champions review and trust scoring stay on Champions-format teams.</small></div>'
-          : '<div class="team-legality-note"><strong>Not legal for current sim rules</strong><span>' +
+          : '<div class="team-legality-note"><strong>Team check failed</strong><span>' +
             _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'Unknown legality issue') +
             '</span><small>Team remains visible for review/testing, but results should be treated as untrusted until the source data is fixed.</small></div>')
       : '';
@@ -2297,16 +2312,7 @@ function renderTeamsGrid() {
         <div class="tfcard-badges">
           <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
           ${csRenderTeamRulesetBadges(key, team)}
-          ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
-            var st = team.legality_status; var fmt = team.format;
-            if (!legalityVerdict.valid && fmt === 'sv') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.errors || []).join('; ')) + '">\u26A0 SV COMPAT ONLY</span>';
-            if (!legalityVerdict.valid) return '<span class="badge-illegal" title="' + _escapeHtml(legalityVerdict.errors.join('; ')) + '">\u274C NOT LEGAL</span>';
-            if (st === 'legal' && fmt === 'champions') return '<span class="badge-legal">\u2705 LEGAL</span>';
-            if (st === 'legal_inferred' && fmt === 'champions') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.warnings || []).join('; ') || 'Tournament-placement team; spreads are inferred from source archetypes.') + '">\u26A0 ' + _escapeHtml(legalityVerdict.label || 'LEGAL (inferred)') + '</span>';
-            if (st === 'illegal') return '<span class="badge-illegal">\u274C ILLEGAL</span>';
-            if (fmt === 'sv') return '<span class="badge-warn">\u26A0 SV FORMAT</span>';
-            return '<span class="badge-warn">\u26A0 UNVERIFIED</span>';
-          })()}
+          ${csRenderTeamValidationBadge(team, legalityVerdict)}
           <button class="export-card-btn" data-team="${key}">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             Export

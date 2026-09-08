@@ -6,6 +6,16 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0032: Separate Team Checks From Competitive Approval
+
+The Teams page combined unverified/historical regulation badges with a green
+LEGAL shortcut. It now labels local validation without claiming tournament
+approval. Mobile roster rows wrap full-width Details controls instead of crushing
+Pokemon text. Actual browser checks cover 16 cards across five viewport/input
+cases, with no hidden games. See [scope and evidence](../poke-sim/reports/team_review_clarity_2026-09-08.md).
+Lesson: independent badges must not contradict each other, and source-string CSS
+tests cannot substitute for checking rendered geometry.
+
 ### IMP-0031: Check Every Consumer, Not Only Mirrored Rows
 
 Correct database/baseline rows did not guarantee correct roster displays. The UI
