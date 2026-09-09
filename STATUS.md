@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- Cross-repo candidate handoff: Alfredo draft PR #276 now carries the same v162
+  candidate as Yfactor PR #195. Read-only merge simulation found no conflicts and
+  no content delta from the tested candidate. Main branches and live deployment
+  remain unchanged. See [exact comparison and release gates](docs/release/CROSS_REPO_ALIGNMENT_2026-09-09.md).
+
 - v162 is a roadmap/release-label update only; engine 1.1.10 and battle logic
   are unchanged from v161. Markdown and the browser roadmap now use the same
   ordered queue. This candidate is not a new mechanics-accuracy claim or deployment.
