@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- v161 preserves registered member IDs through unambiguous paste edits and
+  reordering; species replacements get fresh IDs. Conflicts block saving, and
+  SV preview uses the saved format. Actual upload/edit/reload plus paired battle
+  exports pass. [Identity evidence and limits](poke-sim/reports/member_edit_identity_2026-09-08.md).
+  Local full gate passes; hosted CI is pending. Final independent review was
+  unavailable after agent usage limits, so parent verification is identified.
+
 - v160 fixes the shared Champions move-pool path exposed by the preceding audit.
   All 235 reviewed identities and eight narrowed set probes agree with pinned
   Champions. Imports/replays use explicit context; stale teams remain editable
@@ -14,9 +21,9 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
   official approval and DB publication remain open. See
   [scope and evidence](poke-sim/reports/champions_move_context_validation_2026-09-08.md).
 
-- Next reproduced identity issue: unchanged paste-editor saves lose member IDs
-  while preserving the team ID/format. SV preview also uses the wrong move
-  context. Fix and test reconciliation before extending legality claims.
+- The paste-editor identity/preview findings are addressed in v161 above.
+  Broader copy/restore identity, SV IV roundtrip fidelity and complete-set legality
+  remain open; the bounded custom-team test does not close those contracts.
 
 - v159 separates team validation from regulation approval and fixes compressed
   mobile roster text. Five browser viewport/input checks cover the actual Teams

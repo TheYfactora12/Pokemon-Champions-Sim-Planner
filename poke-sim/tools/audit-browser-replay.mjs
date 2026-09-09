@@ -18,6 +18,7 @@ const directory = fs.mkdtempSync(path.join(artifacts, 'browser-replay-'));
 const write = (name, value) => fs.writeFileSync(path.join(directory, name), JSON.stringify(value, null, 2) + '\n');
 const inventory = { schema_version: 'champions-visual-inventory-v1', expected_game_count: 0, cases: [], runs: [] };
 const diagnostics = { url: url.href, page_errors: [], blocked_nonread_requests: [] };
+const auditMemberEdit = process.env.AUDIT_MEMBER_EDIT === '1';
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
 page.on('pageerror', error => diagnostics.page_errors.push(error.message));
@@ -138,21 +139,65 @@ async function inspectReplayLayouts() {
   await page.locator('html').evaluate((el, value) => value === null ? el.removeAttribute('data-theme') : el.setAttribute('data-theme', value), originalTheme);
 }
 
+async function prepareEditedTeam() {
+  const fixture = await page.evaluate(() => {
+    _upsertTeamToDB = () => {};
+    const team = JSON.parse(JSON.stringify(TEAMS.mega_dragonite));
+    team.name = 'Member identity browser fixture';
+    team.members.forEach((member, index) => {
+      member.member_id = 'browser-member-' + index;
+      member.metadata = { registration: index };
+    });
+    return team;
+  });
+  await page.locator('#bulk-import-file').setInputFiles({ name: 'identity-team.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ version: 1, teams: { fixture } })) });
+  await page.waitForFunction(name => Object.values(TEAMS).some(team => team.name === name), fixture.name);
+  const key = await page.evaluate(name => Object.keys(TEAMS).find(key => TEAMS[key].name === name), fixture.name);
+  await page.getByRole('tab', { name: 'Teams', exact: true }).click();
+  await page.locator('[data-filter="custom"]').click();
+  await page.locator('.edit-card-btn').evaluateAll((buttons, key) => buttons.find(button => button.dataset.team === key).click(), key);
+  const reversed = await page.evaluate(key => exportTeamToPaste({ ...TEAMS[key], members: TEAMS[key].members.slice().reverse() }), key);
+  await page.locator('#showdown-paste').fill(reversed);
+  await page.locator('#do-import-btn').click();
+  await page.waitForFunction(() => document.getElementById('import-status').textContent.includes('Loaded'));
+  const saved = await page.evaluate(key => JSON.parse(JSON.stringify(TEAMS[key])), key);
+  assert.deepEqual(saved.members.map(member => member.member_id), fixture.members.map(member => member.member_id).reverse());
+  assert.deepEqual(saved.members.map(member => member.metadata), fixture.members.map(member => member.metadata).reverse());
+  write('edited-team-identity.json', { key, before: fixture, after: saved });
+  await page.locator('#close-import').click();
+  await page.reload({ waitUntil: 'networkidle' });
+  const restored = await page.evaluate(key => TEAMS[key].members.map(member => ({ id: member.member_id, metadata: member.metadata })), key);
+  assert.deepEqual(restored, saved.members.map(member => ({ id: member.member_id, metadata: member.metadata })));
+  write('edited-team-reload.json', { key, restored });
+  return { key, members: saved.members };
+}
+
 try {
   await page.goto(url.href, { waitUntil: 'domcontentloaded' });
+  if (auditMemberEdit) await page.waitForLoadState('networkidle');
+  const edited = auditMemberEdit ? await prepareEditedTeam() : null;
+  const playerKey = edited ? edited.key : 'mega_dragonite';
   await page.locator('#tab-btn-simulator').click();
   diagnostics.build = await page.locator('#build-version').innerText();
   assert.equal(await page.locator('#replay-list .replay-card').count(), 0, 'Fresh page must not manufacture replay evidence');
   await page.locator('#sim-regulation').selectOption('champions_custom_practice');
-  await page.locator('#player-select').selectOption('mega_dragonite');
+  await page.locator('#player-select').selectOption(playerKey);
   await page.locator('#opponent-select').selectOption('mega_altaria');
   await page.locator('#bo-picker [data-bo="1"]').click();
   await page.locator('#sim-count').selectOption('1');
   const first = await run('baseline');
+  if (edited) {
+    assert.equal(first.participants.player.length, 4);
+    for (const participant of first.participants.player) {
+      const member = edited.members.find(member => member.member_id === participant.member_id);
+      assert(member, 'Exported battle participant lost its saved member ID');
+      assert.equal(participant.item, member.item || '');
+    }
+  }
   await page.locator('#tab-btn-simulator').click();
   await page.locator('#swap-teams-btn').click();
   assert.equal(await page.locator('#player-select').inputValue(), 'mega_altaria');
-  assert.equal(await page.locator('#opponent-select').inputValue(), 'mega_dragonite');
+  assert.equal(await page.locator('#opponent-select').inputValue(), playerKey);
   await page.locator('#tab-btn-replays').click();
   await capture('after-swap-continuity', 'continuity', first);
   await page.locator('#tab-btn-simulator').click();

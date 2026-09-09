@@ -6,7 +6,7 @@
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "Fix unchanged paste-editor saves losing member IDs and align SV preview/save context, then validate complete-set combinations and official Champions eligibility. v160 separates Champions/historical pools; all 235 reviewed pools agree with the pinned reference, not game approval. See poke-sim/reports/champions_move_context_validation_2026-09-08.md. Human fingerprint approval, DB publication/live security and full-battle parity remain open. Keep M-C separate.",
+  "next_action": "Validate broader copy/restore identity and complete-set combinations before official Champions sign-off. v161 preserves unambiguous member identity through edits/reordering and aligns SV preview; arbitrary SV IV roundtrip fidelity remains open. See poke-sim/reports/member_edit_identity_2026-09-08.md. v160 matches 235 reviewed move pools to pinned Champions, not game approval. Human fingerprint approval, DB publication/live security and full-battle parity remain open. Keep M-C separate.",
   "milestones": [
     {
       "id": "simulation-truth",

@@ -104,10 +104,12 @@ retained for repair. Local full gate (179 fast/12 offline DB), paired replay,
 failure-path browser checks and independent review pass. Hosted CI is pending. Detailed scope and DB
 limits: [move context validation](../../poke-sim/reports/champions_move_context_validation_2026-09-08.md).
 
-Next reproducible fix: unchanged paste-editor saves replace member objects and
-lose `member_id`, despite retaining team ID and format. Preview hardcodes
-Champions for existing SV teams. Reconcile unambiguous IDs without positional
-transfer, distinguish new replacements, and test reorder/ambiguous cases.
+v161 addresses the reproduced paste-edit identity loss and SV preview mismatch,
+including the sibling individual-editor replacement bug. Custom browser
+upload/edit/reload and paired participant exports pass; broader copy/restore,
+SV IV fidelity and final independent review remain open. See
+[scoped identity evidence](../../poke-sim/reports/member_edit_identity_2026-09-08.md).
+v160 hosted CI `34198148786`, bundle and cache checks passed for `31b7d92`.
 
 1. Obtain human approval of the exact 235-row identity candidate and complete
    field/learnset/rules evidence. Review-only form reconciliation is now recorded.

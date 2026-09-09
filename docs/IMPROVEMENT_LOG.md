@@ -6,6 +6,14 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0036: Preserve Member Identity Across Edits
+
+Paste edits no longer erase IDs/annotations, and individual species replacements
+no longer inherit the displaced Pokemon's ID. Exact unique identities survive
+reordering; ambiguous matches block saving. Real upload/edit/reload and paired
+battle exports verify the custom-team path. See [proof and remaining gaps](../poke-sim/reports/member_edit_identity_2026-09-08.md).
+Lesson: durable registration identity must not depend on current slot position.
+
 ### IMP-0035: Keep Imported Names Literal In The Edit Dialog
 
 The edit dialog now applies the established output-escaping helper to imported
