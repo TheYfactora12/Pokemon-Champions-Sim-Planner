@@ -1901,7 +1901,7 @@ T('61. Noble Roar lowers the target Attack and Special Attack', () => {
     item: '',
     nature: 'Relaxed',
     level: 50,
-    moves: ['Protect'],
+    moves: ['Splash'],
     evs: { hp: 252, def: 252, spd: 4, atk: 0, spa: 0, spe: 0 }
   }]);
   const battle = simulateBattle(player, opp, { format: 'singles', seed: [3, 1, 4, 1], maxTurns: 1 });

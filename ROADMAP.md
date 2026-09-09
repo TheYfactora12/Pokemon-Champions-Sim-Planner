@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-09-02. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-09-09. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Review and apply the existing public-data hardening migration in a protected staging-to-production flow. The declared 4,624-run accuracy harness is clean and now fails on warnings or regulation drift; next tackle residual ordering, wider imported-team interactions, Champion-specific reference evidence and two-user private persistence. Keep unverified regulations blocked.
+First establish protected staging and validate shared-evidence write containment plus private-save ownership. While production actions await exact approval, reproduce and fix Toxic rounding, Spite hit resolution, suppressed-item effects and Wish/Leftovers ordering against pinned Showdown. Then extend copy/restore identity, SV IV roundtrip and complete-set legality coverage. Keep M-C source review separate from rule approval. Release only after review, hosted CI and paired live replay/export checks. See docs/release/RELEASE_REVIEW_2026-09-09.md. The live site remains v142; candidate tests do not imply deployment or 99% accuracy.
 
 ## Milestone Index
 
@@ -45,16 +45,21 @@ Completed locally / recorded:
 - Unknown-ruleset preflight and default bring-four/participant identity fixes have regression coverage.
 - Scoped switching, immunity, grounding, multi-hit and Seismic Toss fixes are tested. One complete-game Showdown comparison includes forced replacements, winner, HP, stages and PP; one seven-turn browser run has matching visible/export logs.
 - Same-turn Tailwind and Growl/Leer now agree with pinned Showdown in scoped synthetic doubles probes, including side swaps, Trick Room, per-target protection and selected ability/item/Substitute gates. PP, single/double Pressure, depletion and Struggle have deterministic boundary coverage.
+- September 8 PP/Substitute audit corrects earlier wrong Spite, Taunt and Noble Roar test expectations. Side-swapped synthetic reference probes cover named bypass, reflection, protection, ability, secondary-effect and knockout boundaries, with Substitute HP preservation checks. The dated audit owns exact test counts and outstanding gates: poke-sim/reports/pp_substitute_validation_2026-09-08.md.
 - Replay review rejects absent or structurally empty evidence and preserves stable actor/target identity through mirror-name actions. The declared cross-format harness completes 4,624/4,624 runs without state, validator, warning or repeatability failures. This is scoped invariant proof, not universal accuracy.
+- Perish Song candidate tests correct countdown, recipient immunity, concealment and terminal faint-order/winner handling, including Trick Room. Replacement-choice parity and broader residual interactions remain open. Evidence and final gate status: poke-sim/reports/perish_song_validation_2026-09-08.md.
+- Page startup no longer manufactures hidden simulation games. Paired browser audits bind selected matchup identity and preserve re-downloaded history across swaps; replay contrast and mobile reserve overflow are corrected. Scoped proof and exclusions: poke-sim/reports/intentional_replay_validation_2026-09-08.md.
+- Decision audit no longer promotes move inventories or heuristic score gaps into authoritative alternatives or execution diagnoses. Historical action availability is incomplete; re-enabling requires a versioned evidence contract. See poke-sim/reports/decision_evidence_validation_2026-09-08.md.
+- Generic pre/in/post coaching templates no longer invent best plans, default scores, causes or confidence from volume. Unknown or ambiguous turn evidence stays unknown; score output is explicitly heuristic. See poke-sim/reports/coach_template_validation_2026-09-08.md.
 
 Remaining:
 - [ ] Extend complete-game and visible-replay parity beyond the bounded fixtures; resolve Strategy-cache context mixing and misleading coaching.
-- [ ] Test broader mid-turn Speed and stage interactions, Mirror Armor/Contrary, other fixed-damage moves, entry/residual ordering, resource-changing moves and imported-team edge cases.
+- [ ] Test broader mid-turn Speed and stage interactions, Mirror Armor/Contrary, other fixed-damage moves, entry/residual ordering, Grudge/Disable/berry restoration and imported-team edge cases.
 - [ ] Define the accuracy denominator and human verification gaps; obtain official Champions evidence before promoting Showdown baseline behavior as Champion truth.
 
 **Exit:** No unresolved critical mechanics, identity or evidence errors in the declared benchmark; every accuracy claim has reference evidence and explicit exclusions.
 
-Evidence: [showdown_reference_validation_2026-08-30.md](poke-sim/reports/showdown_reference_validation_2026-08-30.md), [visual_replay_audit_2026-08-30.md](poke-sim/reports/visual_replay_audit_2026-08-30.md), [identity_validation_2026-08-30.md](poke-sim/reports/identity_validation_2026-08-30.md), [PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md](docs/release/PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md), [seismic_toss_validation_2026-08-30.md](poke-sim/reports/seismic_toss_validation_2026-08-30.md), [tailwind_growl_leer_validation_2026-09-01.md](poke-sim/reports/tailwind_growl_leer_validation_2026-09-01.md)
+Evidence: [showdown_reference_validation_2026-08-30.md](poke-sim/reports/showdown_reference_validation_2026-08-30.md), [visual_replay_audit_2026-08-30.md](poke-sim/reports/visual_replay_audit_2026-08-30.md), [identity_validation_2026-08-30.md](poke-sim/reports/identity_validation_2026-08-30.md), [PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md](docs/release/PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md), [seismic_toss_validation_2026-08-30.md](poke-sim/reports/seismic_toss_validation_2026-08-30.md), [tailwind_growl_leer_validation_2026-09-01.md](poke-sim/reports/tailwind_growl_leer_validation_2026-09-01.md), [pp_drain_validation_2026-09-03.md](poke-sim/reports/pp_drain_validation_2026-09-03.md), [OODA_REPLAY_ATTRIBUTION_2026-09-08.md](docs/release/OODA_REPLAY_ATTRIBUTION_2026-09-08.md), [OODA_OUTCOME_CLAIMS_2026-09-08.md](docs/release/OODA_OUTCOME_CLAIMS_2026-09-08.md)
 
 <a id="regulation-source-truth"></a>
 
@@ -68,15 +73,19 @@ Completed locally / recorded:
 - Official-source inventory, daily regulation watcher, exact-digest candidate validation, recurrence-aware alerts and protected staging workflow are prepared.
 - Unsafe approval-time refetch is blocked. Generated offline data remains the browser baseline; official Champions evidence must establish legality.
 - The accuracy harness manifest binds regulation IDs, versions, review/promotion states and format lanes. Catalog drift, unreviewed runnable formats and warnings above the zero-warning budget fail closed.
+- The official Regulation M-C notice, exact UTC dates, six named Mega additions and Rillaboom example are captured in a versioned source-review package. The active window fails closed; the later M-B audit corrects the supposed pre-start gap using the official September 9 extension, Showdown's still-M-B format state is recorded, and missing exact Mega sprites use a base-form fallback without implying legality.
+- M-B official identity reconciliation covers all 235 rows using source-linked explicit aliases for Fancy Vivillon and Eternal Flower Floette. The review artifact binds visual evidence and preserves baseline metadata; all mapped baseline stats/types/ability slots/numbers agree with pinned Champions. This does not approve learnsets, runtime consumers or legality.
 
 Remaining:
-- [ ] Resolve blocked/JavaScript official sources and obtain required in-game captures. M-A and M-B remain unverified.
+- [ ] September 9 update: all 262 official M-C roster IDs are captured; 260 map to identity candidates. Resolve Maushold and Squawkabilly form IDs and verify format scope. See docs/release/REG_MC_INTAKE_2026-09-09.md.
+- [ ] A pinned M-C reference now exists with 42 individual-set probes. Verify item/move/Ability inventory with official or in-game evidence, and preserve historical M-B routing during any reference upgrade. M-A, M-B and M-C remain unverified.
+- [ ] Add complete-team accepted/rejected fixtures and controlled Z Mega mechanics fixtures, including Aura Guard contact boundaries, switching, suppression, multi-hit and spread interactions.
 - [ ] Activate hosted monitoring and encrypted evidence retention; validate permissions and immutable candidate readback.
 - [ ] Compile complete regulation-specific eligibility packages and implement separate digest-bound human approval and atomic publication, preserving old versions.
 
 **Exit:** The selected regulation has complete reviewed eligibility evidence and an immutable published package; source outages and unknown facts cannot silently pass.
 
-Evidence: [REGULATION_WATCH_2026-08-30.md](docs/release/REGULATION_WATCH_2026-08-30.md), [REGULATION_CONTEXT_AND_ELIGIBILITY.md](poke-sim/docs/REGULATION_CONTEXT_AND_ELIGIBILITY.md), [CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md](poke-sim/docs/CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md)
+Evidence: [REGULATION_WATCH_2026-08-30.md](docs/release/REGULATION_WATCH_2026-08-30.md), [REGULATION_CONTEXT_AND_ELIGIBILITY.md](poke-sim/docs/REGULATION_CONTEXT_AND_ELIGIBILITY.md), [CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md](poke-sim/docs/CHAMPIONS_FULL_SOURCE_INVENTORY_2026-08-29.md), [reg_m_c_readiness_2026-09-07.md](poke-sim/reports/reg_m_c_readiness_2026-09-07.md)
 
 <a id="database-evidence"></a>
 
@@ -88,11 +97,13 @@ Depends on: Independent workstream; readiness still requires the other release g
 
 Completed locally / recorded:
 - Authorized read-only live metadata was audited on September 2: all 16 public tables have RLS, no public security-definer functions exist, and the Showdown mirror is anonymously readable. The existing local public-data hardening migration matches the anonymous write policies still present in production.
+- September 3 readback confirmed 36 legacy team rows and 204 members with no build/schema/ruleset-version identity. The UI now separates a reachable DB from an accepted catalog and keeps bundled data authoritative when all rows are blocked.
 
 Remaining:
 - [ ] Review and apply the exact hardening migration through protected staging and production, then prove anonymous POST/PATCH/DELETE denial. Production currently permits anonymous analysis/coverage inserts and unrestricted branch-coverage updates.
 - [ ] Create an owner-scoped private-save schema before claiming two-user isolation; the current public schema has no user/owner column. Reconcile the four-entry live migration ledger with repository migrations and record checksums.
-- [ ] Fix paginated roster reads and complete-snapshot promotion/retention semantics; verify trusted import mappings and narrowly scoped staging identities before accepting durable competitive evidence.
+- [ ] Design a reviewed versioned roster migration/reseed for the 36 legacy rows; do not relax runtime acceptance to hide drift.
+- [ ] Review the advisor's missing foreign-key indexes against measured query plans. Fix paginated roster reads and complete-snapshot promotion/retention semantics before accepting durable competitive evidence.
 
 **Exit:** Live allow/deny, completeness, digest, identity and persistence checks pass for the named project/schema; browser clients cannot promote private or unapproved evidence.
 
@@ -107,7 +118,7 @@ Evidence: [SUPABASE_FULL_AUDIT_2026-08-29.md](docs/release/SUPABASE_FULL_AUDIT_2
 Depends on: [Simulation And Replay Truth](#simulation-truth), [Regulations And Source Truth](#regulation-source-truth), [Database And Evidence Integrity](#database-evidence)
 
 Completed locally / recorded:
-- Bundle/cache identity checks, Pages asset inventory and consolidated local test gates exist. Documentation and source changes are still local candidates.
+- Candidate changes through 08451b7 are pushed to PR #195 and hosted CI passed, including bundle freshness and battle audit. Generated metadata and pre-upload checks bind the required move pool and intro sprites to exact bytes; LF checkout regression coverage passes. This is not deployment: live readback remains v142. Runtime v161 identity fixes retain their separate scoped evidence.
 
 Remaining:
 - [ ] Reconcile incoming commits and both repository queues through reviewed PRs; do not force-copy or close issues from test counts alone.

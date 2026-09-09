@@ -1,7 +1,7 @@
 # Pokemon Champions Full Source And Data Inventory
 
-Date: 2026-08-29
-Status: inventory framework active; public-source metadata captured; complete Champion client inventory still required
+Date: 2026-09-07 (updated from the 2026-08-29 inventory)
+Status: M-C official notice captured; inventory framework active; complete Champion client inventory still required
 
 ## Decision
 
@@ -22,12 +22,14 @@ The read-only `.github/workflows/champions-source-inventory.yml` job runs weekly
 
 ## First Collection Result
 
-The 2026-08-29 run checked 11 official public endpoints:
+The 2026-09-07 EDT run checked 12 official public endpoints:
 
-- 9 responded successfully and were hashed.
+- 10 responded successfully and were hashed.
 - the two optional Pokemon Support pages returned HTTP 403 to automated collection and remain manual/browser review sources.
 - no required public source failed.
 - 7 official in-game capture sets remain required.
+
+The official Regulation M-C notice is now part of the daily inventory. It confirms the September 9, 2026 02:00 UTC through December 2, 2026 01:59 UTC window, inherited prior eligibility, six named Mega additions, and Rillaboom as one example among 24 newly available Pokemon. It directs players to the in-game Roster Info pages for the complete roster, so the notice is not a complete allowlist.
 
 The collector stores URL, final URL, UTC check time, HTTP status, content type, byte size, SHA-256, page title, canonical URL, and official modified date when exposed. It does not commit full page bodies.
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "matrix_version": "2026-09-02.1",
+  "matrix_version": "2026-09-08.1",
   "scope": "Case-level battle behavior for the currently declared simulator surface",
   "status_policy": {
     "covered": "A named behavior and its listed boundaries have deterministic executable evidence.",
@@ -13,6 +13,16 @@
     "champion_override_rule": "Champion-specific behavior replaces the baseline only with approved Champion evidence."
   },
   "cases": [
+    {
+      "id": "STATS-ROSTER-CONSUMER-PARITY",
+      "family": "stats-forms",
+      "behavior": "Mapped roster types and unboosted Speed agree with runtime stats; supported Eternal Flower aliases preserve species identity.",
+      "status": "partial",
+      "tests": ["tests/roster_runtime_consumer_tests.mjs", "tests/reg_mb_roster_baseline_tests.mjs"],
+      "oracle": "Pinned Champions species baseline plus engine starting-stat contract; not battle ordering or official legality.",
+      "boundary_vectors": ["235-mapped-keys", "champions-SP-vs-SV-EV", "non-Speed-natures", "unknown-format", "alias-with-and-without-bridge", "species-only-radar-unknown"],
+      "known_gap": "All item/ability/field combinations, Mega alias transitions and in-game Champions confirmation remain unproved."
+    },
     {
       "id": "LIFE-IDENTITY-REPLACEMENT",
       "family": "identity-lifecycle",
@@ -287,11 +297,11 @@
       "id": "RESIDUAL-GLOBAL-ORDER",
       "family": "status",
       "behavior": "Weather, abilities, status, seeds, delayed healing, items, terrain, and field expiry use the correct end-of-turn order.",
-      "status": "open",
-      "tests": [],
+      "status": "partial",
+      "tests": ["tests/company_audit_regressions.mjs"],
       "oracle": "Pokemon Showdown residual event priorities and suborders.",
       "boundary_vectors": ["weather", "Solar-Power", "status", "Leech-Seed", "Wish", "Leftovers", "terrain", "field-expiry"],
-      "known_gap": "Effects are currently implemented as fixed family loops rather than a parity-verified residual event queue."
+      "known_gap": "Eight side-swapped Leftovers/Toxic probes cover full HP and ticks through five, including rounding before multiplication. Effects still use fixed family loops; mixed recovery, Heal Block expiry, lethal residual boundaries and full queue parity remain unproved."
     },
     {
       "id": "RESIDUAL-SPEED-TIE-ORDER",
@@ -328,10 +338,10 @@
       "family": "status",
       "behavior": "Perish Song reaching zero on multiple Pokemon resolves all faints and the winner correctly.",
       "status": "partial",
-      "tests": ["tests/move_verification_registry_tests.js"],
+      "tests": ["tests/move_verification_registry_tests.js", "tests/perish_song_reference_tests.mjs"],
       "oracle": "Pokemon Showdown Perish Song residual ordering.",
-      "boundary_vectors": ["single-faint", "both-sides-zero", "bench-available"],
-      "known_gap": "Perish Song exists, but simultaneous zero-count winner and replacement fixtures are missing."
+      "boundary_vectors": ["single-faint", "both-sides-zero", "bench-available", "fourth-end-of-turn", "side-swapped", "Soundproof-source", "Soundproof-target", "Mold-Breaker", "Ability-Shield", "recast-does-not-reset", "replacement-lifecycle"],
+      "known_gap": "Four-turn reference probes cover countdown, recast and named immunity gates; two-wave terminal winner/faint-order with/without Trick Room and Phantom Force/No Guard controls also pass. Tied residual speeds, voluntary switch/re-entry and other semi-invulnerability remain unproved. Replacement choices differ by policy; matching counts and legal membership do not prove identical tactical continuation."
     },
     {
       "id": "RESOURCE-PP-PRESSURE",
@@ -342,6 +352,16 @@
       "oracle": "Pokemon Showdown move-slot and Pressure behavior.",
       "boundary_vectors": ["single-Pressure", "double-Pressure", "last-PP", "all-moves-empty"],
       "known_gap": ""
+    },
+    {
+      "id": "RESOURCE-PP-DRAIN-SUBSTITUTE",
+      "family": "moves-effects",
+      "behavior": "Spite and Eerie Spell respect Substitute bypass and relevant defensive or secondary-effect gates.",
+      "status": "partial",
+      "tests": ["tests/pp_drain_move_tests.mjs", "tests/pp_substitute_reference_tests.mjs"],
+      "oracle": "Pinned pokemon-showdown 0.11.11 gen9championsdoublescustomgame synthetic probes, not Champions legality approval.",
+      "boundary_vectors": ["side-swapped", "Spite-bypass-Substitute", "Protect-before-Magic-Bounce", "Good-as-Gold", "reflected-Good-as-Gold", "Prankster-Dark", "Mold-Breaker", "Ability-Shield", "Infiltrator", "sound-bypass-Substitute", "Substitute-HP-preservation", "Soundproof", "Sheer-Force", "Shield-Dust", "Covert-Cloak", "knockout-suppresses-drain"],
+      "known_gap": "Slot-1 and ally targeting, general reflection recursion, item suppression, exact random damage and complete-game/UI parity are not established by these bounded probes."
     },
     {
       "id": "RESOURCE-STRUGGLE-RESOLUTION",

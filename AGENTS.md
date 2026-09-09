@@ -127,8 +127,19 @@ If a task crosses classes, test each class separately and record the dependency.
 
 ## Implementation Rules
 
+### Standing Challenge And Stress-Test Mandate
+
+- Challenge the user's and the implementation's assumptions when evidence suggests a better path. Explain the concrete risk, alternative, tradeoff and smallest test that could distinguish them; do not agree merely to preserve the current design.
+- For material behavior changes, test adversarial inputs and relevant failure boundaries as well as the happy path. Scale stress runs to the affected contracts: mechanics, imported teams, state/identity, evidence, UI journeys or service failure. Documentation-only edits need consistency checks, not unrelated battle runs.
+- Declare the tested scope, reference/oracle, pass criteria and exclusions before making an accuracy claim. Use reproducible seeds and retained failures where applicable. Test repeated runs, side/format changes and interactions when those boundaries are affected.
+- A green harness can be wrong. Challenge expected outputs and coverage, preserve failing evidence, and never weaken assertions or regenerate golden results solely to make tests pass. Reproduce, fix the shared cause, then rerun the failure and related cases.
+- Report blockers and propose a pivot when the current approach cannot support the product's trust goal. This mandate does not authorize unrelated rewrites, destructive cleanup, production load tests, rule promotion or release-gate bypasses.
+
+### Execution
+
 - Use the shared project skill at `.agents/skills/pokemon-champion-engineering/SKILL.md` to route work to the correct proof lane.
 - Use `.agents/skills/pokemon-battle-audit/SKILL.md` for battle accuracy, mechanics, stats, move, ability, item, gameplay, stress-test, and universal-correctness requests.
+- Use `.agents/skills/pokemon-season-update/SKILL.md` and read-only `season_reviewer` for seasonal regulations, newly eligible entities and historical-team/result compatibility. Reuse existing watchers; enabled is not healthy, and source discovery never grants approval.
 - Assign roles from `docs/agents/ENGINEERING_AGENT_ROSTER.md`; substantial cross-lane changes need one primary owner and named independent review.
 - Delegate boundary-crossing review to the read-only custom agents under `.codex/agents/`; keep routine implementation in the main agent and avoid overlapping write agents.
 - Delegate independent battle coverage review to `battle_auditor` whenever a change alters battle execution or makes a mechanics-accuracy claim.

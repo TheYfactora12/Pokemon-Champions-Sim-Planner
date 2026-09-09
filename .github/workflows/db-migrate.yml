@@ -40,9 +40,16 @@ jobs:
 
       - name: Validate migration input
         id: migration
+        env:
+          MIGRATION_FILENAME: ${{ inputs.migration }}
         run: |
           set -euo pipefail
-          migration="${{ inputs.migration }}"
+          migration="$MIGRATION_FILENAME"
+
+          if [[ ! "$migration" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]*\.sql$ ]]; then
+            echo "::error::Migration must be a simple SQL filename."
+            exit 1
+          fi
 
           case "$migration" in
             /*|*..*|*/*)

@@ -134,7 +134,7 @@
 // v181-qa-artifact-evidence-intake [2026-06-29] - Convert QA artifacts into Team Lab sim evidence and collapse Overview proof archive.
 try { importScripts('./release_manifest.js'); } catch (e) { /* fallback below */ }
 const RELEASE_MANIFEST = (typeof self !== 'undefined' && self.CHAMPIONS_RELEASE_MANIFEST) ? self.CHAMPIONS_RELEASE_MANIFEST : {};
-const CACHE_NAME = RELEASE_MANIFEST.service_worker_cache || 'champions-sim-v2-2-142-pp-replay-proof';
+const CACHE_NAME = RELEASE_MANIFEST.service_worker_cache || 'champions-sim-v2-2-163-mc-evidence-intake';
 const SPRITE_CACHE = 'champions-sprites-v1';
 
 const APP_ASSETS = [
@@ -148,6 +148,7 @@ const APP_ASSETS = [
   './data.js',
   './logger.js',
   './generated/pokemon_showdown_legal_data.js',
+  './generated/champions_move_pools.js',
   './generated/pokemon_showdown_species_weights.js',
   './generated/champions_move_overrides.js',
   './generated/source_sync_status.js',
@@ -156,6 +157,8 @@ const APP_ASSETS = [
   './generated/tournament_catalog.js',
   './generated/project_roadmap.js',
   './assets/news-card.svg',
+  './assets/retro-intro/gengar.png',
+  './assets/retro-intro/nidorino.png',
   './runtime_data.js',
   './engine.js',
   './rulesets.js',

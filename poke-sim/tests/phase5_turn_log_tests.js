@@ -722,7 +722,7 @@ const DECISION_TURN_LOG = [{
   delta: { position_score: -0.2 }
 }];
 
-T('T5c-5 csBuildDecisionAudit flags a clearly worse line', () => {
+T('T5c-5 move inventories do not prove an alternative was usable', () => {
   const audit = ctx.csBuildDecisionAudit(DECISION_TURN_LOG, {
     playerKey: 'player',
     oppKey: 'opp',
@@ -730,23 +730,22 @@ T('T5c-5 csBuildDecisionAudit flags a clearly worse line', () => {
     oppLookup: DECISION_OPP,
     threshold: 10
   });
-  truthy(audit && audit.total_flags === 1, 'expected one flagged turn');
-  eq(audit.flagged_turns[0].best_move, 'Recover');
-  truthy(audit.flagged_turns[0].score_gap >= 10, 'expected a meaningful score gap');
+  eq(audit.total_flags, 0, 'unverified availability must not produce advice');
+  eq(audit.flagged_turns.length, 0);
 });
 
-T('T5c-6 Replay Log v2 renders decision gap chip', () => {
+T('T5c-6 Replay Log does not render an unsupported better-line chip', () => {
   const html = ctx.csRenderTurnLogRows(DECISION_TURN_LOG, {
     playerKey: 'player',
     oppKey: 'opp',
     teamLookup: DECISION_PLAYER,
     oppLookup: DECISION_OPP
   });
-  truthy(html.includes('decision-gap'), 'missing decision gap class');
-  truthy(html.includes('Better line: Recover'), 'missing best-line chip');
+  truthy(!html.includes('decision-gap'), 'unsupported decision gap rendered');
+  truthy(!html.includes('Better line: Recover'), 'unsupported alternative rendered');
 });
 
-T('T5c-7 replay coaching summary flags execution from turn-log evidence', () => {
+T('T5c-7 replay coaching does not diagnose execution from heuristic scores', () => {
   const out = ctx.csBuildReplayCoachingSummary({
     result: 'loss',
     oppKey: 'opp',
@@ -758,9 +757,9 @@ T('T5c-7 replay coaching summary flags execution from turn-log evidence', () => 
     teamLookup: DECISION_PLAYER,
     oppLookup: DECISION_OPP
   });
-  eq(out.issue_category, 'execution', 'expected execution issue');
-  eq(out.evidence_label, 'replay + turn log', 'expected turn-log evidence label');
-  truthy(/Review T1/.test(out.next_action), 'expected turn review action');
+  eq(out.issue_category, 'not enough evidence', 'expected conservative issue');
+  eq(out.evidence_label, 'not enough evidence', 'expected evidence boundary');
+  truthy(!/clearer line|execution rather/.test(out.detail), 'unsupported causal conclusion');
 });
 
 T('T5c-8 replay coaching summary does not fall back to strategy context in v1', () => {

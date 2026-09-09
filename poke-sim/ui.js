@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.142-pp-replay-proof
+// Build marker: v2.2.163-mc-evidence-intake
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.142-pp-replay-proof'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.163-mc-evidence-intake'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -365,6 +365,32 @@ function regulationCheckHtml(check) {
     return '<div>' + _escapeHtml(message) + '</div>';
   }).join('');
 }
+function hasDbTeamVersionIdentity(team) {
+  var metadata = team && team.metadata;
+  var profile = typeof getChampionsRuleset === 'function' ? getChampionsRuleset(team && team.ruleset_id) : null;
+  return !!(metadata && typeof metadata.schema_version === 'string' && metadata.schema_version &&
+    typeof metadata.build_id === 'string' && metadata.build_id &&
+    typeof metadata.ruleset_version === 'string' && metadata.ruleset_version &&
+    profile && profile.version && metadata.ruleset_version === profile.version);
+}
+function dbTeamCatalogBlockReasons(team, verdict) {
+  var reasons = [];
+  if (!team) return ['missing_team'];
+  if (team.source === 'retired_legacy' || (team.metadata && team.metadata.retired === true)) reasons.push('retired_row');
+  if (!Array.isArray(team.members) || team.members.length !== 6) reasons.push('incomplete_roster');
+  if (team.format !== 'champions') reasons.push('wrong_format');
+  if (team.legality_status !== 'legal') reasons.push('unapproved_legality_status');
+  if (verdict && !verdict.valid) reasons.push('legality_validation_failed');
+  if (!hasDbTeamVersionIdentity(team)) reasons.push('missing_or_mismatched_version_identity');
+  if (!reasons.length) reasons.push('not_approved_champion_team');
+  return reasons;
+}
+function summarizeDbTeamBlocks(blocked) {
+  return (blocked || []).reduce(function(out, row) {
+    (row.reasons || ['unknown']).forEach(function(reason) { out[reason] = (out[reason] || 0) + 1; });
+    return out;
+  }, {});
+}
 function refreshRegulationControls() {
   if (typeof CHAMPIONS_RULESETS === 'undefined') return;
   if (typeof applyLadderGate === 'function') applyLadderGate();
@@ -383,6 +409,9 @@ function refreshRegulationControls() {
   var host = document.getElementById('sim-regulation-status');
   if (host) host.innerHTML = '<div>Your team: ' + regulationCheckHtml(selectedRegulationCheck(player)) + '</div>' +
     '<div>Opponent: ' + regulationCheckHtml(selectedRegulationCheck(opponent)) + '</div>' +
+    (typeof getChampionsRegulationCoverage === 'function' && getChampionsRegulationCoverage().status !== 'covered'
+      ? '<div class="regulation-coverage-warning"><strong>Current regulation not verified</strong><div>' + _escapeHtml(getChampionsRegulationCoverage().message) + '</div></div>'
+      : '') +
     '<div class="regulation-mechanics-status">Mechanics: not verified against the complete game</div>';
   var editorHost = document.getElementById('editor-regulation-status');
   if (editorHost) editorHost.innerHTML = regulationCheckHtml(selectedRegulationCheck(player));
@@ -596,10 +625,73 @@ function getChampionSpreadErrorsForTeam(team) {
   return errors;
 }
 
+var csMemberIdSequence = 0;
+function csNewMemberId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  csMemberIdSequence++;
+  return 'local-member-' + Date.now().toString(36) + '-' + csMemberIdSequence.toString(36) + '-' + Math.random().toString(36).slice(2);
+}
+
+function csMemberIdentityKey(member) {
+  var api = ChampionsSim && ChampionsSim.moveLegality;
+  if (!api || typeof api.canonicalSpeciesKey !== 'function') return '';
+  var name = api.canonicalSpeciesKey(member && member.name);
+  var species = member && member.species ? api.canonicalSpeciesKey(member.species) : name;
+  return name && species === name ? name : '';
+}
+
+function csReconcilePasteMembers(previous, incoming, options) {
+  options = options || {};
+  var errors = [], ids = new Set(), before = new Map(), after = new Map();
+  function group(rows, target) {
+    rows.forEach(function(member) {
+      var identity = csMemberIdentityKey(member);
+      if (!identity) errors.push('Every Pokemon needs a known, consistent species/form before editing.');
+      if (!target.has(identity)) target.set(identity, []);
+      target.get(identity).push(member);
+    });
+  }
+  if (!Array.isArray(previous) || !Array.isArray(incoming)) return { valid: false, members: [], errors: ['Invalid team member list.'] };
+  previous.forEach(function(member) {
+    if (!member || !member.member_id) return;
+    if (typeof member.member_id !== 'string' || ids.has(member.member_id)) errors.push('Existing Pokemon identities are invalid or duplicated; the team was not changed.');
+    ids.add(member.member_id);
+  });
+  group(previous, before);
+  group(incoming, after);
+  after.forEach(function(rows, identity) {
+    if (before.has(identity) && (rows.length !== 1 || before.get(identity).length !== 1)) {
+      errors.push(identity + ': ambiguous Pokemon identity in this paste; edit individual sets or import as a separate team.');
+    }
+  });
+  if (errors.length) return { valid: false, members: [], errors: Array.from(new Set(errors)) };
+  if (options.previewOnly) return { valid: true, members: [], errors: [] };
+  var members = incoming.map(function(member) {
+    var candidates = before.get(csMemberIdentityKey(member));
+    var original = candidates && candidates[0];
+    var merged = Object.assign({}, original || {}, member);
+    // Paste represents set fields, not registration IDs or non-paste annotations.
+    merged.member_id = original && original.member_id || (options.createId || csNewMemberId)();
+    if (typeof merged.member_id !== 'string' || !merged.member_id.trim()) errors.push('A valid Pokemon identity could not be allocated; the team was not changed.');
+    merged.species = member.name;
+    if (Object.prototype.hasOwnProperty.call(member, 'tera')) merged.teraType = merged.tera_type = member.tera || '';
+    if (original && !member.role && options.preserveRole !== false) merged.role = original.role || original.role_tag || '';
+    if (ids.has(merged.member_id) && !(original && original.member_id === merged.member_id)) {
+      errors.push('A new Pokemon identity collided; the team was not changed.');
+    }
+    ids.add(merged.member_id);
+    return merged;
+  });
+  return { valid: errors.length === 0, members: errors.length ? [] : members, errors: errors };
+}
+
+function csLearnsetOptionsForTeam(team) {
+  return { learnsetContext: team && team.format === 'champions' ? 'champions' : team && team.format === 'sv' ? 'historical' : null };
+}
+
 function buildImportedTeamValidation(members, opts) {
   opts = opts || {};
-  // Imports stay usable when source data is unavailable, but known illegal
-  // species/form move rows are hard errors so they cannot enter the sim.
+  // Editable input is not verified admission when source evidence is missing.
   var team = {
     name: opts.name || 'Imported Team',
     format: opts.format || 'champions',
@@ -611,7 +703,8 @@ function buildImportedTeamValidation(members, opts) {
     errors: [],
     warnings: [],
     sourceVersion: '',
-    memberWarnings: {}
+    memberWarnings: {},
+    sourceVerified: true
   };
   if ((opts.format || 'champions') === 'champions') {
     out.errors = out.errors.concat(buildChampionImportGateErrors(members));
@@ -628,51 +721,34 @@ function buildImportedTeamValidation(members, opts) {
   });
   if (typeof validateTeam === 'function') {
     try {
-      var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
+      var verdict = validateTeam(team, team.format) || {};
+      if (typeof verdict.valid !== 'boolean' || !Array.isArray(verdict.errors) ||
+          (verdict.valid === false && verdict.errors.length === 0)) throw new Error('Incomplete team verdict');
       out.errors = out.errors.concat(verdict.errors || []);
       out.warnings = out.warnings.concat(verdict.warnings || []);
     } catch (_e) {
       out.warnings.push('Team rules could not be fully checked.');
+      out.sourceVerified = false;
     }
-  }
-  var root = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : null);
-  var simRoot = (typeof ChampionsSim !== 'undefined') ? ChampionsSim : (root && root.ChampionsSim);
-  var api = simRoot && simRoot.moveLegality ? simRoot.moveLegality : null;
-  if (!api || typeof api.validateMovesForSet !== 'function') {
-    out.warnings.push('Showdown species and move legality data is not loaded.');
   } else {
-    (members || []).forEach(function(member, idx) {
-      if (typeof api.validateAbilityForSet === 'function') {
-        var abilityCheck = api.validateAbilityForSet(member || {});
-        if (abilityCheck && !out.sourceVersion && abilityCheck.sourceVersion) out.sourceVersion = abilityCheck.sourceVersion;
-        if (abilityCheck && !abilityCheck.legal) {
-          var abilityLabel = (member && member.name ? member.name : 'Pokemon') + ': ' + (member && member.ability ? member.ability : 'unknown ability') + ' - ' + (abilityCheck.notes || abilityCheck.reason || 'not verified');
-          var abilitySeverity = abilityCheck.reason === 'not_in_species_form_abilities' || abilityCheck.reason === 'unknown_ability' ? 'error' : 'warning';
-          if (abilitySeverity === 'error') out.errors.push(abilityLabel);
-          else out.warnings.push(abilityLabel);
-          out.memberWarnings[String(idx)] = out.memberWarnings[String(idx)] || [];
-          out.memberWarnings[String(idx)].push({ severity: abilitySeverity, text: abilityLabel });
-        }
-      }
-      var checks = api.validateMovesForSet(member || {});
-      checks.forEach(function(row) {
-        if (!out.sourceVersion && row.sourceVersion) out.sourceVersion = row.sourceVersion;
-        if (row.legal) return;
-        var label = (member && member.name ? member.name : 'Pokemon') + ': ' + (row.moveName || 'unknown move') + ' - ' + (row.notes || row.reason || 'not verified');
-        var severity = getMoveLegalityIssueSeverity(row.reason);
-        if (severity === 'error') out.errors.push(label);
-        else out.warnings.push(label);
-        out.memberWarnings[String(idx)] = out.memberWarnings[String(idx)] || [];
-        out.memberWarnings[String(idx)].push({
-          severity: severity,
-          text: label
-        });
-      });
-    });
+    out.sourceVerified = false;
+    out.warnings.push('Team validator is unavailable.');
   }
+  var sourceIssues = collectTeamMoveLegalityIssues(team);
+  out.sourceVersion = sourceIssues.sourceVersion || '';
+  sourceIssues.forEach(function(issue) {
+    if (issue.severity === 'unchecked') out.sourceVerified = false;
+    if (issue.severity === 'error') out.errors.push(issue.label);
+    else out.warnings.push(issue.label);
+    if (issue.memberIndex !== undefined) {
+      var index = String(issue.memberIndex);
+      out.memberWarnings[index] = out.memberWarnings[index] || [];
+      out.memberWarnings[index].push({ severity: issue.severity, text: issue.label });
+    }
+  });
   out.errors = Array.from(new Set(out.errors.filter(Boolean)));
   out.warnings = Array.from(new Set(out.warnings.filter(Boolean)));
-  out.valid = out.errors.length === 0;
+  out.valid = out.errors.length === 0 && out.sourceVerified;
   return out;
 }
 
@@ -721,7 +797,7 @@ function csNormalizeMegaRuntimeMember(member) {
 }
 
 function getMoveLegalityIssueSeverity(reason) {
-  if (reason === 'source_unavailable') return 'unchecked';
+  if (['source_unavailable', 'learnset_context_unavailable', 'champions_pool_unavailable'].indexOf(reason) >= 0) return 'unchecked';
   if (reason === 'unknown_species' ||
       reason === 'unknown_move' ||
       reason === 'not_in_species_form_learnset') {
@@ -750,7 +826,8 @@ function exportTeamToPasteWithOptions(team, opts) {
     lines.push(`${m.name}${itemStr}`);
     if (m.ability) lines.push(`Ability: ${m.ability}`);
     lines.push(`Level: ${m.level || 50}`);
-    if (team.format !== 'champions' && m.tera) lines.push(`Tera Type: ${m.tera}`);
+    var teraType = m.teraType || m.tera_type || m.tera;
+    if (team.format !== 'champions' && teraType) lines.push(`Tera Type: ${teraType}`);
     // SPs — only non-zero
     const evs = m.evs || {};
     const evParts = [];
@@ -778,7 +855,10 @@ function typeColor(type) { return TYPE_COLORS[type] || '#888'; }
 // ROSTER RENDERING
 // ============================================================
 function getPokemonTypes(name) {
-  // Check POKEMON_TYPES_DB first (comprehensive), then BASE_STATS, then fallback
+  const source = typeof _showdownSpeciesBase === 'function' ? _showdownSpeciesBase(name) : null;
+  if (source && Array.isArray(source.types) && source.types.length) return source.types.slice();
+  if (typeof name !== 'string' || !name) return [];
+  // Exact legacy/custom rows may backfill missing generated data, not invent it.
   if (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[name]) return POKEMON_TYPES_DB[name];
   const base = BASE_STATS[name];
   if (base && base.types) return base.types;
@@ -787,7 +867,7 @@ function getPokemonTypes(name) {
     const key = Object.keys(POKEMON_TYPES_DB).find(k => k.toLowerCase() === name.toLowerCase());
     if (key) return POKEMON_TYPES_DB[key];
   }
-  return ['Normal']; // last resort
+  return [];
 }
 
 function renderRoster(containerId, members) {
@@ -810,7 +890,7 @@ function renderRoster(containerId, members) {
         <div class="poke-moves">${escMoves}</div>
       </div>
       <div class="type-chips">
-        ${types.map(t=>`<span class="type-chip" style="background:${typeColor(t)}20;color:${typeColor(t)};border:1px solid ${typeColor(t)}40">${_escapeHtml(t)}</span>`).join('')}
+        ${types.length ? types.map(t=>`<span class="type-chip" style="background:${typeColor(t)}20;color:${typeColor(t)};border:1px solid ${typeColor(t)}40">${_escapeHtml(t)}</span>`).join('') : '<span class="type-chip">Unknown type</span>'}
       </div>
       <button class="team-mon-detail-btn" type="button" data-team="${containerId === 'player-roster' ? currentPlayerKey : (document.getElementById('opponent-select') ? document.getElementById('opponent-select').value : '')}" data-mon="${escName}" title="View full stat details">Stats</button>`;
     el.appendChild(row);
@@ -892,7 +972,7 @@ function normalizeTeamRecordForSim(teamKey, team) {
       moves = moves.filter(function(move) { return move !== 'Tera Blast'; });
     }
     var teraType = championFormat ? '' : (member.teraType || member.tera_type || '');
-    return {
+    return Object.assign({}, member, {
       name: name,
       species: member.species || name,
       member_id: member.member_id || null,
@@ -906,7 +986,7 @@ function normalizeTeamRecordForSim(teamKey, team) {
       teraType: teraType,
       tera_type: teraType,
       role: member.role || member.role_tag || ''
-    };
+    });
   });
   return team;
 }
@@ -921,10 +1001,11 @@ function removeTeamFromRuntimeCatalog(teamKey, team, verdict, reason) {
     format: team.format || '',
     legality_status: team.legality_status || '',
     reason: reason || 'not_approved_champion_legal',
+    retained_for_review: true,
     errors: verdict && Array.isArray(verdict.errors) ? verdict.errors.slice(0, 8) : [],
     warnings: verdict && Array.isArray(verdict.warnings) ? verdict.warnings.slice(0, 8) : []
   };
-  delete TEAMS[teamKey];
+  // Quarantine from runnable selections without destroying the editable record.
   return true;
 }
 
@@ -939,6 +1020,7 @@ function pruneRuntimeTeamCatalog() {
       : { valid: false, errors: ['Team legality validator is unavailable.'] };
     if (typeof isApprovedPreloadedChampionTeam === 'function' &&
         isApprovedPreloadedChampionTeam(key, team, verdict)) {
+      delete CS_REMOVED_TEAM_CATALOG[key];
       return;
     }
     if (removeTeamFromRuntimeCatalog(key, team, verdict, 'not_approved_champion_legal')) removed++;
@@ -1015,7 +1097,7 @@ function getDefaultVisibleOpponentTeamKey(excludeKey) {
 }
 
 function mergeDbTeamsIntoCatalog(dbTeams) {
-  var summary = { added: 0, replaced: 0, skipped: 0, blocked: [] };
+  var summary = { added: 0, replaced: 0, skipped: 0, blocked: [], reason_counts: {} };
   if (!dbTeams || typeof TEAMS === 'undefined') return summary;
   for (var key in dbTeams) {
     if (!Object.prototype.hasOwnProperty.call(dbTeams, key)) continue;
@@ -1024,13 +1106,14 @@ function mergeDbTeamsIntoCatalog(dbTeams) {
     var verdict = (typeof getTeamLegalityVerdict === 'function')
       ? getTeamLegalityVerdict(key, team)
       : { valid: true, errors: [] };
-    if (!team || team.format !== 'champions' || !verdict.valid ||
+    if (!team || team.format !== 'champions' || !verdict.valid || !hasDbTeamVersionIdentity(team) ||
         (typeof isApprovedPreloadedChampionTeam === 'function' &&
           !isApprovedPreloadedChampionTeam(key, team, verdict))) {
       summary.skipped++;
       summary.blocked.push({
         key: key,
         name: team && team.name,
+        reasons: dbTeamCatalogBlockReasons(team, verdict),
         errors: (verdict && verdict.errors && verdict.errors.length)
           ? verdict.errors
           : ['Not an approved Champion-legal team']
@@ -1041,6 +1124,7 @@ function mergeDbTeamsIntoCatalog(dbTeams) {
     else summary.added++;
     TEAMS[key] = team;
   }
+  summary.reason_counts = summarizeDbTeamBlocks(summary.blocked);
   return summary;
 }
 
@@ -1540,22 +1624,30 @@ function getTeamLegalityVerdict(teamKey, team) {
   var moveIssues = collectTeamMoveLegalityIssues(team);
   var hardMoveIssues = moveIssues.filter(function(row) { return row && row.severity === 'error'; });
   var sourceWarnings = moveIssues.filter(function(row) { return row && row.severity !== 'error'; });
+  var sourceVerified = !sourceWarnings.some(function(row) { return row.severity === 'unchecked'; });
   var fallback = {
-    valid: !!team && hardMoveIssues.length === 0 && (team.legality_status === 'legal' || team.legality_status === 'legal_inferred'),
+    valid: false,
+    sourceVerified: false,
     inferred: !!team && team.legality_status === 'legal_inferred',
     errors: hardMoveIssues.map(function(row) { return row.label; }),
-    warnings: sourceWarnings.map(function(row) { return row.label; }),
-    label: team && team.legality_status === 'legal_inferred' ? 'Legal (inferred)' : 'Legal'
+    warnings: sourceWarnings.map(function(row) { return row.label; }).concat(['Team validator is unavailable or its result could not be verified.']),
+    label: 'Not verified'
   };
   if (!team || typeof validateTeam !== 'function') return fallback;
-  var verdict = validateTeam(team, getActiveValidationFormat(team)) || {};
+  var verdict;
+  try {
+    verdict = validateTeam(team, team.format);
+    if (!verdict || typeof verdict.valid !== 'boolean' || !Array.isArray(verdict.errors) ||
+        (verdict.valid === false && verdict.errors.length === 0)) return fallback;
+  } catch (_e) { return fallback; }
   var errors = Array.isArray(verdict.errors) ? verdict.errors.slice() : [];
   hardMoveIssues.forEach(function(row) { errors.push(row.label); });
   var warnings = Array.isArray(verdict.warnings) ? verdict.warnings.slice() : [];
   sourceWarnings.forEach(function(row) { warnings.push(row.label); });
-  var valid = errors.length === 0;
+  var valid = errors.length === 0 && sourceVerified;
   return {
     valid: valid,
+    sourceVerified: sourceVerified,
     inferred: team.legality_status === 'legal_inferred',
     statAware: false,
     errors: errors,
@@ -1564,7 +1656,7 @@ function getTeamLegalityVerdict(teamKey, team) {
       ? (team.legality_status === 'legal_inferred'
           ? 'Legal (inferred)'
           : 'Legal')
-      : 'Not legal'
+      : (sourceVerified ? 'Team check failed' : 'Not verified')
   };
 }
 
@@ -1581,13 +1673,48 @@ function collectTeamMoveLegalityIssues(team) {
     });
     return out;
   }
-  (team.members || []).forEach(function(member) {
-    var checks = api.validateMovesForSet(member || {});
+  (team.members || []).forEach(function(member, idx) {
+    var abilityCheck = null;
+    var mega = member && typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[member.name];
+    if (mega && member.item !== mega.megaStone) {
+      out.push({ severity: 'error', memberIndex: idx,
+        label: member.name + ': the matching Mega Stone is required for this registered form.' });
+    }
+    try {
+      var abilityMember = member;
+      // Match the ruleset registration view, without changing the exact catalog form.
+      if (mega && member.item === mega.megaStone && typeof api.isAbilityLegalForSpecies === 'function') {
+        var baseAbility = api.isAbilityLegalForSpecies(mega.baseSpecies, member.ability);
+        if (baseAbility && baseAbility.legal === true && baseAbility.verification_status !== 'unchecked') {
+          abilityMember = Object.assign({}, member, { name: mega.baseSpecies });
+        }
+      }
+      if (typeof api.validateAbilityForSet === 'function') abilityCheck = api.validateAbilityForSet(abilityMember || {});
+    } catch (_e) { /* Missing source evidence remains unchecked below. */ }
+    if (abilityCheck && abilityCheck.sourceVersion && !out.sourceVersion) out.sourceVersion = abilityCheck.sourceVersion;
+    if (!abilityCheck || abilityCheck.legal !== true || abilityCheck.verification_status === 'unchecked') {
+      var abilityError = abilityCheck && abilityCheck.legal === false && abilityCheck.verification_status !== 'unchecked' &&
+        (abilityCheck.reason === 'not_in_species_form_abilities' || abilityCheck.reason === 'unknown_ability');
+      out.push({ severity: abilityError ? 'error' : 'unchecked', memberIndex: idx,
+        label: (member && member.name || 'Pokemon') + ': ' + (member && member.ability || 'unknown ability') + ' - ' +
+          (abilityCheck && (abilityCheck.notes || abilityCheck.reason) || 'Ability source check is unavailable.') });
+    }
+    var checks;
+    try {
+      checks = api.validateMovesForSet(member || {}, csLearnsetOptionsForTeam(team));
+      if (!Array.isArray(checks) || checks.length !== ((member && member.moves) || []).filter(Boolean).length ||
+          checks.some(function(row) { return !row || typeof row.legal !== 'boolean'; })) throw new Error('Incomplete move checks');
+    } catch (_e) {
+      out.push({ severity: 'unchecked', memberIndex: idx, label: (member && member.name || 'Pokemon') + ': Move source check is unavailable.' });
+      return;
+    }
     checks.forEach(function(row) {
-      if (row.legal) return;
+      if (row.sourceVersion && !out.sourceVersion) out.sourceVersion = row.sourceVersion;
+      if (row.legal && row.verification_status !== 'unchecked') return;
       var label = (member && member.name ? member.name : 'Pokemon') + ': ' + (row.moveName || 'unknown move') + ' - ' + (row.notes || row.reason || 'not verified');
       out.push({
-        severity: getMoveLegalityIssueSeverity(row.reason),
+        severity: row.verification_status === 'unchecked' ? 'unchecked' : getMoveLegalityIssueSeverity(row.reason),
+        memberIndex: idx,
         label: label,
         reason: row.reason,
         member: member && member.name,
@@ -2019,6 +2146,21 @@ function csRenderTeamRulesetBadges(key, team) {
   return '<span class="' + statusClass + '" title="' + _escapeHtml(title) + '">' + _escapeHtml(label) + '</span>' +
     '<span class="' + statusClass + '" title="' + _escapeHtml(guard) + '">' + _escapeHtml(String(status).replace(/_/g, ' ').toUpperCase()) + '</span>';
 }
+function csRenderTeamValidationBadge(team, verdict) {
+  team = team || {};
+  verdict = verdict || {};
+  var errors = Array.isArray(verdict.errors) ? verdict.errors : [];
+  if (team.format === 'sv') return '<span class="badge-warn">SV COMPAT ONLY</span>';
+  if (verdict.valid === false && (errors.length || verdict.sourceVerified !== false)) return '<span class="badge-illegal" title="' + _escapeHtml(errors.join('; ')) + '">TEAM CHECK FAILED</span>';
+  var evidence = csTeamRulesetEvidence(team);
+  if (verdict.valid !== true || !evidence.runtime_promotable) {
+    return '<span class="badge-warn" title="Team checks do not establish legality under an unverified or historical ruleset.">LEGALITY UNVERIFIED</span>';
+  }
+  if (verdict.inferred || team.legality_status === 'legal_inferred') {
+    return '<span class="badge-warn" title="Some set details are inferred, not source-confirmed.">INFERRED SET</span>';
+  }
+  return '<span class="badge-warn" title="Local team validation passed; this is not tournament approval.">TEAM CHECK PASSED</span>';
+}
 function csGetRegmbCoverageSections() {
   var source = typeof CHAMPIONS_REGMB_SOURCE_CONVERSION !== 'undefined'
     ? CHAMPIONS_REGMB_SOURCE_CONVERSION
@@ -2168,7 +2310,9 @@ function csRenderRegmbCoverageCards(grid) {
 }
 function teamMatchesFilter(key, team, filter) {
   if (!team) return false;
-  if (!isVisibleTeamInCatalog(key, team, { includeCustom: true })) return false;
+  var visible = isVisibleTeamInCatalog(key, team, { includeCustom: true });
+  if (filter === 'needs_review') return !visible && !!team.name;
+  if (!visible) return false;
   var isCustom = team.source === 'custom';
   var evidence = csTeamRulesetEvidence(team);
   var tags = csTeamRulesetTags(key, team);
@@ -2212,6 +2356,7 @@ function renderTeamsFilterRow() {
     { id:'mega',       label:'Mega' },
     { id:'regma',      label:'Reg M-A' },
     { id:'historical', label:'Historical' },
+    { id:'needs_review', label:'Needs review' },
     { id:'regmb_review', label:'Reg M-B Review' }
   ];
   row.innerHTML = chips.map(function(c){
@@ -2246,9 +2391,9 @@ function renderTeamsGrid() {
           ? '<div class="team-legality-note"><strong>SV compatibility team</strong><span>' +
             _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'This team is outside the Champions review lane.') +
             '</span><small>Keep this visible for legacy comparison only. Live Champions review and trust scoring stay on Champions-format teams.</small></div>'
-          : '<div class="team-legality-note"><strong>Not legal for current sim rules</strong><span>' +
-            _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || 'Unknown legality issue') +
-            '</span><small>Team remains visible for review/testing, but results should be treated as untrusted until the source data is fixed.</small></div>')
+          : '<div class="team-legality-note"><strong>' + (legalityVerdict.sourceVerified === false && !legalityVerdict.errors.length ? 'Team checks unverified' : 'Team check failed') + '</strong><span>' +
+            _escapeHtml(legalityVerdict.errors.slice(0, 3).join('; ') || legalityVerdict.warnings.slice(0, 3).join('; ') || 'Team validation is unavailable.') +
+            '</span><small>Retained for review and editing. Simulation is blocked until team checks pass.</small></div>')
       : '';
     const card = document.createElement('div');
     card.className = 'team-full-card';
@@ -2263,16 +2408,7 @@ function renderTeamsGrid() {
         <div class="tfcard-badges">
           <span class="badge ${isPlayer?'badge-blue':'badge-red'}">${_escapeHtml(team.label||key)}</span>
           ${csRenderTeamRulesetBadges(key, team)}
-          ${(function(){ /* Issue #T6: legality badge - T9h: legal_inferred */
-            var st = team.legality_status; var fmt = team.format;
-            if (!legalityVerdict.valid && fmt === 'sv') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.errors || []).join('; ')) + '">\u26A0 SV COMPAT ONLY</span>';
-            if (!legalityVerdict.valid) return '<span class="badge-illegal" title="' + _escapeHtml(legalityVerdict.errors.join('; ')) + '">\u274C NOT LEGAL</span>';
-            if (st === 'legal' && fmt === 'champions') return '<span class="badge-legal">\u2705 LEGAL</span>';
-            if (st === 'legal_inferred' && fmt === 'champions') return '<span class="badge-warn" title="' + _escapeHtml((legalityVerdict.warnings || []).join('; ') || 'Tournament-placement team; spreads are inferred from source archetypes.') + '">\u26A0 ' + _escapeHtml(legalityVerdict.label || 'LEGAL (inferred)') + '</span>';
-            if (st === 'illegal') return '<span class="badge-illegal">\u274C ILLEGAL</span>';
-            if (fmt === 'sv') return '<span class="badge-warn">\u26A0 SV FORMAT</span>';
-            return '<span class="badge-warn">\u26A0 UNVERIFIED</span>';
-          })()}
+          ${csRenderTeamValidationBadge(team, legalityVerdict)}
           <button class="export-card-btn" data-team="${key}">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             Export
@@ -2410,9 +2546,10 @@ function _uniqueTeamName(wanted) {
   return wanted + ' (' + n + ')';
 }
 
-function importCustomTeamsBulk(teams /* [{name, members}] */) {
+function importCustomTeamsBulk(teams /* [{name, members, format?}] */, opts) {
   // Returns { added, skipped, keys:[...], skippedErrors:[...] } so file-upload
   // imports can tell users exactly why a parsed team did not enter the sim.
+  opts = opts || {};
   var added = 0, skipped = 0, keys = [], skippedErrors = [];
   if (!Array.isArray(teams)) return { added: 0, skipped: 0, keys: [], skippedErrors: [] };
   for (var i = 0; i < teams.length; i++) {
@@ -2422,9 +2559,43 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
       skippedErrors.push({ name: (t && t.name) || 'Imported Team', errors: ['No Pokemon or moves were parsed from this team.'], warnings: [] });
       continue;
     }
+    // Reject malformed containers before validators call array/string helpers.
+    var shapeErrors = [];
+    Array.from(t.members).forEach(function(member, index) {
+      var label = 'Pokemon member ' + (index + 1);
+      if (!member || typeof member !== 'object' || Array.isArray(member)) {
+        shapeErrors.push(label + ' must be a Pokemon set object.');
+        return;
+      }
+      if (typeof member.name !== 'string' || !member.name.trim()) shapeErrors.push(label + ' requires a Pokemon name string.');
+      if (!Array.isArray(member.moves) || Array.from(member.moves).some(function(move) { return typeof move !== 'string'; })) {
+        shapeErrors.push(label + ' moves must be an array of move-name strings.');
+      }
+      ['species', 'ability', 'item', 'nature'].forEach(function(field) {
+        if (member[field] !== undefined && typeof member[field] !== 'string') shapeErrors.push(label + ' ' + field + ' must be a string.');
+      });
+      ['evs', 'ivs'].forEach(function(field) {
+        if (member[field] !== undefined && (!member[field] || typeof member[field] !== 'object' || Array.isArray(member[field]))) {
+          shapeErrors.push(label + ' ' + field + ' spread must be an object.');
+        }
+      });
+    });
+    if (shapeErrors.length) {
+      skipped++;
+      skippedErrors.push({ name: t.name || 'Imported Team', errors: shapeErrors, warnings: [] });
+      continue;
+    }
+    // Only the Showdown text path may supply the default Champions context.
+    var format = t.format;
+    if (format === undefined && !opts.requireExplicitFormat) format = 'champions';
+    if (format !== 'champions' && format !== 'sv') {
+      skipped++;
+      skippedErrors.push({ name: t.name || 'Imported Team', errors: ['Missing or unsupported team format; expected explicit "champions" or "sv".'], warnings: [] });
+      continue;
+    }
     var key = _uniqueCustomKey(t.name);
     var name = _uniqueTeamName(t.name || 'Imported Team');
-    var validation = buildImportedTeamValidation(t.members, { name: name, format: 'champions' });
+    var validation = buildImportedTeamValidation(t.members, { name: name, format: format });
     if (!validation.valid) {
       skipped++;
       skippedErrors.push({ name: name, errors: validation.errors.slice(0), warnings: validation.warnings.slice(0) });
@@ -2437,7 +2608,7 @@ function importCustomTeamsBulk(teams /* [{name, members}] */) {
       description: 'Imported via bulk file',
       members: t.members,
       source: 'custom',
-      format: 'champions',
+      format: format,
       legality_status: 'unverified',
       import_warnings: validation.warnings,
       import_errors: validation.errors,
@@ -2468,10 +2639,10 @@ function importFromJsonText(jsonText) {
   for (var k in parsed.teams) {
     var t = parsed.teams[k];
     if (t && Array.isArray(t.members) && t.members.length > 0) {
-      asArr.push({ name: t.name || k, members: t.members });
+      asArr.push({ name: t.name || k, members: t.members, format: t.format });
     }
   }
-  return importCustomTeamsBulk(asArr);
+  return importCustomTeamsBulk(asArr, { requireExplicitFormat: true });
 }
 
 function exportAllCustomAsJson() {
@@ -2916,7 +3087,7 @@ function removeEditorPokemonSlot() {
   if (nextIdx >= 0) openEditorForm(nextIdx);
 }
 
-function buildSetEditorMoveLegalityWarnings(member) {
+function buildSetEditorMoveLegalityWarnings(member, team) {
   var api = ChampionsSim && ChampionsSim.moveLegality;
   if (!api || typeof api.validateMovesForSet !== 'function') {
     return [{
@@ -2924,7 +3095,7 @@ function buildSetEditorMoveLegalityWarnings(member) {
       text: 'Move legality unchecked: generated Pokemon Showdown source data is not loaded.'
     }];
   }
-  var checks = api.validateMovesForSet(member || {});
+  var checks = api.validateMovesForSet(member || {}, csLearnsetOptionsForTeam(team));
   if (!checks.length) return [];
   return checks.filter(function(row) {
     return !row.legal || row.reason === 'source_unavailable' || row.reason === 'unknown_species';
@@ -2937,11 +3108,11 @@ function buildSetEditorMoveLegalityWarnings(member) {
   });
 }
 
-function renderSetEditorMoveLegalityHtml(member) {
-  if (typeof getChampionsRuleset === 'function' && !getChampionsRuleset(selectedRegulationId).runtimePromotable) return '<div class="editor-legality-warning">Move eligibility: not verified for the selected regulation.</div>';
-  var warnings = buildSetEditorMoveLegalityWarnings(member);
+function renderSetEditorMoveLegalityHtml(member, team) {
+  if (team && team.format === 'champions' && typeof getChampionsRuleset === 'function' && !getChampionsRuleset(selectedRegulationId).runtimePromotable) return '<div class="editor-legality-warning">Move eligibility: not verified for the selected regulation.</div>';
+  var warnings = buildSetEditorMoveLegalityWarnings(member, team);
   if (!warnings.length) {
-    return '<div class="editor-legality-ok">Move legality checked against Pokemon Showdown species/form learnsets.</div>';
+    return '<div class="editor-legality-ok">Individual moves match the selected reference pool; combinations and regulation eligibility are not established.</div>';
   }
   return '<div class="editor-legality-warnings">' + warnings.map(function(row) {
     return '<div class="editor-legality-warning ' + _escapeHtml(row.severity) + '">' + _escapeHtml(row.text) + '</div>';
@@ -3040,14 +3211,14 @@ function csRenderEditorMegaRuntimeHtml(member) {
     '</div>';
 }
 
-function csRenderEditorMoveDatalist(speciesName) {
+function csRenderEditorMoveDatalist(speciesName, team) {
   var list = document.getElementById('editor-move-list');
   if (!list) return 0;
   var api = ChampionsSim && ChampionsSim.moveLegality;
   var moves = api && typeof api.legalMoveDisplayNamesForSpecies === 'function'
-    ? api.legalMoveDisplayNamesForSpecies(speciesName)
+    ? api.legalMoveDisplayNamesForSpecies(speciesName, csLearnsetOptionsForTeam(team))
     : [];
-  if (typeof getRegulationChoices === 'function') moves = editorRegulationChoices('move', speciesName).map(function(row) { return row.name; });
+  if (team && team.format === 'champions' && typeof getRegulationChoices === 'function') moves = editorRegulationChoices('move', speciesName).map(function(row) { return row.name; });
   list.setAttribute('data-moves', JSON.stringify(moves));
   list.innerHTML = moves.slice(0, 450).map(function(move) {
     return '<option value="' + _escapeHtml(move) + '"></option>';
@@ -3140,7 +3311,7 @@ function refreshEditorMoveLegality(baseMember) {
   if (!host) return;
   var current = currentEditorMemberForLegality(baseMember);
   if (typeof getRegulationChoices === 'function') renderRegulationDatalist('editor-species-list', editorRegulationChoices('species', current.name));
-  var legalMoveCount = csRenderEditorMoveDatalist(current.name);
+  var legalMoveCount = csRenderEditorMoveDatalist(current.name, getEditablePlayerTeam());
   csRenderEditorItemDatalist();
   csRenderEditorAbilityDatalist();
   if (typeof checkTeamForSelectedRegulation === 'function') {
@@ -3155,7 +3326,7 @@ function refreshEditorMoveLegality(baseMember) {
     var statusHost = document.getElementById('editor-regulation-status');
     if (statusHost) statusHost.innerHTML = regulationCheckHtml(selectedRegulationCheck(draftTeam));
   }
-  host.innerHTML = csRenderEditorItemLegalityHtml(current) + renderSetEditorMoveLegalityHtml(current) +
+  host.innerHTML = csRenderEditorItemLegalityHtml(current) + renderSetEditorMoveLegalityHtml(current, getEditablePlayerTeam()) +
     csRenderEditorMegaRuntimeHtml(current) +
     '<div class="editor-move-source">' +
       (legalMoveCount
@@ -3210,7 +3381,7 @@ function openEditorForm(idx) {
     </div>
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">Moves</label>
     <div class="moves-2col">${[0,1,2,3].map((i)=>`<div class="editor-move-combobox"><input class="form-input" id="ed-mv-${i}" data-move-index="${i}" value="${_escapeHtml((m.moves||[])[i] || '')}" placeholder="Search legal move ${i + 1}"/><div class="editor-move-menu" id="ed-mv-menu-${i}" style="display:none"></div></div>`).join('')}</div></div>
-    <div id="editor-move-legality">${renderSetEditorMoveLegalityHtml(m)}</div>
+    <div id="editor-move-legality">${renderSetEditorMoveLegalityHtml(m, getEditablePlayerTeam())}</div>
     ${renderStatPanelHtml(m)}
     <div style="margin-top:var(--sp4)"><label class="form-label" style="display:block;margin-bottom:6px">SPs (max 66 total, 32 per stat)</label>
     <div class="ev-6col">${evsHtml}</div>
@@ -3325,7 +3496,7 @@ function saveEdits() {
   if (!team || !Array.isArray(team.members) || !team.members[editingIdx]) return;
   var spreadGuard = refreshEditorSpreadGuard();
   if (spreadGuard.errors.length) return;
-  const editedMember = Object.assign({}, team.members[editingIdx], {
+  const editedFields = {
     name: (document.getElementById('ed-name').value.trim() || team.members[editingIdx].name),
     item: document.getElementById('ed-item').value.trim(),
     ability: document.getElementById('ed-ability').value.trim(),
@@ -3334,10 +3505,15 @@ function saveEdits() {
     role: document.getElementById('ed-role').value.trim(),
     moves: [0,1,2,3].map(i => (document.getElementById(`ed-mv-${i}`)?.value||'').trim()).filter(Boolean),
     evs: spreadGuard.evs
-  });
+  };
+  const sameIdentity = csMemberIdentityKey(team.members[editingIdx]) === csMemberIdentityKey(editedFields);
+  const editedMember = Object.assign({}, sameIdentity ? team.members[editingIdx] : {}, editedFields, { species: editedFields.name });
   var candidateMembers = team.members.slice();
   candidateMembers[editingIdx] = editedMember;
-  var validation = buildImportedTeamValidation(candidateMembers, { name: team.name, format: team.format || 'champions' });
+  var reconciliation = csReconcilePasteMembers(team.members, candidateMembers, { preserveRole: false });
+  var validation = buildImportedTeamValidation(reconciliation.valid ? reconciliation.members : candidateMembers, { name: team.name, format: team.format || 'champions' });
+  validation.errors = validation.errors.concat(reconciliation.errors);
+  validation.valid = validation.valid && reconciliation.valid;
   if (!validation.valid) {
     var status = document.getElementById('sp-guard-status');
     if (status) {
@@ -3346,7 +3522,7 @@ function saveEdits() {
     }
     return;
   }
-  team.members[editingIdx] = editedMember;
+  team.members = reconciliation.members;
   team.import_warnings = validation.warnings;
   team.import_errors = validation.errors;
   team.showdown_source_version = validation.sourceVersion;
@@ -3478,7 +3654,7 @@ function openEditTeamModal(teamKey) {
   if (hdr) hdr.textContent = 'Edit Team: ' + team.name;
   var hint = document.querySelector('#import-modal .modal-hint');
   if (hint) {
-    hint.innerHTML = 'Editing <strong>' + team.name + '</strong>. Modify the Showdown paste below, then click Load Team. ' +
+    hint.innerHTML = 'Editing <strong>' + _escapeHtml(team.name) + '</strong>. Modify the Showdown paste below, then click Load Team. ' +
       (team.source === 'custom' ? 'Custom team — saved to localStorage.' :
        'Preloaded team — your edits save as an override; use Reset to revert to the original.');
   }
@@ -3547,11 +3723,17 @@ document.getElementById('import-slot')?.addEventListener('change', function() {
 function showImportPreview(members) {
   const preview = document.getElementById('import-preview');
   const roster = document.getElementById('preview-roster');
-  const validation = buildImportedTeamValidation(members, { format: 'champions' });
   const flow = document.getElementById('import-flow-card');
   const dest = document.getElementById('import-destination-card');
   const slotEl = document.getElementById('import-slot');
   const slot = slotEl ? slotEl.value : '__new__';
+  const targetTeam = slot === '__new__' ? null : TEAMS[slot];
+  const validation = buildImportedTeamValidation(members, { format: targetTeam ? targetTeam.format : 'champions' });
+  if (targetTeam) {
+    const reconciliation = csReconcilePasteMembers(targetTeam.members, members, { previewOnly: true });
+    validation.errors = validation.errors.concat(reconciliation.errors);
+    validation.valid = validation.valid && reconciliation.valid;
+  }
   const destination = slot === '__new__' ? 'New custom team' : ((TEAMS[slot] && TEAMS[slot].name) || slot || 'Selected slot');
   const memberWarningsTotal = Object.keys(validation.memberWarnings || {}).reduce(function(sum, key) {
     return sum + ((validation.memberWarnings[key] || []).length);
@@ -3673,14 +3855,21 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
   } else {
     const teamKeys = Object.keys(TEAMS);
     if (!teamKeys.includes(slot)) { statusEl.textContent = 'Unknown slot'; statusEl.className='modal-status err'; return; }
-    const validation = buildImportedTeamValidation(members, { name: TEAMS[slot].name, format: TEAMS[slot].format || 'champions' });
-    if (!validation.valid) {
-      statusEl.textContent = validation.errors.slice(0, 3).join(' ');
+    const reconciliation = csReconcilePasteMembers(TEAMS[slot].members, members);
+    if (!reconciliation.valid) {
+      statusEl.textContent = reconciliation.errors.join(' ');
       statusEl.className = 'modal-status err';
       showImportPreview(members);
       return;
     }
-    TEAMS[slot].members = members;
+    const validation = buildImportedTeamValidation(reconciliation.members, { name: TEAMS[slot].name, format: TEAMS[slot].format || 'champions' });
+    if (!validation.valid) {
+      statusEl.textContent = validation.errors.concat(validation.warnings).slice(0, 3).join(' ');
+      statusEl.className = 'modal-status err';
+      showImportPreview(members);
+      return;
+    }
+    TEAMS[slot].members = reconciliation.members;
     TEAMS[slot].legality_status = 'unverified';
     TEAMS[slot].import_warnings = validation.warnings;
     TEAMS[slot].import_errors = validation.errors;
@@ -4795,76 +4984,10 @@ function _csDecisionMoveScore(move, actor, target, turn, opts) {
 }
 
 function csBuildDecisionAudit(turnLog, opts) {
-  var rows = Array.isArray(turnLog) ? turnLog : [];
-  var out = { total_flags: 0, flagged_turns: [], byTurn: {}, byKey: {} };
-  if (!rows.length) return out;
-  opts = opts || {};
-  var playerKey = opts.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
-  var oppKey = opts.oppKey || null;
-  var teamLookup = opts.teamLookup || ((typeof TEAMS !== 'undefined' && TEAMS[playerKey] && Array.isArray(TEAMS[playerKey].members)) ? TEAMS[playerKey].members : []);
-  var oppLookup = opts.oppLookup || ((oppKey && typeof TEAMS !== 'undefined' && TEAMS[oppKey] && Array.isArray(TEAMS[oppKey].members)) ? TEAMS[oppKey].members : []);
-  var playerMap = _csDecisionMemberMap(teamLookup);
-  var oppMap = _csDecisionMemberMap(oppLookup);
-  var threshold = typeof opts.threshold === 'number' ? opts.threshold : 12;
-
-  for (var i = 0; i < rows.length; i++) {
-    var turn = rows[i];
-    if (!turn || !turn.pre || !turn.actions) continue;
-    var playerActs = (turn.actions.player || []).slice();
-    if (!playerActs.length) continue;
-    var bestGap = -Infinity;
-    var bestFlag = null;
-
-    for (var a = 0; a < playerActs.length; a++) {
-      var act = playerActs[a];
-      if (!act || !act.actor || !act.move) continue;
-      var actor = playerMap[act.actor] || { name: act.actor, moves: [], types: [] };
-      var legal = (turn.pre.legal_options && turn.pre.legal_options[act.actor]) ? turn.pre.legal_options[act.actor] : [];
-      var candidates = legal.map(function(opt) {
-        return String(opt).split(' -> ')[0];
-      }).filter(function(mv) { return mv && mv.length; });
-      if (!candidates.length && Array.isArray(actor.moves)) candidates = actor.moves.slice();
-      if (!candidates.length) candidates = [act.move];
-      var targetName = act.target || ((turn.pre.active && turn.pre.active.opponent && turn.pre.active.opponent[0]) || null);
-      var target = targetName ? (oppMap[targetName] || { name: targetName, moves: [], types: [] }) : null;
-
-      var chosenScore = _csDecisionMoveScore(act.move, actor, target, turn, { oppLookup: oppMap });
-      var bestMove = act.move;
-      var bestScore = chosenScore;
-      for (var c = 0; c < candidates.length; c++) {
-        var mv = candidates[c];
-        var sc = _csDecisionMoveScore(mv, actor, target, turn, { oppLookup: oppMap });
-        if (sc > bestScore) {
-          bestScore = sc;
-          bestMove = mv;
-        }
-      }
-      var gap = Math.round((bestScore - chosenScore) * 10) / 10;
-      if (bestMove !== act.move && gap >= threshold && gap > bestGap) {
-        bestGap = gap;
-        bestFlag = {
-          turn: turn.turn,
-          actor: act.actor,
-          chosen_move: act.move,
-          best_move: bestMove,
-          chosen_score: Math.round(chosenScore * 10) / 10,
-          best_score: Math.round(bestScore * 10) / 10,
-          score_gap: gap,
-          expected_delta: Math.round(gap),
-          target: targetName,
-          reason: 'A better line was available based on current board state'
-        };
-      }
-    }
-
-    if (bestFlag) {
-      out.total_flags++;
-      out.flagged_turns.push(bestFlag);
-      out.byTurn[turn.turn] = bestFlag;
-      out.byKey[turn.turn + '|' + bestFlag.actor] = bestFlag;
-    }
-  }
-  return out;
+  // Current snapshots contain move inventories, not verified move/target availability.
+  // Positive PP cannot establish missing Disable, Encore, Choice or action-lock state.
+  // Preserve the public shape without turning heuristic scores into battle advice.
+  return { total_flags: 0, flagged_turns: [], byTurn: {}, byKey: {} };
 }
 
 function csRenderDecisionAuditChip(flag) {
@@ -8267,29 +8390,11 @@ function csBuildReplayCoachingSummary(replay, opts) {
   var fallback = {
     issue_category: 'not enough evidence',
     evidence_label: 'not enough evidence',
-    next_action: 'Run another replay with structured turn log so the Replay Log can show a clearer decision review.',
-    detail: 'This replay does not expose enough structured evidence to label the miss confidently.'
+    next_action: 'Inspect the recorded actions and board changes in the Replay Log.',
+    detail: 'This evidence does not establish which alternatives were usable or how they would have changed the outcome.'
   };
   if (!replay || typeof replay !== 'object') return fallback;
 
-  var rows = Array.isArray(replay.turnLog) ? replay.turnLog : [];
-  if (rows.length) {
-    var audit = csBuildDecisionAudit(rows, {
-      playerKey: opts.playerKey || replay.playerKey || (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player'),
-      oppKey: opts.oppKey || replay.oppKey || null,
-      teamLookup: opts.teamLookup,
-      oppLookup: opts.oppLookup
-    });
-    if (audit && audit.total_flags && Array.isArray(audit.flagged_turns) && audit.flagged_turns.length) {
-      var flag = audit.flagged_turns[0];
-      return {
-        issue_category: 'execution',
-        evidence_label: 'replay + turn log',
-        next_action: 'Review T' + flag.turn + ': compare ' + flag.chosen_move + ' against ' + flag.best_move + '.',
-        detail: 'The replay shows a clearer line on the turning turn, so the next review target is execution rather than team theory.'
-      };
-    }
-  }
 
   return fallback;
 }
@@ -8605,7 +8710,9 @@ function csReplayFindBestTeamMatch(preview, visible, opts) {
     else if (visibleList.length >= 4 && csReplayMatchSpeciesCount(csReplaySpeciesSet(visibleList), teamSet) >= 4) confidence = 'visible_four_match';
     var missing = required.filter(function(name) { return !teamSet[csReplaySpeciesId(name)]; });
     rows.push({
-      team_id: teamId,
+      team_id: null,
+      candidate_team_id: teamId,
+      status: 'needs_verification',
       team_name: team.name || teamId,
       confidence: confidence,
       matched_count: matched,
@@ -8613,8 +8720,8 @@ function csReplayFindBestTeamMatch(preview, visible, opts) {
       matched_species: required.filter(function(name) { return !!teamSet[csReplaySpeciesId(name)]; }),
       missing_species: missing,
       team_species: teamSpecies,
-      regulation_id: team.regulation_id || team.ruleset || team.champion_ruleset || null,
-      legality_status: team.legality_status || null
+      regulation_id: null,
+      legality_status: 'unknown'
     });
   });
   rows.sort(function(a, b) {
@@ -8637,12 +8744,12 @@ function csReplayScenarioResolveTeamMappings(row, context) {
   return {
     player: player,
     opponent: opponent,
-    status: (player.team_id && opponent.team_id) ? 'mapped' : (player.team_id || opponent.team_id ? 'partial_mapping' : 'no_match')
+    status: (player.candidate_team_id || opponent.candidate_team_id) ? 'needs_verification' : 'no_match'
   };
 }
-function csReplayScenarioTeamMapStatus(row) {
+function csReplayScenarioTeamMapStatus(row, context) {
   row = row || {};
-  var context = CS_LAST_REPLAY_SCENARIO_CONTEXT || {};
+  context = context || CS_LAST_REPLAY_SCENARIO_CONTEXT || {};
   var mappings = csReplayScenarioResolveTeamMappings(row, context);
   var board = row.boardContext || {};
   var yourLead = Array.isArray(board.yourLead) ? board.yourLead : [];
@@ -8666,7 +8773,7 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
   var parsed = context.parsed || {};
   var review = context.review || {};
   var claimAudit = review.claimAudit || null;
-  var map = csReplayScenarioTeamMapStatus(row);
+  var map = csReplayScenarioTeamMapStatus(row, context);
   var buildId = typeof csGetBuildId === 'function' ? csGetBuildId() : 'unknown-engine';
   var mappings = map.mappings || csReplayScenarioResolveTeamMappings(row, context);
   return {
@@ -8675,8 +8782,9 @@ function csBuildReplayScenarioTacticalQaPayload(row, index, context) {
     scenario_index: index,
     source: 'battle_sensei_replay_scenario_queue',
     source_boundary: 'Replay-derived Tactical QA payload. This is player-match evidence and does not overwrite Champion legality, mechanics truth, or leaderboard rankings.',
-    engine_version: buildId,
-    ruleset_version: buildId,
+    exporter_build_id: buildId,
+    engine_version: 'unknown',
+    ruleset_version: 'unknown',
     regulation_id: 'needs_regulation_mapping',
     format: parsed.format || 'unknown',
     sample_size: 1,
@@ -9218,65 +9326,9 @@ function csUniquePokemonNames(names, teamKey, cap) {
 }
 
 function csBuildBattleSenseiSimPlan(parsed, selectedSide) {
-  parsed = parsed || {};
-  var playerKey = (typeof currentPlayerKey === 'string' && TEAMS[currentPlayerKey]) ? currentPlayerKey : 'player';
-  var results = (ChampionsSim && ChampionsSim.state && ChampionsSim.state.lastResults) ? ChampionsSim.state.lastResults : {};
-  var oppSide = (selectedSide || parsed.selectedSide || 'p1') === 'p1' ? 'p2' : 'p1';
-  var oppPreview = parsed.teamPreview && parsed.teamPreview[oppSide] ? parsed.teamPreview[oppSide] : [];
-  var oppSelect = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
-  var selectedOppKey = oppSelect && oppSelect.value && TEAMS[oppSelect.value] ? oppSelect.value : '';
-  var candidateKeys = Object.keys(results || {}).filter(function(k) { return TEAMS[k]; });
-  if (selectedOppKey && candidateKeys.indexOf(selectedOppKey) < 0) candidateKeys.unshift(selectedOppKey);
-  if (!candidateKeys.length) return null;
-
-  var ranked = candidateKeys.map(function(key) {
-    var previewScore = csTeamPreviewOverlap(oppPreview, key);
-    var hasResult = results && results[key] ? 0.25 : 0;
-    var selectedBoost = key === selectedOppKey ? 0.15 : 0;
-    return { key: key, score: previewScore + hasResult + selectedBoost, previewScore: previewScore, hasResult: !!(results && results[key]) };
-  }).sort(function(a, b) { return b.score - a.score; });
-  var best = ranked[0];
-  if (!best || (!best.hasResult && best.previewScore <= 0)) return null;
-
-  var scopedResults = {};
-  if (results && results[best.key]) scopedResults[best.key] = results[best.key];
-  var report = null;
-  try {
-    if (typeof buildStrategyReport === 'function') report = buildStrategyReport(playerKey, scopedResults, currentFormat);
-  } catch (e) { report = null; }
-  if (!report && typeof loadStrategyReport === 'function') {
-    try { report = loadStrategyReport(playerKey); } catch (_e) { report = null; }
-  }
-  if (!report) return null;
-
-  var leadSystem = report.lead_system || {};
-  var matchupIntel = report.matchup_intelligence || {};
-  var bestLeadLabel = (matchupIntel.safe_leads && matchupIntel.safe_leads[0]) || leadSystem.safe || leadSystem.speed || leadSystem.pressure || leadSystem.punish || '';
-  var bestLead = csSplitLeadPair(bestLeadLabel);
-  var preserveNames = [];
-  if (report.team_identity && report.team_identity.primary_win_condition) preserveNames = preserveNames.concat(csSplitLeadPair(report.team_identity.primary_win_condition.replace(/->/g, '+')));
-  if (report.team_identity && Array.isArray(report.team_identity.speed_control_mons)) preserveNames = preserveNames.concat(report.team_identity.speed_control_mons);
-  if (report.team_identity && Array.isArray(report.team_identity.pivot_mons)) preserveNames = preserveNames.concat(report.team_identity.pivot_mons);
-  var bestFour = csUniquePokemonNames(bestLead.concat(preserveNames), playerKey, getBringCount());
-  var matchConfidence = best.previewScore >= 0.5 && best.hasResult ? 'medium' : 'low';
-
-  return {
-    source: 'latest in-app simulation strategy report',
-    matchedOpponentKey: best.key,
-    matchedOpponentName: TEAMS[best.key] && TEAMS[best.key].name ? TEAMS[best.key].name : best.key,
-    registeredRoster: parsed.teamPreview && parsed.teamPreview[selectedSide] ? parsed.teamPreview[selectedSide] : [],
-    lineupSize: getBringCount(),
-    lineupMatrix: (ChampionsSim.replayLearning && typeof ChampionsSim.replayLearning.lineupCombinations === 'function' && parsed.teamPreview && parsed.teamPreview[selectedSide])
-      ? ChampionsSim.replayLearning.lineupCombinations(parsed.teamPreview[selectedSide], getBringCount())
-      : [],
-    matchConfidence: matchConfidence,
-    bestLead: bestLead,
-    bestFour: bestFour,
-    expectedWinPath: matchupIntel.best_win_path || (report.coaching_notes && report.coaching_notes.best_win_path) || (report.team_identity && report.team_identity.primary_win_condition) || '',
-    safestLine: report.pilot_plan ? report.pilot_plan.turn_1 : '',
-    confidence: matchConfidence,
-    sampleSize: report.sample_size || 0
-  };
+  // Selected UI teams and species overlap cannot prove the replay's team versions.
+  // Re-enable only behind a verified two-team, format and ruleset identity contract.
+  return null;
 }
 
 function csInitReplayCoachUi() {
@@ -13494,7 +13546,8 @@ function teamHasMega(team) {
 }
 
 function megaTriggerCacheKey(playerKey, oppKey, bo, format) {
-  return [playerKey, oppKey, bo || 1, format || 'doubles'].join('|');
+  return _stableResultsStringify([playerKey, TEAMS[playerKey] || null,
+    oppKey, TEAMS[oppKey] || null, bo || 1, format || 'doubles', strategyExecutionContext()]);
 }
 
 function getCachedMegaSweep(playerKey, oppKey, bo, format) {
@@ -16325,23 +16378,14 @@ function csRenderTeamLabNewsroomHub() {
           '<span>Safer Team Testing</span>' +
         '</div>' +
       '</div>' +
-      '<div class="home-product-stage" aria-label="Battle Labs product preview">' +
-        '<div class="home-product-window">' +
-          '<div class="home-product-bar"><span></span><span></span><span></span></div>' +
-          '<div class="home-product-arena">' +
-            '<div class="home-product-team home-product-team-a"><small>Your team</small><strong>Team Test</strong></div>' +
-            '<div class="home-product-vs">VS</div>' +
-            '<div class="home-product-team home-product-team-b"><small>Opponent</small><strong>Benchmark</strong></div>' +
-          '</div>' +
-          '<div class="home-product-result">' +
-            '<span>Replay lesson</span>' +
-            '<strong>No replay selected</strong>' +
-            '<em>Analysis pending</em>' +
-          '</div>' +
+      '<div class="retro-intro">' +
+        '<input class="retro-pause" type="checkbox" id="retro-intro-pause"><label for="retro-intro-pause">Pause animation</label>' +
+        '<div class="retro-screen" role="img" aria-label="Decorative Game Boy-style opening: Gengar faces Nidorino. Not a simulated battle.">' +
+          '<span class="retro-name retro-name-rival" aria-hidden="true">NIDORINO</span>' +
+          '<img class="retro-fighter retro-nidorino" src="assets/retro-intro/nidorino.png" width="56" height="56" alt="">' +
+          '<img class="retro-fighter retro-gengar" src="assets/retro-intro/gengar.png" width="56" height="56" alt="">' +
+          '<span class="retro-name retro-name-player" aria-hidden="true">GENGAR</span>' +
         '</div>' +
-        '<div class="home-product-floating home-product-floating-a"><span>1</span><strong>Pick team</strong></div>' +
-        '<div class="home-product-floating home-product-floating-b"><span>2</span><strong>Run battle</strong></div>' +
-        '<div class="home-product-floating home-product-floating-c"><span>3</span><strong>Learn why</strong></div>' +
       '</div>' +
     '</div>' +
     csRenderHomeStartCycle() +
@@ -17213,38 +17257,32 @@ function renderSeriesSummary() {
 // ============================================================
 // PART 5A: SPEED TIER WIDGET (Teams Tab)
 // ============================================================
-const NATURE_SPE = {
-  Timid:1.1, Jolly:1.1, Naive:1.1, Hasty:1.1,
-  Modest:0.9, Adamant:0.9, Bold:0.9, Impish:0.9, Careful:0.9, Calm:0.9,
-  Quiet:0.9, Brave:0.9, Relaxed:0.9, Sassy:0.9, Serious:1, Hardy:1, Bashful:1, Docile:1, Quirky:1
-};
-
-function getEffectiveSpe(member) {
-  const base = BASE_STATS[member.name];
-  if (!base) return 0;
-  const nat = NATURE_SPE[member.nature] || 1;
-  const ev = (member.evs && member.evs.spe) ? member.evs.spe : 0;
-  const raw = Math.floor((2 * base.spe + 31 + Math.floor(ev / 4)) * 50 / 100 + 5);
-  return Math.floor(raw * nat);
+function getEffectiveSpe(member, teamFormat) {
+  if (!member || typeof member.name !== 'string' || typeof Pokemon !== 'function') return null;
+  const format = teamFormat ?? member.format ?? 'champions';
+  if (format !== 'champions' && format !== 'sv') return null;
+  const source = typeof _showdownSpeciesBase === 'function' ? _showdownSpeciesBase(member.name) : null;
+  if (!source && !(typeof BASE_STATS !== 'undefined' && BASE_STATS[member.name])) return null;
+  // This widget shows the unboosted starting-form stat, not battle action order.
+  const mon = new Pokemon(Object.assign({}, member, { moves: Array.isArray(member.moves) ? member.moves : [] }), '', format);
+  return !mon.formatMismatch && Number.isFinite(mon.baseSpe) ? mon.baseSpe : null;
 }
 
-function buildSpeedTierHTML(members) {
+function buildSpeedTierHTML(members, teamFormat) {
   const sorted = [...members].map(m => ({
     name: m.name,
-    spe: getEffectiveSpe(m),
-    item: m.item || '',
-    note: m.item === 'Choice Scarf' ? '×1.5 Scarf' : ''
-  })).sort((a,b) => b.spe - a.spe);
+    spe: getEffectiveSpe(m, teamFormat)
+  })).sort((a,b) => a.spe === null ? (b.spe === null ? 0 : 1) : b.spe === null ? -1 : b.spe - a.spe);
 
   return `<div class="speed-tier-section">
-    <button class="speed-tier-toggle" type="button">
-      ▸ Speed Tiers
+    <button class="speed-tier-toggle" type="button" title="Unboosted starting-form Speed. Item, ability, status, stage and field effects are not included.">
+      ▸ Speed Stats
     </button>
     <div class="speed-tier-list">
       ${sorted.map((s,i) => `<div class="speed-tier-row">
-        <span class="speed-rank">${i+1}</span>
+        <span class="speed-rank">${s.spe === null ? '-' : i+1}</span>
         <span class="speed-name">${_escapeHtml(s.name)}</span>
-        <span class="speed-val">${s.spe}${s.note ? ` <em style="color:var(--text-m);font-size:9px">${s.note}</em>` : ''}</span>
+        <span class="speed-val">${s.spe === null ? 'Unknown' : s.spe}</span>
       </div>`).join('')}
     </div>
   </div>`;
@@ -17260,7 +17298,7 @@ function renderSpeedTiersForGrid() {
     if (!team || !team.members) return;
     const existing = card.querySelector('.speed-tier-section');
     safeRemoveNode(existing);
-    card.insertAdjacentHTML('beforeend', buildSpeedTierHTML(team.members));
+    card.insertAdjacentHTML('beforeend', buildSpeedTierHTML(team.members, team.format));
   });
 }
 
@@ -17406,31 +17444,8 @@ const META_THREATS = [
 ];
 
 function computeThreatLevel(threat) {
-  const playerTeam = getActivePlayerTeam();
-  const playerMembers = (playerTeam && Array.isArray(playerTeam.members)) ? playerTeam.members : [];
-  const playerMoves = playerMembers.flatMap(m => m.moves || []);
-  const playerSpeeds = playerMembers.map(m => getEffectiveSpe(m));
-  const maxPlayerSpe = playerSpeeds.length ? Math.max(...playerSpeeds) : 0;
-
-  let hasSECoverage = false;
-  for (const mv of playerMoves) {
-    const mvType = (typeof MOVE_TYPES !== 'undefined') ? MOVE_TYPES[mv] : null;
-    if (!mvType) continue;
-    let eff = 1;
-    for (const dt of threat.types) {
-      const row = (typeof TYPE_CHART !== 'undefined' && TYPE_CHART[mvType]) ? TYPE_CHART[mvType] : {};
-      eff *= (row[dt] !== undefined ? row[dt] : 1);
-    }
-    if (eff >= 2) { hasSECoverage = true; break; }
-  }
-
-  const threatBase = BASE_STATS[threat.name];
-  const threatSpe = threatBase ? threatBase.spe : 100;
-  const hasSpeedAdv = maxPlayerSpe > threatSpe;
-
-  if (hasSECoverage && hasSpeedAdv) return 'radar-safe';
-  if (hasSECoverage || hasSpeedAdv) return 'radar-neutral';
-  return 'radar-threat';
+  // Species-only entries have no opponent set or battle evidence to rate safety.
+  return 'radar-unknown';
 }
 
 function renderMetaRadar() {
@@ -17438,7 +17453,7 @@ function renderMetaRadar() {
   if (!grid) return;
   grid.innerHTML = META_THREATS.map(t => {
     const lvl = computeThreatLevel(t);
-    const dot = lvl === 'radar-safe' ? '#22c55e' : lvl === 'radar-neutral' ? '#f59e0b' : '#ef4444';
+    const dot = '#6b7280';
     return `<div class="radar-card ${lvl}">
       <div class="radar-card-header">
         <span style="width:10px;height:10px;border-radius:50%;background:${dot};display:inline-block;flex-shrink:0"></span>
@@ -17446,8 +17461,7 @@ function renderMetaRadar() {
       </div>
       <div class="radar-types">${t.types.map(tp => `<span class="type-chip" style="background:${typeColor(tp)}20;color:${typeColor(tp)};border:1px solid ${typeColor(tp)}40">${tp}</span>`).join('')}</div>
       <div class="radar-stats">
-        <span>Usage: <strong>${t.usage}%</strong></span>
-        <span>WR: <strong>${t.winRate}%</strong></span>
+        <span>Matchup unverified</span>
       </div>
     </div>`;
   }).join('');
@@ -17619,11 +17633,19 @@ function _t9j16_hash(s) {
 
 function teamSignature(team) {
   if (!team || !Array.isArray(team.members) || !team.members.length) return 'empty';
-  var parts = team.members.map(function(m){
-    var moves = (m.moves || []).slice().sort().join(',');
-    return [m.name||'', m.item||'', m.ability||'', moves].join('|');
-  }).sort();
-  return _t9j16_hash(parts.join('||'));
+  var snapshot = Object.assign({}, team, { members: team.members.map(function(m) {
+    return Object.assign({}, m, { moves: (m.moves || []).slice().sort() });
+  }) });
+  return _t9j16_hash(_stableResultsStringify(snapshot));
+}
+
+function strategyExecutionContext() {
+  return {
+    regulation: typeof getSelectedRegulationId === 'function' ? getSelectedRegulationId() : 'unknown',
+    rulesets: typeof CHAMPIONS_RULESETS !== 'undefined' ? CHAMPIONS_RULESETS : null,
+    build: typeof CHAMPIONS_RELEASE_MANIFEST !== 'undefined' ? CHAMPIONS_RELEASE_MANIFEST.build_id : 'unknown',
+    engine: typeof ENGINE_VERSION !== 'undefined' ? ENGINE_VERSION : 'unknown'
+  };
 }
 
 function _stableResultsStringify(value) {
@@ -17649,7 +17671,12 @@ var _strategyReportCacheLimit = 32;
 
 function _strategyReportCacheKey(teamKey, results, fmt) {
   var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;
-  return [teamSignature(team), strategyResultsHash(results), fmt || 'doubles'].join('::');
+  var opponents = Object.keys(results || {}).sort().map(function(key) {
+    return [key, typeof TEAMS !== 'undefined' ? TEAMS[key] || null : null];
+  });
+  // Exact canonical inputs prevent hash collisions and preserve registered identity.
+  return _stableResultsStringify([teamKey, team, opponents, results || {},
+    fmt || (typeof currentFormat !== 'undefined' ? currentFormat : 'doubles'), strategyExecutionContext()]);
 }
 
 function csClearStrategyReportCache() {
@@ -17781,27 +17808,19 @@ var T9J16_RULES = [
   },
   {
     id: 'fake-out-illegal-timing',
-    when: function(c){
-      var foUsers = (c.members||[]).filter(function(m){ return (m.moves||[]).indexOf('Fake Out') >= 0; });
-      if (!foUsers.length) return false;
-      // Leads aggregated; if no FO user appears in top leads, FO is unused
-      var leadNames = (c.lead_top || []);
-      return !foUsers.some(function(m){ return leadNames.indexOf(m.name) >= 0; });
-    },
+    // Aggregate lead choices do not prove an illegal action or failed Fake Out.
+    when: function(){ return false; },
     severity: function(){ return 'high'; },
-    explain: function(){ return 'Fake Out only works the first turn a Pokemon is out. Your sim shows it never triggering because the user is not leading.'; },
-    correct: function(){ return 'Lead with your Fake Out user, or click it the turn they switch in. Otherwise drop it for coverage.'; }
+    explain: function(){ return 'Action evidence is required to assess Fake Out timing.'; },
+    correct: function(){ return 'Review the action and the user\'s most recent switch-in before changing its set.'; }
   },
   {
     id: 'redirection-vs-spread',
-    when: function(c){
-      var hasSpread = (c.members||[]).some(function(m){ return _pdfHasAny(m, PDF_SPREAD); });
-      var hasRedirect = (c.members||[]).some(function(m){ return _pdfHasAny(m, PDF_REDIRECT); });
-      return hasSpread && !hasRedirect && c.format === 'doubles';
-    },
+    // The retired heuristic incorrectly treated redirection as spread protection.
+    when: function(){ return false; },
     severity: function(){ return 'medium'; },
-    explain: function(){ return 'Your spread damage gets canceled into Follow Me / Rage Powder teams. You have no redirector to mirror it.'; },
-    correct: function(){ return 'Click target-pressure single-target moves into redirection. Save spread for when redirect is gone or off-target.'; }
+    explain: function(){ return 'Team composition alone does not establish a targeting mistake.'; },
+    correct: function(){ return 'Inspect the resolved targets and protection events in the replay.'; }
   },
   {
     id: 'double-switch-over-read',
@@ -20547,40 +20566,6 @@ function _csSimLogWrite(store) {
   }
 }
 
-function csShouldBootstrapSimulatorBoard() {
-  try {
-    var resultsSection = document.getElementById('results-section');
-    if (resultsSection && resultsSection.style.display !== 'none') return false;
-    if (typeof Storage === 'undefined') return true;
-    var simlog = Storage.get(CS_SIMLOG_KEY);
-    if (simlog && Array.isArray(simlog.entries) && simlog.entries.length) return false;
-    return true;
-  } catch (e) {
-    UILog.warn('bootstrap sim-board check failed', e);
-    return false;
-  }
-}
-
-async function csBootstrapSimulatorBoard() {
-  if (simRunning) return false;
-  if (!csShouldBootstrapSimulatorBoard()) return false;
-  var simCtx = null;
-  try { simCtx = resolveSimContext({ bo: currentBo }); } catch (_ctxErr) { return false; }
-  var oppKey = simCtx.oppKey;
-  var playerKey = simCtx.playerKey;
-  simRunning = true;
-  try {
-    var res = await runBoSeries(1, playerKey, oppKey, currentBo, function(){});
-    displayResults(res, oppKey, simCtx);
-    return true;
-  } catch (e) {
-    UILog.warn('sim-board bootstrap skipped', e);
-    return false;
-  } finally {
-    simRunning = false;
-  }
-}
-
 // Shape a single simulateBattle result into the compact sim-log game form.
 // Keeps the essentials (result/turns/leads/bring/survivors/winCondition
 // /TR+TW turns/koEvents). Drops the big "log" string array — not needed
@@ -22582,6 +22567,7 @@ if (typeof window !== 'undefined') {
     if (!chip) return;
     var states = {
       connected: { text: '[DB connected]', bg: '#064e3b', fg: '#bbf7d0', border: '#10b981', title: 'Live team database connected' },
+      review: { text: '[DB review needed]', bg: '#713f12', fg: '#fef3c7', border: '#f59e0b', title: 'Live database responded, but its roster did not pass the current catalog gate' },
       retrying: { text: '[DB retrying]', bg: '#713f12', fg: '#fef3c7', border: '#f59e0b', title: 'Retrying live team database before falling back' },
       fallback: { text: '[Bundled roster]', bg: '#334155', fg: '#e2e8f0', border: '#94a3b8', title: 'Using bundled roster after live database was unavailable' },
       disabled: { text: '[Local roster]', bg: '#334155', fg: '#e2e8f0', border: '#94a3b8', title: 'Live database disabled or not configured; using bundled roster' },
@@ -22656,7 +22642,10 @@ if (typeof window !== 'undefined') {
           if (typeof mergeDbTeamsIntoCatalog !== 'function') Object.assign(TEAMS, dbTeams);
           if (typeof normalizeTeamCatalogForSim === 'function') normalizeTeamCatalogForSim();
           UILog.info('TEAMS patched with DB teams', { count: Object.keys(dbTeams).length, merge: dbMerge, attempts: dbLoad.attempts, status: dbLoad.status });
-          setDbChip('connected', 'Live team database connected after ' + dbLoad.attempts + ' attempt(s) - accepted ' + (dbMerge.added + dbMerge.replaced) + ' teams, blocked ' + dbMerge.skipped + ' stale/illegal rows');
+          var acceptedDbTeams = dbMerge.added + dbMerge.replaced;
+          var dbState = acceptedDbTeams === 0 && dbMerge.skipped > 0 ? 'review' : 'connected';
+          setDbChip(dbState, 'Live database responded after ' + dbLoad.attempts + ' attempt(s) - accepted ' + acceptedDbTeams +
+            ' teams, blocked ' + dbMerge.skipped + '. Reasons: ' + JSON.stringify(dbMerge.reason_counts || {}) + '. Bundled roster remains authoritative.');
         } else {
           var status = dbLoad && dbLoad.status ? dbLoad.status : null;
           var reason = status && status.detail ? ' Last DB status: ' + status.detail : '';
@@ -22677,10 +22666,6 @@ if (typeof window !== 'undefined') {
     if (typeof rebuildTeamSelects === 'function') {
       try { rebuildTeamSelects(); } catch (_e) { /* fail-soft */ }
     }
-
-    // On fresh origins with no prior local sim history, paint one seeded board
-    // so the first-load website experience matches the local board-first view.
-    try { setTimeout(function(){ csBootstrapSimulatorBoard(); }, 50); } catch (_e) {}
 
     // Render when Strategy tab is opened
     document.querySelectorAll('.tab-btn[data-tab="strategy"]').forEach(function(btn){

@@ -35,15 +35,19 @@ assert.ok(manifest.families.filter((family) => family.status !== 'regression_cov
 
 const summary = buildSummary(manifest, edgeMatrix);
 assert.equal(summary.total_families, 15);
-assert.equal(summary.family_counts.regression_covered, 6);
-assert.equal(summary.family_counts.partial, 7);
+assert.equal(summary.family_counts.regression_covered, 5);
+assert.equal(summary.family_counts.partial, 8);
 assert.equal(summary.family_counts.gap, 2);
 assert.equal(summary.universal_accuracy_proven, false);
 assert.equal(summary.total_inventories, 5);
 assert.equal(summary.inventory_counts.partial, 3);
 assert.equal(summary.inventory_counts.gap, 2);
-assert.equal(summary.total_edge_cases, 44);
-assert.deepEqual(summary.edge_case_counts, { covered: 18, partial: 20, open: 6 });
+assert.equal(summary.total_edge_cases, 46);
+assert.deepEqual(summary.edge_case_counts, { covered: 18, partial: 23, open: 5 });
+assert.ok(summary.unproved_edge_case_ids.includes('STATS-ROSTER-CONSUMER-PARITY'));
+assert.ok(summary.unproved_edge_case_ids.includes('RESOURCE-PP-DRAIN-SUBSTITUTE'));
+assert.equal(manifest.families.find(row => row.id === 'status').status, 'partial');
+assert.equal(edgeMatrix.cases.find(row => row.id === 'RESIDUAL-GLOBAL-ORDER').status, 'partial');
 assert.equal(edgeMatrix.cases.find(row => row.id === 'DAMAGE-SEISMIC-TOSS-LEVEL').status, 'partial');
 assert.ok(summary.unproved_edge_case_ids.includes('ORDER-TAILWIND-SAME-TURN'));
 assert.ok(summary.unproved_edge_case_ids.includes('DAMAGE-SEISMIC-TOSS-LEVEL'));

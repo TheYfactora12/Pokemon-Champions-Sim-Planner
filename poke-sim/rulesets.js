@@ -43,7 +43,9 @@ var CHAMPIONS_RULESETS = {
     label: 'Champions Reg M-B Source Review',
     selectorLabel: 'Reg M-B (review)',
     startsAt: '2026-06-17',
-    endsAt: '2026-09-02',
+    endsAt: '2026-09-09',
+    endsAtUtc: '2026-09-09T01:59:00Z',
+    durationSourceUrl: 'https://champions-news.pokemon-home.com/en/page/776.html',
     status: CHAMPIONS_RULESET_STATUS.SOURCE_REVIEW,
     inheritsFrom: 'champions_reg_m_a_2026',
     runtimePromotable: false,
@@ -53,9 +55,70 @@ var CHAMPIONS_RULESETS = {
     dataPolicy: 'do_not_write_trusted_stats',
     coachingPolicy: 'review_only_no_matchup_learning',
     sourceCheckedAtUtc: '2026-06-27T23:20:00Z',
-    blocker: 'Reg M-B allowed-Pokemon image sheets and new Mega implementation fields are not converted into reviewed runtime data.'
+    blocker: 'Reg M-B has 235 reconciled official roster identities. Complete-set legality, remaining mechanics checks and exact-package approval are still incomplete.'
+  },
+  champions_reg_m_c_2026: {
+    id: 'champions_reg_m_c_2026',
+    version: 'champions-reg-mc-source-review-v1',
+    legacyIds: ['champions_reg_m_c_doubles_bo3_source_review'],
+    label: 'Champions Reg M-C Source Review',
+    selectorLabel: 'Reg M-C (review)',
+    startsAt: '2026-09-09',
+    startsAtUtc: '2026-09-09T02:00:00Z',
+    endsAt: '2026-12-02',
+    endsAtUtc: '2026-12-02T01:59:00Z',
+    status: CHAMPIONS_RULESET_STATUS.SOURCE_REVIEW,
+    inheritsFrom: 'champions_reg_m_b_2026',
+    runtimePromotable: false,
+    validator: null,
+    engineFormatId: null,
+    learningEligibility: 'blocked_source_review',
+    dataPolicy: 'do_not_write_trusted_stats',
+    coachingPolicy: 'review_only_no_matchup_learning',
+    sourceCheckedAtUtc: '2026-09-08T00:52:48.095Z',
+    sourceUrl: 'https://www.pokemon.com/us/news/get-ready-for-regulation-set-m-c-in-pokemon-champions',
+    blocker: 'All 262 official Reg M-C roster IDs and a pinned M-C Showdown reference are captured, but form reconciliation, item/move/Ability evidence, mechanics tests and exact-package approval are still incomplete.'
   }
 };
+
+function getChampionsRegulationCoverage(asOf) {
+  var now = asOf == null ? new Date() : new Date(asOf);
+  if (!Number.isFinite(now.getTime())) {
+    return { status: 'invalid_date', covered: false, regulation_id: null, message: 'Regulation coverage date is invalid.' };
+  }
+  var dated = Object.values(CHAMPIONS_RULESETS).filter(function(row) {
+    return row && row.id !== 'champions_custom_practice' && row.startsAt && (row.endsAtUtc || row.endsAt);
+  });
+  var active = dated.find(function(row) {
+    var start = new Date(row.startsAtUtc || (row.startsAt + 'T00:00:00Z'));
+    var end = new Date(row.endsAtUtc || (row.endsAt + 'T23:59:59Z'));
+    return now >= start && now <= end;
+  });
+  if (active) {
+    return { status: active.runtimePromotable ? 'covered' : 'source_review', covered: !!active.runtimePromotable,
+      regulation_id: active.id, ends_at_utc: active.endsAtUtc || active.endsAt,
+      message: active.runtimePromotable ? 'A dated regulation lane is implemented.' : active.selectorLabel + ' is current for this date, but competitive verification is incomplete.' };
+  }
+  var upcoming = dated.filter(function(row) {
+    return now < new Date(row.startsAtUtc || (row.startsAt + 'T00:00:00Z'));
+  }).sort(function(a, b) {
+    return new Date(a.startsAtUtc || (a.startsAt + 'T00:00:00Z')) - new Date(b.startsAtUtc || (b.startsAt + 'T00:00:00Z'));
+  })[0] || null;
+  if (upcoming) {
+    return { status: 'scheduled_source_review', covered: false, regulation_id: upcoming.id,
+      starts_at_utc: upcoming.startsAtUtc || upcoming.startsAt,
+      message: upcoming.label + ' starts at ' + (upcoming.startsAtUtc || upcoming.startsAt) + ' and remains blocked pending complete source review.' };
+  }
+  var latest = dated.sort(function(a, b) {
+    return new Date(b.endsAtUtc || (b.endsAt + 'T23:59:59Z')) - new Date(a.endsAtUtc || (a.endsAt + 'T23:59:59Z'));
+  })[0] || null;
+  if (latest && now > new Date(latest.endsAtUtc || (latest.endsAt + 'T23:59:59Z'))) {
+    return { status: 'successor_required', covered: false, regulation_id: null,
+      last_regulation_id: latest.id, coverage_ended_at_utc: latest.endsAtUtc || latest.endsAt,
+      message: 'Official current-regulation evidence is missing after ' + (latest.endsAtUtc || latest.endsAt) + '. Competitive use stays blocked.' };
+  }
+  return { status: 'not_started', covered: false, regulation_id: null, message: 'No reviewed regulation covers this date.' };
+}
 
 function getChampionsRuleset(rulesetId) {
   var id = rulesetId == null ? '' : String(rulesetId);
@@ -205,11 +268,11 @@ function checkTeamForSelectedRegulation(team, rulesetId, options) {
     if (mega && member.item === mega.megaStone && typeof api.isAbilityLegalForSpecies === 'function' && api.isAbilityLegalForSpecies(mega.baseSpecies, member.ability).legal) {
       abilityMember = Object.assign({}, member, { name: mega.baseSpecies });
     }
-    var checks = api.validateMovesForSet(member).concat([api.validateAbilityForSet(abilityMember)]).filter(Boolean);
+    var checks = api.validateMovesForSet(member, { learnsetContext: 'champions' }).concat([api.validateAbilityForSet(abilityMember)]).filter(Boolean);
     checks.forEach(function(check) {
       if (check.legal) return;
       var message = member.name + ': ' + (check.moveName || check.abilityName || '') + ' - ' + (check.notes || check.reason);
-      if (['source_unavailable', 'unknown_species', 'unknown_move', 'unknown_ability'].indexOf(check.reason) !== -1) gaps.push(message);
+      if (check.verification_status === 'unchecked' || ['source_unavailable', 'learnset_context_unavailable', 'champions_pool_unavailable', 'unknown_species', 'unknown_move', 'unknown_ability'].indexOf(check.reason) !== -1) gaps.push(message);
       else errors.push(message);
     });
   });
@@ -233,10 +296,12 @@ function getRegulationChoices(kind, speciesName, rulesetId, showUnavailable) {
   var data = sim.pokemonDataAudit, api = sim.moveLegality;
   if (!data || !data.species || !api || typeof api.canonicalSpeciesKey !== 'function') return [];
   var speciesKey = api.canonicalSpeciesKey(speciesName || '');
+  var movePool = kind === 'move' && typeof api.resolveLearnsetPool === 'function'
+    ? api.resolveLearnsetPool(speciesName, { learnsetContext: 'champions' }) : null;
   var names = [], allowedAbilities = [];
   if (kind === 'species') names = Object.keys(data.species || {});
   if (kind === 'item') names = Object.keys(data.items || {}).map(function(k) { return data.items[k].name || k; });
-  if (kind === 'move') names = showUnavailable ? Object.keys(data.moves || {}).map(function(k) { return data.moves[k].name || k; }) : api.legalMoveDisplayNamesForSpecies(speciesName);
+  if (kind === 'move') names = showUnavailable ? Object.keys(data.moves || {}).map(function(k) { return data.moves[k].name || k; }) : api.legalMoveDisplayNamesForSpecies(speciesName, { learnsetContext: 'champions' });
   if (kind === 'ability') {
     allowedAbilities = Object.values((data.species[speciesKey] || {}).abilities || {});
     var mega = typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[speciesName];
@@ -248,13 +313,14 @@ function getRegulationChoices(kind, speciesName, rulesetId, showUnavailable) {
     if (profile.id === 'champions_custom_practice') {
       var allowed = true;
       if (kind === 'item') allowed = typeof CHAMPIONS_LEGAL_ITEMS !== 'undefined' && CHAMPIONS_LEGAL_ITEMS.has(name);
-      if (kind === 'move') allowed = api.isMoveLegalForSpecies(speciesName, name).legal && !(typeof CHAMPIONS_BANNED_MECHANIC_MOVES !== 'undefined' && CHAMPIONS_BANNED_MECHANIC_MOVES.has(name));
+      if (kind === 'move') allowed = api.isMoveLegalForSpecies(speciesName, name, { learnsetContext: 'champions' }).legal && !(typeof CHAMPIONS_BANNED_MECHANIC_MOVES !== 'undefined' && CHAMPIONS_BANNED_MECHANIC_MOVES.has(name));
       if (kind === 'ability') allowed = allowedAbilities.indexOf(name) !== -1 && !(typeof CHAMPIONS_BANNED_MECHANIC_ABILITIES !== 'undefined' && CHAMPIONS_BANNED_MECHANIC_ABILITIES.has(name));
       if (kind === 'species') allowed = typeof validateChampionsLegality === 'function' && !(validateChampionsLegality({ members: [{ name: name, moves: [] }] }).violations || []).some(function(v) { return v.severity === 'error'; });
       status = allowed ? 'reference_only' : 'unavailable';
     }
     return { name: name, status: status, regulation_id: profile.id, ruleset_version: profile.version || null,
-      source_version: data.sourceCommitOrVersion || null };
+      source_version: kind === 'move' ? (movePool && movePool.status === 'known' ? movePool.sourceVersion : null) : (data.sourceCommitOrVersion || null),
+      source: kind === 'move' ? (movePool && movePool.status === 'known' ? movePool.source : 'unavailable') : (data.source || null) };
   }).filter(function(row) { return showUnavailable || row.status === 'reference_only'; });
 }
 
