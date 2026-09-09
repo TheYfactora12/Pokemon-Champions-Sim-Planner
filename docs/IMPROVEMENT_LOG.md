@@ -19,6 +19,9 @@ the regulation approval gate are complete. No runtime, DB or deployment change.
 Independent review caught a wall-clock-dependent repeat assertion. Preserve both
 raw logs; normalize only timestamp records for event-repeat checks, and test
 across a real time delay instead of relying on same-second runs.
+First hosted run also caught upstream's verbatim config-example.js copy retaining
+Windows CRLF. Normalize only that file for the canonical build fingerprint,
+retain raw fingerprints, and require the same canonical bytes on Linux.
 
 ### IMP-0039: Replace Stale Regulation Blockers With Captured Evidence
 

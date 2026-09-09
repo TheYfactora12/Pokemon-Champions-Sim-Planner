@@ -11,7 +11,7 @@ choice of Mega Salamence, Mega Golisopod and Mega Baxcalibur:
 
 Pinned reference: `efe4948570d5e8189751792136d26e71710c6c66`, format
 `gen9championsvgc2026regmc`, mod `champions`. Compiled bytes must match the
-existing M-C intake fingerprint. This is not an installed-reference upgrade.
+reviewed canonical fingerprint below. This is not an installed-reference upgrade.
 
 ## Drafts
 
@@ -93,3 +93,15 @@ Fastest safe live path remains: candidate runtime data and mechanics integration
 paired app/reference tests, regulation review and release/security gates, then
 Pages deployment and artifact/readback verification. This workflow does not
 short-circuit those steps or replace the public site with an untested candidate.
+
+### Cross-Platform Failure And Fix
+
+The first hosted run failed the original exact Windows compiled fingerprint.
+Local inspection proved only `dist/config/config-example.js` contains CRLF:
+upstream copies this tracked file verbatim instead of transpiling it. Normalizing
+only that file to LF produces exactly the Linux job's observed fingerprint:
+`2ac4f2a3fd74a17a1509ebb5e1b191c55a7bf9292dfe76c2a0da468a411c59ad`.
+All other compiled JS bytes remain exact, with no arbitrary fingerprint allowlist.
+Reports retain raw and canonical fingerprints; the original intake is unchanged.
+First failing Yfactor run: 34416210855. Canonical fingerprint fixes must pass a
+new hosted run before delivery is considered verified.

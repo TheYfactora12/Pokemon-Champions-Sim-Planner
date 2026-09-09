@@ -17,7 +17,13 @@ assert.equal(Dex.formats.get(format).mod, 'champions');
 const compiledFiles = fs.readdirSync(path.join(upstream, 'dist'), {recursive:true}).filter(f=>f.endsWith('.js')).sort((a,b)=>a<b?-1:a>b?1:0);
 const compiledHashes = Object.fromEntries(compiledFiles.map(f=>[f.replaceAll('\\','/'),createHash('sha256').update(fs.readFileSync(path.join(upstream,'dist',f))).digest('hex')]));
 const compiledFingerprint = createHash('sha256').update(JSON.stringify(compiledHashes)).digest('hex');
-assert.equal(compiledFingerprint, JSON.parse(fs.readFileSync(path.join(root,'source/reg-m-c-reference-intake.json'))).compiled_fingerprint);
+// Upstream copies this tracked JS file verbatim; Git's CRLF checkout is not a mechanics change.
+// Every transpiled JS byte remains exact. Preserve the raw fingerprint as well.
+const canonicalHashes = {...compiledHashes};
+canonicalHashes['config/config-example.js'] = createHash('sha256').update(fs.readFileSync(path.join(upstream,'dist/config/config-example.js'),'utf8').replace(/\r\n/g,'\n')).digest('hex');
+const canonicalFingerprint = createHash('sha256').update(JSON.stringify(canonicalHashes)).digest('hex');
+assert.equal(canonicalFingerprint,'2ac4f2a3fd74a17a1509ebb5e1b191c55a7bf9292dfe76c2a0da468a411c59ad');
+assert.equal(JSON.parse(fs.readFileSync(path.join(root,'source/reg-m-c-reference-intake.json'))).upstream_commit,pin);
 const set = (species, item, ability, nature, moves, points) => ({ species, name: species, item, ability, nature,
   level: 50, moves: moves.split('/'), evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0, ...points } });
 const rilla = () => set('Rillaboom', 'Miracle Seed', 'Grassy Surge', 'Adamant', 'Fake Out/Grassy Glide/Wood Hammer/U-turn', {hp:32,atk:32,spe:2});
@@ -42,7 +48,8 @@ const drafts = [
 ];
 const output = path.join(root, 'artifacts/mc-draft-teams');
 fs.mkdirSync(output, {recursive:true});
-const report = {schema_version:1, upstream_commit:pin, compiled_fingerprint:compiledFingerprint, format, competitive_use:false, learning_eligible:false,
+const report = {schema_version:1, upstream_commit:pin, compiled_fingerprint:compiledFingerprint, canonical_compiled_fingerprint:canonicalFingerprint,
+  fingerprint_normalization:'Only config/config-example.js CRLF -> LF; all other compiled JS bytes unchanged', format, competitive_use:false, learning_eligible:false,
   scope:'Authored experimental doubles drafts; pinned Showdown validation/stat checks and random-policy reference battles, NOT app parity or game verification',
   point_encoding:'evs fields below contain Champions SP, NOT main-series EVs; do not import into the old live site',
   sources:['https://champions-news.pokemon-home.com/en/page/816.html', 'https://www.pokemon.com/us/news/get-ready-for-regulation-set-m-c-in-pokemon-champions'],
