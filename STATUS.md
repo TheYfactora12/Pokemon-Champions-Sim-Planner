@@ -10,14 +10,16 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
   reordering; species replacements get fresh IDs. Conflicts block saving, and
   SV preview uses the saved format. Actual upload/edit/reload plus paired battle
   exports pass. [Identity evidence and limits](poke-sim/reports/member_edit_identity_2026-09-08.md).
-  Local full gate passes; hosted CI is pending. Final independent review was
+  Local full gate and hosted CI `34294165076` pass for code commit `e3705db`.
+  Final independent review was
   unavailable after agent usage limits, so parent verification is identified.
 
 - v160 fixes the shared Champions move-pool path exposed by the preceding audit.
   All 235 reviewed identities and eight narrowed set probes agree with pinned
   Champions. Imports/replays use explicit context; stale teams remain editable
   under Needs review but cannot enter runnable selections. Full local gate,
-  independent review and browser failure-path checks pass; hosted CI is pending. Complete-set,
+  independent review and browser failure-path checks pass; hosted CI `34198148786`
+  passed for `31b7d92`. Complete-set,
   official approval and DB publication remain open. See
   [scope and evidence](poke-sim/reports/champions_move_context_validation_2026-09-08.md).
 

@@ -111,6 +111,13 @@ SV IV fidelity and final independent review remain open. See
 [scoped identity evidence](../../poke-sim/reports/member_edit_identity_2026-09-08.md).
 v160 hosted CI `34198148786`, bundle and cache checks passed for `31b7d92`.
 
+Final follow-up after the user's request to finish: v161 code `e3705db` passed
+hosted CI `34294165076`, including battle audit; bundle `34294164893` and cache
+`34294164923` passed. Local full gate, custom browser upload/edit/reload and
+paired exports are recorded in the identity report. No merge, deployment,
+regulation approval or live DB mutation. The one-time work window has elapsed;
+the tested patch is preserved, with remaining work explicitly scoped above.
+
 1. Obtain human approval of the exact 235-row identity candidate and complete
    field/learnset/rules evidence. Review-only form reconciliation is now recorded.
 2. Prove complete M-B team legality and Champions-specific moves/mechanics rather

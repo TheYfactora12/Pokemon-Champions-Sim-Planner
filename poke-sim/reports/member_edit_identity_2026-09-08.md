@@ -1,7 +1,12 @@
 # Member Edit Identity
 
 Candidate: v2.2.161-member-edit-identity, engine 1.1.10 unchanged.
-Local proof only; hosted CI pending.
+Local and hosted candidate proof; no deployment.
+
+Hosted readback September 9 UTC: code commit `e3705db` passed CI run
+`34294165076`, including the test suite and declared battle audit. Bundle run
+`34294164893` and cache run `34294164923` also passed. Supabase Preview was skipped,
+not a live database pass.
 
 ## Fixed Scope
 
