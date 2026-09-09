@@ -77,9 +77,9 @@ Completed locally / recorded:
 - M-B official identity reconciliation covers all 235 rows using source-linked explicit aliases for Fancy Vivillon and Eternal Flower Floette. The review artifact binds visual evidence and preserves baseline metadata; all mapped baseline stats/types/ability slots/numbers agree with pinned Champions. This does not approve learnsets, runtime consumers or legality.
 
 Remaining:
-- [ ] Capture every in-game M-C roster and rules page for Singles and Doubles; the public notice does not enumerate the full 24 newly available Pokemon.
-- [ ] Normalize M-C species/forms, Mega Stones, moves, items and Abilities against an exact pinned Showdown revision. M-A, M-B and M-C remain unverified.
-- [ ] Add accepted/rejected team fixtures and controlled Z Mega mechanics fixtures, including Aura Guard contact boundaries, switching, suppression, multi-hit and spread interactions.
+- [ ] September 9 update: all 262 official M-C roster IDs are captured; 260 map to identity candidates. Resolve Maushold and Squawkabilly form IDs and verify format scope. See docs/release/REG_MC_INTAKE_2026-09-09.md.
+- [ ] A pinned M-C reference now exists with 42 individual-set probes. Verify item/move/Ability inventory with official or in-game evidence, and preserve historical M-B routing during any reference upgrade. M-A, M-B and M-C remain unverified.
+- [ ] Add complete-team accepted/rejected fixtures and controlled Z Mega mechanics fixtures, including Aura Guard contact boundaries, switching, suppression, multi-hit and spread interactions.
 - [ ] Activate hosted monitoring and encrypted evidence retention; validate permissions and immutable candidate readback.
 - [ ] Compile complete regulation-specific eligibility packages and implement separate digest-bound human approval and atomic publication, preserving old versions.
 

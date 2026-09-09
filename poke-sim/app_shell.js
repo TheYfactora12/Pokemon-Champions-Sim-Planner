@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.162-release-roadmap-alignment';
+      return txt || 'v2.2.163-mc-evidence-intake';
     } catch (e) {
-      return 'v2.2.162-release-roadmap-alignment';
+      return 'v2.2.163-mc-evidence-intake';
     }
   }
 

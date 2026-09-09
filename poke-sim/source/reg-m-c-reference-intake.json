@@ -1,23 +1,11 @@
 {
-  "schema_version": "champions-roster-identity-review-v1",
-  "regulation_id": "champions_reg_m_b_2026",
-  "competitive_use": false,
-  "approval_status": "unapproved",
-  "scope": "Source-to-baseline identity candidates only; no legality, stats, learnset or mechanics approval",
-  "official_source_url": "https://web-view.app.pokemonchampions.jp/battle/pages/events/rs178066986988lmoqpm/en/pokemon.html",
-  "official_source_sha256": "8b0c6db8dcd403bb1f5453c1c6f9ac35c80192762219a308c80023375a93d617",
-  "tracked_source_hash_scope": "capture: JSON.stringify parsed object; code: UTF-8 with LF line endings",
-  "capture_sha256": "0ceb54b4e4d7135db2dabef54db81105419fa5477869953d0831f78bd545bd15",
-  "form_identity_evidence_sha256": "e9f1e4ffd9d392097e77450f3b7ff775cfbe096bb4ed93fb3ffd3039537258a5",
-  "baseline_sha256": "d00ab46ddf9d86f87b1848385b7ee0b3ee22ee7419956350d3e955c5d15b108a",
-  "baseline_source_version": "approved-db",
-  "mapper_sha256": "1c4e66f97544260b560a87e24ddd5b4aaee775824bd08c1707f1cac5f27ae740",
-  "counters": {
-    "official_rows": 235,
-    "mapped_candidates": 235,
-    "unresolved": 0
-  },
-  "rows": [
+  "schema_version": "champions-mc-reference-intake-v1",
+  "upstream_commit": "efe4948570d5e8189751792136d26e71710c6c66",
+  "source_fingerprint": "fdb7e26001f97c42ac24a4515bfb33a839d2beebf85ec36b5060f4ee1fd105d3",
+  "compiled_fingerprint": "fb67973e517fbe62d28ea922a2ca3fd737e3da848843ceae254cd2f72c648489",
+  "mapping_tool_sha256": "1c4e66f97544260b560a87e24ddd5b4aaee775824bd08c1707f1cac5f27ae740",
+  "official_capture_sha256": "1c0c11d7a637770dea992588b45a331c5a2b806d54e9af3a9be3c6ec3d695b65",
+  "official_identity_candidates": [
     {
       "official_id": "0003-000",
       "official_label": "Venusaur",
@@ -78,7 +66,7 @@
         "id": "beedrill",
         "base_species": "Beedrill",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -94,7 +82,7 @@
         "id": "pidgeot",
         "base_species": "Pidgeot",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -211,6 +199,22 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
+      "official_id": "0040-000",
+      "official_label": "Wigglytuff",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Wigglytuff",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "wigglytuff",
+        "base_species": "Wigglytuff",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
       "official_id": "0045-000",
       "official_label": "Vileplume",
       "eligible_in_capture": true,
@@ -222,6 +226,38 @@
         "id": "vileplume",
         "base_species": "Vileplume",
         "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0053-000",
+      "official_label": "Persian",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Persian",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "persian",
+        "base_species": "Persian",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0053-001",
+      "official_label": "Persian (Alolan Form)",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Persian-Alola",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "persianalola",
+        "base_species": "Persian",
+        "forme": "Alola",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -270,7 +306,7 @@
         "id": "alakazam",
         "base_species": "Alakazam",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -286,7 +322,7 @@
         "id": "machamp",
         "base_species": "Machamp",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -339,6 +375,22 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
+      "official_id": "0083-000",
+      "official_label": "Farfetch’d",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Farfetch’d",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "farfetchd",
+        "base_species": "Farfetch’d",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
       "official_id": "0094-000",
       "official_label": "Gengar",
       "eligible_in_capture": true,
@@ -366,7 +418,7 @@
         "id": "kangaskhan",
         "base_species": "Kangaskhan",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -382,7 +434,23 @@
         "id": "starmie",
         "base_species": "Starmie",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0122-000",
+      "official_label": "Mr. Mime",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Mr. Mime",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "mrmime",
+        "base_species": "Mr. Mime",
+        "forme": "",
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -398,7 +466,7 @@
         "id": "pinsir",
         "base_species": "Pinsir",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -558,7 +626,7 @@
         "id": "aerodactyl",
         "base_species": "Aerodactyl",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -814,7 +882,7 @@
         "id": "steelix",
         "base_species": "Steelix",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1022,7 +1090,7 @@
         "id": "mawile",
         "base_species": "Mawile",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1038,7 +1106,7 @@
         "id": "aggron",
         "base_species": "Aggron",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1070,7 +1138,23 @@
         "id": "manectric",
         "base_species": "Manectric",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0317-000",
+      "official_label": "Swalot",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Swalot",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "swalot",
+        "base_species": "Swalot",
+        "forme": "",
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1086,7 +1170,7 @@
         "id": "sharpedo",
         "base_species": "Sharpedo",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1166,7 +1250,7 @@
         "id": "castform",
         "base_species": "Castform",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1214,7 +1298,7 @@
         "id": "absol",
         "base_species": "Absol",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1229,6 +1313,22 @@
       "baseline_metadata": {
         "id": "glalie",
         "base_species": "Glalie",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0373-000",
+      "official_label": "Salamence",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Salamence",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "salamence",
+        "base_species": "Salamence",
         "forme": "",
         "is_nonstandard": ""
       },
@@ -1342,7 +1442,7 @@
         "id": "roserade",
         "base_species": "Roserade",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1390,7 +1490,7 @@
         "id": "lopunny",
         "base_species": "Lopunny",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1790,7 +1890,7 @@
         "id": "watchog",
         "base_species": "Watchog",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1806,7 +1906,7 @@
         "id": "liepard",
         "base_species": "Liepard",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1822,7 +1922,7 @@
         "id": "simisage",
         "base_species": "Simisage",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1838,7 +1938,7 @@
         "id": "simisear",
         "base_species": "Simisear",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1854,7 +1954,7 @@
         "id": "simipour",
         "base_species": "Simipour",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1870,7 +1970,7 @@
         "id": "musharna",
         "base_species": "Musharna",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1902,7 +2002,7 @@
         "id": "audino",
         "base_species": "Audino",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1934,7 +2034,7 @@
         "id": "scolipede",
         "base_species": "Scolipede",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -1998,7 +2098,7 @@
         "id": "cofagrigus",
         "base_species": "Cofagrigus",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2014,7 +2114,7 @@
         "id": "garbodor",
         "base_species": "Garbodor",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2078,7 +2178,7 @@
         "id": "vanilluxe",
         "base_species": "Vanilluxe",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2094,7 +2194,7 @@
         "id": "emolga",
         "base_species": "Emolga",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2158,7 +2258,7 @@
         "id": "stunfisk",
         "base_species": "Stunfisk",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2174,7 +2274,7 @@
         "id": "stunfiskgalar",
         "base_species": "Stunfisk",
         "forme": "Galar",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2286,7 +2386,7 @@
         "id": "diggersby",
         "base_species": "Diggersby",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2350,7 +2450,7 @@
         "id": "floetteeternal",
         "base_species": "Floette",
         "forme": "Eternal",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2365,7 +2465,23 @@
       "baseline_metadata": {
         "id": "florges",
         "base_species": "Florges",
-        "forme": "Red",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0673-000",
+      "official_label": "Gogoat",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Gogoat",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "gogoat",
+        "base_species": "Gogoat",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -2382,7 +2498,7 @@
         "id": "pangoro",
         "base_species": "Pangoro",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2397,8 +2513,8 @@
       "baseline_metadata": {
         "id": "furfrou",
         "base_species": "Furfrou",
-        "forme": "Natural",
-        "is_nonstandard": "Past"
+        "forme": "",
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2413,7 +2529,7 @@
       "baseline_metadata": {
         "id": "meowstic",
         "base_species": "Meowstic",
-        "forme": "M",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -2445,8 +2561,8 @@
       "baseline_metadata": {
         "id": "aegislash",
         "base_species": "Aegislash",
-        "forme": "Shield",
-        "is_nonstandard": "Past"
+        "forme": "",
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2462,7 +2578,7 @@
         "id": "aromatisse",
         "base_species": "Aromatisse",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2478,7 +2594,7 @@
         "id": "slurpuff",
         "base_species": "Slurpuff",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2510,7 +2626,7 @@
         "id": "barbaracle",
         "base_species": "Barbaracle",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2558,7 +2674,7 @@
         "id": "heliolisk",
         "base_species": "Heliolisk",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2574,7 +2690,7 @@
         "id": "tyrantrum",
         "base_species": "Tyrantrum",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2590,7 +2706,7 @@
         "id": "aurorus",
         "base_species": "Aurorus",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2717,8 +2833,8 @@
       "baseline_metadata": {
         "id": "gourgeist",
         "base_species": "Gourgeist",
-        "forme": "Average",
-        "is_nonstandard": "Past"
+        "forme": "",
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2734,7 +2850,7 @@
         "id": "gourgeistsmall",
         "base_species": "Gourgeist",
         "forme": "Small",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2750,7 +2866,7 @@
         "id": "gourgeistlarge",
         "base_species": "Gourgeist",
         "forme": "Large",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2766,7 +2882,7 @@
         "id": "gourgeistsuper",
         "base_species": "Gourgeist",
         "forme": "Super",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -2925,7 +3041,7 @@
       "baseline_metadata": {
         "id": "lycanroc",
         "base_species": "Lycanroc",
-        "forme": "Midday",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -3075,6 +3191,22 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
+      "official_id": "0768-000",
+      "official_label": "Golisopod",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Golisopod",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "golisopod",
+        "base_species": "Golisopod",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
       "official_id": "0778-000",
       "official_label": "Mimikyu",
       "eligible_in_capture": true,
@@ -3085,7 +3217,7 @@
       "baseline_metadata": {
         "id": "mimikyu",
         "base_species": "Mimikyu",
-        "forme": "Disguised",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -3102,7 +3234,7 @@
         "id": "drampa",
         "base_species": "Drampa",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -3123,6 +3255,54 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
+      "official_id": "0812-000",
+      "official_label": "Rillaboom",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Rillaboom",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "rillaboom",
+        "base_species": "Rillaboom",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0815-000",
+      "official_label": "Cinderace",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Cinderace",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "cinderace",
+        "base_species": "Cinderace",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0818-000",
+      "official_label": "Inteleon",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Inteleon",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "inteleon",
+        "base_species": "Inteleon",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
       "official_id": "0823-000",
       "official_label": "Corviknight",
       "eligible_in_capture": true,
@@ -3133,6 +3313,22 @@
       "baseline_metadata": {
         "id": "corviknight",
         "base_species": "Corviknight",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0828-000",
+      "official_label": "Thievul",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Thievul",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "thievul",
+        "base_species": "Thievul",
         "forme": "",
         "is_nonstandard": ""
       },
@@ -3187,6 +3383,54 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
+      "official_id": "0849-000",
+      "official_label": "Toxtricity (Amped Form)",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Toxtricity",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "toxtricity",
+        "base_species": "Toxtricity",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0849-001",
+      "official_label": "Toxtricity (Low Key Form)",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Toxtricity-Low-Key",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "toxtricitylowkey",
+        "base_species": "Toxtricity",
+        "forme": "Low-Key",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0853-000",
+      "official_label": "Grapploct",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Grapploct",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "grapploct",
+        "base_species": "Grapploct",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
       "official_id": "0855-000",
       "official_label": "Polteageist",
       "eligible_in_capture": true,
@@ -3197,7 +3441,7 @@
       "baseline_metadata": {
         "id": "polteageist",
         "base_species": "Polteageist",
-        "forme": "Phony",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -3235,6 +3479,38 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
+      "official_id": "0863-000",
+      "official_label": "Perrserker",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Perrserker",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "perrserker",
+        "base_species": "Perrserker",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0865-000",
+      "official_label": "Sirfetch’d",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Sirfetch’d",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "sirfetchd",
+        "base_species": "Sirfetch’d",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
       "official_id": "0866-000",
       "official_label": "Mr. Rime",
       "eligible_in_capture": true,
@@ -3246,7 +3522,7 @@
         "id": "mrrime",
         "base_species": "Mr. Rime",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -3262,7 +3538,7 @@
         "id": "runerigus",
         "base_species": "Runerigus",
         "forme": "",
-        "is_nonstandard": "Past"
+        "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
@@ -3277,7 +3553,7 @@
       "baseline_metadata": {
         "id": "alcremie",
         "base_species": "Alcremie",
-        "forme": "Vanilla-Cream",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -3299,6 +3575,54 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
+      "official_id": "0871-000",
+      "official_label": "Pincurchin",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Pincurchin",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "pincurchin",
+        "base_species": "Pincurchin",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0876-000",
+      "official_label": "Indeedee (Male)",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Indeedee",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "indeedee",
+        "base_species": "Indeedee",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0876-001",
+      "official_label": "Indeedee (Female)",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Indeedee-F",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "explicit_id_and_label_alias",
+      "baseline_metadata": {
+        "id": "indeedeef",
+        "base_species": "Indeedee",
+        "forme": "F",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
       "official_id": "0877-000",
       "official_label": "Morpeko",
       "eligible_in_capture": true,
@@ -3309,7 +3633,7 @@
       "baseline_metadata": {
         "id": "morpeko",
         "base_species": "Morpeko",
-        "forme": "Full-Belly",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -3373,7 +3697,7 @@
       "baseline_metadata": {
         "id": "basculegion",
         "base_species": "Basculegion",
-        "forme": "M",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -3475,20 +3799,70 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
-      "official_id": "0925-000",
-      "official_label": "Maushold",
+      "official_id": "0923-000",
+      "official_label": "Pawmot",
       "eligible_in_capture": true,
-      "runtime_species_key": "Maushold",
+      "runtime_species_key": "Pawmot",
       "status": "baseline_identity_candidate",
       "competitive_use": false,
       "mapping_basis": "exact_label_and_dex_number",
       "baseline_metadata": {
-        "id": "maushold",
-        "base_species": "Maushold",
-        "forme": "Three",
+        "id": "pawmot",
+        "base_species": "Pawmot",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0925-001",
+      "official_label": "Maushold",
+      "eligible_in_capture": true,
+      "runtime_species_key": null,
+      "status": "needs_identity_review",
+      "competitive_use": false,
+      "reason": "nondefault_form_requires_explicit_mapping"
+    },
+    {
+      "official_id": "0930-000",
+      "official_label": "Arboliva",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Arboliva",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "arboliva",
+        "base_species": "Arboliva",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0931-000",
+      "official_label": "Squawkabilly",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Squawkabilly",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "squawkabilly",
+        "base_species": "Squawkabilly",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
+      "official_id": "0931-002",
+      "official_label": "Squawkabilly",
+      "eligible_in_capture": true,
+      "runtime_species_key": null,
+      "status": "needs_identity_review",
+      "competitive_use": false,
+      "reason": "nondefault_form_requires_explicit_mapping"
     },
     {
       "official_id": "0934-000",
@@ -3555,6 +3929,22 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
+      "official_id": "0943-000",
+      "official_label": "Mabosstiff",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Mabosstiff",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "mabosstiff",
+        "base_species": "Mabosstiff",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
       "official_id": "0952-000",
       "official_label": "Scovillain",
       "eligible_in_capture": true,
@@ -3613,7 +4003,7 @@
       "baseline_metadata": {
         "id": "palafin",
         "base_species": "Palafin",
-        "forme": "Zero",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -3715,6 +4105,22 @@
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
     },
     {
+      "official_id": "0998-000",
+      "official_label": "Baxcalibur",
+      "eligible_in_capture": true,
+      "runtime_species_key": "Baxcalibur",
+      "status": "baseline_identity_candidate",
+      "competitive_use": false,
+      "mapping_basis": "exact_label_and_dex_number",
+      "baseline_metadata": {
+        "id": "baxcalibur",
+        "base_species": "Baxcalibur",
+        "forme": "",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    },
+    {
       "official_id": "1000-000",
       "official_label": "Gholdengo",
       "eligible_in_capture": true,
@@ -3741,7 +4147,7 @@
       "baseline_metadata": {
         "id": "sinistcha",
         "base_species": "Sinistcha",
-        "forme": "Unremarkable",
+        "forme": "",
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
@@ -3777,6 +4183,4293 @@
         "is_nonstandard": ""
       },
       "baseline_metadata_scope": "Mirrored baseline metadata, not Champions regulation legality"
+    }
+  ],
+  "competitive_use": false,
+  "learning_eligible": false,
+  "official_roster_verified": false,
+  "scope": "Pinned upstream availability markers and individual-set validator probes; not official roster or complete team approval",
+  "formats": [
+    {
+      "id": "gen9championsbssregmc",
+      "name": "[Gen 9 Champions] BSS Reg M-C",
+      "mod": "champions",
+      "game_type": "singles",
+      "ruleset": [
+        "Flat Rules",
+        "VGC Timer"
+      ]
+    },
+    {
+      "id": "gen9championsvgc2026regmc",
+      "name": "[Gen 9 Champions] VGC 2026 Reg M-C",
+      "mod": "champions",
+      "game_type": "doubles",
+      "ruleset": [
+        "Flat Rules",
+        "VGC Timer",
+        "Open Team Sheets"
+      ]
+    },
+    {
+      "id": "gen9championsvgc2026regmcbo3",
+      "name": "[Gen 9 Champions] VGC 2026 Reg M-C (Bo3)",
+      "mod": "champions",
+      "game_type": "doubles",
+      "ruleset": [
+        "Flat Rules",
+        "VGC Timer",
+        "Force Open Team Sheets",
+        "Best of = 3"
+      ]
+    },
+    {
+      "id": "gen9championsbssregmb",
+      "name": "[Gen 9 Champions] BSS Reg M-B",
+      "mod": "championsregmb",
+      "game_type": "singles",
+      "ruleset": [
+        "Flat Rules",
+        "VGC Timer"
+      ]
+    },
+    {
+      "id": "gen9championsvgc2026regmb",
+      "name": "[Gen 9 Champions] VGC 2026 Reg M-B",
+      "mod": "championsregmb",
+      "game_type": "doubles",
+      "ruleset": [
+        "Flat Rules",
+        "VGC Timer",
+        "Open Team Sheets"
+      ]
+    },
+    {
+      "id": "gen9championsvgc2026regmbbo3",
+      "name": "[Gen 9 Champions] VGC 2026 Reg M-B (Bo3)",
+      "mod": "championsregmb",
+      "game_type": "doubles",
+      "ruleset": [
+        "Flat Rules",
+        "VGC Timer",
+        "Force Open Team Sheets",
+        "Best of = 3"
+      ]
+    }
+  ],
+  "counts": {
+    "mb_species": 357,
+    "mc_species": 392,
+    "mb_items": 148,
+    "mc_items": 166
+  },
+  "species": {
+    "added": [
+      {
+        "id": "absolmegaz",
+        "name": "Absol-Mega-Z",
+        "base_species": "Absol",
+        "types": [
+          "Dark",
+          "Ghost"
+        ],
+        "stats": {
+          "hp": 65,
+          "atk": 154,
+          "def": 60,
+          "spa": 75,
+          "spd": 60,
+          "spe": 151
+        },
+        "abilities": {
+          "0": "Sharpness"
+        },
+        "required_item": "Absolite Z",
+        "moves": [
+          "aerialace",
+          "airslash",
+          "assurance",
+          "attract",
+          "batonpass",
+          "bite",
+          "blizzard",
+          "bodyslam",
+          "bounce",
+          "brutalswing",
+          "calmmind",
+          "closecombat",
+          "confuseray",
+          "curse",
+          "darkpulse",
+          "detect",
+          "doubleedge",
+          "doubleteam",
+          "endure",
+          "facade",
+          "feint",
+          "fireblast",
+          "flamethrower",
+          "focusenergy",
+          "foulplay",
+          "futuresight",
+          "gigaimpact",
+          "hex",
+          "hyperbeam",
+          "icebeam",
+          "icywind",
+          "irontail",
+          "knockoff",
+          "meanlook",
+          "megahorn",
+          "nightslash",
+          "payback",
+          "perishsong",
+          "phantomforce",
+          "playrough",
+          "protect",
+          "psychocut",
+          "quickattack",
+          "raindance",
+          "rest",
+          "rockslide",
+          "rocktomb",
+          "round",
+          "sandstorm",
+          "shadowball",
+          "shadowclaw",
+          "shadowsneak",
+          "slash",
+          "sleeptalk",
+          "snarl",
+          "snore",
+          "stoneedge",
+          "substitute",
+          "suckerpunch",
+          "sunnyday",
+          "superpower",
+          "swordsdance",
+          "taunt",
+          "thief",
+          "throatchop",
+          "thunder",
+          "thunderbolt",
+          "thunderwave",
+          "trailblaze",
+          "willowisp",
+          "xscissor",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "arboliva",
+        "name": "Arboliva",
+        "base_species": "Arboliva",
+        "types": [
+          "Grass",
+          "Normal"
+        ],
+        "stats": {
+          "hp": 78,
+          "atk": 69,
+          "def": 90,
+          "spa": 125,
+          "spd": 109,
+          "spe": 39
+        },
+        "abilities": {
+          "0": "Seed Sower",
+          "H": "Harvest"
+        },
+        "required_item": null,
+        "moves": [
+          "alluringvoice",
+          "bulletseed",
+          "charm",
+          "dazzlinggleam",
+          "earthpower",
+          "encore",
+          "endure",
+          "energyball",
+          "facade",
+          "flail",
+          "fling",
+          "gigadrain",
+          "gigaimpact",
+          "grassknot",
+          "grassyterrain",
+          "growth",
+          "helpinghand",
+          "hyperbeam",
+          "hypervoice",
+          "leafstorm",
+          "leechseed",
+          "lightscreen",
+          "memento",
+          "mirrorcoat",
+          "petalblizzard",
+          "petaldance",
+          "pollenpuff",
+          "protect",
+          "psychup",
+          "reflect",
+          "rest",
+          "safeguard",
+          "seedbomb",
+          "sleeptalk",
+          "solarbeam",
+          "solarblade",
+          "strengthsap",
+          "substitute",
+          "sunnyday",
+          "sweetscent",
+          "synthesis",
+          "terrainpulse",
+          "trailblaze",
+          "weatherball"
+        ]
+      },
+      {
+        "id": "baxcalibur",
+        "name": "Baxcalibur",
+        "base_species": "Baxcalibur",
+        "types": [
+          "Dragon",
+          "Ice"
+        ],
+        "stats": {
+          "hp": 115,
+          "atk": 145,
+          "def": 92,
+          "spa": 75,
+          "spd": 86,
+          "spe": 87
+        },
+        "abilities": {
+          "0": "Thermal Exchange",
+          "H": "Ice Body"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "aquatail",
+          "avalanche",
+          "bite",
+          "blizzard",
+          "bodypress",
+          "bodyslam",
+          "breakingswipe",
+          "brickbreak",
+          "bulldoze",
+          "crunch",
+          "dig",
+          "doubleedge",
+          "dracometeor",
+          "dragoncheer",
+          "dragonclaw",
+          "dragondance",
+          "dragonpulse",
+          "dragonrush",
+          "dragontail",
+          "earthquake",
+          "endure",
+          "facade",
+          "focusenergy",
+          "freezedry",
+          "frostbreath",
+          "gigaimpact",
+          "glaiverush",
+          "helpinghand",
+          "highhorsepower",
+          "hyperbeam",
+          "icebeam",
+          "icefang",
+          "iceshard",
+          "iciclecrash",
+          "iciclespear",
+          "icywind",
+          "ironhead",
+          "outrage",
+          "protect",
+          "raindance",
+          "rest",
+          "scaleshot",
+          "scaryface",
+          "sleeptalk",
+          "snowscape",
+          "stompingtantrum",
+          "substitute",
+          "swordsdance",
+          "thunderfang",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "baxcaliburmega",
+        "name": "Baxcalibur-Mega",
+        "base_species": "Baxcalibur",
+        "types": [
+          "Dragon",
+          "Ice"
+        ],
+        "stats": {
+          "hp": 115,
+          "atk": 175,
+          "def": 117,
+          "spa": 105,
+          "spd": 101,
+          "spe": 87
+        },
+        "abilities": {
+          "0": "Thermal Exchange",
+          "H": "Ice Body"
+        },
+        "required_item": "Baxcalibrite",
+        "moves": [
+          "aerialace",
+          "aquatail",
+          "avalanche",
+          "bite",
+          "blizzard",
+          "bodypress",
+          "bodyslam",
+          "breakingswipe",
+          "brickbreak",
+          "bulldoze",
+          "crunch",
+          "dig",
+          "doubleedge",
+          "dracometeor",
+          "dragoncheer",
+          "dragonclaw",
+          "dragondance",
+          "dragonpulse",
+          "dragonrush",
+          "dragontail",
+          "earthquake",
+          "endure",
+          "facade",
+          "focusenergy",
+          "freezedry",
+          "frostbreath",
+          "gigaimpact",
+          "glaiverush",
+          "helpinghand",
+          "highhorsepower",
+          "hyperbeam",
+          "icebeam",
+          "icefang",
+          "iceshard",
+          "iciclecrash",
+          "iciclespear",
+          "icywind",
+          "ironhead",
+          "outrage",
+          "protect",
+          "raindance",
+          "rest",
+          "scaleshot",
+          "scaryface",
+          "sleeptalk",
+          "snowscape",
+          "stompingtantrum",
+          "substitute",
+          "swordsdance",
+          "thunderfang",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "cinderace",
+        "name": "Cinderace",
+        "base_species": "Cinderace",
+        "types": [
+          "Fire"
+        ],
+        "stats": {
+          "hp": 80,
+          "atk": 116,
+          "def": 75,
+          "spa": 65,
+          "spd": 75,
+          "spe": 119
+        },
+        "abilities": {
+          "0": "Blaze",
+          "H": "Libero"
+        },
+        "required_item": null,
+        "moves": [
+          "acrobatics",
+          "agility",
+          "assurance",
+          "batonpass",
+          "blastburn",
+          "blazekick",
+          "bounce",
+          "bulkup",
+          "burningjealousy",
+          "coaching",
+          "counter",
+          "courtchange",
+          "doubleedge",
+          "electroball",
+          "endure",
+          "facade",
+          "feint",
+          "fireblast",
+          "firefang",
+          "firepunch",
+          "firespin",
+          "flamecharge",
+          "flamethrower",
+          "flareblitz",
+          "fling",
+          "focusblast",
+          "focusenergy",
+          "gigaimpact",
+          "gunkshot",
+          "heatwave",
+          "helpinghand",
+          "highjumpkick",
+          "hyperbeam",
+          "ironhead",
+          "lowkick",
+          "lowsweep",
+          "megakick",
+          "mudshot",
+          "mudslap",
+          "overheat",
+          "protect",
+          "pyroball",
+          "quickattack",
+          "rest",
+          "reversal",
+          "round",
+          "scorchingsands",
+          "shadowball",
+          "sleeptalk",
+          "smackdown",
+          "snarl",
+          "snore",
+          "substitute",
+          "suckerpunch",
+          "sunnyday",
+          "superfang",
+          "swordsdance",
+          "taunt",
+          "temperflare",
+          "trailblaze",
+          "uturn",
+          "weatherball",
+          "willowisp",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "farfetchd",
+        "name": "Farfetch’d",
+        "base_species": "Farfetch’d",
+        "types": [
+          "Normal",
+          "Flying"
+        ],
+        "stats": {
+          "hp": 52,
+          "atk": 90,
+          "def": 55,
+          "spa": 58,
+          "spd": 62,
+          "spe": 60
+        },
+        "abilities": {
+          "0": "Keen Eye",
+          "1": "Inner Focus",
+          "H": "Defiant"
+        },
+        "required_item": null,
+        "moves": [
+          "acrobatics",
+          "aerialace",
+          "agility",
+          "aircutter",
+          "airslash",
+          "attract",
+          "batonpass",
+          "bodyslam",
+          "bravebird",
+          "brutalswing",
+          "closecombat",
+          "covet",
+          "curse",
+          "dualwingbeat",
+          "endure",
+          "facade",
+          "featherdance",
+          "feint",
+          "finalgambit",
+          "firstimpression",
+          "flail",
+          "fly",
+          "focusenergy",
+          "heatwave",
+          "helpinghand",
+          "irontail",
+          "knockoff",
+          "leafblade",
+          "nightslash",
+          "poisonjab",
+          "protect",
+          "quickattack",
+          "rest",
+          "roost",
+          "round",
+          "simplebeam",
+          "skyattack",
+          "slash",
+          "sleeptalk",
+          "snore",
+          "solarblade",
+          "steelwing",
+          "substitute",
+          "sunnyday",
+          "swordsdance",
+          "thief",
+          "throatchop",
+          "trailblaze",
+          "uproar",
+          "uturn"
+        ]
+      },
+      {
+        "id": "garchompmegaz",
+        "name": "Garchomp-Mega-Z",
+        "base_species": "Garchomp",
+        "types": [
+          "Dragon"
+        ],
+        "stats": {
+          "hp": 108,
+          "atk": 130,
+          "def": 85,
+          "spa": 141,
+          "spd": 85,
+          "spe": 151
+        },
+        "abilities": {
+          "0": "Levitate"
+        },
+        "required_item": "Garchompite Z",
+        "moves": [
+          "aerialace",
+          "bite",
+          "bodyslam",
+          "breakingswipe",
+          "brickbreak",
+          "brutalswing",
+          "bulldoze",
+          "crunch",
+          "dig",
+          "doubleedge",
+          "dracometeor",
+          "dragoncheer",
+          "dragonclaw",
+          "dragonpulse",
+          "dragonrush",
+          "dragontail",
+          "earthpower",
+          "earthquake",
+          "endure",
+          "facade",
+          "fireblast",
+          "firefang",
+          "flamethrower",
+          "fling",
+          "gigaimpact",
+          "helpinghand",
+          "hyperbeam",
+          "ironhead",
+          "irontail",
+          "liquidation",
+          "mudshot",
+          "outrage",
+          "poisonjab",
+          "powergem",
+          "protect",
+          "raindance",
+          "rest",
+          "rockslide",
+          "rocktomb",
+          "round",
+          "sandstorm",
+          "sandtomb",
+          "scaleshot",
+          "scaryface",
+          "scorchingsands",
+          "shadowclaw",
+          "slash",
+          "sleeptalk",
+          "snore",
+          "spikes",
+          "stealthrock",
+          "stompingtantrum",
+          "stoneedge",
+          "substitute",
+          "sunnyday",
+          "surf",
+          "swordsdance",
+          "thrash",
+          "thunderfang"
+        ]
+      },
+      {
+        "id": "gogoat",
+        "name": "Gogoat",
+        "base_species": "Gogoat",
+        "types": [
+          "Grass"
+        ],
+        "stats": {
+          "hp": 123,
+          "atk": 100,
+          "def": 62,
+          "spa": 97,
+          "spd": 81,
+          "spe": 68
+        },
+        "abilities": {
+          "0": "Sap Sipper",
+          "H": "Grass Pelt"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "bodyslam",
+          "brickbreak",
+          "bulkup",
+          "bulldoze",
+          "bulletseed",
+          "dig",
+          "doubleedge",
+          "earthquake",
+          "endeavor",
+          "endure",
+          "energyball",
+          "facade",
+          "gigadrain",
+          "gigaimpact",
+          "grassknot",
+          "grassyglide",
+          "grassyterrain",
+          "growth",
+          "helpinghand",
+          "highhorsepower",
+          "hornleech",
+          "hyperbeam",
+          "irontail",
+          "leafblade",
+          "leafstorm",
+          "leechseed",
+          "megahorn",
+          "milkdrink",
+          "mudshot",
+          "mudslap",
+          "payback",
+          "playrough",
+          "protect",
+          "raindance",
+          "rest",
+          "roar",
+          "rockslide",
+          "round",
+          "seedbomb",
+          "sleeptalk",
+          "snore",
+          "solarbeam",
+          "stompingtantrum",
+          "substitute",
+          "sunnyday",
+          "superpower",
+          "surf",
+          "synthesis",
+          "throatchop",
+          "trailblaze",
+          "wildcharge",
+          "worryseed",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "golisopod",
+        "name": "Golisopod",
+        "base_species": "Golisopod",
+        "types": [
+          "Bug",
+          "Water"
+        ],
+        "stats": {
+          "hp": 75,
+          "atk": 125,
+          "def": 140,
+          "spa": 60,
+          "spd": 90,
+          "spe": 40
+        },
+        "abilities": {
+          "0": "Emergency Exit"
+        },
+        "required_item": null,
+        "moves": [
+          "agility",
+          "aquajet",
+          "assurance",
+          "attract",
+          "blizzard",
+          "brickbreak",
+          "bugbite",
+          "bugbuzz",
+          "bulkup",
+          "chillingwater",
+          "closecombat",
+          "darkpulse",
+          "dive",
+          "doublehit",
+          "drillrun",
+          "endure",
+          "facade",
+          "firstimpression",
+          "fling",
+          "focusblast",
+          "gigaimpact",
+          "gunkshot",
+          "hyperbeam",
+          "icebeam",
+          "icywind",
+          "irondefense",
+          "ironhead",
+          "leechlife",
+          "liquidation",
+          "muddywater",
+          "mudshot",
+          "nightslash",
+          "payback",
+          "pinmissile",
+          "poisonjab",
+          "pounce",
+          "protect",
+          "raindance",
+          "razorshell",
+          "rest",
+          "rockslide",
+          "rocktomb",
+          "round",
+          "scald",
+          "screech",
+          "shadowclaw",
+          "skittersmack",
+          "slash",
+          "sleeptalk",
+          "sludgebomb",
+          "sludgewave",
+          "snarl",
+          "snore",
+          "spikes",
+          "spite",
+          "strugglebug",
+          "substitute",
+          "suckerpunch",
+          "surf",
+          "swordsdance",
+          "taunt",
+          "throatchop",
+          "uturn",
+          "venoshock",
+          "waterfall",
+          "wideguard",
+          "xscissor"
+        ]
+      },
+      {
+        "id": "golisopodmega",
+        "name": "Golisopod-Mega",
+        "base_species": "Golisopod",
+        "types": [
+          "Bug",
+          "Steel"
+        ],
+        "stats": {
+          "hp": 75,
+          "atk": 150,
+          "def": 175,
+          "spa": 70,
+          "spd": 120,
+          "spe": 40
+        },
+        "abilities": {
+          "0": "Tough Claws"
+        },
+        "required_item": "Golisopite",
+        "moves": [
+          "agility",
+          "aquajet",
+          "assurance",
+          "attract",
+          "blizzard",
+          "brickbreak",
+          "bugbite",
+          "bugbuzz",
+          "bulkup",
+          "chillingwater",
+          "closecombat",
+          "darkpulse",
+          "dive",
+          "doublehit",
+          "drillrun",
+          "endure",
+          "facade",
+          "firstimpression",
+          "fling",
+          "focusblast",
+          "gigaimpact",
+          "gunkshot",
+          "hyperbeam",
+          "icebeam",
+          "icywind",
+          "irondefense",
+          "ironhead",
+          "leechlife",
+          "liquidation",
+          "muddywater",
+          "mudshot",
+          "nightslash",
+          "payback",
+          "pinmissile",
+          "poisonjab",
+          "pounce",
+          "protect",
+          "raindance",
+          "razorshell",
+          "rest",
+          "rockslide",
+          "rocktomb",
+          "round",
+          "scald",
+          "screech",
+          "shadowclaw",
+          "skittersmack",
+          "slash",
+          "sleeptalk",
+          "sludgebomb",
+          "sludgewave",
+          "snarl",
+          "snore",
+          "spikes",
+          "spite",
+          "strugglebug",
+          "substitute",
+          "suckerpunch",
+          "surf",
+          "swordsdance",
+          "taunt",
+          "throatchop",
+          "uturn",
+          "venoshock",
+          "waterfall",
+          "wideguard",
+          "xscissor"
+        ]
+      },
+      {
+        "id": "grapploct",
+        "name": "Grapploct",
+        "base_species": "Grapploct",
+        "types": [
+          "Fighting"
+        ],
+        "stats": {
+          "hp": 80,
+          "atk": 118,
+          "def": 90,
+          "spa": 70,
+          "spd": 80,
+          "spe": 42
+        },
+        "abilities": {
+          "0": "Limber",
+          "H": "Technician"
+        },
+        "required_item": null,
+        "moves": [
+          "attract",
+          "bind",
+          "bodyslam",
+          "brickbreak",
+          "brutalswing",
+          "bulkup",
+          "chillingwater",
+          "circlethrow",
+          "closecombat",
+          "coaching",
+          "detect",
+          "dig",
+          "dive",
+          "drainpunch",
+          "endure",
+          "facade",
+          "feint",
+          "focusblast",
+          "gigaimpact",
+          "hydropump",
+          "hyperbeam",
+          "icepunch",
+          "liquidation",
+          "machpunch",
+          "muddywater",
+          "mudshot",
+          "octolock",
+          "painsplit",
+          "payback",
+          "protect",
+          "rest",
+          "reversal",
+          "round",
+          "scaryface",
+          "seismictoss",
+          "skittersmack",
+          "sleeptalk",
+          "snore",
+          "soak",
+          "stompingtantrum",
+          "stormthrow",
+          "substitute",
+          "suckerpunch",
+          "superpower",
+          "surf",
+          "taunt",
+          "topsyturvy",
+          "waterfall",
+          "whirlpool"
+        ]
+      },
+      {
+        "id": "indeedee",
+        "name": "Indeedee",
+        "base_species": "Indeedee",
+        "types": [
+          "Psychic",
+          "Normal"
+        ],
+        "stats": {
+          "hp": 60,
+          "atk": 65,
+          "def": 55,
+          "spa": 105,
+          "spd": 95,
+          "spe": 95
+        },
+        "abilities": {
+          "0": "Inner Focus",
+          "1": "Synchronize",
+          "H": "Psychic Surge"
+        },
+        "required_item": null,
+        "moves": [
+          "afteryou",
+          "bodyslam",
+          "calmmind",
+          "dazzlinggleam",
+          "drainingkiss",
+          "drainpunch",
+          "encore",
+          "endure",
+          "energyball",
+          "expandingforce",
+          "extrasensory",
+          "facade",
+          "fakeout",
+          "futuresight",
+          "gravity",
+          "healingwish",
+          "helpinghand",
+          "hypervoice",
+          "imprison",
+          "lastresort",
+          "magicroom",
+          "mysticalfire",
+          "playrough",
+          "powersplit",
+          "powerswap",
+          "protect",
+          "psychic",
+          "psychicnoise",
+          "psychicterrain",
+          "psychup",
+          "psyshock",
+          "rest",
+          "round",
+          "shadowball",
+          "skillswap",
+          "sleeptalk",
+          "snore",
+          "storedpower",
+          "substitute",
+          "terrainpulse",
+          "triattack",
+          "trick",
+          "trickroom",
+          "wish",
+          "wonderroom",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "indeedeef",
+        "name": "Indeedee-F",
+        "base_species": "Indeedee",
+        "types": [
+          "Psychic",
+          "Normal"
+        ],
+        "stats": {
+          "hp": 70,
+          "atk": 55,
+          "def": 65,
+          "spa": 95,
+          "spd": 105,
+          "spe": 85
+        },
+        "abilities": {
+          "0": "Own Tempo",
+          "1": "Synchronize",
+          "H": "Psychic Surge"
+        },
+        "required_item": null,
+        "moves": [
+          "alluringvoice",
+          "batonpass",
+          "bodyslam",
+          "calmmind",
+          "charm",
+          "dazzlinggleam",
+          "drainingkiss",
+          "drainpunch",
+          "endure",
+          "energyball",
+          "facade",
+          "fakeout",
+          "followme",
+          "futuresight",
+          "guardsplit",
+          "guardswap",
+          "healingwish",
+          "healpulse",
+          "helpinghand",
+          "hypervoice",
+          "imprison",
+          "lightscreen",
+          "mysticalfire",
+          "playrough",
+          "protect",
+          "psychic",
+          "psychicterrain",
+          "psychup",
+          "psyshock",
+          "reflect",
+          "rest",
+          "round",
+          "safeguard",
+          "shadowball",
+          "sing",
+          "skillswap",
+          "sleeptalk",
+          "snore",
+          "storedpower",
+          "substitute",
+          "terrainpulse",
+          "trick",
+          "trickroom",
+          "wish",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "inteleon",
+        "name": "Inteleon",
+        "base_species": "Inteleon",
+        "types": [
+          "Water"
+        ],
+        "stats": {
+          "hp": 70,
+          "atk": 85,
+          "def": 65,
+          "spa": 125,
+          "spd": 65,
+          "spe": 120
+        },
+        "abilities": {
+          "0": "Torrent",
+          "H": "Sniper"
+        },
+        "required_item": null,
+        "moves": [
+          "acrobatics",
+          "agility",
+          "aircutter",
+          "airslash",
+          "aquajet",
+          "aquaring",
+          "batonpass",
+          "bind",
+          "blizzard",
+          "bounce",
+          "breakingswipe",
+          "chillingwater",
+          "darkpulse",
+          "dive",
+          "doubleteam",
+          "endure",
+          "facade",
+          "fellstinger",
+          "fling",
+          "flipturn",
+          "focusenergy",
+          "gigaimpact",
+          "haze",
+          "hydrocannon",
+          "hydropump",
+          "hyperbeam",
+          "icebeam",
+          "iceshard",
+          "iciclespear",
+          "icywind",
+          "lightscreen",
+          "liquidation",
+          "muddywater",
+          "mudshot",
+          "protect",
+          "psychup",
+          "raindance",
+          "reflect",
+          "rest",
+          "round",
+          "scald",
+          "scaleshot",
+          "shadowball",
+          "skittersmack",
+          "sleeptalk",
+          "smackdown",
+          "snipeshot",
+          "snore",
+          "snowscape",
+          "soak",
+          "substitute",
+          "suckerpunch",
+          "surf",
+          "swordsdance",
+          "taunt",
+          "tearfullook",
+          "uturn",
+          "vacuumwave",
+          "waterfall",
+          "waterpulse",
+          "weatherball",
+          "whirlpool"
+        ]
+      },
+      {
+        "id": "lucariomegaz",
+        "name": "Lucario-Mega-Z",
+        "base_species": "Lucario",
+        "types": [
+          "Fighting",
+          "Steel"
+        ],
+        "stats": {
+          "hp": 70,
+          "atk": 100,
+          "def": 70,
+          "spa": 164,
+          "spd": 70,
+          "spe": 151
+        },
+        "abilities": {
+          "0": "Aura Guard"
+        },
+        "required_item": "Lucarionite Z",
+        "moves": [
+          "aerialace",
+          "agility",
+          "aurasphere",
+          "bite",
+          "blazekick",
+          "bodyslam",
+          "bonerush",
+          "brickbreak",
+          "bulkup",
+          "bulldoze",
+          "bulletpunch",
+          "calmmind",
+          "circlethrow",
+          "closecombat",
+          "coaching",
+          "copycat",
+          "counter",
+          "crosschop",
+          "crunch",
+          "darkpulse",
+          "detect",
+          "dig",
+          "dragonpulse",
+          "drainpunch",
+          "earthquake",
+          "endure",
+          "extremespeed",
+          "facade",
+          "feint",
+          "finalgambit",
+          "flashcannon",
+          "fling",
+          "focusblast",
+          "focusenergy",
+          "focuspunch",
+          "gigaimpact",
+          "healpulse",
+          "helpinghand",
+          "highjumpkick",
+          "howl",
+          "hyperbeam",
+          "icepunch",
+          "irondefense",
+          "irontail",
+          "lifedew",
+          "lowkick",
+          "lowsweep",
+          "megakick",
+          "metalsound",
+          "meteormash",
+          "nastyplot",
+          "payback",
+          "poisonjab",
+          "protect",
+          "psychic",
+          "psychup",
+          "quickattack",
+          "quickguard",
+          "raindance",
+          "rest",
+          "reversal",
+          "roar",
+          "rockslide",
+          "rocktomb",
+          "round",
+          "scaryface",
+          "screech",
+          "shadowball",
+          "shadowclaw",
+          "sleeptalk",
+          "snore",
+          "steelbeam",
+          "stoneedge",
+          "substitute",
+          "sunnyday",
+          "swordsdance",
+          "terrainpulse",
+          "thunderpunch",
+          "trailblaze",
+          "upperhand",
+          "vacuumwave",
+          "waterpulse",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "mabosstiff",
+        "name": "Mabosstiff",
+        "base_species": "Mabosstiff",
+        "types": [
+          "Dark"
+        ],
+        "stats": {
+          "hp": 80,
+          "atk": 120,
+          "def": 90,
+          "spa": 60,
+          "spd": 70,
+          "spe": 85
+        },
+        "abilities": {
+          "0": "Intimidate",
+          "1": "Guard Dog",
+          "H": "Stakeout"
+        },
+        "required_item": null,
+        "moves": [
+          "bite",
+          "bodyslam",
+          "comeuppance",
+          "crunch",
+          "curse",
+          "darkpulse",
+          "destinybond",
+          "dig",
+          "doubleedge",
+          "endeavor",
+          "endure",
+          "facade",
+          "faketears",
+          "firefang",
+          "focusenergy",
+          "gigaimpact",
+          "helpinghand",
+          "hyperbeam",
+          "hypervoice",
+          "icefang",
+          "jawlock",
+          "lashout",
+          "outrage",
+          "painsplit",
+          "payback",
+          "playrough",
+          "protect",
+          "psychicfangs",
+          "raindance",
+          "rest",
+          "reversal",
+          "roar",
+          "scaryface",
+          "sleeptalk",
+          "snarl",
+          "spite",
+          "substitute",
+          "sunnyday",
+          "swagger",
+          "taunt",
+          "thief",
+          "thunderfang",
+          "trailblaze",
+          "wildcharge"
+        ]
+      },
+      {
+        "id": "mrmime",
+        "name": "Mr. Mime",
+        "base_species": "Mr. Mime",
+        "types": [
+          "Psychic",
+          "Fairy"
+        ],
+        "stats": {
+          "hp": 40,
+          "atk": 45,
+          "def": 65,
+          "spa": 100,
+          "spd": 120,
+          "spe": 90
+        },
+        "abilities": {
+          "0": "Soundproof",
+          "1": "Filter",
+          "H": "Technician"
+        },
+        "required_item": null,
+        "moves": [
+          "allyswitch",
+          "attract",
+          "batonpass",
+          "bodyslam",
+          "brickbreak",
+          "calmmind",
+          "chargebeam",
+          "charm",
+          "confuseray",
+          "copycat",
+          "dazzlinggleam",
+          "drainpunch",
+          "encore",
+          "endure",
+          "energyball",
+          "expandingforce",
+          "facade",
+          "fakeout",
+          "firepunch",
+          "fling",
+          "focusblast",
+          "foulplay",
+          "futuresight",
+          "gigaimpact",
+          "grassknot",
+          "guardswap",
+          "helpinghand",
+          "hyperbeam",
+          "hypnosis",
+          "icepunch",
+          "icywind",
+          "irondefense",
+          "lightscreen",
+          "magicroom",
+          "megakick",
+          "mistyterrain",
+          "mysticalfire",
+          "nastyplot",
+          "payback",
+          "powersplit",
+          "powerswap",
+          "protect",
+          "psychic",
+          "psychicterrain",
+          "psyshock",
+          "quickguard",
+          "raindance",
+          "recycle",
+          "reflect",
+          "rest",
+          "roleplay",
+          "round",
+          "safeguard",
+          "shadowball",
+          "skillswap",
+          "sleeptalk",
+          "snore",
+          "solarbeam",
+          "storedpower",
+          "substitute",
+          "suckerpunch",
+          "sunnyday",
+          "taunt",
+          "teeterdance",
+          "thief",
+          "thunder",
+          "thunderbolt",
+          "thunderpunch",
+          "thunderwave",
+          "tickle",
+          "torment",
+          "trick",
+          "trickroom",
+          "uproar",
+          "wideguard",
+          "wonderroom",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "pawmot",
+        "name": "Pawmot",
+        "base_species": "Pawmot",
+        "types": [
+          "Electric",
+          "Fighting"
+        ],
+        "stats": {
+          "hp": 70,
+          "atk": 115,
+          "def": 70,
+          "spa": 70,
+          "spd": 60,
+          "spe": 105
+        },
+        "abilities": {
+          "0": "Volt Absorb",
+          "1": "Natural Cure",
+          "H": "Iron Fist"
+        },
+        "required_item": null,
+        "moves": [
+          "agility",
+          "batonpass",
+          "bite",
+          "bodypress",
+          "brickbreak",
+          "bulkup",
+          "charge",
+          "chargebeam",
+          "charm",
+          "closecombat",
+          "coaching",
+          "crunch",
+          "dig",
+          "discharge",
+          "doubleedge",
+          "doubleshock",
+          "eerieimpulse",
+          "electricterrain",
+          "electroball",
+          "electroweb",
+          "encore",
+          "endure",
+          "entrainment",
+          "facade",
+          "fakeout",
+          "firepunch",
+          "fling",
+          "focusblast",
+          "focuspunch",
+          "gigaimpact",
+          "grassknot",
+          "helpinghand",
+          "hyperbeam",
+          "icepunch",
+          "knockoff",
+          "lowkick",
+          "lowsweep",
+          "machpunch",
+          "nuzzle",
+          "playrough",
+          "protect",
+          "quickattack",
+          "raindance",
+          "rest",
+          "revivalblessing",
+          "rocktomb",
+          "seedbomb",
+          "sleeptalk",
+          "substitute",
+          "sunnyday",
+          "supercellslam",
+          "superfang",
+          "sweetkiss",
+          "thief",
+          "throatchop",
+          "thunder",
+          "thunderbolt",
+          "thunderfang",
+          "thunderpunch",
+          "thunderwave",
+          "upperhand",
+          "voltswitch",
+          "wildcharge",
+          "wish"
+        ]
+      },
+      {
+        "id": "perrserker",
+        "name": "Perrserker",
+        "base_species": "Perrserker",
+        "types": [
+          "Steel"
+        ],
+        "stats": {
+          "hp": 70,
+          "atk": 110,
+          "def": 100,
+          "spa": 50,
+          "spd": 60,
+          "spe": 50
+        },
+        "abilities": {
+          "0": "Battle Armor",
+          "1": "Tough Claws",
+          "H": "Steely Spirit"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "amnesia",
+          "assurance",
+          "batonpass",
+          "bite",
+          "bodyslam",
+          "brickbreak",
+          "bulkup",
+          "charm",
+          "chillingwater",
+          "closecombat",
+          "covet",
+          "crunch",
+          "curse",
+          "darkpulse",
+          "dig",
+          "doubleedge",
+          "endeavor",
+          "endure",
+          "facade",
+          "fakeout",
+          "faketears",
+          "flail",
+          "flashcannon",
+          "fling",
+          "foulplay",
+          "gigaimpact",
+          "gunkshot",
+          "gyroball",
+          "heavyslam",
+          "helpinghand",
+          "hyperbeam",
+          "hypervoice",
+          "irondefense",
+          "ironhead",
+          "irontail",
+          "knockoff",
+          "lashout",
+          "metalburst",
+          "metalsound",
+          "nastyplot",
+          "nightslash",
+          "payback",
+          "playrough",
+          "protect",
+          "raindance",
+          "rest",
+          "round",
+          "screech",
+          "seedbomb",
+          "shadowball",
+          "shadowclaw",
+          "slash",
+          "sleeptalk",
+          "snore",
+          "spikes",
+          "spite",
+          "stealthrock",
+          "steelbeam",
+          "substitute",
+          "sunnyday",
+          "swagger",
+          "swordsdance",
+          "taunt",
+          "thief",
+          "thrash",
+          "throatchop",
+          "thunder",
+          "thunderbolt",
+          "thunderwave",
+          "trailblaze",
+          "uproar",
+          "uturn",
+          "xscissor"
+        ]
+      },
+      {
+        "id": "persian",
+        "name": "Persian",
+        "base_species": "Persian",
+        "types": [
+          "Normal"
+        ],
+        "stats": {
+          "hp": 65,
+          "atk": 70,
+          "def": 60,
+          "spa": 65,
+          "spd": 65,
+          "spe": 115
+        },
+        "abilities": {
+          "0": "Limber",
+          "1": "Technician",
+          "H": "Unnerve"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "agility",
+          "amnesia",
+          "assurance",
+          "bite",
+          "bodyslam",
+          "charm",
+          "chillingwater",
+          "covet",
+          "darkpulse",
+          "dig",
+          "doubleedge",
+          "doubleteam",
+          "endeavor",
+          "endure",
+          "facade",
+          "fakeout",
+          "faketears",
+          "feint",
+          "flail",
+          "foulplay",
+          "gigaimpact",
+          "gunkshot",
+          "helpinghand",
+          "hyperbeam",
+          "hypervoice",
+          "hypnosis",
+          "icywind",
+          "irontail",
+          "knockoff",
+          "lashout",
+          "lastresort",
+          "nastyplot",
+          "painsplit",
+          "payback",
+          "playrough",
+          "powergem",
+          "protect",
+          "psychup",
+          "raindance",
+          "rest",
+          "roar",
+          "round",
+          "screech",
+          "seedbomb",
+          "shadowball",
+          "shadowclaw",
+          "skittersmack",
+          "slash",
+          "sleeptalk",
+          "snarl",
+          "snore",
+          "spite",
+          "substitute",
+          "sunnyday",
+          "switcheroo",
+          "taunt",
+          "thief",
+          "throatchop",
+          "thunder",
+          "thunderbolt",
+          "thunderwave",
+          "trailblaze",
+          "uproar",
+          "uturn",
+          "waterpulse"
+        ]
+      },
+      {
+        "id": "persianalola",
+        "name": "Persian-Alola",
+        "base_species": "Persian",
+        "types": [
+          "Dark"
+        ],
+        "stats": {
+          "hp": 65,
+          "atk": 60,
+          "def": 60,
+          "spa": 75,
+          "spd": 65,
+          "spe": 115
+        },
+        "abilities": {
+          "0": "Fur Coat",
+          "1": "Technician",
+          "H": "Rattled"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "agility",
+          "amnesia",
+          "assurance",
+          "beatup",
+          "bite",
+          "bodyslam",
+          "burningjealousy",
+          "charm",
+          "chillingwater",
+          "confuseray",
+          "covet",
+          "curse",
+          "darkpulse",
+          "dig",
+          "doubleedge",
+          "doubleteam",
+          "endeavor",
+          "endure",
+          "facade",
+          "fakeout",
+          "faketears",
+          "feint",
+          "flail",
+          "flatter",
+          "foulplay",
+          "gigaimpact",
+          "gunkshot",
+          "helpinghand",
+          "hyperbeam",
+          "hypervoice",
+          "hypnosis",
+          "icywind",
+          "irontail",
+          "knockoff",
+          "lashout",
+          "nastyplot",
+          "nightslash",
+          "partingshot",
+          "payback",
+          "playrough",
+          "powergem",
+          "protect",
+          "psychup",
+          "quash",
+          "raindance",
+          "rest",
+          "roar",
+          "round",
+          "screech",
+          "seedbomb",
+          "shadowball",
+          "shadowclaw",
+          "skittersmack",
+          "slash",
+          "sleeptalk",
+          "smackdown",
+          "snarl",
+          "snore",
+          "spite",
+          "substitute",
+          "sunnyday",
+          "switcheroo",
+          "taunt",
+          "thief",
+          "throatchop",
+          "thunder",
+          "thunderbolt",
+          "thunderwave",
+          "trailblaze",
+          "uproar",
+          "uturn",
+          "waterpulse"
+        ]
+      },
+      {
+        "id": "pincurchin",
+        "name": "Pincurchin",
+        "base_species": "Pincurchin",
+        "types": [
+          "Electric"
+        ],
+        "stats": {
+          "hp": 48,
+          "atk": 101,
+          "def": 95,
+          "spa": 91,
+          "spd": 85,
+          "spe": 15
+        },
+        "abilities": {
+          "0": "Lightning Rod",
+          "H": "Electric Surge"
+        },
+        "required_item": null,
+        "moves": [
+          "acupressure",
+          "assurance",
+          "bodyslam",
+          "charge",
+          "chargebeam",
+          "chillingwater",
+          "curse",
+          "discharge",
+          "electricterrain",
+          "electroball",
+          "electroweb",
+          "endure",
+          "facade",
+          "gigaimpact",
+          "hex",
+          "hydropump",
+          "hyperbeam",
+          "liquidation",
+          "memento",
+          "muddywater",
+          "painsplit",
+          "payback",
+          "pinmissile",
+          "poisonjab",
+          "protect",
+          "raindance",
+          "recover",
+          "rest",
+          "reversal",
+          "risingvoltage",
+          "round",
+          "scald",
+          "selfdestruct",
+          "sleeptalk",
+          "snore",
+          "spikes",
+          "substitute",
+          "suckerpunch",
+          "supercellslam",
+          "surf",
+          "throatchop",
+          "thunder",
+          "thunderbolt",
+          "thunderwave",
+          "toxicspikes",
+          "venoshock",
+          "wildcharge",
+          "zingzap"
+        ]
+      },
+      {
+        "id": "rillaboom",
+        "name": "Rillaboom",
+        "base_species": "Rillaboom",
+        "types": [
+          "Grass"
+        ],
+        "stats": {
+          "hp": 100,
+          "atk": 125,
+          "def": 90,
+          "spa": 60,
+          "spd": 70,
+          "spe": 85
+        },
+        "abilities": {
+          "0": "Overgrow",
+          "H": "Grassy Surge"
+        },
+        "required_item": null,
+        "moves": [
+          "acrobatics",
+          "assurance",
+          "bodypress",
+          "bodyslam",
+          "boomburst",
+          "brickbreak",
+          "brutalswing",
+          "bulkup",
+          "bulldoze",
+          "bulletseed",
+          "doubleedge",
+          "doublehit",
+          "drainpunch",
+          "drumbeating",
+          "earthpower",
+          "earthquake",
+          "endeavor",
+          "endure",
+          "energyball",
+          "facade",
+          "fakeout",
+          "fling",
+          "focusblast",
+          "focusenergy",
+          "focuspunch",
+          "frenzyplant",
+          "gigadrain",
+          "gigaimpact",
+          "grassknot",
+          "grassyglide",
+          "grassyterrain",
+          "growth",
+          "hammerarm",
+          "highhorsepower",
+          "hyperbeam",
+          "hypervoice",
+          "knockoff",
+          "leafstorm",
+          "leechseed",
+          "lowkick",
+          "lowsweep",
+          "megakick",
+          "mudshot",
+          "nobleroar",
+          "protect",
+          "rest",
+          "round",
+          "scaryface",
+          "screech",
+          "seedbomb",
+          "sleeptalk",
+          "snarl",
+          "snore",
+          "solarbeam",
+          "solarblade",
+          "stompingtantrum",
+          "substitute",
+          "sunnyday",
+          "superpower",
+          "swordsdance",
+          "taunt",
+          "thief",
+          "trailblaze",
+          "uproar",
+          "uturn",
+          "woodhammer",
+          "worryseed"
+        ]
+      },
+      {
+        "id": "salamence",
+        "name": "Salamence",
+        "base_species": "Salamence",
+        "types": [
+          "Dragon",
+          "Flying"
+        ],
+        "stats": {
+          "hp": 95,
+          "atk": 135,
+          "def": 80,
+          "spa": 110,
+          "spd": 80,
+          "spe": 100
+        },
+        "abilities": {
+          "0": "Intimidate",
+          "H": "Moxie"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "airslash",
+          "bite",
+          "bodyslam",
+          "breakingswipe",
+          "brickbreak",
+          "brutalswing",
+          "bulldoze",
+          "crunch",
+          "doubleedge",
+          "dracometeor",
+          "dragoncheer",
+          "dragonclaw",
+          "dragondance",
+          "dragonpulse",
+          "dragonrush",
+          "dragontail",
+          "dualwingbeat",
+          "earthquake",
+          "endure",
+          "facade",
+          "fireblast",
+          "firefang",
+          "firespin",
+          "flamethrower",
+          "fly",
+          "focusenergy",
+          "gigaimpact",
+          "heatwave",
+          "helpinghand",
+          "hurricane",
+          "hydropump",
+          "hyperbeam",
+          "hypervoice",
+          "irondefense",
+          "ironhead",
+          "irontail",
+          "mudslap",
+          "outrage",
+          "protect",
+          "psychicfangs",
+          "raindance",
+          "rest",
+          "roar",
+          "rockslide",
+          "rocktomb",
+          "roost",
+          "round",
+          "scaryface",
+          "shadowclaw",
+          "slash",
+          "sleeptalk",
+          "snore",
+          "steelwing",
+          "stoneedge",
+          "substitute",
+          "sunnyday",
+          "tailwind",
+          "temperflare",
+          "thrash",
+          "thunderfang",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "salamencemega",
+        "name": "Salamence-Mega",
+        "base_species": "Salamence",
+        "types": [
+          "Dragon",
+          "Flying"
+        ],
+        "stats": {
+          "hp": 95,
+          "atk": 145,
+          "def": 130,
+          "spa": 120,
+          "spd": 90,
+          "spe": 120
+        },
+        "abilities": {
+          "0": "Aerilate"
+        },
+        "required_item": "Salamencite",
+        "moves": [
+          "aerialace",
+          "airslash",
+          "bite",
+          "bodyslam",
+          "breakingswipe",
+          "brickbreak",
+          "brutalswing",
+          "bulldoze",
+          "crunch",
+          "doubleedge",
+          "dracometeor",
+          "dragoncheer",
+          "dragonclaw",
+          "dragondance",
+          "dragonpulse",
+          "dragonrush",
+          "dragontail",
+          "dualwingbeat",
+          "earthquake",
+          "endure",
+          "facade",
+          "fireblast",
+          "firefang",
+          "firespin",
+          "flamethrower",
+          "fly",
+          "focusenergy",
+          "gigaimpact",
+          "heatwave",
+          "helpinghand",
+          "hurricane",
+          "hydropump",
+          "hyperbeam",
+          "hypervoice",
+          "irondefense",
+          "ironhead",
+          "irontail",
+          "mudslap",
+          "outrage",
+          "protect",
+          "psychicfangs",
+          "raindance",
+          "rest",
+          "roar",
+          "rockslide",
+          "rocktomb",
+          "roost",
+          "round",
+          "scaryface",
+          "shadowclaw",
+          "slash",
+          "sleeptalk",
+          "snore",
+          "steelwing",
+          "stoneedge",
+          "substitute",
+          "sunnyday",
+          "tailwind",
+          "temperflare",
+          "thrash",
+          "thunderfang",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "sirfetchd",
+        "name": "Sirfetch’d",
+        "base_species": "Sirfetch’d",
+        "types": [
+          "Fighting"
+        ],
+        "stats": {
+          "hp": 62,
+          "atk": 135,
+          "def": 95,
+          "spa": 68,
+          "spd": 82,
+          "spe": 65
+        },
+        "abilities": {
+          "0": "Steadfast",
+          "H": "Scrappy"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "assurance",
+          "attract",
+          "bodyslam",
+          "bravebird",
+          "brickbreak",
+          "brutalswing",
+          "closecombat",
+          "coaching",
+          "counter",
+          "covet",
+          "curse",
+          "defog",
+          "detect",
+          "doubleedge",
+          "dualwingbeat",
+          "endure",
+          "facade",
+          "featherdance",
+          "feint",
+          "finalgambit",
+          "firstimpression",
+          "flail",
+          "focusenergy",
+          "grassyglide",
+          "helpinghand",
+          "irondefense",
+          "knockoff",
+          "leafblade",
+          "nightslash",
+          "poisonjab",
+          "protect",
+          "quickattack",
+          "quickguard",
+          "rest",
+          "round",
+          "simplebeam",
+          "skyattack",
+          "slash",
+          "sleeptalk",
+          "snore",
+          "solarblade",
+          "steelwing",
+          "substitute",
+          "sunnyday",
+          "superpower",
+          "swordsdance",
+          "throatchop"
+        ]
+      },
+      {
+        "id": "squawkabilly",
+        "name": "Squawkabilly",
+        "base_species": "Squawkabilly",
+        "types": [
+          "Normal",
+          "Flying"
+        ],
+        "stats": {
+          "hp": 82,
+          "atk": 96,
+          "def": 51,
+          "spa": 45,
+          "spd": 51,
+          "spe": 92
+        },
+        "abilities": {
+          "0": "Intimidate",
+          "1": "Hustle",
+          "H": "Guts"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "aircutter",
+          "airslash",
+          "bravebird",
+          "copycat",
+          "doubleedge",
+          "dualwingbeat",
+          "endeavor",
+          "endure",
+          "facade",
+          "faketears",
+          "featherdance",
+          "finalgambit",
+          "flatter",
+          "fly",
+          "foulplay",
+          "gigaimpact",
+          "heatwave",
+          "helpinghand",
+          "hurricane",
+          "hyperbeam",
+          "hypervoice",
+          "lashout",
+          "lunge",
+          "partingshot",
+          "pounce",
+          "protect",
+          "quickattack",
+          "rest",
+          "reversal",
+          "roost",
+          "scaryface",
+          "seedbomb",
+          "sleeptalk",
+          "substitute",
+          "sunnyday",
+          "swagger",
+          "tailwind",
+          "taunt",
+          "thief",
+          "torment",
+          "uproar",
+          "uturn"
+        ]
+      },
+      {
+        "id": "squawkabillyblue",
+        "name": "Squawkabilly-Blue",
+        "base_species": "Squawkabilly",
+        "types": [
+          "Normal",
+          "Flying"
+        ],
+        "stats": {
+          "hp": 82,
+          "atk": 96,
+          "def": 51,
+          "spa": 45,
+          "spd": 51,
+          "spe": 92
+        },
+        "abilities": {
+          "0": "Intimidate",
+          "1": "Hustle",
+          "H": "Guts"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "aircutter",
+          "airslash",
+          "bravebird",
+          "copycat",
+          "doubleedge",
+          "dualwingbeat",
+          "endeavor",
+          "endure",
+          "facade",
+          "faketears",
+          "featherdance",
+          "finalgambit",
+          "flatter",
+          "fly",
+          "foulplay",
+          "gigaimpact",
+          "heatwave",
+          "helpinghand",
+          "hurricane",
+          "hyperbeam",
+          "hypervoice",
+          "lashout",
+          "lunge",
+          "partingshot",
+          "pounce",
+          "protect",
+          "quickattack",
+          "rest",
+          "reversal",
+          "roost",
+          "scaryface",
+          "seedbomb",
+          "sleeptalk",
+          "substitute",
+          "sunnyday",
+          "swagger",
+          "tailwind",
+          "taunt",
+          "thief",
+          "torment",
+          "uproar",
+          "uturn"
+        ]
+      },
+      {
+        "id": "squawkabillywhite",
+        "name": "Squawkabilly-White",
+        "base_species": "Squawkabilly",
+        "types": [
+          "Normal",
+          "Flying"
+        ],
+        "stats": {
+          "hp": 82,
+          "atk": 96,
+          "def": 51,
+          "spa": 45,
+          "spd": 51,
+          "spe": 92
+        },
+        "abilities": {
+          "0": "Intimidate",
+          "1": "Hustle",
+          "H": "Sheer Force"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "aircutter",
+          "airslash",
+          "bravebird",
+          "copycat",
+          "doubleedge",
+          "dualwingbeat",
+          "endeavor",
+          "endure",
+          "facade",
+          "faketears",
+          "featherdance",
+          "finalgambit",
+          "flatter",
+          "fly",
+          "foulplay",
+          "gigaimpact",
+          "heatwave",
+          "helpinghand",
+          "hurricane",
+          "hyperbeam",
+          "hypervoice",
+          "lashout",
+          "lunge",
+          "partingshot",
+          "pounce",
+          "protect",
+          "quickattack",
+          "rest",
+          "reversal",
+          "roost",
+          "scaryface",
+          "seedbomb",
+          "sleeptalk",
+          "substitute",
+          "sunnyday",
+          "swagger",
+          "tailwind",
+          "taunt",
+          "thief",
+          "torment",
+          "uproar",
+          "uturn"
+        ]
+      },
+      {
+        "id": "squawkabillyyellow",
+        "name": "Squawkabilly-Yellow",
+        "base_species": "Squawkabilly",
+        "types": [
+          "Normal",
+          "Flying"
+        ],
+        "stats": {
+          "hp": 82,
+          "atk": 96,
+          "def": 51,
+          "spa": 45,
+          "spd": 51,
+          "spe": 92
+        },
+        "abilities": {
+          "0": "Intimidate",
+          "1": "Hustle",
+          "H": "Sheer Force"
+        },
+        "required_item": null,
+        "moves": [
+          "aerialace",
+          "aircutter",
+          "airslash",
+          "bravebird",
+          "copycat",
+          "doubleedge",
+          "dualwingbeat",
+          "endeavor",
+          "endure",
+          "facade",
+          "faketears",
+          "featherdance",
+          "finalgambit",
+          "flatter",
+          "fly",
+          "foulplay",
+          "gigaimpact",
+          "heatwave",
+          "helpinghand",
+          "hurricane",
+          "hyperbeam",
+          "hypervoice",
+          "lashout",
+          "lunge",
+          "partingshot",
+          "pounce",
+          "protect",
+          "quickattack",
+          "rest",
+          "reversal",
+          "roost",
+          "scaryface",
+          "seedbomb",
+          "sleeptalk",
+          "substitute",
+          "sunnyday",
+          "swagger",
+          "tailwind",
+          "taunt",
+          "thief",
+          "torment",
+          "uproar",
+          "uturn"
+        ]
+      },
+      {
+        "id": "swalot",
+        "name": "Swalot",
+        "base_species": "Swalot",
+        "types": [
+          "Poison"
+        ],
+        "stats": {
+          "hp": 100,
+          "atk": 73,
+          "def": 83,
+          "spa": 73,
+          "spd": 83,
+          "spe": 55
+        },
+        "abilities": {
+          "0": "Liquid Ooze",
+          "1": "Sticky Hold",
+          "H": "Gluttony"
+        },
+        "required_item": null,
+        "moves": [
+          "acidarmor",
+          "acidspray",
+          "amnesia",
+          "belch",
+          "bodypress",
+          "bodyslam",
+          "brickbreak",
+          "bulldoze",
+          "bulletseed",
+          "clearsmog",
+          "corrosivegas",
+          "curse",
+          "destinybond",
+          "doubleedge",
+          "earthquake",
+          "encore",
+          "endure",
+          "facade",
+          "firepunch",
+          "fling",
+          "gastroacid",
+          "gigadrain",
+          "gigaimpact",
+          "gunkshot",
+          "helpinghand",
+          "hyperbeam",
+          "icebeam",
+          "icepunch",
+          "knockoff",
+          "mudshot",
+          "mudslap",
+          "painsplit",
+          "poisonjab",
+          "protect",
+          "raindance",
+          "rest",
+          "round",
+          "seedbomb",
+          "selfdestruct",
+          "shadowball",
+          "skittersmack",
+          "sleeptalk",
+          "sludgebomb",
+          "sludgewave",
+          "snore",
+          "solarbeam",
+          "spitup",
+          "stockpile",
+          "stuffcheeks",
+          "substitute",
+          "sunnyday",
+          "swallow",
+          "swordsdance",
+          "thief",
+          "thunderpunch",
+          "thunderwave",
+          "toxic",
+          "toxicspikes",
+          "venoshock",
+          "waterpulse",
+          "yawn",
+          "zenheadbutt"
+        ]
+      },
+      {
+        "id": "thievul",
+        "name": "Thievul",
+        "base_species": "Thievul",
+        "types": [
+          "Dark"
+        ],
+        "stats": {
+          "hp": 70,
+          "atk": 58,
+          "def": 58,
+          "spa": 87,
+          "spd": 92,
+          "spe": 90
+        },
+        "abilities": {
+          "0": "Run Away",
+          "1": "Unburden",
+          "H": "Stakeout"
+        },
+        "required_item": null,
+        "moves": [
+          "acrobatics",
+          "agility",
+          "assurance",
+          "attract",
+          "batonpass",
+          "beatup",
+          "burningjealousy",
+          "crunch",
+          "darkpulse",
+          "dig",
+          "doubleteam",
+          "endure",
+          "facade",
+          "faketears",
+          "firefang",
+          "firstimpression",
+          "foulplay",
+          "gigaimpact",
+          "grassknot",
+          "howl",
+          "hyperbeam",
+          "icefang",
+          "knockoff",
+          "lashout",
+          "mudshot",
+          "nastyplot",
+          "nightslash",
+          "partingshot",
+          "playrough",
+          "protect",
+          "psychic",
+          "quickattack",
+          "quickguard",
+          "rest",
+          "roar",
+          "round",
+          "screech",
+          "shadowball",
+          "shadowclaw",
+          "sleeptalk",
+          "snarl",
+          "snore",
+          "substitute",
+          "suckerpunch",
+          "tailslap",
+          "taunt",
+          "thief",
+          "thunderfang",
+          "torment",
+          "trailblaze",
+          "uturn"
+        ]
+      },
+      {
+        "id": "toxtricity",
+        "name": "Toxtricity",
+        "base_species": "Toxtricity",
+        "types": [
+          "Electric",
+          "Poison"
+        ],
+        "stats": {
+          "hp": 75,
+          "atk": 98,
+          "def": 70,
+          "spa": 114,
+          "spd": 70,
+          "spe": 75
+        },
+        "abilities": {
+          "0": "Punk Rock",
+          "1": "Plus",
+          "H": "Technician"
+        },
+        "required_item": null,
+        "moves": [
+          "acidspray",
+          "belch",
+          "boomburst",
+          "brickbreak",
+          "charge",
+          "chargebeam",
+          "charm",
+          "discharge",
+          "drainpunch",
+          "eerieimpulse",
+          "electricterrain",
+          "electroball",
+          "electroweb",
+          "encore",
+          "endeavor",
+          "endure",
+          "facade",
+          "firepunch",
+          "flail",
+          "fling",
+          "gigaimpact",
+          "gunkshot",
+          "helpinghand",
+          "hex",
+          "hyperbeam",
+          "hypervoice",
+          "megakick",
+          "metalsound",
+          "nobleroar",
+          "nuzzle",
+          "overdrive",
+          "payback",
+          "poisonjab",
+          "protect",
+          "psychicnoise",
+          "raindance",
+          "rest",
+          "risingvoltage",
+          "round",
+          "scaryface",
+          "screech",
+          "shiftgear",
+          "sleeptalk",
+          "sludgebomb",
+          "sludgewave",
+          "snarl",
+          "snore",
+          "storedpower",
+          "substitute",
+          "sunnyday",
+          "swagger",
+          "taunt",
+          "tearfullook",
+          "thief",
+          "throatchop",
+          "thunder",
+          "thunderbolt",
+          "thunderfang",
+          "thunderpunch",
+          "thunderwave",
+          "toxic",
+          "toxicspikes",
+          "trailblaze",
+          "uproar",
+          "venoshock",
+          "voltswitch",
+          "wildcharge",
+          "zapcannon"
+        ]
+      },
+      {
+        "id": "toxtricitylowkey",
+        "name": "Toxtricity-Low-Key",
+        "base_species": "Toxtricity",
+        "types": [
+          "Electric",
+          "Poison"
+        ],
+        "stats": {
+          "hp": 75,
+          "atk": 98,
+          "def": 70,
+          "spa": 114,
+          "spd": 70,
+          "spe": 75
+        },
+        "abilities": {
+          "0": "Punk Rock",
+          "1": "Minus",
+          "H": "Technician"
+        },
+        "required_item": null,
+        "moves": [
+          "acidspray",
+          "belch",
+          "boomburst",
+          "brickbreak",
+          "charge",
+          "chargebeam",
+          "charm",
+          "discharge",
+          "drainpunch",
+          "eerieimpulse",
+          "electricterrain",
+          "electroball",
+          "electroweb",
+          "encore",
+          "endeavor",
+          "endure",
+          "facade",
+          "firepunch",
+          "flail",
+          "fling",
+          "gigaimpact",
+          "gunkshot",
+          "helpinghand",
+          "hex",
+          "hyperbeam",
+          "hypervoice",
+          "magneticflux",
+          "megakick",
+          "metalsound",
+          "nobleroar",
+          "nuzzle",
+          "overdrive",
+          "paraboliccharge",
+          "payback",
+          "poisonjab",
+          "protect",
+          "psychicnoise",
+          "raindance",
+          "rest",
+          "risingvoltage",
+          "round",
+          "scaryface",
+          "screech",
+          "sleeptalk",
+          "sludgebomb",
+          "sludgewave",
+          "snarl",
+          "snore",
+          "storedpower",
+          "substitute",
+          "sunnyday",
+          "swagger",
+          "taunt",
+          "tearfullook",
+          "thief",
+          "throatchop",
+          "thunder",
+          "thunderbolt",
+          "thunderfang",
+          "thunderpunch",
+          "thunderwave",
+          "toxic",
+          "toxicspikes",
+          "trailblaze",
+          "uproar",
+          "venoshock",
+          "voltswitch",
+          "wildcharge"
+        ]
+      },
+      {
+        "id": "wigglytuff",
+        "name": "Wigglytuff",
+        "base_species": "Wigglytuff",
+        "types": [
+          "Normal",
+          "Fairy"
+        ],
+        "stats": {
+          "hp": 140,
+          "atk": 70,
+          "def": 45,
+          "spa": 85,
+          "spd": 50,
+          "spe": 45
+        },
+        "abilities": {
+          "0": "Cute Charm",
+          "1": "Competitive",
+          "H": "Frisk"
+        },
+        "required_item": null,
+        "moves": [
+          "alluringvoice",
+          "amnesia",
+          "batonpass",
+          "blizzard",
+          "bodypress",
+          "bodyslam",
+          "bounce",
+          "brickbreak",
+          "calmmind",
+          "charm",
+          "chillingwater",
+          "copycat",
+          "covet",
+          "darkpulse",
+          "dazzlinggleam",
+          "dig",
+          "disable",
+          "doubleedge",
+          "drainingkiss",
+          "drainpunch",
+          "encore",
+          "endeavor",
+          "endure",
+          "energyball",
+          "expandingforce",
+          "facade",
+          "faketears",
+          "fireblast",
+          "firepunch",
+          "flamethrower",
+          "fling",
+          "focusblast",
+          "focuspunch",
+          "gigaimpact",
+          "grassknot",
+          "gravity",
+          "gyroball",
+          "healpulse",
+          "helpinghand",
+          "hyperbeam",
+          "hypervoice",
+          "icebeam",
+          "icepunch",
+          "icespinner",
+          "icywind",
+          "knockoff",
+          "lastresort",
+          "lightscreen",
+          "magicroom",
+          "megakick",
+          "mistyexplosion",
+          "mistyterrain",
+          "moonblast",
+          "nastyplot",
+          "painsplit",
+          "perishsong",
+          "playrough",
+          "protect",
+          "psychic",
+          "psychicnoise",
+          "psychup",
+          "psyshock",
+          "raindance",
+          "reflect",
+          "rest",
+          "round",
+          "safeguard",
+          "sandstorm",
+          "screech",
+          "selfdestruct",
+          "shadowball",
+          "sing",
+          "skillswap",
+          "sleeptalk",
+          "snore",
+          "solarbeam",
+          "spitup",
+          "stealthrock",
+          "steelroller",
+          "stockpile",
+          "storedpower",
+          "substitute",
+          "sunnyday",
+          "swallow",
+          "sweetkiss",
+          "taunt",
+          "thief",
+          "thunder",
+          "thunderbolt",
+          "thunderpunch",
+          "thunderwave",
+          "trailblaze",
+          "triattack",
+          "uproar",
+          "waterpulse",
+          "wildcharge",
+          "wish",
+          "zenheadbutt"
+        ]
+      }
+    ],
+    "removed": [],
+    "changed": [
+      {
+        "id": "archaludon",
+        "before": {
+          "id": "archaludon",
+          "name": "Archaludon",
+          "base_species": "Archaludon",
+          "types": [
+            "Steel",
+            "Dragon"
+          ],
+          "stats": {
+            "hp": 90,
+            "atk": 105,
+            "def": 130,
+            "spa": 125,
+            "spd": 65,
+            "spe": 85
+          },
+          "abilities": {
+            "0": "Stamina",
+            "1": "Sturdy",
+            "H": "Stalwart"
+          },
+          "required_item": null,
+          "moves": [
+            "aurasphere",
+            "bodyslam",
+            "breakingswipe",
+            "brickbreak",
+            "darkpulse",
+            "doubleedge",
+            "dracometeor",
+            "dragoncheer",
+            "dragonclaw",
+            "dragonpulse",
+            "dragontail",
+            "earthquake",
+            "electroshot",
+            "endure",
+            "facade",
+            "flashcannon",
+            "focusenergy",
+            "foulplay",
+            "gigaimpact",
+            "gyroball",
+            "hardpress",
+            "heavyslam",
+            "hyperbeam",
+            "irondefense",
+            "ironhead",
+            "lightscreen",
+            "metalburst",
+            "metalsound",
+            "meteorbeam",
+            "mirrorcoat",
+            "nightslash",
+            "outrage",
+            "protect",
+            "reflect",
+            "rest",
+            "roar",
+            "rockslide",
+            "rocktomb",
+            "scaryface",
+            "sleeptalk",
+            "smackdown",
+            "snarl",
+            "solarbeam",
+            "stealthrock",
+            "steelbeam",
+            "stoneedge",
+            "substitute",
+            "swordsdance",
+            "thunder",
+            "thunderbolt",
+            "thunderwave"
+          ]
+        },
+        "after": {
+          "id": "archaludon",
+          "name": "Archaludon",
+          "base_species": "Archaludon",
+          "types": [
+            "Steel",
+            "Dragon"
+          ],
+          "stats": {
+            "hp": 90,
+            "atk": 105,
+            "def": 130,
+            "spa": 125,
+            "spd": 65,
+            "spe": 85
+          },
+          "abilities": {
+            "0": "Stamina",
+            "1": "Sturdy",
+            "H": "Stalwart"
+          },
+          "required_item": null,
+          "moves": [
+            "aurasphere",
+            "bodyslam",
+            "breakingswipe",
+            "brickbreak",
+            "darkpulse",
+            "doubleedge",
+            "dracometeor",
+            "dragoncheer",
+            "dragonclaw",
+            "dragonpulse",
+            "dragontail",
+            "earthquake",
+            "electroshot",
+            "endure",
+            "facade",
+            "flashcannon",
+            "focusenergy",
+            "foulplay",
+            "gigaimpact",
+            "gyroball",
+            "hardpress",
+            "heavyslam",
+            "hyperbeam",
+            "irondefense",
+            "ironhead",
+            "lightscreen",
+            "metalsound",
+            "meteorbeam",
+            "nightslash",
+            "outrage",
+            "protect",
+            "reflect",
+            "rest",
+            "roar",
+            "rockslide",
+            "rocktomb",
+            "scaryface",
+            "slash",
+            "sleeptalk",
+            "smackdown",
+            "snarl",
+            "solarbeam",
+            "stealthrock",
+            "steelbeam",
+            "stoneedge",
+            "substitute",
+            "swordsdance",
+            "thunder",
+            "thunderbolt",
+            "thunderwave"
+          ]
+        }
+      }
+    ]
+  },
+  "items": {
+    "added": [
+      {
+        "id": "absolitez",
+        "name": "Absolite Z",
+        "mega_stone": {
+          "Absol": "Absol-Mega-Z"
+        },
+        "mega_evolves": null
+      },
+      {
+        "id": "airballoon",
+        "name": "Air Balloon",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "baxcalibrite",
+        "name": "Baxcalibrite",
+        "mega_stone": {
+          "Baxcalibur": "Baxcalibur-Mega"
+        },
+        "mega_evolves": null
+      },
+      {
+        "id": "bindingband",
+        "name": "Binding Band",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "ejectbutton",
+        "name": "Eject Button",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "electricseed",
+        "name": "Electric Seed",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "garchompitez",
+        "name": "Garchompite Z",
+        "mega_stone": {
+          "Garchomp": "Garchomp-Mega-Z"
+        },
+        "mega_evolves": null
+      },
+      {
+        "id": "golisopite",
+        "name": "Golisopite",
+        "mega_stone": {
+          "Golisopod": "Golisopod-Mega"
+        },
+        "mega_evolves": null
+      },
+      {
+        "id": "grassyseed",
+        "name": "Grassy Seed",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "leek",
+        "name": "Leek",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "lucarionitez",
+        "name": "Lucarionite Z",
+        "mega_stone": {
+          "Lucario": "Lucario-Mega-Z"
+        },
+        "mega_evolves": null
+      },
+      {
+        "id": "mistyseed",
+        "name": "Misty Seed",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "normalgem",
+        "name": "Normal Gem",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "psychicseed",
+        "name": "Psychic Seed",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "redcard",
+        "name": "Red Card",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "rockyhelmet",
+        "name": "Rocky Helmet",
+        "mega_stone": null,
+        "mega_evolves": null
+      },
+      {
+        "id": "salamencite",
+        "name": "Salamencite",
+        "mega_stone": {
+          "Salamence": "Salamence-Mega"
+        },
+        "mega_evolves": null
+      },
+      {
+        "id": "terrainextender",
+        "name": "Terrain Extender",
+        "mega_stone": null,
+        "mega_evolves": null
+      }
+    ],
+    "removed": [],
+    "changed": []
+  },
+  "probes": [
+    {
+      "format": "gen9championsbssregmc",
+      "sets": [
+        {
+          "input": {
+            "species": "Rillaboom",
+            "ability": "Grassy Surge",
+            "item": "",
+            "moves": [
+              "Fake Out"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Salamence",
+            "ability": "Intimidate",
+            "item": "Salamencite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Golisopod",
+            "ability": "Emergency Exit",
+            "item": "Golisopite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Baxcalibur",
+            "ability": "Thermal Exchange",
+            "item": "Baxcalibrite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Absol",
+            "ability": "Super Luck",
+            "item": "Absolite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Garchomp",
+            "ability": "Rough Skin",
+            "item": "Garchompite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Lucario",
+            "ability": "Inner Focus",
+            "item": "Lucarionite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "format": "gen9championsvgc2026regmc",
+      "sets": [
+        {
+          "input": {
+            "species": "Rillaboom",
+            "ability": "Grassy Surge",
+            "item": "",
+            "moves": [
+              "Fake Out"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Salamence",
+            "ability": "Intimidate",
+            "item": "Salamencite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Golisopod",
+            "ability": "Emergency Exit",
+            "item": "Golisopite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Baxcalibur",
+            "ability": "Thermal Exchange",
+            "item": "Baxcalibrite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Absol",
+            "ability": "Super Luck",
+            "item": "Absolite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Garchomp",
+            "ability": "Rough Skin",
+            "item": "Garchompite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Lucario",
+            "ability": "Inner Focus",
+            "item": "Lucarionite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "format": "gen9championsvgc2026regmcbo3",
+      "sets": [
+        {
+          "input": {
+            "species": "Rillaboom",
+            "ability": "Grassy Surge",
+            "item": "",
+            "moves": [
+              "Fake Out"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Salamence",
+            "ability": "Intimidate",
+            "item": "Salamencite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Golisopod",
+            "ability": "Emergency Exit",
+            "item": "Golisopite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Baxcalibur",
+            "ability": "Thermal Exchange",
+            "item": "Baxcalibrite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Absol",
+            "ability": "Super Luck",
+            "item": "Absolite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Garchomp",
+            "ability": "Rough Skin",
+            "item": "Garchompite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        },
+        {
+          "input": {
+            "species": "Lucario",
+            "ability": "Inner Focus",
+            "item": "Lucarionite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [],
+          "accepted": true
+        }
+      ]
+    },
+    {
+      "format": "gen9championsbssregmb",
+      "sets": [
+        {
+          "input": {
+            "species": "Rillaboom",
+            "ability": "Grassy Surge",
+            "item": "",
+            "moves": [
+              "Fake Out"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Rillaboom does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Salamence",
+            "ability": "Intimidate",
+            "item": "Salamencite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Salamence (Salamence-Mega) does not exist in Gen 9.",
+            "Salamence's item Salamencite does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Golisopod",
+            "ability": "Emergency Exit",
+            "item": "Golisopite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Golisopod (Golisopod-Mega) does not exist in Gen 9.",
+            "Golisopod's item Golisopite does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Baxcalibur",
+            "ability": "Thermal Exchange",
+            "item": "Baxcalibrite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Baxcalibur (Baxcalibur-Mega) does not exist in Gen 9.",
+            "Baxcalibur's item Baxcalibrite does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Absol",
+            "ability": "Super Luck",
+            "item": "Absolite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Absol (Absol-Mega-Z) does not exist in Gen 9.",
+            "Absol's item Absolite Z does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Garchomp",
+            "ability": "Rough Skin",
+            "item": "Garchompite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Garchomp (Garchomp-Mega-Z) does not exist in Gen 9.",
+            "Garchomp's item Garchompite Z does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Lucario",
+            "ability": "Inner Focus",
+            "item": "Lucarionite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Lucario (Lucario-Mega-Z) does not exist in Gen 9.",
+            "Lucario's item Lucarionite Z does not exist in Gen 9."
+          ],
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "format": "gen9championsvgc2026regmb",
+      "sets": [
+        {
+          "input": {
+            "species": "Rillaboom",
+            "ability": "Grassy Surge",
+            "item": "",
+            "moves": [
+              "Fake Out"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Rillaboom does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Salamence",
+            "ability": "Intimidate",
+            "item": "Salamencite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Salamence (Salamence-Mega) does not exist in Gen 9.",
+            "Salamence's item Salamencite does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Golisopod",
+            "ability": "Emergency Exit",
+            "item": "Golisopite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Golisopod (Golisopod-Mega) does not exist in Gen 9.",
+            "Golisopod's item Golisopite does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Baxcalibur",
+            "ability": "Thermal Exchange",
+            "item": "Baxcalibrite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Baxcalibur (Baxcalibur-Mega) does not exist in Gen 9.",
+            "Baxcalibur's item Baxcalibrite does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Absol",
+            "ability": "Super Luck",
+            "item": "Absolite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Absol (Absol-Mega-Z) does not exist in Gen 9.",
+            "Absol's item Absolite Z does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Garchomp",
+            "ability": "Rough Skin",
+            "item": "Garchompite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Garchomp (Garchomp-Mega-Z) does not exist in Gen 9.",
+            "Garchomp's item Garchompite Z does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Lucario",
+            "ability": "Inner Focus",
+            "item": "Lucarionite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Lucario (Lucario-Mega-Z) does not exist in Gen 9.",
+            "Lucario's item Lucarionite Z does not exist in Gen 9."
+          ],
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "format": "gen9championsvgc2026regmbbo3",
+      "sets": [
+        {
+          "input": {
+            "species": "Rillaboom",
+            "ability": "Grassy Surge",
+            "item": "",
+            "moves": [
+              "Fake Out"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Rillaboom does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Salamence",
+            "ability": "Intimidate",
+            "item": "Salamencite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Salamence (Salamence-Mega) does not exist in Gen 9.",
+            "Salamence's item Salamencite does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Golisopod",
+            "ability": "Emergency Exit",
+            "item": "Golisopite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Golisopod (Golisopod-Mega) does not exist in Gen 9.",
+            "Golisopod's item Golisopite does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Baxcalibur",
+            "ability": "Thermal Exchange",
+            "item": "Baxcalibrite",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Baxcalibur (Baxcalibur-Mega) does not exist in Gen 9.",
+            "Baxcalibur's item Baxcalibrite does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Absol",
+            "ability": "Super Luck",
+            "item": "Absolite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Absol (Absol-Mega-Z) does not exist in Gen 9.",
+            "Absol's item Absolite Z does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Garchomp",
+            "ability": "Rough Skin",
+            "item": "Garchompite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Garchomp (Garchomp-Mega-Z) does not exist in Gen 9.",
+            "Garchomp's item Garchompite Z does not exist in Gen 9."
+          ],
+          "accepted": false
+        },
+        {
+          "input": {
+            "species": "Lucario",
+            "ability": "Inner Focus",
+            "item": "Lucarionite Z",
+            "moves": [
+              "Protect"
+            ],
+            "level": 50,
+            "nature": "Serious",
+            "evs": {
+              "hp": 32,
+              "atk": 32,
+              "def": 0,
+              "spa": 0,
+              "spd": 0,
+              "spe": 2
+            }
+          },
+          "errors": [
+            "Lucario (Lucario-Mega-Z) does not exist in Gen 9.",
+            "Lucario's item Lucarionite Z does not exist in Gen 9."
+          ],
+          "accepted": false
+        }
+      ]
     }
   ]
 }

@@ -2,6 +2,7 @@
 const FORM_ALIASES = Object.freeze({
   '0026-001': ['Raichu (Alolan Form)', 'Raichu-Alola'],
   '0038-001': ['Ninetales (Alolan Form)', 'Ninetales-Alola'],
+  '0053-001': ['Persian (Alolan Form)', 'Persian-Alola'],
   '0059-001': ['Arcanine (Hisuian Form)', 'Arcanine-Hisui'],
   '0080-002': ['Slowbro (Galarian Form)', 'Slowbro-Galar'],
   '0128-001': ['Tauros (Paldean Form (Combat Breed))', 'Tauros-Paldea-Combat'],
@@ -33,6 +34,11 @@ const FORM_ALIASES = Object.freeze({
   '0745-000': ['Lycanroc (Midday Form)', 'Lycanroc'],
   '0745-001': ['Lycanroc (Midnight Form)', 'Lycanroc-Midnight'],
   '0745-002': ['Lycanroc (Dusk Form)', 'Lycanroc-Dusk'],
+  // Explicit form labels in the September 9 official M-C roster capture.
+  '0849-000': ['Toxtricity (Amped Form)', 'Toxtricity'],
+  '0849-001': ['Toxtricity (Low Key Form)', 'Toxtricity-Low-Key'],
+  '0876-000': ['Indeedee (Male)', 'Indeedee'],
+  '0876-001': ['Indeedee (Female)', 'Indeedee-F'],
   '0902-000': ['Basculegion (Male)', 'Basculegion'],
   '0902-001': ['Basculegion (Female)', 'Basculegion-F']
 });

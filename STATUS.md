@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- v163 captures the newly published 262-row official M-C roster and an isolated
+  pinned Showdown M-C/M-B reference. 260 identity candidates map; two form IDs
+  remain unresolved. 42 individual-set reference probes pass, not full-team or
+  in-game proof. Stale warning text is corrected without approving M-C.
+  [M-C intake, migration risks and remaining gates](docs/release/REG_MC_INTAKE_2026-09-09.md).
+
 - Cross-repo candidate handoff: Alfredo draft PR #276 now carries the same v162
   candidate as Yfactor PR #195. Read-only merge simulation found no conflicts and
   no content delta from the tested candidate. Main branches and live deployment
@@ -118,7 +124,7 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 - September 8 audit correction: [product trust audit](docs/release/PRODUCT_TRUST_AUDIT_2026-09-08.md) reproduces stale/misattributed Strategy reports and evidence-free advice; unresolved PR #195 mechanics and regulation findings remain release blockers despite green CI. The requested destination now includes both singles and doubles; existing doubles-only roadmap scope requires reconciliation. Do not treat Josh QA as the only remaining release gate.
 
 - Branch: `candidate/v143-regulation-db-diagnosis`, based on merged `origin/main` at `81bb0ef250da`.
-- Current runtime candidate: `v2.2.162-release-roadmap-alignment`; engine `1.1.10`. v161 mechanics receipts retain their original scope; v162 changes roadmap content and release labels only. Candidate updates go through PR #195; no new Pages deployment is claimed.
+- Current runtime candidate: `v2.2.163-mc-evidence-intake`; engine `1.1.10`. Earlier mechanics receipts retain their original scope. The installed reference is not upgraded. Candidate updates go through PR #195; no new Pages deployment is claimed.
 - [Company-findings OODA cycle](docs/release/OODA_COMPANY_FINDINGS_2026-09-08.md): eight Leftovers/Toxic reference probes pass; replay matching is contained pending a verified identity resolver; timing-only coaching is excluded from scoring and critical-mistake cards. Six new regression groups and manual doubles/p1 plus singles/p2 replay reviews pass. News CLI repair is candidate-only. Shared-write containment passed isolated PostgreSQL controls but is not applied to Supabase; staging and private-schema verification remain open.
 - [Independent company audit](docs/release/INDEPENDENT_COMPANY_AUDIT_2026-09-08.md) preserves the original findings. The linked OODA report owns their subsequent disposition. Live security and watcher health remain release gates; the inspected public site is v142.
 - [Outcome-claim OODA cycle](docs/release/OODA_OUTCOME_CLAIMS_2026-09-08.md): removed automatic endgame-error judgments from final losses and positive IQ evidence from missing errors. Two regression groups pass across both formats/sides and sparse evidence; full fast gate passed 159 files with four manual/helper skips. Roadmap source/browser view regenerated. Broader IQ calibration, downstream inference, URL/download and all independent release/security gates remain open; no manual v148 browser verification is claimed.

@@ -6,6 +6,16 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0039: Replace Stale Regulation Blockers With Captured Evidence
+
+September 9, v163: capture/hash the now-public M-C roster, preserve ambiguous
+form IDs, and stage a pinned upstream inventory with explicit historical M-B
+routing. Runtime warning text acknowledges completed evidence without silently
+granting legality or learning eligibility. [Evidence and remaining activation gates](release/REG_MC_INTAKE_2026-09-09.md).
+Lesson: active dates, available reference data and verified implementation are
+different states. Bad probe inputs must be corrected as harness failures, not
+counted as illegal-team evidence. No installed reference upgrade or DB promotion.
+
 ### IMP-0038: Align The Next-Work Queue
 
 September 9, v162: STATUS and the generated Markdown/browser roadmap now put

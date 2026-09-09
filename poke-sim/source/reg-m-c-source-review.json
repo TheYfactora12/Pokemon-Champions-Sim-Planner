@@ -35,7 +35,26 @@
     "ordinary_species_examples": ["Rillaboom"],
     "complete_new_species_list": null
   },
+  "official_roster": {
+    "capture": "source/reg-m-c-official-roster.json",
+    "notice_url": "https://champions-news.pokemon-home.com/en/page/816.html",
+    "roster_url": "https://web-view.app.pokemonchampions.jp/battle/pages/events/rs178713870219xeaaio/en/pokemon.html",
+    "captured_rows": 262,
+    "status": "captured_identity_reconciliation_required",
+    "open_identity": "Maushold changes official ID from 0925-000 to 0925-001; do not silently substitute forms."
+  },
   "showdown_observation": {
+    "repository": "https://github.com/smogon/pokemon-showdown",
+    "master_commit": "efe4948570d5e8189751792136d26e71710c6c66",
+    "format_status": "m_c_reference_formats_present_not_approved",
+    "candidate_data_status": "isolated_pinned_inventory_and_set_probes",
+    "reference_capture": "source/reg-m-c-reference-intake.json",
+    "mc_mod": "champions",
+    "historical_mb_mod": "championsregmb",
+    "runtime_reference_upgraded": false,
+    "notes": ["M-C BSS, VGC and VGC Bo3 reference formats now exist.", "Seven individual-set probes pass under each M-C format and reject under the corresponding historical M-B format. These are not complete-team or official in-game tests.", "Do not upgrade the installed reference without migrating historical mod routing."]
+  },
+  "historical_showdown_observation_2026_09_08": {
     "repository": "https://github.com/smogon/pokemon-showdown",
     "master_commit": "6b4bc34e44cc2541929cc4b8fff96e756ab3f268",
     "observed_at_utc": "2026-09-08T00:52:48.095Z",
@@ -63,7 +82,7 @@
     "runtime_policy": "Use the exact sprite when present; otherwise label and render the base-form fallback. Sprite availability never proves legality."
   },
   "required_before_promotion": [
-    "Capture the complete in-game M-C roster in sequence for Singles and Doubles.",
+    "Reconcile all 262 captured official roster IDs, including Maushold's changed form ID, and confirm format scope.",
     "Capture in-game rules, team size, bring size, level, clauses and timers.",
     "Capture and normalize all newly available species/forms, Mega Stones, moves, Abilities and items.",
     "Compare every normalized row with the pinned Showdown baseline and review Champion overrides.",

@@ -2717,7 +2717,8 @@ table{border-collapse:collapse;width:100%}
 .regulation-status { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; text-align: left; }
 .regulation-status > div { margin-top: 8px; }
 .regulation-mechanics-status { color: var(--text-m); border-top: 1px solid var(--border); padding-top: 8px; }
-.regulation-coverage-warning { color: #fef3c7; border-left: 3px solid #f59e0b; padding-left: 8px; }
+.regulation-coverage-warning { color: #fef3c7; background: #422006; border-left: 3px solid #f59e0b; padding: 8px; }
+[data-theme="light"] .regulation-coverage-warning { color: #78350f; background: #fffbeb; }
 .regulation-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
 .regulation-toolbar select { width: 300px; max-width: 100%; }
 .regulation-toolbar label { display: flex; gap: 8px; align-items: center; font-size: 13px; }

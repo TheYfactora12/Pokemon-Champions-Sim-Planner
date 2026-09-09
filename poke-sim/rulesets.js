@@ -55,7 +55,7 @@ var CHAMPIONS_RULESETS = {
     dataPolicy: 'do_not_write_trusted_stats',
     coachingPolicy: 'review_only_no_matchup_learning',
     sourceCheckedAtUtc: '2026-06-27T23:20:00Z',
-    blocker: 'Reg M-B allowed-Pokemon image sheets and new Mega implementation fields are not converted into reviewed runtime data.'
+    blocker: 'Reg M-B has 235 reconciled official roster identities. Complete-set legality, remaining mechanics checks and exact-package approval are still incomplete.'
   },
   champions_reg_m_c_2026: {
     id: 'champions_reg_m_c_2026',
@@ -77,7 +77,7 @@ var CHAMPIONS_RULESETS = {
     coachingPolicy: 'review_only_no_matchup_learning',
     sourceCheckedAtUtc: '2026-09-08T00:52:48.095Z',
     sourceUrl: 'https://www.pokemon.com/us/news/get-ready-for-regulation-set-m-c-in-pokemon-champions',
-    blocker: 'The official M-C dates and named additions are captured, but the complete in-game roster, legality fixtures, move/item/Ability deltas, exact sprites and a reviewed Showdown format are not complete.'
+    blocker: 'All 262 official Reg M-C roster IDs and a pinned M-C Showdown reference are captured, but form reconciliation, item/move/Ability evidence, mechanics tests and exact-package approval are still incomplete.'
   }
 };
 
@@ -97,7 +97,7 @@ function getChampionsRegulationCoverage(asOf) {
   if (active) {
     return { status: active.runtimePromotable ? 'covered' : 'source_review', covered: !!active.runtimePromotable,
       regulation_id: active.id, ends_at_utc: active.endsAtUtc || active.endsAt,
-      message: active.runtimePromotable ? 'A dated regulation lane is implemented.' : 'The dated regulation is still in source review.' };
+      message: active.runtimePromotable ? 'A dated regulation lane is implemented.' : active.selectorLabel + ' is current for this date, but competitive verification is incomplete.' };
   }
   var upcoming = dated.filter(function(row) {
     return now < new Date(row.startsAtUtc || (row.startsAt + 'T00:00:00Z'));
