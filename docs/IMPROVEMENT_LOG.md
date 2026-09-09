@@ -6,6 +6,20 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0040: Test M-C Drafts Before Importing Into An Older Runtime
+
+September 9, local reference-only: three full doubles drafts, explicit Champions
+SP, base/Mega stat checks and six reproducible random-policy games. Negative
+controls reject legacy EVs, duplicate items and an unavailable move. Live v142
+has no M-C selection; no imports or browser battles were falsely counted as
+M-C evidence. [Results and limits](release/MC_DRAFT_TEAMS_2026-09-09.md).
+Lesson: familiar moves, usable artwork and successful reference battles do not
+prove deployed support. Keep reference drafts separate until runtime parity and
+the regulation approval gate are complete. No runtime, DB or deployment change.
+Independent review caught a wall-clock-dependent repeat assertion. Preserve both
+raw logs; normalize only timestamp records for event-repeat checks, and test
+across a real time delay instead of relying on same-second runs.
+
 ### IMP-0039: Replace Stale Regulation Blockers With Captured Evidence
 
 September 9, v163: capture/hash the now-public M-C roster, preserve ambiguous

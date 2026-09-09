@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- M-C draft-team reference smoke tests: three complete doubles teams validate;
+  base/Mega stats checked; six distinct games reproduce battle events across
+  delayed repeats (12 executions; raw timestamp records retained separately).
+  Live v142 has no M-C option, so these are not live-app results or competitive
+  approval. [Exact scope and next integration gate](docs/release/MC_DRAFT_TEAMS_2026-09-09.md).
+
 - v163 captures the newly published 262-row official M-C roster and an isolated
   pinned Showdown M-C/M-B reference. 260 identity candidates map; two form IDs
   remain unresolved. 42 individual-set reference probes pass, not full-team or
