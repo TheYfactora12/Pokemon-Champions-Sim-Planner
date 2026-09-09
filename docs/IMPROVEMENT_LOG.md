@@ -6,6 +6,23 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0038: Align The Next-Work Queue
+
+September 9, v162: STATUS and the generated Markdown/browser roadmap now put
+security staging, known mechanics defects, broader identity/legality and reviewed
+deployment in the same order. The stale v145 manual-QA target is retired. Runtime
+labels/cache are bumped so roadmap changes can be distinguished from v161;
+battle logic and engine version are unchanged. Both remote main branches remain
+different from the candidate; no deployment or cross-repo parity is implied.
+Lesson: one generated roadmap should describe future work, with STATUS recording
+current proof, not competing outdated task lists.
+Verification: 180 fast test files passed, four manual/helper files skipped;
+11 release checks and roadmap generation check passed. Local browser reads show
+the new queue and v162 label at 1440px and 390px, with no mobile horizontal
+overflow. Screenshots: local `poke-sim/artifacts/roadmap-v162-desktop.png` and
+`roadmap-v162-mobile.png`. No battles or database writes were performed in this
+documentation/UI-label check; no new simulation proof is claimed.
+
 ### IMP-0037: Bind Required External Assets To Release Evidence
 
 September 9: the HTML digest omitted the required move-pool file. The generator

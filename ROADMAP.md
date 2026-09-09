@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-09-08. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-09-09. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Validate broader copy/restore identity and complete-set combinations before official Champions sign-off. v161 preserves unambiguous member identity through edits/reordering and aligns SV preview; arbitrary SV IV roundtrip fidelity remains open. See poke-sim/reports/member_edit_identity_2026-09-08.md. v160 matches 235 reviewed move pools to pinned Champions, not game approval. Human fingerprint approval, DB publication/live security and full-battle parity remain open. Keep M-C separate.
+First establish protected staging and validate shared-evidence write containment plus private-save ownership. While production actions await exact approval, reproduce and fix Toxic rounding, Spite hit resolution, suppressed-item effects and Wish/Leftovers ordering against pinned Showdown. Then extend copy/restore identity, SV IV roundtrip and complete-set legality coverage. Keep M-C source review separate from rule approval. Release only after review, hosted CI and paired live replay/export checks. See docs/release/RELEASE_REVIEW_2026-09-09.md. The live site remains v142; candidate tests do not imply deployment or 99% accuracy.
 
 ## Milestone Index
 
@@ -118,7 +118,7 @@ Evidence: [SUPABASE_FULL_AUDIT_2026-08-29.md](docs/release/SUPABASE_FULL_AUDIT_2
 Depends on: [Simulation And Replay Truth](#simulation-truth), [Regulations And Source Truth](#regulation-source-truth), [Database And Evidence Integrity](#database-evidence)
 
 Completed locally / recorded:
-- Bundle/cache identity checks, Pages asset inventory and consolidated local test gates exist. Documentation and source changes are still local candidates.
+- Candidate changes through 08451b7 are pushed to PR #195 and hosted CI passed, including bundle freshness and battle audit. Generated metadata and pre-upload checks bind the required move pool and intro sprites to exact bytes; LF checkout regression coverage passes. This is not deployment: live readback remains v142. Runtime v161 identity fixes retain their separate scoped evidence.
 
 Remaining:
 - [ ] Reconcile incoming commits and both repository queues through reviewed PRs; do not force-copy or close issues from test counts alone.

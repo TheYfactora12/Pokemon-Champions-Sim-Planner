@@ -6,6 +6,10 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- v162 is a roadmap/release-label update only; engine 1.1.10 and battle logic
+  are unchanged from v161. Markdown and the browser roadmap now use the same
+  ordered queue. This candidate is not a new mechanics-accuracy claim or deployment.
+
 - September 9 release review: v161 remains candidate-only; live artifact readback
   identifies v142. Required move-pool and intro-sprite bytes now have generated
   digests and pre-upload verification. See [release review](docs/release/RELEASE_REVIEW_2026-09-09.md).
@@ -109,7 +113,7 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 - September 8 audit correction: [product trust audit](docs/release/PRODUCT_TRUST_AUDIT_2026-09-08.md) reproduces stale/misattributed Strategy reports and evidence-free advice; unresolved PR #195 mechanics and regulation findings remain release blockers despite green CI. The requested destination now includes both singles and doubles; existing doubles-only roadmap scope requires reconciliation. Do not treat Josh QA as the only remaining release gate.
 
 - Branch: `candidate/v143-regulation-db-diagnosis`, based on merged `origin/main` at `81bb0ef250da`.
-- Current runtime candidate: `v2.2.161-member-edit-identity`; engine `1.1.10`. v153 receipts are historical. Candidate updates go through PR #195; no new Pages deployment is claimed.
+- Current runtime candidate: `v2.2.162-release-roadmap-alignment`; engine `1.1.10`. v161 mechanics receipts retain their original scope; v162 changes roadmap content and release labels only. Candidate updates go through PR #195; no new Pages deployment is claimed.
 - [Company-findings OODA cycle](docs/release/OODA_COMPANY_FINDINGS_2026-09-08.md): eight Leftovers/Toxic reference probes pass; replay matching is contained pending a verified identity resolver; timing-only coaching is excluded from scoring and critical-mistake cards. Six new regression groups and manual doubles/p1 plus singles/p2 replay reviews pass. News CLI repair is candidate-only. Shared-write containment passed isolated PostgreSQL controls but is not applied to Supabase; staging and private-schema verification remain open.
 - [Independent company audit](docs/release/INDEPENDENT_COMPANY_AUDIT_2026-09-08.md) preserves the original findings. The linked OODA report owns their subsequent disposition. Live security and watcher health remain release gates; the inspected public site is v142.
 - [Outcome-claim OODA cycle](docs/release/OODA_OUTCOME_CLAIMS_2026-09-08.md): removed automatic endgame-error judgments from final losses and positive IQ evidence from missing errors. Two regression groups pass across both formats/sides and sparse evidence; full fast gate passed 159 files with four manual/helper skips. Roadmap source/browser view regenerated. Broader IQ calibration, downstream inference, URL/download and all independent release/security gates remain open; no manual v148 browser verification is claimed.
@@ -156,7 +160,13 @@ Current competitive product scope is **doubles only**. Singles fixtures are shar
 
 ## Next Task
 
-Next: capture every official in-game M-C Roster Info and rules page for Singles and Doubles, normalize the deltas against the pinned Showdown baseline, then add accepted/rejected legality and Z Mega mechanics fixtures. Have `@jdoutt38` execute the v145 manual QA checklist. In parallel, design and review a versioned roster migration for a protected staging project; then prove anonymous mutation denial and two-user isolation before production. Keep unverified regulations and legacy DB rows blocked. Mechanics work continues with broader complete-game, imported-team, residual and resource-changing interactions; no scoped clean run is a universal 99% claim.
+1. Establish protected staging; test shared-evidence write containment and private-save ownership before explicitly approved production changes.
+2. While those approvals are pending, reproduce and fix Toxic rounding, Spite hit resolution, suppressed-item effects and Wish/Leftovers ordering against pinned Showdown. Each fix needs a failing regression, related cases and independent review.
+3. Extend copy/restore identity, SV IV roundtrip and complete-set legality tests. Complete M-C source evidence without silently approving rules.
+4. Review the exact final candidate, run hosted CI, then have `@jdoutt38` test that revision with paired visible/export logs. The old v145 checklist is historical, not the current sign-off target.
+5. Deploy only after applicable gates pass; verify live artifact/assets and user journeys. Reconcile Alfredo through a reviewed PR, not an overwrite.
+
+September 9 remote readback: origin candidate `08451b7`, origin main `81bb0ef`, Alfredo main `15f0f98`. Both main branches differ and neither is the tested candidate. Documentation alignment does not establish repository parity. The [release review](docs/release/RELEASE_REVIEW_2026-09-09.md) owns detailed evidence and blockers; the generated roadmap uses this same priority order.
 
 Preliminary agent walkthrough is recorded in the player-trust audit. The full [beginner homepage/navigation study](ROADMAP.md#beginner-experience) and its [checklist](docs/strategy/BEGINNER_HOMEPAGE_AUDIT_PLAN.md) remain queued after simulation readiness. Neither roadmap consolidation nor an agent walkthrough proves A+ usability. Evidence-backed Brain expansion follows trusted simulation/evidence; optional LLM, social, premium and broader product ideas remain deferred.
 
