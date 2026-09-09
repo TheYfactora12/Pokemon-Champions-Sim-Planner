@@ -6,6 +6,18 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0037: Bind Required External Assets To Release Evidence
+
+September 9: the HTML digest omitted the required move-pool file. The generator
+now records that file and both intro sprites; freshness and staged Pages checks
+reject changed or missing bytes. Eleven focused groups pass, including negative
+fixtures. Runtime behavior is unchanged. [Release review and remaining gates](release/RELEASE_REVIEW_2026-09-09.md).
+Lesson: a reviewed HTML hash alone cannot identify separately shipped inputs.
+Independent review caught checkout line-ending drift; LF attributes and real
+Git-filter coverage now protect the hashed text asset across platforms.
+Local verification is not deployment; shared-evidence security and mechanics
+review remain open.
+
 ### IMP-0036: Preserve Member Identity Across Edits
 
 Paste edits no longer erase IDs/annotations, and individual species replacements

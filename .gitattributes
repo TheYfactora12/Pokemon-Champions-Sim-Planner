@@ -1,0 +1,3 @@
+# Release identity hashes the exact deployed bytes on every platform.
+poke-sim/generated/champions_move_pools.js text eol=lf
+poke-sim/assets/retro-intro/*.png binary

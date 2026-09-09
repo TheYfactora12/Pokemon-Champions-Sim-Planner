@@ -4,7 +4,7 @@ A Pokemon Champions competitive team simulator under evidence-gated development 
 
 **Live public site:** https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/
 
-**Live single-file app:** [`pokemon-champion-2026.html`](./poke-sim/pokemon-champion-2026.html) — open in any browser, works offline.
+**App entry point:** [`pokemon-champion-2026.html`](./poke-sim/pokemon-champion-2026.html). Serve the `poke-sim` directory with its `generated` and `assets` directories intact. The HTML alone is not a complete offline download; offline PWA use requires a successful initial asset cache.
 
 ## Where the App Lives (Shareable URLs)
 
@@ -47,7 +47,7 @@ Pokemon-Champions-Sim-Planner/
 ├── MASTER_PROMPT.md                   ← Copy-paste prompt for new AI sessions
 ├── index.html                         ← Landing redirect to bundle
 └── poke-sim/                          ← App sources + bundle
-    ├── pokemon-champion-2026.html     ← Self-contained single-file bundle (~11.5 MB)
+    ├── pokemon-champion-2026.html     ← HTML bundle; requires generated data and assets
     ├── index.html                     ← App shell, tabs, PWA meta
     ├── style.css                      ← Mobile-first dark theme
     ├── data.js                        ← BASE_STATS, TEAMS (29), POKEMON_TYPES_DB (700+)

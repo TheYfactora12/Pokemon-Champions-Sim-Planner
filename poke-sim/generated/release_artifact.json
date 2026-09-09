@@ -6,5 +6,19 @@
   "pages_path": "poke-sim/pokemon-champion-2026.html",
   "bundle_sha256": "cc2e5f76f8219b25a561ce0f4d26bdf3fe1faea3209fb21db6ad64e7b9aa125b",
   "bundle_bytes": 11493759,
-  "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
+  "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
+  "external_assets": {
+    "generated/champions_move_pools.js": {
+      "sha256": "21099bad04135f23de2d8b23203628c98004faf4a7d1da179ba808ccef2087f9",
+      "bytes": 1113482
+    },
+    "assets/retro-intro/gengar.png": {
+      "sha256": "b2cdfb0910d892e8ad877af876040d190c76a7ae5ce492be0116a8838ec9f369",
+      "bytes": 232
+    },
+    "assets/retro-intro/nidorino.png": {
+      "sha256": "1d279c06304bcaf08048b39b9bc4cc8e0e7e53ddc11ec9dff083b706e994a100",
+      "bytes": 540
+    }
+  }
 }

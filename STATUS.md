@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- September 9 release review: v161 remains candidate-only; live artifact readback
+  identifies v142. Required move-pool and intro-sprite bytes now have generated
+  digests and pre-upload verification. See [release review](docs/release/RELEASE_REVIEW_2026-09-09.md).
+  Open mechanics reviews and live security gates still prevent merging the full
+  candidate. Read-only database access works; isolated staging remains absent.
+
 - v161 preserves registered member IDs through unambiguous paste edits and
   reordering; species replacements get fresh IDs. Conflicts block saving, and
   SV preview uses the saved format. Actual upload/edit/reload plus paired battle
@@ -103,13 +109,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 - September 8 audit correction: [product trust audit](docs/release/PRODUCT_TRUST_AUDIT_2026-09-08.md) reproduces stale/misattributed Strategy reports and evidence-free advice; unresolved PR #195 mechanics and regulation findings remain release blockers despite green CI. The requested destination now includes both singles and doubles; existing doubles-only roadmap scope requires reconciliation. Do not treat Josh QA as the only remaining release gate.
 
 - Branch: `candidate/v143-regulation-db-diagnosis`, based on merged `origin/main` at `81bb0ef250da`.
-- Current candidate: `v2.2.153-perish-song-boundaries`; engine `1.1.9`. Prior candidate receipts remain historical. Candidate updates go through PR #195; no Pages deployment is claimed.
+- Current runtime candidate: `v2.2.161-member-edit-identity`; engine `1.1.10`. v153 receipts are historical. Candidate updates go through PR #195; no new Pages deployment is claimed.
 - [Company-findings OODA cycle](docs/release/OODA_COMPANY_FINDINGS_2026-09-08.md): eight Leftovers/Toxic reference probes pass; replay matching is contained pending a verified identity resolver; timing-only coaching is excluded from scoring and critical-mistake cards. Six new regression groups and manual doubles/p1 plus singles/p2 replay reviews pass. News CLI repair is candidate-only. Shared-write containment passed isolated PostgreSQL controls but is not applied to Supabase; staging and private-schema verification remain open.
 - [Independent company audit](docs/release/INDEPENDENT_COMPANY_AUDIT_2026-09-08.md) preserves the original findings. The linked OODA report owns their subsequent disposition. Live security and watcher health remain release gates; the inspected public site is v142.
 - [Outcome-claim OODA cycle](docs/release/OODA_OUTCOME_CLAIMS_2026-09-08.md): removed automatic endgame-error judgments from final losses and positive IQ evidence from missing errors. Two regression groups pass across both formats/sides and sparse evidence; full fast gate passed 159 files with four manual/helper skips. Roadmap source/browser view regenerated. Broader IQ calibration, downstream inference, URL/download and all independent release/security gates remain open; no manual v148 browser verification is claimed.
 - [Replay OODA cycle](docs/release/OODA_REPLAY_ATTRIBUTION_2026-09-08.md): forced-switch/weather-upkeep classification, damage/move attribution, ability/item separation and unverified export identity corrected. Eight focused groups and 158 fast files pass. Manual pasted M-B replay confirms scoped visible fixes; URL fetch and physical download readback remain unverified. Outcome-based Endgame Misplay/Battle IQ claims still need correction. This is agent QA, not Josh approval.
 - [First OODA fix cycle](docs/release/OODA_STRATEGY_FIX_2026-09-08.md): full-input Strategy/Mega cache identities, separate cloned-team reports, and disabled unsupported Fake Out/redirection claims; 69 focused checks pass. Saved-history/UI continuity, confidence, PP and regulation findings remain open.
-- Current full project gate: 160 fast files and 12 offline/mock DB files passed, with four manual/helper skips and three administrative security checks explicitly unverified. Current battle audit passes, including 4,500 matrix runs and three golden battles. The earlier 4,624-run cross-format result is historical, not rerun for v149. Production was not mutated.
+- Historical v149 project gate: 160 fast files and 12 offline/mock DB files passed, with four manual/helper skips and three administrative security checks explicitly unverified. Its battle audit included 4,500 matrix runs and three golden battles. See the v161 entry and latest release review for current receipts. Production was not mutated.
 - [Regulation M-C source review](poke-sim/reports/reg_m_c_readiness_2026-09-07.md): exact official UTC dates, six named Mega additions, the 24-Pokemon statement and Rillaboom example are captured from the official notice. M-C is visible but noncompetitive and blocked pending the complete in-game roster, rules, legality fixtures, mechanic deltas and reviewed reference format. Five named forms use base-form sprite placeholders because exact upstream assets returned 404.
 - [Eerie Spell and Spite PP-drain validation](poke-sim/reports/pp_drain_validation_2026-09-03.md): four focused boundary groups and all 19 pinned Showdown reference contracts pass, including exact post-turn PP parity for a doubles probe. Protect, Substitute, missing move history and zero-PP failure behavior are covered. Broader PP-changing moves, Pressure interactions and complete-game parity remain open.
 - [September 3 regulation/database diagnosis](docs/release/REGULATION_AND_DB_DIAGNOSIS_2026-09-03.md): M-B coverage now expires at the retained exact UTC boundary and requires an unknown successor rather than inventing one. Live Supabase returned 36 legacy teams and 204 members, but all rows lack current version identity, so the UI reports `[DB review needed]` and keeps the bundled roster authoritative.
@@ -131,12 +137,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 - [August 30 live GitHub reconciliation](docs/release/GITHUB_QUEUE_RECONCILIATION_2026-08-30.md): canonical repo has 69 open issues, 17 open milestones and 2 open PRs; Alfredo has 56, 15 and 4 respectively.
 - 54 matching-title cross-repo issue pairs are reconciliation candidates, not proven duplicate acceptance contracts. No issue/milestone was closed.
 - Remote main commit identities differ; repo, deployment and DB 1:1 alignment are not established. Canonical branch API reports unprotected; full environment/ruleset verification remains open.
-- Current Pages evidence (August 30 EDT / August 31 UTC): deployed `v2.2.138-site-navigation-fixes`, 11,293,894 bytes, SHA-256 `078fff650a4ef2fe154d1b50e09534f031de3232e48a464e6c3c947136cffa1a`. Deployed manifest matches downloaded bytes and identifies the reviewed repository artifact. Earlier v131 evidence remains historical.
+- Historical Pages evidence (August 30 EDT / August 31 UTC): deployed `v2.2.138-site-navigation-fixes`, 11,293,894 bytes, SHA-256 `078fff650a4ef2fe154d1b50e09534f031de3232e48a464e6c3c947136cffa1a`. September 9 manifest readback identifies v142; this does not constitute a fresh manual battle audit.
 - August 29 public Supabase audit: 8,653 approved Showdown rows, 36 teams / 204 members / 34 complete teams, zero active Champions overrides. Public connectivity does not prove applied private schema, migrations, persistence or safe writer permissions.
 
 ## Active Gates
 
-Immediate priority: [Supabase public-launch security gate](docs/release/SUPABASE_PUBLIC_LAUNCH_GATE_2026-08-30.md). Database source defects and unavailable live administrative proof block public-use approval. Verification tooling is local only; no production security change is claimed.
+Immediate priority: [Supabase public-launch security gate](docs/release/SUPABASE_PUBLIC_LAUNCH_GATE_2026-08-30.md). Live administrative readback is available and confirms remaining security work; protected staging and two-user isolation proof are missing. No production security change is claimed.
 
 | Gate | Local evidence | Still open |
 |---|---|---|

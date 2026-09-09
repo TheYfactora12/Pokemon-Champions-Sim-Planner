@@ -216,6 +216,15 @@ else:
         'bundle_bytes': len(bundle_bytes),
         'hash_scope': 'sha256 of committed poke-sim/pokemon-champion-2026.html bytes'
     }
+    artifact['external_assets'] = {}
+    for asset in ['generated/champions_move_pools.js',
+                  'assets/retro-intro/gengar.png', 'assets/retro-intro/nidorino.png']:
+        with open(os.path.join(BASE, asset), 'rb') as f:
+            asset_bytes = f.read()
+        artifact['external_assets'][asset] = {
+            'sha256': hashlib.sha256(asset_bytes).hexdigest(),
+            'bytes': len(asset_bytes)
+        }
     artifact_path = os.path.join(BASE, 'generated', 'release_artifact.json')
     with open(artifact_path, 'w', encoding='utf-8', newline='') as f:
         json.dump(artifact, f, indent=2)
