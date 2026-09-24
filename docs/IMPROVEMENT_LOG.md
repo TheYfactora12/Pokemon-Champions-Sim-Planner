@@ -6,6 +6,39 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0043: Execute Isolation Checks On A Free Disposable Database
+
+Follow-up September 24: additive migration candidate replaces raw-evidence read
+policies without modifying historical migrations or production. Separate
+investigator and bypass reviewer challenged the boundary. Original diagnostic
+passes in run 35954145642. Expanded exact-identity and visibility-change matrix
+passes in run 35954428924 at `1c87208`; full hosted suite and battle audit passed
+the initial policy revision `adf8601`. Final test expansion has its own hosted CI.
+No real Auth/HTTP, full migration-chain or production-security claim follows.
+
+The previous SQL diagnostic existed without fresh execution evidence. Added a
+public-repository standard-runner job with temporary PostgreSQL, synthetic roles,
+no production secrets and no cloud provisioning. Hosted run 35953586475 applied
+the explicit two-migration baseline and exposed a failing privacy assertion.
+The gate stays red; no production fix or complete isolation claim is made.
+Scope excludes real Auth/HTTP and full migration/production parity.
+[Environment and result](release/ROADMAP_CLOSEOUT_2026-09-24.md).
+Lesson: execute policies on a real SQL engine; file checks and mocks alone can
+miss permission defects. Keep failing acceptance checks intact until corrected.
+
+### IMP-0042: Reconcile Delivered News With The Release Roadmap
+
+September 24: current main still described news as local-only and presented old
+candidate details as current. Added a dated status reconciliation and closeout
+order; updated the shared roadmap source to distinguish deployed news from the
+blocked M-C candidate and remaining source/visual gaps. Historical evidence stays
+intact. No issue closures, regulation approval or database verification are claimed.
+[Evidence and ordered work](release/ROADMAP_CLOSEOUT_2026-09-24.md).
+Proof state: local documentation candidate; all 15 roadmap checks pass and the
+bundle is regenerated. Full release review and deployment remain pending.
+Lesson: update milestone scope from deployment receipts, never from
+the success of an unrelated candidate's tests.
+
 ### IMP-0041: Repair Scheduled News And Permit Tested News-Only Publishing
 
 September 23: traced repeated failures to incompatible GitHub CLI flags before
