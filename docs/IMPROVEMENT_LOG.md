@@ -26,6 +26,12 @@ aborts and nested build-metadata disclosure in the shareable pack. Added shape
 requirements, indexed errors and bounded identifier validation; 11 focused tests
 pass and the original 240-card audit was rerun. These are intake fixes, not closed
 mechanics findings. Full hosted verification is tracked on the pushed candidate.
+Full-detail follow-up: retain the complete original payload in a full AI evidence
+file and generate self-contained per-match JSON/Markdown with valid turn pointers.
+Keep planned actions separate from recorded execution and explicitly block exact
+engine reruns until the missing restoration contract is implemented. Fourteen
+focused tests pass. Detailed packages intentionally contain raw team data; only
+the compact index is privacy-minimized. No mechanics or browser changes.
 
 ### IMP-0040: Test M-C Drafts Before Importing Into An Older Runtime
 

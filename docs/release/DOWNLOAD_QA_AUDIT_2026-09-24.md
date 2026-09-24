@@ -92,3 +92,35 @@ hardening changes; hosted CI must validate the pushed revision separately.
 
 The live replay display findings remain open. Neither this intake repair nor a
 green CI run certifies mechanics, approves M-C or changes the live site.
+
+## Full Match Evidence Follow-Up
+
+The intake command now also emits `full-ai-evidence.json`, preserving the entire
+parsed original payload without removing or rewriting fields. An indexed match
+map points to each before-state, selected action list, recorded event sequence,
+damage calculation, effect sequence and after-state. Repeated same-name events
+are not deduplicated. Coaching and source prompts remain explicitly untrusted.
+
+For manageable AI context windows, `matches/match-NNNN.json` is a self-contained
+recording of one retained match; `matches/match-NNNN.md` lists all its recorded
+turns, full before/after snapshots, action selections, events, damage modifiers,
+effects and engine text. The original source hash binds these files to the export.
+These detailed files intentionally contain raw team/battle data. The earlier
+privacy-minimized `ai-review.json` remains a separate compact index. Nothing is
+uploaded; do not share detailed evidence without reviewing its contents.
+
+Recorded trace inspection is available; exact engine re-execution is BLOCKED.
+The current exports lack a verified canonical initial-input/RNG-restoration and
+decision/replacement-policy contract. Per-match engine/ruleset/regulation IDs are
+also absent in the supplied artifact. A seed and snapshots alone must not be
+presented as deterministic re-simulation proof. Reference comparisons and
+counterfactual move choices remain untested.
+
+Fourteen focused tests pass, including lossless raw-field preservation, repeated
+event multiplicity, valid full/single-match evidence pointers and Markdown fence
+safety. The supplied export generated 240 detailed match packages. Raw artifacts
+remain ignored and local; website export integration is not implemented here.
+Actual generated-file readback confirmed lossless original-payload equality and
+resolved every evidence pointer across all 240 matches / 1,300 turns. The full
+file is 117,282,722 bytes; the first individual match is 306,680 bytes. Prefer
+individual matches when an AI cannot accept the full file.

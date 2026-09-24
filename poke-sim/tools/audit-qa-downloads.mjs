@@ -6,6 +6,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { validateTurnLogPayload } from './validate-turn-logs.mjs';
 import { buildReviewPack, renderPlayerReport } from './qa-review-pack.mjs';
+import { buildFullEvidence, extractMatchEvidence, renderMatchDetails } from './qa-full-evidence.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const QA_FILE = /^champions-(?:sim-qa-artifact|turn-log)-.+\.json$/i;
@@ -110,13 +111,23 @@ function main() {
   if (fs.statSync(file).size > 256 * 1024 * 1024) throw new Error('Artifact exceeds the 256 MiB audit limit. Export a smaller QA slice.');
   const raw = fs.readFileSync(file);
   const sha256 = crypto.createHash('sha256').update(raw).digest('hex');
-  const report = { ...auditPayload(JSON.parse(raw.toString('utf8'))), source_file: file, sha256, bytes: raw.length, audited_at: new Date().toISOString() };
+  const payload = JSON.parse(raw.toString('utf8'));
+  const report = { ...auditPayload(payload), source_file: file, sha256, bytes: raw.length, audited_at: new Date().toISOString() };
   const directory = path.join(ROOT, 'artifacts', 'download-audits', sha256);
   fs.mkdirSync(directory, { recursive: true });
   fs.writeFileSync(path.join(directory, 'audit.json'), JSON.stringify(report, null, 2));
   const reviewPack = buildReviewPack(report, path.basename(file));
   fs.writeFileSync(path.join(directory, 'ai-review.json'), JSON.stringify(reviewPack, null, 2));
   fs.writeFileSync(path.join(directory, 'player-report.md'), renderPlayerReport(reviewPack));
+  const fullEvidence = buildFullEvidence(payload, reviewPack);
+  fs.writeFileSync(path.join(directory, 'full-ai-evidence.json'), JSON.stringify(fullEvidence, null, 2));
+  const matchesDirectory = path.join(directory, 'matches');
+  fs.mkdirSync(matchesDirectory, { recursive: true });
+  for (let index = 0; index < fullEvidence.matches.length; index++) {
+    const match = extractMatchEvidence(fullEvidence, index);
+    fs.writeFileSync(path.join(matchesDirectory, `${match.match.id}.json`), JSON.stringify(match, null, 2));
+    fs.writeFileSync(path.join(matchesDirectory, `${match.match.id}.md`), renderMatchDetails(match));
+  }
   fs.writeFileSync(path.join(directory, 'audit.md'), ['# Download QA Audit', '', `Status: ${report.status}`, `Export build: ${report.export_build}`, `SHA-256: ${sha256}`, '', '## Independently Counted', JSON.stringify(report.observed), '', '## Findings', ...report.findings.map(row => `- ${row.severity}: ${row.code} ${JSON.stringify(row.detail || row.message || '')}`), '', '## Limits', ...report.limits.map(line => `- ${line}`), ''].join('\n'));
   console.log(JSON.stringify({ status: report.status, observed: report.observed, finding_codes: [...new Set(report.findings.map(row => row.code))], report: path.join(directory, 'audit.md') }, null, 2));
   process.exitCode = report.status === 'fail' ? 1 : 0;
