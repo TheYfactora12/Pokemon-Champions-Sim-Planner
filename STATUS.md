@@ -4,7 +4,15 @@
 
 Review how changes improved the project in [the improvement log](docs/IMPROVEMENT_LOG.md). Its recorded history does not replace current gates or imply that local changes are deployed.
 
-## Local Candidate
+## Current Reconciliation - September 24, 2026
+
+- Main news release: PR #206 merged as `3a2848f`; automatic news commit `9770ee279a899dde95f3741fac3fafd0e2948417` followed. News Feed Sync `35949792285` and Pages `35949952049` passed. Live feed bytes matched the commit, and live HTML contained the matching feed timestamp. This proves news delivery, not visual QA or simulation accuracy.
+- M-C candidate remains separate in PR #195 at `18425c91f291d3d682146cc16017a8149db9a578`. Its recorded hosted tests passed, but runtime/import integration, regulation approval, mechanics review and security holds remain. No M-C deployment or approval is claimed.
+- GitHub inventory: 79 open issues, 3 open PRs and 17 open milestones. Counts are an inventory, not completion measures. See [ordered closeout plan](docs/release/ROADMAP_CLOSEOUT_2026-09-24.md).
+- Next priority is named-environment database/security verification, followed by M-C source/runtime integration and mechanics proof. Do not optimize a competitive team against unverified legality or known simulation gaps.
+- The following older observations are historical snapshots. They do not describe today's candidate or deployment and must not override the reconciliation above.
+
+## Historical Local Candidate Snapshot
 
 - September 23 news-only repair: owner approved tested news autopublishing on
   the existing six-hour schedule. See [scope, tests and source outages](docs/release/NEWS_AUTOPUBLISH_2026-09-23.md).
@@ -23,7 +31,7 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 - Browser evidence links target GitHub main; local candidate documents may not be published there yet. Current Markdown/evidence paths were checked locally, not proven deployed.
 - [Consolidation audit](docs/release/ROADMAP_CONSOLIDATION_2026-08-30.md): removed stale active percentage scores and monetization-first blockers, merged overlapping plans, and preserved historical notes.
 
-## Remote Evidence
+## Historical Remote Evidence
 
 - Narrow clean-main site fixes merged through [PR #193](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/193) after green hosted checks on candidate `6fe9cd1`; merge commit `4f2cb179265d647706f4a1749c47d85e3e707043`. Pages run `33344630879` succeeded. Public v138 bytes/hash and all three homepage button destinations/focus were verified. This is not the full audit worktree or Node-only normalization deployment. See [publication evidence](docs/release/SITE_NAVIGATION_PUBLISH_2026-08-30.md).
 

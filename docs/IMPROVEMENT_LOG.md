@@ -6,6 +6,19 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0042: Reconcile Delivered News With The Release Roadmap
+
+September 24: current main still described news as local-only and presented old
+candidate details as current. Added a dated status reconciliation and closeout
+order; updated the shared roadmap source to distinguish deployed news from the
+blocked M-C candidate and remaining source/visual gaps. Historical evidence stays
+intact. No issue closures, regulation approval or database verification are claimed.
+[Evidence and ordered work](release/ROADMAP_CLOSEOUT_2026-09-24.md).
+Proof state: local documentation candidate; all 15 roadmap checks pass and the
+bundle is regenerated. Full release review and deployment remain pending.
+Lesson: update milestone scope from deployment receipts, never from
+the success of an unrelated candidate's tests.
+
 ### IMP-0041: Repair Scheduled News And Permit Tested News-Only Publishing
 
 September 23: traced repeated failures to incompatible GitHub CLI flags before

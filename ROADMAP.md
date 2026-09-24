@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-09-02. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-09-24. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Review and apply the existing public-data hardening migration in a protected staging-to-production flow. The declared 4,624-run accuracy harness is clean and now fails on warnings or regulation drift; next tackle residual ordering, wider imported-team interactions, Champion-specific reference evidence and two-user private persistence. Keep unverified regulations blocked.
+Reconcile current database permissions and migrations in a named authorized environment; prove anonymous denial and two-user isolation before public-use approval. Then integrate and validate the separate M-C candidate, resolve its mechanics findings, and obtain reviewed deployment plus visible/exported battle proof. Team optimization follows verified legality and relevant mechanics. September 24 reconciliation updates delivery status, not historical mechanics or DB proof; see docs/release/ROADMAP_CLOSEOUT_2026-09-24.md.
 
 ## Milestone Index
 
@@ -22,7 +22,7 @@ Review and apply the existing public-data hardening migration in a protected sta
 | [Regulations And Source Truth](#regulation-source-truth) | Blocked | M1 |
 | [Database And Evidence Integrity](#database-evidence) | Blocked | M8, M9 |
 | [Reviewed Release And Repo Alignment](#release-alignment) | Blocked | M6, M7, M10 |
-| [News And Tournament Reference Coverage](#homepage-news) | Local only | M6 |
+| [News And Tournament Reference Coverage](#homepage-news) | Blocked | M6 |
 | [Beginner Homepage And Navigation Audit](#beginner-experience) | Queued | M6, M10 |
 | [Evidence-Backed No-API Brain](#evidence-brain) | Deferred | M2, M3 |
 | [Optional Product Expansion](#future-product) | Deferred | M4, M5, M11 |
@@ -122,16 +122,16 @@ Evidence: [STATUS.md](STATUS.md), [PROJECT_CLEANUP_AUDIT_2026-08-30.md](docs/rel
 
 ### News And Tournament Reference Coverage
 
-**Local only** | Owner: Source/Data Engineer and Release Engineer
+**Blocked** | Owner: Source/Data Engineer and Release Engineer
 
 Depends on: Independent workstream; readiness still requires the other release gates.
 
 Completed locally / recorded:
-- Curated official/news/player-video feed, source-health fallback, publication sorting, controls and six-hour review-PR workflow are implemented.
+- News-only PR #206 is merged. Six-hour tested automatic publication passed hosted sync 35949792285 and Pages 35949952049; live feed bytes match commit 9770ee2. This does not approve competitive rules or simulator data.
 - Worlds Masters top-cut catalog retains 13 review-only teams and 78 member identities; private stat points and approved regulation mappings remain unknown.
 
 Remaining:
-- [ ] Validate hosted news refresh and deployed behavior. Complete Worlds replay coverage is not established.
+- [ ] Restore unavailable approved YouTube sources and verify visual page behavior; browser attachment failed during the news release. Complete Worlds replay coverage is not established.
 - [ ] Keep community commentary and review-only tournament teams separate from official legality and authoritative mechanics data.
 
 **Exit:** Hosted refresh/failure recovery and the deployed feed are verified; every team/replay claim retains scope and provenance.
