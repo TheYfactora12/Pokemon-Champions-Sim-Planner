@@ -24,15 +24,15 @@ check('mechanics audit watches runtime and move support', /poke-sim\/runtime_dat
 check('Pages uses reproducible install', /npm ci/.test(pages) && !/npm install/.test(pages));
 check('Pages deploys an explicit runtime allowlist', /runtime_files=\(/.test(pages) && /generated_files=\(/.test(pages));
 check('Pages excludes internal trees', /test ! -e pages-dist\/poke-sim\/tests/.test(pages) && /test ! -e pages-dist\/poke-sim\/db/.test(pages) && /test ! -e pages-dist\/poke-sim\/reports/.test(pages));
-check('News refresh creates a review PR, never dispatches a production release', /gh pr create/.test(news) && !/gh workflow run pages|actions: write|--force/.test(news));
-check('News refresh is bounded, uses locked tooling and runs the offline gate', /timeout-minutes: 20/.test(news) && /npm ci/.test(news) && /npm run test:fast/.test(news));
-check('News refresh preserves history and updates one automation PR', /git merge --no-edit origin\/main/.test(news) && /automation\/home-news-/.test(news) && /gh pr list/.test(news));
-check('News PR discovery paginates and rejects duplicates', /gh api --paginate --slurp/.test(news) && /"\$count" -le 1/.test(news));
-check('News PR origin, author and head identity are checked', /head\.repo\.full_name/.test(news) && /user\.login == "github-actions\[bot\]"/.test(news) && /head\.sha/.test(news));
-check('Existing PR is checked before checkout and untrusted generated code restored before tooling', news.indexOf('Existing PR changes non-news files') < news.indexOf('git checkout -b') && news.indexOf('git restore --source=origin/main') < news.indexOf('Install locked tooling'));
-check('News final diff cannot exceed the generated artifact allowlist', /Final PR exceeds the news-only boundary/.test(news) && /git diff --name-only origin\/main\.\.\.HEAD/.test(news));
-check('News checks must pass before human merge', /Approve workflows to run/.test(news) && /BEFORE merging/.test(news));
-check('News checkout does not persist token credentials', /persist-credentials: false/.test(news));
+check('News uses only trusted main, not pending PR code', /ref: main/.test(news) && !/gh pr|pull_request_target|git checkout -b/.test(news));
+check('News refresh is bounded, locked and tested', /timeout-minutes: 20/.test(news) && /npm ci/.test(news) && /npm run test:fast/.test(news));
+check('News publishing preserves history', /git push origin HEAD:refs\/heads\/main/.test(news) && !/--force|--admin/.test(news));
+check('News publication is owner/main only', /github.repository == 'TheYfactora12\/Pokemon-Champions-Sim-Planner'/.test(news) && /github.ref == 'refs\/heads\/main'/.test(news));
+check('News does not use production secrets', !/secrets\./.test(news));
+check('Health receipt restoration precedes complete mutation validation', news.indexOf('git restore --source=HEAD -- poke-sim/reports/news-sync-health.json') < news.indexOf('git diff --name-only -z HEAD |'));
+check('Fresh health is retained before only its tracked copy is restored', news.indexOf('Retain source health') < news.indexOf('git restore --source=HEAD -- poke-sim/reports/news-sync-health.json'));
+check('News checks all tracked changes and exact committed paths', /git diff --name-only -z HEAD \| node poke-sim\/tools\/news-review-policy.mjs --paths/.test(news) && /git diff --name-only -z HEAD\^ HEAD \| node poke-sim\/tools\/news-review-policy.mjs --paths/.test(news));
+check('Offline gate precedes push, which precedes normal Pages dispatch', news.indexOf('npm run test:fast') < news.indexOf('git push origin') && news.indexOf('git push origin') < news.indexOf('gh workflow run pages.yml --ref main'));
 
 const diagnostics = read('poke-sim/db/diagnostics/cleanup_preflight.sql').replace(/--[^\r\n]*/g, '');
 check('DB cleanup diagnostics use a read-only transaction', /BEGIN TRANSACTION READ ONLY;/.test(diagnostics) && /COMMIT;/.test(diagnostics));

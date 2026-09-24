@@ -6,6 +6,10 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- September 23 news-only repair: owner approved tested news autopublishing on
+  the existing six-hour schedule. See [scope, tests and source outages](docs/release/NEWS_AUTOPUBLISH_2026-09-23.md).
+  This does not approve or include the separate M-C simulator candidate.
+
 - Branch: `audit/project-open-items-2026-07-05`; dirty worktree preserved. Cached `origin/main` comparison after PR #193: 9 commits ahead, 4 behind.
 - Current candidate: `v2.2.141-tailwind-stage-proof`; engine `1.1.4`. Final local bundle: 11,460,764 bytes, SHA-256 `30de68bb9212981ba340d31a60768439e77e952f28818075db7c31a3e782053b`. No deployment is claimed.
 - Full project gate after final Tailwind/Growl/Leer release corrections: 153 fast files and 12 offline/mock DB files passed. Battle audit: 44 deterministic files, three golden traces and 4,500 completed headless battles, zero execution errors. M9 retains eight local passes and three administrative checks not verified. Live DB permissions were not exercised.

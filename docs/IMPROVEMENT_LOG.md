@@ -6,6 +6,17 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0041: Repair Scheduled News And Permit Tested News-Only Publishing
+
+September 23: traced repeated failures to incompatible GitHub CLI flags before
+source retrieval. Owner explicitly approved automatic publication of tested news
+only. The replacement uses trusted main, a three-generated-file boundary,
+non-forced publication and the existing Pages gate. Year-only relevance matches
+are removed. YouTube outages remain visible, never reported as fresh coverage.
+[Repair contract and evidence](release/NEWS_AUTOPUBLISH_2026-09-23.md).
+Lesson: a fix on an unmerged simulator branch does not repair scheduled main;
+ship independently scoped operational repairs and verify their hosted runs.
+
 | Record | Improvement | Recorded proof state |
 |---|---|---|
 | [IMP-0001](#imp-0001) | Homepage destinations and neutral replay preview | Deployed v138; bounded live verification |
