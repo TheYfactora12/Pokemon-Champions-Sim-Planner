@@ -1,5 +1,10 @@
 # Curated Homepage Coverage - August 30, 2026
 
+> September 23 policy update: the owner authorized automatic publication of tested
+> news-only generated artifacts. Earlier review-PR-only news guidance below is
+> superseded by [the scoped news contract](NEWS_AUTOPUBLISH_2026-09-23.md).
+> Simulator, regulation, database and other release approval requirements remain.
+
 ## Scope And Current State
 
 Primary owner: Source/Data Engineer, with Experience and Release responsibilities.

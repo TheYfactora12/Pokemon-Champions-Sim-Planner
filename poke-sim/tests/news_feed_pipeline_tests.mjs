@@ -2,12 +2,18 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { load } from 'cheerio';
-import { parseSource, assembleFeed, safeUrl, sourceFingerprint } from '../tools/news-feed-core.mjs';
+import { parseSource, assembleFeed, safeUrl, sourceFingerprint, matchesSourceFilters } from '../tools/news-feed-core.mjs';
 import { fetchSource, refreshFeed } from '../tools/sync-news-feed.mjs';
 
 let count = 0;
 function check(name, fn) { fn(); count++; console.log('PASS ' + name); }
 const now = '2026-08-30T12:00:00Z';
+check('A calendar year alone never qualifies competitive news', () => {
+  const registry = JSON.parse(fs.readFileSync(new URL('../tools/news_sources.json', import.meta.url), 'utf8'));
+  const competitive = registry.sources.find(s => s.id === 'victory-road-news');
+  assert.equal(matchesSourceFilters({title:'2027 merchandise and travel guide'}, competitive), false);
+  assert.equal(matchesSourceFilters({title:'Regulation M-C Pokemon Champions teams'}, competitive), true);
+});
 const source = { id: 'test', name: 'Test publisher', type: 'rss', enabled: true, tier: 'community', category: 'News', url: 'https://example.test/feed', fetch_hosts: ['example.test'], link_hosts: ['example.test'], include_keywords: ['Champions'], exclude_keywords: ['Scarlet', 'TCG'] };
 source.image_hosts = ['example.test'];
 const config = { sources: [source], max_age_days: 90, max_per_source: 4, max_items: 24 };
