@@ -6,6 +6,18 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0043: Execute Isolation Checks On A Free Disposable Database
+
+The previous SQL diagnostic existed without fresh execution evidence. Added a
+public-repository standard-runner job with temporary PostgreSQL, synthetic roles,
+no production secrets and no cloud provisioning. Hosted run 35953586475 applied
+the explicit two-migration baseline and exposed a failing privacy assertion.
+The gate stays red; no production fix or complete isolation claim is made.
+Scope excludes real Auth/HTTP and full migration/production parity.
+[Environment and result](release/ROADMAP_CLOSEOUT_2026-09-24.md).
+Lesson: execute policies on a real SQL engine; file checks and mocks alone can
+miss permission defects. Keep failing acceptance checks intact until corrected.
+
 ### IMP-0042: Reconcile Delivered News With The Release Roadmap
 
 September 24: current main still described news as local-only and presented old

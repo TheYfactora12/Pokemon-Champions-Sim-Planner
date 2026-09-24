@@ -50,6 +50,28 @@ security and competitive accuracy remain unverified at their respective gates.
 
 ## Authority
 
+### Free Disposable Test Environment
+
+The owner declined paid staging. No cloud branch was created. Local Docker was
+unavailable because WSL is not installed. A standard GitHub-hosted Ubuntu runner
+in this public repository now starts disposable PostgreSQL 17 with no production
+secrets, a loopback-only port, synthetic identities, and a ten-minute timeout.
+There are no artifact uploads, paid runners or persistent cloud resources.
+
+Workflow: `.github/workflows/free-db-isolation.yml`. Its explicit scope is the
+two June 29 Team Lab migrations and the existing SQL isolation diagnostic.
+`local_ci_bootstrap.sql` models roles and claim lookup, not Supabase Auth or HTTP.
+It grants broad test-role privileges deliberately so missing privileges cannot
+masquerade as passing RLS. It is not a production bootstrap.
+
+Run 35953586475 successfully provisioned the container and applied both migrations,
+then failed a privacy assertion in the existing diagnostic. The red result is
+preserved as a release blocker; do not weaken the assertion to obtain green CI.
+The runner stopped the container. Detailed diagnostics remain in the task/run;
+no production/private user data was involved. This is not a claim that these
+unapplied Team Lab tables exist in production. Next: independently review the
+policy failure and add an additive tested correction before rerunning the gate.
+
 ### September 24 Database Readback
 
 Authorized metadata-only connector reads succeeded for the configured project.
