@@ -6,6 +6,27 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0044: Audit Downloaded Raw Evidence Independently
+
+September 24, local candidate: add on-demand Downloads intake with a source hash,
+strict retained turn-log checks and separate provenance/legality warnings. The
+supplied 240-card artifact passes those structural checks but needs review; its
+own ready labels are not certification. Corrected an initial mixed-denominator
+auditor bug and added a regression before retaining the report. Five new tests
+and 30 validator regressions pass. No runtime/deployment change.
+[Evidence, workflow and built-in QA backlog](release/DOWNLOAD_QA_AUDIT_2026-09-24.md).
+Lesson: test the test harness, compare identical scopes and never turn event
+presence or historical volume into correctness proof. Visual pairing remains open.
+Follow-up: added a plain-English player report and compact AI JSON from the same
+audit, excluding raw private team data and local paths. Eight focused tests pass;
+the earlier 182-file gate preceded this reporting-only addition. Companion files
+are local, not deployed UI downloads or self-contained reproduction packages.
+Independent review then reproduced empty-turn false passes, malformed-history
+aborts and nested build-metadata disclosure in the shareable pack. Added shape
+requirements, indexed errors and bounded identifier validation; 11 focused tests
+pass and the original 240-card audit was rerun. These are intake fixes, not closed
+mechanics findings. Full hosted verification is tracked on the pushed candidate.
+
 ### IMP-0040: Test M-C Drafts Before Importing Into An Older Runtime
 
 September 9, local reference-only: three full doubles drafts, explicit Champions

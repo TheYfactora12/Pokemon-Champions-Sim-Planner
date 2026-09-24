@@ -6,6 +6,20 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- September 24 Downloads intake: `npm --prefix poke-sim run qa:downloads`
+  validates the newest matching local export without uploads. The supplied
+  240-replay artifact passes strict turn-log checks but lacks complete per-replay
+  execution provenance and includes old history plus regulation-blocked testing.
+  [Receipt and built-in QA correction list](docs/release/DOWNLOAD_QA_AUDIT_2026-09-24.md).
+
+- September 24 live browser audit: one v142 practice doubles game inspected
+  against its on-page raw engine log. Repeated same-name replacement, Protect
+  and faint events are omitted from formatted replay text; one damage line is
+  duplicated. Fresh analysis saving was quarantined. JSON download could not be
+  verified in the in-app browser, so automated pairing remains blocked.
+  [Evidence and ordered fixes](docs/release/LIVE_REPLAY_AUDIT_2026-09-24.md).
+  These findings are open, not a mechanics-accuracy certification.
+
 - M-C draft-team reference smoke tests: three complete doubles teams validate;
   base/Mega stats checked; six distinct games reproduce battle events across
   delayed repeats (12 executions; raw timestamp records retained separately).
