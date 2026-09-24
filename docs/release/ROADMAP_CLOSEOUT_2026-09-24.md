@@ -50,6 +50,33 @@ security and competitive accuracy remain unverified at their respective gates.
 
 ## Authority
 
+### Scoped Correction And Team Research
+
+The original red diagnostic is retained in history. An additive migration now
+replaces the three raw-evidence SELECT policies, leaving writes and team/member
+policies unchanged. Each referenced participant must positively qualify for full
+detail access. Replay owners gain access only when every participant qualifies;
+this is an intentional extension consistent with the owner-only private model.
+Public summary access does not imply access to raw hidden-detail battle payloads.
+
+Independent boundary investigator Fermat and fresh bypass reviewer Copernicus
+found no concrete remaining policy defect. Reviewer-noted coverage gaps prompted
+an exact-identity matrix over 64 ordered pairs, anonymous plus two owners, stale
+and illegal cases, malformed job references, duplicate references and a
+public-to-private transition. Run 35954428924 passed on `1c87208`, including the
+original isolation diagnostic and fixture rollback assertion. Initial policy
+revision `adf8601` also passed hosted full suite and battle audit. This proof is
+synthetic SQL-role scope, not real Auth or deployed Supabase verification.
+
+Separately, the unchanged M-C candidate `18425c9` reference harness was rerun:
+Salamence balance, Golisopod rain and Baxcalibur snow; 18 set/stat checks, six
+seeded matchups with repeat agreement, and three rejecting negative controls.
+Pinned reference: `efe4948570d5e8189751792136d26e71710c6c66`. It remains research,
+not runtime/import integration, live-browser evidence or competitive rankings.
+The official notice was reread on September 24; eligibility mapping and complete
+item/move/ability evidence still need the documented M-C approval process.
+Never import these SP-encoded drafts into the old live-site EV path.
+
 ### Free Disposable Test Environment
 
 The owner declined paid staging. No cloud branch was created. Local Docker was

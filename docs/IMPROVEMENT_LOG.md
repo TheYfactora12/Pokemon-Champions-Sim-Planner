@@ -8,6 +8,14 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ### IMP-0043: Execute Isolation Checks On A Free Disposable Database
 
+Follow-up September 24: additive migration candidate replaces raw-evidence read
+policies without modifying historical migrations or production. Separate
+investigator and bypass reviewer challenged the boundary. Original diagnostic
+passes in run 35954145642. Expanded exact-identity and visibility-change matrix
+passes in run 35954428924 at `1c87208`; full hosted suite and battle audit passed
+the initial policy revision `adf8601`. Final test expansion has its own hosted CI.
+No real Auth/HTTP, full migration-chain or production-security claim follows.
+
 The previous SQL diagnostic existed without fresh execution evidence. Added a
 public-repository standard-runner job with temporary PostgreSQL, synthetic roles,
 no production secrets and no cloud provisioning. Hosted run 35953586475 applied

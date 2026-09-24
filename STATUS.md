@@ -6,6 +6,9 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Current Reconciliation - September 24, 2026
 
+- PR #207 now includes an additive raw-evidence visibility correction tested only in free disposable PostgreSQL. The original failing isolation diagnostic passes; run `35954428924` also passes a 64-pair exact-identity matrix and visibility revocation with anonymous/two synthetic owners. No production migration or real Auth/HTTP verification occurred. Separate investigation and bypass review found no concrete remaining defect in the scoped policy patch.
+- M-C research: existing candidate `18425c9` draft harness reran with three teams, 18 set/stat checks, six paired seeded reference matchups and three rejecting negative controls. These are random-policy Showdown references, not live-app parity or a best-team recommendation.
+
 - Main news release: PR #206 merged as `3a2848f`; automatic news commit `9770ee279a899dde95f3741fac3fafd0e2948417` followed. News Feed Sync `35949792285` and Pages `35949952049` passed. Live feed bytes matched the commit, and live HTML contained the matching feed timestamp. This proves news delivery, not visual QA or simulation accuracy.
 - M-C candidate remains separate in PR #195 at `18425c91f291d3d682146cc16017a8149db9a578`. Its recorded hosted tests passed, but runtime/import integration, regulation approval, mechanics review and security holds remain. No M-C deployment or approval is claimed.
 - GitHub inventory: 79 open issues, 3 open PRs and 17 open milestones. Counts are an inventory, not completion measures. See [ordered closeout plan](docs/release/ROADMAP_CLOSEOUT_2026-09-24.md).
