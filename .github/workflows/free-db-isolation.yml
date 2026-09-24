@@ -43,9 +43,11 @@ jobs:
           psql -X -v ON_ERROR_STOP=1 -f poke-sim/db/diagnostics/local_ci_bootstrap.sql
           psql -X -v ON_ERROR_STOP=1 -f poke-sim/db/migrations/2026_06_29_team_lab_foundation.sql
           psql -X -v ON_ERROR_STOP=1 -f poke-sim/db/migrations/2026_06_29_team_lab_sim_jobs_replays.sql
+          psql -X -v ON_ERROR_STOP=1 -f poke-sim/db/migrations/20260924040135_team_lab_evidence_visibility.sql
       - name: Verify two-identity SQL isolation and rollback
         run: |
           set -euo pipefail
           psql -X -v ON_ERROR_STOP=1 -v security_disposable=true -f poke-sim/db/diagnostics/security_isolation_staging.sql
+          psql -X -v ON_ERROR_STOP=1 -f poke-sim/db/diagnostics/evidence_visibility_matrix.sql
           test "$(psql -X -Atc 'SELECT count(*) FROM public.team_lab_teams')" = '0'
           echo 'SQL isolation subset passed; synthetic claims only. Real Auth/HTTP, live production, full migration parity and additional privacy surfaces remain unverified.' >> "$GITHUB_STEP_SUMMARY"
