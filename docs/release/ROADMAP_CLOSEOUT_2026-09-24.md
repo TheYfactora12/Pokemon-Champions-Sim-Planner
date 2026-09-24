@@ -50,6 +50,22 @@ security and competitive accuracy remain unverified at their respective gates.
 
 ## Authority
 
+### September 24 Database Readback
+
+Authorized metadata-only connector reads succeeded for the configured project.
+The account inventory returned one active project; its branch inventory returned
+only main. All 16 inspected public base tables have RLS enabled. The migration
+ledger still contains four April entries; repository migration parity is not
+established. Policy/grant readback confirms the previously documented shared
+evidence hardening gate remains open. Advisor output alone is not full security
+proof. No private records were read, test writes performed, migrations applied,
+or permissions changed. Isolated staging and two-user tests remain unverified.
+Detailed live policy output is retained in the task, not republished here.
+
+Next: select or provision an explicitly authorized isolated test environment,
+review the existing hardening migration there, and collect allow/deny plus
+two-user evidence before requesting exact production-change approval.
+
 STATUS.md records delivery state. The shared roadmap JSON generates ROADMAP.md
 and the site's Roadmap data. Historical reports remain evidence, not fresh status.
 This checklist orders work; it does not authorize bypassing any approval gate.
