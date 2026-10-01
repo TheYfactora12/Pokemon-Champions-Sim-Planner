@@ -6,6 +6,25 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 1: v164 packages the mobile/selection fixes with a distinct build/cache
+  identity. [Release handoff](docs/release/V164_RELEASE_HANDOFF_2026-10-01.md)
+  records four merge conflicts and preserves the broader release blockers.
+  Older uncommitted notes below describe the implementation stage; no live
+  deployment is implied by packaging this candidate.
+
+- Final-selector rendering fix: three red/green regressions and local browser
+  reload align headings and rosters after catalog filtering. Candidate-only,
+  no deployment. See IMP-0046. Save quarantine diagnosis remains open: the same
+  warning covers non-promotable practice as well as missing identity.
+
+- Mobile layout patch is an uncommitted local candidate: width-based stacking,
+  bounded bring slots and contained audit tables. Initial browser geometry checks
+  pass at 360/390 portrait, 844 landscape and 1280 desktop. Not deployed; physical
+  devices and paired battle/export checks remain open. See
+  [operational check](docs/release/LIVE_OPERATIONAL_CHECK_2026-09-30.md).
+  Next: investigate candidate team heading/selection mismatch, then fresh-result
+  execution provenance and replay fidelity. Do not weaken validation to ship.
+
 - September 24 Downloads intake: `npm --prefix poke-sim run qa:downloads`
   validates the newest matching local export without uploads. The supplied
   240-replay artifact passes strict turn-log checks but lacks complete per-replay
@@ -144,7 +163,7 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 - September 8 audit correction: [product trust audit](docs/release/PRODUCT_TRUST_AUDIT_2026-09-08.md) reproduces stale/misattributed Strategy reports and evidence-free advice; unresolved PR #195 mechanics and regulation findings remain release blockers despite green CI. The requested destination now includes both singles and doubles; existing doubles-only roadmap scope requires reconciliation. Do not treat Josh QA as the only remaining release gate.
 
 - Branch: `candidate/v143-regulation-db-diagnosis`, based on merged `origin/main` at `81bb0ef250da`.
-- Current runtime candidate: `v2.2.163-mc-evidence-intake`; engine `1.1.10`. Earlier mechanics receipts retain their original scope. The installed reference is not upgraded. Candidate updates go through PR #195; no new Pages deployment is claimed.
+- Current runtime candidate: `v2.2.164-mobile-selection`; engine `1.1.10`. Earlier mechanics receipts retain their original scope. The installed reference is not upgraded. Candidate updates go through PR #195; no new Pages deployment is claimed.
 - [Company-findings OODA cycle](docs/release/OODA_COMPANY_FINDINGS_2026-09-08.md): eight Leftovers/Toxic reference probes pass; replay matching is contained pending a verified identity resolver; timing-only coaching is excluded from scoring and critical-mistake cards. Six new regression groups and manual doubles/p1 plus singles/p2 replay reviews pass. News CLI repair is candidate-only. Shared-write containment passed isolated PostgreSQL controls but is not applied to Supabase; staging and private-schema verification remain open.
 - [Independent company audit](docs/release/INDEPENDENT_COMPANY_AUDIT_2026-09-08.md) preserves the original findings. The linked OODA report owns their subsequent disposition. Live security and watcher health remain release gates; the inspected public site is v142.
 - [Outcome-claim OODA cycle](docs/release/OODA_OUTCOME_CLAIMS_2026-09-08.md): removed automatic endgame-error judgments from final losses and positive IQ evidence from missing errors. Two regression groups pass across both formats/sides and sparse evidence; full fast gate passed 159 files with four manual/helper skips. Roadmap source/browser view regenerated. Broader IQ calibration, downstream inference, URL/download and all independent release/security gates remain open; no manual v148 browser verification is claimed.

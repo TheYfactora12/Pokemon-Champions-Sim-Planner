@@ -6,6 +6,48 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0047: Package And Reconcile Before Deployment
+
+October 1: package IMP-0045/0046 as v164, preserving the same engine and distinct
+cache identity. Initial full gate caught the UI-only replay exporter fallback
+still reporting v163; corrected the fallback without changing the assertion.
+Read-only merge analysis identifies four conflicting files; no blanket merge or
+production rollout. Preserve main's approved news-only automation during future
+reconciliation. [Release handoff](release/V164_RELEASE_HANDOFF_2026-10-01.md).
+Lesson: a visible header is not enough; exported evidence and cache identity must
+agree, and cached offline content must not count as fresh browser proof.
+
+### IMP-0046: Render Final Catalog Selections
+
+Uncommitted local candidate: startup rendered rosters before catalog rebuilding,
+leaving stale headings and potentially a different opponent roster. Rebuild now
+refreshes both headings and rosters from final selector values after gating.
+Three regression scenarios (fallback, mirror, empty catalog) fail before and pass
+after the fix. Local browser reload confirms matching selections, headings and
+first members. No battle/DB behavior is changed; deployment remains blocked.
+Lesson: filtering a catalog is a selection transition, not just an option-list edit.
+Final combined mobile/selection fast gate: 186 test files, zero failures,
+four manual/helper skips. This supersedes the earlier mobile-only incomplete
+gate receipt; it is not hosted CI, a DB write test or deployed proof.
+
+Persistence investigation: the adapter's generic missing/conflicting-provenance
+warning also covers non-promotable practice rulesets. Earlier console evidence
+alone does not prove missing identity. Preserve quarantine until exact payload
+and policy diagnosis; private practice retention is a separate contract.
+
+### IMP-0045: Size Simulator Layout By Available Width
+
+Uncommitted local candidate, September 30: live v142 overflowed a 390px viewport
+to 567px. Narrow stacking depended on pointer detection; landscape inherited
+explicit grid positions and bring slots used intrinsic minimum widths. Make
+narrow stacking input-independent, reset landscape placement, constrain bring
+tracks and contain audit/source tables. CSS contract test passes; browser checks
+cover 360/390 portrait, 844 landscape and 1280 desktop. Bundle regenerated.
+No mechanics, legality, database or production changes. Full journey, real-device,
+release/cache identity and hosted verification remain open. Lesson: test narrow
+mouse/hybrid views as well as touch, and test intrinsic child widths.
+[Receipt and newly observed separate identity concern](release/LIVE_OPERATIONAL_CHECK_2026-09-30.md).
+
 ### IMP-0044: Audit Downloaded Raw Evidence Independently
 
 September 24, local candidate: add on-demand Downloads intake with a source hash,
