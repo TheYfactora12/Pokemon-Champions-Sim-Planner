@@ -1,16 +1,20 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.164-mobile-selection",
+  "build_id": "v2.2.165-mc-team-review",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "c1bc7c9ba95eca62c80fb5ee5f328a2dd74d7157f654f50dd45438d74b1f9dde",
-  "bundle_bytes": 11495515,
+  "bundle_sha256": "6dd61a64dab2e5438ee164ada19be22ec678f489dd082a6029ad1b7694009974",
+  "bundle_bytes": 11498307,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/champions_move_pools.js": {
       "sha256": "21099bad04135f23de2d8b23203628c98004faf4a7d1da179ba808ccef2087f9",
       "bytes": 1113482
+    },
+    "generated/mc_review_reference.js": {
+      "sha256": "fba0dbf7a01f95a57727923a948afb575b36ef7bb2a883600d2702596dad2905",
+      "bytes": 432221
     },
     "assets/retro-intro/gengar.png": {
       "sha256": "b2cdfb0910d892e8ad877af876040d190c76a7ae5ce492be0116a8838ec9f369",

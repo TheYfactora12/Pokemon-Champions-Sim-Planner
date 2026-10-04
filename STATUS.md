@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 4: v165 adds per-member M-C reference diagnostics for bundled and
+  imported teams, without rewriting historical sets or approving M-C. Local
+  candidate only, not deployed. See IMP-0048 and
+  `docs/release/PRELOADED_MC_LABEL_AUDIT_2026-10-04.md`.
+
 - October 1: v164 packages the mobile/selection fixes with a distinct build/cache
   identity. [Release handoff](docs/release/V164_RELEASE_HANDOFF_2026-10-01.md)
   records four merge conflicts and preserves the broader release blockers.

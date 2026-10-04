@@ -141,7 +141,7 @@ jobs:
             index.html pokemon-champion-2026.html style.css manifest.json sw.js
             icon-192.png icon-512.png local-credentials.js release_manifest.js
             app_shell.js data.js engine.js legality_evidence_package.js legality.js
-            logger.js move_legality.js move_support.js regmb_source_conversion.js
+            logger.js move_legality.js move_support.js regmb_source_conversion.js mc_review.js
             replay_coach.js replay_import_service.js replay_learning.js rulesets.js
             runtime_data.js sim_evidence.js source_truth.js storage_adapter.js
             strategy-injectable.js supabase_adapter.js team_lab.js ui.js
@@ -153,7 +153,7 @@ jobs:
           mkdir -p pages-dist/poke-sim/generated
           generated_files=(
             news_feed.js pokemon_showdown_legal_data.js champions_move_overrides.js
-            champions_move_pools.js
+            champions_move_pools.js mc_review_reference.js
             pokemon_showdown_species_weights.js release_artifact.json
             source_registry.js source_sync_status.js tournament_catalog.js
             project_roadmap.js

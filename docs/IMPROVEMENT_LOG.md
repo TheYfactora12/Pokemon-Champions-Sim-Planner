@@ -1,5 +1,18 @@
 # Improvement Log
 
+## IMP-0048: Current-Regulation Team Review
+
+October 4, 2026, local v165 candidate. Historical legal tags and narrow preload
+tests did not establish M-C legality. Added a reproducible pinned reference
+inventory and per-member diagnostic for all Teams cards, including imported and
+edited sets. Shows reference species availability, move/ability/item issues,
+duplicate items and IV discrepancies; passing limited checks remains unverified.
+No historical metadata, mechanics, DB rows or approval gates changed. Four
+regressions cover full catalog, edit recomputation, starting-form Mega abilities
+and escaped nonmutating output.
+Full-team reference/official approval, new upstream drift review and hosted visual
+verification remain separate gates. Audit: docs/release/PRELOADED_MC_LABEL_AUDIT_2026-10-04.md.
+
 Purpose: show what improved, why it improved, how we checked it, and what is still open. This is a change history, not another roadmap or a percentage-accuracy score.
 
 `STATUS.md` owns current status. `ROADMAP.md` owns future outcomes. Detailed dated reports own the underlying evidence. New entries use stable ascending IDs; append verification/rollback/recurrence notes to existing entries without deleting history. Only evidence-supported states may advance from local to staging, merged or deployed.
