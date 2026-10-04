@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 4 live player audit: one fresh hosted v142 doubles game completed.
+  Raw/formatted replay discrepancies, one-game coaching overconfidence, and
+  save/export evidence gaps remain open. Not an accuracy certification. See
+  `docs/release/LIVE_PLAYER_AUDIT_2026-10-04.md`.
+
 - October 4 full team inventory: 34 bundled + 13 tournament-review + 36 live DB
   records inspected. 20 bundled and 16 builtin DB records fail pinned M-C
   reference checks; different IV persistence explains four apparent DB passes.
