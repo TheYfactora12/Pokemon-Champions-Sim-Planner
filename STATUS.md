@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 4 full team inventory: 34 bundled + 13 tournament-review + 36 live DB
+  records inspected. 20 bundled and 16 builtin DB records fail pinned M-C
+  reference checks; different IV persistence explains four apparent DB passes.
+  All tournament entries lack stat spreads. Read-only evidence and limitations:
+  `docs/release/FULL_TEAM_AUDIT_2026-10-04.md`.
+
 - October 4: v165 adds per-member M-C reference diagnostics for bundled and
   imported teams, without rewriting historical sets or approving M-C. Local
   candidate only, not deployed. See IMP-0048 and
