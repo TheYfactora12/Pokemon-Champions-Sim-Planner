@@ -52,6 +52,20 @@ reset, socket deletion, Docker settings change or machine reboot performed.
 Preserve existing Docker data; repair startup before claiming Auth/two-user
 staging proof. The earlier no-start note records the pre-approval state.
 
+October 5 repair follow-up: normal Docker stop timed out. Stopped only confirmed
+Docker Desktop/backend processes and quarantined temporary socket directories
+by renaming them, with no deletion. Both the inference and secrets-engine
+socket paths had to be cleared together; sequential retry recreated a stale
+inference socket. The secrets-engine directory was checked to contain only
+its zero-byte engine.sock before quarantine. No credentials were read.
+Backups under LOCALAPPDATA are Docker/run.codex-backup-20261005-115325,
+Docker/run.codex-backup-20261005-second, and
+docker-secrets-engine.codex-backup-20261005. Preserve them for recovery; only
+restore while Docker is stopped, preserving newly created runtime paths first.
+Docker info now reports server 29.6.2 and WSL reports docker-desktop running.
+No factory reset, container/volume deletion, settings edits or reboot performed.
+This closes the observed startup blocker, not the Supabase security gate.
+
 ## Release Decision
 
 Dependency audit follow-up: npm audit --omit=dev for poke-sim returned zero
