@@ -33,6 +33,20 @@ in this release. Alfredo is not a verified failover until independently checked.
 
 ## Traceability
 
+### October 5 Follow-Up
+
+Local v177 fixes #211 editor intrinsic sizing. Browser measurements after
+opening Typhlosion-Hisui: client/scroll widths 315/315, 385/385, 763/763 and
+1275/1275 at requested 320, 390, 768 and 1280 viewports. No overflow hiding;
+grid tracks and inputs shrink. Static regression protects sizing contracts;
+it is not a substitute for browser layout proof. Save/reload still open.
+
+Feedback email: intentionally unset at user request. Do not invent an address,
+create a mailbox, or present a nonfunctional contact link as working. Before
+public beta, owner supplies the address and a delivery/reply test confirms it.
+Feedback template should request build, format, steps, expected/actual behavior
+and an optional redacted replay; never passwords or private account credentials.
+
 Release tracking: TheYfactora12/Pokemon-Champions-Sim-Planner#103.
 Strategy follow-up: TheYfactora12/Pokemon-Champions-Sim-Planner#209.
 The last successful earlier Pages revision was 45c9e282b1a288609ced4d136d7461509d899256;
