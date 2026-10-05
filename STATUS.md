@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 tracking update: created GitHub #209 for missing Strategy actor
+  attribution and updated existing deployment-hardening #103 with the eleven-tab
+  audit and closure gates. Roadmap source now orders alignment before database
+  follow-up and distinguishes disconnected scope from backend remediation.
+  Neither ticket is closed; no new deployment or mechanics proof in this update.
+
 - October 5 page-by-page follow-up: all eleven navigation sections inspected
   against production. Live remains v142 versus local v175; homepage, roadmap,
   roster filtering and data mode differ. News feed text matches after line-ending
