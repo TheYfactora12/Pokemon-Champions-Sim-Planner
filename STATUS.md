@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 page-by-page follow-up: all eleven navigation sections inspected
+  against production. Live remains v142 versus local v175; homepage, roadmap,
+  roster filtering and data mode differ. News feed text matches after line-ending
+  normalization. Local Strategy renders missing actor names as `undefined`;
+  this remains open. [Comparison and remaining work](docs/release/LOCAL_LIVE_COMPARISON_2026-10-05.md#page-by-page-follow-up-v175-versus-live-v142).
+  Hosted checks were pending; no deployment or alignment sign-off.
+
 - October 5 v175 alignment scope: user requested production/local alignment
   before database work. Prepared an explicit local-save-only release: manifest
   disables DB initialization despite credentials; Pages no longer consumes or

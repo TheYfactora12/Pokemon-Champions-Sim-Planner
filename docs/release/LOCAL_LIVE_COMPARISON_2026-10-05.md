@@ -76,3 +76,55 @@ release review. Login feature work is deferred; security findings are not waived
 Next: finish these gates or obtain an explicitly reviewed reduced release scope,
 then deploy and rerun the same hosted hash, asset and user-flow checks. Preserve
 Alfredo synchronization as the final post-production-verification step.
+
+## Page-By-Page Follow-Up: v175 Versus Live v142
+
+Audited all eleven navigation sections through browser clicks and DOM snapshots.
+Candidate: `793473e`, v2.2.175-local-save-release on port 8773. Production still
+reports v2.2.142-pp-replay-proof. This is a comparison, not deployment approval.
+The old port 8772 was offline while its tab retained cached v172 content.
+
+| Section | Observed difference | Interpretation / remaining work |
+|---|---|---|
+| Home | Local retro Gengar/Nidorino opening; live abstract Team Test/Benchmark preview. Local leaderboard locked; live experimental preview. | Real release drift. Verify sprites and layout after deployment. |
+| News on Home | Same 11-story feed and October 5 14:34 UTC check time; different currently rotated story. | Feed contents match after line-ending normalization. Carousel position is not missing news. |
+| Simulator | Local exposes M-C review option; live offers Practice/M-A/M-B. Selected opponents differ. | Real ruleset-interface drift plus origin-specific selection state. Review availability is not verified legality. |
+| QA Tester | Same observed content except release/data-mode badge. | Navigation/read-only comparison only; did not rerun QA here. |
+| Roadmap | Local reviewed October 5 with later audit evidence; live reviewed September 2. | Real documentation drift. Local blanket database release-gate wording also needs reconciliation with explicit local-only scope. |
+| Teams | Local six preloads plus one custom card and 28 needs-review entries; live 16 preloads. Local has M-C unverified labels and Speed Stats rather than Speed Tiers. | Filtering/label changes plus local saved state; do not copy old teams into the verified pool to equalize counts. |
+| Set Editor | Different selected teams and therefore different editor contents. | No controlled same-team equivalence claim from these snapshots. |
+| Strategy | Local shows literal `undefined` in Eruption, Heat Wave and Focus Blast advice. Other content differs with selected team. | Confirmed visible local defect; reproduce against a fixed team/evidence fixture and repair missing attribution before treating advice as reliable. |
+| Review | Local private test-team options absent on live. | Expected separate-origin storage; not evidence of lost production saves. |
+| Replay Log | Live contains historical saved results absent locally. | Preserve user history. Do not erase or overwrite saves to make screens identical. |
+| Sources | Local static bundle/no live rows; live approved DB rows and generation ID. | Intentional candidate local-only scope; does not prove backend security or current source accuracy. |
+| Pilot Guide | Same observed content except release/data-mode badge. | Read-only content check, not full interaction proof. |
+
+### News HTTP Evidence
+
+Both `generated/news_feed.js` requests returned HTTP 200:
+
+- Local: 12051 bytes, SHA-256 `2a43b963d9085addfa2ac33a0b10c968f14b63007522955c2646ca61cd2552d6`.
+- Live: 12047 bytes, SHA-256 `a2a692cc73c853d635acf38532d5f9a8a47eccd3042b9b694acbcd634bea2f08`.
+- Entire text is equal after CRLF-to-LF normalization. Raw byte hashes are not equal.
+- This verifies served feed equivalence, not independent freshness of upstream sources.
+
+### Documentation And Release Disposition
+
+Compared candidate documentation with fetched `origin/main`: 37 files differ
+across `docs`, `ROADMAP.md` and `STATUS.md` (3437 insertions, 17 deletions at this
+audit baseline). This includes later replay, regulation, import and release
+reports; branch documentation must not be represented as published main evidence.
+
+The v175 scope decision is in `LOCAL_SAVE_RELEASE_SCOPE_2026-10-05.md`.
+Database findings remain open for reconnection and existing backend exposure;
+disabling this browser's connection does not fix the backend. The earlier
+connected-release gate above is historical, not a claim that every database
+feature must ship in the disconnected artifact.
+
+Latest observed PR checks were pending (Supabase Preview skipped), not passed.
+Remaining order: repair Strategy attribution and reconcile roadmap scope;
+finish exact-revision applicable checks; review and deploy; compare served
+artifact and all sections again; only then synchronize Alfredo. Retain existing
+bounded simulation evidence rather than rerunning unchanged mechanics for this
+documentation-only audit. No new battle, database-security test or deployment
+was performed in this follow-up.
