@@ -8,6 +8,11 @@ The product is not measured by how many simulations, features, rankings, or coac
 
 ## Strategy Kernel
 
+Guided team-building and scenario-adaptive coaching follow
+[the competitive coach contract](docs/strategy/COMPETITIVE_COACH_PRODUCT_CONTRACT.md).
+Recommendations must carry context, evidence, tradeoffs and invalidation rules;
+superiority over general assistants or established tools requires comparative proof.
+
 ### Diagnosis
 
 Competitive Pokemon tools often produce answers faster than they prove them. Static data drifts, partial mechanics look complete, replay observations become universal claims, and coaching can sound more certain than the simulator deserves.
