@@ -1038,8 +1038,12 @@ table{border-collapse:collapse;width:100%}
 .bring-mode-hint{margin:6px 0 8px;padding:6px 8px;border:1px solid rgba(250,204,21,.35);border-radius:var(--r-sm);background:rgba(250,204,21,.08);color:#facc15;font-size:11px;font-weight:700;font-family:var(--font-mono)}
 
 /* ===== EDITOR ===== */
-.editor-layout{display:grid;grid-template-columns:260px 1fr;gap:var(--sp5);align-items:start}
-@media(max-width:760px){.editor-layout{grid-template-columns:1fr}}
+.editor-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:var(--sp5);align-items:start}
+.editor-layout>*{min-width:0}
+.editor-form .form-group,.editor-form .editor-move-combobox{min-width:0}
+.editor-form .form-input{min-width:0;width:100%;box-sizing:border-box}
+.editor-form{overflow-wrap:anywhere}
+@media(max-width:760px){.editor-layout{grid-template-columns:minmax(0,1fr)}}
 .editor-sidebar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp5)}
 .editor-hint{font-size:11px;color:var(--text-m);margin-bottom:var(--sp3);line-height:1.5}
 .editor-team-status{margin:0 0 var(--sp4);padding:10px 12px;border:1px solid rgba(67,213,139,.28);background:linear-gradient(135deg,rgba(67,213,139,.1),rgba(87,167,255,.07));border-radius:var(--r-md);display:flex;flex-direction:column;gap:4px}
@@ -1057,7 +1061,7 @@ table{border-collapse:collapse;width:100%}
 .editor-save-note.dirty{border-color:rgba(245,197,66,.55);background:rgba(245,197,66,.1);color:var(--gold)}
 .btn-secondary.dirty{border-color:rgba(245,197,66,.55);color:var(--gold)}
 .editor-poke-name{font-size:var(--text-xl);font-weight:900}
-.editor-2col{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp4)}
+.editor-2col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp4)}
 .form-group{display:flex;flex-direction:column;gap:3px}
 .form-label{font-size:9px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.07em}
 .form-input{padding:8px var(--sp3);min-height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-family:var(--font-mono),monospace;font-size:11px;transition:border-color var(--tr);-webkit-appearance:none}
@@ -1078,8 +1082,8 @@ table{border-collapse:collapse;width:100%}
 .editor-move-option{display:block;width:100%;padding:7px 8px;border:0;border-radius:7px;background:transparent;color:var(--text);font-family:var(--font-mono);font-size:11px;text-align:left;cursor:pointer}
 .editor-move-option:hover,.editor-move-option:focus{background:rgba(87,167,255,.14);color:var(--primary);outline:none}
 .editor-move-empty{padding:8px;color:var(--text-m);font-size:10px;line-height:1.4}
-.ev-6col{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-top:var(--sp3)}
-@media(max-width:420px){.ev-6col{grid-template-columns:repeat(3,1fr)}}
+.ev-6col{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin-top:var(--sp3)}
+@media(max-width:420px){.ev-6col{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:420px){.editor-2col{grid-template-columns:1fr}}
 @media(max-width:560px){.editor-builder-head{flex-direction:column}.editor-save-note{max-width:none;width:100%}.moves-2col{grid-template-columns:1fr}}
 .stat-panel{margin-top:var(--sp4);border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface2);overflow:hidden}
@@ -2830,7 +2834,7 @@ table{border-collapse:collapse;width:100%}
       </svg>
       <div>
       <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux v2.2.81-source-trust-guard v2.2.82-news-slide-images v2.2.83-source-backed-news-thumbs v2.2.84-news-health-sync v2.2.85-news-source-watch v2.2.86-replay-claim-audit v2.2.87-replay-qa-claim-payload v2.2.88-qa-artifact-claim-boundary v2.2.89-qa-claim-review v2.2.94-move-qa-closeout-plan v2.2.95-replay-logic-audit v2.2.96-legality-99-target v2.2.97-legality-evidence-package v2.2.98-github-release-guard v2.2.99-true-qa-slice-contract v2.2.100-qa-100-readiness v2.2.101-db-architecture-growth-audit v2.2.102-db-architecture-stress-plan v2.2.103-trainer-room-foundation v2.2.104-replay-import-governance v2.2.105-private-replay-import-service v2.2.106-private-replay-import-persistence v2.2.107-pilot-team-log-mapping v2.2.108-review-private-import-save v2.2.109-qa-readiness-next-gate v2.2.110-regmb-legality-request v2.2.111-qa-readout-inline v2.2.112-qa-trace-total-align v2.2.113-qa-no-auto-claim-card v2.2.114-qa-josh-showdown-assignment v2.2.115-qa-josh-owner-alignment v2.2.116-regmb-review-items-abilities v2.2.117-home-product-reveal v2.2.118-home-cycle-clean v2.2.119-home-cycle-team-names v2.2.120-mad-lab-team-ranks v2.2.121-sim-ux-results v2.2.122-qa-tester-link v2.2.123-sim-run-all-mode v2.2.124-sim-qa-output-clarity v2.2.125-pilot-series-evidence v2.2.126-browser-run-budget v2.2.127-targeted-trick-room-proof v2.2.128-turn-log-export-scope v2.2.129-completed-turn-count v2.2.130-single-replay-proof-boundary v2.2.131-production-launch-gate v2.2.132-project-db-audit -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.176-strategy-attribution</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.178-form-roundtrip</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -3729,9 +3733,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
     data_mode: 'local-only',
-    build_id: 'v2.2.176-strategy-attribution',
+    build_id: 'v2.2.178-form-roundtrip',
     release_date: '2026-10-05',
-    service_worker_cache: 'champions-sim-v2-2-176-strategy-attribution',
+    service_worker_cache: 'champions-sim-v2-2-178-form-roundtrip',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3805,9 +3809,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.176-strategy-attribution';
+      return txt || 'v2.2.178-form-roundtrip';
     } catch (e) {
-      return 'v2.2.176-strategy-attribution';
+      return 'v2.2.178-form-roundtrip';
     }
   }
 
@@ -11191,7 +11195,7 @@ var CS_TOURNAMENT_CATALOG = {
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "Align the reviewed local candidate and production first (GitHub #103): fix missing Strategy actor attribution (#209), finish exact-revision hosted and desktop/mobile checks, deploy through review, then verify served assets and user flows before syncing Alfredo. The explicit local-save-only scope is documented in docs/release/LOCAL_SAVE_RELEASE_SCOPE_2026-10-05.md; database confidentiality and existing backend exposure remain open, and reconnection requires separate security approval. Preserve saved teams, historical audits and unverified regulation labels. Then resume the doubles simulation queue in docs/release/SIMULATION_PRIORITY_2026-10-05.md and database work. Log each finding, fix revision, test scope, deployment evidence and remaining limitation. Close tickets only when their acceptance evidence is complete; pushed or locally passing does not mean deployed.",
+  "next_action": "Production v176 is deployed: Pages run 37371824754 succeeded and HTTP artifact alignment passed. Live homepage includes the retro opening and Strategy shows corrected move attribution. Finish cache-transition, saved-team export, mobile edit and paired live replay checks for a limited local-save practice beta; do not relabel as verified competitive simulation. Track remaining alignment in #103 and structured Strategy identity evidence in #209. Database security and regulation approval remain open; reconnect only after separate review. Verify primary release before synchronizing Alfredo. See docs/release/BETA_READINESS_2026-10-05.md for scope and remaining gates.",
   "milestones": [
     {
       "id": "simulation-truth",
@@ -11305,7 +11309,7 @@ var CS_TOURNAMENT_CATALOG = {
         "database-evidence"
       ],
       "completed_locally": [
-        "Candidate changes through 08451b7 are pushed to PR #195 and hosted CI passed, including bundle freshness and battle audit. Generated metadata and pre-upload checks bind the required move pool and intro sprites to exact bytes; LF checkout regression coverage passes. This is not deployment: live readback remains v142. Runtime v161 identity fixes retain their separate scoped evidence."
+        "PR #195 merged as 90bff31 with explicit user approval of recorded pending gates. Pages run 37371824754 succeeded; October 5 HTTP artifact/provenance checks matched local and deployed v176 with zero errors. Live browser confirms local-roster mode, retro opening markup, news controls and corrected Strategy attribution. This is bounded deployment evidence, not complete user-flow or competitive accuracy approval."
       ],
       "remaining": [
         "Reconcile incoming commits and both repository queues through reviewed PRs; do not force-copy or close issues from test counts alone.",
@@ -32717,7 +32721,7 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.176-strategy-attribution
+// Build marker: v2.2.178-form-roundtrip
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -32758,7 +32762,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.176-strategy-attribution'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.178-form-roundtrip'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -33258,12 +33262,25 @@ function parseShowdownPaste(text) {
     let rawName = itemMatch ? itemMatch[1].trim() : line1.trim();
     const item = itemMatch ? itemMatch[2].trim() : '';
 
-    // Strip nickname: "Nickname (Species)" -> use Species
-    const nicknameMatch = rawName.match(/^.+\((.+)\)$/);
-    if (nicknameMatch) rawName = nicknameMatch[1].trim();
-
-    // Strip gender suffix M/F
+    // Gender is outside the nickname/species group; preserve known form names.
     rawName = rawName.replace(/\s*\(([MF])\)\s*$/, '').trim();
+    const knownForm = typeof BASE_STATS !== 'undefined' &&
+      Object.prototype.hasOwnProperty.call(BASE_STATS, rawName);
+    if (!knownForm && rawName.endsWith(')')) {
+      let depth = 0;
+      for (let pos = rawName.length - 1; pos >= 0; pos--) {
+        if (rawName[pos] === ')') depth++;
+        else if (rawName[pos] === '(') {
+          depth--;
+          if (depth === 0) {
+            if (pos > 0 && /\s/.test(rawName[pos - 1])) {
+              rawName = rawName.slice(pos + 1, -1).trim();
+            }
+            break;
+          }
+        }
+      }
+    }
 
     let ability = '', level = 50, nature = 'Hardy', tera = null;
     const evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 };

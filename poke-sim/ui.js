@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.176-strategy-attribution
+// Build marker: v2.2.178-form-roundtrip
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.176-strategy-attribution'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.178-form-roundtrip'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -541,12 +541,25 @@ function parseShowdownPaste(text) {
     let rawName = itemMatch ? itemMatch[1].trim() : line1.trim();
     const item = itemMatch ? itemMatch[2].trim() : '';
 
-    // Strip nickname: "Nickname (Species)" -> use Species
-    const nicknameMatch = rawName.match(/^.+\((.+)\)$/);
-    if (nicknameMatch) rawName = nicknameMatch[1].trim();
-
-    // Strip gender suffix M/F
+    // Gender is outside the nickname/species group; preserve known form names.
     rawName = rawName.replace(/\s*\(([MF])\)\s*$/, '').trim();
+    const knownForm = typeof BASE_STATS !== 'undefined' &&
+      Object.prototype.hasOwnProperty.call(BASE_STATS, rawName);
+    if (!knownForm && rawName.endsWith(')')) {
+      let depth = 0;
+      for (let pos = rawName.length - 1; pos >= 0; pos--) {
+        if (rawName[pos] === ')') depth++;
+        else if (rawName[pos] === '(') {
+          depth--;
+          if (depth === 0) {
+            if (pos > 0 && /\s/.test(rawName[pos - 1])) {
+              rawName = rawName.slice(pos + 1, -1).trim();
+            }
+            break;
+          }
+        }
+      }
+    }
 
     let ability = '', level = 50, nature = 'Hardy', tera = null;
     const evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 };

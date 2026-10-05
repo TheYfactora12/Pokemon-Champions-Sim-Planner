@@ -1,5 +1,42 @@
 # Improvement Log
 
+## IMP-0067: Preserve Parenthetical Forms In Paste Imports (#212)
+
+October 5, v178 candidate. Catalog round-trip test reproduced a species identity
+loss: Floette (Eternal Flower) became Eternal Flower. Parser now removes the
+outer gender suffix first and preserves exact known form names before interpreting
+nickname parentheses. A backward balanced-group scan preserves nested form text
+and parenthetical nicknames; independent review caught the first regex repair
+misparsing Buddy (Ace) (Incineroar), now covered by regression.
+Focused suite passes 37 tests, including 408 member round trips under SPs and
+legacy EVs labels plus seven nickname/gender cases. Browser preview preserved
+Buddy (Floette (Eternal Flower)) (F) as Floette (Eternal Flower); draft cancelled,
+no save or battle. No regulation promotion or cross-tool EV-conversion claim.
+
+Lesson: text export/import must preserve species identity, not only numeric
+spread totals. Retain known-form and nickname regressions together. Full suite,
+independent review and hosted proof are recorded on #212/PR210 before closure.
+
+## IMP-0066: Mobile Editor Intrinsic Sizing (#211)
+
+October 5, v177 candidate e49c232. Live v176 selected-editor content exceeded
+phone width (385 client / 425 scroll). Zero-minimum grid tracks and scoped input
+sizing remove intrinsic expansion without hiding overflowing content. Local
+selected-editor measurements: 315/315, 385/385, 763/763 and 1275/1275.
+Static sizing regression and full project gate pass; offline DB tests do not
+establish live security. Independent review found no release-blocking code defect
+and verified bundle reproduction, manifest/external assets and roadmap consistency.
+
+A separate 390px custom-team paste edit changed the disposable Incineroar fixture
+from 30HP/32Atk/4Spe to 29HP/32Atk/5Spe and retained that spread after reload.
+This proves that paste-edit persistence path, not all Set Editor controls or
+competitive legality of a one-member fixture. No new battle was run.
+
+Lesson: grid items and input intrinsic sizes must both be constrained; hiding
+overflow would mask inaccessible controls. Hosted checks and deployed editor
+verification remain required before #211 closure. Export retrieval, old-cache
+migration and paired live replay remain beta-label gates, not passed by this fix.
+
 ## IMP-0065: Prompt Release And Primary/Backup Ownership
 
 October 5, 2026. User requested that tested fixes stop accumulating locally.

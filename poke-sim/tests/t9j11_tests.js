@@ -857,6 +857,44 @@ T('16. parseMultiTeamShowdown: empty input yields []', () => {
 // ============================================================
 // RESULTS
 // ============================================================
+T('17. catalog paste round trips preserve member sets in both supported spread labels', () => {
+  let count = 0;
+  for (const team of Object.values(TEAMS)) {
+    if (!team || !Array.isArray(team.members) || !team.members.length) continue;
+    for (const showdownCompatible of [false, true]) {
+      const before = JSON.stringify(team);
+      const paste = ctx.exportTeamToPasteWithOptions(team, { showdownCompatible });
+      const parsed = parseShowdownPaste(paste);
+      eq(parsed.length, team.members.length, 'member count');
+      team.members.forEach((member, i) => {
+        for (const key of ['name', 'item', 'ability', 'nature']) {
+          eq(parsed[i][key] || '', member[key] || '', key + ' for ' + member.name);
+        }
+        eq(JSON.stringify(parsed[i].moves), JSON.stringify(member.moves), 'moves');
+        for (const stat of ['hp', 'atk', 'def', 'spa', 'spd', 'spe']) {
+          eq(Number(parsed[i].evs[stat] || 0), Number((member.evs || {})[stat] || 0), stat);
+        }
+        count++;
+      });
+      eq(JSON.stringify(team), before, 'export must not mutate registration');
+    }
+  }
+  truthy(count > 0, 'catalog must not be empty');
+  console.log('  Round-trip member checks: ' + count);
+});
+
+T('18. gender and nicknames preserve parenthetical species forms', () => {
+  for (const [input, expected] of [
+    ['Incineroar (M)', 'Incineroar'],
+    ['Buddy (Incineroar) (M)', 'Incineroar'],
+    ['Floette (Eternal Flower)', 'Floette (Eternal Flower)'],
+    ['Buddy (Floette (Eternal Flower)) (F)', 'Floette (Eternal Flower)'],
+    ['Buddy (Ace) (Incineroar)', 'Incineroar'],
+    ['Buddy (Ace) (Incineroar) (M)', 'Incineroar'],
+    ['Buddy (Ace) (Floette (Eternal Flower)) (F)', 'Floette (Eternal Flower)']
+  ]) eq(parseShowdownPaste(input + '\n- Protect')[0].name, expected, input);
+});
+
 console.log('\n' + '='.repeat(60));
 console.log(`T9j.11 Results: ${pass} pass, ${fail} fail`);
 if (fail > 0) process.exit(1);
