@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 documentation checkpoint: the [v172 release review](docs/release/V172_RELEASE_GATE_REVIEW_2026-10-05.md)
+  now includes status inventory and diagrams for deployment, security approval
+  and reversible Docker recovery. Docker startup is verified repaired; local
+  Supabase/Auth testing and production deployment are not complete. The live
+  artifact comparison still records v142 versus local v172 (IMP-0058).
+
 - October 5 release/security follow-up: v172 pushed as b998541. Independent
   release review found no additional CSS/version defect and reproduced bundle
   and asset checks. Authorized live metadata readback now works, but does not

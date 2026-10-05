@@ -3,6 +3,88 @@
 Date: October 5, 2026. Candidate: b9985416ce66a31133c809693e1f26b2e45eab78.
 Build: v2.2.172-mobile-results. Engine: 1.1.14.
 
+## At A Glance
+
+This is a dated evidence record, not a replacement roadmap. [STATUS.md](../../STATUS.md)
+owns current proof state; [ROADMAP.md](../../ROADMAP.md) owns milestone direction.
+Changes are recorded in [IMPROVEMENT_LOG.md](../IMPROVEMENT_LOG.md), IMP-0056
+through IMP-0058. Work ships through [PR 195](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/195).
+
+| Checkpoint | October 5 evidence | Still needed |
+| --- | --- | --- |
+| Local v172 mobile fix | Five focused assertions; full local gate passed | Full final-candidate player journey |
+| Independent review | CSS/version delta, bundle reproduction and asset checks | Final exact-revision release disposition |
+| GitHub candidate | Code b998541; later checkpoint and documentation commits | Required checks on final merge revision |
+| Production comparison | HTTP check: live/main v142, local v172; four newer assets absent | Approved deploy, artifact comparison and browser checks |
+| Docker repair | Engine 29.6.2 responding; Desktop running; backups preserved | Local Supabase stack and security tests |
+| Shared-write containment | 60 isolated fixture writes denied; live gate not met | Staging validation, exact production approval and readback |
+| Private saves | Required live schema absent | Scope/schema review and two-user Auth isolation proof |
+| Dependencies | Production npm set: zero advisories; full tree: 15 | Review development/CI exposure and tested remediation |
+
+## Release Flow
+
+```mermaid
+flowchart TD
+  L[Local candidate v172] --> T[Regression tests and independent review]
+  T --> P[Candidate branch and PR 195]
+  P --> C[Required CI on exact revision]
+  C --> G{All applicable release gates met?}
+  G -->|No - current state| H[Hold merge and resolve blockers]
+  H --> T
+  G -->|Yes| M[Approved merge to main]
+  M --> D[GitHub Pages build and runtime config injection]
+  D --> A[HTTP artifact and asset checkpoint]
+  A --> B[Desktop and mobile user journey plus replay export checks]
+  B --> V{Checks pass?}
+  V -->|No| R[Investigate or use reviewed rollback]
+  V -->|Yes| S[Verified production URL ready for stated scope]
+  S --> F[Sync Alfredo and verify alignment]
+```
+
+Production target: [TheYfactora12 public simulator](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/poke-sim/pokemon-champion-2026.html).
+Run `node poke-sim/tools/check-production-alignment.cjs` from the tested checkout.
+The JSON result checks build identity, repository provenance, deployed HTML and
+declared asset hashes/sizes. It accounts for Pages configuration injection.
+It does not certify database security, service-worker cache behavior or game
+accuracy. Retain the result with the reviewed SHA and Pages run URL. See the
+[release checklist](PUBLIC_PRACTICE_RELEASE_CHECKLIST_2026-10-05.md).
+
+## Security Boundaries
+
+```mermaid
+flowchart LR
+  F[Isolated PostgreSQL fixtures - passed] --> S[Local Supabase staging - pending]
+  S --> T[Anonymous and two-user Auth tests]
+  T --> R[Independent review of exact migration]
+  R --> A[Human approval for exact production operation]
+  A --> P[Production migration]
+  P --> V[Read-only effective-permission readback]
+  V --> G[Security gate evidence]
+  D[Existing live metadata readback - gate not met] --> R
+```
+
+No arrow represents a completed production operation. Local tests must never
+target the main database. No paid cloud resources were created. Synthetic
+role fixtures are not two real Auth sessions. Sensitive policy details and
+secrets do not belong in this public document.
+
+## Docker Recovery
+
+```mermaid
+flowchart TD
+  E[Startup fails on inaccessible runtime socket] --> I[Inspect logs and exact runtime paths]
+  I --> Q[Normal stop fails; stop confirmed Docker processes]
+  Q --> B[Rename runtime-only directories to preserved backups]
+  B --> N[Restart with both socket paths clear]
+  N --> V[Verify Docker info and Desktop running status]
+  V --> S[Startup blocker resolved; Supabase tests still pending]
+```
+
+This is a record of the observed repair, not a general instruction to rename
+arbitrary Docker folders. Inspect exact paths and contents, stop Docker first,
+and preserve backups. Do not factory-reset, delete volumes or unregister WSL.
+Backup names and the verification evidence are recorded below.
+
 ## Verified Candidate Scope
 
 - Mobile chart and audit grid intrinsic-width fix: five focused assertions pass.
