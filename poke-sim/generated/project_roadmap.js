@@ -6,7 +6,7 @@
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "Align the reviewed local candidate and production first (GitHub #103): fix missing Strategy actor attribution (#209), finish exact-revision hosted and desktop/mobile checks, deploy through review, then verify served assets and user flows before syncing Alfredo. The explicit local-save-only scope is documented in docs/release/LOCAL_SAVE_RELEASE_SCOPE_2026-10-05.md; database confidentiality and existing backend exposure remain open, and reconnection requires separate security approval. Preserve saved teams, historical audits and unverified regulation labels. Then resume the doubles simulation queue in docs/release/SIMULATION_PRIORITY_2026-10-05.md and database work. Log each finding, fix revision, test scope, deployment evidence and remaining limitation. Close tickets only when their acceptance evidence is complete; pushed or locally passing does not mean deployed.",
+  "next_action": "Production v176 is deployed: Pages run 37371824754 succeeded and HTTP artifact alignment passed. Live homepage includes the retro opening and Strategy shows corrected move attribution. Finish cache-transition, saved-team export, mobile edit and paired live replay checks for a limited local-save practice beta; do not relabel as verified competitive simulation. Track remaining alignment in #103 and structured Strategy identity evidence in #209. Database security and regulation approval remain open; reconnect only after separate review. Verify primary release before synchronizing Alfredo. See docs/release/BETA_READINESS_2026-10-05.md for scope and remaining gates.",
   "milestones": [
     {
       "id": "simulation-truth",
@@ -120,7 +120,7 @@
         "database-evidence"
       ],
       "completed_locally": [
-        "Candidate changes through 08451b7 are pushed to PR #195 and hosted CI passed, including bundle freshness and battle audit. Generated metadata and pre-upload checks bind the required move pool and intro sprites to exact bytes; LF checkout regression coverage passes. This is not deployment: live readback remains v142. Runtime v161 identity fixes retain their separate scoped evidence."
+        "PR #195 merged as 90bff31 with explicit user approval of recorded pending gates. Pages run 37371824754 succeeded; October 5 HTTP artifact/provenance checks matched local and deployed v176 with zero errors. Live browser confirms local-roster mode, retro opening markup, news controls and corrected Strategy attribution. This is bounded deployment evidence, not complete user-flow or competitive accuracy approval."
       ],
       "remaining": [
         "Reconcile incoming commits and both repository queues through reviewed PRs; do not force-copy or close issues from test counts alone.",

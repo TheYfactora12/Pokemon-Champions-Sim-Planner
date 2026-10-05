@@ -1,0 +1,40 @@
+# Beta Readiness
+
+## Decision
+
+Keep Preview until the remaining core journeys below pass. Target a limited
+local-save practice beta, not a verified competitive simulator. A beta may have
+known limitations, but must disclose them and preserve users' teams and evidence.
+No universal or 99% accuracy claim is supported.
+
+## Shipped Evidence
+
+- PR195 merged as 90bff31; Pages run 37371824754 completed successfully.
+- October 5, 20:51:17 UTC: production artifact checks matched local v176,
+  with zero errors. Includes the required external asset checks.
+- Live browser DOM confirms v176/local roster, retro opening and animation
+  pause control, news navigation and corrected Strategy move-evidence wording.
+  DOM inspection does not establish smooth animation or complete visual QA.
+- Local full gate: 192 fast files and 12 offline DB files passed; live DB
+  verification remains separate. No new interactive battles in this review.
+
+## Before The Beta Label
+
+- [ ] Prove old-cache upgrade preserves saved teams and replay history.
+- [ ] Export a team, verify downloaded content and test import round trip.
+- [ ] Complete mobile edit/save/reload without clipping or data loss.
+- [ ] Run a deployed practice battle and pair downloaded events with visible log.
+- [ ] Publish clear experimental/local-only limits, feedback route and rollback reference.
+- [ ] Disposition remaining included-feature findings; do not infer legality or accuracy from deployment.
+
+Official M-C approval, expanded mechanics parity, stable-ID coaching and live
+database confidentiality remain separate open work. Do not advertise cloud saves
+in this release. Alfredo is not a verified failover until independently checked.
+
+## Traceability
+
+Release tracking: TheYfactora12/Pokemon-Champions-Sim-Planner#103.
+Strategy follow-up: TheYfactora12/Pokemon-Champions-Sim-Planner#209.
+The last successful earlier Pages revision was 45c9e282b1a288609ced4d136d7461509d899256;
+review its connected configuration before rollback, rather than silently restoring
+database access. The safer incident response may be a reviewed corrective release.

@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 deployed baseline: PR195 merged as 90bff31, Pages run37371824754
+  succeeded, and HTTP artifact alignment passed for v176. Live browser confirms
+  homepage opening markup/news controls and corrected Strategy attribution.
+  Roadmap catch-up is a separate documentation candidate, not yet deployed.
+  [Beta readiness](docs/release/BETA_READINESS_2026-10-05.md): limited practice
+  beta is the target; keep Preview until remaining core journeys pass.
+
 - October 5 standing release policy added to AGENTS.md: promptly publish tested,
   reviewed fixes through existing gates; verify primary production before closure;
   record blockers explicitly and sync Alfredo only after primary verification.
