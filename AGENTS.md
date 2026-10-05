@@ -216,6 +216,29 @@ For every material fix or hardening change, add or update a stable entry in `doc
 
 ## Documentation Authority
 
+### Prompt Release Of Verified Fixes
+
+Standing user direction (October 5, 2026): do not accumulate completed fixes
+only locally. After applicable tests and independent review pass, promptly push
+the exact reviewed revision through the existing PR, CI and deployment gates
+to TheYfactora12/Pokemon-Champions-Sim-Planner main and its primary Pages site.
+Local test success alone does not authorize bypassing a gate or merging unrelated
+unreviewed changes. Keep fixes small and separately traceable where practical.
+
+Verify deployed build/artifact identity, affected assets and user flows on the
+primary site before declaring the fix shipped or closing a deployment-dependent
+ticket. Preserve user saves and record rollback to the last verified release.
+If blocked, record the exact gate, evidence, pending revision and next action in
+STATUS.md and the relevant ticket; never silently leave tested work local.
+
+After initial local/main/live alignment, TheYfactora12 main and its verified
+deployment are the release baseline. Continue developing locally through review,
+not by untested live edits. Alfredo's repository/site is the intended backup:
+sync only after primary production verification, preserving divergent work.
+Backup readiness and any redirect require their own verification; synchronization
+alone does not establish failover readiness. Database, regulation and security
+approval boundaries remain unchanged. No new scheduled automation is implied.
+
 Read in this order:
 
 1. `AGENTS.md` for operating policy.

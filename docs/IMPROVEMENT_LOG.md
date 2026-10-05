@@ -1,5 +1,15 @@
 # Improvement Log
 
+## IMP-0065: Prompt Release And Primary/Backup Ownership
+
+October 5, 2026. User requested that tested fixes stop accumulating locally.
+AGENTS.md now requires prompt reviewed publication, live artifact and affected-flow
+verification before closure, and explicit blocker records when deployment cannot
+proceed. TheYfactora12 is primary; Alfredo is a separately verified backup after
+primary release, not a competing development baseline. Existing approval gates
+and saved data remain protected. Documentation-only consistency/whitespace review;
+no deployment, failover test or new automation performed.
+
 ## IMP-0064: Strategy Move-Evidence Attribution (#209)
 
 October 5, 2026, v176 candidate. The producer returned `pokemon` while the

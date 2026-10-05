@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 standing release policy added to AGENTS.md: promptly publish tested,
+  reviewed fixes through existing gates; verify primary production before closure;
+  record blockers explicitly and sync Alfredo only after primary verification.
+  This policy update does not itself deploy v176 or establish backup readiness.
+
 - October 5 v176 / #209: Strategy move-evidence dashboard now consumes the
   detector's `pokemon` field, withholds unnamed rows and stops inventing zero
   execution counts from absent winning-log mentions. Regression reproduced the
