@@ -1,5 +1,22 @@
 # Improvement Log
 
+## IMP-0067: Preserve Parenthetical Forms In Paste Imports (#212)
+
+October 5, v178 candidate. Catalog round-trip test reproduced a species identity
+loss: Floette (Eternal Flower) became Eternal Flower. Parser now removes the
+outer gender suffix first and preserves exact known form names before interpreting
+nickname parentheses. A backward balanced-group scan preserves nested form text
+and parenthetical nicknames; independent review caught the first regex repair
+misparsing Buddy (Ace) (Incineroar), now covered by regression.
+Focused suite passes 37 tests, including 408 member round trips under SPs and
+legacy EVs labels plus seven nickname/gender cases. Browser preview preserved
+Buddy (Floette (Eternal Flower)) (F) as Floette (Eternal Flower); draft cancelled,
+no save or battle. No regulation promotion or cross-tool EV-conversion claim.
+
+Lesson: text export/import must preserve species identity, not only numeric
+spread totals. Retain known-form and nickname regressions together. Full suite,
+independent review and hosted proof are recorded on #212/PR210 before closure.
+
 ## IMP-0066: Mobile Editor Intrinsic Sizing (#211)
 
 October 5, v177 candidate e49c232. Live v176 selected-editor content exceeded
