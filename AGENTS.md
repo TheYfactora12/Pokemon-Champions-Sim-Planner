@@ -239,6 +239,29 @@ Backup readiness and any redirect require their own verification; synchronizatio
 alone does not establish failover readiness. Database, regulation and security
 approval boundaries remain unchanged. No new scheduled automation is implied.
 
+### Release Scope And Evidence Reuse
+
+- Prefer one independently reviewable fix per release. For an accumulated
+  candidate, inventory dependencies and review it as a coordinated release;
+  do not cherry-pick coupled assets, generated data or engine changes blindly.
+- Freeze the candidate while its checks run. Only release-blocking repairs may
+  change it; batch documentation updates instead of repeatedly restarting CI.
+- Match tests to changed behavior and dependencies. Reuse earlier evidence only
+  with its tested revision, unchanged-input justification and original limits.
+  Documentation-only changes need consistency checks, not new battle batches.
+- Required hosted checks still apply to the final revision. Never turn pending,
+  skipped, unavailable or stale evidence into a passing gate. A full local suite
+  does not substitute for required hosted checks or deployed behavior.
+- Record each gate as passed, failed, pending or not applicable, with evidence,
+  owner and next action. Not applicable needs a reviewed scope rationale; it
+  cannot be used to waive a defect in an included feature.
+- Diagnose queued jobs separately from failing tests and waiting environment
+  approvals. Do not pay for capacity, change runners, weaken protections or
+  repeatedly rerun jobs without evidence that doing so addresses the cause.
+- After deployment, compare the exact artifact plus external assets, test the
+  affected journeys, and record the previous verified revision for rollback.
+  Reopen the ticket if live verification fails; preserve saves and audit history.
+
 Read in this order:
 
 1. `AGENTS.md` for operating policy.
