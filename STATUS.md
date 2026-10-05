@@ -6,6 +6,15 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 isolated Supabase: local Auth, REST, gateway and PostgreSQL now
+  run without a production link. Basic two-user private-team HTTP tests pass.
+  Existing SQL isolation diagnostics exposed a reference-visibility bug;
+  an additive local-only migration now passes the reproduced case and expanded
+  owner/public/invalid-reference controls. Twelve offline DB files pass.
+  Independent static patch review found no new predicate bypass; hidden-detail
+  confidentiality and trusted-writer authorization still need proof;
+  this does not authorize a production migration or close the security gate.
+
 - October 5 audit index: [release traceability](docs/release/RELEASE_TRACEABILITY_2026-10-05.md)
   maps recent fixes to immutable commits, scoped evidence and open gates, with
   a required record contract for subsequent changes. Older unmapped history

@@ -19,6 +19,32 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0059: Real Local Supabase Isolation Tests
+
+October 5: started a disposable local Supabase stack with CLI 2.119.0, using
+repository baseline and selected Team Lab migrations, not production data.
+Two real synthetic Auth users demonstrated owner save/read, cross-user read
+and update denial, and anonymous private-team read denial over HTTP. A shared
+evidence insert was denied with permission error 42501; readback found no
+browser mutation grants across the six containment tables.
+
+The existing SQL diagnostic failed before a new additive reference-visibility
+migration and passed afterward. Expanded rollback-only tests cover public
+positive controls, participant ordering, owner/nonowner access, and empty,
+null-element and missing-reference jobs. Twelve offline DB files and four
+security-reporting tests pass. Independent boundary investigation completed;
+independent patch review found no new bypass in the changed predicates. Added
+and passed authenticated owner-positive/nonowner-negative run/job tests after
+the review requested them. The pre-existing job-owner exception still depends
+on trusted-writer authorization and needs separate proof. Detailed evidence is
+retained in the local security artifact collection, not the public repository.
+
+Lesson: green mocked policies do not establish row-security behavior. Exercise
+the actual SQL engine and Auth/REST boundary, and require positive authorization
+for referenced records. Scope remains limited: hidden-detail raw evidence,
+additional mutations/surfaces and actual production verification are open.
+Synthetic HTTP fixtures remain only in the disposable local environment.
+
 ### IMP-0058: Production Artifact Alignment Checkpoint
 
 October 5: added an explicit read-only HTTP checkpoint to prevent conflating
