@@ -22,7 +22,19 @@ T('1. results header and grid collapse on narrow windows', () => {
   inc(css, '.results-header{flex-direction:column;align-items:flex-start}');
   inc(css, '.results-grid{display:grid;grid-template-columns:1fr;gap:var(--sp3)}');
   inc(css, '.win-circle-wrap{width:100%;display:flex;justify-content:center}');
-  inc(css, '.charts-row{display:grid;grid-template-columns:1fr;gap:var(--sp3)}');
+  inc(css, '.charts-row{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp3)}');
+});
+
+T('chart intrinsic width cannot stretch the mobile grid', () => {
+  inc(css, '.chart-card{min-width:0}');
+  inc(css, '.chart-card canvas{max-width:100%;height:auto}');
+});
+
+T('audit columns and cards can shrink below their content width', () => {
+  const compact = css.replace(/\s+/g, '');
+  inc(compact, '.audit-grid{display:grid;grid-template-columns:minmax(0,1fr)minmax(0,1fr);');
+  inc(compact, '.audit-card{min-width:0;');
+  inc(compact, '.audit-grid{grid-template-columns:minmax(0,1fr);}');
 });
 
 T('2. stats cards reflow into compact columns', () => {

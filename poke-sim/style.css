@@ -273,7 +273,9 @@ table{border-collapse:collapse;width:100%}
   .stat-card{min-width:0;padding:10px 8px}
   .stat-card .stat-value{font-size:clamp(16px,4vw,24px);line-height:1.05;word-break:break-word}
   .stat-card .stat-label{font-size:10px;line-height:1.2}
-  .charts-row{display:grid;grid-template-columns:1fr;gap:var(--sp3)}
+  .charts-row{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp3)}
+  .chart-card{min-width:0}
+  .chart-card canvas{max-width:100%;height:auto}
 }
 @media(max-width:420px){
   .stats-grid{grid-template-columns:1fr}
@@ -2632,11 +2634,12 @@ table{border-collapse:collapse;width:100%}
 }
 .audit-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 12px;
   margin-top: 10px;
 }
 .audit-card {
+  min-width: 0;
   border: 1px solid #1f2937;
   border-radius: 6px;
   background: #111827;
@@ -2707,7 +2710,7 @@ table{border-collapse:collapse;width:100%}
   }
   .cs-detector-head { display: none; }
   .audit-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

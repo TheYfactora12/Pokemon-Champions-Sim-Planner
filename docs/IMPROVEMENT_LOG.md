@@ -19,6 +19,25 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0056: Mobile Results Intrinsic-Width Guard
+
+October 5 local v172. Populated Simulator results previously stretched a 385px
+document to 412px. Chart canvas intrinsic width and audit grid minimum sizing
+were the observed causes. Use minmax(0,1fr) tracks, min-width:0 cards and
+max-width:100% chart canvases with automatic height. Earlier browser checks of
+this candidate measured 385/385 portrait and 839/839 landscape document widths.
+These are bounded viewport checks, not a complete mobile journey.
+
+The first full gate failed because t174 required the old literal 1fr chart
+track. Updated that assertion and added canvas/card/audit shrink guards; all
+five focused assertions pass. The full gate rerun passed: 190 fast test files
+and 12 offline DB files, with four manual/helper files skipped. Offline DB tests
+do not establish live database security. git diff --check passed.
+Lesson: keep source-contract tests aligned with intentional layout fixes, and
+pair them with populated browser measurements rather than treating CSS text
+matching alone as visual proof. Reference: MDN CSS minmax() sizing documentation.
+Production deployment and hosted verification remain pending.
+
 ### IMP-0055: True Starting-State Evidence
 
 October 5 local v171 / engine 1.1.14. IMP-0054's Turn 0 finding was confirmed:

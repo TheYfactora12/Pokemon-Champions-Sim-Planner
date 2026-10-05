@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.171-starting-state",
+  "build_id": "v2.2.172-mobile-results",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "e963da9dc85c6a12ab5af66df5883de7ebdc96ed42b1b222663db70b0f950448",
-  "bundle_bytes": 11493537,
+  "bundle_sha256": "938c48fde8d3ac874f1fc57353622018b1408946910fa00e67f25dc38efac376",
+  "bundle_bytes": 11493672,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/champions_move_pools.js": {

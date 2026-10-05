@@ -6,6 +6,16 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 v172 / engine 1.1.14: mobile results intrinsic-width overflow fixed;
+  chart canvases and audit cards shrink within zero-minimum grid tracks. Five
+  focused layout assertions and the full 190-file fast / 12-file offline DB
+  gate pass (four manual/helper skips). Prior populated-browser measurements
+  are 385/385 portrait and 839/839 landscape document widths. IMP-0056 records
+  the obsolete CSS expectation and its corrected regression guards. The final
+  replay download pairing, complete edit journey and production gates remain.
+  Hosted v171 commit 2f34e15 checks passed; Supabase Preview was skipped.
+  Those results do not yet cover v172 or prove live database isolation.
+
 - October 5 v171 / engine 1.1.14: first turn now preserves a separate entry
   snapshot before Mega Evolution and actions; prior pre-action semantics remain
   unchanged. Legacy replays explicitly disclose missing starting evidence.
