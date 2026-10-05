@@ -37,6 +37,44 @@ function json(teams) {
   return JSON.stringify({ version: 1, teams });
 }
 
+test('Champions stat guard rejects coercible values and misspelled stats', () => {
+  const ctx = harness();
+  for (const evs of [{ hp: true }, { hp: false }, { hp: [] }, { hp: [32] },
+    { hp: {} }, { hp: '' }, { hp: ' ' }, { speed: 32 }]) {
+    assert(ctx.validateChampionsSpread(evs).length > 0, JSON.stringify(evs));
+    const result = ctx.importFromJsonText(json({ bad: {
+      name: 'Invalid stat input', format: 'champions', members: [{ ...member(), evs }]
+    } }));
+    assert.equal(result.added, 0, JSON.stringify({ evs, result }));
+  }
+  assert.equal(ctx.persistedImports.length, 0, 'Rejected stats must not persist');
+  for (const evs of [{}, { hp: 0 }, { hp: 32, atk: 32, spe: 2 }, { hp: '32' }]) {
+    assert.equal(ctx.validateChampionsSpread(evs).length, 0, JSON.stringify(evs));
+  }
+});
+
+test('accepted numeric-string SPs construct the same battle stats without changing registration', () => {
+  const ctx = harness();
+  const numeric = { ...member(), name: 'Blastoise', ability: 'Torrent', evs: { hp: 32, spa: 32, spe: 2 } };
+  const strings = { ...numeric, evs: { hp: '32', spa: '32', spe: '2' } };
+  const result = ctx.importFromJsonText(json({ strings: { name: 'String stats', format: 'champions', members: [strings] } }));
+  assert.equal(result.added, 1, JSON.stringify(result));
+  ctx.statFixture = ctx.TEAMS[result.keys[0]].members[0];
+  ctx.numericFixture = numeric;
+  const before = JSON.stringify(ctx.statFixture);
+  const comparison = vm.runInContext(`(() => {
+    const a = new Pokemon(statFixture, 'balanced', 'champions');
+    const b = new Pokemon(numericFixture, 'balanced', 'champions');
+    return { a: ['baseAtk','baseDef','baseSpa','baseSpd','baseSpe'].map(k => a[k]), b: ['baseAtk','baseDef','baseSpa','baseSpd','baseSpe'].map(k => b[k]), hpA: a.maxHp, hpB: b.maxHp, evs: a.evs };
+  })()`, ctx);
+  assert.equal(JSON.stringify(comparison.a), JSON.stringify(comparison.b));
+  assert.equal(comparison.hpA, comparison.hpB);
+  assert.equal(comparison.hpA, 186);
+  assert(comparison.a.every(Number.isFinite));
+  assert.equal(comparison.evs.hp, 32);
+  assert.equal(JSON.stringify(ctx.statFixture), before);
+});
+
 test('JSON shared-move imports retain explicit SV and Champions context', () => {
   const ctx = harness();
   for (const format of ['sv', 'champions']) {

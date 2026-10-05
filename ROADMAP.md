@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Follow docs/release/PUBLIC_PRACTICE_RELEASE_CHECKLIST_2026-10-05.md: resolve selected-team and pre-Mega ability consistency, verify real replay downloads against visible events, correct small-sample Pilot Notes, validate imported/preloaded set guards, and test the desktop/mobile journey. Protected staging, shared-write containment, private-save ownership and unresolved mechanics reviews remain release gates, not deferred approval. Keep M-C review separate from an experimental practice release. Preserve historical audits and current news automation. Candidate v166 is not deployed; release only after exact-revision review, hosted CI and post-deployment evidence.
+Prioritize the doubles simulator: audit preset/import stat and legality guards, broaden reference-backed complete-game comparisons, pair actual replay downloads with visible events, and verify results/coaching identity. Login/private-save feature work is deferred; database confidentiality findings remain open release gates, not waived approval. Selected-team/pre-Mega snapshots, bounded Pilot Notes and mobile-results fixes have local evidence in STATUS.md. Recheck full desktop/mobile journeys and exact production artifact parity before release. Preserve historical teams and audits; do not label reference acceptance as official M-C approval. See docs/release/SIMULATION_PRIORITY_2026-10-05.md for the ordered queue. No production deployment is implied by a passing local test.
 
 ## Milestone Index
 

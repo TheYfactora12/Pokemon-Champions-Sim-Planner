@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.172-mobile-results';
+      return txt || 'v2.2.173-stat-input-guard';
     } catch (e) {
-      return 'v2.2.172-mobile-results';
+      return 'v2.2.173-stat-input-guard';
     }
   }
 

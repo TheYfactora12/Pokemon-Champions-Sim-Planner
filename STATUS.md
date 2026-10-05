@@ -6,6 +6,18 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 simulation-first candidate v173 / engine 1.1.15: reject malformed
+  coercible SP values and unknown stat keys; normalize runtime numeric-string
+  spreads without mutating registration. Independent review reproduced the
+  HP concatenation bug and identified remaining paste-parser/direct-call gaps.
+  Final project gate: 191 fast files and 12 offline DB files pass (four manual/
+  helper skips); scoped battle audit, roadmap generation and asset checks pass.
+  Independent review: 204 member equivalences, 68 numeric/string battle pairs
+  and 272 before/after compatibility pairs. Earlier gate attempts caught stale
+  release-version surfaces, now aligned and rebuilt. Browser/hosted proof open.
+  [Ordered queue](docs/release/SIMULATION_PRIORITY_2026-10-05.md).
+  Login feature work deferred, security gates still open; not deployed.
+
 - October 5 follow-up verification: local real Auth/REST tests confirm that
   evidence confidentiality still fails its intended boundary. Public controls
   and browser write denial pass, but trusted-writer authorization remains

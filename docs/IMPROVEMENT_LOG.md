@@ -811,6 +811,28 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - Documentation-only change: checked patch consistency; no new battle, live-service, accuracy or deployment proof claimed.
 - Lesson: useful disagreement and independently grounded acceptance criteria matter more than larger passing test counts. Existing production approval boundaries remain intact.
 
+<a id="imp-0061"></a>
+## IMP-0061: Stat Input Types Must Match Runtime Arithmetic
+
+- October 5, local v173 / engine 1.1.15: shared SP validation accepted coercible
+  nonnumeric shapes and unknown stat keys. Numeric strings passed validation
+  but concatenated in battle arithmetic; Blastoise HP reproduced as `"793275"`
+  instead of 186.
+- Reject coercible shapes/unknown keys; copy stat values into numeric runtime
+  fields, preserving saved registration. Regression tests cover JSON rejection
+  without persistence and numeric/string imported stat equivalence.
+- Independent battle review verified unchanged guard verdicts for 204 bundled
+  members and found additional paste parsing gaps, retained as open work in
+  [simulation priorities](release/SIMULATION_PRIORITY_2026-10-05.md).
+- Lesson: validating a number-like value is not enough; test its actual runtime
+  arithmetic and avoid mutating the registered evidence.
+- No deployment, official legality promotion or universal accuracy claim.
+- Final local gate: 191 fast files and 12 offline DB files pass, four manual/
+  helper skips. Scoped battle audit and roadmap/asset checks pass. Earlier gate
+  failures exposed stale version surfaces; aligned them and rebuilt before the
+  successful final run. Independent evidence: 204 member equivalences, 68
+  numeric/string games and 272 before/after compatibility pairs.
+
 ## Entry Template
 
 ```text

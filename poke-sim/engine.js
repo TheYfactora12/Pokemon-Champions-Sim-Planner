@@ -133,9 +133,17 @@ function validateChampionsSpread(evs, label = 'Pokemon') {
   }
   const spread = evs || {};
   const statKeys = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'];
+  for (const stat of Object.keys(spread)) {
+    if (!statKeys.includes(stat)) errors.push(`${label}: unknown Champion SP stat ${stat}`);
+  }
   let total = 0;
   for (const stat of statKeys) {
     const raw = spread[stat] == null ? 0 : spread[stat];
+    if ((typeof raw !== 'number' && typeof raw !== 'string') ||
+        (typeof raw === 'string' && raw.trim() === '')) {
+      errors.push(`${label}: ${stat} SP must be a numeric value`);
+      continue;
+    }
     const val = Number(raw);
     if (!Number.isFinite(val)) {
       errors.push(`${label}: ${stat} SP is not a number (got ${raw})`);
@@ -2034,7 +2042,10 @@ class Pokemon {
     this.item = data.item;
     this.ability = data.ability;
     this.nature = data.nature;
-    this.evs = data.evs || { hp:0,atk:0,def:0,spa:0,spd:0,spe:0 };
+    // Validated imports may contain numeric strings; never concatenate SPs
+    // into stats or mutate the registered spread while constructing a battle.
+    this.evs = Object.fromEntries(['hp','atk','def','spa','spd','spe'].map(stat =>
+      [stat, Number(data.evs && data.evs[stat] != null ? data.evs[stat] : 0)]));
     this.moves = [...data.moves];
     this.movePP = {};
     for (const move of this.moves) {
@@ -7481,7 +7492,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.14'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.15'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
