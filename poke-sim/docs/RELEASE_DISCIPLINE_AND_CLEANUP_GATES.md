@@ -1,5 +1,10 @@
 # Release Discipline and Cleanup Gates
 
+> September 23 policy update: the owner authorized automatic publication of tested
+> news-only generated artifacts. Earlier review-PR-only news guidance below is
+> superseded by [the scoped news contract](../../docs/release/NEWS_AUTOPUBLISH_2026-09-23.md).
+> Simulator, regulation, database and other release approval requirements remain.
+
 This project should not keep adding surface area until the active slice is clean, proven, documented, and understandable.
 
 Use `99% closed` for work that is practically complete but still has normal residual risk, such as needing more live artifacts, more devices, more samples, or future source checks. Use `100% closed` only when the claim is fully source-backed, tested, deployed, and no known residual blocker remains.

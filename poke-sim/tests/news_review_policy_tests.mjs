@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { validateNewsPrs, validateNewsPaths } from '../tools/news-review-policy.mjs';
 const repo = 'TheYfactora12/Pokemon-Champions-Sim-Planner';
 const pr = { head: { ref: 'automation/home-news-123', sha: 'a'.repeat(40), repo: { full_name: repo } }, user: { login: 'github-actions[bot]' }, base: { ref: 'main' } };
@@ -12,3 +13,21 @@ assert.throws(() => validateNewsPrs([{ ...pr, base: { ref: 'development' } }], r
 validateNewsPaths(['poke-sim/generated/news_feed.js', 'poke-sim/pokemon-champion-2026.html', 'poke-sim/generated/release_artifact.json']);
 for (const file of ['poke-sim/engine.js', 'poke-sim/package.json', 'poke-sim/tools/sync-news-feed.mjs', '.github/workflows/ci.yml', 'poke-sim/generated/news_feed.js\nother']) assert.throws(() => validateNewsPaths([file]), /boundary/);
 console.log('News review policy: 14 executable PR identity and file-boundary scenarios passed.');
+const workflow = fs.readFileSync(new URL('../../.github/workflows/news-feed-sync.yml', import.meta.url), 'utf8');
+for (const line of workflow.split('\n').filter(l => l.includes('gh api'))) {
+  assert.ok(!(line.includes('--slurp') && /--jq|--template/.test(line)), 'gh api cannot combine slurp with output filtering');
+}
+assert.match(workflow, /git diff --name-only -z HEAD \| node poke-sim\/tools\/news-review-policy.mjs --paths/);
+assert.match(workflow, /git diff --name-only -z HEAD\^ HEAD \| node poke-sim\/tools\/news-review-policy.mjs --paths/);
+assert.match(workflow, /git push origin HEAD:refs\/heads\/main/);
+assert.doesNotMatch(workflow, /--force|--admin|continue-on-error|pull_request_target/);
+assert.match(workflow, /npm run test:fast/);
+assert.ok(workflow.indexOf('npm run test:fast') < workflow.indexOf('git push origin'));
+assert.match(workflow, /gh workflow run pages.yml --ref main/);
+assert.match(workflow, /persist-credentials: false/);
+assert.match(workflow, /github.ref == 'refs\/heads\/main'/);
+assert.doesNotMatch(workflow, /secrets\./);
+assert.ok(workflow.indexOf('Clear previous source-health receipt') < workflow.indexOf('actions/setup-node'));
+assert.ok(workflow.indexOf('Retain source health') < workflow.indexOf('git restore --source=HEAD'));
+assert.ok(workflow.indexOf('git restore --source=HEAD') < workflow.indexOf('git diff --name-only -z HEAD |'));
+console.log('News workflow: tested three-file publishing with guarded main push and explicit Pages dispatch.');

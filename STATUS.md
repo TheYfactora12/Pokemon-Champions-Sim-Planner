@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 reconciliation: merged main at a5c2224 into the v165 candidate,
+  preserving main's news-only auto-publish workflow and current feed. Rebuilt
+  the bundle instead of choosing conflicting generated metadata. This resolves
+  branch conflicts, not the documented mechanics/security release gates; no
+  production deployment is authorized by a green local gate alone.
+
 - October 5 gate recheck: battle audit, 187-file fast gate, 4,624 cross-format
   invariant runs and six bounded Showdown probes pass locally. M-B/M-C remain
   source-review blocked; reference catalog normalization and hosted replay
@@ -195,6 +201,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 - [Regulation M-C source review](poke-sim/reports/reg_m_c_readiness_2026-09-07.md): exact official UTC dates, six named Mega additions, the 24-Pokemon statement and Rillaboom example are captured from the official notice. M-C is visible but noncompetitive and blocked pending the complete in-game roster, rules, legality fixtures, mechanic deltas and reviewed reference format. Five named forms use base-form sprite placeholders because exact upstream assets returned 404.
 - [Eerie Spell and Spite PP-drain validation](poke-sim/reports/pp_drain_validation_2026-09-03.md): four focused boundary groups and all 19 pinned Showdown reference contracts pass, including exact post-turn PP parity for a doubles probe. Protect, Substitute, missing move history and zero-PP failure behavior are covered. Broader PP-changing moves, Pressure interactions and complete-game parity remain open.
 - [September 3 regulation/database diagnosis](docs/release/REGULATION_AND_DB_DIAGNOSIS_2026-09-03.md): M-B coverage now expires at the retained exact UTC boundary and requires an unknown successor rather than inventing one. Live Supabase returned 36 legacy teams and 204 members, but all rows lack current version identity, so the UI reports `[DB review needed]` and keeps the bundled roster authoritative.
+- September 23 news-only repair: owner approved tested news autopublishing on
+  the existing six-hour schedule. See [scope, tests and source outages](docs/release/NEWS_AUTOPUBLISH_2026-09-23.md).
+  This does not approve or include the separate M-C simulator candidate.
+
+- Historical main-branch note (superseded by candidate status above): `audit/project-open-items-2026-07-05`; dirty worktree preserved. Cached `origin/main` comparison after PR #193: 9 commits ahead, 4 behind.
+- Historical candidate: `v2.2.141-tailwind-stage-proof`; engine `1.1.4`. Final local bundle: 11,460,764 bytes, SHA-256 `30de68bb9212981ba340d31a60768439e77e952f28818075db7c31a3e782053b`. No deployment is claimed.
+- Full project gate after final Tailwind/Growl/Leer release corrections: 153 fast files and 12 offline/mock DB files passed. Battle audit: 44 deterministic files, three golden traces and 4,500 completed headless battles, zero execution errors. M9 retains eight local passes and three administrative checks not verified. Live DB permissions were not exercised.
 - [Tailwind/Growl/Leer validation](poke-sim/reports/tailwind_growl_leer_validation_2026-09-01.md): 25 focused checks and all five declared pinned probes agree in bounded synthetic doubles scope. Two independent adversarial review passes closed live priority, reflection, accuracy/Substitute and selected ability/item boundary mismatches. Coverage remains partial; complete games, browser parity, broader interactions and official Champions proof remain open.
 - [Seismic Toss validation](poke-sim/reports/seismic_toss_validation_2026-08-30.md): 20 focused groups pass, including ten pinned side-swapped doubles probes for ordinary damage, Ghost, Protect, Unseen Fist and Parental Bond. Independent reviewer confirmed 18 additional probes and closed its scoped finding. Coverage remains partial. Local v140 header/roadmap loaded without captured console errors; no browser battle or production save was performed.
 - [Player trust and journey audit](docs/release/PLAYER_TRUST_AND_JOURNEY_AUDIT_2026-08-30.md): inspected all 11 public sections and bounded desktop/mobile journeys; 4,500 headless battles completed without execution errors, but three pinned mechanics disagreements remain. Local replay guard rejects absent/malformed observations, clears stale review actions/status and preserves original HTML provenance. Local browser positive/negative checks passed. Public Strategy counts/coaching, roster trust labels, stale source/roadmap text and navigation friction remain open. Zero browser simulation batches or paired exported games were produced in this audit.

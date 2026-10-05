@@ -93,12 +93,15 @@ test('AUD-1903 residual-only damage cannot earn speed-control conversion praise 
   }
 });
 
-test('AUD-1905 news PR discovery does not combine incompatible gh output flags', () => {
+test('AUD-1905 tested news publishing replaces obsolete PR discovery safely', () => {
   const workflow = readFileSync(new URL('../../.github/workflows/news-feed-sync.yml', import.meta.url), 'utf8');
-  const command = workflow.split('\n').find(line => line.includes('candidates=$(gh api'));
-  assert(command);
-  assert(!command.includes('--jq'));
-  assert(command.includes('| jq '));
+  assert(!workflow.includes('candidates=$(gh api'));
+  assert(workflow.includes('ref: main'));
+  assert(workflow.includes('npm run test:fast'));
+  assert(workflow.includes('news-review-policy.mjs --paths'));
+  assert(workflow.includes('git push origin HEAD:refs/heads/main'));
+  assert(!/git push[^\n]*(?:--force|\s-f\b)/.test(workflow));
+  assert(workflow.includes('gh workflow run pages.yml --ref main'));
 });
 
 test('AUD-1903 setup and protection cannot earn credit from later poison ticks', () => {

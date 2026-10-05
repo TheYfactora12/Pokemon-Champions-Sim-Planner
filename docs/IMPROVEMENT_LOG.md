@@ -19,6 +19,18 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0049: Reconcile Candidate With Current Main
+
+October 5: resolved four merge conflicts against main a5c2224. Preserved main's
+tested-news-only publishing workflow and latest feed; retained both branches'
+audit records and marked superseded main candidate notes as historical.
+Regenerated the HTML and release metadata with the canonical builder.
+No mechanics, regulation approval, DB permissions or release gates were changed.
+Local full-gate receipt: poke-sim/artifacts/alignment-2026-10-05.log.
+Hosted review and deployment remain distinct steps, not implied by conflict
+resolution. Lesson: retain operational fixes from main and regenerate derived
+artifacts; never select a stale release hash to resolve a merge.
+
 ### IMP-0047: Package And Reconcile Before Deployment
 
 October 1: package IMP-0045/0046 as v164, preserving the same engine and distinct
@@ -373,6 +385,16 @@ Observed: five focused suites pass while fresh reference, replay-identity and ca
 ### IMP-0014: OODA Strategy Identity And Advice
 
 Observed: nature edits and separately registered identical teams reused the wrong Strategy report, while two heuristics invented mistakes. Root cause: incomplete cache identity and advice without action evidence. Changed: canonical full-input Strategy/Mega keys and disabled unsupported Fake Out/redirection predicates. Three regression groups failed before and pass after; all 69 focused Strategy checks pass. See [OODA evidence](release/OODA_STRATEGY_FIX_2026-09-08.md). Lesson: reproduce player-visible correctness separately from existing green suites. Local v146 candidate only; confidence, mechanics, persisted UI and live verification remain open.
+### IMP-0041: Repair Scheduled News And Permit Tested News-Only Publishing
+
+September 23: traced repeated failures to incompatible GitHub CLI flags before
+source retrieval. Owner explicitly approved automatic publication of tested news
+only. The replacement uses trusted main, a three-generated-file boundary,
+non-forced publication and the existing Pages gate. Year-only relevance matches
+are removed. YouTube outages remain visible, never reported as fresh coverage.
+[Repair contract and evidence](release/NEWS_AUTOPUBLISH_2026-09-23.md).
+Lesson: a fix on an unmerged simulator branch does not repair scheduled main;
+ship independently scoped operational repairs and verify their hosted runs.
 
 | Record | Improvement | Recorded proof state |
 |---|---|---|
