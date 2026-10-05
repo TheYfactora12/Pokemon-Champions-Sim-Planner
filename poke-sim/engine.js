@@ -2067,7 +2067,11 @@ class Pokemon {
       this.name        = _megaInfo.baseSpecies;     // engine reads base stats
       // Legacy active-Mega sets need a base fallback; an explicit base ability
       // belongs to the registered set and must survive initialization.
-      if (!this.ability || this.ability === _megaInfo.ability) {
+      const _abilityApi = typeof ChampionsSim !== 'undefined' && ChampionsSim.moveLegality;
+      const _baseAbilityCheck = _abilityApi && typeof _abilityApi.isAbilityLegalForSpecies === 'function'
+        ? _abilityApi.isAbilityLegalForSpecies(_megaInfo.baseSpecies, this.ability) : null;
+      const _registeredBaseAbility = _baseAbilityCheck && _baseAbilityCheck.legal === true;
+      if (!this.ability || (this.ability === _megaInfo.ability && !_registeredBaseAbility)) {
         this.ability = (typeof CHAMPIONS_BASE_ABILITIES !== 'undefined'
                        && CHAMPIONS_BASE_ABILITIES[_megaInfo.baseSpecies])
                        || this.ability;
@@ -7460,7 +7464,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.11'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.12'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

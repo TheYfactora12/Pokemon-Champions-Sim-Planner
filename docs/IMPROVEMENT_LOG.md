@@ -19,6 +19,33 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0053: Shared Base Abilities And Pilot Guide Evidence
+
+October 5, local v168 / engine 1.1.12 candidate. Extends IMP-0052 without
+rewriting its historical limits. The expanded registration test failed on
+Audino Healer before the fix. Constructor now checks the existing species
+ability lookup before replacing an ability shared with the Mega form. Ten
+cases pass, including Healer, Infiltrator, Protean, Iron Fist and Berserk,
+previous alternate selections and legacy Mega-only inputs. Independent
+read-only review found no additional mechanics source blocker; it verified
+fallback probes and flagged the stale bundle, which was regenerated.
+
+The separate Pilot Guide still inferred threats from fainted opponent names
+and prescribed strategy from win rate. Four revised regression assertions
+failed before correction; all 32 analytics checks now pass. Removed those
+inferences, replaced Favorable/Avoid with observed series wins, distinguished
+retained versus recorded lead counts and escaped dynamic observation text.
+Separate Mega/threat-response renderers are unchanged and not newly certified.
+
+Full project gate passed: 189 fast files and 12 offline DB files, zero failures;
+four manual/helper files skipped and live administrative DB checks unverified.
+Battle audit passed its declared scope including 4,500 games. Root-entry browser
+smoke showed v2.2.168-pilot-evidence. This is not a paired replay/export test,
+competitive accuracy percentage, live DB proof or production deployment.
+Lesson: ability-name equality does not establish form exclusivity; frequency
+and fainted names do not establish a causal coaching recommendation.
+Next: complete export pairing and mobile journey, then remaining release gates.
+
 ### IMP-0052: Registered Ability, Startup Selection And Inline Evidence
 
 October 5 v167 / engine 1.1.11 candidate. A failing Altaria Cloud Nine fixture

@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.167-registration-evidence
+// Build marker: v2.2.168-pilot-evidence
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.167-registration-evidence'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.168-pilot-evidence'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13377,11 +13377,8 @@ function generatePilotGuide(oppKey, results, simCtx) {
   const totalGames = csResultGameCount(results);
   const winPct = Math.round(results.winRate * 100);
 
-  let verdict, verdictClass;
-  if (winPct >= 65) { verdict = 'Favorable'; verdictClass = 'verdict-favorable'; }
-  else if (winPct >= 45) { verdict = 'Even'; verdictClass = 'verdict-even'; }
-  else if (winPct >= 30) { verdict = 'Risky'; verdictClass = 'verdict-risky'; }
-  else { verdict = 'Avoid'; verdictClass = 'verdict-avoid'; }
+  const verdict = 'Observed series wins';
+  const verdictClass = 'verdict-even';
 
   const wcEntries = Object.entries(results.winConditions || {}).sort((a,b) => b[1]-a[1]).slice(0,2);
   const maxWC = wcEntries.length ? wcEntries[0][1] : 1;
@@ -13397,35 +13394,14 @@ function generatePilotGuide(oppKey, results, simCtx) {
   const leadPairs = csTopCountEntries(results.playerWinLeadCounts, 2).map(e => e[0]);
   const leads = leadPairs.length ? leadPairs : csTopCountEntries(leadCounts, 2).map(e => e[0]);
 
-  const lossSeries = allLogs.filter(g => g.result === 'loss');
-  const riskCounts = {};
-  for (const game of lossSeries) {
-    const kos = (game.log || []).filter(l => l.includes('fainted'));
-    for (const ko of kos) {
-      for (const m of (TEAMS[oppKey] ? TEAMS[oppKey].members : [])) {
-        if (ko.includes(m.name)) {
-          riskCounts[m.name] = (riskCounts[m.name] || 0) + 1;
-        }
-      }
-    }
-  }
-  const riskThreshold = Math.max(1, lossSeries.length * 0.4);
-  const risks = Object.entries(riskCounts)
-    .filter(([,cnt]) => cnt >= riskThreshold)
-    .sort((a,b) => b[1]-a[1])
-    .slice(0,3)
-    .map(e => e[0]);
-
   const tips = [];
   tips.push(`${total} Bo${simCtx.bo || currentBo} series produced ${totalGames} actual games; win/loss uses all series, while replay examples are retained samples.`);
+  tips.push('These are simulation observations, not a prediction of competitive matchup strength. Lead frequency does not prove the best lead or explain why a game was won.');
   if (results.adaptiveBringEnabled) tips.push(`Bo adaptation was active: game 2/3 lineups could change after the previous game result.`);
-  if (leads.length) tips.push(`Use ${leads[0]} as the first winning lead reference.`);
+  if (leads.length) tips.push(`Most frequent lead in ${leadPairs.length ? 'recorded' : 'retained'} wins: ${leads[0]}.`);
   const bestWinningLineup = csTopCountEntries(results.playerWinBringCounts, 1)[0];
   if (bestWinningLineup) tips.push(`Most common winning lineup: ${bestWinningLineup[0]}.`);
   if (wcEntries.length) tips.push(`${wcEntries[0][0]} was the top win condition in ${csWinConditionPct(results, wcEntries[0][1])}% of player game wins.`);
-  if (risks.length) tips.push(`Watch for ${risks[0]} — it appeared in over 40% of your losses.`);
-  else if (winPct > 55) tips.push('Your team has a consistent edge — focus on denying their setup turns.');
-  if (winPct < 45) tips.push('Open with Fake Out + speed control to disrupt their gameplan.');
   const policyOutputAudit = (typeof auditPolicyOutput === 'function') ? auditPolicyOutput(tips) : { fakeGoodCount: 0, flagged: [] };
   const staticAdviceWarningHtml = (typeof renderStaticAdviceWarning === 'function')
     ? renderStaticAdviceWarning(policyOutputAudit, 'pilot') : '';
@@ -13476,18 +13452,16 @@ function generatePilotGuide(oppKey, results, simCtx) {
       </div>
       <div class="pilot-details">
         ${preCoach ? `<details class="cs-pre-coach"><summary>PRE coaching</summary><pre>${_escapeHtml(preCoach)}</pre></details>` : ''}
-        ${leads.length ? `<div class="pilot-leads"><span class="pilot-section-label">WINNING LEAD EVIDENCE</span> ${leads.join(' · ')}</div>` : ''}
+        ${leads.length ? `<div class="pilot-leads"><span class="pilot-section-label">WINNING LEAD EVIDENCE</span> ${_escapeHtml(leads.join(' · '))}</div>` : ''}
         <div class="pilot-section-label">WIN CONDITIONS</div>
         ${wcEntries.map(([cond,cnt]) => `
           <div class="pilot-wc-row">
-            <span>${cond}</span>
+            <span>${_escapeHtml(cond)}</span>
             <div class="pilot-wc-bar-wrap"><div class="pilot-wc-bar" style="width:${Math.round(cnt/maxWC*100)}%"></div></div>
             <span style="font-size:10px;color:var(--primary);font-family:var(--font-mono)">${csWinConditionPct(results, cnt)}%</span>
           </div>`).join('')}
-        ${risks.length ? `<div class="pilot-section-label" style="margin-top:8px">RISKS</div>
-          ${risks.map(r => `<div class="pilot-risk">⚠ Watch out for: <strong>${r}</strong></div>`).join('')}` : ''}
         <div class="pilot-section-label" style="margin-top:8px">TIPS</div>
-        <div class="pilot-tips">${tips.map(t => `<div class="pilot-tip">• ${t}</div>`).join('')}</div>
+        <div class="pilot-tips">${tips.map(t => `<div class="pilot-tip">• ${_escapeHtml(t)}</div>`).join('')}</div>
         ${megaTriggerHtml}
         ${threatResponseHtml}
       </div>

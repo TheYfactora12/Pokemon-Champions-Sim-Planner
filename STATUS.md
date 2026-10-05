@@ -6,6 +6,15 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 v168 / engine 1.1.12: shared base/Mega abilities now preserve a
+  confirmed base-form selection. Separate Pilot Guide no longer derives
+  matchup verdicts, threats or generic strategy from win rate/fainted names.
+  Ten ability cases and 32 analytics checks pass; independent mechanics review
+  found no additional source blocker. Rebuilt root entry visibly loads v168.
+  Battle audit passed its declared scope (4,500 games); universal parity remains
+  unproved. Export pairing, mobile journey, live security, regulation review,
+  hosted checks and production verification remain open. See IMP-0053.
+
 - October 5 v167 candidate: selected base abilities distinct from their Mega
   ability survive construction; startup resolves duplicate matchup selections
   before rendering; inline Pilot Notes report observations instead of matchup
