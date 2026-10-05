@@ -838,7 +838,7 @@ function _teraBlastUsesPhysical(attacker) {
   return _boostedAttackSideStat(attacker, 'atk') > _boostedAttackSideStat(attacker, 'spa');
 }
 
-function _resolveDynamicMoveType(attacker, move, field, baseMoveType) {
+function _resolveBaseDynamicMoveType(attacker, move, field, baseMoveType) {
   var moveType = baseMoveType || _moveType(move);
   var _fieldWeather = _effectiveFieldWeather(field);
   if (move === 'Weather Ball') {
@@ -861,6 +861,25 @@ function _resolveDynamicMoveType(attacker, move, field, baseMoveType) {
     moveType = attacker.tera;
   }
   return moveType;
+}
+
+// Execution gates and damage previews must use the same converted type.
+function _resolveMoveModifiers(attacker, move, field, baseMoveType) {
+  var result = callAbilityHook(attacker, 'onModifyMove', { move: move, attacker: attacker, field: field });
+  return {
+    type: _resolveBaseDynamicMoveType(attacker, move, field, (result && result.typeOverride) || baseMoveType),
+    bpMult: (result && result.bpMult) || 1
+  };
+}
+
+function _resolveDynamicMoveType(attacker, move, field, baseMoveType) {
+  return _resolveMoveModifiers(attacker, move, field, baseMoveType).type;
+}
+
+function _canConvertNormalMove(ctx) {
+  // Pinned Showdown type-changing ability exclusions; these moves own their type.
+  return !_isActiveTeraBlastContext(ctx) &&
+    !['Judgment', 'Multi-Attack', 'Natural Gift', 'Revelation Dance', 'Techno Blast', 'Terrain Pulse', 'Weather Ball'].includes(ctx.move);
 }
 
 function _isActiveTeraBlastContext(ctx) {
@@ -1430,7 +1449,7 @@ function _recordMoveFailureEvent(field, mon, move, reason, details) {
 var ABILITIES = {
   'Aerilate': {
     onModifyMove: function(ctx) {
-      if (_isActiveTeraBlastContext(ctx)) return null;
+      if (!_canConvertNormalMove(ctx)) return null;
       var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Flying', bpMult: 1.20 };
       return null;
@@ -1448,7 +1467,7 @@ var ABILITIES = {
     // Cite: https://www.serebii.net/pokemonchampions/newabilities.shtml
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Champions
     onModifyMove: function(ctx) {
-      if (_isActiveTeraBlastContext(ctx)) return null;
+      if (!_canConvertNormalMove(ctx)) return null;
       var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Dragon', bpMult: 1.20 };
       return null;
@@ -1456,7 +1475,7 @@ var ABILITIES = {
   },
   'Pixilate': {
     onModifyMove: function(ctx) {
-      if (_isActiveTeraBlastContext(ctx)) return null;
+      if (!_canConvertNormalMove(ctx)) return null;
       var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Fairy', bpMult: 1.20 };
       return null;
@@ -1483,7 +1502,7 @@ var ABILITIES = {
   },
   'Refrigerate': {
     onModifyMove: function(ctx) {
-      if (_isActiveTeraBlastContext(ctx)) return null;
+      if (!_canConvertNormalMove(ctx)) return null;
       var baseType = _moveType(ctx.move);
       if (baseType === 'Normal') return { typeOverride: 'Ice', bpMult: 1.20 };
       return null;
@@ -2373,14 +2392,9 @@ class Pokemon {
     // Showdown's Seismic Toss damage:'level' bypasses the damage formula, not immunity.
     const fixedLevelDamage = move === 'Seismic Toss';
     // --- T9j.8 (Refs #30) Dragonize onModifyMove: Normal -> Dragon + 20% BP ---
-    let _typeOverride = null;
-    let _bpMult = 1;
-    const _modRes = callAbilityHook(this, 'onModifyMove', { move: move, attacker: this, field: field });
-    if (_modRes) {
-      if (_modRes.typeOverride) _typeOverride = _modRes.typeOverride;
-      if (_modRes.bpMult) _bpMult = _modRes.bpMult;
-    }
-    let moveType = _resolveDynamicMoveType(this, move, field, _typeOverride || _moveType(move));
+    const _modRes = _resolveMoveModifiers(this, move, field);
+    const _bpMult = _modRes.bpMult;
+    let moveType = _modRes.type;
 
     // --- T9j.9 (Refs #3) Physical/Special classifier ---
     // Data-driven: MOVE_CATEGORY from data.js is the canonical source of truth.
@@ -7464,7 +7478,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.12'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.13'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

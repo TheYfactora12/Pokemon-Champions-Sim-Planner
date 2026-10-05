@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.168-pilot-evidence
+// Build marker: v2.2.170-effective-move-type
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.168-pilot-evidence'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.170-effective-move-type'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -2710,6 +2710,23 @@ async function csSaveTextToQaDropFolder(filename, mime, text) {
   await writable.close();
   return true;
 }
+function csDownloadNotice(tag, message) {
+  var previous = document.getElementById('download-ready-link');
+  if (previous && previous.parentNode) previous.parentNode.removeChild(previous);
+  var notice = document.createElement(tag);
+  notice.id = 'download-ready-link';
+  notice.className = 'btn-secondary';
+  notice.style.display = 'inline-flex';
+  notice.style.marginTop = '8px';
+  notice.style.maxWidth = '100%';
+  notice.style.overflowWrap = 'anywhere';
+  notice.style.textDecoration = 'none';
+  notice.textContent = message;
+  var host = document.querySelector('.tab-panel.active') || document.body;
+  host.appendChild(notice);
+  return notice;
+}
+
 function _downloadBlob(filename, mime, text) {
   try {
     if (CS_LAST_DOWNLOAD_URL && typeof URL !== 'undefined' && typeof URL.revokeObjectURL === 'function') {
@@ -2722,21 +2739,9 @@ function _downloadBlob(filename, mime, text) {
     var a = document.createElement('a');
     a.href = url; a.download = filename; document.body.appendChild(a); a.click();
     setTimeout(function(){ try { document.body.removeChild(a); } catch (_e) {} }, 100);
-    var wrap = document.getElementById('progress-wrap') || document.body;
-    var fallback = document.getElementById('download-ready-link');
-    if (!fallback) {
-      fallback = document.createElement('a');
-      fallback.id = 'download-ready-link';
-      fallback.className = 'btn-secondary';
-      fallback.style.display = 'inline-flex';
-      fallback.style.marginTop = '8px';
-      fallback.style.width = 'fit-content';
-      fallback.style.textDecoration = 'none';
-      wrap.appendChild(fallback);
-    }
+    var fallback = csDownloadNotice('a', 'Download ready: ' + filename);
     fallback.href = url;
     fallback.download = filename;
-    fallback.textContent = 'Download ready: ' + filename;
   } catch (e) { UILog.warn('Download failed', e); alert('Could not download file: ' + e.message); }
 }
 
@@ -2746,18 +2751,7 @@ async function _saveQaArtifactBlob(filename, mime, text, opts) {
     try {
       var saved = await csSaveTextToQaDropFolder(filename, mime, text);
       if (saved) {
-        var fallback = document.getElementById('download-ready-link');
-        if (!fallback) {
-          var wrap = document.getElementById('progress-wrap') || document.body;
-          fallback = document.createElement('span');
-          fallback.id = 'download-ready-link';
-          fallback.className = 'btn-secondary';
-          fallback.style.display = 'inline-flex';
-          fallback.style.marginTop = '8px';
-          fallback.style.width = 'fit-content';
-          wrap.appendChild(fallback);
-        }
-        fallback.textContent = 'Saved to QA drop folder: ' + filename;
+        csDownloadNotice('span', 'Saved to QA drop folder: ' + filename);
         return 'drop-folder';
       }
     } catch (e) {

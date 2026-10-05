@@ -6,6 +6,14 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 v170 / engine 1.1.13 candidate: browser testing exposed converted
+  Normal moves incorrectly blocked by Ghost immunity. Shared type resolution
+  fixes that boundary; independent pinned-Showdown review accepted its scope.
+  Download fallback is visible in Replay Log and an actual v169 file was
+  ingested. Audit schema handling now reads its execution provenance correctly.
+  Turn 0's post-Mega labeling remains a confirmed open finding. Full evidence
+  and limits: `docs/release/REPLAY_EXECUTION_FINDINGS_2026-10-05.md` (IMP-0054).
+
 - October 5 v168 / engine 1.1.12: shared base/Mega abilities now preserve a
   confirmed base-form selection. Separate Pilot Guide no longer derives
   matchup verdicts, threats or generic strategy from win rate/fainted names.

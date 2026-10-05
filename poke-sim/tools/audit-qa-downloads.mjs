@@ -63,7 +63,18 @@ export function auditPayload(payload) {
     }
   }
   if (!payload.build_id || !payload.source_url) add('warning', 'export-provenance-incomplete', {});
-  const missingIdentity = cards.filter(card => !card?.engine_version || !card?.ruleset_version || !card?.regulation_id).length;
+  const identityFields = ['engine_version', 'ruleset_version', 'regulation_id'];
+  const missingIdentity = cards.filter((card, index) => {
+    const identity = single ? (card?.provenance?.schema_version === 'champions-simulation-provenance-v1' ? card.provenance : null) : card;
+    if (single && identity) {
+      for (const field of identityFields) {
+        if (card[field] != null && card[field] !== identity[field]) {
+          add('error', 'conflicting-execution-provenance', { index, field });
+        }
+      }
+    }
+    return identityFields.some(field => typeof identity?.[field] !== 'string' || !identity[field].trim());
+  }).length;
   if (missingIdentity) add('warning', 'per-replay-execution-provenance-incomplete', { count: missingIdentity });
   if (!single) {
     // Top-level totals include targeted sweeps; compare like-for-like retained scope.

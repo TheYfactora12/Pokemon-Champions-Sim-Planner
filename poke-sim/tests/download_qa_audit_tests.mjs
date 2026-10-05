@@ -56,3 +56,19 @@ test('Downloads lookup only selects matching direct files by modification time',
     assert.equal(latestDownload(directory), recent);
   } finally { fs.rmSync(directory, { recursive: true, force: true }); }
 });
+
+test('single replay identity uses its versioned provenance envelope, never export identity', () => {
+  const payload = {schema_version:'champions-turn-log-v2',turnLog:[],
+    provenance:{schema_version:'champions-simulation-provenance-v1',engine_version:'1.1.12',ruleset_version:'practice-v1',regulation_id:'practice'}};
+  const missing = value => auditPayload(value).findings.some(row => row.code === 'per-replay-execution-provenance-incomplete');
+  assert.equal(missing(payload), false);
+  for (const field of ['engine_version','ruleset_version','regulation_id']) {
+    const copy = structuredClone(payload); delete copy.provenance[field];
+    assert.equal(missing(copy), true, field);
+  }
+  assert.equal(missing({...payload, provenance:{...payload.provenance, schema_version:'unknown'}}), true);
+  const conflict = auditPayload({...payload,engine_version:'different'});
+  assert.ok(conflict.findings.some(row => row.code === 'conflicting-execution-provenance'));
+  assert.equal(missing({schema_version:'champions-qa-artifact-v1',retained:{replay_cards:[payload]}}),true,
+    'batch cards must retain their own schema contract');
+});

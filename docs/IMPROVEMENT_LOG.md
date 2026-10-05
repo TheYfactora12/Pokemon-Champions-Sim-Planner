@@ -19,6 +19,24 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0054: Visible Downloads And Converted-Type Execution
+
+October 5 local v169/v170. Browser operation found a hidden download fallback
+and a real Pixilate execution failure despite passing damage-preview tests.
+Fix active-tab fallback placement, folder/browser element transitions, shared
+effective move type resolution and the audit tool's single-replay provenance
+schema. Each change has a failing-before/passing-after regression. Fourteen
+conversion cases now cover both sides and once-only power/event evidence;
+independent mechanics review accepted the bounded type/immunity fix.
+The actual v169 download was ingested and five turns manually compared for
+move order and damage, not a complete board/comparator proof. v170's 190-file
+fast gate, 12 offline DB files and battle audit passed; the full project gate
+passed again after the final test/audit edits. No live approval follows.
+See [detailed findings](release/REPLAY_EXECUTION_FINDINGS_2026-10-05.md).
+Lesson: test execution, not only damage previews; check actual files despite
+tool timeouts; an auditor must respect each artifact's versioned schema.
+Next: true starting-state evidence, final paired/mobile journey and release gates.
+
 ### IMP-0053: Shared Base Abilities And Pilot Guide Evidence
 
 October 5, local v168 / engine 1.1.12 candidate. Extends IMP-0052 without
