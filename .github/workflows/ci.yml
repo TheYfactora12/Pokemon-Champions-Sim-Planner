@@ -50,6 +50,7 @@ jobs:
             poke-sim/storage_adapter.js
             poke-sim/supabase_adapter.js
             poke-sim/move_legality.js
+            poke-sim/generated/champions_move_pools.js
             poke-sim/move_support.js
             poke-sim/replay_coach.js
             poke-sim/replay_learning.js
@@ -162,6 +163,7 @@ jobs:
               - 'poke-sim/regmb_source_conversion.js'
               - 'poke-sim/battle_audit_manifest.json'
               - 'poke-sim/tools/run-battle-audit.mjs'
+              - 'poke-sim/tools/generate-champions-move-pools.mjs'
               - 'poke-sim/tests/**'
               - 'poke-sim/package.json'
               - 'poke-sim/package-lock.json'

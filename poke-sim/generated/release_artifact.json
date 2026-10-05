@@ -1,10 +1,28 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.142-pp-replay-proof",
+  "build_id": "v2.2.176-strategy-attribution",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "bfc537eb1e642c234dc634f44ee025d733d396d0f4102d60eba5f8210bea80d2",
-  "bundle_bytes": 11470750,
-  "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
+  "bundle_sha256": "fd3385c6f53793819f02821bfca7f75935b9fa80bf4732c8658a5d05b5f2eb5e",
+  "bundle_bytes": 11495732,
+  "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
+  "external_assets": {
+    "generated/champions_move_pools.js": {
+      "sha256": "21099bad04135f23de2d8b23203628c98004faf4a7d1da179ba808ccef2087f9",
+      "bytes": 1113482
+    },
+    "generated/mc_review_reference.js": {
+      "sha256": "fba0dbf7a01f95a57727923a948afb575b36ef7bb2a883600d2702596dad2905",
+      "bytes": 432221
+    },
+    "assets/retro-intro/gengar.png": {
+      "sha256": "b2cdfb0910d892e8ad877af876040d190c76a7ae5ce492be0116a8838ec9f369",
+      "bytes": 232
+    },
+    "assets/retro-intro/nidorino.png": {
+      "sha256": "1d279c06304bcaf08048b39b9bc4cc8e0e7e53ddc11ec9dff083b706e994a100",
+      "bytes": 540
+    }
+  }
 }

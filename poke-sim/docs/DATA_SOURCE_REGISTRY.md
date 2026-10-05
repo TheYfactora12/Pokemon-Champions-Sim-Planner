@@ -22,7 +22,11 @@ Product scope rule: this project is Pokemon Champions only. Non-Champion legacy 
 
 As checked August 30, 2026, the official Ranked Battle M-B window is June 17, 2026 at 02:00 UTC through September 9, 2026 at 01:59 UTC. The August 5 notice extended the originally announced September 2 end date. Source: [official Regulation Set M-B notice](https://champions-news.pokemon-home.com/en/page/776.html). Event-specific competition regulations must be verified separately; ranked eligibility alone does not establish a tournament's rules.
 
-Runtime drift remains open: `../rulesets.js` still records the original September 2 date. Correcting this documentation does not approve M-B data or change its source-review status. See [the player review](../reports/competitive_player_review_2026-08-30.md).
+Runtime date drift corrected in the M-B sign-off audit candidate: `../rulesets.js`
+now records September 9 at 01:59 UTC. Boundary regressions pass; this does not
+approve M-B legality. The official roster capture now supplies 235 unique
+species/form IDs and exposes visual-ledger discrepancies. See
+[the sign-off audit](../../docs/release/REG_MB_SIGNOFF_AUDIT.md).
 
 Do not casually call Reg M-A the live ladder unless a current source confirms it. The simulator now treats Reg M-B as the active source-review lane while keeping Reg M-A as the implemented historical runtime lane until source-backed legality and mechanic deltas are promoted.
 

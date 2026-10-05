@@ -92,6 +92,20 @@ VALUES
    'security-test', 'doubles', 'test', 'test', ARRAY['10000000-0000-4000-8000-000000000003'::uuid],
    ARRAY['10000000-0000-4000-8000-000000000001'::uuid], 1);
 
+-- Positive public control and reversed private-participant regression.
+INSERT INTO public.team_lab_sim_runs
+  (id, team_a_id, team_b_id, regulation_id, format, engine_version, ruleset_version, seed, result_reason)
+VALUES
+  ('30000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000003', 'security-test', 'doubles', 'test', 'test', 'test', 'draw'),
+  ('30000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000003', 'security-test', 'doubles', 'test', 'test', 'test', 'draw');
+INSERT INTO public.team_lab_sim_jobs
+  (id, job_type, regulation_id, format, engine_version, ruleset_version, team_ids, opponent_team_ids, games_per_matchup)
+VALUES
+  ('30000000-0000-4000-8000-000000000005', 'team_vs_team', 'security-test', 'doubles', 'test', 'test', '{}', '{}', 1),
+  ('30000000-0000-4000-8000-000000000006', 'team_vs_team', 'security-test', 'doubles', 'test', 'test', ARRAY[NULL::uuid], '{}', 1),
+  ('30000000-0000-4000-8000-000000000007', 'team_vs_team', 'security-test', 'doubles', 'test', 'test', ARRAY['99999999-0000-4000-8000-000000000001'::uuid], '{}', 1),
+  ('30000000-0000-4000-8000-000000000008', 'team_vs_team', 'security-test', 'doubles', 'test', 'test', ARRAY['10000000-0000-4000-8000-000000000003'::uuid], '{}', 1);
+
 SET LOCAL ROLE anon;
 SELECT set_config('request.jwt.claim.sub', '', true), set_config('request.jwt.claims', '{"role":"anon"}', true);
 DO $$
@@ -104,8 +118,37 @@ BEGIN
     THEN RAISE EXCEPTION 'Anonymous mixed public/private replay disclosure'; END IF;
   IF EXISTS (SELECT 1 FROM public.team_lab_sim_jobs WHERE id = '30000000-0000-4000-8000-000000000002')
     THEN RAISE EXCEPTION 'Anonymous mixed public/private job disclosure'; END IF;
+  IF EXISTS (SELECT 1 FROM public.team_lab_sim_runs WHERE id = '30000000-0000-4000-8000-000000000004')
+    THEN RAISE EXCEPTION 'Reversed private run disclosure'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.team_lab_sim_runs WHERE id = '30000000-0000-4000-8000-000000000003')
+    THEN RAISE EXCEPTION 'Public run positive control failed'; END IF;
+  IF EXISTS (SELECT 1 FROM public.team_lab_sim_jobs WHERE id IN (
+    '30000000-0000-4000-8000-000000000005', '30000000-0000-4000-8000-000000000006', '30000000-0000-4000-8000-000000000007'))
+    THEN RAISE EXCEPTION 'Empty, null or dangling job disclosed'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.team_lab_sim_jobs WHERE id = '30000000-0000-4000-8000-000000000008')
+    THEN RAISE EXCEPTION 'Public job positive control failed'; END IF;
 END $$;
 
+RESET ROLE;
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claim.sub', '20000000-0000-4000-8000-000000000001', true),
+       set_config('request.jwt.claims', '{"sub":"20000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM public.team_lab_sim_runs WHERE id = '30000000-0000-4000-8000-000000000001')
+    THEN RAISE EXCEPTION 'Private participant owner lost run access'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.team_lab_sim_jobs WHERE id = '30000000-0000-4000-8000-000000000002')
+    THEN RAISE EXCEPTION 'Job owner lost access'; END IF;
+END $$;
+SELECT set_config('request.jwt.claim.sub', '20000000-0000-4000-8000-000000000002', true),
+       set_config('request.jwt.claims', '{"sub":"20000000-0000-4000-8000-000000000002","role":"authenticated"}', true);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.team_lab_sim_runs WHERE id = '30000000-0000-4000-8000-000000000001')
+    THEN RAISE EXCEPTION 'Other authenticated user sees private run'; END IF;
+  IF EXISTS (SELECT 1 FROM public.team_lab_sim_jobs WHERE id = '30000000-0000-4000-8000-000000000002')
+    THEN RAISE EXCEPTION 'Other authenticated user sees private job'; END IF;
+END $$;
 RESET ROLE;
 ROLLBACK;
 \echo 'SQL isolation subset passed and fixture writes rolled back. Real Auth/HTTP, delete, hidden-details and additional surfaces still require testing.'

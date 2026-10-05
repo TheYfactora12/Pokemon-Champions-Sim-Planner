@@ -103,13 +103,9 @@ T('4. bundle and cache drift workflows treat legality/ruleset files as app sourc
 
 T('5. Pages deploy runs Champion source-of-truth checks before publishing', () => {
   [
-    'db_m2_seed_tests.js',
-    'RUN_LIVE_DB=1',
-    'SUPABASE_ANON_KEY',
-    'SUPABASE_KEY',
-    'Live Supabase seed parity enabled for Pages deploy.',
+    "data_mode !== 'local-only'",
     // pages_asset_inventory_tests checks all four former individual suites remain discovered.
-    'npm run test:fast',
+    'npm test',
     'check-bundle.sh'
   ].forEach((token) => inc(pagesWorkflow, token, 'Pages deploy missing ' + token));
 });

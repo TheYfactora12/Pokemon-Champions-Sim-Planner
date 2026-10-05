@@ -33,10 +33,10 @@ T('2. strategy grids collapse to one column', () => {
 
 T('3. audit and replay surfaces keep a horizontal escape hatch', () => {
   inc(css, '.audit-meta-row{flex-direction:column;align-items:flex-start;gap:2px}');
-  inc(css, '.audit-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:520px}');
+  inc(css, '.audit-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:0;max-width:100%}');
   inc(css, '.replay-v2-tools{grid-template-columns:1fr}');
   inc(css, '.replay-hp-bars{grid-template-columns:1fr}');
-  inc(css, '.source-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:520px}');
+  inc(css, '.source-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:0;max-width:100%}');
 });
 
 T('4. team labels and bring slots stop truncating on mobile', () => {

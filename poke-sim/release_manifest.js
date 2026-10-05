@@ -5,9 +5,10 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.142-pp-replay-proof',
-    release_date: '2026-09-02',
-    service_worker_cache: 'champions-sim-v2-2-142-pp-replay-proof',
+    data_mode: 'local-only',
+    build_id: 'v2.2.176-strategy-attribution',
+    release_date: '2026-10-05',
+    service_worker_cache: 'champions-sim-v2-2-176-strategy-attribution',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

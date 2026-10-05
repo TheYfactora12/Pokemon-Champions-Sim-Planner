@@ -31,7 +31,16 @@ export function referenceProbes() {
   spread.player.members[1] = member('Charizard', 'Blaze', ['Growl']);
   spread.compareBoosts = true;
   spread.hpChange = { player: [0, 0, 0, 0], opponent: [-1, -1, 0, 0] };
-  return [protectedMoves, tailwind, trickRoom, fixed, spread];
+  const ppDrain = make('eerie-spell-spite-pp-drain', [{
+    player: [action('Eerie Spell', 0), action('Spite', 1)],
+    opponent: [action('Psychic', 0), action('Thunderbolt', 1)]
+  }]);
+  ppDrain.player.members[0] = member('Slowbro', 'Own Tempo', ['Eerie Spell']);
+  ppDrain.player.members[1] = member('Dusclops', 'Pressure', ['Spite']);
+  ppDrain.opponent.members[0] = member('Alakazam', 'Synchronize', ['Psychic']);
+  ppDrain.opponent.members[1] = member('Jolteon', 'Volt Absorb', ['Thunderbolt']);
+  ppDrain.comparePP = true;
+  return [protectedMoves, tailwind, trickRoom, fixed, spread, ppDrain];
 }
 
 export function completedGameProbes() {

@@ -865,7 +865,7 @@ function showdownAnimatedSpriteUrl(name) {
 // Suffixes we strip when falling back to the base-form dex sprite.
 // Order matters: longer / more specific variants first (Mega-X before Mega).
 const SPRITE_STRIP_SUFFIXES = [
-  '-Mega-X', '-Mega-Y', '-Mega',
+  '-Mega-X', '-Mega-Y', '-Mega-Z', '-Mega',
   '-Alola', '-Galar', '-Hisui', '-Paldea',
   '-Gmax'
 ];

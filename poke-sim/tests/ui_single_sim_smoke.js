@@ -100,6 +100,7 @@ function load(file) {
   'release_manifest.js',
   'data.js',
   'generated/pokemon_showdown_legal_data.js',
+  'generated/champions_move_pools.js',
   'generated/pokemon_showdown_species_weights.js',
   'move_legality.js',
   'runtime_data.js',
@@ -143,11 +144,11 @@ async function main() {
 
   runMechanicsSmoke(ctx.simulateBattle);
 
-  const identityRun = await ctx.runBoSeries(1, 'player', 'mega_altaria', 1);
+  const identityRun = await ctx.runBoSeries(1, 'mega_dragonite', 'mega_altaria', 1);
   if (identityRun.provenance.engine_version !== vm.runInContext('ENGINE_VERSION', ctx)) throw new Error('wrong captured engine version');
   if (!/^[a-f0-9]{64}$/.test(identityRun.provenance.player_team_digest)) throw new Error('missing execution team digest');
   if (identityRun.allLogs.some(g => g.provenance.format !== 'doubles' || g.participants.player.length !== 4)) throw new Error('UI run lost game identity');
-  const identityPayload = ctx._buildAnalysisPayload('player', 'mega_altaria', 1, identityRun);
+  const identityPayload = ctx._buildAnalysisPayload('mega_dragonite', 'mega_altaria', 1, identityRun);
   if (identityPayload.poisoning_guard === 'trusted_stats_allowed') throw new Error('practice evidence incorrectly promoted');
   if (identityRun.provenance.ruleset_id !== 'champions_custom_practice') throw new Error('explicit practice identity lost');
   const unregistered = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.player))', ctx);
@@ -238,10 +239,11 @@ async function main() {
   }
 
   ids['player-select'].value = stablePlayerKey;
-  ids['opponent-select'].value = 'mega_altaria';
+  const selectedOpponent = stablePlayerKey === 'mega_altaria' ? 'mega_dragonite' : 'mega_altaria';
+  ids['opponent-select'].value = selectedOpponent;
   ids['sim-scope'].value = 'selected';
   const selectedOpps = vm.runInContext('getRunAllOpponentKeys(getActivePlayerTeamKey(), resolveSimContext())', ctx);
-  if (!Array.isArray(selectedOpps) || selectedOpps.length !== 1 || selectedOpps[0] !== 'mega_altaria') {
+  if (!Array.isArray(selectedOpps) || selectedOpps.length !== 1 || selectedOpps[0] !== selectedOpponent) {
     throw new Error('selected matchup scope did not resolve exactly one opponent: ' + JSON.stringify(selectedOpps));
   }
   ids['matchup-tbody'].children = [];

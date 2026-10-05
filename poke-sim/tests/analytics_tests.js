@@ -125,9 +125,12 @@ vm.createContext(ctx);
 
 function load(file) {
   vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+  if (file === 'move_legality.js') ctx.window.ChampionsSim = ctx.ChampionsSim;
 }
 
-['data.js', 'logger.js', 'engine.js', 'storage_adapter.js', 'supabase_adapter.js', 'ui.js'].forEach(load);
+['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/champions_move_pools.js', 'move_legality.js', 'logger.js', 'engine.js', 'storage_adapter.js', 'supabase_adapter.js', 'ui.js'].forEach(load);
+// Isolate rendering contracts from the separately tested historical-move rejection.
+vm.runInContext("TEAMS.player.members[0].moves = ['Fake Out','Parting Shot','Protect','Flare Blitz'];", ctx);
 
 vm.runInContext([
   'this.TEAMS = TEAMS;',
@@ -224,8 +227,8 @@ T('17. generatePilotGuide renders a card for strong results', () => {
   generatePilotGuide(fixture.opponent, fixture.strongResult);
   eq(document._els['pilot-content'].children.length, 1);
 });
-T('18. generatePilotGuide labels favorable branch', () => {
-  inc(document._els['pilot-content'].children[0].innerHTML, 'Favorable');
+T('18. generatePilotGuide labels observations rather than matchup quality', () => {
+  inc(document._els['pilot-content'].children[0].innerHTML, 'Observed series wins');
 });
 T('19. generatePilotGuide uses structured leads from winning logs', () => {
   inc(document._els['pilot-content'].children[0].innerHTML, 'Incineroar + Whimsicott');
@@ -233,8 +236,8 @@ T('19. generatePilotGuide uses structured leads from winning logs', () => {
 T('20. generatePilotGuide renders win condition percentages', () => {
   inc(document._els['pilot-content'].children[0].innerHTML, 'Tailwind Win');
 });
-T('21. generatePilotGuide renders risk branch from loss logs', () => {
-  inc(document._els['pilot-content'].children[0].innerHTML, 'Watch out for');
+T('21. generatePilotGuide does not identify threats from fainted names', () => {
+  eq(/Watch out for|Watch for/.test(document._els['pilot-content'].children[0].innerHTML), false);
 });
 T('22. generatePilotGuide removes the empty placeholder', () => {
   const el = makeStubEl('pilot-content');
@@ -245,10 +248,12 @@ T('22. generatePilotGuide removes the empty placeholder', () => {
   generatePilotGuide(fixture.opponent, fixture.strongResult);
   eq(el.children.some(c => c.className === 'pilot-empty'), false);
 });
-T('23. generatePilotGuide renders weak matchup disruption tip', () => {
+T('23. generatePilotGuide does not invent a loss-based strategy', () => {
   document._els['pilot-content'] = makeStubEl('pilot-content');
   generatePilotGuide(fixture.opponent, fixture.weakResult);
-  inc(document._els['pilot-content'].children[0].innerHTML, 'Fake Out + speed control');
+  const html = document._els['pilot-content'].children[0].innerHTML;
+  inc(html, 'not a prediction of competitive matchup strength');
+  eq(/Fake Out \+ speed control|consistent edge|Use .*first winning lead/.test(html), false);
 });
 T('24. generatePilotGuide safely no-ops without pilot-content', () => {
   document._missing.add('pilot-content');
@@ -261,7 +266,8 @@ T('25. generatePilotGuide replaces an existing opponent card', () => {
   generatePilotGuide(fixture.opponent, fixture.strongResult);
   generatePilotGuide(fixture.opponent, fixture.weakResult);
   eq(el.children.length, 1);
-  inc(el.children[0].innerHTML, 'Avoid');
+  inc(el.children[0].innerHTML, Math.round(fixture.weakResult.winRate * 100) + '%');
+  eq(/Avoid/.test(el.children[0].innerHTML), false);
 });
 
 T('26. showInlinePilotCard creates container in results section', () => {
@@ -270,20 +276,22 @@ T('26. showInlinePilotCard creates container in results section', () => {
   showInlinePilotCard(fixture.opponent, fixture.strongResult);
   eq(document._els['results-section'].children.length, 1);
 });
-T('27. showInlinePilotCard renders favorable verdict branch', () => {
+T('27. showInlinePilotCard labels an observation, not matchup quality', () => {
   const card = document._els['results-section'].children[0];
-  inc(card.innerHTML, 'Favorable');
+  inc(card.innerHTML, 'Observed series wins');
 });
 T('28. showInlinePilotCard renders lead and win condition tips', () => {
   const card = document._els['results-section'].children[0];
-  inc(card.innerHTML, 'Best winning lead: Incineroar + Whimsicott');
+  inc(card.innerHTML, 'Most frequent lead in retained wins: Incineroar + Whimsicott');
   inc(card.innerHTML, 'Win condition: Tailwind Win');
 });
-T('29. showInlinePilotCard renders low-win disruption tip', () => {
+T('29. showInlinePilotCard does not infer a strategy from losses', () => {
   delete document._els['inline-pilot-card'];
   document._els['results-section'] = makeStubEl('results-section');
   showInlinePilotCard(fixture.opponent, fixture.weakResult);
-  inc(document._els['results-section'].children[0].innerHTML, 'Use speed control');
+  const html = document._els['results-section'].children[0].innerHTML;
+  inc(html, 'not a prediction of competitive matchup strength');
+  eq(/Avoid|Use speed control|&lt;strong&gt;Coach/.test(html), false);
 });
 T('30. showInlinePilotCard no-ops when results section is missing', () => {
   delete document._els['inline-pilot-card'];

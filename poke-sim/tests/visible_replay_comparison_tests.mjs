@@ -30,6 +30,14 @@ test('matching mirror species stay side-specific despite CSS capitalization', ()
   assert.equal(compareVisibleReplay(log, visual).status, 'matched_observable_fields');
 });
 test('empty evidence never passes', () => assert.equal(compareVisibleReplay({}, {}).status, 'mismatch'));
+test('initial board uses the captured entry state rather than post-Mega pre-action state', () => {
+  const {log, visual} = fixture();
+  log.turnLog[0].initial = structuredClone(log.turnLog[0].pre);
+  log.turnLog[0].pre.roster.player[0].ability = 'Changed after entry';
+  assert.equal(compareVisibleReplay(log,visual).status,'matched_observable_fields');
+  log.turnLog[0].initial.roster.player[0].ability = 'Incorrect initial';
+  assert.ok(compareVisibleReplay(log,visual).issues.some(i => i.code === 'item_ability_mismatch'));
+});
 test('wrong build and title are rejected', () => {
   rejects(p => p.visual.renderer_build_id = 'build-10', 'build_mismatch');
   rejects(p => p.visual.title = 'WIN vs New selected team', 'replay_title_mismatch');

@@ -30,6 +30,8 @@ For each affected lane:
 
 ## Capability Routing
 
+- Use `$pokemon-season-update` and `season_reviewer` for new regulations, newly eligible entities, seasonal source drift and historical-regulation compatibility.
+
 - Use the Supabase and Postgres best-practice capabilities for schema, migrations, RLS, grants, queries, Edge Functions, or live DB verification.
 - Use security scan/diff/fix capabilities for explicit security reviews and validated findings.
 - Use data-quality and validation capabilities for mirror drift, mapping, replay evidence, benchmark, or source reconciliation work.

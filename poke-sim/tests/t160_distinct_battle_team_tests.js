@@ -75,9 +75,13 @@ vm.createContext(ctx);
 
 function load(file) {
   vm.runInContext(fs.readFileSync(path.join(ROOT, file), 'utf8'), ctx, { filename: file });
+  if (file === 'move_legality.js') ctx.window.ChampionsSim = ctx.ChampionsSim;
 }
 
 load('data.js');
+load('generated/pokemon_showdown_legal_data.js');
+load('generated/champions_move_pools.js');
+load('move_legality.js');
 load('engine.js');
 load('storage_adapter.js');
 load('ui.js');
@@ -98,6 +102,8 @@ console.log('\n=== distinct battle team tests ===\n');
 
 T('1. duplicate player/opponent selection is normalized', () => {
   truthy(typeof enforceDistinctBattleTeams === 'function', 'helper should exist');
+  truthy(oppSel.value !== playerSel.value, 'startup must display distinct selections');
+  oppSel.value = playerSel.value;
   const nextOpp = enforceDistinctBattleTeams();
   truthy(nextOpp, 'expected a fallback opponent');
   truthy(oppSel.value !== playerSel.value, 'opponent should differ from player');

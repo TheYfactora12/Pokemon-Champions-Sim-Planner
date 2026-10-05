@@ -1,6 +1,6 @@
 # Engineering Agent Roster
 
-This roster gives one owner to each risk area while keeping approval independent. The three project-scoped Codex reviewers are defined under `.codex/agents/`; the other entries are working roles assigned to the main implementer, not autonomous production identities.
+This roster gives one owner to each risk area while keeping approval independent. Project-scoped Codex reviewers are defined under `.codex/agents/`; the other entries are working roles assigned to the main implementer, not autonomous production identities.
 
 | Agent role | Owns | Must prove | Cannot self-approve |
 |---|---|---|---|
@@ -34,6 +34,8 @@ This roster gives one owner to each risk area while keeping approval independent
 Agents prepare evidence and candidates. They do not turn an unverified result into production truth.
 
 ## Installed Review Agents
+
+- `season_reviewer`: read-only seasonal regulation, new-entity eligibility, source/version, imported-team and historical-result impact review; uses `$pokemon-season-update`.
 
 - `mechanics_reviewer`: read-only mechanics, identity, legality-behavior, and parity review
 - `trust_boundary_reviewer`: read-only Supabase, RLS, privacy, provenance, and source-promotion review

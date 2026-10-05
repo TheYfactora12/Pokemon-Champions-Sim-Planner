@@ -6,6 +6,7 @@ const read = file => fs.readFileSync(path.join(ROOT, file), 'utf8');
 const ci = read('.github/workflows/ci.yml');
 const pages = read('.github/workflows/pages.yml');
 const news = read('.github/workflows/news-feed-sync.yml');
+const migrate = read('.github/workflows/db-migrate.yml');
 
 let pass = 0;
 function check(name, condition) {
@@ -14,6 +15,8 @@ function check(name, condition) {
 }
 
 check('CI live writes use isolated test-project secrets', /SUPABASE_TEST_URL/.test(ci) && /SUPABASE_TEST_ANON_KEY/.test(ci));
+check('Migration input crosses shell boundary through environment only', migrate.includes('MIGRATION_FILENAME: ${{ inputs.migration }}') && migrate.includes('migration="$MIGRATION_FILENAME"') && !migrate.includes('migration="${{ inputs.migration }}"'));
+check('Migration filenames use a bounded SQL filename alphabet', migrate.includes('^[A-Za-z0-9][A-Za-z0-9_.-]*\\.sql$'));
 check('CI cleanup runs even after failure', /Clean up isolated Supabase test data[\s\S]*if: always\(\)/.test(ci));
 check('CI installs locked dependencies once per test job', (ci.match(/\bnpm ci\b/g) || []).length === 1);
 check('CI cleanup requires a completed dependency install', /if: always\(\) && steps\.dependencies\.outcome == 'success'/.test(ci));
@@ -41,3 +44,4 @@ check('DB diagnostics contain no write/maintenance commands', !/\b(?:INSERT|UPDA
 check('DB inventories report size limits and full matching counts', (diagnostics.match(/LIMIT 200/g) || []).length === 3 && (diagnostics.match(/count\(\*\) OVER \(\)/g) || []).length === 3);
 
 console.log(`workflow governance: ${pass} pass, 0 fail`);
+require('../tools/verify-migration-input.cjs');

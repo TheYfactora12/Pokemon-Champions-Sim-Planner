@@ -280,6 +280,15 @@ T('T5c-1 Replay Log v2 renders turn rows', () => {
   truthy(html.includes('replay-turn-row'), 'turn rows missing');
 });
 
+T('T5c-1initial Replay Log uses true starting state before post-Mega pre-action state', () => {
+  const snapshot = ability => ({roster:{player:[{displayName:'Altaria',species:'Altaria',status:'active',hp:100,hpLabel:'100%',ability,moves:['Hyper Voice']}],opponent:[]}});
+  const html = ctx.csRenderReplayLogTurnZero([{initial:snapshot('Cloud Nine'),pre:snapshot('Pixilate')}]);
+  truthy(html.includes('Turn 0 — Starting State'), 'new starting state heading missing');
+  truthy(html.includes('Cloud Nine'), 'registered starting ability missing');
+  truthy(!html.includes('Pixilate'), 'post-Mega ability leaked into starting state');
+  truthy(html.includes('After entry abilities'), 'snapshot timing must be explicit');
+});
+
 T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
   const html = ctx.csRenderTurnLogRows([{
     turn: 1,
@@ -310,7 +319,7 @@ T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
     events: [{ type: 'ko', text: 'Tyranitar fainted!' }, { type: 'log', text: 'Milotic was sent out!' }],
     delta: { position_score: 0.1 }
   }]);
-  truthy(html.includes('Turn 0 — Starting State'), 'Turn 0 block missing');
+  truthy(html.includes('Opening action state — legacy replay'), 'Legacy snapshot must not claim true starting state');
   truthy(html.includes('replay-stadium-vs'), 'VS stadium divider missing');
   truthy(html.includes('Your team'), 'your board missing');
   truthy(html.includes('Their team'), 'their board missing');
@@ -654,6 +663,8 @@ T('T5c-3identity download retains original run identity and snapshots', () => {
   eq(parsed.provenance.engine_version, 'execution-engine', 'execution provenance dropped');
   eq(parsed.participants.player[0].member_id, 'durable-member', 'participant identity dropped');
   eq(parsed.team_snapshot_source, 'execution_time', 'snapshot origin missing');
+  truthy(parsed.turnLog[0].initial, 'true initial state must survive JSON download');
+  eq(JSON.stringify(parsed.turnLog[0].initial), JSON.stringify(battleA.turnLog[0].initial), 'export changed starting evidence');
 });
 
 T('T5c-3a QA coverage counts recoil occurrences once and keeps damage-row evidence separate', () => {
@@ -722,7 +733,7 @@ const DECISION_TURN_LOG = [{
   delta: { position_score: -0.2 }
 }];
 
-T('T5c-5 csBuildDecisionAudit flags a clearly worse line', () => {
+T('T5c-5 move inventories do not prove an alternative was usable', () => {
   const audit = ctx.csBuildDecisionAudit(DECISION_TURN_LOG, {
     playerKey: 'player',
     oppKey: 'opp',
@@ -730,23 +741,22 @@ T('T5c-5 csBuildDecisionAudit flags a clearly worse line', () => {
     oppLookup: DECISION_OPP,
     threshold: 10
   });
-  truthy(audit && audit.total_flags === 1, 'expected one flagged turn');
-  eq(audit.flagged_turns[0].best_move, 'Recover');
-  truthy(audit.flagged_turns[0].score_gap >= 10, 'expected a meaningful score gap');
+  eq(audit.total_flags, 0, 'unverified availability must not produce advice');
+  eq(audit.flagged_turns.length, 0);
 });
 
-T('T5c-6 Replay Log v2 renders decision gap chip', () => {
+T('T5c-6 Replay Log does not render an unsupported better-line chip', () => {
   const html = ctx.csRenderTurnLogRows(DECISION_TURN_LOG, {
     playerKey: 'player',
     oppKey: 'opp',
     teamLookup: DECISION_PLAYER,
     oppLookup: DECISION_OPP
   });
-  truthy(html.includes('decision-gap'), 'missing decision gap class');
-  truthy(html.includes('Better line: Recover'), 'missing best-line chip');
+  truthy(!html.includes('decision-gap'), 'unsupported decision gap rendered');
+  truthy(!html.includes('Better line: Recover'), 'unsupported alternative rendered');
 });
 
-T('T5c-7 replay coaching summary flags execution from turn-log evidence', () => {
+T('T5c-7 replay coaching does not diagnose execution from heuristic scores', () => {
   const out = ctx.csBuildReplayCoachingSummary({
     result: 'loss',
     oppKey: 'opp',
@@ -758,9 +768,9 @@ T('T5c-7 replay coaching summary flags execution from turn-log evidence', () => 
     teamLookup: DECISION_PLAYER,
     oppLookup: DECISION_OPP
   });
-  eq(out.issue_category, 'execution', 'expected execution issue');
-  eq(out.evidence_label, 'replay + turn log', 'expected turn-log evidence label');
-  truthy(/Review T1/.test(out.next_action), 'expected turn review action');
+  eq(out.issue_category, 'not enough evidence', 'expected conservative issue');
+  eq(out.evidence_label, 'not enough evidence', 'expected evidence boundary');
+  truthy(!/clearer line|execution rather/.test(out.detail), 'unsupported causal conclusion');
 });
 
 T('T5c-8 replay coaching summary does not fall back to strategy context in v1', () => {

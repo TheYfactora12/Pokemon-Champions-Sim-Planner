@@ -28,7 +28,7 @@ export function compareVisibleReplay(log, visual) {
   equal(Number((visual?.meta || '').match(/^(\d+) turns/)?.[1]), turns.length, 'turn_count_mismatch', 'meta');
   equal((visual?.turns || []).map(t => t.label), turns.map(t => `T${t.turn}`), 'turn_sequence_mismatch', 'turns');
   equal((visual?.boards || []).map(b => labelKey(b.label)), turns.length ? ['turn 0', ...turns.map(t => `after t${t.turn}`)] : [], 'board_sequence_mismatch', 'boards');
-  const snapshots = turns.length ? [{ label: 'Turn 0', snapshot: turns[0].pre }, ...turns.map(t => ({ label: `After T${t.turn}`, snapshot: t.post }))] : [];
+  const snapshots = turns.length ? [{ label: 'Turn 0', snapshot: turns[0].initial || turns[0].pre }, ...turns.map(t => ({ label: `After T${t.turn}`, snapshot: t.post }))] : [];
   for (const { label, snapshot } of snapshots) {
     const board = visual?.boards?.find(b => labelKey(b.label) === labelKey(label));
     for (const side of ['player', 'opponent']) {

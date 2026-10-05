@@ -7,7 +7,7 @@
 
 This project should not keep adding surface area until the active slice is clean, proven, documented, and understandable.
 
-Use `99% closed` for work that is practically complete but still has normal residual risk, such as needing more live artifacts, more devices, more samples, or future source checks. Use `100% closed` only when the claim is fully source-backed, tested, deployed, and no known residual blocker remains.
+Use explicit states: open, locally verified, hosted CI verified, deployed and live verified. Missing required evidence keeps the applicable gate open. Percentages do not establish release readiness or game accuracy.
 
 ## Why this exists
 
@@ -30,7 +30,7 @@ Every slice must answer these before it is treated as done:
 9. Does the live Pages build show the correct version?
 10. Did CI pass?
 
-If any answer is weak, the slice is not closed. If the slice is useful but not absolute, mark it `99% closed` and name the exact remaining risk.
+If any required answer lacks evidence, the slice remains open. Name the exact proof state and remaining risk.
 
 ## Cleanup gates before new work
 
@@ -138,7 +138,7 @@ Before starting a new feature, pick one:
 1. Close the current slice with proof.
 2. Mark the current slice open with blockers.
 3. Move the current slice into Roadmap next/open with exact remaining work.
-4. Mark it `99% closed` with named residual risk when that is more honest than claiming 100%.
+4. Mark it locally verified or partially verified, naming every remaining gate.
 
 Do not leave it implicit in chat.
 

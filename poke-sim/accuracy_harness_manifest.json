@@ -25,6 +25,14 @@
       "runtime_promotable": false,
       "harness_lane": "blocked_source_review",
       "formats": []
+    },
+    {
+      "id": "champions_reg_m_c_2026",
+      "version": "champions-reg-mc-source-review-v1",
+      "status": "source_review",
+      "runtime_promotable": false,
+      "harness_lane": "blocked_source_review",
+      "formats": []
     }
   ]
 }

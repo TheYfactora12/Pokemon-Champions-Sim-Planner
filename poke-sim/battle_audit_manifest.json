@@ -71,7 +71,7 @@
       "id": "stats-forms",
       "name": "Base stats, Champion SP, natures, stages, forms, and effective battle stats",
       "status": "partial",
-      "tests": ["tests/regional_variant_stats_tests.js", "tests/t9j13_tests.js", "tests/mega_runtime_form_guard_tests.js"],
+      "tests": ["tests/regional_variant_stats_tests.js", "tests/t9j13_tests.js", "tests/mega_runtime_form_guard_tests.js", "tests/roster_runtime_consumer_tests.mjs", "tests/reg_mb_roster_baseline_tests.mjs"],
       "known_gaps": ["The complete legal species and form inventory is not represented by executable stat fixtures."]
     },
     {
@@ -85,7 +85,7 @@
       "id": "moves-effects",
       "name": "Move metadata, accuracy, recoil, contact, secondary effects, multi-hit, and failure behavior",
       "status": "partial",
-      "tests": ["tests/move_support_audit_tests.js", "tests/move_verification_registry_tests.js", "tests/move_secondary_effect_audit_tests.js", "tests/move_contact_flag_audit_tests.js", "tests/growl_leer_stage_tests.mjs", "tests/pp_pressure_tests.mjs", "tests/showdown_complete_game_tests.mjs"],
+      "tests": ["tests/move_support_audit_tests.js", "tests/move_verification_registry_tests.js", "tests/move_secondary_effect_audit_tests.js", "tests/move_contact_flag_audit_tests.js", "tests/growl_leer_stage_tests.mjs", "tests/pp_pressure_tests.mjs", "tests/pp_drain_move_tests.mjs", "tests/pp_substitute_reference_tests.mjs", "tests/showdown_complete_game_tests.mjs"],
       "known_gaps": ["Imported legal moves may be baseline-supported without dedicated local behavior fixtures.", "Growl, Leer and the declared PP/Pressure boundaries have scoped pinned-reference proof, but the wider status-stage and move-resource interaction inventory remains incomplete."]
     },
     {
@@ -105,9 +105,9 @@
     {
       "id": "status",
       "name": "Major status, volatile status, immunities, duration, denial, and end-of-turn effects",
-      "status": "regression_covered",
-      "tests": ["tests/status_tests.js", "tests/battle_system_mechanics_tests.js"],
-      "known_gaps": []
+      "status": "partial",
+      "tests": ["tests/status_tests.js", "tests/battle_system_mechanics_tests.js", "tests/company_audit_regressions.mjs", "tests/perish_song_reference_tests.mjs"],
+      "known_gaps": ["Leftovers/Toxic ordering and rounding have bounded doubles parity. Full residual event ordering, lethal boundaries, Heal Block expiry and mixed recovery remain unproved."]
     },
     {
       "id": "field-effects",

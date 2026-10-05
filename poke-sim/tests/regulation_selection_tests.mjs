@@ -3,11 +3,14 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 const root = new URL('../', import.meta.url);
 const ctx = vm.createContext({ console });
-for (const file of ['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/pokemon_showdown_species_weights.js', 'runtime_data.js', 'engine.js', 'rulesets.js', 'legality.js', 'move_legality.js']) {
+for (const file of ['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/champions_move_pools.js', 'generated/pokemon_showdown_species_weights.js', 'runtime_data.js', 'engine.js', 'rulesets.js', 'legality.js', 'move_legality.js']) {
   vm.runInContext(fs.readFileSync(new URL(file, root), 'utf8'), ctx, { filename: file });
 }
 const team = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.player))', ctx);
-const ma = 'champions_reg_m_a_2026', mb = 'champions_reg_m_b_2026', practice = 'champions_custom_practice';
+// Hold move availability constant in regulation/identity contract fixtures.
+// The shipped player's historical Incineroar moves are tested separately below.
+team.members.forEach(member => { member.moves = ['Protect']; });
+const ma = 'champions_reg_m_a_2026', mb = 'champions_reg_m_b_2026', mc = 'champions_reg_m_c_2026', practice = 'champions_custom_practice';
 const check = (t, id = ma, opts = { format: 'doubles', bo: 3 }) => ctx.checkTeamForSelectedRegulation(t, id, opts);
 let count = 0;
 function test(name, fn) { fn(); count++; console.log('PASS ' + name); }
@@ -19,9 +22,21 @@ test('historical preflight does not claim complete mechanics verification', () =
   assert.equal(result.mechanics_status, 'not_verified');
 });
 test('unknown and review-only regulations reject without historical fallback', () => {
-  for (const id of [mb, '', 'unknown', 'constructor']) {
+  for (const id of [mb, mc, '', 'unknown', 'constructor']) {
     const result = check(team, id); assert.equal(result.allowed, false); assert.equal(result.status, 'not_verified');
   }
+});
+test('dated coverage honors the M-B extension without promoting legality', () => {
+  const during = ctx.getChampionsRegulationCoverage('2026-08-30T12:00:00Z');
+  assert.equal(during.status, 'source_review');
+  assert.equal(during.regulation_id, mb);
+  const after = ctx.getChampionsRegulationCoverage('2026-09-03T12:00:00Z');
+  assert.equal(after.status, 'source_review');
+  assert.equal(after.covered, false);
+  assert.equal(after.regulation_id, mb);
+  assert.equal(ctx.getChampionsRegulationCoverage('2026-09-09T01:59:00Z').regulation_id, mb);
+  assert.equal(ctx.getChampionsRegulationCoverage('2026-09-09T02:00:00Z').regulation_id, mc);
+  assert.equal(ctx.getChampionsRegulationCoverage('not-a-date').status, 'invalid_date');
 });
 test('rechecking another regulation never rewrites original team identity or items', () => {
   const before = JSON.stringify(team); check(team, mb); check(team, ma);
@@ -32,6 +47,15 @@ test('moves and abilities must belong to the species', () => {
     const t = structuredClone(team); change(t.members[0]);
     assert.equal(check(t).status, 'illegal');
   }
+});
+test('historical Incineroar moves cannot enter Champions practice through legacy tags', () => {
+  const original = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.player))', ctx);
+  const before = JSON.stringify(original);
+  const result = check(original, practice);
+  assert.equal(result.allowed, false);
+  assert(result.errors.some(error => error.includes('U-turn')));
+  assert(result.errors.some(error => error.includes('Knock Off')));
+  assert.equal(JSON.stringify(original), before);
 });
 test('Mega display names can retain valid pre-Mega registration abilities with their stone', () => {
   const t = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.mega_altaria))', ctx);
@@ -111,5 +135,13 @@ test('Species Clause identifies base, Mega and regional forms by National Dex nu
     assert.equal(result.allowed, false);
     assert.ok(result.errors.some(e => /Species Clause/.test(e)));
   }
+});
+test('move choices name the Champions pool source rather than the historical mirror', () => {
+  const choices = ctx.getRegulationChoices('move', 'Incineroar', practice, false);
+  assert(choices.length > 0);
+  assert(choices.every(row => row.source === 'champions-inherited-move-pools-v1' && row.source_version === '0.11.11'));
+  const unknown = ctx.getRegulationChoices('move', 'No Such Species', mb, true);
+  assert(unknown.length > 0);
+  assert(unknown.every(row => row.source === 'unavailable' && row.source_version === null && row.status === 'not_verified'));
 });
 console.log(`Regulation selection: ${count}/${count} passed`);

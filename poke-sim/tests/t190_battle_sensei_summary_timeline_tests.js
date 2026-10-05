@@ -146,7 +146,7 @@ T('5. learning report renders scorecard, critical turns, win path, and practice 
   inc(ui, 'Scenario queue');
   inc(ui, '<strong>Diagnosis boundary</strong>');
   inc(ui, 'csBuildBattleSenseiSimPlan');
-  inc(ui, 'latest in-app simulation strategy report');
+  inc(ui, 'Re-enable only behind a verified two-team, format and ruleset identity contract.');
   inc(ui, 'api.buildReplayCoachReview(parsed, opts)');
   inc(ui, '<h3 class="replay-coach-h3">Practice Plan</h3>');
   inc(ui, '<h3 class="replay-coach-h3">Battle IQ Memory Preview</h3>');

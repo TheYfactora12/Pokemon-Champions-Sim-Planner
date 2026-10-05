@@ -176,6 +176,15 @@ test('spread probe actually checks damaged opponents and an unharmed flying ally
   assert.ok(wrong.differences.some(d => d.kind === 'local_hp_change_sign'));
   assert.ok(wrong.differences.some(d => d.kind === 'reference_hp_change_sign'));
 });
+test('Eerie Spell and Spite PP totals agree with the pinned reference', () => {
+  const fixture = referenceProbes().find(probe => probe.id === 'eerie-spell-spite-pp-drain');
+  assert.ok(fixture);
+  const result = compareProbe(fixture, loadLocalEngine());
+  assert.equal(result.status, 'agreement_in_declared_scope', JSON.stringify(result.differences));
+  assert.ok(result.comparisons.includes('move_pp'));
+  assert.ok(result.reference.frames[0].protocol.some(line => line.includes('|-activate|') && line.includes('Eerie Spell')));
+  assert.ok(result.reference.frames[0].protocol.some(line => line.includes('|-activate|') && line.includes('Spite')));
+});
 test('comparison retains both logs and never converts disagreement into agreement', () => {
   const local = loadLocalEngine();
   const result = compareProbe(probes[0], local);
