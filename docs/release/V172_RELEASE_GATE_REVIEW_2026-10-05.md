@@ -45,6 +45,14 @@ was proposed to the owner; no daemon, cloud project or billable branch started.
 
 ## Release Decision
 
+Dependency audit follow-up: npm audit --omit=dev for poke-sim returned zero
+advisories. The complete tree returned 15 (one critical, nine high, three
+moderate, two low), including the pinned Showdown development dependency chain.
+This is a dependency inventory, not proof of runtime exploitability or a clean
+CI supply chain. Do not run a forced audit fix that silently changes the oracle;
+review the affected tools and validate any lockfile/reference update separately.
+The default-branch GitHub warning reports a different scope (27 alerts).
+
 Hold production merge. An experimental label or hidden cloud-save controls do
 not isolate the existing database or waive the roadmap's security gates.
 Pages currently includes live database configuration and merges trigger deploy.
