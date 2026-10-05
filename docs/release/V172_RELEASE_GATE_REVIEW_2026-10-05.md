@@ -43,6 +43,15 @@ the actual Supabase schema, Auth sessions or two-user isolation tests.
 Docker CLI exists but its daemon was not running. Local Supabase staging setup
 was proposed to the owner; no daemon, cloud project or billable branch started.
 
+October 5 follow-up after owner approval: attempted Docker Desktop startup and
+verified Supabase CLI 2.119.0 command help. Docker's backend failed while
+initializing its dockerInference runtime socket (Windows inaccessible-file /
+invalid-name errors). The waiting docker info command was cancelled. No local
+Supabase stack, cloud resource or production mutation was created. No factory
+reset, socket deletion, Docker settings change or machine reboot performed.
+Preserve existing Docker data; repair startup before claiming Auth/two-user
+staging proof. The earlier no-start note records the pre-approval state.
+
 ## Release Decision
 
 Dependency audit follow-up: npm audit --omit=dev for poke-sim returned zero
