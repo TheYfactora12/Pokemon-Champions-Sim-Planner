@@ -19,6 +19,17 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0051: Align The Public Practice Release Queue
+
+October 5: added a dated seven-step release checklist, updated the shared
+roadmap next action and regenerated Markdown/browser data. Preserved all older
+audits and milestone history; no deletion, issue closure or rule promotion.
+Read-only constructor diagnostic confirms Cloud Nine is overwritten by Natural
+Cure for Altaria-Mega with its stone. This narrows the next mechanics regression
+without claiming a fix. Roadmap generation check and 11 overview tests pass.
+Lesson: distinguish cleanup of current direction from erasure of historical
+evidence; preserve concrete reproductions before changing shared behavior.
+
 ### IMP-0050: Replay Download Lifecycle And Nested Controls
 
 October 5: replay JSON used a detached link and zero-delay URL revocation,

@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 active execution queue: see
+  `docs/release/PUBLIC_PRACTICE_RELEASE_CHECKLIST_2026-10-05.md`.
+  No history removed or gates closed. Constructor diagnostic reproduces
+  selected Cloud Nine becoming Natural Cure before Mega Evolution; this is
+  not just a result-table label. Fix requires scoped mechanics regression and
+  review, preserving legacy Mega-ability input compatibility.
+
 - October 5 v166 candidate: replay export reuses the retained-URL download
   helper; nested raw-log controls no longer close the replay card. Browser
   confirms the interaction repair but download completion remains unverified.

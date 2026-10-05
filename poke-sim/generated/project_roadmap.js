@@ -2,11 +2,11 @@
 (function(root) {
   root.CHAMPIONS_PROJECT_ROADMAP = {
   "schema_version": "champions-project-roadmap-v1",
-  "reviewed_at": "2026-09-09",
+  "reviewed_at": "2026-10-05",
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "First establish protected staging and validate shared-evidence write containment plus private-save ownership. While production actions await exact approval, reproduce and fix Toxic rounding, Spite hit resolution, suppressed-item effects and Wish/Leftovers ordering against pinned Showdown. Then extend copy/restore identity, SV IV roundtrip and complete-set legality coverage. Keep M-C source review separate from rule approval. Release only after review, hosted CI and paired live replay/export checks. See docs/release/RELEASE_REVIEW_2026-09-09.md. The live site remains v142; candidate tests do not imply deployment or 99% accuracy.",
+  "next_action": "Follow docs/release/PUBLIC_PRACTICE_RELEASE_CHECKLIST_2026-10-05.md: resolve selected-team and pre-Mega ability consistency, verify real replay downloads against visible events, correct small-sample Pilot Notes, validate imported/preloaded set guards, and test the desktop/mobile journey. Protected staging, shared-write containment, private-save ownership and unresolved mechanics reviews remain release gates, not deferred approval. Keep M-C review separate from an experimental practice release. Preserve historical audits and current news automation. Candidate v166 is not deployed; release only after exact-revision review, hosted CI and post-deployment evidence.",
   "milestones": [
     {
       "id": "simulation-truth",

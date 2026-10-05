@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-09-09. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-10-05. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-First establish protected staging and validate shared-evidence write containment plus private-save ownership. While production actions await exact approval, reproduce and fix Toxic rounding, Spite hit resolution, suppressed-item effects and Wish/Leftovers ordering against pinned Showdown. Then extend copy/restore identity, SV IV roundtrip and complete-set legality coverage. Keep M-C source review separate from rule approval. Release only after review, hosted CI and paired live replay/export checks. See docs/release/RELEASE_REVIEW_2026-09-09.md. The live site remains v142; candidate tests do not imply deployment or 99% accuracy.
+Follow docs/release/PUBLIC_PRACTICE_RELEASE_CHECKLIST_2026-10-05.md: resolve selected-team and pre-Mega ability consistency, verify real replay downloads against visible events, correct small-sample Pilot Notes, validate imported/preloaded set guards, and test the desktop/mobile journey. Protected staging, shared-write containment, private-save ownership and unresolved mechanics reviews remain release gates, not deferred approval. Keep M-C review separate from an experimental practice release. Preserve historical audits and current news automation. Candidate v166 is not deployed; release only after exact-revision review, hosted CI and post-deployment evidence.
 
 ## Milestone Index
 
