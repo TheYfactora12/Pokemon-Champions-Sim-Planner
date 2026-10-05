@@ -37,6 +37,26 @@ function json(teams) {
   return JSON.stringify({ version: 1, teams });
 }
 
+test('paste spreads reject malformed and duplicate entries before persistence', () => {
+  const ctx = harness();
+  for (const spread of ['-1 HP', '1.5 HP', '32 Attackk', '1 HP / 2 HP', '32 HP garbage', '', '1 HP /', '1 HP\nEVs: 2 HP']) {
+    const members = ctx.parseShowdownPaste('Incineroar\nAbility: Intimidate\nSPs: ' + spread + '\nHardy Nature\n- Protect');
+    for (const format of ['champions', 'sv']) {
+      const result = ctx.importCustomTeamsBulk([{ name: 'Invalid paste', format, members }]);
+      assert.equal(result.added, 0, JSON.stringify({ spread, format, result }));
+    }
+  }
+  assert.equal(ctx.persistedImports.length, 0);
+  for (const header of ['SPs :', 'sps:', 'EVs :', 'evs:']) {
+    const members = ctx.parseShowdownPaste('Incineroar\nAbility: Intimidate\n' + header + ' -1 HP\nHardy Nature\n- Protect');
+    for (const format of ['champions', 'sv']) {
+      assert.equal(ctx.importCustomTeamsBulk([{ name: 'Header variants', format, members }]).added, 0, header);
+    }
+  }
+  const valid = ctx.parseShowdownPaste('Incineroar\nAbility: Intimidate\nSPs: 32 HP / 32 Attack / 2 Speed\nHardy Nature\n- Protect');
+  assert.equal(ctx.importCustomTeamsBulk([{ name: 'Valid paste', format: 'champions', members: valid }]).added, 1);
+});
+
 test('Champions stat guard rejects coercible values and misspelled stats', () => {
   const ctx = harness();
   for (const evs of [{ hp: true }, { hp: false }, { hp: [] }, { hp: [32] },

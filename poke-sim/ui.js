@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.173-stat-input-guard
+// Build marker: v2.2.174-paste-spread-guard
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.173-stat-input-guard'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.174-paste-spread-guard'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -507,10 +507,11 @@ document.querySelectorAll('.bo-btn').forEach(btn => {
 // SHOWDOWN PASTE PARSER
 // Parses standard PS! export format into team member objects
 // ============================================================
-function _applySpreadLineToEvs(lineText, evs) {
+function _applySpreadLineToEvs(lineText, evs, seen = new Set()) {
+  const errors = [];
   const parts = String(lineText || '').split('/').map(s => s.trim());
   for (const p of parts) {
-    const m = p.match(/(\d+)\s+(\w+)/);
+    const m = p.match(/^(\d+)\s+(\w+)$/);
     if (m) {
       const val = parseInt(m[1]), stat = m[2].toLowerCase();
       const key = stat === 'spatk' || stat === 'spa' ? 'spa' :
@@ -519,9 +520,12 @@ function _applySpreadLineToEvs(lineText, evs) {
                   stat === 'attack' || stat === 'atk' ? 'atk' :
                   stat === 'defense' || stat === 'def' ? 'def' :
                   stat === 'hp' ? 'hp' : stat;
-      if (key in evs) evs[key] = val;
-    }
+      if (!Object.prototype.hasOwnProperty.call(evs, key)) errors.push('Unknown spread stat: ' + m[2]);
+      else if (seen.has(key)) errors.push('Duplicate spread stat: ' + key);
+      else { seen.add(key); evs[key] = val; }
+    } else errors.push('Invalid spread entry: ' + (p || '(empty)'));
   }
+  return errors;
 }
 
 function parseShowdownPaste(text) {
@@ -546,10 +550,12 @@ function parseShowdownPaste(text) {
 
     let ability = '', level = 50, nature = 'Hardy', tera = null;
     const evs = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 };
+    const spreadSeen = new Set();
     const importFormatSignals = {
       sawSpsLine: false,
       sawEvsLine: false,
-      sawIvsLine: false
+      sawIvsLine: false,
+      spreadErrors: []
     };
     const moves = [];
 
@@ -558,14 +564,14 @@ function parseShowdownPaste(text) {
       if (l.startsWith('Ability:')) ability = l.replace('Ability:', '').trim();
       else if (l.startsWith('Level:')) level = parseInt(l.replace('Level:', '').trim()) || 50;
       else if (l.startsWith('Tera Type:')) tera = l.replace('Tera Type:', '').trim();
-      else if (l.startsWith('SPs:')) {
+      else if (/^SPs\s*:/i.test(l)) {
         importFormatSignals.sawSpsLine = true;
-        _applySpreadLineToEvs(l.replace('SPs:', ''), evs);
+        importFormatSignals.spreadErrors.push(..._applySpreadLineToEvs(l.replace(/^SPs\s*:/i, ''), evs, spreadSeen));
       }
-      else if (l.startsWith('EVs:')) {
+      else if (/^EVs\s*:/i.test(l)) {
         importFormatSignals.sawEvsLine = true;
-        _applySpreadLineToEvs(l.replace('EVs:', ''), evs);
-      } else if (l.startsWith('IVs:')) {
+        importFormatSignals.spreadErrors.push(..._applySpreadLineToEvs(l.replace(/^EVs\s*:/i, ''), evs, spreadSeen));
+      } else if (/^IVs\s*:/i.test(l)) {
         importFormatSignals.sawIvsLine = true;
       } else if (l.endsWith('Nature')) {
         nature = l.replace('Nature', '').trim();
@@ -709,6 +715,12 @@ function buildImportedTeamValidation(members, opts) {
   if ((opts.format || 'champions') === 'champions') {
     out.errors = out.errors.concat(buildChampionImportGateErrors(members));
   }
+  (members || []).forEach(function(member) {
+    var parseErrors = member && member.import_format_signals && member.import_format_signals.spreadErrors;
+    if (Array.isArray(parseErrors)) parseErrors.forEach(function(error) {
+      out.errors.push((member.name || 'Pokemon') + ': ' + error);
+    });
+  });
   (members || []).forEach(function(member, idx) {
     var megaWarning = csBuildMegaRuntimeWarning(member);
     if (!megaWarning) return;

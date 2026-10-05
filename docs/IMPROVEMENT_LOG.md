@@ -833,6 +833,24 @@ Historical entries below summarize already-recorded evidence, not new runs. This
   successful final run. Independent evidence: 204 member equivalences, 68
   numeric/string games and 272 before/after compatibility pairs.
 
+<a id="imp-0062"></a>
+## IMP-0062: Preserve Paste Errors And Verify The Served Build
+
+- October 5, v174: unanchored spread matching changed negative/fractional
+  inputs and dropped unknown stat labels. Added full-entry matching, canonical
+  duplicate detection and parse-error propagation before import persistence.
+  Independent review found ignored header variants; normalize those explicitly.
+- Eleven import tests cover rejection, valid aliases, both format paths and
+  registration preservation. Final full-gate result is recorded in STATUS.md.
+- Browser blocked negative SPs; downloaded and audited a seven-turn local match.
+  Production still v142 with old advice and four missing assets. Port 8772 was
+  offline despite rendering cached v172; fresh 8773 confirms the new build.
+- [Evidence and limits](release/LOCAL_LIVE_COMPARISON_2026-10-05.md).
+- Lesson: preserve malformed input as an actionable error; verify HTTP and
+  visible build identity before treating a browser page as a current candidate.
+- No production deployment or security-gate closure; repeated Protect display
+  collapsing and full replay/mobile/hosted parity remain open.
+
 ## Entry Template
 
 ```text

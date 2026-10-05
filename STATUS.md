@@ -6,6 +6,17 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 v174: anchored pasted-spread validation preserves errors, rejects
+  duplicate/unknown stats and recognizes case/whitespace header variants.
+  Fresh local server 8773 is browser-confirmed; old 8772 was offline with a
+  cached v172 page. Local seven-turn download has bounded visible-text pairing;
+  live v142 completed a ten-turn smoke test but its export remains unpaired.
+  [Local/live comparison](docs/release/LOCAL_LIVE_COMPARISON_2026-10-05.md).
+  Production is active but not aligned or release-approved. No deployment.
+  Final local gate: 191 fast files and 12 offline DB files pass, four helper/
+  manual skips. Independent header follow-up: 16 checks pass, zero rejected
+  persistence calls. Final browser reload rejects `sps : -1 HP` visibly.
+
 - October 5 simulation-first candidate v173 / engine 1.1.15: reject malformed
   coercible SP values and unknown stat keys; normalize runtime numeric-string
   spreads without mutating registration. Independent review reproduced the
