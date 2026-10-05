@@ -246,7 +246,7 @@ T('T5-12 buildWeaknessDashboard returns matchup intelligence + top 3 coaching se
   truthy(dash.sections[0].title.includes('Matchup Intelligence'), 'matchup intelligence section missing');
   truthy(dash.sections[1].title.includes('Matchup'), 'matchup gap section missing');
   truthy(dash.sections[2].title.includes('Lead'), 'lead section missing');
-  truthy(dash.sections[3].title.includes('Dead'), 'dead move section missing');
+  truthy(dash.sections[3].title === 'Move evidence gaps', 'move evidence section missing');
   truthy(dash.matchup_intelligence && Array.isArray(dash.matchup_intelligence.safe_leads), 'matchup intelligence payload missing');
 });
 
@@ -300,6 +300,18 @@ T('T5-15 strategy report exposes provenance and BO3 adaptation', () => {
   truthy(report.bo3_adaptation.game2_plan, 'missing game2 plan');
   truthy(report.bo3_adaptation.opponent_adjustment_prediction, 'missing opponent prediction');
   truthy(report.bo3_adaptation.counter_adjustment, 'missing counter adjustment');
+});
+
+T('dead-move dashboard preserves detector attribution without inventing counts', () => {
+  const members = [{ name: 'Altaria', moves: ['Heat Wave'] }];
+  const rows = ctx.findDeadMoves({}, members);
+  const dashboard = ctx.buildWeaknessDashboard({ members }, {}, 'doubles', {}, {}, {}, rows, []);
+  const section = dashboard.sections.find(s => s.key === 'dead_moves');
+  truthy(section.headline.includes('Altaria'), 'detector Pokemon identity lost');
+  truthy(!JSON.stringify(section).includes('undefined'), 'missing fields leaked');
+  truthy(!JSON.stringify(section).includes('0 calls'), 'missing mentions treated as execution counts');
+  const missing = ctx.buildWeaknessDashboard({ members }, {}, 'doubles', {}, {}, {}, [{ move: 'Heat Wave' }], []);
+  truthy(missing.sections.find(s => s.key === 'dead_moves').rows.length === 0, 'unattributed row not withheld');
 });
 
 console.log(`\nPhase 4e policy regression: ${pass} pass, ${fail} fail\n`);

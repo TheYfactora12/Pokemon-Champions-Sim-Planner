@@ -6,6 +6,14 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 v176 / #209: Strategy move-evidence dashboard now consumes the
+  detector's `pokemon` field, withholds unnamed rows and stops inventing zero
+  execution counts from absent winning-log mentions. Regression reproduced the
+  name failure before the fix; browser shows Typhlosion-Hisui / Eruption and
+  explicitly unknown execution count. Legacy detector remains name/text-based,
+  not stable-participant action proof. Hosted verification and #103 alignment
+  remain open; no deployment or ticket closure implied.
+
 - October 5 tracking update: created GitHub #209 for missing Strategy actor
   attribution and updated existing deployment-hardening #103 with the eleven-tab
   audit and closure gates. Roadmap source now orders alignment before database

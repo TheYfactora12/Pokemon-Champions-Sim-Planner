@@ -1,5 +1,28 @@
 # Improvement Log
 
+## IMP-0064: Strategy Move-Evidence Attribution (#209)
+
+October 5, 2026, v176 candidate. The producer returned `pokemon` while the
+dashboard read `owner`, `times_used` and `games_sampled`; visible output leaked
+undefined values and claimed zero calls without execution evidence. The dashboard
+now uses the producer's name, withholds unattributed rows and labels counts unknown.
+It asks for structured replay inspection rather than recommending replacement
+from missing text mentions. Regression failed before the fix; local browser
+confirmed named Eruption attribution and cautious copy afterward.
+
+Lesson: test the real producer-consumer contract, not only handcrafted dashboard
+fixtures. This narrow presentation fix does not upgrade the legacy text detector
+to stable participant-ID evidence, fix every coaching consumer, or prove mechanics.
+Release/cache identity and bundle regenerated. Ticket stays open for hosted proof;
+deployment alignment remains #103. No database or engine behavior changed.
+
+Verification: full project gate passed, 192 fast files and 12 offline DB files,
+four manual/helper files skipped. Live DB checks are not verified. Local v176
+Strategy browser snapshot shows Typhlosion-Hisui - Eruption with unknown count
+and no undefined fields in the inspected section. Artifact SHA-256:
+`fd3385c6f53793819f02821bfca7f75935b9fa80bf4732c8658a5d05b5f2eb5e`.
+No new interactive simulation batch was run for this presentation-only change.
+
 ## IMP-0048: Current-Regulation Team Review
 
 October 4, 2026, local v165 candidate. Historical legal tags and narrow preload

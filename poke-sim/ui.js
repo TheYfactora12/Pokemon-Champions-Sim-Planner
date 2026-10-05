@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.175-local-save-release
+// Build marker: v2.2.176-strategy-attribution
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.175-local-save-release'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.176-strategy-attribution'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -18346,7 +18346,11 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
   var matchupIntel = buildMatchupIntelligence(team, results, format, identity, leadSystem, trends, matchupFocus, matchupWarnings);
   var worstMatchup = matchupFocus[0] || null;
   var worstLead = (trends && trends.worst_lead) ? trends.worst_lead : null;
-  var deadList = Array.isArray(deadMoves) ? deadMoves.slice(0, 3) : [];
+  // Legacy text mentions are not participant-ID execution counts.
+  var deadList = Array.isArray(deadMoves) ? deadMoves.filter(function(row) {
+    return row && typeof row.pokemon === 'string' && row.pokemon.trim() &&
+      typeof row.move === 'string' && row.move.trim();
+  }).slice(0, 3) : [];
   var ruleViolations = (matchupWarnings || []).slice(0, 2);
 
   var sections = [];
@@ -18403,20 +18407,20 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
 
   sections.push({
     key: 'dead_moves',
-    title: 'Dead moves',
+    title: 'Move evidence gaps',
     headline: deadList.length
-      ? (deadList[0].owner + ' - ' + deadList[0].move + ' has 0 calls in the sample.')
-      : 'No dead moves are flagged yet.',
+      ? (deadList[0].pokemon + ' - ' + deadList[0].move + ' was not identified in the available winning text logs.')
+      : 'No attributed move evidence gaps to display.',
     fix: deadList.length
-      ? 'Open these slots on turn 1 when they are support tools, or replace them with coverage that patches your worst matchup.'
-      : 'Keep simming until a move crosses the 0-call threshold.',
+      ? 'Inspect structured replay actions before changing this move. Missing text mentions do not prove zero use or a bad moveset.'
+      : 'Complete, attributed replay evidence is needed before assessing move usage.',
     rows: _itemRows(deadList, function(row){
       return {
-        label: row.owner + ' - ' + row.move,
-        value: row.times_used + ' calls over ' + row.games_sampled + ' games'
+        label: row.pokemon + ' - ' + row.move,
+        value: 'Execution count unknown; text-log observation only'
       };
     }),
-    empty: 'No move has crossed the dead-move threshold yet.'
+    empty: 'No attributed observation available.'
   });
 
   return {
