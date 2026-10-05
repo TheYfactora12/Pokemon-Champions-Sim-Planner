@@ -38,6 +38,12 @@ was not found in Downloads after attempts. Do not promote it to visual parity.
 Lesson: capture evidence at the named boundary, not the nearest convenient one.
 Remaining: full paired/mobile journey, source approval, security and deployment.
 
+Reconciliation note: main 45c9e28 refreshed tested news and conflicted only in
+generated release metadata. Preserved its feed byte-for-byte and regenerated
+the bundle/manifest. Subsequent mobile Simulator check exposed 27px horizontal
+overflow (400px chart intrinsic width and audit grid minimums); this is separate
+from the narrower Replay Log viewport pass and remains an actionable finding.
+
 ### IMP-0054: Visible Downloads And Converted-Type Execution
 
 October 5 local v169/v170. Browser operation found a hidden download fallback
