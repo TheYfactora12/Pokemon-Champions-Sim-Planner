@@ -68,6 +68,10 @@ security. No production deployment or Alfredo synchronization performed.
 
 ## Still Open
 
+October 5 follow-up: item 1 below is source-fixed in v171; see IMP-0055 for
+independent behavior-preservation tests. Final browser/download pairing is
+still open. The original finding below remains as the historical observation.
+
 1. Turn 0 uses the post-Mega first-turn snapshot. Preserve a true immutable
    starting snapshot and label old evidence accurately; do not move existing
    pre-action timing without checking speed/order consumers.

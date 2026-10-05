@@ -48,6 +48,15 @@ for (const reversed of [false, true]) for (const evolve of [false, true]) {
     });
     assert.equal(battle.log.some(s => s.includes('Hyper Voice had no effect on Basculegion')), !evolve);
     assert.equal(battle.log.some(s => s.includes('Mega Evolved!')), evolve);
+    const initial = battle.turnLog[0].initial;
+    assert.ok(initial, 'true starting snapshot must be retained independently of pre-action state');
+    const side = reversed ? 'opponent' : 'player';
+    const initialAltaria = initial.roster[side].find(m => m.ability === 'Cloud Nine');
+    assert.ok(initialAltaria, 'starting ability is Cloud Nine even when turn 1 Mega evolves');
+    assert.equal(battle.turnLog[0].pre.roster[side].find(m => m.teamSlot === initialAltaria.teamSlot).ability, evolve ? 'Pixilate' : 'Cloud Nine');
+    const savedInitial = JSON.stringify(initial);
+    battle.turnLog[0].post.roster[side][0].ability = 'Mutation probe';
+    assert.equal(JSON.stringify(initial), savedInitial, 'later snapshot changes cannot rewrite starting state');
     assert.equal(attack.members[0].ability,'Cloud Nine','registered input must not mutate');
   });
 }

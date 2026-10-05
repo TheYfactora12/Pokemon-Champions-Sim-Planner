@@ -6501,6 +6501,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     return { move: entry.move, target: target };
   }
 
+  // Preserve entry state before turn-one switches, Mega Evolution and decisions.
+  const initialSnapshot = _makeTurnSnapshot(playerActive, playerBench, oppActive, oppBench, field, false, _orderedPlayer, _orderedOpp);
   while (turn < MAX_TURNS) {
     turn++;
     log.push(`--- Turn ${turn} ---`);
@@ -6599,6 +6601,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     const _turnEntry = {
       turn: turn,
+      ...(turn === 1 ? { initial: initialSnapshot } : {}),
       playerHP: playerPokemon.map(m => Math.round(_hpPct(m) * 1000) / 1000),
       oppHP: oppPokemon.map(m => Math.round(_hpPct(m) * 1000) / 1000),
       activePair: playerActive.concat(oppActive).filter(Boolean).map(m => m.name),
@@ -7478,7 +7481,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.13'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.14'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

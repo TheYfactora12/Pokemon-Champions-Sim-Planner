@@ -280,6 +280,15 @@ T('T5c-1 Replay Log v2 renders turn rows', () => {
   truthy(html.includes('replay-turn-row'), 'turn rows missing');
 });
 
+T('T5c-1initial Replay Log uses true starting state before post-Mega pre-action state', () => {
+  const snapshot = ability => ({roster:{player:[{displayName:'Altaria',species:'Altaria',status:'active',hp:100,hpLabel:'100%',ability,moves:['Hyper Voice']}],opponent:[]}});
+  const html = ctx.csRenderReplayLogTurnZero([{initial:snapshot('Cloud Nine'),pre:snapshot('Pixilate')}]);
+  truthy(html.includes('Turn 0 — Starting State'), 'new starting state heading missing');
+  truthy(html.includes('Cloud Nine'), 'registered starting ability missing');
+  truthy(!html.includes('Pixilate'), 'post-Mega ability leaked into starting state');
+  truthy(html.includes('After entry abilities'), 'snapshot timing must be explicit');
+});
+
 T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
   const html = ctx.csRenderTurnLogRows([{
     turn: 1,
@@ -310,7 +319,7 @@ T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
     events: [{ type: 'ko', text: 'Tyranitar fainted!' }, { type: 'log', text: 'Milotic was sent out!' }],
     delta: { position_score: 0.1 }
   }]);
-  truthy(html.includes('Turn 0 — Starting State'), 'Turn 0 block missing');
+  truthy(html.includes('Opening action state — legacy replay'), 'Legacy snapshot must not claim true starting state');
   truthy(html.includes('replay-stadium-vs'), 'VS stadium divider missing');
   truthy(html.includes('Your team'), 'your board missing');
   truthy(html.includes('Their team'), 'their board missing');
@@ -654,6 +663,8 @@ T('T5c-3identity download retains original run identity and snapshots', () => {
   eq(parsed.provenance.engine_version, 'execution-engine', 'execution provenance dropped');
   eq(parsed.participants.player[0].member_id, 'durable-member', 'participant identity dropped');
   eq(parsed.team_snapshot_source, 'execution_time', 'snapshot origin missing');
+  truthy(parsed.turnLog[0].initial, 'true initial state must survive JSON download');
+  eq(JSON.stringify(parsed.turnLog[0].initial), JSON.stringify(battleA.turnLog[0].initial), 'export changed starting evidence');
 });
 
 T('T5c-3a QA coverage counts recoil occurrences once and keeps damage-row evidence separate', () => {

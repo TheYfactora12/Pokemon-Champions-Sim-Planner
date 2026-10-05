@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.170-effective-move-type
+// Build marker: v2.2.171-starting-state
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.170-effective-move-type'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.171-starting-state'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -4653,9 +4653,14 @@ function csRenderReplayLogTurnZero(turnLog) {
   var rows = Array.isArray(turnLog) ? turnLog : [];
   var first = rows[0] || {};
   if (!first.pre) return '';
+  var initial = first.initial || first.pre;
+  var heading = first.initial ? 'Turn 0 — Starting State' : 'Opening action state — legacy replay';
+  var description = first.initial
+    ? 'After entry abilities, before turn-one switches, Mega Evolution and moves.'
+    : 'First recorded pre-action state; may already include Mega Evolution. The original starting state was not captured.';
   return '<div class="replay-turn-zero">' +
-    '<div class="replay-turn-main"><strong>Turn 0 — Starting State</strong><span>Before any moves: leads, bench, HP, stats, items, abilities, and known moves.</span></div>' +
-    csRenderReplayLogSnapshot(first.pre, 'Turn 0', false) +
+    '<div class="replay-turn-main"><strong>' + heading + '</strong><span>' + description + '</span></div>' +
+    csRenderReplayLogSnapshot(initial, 'Turn 0', false) +
   '</div>';
 }
 

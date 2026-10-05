@@ -6,6 +6,16 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 v171 / engine 1.1.14: first turn now preserves a separate entry
+  snapshot before Mega Evolution and actions; prior pre-action semantics remain
+  unchanged. Legacy replays explicitly disclose missing starting evidence.
+  Independent review compared 136 paired doubles games across all 34 bundled
+  teams with unchanged RNG/results after excluding added evidence/version.
+  Full project gate and scoped battle audit passed. Browser shows starting
+  Cloud Nine; the new nine-turn run still needs its actual download paired.
+  PR195 developed conflicts with newer main; reconciliation is required before
+  fresh hosted checks. No production deployment. See IMP-0055.
+
 - October 5 v170 / engine 1.1.13 candidate: browser testing exposed converted
   Normal moves incorrectly blocked by Ghost immunity. Shared type resolution
   fixes that boundary; independent pinned-Showdown review accepted its scope.

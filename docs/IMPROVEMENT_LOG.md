@@ -19,6 +19,25 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0055: True Starting-State Evidence
+
+October 5 local v171 / engine 1.1.14. IMP-0054's Turn 0 finding was confirmed:
+the UI used the first post-Mega pre-action snapshot. Add first-turn `initial`
+after entry abilities and before the battle loop, leaving `pre` unchanged.
+Renderer and comparator prefer initial; old logs disclose their limitation.
+Four starting-state assertions failed before and passed after. Fourteen
+ability/execution tests, 38 turn-log/export checks and 15 comparator checks pass.
+Independent review instrumented 3,200 snapshot calls without input mutation or
+shared mutable objects; 136 paired doubles games across 34 teams and two seeds,
+both sides, had identical RNG and returned outcomes after ignoring the additive
+snapshot/version. Full 190-file fast gate, 12 offline DB files and scoped
+4,500-game battle audit passed; manual/helper and live DB gaps remain.
+Browser v171 shows Cloud Nine before Mega; nine-turn loss seed
+`1449608657,4090077655,3318158718,3721624941` remains unpaired because its file
+was not found in Downloads after attempts. Do not promote it to visual parity.
+Lesson: capture evidence at the named boundary, not the nearest convenient one.
+Remaining: full paired/mobile journey, source approval, security and deployment.
+
 ### IMP-0054: Visible Downloads And Converted-Type Execution
 
 October 5 local v169/v170. Browser operation found a hidden download fallback
