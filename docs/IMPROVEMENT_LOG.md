@@ -851,6 +851,20 @@ Historical entries below summarize already-recorded evidence, not new runs. This
 - No production deployment or security-gate closure; repeated Protect display
   collapsing and full replay/mobile/hosted parity remain open.
 
+<a id="imp-0063"></a>
+## IMP-0063: Separate Disconnected Publishing From DB Reconnection
+
+- October 5, v175 candidate: user chose alignment before DB work. Pages previously
+  required live credentials and changed the reviewed HTML during deployment.
+- Local-only manifest disables adapter initialization even with stale credentials;
+  Pages consumes no secrets and stages identical repository bundle bytes.
+  Runtime/source checks remain, with explicit local-only policy assertions.
+- Two focused isolation tests pass; three outdated connected-workflow contracts
+  now pass focused reruns. Browser create/edit/reload preserves a custom spread.
+- [Scope, evidence and pending gates](release/LOCAL_SAVE_RELEASE_SCOPE_2026-10-05.md).
+- No backend mitigation, credential revocation, DB mutation or deployment claim.
+  Reconnection requires security proof and separately reviewed policy changes.
+
 ## Entry Template
 
 ```text

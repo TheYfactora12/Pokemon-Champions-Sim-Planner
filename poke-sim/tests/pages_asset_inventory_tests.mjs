@@ -16,6 +16,8 @@ function literalArray(name) {
   return paths;
 }
 const staged = new Set([...literalArray('runtime_files'), ...literalArray('generated_files').map(p => `generated/${p}`)]);
+assert.ok(pages.includes("'window.__DISABLE_SUPABASE__ = true;' > pages-dist/poke-sim/local-credentials.js"), 'explicit disable-only credentials stub required');
+staged.add('local-credentials.js');
 function assertStaged(p) {
   if (p === './') p = 'index.html';
   p = p.replace(/^\.\//, '');
@@ -37,9 +39,10 @@ const sourceSuites = [...pkg.scripts['test:source-truth'].matchAll(/node tests\/
 assert.ok(sourceSuites.length > 0, 'source-truth suite discovery must not be empty');
 const formerExtraSuites = ['champion_pack_legality_tests.js', 'preloaded_team_legality_tests.js', 't9j11_tests.js', 'bundle_load_order_tests.js'];
 for (const file of [...sourceSuites, ...formerExtraSuites]) assert.ok(fast.has(file), `deduplicated suite no longer covered by fast gate: ${file}`);
-assert.ok(pages.includes('npm run test:fast'));
+assert.ok(pages.includes('npm test'));
 assert.ok(!pages.includes('npm run test:source-truth'), 'source-truth suites already run in fast gate');
 for (const file of formerExtraSuites) assert.ok(!pages.includes(`node poke-sim/tests/${file}`), `duplicate suite: ${file}`);
-assert.ok(pages.includes('node poke-sim/tests/db_m2_seed_tests.js'), 'retain distinct live DB seed gate');
+assert.ok(!pages.includes('RUN_LIVE_DB'), 'local-only publishing must not connect to DB');
+assert.ok(pages.includes("data_mode !== 'local-only'"), 'connected release needs separate review');
 assert.ok(pages.includes('bash poke-sim/tools/check-bundle.sh'), 'retain bundle freshness gate');
 console.log(`Pages inventory passed: ${staged.size} explicit staged files; ${sourceSuites.length + formerExtraSuites.length} duplicate test invocations eliminated without losing discovery coverage.`);

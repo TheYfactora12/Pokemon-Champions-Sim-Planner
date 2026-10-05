@@ -43,12 +43,13 @@ T('1. local credentials and env files stay ignored', () => {
   truthy(gitignore.includes('.env.local'), 'local env files must be ignored');
 });
 
-T('2. Pages deploy uses anon/public Supabase config only', () => {
-  truthy(pagesWorkflow.includes('SUPABASE_ANON_KEY'), 'Pages deploy should use anon key secret for browser runtime');
+T('2. local-save Pages deploy injects no credentials or database access', () => {
+  truthy(!pagesWorkflow.includes('secrets.'), 'Local-only deploy must not consume secrets');
+  truthy(pagesWorkflow.includes("data_mode !== 'local-only'"), 'Connected releases must fail this policy');
   truthy(!/SUPABASE_SERVICE_ROLE_KEY|SUPABASE_DB_WRITE_KEY|SUPABASE_DB_URL/.test(pagesWorkflow),
     'Pages deploy must never expose service-role/write/database secrets');
-  truthy(pagesWorkflow.includes('Generate deployed Pages artifact SHA manifest'),
-    'Pages deploy should produce post-injection artifact proof');
+  truthy(pagesWorkflow.includes('cmp poke-sim/pokemon-champion-2026.html'),
+    'Pages deploy must preserve exact reviewed bundle bytes');
 });
 
 T('3. committed browser runtime does not contain privileged secret names', () => {

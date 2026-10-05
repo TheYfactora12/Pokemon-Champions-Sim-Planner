@@ -64,9 +64,9 @@ T('5. privileged workflows are scoped and production deploy fails closed', () =>
   has(migrationWorkflow, 'environment: production', 'production environment missing');
   has(migrationWorkflow, 'refs/heads/main', 'main-only migration guard missing');
   has(migrationWorkflow, '--single-transaction', 'transactional psql mode missing');
-  has(pagesWorkflow, 'are required for production Pages deploys', 'Pages credential fail-closed guard missing');
+  has(pagesWorkflow, "data_mode !== 'local-only'", 'Pages local-only fail-closed guard missing');
   // pages_asset_inventory_tests proves every source-truth suite belongs to this gate.
-  has(pagesWorkflow, 'npm run test:fast', 'Pages shared source-truth release gate missing');
+  has(pagesWorkflow, 'npm test', 'Pages shared source-truth release gate missing');
 });
 
 console.log('\nSupabase governance:', pass + ' pass, ' + fail + ' fail\n');

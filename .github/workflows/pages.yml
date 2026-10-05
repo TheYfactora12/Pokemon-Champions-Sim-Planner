@@ -16,130 +16,42 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy site with Supabase runtime config
+    name: Deploy reviewed local-save site
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v7
-
       - uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: npm
           cache-dependency-path: poke-sim/package-lock.json
 
-      - name: Validate Champion sim artifact before deploy
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      - name: Validate local-only release before deploy
         run: |
           set -euo pipefail
-          if [ -n "${SUPABASE_URL:-}" ] && [ -n "${SUPABASE_ANON_KEY:-}" ]; then
-            export SUPABASE_KEY="$SUPABASE_ANON_KEY"
-            export RUN_LIVE_DB=1
-            echo "Live Supabase seed parity enabled for Pages deploy."
-          else
-            echo "::error::SUPABASE_URL and SUPABASE_ANON_KEY are required for production Pages deploys."
-            exit 1
-          fi
+          node -e "if(require('./poke-sim/release_manifest.js').data_mode !== 'local-only') throw Error('Connected releases require a separately reviewed deployment policy')"
           cd poke-sim
           npm ci
-          # Includes source-truth, legality and bundle contract suites once.
-          npm run test:fast
+          npm test
           cd ..
-          node poke-sim/tests/db_m2_seed_tests.js
           bash poke-sim/tools/check-bundle.sh
 
       - uses: actions/configure-pages@v6
         with:
           enablement: true
 
-      - name: Inject Supabase anon runtime config
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-        run: |
-          set -euo pipefail
-
-          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
-            echo "::error::SUPABASE_URL and SUPABASE_ANON_KEY are required for production Pages deploys."
-            exit 1
-          fi
-
-          python3 - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          url = os.environ["SUPABASE_URL"]
-          key = os.environ["SUPABASE_ANON_KEY"]
-
-          Path("poke-sim/local-credentials.js").write_text(
-              "window.__SUPABASE_URL__ = " + json.dumps(url) + ";\n"
-              "window.__SUPABASE_KEY__ = " + json.dumps(key) + ";\n",
-              encoding="utf-8",
-          )
-
-          bundle = Path("poke-sim/pokemon-champion-2026.html")
-          html = bundle.read_text(encoding="utf-8")
-          html = html.replace(
-              "window.__SUPABASE_URL__ = window.__SUPABASE_URL__ || '';",
-              "window.__SUPABASE_URL__ = window.__SUPABASE_URL__ || " + json.dumps(url) + ";",
-          )
-          html = html.replace(
-              "window.__SUPABASE_KEY__ = window.__SUPABASE_KEY__ || '';",
-              "window.__SUPABASE_KEY__ = window.__SUPABASE_KEY__ || " + json.dumps(key) + ";",
-          )
-          bundle.write_text(html, encoding="utf-8")
-          PY
-
-          echo "Supabase anon runtime config injected for Pages artifact."
-
-      - name: Generate deployed Pages artifact SHA manifest
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import hashlib
-          import json
-          from pathlib import Path
-
-          bundle = Path("poke-sim/pokemon-champion-2026.html")
-          artifact_path = Path("poke-sim/generated/release_artifact.json")
-          artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
-          bundle_bytes = bundle.read_bytes()
-          deployed_sha = hashlib.sha256(bundle_bytes).hexdigest()
-
-          repo_sha = artifact.get("bundle_sha256")
-          repo_bytes = artifact.get("bundle_bytes")
-          artifact["repo_bundle_sha256"] = repo_sha
-          artifact["repo_bundle_bytes"] = repo_bytes
-          artifact["bundle_sha256"] = deployed_sha
-          artifact["bundle_bytes"] = len(bundle_bytes)
-          artifact["hash_scope"] = "sha256 of deployed GitHub Pages HTML after runtime config injection"
-          artifact["deploy_mutations"] = [
-              "Supabase anon runtime config injection when repository secrets are present"
-          ]
-
-          artifact_path.write_text(json.dumps(artifact, indent=2) + "\n", encoding="utf-8")
-
-          if artifact["bundle_sha256"] != hashlib.sha256(bundle.read_bytes()).hexdigest():
-              raise SystemExit("release_artifact.json bundle_sha256 does not match deployed bundle bytes")
-          PY
-
-          echo "Deploy artifact SHA manifest generated for Pages upload."
-
       - name: Stage Pages artifact to match local repo layout
         run: |
           set -euo pipefail
-          rm -rf pages-dist
           mkdir -p pages-dist/poke-sim
           cp index.html pages-dist/index.html
           cp .nojekyll pages-dist/.nojekyll
           runtime_files=(
             index.html pokemon-champion-2026.html style.css manifest.json sw.js
-            icon-192.png icon-512.png local-credentials.js release_manifest.js
+            icon-192.png icon-512.png release_manifest.js
             app_shell.js data.js engine.js legality_evidence_package.js legality.js
             logger.js move_legality.js move_support.js regmb_source_conversion.js mc_review.js
             replay_coach.js replay_import_service.js replay_learning.js rulesets.js
@@ -149,6 +61,8 @@ jobs:
           for file in "${runtime_files[@]}"; do
             install -m 0644 "poke-sim/$file" "pages-dist/poke-sim/$file"
           done
+          printf '%s\n' 'window.__DISABLE_SUPABASE__ = true;' > pages-dist/poke-sim/local-credentials.js
+          cmp poke-sim/pokemon-champion-2026.html pages-dist/poke-sim/pokemon-champion-2026.html
           cp -R poke-sim/assets pages-dist/poke-sim/assets
           mkdir -p pages-dist/poke-sim/generated
           generated_files=(

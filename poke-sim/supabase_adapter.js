@@ -27,7 +27,8 @@
   // the adapter into local-only mode regardless of injected creds (defense-in-
   // depth: even if a future change re-introduces hardcoded creds, this flag
   // still wins).
-  const DISABLED = !!(typeof window !== 'undefined' && window.__DISABLE_SUPABASE__);
+  const DISABLED = !!(typeof window !== 'undefined' && (window.__DISABLE_SUPABASE__ ||
+    (window.CHAMPIONS_RELEASE_MANIFEST && window.CHAMPIONS_RELEASE_MANIFEST.data_mode === 'local-only')));
 
   const SUPABASE_URL = DISABLED
     ? null

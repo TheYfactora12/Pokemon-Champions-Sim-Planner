@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 v175 alignment scope: user requested production/local alignment
+  before database work. Prepared an explicit local-save-only release: manifest
+  disables DB initialization despite credentials; Pages no longer consumes or
+  injects DB secrets and preserves bundle bytes. No DB mutation or security
+  closure. [Scope and acceptance](docs/release/LOCAL_SAVE_RELEASE_SCOPE_2026-10-05.md).
+  Deployment is not yet confirmed; connected release remains blocked.
+
 - October 5 v174: anchored pasted-spread validation preserves errors, rejects
   duplicate/unknown stats and recognizes case/whitespace header variants.
   Fresh local server 8773 is browser-confirmed; old 8772 was offline with a
