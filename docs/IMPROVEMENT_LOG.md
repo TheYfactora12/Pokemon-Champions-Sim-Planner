@@ -19,6 +19,22 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0060: Verify Remaining Evidence Confidentiality Boundaries
+
+October 5, candidate 13bded3, disposable local Supabase only. Real Auth/REST
+verification confirmed an unresolved evidence confidentiality boundary while
+positive public controls and denied browser writes passed. A separate
+trusted-writer-dependent scenario was reproduced, but its unprivileged
+creation path was not established. The earlier reference-isolation fix is
+not a claim to close these separate boundaries.
+
+Synthetic fixtures/user from this verification were cleaned up; no production
+data accessed or changed. Sensitive reproducible script and detailed evidence
+are retained outside public GitHub in the local security artifact collection.
+Lesson: protected team rows do not by themselves prove protection of derived
+evidence. Require direct API tests, legitimate controls and explicit writer
+preconditions. No additional fix or release approval claimed in this pass.
+
 ### IMP-0059: Real Local Supabase Isolation Tests
 
 October 5: started a disposable local Supabase stack with CLI 2.119.0, using

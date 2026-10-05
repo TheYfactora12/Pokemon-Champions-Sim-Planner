@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 follow-up verification: local real Auth/REST tests confirm that
+  evidence confidentiality still fails its intended boundary. Public controls
+  and browser write denial pass, but trusted-writer authorization remains
+  unverified. Sensitive reproducer/results are retained in the local security
+  artifact collection. No production mutation or new policy fix in this pass;
+  the security release gate remains blocked (IMP-0060).
+
 - October 5 isolated Supabase: local Auth, REST, gateway and PostgreSQL now
   run without a production link. Basic two-user private-team HTTP tests pass.
   Existing SQL isolation diagnostics exposed a reference-visibility bug;
