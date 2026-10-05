@@ -16,9 +16,11 @@ for (const scenario of ['fallback', 'mirror', 'empty']) {
       getVisibleTeamKeys:()=>scenario==='empty'?[]:['a','b'],
       isVisibleTeamInCatalog:()=>scenario!=='empty',
       getDefaultVisiblePlayerTeamKey:()=>scenario==='empty'?'':'a',
-      getDefaultVisibleOpponentTeamKey:()=>scenario==='empty'?'':'b',
+      getDefaultVisibleOpponentTeamKey:player=>scenario==='empty'?'':player==='b'?'a':'b',
       applyLadderGate(){},renderRoster:(id,members)=>{rendered[id]=members;}});
     vm.runInContext(rebuild+'\nrebuildTeamSelects();',context);
+    if (scenario !== 'empty') assert.notEqual(nodes['player-select'].value, nodes['opponent-select'].value,
+      'Selected-matchup policy must be applied before showing the teams, not first at Run');
     for (const [select,title,roster] of [['player-select','player-team-name','player-roster'],['opponent-select','opp-team-name','opp-roster']]) {
       const team=teams[nodes[select].value];
       assert.equal(nodes[title].textContent,team?team.name:'No available team');

@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 v167 candidate: selected base abilities distinct from their Mega
+  ability survive construction; startup resolves duplicate matchup selections
+  before rendering; inline Pilot Notes report observations instead of matchup
+  verdicts. Browser confirms Cloud Nine in result stats and stable default
+  matchup. Shared base/Mega ability collisions, separate Pilot Guide claims,
+  downloaded-log pairing and live security/ruleset gates remain open. IMP-0052.
+
 - October 5 active execution queue: see
   `docs/release/PUBLIC_PRACTICE_RELEASE_CHECKLIST_2026-10-05.md`.
   No history removed or gates closed. Constructor diagnostic reproduces

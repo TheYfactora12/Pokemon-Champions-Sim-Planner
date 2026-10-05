@@ -19,6 +19,44 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0052: Registered Ability, Startup Selection And Inline Evidence
+
+October 5 v167 / engine 1.1.11 candidate. A failing Altaria Cloud Nine fixture
+showed the constructor unconditionally replaced a selected base ability.
+Preserve explicit abilities that differ from the Mega ability; retain the
+legacy fallback for missing/Mega-only input. Five base/legacy/transformation
+cases pass. Independent read-only battle review passed 62 focused cases but
+identified pre-existing shared-ability ambiguity (Audino Healer, Chandelure
+Infiltrator, Greninja Protean, Crabominable Iron Fist, Drampa Berserk). These
+remain OPEN: this is not universal registration preservation or legality proof.
+
+Independent selection review reproduced startup Altaria/Altaria changing to
+Altaria/Dragonite at Run without user selection. Rebuild preserved duplicates
+but Run enforced distinct teams. Apply the existing distinct policy before
+display and refresh bring pickers. The mirror-startup regression failed before
+and passes after; the legacy helper test now explicitly creates its duplicate
+input instead of assuming startup remains broken. Run All mirror policy is
+unchanged.
+
+Inline Pilot Notes no longer judge Favorable/Avoid or recommend speed control
+from win rate. They label observed series wins, name sample limits and describe
+winning-lead frequency. Removed unsupported injected strategy rule text,
+including escaped strong markup. Three red/green assertions; 32 analytics
+checks pass. The separate generated Pilot Guide still needs review.
+
+Browser: v167 shows Altaria/Dragonite before Run; one Bo1 practice game completed
+in four turns (win). Result table retained Cloud Nine; inline notes displayed
+observed wins and uncertainty. JSON download event still timed out, with no
+captured console errors. Exact export/visible pairing remains unverified and
+this sample is not mechanics parity proof. Final engine-version/date metadata
+was rebuilt after that visual check. Full-gate receipt:
+poke-sim/artifacts/v167-gate-release.log: 189 fast files and 12 offline DB files
+pass; four manual/helper skips. Declared battle audit also passes, including
+the 4,500-game matrix (v167-battle-audit.log). No production deployment.
+
+Lesson: validate the setup users see against the inputs execution actually
+receives, and inspect every advice consumer rather than just the replay summary.
+
 ### IMP-0051: Align The Public Practice Release Queue
 
 October 5: added a dated seven-step release checklist, updated the shared

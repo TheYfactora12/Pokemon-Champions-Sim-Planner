@@ -102,6 +102,8 @@ console.log('\n=== distinct battle team tests ===\n');
 
 T('1. duplicate player/opponent selection is normalized', () => {
   truthy(typeof enforceDistinctBattleTeams === 'function', 'helper should exist');
+  truthy(oppSel.value !== playerSel.value, 'startup must display distinct selections');
+  oppSel.value = playerSel.value;
   const nextOpp = enforceDistinctBattleTeams();
   truthy(nextOpp, 'expected a fallback opponent');
   truthy(oppSel.value !== playerSel.value, 'opponent should differ from player');

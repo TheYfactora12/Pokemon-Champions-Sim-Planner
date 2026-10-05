@@ -5,9 +5,9 @@
 (function(root) {
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
-    build_id: 'v2.2.166-replay-download',
-    release_date: '2026-10-04',
-    service_worker_cache: 'champions-sim-v2-2-166-replay-download',
+    build_id: 'v2.2.167-registration-evidence',
+    release_date: '2026-10-05',
+    service_worker_cache: 'champions-sim-v2-2-167-registration-evidence',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

@@ -273,20 +273,22 @@ T('26. showInlinePilotCard creates container in results section', () => {
   showInlinePilotCard(fixture.opponent, fixture.strongResult);
   eq(document._els['results-section'].children.length, 1);
 });
-T('27. showInlinePilotCard renders favorable verdict branch', () => {
+T('27. showInlinePilotCard labels an observation, not matchup quality', () => {
   const card = document._els['results-section'].children[0];
-  inc(card.innerHTML, 'Favorable');
+  inc(card.innerHTML, 'Observed series wins');
 });
 T('28. showInlinePilotCard renders lead and win condition tips', () => {
   const card = document._els['results-section'].children[0];
-  inc(card.innerHTML, 'Best winning lead: Incineroar + Whimsicott');
+  inc(card.innerHTML, 'Most frequent lead in retained wins: Incineroar + Whimsicott');
   inc(card.innerHTML, 'Win condition: Tailwind Win');
 });
-T('29. showInlinePilotCard renders low-win disruption tip', () => {
+T('29. showInlinePilotCard does not infer a strategy from losses', () => {
   delete document._els['inline-pilot-card'];
   document._els['results-section'] = makeStubEl('results-section');
   showInlinePilotCard(fixture.opponent, fixture.weakResult);
-  inc(document._els['results-section'].children[0].innerHTML, 'Use speed control');
+  const html = document._els['results-section'].children[0].innerHTML;
+  inc(html, 'not a prediction of competitive matchup strength');
+  eq(/Avoid|Use speed control|&lt;strong&gt;Coach/.test(html), false);
 });
 T('30. showInlinePilotCard no-ops when results section is missing', () => {
   delete document._els['inline-pilot-card'];

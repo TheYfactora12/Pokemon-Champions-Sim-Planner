@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.166-replay-download
+// Build marker: v2.2.167-registration-evidence
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.166-replay-download'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.167-registration-evidence'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -1499,7 +1499,6 @@ function rebuildTeamSelects() {
   if (!playerSel || !oppSel) return;
   var prevPlayer = playerSel.value || currentPlayerKey || getDefaultVisiblePlayerTeamKey();
   var prevOpp = oppSel.value || getDefaultVisibleOpponentTeamKey(prevPlayer);
-  var hadDuplicateSelection = prevPlayer && prevOpp && prevPlayer === prevOpp;
   playerSel.innerHTML = '';
   // Rebuild opponent while preserving order (existing option text has
   // ladder-gate glyph mutations; start fresh from TEAMS)
@@ -1519,8 +1518,6 @@ function rebuildTeamSelects() {
     : getDefaultVisiblePlayerTeamKey();
   if (TEAMS[prevOpp] && isVisibleTeamInCatalog(prevOpp, TEAMS[prevOpp], { includeCustom: true }) && prevOpp !== playerSel.value) {
     oppSel.value = prevOpp;
-  } else if (hadDuplicateSelection) {
-    oppSel.value = playerSel.value;
   } else {
     oppSel.value = getDefaultVisibleOpponentTeamKey(playerSel.value);
   }
@@ -1534,6 +1531,7 @@ function rebuildTeamSelects() {
     if (heading) heading.textContent = selectedTeam ? selectedTeam.name : 'No available team';
     renderRoster(row[2], selectedTeam ? selectedTeam.members : []);
   });
+  if (typeof renderSimBringPickers === 'function') renderSimBringPickers();
 }
 
 // ---- Initial renders ----
@@ -4196,11 +4194,8 @@ function showInlinePilotCard(oppKey, res, simCtx) {
   const oppTeam = TEAMS[oppKey];
   const teamName = oppTeam ? oppTeam.name : oppKey;
 
-  let verdict, verdictClass;
-  if (winPct >= 65) { verdict = 'Favorable'; verdictClass = 'verdict-favorable'; }
-  else if (winPct >= 45) { verdict = 'Even'; verdictClass = 'verdict-even'; }
-  else if (winPct >= 30) { verdict = 'Risky'; verdictClass = 'verdict-risky'; }
-  else { verdict = 'Avoid'; verdictClass = 'verdict-avoid'; }
+  const verdict = 'Observed series wins';
+  const verdictClass = 'verdict-even';
 
   const wcEntries = Object.entries(res.winConditions || {}).sort((a,b) => b[1]-a[1]).slice(0,2);
 
@@ -4220,25 +4215,11 @@ function showInlinePilotCard(oppKey, res, simCtx) {
   const tips = [];
   tips.push(`Evidence: ${total} Bo${simCtx.bo || currentBo} series / ${totalGames} games; ${res.retainedLogSampleSize || (res.allLogs || []).length} replay samples retained.`);
   if (res.adaptiveBringEnabled) tips.push(`Bo adaptation active: each game can keep or change the selected ${getBringCount()} from the registered six.`);
-  if (leadPairs.length) tips.push(`Best winning lead: ${leadPairs[0]}`);
+  tips.push('This sample is not a prediction of competitive matchup strength.');
+  if (leadPairs.length) tips.push(`Most frequent lead in retained wins: ${leadPairs[0]}`);
   const bestLineup = csTopCountEntries(res.playerWinBringCounts, 1)[0];
-  if (bestLineup) tips.push(`Best winning lineup: ${bestLineup[0]}`);
+  if (bestLineup) tips.push(`Most frequent lineup in recorded wins: ${bestLineup[0]}`);
   if (wcEntries.length) tips.push(`Win condition: ${wcEntries[0][0]} (${csWinConditionPct(res, wcEntries[0][1])}% of player game wins)`);
-  if (winPct < 45) tips.push('Use speed control to disrupt their gameplan');
-
-  // T9j.16 (Refs #65) - inject top critical/high coaching rule for this matchup.
-  // Lightweight: builds a single-matchup report and pulls the top-severity rule.
-  try {
-    if (typeof buildStrategyReport === 'function' && playerKey) {
-      const singleResults = {}; singleResults[oppKey] = res;
-      const fmt = simCtx.format || ((typeof currentFormat !== 'undefined') ? currentFormat : 'doubles');
-      const rep = buildStrategyReport(playerKey, singleResults, fmt);
-      if (rep && rep.coaching_rules && rep.coaching_rules.length) {
-        const top = rep.coaching_rules[0];
-        tips.push(`<strong>Coach (${top.severity}):</strong> ${top.correction}`);
-      }
-    }
-  } catch(e) { /* silent - inline card stays minimal on error */ }
 
   const postCoach = (typeof coachPost === 'function') ? coachPost(res) : '';
   container.innerHTML = `

@@ -2065,9 +2065,13 @@ class Pokemon {
       };
       this.displayName = data.name;                 // keep Mega name for UI
       this.name        = _megaInfo.baseSpecies;     // engine reads base stats
-      this.ability     = (typeof CHAMPIONS_BASE_ABILITIES !== 'undefined'
-                         && CHAMPIONS_BASE_ABILITIES[_megaInfo.baseSpecies])
-                         || this.ability;
+      // Legacy active-Mega sets need a base fallback; an explicit base ability
+      // belongs to the registered set and must survive initialization.
+      if (!this.ability || this.ability === _megaInfo.ability) {
+        this.ability = (typeof CHAMPIONS_BASE_ABILITIES !== 'undefined'
+                       && CHAMPIONS_BASE_ABILITIES[_megaInfo.baseSpecies])
+                       || this.ability;
+      }
       this.hasMegaEvolved = false;
     } else {
       this.megaForm       = null;
@@ -7456,7 +7460,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.10'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.11'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
