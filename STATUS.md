@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 gate recheck: battle audit, 187-file fast gate, 4,624 cross-format
+  invariant runs and six bounded Showdown probes pass locally. M-B/M-C remain
+  source-review blocked; reference catalog normalization and hosted replay
+  findings remain open. PR #195 is conflicting. See
+  `docs/release/RULESET_GATE_RECHECK_2026-10-05.md`.
+
 - October 4 live player audit: one fresh hosted v142 doubles game completed.
   Raw/formatted replay discrepancies, one-game coaching overconfidence, and
   save/export evidence gaps remain open. Not an accuracy certification. See
