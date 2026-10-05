@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 audit index: [release traceability](docs/release/RELEASE_TRACEABILITY_2026-10-05.md)
+  maps recent fixes to immutable commits, scoped evidence and open gates, with
+  a required record contract for subsequent changes. Older unmapped history
+  is explicitly not certified. This documentation does not close release gates.
+
 - October 5 documentation checkpoint: the [v172 release review](docs/release/V172_RELEASE_GATE_REVIEW_2026-10-05.md)
   now includes status inventory and diagrams for deployment, security approval
   and reversible Docker recovery. Docker startup is verified repaired; local

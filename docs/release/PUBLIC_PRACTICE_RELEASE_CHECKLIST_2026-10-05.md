@@ -5,6 +5,10 @@ required for the applicable changes. No deadline overrides a failed gate.
 This is the October 5 execution queue, not competitive M-C approval.
 STATUS.md owns proof state; source/project-roadmap.json owns milestone direction.
 
+Maintain the [audit and traceability ledger](RELEASE_TRACEABILITY_2026-10-05.md)
+for every release change: finding, exact commit, tests, review, approval,
+deployment, verification and recovery. Missing evidence stays open.
+
 ## Ordered work
 
 1. [ ] Selection and identity: reproduce startup opponent changes; preserve
