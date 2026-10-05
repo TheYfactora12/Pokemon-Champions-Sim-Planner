@@ -1,5 +1,25 @@
 # Improvement Log
 
+## IMP-0066: Mobile Editor Intrinsic Sizing (#211)
+
+October 5, v177 candidate e49c232. Live v176 selected-editor content exceeded
+phone width (385 client / 425 scroll). Zero-minimum grid tracks and scoped input
+sizing remove intrinsic expansion without hiding overflowing content. Local
+selected-editor measurements: 315/315, 385/385, 763/763 and 1275/1275.
+Static sizing regression and full project gate pass; offline DB tests do not
+establish live security. Independent review found no release-blocking code defect
+and verified bundle reproduction, manifest/external assets and roadmap consistency.
+
+A separate 390px custom-team paste edit changed the disposable Incineroar fixture
+from 30HP/32Atk/4Spe to 29HP/32Atk/5Spe and retained that spread after reload.
+This proves that paste-edit persistence path, not all Set Editor controls or
+competitive legality of a one-member fixture. No new battle was run.
+
+Lesson: grid items and input intrinsic sizes must both be constrained; hiding
+overflow would mask inaccessible controls. Hosted checks and deployed editor
+verification remain required before #211 closure. Export retrieval, old-cache
+migration and paired live replay remain beta-label gates, not passed by this fix.
+
 ## IMP-0065: Prompt Release And Primary/Backup Ownership
 
 October 5, 2026. User requested that tested fixes stop accumulating locally.
