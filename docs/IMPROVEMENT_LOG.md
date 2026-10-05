@@ -19,6 +19,18 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0058: Production Artifact Alignment Checkpoint
+
+October 5: added an explicit read-only HTTP checkpoint to prevent conflating
+local, pushed and deployed state. Six fixtures cover matching artifacts,
+configuration-injected HTML provenance, old builds, stale HTML, altered assets
+and missing assets. A live run reports local v172 versus hosted v142 and four
+missing v172 external assets. GitHub main's manifest independently reports v142.
+No production change. This verifies declared artifact identity, not independent
+manifest approval, browser-cache behavior, mechanics or live database security.
+Run the command in the public-practice release checklist after an approved
+deployment, then perform the actual user journey. No new recurring job added.
+
 ### IMP-0057: Replace Unknown Security Status With Live Readback
 
 October 5: authorized metadata-only Supabase readback replaced an access gap

@@ -29,7 +29,27 @@ STATUS.md owns proof state; source/project-roadmap.json owns milestone direction
 7. [ ] Deploy and verify: only after prior gates; compare deployed artifact,
    cache identity and required assets, then repeat battle/export/user-flow QA.
 
-## Preservation rules
+## Production Alignment Checkpoint
+
+Before declaring a release live, run from the tested checkout:
+
+```powershell
+node poke-sim/tools/check-production-alignment.cjs
+```
+
+Require exit 0 and retain the JSON report with the reviewed commit SHA and
+Pages run URL. It verifies local manifest integrity, live build identity,
+repository bundle provenance, deployed HTML hash/size and every declared
+external asset. Pages intentionally injects runtime configuration, so deployed
+HTML is checked against its deployed hash and repository provenance separately.
+This is not independent attestation of the deployed manifest or browser-cache,
+database, UI or simulation correctness. Repeat the visible user journey after
+artifact verification. A failed or unavailable check must not be called aligned.
+
+October 5 HTTP checkpoint: local v172 versus live/main v142, mismatch. Four
+v172 external assets returned 404. No deployment performed by this check.
+
+## Preservation Rules
 
 - No branch deletion, force push, destructive DB cleanup or bulk issue closure.
 - Keep dated audits as history; append supersession links instead of deleting
