@@ -19,6 +19,29 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0050: Replay Download Lifecycle And Nested Controls
+
+October 5: replay JSON used a detached link and zero-delay URL revocation,
+unlike the existing shared helper. It now uses the shared attached-link,
+retained-URL path. This removes a concrete lifecycle risk, not proof that it
+caused the in-app browser download timeout. Nested details/buttons/links no
+longer toggle the replay card. The new regression failed before the fix and
+passes after; v166 browser raw-log expansion remains open as intended.
+
+One new explicit Mega Altaria/Mega Dragonite practice battle completed in four
+turns (win). Download still timed out, so visible/export pairing and exact
+mechanics correctness are NOT proven. No extra stress claim from this sample.
+Pilot Notes again produced Favorable/100% from one win and remain open, along
+with selected ability and initial opponent consistency.
+
+Removed percentage-based completion guidance from the release discipline
+document; historical UI/docs still need broader consolidation. First full gate
+caught stale app-shell build identity and the old policy assertion; corrected
+both. Rerun receipt: poke-sim/artifacts/v166-gate-final.log. Build/cache/header
+and generated metadata move together as v2.2.166-replay-download.
+Lesson: a download request is not saved-file proof; never close the evidence
+gate until the file is read back and paired with its exact visible battle.
+
 ### IMP-0049: Reconcile Candidate With Current Main
 
 October 5: resolved four merge conflicts against main a5c2224. Preserved main's

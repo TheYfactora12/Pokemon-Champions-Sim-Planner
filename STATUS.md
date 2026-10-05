@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 v166 candidate: replay export reuses the retained-URL download
+  helper; nested raw-log controls no longer close the replay card. Browser
+  confirms the interaction repair but download completion remains unverified.
+  Selection/ability consistency and Pilot Notes findings remain open. See
+  IMP-0050; no production deployment or mechanics approval.
+
 - October 5 reconciliation: merged main at a5c2224 into the v165 candidate,
   preserving main's news-only auto-publish workflow and current feed. Rebuilt
   the bundle instead of choosing conflicting generated metadata. This resolves

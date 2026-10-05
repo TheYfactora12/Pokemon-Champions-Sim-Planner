@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.165-mc-team-review
+// Build marker: v2.2.166-replay-download
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.165-mc-team-review'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.166-replay-download'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8385,13 +8385,14 @@ function downloadReplayTurnLog(replay, opts) {
     single_replay_missing_mechanics: singleReplayMissingMechanics,
     turnLog: turnLog
   };
-  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'champions-turn-log-' + (replay.seed || Date.now()) + '.json';
-  a.click();
-  setTimeout(function() { URL.revokeObjectURL(url); }, 0);
+  _downloadBlob('champions-turn-log-' + (replay.seed || Date.now()) + '.json',
+    'application/json', JSON.stringify(payload, null, 2));
+}
+
+function csReplayCardClick(card, event) {
+  if (event.target && event.target.closest &&
+      event.target.closest('button, a, details, input, select, textarea')) return;
+  card.classList.toggle('open');
 }
 
 function csBuildReplayCoachingSummary(replay, opts) {
@@ -9584,7 +9585,7 @@ function renderReplays() {
       </div>`;
     const dlBtn = card.querySelector('.replay-json-btn');
     if (dlBtn) dlBtn.addEventListener('click', (ev)=>{ ev.stopPropagation(); downloadReplayTurnLog(r); });
-    card.addEventListener('click', ()=>card.classList.toggle('open'));
+    card.addEventListener('click', (event)=>csReplayCardClick(card, event));
     el.appendChild(card);
   }
 }

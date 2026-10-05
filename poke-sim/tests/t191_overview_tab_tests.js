@@ -305,8 +305,8 @@ T('4b. Architecture evidence map documents the QA proof contract', () => {
   inc(doc, 'Tactical Coaching QA');
   inc(doc, 'No QA artifact may be used as complete Champion legality');
   const cleanup = fs.readFileSync(path.join(ROOT, 'docs', 'RELEASE_DISCIPLINE_AND_CLEANUP_GATES.md'), 'utf8');
-  inc(cleanup, '99% closed');
-  inc(cleanup, '100% closed');
+  inc(cleanup, 'Missing required evidence keeps the applicable gate open');
+  inc(cleanup, 'Percentages do not establish release readiness or game accuracy');
   inc(cleanup, 'What exact problem did this solve?');
   inc(cleanup, 'Which QA slice proves it?');
   inc(cleanup, 'Do not leave it implicit in chat.');
