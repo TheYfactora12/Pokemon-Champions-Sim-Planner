@@ -6,6 +6,15 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 5 release/security follow-up: v172 pushed as b998541. Independent
+  release review found no additional CSS/version defect and reproduced bundle
+  and asset checks. Authorized live metadata readback now works, but does not
+  meet the shared-evidence containment contract; private-save prerequisites
+  are absent and isolated cloud staging was not found. No production mutation.
+  Existing containment passes fresh isolated PostgreSQL fixtures, not live
+  Auth/ownership. Production remains held. See
+  `docs/release/V172_RELEASE_GATE_REVIEW_2026-10-05.md` for scope and next steps.
+
 - October 5 v172 / engine 1.1.14: mobile results intrinsic-width overflow fixed;
   chart canvases and audit cards shrink within zero-minimum grid tracks. Five
   focused layout assertions and the full 190-file fast / 12-file offline DB

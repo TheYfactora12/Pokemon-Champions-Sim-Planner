@@ -19,6 +19,20 @@ Purpose: show what improved, why it improved, how we checked it, and what is sti
 
 ## Review Index
 
+### IMP-0057: Replace Unknown Security Status With Live Readback
+
+October 5: authorized metadata-only Supabase readback replaced an access gap
+with a confirmed unmet containment gate. No user data or secrets retrieved,
+no production writes, and no sensitive policy detail published. Re-ran the
+existing isolated PostgreSQL containment suite successfully (60 denied writes,
+public reads preserved, six trusted writes, idempotency and rollback checks).
+Independent release review rejected offline/experimental labeling as a waiver.
+Lesson: healthy service status and a quiet advisor do not prove the application's
+ownership or write policy. Read actual effective permissions; keep synthetic
+fixtures distinct from live user isolation. Staging, exact production-change
+approval and readback remain required. Details and next actions:
+`docs/release/V172_RELEASE_GATE_REVIEW_2026-10-05.md`.
+
 ### IMP-0056: Mobile Results Intrinsic-Width Guard
 
 October 5 local v172. Populated Simulator results previously stretched a 385px
