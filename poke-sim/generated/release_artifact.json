@@ -4,7 +4,7 @@
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "21689d952c170cc7450fe073f5b229d5dcd6724bef0f60b86046ccf815368e19",
-  "bundle_bytes": 11472103,
+  "bundle_sha256": "bfc537eb1e642c234dc634f44ee025d733d396d0f4102d60eba5f8210bea80d2",
+  "bundle_bytes": 11470750,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes"
 }
