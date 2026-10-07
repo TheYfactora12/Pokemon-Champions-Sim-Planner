@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.184-legality-context
+// Build marker: v2.2.185-source-context
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.184-legality-context'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.185-source-context'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -16879,6 +16879,9 @@ function csRenderSourceSyncRows(status, dbSnapshot) {
   var generated = status && status.generatedShowdown ? status.generatedShowdown : {};
   var review = status && status.reviewTracks ? status.reviewTracks : {};
   var db = status && status.approvedDb ? status.approvedDb : {};
+  var coverage = typeof getChampionsRegulationCoverage === 'function' ? getChampionsRegulationCoverage() : null;
+  var currentProfile = coverage && coverage.regulation_id && typeof getChampionsRuleset === 'function'
+    ? getChampionsRuleset(coverage.regulation_id) : null;
   var dbLiveRun = dbSnapshot && dbSnapshot.latestRun ? dbSnapshot.latestRun : null;
   var dbApprovedCounts = dbSnapshot && Array.isArray(dbSnapshot.approvedCounts) ? dbSnapshot.approvedCounts : [];
   var dbApprovedTotal = dbApprovedCounts.reduce(function(sum, row) {
@@ -16900,16 +16903,28 @@ function csRenderSourceSyncRows(status, dbSnapshot) {
       why: 'Read-only approved DB snapshot used to inspect live source freshness and promotion state when Supabase is reachable.'
     },
     {
-      track: 'Champion regulation review lane',
+      track: 'Historical regulation review snapshot',
       stamp: csFormatSourceStamp(review.regulationReviewAt),
       marker: review.regulationLabel || 'Review lane',
       why: 'Human-reviewed regulation and Champion-only source notes that stay blocked until the team approves promotion.'
     },
     {
-      track: 'Sources page release snapshot',
+      track: 'Historical Sources page snapshot',
       stamp: csFormatSourceStamp(status && status.sourcesPageReviewedAt),
-      marker: (status && status.buildId) || ((typeof csGetBuildId === 'function') ? csGetBuildId() : 'Unknown build'),
-      why: 'Shows which source assumptions this exact browser build is presenting to users.'
+      marker: (status && status.buildId) || 'Unknown historical build',
+      why: 'Original captured metadata, not this deployment or a fresh source review.'
+    },
+    {
+      track: 'Current regulation lane',
+      stamp: currentProfile ? csFormatSourceStamp(currentProfile.sourceCheckedAtUtc) : 'Unknown',
+      marker: currentProfile ? (currentProfile.selectorLabel || currentProfile.label) : 'No current lane verified',
+      why: coverage ? coverage.message : 'Current regulation coverage is unavailable.'
+    },
+    {
+      track: 'Current browser release',
+      stamp: 'Build identity only; not a source-review date',
+      marker: typeof csGetBuildId === 'function' ? csGetBuildId() : 'Unknown build',
+      why: 'Deployment version is separate from source freshness and regulation approval.'
     }
   ].map(function(row) {
     return '<tr><td><strong>' + _escapeHtml(row.track) + '</strong></td>' +
@@ -16937,7 +16952,10 @@ function csRenderSourceRegistry() {
   if (!registry || !Array.isArray(registry.tiers)) return '';
   var tiers = registry.tiers.map(function(tier) {
     var sources = (tier.sources || []).map(function(source) {
-      return '<li><a href="' + _escapeHtml(source.url || '#') + '" target="_blank" rel="noopener">' + _escapeHtml(source.name || 'Source') + '</a><span>' + _escapeHtml(source.status || 'tracked') + '</span></li>';
+      var url = source.url || '';
+      var linked = /^https?:\/\//i.test(url) || /^generated\/[a-zA-Z0-9_.-]+\.js$/.test(url);
+      var name = _escapeHtml(source.name || 'Source');
+      return '<li>' + (linked ? '<a href="' + _escapeHtml(url) + '" target="_blank" rel="noopener">' + name + '</a>' : '<strong>' + name + '</strong>') + '<span>' + _escapeHtml(source.status || 'tracked') + '</span></li>';
     }).join('');
     return '<article class="sources-table-card">' +
       '<div class="sources-table-head"><div><span class="badge badge-blue">' + _escapeHtml(tier.trust || 'tracked') + '</span><h3>' + _escapeHtml(tier.label || tier.id || 'Source tier') + '</h3></div><p>Use for: ' + _escapeHtml((tier.use_for || []).join(', ') || 'tracked evidence') + '.</p></div>' +

@@ -1,5 +1,16 @@
 # Improvement Log
 
+## IMP-0074: Historical Source Metadata Versus Current Release (#221)
+
+October 6 v185 candidate. Sources previously presented captured v23/M-B metadata
+as this browser's current context. Preserve those capture dates with explicit
+historical labels, and separately render runtime build and dated regulation.
+Non-URL evidence placeholders no longer create broken navigation links. Review
+copy no longer promises pilot-mistake diagnosis. Canonical roadmap checkpoint
+now records shipped v184; generated Markdown/browser outputs rebuilt together.
+Focused renderer tests pass. Full gate/review/deployment pending in release PR.
+Do not confuse a new UI version with a fresh data sync or regulation approval.
+
 ## IMP-0073: Selected-Regulation Reporting (#221)
 
 October 6 v184 candidate. Teams previously used historical/general validation

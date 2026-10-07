@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 6: v184 deployed in PR222 / 26e7c20 / Pages37563372479;
+  exact artifact check and live selected-regulation/reload verification passed
+  at 22:47 EDT. v185 candidate separates historical/current Sources metadata,
+  aligns the roadmap checkpoint and bounds Review wording. See
+  docs/release/RELEASE_HANDOFF_2026-10-06.md for the ten-item worklist and limits.
+
 - October 6: v183 deployed in PR220 / c72cba7 / Pages37562090643;
   production artifact alignment passed at 22:30 EDT. Candidate v184 aligns
   team-card checks with the selected regulation and retains structural errors
