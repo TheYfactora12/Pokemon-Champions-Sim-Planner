@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Production v179 is verified by PR215, Pages run 37552163599 and exact HTTP artifact alignment. Live desktop practice-sample preview and disposable-team save/reload passed; #214 closed. Candidate v180 fixes unsupported result attribution (#216), not battle mechanics. Finish live phone save/reload (#211/#213), supported replay download and paired visible/export verification, then remaining beta gates (#103). Structured Strategy identity (#209), database security and regulation approval remain open. Preserve Preview and local-save scope; no competitive accuracy percentage is established. Verify each primary release before synchronizing Alfredo. See docs/release/BETA_READINESS_2026-10-05.md.
+Verified checkpoint: v181 shipped through PR218 and Pages37559335076, with exact HTTP artifact alignment and live move-evidence panel inspection. Candidate v182 withdraws unsupported Strategy/PDF recommendations and scores; registered sets and matching action observations remain available. Reintroduce coaching only with claim-specific evidence contracts and correctness tests (#209). Complete live phone save/reload (#211/#213), supported replay download and visible/export pairing, then beta gates (#103). Database security, regulation approval and broader coaching surfaces remain open. Preview/local-save scope remains; no competitive accuracy percentage is established. Verify primary releases before Alfredo synchronization.
 
 ## Milestone Index
 

@@ -1428,6 +1428,13 @@ table{border-collapse:collapse;width:100%}
 /* ===== PDF PRINT STYLES — T9j.14 Shadow Pressure master sheet theme ===== */
 @media print {
   body > *:not(#pdf-report-container) { display: none !important; }
+  #pdf-report-container .cs-section {
+    color: #111 !important;
+    background: #fff !important;
+    border: 0;
+    break-inside: avoid;
+  }
+  #pdf-report-container .cs-section * { color: inherit !important; }
   #pdf-report-container {
     display: block !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
