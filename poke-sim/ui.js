@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.178-form-roundtrip
+// Build marker: v2.2.179-practice-sample
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.178-form-roundtrip'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.179-practice-sample'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -195,6 +195,7 @@ function _activateTab(tabId, opts) {
   var panel = document.getElementById('tab-' + tabId);
   if (!btn || !panel) return false;
   _syncTabA11yState(tabId);
+  if (tabId === 'editor') syncEditorTeamSelection();
   btn.setAttribute('aria-controls', 'tab-' + tabId);
   if (!btn.id) btn.id = 'tab-btn-' + tabId;
   panel.setAttribute('aria-labelledby', btn.id);
@@ -2845,6 +2846,26 @@ document.getElementById('bulk-import-file')?.addEventListener('change', function
 // EDITOR TAB
 // ============================================================
 let editingIdx = null;
+var editingTeamKey = null;
+var editingRosterSnapshot = null;
+
+function editorContextMatches() {
+  var team = getEditablePlayerTeam();
+  return editingTeamKey === getEditablePlayerTeamKey() &&
+    editingRosterSnapshot === JSON.stringify(team ? team.members : null);
+}
+
+function syncEditorTeamSelection() {
+  var key = getEditablePlayerTeamKey();
+  if (editorContextMatches()) return;
+  editingIdx = null;
+  editingTeamKey = key;
+  var team = getEditablePlayerTeam();
+  editingRosterSnapshot = JSON.stringify(team ? team.members : null);
+  renderEditorRoster();
+  var form = document.getElementById('editor-form');
+  if (form) form.innerHTML = '<p>Select a Pokemon to edit its set.</p>';
+}
 const STAT_PANEL_KEYS = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'];
 const STAT_PANEL_LABELS = { hp:'HP', atk:'Atk', def:'Def', spa:'SpA', spd:'SpD', spe:'Spe' };
 const STAT_PANEL_NATURE_PLUS = {
@@ -3096,6 +3117,7 @@ function addEditorPokemonSlot() {
 }
 
 function removeEditorPokemonSlot() {
+  if (!editorContextMatches()) { syncEditorTeamSelection(); return; }
   if (editingIdx === null) return;
   const team = getEditablePlayerTeam();
   if (!team || !Array.isArray(team.members) || !team.members[editingIdx]) return;
@@ -3379,6 +3401,8 @@ function openEditorForm(idx) {
   editingIdx = idx;
   const team = getEditablePlayerTeam();
   if (!team || !Array.isArray(team.members) || !team.members[idx]) return;
+  editingTeamKey = getEditablePlayerTeamKey();
+  editingRosterSnapshot = JSON.stringify(team.members);
   const m = team.members[idx];
   const form = document.getElementById('editor-form');
   const currentSpTotal = ['hp','atk','def','spa','spd','spe'].reduce(function(sum, stat) {
@@ -3517,6 +3541,7 @@ function refreshEditorSpreadGuard() {
 }
 
 function saveEdits() {
+  if (!editorContextMatches()) { syncEditorTeamSelection(); return; }
   if (editingIdx === null) return;
   const team = getEditablePlayerTeam();
   if (!team || !Array.isArray(team.members) || !team.members[editingIdx]) return;
@@ -3554,6 +3579,7 @@ function saveEdits() {
   team.showdown_source_version = validation.sourceVersion;
   csPersistEditedTeam(team, 'set_editor');
   csRefreshEditorTeamViews(team);
+  openEditorForm(editingIdx);
   const btn = document.getElementById('save-edits');
   const orig = btn.textContent;
   clearEditorDraftDirty();
@@ -3722,18 +3748,36 @@ document.getElementById('showdown-paste')?.addEventListener('input', function() 
 });
 
 document.getElementById('load-sample-import-team')?.addEventListener('click', function() {
-  var sample = TEAMS.kevin_meta_sun || TEAMS.targeted_proof_legal || TEAMS.player;
   var ta = document.getElementById('showdown-paste');
-  if (!sample || !ta) return;
-  ta.value = exportTeamToPasteWithOptions(sample, { showdownCompatible: true });
+  var statusEl = document.getElementById('import-status');
+  if (!ta) return;
+  var keys = Array.from(new Set(['kevin_meta_sun', 'targeted_proof_legal', 'player'].concat(getVisibleTeamKeys())));
+  var paste = '';
+  for (var key of keys) {
+    var sample = TEAMS[key];
+    if (!sample || sample.source === 'custom' || !sample.members || sample.members.length !== 6) continue;
+    var candidate = exportTeamToPasteWithOptions(sample, { showdownCompatible: false });
+    var members = parseShowdownPaste(candidate);
+    if (members.length === 6 && buildImportedTeamValidation(members, { format: 'champions' }).valid) {
+      paste = candidate;
+      break;
+    }
+  }
+  if (!paste) {
+    if (statusEl) {
+      statusEl.textContent = 'No sample passes the current import checks. Your paste has been kept.';
+      statusEl.className = 'modal-status err';
+    }
+    return;
+  }
+  ta.value = paste;
   var pasteTab = document.querySelector('.import-tab[data-itab="paste"]');
   if (pasteTab) pasteTab.click();
   var slot = document.getElementById('import-slot');
   if (slot) slot.value = '__new__';
   ta.dispatchEvent(new Event('input'));
-  var statusEl = document.getElementById('import-status');
   if (statusEl) {
-    statusEl.textContent = 'Sample loaded. Review the checker, then click Load Team.';
+    statusEl.textContent = 'Practice sample loaded. Regulation eligibility is not verified.';
     statusEl.className = 'modal-status ok';
   }
 });

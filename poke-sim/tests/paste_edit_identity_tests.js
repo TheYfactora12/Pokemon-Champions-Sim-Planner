@@ -223,8 +223,9 @@ test('actual set editor preserves same-member identity but replaces species iden
     getEditablePlayerTeam = function(){ return TEAMS.custom_paste_identity; };
     csPersistEditedTeam = function(){ effects.persist.push('editor'); };
     csRefreshEditorTeamViews = function(){};
-    editingIdx = 0;
   `, ctx);
+  ctx.document.getElementById('player-select').value = key;
+  ctx.openEditorForm(0);
   function fill(name, ability) {
     for (const [id, value] of Object.entries({ 'ed-name': name, 'ed-ability': ability, 'ed-item': '', 'ed-nature': 'Hardy', 'ed-level': '50', 'ed-role': '', 'ed-mv-0': 'Protect', 'ed-mv-1': '', 'ed-mv-2': '', 'ed-mv-3': '' })) ctx.document.getElementById(id).value = value;
     for (const stat of ['hp','atk','def','spa','spd','spe']) ctx.document.getElementById('ev-' + stat).value = '0';

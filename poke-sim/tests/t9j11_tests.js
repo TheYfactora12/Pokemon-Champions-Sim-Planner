@@ -895,6 +895,58 @@ T('18. gender and nicknames preserve parenthetical species forms', () => {
   ]) eq(parseShowdownPaste(input + '\n- Protect')[0].name, expected, input);
 });
 
+T('19. sample button supplies a six-member importable practice team', () => {
+  ctx.Event = function(type) { this.type = type; };
+  const button = ctx.document.getElementById('load-sample-import-team');
+  button._listeners.click[0]();
+  const text = ctx.document.getElementById('showdown-paste').value;
+  const members = parseShowdownPaste(text);
+  eq(members.length, 6);
+  const verdict = buildImportedTeamValidation(members, { format: 'champions' });
+  truthy(verdict.valid, JSON.stringify(verdict.errors));
+});
+
+T('20. unavailable sample preserves user input and does not claim success', () => {
+  const validate = ctx.buildImportedTeamValidation;
+  const ta = ctx.document.getElementById('showdown-paste');
+  ta.value = 'User draft';
+  try {
+    ctx.buildImportedTeamValidation = () => ({ valid: false, errors: ['blocked'] });
+    ctx.document.getElementById('load-sample-import-team')._listeners.click[0]();
+    eq(ta.value, 'User draft');
+    truthy(ctx.document.getElementById('import-status').textContent.includes('No sample passes'));
+  } finally { ctx.buildImportedTeamValidation = validate; }
+});
+
+T('21. changing selected team invalidates the editor draft before save or remove', () => {
+  const select = ctx.document.getElementById('player-select');
+  select.value = 'mega_altaria';
+  ctx.openEditorForm(0);
+  select.value = 'mega_dragonite';
+  const before = JSON.stringify(TEAMS);
+  ctx.saveEdits();
+  eq(JSON.stringify(TEAMS), before, 'stale save must not mutate either team');
+  ctx.syncEditorTeamSelection();
+  truthy(ctx.document.getElementById('editor-team-status').innerHTML.includes(TEAMS.mega_dragonite.name));
+  truthy(ctx.document.getElementById('editor-form').innerHTML.includes('Select a'));
+  ctx.openEditorForm(0);
+  select.value = 'mega_altaria';
+  ctx.removeEditorPokemonSlot();
+  eq(JSON.stringify(TEAMS), before, 'stale remove must not mutate either team');
+});
+
+T('22. same-key roster replacement invalidates stale editor values', () => {
+  const select = ctx.document.getElementById('player-select');
+  select.value = 'mega_altaria';
+  ctx.openEditorForm(0);
+  TEAMS.mega_altaria.members = JSON.parse(JSON.stringify(TEAMS.mega_altaria.members));
+  TEAMS.mega_altaria.members[0].nature = 'Hardy';
+  const before = JSON.stringify(TEAMS);
+  ctx.saveEdits();
+  eq(JSON.stringify(TEAMS), before);
+  truthy(ctx.document.getElementById('editor-form').innerHTML.includes('Select a'));
+});
+
 console.log('\n' + '='.repeat(60));
 console.log(`T9j.11 Results: ${pass} pass, ${fail} fail`);
 if (fail > 0) process.exit(1);

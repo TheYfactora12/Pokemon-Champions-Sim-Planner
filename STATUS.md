@@ -6,6 +6,15 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 6: v178 is deployed via PR210 / merge2508d75 / Pages37376456724.
+  HTTP artifact comparison passed October5 21:40 UTC; public import identity and
+  320/390px editor width checks passed. #212 closed. Candidate v179 addresses
+  the rejected onboarding sample and stale editor team context found during
+  mobile save/reload testing (#213). It is not yet deployed. See
+  [the journey report](docs/release/MOBILE_SAVE_JOURNEY_2026-10-06.md).
+
+The entries below retain historical checkpoints, not the latest deployment state.
+
 - October 5 deployed baseline: PR195 merged as 90bff31, Pages run37371824754
   succeeded, and HTTP artifact alignment passed for v176. Live browser confirms
   homepage opening markup/news controls and corrected Strategy attribution.
