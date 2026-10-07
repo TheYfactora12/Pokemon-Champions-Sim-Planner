@@ -34,3 +34,11 @@ No new battle was run. Replay download pairing remains open, including the prior
 browser-tool download limitation. No database, legality or mechanics promotion.
 Local browser proof is not deployed proof. Track review, tests and release on
 #213; keep #211 open until the deployed save/reload acceptance is complete.
+# Deployed Checkpoint
+
+v179 shipped through PR215, merge fe5a44a and successful Pages run 37552163599.
+Exact HTTP artifact comparison passed October 7 00:31 UTC. Live desktop sample
+preview and a disposable team's save/reload passed, including immediate stat
+summary refresh (#214 closed). The production viewport remained 1412px despite
+the requested phone override; do not treat this as live phone evidence.
+#211/#213 remain open for that final journey. Existing user teams were untouched.

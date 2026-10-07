@@ -1,10 +1,10 @@
 {
   "schema_version": "champions-project-roadmap-v1",
-  "reviewed_at": "2026-10-05",
+  "reviewed_at": "2026-10-06",
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "Production v176 is deployed: Pages run 37371824754 succeeded and HTTP artifact alignment passed. Live homepage includes the retro opening and Strategy shows corrected move attribution. Finish cache-transition, saved-team export, mobile edit and paired live replay checks for a limited local-save practice beta; do not relabel as verified competitive simulation. Track remaining alignment in #103 and structured Strategy identity evidence in #209. Database security and regulation approval remain open; reconnect only after separate review. Verify primary release before synchronizing Alfredo. See docs/release/BETA_READINESS_2026-10-05.md for scope and remaining gates.",
+  "next_action": "Production v179 is verified by PR215, Pages run 37552163599 and exact HTTP artifact alignment. Live desktop practice-sample preview and disposable-team save/reload passed; #214 closed. Candidate v180 fixes unsupported result attribution (#216), not battle mechanics. Finish live phone save/reload (#211/#213), supported replay download and paired visible/export verification, then remaining beta gates (#103). Structured Strategy identity (#209), database security and regulation approval remain open. Preserve Preview and local-save scope; no competitive accuracy percentage is established. Verify each primary release before synchronizing Alfredo. See docs/release/BETA_READINESS_2026-10-05.md.",
   "milestones": [
     {
       "id": "simulation-truth",

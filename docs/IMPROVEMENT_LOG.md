@@ -1,5 +1,22 @@
 # Improvement Log
 
+## IMP-0069: Report Outcomes Without Inventing Causes (#216)
+
+October 6 candidate v180. Live v179 replay used opponent-only Tailwind, yet
+reported a player Tailwind Win. The result classifier searched both sides' prose;
+it also treated any Trick Room appearance and total faint count as causal proof.
+New count-resolved player wins record Opponent team defeated or Pokemon-count
+advantage instead. Timer and HP resolution remain unchanged. UI uses Recorded
+outcome; the legacy winCondition export key remains compatible. Historical
+exports are not rewritten and can retain unsupported old labels.
+
+Regression covers player/opponent Tailwind and Trick Room in synthetic one-turn
+fixtures. These prove outcome-label behavior, not legal teams or game parity.
+The live v179 replay download timed out and was not paired with its visible log.
+Independent review, final tests and deployment proof belong to the release PR.
+
+Lesson: a move appearing in a winning battle is not evidence that it caused the win.
+
 ## IMP-0068: Validate Onboarding Samples And Bind Editor Drafts (#213)
 
 October 6 candidate v179. Live user-journey testing found a sample rejected by
