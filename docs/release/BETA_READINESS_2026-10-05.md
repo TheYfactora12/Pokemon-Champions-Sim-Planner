@@ -9,6 +9,15 @@ No universal or 99% accuracy claim is supported.
 
 ## Shipped Evidence
 
+Latest checkpoint, October 6: v179 shipped through PR215 (fe5a44a), successful
+Pages run 37552163599 and exact HTTP artifact comparison (October 7 00:31 UTC).
+Live desktop onboarding sample preview and disposable-team save/reload passed.
+#214 closed. Local phone testing passed, but the live viewport override did not
+apply; live phone save/reload is still unproved (#211/#213). A 12-turn production
+battle exposed #216 (unsupported Tailwind win attribution); its download timed
+out, so the visible/export comparison remains open. Candidate v180 addresses
+the label, not battle mechanics. Earlier release evidence follows for history.
+
 - PR195 merged as 90bff31; Pages run 37371824754 completed successfully.
 - October 5, 20:51:17 UTC: production artifact checks matched local v176,
   with zero errors. Includes the required external asset checks.

@@ -6,6 +6,15 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 6 checkpoint: v179 shipped in PR215, merge fe5a44a; Pages run
+  37552163599 succeeded. HTTP artifact alignment passed at October 7 00:31 UTC.
+  Live desktop sample preview and disposable-team save/reload passed; #214 closed.
+  Live phone save/reload and paired replay/download verification remain open
+  (#211/#213). Candidate v180 removes unsupported Tailwind/Trick Room result
+  attribution (#216); release evidence will be recorded on its PR.
+
+The entries below retain historical checkpoints, not the latest deployment state.
+
 - October 6: v178 is deployed via PR210 / merge2508d75 / Pages37376456724.
   HTTP artifact comparison passed October5 21:40 UTC; public import identity and
   320/390px editor width checks passed. #212 closed. Candidate v179 addresses

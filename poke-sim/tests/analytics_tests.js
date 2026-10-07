@@ -283,7 +283,7 @@ T('27. showInlinePilotCard labels an observation, not matchup quality', () => {
 T('28. showInlinePilotCard renders lead and win condition tips', () => {
   const card = document._els['results-section'].children[0];
   inc(card.innerHTML, 'Most frequent lead in retained wins: Incineroar + Whimsicott');
-  inc(card.innerHTML, 'Win condition: Tailwind Win');
+  inc(card.innerHTML, 'Recorded outcome: Tailwind Win');
 });
 T('29. showInlinePilotCard does not infer a strategy from losses', () => {
   delete document._els['inline-pilot-card'];

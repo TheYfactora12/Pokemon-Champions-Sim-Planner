@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.179-practice-sample
+// Build marker: v2.2.180-outcome-evidence
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.179-practice-sample'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.180-outcome-evidence'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -4149,7 +4149,7 @@ function renderAuditPanel(res, oppKey, simCtx) {
     ['Evidence', totalSeries + ' series · ' + totalGames + ' games · ' + retainedLogs + ' retained replay samples'],
     ['Bo adaptation', res && res.adaptiveBringEnabled ? 'On · selected lineup can change between games from the registered six' : 'Off · one lineup used for the battle sample'],
     ['Sample', sample ? ((sample.result || 'unknown') + ' · ' + (sample.turns || 0) + ' turns') : 'No sample battle'],
-    ['Win condition', sample && sample.winCondition ? sample.winCondition : '—']
+    ['Recorded outcome', sample && sample.winCondition ? sample.winCondition : '—']
   ];
   const metaHtml = metaRows.map(function(row) {
     return '<div class="audit-meta-row"><span>' + _escapeHtml(row[0]) + '</span><strong>' + _escapeHtml(row[1]) + '</strong></div>';
@@ -4282,7 +4282,7 @@ function showInlinePilotCard(oppKey, res, simCtx) {
   if (leadPairs.length) tips.push(`Most frequent lead in retained wins: ${leadPairs[0]}`);
   const bestLineup = csTopCountEntries(res.playerWinBringCounts, 1)[0];
   if (bestLineup) tips.push(`Most frequent lineup in recorded wins: ${bestLineup[0]}`);
-  if (wcEntries.length) tips.push(`Win condition: ${wcEntries[0][0]} (${csWinConditionPct(res, wcEntries[0][1])}% of player game wins)`);
+  if (wcEntries.length) tips.push(`Recorded outcome: ${wcEntries[0][0]} (${csWinConditionPct(res, wcEntries[0][1])}% of player game wins)`);
 
   const postCoach = (typeof coachPost === 'function') ? coachPost(res) : '';
   container.innerHTML = `

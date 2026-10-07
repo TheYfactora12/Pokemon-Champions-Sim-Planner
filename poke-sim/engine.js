@@ -7211,11 +7211,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     winCondition = 'Perish Song last-faint resolution';
   } else if (pSurvive > oSurvive) {
     result = 'win';
-    const ko = log.filter(l => l.includes('fainted')).length;
-    const trSet = log.some(l => l.includes('Trick Room was set'));
-    const twSet = log.some(l => l.includes('Tailwind is blowing'));
+    // Keep the legacy field, but report resolution evidence rather than inferred causes.
     winCondition = timerExpired ? 'Timer Win (pokemon)'
-      : (trSet ? 'TR Win' : twSet ? 'Tailwind Win' : ko >= 4 ? 'KO Sweep' : 'Attrition Win');
+      : (oSurvive === 0 ? 'Opponent team defeated' : 'Pokemon-count advantage');
   } else if (oSurvive > pSurvive) {
     result = 'loss';
     winCondition = timerExpired ? 'Timer Loss (pokemon)' : 'Opponent Win';
