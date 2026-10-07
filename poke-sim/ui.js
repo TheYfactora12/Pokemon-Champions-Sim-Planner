@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.182-evidence-only
+// Build marker: v2.2.183-review-boundaries
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.182-evidence-only'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.183-review-boundaries'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -5890,7 +5890,7 @@ function csBuildCoachBrainSummary(ledger, opts) {
   var opportunities = Number(totals.opportunities || 0);
   var issue = csCoachBrainBestCategory(categories, 'weakness');
   var strength = csCoachBrainBestCategory(categories, 'strength');
-  var confidence = opportunities >= 100 ? 'high' : (opportunities >= 20 ? 'medium' : (opportunities > 0 ? 'low' : 'needs_more_data'));
+  var confidence = 'unknown';
   return {
     schema_version: 'champions-coach-brain-summary-v1',
     scope: options.scope || (ledger && ledger.scope) || 'decision-ledger',
@@ -5916,11 +5916,11 @@ function csBuildCoachBrainSummary(ledger, opts) {
       negative: issue.negative,
       neutral: issue.neutral,
       positive_rate_pct: issue.positive_rate_pct,
-      read: csCoachBrainIssueText(issue)
+      read: 'Recorded ledger category; not a validated coaching diagnosis.'
     } : null,
-    observed_pattern: issue ? csCoachBrainIssueText(issue) : 'No reliable repeated tactical pattern yet.',
-    root_problem: csCoachBrainRootProblem(issue),
-    risk_if_unchanged: csCoachBrainRisk(issue),
+    observed_pattern: issue ? 'Review the recorded ' + issue.label + ' category and its underlying actions.' : 'No ledger category available to inspect.',
+    root_problem: 'Not established by ledger totals.',
+    risk_if_unchanged: 'Unknown; no validated counterfactual comparison.',
     best_strength: strength ? {
       category: strength.id,
       label: strength.label,
@@ -5929,19 +5929,30 @@ function csBuildCoachBrainSummary(ledger, opts) {
       negative: strength.negative,
       neutral: strength.neutral,
       positive_rate_pct: strength.positive_rate_pct,
-      read: csCoachBrainStrengthText(strength)
+      read: 'Recorded ledger category; not proof of a player strength.'
     } : null,
-    recommended_solution: csCoachBrainNextPlan(issue),
-    next_game_plan: csCoachBrainNextPlan(issue),
-    expected_result_if_fixed: csCoachBrainExpectedResult(issue),
-    practice_drill: csCoachBrainDrill(issue),
-    tactical_interpretation: csCoachBrainTacticalInterpretation(issue, strength),
+    recommended_solution: 'Inspect the underlying action events and their participant identities before changing a move or team.',
+    next_game_plan: 'Withheld until legal alternatives and outcomes are verified.',
+    expected_result_if_fixed: 'Unknown.',
+    practice_drill: 'Compare a recorded turn with its exported events and note any discrepancy.',
+    tactical_interpretation: {
+      schema_version: 'champions-coach-tactical-interpretation-v1',
+      primary_category: issue ? issue.id : null,
+      strength_category: strength ? strength.id : null,
+      player_question: 'Which recorded actions support these ledger observations?',
+      evidence_boundary: 'Withheld: ledger categories alone do not establish decision quality.',
+      why_good_windows_worked: 'Not established.',
+      why_bad_windows_failed: 'Not established.',
+      turn_sequence_rule: 'Inspect attributed events before proposing a different action.',
+      coach_checklist: [],
+      data_to_watch_next: []
+    },
     learning_direction: {
       next_layer: 'coach_memory',
       purpose: 'Compare this summary against future sessions and broader shared sim evidence before recommending move, lineup, or team changes.',
       shared_data_boundary: 'Use aggregated, non-personal sim evidence and matchup patterns; do not expose another player private team or identity.'
     },
-    boundary: 'Evidence-bound speed-control coaching. This does not claim best move or best team until alternative branches are compared.'
+    boundary: 'Unvalidated ledger observations for review, not tactical advice. Sample volume does not establish confidence or causality.'
   };
 }
 
@@ -17004,9 +17015,9 @@ if (typeof ChampionsSim !== 'undefined') {
 if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('renderSourcesTab', renderSourcesTab);
 renderSourcesTab();
 
-function generatePDFReport() {
+function generatePDFReport(teamKey) {
   var container = document.getElementById('pdf-report-container');
-  var key = typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player';
+  var key = typeof teamKey === 'string' ? teamKey : (typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player');
   if (!container || !TEAMS[key]) return;
   container.innerHTML = csRenderEvidenceOnlyStrategy(csBuildEvidenceOnlyStrategy(key));
   window.print();
@@ -20087,6 +20098,14 @@ function renderStrategyTab(teamKey) {
   if (!host) return;
   var report = csBuildEvidenceOnlyStrategy(teamKey);
   host.innerHTML = csRenderEvidenceOnlyStrategy(report);
+  if (report) {
+    var printButton = document.createElement('button');
+    printButton.className = 'btn-secondary';
+    printButton.type = 'button';
+    printButton.textContent = 'Print team evidence';
+    printButton.addEventListener('click', function() { generatePDFReport(teamKey); });
+    host.appendChild(printButton);
+  }
   ChampionsSim.state.lastStrategyReport = report;
   if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_lastStrategyReport', report);
 }

@@ -1,5 +1,14 @@
 # Improvement Log
 
+## IMP-0072: QA Brain Uncertainty And Team-Bound Printing (#209)
+
+October 6 v183 candidate. QA Brain opportunity volume no longer creates
+confidence or causal coaching. Ledger observations remain inspectable; only
+evidence-review steps are suggested, not a better move or promised outcome.
+Team Evidence printing is directly accessible and bound to its displayed team.
+See [surface audit](release/COACHING_SURFACE_AUDIT_2026-10-06.md) for open branch
+analysis, legacy report and browser print-layout gates. No mechanics changes.
+
 ## IMP-0071: Withdraw Unsupported Public Strategy Claims (#209)
 
 October 6 candidate v182. Browser inspection found invented tactical templates,

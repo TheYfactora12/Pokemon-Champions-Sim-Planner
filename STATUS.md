@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 6: v182 deployed via PR219 / 71922ad / Pages37560818502; HTTP
+  alignment and live evidence-only Strategy passed October7 02:14 UTC.
+  v183 candidate removes QA Brain volume-confidence/causal prescriptions and
+  adds team-bound printing. See the coaching surface audit for unclosed gates.
+
 - October 6: v181 deployed via PR218 / c0367b0 / Pages37559335076.
   HTTP artifact alignment and live move-evidence panel passed October7 01:57 UTC.
   v182 candidate withdraws unvalidated Strategy/PDF coaching, grades and

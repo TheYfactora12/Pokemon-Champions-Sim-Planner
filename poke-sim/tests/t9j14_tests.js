@@ -371,5 +371,23 @@ T('27. safe report excludes other teams and formats despite identical sets', () 
   delete TEAMS.evidence_fixture;
 });
 
+T('28. QA Brain volume cannot become confidence or tactical advice', () => {
+  for (const opportunities of [0, 20, 100, 1000000]) {
+    const report = ctx.csBuildCoachBrainSummary({totals:{opportunities},categories:[]});
+    eq(report.confidence,'unknown');
+    eq(report.expected_result_if_fixed,'Unknown.');
+    inc(report.root_problem,'Not established');
+    inc(report.next_game_plan,'Withheld');
+    inc(report.recommended_solution,'participant identities');
+  }
+});
+
+T('29. explicit print target does not silently use the current team', () => {
+  TEAMS.print_fixture = {name:'Explicit Print Fixture',members:[]};
+  ctx.generatePDFReport('print_fixture');
+  inc(ctx.document.getElementById('pdf-report-container').innerHTML,'Explicit Print Fixture');
+  delete TEAMS.print_fixture;
+});
+
 console.log(`\nT9j.14 Results: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);
