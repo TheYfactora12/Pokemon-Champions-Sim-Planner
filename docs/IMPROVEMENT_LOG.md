@@ -1,5 +1,25 @@
 # Improvement Log
 
+## IMP-0070: Bind Move Observations To Registered Player Actions (#209)
+
+October 6 candidate v181. The legacy move-gap helper searched winning prose
+for names, conflating sides and duplicate names and excluding losses. New
+battles retain a detached player registration snapshot. Move observations need
+an exact current-registration match plus an unambiguous player participant
+stable key and original team slot. Reordered/edited sets and legacy logs fail
+closed. Any missing action evidence remains unknown, never zero executions.
+Recorded attempts include blocked moves and do not establish successful use.
+PDF, coaching and dashboard no longer recommend a swap from absent log text.
+Historical exports remain unchanged; no battle execution or legality changes.
+
+Regression covers legacy prose, losses, mirror names/sides, duplicate identities,
+changed nature and missing action keys. Release PR owns final gate and deployed
+journey proof. Exact JSON registration matching is intentionally conservative;
+equivalent sets with different serialization can produce unknown observations.
+
+Lesson: identify the registered participant before interpreting an action, and
+separate an observed attempt from success, usage completeness and team quality.
+
 ## IMP-0069: Report Outcomes Without Inventing Causes (#216)
 
 October 6 candidate v180. Live v179 replay used opponent-only Tailwind, yet

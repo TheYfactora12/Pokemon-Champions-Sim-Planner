@@ -210,7 +210,7 @@ T('17. analyzeLossTrends - no losses -> safe defaults', () => {
 });
 
 // ---- Section F: Dead-move finder ----
-T('18. findDeadMoves - move never used in a win is flagged', () => {
+T('18. legacy prose cannot establish move usage', () => {
   const members = [{ name:'Gengar-Mega', moves:['Shadow Ball','Hypnosis','Taunt','Protect'] }];
   const results = { opp1: { allLogs: [
     { result: 'win', log:['Gengar-Mega used Shadow Ball!','Gengar-Mega used Protect'] },
@@ -218,17 +218,55 @@ T('18. findDeadMoves - move never used in a win is flagged', () => {
   ] } };
   const dead = findDeadMoves(results, members);
   const moves = dead.map(d => d.move).sort();
-  eq(moves.length, 2);
-  eq(moves[0], 'Hypnosis');
-  eq(moves[1], 'Taunt');
+  eq(moves.length, 4);
+  eq(dead.every(d => d.evidence_status === 'unknown'), true);
 });
-T('19. findDeadMoves - all moves used -> empty list', () => {
+T('19. registered player actions count in losses without implying success', () => {
   const members = [{ name:'A', moves:['M1','M2'] }];
-  const results = { o: { allLogs: [{ result:'win', log:['A used M1','A used M2'] }] } };
+  const results = { o: { allLogs: [{ result:'loss', playerRegistration: members,
+    participants: {player:[{stable_key:'player:slot:0:A',team_slot:0}]},
+    turnLog:[{events:['M1','M2'].map(move => ({side:'player',actor_key:'player:slot:0:A',move}))}] }] } };
   eq(findDeadMoves(results, members).length, 0);
 });
 
+T('19b. side, duplicate identity, changed set and missing keys fail closed', () => {
+  const members = [{name:'A',moves:['M1'],nature:'Hardy'}, {name:'A',moves:['M1'],nature:'Hardy'}];
+  const game = {playerRegistration: JSON.parse(JSON.stringify(members)),
+    participants:{player:[{stable_key:'player:slot:0:A',team_slot:0},{stable_key:'player:slot:1:A',team_slot:1}]},
+    turnLog:[{events:[{side:'player',actor_key:'player:slot:1:A',move:'M1'}]}]};
+  const results = {o:{allLogs:[game]}};
+  eq(findDeadMoves(results,members).length,1);
+  eq(findDeadMoves(results,members)[0].team_slot,0);
+  game.turnLog[0].events[0].side = 'opponent';
+  eq(findDeadMoves(results,members).length,2);
+  game.turnLog[0].events[0].side = 'player';
+  members[1].nature = 'Timid';
+  eq(findDeadMoves(results,members).length,2);
+  members[1].nature = 'Hardy';
+  game.participants.player[0].team_slot = 1;
+  game.participants.player[1].team_slot = 0;
+  eq(findDeadMoves(results,members).length,2);
+  game.participants.player[0].team_slot = 0;
+  game.participants.player[1].team_slot = 1;
+  game.participants.player.push({stable_key:'player:slot:1:A',team_slot:1});
+  eq(findDeadMoves(results,members).length,2);
+  game.participants.player.pop();
+  delete game.turnLog[0].events[0].actor_key;
+  eq(findDeadMoves(results,members).length,2);
+});
+
 // ---- Section G: Coverage gaps + coaching rules ----
+T('19c. real action retains detached registration and clears only its move gap', () => {
+  const members = [{name:'Whimsicott',moves:['Tailwind'],nature:'Hardy',ability:'Prankster',item:'',evs:{}}];
+  const battle = ctx.simulateBattle({members,format:'champions'},
+    {members:[{name:'Whimsicott',moves:['Splash'],nature:'Hardy',ability:'',item:'',evs:{}}],format:'champions'},
+    {format:'doubles',seed:[1,2,3,4],maxTurns:1});
+  eq(findDeadMoves({o:{allLogs:[battle]}},members).length,0);
+  members[0].nature = 'Timid';
+  eq(battle.playerRegistration[0].nature,'Hardy');
+  eq(findDeadMoves({o:{allLogs:[battle]}},members).length,1);
+});
+
 T('20. findCoverageGaps - team with no Fake Out surfaces gap', () => {
   const members = [{ name:'Dragapult', ability:'Clear Body', moves:['Dragon Darts','Phantom Force','U-turn','Protect'] }];
   const gaps = findCoverageGaps(members);
