@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.181-move-identity
+// Build marker: v2.2.182-evidence-only
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.181-move-identity'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.182-evidence-only'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -17006,6 +17006,15 @@ renderSourcesTab();
 
 function generatePDFReport() {
   var container = document.getElementById('pdf-report-container');
+  var key = typeof currentPlayerKey !== 'undefined' ? currentPlayerKey : 'player';
+  if (!container || !TEAMS[key]) return;
+  container.innerHTML = csRenderEvidenceOnlyStrategy(csBuildEvidenceOnlyStrategy(key));
+  window.print();
+}
+
+// Retained for audit only; public printing uses the evidence-only report above.
+function _unverifiedLegacyPDFReport() {
+  var container = document.getElementById('pdf-report-container');
   if (!container) return;
 
   var results = ChampionsSim.state.lastResults || {};
@@ -20074,6 +20083,62 @@ function getStrategyContentHost() {
 }
 
 function renderStrategyTab(teamKey) {
+  var host = getStrategyContentHost();
+  if (!host) return;
+  var report = csBuildEvidenceOnlyStrategy(teamKey);
+  host.innerHTML = csRenderEvidenceOnlyStrategy(report);
+  ChampionsSim.state.lastStrategyReport = report;
+  if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_lastStrategyReport', report);
+}
+
+function csBuildEvidenceOnlyStrategy(teamKey) {
+  var team = typeof TEAMS !== 'undefined' && TEAMS[teamKey];
+  if (!team) return null;
+  var format = typeof currentFormat !== 'undefined' ? currentFormat : 'doubles';
+  var results = ChampionsSim.state.lastResults || {};
+  var matching = {};
+  Object.keys(results).forEach(function(key) {
+    var result = results[key];
+    matching[key] = { allLogs: (result && Array.isArray(result.allLogs) ? result.allLogs : []).filter(function(game) {
+      return game && game.playerKey === teamKey && game.format === format;
+    }) };
+  });
+  var members = team.members || [];
+  var gaps = findDeadMoves(matching, members);
+  return {
+    schema_version: 'strategy-evidence-only-v1',
+    team_key: teamKey, team_name: team.name || teamKey, format: format,
+    confidence: 'unknown', legality: 'not assessed',
+    notice: 'Competitive coaching is under review. Grades, confidence scores and tactical recommendations are withheld.',
+    members: members.map(function(member, slot) {
+      return { name: member.name, item: member.item || 'None', ability: member.ability || 'Unknown',
+        moves: (member.moves || []).map(function(move) {
+          var missing = gaps.some(function(gap) { return gap.team_slot === slot && gap.move === move; });
+          return { name: move, observation: missing ? 'Unknown: no matching action evidence' : 'Recorded player attempt' };
+        }) };
+    })
+  };
+}
+
+function csRenderEvidenceOnlyStrategy(report) {
+  if (!report) return '<p>Select a team to inspect its evidence.</p>';
+  var html = '<section class="cs-section"><h2>' + _csEsc(report.team_name) + ' - Team Evidence</h2>' +
+    '<p>' + _csEsc(report.notice) + '</p>' +
+    '<p><strong>Coaching confidence:</strong> Unknown. <strong>Competitive legality:</strong> Not assessed by this report.</p>' +
+    '<p>Current registered sets are shown below, not endorsed as legal or optimal. A recorded attempt does not prove success or move quality.</p></section>';
+  report.members.forEach(function(member) {
+    html += '<section class="cs-section"><h3>' + _csEsc(member.name) + '</h3><p>' +
+      _csEsc(member.item) + ' | ' + _csEsc(member.ability) + '</p><ul class="cs-list">';
+    member.moves.forEach(function(move) {
+      html += '<li><strong>' + _csEsc(move.name) + ':</strong> ' + _csEsc(move.observation) + '</li>';
+    });
+    html += '</ul></section>';
+  });
+  return html;
+}
+
+// Unvalidated templates remain inspectable but cannot paint the public Strategy tab.
+function _unverifiedLegacyStrategyTab(teamKey) {
   var host = getStrategyContentHost();
   if (!host) return;
   var team = (typeof TEAMS !== 'undefined' && TEAMS[teamKey]) ? TEAMS[teamKey] : null;

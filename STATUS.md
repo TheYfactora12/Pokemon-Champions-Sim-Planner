@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 6: v181 deployed via PR218 / c0367b0 / Pages37559335076.
+  HTTP artifact alignment and live move-evidence panel passed October7 01:57 UTC.
+  v182 candidate withdraws unvalidated Strategy/PDF coaching, grades and
+  confidence scores. It exposes registered sets and matched action attempts only;
+  unknowns stay unknown. Legacy templates are retained for audit, not endorsed.
+
 - October 6: v180 deployed in PR217 / db71f0d / Pages37558126534.
   HTTP exact artifact alignment passed October7 01:41 UTC; live build/Roadmap
   navigation confirmed. v181 candidate binds Strategy move observations to

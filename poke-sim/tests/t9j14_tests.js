@@ -321,14 +321,54 @@ T('24. _escapeHtml - escapes angle brackets and quotes', () => {
 
 // ---- Integration: generatePDFReport renders without throwing on a real team ----
 T('25. generatePDFReport renders HTML into pdf-report-container without throwing', () => {
+  const sourceHtml = fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
+  eq((sourceHtml.match(/id="pdf-report-container"/g) || []).length,1);
+  let prints = 0;
+  ctx.window.print = () => { prints++; };
   // Prime lastSimResults minimally so sections render.
   ctx.window.ChampionsSim.state.lastResults = { mega_altaria: { winRate: 0.6, wins: 6, losses: 3, draws: 1, winConditions: { 'Opponent Fainted': 5 }, allLogs: [{ result:'win', leads:{ player:['Incineroar','Gengar-Mega']}, log:[] }] } };
   vm.runInContext('window.ChampionsSim.state.lastResults = ' + JSON.stringify(ctx.window.ChampionsSim.state.lastResults) + ';', ctx);
   vm.runInContext('generatePDFReport();', ctx);
   const container = ctx.document.getElementById('pdf-report-container');
-  inc(container.innerHTML, 'TEAM OVERVIEW');
-  inc(container.innerHTML, 'COACHING NOTES');
-  inc(container.innerHTML, 'MATCHUP GUIDE');
+  inc(container.innerHTML, 'Team Evidence');
+  inc(container.innerHTML, 'Competitive coaching is under review');
+  eq(container.innerHTML.includes('/100'), false);
+  eq(container.innerHTML.includes('COACHING NOTES'), false);
+  eq(prints,1);
+});
+
+T('26. public Strategy ignores unsafe cache and volume-based scores', () => {
+  ctx.window.ChampionsSim.state.cachedStrategyOverride = {coaching_summary:'UNSUPPORTED_TACTIC',team_report_card:{score:100,confidence:'high'}};
+  vm.runInContext("renderStrategyTab('player')", ctx);
+  const html = ctx.document.getElementById('strategy-content').innerHTML;
+  inc(html, 'Coaching confidence:</strong> Unknown');
+  eq(html.includes('UNSUPPORTED_TACTIC'),false);
+  eq(html.includes('BATTLE READY'),false);
+  eq(html.includes('/10'),false);
+  eq(html.includes('Skill Coaching'),false);
+});
+
+T('27. safe report excludes other teams and formats despite identical sets', () => {
+  TEAMS.evidence_fixture = {name:'Evidence fixture',members:[{name:'Whimsicott',moves:['Tailwind']}]};
+  const members = TEAMS.evidence_fixture.members;
+  const game = {playerKey:'other_team',format:'doubles',playerRegistration:members,
+    participants:{player:[{stable_key:'player:slot:0:Whimsicott',team_slot:0}]},
+    turnLog:[{events:[{side:'player',actor_key:'player:slot:0:Whimsicott',move:'Tailwind'}]}]};
+  ctx.window.ChampionsSim.state.lastResults = {o:{wins:1000000,allLogs:[game]}};
+  vm.runInContext("currentFormat = 'doubles'",ctx);
+  const get = () => ctx.csBuildEvidenceOnlyStrategy('evidence_fixture');
+  eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
+  game.playerKey = 'evidence_fixture'; game.format = 'singles';
+  eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
+  game.format = 'doubles';
+  eq(get().members[0].moves[0].observation,'Recorded player attempt');
+  eq(get().confidence,'unknown');
+  eq(get().legality,'not assessed');
+  members[0].nature = 'Timid';
+  // Freeze a prior registration rather than sharing the fixture's reference.
+  game.playerRegistration = [{name:'Whimsicott',moves:['Tailwind']}];
+  eq(get().members[0].moves[0].observation,'Unknown: no matching action evidence');
+  delete TEAMS.evidence_fixture;
 });
 
 console.log(`\nT9j.14 Results: ${pass} pass, ${fail} fail\n`);

@@ -1,5 +1,24 @@
 # Improvement Log
 
+## IMP-0071: Withdraw Unsupported Public Strategy Claims (#209)
+
+October 6 candidate v182. Browser inspection found invented tactical templates,
+roster-based 10/10 legality and quality scores, and confidence inferred from
+sample volume. Public Strategy and printing now share an evidence-only report:
+current sets, exact team/format/registration-matched player action attempts,
+unknown confidence and no claimed legality. Old cached reports cannot bypass
+this boundary. Saved teams/history remain untouched; legacy template functions
+remain for audit but are not called by these public report paths.
+
+Tests cover unsafe cached output, exaggerated volume, team/format isolation,
+set edits and printing. This withdraws unsupported advice rather than claiming
+the templates have become accurate. Re-enabling each recommendation requires
+an evidence contract and correctness fixtures. Other replay and simulator advice
+surfaces need separate review; this is not a whole-app coaching certification.
+
+Lesson: when a model of advice is unvalidated, remove its authority at every
+affected presentation path instead of adjusting a confidence badge.
+
 ## IMP-0070: Bind Move Observations To Registered Player Actions (#209)
 
 October 6 candidate v181. The legacy move-gap helper searched winning prose
