@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.183-review-boundaries
+// Build marker: v2.2.184-legality-context
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.183-review-boundaries'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.184-legality-context'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -347,6 +347,7 @@ function setSelectedRegulationId(id) {
   selectedRegulationId = String(id == null ? '' : id);
   try { Storage.set('regulation:selection:v1', { id: selectedRegulationId }); } catch (_e) {}
   refreshRegulationControls();
+  if (typeof renderTeamsGrid === 'function') renderTeamsGrid();
   if (typeof editingIdx !== 'undefined' && editingIdx !== null) refreshEditorMoveLegality();
   return true;
 }
@@ -434,6 +435,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var savedRegulation = Storage.get('regulation:selection:v1');
     if (savedRegulation && typeof savedRegulation.id === 'string') selectedRegulationId = savedRegulation.id;
   } catch (_e) {}
+  if (typeof renderTeamsGrid === 'function') renderTeamsGrid();
   document.querySelectorAll('[data-regulation-select]').forEach(function(select) {
     select.addEventListener('change', function() { setSelectedRegulationId(select.value); });
   });
@@ -2130,7 +2132,7 @@ var TOURNAMENT_TEAM_KEYS = {
 function csTeamRulesetEvidence(team) {
   team = team || {};
   var meta = team.metadata || {};
-  var rulesetId = team.ruleset_id || meta.ruleset_id || 'champions_reg_m_doubles_bo3';
+  var rulesetId = team.ruleset_id || meta.ruleset_id || 'unknown';
   var evidence = typeof getRulesetEvidencePolicy === 'function'
     ? getRulesetEvidencePolicy(rulesetId)
     : {
@@ -2176,10 +2178,14 @@ function csRenderTeamRulesetBadges(key, team) {
   var statusClass = evidence.runtime_promotable ? 'badge-legal' : 'badge-warn';
   var title = 'Ruleset: ' + label + ' | data policy: ' + (evidence.data_policy || 'unknown') + ' | coaching: ' + (evidence.coaching_policy || 'unknown');
   return '<span class="' + statusClass + '" title="' + _escapeHtml(title) + '">' + _escapeHtml(label) + '</span>' +
-    '<span class="' + statusClass + '" title="' + _escapeHtml(guard) + '">' + _escapeHtml(String(status).replace(/_/g, ' ').toUpperCase()) + '</span>';
+    '<span class="' + statusClass + '" title="Original registration provenance, not selected-regulation approval. ' + _escapeHtml(guard) + '">Registration: ' + _escapeHtml(String(status).replace(/_/g, ' ').toUpperCase()) + '</span>';
 }
 function csRenderTeamValidationBadge(team, verdict) {
   team = team || {};
+  if (typeof selectedRegulationCheck === 'function' && typeof checkTeamForSelectedRegulation === 'function') {
+    var selected = selectedRegulationCheck(team);
+    return '<span class="' + (selected.status === 'illegal' ? 'badge-illegal' : 'badge-warn') + '">' + regulationCheckHtml(selected) + '</span>';
+  }
   verdict = verdict || {};
   var errors = Array.isArray(verdict.errors) ? verdict.errors : [];
   if (team.format === 'sv') return '<span class="badge-warn">SV COMPAT ONLY</span>';

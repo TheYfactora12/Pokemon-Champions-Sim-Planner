@@ -1,5 +1,20 @@
 # Improvement Log
 
+## IMP-0073: Selected-Regulation Reporting (#221)
+
+October 6 v184 candidate. Teams previously used historical/general validation
+while Simulator and Editor used selected-regulation checks. Team cards now use
+the latter result and show its errors and source gaps. Review-only regulations
+no longer hide malformed sets or unsupported roster sizes behind early return.
+Missing registration identity stays unknown, not implicitly historical M-A.
+Historical provenance badges are explicitly registration-scoped.
+
+Focused proof: 18 regulation selection checks and 7 badge tests passed locally
+and in independent review. Browser and reviewer found stale cards on selection
+change and saved-regulation restore; both refresh paths now have regressions.
+Final full gate pending. No eligibility or mechanics approval;
+M-C remains blocked. See REGULATION_REPORTING_2026-10-06.md in docs/release.
+
 ## IMP-0072: QA Brain Uncertainty And Team-Bound Printing (#209)
 
 October 6 v183 candidate. QA Brain opportunity volume no longer creates

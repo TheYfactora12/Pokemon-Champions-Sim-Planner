@@ -6,9 +6,9 @@
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
     data_mode: 'local-only',
-    build_id: 'v2.2.183-review-boundaries',
+    build_id: 'v2.2.184-legality-context',
     release_date: '2026-10-05',
-    service_worker_cache: 'champions-sim-v2-2-183-review-boundaries',
+    service_worker_cache: 'champions-sim-v2-2-184-legality-context',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

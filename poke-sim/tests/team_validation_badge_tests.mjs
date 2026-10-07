@@ -9,6 +9,41 @@ const ctx = vm.createContext({
 });
 vm.runInContext(source.slice(source.indexOf('function csRenderTeamValidationBadge('), source.indexOf('function csGetRegmbCoverageSections(')), ctx);
 const render = ctx.csRenderTeamValidationBadge;
+
+test('restoring a saved regulation refreshes cards with the restored identity', () => {
+  const start = source.indexOf("    var savedRegulation = Storage.get('regulation:selection:v1');");
+  const end = source.indexOf("  document.querySelectorAll('[data-regulation-select]')", start);
+  const local = vm.createContext({Storage:{get:()=>({id:'champions_reg_m_c_2026'})}, selectedRegulationId:'champions_custom_practice'});
+  local.renderTeamsGrid = () => { local.renderedId = local.selectedRegulationId; };
+  vm.runInContext('try {\n' + source.slice(start,end),local);
+  assert.equal(local.renderedId,'champions_reg_m_c_2026');
+});
+
+test('changing regulation refreshes team-card validation', () => {
+  const calls = [];
+  const local = vm.createContext({Storage:{set(){}}, refreshRegulationControls:()=>calls.push('controls'), renderTeamsGrid:()=>calls.push('cards')});
+  vm.runInContext(source.slice(source.indexOf('function setSelectedRegulationId('), source.indexOf('function selectedRegulationCheck(')), local);
+  local.setSelectedRegulationId('champions_reg_m_c_2026');
+  assert.deepEqual(calls, ['controls','cards']);
+});
+
+test('live team cards use the selected-regulation result, preserving errors and gaps', () => {
+  ctx.checkTeamForSelectedRegulation = () => {};
+  ctx.selectedRegulationCheck = () => ({status:'illegal', errors:['Register four to six Pokemon'], source_gaps:['M-C approval pending']});
+  ctx.regulationCheckHtml = check => check.status + ': ' + check.errors.concat(check.source_gaps).join('; ');
+  try {
+    const html = render({format:'champions'}, {valid:true});
+    assert.match(html, /badge-illegal/);
+    assert.match(html, /Register four to six Pokemon/);
+    assert.match(html, /M-C approval pending/);
+    ctx.selectedRegulationCheck = () => ({status:'not_verified', errors:[], source_gaps:['M-C approval pending']});
+    assert.match(render({}, {valid:false}), /badge-warn/);
+  } finally {
+    delete ctx.checkTeamForSelectedRegulation;
+    delete ctx.selectedRegulationCheck;
+    delete ctx.regulationCheckHtml;
+  }
+});
 test('historical, unknown and review-only contexts cannot inherit a LEGAL label', () => {
   for (const status of ['historical', 'unknown', 'source_review']) {
     const html = render({ format: 'champions', legality_status: 'legal', ruleset_status: status }, { valid: true });

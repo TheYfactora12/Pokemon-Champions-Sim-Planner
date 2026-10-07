@@ -6,6 +6,11 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 6: v183 deployed in PR220 / c72cba7 / Pages37562090643;
+  production artifact alignment passed at 22:30 EDT. Candidate v184 aligns
+  team-card checks with the selected regulation and retains structural errors
+  alongside review gaps. No M-C approval or mechanics promotion.
+
 - October 6: v182 deployed via PR219 / 71922ad / Pages37560818502; HTTP
   alignment and live evidence-only Strategy passed October7 02:14 UTC.
   v183 candidate removes QA Brain volume-confidence/causal prescriptions and

@@ -212,9 +212,9 @@ function checkTeamForSelectedRegulation(team, rulesetId, options) {
     mechanics_status: 'not_verified', scope: 'bundled_regulation_checks_not_official_certification' };
   if (!practice && (!profile.runtimePromotable || profile.id !== 'champions_reg_m_a_2026')) {
     gaps.push(profile.blocker || 'No implemented validator and engine mapping for this regulation.');
-    return result;
+    // Keep the approval gap, but still report independent structural failures.
   }
-  if (!practice) gaps.push('Regulation-scoped species, forms and learnsets are not yet approved. The general Showdown mirror is not proof of M-A eligibility.');
+  if (!practice && profile.id === 'champions_reg_m_a_2026') gaps.push('Regulation-scoped species, forms and learnsets are not yet approved. The general Showdown mirror is not proof of M-A eligibility.');
   // Reject malformed imports before calling validators that expect set objects.
   if (!team || !Array.isArray(team.members) || team.members.some(function(member) {
     return !member || typeof member !== 'object' || typeof member.name !== 'string' || !member.name.trim() ||
@@ -229,6 +229,10 @@ function checkTeamForSelectedRegulation(team, rulesetId, options) {
   if (opts.format && opts.format !== 'doubles') gaps.push('This regulation workflow currently supports doubles only.');
   if (opts.bo != null && [1, 3].indexOf(opts.bo) === -1) gaps.push('Competitive regulation checks support Bo1 or Bo3; other series are not verified.');
   if (!team || !Array.isArray(team.members) || team.members.length < 4 || team.members.length > 6) errors.push('Register four to six Pokemon for doubles.');
+  if (!practice && (!profile.runtimePromotable || profile.id !== 'champions_reg_m_a_2026')) {
+    if (errors.length) result.status = 'illegal';
+    return result;
+  }
   if (!team || team.format !== 'champions') gaps.push('Explicit Champions stat-point format is required.');
   if (typeof validateTeamForRuleset !== 'function' || typeof validateTeam !== 'function') {
     gaps.push('Team validators are unavailable.');
