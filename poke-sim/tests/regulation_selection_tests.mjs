@@ -144,4 +144,23 @@ test('move choices name the Champions pool source rather than the historical mir
   assert(unknown.length > 0);
   assert(unknown.every(row => row.source === 'unavailable' && row.source_version === null && row.status === 'not_verified'));
 });
+test('review-only lanes retain structural failures and approval gaps without historical fallback', () => {
+  for (const id of [mb, mc, 'future_unknown']) {
+    for (const members of [null, [null], [team.members[0]]]) {
+      const result = check({format: 'champions', members}, id);
+      assert.equal(result.status, 'illegal');
+      assert.equal(result.allowed, false);
+      assert.equal(result.competitive_eligible, false);
+      assert(result.errors.length > 0);
+      assert(result.source_gaps.length > 0);
+    }
+    const t = structuredClone(team);
+    t.members[0].item = 'Unreviewed future item';
+    const before = JSON.stringify(t);
+    const result = check(t, id);
+    assert.equal(result.status, 'not_verified');
+    assert.equal(result.errors.length, 0, 'Do not impose historical eligibility on a review lane');
+    assert.equal(JSON.stringify(t), before);
+  }
+});
 console.log(`Regulation selection: ${count}/${count} passed`);
