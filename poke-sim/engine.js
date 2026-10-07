@@ -3746,6 +3746,7 @@ function isRNGBlame(turnLog, turn) {
 // SIMULATE BATTLE
 // ============================================================
 function simulateBattle(playerTeam, oppTeam, opts = {}) {
+  const playerRegistration = JSON.parse(JSON.stringify(playerTeam && playerTeam.members || []));
   const seed = opts.seed || makeSeed();
   const rng  = makePRNG(seed);
   const log  = [];
@@ -7280,6 +7281,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       opponent: participants.opponent.map(p => p.name)
     },
     participants: participants,
+    playerRegistration,
     // #5 — attach legality verdict so UI can surface warnings on team/match cards.
     legality: { player: playerLegality, opp: oppLegality },
     // Phase 4a (Refs #52) — structured KO event log. See _recordKO site above.

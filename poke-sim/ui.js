@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.180-outcome-evidence
+// Build marker: v2.2.181-move-identity
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.180-outcome-evidence'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.181-move-identity'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -14036,26 +14036,35 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('csAp
   };
 }
 
-// Find dead moves: moves never referenced in any win log across all matchups.
+// Legacy API name: gaps are unknown observations, never proof of a bad move.
 function findDeadMoves(results, members) {
-  var used = {};
-  Object.entries(results).forEach(function(pair){
-    (pair[1].allLogs || []).filter(function(g){ return g.result === 'win'; }).forEach(function(game){
-      (game.log || []).forEach(function(line){
-        if (typeof line !== 'string') return;
-        (members || []).forEach(function(m){
-          if (line.indexOf(m.name) < 0) return;
-          (m.moves || []).forEach(function(mv){
-            if (line.indexOf(mv) >= 0) { used[m.name+'|'+mv] = (used[m.name+'|'+mv]||0)+1; }
-          });
+  var used = new Set();
+  var registration = JSON.stringify(members || []);
+  Object.values(results || {}).forEach(function(result){
+    (result && Array.isArray(result.allLogs) ? result.allLogs : []).forEach(function(game){
+      // Exact registration match fails closed for old logs, edits and reordered teams.
+      if (!game || !Array.isArray(game.playerRegistration) || JSON.stringify(game.playerRegistration) !== registration) return;
+      var participants = game.participants && game.participants.player;
+      if (!Array.isArray(participants)) return;
+      (Array.isArray(game.turnLog) ? game.turnLog : []).forEach(function(turn){
+        (turn && Array.isArray(turn.events) ? turn.events : []).forEach(function(event){
+          if (!event || event.side !== 'player' || typeof event.actor_key !== 'string' || !event.actor_key) return;
+          var matches = participants.filter(function(p){ return p && p.stable_key === event.actor_key; });
+          if (matches.length !== 1) return;
+          var slot = matches[0].team_slot;
+          if (!Number.isInteger(slot) || !members[slot]) return;
+          if (!event.actor_key.startsWith('player:slot:' + slot + ':')) return;
+          if ((matches[0].member_id || null) !== (members[slot].member_id || null)) return;
+          if (participants.filter(function(p){ return p && p.team_slot === slot; }).length !== 1) return;
+          if ((members[slot].moves || []).includes(event.move)) used.add(slot + '|' + event.move);
         });
       });
     });
   });
   var dead = [];
-  (members || []).forEach(function(m){
+  (members || []).forEach(function(m, slot){
     (m.moves || []).forEach(function(mv){
-      if (!used[m.name+'|'+mv]) dead.push({ pokemon: m.name, move: mv });
+      if (!used.has(slot + '|' + mv)) dead.push({ pokemon: m.name, move: mv, team_slot: slot, evidence_status: 'unknown' });
     });
   });
   return dead;
@@ -14130,7 +14139,7 @@ var COACHING_RULES = [
     when: function(c){ return c.deadMoves && c.deadMoves.length > 0; },
     say: function(c){
       var sample = c.deadMoves.slice(0,3).map(function(d){ return d.pokemon+'\u2019s '+d.move; }).join(', ');
-      return 'Moves never used in a win: ' + sample + (c.deadMoves.length > 3 ? ' (+' + (c.deadMoves.length-3) + ' more)' : '') + '. Consider swapping to coverage or utility that the sim actually clicks.';
+      return 'Move evidence incomplete: ' + sample + (c.deadMoves.length > 3 ? ' (+' + (c.deadMoves.length-3) + ' more)' : '') + '. Review attributed replay actions before changing the moveset; missing evidence does not prove zero use.';
     }
   },
   {
@@ -17129,12 +17138,12 @@ function generatePDFReport() {
     : '<div style="color:#666">No losses recorded in this simulation.</div>';
 
   var deadMovesHtml = deadMoves.length
-    ? '<table class="pdf-table"><thead><tr><th>Pokémon</th><th>Dead Move</th><th>Rationale</th></tr></thead><tbody>' +
+    ? '<table class="pdf-table"><thead><tr><th>Pokémon</th><th>Move evidence gap</th><th>Rationale</th></tr></thead><tbody>' +
         deadMoves.slice(0, 12).map(function(d){
-          return '<tr><td>' + _escapeHtml(d.pokemon) + '</td><td>' + _escapeHtml(d.move) + '</td><td>Never appeared in a winning battle log — candidate for swap.</td></tr>';
+          return '<tr><td>' + _escapeHtml(d.pokemon) + '</td><td>' + _escapeHtml(d.move) + '</td><td>No attributed action found for this registered set. Usage is unknown; no swap recommendation.</td></tr>';
         }).join('') +
       '</tbody></table>'
-    : '<div style="color:#666">All moves were used in at least one win — no dead-move swaps suggested.</div>';
+    : '<div style="color:#666">No move evidence gaps listed. Recorded actions do not establish success or moveset quality.</div>';
 
   // --- Render -----------------------------------------------------------
   container.innerHTML = [
@@ -18466,7 +18475,7 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
     key: 'dead_moves',
     title: 'Move evidence gaps',
     headline: deadList.length
-      ? (deadList[0].pokemon + ' - ' + deadList[0].move + ' was not identified in the available winning text logs.')
+      ? (deadList[0].pokemon + ' - ' + deadList[0].move + ': no attributed action found for this registered set.')
       : 'No attributed move evidence gaps to display.',
     fix: deadList.length
       ? 'Inspect structured replay actions before changing this move. Missing text mentions do not prove zero use or a bad moveset.'
@@ -18474,7 +18483,7 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
     rows: _itemRows(deadList, function(row){
       return {
         label: row.pokemon + ' - ' + row.move,
-        value: 'Execution count unknown; text-log observation only'
+        value: 'Usage unknown; missing or unmatched action evidence'
       };
     }),
     empty: 'No attributed observation available.'
@@ -18482,7 +18491,7 @@ function buildWeaknessDashboard(team, results, format, identity, leadSystem, tre
 
   return {
     summary: matchupIntel.summary || (worstMatchup
-      ? ('Start with the matchup gap, then clean up the weakest opening pair, then prune dead moves.')
+      ? ('Start with the matchup gap, then review opening pairs and attributed move evidence.')
       : 'Keep simming; the dashboard will populate once the sample is large enough.'),
     sections: sections,
     rule_violations: ruleViolations.map(function(v){
@@ -20303,7 +20312,7 @@ function renderStrategyTab(teamKey) {
     if (ta.worst_lead) html += '<li><strong>Worst lead:</strong> ' + _csEsc(ta.worst_lead.lead.join(' + ')) + ' (' + Math.round(ta.worst_lead.win_rate*100) + '% over ' + ta.worst_lead.sample + ')</li>';
     if (ta.most_common_loss_cause) html += '<li><strong>Most common loss cause:</strong> ' + _csEsc(ta.most_common_loss_cause) + '</li>';
     if (ta.avg_first_ko_turn) html += '<li><strong>Avg first KO turn:</strong> ' + ta.avg_first_ko_turn + '</li>';
-    if (ta.dead_moves.length) html += '<li><strong>Dead moves:</strong> ' + _csEsc(ta.dead_moves.join(', ')) + '</li>';
+    if (ta.dead_moves.length) html += '<li><strong>Move evidence gaps (usage unknown):</strong> ' + _csEsc(ta.dead_moves.join(', ')) + '</li>';
     if (ta.failed_matchups.length) html += '<li><strong>Failed matchups:</strong> ' + _csEsc(ta.failed_matchups.join(', ')) + '</li>';
     html += '</ul>';
   }

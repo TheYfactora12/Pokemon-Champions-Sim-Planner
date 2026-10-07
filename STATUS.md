@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 6: v180 deployed in PR217 / db71f0d / Pages37558126534.
+  HTTP exact artifact alignment passed October7 01:41 UTC; live build/Roadmap
+  navigation confirmed. v181 candidate binds Strategy move observations to
+  registered sets and stable player action identity; legacy evidence is unknown.
+  #209 remains open until deployed journey verification. No mechanics promotion.
+
 - October 6 checkpoint: v179 shipped in PR215, merge fe5a44a; Pages run
   37552163599 succeeded. HTTP artifact alignment passed at October 7 00:31 UTC.
   Live desktop sample preview and disposable-team save/reload passed; #214 closed.
