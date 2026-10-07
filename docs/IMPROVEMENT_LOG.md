@@ -1,5 +1,20 @@
 # Improvement Log
 
+## IMP-0068: Validate Onboarding Samples And Bind Editor Drafts (#213)
+
+October 6 candidate v179. Live user-journey testing found a sample rejected by
+the same import checker and an editor still showing the previous team's form.
+Sample selection now round-trips through import validation without changing
+legality data. Editor drafts bind to their team; stale save/remove are blocked.
+Local phone-width Save Changes/reload retained the test spread and set details.
+Same-slot roster replacement also invalidates drafts after independent review.
+Reopening the saved form repairs stat-summary refresh locally (#214). See the dated
+[journey report](release/MOBILE_SAVE_JOURNEY_2026-10-06.md) and #213 for final
+tests, independent review and deployed proof. No new simulation accuracy claim.
+
+Lesson: onboarding must use the actual admission path, and editable UI context
+must be tied to the record being saved, not a mutable global selection.
+
 ## IMP-0067: Preserve Parenthetical Forms In Paste Imports (#212)
 
 October 5, v178 candidate. Catalog round-trip test reproduced a species identity
