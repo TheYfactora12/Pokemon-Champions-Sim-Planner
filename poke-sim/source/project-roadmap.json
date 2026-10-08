@@ -4,7 +4,7 @@
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "October 8: Soak v190, Electromorphosis v191 and Shuca v192 are deployed with bounded regression and artifact evidence (#228). The next candidate separates new M-C paste draft saving from competitive admission: matching the pinned reference does not approve execution. Drafts remain local and unverified; historical, replacement and bulk paths retain existing checks. Complete M-C evidence and exact-package approval in #232 before battle admission, then paired live/export tests before competitive team advice. Coaching (#209), page audit (#221), mobile (#211/#213), database security and beta (#103) remain open. Preview/local-save scope remains.",
+  "next_action": "October 8: v193 draft intake deployed. v194 candidate repairs M-C edit, paste-replacement, JSON/bulk and choice-list context; closes draft metadata loss and non-strict engine execution gaps. See docs/release/MC_WORKFLOW_AUDIT_2026-10-08.md for the cross-path audit and remaining release gates. Complete exact-package M-C approval in #232 or obtain a separate owner decision on explicitly unverified reference simulations; current draft saving does not enable battles. Then perform paired live/export tests before team-strength advice. Coaching (#209), page audit (#221), mobile (#211/#213), database security and beta (#103) remain open. Preview/local-save scope remains.",
   "milestones": [
     {
       "id": "simulation-truth",

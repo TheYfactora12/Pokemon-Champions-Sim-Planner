@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.193-mc-draft-intake
+// Build marker: v2.2.194-mc-intake-parity
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.193-mc-draft-intake'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.194-mc-intake-parity'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -420,7 +420,10 @@ function refreshRegulationControls() {
   document.querySelectorAll('[data-regulation-unavailable]').forEach(function(input) { input.checked = showUnavailableRegulationChoices; });
 }
 function editorRegulationChoices(kind, species) {
-  return getRegulationChoices(kind, species, selectedRegulationId, showUnavailableRegulationChoices);
+  var team = typeof getEditablePlayerTeam === 'function' ? getEditablePlayerTeam() : null;
+  var context = team && team.import_context && team.import_context.draft_only === true ?
+    team.import_context.regulation_id : selectedRegulationId;
+  return getRegulationChoices(kind, species, context, showUnavailableRegulationChoices);
 }
 function renderRegulationDatalist(id, rows) {
   var list = document.getElementById(id);
@@ -713,6 +716,9 @@ function csLearnsetOptionsForTeam(team) {
 
 function buildImportedTeamValidation(members, opts) {
   opts = opts || {};
+  if (opts.blockedContext) return {valid:false, canSave:false, canExecute:false, sourceVerified:false,
+    errors:['Unsupported saved draft context; select a supported intake context without discarding the original.'],
+    warnings:[], memberWarnings:{}, sourceVersion:''};
   if (opts.draftOnly === true && opts.regulationId === 'champions_reg_m_c_2026' &&
       (opts.format || 'champions') === 'champions') return buildMcDraftImportValidation(members, opts);
   // Editable input is not verified admission when source evidence is missing.
@@ -2697,8 +2703,14 @@ function importCustomTeamsBulk(teams /* [{name, members, format?}] */, opts) {
     }
     var key = _uniqueCustomKey(t.name);
     var name = _uniqueTeamName(t.name || 'Imported Team');
-    var validation = buildImportedTeamValidation(t.members, { name: name, format: format });
-    if (!validation.valid) {
+    var restrictedDraft = t.import_context && t.import_context.draft_only === true;
+    if (restrictedDraft && (format !== 'champions' || t.import_context.regulation_id !== 'champions_reg_m_c_2026')) {
+      skipped++;
+      skippedErrors.push({name:name, errors:['Unsupported saved draft context; restriction cannot be discarded.'], warnings:[]});
+      continue;
+    }
+    var validation = buildImportedTeamValidation(t.members, Object.assign(csPasteImportOptions(restrictedDraft ? t : null, format), {name:name}));
+    if (!validation.valid && !validation.canSave) {
       skipped++;
       skippedErrors.push({ name: name, errors: validation.errors.slice(0), warnings: validation.warnings.slice(0) });
       continue;
@@ -2715,12 +2727,13 @@ function importCustomTeamsBulk(teams /* [{name, members, format?}] */, opts) {
       import_warnings: validation.warnings,
       import_errors: validation.errors,
       showdown_source_version: validation.sourceVersion,
+      import_context: csIntakeProvenance(validation),
       created_at: new Date().toISOString()
     };
     added++;
     keys.push(key);
     // M5: persist to Supabase (fire-and-forget)
-    if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(key, TEAMS[key], 'bulk_import');
+    if (!validation.referencePin && typeof _upsertTeamToDB === 'function') _upsertTeamToDB(key, TEAMS[key], 'bulk_import');
   }
   if (added > 0 && typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
   return { added: added, skipped: skipped, keys: keys, skippedErrors: skippedErrors };
@@ -2741,7 +2754,9 @@ function importFromJsonText(jsonText) {
   for (var k in parsed.teams) {
     var t = parsed.teams[k];
     if (t && Array.isArray(t.members) && t.members.length > 0) {
-      asArr.push({ name: t.name || k, members: t.members, format: t.format });
+      asArr.push({ name: t.name || k, members: t.members, format: t.format,
+        import_context: t.import_context && t.import_context.draft_only === true ?
+          {draft_only:true,regulation_id:t.import_context.regulation_id} : null });
     }
   }
   return importCustomTeamsBulk(asArr, { requireExplicitFormat: true });
@@ -3631,10 +3646,10 @@ function saveEdits() {
   var candidateMembers = team.members.slice();
   candidateMembers[editingIdx] = editedMember;
   var reconciliation = csReconcilePasteMembers(team.members, candidateMembers, { preserveRole: false });
-  var validation = buildImportedTeamValidation(reconciliation.valid ? reconciliation.members : candidateMembers, { name: team.name, format: team.format || 'champions' });
+  var validation = buildImportedTeamValidation(reconciliation.valid ? reconciliation.members : candidateMembers, Object.assign(csPasteImportOptions(team), {name:team.name}));
   validation.errors = validation.errors.concat(reconciliation.errors);
   validation.valid = validation.valid && reconciliation.valid;
-  if (!validation.valid) {
+  if ((!validation.valid && !validation.canSave) || !reconciliation.valid) {
     var status = document.getElementById('sp-guard-status');
     if (status) {
       status.textContent = validation.errors[0] || 'Team is not legal for Champions.';
@@ -3646,6 +3661,7 @@ function saveEdits() {
   team.import_warnings = validation.warnings;
   team.import_errors = validation.errors;
   team.showdown_source_version = validation.sourceVersion;
+  if (validation.referencePin) team.import_context = csIntakeProvenance(validation);
   csPersistEditedTeam(team, 'set_editor');
   csRefreshEditorTeamViews(team);
   openEditorForm(editingIdx);
@@ -3859,14 +3875,28 @@ document.getElementById('import-slot')?.addEventListener('change', function() {
   }
 });
 
-function csPasteImportOptions(targetTeam) {
-  var options = { format: targetTeam ? targetTeam.format : 'champions' };
-  // New drafts only: do not reinterpret or replace historical registrations.
-  if (!targetTeam && getSelectedRegulationId() === 'champions_reg_m_c_2026') {
+function csPasteImportOptions(targetTeam, format) {
+  var options = { format: format || (targetTeam ? targetTeam.format : 'champions') };
+  // Keep a saved draft's context across edits, without reinterpreting historical teams.
+  if (targetTeam && targetTeam.import_context && targetTeam.import_context.draft_only === true &&
+      (options.format !== 'champions' || targetTeam.import_context.regulation_id !== 'champions_reg_m_c_2026')) {
+    options.blockedContext = true;
+    return options;
+  }
+  var draft = targetTeam && targetTeam.import_context && targetTeam.import_context.draft_only === true &&
+    targetTeam.import_context.regulation_id === 'champions_reg_m_c_2026';
+  if (options.format === 'champions' && (draft || (!targetTeam && getSelectedRegulationId() === 'champions_reg_m_c_2026'))) {
     options.regulationId = 'champions_reg_m_c_2026';
     options.draftOnly = true;
   }
   return options;
+}
+
+function csIntakeProvenance(validation) {
+  return validation.referencePin ? {version:1, regulation_id:'champions_reg_m_c_2026',
+    reference_pin:validation.referencePin,
+    reference_artifact_sha256:'fba0dbf7a01f95a57727923a948afb575b36ef7bb2a883600d2702596dad2905',
+    official_status:'unverified', draft_only:true} : null;
 }
 
 function showImportPreview(members) {
@@ -3882,6 +3912,7 @@ function showImportPreview(members) {
     const reconciliation = csReconcilePasteMembers(targetTeam.members, members, { previewOnly: true });
     validation.errors = validation.errors.concat(reconciliation.errors);
     validation.valid = validation.valid && reconciliation.valid;
+    validation.canSave = validation.canSave && reconciliation.valid;
   }
   const destination = slot === '__new__' ? 'New custom team' : ((TEAMS[slot] && TEAMS[slot].name) || slot || 'Selected slot');
   const memberWarningsTotal = Object.keys(validation.memberWarnings || {}).reduce(function(sum, key) {
@@ -3983,10 +4014,7 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
       import_warnings: validation.warnings,
       import_errors: validation.errors,
       showdown_source_version: validation.sourceVersion,
-      import_context: validation.referencePin ? {version:1, regulation_id:'champions_reg_m_c_2026',
-        reference_pin:validation.referencePin,
-        reference_artifact_sha256:'fba0dbf7a01f95a57727923a948afb575b36ef7bb2a883600d2702596dad2905',
-        official_status:'unverified', draft_only:true} : null,
+      import_context: csIntakeProvenance(validation),
       created_at: new Date().toISOString()
     };
     // T9f: persist to localStorage immediately
@@ -4015,8 +4043,8 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
       showImportPreview(members);
       return;
     }
-    const validation = buildImportedTeamValidation(reconciliation.members, { name: TEAMS[slot].name, format: TEAMS[slot].format || 'champions' });
-    if (!validation.valid) {
+    const validation = buildImportedTeamValidation(reconciliation.members, Object.assign(csPasteImportOptions(TEAMS[slot]), { name:TEAMS[slot].name }));
+    if (!validation.valid && !validation.canSave) {
       statusEl.textContent = validation.errors.concat(validation.warnings).slice(0, 3).join(' ');
       statusEl.className = 'modal-status err';
       showImportPreview(members);
@@ -4027,6 +4055,7 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
     TEAMS[slot].import_warnings = validation.warnings;
     TEAMS[slot].import_errors = validation.errors;
     TEAMS[slot].showdown_source_version = validation.sourceVersion;
+    if (validation.referencePin) TEAMS[slot].import_context = csIntakeProvenance(validation);
     targetSlot = slot;
     teamName = TEAMS[slot].name;
     // T9h: persist edits appropriately by team source
@@ -4036,7 +4065,7 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
       savePreloadedOverride(slot); // preloaded override survives reload
     }
     // M5: persist edits to Supabase (fire-and-forget)
-    if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(slot, TEAMS[slot], 'set_editor');
+    if (!validation.referencePin && typeof _upsertTeamToDB === 'function') _upsertTeamToDB(slot, TEAMS[slot], 'set_editor');
     if (slot === currentPlayerKey) {
       renderRoster('player-roster', TEAMS[currentPlayerKey].members);
       renderEditorRoster();

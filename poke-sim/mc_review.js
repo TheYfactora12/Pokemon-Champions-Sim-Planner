@@ -1,4 +1,27 @@
 // This diagnostic is separate from historical rules and competitive approval.
+function getMcReferenceChoices(kind, speciesName, data, showUnavailable) {
+  var ref = typeof MC_REVIEW_REFERENCE === 'undefined' ? null : MC_REVIEW_REFERENCE;
+  if (!ref || ref.regulation !== 'champions_reg_m_c_2026' ||
+      ref.pin !== 'efe4948570d5e8189751792136d26e71710c6c66' || !ref.species || !Array.isArray(ref.items)) return [];
+  var id = function(value) { return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, ''); };
+  var key = id(speciesName);
+  if (key === 'floetteeternalflowermega') key = 'floettemega';
+  if (key === 'floetteeternalflower') key = 'floetteeternal';
+  var species = Object.prototype.hasOwnProperty.call(ref.species,key) ? ref.species[key] : null;
+  var source = kind === 'species' ? ref.species : kind === 'item' ? data.items : kind === 'move' ? data.moves : kind === 'ability' ? data.abilities : null;
+  if (!source) return [];
+  return Object.keys(source).map(function(k) {
+    var name = source[k].name || k;
+    var eligible = kind === 'species' ? source[k].available === true : kind === 'item' ? ref.items.indexOf(id(name)) >= 0 :
+      !!(species && species.available && Array.isArray(species[kind === 'move' ? 'moves' : 'abilities']) &&
+        species[kind === 'move' ? 'moves' : 'abilities'].indexOf(id(name)) >= 0);
+    return {name:name,status:eligible ? 'reference_only' : 'unavailable',
+      regulation_id:ref.regulation,ruleset_version:'champions-reg-mc-source-review-v1',
+      source_version:ref.pin,source:'pinned_showdown_mc_reference',competitive_eligible:false};
+  }).filter(function(row) { return showUnavailable || row.status === 'reference_only'; })
+    .sort(function(a,b) { return a.name.localeCompare(b.name); });
+}
+
 function reviewMcTeam(team, reference) {
   var id = function(value) { return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, ''); };
   if (!reference || reference.regulation !== 'champions_reg_m_c_2026') return null;

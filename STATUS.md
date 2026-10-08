@@ -6,6 +6,16 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8: v194 candidate aligns M-C draft paste, bulk/JSON and editor intake.
+  Reference move/item suggestions no longer depend on the older pool. Follow-up
+  audit found JSON could drop draft restrictions and non-strict direct engine
+  calls could execute drafts; both now have failing-before/passing-after coverage.
+  Twelve focused tests pass, independently rerun and cleared. Frozen full gate:
+  202 fast + 12 offline/mock DB files pass, four helpers skipped. Local browser
+  unchanged-set save and reload pass. Deployment pending; unknown contexts reject.
+  The question of enabling clearly labeled reference battles is awaiting owner
+  direction; this candidate does not promote M-C or claim complete game accuracy.
+
 - October 8: M-C new-paste draft intake now uses the pinned M-C reference,
   avoiding historical item/learnset rejection while retaining structural checks.
   Drafts stay local and unverified; existing-team replacement, JSON/bulk intake

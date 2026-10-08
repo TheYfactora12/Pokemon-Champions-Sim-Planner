@@ -303,6 +303,9 @@ function getRegulationChoices(kind, speciesName, rulesetId, showUnavailable) {
   var sim = typeof ChampionsSim !== 'undefined' ? ChampionsSim : {};
   var data = sim.pokemonDataAudit, api = sim.moveLegality;
   if (!data || !data.species || !api || typeof api.canonicalSpeciesKey !== 'function') return [];
+  if (profile.id === 'champions_reg_m_c_2026') {
+    return typeof getMcReferenceChoices === 'function' ? getMcReferenceChoices(kind, speciesName, data, showUnavailable) : [];
+  }
   var speciesKey = api.canonicalSpeciesKey(speciesName || '');
   var movePool = kind === 'move' && typeof api.resolveLearnsetPool === 'function'
     ? api.resolveLearnsetPool(speciesName, { learnsetContext: 'champions' }) : null;
