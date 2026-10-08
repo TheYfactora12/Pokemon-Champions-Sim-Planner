@@ -6,6 +6,16 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8: v194 deployed via PR234 / Pages37845035178. Live HTML and all four
+  assets matched; live unchanged-set save/reload succeeded. No battle approval.
+- v195 candidate fixes Klutz suppression for type boosters and triggered items.
+  Six targeted regressions pass; four failed before the fix. Item audit:
+  [current source/runtime gaps](docs/release/ITEM_RUNTIME_AUDIT_2026-10-08.md).
+  Raichunite X source exists, but base-to-Mega runtime transition remains unwired.
+  Independent bounded review cleared; 203 fast + 12 offline/mock DB files pass,
+  four helpers skipped. Final release/cache tests 11/11. CI/deployment pending.
+  No M-C source promotion. Further item hooks/suppression tracked in #235.
+
 - October 8: v194 candidate aligns M-C draft paste, bulk/JSON and editor intake.
   Reference move/item suggestions no longer depend on the older pool. Follow-up
   audit found JSON could drop draft restrictions and non-strict direct engine
