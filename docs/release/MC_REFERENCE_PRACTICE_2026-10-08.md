@@ -91,3 +91,29 @@ The event/HP log comparison is not proof these UI labels correctly explain the
 current held item or faint cause; keep them in the replay audit backlog.
 
 Rollback: revert the release commit; saved drafts remain intact and review-only.
+
+## Production Follow-Up (v197)
+
+PR237 merged as `209e58eb8da2f4103568de06f669e0a2fb28ae74`; all required
+checks passed, including Battle Audit. Pages37850111959 succeeded. HTTP checks
+matched v196 HTML and all four external assets. Live Run All completed 14 games
+and all 14 JSON files were retrieved. The 58-turn DOM comparison found one
+mismatch: a structured Fake Out failure was appended as a late "used" action
+after the authoritative Armor Tail block and other moves. No battle mechanics
+change is made by the repair: ordered raw events remain authoritative and only
+matching structured detail enriches those rows. Unanchored effect details move
+to a separate "action order unknown" section, not the ordered timeline. Turns
+containing only blocks/denials also never manufacture planned moves as executed.
+Regression fixtures now explicitly provide raw action evidence when expecting
+an executed move, and preserve miss details without inventing their order.
+
+Regulation selection also needs to rebuild catalog options immediately, without
+requiring reload. v197 adds this refresh while preserving valid team selections.
+Two sanitized regression tests cover both repairs; private replay is not posted.
+Previous local v196 clean samples do not erase this later production finding.
+Final follow-up CI/deployment/visual evidence is recorded on its PR.
+
+v197 local final gate: 205 fast and 12 offline/mock DB test files passed; four
+manual/helpers skipped. Independent review cleared the scoped UI repair and
+confirmed unchanged engine, selector/bring preservation and artifact identity.
+Final HTML SHA256: `b4fcd664f24b1cc3c84042d5ce1a0b09a07ff13de458059693471039a6d8f04f`.

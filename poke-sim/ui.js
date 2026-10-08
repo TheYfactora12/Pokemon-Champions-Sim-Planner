@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.196-mc-reference-practice
+// Build marker: v2.2.197-reference-replay-order
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.196-mc-reference-practice'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.197-reference-replay-order'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -346,6 +346,7 @@ function setSelectedRegulationId(id) {
   if (typeof simRunning !== 'undefined' && simRunning) { refreshRegulationControls(); return false; }
   selectedRegulationId = String(id == null ? '' : id);
   try { Storage.set('regulation:selection:v1', { id: selectedRegulationId }); } catch (_e) {}
+  if (typeof rebuildTeamSelects === 'function') rebuildTeamSelects();
   refreshRegulationControls();
   if (typeof renderTeamsGrid === 'function') renderTeamsGrid();
   if (typeof editingIdx !== 'undefined' && editingIdx !== null) refreshEditorMoveLegality();
@@ -4853,6 +4854,7 @@ function csRenderReplayLogTurnZero(turnLog) {
 function csRenderReplayPlayByPlay(turn) {
   turn = turn || {};
   var rows = [];
+  var unordered = [];
   function hpText(row) {
     var after = row && row.target_hp_after != null ? row.target_hp_after : row && row.hp_after;
     var max = row && row.target_max_hp != null ? row.target_max_hp : row && row.max_hp;
@@ -4947,10 +4949,7 @@ function csRenderReplayPlayByPlay(turn) {
     if (!text) return;
     eventRows.push(text);
   });
-  var eventRowsHaveMoves = eventRows.some(function(text) {
-    return /\bused\b/.test(String(text || ''));
-  });
-  if (eventRows.length && eventRowsHaveMoves) {
+  if (eventRows.length) {
     var structuredByMove = {};
     var plannedMoveCounts = {};
     ['player', 'opponent'].forEach(function(side) {
@@ -4980,11 +4979,10 @@ function csRenderReplayPlayByPlay(turn) {
       var structuredMatches = structuredByMove[prefix] || [];
       rows.push(structuredMatches[representedMoves[prefix] - 1] || text);
     });
+    // Missing raw anchors may preserve effect detail, but cannot establish order.
     structuredRows.forEach(function(text) {
       var match = String(text || '').match(/^(.+? used .+?!)/);
-      if (!match) return;
-      if (representedMoves[match[1]]) return;
-      rows.push(text);
+      if (match && !representedMoves[match[1]]) unordered.push(text.replace(' used ', ' attempted '));
     });
   } else {
     (turn.actions.player || []).forEach(function(action) {
@@ -5017,7 +5015,7 @@ function csRenderReplayPlayByPlay(turn) {
         '<b>' + _escapeHtml(text || '') + '</b>' +
       '</div>';
     }).join('') +
-  '</div>';
+  '</div>' + (unordered.length ? '<div class="replay-unordered-evidence"><strong>Additional effect evidence - action order unknown</strong><div>' + unordered.map(_escapeHtml).join('<br>') + '</div></div>' : '');
 }
 
 function _csResolveSnapshotKey(pre, side, name) {

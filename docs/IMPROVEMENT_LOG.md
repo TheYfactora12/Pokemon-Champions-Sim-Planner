@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0086: Live Replay Evidence Drives UI Repairs
+
+- v196 live Run All cleared the saved-team execution gate. Downloading every
+  retained game exposed one action-order display mismatch among 58 turns.
+- v197 keeps authoritative ordered engine events and stops appending an
+  unanchored blocked move as a late action. No engine mechanic is changed.
+- Regulation changes now refresh selector choices immediately; local browser
+  switches 7 to 35 options without reload and preserves the selected custom team.
+- Two focused regressions and re-rendering the preserved failing turn verify the
+  repairs. Final CI/deployed receipts are attached to the follow-up PR. Official
+  approval and semantic replay-item/faint labels (#238) remain separate work.
+
 ## IMP-0085: Separate Reference Execution From Official Approval
 
 - Owner requested clearing the saved-draft Run All gate. New explicit M-C
