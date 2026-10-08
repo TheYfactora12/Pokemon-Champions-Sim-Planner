@@ -210,6 +210,10 @@ function checkTeamForSelectedRegulation(team, rulesetId, options) {
   var result = { regulation_id: profile.id, ruleset_version: profile.version || null,
     status: 'not_verified', allowed: false, competitive_eligible: false, errors: errors, source_gaps: gaps,
     mechanics_status: 'not_verified', scope: 'bundled_regulation_checks_not_official_certification' };
+  if (team && team.import_context && team.import_context.draft_only === true) {
+    gaps.push('Saved M-C draft: execution remains blocked in every regulation until separately reviewed.');
+    return result;
+  }
   if (!practice && (!profile.runtimePromotable || profile.id !== 'champions_reg_m_a_2026')) {
     gaps.push(profile.blocker || 'No implemented validator and engine mapping for this regulation.');
     // Keep the approval gap, but still report independent structural failures.

@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.192-shuca-hit-lifecycle
+// Build marker: v2.2.193-mc-draft-intake
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.192-shuca-hit-lifecycle'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.193-mc-draft-intake'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -713,6 +713,8 @@ function csLearnsetOptionsForTeam(team) {
 
 function buildImportedTeamValidation(members, opts) {
   opts = opts || {};
+  if (opts.draftOnly === true && opts.regulationId === 'champions_reg_m_c_2026' &&
+      (opts.format || 'champions') === 'champions') return buildMcDraftImportValidation(members, opts);
   // Editable input is not verified admission when source evidence is missing.
   var team = {
     name: opts.name || 'Imported Team',
@@ -777,6 +779,61 @@ function buildImportedTeamValidation(members, opts) {
   out.errors = Array.from(new Set(out.errors.filter(Boolean)));
   out.warnings = Array.from(new Set(out.warnings.filter(Boolean)));
   out.valid = out.errors.length === 0 && out.sourceVerified;
+  return out;
+}
+
+function buildMcDraftImportValidation(members, opts) {
+  var out = { valid: false, canSave: false, canExecute: false, sourceVerified: false,
+    officialStatus: 'unverified', referenceStatus: 'unavailable', referencePin: null,
+    errors: [], warnings: ['Saved M-C draft only. Official approval and simulation remain blocked.'],
+    memberWarnings: {}, sourceVersion: '' };
+  var reference = typeof MC_REVIEW_REFERENCE === 'undefined' ? null : MC_REVIEW_REFERENCE;
+  if (!reference || reference.regulation !== opts.regulationId ||
+      reference.pin !== 'efe4948570d5e8189751792136d26e71710c6c66' ||
+      !reference.species || !Array.isArray(reference.items) || typeof reviewMcTeam !== 'function' ||
+      typeof validateTeam !== 'function') {
+    out.errors.push('Pinned M-C draft validation is unavailable.');
+    return out;
+  }
+  if (!Array.isArray(members) || !members.length || members.length > 6 || members.some(function(m) {
+    return !m || typeof m.name !== 'string' || !Array.isArray(m.moves) ||
+      m.moves.some(function(move) { return typeof move !== 'string'; });
+  })) { out.errors.push('A draft requires one to six well-formed Pokemon sets.'); return out; }
+  out.referencePin = reference.pin;
+  out.sourceVersion = reference.pin;
+  var team = {format:'champions', members:members};
+  out.errors = buildChampionImportGateErrors(members);
+  var verdict = validateTeam(team, 'champions', {mcDraftOnly:true});
+  out.errors = out.errors.concat(verdict.errors || []);
+  if (typeof verdict.valid !== 'boolean' || !Array.isArray(verdict.errors) ||
+      (!verdict.valid && !verdict.errors.length)) out.errors.push('Structural validation is unavailable.');
+  var id = function(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); };
+  var speciesSeen = new Set(), itemsSeen = new Set();
+  var api = typeof ChampionsSim !== 'undefined' && ChampionsSim.moveLegality;
+  var speciesData = typeof ChampionsSim !== 'undefined' && ChampionsSim.pokemonDataAudit && ChampionsSim.pokemonDataAudit.species;
+  var natures = ['Hardy','Lonely','Brave','Adamant','Naughty','Bold','Docile','Relaxed','Impish','Lax','Timid','Hasty','Serious','Jolly','Naive','Modest','Mild','Quiet','Bashful','Rash','Calm','Gentle','Sassy','Careful','Quirky'];
+  var rows = reviewMcTeam(team, reference);
+  members.forEach(function(m, index) {
+    var errors = rows[index].issues.map(function(issue) { return m.name + ': ' + issue; });
+    if (m.species && id(m.species) !== id(m.name)) errors.push(m.name + ': conflicting species identity.');
+    var row = speciesData && api && api.canonicalSpeciesKey && speciesData[api.canonicalSpeciesKey(m.name)];
+    if (!row || !Number.isInteger(row.num) || row.num <= 0) errors.push(m.name + ': species identity unavailable.');
+    else if (speciesSeen.has(row.num)) errors.push(m.name + ': duplicate National Dex species.');
+    else speciesSeen.add(row.num);
+    if (m.item && itemsSeen.has(id(m.item))) errors.push(m.name + ': duplicate held item.');
+    if (m.item) itemsSeen.add(id(m.item));
+    if (!m.ability || natures.indexOf(m.nature) < 0 || m.level !== 50) errors.push(m.name + ': ability, known nature and level 50 are required.');
+    if (m.moves.some(function(move) { return !move.trim(); }) || new Set(m.moves.map(id)).size !== m.moves.length) errors.push(m.name + ': moves must be nonblank and distinct.');
+    var mega = typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[m.name];
+    if (mega && m.item !== mega.megaStone) errors.push(m.name + ': matching Mega Stone required.');
+    var parseErrors = m.import_format_signals && m.import_format_signals.spreadErrors;
+    if (Array.isArray(parseErrors)) errors = errors.concat(parseErrors.map(function(e) { return m.name + ': ' + e; }));
+    out.errors = out.errors.concat(errors);
+    out.memberWarnings[String(index)] = errors.map(function(e) { return {severity:'error',text:e}; });
+  });
+  out.errors = Array.from(new Set(out.errors));
+  out.referenceStatus = out.errors.length ? 'rejected' : 'matched';
+  out.canSave = out.errors.length === 0;
   return out;
 }
 
@@ -1088,6 +1145,7 @@ function isVisibleTeamInCatalog(teamKey, team, opts) {
   if (team.source === 'custom' && opts.includeCustom === false) return false;
   if (team.format !== 'champions') return false;
   if (team.legality_status === 'illegal') return false;
+  if (team.source === 'custom' && team.import_context && team.import_context.draft_only === true) return true;
   var verdict = null;
   if (typeof getTeamLegalityVerdict === 'function') {
     verdict = getTeamLegalityVerdict(teamKey, team);
@@ -1645,6 +1703,11 @@ var LADDER_MODE = false;
 
 function getTeamLegalityVerdict(teamKey, team) {
   team = team || ((typeof TEAMS !== 'undefined') ? TEAMS[teamKey] : null);
+  if (team && team.import_context && team.import_context.draft_only === true) {
+    var draft = buildMcDraftImportValidation(team.members, {regulationId:'champions_reg_m_c_2026'});
+    return {valid:false, sourceVerified:false, inferred:false, statAware:false,
+      errors:draft.errors, warnings:draft.warnings, label:'M-C draft - not verified'};
+  }
   if (team && !isTeamCompatibleWithCurrentRuleset(team)) {
     return {
       valid: false,
@@ -3796,6 +3859,16 @@ document.getElementById('import-slot')?.addEventListener('change', function() {
   }
 });
 
+function csPasteImportOptions(targetTeam) {
+  var options = { format: targetTeam ? targetTeam.format : 'champions' };
+  // New drafts only: do not reinterpret or replace historical registrations.
+  if (!targetTeam && getSelectedRegulationId() === 'champions_reg_m_c_2026') {
+    options.regulationId = 'champions_reg_m_c_2026';
+    options.draftOnly = true;
+  }
+  return options;
+}
+
 function showImportPreview(members) {
   const preview = document.getElementById('import-preview');
   const roster = document.getElementById('preview-roster');
@@ -3804,7 +3877,7 @@ function showImportPreview(members) {
   const slotEl = document.getElementById('import-slot');
   const slot = slotEl ? slotEl.value : '__new__';
   const targetTeam = slot === '__new__' ? null : TEAMS[slot];
-  const validation = buildImportedTeamValidation(members, { format: targetTeam ? targetTeam.format : 'champions' });
+  const validation = buildImportedTeamValidation(members, csPasteImportOptions(targetTeam));
   if (targetTeam) {
     const reconciliation = csReconcilePasteMembers(targetTeam.members, members, { previewOnly: true });
     validation.errors = validation.errors.concat(reconciliation.errors);
@@ -3815,7 +3888,7 @@ function showImportPreview(members) {
     return sum + ((validation.memberWarnings[key] || []).length);
   }, 0);
   if (flow) {
-    flow.innerHTML = '<strong>' + (validation.valid ? 'Ready to load' : 'Blocked until fixed') + '</strong>' +
+    flow.innerHTML = '<strong>' + (validation.canSave ? 'Ready to save M-C draft (simulation blocked)' : validation.valid ? 'Ready to load' : 'Blocked until fixed') + '</strong>' +
       '<span>' + members.length + '/6 Pokemon parsed · ' + validation.errors.length + ' errors · ' + validation.warnings.length + ' warnings · ' + memberWarningsTotal + ' move checks flagged</span>' +
       '<div class="import-check-chips">' +
         '<span class="' + (members.length >= 1 && members.length <= 6 ? 'ok' : 'bad') + '">Roster ' + members.length + '/6</span>' +
@@ -3825,14 +3898,14 @@ function showImportPreview(members) {
   }
   if (dest) {
     dest.innerHTML = '<strong>Destination</strong><span>' + _escapeHtml(destination) + '</span><small>' +
-      _escapeHtml(slot === '__new__' ? 'Creates a saved custom team you can edit and sim.' : 'Replaces this slot after validation; preloaded teams save as overrides.') +
+      _escapeHtml(validation.canExecute === false ? 'Saves locally without changing your sets. M-C execution remains blocked pending approval.' : slot === '__new__' ? 'Creates a saved custom team you can edit; simulation has separate regulation checks.' : 'Replaces this slot after validation; preloaded teams save as overrides.') +
       '</small>';
   }
   roster.innerHTML = members.map((m, idx) => {
     const warnings = validation.memberWarnings[String(idx)] || [];
     const warningHtml = warnings.length
       ? '<div class="preview-warnings">' + warnings.slice(0, 3).map(w => '<span class="preview-warning ' + _escapeHtml(w.severity) + '">' + _escapeHtml(w.text) + '</span>').join('') + '</div>'
-      : '<div class="preview-ok">Showdown species and moves checked</div>';
+      : '<div class="preview-ok">' + (validation.referencePin ? 'Pinned M-C reference checked; official status unverified' : 'Showdown species and moves checked') + '</div>';
     return `
     <div class="preview-row">
       <img class="preview-sprite" src="${getSpriteUrl(m.name)}" alt="${_escapeHtml(m.name || '')}" ${csSpriteFallbackAttrs(m.name)}/>
@@ -3890,8 +3963,8 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
   if (slot === '__new__') {
     const newKey = 'custom_' + Date.now();
     const guessedName = members[0] ? `${members[0].name}'s Team` : 'Imported Team';
-    const validation = buildImportedTeamValidation(members, { name: guessedName, format: 'champions' });
-    if (!validation.valid) {
+    const validation = buildImportedTeamValidation(members, Object.assign({ name: guessedName }, csPasteImportOptions(null)));
+    if (!validation.valid && !validation.canSave) {
       statusEl.textContent = validation.errors.slice(0, 3).join(' ');
       statusEl.className = 'modal-status err';
       showImportPreview(members);
@@ -3910,12 +3983,16 @@ document.getElementById('do-import-btn')?.addEventListener('click', async functi
       import_warnings: validation.warnings,
       import_errors: validation.errors,
       showdown_source_version: validation.sourceVersion,
+      import_context: validation.referencePin ? {version:1, regulation_id:'champions_reg_m_c_2026',
+        reference_pin:validation.referencePin,
+        reference_artifact_sha256:'fba0dbf7a01f95a57727923a948afb575b36ef7bb2a883600d2702596dad2905',
+        official_status:'unverified', draft_only:true} : null,
       created_at: new Date().toISOString()
     };
     // T9f: persist to localStorage immediately
     if (typeof saveCustomTeamsToStorage === 'function') saveCustomTeamsToStorage();
     // M5: persist to Supabase (fire-and-forget)
-    if (typeof _upsertTeamToDB === 'function') _upsertTeamToDB(newKey, TEAMS[newKey], 'pokepaste');
+    if (!validation.referencePin && typeof _upsertTeamToDB === 'function') _upsertTeamToDB(newKey, TEAMS[newKey], 'pokepaste');
     targetSlot = newKey;
     teamName = guessedName;
     // T9d: rebuild both player + opponent dropdowns so the new team is
@@ -12826,6 +12903,7 @@ if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_bui
 // M5 — _upsertTeamToDB: persists imported/edited teams to Supabase
 // ============================================================
 function _upsertTeamToDB(teamId, team, source) {
+  if (team && team.import_context && team.import_context.draft_only === true) return;
   try {
     var adapter = (typeof window === 'undefined') ? null : window['SupabaseAdapter'];
     if (!adapter || !adapter.enabled || typeof adapter.saveTeam !== 'function') {
