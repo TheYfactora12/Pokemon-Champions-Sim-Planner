@@ -474,6 +474,16 @@
       "known_gap": "Scoped Surge/Seed Sower dispatch, capped stages, Klutz and shared Simple/Contrary regressions plus synthetic doubles entry. Full Mega lifecycle, general suppression, item transfer, Unburden reset and official seasonal approval remain unproved."
     },
     {
+      "id": "MOVE-SOAK-TYPE-LIFECYCLE",
+      "family": "moves-effects",
+      "behavior": "Soak replaces current typing and successful switches restore current-form native types.",
+      "status": "partial",
+      "tests": ["tests/soak_lifecycle_tests.js"],
+      "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 Soak, setType, Magic Bounce and Water absorption handlers.",
+      "boundary_vectors": ["dual-type-replacement", "Water-dual-versus-pure", "Protect", "Substitute-Infiltrator", "Magic-Bounce-behind-Substitute", "allied-bounce", "Good-as-Gold", "Water-absorption", "Storm-Drain-redirection", "Mold-Breaker", "successful-and-failed-pivot", "Arceus-Silvally-Tera-locks", "grounding", "next-hit-effectiveness", "type-state-evidence"],
+      "known_gap": "Scoped synthetic battles and direct-effect tests, not full imported-game parity. Full form-change, general suppression, ability redirection tie ordering and Champions-specific approval remain unproved."
+    },
+    {
       "id": "CHAMPION-REG-MB-DELTAS",
       "family": "champion-regulation-deltas",
       "behavior": "Regulation M-B differences from Showdown baseline are backed by approved Champion evidence and tests.",

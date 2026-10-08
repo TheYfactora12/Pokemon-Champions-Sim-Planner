@@ -6,6 +6,14 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8 follow-up: v189 is deployed through PR227 / Pages37827800816;
+  exact HTML SHA256 and browser Simulator navigation verified. Soak is the
+  next local candidate: 31 focused cases pass, including actual type-change,
+  reflection, absorption, switch restoration and subsequent damage traces.
+  Independent bounded review and final gate (199 fast + 12 DB files) passed.
+  Electromorphosis, Shuca, current import data and
+  M-C approval still block a trustworthy full-team viability claim (#228).
+
 - October 8: Acrobatics itemless power candidate follows Unburden PR226.
   Production-shaped mirror/runtime tests reproduced three failures; all six
   now pass. Held or disabled items retain normal power; consumed/removed items
