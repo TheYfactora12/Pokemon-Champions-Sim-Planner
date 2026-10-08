@@ -8,12 +8,13 @@ Historical candidate observations are not current deployment instructions.
 ## Verified Release
 
 - Primary repository: TheYfactora12/Pokemon-Champions-Sim-Planner, main.
-- Deployed build: **v2.2.198-mc-roster-evidence**, preview / local-save.
-- Merge: `8191d27326d7a1b1cf328317f9e4921ba10bde93`, [PR244](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/244).
-- Required PR CI `37854848075` and reference checks passed; Pages `37855405638` succeeded.
-- At 2026-10-08T22:47:40.747Z, HTTP checks matched bundle and four external assets.
-  Fresh browser readback confirmed v198 and its roadmap. [Deployment receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/244#issuecomment-6070583942).
-- Bundle SHA-256: `0fa4502498a31237a5235d50c663ee547f6331f31d4f1d87a57df656bec8f178`.
+- Deployed build: **v2.2.199-project-alignment**, preview / local-save.
+- Runtime merge: `3c6dca619916f7aedea09de582eb6cbc1a4b005c`, [PR246](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/246).
+- Required PR CI `37856610213`, bundle and cache checks passed; Pages `37857086095` succeeded.
+- At 2026-10-08T23:05:35.983Z, HTTP checks matched bundle and four external assets.
+  Fresh browser readback confirmed v199 and its corrected roadmap. [Deployment receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/246#issuecomment-6070804929).
+- Bundle SHA-256: `f6154ca9743cb93f09c3c0dc1307ab7b2c767a06a0895ef3906b6e1000de595a`.
+- Previous verified rollback: v198, `8191d27326d7a1b1cf328317f9e4921ba10bde93`.
 - This proves the named release/assets/roadmap, not all game mechanics, live DB
   security, mobile journeys or beta readiness. No verified 99% accuracy claim.
 - Alfredo's repository is the intended backup, not an assumed synchronized
@@ -31,6 +32,10 @@ Supabase security or ownership tests.
 ## Next Work, In Order
 
 All issue numbers below refer to TheYfactora12/Pokemon-Champions-Sim-Planner.
+
+Security intake #247: GitHub reports 31 dependency alerts (12 high, 14 moderate,
+5 low). Triage affected runtime/build paths before expanding release claims;
+provider severity is not yet a project-specific exploitability assessment.
 
 1. **Mega identity and lifecycle (#241):** fix canonical-name bypass and
    base-plus-stone behavior; inventory has 21 missing descriptors and 3 aliases.

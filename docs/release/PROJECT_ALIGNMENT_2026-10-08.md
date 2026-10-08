@@ -102,3 +102,12 @@ release identity and roadmap content only; no new mechanics test claim.
 The earlier v197 regression and v198 release proof retain their original scope.
 Follow-up after deployment: record the exact receipt in STATUS without another
 runtime version bump merely for documentation. No universal alignment claim.
+
+## Deployment Follow-Up
+
+PR246 merged as 3c6dca619916f7aedea09de582eb6cbc1a4b005c. CI 37856610213,
+bundle/cache checks and Pages 37857086095 passed. HTTP artifact and four external
+asset checks passed at 2026-10-08T23:05:35.983Z; fresh browser verified v199 and
+the corrected expanded regulation milestone. [Receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/246#issuecomment-6070804929).
+This follow-up changes documentation only, not the tested app artifact.
+GitHub-reported dependency alerts are tracked separately in #247, untriaged.
