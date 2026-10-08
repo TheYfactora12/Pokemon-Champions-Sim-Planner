@@ -1,5 +1,23 @@
 # Improvement Log
 
+## IMP-0077: Unburden Activation Is Not Item History
+
+- Reproduced: consumed-item history incorrectly doubled Speed after returning
+  to battle. Two regression cases failed before repair.
+- Candidate: explicit temporary Unburden activation; consumption/Knock Off
+  activates, successful switch-out/entry resets, Trick gain clears and loss
+  activates. Historical itemConsumed remains intact for replay ownership.
+- Tests: tests/unburden_lifecycle_tests.js covers five boundaries including
+  actual pivot out/back and two-turn Trick. Terrain lifecycle 13/13 and item
+  tests 18/18 remain passing. Final gate: 197 fast + 12 DB files, zero failures.
+  Independent review passed the narrow delta, with 8 additional checks and
+  14 reference checks against pinned Showdown efe4948570d5e8189751792136d26e71710c6c66.
+  Engine reviewed SHA256: d963c60d78e2b4041cb3d30e939ce1df8e17a0213cebc233dd4ea6d906521e17.
+  These DB tests are local contract tests, not live database verification.
+- Scope: shared engine mechanics, not seasonal approval or competitive viability.
+  Ability acquisition/suppression and full live-export parity remain open.
+- Lesson: persistent history must not stand in for a switch-scoped ability state.
+
 ## IMP-0076: Terrain Changes Reach Active Seed Holders
 
 - Root cause: terrain setters updated the field but only entry processed a seed.

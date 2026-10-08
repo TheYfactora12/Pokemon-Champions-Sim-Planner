@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-October 8 item audit: stored M-C reference intake already includes Electric Seed and 17 other additions, but runtime imports still use an older allowlist. A local seed-grounding correction passes focused tests; terrain-change lifecycle, item suppression, source approval and release remain open. See docs/release/MC_ITEM_AUDIT_2026-10-08.md. Complete seasonal item/move inventory and full-team mechanics evidence before exact-package approval; do not promote historical M-A data or treat reference acceptance as official approval. Live v185 retains Preview/local-save scope. Coaching (#209), page audit (#221), mobile (#211/#213), paired replay exports, database security and beta (#103) remain open. Verify primary releases before Alfredo synchronization.
+October 8: v186 grounding fix verified on primary production; PR225 terrain dispatch passed hosted checks and merged, deployment proof pending. Unburden switch/item lifecycle is the next candidate. Runtime M-C imports still use older item/move evidence; official package approval remains incomplete. See docs/release/MC_ITEM_AUDIT_2026-10-08.md. Decide an explicitly isolated reference-only practice lane versus waiting for approved competitive M-C. Never pool experimental/current/historical results into a trusted win rate. Complete source approval, mechanics and paired live-export tests before competitive team advice. Coaching (#209), page audit (#221), mobile (#211/#213), database security and beta (#103) remain open. Preview/local-save scope remains.
 
 ## Milestone Index
 
