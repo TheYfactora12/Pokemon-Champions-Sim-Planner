@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.198-mc-roster-evidence';
+      return txt || 'v2.2.199-project-alignment';
     } catch (e) {
-      return 'v2.2.198-mc-roster-evidence';
+      return 'v2.2.199-project-alignment';
     }
   }
 

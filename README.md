@@ -8,31 +8,30 @@ A Pokemon Champions competitive team simulator under evidence-gated development 
 
 ## Where the App Lives (Shareable URLs)
 
-Three ways to open the sim without cloning. Each points to a different snapshot of the bundle — know which one you are sharing.
+Use the primary GitHub Pages URL for the deployed preview. A merged branch is
+not proof of a successful deployment; the tested revision and live receipt are
+recorded in [STATUS.md](./STATUS.md).
 
 | Channel | Name | What it serves | Updates when | Use it for | Status |
 |---|---|---|---|---|---|
-| **Dev preview** | current active PR branch | Newest work-in-progress bundle for the branch under active review | Every push to that branch | Testing the latest mechanics / tickets before merge | ✅ Live when branch preview is shared |
-| **Stable** | `main` branch | Last merged bundle on the default branch | Only after a PR from a feature branch is merged into `main` | Sharing with teammates / VGC players who want a known-good build | ✅ Live |
-| **Static host** | GitHub Pages | Clean short URL, no proxy | Re-publishes on every push to `main` | Giving out a permanent link; best mobile experience | ✅ Live |
+| **Candidate** | reviewed PR or local server | Work in progress at an identified commit | When explicitly built/shared | Scoped testing; no deployment assumption | Check PR evidence |
+| **Repository** | `main` branch | Merged source and generated bundle | After approved merge | Inspect source; not a separate hosted environment | Check STATUS.md |
+| **Deployed preview** | GitHub Pages | Successfully deployed main artifact | After deployment succeeds | Public practice; not certified competitive advice | Check live receipt |
 
 **Links:**
-- **Stable — branch `main`**: [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
-- **Stable raw preview — branch `main`**: [htmlpreview.github.io — main](https://htmlpreview.github.io/?https://raw.githubusercontent.com/TheYfactora12/Pokemon-Champions-Sim-Planner/main/poke-sim/pokemon-champion-2026.html)
+- **Primary deployed preview**: [GitHub Pages](https://theyfactora12.github.io/Pokemon-Champions-Sim-Planner/)
 - **Dev preview**: use the active branch preview URL shared in the PR under review
 
-> **Note:** The htmlpreview link is a branch/raw preview tool, not the canonical public site. The stable public site is GitHub Pages on `main`. The local file at `poke-sim/pokemon-champion-2026.html` remains the source artifact that the site serves.
+> **Note:** Raw HTML proxy previews are not deployment evidence and can miss external assets. Use the primary Pages site or a local server with the complete asset tree.
 >
 > For QA handoffs, always pin the exact repo, branch, commit SHA, preview target, and required local/DB credentials. Do not send branch-only review to GitHub Pages. See [`docs/release/QA_ENVIRONMENT_HANDOFF_RULES_2026-06-19.md`](./docs/release/QA_ENVIRONMENT_HANDOFF_RULES_2026-06-19.md) and [`docs/release/SIM_AND_DB_SNAPSHOT_2026-06-19.md`](./docs/release/SIM_AND_DB_SNAPSHOT_2026-06-19.md).
 
 ## Release Direction
 
-This project should ship as a public site first, then add optional accounts, donations, subscriptions, and coaching on top of a trustworthy free core.
-
-- Site: canonical public entry point for simulator, replay review, Battle Sensei, and team tools.
-- Donations: optional support channel after the stable site is live.
-- Subscription: for saved history, deeper analysis, and repeat workflow value, not for basic simulator trust.
-- Coaching: separate premium human service layered on top of replay evidence and Battle Sensei outputs.
+Current priority is the free doubles team lab: build, validate, simulate, inspect,
+improve. Prove mechanics, regulation data and evidence before expanding coaching.
+Accounts, paid services, subscriptions and LLM orchestration are deferred ideas,
+not release prerequisites or authorization to incur costs.
 
 See [ROADMAP.md](./ROADMAP.md#release-alignment) for reviewed release gates; optional revenue features remain deferred behind trust and demonstrated player value.
 
@@ -43,14 +42,14 @@ See [ROADMAP.md](./ROADMAP.md#release-alignment) for reviewed release gates; opt
 ```
 Pokemon-Champions-Sim-Planner/
 ├── README.md                          ← This file
-├── DEVELOPMENT_RUNBOOK.md             ← Full dev + QA + replication guide
-├── MASTER_PROMPT.md                   ← Copy-paste prompt for new AI sessions
+├── DEVELOPMENT_RUNBOOK.md             ← Historical runbook archive entry point
+├── MASTER_PROMPT.md                   ← Historical prompt archive entry point
 ├── index.html                         ← Landing redirect to bundle
 └── poke-sim/                          ← App sources + bundle
     ├── pokemon-champion-2026.html     ← HTML bundle; requires generated data and assets
     ├── index.html                     ← App shell, tabs, PWA meta
     ├── style.css                      ← Mobile-first dark theme
-    ├── data.js                        ← BASE_STATS, TEAMS (29), POKEMON_TYPES_DB (700+)
+    ├── data.js                        ← Baseline stats, preloaded teams and type data
     ├── engine.js                      ← Battle sim engine, damage formula, Bo runner
     ├── ui.js                          ← All UI logic, import/export, pilot guide, PDF
     ├── legality.js                    ← Team legality validator
@@ -64,29 +63,35 @@ Pokemon-Champions-Sim-Planner/
 
 ---
 
-## Quickstart — Zero Dependencies
+## Local Preview
 
-1. Clone or download this repo
-2. Open `poke-sim/pokemon-champion-2026.html` in Chrome, Firefox, or Safari
-3. No install, no build step, no server needed
+Clone the repository, then serve the complete application directory:
+
+```bash
+cd poke-sim
+python -m http.server 8765
+```
+
+Open `http://localhost:8765/pokemon-champion-2026.html`. Use another port if
+occupied. Keep generated files and assets together. This serves the committed
+build; rebuilding and running tests require the development dependencies.
 
 ---
 
 ## Features
 
-- Bo1 / Bo3 / Bo5 Monte Carlo simulation
-- Doubles and Singles format toggle
-- 29 curated teams preloaded (Champions Arena, Chuppa, Rin Sand, Suica Sun, Mega variants, and review imports)
+- Seeded practice simulation; supported series formats depend on the selected ruleset
+- Doubles product scope; singles is retained for shared-mechanics testing
+- Preloaded and imported teams, revalidated against the selected context
 - Poképaste + Showdown import/export
 - Team Preview bring-N-of-6 picker with drag+tap UI and Random 4/6 opponent mode (T9j.10)
 - Simulator-tab inline bring pickers for player + opponent sharing state with the Teams tab (T9j.12)
 - Custom team bulk import/export via file + filter chips on Teams tab (T9j.11)
 - Replay Log with All / Wins / Losses / Clutch filters
-- Auto-generated Pilot Guide per matchup
-- Strategy tab with team-level tactical guidance
+- Pilot Guide and Strategy evidence surfaces; unverified advice is not competitive guidance
 - Meta Threat Radar, Speed Tiers, Team Coverage checker
 - PDF report (after Run All Matchups)
-- PWA — installable on iOS/Android/Desktop
+- PWA support; device-specific behavior requires testing, not an installation claim
 
 ---
 
@@ -94,24 +99,11 @@ Pokemon-Champions-Sim-Planner/
 
 ```bash
 cd poke-sim
-node tests/items_tests.js      # 14/14
-node tests/status_tests.js     # 27/27
-node tests/mega_tests.js       # 27/27
-node tests/coverage_tests.js   # 9/9
-node tests/t9j8_tests.js       # 47/47 — crit / flinch / abilities
-node tests/t9j9_tests.js       # 24/24 — MOVE_CATEGORY / MOVE_BP
-node tests/t9j10_tests.js      # 16/16 — bring N-of-6 picker state
-node tests/t9j11_tests.js      # 16/16 — custom teams bulk I/O + filter chips
-node tests/t9j12_tests.js      # 11/11 — simulator bring picker
-node tests/t9j13_tests.js      # 47/47 — format-mismatch guard + SP rescale
-node tests/t9j14_tests.js      # 25/25 — Shadow Pressure PDF + coaching notes
-node tests/t9j15_tests.js      # 22/22 — Best Mega Trigger Turn card (Pilot Guide + PDF)
-node tests/t9j16_tests.js      # 58/58 — Elite Coaching Engine + Strategy Report (17 rules)
-npm run test:fast              # current fast suite, skips live DB tests
-node tests/audit.js            # 5070 battles, 0 errors
-
-# Nightly (not in fast loop)
-N=500 node tests/nightly_bring_harness.js   # end-to-end bring picker wiring check
+npm ci
+npm test                       # fast tests plus offline/mock DB contracts
+npm run test:battle-audit       # declared mechanics coverage and gaps
+npm run test:accuracy           # state/repeatability, not game certification
+npm run roadmap:check          # source and generated roadmap consistency
 ```
 
 Current evidence belongs in [STATUS.md](STATUS.md) and its linked dated reports. `npm run test:fast` runs the non-DB gate; `npm test` adds offline/mock DB checks. Live verification requires explicit configuration and cannot be inferred from either command passing.
@@ -133,7 +125,8 @@ Use the canonical builder for module inclusion, inline-script escaping, and rele
 
 ## See Also
 
-- [`DEVELOPMENT_RUNBOOK.md`](./DEVELOPMENT_RUNBOOK.md) — full dev history, QA log, replication steps, known issues
-- [`MASTER_PROMPT.md`](./MASTER_PROMPT.md) — copy-paste context for resuming in a new AI session
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) — current contribution workflow
+- [`DEVELOPMENT_RUNBOOK.md`](./DEVELOPMENT_RUNBOOK.md) — archived historical context
+- [`MASTER_PROMPT.md`](./MASTER_PROMPT.md) — archived prompt, not active agent instructions
 - [`docs/repo-sync-playbook.md`](./docs/repo-sync-playbook.md) — fastest safe process for syncing validated fixes into mirror repos
 - [`CHAMPIONS_VALIDATOR_FRAMEWORK.md`](./CHAMPIONS_VALIDATOR_FRAMEWORK.md) — validator framework governing engine change tickets

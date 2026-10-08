@@ -1,5 +1,16 @@
 # Improvement Log
 
+## IMP-0089: Remove Competing Current Instructions Without Losing History
+
+- Replaced a 587-line mixed-era STATUS with one current receipt and queue;
+  archived the previous content and verified it against the source revision.
+- Archived old agent prompt/runbook bodies behind explicit history entry points.
+  Corrected README preview/setup/claims and roadmap's stale 260-row statement.
+- Added authority diagram, reviewed scope, workflow readback and cleanup
+  retention rules in PROJECT_ALIGNMENT_2026-10-08.md. No evidence or saves deleted.
+- Independent review found additional stale README and roadmap statements;
+  applied corrections. Documentation cleanup does not close mechanics or security.
+
 ## IMP-0088: Separate Identity Closure From Season Implementation
 
 - Live official sprites and independent visual review resolve two exact M-C
