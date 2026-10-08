@@ -60,9 +60,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.196-mc-reference-practice';
+      return txt || 'v2.2.197-reference-replay-order';
     } catch (e) {
-      return 'v2.2.196-mc-reference-practice';
+      return 'v2.2.197-reference-replay-order';
     }
   }
 

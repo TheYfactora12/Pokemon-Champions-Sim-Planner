@@ -4,7 +4,15 @@
 
 Review how changes improved the project in [the improvement log](docs/IMPROVEMENT_LOG.md). Its recorded history does not replace current gates or imply that local changes are deployed.
 
-## Local Candidate
+## Latest Follow-Up
+
+- v196 deployed through PR237 / Pages37850111959 at merge 209e58e. HTTP artifact
+  and four external assets match. Live Run All executed 14 games; all exports
+  downloaded. Of 58 compared turns, one exposed an extra late Fake Out line after
+  Armor Tail already blocked it. v197 fixes that renderer issue and refreshes
+  selector catalogs on regulation changes; official approval remains open.
+
+## Prior Candidate Evidence
 
 - October 8: v195 deployed (PR236 / Pages37846757234); exact HTML and assets
   verified. v196 candidate adds explicit, unverified M-C reference practice

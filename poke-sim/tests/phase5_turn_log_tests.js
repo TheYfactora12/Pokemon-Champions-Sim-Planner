@@ -316,7 +316,7 @@ T('T5c-1a Replay Log v2 renders Turn 0 and both board sides', () => {
       position_score: 0.6
     },
     actions: { player: [{ actor: 'Kangaskhan', move: 'Fake Out', target: 'Tyranitar' }], opponent: [] },
-    events: [{ type: 'ko', text: 'Tyranitar fainted!' }, { type: 'log', text: 'Milotic was sent out!' }],
+    events: [{ type: 'log', text: 'Kangaskhan used Fake Out! → Tyranitar' }, { type: 'ko', text: 'Tyranitar fainted!' }, { type: 'log', text: 'Milotic was sent out!' }],
     delta: { position_score: 0.1 }
   }]);
   truthy(html.includes('Opening action state — legacy replay'), 'Legacy snapshot must not claim true starting state');
@@ -413,7 +413,8 @@ T('T5c-1ac Replay Log v2 groups spread damage and surfaces miss/failure details'
     delta: { position_score: 0.1 }
   }]);
   truthy(html.includes('Charizard used Heat Wave! Tyranitar lost 24 HP (76/100 HP) [resisted, spread]; Indeedee-F lost 31 HP (69/100 HP) [spread]'), 'spread damage should show both targets in one resolved row');
-  truthy(html.includes('Tyranitar used Stone Edge! → Charizard It missed. Accuracy 80%.'), 'accuracy miss detail missing');
+  truthy(html.includes('Tyranitar attempted Stone Edge! → Charizard It missed. Accuracy 80%.'), 'accuracy miss detail missing');
+  truthy(html.includes('Additional effect evidence - action order unknown'), 'unanchored miss must not invent resolved action order');
 });
 
 T('T5c-1ad Replay Log preserves status moves, resolved move order and Tailwind field tags', () => {
