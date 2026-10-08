@@ -1,5 +1,23 @@
 # Improvement Log
 
+## IMP-0084: Item Suppression Must Reach Actual Effects
+
+- October 8: trusted-source/runtime audit found Klutz omitted from type booster
+  and triggered-item paths despite existing seed/Shuca guards. Four new tests
+  failed before repair. Two localized guards preserve items while suppressing
+  boosts/healing/status cures. Six regressions now pass, including actual damage.
+- [Audit and source scope](release/ITEM_RUNTIME_AUDIT_2026-10-08.md) distinguish
+  reference availability from approval and runtime implementation. Raichunite X
+  is in source notes but runtime transition remains incomplete; do not hide it.
+- v195 candidate only at this checkpoint. Broader item parity, independent
+  review, complete release gate and live proof remain separate obligations.
+- Lesson: validate activation, suppression, consumption and restoration through
+  effect entry points, not only item names in an import list.
+- Independent review cleared the bounded patch and reran 6/6; full local gate
+  passes 203 fast + 12 offline/mock DB files, four helpers skipped. Final cache
+  and artifact checks separately pass 11/11. Remaining hooks are #235; hosted
+  proof belongs to the release PR. No live DB or full-team accuracy claim.
+
 ## IMP-0083: Keep M-C Intake Context Across User Workflows
 
 - October 8: audit of v193 found stale-context rejection in paste replacement,

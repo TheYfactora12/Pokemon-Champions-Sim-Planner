@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-October 8: v193 draft intake deployed. v194 candidate repairs M-C edit, paste-replacement, JSON/bulk and choice-list context; closes draft metadata loss and non-strict engine execution gaps. See docs/release/MC_WORKFLOW_AUDIT_2026-10-08.md for the cross-path audit and remaining release gates. Complete exact-package M-C approval in #232 or obtain a separate owner decision on explicitly unverified reference simulations; current draft saving does not enable battles. Then perform paired live/export tests before team-strength advice. Coaching (#209), page audit (#221), mobile (#211/#213), database security and beta (#103) remain open. Preview/local-save scope remains.
+October 8: v194 intake workflow repairs deployed and live save/reload checked. v195 candidate fixes item-effect Klutz suppression; see docs/release/ITEM_RUNTIME_AUDIT_2026-10-08.md. Complete Raichunite X base-to-Mega runtime transition using reviewed candidate sources and timing tests; do not confuse draft import with implemented mechanics. Complete exact-package M-C approval in #232 or obtain a separate owner decision on explicitly unverified reference simulations; draft saving does not enable battles. Then perform paired live/export tests before team-strength advice. Coaching (#209), page audit (#221), mobile (#211/#213), database security and beta (#103) remain open. Preview/local-save scope remains.
 
 ## Milestone Index
 

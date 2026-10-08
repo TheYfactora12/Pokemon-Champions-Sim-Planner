@@ -739,7 +739,7 @@ var TYPE_BOOSTING_ITEMS = {
 };
 
 function _heldItemTypeBoostMod(mon, moveType) {
-  if (!mon || !mon.item || mon.itemConsumed) return 4096;
+  if (!mon || !mon.item || mon.itemConsumed || mon.ability === 'Klutz') return 4096;
   return TYPE_BOOSTING_ITEMS[mon.item] === moveType ? 4915 : 4096;
 }
 
@@ -3007,7 +3007,7 @@ class Pokemon {
   }
 
   applyItem(trigger, field) {
-    if (this.itemConsumed) return;
+    if (this.itemConsumed || this.ability === 'Klutz') return;
     if (_itemSuppressedByUnnerve(this, field)) return;
     // Lum Berry: clears status
     if (this.item === 'Lum Berry' && trigger === 'status') {
