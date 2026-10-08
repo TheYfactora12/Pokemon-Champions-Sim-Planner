@@ -759,6 +759,13 @@ function _hasUsableHeldItem(mon) {
   return !!(mon && mon.item && !mon.itemConsumed);
 }
 
+function _consumeHeldItem(mon) {
+  if (!mon || !_hasUsableHeldItem(mon)) return false;
+  mon.itemConsumed = true;
+  if (mon.ability === 'Unburden') mon._unburdenActive = true;
+  return true;
+}
+
 function _holdsCorrespondingMegaStone(mon) {
   if (!_hasUsableHeldItem(mon)) return false;
   if (mon.megaForm && mon.megaForm.stone === mon.item) return true;
@@ -793,8 +800,8 @@ function _canKnockOffHeldItem(target) {
 function _applyKnockOffItemRemoval(target, log) {
   if (!_canKnockOffHeldItem(target)) return false;
   const removed = target.item;
+  _consumeHeldItem(target);
   target.item = '';
-  target.itemConsumed = true;
   if (log) log.push(`${target.name} lost its ${removed} because of Knock Off!`);
   return true;
 }
@@ -1833,7 +1840,7 @@ function tryTerrainSeed(mon, field, log) {
   // Seeds react to the field, not the holder's terrain eligibility.
   // Showdown efe4948 data/items.ts: seed onStart/onTerrainChange.
   if (!mon.statBoosts) mon.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
-  mon.itemConsumed = true;
+  _consumeHeldItem(mon);
   if (log) log.push(mon.name + ' consumed its ' + mon.item + '!');
   var deltas = {}; deltas[seed.stat] = seed.stages;
   _applyTargetStageMap(mon, mon, deltas, log);
@@ -2218,6 +2225,7 @@ class Pokemon {
     this.hasActed = false;
     this.teraActivated = false;
     this.itemConsumed = false;
+    this._unburdenActive = false;
     this.substituteHp = Math.max(0, data.substituteHp || 0);
     this.roosting = false;
     // Sinistcha Hospitality: restores ally HP on switch
@@ -2364,8 +2372,8 @@ class Pokemon {
     if (stat === 'spe' && this.status === 'paralysis') val *= 0.5;
     // Sand Rush doubles speed in sand
     if (stat === 'spe' && this.ability === 'Sand Rush' && effectiveWeather === 'sand') val *= 2;
-    // Unburden doubles speed after item consumed
-    if (stat === 'spe' && this.ability === 'Unburden' && this.itemConsumed) val *= 2;
+    // Item history survives switching; Unburden's temporary activation does not.
+    if (stat === 'spe' && this.ability === 'Unburden' && this._unburdenActive && !_hasUsableHeldItem(this)) val *= 2;
     // Intimidate already applied to statBoosts.atk
     if (stat === 'atk' && (this.ability === 'Huge Power' || this.ability === 'Pure Power')) val *= 2;
     // Standard baseline: Rock-types gain 1.5x Special Defense in sand.
@@ -2890,26 +2898,26 @@ class Pokemon {
     if (_itemSuppressedByUnnerve(this, field)) return;
     // Lum Berry: clears status
     if (this.item === 'Lum Berry' && trigger === 'status') {
-      this.status = null; this.statusTurns = 0; this.itemConsumed = true;
+      this.status = null; this.statusTurns = 0; _consumeHeldItem(this);
       return `${this.name}'s Lum Berry cured its status!`;
     }
     // Sitrus Berry: restores 25% HP
     if (this.item === 'Sitrus Berry' && trigger === 'damage' && this.hp > 0 && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
       const heal = Math.floor(this.maxHp * 0.25);
       this.hp = Math.min(this.maxHp, this.hp + heal);
-      this.itemConsumed = true;
+      _consumeHeldItem(this);
       return `${this.name}'s Sitrus Berry restored HP!`;
     }
     // Oran Berry: restores 10 HP
     if (this.item === 'Oran Berry' && trigger === 'damage' && this.hp > 0 && this.hp <= this.maxHp * 0.5 && _canReceiveHealing(this)) {
       this.hp = Math.min(this.maxHp, this.hp + 10);
-      this.itemConsumed = true;
+      _consumeHeldItem(this);
       return `${this.name}'s Oran Berry restored HP!`;
     }
     // Mental Herb: clears taunt etc (placeholder)
     if (this.item === 'Mental Herb' && trigger === 'taunt') {
       this.tauntedTurns = 0;
-      this.itemConsumed = true;
+      _consumeHeldItem(this);
       return `${this.name}'s Mental Herb removed the effect!`;
     }
   }
@@ -3991,6 +3999,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   function _resetSwitchInState(replacement) {
     if (!replacement) return;
+    replacement._unburdenActive = false;
     if (replacement.stanceChangeForms) replacement.setStanceForm('shield');
     replacement.toxicCounter = 0;
     replacement.frozenTurns  = 0;
@@ -4064,6 +4073,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
     }
     bench.splice(bench.indexOf(replacement), 1);
+    mon._unburdenActive = false;
     if (bench.indexOf(mon) < 0) bench.push(mon);
     _clearImprisonEffectsForMon(mon, field);
     mon.chargingMove = null;
@@ -4441,7 +4451,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       log.push(`${attacker.name} began charging ${move}!`);
       return;
     } else if (_powerHerbSkip) {
-      attacker.itemConsumed = true;
+      _consumeHeldItem(attacker);
       log.push(`${attacker.name} consumed its Power Herb!`);
     }
 
@@ -5173,6 +5183,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target.item = attackerItem || '';
         attacker.itemConsumed = false;
         target.itemConsumed = false;
+        if (attacker.item) attacker._unburdenActive = false;
+        else if (attackerItem && attacker.ability === 'Unburden') attacker._unburdenActive = true;
+        if (target.item) target._unburdenActive = false;
+        else if (targetItem && target.ability === 'Unburden') target._unburdenActive = true;
         attacker.choiceLock = null;
         target.choiceLock = null;
         log.push(`${attacker.name} swapped items with ${target.name} using Trick!`);
@@ -6166,7 +6180,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     let sashSaved = false;
     if (!enduredHit && !sturdySaved && target.hp === 0 && target.item === 'Focus Sash' && !target.itemConsumed && wasFullHp) {
       target.hp = 1;
-      target.itemConsumed = true;
+      _consumeHeldItem(target);
       sashSaved = true;
     }
     const appliedDamage = Math.max(0, Number(hpBeforeDamage || 0) - Number(target.hp || 0));

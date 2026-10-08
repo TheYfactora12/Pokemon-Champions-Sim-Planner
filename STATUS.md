@@ -6,6 +6,21 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8: Unburden switch-reset candidate separates active ability state
+  from item consumption history (IMP-0077); five focused regressions pass.
+  Final local gate: 197 fast + 12 DB test files passed. Independent review found
+  no blocking regression (8 additional checks and 14 reference checks).
+  PR225 passed hosted checks and merged; Pages37825900939 succeeded. Live v187
+  HTML SHA256 matches the reviewed 6e0caa0 artifact (HTTP, not battle UI proof).
+  v186 artifact and Simulator navigation were verified in production. M-C
+  approval/import gates remain open; no competitive team-strength claim.
+
+- Team viability blockers: static review found no executable Acrobatics itemless
+  doubling, Electromorphosis activation, Soak type replacement or Shuca Berry
+  reduction/consumption. Add failing executable regressions before repairs.
+  Current and historical practice results must remain separate; no trusted
+  win-rate claim until mechanics and regulation admission are verified.
+
 - October 8 release checkpoint: PR224 merged after hosted CI/Battle Audit passed
   as 9b7e040. Pages37824723588 pending at this checkpoint; v187 remains separate.
   Independent follow-up review found/fixed a zero-HP seed-consumption edge case;
