@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
 import { checkState, seedFor, qualityGateFailed, validateRegulationCoverage } from '../tools/run-accuracy-validation.mjs';
 assert.deepEqual(seedFor('fixed'), seedFor('fixed'));
 assert.notDeepEqual(seedFor('fixed'), seedFor('other'));
@@ -36,4 +38,8 @@ assert.ok(validateRegulationCoverage(catalog, { ...manifest, regulations: manife
 assert.equal(qualityGateFailed({ doubles: { validator_warnings: 0 } }, 0), false);
 assert.equal(qualityGateFailed({ doubles: { validator_warnings: 1 } }, 0), true);
 assert.equal(qualityGateFailed({ doubles: { validator_errors: 1, validator_warnings: 0 } }, 0), true);
-console.log('Accuracy harness: deterministic seeds and non-vacuous HP/identity checks passed.');
+const runtime = vm.createContext({});
+vm.runInContext(readFileSync(new URL('../rulesets.js', import.meta.url), 'utf8'), runtime);
+const actualManifest = JSON.parse(readFileSync(new URL('../accuracy_harness_manifest.json', import.meta.url), 'utf8'));
+assert.deepEqual(validateRegulationCoverage(runtime.CHAMPIONS_RULESETS, actualManifest), []);
+console.log('Accuracy harness: real catalog coverage, deterministic seeds and non-vacuous HP/identity checks passed.');
