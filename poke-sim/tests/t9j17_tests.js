@@ -386,7 +386,7 @@ T('D7. Pokemon constructor sets flying=true for Flying-types', () => {
 // SECTION E -- Terrain Seeds switch-in (8 cases)
 // What the user is testing: Grassy/Electric/Misty/Psychic Seed each grant
 // the right stat boost when the holder switches in to matching terrain.
-// Ungrounded mons skip; non-matching terrain skips; consume flag fires.
+// Seeds also activate for ungrounded holders; terrain benefits are separate.
 // ============================================================
 console.log('\n=== SECTION E: Terrain Seeds ===');
 
@@ -439,13 +439,25 @@ T('E6. Seed does NOT trigger when terrain mismatches', () => {
   falsy(ok); eq(p.statBoosts.def, 0); falsy(p.itemConsumed);
 });
 
-T('E7. Ungrounded user (Flying-type) does NOT receive seed boost', () => {
+T('E7. Ungrounded user (Flying-type) receives seed boost', () => {
   const p = mk({ name:'Charizard', item:'Grassy Seed', ability:'Blaze',
                  moves:['Flamethrower','Air Slash','Roost','Protect'] });
   const f = new ctx.Field(); f.terrain = 'grassy'; f.terrainTurns = 5;
   truthy(p.flying, 'Charizard should register as ungrounded');
   const ok = ctx.tryTerrainSeed(p, f, []);
-  falsy(ok); eq(p.statBoosts.def, 0); falsy(p.itemConsumed);
+  truthy(ok); eq(p.statBoosts.def, 1); truthy(p.itemConsumed);
+});
+
+T('E7b. All four seeds activate for Levitate holders', () => {
+  for (const [item, terrain, stat] of [
+    ['Electric Seed', 'electric', 'def'], ['Grassy Seed', 'grassy', 'def'],
+    ['Psychic Seed', 'psychic', 'spd'], ['Misty Seed', 'misty', 'spd']
+  ]) {
+    const p = mk({ name:'Cresselia', ability:'Levitate', item });
+    const f = new ctx.Field(); f.terrain = terrain; f.terrainTurns = 5;
+    truthy(ctx.tryTerrainSeed(p, f, []), item);
+    eq(p.statBoosts[stat], 1, item); truthy(p.itemConsumed, item);
+  }
 });
 
 T('E8. Seed consume flag prevents double-trigger', () => {

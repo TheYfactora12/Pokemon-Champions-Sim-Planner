@@ -2,11 +2,11 @@
 (function(root) {
   root.CHAMPIONS_PROJECT_ROADMAP = {
   "schema_version": "champions-project-roadmap-v1",
-  "reviewed_at": "2026-10-06",
+  "reviewed_at": "2026-10-08",
   "direction": "Prove the doubles simulator before expanding coaching.",
   "scope": "Doubles competitive readiness. Singles fixtures test shared mechanics only.",
   "proof_note": "Local tests are not live database, deployment or universal game-accuracy proof. No verified 99% accuracy or top-1% usability claim.",
-  "next_action": "Verified checkpoint: v184 shipped through PR222 and Pages37563372479, with exact HTTP artifact alignment and live regulation-change/reload checks. v182/v183 withdrew unsupported Strategy/PDF/QA coaching claims; v184 aligns selected-regulation team reporting without approving M-C. Next: resolve M-C form and inventory evidence, complete full-team and mechanics proof, then obtain exact-package approval. Reuse unchanged verified baseline data, not inherited approval. Candidate v185 separates historical source metadata from current runtime status and corrects Review wording. Coaching contracts (#209), remaining page audit (#221), live phone save/reload (#211/#213), paired replay exports, database security and beta gates (#103) remain open. Preview/local-save scope remains; no competitive accuracy percentage is established. Verify primary releases before Alfredo synchronization.",
+  "next_action": "October 8 item audit: stored M-C reference intake already includes Electric Seed and 17 other additions, but runtime imports still use an older allowlist. A local seed-grounding correction passes focused tests; terrain-change lifecycle, item suppression, source approval and release remain open. See docs/release/MC_ITEM_AUDIT_2026-10-08.md. Complete seasonal item/move inventory and full-team mechanics evidence before exact-package approval; do not promote historical M-A data or treat reference acceptance as official approval. Live v185 retains Preview/local-save scope. Coaching (#209), page audit (#221), mobile (#211/#213), paired replay exports, database security and beta (#103) remain open. Verify primary releases before Alfredo synchronization.",
   "milestones": [
     {
       "id": "simulation-truth",

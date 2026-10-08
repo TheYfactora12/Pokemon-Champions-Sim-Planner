@@ -1,5 +1,18 @@
 # Improvement Log
 
+## IMP-0075: Terrain Seeds Are Not Grounded Terrain Benefits
+
+- Observed: imported seasonal items disagree with the older allowlist. Audit
+  found a separate mechanics defect: Flying/Levitate prevented seed activation,
+  and a regression test incorrectly endorsed that behavior.
+- Change: remove only the seed grounding gate; test Flying and all four seeds
+  with Levitate. Two red tests became green; focused suite 48/48.
+- Evidence: docs/release/MC_ITEM_AUDIT_2026-10-08.md; pinned Showdown item callbacks.
+- Lesson: distinguish item activation from terrain benefits and item existence
+  from seasonal approval. Test expectations themselves need oracle review.
+- State: uncommitted local candidate, not deployed. Terrain-change lifecycle,
+  suppression, source approval and imported-team usability remain open.
+
 ## IMP-0074: Historical Source Metadata Versus Current Release (#221)
 
 October 6 v185 candidate. Sources previously presented captured v23/M-B metadata
