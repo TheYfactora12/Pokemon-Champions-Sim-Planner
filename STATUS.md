@@ -6,6 +6,14 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8: v191 Electromorphosis deployed via PR230 / Pages37833771226;
+  live HTML and all four external assets match the reviewed candidate. Browser
+  build/Simulator navigation passed, not a private-team battle. Shuca candidate
+  now has 18 passing focused regressions and independent mechanics/release
+  review clearance. Final local gate passed 201 fast + 12 DB files;
+  hosted CI/deployment remain pending. DB checks are not live DB verification.
+  Current item/learnset admission and M-C approval remain open in #228.
+
 - October 8: Soak v190 deployed via PR229 / Pages37831482167; exact HTML hash
   and browser Simulator navigation verified. Electromorphosis candidate has
   18 focused tests passing after repairing a reference-discovered abort/type

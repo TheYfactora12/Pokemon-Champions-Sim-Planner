@@ -494,6 +494,16 @@
       "known_gap": "Scoped synthetic battles and reference probes, not full imported-game parity. General ability suppression, all combined modifier rounding, Charge/Wind Power activation and Champions-specific approval remain unproved."
     },
     {
+      "id": "ITEM-SHUCA-HIT-LIFECYCLE",
+      "family": "items",
+      "behavior": "Shuca halves an eligible Ground hit using current typing and is consumed by actual damage, not previews.",
+      "status": "partial",
+      "tests": ["tests/shuca_lifecycle_tests.js"],
+      "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 data/items.ts shucaberry.",
+      "boundary_vectors": ["super-effective", "neutral-resistant-immune", "Protect", "Substitute", "Infiltrator", "Klutz", "Unnerve", "Soak-current-types", "spread-holders", "preview-purity", "multi-hit", "Unburden"],
+      "known_gap": "General ability/item suppression, Ripen and berry-transfer/EatItem callbacks, combined modifier ordering, official seasonal approval and full-game parity remain unproved."
+    },
+    {
       "id": "CHAMPION-REG-MB-DELTAS",
       "family": "champion-regulation-deltas",
       "behavior": "Regulation M-B differences from Showdown baseline are backed by approved Champion evidence and tests.",

@@ -99,7 +99,7 @@
       "id": "items",
       "name": "Held-item activation, consumption, choice locks, defensive effects, and ownership continuity",
       "status": "partial",
-      "tests": ["tests/items_tests.js", "tests/screens_terrain_item_tests.js", "tests/turn_log_export_validator_tests.js"],
+      "tests": ["tests/items_tests.js", "tests/screens_terrain_item_tests.js", "tests/turn_log_export_validator_tests.js", "tests/shuca_lifecycle_tests.js"],
       "known_gaps": ["The complete legal item inventory and all item-ability-move interaction orders are not covered."]
     },
     {

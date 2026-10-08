@@ -17,11 +17,11 @@
 | --- | --- | --- |
 | Terrain seeds on Flying/Levitate holders | 48 scoped regression/reference checks | v186 deployed |
 | Terrain changes notify active seed holders | 13 lifecycle tests, including lethal Seed Sower | v187 deployed |
-| Unburden activation versus consumed-item history | Five regressions, independent review, full local gate | PR226 |
-| Acrobatics power after item loss | Three failures with production-shaped mirror/runtime, six focused tests after fix | v189 candidate |
-| Electromorphosis charge lifecycle | Static review finds no executable handler | Need red tests and implementation |
-| Soak type replacement and switch reset | Static review finds no executable handler | Need red tests and implementation |
-| Shuca Berry reduction and consumption | Static review finds no executable handler | Need red tests and implementation |
+| Unburden activation versus consumed-item history | Five regressions, independent review, full local gate | v188 deployed, PR226 |
+| Acrobatics power after item loss | Three failures with production-shaped mirror/runtime, six focused tests after fix | v189 deployed, PR227 |
+| Electromorphosis charge lifecycle | 18 focused tests, independent review, 212-file local gate, hosted CI/Battle Audit and live artifact/navigation proof | v191 deployed, PR230 |
+| Soak type replacement and switch reset | 31 focused tests, independent review, hosted CI/Battle Audit and live artifact/navigation proof | v190 deployed, PR229 |
+| Shuca Berry reduction and consumption | Focused regression and independent reference probes; see IMP-0081 for scoped gaps | Local candidate, release gates pending |
 
 Reference baseline: Showdown efe4948570d5e8189751792136d26e71710c6c66.
 Scalar mirrored move/item data does not implement callbacks. Passing local DB

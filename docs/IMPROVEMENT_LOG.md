@@ -1,5 +1,34 @@
 # Improvement Log
 
+## IMP-0081: Shuca Uses Current Hit Typing And Actual Consumption
+
+- Before: Shuca metadata existed but Ground damage had no reduction or item
+  consumption. Red tests reproduced missing actual damage/consumption behavior.
+- Candidate: current resolved Ground type and defender effectiveness select the
+  final damage modifier. Pure previews do not consume. An eligible actual hit
+  consumes through the shared item lifecycle and records a structured effect.
+- Tests cover weakness, neutral/resisted/immune hits, Protect, Substitute,
+  Infiltrator, Klutz, Unnerve, Soak, spread targets, multihit and Unburden.
+- Independent review compared multihit, Substitute-break, switch-return and
+  Soak probes with pinned Showdown efe4948570d5e8189751792136d26e71710c6c66.
+- Lesson: current on-field state controls damage; catalog metadata is not an
+  executable effect, and preview calculations must not spend resources.
+- Scope remains partial: Ripen, general suppression, Magic Room/Embargo,
+  As One, berry-transfer/EatItem callbacks and all combined-modifier ordering
+  are not proven. No M-C approval, live DB proof or private-team win-rate claim.
+- Proof state: v192 local candidate; 18 focused tests and independent final
+  mechanics/release review passed. Full gate passed 201 fast + 12 DB files,
+  four manual/helper files skipped; hosted CI/deployment pending.
+  Next: source-aware current item/learnset admission and paired live
+  private-team replay/export checks after applicable gates.
+
+### IMP-0080 Deployment Follow-Up
+
+PR230 merged d574aef as f3fc2f7; CI37833209378 and Pages37833771226 passed.
+Live v191 HTML SHA256 efdaa9403eb81d6a18b38f7f68cc345eb4de7f72a7b1a34a42448ae8e442b7d3
+and four external assets match the reviewed release. Browser build/Simulator
+navigation passed; no full private-team browser match or live DB verification.
+
 ## IMP-0080: Electromorphosis Charge Is Action-Scoped
 
 - Before: hit Bellibolt still used 90 BP Thunderbolt / 65 BP Parabolic Charge;
