@@ -1835,9 +1835,8 @@ function tryTerrainSeed(mon, field, log) {
   var seed = TERRAIN_SEEDS[mon.item];
   if (!seed) return false;
   if (!field || field.terrain !== seed.terrain) return false;
-  // Ungrounded mons (Flying / Levitate) do NOT receive terrain effects, so
-  // their seed should not consume either. Cite: Bulbapedia Terrain.
-  if (!_isGrounded(mon)) return false;
+  // Seeds react to the field, not the holder's terrain eligibility.
+  // Showdown efe4948 data/items.ts: seed onStart/onTerrainChange.
   if (!mon.statBoosts) mon.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
   var prev = mon.statBoosts[seed.stat] || 0;
   mon.statBoosts[seed.stat] = Math.min(6, prev + seed.stages);
@@ -3958,7 +3957,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // T9j.17 (Refs #44) -- Terrain Seed switch-in trigger.
     // Grassy/Electric/Misty/Psychic Seed give +1 Def or +1 SpD when the
     // matching terrain is already active as the holder switches in. Item is
-    // consumed in the process. Helper handles ungrounded skip + match logic.
+    // consumed in the process. Seed activation does not require grounding.
     if (typeof tryTerrainSeed === 'function') tryTerrainSeed(mon, field, log);
   }
 

@@ -6,6 +6,12 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8: terrain seed grounding correction on `fix/terrain-seed-reference-audit`.
+  Focused regression reproduced two failures, then passed 48/48. M-C intake
+  already contains 18 reference item additions; importer still uses the older
+  item list. No eligibility promotion or deployment. Full seed lifecycle and
+  source approval remain open: docs/release/MC_ITEM_AUDIT_2026-10-08.md.
+
 - October 6: v184 deployed in PR222 / 26e7c20 / Pages37563372479;
   exact artifact check and live selected-regulation/reload verification passed
   at 22:47 EDT. v185 candidate separates historical/current Sources metadata,

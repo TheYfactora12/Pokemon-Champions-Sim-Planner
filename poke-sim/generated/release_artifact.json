@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.185-source-context",
+  "build_id": "v2.2.186-terrain-seed-grounding",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "7afe10f78fa4d3a6862ffda09af693668876094a22e88a000d8a0f6c0f31adcc",
-  "bundle_bytes": 11505906,
+  "bundle_sha256": "7e46f2c589a6175e7bbb9252db63564521090d2b736e441b3bc607e755c6b3c3",
+  "bundle_bytes": 11505783,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/champions_move_pools.js": {

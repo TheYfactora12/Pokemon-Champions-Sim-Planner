@@ -464,6 +464,16 @@
       "known_gap": "Pinned synthetic doubles probes agree for the listed boundaries. The broader stat-stage move, ability and item inventory, imported full games, UI parity and official Champions confirmation remain unproved."
     },
     {
+      "id": "ITEM-TERRAIN-SEED-ACTIVATION",
+      "family": "items",
+      "behavior": "Terrain seeds activate on their matching field independently of holder grounding.",
+      "status": "partial",
+      "tests": ["tests/t9j17_tests.js"],
+      "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 data/items.ts seed callbacks.",
+      "boundary_vectors": ["Flying-holder", "Levitate-four-seeds", "matching-terrain", "wrong-terrain", "already-consumed"],
+      "known_gap": "Helper regression only. Full terrain-change/Mega lifecycle, suppression, stat-stage modifiers, item transfer and official seasonal approval remain unproved."
+    },
+    {
       "id": "CHAMPION-REG-MB-DELTAS",
       "family": "champion-regulation-deltas",
       "behavior": "Regulation M-B differences from Showdown baseline are backed by approved Champion evidence and tests.",
