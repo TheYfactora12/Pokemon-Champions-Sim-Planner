@@ -80,3 +80,30 @@ stale generated bundle bytes/CRLF size and the case-count assertion after adding
 one partial matrix entry. Regeneration and explicit case-count update fixed
 the focused release-manifest (11/11), audit-system and security-reporting (4/4)
 checks. A complete final gate is required before merge; no hosted claim yet.
+
+## Follow-Up Candidate
+
+Branch fix/terrain-seed-change-dispatch, based on the unchanged PR224 revision:
+all four Surge abilities and Seed Sower now dispatch to living active seed
+holders on both sides. Bench/fainted holders are excluded. Seed effects use
+the shared stage helper (Simple/Contrary); consumption is logged separately,
+so +6 does not produce a false raise. Klutz blocks activation.
+
+Nine red regression cases became green; tests/terrain_seed_lifecycle_tests.js
+now passes 11 cases including 20 one-turn synthetic doubles entry simulations.
+These exercise holder/setter slot orders and opposite sides, not legal teams or
+complete-game parity. General ability suppression, Embargo/Magic Room lifecycle,
+item transfer, Unburden reset and approved seasonal eligibility remain open.
+The original findings above are historical; this follow-up is not yet deployed.
+
+Independent follow-up review found a lethal-hit bug in the new dispatch:
+Seed Sower can run with zero HP before faint finalization sets alive=false.
+The helper now also rejects hp<=0. A retained actual battle regression confirms
+the victim keeps its seed while the surviving holder activates. Focused suite:
+13/13, including 20 entry variants and one lethal-hit battle. The original
+pre-fix 11-case count above is retained as history. Broader final gate is rerun
+after this repair; no pre-repair gate is represented as final approval.
+
+PR224 grounding-only revision f7ce7cf passed hosted CI, including Battle Audit,
+and merged as 9b7e0404b7790cfa918d3a850b66e6ea23473ad7. Pages run37824723588
+was in progress at this checkpoint. Follow-up v187 is separate and not deployed.

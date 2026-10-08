@@ -1,5 +1,23 @@
 # Improvement Log
 
+## IMP-0076: Terrain Changes Reach Active Seed Holders
+
+- Root cause: terrain setters updated the field but only entry processed a seed.
+  Direct stat writes also bypassed Simple/Contrary and logged a raise at +6.
+- Local fix: all four Surge setters and Seed Sower dispatch to living active
+  holders on both sides; seed consumption uses the shared stat-stage helper,
+  logs consumption separately and respects Klutz.
+- Evidence: tests/terrain_seed_lifecycle_tests.js, 9 failures reproduced before
+  repair; 11 tests now pass including 20 actual one-turn doubles entry cases.
+  Existing t9j17 suite remains 48/48; pinned reference checks remain 48/48.
+- Scope: not full suppression lifecycle, Unburden reset, item transfer, terrain
+  moves or approved seasonal availability. No live-team battle or deployment.
+- Lesson: field changes must notify active holders independently of which side
+  caused them; consumption and successful stat change are distinct events.
+- Review found a zero-HP-before-faint dispatch bug; hp<=0 now prevents victim
+  consumption without suppressing Seed Sower on survivors. Persisted full
+  attack regression passes; focused suite is now 13/13. Final gate rerun.
+
 ## IMP-0075: Terrain Seeds Are Not Grounded Terrain Benefits
 
 - Observed: imported seasonal items disagree with the older allowlist. Audit

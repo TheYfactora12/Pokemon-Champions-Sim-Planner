@@ -1811,12 +1811,8 @@ var ABILITIES = {
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Electric_Seed
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Psychic_Seed
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Misty_Seed
-// In-engine, the trigger fires inside applyEntryAbility when the holder
-// switches into a matching terrain. Trigger on terrain-set (e.g. a partner
-// uses Grassy Terrain mid-match) is wired in via the same helper called
-// from terrain-setting hooks; until terrain-setting moves are added to the
-// engine, only the switch-in path activates in real battles. Tests cover
-// both paths via direct helper invocation.
+// Entry handles existing terrain; terrain-setting abilities dispatch to all
+// living active holders. Item availability remains separately review-gated.
 // ============================================================
 var TERRAIN_SEEDS = {
   'Grassy Seed':  { terrain: 'grassy',   stat: 'def', stages: 1 },
@@ -1825,25 +1821,30 @@ var TERRAIN_SEEDS = {
   'Misty Seed':   { terrain: 'misty',    stat: 'spd', stages: 1 },
 };
 
-// T9j.17 helper -- triggered from applyEntryAbility (switch-in) and from any
-// future terrain-set hook. Returns true iff the seed activated. Boosts cap
+// Triggered from entry and terrain-setting ability hooks. Boosts cap
 // at +6, item is consumed (sets itemConsumed flag for Unburden).
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Grassy_Seed (mechanics box)
 function tryTerrainSeed(mon, field, log) {
-  if (!mon || !mon.alive) return false;
-  if (mon.itemConsumed) return false;
+  if (!mon || !mon.alive || mon.hp <= 0) return false;
+  if (mon.itemConsumed || mon.ability === 'Klutz') return false;
   var seed = TERRAIN_SEEDS[mon.item];
   if (!seed) return false;
   if (!field || field.terrain !== seed.terrain) return false;
   // Seeds react to the field, not the holder's terrain eligibility.
   // Showdown efe4948 data/items.ts: seed onStart/onTerrainChange.
   if (!mon.statBoosts) mon.statBoosts = { atk:0, def:0, spa:0, spd:0, spe:0, acc:0, eva:0 };
-  var prev = mon.statBoosts[seed.stat] || 0;
-  mon.statBoosts[seed.stat] = Math.min(6, prev + seed.stages);
   mon.itemConsumed = true;
-  var prettyStat = (seed.stat === 'def') ? 'Defense' : 'Special Defense';
-  if (log) log.push(mon.name + "'s " + mon.item + ' raised its ' + prettyStat + '!');
+  if (log) log.push(mon.name + ' consumed its ' + mon.item + '!');
+  var deltas = {}; deltas[seed.stat] = seed.stages;
+  _applyTargetStageMap(mon, mon, deltas, log);
   return true;
+}
+
+function applyActiveTerrainSeeds(field, log) {
+  if (!field) return;
+  var active = (field.playerSide && field.playerSide.activeMons || [])
+    .concat(field.oppSide && field.oppSide.activeMons || []);
+  for (const mon of active) tryTerrainSeed(mon, field, log);
 }
 
 function applyWeatherAbility(mon, field, log) {
@@ -1880,21 +1881,25 @@ function applyTerrainAbility(mon, field, log) {
   if (mon.ability === 'Grassy Surge') {
     field.terrain = 'grassy'; field.terrainTurns = 5;
     if (log) log.push(`${mon.name}'s Grassy Surge set Grassy Terrain!`);
+    applyActiveTerrainSeeds(field, log);
     return true;
   }
   if (mon.ability === 'Electric Surge') {
     field.terrain = 'electric'; field.terrainTurns = 5;
     if (log) log.push(`${mon.name}'s Electric Surge set Electric Terrain!`);
+    applyActiveTerrainSeeds(field, log);
     return true;
   }
   if (mon.ability === 'Misty Surge') {
     field.terrain = 'misty'; field.terrainTurns = 5;
     if (log) log.push(`${mon.name}'s Misty Surge set Misty Terrain!`);
+    applyActiveTerrainSeeds(field, log);
     return true;
   }
   if (mon.ability === 'Psychic Surge') {
     field.terrain = 'psychic'; field.terrainTurns = 5;
     if (log) log.push(`${mon.name}'s Psychic Surge set Psychic Terrain!`);
+    applyActiveTerrainSeeds(field, log);
     return true;
   }
   return false;
@@ -1905,6 +1910,7 @@ function applySeedSowerOnHit(target, field, log) {
   field.terrain = 'grassy';
   field.terrainTurns = 5;
   if (log) log.push(`${target.name}'s Seed Sower set Grassy Terrain!`);
+  applyActiveTerrainSeeds(field, log);
   _recordEffectEvent(field, target, 'Seed Sower', 'ability-terrain-set', target.hp, target.hp, {
     source: 'pokemon-showdown ability metadata + engine rule',
     ability: 'Seed Sower',
