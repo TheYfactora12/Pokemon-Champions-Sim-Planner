@@ -1,5 +1,18 @@
 # Improvement Log
 
+## IMP-0088: Separate Identity Closure From Season Implementation
+
+- Live official sprites and independent visual review resolve two exact M-C
+  form IDs. MC-only mapping now yields 262 review-only candidates without
+  changing historical M-B or granting competitive approval.
+- Added pinned inventory comparison for species, moves, items, abilities and
+  Mega descriptors. Deep structural comparison avoids property-order false
+  positives; aliases are distinct from missing data; item names are not effects.
+- Independent review required stronger source/sprite evidence binding. Added
+  stripped-envelope and contradictory-class regressions before release review.
+- Reusable lesson: source availability, identity, effective mechanics and
+  regulation approval are separate gates, not one green status.
+
 ## IMP-0087: Test Real Catalog Coverage, Not Only Synthetic Contracts
 
 - v197 full regression found the accuracy command failed before battles because

@@ -36,8 +36,14 @@ test('captured M-C reference remains quarantined and every declared set probe ha
   assert.equal(report.official_roster_verified, false);
   assert.equal(report.formats.length, 6);
   assert.equal(report.official_identity_candidates.length, 262);
-  assert.equal(report.official_identity_candidates.filter(r => r.runtime_species_key).length, 260);
-  assert.deepEqual(report.official_identity_candidates.filter(r => !r.runtime_species_key).map(r => r.official_id).sort(), ['0925-001', '0931-002']);
+  assert.equal(report.official_identity_candidates.filter(r => r.runtime_species_key).length, 262);
+  assert.deepEqual(report.official_identity_candidates.filter(r => !r.runtime_species_key), []);
+  for (const [id,key] of [['0925-001','Maushold-Four'],['0931-002','Squawkabilly-Yellow']]) {
+    const row=report.official_identity_candidates.find(r=>r.official_id===id);
+    assert.equal(row.runtime_species_key,key);
+    assert.equal(row.mapping_basis,'reviewed_exact_official_sprite_and_label');
+    assert.equal(row.competitive_use,false);
+  }
   for (const id of ['0053-001', '0849-000', '0849-001', '0876-000', '0876-001']) {
     const row = report.official_identity_candidates.find(r => r.official_id === id);
     assert.equal(row.mapping_basis, 'explicit_id_and_label_alias');

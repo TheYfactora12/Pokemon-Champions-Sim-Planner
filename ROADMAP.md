@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-October 8: v196 reference practice deployed. Live Run All executes the saved M-C team; v197 repairs a replay-order discrepancy and refreshes catalog choices when regulation changes. Reference results remain unverified and excluded from trusted rankings/database learning. See docs/release/MC_REFERENCE_PRACTICE_2026-10-08.md for evidence. Complete official M-C approval in #232 separately. Pair live battle exports with visible replays before team-strength advice. Item gaps (#235), replay labels (#238), coaching (#209), page audit (#221), mobile (#211/#213), database security and beta (#103) remain open. Preview/local-save scope remains.
+M-C release: all 262 official roster identities now have review-only mappings. Next fix Mega lifecycle/aliases (#241), item hooks (#235), and reference-data differences before exact-package approval (#232). See docs/release/MC_RELEASE_INVENTORY_2026-10-08.md. Reference practice is unverified; no trusted ranking or database learning. Result columns (#242), replay labels (#238), coaching, mobile and security remain open. Preview/local-save scope remains.
 
 ## Milestone Index
 
