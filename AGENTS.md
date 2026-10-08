@@ -279,6 +279,13 @@ Read in this order:
 
 When documents conflict, do not average them. Prefer the newer, more specific, better-proven source and record the stale conflict for cleanup.
 
+Keep STATUS.md concise: one current release receipt, current boundaries and an
+ordered queue. Archive superseded checkpoint blocks intact and link them instead
+of accumulating contradictory pending/deployed instructions. After a verified
+deployment, reconcile its receipt into STATUS.md in a documentation-only change;
+do not bump runtime versions merely to publish a historical receipt. Keep the
+generated roadmap authoritative for milestone direction, not deployment truth.
+
 ## Agent Handoff Contract
 
 Every substantial handoff must state:
