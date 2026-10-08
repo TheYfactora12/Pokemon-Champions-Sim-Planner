@@ -6,6 +6,15 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8: v195 deployed (PR236 / Pages37846757234); exact HTML and assets
+  verified. v196 candidate adds explicit, unverified M-C reference practice
+  following the owner's request to get through the saved-draft gate. Official
+  approval remains #232. Scoped Raichu transition and Run All exclusions are
+  documented in [reference practice](docs/release/MC_REFERENCE_PRACTICE_2026-10-08.md).
+  Local gate passed (204 fast / 12 offline-mock DB files); independent scoped
+  review cleared. Browser Run All: 14 games / 69 turns paired with downloaded
+  exports, zero observable mismatches. Hosted CI and live checks remain pending.
+
 - October 8: v194 deployed via PR234 / Pages37845035178. Live HTML and all four
   assets matched; live unchanged-set save/reload succeeded. No battle approval.
 - v195 candidate fixes Klutz suppression for type boosters and triggered items.
