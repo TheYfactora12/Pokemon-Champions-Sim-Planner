@@ -766,6 +766,14 @@ function _consumeHeldItem(mon) {
   return true;
 }
 
+function _shucaDamageMod(attacker, target, move, moveType, typeEff, field) {
+  if (!target || target.item !== 'Shuca Berry' || !_hasUsableHeldItem(target) ||
+      target.hp <= 0 || target.ability === 'Klutz' || _itemSuppressedByUnnerve(target, field) ||
+      moveType !== 'Ground' || typeEff <= 1 ||
+      (target.substituteHp > 0 && !_moveBypassesSubstitute(attacker, move))) return 4096;
+  return 2048;
+}
+
 function _resetSoakTypes(mon) {
   if (!mon || !mon._soaked) return;
   mon.types = mon._base.types.slice();
@@ -2880,6 +2888,8 @@ class Pokemon {
     const finalMods = [screenMod, loMod, supremeOverlordMod];
     if (_attackerDamageRes && _attackerDamageRes.finalMod) finalMods.push(_attackerDamageRes.finalMod);
     if (_defenderDamageRes && _defenderDamageRes.finalMod) finalMods.push(_defenderDamageRes.finalMod);
+    const resistBerryMod = _shucaDamageMod(this, target, move, moveType, typeEff, field);
+    finalMods.push(resistBerryMod);
     const finalMod = _chain4096Mods(finalMods);
     const finalDamage = _finalizeDamage(baseDamage, roll, typeEff, applyStatusPenalty, stabMod, finalMod);
     if (_ctx && _ctx.captureDamageCalc) {
@@ -2924,6 +2934,7 @@ class Pokemon {
         screen_mod: Number(screenMod || 4096),
         stab_mod: Number(stabMod || 4096),
         final_mod: Number(finalMod || 4096),
+        resist_berry_mod: resistBerryMod,
         status_penalty: !!applyStatusPenalty,
         roll: Number(roll || 0),
         weather: _effWeather,
@@ -2970,6 +2981,7 @@ class Pokemon {
             screen_mod: Number(screenMod || 4096),
             stab_mod: Number(stabMod || 4096),
             final_mod: Number(finalMod || 4096),
+            resist_berry_mod: resistBerryMod,
             status_penalty: !!applyStatusPenalty,
             critical: !!_isCrit,
             roll: Number(roll || 0),
@@ -6279,6 +6291,19 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         }
       }
       return;
+    }
+    // Commit only the berry selected by this actual hit's calculation; previews stay pure.
+    const hitCalc = field && field._ctx && field._ctx.lastDamageCalc;
+    const hitAttackerKey = _snapshotMonStableKey(attacker.side === field.playerSide ? 'player' : 'opponent', attacker);
+    const hitTargetKey = _snapshotMonStableKey(target.side === field.playerSide ? 'player' : 'opponent', target);
+    if (hitCalc && hitCalc.move === move && hitCalc.attacker_key === hitAttackerKey &&
+        hitCalc.target_key === hitTargetKey && hitCalc.resist_berry_mod < 4096 &&
+        target.item === 'Shuca Berry' && _consumeHeldItem(target)) {
+      log.push(`${target.name}'s Shuca Berry weakened the damage!`);
+      _recordEffectEvent(field, target, move, 'resist-berry-consumed', target.hp, target.hp, {
+        item: 'Shuca Berry', damage_modifier: hitCalc.resist_berry_mod,
+        source_actor_key: hitAttackerKey, type_effectiveness: hitCalc.type_effectiveness
+      });
     }
     // T9j.6 (#8) — Focus Sash: snapshot full-HP state BEFORE damage mutation.
     // Cite: Bulbapedia Focus Sash.
