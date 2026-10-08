@@ -3899,14 +3899,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     log.push(`[LEGALITY] Opponent team errors: ${oppLegality.errors.join('; ')}`);
   }
   for (const w of oppLegality.warnings) log.push(`[LEGALITY] Opponent warning: ${w}`);
-  if (opts.strict && (!playerLegality.valid || !oppLegality.valid)) {
+  const savedDraft = [playerTeam, oppTeam].some(team => team && team.import_context && team.import_context.draft_only === true);
+  if (savedDraft || (opts.strict && (!playerLegality.valid || !oppLegality.valid))) {
     return {
       result: 'error', turns: 0, trTurns: 0,
       twTurns: 0, twTurnsPlayer: 0, twTurnsOpp: 0,
       timerExpired: false, clockPlayer: 0, clockOpp: 0, pHpSum: 0, oHpSum: 0,
       screens: { playerReflect:0, playerLightScreen:0, playerAuroraVeil:0, oppReflect:0, oppLightScreen:0, oppAuroraVeil:0 },
       log,
-      winCondition: 'Illegal team — simulation aborted (strict mode)',
+      winCondition: savedDraft ? 'Saved M-C draft - simulation blocked pending separate approval' : 'Illegal team — simulation aborted (strict mode)',
       seed, playerSurvivors: 0, oppSurvivors: 0,
       legality: { player: playerLegality, opp: oppLegality },
     };
