@@ -92,7 +92,7 @@
       "id": "abilities",
       "name": "Ability activation, suppression, targeting, damage, priority, and entry effects",
       "status": "partial",
-      "tests": ["tests/ability_coverage_audit_tests.js", "tests/ability_damage_parity_tests.js", "tests/ability_priority_targeting_tests.js"],
+      "tests": ["tests/ability_coverage_audit_tests.js", "tests/ability_damage_parity_tests.js", "tests/ability_priority_targeting_tests.js", "tests/electromorphosis_lifecycle_tests.js"],
       "known_gaps": ["The curated and Mega inventory is modeled, but the full legal ability inventory and all interaction orders are not covered."]
     },
     {

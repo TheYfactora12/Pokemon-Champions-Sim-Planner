@@ -484,6 +484,16 @@
       "known_gap": "Scoped synthetic battles and direct-effect tests, not full imported-game parity. Full form-change, general suppression, ability redirection tie ordering and Champions-specific approval remain unproved."
     },
     {
+      "id": "ABILITY-ELECTROMORPHOSIS-CHARGE",
+      "family": "abilities",
+      "behavior": "Real damage activates nonstacking Electric charge; the next Electric action consumes it after all targets and hits.",
+      "status": "partial",
+      "tests": ["tests/electromorphosis_lifecycle_tests.js"],
+      "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 Electromorphosis and charge volatile callbacks.",
+      "boundary_vectors": ["damaging-hit", "spread-three-targets", "Substitute", "Protect", "type-immunity", "Electric-status", "non-Electric-retention", "switch-success-failure", "faint", "multihit-nonstacking", "preview-purity", "no-SpD-boost", "sleep-denial-original-type", "resolved-Terrain-Pulse", "Electro-Shot-windup", "Sleep-Talk-called-move"],
+      "known_gap": "Scoped synthetic battles and reference probes, not full imported-game parity. General ability suppression, all combined modifier rounding, Charge/Wind Power activation and Champions-specific approval remain unproved."
+    },
+    {
       "id": "CHAMPION-REG-MB-DELTAS",
       "family": "champion-regulation-deltas",
       "behavior": "Regulation M-B differences from Showdown baseline are backed by approved Champion evidence and tests.",

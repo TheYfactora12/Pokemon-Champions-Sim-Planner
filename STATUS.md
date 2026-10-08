@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8: Soak v190 deployed via PR229 / Pages37831482167; exact HTML hash
+  and browser Simulator navigation verified. Electromorphosis candidate has
+  18 focused tests passing after repairing a reference-discovered abort/type
+  boundary. Independent mechanics/release reviews passed; full local gate
+  passed 200 fast + 12 DB files. Shuca and current-regulation admission
+  still block trustworthy private-team viability testing (#228).
+
 - October 8 follow-up: v189 is deployed through PR227 / Pages37827800816;
   exact HTML SHA256 and browser Simulator navigation verified. Soak is the
   next local candidate: 31 focused cases pass, including actual type-change,

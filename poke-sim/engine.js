@@ -773,6 +773,14 @@ function _resetSoakTypes(mon) {
   mon._soaked = false;
 }
 
+function _consumeElectricCharge(mon, move, field, log, beforeMove) {
+  if (!mon || !mon._electricCharge || move === 'Charge' ||
+      (beforeMove ? _moveType(move) : _resolveDynamicMoveType(mon, move, field)) !== 'Electric') return;
+  mon._electricCharge = false;
+  if (log) log.push(`${mon.name}'s electric charge was consumed!`);
+  _recordEffectEvent(field, mon, move, 'electric-charge-consumed', mon.hp, mon.hp, { electric_charge: false });
+}
+
 function _resolveSoakTarget(source, target, active, field, rng) {
   if (source.ability === 'Stalwart') return target;
   const redirect = target && target.side && target.side.redirectTo;
@@ -1538,6 +1546,17 @@ function _recordMoveFailureEvent(field, mon, move, reason, details) {
 // Sources cited per-ability.
 // ============================================================
 var ABILITIES = {
+  'Electromorphosis': {
+    onDamagingHit: function(ctx) {
+      const mon = ctx.defender;
+      if (!mon || !mon.alive || mon.hp <= 0 || !(ctx.damage > 0)) return;
+      mon._electricCharge = true;
+      if (ctx.log) ctx.log.push(`${mon.name}'s Electromorphosis charged its next Electric move!`);
+      _recordEffectEvent(ctx.field, mon, ctx.move, 'electric-charge-activation', mon.hp, mon.hp, {
+        ability: 'Electromorphosis', electric_charge: true
+      });
+    }
+  },
   'Aerilate': {
     onModifyMove: function(ctx) {
       if (!_canConvertNormalMove(ctx)) return null;
@@ -2302,6 +2321,7 @@ class Pokemon {
     this.teraActivated = false;
     this.itemConsumed = false;
     this._unburdenActive = false;
+    this._electricCharge = false;
     this.substituteHp = Math.max(0, data.substituteHp || 0);
     this.roosting = false;
     // Sinistcha Hospitality: restores ally HP on switch
@@ -2712,6 +2732,7 @@ class Pokemon {
     // Showdown / mainline terrain and Helping Hand modify base power, not the
     // late final-damage stage. Use fixed-point chaining so ranges stay aligned.
     const bpMods = [];
+    if (this._electricCharge && moveType === 'Electric') bpMods.push(8192);
     const _abilityBpRes = callAbilityHook(this, 'onBasePower', {
       move: move,
       moveType: moveType,
@@ -3465,6 +3486,7 @@ function _battleRosterSnapshot(active, bench, roster, side) {
       level: mon.level || 50,
       item: mon.item || '',
       itemConsumed: !!mon.itemConsumed,
+      electric_charge: !!mon._electricCharge,
       ability: mon.ability || '',
       moves: Array.isArray(mon.moves) ? mon.moves.slice() : [],
       move_pp: Object.fromEntries((mon.moves || []).map(move => [move, {
@@ -4079,6 +4101,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (!replacement) return;
     _resetSoakTypes(replacement);
     replacement._unburdenActive = false;
+    replacement._electricCharge = false;
     if (replacement.stanceChangeForms) replacement.setStanceForm('shield');
     replacement.toxicCounter = 0;
     replacement.frozenTurns  = 0;
@@ -4154,6 +4177,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     bench.splice(bench.indexOf(replacement), 1);
     _resetSoakTypes(mon);
     mon._unburdenActive = false;
+    mon._electricCharge = false;
     if (bench.indexOf(mon) < 0) bench.push(mon);
     _clearImprisonEffectsForMon(mon, field);
     mon.chargingMove = null;
@@ -4444,6 +4468,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   function executeAction(attacker, move, target, allies, enemies, field, log, rng, opts) {
+    try {
+      return executeActionImpl(attacker, move, target, allies, enemies, field, log, rng, opts);
+    } finally {
+      // One charge applies to the whole action, including spread and child hits.
+      _consumeElectricCharge(attacker, move, field, log);
+    }
+  }
+
+  function executeActionImpl(attacker, move, target, allies, enemies, field, log, rng, opts) {
     const fromSleepTalk = !!(opts && opts.fromSleepTalk);
     if (!attacker.alive) return;
     if (!move) return;
@@ -6532,6 +6565,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     } catch (_e) { /* never kill sim for telemetry */ }
   };
   const _recordKO = function(mon, cause) {
+    if (mon) mon._electricCharge = false;
     try {
       const side = (playerPokemon.indexOf(mon) >= 0) ? 'player' : 'opp';
       koEvents.push({
@@ -6745,6 +6779,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       _speedSort(pendingActions, (a, b) => _compareTurnActionOrder(a, b, field), rng);
       const action = pendingActions.shift();
       if (!action.attacker.alive) continue;
+      let electricActionStarted = false;
+      try {
       // T9j.4 (#41) — Freeze resolution per Champions rules:
       //   25% thaw per move attempt, guaranteed thaw on turn 3 (3-turn cap).
       // Cite: Bulbapedia Freeze — Pokemon Champions section.
@@ -6941,11 +6977,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         continue;
       }
       if (action.deductPP) _consumeSelectedMovePP(action.attacker, action.move, _resolvedTarget, _enemies);
+      electricActionStarted = true;
       executeAction(action.attacker, action.move, _resolvedTarget,
         _allies, _enemies, field, log, rng);
       // T9j.8 (Refs #19) Mark as acted so later-in-queue flinch rolls against
       // this mon have no effect (can't flinch a mon that already moved).
       action.attacker.hasActed = true;
+      } finally {
+        // BeforeMove denial never enters executeAction, but still aborts charge.
+        if (!electricActionStarted) _consumeElectricCharge(action.attacker, action.move, field, log, true);
+      }
     }
 
     // Sand damage
