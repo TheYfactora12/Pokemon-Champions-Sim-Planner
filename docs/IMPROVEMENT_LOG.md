@@ -1,5 +1,28 @@
 # Improvement Log
 
+## IMP-0080: Electromorphosis Charge Is Action-Scoped
+
+- Before: hit Bellibolt still used 90 BP Thunderbolt / 65 BP Parabolic Charge;
+  the ability had no handler and exports had no charge state.
+- Candidate: real HP damage activates a nonstacking charge volatile; all targets
+  and child hits see doubled Electric base power. Pure damage previews do not
+  spend it. Action completion/abort, successful switching and fainting clear it
+  according to the tested boundary. Non-Electric actions retain it; no SpD boost.
+- Independent review caught a premature dynamic-type resolution on BeforeMove
+  abort. Sleeping Terrain Pulse must retain charge, unlike sleeping Thunderbolt.
+  Persisted red fixture and control, then separated original/resolved type phases.
+- Focused tests: 18 passing, including three-target Parabolic Charge, Substitute,
+  Electro Shot windup and Sleep Talk. Full gate and final review pending.
+- Baseline: pinned Showdown efe4948570d5e8189751792136d26e71710c6c66.
+- Scope excludes general suppression, combined modifier rounding parity, Charge
+  and Wind Power activation, whole-team viability and seasonal approval.
+- Lesson: consuming a volatile inside a damage preview or per-target hit is
+  incorrect; aborted and completed moves can see different move types.
+- Final local gate: 200 fast + 12 DB contract files passed, four helpers skipped.
+  Read-only mechanics/release reviews approved the bounded delta. Engine SHA256:
+  1292fbb91372b57f73685f3f9e2139591afaf512a497adc0e76c4bd9db0c6052.
+  No live DB or hosted battle proof is inferred from those checks.
+
 ## IMP-0079: Soak Has Executable Type And Lifecycle Effects
 
 - Before: mirrored Soak metadata existed but the engine had no effect handler.
