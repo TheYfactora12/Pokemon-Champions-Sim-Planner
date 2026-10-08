@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8: Acrobatics itemless power candidate follows Unburden PR226.
+  Production-shaped mirror/runtime tests reproduced three failures; all six
+  now pass. Held or disabled items retain normal power; consumed/removed items
+  allow doubling. Full gate: 198 fast + 12 DB files passed. Independent review
+  passed eight reference probes and actual Trick/seed battle trace checks. No eligibility
+  change or private team-strength conclusion.
+
 - October 8: Unburden switch-reset candidate separates active ability state
   from item consumption history (IMP-0077); five focused regressions pass.
   Final local gate: 197 fast + 12 DB test files passed. Independent review found

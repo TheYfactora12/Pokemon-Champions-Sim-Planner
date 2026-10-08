@@ -1,5 +1,21 @@
 # Improvement Log
 
+## IMP-0078: Acrobatics Depends On Current Item Possession
+
+- Reproduced with the generated mirror and runtime bridge: itemless,
+  consumed-seed and Knock Off cases incorrectly stayed at 55 base power.
+- Fix: double Acrobatics base power only when no unconsumed item is held.
+  An ineffective held item (Klutz) still prevents doubling; a replacement item
+  restores normal power. Damage calculation evidence exposes the modified BP.
+- Focused tests: tests/acrobatics_lifecycle_tests.js, three red cases became
+  green; all six pass. Full gate: 198 fast + 12 DB files passed. Independent
+  review passed eight reference probes, actual two-turn Trick traces (110 to
+  55 BP), and doubles seed-consumption traces (110 BP). No UI/export proof.
+  Reviewed engine SHA256: cfc40d1e59c78bcda009a23d8314a2b6777a420124ea5abe28c2cf79ba3f0664.
+- Source: pinned Showdown efe4948570d5e8189751792136d26e71710c6c66,
+  data/moves.ts acrobatics.basePowerCallback. No seasonal legality promotion.
+- Lesson: mirrored scalar base power is not an executable move callback.
+
 ## IMP-0077: Unburden Activation Is Not Item History
 
 - Reproduced: consumed-item history incorrectly doubled Speed after returning

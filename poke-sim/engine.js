@@ -2606,6 +2606,7 @@ class Pokemon {
     }
 
     // Weather Ball doubles in active weather and already has its weather type.
+    if (move === 'Acrobatics' && !_hasUsableHeldItem(this)) bp *= 2;
     if (move === 'Weather Ball' && _fieldWeather !== 'none') bp = 100;
     if (move === 'Terrain Pulse' && _isGrounded(this) && field.terrain !== 'none') bp *= 2;
     // Electro Shot: 130 in rain (one-turn), else still 130 after charge
