@@ -1,0 +1,19 @@
+{
+  "schema_version": "champions-form-identity-evidence-v1",
+  "regulation_id": "champions_reg_m_c_2026",
+  "observed_at": "2026-10-08T22:32:44.096Z",
+  "competitive_use": false,
+  "approval_status": "review_only_identity_not_regulation_approval",
+  "source_url": "https://web-view.app.pokemonchampions.jp/battle/pages/events/rs178713870219xeaaio/en/pokemon.html",
+  "source_sha256": "122529cebbc15cd2a22c781e0fb43ca814be86a18951f1ceaf37cf65297a3627",
+  "asset_url": "https://web-view.app.pokemonchampions.jp/battle/pages/resources/sprite_poke_3.png",
+  "asset_sha256": "c4eb99b3c46ac7ff14e7aea6b5eeb8245732e7df912eee811fde8f57ba3846a5",
+  "screenshot": "artifacts/mc-form-review/official.png",
+  "screenshot_sha256": "8a278c5ee89defa57d0aec7ce1d63d61e8d145e22849b8f8cabaa770fe02df57",
+  "dom_sha256": "4ba1ee5c27b9fe064720562c6b9599e943cfa27d9bc1e89dceb620bd19b0d79f",
+  "review": "Parent observed live DOM IDs and image. Independent reviewer Popper inspected saved screenshot and supplied DOM geometry, confirming four members and yellow plumage. This is scoped visual inference, not a general numeric form decoder or legality/behavior proof. Third-party artwork remains local.",
+  "rows": [
+    {"official_id":"0925-001","official_label":"Maushold","runtime_species_key":"Maushold-Four","sprite_class":"sprite-poke-ui_PokeIcon_02_0925_01_0","background_position":"93.75% 86.667%","observed_features":"Two adults and two smaller members, Family of Four"},
+    {"official_id":"0931-002","official_label":"Squawkabilly","runtime_species_key":"Squawkabilly-Yellow","sprite_class":"sprite-poke-ui_PokeIcon_02_0931_02_0","background_position":"12.5% 100%","observed_features":"Yellow plumage, distinct from adjacent green 0931-000"}
+  ]
+}

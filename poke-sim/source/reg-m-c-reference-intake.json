@@ -4,6 +4,8 @@
   "source_fingerprint": "fdb7e26001f97c42ac24a4515bfb33a839d2beebf85ec36b5060f4ee1fd105d3",
   "compiled_fingerprint": "fb67973e517fbe62d28ea922a2ca3fd737e3da848843ceae254cd2f72c648489",
   "mapping_tool_sha256": "1c4e66f97544260b560a87e24ddd5b4aaee775824bd08c1707f1cac5f27ae740",
+  "mc_mapping_tool_sha256": "b1c96a48aee8112b01aeda9453486a8eca05cfa0cf08a85102c58a4336b2a46b",
+  "form_identity_evidence_sha256": "4f6cde37f86fcf9da3d56dbc0ad06df1ee4dee3b02647834b0406817c910f884",
   "official_capture_sha256": "1c0c11d7a637770dea992588b45a331c5a2b806d54e9af3a9be3c6ec3d695b65",
   "official_identity_candidates": [
     {
@@ -3818,10 +3820,17 @@
       "official_id": "0925-001",
       "official_label": "Maushold",
       "eligible_in_capture": true,
-      "runtime_species_key": null,
-      "status": "needs_identity_review",
+      "runtime_species_key": "Maushold-Four",
+      "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "reason": "nondefault_form_requires_explicit_mapping"
+      "mapping_basis": "reviewed_exact_official_sprite_and_label",
+      "baseline_metadata": {
+        "id": "mausholdfour",
+        "base_species": "Maushold",
+        "forme": "Four",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Identity review only, not regulation legality"
     },
     {
       "official_id": "0930-000",
@@ -3859,10 +3868,17 @@
       "official_id": "0931-002",
       "official_label": "Squawkabilly",
       "eligible_in_capture": true,
-      "runtime_species_key": null,
-      "status": "needs_identity_review",
+      "runtime_species_key": "Squawkabilly-Yellow",
+      "status": "baseline_identity_candidate",
       "competitive_use": false,
-      "reason": "nondefault_form_requires_explicit_mapping"
+      "mapping_basis": "reviewed_exact_official_sprite_and_label",
+      "baseline_metadata": {
+        "id": "squawkabillyyellow",
+        "base_species": "Squawkabilly",
+        "forme": "Yellow",
+        "is_nonstandard": ""
+      },
+      "baseline_metadata_scope": "Identity review only, not regulation legality"
     },
     {
       "official_id": "0934-000",

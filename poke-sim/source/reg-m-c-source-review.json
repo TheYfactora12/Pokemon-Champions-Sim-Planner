@@ -40,8 +40,9 @@
     "notice_url": "https://champions-news.pokemon-home.com/en/page/816.html",
     "roster_url": "https://web-view.app.pokemonchampions.jp/battle/pages/events/rs178713870219xeaaio/en/pokemon.html",
     "captured_rows": 262,
-    "status": "captured_identity_reconciliation_required",
-    "open_identity": "Maushold changes official ID from 0925-000 to 0925-001; do not silently substitute forms."
+    "status": "262_review_only_identity_candidates",
+    "identity_evidence": "source/reg-m-c-form-identity-evidence.json",
+    "open_identity": null
   },
   "showdown_observation": {
     "repository": "https://github.com/smogon/pokemon-showdown",
@@ -82,7 +83,7 @@
     "runtime_policy": "Use the exact sprite when present; otherwise label and render the base-form fallback. Sprite availability never proves legality."
   },
   "required_before_promotion": [
-    "Reconcile all 262 captured official roster IDs, including Maushold's changed form ID, and confirm format scope.",
+    "Approve the 262 review-only identity mappings and bind format scope; October 8 visual evidence resolves the two previously ambiguous forms.",
     "Capture in-game rules, team size, bring size, level, clauses and timers.",
     "Capture and normalize all newly available species/forms, Mega Stones, moves, Abilities and items.",
     "Compare every normalized row with the pinned Showdown baseline and review Champion overrides.",

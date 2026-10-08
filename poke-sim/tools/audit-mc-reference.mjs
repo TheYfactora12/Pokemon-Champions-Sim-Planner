@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
-import { mapOfficialRoster } from './regulation-roster-mapping.mjs';
+import { mapMcRoster } from './mc-roster-identity.mjs';
 
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
@@ -58,7 +58,8 @@ export function capture(upstream, commit) {
   const mb = rows('championsregmb'), mc = rows('champions');
   const officialBytes = fs.readFileSync(new URL('../source/reg-m-c-official-roster.json', import.meta.url));
   const official = JSON.parse(officialBytes);
-  const mappings = mapOfficialRoster(official, Object.fromEntries(Dex.mod('champions').species.all().map(s => [s.name, s])));
+  const formEvidenceBytes = fs.readFileSync(new URL('../source/reg-m-c-form-identity-evidence.json', import.meta.url));
+  const mappings = mapMcRoster(official, Object.fromEntries(Dex.mod('champions').species.all().map(s => [s.name, s])), JSON.parse(formEvidenceBytes));
   const probeSets = [
     { species: 'Rillaboom', ability: 'Grassy Surge', item: '', moves: ['Fake Out'] },
     { species: 'Salamence', ability: 'Intimidate', item: 'Salamencite', moves: ['Protect'] },
@@ -90,6 +91,8 @@ export function capture(upstream, commit) {
     schema_version: 'champions-mc-reference-intake-v1', upstream_commit: commit,
     source_fingerprint: sha(JSON.stringify(sourceHashes)), compiled_fingerprint: sha(JSON.stringify(compiledHashes)),
     mapping_tool_sha256: sha(fs.readFileSync(new URL('./regulation-roster-mapping.mjs', import.meta.url), 'utf8').replace(/\r\n/g, '\n')),
+    mc_mapping_tool_sha256: sha(fs.readFileSync(new URL('./mc-roster-identity.mjs', import.meta.url), 'utf8').replace(/\r\n/g, '\n')),
+    form_identity_evidence_sha256: sha(formEvidenceBytes),
     official_capture_sha256: sha(officialBytes), official_identity_candidates: mappings,
     competitive_use: false, learning_eligible: false, official_roster_verified: false,
     scope: 'Pinned upstream availability markers and individual-set validator probes; not official roster or complete team approval',

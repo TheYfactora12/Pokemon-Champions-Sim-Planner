@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Latest Follow-Up
 
+- M-C v198 evidence candidate resolves both ambiguous official form identities:
+  262 review-only mappings, no regulation promotion. Repeatable inventory finds
+  21 missing Mega descriptors, 3 aliases and mirror differences requiring
+  effective-runtime review. See [M-C inventory](docs/release/MC_RELEASE_INVENTORY_2026-10-08.md).
+  Candidate/hosted release checks are tracked in its PR; live v197 is not a
+  complete M-C implementation. Audit PR243 merged after hosted gates passed.
+
 - October 8 v197 full regression: project and battle gates pass; 4,624 headless
   battles pass state/export/repeat checks after repairing a missing experimental
   profile in the accuracy manifest. Adversarial Mega admission, item mechanics,
