@@ -6,6 +6,17 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8 release checkpoint: PR224 merged after hosted CI/Battle Audit passed
+  as 9b7e040. Pages37824723588 pending at this checkpoint; v187 remains separate.
+  Independent follow-up review found/fixed a zero-HP seed-consumption edge case;
+  final focused lifecycle suite passes 13/13, final full gate rerunning.
+
+- October 8 follow-up: `fix/terrain-seed-change-dispatch` builds on PR224 without
+  changing its frozen revision. Terrain-setting abilities now check both active
+  sides; capped-stage logs, Klutz and shared Simple/Contrary handling have scoped
+  regressions. 11 tests pass, including 20 one-turn doubles entry cases. No M-C
+  approval or hosted-team claim; suppression lifecycle and Unburden remain open.
+
 - October 8: terrain seed grounding correction on `fix/terrain-seed-reference-audit`.
   Focused regression reproduced two failures, then passed 48/48. M-C intake
   already contains 18 reference item additions; importer still uses the older
