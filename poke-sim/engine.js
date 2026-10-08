@@ -766,6 +766,82 @@ function _consumeHeldItem(mon) {
   return true;
 }
 
+function _resetSoakTypes(mon) {
+  if (!mon || !mon._soaked) return;
+  mon.types = mon._base.types.slice();
+  mon.flying = mon.types.includes('Flying') || mon.ability === 'Levitate';
+  mon._soaked = false;
+}
+
+function _resolveSoakTarget(source, target, active, field, rng) {
+  if (source.ability === 'Stalwart') return target;
+  const redirect = target && target.side && target.side.redirectTo;
+  const powderBypass = target && target.side && target.side.redirectType === 'ragePowder' &&
+    (source.types.includes('Grass') || source.ability === 'Overcoat' ||
+     (source.item === 'Safety Goggles' && !source.itemConsumed));
+  if (redirect && redirect.alive && redirect !== source && !powderBypass) return redirect;
+  const drains = active.filter(mon => mon !== source && mon.alive && mon.hp > 0 && mon.ability === 'Storm Drain');
+  drains.sort((a, b) => _comparePokemonSpeedOrder(a, b, field));
+  if (!drains.length) return target;
+  const fastest = drains.filter(mon => mon.getEffSpeed(field) === drains[0].getEffSpeed(field));
+  return fastest.length === 1 ? fastest[0] : fastest[Math.floor(rng() * fastest.length)];
+}
+
+function _applySoak(source, target, field, log, rng, reflected, priorityCheck, redirectTarget) {
+  if (reflected && redirectTarget) target = redirectTarget(source, target);
+  const fail = reason => {
+    source.lastMoveFailed = true;
+    _recordMoveFailureEvent(field, source, 'Soak', reason, {
+      target: target && target.name,
+      target_key: target && _snapshotMonStableKey(target.side === field.playerSide ? 'player' : 'opponent', target)
+    });
+    return false;
+  };
+  if (!target || !target.alive || target.hp <= 0) return fail('no-valid-target');
+  if (target.protected || target.concealedByMove) {
+    log.push(`${target.name} blocked Soak!`);
+    return fail(target.protected ? 'protect' : 'concealed');
+  }
+  if (!priorityCheck(source, 'Soak', target, field, log)) return fail('priority-block');
+  if (_targetAbilityActive(target, source, 'Good as Gold')) return fail('good-as-gold');
+  // Reflection is an onTryHit effect: it precedes Substitute and accuracy.
+  if (!reflected && _targetAbilityActive(target, source, 'Magic Bounce')) {
+    log.push(`${target.name}'s Magic Bounce reflected Soak!`);
+    return _applySoak(target, source, field, log, rng, true, priorityCheck, redirectTarget);
+  }
+  for (const ability of ['Water Absorb', 'Dry Skin', 'Storm Drain']) {
+    if (target !== source && _targetAbilityActive(target, source, ability)) {
+      const before = target.hp;
+      if (ability === 'Storm Drain') _applyTargetStageMap(target, target, { spa: 1 }, log);
+      else if (_canReceiveHealing(target)) target.hp = Math.min(target.maxHp, target.hp + Math.floor(target.maxHp / 4));
+      log.push(`${target.name}'s ${ability} absorbed Soak!`);
+      _recordEffectEvent(field, target, 'Soak', 'ability-immunity', before, target.hp, { ability, immune: true });
+      return fail('water-absorption');
+    }
+  }
+  if (!reflected && shouldPranksterFailOnTarget(source, 'Soak', target)) return fail('prankster-dark-immunity');
+  if (!_moveHits(source, target, 'Soak', field, rng, _moveAccuracy('Soak'))) {
+    log.push(`${source.name}'s Soak missed ${target.name}!`);
+    return fail('miss');
+  }
+  if (target.substituteHp > 0 && !_moveBypassesSubstitute(source, 'Soak')) return fail('substitute-block');
+  const locked = /^(Arceus|Silvally)(-|$)/.test(target.name) || target.teraActivated;
+  if (locked || (target.types.length === 1 && target.types[0] === 'Water')) {
+    log.push(`${source.name}'s Soak failed!`);
+    return fail(locked ? 'type-locked' : 'already-water');
+  }
+  const before = target.types.slice();
+  target.types = ['Water'];
+  target._soaked = true;
+  target.flying = target.ability === 'Levitate';
+  log.push(`${target.name} became the Water type!`);
+  _recordEffectEvent(field, target, 'Soak', 'type-change', target.hp, target.hp, {
+    types_before: before, types_after: target.types.slice(),
+    source_actor_key: _snapshotMonStableKey(source.side === field.playerSide ? 'player' : 'opponent', source)
+  });
+  return true;
+}
+
 function _holdsCorrespondingMegaStone(mon) {
   if (!_hasUsableHeldItem(mon)) return false;
   if (mon.megaForm && mon.megaForm.stone === mon.item) return true;
@@ -3379,6 +3455,7 @@ function _battleRosterSnapshot(active, bench, roster, side) {
       status,
       displayName: mon.displayName || mon.name || 'Unknown',
       species: mon.name || mon.displayName || 'Unknown',
+      types: Array.isArray(mon.types) ? mon.types.slice() : [],
       hp: hpPct,
       hp_current: mon.hp,
       substitute_hp: Math.max(0, mon.substituteHp || 0),
@@ -4000,6 +4077,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   function _resetSwitchInState(replacement) {
     if (!replacement) return;
+    _resetSoakTypes(replacement);
     replacement._unburdenActive = false;
     if (replacement.stanceChangeForms) replacement.setStanceForm('shield');
     replacement.toxicCounter = 0;
@@ -4074,6 +4152,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
     }
     bench.splice(bench.indexOf(replacement), 1);
+    _resetSoakTypes(mon);
     mon._unburdenActive = false;
     if (bench.indexOf(mon) < 0) bench.push(mon);
     _clearImprisonEffectsForMon(mon, field);
@@ -4483,6 +4562,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       attacker.enduring = false;
       attacker.protectChain++;
       log.push(`${attacker.name} used ${move}!`);
+      return;
+    }
+
+    if (move === 'Soak') {
+      log.push(`${attacker.name} used Soak!`);
+      const redirectTarget = (source, recipient) => _resolveSoakTarget(source, recipient, allies.concat(enemies), field, rng);
+      target = redirectTarget(attacker, target);
+      _applySoak(attacker, target, field, log, rng, false, priorityTargetAllowed, redirectTarget);
       return;
     }
 
@@ -7330,7 +7417,7 @@ var STATUS_MOVE_NAMES = new Set([
 
 var TARGETED_STATUS_MOVES = new Set([
   'Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder','Hypnosis','Spore','Leech Seed','Toxic',
-  'Poison Powder','Encore','Parting Shot','Fake Tears','Trick','Noble Roar','Growl','Leer','Spite'
+  'Poison Powder','Encore','Parting Shot','Fake Tears','Trick','Noble Roar','Growl','Leer','Spite','Soak'
 ]);
 
 function isStatusMoveName(move) {

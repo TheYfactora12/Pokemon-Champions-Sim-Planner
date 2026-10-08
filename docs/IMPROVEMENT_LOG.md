@@ -1,5 +1,33 @@
 # Improvement Log
 
+## IMP-0079: Soak Has Executable Type And Lifecycle Effects
+
+- Before: mirrored Soak metadata existed but the engine had no effect handler.
+  Adding snapshot type evidence exposed four failing behavior regressions.
+- Candidate: scoped Soak hit resolution, reflection before Substitute, Water
+  absorption, current-type replacement and current-form restoration after a
+  successful switch. Added stable-identity before/after type effect evidence
+  and roster types, so downstream damage can be inspected rather than inferred.
+- Focused suite: 26 cases pass, including next-hit Electric effectiveness,
+  allied reflection and Storm Drain redirection. Full gate/review pending.
+- Reference: pinned Showdown efe4948570d5e8189751792136d26e71710c6c66.
+- Scope: not full-game parity or seasonal admission. General suppression,
+  every form-change interaction and full-team browser/export remain unproved.
+- Lesson: move metadata is not a move implementation; effect ordering and
+  temporary state restoration require their own tests.
+- Independent review reproduced three further disagreements: Dark/Prankster
+  before reflection, reflected target redirection and Storm Drain under Trick
+  Room. Persisted all three failures, then corrected routing/order; 29 focused
+  cases pass. The earlier broad gate caught those failures and is superseded
+  only by a new final gate after repair, not counted as a pass.
+- A fourth independent finding showed Water absorption must precede Dark-type
+  Prankster rejection. Actual doubles regression reproduced 109 versus 145 HP;
+  repair plus a nonabsorbing Dark control passes. Final focused suite: 31/31.
+  Read-only reviewer approved this bounded delta; engine SHA256
+  82272aabf266839020346875ea11a7a9423ba65e8534ad663cf93a55bba03ec9.
+- Final frozen-candidate gate: 199 fast and 12 local DB contract files passed;
+  four manual/helper files skipped. This is not live DB or browser-battle proof.
+
 ## IMP-0078: Acrobatics Depends On Current Item Possession
 
 - Reproduced with the generated mirror and runtime bridge: itemless,
