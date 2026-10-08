@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Local Candidate
 
+- October 8: M-C new-paste draft intake now uses the pinned M-C reference,
+  avoiding historical item/learnset rejection while retaining structural checks.
+  Drafts stay local and unverified; existing-team replacement, JSON/bulk intake
+  and battle execution are unchanged. Candidate tests cover preview/save parity,
+  no DB write, immutable sets and rejection boundaries. Not deployed yet;
+  independent review and full release gate pending. M-C approval remains #232.
+
 - October 8: v191 Electromorphosis deployed via PR230 / Pages37833771226;
   live HTML and all four external assets match the reviewed candidate. Browser
   build/Simulator navigation passed, not a private-team battle. Shuca candidate

@@ -1,5 +1,28 @@
 # Improvement Log
 
+## IMP-0082: Separate M-C Draft Saving From Battle Approval
+
+- October 8, source-context/experience candidate: live v192 rejected a current
+  reference item and learnset through historical validators before saving.
+- Explicitly selected M-C new-paste imports now check the pinned reference and
+  structural restrictions. Outcomes distinguish canSave, officialStatus,
+  referenceStatus and canExecute; valid/sourceVerified stay false for drafts.
+- Sets are preserved unchanged in local storage with reference pin/context;
+  this path does not write to Supabase. Battle gates and trusted statistics
+  remain blocked. No individual team, item or move is declared officially legal.
+- Five focused regressions cover reference membership, invalid sets, missing
+  source/forged metadata and actual preview/save parity without DB calls.
+  Existing source-gap, JSON and execution checks also pass locally.
+- Lesson: saving a reference-compatible draft is not competitive admission.
+  Do not use old source exclusions as proof of new-regulation illegality.
+- Independent review found and verified repairs for edit-to-DB persistence,
+  regulation-switch execution and conflicting species identity. Browser v193
+  candidate accepted the unchanged private six-member paste with zero errors;
+  save/reload/selection retained its sets. No battle was run.
+- Pending: final full gate and hosted deployment/browser proof.
+  JSON/bulk and replacement/edit flows keep their existing restrictive behavior;
+  official M-C package completion is tracked separately in #232.
+
 ## IMP-0081: Shuca Uses Current Hit Typing And Actual Consumption
 
 - Before: Shuca metadata existed but Ground damage had no reduction or item

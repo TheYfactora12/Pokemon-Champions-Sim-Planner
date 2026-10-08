@@ -199,7 +199,13 @@ function _stripForm(name) {
   );
 }
 
-function validateChampionsLegality(team) {
+function validateChampionsLegality(team, options) {
+  // A caller may check a local draft against M-C without changing battle admission.
+  var draftReference = options && options.mcDraftOnly === true &&
+    typeof MC_REVIEW_REFERENCE !== 'undefined' && MC_REVIEW_REFERENCE &&
+    MC_REVIEW_REFERENCE.regulation === 'champions_reg_m_c_2026' &&
+    MC_REVIEW_REFERENCE.pin === 'efe4948570d5e8189751792136d26e71710c6c66' &&
+    Array.isArray(MC_REVIEW_REFERENCE.items) ? MC_REVIEW_REFERENCE : null;
   var violations = [];
   if (!team || !Array.isArray(team.members)) return { violations: violations };
   if (typeof FAKEMON_BLOCKLIST === 'undefined'
@@ -235,7 +241,8 @@ function validateChampionsLegality(team) {
 
     // Item legality checks
     var item = mon && mon.item ? mon.item : '';
-    if (item && !CHAMPIONS_LEGAL_ITEMS.has(item)) {
+    var draftItemMatch = draftReference && draftReference.items.indexOf(String(item).toLowerCase().replace(/[^a-z0-9]/g, '')) >= 0;
+    if (item && !CHAMPIONS_LEGAL_ITEMS.has(item) && !draftItemMatch) {
       var knownAbsent = CHAMPIONS_BANNED_ITEMS.has(item);
       var regMbReviewCandidate = typeof CHAMPIONS_REGMB_REVIEW_ITEM_CANDIDATES !== 'undefined'
         && CHAMPIONS_REGMB_REVIEW_ITEM_CANDIDATES

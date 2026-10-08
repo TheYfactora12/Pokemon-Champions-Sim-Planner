@@ -170,9 +170,12 @@ function resolveMonStatFormat(mon, teamFormat) {
   };
 }
 
-function validateTeam(team, format = 'vgc') {
+function validateTeam(team, format = 'vgc', validationOptions = {}) {
   const errors = [];
   const warnings = [];
+  if (team && team.import_context && team.import_context.draft_only === true && !validationOptions.mcDraftOnly) {
+    errors.push('M-C draft is saved for review only; battle execution requires separate approval.');
+  }
   if (!team || !team.members || team.members.length === 0) {
     errors.push('Team has no members.');
     return { valid: false, errors, warnings };
@@ -231,7 +234,7 @@ function validateTeam(team, format = 'vgc') {
   // runs if legality.js has been loaded and team is declared Champions format.
   if ((team.format === 'champions' || format === 'champions')
       && typeof validateChampionsLegality === 'function') {
-    const champ = validateChampionsLegality(team);
+    const champ = validateChampionsLegality(team, validationOptions);
     if (champ && Array.isArray(champ.violations)) {
       for (const v of champ.violations) {
         if (v.severity === 'error') errors.push(v.message);

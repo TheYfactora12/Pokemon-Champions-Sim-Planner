@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.192-shuca-hit-lifecycle",
+  "build_id": "v2.2.193-mc-draft-intake",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "c2a62576e75e6c25c8a552aaec19b80a8f4f35b85f30a5c415226f3d500df1da",
-  "bundle_bytes": 11514624,
+  "bundle_sha256": "c4bb95b7b95ddcaac27e5b1db641f3c5f38d7971b6955de7bac8b3e50bfc3bca",
+  "bundle_bytes": 11521444,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/champions_move_pools.js": {
