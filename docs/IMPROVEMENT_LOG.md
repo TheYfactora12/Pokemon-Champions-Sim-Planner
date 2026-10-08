@@ -1,5 +1,15 @@
 # Improvement Log
 
+## IMP-0087: Test Real Catalog Coverage, Not Only Synthetic Contracts
+
+- v197 full regression found the accuracy command failed before battles because
+  the new experimental reference profile was missing from its manifest.
+- Added the non-promotable profile without changing legality and added a fast
+  contract test against the actual ruleset catalog. Original failure preserved.
+- Retest: 4,624 headless battles, no state/export/repeat failures. Independent
+  adversarial probes still found Mega/item defects, demonstrating why a green
+  stress gate is not complete game correctness. See the dated v197 audit.
+
 ## IMP-0086: Live Replay Evidence Drives UI Repairs
 
 - v196 live Run All cleared the saved-team execution gate. Downloading every

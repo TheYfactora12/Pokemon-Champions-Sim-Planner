@@ -6,6 +6,13 @@ Review how changes improved the project in [the improvement log](docs/IMPROVEMEN
 
 ## Latest Follow-Up
 
+- October 8 v197 full regression: project and battle gates pass; 4,624 headless
+  battles pass state/export/repeat checks after repairing a missing experimental
+  profile in the accuracy manifest. Adversarial Mega admission, item mechanics,
+  live result-column and Sources mobile defects remain open. Not competitive
+  accuracy sign-off. See [full audit](docs/release/FULL_REGRESSION_V197_2026-10-08.md).
+  Harness repair is a separate test/documentation candidate; runtime unchanged.
+
 - v196 deployed through PR237 / Pages37850111959 at merge 209e58e. HTTP artifact
   and four external assets match. Live Run All executed 14 games; all exports
   downloaded. Of 58 compared turns, one exposed an extra late Fake Out line after

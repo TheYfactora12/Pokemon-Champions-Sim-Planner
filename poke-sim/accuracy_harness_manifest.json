@@ -3,6 +3,14 @@
   "warning_budget": 0,
   "regulations": [
     {
+      "id": "champions_mc_reference",
+      "version": "champions-mc-reference-v1",
+      "status": "experimental",
+      "runtime_promotable": false,
+      "harness_lane": "catalog_contract_only_not_execution_or_parity",
+      "formats": ["doubles"]
+    },
+    {
       "id": "champions_custom_practice",
       "version": "champions-practice-v1",
       "status": "experimental",
