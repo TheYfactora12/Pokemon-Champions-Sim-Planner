@@ -11,6 +11,13 @@ var CHAMPIONS_RULESET_STATUS = {
 };
 
 var CHAMPIONS_RULESETS = {
+  champions_mc_reference: {
+    id:'champions_mc_reference',version:'champions-mc-reference-v1',
+    label:'M-C reference practice - UNVERIFIED',selectorLabel:'M-C reference practice (unverified)',
+    status:'experimental',runtimePromotable:false,learningEligibility:'blocked_experimental',
+    dataPolicy:'do_not_write_trusted_stats',coachingPolicy:'review_only_no_matchup_learning',
+    blocker:'Reference practice is not official M-C approval or verified battle accuracy.'
+  },
   champions_custom_practice: {
     id: 'champions_custom_practice', version: 'champions-practice-v1',
     label: 'Custom practice - NOT regulation verified', status: 'experimental',
@@ -204,6 +211,7 @@ function getSimulationEvidencePolicy(provenance, games) {
 // Selection is separate from a team's original registration and never rewrites it.
 function checkTeamForSelectedRegulation(team, rulesetId, options) {
   var opts = options || {};
+  if (rulesetId === 'champions_mc_reference' && typeof checkMcReferenceExecution === 'function') return checkMcReferenceExecution(team,opts);
   var profile = getChampionsRuleset(rulesetId);
   var practice = profile.id === 'champions_custom_practice';
   var errors = [], gaps = [];
@@ -303,7 +311,7 @@ function getRegulationChoices(kind, speciesName, rulesetId, showUnavailable) {
   var sim = typeof ChampionsSim !== 'undefined' ? ChampionsSim : {};
   var data = sim.pokemonDataAudit, api = sim.moveLegality;
   if (!data || !data.species || !api || typeof api.canonicalSpeciesKey !== 'function') return [];
-  if (profile.id === 'champions_reg_m_c_2026') {
+  if (profile.id === 'champions_reg_m_c_2026' || profile.id === 'champions_mc_reference') {
     return typeof getMcReferenceChoices === 'function' ? getMcReferenceChoices(kind, speciesName, data, showUnavailable) : [];
   }
   var speciesKey = api.canonicalSpeciesKey(speciesName || '');

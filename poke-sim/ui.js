@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.195-item-suppression
+// Build marker: v2.2.196-mc-reference-practice
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.195-item-suppression'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.196-mc-reference-practice'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -791,7 +791,7 @@ function buildImportedTeamValidation(members, opts) {
 function buildMcDraftImportValidation(members, opts) {
   var out = { valid: false, canSave: false, canExecute: false, sourceVerified: false,
     officialStatus: 'unverified', referenceStatus: 'unavailable', referencePin: null,
-    errors: [], warnings: ['Saved M-C draft only. Official approval and simulation remain blocked.'],
+    errors: [], warnings: ['Saved locally. Official M-C remains unverified; reference practice has separate execution checks.'],
     memberWarnings: {}, sourceVersion: '' };
   var reference = typeof MC_REVIEW_REFERENCE === 'undefined' ? null : MC_REVIEW_REFERENCE;
   if (!reference || reference.regulation !== opts.regulationId ||
@@ -1150,6 +1150,7 @@ function isVisibleTeamInCatalog(teamKey, team, opts) {
   if (!team || !team.name) return false;
   if (team.source === 'custom' && opts.includeCustom === false) return false;
   if (team.format !== 'champions') return false;
+  if (typeof getSelectedRegulationId === 'function' && getSelectedRegulationId() === 'champions_mc_reference') return true;
   if (team.legality_status === 'illegal') return false;
   if (team.source === 'custom' && team.import_context && team.import_context.draft_only === true) return true;
   var verdict = null;
@@ -1291,6 +1292,10 @@ function isPreloadedSimTeam(teamKey, team) {
 function getRunAllOpponentKeys(playerKey, simCtx) {
   simCtx = simCtx || {};
   var scope = simCtx.simScope || getSimScopeMode();
+  if (typeof getSelectedRegulationId === 'function' && getSelectedRegulationId() === 'champions_mc_reference') {
+    // Reference preflight evaluates every loaded entry and records exclusions.
+    return scope === 'selected' ? (TEAMS[simCtx.oppKey] ? [simCtx.oppKey] : []) : Object.keys(TEAMS);
+  }
   if (scope === 'selected') {
     var selectedOpp = simCtx.oppKey || getDefaultVisibleOpponentTeamKey(playerKey);
     if (selectedOpp
@@ -3885,7 +3890,7 @@ function csPasteImportOptions(targetTeam, format) {
   }
   var draft = targetTeam && targetTeam.import_context && targetTeam.import_context.draft_only === true &&
     targetTeam.import_context.regulation_id === 'champions_reg_m_c_2026';
-  if (options.format === 'champions' && (draft || (!targetTeam && getSelectedRegulationId() === 'champions_reg_m_c_2026'))) {
+  if (options.format === 'champions' && (draft || (!targetTeam && ['champions_reg_m_c_2026','champions_mc_reference'].indexOf(getSelectedRegulationId()) >= 0))) {
     options.regulationId = 'champions_reg_m_c_2026';
     options.draftOnly = true;
   }
@@ -3929,7 +3934,7 @@ function showImportPreview(members) {
   }
   if (dest) {
     dest.innerHTML = '<strong>Destination</strong><span>' + _escapeHtml(destination) + '</span><small>' +
-      _escapeHtml(validation.canExecute === false ? 'Saves locally without changing your sets. M-C execution remains blocked pending approval.' : slot === '__new__' ? 'Creates a saved custom team you can edit; simulation has separate regulation checks.' : 'Replaces this slot after validation; preloaded teams save as overrides.') +
+      _escapeHtml(validation.canExecute === false ? 'Saves locally without changing your sets. Use M-C reference practice for separately checked, unverified simulations.' : slot === '__new__' ? 'Creates a saved custom team you can edit; simulation has separate regulation checks.' : 'Replaces this slot after validation; preloaded teams save as overrides.') +
       '</small>';
   }
   roster.innerHTML = members.map((m, idx) => {
@@ -12571,10 +12576,13 @@ async function runBoSeries(numSeries, playerTeamKey, oppTeamKey, bo, onProgress)
         }
         const battle = simulateBattle(playerDefinition, opponentDefinition, {
           format: runFormat,
+          rulesetId: runRegulation,
+          bo: bo,
           playerBring,
           opponentBring,
           roleAwareOpeners: true
         });
+        if (battle.result === 'error') throw new Error(battle.winCondition || 'Engine rejected this battle.');
         battle.boGame = nextGameNumber;
         battle.boSeries = seriesNumber;
         battle.provenance = Object.assign({}, results.provenance);
@@ -12694,9 +12702,21 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone, simCtx) {
   if (typeof checkTeamForSelectedRegulation !== 'function' || typeof getSelectedRegulationId !== 'function') throw new Error('Regulation validator unavailable; simulation blocked.');
   simCtx = simCtx || resolveSimContext({ numSeries: numSeries, bo: bo });
   var playerKey = simCtx.playerKey;
-  const opps = getRunAllOpponentKeys(playerKey, simCtx);
+  let opps = getRunAllOpponentKeys(playerKey, simCtx);
   if (!opps.length) throw new Error('no opponents available for ' + getSimScopeLabel(simCtx.simScope || getSimScopeMode()));
   const runRegulation = typeof getSelectedRegulationId === 'function' ? getSelectedRegulationId() : null;
+  const referenceSkipped = [];
+  if (runRegulation === 'champions_mc_reference') {
+    opps = opps.filter(function(key) {
+      const check = checkTeamForSelectedRegulation(TEAMS[key],runRegulation,{format:currentFormat,bo:bo});
+      if (check.allowed) return true;
+      referenceSkipped.push({team_id:key,reasons:check.errors.concat(check.source_gaps)});
+      return false;
+    });
+    simCtx.reference_exclusions = referenceSkipped;
+    csSetSimBudgetNote('UNVERIFIED M-C reference: '+opps.length+' opponents included; '+referenceSkipped.length+' excluded. '+referenceSkipped.map(function(r) { return r.team_id+': '+r.reasons[0]; }).join(' | '),'warn');
+    if (!opps.length) throw new Error('No reference-compatible opponents; see exclusion report.');
+  }
   if (typeof checkTeamForSelectedRegulation === 'function') {
     for (const key of [playerKey].concat(opps)) {
       const check = checkTeamForSelectedRegulation(TEAMS[key], runRegulation, { format: currentFormat, bo: bo });
@@ -12710,11 +12730,18 @@ async function runAllMatchupsUI(numSeries, bo, onProgress, onDone, simCtx) {
       if (onProgress) onProgress(done*numSeries+cur, opps.length*numSeries, w, l);
     });
     done++;
+    if (runRegulation === 'champions_mc_reference') {
+      res.reference_exclusions = referenceSkipped;
+      if (res.provenance) res.provenance.reference_exclusions = referenceSkipped;
+      (res.allLogs || res.logs || []).forEach(function(game) {
+        if (game.provenance) game.provenance.reference_exclusions = referenceSkipped;
+      });
+    }
     if (onDone) onDone(opp, res);
     // M4: persist each matchup result to Supabase (fire-and-forget)
     try {
       var _adapter = getWindowValue('SupabaseAdapter', null);
-      if (_adapter && _adapter.enabled) {
+      if (runRegulation !== 'champions_mc_reference' && _adapter && _adapter.enabled) {
         Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(playerKey, opp, bo, res)))
           .catch(function(e) { UILog.warn('run-all saveAnalysis failed', e); });
       }
@@ -12747,7 +12774,10 @@ async function _captureSimulationProvenance(playerKey, oppKey, playerTeam, oppTe
     original_player_ruleset_id: ruleset(playerTeam), original_opponent_ruleset_id: ruleset(oppTeam),
     ruleset_version: profile.version || null, regulation_id: profile.id || null,
     engine_format_id: profile.engineFormatId || null,
-    level_policy: selectedRegulation === 'champions_custom_practice' ? 'missing_level_defaults_to_50_in_engine' : 'explicit_level_50',
+    reference_pin: selectedRegulation === 'champions_mc_reference' && typeof MC_REVIEW_REFERENCE !== 'undefined' ? MC_REVIEW_REFERENCE.pin : null,
+    reference_artifact_sha256: selectedRegulation === 'champions_mc_reference' ? 'fba0dbf7a01f95a57727923a948afb575b36ef7bb2a883600d2702596dad2905' : null,
+    source_gaps: selectedRegulation === 'champions_mc_reference' ? ['unapproved_mc_reference','incomplete_mechanics_parity'] : [],
+    level_policy: ['champions_custom_practice','champions_mc_reference'].indexOf(selectedRegulation) >= 0 ? 'missing_level_defaults_to_50_in_engine' : 'explicit_level_50',
     format: format, bo: bo, player_team_id: playerKey, opp_team_id: oppKey,
     policy_model: 'deterministic-v1', selection_policy: Object.assign({}, selectionPolicy)
   };
@@ -13211,7 +13241,7 @@ document.getElementById('run-sim-btn')?.addEventListener('click', async function
     // M4: persist single-sim result to Supabase (fire-and-forget)
     try {
       var _adapter = getWindowValue('SupabaseAdapter', null);
-      if (_adapter && _adapter.enabled) {
+      if (!(res.provenance && res.provenance.ruleset_id === 'champions_mc_reference') && _adapter && _adapter.enabled) {
         Promise.resolve(_adapter.saveAnalysis(_buildAnalysisPayload(playerKey, oppKey, bo, res)))
           .catch(function(e) { UILog.warn('single-sim saveAnalysis failed', e); });
       }
@@ -13295,7 +13325,7 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
         <td style="color:var(--red);font-family:var(--font-mono)">${res.losses}</td>
         <td style="font-family:var(--font-mono)">${res.avgTurns.toFixed(1)}</td>
         <td style="font-family:var(--font-mono)">${res.avgTrTurns.toFixed(1)}</td>
-        <td><span class="assess-chip ${aCls}">${aLbl}</span></td>`;
+        <td><span class="assess-chip ${aCls}">${res.provenance && res.provenance.ruleset_id === 'champions_mc_reference' ? 'Reference only' : aLbl}</span></td>`;
       tbody.appendChild(tr);
       (res.allLogs || []).forEach(function(b) {
         runAllQaReplayCards.unshift(Object.assign({}, csCapBattleReplay(b), {

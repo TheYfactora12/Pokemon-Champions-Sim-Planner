@@ -2155,7 +2155,7 @@ function classifyPokemon(mon) {
 }
 
 class Pokemon {
-  constructor(data, teamStyle, teamFormat) {
+  constructor(data, teamStyle, teamFormat, referenceMode) {
     this.name = data.name;
     this.item = data.item;
     this.ability = data.ability;
@@ -2202,13 +2202,16 @@ class Pokemon {
     // correct Mega Stone is held, enter battle in BASE form. Store Mega form
     // for later trigger during simulateBattle. Backward-compat: no stone held
     // means legacy behavior (name unchanged, Mega stats from turn 1).
-    const _megaInfo = (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[data.name]) || null;
+    const _megaInfo = (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[data.name]) ||
+      (referenceMode === 'champions_mc_reference' && typeof getMcReferenceMega === 'function' &&
+        getMcReferenceMega(data.name === 'Raichu' && data.item === 'Raichunite X' ? 'Raichu-Mega-X' : data.name)) || null;
     if (_megaInfo && _megaInfo.baseSpecies && data.item === _megaInfo.megaStone) {
       this.megaForm = {
-        megaName:    data.name,
+        megaName:    _megaInfo.megaName || data.name,
         megaStats:   _megaInfo.megaBaseStats,
         megaTypes:   _megaInfo.types,
         megaAbility: _megaInfo.ability,
+        weightkg:    _megaInfo.weightkg,
         stone:       _megaInfo.megaStone
       };
       this.displayName = data.name;                 // keep Mega name for UI
@@ -2222,7 +2225,7 @@ class Pokemon {
       if (!this.ability || (this.ability === _megaInfo.ability && !_registeredBaseAbility)) {
         this.ability = (typeof CHAMPIONS_BASE_ABILITIES !== 'undefined'
                        && CHAMPIONS_BASE_ABILITIES[_megaInfo.baseSpecies])
-                       || this.ability;
+                       || _megaInfo.baseAbility || this.ability;
       }
       this.hasMegaEvolved = false;
     } else {
@@ -2410,6 +2413,7 @@ class Pokemon {
     this.name = m.megaName;
     this.displayName = m.megaName;
     this.ability = m.megaAbility;
+    if (Number.isFinite(m.weightkg) && m.weightkg > 0) this.weightkg = m.weightkg;
     // Recalculate derived stats
     this._calcStats();
     this.hp = Math.max(1, Math.round(this.maxHp * hpFrac));
@@ -3275,12 +3279,12 @@ class Field {
 // ============================================================
 // TEAM BUILDER — builds active battlers from team definition
 // ============================================================
-function buildTeam(teamDef, side) {
+function buildTeam(teamDef, side, referenceMode) {
   if (!teamDef || !teamDef.members) return [];
   const style = teamDef.style || '';
   // Issue #T1: propagate team.format so Pokemon uses correct stat math.
   return teamDef.members.map(function(m, i) {
-    const mon = new Pokemon(m, style, teamDef.format);
+    const mon = new Pokemon(m, style, teamDef.format, referenceMode);
     mon.teamSlot = i;
     mon.registeredMemberId = m.member_id || null;
     mon.stableKey = (side || 'team') + ':slot:' + i + ':' + (mon.displayName || mon.name || 'Unknown');
@@ -3889,8 +3893,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   // to the result so UI / PDF report can surface them. Pass opts.strict=true
   // to abort before rolling seeds (for CI / golden tests).
   const fmt = opts.format === 'singles' ? 'singles' : 'vgc';
-  const playerLegality = validateTeam(playerTeam, fmt);
-  const oppLegality    = validateTeam(oppTeam, fmt);
+  const referenceMode = opts.rulesetId === 'champions_mc_reference';
+  const referenceChecks = referenceMode && typeof checkMcReferenceExecution === 'function' ?
+    [checkMcReferenceExecution(playerTeam,{format:opts.format,bo:opts.bo,bring:opts.playerBring}),
+     checkMcReferenceExecution(oppTeam,{format:opts.format,bo:opts.bo,bring:opts.opponentBring})] : null;
+  const referenceAllowed = referenceChecks && referenceChecks.every(c => c.allowed);
+  const playerLegality = referenceAllowed ? {valid:false,errors:[],warnings:referenceChecks[0].source_gaps} : validateTeam(playerTeam, fmt);
+  const oppLegality    = referenceAllowed ? {valid:false,errors:[],warnings:referenceChecks[1].source_gaps} : validateTeam(oppTeam, fmt);
+  if (referenceMode) log.push('[REFERENCE ONLY] M-C experimental simulation; excluded from verified rankings.');
+  if (referenceChecks && !referenceAllowed) referenceChecks.forEach(c => log.push.apply(log,c.errors));
   if (!playerLegality.valid) {
     log.push(`[LEGALITY] Player team errors: ${playerLegality.errors.join('; ')}`);
   }
@@ -3900,21 +3911,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
   for (const w of oppLegality.warnings) log.push(`[LEGALITY] Opponent warning: ${w}`);
   const savedDraft = [playerTeam, oppTeam].some(team => team && team.import_context && team.import_context.draft_only === true);
-  if (savedDraft || (opts.strict && (!playerLegality.valid || !oppLegality.valid))) {
+  if ((referenceMode && !referenceAllowed) || (savedDraft && !referenceAllowed) || (!referenceAllowed && opts.strict && (!playerLegality.valid || !oppLegality.valid))) {
     return {
       result: 'error', turns: 0, trTurns: 0,
       twTurns: 0, twTurnsPlayer: 0, twTurnsOpp: 0,
       timerExpired: false, clockPlayer: 0, clockOpp: 0, pHpSum: 0, oHpSum: 0,
       screens: { playerReflect:0, playerLightScreen:0, playerAuroraVeil:0, oppReflect:0, oppLightScreen:0, oppAuroraVeil:0 },
       log,
-      winCondition: savedDraft ? 'Saved M-C draft - simulation blocked pending separate approval' : 'Illegal team — simulation aborted (strict mode)',
+      winCondition: referenceMode ? 'M-C reference checks failed: '+(referenceChecks ? referenceChecks.flatMap(c => c.errors).join('; ') : 'reference validator unavailable') : savedDraft ? 'Saved M-C draft - simulation blocked pending separate approval' : 'Illegal team — simulation aborted (strict mode)',
       seed, playerSurvivors: 0, oppSurvivors: 0,
       legality: { player: playerLegality, opp: oppLegality },
     };
   }
 
-  const playerPokemon = buildTeam(playerTeam, 'player');
-  const oppPokemon    = buildTeam(oppTeam, 'opponent');
+  const playerPokemon = buildTeam(playerTeam, 'player', referenceAllowed ? opts.rulesetId : null);
+  const oppPokemon    = buildTeam(oppTeam, 'opponent', referenceAllowed ? opts.rulesetId : null);
 
   // T9j.10 (Refs #16) — Team Preview / bring-N-of-6.
   //   Doubles: bring 4 of 6 (leads 1-2, bench 3-4)
@@ -7459,6 +7470,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     },
     participants: participants,
     playerRegistration,
+    reference_policy: referenceAllowed ? {mode:'champions_mc_reference',pin:MC_REVIEW_REFERENCE.pin,official_approval:false,trusted_rankings:false} : null,
     // #5 — attach legality verdict so UI can surface warnings on team/match cards.
     legality: { player: playerLegality, opp: oppLegality },
     // Phase 4a (Refs #52) — structured KO event log. See _recordKO site above.

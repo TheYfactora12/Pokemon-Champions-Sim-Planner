@@ -1,5 +1,18 @@
 # Improvement Log
 
+## IMP-0085: Separate Reference Execution From Official Approval
+
+- Owner requested clearing the saved-draft Run All gate. New explicit M-C
+  reference mode revalidates current inputs, implements scoped Raichu Mega
+  lifecycle and reports excluded opponents without changing registrations.
+- Reference output is unverified, versioned, local-only and excluded from trusted
+  rankings/coaching. Official M-C and historical restrictions are unchanged.
+- Independent adversarial review found two initial admission inconsistencies:
+  conflicting species/name and case-variant duplicate moves. Added rejection
+  regressions. Actual Mega/seed timing and delayed evolution are also tested.
+- [Decision, sources, tests and remaining scope](release/MC_REFERENCE_PRACTICE_2026-10-08.md).
+  Candidate v196; full release/deployed evidence still pending at this checkpoint.
+
 ## IMP-0084: Item Suppression Must Reach Actual Effects
 
 - October 8: trusted-source/runtime audit found Klutz omitted from type booster
