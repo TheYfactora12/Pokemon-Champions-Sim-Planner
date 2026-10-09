@@ -8,15 +8,15 @@ Historical candidate observations are not current deployment instructions.
 ## Verified Release
 
 - Primary repository: TheYfactora12/Pokemon-Champions-Sim-Planner, main.
-- Deployed build: **v2.2.201-fake-out-flinch**, preview / local-save.
-- Runtime merge: `20ecb36eb608524714664e1ce9e2503ed5d65031`, [PR253](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/253).
-- Required PR CI `37932507880`, bundle and cache checks passed; Pages `37933058440` succeeded.
-- At 2026-10-09T12:56:47.371Z, HTTP checks matched bundle and external assets.
-  Two four-turn live synthetic games were downloaded and compared to visible logs;
-  one proved flinch denial with PP retained, the other showed Armor Tail blocking.
-  [Receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/253#issuecomment-6081366821).
-- Bundle SHA-256: `e564e2a0edf693f7c30e4a0aae30bc3dd90385af3333251f7e75a539cc7cf863`.
-- Previous verified release/rollback target: v200, `287c4e4804ab5c82ecee82556d4d363c24d72461`.
+- Deployed build: **v2.2.202-klutz-items**, preview / local-save.
+- Runtime merge: `698957eeaa142b41d72c96a439fc6e62f196611c`, [PR254](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/254).
+- Required PR CI `37933950819`, bundle and cache checks passed; Pages `37934590584` succeeded.
+- At 2026-10-09T13:10:36.268Z, HTTP checks matched bundle and external assets.
+  A five-turn live synthetic game was downloaded and compared to visible logs;
+  Klutz/Scarf Lopunny retained base and effective Speed 157.
+  [Scoped receipt](docs/release/KLUTZ_ITEM_PATHS_2026-10-09.md).
+- Bundle SHA-256: `99d1365c5550a3c7d9bab6cb88a760375347a5b9a35737bc2bbb2c2d143d1d43`.
+- Previous verified release/rollback target: v201, `20ecb36eb608524714664e1ce9e2503ed5d65031`.
 - This proves the named release/assets and scoped lifecycle path, not all game mechanics, live DB
   security, mobile journeys or beta readiness. No verified 99% accuracy claim.
 - Alfredo's repository is the intended backup, not an assumed synchronized
@@ -35,7 +35,8 @@ Supabase security or ownership tests.
 
 v201 shipped the first-turn Fake Out fix (#249); see
 [scoped evidence](docs/release/FAKE_OUT_FLINCH_2026-10-09.md).
-v202 Klutz item candidate is in review, not yet deployed. #235 Lum activation,
+v202 Klutz direct-item guards are deployed and smoke-tested. #255 bundle
+headroom (145 bytes remaining) precedes adding runtime code. #235 Lum activation,
 #252 Champions-specific late Fake Out/Encore timing, #241 descriptors/aliases
 and official approval remain open. Do not infer team strength from these fixes.
 
