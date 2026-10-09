@@ -29,8 +29,8 @@ from FLINCH_MOVES; shared flinch also lacked target secondary-effect guards.
 
 ## Remaining Boundaries
 
-Late forced Fake Out is currently converted to Struggle instead of failing;
-track separately. Broader flinch chance modifiers, multi-hit timing and complete
+Champions disables late Fake Out selection; forced/Encore timing needs its
+own format-specific proof. Broader flinch chance modifiers, multi-hit timing and complete
 Champions confirmation remain unproved. The case stays partial. No universal
 accuracy, team-strength or official M-C claim follows from this repair.
 
@@ -49,3 +49,14 @@ match with Liepard in the leads. Download seed:
 10-HP recovery. First-turn Fake Out applied and skipped Dragon Claw; its PP
 remained 16/16. Stable source/target keys survived lead reordering/evolution.
 This is bounded replay evidence, not validation of all damage in that match.
+
+## Rejected Follow-Up Hypothesis
+
+The initial #252 claim that late Fake Out must simply fail was based on the
+generic moves.ts onTry, not the Champions override. A two-turn reference probe
+rejected selection: pinned mods/champions/moves.ts disables Fake Out after the
+first active move action. The proposed deletion of the Struggle fallback was
+withdrawn before commit or deployment. #252 now tracks format-specific
+selection/Encore/PP proof, not an established universal replacement rule.
+Failed local probe output is retained in artifacts/late-fake-out-before.log;
+no claim that the rejected probe validated Champions behavior.
