@@ -374,6 +374,16 @@
       "known_gap": ""
     },
     {
+      "id": "FORM-MC-ADMISSION",
+      "family": "transformations",
+      "behavior": "Reference admission and construction resolve the same Mega identity and matching stone.",
+      "status": "partial",
+      "tests": ["tests/mc_reference_execution_tests.js"],
+      "oracle": "Pinned mirrored species/form and item megaStone metadata; lifecycle contract, not complete-game Champions parity.",
+      "boundary_vectors": ["case-and-ID-alias", "unsupported-on-either-side", "base-plus-X-or-Y-stone", "wrong-species-stone", "delayed-evolution", "one-Mega-per-side", "registration-preserved"],
+      "known_gap": "Missing descriptors, form-specific weight/ability parity, all switch interactions and official M-C approval remain unproved."
+    },
+    {
       "id": "FORM-SWITCH-PERSISTENCE",
       "family": "transformations",
       "behavior": "Mega, stance, and supported Tera state persist or reset correctly through switching.",

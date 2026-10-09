@@ -14,6 +14,18 @@ function getMcReferenceMega(name) {
     ability:'Electric Surge', baseAbility:'Static', weightkg:38};
 }
 
+function resolveMcMega(name, item) {
+  var api = typeof ChampionsSim !== 'undefined' && ChampionsSim.moveLegality;
+  var data = typeof ChampionsSim !== 'undefined' && ChampionsSim.pokemonDataAudit;
+  var key = api && api.canonicalSpeciesKey(name), species = data && data.species[key];
+  var stone = data && data.items[String(item || '').toLowerCase().replace(/[^a-z0-9]/g,'')];
+  var target = species && /^Mega/.test(species.forme) ? key :
+    stone && stone.megaStone && typeof stone.megaStone === 'object' ? stone.megaStone[key] :
+    stone && stone.megaEvolves === key ? stone.megaStone : null;
+  var form = target && ((typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[target]) || getMcReferenceMega(target));
+  return {required:!!target, form:form ? Object.assign({megaName:target},form) : null};
+}
+
 function checkMcReferenceExecution(team, options) {
   var opts = options || {}, errors = [];
   var id = function(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g,''); };
@@ -48,8 +60,8 @@ function checkMcReferenceExecution(team, options) {
     if (!species || !Number.isInteger(species.num)) errors.push(m.name+': species identity missing.');
     else if (seen.has(species.num)) errors.push(m.name+': duplicate National Dex species.');
     else seen.add(species.num);
-    var mega = (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[m.name]) || getMcReferenceMega(m.name);
-    if (m.name.indexOf('-Mega') >= 0 && !mega) errors.push(m.name+': Mega lifecycle not implemented.');
+    var resolved = resolveMcMega(m.name,m.item), mega = resolved.form;
+    if (resolved.required && !mega) errors.push(m.name+': Mega lifecycle not implemented.');
     if (mega && m.item !== mega.megaStone) errors.push(m.name+': matching Mega Stone required.');
   });
   if (opts.bring && (!Array.isArray(opts.bring) || opts.bring.length !== 4 || new Set(opts.bring).size !== 4 ||

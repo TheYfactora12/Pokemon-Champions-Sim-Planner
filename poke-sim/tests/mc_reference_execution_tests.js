@@ -12,6 +12,70 @@ function team(){return {name:'Synthetic reference fixture',format:'champions',im
   member('Raichu-Mega-X','Raichunite X','Electric Surge'),member('Sneasler','Electric Seed','Unburden'),
   member('Pelipper','','Drizzle'),member('Farigiraf','Sitrus Berry','Armor Tail')]};}
 const opts={format:'doubles',bo:1,rulesetId:'champions_mc_reference',maxTurns:2,seed:[3,7,11,13]};
+
+test('Mega admission is invariant to case and normalized identifiers',()=>{
+  const c=harness();
+  for(const name of ['Raichu-Mega-Y','raichu-mega-y','RAICHU-MEGA-Y','raichumegay','  RaIcHu-MeGa-Y  ']) {
+    const t=team();t.members[0]=member(name,'Raichunite Y','No Guard');
+    const result=c.checkMcReferenceExecution(t,opts);
+    assert.equal(result.allowed,false,name);
+    assert.match(result.errors.join(' '),/Mega lifecycle not implemented/);
+    assert.equal(c.simulateBattle(t,team(),opts).result,'error');
+    assert.equal(c.simulateBattle(team(),t,opts).result,'error');
+  }
+  for(const name of ['Raichu-Mega-X','raichu-mega-x','RAICHUMEGAX']) {
+    const t=team();t.members[0]=member(name,'Raichunite X','Electric Surge');
+    assert.equal(c.checkMcReferenceExecution(t,opts).allowed,true,name);
+    const before=JSON.stringify(t),p=new c.Pokemon(t.members[0],'','champions',opts.rulesetId);
+    assert.equal(p.name,'Raichu');assert.equal(p._base.atk,90);
+    assert.equal(p.megaEvolve([]),true);assert.equal(p.name,'Raichu-Mega-X');
+    assert.equal(p.megaEvolve([]),false);assert.equal(JSON.stringify(t),before);
+  }
+});
+
+test('null stone metadata does not crash ordinary non-Mega admission',()=>{
+  const c=harness();c.ChampionsSim.pokemonDataAudit.items.magnet.megaStone=null;
+  assert.equal(c.resolveMcMega('Pelipper','Magnet').required,false);
+  assert.equal(c.resolveMcMega('Pelipper','Magnet').form,null);
+});
+
+test('base plus stone resolves supported lifecycle or explicitly rejects unsupported form',()=>{
+  const c=harness();
+  for(const [name,item,ability] of [['Raichu','Raichunite Y','Static']]) {
+    const t=team();t.members[0]=member(name,item,ability);
+    assert.match(c.checkMcReferenceExecution(t,opts).errors.join(' '),/Mega lifecycle not implemented/);
+  }
+  const t=team();t.members[0]=member('Charizard','Charizardite X','Blaze');
+  assert.equal(c.checkMcReferenceExecution(t,opts).allowed,true);
+  const p=new c.Pokemon(t.members[0],'','champions',opts.rulesetId);
+  assert.equal(p.name,'Charizard');assert.equal(p.ability,'Blaze');
+  assert.equal(p.megaEvolve([]),true);assert.equal(p.name,'Charizard-Mega-X');
+  assert.equal(p.ability,'Tough Claws');assert.equal(p.megaEvolve([]),false);
+  const y=new c.Pokemon(member('Charizard','Charizardite Y','Blaze'),'','champions',opts.rulesetId);
+  assert.equal(y.megaEvolve([]),true);assert.equal(y.name,'Charizard-Mega-Y');
+  assert.equal(y.ability,'Drought');
+  for(const [name,item,ability] of [['Dragonite','Dragoninite','Inner Focus'],['Clefable','Clefablite','Magic Guard']]) {
+    const set=member(name,item,ability),mon=new c.Pokemon(set,'','champions',opts.rulesetId);
+    assert.equal(mon.name,name);assert.equal(mon.ability,ability);
+    assert.equal(mon.megaEvolve([]),true);assert.equal(mon.name,name+'-Mega');
+  }
+  const ordinary=new c.Pokemon(member('Pelipper','Charizardite X','Drizzle'),'','champions',opts.rulesetId);
+  assert.equal(ordinary.megaForm,null,'wrong species cannot use another species stone');
+});
+
+test('base/stone battle keeps registration, delays evolution and limits each side to one',()=>{
+  const c=harness(),t=team();t.members[0]=member('Charizard','Charizardite X','Blaze');
+  const before=JSON.stringify(t),r=c.simulateBattle(t,t,{...opts,_megaPolicyOverride:{side:'player',policy:'at_turn',triggerTurn:2}});
+  assert.notEqual(r.result,'error',r.winCondition);
+  assert.equal(r.turnLog[0].post.roster.player[0].ability,'Blaze');
+  assert.equal(r.turnLog[1].post.roster.player[0].ability,'Tough Claws');
+  assert.equal(r.log.filter(s=>s.includes('Mega Evolved')).length,2);
+  assert.equal(JSON.stringify(t),before);
+  t.members[1]=member('Raichu','Raichunite X','Static');
+  const two=c.simulateBattle(t,t,opts);
+  assert.notEqual(two.result,'error',two.winCondition);
+  assert.equal(two.log.filter(s=>s.includes('Mega Evolved')).length,2);
+});
 test('reference selection allows checked draft but official, historical and missing opt-in do not',()=>{
   const c=harness(),t=team(),before=JSON.stringify(t);
   assert.equal(c.checkTeamForSelectedRegulation(t,opts.rulesetId,opts).allowed,true);

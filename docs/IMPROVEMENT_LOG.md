@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0090: Share Mega Identity Between Admission And Construction
+
+- #241 reproduced a case-sensitive lifecycle bypass and silent base/stone
+  non-evolution. One reference-scoped resolver now owns both paths.
+- Added aliases, stone variants, both-side rejection, delayed and one-per-side
+  regression coverage. Independent review added null-metadata robustness.
+- Keep transformation coverage partial; descriptors are not parity proof.
+  Browser/export evidence exposed a separate potential flinch issue (#249).
+- Evidence and remaining scope: [Mega admission report](release/MEGA_ADMISSION_2026-10-09.md).
+- Lesson: a gate and its execution path must consume the same canonical identity.
+
+
 ## IMP-0089: Remove Competing Current Instructions Without Losing History
 
 - Replaced a 587-line mixed-era STATUS with one current receipt and queue;
