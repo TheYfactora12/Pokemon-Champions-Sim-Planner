@@ -8,15 +8,15 @@ Historical candidate observations are not current deployment instructions.
 ## Verified Release
 
 - Primary repository: TheYfactora12/Pokemon-Champions-Sim-Planner, main.
-- Deployed build: **v2.2.202-klutz-items**, preview / local-save.
-- Runtime merge: `698957eeaa142b41d72c96a439fc6e62f196611c`, [PR254](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/254).
-- Required PR CI `37933950819`, bundle and cache checks passed; Pages `37934590584` succeeded.
-- At 2026-10-09T13:10:36.268Z, HTTP checks matched bundle and external assets.
-  A five-turn live synthetic game was downloaded and compared to visible logs;
-  Klutz/Scarf Lopunny retained base and effective Speed 157.
-  [Scoped receipt](docs/release/KLUTZ_ITEM_PATHS_2026-10-09.md).
-- Bundle SHA-256: `99d1365c5550a3c7d9bab6cb88a760375347a5b9a35737bc2bbb2c2d143d1d43`.
-- Previous verified release/rollback target: v201, `20ecb36eb608524714664e1ce9e2503ed5d65031`.
+- Deployed build: **v2.2.203-catalog-headroom**, preview / local-save.
+- Runtime merge: `07e36dc1d084235f353763ea1306e67c9cb3e748`, [PR257](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/257).
+- Required PR CI `37935730695`, bundle and cache checks passed; Pages `37936291758` succeeded.
+- At 2026-10-09T13:24:15.049Z, HTTP checks matched bundle and external assets.
+  Live/local catalog rendering matched, including all 13 names and an expanded
+  six-member sheet. This serialization-only release changes no battle mechanics.
+  [Scoped receipt](docs/release/CATALOG_HEADROOM_2026-10-09.md).
+- Bundle SHA-256: `1889ba9309156fb6b3bd81adf0b8b60216d0c0a8dcf55b9f06e15d13f95112e4`.
+- Previous verified release/rollback target: v202, `698957eeaa142b41d72c96a439fc6e62f196611c`.
 - This proves the named release/assets and scoped lifecycle path, not all game mechanics, live DB
   security, mobile journeys or beta readiness. No verified 99% accuracy claim.
 - Alfredo's repository is the intended backup, not an assumed synchronized
@@ -35,8 +35,9 @@ Supabase security or ownership tests.
 
 v201 shipped the first-turn Fake Out fix (#249); see
 [scoped evidence](docs/release/FAKE_OUT_FLINCH_2026-10-09.md).
-v202 Klutz direct-item guards are deployed and smoke-tested. #255 bundle
-headroom (145 bytes remaining) precedes adding runtime code. #235 Lum activation,
+v202 Klutz direct-item guards are deployed and smoke-tested. v203 recovered
+catalog whitespace headroom (16,541 bytes remaining); broader #255 size work
+remains open. #235 Lum activation,
 #252 Champions-specific late Fake Out/Encore timing, #241 descriptors/aliases
 and official approval remain open. Do not infer team strength from these fixes.
 
