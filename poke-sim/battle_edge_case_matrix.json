@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "MOVE-FAKE-OUT-FLINCH",
+      "family": "moves-effects",
+      "behavior": "First-turn Fake Out denies an eligible target action without spending target PP.",
+      "status": "partial",
+      "tests": ["tests/fake_out_flinch_tests.js", "tests/fake_out_reference_tests.mjs"],
+      "oracle": "Pinned pokemon-showdown 0.11.11 synthetic doubles action-order and PP comparisons.",
+      "boundary_vectors": ["side-swap", "Inner-Focus", "Shield-Dust", "Covert-Cloak", "Klutz", "Mold-Breaker", "Ability-Shield", "Sheer-Force", "Substitute", "Infiltrator", "Protect", "Ghost", "next-turn-reset"],
+      "known_gap": "Late forced Fake Out currently becomes Struggle; broader flinch chance modifiers, multi-hit timing and Champions-specific confirmation remain open."
+    },
+    {
       "id": "STATS-ROSTER-CONSUMER-PARITY",
       "family": "stats-forms",
       "behavior": "Mapped roster types and unboosted Speed agree with runtime stats; supported Eternal Flower aliases preserve species identity.",
