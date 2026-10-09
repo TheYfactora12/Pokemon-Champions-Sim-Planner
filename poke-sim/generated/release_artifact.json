@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.202-klutz-items",
+  "build_id": "v2.2.203-catalog-headroom",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "99d1365c5550a3c7d9bab6cb88a760375347a5b9a35737bc2bbb2c2d143d1d43",
-  "bundle_bytes": 11534191,
+  "bundle_sha256": "1889ba9309156fb6b3bd81adf0b8b60216d0c0a8dcf55b9f06e15d13f95112e4",
+  "bundle_bytes": 11517795,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/champions_move_pools.js": {

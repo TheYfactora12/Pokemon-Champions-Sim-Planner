@@ -17,6 +17,16 @@ assert.ok(read('tools/build-bundle.py').includes('sanitize_inline_js(tournament_
 const context = { TEAMS: [{ id: 'existing-regression' }] };
 vm.createContext(context);
 vm.runInContext(read('generated/tournament_catalog.js'), context);
+assert.deepEqual(JSON.parse(JSON.stringify(context.CS_TOURNAMENT_CATALOG)), catalog, 'compact serialization must preserve every source value');
+assert.equal(generateCatalog(catalog), generateCatalog(structuredClone(catalog)), 'generation must be deterministic');
+const escapedCatalog = structuredClone(catalog);
+escapedCatalog.teams[0].player = '</script><script>unsafe</script>';
+const escapedOutput = generateCatalog(escapedCatalog);
+assert.ok(!escapedOutput.includes('</script>'), 'inline HTML terminators must remain escaped');
+const escapedContext = {};
+vm.runInNewContext(escapedOutput, escapedContext);
+assert.deepEqual(JSON.parse(JSON.stringify(escapedContext.CS_TOURNAMENT_CATALOG)), escapedCatalog);
+assert.ok(Buffer.byteLength(generateCatalog(catalog)) < 30000, 'catalog must retain recovered size headroom');
 assert.equal(JSON.stringify(context.TEAMS), '[{"id":"existing-regression"}]', 'review candidates must not enter runtime TEAMS');
 for (const mutate of [
   c => c.format = 'singles',
