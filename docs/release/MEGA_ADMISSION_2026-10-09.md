@@ -50,3 +50,14 @@ Keep #241 open for descriptor/alias completeness and #232 for exact-package
 approval. Next mechanics work includes #249 and item suppression in #235.
 
 All issue numbers refer to TheYfactora12/Pokemon-Champions-Sim-Planner.
+
+## Verified Deployment
+
+Final local project gate passed, with offline/mock DB checks only. PR250 merged
+as 287c4e4804ab5c82ecee82556d4d363c24d72461 after required CI37929018619.
+Pages37929506718 passed. HTTP artifact checks passed 2026-10-09T12:25:45.177Z.
+Fresh live browser ran a six-turn synthetic game and retrieved its JSON.
+Seed: 237452163,3434968491,1613702333,4246864003. Of 41 log-type events,
+36 appeared verbatim; one Hurricane miss and four Leftovers heal rows matched
+the equivalent formatted UI wording/amounts. This is presentation and lifecycle
+evidence, not full battle correctness. [Receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/250#issuecomment-6080865766).
