@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.201-fake-out-flinch",
+  "build_id": "v2.2.202-klutz-items",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "e564e2a0edf693f7c30e4a0aae30bc3dd90385af3333251f7e75a539cc7cf863",
-  "bundle_bytes": 11533964,
+  "bundle_sha256": "99d1365c5550a3c7d9bab6cb88a760375347a5b9a35737bc2bbb2c2d143d1d43",
+  "bundle_bytes": 11534191,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/champions_move_pools.js": {

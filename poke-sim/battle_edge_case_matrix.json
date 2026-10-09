@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "ITEM-KLUTZ-DIRECT-PATHS",
+      "family": "items",
+      "behavior": "Klutz suppresses Scarf speed/locking, Power Herb charge skipping and Focus Sash survival without losing ownership.",
+      "status": "partial",
+      "tests": ["tests/klutz_item_paths_tests.js", "tests/klutz_item_reference_tests.mjs"],
+      "oracle": "Pinned pokemon-showdown 0.11.11 Champions synthetic custom games; not item eligibility.",
+      "boundary_vectors": ["active-control", "Klutz-control", "speed", "move-lock", "charge-preview", "charge-execution", "charge-turn-two", "sunlight", "consumption", "lethal-hit"],
+      "known_gap": "Ability changes, consumed-item transitions, Magic Room/Embargo and broader item inventory remain unproved."
+    },
+    {
       "id": "MOVE-FAKE-OUT-FLINCH",
       "family": "moves-effects",
       "behavior": "First-turn Fake Out denies an eligible target action without spending target PP.",
