@@ -1,6 +1,6 @@
 # Project Status
 
-Reviewed: 2026-10-08. This file owns current release facts and priorities.
+Reviewed: 2026-10-09. This file owns current release facts and priorities.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
@@ -8,14 +8,15 @@ Historical candidate observations are not current deployment instructions.
 ## Verified Release
 
 - Primary repository: TheYfactora12/Pokemon-Champions-Sim-Planner, main.
-- Deployed build: **v2.2.199-project-alignment**, preview / local-save.
-- Runtime merge: `3c6dca619916f7aedea09de582eb6cbc1a4b005c`, [PR246](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/246).
-- Required PR CI `37856610213`, bundle and cache checks passed; Pages `37857086095` succeeded.
-- At 2026-10-08T23:05:35.983Z, HTTP checks matched bundle and four external assets.
-  Fresh browser readback confirmed v199 and its corrected roadmap. [Deployment receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/246#issuecomment-6070804929).
-- Bundle SHA-256: `f6154ca9743cb93f09c3c0dc1307ab7b2c767a06a0895ef3906b6e1000de595a`.
-- Previous verified rollback: v198, `8191d27326d7a1b1cf328317f9e4921ba10bde93`.
-- This proves the named release/assets/roadmap, not all game mechanics, live DB
+- Deployed build: **v2.2.200-mega-admission**, preview / local-save.
+- Runtime merge: `287c4e4804ab5c82ecee82556d4d363c24d72461`, [PR250](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/250).
+- Required PR CI `37929018619`, bundle and cache checks passed; Pages `37929506718` succeeded.
+- At 2026-10-09T12:25:45.177Z, HTTP checks matched bundle and four external assets.
+  Fresh browser ran a six-turn synthetic base/stone match and downloaded its JSON.
+  All 41 log events matched verbatim or reviewed formatted wording. [Receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/250#issuecomment-6080865766).
+- Bundle SHA-256: `7924efc3190cb04291eb73917459ce599472c76851f9be40f26f427ab3acbc28`.
+- Previous verified release/rollback target: v199, `3c6dca619916f7aedea09de582eb6cbc1a4b005c`.
+- This proves the named release/assets and scoped lifecycle path, not all game mechanics, live DB
   security, mobile journeys or beta readiness. No verified 99% accuracy claim.
 - Alfredo's repository is the intended backup, not an assumed synchronized
   deployment. Preserve divergent work; no backup/failover certification here.
@@ -31,11 +32,11 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
-v200 candidate: canonical Mega admission and supported base/stone resolution
-are under release checks; see [scoped evidence](docs/release/MEGA_ADMISSION_2026-10-09.md).
+v200 shipped canonical Mega admission and supported base/stone resolution;
+see [scoped evidence](docs/release/MEGA_ADMISSION_2026-10-09.md).
 #241 stays open for remaining descriptor and alias gaps. The browser sample
 identified possible Fake Out/action denial (#249); investigate before interpreting
-team strength. This candidate note is not a deployment receipt.
+team strength. Missing descriptors and official approval are not resolved.
 
 All issue numbers below refer to TheYfactora12/Pokemon-Champions-Sim-Planner.
 
@@ -43,8 +44,9 @@ Security intake #247: GitHub reports 31 dependency alerts (12 high, 14 moderate,
 5 low). Triage affected runtime/build paths before expanding release claims;
 provider severity is not yet a project-specific exploitability assessment.
 
-1. **Mega identity and lifecycle (#241):** fix canonical-name bypass and
-   base-plus-stone behavior; inventory has 21 missing descriptors and 3 aliases.
+1. **Battle correctness (#249/#241):** investigate Fake Out/action denial and
+   complete Mega descriptors/aliases; canonical-name bypass and supported
+   base-plus-stone behavior are repaired in v200, not complete Mega parity.
 2. **Item and move correctness (#235, #245):** repair Lum/Klutz boundaries and
    trace 22 remaining move rows after existing PP overrides explain 51 of 73
    raw differences. Inventory is not effective-engine correctness proof.
