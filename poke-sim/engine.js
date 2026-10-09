@@ -283,6 +283,7 @@ var HIGH_CRIT_MOVES = new Set([
 ]);
 var ALWAYS_CRIT_MOVES = new Set(['Frost Breath','Storm Throw','Surging Strikes']);
 var FLINCH_MOVES = {
+  'Fake Out': { chance: 1.00 },
   'Rock Slide':   { chance: 0.30 },
   'Iron Head':    { chance: 0.20 }, // Champions nerf (30% -> 20%)
   'Air Slash':    { chance: 0.30 },
@@ -315,7 +316,7 @@ var SOUND_MOVES = new Set([
 var SHEER_FORCE_MOVES = new Set([
   'Air Slash','Ancient Power','Bite','Blizzard','Body Slam','Bug Buzz',
   'Charge Beam','Crunch','Dark Pulse','Discharge','Dragon Rush','Earth Power',
-  'Energy Ball','Eerie Spell','Extrasensory','Fire Blast','Fire Fang','Flamethrower',
+  'Energy Ball','Eerie Spell','Extrasensory','Fake Out','Fire Blast','Fire Fang','Flamethrower',
   'Flash Cannon','Focus Blast','Heat Wave','Hurricane','Hyper Fang',
   'Ice Beam','Ice Fang','Icicle Crash','Icy Wind','Iron Head','Lava Plume',
   'Lunge','Meteor Mash','Moonblast','Muddy Water','Needle Arm','Poison Jab',
@@ -6213,7 +6214,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         // target hasn't acted yet. Fang moves roll flinch + status independently.
         if (t.alive) {
           const _flinch = FLINCH_MOVES[move];
-          if (!_suppressSecondary && _flinch && !t.hasActed && rng() < _flinch.chance) {
+          if (!_suppressSecondary && !_hadSubstitute && _flinch && !t.hasActed &&
+              !_targetAbilityActive(t, attacker, 'Inner Focus') &&
+              !_targetAbilityActive(t, attacker, 'Shield Dust') &&
+              !(t.item === 'Covert Cloak' && !t.itemConsumed && t.ability !== 'Klutz') &&
+              rng() < _flinch.chance) {
             t._flinched = true;
             t._flinchSource = {
               actor: attacker.name || null,

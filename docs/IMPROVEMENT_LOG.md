@@ -1,5 +1,18 @@
 # Improvement Log
 
+## IMP-0091: Prove Action Denial, Not Just Fake Out Damage
+
+- #249 browser/export pair reproduced Fake Out hitting before the target acted.
+  Fake Out was absent from the flinch table and Sheer Force move set.
+- Added guaranteed secondary flinch and shared Substitute, Inner Focus,
+  Shield Dust and effective Covert Cloak guards. Preserve Mold Breaker,
+  Ability Shield, Infiltrator and Klutz boundaries.
+- Evidence: [flinch report](release/FAKE_OUT_FLINCH_2026-10-09.md).
+  Candidate v201; deployment proof must be appended after hosted verification.
+- Lesson: damage success is not evidence that secondary effects or denied-action
+  PP semantics work. Keep source comparisons and replay evidence paired.
+
+
 ## IMP-0090: Share Mega Identity Between Admission And Construction
 
 - #241 reproduced a case-sensitive lifecycle bypass and silent base/stone
