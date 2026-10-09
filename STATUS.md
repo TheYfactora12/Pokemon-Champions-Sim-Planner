@@ -8,14 +8,15 @@ Historical candidate observations are not current deployment instructions.
 ## Verified Release
 
 - Primary repository: TheYfactora12/Pokemon-Champions-Sim-Planner, main.
-- Deployed build: **v2.2.200-mega-admission**, preview / local-save.
-- Runtime merge: `287c4e4804ab5c82ecee82556d4d363c24d72461`, [PR250](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/250).
-- Required PR CI `37929018619`, bundle and cache checks passed; Pages `37929506718` succeeded.
-- At 2026-10-09T12:25:45.177Z, HTTP checks matched bundle and four external assets.
-  Fresh browser ran a six-turn synthetic base/stone match and downloaded its JSON.
-  All 41 log events matched verbatim or reviewed formatted wording. [Receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/250#issuecomment-6080865766).
-- Bundle SHA-256: `7924efc3190cb04291eb73917459ce599472c76851f9be40f26f427ab3acbc28`.
-- Previous verified release/rollback target: v199, `3c6dca619916f7aedea09de582eb6cbc1a4b005c`.
+- Deployed build: **v2.2.201-fake-out-flinch**, preview / local-save.
+- Runtime merge: `20ecb36eb608524714664e1ce9e2503ed5d65031`, [PR253](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/253).
+- Required PR CI `37932507880`, bundle and cache checks passed; Pages `37933058440` succeeded.
+- At 2026-10-09T12:56:47.371Z, HTTP checks matched bundle and external assets.
+  Two four-turn live synthetic games were downloaded and compared to visible logs;
+  one proved flinch denial with PP retained, the other showed Armor Tail blocking.
+  [Receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/253#issuecomment-6081366821).
+- Bundle SHA-256: `e564e2a0edf693f7c30e4a0aae30bc3dd90385af3333251f7e75a539cc7cf863`.
+- Previous verified release/rollback target: v200, `287c4e4804ab5c82ecee82556d4d363c24d72461`.
 - This proves the named release/assets and scoped lifecycle path, not all game mechanics, live DB
   security, mobile journeys or beta readiness. No verified 99% accuracy claim.
 - Alfredo's repository is the intended backup, not an assumed synchronized
@@ -32,11 +33,11 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
-v200 shipped canonical Mega admission and supported base/stone resolution;
-see [scoped evidence](docs/release/MEGA_ADMISSION_2026-10-09.md).
-#241 stays open for remaining descriptor and alias gaps. The browser sample
-identified possible Fake Out/action denial (#249); investigate before interpreting
-team strength. Missing descriptors and official approval are not resolved.
+v201 shipped the first-turn Fake Out fix (#249); see
+[scoped evidence](docs/release/FAKE_OUT_FLINCH_2026-10-09.md).
+v202 Klutz item candidate is in review, not yet deployed. #235 Lum activation,
+#252 Champions-specific late Fake Out/Encore timing, #241 descriptors/aliases
+and official approval remain open. Do not infer team strength from these fixes.
 
 All issue numbers below refer to TheYfactora12/Pokemon-Champions-Sim-Planner.
 

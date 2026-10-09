@@ -1378,7 +1378,7 @@ function _isChargeMove(move) {
 
 function _moveSkipsChargeTurn(mon, move, field) {
   if (!_isChargeMove(move)) return false;
-  if (mon && mon.item === 'Power Herb' && !mon.itemConsumed) return true;
+  if (mon && mon.item === 'Power Herb' && !mon.itemConsumed && mon.ability !== 'Klutz') return true;
   var weather = _effectiveFieldWeather(field);
   if (move === 'Electro Shot') return weather === 'rain';
   if (move === 'Solar Beam' || move === 'Solar Blade') return weather === 'sun';
@@ -2478,7 +2478,7 @@ class Pokemon {
     // absent from Champions launch (IGN Changes, games.gg); kept here as no-op
     // safe: if user imports a legacy set with Band/Specs, they simply have no
     // effect (matches in-game reality until items are added).
-    if (stat === 'spe' && this.item === 'Choice Scarf') val *= 1.5;
+    if (stat === 'spe' && this.item === 'Choice Scarf' && this.ability !== 'Klutz' && !this.itemConsumed) val *= 1.5;
     // (Choice Band / Choice Specs multipliers removed — #11 WONTFIX pattern.)
     // T9j.6 (#11 WONTFIX) — Assault Vest absent from Champions launch item pool
     // (Game8 Champions item list; IGN Champions Changes). No effect applied.
@@ -4237,7 +4237,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     // T9j.6 (#18) — Choice Scarf lock enforcement. If holder already used a move
     // and still has it legal, must use same move. Cite: Bulbapedia Choice Scarf.
-    if (attacker.item === 'Choice Scarf' && attacker.choiceLock &&
+    if (attacker.item === 'Choice Scarf' && attacker.ability !== 'Klutz' && !attacker.itemConsumed && attacker.choiceLock &&
         attacker.moves.includes(attacker.choiceLock) && _movePPRemaining(attacker, attacker.choiceLock) > 0) {
       const target = liveEnemies[0] || allies.find(a => a !== attacker && a.alive) || null;
       return { move: attacker.choiceLock, target };
@@ -4498,7 +4498,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     // T9j.6 (#18) — Choice Scarf lock SET on first move used. Exempt utility
     // moves that break/transfer the lock per Bulbapedia (Trick, Switcheroo).
-    if (attacker.item === 'Choice Scarf' && !attacker.choiceLock &&
+    if (attacker.item === 'Choice Scarf' && attacker.ability !== 'Klutz' && !attacker.itemConsumed && !attacker.choiceLock &&
         move !== 'Trick' && move !== 'Switcheroo' && move !== 'Struggle') {
       attacker.choiceLock = move;
     }
@@ -4552,7 +4552,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       ((move === 'Solar Beam' || move === 'Solar Blade') && _effectiveWeather === 'sun')
     );
     const _powerHerbSkip = !_continuingCharge && _isChargeMove(move) &&
-      attacker.item === 'Power Herb' && !attacker.itemConsumed &&
+      attacker.item === 'Power Herb' && !attacker.itemConsumed && attacker.ability !== 'Klutz' &&
       !_naturalChargeSkip;
     const _chargeWouldNormallyBeSkipped = _naturalChargeSkip || _powerHerbSkip;
     if (_continuingCharge) {
@@ -6326,7 +6326,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       sturdySaved = true;
     }
     let sashSaved = false;
-    if (!enduredHit && !sturdySaved && target.hp === 0 && target.item === 'Focus Sash' && !target.itemConsumed && wasFullHp) {
+    if (!enduredHit && !sturdySaved && target.hp === 0 && target.item === 'Focus Sash' && !target.itemConsumed && target.ability !== 'Klutz' && wasFullHp) {
       target.hp = 1;
       _consumeHeldItem(target);
       sashSaved = true;

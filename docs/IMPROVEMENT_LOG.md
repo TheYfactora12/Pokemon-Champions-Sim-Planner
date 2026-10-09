@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0092: Suppress Direct Item Effects Without Losing Ownership
+
+- #235 active/suppressed fixtures reproduced Choice Scarf, Power Herb and Focus
+  Sash applying effects to Klutz holders. Six direct paths now check suppression.
+- Eleven local boundary checks and six Champions-reference probes cover named
+  speed, charge, consumption and survival behavior. Lum Berry is separate.
+- [Candidate evidence](release/KLUTZ_ITEM_PATHS_2026-10-09.md). Not deployment
+  proof until a hosted receipt is recorded.
+- Lesson: item presence and item effect availability are different contracts;
+  suppression must not erase ownership or silently certify item eligibility.
+
+
 ## IMP-0091: Prove Action Denial, Not Just Fake Out Damage
 
 - #249 browser/export pair reproduced Fake Out hitting before the target acted.

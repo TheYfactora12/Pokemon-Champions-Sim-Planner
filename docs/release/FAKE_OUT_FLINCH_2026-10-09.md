@@ -60,3 +60,12 @@ withdrawn before commit or deployment. #252 now tracks format-specific
 selection/Encore/PP proof, not an established universal replacement rule.
 Failed local probe output is retained in artifacts/late-fake-out-before.log;
 no claim that the rejected probe validated Champions behavior.
+
+## Deployed Receipt
+
+PR253 merged as 20ecb36; CI37932507880 and Pages37933058440 passed.
+HTTP identity/assets passed at 2026-10-09T12:56:47.371Z. Two fresh live
+four-turn samples were downloaded and compared: Armor Tail rejection and
+successful flinch/action denial with Dragon Claw PP16/16. All log-type events
+matched verbatim or reviewed equivalent UI formatting. Details and seeds:
+[deployment receipt](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/253#issuecomment-6081366821).
