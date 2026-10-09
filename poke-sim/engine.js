@@ -2174,37 +2174,19 @@ class Pokemon {
     this.roles = (typeof classifyPokemon === 'function' ? (classifyPokemon(data).roles || []) : []);
     this.teamStyle = teamStyle;
     this.tera = data.teraType || data.tera_type || data.tera || null;
-    // Issue #T1: Champions Stat Point (SP) system support.
-    // Champions replaced SV-style EVs with Stat Points:
-    //   - Per-stat cap 32 (SV: 252), total cap 66 (SV: 510)
-    //   - IVs fixed at 31 and removed from formula
-    //   - HP = Base + SP + 75 ; Other = floor((Base + SP + 20) * Alignment)
+    // Champions SP caps: 32 per stat, 66 total. Preserve the format mismatch
+    // guard so an SV-scale spread cannot enter the Champions stat formula.
     // Source: https://bulbapedia.bulbagarden.net/wiki/Stat_point
-    // Format resolution order: explicit teamFormat > auto-detect from spread shape > 'sv'.
-    //
-    // T9j.13 (Refs #42) — Format-mismatch guard.
-    // If the team is declared 'champions' but the spread is SV-scale (total > 66
-    // OR any stat > 32), fall back to SV-scale to prevent god-tier stats from the
-    // Champions HP formula (Base + SP + 75) being applied to a 252 SP value.
-    // This was the root cause of Cofagrigus / Aurora Veil teams hitting 100% WR
-    // in the 5070-battle audit (#42). Non-breaking for legitimate Champions
-    // teams because they already satisfy the cap; only misdeclared teams shift.
-    //   Cite: https://bulbapedia.bulbagarden.net/wiki/Stat_point
-    //   Cite: https://game8.co/games/Pokemon-Champions/archives/538683
     var _declaredFmt = teamFormat || data.format || null;
     var _resolvedStatFormat = resolveMonStatFormat(data, _declaredFmt);
     this.teamFormat = _declaredFmt;
     this.statFormat = _resolvedStatFormat.statFormat;
     this.formatMismatch = _resolvedStatFormat.formatMismatch;
 
-    // T9j.7 — Mega form resolution.
-    // If this is a -Mega name and we have a CHAMPIONS_MEGAS entry AND the
-    // correct Mega Stone is held, enter battle in BASE form. Store Mega form
-    // for later trigger during simulateBattle. Backward-compat: no stone held
-    // means legacy behavior (name unchanged, Mega stats from turn 1).
-    const _megaInfo = (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[data.name]) ||
-      (referenceMode === 'champions_mc_reference' && typeof getMcReferenceMega === 'function' &&
-        getMcReferenceMega(data.name === 'Raichu' && data.item === 'Raichunite X' ? 'Raichu-Mega-X' : data.name)) || null;
+    // Reference admission and construction share canonical form/stone resolution.
+    const _megaInfo = referenceMode === 'champions_mc_reference' && typeof resolveMcMega === 'function'
+      ? resolveMcMega(data.name,data.item).form
+      : (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[data.name]) || null;
     if (_megaInfo && _megaInfo.baseSpecies && data.item === _megaInfo.megaStone) {
       this.megaForm = {
         megaName:    _megaInfo.megaName || data.name,

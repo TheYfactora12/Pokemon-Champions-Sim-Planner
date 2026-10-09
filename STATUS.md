@@ -31,6 +31,12 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
+v200 candidate: canonical Mega admission and supported base/stone resolution
+are under release checks; see [scoped evidence](docs/release/MEGA_ADMISSION_2026-10-09.md).
+#241 stays open for remaining descriptor and alias gaps. The browser sample
+identified possible Fake Out/action denial (#249); investigate before interpreting
+team strength. This candidate note is not a deployment receipt.
+
 All issue numbers below refer to TheYfactora12/Pokemon-Champions-Sim-Planner.
 
 Security intake #247: GitHub reports 31 dependency alerts (12 high, 14 moderate,

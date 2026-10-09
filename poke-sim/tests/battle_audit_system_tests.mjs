@@ -35,15 +35,17 @@ assert.ok(manifest.families.filter((family) => family.status !== 'regression_cov
 
 const summary = buildSummary(manifest, edgeMatrix);
 assert.equal(summary.total_families, 15);
-assert.equal(summary.family_counts.regression_covered, 5);
-assert.equal(summary.family_counts.partial, 8);
+assert.equal(summary.family_counts.regression_covered, 4);
+assert.equal(summary.family_counts.partial, 9);
 assert.equal(summary.family_counts.gap, 2);
 assert.equal(summary.universal_accuracy_proven, false);
 assert.equal(summary.total_inventories, 5);
 assert.equal(summary.inventory_counts.partial, 3);
 assert.equal(summary.inventory_counts.gap, 2);
-assert.equal(summary.total_edge_cases, 50);
-assert.deepEqual(summary.edge_case_counts, { covered: 18, partial: 27, open: 5 });
+assert.equal(summary.total_edge_cases, 51);
+assert.deepEqual(summary.edge_case_counts, { covered: 18, partial: 28, open: 5 });
+assert.equal(manifest.families.find(row => row.id === 'transformations').status, 'partial');
+assert.ok(summary.unproved_edge_case_ids.includes('FORM-MC-ADMISSION'));
 assert.ok(summary.unproved_edge_case_ids.includes('ITEM-TERRAIN-SEED-ACTIVATION'));
 assert.ok(summary.unproved_edge_case_ids.includes('STATS-ROSTER-CONSUMER-PARITY'));
 assert.ok(summary.unproved_edge_case_ids.includes('RESOURCE-PP-DRAIN-SUBSTITUTE'));

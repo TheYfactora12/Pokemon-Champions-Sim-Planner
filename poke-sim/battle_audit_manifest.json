@@ -126,9 +126,9 @@
     {
       "id": "transformations",
       "name": "Mega activation, runtime form changes, and supported Tera behavior",
-      "status": "regression_covered",
-      "tests": ["tests/mega_tests.js", "tests/mega_runtime_battle_effect_tests.js", "tests/mega_runtime_form_guard_tests.js", "tests/t152_tera_activation_tests.js"],
-      "known_gaps": []
+      "status": "partial",
+      "tests": ["tests/mega_tests.js", "tests/mega_runtime_battle_effect_tests.js", "tests/mega_runtime_form_guard_tests.js", "tests/t152_tera_activation_tests.js", "tests/mc_reference_execution_tests.js"],
+      "known_gaps": ["M-C descriptor completeness, form-specific ability/weight parity and official approval remain open; admission fixtures do not certify all transformations."]
     },
     {
       "id": "legality-imports",
