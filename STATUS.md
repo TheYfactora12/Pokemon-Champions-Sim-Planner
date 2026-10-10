@@ -33,6 +33,12 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
+v204 candidate: active Rock Head recoil and matchup headings corrected locally;
+19 focused and eight pinned-reference probes pass. The 6,370-battle variation
+sweep has zero Rock Head flags (previously 580). Review/release checks pending;
+v203 remains the verified deployment until a fresh receipt is recorded.
+[Scope and limits](docs/release/ROCK_HEAD_MATRIX_2026-10-10.md).
+
 v201 shipped the first-turn Fake Out fix (#249); see
 [scoped evidence](docs/release/FAKE_OUT_FLINCH_2026-10-09.md).
 v202 Klutz direct-item guards are deployed and smoke-tested. v203 recovered
