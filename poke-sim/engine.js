@@ -6491,7 +6491,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     // Recoil
     const recoilRule = _moveRecoilRule(move);
-    if (recoilRule && attacker && attacker.alive) {
+    if (recoilRule && attacker && attacker.alive && (attacker.ability !== 'Rock Head' || move === 'Struggle')) {
       const hpBeforeRecoil = attacker.hp;
       const recoil = _ratioAmount(appliedDamage, recoilRule);
       attacker.hp = Math.max(0, attacker.hp - recoil);

@@ -1365,3 +1365,13 @@ Dated verification / rollback / recurrence notes:
 ```
 
 For documentation-only work, use a document consistency check instead of claiming a runtime regression. For sensitive security work, keep the public entry general and point to an access-controlled record by ID.
+# 2026-10-10: Rock Head and matchup labels
+
+Local candidate v204: shared recoil path omitted the active Rock Head guard;
+matchup headings described different values than the renderer emitted. Added
+failing-before recoil fixtures, side-swapped doubles HP checks and reference
+probes. Repeated identical variation coverage: 580 recoil flags before, zero
+after. Structural success is not mechanics certification. Suppression, full
+parity and deployment remain separately tracked. See
+[scoped audit](release/ROCK_HEAD_MATRIX_2026-10-10.md), issues #260 and #242.
+

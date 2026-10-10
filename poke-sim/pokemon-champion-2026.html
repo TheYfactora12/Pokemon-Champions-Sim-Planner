@@ -3115,7 +3115,7 @@ table{border-collapse:collapse;width:100%}
       <table class="matchup-table">
         <thead>
           <tr>
-            <th>Opponent</th><th>Win%</th><th>W</th><th>L</th><th>D</th><th>Avg Turns</th><th>Top Win Cond</th>
+            <th>Opponent</th><th>Win%</th><th>W</th><th>L</th><th>Avg Turns</th><th>Avg TR Turns</th><th>Assessment</th>
           </tr>
         </thead>
         <tbody id="matchup-tbody"></tbody>
@@ -3741,9 +3741,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
     data_mode: 'local-only',
-    build_id: 'v2.2.203-catalog-headroom',
-    release_date: '2026-10-09',
-    service_worker_cache: 'champions-sim-v2-2-203-catalog-headroom',
+    build_id: 'v2.2.204-rock-head-matrix',
+    release_date: '2026-10-10',
+    service_worker_cache: 'champions-sim-v2-2-204-rock-head-matrix',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -16684,7 +16684,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     // Recoil
     const recoilRule = _moveRecoilRule(move);
-    if (recoilRule && attacker && attacker.alive) {
+    if (recoilRule && attacker && attacker.alive && (attacker.ability !== 'Rock Head' || move === 'Struggle')) {
       const hpBeforeRecoil = attacker.hp;
       const recoil = _ratioAmount(appliedDamage, recoilRule);
       attacker.hp = Math.max(0, attacker.hp - recoil);
