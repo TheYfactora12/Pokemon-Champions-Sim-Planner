@@ -1,14 +1,26 @@
 # Project Status
 
-Reviewed: 2026-10-09. This file owns current release facts and priorities.
+Reviewed: 2026-10-10. This file owns current release facts and priorities.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
 ## Verified Release
 
+Latest verified release: **v2.2.204-rock-head-matrix**, preview/local-save.
+PR261 merged as `4aa63b62b2e68653fe6ffcd76719e9e539cc7f7c` after CI
+`38025372689`; Pages `38025633022` passed. HTTP artifact and asset checks
+passed at 2026-10-10T04:57:03.496Z. Bundle SHA-256:
+`e11335b0ddb5243509439788439b21113593901c26ed6cdb49f90a880cb08049`.
+Live 16-matchup batch completed; one downloaded replay matched visible events
+and confirmed Flare Blitz without Rock Head recoil. Headings now match values.
+[Receipt and limitations](docs/release/ROCK_HEAD_MATRIX_2026-10-10.md).
+### Previous Release / Rollback Reference
+
+The v203 record below is historical, not the current deployment.
+
 - Primary repository: TheYfactora12/Pokemon-Champions-Sim-Planner, main.
-- Deployed build: **v2.2.203-catalog-headroom**, preview / local-save.
+- Previous build: **v2.2.203-catalog-headroom**, preview / local-save.
 - Runtime merge: `07e36dc1d084235f353763ea1306e67c9cb3e748`, [PR257](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/257).
 - Required PR CI `37935730695`, bundle and cache checks passed; Pages `37936291758` succeeded.
 - At 2026-10-09T13:24:15.049Z, HTTP checks matched bundle and external assets.
@@ -33,10 +45,10 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
-v204 candidate: active Rock Head recoil and matchup headings corrected locally;
+v204: active Rock Head recoil and matchup headings corrected and deployed;
 19 focused and eight pinned-reference probes pass. The 6,370-battle variation
-sweep has zero Rock Head flags (previously 580). Review/release checks pending;
-v203 remains the verified deployment until a fresh receipt is recorded.
+sweep has zero Rock Head flags (previously 580). Review, CI and deployment passed;
+general suppression and full game accuracy remain unproved.
 [Scope and limits](docs/release/ROCK_HEAD_MATRIX_2026-10-10.md).
 
 v201 shipped the first-turn Fake Out fix (#249); see
