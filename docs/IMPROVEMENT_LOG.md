@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0093: Count Draws And Validate The Test Harness
+
+- Live 100-game rows omitted draws; v205 displays the actual count. The real
+  renderer is exercised with 65W/34L/1D, not merely a label assertion.
+- Independent review strengthened stress summaries: tally after invariants,
+  distinguish terminal/timer/truncated outcomes, hash the summary helper.
+- Pin generated HTML to LF after Windows checkout reproduced manifest drift.
+- [Evidence and limitations](release/EXPANDED_TEAM_MATRIX_2026-10-13.md).
+  Candidate pending hosted gates; no engine, legality or team changes.
+- Lesson: verify reporting and harness semantics before increasing sample volume.
+
+
 ## IMP-0092: Suppress Direct Item Effects Without Losing Ownership
 
 - #235 active/suppressed fixtures reproduced Choice Scarf, Power Herb and Focus

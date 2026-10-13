@@ -16,7 +16,7 @@ for (const move of ['Flare Blitz','Head Smash','Double-Edge','Struggle']) {
 }
 test('matchup matrix headings describe rendered values',()=>{
   const html=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
-  assert.ok(html.includes('<th>Opponent</th><th>Win%</th><th>W</th><th>L</th><th>Avg Turns</th><th>Avg TR Turns</th><th>Assessment</th>'));
+  assert.ok(html.includes('<th>Opponent</th><th>Win%</th><th>W</th><th>L</th><th>D</th><th>Avg Turns</th><th>Avg TR Turns</th><th>Assessment</th>'));
 });
 test('Rock Head retains contact damage from Rough Skin',()=>{
   const b=c.simulateBattle(team('Arcanine-Hisui','Rock Head',['Flare Blitz']),team('Garchomp','Rough Skin',['Splash']),{format:'singles',seed:[8,3,12,7],maxTurns:1});
