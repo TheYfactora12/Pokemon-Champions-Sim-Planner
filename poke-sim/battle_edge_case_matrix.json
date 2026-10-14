@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "POLICY-IMPRISON-REDUNDANT",
+      "family": "moves-effects",
+      "behavior": "Heuristic selection deprioritizes the actor's already active same-move Imprison seal while preserving forced or sole usable choices.",
+      "status": "partial",
+      "tests": ["tests/imprison_policy_tests.js"],
+      "oracle": "Production selector and seeded synthetic doubles integration; policy contract only, not mechanics parity or competitive strength.",
+      "boundary_vectors": ["side-swap", "active-seal", "cleared-seal", "other-owner", "changed-moves", "sole-usable-choice", "Encore", "Choice-lock", "no-new-hidden-move-read", "deterministic-repeat", "input-preservation"],
+      "known_gap": "Full Imprison mechanics/lifecycle parity, opponent knowledge model, Armor Tail selection and calibrated policy/selection provenance remain unproved."
+    },
+    {
       "id": "ITEM-KLUTZ-DIRECT-PATHS",
       "family": "items",
       "behavior": "Klutz suppresses Scarf speed/locking, Power Herb charge skipping and Focus Sash survival without losing ownership.",

@@ -47,6 +47,12 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
+October 14 local candidate: redundant Imprison preference fixed with 14 focused
+checks, 215 fast + 12 offline DB suites and the battle gate passing. No push or
+deployment. [Ordered completion gates](docs/release/MOVE_POLICY_2026-10-14.md)
+keep move reconciliation before exact M-C package approval; #264 provenance,
+mobile/core journeys and release proof remain open. This is not product completion.
+
 October 13: PR262 receipt merged after passing CI. Deployed v205 adds missing
 draw counts and pins generated HTML line endings. Expanded 21,580-battle
 diagnostics passed checked invariants; 1,600 live v204 games completed, one

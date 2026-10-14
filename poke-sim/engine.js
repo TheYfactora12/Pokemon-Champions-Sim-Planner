@@ -4346,7 +4346,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if ((move === 'Recover' || move === 'Shore Up') && attacker.hp < attacker.maxHp * 0.65) score = 46;
         if (move === 'Rest' && attacker.hp < attacker.maxHp * 0.55) score = 47;
         if (move === 'Substitute' && attacker.hp > attacker.maxHp * 0.35 && attacker.substituteHp <= 0) score = 38;
-        if (move === 'Imprison' && liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => attacker.moves.includes(m)))) score = 45;
+        if (move === 'Imprison') {
+          // Policy only: our existing seal needs no refresh. Keep the move
+          // selectable when it is the only option; forced locks above still win.
+          // This check uses our effect and moves, not additional enemy knowledge.
+          const alreadySealed = enemySide && enemySide.imprisonedBy === attacker.name &&
+            enemySide.imprisonedMoves && attacker.moves.filter(m => m !== 'Imprison')
+              .every(m => enemySide.imprisonedMoves.has(m));
+          if (alreadySealed) score = -1;
+          else if (liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => attacker.moves.includes(m)))) score = 45;
+        }
         if (move === 'Ally Switch' && liveAllies.length > 0) score = 32;
         if (move === 'Roost' && attacker.hp < attacker.maxHp * 0.5) score = 45;
         if (freshEntry && isSupportRole && TURN1_ROLE_UTILITY.has(move)) score = Math.max(score, 70);

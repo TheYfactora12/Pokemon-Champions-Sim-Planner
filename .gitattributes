@@ -1,6 +1,8 @@
 # Release identity hashes the exact deployed bytes on every platform.
 poke-sim/pokemon-champion-2026.html text eol=lf
 poke-sim/generated/champions_move_pools.js text eol=lf
+poke-sim/generated/mc_review_reference.js text eol=lf
+poke-sim/generated/tournament_catalog.js text eol=lf
 poke-sim/assets/retro-intro/*.png binary
 poke-sim/source/reg-m-c-official-roster.json text eol=lf
 poke-sim/source/reg-m-c-reference-intake.json text eol=lf

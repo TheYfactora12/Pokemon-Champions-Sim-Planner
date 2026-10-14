@@ -1,5 +1,20 @@
 # Improvement Log
 
+## IMP-0094: Avoid Refreshing An Unchanged Imprison Seal
+
+- Reproduced repeated voluntary Imprison with a failing policy fixture. The
+  initial-use score ignored its already active same-owner seal.
+- Local v206 candidate lowers redundant preference while retaining locks and
+  sole-option behavior; 14 focused checks and full offline/battle gates pass.
+- Independent release review also caught CRLF drift in an externally hashed
+  generated asset. Pin LF and test checkout filters instead of accepting a
+  platform-specific hash. No generated source contents were promoted.
+- [Evidence, limitations and ordered completion gates](release/MOVE_POLICY_2026-10-14.md).
+  Uncommitted local candidate; no hosted or deployed proof.
+- Lesson: mechanical success does not prove useful action selection; isolate
+  policy regressions and preserve information-boundary and provenance gaps.
+
+
 ## IMP-0093: Count Draws And Validate The Test Harness
 
 - Live 100-game rows omitted draws; v205 displays the actual count. The real
