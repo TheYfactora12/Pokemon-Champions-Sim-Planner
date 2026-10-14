@@ -1,5 +1,13 @@
 # Improvement Log
 
+## IMP-0100: Preserve Exact Mega Starting Forms And Quarantine Candidate Descriptors
+
+- Pinned source review found female Mega Meowstic inherited male Prankster instead of Competitive; correct the registered-form ability pool and recognize gender-prefixed Mega names in reference lifecycle gating.
+- Generate22 descriptor/alias candidates outside runtime activation. Preserve19 execution gaps and3 aliases; legacy female stats and import stone-name mismatch remain explicit.
+- Full-record audit validation closes an independently discovered false preparation claim; mutation tests cover changed identities, metadata and package flags.
+- [Evidence, regression/browser results and remaining client proof](release/MC_MEGA_CANDIDATES_2026-10-14.md). No competitive promotion.
+- Lesson: a taxonomic base species is not always the registered form, and descriptor completeness does not establish executable mechanics.
+
 ## IMP-0099: Clear Obsolete Simulation Failures On Context Change
 
 - Independent visible replay QA found the prior official-M-C rejection still displayed after selecting permitted reference practice. Clear only a previous failed-run message/progress when regulation or either team changes while idle; preserve current legality and unverified notices.

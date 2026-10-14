@@ -31,8 +31,8 @@ console.log('\n=== release manifest tests ===\n');
 
 T('1. manifest exposes canonical build and cache identity', () => {
   truthy(manifest.schema_version === 'champions-release-manifest-v1', 'schema mismatch');
-  truthy(manifest.build_id === 'v2.2.210-context-error', 'build id mismatch');
-  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-210-context-error', 'cache id mismatch');
+  truthy(manifest.build_id === 'v2.2.211-mega-candidates', 'build id mismatch');
+  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-211-mega-candidates', 'cache id mismatch');
   truthy(manifest.artifact_manifest === 'generated/release_artifact.json', 'artifact manifest path mismatch');
 });
 
@@ -142,7 +142,7 @@ T('11. Windows Git checkout filters preserve generated asset bytes', () => {
   try {
     run(['init', '--quiet']);
     fs.copyFileSync(path.join(ROOT, '../.gitattributes'), path.join(temp, '.gitattributes'));
-    for (const asset of ['generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'generated/tournament_catalog.js']) {
+    for (const asset of ['generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'generated/tournament_catalog.js', 'source/reg-m-c-mega-descriptor-candidates.json']) {
     const bytes = fs.readFileSync(path.join(ROOT, asset));
     const object = run(['hash-object', '-w', '--stdin'], bytes).toString().trim();
     for (const autocrlf of ['true', 'false', 'input']) {

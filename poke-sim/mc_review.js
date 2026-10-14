@@ -24,7 +24,7 @@ function resolveMcMega(name, item) {
   var data = typeof ChampionsSim !== 'undefined' && ChampionsSim.pokemonDataAudit;
   var key = api && api.canonicalSpeciesKey(name), species = data && data.species[key];
   var stone = data && data.items[String(item || '').toLowerCase().replace(/[^a-z0-9]/g,'')];
-  var target = species && /^Mega/.test(species.forme) ? key :
+  var target = species && /(?:^|-)Mega(?:-|$)/.test(species.forme) ? key :
     stone && stone.megaStone && typeof stone.megaStone === 'object' ? stone.megaStone[key] :
     stone && stone.megaEvolves === key ? stone.megaStone : null;
   var form = target && ((typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[target]) || getMcReferenceMega(target));

@@ -5,6 +5,10 @@ Reviewed: 2026-10-14. This file owns current release facts and priorities.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
+## Separate M-C draft candidate
+
+v211 prepares22 non-executable Mega/alias descriptor records, fixes female Meowstic's reference ability pool and closes gender-prefixed Mega lifecycle-check bypass. Aggregate222+12, source-truth and battle gates pass; desktop/touch paired replay checks pass.19 execution gaps and3 alias activation gaps remain. No package promotion or deployment. [Candidate evidence and remaining work](docs/release/MC_MEGA_CANDIDATES_2026-10-14.md).
+
 ## Current verified release
 
 **v2.2.210-context-error / engine1.1.18** is live on the primary Pages site.

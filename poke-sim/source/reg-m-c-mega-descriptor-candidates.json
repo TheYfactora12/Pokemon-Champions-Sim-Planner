@@ -1,0 +1,748 @@
+{
+  "schema_version": "champions-mc-mega-candidates-v1",
+  "regulation": "champions_reg_m_c_2026",
+  "pin": "efe4948570d5e8189751792136d26e71710c6c66",
+  "compiled_fingerprint": "fb67973e517fbe62d28ea922a2ca3fd737e3da848843ceae254cd2f72c648489",
+  "competitive_use": false,
+  "execution_enabled": false,
+  "scope": "Pinned reference descriptor and alias preparation only; no runtime activation or current-client proof.",
+  "candidates": [
+    {
+      "id": "sceptilemega",
+      "name": "Sceptile-Mega",
+      "taxonomic_base_species": "Sceptile",
+      "registered_form": "Sceptile",
+      "required_item": "Sceptilite",
+      "gender": "",
+      "types": [
+        "Grass",
+        "Dragon"
+      ],
+      "stats": {
+        "hp": 70,
+        "atk": 110,
+        "def": 75,
+        "spa": 145,
+        "spd": 85,
+        "spe": 145
+      },
+      "ability": "Lightning Rod",
+      "weightkg": 55.2,
+      "registered_abilities": {
+        "0": "Overgrow",
+        "H": "Unburden"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "blazikenmega",
+      "name": "Blaziken-Mega",
+      "taxonomic_base_species": "Blaziken",
+      "registered_form": "Blaziken",
+      "required_item": "Blazikenite",
+      "gender": "",
+      "types": [
+        "Fire",
+        "Fighting"
+      ],
+      "stats": {
+        "hp": 80,
+        "atk": 160,
+        "def": 80,
+        "spa": 130,
+        "spd": 80,
+        "spe": 100
+      },
+      "ability": "Speed Boost",
+      "weightkg": 52,
+      "registered_abilities": {
+        "0": "Blaze",
+        "H": "Speed Boost"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "swampertmega",
+      "name": "Swampert-Mega",
+      "taxonomic_base_species": "Swampert",
+      "registered_form": "Swampert",
+      "required_item": "Swampertite",
+      "gender": "",
+      "types": [
+        "Water",
+        "Ground"
+      ],
+      "stats": {
+        "hp": 100,
+        "atk": 150,
+        "def": 110,
+        "spa": 95,
+        "spd": 110,
+        "spe": 70
+      },
+      "ability": "Swift Swim",
+      "weightkg": 102,
+      "registered_abilities": {
+        "0": "Torrent",
+        "H": "Damp"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "mawilemega",
+      "name": "Mawile-Mega",
+      "taxonomic_base_species": "Mawile",
+      "registered_form": "Mawile",
+      "required_item": "Mawilite",
+      "gender": "",
+      "types": [
+        "Steel",
+        "Fairy"
+      ],
+      "stats": {
+        "hp": 50,
+        "atk": 105,
+        "def": 125,
+        "spa": 55,
+        "spd": 95,
+        "spe": 50
+      },
+      "ability": "Huge Power",
+      "weightkg": 23.5,
+      "registered_abilities": {
+        "0": "Hyper Cutter",
+        "1": "Intimidate",
+        "H": "Sheer Force"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "absolmegaz",
+      "name": "Absol-Mega-Z",
+      "taxonomic_base_species": "Absol",
+      "registered_form": "Absol",
+      "required_item": "Absolite Z",
+      "gender": "",
+      "types": [
+        "Dark",
+        "Ghost"
+      ],
+      "stats": {
+        "hp": 65,
+        "atk": 154,
+        "def": 60,
+        "spa": 75,
+        "spd": 60,
+        "spe": 151
+      },
+      "ability": "Sharpness",
+      "weightkg": 49,
+      "registered_abilities": {
+        "0": "Pressure",
+        "1": "Super Luck",
+        "H": "Justified"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "metagrossmega",
+      "name": "Metagross-Mega",
+      "taxonomic_base_species": "Metagross",
+      "registered_form": "Metagross",
+      "required_item": "Metagrossite",
+      "gender": "N",
+      "types": [
+        "Steel",
+        "Psychic"
+      ],
+      "stats": {
+        "hp": 80,
+        "atk": 145,
+        "def": 150,
+        "spa": 105,
+        "spd": 110,
+        "spe": 110
+      },
+      "ability": "Tough Claws",
+      "weightkg": 942.9,
+      "registered_abilities": {
+        "0": "Clear Body",
+        "H": "Light Metal"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "staraptormega",
+      "name": "Staraptor-Mega",
+      "taxonomic_base_species": "Staraptor",
+      "registered_form": "Staraptor",
+      "required_item": "Staraptite",
+      "gender": "",
+      "types": [
+        "Fighting",
+        "Flying"
+      ],
+      "stats": {
+        "hp": 85,
+        "atk": 140,
+        "def": 100,
+        "spa": 60,
+        "spd": 90,
+        "spe": 110
+      },
+      "ability": "Contrary",
+      "weightkg": 50,
+      "registered_abilities": {
+        "0": "Intimidate",
+        "H": "Reckless"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "garchompmegaz",
+      "name": "Garchomp-Mega-Z",
+      "taxonomic_base_species": "Garchomp",
+      "registered_form": "Garchomp",
+      "required_item": "Garchompite Z",
+      "gender": "",
+      "types": [
+        "Dragon"
+      ],
+      "stats": {
+        "hp": 108,
+        "atk": 130,
+        "def": 85,
+        "spa": 141,
+        "spd": 85,
+        "spe": 151
+      },
+      "ability": "Levitate",
+      "weightkg": 99,
+      "registered_abilities": {
+        "0": "Sand Veil",
+        "H": "Rough Skin"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "lucariomegaz",
+      "name": "Lucario-Mega-Z",
+      "taxonomic_base_species": "Lucario",
+      "registered_form": "Lucario",
+      "required_item": "Lucarionite Z",
+      "gender": "",
+      "types": [
+        "Fighting",
+        "Steel"
+      ],
+      "stats": {
+        "hp": 70,
+        "atk": 100,
+        "def": 70,
+        "spa": 164,
+        "spd": 70,
+        "spe": 151
+      },
+      "ability": "Aura Guard",
+      "weightkg": 49.4,
+      "registered_abilities": {
+        "0": "Steadfast",
+        "1": "Inner Focus",
+        "H": "Justified"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "scolipedemega",
+      "name": "Scolipede-Mega",
+      "taxonomic_base_species": "Scolipede",
+      "registered_form": "Scolipede",
+      "required_item": "Scolipite",
+      "gender": "",
+      "types": [
+        "Bug",
+        "Poison"
+      ],
+      "stats": {
+        "hp": 60,
+        "atk": 140,
+        "def": 149,
+        "spa": 75,
+        "spd": 99,
+        "spe": 62
+      },
+      "ability": "Shell Armor",
+      "weightkg": 230.5,
+      "registered_abilities": {
+        "0": "Poison Point",
+        "1": "Swarm",
+        "H": "Speed Boost"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "scraftymega",
+      "name": "Scrafty-Mega",
+      "taxonomic_base_species": "Scrafty",
+      "registered_form": "Scrafty",
+      "required_item": "Scraftinite",
+      "gender": "",
+      "types": [
+        "Dark",
+        "Fighting"
+      ],
+      "stats": {
+        "hp": 65,
+        "atk": 130,
+        "def": 135,
+        "spa": 55,
+        "spd": 135,
+        "spe": 68
+      },
+      "ability": "Intimidate",
+      "weightkg": 31,
+      "registered_abilities": {
+        "0": "Shed Skin",
+        "1": "Moxie",
+        "H": "Intimidate"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "eelektrossmega",
+      "name": "Eelektross-Mega",
+      "taxonomic_base_species": "Eelektross",
+      "registered_form": "Eelektross",
+      "required_item": "Eelektrossite",
+      "gender": "",
+      "types": [
+        "Electric"
+      ],
+      "stats": {
+        "hp": 85,
+        "atk": 145,
+        "def": 80,
+        "spa": 135,
+        "spd": 90,
+        "spe": 80
+      },
+      "ability": "Eelevate",
+      "weightkg": 180,
+      "registered_abilities": {
+        "0": "Levitate"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "pyroarmega",
+      "name": "Pyroar-Mega",
+      "taxonomic_base_species": "Pyroar",
+      "registered_form": "Pyroar",
+      "required_item": "Pyroarite",
+      "gender": "",
+      "types": [
+        "Fire",
+        "Normal"
+      ],
+      "stats": {
+        "hp": 86,
+        "atk": 88,
+        "def": 92,
+        "spa": 129,
+        "spd": 86,
+        "spe": 126
+      },
+      "ability": "Fire Mane",
+      "weightkg": 93.3,
+      "registered_abilities": {
+        "0": "Rivalry",
+        "1": "Unnerve",
+        "H": "Moxie"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "floettemega",
+      "name": "Floette-Mega",
+      "taxonomic_base_species": "Floette",
+      "registered_form": "Floette-Eternal",
+      "required_item": "Floettite",
+      "gender": "F",
+      "types": [
+        "Fairy"
+      ],
+      "stats": {
+        "hp": 74,
+        "atk": 85,
+        "def": 87,
+        "spa": 155,
+        "spd": 148,
+        "spe": 102
+      },
+      "ability": "Fairy Aura",
+      "weightkg": 100.8,
+      "registered_abilities": {
+        "0": "Flower Veil",
+        "H": "Symbiosis"
+      },
+      "legacy_alias": "Floette (Eternal Flower)-Mega",
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": [
+        {
+          "field": "baseSpecies",
+          "legacy": "Floette (Eternal Flower)",
+          "reference": "Floette-Eternal"
+        },
+        {
+          "field": "weightkg",
+          "legacy": null,
+          "reference": 100.8
+        }
+      ]
+    },
+    {
+      "id": "meowsticmmega",
+      "name": "Meowstic-M-Mega",
+      "taxonomic_base_species": "Meowstic",
+      "registered_form": "Meowstic",
+      "required_item": "Meowsticite",
+      "gender": "M",
+      "types": [
+        "Psychic"
+      ],
+      "stats": {
+        "hp": 74,
+        "atk": 48,
+        "def": 76,
+        "spa": 143,
+        "spd": 101,
+        "spe": 124
+      },
+      "ability": "Trace",
+      "weightkg": 10.1,
+      "registered_abilities": {
+        "0": "Keen Eye",
+        "1": "Infiltrator",
+        "H": "Prankster"
+      },
+      "legacy_alias": "Meowstic (Male)-Mega",
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": [
+        {
+          "field": "baseSpecies",
+          "legacy": "Meowstic (Male)",
+          "reference": "Meowstic"
+        },
+        {
+          "field": "weightkg",
+          "legacy": null,
+          "reference": 10.1
+        }
+      ]
+    },
+    {
+      "id": "meowsticfmega",
+      "name": "Meowstic-F-Mega",
+      "taxonomic_base_species": "Meowstic",
+      "registered_form": "Meowstic-F",
+      "required_item": "Meowsticite",
+      "gender": "F",
+      "types": [
+        "Psychic"
+      ],
+      "stats": {
+        "hp": 74,
+        "atk": 48,
+        "def": 76,
+        "spa": 143,
+        "spd": 101,
+        "spe": 124
+      },
+      "ability": "Trace",
+      "weightkg": 10.1,
+      "registered_abilities": {
+        "0": "Keen Eye",
+        "1": "Infiltrator",
+        "H": "Competitive"
+      },
+      "legacy_alias": "Meowstic (Female)-Mega",
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": [
+        {
+          "field": "baseSpecies",
+          "legacy": "Meowstic (Female)",
+          "reference": "Meowstic-F"
+        },
+        {
+          "field": "megaBaseStats",
+          "legacy": {
+            "hp": 74,
+            "atk": 48,
+            "def": 76,
+            "spa": 83,
+            "spd": 81,
+            "spe": 104
+          },
+          "reference": {
+            "hp": 74,
+            "atk": 48,
+            "def": 76,
+            "spa": 143,
+            "spd": 101,
+            "spe": 124
+          }
+        },
+        {
+          "field": "weightkg",
+          "legacy": null,
+          "reference": 10.1
+        }
+      ]
+    },
+    {
+      "id": "malamarmega",
+      "name": "Malamar-Mega",
+      "taxonomic_base_species": "Malamar",
+      "registered_form": "Malamar",
+      "required_item": "Malamarite",
+      "gender": "",
+      "types": [
+        "Dark",
+        "Psychic"
+      ],
+      "stats": {
+        "hp": 86,
+        "atk": 102,
+        "def": 88,
+        "spa": 98,
+        "spd": 120,
+        "spe": 88
+      },
+      "ability": "Contrary",
+      "weightkg": 69.8,
+      "registered_abilities": {
+        "0": "Contrary",
+        "1": "Suction Cups",
+        "H": "Infiltrator"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "barbaraclemega",
+      "name": "Barbaracle-Mega",
+      "taxonomic_base_species": "Barbaracle",
+      "registered_form": "Barbaracle",
+      "required_item": "Barbaracite",
+      "gender": "",
+      "types": [
+        "Rock",
+        "Fighting"
+      ],
+      "stats": {
+        "hp": 72,
+        "atk": 140,
+        "def": 130,
+        "spa": 64,
+        "spd": 106,
+        "spe": 88
+      },
+      "ability": "Tough Claws",
+      "weightkg": 100,
+      "registered_abilities": {
+        "0": "Tough Claws",
+        "1": "Sniper",
+        "H": "Pickpocket"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "dragalgemega",
+      "name": "Dragalge-Mega",
+      "taxonomic_base_species": "Dragalge",
+      "registered_form": "Dragalge",
+      "required_item": "Dragalgite",
+      "gender": "",
+      "types": [
+        "Poison",
+        "Dragon"
+      ],
+      "stats": {
+        "hp": 65,
+        "atk": 85,
+        "def": 105,
+        "spa": 132,
+        "spd": 163,
+        "spe": 44
+      },
+      "ability": "Regenerator",
+      "weightkg": 100.3,
+      "registered_abilities": {
+        "0": "Poison Point",
+        "1": "Poison Touch",
+        "H": "Adaptability"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "golisopodmega",
+      "name": "Golisopod-Mega",
+      "taxonomic_base_species": "Golisopod",
+      "registered_form": "Golisopod",
+      "required_item": "Golisopite",
+      "gender": "",
+      "types": [
+        "Bug",
+        "Steel"
+      ],
+      "stats": {
+        "hp": 75,
+        "atk": 150,
+        "def": 175,
+        "spa": 70,
+        "spd": 120,
+        "spe": 40
+      },
+      "ability": "Tough Claws",
+      "weightkg": 148,
+      "registered_abilities": {
+        "0": "Emergency Exit"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "falinksmega",
+      "name": "Falinks-Mega",
+      "taxonomic_base_species": "Falinks",
+      "registered_form": "Falinks",
+      "required_item": "Falinksite",
+      "gender": "N",
+      "types": [
+        "Fighting"
+      ],
+      "stats": {
+        "hp": 65,
+        "atk": 135,
+        "def": 135,
+        "spa": 70,
+        "spd": 65,
+        "spe": 100
+      },
+      "ability": "Defiant",
+      "weightkg": 99,
+      "registered_abilities": {
+        "0": "Battle Armor",
+        "H": "Defiant"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    },
+    {
+      "id": "baxcaliburmega",
+      "name": "Baxcalibur-Mega",
+      "taxonomic_base_species": "Baxcalibur",
+      "registered_form": "Baxcalibur",
+      "required_item": "Baxcalibrite",
+      "gender": "",
+      "types": [
+        "Dragon",
+        "Ice"
+      ],
+      "stats": {
+        "hp": 115,
+        "atk": 175,
+        "def": 117,
+        "spa": 105,
+        "spd": 101,
+        "spe": 87
+      },
+      "ability": "Thermal Exchange",
+      "weightkg": 315,
+      "registered_abilities": {
+        "0": "Thermal Exchange",
+        "H": "Ice Body"
+      },
+      "legacy_alias": null,
+      "competitive_use": false,
+      "execution_enabled": false,
+      "review_status": "descriptor_candidate_not_lifecycle_proof",
+      "legacy_differences": []
+    }
+  ]
+}
