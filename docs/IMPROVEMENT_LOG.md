@@ -10,6 +10,12 @@
 - [Evidence and limitations](release/EXPANDED_TEAM_MATRIX_2026-10-13.md).
   Candidate pending hosted gates; no engine, legality or team changes.
 - Lesson: verify reporting and harness semantics before increasing sample volume.
+- October13 follow-up: PR263 merged after CI38487226759, Pages38487715884
+  passed and deployed artifact matched. Structured paired comparisons passed
+  651 live-v204 and 457 local-v205 checks. #264 owns move-choice follow-up.
+- Post-deploy v205:1600 games completed; nonzero draws preserved, all16 rows
+  reconcile to100. Sample export passed396 observable checks. Other1599 games
+  not individually visually audited; reference-only result boundary remains.
 
 
 ## IMP-0092: Suppress Direct Item Effects Without Losing Ownership

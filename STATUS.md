@@ -1,20 +1,22 @@
 # Project Status
 
-Reviewed: 2026-10-10. This file owns current release facts and priorities.
+Reviewed: 2026-10-13. This file owns current release facts and priorities.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
 ## Verified Release
 
-Latest verified release: **v2.2.204-rock-head-matrix**, preview/local-save.
-PR261 merged as `4aa63b62b2e68653fe6ffcd76719e9e539cc7f7c` after CI
-`38025372689`; Pages `38025633022` passed. HTTP artifact and asset checks
-passed at 2026-10-10T04:57:03.496Z. Bundle SHA-256:
-`e11335b0ddb5243509439788439b21113593901c26ed6cdb49f90a880cb08049`.
-Live 16-matchup batch completed; one downloaded replay matched visible events
-and confirmed Flare Blitz without Rock Head recoil. Headings now match values.
-[Receipt and limitations](docs/release/ROCK_HEAD_MATRIX_2026-10-10.md).
+Latest deployed release: **v2.2.205-matrix-draws**, preview/local-save.
+PR263 merged as `d2cd77678f138307476c651a04cd092db22e12ed` after CI
+`38487226759`; Pages `38487715884` passed. HTTP artifact and asset checks
+passed at 2026-10-14T00:04:40.665Z (October 13 local time). Bundle SHA-256:
+`9d9fd75ab67d36c58e856507554583c0d58d50d8b089eeba7510816f9f9a2872`.
+Live 1600-game batch completed with consistent W/L/D rows; five-turn export
+passed396 observable-field comparisons. Post-deployment verification is recorded
+in [the expanded audit](docs/release/EXPANDED_TEAM_MATRIX_2026-10-13.md).
+Rollback: v204, merge `4aa63b62b2e68653fe6ffcd76719e9e539cc7f7c`;
+[prior receipt](docs/release/ROCK_HEAD_MATRIX_2026-10-10.md).
 ### Previous Release / Rollback Reference
 
 The v203 record below is historical, not the current deployment.
@@ -45,11 +47,13 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
-October 13: PR262 receipt merged after passing CI. Candidate v205 adds missing
+October 13: PR262 receipt merged after passing CI. Deployed v205 adds missing
 draw counts and pins generated HTML line endings. Expanded 21,580-battle
 diagnostics passed checked invariants; 1,600 live v204 games completed, one
 downloaded sample checked. No competitive-strength certification.
-[Evidence and pending release gates](docs/release/EXPANDED_TEAM_MATRIX_2026-10-13.md).
+[Evidence and limitations](docs/release/EXPANDED_TEAM_MATRIX_2026-10-13.md).
+Next scoped investigation: #264 move-choice policy and selection provenance
+before using matchup win rates as team-strength advice.
 
 v204: active Rock Head recoil and matchup headings corrected and deployed;
 19 focused and eight pinned-reference probes pass. The 6,370-battle variation
