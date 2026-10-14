@@ -6,13 +6,13 @@ Historical snapshot only. These entries mixed earlier candidate observations wit
 
 October 14 follow-up local candidate v207 reconciles all 22 residual M-C move
 rows and adds scoped effects with 24 metadata checks, 50 effect checks and 20
-pinned comparisons. The [move audit](docs/release/MC_MOVE_AUDIT_2026-10-14.md)
+pinned comparisons. The [move audit](../../docs/release/MC_MOVE_AUDIT_2026-10-14.md)
 records the original five effect gaps, subsequently covered by the v208 continuation; package/workflow gates remain.
 M-C remains reference-only; nothing published. This does not finish the lab.
 
 October 14 local candidate: redundant Imprison preference fixed with 14 focused
 checks, 215 fast + 12 offline DB suites and the battle gate passing. No push or
-deployment. [Ordered completion gates](docs/release/MOVE_POLICY_2026-10-14.md)
+deployment. [Ordered completion gates](../../docs/release/MOVE_POLICY_2026-10-14.md)
 keep move reconciliation before exact M-C package approval; #264 provenance,
 mobile/core journeys and release proof remain open. This is not product completion.
 
@@ -20,7 +20,7 @@ October 13: PR262 receipt merged after passing CI. Deployed v205 adds missing
 draw counts and pins generated HTML line endings. Expanded 21,580-battle
 diagnostics passed checked invariants; 1,600 live v204 games completed, one
 downloaded sample checked. No competitive-strength certification.
-[Evidence and limitations](docs/release/EXPANDED_TEAM_MATRIX_2026-10-13.md).
+[Evidence and limitations](../../docs/release/EXPANDED_TEAM_MATRIX_2026-10-13.md).
 Next scoped investigation: #264 move-choice policy and selection provenance
 before using matchup win rates as team-strength advice.
 
@@ -28,10 +28,10 @@ v204: active Rock Head recoil and matchup headings corrected and deployed;
 19 focused and eight pinned-reference probes pass. The 6,370-battle variation
 sweep has zero Rock Head flags (previously 580). Review, CI and deployment passed;
 general suppression and full game accuracy remain unproved.
-[Scope and limits](docs/release/ROCK_HEAD_MATRIX_2026-10-10.md).
+[Scope and limits](../../docs/release/ROCK_HEAD_MATRIX_2026-10-10.md).
 
 v201 shipped the first-turn Fake Out fix (#249); see
-[scoped evidence](docs/release/FAKE_OUT_FLINCH_2026-10-09.md).
+[scoped evidence](../../docs/release/FAKE_OUT_FLINCH_2026-10-09.md).
 v202 Klutz direct-item guards are deployed and smoke-tested. v203 recovered
 catalog whitespace headroom (16,541 bytes remaining); broader #255 size work
 remains open. #235 Lum activation,
