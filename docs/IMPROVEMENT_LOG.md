@@ -1,5 +1,11 @@
 # Improvement Log
 
+## IMP-0098: Recognize Mid-Turn Thunder Wave Evidence
+
+- The 4,624-game accuracy gate exposed one validator false positive: Thunder Wave emits “is paralysed”, while the order reconstruction recognized only “was paralysed”. Recognize both spellings without changing the actor, timing or Speed checks.
+- 31 validator tests pass, including late-event, other-actor and incorrect-order controls; independent review passed. The retained eight-turn failure now has zero errors/warnings. The complete rerun passes 2,312 doubles and 2,312 singles with zero state, validator or repeatability failures and 68 repeat checks.
+- Lesson: retain failing traces and test rejected explanations as well as the accepted event wording.
+
 ## IMP-0097: Add Two Pinned Mega Lifecycles And Bind Reference Provenance
 
 - Missing descriptors blocked Salamence-Mega and Raichu-Mega-Y despite existing generic ability hooks. Generate explicit reference-only descriptors and prove15 local/16 pinned lifecycle and selected ability cases; other forms stay blocked.

@@ -7,7 +7,7 @@ Historical candidate observations are not current deployment instructions.
 
 ## Local candidate, not deployed
 
-October14: `fix/move-policy-audit-264` prepares v209/engine1.1.18. v208 passed220 fast files,12 offlineDB files, source-truth and69 battle files plus golden/stress. The v209 continuation adds two scoped reference Mega lifecycles and fixes stale reference hashes; final aggregate/hosted checks are pending. Kevin requested the intended live page through README release procedures. Desktop/mobile paired proof remains blocked by the automation launcher; exact M-C package promotion remains unapproved. [Evidence and human review packet](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
+October14: `fix/move-policy-audit-264` prepares v209/engine1.1.18. v209 passed221 fast files,12 offlineDB files, source-truth,70 battle files plus golden/stress and17 syntax checks. Accuracy rerun passed4,624 battles and68 repeat checks after a reviewed validator wording repair. The candidate adds two scoped reference Mega lifecycles and fixes stale reference hashes; hosted checks remain pending. Kevin requested the intended live page through README release procedures. Desktop/mobile paired proof remains blocked by the automation launcher; exact M-C package promotion remains unapproved. [Evidence and human review packet](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
 
 ## Verified Release
 
