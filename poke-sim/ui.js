@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.209-mc-mega-reference
+// Build marker: v2.2.210-context-error
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.209-mc-mega-reference'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.210-context-error'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13096,6 +13096,18 @@ function setBranchProgress(pct, label, meta) {
   }
   if (right) right.textContent = safePct + '%';
 }
+
+// A failed run describes its old selection, not a newly selected context.
+['sim-regulation', 'player-select', 'opponent-select'].forEach(function(id) {
+  document.getElementById(id)?.addEventListener('change', function() {
+    var error = document.getElementById('sim-run-error');
+    if (simRunning || !error || error.hidden) return;
+    error.hidden = true;
+    error.textContent = '';
+    var progress = document.getElementById('progress-wrap');
+    if (progress) progress.style.display = 'none';
+  });
+});
 
 function setSimError(err) {
   var msg = (err && err.message) ? err.message : String(err || 'Unknown simulation error');

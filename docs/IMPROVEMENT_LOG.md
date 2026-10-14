@@ -1,5 +1,11 @@
 # Improvement Log
 
+## IMP-0099: Clear Obsolete Simulation Failures On Context Change
+
+- Independent visible replay QA found the prior official-M-C rejection still displayed after selecting permitted reference practice. Clear only a previous failed-run message/progress when regulation or either team changes while idle; preserve current legality and unverified notices.
+- This changes UI state only; engine1.1.18 and reference bytes remain unchanged. v210 browser recovery and aggregate receipts follow in the release audit.
+- Strategy headings have poor contrast in the evidence-only view; independent review classifies this preexisting-looking issue as nonblocking for the bounded reference release, not an accessibility pass.
+
 ## IMP-0098: Recognize Mid-Turn Thunder Wave Evidence
 
 - The 4,624-game accuracy gate exposed one validator false positive: Thunder Wave emits “is paralysed”, while the order reconstruction recognized only “was paralysed”. Recognize both spellings without changing the actor, timing or Speed checks.

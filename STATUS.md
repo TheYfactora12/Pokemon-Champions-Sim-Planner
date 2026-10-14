@@ -7,7 +7,7 @@ Historical candidate observations are not current deployment instructions.
 
 ## Local candidate, not deployed
 
-October14: `fix/move-policy-audit-264` prepares v209/engine1.1.18. v209 passed221 fast files,12 offlineDB files, source-truth,70 battle files plus golden/stress and17 syntax checks. Accuracy rerun passed4,624 battles and68 repeat checks after a reviewed validator wording repair. The candidate adds two scoped reference Mega lifecycles and fixes stale reference hashes; hosted checks remain pending. Kevin requested the intended live page through README release procedures. Desktop/mobile paired proof remains blocked by the automation launcher; exact M-C package promotion remains unapproved. [Evidence and human review packet](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
+October14: PR266 prepares v210/engine1.1.18. Hosted v209 gates passed; supported Playwright now supplies independently reviewed desktop/mobile paired practice and M-C reference evidence. A demonstrated stale preflight error was repaired in v210; final resumed aggregate passed221 fast +12 offlineDB files; hosted final-head checks are pending. Targeted baseline comparison found only intentional policy changes and no unexpected differences in36 forced battles. Exact M-C package promotion remains unapproved; experimental practice restrictions remain. [Evidence and human review packet](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
 
 ## Verified Release
 
