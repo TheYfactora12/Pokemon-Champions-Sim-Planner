@@ -31,8 +31,8 @@ console.log('\n=== release manifest tests ===\n');
 
 T('1. manifest exposes canonical build and cache identity', () => {
   truthy(manifest.schema_version === 'champions-release-manifest-v1', 'schema mismatch');
-  truthy(manifest.build_id === 'v2.2.208-mc-effect-lifecycle', 'build id mismatch');
-  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-208-mc-effect-lifecycle', 'cache id mismatch');
+  truthy(manifest.build_id === 'v2.2.209-mc-mega-reference', 'build id mismatch');
+  truthy(manifest.service_worker_cache === 'champions-sim-v2-2-209-mc-mega-reference', 'cache id mismatch');
   truthy(manifest.artifact_manifest === 'generated/release_artifact.json', 'artifact manifest path mismatch');
 });
 
@@ -154,6 +154,12 @@ T('11. Windows Git checkout filters preserve generated asset bytes', () => {
   } finally {
     fs.rmSync(temp, { recursive: true, force: true });
   }
+});
+
+T('12. exported reference identity matches committed bytes', () => {
+  const actual=require('crypto').createHash('sha256').update(fs.readFileSync(path.join(ROOT,'generated/mc_review_reference.js'))).digest('hex');
+  truthy(manifest.reference_artifact_sha256 === actual,'reference provenance hash drift');
+  truthy(artifact.external_assets['generated/mc_review_reference.js'].sha256 === actual,'release asset hash drift');
 });
 
 console.log(`\nrelease manifest: ${pass} pass, ${fail} fail\n`);

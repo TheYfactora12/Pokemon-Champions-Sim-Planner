@@ -11,8 +11,9 @@ function harness() {
     setTimeout, setInterval, clearTimeout, clearInterval });
   vm.runInContext(source.slice(0, source.indexOf('// Expose ctx-scoped')) + '\nthis.context = ctx;', host);
   const ctx = host.context;
-  for (const name of ['generated/mc_review_reference.js', 'mc_review.js'])
+  for (const name of ['release_manifest.js','generated/mc_review_reference.js', 'mc_review.js'])
     vm.runInContext(fs.readFileSync(path.join(__dirname, '..', name), 'utf8'), ctx);
+  ctx.CHAMPIONS_RELEASE_MANIFEST=ctx.window.CHAMPIONS_RELEASE_MANIFEST;
   return ctx;
 }
 const member = {name:'Rillaboom', item:'Electric Seed', ability:'Grassy Surge', nature:'Adamant',
@@ -200,4 +201,9 @@ test('unsupported stored draft context fails closed instead of using a historica
     assert.equal(verdict.sourceVerified,false);
     assert.equal(JSON.stringify(draft),before);
   }
+});
+
+test('new draft provenance hashes actual reference bytes',()=>{
+ const ctx=harness(),hash=require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(__dirname,'..','generated/mc_review_reference.js'))).digest('hex');
+ assert.equal(ctx.csIntakeProvenance({referencePin:ctx.MC_REVIEW_REFERENCE.pin}).reference_artifact_sha256,hash);
 });

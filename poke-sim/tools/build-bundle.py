@@ -79,6 +79,8 @@ data    = read('data.js')
 tournament_catalog = read('generated/tournament_catalog.js')
 project_roadmap = read('generated/project_roadmap.js')
 release_manifest = read('release_manifest.js')
+if manifest_value(release_manifest, 'reference_artifact_sha256') != hashlib.sha256(read('generated/mc_review_reference.js').encode('utf-8')).hexdigest():
+    raise RuntimeError('Reference artifact identity drift; run build-mc-review.cjs')
 app_shell = read('app_shell.js')
 logger  = read('logger.js')
 runtime_data = read('runtime_data.js')

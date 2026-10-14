@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.208-mc-effect-lifecycle
+// Build marker: v2.2.209-mc-mega-reference
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.208-mc-effect-lifecycle'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.209-mc-mega-reference'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -3901,7 +3901,7 @@ function csPasteImportOptions(targetTeam, format) {
 function csIntakeProvenance(validation) {
   return validation.referencePin ? {version:1, regulation_id:'champions_reg_m_c_2026',
     reference_pin:validation.referencePin,
-    reference_artifact_sha256:'fba0dbf7a01f95a57727923a948afb575b36ef7bb2a883600d2702596dad2905',
+    reference_artifact_sha256:(typeof CHAMPIONS_RELEASE_MANIFEST !== 'undefined' ? CHAMPIONS_RELEASE_MANIFEST.reference_artifact_sha256 || null : null),
     official_status:'unverified', draft_only:true} : null;
 }
 
@@ -12774,7 +12774,7 @@ async function _captureSimulationProvenance(playerKey, oppKey, playerTeam, oppTe
     ruleset_version: profile.version || null, regulation_id: profile.id || null,
     engine_format_id: profile.engineFormatId || null,
     reference_pin: selectedRegulation === 'champions_mc_reference' && typeof MC_REVIEW_REFERENCE !== 'undefined' ? MC_REVIEW_REFERENCE.pin : null,
-    reference_artifact_sha256: selectedRegulation === 'champions_mc_reference' ? 'fba0dbf7a01f95a57727923a948afb575b36ef7bb2a883600d2702596dad2905' : null,
+    reference_artifact_sha256: selectedRegulation === 'champions_mc_reference' ? (typeof CHAMPIONS_RELEASE_MANIFEST !== 'undefined' ? CHAMPIONS_RELEASE_MANIFEST.reference_artifact_sha256 || null : null) : null,
     source_gaps: selectedRegulation === 'champions_mc_reference' ? ['unapproved_mc_reference','incomplete_mechanics_parity'] : [],
     level_policy: ['champions_custom_practice','champions_mc_reference'].indexOf(selectedRegulation) >= 0 ? 'missing_level_defaults_to_50_in_engine' : 'explicit_level_50',
     format: format, bo: bo, player_team_id: playerKey, opp_team_id: oppKey,

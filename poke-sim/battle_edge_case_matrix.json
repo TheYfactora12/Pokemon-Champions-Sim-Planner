@@ -563,6 +563,7 @@
         "tests/mc_move_effects_tests.js",
         "tests/mc_remaining_effects_tests.js",
         "tests/mc_reference_registration_tests.js",
+        "tests/mc_mega_lifecycle_tests.js",
         "tests/priority_selection_policy_tests.js"
       ],
       "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 Champions move overrides and inherited move handlers; retained compiled fingerprint verified by tools/verify-mc-move-effects.cjs.",

@@ -7,7 +7,7 @@ Historical candidate observations are not current deployment instructions.
 
 ## Local candidate, not deployed
 
-October 14: `fix/move-policy-audit-264` prepares v208 / engine1.1.17. Scoped reference move effects, six-member registration checks and honest policy provenance have independent review. Full local gates passed (220 fast files,12 offline DB files, source-truth,69 battle files plus golden/stress); desktop/mobile paired workflow evidence remains incomplete after browser-tool startup failure. Exact-package human approval and publication authorization remain outstanding. [Candidate evidence](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
+October14: `fix/move-policy-audit-264` prepares v209/engine1.1.18. v208 passed220 fast files,12 offlineDB files, source-truth and69 battle files plus golden/stress. The v209 continuation adds two scoped reference Mega lifecycles and fixes stale reference hashes; final aggregate/hosted checks are pending. Kevin requested the intended live page through README release procedures. Desktop/mobile paired proof remains blocked by the automation launcher; exact M-C package promotion remains unapproved. [Evidence and human review packet](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
 
 ## Verified Release
 
@@ -54,7 +54,7 @@ Supabase security or ownership tests.
 October 14 follow-up local candidate v207 reconciles all 22 residual M-C move
 rows and adds scoped effects with 24 metadata checks, 50 effect checks and 20
 pinned comparisons. The [move audit](docs/release/MC_MOVE_AUDIT_2026-10-14.md)
-explicitly retains five unfinished effect families and package/workflow gates.
+records the original five effect gaps, subsequently covered by the v208 continuation; package/workflow gates remain.
 M-C remains reference-only; nothing published. This does not finish the lab.
 
 October 14 local candidate: redundant Imprison preference fixed with 14 focused

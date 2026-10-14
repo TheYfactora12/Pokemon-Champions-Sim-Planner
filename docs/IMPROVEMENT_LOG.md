@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0097: Add Two Pinned Mega Lifecycles And Bind Reference Provenance
+
+- Missing descriptors blocked Salamence-Mega and Raichu-Mega-Y despite existing generic ability hooks. Generate explicit reference-only descriptors and prove15 local/16 pinned lifecycle and selected ability cases; other forms stay blocked.
+- New draft/simulation records stamped a stale reference artifact hash. Generate the manifest hash with the reference, fail the build on drift and test both provenance paths. Never relabel old history.
+- [Evidence, exact current-client capture requirements and internal approval authority](release/MC_MOVE_AUDIT_2026-10-14.md). Live publication was subsequently requested; required checks and runtime recovery remain gates.
+- Lesson: supported metadata, lifecycle behavior and source identity require distinct checks.
+
 ## IMP-0096: Prove Remaining Reference Effects And Preserve Policy Uncertainty
 
 - Added bounded Strength Sap, Syrup Bomb, Snap Trap, Gravity and Beak Blast behavior with 74 local checks and 78 pinned comparisons; independent review found and closed no-effect healing and Leaf Guard boundaries.

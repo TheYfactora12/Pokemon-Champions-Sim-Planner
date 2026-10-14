@@ -14,11 +14,9 @@ function getMcReferenceMove(move, actor) {
 }
 
 function getMcReferenceMega(name) {
-  if (!mcReferenceReady() || name !== 'Raichu-Mega-X') return null;
-  // Quarantined reference implementation; never adds a row to approved runtime data.
-  return {baseSpecies:'Raichu', megaName:'Raichu-Mega-X', megaStone:'Raichunite X', types:['Electric'],
-    megaBaseStats:{hp:60,atk:135,def:95,spa:90,spd:95,spe:110},
-    ability:'Electric Surge', baseAbility:'Static', weightkg:38};
+  if (!mcReferenceReady()) return null;
+  var rows = MC_REVIEW_REFERENCE.megas;
+  return rows && Object.prototype.hasOwnProperty.call(rows,name) ? rows[name] : null;
 }
 
 function resolveMcMega(name, item) {
