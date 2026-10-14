@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "POLICY-IMPRISON-REDUNDANT",
+      "family": "moves-effects",
+      "behavior": "Heuristic selection deprioritizes the actor's already active same-move Imprison seal while preserving forced or sole usable choices.",
+      "status": "partial",
+      "tests": ["tests/imprison_policy_tests.js"],
+      "oracle": "Production selector and seeded synthetic doubles integration; policy contract only, not mechanics parity or competitive strength.",
+      "boundary_vectors": ["side-swap", "active-seal", "cleared-seal", "other-owner", "changed-moves", "sole-usable-choice", "Encore", "Choice-lock", "no-new-hidden-move-read", "deterministic-repeat", "input-preservation"],
+      "known_gap": "Full Imprison mechanics/lifecycle parity, opponent knowledge model, Armor Tail selection and calibrated policy/selection provenance remain unproved."
+    },
+    {
       "id": "ITEM-KLUTZ-DIRECT-PATHS",
       "family": "items",
       "behavior": "Klutz suppresses Scarf speed/locking, Power Herb charge skipping and Focus Sash survival without losing ownership.",
@@ -542,6 +552,33 @@
       "oracle": "Approved official or captured Pokemon Champions evidence.",
       "boundary_vectors": ["move-deltas", "ability-deltas", "item-deltas", "format-rules"],
       "known_gap": "Authoritative Regulation M-B evidence remains incomplete."
+    },
+    {
+      "id": "MC-REFERENCE-MOVE-AUDIT",
+      "family": "champion-regulation-deltas",
+      "behavior": "Explicit diagnostic M-C actors use pinned move metadata and scoped move-effect repairs without promoting competitive legality.",
+      "status": "partial",
+      "tests": [
+        "tests/mc_move_metadata_tests.js",
+        "tests/mc_move_effects_tests.js",
+        "tests/mc_remaining_effects_tests.js",
+        "tests/mc_reference_registration_tests.js",
+        "tests/mc_mega_lifecycle_tests.js",
+        "tests/priority_selection_policy_tests.js"
+      ],
+      "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 Champions move overrides and inherited move handlers; retained compiled fingerprint verified by tools/verify-mc-move-effects.cjs.",
+      "boundary_vectors": [
+        "actor-context-isolation",
+        "base-power-type-accuracy-PP",
+        "Make-It-Rain-spread-Protect-Simple-Contrary",
+        "First-Impression-entry-selection-forced-failure",
+        "Infernal-Parade-status-Comatose",
+        "Apple-Acid-Fire-Lash-Grav-Apple-target-drops",
+        "Growth-sun-Cloud-Nine",
+        "Snipe-Shot-Follow-Me",
+        "Mountain-Gale-flinch-blockers"
+      ],
+      "known_gap": "Synthetic fixtures are not legal-team or full-game validation. Beak Blast, Snap Trap, Syrup Bomb, Strength Sap and Gravity have scoped side-swapped synthetic reference proof; arbitrary combinations and full-game parity remain open. Voluntary switching and complete Fly/Bounce/Sky Drop execution remain unsupported. Re-entry is tested as selector state, not a complete switch lifecycle. General redirection, suppression, Substitute combinations and exact-package official approval remain unproved."
     }
   ]
 }

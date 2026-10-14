@@ -69,10 +69,18 @@ def fetch_supabase_umd():
 
 html    = read('index.html')
 css     = read('style.css')
+# Keep editable CSS formatted, but omit indentation from the shipped bundle.
+# Escaped newlines can make leading spaces part of a string; fail closed there.
+if re.search(r'\\\r?\n', css):
+    raise RuntimeError('CSS escaped newline requires preserving indentation')
+css = re.sub(r'(?m)^[ \t]+', '', css)
+css = re.sub(r'(?m)^/\*(?:(?!\*/)[^\n])*\*/[ \t]*\n', '', css)
 data    = read('data.js')
 tournament_catalog = read('generated/tournament_catalog.js')
 project_roadmap = read('generated/project_roadmap.js')
 release_manifest = read('release_manifest.js')
+if manifest_value(release_manifest, 'reference_artifact_sha256') != hashlib.sha256(read('generated/mc_review_reference.js').encode('utf-8')).hexdigest():
+    raise RuntimeError('Reference artifact identity drift; run build-mc-review.cjs')
 app_shell = read('app_shell.js')
 logger  = read('logger.js')
 runtime_data = read('runtime_data.js')

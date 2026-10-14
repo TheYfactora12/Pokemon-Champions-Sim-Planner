@@ -1,9 +1,13 @@
 # Project Status
 
-Reviewed: 2026-10-13. This file owns current release facts and priorities.
+Reviewed: 2026-10-14. This file owns current release facts and priorities.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
+
+## Local candidate, not deployed
+
+October14: PR266 prepares v210/engine1.1.18. Hosted v209 gates passed; supported Playwright now supplies independently reviewed desktop/mobile paired practice and M-C reference evidence. A demonstrated stale preflight error was repaired in v210; final resumed aggregate passed221 fast +12 offlineDB files; hosted final-head checks are pending. Targeted baseline comparison found only intentional policy changes and no unexpected differences in36 forced battles. Exact M-C package promotion remains unapproved; experimental practice restrictions remain. [Evidence and human review packet](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
 
 ## Verified Release
 
@@ -46,6 +50,18 @@ The production release uses local saves; offline/mock DB tests are not live
 Supabase security or ownership tests.
 
 ## Next Work, In Order
+
+October 14 follow-up local candidate v207 reconciles all 22 residual M-C move
+rows and adds scoped effects with 24 metadata checks, 50 effect checks and 20
+pinned comparisons. The [move audit](docs/release/MC_MOVE_AUDIT_2026-10-14.md)
+records the original five effect gaps, subsequently covered by the v208 continuation; package/workflow gates remain.
+M-C remains reference-only; nothing published. This does not finish the lab.
+
+October 14 local candidate: redundant Imprison preference fixed with 14 focused
+checks, 215 fast + 12 offline DB suites and the battle gate passing. No push or
+deployment. [Ordered completion gates](docs/release/MOVE_POLICY_2026-10-14.md)
+keep move reconciliation before exact M-C package approval; #264 provenance,
+mobile/core journeys and release proof remain open. This is not product completion.
 
 October 13: PR262 receipt merged after passing CI. Deployed v205 adds missing
 draw counts and pins generated HTML line endings. Expanded 21,580-battle

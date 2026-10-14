@@ -15,8 +15,8 @@ const opts={format:'doubles',bo:1,rulesetId:'champions_mc_reference',maxTurns:2,
 
 test('Mega admission is invariant to case and normalized identifiers',()=>{
   const c=harness();
-  for(const name of ['Raichu-Mega-Y','raichu-mega-y','RAICHU-MEGA-Y','raichumegay','  RaIcHu-MeGa-Y  ']) {
-    const t=team();t.members[0]=member(name,'Raichunite Y','No Guard');
+  for(const name of ['Sceptile-Mega','sceptile-mega','SCEPTILE-MEGA','sceptilemega','  ScEpTiLe-MeGa  ']) {
+    const t=team();t.members[0]=member(name,'Sceptilite','Lightning Rod');
     const result=c.checkMcReferenceExecution(t,opts);
     assert.equal(result.allowed,false,name);
     assert.match(result.errors.join(' '),/Mega lifecycle not implemented/);
@@ -41,7 +41,7 @@ test('null stone metadata does not crash ordinary non-Mega admission',()=>{
 
 test('base plus stone resolves supported lifecycle or explicitly rejects unsupported form',()=>{
   const c=harness();
-  for(const [name,item,ability] of [['Raichu','Raichunite Y','Static']]) {
+  for(const [name,item,ability] of [['Sceptile','Sceptilite','Overgrow']]) {
     const t=team();t.members[0]=member(name,item,ability);
     assert.match(c.checkMcReferenceExecution(t,opts).errors.join(' '),/Mega lifecycle not implemented/);
   }

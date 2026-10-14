@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-M-C release: all 262 official roster identities now have review-only mappings. Next fix Mega lifecycle/aliases (#241), item hooks (#235), and reference-data differences before exact-package approval (#232). See docs/release/MC_RELEASE_INVENTORY_2026-10-08.md. Reference practice is unverified; no trusted ranking or database learning. Result columns (#242), replay labels (#238), coaching, mobile and security remain open. Preview/local-save scope remains.
+Local v208 completes bounded reference move-effect checks and distinguishes six-member registration from reduced practice. Next prove desktop/mobile paired replay/export workflows, resolve unsupported Mega lifecycles and exact-package human approval (#232). See docs/release/MC_MOVE_AUDIT_2026-10-14.md. M-C remains unverified; no trusted ranking or database learning. Preview/local-save scope remains.
 
 ## Milestone Index
 

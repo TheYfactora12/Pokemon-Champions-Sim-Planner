@@ -449,7 +449,7 @@ function paralysisAdjustedOrderSupports(first, second, turn) {
   const wasParalyzed = action => {
     const status = String(action.row && action.row.status || '').toLowerCase();
     if (status === 'paralysis' || status === 'paralyzed' || status === 'paralysed') return false;
-    return priorText.some(text => text.startsWith(`${action.actor} was paralysed`) || text.startsWith(`${action.actor} was paralyzed`));
+    return priorText.some(text => ['is paralysed!', 'is paralyzed!', 'was paralysed', 'was paralyzed'].some(suffix => text.startsWith(`${action.actor} ${suffix}`)));
   };
   const firstChanged = wasParalyzed(first);
   const secondChanged = wasParalyzed(second);

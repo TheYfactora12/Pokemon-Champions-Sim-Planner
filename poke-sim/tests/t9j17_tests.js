@@ -303,7 +303,7 @@ T('C4. executeMove gates a 25% miss when attacker.ability === Piercing Drill', (
 T('C5. Piercing Drill miss happens AFTER the standard ACC_MAP check', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
   // Check the ACC_MAP miss block precedes the Piercing Drill block in source.
-  const accIdx = src.indexOf('const acc = _moveAccuracy(move, ACC_MAP[move]);');
+  const accIdx = src.indexOf('const acc = _moveAccuracy(move, ACC_MAP[move], attacker);');
   const pdIdx  = src.indexOf("attacker.ability === 'Piercing Drill' && rng() < 0.25");
   truthy(accIdx < pdIdx && accIdx > 0 && pdIdx > 0,
     'Piercing Drill roll must fire after ACC_MAP miss block in executeMove');
@@ -344,7 +344,7 @@ T('D1. data.js MOVE_TARGETS Expanding Force = normal (default single-target)', (
 
 T('D2. engine.js executeMove flips targetCat to all-adjacent-foes under Psychic Terrain', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  truthy(/move === 'Expanding Force' && field\.terrain === 'psychic' && _isGrounded\(attacker\)[\s\S]*?targetCat = 'all-adjacent-foes'/.test(src),
+  truthy(/move === 'Expanding Force' && field\.terrain === 'psychic' && _isGrounded\(attacker, field\)[\s\S]*?targetCat = 'all-adjacent-foes'/.test(src),
     'executeMove must rewrite targetCat for grounded user under Psychic Terrain');
 });
 
@@ -356,7 +356,7 @@ T('D3. Expanding Force BP boost is 1.5x via field._ctx.bpMult', () => {
 
 T('D4. Ungrounded (Flying or Levitate) attacker keeps default single-target', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  truthy(/move === 'Expanding Force' && field\.terrain === 'psychic' && _isGrounded\(attacker\)/.test(src),
+  truthy(/move === 'Expanding Force' && field\.terrain === 'psychic' && _isGrounded\(attacker, field\)/.test(src),
     'spread/BP boost must use shared grounded state, including move grounding');
 });
 

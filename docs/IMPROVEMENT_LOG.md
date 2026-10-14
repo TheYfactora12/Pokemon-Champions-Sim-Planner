@@ -1,5 +1,55 @@
 # Improvement Log
 
+## IMP-0099: Clear Obsolete Simulation Failures On Context Change
+
+- Independent visible replay QA found the prior official-M-C rejection still displayed after selecting permitted reference practice. Clear only a previous failed-run message/progress when regulation or either team changes while idle; preserve current legality and unverified notices.
+- This changes UI state only; engine1.1.18 and reference bytes remain unchanged. v210 browser recovery and aggregate receipts follow in the release audit.
+- Strategy headings have poor contrast in the evidence-only view; independent review classifies this preexisting-looking issue as nonblocking for the bounded reference release, not an accessibility pass.
+
+## IMP-0098: Recognize Mid-Turn Thunder Wave Evidence
+
+- The 4,624-game accuracy gate exposed one validator false positive: Thunder Wave emits “is paralysed”, while the order reconstruction recognized only “was paralysed”. Recognize both spellings without changing the actor, timing or Speed checks.
+- 31 validator tests pass, including late-event, other-actor and incorrect-order controls; independent review passed. The retained eight-turn failure now has zero errors/warnings. The complete rerun passes 2,312 doubles and 2,312 singles with zero state, validator or repeatability failures and 68 repeat checks.
+- Lesson: retain failing traces and test rejected explanations as well as the accepted event wording.
+
+## IMP-0097: Add Two Pinned Mega Lifecycles And Bind Reference Provenance
+
+- Missing descriptors blocked Salamence-Mega and Raichu-Mega-Y despite existing generic ability hooks. Generate explicit reference-only descriptors and prove15 local/16 pinned lifecycle and selected ability cases; other forms stay blocked.
+- New draft/simulation records stamped a stale reference artifact hash. Generate the manifest hash with the reference, fail the build on drift and test both provenance paths. Never relabel old history.
+- [Evidence, exact current-client capture requirements and internal approval authority](release/MC_MOVE_AUDIT_2026-10-14.md). Live publication was subsequently requested; required checks and runtime recovery remain gates.
+- Lesson: supported metadata, lifecycle behavior and source identity require distinct checks.
+
+## IMP-0096: Prove Remaining Reference Effects And Preserve Policy Uncertainty
+
+- Added bounded Strength Sap, Syrup Bomb, Snap Trap, Gravity and Beak Blast behavior with 74 local checks and 78 pinned comparisons; independent review found and closed no-effect healing and Leaf Guard boundaries.
+- Added 60 complete-team matrix cases and explicit six-member registration versus reduced-roster practice labels. Reference acceptance remains distinct from supported app mechanics and official approval.
+- Deprioritized blocked damaging priority moves; preserve full-state policy limitations in new results and unknown provenance in legacy analysis.
+- [Evidence and remaining gates](release/MC_MOVE_AUDIT_2026-10-14.md). Interactive desktop/mobile proof is blocked by browser startup failure; no publication.
+- Lesson: a reference validator, a mechanics oracle, an action policy and a visible workflow prove different things.
+
+## IMP-0095: Audit Effective M-C Moves In Explicit Reference Context
+
+- Raw source differences hid two problems: runtime metadata shadowed fallback values, and matching numbers did not establish working move effects.
+- Reconciled all 22 residual rows and all 73 original difference rows against the exact pinned, compiled reference. Added actor-scoped metadata and bounded effect repairs, retaining historical/default data and review-only eligibility.
+- Independent review caught Comatose; regression added. Evidence includes 24 metadata checks, 50 effect checks and 20 scoped pinned comparisons.
+- [Evidence and explicit remaining move/package/workflow gates](release/MC_MOVE_AUDIT_2026-10-14.md). No completion or competitive-strength claim; no publication.
+- Lesson: accessor parity, synthetic effect parity and approved complete-team evidence are separate gates.
+
+## IMP-0094: Avoid Refreshing An Unchanged Imprison Seal
+
+- Reproduced repeated voluntary Imprison with a failing policy fixture. The
+  initial-use score ignored its already active same-owner seal.
+- Local v206 candidate lowers redundant preference while retaining locks and
+  sole-option behavior; 14 focused checks and full offline/battle gates pass.
+- Independent release review also caught CRLF drift in an externally hashed
+  generated asset. Pin LF and test checkout filters instead of accepting a
+  platform-specific hash. No generated source contents were promoted.
+- [Evidence, limitations and ordered completion gates](release/MOVE_POLICY_2026-10-14.md).
+  Locally committed candidate; no hosted or deployed proof.
+- Lesson: mechanical success does not prove useful action selection; isolate
+  policy regressions and preserve information-boundary and provenance gaps.
+
+
 ## IMP-0093: Count Draws And Validate The Test Harness
 
 - Live 100-game rows omitted draws; v205 displays the actual count. The real

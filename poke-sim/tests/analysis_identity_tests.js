@@ -8,6 +8,7 @@ const ctx = vm.createContext({ console, crypto: webcrypto, TextEncoder });
 ctx.window = ctx;
 ctx.ChampionsSim = { internal: {} };
 const root = path.join(__dirname, '..');
+vm.runInContext(fs.readFileSync(path.join(root, 'release_manifest.js'), 'utf8'), ctx);
 vm.runInContext(fs.readFileSync(path.join(root, 'rulesets.js'), 'utf8'), ctx);
 const ui = fs.readFileSync(path.join(root, 'ui.js'), 'utf8');
 vm.runInContext(ui.slice(ui.indexOf('// __M4_BUILD_PAYLOAD_BEGIN__'), ui.indexOf('// __M4_BUILD_PAYLOAD_END__')), ctx);
@@ -22,10 +23,16 @@ function envelope(format = 'doubles') {
 let failed = 0;
 async function test(name, fn) { try { await fn(); console.log('PASS ' + name); } catch(e) { failed++; console.error('FAIL ' + name + ': ' + e.message); } }
 (async () => {
+  await test('supplied move-policy provenance survives saved analysis', () => {
+    const policy={id:'historical-custom',information_model:'unknown'};
+    const p=ctx._buildAnalysisPayload('player','opp',3,{policy_provenance:policy});
+    assert.deepEqual(JSON.parse(JSON.stringify(p.analysis_json.policy_provenance)),policy);
+  });
   await test('missing provenance stays unknown, not current selected team/version', () => {
     ctx.TEAMS = { player: { metadata: { ruleset_id: id } } };
     const p = ctx._buildAnalysisPayload('player', 'opp', 3, {});
     assert.equal(p.engine_version, 'unknown');
+    assert.equal(p.analysis_json.policy_provenance, null);
     assert.equal(p.ruleset_id, 'unknown');
     assert.equal(p.learning_eligibility, 'blocked_missing_provenance');
   });
@@ -85,6 +92,12 @@ async function test(name, fn) { try { await fn(); console.log('PASS ' + name); }
     assert.equal(JSON.stringify(team), before);
     team.ruleset_id = 'future-regulation';
     assert.equal(a.original_player_ruleset_id, 'champions_reg_m_b_2026');
+  });
+  await test('M-C simulation provenance identifies the generated reference bytes', async () => {
+    const team={members:[{name:'Raichu'}]};
+    const result=await ctx._captureSimulationProvenance('player','opp',team,team,'doubles',1,{},'champions_mc_reference');
+    const hash=require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(root,'generated/mc_review_reference.js'))).digest('hex');
+    assert.equal(result.reference_artifact_sha256,hash);
   });
   process.exitCode = failed ? 1 : 0;
 })();

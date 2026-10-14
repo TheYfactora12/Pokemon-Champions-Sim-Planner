@@ -6,12 +6,17 @@ function mcReferenceReady() {
     MC_REVIEW_REFERENCE.species && Array.isArray(MC_REVIEW_REFERENCE.items);
 }
 
+// Explicit diagnostic context only. Never overwrite baseline/historical rows.
+function getMcReferenceMove(move, actor) {
+  if (!actor || actor.referenceMode !== 'champions_mc_reference' || !mcReferenceReady()) return null;
+  var rows = MC_REVIEW_REFERENCE.moves;
+  return rows && rows[String(move || '').toLowerCase().replace(/[^a-z0-9]/g,'')] || null;
+}
+
 function getMcReferenceMega(name) {
-  if (!mcReferenceReady() || name !== 'Raichu-Mega-X') return null;
-  // Quarantined reference implementation; never adds a row to approved runtime data.
-  return {baseSpecies:'Raichu', megaName:'Raichu-Mega-X', megaStone:'Raichunite X', types:['Electric'],
-    megaBaseStats:{hp:60,atk:135,def:95,spa:90,spd:95,spe:110},
-    ability:'Electric Surge', baseAbility:'Static', weightkg:38};
+  if (!mcReferenceReady()) return null;
+  var rows = MC_REVIEW_REFERENCE.megas;
+  return rows && Object.prototype.hasOwnProperty.call(rows,name) ? rows[name] : null;
 }
 
 function resolveMcMega(name, item) {
@@ -40,6 +45,13 @@ function checkMcReferenceExecution(team, options) {
           (m.item != null && typeof m.item !== 'string') || !Array.isArray(m.moves) ||
           m.moves.some(function(v) { return typeof v !== 'string'; });
       })) { errors.push('Reference doubles requires four to six well-formed Champions sets.'); return result; }
+  result.registered_team_size = team.members.length;
+  result.registration_scope = team.members.length === 6 ? 'six_registered_reference' : 'reduced_roster_practice';
+  result.reference_format = opts.bo === 3 ? 'gen9championsvgc2026regmcbo3' : 'gen9championsvgc2026regmc';
+  if (team.members.length !== 6) {
+    result.source_gaps.push('Reduced-roster practice only: pinned M-C VGC requires six registered Pokemon, four brought and two leads.');
+    if (opts.requireFullTeam) errors.push('Full-team M-C reference validation requires exactly six registered Pokemon.');
+  }
   if (opts.format !== 'doubles' || [1,3].indexOf(opts.bo == null ? 1 : opts.bo) < 0) errors.push('Reference mode supports doubles Bo1 or Bo3.');
   if (team.import_context && team.import_context.draft_only &&
       team.import_context.regulation_id !== 'champions_reg_m_c_2026') errors.push('Unsupported saved draft context.');
@@ -129,7 +141,7 @@ function csRenderMcReview(team) {
   if (!rows) return '';
   var failed = rows.some(function(row) { return row.issues.length; });
   return '<div class="team-legality-note"><strong>M-C: ' + (failed ? 'SET REVIEW REQUIRED' : 'LEGALITY UNVERIFIED') +
-    '</strong><small>Pinned Showdown reference, September 9. Not official approval; combinations and battle implementation are not certified.</small><ul>' +
+    '</strong><small>' + (team.members.length === 6 ? 'Six registered Pokemon; bring four and choose two leads. ' : 'Reduced-roster practice: exact M-C VGC registration requires six Pokemon. ') + 'Pinned Showdown reference, September 9. Not official approval; combinations and battle implementation are not certified.</small><ul>' +
     rows.map(function(row) { return '<li><strong>' + _escapeHtml(row.name) + '</strong>: ' + _escapeHtml(row.speciesStatus) +
       (row.issues.length ? '. ' + _escapeHtml(row.issues.join('; ')) : '. No issues in these limited checks; full legality unverified') + '</li>'; }).join('') + '</ul></div>';
 }

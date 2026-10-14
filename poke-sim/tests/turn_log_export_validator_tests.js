@@ -373,6 +373,35 @@ function stripStableFields(payload) {
     truthy(!res.findings.some(f => f.code === 'observed-action-order-mismatch'), JSON.stringify(res.findings));
   });
 
+  T('7e. Thunder Wave paralysis changes order within Trick Room (accuracy seed 2775382101)', () => {
+    const payload = stableFixture();
+    const turn = payload.turnLog[0];
+    const first = turn.pre.roster.player[0];
+    const second = turn.pre.roster.opponent[0];
+    turn.pre.field = { trick_room: 4 };
+    turn.actions.player = [{ actor: 'Incineroar', actor_key: first.stableKey, move: 'Knock Off' }];
+    turn.actions.opponent = [{ actor: 'Milotic', actor_key: second.stableKey, move: 'Scald' }];
+    turn.pre.speed_order_details = [
+      { side: 'player', stableKey: first.stableKey, key: first.key, pokemon: 'Incineroar', effective_speed: 173, status: '' },
+      { side: 'opponent', stableKey: second.stableKey, key: second.key, pokemon: 'Milotic', effective_speed: 128, status: '' }
+    ];
+    turn.pre.speed_order_details.reverse(); // Pre-action Trick Room order: 128 before 173.
+    const used = [{ text: 'Incineroar used Knock Off!' }, { text: 'Milotic used Scald!' }];
+    const mismatch = () => validateTurnLogPayload(payload).findings.some(f => f.code === 'observed-action-order-mismatch');
+    for (const spelling of ['paralysed', 'paralyzed']) {
+      turn.events = [{ text: `Incineroar is ${spelling}! It may be unable to move!` }, ...used];
+      truthy(!mismatch(), 'paralysis halves 173 to 86, before 128 in Trick Room');
+    }
+    turn.events = [...used, { text: 'Incineroar is paralysed! It may be unable to move!' }];
+    truthy(mismatch(), 'a later status event must not justify earlier wrong order');
+    turn.events = [{ text: 'Other Pokemon is paralysed! It may be unable to move!' }, ...used];
+    truthy(mismatch(), 'another actor status must not justify wrong order');
+    turn.events = [{ text: 'Incineroar is paralysed! It may be unable to move!' }, ...used];
+    turn.pre.field.trick_room = 0;
+    turn.pre.speed_order_details[1].effective_speed = 80;
+    truthy(mismatch(), 'the same order is wrong outside Trick Room after paralysis');
+  });
+
   T('8. speed_order_details provide SP-aware order evidence over legacy name order', () => {
     const payload = stableFixture();
     const turn = payload.turnLog[0];
