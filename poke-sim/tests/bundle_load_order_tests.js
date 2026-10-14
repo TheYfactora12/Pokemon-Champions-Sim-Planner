@@ -80,5 +80,14 @@ T('3. Champions pools stay a separately cached asset before bundled consumers', 
   truthy(bundle.indexOf(tag) < bundle.indexOf('function resolveLearnsetPool('), 'pool asset must load before consumer');
   truthy(fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8').includes("'./generated/champions_move_pools.js'"), 'pool asset must be cached');
 });
+T('4. reference helpers load once at their original position and remain cached',()=>{
+  const bundle=fs.readFileSync(path.join(ROOT,'pokemon-champion-2026.html'),'utf8');
+  const tag='<script src="mc_review.js"></script>';
+  truthy(bundle.split(tag).length===2,'reference helper must load exactly once');
+  truthy(!bundle.includes('function mcReferenceReady()'),'duplicate inline reference helper');
+  truthy(bundle.indexOf('var CHAMPIONS_MEGAS')<bundle.indexOf(tag),'data must precede helper');
+  truthy(bundle.indexOf(tag)<bundle.indexOf('function callAbilityHook('),'helper must precede engine');
+  truthy(fs.readFileSync(path.join(ROOT,'sw.js'),'utf8').includes("'./mc_review.js'"),'helper must be cached');
+});
 console.log(`\nbundle load order: ${pass} pass, ${fail} fail\n`);
 process.exit(fail ? 1 : 0);

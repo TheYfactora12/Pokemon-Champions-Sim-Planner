@@ -9,7 +9,7 @@ if (execFileSync('git', ['-C', upstream, 'rev-parse', 'HEAD'], {encoding:'utf8'}
 if (execFileSync('git', ['-C', upstream, 'status', '--porcelain', '--untracked-files=no'], {encoding:'utf8'}).trim()) throw Error('Modified reference');
 const { Dex } = require(path.join(upstream, 'dist/sim'));
 const dex = Dex.mod('champions');
-const {registeredForm,buildCandidates}=require('./mc-mega-candidates.cjs');
+const {registeredForm,buildCandidates,CANDIDATE_NAMES}=require('./mc-mega-candidates.cjs');
 // The inventory verifier also binds compiled bytes to the captured reference.
 const inventory = require('./audit-mc-release-inventory.cjs').audit(root);
 const moves = {};
@@ -27,16 +27,18 @@ for (const s of dex.species.all()) {
 }
 // Only individually reviewed lifecycle candidates; absent forms remain blocked.
 const megas = {};
-for (const name of ['Raichu-Mega-X','Raichu-Mega-Y','Salamence-Mega']) {
-  const row=dex.species.get(name),base=dex.species.get(row.baseSpecies);
-  megas[name]={baseSpecies:row.baseSpecies,megaName:row.name,megaStone:row.requiredItem,
+for (const name of ['Raichu-Mega-X','Raichu-Mega-Y','Salamence-Mega',...CANDIDATE_NAMES]) {
+  const row=dex.species.get(name),base=registeredForm(dex,row);
+  megas[name]={baseSpecies:base.name,megaName:row.name,megaStone:row.requiredItem,
     types:row.types,megaBaseStats:row.baseStats,ability:row.abilities['0'],
-    baseAbility:base.abilities['0'],weightkg:row.weightkg};
+    baseAbility:base.abilities['0'],baseAbilities:Object.values(base.abilities),weightkg:row.weightkg,
+    execution_enabled:true};
 }
 const data = {regulation:'champions_reg_m_c_2026', pin, competitive_use:false,
-  species, moves, megas, items:dex.items.all().filter(i=>i.exists && !i.isNonstandard).map(i=>i.id).sort()};
-// Candidate descriptors are retained outside runtime assets and never added to
-// the executable whitelist. Exact identity does not establish ability behavior.
+  species, moves, megas, notrace:dex.abilities.all().filter(a=>a.flags.notrace).map(a=>a.name).sort(),
+  items:dex.items.all().filter(i=>i.exists && !i.isNonstandard).map(i=>i.id).sort()};
+// Preserve the original offline preparation packet separately from executable
+// reference descriptors. Exact identity does not establish ability behavior.
 const vm=require('node:vm'),legacy=vm.createContext({});
 vm.runInContext(fs.readFileSync(path.join(root,'data.js'),'utf8'),legacy);
 const candidates={schema_version:'champions-mc-mega-candidates-v1',regulation:data.regulation,

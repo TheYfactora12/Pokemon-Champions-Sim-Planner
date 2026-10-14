@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.211-mega-candidates
+// Build marker: v2.2.212-mega-lifecycles
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.211-mega-candidates'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.212-mega-lifecycles'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -822,8 +822,8 @@ function buildMcDraftImportValidation(members, opts) {
   var rows = reviewMcTeam(team, reference);
   members.forEach(function(m, index) {
     var errors = rows[index].issues.map(function(issue) { return m.name + ': ' + issue; });
-    if (m.species && id(m.species) !== id(m.name)) errors.push(m.name + ': conflicting species identity.');
-    var row = speciesData && api && api.canonicalSpeciesKey && speciesData[api.canonicalSpeciesKey(m.name)];
+    if (m.species && mcSpeciesId(m.species) !== mcSpeciesId(m.name)) errors.push(m.name + ': conflicting species identity.');
+    var row = resolveMcMega(m.name,m.item).species;
     if (!row || !Number.isInteger(row.num) || row.num <= 0) errors.push(m.name + ': species identity unavailable.');
     else if (speciesSeen.has(row.num)) errors.push(m.name + ': duplicate National Dex species.');
     else speciesSeen.add(row.num);
@@ -831,7 +831,7 @@ function buildMcDraftImportValidation(members, opts) {
     if (m.item) itemsSeen.add(id(m.item));
     if (!m.ability || natures.indexOf(m.nature) < 0 || m.level !== 50) errors.push(m.name + ': ability, known nature and level 50 are required.');
     if (m.moves.some(function(move) { return !move.trim(); }) || new Set(m.moves.map(id)).size !== m.moves.length) errors.push(m.name + ': moves must be nonblank and distinct.');
-    var mega = typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[m.name];
+    var mega = resolveMcMega(m.name,m.item).form;
     if (mega && m.item !== mega.megaStone) errors.push(m.name + ': matching Mega Stone required.');
     var parseErrors = m.import_format_signals && m.import_format_signals.spreadErrors;
     if (Array.isArray(parseErrors)) errors = errors.concat(parseErrors.map(function(e) { return m.name + ': ' + e; }));
@@ -954,6 +954,8 @@ function getPokemonTypes(name) {
   if (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[name]) return POKEMON_TYPES_DB[name];
   const base = BASE_STATS[name];
   if (base && base.types) return base.types;
+  // Display-only fallback; historical stats and saved identities stay untouched.
+  if (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[name]) return CHAMPIONS_MEGAS[name].types.slice();
   // Try partial match (e.g. 'Milotic' vs 'Milotic-something')
   if (typeof POKEMON_TYPES_DB !== 'undefined') {
     const key = Object.keys(POKEMON_TYPES_DB).find(k => k.toLowerCase() === name.toLowerCase());

@@ -1294,6 +1294,7 @@ function _targetAbilityActive(target, attacker, ability) {
 function _isGrounded(mon, field) {
   if (!mon) return false;
   if (mon.groundedByMove || (field && field.gravityTurns > 0)) return true;
+  if (mon.referenceMode === 'champions_mc_reference' && mon.ability === 'Eelevate') return false;
   if (mon.referenceMode === 'champions_mc_reference' && mon.item === 'Air Balloon' && !mon.itemConsumed && mon.ability !== 'Klutz') return false;
   if (mon.teraActivated && mon.tera) return mon.tera !== 'Flying' && mon.ability !== 'Levitate';
   return !mon.flying;
@@ -2103,6 +2104,10 @@ function callAbilityHook(mon, hookName, ctx) {
   if (!mon || !mon.ability) return null;
   if ((hookName === 'onTryHit' || hookName === 'onSourceModifyAtk' || hookName === 'onSourceModifyDamage') &&
       ctx && _attackerIgnoresTargetAbility(ctx.attacker, mon)) return null;
+  if (typeof mcAbilityHook === 'function') {
+    var referenceHook = mcAbilityHook(mon,hookName,ctx);
+    if (referenceHook !== undefined) return referenceHook;
+  }
   var ability = ABILITIES[mon.ability];
   if (!ability || typeof ability[hookName] !== 'function') return null;
   try {
@@ -2267,9 +2272,10 @@ class Pokemon {
       const _abilityApi = typeof ChampionsSim !== 'undefined' && ChampionsSim.moveLegality;
       const _baseAbilityCheck = _abilityApi && typeof _abilityApi.isAbilityLegalForSpecies === 'function'
         ? _abilityApi.isAbilityLegalForSpecies(_megaInfo.baseSpecies, this.ability) : null;
-      const _registeredBaseAbility = _baseAbilityCheck && _baseAbilityCheck.legal === true;
+      const _registeredBaseAbility = referenceMode === 'champions_mc_reference' && _megaInfo.baseAbilities
+        ? _megaInfo.baseAbilities.includes(this.ability) : _baseAbilityCheck && _baseAbilityCheck.legal === true;
       if (!this.ability || (this.ability === _megaInfo.ability && !_registeredBaseAbility)) {
-        this.ability = (typeof CHAMPIONS_BASE_ABILITIES !== 'undefined'
+        this.ability = (referenceMode === 'champions_mc_reference' && _megaInfo.baseAbility) || (typeof CHAMPIONS_BASE_ABILITIES !== 'undefined'
                        && CHAMPIONS_BASE_ABILITIES[_megaInfo.baseSpecies])
                        || _megaInfo.baseAbility || this.ability;
       }
@@ -2459,6 +2465,7 @@ class Pokemon {
     this.name = m.megaName;
     this.displayName = m.megaName;
     this.ability = m.megaAbility;
+    if (this.referenceMode === 'champions_mc_reference') { this._mcTraceOriginal=null; this._mcTraceBlocked=false; }
     if (Number.isFinite(m.weightkg) && m.weightkg > 0) this.weightkg = m.weightkg;
     // Recalculate derived stats
     this._calcStats();
@@ -2691,6 +2698,7 @@ class Pokemon {
     if (!isPhysical && this.ability === 'Solar Power' && _fieldWeather === 'sun') {
       atk = _applyStatMod(atk, 6144);
     }
+    if (this.referenceMode === 'champions_mc_reference' && this.ability === 'Fire Mane' && moveType === 'Fire') atk = _applyStatMod(atk,6144);
     if (this.hp <= this.maxHp / 3) {
       if (this.ability === 'Blaze' && moveType === 'Fire') {
         atk = _applyStatMod(atk, 6144);
@@ -2794,6 +2802,7 @@ class Pokemon {
     // Showdown / mainline terrain and Helping Hand modify base power, not the
     // late final-damage stage. Use fixed-point chaining so ranges stay aligned.
     const bpMods = [];
+    if (typeof mcFairyAuraMod === 'function') bpMods.push(mcFairyAuraMod(this,moveType,field));
     if (this.referenceMode === 'champions_mc_reference' && move === 'Grav Apple' && field.gravityTurns > 0) bpMods.push(6144);
     if (this._electricCharge && moveType === 'Electric') bpMods.push(8192);
     const _abilityBpRes = callAbilityHook(this, 'onBasePower', {
@@ -3097,6 +3106,7 @@ class Pokemon {
 // type-immune, already statused, under weather protection, or has a blocking
 // ability. Cite: Bulbapedia Status; Bulbapedia Freeze.
 function canInflictStatus(mon, status, field, source) {
+  if (mon && mon.referenceMode === 'champions_mc_reference' && status === 'burn' && _targetAbilityActive(mon,source,'Thermal Exchange')) return false;
   if (!mon || !mon.alive) return false;
   if (mon.status) return false; // one major status at a time
   const effectiveWeather = _effectiveFieldWeather(field);
@@ -4220,12 +4230,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   // Apply on-entry abilities
   function applyEntryAbility(mon, side, field, log) {
+    mon._mcEntryApplied = true;
     if (mon.ability === 'Trace') {
       const targets = side === 'player' ? oppActive : playerActive;
-      const traced = targets.find(function(t) {
+      const traced = mon.referenceMode === 'champions_mc_reference' ? mcTraceTarget(mon,targets,rng) : targets.find(function(t) {
         return t && t.alive && t.ability && t.ability !== 'Trace';
       });
       if (traced) {
+        if (mon.referenceMode === 'champions_mc_reference') mon._mcTraceOriginal = 'Trace';
         mon.ability = traced.ability;
         mon.flying = mon.types.includes('Flying') || mon.ability === 'Levitate';
         log.push(`${mon.name} traced ${traced.name}'s ${traced.ability}!`);
@@ -4268,6 +4280,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // matching terrain is already active as the holder switches in. Item is
     // consumed in the process. Seed activation does not require grounding.
     if (typeof tryTerrainSeed === 'function') tryTerrainSeed(mon, field, log);
+    for (const tracer of [...playerActive,...oppActive]) {
+      if (tracer !== mon && tracer.alive && tracer._mcEntryApplied && tracer.referenceMode === 'champions_mc_reference' && tracer.ability === 'Trace' && !tracer._mcTraceBlocked) {
+        const foes = tracer.side === field.playerSide ? oppActive : playerActive;
+        if (foes.some(t=>t.alive && t.ability && t.ability !== 'No Ability' && MC_REVIEW_REFERENCE.notrace.indexOf(t.ability)<0))
+          applyEntryAbility(tracer,tracer.side === field.playerSide ? 'player' : 'opp',field,log);
+      }
+    }
   }
 
   function _chooseBenchReplacement(bench) {
@@ -4294,6 +4313,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   function _resetSwitchInState(replacement) {
     if (!replacement) return;
+    if (replacement.referenceMode === 'champions_mc_reference') {
+      if (replacement._mcTraceOriginal) replacement.ability = replacement._mcTraceOriginal;
+      replacement._mcTraceOriginal = null; replacement._mcTraceBlocked = false; replacement._mcEntryApplied = false;
+    }
     _resetSoakTypes(replacement);
     replacement._unburdenActive = false;
     replacement._electricCharge = false;
@@ -4344,11 +4367,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const bench = side === 'player' ? playerBench : oppBench;
     const idx = activeArr.indexOf(mon);
     if (idx < 0) return false;
-    if (_isTrappedByShadowTag(mon, field)) {
+    if (!(opts && opts.forcedAbilitySwitch) && _isTrappedByShadowTag(mon, field)) {
       if (log) log.push(`${mon.name} is trapped by Shadow Tag!`);
       return false;
     }
-    if (_isTrappedByMove(mon)) {
+    if (!(opts && opts.forcedAbilitySwitch) && _isTrappedByMove(mon)) {
       if (log) log.push(`${mon.name} is trapped by ${mon.trappedByMove}!`);
       return false;
     }
@@ -4690,10 +4713,30 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     return true;
   }
 
+  function mcEmergencySwitches(before,attacker,move) {
+    let switched=false;
+    for (const row of before || []) {
+      const mon=row.mon;
+      if (row.used || !mon.alive || mon.hp<=0 || mon.ability !== 'Emergency Exit' || row.hp<=mon.maxHp/2 || mon.hp>mon.maxHp/2 ||
+          (attacker && mon!==attacker && attacker.ability==='Sheer Force' && _hasSheerForceEffect(attacker,move))) continue;
+      row.used=true;
+      const side=playerActive.includes(mon)?'player':oppActive.includes(mon)?'opp':null;
+      if (side && _switchOutActiveMon(mon,side,field,log,{forcedAbilitySwitch:true})) {
+        log.push(`${mon.name}'s Emergency Exit activated!`); switched=true;
+      }
+    }
+    return switched;
+  }
+
   function executeAction(attacker, move, target, allies, enemies, field, log, rng, opts) {
+    if (attacker.referenceMode === 'champions_mc_reference') attacker._mcEmergencyBefore = [...playerActive,...oppActive].map(mon=>({mon,hp:mon.hp}));
     try {
       return executeActionImpl(attacker, move, target, allies, enemies, field, log, rng, opts);
     } finally {
+      if (attacker.referenceMode === 'champions_mc_reference') {
+        mcEmergencySwitches(attacker._mcEmergencyBefore,attacker,move);attacker._mcEmergencyBefore=null;
+      }
+      if (attacker.referenceMode === 'champions_mc_reference') mcFinishMove(attacker,log);
       // One charge applies to the whole action, including spread and child hits.
       _consumeElectricCharge(attacker, move, field, log);
       if (move === 'Beak Blast') attacker._beakBlastPreparing=false;
@@ -4704,6 +4747,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const fromSleepTalk = !!(opts && opts.fromSleepTalk);
     if (!attacker.alive) return;
     if (!move) return;
+    if (typeof mcRedirectElectric === 'function') target = mcRedirectElectric(attacker,target,move,field,log,rng);
     _recordTurnActionEvent(attacker, move, target, field, log, opts);
     attacker.lastMoveUsed = move;
     attacker.lastTarget = target || null;
@@ -4924,6 +4968,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         log.push(`${target.name}'s Soundproof blocked ${move}!`);
         attacker.lastMoveFailed = true;
         return;
+      }
+      if (target && target.referenceMode === 'champions_mc_reference' && move === 'Thunder Wave') {
+        const immunity=callAbilityHook(target,'onTryHit',{attacker,defender:target,move,moveType:'Electric',field,log});
+        if (immunity && immunity.immune) return;
       }
       if (target && target.alive && target.substituteHp > 0 && !_moveBypassesSubstitute(attacker, move) && blockedBySubstitute.has(move)) {
         log.push(`${attacker.name} used ${move}! But it failed because of Substitute!`);
@@ -5803,7 +5851,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const _moveResult = executeMove(attacker, move, target, allies, enemies, field, log, rng);
     attacker.lastMoveFailed = !(_moveResult && _moveResult.didDamage);
     const _pivotAttackMoves = new Set(['U-turn', 'Flip Turn', 'Volt Switch']);
-    if (_pivotAttackMoves.has(move) && _moveResult && _moveResult.didDamage && attacker.alive) {
+    const _emergencyExit = _pivotAttackMoves.has(move) && attacker.referenceMode === 'champions_mc_reference' && mcEmergencySwitches(attacker._mcEmergencyBefore,attacker,move);
+    if (!_emergencyExit && _pivotAttackMoves.has(move) && _moveResult && _moveResult.didDamage && attacker.alive) {
       _switchOutActiveMon(attacker, attacker.side === field.playerSide ? 'player' : 'opp', field, log);
     }
     if (_pbEligible && attacker.alive && target && target.alive) {
@@ -6843,6 +6892,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     } catch (_e) { /* never kill sim for telemetry */ }
   };
   const _recordKO = function(mon, cause) {
+    if (cause && cause.reason === 'attack' && cause.attacker && cause.attacker.referenceMode === 'champions_mc_reference' && cause.attacker.ability === 'Eelevate')
+      cause.attacker._mcMoveKOs = (cause.attacker._mcMoveKOs || 0) + 1;
     _clearMcVolatilesForMon(mon, field);
     if (mon) mon._electricCharge = false;
     try {
@@ -7066,6 +7117,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       _speedSort(pendingActions, (a, b) => _compareTurnActionOrder(a, b, field), rng);
       const action = pendingActions.shift();
       if (!action.attacker.alive) continue;
+      if (action.attacker.referenceMode === 'champions_mc_reference' && !playerActive.includes(action.attacker) && !oppActive.includes(action.attacker)) continue;
       let electricActionStarted = false;
       try {
       // T9j.4 (#41) — Freeze resolution per Champions rules:
@@ -7267,6 +7319,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       electricActionStarted = true;
       executeAction(action.attacker, action.move, _resolvedTarget,
         _allies, _enemies, field, log, rng);
+      for (const mon of [...playerActive,...oppActive]) if (mon.alive && mon.referenceMode === 'champions_mc_reference' && mon.ability === 'Thermal Exchange' && mon.status === 'burn') {
+        mon.status=null; log.push(`${mon.name}'s Thermal Exchange cured its burn!`);
+      }
       // T9j.8 (Refs #19) Mark as acted so later-in-queue flinch rolls against
       // this mon have no effect (can't flinch a mon that already moved).
       action.attacker.hasActed = true;
@@ -7278,6 +7333,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     for (const mon of [...playerActive,...oppActive]) mon._beakBlastPreparing=false;
 
+    const _mcResidualHP = [...playerActive,...oppActive].filter(mon=>mon.referenceMode==='champions_mc_reference').map(mon=>({mon,hp:mon.hp}));
     // Sand damage
     if (_effectiveFieldWeather(field) === 'sand') {
       for (const mon of [...playerActive, ...oppActive].filter(m => m.alive)) {
@@ -7552,6 +7608,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
     }
 
+    for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.referenceMode === 'champions_mc_reference')) {
+      if (mon.ability === 'Speed Boost' && mon.turnsSinceEntry > 0) _applyStageMap(mon,{spe:1},log);
+      if (mon.ability === 'Thermal Exchange' && mon.status === 'burn') { mon.status = null; log.push(`${mon.name}'s Thermal Exchange cured its burn!`); }
+      if (mon.ability === 'Trace') applyEntryAbility(mon,mon.side === field.playerSide ? 'player' : 'opp',field,log);
+    }
+    mcEmergencySwitches(_mcResidualHP,null,null);
     // Field upkeep
     field.tick(log);
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.roosting)) {
@@ -7934,7 +7996,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.18'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.19'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

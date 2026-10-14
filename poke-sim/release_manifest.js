@@ -6,10 +6,10 @@
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
     data_mode: 'local-only',
-    reference_artifact_sha256: 'f4cb1251e195b57af7baabc9a591cad6f76e5f35778fa516cf71b9122acfa01c',
-    build_id: 'v2.2.211-mega-candidates',
+    reference_artifact_sha256: '9b2262a492e6320816edfd1e482386c597eacbbcfccf9860cbd05d18d283c630',
+    build_id: 'v2.2.212-mega-lifecycles',
     release_date: '2026-10-14',
-    service_worker_cache: 'champions-sim-v2-2-211-mega-candidates',
+    service_worker_cache: 'champions-sim-v2-2-212-mega-lifecycles',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',

@@ -7,7 +7,7 @@ Historical candidate observations are not current deployment instructions.
 
 ## Separate M-C draft candidate
 
-v211 prepares22 non-executable Mega/alias descriptor records, fixes female Meowstic's reference ability pool and closes gender-prefixed Mega lifecycle-check bypass. Aggregate222+12, source-truth and battle gates pass; desktop/touch paired replay checks pass.19 execution gaps and3 alias activation gaps remain. No package promotion or deployment. [Candidate evidence and remaining work](docs/release/MC_MEGA_CANDIDATES_2026-10-14.md).
+Local v212 implements the 19 missing Mega lifecycles and 3 aliases in experimental reference mode, including female Meowstic stats/import isolation. 88 pinned lifecycle and 78 selected ability comparisons pass; final aggregate 224+12 and source/battle gates pass. Desktop/touch replay verification passes 5,254 observable checks with zero mismatches. Official M-C promotion and deployment remain unapproved. [Implementation, evidence and remaining boundaries](docs/release/MC_MEGA_LIFECYCLES_2026-10-14.md); [earlier descriptor-only preparation](docs/release/MC_MEGA_CANDIDATES_2026-10-14.md).
 
 ## Current verified release
 

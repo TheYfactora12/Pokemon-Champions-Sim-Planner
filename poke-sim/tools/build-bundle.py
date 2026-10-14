@@ -171,7 +171,7 @@ inline_js = (
     + sanitize_inline_js(release_manifest) + '\n\n'
     + sanitize_inline_js(app_shell) + '\n\n'
     + sanitize_inline_js(data) + '\n\n'
-    + sanitize_inline_js(read('mc_review.js')) + '\n\n'
+    + '</script>\n<script src="mc_review.js"></script>\n<script>\n'
     + sanitize_inline_js(tournament_catalog) + '\n\n'
     + sanitize_inline_js(project_roadmap) + '\n\n'
     + sanitize_inline_js(logger) + '\n\n'
@@ -227,7 +227,7 @@ else:
         'hash_scope': 'sha256 of committed poke-sim/pokemon-champion-2026.html bytes'
     }
     artifact['external_assets'] = {}
-    for asset in ['generated/champions_move_pools.js', 'generated/mc_review_reference.js',
+    for asset in ['generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'mc_review.js',
                   'assets/retro-intro/gengar.png', 'assets/retro-intro/nidorino.png']:
         with open(os.path.join(BASE, asset), 'rb') as f:
             asset_bytes = f.read()

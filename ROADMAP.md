@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-v210 practice workflows are live-verified (STATUS.md). Draft v211 prepares22 Mega/alias descriptors and corrects exact-form reference checks;19 lifecycle and3 alias activation gaps remain. Complete source/mechanics evidence and exact-package human approval (#232). M-C remains experimental, excluded from trusted rankings and database learning.
+v210 practice workflows are live-verified (STATUS.md). Draft v212 implements22 exact Mega/alias lifecycles with bounded pinned mechanics proof and historical isolation; complete remaining interaction and current-client evidence. Complete source/mechanics evidence and exact-package human approval (#232). M-C remains experimental, excluded from trusted rankings and database learning.
 
 ## Milestone Index
 

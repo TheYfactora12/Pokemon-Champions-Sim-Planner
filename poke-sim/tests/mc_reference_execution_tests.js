@@ -18,10 +18,13 @@ test('Mega admission is invariant to case and normalized identifiers',()=>{
   for(const name of ['Sceptile-Mega','sceptile-mega','SCEPTILE-MEGA','sceptilemega','  ScEpTiLe-MeGa  ']) {
     const t=team();t.members[0]=member(name,'Sceptilite','Lightning Rod');
     const result=c.checkMcReferenceExecution(t,opts);
-    assert.equal(result.allowed,false,name);
-    assert.match(result.errors.join(' '),/Mega lifecycle not implemented/);
+    assert.equal(result.allowed,true,name);
+    assert.notEqual(c.simulateBattle(t,team(),opts).result,'error');
+    assert.notEqual(c.simulateBattle(team(),t,opts).result,'error');
+    c.MC_REVIEW_REFERENCE.megas['Sceptile-Mega'].execution_enabled=false;
+    assert.match(c.checkMcReferenceExecution(t,opts).errors.join(' '),/Mega lifecycle not implemented/);
     assert.equal(c.simulateBattle(t,team(),opts).result,'error');
-    assert.equal(c.simulateBattle(team(),t,opts).result,'error');
+    c.MC_REVIEW_REFERENCE.megas['Sceptile-Mega'].execution_enabled=true;
   }
   for(const name of ['Raichu-Mega-X','raichu-mega-x','RAICHUMEGAX']) {
     const t=team();t.members[0]=member(name,'Raichunite X','Electric Surge');
@@ -43,7 +46,7 @@ test('base plus stone resolves supported lifecycle or explicitly rejects unsuppo
   const c=harness();
   for(const [name,item,ability] of [['Sceptile','Sceptilite','Overgrow']]) {
     const t=team();t.members[0]=member(name,item,ability);
-    assert.match(c.checkMcReferenceExecution(t,opts).errors.join(' '),/Mega lifecycle not implemented/);
+    assert.equal(c.checkMcReferenceExecution(t,opts).allowed,true);
   }
   const t=team();t.members[0]=member('Charizard','Charizardite X','Blaze');
   assert.equal(c.checkMcReferenceExecution(t,opts).allowed,true);

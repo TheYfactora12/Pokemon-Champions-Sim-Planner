@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "MC-MEGA-EXACT-FORM-LIFECYCLE",
+      "family": "transformations",
+      "behavior": "Reference-only Mega identities, base ability retention, transition stats and selected ability interactions preserve historical descriptors.",
+      "status": "partial",
+      "tests": ["tests/mc_expanded_mega_tests.js", "tests/mc_mega_ability_tests.js", "tests/mc_draft_import_tests.js"],
+      "oracle": "Pinned Showdown efe4948570d5e8189751792136d26e71710c6c66; tools/verify-mc-expanded-megas.cjs and tools/verify-mc-mega-abilities.cjs. Experimental reference, not official game approval.",
+      "boundary_vectors": ["both-sides", "immediate-delayed-Mega", "base-active-form-registration", "female-male-Meowstic", "Eternal-Floette-aliases", "wrong-stone", "prior-regulation-isolation", "contact-fixed-point-damage", "global-Fairy-Aura", "Trace-Mega-switch-reentry", "Lightning-Rod-redirect", "Speed-Boost", "Thermal-Exchange", "Eelevate-highest-stat", "Emergency-Exit-threshold-berry-KO"],
+      "known_gap": "Exhaustive ability suppression/copying, simultaneous switches, multi-hit/recoil/residual combinations and current-client M-C evidence remain unproved. Official M-C stays gated."
+    },
+    {
       "id": "POLICY-IMPRISON-REDUNDANT",
       "family": "moves-effects",
       "behavior": "Heuristic selection deprioritizes the actor's already active same-move Imprison seal while preserving forced or sole usable choices.",

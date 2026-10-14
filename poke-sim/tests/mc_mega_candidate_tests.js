@@ -48,7 +48,9 @@ test('candidate inventory is complete, unique, quarantined and keeps exact start
 });
 test('candidate preparation cannot activate missing Mega lifecycles, including gender-prefixed forms', () => {
   const c=reference(), before=JSON.stringify(c.CHAMPIONS_MEGAS);
-  assert.deepEqual(Object.keys(c.MC_REVIEW_REFERENCE.megas).sort(),['Raichu-Mega-X','Raichu-Mega-Y','Salamence-Mega']);
+  // Remove executable descriptors to prove the offline candidate packet alone
+  // cannot grant runtime admission, even after reviewed lifecycles are added.
+  c.MC_REVIEW_REFERENCE.megas = {};
   c.MC_REVIEW_REFERENCE.mega_candidates=catalog().candidates;
   c.ChampionsSim.pokemonDataAudit=require('../generated/pokemon_showdown_legal_data.js');
   for(const r of catalog().candidates) {

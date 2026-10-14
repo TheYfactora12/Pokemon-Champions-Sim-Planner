@@ -13,22 +13,97 @@ function getMcReferenceMove(move, actor) {
   return rows && rows[String(move || '').toLowerCase().replace(/[^a-z0-9]/g,'')] || null;
 }
 
+function mcSpeciesId(name) {
+  var key = String(name || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+  return ({floetteeternalflowermega:'floettemega',floetteeternalflower:'floetteeternal',
+    floetteeternalmega:'floettemega',floettemegaef:'floettemega',floettemegaeternalflower:'floettemega',eternalflowerfloette:'floetteeternal',
+    meowsticmalemega:'meowsticmmega',meowsticfemalemega:'meowsticfmega',
+    meowsticmale:'meowstic',meowsticm:'meowstic',meowsticfemale:'meowsticf'})[key] || key;
+}
+
 function getMcReferenceMega(name) {
   if (!mcReferenceReady()) return null;
   var rows = MC_REVIEW_REFERENCE.megas;
-  return rows && Object.prototype.hasOwnProperty.call(rows,name) ? rows[name] : null;
+  var key = mcSpeciesId(name);
+  var target = rows && Object.keys(rows).find(function(n) { return mcSpeciesId(n) === key; });
+  return target ? rows[target] : null;
 }
 
 function resolveMcMega(name, item) {
   var api = typeof ChampionsSim !== 'undefined' && ChampionsSim.moveLegality;
   var data = typeof ChampionsSim !== 'undefined' && ChampionsSim.pokemonDataAudit;
-  var key = api && api.canonicalSpeciesKey(name), species = data && data.species[key];
+  var ref = mcReferenceReady() && MC_REVIEW_REFERENCE.species[mcSpeciesId(name)];
+  var key = ref ? ref.name : api && api.canonicalSpeciesKey(name), species = data && data.species[key];
   var stone = data && data.items[String(item || '').toLowerCase().replace(/[^a-z0-9]/g,'')];
   var target = species && /(?:^|-)Mega(?:-|$)/.test(species.forme) ? key :
     stone && stone.megaStone && typeof stone.megaStone === 'object' ? stone.megaStone[key] :
     stone && stone.megaEvolves === key ? stone.megaStone : null;
-  var form = target && ((typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[target]) || getMcReferenceMega(target));
-  return {required:!!target, form:form ? Object.assign({megaName:target},form) : null};
+  var form = target && (getMcReferenceMega(target) || (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[target]));
+  return {required:!!target, target:target, species:species,
+    form:form && form.execution_enabled !== false ? Object.assign({megaName:target},form) : null};
+}
+
+// Reference-only ability deltas; historical calculation remains unchanged.
+function mcAbilityHook(mon, hook, ctx) {
+  if (!mon || mon.referenceMode !== 'champions_mc_reference') return undefined;
+  if (mon.ability === 'Tough Claws') {
+    if (hook === 'onModifyMove') return null;
+    if (hook === 'onBasePower') return _moveHasFlag(ctx.move,'contact') ? {bpMod:5325} : null;
+  }
+  if (mon.ability === 'Sharpness' && hook === 'onBasePower') return _moveHasFlag(ctx.move,'slicing') ? {bpMod:6144} : null;
+  if (mon.ability === 'Aura Guard' && hook === 'onSourceModifyDamage') return ctx.attacker.ability !== 'Long Reach' && _moveHasFlag(ctx.move,'contact') ? {finalMod:2048} : null;
+  if (mon.ability === 'Fairy Aura' && hook === 'onBasePower') return null;
+  if (mon.ability === 'Eelevate' && hook === 'onTryHit') return ABILITIES.Levitate.onTryHit(ctx);
+  if (mon.ability === 'Lightning Rod' && hook === 'onTryHit' && mon !== ctx.attacker && ctx.moveType === 'Electric') {
+    if (ctx.log) { _applyStageMap(mon,{spa:1},ctx.log); ctx.log.push(mon.name+' absorbed '+ctx.move+' with Lightning Rod!'); }
+    return {immune:true};
+  }
+  if (mon.ability === 'Thermal Exchange' && hook === 'onDamagingHit') {
+    if (mon.hp > 0 && ctx.damage > 0 && ctx.moveType === 'Fire') _applyStageMap(mon,{atk:1},ctx.log);
+    return null;
+  }
+  return undefined;
+}
+
+function mcFairyAuraMod(attacker,moveType,field) {
+  if (!attacker || attacker.referenceMode !== 'champions_mc_reference' || moveType !== 'Fairy') return 4096;
+  var active = _activeWeatherMons(field);
+  if (active.indexOf(attacker) < 0) active.push(attacker);
+  if (!active.some(function(p) { return p.ability === 'Fairy Aura'; })) return 4096;
+  return active.some(function(p) { return p.ability === 'Aura Break'; }) ? 3072 : 5448;
+}
+
+function mcTraceTarget(mon,targets,rng) {
+  if (mon._mcTraceBlocked || (mon.item === 'Ability Shield' && !mon.itemConsumed) ||
+      targets.some(function(t) { return t.alive && t.ability === 'No Ability'; })) {
+    mon._mcTraceBlocked = true; return null;
+  }
+  var eligible = targets.filter(function(t) { return t && t.alive && t.ability &&
+    MC_REVIEW_REFERENCE.notrace.indexOf(t.ability) < 0 && t.ability !== 'No Ability'; });
+  return eligible.length ? eligible[Math.floor(rng()*eligible.length)] : null;
+}
+
+function mcFinishMove(mon,log) {
+  var count=mon._mcMoveKOs || 0; mon._mcMoveKOs=0;
+  if (!count || !mon.alive || mon.ability !== 'Eelevate') return;
+  var stats={atk:mon.baseAtk,def:mon.baseDef,spa:mon.baseSpa,spd:mon.baseSpd,spe:mon.baseSpe};
+  var best='atk';
+  ['def','spa','spd','spe'].forEach(function(k) { if (stats[k] > stats[best]) best=k; });
+  _applyStageMap(mon,{[best]:count},log);
+}
+
+function mcRedirectElectric(attacker,target,move,field,log,rng) {
+  if (attacker.referenceMode !== 'champions_mc_reference' || ['Stalwart','Propeller Tail'].includes(attacker.ability) ||
+      _resolveDynamicMoveType(attacker,move,field) !== 'Electric' ||
+      ['normal','adjacent-foe','random-foe'].indexOf(_moveTargetCategory(move)) < 0) return target;
+  var redirect=target && target.side && target.side.redirectTo;
+  if (redirect && redirect.alive && (target.side.redirectType !== 'ragePowder' ||
+      (!attacker.types.includes('Grass') && attacker.ability !== 'Overcoat' && attacker.item !== 'Safety Goggles'))) return redirect;
+  var holders=_activeWeatherMons(field).filter(function(p) { return p !== attacker && _targetAbilityActive(p,attacker,'Lightning Rod'); });
+  if (!holders.length) return target;
+  _speedSort(holders,function(a,b) { return b.getEffSpeed(field)-a.getEffSpeed(field); },rng);
+  if (holders[0] !== target) log.push(holders[0].name+' redirected '+move+' with Lightning Rod!');
+  return holders[0];
 }
 
 function checkMcReferenceExecution(team, options) {
@@ -60,7 +135,7 @@ function checkMcReferenceExecution(team, options) {
   var rows = reviewMcTeam(team,MC_REVIEW_REFERENCE), seen = new Set();
   team.members.forEach(function(m,i) {
     errors.push.apply(errors,rows[i].issues.map(function(e) { return m.name+': '+e; }));
-    if (m.species && id(m.species) !== id(m.name)) errors.push(m.name+': conflicting species identity.');
+    if (m.species && mcSpeciesId(m.species) !== mcSpeciesId(m.name)) errors.push(m.name+': conflicting species identity.');
     if (!m.ability || !m.nature || (m.level != null && m.level !== 50)) errors.push(m.name+': ability, nature and level 50 required.');
     if (['Hardy','Lonely','Brave','Adamant','Naughty','Bold','Docile','Relaxed','Impish','Lax','Timid','Hasty','Serious','Jolly','Naive','Modest','Mild','Quiet','Bashful','Rash','Calm','Gentle','Sassy','Careful','Quirky'].indexOf(m.nature) < 0) errors.push(m.name+': unknown nature.');
     if (m.moves.some(function(v) { return !v.trim(); }) || new Set(m.moves.map(id)).size !== m.moves.length) errors.push(m.name+': distinct moves required.');
@@ -68,7 +143,7 @@ function checkMcReferenceExecution(team, options) {
     if (m.tera || m.teraType || m.tera_type) errors.push(m.name+': Terastallization is unsupported.');
     var api = typeof ChampionsSim !== 'undefined' && ChampionsSim.moveLegality;
     var data = typeof ChampionsSim !== 'undefined' && ChampionsSim.pokemonDataAudit;
-    var species = data && api && data.species[api.canonicalSpeciesKey(m.name)];
+    var species = resolveMcMega(m.name,m.item).species;
     if (!species || !Number.isInteger(species.num)) errors.push(m.name+': species identity missing.');
     else if (seen.has(species.num)) errors.push(m.name+': duplicate National Dex species.');
     else seen.add(species.num);
@@ -89,9 +164,7 @@ function getMcReferenceChoices(kind, speciesName, data, showUnavailable) {
   if (!ref || ref.regulation !== 'champions_reg_m_c_2026' ||
       ref.pin !== 'efe4948570d5e8189751792136d26e71710c6c66' || !ref.species || !Array.isArray(ref.items)) return [];
   var id = function(value) { return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, ''); };
-  var key = id(speciesName);
-  if (key === 'floetteeternalflowermega') key = 'floettemega';
-  if (key === 'floetteeternalflower') key = 'floetteeternal';
+  var key = mcSpeciesId(speciesName);
   var species = Object.prototype.hasOwnProperty.call(ref.species,key) ? ref.species[key] : null;
   var source = kind === 'species' ? ref.species : kind === 'item' ? data.items : kind === 'move' ? data.moves : kind === 'ability' ? data.abilities : null;
   if (!source) return [];
@@ -113,9 +186,7 @@ function reviewMcTeam(team, reference) {
   if (!team || team.format === 'sv' || !Array.isArray(team.members)) return null;
   var items = new Set();
   return team.members.map(function(member) {
-    var key = id(member.species || member.name);
-    if (key === 'floetteeternalflowermega') key = 'floettemega';
-    if (key === 'floetteeternalflower') key = 'floetteeternal';
+    var key = mcSpeciesId(member.species || member.name);
     var species = Object.prototype.hasOwnProperty.call(reference.species, key) ? reference.species[key] : null;
     var issues = [];
     if (!species) issues.push('Species identity unresolved');

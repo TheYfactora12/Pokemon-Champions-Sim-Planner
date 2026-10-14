@@ -1,5 +1,13 @@
 # Improvement Log
 
+## IMP-0101: Execute Exact Reference Mega Forms With Scoped Mechanics Proof
+
+- Implement 19 missing Mega lifecycles and 3 canonical/legacy aliases in explicit experimental M-C reference context. Repair female Meowstic stats and import stone identity without mutating historical data or saved registrations.
+- Add scoped ability behavior and pinned comparisons; independent review caught Trace restoration after Mega evolution and Windows clean-filter asset drift. Both have production-path regressions.
+- Externalize the existing reference helper synchronously, bind its bytes and retain the bundle budget. [Proof, artifacts, failed attempts and exclusions](release/MC_MEGA_LIFECYCLES_2026-10-14.md).
+- Local candidate v212; official M-C approval, hosted checks for the new revision and deployment are separate gates. Live v210 is unchanged.
+- Lesson: activation needs exact registered identity, executable interaction evidence and committed-byte delivery proof; prepared metadata alone proves none of those.
+
 ## IMP-0100: Preserve Exact Mega Starting Forms And Quarantine Candidate Descriptors
 
 - Pinned source review found female Mega Meowstic inherited male Prankster instead of Competitive; correct the registered-form ability pool and recognize gender-prefixed Mega names in reference lifecycle gating.

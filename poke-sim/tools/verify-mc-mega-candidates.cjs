@@ -20,11 +20,11 @@ for(const row of packet.candidates) {
   assert.equal(row.gender,s.gender || '');assert.deepEqual(row.registered_abilities,base.abilities);
   assert.equal(row.execution_enabled,false);assert.equal(row.competitive_use,false);checks++;
 }
-assert.equal(inventory.mega.filter(r=>r.status==='missing_runtime_descriptor').length,19);
-assert.equal(inventory.mega.filter(r=>r.status==='alias_requires_resolution').length,3);
+assert.equal(inventory.mega.filter(r=>r.status==='missing_runtime_descriptor').length,0);
+assert.equal(inventory.mega.filter(r=>r.status==='alias_requires_resolution').length,0);
 assert.equal(inventory.candidate_preparation.filter(r=>r.candidate_status==='descriptor_prepared_not_enabled').length,22);
 const report={pin:inventory.pin,compiled_fingerprint:inventory.compiled_fingerprint,checks,
-  status:'passed',scope:'22 exact descriptor candidates;19 runtime gaps and3 alias activation gaps remain; not mechanics parity'};
+  status:'passed',scope:'22 exact historical candidate descriptors; runtime activation has separate lifecycle and mechanics probes; not mechanics parity'};
 fs.mkdirSync(path.join(root,'artifacts/mc-mega-candidates'),{recursive:true});
 fs.writeFileSync(path.join(root,'artifacts/mc-mega-candidates/verification.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report));
