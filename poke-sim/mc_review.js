@@ -6,6 +6,13 @@ function mcReferenceReady() {
     MC_REVIEW_REFERENCE.species && Array.isArray(MC_REVIEW_REFERENCE.items);
 }
 
+// Explicit diagnostic context only. Never overwrite baseline/historical rows.
+function getMcReferenceMove(move, actor) {
+  if (!actor || actor.referenceMode !== 'champions_mc_reference' || !mcReferenceReady()) return null;
+  var rows = MC_REVIEW_REFERENCE.moves;
+  return rows && rows[String(move || '').toLowerCase().replace(/[^a-z0-9]/g,'')] || null;
+}
+
 function getMcReferenceMega(name) {
   if (!mcReferenceReady() || name !== 'Raichu-Mega-X') return null;
   // Quarantined reference implementation; never adds a row to approved runtime data.

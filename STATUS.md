@@ -1,6 +1,6 @@
 # Project Status
 
-Reviewed: 2026-10-13. This file owns current release facts and priorities.
+Reviewed: 2026-10-14. This file owns current release facts and priorities.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
@@ -46,6 +46,12 @@ The production release uses local saves; offline/mock DB tests are not live
 Supabase security or ownership tests.
 
 ## Next Work, In Order
+
+October 14 follow-up local candidate v207 reconciles all 22 residual M-C move
+rows and adds scoped effects with 24 metadata checks, 50 effect checks and 20
+pinned comparisons. The [move audit](docs/release/MC_MOVE_AUDIT_2026-10-14.md)
+explicitly retains five unfinished effect families and package/workflow gates.
+M-C remains reference-only; nothing published. This does not finish the lab.
 
 October 14 local candidate: redundant Imprison preference fixed with 14 focused
 checks, 215 fast + 12 offline DB suites and the battle gate passing. No push or

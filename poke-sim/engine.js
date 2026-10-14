@@ -528,7 +528,9 @@ function _targetWeightBasePower(target) {
   return 120;
 }
 
-function _moveType(move) {
+function _moveType(move, actor) {
+  var reference = typeof getMcReferenceMove === 'function' && getMcReferenceMove(move, actor);
+  if (reference) return reference.type;
   var api = _runtimeDataApi();
   if (api && typeof api.getMoveType === 'function') return api.getMoveType(move);
   var row = _showdownMoveRow(move);
@@ -548,7 +550,9 @@ function _moveCategory(move) {
   return '';
 }
 
-function _moveBasePower(move) {
+function _moveBasePower(move, actor) {
+  var reference = typeof getMcReferenceMove === 'function' && getMcReferenceMove(move, actor);
+  if (reference) return reference.basePower;
   var api = _runtimeDataApi();
   if (api && typeof api.getMoveBasePower === 'function') return api.getMoveBasePower(move);
   var row = _showdownMoveRow(move);
@@ -562,7 +566,9 @@ function _moveBasePower(move) {
   return undefined;
 }
 
-function _moveAccuracy(move, localValue) {
+function _moveAccuracy(move, localValue, actor) {
+  var reference = typeof getMcReferenceMove === 'function' && getMcReferenceMove(move, actor);
+  if (reference) return reference.accuracy === true ? 1 : reference.accuracy / 100;
   var api = _runtimeDataApi();
   if (api && typeof api.getMoveAccuracy === 'function') return api.getMoveAccuracy(move, localValue);
   var row = _showdownMoveRow(move);
@@ -575,7 +581,9 @@ function _moveAccuracy(move, localValue) {
   return 1.0;
 }
 
-function _moveNeverMiss(move) {
+function _moveNeverMiss(move, actor) {
+  var reference = typeof getMcReferenceMove === 'function' && getMcReferenceMove(move, actor);
+  if (reference) return reference.accuracy === true;
   var row = _showdownMoveRow(move);
   if (row && (row.accuracy === true || row.accuracy === 'true')) return true;
   return false;
@@ -950,7 +958,7 @@ function _teraBlastUsesPhysical(attacker) {
 }
 
 function _resolveBaseDynamicMoveType(attacker, move, field, baseMoveType) {
-  var moveType = baseMoveType || _moveType(move);
+  var moveType = baseMoveType || _moveType(move, attacker);
   var _fieldWeather = _effectiveFieldWeather(field);
   if (move === 'Weather Ball') {
     moveType =
@@ -1153,7 +1161,7 @@ function _applyTargetStageMap(source, target, deltas, log, options) {
   return applied;
 }
 
-function _moveMaxPP(move) {
+function _moveMaxPP(move, actor) {
   var row = _showdownMoveRow(move);
   var root = (typeof globalThis !== 'undefined') ? globalThis : ((typeof window !== 'undefined') ? window : null);
   var override = root && root.ChampionsSim && root.ChampionsSim.championsMoveOverrides &&
@@ -1161,6 +1169,8 @@ function _moveMaxPP(move) {
     ? root.ChampionsSim.championsMoveOverrides.moves[_moveId(move)]
     : null;
   var base = Number(override && override.champions_pp != null ? override.champions_pp : row && row.pp);
+  var reference = typeof getMcReferenceMove === 'function' && getMcReferenceMove(move, actor);
+  if (reference) base = reference.pp;
   // Isolated engine tests do not always load the generated Showdown mirror.
   // Use Champions' common 20-PP baseline there; production/import legality
   // still requires a mirrored move row before competitive use.
@@ -1312,12 +1322,12 @@ function _isAccuracyBypassed(attacker, target) {
 function _moveHits(attacker, target, move, field, rng, localAccuracy) {
   if (!target) return true;
   if (_isAccuracyBypassed(attacker, target)) return true;
-  if (_moveNeverMiss(move)) return true;
+  if (_moveNeverMiss(move, attacker)) return true;
   var rngFn = typeof rng === 'function' ? rng : Math.random;
   var effectiveWeather = _effectiveFieldWeather(field);
   if (move === 'Blizzard' && (effectiveWeather === 'hail' || effectiveWeather === 'snow')) return true;
   if ((move === 'Thunder' || move === 'Hurricane') && effectiveWeather === 'rain') return true;
-  var acc = _moveAccuracy(move, localAccuracy);
+  var acc = _moveAccuracy(move, localAccuracy, attacker);
   if ((move === 'Thunder' || move === 'Hurricane') && effectiveWeather === 'sun') acc = 0.50;
   if (acc >= 1 && (!attacker || !(attacker.statBoosts && attacker.statBoosts.acc < 0)) &&
       (!target || !(target.statBoosts && target.statBoosts.eva > 0))) {
@@ -1572,7 +1582,7 @@ var ABILITIES = {
   'Aerilate': {
     onModifyMove: function(ctx) {
       if (!_canConvertNormalMove(ctx)) return null;
-      var baseType = _moveType(ctx.move);
+      var baseType = _moveType(ctx.move, ctx.attacker);
       if (baseType === 'Normal') return { typeOverride: 'Flying', bpMult: 1.20 };
       return null;
     }
@@ -1590,7 +1600,7 @@ var ABILITIES = {
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Champions
     onModifyMove: function(ctx) {
       if (!_canConvertNormalMove(ctx)) return null;
-      var baseType = _moveType(ctx.move);
+      var baseType = _moveType(ctx.move, ctx.attacker);
       if (baseType === 'Normal') return { typeOverride: 'Dragon', bpMult: 1.20 };
       return null;
     }
@@ -1598,7 +1608,7 @@ var ABILITIES = {
   'Pixilate': {
     onModifyMove: function(ctx) {
       if (!_canConvertNormalMove(ctx)) return null;
-      var baseType = _moveType(ctx.move);
+      var baseType = _moveType(ctx.move, ctx.attacker);
       if (baseType === 'Normal') return { typeOverride: 'Fairy', bpMult: 1.20 };
       return null;
     }
@@ -1625,7 +1635,7 @@ var ABILITIES = {
   'Refrigerate': {
     onModifyMove: function(ctx) {
       if (!_canConvertNormalMove(ctx)) return null;
-      var baseType = _moveType(ctx.move);
+      var baseType = _moveType(ctx.move, ctx.attacker);
       if (baseType === 'Normal') return { typeOverride: 'Ice', bpMult: 1.20 };
       return null;
     }
@@ -1682,7 +1692,7 @@ var ABILITIES = {
     // surface plus common Showdown secondary moves used by shipped teams.
     // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onBasePower: function(ctx) {
-      if (SHEER_FORCE_MOVES.has(ctx.move)) return { bpMod: 5325 };
+      if (_hasSheerForceEffect(ctx.attacker, ctx.move)) return { bpMod: 5325 };
       return null;
     }
   },
@@ -2157,6 +2167,7 @@ function classifyPokemon(mon) {
 
 class Pokemon {
   constructor(data, teamStyle, teamFormat, referenceMode) {
+    this.referenceMode = referenceMode === 'champions_mc_reference' ? referenceMode : null;
     this.name = data.name;
     this.item = data.item;
     this.ability = data.ability;
@@ -2168,7 +2179,7 @@ class Pokemon {
     this.moves = [...data.moves];
     this.movePP = {};
     for (const move of this.moves) {
-      const max = _moveMaxPP(move);
+      const max = _moveMaxPP(move, this);
       this.movePP[move] = { current: max, max: max };
     }
     this.role = data.role || '';
@@ -2673,7 +2684,7 @@ class Pokemon {
       'Infernal Parade':65,'Bone Rush':30
     };
     let bp;
-    const moveBasePower = _moveBasePower(move);
+    const moveBasePower = _moveBasePower(move, this);
     if (moveBasePower !== undefined) {
       bp = moveBasePower;
     } else if (BP_MAP[move] !== undefined) {
@@ -2714,6 +2725,7 @@ class Pokemon {
     if (move === 'Stomping Tantrum' && (this.lastMoveFailed || this._previousMoveFailedForDamage)) {
       bp *= 2;
     }
+    if (this.referenceMode === 'champions_mc_reference' && move === 'Infernal Parade' && (target.status || target.ability === 'Comatose')) bp *= 2;
     // Eruption: scales with user HP
     if (move === 'Eruption') {
       bp = Math.max(1, Math.floor(150 * this.hp / this.maxHp));
@@ -3056,10 +3068,23 @@ function canInflictStatus(mon, status, field, source) {
   return true;
 }
 
+function _mcReferenceSecondary(attacker, move) {
+  if (!attacker || attacker.referenceMode !== 'champions_mc_reference') return null;
+  return {'Apple Acid':{chance:1,targetStages:{spd:-1}},
+    'Fire Lash':{chance:1,targetStages:{def:-1}},
+    'Grav Apple':{chance:1,targetStages:{def:-1}}}[move] || null;
+}
+function _hasSheerForceEffect(attacker, move) {
+  return SHEER_FORCE_MOVES.has(move) || !!_mcReferenceSecondary(attacker, move) ||
+    !!(attacker && attacker.referenceMode === 'champions_mc_reference' && move === 'Mountain Gale');
+}
 function _applyDamagingMoveSecondary(attacker, move, target, field, log, rng) {
-  const effect = SECONDARY_EFFECTS[move];
+  const scopedEffect = _mcReferenceSecondary(attacker, move);
+  const effect = scopedEffect || SECONDARY_EFFECTS[move];
   if (!effect || !target || !target.alive) return false;
-  if (attacker && attacker.ability === 'Sheer Force' && SHEER_FORCE_MOVES.has(move)) return false;
+  if (attacker && attacker.ability === 'Sheer Force' && _hasSheerForceEffect(attacker, move)) return false;
+  if (scopedEffect && (_targetAbilityActive(target, attacker, 'Shield Dust') ||
+      (target.item === 'Covert Cloak' && !target.itemConsumed && target.ability !== 'Klutz'))) return false;
   const chance = Number(effect.chance);
   if (Number.isFinite(chance) && chance < 1 && rng() >= chance) return false;
   let applied = false;
@@ -3493,7 +3518,7 @@ function _battleRosterSnapshot(active, bench, roster, side) {
       moves: Array.isArray(mon.moves) ? mon.moves.slice() : [],
       move_pp: Object.fromEntries((mon.moves || []).map(move => [move, {
         current: _movePPRemaining(mon, move),
-        max: mon.movePP && mon.movePP[move] ? mon.movePP[move].max : _moveMaxPP(move)
+        max: mon.movePP && mon.movePP[move] ? mon.movePP[move].max : _moveMaxPP(move, mon)
       }])),
       baseStatsLabel: _statsLabel(mon._base),
       calculatedStats: _statsLabel({
@@ -4277,7 +4302,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const move of attacker.moves) {
       if (_movePPRemaining(attacker, move) <= 0) continue;
       if (selfSide && selfSide.imprisonedMoves && selfSide.imprisonedMoves.has(move)) continue;
-      const moveType = _moveType(move);
+      if (attacker.referenceMode === 'champions_mc_reference' && move === 'First Impression' && (attacker.turnsSinceEntry || 0) > 1) continue;
+      const moveType = _moveType(move, attacker);
 
       if (attacker.encoredTurns > 0 && attacker.encoredMove) {
         if (_movePPRemaining(attacker, attacker.encoredMove) <= 0) {
@@ -4409,7 +4435,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     // Fallback
     if (!best.move) {
-      if (attacker.tauntedTurns > 0 || attacker.moves.every(function(move) { return _movePPRemaining(attacker, move) <= 0; })) {
+      if (attacker.tauntedTurns > 0 || attacker.moves.every(function(move) { return _movePPRemaining(attacker, move) <= 0 ||
+          (selfSide && selfSide.imprisonedMoves && selfSide.imprisonedMoves.has(move)) ||
+          (attacker.referenceMode === 'champions_mc_reference' && move === 'First Impression' && (attacker.turnsSinceEntry || 0) > 1); })) {
         best.move = 'Struggle';
         best.target = liveEnemies[0] || allies.find(a => a !== attacker && a.alive) || null;
         return best;
@@ -4518,7 +4546,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (wgSide && wgSide.wideGuardChain > 0) wgSide.wideGuardChain = 0;
     }
 
-    const moveType = _moveType(move);
+    const moveType = _moveType(move, attacker);
     const PROTECT_MOVES = new Set(['Protect','Detect','Wide Guard','Quick Guard','Endure',
       "King's Shield",'Spiky Shield','Baneful Bunker','Obstruct']);
     const STATUS_MOVES  = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder','Hypnosis','Spore','Leech Seed','Toxic','Poison Powder','Perish Song','Trick',
@@ -4626,7 +4654,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
 
     // Status moves
-    if (STATUS_MOVES.has(move)) {
+    if (STATUS_MOVES.has(move) || (attacker.referenceMode === 'champions_mc_reference' && move === 'Growth')) {
       log.push(`${attacker.name} used ${move}!`);
       if (move === 'Growl' || move === 'Leer') {
         const moveRow = _showdownMoveRow(move);
@@ -5246,6 +5274,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         log.push(`${attacker.name} passed its battle state to the replacement!`);
         return;
       }
+      if (attacker.referenceMode === 'champions_mc_reference' && move === 'Growth') {
+        const amount = _effectiveFieldWeather(field) === 'sun' ? 2 : 1;
+        if (!_applyTargetStageMap(attacker, attacker, {atk:amount,spa:amount}, log)) {
+          log.push(`${attacker.name} used Growth! But it failed!`);
+        }
+        return;
+      }
       if (move === 'Swords Dance') {
         if (!_applyStageMap(attacker, { atk: 2 }, log)) {
           log.push(`${attacker.name} used Swords Dance! But it failed!`);
@@ -5495,6 +5530,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       return;
     }
 
+    if (attacker.referenceMode === 'champions_mc_reference' && move === 'First Impression' && (attacker.turnsSinceEntry || 0) > 1) {
+      log.push(`${attacker.name} used First Impression! But it failed!`);
+      attacker.lastMoveFailed = true;
+      _recordMoveFailureEvent(field, attacker, move, 'first-active-turn-only', {
+        turns_since_entry: attacker.turnsSinceEntry,
+        note: 'First Impression fails after the first active turn.'
+      });
+      return;
+    }
     if (move === 'Sucker Punch') {
       const targetMove = target && target._chosenMove;
       const targetCategory = _moveCategory(targetMove);
@@ -5509,7 +5553,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const ACC_MAP = { 'Focus Blast':0.70, 'Hydro Pump':0.80, 'Blizzard':0.70,
                      'Thunder':0.70, 'Hurricane':0.70, 'Sleep Powder':0.75,
                      'Will-O-Wisp':0.85, 'High Horsepower':0.95, 'Dire Claw':1.0 };
-    const acc = _moveAccuracy(move, ACC_MAP[move]);
+    const acc = _moveAccuracy(move, ACC_MAP[move], attacker);
     const checksAccuracyHere = move === 'Pollen Puff' && target && target.side === attacker.side;
     if (checksAccuracyHere && !_moveHits(attacker, target, move, field, rng, acc)) {
       log.push(`${attacker.name} used ${move}! It missed!`);
@@ -5841,7 +5885,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       attacker.lastMoveFailed = true;
       return { didDamage: false };
     }
-    const accuracy = _moveAccuracy(move);
+    const accuracy = _moveAccuracy(move, undefined, attacker);
     if (!_moveHits(attacker, target, move, field, rng, accuracy)) {
       log.push(`${attacker.name} used ${move}! It missed!`);
       _recordMoveFailureEvent(field, attacker, move, 'accuracy-miss', {
@@ -5927,7 +5971,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           const rTo = t.side.redirectTo;
           const rType = t.side.redirectType;
           if (rTo && rTo.alive && rTo !== attacker) {
-            let bypass = false;
+            let bypass = attacker.referenceMode === 'champions_mc_reference' && move === 'Snipe Shot';
             if (rType === 'ragePowder') {
               if (attacker.types.includes('Grass')) bypass = true;
               if (attacker.ability === 'Overcoat') bypass = true;
@@ -6009,7 +6053,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
                       'Thunder':0.70, 'Hurricane':0.70, 'Sleep Powder':0.75,
                       'Will-O-Wisp':0.85, 'High Horsepower':0.95, 'Dire Claw':1.0,
                       'Rock Slide':0.90, 'Heat Wave':0.90 };
-    const acc = _moveAccuracy(move, ACC_MAP[move]);
+    const acc = _moveAccuracy(move, ACC_MAP[move], attacker);
     // T9j.17 (Refs #101) -- Piercing Drill 25% miss chance on every move.
     // Replaces the prior contact-bypass-Protect interpretation. The roll fires
     // here (after the move is selected and the standard ACC_MAP roll passes)
@@ -6207,7 +6251,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (_wasCrit) log.push(`A critical hit!`);
         applyDamage(attacker, move, t, dmg, field, log, rng);
         resolution.didDamage = true;
-        const _suppressSecondary = attacker.ability === 'Sheer Force' && SHEER_FORCE_MOVES.has(move);
+        const _suppressSecondary = attacker.ability === 'Sheer Force' && _hasSheerForceEffect(attacker, move);
         if (!_suppressSecondary && move === 'Psychic Noise' && t.alive) {
           t.healBlockedTurns = Math.max(t.healBlockedTurns || 0, 2);
           log.push(`${t.name} can no longer recover HP because of Psychic Noise!`);
@@ -6222,7 +6266,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         // T9j.8 (Refs #19) Flinch roll: after damage applied, target alive,
         // target hasn't acted yet. Fang moves roll flinch + status independently.
         if (t.alive) {
-          const _flinch = FLINCH_MOVES[move];
+          const _flinch = FLINCH_MOVES[move] ||
+            (attacker.referenceMode === 'champions_mc_reference' && move === 'Mountain Gale' ? {chance:0.3} : null);
           if (!_suppressSecondary && !_hadSubstitute && _flinch && !t.hasActed &&
               !_targetAbilityActive(t, attacker, 'Inner Focus') &&
               !_targetAbilityActive(t, attacker, 'Shield Dust') &&
@@ -6261,6 +6306,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         'Clanging Scales': { def: -1 }
       };
       if (selfDrops[move]) _applyStageMap(attacker, selfDrops[move], log);
+      if (attacker.referenceMode === 'champions_mc_reference' && move === 'Make It Rain') {
+        _applyTargetStageMap(attacker, attacker, {spa:-2}, log);
+      }
     }
     field._ctx.preDamageSpaBoostMon = _prevPreDamageBoostMon;
     field._ctx.preDamageSpaBoostMove = _prevPreDamageBoostMove;
@@ -6459,7 +6507,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       target.frozenTurns = 0;
       log.push(`${target.name} was thawed out by ${attacker.name}'s ${move}!`);
     }
-    const suppressSecondary = attacker && attacker.ability === 'Sheer Force' && SHEER_FORCE_MOVES.has(move);
+    const suppressSecondary = attacker && attacker.ability === 'Sheer Force' && _hasSheerForceEffect(attacker, move);
     if (move === 'Matcha Gotcha' && target.alive && target.hp > 0) {
       if (!suppressSecondary && !target.status && canInflictStatus(target, 'burn', field, attacker) && rng() < 0.2) {
         target.status = 'burn';
@@ -7677,7 +7725,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.15'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.16'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

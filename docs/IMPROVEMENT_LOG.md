@@ -1,5 +1,13 @@
 # Improvement Log
 
+## IMP-0095: Audit Effective M-C Moves In Explicit Reference Context
+
+- Raw source differences hid two problems: runtime metadata shadowed fallback values, and matching numbers did not establish working move effects.
+- Reconciled all 22 residual rows and all 73 original difference rows against the exact pinned, compiled reference. Added actor-scoped metadata and bounded effect repairs, retaining historical/default data and review-only eligibility.
+- Independent review caught Comatose; regression added. Evidence includes 24 metadata checks, 50 effect checks and 20 scoped pinned comparisons.
+- [Evidence and explicit remaining move/package/workflow gates](release/MC_MOVE_AUDIT_2026-10-14.md). No completion or competitive-strength claim; no publication.
+- Lesson: accessor parity, synthetic effect parity and approved complete-team evidence are separate gates.
+
 ## IMP-0094: Avoid Refreshing An Unchanged Imprison Seal
 
 - Reproduced repeated voluntary Imprison with a failing policy fixture. The
@@ -10,7 +18,7 @@
   generated asset. Pin LF and test checkout filters instead of accepting a
   platform-specific hash. No generated source contents were promoted.
 - [Evidence, limitations and ordered completion gates](release/MOVE_POLICY_2026-10-14.md).
-  Uncommitted local candidate; no hosted or deployed proof.
+  Locally committed candidate; no hosted or deployed proof.
 - Lesson: mechanical success does not prove useful action selection; isolate
   policy regressions and preserve information-boundary and provenance gaps.
 
