@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0102: Retire Shipped Work From The Active Queue
+
+- PR267 review identified candidate-era v207/v208 and 22-move tasks still listed as unpublished or unfinished after v210 deployment.
+- Archive the exact obsolete queue and replace it with evidence-linked v212 review, official-package, interaction, policy and remaining experience gates. The generated roadmap Next Action was already reconciled by v212; preserve its frozen runtime bytes.
+- Documentation-only validation: roadmap source/output check, local evidence links, diff checks and unchanged runtime artifact SHA. Hosted checks must bind the final PR268 head.
+- Lesson: a release receipt must reconcile the active queue while retaining the historical record and unproved boundaries.
+
 ## IMP-0101: Execute Exact Reference Mega Forms With Scoped Mechanics Proof
 
 - Implement 19 missing Mega lifecycles and 3 canonical/legacy aliases in explicit experimental M-C reference context. Repair female Meowstic stats and import stone identity without mutating historical data or saved registrations.
