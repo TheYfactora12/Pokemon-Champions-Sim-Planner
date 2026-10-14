@@ -1,5 +1,13 @@
 # Improvement Log
 
+## IMP-0096: Prove Remaining Reference Effects And Preserve Policy Uncertainty
+
+- Added bounded Strength Sap, Syrup Bomb, Snap Trap, Gravity and Beak Blast behavior with 74 local checks and 78 pinned comparisons; independent review found and closed no-effect healing and Leaf Guard boundaries.
+- Added 60 complete-team matrix cases and explicit six-member registration versus reduced-roster practice labels. Reference acceptance remains distinct from supported app mechanics and official approval.
+- Deprioritized blocked damaging priority moves; preserve full-state policy limitations in new results and unknown provenance in legacy analysis.
+- [Evidence and remaining gates](release/MC_MOVE_AUDIT_2026-10-14.md). Interactive desktop/mobile proof is blocked by browser startup failure; no publication.
+- Lesson: a reference validator, a mechanics oracle, an action policy and a visible workflow prove different things.
+
 ## IMP-0095: Audit Effective M-C Moves In Explicit Reference Context
 
 - Raw source differences hid two problems: runtime metadata shadowed fallback values, and matching numbers did not establish working move effects.

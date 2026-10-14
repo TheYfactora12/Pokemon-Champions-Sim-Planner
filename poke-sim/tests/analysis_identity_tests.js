@@ -22,10 +22,16 @@ function envelope(format = 'doubles') {
 let failed = 0;
 async function test(name, fn) { try { await fn(); console.log('PASS ' + name); } catch(e) { failed++; console.error('FAIL ' + name + ': ' + e.message); } }
 (async () => {
+  await test('supplied move-policy provenance survives saved analysis', () => {
+    const policy={id:'historical-custom',information_model:'unknown'};
+    const p=ctx._buildAnalysisPayload('player','opp',3,{policy_provenance:policy});
+    assert.deepEqual(JSON.parse(JSON.stringify(p.analysis_json.policy_provenance)),policy);
+  });
   await test('missing provenance stays unknown, not current selected team/version', () => {
     ctx.TEAMS = { player: { metadata: { ruleset_id: id } } };
     const p = ctx._buildAnalysisPayload('player', 'opp', 3, {});
     assert.equal(p.engine_version, 'unknown');
+    assert.equal(p.analysis_json.policy_provenance, null);
     assert.equal(p.ruleset_id, 'unknown');
     assert.equal(p.learning_eligibility, 'blocked_missing_provenance');
   });

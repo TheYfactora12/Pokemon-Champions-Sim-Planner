@@ -69,6 +69,12 @@ def fetch_supabase_umd():
 
 html    = read('index.html')
 css     = read('style.css')
+# Keep editable CSS formatted, but omit indentation from the shipped bundle.
+# Escaped newlines can make leading spaces part of a string; fail closed there.
+if re.search(r'\\\r?\n', css):
+    raise RuntimeError('CSS escaped newline requires preserving indentation')
+css = re.sub(r'(?m)^[ \t]+', '', css)
+css = re.sub(r'(?m)^/\*(?:(?!\*/)[^\n])*\*/[ \t]*\n', '', css)
 data    = read('data.js')
 tournament_catalog = read('generated/tournament_catalog.js')
 project_roadmap = read('generated/project_roadmap.js')

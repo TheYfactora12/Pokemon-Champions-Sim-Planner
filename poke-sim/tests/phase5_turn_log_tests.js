@@ -627,6 +627,7 @@ T('T5c-3 JSON download produces valid parseable file', () => {
   ctx.downloadReplayTurnLog({ seed: 'abc', result: 'win', turns: battleA.turnLog.length + 1, playerKey: 'player', oppKey: 'mega_altaria', turnLog: battleA.turnLog, position_path: battleA.position_path });
   truthy(parsed && Array.isArray(parsed.turnLog), 'download JSON did not parse');
   eq(parsed.schema_version, 'champions-turn-log-v2', 'download schema version missing');
+  eq(parsed.policy_provenance, null, 'legacy policy must stay unknown');
   eq(parsed.build_id, ctx.window.CHAMPIONS_RELEASE_MANIFEST.build_id, 'download build id must match release manifest');
   truthy(typeof parsed.exported_at === 'string' && parsed.exported_at.length > 0, 'download timestamp missing');
   eq(parsed.turns, parsed.turnLog.length, 'download top-level turns must match turnLog rows');
@@ -655,10 +656,11 @@ T('T5c-3identity download retains original run identity and snapshots', () => {
   let parsed = null;
   ctx.Blob = function(parts) { parsed = JSON.parse(parts[0]); };
   const provenance = { build_id: 'execution-build', engine_version: 'execution-engine', format: 'doubles', player_team_id: 'original-player', opp_team_id: 'original-opp' };
-  ctx.downloadReplayTurnLog({ seed: 'identity', turnLog: battleA.turnLog, provenance,
+  ctx.downloadReplayTurnLog({ seed: 'identity', policy_provenance: { id: 'historical-custom' }, turnLog: battleA.turnLog, provenance,
     team_snapshots: { player: { name: 'Original team', members: [{ name: 'Original member' }] }, opponent: { members: [] } },
     participants: { player: [{ member_id: 'durable-member', item: 'Original item' }], opponent: [] } }, { playerKey: 'changed', oppKey: 'changed' });
   eq(parsed.build_id, 'execution-build', 'must not relabel with export build');
+  eq(parsed.policy_provenance.id, 'historical-custom', 'export must preserve supplied policy');
   eq(parsed.player_team_id, 'original-player', 'must not relabel with selected team');
   eq(parsed.player_team.name, 'Original team', 'must not reload edited team');
   eq(parsed.provenance.engine_version, 'execution-engine', 'execution provenance dropped');

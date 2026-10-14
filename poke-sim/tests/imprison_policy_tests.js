@@ -12,6 +12,8 @@ assert(start >= 0 && end > start, 'production selector must be found');
 const ctx = vm.createContext({
   _movePPRemaining: (mon, move) => mon.pp?.[move] ?? 10,
   _moveType: () => 'Normal',
+  _selectionPriorityBlocked: () => false,
+  _mcMoveUnavailable: () => false, // This fixture uses baseline actors, not reference-only move bans.
   _moveCategory: move => move === 'Imprison' ? 'status' : 'physical',
   _effectiveFieldWeather: () => 'none', getPriority: () => 0,
   rng: () => 0.5

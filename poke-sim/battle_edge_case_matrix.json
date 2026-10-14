@@ -560,7 +560,10 @@
       "status": "partial",
       "tests": [
         "tests/mc_move_metadata_tests.js",
-        "tests/mc_move_effects_tests.js"
+        "tests/mc_move_effects_tests.js",
+        "tests/mc_remaining_effects_tests.js",
+        "tests/mc_reference_registration_tests.js",
+        "tests/priority_selection_policy_tests.js"
       ],
       "oracle": "Showdown efe4948570d5e8189751792136d26e71710c6c66 Champions move overrides and inherited move handlers; retained compiled fingerprint verified by tools/verify-mc-move-effects.cjs.",
       "boundary_vectors": [
@@ -574,7 +577,7 @@
         "Snipe-Shot-Follow-Me",
         "Mountain-Gale-flinch-blockers"
       ],
-      "known_gap": "Synthetic fixtures are not legal-team or full-game validation. Beak Blast charge/contact burn, Snap Trap residual lifecycle, Syrup Bomb lifecycle, Strength Sap effect and Gravity interactions remain open. Re-entry is tested as selector state, not a complete switch lifecycle. General redirection, suppression, Substitute combinations and exact-package official approval remain unproved."
+      "known_gap": "Synthetic fixtures are not legal-team or full-game validation. Beak Blast, Snap Trap, Syrup Bomb, Strength Sap and Gravity have scoped side-swapped synthetic reference proof; arbitrary combinations and full-game parity remain open. Voluntary switching and complete Fly/Bounce/Sky Drop execution remain unsupported. Re-entry is tested as selector state, not a complete switch lifecycle. General redirection, suppression, Substitute combinations and exact-package official approval remain unproved."
     }
   ]
 }

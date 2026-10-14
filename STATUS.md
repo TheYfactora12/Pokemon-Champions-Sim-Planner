@@ -5,6 +5,10 @@ Reviewed: 2026-10-14. This file owns current release facts and priorities.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
+## Local candidate, not deployed
+
+October 14: `fix/move-policy-audit-264` prepares v208 / engine1.1.17. Scoped reference move effects, six-member registration checks and honest policy provenance have independent review. Full local gates passed (220 fast files,12 offline DB files, source-truth,69 battle files plus golden/stress); desktop/mobile paired workflow evidence remains incomplete after browser-tool startup failure. Exact-package human approval and publication authorization remain outstanding. [Candidate evidence](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
+
 ## Verified Release
 
 Latest deployed release: **v2.2.205-matrix-draws**, preview/local-save.

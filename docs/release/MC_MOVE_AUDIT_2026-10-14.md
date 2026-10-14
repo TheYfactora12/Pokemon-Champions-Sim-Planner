@@ -55,3 +55,43 @@ The evidence logs are retained beside this isolated checkout in the task workspa
 6. Separate publication authorization, remote CI/Pages checks, deployed-byte verification and hosted journey proof. Deployed receipt remains v205.
 
 No full-M-C ETA is supported while those effect and external evidence gates remain open. AI Labs and consulting are untouched.
+
+
+## v208 continuation: remaining effect families and honest policy evidence
+
+Candidate `v2.2.208-mc-effect-lifecycle`, engine `1.1.17`, adds reference-context Strength Sap healing/drop and defensive boundaries; source-owned Syrup Bomb and Snap Trap residual lifecycles; Gravity duration, grounding, accuracy, unavailable-move selection and stored airborne-charge interruption; and Beak Blast preparation/contact burn. Beak Blast respects effective Leaf Guard weather, contact prevention, status immunities and action timing. These changes do not promote any species or package to competitive legality.
+
+Independent move review passed all **74 local checks and 78 pinned comparisons**. The reference pin and compiled fingerprint are unchanged from the v207 section. The oracle compares bounded state/effect outcomes, deliberately excluding arbitrary random-damage and full-game parity. Snap Trap exposes trapping state, but this engine has no voluntary-switch action; tested pivot escape is not proof of an unimplemented switch UI. Complete Fly/Bounce/Sky Drop execution, arbitrary combined suppression/redirection, simultaneous residual ties and full historical mixed-team parity remain unproved.
+
+A new complete-team matrix passes **60 cases** across both reference formats: six registered members, four brought, two leads; invalid sizes, duplicate items/species, excessive stat points, invalid moves/abilities and invalid bring selections. Three authored six-member drafts also ran in the pinned reference, with repeated seeded reference games. Reference acceptance does not make missing Mega lifecycle support available in the app. Reduced-roster four/five-member practice remains usable and is now labeled explicitly; strict `requireFullTeam` rejects undersized teams on either side. Neither strict registration nor reference games replace official in-game package evidence.
+
+Damaging-priority selection deprioritizes moves blocked by recorded Armor Tail/Dazzling/Queenly Majesty, Quick Guard or grounded Psychic Terrain. Tests cover both sides, second targets, sole options, locks, Feint, other priority attacks and fainted blockers. This does not cover Prankster status scoring or certify competitive strength. Newly generated simulations label their policy `greedy-state-aware-v2`, full registered state, and unvalidated strength; legacy analysis without provenance retains `null` rather than acquiring a false current-policy identity. Independent policy review passed after that correction.
+
+The five named missing effect families from gate 1 above now have this bounded implementation and oracle proof. They remain part of a partial mechanics inventory. Exact-package human approval, 262 review-only identities, 21 unsupported Mega descriptors, official complete-team evidence and hosted publication gates remain open.
+
+Desktop/mobile interactive workflow proof was attempted but not completed: the browser tool's trusted Node process exited unexpectedly twice before returning a usable browser state. No interactive simulation batch or paired screenshot/download is claimed. The local static server was reachable only as a setup step; this is not visual acceptance evidence.
+
+Aggregate v208 results are recorded below after completion. No push, remote PR, merge or deployment has been performed.
+
+
+### Exact approval and browser blockers
+
+“Official M-C approval” in older project wording means **internal human approval to promote a source-backed M-C package**. It does not mean certification by The Pokemon Company or the game publisher. AGENTS.md lines305–316 separates the data approver/human production operator from the implementing agent; `.agents/skills/pokemon-season-update/SKILL.md` requires the existing human boundary and says a changed digest invalidates prior approval. The package must be frozen and reviewed with official rules/roster/form evidence, effective format/date, item/move/ability differences, accepted/rejected complete-team in-game evidence, and supported Mega/Z-Mega mappings and lifecycle behavior. Issue232 tracks that package promotion. A human authorized for this project must approve those exact bytes; an agent or passing reference test cannot supply that approval.
+
+Local work can still prepare immutable candidates, audit mapping/metadata, implement unsupported mechanics and add reference comparisons without promoting them. This slice did so for the five effect families and complete-team reference matrix. External current-client captures and human sign-off are not available in this task; no publisher certification is requested.
+
+Browser recovery was attempted through a reset followed by the supported inventory call, not another identical page-open call. Exact diagnostic: `node_repl kernel exited unexpectedly`, `exited(code=1)`, stderr `MXC launcher: cannot locate required Windows platform directory: HRESULT 0x80070003`, reason `stdout_eof`. Edge is installed, but native computer APIs are disabled and no node_repl, Playwright, Selenium or Puppeteer automation runtime is exposed/installed for this task. No software was installed and no access denial was bypassed. Smallest recovery: repair/restart the bundled computer-use runtime so its required Windows platform directory resolves, then resume desktop/mobile paired visible/download evidence. This is an environment blocker, not a passing UI check.
+
+The first aggregate attempt failed one stale source-signature assertion file and three files affected by the same 11 MiB bundle-size overflow. The grounding assertions now include field context. The bundle builder omits CSS indentation and standalone one-line comments, with an escaped-newline guard and first-comment-close restriction; source CSS remains unchanged and the existing size cap is unchanged. Downloaded turn logs and saved analysis JSON preserve supplied policy provenance and leave legacy unknowns null.
+
+
+### Final v208 local receipt
+
+- `npm test`: **220 fast files +12 offline/mock DB files, zero failures**;4 manual/helper files intentionally skipped. Final log: `../project-gate-v208-final.log` relative to checkout. Administrative/live DB checks remain not verified.
+- `npm run test:source-truth`: passed, exit0 (`../source-truth-v208.log`).
+- `npm run test:battle-audit`: **69 deterministic files, golden traces and seeded stress passed**, failures empty (`../battle-audit-v208-verified.json`).18 covered/32 partial/5 open edge cases; no universal accuracy claim.
+-17 CI/changed-source syntax checks passed; final UI syntax, roadmap generation check and `git diff --check` passed. No separate lint/typecheck scripts are declared.
+- Independent mechanics review:74 local +78 oracle checks passed. Independent policy review resolved missing historical provenance. Saved-analysis tests8 and replay/turn-log tests38 passed after export wiring.
+- Independent release review:11 manifest tests, external asset verification, bundle reproducibility and CSS safety probes passed. Bundle **11,533,308bytes**, SHA256 **76b394e929d2be7fc0421bb348533b18d3d030b7b3e7c8221061ff7cfb167aa7**,1028bytes below unchanged11MiB cap.
+
+No live DB, hosted CI, remote publication, deployed-byte verification, desktop/mobile paired workflow or complete-game M-C parity was run or claimed. Deployed receipt remains v205. The local candidate is reviewable; the overall free doubles workflow is not yet declared complete.

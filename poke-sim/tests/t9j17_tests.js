@@ -344,7 +344,7 @@ T('D1. data.js MOVE_TARGETS Expanding Force = normal (default single-target)', (
 
 T('D2. engine.js executeMove flips targetCat to all-adjacent-foes under Psychic Terrain', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  truthy(/move === 'Expanding Force' && field\.terrain === 'psychic' && _isGrounded\(attacker\)[\s\S]*?targetCat = 'all-adjacent-foes'/.test(src),
+  truthy(/move === 'Expanding Force' && field\.terrain === 'psychic' && _isGrounded\(attacker, field\)[\s\S]*?targetCat = 'all-adjacent-foes'/.test(src),
     'executeMove must rewrite targetCat for grounded user under Psychic Terrain');
 });
 
@@ -356,7 +356,7 @@ T('D3. Expanding Force BP boost is 1.5x via field._ctx.bpMult', () => {
 
 T('D4. Ungrounded (Flying or Levitate) attacker keeps default single-target', () => {
   const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  truthy(/move === 'Expanding Force' && field\.terrain === 'psychic' && _isGrounded\(attacker\)/.test(src),
+  truthy(/move === 'Expanding Force' && field\.terrain === 'psychic' && _isGrounded\(attacker, field\)/.test(src),
     'spread/BP boost must use shared grounded state, including move grounding');
 });
 

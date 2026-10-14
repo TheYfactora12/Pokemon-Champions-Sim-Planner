@@ -6,9 +6,9 @@
   var manifest = {
     schema_version: 'champions-release-manifest-v1',
     data_mode: 'local-only',
-    build_id: 'v2.2.207-mc-move-audit',
+    build_id: 'v2.2.208-mc-effect-lifecycle',
     release_date: '2026-10-14',
-    service_worker_cache: 'champions-sim-v2-2-207-mc-move-audit',
+    service_worker_cache: 'champions-sim-v2-2-208-mc-effect-lifecycle',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
