@@ -45,6 +45,12 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
+October 13: PR262 receipt merged after passing CI. Candidate v205 adds missing
+draw counts and pins generated HTML line endings. Expanded 21,580-battle
+diagnostics passed checked invariants; 1,600 live v204 games completed, one
+downloaded sample checked. No competitive-strength certification.
+[Evidence and pending release gates](docs/release/EXPANDED_TEAM_MATRIX_2026-10-13.md).
+
 v204: active Rock Head recoil and matchup headings corrected and deployed;
 19 focused and eight pinned-reference probes pass. The 6,370-battle variation
 sweep has zero Rock Head flags (previously 580). Review, CI and deployment passed;

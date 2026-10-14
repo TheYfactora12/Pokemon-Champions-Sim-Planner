@@ -8,6 +8,12 @@ const crypto = require('node:crypto');
 const { check } = require('../tools/check-production-alignment.cjs');
 const { REQUIRED } = require('../tools/verify-release-assets.cjs');
 const identity = data => ({ sha256: crypto.createHash('sha256').update(data).digest('hex'), bytes: Buffer.byteLength(data) });
+test('generated HTML checkout preserves exact release bytes on Windows', () => {
+  const { execFileSync } = require('node:child_process');
+  const repo = path.resolve(__dirname, '../..');
+  const attr = execFileSync('git', ['check-attr', 'eol', '--', 'poke-sim/pokemon-champion-2026.html'], {cwd:repo,encoding:'utf8'});
+  assert.match(attr, /: eol: lf\s*$/);
+});
 async function fixture(mutate) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'alignment-test-'));
   const bundle = identity('local');

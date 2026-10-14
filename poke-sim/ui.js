@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.204-rock-head-matrix
+// Build marker: v2.2.205-matrix-draws
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.204-rock-head-matrix'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.205-matrix-draws'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -13279,7 +13279,7 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
   try {
     document.getElementById('matchup-table-wrap').style.display='';
     document.getElementById('results-section').style.display='none';
-    document.getElementById('matchup-tbody').innerHTML='<tr><td colspan="7" style="color:var(--text-m);font-size:12px;text-align:center;padding:20px;font-family:var(--font-mono)">Running all matchups…</td></tr>';
+    document.getElementById('matchup-tbody').innerHTML='<tr><td colspan="8" style="color:var(--text-m);font-size:12px;text-align:center;padding:20px;font-family:var(--font-mono)">Running all matchups…</td></tr>';
 
     var simCtx = resolveSimContext();
     var n=simCtx.numSeries;
@@ -13321,6 +13321,7 @@ async function csRunAllMatchupsFromButton(allBtn, opts) {
         <td><span class="win-pill ${pillCls}">${winPct}%</span></td>
         <td style="color:var(--green);font-family:var(--font-mono)">${res.wins}</td>
         <td style="color:var(--red);font-family:var(--font-mono)">${res.losses}</td>
+        <td style="font-family:var(--font-mono)">${res.draws}</td>
         <td style="font-family:var(--font-mono)">${res.avgTurns.toFixed(1)}</td>
         <td style="font-family:var(--font-mono)">${res.avgTrTurns.toFixed(1)}</td>
         <td><span class="assess-chip ${aCls}">${res.provenance && res.provenance.ruleset_id === 'champions_mc_reference' ? 'Reference only' : aLbl}</span></td>`;

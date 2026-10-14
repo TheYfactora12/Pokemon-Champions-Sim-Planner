@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const crypto = require('node:crypto');
+const {addValidatedBattle} = require('./team-variation-summary.cjs');
 const root = path.resolve(__dirname, '..');
 const c = vm.createContext({console});
 const files = ['data.js','generated/tournament_catalog.js','generated/pokemon_showdown_legal_data.js','runtime_data.js','move_legality.js','generated/mc_review_reference.js','mc_review.js','legality.js','rulesets.js','engine.js'];
@@ -15,6 +16,10 @@ for (const file of files) {
 c.ChampionsSim.pokemonDataAudit = require('../generated/pokemon_showdown_legal_data.js');
 const teams = vm.runInContext('TEAMS', c);
 const replayPath = process.argv[2];
+const seedsPerPair = Number(process.argv[3] || 10);
+if (!Number.isInteger(seedsPerPair) || seedsPerPair < 1 || seedsPerPair > 1000) throw new Error('Seeds per pair must be an integer from 1 to 1000');
+hashes.harness = crypto.createHash('sha256').update(fs.readFileSync(__filename)).digest('hex');
+hashes.summary = crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'team-variation-summary.cjs'))).digest('hex');
 if (replayPath) {
   const bytes = fs.readFileSync(path.resolve(replayPath));
   const replay = JSON.parse(bytes);
@@ -27,7 +32,7 @@ const checks = Object.entries(teams).map(([id, team]) => ({id, ...c.checkMcRefer
 const accepted = checks.filter(r => r.allowed).map(r => r.id);
 if (!accepted.length) throw new Error('No reference-accepted teams loaded');
 const before = JSON.stringify(teams);
-const report = {created_at:new Date().toISOString(), hashes, scope:'M-C reference diagnostics, not approved competitive evidence', checks, battles:0, repeats:0, failures:[], findings:{}, coverage:{}, outcomes:{}};
+const report = {created_at:new Date().toISOString(), hashes, seeds_per_pair:seedsPerPair, scope:'M-C reference diagnostics, not approved competitive evidence', checks, battles:0, repeats:0, failures:[], findings:{}, coverage:{}, outcomes:{}, matchups:{}};
 function permutations(names, picked = []) {
   if (picked.length === 4) return [picked];
   return names.flatMap((name,i) => permutations(names.filter((_,j)=>i!==j), [...picked,name]));
@@ -37,7 +42,7 @@ function record(kind, detail) {
   entry.count++;
   if (entry.samples.length < 8) entry.samples.push(detail);
 }
-function run(p,o,picks,other,index,repeat) {
+function run(p,o,picks,other,index,repeat,phase) {
   const digest = crypto.createHash('sha256').update(JSON.stringify([p,o,picks,other,index])).digest();
   const seed = [0,4,8,12].map(i=>digest.readUInt32LE(i));
   const opts = {format:'doubles', rulesetId:'champions_mc_reference', seed, playerBring:picks, opponentBring:other};
@@ -67,20 +72,21 @@ function run(p,o,picks,other,index,repeat) {
       report.repeats++;
       if (JSON.stringify(b)!==JSON.stringify(c.simulateBattle(teams[p],teams[o],opts))) throw new Error('Seed repeatability failure');
     }
+    addValidatedBattle(report.matchups,phase,p,o,b);
   } catch(e) { report.failures.push({...detail,error:e.message}); }
 }
 for (let i=0;i<accepted.length;i++) {
   const p = accepted[i];
   const variants = permutations(teams[p].members.map(m=>m.name));
-  report.coverage[p] = {ordered_bring_variants:variants.length, pairings:accepted.length, seeds_per_pair:10};
+  report.coverage[p] = {ordered_bring_variants:variants.length, pairings:accepted.length, seeds_per_pair:seedsPerPair};
   variants.forEach((bring,n)=>{
     const o = accepted[(i+n)%accepted.length];
     const opponent = teams[o].members.map(m=>m.name);
     const shift = n%opponent.length;
     const other = opponent.slice(shift).concat(opponent.slice(0,shift)).slice(0,4);
-    run(p,o,bring,other,n,n%60===0);
+    run(p,o,bring,other,n,n%60===0,'bring_variations');
   });
-  for (const o of accepted) for(let n=0;n<10;n++) run(p,o,undefined,undefined,n,n===0);
+  for (const o of accepted) for(let n=0;n<seedsPerPair;n++) run(p,o,undefined,undefined,n,n===0,'default_seed_matrix');
   console.log(p, report.battles, 'battles;',report.failures.length,'invariant failures');
 }
 if (JSON.stringify(teams)!==before) report.failures.push({error:'Input teams mutated'});
