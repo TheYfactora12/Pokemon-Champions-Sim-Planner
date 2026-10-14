@@ -65,3 +65,30 @@ No battle-engine, legality, database or user-team changes. Candidate v205;
 hosted CI, deployment and live draw-column verification must pass before closure.
 General suppression, other mechanics/source gaps and official M-C approval
 remain open. Large simulation counts do not establish game accuracy.
+
+## Hosted verification
+
+PR263 merged as `d2cd77678f138307476c651a04cd092db22e12ed` after all required
+PR checks passed, including battle audit (CI38487226759). Pages38487715884
+passed. HTTP provenance and assets matched at 2026-10-14T00:04:40.665Z
+(October13 local time). No live database-security claim.
+
+Structured visible/export comparison additionally passed 651 observable-field
+checks on the nine-turn v204 live sample and 457 on the six-turn v205 local
+sample. Zero discrepancies; exact hidden stats, all repeated same-name action
+multiplicity and independent real-game mechanics remain outside this proof.
+Narrow390x844 local matrix shows D without overlap; wide table is contained
+in a horizontal auto-scroll wrapper. Desktop eight-column layout inspected.
+
+Move-choice quality and selection-provenance follow-up is tracked in #264.
+Do not combine different selection policies into one team-strength score.
+
+Post-deployment v205 browser batch completed 100 Bo1 per16 included opponents;
+Run All returned enabled. Every row sums W+L+D to100. Nonzero examples:
+rain Meganium77W/22L/1D; Floette/Aerodactyl22W/76L/2D. Aggregate997W/600L/3D
+is descriptive of this selected policy/opponent set, not a calibrated rating.
+The 22 excluded teams were not simulated or declared legal. No user sets edited.
+Downloaded sample seed1170107274,1088310494,3062691367,100752621 passed396
+observable-field comparisons across five turns, zero discrepancies. Other1599
+games were not individually visually audited. Screenshot retained locally as
+`v205-live-matrix.png`; runtime and UI changes are now deployed verified.
