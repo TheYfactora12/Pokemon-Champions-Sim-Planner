@@ -5,13 +5,19 @@ Reviewed: 2026-10-14. This file owns current release facts and priorities.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
-## Local candidate, not deployed
+## Current verified release
 
-October14: PR266 prepares v210/engine1.1.18. Hosted v209 gates passed; supported Playwright now supplies independently reviewed desktop/mobile paired practice and M-C reference evidence. A demonstrated stale preflight error was repaired in v210; final resumed aggregate passed221 fast +12 offlineDB files; hosted final-head checks are pending. Targeted baseline comparison found only intentional policy changes and no unexpected differences in36 forced battles. Exact M-C package promotion remains unapproved; experimental practice restrictions remain. [Evidence and human review packet](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
+**v2.2.210-context-error / engine1.1.18** is live on the primary Pages site.
+PR266 merged as `36a4729bca370b2457dc57e292807a5525818fac`; Pages38619285422 passed.
+Live bundle, all four external assets, manifest and service worker matched reviewed bytes.
+Desktop/mobile checks passed four games and six paired replay/export captures with zero mismatches or page errors.
+M-C remains experimental; exact competitive package promotion is unapproved. Live DB persistence and real-device Safari remain untested; dark Strategy-heading contrast is a known nonblocking limitation.
+[Live receipt, evidence scope and rollback](docs/release/V210_LIVE_2026-10-14.md).
+[Implementation and earlier candidate history](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
 
-## Verified Release
+## Previous verified release
 
-Latest deployed release: **v2.2.205-matrix-draws**, preview/local-save.
+Previous documented release: **v2.2.205-matrix-draws**, preview/local-save.
 PR263 merged as `d2cd77678f138307476c651a04cd092db22e12ed` after CI
 `38487226759`; Pages `38487715884` passed. HTTP artifact and asset checks
 passed at 2026-10-14T00:04:40.665Z (October 13 local time). Bundle SHA-256:
