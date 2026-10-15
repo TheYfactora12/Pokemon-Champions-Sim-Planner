@@ -1,5 +1,35 @@
 # Improvement Log
 
+## IMP-0103: Reconcile News Drift Through Generated Artifacts
+
+- Automated main news publication conflicted with PR268's generated release receipt after the earlier head passed CI.
+- Merge current main `2971a59` into the existing draft and regenerate the bundle/receipt through the canonical builder. Keep historical rules, experimental M-C labels and runtime mechanics unchanged.
+- Refreshed bundle retains 5,023 bytes of headroom. Release contracts and paired desktop/touch/offline checks pass; the dated [Mega evidence report](release/MC_MEGA_LIFECYCLES_2026-10-14.md) records final aggregate status and exact bytes.
+- Lesson: resolve generated conflicts from merged source inputs, then bind verification to the new immutable head. Earlier green CI is not current-base release approval.
+
+## IMP-0102: Retire Shipped Work From The Active Queue
+
+- PR267 review identified candidate-era v207/v208 and 22-move tasks still listed as unpublished or unfinished after v210 deployment.
+- Archive the exact obsolete queue and replace it with evidence-linked v212 review, official-package, interaction, policy and remaining experience gates. The generated roadmap Next Action was already reconciled by v212; preserve its frozen runtime bytes.
+- Documentation-only validation: roadmap source/output check, local evidence links, diff checks and unchanged runtime artifact SHA. Hosted checks must bind the final PR268 head.
+- Lesson: a release receipt must reconcile the active queue while retaining the historical record and unproved boundaries.
+
+## IMP-0101: Execute Exact Reference Mega Forms With Scoped Mechanics Proof
+
+- Implement 19 missing Mega lifecycles and 3 canonical/legacy aliases in explicit experimental M-C reference context. Repair female Meowstic stats and import stone identity without mutating historical data or saved registrations.
+- Add scoped ability behavior and pinned comparisons; independent review caught Trace restoration after Mega evolution and Windows clean-filter asset drift. Both have production-path regressions.
+- Externalize the existing reference helper synchronously, bind its bytes and retain the bundle budget. [Proof, artifacts, failed attempts and exclusions](release/MC_MEGA_LIFECYCLES_2026-10-14.md).
+- Local candidate v212; official M-C approval, hosted checks for the new revision and deployment are separate gates. Live v210 is unchanged.
+- Lesson: activation needs exact registered identity, executable interaction evidence and committed-byte delivery proof; prepared metadata alone proves none of those.
+
+## IMP-0100: Preserve Exact Mega Starting Forms And Quarantine Candidate Descriptors
+
+- Pinned source review found female Mega Meowstic inherited male Prankster instead of Competitive; correct the registered-form ability pool and recognize gender-prefixed Mega names in reference lifecycle gating.
+- Generate22 descriptor/alias candidates outside runtime activation. Preserve19 execution gaps and3 aliases; legacy female stats and import stone-name mismatch remain explicit.
+- Full-record audit validation closes an independently discovered false preparation claim; mutation tests cover changed identities, metadata and package flags.
+- [Evidence, regression/browser results and remaining client proof](release/MC_MEGA_CANDIDATES_2026-10-14.md). No competitive promotion.
+- Lesson: a taxonomic base species is not always the registered form, and descriptor completeness does not establish executable mechanics.
+
 ## IMP-0099: Clear Obsolete Simulation Failures On Context Change
 
 - Independent visible replay QA found the prior official-M-C rejection still displayed after selecting permitted reference practice. Clear only a previous failed-run message/progress when regulation or either team changes while idle; preserve current legality and unverified notices.

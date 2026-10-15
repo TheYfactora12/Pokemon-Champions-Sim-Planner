@@ -286,7 +286,15 @@ function validateChampionsLegality(team, options) {
     }
 
     // Mega stone must match holder species
-    if (item && CHAMPIONS_STONE_TO_SPECIES[item]) {
+    if (draftReference && item && typeof resolveMcMega === 'function') {
+      var referenceMega = resolveMcMega(name,item);
+      var referenceData = typeof ChampionsSim !== 'undefined' && ChampionsSim.pokemonDataAudit;
+      var referenceStone = referenceData && referenceData.items[String(item).toLowerCase().replace(/[^a-z0-9]/g,'')];
+      if (referenceStone && referenceStone.megaStone && (!referenceMega.target ||
+          (referenceMega.species && referenceMega.species.requiredItem && referenceMega.species.requiredItem !== item))) {
+        violations.push({severity:'error',code:'MEGA_STONE_MISMATCH',message:name+': cannot hold '+item+' (exact registered form required)'});
+      }
+    } else if (item && CHAMPIONS_STONE_TO_SPECIES[item]) {
       var required = CHAMPIONS_STONE_TO_SPECIES[item];
       if (base !== required) {
         violations.push({

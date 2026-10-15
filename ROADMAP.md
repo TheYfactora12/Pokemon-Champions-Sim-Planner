@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Local v208 completes bounded reference move-effect checks and distinguishes six-member registration from reduced practice. Next prove desktop/mobile paired replay/export workflows, resolve unsupported Mega lifecycles and exact-package human approval (#232). See docs/release/MC_MOVE_AUDIT_2026-10-14.md. M-C remains unverified; no trusted ranking or database learning. Preview/local-save scope remains.
+v210 practice workflows are live-verified (STATUS.md). Draft v212 implements22 exact Mega/alias lifecycles with bounded pinned mechanics proof and historical isolation; complete remaining interaction and current-client evidence. Complete source/mechanics evidence and exact-package human approval (#232). M-C remains experimental, excluded from trusted rankings and database learning.
 
 ## Milestone Index
 

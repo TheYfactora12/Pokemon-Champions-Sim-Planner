@@ -64,13 +64,19 @@ function audit(root) {
   const compiledFiles = fs.readdirSync(path.join(upstream,'dist'),{recursive:true}).filter(f=>f.endsWith('.js')).sort();
   const compiledHashes = Object.fromEntries(compiledFiles.map(f=>[f.replaceAll('\\','/'),hash(fs.readFileSync(path.join(upstream,'dist',f)))]));
   if (hash(JSON.stringify(compiledHashes)) !== intake.compiled_fingerprint) throw new Error('Compiled reference differs from captured intake');
+  const candidatePath=path.join(root,'source/reg-m-c-mega-descriptor-candidates.json');
+  const candidatePacket=fs.existsSync(candidatePath) ? JSON.parse(fs.readFileSync(candidatePath)) : null;
+  const {buildCandidates,reviewCandidates}=require('./mc-mega-candidates.cjs');
+  const candidatePreparation=reviewCandidates(candidatePacket,buildCandidates(dex,c.CHAMPIONS_MEGAS),PIN,intake.compiled_fingerprint)
+    .map(row=>({...row,execution_status:mega.find(m=>m.name===row.name).status}));
+  if (candidatePacket) fingerprints['source/reg-m-c-mega-descriptor-candidates.json']=hash(fs.readFileSync(candidatePath));
   return {schema_version:'champions-mc-release-inventory-v1',generated_at:new Date().toISOString(),pin:PIN,
     competitive_use:false,release_verified:false,
     scope:'Reference availability, mirror field comparison and Mega descriptor inventory. Not official legality, effective engine parity, item hooks, move effects or ability behavior certification.',
     fingerprints,compiled_fingerprint:intake.compiled_fingerprint,
     counts:Object.fromEntries(Object.entries(categories).map(([key,rows])=>[key,{total:rows.length,matched:rows.filter(r=>r.status==='mirror_fields_match').length,missing:rows.filter(r=>r.status==='missing_mirror_row').length,different:rows.filter(r=>r.status==='mirror_field_difference').length}])),
     official_mapping:{total:intake.official_identity_candidates.length,unresolved:intake.official_identity_candidates.filter(r=>r.status!=='baseline_identity_candidate')},
-    mega, categories};
+    mega, candidate_preparation:candidatePreparation, categories};
 }
 
 module.exports = {compareRows,audit};

@@ -5,6 +5,10 @@ Reviewed: 2026-10-14. This file owns current release facts and priorities.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
+## Separate M-C draft candidate
+
+Local v212 implements the 19 missing Mega lifecycles and 3 aliases in experimental reference mode, including female Meowstic stats/import isolation. 88 pinned lifecycle and 78 selected ability comparisons pass; final aggregate 224+12 and source/battle gates pass. Desktop/touch replay verification passes 5,254 observable checks with zero mismatches. Official M-C promotion and deployment remain unapproved. [Implementation, evidence and remaining boundaries](docs/release/MC_MEGA_LIFECYCLES_2026-10-14.md); [earlier descriptor-only preparation](docs/release/MC_MEGA_CANDIDATES_2026-10-14.md).
+
 ## Current verified release
 
 **v2.2.210-context-error / engine1.1.18** is live on the primary Pages site.
@@ -57,64 +61,47 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
-October 14 follow-up local candidate v207 reconciles all 22 residual M-C move
-rows and adds scoped effects with 24 metadata checks, 50 effect checks and 20
-pinned comparisons. The [move audit](docs/release/MC_MOVE_AUDIT_2026-10-14.md)
-records the original five effect gaps, subsequently covered by the v208 continuation; package/workflow gates remain.
-M-C remains reference-only; nothing published. This does not finish the lab.
+The v207/v208 move reconciliation and scoped effects, Imprison preference fix,
+and v210 context-error handling have shipped in v210. The 22 residual move rows
+are reconciled; their named probes are recorded in the [move audit](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
+The [v210 live receipt](docs/release/V210_LIVE_2026-10-14.md) records four games,
+six paired desktop/mobile replay/export captures and 2,509 observable checks
+with zero mismatches or page errors. Do not repeat those completed gates as
+unfinished work; new runtime changes still require their own release proof.
 
-October 14 local candidate: redundant Imprison preference fixed with 14 focused
-checks, 215 fast + 12 offline DB suites and the battle gate passing. No push or
-deployment. [Ordered completion gates](docs/release/MOVE_POLICY_2026-10-14.md)
-keep move reconciliation before exact M-C package approval; #264 provenance,
-mobile/core journeys and release proof remain open. This is not product completion.
-
-October 13: PR262 receipt merged after passing CI. Deployed v205 adds missing
-draw counts and pins generated HTML line endings. Expanded 21,580-battle
-diagnostics passed checked invariants; 1,600 live v204 games completed, one
-downloaded sample checked. No competitive-strength certification.
-[Evidence and limitations](docs/release/EXPANDED_TEAM_MATRIX_2026-10-13.md).
-Next scoped investigation: #264 move-choice policy and selection provenance
-before using matchup win rates as team-strength advice.
-
-v204: active Rock Head recoil and matchup headings corrected and deployed;
-19 focused and eight pinned-reference probes pass. The 6,370-battle variation
-sweep has zero Rock Head flags (previously 580). Review, CI and deployment passed;
-general suppression and full game accuracy remain unproved.
-[Scope and limits](docs/release/ROCK_HEAD_MATRIX_2026-10-10.md).
-
-v201 shipped the first-turn Fake Out fix (#249); see
-[scoped evidence](docs/release/FAKE_OUT_FLINCH_2026-10-09.md).
-v202 Klutz direct-item guards are deployed and smoke-tested. v203 recovered
-catalog whitespace headroom (16,541 bytes remaining); broader #255 size work
-remains open. #235 Lum activation,
-#252 Champions-specific late Fake Out/Encore timing, #241 descriptors/aliases
-and official approval remain open. Do not infer team strength from these fixes.
+Earlier candidate/unpublished statements and the old queue are preserved in
+[the superseded queue archive](docs/archive/STATUS_QUEUE_PRE_V210_RECONCILIATION_2026-10-14.md).
+ROADMAP.md's generated Next Action already reflects live v210 and draft v212;
+this documentation correction does not change the frozen v212 runtime.
 
 All issue numbers below refer to TheYfactora12/Pokemon-Champions-Sim-Planner.
 
-Security intake #247: GitHub reports 31 dependency alerts (12 high, 14 moderate,
-5 low). Triage affected runtime/build paths before expanding release claims;
-provider severity is not yet a project-specific exploitability assessment.
+1. **Review the separate v212 draft (#241):** 19 missing Mega lifecycles and
+   three aliases now have bounded local reference proof, including female
+   Meowstic historical isolation. Verify hosted checks on the final PR268 head
+   before a release decision. This draft is not deployed or official M-C approval.
+2. **Official M-C package (#232):** complete current-client full-team/format
+   evidence, bind the immutable source/mechanics package and obtain exact-package
+   human approval. The 262 roster mappings and passing Showdown probes do not
+   replace this evidence. Trusted rankings and database learning remain excluded.
+3. **Remaining mechanics and policy evidence (#264/#241/#235/#245/#252):**
+   extend named interaction boundaries, including simultaneous Emergency Exit,
+   wider residual/recoil/multi-hit and ability suppression/copy timing. Evaluate
+   move-choice provenance before using matchup win rates as team-strength advice.
+   The 22-row reconciliation and scoped Fake Out/Klutz repairs are completed
+   evidence, not universal interaction parity or automatic issue closure.
+4. **Remaining experience and release verification:** live DB persistence,
+   real-device Safari, wider accessibility/keyboard/network-failure journeys,
+   coaching review and independent QA remain unproved. The known dark Strategy
+   heading contrast limitation remains. Completed desktop/touch captures are
+   bounded workflow evidence, not a complete beginner study.
+5. **Security intake (#247):** triage the reported dependency alerts against
+   affected runtime/build paths; provider severity alone is not an exploitability
+   assessment. No security certification follows from the offline gates.
 
-1. **Battle correctness (#249/#241):** investigate Fake Out/action denial and
-   complete Mega descriptors/aliases; canonical-name bypass and supported
-   base-plus-stone behavior are repaired in v200, not complete Mega parity.
-2. **Item and move correctness (#235, #245):** repair Lum/Klutz boundaries and
-   trace 22 remaining move rows after existing PP overrides explain 51 of 73
-   raw differences. Inventory is not effective-engine correctness proof.
-3. **Official M-C package (#232):** 262 review-only roster mappings now exist;
-   bind format/effect evidence, team boundary fixtures and exact-package sign-off.
-4. **Honest result/replay UX (#242, #238, #240):** correct columns, item/faint
-   labels and exclusion-report ergonomics before interpreting team strength.
-5. **Competitive beta gates:** complete paired user journeys, coaching review
-   (#209), mobile/onboarding (#211/#213), Sources (#221), release/security
-   (#103/#102) and independent QA (#190). Keep approval boundaries intact.
-
-#228 remains the team-viability umbrella; linked scoped tickets own individual
-repairs. Partially fixed issues do not close merely because a release merged.
-News/source-watch incidents retain their own evidence; do not collapse different
-source hashes into duplicate tickets without review.
+#228 remains the team-viability umbrella. Close only acceptance criteria backed
+by linked evidence; partially repaired issues do not close because a release
+merged. Preserve source-watch incidents with distinct source hashes separately.
 
 ## Evidence Index
 

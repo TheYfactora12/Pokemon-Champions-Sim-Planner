@@ -19,6 +19,23 @@ function harness() {
 const member = {name:'Rillaboom', item:'Electric Seed', ability:'Grassy Surge', nature:'Adamant',
   level:50, evs:{hp:2,atk:32,def:0,spa:0,spd:0,spe:32}, moves:['Fake Out','Protect']};
 const opts = {format:'champions', regulationId:'champions_reg_m_c_2026', draftOnly:true};
+
+test('exact reference aliases import without changing historical descriptors or saved identities',()=>{
+  const ctx=harness(),legacy=JSON.stringify(ctx.CHAMPIONS_MEGAS);
+  for(const [names,canonical,item,ability] of [
+    [['Floette-Mega','Floette (Eternal Flower)-Mega','Floette-Eternal-Mega','Floette-Mega-EF','Floette-Mega Eternal Flower'],'Floette-Mega','Floettite','Flower Veil'],
+    [['Floette-Eternal','Eternal Flower Floette'],'Floette-Eternal','Floettite','Flower Veil'],
+    [['Meowstic-F-Mega','Meowstic (Female)-Mega'],'Meowstic-F-Mega','Meowsticite','Competitive'],
+    [['Meowstic-M-Mega','Meowstic (Male)-Mega'],'Meowstic-M-Mega','Meowsticite','Prankster']])for(const name of names) {
+    const m={...member,name,species:canonical,item,ability,moves:['Protect']},before=JSON.stringify(m);
+    const result=ctx.buildImportedTeamValidation([m],opts);
+    assert.equal(result.canSave,true,JSON.stringify({name,errors:result.errors}));
+    assert.equal(result.canExecute,false);assert.equal(result.officialStatus,'unverified');assert.equal(JSON.stringify(m),before);
+  }
+  assert.equal(ctx.buildImportedTeamValidation([{...member,name:'Meowstic-F-Mega',species:'Meowstic-M-Mega',item:'Meowsticite',ability:'Competitive',moves:['Protect']}],opts).canSave,false);
+  assert.equal(ctx.buildImportedTeamValidation([{...member,name:'Floette',item:'Floettite',ability:'Flower Veil',moves:['Protect']}],opts).canSave,false);
+  assert.equal(JSON.stringify(ctx.CHAMPIONS_MEGAS),legacy);
+});
 test('M-C draft intake saves reference-compatible sets without approving execution', () => {
   const ctx = harness(), before = JSON.stringify(member);
   const result = ctx.buildImportedTeamValidation([member], opts);
@@ -206,4 +223,13 @@ test('unsupported stored draft context fails closed instead of using a historica
 test('new draft provenance hashes actual reference bytes',()=>{
  const ctx=harness(),hash=require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(__dirname,'..','generated/mc_review_reference.js'))).digest('hex');
  assert.equal(ctx.csIntakeProvenance({referencePin:ctx.MC_REVIEW_REFERENCE.pin}).reference_artifact_sha256,hash);
+});
+
+test('legacy Meowstic Mega preview keeps type and exact sprite identity',()=>{
+ const ctx=harness();
+ for(const [gender,slug] of [['Female','f'],['Male','m']]) {
+  const name='Meowstic ('+gender+')-Mega';
+  assert.equal(JSON.stringify(ctx.getPokemonTypes(name)),JSON.stringify(['Psychic']));
+  assert.equal(ctx.getSpriteUrl(name),'https://play.pokemonshowdown.com/sprites/ani/meowstic-'+slug+'mega.gif');
+ }
 });
