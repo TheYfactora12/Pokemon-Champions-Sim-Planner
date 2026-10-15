@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-10-08. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-10-15. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-v210 practice workflows are live-verified (STATUS.md). Draft v212 implements22 exact Mega/alias lifecycles with bounded pinned mechanics proof and historical isolation; complete remaining interaction and current-client evidence. Complete source/mechanics evidence and exact-package human approval (#232). M-C remains experimental, excluded from trusted rankings and database learning.
+v212 experimental practice is deployed and live-verified (STATUS.md), including 22 exact Mega/alias lifecycles with bounded reference proof and historical isolation. Complete remaining interaction and current-client evidence, then exact-package human approval (#232). M-C stays excluded from trusted rankings and database learning.
 
 ## Milestone Index
 

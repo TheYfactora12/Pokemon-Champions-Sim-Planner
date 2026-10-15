@@ -77,4 +77,10 @@ for(const swap of [false,true])test('Trace applies copied entry ability exactly 
  const post=r.turnLog[0].post,side=swap?'player':'opponent';
  for(const row of post.roster[side].slice(0,2)) assert.equal(post.stat_boosts_stable[row.stableKey].atk,-1,JSON.stringify(r.log));
 });
+for(const swap of [false,true])test('entry Ability Shield blocks Trace until a new entry despite Knock Off '+swap,()=>{
+ const r=battle('Knock Off',{target:{ability:'Trace',item:'Ability Shield'},turns:2,swap});
+ assert(r.log.some(x=>x.includes('lost its Ability Shield because of Knock Off')));
+ for(const turn of r.turnLog) assert.equal(turn.post.roster[swap?'player':'opponent'][0].ability,'Trace');
+ assert(!r.log.some(x=>x.includes('traced')));
+});
 console.log(checks+' expanded Mega ability checks passed');

@@ -29,7 +29,7 @@ Earlier failed attempts are not counted as proof: adding the named partial cover
 
 Remaining uncertainty includes simultaneous Emergency Exit crossings, wider recoil/residual/multi-hit combinations, arbitrary copied-ability timing and exhaustive ability suppression interactions. These are not certified by the named passing probes. Current-client full-team/format evidence and exact immutable-package human approval are still required for official M-C promotion. Live DB and real-device Safari remain untested. No paid service or unrelated project change is included.
 
-## Frozen artifact
+## Historical initial frozen artifact
 
 - Build: `v2.2.212-mega-lifecycles`; engine `1.1.19`.
 - Bundle: 11,529,171 bytes; SHA-256 `b0f56899b20001e2e9b2e17cd187bd269262f1ca37aca5bc592d34a245e26885`.
@@ -41,7 +41,7 @@ Final frozen battle gate passed (75 RUN entries including both new Mega files, g
 
 Final frozen aggregate: **224 fast files + 12 offline DB files, zero failures**; four manual/helper files skipped. Log: `project-gate-v212-complete.log` in the local checkout (ignored). Final source-truth and battle logs are `source-truth-v212-closed.log` and `battle-audit-v212-closed.log`. Independent mechanics and release reviewers closed their Trace/display findings on these final bytes. Previous PR268 hosted checks passed only for e9edd92; new local changes require their own hosted checks before publication. No merge or deployment is authorized by this report.
 
-## October 15 news reconciliation
+## Historical first news reconciliation (dd4f85c)
 
 PR268 head `9aaa90b` passed hosted CI, battle audit, bundle and cache checks. Automated main commit `2971a59b18ea80e10bd3e69f70b9aa9228183681` then refreshed the news feed and deployed v210 with a new news-only bundle hash. This continuation merges that current main into the existing draft and regenerates artifacts through `tools/build-bundle.py`; it does not merge the PR into main or deploy v212.
 
@@ -52,3 +52,9 @@ Refreshed v212 bundle: **11,529,313 bytes**, SHA-256 `ed15cd03bf309a12e9debc1532
 Release manifest 12/12, load order 4/4 and roadmap source/output checks pass. Desktop `browser-replay-Hit2Pf`: two games, three pairs, 26 pair-turns, 1,891 observable checks. Touch `browser-replay-6cv2vE`: two games, three pairs, 21 pair-turns, 1,576 checks. All six pairs match, no page errors, both offline helper reloads pass. Continuity captures are included in totals. The prior 88 lifecycle and 78 ability oracle results apply to unchanged mechanics; these were not rerun solely for news content.
 
 Final refreshed aggregate: **224 fast files + 12 offline DB files, zero failures**, four manual/helper files skipped (`project-gate-v212-news-refresh.log`). Independent release review found no blocker and verified news identity, unchanged runtime, asset hashes and browser pair receipts. New-head hosted CI remains required. Official-package approval, broader parity, live DB and real Safari exclusions remain unchanged.
+
+## Final deployed v212 identity and post-merge review
+
+The earlier `ed15cd03...` receipt above binds the first news reconciliation at `dd4f85c`, not final candidate `3ac1654`. A second news-only main update produced final bundle SHA256 `37aea654b6a8bcfbbcd754d917996e940e5b22e7463927b2d98baed5fe6ad599` at the same 11,529,313-byte size. PR268 merged as `bceb93f` and Pages38771451578 deployed these bytes. [Final live receipt](V212_LIVE_2026-10-15.md) records fresh live browser evidence for this hash; earlier browser captures are not relabeled as new-byte captures.
+
+Post-merge review correctly identified that the earlier refreshed heading was ambiguous and the roadmap review date predated its release claims. This clarification preserves each historical hash; the roadmap source date and next action are refreshed separately through its generator. The Trace/Ability Shield allegation was independently rejected against pinned `efe4948570d5e8189751792136d26e71710c6c66`: `data/abilities.ts` Trace.onStart sets seek=false while Shield is held, and onUpdate does not restart seeking after Knock Off. Both-side actual doubles removal plus a second idle turn match locally and in the pinned Battle. Added local regressions (35 ability checks total) and pinned probes (80 comparisons total) preserve this intended behavior; no battle code changes.

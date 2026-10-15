@@ -1,23 +1,19 @@
 # Project Status
 
-Reviewed: 2026-10-14. This file owns current release facts and priorities.
+Reviewed: 2026-10-15. This file owns current release facts and priorities.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
-## Separate M-C draft candidate
-
-Local v212 implements the 19 missing Mega lifecycles and 3 aliases in experimental reference mode, including female Meowstic stats/import isolation. 88 pinned lifecycle and 78 selected ability comparisons pass; final aggregate 224+12 and source/battle gates pass. Desktop/touch replay verification passes 5,254 observable checks with zero mismatches. Official M-C promotion and deployment remain unapproved. [Implementation, evidence and remaining boundaries](docs/release/MC_MEGA_LIFECYCLES_2026-10-14.md); [earlier descriptor-only preparation](docs/release/MC_MEGA_CANDIDATES_2026-10-14.md).
-
 ## Current verified release
 
-**v2.2.210-context-error / engine1.1.18** is live on the primary Pages site.
-PR266 merged as `36a4729bca370b2457dc57e292807a5525818fac`; Pages38619285422 passed.
-Live bundle, all four external assets, manifest and service worker matched reviewed bytes.
-Desktop/mobile checks passed four games and six paired replay/export captures with zero mismatches or page errors.
-M-C remains experimental; exact competitive package promotion is unapproved. Live DB persistence and real-device Safari remain untested; dark Strategy-heading contrast is a known nonblocking limitation.
-[Live receipt, evidence scope and rollback](docs/release/V210_LIVE_2026-10-14.md).
-[Implementation and earlier candidate history](docs/release/MC_MOVE_AUDIT_2026-10-14.md).
+**v2.2.212-mega-lifecycles / engine 1.1.19** is live on primary Pages.
+PR268 merged as `bceb93ffe8862011b2facb285790b07c5faab534`; Pages38771451578 passed.
+The exact bundle, five external assets, manifest and service worker matched reviewed bytes.
+Desktop/touch live checks passed four games and six replay/export pairs with zero mismatches or page errors; offline reloads passed.
+M-C remains explicitly experimental and excluded from trusted rankings/database learning. Official-package approval is separate and ungranted.
+[Live receipt, proof limits and rollback](docs/release/V212_LIVE_2026-10-15.md).
+[Prior v210 / candidate checkpoint](docs/archive/STATUS_PRE_V212_RELEASE_2026-10-15.md).
 
 ## Previous verified release
 
@@ -71,15 +67,15 @@ unfinished work; new runtime changes still require their own release proof.
 
 Earlier candidate/unpublished statements and the old queue are preserved in
 [the superseded queue archive](docs/archive/STATUS_QUEUE_PRE_V210_RECONCILIATION_2026-10-14.md).
-ROADMAP.md's generated Next Action already reflects live v210 and draft v212;
-this documentation correction does not change the frozen v212 runtime.
+The generated roadmap now reflects the verified v212 deployment and October 15 review date.
+The v213 follow-up changes roadmap copy and cache identity only; its remaining evidence/approval gates still apply.
 
 All issue numbers below refer to TheYfactora12/Pokemon-Champions-Sim-Planner.
 
-1. **Review the separate v212 draft (#241):** 19 missing Mega lifecycles and
-   three aliases now have bounded local reference proof, including female
-   Meowstic historical isolation. Verify hosted checks on the final PR268 head
-   before a release decision. This draft is not deployed or official M-C approval.
+1. **Experimental release completed (#241):** PR268's 19 missing Mega lifecycles
+   and three aliases are deployed with bounded reference and live workflow proof.
+   Do not repeat completed release gates as unfinished work. New runtime changes
+   need fresh evidence; the accepted release does not imply official M-C approval.
 2. **Official M-C package (#232):** complete current-client full-team/format
    evidence, bind the immutable source/mechanics package and obtain exact-package
    human approval. The 262 roster mappings and passing Showdown probes do not
