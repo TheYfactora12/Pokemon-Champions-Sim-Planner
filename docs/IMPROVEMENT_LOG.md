@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0104: Verify The Approved Experimental v212 Release
+
+- Released PR268 only after final-head CI and independent review; reconciled a second news-only update without changing historical mechanics or M-C approval flags.
+- Verified successful Pages deployment, exact live bundle/all external assets and paired desktop/touch/offline workflows. [Receipt and rollback](release/V212_LIVE_2026-10-15.md).
+- Archived superseded candidate status and reconciled the active queue. Official-package approval and broader accuracy remain separate.
+- Lesson: merge, deployment and live workflow proof are distinct gates; an early HTTP response during publishing is not the new release.
+
 ## IMP-0103: Reconcile News Drift Through Generated Artifacts
 
 - Automated main news publication conflicted with PR268's generated release receipt after the earlier head passed CI.
