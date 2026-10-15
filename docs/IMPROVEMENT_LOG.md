@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0103: Reconcile News Drift Through Generated Artifacts
+
+- Automated main news publication conflicted with PR268's generated release receipt after the earlier head passed CI.
+- Merge current main `2971a59` into the existing draft and regenerate the bundle/receipt through the canonical builder. Keep historical rules, experimental M-C labels and runtime mechanics unchanged.
+- Refreshed bundle retains 5,023 bytes of headroom. Release contracts and paired desktop/touch/offline checks pass; the dated [Mega evidence report](release/MC_MEGA_LIFECYCLES_2026-10-14.md) records final aggregate status and exact bytes.
+- Lesson: resolve generated conflicts from merged source inputs, then bind verification to the new immutable head. Earlier green CI is not current-base release approval.
+
 ## IMP-0102: Retire Shipped Work From The Active Queue
 
 - PR267 review identified candidate-era v207/v208 and 22-move tasks still listed as unpublished or unfinished after v210 deployment.
