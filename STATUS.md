@@ -18,9 +18,9 @@ M-C remains experimental and excluded from trusted rankings/database learning. O
 [Previous v212 workflow receipt](docs/release/V212_LIVE_2026-10-15.md).
 [Prior v210 / candidate checkpoint](docs/archive/STATUS_PRE_V212_RELEASE_2026-10-15.md).
 
-## Previous verified release
+## Historical release references
 
-Previous documented release: **v2.2.205-matrix-draws**, preview/local-save.
+Historical documented release: **v2.2.205-matrix-draws**, preview/local-save.
 PR263 merged as `d2cd77678f138307476c651a04cd092db22e12ed` after CI
 `38487226759`; Pages `38487715884` passed. HTTP artifact and asset checks
 passed at 2026-10-14T00:04:40.665Z (October 13 local time). Bundle SHA-256:
