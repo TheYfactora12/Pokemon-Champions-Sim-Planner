@@ -7,12 +7,15 @@ Historical candidate observations are not current deployment instructions.
 
 ## Current verified release
 
-**v2.2.212-mega-lifecycles / engine 1.1.19** is live on primary Pages.
-PR268 merged as `bceb93ffe8862011b2facb285790b07c5faab534`; Pages38771451578 passed.
-The exact bundle, five external assets, manifest and service worker matched reviewed bytes.
-Desktop/touch live checks passed four games and six replay/export pairs with zero mismatches or page errors; offline reloads passed.
-M-C remains explicitly experimental and excluded from trusted rankings/database learning. Official-package approval is separate and ungranted.
-[Live receipt, proof limits and rollback](docs/release/V212_LIVE_2026-10-15.md).
+**v2.2.213-roadmap-receipt / engine 1.1.19** is live on primary Pages.
+PR269 merged as `08d09d68babdc9eb06c67fe440b8a8f47b37a444`; Pages38775449546 passed.
+At 2026-10-15T17:18:07Z, the bundle, five external assets, manifest and service worker matched exact committed bytes.
+Live desktop/touch roadmap display and offline reload passed with zero page errors.
+This follow-up changes roadmap copy/cache identity; unchanged v212 battle workflow proof covers four games, six replay/export pairs and 3,589 comparisons with zero mismatches.
+The Trace review allegation did not reproduce against the pinned reference; added regressions passed. Historical hash ambiguity and stale roadmap date were corrected.
+M-C remains experimental and excluded from trusted rankings/database learning. Official-package approval remains ungranted.
+[Current receipt, review dispositions and rollback](docs/release/V213_LIVE_2026-10-15.md).
+[Previous v212 workflow receipt](docs/release/V212_LIVE_2026-10-15.md).
 [Prior v210 / candidate checkpoint](docs/archive/STATUS_PRE_V212_RELEASE_2026-10-15.md).
 
 ## Previous verified release
