@@ -40,6 +40,7 @@ for(const swap of [false,true])for(const spec of probes) {
 }
 const {battle:localBattle}=require('../tests/mc_remaining_effects_tests.js');
 const interactions=[
+ {move:'Knock Off',target:{ability:'Trace',item:'Ability Shield'},turns:2},
  {move:'Splash',source:{ability:'Trace'},target:{ability:'Intimidate'},targetAllyAbility:'Multitype'},
  {move:'Splash',source:{ability:'Speed Boost'},turns:3},
  ...['Ember','Tackle','Will-O-Wisp'].map(move=>({move,target:{ability:'Thermal Exchange'}})),
@@ -75,6 +76,10 @@ for(const swap of [false,true])for(const spec of interactions) {
     if(spec.target?.ability==='Emergency Exit' && ref===dst && i===0) {
       assert.equal(row.zone==='active',actor.isActive && actor.hp>0,JSON.stringify({swap,spec,row}));
       assert.equal(row.hp_current,actor.hp);
+    }
+    if(spec.target?.item==='Ability Shield' && ref===dst && i===0) {
+      assert.equal(actor.item,'');assert.equal(actor.abilityState.seek,false);
+      assert(local.log.some(x=>x.includes('lost its Ability Shield because of Knock Off')));
     }
     const boosts=post.stat_boosts_stable[row.stableKey]||{};
     for(const stat of ['atk','def','spa','spd','spe'])assert.equal(boosts[stat]||0,actor.boosts[stat],JSON.stringify({swap,spec,side,i,stat}));

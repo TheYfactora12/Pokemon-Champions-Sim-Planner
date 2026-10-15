@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.212-mega-lifecycles",
+  "build_id": "v2.2.213-roadmap-receipt",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "37aea654b6a8bcfbbcd754d917996e940e5b22e7463927b2d98baed5fe6ad599",
-  "bundle_bytes": 11529313,
+  "bundle_sha256": "faffc9d00f7c94ba9773c35f6324b30739cde1966adad618650ecac263505660",
+  "bundle_bytes": 11529260,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/champions_move_pools.js": {

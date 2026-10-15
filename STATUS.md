@@ -67,8 +67,8 @@ unfinished work; new runtime changes still require their own release proof.
 
 Earlier candidate/unpublished statements and the old queue are preserved in
 [the superseded queue archive](docs/archive/STATUS_QUEUE_PRE_V210_RECONCILIATION_2026-10-14.md).
-The generated roadmap's v212 draft wording is a pre-release planning checkpoint;
-this STATUS receipt owns current deployment truth. Its remaining evidence/approval gates still apply.
+The generated roadmap now reflects the verified v212 deployment and October 15 review date.
+The v213 follow-up changes roadmap copy and cache identity only; its remaining evidence/approval gates still apply.
 
 All issue numbers below refer to TheYfactora12/Pokemon-Champions-Sim-Planner.
 

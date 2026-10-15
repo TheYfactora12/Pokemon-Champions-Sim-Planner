@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0105: Triage Review Allegations Against The Pinned Reference
+
+- Post-merge review alleged Trace should retry after Knock Off removes Ability Shield. Independent actual doubles comparisons on both sides refute that claim: pinned entry seek=false persists until new entry. Preserve battle behavior and add bounded regressions/oracle comparisons.
+- Two documentation findings are valid: distinguish historical bundle receipts from final deployed bytes, and refresh the roadmap source review date/live-release wording. Generate v213 UI/cache artifacts without changing engine1.1.19 or official M-C approval.
+- Validation: 35 ability checks and80 pinned comparisons pass; the current follow-up gate and desktop/touch/offline results are recorded in PR269. No universal copy-timing claim.
+- Lesson: automated review is an allegation to test, not authority to override pinned behavior; historical and current artifact receipts must be unambiguous.
+
 ## IMP-0104: Verify The Approved Experimental v212 Release
 
 - Released PR268 only after final-head CI and independent review; reconciled a second news-only update without changing historical mechanics or M-C approval flags.
