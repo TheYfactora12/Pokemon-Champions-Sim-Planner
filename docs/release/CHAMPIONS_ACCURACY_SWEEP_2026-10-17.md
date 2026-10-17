@@ -32,6 +32,8 @@ were checked through application admission, and the runtime PP function was run:
 | Vileplume / Strength Sap | Admitted; 12 PP, stale | Admitted; 8 PP |
 
 These are application admission/runtime checks, not observed game-client battles.
+The official notice enables Slash generally; Archaludon-specific availability in
+this table is from the pinned reference pool, not a separately observed game learnset.
 Default practice/editor uses the older pool (`rulesets.js` practice context).
 Proposed repair: version the current-practice data against official patch changes,
 preserve historical pools, and add admission/PP regressions before release.
@@ -105,3 +107,13 @@ Next highest-value work: fix current-practice patch drift and close admitted
 unsupported move execution using game-backed fixtures, then design and verify
 voluntary switching and policy-information boundaries. These need a separately
 authorized repair slice; the feedback-link release does not silently include them.
+
+## Final runtime verification
+
+The v216 runtime merged as `35855867fe98d6566ea342762e85e7ee6a880e8d`.
+Exact deployed files matched at 2026-10-17T07:22:50.328462Z. The six admission/PP
+fixtures and retained Fly/Mega diagnostics reproduced on that revision. Engine
+SHA-256 remains `c4322bd0cc59635f227fc266f737abaad02e3a2780c6360c99dd190c569b430d`.
+18 live startup visits, desktop/mobile feedback, two live games/three exported-DOM
+pairs (1,191 checks, zero issues), cached upgrade and offline load passed.
+These user-flow checks do not change the no-go accuracy decision above.

@@ -49,3 +49,31 @@ Production DB, paid services and social posting are outside scope. Rollback is a
 reviewed revert to v215 runtime bytes from the baseline above, preserving saves.
 After deployment verify exact artifact/assets and the live link, then append the
 receipt in a documentation-only change without another runtime version bump.
+
+## Deployed verification
+
+PR [276](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/276)
+merged reviewed candidate `3d3b4af9893f4e1d437d7589365fbed7ef9649cb` as
+`35855867fe98d6566ea342762e85e7ee6a880e8d`. PR CI 39012887704, bundle
+freshness 39012887654 and cache gate 39012887656 passed. Pages 39013211933
+and main CI 39013211926 passed. All eight deployed files matched exact committed bytes at
+2026-10-17T07:22:50.328462Z; bundle hash is the v216 hash above.
+
+The actual Report a bug link opened the primary Issues page at 390px touch and
+1440px desktop, both themes, with keyboard focus and all 11 tabs checked.
+18 fresh/reload startup visits had zero page errors. A separately retained v215
+profile upgraded to v216, removed the old app cache, preserved a local-storage
+sentinel and loaded the app/reference helper offline. This is not exhaustive
+saved-team migration evidence; this release changes no persistence schema.
+
+Two live games produced three actual downloaded-JSON/visible-DOM pairs across
+15 paired turns: 1,191 observable comparisons, zero mismatches or page errors.
+Import, invalid-roster rejection, bring-four/two-leads, swap continuity and offline
+reload passed. Coaching explicitly returned insufficient evidence for alternative
+actions. This confirms an inspectable model workflow, not real-game correctness.
+
+The official-update admission and Fly/Mega diagnostics were rerun on the merged
+revision; the unchanged engine and data preserve those documented blockers.
+The public bug-report route is shipped. Current-Champions accuracy remains
+no-go as detailed in the separate sweep. No mechanics repairs, official approval,
+production DB writes, paid services or social posts were included.
