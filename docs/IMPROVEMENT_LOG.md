@@ -23,6 +23,13 @@
   local reloads pass. Original browser interruption remains unproved; no complete
   startup, mechanics, official-M-C or DB certification is implied.
 - Final gate/release evidence belongs to the [dated receipt](release/STARTUP_HARDENING_2026-10-17.md).
+- October17 deployment: PR272 merged, v214 HTTP bundle/asset checks and five
+  live reloads plus tournament filtering passed. #271 remains open for the
+  unexplained original interruption; no saved teams were edited or cleared.
+- Next diagnostic retained for #264:15 synthetic priority-suppression probes,
+  nine substantive PP/event disagreements and six comparator-order-only cases.
+  Completion of a diagnostic is not a passing mechanics gate. Repair and
+  independent verification remain next; no engine behavior changed here.
 
 ## IMP-0105: Triage Review Allegations Against The Pinned Reference
 

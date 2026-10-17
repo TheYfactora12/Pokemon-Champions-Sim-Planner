@@ -44,7 +44,40 @@ a fresh diagnostic. No runtime error is silently declared resolved.
 - Independent review approved the bounded hardening after the conversion repair.
   Reviewed bundle SHA256:
   `cb6c16fe3cd2066214d2dc7bceeee9e4fd3cc88a69523b8b0b8890f4bbbc782e`.
-- Hosted CI and live receipt are pending. Production remains v213 until verified.
+- At candidate submission, hosted CI and live receipt were pending; resolved below.
+
+## Deployed receipt
+
+PR272 merged as `b7f668f56a3f98402118da1a3bd337b08ec96024` with reviewed
+head `1f164b82a5bafe8a94ba8de8e30ac354d199b50a`.
+Final PR CI39003446904 (including battle audit), bundle39003446922 and
+cache39003446901 passed. Main CI39003792247 and Pages39003792322 passed.
+Supabase Preview was skipped, not passed; this is an unchanged local-save release.
+
+HTTP alignment at2026-10-17T04:49:21.118Z passed for the deployed bundle,
+manifest provenance and all five tracked external assets. Browser verification
+then showed v214, completed Home rendering on five repeated reloads, and rendered
+Rin Sand after selecting the Tournament filter. Zero captured console errors.
+Four existing custom teams remained listed; no edit, import, battle or bring/lead
+selection occurred. This is not exhaustive saved-state or battle parity proof.
+One initial automation locator mistakenly requested an animation button instead
+of the actual checkbox; corrected to the visible Start Team Test control. This
+was a harness selector failure, not an observed application startup exception.
+News still labels three unavailable sources; freshness was not certified here.
+
+## Next diagnostic: priority suppression
+
+Run `node poke-sim/tools/audit-priority-suppression.mjs` from repository root.
+This diagnostic is not a pass/fail release suite; completion is not mechanics success.
+The retained15 synthetic forced-action probes against pinned Showdown0.11.11
+reproduce nine PP/event disagreements involving Mold Breaker, Neutralizing Gas
+and priority-blocking abilities. Six controls agree on blocking but expose the
+comparator counting blocked `[still]` announcements as resolved moves.
+No exact random HP equality is claimed. Ability Shield ownership must be evaluated
+on the blocker, not just its protected ally. Issue264 retains the evidence summary.
+Next: add failing formal regressions, repair shared active-ability semantics,
+cover side swaps/direct targets/suppression removal, independently review, then
+release through the same gates. No engine fix is included in this diagnostic.
 
 ## Scope, rollback and next action
 
