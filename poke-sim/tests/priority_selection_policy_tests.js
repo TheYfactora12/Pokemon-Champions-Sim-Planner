@@ -38,3 +38,28 @@ for(const swap of [false,true]) {
  other.quickGuard=false;other.activeMons=[grounded,{ability:'Armor Tail',alive:false}];assert.equal(c._selectionPriorityBlocked(attacker,'Quick Attack',grounded,field),false);
 }
 console.log('Side-swapped target, locks, Feint, other priority and fainted-blocker boundaries passed');
+
+for (const ability of ['Armor Tail', 'Dazzling', 'Queenly Majesty']) for (const swap of [false, true]) {
+ const field={playerSide:{},oppSide:{},terrain:'none'},own=swap?field.oppSide:field.playerSide,other=swap?field.playerSide:field.oppSide;
+ const attacker={name:'Liepard',side:own,ability:'Mold Breaker',moves:['Fake Out','Tackle'],hp:100,maxHp:100,alive:true,turnsSinceEntry:1,calcDamage:()=>20};
+ const target={name:'Charizard',side:other,ability:'Blaze',alive:true,hp:100,maxHp:100};
+ const blocker={name:'Snorlax',side:other,ability,alive:true};
+ const gas={name:'Weezing',side:own,ability:'Neutralizing Gas',alive:true};
+ own.activeMons=[attacker];other.activeMons=[target,blocker];
+ assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
+ target.item='Ability Shield';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
+ blocker.item='Ability Shield';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
+ blocker.itemConsumed=true;assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
+ blocker.item='';blocker.itemConsumed=false;attacker.ability='Limber';
+ assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
+ own.activeMons.push(gas);assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
+ blocker.item='Ability Shield';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
+ blocker.item='';gas.alive=false;assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
+ gas.alive=true;own.activeMons=[attacker];assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
+ own.activeMons.push(gas);assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
+ other.quickGuard=true;assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
+ other.quickGuard=false;field.terrain='psychic';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
+ field.terrain='none';own.activeMons=[attacker];blocker.alive=false;
+ assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
+}
+console.log('78 suppression selection/lifecycle assertions passed across three blockers and both sides');

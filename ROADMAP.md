@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Investigate startup #271: preserve the first error and remove the late tournament-registry dependency; see the October 16 trust recovery plan and STATUS.md for release proof. Then audit remaining move-choice policy (#264). Existing experimental Mega lifecycles stay available; official M-C approval (#232), trusted rankings and database learning remain gated.
+Startup hardening shipped in v214; the original interruption (#271) remains unproved. Validate priority-blocker suppression and remaining move-choice policy (#264), then paired team evidence. See STATUS.md for release proof. Official M-C approval (#232), trusted rankings and database learning remain gated.
 
 ## Milestone Index
 

@@ -74,6 +74,11 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
+October17: v215/engine1.1.20 is a local priority-suppression candidate;96 oracle
+cases and78 new selection/state assertions pass. Local six-turn browser/export
+comparison passes464 checks. Final aggregate/hosted/deployed gates remain pending.
+[Candidate evidence and exclusions](docs/release/PRIORITY_SUPPRESSION_2026-10-17.md).
+
 October16: [the trust recovery execution plan](docs/strategy/TRUST_RECOVERY_EXECUTION_PLAN_2026-10-16.md)
 tracks startup #271 first, then remaining policy/mechanics and paired team evidence.
 The startup exception condition is under diagnostic investigation; the original
