@@ -36,5 +36,5 @@ for (const ability of ['Armor Tail', 'Dazzling', 'Queenly Majesty']) {
 console.log(JSON.stringify({ diagnostic_only: true, local_hashes: local.hashes, reference: referenceIdentity(), rows,
   limits: ['Synthetic forced actions, not team legality or selection-policy proof',
     'Independent random HP values are not exact-equality assertions',
-    'Known comparator caveat: blocked [still] move announcements count toward reference move order',
+    'Move order normalizes only matching priority-ability rejections; raw protocol remains available',
     'No side swaps, direct blocker targets or suppression-removal coverage yet'] }, null, 2));

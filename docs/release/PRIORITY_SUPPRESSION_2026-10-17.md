@@ -1,5 +1,31 @@
 # Priority-blocker suppression repair
 
+## Live receipt and subsequent harness correction
+
+PR274 merged as `fb481d904972084be6665e56e415c9732b15dc44`; the immutable
+candidate was `fee5fff`. PR CI39005261806 including battle audit, bundle39005261710
+and cache39005261735 passed. Pages39005599477 passed. HTTP alignment at
+2026-10-17T05:19:12.665Z matched v215 bundle and five tracked external assets.
+The live M-C reference-practice battle (Mega Altaria versus Mega Dragonite)
+completed five turns. Seed619815971,642260276,850837837,3052013669 downloaded
+successfully and matched399 visible replay checks with zero discrepancies and
+zero captured page errors. Local/live used different seeds/bring settings and
+practice modes; these are independent UI/export checks, not identical outcome tests.
+
+The subsequent harness-only patch normalizes only a `[still]` move announcement
+with a matching priority-blocker `cant` event, same move and `[of]` attacker,
+within that move/turn segment. Raw protocol is untouched.14 parser fixtures retain
+Protect, misses, failed healing, successful boost-stealing and mismatched rejection
+events.96 oracle tests now require zero differences; the original15 probes all
+agree. Independent review restored the old blocker in memory and confirmed the
+comparator still detects move-order and PP errors. Final harness aggregate passed
+(228 fast files and12 offline DB files). This follow-up does not change browser
+code, engine version, cache, bundle or assets. Its hosted merge gate is separate.
+
+The candidate notes below preserve the earlier comparator limitation; that one
+limitation is superseded by this tested normalization. Broader suppression and
+policy/legality boundaries remain open. No99% or universal accuracy claim.
+
 Related: TheYfactora12/Pokemon-Champions-Sim-Planner#264. Candidate:
 v2.2.215-priority-suppression, engine1.1.20. Official M-C approval is unchanged.
 

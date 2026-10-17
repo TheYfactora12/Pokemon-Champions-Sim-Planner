@@ -240,8 +240,21 @@ export function loadLocalEngine() {
   return { context, hashes };
 }
 
-function moveOrder(protocol, teams) {
-  return protocol.filter(line => line.startsWith('|move|')).map(line => {
+export function moveOrder(protocol, teams) {
+  return protocol.filter((line, index) => {
+    if (!line.startsWith('|move|')) return false;
+    const parts = line.split('|');
+    if (!parts.includes('[still]')) return true;
+    // [still] only hides animation. Omit an announcement solely when its own
+    // segment proves the priority-ability rejection missing from local used logs.
+    for (let i = index + 1; i < protocol.length; i++) {
+      if (protocol[i].startsWith('|move|') || protocol[i].startsWith('|turn|')) break;
+      const event = protocol[i].split('|');
+      if (event[1] === 'cant' && ['ability: Armor Tail', 'ability: Dazzling', 'ability: Queenly Majesty'].includes(event[3]) &&
+          event[4] === parts[3] && event.includes(`[of] ${parts[2]}`)) return false;
+    }
+    return true;
+  }).map(line => {
     const [, , actor, move] = line.split('|');
     const nickname = actor.split(': ')[1];
     const side = nickname.slice(0, 2);

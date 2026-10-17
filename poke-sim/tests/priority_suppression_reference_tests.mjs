@@ -41,13 +41,8 @@ for (const direct of [false, true]) for (const swap of [false, true]) {
     assert.equal(after.move_pp.Tackle.current, expectedBlock ? 19 : 20, 'local flinch/PP');
     assert.equal(r.reference.raw_protocol.some(line => line.includes(`|ability: ${ability}|`)), expectedBlock, 'reference blocker event');
     assert.equal(r.local.log.some(line => line.includes(`${ability} blocked Fake Out`)), expectedBlock, 'local blocker event');
-    // The shared comparator counts blocked [still] announcements as resolved moves.
-    // Prove that exact known discrepancy rather than hiding arbitrary mismatches.
-    assert.equal(r.differences.length, expectedBlock ? 1 : 0, JSON.stringify(r.differences));
+    assert.equal(r.differences.length, 0, JSON.stringify(r.differences));
     if (expectedBlock) {
-      const diff = r.differences[0];
-      assert.equal(diff.kind, 'resolved_move_order');
-      assert.deepEqual(diff.reference.filter(m => m !== 'Liepard used Fake Out!'), diff.local);
       assert.ok(r.reference.raw_protocol.some(line => line.startsWith('|move|') && line.includes('|Fake Out|') && line.endsWith('|[still]')));
     }
   });
