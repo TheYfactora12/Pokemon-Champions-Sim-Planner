@@ -11,6 +11,10 @@
 - Lesson: feedback must be reachable from the product, with clear destination
   and privacy expectations. A reporting route is not mechanics certification.
 - [Scope, verification and rollback](release/BETA_FEEDBACK_2026-10-17.md).
+- October 17: PR276 merged and v216 deployed. Exact eight-file HTTP identity,
+  desktop/mobile link, 18 startup visits, 1,191 live replay/export checks and
+  cached upgrade/offline loading passed. The separate accuracy sweep remains
+  no-go for game-accurate claims; no mechanics changes were included.
 
 ## IMP-0107: Resolve Priority Protection On Its Actual Holder
 

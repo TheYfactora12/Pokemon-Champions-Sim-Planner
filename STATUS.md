@@ -7,14 +7,23 @@ Historical candidate observations are not current deployment instructions.
 
 ## Current verified release
 
-Candidate: v216 adds a visible Report a bug link only; engine 1.1.20 is unchanged.
-Local browser, aggregate and independent review passed; hosted gates and deployment are pending.
-[Candidate scope and proof](docs/release/BETA_FEEDBACK_2026-10-17.md).
-The separate current-Champions accuracy sweep does not establish complete M-C
-readiness; preview labels and known mechanics/source boundaries remain in force.
-[Accuracy blockers and evidence boundaries](docs/release/CHAMPIONS_ACCURACY_SWEEP_2026-10-17.md).
+**v2.2.216-beta-feedback / engine 1.1.20** is live on primary Pages.
+PR276 merged as `35855867fe98d6566ea342762e85e7ee6a880e8d`; PR gates and
+main CI 39013211926 and Pages 39013211933 passed. Eight deployed files matched committed bytes at
+2026-10-17T07:22:50.328462Z. The visible Report a bug route opened correctly on
+desktop/mobile. 18 startup visits and 1,191 live replay/export checks passed; the
+retained v215 cache upgraded and offline loading passed.
+[Release receipt and rollback](docs/release/BETA_FEEDBACK_2026-10-17.md).
 
-**v2.2.215-priority-suppression / engine 1.1.20** is live on primary Pages.
+**No-go for a game-accurate Champions launch claim.** Default Practice has current
+patch drift; M-C reference admits unsupported Fly; voluntary switching is absent.
+Mega ordering, complete game stat/data proof and human-like policy remain open.
+[Accuracy sweep, denominators and proposed repairs](docs/release/CHAMPIONS_ACCURACY_SWEEP_2026-10-17.md).
+Feedback availability does not resolve these blockers.
+
+### Previous verified v215 / rollback
+
+**v2.2.215-priority-suppression / engine 1.1.20** was previously live on primary Pages.
 PR274 merged as `fb481d904972084be6665e56e415c9732b15dc44` after CI/battle
 audit/bundle/cache checks passed. Pages39005599477 passed. HTTP alignment at
 2026-10-17T05:19:12.665Z passed; live five-turn replay/export matched399 checks
@@ -34,8 +43,8 @@ five live reloads, Home and tournament filtering passed without page errors.
 The undefined-registry dependency and overwritten-first-error behavior are fixed.
 The original intermittent initialization interruption remains unexplained: #271 stays open.
 [Scoped receipt and limits](docs/release/STARTUP_HARDENING_2026-10-17.md).
-Next: #264 priority suppression/bypass mismatch; retained diagnostic reproduces
-nine substantive discrepancies in15 synthetic pinned-reference probes.
+Historical next action at v214: #264 priority suppression/bypass mismatch.
+The nine discrepancies were subsequently repaired in v215; this is not an active defect notice.
 No new team-strength, official M-C approval or live database claim follows.
 
 ### Previous verified release / rollback
