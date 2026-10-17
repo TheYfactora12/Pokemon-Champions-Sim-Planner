@@ -13,6 +13,12 @@
 - Candidate v215/engine1.1.20; final release gates pending. Registry stays partial;
   no general Gas or official-regulation certification. See
   [repair/evidence/limitations](release/PRIORITY_SUPPRESSION_2026-10-17.md).
+- October17 follow-up: PR274 deployed v215 after hosted gates passed. HTTP
+  identity passed; live five-turn replay/export matched399 checks with no errors.
+  The harness-only follow-up now normalizes exact ability rejections, preserving
+  raw logs and14 parser boundary tests;96 oracle cases require zero differences.
+  Independent negative control still detects the original bug. Original15 probes
+  now agree. Wider suppression remains partial; no competitive-strength claim.
 
 ## IMP-0106: Separate Startup Symptoms From Root-Cause Proof
 

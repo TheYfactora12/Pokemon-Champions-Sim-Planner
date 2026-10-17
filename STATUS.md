@@ -7,7 +7,19 @@ Historical candidate observations are not current deployment instructions.
 
 ## Current verified release
 
-**v2.2.214-startup-diagnostics / engine 1.1.19** is live on primary Pages.
+**v2.2.215-priority-suppression / engine 1.1.20** is live on primary Pages.
+PR274 merged as `fb481d904972084be6665e56e415c9732b15dc44` after CI/battle
+audit/bundle/cache checks passed. Pages39005599477 passed. HTTP alignment at
+2026-10-17T05:19:12.665Z passed; live five-turn replay/export matched399 checks
+with zero issues/page errors.96 scoped oracle cases and78 new selection/state
+assertions passed locally. The original nine priority suppression discrepancies
+are repaired. General ability suppression, official M-C approval, policy-quality
+and unexplained startup interruption remain open.
+[Current receipt and next harness work](docs/release/PRIORITY_SUPPRESSION_2026-10-17.md).
+
+### Previous v214 release / rollback
+
+**v2.2.214-startup-diagnostics / engine 1.1.19** was the previous release.
 PR272 merged as `b7f668f56a3f98402118da1a3bd337b08ec96024` after final-head CI,
 bundle, cache and battle-audit gates passed. Main CI39003792247 and
 Pages39003792322 passed. HTTP alignment passed at2026-10-17T04:49:21.118Z;
@@ -74,9 +86,9 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
-October17: v215/engine1.1.20 is a local priority-suppression candidate;96 oracle
+October17 candidate checkpoint (superseded by live receipt above):96 oracle
 cases and78 new selection/state assertions pass. Local six-turn browser/export
-comparison passes464 checks. Final aggregate/hosted/deployed gates remain pending.
+comparison passes464 checks. Aggregate/hosted/deployed gates were pending then.
 [Candidate evidence and exclusions](docs/release/PRIORITY_SUPPRESSION_2026-10-17.md).
 
 October16: [the trust recovery execution plan](docs/strategy/TRUST_RECOVERY_EXECUTION_PLAN_2026-10-16.md)
