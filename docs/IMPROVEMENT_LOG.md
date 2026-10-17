@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0106: Separate Startup Symptoms From Root-Cause Proof
+
+- October16 news review observed one production startup exception, recovered by
+  reload, tracked in #271. The failing access is the tournament registry before
+  assignment; interrupted initialization/cache timing remain hypotheses.
+- Added a read-only diagnostic using the production filter and an ordered
+  [engineering plan](strategy/TRUST_RECOVERY_EXECUTION_PLAN_2026-10-16.md).
+  No runtime behavior, legality, source approval or saves changed.
+- Lesson: reproducing an undefined lookup does not prove why initialization
+  stopped. Capture the first exception before masking a downstream symptom.
+- Proof state: investigation, not a deployed fix. #271 remains open.
+
 ## IMP-0105: Triage Review Allegations Against The Pinned Reference
 
 - Post-merge review alleged Trace should retry after Knock Off removes Ability Shield. Independent actual doubles comparisons on both sides refute that claim: pinned entry seek=false persists until new entry. Preserve battle behavior and add bounded regressions/oracle comparisons.
