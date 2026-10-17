@@ -1,5 +1,19 @@
 # Improvement Log
 
+## IMP-0107: Resolve Priority Protection On Its Actual Holder
+
+- Raw blocker-name checks ignored ability bypass/suppression in both selection
+  and execution. Nine original pinned-reference discrepancies reproduced.
+- Shared holder-aware predicate respects Ability Shield ownership and current
+  active Gas occupants; scoped Mold Breaker-family behavior is covered.
+-96 oracle cases pass after54 failed before;78 selection/state assertions pass.
+  Local six-turn replay/export comparison:464 checks, zero issues.
+- Lesson: distinguish attacked ally from ability owner and reuse the decision
+  predicate across scoring/execution. Diagnostic completion is not parity success.
+- Candidate v215/engine1.1.20; final release gates pending. Registry stays partial;
+  no general Gas or official-regulation certification. See
+  [repair/evidence/limitations](release/PRIORITY_SUPPRESSION_2026-10-17.md).
+
 ## IMP-0106: Separate Startup Symptoms From Root-Cause Proof
 
 - October16 news review observed one production startup exception, recovered by

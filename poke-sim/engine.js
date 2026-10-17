@@ -3136,8 +3136,18 @@ function canInflictStatus(mon, status, field, source) {
 function _selectionPriorityBlocked(attacker, move, target, field) {
   if (!target || !target.side || !attacker.side || target.side === attacker.side || getPriority(move,attacker) <= 0) return false;
   if (target.side.quickGuard && move !== 'Feint') return true;
-  if ((target.side.activeMons || []).some(mon=>mon.alive && ['Armor Tail','Dazzling','Queenly Majesty'].includes(mon.ability))) return true;
+  if (_priorityAbilityBlocker(attacker, target.side.activeMons || [], field)) return true;
   return !!(field && field.terrain === 'psychic' && _isGrounded(target,field));
+}
+
+function _priorityAbilityBlocker(attacker, defenders, field) {
+  const active = [...(field && field.playerSide && field.playerSide.activeMons || []),
+    ...(field && field.oppSide && field.oppSide.activeMons || [])];
+  const gas = active.some(mon => mon.alive && mon.ability === 'Neutralizing Gas');
+  const bypass = attacker && ['Mold Breaker', 'Turboblaze', 'Teravolt'].includes(attacker.ability);
+  // The protecting ability belongs to its holder, not necessarily the attacked ally.
+  return defenders.find(mon => mon.alive && ['Armor Tail', 'Dazzling', 'Queenly Majesty'].includes(mon.ability) &&
+    ((mon.item === 'Ability Shield' && !mon.itemConsumed) || (!gas && !bypass)));
 }
 function _selectionPolicyProvenance(forced) {
   return {id:'greedy-state-aware-v2',information_model:'full_registered_state',
@@ -5920,8 +5930,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       return false;
     }
     const defenders = t.side === field.playerSide ? playerActive : oppActive;
-    const priorityBlocker = defenders.find(m => m.alive &&
-      ['Armor Tail', 'Dazzling', 'Queenly Majesty'].includes(m.ability));
+    const priorityBlocker = _priorityAbilityBlocker(attacker, defenders, field);
     if (priorityBlocker) {
       log.push(`${priorityBlocker.ability} blocked ${move} on ${t.name}!`);
       _recordMoveFailureEvent(field, attacker, move, _normalizeMechanicsReasonId(priorityBlocker.ability) + '_priority_block', {
@@ -7996,7 +8005,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.19'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.20'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

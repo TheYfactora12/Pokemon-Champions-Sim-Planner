@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "PRIORITY-BLOCKER-SUPPRESSION",
+      "family": "abilities",
+      "behavior": "Priority blocking uses the protecting holder's Ability Shield, active Neutralizing Gas and Mold Breaker-family bypass for selection and execution.",
+      "status": "partial",
+      "tests": ["tests/priority_suppression_reference_tests.mjs", "tests/priority_selection_policy_tests.js"],
+      "oracle": "Pinned Showdown0.11.11 synthetic doubles; raw blocker events, damage presence and target flinch/PP, not official Champions legality.",
+      "boundary_vectors": ["both-sides", "direct-target", "protected-ally", "Armor-Tail", "Dazzling", "Queenly-Majesty", "Mold-Breaker", "Turboblaze", "Teravolt", "Neutralizing-Gas", "blocker-Shield", "target-only-Shield", "inactive-Gas", "removed-Gas", "consumed-Shield", "fainted-blocker", "Quick-Guard-isolation", "Psychic-Terrain-isolation"],
+      "known_gap": "General Neutralizing Gas suppression outside priority blockers, Gastro Acid, transformed Gas, Magic Room/Embargo and full switch lifecycle parity remain unproved. Existing comparator counts blocked [still] move announcements; tests explicitly isolate that known discrepancy."
+    },
+    {
       "id": "MC-MEGA-EXACT-FORM-LIFECYCLE",
       "family": "transformations",
       "behavior": "Reference-only Mega identities, base ability retention, transition stats and selected ability interactions preserve historical descriptors.",
