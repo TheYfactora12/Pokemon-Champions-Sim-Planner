@@ -1,13 +1,27 @@
 # Project Status
 
-Reviewed: 2026-10-15. This file owns current release facts and priorities.
+Reviewed: 2026-10-17. This file owns current release facts and priorities.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
 ## Current verified release
 
-**v2.2.213-roadmap-receipt / engine 1.1.19** is live on primary Pages.
+**v2.2.214-startup-diagnostics / engine 1.1.19** is live on primary Pages.
+PR272 merged as `b7f668f56a3f98402118da1a3bd337b08ec96024` after final-head CI,
+bundle, cache and battle-audit gates passed. Main CI39003792247 and
+Pages39003792322 passed. HTTP alignment passed at2026-10-17T04:49:21.118Z;
+five live reloads, Home and tournament filtering passed without page errors.
+The undefined-registry dependency and overwritten-first-error behavior are fixed.
+The original intermittent initialization interruption remains unexplained: #271 stays open.
+[Scoped receipt and limits](docs/release/STARTUP_HARDENING_2026-10-17.md).
+Next: #264 priority suppression/bypass mismatch; retained diagnostic reproduces
+nine substantive discrepancies in15 synthetic pinned-reference probes.
+No new team-strength, official M-C approval or live database claim follows.
+
+### Previous verified release / rollback
+
+**v2.2.213-roadmap-receipt / engine 1.1.19** was the previous verified release.
 PR269 merged as `08d09d68babdc9eb06c67fe440b8a8f47b37a444`; Pages38775449546 passed.
 At 2026-10-15T17:18:07Z, the bundle, five external assets, manifest and service worker matched exact committed bytes.
 Live desktop/touch roadmap display and offline reload passed with zero page errors.
@@ -66,9 +80,9 @@ The startup exception condition is under diagnostic investigation; the original
 browser trigger and a production repair are not yet proved. Preserve the shipped
 v210-v213 work below rather than reopening completed implementation batches.
 
-October17: v214 bounded startup hardening is a local candidate in PR272: exact
+October17 candidate checkpoint (superseded by the live receipt above): v214 in PR272: exact
 tournament membership no longer depends on late assignment and the first error
-is retained. Focused tests and20 local reloads passed; final release gates pending.
+is retained. Focused tests and20 local reloads passed; release gates were pending then.
 [#271 evidence and limits](docs/release/STARTUP_HARDENING_2026-10-17.md).
 
 The v207/v208 move reconciliation and scoped effects, Imprison preference fix,
