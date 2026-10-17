@@ -12,6 +12,18 @@
   stopped. Capture the first exception before masking a downstream symptom.
 - Proof state: investigation, not a deployed fix. #271 remains open.
 
+### October17 bounded hardening candidate
+
+- Replace the late tournament registry lookup with hoisted exact membership;
+  preserve custom/visibility filtering and reject inherited object names.
+- Retain the first runtime error in memory/text so downstream failures cannot
+  erase the diagnostic. Independent review found a conversion exception in the
+  initial patch; null-prototype/throwing-toString regressions now pass after repair.
+- Focused tests:29 filter and12 reporter assertions. Ten desktop plus ten390px
+  local reloads pass. Original browser interruption remains unproved; no complete
+  startup, mechanics, official-M-C or DB certification is implied.
+- Final gate/release evidence belongs to the [dated receipt](release/STARTUP_HARDENING_2026-10-17.md).
+
 ## IMP-0105: Triage Review Allegations Against The Pinned Reference
 
 - Post-merge review alleged Trace should retry after Knock Off removes Ability Shield. Independent actual doubles comparisons on both sides refute that claim: pinned entry seek=false persists until new entry. Preserve battle behavior and add bounded regressions/oracle comparisons.

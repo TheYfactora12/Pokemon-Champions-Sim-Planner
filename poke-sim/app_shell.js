@@ -31,12 +31,18 @@
     } catch (_e2) {}
   }
 
+  var firstRuntimeError = null;
   function showRuntimeError(message) {
+    // Keep the original failure visible when later handlers fail as a consequence.
+    if (firstRuntimeError === null) {
+      try { firstRuntimeError = String(message || 'Unexpected runtime error'); }
+      catch (_e) { firstRuntimeError = 'Unexpected runtime error (message unavailable)'; }
+    }
     try {
       var banner = root.document && root.document.getElementById('runtime-error-banner');
       var text = root.document && root.document.getElementById('runtime-error-text');
       if (!banner || !text) return;
-      text.textContent = String(message || 'Unexpected runtime error');
+      text.textContent = firstRuntimeError;
       banner.style.display = '';
     } catch (e) {
       // no-op
@@ -60,9 +66,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.213-roadmap-receipt';
+      return txt || 'v2.2.214-startup-diagnostics';
     } catch (e) {
-      return 'v2.2.213-roadmap-receipt';
+      return 'v2.2.214-startup-diagnostics';
     }
   }
 

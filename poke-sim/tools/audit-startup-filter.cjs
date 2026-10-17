@@ -9,7 +9,10 @@ const begin = ui.indexOf('function teamMatchesFilter(');
 const end = ui.indexOf('function countTeamsByFilter(', begin);
 assert.ok(begin >= 0 && end > begin, 'Production filter boundaries must exist');
 const assignment = ui.match(/var TOURNAMENT_TEAM_KEYS = (\{[\s\S]*?\});/);
-assert.ok(assignment, 'Production tournament registry must exist');
+const helperStart = ui.indexOf('function csIsTournamentTeamKey(');
+const helperEnd = ui.indexOf('function csTeamRulesetEvidence(', helperStart);
+const helper = helperStart >= 0 && helperEnd > helperStart ? ui.slice(helperStart, helperEnd) : '';
+assert.ok(assignment || helper, 'Production tournament membership must exist');
 const scenarios = [];
 for (const initialized of [false, true]) {
   const context = vm.createContext({
@@ -18,8 +21,8 @@ for (const initialized of [false, true]) {
     csTeamRulesetEvidence: () => ({ ruleset_status: 'unknown' }),
     csTeamRulesetTags: () => []
   });
-  vm.runInContext(ui.slice(begin, end), context);
-  if (initialized) vm.runInContext('TOURNAMENT_TEAM_KEYS = ' + assignment[1], context);
+  vm.runInContext(helper + ui.slice(begin, end), context);
+  if (initialized && assignment) vm.runInContext('TOURNAMENT_TEAM_KEYS = ' + assignment[1], context);
   for (const key of ['player', 'champions_arena_1st']) {
     try {
       const result = context.teamMatchesFilter(key, { name: key }, 'tournament');
