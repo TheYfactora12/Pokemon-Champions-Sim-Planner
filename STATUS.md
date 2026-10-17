@@ -60,6 +60,17 @@ Supabase security or ownership tests.
 
 ## Next Work, In Order
 
+October16: [the trust recovery execution plan](docs/strategy/TRUST_RECOVERY_EXECUTION_PLAN_2026-10-16.md)
+tracks startup #271 first, then remaining policy/mechanics and paired team evidence.
+The startup exception condition is under diagnostic investigation; the original
+browser trigger and a production repair are not yet proved. Preserve the shipped
+v210-v213 work below rather than reopening completed implementation batches.
+
+October17: v214 bounded startup hardening is a local candidate in PR272: exact
+tournament membership no longer depends on late assignment and the first error
+is retained. Focused tests and20 local reloads passed; final release gates pending.
+[#271 evidence and limits](docs/release/STARTUP_HARDENING_2026-10-17.md).
+
 The v207/v208 move reconciliation and scoped effects, Imprison preference fix,
 and v210 context-error handling have shipped in v210. The 22 residual move rows
 are reconciled; their named probes are recorded in the [move audit](docs/release/MC_MOVE_AUDIT_2026-10-14.md).

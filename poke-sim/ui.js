@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.213-roadmap-receipt
+// Build marker: v2.2.214-startup-diagnostics
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.213-roadmap-receipt'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.214-startup-diagnostics'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -2202,10 +2202,11 @@ function renderSimBringPickers() {
 // Cite: MDN File API (reader)      -- https://developer.mozilla.org/en-US/docs/Web/API/File_API
 // ============================================================
 var TEAMS_FILTER = 'all'; // 'all' | 'preloaded' | 'custom' | 'tournament' | 'mega' | 'regma' | 'historical' | 'regmb_review'
-var TOURNAMENT_TEAM_KEYS = {
-  champions_arena_1st:1, champions_arena_2nd:1, champions_arena_3rd:1,
-  aurora_veil_froslass:1, cofagrigus_tr:1, rin_sand:1, suica_sun:1
-};
+function csIsTournamentTeamKey(key) {
+  // Membership is callable before UI state initialization, including error recovery.
+  return ['champions_arena_1st', 'champions_arena_2nd', 'champions_arena_3rd',
+    'aurora_veil_froslass', 'cofagrigus_tr', 'rin_sand', 'suica_sun'].indexOf(key) >= 0;
+}
 function csTeamRulesetEvidence(team) {
   team = team || {};
   var meta = team.metadata || {};
@@ -2434,7 +2435,7 @@ function teamMatchesFilter(key, team, filter) {
   if (filter === 'all') return true;
   if (filter === 'custom') return isCustom;
   if (filter === 'preloaded') return !isCustom;
-  if (filter === 'tournament') return !isCustom && !!TOURNAMENT_TEAM_KEYS[key];
+  if (filter === 'tournament') return !isCustom && csIsTournamentTeamKey(key);
   if (filter === 'mega') return /^mega_/.test(key);
   if (filter === 'regma') return tags.indexOf('reg-m-a') >= 0;
   if (filter === 'historical') return evidence.ruleset_status === 'historical';

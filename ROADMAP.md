@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-10-15. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-10-17. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-v212 experimental practice is deployed and live-verified (STATUS.md), including 22 exact Mega/alias lifecycles with bounded reference proof and historical isolation. Complete remaining interaction and current-client evidence, then exact-package human approval (#232). M-C stays excluded from trusted rankings and database learning.
+Investigate startup #271: preserve the first error and remove the late tournament-registry dependency; see the October 16 trust recovery plan and STATUS.md for release proof. Then audit remaining move-choice policy (#264). Existing experimental Mega lifecycles stay available; official M-C approval (#232), trusted rankings and database learning remain gated.
 
 ## Milestone Index
 
