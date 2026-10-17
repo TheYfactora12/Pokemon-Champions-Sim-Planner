@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0108: Make Public Beta Feedback Discoverable
+
+- Observation: the v215 audit found no direct feedback route across 11 app tabs.
+- Change: add an accessible shell-level Report a bug link to the primary Issues
+  page, with new-tab, sign-in and public-report guidance. No automatic uploads.
+- Evidence: desktop/touch, both themes, keyboard focus, all tabs and reload;
+  exact GitHub destination opened. Candidate release identity v216, engine
+  unchanged. Final hosted/deployed proof remains pending until recorded.
+- Lesson: feedback must be reachable from the product, with clear destination
+  and privacy expectations. A reporting route is not mechanics certification.
+- [Scope, verification and rollback](release/BETA_FEEDBACK_2026-10-17.md).
+
 ## IMP-0107: Resolve Priority Protection On Its Actual Holder
 
 - Raw blocker-name checks ignored ability bypass/suppression in both selection
