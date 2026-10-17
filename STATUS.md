@@ -7,6 +7,13 @@ Historical candidate observations are not current deployment instructions.
 
 ## Current verified release
 
+Candidate: v216 adds a visible Report a bug link only; engine 1.1.20 is unchanged.
+Local browser, aggregate and independent review passed; hosted gates and deployment are pending.
+[Candidate scope and proof](docs/release/BETA_FEEDBACK_2026-10-17.md).
+The separate current-Champions accuracy sweep does not establish complete M-C
+readiness; preview labels and known mechanics/source boundaries remain in force.
+[Accuracy blockers and evidence boundaries](docs/release/CHAMPIONS_ACCURACY_SWEEP_2026-10-17.md).
+
 **v2.2.215-priority-suppression / engine 1.1.20** is live on primary Pages.
 PR274 merged as `fb481d904972084be6665e56e415c9732b15dc44` after CI/battle
 audit/bundle/cache checks passed. Pages39005599477 passed. HTTP alignment at

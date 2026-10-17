@@ -40,6 +40,11 @@ table{border-collapse:collapse;width:100%}
 ::-webkit-scrollbar-thumb:hover{background:var(--text-m)}
 
 /* ===== HEADER ===== */
+.beta-feedback{display:flex;align-items:center;flex-wrap:wrap;gap:4px 16px;max-width:1400px;margin:0 auto;padding:4px var(--sp4);font-size:var(--text-sm);color:var(--text)}
+.beta-feedback a{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;min-height:44px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.beta-feedback a:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:var(--r-sm)}
+.feedback-new-tab{font-weight:400}
+.beta-feedback>span{flex:1 1 260px}
 .site-header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
 .header-inner{max-width:1400px;margin:0 auto;padding:var(--sp3) var(--sp4);display:flex;align-items:center;justify-content:space-between;gap:var(--sp3);flex-wrap:wrap}
 .logo-block{display:flex;align-items:center;gap:var(--sp3)}
