@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Startup hardening shipped in v214; the original interruption (#271) remains unproved. Validate priority-blocker suppression and remaining move-choice policy (#264), then paired team evidence. See STATUS.md for release proof. Official M-C approval (#232), trusted rankings and database learning remain gated.
+Review local v217 move/PP corrections and Fly exclusion. Switching, policy, Mega ordering and primary stat/data evidence remain open. M-C approval and rankings stay gated; see STATUS.md.
 
 ## Milestone Index
 

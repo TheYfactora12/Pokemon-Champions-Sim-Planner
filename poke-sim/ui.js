@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.216-beta-feedback
+// Build marker: v2.2.217-current-moves
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.216-beta-feedback'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.217-current-moves'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -712,7 +712,10 @@ function csReconcilePasteMembers(previous, incoming, options) {
 }
 
 function csLearnsetOptionsForTeam(team) {
-  return { learnsetContext: team && team.format === 'champions' ? 'champions' : team && team.format === 'sv' ? 'historical' : null };
+  var rules = team && (team.ruleset_id || team.regulation_id) ||
+    (typeof getSelectedRegulationId === 'function' ? getSelectedRegulationId() : null);
+  return { learnsetContext: team && team.format === 'champions' ?
+    (rules === 'champions_custom_practice' ? 'champions_current' : 'champions') : team && team.format === 'sv' ? 'historical' : null };
 }
 
 function buildImportedTeamValidation(members, opts) {
@@ -725,6 +728,7 @@ function buildImportedTeamValidation(members, opts) {
   // Editable input is not verified admission when source evidence is missing.
   var team = {
     name: opts.name || 'Imported Team',
+    regulation_id: opts.regulationId || null,
     format: opts.format || 'champions',
     legality_status: 'unverified',
     members: members || []
@@ -13889,7 +13893,7 @@ function computeMegaTriggerSweep(playerKey, oppKey, bo, format) {
   try {
     // Use smaller sample counts than engine default so Pilot Guide render
     // stays within the <30s acceptance budget even on 13-matchup full runs.
-    var sweep = runMegaTriggerSweep(TEAMS[playerKey], TEAMS[oppKey], bo || 1, { coarseN: 30, refineN: 200, maxTurn: 6 });
+    var sweep = runMegaTriggerSweep(TEAMS[playerKey], TEAMS[oppKey], bo || 1, { coarseN: 30, refineN: 200, maxTurn: 6, rulesetId: getSelectedRegulationId(), format: format });
     setCachedMegaSweep(playerKey, oppKey, bo, format, sweep);
     return sweep;
   } catch (e) {

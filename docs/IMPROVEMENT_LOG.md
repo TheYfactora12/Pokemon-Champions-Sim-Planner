@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0109: Scope Current Move Corrections And Reject Unsupported Execution
+
+- Reproduced four current-Practice move admission discrepancies, two PP errors,
+  and six Fly paths that fabricated wins/losses.
+- Add a versioned overlay preserving historical pools; carry official versus
+  reference-only provenance into legality and editor choices.
+- Block unsupported Fly before battle construction, including bench, aliases
+  and forced actions; prevent rejected games from becoming sweep samples.
+- Lesson: admission, initialized PP, direct execution and aggregate reporting
+  require separate tests. A reference learnset does not prove engine support.
+- [Candidate evidence](release/CURRENT_MOVES_AND_FLY_2026-10-17.md).
+
 ## IMP-0108: Make Public Beta Feedback Discoverable
 
 - Observation: the v215 audit found no direct feedback route across 11 app tabs.
