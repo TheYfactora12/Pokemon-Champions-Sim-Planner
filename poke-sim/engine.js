@@ -1212,6 +1212,8 @@ function _applyTargetStageMap(source, target, deltas, log, options) {
 }
 
 function _moveMaxPP(move, actor) {
+  // Official v1.2.0 final PP (2026-09-09).
+  if (actor && actor.rulesetId === 'champions_custom_practice' && ['wish','strengthsap'].includes(_moveId(move))) return 8;
   var row = _showdownMoveRow(move);
   var root = (typeof globalThis !== 'undefined') ? globalThis : ((typeof window !== 'undefined') ? window : null);
   var override = root && root.ChampionsSim && root.ChampionsSim.championsMoveOverrides &&
@@ -2223,7 +2225,8 @@ function classifyPokemon(mon) {
 }
 
 class Pokemon {
-  constructor(data, teamStyle, teamFormat, referenceMode) {
+  constructor(data, teamStyle, teamFormat, referenceMode, rulesetId) {
+    this.rulesetId = rulesetId || null;
     this.referenceMode = referenceMode === 'champions_mc_reference' ? referenceMode : null;
     this.name = data.name;
     this.item = data.item;
@@ -3463,12 +3466,12 @@ class Field {
 // ============================================================
 // TEAM BUILDER — builds active battlers from team definition
 // ============================================================
-function buildTeam(teamDef, side, referenceMode) {
+function buildTeam(teamDef, side, referenceMode, rulesetId) {
   if (!teamDef || !teamDef.members) return [];
   const style = teamDef.style || '';
   // Issue #T1: propagate team.format so Pokemon uses correct stat math.
   return teamDef.members.map(function(m, i) {
-    const mon = new Pokemon(m, style, teamDef.format, referenceMode);
+    const mon = new Pokemon(m, style, teamDef.format, referenceMode, rulesetId);
     mon.teamSlot = i;
     mon.registeredMemberId = m.member_id || null;
     mon.stableKey = (side || 'team') + ':slot:' + i + ':' + (mon.displayName || mon.name || 'Unknown');
@@ -4065,6 +4068,17 @@ function isRNGBlame(turnLog, turn) {
 // ============================================================
 // SIMULATE BATTLE
 // ============================================================
+// Execution support is separate from legality.
+function checkSimulationSupport(team) {
+  var errors = [];
+  (team && Array.isArray(team.members) ? team.members : []).forEach(function(member) {
+    (member && Array.isArray(member.moves) ? member.moves : []).forEach(function(move) {
+      if (_moveId(move) === 'fly') errors.push((member.name || 'Pokemon') + ': Fly simulation is not supported; this team cannot be simulated yet.');
+    });
+  });
+  return errors;
+}
+
 function simulateBattle(playerTeam, oppTeam, opts = {}) {
   const playerRegistration = JSON.parse(JSON.stringify(playerTeam && playerTeam.members || []));
   const seed = opts.seed || makeSeed();
@@ -4075,11 +4089,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   field._format = (opts.format === 'singles') ? 'singles' : 'doubles';
   const DECISION_TIME_MS = 15 * 1000;  // deterministic 15s/turn proxy for timer-draw
 
-  // #5 — Legality validation (non-blocking by default).
-  // validateTeam detects stat-point caps (SP or EV), move count, Species/Item
-  // Clause, Champions ban list. Errors are logged to battle log and attached
-  // to the result so UI / PDF report can surface them. Pass opts.strict=true
-  // to abort before rolling seeds (for CI / golden tests).
+  // Legality is advisory unless strict; capability failures always block.
   const fmt = opts.format === 'singles' ? 'singles' : 'vgc';
   const referenceMode = opts.rulesetId === 'champions_mc_reference';
   const referenceChecks = referenceMode && typeof checkMcReferenceExecution === 'function' ?
@@ -4098,22 +4108,25 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     log.push(`[LEGALITY] Opponent team errors: ${oppLegality.errors.join('; ')}`);
   }
   for (const w of oppLegality.warnings) log.push(`[LEGALITY] Opponent warning: ${w}`);
+  const unsupported = checkSimulationSupport(playerTeam).concat(checkSimulationSupport(oppTeam));
+  if (Array.isArray(opts.forcedActions) && opts.forcedActions.some(row => row && _moveId(row.move) === 'fly')) unsupported.push('Forced Fly simulation is not supported.');
+  log.push(...unsupported);
   const savedDraft = [playerTeam, oppTeam].some(team => team && team.import_context && team.import_context.draft_only === true);
-  if ((referenceMode && !referenceAllowed) || (savedDraft && !referenceAllowed) || (!referenceAllowed && opts.strict && (!playerLegality.valid || !oppLegality.valid))) {
+  if (unsupported.length || (referenceMode && !referenceAllowed) || (savedDraft && !referenceAllowed) || (!referenceAllowed && opts.strict && (!playerLegality.valid || !oppLegality.valid))) {
     return {
       result: 'error', turns: 0, trTurns: 0,
       twTurns: 0, twTurnsPlayer: 0, twTurnsOpp: 0,
       timerExpired: false, clockPlayer: 0, clockOpp: 0, pHpSum: 0, oHpSum: 0,
       screens: { playerReflect:0, playerLightScreen:0, playerAuroraVeil:0, oppReflect:0, oppLightScreen:0, oppAuroraVeil:0 },
       log,
-      winCondition: referenceMode ? 'M-C reference checks failed: '+(referenceChecks ? referenceChecks.flatMap(c => c.errors).join('; ') : 'reference validator unavailable') : savedDraft ? 'Saved M-C draft - simulation blocked pending separate approval' : 'Illegal team — simulation aborted (strict mode)',
+      winCondition: unsupported.length ? unsupported.join('; ') : referenceMode ? 'M-C reference checks failed: '+(referenceChecks ? referenceChecks.flatMap(c => c.errors).join('; ') : 'reference validator unavailable') : savedDraft ? 'Saved M-C draft - simulation blocked pending separate approval' : 'Illegal team — simulation aborted (strict mode)',
       seed, playerSurvivors: 0, oppSurvivors: 0,
       legality: { player: playerLegality, opp: oppLegality },
     };
   }
 
-  const playerPokemon = buildTeam(playerTeam, 'player', referenceAllowed ? opts.rulesetId : null);
-  const oppPokemon    = buildTeam(oppTeam, 'opponent', referenceAllowed ? opts.rulesetId : null);
+  const playerPokemon = buildTeam(playerTeam, 'player', referenceAllowed ? opts.rulesetId : null, opts.rulesetId);
+  const oppPokemon    = buildTeam(oppTeam, 'opponent', referenceAllowed ? opts.rulesetId : null, opts.rulesetId);
 
   // T9j.10 (Refs #16) — Team Preview / bring-N-of-6.
   //   Doubles: bring 4 of 6 (leads 1-2, bench 3-4)
@@ -7894,9 +7907,12 @@ function shouldReflectByMagicBounce(attacker, target, move) {
 // MONTE CARLO RUNNER
 // ============================================================
 
-async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress) {
+async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress, options) {
+  const context = options || {};
   const playerTeamDef = TEAMS[playerTeamKey];
   const oppTeamDef = TEAMS[oppTeamKey];
+  const unsupported = checkSimulationSupport(playerTeamDef).concat(checkSimulationSupport(oppTeamDef));
+  if (unsupported.length) throw new Error(unsupported.join('; '));
 
   const results = { wins:0, losses:0, draws:0, errors:0, totalTurns:0, totalTrTurns:0,
     // T9j.3 (#38) Tailwind cumulative + (#39) timer-draw bucket.
@@ -7923,7 +7939,7 @@ async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress) 
         && window.ChampionsSim
         && window.ChampionsSim.state
         && window.ChampionsSim.state.format) || 'doubles';
-      const battle = simulateBattle(playerTeamDef, oppTeamDef, { seed, format: fmt });
+      const battle = simulateBattle(playerTeamDef, oppTeamDef, { seed, format: context.format || fmt, rulesetId: context.rulesetId, bo: context.bo });
       if (battle.result === 'error') {
         results.errors++;
         if (results.allLogs.length < 5) results.allLogs.push({ ...battle, oppTeam: oppTeamKey });
@@ -7955,25 +7971,28 @@ async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress) 
   }
 
   const validBattles = results.wins + results.losses + results.draws;
+  results.sampleSize = validBattles;
+  results.requestedBattles = numBattles;
+  if (!validBattles) throw new Error('No completed battles; simulation results are unavailable.');
   results.winRate = validBattles > 0 ? results.wins / validBattles : 0;
   results.avgTurns = validBattles > 0 ? results.totalTurns / validBattles : 0;
   results.avgTrTurns = validBattles > 0 ? results.totalTrTurns / validBattles : 0;
   results.avgTwTurns = validBattles > 0 ? results.totalTwTurns / validBattles : 0;  // T9j.3 (#38)
   // Issue #6: confidence tier label
-  results.confidenceNote = numBattles < 20  ? 'Low confidence — run more simulations or increase sample size' :
-                           numBattles < 100 ? 'Moderate confidence' : 'High confidence';
+  results.confidenceNote = validBattles < 20  ? 'Low confidence — run more simulations or increase sample size' :
+                           validBattles < 100 ? 'Moderate confidence' : 'High confidence';
   return results;
 }
 
 // Run all matchups
-async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
+async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
   const opponents = Object.keys(TEAMS).filter(k => k !== 'player');
   const allResults = {};
   let done = 0;
   for (const opp of opponents) {
     const res = await runSimulation(numBattles, 'player', opp, (current, total) => {
       if (onProgress) onProgress(done * numBattles + current, opponents.length * numBattles);
-    });
+    }, options);
     allResults[opp] = res;
     done++;
     if (onMatchupDone) onMatchupDone(opp, res);
@@ -8005,7 +8024,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.20'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.21'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
@@ -8097,19 +8116,9 @@ function buildAnalysisPayload(rawResult, ctx = {}) {
   };
 }
 
-// ============================================================
-// T9j.7 — MEGA TRIGGER SWEEP
-// Explores the full WR-by-trigger-turn curve for every Mega on teamA
-// against teamB. Progressive refinement: coarse pass (50 battles per cell)
-// identifies promising turns, then top 3 re-run at 500 battles each.
-// Output consumed by M2 Pilot Guide card and M3 Trend Dashboard heatmap.
-// ============================================================
-
-/**
- * Run one cell of the sweep: force teamA's Mega-capable mons to use the
- * supplied policy, run nBattles, and return {wr, n, wins, losses, ci95}.
- */
-function runMegaSweepCell(teamA, teamB, bo, policy, triggerTurn, nBattles) {
+// Mega trigger sweep: reject invalid games before aggregating samples.
+function runMegaSweepCell(teamA, teamB, bo, policy, triggerTurn, nBattles, options) {
+  const context = options || {};
   let wins = 0, losses = 0, draws = 0;
   for (let i = 0; i < nBattles; i++) {
     // Deep copy team data so we can override Mega policy without mutating
@@ -8118,12 +8127,14 @@ function runMegaSweepCell(teamA, teamB, bo, policy, triggerTurn, nBattles) {
     const teamBCopy = JSON.parse(JSON.stringify(teamB));
     const res = simulateBattle(teamACopy, teamBCopy, {
       bo: bo || 1,
+      rulesetId: context.rulesetId, format: context.format,
       _megaPolicyOverride: {
         side: 'player',
         policy: policy,
         triggerTurn: triggerTurn
       }
     });
+    if (!res || res.result === 'error') throw new Error(res && res.winCondition || 'Simulation unavailable; sweep aborted.');
     if (res && res.winner === 'player') wins++;
     else if (res && res.winner === 'opp') losses++;
     else draws++;
@@ -8142,6 +8153,8 @@ function runMegaSweepCell(teamA, teamB, bo, policy, triggerTurn, nBattles) {
  * Returns { matchup, results: [ { megaSlot, curve, refinedTop3, bestTurn } ] }
  */
 function runMegaTriggerSweep(teamA, teamB, bo, opts) {
+  const unsupported = checkSimulationSupport(teamA).concat(checkSimulationSupport(teamB));
+  if (unsupported.length) throw new Error(unsupported.join('; '));
   opts = opts || {};
   const MAX_TURN   = opts.maxTurn  || 10;
   const COARSE_N   = opts.coarseN  ||  50;
@@ -8163,18 +8176,18 @@ function runMegaTriggerSweep(teamA, teamB, bo, opts) {
     const curve = [];
     // Pass 1: every legal turn
     for (let t = 1; t <= MAX_TURN; t++) {
-      const cell = runMegaSweepCell(teamA, teamB, bo, 'at_turn', t, COARSE_N);
+      const cell = runMegaSweepCell(teamA, teamB, bo, 'at_turn', t, COARSE_N, opts);
       curve.push({ turn: t, wr: cell.wr, n: cell.n, ci95: cell.ci95 });
     }
     // Pass 1: 'never' baseline
-    const neverCell = runMegaSweepCell(teamA, teamB, bo, 'never', null, COARSE_N);
+    const neverCell = runMegaSweepCell(teamA, teamB, bo, 'never', null, COARSE_N, opts);
     curve.push({ turn: 'never', wr: neverCell.wr, n: neverCell.n, ci95: neverCell.ci95 });
 
     // Pass 2: refine top 3 by coarse WR
     const top3 = curve.slice().sort((a, b) => b.wr - a.wr).slice(0, 3);
     const refined = top3.map(function(cell) {
       const policy = cell.turn === 'never' ? 'never' : 'at_turn';
-      const refinedCell = runMegaSweepCell(teamA, teamB, bo, policy, cell.turn, REFINE_N);
+      const refinedCell = runMegaSweepCell(teamA, teamB, bo, policy, cell.turn, REFINE_N, opts);
       return { turn: cell.turn, wr: refinedCell.wr, n: refinedCell.n, ci95: refinedCell.ci95 };
     });
     const bestTurn = refined.slice().sort((a, b) => b.wr - a.wr)[0].turn;

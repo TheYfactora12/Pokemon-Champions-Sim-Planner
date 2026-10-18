@@ -12,7 +12,7 @@
     },
     {
       "id": "champions_custom_practice",
-      "version": "champions-practice-v1",
+      "version": "champions-practice-v2",
       "status": "experimental",
       "runtime_promotable": false,
       "harness_lane": "practice_mechanics_only",

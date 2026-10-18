@@ -5,6 +5,14 @@ Reviewed: 2026-10-17. This file owns current release facts and priorities.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
+## Local repair candidate
+
+v2.2.217-current-moves / engine 1.1.21 is a local candidate, not deployed.
+Current Practice uses the September 9 official move removals and PP corrections;
+Slash species eligibility remains pinned-reference evidence. Unsupported Fly
+blocks execution and aggregate recommendations while saved teams remain editable.
+[Repair scope and checks](docs/release/CURRENT_MOVES_AND_FLY_2026-10-17.md).
+
 ## Current verified release
 
 **v2.2.216-beta-feedback / engine 1.1.20** is live on primary Pages.

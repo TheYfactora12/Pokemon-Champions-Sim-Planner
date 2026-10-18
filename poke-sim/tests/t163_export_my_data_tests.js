@@ -108,7 +108,7 @@ function load(file) {
   'app_shell.js',
   'data.js',
   'generated/pokemon_showdown_legal_data.js',
-  'generated/champions_move_pools.js',
+  'generated/champions_move_pools.js', 'generated/mc_review_reference.js',
   'move_legality.js',
   'logger.js',
   'engine.js',
