@@ -76,3 +76,18 @@ fixed in the shared UI context helper, plus omitted reference dependencies in
 isolated UI bootstraps. Final tests load the browser's dependency and retain
 all behavioral assertions. The accuracy manifest was updated to Practice v2.
 No production approval, push, PR, merge or deployment occurred.
+
+## October 18 draft publication preparation
+
+Kevin authorized committing/pushing this repair and opening a draft PR only.
+Reconciled main through `0b57b13` (three intervening news updates). The sole
+conflict was generated release metadata, regenerated from merged sources.
+Mechanics, intake, tests and reference data are unchanged from the reviewed repair;
+prior scoped browser, source-truth, battle-audit and accuracy evidence is reused
+with those limits. Release identity checks passed 12/12 after regeneration.
+
+Reconciled bundle: 11,533,195 bytes; SHA-256
+`fb22bf2f58a6f2a2f603034721f01b2921247375a3735b24c64db33b86add2f6`.
+The final local aggregate and exact-head hosted CI are recorded in the draft PR.
+No merge or deployment is authorized. The unrelated hash-receipt correction is
+excluded from the branch.
