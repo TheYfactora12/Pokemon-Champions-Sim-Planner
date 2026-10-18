@@ -1,5 +1,16 @@
 # Improvement Log
 
+## IMP-0110: Prepare Observed-Information And Switch Contracts
+
+- Reproduced both-side selector dependence on unrevealed opponent moves.
+- Prepared isolated immutable observation and explicit switch-intent contracts;
+  no runtime integration or Champions visibility/order claim.
+- Independent review caught missing-identity admission and out-of-order reveals;
+  failing regressions now pass with explicit identity and chronological handling.
+- Lesson: test forbidden information access and malformed identity separately
+  from move strength; contract success is not gameplay integration.
+- [Scope, evidence gaps and next patches](release/SWITCHING_INFORMATION_PREPARATION_2026-10-18.md).
+
 ## IMP-0109: Scope Current Move Corrections And Reject Unsupported Execution
 
 - Reproduced four current-Practice move admission discrepancies, two PP errors,
