@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 const root = new URL('../', import.meta.url);
 const ctx = vm.createContext({ console });
-for (const file of ['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/champions_move_pools.js', 'generated/pokemon_showdown_species_weights.js', 'runtime_data.js', 'engine.js', 'rulesets.js', 'legality.js', 'move_legality.js']) {
+for (const file of ['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'generated/pokemon_showdown_species_weights.js', 'runtime_data.js', 'engine.js', 'rulesets.js', 'legality.js', 'move_legality.js']) {
   vm.runInContext(fs.readFileSync(new URL(file, root), 'utf8'), ctx, { filename: file });
 }
 const team = vm.runInContext('JSON.parse(JSON.stringify(TEAMS.player))', ctx);
@@ -139,7 +139,7 @@ test('Species Clause identifies base, Mega and regional forms by National Dex nu
 test('move choices name the Champions pool source rather than the historical mirror', () => {
   const choices = ctx.getRegulationChoices('move', 'Incineroar', practice, false);
   assert(choices.length > 0);
-  assert(choices.every(row => row.source === 'champions-inherited-move-pools-v1' && row.source_version === '0.11.11'));
+  assert(choices.every(row => row.source === 'champions-current-practice-overlay-v1' && row.source_version === '2026-09-09' && row.provenance.slash_species === 'pinned_mc_reference_only'));
   const unknown = ctx.getRegulationChoices('move', 'No Such Species', mb, true);
   assert(unknown.length > 0);
   assert(unknown.every(row => row.source === 'unavailable' && row.source_version === null && row.status === 'not_verified'));

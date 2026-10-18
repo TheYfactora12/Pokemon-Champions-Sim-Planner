@@ -249,8 +249,8 @@
       referenceSpeciesId: species ? toId(species) : '', canonicalSpeciesKey: species,
       reason: 'learnset_context_unavailable'
     };
-    if (context !== 'champions' && context !== 'historical') return result;
-    if (context === 'champions') {
+    if (context !== 'champions' && context !== 'champions_current' && context !== 'historical') return result;
+    if (context === 'champions' || context === 'champions_current') {
       result.reason = 'champions_pool_unavailable';
       var sourceRow = data && data.species && data.species[species];
       var maleKey = EXACT_MALE_IDENTITIES[species];
@@ -274,6 +274,21 @@
       result.source = 'champions-inherited-move-pools-v1';
       result.sourceVersion = championsPools.reference.version;
       result.inheritedFrom = pool.inherited_from.slice();
+      if (context === 'champions_current') {
+        // Official patch; Slash species evidence remains reference-only.
+        var removed = {politoed:['pound'], archaludon:['mirrorcoat','metalburst']};
+        result.moves = result.moves.filter(function(id) { return (removed[result.referenceSpeciesId] || []).indexOf(id) < 0; });
+        var ref = typeof MC_REVIEW_REFERENCE !== 'undefined' && MC_REVIEW_REFERENCE;
+        var row = ref && ref.species && ref.pin === 'efe4948570d5e8189751792136d26e71710c6c66' && ref.species[result.referenceSpeciesId];
+        if (!ref || !ref.species || ref.pin !== 'efe4948570d5e8189751792136d26e71710c6c66' || (row && !Array.isArray(row.moves))) {
+          result.moves = []; result.reason = 'champions_pool_unavailable'; return result;
+        }
+        if (row && row.moves.indexOf('slash') >= 0 && result.moves.indexOf('slash') < 0) result.moves.push('slash');
+        result.source = 'champions-current-practice-overlay-v1';
+        result.sourceVersion = '2026-09-09';
+        result.provenance = {official_patch:'https://www.nintendo.com/en-gb/Support/Purchases-Subscriptions/Games/How-to-Update-Pokemon-Champions-3079895.html',
+          removals:'official_patch', slash_species:'pinned_mc_reference_only', reference_pin:ref && ref.pin || null};
+      }
     } else {
       result.reason = !data || !data.species || !data.moves ? 'source_unavailable' : 'unknown_species';
       if (!data || !data.species || !data.moves || !species) return result;
@@ -311,6 +326,7 @@
       legal: legal, speciesKey: clean(speciesKey), canonicalSpeciesKey: pool.canonicalSpeciesKey,
       moveName: clean(moveName), canonicalMoveName: moveDisplayName(id, moveName),
       source: pool.source, sourceVersion: pool.sourceVersion, learnsetContext: pool.context,
+      provenance: pool.provenance || null,
       referenceSpeciesId: pool.referenceSpeciesId, verification_status: 'known',
       reason: legal ? 'learnset_match' : 'not_in_species_form_learnset',
       notes: 'Pinned Champions inherited move pool only; not full-set or regulation approval.',

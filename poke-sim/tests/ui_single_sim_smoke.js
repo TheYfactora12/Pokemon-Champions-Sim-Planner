@@ -100,7 +100,7 @@ function load(file) {
   'release_manifest.js',
   'data.js',
   'generated/pokemon_showdown_legal_data.js',
-  'generated/champions_move_pools.js',
+  'generated/champions_move_pools.js', 'generated/mc_review_reference.js',
   'generated/pokemon_showdown_species_weights.js',
   'move_legality.js',
   'runtime_data.js',

@@ -19,7 +19,7 @@ var CHAMPIONS_RULESETS = {
     blocker:'Reference practice is not official M-C approval or verified battle accuracy.'
   },
   champions_custom_practice: {
-    id: 'champions_custom_practice', version: 'champions-practice-v1',
+    id: 'champions_custom_practice', version: 'champions-practice-v2',
     label: 'Custom practice - NOT regulation verified', status: 'experimental',
     selectorLabel: 'Practice (unverified)',
     runtimePromotable: false, learningEligibility: 'blocked_experimental',
@@ -214,7 +214,7 @@ function checkTeamForSelectedRegulation(team, rulesetId, options) {
   if (rulesetId === 'champions_mc_reference' && typeof checkMcReferenceExecution === 'function') return checkMcReferenceExecution(team,opts);
   var profile = getChampionsRuleset(rulesetId);
   var practice = profile.id === 'champions_custom_practice';
-  var errors = [], gaps = [];
+  var errors = typeof checkSimulationSupport === 'function' ? checkSimulationSupport(team) : [], gaps = [];
   var result = { regulation_id: profile.id, ruleset_version: profile.version || null,
     status: 'not_verified', allowed: false, competitive_eligible: false, errors: errors, source_gaps: gaps,
     mechanics_status: 'not_verified', scope: 'bundled_regulation_checks_not_official_certification' };
@@ -284,7 +284,7 @@ function checkTeamForSelectedRegulation(team, rulesetId, options) {
     if (mega && member.item === mega.megaStone && typeof api.isAbilityLegalForSpecies === 'function' && api.isAbilityLegalForSpecies(mega.baseSpecies, member.ability).legal) {
       abilityMember = Object.assign({}, member, { name: mega.baseSpecies });
     }
-    var checks = api.validateMovesForSet(member, { learnsetContext: 'champions' }).concat([api.validateAbilityForSet(abilityMember)]).filter(Boolean);
+    var checks = api.validateMovesForSet(member, { learnsetContext: practice ? 'champions_current' : 'champions' }).concat([api.validateAbilityForSet(abilityMember)]).filter(Boolean);
     checks.forEach(function(check) {
       if (check.legal) return;
       var message = member.name + ': ' + (check.moveName || check.abilityName || '') + ' - ' + (check.notes || check.reason);
@@ -316,11 +316,11 @@ function getRegulationChoices(kind, speciesName, rulesetId, showUnavailable) {
   }
   var speciesKey = api.canonicalSpeciesKey(speciesName || '');
   var movePool = kind === 'move' && typeof api.resolveLearnsetPool === 'function'
-    ? api.resolveLearnsetPool(speciesName, { learnsetContext: 'champions' }) : null;
+    ? api.resolveLearnsetPool(speciesName, { learnsetContext: profile.id === 'champions_custom_practice' ? 'champions_current' : 'champions' }) : null;
   var names = [], allowedAbilities = [];
   if (kind === 'species') names = Object.keys(data.species || {});
   if (kind === 'item') names = Object.keys(data.items || {}).map(function(k) { return data.items[k].name || k; });
-  if (kind === 'move') names = showUnavailable ? Object.keys(data.moves || {}).map(function(k) { return data.moves[k].name || k; }) : api.legalMoveDisplayNamesForSpecies(speciesName, { learnsetContext: 'champions' });
+  if (kind === 'move') names = showUnavailable ? Object.keys(data.moves || {}).map(function(k) { return data.moves[k].name || k; }) : api.legalMoveDisplayNamesForSpecies(speciesName, { learnsetContext: profile.id === 'champions_custom_practice' ? 'champions_current' : 'champions' });
   if (kind === 'ability') {
     allowedAbilities = Object.values((data.species[speciesKey] || {}).abilities || {});
     var mega = typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[speciesName];
@@ -332,12 +332,13 @@ function getRegulationChoices(kind, speciesName, rulesetId, showUnavailable) {
     if (profile.id === 'champions_custom_practice') {
       var allowed = true;
       if (kind === 'item') allowed = typeof CHAMPIONS_LEGAL_ITEMS !== 'undefined' && CHAMPIONS_LEGAL_ITEMS.has(name);
-      if (kind === 'move') allowed = api.isMoveLegalForSpecies(speciesName, name, { learnsetContext: 'champions' }).legal && !(typeof CHAMPIONS_BANNED_MECHANIC_MOVES !== 'undefined' && CHAMPIONS_BANNED_MECHANIC_MOVES.has(name));
+      if (kind === 'move') allowed = api.isMoveLegalForSpecies(speciesName, name, { learnsetContext: profile.id === 'champions_custom_practice' ? 'champions_current' : 'champions' }).legal && !(typeof CHAMPIONS_BANNED_MECHANIC_MOVES !== 'undefined' && CHAMPIONS_BANNED_MECHANIC_MOVES.has(name));
       if (kind === 'ability') allowed = allowedAbilities.indexOf(name) !== -1 && !(typeof CHAMPIONS_BANNED_MECHANIC_ABILITIES !== 'undefined' && CHAMPIONS_BANNED_MECHANIC_ABILITIES.has(name));
       if (kind === 'species') allowed = typeof validateChampionsLegality === 'function' && !(validateChampionsLegality({ members: [{ name: name, moves: [] }] }).violations || []).some(function(v) { return v.severity === 'error'; });
       status = allowed ? 'reference_only' : 'unavailable';
     }
     return { name: name, status: status, regulation_id: profile.id, ruleset_version: profile.version || null,
+      provenance: kind === 'move' && movePool ? movePool.provenance || null : null,
       source_version: kind === 'move' ? (movePool && movePool.status === 'known' ? movePool.sourceVersion : null) : (data.sourceCommitOrVersion || null),
       source: kind === 'move' ? (movePool && movePool.status === 'known' ? movePool.source : 'unavailable') : (data.source || null) };
   }).filter(function(row) { return showUnavailable || row.status === 'reference_only'; });
