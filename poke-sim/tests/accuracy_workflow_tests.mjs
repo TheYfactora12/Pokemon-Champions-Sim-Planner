@@ -17,3 +17,6 @@ assert.match(ci,/name: Candidate browser replay evidence/);
 assert.match(ci,/npx --no-install playwright install chromium/);
 assert.match(ci,/npm run test:browser/);
 console.log('Accuracy workflow: existing triggers, recurring controls, mandatory evidence and strict pre-deploy readiness verified.');
+
+assert(!ci.includes('${{ runner.temp }}'), 'runner context is unavailable in job-level env');
+assert(ci.includes('PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/champions-playwright'));

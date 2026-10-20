@@ -233,8 +233,6 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/champions-playwright
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
@@ -245,6 +243,8 @@ jobs:
       - name: Install locked test dependencies
         working-directory: poke-sim
         run: npm ci
+      - name: Set isolated browser cache
+        run: echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/champions-playwright" >> "$GITHUB_ENV"
       - name: Install pinned Chromium revision
         working-directory: poke-sim
         run: npx --no-install playwright install chromium
