@@ -7,6 +7,13 @@ repository security change is authorized.
 
 ## Current development candidate
 
+Local source-watcher repair is under validation; it is not yet published.
+The official M-C notice/roster and Nintendo updates now have narrow fetch/parser
+support with quarantined outputs. Workflow349252390 remains manually disabled.
+[Source repair and operational limits](docs/release/OFFICIAL_WATCH_REPAIR_2026-10-20.md).
+The changed source dependency invalidates local bounded checkmarks pending a fresh
+reviewed capture; the six-pass published tracker remains pinned to76b29f3.
+
 Contained Fly follow-up: v2.2.241-charge-herb / engine1.1.42. Public Fly admission
 remains rejected. [Readiness map and exact evidence](docs/release/FLY_REPAIR_2026-10-20.md).
 Local and hosted completion must be read from the immutable candidate checks;

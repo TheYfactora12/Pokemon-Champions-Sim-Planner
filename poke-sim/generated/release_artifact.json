@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.241-charge-herb",
+  "build_id": "v2.2.242-source-watch",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "3655893d82aa65ec7f52f4887d7b4f01b19210a6525f4c488561d48c0b364d24",
-  "bundle_bytes": 11533531,
+  "bundle_sha256": "b4003dd47bfcdc2c1c08e2d95de00aa95a9d9eb7d70ba3a644f6f75a3b84f3ad",
+  "bundle_bytes": 11533712,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/source_sync_status.js": {

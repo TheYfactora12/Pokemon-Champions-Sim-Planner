@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0125: Repair Official Source Observation
+
+- Add exact official M-C notice/roster and Nintendo update hosts, preserving redirect rejection.
+- Parse the official roster data without script execution; bind surrounding rules and keep candidates quarantined.
+- Independent narrow review: 41 Node tests, including 39 offline staging checks, passed. Operational watcher remains disabled.
+- [Candidate and remaining gates](release/OFFICIAL_WATCH_REPAIR_2026-10-20.md).
+
 ## IMP-0124: Contain Fly Airborne and Abort Repairs
 
 - Repair scoped airborne eligibility, effective ability/item gates, final damage doubling, abort and grounding cleanup behind public rejection.

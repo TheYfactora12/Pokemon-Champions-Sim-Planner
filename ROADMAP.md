@@ -80,7 +80,7 @@ Remaining:
 - [ ] October 8: all 262 official M-C roster IDs have review-only identity mappings. Approve format scope and complete-package evidence separately. See docs/release/MC_RELEASE_INVENTORY_2026-10-08.md.
 - [ ] A pinned M-C reference now exists with 42 individual-set probes. Verify item/move/Ability inventory with official or in-game evidence, and preserve historical M-B routing during any reference upgrade. M-A, M-B and M-C remain unverified.
 - [ ] Add complete-team accepted/rejected fixtures and controlled Z Mega mechanics fixtures, including Aura Guard contact boundaries, switching, suppression, multi-hit and spread interactions.
-- [ ] Activate hosted monitoring and encrypted evidence retention; validate permissions and immutable candidate readback.
+- [ ] Official-source watcher repair is locally tested; workflow349252390 remains disabled_manually. Verify repaired default-branch code and separately authorize activation, then validate encrypted retention and immutable candidate readback. See docs/release/OFFICIAL_WATCH_REPAIR_2026-10-20.md.
 - [ ] Compile complete regulation-specific eligibility packages and implement separate digest-bound human approval and atomic publication, preserving old versions.
 
 **Exit:** The selected regulation has complete reviewed eligibility evidence and an immutable published package; source outages and unknown facts cannot silently pass.

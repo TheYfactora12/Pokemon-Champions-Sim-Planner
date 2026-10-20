@@ -1,8 +1,8 @@
 {
-  "identity": "bcc89c32b59759522c6315104596f36302b462872d96a00c8bee97ece1296fcc",
-  "path": "bcc89c32b59759522c6315104596f36302b462872d96a00c8bee97ece1296fcc/current.json",
-  "history": "bcc89c32b59759522c6315104596f36302b462872d96a00c8bee97ece1296fcc/history.json",
+  "identity": "bd19ecefad4b9cfd413816a45d6efd38b381884fa2bbd91f67b0f813f9e3d5fc",
+  "path": "bd19ecefad4b9cfd413816a45d6efd38b381884fa2bbd91f67b0f813f9e3d5fc/current.json",
+  "history": "bd19ecefad4b9cfd413816a45d6efd38b381884fa2bbd91f67b0f813f9e3d5fc/history.json",
   "current_cases": 7,
-  "current_passes": 6,
+  "current_passes": 0,
   "history_rows": 19
 }
