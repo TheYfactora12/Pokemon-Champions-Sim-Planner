@@ -179,10 +179,50 @@ jobs:
   # ----------------------------------------------------------------
   # 4. BATTLE AUDIT (GATED)
   # Runs the reusable mechanics-fixture, parity, golden-trace, and seeded-stress
-  # workflow whenever battle code, evidence, or tests change.
+  # workflow on every existing push/PR trigger; path filters do not waive it.
   # ----------------------------------------------------------------
   audit:
     name: "Battle Audit"
     needs: [tests, detect-changes]
-    if: needs.detect-changes.outputs.engine == 'true'
     uses: ./.github/workflows/battle-audit.yml
+
+  accuracy-standard:
+    name: Accuracy methodology and readiness report
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: poke-sim/package-lock.json
+      - name: Install existing locked dependencies
+        working-directory: poke-sim
+        run: npm ci
+      - name: Run references, information boundaries and negative controls
+        working-directory: poke-sim
+        run: npm run test:accuracy:standard
+      - name: Run shipped-mechanics invariants (not client accuracy)
+        working-directory: poke-sim
+        run: npm run test:accuracy
+      - name: Report competitive readiness separately
+        if: always()
+        working-directory: poke-sim
+        run: |
+          mkdir -p artifacts/accuracy-standard
+          npm run readiness:competitive -- --report artifacts/accuracy-standard/competitive-readiness.json
+          node -e "const r=require('./artifacts/accuracy-standard/competitive-readiness.json');require('fs').appendFileSync(process.env.GITHUB_STEP_SUMMARY,'Competitive release: **'+r.status+'**\n\n'+r.blockers.map(x=>'- '+x).join('\n')+'\n')"
+      - name: Retain exact-head evidence and failures
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: accuracy-method-${{ github.sha }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          path: |
+            poke-sim/artifacts/accuracy-standard/
+            poke-sim/artifacts/test-method-controls/
+            poke-sim/artifacts/accuracy-2026-08-30/cross-format/
+          retention-days: 30

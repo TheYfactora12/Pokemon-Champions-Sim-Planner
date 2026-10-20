@@ -5,9 +5,9 @@ import { createHash } from 'node:crypto';
 
 const normalize = value => String(value ?? '').replace(/\s+/g, ' ').trim();
 const labelKey = value => normalize(value).toLowerCase();
-const movePrefixes = lines => [...new Set(lines.map(line => normalize(line).match(/^(.+? used .+?!)/)?.[1]).filter(Boolean))];
+const movePrefixes = lines => lines.map(line => normalize(line).match(/^(.+? used .+?!)/)?.[1]).filter(Boolean);
 
-export function compareVisibleReplay(log, visual) {
+export function compareVisibleReplay(log, visual, expectedCandidate = null) {
   const issues = [];
   let checks = 0;
   const check = (ok, code, location, expected, actual) => {
@@ -24,6 +24,13 @@ export function compareVisibleReplay(log, visual) {
   const rendererBuild = visual?.renderer_build_id || (visual?.banner || '').match(/\b(v\d+\.\d+\.\d+-[a-z0-9-]+)\b/)?.[1];
   equal(rendererBuild, log?.exporter_build_id || p?.build_id, 'build_mismatch', 'renderer_build_id');
   check(!!p?.build_id && log?.build_id === p.build_id, 'execution_build_mismatch', 'log.build_id', p?.build_id, log?.build_id);
+  if (expectedCandidate) {
+    equal(rendererBuild, expectedCandidate.build_id, 'candidate_renderer_mismatch', 'renderer_build_id');
+    equal(log?.build_id, expectedCandidate.build_id, 'candidate_execution_mismatch', 'log.build_id');
+    check(/^[a-f0-9]{40}$/.test(expectedCandidate.commit || '') && /^[a-f0-9]{64}$/.test(expectedCandidate.bundle_sha256 || ''),
+      'invalid_candidate_identity', 'expectedCandidate', 'independent commit and bundle digest', expectedCandidate);
+    equal(visual?.candidate_bundle_sha256, expectedCandidate.bundle_sha256, 'candidate_bytes_mismatch', 'captured response bytes');
+  }
   equal(visual?.title, `${String(log?.result || '').toUpperCase()} vs ${log?.opponent_team?.name || ''}`, 'replay_title_mismatch', 'title');
   equal(Number((visual?.meta || '').match(/^(\d+) turns/)?.[1]), turns.length, 'turn_count_mismatch', 'meta');
   equal((visual?.turns || []).map(t => t.label), turns.map(t => `T${t.turn}`), 'turn_sequence_mismatch', 'turns');
@@ -68,7 +75,9 @@ export function compareVisibleReplay(log, visual) {
   }
   for (const turn of turns) {
     const lines = visual?.turns?.find(t => t.label === `T${turn.turn}`)?.lines || [];
-    const expected = movePrefixes((turn.events || []).map(e => e.text || e.message || ''));
+    const events=turn.events || [];
+    const anchored=events.filter(e=>e.actor_key && e.move && Number.isInteger(e.log_index));
+    const expected = movePrefixes((anchored.length ? anchored : events.filter(e=>!/^.+? used .+?!\s*→.*\[\d+ dmg/.test(e.text || ''))).map(e => e.text || e.message || ''));
     const actual = movePrefixes(lines);
     check(Array.isArray(turn.events), 'missing_action_evidence', `T${turn.turn}`, 'events array', turn.events);
     equal(actual, expected, 'resolved_move_order_or_omission', `T${turn.turn}`);
@@ -82,10 +91,10 @@ export function compareVisibleReplay(log, visual) {
     build_id: p?.build_id || null, team_ids: [p?.player_team_id, p?.opp_team_id],
     status: issues.length ? 'mismatch' : 'matched_observable_fields', checks, turns: turns.length, issues,
     not_checked: ['Independent real-game mechanics parity', 'Hidden stable IDs and exact stats not printed in replay cards',
-      'Every same-name repeated action, effect tooltip and coach claim', 'Pixel layout outside inspected screenshots; lazy sprites outside viewport', 'Production DB persistence'] };
+      'Hidden actor IDs/targets, effect tooltips and coach claims', 'Pixel layout outside inspected screenshots; lazy sprites outside viewport', 'Production DB persistence', ...(!expectedCandidate ? ['Current candidate artifact identity not supplied; historical display consistency only'] : [])] };
 }
 
-export function ingestDirectory(directory) {
+export function ingestDirectory(directory, expectedCandidate = null) {
   const names = fs.readdirSync(directory);
   const files = names.filter(name => name.endsWith('.visual.json')).sort();
   if (!files.length) throw new Error('No paired visible replay captures');
@@ -109,7 +118,7 @@ export function ingestDirectory(directory) {
     const log = JSON.parse(logBytes);
     const captureCase = cases.find(c => c.id === file.replace(/\.visual\.json$/, ''));
     if (JSON.stringify(captureCase.seed) !== JSON.stringify(log.seed)) throw new Error('Seed differs from capture inventory: ' + file);
-    const report = compareVisibleReplay(log, JSON.parse(visualBytes));
+    const report = compareVisibleReplay(log, JSON.parse(visualBytes), expectedCandidate);
     return { ...report, case_kind: captureCase.kind, log_file: logName, visual_file: file,
       log_sha256: createHash('sha256').update(logBytes).digest('hex'), visual_sha256: createHash('sha256').update(visualBytes).digest('hex') };
   });

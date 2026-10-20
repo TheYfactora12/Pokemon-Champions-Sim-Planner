@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Review local v221 and PR278 separately after final gates. Rocky Helmet and the conservative production policy have scoped repairs. See docs/release/OVERNIGHT_ACCEPTANCE_GATES_2026-10-20.md for each remaining acceptance gate, owner, blocker and next action.
+Complete independent retest and exact-head checks for the v226 PR279 candidate. Competitive release remains NO-GO pending current-client/regulation, gameplay and service evidence. See docs/release/COMPETITIVE_READINESS_2026-10-20.md for owners, gates and the Wednesday decision.
 
 ## Milestone Index
 

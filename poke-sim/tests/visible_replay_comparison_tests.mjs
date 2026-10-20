@@ -104,4 +104,23 @@ test('ingestion requires exact inventory, symmetric pairs and matching seeds', (
     fs.rmSync(directory, { recursive: true });
   }
 });
+
+test('omitting an identical repeated action fails without collapsing multiplicity',()=>rejects(p=>p.log.turnLog[0].events.push({text:'Mirror used Protect!'}),'resolved_move_order_or_omission'));
+test('externally bound candidate rejects coordinated stale labels and bytes',()=>{
+ const p=fixture(), expected={build_id:'build-1',commit:'a'.repeat(40),bundle_sha256:'b'.repeat(64)};
+ p.visual.candidate_bundle_sha256=expected.bundle_sha256;
+ assert.equal(compareVisibleReplay(p.log,p.visual,expected).issues.length,0);
+ p.log.build_id=p.log.exporter_build_id=p.log.provenance.build_id=p.visual.renderer_build_id='stale';
+ assert(compareVisibleReplay(p.log,p.visual,expected).issues.some(i=>i.code==='candidate_execution_mismatch'));
+ p.visual.candidate_bundle_sha256='c'.repeat(64);
+ assert(compareVisibleReplay(p.log,p.visual,expected).issues.some(i=>i.code==='candidate_bytes_mismatch'));
+});
+
+test('stable action anchors distinguish missed-move detail from a second action',()=>{
+ const p=fixture();p.log.turnLog[0].events=[{text:'Mirror used Hurricane!',actor_key:'player:slot:0:Mirror',move:'Hurricane',log_index:0},{text:'Mirror used Hurricane! It missed!'}];
+ p.visual.turns[0].lines=['Mirror used Hurricane! → Opponent It missed. Accuracy 70%.'];
+ assert.equal(compareVisibleReplay(p.log,p.visual).issues.length,0);
+ p.log.turnLog[0].events.push({text:'Mirror used Hurricane!',actor_key:'opponent:slot:0:Mirror',move:'Hurricane',log_index:2});
+ assert(compareVisibleReplay(p.log,p.visual).issues.some(i=>i.code==='resolved_move_order_or_omission'));
+});
 console.log(`Visible replay comparison: ${passed}/${passed} passed`);

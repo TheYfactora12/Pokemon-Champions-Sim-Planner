@@ -19,7 +19,7 @@
       "behavior": "Contact damage, fixed multi-hit frequency and contact KO are explicit and identity-preserving.",
       "status": "partial",
       "tests": [
-        "tests/rocky_helmet_reference_tests.mjs"
+        "tests/rocky_helmet_reference_tests.mjs", "tests/rough_skin_reference_tests.mjs"
       ],
       "oracle": "Pinned pokemon-showdown 0.11.11 Champions custom battle; items onDamagingHitOrder2 and RoughSkin order1.",
       "boundary_vectors": [

@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: battle-audit-${{ github.sha }}
-          if-no-files-found: warn
+          if-no-files-found: error
           path: |
             poke-sim/battle-audit-report.json
             poke-sim/tests/audit_matrix.json

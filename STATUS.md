@@ -7,30 +7,24 @@ Historical candidate observations are not current deployment instructions.
 
 ## Draft review candidate
 
-v2.2.225-strategy-context / engine 1.1.27 is the local follow-up for
+v2.2.226-accuracy-gates / engine 1.1.28 is the review follow-up to
 [draft PR279](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279).
-Main is reconciled through `3eb6ab1ce7f026a82934901ac386ae46505c3dde`; all v224 and
-earlier overnight repairs remain. PR278 is preserved pending integration review.
-Strategy/Print now require current execution and both-team identity before showing
-an observed attempt; My Data export preserves archived reports without calling them
-current coaching. [Scope and verification](docs/release/STRATEGY_CONTEXT_2026-10-20.md).
+The [competitive readiness register](docs/release/COMPETITIVE_READINESS_2026-10-20.md)
+owns current defects, severity, evidence, owners, retest and the Wednesday decision.
+The [season/accuracy workflow](docs/release/SEASON_AND_ACCURACY_WORKFLOW.md) defines
+intake through independently verified release. Competitive release remains **NO-GO**.
 
-Development-only scripted switching has 63 reference/admission cases; public and
-automatic switching remain unavailable. Natural Cure/Regenerator switch-out fixes
-have 64 reference cases. The v224 full project, battle and accuracy gates passed;
-v225 independent reviews, 6-game/7-pair browser audit and aggregate gate pass
-(238 fast + 12 offline DB files; four helpers skipped). Exact hosted-head results
-are tracked in PR279; prior-head checks are not final-head proof. Publication for draft review is
-authorized; merge/deployment and live DB/security changes remain unauthorized.
-Client mechanics, full regulation approval and live DB gates remain open. See the
-[consolidated acceptance register](docs/release/CONTINUATION_ACCEPTANCE_2026-10-20.md)
-and [explicit-grant assessment](docs/release/SUPABASE_GRANTS_READINESS_2026-10-20.md).
+This candidate repairs Rough Skin effective contact protection and strengthens
+checker sensitivity, replay multiplicity/artifact binding, runtime parity and
+recurring GitHub gates. Development checks do not certify current-client rules,
+full mechanics, competitive policy quality or live Supabase. Scoped independent review and final local gates pass;
+exact-head hosted checks remain pending; no merge/deployment authorized.
 
-v2.2.217-current-moves / engine 1.1.21 is draft PR278, not deployed.
-Current Practice uses the September 9 official move removals and PP corrections;
-Slash species eligibility remains pinned-reference evidence. Unsupported Fly
-blocks execution and aggregate recommendations while saved teams remain editable.
-[Repair scope and checks](docs/release/CURRENT_MOVES_AND_FLY_2026-10-17.md).
+The v225 candidate and its evidence are preserved in
+[the historical candidate receipt](docs/archive/STATUS_V225_CANDIDATE_2026-10-20.md).
+PR279 retains the current move/PP/Fly, default-policy, pivot, switch-out and earlier
+repairs. PR278 stays open pending authorized integration; recommended sequence is
+279 as consolidated superset, then separately authorized supersession of278.
 
 ## Current verified release
 

@@ -171,13 +171,24 @@
     return null;
   }
 
-  function artifactResultReason(result) {
-    var value = String(result || '').toLowerCase();
-    if (value === 'draw') return 'draw';
-    if (value === 'timeout' || value === 'timer') return 'timer';
-    if (value === 'forfeit') return 'forfeit';
+  function artifactResultReason(result, card, sourceGaps) {
+    var value = String(result || '').toLowerCase(), gap;
     if (value === 'error') return 'error';
-    return 'ko';
+    if (value === 'forfeit') {
+      sourceGaps.push(artifactSourceGap('OUTCOME_WINNER_UNVERIFIED', 'Forfeit winner is not attributed.', 'result'));
+      return 'forfeit';
+    }
+    if (card.timerExpired === true || value === 'timeout' || value === 'timer') {
+      sourceGaps.push(artifactSourceGap('TIMER_POLICY_UNVERIFIED', 'Timer proxy is not verified game adjudication.', 'timerExpired'));
+      return 'timer';
+    }
+    if (card.terminal === false) gap = 'OUTCOME_UNFINISHED';
+    else if (card.terminal !== true || !Number.isInteger(card.playerSurvivors) || !Number.isInteger(card.oppSurvivors) ||
+        card.playerSurvivors < 0 || card.oppSurvivors < 0 || (card.playerSurvivors > 0 && card.oppSurvivors > 0)) gap = 'OUTCOME_TERMINATION_UNKNOWN';
+    else if (!(value === 'win' && card.playerSurvivors > 0 && card.oppSurvivors === 0) &&
+        !(value === 'loss' && card.oppSurvivors > 0 && card.playerSurvivors === 0)) gap = 'OUTCOME_WINNER_UNVERIFIED';
+    if (gap) { sourceGaps.push(artifactSourceGap(gap, 'No verified terminal outcome in artifact.', 'terminal')); return 'error'; }
+    return value === 'draw' ? 'draw' : 'ko';
   }
 
   function artifactWinnerTeamId(result, playerTeamId, opponentTeamId) {
@@ -462,6 +473,7 @@
     var turnLog = Array.isArray(card.turnLog) ? card.turnLog : (Array.isArray(card.turn_log) ? card.turn_log : []);
     var eventLog = Array.isArray(card.event_log) ? card.event_log : artifactRowsFromTextLog(card.log);
     var result = card.result || payload.result || null;
+    var reason = artifactResultReason(result, Object.assign({},payload,card), sourceGaps);
     var replay = {
       id: card.id || undefined,
       job_id: opts.job_id || undefined,
@@ -473,8 +485,8 @@
       engine_version: scope.engine_version,
       ruleset_version: scope.ruleset_version,
       seed: String(card.seed || payload.seed || 'artifact-seed-needed'),
-      winner_team_id: artifactWinnerTeamId(result, playerTeamId, opponentTeamId) || undefined,
-      result_reason: artifactResultReason(result),
+      winner_team_id: reason !== 'error' && reason !== 'timer' ? artifactWinnerTeamId(result, playerTeamId, opponentTeamId) || undefined : undefined,
+      result_reason: reason,
       turns: Number(card.turns || turnLog.length || 0),
       event_log: eventLog,
       turn_log: turnLog,
@@ -628,6 +640,10 @@
     run.replay_id = normalized.id || run.replay_id || null;
     run.job_id = normalized.job_id || run.job_id || null;
     run.confidence_flags = unique((run.confidence_flags || []).concat(normalized.confidence_flags || []));
+    run.source_gaps = unique((run.source_gaps || []).concat(normalized.source_gaps || []));
+    run.confidence_flags = unique(run.confidence_flags.concat(normalized.source_gaps || []));
+    run.result_reason = normalized.result_reason;
+    run.winner_team_id = normalized.winner_team_id || null;
     run.replay_evidence_summary = normalized.evidence_summary;
     return { ok: true, sim_run: run, replay: normalized, warnings: replayValidation.warnings };
   }

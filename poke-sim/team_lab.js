@@ -398,7 +398,8 @@
     }
 
     (simRuns || []).forEach(function(run) {
-      if (!run || run.result_reason === 'error') return;
+      if (!run || run.result_reason === 'error' || (run.source_gaps || []).length ||
+          (run.confidence_flags || []).some(function(flag){return /^(OUTCOME_|TIMER_POLICY_UNVERIFIED)/.test(flag);})) return;
       if (opts.regulation_id && run.regulation_id !== opts.regulation_id) return;
       if (opts.format && run.format !== opts.format) return;
       if (current.engine_version !== 'unknown' && run.engine_version !== current.engine_version) return;

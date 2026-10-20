@@ -1683,3 +1683,40 @@ after. Structural success is not mechanics certification. Suppression, full
 parity and deployment remain separately tracked. See
 [scoped audit](release/ROCK_HEAD_MATRIX_2026-10-10.md), issues #260 and #242.
 
+
+
+## IMP-0121 — Effective contact protection and accuracy-method controls (2026-10-20)
+
+Environment: uncommitted v2.2.226-accuracy-gates / engine1.1.28; not deployed.
+The independent Rough Skin probe found8of12 disagreements: the hook checked contact
+but ignored effective attacker protections and defender suppression. Shared contact
+resolution now honors Gas/Shield, consumed items, Pads/Klutz, Long Reach and Magic
+Guard without changing established Helmet ordering.28boundary cases and2real-engine
+mutant controls pass; independent reviewer requested nonvacuous shielded-defender
+cases, which were added. Current-client parity remains unproved.
+
+The separate fixed-head audit exposed false confidence in broad invariants and
+replay Set/build-label comparisons. Repairs add one-sided elimination consistency,
+independent damage and information/switch mutant controls, explicit randomized-HP
+exclusions, repeated-action preservation, actual response-byte binding, shipped
+mechanics dependencies and an always-running methodology/readiness CI job.
+Missing package/human approval/open cases stay NO-GO in the strict deployment gate.
+No expected golden behavior was changed. Release identity expectations changed only
+for the new build. Failed aggregate results and browser capture attempts remain in
+the dated evidence; independent final retest and hosted checks are pending.
+
+Reusable lesson: test each claimed property with a fault it must detect, keep
+client/reference/self-consistency/policy verdicts separate, and bind approval to
+immutable evidence. Counts and signatures without source/reviewer controls cannot
+establish truth. The [current decision and failure-learning register](release/COMPETITIVE_READINESS_2026-10-20.md)
+owns exact proof, blockers and next actions; the [workflow](release/SEASON_AND_ACCURACY_WORKFLOW.md)
+reuses existing season intake/staging without auto-promotion.
+
+
+IMP-0121 follow-up: foundationF07 also exposed cutoff/timer-to-KO conversion and
+uncertainty loss through attachment/leaderboard. New importer quarantine, propagated
+gaps/outcome fields and aggregation exclusion pass10adversarial boundaries plus
+consumer checks. Independent reviewer first rejected contradictory survivor/winner
+cases and downstream leakage; these were reproduced and repaired without schema
+changes. Final independent retest remains pending. The actual clock model and eight
+other foundation findings remain open in the same register.

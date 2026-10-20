@@ -72,3 +72,25 @@ Docker CLI exists; `docker version --format '{{.Server.Version}}'` failed becaus
 Fresh schemas using documented bootstrap WILL lack required Data API grants under the new defaults; a more complete migration route still lacks the two runtime reads and four server-writer grants described above. Existing production tables are not predicted to break solely on October 30; their actual ACLs/defaults were not read back. Offline/bundled simulations remain independent of Data API availability.
 
 Smallest next decision: approve an isolated compatibility patch for the two anon reads, and separately confirm whether the existing Showdown server writer belongs in that patch. Provide/authorize a disposable local database test runtime before claiming the migration validated. Live application remains a later, separate exact-migration approval. Preserve v224 as reviewed throughout.
+
+
+## Subsequent isolated PostgreSQL verification, October20 14:33 UTC
+
+Ordinary installed Docker launch failed on the existing backend socket error; no
+reset, socket cleanup, installation or settings change was attempted. An independent
+reviewer used already-installed PGlite0.5.8/PostgreSQL18.3 with a fresh in-memory DB.
+Actual repository schema/RLS and June6/7, August29 and September8 migration SQL
+passed86named assertions. Missing anon reads and four service upserts reproduced
+42501; only the proposed fixture grants restored those paths. Approved/active
+invoker views filtered rows, underlying ACLs remained required, browser DML and
+sequence access were denied, service DELETE/TRUNCATE denied, and RLS resisted
+re-granted writes. ALTER preserved grants; recreated tables required explicit grants.
+The existing containment suite additionally passed60browser-write denials,
+sixtrusted writes, idempotency and rollback controls.
+
+Evidence retained outside checkout in task-2/isolated-data-api-grants.mjs,
+-result.json, -state.json and isolated-shared-containment.log, including source hashes.
+These are repeated PostgreSQL assertions, not independent security cases or live
+clearance. Supabase Auth/JWT, owner isolation through real users, PostgREST HTTP,
+full private persistence paths, live ledger/checksum/roster/version state and
+production-version parity remain untested. No proposed grant was applied live.

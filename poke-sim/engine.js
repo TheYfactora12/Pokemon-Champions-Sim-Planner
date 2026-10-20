@@ -1,10 +1,7 @@
-// ============================================================
 // BATTLE ENGINE — VGC Doubles Simulator
 // Simulates VGC-style 4v4 doubles with priority, speed tiers,
 // weather, Trick Room, Intimidate, and damage variance
-// ============================================================
 
-// ============================================================
 // CHAMPIONS REG M-A MECHANICS REFERENCE (T10, verified April 2026)
 // See docs/CHAMPIONS_MEGA_SYSTEM.md + docs/CHAMPIONS_LEGALITY.md +
 // CHAMPIONS_MECHANICS_VERIFICATION.md + ENGINE_AUDIT_REPORT.md for
@@ -62,21 +59,18 @@
 //   https://bulbapedia.bulbagarden.net/wiki/Stat_point
 //   https://game8.co/games/Pokemon-Champions/archives/588871
 //   https://victoryroad.pro/champions-regulations/
-// ============================================================
 
 var CHAMPIONS_FORMAT_ID = 'champions-vgc-2026-regma';
 var CHAMPIONS_ACTIVE_SOURCE_RULESET_ID = 'champions_reg_m_b_doubles_bo3_source_review';
 var CHAMPIONS_ACTIVE_SOURCE_FORMAT_LABEL = 'Champions Reg M-B Source Review (Jun 17 - Sep 2, 2026)';
 var CHAMPIONS_FORMAT_LABEL = 'Champions Reg M-A Historical Lane (Apr 8 - Jun 17, 2026)';
 
-// ============================================================
 // SEEDED PRNG — Issue #2 FIX
 // Mulberry32: fast, deterministic, browser-safe.
 // All battle randomness goes through rng() — never Math.random().
 // Seed is a 4-number array [a,b,c,d] passed via opts.seed to
 // simulateBattle(). runSimulation() auto-generates seeds per battle
 // so each battle is independently reproducible.
-// ============================================================
 function makePRNG(seed) {
   // seed: [a, b, c, d] — four 32-bit integers
   let [a, b, c, d] = seed.map(n => n >>> 0);
@@ -99,7 +93,6 @@ function makeSeed() {
   ];
 }
 
-// ============================================================
 // TEAM LEGALITY VALIDATOR — Issue #5 + #T2
 // Called before every simulateBattle() invocation.
 // Blocks on errors, warns on warnings.
@@ -111,7 +104,6 @@ function makeSeed() {
 //     (VGC/Champions rules: both are hard bans, not soft recommendations).
 //   - Optional Champions legality layer (ban list, fakemon) wired in
 //     via validateChampionsLegality() if legality.js is loaded.
-// ============================================================
 function detectSpreadStatFormat(evs) {
   const vals = Object.values(evs || {});
   if (vals.length === 0) return 'sv';
@@ -246,7 +238,6 @@ function validateTeam(team, format = 'vgc', validationOptions = {}) {
   return { valid: errors.length === 0, errors, warnings };
 }
 
-// ============================================================
 // T9j.8 — CRITICAL HITS, FLINCH, AND ABILITIES FRAMEWORK
 // Refs #27 (crits), #19 (flinch), #30 (abilities).
 // All tables are `var` for TDZ-safety (referenced from Pokemon methods).
@@ -274,7 +265,6 @@ function validateTeam(team, format = 'vgc', validationOptions = {}) {
 //   Zen Headbutt: 20%. Fire/Ice/Thunder Fang: 10% flinch (+10% independent status).
 //   Dark Pulse / Twister / Icicle Crash / Waterfall: secondary flinch retained.
 //   Cite: https://game8.co/games/Pokemon-Champions/archives/590527 (move list)
-// ============================================================
 var CRIT_STAGES = [1/24, 1/8, 1/2, 1, 1]; // index by clamped stage
 var HIGH_CRIT_MOVES = new Set([
   // Gen 9 +1 stage list. Champions retains standard list per Game8 move pages.
@@ -1588,7 +1578,6 @@ function _recordMoveFailureEvent(field, mon, move, reason, details) {
   }, details || {}));
 }
 
-// ============================================================
 // ABILITIES REGISTRY — T9j.8
 // Each entry declares the hooks an ability participates in. Handlers return
 // a mutation object (or undefined for no-op). The engine calls the relevant
@@ -1621,7 +1610,6 @@ function _recordMoveFailureEvent(field, mon, move, reason, details) {
 //     for the holder's Fire-typed moves even if field weather is 'none'.
 //
 // Sources cited per-ability.
-// ============================================================
 var ABILITIES = {
   'Electromorphosis': {
     onDamagingHit: function(ctx) {
@@ -1869,7 +1857,10 @@ var ABILITIES = {
       var attacker = ctx.attacker, defender = ctx.defender;
       if (!attacker || !attacker.alive || !defender) return;
       if (!ctx.damage || ctx.damage <= 0) return;
-      if (!_isContactMove(ctx.move)) return;
+      const contact = _contactEffects(ctx.field);
+      if (contact.ability(defender) !== 'Rough Skin' || !_isContactMove(ctx.move) ||
+          contact.ability(attacker) === 'Long Reach' || contact.ability(attacker) === 'Magic Guard' ||
+          contact.item(attacker) === 'Protective Pads') return;
       var chip = Math.max(1, Math.floor(attacker.maxHp / 8));
       var hpBeforeRoughSkin = attacker.hp;
       attacker.hp = Math.max(0, attacker.hp - chip);
@@ -1877,6 +1868,7 @@ var ABILITIES = {
       _recordEffectEvent(ctx.field, attacker, 'Rough Skin', 'ability-contact-damage', hpBeforeRoughSkin, attacker.hp, {
         source: 'engine ability contact rule',
         source_actor: defender.name || '',
+        source_actor_key: _snapshotMonStableKey(defender.side === ctx.field.playerSide ? 'player' : 'opponent', defender),
         rule: { numerator: 1, denominator: 8, basis: 'max_hp', rounding: 'down' },
         damage_applied: Math.max(0, hpBeforeRoughSkin - attacker.hp)
       });
@@ -1995,7 +1987,6 @@ var ABILITIES = {
   // Parental Bond handled inline in executeMove (2-strike loop with BP override)
 };
 
-// ============================================================
 // T9j.17 (Refs #44) -- TERRAIN SEEDS
 // One-shot consumable items that boost the holder by +1 to a defensive stat
 // when present in matching terrain at switch-in. Standard mainline behavior
@@ -2006,7 +1997,6 @@ var ABILITIES = {
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Misty_Seed
 // Entry handles existing terrain; terrain-setting abilities dispatch to all
 // living active holders. Item availability remains separately review-gated.
-// ============================================================
 var TERRAIN_SEEDS = {
   'Grassy Seed':  { terrain: 'grassy',   stat: 'def', stages: 1 },
   'Electric Seed':{ terrain: 'electric', stat: 'def', stages: 1 },
@@ -2116,6 +2106,12 @@ function applySeedSowerOnHit(target, field, log) {
 
 // T9j.8 — Ability hook dispatcher. Safe call: returns null when no ability or
 // no matching hook. Invoked from engine trigger points.
+function _contactEffects(field) {
+  const gas = [..._sideActiveMons(field && field.playerSide), ..._sideActiveMons(field && field.oppSide)]
+    .some(mon => mon.ability === 'Neutralizing Gas');
+  const ability = mon => (!gas || (mon.item === 'Ability Shield' && !mon.itemConsumed)) ? mon.ability : '';
+  return {ability, item:mon => !mon.itemConsumed && ability(mon) !== 'Klutz' ? mon.item : ''};
+}
 function callAbilityHook(mon, hookName, ctx) {
   if (!mon || !mon.ability) return null;
   if (hookName === 'onSwitchOut' && ctx && ctx.field) {
@@ -3121,9 +3117,7 @@ class Pokemon {
   }
 }
 
-// ============================================================
 // STATUS INFLICT GATE (T9j.4 #41)
-// ============================================================
 // Central gate for status inflict attempts. Returns false if the target is
 // type-immune, already statused, under weather protection, or has a blocking
 // ability. Cite: Bulbapedia Status; Bulbapedia Freeze.
@@ -3345,9 +3339,7 @@ function _confusionSelfHitDamage(mon, field, rng) {
   return Math.max(1, dmg);
 }
 
-// ============================================================
 // FIELD STATE
-// ============================================================
 class Field {
   constructor(init) {
     init = init || {};
@@ -3482,9 +3474,7 @@ class Field {
   }
 }
 
-// ============================================================
 // TEAM BUILDER — builds active battlers from team definition
-// ============================================================
 function buildTeam(teamDef, side, referenceMode, rulesetId) {
   if (!teamDef || !teamDef.members) return [];
   const style = teamDef.style || '';
@@ -4085,9 +4075,7 @@ function isRNGBlame(turnLog, turn) {
   return hits >= 2;
 }
 
-// ============================================================
 // SIMULATE BATTLE
-// ============================================================
 // Execution support is separate from legality.
 function checkSimulationSupport(team) {
   var errors = [];
@@ -4486,10 +4474,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   for (const m of playerActive) applyEntryAbility(m, 'player', field, log);
   for (const m of oppActive)    applyEntryAbility(m, 'opp', field, log);
 
-  // ============================================================
   // CONSERVATIVE OWN-STATE MOVE SELECTION
   // Scores moves by expected damage or utility value.
-  // ============================================================
   function selectMove(attacker, allies, enemies, field) {
     const choice = _chooseDefaultDecision(_prepareDefaultDecision(attacker,allies,enemies,field));
     return {move:choice.move,target:(choice.targetSide === 'ally' ? allies : enemies)[choice.targetSlot] || null};
@@ -4571,9 +4557,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     return best||result('Struggle');
   }
 
-  // ============================================================
   // EXECUTE ACTION
-  // ============================================================
   function _recordTurnActionEvent(attacker, move, target, field, log, opts) {
     if (!Array.isArray(field._ctx.turnActionEvents)) field._ctx.turnActionEvents = [];
     const actorSide = attacker.side === field.playerSide ? 'player' : 'opponent';
@@ -5801,11 +5785,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
   }
 
-  // ============================================================
   // T9j.2 — executeMove: per-target damage resolution
   // Refs #26 (spread), #31 (Wide Guard), #32 (Follow Me/Rage Powder),
   //      #33 (MOVE_TARGETS registry)
-  // ============================================================
   function dragonDartsNoDamageTarget(attacker, target, field) {
     if (!target || !target.alive) return true;
     if (target.protected) return true;
@@ -6719,10 +6701,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       recordKO: _recordKO
     });
     // Pinned Showdown item onDamagingHitOrder=2: Rough Skin order=1 precedes the item.
-    const contactGas = [..._sideActiveMons(field.playerSide), ..._sideActiveMons(field.oppSide)]
-      .some(mon => mon.ability === 'Neutralizing Gas');
-    const contactAbility = mon => (!contactGas || (mon.item === 'Ability Shield' && !mon.itemConsumed)) ? mon.ability : '';
-    const contactItem = mon => !mon.itemConsumed && contactAbility(mon) !== 'Klutz' ? mon.item : '';
+    const {ability:contactAbility,item:contactItem} = _contactEffects(field);
     if (appliedDamage > 0 && attacker.alive && contactItem(target) === 'Rocky Helmet' &&
         _isContactMove(move) && contactAbility(attacker) !== 'Long Reach' &&
         contactAbility(attacker) !== 'Magic Guard' && contactItem(attacker) !== 'Protective Pads') {
@@ -6806,9 +6785,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
   }
 
-  // ============================================================
   // MAIN BATTLE LOOP
-  // ============================================================
   let turn = 0;
   // Phase 4a (Refs #52) — structured KO event log for dynamic coaching.
   // Populated at every faint site below. UI reads this instead of parsing
@@ -6972,12 +6949,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const oAlive = oppActive.filter(m => m.alive).length + oppBench.filter(m => m.alive).length;
     if (pAlive === 0 || oAlive === 0) break;
 
-    // --------------------------------------------------------
     // T9j.7 — MEGA EVOLUTION PHASE
     // Own-slot candidate selection only. Execution currently resolves player then
     // opponent before moves. Simultaneous Mega and voluntary-switch ordering need
     // approved evidence; no parity claim is made for that execution order.
-    // --------------------------------------------------------
     const switchPlan = scriptedSwitches ? ScriptedSwitchDiagnostic.prepare(opts, turn,
       {player:playerActive,opponent:oppActive}, {player:playerBench,opponent:oppBench}, field) : null;
 
@@ -7988,7 +7963,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.27'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.28'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

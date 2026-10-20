@@ -39,6 +39,12 @@ jobs:
           cd ..
           bash poke-sim/tools/check-bundle.sh
 
+      - name: Require competitive release evidence (no Practice fallback)
+        working-directory: poke-sim
+        run: |
+          npm run test:accuracy:standard
+          npm run release:competitive:check
+
       - uses: actions/configure-pages@v6
         with:
           enablement: true
