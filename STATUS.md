@@ -5,43 +5,28 @@ Reviewed: 2026-10-20. This file owns current development checkpoint facts.
 Competitive release remains **NO-GO**. No merge, deployment, live database or
 repository security change is authorized.
 
-## Follow-up candidate in final validation
-
-v2.2.239-struggle-evidence / engine1.1.40 repairs the independently audited Struggle
-boundaries and late Fake Out request/execution distinction. It also adds bounded
-historical receipt enrollment and an explicit current-profile golden loader.
-[Scope and evidence](docs/release/STRUGGLE_BOUNDARIES_2026-10-20.md) records the limits.
-Final local and hosted outcomes belong to the validation receipt and exact-head PR checks;
-the successful published checkpoint below remains the last terminal hosted result.
-
 ## Current reviewed checkpoint
 
-Draft PR279 checkpoint `146ba91093ad9c0c3c3b7e675850e2e0f5f57475`,
-v2.2.238-reference-evidence / engine1.1.39, passed every hosted check.
-[CI39472580253](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39472580253)
-finished successfully at2026-10-20T18:25:41Z; bundle39472580200 and cache39472580173
-also passed. The earlier c97866f CI39469714879 was cancelled on both attempts;
-neither cancellation is counted as a pass.
+Draft PR279 head `9ea1ccb044f4cf8e58f903734fd79cb339199c8d`, runtime
+v2.2.239-struggle-evidence / engine1.1.40, passed all hosted checks.
+[CI 39491873562](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39491873562)
+finished Battle Audit at 2026-10-20T20:43:49Z: 4500 battles, 0 JS errors.
+Test Suite passed 267 fast files and 12 DB contract files; browser evidence covers
+2 games, 3 pairs and 21 turns with 0 mismatches/page errors.
 
-The [independent focused report](poke-sim/reports/focused-independent-146ba91/FOCUSED_RETEST_146BA91.md)
-verifies prior Unburden causality/provenance controls, zero runtime species/item/pair
-differences against the pinned reference candidate, six saved team controls and
-16discrete damage buckets over an independent4096point grid and45boundary checks.
-These are bounded reference results, not full mechanics or current-client proof.
-Of312additional full-team probes, six reference-accepted teams remain explicitly
-blocked because Fly is unsupported. No new material defect was found within that
-focused scope. Original historical receipts are preserved.
+The tracker has 6 current bounded reference passes and 7 historical stale assertions.
+Independent exact-head review passed 120 tests, 192 unsupported-input controls and
+23 dependency invalidation controls. Client verification remains unknown.
+[Receipt scope and exports](docs/release/CURRENT_BOUNDED_RECEIPTS_2026-10-20.md).
 
-Canonical broad move inventory:954moves,68025historical pairs,70interaction declarations.
-Current M-C reference candidate:392species/forms,537reachable moves,166items,
-225abilities and23756pairs. [Small source/compiled manifest](poke-sim/reports/focused-independent-146ba91/mc-candidate-evidence.json)
-binds the candidate to immutable upstream9b136a8. Official eligibility and client
-verification remain unknown; implementation coverage is separate from inventory.
+M-C candidate inventory: 392 forms, 537 moves, 166 items, 225 abilities and 23756 pairs.
+Official eligibility/client proof remain unresolved.
 
-Next bounded work: enroll positive assertion receipts with dependency invalidation,
-repair audited Struggle boundaries, close the legacy golden-loader gap and evaluate
-Fly without removing unsupported containment before evidence. The
-[readiness register](docs/release/COMPETITIVE_READINESS_2026-10-20.md) owns remaining gates.
+The next Fly checkpoint is an assessment, not admission: 24 diagnostic comparisons
+expose seven exception failures on both sides. Production rejection and existing
+runtime receipts remain unchanged. [Readiness and next repair](docs/release/FLY_ASSESSMENT_2026-10-20.md).
+Its validation belongs to exact-head checks; 9ea1ccb remains the last recorded
+terminal checkpoint here until the assessment is published.
 
 ## Historical development checkpoints
 

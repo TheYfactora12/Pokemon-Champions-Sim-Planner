@@ -1,0 +1,291 @@
+
+RUN db_live_catalog_guard_tests.js
+
+=== live Supabase catalog guard tests ===
+
+  PASS 1. live alignment migration retires stale built-in rows outside the legal catalog
+  PASS 2. generator owns the stale-row retirement clause
+  PASS 3. DB runbook documents legal-only active rows and retirement workflow
+  PASS 4. public release guardrails document source-sync and user-data separation risks
+
+live Supabase catalog guard: 4 pass, 0 fail
+
+RUN db_m1_wiring_tests.js
+
+▶ Module 1 — Wiring suite (16 cases)
+  ✔ T-wiring-1
+  ✔ T-wiring-2
+  ✔ T-wiring-3
+  ✔ T-wiring-4
+  ✔ T-wiring-5
+  ✔ T-wiring-6
+  ✔ T-wiring-7
+  ✔ T-wiring-8
+  ✔ T-wiring-9
+  ✔ T-wiring-10
+  ✔ T-wiring-11
+  ✔ T-wiring-12
+  ✔ T-wiring-13
+  ✔ T-wiring-14
+  ✔ T-wiring-15
+  ✔ T-wiring-16
+
+==================================================
+Module 1 Wiring Test Results: 16/16 passed
+✅ All 16 db_m1 wiring tests GREEN
+
+RUN db_m10_meta_alignment_tests.js
+
+▶ Module 10 — Reg M-A public source alignment
+  ✔ T-meta-1 migration adds prior_snapshots.usage_data
+  ✔ T-meta-2 snapshot id and format are stable
+  ✔ T-meta-3 source audit records Smogon stats file presence separately from usage data
+  ✔ T-meta-4 Pokestats all-ratings ordering is captured
+  ✔ T-meta-5 Pokestats Bo3 ordering is captured for tournament priors
+  ✔ T-meta-6 ShowdownTier is labeled as performance cross-check
+    ⚠ LIVE DB test skipped (RUN_LIVE_DB not set)
+  ✔ T-meta-7 live DB can read aligned prior snapshot when RUN_LIVE_DB=1
+
+==================================================
+Module 10 Meta Alignment Results: 7/7 passed
+
+RUN db_m2_seed_tests.js
+
+▶ Module 2 — Seed suite (20 cases)
+  ✔ T-seed-1
+  ✔ T-seed-2
+  ✔ T-seed-3
+  ✔ T-seed-4
+  ✔ T-seed-5
+  ✔ T-seed-6
+  ✔ T-seed-7
+  ✔ T-seed-8
+  ✔ T-seed-9
+  ✔ T-seed-10
+  ✔ T-seed-11
+  ✔ T-seed-12
+  ✔ T-seed-13
+  ✔ T-seed-14
+  ✔ T-seed-15
+  ✔ T-seed-16
+  ✔ T-seed-17
+  ✔ T-seed-18
+  ✔ T-seed-19
+    ⚠ LIVE DB test skipped (RUN_LIVE_DB not set)
+  ✔ T-seed-20
+
+==================================================
+Module 2 Seed Test Results: 20/20 passed
+✅ All 20 db_m2 seed tests GREEN
+
+RUN db_m3_init_tests.js
+
+▶ Module 3 — Init / source-of-truth suite (12 cases)
+  ✔ T-init-1
+  ✔ T-init-2
+⚠️ No environment variables found, process.env: []
+  ✔ T-init-3
+⚠️ No environment variables found, process.env: []
+  ✔ T-init-4
+⚠️ No environment variables found, process.env: []
+  ✔ T-init-5
+⚠️ No environment variables found, process.env: []
+  ✔ T-init-6
+⚠️ No environment variables found, process.env: []
+  ✔ T-init-7
+⚠️ No environment variables found, process.env: []
+  ✔ T-init-8
+  ✔ T-init-9
+⚠️ No environment variables found, process.env: []
+  ✔ T-init-10
+  ✔ T-init-11
+⚠️ No environment variables found, process.env: []
+  ✔ T-init-12
+
+==================================================
+Module 3 Init Test Results: 12/12 passed
+✅ All 12 db_m3 init tests GREEN
+
+RUN db_m4_save_tests.js
+⚠️ No environment variables found, process.env: []
+
+▶ Module 4 — Save analyses suite (18 cases)
+PASS T-save-1
+PASS T-save-2
+PASS T-save-3
+PASS T-save-4
+⚠️ No environment variables found, using mock
+PASS T-save-5
+✓ Using injected test credentials with mock client
+PASS T-save-6
+✓ Using injected test credentials with mock client
+PASS T-save-7
+✓ Using injected test credentials with mock client
+PASS T-save-8
+✓ Using injected test credentials with mock client
+PASS T-save-9
+✓ Using injected test credentials with mock client
+PASS T-save-10
+✓ Using injected test credentials with mock client
+PASS T-save-11
+✓ Using injected test credentials with mock client
+PASS T-save-12
+✓ Using injected test credentials with mock client
+PASS T-save-13
+✓ Using injected test credentials with mock client
+PASS T-save-14
+✓ Using injected test credentials with mock client
+PASS T-save-15
+✓ Using injected test credentials with mock client
+PASS T-save-16
+✓ Using injected test credentials with mock client
+PASS T-save-17
+✓ Using injected test credentials with mock client
+PASS T-save-18
+✓ Using injected test credentials with mock client
+PASS identity: incomplete legacy payload makes no DB writes
+✓ Using injected test credentials with mock client
+PASS identity: JSON envelope survives insert and recent-history read
+✓ Using injected test credentials with mock client
+✓ Using injected test credentials with mock client
+✓ Using injected test credentials with mock client
+✓ Using injected test credentials with mock client
+PASS identity: contradictory scalar/envelope or games are rejected
+✓ Using injected test credentials with mock client
+PASS identity: both history readers quarantine changed scalar policy
+✓ Using injected test credentials with mock client
+PASS identity: singles storage stays labeled and ineligible for doubles learning
+PASS outcomes: incomplete, unfinished and contradictory evidence cannot build a saved aggregate
+✓ Using injected test credentials with mock client
+✓ Using injected test credentials with mock client
+✓ Using injected test credentials with mock client
+PASS outcomes: stored count mismatch or invalid terminal proof makes no DB writes
+Module 4 Save Test Results: 25/25 passed
+
+RUN db_m5_import_tests.js
+⚠️ No environment variables found, process.env: []
+⚠️ No environment variables found, using mock
+
+▶ Module 5 — Imported teams persist (12 cases)
+  ✔ T-import-1
+✓ Using injected test credentials with mock client
+  ✔ T-import-2
+✓ Using injected test credentials with mock client
+  ✔ T-import-3
+✓ Using injected test credentials with mock client
+  ✔ T-import-4
+  ✔ T-import-5
+  ✔ T-import-6
+✓ Using injected test credentials with mock client
+  ✔ T-import-7
+✓ Using injected test credentials with mock client
+  ✔ T-import-8
+  ✔ T-import-9
+✓ Using injected test credentials with mock client
+  ✔ T-import-10
+  ✔ T-import-11
+  ✔ T-import-12
+
+==================================================
+Module 5 Import Results: 12/12 passed
+✅ All tests passed
+
+RUN db_m6_history_tests.js
+⚠️ No environment variables found, process.env: []
+⚠️ No environment variables found, using mock
+
+▶ Module 6 — History tab reads from DB (10 cases)
+  ✔ T-hist-1
+  ✔ T-hist-2
+  ✔ T-hist-3
+  ✔ T-hist-4
+  ✔ T-hist-5
+  ✔ T-hist-6
+  ✔ T-hist-7
+  ✔ T-hist-8
+✓ Using injected test credentials with mock client
+  ✔ T-hist-9
+✓ Using injected test credentials with mock client
+  ✔ T-hist-10
+
+==================================================
+Module 6 History Results: 10/10 passed
+✅ All tests passed
+
+RUN db_m7_golden_battles_tests.js
+
+▶ Module 7 — Golden battles regression (8 cases)
+  ✔ T-golden-1
+  ✔ T-golden-2
+  ✔ T-golden-3
+  ✔ T-golden-4
+  ✔ T-golden-5
+  ✔ T-golden-6
+  ✔ T-golden-7
+  ✔ T-golden-8
+
+==================================================
+Module 7 Golden Battles Results: 8/8 passed
+✅ All tests passed
+
+RUN db_m8_priors_tests.js
+⚠️ No environment variables found, process.env: []
+⚠️ No environment variables found, using mock
+
+▶ Module 8 — Prior snapshots for hidden-info inference (10 cases)
+  ✔ T-prior-1
+  ✔ T-prior-2
+  ✔ T-prior-3
+  ✔ T-prior-4
+⚠️ No environment variables found, process.env: []
+⚠️ No environment variables found, using mock
+  ✔ T-prior-5
+⚠️ No environment variables found, process.env: []
+  ✔ T-prior-6
+⚠️ No environment variables found, process.env: []
+  ✔ T-prior-7
+⚠️ No environment variables found, process.env: []
+  ✔ T-prior-8
+  ✔ T-prior-9
+  ✔ T-prior-10
+
+==================================================
+Module 8 Prior Snapshots Results: 10/10 passed
+✅ All tests passed
+
+RUN db_m9_hardening_tests.js
+
+▶ Module 9 — Hardening / advisor / migration baseline suite (10 cases)
+  ✔ T-hard-1
+  ✔ T-hard-2
+  NOT VERIFIED: applied migration ledger (requires authorized administrative readback)
+  SKIP T-hard-3
+  ✔ T-hard-4
+  ✔ T-hard-5
+  NOT VERIFIED: Supabase security advisor (requires authorized administrative readback)
+  SKIP T-hard-6
+  NOT VERIFIED: Supabase performance advisor (requires authorized administrative readback)
+  SKIP T-hard-7
+  ✔ T-hard-8
+  ✔ T-hard-9
+  ✔ T-hard-10
+  ✔ T-hard-11
+
+==================================================
+Module 9 Hardening Test Results: 8 passed, 0 failed, 3 not verified; 11 total
+
+RUN db_status_retry_tests.js
+
+=== DB status retry tests ===
+
+  PASS 1. app shell keeps visible DB chip but UI owns clearer states
+  PASS 4. responsive-but-rejected catalog is not presented as healthy
+  PASS 2. UI retries live DB before bundled fallback
+  PASS 3. Supabase adapter records last team-load status for diagnostics
+
+DB status retry: 4 pass, 0 fail
+
+
+DB gate: ran 12 file(s), 0 failure(s).
+Skipped 4 manual/helper file(s).
+Project gate passed.

@@ -1,5 +1,11 @@
 # Improvement Log
 
+## IMP-0123: Preserve Fly Admission Counterexamples
+
+- Keep Fly rejected: a quarantined minimal prototype exposes seven airborne exceptions on both sides (14 disagreements in 24 probes).
+- Add admission negative controls, source-bound structured receipts and a dependency-specific readiness map.
+- [Assessment](release/FLY_ASSESSMENT_2026-10-20.md).
+
 ## IMP-0122: Reject Unsupported Bounded Capture Inputs
 
 - Independent target-slot mutation exposed both damage adapters silently calculating the original target. Preserve the direct reference counterexample: maximum 31 versus 36.
