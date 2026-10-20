@@ -19,7 +19,8 @@
       "behavior": "Contact damage, fixed multi-hit frequency and contact KO are explicit and identity-preserving.",
       "status": "partial",
       "tests": [
-        "tests/rocky_helmet_reference_tests.mjs", "tests/rough_skin_reference_tests.mjs"
+        "tests/rocky_helmet_reference_tests.mjs",
+        "tests/rough_skin_reference_tests.mjs"
       ],
       "oracle": "Pinned pokemon-showdown 0.11.11 Champions custom battle; items onDamagingHitOrder2 and RoughSkin order1.",
       "boundary_vectors": [
@@ -1301,6 +1302,26 @@
         "sleep-freeze-paralysis-diagnostic"
       ],
       "known_gap": "General ability suppression, suppressed Gas, other item disabling and Champions client parity remain unproved."
+    },
+    {
+      "id": "MOVE-AMNESIA-SELF-STAGE",
+      "family": "moves-effects",
+      "behavior": "Amnesia changes only user Special Defense with effective Contrary/Simple and stage caps; self action identity and one PP are preserved.",
+      "status": "partial",
+      "tests": [
+        "tests/amnesia_reference_tests.mjs"
+      ],
+      "oracle": "Pinned pokemon-showdown 0.11.11 custom battle; base definition also checked against upstream9b136a8. Synthetic ability boundaries are not legal-team proof.",
+      "boundary_vectors": [
+        "both-sides",
+        "self-only-stage-and-action-identity",
+        "upper-and-lower-cap",
+        "Contrary-Simple",
+        "Neutralizing-Gas",
+        "Ability-Shield-intact-consumed",
+        "PP-at-cap"
+      ],
+      "known_gap": "Current-client certification, called moves, wider stat-stage interactions and complete legal-team inventory remain unproved."
     }
   ]
 }

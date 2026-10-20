@@ -1720,3 +1720,7 @@ consumer checks. Independent reviewer first rejected contradictory survivor/winn
 cases and downstream leakage; these were reproduced and repaired without schema
 changes. Final independent retest remains pending. The actual clock model and eight
 other foundation findings remain open in the same register.
+
+## IMP-0122 — Amnesia self-stage and failure continuity (2026-10-20)
+
+A reference-admitted self-boost fell through to an opponent status path. Added a scoped handler, effective Contrary/Simple suppression, self action identity and explicit cap failure. Independent review caught that failure text alone did not set state used by next-turn Stomping Tantrum; four two-turn regressions now protect that consequence. Thirty focused cases pass. Base source and isolated exact-upstream probes agree; current-client parity remains unproved. General lesson: test downstream state consumers, not only the immediate number or log.

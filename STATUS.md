@@ -7,18 +7,21 @@ Historical candidate observations are not current deployment instructions.
 
 ## Draft review candidate
 
-v2.2.226-accuracy-gates / engine 1.1.28 is the review follow-up to
+v2.2.227-amnesia / engine 1.1.29 is the review follow-up to
 [draft PR279](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279).
 The [competitive readiness register](docs/release/COMPETITIVE_READINESS_2026-10-20.md)
 owns current defects, severity, evidence, owners, retest and the Wednesday decision.
 The [season/accuracy workflow](docs/release/SEASON_AND_ACCURACY_WORKFLOW.md) defines
 intake through independently verified release. Competitive release remains **NO-GO**.
 
+The [Amnesia repair receipt](docs/release/AMNESIA_REPAIR_2026-10-20.md) records its separate 30-case reviewed regression and remaining boundaries.
+
 This candidate repairs Rough Skin effective contact protection and strengthens
 checker sensitivity, replay multiplicity/artifact binding, runtime parity and
 recurring GitHub gates. Development checks do not certify current-client rules,
 full mechanics, competitive policy quality or live Supabase. Scoped independent review and final local gates pass;
-exact-head hosted checks remain pending; no merge/deployment authorized.
+methodology checkpoint d48b9aa passed all seven hosted checks;
+the separate Amnesia checkpoint is awaiting publication and hosted checks; no merge/deployment authorized.
 
 The v225 candidate and its evidence are preserved in
 [the historical candidate receipt](docs/archive/STATUS_V225_CANDIDATE_2026-10-20.md).

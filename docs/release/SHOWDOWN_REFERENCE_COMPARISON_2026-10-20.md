@@ -39,3 +39,9 @@ Prepare an isolated commit-pinned upstream executable reference only after depen
 Parent research identified the upstream M-C profile as tournament doubles with Open Team Sheets and six registered/four picked. It must not silently substitute for ranked registration or information visibility. Proposed upstream switch/Eject Button/Emergency Exit probes and replacement-queue ordering require executable and client cross-checks.
 
 The October 19 ranked video https://www.youtube.com/watch?v=VpQqdykD2PU has transcript leads at 45:33–45:40 (weather/speed), 1:05:49–1:06:12 (self Volt Switch/Electro Shot), and 1:11:29 (Electric Terrain/Sleep Powder). Frames were not visually verified here. Recording date, complete sets, RNG and server behavior remain unverified; no outcome or mechanics golden derives from these leads.
+
+## Subsequent isolated executable validation
+
+The exact upstream archive (SHA256 ee1cc7a756e6f520f8afd4eeb97269ea66316137bfae0c70d250d6af72755f42) was transpiled outside the checkout with existing cached esbuild0.25.12/ts-chacha20; no install, package replacement or server startup. The build bypassed the automatic install entrypoint and recorded hashes for 1,080 compiled files. This was not a TypeScript/full-upstream-suite check.
+
+Nine bounded probes executed Amnesia, Rest and ordinary Encore in installed custom, upstream custom and explicit upstream M-C. All agree: Amnesia self +2 SpD; Rest blocks turns2/3 and wakes/actions turn4 after turn1 use; Encore replaces queued Flamethrower with prior Will-O-Wisp. All final M-C six-member registrations validated and selected four under Open Team Sheets. An initial ineligible Blissey helper was rejected and replaced with eligible Venusaur. Randomized HP and Encore priority-contribution boundaries were not compared. Inputs, logs, frames and executable hashes remain in the isolated `upstream-reference-audit/executable` evidence directory. Current-client certification remains absent.

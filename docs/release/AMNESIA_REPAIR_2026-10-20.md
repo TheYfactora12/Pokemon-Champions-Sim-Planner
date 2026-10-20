@@ -1,0 +1,11 @@
+# Amnesia repair checkpoint
+
+Candidate v2.2.227-amnesia / engine1.1.29 follows immutable methodology checkpoint d48b9aaf76af132d2194701506a3003acb850185. All seven hosted development checks for that checkpoint passed in CI39445437448, bundle39445437415 and cache39445437406. Supabase Preview was skipped. These checks do not close the original independent audit findings.
+
+Amnesia previously fell through as an ineffective opponent-directed move. It now targets the user before action identity is recorded and applies +2 Special Defense, -2 under effective Contrary or +4 under effective Simple, with stage caps. Existing active Gas/Ability Shield resolution determines effective ability. Only this move's stage handler changes.
+
+Thirty focused tests pass: both orientations, normal and upper/lower cap, Simple/Contrary, Gas, intact/consumed Shield, unchanged other Special Defense stages, self action identity and PP use. Independent review found missing failed-move state at cap; repaired with a structured stage-cap failure and four two-turn tests comparing reference Stomping Tantrum base power75/150 with local failure-state propagation. Independent retest passes30/30. Initial fixture errors (wrong event field, wrong reference cap-log assumption, invalid numeric seed) were corrected without changing expected stages or weakening assertions.
+
+Source scope: base Amnesia definitions are identical in installed0.11.11 and official upstream9b136a8c8cdb860a8ab96fa063f906604e352547. Synthetic custom ability boundaries do not prove regulation legality or client parity. Called moves, wider denial/stage interactions and current-client semantics remain unproved. F03 stays pending original-auditor exact-head retest.
+
+Project gate ran244 fast files and12 offline DB files: one failure was the old64-case inventory assertion. Updated it to65 cases/42partial and explicitly retained Amnesia as unproved; focused system retest passed. Battle audit passed. Release identity review12/12 and final browser2games/3pairs/32turns passed, zero mismatches/page errors. Final bundle SHA256 f60e6a31108c57f7c0bc7f539a901f026e619181e81f9dc6916c8cc33cb2bc36,11534169bytes. Full hosted retest pending. No goldens, budget thresholds, dependencies or live data changed.

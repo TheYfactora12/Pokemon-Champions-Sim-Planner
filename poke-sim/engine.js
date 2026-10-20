@@ -4664,6 +4664,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   function executeActionImpl(attacker, move, target, allies, enemies, field, log, rng, opts) {
+    if (move === 'Amnesia') target = attacker;
     const fromSleepTalk = !!(opts && opts.fromSleepTalk);
     if (!attacker.alive) return;
     if (!move) return;
@@ -4701,7 +4702,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // Recovery / board-state support
       'Recover','Shore Up','Rest','Sleep Talk','Substitute','Imprison','Ally Switch',
       // Stage / pressure moves
-      'Swords Dance','Dragon Dance','Calm Mind','Coil','Fake Tears','Coaching','Clangorous Soul',
+      'Swords Dance','Dragon Dance','Calm Mind','Amnesia','Coil','Fake Tears','Coaching','Clangorous Soul',
       'Heal Bell','Aromatherapy','Jungle Healing','Noble Roar','Growl','Leer','Spite']);
 
     // Attacker must be alive
@@ -5445,6 +5446,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (move === 'Dragon Dance') {
         if (!_applyStageMap(attacker, { atk: 1, spe: 1 }, log)) {
           log.push(`${attacker.name} used Dragon Dance! But it failed!`);
+        }
+        return;
+      }
+      if (move === 'Amnesia') {
+        const ability = _contactEffects(field).ability(attacker);
+        if (!_applyStageMap(attacker, {spd: ability === 'Contrary' ? -2 : ability === 'Simple' ? 4 : 2}, log)) {
+          attacker.lastMoveFailed = true;
+          _recordMoveFailureEvent(field,attacker,move,'stage-cap');
+          log.push(`${attacker.name} used Amnesia! But it failed!`);
         }
         return;
       }
@@ -7766,7 +7776,7 @@ var STATUS_MOVE_NAMES = new Set([
   "King's Shield",'Spiky Shield','Baneful Bunker','Obstruct','Light Screen',
   'Reflect','Aurora Veil','Encore','Haze','Defog','Recover','Shore Up','Rest',
   'Sleep Talk','Substitute','Imprison','Ally Switch','Toxic','Poison Powder',
-  'Rain Dance','Swords Dance','Dragon Dance','Calm Mind','Coil','Fake Tears',
+  'Rain Dance','Swords Dance','Dragon Dance','Calm Mind','Amnesia','Coil','Fake Tears',
   'Coaching','Clangorous Soul','Heal Bell','Aromatherapy','Jungle Healing','Noble Roar','Growl','Leer'
 ]);
 
@@ -7963,7 +7973,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.28'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.29'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

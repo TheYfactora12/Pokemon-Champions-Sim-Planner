@@ -5,8 +5,7 @@ release only after all required gates. **NO-GO. No scope waiver or percentage.**
 Owner: Kevin for release decisions; implementer for repairs; independent reviewers
 for retest; a current-client capture owner remains unassigned.
 
-Candidate: v2.2.226-accuracy-gates / engine1.1.28, review follow-up to PR279
-base07d193a. This register owns current gate status; older dated reports remain
+Candidate: v2.2.227-amnesia / engine1.1.29, separate follow-up to methodology checkpoint d48b9aa in PR279. This register owns current gate status; older dated reports remain
 historical receipts. No merge, deployment, live DB change or key enrollment made.
 
 | ID / severity | Reproduction and impact | Owner / change | Status and independent closure |
@@ -17,7 +16,7 @@ historical receipts. No merge, deployment, live DB change or key enrollment made
 | ACC-04 High for claims | Random-damage reference probes compare order/direction, not exact HP. Same seed does not synchronize RNG. | Implementer: machine-readable exclusions and negative tests; deterministic Seismic Toss rejects1HP corruption. | Scoped checks pass; randomized exact damage/client parity not established. |
 | MECH-01 High | Rough Skin ignored Pads, Gas, Magic Guard and Long Reach:8/12 original probes disagreed. | Implementer: effective contact ability/item helper shared with Helmet. | 28boundary cases+2engine mutant controls pass;56Helmet cases pass. Independent reviewer found no implementation blocker; final aggregate and battle retest passed. |
 | RULE-01 Critical release | M-C package incomplete; roster262 and October form evidence already available. | Human capture owner + source reviewer. | NO-GO: full-team acceptance/rejection, training/learnset/item constraints, current client traces and immutable reviewed digest missing. |
-| GAME-01 Critical release | Public switching, simultaneous Mega/order, broader lifecycle and held-out player-policy quality unproved. | Mechanics owner + client capture owner. | NO-GO.64benchmark cases:18covered,41partial,5open. No narrow Practice substitute approved. |
+| GAME-01 Critical release | Public switching, simultaneous Mega/order, broader lifecycle and held-out player-policy quality unproved. | Mechanics owner + client capture owner. | NO-GO.65 benchmark cases:18 covered,42 partial,5 open. No narrow Practice substitute approved. |
 | DB-01 High release | Future default grants absent on two anon reads and four trusted writers. Docker backend socket launch failure. | Isolated DB reviewer. | Fresh in-memory PostgreSQL86named assertions pass; companion60browser denials+6trusted writes pass. Auth/PostgREST/owner isolation/live ledger, full persistence and deployment-version proof unavailable. No live grants applied. |
 | CI-01 High process | Pages previously independent of battle checks; main has no protection/rulesets. | Implementer + human repository owner. | New always-running methodology job and strict pre-deploy gate proposed. Branch settings unchanged. Hosted browser dependency installation blocked by auto-review; approval needed. |
 | APPROVAL-01 Critical release | No reviewed client package or enrolled human verification key. | Human owner + independent reviewer. | Empty key registry and null package intentionally block. Signature identity requires separately approved enrollment and protected review controls; source-editable keys alone do not establish ownership. |
@@ -105,7 +104,7 @@ not current-client approval or an independent accuracy denominator.
 |---|---|---|
 | F01 High | Admitted Red Card does not consume/force attacker switch. | Open: full-six/bring-four natural fixtures, side/slot and protected/KO/reserve boundaries. |
 | F02 High | White Herb does not clear Intimidate drop or consume. | Open: entry/stage/item lifecycle and suppression cases. |
-| F03 High | Amnesia targets opponent instead of self SpD. | Independent isolated reproduction confirms 16 disagreements in 18 probes: exact self-stage, cap, Simple/Contrary and suppression. Repair pending. |
+| F03 High | Amnesia targets opponent instead of self SpD. | Local repair and independent 30-case retest pass: self-stage/identity, caps, Simple/Contrary, Gas/Shield, PP and next-turn failure state. Original-auditor exact-head retest pending. |
 | F04 High | Same-turn Encore leaves queued move unchanged. | Open: replacement target/PP/priority; preserve selected non-move bonuses and Mental Herb/Quash exceptions. |
 | F05 High | Rest wakes T3 after T1 use; reference wakes T4. | Open; original reproduction retained. No client certification. |
 | F06 High | Shipped86–100 discrete roll conflicts with dated April correction; old stress fallback differed. | Runtime-graph discrepancy repaired; roll-profile source conflict remains open pending dated independent/current-client proof. No expected0.86 fixture silently rewritten. |
@@ -139,3 +138,5 @@ Final local project gate: 243 fast files and 12 offline DB files passed, four ma
 Final local browser capture: `browser-replay-b3NHXh`, two games, three paired replays, 29 paired turns, zero mismatch pairs and zero page errors. Bundle 11,533,727 bytes; SHA256 `7310ecb5b8c0f91b4d60677823e7302a4685da547667c51f9d1eca89aaf880e0`. Captures bind observed response bytes to the candidate; local checkout was uncommitted at capture, so hosted commit checks remain distinct. No standalone lint/typecheck scripts exist; syntax and generated consistency are covered by project/release checks.
 
 Initial project/battle failures are retained: stale UI/release build expectations and workflow install-count assumption were repaired; disposable Git/MSYS checks required host execution. Initial browser inspector-body and comparator-arrow failures remain historical failed captures. No golden expectations or size ceilings were relaxed. Exact-head hosted checks are pending publication of this review candidate.
+
+The d48b9aa hosted checkpoint reached success for all seven checks (CI39445437448, bundle39445437415, cache39445437406); Supabase Preview skipped. The subsequent Amnesia change is independently scoped in [its receipt](AMNESIA_REPAIR_2026-10-20.md). User approval now permits pinned Playwright/Chromium setup; integration is a separate next commit and is not yet claimed complete.
