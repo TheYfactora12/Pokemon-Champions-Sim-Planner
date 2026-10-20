@@ -5,18 +5,26 @@ Reviewed: 2026-10-20. This file owns current release facts and priorities.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
-## Local repair candidate
+## Draft review candidate
 
-v2.2.224-replay-resilience / engine1.1.27 is the unpublished local candidate,
-based on main `ae3f52ce481924512bff523fdcef75d04935b7a3`. All v221 repairs remain.
-Development-only scripted switching has63 reference/admission cases; public and
+v2.2.225-strategy-context / engine 1.1.27 is the local follow-up for
+[draft PR279](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279).
+Main is reconciled through `3eb6ab1ce7f026a82934901ac386ae46505c3dde`; all v224 and
+earlier overnight repairs remain. PR278 is preserved pending integration review.
+Strategy/Print now require current execution and both-team identity before showing
+an observed attempt; My Data export preserves archived reports without calling them
+current coaching. [Scope and verification](docs/release/STRATEGY_CONTEXT_2026-10-20.md).
+
+Development-only scripted switching has 63 reference/admission cases; public and
 automatic switching remain unavailable. Natural Cure/Regenerator switch-out fixes
-have64 reference cases. Replay keyboard and saved-log retry repairs are included.
-Battle/accuracy gates and the 6-game/7-pair browser audit pass. Full project gate
-passes 238 fast and 12 local DB test files, with four manual/helpers skipped. See the
-[consolidated acceptance register](docs/release/CONTINUATION_ACCEPTANCE_2026-10-20.md).
-Simultaneous Mega/client evidence, full regulation approval, live DB and publication
-gates remain open. No push, merge, deploy or security/access changes performed.
+have 64 reference cases. The v224 full project, battle and accuracy gates passed;
+v225 independent reviews, 6-game/7-pair browser audit and aggregate gate pass
+(238 fast + 12 offline DB files; four helpers skipped). Exact hosted-head results
+are tracked in PR279; prior-head checks are not final-head proof. Publication for draft review is
+authorized; merge/deployment and live DB/security changes remain unauthorized.
+Client mechanics, full regulation approval and live DB gates remain open. See the
+[consolidated acceptance register](docs/release/CONTINUATION_ACCEPTANCE_2026-10-20.md)
+and [explicit-grant assessment](docs/release/SUPABASE_GRANTS_READINESS_2026-10-20.md).
 
 v2.2.217-current-moves / engine 1.1.21 is draft PR278, not deployed.
 Current Practice uses the September 9 official move removals and PP corrections;

@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0120: Bind Current Strategy Observations to Execution Context
+
+- Reproduced old-build/regulation attempts labelled current despite matching roster.
+- Require captured execution and both-team identity; keep Practice/reference
+  observations separate from competitive promotion. Preserve archived exports.
+- [Focused, browser and release receipts](release/STRATEGY_CONTEXT_2026-10-20.md).
+
 ## IMP-0119: Make Replay Expansion and Read Recovery Usable
 
 - Browser inspection reproduced keyboard-inaccessible replay expansion. Add focus,

@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.224-replay-resilience
+// Build marker: v2.2.225-strategy-context
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.224-replay-resilience'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.225-strategy-context'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -9922,7 +9922,7 @@ async function csBuildMyDataExport(teamKey) {
   var localReports = (typeof csLoadAllReports === 'function') ? csLoadAllReports() : {};
   var localSimLog = (typeof csSimLogGetAll === 'function') ? csSimLogGetAll({ includeQuarantined: true }) : [];
   var localTeamHistory = (typeof csSimLogForTeamBothSides === 'function') ? csSimLogForTeamBothSides(key) : [];
-  var activeReport = (typeof csLoadReport === 'function') ? csLoadReport(key) : null;
+  var activeReport = (typeof csBuildEvidenceOnlyStrategy === 'function') ? csBuildEvidenceOnlyStrategy(key) : null;
   var dbAnalyses = [];
 
   if (adapter && adapter.enabled && typeof adapter.loadAnalysesForPlayer === 'function') {
@@ -9973,6 +9973,7 @@ async function csBuildMyDataExport(teamKey) {
     local: {
       reports: localReports,
       current_report: activeReport,
+      reports_status: 'historical_unverified_reports_not_current_coaching',
       sim_log: localSimLog,
       team_history: localTeamHistory
     },
@@ -20323,6 +20324,28 @@ function renderStrategyTab(teamKey) {
   if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_lastStrategyReport', report);
 }
 
+// Observation eligibility is separate from competitive promotion: Practice/reference
+// attempts can be shown, but only for the current captured execution context.
+function csStrategyObservationMatches(game, teamKey, opponentKey, format) {
+  var p = game && game.provenance;
+  if (!p || p.schema_version !== 'champions-simulation-provenance-v1') return false;
+  if (game.playerKey !== teamKey || game.oppKey !== opponentKey || game.format !== format ||
+      p.player_team_id !== teamKey || p.opp_team_id !== opponentKey || p.format !== format) return false;
+  if (typeof ENGINE_VERSION === 'undefined' || p.engine_version !== ENGINE_VERSION ||
+      typeof CHAMPIONS_RELEASE_MANIFEST === 'undefined' || p.build_id !== CHAMPIONS_RELEASE_MANIFEST.build_id) return false;
+  if (typeof getSelectedRegulationId !== 'function' || typeof getChampionsRuleset !== 'function') return false;
+  var profile = getChampionsRuleset(getSelectedRegulationId());
+  if (!profile || !profile.id || !profile.version || p.regulation_id !== profile.id ||
+      p.ruleset_id !== profile.id || p.ruleset_version !== profile.version) return false;
+  if (profile.id === 'champions_mc_reference' && (!p.reference_artifact_sha256 ||
+      p.reference_artifact_sha256 !== CHAMPIONS_RELEASE_MANIFEST.reference_artifact_sha256)) return false;
+  return [['player_team_id', 'player_team_digest'], ['opp_team_id', 'opp_team_digest']].every(function(keys) {
+    var identity = _csRunTeamIdentities[p[keys[0]]];
+    return TEAMS[p[keys[0]]] && identity && /^[a-f0-9]{64}$/.test(p[keys[1]] || '') &&
+      identity.digest === p[keys[1]] && identity.input === JSON.stringify(TEAMS[p[keys[0]]]);
+  });
+}
+
 function csBuildEvidenceOnlyStrategy(teamKey) {
   var team = typeof TEAMS !== 'undefined' && TEAMS[teamKey];
   if (!team) return null;
@@ -20332,7 +20355,7 @@ function csBuildEvidenceOnlyStrategy(teamKey) {
   Object.keys(results).forEach(function(key) {
     var result = results[key];
     matching[key] = { allLogs: (result && Array.isArray(result.allLogs) ? result.allLogs : []).filter(function(game) {
-      return game && game.playerKey === teamKey && game.format === format;
+      return csStrategyObservationMatches(game, teamKey, key, format);
     }) };
   });
   var members = team.members || [];
@@ -20378,10 +20401,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     host.innerHTML = '<div class="strategy-empty">Select a team to generate the coaching report.</div>';
     return;
   }
-  // Phase 3 (Refs #51): cached fast-path. If renderStrategyTabFromCache has
-  // stashed a saved report on window._csCachedOverride, paint that instead
-  // of rebuilding from scratch. Skips the (cheap) build but more importantly
-  // gives us instant paint on team switches and after page reload.
   var report;
   var fromCache = false;
   if (ChampionsSim.state.cachedStrategyOverride) {
@@ -20395,11 +20414,9 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     host.innerHTML = '<div class="strategy-empty">Could not generate report for this team.</div>';
     return;
   }
-  // Phase 3: persist freshly-built reports so the next page load paints instantly.
   if (!fromCache) {
     try { csSaveReport(teamKey, report); } catch(e) { UILog.warn('strategy report save failed', e); }
   }
-  // Stash for tests / inspection
   ChampionsSim.state.lastStrategyReport = report;
   if (typeof exposeLegacyWindowAlias === 'function') exposeLegacyWindowAlias('_lastStrategyReport', report);
 
@@ -20420,8 +20437,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
 
   html += '<p class="cs-summary-line">' + _csEsc(report.coaching_summary) + '</p>';
 
-  // Phase 4b (Refs #52) — Adaptive state banner + consistency pill.
-  // Inserted above Section 1 so the user sees the state before reading anything.
   try {
     var _history = (typeof computeTeamHistory === 'function') ? computeTeamHistory(teamKey) : null;
     var _branchAnalysis = (typeof csLatestBranchMoveAnalysisForTeam === 'function') ? csLatestBranchMoveAnalysisForTeam(teamKey) : null;
@@ -20430,18 +20445,12 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     }
     if (_history) html += csRenderAdaptiveBanner(_history);
     if (_history) html += csRenderRecordBar(_history);
-    // Phase 4c (Refs PHASE4C_DETECTORS_SPEC.md): 5 collapsible detector
-    // sections under the Record bar. Renders inline/section confidence
-    // badges and 'insufficient data' placeholders when n < 5.
     if (_history && typeof csRenderPhase4cSections === 'function') {
       html += csRenderPhase4cSections(_history, teamKey, team);
     }
     if (_history && typeof csRenderPolicyAuditSection === 'function') {
       html += csRenderPolicyAuditSection(_history);
     }
-    // Phase 4d: surface best candidate + alternatives for the currently
-    // selected opponent. Kept low-budget in the tab render; deeper sweeps can
-    // request a larger simsPerBranch explicitly.
     if (typeof solveThreatResponse === 'function' && typeof renderThreatResponseCard === 'function') {
       var _oppSel = (typeof document !== 'undefined') ? document.getElementById('opponent-select') : null;
       var _oppKey = (_oppSel && _oppSel.value && TEAMS[_oppSel.value]) ? _oppSel.value : Object.keys(TEAMS).filter(function(k){ return k !== teamKey; })[0];
@@ -20452,7 +20461,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     }
   } catch (e) { UILog.warn('banner render failed', e); }
 
-  // Section 1: Team report card
   html += '<section class="cs-section"><h3 class="cs-h3">Team Report Card ' + _csSourceChip(csLabelSim()) + '</h3>';
   html += '<p class="cs-explain">' + _csEsc(rc.short_explanation) + '</p>';
   html += '<div class="cs-cat-grid">';
@@ -20463,7 +20471,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 2: Team identity
   html += '<section class="cs-section"><h3 class="cs-h3">Team Identity ' + _csSourceChip(id.source_label) + '</h3>';
   html += '<ul class="cs-list">';
   html += '<li><strong>Playstyle:</strong> ' + _csEsc(id.playstyle) + '</li>';
@@ -20482,7 +20489,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   html += '<li><strong>Format fit:</strong> ' + _csEsc(id.format_fit) + '</li>';
   html += '</ul></section>';
 
-  // Section 3: Matchup intelligence
   var mi = report.matchup_intelligence;
   if (mi) {
     html += '<section class="cs-section"><h3 class="cs-h3">Matchup Intelligence</h3>';
@@ -20495,7 +20501,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     html += '</section>';
   }
 
-  // Section 4: BO3 adaptation
   var bo3 = report.bo3_adaptation;
   if (bo3) {
     html += '<section class="cs-section"><h3 class="cs-h3">BO3 Adaptation</h3>';
@@ -20509,7 +20514,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     html += '</section>';
   }
 
-  // Section 5: What works
   var ww = report.what_works;
   html += '<section class="cs-section"><h3 class="cs-h3">What Works</h3>';
   html += '<p><strong>Best synergy:</strong> ' + _csEsc(ww.best_synergy.description) + ' ' + _csSourceChip(ww.best_synergy.source_label) + '</p>';
@@ -20518,7 +20522,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   html += '<p><strong>Strongest win path:</strong> ' + _csEsc(ww.strongest_win_path.description) + ' ' + _csSourceChip(ww.strongest_win_path.source_label) + '</p>';
   html += '</section>';
 
-  // Section 6: What is weak
   var wk = report.what_is_weak;
   html += '<section class="cs-section"><h3 class="cs-h3">What Is Weak</h3>';
   if (wk.missing_roles.length) html += '<p><strong>Missing:</strong> ' + _csEsc(wk.missing_roles.join(', ')) + '</p>';
@@ -20529,7 +20532,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   html += '<p><strong>Speed control:</strong> ' + _csEsc(wk.speed_issues) + '</p>';
   html += '</section>';
 
-  // Section 7: Top threats
   if (report.top_threats.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Top Threats</h3><div class="cs-threat-grid">';
     report.top_threats.forEach(function(t){
@@ -20540,7 +20542,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 8: Lead guide (top 3)
   html += '<section class="cs-section"><h3 class="cs-h3">Top 3 Leads (' + lg.format + ')</h3>';
   html += '<div class="cs-lead-grid">';
   (lg.recommendations || []).forEach(function(rec){
@@ -20558,7 +20559,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 9: Move lines
   html += '<section class="cs-section"><h3 class="cs-h3">Move Lines (' + report.move_lines.length + ' scenarios)</h3>';
   html += '<div class="cs-moveline-grid">';
   report.move_lines.forEach(function(ml){
@@ -20573,7 +20573,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 10: Mistakes
   html += '<section class="cs-section"><h3 class="cs-h3">Mistakes to Avoid (' + report.mistakes_to_avoid.length + ')</h3>';
   html += '<div class="cs-mistake-list">';
   report.mistakes_to_avoid.forEach(function(m, i){
@@ -20585,7 +20584,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   });
   html += '</div></section>';
 
-  // Section 11: Risk profile
   if (report.risk_profile.length) {
     html += '<section class="cs-section"><h3 class="cs-h3">Risk Profile</h3><div class="cs-risk-grid">';
     report.risk_profile.forEach(function(r){
@@ -20598,7 +20596,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     html += '</div></section>';
   }
 
-  // Section 12: Trend analysis
   var ta = report.trend_analysis;
   html += '<section class="cs-section"><h3 class="cs-h3">Trend Analysis</h3>';
   if (!ta.has_data) {
@@ -20615,7 +20612,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   }
   html += '</section>';
 
-  // Section 13: Skill coaching
   var sk = report.skill_coaching;
   html += '<section class="cs-section"><h3 class="cs-h3">Skill Coaching</h3><div class="cs-skill-grid">';
   html += '<div class="cs-skill-card"><h4>Beginner</h4>';
@@ -20638,7 +20634,6 @@ function _unverifiedLegacyStrategyTab(teamKey) {
   html += '<p><strong>Opponent prediction:</strong> ' + _csEsc(sk.advanced.opponent_prediction) + '</p></div>';
   html += '</div></section>';
 
-  // Section 14: Stress test
   var st = report.stress_test;
   html += '<section class="cs-section"><h3 class="cs-h3">Stress Test &middot; Consistency: ' + st.consistency_rating + '</h3>';
   if (st.break_points.length) {
@@ -20665,11 +20660,9 @@ function _unverifiedLegacyStrategyTab(teamKey) {
     csWireLeadPairTableSort(host, teamKey);
   }
 
-  // Apply Evidence toggle state on initial paint
   _csApplyEvidenceVisibility();
 }
 
-// ---- Evidence toggle (Section 14, decision 3) -----------------------
 var CS_EVIDENCE_KEY = 'champions_evidence_chips_visible';
 function _csApplyEvidenceVisibility() {
   try {
@@ -20691,19 +20684,6 @@ function _csInitEvidenceToggle() {
   _csApplyEvidenceVisibility();
 }
 
-// =====================================================================
-// PHASE 3 - PER-TEAM REPORT PERSISTENCE (Section 7)
-// =====================================================================
-// Stores StrategyReport snapshots in localStorage keyed by team_signature
-// so the Strategy tab paints instantly on team switch, with no flash.
-// Implements Section 7 schema: { schema_version, reports: { <sig>: ... } }
-// Section 11 explicitly defers IndexedDB to a later effort, so we use
-// localStorage only for v1 - simpler and synchronous.
-//
-// Lifecycle (per Section 13.1 lifecycle 1 + 4):
-//   page load: paint cached snapshot synchronously, then schedule rebuild
-//   rebuild fires: compute new report, write snapshot, repaint
-// ---------------------------------------------------------------------
 var CS_PERSIST_KEY = 'champions_strategy_report_v1';
 var CS_PERSIST_SCHEMA = 1;
 

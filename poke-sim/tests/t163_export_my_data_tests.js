@@ -169,7 +169,7 @@ function seedLocalHistory() {
     reports: {
       [sig]: {
         team_key: 'player',
-        theory_report: { team_signature: sig, trend_analysis: { has_data: true } },
+        theory_report: { team_signature: sig, format:'singles', coaching_summary:'STALE_COACHING', provenance:{engine_version:'old',regulation_id:'old'}, trend_analysis: { has_data: true } },
         simulation_overlay: null,
         last_built_at: '2026-05-15T10:00:00.000Z',
         last_simmed_at: '2026-05-15T10:00:00.000Z'
@@ -214,6 +214,11 @@ async function main() {
     truthy(payload.local && Array.isArray(payload.local.team_history), 'team_history missing');
     truthy(payload.local.sim_log.length >= 1, 'local sim log not exported');
     truthy(payload.local.current_report, 'current_report missing');
+    eq(payload.local.current_report.schema_version, 'strategy-evidence-only-v1');
+    eq(payload.local.current_report.confidence, 'unknown');
+    eq(payload.local.current_report.coaching_summary, undefined);
+    eq(payload.local.reports_status, 'historical_unverified_reports_not_current_coaching');
+    eq(payload.local.reports[teamSignature(TEAMS.player)].theory_report.coaching_summary, 'STALE_COACHING');
   });
 
   await T('3. db export payload includes analyses and nested logs', async () => {
