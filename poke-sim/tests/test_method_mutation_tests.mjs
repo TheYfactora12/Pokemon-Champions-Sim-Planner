@@ -10,6 +10,7 @@ const root=fileURLToPath(new URL('../',import.meta.url)),out=new URL('../artifac
 fs.mkdirSync(out,{recursive:true});
 for(const [mutant,suite,pattern] of [
   ...['encore_queue','encore_herb','encore_duration','encore_priority'].map(m=>[m,'encore_reference_tests.mjs','Encore false/0/(before|herb|after|changed-priority)$']),
+  ...['roll_fifteen','roll_continuous'].map(m=>[m,'discrete_damage_reference_tests.mjs']),
   ['encore_unburden','encore_reference_tests.mjs','herb-unburden'],
   ['rest_leaf_guard','rest_reference_tests.mjs','Rest Leaf Guard player/0/(sun|sun-gas-shield)$'],
   ['rest_admission','rest_reference_tests.mjs','Rest terrain and ally admission player/0/(electric|ally)$'],

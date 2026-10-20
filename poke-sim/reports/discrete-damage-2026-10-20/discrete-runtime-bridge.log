@@ -1,0 +1,12 @@
+
+=== runtime data bridge tests ===
+
+  PASS 1. runtime bridge exposes generated move/species lookups
+  PASS 2. champions damage roll window is explicit in runtime overrides
+  PASS 3. engine damage uses runtime roll override instead of DB-side logic
+  PASS 4. runtime bridge canonicalizes Showdown move target categories for the engine
+  PASS 5. every generated Showdown target value maps to a supported engine category
+  PASS 6. engine-only fallback target map cannot drift from runtime bridge map
+
+runtime data bridge: 6 pass, 0 fail
+

@@ -1,7 +1,9 @@
 // Test-process-only source transform. Never writes engine.js or golden fixtures.
 const fs=require('node:fs'),path=require('node:path');
-const original=fs.readFileSync, engine=path.resolve(__dirname,'../engine.js');
+const original=fs.readFileSync, engine=path.resolve(__dirname,process.env.CHAMPIONS_TEST_MUTANT?.startsWith('roll_')?'../runtime_data.js':'../engine.js');
 const mutations={
+  roll_fifteen:["champions: { mode: 'discrete_percent', min: 85, max: 100 }","champions: { mode: 'discrete_percent', min: 86, max: 100 }"],
+  roll_continuous:["champions: { mode: 'discrete_percent', min: 85, max: 100 }","champions: { mode: 'continuous_percent', min: 85, max: 100 }"],
   encore_unburden:["_consumeHeldItem(target);target.encoredMove=null;target.encoredTurns=0;","target.itemConsumed=true;target.encoredMove=null;target.encoredTurns=0;"],
   encore_queue:["} else if (queued && queued.move!==last) {","} else if (false && queued && queued.move!==last) {"],
   encore_herb:["if (effects.item(target)==='Mental Herb') {","if (false && effects.item(target)==='Mental Herb') {"],

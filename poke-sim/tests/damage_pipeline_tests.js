@@ -178,7 +178,7 @@ T('1. damage follows explicit staged rounding instead of one-shot modifier lumpi
   attacker.side = field.playerSide;
   target.side = field.oppSide;
   field._ctx.forceNoCrit = true;
-  const expected = handDamage(attacker, target, 'Thunderbolt', field, 0.86);
+  const expected = handDamage(attacker, target, 'Thunderbolt', field, 0.85);
   const actual = attacker.calcDamage('Thunderbolt', target, field, null, function() { return 0; });
   eq(actual, expected, 'staged damage chain mismatch');
 });

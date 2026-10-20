@@ -78,9 +78,9 @@ T('1. runtime bridge exposes generated move/species lookups', () => {
 T('2. champions damage roll window is explicit in runtime overrides', () => {
   const win = runtimeData.getDamageRollWindow({ statFormat: 'champions' });
   eq(win.mode, 'discrete_percent', 'champions roll mode');
-  eq(win.min, 86, 'champions min roll');
+  eq(win.min, 85, 'champions min roll');
   eq(win.max, 100, 'champions max roll');
-  eq(runtimeData.sampleDamageRoll({ statFormat: 'champions' }, function() { return 0; }), 0.86, 'low champions roll');
+  eq(runtimeData.sampleDamageRoll({ statFormat: 'champions' }, function() { return 0; }), 0.85, 'low champions roll');
   eq(runtimeData.sampleDamageRoll({ statFormat: 'champions' }, function() { return 0.999999; }), 1.0, 'high champions roll');
 });
 

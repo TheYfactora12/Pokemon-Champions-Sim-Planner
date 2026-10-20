@@ -1,0 +1,11 @@
+
+=== damage pipeline tests ===
+
+  PASS 1. damage follows explicit staged rounding instead of one-shot modifier lumping
+  PASS 2. sand does not boost Rock-type move damage
+  PASS 3. Rock-types gain special defense in sand against special hits
+  PASS 4. electric terrain boost keys off attacker grounded state, not target grounded state
+  PASS 5. flying attackers do not receive electric terrain damage boost
+
+damage pipeline: 5 pass, 0 fail
+

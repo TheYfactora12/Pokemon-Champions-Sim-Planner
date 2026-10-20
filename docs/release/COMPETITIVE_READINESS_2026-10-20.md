@@ -163,3 +163,7 @@ The d48b9aa hosted checkpoint reached success for all seven checks (CI3944543744
 ## Follow-up to hosted1610d1a
 
 Test Suite/browser/syntax/bundle/cache passed; methodology found4item-speed evidence errors, reproduced and repaired with preserved negative controls. See [ordering evidence repair](ITEM_SPEED_EVIDENCE_2026-10-20.md). Final exact-head hosted rerun pending. Register contract repairs are scoped consistency checks, not source freshness or official legality approval.
+
+## Discrete damage candidate
+
+See [bounded discrete damage receipt](DISCRETE_DAMAGE_2026-10-20.md). The sampler now follows the pinned reference's 16 discrete 85–100 buckets. This is source-reference evidence, not current-client certification. The current register candidate contains 954 catalog moves and 70 interaction declarations, with zero regulation-approved or client-verified moves. Stale learnsets, full eligibility reconciliation, bounded positive receipt enrollment and the legacy golden runner loading gap remain open. No competitive release approval is implied.

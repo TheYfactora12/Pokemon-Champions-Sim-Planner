@@ -1,4 +1,6 @@
 # CHAMPIONS_MECHANICS_SPEC.md
+
+> 2026-10-20 supersession: the historical86–100/15-roll adoption below is superseded for the simulator's reference profile by executable Champions custom/M-C upstream9b136a8, which yields85–100/16rolls. See docs/release/DISCRETE_DAMAGE_2026-10-20.md. The prior second-source account is retained as history; current-client distribution remains unverified.
 **Source of Truth for Pokémon Champions 2026 Battle Engine Implementation**
 > Historical mechanics research baseline. For current delivery direction and release gating, prefer `docs/release/SIMULATION_FIRST_REALIGNMENT_2026-06-06.md` plus current tests over this April 2026 snapshot alone.
 Last updated: 2026-04

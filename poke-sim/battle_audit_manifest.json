@@ -125,7 +125,8 @@
         "tests/damage_pipeline_tests.js",
         "tests/showdown_damage_oracle_tests.js",
         "tests/type_multiplier_audit_tests.js",
-        "tests/seismic_toss_tests.mjs"
+        "tests/seismic_toss_tests.mjs",
+        "tests/discrete_damage_reference_tests.mjs"
       ],
       "known_gaps": [
         "Oracle fixtures cover selected supported moves and modifier combinations, not the complete Showdown interaction space.",

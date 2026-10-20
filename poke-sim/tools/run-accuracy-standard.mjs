@@ -12,7 +12,7 @@ const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const commit=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
 if(process.env.GITHUB_SHA && process.env.GITHUB_SHA!==commit)throw Error('CI checkout is not the declared SHA');
 const lanes={
-  'independent-shared-reference':['amnesia_reference_tests.mjs','encore_reference_tests.mjs','struggle_reference_tests.mjs','showdown_damage_oracle_tests.js','rough_skin_reference_tests.mjs','showdown_complete_game_tests.mjs'],
+  'independent-shared-reference':['discrete_damage_reference_tests.mjs','amnesia_reference_tests.mjs','encore_reference_tests.mjs','struggle_reference_tests.mjs','showdown_damage_oracle_tests.js','rough_skin_reference_tests.mjs','showdown_complete_game_tests.mjs'],
   'player-information-boundary':['default_policy_boundary_tests.js','utility_information_policy_tests.js'],
   'legality-version-roster':['mc_reference_registration_tests.js','mc_reference_intake_tests.mjs','move_verification_registry_tests.js'],
   'checker-sensitivity':['item_speed_evidence_tests.mjs','artifact_outcome_truth_tests.js','test_method_mutation_tests.mjs','visible_replay_comparison_tests.mjs','competitive_readiness_tests.mjs']
