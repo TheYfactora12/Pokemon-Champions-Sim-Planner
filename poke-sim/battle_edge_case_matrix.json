@@ -1322,6 +1322,24 @@
         "PP-at-cap"
       ],
       "known_gap": "Current-client certification, called moves, wider stat-stage interactions and complete legal-team inventory remain unproved."
+    },
+    {
+      "id": "MOVE-REST-SLEEP-TIMING",
+      "family": "status",
+      "behavior": "Rest heals and sets a fixed three-count sleep; effective Early Bird doubles countdown and called Rest cannot reset sleep.",
+      "status": "partial",
+      "tests": [
+        "tests/rest_reference_tests.mjs"
+      ],
+      "oracle": "Showdown 9b136a8c8cdb860a8ab96fa063f906604e352547 data/moves.ts Rest and data/conditions.ts slp; executable current Champions custom reference.",
+      "boundary_vectors": [
+        "both-sides-and-active-slots",
+        "ordinary-burn-fullhp",
+        "EarlyBird-Gas-Shield-consumed",
+        "SleepTalk-calls-Rest",
+        "Insomnia-VitalSpirit-Comatose"
+      ],
+      "known_gap": "Synthetic custom states, not legal-team or client proof. Generic sleep distribution, switching, cure then subsequent sleep, ally/terrain immunity and failed Rest follow-on damage remain unproved."
     }
   ]
 }

@@ -3235,7 +3235,7 @@ function _applyDamagingMoveSecondary(attacker, move, target, field, log, rng) {
     if (effect.status === 'poison') target.toxicCounter = 0;
     if (effect.status === 'sleep') {
       target.statusTurns = 2 + Math.floor(rng() * 2);
-      target.sleepTurns = 0;
+      target.sleepTurns = 0; target.restSleep = false;
     }
     if (effect.status === 'frozen') target.frozenTurns = 0;
     const statusLabel = effect.status === 'paralysis' ? 'paralysed'
@@ -4610,7 +4610,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   function executeActionImpl(attacker, move, target, allies, enemies, field, log, rng, opts) {
-    if (move === 'Amnesia') target = attacker;
+    if (move === 'Amnesia' || move === 'Rest') target = attacker;
     const fromSleepTalk = !!(opts && opts.fromSleepTalk);
     if (!attacker.alive) return;
     if (!move) return;
@@ -4965,14 +4965,17 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Rest') {
-        if (attacker.hp >= attacker.maxHp || attacker.ability === 'Insomnia' || attacker.ability === 'Sweet Veil') {
+        if (attacker.status === 'sleep' || attacker.hp >= attacker.maxHp || attacker.ability === 'Comatose' || ['Insomnia','Vital Spirit','Sweet Veil'].includes(_contactEffects(field).ability(attacker))) {
+          attacker.lastMoveFailed = true;
+          _recordMoveFailureEvent(field,attacker,move,'rest-unavailable');
           log.push(`${attacker.name} used Rest! But it failed!`);
           return;
         }
         const hpBeforeHeal = attacker.hp;
         attacker.hp = attacker.maxHp;
         attacker.status = 'sleep';
-        attacker.statusTurns = ((typeof MOVE_EFFECTS !== 'undefined' && MOVE_EFFECTS.Rest && MOVE_EFFECTS.Rest.sleepTurns) || 2);
+        attacker.statusTurns = 3;
+        attacker.restSleep = true;
         attacker.sleepTurns = 0;
         attacker.toxicCounter = 0;
         attacker.frozenTurns = 0;
@@ -5187,21 +5190,21 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (move === 'Sleep Powder' && target && target.alive && canInflictStatus(target, 'sleep', field, attacker) && !target.types.includes('Grass')) {
         if (!_moveHits(attacker, target, move, field, rng, 0.75)) { log.push(`${attacker.name}'s Sleep Powder missed!`); return; }
         target.status = 'sleep'; target.statusTurns = 2 + Math.floor(rng() * 2);
-        target.sleepTurns = 0;
+        target.sleepTurns = 0; target.restSleep = false;
         log.push(`${target.name} fell asleep from ${attacker.name}'s Sleep Powder!`);
       }
       if (move === 'Hypnosis' && target && target.alive && canInflictStatus(target, 'sleep', field, attacker)) {
         if (!_moveHits(attacker, target, move, field, rng, 0.60)) { log.push(`${attacker.name}'s Hypnosis missed!`); return; }
         target.status = 'sleep';
         target.statusTurns = 2 + Math.floor(rng() * 2);
-        target.sleepTurns = 0;
+        target.sleepTurns = 0; target.restSleep = false;
         log.push(`${target.name} fell asleep from ${attacker.name}'s Hypnosis!`);
       }
       if (move === 'Spore' && target && target.alive && canInflictStatus(target, 'sleep', field, attacker) && !target.types.includes('Grass')) {
         if (!_moveHits(attacker, target, move, field, rng, 1.0)) { log.push(`${attacker.name}'s Spore missed!`); return; }
         target.status = 'sleep';
         target.statusTurns = 2 + Math.floor(rng() * 2);
-        target.sleepTurns = 0;
+        target.sleepTurns = 0; target.restSleep = false;
         log.push(`${target.name} fell asleep from ${attacker.name}'s Spore!`);
       }
       if (move === 'Leech Seed' && target && target.alive && !target.types.includes('Grass')) {
@@ -6642,7 +6645,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           target.status = status;
           if (status === 'sleep') {
             target.statusTurns = 2 + Math.floor(rng() * 2);
-            target.sleepTurns = 0;
+            target.sleepTurns = 0; target.restSleep = false;
           } else if (status === 'poison') {
             target.toxicCounter = 0;
           }
@@ -7066,10 +7069,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // turn 3 guaranteed wake (3-turn cap). Cite: games.gg Champions nerfs.
       if (action.attacker.status === 'sleep') {
         action.attacker.sleepTurns = (action.attacker.sleepTurns || 0) + 1;
-        action.attacker.statusTurns--;
-        if (action.attacker.sleepTurns >= 3 || action.attacker.statusTurns <= 0) {
+        action.attacker.statusTurns -= action.attacker.restSleep && _contactEffects(field).ability(action.attacker) === 'Early Bird' ? 2 : 1;
+        if ((!action.attacker.restSleep && action.attacker.sleepTurns >= 3) || action.attacker.statusTurns <= 0) {
           const sleepTurnsBeforeWake = action.attacker.sleepTurns || 0;
-          action.attacker.status = null;
+          action.attacker.status = null; action.attacker.restSleep = false;
           action.attacker.sleepTurns = 0;
           action.attacker.statusTurns = 0;
           log.push(`${action.attacker.name} woke up!`);
@@ -7085,9 +7088,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
             skipped_move: false,
             note: 'The Pokemon woke before action execution, so sleep did not deny this move.'
           });
-        } else if (action.attacker.sleepTurns === 2 && rng() < 0.333) {
+        } else if (!action.attacker.restSleep && action.attacker.sleepTurns === 2 && rng() < 0.333) {
           const sleepTurnsBeforeWake = action.attacker.sleepTurns || 0;
-          action.attacker.status = null;
+          action.attacker.status = null; action.attacker.restSleep = false;
           action.attacker.sleepTurns = 0;
           action.attacker.statusTurns = 0;
           log.push(`${action.attacker.name} woke up early!`);
@@ -7911,7 +7914,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.30'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.31'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
