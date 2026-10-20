@@ -17,18 +17,28 @@ export function referenceIdentity(upstream){
 }
 const norm=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
 function validateInput(input){
- assert.equal(input.scope.format,'gen9championsdoublescustomgame');
- assert.equal(input.scope.oracle_kind,'shared_reference');
- assert(['struggle','rest','encore','redcard','whiteherb','discrete'].includes(input.kind));
- assert.equal(input.teams.length,2);assert(input.actions.length>0);
- if(input.kind==='discrete'){
-  assert.equal(input.actions.length,16);assert.equal(input.rng_controls.local_draws.length,16);assert.equal(input.rng_controls.reference_random16.length,16);
-  for(const a of input.actions)assert.equal(a.method,'calculate_damage');
- }else{
-  assert.equal(input.rng_controls.damage,'maximum');assert.equal(input.rng_controls.accuracy,'forced_hit');
+ // Observers below intentionally address fixed slots. Reject unsupported mapping
+ // before either runtime loads, rather than letting shared assumptions agree.
+ const supported=caseCatalog().find(row=>row.kind===input?.kind);
+ assert(supported,'Unsupported bounded input: kind');
+ const allowed=['schema_version','assertion_id','case_id','contract_sha256','kind','teams','actions','seed','initial_state','rng_controls','scope','expected'];
+ assert(Object.keys(input).every(key=>allowed.includes(key)),'Unsupported bounded input: extra field');
+ const versionPrefix=supported.case_id+'.current-runtime.v';
+ assert(typeof input.assertion_id==='string'&&input.assertion_id.startsWith(versionPrefix)&&/^[1-9][0-9]*$/.test(input.assertion_id.slice(versionPrefix.length)),'Unsupported bounded input: assertion_id');
+ for(const key of ['case_id','scope','teams','actions','seed','rng_controls'])
+  assert.deepEqual(input[key],supported[key],'Unsupported bounded input: '+key);
+ const initial=structuredClone(supported.initial_state);
+ // This existing sensitivity control is executed by both initializers, not
+ // reconstructed: allow only the declared White Herb SpA stage value to vary.
+ if(input.kind==='whiteherb'){
+  const spa=input.initial_state?.player_slot0_stages?.spa;
+  assert(Number.isInteger(spa)&&spa>=-6&&spa<=6,'Unsupported bounded input: initial_state spa');
+  initial.player_slot0_stages.spa=spa;
  }
- assert.equal(input.rng_controls.critical_hits,false);
+ assert.deepEqual(input.initial_state,initial,'Unsupported bounded input: initial_state');
+ if(input.schema_version!==undefined)assert.equal(input.schema_version,'bounded-inputs-v1','Unsupported bounded input: schema_version');
 }
+
 function initialize(input,actor,reference){
  const st=input.initial_state;
  if(st.player_slot0_hp_missing)actor.hp-=st.player_slot0_hp_missing;

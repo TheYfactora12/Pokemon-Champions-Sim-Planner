@@ -25,3 +25,4 @@ poke-sim/source/bounded-assertions/** -text
 # Immutable raw audit receipts and execution logs.
 poke-sim/reports/focused-independent-146ba91/** -text
 poke-sim/reports/struggle-boundaries-2026-10-20/** -text
+poke-sim/reports/current-bounded-input-repair-2026-10-20/** -text

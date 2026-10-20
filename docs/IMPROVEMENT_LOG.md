@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0122: Reject Unsupported Bounded Capture Inputs
+
+- Independent target-slot mutation exposed both damage adapters silently calculating the original target. Preserve the direct reference counterexample: maximum 31 versus 36.
+- Reject unsupported fixed-case actions, actors, targets, draw/bucket mappings and other ignored inputs before either runtime loads. Preserve supported stage sensitivity and versioned receipt IDs.
+- Recapture and independently review v2 assertions after the runner change; retain v1 receipts as stale history.
+- [Repair evidence](../poke-sim/reports/current-bounded-input-repair-2026-10-20/).
+
 ## IMP-0121: Enroll Current Bounded Mechanics Receipts
 
 - Independently replay six exact current-runtime cases and retain structured inputs, outcomes, timestamps and source fingerprints.

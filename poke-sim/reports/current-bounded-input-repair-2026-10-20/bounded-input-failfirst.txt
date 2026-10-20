@@ -1,0 +1,197 @@
+✖ fixed mapping rejects ignored fields struggle (1.7113ms)
+✖ fixed mapping rejects ignored fields rest (0.5647ms)
+✖ fixed mapping rejects ignored fields encore (0.5066ms)
+✖ fixed mapping rejects ignored fields redcard (0.4735ms)
+✖ fixed mapping rejects ignored fields whiteherb (0.4839ms)
+✖ fixed mapping rejects ignored fields discrete (0.4828ms)
+✖ independent target-slot-one calculation differs; contradictory capture is rejected (652.3308ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 0
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1018.5534
+
+✖ failing tests:
+
+test at tests\bounded_runtime_capture_tests.mjs:24:37
+✖ fixed mapping rejects ignored fields struggle (1.7113ms)
+  AssertionError [ERR_ASSERTION]: struggle targetSlot
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Error: ENOENT: no such file or directory, open 'C:\must-not-load-unsupported-input\data.js'
+        at Object.readFileSync (node:fs:441:20)
+        at executeLocal (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tools/bounded-runtime-capture.mjs:52:87)
+        at file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:74
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1201:25)
+        at Test.start (node:internal/test_runner/test:1096:17)
+        at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17),
+    expected: /Unsupported bounded input: (actions|rng_controls)/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tests\bounded_runtime_capture_tests.mjs:24:37
+✖ fixed mapping rejects ignored fields rest (0.5647ms)
+  AssertionError [ERR_ASSERTION]: rest targetSlot
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Error: ENOENT: no such file or directory, open 'C:\must-not-load-unsupported-input\data.js'
+        at Object.readFileSync (node:fs:441:20)
+        at executeLocal (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tools/bounded-runtime-capture.mjs:52:87)
+        at file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:74
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1201:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+        at Test.postRun (node:internal/test_runner/test:1330:19),
+    expected: /Unsupported bounded input: (actions|rng_controls)/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tests\bounded_runtime_capture_tests.mjs:24:37
+✖ fixed mapping rejects ignored fields encore (0.5066ms)
+  AssertionError [ERR_ASSERTION]: encore targetSlot
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Error: ENOENT: no such file or directory, open 'C:\must-not-load-unsupported-input\data.js'
+        at Object.readFileSync (node:fs:441:20)
+        at executeLocal (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tools/bounded-runtime-capture.mjs:52:87)
+        at file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:74
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1201:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+        at Test.postRun (node:internal/test_runner/test:1330:19),
+    expected: /Unsupported bounded input: (actions|rng_controls)/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tests\bounded_runtime_capture_tests.mjs:24:37
+✖ fixed mapping rejects ignored fields redcard (0.4735ms)
+  AssertionError [ERR_ASSERTION]: redcard targetSlot
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Error: ENOENT: no such file or directory, open 'C:\must-not-load-unsupported-input\data.js'
+        at Object.readFileSync (node:fs:441:20)
+        at executeLocal (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tools/bounded-runtime-capture.mjs:52:87)
+        at file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:74
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1201:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+        at Test.postRun (node:internal/test_runner/test:1330:19),
+    expected: /Unsupported bounded input: (actions|rng_controls)/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tests\bounded_runtime_capture_tests.mjs:24:37
+✖ fixed mapping rejects ignored fields whiteherb (0.4839ms)
+  AssertionError [ERR_ASSERTION]: whiteherb targetSlot
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Error: ENOENT: no such file or directory, open 'C:\must-not-load-unsupported-input\data.js'
+        at Object.readFileSync (node:fs:441:20)
+        at executeLocal (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tools/bounded-runtime-capture.mjs:52:87)
+        at file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:74
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1201:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+        at Test.postRun (node:internal/test_runner/test:1330:19),
+    expected: /Unsupported bounded input: (actions|rng_controls)/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tests\bounded_runtime_capture_tests.mjs:24:37
+✖ fixed mapping rejects ignored fields discrete (0.4828ms)
+  AssertionError [ERR_ASSERTION]: discrete targetSlot
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Error: ENOENT: no such file or directory, open 'C:\must-not-load-unsupported-input\data.js'
+        at Object.readFileSync (node:fs:441:20)
+        at executeLocal (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tools/bounded-runtime-capture.mjs:52:87)
+        at file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:74
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:44:63)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1201:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+        at Test.postRun (node:internal/test_runner/test:1330:19),
+    expected: /Unsupported bounded input: (actions|rng_controls)/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tests\bounded_runtime_capture_tests.mjs:47:13
+✖ independent target-slot-one calculation differs; contradictory capture is rejected (652.3308ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/bounded_runtime_capture_tests.mjs:58:9)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /Unsupported bounded input: actions/,
+    operator: 'throws',
+    diff: 'simple'
+  }

@@ -1,0 +1,31 @@
+✔ current capture local RESOURCE-STRUGGLE-CAPTURE (298.4261ms)
+✔ current capture local REST-ELECTRIC-CAPTURE (125.6788ms)
+✔ current capture local ENCORE-QUEUE-CAPTURE (136.3173ms)
+✔ current capture local RED-CARD-CAPTURE (151.9258ms)
+✔ current capture local WHITE-HERB-CAPTURE (110.5974ms)
+✔ current capture local DAMAGE-ROLL-CAPTURE (128.0807ms)
+✔ capture catalog returns isolated copies (0.3196ms)
+✔ current capture exact-reference RESOURCE-STRUGGLE-CAPTURE (378.9642ms)
+✔ current capture exact-reference REST-ELECTRIC-CAPTURE (5.5429ms)
+✔ current capture exact-reference ENCORE-QUEUE-CAPTURE (15.6164ms)
+✔ current capture exact-reference RED-CARD-CAPTURE (5.3087ms)
+✔ current capture exact-reference WHITE-HERB-CAPTURE (3.5851ms)
+✔ current capture exact-reference DAMAGE-ROLL-CAPTURE (3.3934ms)
+✔ six envelopes bind separately executed observations (2088.5691ms)
+✔ serialized initial state is executed, not reconstructed from catalog (132.2013ms)
+✔ unsupported RNG controls are rejected rather than silently replaced (1.4697ms)
+✔ fixed mapping rejects ignored fields struggle (5.352ms)
+✔ fixed mapping rejects ignored fields rest (4.2879ms)
+✔ fixed mapping rejects ignored fields encore (4.8558ms)
+✔ fixed mapping rejects ignored fields redcard (4.2201ms)
+✔ fixed mapping rejects ignored fields whiteherb (3.3022ms)
+✔ fixed mapping rejects ignored fields discrete (15.898ms)
+✔ independent target-slot-one calculation differs; contradictory capture is rejected (1197.9727ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5215.525

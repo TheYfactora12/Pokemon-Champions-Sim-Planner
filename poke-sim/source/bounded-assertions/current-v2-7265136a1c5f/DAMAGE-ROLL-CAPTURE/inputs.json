@@ -1,0 +1,294 @@
+{
+  "schema_version": "bounded-inputs-v1",
+  "assertion_id": "DAMAGE-ROLL-CAPTURE.current-runtime.v2",
+  "case_id": "DAMAGE-ROLL-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "level50 Hardy zeroEV Snorlax Tackle into Venusaur",
+      "16 explicitly controlled damage draws, no critical hits; calculation API in doubles field"
+    ]
+  },
+  "contract_sha256": "a52500c22958aa3bd9c3c70bd803cba72faf5679b56a189a0652ce3b4b78ad49",
+  "kind": "discrete",
+  "teams": [
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Snorlax",
+          "ability": "Immunity",
+          "moves": [
+            "Tackle"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Blastoise",
+          "ability": "Torrent",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    },
+    {
+      "format": "champions",
+      "members": [
+        {
+          "name": "Venusaur",
+          "ability": "Overgrow",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        },
+        {
+          "name": "Blastoise",
+          "ability": "Torrent",
+          "moves": [
+            "Protect"
+          ],
+          "item": "",
+          "nature": "Hardy",
+          "level": 50,
+          "evs": {
+            "hp": 0,
+            "atk": 0,
+            "def": 0,
+            "spa": 0,
+            "spd": 0,
+            "spe": 0
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 0
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 1
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 2
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 3
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 4
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 5
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 6
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 7
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 8
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 9
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 10
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 11
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 12
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 13
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 14
+    },
+    {
+      "turn": 1,
+      "side": "player",
+      "slot": 0,
+      "move": "Tackle",
+      "targetSlot": 0,
+      "method": "calculate_damage",
+      "bucket": 15
+    }
+  ],
+  "seed": [
+    3,
+    7,
+    11,
+    13
+  ],
+  "initial_state": {},
+  "rng_controls": {
+    "critical_hits": false,
+    "local_draws": [
+      0.03125,
+      0.09375,
+      0.15625,
+      0.21875,
+      0.28125,
+      0.34375,
+      0.40625,
+      0.46875,
+      0.53125,
+      0.59375,
+      0.65625,
+      0.71875,
+      0.78125,
+      0.84375,
+      0.90625,
+      0.96875
+    ],
+    "reference_random16": [
+      15,
+      14,
+      13,
+      12,
+      11,
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1,
+      0
+    ],
+    "same_seed_alignment": false
+  }
+}

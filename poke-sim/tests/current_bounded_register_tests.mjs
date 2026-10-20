@@ -10,7 +10,7 @@ import {CURRENT_DEPENDENCY_FILES,CURRENT_REFERENCE,CURRENT_ANCHORS,currentDepend
 import {digest} from '../tools/bounded-assertions.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const index=JSON.parse(fs.readFileSync(path.join(root,INDEX)));
-const current=index.assertions.filter(entry=>entry.enrollment_kind==='current-capture-v1');
+const current=index.assertions.filter(entry=>entry.enrollment_kind==='current-capture-v1'&&entry.assertion_id.endsWith('.v2'));
 const bytes=value=>Buffer.from(JSON.stringify(value));
 function modified(changes,fn){
  const original=fs.readFileSync;
@@ -23,7 +23,7 @@ function modified(changes,fn){
 }
 const rows=()=>readBoundedRegister(root).filter(row=>current.some(entry=>entry.assertion_id===row.assertion_id));
 test('six current exact assertions pass without promoting historical or client scope',()=>{
- assert.equal(current.length,6);const all=readBoundedRegister(root);assert.equal(all.length,7);
+ assert.equal(current.length,6);const all=readBoundedRegister(root);assert.equal(all.length,13);assert.equal(all.filter(row=>row.status==='stale').length,7);
  for(const row of rows()){assert.equal(row.status,'passed_declared_scope');assert.equal(row.client_verification,'unknown');assert.equal(row.competitive_use,false);assert.equal(row.implementation_coverage,'bounded_assertion_only');assert(row.executed_at);}
  assert.equal(all.find(row=>row.assertion_id==='DAMAGE-ROLL-DISCRETE-016.tackle-vector.v1').status,'stale');
 });
@@ -43,7 +43,7 @@ test('documentation-only Git commit changes HEAD but not dependency identity',()
   assert.notEqual(git(['rev-parse','HEAD']),before);assert.deepEqual(currentDependencies(fixture,target.compiled_fingerprint),identity);
  }finally{const resolved=path.resolve(fixture),parent=path.resolve(os.tmpdir());assert.equal(path.dirname(resolved),parent);assert(path.basename(resolved).startsWith('bounded-docs-'));fs.rmSync(resolved,{recursive:true,force:true});}
 });
-function changedIndex(fn){const copy=structuredClone(index);fn(copy.assertions.find(row=>row.enrollment_kind==='current-capture-v1'));return new Map([[INDEX,bytes(copy)]]);}
+function changedIndex(fn){const copy=structuredClone(index);fn(copy.assertions.find(row=>row.enrollment_kind==='current-capture-v1'&&row.assertion_id.endsWith('.v2')));return new Map([[INDEX,bytes(copy)]]);}
 for(const [name,mutate,pattern]of [
  ['wrong item label',entry=>entry.item_ids=['choiceband'],/item\/input/],
  ['wrong move label',entry=>entry.move_ids=['fissure'],/move\/action/],
@@ -64,6 +64,6 @@ for(const [name,mutate,pattern]of [
 ])test(name,()=>{
  const entry=current[0],review=JSON.parse(fs.readFileSync(path.join(root,entry.independent_review.path)));mutate(review);const content=bytes(review),sha256=digest(content);
  const anchors=JSON.parse(fs.readFileSync(path.join(root,CURRENT_ANCHORS)));anchors.reviews.find(row=>row.path===entry.independent_review.path).sha256=sha256;
- const copy=structuredClone(index);for(const row of copy.assertions.filter(row=>row.enrollment_kind==='current-capture-v1'))row.independent_review.sha256=sha256;
+ const copy=structuredClone(index);for(const row of copy.assertions.filter(row=>row.independent_review?.path===entry.independent_review.path))row.independent_review.sha256=sha256;
  modified(new Map([[entry.independent_review.path,content],[CURRENT_ANCHORS,bytes(anchors)],[INDEX,bytes(copy)]]),()=>assert.throws(()=>rows(),pattern));
 });
