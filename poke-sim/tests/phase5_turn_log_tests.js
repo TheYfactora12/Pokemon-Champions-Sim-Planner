@@ -106,7 +106,10 @@ console.log('\n=== Phase 5 turn log tests ===\n');
 
 let battleA;
 T('T5a-1 turnLog is populated after simulateBattle', () => {
-  battleA = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_altaria, {});
+  battleA = ctx.simulateBattle(ctx.TEAMS.player, ctx.TEAMS.mega_altaria, {
+    seed: [1, 1015568748, 22695478, 1103527590]
+  });
+  truthy(ctx.ChampionsOutcome.evaluate(battleA).eligible, 'trusted-save fixture requires a completed eligible outcome');
   truthy(Array.isArray(battleA.turnLog), 'turnLog array missing');
   truthy(battleA.turnLog.length > 0, 'turnLog empty');
   eq(battleA.turns, battleA.turnLog.length, 'battle turns should equal completed turnLog rows');
