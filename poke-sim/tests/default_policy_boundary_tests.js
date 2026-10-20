@@ -55,4 +55,3 @@ full.runSimulation(1,'boundaryA','boundaryB',null,{format:'doubles'}).then(resul
  assert.equal(result.policy_provenance.id,'own-public-heuristic-v4');assert.equal(result.policy,'own-public-heuristic-v4-vs-own-public-heuristic-v4');
  console.log(groups+' default boundary groups, 40 production mutation runs, aggregate default/provenance passed');
 }).catch(error=>{console.error(error);process.exitCode=1;});
-

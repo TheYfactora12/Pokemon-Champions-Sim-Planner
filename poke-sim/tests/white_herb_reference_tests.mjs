@@ -39,5 +39,3 @@ for(const side of ['player','opponent'])for(const slot of [0,1])for(const varian
  assert.equal(result.log.filter(x=>x.includes('White Herb')).length,consumed&&variant!=='consumed'?1:0);
  b.destroy();
 });
-
-

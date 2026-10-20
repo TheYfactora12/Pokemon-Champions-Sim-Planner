@@ -54,11 +54,3 @@ for(const side of ['player','opponent'])for(const slot of [0,1])for(const varian
  }
  b.destroy();
 });
-
-
-
-
-
-
-
-

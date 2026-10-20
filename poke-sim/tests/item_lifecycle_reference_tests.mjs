@@ -87,5 +87,3 @@ test('Red Card samples both eligible reserves across deterministic seeds',()=>{
  }
  assert.deepEqual([...seen].sort(),['Garchomp','Incineroar']);
 });
-
-
