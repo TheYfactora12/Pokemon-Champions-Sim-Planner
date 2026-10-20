@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Review PR278 separately. Local v218 removes utility move-inventory probes; full-state damage scoring, pivot/trap parity, voluntary switching and Mega ordering remain open. See STATUS.md.
+Review local v220 and PR278 separately. Pivot repair and an own-state diagnostic have scoped proof. Default policy leakage, Rocky Helmet, voluntary switches and Mega order remain open. See STATUS.md.
 
 ## Milestone Index
 

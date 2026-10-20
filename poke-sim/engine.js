@@ -4091,6 +4091,7 @@ function checkSimulationSupport(team) {
 }
 
 function simulateBattle(playerTeam, oppTeam, opts = {}) {
+  const diagnosticPolicy = opts.decisionPolicy === 'own-state-diagnostic-v1';
   const playerRegistration = JSON.parse(JSON.stringify(playerTeam && playerTeam.members || []));
   const seed = opts.seed || makeSeed();
   const rng  = makePRNG(seed);
@@ -4120,6 +4121,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
   for (const w of oppLegality.warnings) log.push(`[LEGALITY] Opponent warning: ${w}`);
   const unsupported = checkSimulationSupport(playerTeam).concat(checkSimulationSupport(oppTeam));
+  if ((opts.decisionPolicy && opts.decisionPolicy !== 'greedy-state-aware-v3' && !diagnosticPolicy) ||
+      (diagnosticPolicy && typeof OwnStatePolicy === 'undefined')) unsupported.push('Unknown or unavailable decision policy.');
   if (Array.isArray(opts.forcedActions) && opts.forcedActions.some(row => row && _moveId(row.move) === 'fly')) unsupported.push('Forced Fly simulation is not supported.');
   log.push(...unsupported);
   const savedDraft = [playerTeam, oppTeam].some(team => team && team.import_context && team.import_context.draft_only === true);
@@ -7078,10 +7081,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // --------------------------------------------------------
     const actions = [];
 
+    const isolatedChoices = diagnosticPolicy ? OwnStatePolicy.turn(playerActive,oppActive,_moveCategory) : null;
+    function pickMove(mon, allies, enemies) {
+      if (!isolatedChoices) return selectMove(mon,allies,enemies,field);
+      const choice = isolatedChoices.get(mon);
+      return {move:choice.move,target:(choice.targetSide === 'ally' ? allies : enemies)[choice.targetSlot] || null};
+    }
     for (const mon of playerActive.filter(m => m.alive)) {
       const wasCharging = !!mon.chargingMove;
       const { move, target } = _forcedActionFor('player', mon, playerActive, oppActive) ||
-        selectMove(mon, playerActive, oppActive, field);
+        pickMove(mon, playerActive, oppActive);
       const _act = {
         attacker: mon,
         move,
@@ -7099,7 +7108,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const mon of oppActive.filter(m => m.alive)) {
       const wasCharging = !!mon.chargingMove;
       const { move, target } = _forcedActionFor('opp', mon, oppActive, playerActive) ||
-        selectMove(mon, oppActive, playerActive, field);
+        pickMove(mon, oppActive, playerActive);
       const _act = {
         attacker: mon,
         move,
@@ -7814,7 +7823,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     },
     participants: participants,
     playerRegistration,
-    policy_provenance: _selectionPolicyProvenance(opts.forcedActions && opts.forcedActions.length),
+    policy_provenance: (diagnosticPolicy ? OwnStatePolicy.provenance : _selectionPolicyProvenance)(opts.forcedActions && opts.forcedActions.length),
     reference_policy: referenceAllowed ? {mode:'champions_mc_reference',pin:MC_REVIEW_REFERENCE.pin,official_approval:false,trusted_rankings:false} : null,
     // #5 — attach legality verdict so UI can surface warnings on team/match cards.
     legality: { player: playerLegality, opp: oppLegality },
@@ -7918,6 +7927,7 @@ function shouldReflectByMagicBounce(attacker, target, move) {
 
 async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress, options) {
   const context = options || {};
+  if (context.decisionPolicy && context.decisionPolicy !== 'greedy-state-aware-v3') throw new Error('Diagnostic policies require direct simulateBattle; aggregate integration is not supported.');
   const playerTeamDef = TEAMS[playerTeamKey];
   const oppTeamDef = TEAMS[oppTeamKey];
   const unsupported = checkSimulationSupport(playerTeamDef).concat(checkSimulationSupport(oppTeamDef));
@@ -8033,7 +8043,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.23'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.24'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

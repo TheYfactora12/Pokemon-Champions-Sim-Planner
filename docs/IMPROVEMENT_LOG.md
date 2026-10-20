@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0113: Isolate an Opt-In Own-State Diagnostic
+
+- Hidden ability and defensive-stat reads remain in the default selector. A pure
+  diagnostic provides a bounded comparison control without guessed opponent data.
+- Both sides receive detached frozen snapshots before choices; no live enemy
+  references, field callbacks or RNG enter the pure chooser.
+- Eight groups including 40 engine mutation runs and aggregate rejection passed.
+  Independent policy and release-wiring reviews passed.
+- Limited legality checks may select a move execution rejects. This is direct-API
+  experimental support, not stronger play or a human-visibility implementation.
+- [Scope and final gates](release/OWN_STATE_DIAGNOSTIC_2026-10-20.md).
+
 ## IMP-0112: Distinguish Damaging Pivots From Voluntary Traps
 
 - Successful U-turn/Flip Turn/Volt Switch were incorrectly stopped by voluntary

@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "OWN-STATE-DIAGNOSTIC",
+      "family": "moves-effects",
+      "behavior": "Opt-in diagnostic choices use detached own-state primitives and target occupancy only.",
+      "status": "partial",
+      "tests": ["tests/own_state_policy_tests.js"],
+      "oracle": "Information-boundary contract with throwing getters, mutation invariance and actual engine integration; no strength oracle.",
+      "boundary_vectors": ["both-sides", "immutable-DTO", "snapshot-before-choice", "no-RNG", "hidden-state-mutations", "forced-action-provenance"],
+      "known_gap": "Direct simulateBattle only. Limited own legality checks; execution may reject. No opponent estimates, reveal ledger, human visibility or competitive strength claim. Default greedy v3 remains full-state."
+    },
+    {
       "id": "DAMAGE-PIVOT-TRAP-CAUSE",
       "family": "identity-lifecycle",
       "behavior": "Successful living-user U-turn, Flip Turn and Volt Switch bypass voluntary traps; Water Absorb blocks damaging Water moves through the shared immunity/healing path.",

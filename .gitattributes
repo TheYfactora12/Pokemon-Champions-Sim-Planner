@@ -8,3 +8,4 @@ poke-sim/source/reg-m-c-official-roster.json text eol=lf
 poke-sim/source/reg-m-c-reference-intake.json text eol=lf
 poke-sim/source/reg-m-c-mega-descriptor-candidates.json text eol=lf
 poke-sim/mc_review.js text eol=lf
+poke-sim/own_state_policy.js text eol=lf

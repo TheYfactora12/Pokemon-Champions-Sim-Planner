@@ -116,6 +116,7 @@ html = html.replace('<script src="app_shell.js"></script>', '')
 html = html.replace('<script src="logger.js"></script>', '')
 html = html.replace('<script src="runtime_data.js"></script>', '')
 html = html.replace('<script src="engine.js"></script>', '')
+html = html.replace('<script src="own_state_policy.js"></script>', '')
 html = html.replace('<script src="ui.js"></script>', '')
 html = html.replace('<script src="rulesets.js"></script>', '')
 html = html.replace('<script src="regmb_source_conversion.js"></script>', '')
@@ -171,7 +172,7 @@ inline_js = (
     + sanitize_inline_js(release_manifest) + '\n\n'
     + sanitize_inline_js(app_shell) + '\n\n'
     + sanitize_inline_js(data) + '\n\n'
-    + '</script>\n<script src="mc_review.js"></script>\n<script>\n'
+    + '</script>\n<script src="mc_review.js"></script>\n<script src="own_state_policy.js"></script>\n<script>\n'
     + sanitize_inline_js(tournament_catalog) + '\n\n'
     + sanitize_inline_js(project_roadmap) + '\n\n'
     + sanitize_inline_js(logger) + '\n\n'
@@ -227,7 +228,7 @@ else:
         'hash_scope': 'sha256 of committed poke-sim/pokemon-champion-2026.html bytes'
     }
     artifact['external_assets'] = {}
-    for asset in ['generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'mc_review.js',
+    for asset in ['generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'mc_review.js', 'own_state_policy.js',
                   'assets/retro-intro/gengar.png', 'assets/retro-intro/nidorino.png']:
         with open(os.path.join(BASE, asset), 'rb') as f:
             asset_bytes = f.read()

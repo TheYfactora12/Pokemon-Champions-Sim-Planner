@@ -7,16 +7,14 @@ Historical candidate observations are not current deployment instructions.
 
 ## Local repair candidate
 
-v2.2.218-utility-policy / engine 1.1.22 is an unpublished local candidate,
-stacked on PR278 and the isolated preparation commit. Four direct opponent
-move-inventory queries are removed from utility selection. Policy v3 remains
-full-state; better play and complete hidden-information safety are unproved.
-[Scope, checks and ordered acceptance gates](docs/release/UTILITY_INFORMATION_POLICY_2026-10-20.md).
-Next mechanics fixture: successful U-turn is incorrectly blocked by Shadow Tag.
-Voluntary switching and Mega ordering remain open. PR278 merge/release approval
-is pending. Separate branch `review/utility-current-main` now starts at `ae3f52c`;
-the original reviewed `d9bc79a` branch is preserved. Generated artifact conflicts
-were rebuilt from source; mechanics code is identical to the original v218.
+v2.2.220-own-state / engine 1.1.24 is an unpublished local candidate based on
+main `ae3f52c` plus PR278 prerequisites. The original utility branch is preserved.
+Successful damaging pivots bypass voluntary trapping; Water Absorb and scoped
+ability bypass repairs have 101 reference cases. An opt-in own-state diagnostic
+uses frozen primitive inputs; default v3 remains full-state and strength is
+unverified. [Final scope and checks](docs/release/OWN_STATE_DIAGNOSTIC_2026-10-20.md).
+Rocky Helmet contact damage, voluntary switching and Mega ordering remain open.
+PR278 merge/release approval is pending. No push, merge or deployment performed.
 
 v2.2.217-current-moves / engine 1.1.21 is draft PR278, not deployed.
 Current Practice uses the September 9 official move removals and PP corrections;
