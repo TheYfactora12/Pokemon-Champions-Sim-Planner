@@ -22,11 +22,11 @@ function fixture() {
     e.oracle='official-publication';e.source_url=e.kind==='official-client-version'?'https://www.nintendo.com/synthetic':'https://champions-news.pokemon-home.com/synthetic';e.extracted={...target};e.source_capture={path:e.path,sha256:e.sha256};
   }
   for(const e of pkg.evidence){
-    e.oracle=ORACLES[e.kind];
+    e.oracle=ORACLES[e.kind];e.capture_id=`capture-${e.id}`;e.source_url ||= `https://evidence.example/synthetic/${e.id}`;
 
     const values={registration_accepted:e.kind==='accepted-complete-team',rejection_code:'item-clause',terminal:true,winner:'player',acceptance_met:true,allow:true,deny:false,replay_match:true,loaded_assets_match:true,exact_hp:42,...target};
     const fields=e.kind==='client-mechanics'?['exact_hp']:FIELDS[e.kind];
-    const input=Buffer.from(JSON.stringify({schema_version:'competitive-observations-v1',kind:e.kind,target,identity,case_id:'case-a',field_contracts:Object.fromEntries(fields.map(field=>[field,field==='exact_hp'?{type:'number',unit:'hp',min:0}:{type:typeof values[field],unit:typeof values[field]==='boolean'?'boolean':'text'}])),protocol_id:'synthetic-held-out-v1',held_out:true,environment:'synthetic-service',loaded_assets:identity.external_assets,status:'complete',expected:values,observed:values}));files.set(`input/${e.id}`,input);
+    const input=Buffer.from(JSON.stringify({schema_version:'competitive-observations-v1',kind:e.kind,target,identity,capture_id:e.capture_id,captured_at_utc:e.captured_at_utc,source_url:e.source_url,client_version:e.client_version,regulation_id:e.regulation_id,format:e.format,server_context:e.server_context,case_id:'case-a',field_contracts:Object.fromEntries(fields.map(field=>[field,field==='exact_hp'?{type:'number',unit:'hp',min:0}:{type:typeof values[field],unit:typeof values[field]==='boolean'?'boolean':'text'}])),protocol_id:'synthetic-held-out-v1',held_out:true,environment:'synthetic-service',loaded_assets:identity.external_assets,status:'complete',expected:values,observed:values}));files.set(`input/${e.id}`,input);
     const body={schema_version:'competitive-comparison-v1',kind:e.kind,oracle:e.oracle,target,identity,status:'passed',mismatches:0,
       observations:fields.map((field,i)=>({id:`${e.id}-${i}`,case_id:'case-a',field,comparator:'exact',unit:field==='exact_hp'?'hp':typeof values[field]==='boolean'?'boolean':'text',expected:values[field],observed:values[field],expected_source:{input_id:'observations',pointer:`/expected/${field}`},observed_source:{input_id:'observations',pointer:`/observed/${field}`} })),
       inputs:[{id:'observations',path:`input/${e.id}`,sha256:sha256(input)}],protocol_id:'synthetic-held-out-v1',held_out:true,environment:'synthetic-service',loaded_assets:identity.external_assets};
@@ -141,3 +141,12 @@ for(const [name,kind,mutate] of [
   ['wrong loaded asset source','paired-browser-replays',i=>{i.loaded_assets={};}]
 ])test(name,()=>{const f=fixture();rewriteInput(f,kind,mutate);assert.notEqual(assess(f.manifest,f.options).status,'READY');});
 test('unrelated counter cannot stand in for observed HP',()=>{const f=fixture();rewriteInput(f,'client-mechanics',i=>{i.observed.exact_hp=0;i.observed.unrelated_counter=42;},b=>{b.observations[0].observed_source.pointer='/observed/unrelated_counter';});assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+
+test('external field contract overrides signed stale package minimum',()=>{const f=fixture();f.options.identity=structuredClone(f.options.identity);f.options.identity.benchmark_requirements['case-a'].field_contracts.exact_hp.min=100;assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+for(const [field,value]of [['captured_at_utc','2020-01-01T00:00:00Z'],['source_url','https://unrelated.example/'],['capture_id','other-capture'],['server_context','other-server']])test(`retained capture ${field} must agree`,()=>{const f=fixture();rewriteInput(f,'client-mechanics',i=>{i[field]=value;});assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+
+for(const constraint of [{max:10},{unknown_constraint:true},{min:'0'},{min:100,max:10}])test('reject invalid or violated contract '+JSON.stringify(constraint),()=>{
+ const f=fixture();Object.assign(f.options.identity.benchmark_requirements['case-a'].field_contracts.exact_hp,constraint);
+ for(const e of f.pkg.evidence)rewriteInput(f,e.id,i=>{i.identity=f.options.identity;if(e.kind==='client-mechanics')Object.assign(i.field_contracts.exact_hp,constraint);},b=>{b.identity=f.options.identity;});
+ f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');
+});

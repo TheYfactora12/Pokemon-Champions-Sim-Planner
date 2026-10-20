@@ -5,6 +5,7 @@ import {isDeepStrictEqual as equal} from 'node:util';
 export const ORACLES = Object.freeze({'official-client-version':'official-publication','regulation-rules':'official-publication','accepted-complete-team':'champions-client','rejected-complete-team':'champions-client','client-mechanics':'champions-client','complete-client-battles':'champions-client','competitive-policy-quality':'held-out-player-evaluation','live-service':'service-probe','paired-browser-replays':'candidate-bound-browser'});
 export const FIELDS = Object.freeze({'official-client-version':['client_version'],'regulation-rules':['regulation_id','format','effective_from_utc','effective_to_utc'],'accepted-complete-team':['registration_accepted'],'rejected-complete-team':['registration_accepted','rejection_code'],'client-mechanics':[],'complete-client-battles':['terminal','winner'],'competitive-policy-quality':['acceptance_met'],'live-service':['allow','deny'],'paired-browser-replays':['replay_match','loaded_assets_match']});
 const nonempty=x=>typeof x==='string'&&x.trim().length>0;
+const proofIdentity=value=>Object.fromEntries(Object.entries(value||{}).filter(([key])=>!['checked_commit','github_sha','run_id','run_attempt'].includes(key)));
 const hash=x=>createHash('sha256').update(x).digest('hex');
 export function installedInventory(directory) {
   const files={};
@@ -24,7 +25,7 @@ export function parseEvidence(bytes,entry,{target,identity,load}) {
   if(!bytes?.length)fail('Empty evidence');
   let body;try{body=JSON.parse(bytes);}catch{fail('Malformed evidence JSON');}
   if(!body||body.schema_version!=='competitive-comparison-v1'||body.kind!==entry.kind||body.oracle!==ORACLES[entry.kind]||entry.oracle!==body.oracle)fail('Unsupported evidence schema/kind/oracle');
-  if(!equal(body.target,target)||!equal(body.identity,identity))fail('Evidence context/identity mismatch');
+  if(!equal(body.target,target)||!equal(proofIdentity(body.identity),proofIdentity(identity)))fail('Evidence context/identity mismatch');
   if(!Array.isArray(body.observations)||!body.observations.length)fail('Missing observations');
   if(!Array.isArray(body.inputs)||!body.inputs.length)fail('Missing immutable inputs');
   const inputs=new Map();
@@ -32,9 +33,13 @@ export function parseEvidence(bytes,entry,{target,identity,load}) {
     if(!nonempty(ref.id)||inputs.has(ref.id))fail('Duplicate/missing input identity');
     const raw=load(ref,`${entry.id} input`);if(!raw?.length)fail('Empty/unavailable input');
     let input;try{input=JSON.parse(raw);}catch{fail('Unsupported input encoding');}
-    if(input?.schema_version!=='competitive-observations-v1'||input.kind!==entry.kind||!equal(input.target,target)||!equal(input.identity,identity)||!nonempty(input.case_id)||input.status!=='complete'||!input.expected||!input.observed)fail('Unsupported/incomplete input schema');
+    if(input?.schema_version!=='competitive-observations-v1'||input.kind!==entry.kind||!equal(input.target,target)||!equal(proofIdentity(input.identity),proofIdentity(identity))||!nonempty(input.case_id)||input.status!=='complete'||!input.expected||!input.observed)fail('Unsupported/incomplete input schema');
     for(const field of entry.kind==='competitive-policy-quality'?['protocol_id','held_out']:entry.kind==='live-service'?['environment']:entry.kind==='paired-browser-replays'?['loaded_assets']:[]){
       if(!Object.hasOwn(input,field)||!equal(input[field],body[field]))fail('Input semantic metadata differs from receipt');
+    }
+    if(!nonempty(entry.capture_id)||!nonempty(entry.source_url))fail('Missing capture provenance');
+    for(const key of ['capture_id','captured_at_utc','source_url','client_version','regulation_id','format','server_context']){
+      if(!Object.hasOwn(input,key)||input[key]!==entry[key])fail('Input capture metadata differs from envelope');
     }
     inputs.set(ref.id,input);
   }
@@ -54,7 +59,8 @@ export function parseEvidence(bytes,entry,{target,identity,load}) {
     const builtin=FIELDS[entry.kind]?.includes(row.field)?{type:booleans.has(row.field)?'boolean':'string',unit:booleans.has(row.field)?'boolean':'text'}:null;
     const contract=builtin||declared;
     if(!contract||!['number','boolean','string'].includes(contract.type)||!nonempty(contract.unit)||row.unit!==contract.unit)fail('Undeclared field type/unit');
-    const valid=value=>typeof value===contract.type&&(contract.type!=='number'||Number.isFinite(value))&&(contract.type!=='string'||nonempty(value))&&(contract.min===undefined||value>=contract.min);
+    if(Object.keys(contract).some(k=>!['type','unit','min','max'].includes(k))||['min','max'].some(k=>contract[k]!==undefined&&(contract.type!=='number'||!Number.isFinite(contract[k])))||contract.min!==undefined&&contract.max!==undefined&&contract.min>contract.max)fail('Unsupported field contract');
+    const valid=value=>typeof value===contract.type&&(contract.type!=='number'||Number.isFinite(value))&&(contract.type!=='string'||nonempty(value))&&(contract.min===undefined||value>=contract.min)&&(contract.max===undefined||value<=contract.max);
     if(!valid(row.expected)||!valid(row.observed)||(row.field==='exact_hp'&&(contract.type!=='number'||contract.unit!=='hp'||row.expected<0||row.observed<0)))fail('Invalid typed comparison values');
     const expected=source(row.expected_source,'expected',row,contract),observed=source(row.observed_source,'observed',row,contract);
     if(!equal(expected,row.expected)||!equal(observed,row.observed))fail('Receipt contradicts parsed source values');

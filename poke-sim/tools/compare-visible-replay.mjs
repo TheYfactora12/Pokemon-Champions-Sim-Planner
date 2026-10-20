@@ -102,6 +102,13 @@ export function compareVisibleReplay(log, visual, expectedCandidate = null) {
       check(indices.every((n,i) => i === 0 || n > indices[i-1]), 'invalid_action_anchor_order', `T${turn.turn}`, 'unique increasing indices', indices);
       for (const e of actions.filter(complete)) check((e.text || e.message || '').includes(` used ${e.move}!`), 'action_anchor_move_mismatch', `T${turn.turn}`, e.move, e.text || e.message);
     }
+    // Legacy details may repeat an action, but cannot establish an omitted action.
+    let retainedAction=null;
+    for(const event of events){
+      if(actions.includes(event)){retainedAction=movePrefixes([event.text||event.message||''])[0];continue;}
+      const text=event.text||event.message||'',prefix=movePrefixes([text])[0];
+      if(prefix&&detailRecord(text))check(prefix===retainedAction,'orphan_action_detail',`T${turn.turn}`,'preceding matching retained action',text);
+    }
     const expected = movePrefixes(actions.map(e => e.text || e.message || ''));
     const actual = movePrefixes(lines);
     check(Array.isArray(turn.events), 'missing_action_evidence', `T${turn.turn}`, 'events array', turn.events);

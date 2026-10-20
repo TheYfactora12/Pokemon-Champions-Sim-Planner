@@ -10,17 +10,24 @@ const root=fileURLToPath(new URL('../',import.meta.url)),out=new URL('../artifac
 fs.mkdirSync(out,{recursive:true});
 for(const [mutant,suite] of [
   ['half_damage','showdown_damage_oracle_tests.js'],
+  ['tantrum_150_percent','amnesia_reference_tests.mjs'],
   ['hidden_read','default_policy_boundary_tests.js'],
   ['switch_noop','scripted_switch_reference_tests.mjs']
 ]) test(`independent ${suite} kills ${mutant} with healthy control`,()=>{
-  const baseline=spawnSync(process.execPath,[`tests/${suite}`],{cwd:root,encoding:'utf8',timeout:120000});
+  const childEnv={...process.env};delete childEnv.NODE_TEST_CONTEXT;
+  const baseline=spawnSync(process.execPath,[`tests/${suite}`],{cwd:root,encoding:'utf8',timeout:120000,env:childEnv});
   fs.writeFileSync(new URL(`${mutant}-baseline.log`,out),(baseline.stdout||'')+(baseline.stderr||''));
   assert.equal(baseline.status,0,baseline.stderr);
   const bad=spawnSync(process.execPath,['--require','./tools/test-engine-mutant.cjs',`tests/${suite}`],{
-    cwd:root,encoding:'utf8',timeout:120000,env:{...process.env,CHAMPIONS_TEST_MUTANT:mutant}});
+    cwd:root,encoding:'utf8',timeout:120000,env:{...childEnv,CHAMPIONS_TEST_MUTANT:mutant}});
   fs.writeFileSync(new URL(`${mutant}-mutant.log`,out),(bad.stdout||'')+(bad.stderr||''));
   assert.equal(bad.signal,null);assert.notEqual(bad.status,null);assert.notEqual(bad.status,0);
   assert.notEqual(bad.status,97);assert.match(bad.stderr, new RegExp('MUTATION_APPLIED:'+mutant));
+  if(mutant==='tantrum_150_percent'){
+    const transcript=(bad.stdout||'')+(bad.stderr||'');
+    assert.match(transcript,/actual: 57/);assert.match(transcript,/expected: 76/);
+    assert.match(transcript,/fail 2/);assert.match(transcript,/pass 28/);
+  }
 });
 test('16 actual doubles results reject flipped one-sided-elimination winners',()=>{
   const {context}=loadAccuracyRuntime(),ids=Object.keys(context.TEAMS).sort().slice(0,4),receipts=[];

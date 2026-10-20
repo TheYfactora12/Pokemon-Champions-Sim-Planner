@@ -175,4 +175,8 @@ if(fs.existsSync(retained))test('retained browser evidence preserves actual dupl
  const r=ingestDirectory(retained);assert(r.reports.find(p=>p.log_file==='practice-rapid.log.json').issues.some(i=>i.code==='damage_display_mismatch'&&i.location==='T10'));
  assert.equal(r.reports.find(p=>p.log_file==='mc-baseline.log.json').issues.some(i=>i.location==='T2'),false,'legitimate spread rows agree');
 });
+for(const text of ['Mirror used Protect! But it failed!','Mirror used Hurricane! It missed!'])test('orphan action cannot disappear: '+text,()=>{
+ const f=fixture();f.log.turnLog[0].events=[{text}];f.visual.turns[0].lines=[];
+ assert(compareVisibleReplay(f.log,f.visual).issues.some(i=>i.code==='orphan_action_detail'));
+});
 console.log(`Visible replay comparison: ${passed}/${passed} passed`);

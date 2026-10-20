@@ -53,12 +53,12 @@ export function assess(manifest, {read, now, identity, keys = []}) {
     }
     if (!Array.isArray(pkg.evidence)) fault('Evidence inventory absent');
     const entries = Array.isArray(pkg.evidence) ? pkg.evidence : [], ids = new Set(), parsed = new Map();
-    for(const field of ['external_assets','installed_reference','checker_schema']) if(!identity[field] || !equal(pkg.identity?.[field],identity[field])) block(`Stale complete identity: ${field}`);
+    for(const field of ['external_assets','installed_reference','checker_schema','benchmark_requirements','benchmark_cases','unproved_cases']) if(!identity[field] || !equal(pkg.identity?.[field],identity[field])) block(`Stale complete identity: ${field}`);
     for (const entry of entries) {
       if (!entry.id || ids.has(entry.id)) fault('Duplicate or absent evidence ID');
       ids.add(entry.id);
       const evidenceBytes=load(entry, entry.id || 'unnamed evidence');
-      try { parsed.set(entry.id,parseEvidence(evidenceBytes,entry,{target,identity:pkg.identity,load})); } catch(error) { fault(error.message); }
+      try { parsed.set(entry.id,parseEvidence(evidenceBytes,entry,{target,identity,load})); } catch(error) { fault(error.message); }
       if (entry.status !== 'passed' || entry.mismatches !== 0) block(`${entry.id}: comparison not passed`);
       if (!Number.isFinite(Date.parse(entry.captured_at_utc)) ||
           Date.parse(entry.captured_at_utc) > now ||

@@ -11,12 +11,7 @@ var CHAMPIONS_ACTIVE_SOURCE_RULESET_ID = 'champions_reg_m_b_doubles_bo3_source_r
 var CHAMPIONS_ACTIVE_SOURCE_FORMAT_LABEL = 'Champions Reg M-B Source Review (Jun 17 - Sep 2, 2026)';
 var CHAMPIONS_FORMAT_LABEL = 'Champions Reg M-A Historical Lane (Apr 8 - Jun 17, 2026)';
 
-// SEEDED PRNG — Issue #2 FIX
-// Mulberry32: fast, deterministic, browser-safe.
-// All battle randomness goes through rng() — never Math.random().
-// Seed is a 4-number array [a,b,c,d] passed via opts.seed to
-// simulateBattle(). runSimulation() auto-generates seeds per battle
-// so each battle is independently reproducible.
+// Seeded PRNG; see docs/ENGINE_INTERFACE_NOTES.md
 function makePRNG(seed) {
   // seed: [a, b, c, d] — four 32-bit integers
   let [a, b, c, d] = seed.map(n => n >>> 0);
@@ -39,17 +34,7 @@ function makeSeed() {
   ];
 }
 
-// TEAM LEGALITY VALIDATOR — Issue #5 + #T2
-// Called before every simulateBattle() invocation.
-// Blocks on errors, warns on warnings.
-//
-// #T2 updates:
-//   - Dual-format stat caps: Champions SP (<=32/stat, <=66 total)
-//     vs SV EV (<=252/stat, <=510 total). Detects per team.
-//   - Species Clause and Item Clause upgraded from warning -> ERROR
-//     (VGC/Champions rules: both are hard bans, not soft recommendations).
-//   - Optional Champions legality layer (ban list, fakemon) wired in
-//     via validateChampionsLegality() if legality.js is loaded.
+// Spread validation; see docs/ENGINE_INTERFACE_NOTES.md
 function detectSpreadStatFormat(evs) {
   const vals = Object.values(evs || {});
   if (vals.length === 0) return 'sv';

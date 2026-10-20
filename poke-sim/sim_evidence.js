@@ -1,66 +1,8 @@
-// ============================================================
-// TEAM LAB SIM EVIDENCE FOUNDATION
-// ============================================================
-// First-class replay records and simulation jobs for Team Lab evidence.
-// This module does not run battles. It normalizes metadata so future runners,
-// replays, and leaderboard aggregation can stay versioned and auditable.
 (function(root) {
   'use strict';
   var outcomePolicy = root.ChampionsOutcome || (typeof require==='function' ? require('./outcome_policy.js') : null);
 
-  /** @typedef {'team_vs_team'|'team_vs_leaderboard'|'archetype_sweep'|'full_leaderboard_recalc'|'qa_regression'} SimJobType */
-  /** @typedef {'queued'|'running'|'completed'|'failed'|'cancelled'} SimJobStatus */
-  /** @typedef {'ko'|'timer'|'forfeit'|'draw'|'error'} SimResultReason */
-  /**
-   * @typedef {Object} SimJob
-   * @property {string=} id
-   * @property {SimJobType} job_type
-   * @property {string} regulation_id
-   * @property {string} ruleset_version
-   * @property {string} engine_version
-   * @property {'singles'|'doubles'} format
-   * @property {string[]} team_ids
-   * @property {string[]=} opponent_team_ids
-   * @property {string[]=} opponent_archetypes
-   * @property {number} games_per_matchup
-   * @property {SimJobStatus} status
-   * @property {Object=} status_report
-   * @property {string[]=} confidence_flags
-   * @property {string[]=} source_gaps
-   */
-  /**
-   * @typedef {Object} ReplayRecord
-   * @property {string=} id
-   * @property {string=} sim_run_id
-   * @property {string=} job_id
-   * @property {string} team_a_id
-   * @property {string} team_b_id
-   * @property {string} regulation_id
-   * @property {'singles'|'doubles'} format
-   * @property {string} engine_version
-   * @property {string} ruleset_version
-   * @property {string} seed
-   * @property {string=} winner_team_id
-   * @property {SimResultReason} result_reason
-   * @property {number=} turns
-   * @property {Object[]} event_log
-   * @property {Object[]=} turn_log
-   * @property {Object[]=} damage_events
-   * @property {Object[]=} effect_events
-   * @property {Object=} qa_coverage_summary
-   * @property {string[]=} confidence_flags
-   * @property {string[]=} source_gaps
-   */
-   /**
-    * @typedef {Object} ReplayEvidenceSummary
-    * @property {number} events
-    * @property {number} turns
-    * @property {number} damage_events
-    * @property {number} effect_events
-    * @property {boolean} has_qa_coverage
-    * @property {string[]} confidence_flags
-    * @property {string[]} source_gaps
-    */
+  // Record type documentation: docs/SIM_EVIDENCE_TYPES.md
 
   var VALID_JOB_TYPES = ['team_vs_team', 'team_vs_leaderboard', 'archetype_sweep', 'full_leaderboard_recalc', 'qa_regression'];
   var VALID_JOB_STATUS = ['queued', 'running', 'completed', 'failed', 'cancelled'];
@@ -132,7 +74,7 @@
       turnLog.forEach(function(turn) { effectRows = effectRows.concat((turn && turn.effect_events) || []); });
     }
     return {
-      outcome_proof: replay && (replay.outcome_proof || (replay.qa_coverage_summary||{}).outcome_proof) || null,
+      outcome_proof: outcomePolicy ? outcomePolicy.evaluate(replay).proof : null,
       events: eventLog.length,
       turns: Number((replay && replay.turns) || turnLog.length || 0),
       damage_events: damageRows.length,
@@ -646,7 +588,10 @@
     run.confidence_flags = unique((run.confidence_flags || []).concat(normalized.confidence_flags || []));
     run.source_gaps = unique((run.source_gaps || []).concat(normalized.source_gaps || []));
     run.confidence_flags = unique(run.confidence_flags.concat(normalized.source_gaps || []));
-    run.outcome_proof = normalized.outcome_proof || (normalized.qa_coverage_summary||{}).outcome_proof || null;
+    var prior = outcomePolicy && outcomePolicy.evaluate(run);
+    var hasPrior = ['outcome_proof','tactical_summary','qa_coverage_summary','replay_evidence_summary','terminal','timerExpired','exclusion_reason','result','result_reason','playerSurvivors','oppSurvivors','winner_team_id'].some(function(k){return run[k]!=null;});
+    run.outcome_proof = hasPrior ? outcomePolicy.evaluate({outcome_proof:prior.proof,replay_evidence_summary:normalized.evidence_summary}).proof : normalized.evidence_summary.outcome_proof;
+    if(outcomePolicy)run.outcome_proof=outcomePolicy.evaluate(run).proof;
     run.result_reason = normalized.result_reason;
     run.winner_team_id = normalized.winner_team_id || null;
     run.replay_evidence_summary = normalized.evidence_summary;

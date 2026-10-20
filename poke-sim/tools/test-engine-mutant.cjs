@@ -2,6 +2,7 @@
 const fs=require('node:fs'),path=require('node:path');
 const original=fs.readFileSync, engine=path.resolve(__dirname,'../engine.js');
 const mutations={
+  tantrum_150_percent:["if (move === 'Stomping Tantrum' && (this.lastMoveFailed || this._previousMoveFailedForDamage)) {\n      bp *= 2;", "if (move === 'Stomping Tantrum' && (this.lastMoveFailed || this._previousMoveFailedForDamage)) {\n      bp *= 1.5;"],
   half_damage:['return finalDamage;','return Math.max(1, Math.floor(finalDamage / 2));'],
   hidden_read:['function _prepareDefaultDecision(actor, allies, enemies, field) {',
     'function _prepareDefaultDecision(actor, allies, enemies, field) { globalThis.__hiddenRead = enemies[0].moves;'],

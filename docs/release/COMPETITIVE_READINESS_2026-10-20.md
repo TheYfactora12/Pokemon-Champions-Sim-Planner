@@ -5,7 +5,7 @@ release only after all required gates. **NO-GO. No scope waiver or percentage.**
 Owner: Kevin for release decisions; implementer for repairs; independent reviewers
 for retest; a current-client capture owner remains unassigned.
 
-Candidate: v2.2.228-evidence-boundaries / engine1.1.30, separate follow-up to methodology d48b9aa and Amnesia 991f4fd in PR279. This register owns current gate status; older dated reports remain
+Candidate: v2.2.230-proof / engine1.1.31, separate follow-up to methodology d48b9aa and Amnesia 991f4fd in PR279. This register owns current gate status; older dated reports remain
 historical receipts. No merge, deployment, live DB change or key enrollment made.
 
 | ID / severity | Reproduction and impact | Owner / change | Status and independent closure |
@@ -16,10 +16,16 @@ historical receipts. No merge, deployment, live DB change or key enrollment made
 | ACC-04 High for claims | Random-damage reference probes compare order/direction, not exact HP. Same seed does not synchronize RNG. | Implementer: machine-readable exclusions and negative tests; deterministic Seismic Toss rejects1HP corruption. | Scoped checks pass; randomized exact damage/client parity not established. |
 | MECH-01 High | Rough Skin ignored Pads, Gas, Magic Guard and Long Reach:8/12 original probes disagreed. | Implementer: effective contact ability/item helper shared with Helmet. | 28boundary cases+2engine mutant controls pass;56Helmet cases pass. Independent reviewer found no implementation blocker; final aggregate and battle retest passed. |
 | RULE-01 Critical release | M-C package incomplete; roster262 and October form evidence already available. | Human capture owner + source reviewer. | NO-GO: full-team acceptance/rejection, training/learnset/item constraints, current client traces and immutable reviewed digest missing. |
-| GAME-01 Critical release | Public switching, simultaneous Mega/order, broader lifecycle and held-out player-policy quality unproved. | Mechanics owner + client capture owner. | NO-GO.65 benchmark cases:18 covered,42 partial,5 open. No narrow Practice substitute approved. |
+| GAME-01 Critical release | Public switching, simultaneous Mega/order, broader lifecycle and held-out player-policy quality unproved. | Mechanics owner + client capture owner. | NO-GO.66 benchmark cases:18 covered,43 partial,5 open. No narrow Practice substitute approved. |
 | DB-01 High release | Future default grants absent on two anon reads and four trusted writers. Docker backend socket launch failure. | Isolated DB reviewer. | Fresh in-memory PostgreSQL86named assertions pass; companion60browser denials+6trusted writes pass. Auth/PostgREST/owner isolation/live ledger, full persistence and deployment-version proof unavailable. No live grants applied. |
 | CI-01 High process | Pages previously independent of battle checks; main has no protection/rulesets. | Implementer + human repository owner. | New always-running methodology job and strict pre-deploy gate proposed. Branch settings unchanged. Kevin explicitly approved pinned Playwright/Chromium; isolated installation completed and mandatory browser CI is implemented. Exact-head hosted verification pending; no branch settings changed. |
 | APPROVAL-01 Critical release | No reviewed client package or enrolled human verification key. | Human owner + independent reviewer. | Empty key registry and null package intentionally block. Signature identity requires separately approved enrollment and protected review controls; source-editable keys alone do not establish ownership. |
+
+## Current independent follow-up
+
+2669c065ec97c9c55128ac6e30b5b7af1e1e57fb passed all eight hosted checks ([run39452251570](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39452251570)). Original auditor verified original cutoff/timer, browser response binding, duplicate-count reporting and Amnesia actual follow-on damage, but found S1-S4 survivors. Those development checks did not close the survivors.
+
+The [proof consistency receipt](PROOF_CONSISTENCY_2026-10-20.md) records scoped repairs and independent controls: nested outcome contradictions and attachment rejection; actual Stomping Tantrum damage sensitivity; external evidence contracts/capture provenance; orphan failed/missed replay actions. Final immutable original-auditor closure remains pending. Rest is separate303810f with44 reference cases. Red Card/White Herb are reserved for a separate task; Encore/Struggle/discrete damage/Mega replacement remain open. No current-client certification.
 
 ## Original-auditor R1–R5 retest checkpoint
 

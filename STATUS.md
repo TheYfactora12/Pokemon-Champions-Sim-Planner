@@ -5,9 +5,11 @@ Reviewed: 2026-10-20. This file owns current release facts and priorities.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
+Current follow-up: [proof consistency repairs](docs/release/PROOF_CONSISTENCY_2026-10-20.md) address independent S1-S4 survivors. Rest checkpoint303810f has44 reference cases. Final hosted/original-auditor closure pending; competitive release remains NO-GO.
+
 ## Draft review candidate
 
-v2.2.228-evidence-boundaries / engine 1.1.30 is the review follow-up to
+v2.2.230-proof / engine 1.1.31 is the review follow-up to
 [draft PR279](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279).
 The [competitive readiness register](docs/release/COMPETITIVE_READINESS_2026-10-20.md)
 owns current defects, severity, evidence, owners, retest and the Wednesday decision.
