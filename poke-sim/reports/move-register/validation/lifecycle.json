@@ -8,7 +8,7 @@
     "source_digest": "3ff866fa99ee7f3143045d7550af892e0e9830ff51e5dcc147f42fe4e91ac23b"
   },
   "local_test": {
-    "status": "passed",
+    "status": "stale",
     "fast_files": 273,
     "offline_db_files": 12,
     "failures": 0,
@@ -18,7 +18,7 @@
       "path": "source/validation-lifecycle/6c4ea6eb180f0372ba30af6528921c7a3500c1be7acdd6757239bbaa01f8d291/local.json",
       "sha256": "76455c89f796fc216c79ac4fb3139c7926ec6c25b7079a85963be391381f89ef"
     },
-    "candidate_source_bound": true
+    "candidate_source_bound": false
   },
   "independent_verification": {
     "status": "stale",

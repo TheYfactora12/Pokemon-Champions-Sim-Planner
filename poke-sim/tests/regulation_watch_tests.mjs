@@ -183,7 +183,7 @@ test('discovery follows new official announcements and rejects lookalike hosts',
 test('empty discovery and challenge pages become unavailable, not unchanged', async () => {
   const result = await observe({ public_sources: [{ ...source, kind: 'official_news_index' }] }, null, { fetcher });
   assert.equal(result.report.health[0].status, 'unavailable');
-  assert.throws(() => snapshot(source, response('<html><main>Just a moment</main></html>')), /layout/);
+  assert.throws(() => snapshot(source, response('<html><main>Just a moment</main></html>')), /challenge/);
 });
 test('official Next.js index discovers every article, not only the first', () => {
   const html = '<div id="__next"><h1>Latest Champions News</h1>' + [1, 2, 3].map(n => `<article><p>Official Champions regulation announcement number ${n}, to be reviewed before approval.</p><a href="https://www.pokemon.com/us/pokemon-news/regulation-${n}">Read news</a></article>`).join('') + '</div>';

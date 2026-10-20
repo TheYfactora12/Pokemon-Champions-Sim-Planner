@@ -1,7 +1,38 @@
 import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
 import {CURRENT_DEPENDENCY_FILES} from './current-bounded-core.mjs';import {digest} from './bounded-assertions.mjs';import {canonical} from './regulation-watch-core.mjs';
 export const LIFECYCLE_FILES=[...new Set(Object.values(CURRENT_DEPENDENCY_FILES).flat()),'tools/validation-cycle.mjs','tools/validation-lifecycle.mjs','tools/enroll-current-bounded.mjs','tests/validation_cycle_tests.mjs','tools/record-validation-lifecycle.mjs','../.github/workflows/ci.yml'];
-export function lifecycleSource(root,commit){return digest(canonical(Object.fromEntries(LIFECYCLE_FILES.map(file=>{let bytes;if(commit){try{bytes=execFileSync('git',['show',commit+':'+path.posix.normalize('poke-sim/'+file)],{cwd:root,encoding:'utf8',stdio:['ignore','pipe','ignore'],maxBuffer:32*1024*1024});}catch{bytes=null;}}else bytes=fs.existsSync(path.join(root,file))?fs.readFileSync(path.join(root,file),'utf8'):null;return [file,bytes===null?null:digest(bytes.replace(/\r\n/g,'\n'))];}))));}
+function legacySource(root,commit){return digest(canonical(Object.fromEntries(LIFECYCLE_FILES.map(file=>{let bytes;if(commit){try{bytes=execFileSync('git',['show',commit+':'+path.posix.normalize('poke-sim/'+file)],{cwd:root,encoding:'utf8',stdio:['ignore','pipe','ignore'],maxBuffer:32*1024*1024});}catch{bytes=null;}}else bytes=fs.existsSync(path.join(root,file))?fs.readFileSync(path.join(root,file),'utf8'):null;return [file,bytes===null?null:digest(bytes.replace(/\r\n/g,'\n'))];}))));}
+// Aggregate inputs are discovered, not a hand-picked list of six case owners.
+// Receipt/output history is verified by its own content-addressed gates, and is
+// excluded here so recording a result cannot change the source it describes.
+export function isLifecycleInput(file){
+ return LIFECYCLE_FILES.includes(file)||
+  /^(tests|tools|db|generated)\//.test(file)&&!/\.(md|log)$/i.test(file)||
+  /^[^/]+\.(js|mjs|cjs|json|py|sh|html|css)$/.test(file)||
+  /^source\//.test(file)&&!/^source\/(bounded-assertions|validation-lifecycle)\//.test(file)&&!/\.md$/i.test(file)||
+  /^\.\.\/\.github\/workflows\//.test(file);
+}
+const inputDigest=(file,bytes)=>digest(/\.(js|mjs|cjs|json|py|sh|html|css|sql|ts|txt|csv|yml|yaml|toml)$/i.test(file)?bytes.toString('utf8').replace(/\r\n/g,'\n'):bytes);
+const committedSources=new Map();
+export function lifecycleSource(root,commit,version='aggregate-inputs-v2'){
+ if(version==='selected-inputs-v1')return legacySource(root,commit);
+ assert.equal(version,'aggregate-inputs-v2','Unknown lifecycle fingerprint version');
+ const cacheKey=root+':'+commit;
+ if(commit&&committedSources.has(cacheKey))return committedSources.get(cacheKey);
+ let entries;
+ if(commit){
+  const listing=execFileSync('git',['ls-tree','-r','-z',commit,'--','poke-sim','.github/workflows'],{cwd:path.resolve(root,'..'),encoding:'utf8',maxBuffer:16*1024*1024});
+  const rows=listing.split('\0').filter(Boolean).map(row=>{const [meta,name]=row.split('\t');return {id:meta.split(' ')[2],file:name.startsWith('poke-sim/')?name.slice(9):'../'+name};}).filter(row=>isLifecycleInput(row.file));
+  const bytes=execFileSync('git',['cat-file','--batch'],{cwd:root,input:rows.map(row=>row.id+'\n').join(''),maxBuffer:256*1024*1024});let offset=0;
+  entries=rows.map(row=>{const end=bytes.indexOf(10,offset),header=bytes.subarray(offset,end).toString();assert(/ blob \d+$/.test(header),'Missing lifecycle blob');const size=Number(header.split(' ')[2]);offset=end+1;const content=bytes.subarray(offset,offset+size);offset+=size+1;return [row.file,inputDigest(row.file,content)];});
+ }else{
+  const files=[];const walk=(directory,prefix)=>{if(!fs.existsSync(directory))return;for(const item of fs.readdirSync(directory,{withFileTypes:true})){const file=prefix+item.name;if(item.isDirectory()){if(['tests','tools','db','generated','source'].includes(file)||prefix)walk(path.join(directory,item.name),file+'/');}else if(isLifecycleInput(file))files.push(file);}};
+  walk(root,'');walk(path.resolve(root,'../.github/workflows'),'../.github/workflows/');
+  entries=files.map(file=>[file,inputDigest(file,fs.readFileSync(path.join(root,file)))]);
+ }
+ entries.sort(([a],[b])=>a.localeCompare(b));const result=digest(canonical(Object.fromEntries(entries)));
+ if(commit)committedSources.set(cacheKey,result);return result;
+}
 export function candidateEvidenceBindings(root,facts,local,review){
  const localCommit=local.source_commit||local.fixture_commit||local.candidate_runtime_commit;
  const localBound=/^[a-f0-9]{40}$/.test(localCommit||'')&&lifecycleSource(root,localCommit)===facts.source_digest;
@@ -36,7 +67,7 @@ export function refreshLifecycle(root,{check=false}={}){
  const remote=JSON.parse(fs.readFileSync(path.join(root,facts.publication.evidence.path)));assert.equal(remote.headRefOid,facts.candidate_commit,'Remote evidence head mismatch');assert.equal(remote.url,facts.publication.url);assert.equal(remote.isDraft,true);assert.equal(remote.state,'OPEN');
  const local=JSON.parse(fs.readFileSync(path.join(root,facts.local.evidence.path)));assert.deepEqual({fast_files:facts.local.fast_files,offline_db_files:facts.local.offline_db_files,failures:facts.local.failures},local.project);
  const review=JSON.parse(fs.readFileSync(path.join(root,facts.review.evidence.path)));assert.equal(facts.review.reviewed_at,review.reviewed_at);assert(review.assertions?.length>0&&review.assertions.every(r=>r.status==='passed_declared_scope'&&r.independent_execution===true));
- assert.equal(lifecycleSource(root,facts.candidate_commit),facts.source_digest,'Candidate source binding mismatch');
+ assert.equal(lifecycleSource(root,facts.candidate_commit,facts.fingerprint_version||'selected-inputs-v1'),facts.source_digest,'Candidate source binding mismatch');
  const view=lifecycleView(facts,lifecycleSource(root),candidateEvidenceBindings(root,facts,local,review));const content=JSON.stringify(view,null,2)+'\n',file=path.join(root,'reports/move-register/validation/lifecycle.json');fs.mkdirSync(path.dirname(file),{recursive:true});if(check)assert.equal(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n'),content,'Stale lifecycle export');else fs.writeFileSync(file,content);return view;
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){const[root,flag]=process.argv.slice(2);console.log(JSON.stringify(refreshLifecycle(path.resolve(root),{check:flag==='--check'})));}

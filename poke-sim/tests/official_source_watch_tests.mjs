@@ -10,6 +10,24 @@ const source = { url, kind: 'official_roster', required: true };
 const page = rows => `<main><article><h1>Eligible Pokémon</h1><div id="pokemons"></div></article></main><script>const pokemons = ${JSON.stringify(rows)};const noPrefix = 'No. {0}';</script><script src="../../../resources/pokemon.js"></script>`;
 const rows = [['0003-000', 1, 'Venusaur'], ['0026-001', 1, 'Raichu (Alolan Form)']];
 const response = html => ({ bytes: Buffer.from(html), content_type: 'text/html', final_url: url });
+
+test('blocked or unidentified roster fragments retain baseline and incomplete required health', async () => {
+  const registry = { public_sources: [source] };
+  const fetcher = html => async () => new Response(html, { headers: { 'content-type': 'text/html' } });
+  const first = await observe(registry, null, { fetcher: fetcher(page(rows)) });
+  for (const html of [
+    page(rows).replace('</main>', '<p>Access denied. Verify you are human.</p></main>'),
+    page(rows).replace(/<h1>.*?<\/h1>/, '<h1></h1>'),
+    page(rows).replace(/<h1>.*?<\/h1>/, '<h1>Unknown page</h1>'),
+    '<p>Checking your browser</p>' + page(rows),
+  ]) {
+    assert.throws(() => snapshot(source, response(html)), /challenge|identity/);
+    const failed = await observe(registry, first.state, { fetcher: fetcher(html) });
+    assert.equal(failed.report.incomplete, true);
+    assert.deepEqual(failed.state.sources, first.state.sources);
+    assert.equal(failed.candidates.length, 0);
+  }
+});
 test('notice and Nintendo heading changes are observed without turning mentions into rules', () => {
   for (const [host, kind, heading] of [['champions-news.pokemon-home.com', 'official_regulation_notice', 'Regulation Set M-C Duration'], ['en-americas-support.nintendo.com', 'official_patch_notes', 'Latest update: Ver. 1.2.2 (Released October 6, 2026)']]) {
     const item = { url: `https://${host}/`, kind };

@@ -60,6 +60,10 @@ export function snapshot(source, response, teams = {}) {
   }
   if (!/text\/html/i.test(response.content_type)) throw new Error('Expected HTML content type');
   const $ = load(response.bytes.toString('utf8'));
+  // Reject blocked responses before any specialized extraction can return data.
+  const visible = $.root().clone();
+  visible.find('script, style, noscript').remove();
+  if (/access denied|just a moment|verify (?:that )?you are human|checking your browser|enable javascript and cookies|complete the security check/i.test(clean(visible.text()))) throw new Error('Source returned a challenge/error page');
   // The official roster is a JSON array embedded in a script, not rendered text.
   // Parse only the observed data grammar; never execute upstream JavaScript.
   if (source.kind === 'official_roster') {
@@ -72,8 +76,10 @@ export function snapshot(source, response, teams = {}) {
     const roster = rows.map(([form_id, source_flag, name]) => ({ form_id, source_flag, name })).sort((a, b) => a.form_id.localeCompare(b.form_id));
     $('script, style, nav, footer, header, noscript').remove();
     const context = clean($('main').text());
+    const title = clean($('main h1').first().text());
+    if (!title || !/eligible\s+pok[eé]mon/i.test(title)) throw new Error('Unrecognized official roster identity; manual parser review required');
     const links = unique($('main a[href]').map((_, el) => safeUrl($(el).attr('href'), response.final_url, HOSTS)).get().filter(Boolean));
-    return { ...base, title: clean($('main h1').first().text()), semantic_sha256: sha256(canonical({ roster, context, links })), paragraph_hashes: [sha256(context), ...roster.map(row => sha256(canonical(row)))],
+    return { ...base, title, semantic_sha256: sha256(canonical({ roster, context, links })), paragraph_hashes: [sha256(context), ...roster.map(row => sha256(canonical(row)))],
       mentions: { regulations: [], dates: [], entities: roster.map(row => row.name), rule_topics: ['eligible'] }, roster,
       potential_team_ids: Object.entries(teams).filter(([, team]) => (team.members || []).some(member => roster.some(row => row.name === member.name))).map(([id]) => id).sort(), discovery: [], manual_pdf_review: false, manual_roster_mapping_review: true };
   }

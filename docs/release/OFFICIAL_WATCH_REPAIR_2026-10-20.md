@@ -62,3 +62,11 @@ unrepaired implementation.
 
 Operational monitoring, full official eligibility reconciliation and client proof
 remain separate unresolved gates.
+
+## Independent4303684 follow-up
+
+The independent retest found that embedded roster data bypassed common challenge/context rejection, and the aggregate lifecycle digest omitted owning tests. The follow-up applies visible challenge detection before specialized extraction, requires the recognized English roster heading, and retains the last good source baseline on rejection. It does not approve roster legality.
+
+Lifecycle fingerprint version aggregate-inputs-v2 discovers tests (including helpers/fixtures), tools, DB inputs, generated data, root runtime/package files, source inputs and workflow definitions. Text inputs normalize LF; binary fixtures retain exact bytes. Receipt/output history remains content-addressed and separately checked, avoiding circular result/source identity. Older selected-inputs-v1 facts remain historical and cannot satisfy the new aggregate source identity. Added/removed/weakened owning tests invalidate the local aggregate stage. Documentation-only receipts preserve identity.
+
+Both new audit controls fail against the prior checkout. Focused repair controls44/44 pass, including real Git committed-versus-working identity and binary-byte mutation. Full candidate validation and independent review remain separate gates. No engine changes, watcher enablement, live DB/settings change or deployment.
