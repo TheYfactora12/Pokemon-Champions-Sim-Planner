@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.220-own-state
+// Build marker: v2.2.221-own-policy
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.220-own-state'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.221-own-policy'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -7099,7 +7099,7 @@ function csQaProofTeam(name, members) {
 
 function csRunTargetedQaProofBattle(config) {
   config = config || {};
-  var seeds = config.seeds || [[1, 2, 3, 4], [100, 200, 300, 400], [10, 20, 30, 40], [123, 456, 789, 1011]];
+  var seeds = config.seeds || [[1000000, 123456789, 987654321, 314159265], [1, 2, 3, 4], [100, 200, 300, 400], [10, 20, 30, 40], [123, 456, 789, 1011]];
   var selected = null;
   var selectedSummary = null;
   for (var i = 0; i < seeds.length; i++) {

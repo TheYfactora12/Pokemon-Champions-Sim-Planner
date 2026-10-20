@@ -1,5 +1,26 @@
 # Improvement Log
 
+## IMP-0115: Put the Actual Default Behind an Information Boundary
+
+- Default v4 receives frozen own-state, public-field and living target-slot inputs.
+  Opponent damage estimates, inventory, stats and ability queries are removed.
+- Mega candidate choice uses own slot order instead of hidden weather suppression
+  through effective Speed. Simultaneous Mega execution ordering remains unproved.
+- Preserve mechanics fixtures with explicit actions/targets; independently replay
+  old and new golden traces before accepting intentional policy/RNG changes.
+- Fixed priors are conservative and can choose ineffective moves. This is an
+  information-boundary correction, not competitive-strength certification.
+- [Candidate gates and remaining blockers](release/OVERNIGHT_ACCEPTANCE_GATES_2026-10-20.md).
+
+## IMP-0114: Resolve Rocky Helmet at Each Contact Hit
+
+- Apply active Helmet after the existing contact ability hook, with scoped
+  prevention, item ownership, KO and stable event provenance.
+- Restore fixed two-hit routing and keep fixed counts ahead of Skill Link.
+- The reference disproved the initial contact ordering assumption; retain the
+  low-HP Rough Skin/Helmet counterexample. 56 pinned-reference cases pass.
+- [Reference scope and exclusions](release/ROCKY_HELMET_2026-10-20.md).
+
 ## IMP-0113: Isolate an Opt-In Own-State Diagnostic
 
 - Hidden ability and defensive-stat reads remain in the default selector. A pure

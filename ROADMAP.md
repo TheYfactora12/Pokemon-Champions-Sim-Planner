@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Review local v220 and PR278 separately. Pivot repair and an own-state diagnostic have scoped proof. Default policy leakage, Rocky Helmet, voluntary switches and Mega order remain open. See STATUS.md.
+Review local v221 and PR278 separately after final gates. Rocky Helmet and the conservative production policy have scoped repairs. See docs/release/OVERNIGHT_ACCEPTANCE_GATES_2026-10-20.md for each remaining acceptance gate, owner, blocker and next action.
 
 ## Milestone Index
 

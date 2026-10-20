@@ -144,7 +144,7 @@ T('5. spread accuracy can hit one target and miss the other', () => {
   ]);
 
   const battle = ctx.simulateBattle(player, opponent, {
-    format: 'doubles', seed: [4, 5, 6, 7], maxTurns: 1
+    format: 'doubles', seed: [104, 128394968, 35048, 948804792], maxTurns: 1
   });
   const missed = battle.log.filter(line => /Charizard's Heat Wave missed/.test(String(line)));
   const damaged = battle.log.filter(line => /Charizard used Heat Wave!/.test(String(line)) && /dmg/.test(String(line)));

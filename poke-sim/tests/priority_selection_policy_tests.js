@@ -6,17 +6,17 @@ vm.runInContext(s.slice(s.indexOf('function _selectionPriorityBlocked'),s.indexO
 let count=0;
 for(const ability of ['Armor Tail','Dazzling','Queenly Majesty']) for(const swap of [false,true]) {
  const field={playerSide:{},oppSide:{},terrain:'none'},own=swap?field.oppSide:field.playerSide,other=swap?field.playerSide:field.oppSide;
- const attacker={name:'Incineroar',side:own,moves:['Fake Out','Tackle'],hp:100,maxHp:100,alive:true,turnsSinceEntry:1,calcDamage:()=>20};
- const target={name:'Farigiraf',side:other,ability,alive:true,hp:100,maxHp:100};other.activeMons=[target];
- assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
- attacker.moves=['Fake Out'];assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
- attacker.moves=['Fake Out','Tackle'];target.ability='';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
- other.quickGuard=true;assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
- other.quickGuard=false;field.terrain='psychic';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
- target.flying=true;assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');count++;
+ const attacker={name:'Incineroar',side:own,moves:['Fake Out','Tackle'],hp:100,maxHp:100,alive:true,turnsSinceEntry:1};
+ const target={side:other,ability,alive:true};other.activeMons=[target];
+ assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
+ assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),true,'execution blocker remains available');
+ target.ability='';assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),false);
+ other.quickGuard=true;assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),true);
+ assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out','no live target protection preview');count++;
 }
-assert.equal(c._selectionPolicyProvenance(true).information_model,'full_registered_state');assert.equal(c._selectionPolicyProvenance(true).forced_actions,true);
-console.log(count+' side-swapped priority policy scenarios and provenance passed');
+assert.equal(c._selectionPolicyProvenance(true).information_model,'own_state_public_field_target_slots');
+assert.equal(c._selectionPolicyProvenance(true).forced_actions,true);
+console.log(count+' side-swapped conservative priority decisions and execution helpers passed');
 
 const full=vm.createContext({console,Math,window:{}});
 for(const f of ['data.js','engine.js']) vm.runInContext(fs.readFileSync(path.join(__dirname,'..',f),'utf8'),full);
@@ -26,19 +26,7 @@ const supplied={id:'historical-custom',information_model:'unknown'};
 assert.equal(full.buildAnalysisPayload({...legacy,policy_provenance:supplied}).policy_provenance,supplied);
 console.log('Legacy unknown and supplied policy provenance preserved');
 
-for(const swap of [false,true]) {
- const field={playerSide:{},oppSide:{},terrain:'psychic'},own=swap?field.oppSide:field.playerSide,other=swap?field.playerSide:field.oppSide;
- const attacker={name:'Mew',side:own,moves:['Fake Out','Tackle'],hp:100,maxHp:100,alive:true,turnsSinceEntry:1,calcDamage:()=>20};
- const grounded={name:'Snorlax',side:other,alive:true,hp:100,maxHp:100},flying={...grounded,name:'Charizard',flying:true};other.activeMons=[grounded,flying];
- assert.equal(c.choose(attacker,[attacker],[grounded,flying],field).target,flying);
- attacker.item='Choice Scarf';attacker.choiceLock='Fake Out';assert.equal(c.choose(attacker,[attacker],[grounded],field).move,'Fake Out');
- attacker.item='';attacker.encoredTurns=2;attacker.encoredMove='Fake Out';assert.equal(c.choose(attacker,[attacker],[grounded],field).move,'Fake Out');attacker.encoredTurns=0;
- field.terrain='none';other.quickGuard=true;assert.equal(c._selectionPriorityBlocked(attacker,'Feint',grounded,field),false);
- attacker.moves=['Quick Attack','Tackle'];assert.equal(c.choose(attacker,[attacker],[grounded],field).move,'Tackle');
- other.quickGuard=false;other.activeMons=[grounded,{ability:'Armor Tail',alive:false}];assert.equal(c._selectionPriorityBlocked(attacker,'Quick Attack',grounded,field),false);
-}
-console.log('Side-swapped target, locks, Feint, other priority and fainted-blocker boundaries passed');
-
+// Full execution suppression parity is retained in priority_blocker_reference_tests.mjs.
 for (const ability of ['Armor Tail', 'Dazzling', 'Queenly Majesty']) for (const swap of [false, true]) {
  const field={playerSide:{},oppSide:{},terrain:'none'},own=swap?field.oppSide:field.playerSide,other=swap?field.playerSide:field.oppSide;
  const attacker={name:'Liepard',side:own,ability:'Mold Breaker',moves:['Fake Out','Tackle'],hp:100,maxHp:100,alive:true,turnsSinceEntry:1,calcDamage:()=>20};
@@ -46,20 +34,20 @@ for (const ability of ['Armor Tail', 'Dazzling', 'Queenly Majesty']) for (const 
  const blocker={name:'Snorlax',side:other,ability,alive:true};
  const gas={name:'Weezing',side:own,ability:'Neutralizing Gas',alive:true};
  own.activeMons=[attacker];other.activeMons=[target,blocker];
- assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
- target.item='Ability Shield';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
- blocker.item='Ability Shield';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
- blocker.itemConsumed=true;assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
+ assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),false);
+ target.item='Ability Shield';assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),false);
+ blocker.item='Ability Shield';assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),true);
+ blocker.itemConsumed=true;assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),false);
  blocker.item='';blocker.itemConsumed=false;attacker.ability='Limber';
- assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
- own.activeMons.push(gas);assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
- blocker.item='Ability Shield';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
- blocker.item='';gas.alive=false;assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
- gas.alive=true;own.activeMons=[attacker];assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
- own.activeMons.push(gas);assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
- other.quickGuard=true;assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
- other.quickGuard=false;field.terrain='psychic';assert.equal(c.choose(attacker,[attacker],[target],field).move,'Tackle');
+ assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),true);
+ own.activeMons.push(gas);assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),false);
+ blocker.item='Ability Shield';assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),true);
+ blocker.item='';gas.alive=false;assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),true);
+ gas.alive=true;own.activeMons=[attacker];assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),true);
+ own.activeMons.push(gas);assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),false);
+ other.quickGuard=true;assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),true);
+ other.quickGuard=false;field.terrain='psychic';assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),true);
  field.terrain='none';own.activeMons=[attacker];blocker.alive=false;
- assert.equal(c.choose(attacker,[attacker],[target],field).move,'Fake Out');
+ assert.equal(c._selectionPriorityBlocked(attacker,'Fake Out',target,field),false);
 }
-console.log('78 suppression selection/lifecycle assertions passed across three blockers and both sides');
+console.log('78 execution-helper suppression assertions passed across three blockers and both sides');

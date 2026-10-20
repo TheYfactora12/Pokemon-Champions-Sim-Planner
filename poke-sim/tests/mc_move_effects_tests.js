@@ -120,7 +120,7 @@ check('First Impression becomes selectable again on fresh entry; sole disabled m
   actor.side=field.playerSide;target.side=field.oppSide;
   actor.turnsSinceEntry=2;assert.equal(c.choose(actor,[actor],[target],field).move,'Struggle');
   actor.moves.push('Splash');actor.movePP.Splash={current:10,max:10};field.playerSide.imprisonedMoves=new Set(['Splash']);
-  assert.equal(c.choose(actor,[actor],[target],field).move,'Struggle','disabled First Impression plus imprisoned alternative');
+  assert.equal(c.choose(actor,[actor],[target],field).move,'Splash','unknown enemy Imprison inventory is not a selection input; execution enforces it');
   actor.moves=['First Impression'];field.playerSide.imprisonedMoves=null;
   actor.turnsSinceEntry=1;assert.equal(c.choose(actor,[actor],[target],field).move,'First Impression');
 });

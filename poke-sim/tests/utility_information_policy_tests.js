@@ -41,12 +41,12 @@ for (const swap of [false, true]) for (const move of utilities) {
   assert.equal(c.choose(attacker, [attacker], [enemy], field).move, 'Tackle');
   attacker.item = ''; attacker.encoredTurns = 2; attacker.encoredMove = 'Tackle';
   assert.equal(c.choose(attacker, [attacker], [enemy], field).move, 'Tackle');
-  attacker.encoredTurns = 0; attacker.calcDamage = () => 90;
-  assert.equal(c.choose(attacker, [attacker], [enemy], field).move, 'Tackle', 'strong damage can outrank a fixed utility prior');
-  checks += 6;
+  attacker.encoredTurns = 0; attacker.calcDamage = () => {throw Error('Hidden damage preview');}; c._moveBasePower = () => 200;
+  assert.equal(c.choose(attacker, [attacker], [enemy], field).move, 'Tackle', 'static own-move score can outrank a fixed utility prior');
+  c._moveBasePower = () => 40; checks += 6;
 }
 const provenance = c._selectionPolicyProvenance(false);
-assert.equal(provenance.id, 'greedy-state-aware-v3');
-assert.equal(provenance.information_model, 'full_registered_state');
+assert.equal(provenance.id, 'own-public-heuristic-v4');
+assert.equal(provenance.information_model, 'own_state_public_field_target_slots');
 assert.equal(provenance.competitive_strength_verified, false);
-console.log(`${checks} utility inventory-invariance and lock checks passed; remaining full-state provenance preserved.`);
+console.log(`${checks} utility inventory-invariance and lock checks passed; conservative default provenance preserved.`);

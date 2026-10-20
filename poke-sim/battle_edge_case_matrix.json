@@ -14,6 +14,48 @@
   },
   "cases": [
     {
+      "id": "ITEM-ROCKY-HELMET-CONTACT",
+      "family": "items",
+      "behavior": "Contact damage, fixed multi-hit frequency and contact KO are explicit and identity-preserving.",
+      "status": "partial",
+      "tests": [
+        "tests/rocky_helmet_reference_tests.mjs"
+      ],
+      "oracle": "Pinned pokemon-showdown 0.11.11 Champions custom battle; items onDamagingHitOrder2 and RoughSkin order1.",
+      "boundary_vectors": [
+        "both-sides",
+        "Protect-Substitute",
+        "consumed-Klutz-Pads",
+        "LongReach-MagicGuard-Gas-Shield",
+        "two-hit-SkillLink",
+        "attacker-holder-KO",
+        "RoughSkin-order",
+        "pivot-stop"
+      ],
+      "known_gap": "Synthetic mechanics, not legal-team/client certification. General contact effect ordering and Rough Skin suppression remain unproved."
+    },
+    {
+      "id": "DEFAULT-POLICY-BOUNDARY",
+      "family": "moves-effects",
+      "behavior": "Production default snapshots own primitives and target occupancy, excluding hidden opponent scoring.",
+      "status": "partial",
+      "tests": [
+        "tests/default_policy_boundary_tests.js",
+        "tests/utility_information_policy_tests.js",
+        "tests/priority_selection_policy_tests.js"
+      ],
+      "oracle": "Production input mutation and throwing-accessor contract; no strength oracle.",
+      "boundary_vectors": [
+        "both-sides",
+        "40-hidden-state-mutations",
+        "no-damage-preview-RNG",
+        "own-PP-lock-healing",
+        "aggregate-provenance",
+        "Mega-slot-choice"
+      ],
+      "known_gap": "No opponent reveal ledger or verified Champions visibility. Conservative static scoring can choose ineffective moves. Simultaneous Mega/switch execution order remains unproved."
+    },
+    {
       "id": "OWN-STATE-DIAGNOSTIC",
       "family": "moves-effects",
       "behavior": "Opt-in diagnostic choices use detached own-state primitives and target occupancy only.",

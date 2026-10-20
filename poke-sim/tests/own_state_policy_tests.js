@@ -79,9 +79,9 @@ for(const swap of [false,true]) test('actual engine hidden-state mutation invari
     assert.equal(JSON.stringify(inputs),original);
   }
 });
-test('default stays full-state; unknown or missing diagnostic module fails closed',()=>{
+test('default uses conservative own/public policy; unknown or missing diagnostic module fails closed',()=>{
   const opts={format:'doubles',maxTurns:1,seed:[8,3,12,7]};
-  assert.equal(c.simulateBattle(observer,observer,opts).policy_provenance.id,'greedy-state-aware-v3');
+  assert.equal(c.simulateBattle(observer,observer,opts).policy_provenance.id,'own-public-heuristic-v4');
   const wrong=c.simulateBattle(observer,observer,{...opts,decisionPolicy:'typo'});
   assert.equal(wrong.result,'error');assert.equal(wrong.turns,0);
   const api=c.OwnStatePolicy;c.OwnStatePolicy=undefined;

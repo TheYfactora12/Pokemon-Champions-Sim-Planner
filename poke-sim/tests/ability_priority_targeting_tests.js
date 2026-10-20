@@ -593,7 +593,7 @@ T('18. Stalwart ignores Follow Me redirection', function() {
     moves: ['Splash'],
     evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }
   })]);
-  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [77, 78, 79, 80], maxTurns: 1 });
+  const battle = ctx.simulateBattle(playerTeam, oppTeam, { format: 'doubles', seed: [77, 78, 79, 80], maxTurns: 1, forcedActions:[{turn:1,side:'player',slot:0,move:'Thunderbolt',targetSlot:1}] });
   falsy(battle.log.some(line => String(line).includes('attack was drawn to Clefairy')),
     'Stalwart should bypass Follow Me redirection');
   truthy(battle.log.some(line => String(line).includes('Raichu used Thunderbolt') && String(line).includes('Pelipper')),

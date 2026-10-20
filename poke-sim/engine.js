@@ -3164,9 +3164,9 @@ function _priorityAbilityBlocker(attacker, defenders, field) {
     ((mon.item === 'Ability Shield' && !mon.itemConsumed) || (!gas && !bypass)));
 }
 function _selectionPolicyProvenance(forced) {
-  return {id:'greedy-state-aware-v3',information_model:'full_registered_state',
+  return {id:'own-public-heuristic-v4',information_model:'own_state_public_field_target_slots',
     forced_actions:!!forced,competitive_strength_verified:false,
-    limitations:['Damage and priority scoring inspect opponent stats, items and abilities.','Not a hidden-information or human-play policy.']};
+    limitations:['Own-move heuristic, not predicted damage; target occupancy only.','No opponent reveal model or verified competitive strength; execution may reject hidden restrictions.']};
 }
 
 function _mcMoveUnavailable(mon, move, field) {
@@ -4121,7 +4121,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
   for (const w of oppLegality.warnings) log.push(`[LEGALITY] Opponent warning: ${w}`);
   const unsupported = checkSimulationSupport(playerTeam).concat(checkSimulationSupport(oppTeam));
-  if ((opts.decisionPolicy && opts.decisionPolicy !== 'greedy-state-aware-v3' && !diagnosticPolicy) ||
+  if ((opts.decisionPolicy && opts.decisionPolicy !== 'own-public-heuristic-v4' && !diagnosticPolicy) ||
       (diagnosticPolicy && typeof OwnStatePolicy === 'undefined')) unsupported.push('Unknown or unavailable decision policy.');
   if (Array.isArray(opts.forcedActions) && opts.forcedActions.some(row => row && _moveId(row.move) === 'fly')) unsupported.push('Forced Fly simulation is not supported.');
   log.push(...unsupported);
@@ -4464,34 +4464,24 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   for (const m of oppActive)    applyEntryAbility(m, 'opp', field, log);
 
   // ============================================================
-  // GREEDY MOVE SELECTION
+  // CONSERVATIVE OWN-STATE MOVE SELECTION
   // Scores moves by expected damage or utility value.
   // ============================================================
   function selectMove(attacker, allies, enemies, field) {
-    const liveEnemies = enemies.filter(e => e.alive);
-    const liveAllies  = allies.filter(a => a !== attacker && a.alive);
-    if (attacker.chargingMove) {
-      const _storedTarget = attacker.chargingTarget || null;
-      const _storedTargetIsLiveBattler = !!(_storedTarget && _storedTarget.alive &&
-        (enemies.includes(_storedTarget) || allies.includes(_storedTarget)));
-      let lockedTarget = _storedTargetIsLiveBattler ? _storedTarget : null;
-      if (!lockedTarget && Number.isFinite(attacker.chargingTargetSlot)) {
-        const lockedSide = attacker.chargingTargetSide === 'ally' ? allies : enemies;
-        const slotTarget = lockedSide[attacker.chargingTargetSlot] || null;
-        if (slotTarget && slotTarget.alive && slotTarget !== attacker) lockedTarget = slotTarget;
-      }
-      if (!lockedTarget && _storedTarget && _storedTarget.alive) lockedTarget = _storedTarget;
-      if (!lockedTarget) lockedTarget = liveEnemies[0] || liveAllies[0] || null;
-      return { move: attacker.chargingMove, target: lockedTarget };
-    }
-    // T9j.6 (#18) — Choice Scarf lock enforcement. If holder already used a move
-    // and still has it legal, must use same move. Cite: Bulbapedia Choice Scarf.
-    if (attacker.item === 'Choice Scarf' && attacker.ability !== 'Klutz' && !attacker.itemConsumed && attacker.choiceLock &&
-        attacker.moves.includes(attacker.choiceLock) && _movePPRemaining(attacker, attacker.choiceLock) > 0) {
-      const target = liveEnemies[0] || allies.find(a => a !== attacker && a.alive) || null;
-      return { move: attacker.choiceLock, target };
-    }
-    const STATUS_MOVES = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder','Toxic','Poison Powder',
+    const choice = _chooseDefaultDecision(_prepareDefaultDecision(attacker,allies,enemies,field));
+    return {move:choice.move,target:(choice.targetSide === 'ally' ? allies : enemies)[choice.targetSlot] || null};
+  }
+  // Trusted adapter. No enemy object crosses the decision boundary; occupancy is
+  // the only enemy-mon property read. Own imposed Imprison is our effect history.
+  function _prepareDefaultDecision(actor, allies, enemies, field) {
+    const own = actor.side === field.playerSide ? field.playerSide : field.oppSide;
+    const other = actor.side === field.playerSide ? field.oppSide : field.playerSide;
+    const slots = Object.freeze(enemies.flatMap((mon,slot)=>mon.alive?[slot]:[]));
+    const allyHeal = allies.findIndex(mon=>mon!==actor && mon.alive && mon.hp<mon.maxHp*.6);
+    const roles = Object.freeze((actor.roles || []).filter(role=>typeof role==='string'));
+    const sealed = !!(other && other.imprisonedBy === actor.name && other.imprisonedMoves &&
+      actor.moves.filter(m=>m!=='Imprison').every(m=>other.imprisonedMoves.has(m)));
+    const knownStatus = new Set(['Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder','Toxic','Poison Powder',
       'Tailwind','Sunny Day','Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail','Quick Guard',
       'Protect','Detect',
       // T9j.3 Screens setters
@@ -4500,174 +4490,62 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       'Encore','Haze','Defog',
       // Recovery / board-state support
       'Recover','Shore Up','Rest','Sleep Talk','Substitute','Imprison','Ally Switch']);
-    const TURN1_ROLE_UTILITY = new Set([
-      'Tailwind','Trick Room','Fake Out','Follow Me','Rage Powder',
-      'Light Screen','Reflect','Aurora Veil','Will-O-Wisp','Thunder Wave',
-      'Encore','Taunt','Quick Guard','Protect','Detect','Parting Shot',
-      'Haze','Defog','Recover','Shore Up','Rest','Substitute','Ally Switch'
-    ]);
-    const roles = Array.isArray(attacker.roles) ? attacker.roles : [];
-    const turnsSinceEntry = attacker.turnsSinceEntry || 0;
-    const freshEntry = turnsSinceEntry <= 1;
-    const isSupportRole = roles.indexOf('Support') >= 0 || roles.indexOf('Speed Control') >= 0;
-    const isPivotRole = roles.indexOf('Pivot') >= 0;
-
-    let best = { move: null, target: null, score: -Infinity };
-
-    const attackerOnPlayerSide = !!(field && attacker && attacker.side === field.playerSide);
-    const selfSide = field && attackerOnPlayerSide ? field.playerSide : field.oppSide;
-    const enemySide = field && attackerOnPlayerSide ? field.oppSide : field.playerSide;
-
-    if (attacker.status === 'sleep' && attacker.moves.includes('Sleep Talk') && _movePPRemaining(attacker, 'Sleep Talk') > 0) {
-      const target = liveEnemies[0] || liveAllies[0] || null;
-      return { move: 'Sleep Talk', target };
+    const moves = Object.freeze(actor.moves.map(name=>{
+      const category=_moveCategory(name), raw=typeof _moveBasePower==='function'?_moveBasePower(name,actor):40;
+      return Object.freeze({name, pp:_movePPRemaining(actor,name), status:category==='status'||(!category&&knownStatus.has(name)),
+        power:Number.isFinite(raw)&&raw>0?raw:40, variablePower:!Number.isFinite(raw)||raw<=0,
+        stab:!!(actor.types && actor.types.includes(_moveType(name,actor))), priority:getPriority(name,actor),
+        unavailable:_mcMoveUnavailable(actor,name,field) ||
+          (actor.throatChopTurns>0 && typeof _isSoundMove==='function' && _isSoundMove(name)) ||
+          (actor.healBlockedTurns>0 && ['Recover','Roost','Shore Up','Life Dew','Rest','Strength Sap'].includes(name)) ||
+          (field.gravityTurns>0 && typeof _moveHasFlag==='function' && _moveHasFlag(name,'gravity'))});
+    }));
+    return Object.freeze({moves,slots,roles,allyHeal,sealed,
+      charge:typeof actor.chargingMove==='string'?actor.chargingMove:null,
+      chargeSide:actor.chargingTargetSide==='ally'?'ally':'enemy',
+      chargeSlot:Number.isInteger(actor.chargingTargetSlot)?actor.chargingTargetSlot:null,
+      choice:actor.item==='Choice Scarf'&&!actor.itemConsumed&&actor.ability!=='Klutz'?actor.choiceLock:null,
+      encore:actor.encoredTurns>0?actor.encoredMove:null,
+      asleep:actor.status==='sleep',taunted:actor.tauntedTurns>0,fakeDone:!!actor._fakeDone,
+      fresh:!(actor.turnsSinceEntry>1),mc:actor.referenceMode==='champions_mc_reference',
+      hpFraction:actor.maxHp>0?actor.hp/actor.maxHp:1,substitute:actor.substituteHp>0,
+      tailwind:!!own.tailwind,reflect:!!own.reflect,lightScreen:!!own.lightScreen,veil:!!own.auroraVeil,
+      trickRoom:!!field.trickRoom,weather:typeof field.weather==='string'?field.weather:'none'});
+  }
+  // Pure conservative heuristic, not predicted damage. Static positive metadata
+  // is a prior; missing/zero power uses 40. Enemy facts and reveals are unknown.
+  function _chooseDefaultDecision(input) {
+    const result=(move,targetSide='enemy',targetSlot=input.slots[0]??null)=>Object.freeze({move,targetSide,targetSlot});
+    const usable=name=>input.moves.some(row=>row.name===name&&row.pp>0);
+    if(input.charge)return result(input.charge,input.chargeSide,input.chargeSlot??input.slots[0]??null);
+    if(input.choice&&usable(input.choice))return result(input.choice);
+    if(input.encore)return result(usable(input.encore)?input.encore:'Struggle');
+    if(input.asleep&&usable('Sleep Talk'))return result('Sleep Talk');
+    let best=null,score=-Infinity;
+    const utility={'Imprison':45,'Quick Guard':48,"King's Shield":43,'Spiky Shield':43,'Baneful Bunker':43,'Obstruct':43,
+      'Follow Me':35,'Rage Powder':35,'Taunt':34,'Will-O-Wisp':45,'Thunder Wave':44,'Ally Switch':32};
+    for(const row of input.moves) {
+      if(row.pp<=0||row.unavailable||(row.status&&input.taunted)||
+        (row.name==='Fake Out'&&(!input.fresh||input.fakeDone))||
+        (row.name==='First Impression'&&input.mc&&!input.fresh))continue;
+      let value=row.status?(utility[row.name]??0):row.power*.5*(row.stab?1.5:1)+(row.priority>0?10:0);
+      if(row.name==='Fake Out'&&input.fresh)value=100;
+      if(row.name==='Imprison'&&input.sealed)value=-1;
+      if(row.name==='Trick Room'&&!input.trickRoom)value=55;
+      if(row.name==='Tailwind'&&!input.tailwind)value=50;
+      if(row.name==='Reflect'&&!input.reflect)value=42;
+      if(row.name==='Light Screen'&&!input.lightScreen)value=42;
+      if(row.name==='Aurora Veil'&&!input.veil&&['snow','hail'].includes(input.weather))value=52;
+      if(['Recover','Shore Up','Roost'].includes(row.name)&&input.hpFraction<.65)value=46;
+      if(row.name==='Rest'&&input.hpFraction<.55)value=47;
+      if(row.name==='Substitute'&&!input.substitute&&input.hpFraction>.35)value=38;
+      if(row.name==='Life Dew'&&input.allyHeal>=0)value=40;
+      if(row.name==='Pollen Puff'&&input.allyHeal>=0)value=43;
+      if(input.fresh&&row.status&&(input.roles.includes('Support')||input.roles.includes('Speed Control'))&&value>0)value=Math.max(value,100);
+      if(input.hpFraction<.3&&['Protect','Detect','Ally Switch','Parting Shot'].includes(row.name))value=Math.max(value,66);
+      if(value>score){score=value;best=row.name==='Pollen Puff'&&input.allyHeal>=0?result(row.name,'ally',input.allyHeal):result(row.name);}
     }
-
-    for (const move of attacker.moves) {
-      if (_movePPRemaining(attacker, move) <= 0 || _mcMoveUnavailable(attacker,move,field)) continue;
-      if (selfSide && selfSide.imprisonedMoves && selfSide.imprisonedMoves.has(move)) continue;
-      if (attacker.referenceMode === 'champions_mc_reference' && move === 'First Impression' && (attacker.turnsSinceEntry || 0) > 1) continue;
-      const moveType = _moveType(move, attacker);
-
-      if (attacker.encoredTurns > 0 && attacker.encoredMove) {
-        if (_movePPRemaining(attacker, attacker.encoredMove) <= 0) {
-          return { move: 'Struggle', target: liveEnemies[0] || liveAllies[0] || null };
-        }
-        const target = attacker.lastTarget && attacker.lastTarget.alive
-          ? attacker.lastTarget
-          : liveEnemies[0] || liveAllies[0] || null;
-        return { move: attacker.encoredMove, target };
-      }
-
-      // Status/utility scoring
-      if (STATUS_MOVES.has(move) || _moveCategory(move) === 'status') {
-        if (attacker.tauntedTurns > 0) continue;
-        let score = 0;
-        if (freshEntry && isSupportRole && TURN1_ROLE_UTILITY.has(move)) score += 35;
-        if (freshEntry && isPivotRole && (move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn' || move === 'Teleport' || move === 'Baton Pass')) score += 28;
-        if (freshEntry && roles.indexOf('Sweeper') >= 0 && (move === 'Protect' || move === 'Detect')) score += 10;
-        if (attacker.hp < attacker.maxHp * 0.3 && (move === 'Protect' || move === 'Detect' || move === 'Ally Switch' || move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn')) score += 25;
-        if (move === 'Trick Room' && !field.trickRoom) score = 55;
-        if (move === 'Tailwind'   && !(attackerOnPlayerSide ? field.playerSide : field.oppSide)?.tailwind) score = 50;
-        // T9j.3 Screens scoring — value them when not already up.
-        const _selfSide = attackerOnPlayerSide ? field.playerSide : field.oppSide;
-        if (move === 'Light Screen' && _selfSide && !_selfSide.lightScreen) score = 42;
-        if (move === 'Reflect'      && _selfSide && !_selfSide.reflect)     score = 42;
-        const effectiveWeather = _effectiveFieldWeather(field);
-        if (move === 'Aurora Veil' && _selfSide && !_selfSide.auroraVeil
-            && (effectiveWeather === 'hail' || effectiveWeather === 'snow')) score = 52;
-        if (move === 'Will-O-Wisp' && liveEnemies.length) {
-          const target = liveEnemies.find(e => !e.status) || liveEnemies[0];
-          if (target && !target.status && target.types.every(t => t !== 'Fire')) {
-            if (best.score < 45) { best = { move, target, score: 45 }; }
-          }
-          continue;
-        }
-        if (move === 'Life Dew' && liveAllies.some(a => a.hp < a.maxHp * 0.6)) score = 40;
-        if (move === 'Pollen Puff' && liveAllies.some(a => a !== attacker && a.alive && a.hp < a.maxHp)) {
-          const target = liveAllies.find(a => a !== attacker && a.alive && a.hp < a.maxHp) || liveAllies[0] || null;
-          if (target) {
-            if (best.score < 43) { best = { move, target, score: 43 }; }
-          }
-          continue;
-        }
-        if (move === 'Rage Powder' && liveAllies.some(a => !a.alive)) score = 35;
-        // Fixed utility priors: never infer threats from unrevealed move inventories.
-        // These are heuristics, not verified predictions of the opponent's action.
-        if (move === 'Quick Guard') score = 48;
-        if ((move === "King's Shield" || move === 'Spiky Shield' || move === 'Baneful Bunker' || move === 'Obstruct')) {
-          score = 43;
-        }
-        if (move === 'Endure' && attacker.hp < attacker.maxHp * 0.35) score = 41;
-        if (move === 'Taunt') score = 34;
-        if (move === 'Encore' && liveEnemies.some(e => e.lastMoveUsed)) {
-          score = 46;
-        }
-        if (move === 'Haze' && liveEnemies.some(e => e.statBoosts && Object.values(e.statBoosts).some(v => v !== 0))) {
-          score = 44;
-        }
-        if (move === 'Defog' && (field.terrain !== 'none' || liveEnemies.some(e => e.side && (e.side.reflect || e.side.lightScreen || e.side.auroraVeil)))) {
-          score = 44;
-        }
-        if ((move === 'Recover' || move === 'Shore Up') && attacker.hp < attacker.maxHp * 0.65) score = 46;
-        if (move === 'Rest' && attacker.hp < attacker.maxHp * 0.55) score = 47;
-        if (move === 'Substitute' && attacker.hp > attacker.maxHp * 0.35 && attacker.substituteHp <= 0) score = 38;
-        if (move === 'Imprison') {
-          // Policy only: our existing seal needs no refresh. Keep the move
-          // selectable when it is the only option; forced locks above still win.
-          // This check uses our effect and moves, not additional enemy knowledge.
-          const alreadySealed = enemySide && enemySide.imprisonedBy === attacker.name &&
-            enemySide.imprisonedMoves && attacker.moves.filter(m => m !== 'Imprison')
-              .every(m => enemySide.imprisonedMoves.has(m));
-          if (alreadySealed) score = -1;
-          else score = 45;
-        }
-        if (move === 'Ally Switch' && liveAllies.length > 0) score = 32;
-        if (move === 'Roost' && attacker.hp < attacker.maxHp * 0.5) score = 45;
-        if (freshEntry && isSupportRole && TURN1_ROLE_UTILITY.has(move)) score = Math.max(score, 70);
-        if (freshEntry && isPivotRole && (move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn' || move === 'Teleport' || move === 'Baton Pass')) score = Math.max(score, 62);
-        if (attacker.hp < attacker.maxHp * 0.3 && (move === 'Protect' || move === 'Detect' || move === 'Ally Switch' || move === 'Parting Shot' || move === 'U-turn' || move === 'Volt Switch' || move === 'Flip Turn')) score = Math.max(score, 66);
-        if (score > best.score) best = { move, target: liveEnemies[0] || null, score };
-        continue;
-      }
-
-      // Priority move logic
-      if (getPriority(move, attacker) > 0) {
-        // T9j.17 (Refs #101) -- Fake Out hard-gate: skip selection entirely past
-        // first turn out. Previously it fell through to the damage-scoring loop
-        // below, which let the AI "select" Fake Out turn 2+ as a 40-BP attack.
-        // Champions rule: Fake Out is only legal on the user's first turn out.
-        // Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out_(move)
-        if (move === 'Fake Out') {
-          if (attacker._fakeDone || (attacker.turnsSinceEntry || 0) > 1) continue; // illegal selection -- skip entirely
-          const target = liveEnemies.find(t=>!_selectionPriorityBlocked(attacker,move,t,field)) || liveEnemies[0];
-          if (target) {
-            const dmg = attacker.calcDamage(move, target, field, null, rng);
-            let score = dmg / target.maxHp * 100 + 25;
-            // Turn-1 support leads should strongly prefer legal Fake Out pressure
-            // over passive lines like Protect so guard/counterplay tests reflect
-            // actual opener behavior instead of AI scoring noise.
-            if (freshEntry) score = Math.max(score, 74);
-            if (_selectionPriorityBlocked(attacker,move,target,field)) score = -1;
-            if (score > best.score) best = { move, target, score };
-          }
-          continue;
-        }
-      }
-
-      // Damage scoring — pick highest damage target
-      if (move === 'Pollen Puff' && liveAllies.some(a => a !== attacker && a.alive && a.hp < a.maxHp)) {
-        const target = liveAllies.find(a => a !== attacker && a.alive && a.hp < a.maxHp) || liveAllies[0] || null;
-        if (target) {
-          const score = 43;
-          if (score > best.score) best = { move, target, score };
-        }
-        continue;
-      }
-      for (const target of liveEnemies) {
-        const dmg = attacker.calcDamage(move, target, field, null, rng);
-        // Score: damage fraction + KO bonus + priority bonus
-        let score = dmg / target.maxHp * 100;
-        if (dmg >= target.hp) score += 50; // KO bonus
-        if (getPriority(move, attacker) > 0) score += 10;
-        if (_selectionPriorityBlocked(attacker,move,target,field)) score = -1;
-        if (score > best.score) best = { move, target, score };
-      }
-    }
-
-    // Fallback
-    if (!best.move) {
-      if (attacker.tauntedTurns > 0 || attacker.moves.every(function(move) { return _movePPRemaining(attacker, move) <= 0 || _mcMoveUnavailable(attacker,move,field) ||
-          (selfSide && selfSide.imprisonedMoves && selfSide.imprisonedMoves.has(move)) ||
-          (attacker.referenceMode === 'champions_mc_reference' && move === 'First Impression' && (attacker.turnsSinceEntry || 0) > 1); })) {
-        best.move = 'Struggle';
-        best.target = liveEnemies[0] || allies.find(a => a !== attacker && a.alive) || null;
-        return best;
-      }
-      best.move   = attacker.moves[0] || 'Tackle';
-      best.target = liveEnemies[0] || allies[0];
-    }
-    return best;
+    return best||result('Struggle');
   }
 
   // ============================================================
@@ -7073,20 +6951,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     // --------------------------------------------------------
     // T9j.7 — MEGA EVOLUTION PHASE
-    // Champions rule: one Mega per team per match, persists through switch
-    // and even after faint. Triggers at start of turn, after switches, before
-    // moves. Simultaneous Megas resolve by speed with RNG tiebreak (documented
-    // Champions behavior is 'random' per Game8 Known Bugs; speed+RNG is a
-    // deterministic spec choice for sim reproducibility).
-    // Source: https://game8.co/games/Pokemon-Champions/archives/592472
-    //         https://bulbapedia.bulbagarden.net/wiki/Priority
+    // Own-slot candidate selection only. Execution currently resolves player then
+    // opponent before moves. Simultaneous Mega and voluntary-switch ordering need
+    // approved evidence; no parity claim is made for that execution order.
     // --------------------------------------------------------
     function tryMegaPhase(activeArr, sideFlagKey, side) {
       if (field[sideFlagKey]) return;
       const candidates = activeArr.filter(m => shouldMegaThisTurn(m, turn));
       if (candidates.length === 0) return;
-      _speedSort(candidates, (a, b) => _comparePokemonSpeedOrder(a, b, field), rng);
-      // One per team: only the first (fastest / coin-flip) evolves.
+      // Policy chooses the first eligible own active slot. Execution order is a
+      // separate mechanics gap; hidden weather suppression must not choose our Mega.
       candidates[0].megaEvolve(log, field, function(mon) {
         applyEntryAbility(mon, side, field, log);
       });
@@ -7100,9 +6974,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // --------------------------------------------------------
     const actions = [];
 
-    const isolatedChoices = diagnosticPolicy ? OwnStatePolicy.turn(playerActive,oppActive,_moveCategory) : null;
+    const preparedChoices = diagnosticPolicy ? null : [
+      ...playerActive.filter(m=>m.alive).map(m=>[m,_prepareDefaultDecision(m,playerActive,oppActive,field)]),
+      ...oppActive.filter(m=>m.alive).map(m=>[m,_prepareDefaultDecision(m,oppActive,playerActive,field)])];
+    const isolatedChoices = diagnosticPolicy ? OwnStatePolicy.turn(playerActive,oppActive,_moveCategory) :
+      new Map(preparedChoices.map(([mon,input])=>[mon,_chooseDefaultDecision(input)]));
     function pickMove(mon, allies, enemies) {
-      if (!isolatedChoices) return selectMove(mon,allies,enemies,field);
       const choice = isolatedChoices.get(mon);
       return {move:choice.move,target:(choice.targetSide === 'ally' ? allies : enemies)[choice.targetSlot] || null};
     }
@@ -7946,7 +7823,7 @@ function shouldReflectByMagicBounce(attacker, target, move) {
 
 async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress, options) {
   const context = options || {};
-  if (context.decisionPolicy && context.decisionPolicy !== 'greedy-state-aware-v3') throw new Error('Diagnostic policies require direct simulateBattle; aggregate integration is not supported.');
+  if (context.decisionPolicy && context.decisionPolicy !== 'own-public-heuristic-v4') throw new Error('Diagnostic policies require direct simulateBattle; aggregate integration is not supported.');
   const playerTeamDef = TEAMS[playerTeamKey];
   const oppTeamDef = TEAMS[oppTeamKey];
   const unsupported = checkSimulationSupport(playerTeamDef).concat(checkSimulationSupport(oppTeamDef));
@@ -7959,7 +7836,7 @@ async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress, 
     seeds: [],          // Issue #2: store seeds for reproducibility
     // Issue #6: metadata fields for trustworthy win-rate display
     sampleSize: numBattles,
-    policy: 'greedy-vs-greedy',
+    policy: 'own-public-heuristic-v4-vs-own-public-heuristic-v4',
     policy_provenance: _selectionPolicyProvenance(false),
     format: 'vgc-doubles',
     playerTeam: playerTeamKey,
@@ -8062,7 +7939,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.24'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.25'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
@@ -8132,7 +8009,7 @@ function buildAnalysisPayload(rawResult, ctx = {}) {
     seed_policy:    rawResult.seeds ? 'per-battle-mulberry32' : 'legacy-unseed',
     sample_size:    rawResult.sampleSize || n,
     bo_mode:        ctx.bo || null,
-    policy_models:  rawResult.policy || ctx.policy || 'greedy-vs-greedy',
+    policy_models:  rawResult.policy || ctx.policy || 'unknown',
     policy_provenance: rawResult.policy_provenance || null,
     win_rate:       rawResult.winRate,
     wins:           rawResult.wins,

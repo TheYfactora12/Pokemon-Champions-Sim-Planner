@@ -7,14 +7,18 @@ Historical candidate observations are not current deployment instructions.
 
 ## Local repair candidate
 
-v2.2.220-own-state / engine 1.1.24 is an unpublished local candidate based on
-main `ae3f52c` plus PR278 prerequisites. The original utility branch is preserved.
-Successful damaging pivots bypass voluntary trapping; Water Absorb and scoped
-ability bypass repairs have 101 reference cases. An opt-in own-state diagnostic
-uses frozen primitive inputs; default v3 remains full-state and strength is
-unverified. [Final scope and checks](docs/release/OWN_STATE_DIAGNOSTIC_2026-10-20.md).
-Rocky Helmet contact damage, voluntary switching and Mega ordering remain open.
-PR278 merge/release approval is pending. No push, merge or deployment performed.
+v2.2.221-own-policy / engine 1.1.25 is an unpublished local candidate based on
+main `ae3f52ce481924512bff523fdcef75d04935b7a3` plus PR278 prerequisites.
+Utility fix `0fa05c6` is included. Rocky Helmet contact/multihit behavior has 56
+pinned-reference cases. Actual default policy v4 now chooses from frozen own-state,
+public-field and target-slot inputs; hidden opponent attributes do not enter it.
+Strength remains unverified. Voluntary switching and simultaneous Mega resolution
+remain blocked on execution fixtures and approved Champions evidence respectively.
+[Consolidated acceptance gates](docs/release/OVERNIGHT_ACCEPTANCE_GATES_2026-10-20.md).
+Final local gates pass:235 fast files,12 DB files, battle audit,4,624 accuracy runs
+with zero findings, and3 browser games/4pairs with zero mismatches.
+PR278 is still draft/open; no publication,
+security/access change, spending, merge or deployment was performed.
 
 v2.2.217-current-moves / engine 1.1.21 is draft PR278, not deployed.
 Current Practice uses the September 9 official move removals and PP corrections;

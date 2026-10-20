@@ -237,10 +237,12 @@ T('B8. Fake Out user picks a non-Fake-Out move on its second turn out', () => {
                 moves:['Thunderbolt','Quick Attack','Iron Tail','Protect'] };
   const r = ctx.simulateBattle(team([fo, ally, opp, opp, opp, opp]),
                                 team([opp, opp, opp, opp, opp, opp]),
-                                { format:'doubles', seed: seed(2024) });
+                                { format:'doubles', seed: seed(2024), maxTurns:2 });
   // Count Fake Out usages by Incineroar in the log. Must be exactly 0 or 1.
   // (0 if Incineroar fainted before T1 acted; 1 if it landed on T1 then never again.)
-  const foLines = (r.log || []).filter(l => /Incineroar.*Fake Out/.test(l));
+  const foLines = (r.log || []).filter(l => /^Incineroar used Fake Out!$/.test(l));
+  truthy(r.log.indexOf('--- Turn 2 ---') >= 0, 'battle reaches turn two');
+  truthy(!r.log.slice(r.log.indexOf('--- Turn 2 ---')).some(l=>/Incineroar used Fake Out/.test(l)), 'no Fake Out choice on second turn of the same stay');
   truthy(foLines.length <= 1, `Incineroar may use Fake Out at most once, saw ${foLines.length}`);
 });
 

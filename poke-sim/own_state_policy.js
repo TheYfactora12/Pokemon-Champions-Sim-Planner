@@ -1,5 +1,5 @@
 // Opt-in diagnostic control. No opponent estimates, tactical strength or
-// Champions visibility claim. The default full-state policy is unchanged.
+// Champions visibility claim. The conservative production default is a separate policy.
 var OwnStatePolicy = (function() {
   'use strict';
   const id = 'own-state-diagnostic-v1';
