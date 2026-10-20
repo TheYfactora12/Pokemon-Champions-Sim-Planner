@@ -85,7 +85,14 @@ workflow exercise after this checkpoint. Permanent relevant coverage teams come 
 
 ## Current scope and remaining coverage
 
-Six v3 reference assertions were independently replayed at2026-10-20T22:27:12.831Z
+Current v5 assertions were independently replayed at `2026-10-20T23:04:41.602Z`
+against source checkpoint `066b49a2fd3e326f4fde5027ee6a2c02195cdfff`.
+All six bounded outcomes agree; 36 unsupported-input controls reject. The tracker
+preserves 19 stale assertions and six blocked v4 attempt entries alongside these
+six current passes. The v4 reference dependency-loading error was retained, and
+v5 reused the existing local dependencies. No expected values were changed.
+
+Historical v3 reference assertions were independently replayed at2026-10-20T22:27:12.831Z
 against runtime366bbdcefce135c6c68dc65e26bb34219cb04ebd. They cover ordinary Struggle,
 grounded ElectricTerrain Rest rejection, Encore queued replacement, a single RedCard
 replacement, synthetic WhiteHerb stages and sixteen Tackle damage buckets. They do

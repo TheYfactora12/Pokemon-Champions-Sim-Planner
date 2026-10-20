@@ -15,7 +15,7 @@ A fresh v5 independent capture restores six bounded checks against the changed
 source dependency. History preserves19stale assertions and6blocked v4 attempts.
 The published six-pass v3 tracker remains pinned to63c1e91 until local validation completes.
 
-Contained Fly follow-up: v2.2.241-charge-herb / engine1.1.42. Public Fly admission
+Local source-watch shell: v2.2.242-source-watch / engine1.1.42. Public Fly admission
 remains rejected. [Readiness map and exact evidence](docs/release/FLY_REPAIR_2026-10-20.md).
 Local and hosted completion must be read from the immutable candidate checks;
 this source document does not predeclare their result.

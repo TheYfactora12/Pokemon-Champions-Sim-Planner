@@ -38,11 +38,24 @@ any separately authorized enabling decision.
 
 ## Gates still pending
 
-Local targeted tests and independent review must precede the source checkpoint.
-Refresh source-dependent tracker exports: changed dependencies must invalidate
-current checkmarks until fresh execution and review. Then run clean-checkout and
-applicable aggregate checks, publish only the draft candidate and observe its
-exact hosted result. Preserve the prior tracker checkpoint at 76b29f3 separately.
+Fresh one-time health report: `poke-sim/reports/official-watch-2026-10-20/source-health-seeds.json`.
+Nine of 15 registered seed URLs parsed. The three required www.pokemon.com articles
+returned Incapsula request-unsuccessful bodies, not article content; they remain
+unavailable. Two optional support pages returned 403, and the optional championship
+page lacked the expected layout. Discovered links were not traversed. No access
+control was bypassed and no required source was removed to make health green.
+
+Clean-checkout tests at `43c5e0f`: 98 Node tests, 12 release-manifest checks, 29 workflow
+checks and 11 invalid migration-input controls passed. Browser evidence: 2 games,
+3 pairs, 22 turns, 0 mismatches, 0 page errors. Fresh v5 independent capture: 6 agreements,
+36 negative controls rejected. The failed v4 module-resolution attempt remains
+blocked history; v5 used the existing local dependency path, without installation.
+
+Local aggregate: 275 fast test files and 12 offline database test files passed,
+with zero failures. Fresh reviewed receipts and generated exports restore six
+bounded checks, while retaining all failed/stale history. Hosted validation of
+this source candidate remains pending. Preserve the cancelled76b29f3run and its
+CI-budget repair at63c1e91 separately; cancellation is not a pass.
 October 20 read-only default-branch inspection confirms `main` lacks all three
 new host entries and the roster parser. Enabling the workflow now would run the
 unrepaired implementation.
