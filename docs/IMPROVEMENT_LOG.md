@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0112: Distinguish Damaging Pivots From Voluntary Traps
+
+- Successful U-turn/Flip Turn/Volt Switch were incorrectly stopped by voluntary
+  trap checks. Add an explicit cause at the existing successful-damage caller.
+- Neighbor controls reproduced missing Water Absorb and consumed-Shield bypass;
+  scoped shared-hook corrections now have 101 pinned-reference checks.
+- Lesson: a force-switch request after user KO can mean faint replacement,
+  not a successful pivot. Compare cause, identity, PP and subsequent targeting.
+- Independent mechanics review passed. Synthetic reference proof is narrower
+  than client certification. Rocky Helmet and voluntary switches remain open.
+- [Scope and proof](release/PIVOT_TRAPPING_2026-10-20.md), local v219/engine1.1.23.
+
 ## IMP-0111: Stop Utility Policy Reading Hidden Move Inventories
 
 - Four utility-scoring predicates queried unrevealed opponent moves; the

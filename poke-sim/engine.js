@@ -1280,8 +1280,8 @@ function _attackerIgnoresTargetAbility(attacker, target) {
     attacker &&
     target &&
     attacker !== target &&
-    attacker.ability === 'Mold Breaker' &&
-    target.item !== 'Ability Shield'
+    ['Mold Breaker', 'Turboblaze', 'Teravolt'].includes(attacker.ability) &&
+    (target.item !== 'Ability Shield' || target.itemConsumed)
   );
 }
 
@@ -1834,6 +1834,17 @@ var ABILITIES = {
   'Soundproof': {
     onTryHit: function(ctx) {
       if (ctx.defender !== ctx.attacker && _isSoundMove(ctx.move)) return { immune: true };
+      return null;
+    }
+  },
+  'Water Absorb': {
+    onTryHit: function(ctx) {
+      if (ctx.defender !== ctx.attacker && ctx.moveType === 'Water') {
+        const shield = ctx.defender.item === 'Ability Shield' && !ctx.defender.itemConsumed;
+        const active = [..._sideActiveMons(ctx.field && ctx.field.playerSide), ..._sideActiveMons(ctx.field && ctx.field.oppSide)];
+        if (!shield && active.some(mon => mon.ability === 'Neutralizing Gas')) return null;
+        return { immune: true, healFraction: 0.25 };
+      }
       return null;
     }
   },
@@ -4390,11 +4401,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const bench = side === 'player' ? playerBench : oppBench;
     const idx = activeArr.indexOf(mon);
     if (idx < 0) return false;
-    if (!(opts && opts.forcedAbilitySwitch) && _isTrappedByShadowTag(mon, field)) {
+    // Successful damaging pivots bypass voluntary-switch traps (pinned Showdown).
+    const bypassTrap = opts && (opts.forcedAbilitySwitch || opts.cause === 'damagePivot');
+    if (!bypassTrap && _isTrappedByShadowTag(mon, field)) {
       if (log) log.push(`${mon.name} is trapped by Shadow Tag!`);
       return false;
     }
-    if (!(opts && opts.forcedAbilitySwitch) && _isTrappedByMove(mon)) {
+    if (!bypassTrap && _isTrappedByMove(mon)) {
       if (log) log.push(`${mon.name} is trapped by ${mon.trappedByMove}!`);
       return false;
     }
@@ -5872,7 +5885,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const _pivotAttackMoves = new Set(['U-turn', 'Flip Turn', 'Volt Switch']);
     const _emergencyExit = _pivotAttackMoves.has(move) && attacker.referenceMode === 'champions_mc_reference' && mcEmergencySwitches(attacker._mcEmergencyBefore,attacker,move);
     if (!_emergencyExit && _pivotAttackMoves.has(move) && _moveResult && _moveResult.didDamage && attacker.alive) {
-      _switchOutActiveMon(attacker, attacker.side === field.playerSide ? 'player' : 'opp', field, log);
+      _switchOutActiveMon(attacker, attacker.side === field.playerSide ? 'player' : 'opp', field, log, { cause: 'damagePivot' });
     }
     if (_pbEligible && attacker.alive && target && target.alive) {
       // Second strike at 1/4 BP per Champions nerf (was 1/2 in mainline).
@@ -8020,7 +8033,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.22'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.23'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

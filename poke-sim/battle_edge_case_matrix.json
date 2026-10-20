@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "DAMAGE-PIVOT-TRAP-CAUSE",
+      "family": "identity-lifecycle",
+      "behavior": "Successful living-user U-turn, Flip Turn and Volt Switch bypass voluntary traps; Water Absorb blocks damaging Water moves through the shared immunity/healing path.",
+      "status": "partial",
+      "tests": ["tests/damage_pivot_trapping_tests.mjs", "tests/mc_mega_ability_tests.js"],
+      "oracle": "Pinned pokemon-showdown0.11.11 Champions custom synthetic probes; not official team legality or current-client certification.",
+      "boundary_vectors": ["both-sides", "both-slots", "Shadow-Tag", "Mean-Look", "Protect", "Substitute", "forced-miss", "Rough-Skin-user-KO", "no-bench", "HP-item-status-PP", "entry-once", "target-slot", "no-extra-action", "Water-Absorb", "Heal-Block", "Neutralizing-Gas", "Ability-Shield", "consumed-Shield", "Mold-Breaker-family", "Emergency-Exit-control"],
+      "known_gap": "Rocky Helmet contact damage is missing. Voluntary switches, other pivot moves, broader ability suppression, simultaneous switching/Mega ordering and current-client proof remain open."
+    },
+    {
       "id": "POLICY-UTILITY-MOVE-INVENTORY",
       "family": "moves-effects",
       "behavior": "Utility scoring for Imprison, Quick Guard, contact shields and Taunt does not query enemy move inventories.",
