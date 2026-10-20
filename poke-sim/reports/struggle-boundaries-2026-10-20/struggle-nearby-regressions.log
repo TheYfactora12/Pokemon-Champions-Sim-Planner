@@ -1,0 +1,17 @@
+4 default boundary groups, 40 production mutation runs, aggregate default/provenance passed
+✔ tests\default_policy_boundary_tests.js (443.4389ms)
+
+=== Protect family tests ===
+
+  PASS 1. Protect success drops on consecutive use
+  PASS 2. Endure leaves the user braced for the turn
+  PASS 3. Source wiring exists for Endure and endurance survival
+✔ tests\t157_protect_family_tests.js (77.8723ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 448.6731

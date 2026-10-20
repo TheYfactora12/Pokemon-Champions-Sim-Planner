@@ -1,0 +1,13 @@
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_imprison with healthy control (1624.0468ms)
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_shield with healthy control (1559.832ms)
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_disguise with healthy control (1927.861ms)
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_target with healthy control (1252.5513ms)
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_suppression with healthy control (1708.9015ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8489.2198

@@ -1,0 +1,34 @@
+✔ independent t9j17_tests.js kills fakeout_extra_attack with healthy control (2270.3959ms)
+✔ independent default_policy_boundary_tests.js kills fakeout_choice_bypass with healthy control (469.094ms)
+✔ independent default_policy_boundary_tests.js kills fakeout_encore_usable with healthy control (477.9469ms)
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_imprison with healthy control (1593.8278ms)
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_shield with healthy control (1578.9012ms)
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_disguise with healthy control (1935.3376ms)
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_target with healthy control (1202.5876ms)
+✔ independent struggle_boundary_reference_tests.mjs kills struggle_suppression with healthy control (1592.7768ms)
+✔ independent encore_reference_tests.mjs kills encore_queue with healthy control (2484.8288ms)
+✔ independent encore_reference_tests.mjs kills encore_herb with healthy control (2526.9708ms)
+✔ independent encore_reference_tests.mjs kills encore_duration with healthy control (2592.9096ms)
+✔ independent encore_reference_tests.mjs kills encore_priority with healthy control (2605.6315ms)
+✔ independent discrete_damage_reference_tests.mjs kills roll_fifteen with healthy control (2266.8938ms)
+✔ independent discrete_damage_reference_tests.mjs kills roll_continuous with healthy control (2268.288ms)
+✔ independent encore_reference_tests.mjs kills encore_unburden with healthy control (2574.1415ms)
+✔ independent rest_reference_tests.mjs kills rest_leaf_guard with healthy control (2011.3452ms)
+✔ independent rest_reference_tests.mjs kills rest_admission with healthy control (2025.2124ms)
+✔ independent struggle_reference_tests.mjs kills struggle_fixed with healthy control (2026.6859ms)
+✔ independent struggle_reference_tests.mjs kills struggle_floor with healthy control (2041.2419ms)
+✔ independent struggle_reference_tests.mjs kills struggle_normal with healthy control (2010.2176ms)
+✔ independent showdown_damage_oracle_tests.js kills half_damage with healthy control (918.4315ms)
+✔ independent amnesia_reference_tests.mjs kills tantrum_150_percent with healthy control (10073.1375ms)
+✔ independent default_policy_boundary_tests.js kills hidden_read with healthy control (493.0522ms)
+✔ independent scripted_switch_reference_tests.mjs kills switch_noop with healthy control (21110.2075ms)
+✔ 16 actual doubles results reject flipped one-sided-elimination winners (503.8462ms)
+✔ exact fixed-damage oracle rejects one-HP corruption; randomized probes disclose exclusions (693.1725ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 72803.9786
