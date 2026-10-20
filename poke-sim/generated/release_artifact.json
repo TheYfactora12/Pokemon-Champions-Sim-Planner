@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.234-rest-leaf-guard",
+  "build_id": "v2.2.235-items",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "cf220fa98f06f343821411326f6c1e80fcabe2da30e69bbea8a2de8ccb9a4468",
-  "bundle_bytes": 11526671,
+  "bundle_sha256": "bf832b7f12e78ce70f30b11ece330a759cc54bb9f6cb1c297e5574b25e3f8d2a",
+  "bundle_bytes": 11531377,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/source_sync_status.js": {

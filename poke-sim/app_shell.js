@@ -66,9 +66,9 @@
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.234-rest-leaf-guard';
+      return txt || 'v2.2.235-items';
     } catch (e) {
-      return 'v2.2.234-rest-leaf-guard';
+      return 'v2.2.235-items';
     }
   }
 

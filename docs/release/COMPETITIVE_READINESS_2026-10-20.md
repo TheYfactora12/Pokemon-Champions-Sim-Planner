@@ -5,8 +5,7 @@ release only after all required gates. **NO-GO. No scope waiver or percentage.**
 Owner: Kevin for release decisions; implementer for repairs; independent reviewers
 for retest; a current-client capture owner remains unassigned.
 
-Candidate under local validation: v2.2.232-rest-admission / engine1.1.33 ([bounded repair](STRUGGLE_REPAIR_2026-10-20.md)); hosted checkpoint2769879 passed all CI jobs. Prior candidate v2.2.230-proof / engine1.1.31, separate follow-up to methodology d48b9aa and Amnesia 991f4fd in PR279. This register owns current gate status; older dated reports remain
-historical receipts. No merge, deployment, live DB change or key enrollment made.
+Candidate v2.2.235-items / engine1.1.36 combines Encore, Leaf Guard Rest and reviewed Red Card/White Herb repairs. See [integrated checkpoint](INTEGRATED_MECHANICS_2026-10-20.md) for exact validation boundaries and [register independent audit](independent/REGISTER_RETEST_308DA9B.md) for open data defects. Historical Rest8bfccd3 hosted CI39461951692 passed. Later PR checks were blocked by news-only main conflicts; current news is now integrated, with final hosted status pending. Broader Struggle, discrete damage, register contracts/learnsets and official/client proof remain open. This register owns current gate status; older dated reports retain their historical scope. No merge to main, deployment, live DB change or settings/key enrollment.
 
 | ID / severity | Reproduction and impact | Owner / change | Status and independent closure |
 |---|---|---|---|

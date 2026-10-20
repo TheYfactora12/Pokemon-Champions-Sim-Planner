@@ -5099,7 +5099,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         target.encoredTurns = queued ? 3 : 4;
         log.push(`${target.name} got an Encore!`);
         if (effects.item(target)==='Mental Herb') {
-          target.itemConsumed=true;target.encoredMove=null;target.encoredTurns=0;
+          _consumeHeldItem(target);target.encoredMove=null;target.encoredTurns=0;
           log.push(`${target.name}'s Mental Herb removed Encore!`);
           _recordEffectEvent(field,target,move,'item-consumed',target.hp,target.hp,{item:'Mental Herb',removed_effect:'Encore'});
         } else if (queued && queued.move!==last) {
@@ -7895,7 +7895,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.35'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.36'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

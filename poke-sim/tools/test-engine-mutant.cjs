@@ -2,6 +2,7 @@
 const fs=require('node:fs'),path=require('node:path');
 const original=fs.readFileSync, engine=path.resolve(__dirname,'../engine.js');
 const mutations={
+  encore_unburden:["_consumeHeldItem(target);target.encoredMove=null;target.encoredTurns=0;","target.itemConsumed=true;target.encoredMove=null;target.encoredTurns=0;"],
   encore_queue:["} else if (queued && queued.move!==last) {","} else if (false && queued && queued.move!==last) {"],
   encore_herb:["if (effects.item(target)==='Mental Herb') {","if (false && effects.item(target)==='Mental Herb') {"],
   encore_duration:["target.encoredTurns = queued ? 3 : 4;","target.encoredTurns = 3;"],
