@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {createRequire} from 'node:module';
-import {loadLocalEngine,mapTeam} from '../tools/showdown-reference.mjs';
+import {loadLocalEngine,mapTeam} from './_item_reference_helpers.mjs';
 const {Battle}=createRequire(import.meta.url)(process.env.CHAMPIONS_REFERENCE_SIM || 'pokemon-showdown');
 const format='gen9championsdoublescustomgame',seed=[3,7,11,13];
 const mon=(name,ability,moves,item='')=>({name,ability,moves,item,nature:'Hardy',level:50,evs:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0}});
@@ -39,4 +39,5 @@ for(const side of ['player','opponent'])for(const slot of [0,1])for(const varian
  assert.equal(result.log.filter(x=>x.includes('White Herb')).length,consumed&&variant!=='consumed'?1:0);
  b.destroy();
 });
+
 

@@ -47,7 +47,7 @@ const phase=source.slice(source.indexOf('    function tryMegaPhase('),source.ind
 for(const hidden of ['Cloud Nine','Air Lock','Pressure']) {
  const chosen=[], first={alive:true,megaForm:'X',megaEvolve(){chosen.push('first');}},second={alive:true,megaForm:'Y',megaEvolve(){chosen.push('second');}};
  for(const m of [first,second])Object.defineProperty(m,'getEffSpeed',{get(){throw Error('Hidden weather speed preview');}});
- const phaseContext=vm.createContext({field:{},turn:1,log:[],shouldMegaThisTurn:m=>m.alive,applyEntryAbility(){},rng(){throw Error('Policy consumed battle RNG');},_speedSort(){throw Error('Policy speed sort');}});
+ const phaseContext=vm.createContext({field:{},turn:1,log:[],shouldMegaThisTurn:m=>m.alive,applyEntryAbility(){},activateWhiteHerbs(){},rng(){throw Error('Policy consumed battle RNG');},_speedSort(){throw Error('Policy speed sort');}});
  vm.runInContext(phase+';this.run=tryMegaPhase;',phaseContext);phaseContext.run([first,second],'used','player');assert.deepEqual(chosen,['first']);
 }
 full.observer=observer;vm.runInContext('TEAMS.boundaryA=observer;TEAMS.boundaryB=observer;',full);
@@ -55,3 +55,4 @@ full.runSimulation(1,'boundaryA','boundaryB',null,{format:'doubles'}).then(resul
  assert.equal(result.policy_provenance.id,'own-public-heuristic-v4');assert.equal(result.policy,'own-public-heuristic-v4-vs-own-public-heuristic-v4');
  console.log(groups+' default boundary groups, 40 production mutation runs, aggregate default/provenance passed');
 }).catch(error=>{console.error(error);process.exitCode=1;});
+

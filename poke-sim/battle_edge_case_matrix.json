@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "ITEM-RED-CARD-WHITE-HERB",
+      "family": "items",
+      "behavior": "Red Card resolves after complete damage and White Herb clears negative stages at lifecycle boundaries before pivot entry.",
+      "status": "partial",
+      "tests": ["tests/red_card_reference_tests.mjs", "tests/white_herb_reference_tests.mjs", "tests/item_lifecycle_reference_tests.mjs"],
+      "oracle": "Current upstream Showdown 9b136a8c8cdb860a8ab96fa063f906604e352547 Champions/M-C; historical npm 0.11.11 compared separately with explicit Sheer Force and Herb-before-drag differences.",
+      "boundary_vectors": ["full-six-M-C-bilateral", "both-sides-slots", "Protect-immunity-Substitute-KO", "no-live-bench", "multi-hit-spread", "Klutz-Gas", "Suction-Cups-Guard-Dog-Shadow-Tag", "Knock-Off-pivot", "multiple-stat-drops-positive-cap-Contrary-Defiant", "Herb-before-drag", "Parting-Shot-before-replacement-Intimidate", "pre-action-event-speed", "random-eligible-reserves"],
+      "known_gap": "No fresh client proof. Magic Room, Embargo, Ingrain, complete forced-switch interactions, suppression chains, Mega/re-entry and residual cross-products remain unproved. Synthetic diagnostic abilities/items are not M-C legality proof. Recoil Emergency Exit activation log parity is not claimed."
+    },
+    {
       "id": "ITEM-ROCKY-HELMET-CONTACT",
       "family": "items",
       "behavior": "Contact damage, fixed multi-hit frequency and contact KO are explicit and identity-preserving.",

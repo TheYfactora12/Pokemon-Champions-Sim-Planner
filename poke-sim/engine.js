@@ -4233,13 +4233,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
   }
 
+  let moveSwitchQueue = null;
   function _switchOutActiveMon(mon, side, field, log, opts) {
     const activeArr = side === 'player' ? playerActive : oppActive;
     const bench = side === 'player' ? playerBench : oppBench;
     const idx = activeArr.indexOf(mon);
     if (idx < 0) return false;
     // Successful damaging pivots bypass voluntary-switch traps (pinned Showdown).
-    const bypassTrap = opts && (opts.forcedAbilitySwitch || opts.cause === 'damagePivot');
+    const bypassTrap = opts && (opts.forcedAbilitySwitch || opts.cause === 'damagePivot' || opts.cause === 'redCard');
     if (!bypassTrap && _isTrappedByShadowTag(mon, field)) {
       if (log) log.push(`${mon.name} is trapped by Shadow Tag!`);
       return false;
@@ -4251,6 +4252,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const replacement = opts && opts.explicitReplacement ? opts.explicitReplacement : _chooseBenchReplacement(bench);
     if (replacement && (!replacement.alive || !bench.includes(replacement))) return false;
     if (!replacement) return false;
+    // Move switches resolve after AfterMove item hooks. Keep the outgoing actor
+    // present until White Herb has seen the complete move (including self drops).
+    if (moveSwitchQueue) {
+      moveSwitchQueue.push({mon,side,opts});
+      return true;
+    }
     const switchOutAbility = callAbilityHook(mon, 'onSwitchOut', { mon: mon, field: field, log: log });
     if (switchOutAbility && switchOutAbility.cureStatus && mon.alive && mon.status) {
       const curedStatus = mon.status;
@@ -4296,7 +4303,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     _applyIncomingSwitchState(replacement, opts && opts.incomingState);
     if (opts && opts.incomingSubstituteHp > 0) replacement.substituteHp = opts.incomingSubstituteHp;
     activeArr[idx] = replacement;
-    if (opts && opts.cause === 'scriptedDiagnostic') log.push(`${mon.name} switched out!`);
+    if (opts && opts.cause === 'redCard') log.push(`${mon.name} was forced out by Red Card!`);
+    else if (opts && opts.cause === 'scriptedDiagnostic') log.push(`${mon.name} switched out!`);
     else if (!opts || !opts.silentPivotLog) log.push(`${mon.name} pivoted out!`);
     log.push(`${replacement.name} was sent out!`);
     applyEntryAbility(replacement, side, field, log);
@@ -4471,7 +4479,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     let switched=false;
     for (const row of before || []) {
       const mon=row.mon;
-      if (row.used || !mon.alive || mon.hp<=0 || mon.ability !== 'Emergency Exit' || row.hp<=mon.maxHp/2 || mon.hp>mon.maxHp/2 ||
+      if (row.used || (mon._redCardMove && mon._redCardMove.pending) || !mon.alive || mon.hp<=0 || mon.ability !== 'Emergency Exit' || row.hp<=mon.maxHp/2 || mon.hp>mon.maxHp/2 ||
           (attacker && mon!==attacker && attacker.ability==='Sheer Force' && _hasSheerForceEffect(attacker,move))) continue;
       row.used=true;
       const side=playerActive.includes(mon)?'player':oppActive.includes(mon)?'opp':null;
@@ -4483,16 +4491,75 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   let pendingActions = [];
+  function prepareRedCard(attacker, move) {
+    const state = attacker._redCardMove;
+    if (!state || state.checked) return false;
+    state.checked = true;
+    const side = playerActive.includes(attacker) ? 'player' : oppActive.includes(attacker) ? 'opp' : null;
+    const bench = side === 'player' ? playerBench : oppBench;
+    if (!side || !attacker.alive || attacker.hp <= 0 || !bench.some(mon => mon.alive && mon.hp > 0)) return false;
+    const {ability, item} = _contactEffects(field);
+    // AfterMoveSecondary handlers use event speed, not spread-target iteration order.
+    const holders = [...state.targets].filter(mon => mon !== attacker && mon.alive && mon.hp > 0 &&
+      (playerActive.includes(mon) || oppActive.includes(mon)) && item(mon) === 'Red Card')
+      .map(mon => ({mon, speed: state.speeds.get(mon)}));
+    _speedSort(holders, (a,b) => b.speed-a.speed, rng);
+    for (const {mon} of holders) {
+      if (!_consumeHeldItem(mon)) continue;
+      log.push(`${mon.name}'s Red Card activated!`);
+      _recordEffectEvent(field, mon, 'Red Card', 'item-forced-switch', mon.hp, mon.hp, {
+        source: 'pokemon-showdown@9b136a8 items.redcard / champions.scripts',
+        source_actor: attacker.name, item_consumed: true
+      });
+      // Consumption precedes DragOut. These abilities block dragging, not item use.
+      if (['Suction Cups','Guard Dog'].includes(ability(attacker))) {
+        log.push(`${attacker.name}'s ${ability(attacker)} prevented Red Card from forcing it out!`);
+        continue;
+      }
+      state.pending = {side};
+      return true;
+    }
+    return false;
+  }
+
+  function finishRedCard(attacker) {
+    const pending = attacker._redCardMove && attacker._redCardMove.pending;
+    if (!pending || !attacker.alive || attacker.hp <= 0) return;
+    const bench = pending.side === 'player' ? playerBench : oppBench;
+    const eligible = bench.filter(mon => mon.alive && mon.hp > 0);
+    if (!eligible.length) return;
+    _switchOutActiveMon(attacker, pending.side, field, log, {
+      cause: 'redCard', explicitReplacement: eligible[Math.floor(rng()*eligible.length)]
+    });
+  }
+
   function executeAction(attacker, move, target, allies, enemies, field, log, rng, opts) {
+    const previousRedCardMove = attacker._redCardMove;
+    const previousSwitchQueue = moveSwitchQueue;
+    moveSwitchQueue = [];
+    attacker._redCardMove = {targets:new Set(), checked:false, pending:null,
+      speeds:new Map([...playerActive,...oppActive].map(mon => [mon,
+        Math.trunc(field.trickRoom ? 10000-mon.getEffSpeed(field) : mon.getEffSpeed(field)) & 8191]))};
     if (attacker.referenceMode === 'champions_mc_reference') attacker._mcEmergencyBefore = [...playerActive,...oppActive].map(mon=>({mon,hp:mon.hp}));
     try {
       return executeActionImpl(attacker, move, target, allies, enemies, field, log, rng, opts);
     } finally {
+      prepareRedCard(attacker, move);
       if (attacker.referenceMode === 'champions_mc_reference') {
         mcEmergencySwitches(attacker._mcEmergencyBefore,attacker,move);attacker._mcEmergencyBefore=null;
       }
       if (attacker.referenceMode === 'champions_mc_reference') mcFinishMove(attacker,log);
       activateWhiteHerbs();
+      const switches = moveSwitchQueue;
+      moveSwitchQueue = null;
+      finishRedCard(attacker);
+      for (const entry of switches) {
+        if (entry.opts && entry.opts.incomingState && entry.opts.incomingState.statBoosts)
+          entry.opts.incomingState.statBoosts = Object.assign({},entry.mon.statBoosts);
+        _switchOutActiveMon(entry.mon,entry.side,field,log,entry.opts);
+      }
+      moveSwitchQueue = previousSwitchQueue;
+      attacker._redCardMove = previousRedCardMove;
       // One charge applies to the whole action, including spread and child hits.
       _consumeElectricCharge(attacker, move, field, log);
       if (move === 'Beak Blast') attacker._beakBlastPreparing=false;
@@ -5639,8 +5706,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     const _moveResult = executeMove(attacker, move, target, allies, enemies, field, log, rng);
     attacker.lastMoveFailed = !(_moveResult && _moveResult.didDamage);
     const _pivotAttackMoves = new Set(['U-turn', 'Flip Turn', 'Volt Switch']);
+    const _redCard = _pivotAttackMoves.has(move) && prepareRedCard(attacker, move);
     const _emergencyExit = _pivotAttackMoves.has(move) && attacker.referenceMode === 'champions_mc_reference' && mcEmergencySwitches(attacker._mcEmergencyBefore,attacker,move);
-    if (!_emergencyExit && _pivotAttackMoves.has(move) && _moveResult && _moveResult.didDamage && attacker.alive) {
+    if (!_redCard && !_emergencyExit && _pivotAttackMoves.has(move) && _moveResult && _moveResult.didDamage && attacker.alive) {
       _switchOutActiveMon(attacker, attacker.side === field.playerSide ? 'player' : 'opp', field, log, { cause: 'damagePivot' });
     }
     if (_pbEligible && attacker.alive && target && target.alive) {
@@ -6483,6 +6551,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       field._ctx.lastDamageCalc = null;
     }
     if (enduredHit) log.push(`${target.name} endured the hit!`);
+    if (appliedDamage > 0 && attacker && attacker._redCardMove) attacker._redCardMove.targets.add(target);
     if (sturdySaved) log.push(`${target.name} hung on with Sturdy!`);
     if (sashSaved) log.push(`${target.name} hung on with its Focus Sash!`);
     if (move === 'Thousand Arrows' && appliedDamage > 0 && target.hp > 0 && !_isGrounded(target, field)) {
