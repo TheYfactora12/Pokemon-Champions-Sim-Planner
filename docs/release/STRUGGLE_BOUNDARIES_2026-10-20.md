@@ -73,3 +73,7 @@ manifest is reports/focused-independent-146ba91/mc-candidate-evidence.json.
 ## Final local validation
 
 Project gate: 265 fast files and 12 offline DB files passed; four manual helpers skipped. Battle audit passed with 4,500 stress battles and three unchanged historical goldens. Invariants: 9,248 cases, zero failures. Expanded methodology: 26 reversal controls passed. Browser capture KSLQRH: two games, three comparison pairs, 20 turns, zero mismatches or page errors. Syntax checks passed for 25 changed/new JavaScript files; both canonical export checks and diff checks passed. Exact commands, initial resolved failures and scoped receipts are retained in reports/struggle-boundaries-2026-10-20. Hosted validation is separate.
+
+## Hosted change-detection repair
+
+Run 39479571527 at 443bd765744e06222685a532e7ea3e288c80ec96 failed change detection because GitHub's PR-diff API reported that the diff took too long to generate. Browser and syntax jobs passed; full project and battle jobs were skipped, not passes. The same path-filter action now uses its supported empty-token local Git comparison of the event base SHA and checked-out PR merge. Filters and failure handling remain unchanged. The focused host test passed 29 workflow assertions and 11 injection fixtures. No security settings or permissions changed.

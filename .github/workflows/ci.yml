@@ -149,6 +149,9 @@ jobs:
       - uses: dorny/paths-filter@v4
         id: filter
         with:
+          # Large evidence snapshots can exceed GitHub's PR-diff API budget.
+          # The action compares the event base SHA to the checked-out merge via Git.
+          token: ''
           filters: |
             engine:
               - 'poke-sim/engine.js'

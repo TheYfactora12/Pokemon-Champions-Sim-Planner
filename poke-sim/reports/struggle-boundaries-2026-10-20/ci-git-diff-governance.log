@@ -1,0 +1,2 @@
+workflow governance: 29 pass, 0 fail
+PASS migration input: valid existing SQL accepted; 11 invalid/injection cases rejected without execution
