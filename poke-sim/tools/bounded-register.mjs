@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {assessBoundedAssertion,digest} from './bounded-assertions.mjs';
 import {canonical} from './regulation-watch-core.mjs';
+import {readCurrentBoundedEntry} from './current-bounded-core.mjs';
 
 export const INDEX='source/bounded-assertions/index.json';
 // This enrollment adapts one retained audit. The anchor is a reviewed byte
@@ -53,6 +54,8 @@ export function readBoundedRegister(root,{now=Date.now()}={}){
   const seen=new Set();
   return index.assertions.map(entry=>{
     if(seen.has(entry.assertion_id))throw Error('Duplicate bounded assertion');seen.add(entry.assertion_id);
+    if(entry.enrollment_kind==='current-capture-v1')return readCurrentBoundedEntry(root,entry,{load,read,now});
+    if(entry.enrollment_kind!==undefined)throw Error('Unknown bounded enrollment profile');
     const receipt=JSON.parse(load(entry.receipt));
     if(receipt.assertion_id!==entry.assertion_id||receipt.case_id!==entry.case_id)throw Error('Enrollment assertion/case mismatch');
     if(canonical(entry.dependency_files)!==canonical(DEPENDENCY_FILES))throw Error('Dependency inventory mismatch');

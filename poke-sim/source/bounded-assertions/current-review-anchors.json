@@ -1,0 +1,9 @@
+{
+  "schema_version": "current-bounded-review-anchors-v1",
+  "reviews": [
+    {
+      "path": "source/bounded-assertions/reviews/1be9694a73b183ea87d0a06c022bdcc0fb04343c23f23b676a9e5420c9923e9a/review.json",
+      "sha256": "9cbab86503c6690b8119e40c8d5d806a669c9f489a7d2120429c1b7e94ed964d"
+    }
+  ]
+}

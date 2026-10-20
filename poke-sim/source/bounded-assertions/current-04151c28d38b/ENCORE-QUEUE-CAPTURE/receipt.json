@@ -1,0 +1,40 @@
+{
+  "schema_version": "champions-bounded-assertion-v1",
+  "assertion_id": "ENCORE-QUEUE-CAPTURE.current-runtime.v1",
+  "case_id": "ENCORE-QUEUE-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "two turns, Prankster Encore before queued Flamethrower",
+      "replacement executes Will-O-Wisp and spends replacement PP"
+    ]
+  },
+  "executed_at": "2026-10-20T19:52:20.596Z",
+  "dependencies": {
+    "engine": "6f497da91cf4294b5f57a8f9b8cfb0a13520b4558ffaeb7d48193bd40ed6a666",
+    "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+    "runner": "f6a585822a17528b7a759167bc2bbf4f36d9bf2b4c2b84dfe604e7abf2beefb9",
+    "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+    "checker": "469e4c27b2d4c3824fa4068f741cc0ff66d0211033c0f0e6ef630d33f5e4745d",
+    "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+  },
+  "contract": {
+    "path": "source/bounded-assertions/current-04151c28d38b/ENCORE-QUEUE-CAPTURE/contract.json",
+    "sha256": "a3c4b43c0cf7f701bc0007e1cad5538e9a633151055b97b66cc3e6a0e8f99984"
+  },
+  "inputs": {
+    "path": "source/bounded-assertions/current-04151c28d38b/ENCORE-QUEUE-CAPTURE/inputs.json",
+    "sha256": "c7a4d71e3644ba7cb31a4c45e7757efa057aa11acb4b6bbf2b667e745d6a2b70"
+  },
+  "local_result": {
+    "path": "source/bounded-assertions/current-04151c28d38b/ENCORE-QUEUE-CAPTURE/local_result.json",
+    "sha256": "d5194799871a31fd64ac8e17f56fdd32403b6d8f959356fa87bb4c822cd8f50e"
+  },
+  "reference_result": {
+    "path": "source/bounded-assertions/current-04151c28d38b/ENCORE-QUEUE-CAPTURE/reference_result.json",
+    "sha256": "54dbd809feb70c712991855d56212070a7c944be23b6c865740613854e97fd14"
+  }
+}

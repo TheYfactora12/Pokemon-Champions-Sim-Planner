@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0121: Enroll Current Bounded Mechanics Receipts
+
+- Independently replay six exact current-runtime cases and retain structured inputs, outcomes, timestamps and source fingerprints.
+- Bind freshness to runtime/rule/checker dependencies so documentation-only commits retain evidence while implementation changes invalidate it.
+- Export six current bounded passes and one preserved stale historical assertion; no whole-move or client promotion.
+- [Scope, canonical exports and validation](release/CURRENT_BOUNDED_RECEIPTS_2026-10-20.md).
+
 ## IMP-0120: Bind Current Strategy Observations to Execution Context
 
 - Reproduced old-build/regulation attempts labelled current despite matching roster.
