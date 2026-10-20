@@ -5,7 +5,7 @@ release only after all required gates. **NO-GO. No scope waiver or percentage.**
 Owner: Kevin for release decisions; implementer for repairs; independent reviewers
 for retest; a current-client capture owner remains unassigned.
 
-Candidate v2.2.235-items / engine1.1.36 combines Encore, Leaf Guard Rest and reviewed Red Card/White Herb repairs. See [integrated checkpoint](INTEGRATED_MECHANICS_2026-10-20.md) for exact validation boundaries and [register independent audit](independent/REGISTER_RETEST_308DA9B.md) for open data defects. Historical Rest8bfccd3 hosted CI39461951692 passed. Later PR checks were blocked by news-only main conflicts; current news is now integrated, with final hosted status pending. Broader Struggle, discrete damage, register contracts/learnsets and official/client proof remain open. This register owns current gate status; older dated reports retain their historical scope. No merge to main, deployment, live DB change or settings/key enrollment.
+Candidate v2.2.236-item-speed-evidence / engine1.1.37 combines Encore, Leaf Guard Rest and reviewed Red Card/White Herb repairs. See [integrated checkpoint](INTEGRATED_MECHANICS_2026-10-20.md) for exact validation boundaries and [register independent audit](independent/REGISTER_RETEST_308DA9B.md) for open data defects. Historical Rest8bfccd3 hosted CI39461951692 passed. Later PR checks were blocked by news-only main conflicts; current news is now integrated, with final hosted status pending. Broader Struggle, discrete damage, register contracts/learnsets and official/client proof remain open. This register owns current gate status; older dated reports retain their historical scope. No merge to main, deployment, live DB change or settings/key enrollment.
 
 | ID / severity | Reproduction and impact | Owner / change | Status and independent closure |
 |---|---|---|---|
@@ -159,3 +159,7 @@ Final local browser capture: `browser-replay-b3NHXh`, two games, three paired re
 Initial project/battle failures are retained: stale UI/release build expectations and workflow install-count assumption were repaired; disposable Git/MSYS checks required host execution. Initial browser inspector-body and comparator-arrow failures remain historical failed captures. No golden expectations or size ceilings were relaxed. Exact-head hosted checks are pending publication of this review candidate.
 
 The d48b9aa hosted checkpoint reached success for all seven checks (CI39445437448, bundle39445437415, cache39445437406); Supabase Preview skipped. The subsequent Amnesia change is independently scoped in [its receipt](AMNESIA_REPAIR_2026-10-20.md). User approval now permits pinned Playwright/Chromium setup; integration is a separate next commit and is not yet claimed complete.
+
+## Follow-up to hosted1610d1a
+
+Test Suite/browser/syntax/bundle/cache passed; methodology found4item-speed evidence errors, reproduced and repaired with preserved negative controls. See [ordering evidence repair](ITEM_SPEED_EVIDENCE_2026-10-20.md). Final exact-head hosted rerun pending. Register contract repairs are scoped consistency checks, not source freshness or official legality approval.

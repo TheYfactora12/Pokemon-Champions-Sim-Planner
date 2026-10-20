@@ -213,7 +213,8 @@ function actorOrderFromEvents(events) {
       actor: String(event.actor),
       move: String(event.move),
       actor_key: event.actor_key ? String(event.actor_key) : null,
-      side: SIDES.includes(event.side) ? event.side : null
+      side: SIDES.includes(event.side) ? event.side : null,
+      log_index: event.log_index
     }));
   if (structured.length) return structured;
 
@@ -497,6 +498,31 @@ function sitrusUnburdenAdjustedOrderSupports(first, second, turn) {
   return a === b || (room ? a < b : a > b);
 }
 
+// Structured, identity-bound consumption proof handles mirror names and White Herb.
+// No inference from end-of-turn speed alone; mixed modifiers remain unproved.
+function itemUnburdenOrder(first, second, turn) {
+ const boundary=first.logIndex;if(!Number.isInteger(boundary))return null;
+ const active=SIDES.flatMap(side=>(turn.pre.roster?.[side]||[])).filter(r=>r.zone==='active');
+ const prior=(turn.events||[]).filter(e=>Number.isInteger(e.log_index)&&e.log_index<boundary);
+ if(active.some(r=>r.ability==='Neutralizing Gas'))return null;
+ const text=(turn.events||[]).slice(0,boundary).map(e=>cleanText(e.text||e.message)).join('\n');
+ if(/switched|sent out|withdrew|replaced|Skill Swap|Role Play|Gastro Acid|Entrainment|Trick!|Switcheroo|Speed |Tailwind|paraly|paralis|paralys/i.test(text))return null;
+ let changed=false;
+ const speed=action=>{
+  const row=action.row,base=snapshotEffectiveSpeed(row,turn.pre);
+  if(base==null||row.ability!=='Unburden'||row.itemConsumed!==false)return base;
+  const proofs=(turn.effect_events||[]).filter(e=>e.effect_kind==='item-speed-activation'&&e.actor_key===row.stableKey&&e.side===action.side);
+  if(proofs.length!==1)return base;
+  const e=proofs[0],post=(turn.post.roster?.[action.side]||[]).filter(r=>r.stableKey===row.stableKey);
+  if(e.ability!=='Unburden'||e.item!==row.item||e.item_consumed!==true||!Number.isInteger(e.log_index)||e.log_index<1||e.log_index>boundary||post.length!==1||post[0].item!==row.item||post[0].itemConsumed!==true||post[0].ability!=='Unburden')return base;
+  if(!prior.some(p=>p.actor_key===e.source_actor_key&&p.move===e.move&&p.log_index<e.log_index))return base;
+  changed=true;return base*2;
+ };
+ const a=speed(first),b=speed(second);if(!changed||a==null||b==null)return null;
+ const room=actualTrickRoomToggleCount(turn,boundary)%2?!Number(turn.pre.field?.trick_room||0):Number(turn.pre.field?.trick_room||0)>0;
+ return a===b||(room?a<b:a>b);
+}
+
 function validateObservedActionOrder(turn, findings) {
   const observed = actorOrderFromEvents(turn.events);
   if (observed.length < 2 || !turn.pre || !turn.actions) return;
@@ -540,6 +566,7 @@ function validateObservedActionOrder(turn, findings) {
         side: matches[0].side,
         action: matches[0].action,
         row,
+        logIndex: o.log_index,
         speedIndex: speedOrderIndexForRow(row, turn.pre)
       };
     })
@@ -572,6 +599,8 @@ function validateObservedActionOrder(turn, findings) {
       if (firstPriority !== secondPriority) continue;
       if (first.speedIndex == null || second.speedIndex == null) continue;
 
+      const itemOrder=itemUnburdenOrder(first,second,turn);
+      if(itemOrder!==null){if(!itemOrder){failOrder('item-speed',second.key,first.key);return;}continue;}
       if (snapshotSupportsObservedSpeed(first, second, turn.pre)) continue;
       if (trickRoomAdjustedOrderSupports(first, second, turn, actual.slice(0, i))) continue;
       if (tailwindAdjustedOrderSupports(first, second, turn, actual.slice(0, i))) continue;

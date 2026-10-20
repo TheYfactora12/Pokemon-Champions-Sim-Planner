@@ -4534,6 +4534,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   function executeAction(attacker, move, target, allies, enemies, field, log, rng, opts) {
+    const itemSpeedEventStart = (field._ctx.turnEffectEvents || []).length;
+    const itemSpeedBefore = [...playerActive,...oppActive].map(mon=>({mon,active:!!mon._unburdenActive,item:mon.item,consumed:!!mon.itemConsumed}));
     const previousRedCardMove = attacker._redCardMove;
     const previousSwitchQueue = moveSwitchQueue;
     moveSwitchQueue = [];
@@ -4557,6 +4559,16 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         if (entry.opts && entry.opts.incomingState && entry.opts.incomingState.statBoosts)
           entry.opts.incomingState.statBoosts = Object.assign({},entry.mon.statBoosts);
         _switchOutActiveMon(entry.mon,entry.side,field,log,entry.opts);
+      }
+      for (const before of itemSpeedBefore) {
+        const mon=before.mon;
+        if (!before.active && mon._unburdenActive && !before.consumed && mon.itemConsumed && mon.item===before.item &&
+            !(field._ctx.turnEffectEvents||[]).slice(itemSpeedEventStart).some(e=>e.effect_kind==='item-speed-activation' && e.actor_key===_snapshotMonStableKey(mon.side===field.playerSide?'player':'opponent',mon)))
+          _recordEffectEvent(field,mon,move,'item-speed-activation',mon.hp,mon.hp,{
+            ability:'Unburden',item:before.item,item_consumed:true,
+            log_index:log.length-field._ctx.turnLogStart,
+            source_actor_key:_snapshotMonStableKey(attacker.side===field.playerSide?'player':'opponent',attacker)
+          });
       }
       moveSwitchQueue = previousSwitchQueue;
       attacker._redCardMove = previousRedCardMove;
@@ -7895,7 +7907,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.36'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.37'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
