@@ -49,3 +49,15 @@ test('rebound results cannot hide changed input from current pin',()=>{
   assert.equal(f.run().status,'stale');
 });
 test('missing current input pin rejects',()=>{const f=fixture();delete f.current.inputs_sha256;assert.equal(f.run().status,'invalid');});
+test('future captures bind one execution timestamp in receipt and both raw results',()=>{
+ const f=fixture();f.receipt.executed_at='2026-10-20T18:37:54.117Z';
+ for(const role of ['local_result','reference_result'])f.edit(role,v=>v.executed_at=f.receipt.executed_at);
+ assert.equal(f.run().status,'passed_declared_scope');
+});
+for(const [name,mutate]of [
+ ['future timestamp',f=>{f.receipt.executed_at='2099-01-01T00:00:00.000Z';for(const role of ['local_result','reference_result'])f.edit(role,v=>v.executed_at=f.receipt.executed_at);}],
+ ['invalid timestamp',f=>f.receipt.executed_at='not-a-date'],
+ ['missing result timestamp',f=>f.receipt.executed_at='2026-10-20T18:37:54.117Z'],
+ ['result-only timestamp',f=>f.edit('local_result',v=>v.executed_at='2026-10-20T18:37:54.117Z')],
+ ['mismatched result timestamp',f=>{f.receipt.executed_at='2026-10-20T18:37:54.117Z';for(const role of ['local_result','reference_result'])f.edit(role,v=>v.executed_at='2026-10-20T18:38:00.000Z');}]
+])test(name,()=>{const f=fixture();mutate(f);assert.equal(f.run().status,'invalid');});

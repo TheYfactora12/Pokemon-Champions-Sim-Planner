@@ -3,7 +3,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {readBoundedRegister,INDEX} from '../tools/bounded-register.mjs';
+import {readBoundedRegister,INDEX,CORROBORATING_ROLES} from '../tools/bounded-register.mjs';
 import {digest} from '../tools/bounded-assertions.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const index=JSON.parse(fs.readFileSync(path.join(root,INDEX))),entry=index.assertions[0];
@@ -83,4 +83,45 @@ test('rehashed independent source cannot contradict original audit digest',()=>{
  const copy=structuredClone(index),ref=copy.assertions[0].independent_sources['engine.js'],raw=Buffer.from('fake historical engine');
  ref.sha256=digest(raw);
  modified(new Map([[INDEX,bytes(copy)],[ref.path,raw]]),()=>assert.throws(()=>readBoundedRegister(root),/Independent source bytes/));
+});
+test('legacy capture time is unknown and independent audit time stays separate',()=>{
+ const [row]=readBoundedRegister(root);
+ assert.equal(row.executed_at,null);assert.equal(row.execution_timestamp_status,'unknown_legacy_capture');
+ assert.equal(row.independent_audited_at,'2026-10-20T18:26:48.656Z');
+ assert.equal(row.historical_execution_status,'passed_declared_scope');assert.equal(row.status,'stale');
+});
+for(const [role,spec]of Object.entries(CORROBORATING_ROLES).filter(([role])=>role!=='audit_manifest'))test(`rehashed ${role} contradicting original audit rejects`,()=>{
+ const copy=structuredClone(index),ref=copy.assertions[0].independent_receipts.find(r=>r.role===role);
+ const raw=role==='sampler_grid'?bytes({cases:4096,counts:{'0.99':4096},scope:'contradicts retained audited grid'}):Buffer.from('changed '+spec.name);
+ ref.sha256=digest(raw);
+ modified(new Map([[INDEX,bytes(copy)],[ref.path,raw]]),()=>assert.throws(()=>readBoundedRegister(root),/Corroborating evidence differs from original audit/));
+});
+test('removing report script grid and log while retaining manifest and reference rejects',()=>{
+ const copy=structuredClone(index);copy.assertions[0].independent_receipts=copy.assertions[0].independent_receipts.filter(r=>/focused-receipt.json|candidate-check.json/.test(r.path));
+ modified(new Map([[INDEX,bytes(copy)]]),()=>assert.throws(()=>readBoundedRegister(root),/Missing independent receipt roles/));
+});
+test('duplicate original independent entry rejects',()=>{
+ const copy=structuredClone(index);copy.assertions[0].independent_receipts.push({...copy.assertions[0].independent_receipts[0]});
+ modified(new Map([[INDEX,bytes(copy)]]),()=>assert.throws(()=>readBoundedRegister(root),/independent receipt role/));
+});
+test('duplicate logical role rejects even when inventory length remains six',()=>{
+ const copy=structuredClone(index);copy.assertions[0].independent_receipts[1]={...copy.assertions[0].independent_receipts[0]};
+ modified(new Map([[INDEX,bytes(copy)]]),()=>assert.throws(()=>readBoundedRegister(root),/Duplicate or invalid independent/));
+});
+for(const stamp of ['2099-01-01T00:00:00Z','2026-10-20T18:37:54.117Z','not-a-date'])test(`unbound legacy executed_at rejects: ${stamp}`,()=>{
+ const copy=structuredClone(index);copy.assertions[0].executed_at=stamp;
+ modified(new Map([[INDEX,bytes(copy)]]),()=>assert.throws(()=>readBoundedRegister(root),/unbound execution timestamp/));
+});
+test('wrong enrollment case is rejected instead of silently ignored',()=>{
+ const copy=structuredClone(index);copy.assertions[0].case_id='UNRELATED-MECHANIC';
+ modified(new Map([[INDEX,bytes(copy)]]),()=>assert.throws(()=>readBoundedRegister(root),/assertion\/case mismatch/));
+});
+test('rehashed audit manifest is not a replacement anchor',()=>{
+ const copy=structuredClone(index),ref=copy.assertions[0].independent_receipts.find(r=>r.role==='audit_manifest');
+ const audit=JSON.parse(fs.readFileSync(path.join(root,ref.path)));audit.time_utc='2099-01-01T00:00:00.000Z';
+ const raw=bytes(audit);ref.sha256=digest(raw);
+ modified(new Map([[INDEX,bytes(copy)],[ref.path,raw]]),()=>assert.throws(()=>readBoundedRegister(root),/audit anchor mismatch/));
+});
+test('future independent audit time is rejected against supplied clock',()=>{
+ assert.throws(()=>readBoundedRegister(root,{now:Date.parse('2026-10-19T00:00:00Z')}),/future independent audit time/);
 });

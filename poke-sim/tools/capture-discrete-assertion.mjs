@@ -10,7 +10,7 @@ import {mapTeam} from './showdown-reference.mjs';
 import {compiledIdentity,PIN} from './prepare-mc-reference-candidate.mjs';
 import {canonical} from './regulation-watch-core.mjs';
 import {digest,assessBoundedAssertion} from './bounded-assertions.mjs';
-import {fileDependency,INDEX,DEPENDENCY_FILES} from './bounded-register.mjs';
+import {fileDependency,INDEX,DEPENDENCY_FILES,CORROBORATING_ROLES,readCorroboratingEvidence} from './bounded-register.mjs';
 
 export function captureDiscrete(root,upstream,audit){
   assert.equal(execFileSync('git',['rev-parse','HEAD'],{cwd:upstream,encoding:'utf8'}).trim(),PIN);
@@ -19,6 +19,11 @@ export function captureDiscrete(root,upstream,audit){
   assert.equal(fingerprint,independent.compiled_fingerprint,'Reference must match independent compiled fingerprint');
   const auditReceipt=JSON.parse(fs.readFileSync(path.join(audit,'focused-receipt.json')));
   assert.equal(auditReceipt.head,'146ba91093ad9c0c3c3b7e675850e2e0f5f57475');
+  const originals=Object.entries(CORROBORATING_ROLES).map(([role,spec])=>{
+    const name=spec.audit_path||spec.name,bytes=fs.readFileSync(path.join(audit,name));
+    return {role,path:name,sha256:digest(bytes),bytes};
+  });
+  readCorroboratingEvidence(originals,ref=>ref.bytes);
   const auditedRoot=path.join(audit,'retest-146ba91/poke-sim');
   const buckets=JSON.parse(fs.readFileSync(path.join(audit,'focused-retest-evidence/buckets.json')));
   assert.equal(buckets.cases,4096);assert.equal(Object.keys(buckets.counts).length,16);
@@ -55,20 +60,21 @@ export function captureDiscrete(root,upstream,audit){
   const local=[],reference=[];
   try{for(let k=0;k<16;k++){b.random=n=>{assert.equal(n,16);return 15-k;};const move=b.dex.getActiveMove('tackle');move.willCrit=false;
     reference.push(b.actions.getDamage(b.p1.active[0],b.p2.active[0],move));local.push(a.calcDamage('Tackle',t,field,null,()=>(k+.5)/16));}}finally{b.destroy();}
-  const receipt={schema_version:'champions-bounded-assertion-v1',...identity,dependencies,contract,inputs};
-  for(const [role,values]of [['local_result',local],['reference_result',reference]])receipt[role]=put(role+'.json',{schema_version:'bounded-result-v1',...identity,role,status:'complete',dependencies,
+  const executed_at=new Date().toISOString();
+  const receipt={schema_version:'champions-bounded-assertion-v1',...identity,dependencies,contract,inputs,executed_at};
+  for(const [role,values]of [['local_result',local],['reference_result',reference]])receipt[role]=put(role+'.json',{schema_version:'bounded-result-v1',...identity,role,status:'complete',dependencies,executed_at,
     inputs_sha256:inputs.sha256,contract_sha256:contract.sha256,observations:Object.fromEntries(values.map((value,k)=>[`bucket_${k}_damage`,{pointer:`/observations/bucket_${k}_damage/value`,unit:'hp',value}]))});
   assert.equal(assessBoundedAssertion(receipt,{current:{scope,dependencies,contract_sha256:contract.sha256,inputs_sha256:inputs.sha256},read:name=>files.get(name)}).status,'passed_declared_scope');
-  const independent_receipts=['FOCUSED_RETEST_146BA91.md','focused-receipt.json','focused-buckets.mjs','focused-retest-evidence/buckets.json','focused-retest-evidence/discrete.log','focused-retest-evidence/candidate-check.json'].map(name=>put('independent/'+path.basename(name),fs.readFileSync(path.join(audit,name))));
+  const independent_receipts=originals.map(({role,path:name,bytes})=>({...put('independent/'+path.basename(name),bytes),role}));
   const independent_sources=Object.fromEntries(['engine','data','test'].flatMap(role=>dependency_files[role]).map(file=>[file,put('independent/source/'+file,fs.readFileSync(path.join(auditedRoot,file)))]));
-  const captureId=digest(canonical({dependencies,contract,inputs,independent_receipts,independent_sources}));
+  const captureId=digest(canonical({dependencies,contract,inputs,independent_receipts,independent_sources,executed_at}));
   const base=`source/bounded-assertions/${captureId}/`;
   const prefix=ref=>({...ref,path:base+ref.path});
   for(const key of ['contract','inputs','local_result','reference_result'])receipt[key]=prefix(receipt[key]);
   put('receipt.json',receipt);
   const write=(name,bytes)=>{const file=path.join(root,name);fs.mkdirSync(path.dirname(file),{recursive:true});if(fs.existsSync(file))assert.deepEqual(fs.readFileSync(file),bytes,'Immutable receipt differs');else fs.writeFileSync(file,bytes);};
   for(const[name,bytes]of files)write(base+name,bytes);
-  const entry={...identity,move_ids:['tackle'],executed_at:new Date().toISOString(),simulator_commit:auditReceipt.head,
+  const entry={...identity,move_ids:['tackle'],executed_at,simulator_commit:auditReceipt.head,
     independent_target_commit:auditReceipt.head,reference_pin:PIN,reference_fingerprint:fingerprint,dependency_files,
     contract:receipt.contract,inputs:receipt.inputs,receipt:{path:base+'receipt.json',sha256:digest(files.get('receipt.json'))},independent_receipts:independent_receipts.map(prefix),
     independent_sources:Object.fromEntries(Object.entries(independent_sources).map(([file,ref])=>[file,prefix(ref)]))};

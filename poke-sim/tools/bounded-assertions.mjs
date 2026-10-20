@@ -11,7 +11,7 @@ const escape = x => x.replaceAll('~','~0').replaceAll('/','~1');
 
 // Validates consistency with caller-supplied current identities, not authorship,
 // execution authenticity, legal-team eligibility or Champions client parity.
-export function assessBoundedAssertion(receipt, {read, current}) {
+export function assessBoundedAssertion(receipt, {read, current, now=Date.now()}) {
   const errors=[], stale=[], mismatches=[];
   const require = (ok, message) => { if(!ok) throw Error(message); };
   const load = (ref, label) => {
@@ -26,6 +26,9 @@ export function assessBoundedAssertion(receipt, {read, current}) {
   try {
     require(receipt?.schema_version==='champions-bounded-assertion-v1','receipt schema');
     require(text(receipt.assertion_id)&&text(receipt.case_id),'assertion/case identity');
+    const timed=Object.hasOwn(receipt,'executed_at');
+    if(timed)require(typeof receipt.executed_at==='string'&&Number.isFinite(Date.parse(receipt.executed_at))&&
+      new Date(receipt.executed_at).toISOString()===receipt.executed_at&&Date.parse(receipt.executed_at)<=now,'invalid or future execution timestamp');
     require(object(current)&&hash(current.contract_sha256)&&hash(current.inputs_sha256),'current contract/input identity required');
     require(object(current.dependencies)&&dependencies.every(k=>hash(current.dependencies[k])),'current dependencies required');
     require(object(receipt.dependencies)&&dependencies.every(k=>hash(receipt.dependencies[k])),'receipt dependencies required');
@@ -60,7 +63,8 @@ export function assessBoundedAssertion(receipt, {read, current}) {
       (f.type!=='string'||text(v))&&(f.min===undefined||v>=f.min)&&(f.max===undefined||v<=f.max);
     for(const role of ['local_result','reference_result']){
       const result=load(receipt[role],role);
-      require(Object.keys(result).every(k=>['schema_version','role','status','assertion_id','case_id','inputs_sha256','contract_sha256','scope','dependencies','observations'].includes(k)),'unsupported result metadata');
+      require(Object.keys(result).every(k=>['schema_version','role','status','assertion_id','case_id','inputs_sha256','contract_sha256','scope','dependencies','observations','executed_at'].includes(k)),'unsupported result metadata');
+      require(Object.hasOwn(result,'executed_at')===timed&&result.executed_at===receipt.executed_at,'result execution timestamp mismatch');
       require(result.schema_version==='bounded-result-v1'&&result.role===role&&result.status==='complete'&&
         result.assertion_id===receipt.assertion_id&&result.case_id===receipt.case_id&&
         result.inputs_sha256===receipt.inputs.sha256&&result.contract_sha256===receipt.contract.sha256&&

@@ -20,7 +20,7 @@
       "move_ids": [
         "tackle"
       ],
-      "executed_at": "2026-10-20T18:37:54.117Z",
+      "executed_at": null,
       "simulator_commit": "146ba91093ad9c0c3c3b7e675850e2e0f5f57475",
       "independent_target_commit": "146ba91093ad9c0c3c3b7e675850e2e0f5f57475",
       "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
@@ -65,27 +65,33 @@
       "independent_receipts": [
         {
           "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/FOCUSED_RETEST_146BA91.md",
-          "sha256": "2d411549e32c53e3d37d2d30c393c91ac8990281446a75f5c998529487e71576"
+          "sha256": "2d411549e32c53e3d37d2d30c393c91ac8990281446a75f5c998529487e71576",
+          "role": "report"
         },
         {
           "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/focused-receipt.json",
-          "sha256": "351b3108e14adf3c08953447d516e79b96067b21e2debb03722d3e89129cf077"
+          "sha256": "351b3108e14adf3c08953447d516e79b96067b21e2debb03722d3e89129cf077",
+          "role": "audit_manifest"
         },
         {
           "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/focused-buckets.mjs",
-          "sha256": "7ea0ab95f8ae630f3a812a1eb5db32bd54200cba41bcea3f5a2070223096a0ef"
+          "sha256": "7ea0ab95f8ae630f3a812a1eb5db32bd54200cba41bcea3f5a2070223096a0ef",
+          "role": "sampler_script"
         },
         {
           "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/buckets.json",
-          "sha256": "dd90f0674ae63adacdff5fd4f589759fb40dc20a9752a276b34e70f719501450"
+          "sha256": "dd90f0674ae63adacdff5fd4f589759fb40dc20a9752a276b34e70f719501450",
+          "role": "sampler_grid"
         },
         {
           "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/discrete.log",
-          "sha256": "7156dc2e2aaef99ce4760fcaa82427a61274fdf7c845f762ccaa887047f7c6a5"
+          "sha256": "7156dc2e2aaef99ce4760fcaa82427a61274fdf7c845f762ccaa887047f7c6a5",
+          "role": "execution_log"
         },
         {
           "path": "source/bounded-assertions/8a13b340b33ddf3bcda1a7395298317c90f72887b4114af0818a4f9cc81575c5/independent/candidate-check.json",
-          "sha256": "a6342b71a2a13072baedc6576cce272ab5a4999e2fbe438006f93c0752c69c95"
+          "sha256": "a6342b71a2a13072baedc6576cce272ab5a4999e2fbe438006f93c0752c69c95",
+          "role": "reference_check"
         }
       ],
       "independent_sources": {
