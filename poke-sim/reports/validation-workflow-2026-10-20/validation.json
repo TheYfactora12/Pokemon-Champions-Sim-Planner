@@ -1,0 +1,37 @@
+{
+  "source_commit": "493e927a5fb9c46591abfa97a8b818daf3e4af4c",
+  "project": {
+    "fast_files": 274,
+    "offline_db_files": 12,
+    "failures": 0
+  },
+  "validation_mode": "initial aggregate plus targeted repaired-file retest; fresh full hosted aggregate pending",
+  "initial_project_failures": 1,
+  "initial_failure": "historical Fly receipt compared changed adapter instead of retained original",
+  "repair_retest": {
+    "checks": 29,
+    "failures": 0
+  },
+  "focused": {
+    "checks": 75,
+    "failures": 0
+  },
+  "clean_checkout": {
+    "initial_checks": 59,
+    "initial_failures": 1,
+    "initial_failure": "newline conversion in lifecycle local evidence",
+    "byte_retest_checks": 19,
+    "final_checks": 48,
+    "final_failures": 0
+  },
+  "independent_review": {
+    "six_cases": 6,
+    "negative_mapping_controls": 36,
+    "workflow_controls": 18,
+    "candidate_binding_checks": 4
+  },
+  "runtime_changed": false,
+  "client_verified": false,
+  "merge": "not_performed",
+  "deployment": "not_performed"
+}
