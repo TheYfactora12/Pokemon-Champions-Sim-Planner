@@ -4839,7 +4839,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         const effects = _contactEffects(field), ability = effects.ability(attacker);
         const grounded = attacker.groundedByMove || field.gravityTurns > 0 || effects.item(attacker) === 'Iron Ball' ||
           (!attacker.types.includes('Flying') && !['Levitate','Eelevate'].includes(ability) && effects.item(attacker) !== 'Air Balloon');
-        const sleepBlocked = (grounded && ['electric','misty'].includes(field.terrain)) ||
+        const sleepBlocked = (ability === 'Leaf Guard' && _effectiveFieldWeather(field) === 'sun') || (grounded && ['electric','misty'].includes(field.terrain)) ||
           allies.some(mon => mon.alive && effects.ability(mon) === 'Sweet Veil');
         if (sleepBlocked || attacker.status === 'sleep' || attacker.hp >= attacker.maxHp || attacker.ability === 'Comatose' || ['Insomnia','Vital Spirit'].includes(ability)) {
           attacker.lastMoveFailed = true;
@@ -7804,7 +7804,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.34'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.35'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
