@@ -1,6 +1,9 @@
 # Project Status
 
 Reviewed: 2026-10-20. This file owns current release facts and priorities.
+Isolated reserved-item candidate: [Red Card / White Herb receipt](docs/release/RESERVED_ITEMS_2026-10-20.md).
+Current-upstream focused checks pass; bundle exceeds the unchanged 11 MiB gate
+by 4,480 bytes. This is an unpushed integration candidate, not a release.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.

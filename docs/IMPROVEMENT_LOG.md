@@ -1733,3 +1733,11 @@ The original auditor proved that importer quarantine did not protect direct aggr
 ## 2026-10-20: candidate move register
 
 Extended the existing move-support audit with immutable CSV/JSON reference inventory and semantic review queues. Source/runtime provenance and conservative claim boundaries retained. Six tests plus independent review passed; no regulation/client promotion. See poke-sim/docs/MOVE_REGISTER.md for counts, reproducibility and remaining anti-drift work.
+
+## IMP-2026-10-20-RESERVED-ITEMS — Red Card and White Herb lifecycle
+
+At base2769879d005f10102754d6fa539e5925bfe9a836, admitted full-six Red Card never consumed/dragged and White Herb retained Intimidate's Attack drop. Missing lifecycle hooks caused the defects. The isolated candidate restores boundary-based White Herb and whole-action Red Card with deferred move switches. Independent review found and repaired pivot-entry and cached event-speed mistakes.
+
+Proof: [dated receipt](release/RESERVED_ITEMS_2026-10-20.md), static versioned fixtures, current/shared runtime digest checks,148 focused expected outcomes per reference and9 assertion-killed mutants. Engine3ae31d3aef4e414b4aaa398e0c0516046b56eafb9f2a4ebe462dee39e6576bd9. Current upstream and historical npm differ; matching the latter is not the acceptance target for the two documented differences. Reusable lesson: consumption and switching are separate lifecycle events; reference version strings alone do not identify executed mechanics.
+
+Local only, unpushed; runtime candidatef88a073eef84f8d3ace8331bc74144cff32b94ec. Bundle-size gate still fails by4,480 bytes; current-client and broader interaction proof remain incomplete. Next action: reviewed integration/size resolution, exact-head gates and client evidence. No deployment or live DB claim.
