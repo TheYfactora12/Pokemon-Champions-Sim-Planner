@@ -15,7 +15,7 @@
 //      trigger Parental Bond's second hit.
 //   B. Mega Incineroar (or any Fake Out user) can only legally use Fake Out
 //      on its first turn out. Switching out and back in resets the window.
-//      A forced second use Struggles instead of dealing the 40-BP attack.
+//      Injected late execution fails; request-time unavailable moves are separate.
 //   C. Piercing Drill (Mega Excadrill) now has a flat 25% miss chance on
 //      every move. The prior contact-bypass-Protect interpretation is gone.
 //   D. Expanding Force used by a grounded Pokemon under Psychic Terrain
@@ -155,8 +155,8 @@ T('A5. Champions nerf citation present in engine.js Parental Bond block', () => 
 // ============================================================
 // SECTION B -- Fake Out hard-gate (8 cases)
 // What the user is testing: Fake Out is illegal past the user's first turn
-// out. The selectMove path skips it; the executeAction path Struggles if
-// forced (Encore lock); switching out and back in resets the window.
+// out. Request availability skips it; injected late execution fails without
+// another attack. Switching out and back in resets the window.
 // ============================================================
 console.log('\n=== SECTION B: Fake Out hard-gate ===');
 
@@ -171,31 +171,36 @@ T('B2. selectMove gate present for Fake Out (skips selection past turn 1)', () =
     'selectMove must skip Fake Out once the first turn of that field stay has passed');
 });
 
-T('B3. executeAction hard-gate routes blocked Fake Out to Struggle', () => {
-  const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  truthy(/if \(move === 'Fake Out'\)[\s\S]*?attacker\._fakeDone \|\| \(attacker\.turnsSinceEntry \|\| 0\) > 1[\s\S]*?Struggle/.test(src),
-    'Forced Fake Out past the first turn of that stay must trigger Struggle path');
+// Synthetic forced action isolates execution timing from Champions request availability.
+function fakeOutTiming(side, protectedFirst=false) {
+  const member=(name,moves)=>({name,moves,ability:'',item:'',nature:'Serious',evs:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0}});
+  const own=team([member('Incineroar',['Fake Out','Swords Dance']),member('Blastoise',['Swords Dance'])],'champions');
+  const foe=team([member('Venusaur',[protectedFirst?'Protect':'Swords Dance']),member('Blastoise',['Swords Dance'])],'champions');
+  const inputs=side==='player'?[own,foe]:[foe,own];
+  const forcedActions=[1,2].flatMap(turn=>['player','opponent'].flatMap(s=>[0,1].map(slot=>({turn,side:s,slot,move:slot?'Swords Dance':s===side?'Fake Out':protectedFirst?'Protect':'Swords Dance',targetSlot:0}))));
+  return ctx.simulateBattle(...inputs,{format:'doubles',seed:seed(2024),maxTurns:2,forcedActions});
+}
+T('B3. Injected late Fake Out fails on both sides without invented Struggle',()=>{
+  for(const side of ['player','opponent']){
+    const r=fakeOutTiming(side),late=r.log.slice(r.log.indexOf('--- Turn 2 ---'));
+    truthy(late.some(l=>l.includes('tried Fake Out -- but it failed')),JSON.stringify(r.log));
+    falsy(late.some(l=>l.includes('Struggle')),JSON.stringify(late));
+  }
 });
-
-T('B4. Struggle redirect deals 1/4 maxHp to target and 1/4 maxHp recoil to user', () => {
-  const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  truthy(/_struggleTgt\.maxHp \* 0\.25/.test(src), 'target damage = 1/4 maxHp');
-  truthy(/attacker\.maxHp \* 0\.25/.test(src),     'recoil       = 1/4 maxHp');
+T('B4. Late Fake Out failure has no damage or recoil events',()=>{
+  for(const side of ['player','opponent']){
+    const r=fakeOutTiming(side),turn=r.turnLog[1];
+    falsy(turn.effect_events.some(e=>e.effect_kind==='recoil'),JSON.stringify(turn));
+    falsy(turn.events.some(e=>e.damage>0),JSON.stringify(turn));
+  }
 });
-
-T('B5. _fakeDone flag is set BEFORE the Protect early-return', () => {
-  // Read executeAction source and confirm the flag-set line precedes the
-  // protected check, so a Protect-blocked Fake Out still consumes the window.
-  const src = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
-  // Anchor on the executeAction comment block (NOT the constructor flag init).
-  const headerIdx = src.indexOf('Fake Out hard-gate enforced inside executeAction');
-  truthy(headerIdx > 0, 'executeAction Fake Out header must exist');
-  const slice = src.slice(headerIdx, headerIdx + 4000);
-  const localFakeIdx = slice.indexOf('attacker._fakeDone = true;');
-  const localProtIdx = slice.indexOf('// Skip if target protected.');
-  truthy(localFakeIdx >= 0, 'flag-set must exist after header');
-  truthy(localProtIdx >= 0, 'protect check must exist after header');
-  truthy(localFakeIdx < localProtIdx, 'Fake Out flag-set must precede the protect check');
+T('B5. Protect-blocked first Fake Out still consumes its timing window',()=>{
+  for(const side of ['player','opponent']){
+    const r=fakeOutTiming(side,true),late=r.log.slice(r.log.indexOf('--- Turn 2 ---'));
+    truthy(r.log.some(l=>l.includes('protected itself')),JSON.stringify(r.log));
+    truthy(late.some(l=>l.includes('tried Fake Out -- but it failed')),JSON.stringify(late));
+    falsy(late.some(l=>l.includes('Struggle')),JSON.stringify(late));
+  }
 });
 
 T('B6. _fakeDone resets on switch-in via replaceOnField', () => {

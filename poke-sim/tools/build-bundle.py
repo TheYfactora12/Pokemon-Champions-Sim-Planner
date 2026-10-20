@@ -74,7 +74,61 @@ css     = read('style.css')
 if re.search(r'\\\r?\n', css):
     raise RuntimeError('CSS escaped newline requires preserving indentation')
 css = re.sub(r'(?m)^[ \t]+', '', css)
-css = re.sub(r'(?m)^/\*(?:(?!\*/)[^\n])*\*/[ \t]*\n', '', css)
+# Compact CSS comment bodies with a quote-aware scanner. Keep the comment
+# token itself: replacing it with whitespace can change compound selectors.
+# Quoted comment markers and escapes are data.
+def omit_css_comments(source):
+    out, index, quote = [], 0, None
+    while index < len(source):
+        char = source[index]
+        if quote:
+            out.append(char)
+            if char == "\\" and index + 1 < len(source):
+                index += 1
+                out.append(source[index])
+            elif char == quote:
+                quote = None
+        elif char == "\\" and index + 1 < len(source):
+            out.extend((char, source[index + 1]))
+            index += 1
+        elif source[index:index + 4].lower() == 'url(':
+            # URL tokens can contain literal comment markers. Preserve the
+            # complete function, including escaped delimiters and quoted URLs.
+            end, url_quote = index + 4, None
+            while end < len(source):
+                token = source[end]
+                if token == "\\":
+                    end += 2
+                    continue
+                if url_quote:
+                    if token == url_quote:
+                        url_quote = None
+                elif token in ("'", '"'):
+                    url_quote = token
+                elif token == ')':
+                    break
+                end += 1
+            if end >= len(source):
+                raise RuntimeError('Unterminated CSS URL')
+            out.append(source[index:end + 1])
+            index = end
+        elif char in ("'", '"'):
+            quote = char
+            out.append(char)
+        elif source.startswith('/*', index):
+            end = source.find('*/', index + 2)
+            if end < 0:
+                raise RuntimeError('Unterminated CSS comment')
+            out.append('/**/')
+            index = end + 1
+        else:
+            out.append(char)
+        index += 1
+    if quote:
+        raise RuntimeError('Unterminated CSS string')
+    return ''.join(out)
+
+css = omit_css_comments(css)
 data    = read('data.js')
 tournament_catalog = read('generated/tournament_catalog.js')
 project_roadmap = read('generated/project_roadmap.js')

@@ -37,6 +37,7 @@
 </script>
 
 <style>
+/**/
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 img{max-width:100%;height:auto;display:block}
@@ -69,6 +70,7 @@ body{font-family:var(--font-display),system-ui,-apple-system,sans-serif;font-siz
 a{color:inherit}
 button{cursor:pointer;background:none;border:none;font-family:var(--font-display),system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 input,select,textarea{font-family:var(--font-display),system-ui,-apple-system,sans-serif;-webkit-appearance:none;appearance:none}
+/**/
 .site-header{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 table{border-collapse:collapse;width:100%}
 ::-webkit-scrollbar{width:5px;height:5px}
@@ -76,6 +78,7 @@ table{border-collapse:collapse;width:100%}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--text-m)}
 
+/**/
 .beta-feedback{display:flex;align-items:center;flex-wrap:wrap;gap:4px 16px;max-width:1400px;margin:0 auto;padding:4px var(--sp4);font-size:var(--text-sm);color:var(--text)}
 .beta-feedback a{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;min-height:44px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .beta-feedback a:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:var(--r-sm)}
@@ -339,6 +342,7 @@ margin-top:0;
 .team-card,.results-section,.about-card,.pilot-card,.team-full-card,.replay-card,.cs-section,.stat-panel,.editor-sidebar,.editor-form{padding:var(--sp3)}
 }
 
+/**/
 .format-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);padding:3px;gap:2px}
 .fmt-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;min-height:32px;border-radius:var(--r-full);font-size:var(--text-xs);font-weight:700;color:var(--text-m);transition:all var(--tr);letter-spacing:.03em}
 .fmt-btn:hover{color:var(--text)}
@@ -347,6 +351,7 @@ margin-top:0;
 .btn-icon{width:34px;height:34px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--text-m);display:flex;align-items:center;justify-content:center;transition:all var(--tr)}
 .btn-icon:hover{color:var(--text);border-color:var(--primary)}
 
+/**/
 .format-banner{background:var(--surface);border-bottom:1px solid var(--border)}
 .format-banner-inner{max-width:1400px;margin:0 auto;padding:6px var(--sp4);display:flex;align-items:center;gap:var(--sp3);flex-wrap:wrap}
 .fmt-indicator{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--primary);font-family:var(--font-mono);letter-spacing:.04em}
@@ -357,6 +362,7 @@ margin-top:0;
 .fmt-pill-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;min-height:30px;background:rgba(124,106,245,.12);border:1px solid rgba(124,106,245,.3);border-radius:var(--r-full);color:var(--primary);font-size:10px;font-weight:700;font-family:var(--font-display),system-ui,sans-serif;letter-spacing:.04em;transition:all var(--tr);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .fmt-pill-btn:hover{background:rgba(124,106,245,.22);border-color:var(--primary)}
 
+/**/
 .tab-nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 var(--sp4);max-width:1400px;margin:0 auto;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .tab-nav::-webkit-scrollbar{display:none}
 .tab-btn{padding:var(--sp3) var(--sp4);font-size:var(--text-sm);font-weight:700;color:var(--text-m);border:none;background:none;border-bottom:2px solid transparent;cursor:pointer;transition:all var(--tr);white-space:nowrap;letter-spacing:.02em;min-height:44px;-webkit-tap-highlight-color:transparent}
@@ -366,6 +372,7 @@ margin-top:0;
 @media(min-width:600px){.tab-panel{padding:var(--sp6)}}
 .tab-panel.active{display:block}
 
+/**/
 .overview-shell{display:flex;flex-direction:column;gap:var(--sp4);min-width:0}
 .overview-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp4);flex-wrap:wrap}
 .overview-updated{display:inline-flex;align-items:center;border:1px solid rgba(91,164,245,.35);background:rgba(91,164,245,.08);color:var(--blue);border-radius:var(--r-full);padding:5px 10px;font-family:var(--font-mono);font-size:10px;font-weight:800;letter-spacing:.04em;white-space:nowrap}
@@ -752,6 +759,7 @@ margin-top:0;
 @media(max-width:720px){.pokemon-news-slide.active{grid-template-columns:1fr}.pokemon-news-slides{min-height:0}.pokemon-news-image-link,.pokemon-news-image-link img{min-height:190px}}
 @media(max-width:560px){.overview-header{gap:var(--sp3)}.overview-updated{white-space:normal}.overview-metrics{grid-template-columns:1fr}.overview-section{padding:var(--sp3)}.overview-item{grid-template-columns:1fr;gap:6px}.overview-status{justify-self:start}.overview-section-head,.pokemon-news-feed-head,.team-lab-gates-head,.team-lab-admin-controls{align-items:flex-start;flex-direction:column;gap:6px}.overview-kicker{white-space:normal}.overview-db-summary,.overview-db-counts{grid-template-columns:1fr}.home-start-steps,.home-player-outcome-grid,.home-question-grid,.home-value-strip,.home-start-rail ol,.pokemon-news-headlines,.home-proof-snapshot dl,.team-lab-gate-grid{grid-template-columns:1fr}.home-quick-plan-rows article{grid-template-columns:1fr;align-items:start}.home-sim-output-head{display:grid;text-align:left}.home-sim-output-head strong{text-align:left}.team-lab-leaderboard-head{flex-direction:column}.team-lab-gate-actions{justify-content:flex-start;width:100%}.team-lab-gate-actions button,.team-lab-admin-controls button,.home-start-rail button{width:100%}.pokemon-news-controls{width:100%;justify-content:flex-start}.pokemon-news-copy h4{font-size:24px}.home-landing-hero,.home-sim-preview,.home-quick-plan,.team-lab-gates,.team-lab-admin-controls,.home-start-rail,.home-proof-snapshot{padding:var(--sp3)}.home-landing-actions button{width:100%}.home-start-rail li{white-space:normal}.pokemon-news-headline strong{font-size:14px}}
 
+/**/
 .sim-layout{display:grid;grid-template-columns:minmax(0,1fr) 220px minmax(0,1fr);gap:var(--sp4);align-items:start;margin-bottom:var(--sp6)}
 .team-card,.player-card,.opp-card,.sim-controls{min-width:0}
 @media(min-width:701px) and (max-width:900px) and (hover:hover) and (pointer:fine){
@@ -767,6 +775,8 @@ margin-top:0;
 .sim-controls{position:sticky;top:var(--sp4)}
 }
 
+/**/
+/**/
 @media(max-width:700px){
 .sim-layout{grid-template-columns:minmax(0,1fr)}
 .sim-layout .player-card,.sim-layout .opp-card,.sim-layout .sim-controls{grid-column:auto;grid-row:auto;order:unset;position:static}
@@ -853,11 +863,13 @@ margin-top:0;
 .pilot-wc-row{grid-template-columns:1fr 1fr auto}
 }
 
+/**/
 .badge{font-size:9px;font-weight:700;letter-spacing:.07em;padding:2px 8px;border-radius:var(--r-full);font-family:var(--font-mono);flex-shrink:0}
 .badge-blue{background:rgba(91,164,245,.12);color:var(--blue);border:1px solid rgba(91,164,245,.28)}
 .badge-red{background:rgba(240,84,100,.12);color:var(--red);border:1px solid rgba(240,84,100,.28)}
 .badge-green{background:rgba(78,201,148,.12);color:var(--green);border:1px solid rgba(78,201,148,.28)}
 
+/**/
 .roster{display:flex;flex-direction:column;gap:var(--sp2)}
 .poke-row{display:flex;align-items:center;gap:var(--sp3);padding:var(--sp2) var(--sp3);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);transition:border-color var(--tr)}
 .poke-row:hover{border-color:var(--primary)}
@@ -883,6 +895,7 @@ margin-top:0;
 .move-tag{white-space:nowrap}
 }
 
+/**/
 .sim-controls{display:flex;flex-direction:column;gap:var(--sp4);align-items:stretch}
 .qa-tester-shell{display:grid;gap:var(--sp5)}
 .qa-tester-hero{border:1px solid rgba(245,197,66,.25);border-radius:var(--r-lg);background:radial-gradient(circle at 16% 0%,rgba(245,197,66,.16),transparent 34%),linear-gradient(135deg,rgba(18,25,38,.98),rgba(12,18,29,.96));padding:clamp(18px,3vw,34px)}
@@ -906,6 +919,7 @@ margin-top:0;
 .control-block{display:flex;flex-direction:column;gap:4px}
 .control-label{font-size:9px;font-weight:700;color:var(--text-m);letter-spacing:.07em;text-transform:uppercase}
 
+/**/
 .bo-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
 .bo-btn{padding:8px 4px;min-height:38px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);font-size:11px;font-weight:700;color:var(--text-m);cursor:pointer;transition:all var(--tr);font-family:var(--font-display),system-ui,sans-serif;letter-spacing:.02em;-webkit-tap-highlight-color:transparent}
 .bo-btn:hover{color:var(--text);border-color:var(--primary)}
@@ -922,6 +936,7 @@ margin-top:0;
 .btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px var(--sp4);min-height:40px;background:none;color:var(--text-m);border:1px solid var(--border);border-radius:var(--r-md);font-family:var(--font-display),system-ui,sans-serif;font-size:var(--text-sm);font-weight:600;cursor:pointer;transition:all var(--tr);-webkit-tap-highlight-color:transparent}
 .btn-secondary:hover{color:var(--text);border-color:var(--primary)}
 
+/**/
 .progress-wrap{display:flex;flex-direction:column;gap:4px}
 .progress-bar-track{width:100%;height:5px;background:var(--surface2);border-radius:var(--r-full);overflow:hidden}
 .progress-bar-fill{height:100%;background:var(--primary);border-radius:var(--r-full);transition:width 60ms linear;box-shadow:0 0 6px var(--primary)}
@@ -931,6 +946,7 @@ margin-top:0;
 .ticker-pct{font-size:11px;font-weight:700;color:var(--primary);font-family:var(--font-mono);margin-left:auto}
 .progress-label{font-size:10px;color:var(--text-m);font-family:var(--font-mono)}
 
+/**/
 .results-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp6);margin-bottom:var(--sp6);box-shadow:var(--sh-md)}
 .results-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp4);margin-bottom:var(--sp5);flex-wrap:wrap}
 .results-title{font-size:var(--text-xl);font-weight:900;letter-spacing:-.02em}
@@ -956,6 +972,7 @@ margin-top:0;
 .win-cond-row:last-child{border-bottom:none}
 .win-cond-bar{height:3px;border-radius:2px;background:var(--primary);margin-top:3px;transition:width .3s ease}
 
+/**/
 .matchup-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp6);overflow:hidden}
 .table-scroll{overflow-x:auto}
 .section-heading{font-size:var(--text-xl);font-weight:900;letter-spacing:-.02em;margin-bottom:var(--sp5)}
@@ -973,6 +990,7 @@ margin-top:0;
 .assess-chip.loss{background:rgba(240,84,100,.08);color:var(--red);border:1px solid rgba(240,84,100,.25)}
 .matrix-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--r-full);background:var(--surface2);border:1px solid var(--border);color:var(--text-m);font-family:var(--font-mono)}
 
+/**/
 .teams-tab-header{display:flex;flex-direction:column;gap:var(--sp3);margin-bottom:var(--sp4)}
 .teams-actions{margin-bottom:var(--sp4);display:flex;gap:var(--sp3)}
 .teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(380px,100%),1fr));gap:var(--sp5)}
@@ -992,9 +1010,7 @@ margin-top:0;
 .export-card-btn{font-size:9px;padding:2px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);color:var(--text-m);cursor:pointer;transition:all var(--tr);font-family:var(--font-display);font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:3px;flex-shrink:0}
 .export-card-btn:hover{color:var(--primary);border-color:var(--primary)}
 
-/* ===== T9j.10 TEAM PREVIEW BRING PICKER (Refs #16) =====
-Cite: https://bulbapedia.bulbagarden.net/wiki/Team_Preview
-Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
+/**/
 .bring-mode-row{display:flex;align-items:center;gap:var(--sp2);margin:var(--sp3) 0;flex-wrap:wrap}
 .bring-mode-label{font-size:10px;color:var(--text-m);font-family:var(--font-mono);letter-spacing:.04em;text-transform:uppercase}
 .bring-mode-btn{font-size:10px;padding:3px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);color:var(--text-m);cursor:pointer;transition:all var(--tr);font-family:var(--font-display);font-weight:700;letter-spacing:.04em}
@@ -1024,6 +1040,7 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .bring-pool-row.bring-dragging{opacity:.4}
 .bring-mode-hint{margin:6px 0 8px;padding:6px 8px;border:1px solid rgba(250,204,21,.35);border-radius:var(--r-sm);background:rgba(250,204,21,.08);color:#facc15;font-size:11px;font-weight:700;font-family:var(--font-mono)}
 
+/**/
 .editor-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:var(--sp5);align-items:start}
 .editor-layout>*{min-width:0}
 .editor-form .form-group,.editor-form .editor-move-combobox{min-width:0}
@@ -1114,6 +1131,7 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .btn-save:hover{background:var(--primary-h)}
 .btn-save:disabled{opacity:.55;cursor:not-allowed;background:var(--surface2);color:var(--text-m);border:1px solid var(--border)}
 
+/**/
 .section-subtitle{color:var(--text-m);font-size:var(--text-sm);line-height:1.5;margin-top:4px;max-width:760px}
 .replay-coach-shell{display:flex;flex-direction:column;gap:var(--sp4)}
 .replay-coach-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp3)}
@@ -1203,6 +1221,7 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .replay-play-row{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:start;font-size:12px;line-height:1.45;padding:3px 0;border-top:1px solid rgba(148,163,184,.12)}
 .replay-play-row span{font-family:var(--font-mono);color:var(--text-m);font-size:10px;text-align:right}
 .replay-play-row b{font-weight:700;overflow-wrap:anywhere;color:var(--text)}
+/**/
 .replay-stadium,.replay-play-by-play{--text-m:var(--text)}
 .replay-stadium-field{background:var(--surface)}
 .replay-stadium-zone,.replay-play-by-play{background:var(--surface2)}
@@ -1291,6 +1310,7 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .replay-coach-textarea{min-height:220px;white-space:pre-wrap}
 }
 
+/**/
 .about-wrap{max-width:900px}
 .about-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp6)}
 .about-sub{font-size:var(--text-base);font-weight:700;margin:var(--sp6) 0 var(--sp4)}
@@ -1328,6 +1348,7 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 @media(min-width:500px){.engine-row{grid-template-columns:160px 1fr}}
 .engine-row b{color:var(--text-m);font-size:11px}
 
+/**/
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;display:flex;align-items:flex-end;justify-content:center;padding:var(--sp4);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 @media(min-width:600px){.modal-overlay{align-items:center}}
 .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp5);max-width:580px;width:100%;max-height:92vh;max-height:92dvh;overflow-y:auto;box-shadow:var(--sh-lg);padding-bottom:max(var(--sp5),env(safe-area-inset-bottom))}
@@ -1353,14 +1374,17 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .import-helper-row span{font-size:10px;color:var(--text-m);line-height:1.4}
 @media(max-width:520px){.import-helper-row{align-items:flex-start;flex-direction:column}.import-helper-row .btn-secondary{width:100%}}
 
+/**/
 .import-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;margin-bottom:var(--sp4)}
 .import-tab{flex:1;padding:7px;font-size:var(--text-xs);font-weight:700;color:var(--text-m);background:none;border:none;cursor:pointer;transition:all var(--tr);letter-spacing:.03em}
 .import-tab.active{background:var(--primary);color:#fff}
 .import-tab:hover:not(.active){background:var(--surface2);color:var(--text)}
 
+/**/
 .paste-textarea{width:100%;min-height:160px;padding:var(--sp3);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);font-family:var(--font-mono),monospace;font-size:11px;line-height:1.7;resize:vertical;transition:border-color var(--tr);-webkit-appearance:none}
 .paste-textarea:focus{outline:none;border-color:var(--primary)}
 
+/**/
 .preview-roster{display:flex;flex-direction:column;gap:4px}
 .preview-row{display:flex;align-items:center;gap:var(--sp3);padding:5px var(--sp3);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);font-size:var(--text-xs)}
 .preview-sprite{width:28px;height:28px;image-rendering:pixelated;background:var(--border);border-radius:3px}
@@ -1376,6 +1400,7 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .preview-team-error{border:1px solid rgba(240,84,100,.4);background:rgba(240,84,100,.08);color:var(--red)}
 .inline-code{font-family:var(--font-mono);font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px}
 
+/**/
 .pilot-header{margin-bottom:var(--sp5)}
 .pilot-subtitle{font-size:var(--text-sm);color:var(--text-m);margin-top:4px}
 .pilot-empty{color:var(--text-m);font-size:var(--text-sm);text-align:center;padding:var(--sp10) 0}
@@ -1393,18 +1418,21 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .pilot-tips{display:flex;flex-direction:column;gap:4px}
 .pilot-tip{font-size:11px;color:var(--text-m);line-height:1.5}
 
+/**/
 .pilot-verdict{display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--r-full);font-size:10px;font-weight:700;font-family:var(--font-mono);letter-spacing:.04em}
 .verdict-favorable{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3)}
 .verdict-even{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.3)}
 .verdict-risky{background:rgba(249,115,22,.12);color:#f97316;border:1px solid rgba(249,115,22,.3)}
 .verdict-avoid{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
 
+/**/
 .coverage-widget{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp3)}
 .coverage-widget-title{font-size:9px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.07em;margin-bottom:var(--sp2)}
 .coverage-item{display:flex;align-items:center;gap:6px;font-size:11px;padding:2px 0}
 .coverage-ok{color:var(--green)}
 .coverage-miss{color:var(--red)}
 
+/**/
 .radar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:var(--sp3);margin-bottom:var(--sp5)}
 .radar-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp3);transition:border-color var(--tr)}
 .radar-card.radar-safe{border-color:rgba(34,197,94,.3)}
@@ -1414,6 +1442,7 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .radar-types{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px}
 .radar-stats{display:flex;gap:var(--sp3);font-size:10px;color:var(--text-m);font-family:var(--font-mono)}
 
+/**/
 .series-summary-table{width:100%;border-collapse:collapse}
 .series-summary-table th{text-align:left;padding:var(--sp2) var(--sp3);font-size:9px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border);font-family:var(--font-mono)}
 .series-summary-table td{padding:8px var(--sp3);border-bottom:1px solid var(--border);font-size:var(--text-sm);vertical-align:middle}
@@ -1423,8 +1452,10 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .ss-draw td{background:rgba(245,197,66,.04)}
 .series-summary-table tr:hover td{filter:brightness(1.1)}
 
+/**/
 .replay-filters-row{display:flex;align-items:center;justify-content:space-between;gap:var(--sp3);flex-wrap:wrap;margin-top:var(--sp3)}
 
+/**/
 .speed-tier-section{margin-top:var(--sp3);border-top:1px solid var(--border);padding-top:var(--sp3)}
 .speed-tier-toggle{background:none;border:none;color:var(--text-m);font-family:var(--font-display);font-size:11px;font-weight:700;cursor:pointer;padding:0;letter-spacing:.04em;transition:color var(--tr)}
 .speed-tier-toggle:hover{color:var(--primary)}
@@ -1436,6 +1467,7 @@ Doubles: 4 slots (LEAD 1-2, BENCH 3-4). Singles: 3 slots. Hybrid drag+tap. */
 .speed-name{font-weight:600}
 .speed-val{font-family:var(--font-mono);color:var(--primary);font-size:11px;font-weight:700;white-space:nowrap}
 
+/**/
 @media print {
 body > *:not(#pdf-report-container) { display: none !important; }
 #pdf-report-container .cs-section {
@@ -1502,10 +1534,12 @@ padding: 1px 6px; margin-right: 6px; color: #fff; border-radius: 2px; vertical-a
 }
 #pdf-report-container { display: none; }
 
+/**/
 .badge-legal   { background:#16a34a20; color:#4ade80; border:1px solid #16a34a60; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; letter-spacing:.3px; }
 .badge-warn    { background:#d9770620; color:#fbbf24; border:1px solid #d9770660; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; letter-spacing:.3px; }
 .badge-illegal { background:#dc262620; color:#f87171; border:1px solid #dc262660; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; letter-spacing:.3px; }
 
+/**/
 .delete-card-btn {
 display: inline-flex; align-items: center; gap: 4px;
 padding: 4px 8px; font-size: 10px; font-weight: 600;
@@ -1515,6 +1549,7 @@ cursor: pointer; margin-left: 6px;
 }
 .delete-card-btn:hover { background: rgba(220, 38, 38, 0.25); }
 
+/**/
 .edit-card-btn {
 display: inline-flex; align-items: center; gap: 4px;
 padding: 4px 8px; font-size: 10px; font-weight: 600;
@@ -1524,6 +1559,7 @@ cursor: pointer; margin-left: 6px;
 }
 .edit-card-btn:hover { background: rgba(59, 130, 246, 0.25); }
 
+/**/
 .reset-card-btn {
 display: inline-flex; align-items: center; gap: 4px;
 padding: 4px 8px; font-size: 10px; font-weight: 600;
@@ -1533,11 +1569,7 @@ cursor: pointer; margin-left: 6px;
 }
 .reset-card-btn:hover { background: rgba(234, 179, 8, 0.25); }
 
-/* ============================================================
-T9j.11 (Refs #73) Teams-tab persistence banner + filter chips
-+ bulk file buttons. Cite: MDN File API.
-https://developer.mozilla.org/en-US/docs/Web/API/File_API
-============================================================ */
+/**/
 .teams-persistence-banner {
 display: flex; align-items: center; gap: 8px;
 padding: 8px 12px; margin: 8px 0 10px;
@@ -1588,15 +1620,7 @@ background: rgba(37, 99, 235, 0.55); color: #eff6ff;
 display: flex; flex-wrap: wrap; gap: 8px;
 }
 
-/* ============================================================
-* T9j.12 (Refs #74) Simulator-tab inline bring picker
-* Compact sibling of the Teams-tab picker. Sits under each roster
-* column (player / opponent) on the Simulator view so leads + bench
-* can be overridden without switching tabs. Shares state via the
-* T9j.10 BRING_SELECTION / BRING_MODE helpers (localStorage).
-* Refs: https://bulbapedia.bulbagarden.net/wiki/Team_Preview
-*       https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
-* ============================================================ */
+/**/
 .sim-bring-picker {
 margin-top: 10px;
 padding: 8px 10px;
@@ -1612,6 +1636,7 @@ color: var(--text-m);
 text-transform: uppercase;
 margin-bottom: 6px;
 }
+/**/
 .bring-pool-compact {
 display: flex;
 flex-wrap: wrap;
@@ -1665,15 +1690,7 @@ box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.25);
 }
 .bring-pool-chip.bring-dragging { opacity: 0.5; }
 
-/* ============================================================
-T9j.15 (Refs #71) — Best Mega Trigger card
-============================================================
-Pilot Guide inline card + print-safe PDF column summary.
-Severity bands match the three-tier coaching-notes pattern:
-green  = delta >= 3% vs turn-1 baseline
-amber  = 1-3% delta
-gray   = <1% delta
-*/
+/**/
 .mega-trigger-group {
 margin-top: var(--sp4, 16px);
 padding-top: var(--sp3, 12px);
@@ -1790,6 +1807,7 @@ background: linear-gradient(90deg, #64748b 0%, #94a3b8 100%);
 border-radius: 3px;
 }
 
+/**/
 @media print {
 .mega-trigger-card {
 border: 1px solid #000 !important;
@@ -1811,11 +1829,9 @@ page-break-inside: avoid;
 .mt-bar { background: #000 !important; }
 }
 
-/* ===================================================================
-PHASE 2 - COACHING LAYER (Strategy tab)
-See COACHING_LAYER_SPEC.md sections 8 (rendering rules) + 14
-=================================================================== */
+/**/
 
+/**/
 .build-version {
 display: inline-block;
 margin-left: 8px;
@@ -1831,6 +1847,7 @@ vertical-align: middle;
 letter-spacing: 0.02em;
 }
 
+/**/
 .strategy-header { margin-bottom: 16px; }
 .strategy-header-row {
 display: flex; align-items: center; justify-content: space-between;
@@ -1849,6 +1866,7 @@ background: var(--surface-1, #0f172a); border: 1px dashed #334155;
 border-radius: 8px;
 }
 
+/**/
 .cs-summary-bar {
 display: flex; align-items: center; gap: 16px;
 padding: 14px 16px; background: var(--surface-1, #0f172a);
@@ -1896,6 +1914,7 @@ color: var(--text-1, #e2e8f0);
 margin: 0 0 16px;
 }
 
+/**/
 .cs-section {
 background: var(--surface-1, #0f172a);
 border: 1px solid #1e293b;
@@ -1916,6 +1935,7 @@ margin: 0 0 12px;
 .cs-list li { font-size: 13px; color: var(--text-1, #e2e8f0); margin-bottom: 4px; line-height: 1.5; }
 .cs-section p { font-size: 13px; line-height: 1.5; margin: 6px 0; color: var(--text-1, #e2e8f0); }
 
+/**/
 .cs-cat-grid {
 display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 gap: 8px;
@@ -1936,6 +1956,7 @@ font-size: 16px; font-weight: 600;
 color: #67e8f9; margin-top: 2px;
 }
 
+/**/
 .cs-chip {
 display: inline-block; padding: 2px 8px;
 font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
@@ -1945,6 +1966,7 @@ border-radius: 4px; text-transform: uppercase;
 }
 .cs-chip-playstyle { background: rgba(168, 85, 247, 0.15); color: #c4b5fd; }
 
+/**/
 .cs-source {
 display: inline-flex; align-items: center; gap: 4px;
 font-size: 10px; padding: 2px 6px;
@@ -1969,6 +1991,7 @@ color: inherit; opacity: 0.85; text-decoration: underline;
 }
 .cs-cite:hover { opacity: 1; }
 
+/**/
 .cs-lead-grid {
 display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 gap: 10px;
@@ -2004,6 +2027,7 @@ font-size: 11px; color: #4ade80;
 margin-top: 6px;
 }
 
+/**/
 .cs-moveline-grid {
 display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 gap: 10px;
@@ -2026,6 +2050,7 @@ margin-bottom: 6px;
 .cs-avoid { color: #fbbf24; margin-top: 4px; }
 .cs-fallback { color: #94a3b8; margin-top: 4px; }
 
+/**/
 .cs-mistake-list { display: flex; flex-direction: column; gap: 8px; }
 .cs-mistake {
 padding: 10px 12px;
@@ -2050,6 +2075,7 @@ color: var(--text-1, #e2e8f0); margin-top: 2px;
 }
 .cs-mistake-fix { color: #4ade80; }
 
+/**/
 .cs-risk-grid {
 display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 gap: 8px;
@@ -2071,6 +2097,7 @@ margin-bottom: 4px; color: var(--text-1, #e2e8f0);
 }
 .cs-risk-fix { color: #4ade80; margin-top: 4px; }
 
+/**/
 .cs-skill-grid {
 display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 gap: 10px;
@@ -2086,6 +2113,7 @@ color: #67e8f9; font-size: 12px;
 text-transform: uppercase; letter-spacing: 0.04em;
 }
 
+/**/
 .cs-threat-grid {
 display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 gap: 8px;
@@ -2126,9 +2154,7 @@ border-radius: 4px;
 .cs-score { font-size: 28px; }
 }
 
-/* ==================================================================
-Phase 4b (Refs #52) — Adaptive state banner + consistency pill
-================================================================== */
+/**/
 .cs-adaptive-banner {
 margin: 12px 0 14px;
 padding: 12px 14px;
@@ -2165,6 +2191,7 @@ color: #f8fafc;
 color: #cbd5e1;
 font-size: 12px;
 }
+/**/
 .cs-adaptive-state-1 {
 background: #3a2a10;
 border-color: #b45309;
@@ -2181,6 +2208,7 @@ border-color: #16a34a;
 }
 .cs-adaptive-state-3 .cs-adaptive-state-label { background: rgba(34,197,94,0.25); color: #bbf7d0; }
 
+/**/
 .cs-consistency-pill {
 margin-left: auto;
 font-size: 11px;
@@ -2198,10 +2226,7 @@ white-space: nowrap;
 .cs-consistency-inconsistent     { background: rgba(245,158,11,0.22);  color: #fde68a; }
 .cs-consistency-volatile         { background: rgba(239,68,68,0.22);   color: #fecaca; }
 
-/* ==================================================================
-Phase 4b (Refs #95) - Record bar: total W-L + per-archetype splits
-User rule: no draws surfaced in Pokemon
-================================================================== */
+/**/
 .cs-record-bar {
 margin: 0 0 14px;
 padding: 10px 12px;
@@ -2269,6 +2294,7 @@ font-weight: 700;
 font-variant-numeric: tabular-nums;
 color: #f8fafc;
 }
+/**/
 .cs-record-wr-good { background: rgba(34,197,94,0.16);  border-color: rgba(34,197,94,0.45); }
 .cs-record-wr-mid  { background: rgba(245,158,11,0.14); border-color: rgba(245,158,11,0.45); }
 .cs-record-wr-bad  { background: rgba(239,68,68,0.14);  border-color: rgba(239,68,68,0.45); }
@@ -2280,9 +2306,7 @@ color: #f8fafc;
 .cs-record-wr-mid  .cs-record-total-score,
 .cs-record-wr-mid  .cs-record-chip-score { color: #fde68a; }
 
-/* Empty-state hint under the Record pill. Shown only when the Phase 4 sim
-log has no per-series data yet - tells the user whether they have legacy
-aggregate data or need to run their first sim. Refs #53, #55. */
+/**/
 .cs-record-empty-hint {
 flex-basis: 100%;
 font-size: 12px;
@@ -2298,11 +2322,7 @@ font-style: italic;
 .cs-record-empty-hint { font-size: 11px; }
 }
 
-/* ============================================================
-* Phase 4c (Refs PHASE4C_DETECTORS_SPEC.md) - detector sections.
-* Five collapsible <details> blocks under the Record bar with
-* inline confidence badges and section-summary badges.
-* ============================================================ */
+/**/
 .cs-phase4c-block {
 display: flex;
 flex-direction: column;
@@ -2393,6 +2413,7 @@ font-size: 13px;
 color: #cbd5e1;
 }
 
+/**/
 .cs-confidence-badge {
 display: inline-block;
 font-size: 11px;
@@ -2418,6 +2439,7 @@ color: #94a3b8;
 .cs-severity-medium .cs-severity-tag { color: #fbbf24; font-weight: 600; }
 .cs-severity-low .cs-severity-tag { color: #60a5fa; }
 
+/**/
 .cs-phase4d-block {
 margin-top: 14px;
 }
@@ -2458,6 +2480,7 @@ color: #cbd5e1;
 font-weight: 600;
 }
 
+/**/
 .cs-policy-audit-section {
 margin-top: 10px;
 }
@@ -2513,6 +2536,7 @@ font-size: 13px;
 margin-top: 5px;
 }
 
+/**/
 .replay-v2-tools {
 display: grid;
 grid-template-columns: minmax(120px, 1fr) auto;
@@ -2733,6 +2757,7 @@ grid-template-columns: minmax(0, 1fr);
 #sim-run-error { color: var(--red); }
 .sim-controls .sim-output-guide div { display: block; }
 .sim-controls .sim-output-guide span { display: block; text-align: left; margin-top: 3px; }
+/**/
 .pokemon-news-feed{scroll-margin-top:100px;border-radius:0;background:transparent;box-shadow:none;border:0;border-top:1px solid var(--border)}
 .pokemon-news-feed .pokemon-news-feed-head h3{font-size:26px;letter-spacing:0;line-height:1.2}
 .pokemon-news-feed .pokemon-news-copy h4{font-size:24px;letter-spacing:0;line-height:1.25;overflow-wrap:anywhere}
@@ -2787,7 +2812,7 @@ grid-template-columns: minmax(0, 1fr);
       </svg>
       <div>
       <!-- build history: v2.1.68-speed-transition v2.1.69-source-truth-audit v2.1.70-terrain-gaps-fixed v2.1.83-champions-tera-gate v2.1.86-regmb-source-audit v2.1.87-ruleset-lifecycle v2.1.88-ruleset-team-sections v2.1.89-regmb-review-cards v2.1.94-paldea-tauros-sprites v2.1.95-sprite-fallback-chain v2.1.96-alola-raichu-sprite-fallbacks v2.1.97-hisui-zoroark-gif v2.1.98-gif-primary-sprite-audit v2.1.99-regmb-promotion-gate v2.2.0-regmb-stone-source-pass v2.2.1-regmb-stats-types-abilities-source-pass v2.2.2-learnset-policy-pass v2.2.3-damage-stat-override-audit v2.2.4-contact-flag-audit v2.2.5-secondary-effect-audit v2.2.6-complex-secondary-state v2.2.7-secondary-table-consolidation v2.2.8-drain-rule-source-audit v2.2.9-foul-play-stat-source-audit v2.2.10-move-rule-trace-qa v2.2.11-codex-qa-context-drop v2.2.12-codex-qa-drop-folder v2.2.13-tactical-sweep-schema v2.2.14-stat-source-proof-team v2.2.15-live-db-pages-guard v2.2.16-coach-sequence-why v2.2.17-stress-lite-qa v2.2.18-stress-lite-summary v2.2.19-hard-beta-guard v2.2.20-data-sources-matrix v2.2.21-source-sync-stamps v2.2.22-source-sync-runtime v2.2.23-sources-ui-polish v2.2.26-editor-save-cancel v2.2.27-import-file-feedback v2.2.28-move-failure-evidence v2.2.29-replay-log-dedupe v2.2.30-replay-detail-rows v2.2.31-overview-closeout v2.2.32-action-denial-priority v2.2.33-status-lock-proof v2.2.34-status-resolution-proof v2.2.43-move-effect-logic-matrix v2.2.44-source-confidence-intake v2.2.45-team-lab-foundation v2.2.46-source-truth-packages v2.2.47-sim-evidence-foundation v2.2.49-qa-artifact-evidence-intake v2.2.50-sim-evidence-adapter v2.2.51-team-lab-milestone-align v2.2.52-team-lab-newsroom-hub v2.2.53-home-roadmap-split v2.2.54-home-news-carousel v2.2.80-replay-scenario-export-ux v2.2.81-source-trust-guard v2.2.82-news-slide-images v2.2.83-source-backed-news-thumbs v2.2.84-news-health-sync v2.2.85-news-source-watch v2.2.86-replay-claim-audit v2.2.87-replay-qa-claim-payload v2.2.88-qa-artifact-claim-boundary v2.2.89-qa-claim-review v2.2.94-move-qa-closeout-plan v2.2.95-replay-logic-audit v2.2.96-legality-99-target v2.2.97-legality-evidence-package v2.2.98-github-release-guard v2.2.99-true-qa-slice-contract v2.2.100-qa-100-readiness v2.2.101-db-architecture-growth-audit v2.2.102-db-architecture-stress-plan v2.2.103-trainer-room-foundation v2.2.104-replay-import-governance v2.2.105-private-replay-import-service v2.2.106-private-replay-import-persistence v2.2.107-pilot-team-log-mapping v2.2.108-review-private-import-save v2.2.109-qa-readiness-next-gate v2.2.110-regmb-legality-request v2.2.111-qa-readout-inline v2.2.112-qa-trace-total-align v2.2.113-qa-no-auto-claim-card v2.2.114-qa-josh-showdown-assignment v2.2.115-qa-josh-owner-alignment v2.2.116-regmb-review-items-abilities v2.2.117-home-product-reveal v2.2.118-home-cycle-clean v2.2.119-home-cycle-team-names v2.2.120-mad-lab-team-ranks v2.2.121-sim-ux-results v2.2.122-qa-tester-link v2.2.123-sim-run-all-mode v2.2.124-sim-qa-output-clarity v2.2.125-pilot-series-evidence v2.2.126-browser-run-budget v2.2.127-targeted-trick-room-proof v2.2.128-turn-log-export-scope v2.2.129-completed-turn-count v2.2.130-single-replay-proof-boundary v2.2.131-production-launch-gate v2.2.132-project-db-audit -->
-      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.238-reference-evidence</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
+      <h1 class="site-title">Poke-e-Sim Champion 2026 Preview <span class="build-version" id="build-version" title="Build version comes from release_manifest.js so deployed bundle, exports, and service worker cache agree">v2.2.239-struggle-evidence</span> <span id="db-offline-chip" class="db-offline-chip" title="Live database unavailable — using bundled team data" style="display:none;background:#7c2d12;color:#fed7aa;border:1px solid #ea580c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;letter-spacing:0.3px;margin-left:6px;vertical-align:middle;">[DB offline]</span></h1>
         <p class="site-sub">Champions 2026 Preview · Singles + Doubles Simulator</p>
       </div>
     </div>
@@ -3695,9 +3720,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
     schema_version: 'champions-release-manifest-v1',
     data_mode: 'local-only',
     reference_artifact_sha256: 'd81091273c06c39dd1a234c5eeb2bb89af2d6e64d36998b2ae9450d8b6c43827',
-    build_id: 'v2.2.238-reference-evidence',
+    build_id: 'v2.2.239-struggle-evidence',
     release_date: '2026-10-20',
-    service_worker_cache: 'champions-sim-v2-2-238-reference-evidence',
+    service_worker_cache: 'champions-sim-v2-2-239-struggle-evidence',
     bundle_name: 'pokemon-champion-2026.html',
     pages_path: 'poke-sim/pokemon-champion-2026.html',
     artifact_manifest: 'generated/release_artifact.json',
@@ -3777,9 +3802,9 @@ var supabase=function(e){function t(e,t){var r={};for(var s in e)Object.prototyp
       if (manifest && manifest.build_id) return String(manifest.build_id);
       var el = root.document && root.document.getElementById('build-version');
       var txt = el && typeof el.textContent === 'string' ? el.textContent.trim() : '';
-      return txt || 'v2.2.238-reference-evidence';
+      return txt || 'v2.2.239-struggle-evidence';
     } catch (e) {
-      return 'v2.2.238-reference-evidence';
+      return 'v2.2.239-struggle-evidence';
     }
   }
 
@@ -10670,6 +10695,11 @@ function _sampleDamageRoll(attacker, field, rng) {
   return 0.85 + rngFn() * 0.15;
 }
 
+function _chooseStruggleTarget(enemies, rng) {
+  const eligible = enemies.filter(mon => mon.alive && mon.hp > 0);
+  return eligible.length ? eligible[Math.min(eligible.length - 1, Math.floor(rng() * eligible.length))] : null;
+}
+
 function _pokeRound(num) {
   return num % 1 > 0.5 ? Math.ceil(num) : Math.floor(num);
 }
@@ -14413,6 +14443,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         power:Number.isFinite(raw)&&raw>0?raw:40, variablePower:!Number.isFinite(raw)||raw<=0,
         stab:!!(actor.types && actor.types.includes(_moveType(name,actor))), priority:getPriority(name,actor),
         unavailable:_mcMoveUnavailable(actor,name,field) ||
+          !!(own.imprisonedMoves && own.imprisonedMoves.has(name)) ||
           (actor.throatChopTurns>0 && typeof _isSoundMove==='function' && _isSoundMove(name)) ||
           (actor.healBlockedTurns>0 && ['Recover','Roost','Shore Up','Life Dew','Rest','Strength Sap'].includes(name)) ||
           (field.gravityTurns>0 && typeof _moveHasFlag==='function' && _moveHasFlag(name,'gravity'))});
@@ -14433,8 +14464,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   // is a prior; missing/zero power uses 40. Enemy facts and reveals are unknown.
   function _chooseDefaultDecision(input) {
     const result=(move,targetSide='enemy',targetSlot=input.slots[0]??null)=>Object.freeze({move,targetSide,targetSlot});
-    const usable=name=>input.moves.some(row=>row.name===name&&row.pp>0);
+    const usable=name=>input.moves.some(row=>row.name===name&&row.pp>0&&!row.unavailable&&!(row.status&&input.taunted)&&!(row.name==='Fake Out'&&(!input.fresh||input.fakeDone)));
     if(input.charge)return result(input.charge,input.chargeSide,input.chargeSlot??input.slots[0]??null);
+    if(input.choice==='Fake Out'&&!usable(input.choice))return result('Struggle');
     if(input.choice&&usable(input.choice))return result(input.choice);
     if(input.encore)return result(usable(input.encore)?input.encore:'Struggle');
     if(input.asleep&&usable('Sleep Talk'))return result('Sleep Talk');
@@ -14645,6 +14677,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   function executeActionImpl(attacker, move, target, allies, enemies, field, log, rng, opts) {
+    if (move === 'Struggle') target = _chooseStruggleTarget(enemies, rng);
     if (move === 'Amnesia' || move === 'Rest') target = attacker;
     const fromSleepTalk = !!(opts && opts.fromSleepTalk);
     if (!attacker.alive) return;
@@ -15605,17 +15638,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       return;
     }
 
-    // T9j.17 (Refs #101) -- Fake Out hard-gate enforced inside executeAction.
-    // selectMove already filters Fake Out past turn 1, so this branch is a
-    // safety net for forced-move paths (Encore lock, imported test moves).
-    // Champions rule: if a Pokemon is forced into Fake Out past its first turn
-    // out, the move fails and the user Struggles instead (mirrors Encore -> Struggle
-    // when no legal move remains). Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out
-    // Cite: https://bulbapedia.bulbagarden.net/wiki/Encore_(move)
-    //
-    // PLACEMENT: this block lives ABOVE the Protect check so that even when
-    // a legal Fake Out is blocked by Protect, the _fakeDone flag is still set --
-    // i.e. the user has spent its one Fake Out window for this stay on the field.
+    // Champions request availability disables late Fake Out (pinned mod onDisableMove).
+    // An injected late execution fails via inherited onTry; it is not another attack.
+    // Genuine unavailable-move fallback resolves Struggle through the shared path.
     if (move === 'Fake Out') {
       if (attacker._fakeDone || (attacker.turnsSinceEntry || 0) > 1) {
         log.push(`${attacker.name} tried Fake Out -- but it failed! (only on first turn out)`);
@@ -15627,30 +15652,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           fake_out_window_spent: !!attacker._fakeDone,
           note: 'Fake Out failed because it can only be used on the user first turn out.'
         });
-        // Encore -> Struggle path: deal 1/4 max HP fixed damage to a live
-        // enemy and recoil 1/4 max HP. Standard Struggle resolution.
-        // Cite: https://bulbapedia.bulbagarden.net/wiki/Struggle
-        const _struggleTgt = (target && target.alive) ? target : enemies.find(e => e.alive);
-        if (_struggleTgt && _struggleTgt.alive) {
-          log.push(`${attacker.name} used Struggle!`);
-          const _stDmg = Math.max(1, Math.floor(_struggleTgt.maxHp * 0.25));
-          applyDamage(attacker, 'Struggle', _struggleTgt, _stDmg, field, log, rng);
-        }
-        const _stRecoil = Math.max(1, Math.floor(attacker.maxHp * 0.25));
-        const _stHpBeforeRecoil = attacker.hp;
-        attacker.hp = Math.max(0, attacker.hp - _stRecoil);
-        const _stAppliedRecoil = Math.max(0, _stHpBeforeRecoil - attacker.hp);
-        log.push(`${attacker.name} is hit by Struggle recoil! [${_stAppliedRecoil} dmg${_stRecoil !== _stAppliedRecoil ? ', calc ' + _stRecoil : ''}]`);
-        _recordEffectEvent(field, attacker, 'Struggle', 'recoil', _stHpBeforeRecoil, attacker.hp, {
-          rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
-          calculated_effect_damage: _stRecoil,
-          damage_applied_to_user: _stAppliedRecoil
-        });
-        if (attacker.hp === 0) {
-          attacker.alive = false;
-          log.push(`${attacker.name} fainted from Struggle recoil!`);
-          _recordKO(attacker, { move: 'Struggle', attacker: attacker, reason: 'recoil' });
-        }
         return;
       }
       // Mark the Fake Out window consumed BEFORE the Protect check so that a
@@ -15658,28 +15659,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       attacker._fakeDone = true;
     }
 
-    // Skip if target protected.
-    // T9j.8 (Refs #30): Piercing Drill / Unseen Fist piercing paths are resolved
-    // inside executeMove (per-target loop). Utility branches reaching THIS block
-    // (U-turn / Flip Turn / Dragon Darts below) fall through to those specific
-    // handlers, which all delegate to applyDamage directly -- and currently treat
-    // Protect as full block. Keeping default full-block here preserves parity
-    // with pre-T9j.8 behavior for those narrow paths.
-    const _shieldRiderKinds = new Set(["King's Shield",'Spiky Shield','Baneful Bunker','Obstruct']);
-    const _directProtectGateMoves = new Set(['Struggle']);
-    if (target && target.protected && _directProtectGateMoves.has(move) &&
-        move !== 'Feint' && move !== 'Dragon Darts' && move !== 'Phantom Force' &&
-        !_shieldRiderKinds.has(target.protectKind)) {
-      log.push(`${attacker.name} used ${move}! But ${target.name} was protected!`);
-      return;
-    }
-
     if (move === 'Struggle') {
       const _struggleTgt = (target && target.alive) ? target : enemies.find(e => e.alive);
       if (!_struggleTgt) return;
       log.push(`${attacker.name} used Struggle!`);
-      const _stDmg = captureBattleDamage(attacker, move, _struggleTgt, field, rng);
-      applyDamage(attacker, 'Struggle', _struggleTgt, _stDmg, field, log, rng);
+      if (!applySingleTargetHit(attacker, move, _struggleTgt, field, log, rng)) return;
       const _stRecoil = Math.max(1, Math.round(attacker.maxHp / 4));
       const _stHpBeforeRecoil = attacker.hp;
       attacker.hp = Math.max(0, attacker.hp - _stRecoil);
@@ -15819,6 +15803,17 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   function captureBattleDamage(attacker, move, target, field, rng) {
+    if (move === 'Struggle') {
+      const ability = attacker.ability;
+      attacker.ability = _contactEffects(field).ability(attacker);
+      try {
+        return captureBattleDamageImpl(attacker, move, target, field, rng);
+      } finally { attacker.ability = ability; }
+    }
+    return captureBattleDamageImpl(attacker, move, target, field, rng);
+  }
+
+  function captureBattleDamageImpl(attacker, move, target, field, rng) {
     const ctx = field && field._ctx;
     if (!ctx) return attacker.calcDamage(move, target, field, null, rng);
     const prevCapture = !!ctx.captureDamageCalc;
@@ -15890,6 +15885,22 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     return true;
   }
 
+  function breakDisguise(attacker, move, target, field, log) {
+    const bypass = ['Mold Breaker','Teravolt','Turboblaze'].includes(_contactEffects(field).ability(attacker)) &&
+      (target.item !== 'Ability Shield' || target.itemConsumed);
+    if (target.ability !== 'Disguise' || target._disguiseBroken || target.substituteHp > 0 || bypass) return false;
+    target._disguiseBroken = true;
+    const before=target.hp,damage=Math.max(1,Math.floor(target.maxHp/8));
+    target.hp=Math.max(0,target.hp-damage);
+    log.push(`${target.name}'s Disguise broke! [${before-target.hp} dmg]`);
+    _recordEffectEvent(field,target,move,'disguise-break',before,target.hp,{
+      ability:'Disguise',calculated_effect_damage:damage,damage_applied:before-target.hp,
+      rule:{numerator:1,denominator:8,basis:'max_hp',rounding:'down'}
+    });
+    if (!target.hp) {target.alive=false;_recordKO(target,{move,attacker,reason:'disguise'});}
+    return true;
+  }
+
   function applySingleTargetHit(attacker, move, target, field, log, rng) {
     if (!target || !target.alive) return;
     if (target.concealedByMove && move !== 'Phantom Force') {
@@ -15898,7 +15909,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     let _protectMult = 0;
     const _resolvedMoveType = _resolveDynamicMoveType(attacker, move, field);
+    const effects = _contactEffects(field);
     const _isContact = _isContactMove(move);
+    const shieldContact = _isContact && (move !== 'Struggle' ||
+      (effects.ability(attacker) !== 'Long Reach' && effects.item(attacker) !== 'Protective Pads'));
     const _shieldKind = target.protectKind || 'Protect';
     if (move === 'Phantom Force' && target.protected) {
       target.protected = false;
@@ -15909,7 +15923,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
       log.push(`${attacker.name}'s Phantom Force pierced through protection!`);
     } else if (target.protected && move !== 'Feint') {
-      const _protRes = callAbilityHook(attacker, 'onProtectResolve', {
+      const _protRes = (move !== 'Struggle' || effects.ability(attacker)) && callAbilityHook(attacker, 'onProtectResolve', {
         attacker: attacker, defender: target, move: move,
         moveType: _resolvedMoveType, isContact: _isContact, log: log
       });
@@ -15917,11 +15931,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         _protectMult = _protRes.damageMult;
         log.push(`${target.name} protected itself, but ${attacker.ability} pierced through!`);
       } else {
-        if (_isContact && (_shieldKind === "King's Shield" || _shieldKind === 'Spiky Shield' || _shieldKind === 'Baneful Bunker' || _shieldKind === 'Obstruct')) {
+        if (shieldContact && (_shieldKind === "King's Shield" || _shieldKind === 'Spiky Shield' || _shieldKind === 'Baneful Bunker' || _shieldKind === 'Obstruct')) {
           if (_shieldKind === "King's Shield") {
             _applyTargetStageMap(target, attacker, { atk: -1 }, log);
           }
           if (_shieldKind === 'Spiky Shield') {
+            if (move === 'Struggle' && effects.ability(attacker) === 'Magic Guard') {
+              log.push(`${target.name} protected itself!`);
+              return;
+            }
             const recoil = Math.max(1, Math.floor(attacker.maxHp / 8));
             const hpBeforeShield = attacker.hp;
             attacker.hp = Math.max(0, attacker.hp - recoil);
@@ -15938,7 +15956,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
             }
           }
           if (_shieldKind === 'Baneful Bunker') {
-            if (canInflictStatus(attacker, 'poison', field, target)) {
+            if (!(move === 'Struggle' && effects.ability(attacker) === 'Immunity') &&
+                canInflictStatus(attacker, 'poison', field, target)) {
               attacker.status = 'poison';
               log.push(`${attacker.name} was poisoned by Baneful Bunker!`);
             }
@@ -15962,8 +15981,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     field._ctx.lastWasCrit = false;
     if (_protectMult > 0 && dmg > 0 && move !== 'Seismic Toss') dmg = Math.max(1, Math.floor(dmg * _protectMult));
     if (dmg > 0) {
+      if (breakDisguise(attacker, move, target, field, log)) return false;
       if (_wasCrit) log.push(`A critical hit!`);
       applyDamage(attacker, move, target, dmg, field, log, rng);
+      return true;
     } else {
       log.push(`${move} had no effect on ${target.name}!`);
     }
@@ -16415,6 +16436,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // Fixed level damage bypasses Champions' Protect damage modifier in Showdown.
       if (_protectMult > 0 && dmg > 0 && move !== 'Seismic Toss') dmg = Math.max(1, Math.floor(dmg * _protectMult));
       if (dmg > 0) {
+        if (breakDisguise(attacker, move, t, field, log)) continue;
         if (_wasCrit) log.push(`A critical hit!`);
         applyDamage(attacker, move, t, dmg, field, log, rng);
         resolution.didDamage = true;
@@ -17973,7 +17995,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.39'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.40'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
@@ -31409,7 +31431,7 @@ if (typeof module !== 'undefined' && module.exports) {
 
 
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.238-reference-evidence
+// Build marker: v2.2.239-struggle-evidence
 
 // Theme Toggle
 (function() {
@@ -31447,7 +31469,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.238-reference-evidence'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.239-struggle-evidence'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };

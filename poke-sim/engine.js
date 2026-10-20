@@ -604,6 +604,11 @@ function _sampleDamageRoll(attacker, field, rng) {
   return 0.85 + rngFn() * 0.15;
 }
 
+function _chooseStruggleTarget(enemies, rng) {
+  const eligible = enemies.filter(mon => mon.alive && mon.hp > 0);
+  return eligible.length ? eligible[Math.min(eligible.length - 1, Math.floor(rng() * eligible.length))] : null;
+}
+
 function _pokeRound(num) {
   return num % 1 > 0.5 ? Math.ceil(num) : Math.floor(num);
 }
@@ -4347,6 +4352,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         power:Number.isFinite(raw)&&raw>0?raw:40, variablePower:!Number.isFinite(raw)||raw<=0,
         stab:!!(actor.types && actor.types.includes(_moveType(name,actor))), priority:getPriority(name,actor),
         unavailable:_mcMoveUnavailable(actor,name,field) ||
+          !!(own.imprisonedMoves && own.imprisonedMoves.has(name)) ||
           (actor.throatChopTurns>0 && typeof _isSoundMove==='function' && _isSoundMove(name)) ||
           (actor.healBlockedTurns>0 && ['Recover','Roost','Shore Up','Life Dew','Rest','Strength Sap'].includes(name)) ||
           (field.gravityTurns>0 && typeof _moveHasFlag==='function' && _moveHasFlag(name,'gravity'))});
@@ -4367,8 +4373,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   // is a prior; missing/zero power uses 40. Enemy facts and reveals are unknown.
   function _chooseDefaultDecision(input) {
     const result=(move,targetSide='enemy',targetSlot=input.slots[0]??null)=>Object.freeze({move,targetSide,targetSlot});
-    const usable=name=>input.moves.some(row=>row.name===name&&row.pp>0);
+    const usable=name=>input.moves.some(row=>row.name===name&&row.pp>0&&!row.unavailable&&!(row.status&&input.taunted)&&!(row.name==='Fake Out'&&(!input.fresh||input.fakeDone)));
     if(input.charge)return result(input.charge,input.chargeSide,input.chargeSlot??input.slots[0]??null);
+    if(input.choice==='Fake Out'&&!usable(input.choice))return result('Struggle');
     if(input.choice&&usable(input.choice))return result(input.choice);
     if(input.encore)return result(usable(input.encore)?input.encore:'Struggle');
     if(input.asleep&&usable('Sleep Talk'))return result('Sleep Talk');
@@ -4579,6 +4586,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   function executeActionImpl(attacker, move, target, allies, enemies, field, log, rng, opts) {
+    if (move === 'Struggle') target = _chooseStruggleTarget(enemies, rng);
     if (move === 'Amnesia' || move === 'Rest') target = attacker;
     const fromSleepTalk = !!(opts && opts.fromSleepTalk);
     if (!attacker.alive) return;
@@ -5539,17 +5547,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       return;
     }
 
-    // T9j.17 (Refs #101) -- Fake Out hard-gate enforced inside executeAction.
-    // selectMove already filters Fake Out past turn 1, so this branch is a
-    // safety net for forced-move paths (Encore lock, imported test moves).
-    // Champions rule: if a Pokemon is forced into Fake Out past its first turn
-    // out, the move fails and the user Struggles instead (mirrors Encore -> Struggle
-    // when no legal move remains). Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out
-    // Cite: https://bulbapedia.bulbagarden.net/wiki/Encore_(move)
-    //
-    // PLACEMENT: this block lives ABOVE the Protect check so that even when
-    // a legal Fake Out is blocked by Protect, the _fakeDone flag is still set --
-    // i.e. the user has spent its one Fake Out window for this stay on the field.
+    // Champions request availability disables late Fake Out (pinned mod onDisableMove).
+    // An injected late execution fails via inherited onTry; it is not another attack.
+    // Genuine unavailable-move fallback resolves Struggle through the shared path.
     if (move === 'Fake Out') {
       if (attacker._fakeDone || (attacker.turnsSinceEntry || 0) > 1) {
         log.push(`${attacker.name} tried Fake Out -- but it failed! (only on first turn out)`);
@@ -5561,30 +5561,6 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           fake_out_window_spent: !!attacker._fakeDone,
           note: 'Fake Out failed because it can only be used on the user first turn out.'
         });
-        // Encore -> Struggle path: deal 1/4 max HP fixed damage to a live
-        // enemy and recoil 1/4 max HP. Standard Struggle resolution.
-        // Cite: https://bulbapedia.bulbagarden.net/wiki/Struggle
-        const _struggleTgt = (target && target.alive) ? target : enemies.find(e => e.alive);
-        if (_struggleTgt && _struggleTgt.alive) {
-          log.push(`${attacker.name} used Struggle!`);
-          const _stDmg = Math.max(1, Math.floor(_struggleTgt.maxHp * 0.25));
-          applyDamage(attacker, 'Struggle', _struggleTgt, _stDmg, field, log, rng);
-        }
-        const _stRecoil = Math.max(1, Math.floor(attacker.maxHp * 0.25));
-        const _stHpBeforeRecoil = attacker.hp;
-        attacker.hp = Math.max(0, attacker.hp - _stRecoil);
-        const _stAppliedRecoil = Math.max(0, _stHpBeforeRecoil - attacker.hp);
-        log.push(`${attacker.name} is hit by Struggle recoil! [${_stAppliedRecoil} dmg${_stRecoil !== _stAppliedRecoil ? ', calc ' + _stRecoil : ''}]`);
-        _recordEffectEvent(field, attacker, 'Struggle', 'recoil', _stHpBeforeRecoil, attacker.hp, {
-          rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
-          calculated_effect_damage: _stRecoil,
-          damage_applied_to_user: _stAppliedRecoil
-        });
-        if (attacker.hp === 0) {
-          attacker.alive = false;
-          log.push(`${attacker.name} fainted from Struggle recoil!`);
-          _recordKO(attacker, { move: 'Struggle', attacker: attacker, reason: 'recoil' });
-        }
         return;
       }
       // Mark the Fake Out window consumed BEFORE the Protect check so that a
@@ -5592,28 +5568,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       attacker._fakeDone = true;
     }
 
-    // Skip if target protected.
-    // T9j.8 (Refs #30): Piercing Drill / Unseen Fist piercing paths are resolved
-    // inside executeMove (per-target loop). Utility branches reaching THIS block
-    // (U-turn / Flip Turn / Dragon Darts below) fall through to those specific
-    // handlers, which all delegate to applyDamage directly -- and currently treat
-    // Protect as full block. Keeping default full-block here preserves parity
-    // with pre-T9j.8 behavior for those narrow paths.
-    const _shieldRiderKinds = new Set(["King's Shield",'Spiky Shield','Baneful Bunker','Obstruct']);
-    const _directProtectGateMoves = new Set(['Struggle']);
-    if (target && target.protected && _directProtectGateMoves.has(move) &&
-        move !== 'Feint' && move !== 'Dragon Darts' && move !== 'Phantom Force' &&
-        !_shieldRiderKinds.has(target.protectKind)) {
-      log.push(`${attacker.name} used ${move}! But ${target.name} was protected!`);
-      return;
-    }
-
     if (move === 'Struggle') {
       const _struggleTgt = (target && target.alive) ? target : enemies.find(e => e.alive);
       if (!_struggleTgt) return;
       log.push(`${attacker.name} used Struggle!`);
-      const _stDmg = captureBattleDamage(attacker, move, _struggleTgt, field, rng);
-      applyDamage(attacker, 'Struggle', _struggleTgt, _stDmg, field, log, rng);
+      if (!applySingleTargetHit(attacker, move, _struggleTgt, field, log, rng)) return;
       const _stRecoil = Math.max(1, Math.round(attacker.maxHp / 4));
       const _stHpBeforeRecoil = attacker.hp;
       attacker.hp = Math.max(0, attacker.hp - _stRecoil);
@@ -5753,6 +5712,17 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   }
 
   function captureBattleDamage(attacker, move, target, field, rng) {
+    if (move === 'Struggle') {
+      const ability = attacker.ability;
+      attacker.ability = _contactEffects(field).ability(attacker);
+      try {
+        return captureBattleDamageImpl(attacker, move, target, field, rng);
+      } finally { attacker.ability = ability; }
+    }
+    return captureBattleDamageImpl(attacker, move, target, field, rng);
+  }
+
+  function captureBattleDamageImpl(attacker, move, target, field, rng) {
     const ctx = field && field._ctx;
     if (!ctx) return attacker.calcDamage(move, target, field, null, rng);
     const prevCapture = !!ctx.captureDamageCalc;
@@ -5824,6 +5794,22 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     return true;
   }
 
+  function breakDisguise(attacker, move, target, field, log) {
+    const bypass = ['Mold Breaker','Teravolt','Turboblaze'].includes(_contactEffects(field).ability(attacker)) &&
+      (target.item !== 'Ability Shield' || target.itemConsumed);
+    if (target.ability !== 'Disguise' || target._disguiseBroken || target.substituteHp > 0 || bypass) return false;
+    target._disguiseBroken = true;
+    const before=target.hp,damage=Math.max(1,Math.floor(target.maxHp/8));
+    target.hp=Math.max(0,target.hp-damage);
+    log.push(`${target.name}'s Disguise broke! [${before-target.hp} dmg]`);
+    _recordEffectEvent(field,target,move,'disguise-break',before,target.hp,{
+      ability:'Disguise',calculated_effect_damage:damage,damage_applied:before-target.hp,
+      rule:{numerator:1,denominator:8,basis:'max_hp',rounding:'down'}
+    });
+    if (!target.hp) {target.alive=false;_recordKO(target,{move,attacker,reason:'disguise'});}
+    return true;
+  }
+
   function applySingleTargetHit(attacker, move, target, field, log, rng) {
     if (!target || !target.alive) return;
     if (target.concealedByMove && move !== 'Phantom Force') {
@@ -5832,7 +5818,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     let _protectMult = 0;
     const _resolvedMoveType = _resolveDynamicMoveType(attacker, move, field);
+    const effects = _contactEffects(field);
     const _isContact = _isContactMove(move);
+    const shieldContact = _isContact && (move !== 'Struggle' ||
+      (effects.ability(attacker) !== 'Long Reach' && effects.item(attacker) !== 'Protective Pads'));
     const _shieldKind = target.protectKind || 'Protect';
     if (move === 'Phantom Force' && target.protected) {
       target.protected = false;
@@ -5843,7 +5832,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
       log.push(`${attacker.name}'s Phantom Force pierced through protection!`);
     } else if (target.protected && move !== 'Feint') {
-      const _protRes = callAbilityHook(attacker, 'onProtectResolve', {
+      const _protRes = (move !== 'Struggle' || effects.ability(attacker)) && callAbilityHook(attacker, 'onProtectResolve', {
         attacker: attacker, defender: target, move: move,
         moveType: _resolvedMoveType, isContact: _isContact, log: log
       });
@@ -5851,11 +5840,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         _protectMult = _protRes.damageMult;
         log.push(`${target.name} protected itself, but ${attacker.ability} pierced through!`);
       } else {
-        if (_isContact && (_shieldKind === "King's Shield" || _shieldKind === 'Spiky Shield' || _shieldKind === 'Baneful Bunker' || _shieldKind === 'Obstruct')) {
+        if (shieldContact && (_shieldKind === "King's Shield" || _shieldKind === 'Spiky Shield' || _shieldKind === 'Baneful Bunker' || _shieldKind === 'Obstruct')) {
           if (_shieldKind === "King's Shield") {
             _applyTargetStageMap(target, attacker, { atk: -1 }, log);
           }
           if (_shieldKind === 'Spiky Shield') {
+            if (move === 'Struggle' && effects.ability(attacker) === 'Magic Guard') {
+              log.push(`${target.name} protected itself!`);
+              return;
+            }
             const recoil = Math.max(1, Math.floor(attacker.maxHp / 8));
             const hpBeforeShield = attacker.hp;
             attacker.hp = Math.max(0, attacker.hp - recoil);
@@ -5872,7 +5865,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
             }
           }
           if (_shieldKind === 'Baneful Bunker') {
-            if (canInflictStatus(attacker, 'poison', field, target)) {
+            if (!(move === 'Struggle' && effects.ability(attacker) === 'Immunity') &&
+                canInflictStatus(attacker, 'poison', field, target)) {
               attacker.status = 'poison';
               log.push(`${attacker.name} was poisoned by Baneful Bunker!`);
             }
@@ -5896,8 +5890,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     field._ctx.lastWasCrit = false;
     if (_protectMult > 0 && dmg > 0 && move !== 'Seismic Toss') dmg = Math.max(1, Math.floor(dmg * _protectMult));
     if (dmg > 0) {
+      if (breakDisguise(attacker, move, target, field, log)) return false;
       if (_wasCrit) log.push(`A critical hit!`);
       applyDamage(attacker, move, target, dmg, field, log, rng);
+      return true;
     } else {
       log.push(`${move} had no effect on ${target.name}!`);
     }
@@ -6349,6 +6345,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // Fixed level damage bypasses Champions' Protect damage modifier in Showdown.
       if (_protectMult > 0 && dmg > 0 && move !== 'Seismic Toss') dmg = Math.max(1, Math.floor(dmg * _protectMult));
       if (dmg > 0) {
+        if (breakDisguise(attacker, move, t, field, log)) continue;
         if (_wasCrit) log.push(`A critical hit!`);
         applyDamage(attacker, move, t, dmg, field, log, rng);
         resolution.didDamage = true;
@@ -7907,7 +7904,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.39'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.40'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

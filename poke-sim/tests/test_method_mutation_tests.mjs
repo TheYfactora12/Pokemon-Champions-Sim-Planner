@@ -9,6 +9,12 @@ import {compareProbe,loadLocalEngine} from '../tools/showdown-reference.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),out=new URL('../artifacts/test-method-controls/',import.meta.url);
 fs.mkdirSync(out,{recursive:true});
 for(const [mutant,suite,pattern] of [
+  ['fakeout_extra_attack','t9j17_tests.js'],
+  ...['fakeout_choice_bypass','fakeout_encore_usable'].map(m=>[m,'default_policy_boundary_tests.js']),
+  ...[['struggle_imprison','boundary false/imprison$'],['struggle_shield','boundary false/spiky-shield$'],
+    ['struggle_disguise','cross-move lifecycle false'],['struggle_target','actual target player/0'],
+    ['struggle_suppression','boundary false/gas-technician$']]
+    .map(([m,p])=>[m,'struggle_boundary_reference_tests.mjs',p]),
   ...['encore_queue','encore_herb','encore_duration','encore_priority'].map(m=>[m,'encore_reference_tests.mjs','Encore false/0/(before|herb|after|changed-priority)$']),
   ...['roll_fifteen','roll_continuous'].map(m=>[m,'discrete_damage_reference_tests.mjs']),
   ['encore_unburden','encore_reference_tests.mjs','herb-unburden'],
@@ -30,6 +36,24 @@ for(const [mutant,suite,pattern] of [
   fs.writeFileSync(new URL(`${mutant}-mutant.log`,out),(bad.stdout||'')+(bad.stderr||''));
   assert.equal(bad.signal,null);assert.notEqual(bad.status,null);assert.notEqual(bad.status,0);
   assert.notEqual(bad.status,97);assert.match(bad.stderr, new RegExp('MUTATION_APPLIED:'+mutant));
+  if(mutant.startsWith('fakeout_')){
+    const transcript=(bad.stdout||'')+(bad.stderr||'');
+    assert.doesNotMatch(transcript,/Mutation anchor missing or ambiguous|SyntaxError/);
+    if(mutant==='fakeout_extra_attack'){
+      assert.match(transcript,/FAIL B3\. Injected late Fake Out/);
+      assert.match(transcript,/Struggle.*38 dmg/);
+      assert.match(transcript,/Struggle recoil! \[42 dmg\]/);
+    }else{
+      assert.match(transcript,/AssertionError/);
+      assert.match(transcript,mutant==='fakeout_choice_bypass'?/\+ 'Tackle'/:/\+ 'Fake Out'/);
+      assert.match(transcript,/- 'Struggle'/);
+    }
+  }
+  if(mutant==='struggle_fixed'){
+    const transcript=(bad.stdout||'')+(bad.stderr||'');
+    assert.match(transcript,/actual: 38/);assert.match(transcript,/expected: 29/);
+    assert.match(transcript,/fail 2/);
+  }
   if(mutant==='tantrum_150_percent'){
     const transcript=(bad.stdout||'')+(bad.stderr||'');
     assert.match(transcript,/actual: 57/);assert.match(transcript,/expected: 76/);

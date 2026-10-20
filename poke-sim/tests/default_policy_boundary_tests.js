@@ -19,6 +19,34 @@ for(const swap of [false,true]) {
  actor.item='';actor.encoredTurns=2;actor.encoredMove='Earthquake';assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Struggle');
  actor.encoredTurns=0;actor.moves=['Recover','Tackle'];actor.hp=20;assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Recover');
  actor.tauntedTurns=2;assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Tackle');
+ // Both orientations retain poisoned enemy getters. Only the actor's known
+ // availability mask changes; no opponent inventory reaches the policy DTO.
+ actor.tauntedTurns=0;actor.moves=['Tackle','Earthquake'];actor.pp={};actor.hp=100;
+ side.imprisonedMoves=new Set(['Earthquake']);
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Tackle');
+ const restricted=c.prepare(actor,[actor],[enemy],field);
+ assert.equal(restricted.moves.find(m=>m.name==='Earthquake').unavailable,true);
+ side.imprisonedMoves.add('Tackle');
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Struggle');
+ side.imprisonedMoves=null;
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Earthquake');
+ // Champions late Fake Out availability applies before Encore/Choice selection.
+ actor.moves=['Fake Out'];actor.pp={};actor.turnsSinceEntry=2;
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Struggle');
+ actor.encoredTurns=2;actor.encoredMove='Fake Out';
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Struggle');
+ actor.turnsSinceEntry=1;actor._fakeDone=false;
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Fake Out');
+ actor._fakeDone=true;
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Struggle');
+ actor.encoredTurns=0;actor.item='Choice Scarf';actor.choiceLock='Fake Out';actor.moves=['Fake Out','Tackle'];
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Struggle');
+ actor._fakeDone=false;actor.turnsSinceEntry=1;
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Fake Out');
+ actor.turnsSinceEntry=2;actor.itemConsumed=true;
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Tackle');
+ actor.itemConsumed=false;actor.ability='Klutz';
+ assert.equal(c.selectMove(actor,[actor],[enemy],field).move,'Tackle');
  groups++;
 }
 const full=vm.createContext({console,Math,setTimeout,window:{}});let records=[];
