@@ -1,0 +1,23 @@
+
+=== release manifest tests ===
+
+  PASS 1. manifest exposes canonical build and cache identity
+  PASS 2. visible header and app shell fallback mirror manifest build id
+  PASS 3. service worker derives cache from manifest and precaches manifest
+  PASS 4. bundle builder inlines release manifest before app runtime
+  PASS 5. release artifact records committed bundle sha and mirrors manifest identity
+  PASS 6. generator stdout reproduces file bytes, including on Windows
+  PASS 7. external move pools and intro sprites are bound to release bytes
+  PASS 8. missing or mismatched external asset identities fail closed
+  PASS 9. changed and missing deployed bytes are rejected
+  PASS 10. staged assets are verified before Pages upload
+  FAIL 11. Windows Git checkout filters preserve generated asset bytes: error: could not write config file C:/Users/The Rig/AppData/Local/Packages/sandbox.{7ce9a3ac-eda5-454c-8ec1-00c6dadc1b41}/AC/Temp/champions-checkout-m1mhWE/.git/config: Permission denied
+fatal: could not set 'core.repositoryformatversion' to '0'
+
+
+128 !== 0
+
+  PASS 12. exported reference identity matches committed bytes
+
+release manifest: 11 pass, 1 fail
+
