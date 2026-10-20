@@ -29,11 +29,27 @@ test('CSV preserves boolean accuracy and neutralizes spreadsheet formulas',()=>{
 });
 test('committed candidate detects edits to metadata and provenance',()=>{
  const pointer=JSON.parse(fs.readFileSync(root+'reports/move-register/latest-candidate.json'));
- const snapshot=JSON.parse(fs.readFileSync(root+'reports/move-register/'+pointer.path));assert.deepEqual(validateMoveRegister(snapshot),[]);
+ const snapshot=JSON.parse(fs.readFileSync(root+'reports/move-register/'+pointer.path));
+ if(snapshot.provenance_contract!=='move-register-provenance-v2')assert(validateMoveRegister(snapshot).includes('historical provenance contract: explicit historical validation required'));
+ assert.deepEqual(validateMoveRegister(snapshot,{historical:true}),[]);
  snapshot.moves[0].baseline.pp++;assert(validateMoveRegister(snapshot).includes('snapshot identity mismatch'));
 });
 
 test('generated candidate matches current source and generator bytes',()=>{assert.equal(exportMoveRegister(root,{check:true}).counts.catalog_moves,954);});
+test('historical mode cannot disable stronger provenance checks',()=>{
+ const next=structuredClone(data);next.moves[0].source_sha256='0'.repeat(64);
+ assert(validateMoveRegister(next,{historical:true}).includes('move source provenance mismatch'));
+});
+test('six independent provenance counterexamples reject before snapshot hashing',()=>{
+ for(const [name,mutate]of [
+  ['false_move_source_hash',d=>d.moves[0].source_sha256='0'.repeat(64)],
+  ['false_move_source_revision',d=>d.moves[0].source_revision='invented-current-client-source'],
+  ['wrong_pair_evidence_kind',d=>d.species_move_pairs[0].evidence_id='regulation'],
+  ['false_pair_inheritance',d=>{d.species_move_pairs[0].inherited_from=['notarealspecies'];d.species_move_pairs[0].source_sha256='0'.repeat(64);}],
+  ['duplicate_evidence_id',d=>d.evidence.push({...d.evidence[0]})],
+  ['remove_species_gaps',d=>d.species_gaps=[]]
+ ]){const d=structuredClone(data);mutate(d);assert(validateMoveRegister(d).length,name);}
+});
 
 test('original independent register counterexamples reject before snapshot hashing',()=>{
  const mutations={

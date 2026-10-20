@@ -3,8 +3,14 @@ import path from 'node:path';
 import vm from 'node:vm';
 import {canonical,sha256} from './regulation-watch-core.mjs';
 const fields=['type','category','basePower','accuracy','pp','priority','target'];
-export function validateMoveRegister(register) {
+// Historical mode retains the old consistency checks only; it never upgrades
+// an old snapshot to the provenance-v2 contract or authenticates its sources.
+export function validateMoveRegister(register, {historical=false}={}) {
  const errors=[],ids=new Set(),evidence=new Map((register.evidence||[]).map(r=>[r.evidence_id,r]));
+ const strict=register.provenance_contract==='move-register-provenance-v2';
+ if(!strict&&!historical)errors.push('historical provenance contract: explicit historical validation required');
+ if(register.provenance_contract&&!strict)errors.push('unsupported provenance contract');
+ if(strict&&evidence.size!==(register.evidence||[]).length)errors.push('duplicate evidence identity');
  if(register.identity){const {identity,generator_sha256,...data}=register;if(identity!==sha256(canonical({data,generator:generator_sha256})))errors.push('snapshot identity mismatch');}
  if(register.schema_version!=='champions-move-register-v1')errors.push('schema');
  const sourceNames=['data.js','generated/pokemon_showdown_legal_data.js','generated/champions_move_overrides.js','generated/champions_move_pools.js','move_support.js','battle_edge_case_matrix.json','source/reg-m-c-source-review.json','package-lock.json'];
@@ -17,6 +23,7 @@ export function validateMoveRegister(register) {
   if(!row.move_id||ids.has(row.move_id))errors.push('duplicate or absent move ID');ids.add(row.move_id);
   if(!row.name||fields.some(k=>row.baseline?.[k]===undefined||row.baseline?.[k]===null||row.effective_metadata?.[k]===undefined||row.effective_metadata?.[k]===null))errors.push('missing move metadata');
   if(row.regulation_id!==register.regulation_id||row.format!==register.format)errors.push('row scope mismatch');
+  if(strict&&(row.source_sha256!==evidence.get('baseline')?.sha256||row.source_revision!==evidence.get('baseline')?.source_revision||row.source_url!==evidence.get('baseline')?.source_url))errors.push('move source provenance mismatch');
   if(row.regulation_eligibility!=='unknown'||row.complete_set_legality!=='not_evaluated'||row.client_verification!=='unknown'||row.implementation_coverage!=='unverified'||row.verification_status!=='needs_bounded_assertion_review'||row.assertion_ids?.length||row.last_verification!==null||row.confidence!=='reference_inventory_only')errors.push('unapproved claim');
   if(!row.evidence_ids?.length||row.evidence_ids.some(id=>!evidence.has(id))||!row.gaps?.length)errors.push('missing evidence/gaps');
  }
@@ -25,11 +32,18 @@ export function validateMoveRegister(register) {
  for(const row of register.species_move_pairs||[]){
   if(!row.pair_id||pairs.has(row.pair_id)||row.pair_id!==row.species_id+':'+row.move_id)errors.push('pair identity');pairs.add(row.pair_id);
   if(!ids.has(row.move_id)||!species.has(row.species_id)||!evidence.has(row.evidence_id))errors.push('orphan pair');
+  if(strict){
+   const source=pool?.species_provenance?.[row.species_id];
+   if(row.evidence_id!=='pools'||evidence.get(row.evidence_id)?.kind!=='inherited_reference_learnsets')errors.push('pair evidence kind mismatch');
+   if(!source||row.source_sha256!==source.source_sha256||row.reference_membership!==source.status||
+     canonical(row.inherited_from??null)!==canonical(source.inherited_from??null))errors.push('pair source lineage mismatch');
+  }
   if(row.regulation_id!==register.regulation_id||row.format!==register.format)errors.push('pair scope mismatch');
   if(row.regulation_eligibility!=='unknown'||row.complete_set_legality!=='not_evaluated')errors.push('unapproved pair claim');
  }
  for(const row of register.interactions||[]){if(!row.case_id||cases.has(row.case_id))errors.push('case identity');cases.add(row.case_id);if((row.move_ids||[]).some(id=>!ids.has(id)))errors.push('orphan interaction');if(row.status!=='unverified'||row.verification_status!=='unverified_declaration'||row.executed_receipt!==null)errors.push('unenrolled executed receipt');}
  if(sha256(canonical([...pairs].sort()))!==pool?.pair_ids_sha256)errors.push('pair inventory omission');
+ if(strict&&(!/^[a-f0-9]{64}$/.test(pool?.species_gaps_sha256||'')||sha256(canonical(register.species_gaps??null))!==pool.species_gaps_sha256))errors.push('species gap inventory mismatch');
  if(canonical([...cases].sort())!==canonical(evidence.get('interactions')?.case_ids||[]))errors.push('case inventory omission');
  if(register.counts?.catalog_moves!==ids.size||register.counts?.reference_pairs!==pairs.size||register.counts?.interaction_cases!==cases.size||register.counts?.regulation_approved_moves!==0||register.counts?.client_verified_moves!==0)errors.push('invalid summary counts');
  if(register.competitive_use!==false)errors.push('competitive promotion');
@@ -54,6 +68,9 @@ export function buildMoveRegister(root) {
   if(row.status!=='known')speciesGaps.push({species_id:species,status:row.status,reason:'Reference pool unavailable; no alias/base fallback'});
   for(const move of row.moves||[])pairs.push({pair_id:species+':'+move,species_id:species,move_id:move,reference_membership:row.status,inherited_from:row.inherited_from,source_sha256:row.source_sha256,regulation_eligibility:'unknown',complete_set_legality:'not_evaluated',evidence_id:'pools',regulation_id:regulation.regulation_id,format:'doubles'});
  }
+ const poolEvidence=evidence.find(e=>e.evidence_id==='pools');
+ poolEvidence.species_provenance=Object.fromEntries(Object.entries(pools.species).sort().map(([id,row])=>[id,{status:row.status,inherited_from:row.inherited_from??null,source_sha256:row.source_sha256??null}]));
+ poolEvidence.species_gaps_sha256=sha256(canonical(speciesGaps));
  const moves=Object.entries(baseline.moves).sort(([a],[b])=>a.localeCompare(b)).map(([id,m])=>{
   const support=ctx.ChampionsSim.moveSupport.getLocalMoveSupport(m.name),override=overrides.moves[id]||null;
   const metadata=Object.fromEntries(fields.map(k=>[k,m[k]])),effective={...metadata};if(override?.champions_pp!==undefined)effective.pp=override.champions_pp;
@@ -64,7 +81,7 @@ export function buildMoveRegister(root) {
    conflicts:support.notes?[support.notes]:[],gaps:['No approved current-regulation move eligibility','No client-version evidence','Legacy test-file tags are not bounded assertion proof','Metadata does not prove effects/interactions'],evidence_ids:['baseline','overrides','regulation']};
  });
  const interactions=matrix.cases.map(row=>({...row,declared_status:row.status,status:'unverified',verification_status:'unverified_declaration',executed_receipt:null,case_id:row.id,move_ids:row.move_ids||[],linkage_status:row.move_ids?.length?'explicit':'needs_move_link_review',verification_scope:'Declared test boundaries only; no inferred client verification'}));
- const register={schema_version:'champions-move-register-v1',competitive_use:false,catalog_count:moves.length,regulation_id:regulation.regulation_id,format:'doubles',source_hashes:hashes,regulation,counts:{catalog_moves:moves.length,regulation_approved_moves:0,client_verified_moves:0,reference_pairs:pairs.length,interaction_cases:interactions.length},moves,species_move_pairs:pairs,species_gaps:speciesGaps,interactions,evidence};
+ const register={schema_version:'champions-move-register-v1',provenance_contract:'move-register-provenance-v2',competitive_use:false,catalog_count:moves.length,regulation_id:regulation.regulation_id,format:'doubles',source_hashes:hashes,regulation,counts:{catalog_moves:moves.length,regulation_approved_moves:0,client_verified_moves:0,reference_pairs:pairs.length,interaction_cases:interactions.length},moves,species_move_pairs:pairs,species_gaps:speciesGaps,interactions,evidence};
  const errors=validateMoveRegister(register);if(errors.length)throw Error(errors.join('; '));return JSON.parse(JSON.stringify(register,(_k,v)=>v===undefined?null:v));
 }
 export function registerDiff(previous,current){

@@ -502,6 +502,7 @@ function sitrusUnburdenAdjustedOrderSupports(first, second, turn) {
 // No inference from end-of-turn speed alone; mixed modifiers remain unproved.
 function itemUnburdenOrder(first, second, turn) {
  const boundary=first.logIndex;if(!Number.isInteger(boundary))return null;
+ if((turn.events||[]).some((e,i)=>e.actor_key&&e.move&&Number.isInteger(e.log_index)&&e.log_index!==i))return false;
  const active=SIDES.flatMap(side=>(turn.pre.roster?.[side]||[])).filter(r=>r.zone==='active');
  const prior=(turn.events||[]).filter(e=>Number.isInteger(e.log_index)&&e.log_index<boundary);
  if(active.some(r=>r.ability==='Neutralizing Gas'))return null;
@@ -515,7 +516,17 @@ function itemUnburdenOrder(first, second, turn) {
   if(proofs.length!==1)return base;
   const e=proofs[0],post=(turn.post.roster?.[action.side]||[]).filter(r=>r.stableKey===row.stableKey);
   if(e.ability!=='Unburden'||e.item!==row.item||e.item_consumed!==true||!Number.isInteger(e.log_index)||e.log_index<1||e.log_index>boundary||post.length!==1||post[0].item!==row.item||post[0].itemConsumed!==true||post[0].ability!=='Unburden')return base;
-  if(!prior.some(p=>p.actor_key===e.source_actor_key&&p.move===e.move&&p.log_index<e.log_index))return base;
+  const causes=prior.filter(p=>p.actor_key&&p.move&&p.log_index<e.log_index);
+  const cause=causes[causes.length-1];
+  if(!cause||cause.actor_key!==e.source_actor_key||cause.move!==e.move)return base;
+  const interval=(turn.events||[]).slice(cause.log_index+1,e.log_index).map(p=>cleanText(p.text||p.message));
+  if(e.item==='White Herb') {
+   const clears=(turn.effect_events||[]).filter(p=>p.effect_kind==='item-clear-negative-stages'&&p.actor_key===row.stableKey&&p.side===action.side&&p.item_consumed===true&&Array.isArray(p.cleared_stats)&&p.cleared_stats.length);
+   if(clears.length!==1||!interval.includes(`${rowName(row)}'s White Herb restored its lowered stats!`)||!interval.some(line=>line.startsWith(`${rowName(row)}'s `)&&/ fell!$/.test(line)))return base;
+  } else if(e.item==='Sitrus Berry') {
+   if(!interval.includes(`${rowName(row)}'s Sitrus Berry restored HP!`)||!(turn.damage_events||[]).some(p=>p.attacker_key===cause.actor_key&&p.move===cause.move&&p.target_key===row.stableKey&&p.applied_damage>0&&p.target_hp_after>0&&p.target_hp_after<=p.target_max_hp/2))return base;
+  } else return base;
+
   changed=true;return base*2;
  };
  const a=speed(first),b=speed(second);if(!changed||a==null||b==null)return null;

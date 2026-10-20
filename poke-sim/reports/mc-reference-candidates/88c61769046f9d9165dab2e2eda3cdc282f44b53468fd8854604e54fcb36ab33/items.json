@@ -1,0 +1,3319 @@
+[
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "abomasite",
+    "name": "Abomasite",
+    "mega_stone": {
+      "Abomasnow": "Abomasnow-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "absolite",
+    "name": "Absolite",
+    "mega_stone": {
+      "Absol": "Absol-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "absolitez",
+    "name": "Absolite Z",
+    "mega_stone": {
+      "Absol": "Absol-Mega-Z"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "aerodactylite",
+    "name": "Aerodactylite",
+    "mega_stone": {
+      "Aerodactyl": "Aerodactyl-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "aggronite",
+    "name": "Aggronite",
+    "mega_stone": {
+      "Aggron": "Aggron-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "airballoon",
+    "name": "Air Balloon",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "alakazite",
+    "name": "Alakazite",
+    "mega_stone": {
+      "Alakazam": "Alakazam-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "altarianite",
+    "name": "Altarianite",
+    "mega_stone": {
+      "Altaria": "Altaria-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "ampharosite",
+    "name": "Ampharosite",
+    "mega_stone": {
+      "Ampharos": "Ampharos-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "aspearberry",
+    "name": "Aspear Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "audinite",
+    "name": "Audinite",
+    "mega_stone": {
+      "Audino": "Audino-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "babiriberry",
+    "name": "Babiri Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "banettite",
+    "name": "Banettite",
+    "mega_stone": {
+      "Banette": "Banette-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "barbaracite",
+    "name": "Barbaracite",
+    "mega_stone": {
+      "Barbaracle": "Barbaracle-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "baxcalibrite",
+    "name": "Baxcalibrite",
+    "mega_stone": {
+      "Baxcalibur": "Baxcalibur-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "beedrillite",
+    "name": "Beedrillite",
+    "mega_stone": {
+      "Beedrill": "Beedrill-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "bigroot",
+    "name": "Big Root",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "bindingband",
+    "name": "Binding Band",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "blackbelt",
+    "name": "Black Belt",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "blackglasses",
+    "name": "Black Glasses",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "blastoisinite",
+    "name": "Blastoisinite",
+    "mega_stone": {
+      "Blastoise": "Blastoise-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "blazikenite",
+    "name": "Blazikenite",
+    "mega_stone": {
+      "Blaziken": "Blaziken-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "brightpowder",
+    "name": "Bright Powder",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "cameruptite",
+    "name": "Cameruptite",
+    "mega_stone": {
+      "Camerupt": "Camerupt-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "chandelurite",
+    "name": "Chandelurite",
+    "mega_stone": {
+      "Chandelure": "Chandelure-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "charcoal",
+    "name": "Charcoal",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "charizarditex",
+    "name": "Charizardite X",
+    "mega_stone": {
+      "Charizard": "Charizard-Mega-X"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "charizarditey",
+    "name": "Charizardite Y",
+    "mega_stone": {
+      "Charizard": "Charizard-Mega-Y"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "chartiberry",
+    "name": "Charti Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "cheriberry",
+    "name": "Cheri Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "chesnaughtite",
+    "name": "Chesnaughtite",
+    "mega_stone": {
+      "Chesnaught": "Chesnaught-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "chestoberry",
+    "name": "Chesto Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "chilanberry",
+    "name": "Chilan Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "chimechite",
+    "name": "Chimechite",
+    "mega_stone": {
+      "Chimecho": "Chimecho-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "choicescarf",
+    "name": "Choice Scarf",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "chopleberry",
+    "name": "Chople Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "clefablite",
+    "name": "Clefablite",
+    "mega_stone": {
+      "Clefable": "Clefable-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "cobaberry",
+    "name": "Coba Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "colburberry",
+    "name": "Colbur Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "crabominite",
+    "name": "Crabominite",
+    "mega_stone": {
+      "Crabominable": "Crabominable-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "damprock",
+    "name": "Damp Rock",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "delphoxite",
+    "name": "Delphoxite",
+    "mega_stone": {
+      "Delphox": "Delphox-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "dragalgite",
+    "name": "Dragalgite",
+    "mega_stone": {
+      "Dragalge": "Dragalge-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "dragonfang",
+    "name": "Dragon Fang",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "dragoninite",
+    "name": "Dragoninite",
+    "mega_stone": {
+      "Dragonite": "Dragonite-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "drampanite",
+    "name": "Drampanite",
+    "mega_stone": {
+      "Drampa": "Drampa-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "eelektrossite",
+    "name": "Eelektrossite",
+    "mega_stone": {
+      "Eelektross": "Eelektross-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "ejectbutton",
+    "name": "Eject Button",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "electricseed",
+    "name": "Electric Seed",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "emboarite",
+    "name": "Emboarite",
+    "mega_stone": {
+      "Emboar": "Emboar-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "excadrite",
+    "name": "Excadrite",
+    "mega_stone": {
+      "Excadrill": "Excadrill-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "expertbelt",
+    "name": "Expert Belt",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "fairyfeather",
+    "name": "Fairy Feather",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "falinksite",
+    "name": "Falinksite",
+    "mega_stone": {
+      "Falinks": "Falinks-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "feraligite",
+    "name": "Feraligite",
+    "mega_stone": {
+      "Feraligatr": "Feraligatr-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "floettite",
+    "name": "Floettite",
+    "mega_stone": {
+      "Floette-Eternal": "Floette-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "focusband",
+    "name": "Focus Band",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "focussash",
+    "name": "Focus Sash",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "froslassite",
+    "name": "Froslassite",
+    "mega_stone": {
+      "Froslass": "Froslass-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "galladite",
+    "name": "Galladite",
+    "mega_stone": {
+      "Gallade": "Gallade-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "garchompite",
+    "name": "Garchompite",
+    "mega_stone": {
+      "Garchomp": "Garchomp-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "garchompitez",
+    "name": "Garchompite Z",
+    "mega_stone": {
+      "Garchomp": "Garchomp-Mega-Z"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "gardevoirite",
+    "name": "Gardevoirite",
+    "mega_stone": {
+      "Gardevoir": "Gardevoir-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "gengarite",
+    "name": "Gengarite",
+    "mega_stone": {
+      "Gengar": "Gengar-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "glalitite",
+    "name": "Glalitite",
+    "mega_stone": {
+      "Glalie": "Glalie-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "glimmoranite",
+    "name": "Glimmoranite",
+    "mega_stone": {
+      "Glimmora": "Glimmora-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "golisopite",
+    "name": "Golisopite",
+    "mega_stone": {
+      "Golisopod": "Golisopod-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "golurkite",
+    "name": "Golurkite",
+    "mega_stone": {
+      "Golurk": "Golurk-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "grassyseed",
+    "name": "Grassy Seed",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "greninjite",
+    "name": "Greninjite",
+    "mega_stone": {
+      "Greninja": "Greninja-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "gyaradosite",
+    "name": "Gyaradosite",
+    "mega_stone": {
+      "Gyarados": "Gyarados-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "habanberry",
+    "name": "Haban Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "hardstone",
+    "name": "Hard Stone",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "hawluchanite",
+    "name": "Hawluchanite",
+    "mega_stone": {
+      "Hawlucha": "Hawlucha-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "heatrock",
+    "name": "Heat Rock",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "heracronite",
+    "name": "Heracronite",
+    "mega_stone": {
+      "Heracross": "Heracross-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "houndoominite",
+    "name": "Houndoominite",
+    "mega_stone": {
+      "Houndoom": "Houndoom-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "icyrock",
+    "name": "Icy Rock",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "ironball",
+    "name": "Iron Ball",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "kangaskhanite",
+    "name": "Kangaskhanite",
+    "mega_stone": {
+      "Kangaskhan": "Kangaskhan-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "kasibberry",
+    "name": "Kasib Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "kebiaberry",
+    "name": "Kebia Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "kingsrock",
+    "name": "King's Rock",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "leek",
+    "name": "Leek",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "leftovers",
+    "name": "Leftovers",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "leppaberry",
+    "name": "Leppa Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "lifeorb",
+    "name": "Life Orb",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "lightball",
+    "name": "Light Ball",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "lightclay",
+    "name": "Light Clay",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "lopunnite",
+    "name": "Lopunnite",
+    "mega_stone": {
+      "Lopunny": "Lopunny-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "lucarionite",
+    "name": "Lucarionite",
+    "mega_stone": {
+      "Lucario": "Lucario-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "lucarionitez",
+    "name": "Lucarionite Z",
+    "mega_stone": {
+      "Lucario": "Lucario-Mega-Z"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "lumberry",
+    "name": "Lum Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "magnet",
+    "name": "Magnet",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "malamarite",
+    "name": "Malamarite",
+    "mega_stone": {
+      "Malamar": "Malamar-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "manectite",
+    "name": "Manectite",
+    "mega_stone": {
+      "Manectric": "Manectric-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "mawilite",
+    "name": "Mawilite",
+    "mega_stone": {
+      "Mawile": "Mawile-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "medichamite",
+    "name": "Medichamite",
+    "mega_stone": {
+      "Medicham": "Medicham-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "meganiumite",
+    "name": "Meganiumite",
+    "mega_stone": {
+      "Meganium": "Meganium-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "mentalherb",
+    "name": "Mental Herb",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "meowsticite",
+    "name": "Meowsticite",
+    "mega_stone": {
+      "Meowstic": "Meowstic-M-Mega",
+      "Meowstic-F": "Meowstic-F-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "metagrossite",
+    "name": "Metagrossite",
+    "mega_stone": {
+      "Metagross": "Metagross-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "metalcoat",
+    "name": "Metal Coat",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "metronome",
+    "name": "Metronome",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "miracleseed",
+    "name": "Miracle Seed",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "mistyseed",
+    "name": "Misty Seed",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "muscleband",
+    "name": "Muscle Band",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "mysticwater",
+    "name": "Mystic Water",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "nevermeltice",
+    "name": "Never-Melt Ice",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "normalgem",
+    "name": "Normal Gem",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "occaberry",
+    "name": "Occa Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "oranberry",
+    "name": "Oran Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "passhoberry",
+    "name": "Passho Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "payapaberry",
+    "name": "Payapa Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "pechaberry",
+    "name": "Pecha Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "persimberry",
+    "name": "Persim Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "pidgeotite",
+    "name": "Pidgeotite",
+    "mega_stone": {
+      "Pidgeot": "Pidgeot-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "pinsirite",
+    "name": "Pinsirite",
+    "mega_stone": {
+      "Pinsir": "Pinsir-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "poisonbarb",
+    "name": "Poison Barb",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "psychicseed",
+    "name": "Psychic Seed",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "pyroarite",
+    "name": "Pyroarite",
+    "mega_stone": {
+      "Pyroar": "Pyroar-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "quickclaw",
+    "name": "Quick Claw",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "raichunitex",
+    "name": "Raichunite X",
+    "mega_stone": {
+      "Raichu": "Raichu-Mega-X"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "raichunitey",
+    "name": "Raichunite Y",
+    "mega_stone": {
+      "Raichu": "Raichu-Mega-Y"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "rawstberry",
+    "name": "Rawst Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "redcard",
+    "name": "Red Card",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "rindoberry",
+    "name": "Rindo Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "rockyhelmet",
+    "name": "Rocky Helmet",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "roseliberry",
+    "name": "Roseli Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sablenite",
+    "name": "Sablenite",
+    "mega_stone": {
+      "Sableye": "Sableye-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "salamencite",
+    "name": "Salamencite",
+    "mega_stone": {
+      "Salamence": "Salamence-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sceptilite",
+    "name": "Sceptilite",
+    "mega_stone": {
+      "Sceptile": "Sceptile-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "scizorite",
+    "name": "Scizorite",
+    "mega_stone": {
+      "Scizor": "Scizor-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "scolipite",
+    "name": "Scolipite",
+    "mega_stone": {
+      "Scolipede": "Scolipede-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "scopelens",
+    "name": "Scope Lens",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "scovillainite",
+    "name": "Scovillainite",
+    "mega_stone": {
+      "Scovillain": "Scovillain-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "scraftinite",
+    "name": "Scraftinite",
+    "mega_stone": {
+      "Scrafty": "Scrafty-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sharpbeak",
+    "name": "Sharp Beak",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sharpedonite",
+    "name": "Sharpedonite",
+    "mega_stone": {
+      "Sharpedo": "Sharpedo-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "shedshell",
+    "name": "Shed Shell",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "shellbell",
+    "name": "Shell Bell",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "shucaberry",
+    "name": "Shuca Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "silkscarf",
+    "name": "Silk Scarf",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "silverpowder",
+    "name": "Silver Powder",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "sitrusberry",
+    "name": "Sitrus Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "skarmorite",
+    "name": "Skarmorite",
+    "mega_stone": {
+      "Skarmory": "Skarmory-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "slowbronite",
+    "name": "Slowbronite",
+    "mega_stone": {
+      "Slowbro": "Slowbro-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "smoothrock",
+    "name": "Smooth Rock",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "softsand",
+    "name": "Soft Sand",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "spelltag",
+    "name": "Spell Tag",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "staraptite",
+    "name": "Staraptite",
+    "mega_stone": {
+      "Staraptor": "Staraptor-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "starminite",
+    "name": "Starminite",
+    "mega_stone": {
+      "Starmie": "Starmie-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "steelixite",
+    "name": "Steelixite",
+    "mega_stone": {
+      "Steelix": "Steelix-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "swampertite",
+    "name": "Swampertite",
+    "mega_stone": {
+      "Swampert": "Swampert-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "tangaberry",
+    "name": "Tanga Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "terrainextender",
+    "name": "Terrain Extender",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "twistedspoon",
+    "name": "Twisted Spoon",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "tyranitarite",
+    "name": "Tyranitarite",
+    "mega_stone": {
+      "Tyranitar": "Tyranitar-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "venusaurite",
+    "name": "Venusaurite",
+    "mega_stone": {
+      "Venusaur": "Venusaur-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "victreebelite",
+    "name": "Victreebelite",
+    "mega_stone": {
+      "Victreebel": "Victreebel-Mega"
+    },
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "wacanberry",
+    "name": "Wacan Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "whiteherb",
+    "name": "White Herb",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "widelens",
+    "name": "Wide Lens",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "wiseglasses",
+    "name": "Wise Glasses",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "yacheberry",
+    "name": "Yache Berry",
+    "mega_stone": null,
+    "mega_evolves": null
+  },
+  {
+    "regulation_id": "champions_reg_m_c_2026",
+    "format": "doubles",
+    "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "competitive_use": false,
+    "official_eligibility": "unresolved",
+    "client_verification": "unknown",
+    "implementation_status": "unknown",
+    "review_status": "unreviewed_candidate",
+    "evidence_ids": [
+      "pinned-reference-intake"
+    ],
+    "assertion_ids": [],
+    "test_ids": [],
+    "id": "zoomlens",
+    "name": "Zoom Lens",
+    "mega_stone": null,
+    "mega_evolves": null
+  }
+]

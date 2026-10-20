@@ -96,7 +96,8 @@
         "tests/t155_speed_control_secondary_tests.js",
         "tests/tailwind_dynamic_order_tests.mjs",
         "tests/showdown_complete_game_tests.mjs",
-        "tests/item_speed_evidence_tests.mjs"
+        "tests/item_speed_evidence_tests.mjs",
+        "tests/item_speed_causality_tests.mjs"
       ],
       "known_gaps": [
         "Scoped same-turn Tailwind and one complete-game fixture agree with the pinned reference; arbitrary mid-turn Speed changes, changed exact ties and official Champions confirmation remain unproved."
