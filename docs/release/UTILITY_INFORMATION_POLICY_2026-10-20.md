@@ -111,3 +111,18 @@ Issue264 remains open after fresh GitHub read; its hidden-information and
 win-rate interpretation investigation is broader than this patch. Publication
 of PR278 or this stacked candidate still needs an explicit decision. No paid
 service, account/access change or unrelated project modification was made.
+
+### Current-main reconciliation
+
+October 20 continuation: separate `review/utility-current-main` starts at
+`ae3f52ce481924512bff523fdcef75d04935b7a3`. Cherry-picked PR278 repair,
+preparation and v218 as `9b1a307`, `cf8961f`, `0fa05c6`. Original commits/branch
+are preserved. Only generated release metadata conflicted; the builder resolved
+it. Current news is byte-identical to main; engine/UI/test source is identical
+to original v218. Historical PR278 publication receipt is retained.
+
+Reconciled bundle: 11,531,929 bytes; SHA-256
+`3c15d45a4e0c5f7c15c56241018ec88af58e3807bfa1f0ccb481267622bd188a`.
+Focused utility/Imprison and 12 release checks passed; broader v218 mechanics
+evidence above is reused only because those source inputs are unchanged.
+No remote state changed.

@@ -14,7 +14,9 @@ full-state; better play and complete hidden-information safety are unproved.
 [Scope, checks and ordered acceptance gates](docs/release/UTILITY_INFORMATION_POLICY_2026-10-20.md).
 Next mechanics fixture: successful U-turn is incorrectly blocked by Shadow Tag.
 Voluntary switching and Mega ordering remain open. PR278 merge/release approval
-is pending; main's newer `ae3f52c` news update is not included in this candidate.
+is pending. Separate branch `review/utility-current-main` now starts at `ae3f52c`;
+the original reviewed `d9bc79a` branch is preserved. Generated artifact conflicts
+were rebuilt from source; mechanics code is identical to the original v218.
 
 v2.2.217-current-moves / engine 1.1.21 is draft PR278, not deployed.
 Current Practice uses the September 9 official move removals and PP corrections;
