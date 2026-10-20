@@ -1435,7 +1435,7 @@
     {
       "id": "DAMAGE-ROLL-DISCRETE-016",
       "family": "damage-formula",
-      "behavior": "Champions profile samples sixteen uniform integer percentages85–100 and applies the pinned independent Tackle damage vector.",
+      "behavior": "Champions profile samples sixteen uniform integer percentages85\u2013100 and applies the pinned independent Tackle damage vector.",
       "status": "partial",
       "move_ids": [
         "tackle"
@@ -1444,7 +1444,7 @@
         "tests/discrete_damage_reference_tests.mjs",
         "tests/test_method_mutation_tests.mjs"
       ],
-      "oracle": "Executable current Champions custom/M-C upstream9b136a8c8cdb860a8ab96fa063f906604e352547 sim/battle.ts2407–2409 and Champions inherited randomizer. Historical npm generic scope separate.",
+      "oracle": "Executable current Champions custom/M-C upstream9b136a8c8cdb860a8ab96fa063f906604e352547 sim/battle.ts2407\u20132409 and Champions inherited randomizer. Historical npm generic scope separate.",
       "boundary_vectors": [
         "all-sixteen-bucket-centers-and-boundaries",
         "zero-and-just-below-one",
@@ -1453,6 +1453,33 @@
         "fifteen-bucket-and-continuous-mutants"
       ],
       "known_gap": "Not current-client observation or full move/damage pipeline certification. Equal semantic roll indices do not establish synchronized RNG seeds. Historical golden expectations remain unapproved for the separately loaded current runtime profile."
+    },
+    {
+      "id": "MOVE-FLY-CONTAINED-001",
+      "family": "moves-effects",
+      "behavior": "Development-only Fly airborne exceptions, effective No Guard/Power Herb, abort and grounding cancellation; public admission blocked.",
+      "status": "partial",
+      "move_ids": [
+        "fly"
+      ],
+      "tests": [
+        "tests/fly_repair_tests.mjs",
+        "tests/fly_lifecycle_tests.mjs",
+        "tests/fly_mutation_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown9b136a8 Champions doubles custom; reports/fly-repair-2026-10-20/reference.json. Synthetic teams, not official eligibility or client proof.",
+      "boundary_vectors": [
+        "seven-airborne-exceptions-both-sides",
+        "both-active-slots",
+        "Gust-Twister-final-damage-16-rolls",
+        "effective-NoGuard-Klutz-Gas-Shield",
+        "sleep-freeze-paralysis-flinch-confusion-Imprison-abort",
+        "SmackDown-ThousandArrows-Gravity-cancellation-and-next-action",
+        "FollowMe-charge-release-stored-slot",
+        "Soak-StrengthSap-DragonDarts-NoGuard",
+        "six-reversal-mutants"
+      ],
+      "known_gap": "Eject Button unsupported (four retained discrepancies); forced-switch/re-entry, Coaching, target replacement/faint/ally selection and broader immunity/status combinations unproved. No client proof. Public Fly blocked."
     }
   ]
 }

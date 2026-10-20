@@ -1,5 +1,12 @@
 # Improvement Log
 
+## IMP-0124: Contain Fly Airborne and Abort Repairs
+
+- Repair scoped airborne eligibility, effective ability/item gates, final damage doubling, abort and grounding cleanup behind public rejection.
+- Preserve original failures, add reversal controls, and retain unsupported Eject Button discrepancy.
+- Invalidate prior bounded runtime receipts instead of silently carrying green status forward.
+- [Readiness and evidence](release/FLY_REPAIR_2026-10-20.md).
+
 ## IMP-0123: Preserve Fly Admission Counterexamples
 
 - Keep Fly rejected: a quarantined minimal prototype exposes seven airborne exceptions on both sides (14 disagreements in 24 probes).

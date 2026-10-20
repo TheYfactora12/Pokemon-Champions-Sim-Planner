@@ -154,11 +154,15 @@
         "tests/soak_lifecycle_tests.js",
         "tests/fake_out_flinch_tests.js",
         "tests/fake_out_reference_tests.mjs",
-        "tests/encore_reference_tests.mjs"
+        "tests/encore_reference_tests.mjs",
+        "tests/fly_repair_tests.mjs",
+        "tests/fly_lifecycle_tests.mjs",
+        "tests/fly_mutation_tests.mjs"
       ],
       "known_gaps": [
         "Imported legal moves may be baseline-supported without dedicated local behavior fixtures.",
-        "Growl, Leer and the declared PP/Pressure boundaries have scoped pinned-reference proof, but the wider status-stage and move-resource interaction inventory remains incomplete."
+        "Growl, Leer and the declared PP/Pressure boundaries have scoped pinned-reference proof, but the wider status-stage and move-resource interaction inventory remains incomplete.",
+        "Fly remains publicly unsupported. Contained airborne/abort reference probes do not establish Eject Button switch lifecycle, Coaching, target replacement/faint/ally semantics or current-client parity."
       ]
     },
     {

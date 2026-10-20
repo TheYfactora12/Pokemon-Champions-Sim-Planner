@@ -5,28 +5,21 @@ Reviewed: 2026-10-20. This file owns current development checkpoint facts.
 Competitive release remains **NO-GO**. No merge, deployment, live database or
 repository security change is authorized.
 
-## Current reviewed checkpoint
+## Current development candidate
 
-Draft PR279 head `9ea1ccb044f4cf8e58f903734fd79cb339199c8d`, runtime
-v2.2.239-struggle-evidence / engine1.1.40, passed all hosted checks.
-[CI 39491873562](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39491873562)
-finished Battle Audit at 2026-10-20T20:43:49Z: 4500 battles, 0 JS errors.
-Test Suite passed 267 fast files and 12 DB contract files; browser evidence covers
-2 games, 3 pairs and 21 turns with 0 mismatches/page errors.
+Contained Fly repair: v2.2.240-fly-contained / engine1.1.41. Public Fly admission
+remains rejected. [Readiness map and exact evidence](docs/release/FLY_REPAIR_2026-10-20.md).
+Local and hosted completion must be read from the immutable candidate checks;
+this source document does not predeclare their result.
 
-The tracker has 6 current bounded reference passes and 7 historical stale assertions.
-Independent exact-head review passed 120 tests, 192 unsupported-input controls and
-23 dependency invalidation controls. Client verification remains unknown.
-[Receipt scope and exports](docs/release/CURRENT_BOUNDED_RECEIPTS_2026-10-20.md).
+Last terminal hosted checkpoint: `71220ad0425f56de26024db852cb8167c8d3c57f`,
+assessment only, unchanged runtime1.1.40. [CI39496971145](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39496971145)
+passed at2026-10-20T21:19:49Z:268fastfiles,12DBcontractfiles,4500battles/0JSerrors.
 
-M-C candidate inventory: 392 forms, 537 moves, 166 items, 225 abilities and 23756 pairs.
-Official eligibility/client proof remain unresolved.
-
-The next Fly checkpoint is an assessment, not admission: 24 diagnostic comparisons
-expose seven exception failures on both sides. Production rejection and existing
-runtime receipts remain unchanged. [Readiness and next repair](docs/release/FLY_ASSESSMENT_2026-10-20.md).
-Its validation belongs to exact-head checks; 9ea1ccb remains the last recorded
-terminal checkpoint here until the assessment is published.
+The engine change invalidates all six earlier current assertions: canonical tracker
+now preserves13historical stale assertions and0current passes pending independent
+revalidation. No capture or golden is silently promoted. M-C reference candidate:
+392forms,537moves,166items,23756pairs; official eligibility/client proof unresolved.
 
 ## Historical development checkpoints
 

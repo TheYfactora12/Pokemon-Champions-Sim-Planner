@@ -737,7 +737,7 @@ function _applyMcStrengthSap(source, target, field, log, rng, reflected, priorit
   };
   if (!target || !target.alive || target.hp <= 0) return fail('no-valid-target');
   if (!_canReceiveHealing(source)) return fail('heal-block');
-  if (target.protected || target.concealedByMove) return fail(target.protected ? 'protect' : 'concealed');
+  if (target.protected || (target.concealedByMove && (target.concealedByMove !== 'Fly' || _concealmentBlocksMove(source,target,'Strength Sap',field)))) return fail(target.protected ? 'protect' : 'concealed');
   if (priorityCheck && !priorityCheck(source, 'Strength Sap', target, field, log)) return fail('priority-block');
   if (_targetAbilityActive(target, source, 'Good as Gold')) return fail('good-as-gold');
   if (!reflected && _targetAbilityActive(target, source, 'Magic Bounce')) {
@@ -780,7 +780,7 @@ function _applySoak(source, target, field, log, rng, reflected, priorityCheck, r
     return false;
   };
   if (!target || !target.alive || target.hp <= 0) return fail('no-valid-target');
-  if (target.protected || target.concealedByMove) {
+  if (target.protected || (target.concealedByMove && (target.concealedByMove !== 'Fly' || _concealmentBlocksMove(source,target,'Soak',field)))) {
     log.push(`${target.name} blocked Soak!`);
     return fail(target.protected ? 'protect' : 'concealed');
   }
@@ -1274,9 +1274,33 @@ function _isAccuracyBypassed(attacker, target) {
   );
 }
 
+// Fly remains blocked at public intake. These scoped execution rules are exercised
+// only through the development admission bypass until lifecycle coverage is reviewed.
+// Pin: Showdown 9b136a8 moves.fly, battle-actions Invulnerability/ModifyDamage.
+function _flyNoGuard(attacker, target, field) {
+  var effects = _contactEffects(field);
+  return !!((attacker && effects.ability(attacker) === 'No Guard') ||
+    (target && effects.ability(target) === 'No Guard'));
+}
+function _concealmentBlocksMove(attacker, target, move, field) {
+  if (!target || !target.concealedByMove) return false;
+  if (target.concealedByMove !== 'Fly') return move !== 'Phantom Force';
+  if (_flyNoGuard(attacker, target, field)) return false;
+  if (move === 'Helping Hand' || (move === 'Toxic' && attacker &&
+      Array.isArray(attacker.types) && attacker.types.includes('Poison'))) return false;
+  return !['Gust','Twister','Sky Uppercut','Thunder','Hurricane','Smack Down','Thousand Arrows'].includes(move);
+}
+function _usableChargeHerb(mon, move, field) {
+  if (!mon) return false;
+  return move === 'Fly' ? _contactEffects(field).item(mon) === 'Power Herb'
+    : mon.item === 'Power Herb' && !mon.itemConsumed && mon.ability !== 'Klutz';
+}
+
 function _moveHits(attacker, target, move, field, rng, localAccuracy) {
   if (!target) return true;
-  if (_isAccuracyBypassed(attacker, target)) return true;
+  if (move === 'Fly' || target.concealedByMove === 'Fly') {
+    if (_flyNoGuard(attacker, target, field)) return true;
+  } else if (_isAccuracyBypassed(attacker, target)) return true;
   if (_moveNeverMiss(move, attacker)) return true;
   var rngFn = typeof rng === 'function' ? rng : Math.random;
   var effectiveWeather = _effectiveFieldWeather(field);
@@ -1339,12 +1363,12 @@ function _effectiveMoveWeather(mon, field, moveType) {
 }
 
 function _isChargeMove(move) {
-  return move === 'Electro Shot' || move === 'Meteor Beam' || move === 'Solar Beam' || move === 'Solar Blade' || move === 'Phantom Force';
+  return move === 'Fly' || move === 'Electro Shot' || move === 'Meteor Beam' || move === 'Solar Beam' || move === 'Solar Blade' || move === 'Phantom Force';
 }
 
 function _moveSkipsChargeTurn(mon, move, field) {
   if (!_isChargeMove(move)) return false;
-  if (mon && mon.item === 'Power Herb' && !mon.itemConsumed && mon.ability !== 'Klutz') return true;
+  if (_usableChargeHerb(mon, move, field)) return true;
   var weather = _effectiveFieldWeather(field);
   if (move === 'Electro Shot') return weather === 'rain';
   if (move === 'Solar Beam' || move === 'Solar Blade') return weather === 'sun';
@@ -2791,6 +2815,7 @@ class Pokemon {
     baseDamage = _applyBaseDamageMod(baseDamage, weatherMod);
     if (_isCrit) baseDamage = Math.floor(_of32(baseDamage * 1.5));
     const finalMods = [screenMod, loMod, supremeOverlordMod];
+    if (target.concealedByMove === 'Fly' && (move === 'Gust' || move === 'Twister')) finalMods.push(8192);
     if (_attackerDamageRes && _attackerDamageRes.finalMod) finalMods.push(_attackerDamageRes.finalMod);
     if (_defenderDamageRes && _defenderDamageRes.finalMod) finalMods.push(_defenderDamageRes.finalMod);
     const resistBerryMod = _shucaDamageMod(this, target, move, moveType, typeEff, field);
@@ -4428,6 +4453,11 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   function _denyBeforeMove(attacker, move, target, field, log) {
     let reason = null;
+    if (attacker._flyInterrupted) {
+      attacker._flyInterrupted = false; attacker.lastMoveFailed = true;
+      _recordMoveFailureEvent(field,attacker,move,'fly-grounding-cancel',{before_pp:true});
+      return true;
+    }
     if (attacker._gravityInterrupted || (field.gravityTurns > 0 && _moveHasFlag(move,'gravity'))) {
       attacker._gravityInterrupted=false; attacker.lastMoveFailed=true;
       _recordMoveFailureEvent(field,attacker,move,'gravity-block',{before_pp:true});
@@ -4654,7 +4684,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       ((move === 'Solar Beam' || move === 'Solar Blade') && _effectiveWeather === 'sun')
     );
     const _powerHerbSkip = !_continuingCharge && _isChargeMove(move) &&
-      attacker.item === 'Power Herb' && !attacker.itemConsumed && attacker.ability !== 'Klutz' &&
+      _usableChargeHerb(attacker, move, field) &&
       !_naturalChargeSkip;
     const _chargeWouldNormallyBeSkipped = _naturalChargeSkip || _powerHerbSkip;
     if (_continuingCharge) {
@@ -4671,7 +4701,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       attacker.chargingTargetSlot = attacker.chargingTargetSide === 'enemy'
         ? enemies.indexOf(target)
         : (attacker.chargingTargetSide === 'ally' ? allies.indexOf(target) : null);
-      attacker.concealedByMove = move === 'Phantom Force' ? move : null;
+      attacker.concealedByMove = (move === 'Phantom Force' || move === 'Fly') ? move : null;
       log.push(`${attacker.name} used ${move}!`);
       log.push(`${attacker.name} began charging ${move}!`);
       return;
@@ -4730,6 +4760,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
     // Status moves
     if (STATUS_MOVES.has(move) || (attacker.referenceMode === 'champions_mc_reference' && move === 'Growth')) {
+      if (target && target !== attacker && target.concealedByMove === 'Fly' &&
+          ['normal','adjacent-foe','adjacent-ally'].includes(_moveTargetCategory(move)) &&
+          _concealmentBlocksMove(attacker,target,move,field)) {
+        attacker.lastMoveFailed = true;
+        log.push(`${target.name} avoided ${move} while airborne!`);
+        return;
+      }
       log.push(`${attacker.name} used ${move}!`);
       if (move === 'Growl' || move === 'Leer') {
         const moveRow = _showdownMoveRow(move);
@@ -4744,7 +4781,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
             log.push(`${stageTarget.name} protected itself!`);
             return 0;
           }
-          if (stageTarget.concealedByMove) {
+          if (stageTarget.concealedByMove && (stageTarget.concealedByMove !== 'Fly' || _concealmentBlocksMove(stageSource,stageTarget,move,field))) {
             log.push(`${stageTarget.name} avoided ${move} while concealed!`);
             return 0;
           }
@@ -5214,7 +5251,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       }
       if (move === 'Perish Song') {
         for (const mon of [...playerActive, ...oppActive].filter(m => m.alive)) {
-          if (mon.concealedByMove && !_isAccuracyBypassed(attacker, mon)) {
+          if (mon.concealedByMove && (mon.concealedByMove === 'Fly' ? _concealmentBlocksMove(attacker,mon,move,field) : !_isAccuracyBypassed(attacker,mon))) {
             log.push(`${mon.name} avoided Perish Song while concealed!`);
             continue;
           }
@@ -5698,7 +5735,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   function dragonDartsNoDamageTarget(attacker, target, field) {
     if (!target || !target.alive) return true;
     if (target.protected) return true;
-    if (target.concealedByMove) return true;
+    if (target.concealedByMove && (target.concealedByMove !== 'Fly' || _concealmentBlocksMove(attacker,target,'Dragon Darts',field))) return true;
     const _savedForceNoCrit = field._ctx.forceNoCrit;
     const _savedLastWasCrit = field._ctx.lastWasCrit;
     field._ctx.forceNoCrit = true;
@@ -5812,7 +5849,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
 
   function applySingleTargetHit(attacker, move, target, field, log, rng) {
     if (!target || !target.alive) return;
-    if (target.concealedByMove && move !== 'Phantom Force') {
+    if (_concealmentBlocksMove(attacker, target, move, field)) {
       log.push(`${target.name} avoided the attack while concealed!`);
       return;
     }
@@ -6180,7 +6217,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     for (const t of ordered) {
       if (!t.alive) continue;
       const _hadSubstitute = t.substituteHp > 0 && !_moveBypassesSubstitute(attacker, move);
-      if (t.concealedByMove && move !== 'Phantom Force') {
+      if (_concealmentBlocksMove(attacker, t, move, field)) {
         log.push(`${t.name} avoided the attack while concealed!`);
         continue;
       }
@@ -6563,7 +6600,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (appliedDamage > 0 && attacker && attacker._redCardMove) attacker._redCardMove.targets.add(target);
     if (sturdySaved) log.push(`${target.name} hung on with Sturdy!`);
     if (sashSaved) log.push(`${target.name} hung on with its Focus Sash!`);
-    if (move === 'Thousand Arrows' && appliedDamage > 0 && target.hp > 0 && !_isGrounded(target, field)) {
+    const groundedFly = target.chargingMove === 'Fly' && (move === 'Smack Down' || move === 'Thousand Arrows') && appliedDamage > 0 && target.hp > 0;
+    if (groundedFly) {
+      _clearStoredCharge(target);
+      target._flyInterrupted = true; // reset at turn start; never cancels next turn's choice
+    }
+    if ((move === 'Thousand Arrows' || groundedFly) && appliedDamage > 0 && target.hp > 0 && (groundedFly || !_isGrounded(target, field))) {
       target.groundedByMove = true;
       _recordEffectEvent(field, target, move, 'move-grounding', target.hp, target.hp, {
         source: 'pokemon-showdown Thousand Arrows smackdown volatile',
@@ -6808,7 +6850,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   //   queued attack rather than pausing it.
   function _shouldCancelStoredCharge(mon, move, reason) {
     if (!mon || mon.chargingMove !== move) return false;
-    if (move === 'Phantom Force') return true;
+    if (move === 'Phantom Force' || move === 'Fly') return true;
     if ((move === 'Solar Beam' || move === 'Solar Blade') &&
         (reason === 'flinch' || reason === 'paralysis')) {
       return true;
@@ -6886,6 +6928,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // cannot bleed into this turn's action.
       m._beakBlastPreparing = false;
       m._gravityInterrupted = false;
+      m._flyInterrupted = false;
       m._flinched = false;
       m._flinchSource = null;
     }
@@ -7214,6 +7257,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       // Showdown spends PP after BeforeMove succeeds. Faint, sleep, freeze,
       // paralysis, flinch, and confusion denial above therefore keep PP.
       if (_denyBeforeMove(action.attacker, action.move, _resolvedTarget, field, log)) {
+        if (action.move === 'Fly') _cancelInterruptedCharge(action.attacker, action.move, 'before-move');
         action.attacker.hasActed = true;
         continue;
       }
@@ -7904,7 +7948,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.40'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.41'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

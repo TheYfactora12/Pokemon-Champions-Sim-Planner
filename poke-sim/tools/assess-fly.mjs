@@ -21,7 +21,7 @@ export const prototypePatches=[
 ];
 export function localContext(prototype=false){
  const c=vm.createContext({console});
- for(const file of LOCAL_FILES){let source=fs.readFileSync(path.join(root,file),'utf8');
+ for(const file of LOCAL_FILES){let source=fs.readFileSync(path.join(root,prototype && file==='engine.js'?'reports/fly-assessment-2026-10-20/engine.original.js.txt':file),'utf8');
   if(file==='engine.js'&&prototype)for(const [before,after]of prototypePatches){assert.equal(source.split(before).length,2,'unique diagnostic patch');source=source.replace(before,after);}
   vm.runInContext(source,c,{filename:file});
  }
