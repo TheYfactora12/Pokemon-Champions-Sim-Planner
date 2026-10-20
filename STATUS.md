@@ -12,9 +12,9 @@ remains rejected. [Readiness map and exact evidence](docs/release/FLY_REPAIR_202
 Local and hosted completion must be read from the immutable candidate checks;
 this source document does not predeclare their result.
 
-Last terminal hosted checkpoint: `433aaf4ceb9648e073ca4ede56baa3c4f855e742`,
-contained Fly runtime1.1.41. [CI39503065457](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39503065457)
-passed at2026-10-20T22:02:58Z. This does not certify the follow-up runtime.
+Last terminal hosted checkpoint: `366bbdcefce135c6c68dc65e26bb34219cb04ebd`,
+contained Fly/Herb runtime1.1.42. [CI39507753055](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39507753055)
+passed at2026-10-20T22:41:10Z. This does not certify the follow-up runtime.
 The follow-up corrects confusion evidence and effective Power Herb under suppressed
 Klutz. Repeat-charge SpA boosts and Eject Button remain explicit gaps.
 

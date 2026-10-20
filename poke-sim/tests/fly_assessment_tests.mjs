@@ -41,7 +41,7 @@ test('assessment receipt source binding',()=>{
  assert.equal(receipt.reference.source_attribution_commit,'9b136a8c8cdb860a8ab96fa063f906604e352547');
  assert.deepEqual(Object.keys(receipt.loaded_source_hashes).sort(),[...LOCAL_FILES,'tools/showdown-reference.mjs','tools/bounded-runtime-capture.mjs','tools/assess-fly.mjs'].sort());
  for(const [file,expected]of Object.entries(receipt.loaded_source_hashes)){
-  const historic=file==='engine.js'?'reports/fly-assessment-2026-10-20/engine.original.js.txt':file==='tools/assess-fly.mjs'?'reports/fly-assessment-2026-10-20/assess-fly.original.mjs.txt':file;
+  const historic=file==='engine.js'?'reports/fly-assessment-2026-10-20/engine.original.js.txt':file==='tools/assess-fly.mjs'?'reports/fly-assessment-2026-10-20/assess-fly.original.mjs.txt':file==='tools/bounded-runtime-capture.mjs'?'reports/fly-repair-v2-2026-10-20/source-v2/tools__bounded-runtime-capture.mjs.txt':file;
   const actual=createHash('sha256').update(fs.readFileSync(new URL('../'+historic,import.meta.url),'utf8').replace(/\r\n/g,'\n')).digest('hex');
   assert.equal(actual,expected,'assessment source changed; preserve history and review new capture: '+file);
  }
