@@ -1,0 +1,11 @@
+Γ£ö execution dates come from retained execution evidence, never observation time (2.0352ms)
+Γ£ö aggregate identity binds owning tests, runners, fixtures, DB inputs and discovery additions/removals (83.3169ms)
+Γ£ö committed inventory and working bytes agree; documentation-only commit preserves identity (997.1049ms)
+Γä╣ tests 3
+Γä╣ suites 0
+Γä╣ pass 3
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1325.6847

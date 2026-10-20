@@ -1,0 +1,399 @@
+{
+  "schema_version": "current-bounded-independent-review-v1",
+  "reviewed_at": "2026-10-20T23:04:41.602Z",
+  "runtime_source_commit": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
+  "checkout_head": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+  "source_hashes": {
+    "engine.js": "01108244866cc527cf27300ae80f8f10c8a5c5dad334c71cd6d3e1c89e2b62b1",
+    "outcome_policy.js": "9b356f341f0600b28a157ee7d0f9da33149a63538e824701272fc93b1c3f4832",
+    "rulesets.js": "72d23fc4490d7291052e18320461e5c309bb70c697ca4f9f5052bb80c139cab7",
+    "move_legality.js": "80f5a3a42a6c4709f64698cc9d354782c08482c099c64b6281d905ba651508f1",
+    "mc_review.js": "7d51fec376e60c05e81d23e74770c5f00333570e87e08b7b0a598ac790a6b7e2",
+    "legality.js": "859c5fcb4eff7c05834791f00bee13c9ae7587efa8e30a433f2928d388920c0d",
+    "data.js": "1f6fb92c6ef68cf095a07058f3ddede81f16bb19b9e83dc12a1a98f117802d92",
+    "runtime_data.js": "c9ad5dc5c847b5e1be5685a4ee575c6838e2ae958b8063f30adc296eec2dc2eb",
+    "generated/pokemon_showdown_legal_data.js": "1f13d6fa5b6340e9db041668bde45d7fc70d137ab15ccbc6f42468471ca26bd0",
+    "generated/pokemon_showdown_species_weights.js": "707978246aa6daa97f73495d233d81f2ba0a17c1f9c5119b6a7ddb5585a5914f",
+    "generated/champions_move_overrides.js": "e06e7e59dccc7fd7e1565cc5bc3896e36cc0b5a2cdb03312555458afae677783",
+    "generated/champions_move_pools.js": "21099bad04135f23de2d8b23203628c98004faf4a7d1da179ba808ccef2087f9",
+    "generated/mc_review_reference.js": "d81091273c06c39dd1a234c5eeb2bb89af2d6e64d36998b2ae9450d8b6c43827",
+    "package-lock.json": "4a87ce6cee53e8a715efa66a9631d866ea5378ef59365644d1c5360440b58c09",
+    "source/bounded-assertions/reference-target.json": "41555f4d66ce91578a022fcc176e8f831d6c6bb1115115e605c8e6b000e07e7c",
+    "tools/bounded-runtime-capture.mjs": "471a7efbf78f794c058e8099a9d7c7882a74a6504fb73235d4da15b2905f93ea",
+    "tools/showdown-reference.mjs": "89eecaaca78d41e65f97bc989fd2d390ffcca630f67935df4f20cb6d618e4f17",
+    "tools/prepare-mc-reference-candidate.mjs": "e257a22328b14ad146b4bf5f52439c4e1a6e36ff49be6ce450196ac15942d3f2",
+    "tests/fixtures/bounded_runtime_cases.mjs": "ce2e3f7994837dbcb30e8ee1a7e3f63558cc1c316731285a1bfad7d75d682da9",
+    "tools/bounded-assertions.mjs": "e15c6fc1716b62e35d18fc76e072108bf2c3fd4ab0c4233b64f3cf0ca4b17a8e",
+    "tools/bounded-register.mjs": "96989bd8b5249eb6f1fd9f16484cadf690a8d6950fbe4678e80147710f5e002e",
+    "tools/current-bounded-core.mjs": "12f178f3d6f22d7f314c32771a91cfeb6322b43a07c62129c825dfab6fd9e366",
+    "tools/regulation-watch-core.mjs": "49dbfd62f5350e1b18f12b961eba0db70a9dfb089f5467dd0893fdcc39496b1b"
+  },
+  "assertions": [
+    {
+      "move_ids": [
+        "protect",
+        "struggle",
+        "swordsdance"
+      ],
+      "item_ids": [],
+      "assertion_id": "RESOURCE-STRUGGLE-CAPTURE.current-runtime.v5",
+      "case_id": "RESOURCE-STRUGGLE-CAPTURE",
+      "receipt_sha256": "30323140b1dbd355216ab4bdb555eb62e92e67bdd5255f1cf9fe022a503c0596",
+      "contract_sha256": "5ff8ffe47b2dff810e669582f2fa767a2931a96fe36c0f8260d47b6b3373328d",
+      "inputs_sha256": "0ed4cb6b54d496c6aaa5341cb4f695543e87dc63f125aae129180ea714001f28",
+      "local_result_sha256": "8948ee8a3bf9c70a3182f95b6954f3d2c2e1c0dc7a562929f283b31f47e480cd",
+      "reference_result_sha256": "606ebc32f2260346f4b50db4870bebc9942b548fb078fd39ed595a1175a42205",
+      "dependencies": {
+        "engine": "75d75d4d5377b286765ff8dac65a7d5f912c434ef26e8253429dd55c4b89fd71",
+        "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+        "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+        "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+        "checker": "38863985f9f0f8dc9b5225cf74f5a91ee78158a7e385c46095fdc6c0dedf8bc4",
+        "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+      },
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "player slot0, no PP, target isolated to opposing slot0",
+          "ordinary physical damage and rounded maxHP recoil; no random-target claim"
+        ]
+      },
+      "expected_observations": {
+        "target_hp_loss": 29,
+        "user_hp_loss": 59,
+        "amnesia_pp_spent": 0
+      },
+      "local_observations": {
+        "target_hp_loss": 29,
+        "user_hp_loss": 59,
+        "amnesia_pp_spent": 0
+      },
+      "reference_observations": {
+        "target_hp_loss": 29,
+        "user_hp_loss": 59,
+        "amnesia_pp_spent": 0
+      },
+      "status": "passed_declared_scope",
+      "independent_execution": true
+    },
+    {
+      "move_ids": [
+        "protect",
+        "rest"
+      ],
+      "item_ids": [],
+      "assertion_id": "REST-ELECTRIC-CAPTURE.current-runtime.v5",
+      "case_id": "REST-ELECTRIC-CAPTURE",
+      "receipt_sha256": "8b0085b79038550d65af64772c2697a5b3514c0cc2e8f5bad828bfced3cf8f17",
+      "contract_sha256": "ae815469b4290a3b0e99e8b6aa5a2f59a62431403c628e78521e32af99b22226",
+      "inputs_sha256": "3972d08d34b8ecfae608a4b297b390d23ff7425db6b80271cde24cf396bf61ef",
+      "local_result_sha256": "6efad1fd6f56bba1064a60f8a72a325fc363420a5abeec41b38e37f84b13918a",
+      "reference_result_sha256": "92f1fa522523a8c8f9757d6c8b9950e92dc9a10be40d281bcf2fd357f2c6d44f",
+      "dependencies": {
+        "engine": "75d75d4d5377b286765ff8dac65a7d5f912c434ef26e8253429dd55c4b89fd71",
+        "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+        "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+        "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+        "checker": "38863985f9f0f8dc9b5225cf74f5a91ee78158a7e385c46095fdc6c0dedf8bc4",
+        "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+      },
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "grounded player slot0, missing20HP, ElectricTerrain admission rejection"
+        ]
+      },
+      "expected_observations": {
+        "hp_restored": 0,
+        "asleep": false,
+        "rest_pp_spent": 1
+      },
+      "local_observations": {
+        "hp_restored": 0,
+        "asleep": false,
+        "rest_pp_spent": 1
+      },
+      "reference_observations": {
+        "hp_restored": 0,
+        "asleep": false,
+        "rest_pp_spent": 1
+      },
+      "status": "passed_declared_scope",
+      "independent_execution": true
+    },
+    {
+      "move_ids": [
+        "amnesia",
+        "encore",
+        "flamethrower",
+        "irondefense",
+        "protect",
+        "willowisp"
+      ],
+      "item_ids": [],
+      "assertion_id": "ENCORE-QUEUE-CAPTURE.current-runtime.v5",
+      "case_id": "ENCORE-QUEUE-CAPTURE",
+      "receipt_sha256": "4dd4192acf47dd7a61e953ba5ce61768b76d55897d946771c2f5cb8f73d4621c",
+      "contract_sha256": "6f051c1d05d1afca57bea973f7a22f4cb5cac9f50e4272956bc6739b9ff0c6a9",
+      "inputs_sha256": "daf718532e1105aa60998d7f2393f5398aef6cda56e593a12f331441d4160303",
+      "local_result_sha256": "bd04166d5c91810eeae64639857b4391b089ead95b26655d729089f8eee195c5",
+      "reference_result_sha256": "b3ab6a422a5437cf5bb08f3ef4ea97649c31ea4a0f64369d2376ded51886f901",
+      "dependencies": {
+        "engine": "75d75d4d5377b286765ff8dac65a7d5f912c434ef26e8253429dd55c4b89fd71",
+        "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+        "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+        "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+        "checker": "38863985f9f0f8dc9b5225cf74f5a91ee78158a7e385c46095fdc6c0dedf8bc4",
+        "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+      },
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "two turns, Prankster Encore before queued Flamethrower",
+          "replacement executes Will-O-Wisp and spends replacement PP"
+        ]
+      },
+      "expected_observations": {
+        "executed_move": "Will-O-Wisp",
+        "willowisp_pp_spent": 2,
+        "flamethrower_pp_spent": 0,
+        "lock_move": "willowisp"
+      },
+      "local_observations": {
+        "executed_move": "Will-O-Wisp",
+        "willowisp_pp_spent": 2,
+        "flamethrower_pp_spent": 0,
+        "lock_move": "willowisp"
+      },
+      "reference_observations": {
+        "executed_move": "Will-O-Wisp",
+        "willowisp_pp_spent": 2,
+        "flamethrower_pp_spent": 0,
+        "lock_move": "willowisp"
+      },
+      "status": "passed_declared_scope",
+      "independent_execution": true
+    },
+    {
+      "move_ids": [
+        "amnesia",
+        "protect",
+        "seismictoss"
+      ],
+      "item_ids": [
+        "redcard"
+      ],
+      "assertion_id": "RED-CARD-CAPTURE.current-runtime.v5",
+      "case_id": "RED-CARD-CAPTURE",
+      "receipt_sha256": "2a7b3aa262f938c8fb5a37c6a844fde89fc072264ae9845bffbb53f1dc48617e",
+      "contract_sha256": "c8b07dda2f522251bac76e07865a394afc51b814c5145fc4a72858a72b20f173",
+      "inputs_sha256": "e02dfaae79bc34a60f5d462ba623dab0466ab18381c8e74be01058a0e6863a4d",
+      "local_result_sha256": "7b0746c80e8ab7151fb2d2c91f1ea2136156a2b0f446b4e034c78c93fc8548f0",
+      "reference_result_sha256": "8d651c09819cb0bdfd634fc5fcbff0374042defc7bc1eadb809b2392400096e4",
+      "dependencies": {
+        "engine": "75d75d4d5377b286765ff8dac65a7d5f912c434ef26e8253429dd55c4b89fd71",
+        "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+        "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+        "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+        "checker": "38863985f9f0f8dc9b5225cf74f5a91ee78158a7e385c46095fdc6c0dedf8bc4",
+        "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+      },
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "single fixed damage hit, surviving holder, exactly one legal reserve",
+          "consumption and forced replacement; no random-reserve claim"
+        ]
+      },
+      "expected_observations": {
+        "target_hp_loss": 50,
+        "item_consumed": true,
+        "attacker_active": false,
+        "replacement": "Garchomp"
+      },
+      "local_observations": {
+        "target_hp_loss": 50,
+        "item_consumed": true,
+        "attacker_active": false,
+        "replacement": "Garchomp"
+      },
+      "reference_observations": {
+        "target_hp_loss": 50,
+        "item_consumed": true,
+        "attacker_active": false,
+        "replacement": "Garchomp"
+      },
+      "status": "passed_declared_scope",
+      "independent_execution": true
+    },
+    {
+      "move_ids": [
+        "amnesia",
+        "protect"
+      ],
+      "item_ids": [
+        "whiteherb"
+      ],
+      "assertion_id": "WHITE-HERB-CAPTURE.current-runtime.v5",
+      "case_id": "WHITE-HERB-CAPTURE",
+      "receipt_sha256": "71769e043937eae838cd5ffeae1f163c45155ab0a265152a417ec84c438273ec",
+      "contract_sha256": "ccc30f258c8bee407c158c2f709ab7bf11f3728ade216fdb259b3e882746d85d",
+      "inputs_sha256": "380479685d478c6c1e351a01acbc39a9b75842043aee8e7fe6f9ff5002025bbb",
+      "local_result_sha256": "8f73f466ce27893a1ac15a8ac86a0f33a69b3ce09a98d52e1a5a11b0a8d7fc3b",
+      "reference_result_sha256": "6ca1176bd767b32d661dbcff1e5595ac50434067265809e4b7c2ef009ff41f53",
+      "dependencies": {
+        "engine": "75d75d4d5377b286765ff8dac65a7d5f912c434ef26e8253429dd55c4b89fd71",
+        "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+        "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+        "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+        "checker": "38863985f9f0f8dc9b5225cf74f5a91ee78158a7e385c46095fdc6c0dedf8bc4",
+        "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+      },
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "synthetic initial atk-2 def-1 spa+3 stages",
+          "negative stages reset and positive stage retained"
+        ]
+      },
+      "expected_observations": {
+        "attack_stage": 0,
+        "defense_stage": 0,
+        "special_attack_stage": 3,
+        "item_consumed": true
+      },
+      "local_observations": {
+        "attack_stage": 0,
+        "defense_stage": 0,
+        "special_attack_stage": 3,
+        "item_consumed": true
+      },
+      "reference_observations": {
+        "attack_stage": 0,
+        "defense_stage": 0,
+        "special_attack_stage": 3,
+        "item_consumed": true
+      },
+      "status": "passed_declared_scope",
+      "independent_execution": true
+    },
+    {
+      "move_ids": [
+        "tackle"
+      ],
+      "item_ids": [],
+      "assertion_id": "DAMAGE-ROLL-CAPTURE.current-runtime.v5",
+      "case_id": "DAMAGE-ROLL-CAPTURE",
+      "receipt_sha256": "f43c1f3ba6fe3f783d69bf0ce7f7c229775f1c214f4b1dfb7966eab1b0ef2f9e",
+      "contract_sha256": "eea3bed67d906a1422fcf1736507c9a7372e7e2d6197c773ea1e4f0b7e945fe3",
+      "inputs_sha256": "997874add6da1240a824b98d2e5b4aae05cdd9416bc1e397ede324184ed9d36d",
+      "local_result_sha256": "5c30d9e6be7e1fab2dea0605bc5aa38bf0dcde7ff30d51b046f5a7cb152f2eb7",
+      "reference_result_sha256": "a50a2cc6eb88f95eefd6e21d4550d81c82e96501f0eca97d1673f8ff4bea3d0d",
+      "dependencies": {
+        "engine": "75d75d4d5377b286765ff8dac65a7d5f912c434ef26e8253429dd55c4b89fd71",
+        "data": "dd258aec23104c305658a95eeb20c8af71204ef43311d7033d00f33a64943409",
+        "runner": "7324e992dc86371999bd2686edb4e2c649ea1d9b2e655ad3850ac5121608df08",
+        "test": "3d7cfd2e383fa6e32f8dc626c9a9bef27ac9b25d298e90646014bf95b1e524e1",
+        "checker": "38863985f9f0f8dc9b5225cf74f5a91ee78158a7e385c46095fdc6c0dedf8bc4",
+        "reference": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61"
+      },
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "level50 Hardy zeroEV Snorlax Tackle into Venusaur",
+          "16 explicitly controlled damage draws, no critical hits; calculation API in doubles field"
+        ]
+      },
+      "expected_observations": {
+        "damage_bucket_0": 30,
+        "damage_bucket_1": 30,
+        "damage_bucket_2": 30,
+        "damage_bucket_3": 31,
+        "damage_bucket_4": 31,
+        "damage_bucket_5": 31,
+        "damage_bucket_6": 31,
+        "damage_bucket_7": 33,
+        "damage_bucket_8": 33,
+        "damage_bucket_9": 33,
+        "damage_bucket_10": 33,
+        "damage_bucket_11": 34,
+        "damage_bucket_12": 34,
+        "damage_bucket_13": 34,
+        "damage_bucket_14": 34,
+        "damage_bucket_15": 36
+      },
+      "local_observations": {
+        "damage_bucket_0": 30,
+        "damage_bucket_1": 30,
+        "damage_bucket_2": 30,
+        "damage_bucket_3": 31,
+        "damage_bucket_4": 31,
+        "damage_bucket_5": 31,
+        "damage_bucket_6": 31,
+        "damage_bucket_7": 33,
+        "damage_bucket_8": 33,
+        "damage_bucket_9": 33,
+        "damage_bucket_10": 33,
+        "damage_bucket_11": 34,
+        "damage_bucket_12": 34,
+        "damage_bucket_13": 34,
+        "damage_bucket_14": 34,
+        "damage_bucket_15": 36
+      },
+      "reference_observations": {
+        "damage_bucket_0": 30,
+        "damage_bucket_1": 30,
+        "damage_bucket_2": 30,
+        "damage_bucket_3": 31,
+        "damage_bucket_4": 31,
+        "damage_bucket_5": 31,
+        "damage_bucket_6": 31,
+        "damage_bucket_7": 33,
+        "damage_bucket_8": 33,
+        "damage_bucket_9": 33,
+        "damage_bucket_10": 33,
+        "damage_bucket_11": 34,
+        "damage_bucket_12": 34,
+        "damage_bucket_13": 34,
+        "damage_bucket_14": 34,
+        "damage_bucket_15": 36
+      },
+      "status": "passed_declared_scope",
+      "independent_execution": true
+    }
+  ],
+  "evidence": [
+    {
+      "path": "independent-replay.mjs",
+      "sha256": "a3a73e488a2995663572c71fb962c45fa79d1b3f52f45a2689d80dcdeef9d7b3",
+      "role": "execution_script"
+    },
+    {
+      "path": "independent-replay-raw.json",
+      "sha256": "a52d96fbce50c4efd3651085cba68506901f6e93e4cbbdddfb9d9ea905cf1df8",
+      "role": "execution_results"
+    }
+  ],
+  "claim": "Six exact synthetic shared-reference cases; independently rerun reviewed adapter; no whole-move/client/legality promotion",
+  "reviewer": "battle_auditor"
+}

@@ -1,52 +1,52 @@
 {
   "schema_version": "validation-lifecycle-view-v1",
-  "candidate_commit": "366bbdcefce135c6c68dc65e26bb34219cb04ebd",
-  "observed_at": "2026-10-20T22:42:06.667Z",
+  "candidate_commit": "430368455dd52d6393cc1c3330613c0a2209ecc1",
+  "observed_at": "2026-10-20T23:43:51.612Z",
   "scope": "Bounded reference validation and draft CI; excludes official/client certification and deployment",
   "implementation": {
     "status": "implemented",
-    "source_digest": "3ff866fa99ee7f3143045d7550af892e0e9830ff51e5dcc147f42fe4e91ac23b"
+    "source_digest": "3635c6b19b4cbcdd15f501409a53c98bdc3b2c6747d4b6bb6da90bc619536f44"
   },
   "local_test": {
     "status": "stale",
-    "fast_files": 273,
+    "fast_files": 275,
     "offline_db_files": 12,
     "failures": 0,
     "executed_at": null,
     "date_limitation": "Retained aggregate logs lack execution timestamp; observation time is not execution time",
     "evidence": {
-      "path": "source/validation-lifecycle/6c4ea6eb180f0372ba30af6528921c7a3500c1be7acdd6757239bbaa01f8d291/local.json",
-      "sha256": "76455c89f796fc216c79ac4fb3139c7926ec6c25b7079a85963be391381f89ef"
+      "path": "source/validation-lifecycle/bdac1aa768cd5ef96ad88873846b06edc58dfba2a9b85fbea69858e23a077736/local.json",
+      "sha256": "aab9fc62339091defe366371aa31039c2c7b5dd6b3e6f1585b8279c8eeb8a428"
     },
     "candidate_source_bound": false
   },
   "independent_verification": {
-    "status": "stale",
-    "reviewed_at": "2026-10-20T22:27:12.831Z",
-    "runtime_source_commit": "366bbdcefce135c6c68dc65e26bb34219cb04ebd",
+    "status": "passed_bounded_scope",
+    "reviewed_at": "2026-10-20T23:04:41.602Z",
+    "runtime_source_commit": "066b49a2fd3e326f4fde5027ee6a2c02195cdfff",
     "cases": 6,
     "evidence": {
-      "path": "source/validation-lifecycle/6c4ea6eb180f0372ba30af6528921c7a3500c1be7acdd6757239bbaa01f8d291/review.json",
-      "sha256": "a4d86d75995e0185dd5f78e336963cd0874e9d611fb3dd0cb6b78fe118a61878"
+      "path": "source/validation-lifecycle/bdac1aa768cd5ef96ad88873846b06edc58dfba2a9b85fbea69858e23a077736/review.json",
+      "sha256": "b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867"
     },
-    "candidate_source_bound": false
+    "candidate_source_bound": true
   },
   "remote_publication": {
-    "commit": "366bbdcefce135c6c68dc65e26bb34219cb04ebd",
+    "commit": "430368455dd52d6393cc1c3330613c0a2209ecc1",
     "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279",
-    "observed_at": "2026-10-20T22:42:06.668Z",
+    "observed_at": "2026-10-20T23:43:51.613Z",
     "evidence": {
-      "path": "source/validation-lifecycle/6c4ea6eb180f0372ba30af6528921c7a3500c1be7acdd6757239bbaa01f8d291/remote.json",
-      "sha256": "e323f0258834d1498188a2cc4f5dd677eb7f443f61b82e6bdd5d0dd87dbab233"
+      "path": "source/validation-lifecycle/bdac1aa768cd5ef96ad88873846b06edc58dfba2a9b85fbea69858e23a077736/remote.json",
+      "sha256": "67fb0ceb3eb8e42abbccdd896a7f4a067adb4470766276de8ab044da9c1cde3e"
     },
     "status": "pushed"
   },
   "hosted_checks": {
     "status": "passed",
-    "run_url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39507753055",
-    "commit": "366bbdcefce135c6c68dc65e26bb34219cb04ebd",
-    "started_at": "2026-10-20T22:23:30Z",
-    "updated_at": "2026-10-20T22:41:10Z"
+    "run_url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39514557728",
+    "commit": "430368455dd52d6393cc1c3330613c0a2209ecc1",
+    "started_at": "2026-10-20T23:22:15Z",
+    "updated_at": "2026-10-20T23:42:30Z"
   },
   "merge": {
     "status": "not_performed",

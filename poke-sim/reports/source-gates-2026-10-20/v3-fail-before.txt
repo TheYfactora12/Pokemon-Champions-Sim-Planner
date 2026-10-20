@@ -1,0 +1,72 @@
+Γ£ö execution dates come from retained execution evidence, never observation time (1.9657ms)
+Γ£û asserted DB documentation invalidates aggregate but not bounded mechanics dependencies (449.8182ms)
+Γ£û aggregate identity binds owning tests, runners, fixtures, DB inputs and discovery additions/removals (30.5356ms)
+Γ£û committed inventory and working bytes agree; documentation changes invalidate aggregate identity (684.3283ms)
+Γä╣ tests 4
+Γä╣ suites 0
+Γä╣ pass 1
+Γä╣ fail 3
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1408.5154
+
+Γ£û failing tests:
+
+test at ..\source-gates-final-clean\poke-sim\tests\lifecycle_inventory_tests.mjs:18:1
+Γ£û asserted DB documentation invalidates aggregate but not bounded mechanics dependencies (449.8182ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to:
+  
+  '1210f62a614b03c83be9a36ca6cde6fb59a2a5a050f17430de0a17911e664761'
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/source-gates-final-clean/poke-sim/tests/lifecycle_inventory_tests.mjs:23:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '1210f62a614b03c83be9a36ca6cde6fb59a2a5a050f17430de0a17911e664761',
+    expected: '1210f62a614b03c83be9a36ca6cde6fb59a2a5a050f17430de0a17911e664761',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at ..\source-gates-final-clean\poke-sim\tests\lifecycle_inventory_tests.mjs:26:1
+Γ£û aggregate identity binds owning tests, runners, fixtures, DB inputs and discovery additions/removals (30.5356ms)
+  AssertionError [ERR_ASSERTION]: Added input db/README_DB.md
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/source-gates-final-clean/poke-sim/tests/lifecycle_inventory_tests.mjs:32:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a',
+    expected: '44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at ..\source-gates-final-clean\poke-sim\tests\lifecycle_inventory_tests.mjs:44:1
+Γ£û committed inventory and working bytes agree; documentation changes invalidate aggregate identity (684.3283ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be strictly unequal to:
+  
+  'e89624e3f117e078b90a50734fd1e77575bc2264392da473e8c225c2c3d56d94'
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/source-gates-final-clean/poke-sim/tests/lifecycle_inventory_tests.mjs:51:111)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'e89624e3f117e078b90a50734fd1e77575bc2264392da473e8c225c2c3d56d94',
+    expected: 'e89624e3f117e078b90a50734fd1e77575bc2264392da473e8c225c2c3d56d94',
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,31 @@
+Γ£ö execution dates come from retained execution evidence, never observation time (2.1147ms)
+Γ£ö asserted DB documentation invalidates aggregate but not bounded mechanics dependencies (4089.8023ms)
+Γ£ö aggregate identity binds owning tests, runners, fixtures, DB inputs and discovery additions/removals (99.6262ms)
+Γ£ö committed inventory and working bytes agree; documentation changes invalidate aggregate identity (1253.8264ms)
+Γ£ö checked-in canonical current/history exports are refreshed (4628.685ms)
+Γ£ö new reviewed rerun becomes dated current and preserves prior stale record (0.1925ms)
+Γ£ö stale never checked (0.0848ms)
+Γ£ö failed never checked (0.0659ms)
+Γ£ö blocked never checked (0.0676ms)
+Γ£ö missing independent evidence cannot yield green (0.5439ms)
+Γ£ö skipped refresh is rejected (2846.5962ms)
+Γ£ö changed runtime cannot retain stale green export (1392.6463ms)
+Γ£ö missing receipt fails closed (1368.6538ms)
+Γ£ö failed capture persists blocked attempt instead of old green (9.0273ms)
+Γ£ö exact validated checkpoint never means merged/deployed/competitive (0.3148ms)
+Γ£ö source change blocks prior completed status (0.131ms)
+Γ£ö publication wrong commit rejects (0.3868ms)
+Γ£ö hosted wrong commit rejects (0.1025ms)
+Γ£ö failed CI and missing hosted job cannot complete (0.1516ms)
+Γ£ö unsupported deployment promotion rejects (0.1981ms)
+Γ£ö canonical lifecycle export is refreshed when present (5179.5505ms)
+Γ£ö old unbound local or review evidence cannot complete new candidate (0.2681ms)
+Γ£ö single and doubles scope never share a current checkmark (0.1854ms)
+Γä╣ tests 23
+Γä╣ suites 0
+Γä╣ pass 23
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 15713.5817

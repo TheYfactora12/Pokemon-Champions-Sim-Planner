@@ -7,7 +7,7 @@ repository security change is authorized.
 
 ## Current development candidate
 
-Source watcher checkpoint430368455dd52d6393cc1c3330613c0a2209ecc1 is published in draft PR279; its hosted checks remain separately tracked. Independent review confirmed the bounded mechanics, but found roster error-page/context acceptance and incomplete aggregate-test source binding. Follow-up repairs reject blocked/unidentified roster fragments and bind discovered tests, runners, fixtures, DB inputs and source bytes. Current follow-up validation is pending; no completion is implied.
+Source watcher checkpoint430368455dd52d6393cc1c3330613c0a2209ecc1 is published in draft PR279; its hosted checks remain separately tracked. Independent review confirmed the bounded mechanics, but found roster error-page/context acceptance and incomplete aggregate-test source binding. Follow-up repairs reject blocked/unidentified roster fragments and bind repository-wide aggregate inputs, including asserted documentation/configuration, separately from bounded mechanics dependencies. Completion is recorded only in the generated lifecycle export with its exact tested commit; this source note does not predeclare a result.
 
 Local shell remains v2.2.242-source-watch / engine1.1.42. Public Fly admission is rejected. Repeat-charge Meteor Beam/Electro Shot Special Attack and Eject Button remain explicit implementation gaps; paired singles/doubles coverage, official eligibility and client proof remain incomplete.
 

@@ -1,0 +1,368 @@
+{
+  "candidate": "430368455dd52d6393cc1c3330613c0a2209ecc1",
+  "executed_at": "2026-10-20T23:23:33.821Z",
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "scope": "Read-only one-turn no-Herb charge assessment; no implementation or golden changes",
+  "rows": [
+    {
+      "chargeMove": "Meteor Beam",
+      "side": "player",
+      "slot": 0,
+      "candidate": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 0,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      },
+      "reference": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 1,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      }
+    },
+    {
+      "chargeMove": "Meteor Beam",
+      "side": "player",
+      "slot": 1,
+      "candidate": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 0,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      },
+      "reference": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 1,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      }
+    },
+    {
+      "chargeMove": "Meteor Beam",
+      "side": "opponent",
+      "slot": 0,
+      "candidate": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 0,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      },
+      "reference": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 1,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      }
+    },
+    {
+      "chargeMove": "Meteor Beam",
+      "side": "opponent",
+      "slot": 1,
+      "candidate": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 0,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      },
+      "reference": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 1,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      }
+    },
+    {
+      "chargeMove": "Electro Shot",
+      "side": "player",
+      "slot": 0,
+      "candidate": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 0,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      },
+      "reference": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 1,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      }
+    },
+    {
+      "chargeMove": "Electro Shot",
+      "side": "player",
+      "slot": 1,
+      "candidate": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 0,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      },
+      "reference": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 1,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      }
+    },
+    {
+      "chargeMove": "Electro Shot",
+      "side": "opponent",
+      "slot": 0,
+      "candidate": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 0,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      },
+      "reference": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 1,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      }
+    },
+    {
+      "chargeMove": "Electro Shot",
+      "side": "opponent",
+      "slot": 1,
+      "candidate": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 0,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      },
+      "reference": {
+        "actor_types": [
+          "Rock",
+          "Flying"
+        ],
+        "actor_atk": 0,
+        "actor_spa": 1,
+        "charging": true,
+        "pp_spent": 1,
+        "tackle_pp_spent": 0,
+        "actor_hp_loss": 11,
+        "target_losses": [
+          0,
+          0
+        ],
+        "item_consumed": false,
+        "active": true,
+        "status": "",
+        "helped": false
+      }
+    }
+  ]
+}

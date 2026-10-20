@@ -16,7 +16,7 @@ export function isLifecycleInput(file){
 }
 const inputDigest=(file,bytes)=>digest(/\.(js|mjs|cjs|json|py|sh|html|css|sql|ts|txt|csv|yml|yaml|toml)$/i.test(file)?bytes.toString('utf8').replace(/\r\n/g,'\n'):bytes);
 const committedSources=new Map();
-export function lifecycleSource(root,commit,version='aggregate-inputs-v2'){
+function lifecycleSourceV2(root,commit,version='aggregate-inputs-v2'){
  if(version==='selected-inputs-v1')return legacySource(root,commit);
  assert.equal(version,'aggregate-inputs-v2','Unknown lifecycle fingerprint version');
  const cacheKey=root+':'+commit;
@@ -34,6 +34,35 @@ export function lifecycleSource(root,commit,version='aggregate-inputs-v2'){
  }
  entries.sort(([a],[b])=>a.localeCompare(b));const result=digest(canonical(Object.fromEntries(entries)));
  if(commit)committedSources.set(cacheKey,result);return result;
+}
+// Whole-suite claims bind the repository, including asserted documentation and
+// arbitrary fixture/config extensions. Only this ledger's own facts and rendered
+// view are outside the tested input tree; their hashes and semantics are checked
+// by refreshLifecycle. Bounded mechanics retain CURRENT_DEPENDENCY_FILES instead.
+export const isAggregateLedgerOutput=file=>file.startsWith('poke-sim/source/validation-lifecycle/')||file==='poke-sim/reports/move-register/validation/lifecycle.json';
+const repoDigest=(file,bytes)=>/\.(md|markdown)$/i.test(file)?digest(bytes.toString('utf8').replace(/\r\n/g,'\n')):inputDigest(file,bytes);
+export function lifecycleSource(root,commit,version='repository-inputs-v3'){
+ if(version!=='repository-inputs-v3')return lifecycleSourceV2(root,commit,version);
+ const repo=path.resolve(root,'..'),key='v3:'+repo+':'+commit;
+ if(commit&&committedSources.has(key))return committedSources.get(key);
+ let entries=[];
+ if(commit){
+  const listing=execFileSync('git',['ls-tree','-r','-l','-z',commit],{cwd:repo,encoding:'utf8',maxBuffer:16*1024*1024});
+  const rows=listing.split('\0').filter(Boolean).map(row=>{const [meta,file]=row.split('\t'),[mode,type,id,size]=meta.trim().split(/\s+/);assert.equal(type,'blob','Aggregate tree contains unsupported submodule');return {file,mode,id,size:Number(size)};}).filter(row=>!isAggregateLedgerOutput(row.file));
+  // Bound memory independently of total repository/history size.
+  for(let start=0;start<rows.length;){let end=start,total=0;while(end<rows.length&&(end===start||total+rows[end].size<128*1024*1024)){total+=rows[end++].size;}
+   const batch=rows.slice(start,end),bytes=execFileSync('git',['cat-file','--batch'],{cwd:repo,input:batch.map(row=>row.id+'\n').join(''),maxBuffer:Math.max(256*1024*1024,total+batch.length*256)});let offset=0;
+   for(const row of batch){const line=bytes.indexOf(10,offset),header=bytes.subarray(offset,line).toString();assert(/ blob \d+$/.test(header),'Missing aggregate input');const size=Number(header.split(' ')[2]);offset=line+1;entries.push([row.file,{mode:row.mode,sha256:repoDigest(row.file,bytes.subarray(offset,offset+size))}]);offset+=size+1;}start=end;
+  }
+ }else{
+  let files,modes={};
+  if(fs.existsSync(path.join(repo,'.git'))){
+   files=execFileSync('git',['ls-files','-z','--cached','--others','--exclude-standard'],{cwd:repo,encoding:'utf8',maxBuffer:16*1024*1024}).split('\0').filter(Boolean);
+   const index=execFileSync('git',['ls-files','-s','-z'],{cwd:repo,encoding:'utf8',maxBuffer:16*1024*1024});for(const row of index.split('\0').filter(Boolean)){const[meta,file]=row.split('\t');modes[file]=meta.split(' ')[0];}
+  }else{files=[];const walk=(directory,prefix='')=>{for(const item of fs.readdirSync(directory,{withFileTypes:true})){if(['.git','node_modules'].includes(item.name))continue;const file=prefix+item.name;if(item.isDirectory())walk(path.join(directory,item.name),file+'/');else files.push(file);}};walk(repo);}
+  entries=[...new Set(files)].filter(file=>!isAggregateLedgerOutput(file)).map(file=>{const target=path.join(repo,file);if(!fs.existsSync(target))return[file,null];const link=fs.lstatSync(target).isSymbolicLink();return[file,{mode:link?'120000':modes[file]||'100644',sha256:repoDigest(file,link?Buffer.from(fs.readlinkSync(target)):fs.readFileSync(target))}];});
+ }
+ entries.sort(([a],[b])=>a.localeCompare(b));const result=digest(canonical(Object.fromEntries(entries)));if(commit)committedSources.set(key,result);return result;
 }
 export function candidateEvidenceBindings(root,facts,local,review){
  const localCommit=local.source_commit||local.fixture_commit||local.candidate_runtime_commit;
@@ -75,7 +104,7 @@ export function refreshLifecycle(root,{check=false}={}){
  const hosted=JSON.parse(fs.readFileSync(path.join(root,facts.hosted.evidence.path)));for(const k of ['headSha','status','conclusion','url','jobs','createdAt','updatedAt'])assert.deepEqual(facts.hosted[k],hosted[k],'Hosted fact differs from evidence: '+k);
  const remote=JSON.parse(fs.readFileSync(path.join(root,facts.publication.evidence.path)));assert.equal(remote.headRefOid,facts.candidate_commit,'Remote evidence head mismatch');assert.equal(remote.url,facts.publication.url);assert.equal(remote.isDraft,true);assert.equal(remote.state,'OPEN');
  const local=JSON.parse(fs.readFileSync(path.join(root,facts.local.evidence.path)));assert.deepEqual({fast_files:facts.local.fast_files,offline_db_files:facts.local.offline_db_files,failures:facts.local.failures},local.project);
- if(facts.fingerprint_version==='aggregate-inputs-v2')for(const[key,value]of Object.entries(localExecutionDates(local)))assert.equal(facts.local[key],value,'Local execution date differs from retained evidence');
+ if(['aggregate-inputs-v2','repository-inputs-v3'].includes(facts.fingerprint_version))for(const[key,value]of Object.entries(localExecutionDates(local)))assert.equal(facts.local[key],value,'Local execution date differs from retained evidence');
  const review=JSON.parse(fs.readFileSync(path.join(root,facts.review.evidence.path)));assert.equal(facts.review.reviewed_at,review.reviewed_at);assert(review.assertions?.length>0&&review.assertions.every(r=>r.status==='passed_declared_scope'&&r.independent_execution===true));
  assert.equal(lifecycleSource(root,facts.candidate_commit,facts.fingerprint_version||'selected-inputs-v1'),facts.source_digest,'Candidate source binding mismatch');
  const view=lifecycleView(facts,lifecycleSource(root),candidateEvidenceBindings(root,facts,local,review));const content=JSON.stringify(view,null,2)+'\n',file=path.join(root,'reports/move-register/validation/lifecycle.json');fs.mkdirSync(path.dirname(file),{recursive:true});if(check)assert.equal(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n'),content,'Stale lifecycle export');else fs.writeFileSync(file,content);return view;

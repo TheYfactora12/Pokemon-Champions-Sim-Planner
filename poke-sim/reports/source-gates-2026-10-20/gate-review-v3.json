@@ -1,0 +1,76 @@
+{
+  "schema_version": "independent-source-lifecycle-gate-review-v1",
+  "reviewed_at": "2026-10-20T23:49:11.889Z",
+  "reviewer": "battle_auditor",
+  "checkout_head": "5e98c082fc900d521efeda6420fca572434ba29f",
+  "source_state": "Working-tree repository-inputs-v3 repair; exact examined bytes below, not a claim that HEAD contains these edits",
+  "status": "passed_declared_scope",
+  "examined_files": [
+    {
+      "path": "poke-sim/tools/validation-lifecycle.mjs",
+      "sha256": "de983e52f578740f8d3b36e0fec178eb7fb3e2908a2684e6324c70f82a4cd142",
+      "lf_sha256": "035b9d66f85cc139122756a1777d07ece43392432f83285ad70799d8021e4016"
+    },
+    {
+      "path": "poke-sim/tools/record-validation-lifecycle.mjs",
+      "sha256": "f9b647ba362cb7f22622a9c1da64d9835c1cee594f2ce31ef3963b6145462ae8",
+      "lf_sha256": "d6f674ede88712f64fe7697efd5e2514a81d43449167d21ccb0047c162d59544"
+    },
+    {
+      "path": "poke-sim/tests/lifecycle_inventory_tests.mjs",
+      "sha256": "88efa2fef063cc113727fd2e1fd27d47539243857a0d99b2f20577340bdbd304",
+      "lf_sha256": "88efa2fef063cc113727fd2e1fd27d47539243857a0d99b2f20577340bdbd304"
+    },
+    {
+      "path": "poke-sim/db/README_DB.md",
+      "sha256": "eece51d7f8bad0e2b5e704646b321fd5b16cda91c740709e27698f47d855c8f6",
+      "lf_sha256": "5b25bed2742be028db56d4096d3e557bb9d0ec84e31c60e93d85d56553985d88"
+    },
+    {
+      "path": "poke-sim/tools/current-bounded-core.mjs",
+      "sha256": "12f178f3d6f22d7f314c32771a91cfeb6322b43a07c62129c825dfab6fd9e366",
+      "lf_sha256": "12f178f3d6f22d7f314c32771a91cfeb6322b43a07c62129c825dfab6fd9e366"
+    }
+  ],
+  "preserved_prior_review": {
+    "path": "gate-review.json",
+    "sha256": "767ad4d15257c6798ca1276566756523d3e2552aee3be2a609297c676802e247"
+  },
+  "executed_controls": {
+    "inventory_suite": {
+      "command": "node --test poke-sim/tests/lifecycle_inventory_tests.mjs",
+      "execution": "Authorized temporary Git fixture execution outside sandbox",
+      "passed": 4,
+      "failed": 0,
+      "coverage": [
+        "Canonical execution timestamps",
+        "Exact DB README audit-marker mutation changes aggregate identity while preserving currentDependencies",
+        "Add/change/remove source, documentation and arbitrary fixtures; CRLF normalization; binary bytes; lifecycle output exclusion",
+        "Committed and working inventory equality; documentation commit invalidates identity"
+      ]
+    },
+    "direct_exclusion_boundaries": {
+      "passed": 7,
+      "failed": 0,
+      "included": [
+        "poke-sim/db/README_DB.md",
+        "docs/a.md",
+        "poke-sim/source/bounded-assertions/index.json",
+        "poke-sim/tests/audit_matrix.json",
+        "poke-sim/reports/move-register/validation/current.json"
+      ],
+      "excluded": [
+        "poke-sim/source/validation-lifecycle/latest.json",
+        "poke-sim/reports/move-register/validation/lifecycle.json"
+      ]
+    }
+  },
+  "assessment": "The reproduced asserted-DB-documentation omission is repaired. V3 binds repository tracked and nonignored new files; only lifecycle fact storage and its rendered view are explicitly excluded. Historical v1/v2 fingerprint algorithms remain available.",
+  "limits": [
+    "Working-tree source review; final freeze commit and full clean aggregate are separate parent-owned steps",
+    "Git-ignored untracked files remain outside inventory by design",
+    "Lifecycle fact storage and rendered view require refreshLifecycle hash and semantic checks; this review does not authenticate evidence authorship",
+    "No broad mechanics tests, client verification, legality approval, publication, merge, deployment or database actions",
+    "Prior v6 bounded-mechanics review remains separate and unchanged; no enlargement of its six-case scope"
+  ]
+}

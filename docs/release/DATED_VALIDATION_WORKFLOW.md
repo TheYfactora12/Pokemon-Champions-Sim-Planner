@@ -52,9 +52,14 @@ unknown. Inventory counts are not a denominator for a fully validated percentage
 
 `completed` means a bounded validated draft checkpoint, never competitive release,
 merge or deployment. It requires successful exact-candidate CI and unchanged relevant
-source. Relevant source hashes exclude generated receipts, docs and Git HEAD to avoid
-circular self-hashing: a documentation/enrollment-only commit preserves behavior
-identity, while actual runner/rules/engine/workflow changes invalidate completion.
+source. Aggregate fingerprint repository-inputs-v3 binds every tracked repository
+input, including documentation, configuration, historical fixtures and arbitrary
+extensions, plus new nonignored files. Only this lifecycle ledger's own immutable
+facts and rendered lifecycle.json are excluded to avoid circular self-hashing; those
+outputs remain hash- and semantic-checked. A documentation/enrollment change therefore
+invalidates the aggregate stage until rerun. Separately, the six bounded mechanics
+cases use CURRENT_DEPENDENCY_FILES: unrelated documentation preserves their behavior
+identity. These are different claims with different dependency scopes.
 Every hosted claim still names the exact commit that ran; source equivalence is not
 presented as a run on a newer commit. Local logs without timestamps expose null time
 and a limitation instead of fabricated execution dates. Publication time is observed

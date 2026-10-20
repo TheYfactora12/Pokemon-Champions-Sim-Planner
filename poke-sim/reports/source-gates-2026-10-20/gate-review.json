@@ -1,0 +1,127 @@
+{
+  "schema_version": "independent-source-lifecycle-gate-review-v1",
+  "reviewed_at": "2026-10-20T23:40:24.492Z",
+  "reviewer": "battle_auditor",
+  "source_commit": "5e98c082fc900d521efeda6420fca572434ba29f",
+  "status": "passed_declared_scope",
+  "examined_files": [
+    {
+      "path": "poke-sim/tools/regulation-watch-core.mjs",
+      "sha256": "9015ba429f8fc93cfe1af6a35216835b658bdcebef1c3df6674ad6d20facb952",
+      "git_blob_lf_sha256": "ab877fe0134165b8551875bdbdf25bdfc29e869c9191d4a8923858ae2929fca3"
+    },
+    {
+      "path": "poke-sim/tools/champions_source_inventory.json",
+      "sha256": "2949128a5a5fff5e54a4531d0e9fcfc5b05d8f37b8743c61b081fd980c70cbcb",
+      "git_blob_lf_sha256": "8fdd2521992bbb6b5712222a9ed29dd3659a3f6028620d94bcd3ba9ff37ad529"
+    },
+    {
+      "path": "poke-sim/tools/stage-regulation-candidate.mjs",
+      "sha256": "518c47d25623551f6c96535887fff5f3254bfaa0d4b2d4e4ca7942eb179429ea",
+      "git_blob_lf_sha256": "befae6eddd730e63023237de73eeefe82cfa3fbad9b33e17be633d591b1d58b6"
+    },
+    {
+      "path": "poke-sim/tools/validation-lifecycle.mjs",
+      "sha256": "6488d3a22d33516d596fde5dfd70894df3b5a7390af57e636eb357bcf2f7b199",
+      "git_blob_lf_sha256": "3d891baa4a5cc9e549c01626fb2c3adf5f1cca58facb378217c6e81b46913f61"
+    },
+    {
+      "path": "poke-sim/tools/record-validation-lifecycle.mjs",
+      "sha256": "02f1c7ffc41903364fe802224043268839b5868ea162b5c645a98195c97b2869",
+      "git_blob_lf_sha256": "a661841f8144bdd25a4e54b0549bfc64dc81417484df7b6fa5b2ac3f0cfb0ce4"
+    },
+    {
+      "path": "poke-sim/tests/official_source_watch_tests.mjs",
+      "sha256": "49d96da9e21af03c70cf8a42abc500df34f680c137b1e2fda430cc0e936199aa",
+      "git_blob_lf_sha256": "49d96da9e21af03c70cf8a42abc500df34f680c137b1e2fda430cc0e936199aa"
+    },
+    {
+      "path": "poke-sim/tests/regulation_watch_tests.mjs",
+      "sha256": "04e3e723a172fe870302edcb8faa2c3742ad92c6cd5f8475dc2e388d740c7f7f",
+      "git_blob_lf_sha256": "aa5550a7726b541eee01902e2668843a60176eff5722ee5f6a04990e95c2710a"
+    },
+    {
+      "path": "poke-sim/tests/regulation_candidate_staging_tests.mjs",
+      "sha256": "8fe7c32b67a56a22cccd1e3aeae83948f10413462cef5ae69e0d63f6e9fac311",
+      "git_blob_lf_sha256": "c82b1e530ec426ddbde0cb9692f8aac7458e5df2b0ba9f4f3f5cfc7e251fcbc9"
+    },
+    {
+      "path": "poke-sim/tests/lifecycle_inventory_tests.mjs",
+      "sha256": "2607bfa67b2ca4bd9e18aceef2f0d9b1fd1dc250a80516171d707519e73f4baa",
+      "git_blob_lf_sha256": "2607bfa67b2ca4bd9e18aceef2f0d9b1fd1dc250a80516171d707519e73f4baa"
+    }
+  ],
+  "executions": [
+    {
+      "scope": "Four focused files after binary/challenge repairs",
+      "command": "node --test poke-sim/tests/lifecycle_inventory_tests.mjs poke-sim/tests/official_source_watch_tests.mjs poke-sim/tests/regulation_watch_tests.mjs poke-sim/tests/regulation_candidate_staging_tests.mjs",
+      "node_tests": 45,
+      "passed": 44,
+      "blocked": 1,
+      "block_reason": "Sandbox denied git init writing temporary fixture .git/config; not an assertion failure",
+      "nested_staging_checks": 39,
+      "note": "Nested staging checks are included within the Node staging-file test; do not add counts."
+    },
+    {
+      "scope": "Authorized rerun of inventory suite resolving sandbox blockage",
+      "command": "node --test poke-sim/tests/lifecycle_inventory_tests.mjs",
+      "passed": 2,
+      "failed": 0,
+      "note": "Overlaps inventory checks above; not additional distinct coverage."
+    },
+    {
+      "scope": "Retained official roster parsing",
+      "fixture": "../watcher-roster.html",
+      "title": "Eligible Pokémon",
+      "roster_entries": 262,
+      "manual_roster_mapping_review": true
+    },
+    {
+      "scope": "Final exact-head timestamp and inventory probes",
+      "source_commit": "5e98c082fc900d521efeda6420fca572434ba29f",
+      "timestamp_negative_controls": 2,
+      "inventory_controls": 5,
+      "passed": 7,
+      "failed": 0,
+      "controls": [
+        "Numeric start/end rejected",
+        "Impossible February 30 rejected",
+        "Only tests/audit_matrix.json excluded",
+        "tests/audit.js included",
+        "tests/fixtures/audit_matrix.json included",
+        "tests/lifecycle_inventory_tests.mjs included",
+        "tools/record-validation-lifecycle.mjs included"
+      ]
+    },
+    {
+      "scope": "Final exact-head focused date/inventory tests",
+      "command": "node --test --test-name-pattern 'execution dates|aggregate identity' poke-sim/tests/lifecycle_inventory_tests.mjs",
+      "passed": 2,
+      "failed": 0,
+      "note": "Overlapping rerun; does not rerun temporary Git test."
+    }
+  ],
+  "repaired_findings": [
+    {
+      "finding": "Legacy challenge fixture expected layout error",
+      "observed": "42/43 earlier focused tests passed; challenge now rejected earlier with challenge/error message",
+      "resolution": "Expectation corrected to challenge rejection; later suite passes it"
+    },
+    {
+      "finding": "UTF-8 decoding caused binary fixture 0x80 and 0x81 fingerprint collision",
+      "resolution": "Raw-byte hashing for nontext extensions plus regression and Git/working equality controls"
+    },
+    {
+      "finding": "Date.parse accepted numeric timestamps and impossible February 30",
+      "resolution": "Canonical ISO string round-trip validation; final direct negative controls reject both"
+    }
+  ],
+  "limits": [
+    "Source/lifecycle gate review only; no whole-move, current-client, legality or competitive certification",
+    "No database writes or live database/RLS validation; staging transport mocked and SQL checked statically",
+    "No broad aggregate rerun performed by this reviewer; final clean aggregate remains owned by parent",
+    "Earlier failures and overlapping reruns remain separately described; no summed test total",
+    "Six v6 mechanics assertions retain their separate independent-review.json; this receipt does not broaden them",
+    "No application changes, publication, merge, deployment or settings changes performed"
+  ]
+}
