@@ -1,0 +1,4 @@
+doubles: {"battles":4624,"win":2290,"loss":2318,"draw":16,"state_failures":0,"validator_errors":0,"validator_warnings":0,"repeat_checks":34,"repeat_failures":0,"outcome_scopes":{"one-sided-elimination-checked":4590,"both-extinct-order-unproved":16,"timer-or-unavailable":18}}
+singles: {"battles":4624,"win":2284,"loss":2297,"draw":43,"state_failures":0,"validator_errors":0,"validator_warnings":0,"repeat_checks":34,"repeat_failures":0,"outcome_scopes":{"one-sided-elimination-checked":4483,"timer-or-unavailable":99,"both-extinct-order-unproved":42}}
+Retained logs and report: C:\Users\The Rig\Documents\Codex\2026-10-14\task-2\champions-moves-repair\poke-sim\artifacts\accuracy-2026-08-30\cross-format\
+Finding counts: {}

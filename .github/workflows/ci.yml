@@ -73,7 +73,8 @@ jobs:
   tests:
     name: "Test Suite"
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    # Retain every discovered test; the measured full suite can exceed eight minutes.
+    timeout-minutes: 12
     needs: [syntax, detect-changes]
     # The isolated test project has shared fixture IDs; serialize its users.
     # A different repository/manual test runner must use a separate test project.

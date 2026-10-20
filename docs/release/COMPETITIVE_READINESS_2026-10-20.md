@@ -167,3 +167,7 @@ Test Suite/browser/syntax/bundle/cache passed; methodology found4item-speed evid
 ## Discrete damage candidate
 
 See [bounded discrete damage receipt](DISCRETE_DAMAGE_2026-10-20.md). The sampler now follows the pinned reference's 16 discrete 85–100 buckets. This is source-reference evidence, not current-client certification. The current register candidate contains 954 catalog moves and 70 interaction declarations, with zero regulation-approved or client-verified moves. Stale learnsets, full eligibility reconciliation, bounded positive receipt enrollment and the legacy golden runner loading gap remain open. No competitive release approval is implied.
+
+## Reference/evidence follow-up
+
+[The v238 receipt](REFERENCE_EVIDENCE_2026-10-20.md) records the independent ee93569 survivors, their regressions and local validation. Sirfetchd/Meteor Assault reference admission is corrected with a bounded source delta; the broader reference candidate retains636/205learnset differences for review. Official completeness and current-client proof remain unresolved.
