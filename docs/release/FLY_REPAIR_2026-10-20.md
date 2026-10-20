@@ -69,3 +69,30 @@ Sources: pinned data/moves.ts Fly5897–5935; data/conditions.ts287–322;
 sim/battle-actions.ts BeforeMove312–320 and Invulnerability683–692;
 Gravity7784–7787 and Smack Down16967–16986 in data/moves.ts.
 No merge, deployment, live database or repository settings change is included.
+
+## Follow-up: corrected causal evidence and shared Power Herb helper
+
+Candidate v2.2.241-charge-herb / engine1.1.42 changes only the shared Power Herb
+eligibility helper to use effective item state. The five non-Fly suppressed-Klutz
+failures were independently reproduced on both the old and contained-Fly engines;
+they were pre-existing defects, not regressions introduced by Fly.
+
+The original independent 433aaf4 audit found that v1's confusion fixture used the
+wrong reference RNG denominator. Its apparent agreement did not prove interruption.
+The original receipt and hash-bound sources are retained; v2 supersedes that bounded
+claim. Eight corrected cases require actual reference self-hit events, 27/54 HP loss,
+no Fly release, candidate action-denial events and stored-charge cancellation. The
+old false-positive receipt and a confusion-cancellation reversal must fail.
+
+The new receipt is [reference.json](../../poke-sim/reports/fly-repair-v2-2026-10-20/reference.json).
+It contains 24 basic cases, 172 lifecycle/damage cases, four retained Eject Button
+discrepancies and 80 shared-charge probes. Of those 80 probes, 64 have no observed
+stage discrepancy; 16 agree only on the declared charge/PP/HP/damage/consumption
+fields and explicitly retain a repeat-charge SpA gap for Meteor Beam/Electro Shot.
+They are not 80 full-state agreements. Five helper reversal controls and suppression
+restoration/consumption controls own this narrow repair. Public Fly remains blocked.
+
+Prior hosted checkpoint 433aaf4 completed all checks at 2026-10-20T22:02:58Z in
+[run39503065457](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39503065457).
+The tested merge tree matched the candidate tree. That result belongs to v240;
+follow-up validation is recorded separately. No current-client proof is available.

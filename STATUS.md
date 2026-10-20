@@ -7,14 +7,16 @@ repository security change is authorized.
 
 ## Current development candidate
 
-Contained Fly repair: v2.2.240-fly-contained / engine1.1.41. Public Fly admission
+Contained Fly follow-up: v2.2.241-charge-herb / engine1.1.42. Public Fly admission
 remains rejected. [Readiness map and exact evidence](docs/release/FLY_REPAIR_2026-10-20.md).
 Local and hosted completion must be read from the immutable candidate checks;
 this source document does not predeclare their result.
 
-Last terminal hosted checkpoint: `71220ad0425f56de26024db852cb8167c8d3c57f`,
-assessment only, unchanged runtime1.1.40. [CI39496971145](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39496971145)
-passed at2026-10-20T21:19:49Z:268fastfiles,12DBcontractfiles,4500battles/0JSerrors.
+Last terminal hosted checkpoint: `433aaf4ceb9648e073ca4ede56baa3c4f855e742`,
+contained Fly runtime1.1.41. [CI39503065457](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39503065457)
+passed at2026-10-20T22:02:58Z. This does not certify the follow-up runtime.
+The follow-up corrects confusion evidence and effective Power Herb under suppressed
+Klutz. Repeat-charge SpA boosts and Eject Button remain explicit gaps.
 
 The engine change invalidates all six earlier current assertions: canonical tracker
 now preserves13historical stale assertions and0current passes pending independent

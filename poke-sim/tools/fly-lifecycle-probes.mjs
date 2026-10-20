@@ -4,14 +4,18 @@ import {localContext,teams} from './probe-fly-repair.mjs';
 import {mapTeam} from './showdown-reference.mjs';
 const require=createRequire(import.meta.url);
 const format='gen9championsdoublescustomgame',seed=[3,7,11,13];
-const allowed=new Set(['side','slot','move','item','ability','foeAbility','gas','consumed','species','roll','turns','interrupt','actorMove','foeMove2','redirectTurn','protectTurn','targetSlot','foeFirst','helpingHand','poisonFoe','actorMove2']);
+const allowed=new Set(['side','slot','move','item','ability','foeAbility','gas','consumed','species','roll','turns','interrupt','actorMove','foeMove2','redirectTurn','protectTurn','targetSlot','foeFirst','helpingHand','poisonFoe','actorMove2','chargeMove']);
 export function lifecycleProbe(config={},referencePath,mutate){
  assert(Object.keys(config).every(k=>allowed.has(k)),'Unsupported Fly probe option');
- const x={side:'player',slot:0,move:'Tackle',item:'',ability:'Rock Head',foeAbility:'Torrent',gas:false,consumed:false,species:'Aerodactyl',roll:100,turns:1,interrupt:null,actorMove:'Fly',foeMove2:null,redirectTurn:0,protectTurn:0,targetSlot:0,foeFirst:false,helpingHand:false,poisonFoe:false,actorMove2:null,...config};
+ const x={side:'player',slot:0,move:'Tackle',item:'',ability:'Rock Head',foeAbility:'Torrent',gas:false,consumed:false,species:'Aerodactyl',roll:100,turns:1,interrupt:null,actorMove:'Fly',foeMove2:null,redirectTurn:0,protectTurn:0,targetSlot:0,foeFirst:false,helpingHand:false,poisonFoe:false,actorMove2:null,chargeMove:'Fly',...config};
+ if(!Object.hasOwn(config,'actorMove'))x.actorMove=x.chargeMove;
+ assert(['Fly','Solar Beam','Solar Blade','Meteor Beam','Electro Shot','Phantom Force'].includes(x.chargeMove),'Unsupported charge move');
+ assert([1,2,3].includes(x.turns)&& (x.turns<3 || x.interrupt==='confusion' || (x.foeFirst&&['Smack Down','Thousand Arrows','Gravity'].includes(x.foeMove2))),'Unsupported continuation configuration');
+ assert(x.chargeMove==='Fly'||x.turns<=2,'Unsupported charge continuation');
  assert(['player','opponent'].includes(x.side)&&[0,1].includes(x.slot)&&[0,1].includes(x.targetSlot));
  assert(Number.isInteger(x.roll)&&x.roll>=85&&x.roll<=100);
  const own=teams(x.move,x.item,x.ability);
- const spec=own[0].members[0];spec.name=x.species;spec.moves=['Fly','Protect','Tackle'];
+ const spec=own[0].members[0];spec.name=x.species;spec.moves=[x.chargeMove,'Protect','Tackle'];
  if(x.slot)[own[0].members[0],own[0].members[1]]=[own[0].members[1],own[0].members[0]];
  const foe=own[1].members[0];foe.ability=x.foeAbility;
  if(x.poisonFoe)foe.name='Venusaur';
@@ -27,9 +31,9 @@ export function lifecycleProbe(config={},referencePath,mutate){
  const ra=b[rid].active[x.slot],rt=b[oid].active[0];
  if(x.consumed)ra.setItem('');
  b.randomizer=n=>Math.floor(n*x.roll/100);
- b.randomChance=(n,d)=>x.interrupt==='paralysis'&&n===1&&d===8||x.interrupt==='confusion'&&n===1&&d===3||n/d>.5;
+ b.randomChance=(n,d)=>x.interrupt==='paralysis'&&n===1&&d===8||x.interrupt==='confusion'&&n===33&&d===100||n/d>.5;
  const snapshots=[],commands=[];
- function refSnapshot(){return {actor_types:ra.getTypes(),actor_atk:ra.boosts.atk,charging:!!ra.volatiles.fly,pp_spent:ra.moveSlots[0].maxpp-ra.moveSlots[0].pp,tackle_pp_spent:ra.moveSlots[2].maxpp-ra.moveSlots[2].pp,actor_hp_loss:ra.maxhp-ra.hp,target_losses:b[oid].active.map(m=>m.maxhp-m.hp),item_consumed:!!x.item&&!ra.item,active:b[rid].active.includes(ra),status:ra.status,helped:!!ra.volatiles.helpinghand};}
+ function refSnapshot(){return {actor_types:ra.getTypes(),actor_atk:ra.boosts.atk,actor_spa:ra.boosts.spa,charging:!!ra.volatiles.twoturnmove,pp_spent:ra.moveSlots[0].maxpp-ra.moveSlots[0].pp,tackle_pp_spent:ra.moveSlots[2].maxpp-ra.moveSlots[2].pp,actor_hp_loss:ra.maxhp-ra.hp,target_losses:b[oid].active.map(m=>m.maxhp-m.hp),item_consumed:!!x.item&&!ra.item,active:b[rid].active.includes(ra),status:ra.status,helped:!!ra.volatiles.helpinghand};}
  for(let turn=1;turn<=x.turns;turn++){
   if(turn===2){
    if(['sleep','frozen','paralysis'].includes(x.interrupt)){ra.setStatus({sleep:'slp',frozen:'frz',paralysis:'par'}[x.interrupt]);if(x.interrupt==='sleep'||x.interrupt==='frozen')ra.statusState.time=3;}
@@ -70,14 +74,15 @@ export function lifecycleProbe(config={},referencePath,mutate){
  for(let turn=1;turn<=x.turns;turn++)for(const side of ['player','opponent'])for(const slot of [0,1]){
   const isOwn=side===x.side,isActor=isOwn&&slot===x.slot;
   // Leave the continuation to the real stored-slot selection, not a forced target.
-  if(isActor&&turn===2&&!x.actorMove2)continue;
+  if(isActor&&turn===2&&!x.actorMove2&&x.chargeMove==='Fly')continue;
   const move=isActor?(turn>2?'Tackle':turn===2&&x.actorMove2?x.actorMove2:x.actorMove):isOwn?(x.helpingHand?'Helping Hand':'Protect'):slot===1?(x.redirectTurn===turn?'Follow Me':'Protect'):x.protectTurn===turn?'Protect':turn===2&&x.foeMove2?x.foeMove2:x.move;
   actions.push({turn,side,slot,move,targetSlot:isActor?x.targetSlot:x.slot,...(isOwn&&x.helpingHand&&!isActor?{targetSide:'ally'}:{})});
  }
  const result=c.simulateBattle(...inputs,{format:'doubles',maxTurns:x.turns,seed,forcedActions:actions});
  assert.notEqual(result.result,'error',result.winCondition);
- const candidate={actor_types:[...a.types],actor_atk:a.statBoosts.atk||0,charging:a.chargingMove==='Fly',pp_spent:a.movePP.Fly.max-a.movePP.Fly.current,tackle_pp_spent:a.movePP.Tackle.max-a.movePP.Tackle.current,actor_hp_loss:a.maxHp-a.hp,target_losses:foeMons.slice(0,2).map(m=>m.maxHp-m.hp),item_consumed:!!a.itemConsumed,active:a.side.activeMons.includes(a),status:({sleep:'slp',frozen:'frz',paralysis:'par',toxic:'tox',poison:'psn'})[a.status]||a.status||'',helped:!!a.helpingHand};
- return {input:x,teams:inputs,commands,actions,reference:snapshots.at(-1),candidate,reference_turns:snapshots,reference_log:referenceLog,candidate_log:result.log,candidate_turns:result.turnLog};
+ const candidate={actor_types:[...a.types],actor_atk:a.statBoosts.atk||0,actor_spa:a.statBoosts.spa||0,charging:a.chargingMove===x.chargeMove,pp_spent:a.movePP[x.chargeMove].max-a.movePP[x.chargeMove].current,tackle_pp_spent:a.movePP.Tackle.max-a.movePP.Tackle.current,actor_hp_loss:a.maxHp-a.hp,target_losses:foeMons.slice(0,2).map(m=>m.maxHp-m.hp),item_consumed:!!a.itemConsumed,active:a.side.activeMons.includes(a),status:({sleep:'slp',frozen:'frz',paralysis:'par',toxic:'tox',poison:'psn',burn:'brn'})[a.status]||a.status||'',helped:!!a.helpingHand};
+ const interruptions={reference_self_hits:[...new Set(referenceLog.filter(line=>line.startsWith('|-damage|')&&line.endsWith('[from] confusion')))],candidate_events:result.turnLog.flatMap(turn=>turn.effect_events||[]).filter(event=>event.effect_kind==='confusion-self-hit')};
+ return {interruptions,input:x,teams:inputs,commands,actions,reference:snapshots.at(-1),candidate,reference_turns:snapshots,reference_log:referenceLog,candidate_log:result.log,candidate_turns:result.turnLog};
 }
 
 export const variants=[
@@ -100,3 +105,16 @@ export const variants=[
  {id:'redirect-release',redirectTurn:2,move:'Protect',turns:2},
  {id:'stored-slot-one',targetSlot:1,move:'Protect',turns:2}
 ];
+
+export function assertConfusionInterrupted(row){
+ assert.equal(row.input.interrupt,'confusion');
+ const expected=row.input.turns-1;
+ const ref=[...new Set(row.reference_log.filter(line=>line.startsWith('|-damage|')&&line.endsWith('[from] confusion')))];
+ assert.equal(ref.length,expected,'reference must actually self-hit from confusion');
+ assert(!row.reference_log.some(line=>line.startsWith('|move|')&&line.includes('|Fly|')&&line.includes('[from] lockedmove')),'reference must not release Fly');
+ assert.equal(row.candidate.actor_hp_loss,27*expected,'candidate self-hit HP');
+ assert.equal(row.reference.actor_hp_loss,27*expected,'reference self-hit HP');
+ assert.equal(row.candidate.charging,false,'confusion must cancel stored Fly');
+ assert.deepEqual(row.candidate.target_losses,[0,0]);
+ if(row.interruptions){assert.equal(row.interruptions.candidate_events.length,expected);assert.equal(row.interruptions.candidate_events[0].skipped_action_move,'Fly');for(const event of row.interruptions.candidate_events){assert.equal(event.action_denial_reason,'confusion');assert.equal(event.skipped_move,true);assert.equal(event.damage_applied,27);}}
+}

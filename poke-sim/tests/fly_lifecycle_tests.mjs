@@ -1,14 +1,15 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {lifecycleProbe,variants} from '../tools/fly-lifecycle-probes.mjs';
+import {lifecycleProbe,variants,assertConfusionInterrupted} from '../tools/fly-lifecycle-probes.mjs';
 
 for(const side of ['player','opponent'])for(const slot of [0,1])for(const {id,...config}of variants)test(`FLY-LIFE-${id}-${side}-${slot}`,()=>{
  const row=lifecycleProbe({...config,side,slot},process.env.CHAMPIONS_REFERENCE_SIM);
- const keys=['actor_types','actor_atk','charging','pp_spent','tackle_pp_spent','target_losses','item_consumed','active'];
+ const keys=['actor_types','actor_atk','actor_spa','charging','pp_spent','tackle_pp_spent','target_losses','item_consumed','active'];
  if(!config.interrupt)keys.push('actor_hp_loss','status');
  for(const key of keys)assert.deepEqual(row.candidate[key],row.reference[key],key+' '+JSON.stringify(row.input));
  if(['helping-hand','redirect-charge','stored-slot-one'].includes(id))assert(row.reference.target_losses.some(n=>n>0),'target assertion must observe damage');
  if(id==='helping-hand')assert.equal(row.candidate.target_losses[0],94,'independent boosted release damage');
+ if(config.interrupt==='confusion')assertConfusionInterrupted(row);
  if(config.interrupt)assert.equal(row.candidate.charging,false,'interrupted Fly must not remain concealed');
 });
 for(const move of ['Gust','Twister'])for(let roll=85;roll<=100;roll++)test(`FLY-DAMAGE-${move}-${roll}`,()=>{

@@ -254,9 +254,10 @@
       "status": "partial",
       "tests": [
         "tests/klutz_item_paths_tests.js",
-        "tests/klutz_item_reference_tests.mjs"
+        "tests/klutz_item_reference_tests.mjs",
+        "tests/charge_herb_suppression_tests.mjs"
       ],
-      "oracle": "Pinned pokemon-showdown 0.11.11 Champions synthetic custom games; not item eligibility.",
+      "oracle": "Pinned pokemon-showdown 0.11.11 Champions synthetic custom games; not item eligibility. Additional exact9b136a8 executable cases: reports/fly-repair-v2-2026-10-20/reference.json.",
       "boundary_vectors": [
         "active-control",
         "Klutz-control",
@@ -267,9 +268,20 @@
         "charge-turn-two",
         "sunlight",
         "consumption",
-        "lethal-hit"
+        "lethal-hit",
+        "five-charge-moves-active-Gas-both-sides-slots",
+        "consumed-Herb-and-Gas-faint-restoration",
+        "five-raw-Klutz-reversal-controls"
       ],
-      "known_gap": "Ability changes, consumed-item transitions, Magic Room/Embargo and broader item inventory remain unproved."
+      "known_gap": "Ability changes, consumed-item transitions, Magic Room/Embargo and broader item inventory remain unproved. Meteor Beam/Electro Shot repeat-charge SpA boost after Herb differs in16 retained orientations; no full-charge or client certification.",
+      "move_ids": [
+        "fly",
+        "solarbeam",
+        "solarblade",
+        "meteorbeam",
+        "electroshot",
+        "phantomforce"
+      ]
     },
     {
       "id": "MOVE-FAKE-OUT-FLINCH",
@@ -1467,7 +1479,7 @@
         "tests/fly_lifecycle_tests.mjs",
         "tests/fly_mutation_tests.mjs"
       ],
-      "oracle": "Pinned Showdown9b136a8 Champions doubles custom; reports/fly-repair-2026-10-20/reference.json. Synthetic teams, not official eligibility or client proof.",
+      "oracle": "Pinned Showdown9b136a8 Champions doubles custom; reports/fly-repair-v2-2026-10-20/reference.json. Synthetic teams, not official eligibility or client proof.",
       "boundary_vectors": [
         "seven-airborne-exceptions-both-sides",
         "both-active-slots",
@@ -1477,7 +1489,8 @@
         "SmackDown-ThousandArrows-Gravity-cancellation-and-next-action",
         "FollowMe-charge-release-stored-slot",
         "Soak-StrengthSap-DragonDarts-NoGuard",
-        "six-reversal-mutants"
+        "six-reversal-mutants",
+        "confusion33-of100-self-hit-causal-events-and-HP"
       ],
       "known_gap": "Eject Button unsupported (four retained discrepancies); forced-switch/re-entry, Coaching, target replacement/faint/ally selection and broader immunity/status combinations unproved. No client proof. Public Fly blocked."
     }

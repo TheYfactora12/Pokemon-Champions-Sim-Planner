@@ -1,0 +1,678 @@
+✔ CHARGE-HERB-Solar Beam-player-0-0 (513.7006ms)
+✔ CHARGE-HERB-Solar Beam-player-0-1 (139.8126ms)
+✔ CHARGE-HERB-Solar Beam-player-0-2 (137.5874ms)
+✖ CHARGE-HERB-Solar Beam-player-0-3 (161.9239ms)
+✔ CHARGE-HERB-Solar Beam-player-1-0 (119.3408ms)
+✔ CHARGE-HERB-Solar Beam-player-1-1 (133.6305ms)
+✔ CHARGE-HERB-Solar Beam-player-1-2 (133.1116ms)
+✖ CHARGE-HERB-Solar Beam-player-1-3 (135.6228ms)
+✔ CHARGE-HERB-Solar Beam-opponent-0-0 (135.4375ms)
+✔ CHARGE-HERB-Solar Beam-opponent-0-1 (134.8496ms)
+✔ CHARGE-HERB-Solar Beam-opponent-0-2 (132.8234ms)
+✖ CHARGE-HERB-Solar Beam-opponent-0-3 (130.6089ms)
+✔ CHARGE-HERB-Solar Beam-opponent-1-0 (133.5552ms)
+✔ CHARGE-HERB-Solar Beam-opponent-1-1 (134.5754ms)
+✔ CHARGE-HERB-Solar Beam-opponent-1-2 (139.5878ms)
+✖ CHARGE-HERB-Solar Beam-opponent-1-3 (131.8835ms)
+✔ CHARGE-HERB-Solar Blade-player-0-0 (174.2925ms)
+✔ CHARGE-HERB-Solar Blade-player-0-1 (145.7726ms)
+✔ CHARGE-HERB-Solar Blade-player-0-2 (143.289ms)
+✖ CHARGE-HERB-Solar Blade-player-0-3 (136.4066ms)
+✔ CHARGE-HERB-Solar Blade-player-1-0 (136.8357ms)
+✔ CHARGE-HERB-Solar Blade-player-1-1 (163.7995ms)
+✔ CHARGE-HERB-Solar Blade-player-1-2 (151.0242ms)
+✖ CHARGE-HERB-Solar Blade-player-1-3 (152.9396ms)
+✔ CHARGE-HERB-Solar Blade-opponent-0-0 (148.6678ms)
+✔ CHARGE-HERB-Solar Blade-opponent-0-1 (156.1177ms)
+✔ CHARGE-HERB-Solar Blade-opponent-0-2 (162.4466ms)
+✖ CHARGE-HERB-Solar Blade-opponent-0-3 (144.2601ms)
+✔ CHARGE-HERB-Solar Blade-opponent-1-0 (157.6406ms)
+✔ CHARGE-HERB-Solar Blade-opponent-1-1 (202.3352ms)
+✔ CHARGE-HERB-Solar Blade-opponent-1-2 (145.4283ms)
+✖ CHARGE-HERB-Solar Blade-opponent-1-3 (138.9382ms)
+✔ CHARGE-HERB-Meteor Beam-player-0-0 (139.9929ms)
+✖ CHARGE-HERB-Meteor Beam-player-0-1 (163.4358ms)
+✔ CHARGE-HERB-Meteor Beam-player-0-2 (156.8869ms)
+✖ CHARGE-HERB-Meteor Beam-player-0-3 (159.5059ms)
+✔ CHARGE-HERB-Meteor Beam-player-1-0 (156.8748ms)
+✖ CHARGE-HERB-Meteor Beam-player-1-1 (167.644ms)
+✔ CHARGE-HERB-Meteor Beam-player-1-2 (163.793ms)
+✖ CHARGE-HERB-Meteor Beam-player-1-3 (167.4696ms)
+✔ CHARGE-HERB-Meteor Beam-opponent-0-0 (159.6858ms)
+✖ CHARGE-HERB-Meteor Beam-opponent-0-1 (152.5203ms)
+✔ CHARGE-HERB-Meteor Beam-opponent-0-2 (205.0932ms)
+✖ CHARGE-HERB-Meteor Beam-opponent-0-3 (147.6559ms)
+✔ CHARGE-HERB-Meteor Beam-opponent-1-0 (160.1743ms)
+✖ CHARGE-HERB-Meteor Beam-opponent-1-1 (148.308ms)
+✔ CHARGE-HERB-Meteor Beam-opponent-1-2 (152.4513ms)
+✖ CHARGE-HERB-Meteor Beam-opponent-1-3 (134.0659ms)
+✔ CHARGE-HERB-Electro Shot-player-0-0 (136.1833ms)
+✖ CHARGE-HERB-Electro Shot-player-0-1 (136.5483ms)
+✔ CHARGE-HERB-Electro Shot-player-0-2 (130.1465ms)
+✖ CHARGE-HERB-Electro Shot-player-0-3 (135.0708ms)
+✔ CHARGE-HERB-Electro Shot-player-1-0 (136.115ms)
+✖ CHARGE-HERB-Electro Shot-player-1-1 (134.5447ms)
+✔ CHARGE-HERB-Electro Shot-player-1-2 (139.3723ms)
+✖ CHARGE-HERB-Electro Shot-player-1-3 (180.3372ms)
+✔ CHARGE-HERB-Electro Shot-opponent-0-0 (121.5742ms)
+✖ CHARGE-HERB-Electro Shot-opponent-0-1 (133.3274ms)
+✔ CHARGE-HERB-Electro Shot-opponent-0-2 (127.4085ms)
+✖ CHARGE-HERB-Electro Shot-opponent-0-3 (148.0892ms)
+✔ CHARGE-HERB-Electro Shot-opponent-1-0 (157.1803ms)
+✖ CHARGE-HERB-Electro Shot-opponent-1-1 (165.1ms)
+✔ CHARGE-HERB-Electro Shot-opponent-1-2 (152.4134ms)
+✖ CHARGE-HERB-Electro Shot-opponent-1-3 (147.4282ms)
+✔ CHARGE-HERB-Phantom Force-player-0-0 (139.047ms)
+✔ CHARGE-HERB-Phantom Force-player-0-1 (128.0595ms)
+✔ CHARGE-HERB-Phantom Force-player-0-2 (127.8321ms)
+✖ CHARGE-HERB-Phantom Force-player-0-3 (175.5144ms)
+✔ CHARGE-HERB-Phantom Force-player-1-0 (120.4489ms)
+✔ CHARGE-HERB-Phantom Force-player-1-1 (129.1214ms)
+✔ CHARGE-HERB-Phantom Force-player-1-2 (127.3277ms)
+✖ CHARGE-HERB-Phantom Force-player-1-3 (129.3345ms)
+✔ CHARGE-HERB-Phantom Force-opponent-0-0 (130.3416ms)
+✔ CHARGE-HERB-Phantom Force-opponent-0-1 (127.3188ms)
+✔ CHARGE-HERB-Phantom Force-opponent-0-2 (128.6752ms)
+✖ CHARGE-HERB-Phantom Force-opponent-0-3 (134.0696ms)
+✔ CHARGE-HERB-Phantom Force-opponent-1-0 (131.6661ms)
+✔ CHARGE-HERB-Phantom Force-opponent-1-1 (126.4418ms)
+✔ CHARGE-HERB-Phantom Force-opponent-1-2 (130.203ms)
+✖ CHARGE-HERB-Phantom Force-opponent-1-3 (166.1623ms)
+ℹ tests 80
+ℹ suites 0
+ℹ pass 52
+ℹ fail 28
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11985.6902
+
+✖ failing tests:
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Solar Beam-player-0-3 (161.9239ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Solar Beam-player-1-3 (135.6228ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Solar Beam-opponent-0-3 (130.6089ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Solar Beam-opponent-1-3 (131.8835ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Solar Blade-player-0-3 (136.4066ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Solar Blade-player-1-3 (152.9396ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Solar Blade-opponent-0-3 (144.2601ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Solar Blade-opponent-1-3 (138.9382ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Meteor Beam-player-0-1 (163.4358ms)
+  AssertionError [ERR_ASSERTION]: actor_spa
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Meteor Beam-player-0-3 (159.5059ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Meteor Beam-player-1-1 (167.644ms)
+  AssertionError [ERR_ASSERTION]: actor_spa
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Meteor Beam-player-1-3 (167.4696ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Meteor Beam-opponent-0-1 (152.5203ms)
+  AssertionError [ERR_ASSERTION]: actor_spa
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Meteor Beam-opponent-0-3 (147.6559ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Meteor Beam-opponent-1-1 (148.308ms)
+  AssertionError [ERR_ASSERTION]: actor_spa
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Meteor Beam-opponent-1-3 (134.0659ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Electro Shot-player-0-1 (136.5483ms)
+  AssertionError [ERR_ASSERTION]: actor_spa
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Electro Shot-player-0-3 (135.0708ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Electro Shot-player-1-1 (134.5447ms)
+  AssertionError [ERR_ASSERTION]: actor_spa
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Electro Shot-player-1-3 (180.3372ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Electro Shot-opponent-0-1 (133.3274ms)
+  AssertionError [ERR_ASSERTION]: actor_spa
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Electro Shot-opponent-0-3 (148.0892ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Electro Shot-opponent-1-1 (165.1ms)
+  AssertionError [ERR_ASSERTION]: actor_spa
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Electro Shot-opponent-1-3 (147.4282ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Phantom Force-player-0-3 (175.5144ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Phantom Force-player-1-3 (129.3345ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Phantom Force-opponent-0-3 (134.0696ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at poke-sim\tests\charge_herb_suppression_tests.mjs:4:134
+✖ CHARGE-HERB-Phantom Force-opponent-1-3 (166.1623ms)
+  AssertionError [ERR_ASSERTION]: charging
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/The%20Rig/Documents/Codex/2026-10-14/task-2/champions-moves-repair/poke-sim/tests/charge_herb_suppression_tests.mjs:6:110)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

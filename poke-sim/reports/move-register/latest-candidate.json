@@ -1,7 +1,7 @@
 {
   "schema_version": "champions-move-register-v1",
-  "identity": "1a11919f991dabbdf28aa667a1d1e25323bdb1b611ce92e6e254ef8e8177b673",
-  "path": "1a11919f991dabbdf28aa667a1d1e25323bdb1b611ce92e6e254ef8e8177b673/register.json",
+  "identity": "0b025f66483f3356c59f717f6bbbba9ddaac3db078a24cd871816be144650bcc",
+  "path": "0b025f66483f3356c59f717f6bbbba9ddaac3db078a24cd871816be144650bcc/register.json",
   "competitive_use": false,
   "counts": {
     "catalog_moves": 954,

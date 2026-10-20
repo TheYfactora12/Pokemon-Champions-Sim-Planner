@@ -195,10 +195,12 @@
         "tests/klutz_item_reference_tests.mjs",
         "tests/white_herb_reference_tests.mjs",
         "tests/red_card_reference_tests.mjs",
-        "tests/item_lifecycle_reference_tests.mjs"
+        "tests/item_lifecycle_reference_tests.mjs",
+        "tests/charge_herb_suppression_tests.mjs"
       ],
       "known_gaps": [
-        "The complete legal item inventory and all item-ability-move interaction orders are not covered."
+        "The complete legal item inventory and all item-ability-move interaction orders are not covered.",
+        "Meteor Beam/Electro Shot repeat-charge SpA boost after Power Herb remains discrepant; effective-item helper repair does not certify full charge lifecycle."
       ]
     },
     {

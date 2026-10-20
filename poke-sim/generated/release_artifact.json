@@ -1,11 +1,11 @@
 {
   "schema_version": "champions-release-artifact-v1",
-  "build_id": "v2.2.240-fly-contained",
+  "build_id": "v2.2.241-charge-herb",
   "release_manifest": "release_manifest.js",
   "bundle_name": "pokemon-champion-2026.html",
   "pages_path": "poke-sim/pokemon-champion-2026.html",
-  "bundle_sha256": "aae9e63de7356e99fbb7fca3c1a7910b34377309f0b3d50dc9943d4bb4235178",
-  "bundle_bytes": 11533642,
+  "bundle_sha256": "3655893d82aa65ec7f52f4887d7b4f01b19210a6525f4c488561d48c0b364d24",
+  "bundle_bytes": 11533531,
   "hash_scope": "sha256 of committed poke-sim/pokemon-champion-2026.html bytes",
   "external_assets": {
     "generated/source_sync_status.js": {
