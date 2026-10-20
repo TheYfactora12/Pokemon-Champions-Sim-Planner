@@ -1,5 +1,18 @@
 # Improvement Log
 
+## IMP-0111: Stop Utility Policy Reading Hidden Move Inventories
+
+- Four utility-scoring predicates queried unrevealed opponent moves; the
+  both-side Imprison mutation regression failed before repair.
+- v218 / engine 1.1.22 replaces those predicates with fixed heuristic priors.
+  Versioned policy v3 still declares full registered state and unverified strength.
+- Throwing-accessor, hidden-mutation, lock/PP and strong-damage checks cover seven
+  utilities. Existing Imprison redundancy handling remains intact.
+- Lesson: removing one knowledge channel is not a complete observation boundary
+  or proof of better decisions. Fixed priors can overuse guard/Taunt.
+- Local candidate only; remaining switching, visibility and release gates are
+  documented in [the dated report](release/UTILITY_INFORMATION_POLICY_2026-10-20.md).
+
 ## IMP-0110: Prepare Observed-Information And Switch Contracts
 
 - Reproduced both-side selector dependence on unrevealed opponent moves.

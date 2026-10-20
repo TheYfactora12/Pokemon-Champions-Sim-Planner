@@ -14,6 +14,16 @@
   },
   "cases": [
     {
+      "id": "POLICY-UTILITY-MOVE-INVENTORY",
+      "family": "moves-effects",
+      "behavior": "Utility scoring for Imprison, Quick Guard, contact shields and Taunt does not query enemy move inventories.",
+      "status": "partial",
+      "tests": ["tests/utility_information_policy_tests.js", "tests/imprison_policy_tests.js"],
+      "oracle": "Production-selector noninterference contract with throwing inventory getters; not Champions visibility proof or policy-strength parity.",
+      "boundary_vectors": ["both-sides", "seven-utility-moves", "hidden-inventory-mutations", "forbidden-read", "PP", "Taunt", "Encore", "Choice-lock", "strong-damage-control", "existing-seal"],
+      "known_gap": "Damage and priority scoring still use full opponent state. Fixed utility priors can choose unnecessary guards or Taunt; repeated-turn policy quality and a complete observation boundary remain unproved."
+    },
+    {
       "id": "PRIORITY-BLOCKER-SUPPRESSION",
       "family": "abilities",
       "behavior": "Priority blocking uses the protecting holder's Ability Shield, active Neutralizing Gas and Mold Breaker-family bypass for selection and execution.",

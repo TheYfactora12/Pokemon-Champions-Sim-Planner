@@ -1,13 +1,22 @@
 # Project Status
 
-Reviewed: 2026-10-17. This file owns current release facts and priorities.
+Reviewed: 2026-10-20. This file owns current release facts and priorities.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
 ## Local repair candidate
 
-v2.2.217-current-moves / engine 1.1.21 is a local candidate, not deployed.
+v2.2.218-utility-policy / engine 1.1.22 is an unpublished local candidate,
+stacked on PR278 and the isolated preparation commit. Four direct opponent
+move-inventory queries are removed from utility selection. Policy v3 remains
+full-state; better play and complete hidden-information safety are unproved.
+[Scope, checks and ordered acceptance gates](docs/release/UTILITY_INFORMATION_POLICY_2026-10-20.md).
+Next mechanics fixture: successful U-turn is incorrectly blocked by Shadow Tag.
+Voluntary switching and Mega ordering remain open. PR278 merge/release approval
+is pending; main's newer `ae3f52c` news update is not included in this candidate.
+
+v2.2.217-current-moves / engine 1.1.21 is draft PR278, not deployed.
 Current Practice uses the September 9 official move removals and PP corrections;
 Slash species eligibility remains pinned-reference evidence. Unsupported Fly
 blocks execution and aggregate recommendations while saved teams remain editable.

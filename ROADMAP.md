@@ -2,7 +2,7 @@
 
 <!-- Generated from poke-sim/source/project-roadmap.json. Run npm run roadmap:build in poke-sim. -->
 
-Reviewed: 2026-10-17. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
+Reviewed: 2026-10-20. Current runtime/deployment evidence: [STATUS.md](STATUS.md).
 
 **Prove the doubles simulator before expanding coaching.**
 
@@ -12,7 +12,7 @@ Local tests are not live database, deployment or universal game-accuracy proof. 
 
 ## Next Action
 
-Review local v217 move/PP corrections and Fly exclusion. Switching, policy, Mega ordering and primary stat/data evidence remain open. M-C approval and rankings stay gated; see STATUS.md.
+Review PR278 separately. Local v218 removes utility move-inventory probes; full-state damage scoring, pivot/trap parity, voluntary switching and Mega ordering remain open. See STATUS.md.
 
 ## Milestone Index
 

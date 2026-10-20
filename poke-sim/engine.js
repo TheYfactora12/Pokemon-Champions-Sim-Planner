@@ -3153,9 +3153,9 @@ function _priorityAbilityBlocker(attacker, defenders, field) {
     ((mon.item === 'Ability Shield' && !mon.itemConsumed) || (!gas && !bypass)));
 }
 function _selectionPolicyProvenance(forced) {
-  return {id:'greedy-state-aware-v2',information_model:'full_registered_state',
+  return {id:'greedy-state-aware-v3',information_model:'full_registered_state',
     forced_actions:!!forced,competitive_strength_verified:false,
-    limitations:['Selection can inspect unrevealed opponent moves and abilities.','Not a hidden-information or human-play policy.']};
+    limitations:['Damage and priority scoring inspect opponent stats, items and abilities.','Not a hidden-information or human-play policy.']};
 }
 
 function _mcMoveUnavailable(mon, move, field) {
@@ -4556,18 +4556,14 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
           continue;
         }
         if (move === 'Rage Powder' && liveAllies.some(a => !a.alive)) score = 35;
-        if (move === 'Quick Guard') {
-          const hasPriorityThreat = liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => getPriority(m) > 0));
-          if (hasPriorityThreat) score = 48;
-        }
+        // Fixed utility priors: never infer threats from unrevealed move inventories.
+        // These are heuristics, not verified predictions of the opponent's action.
+        if (move === 'Quick Guard') score = 48;
         if ((move === "King's Shield" || move === 'Spiky Shield' || move === 'Baneful Bunker' || move === 'Obstruct')) {
-          const hasContactThreat = liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => _isContactMove(m)));
-          if (hasContactThreat) score = 43;
+          score = 43;
         }
         if (move === 'Endure' && attacker.hp < attacker.maxHp * 0.35) score = 41;
-        if (move === 'Taunt' && liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => _moveCategory(m) === 'status'))) {
-          score = 34;
-        }
+        if (move === 'Taunt') score = 34;
         if (move === 'Encore' && liveEnemies.some(e => e.lastMoveUsed)) {
           score = 46;
         }
@@ -4588,7 +4584,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
             enemySide.imprisonedMoves && attacker.moves.filter(m => m !== 'Imprison')
               .every(m => enemySide.imprisonedMoves.has(m));
           if (alreadySealed) score = -1;
-          else if (liveEnemies.some(e => Array.isArray(e.moves) && e.moves.some(m => attacker.moves.includes(m)))) score = 45;
+          else score = 45;
         }
         if (move === 'Ally Switch' && liveAllies.length > 0) score = 32;
         if (move === 'Roost' && attacker.hp < attacker.maxHp * 0.5) score = 45;
@@ -8024,7 +8020,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.21'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.22'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
