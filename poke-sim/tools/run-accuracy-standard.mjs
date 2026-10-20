@@ -26,7 +26,7 @@ const report={schema_version:1,commit,run_id:process.env.GITHUB_RUN_ID||null,run
   generated_at:new Date().toISOString(),reference:referenceIdentity(),artifact,hashes,lanes:{},
   exclusions:discoverTests().filter(t=>t.lane==='skip'),
   units:'Suites are file executions, not independent accuracy cases. Side permutations and repeated assertions remain within their named scenario.',
-  visible_browser:{status:'unavailable',reason:'Pinned hosted browser dependency awaiting installation approval; local cached-runtime evidence is separate.'},
+  visible_browser:{status:'separate_job',reason:'Pinned Playwright/Chromium browser checks run in Candidate browser replay evidence; inspect its exact-head receipt and retained captures.'},
   client_parity:{status:'not_run',reason:'Current-client immutable reviewed evidence incomplete'},
   policy_quality:{status:'not_run',reason:'Information isolation is not competitive strength'}};
 let failed=false;

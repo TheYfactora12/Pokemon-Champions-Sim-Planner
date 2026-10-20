@@ -1724,3 +1724,8 @@ other foundation findings remain open in the same register.
 ## IMP-0122 — Amnesia self-stage and failure continuity (2026-10-20)
 
 A reference-admitted self-boost fell through to an opponent status path. Added a scoped handler, effective Contrary/Simple suppression, self action identity and explicit cap failure. Independent review caught that failure text alone did not set state used by next-turn Stomping Tantrum; four two-turn regressions now protect that consequence. Thirty focused cases pass. Base source and isolated exact-upstream probes agree; current-client parity remains unproved. General lesson: test downstream state consumers, not only the immediate number or log.
+
+
+## IMP-0123 - Preserve exclusions through every evidence consumer (2026-10-20)
+
+The original auditor proved that importer quarantine did not protect direct aggregate consumers. Shared terminal-outcome proof now gates all identified consumers and preserves rejection reasons through compact storage. Independent review then caught rejection-reason laundering, series winner mismatch and retained-log poison-guard inconsistency; negative controls reproduce and reject each. Replay comparison consumes every action/detail occurrence, while the renderer follows resolved actors rather than planned-action counts. Readiness parses typed source bodies and binds semantic fields, identities and protocols instead of trusting signed declarations. Browser tests hash executed external responses, block service workers and replace stale receipts on failure. The original exact-head auditor must still close R1–R5; development checks do not certify current-client mechanics. See [checkpoint receipt](release/EVIDENCE_BOUNDARIES_2026-10-20.md).

@@ -105,6 +105,7 @@ function load(file) {
   'move_legality.js',
   'runtime_data.js',
   'logger.js',
+  'outcome_policy.js',
   'engine.js',
   'storage_adapter.js',
   'supabase_adapter.js',

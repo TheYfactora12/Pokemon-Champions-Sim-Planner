@@ -173,6 +173,7 @@ function getSimulationEvidencePolicy(provenance, games) {
   var p = provenance || {};
   var policy = getRulesetEvidencePolicy(p.ruleset_id);
   var gaps = [];
+  if(typeof ChampionsOutcome==='undefined' || !Array.isArray(games) || !games.length || p.outcome_count!==games.length || games.some(function(game){return !ChampionsOutcome.evaluate(game).eligible;}))gaps.push('outcome_evidence');
   var ruleset = getChampionsRuleset(p.ruleset_id);
   if (!ruleset.version || p.ruleset_version !== ruleset.version) gaps.push('ruleset_version');
   if (p.regulation_id !== ruleset.id) gaps.push('regulation_id');

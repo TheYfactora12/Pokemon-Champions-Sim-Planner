@@ -28,19 +28,32 @@ function falsy(v, msg) { if (v) throw new Error(msg + ' expected falsy'); }
 // the impl contract and seed TEAMS.
 var { freshCtx } = require('./_db_helpers.js');
 var ctx = freshCtx();
+vm.runInContext(fs.readFileSync(path.resolve(__dirname, '..', 'outcome_policy.js'), 'utf8'), ctx);
 vm.runInContext(fs.readFileSync(path.resolve(__dirname, '..', 'rulesets.js'), 'utf8'), ctx);
+// Explicit synthetic terminal records exercise storage contracts, not battle parity.
+function terminalFixture(result) {
+  return { schema_version: 'champions-outcome-v1', result, terminal: true, timerExpired: false,
+    playerSurvivors: result === 'win' ? 2 : 0, oppSurvivors: result === 'loss' ? 2 : 0 };
+}
+function outcomeFixture(wins = 1, losses = 0) {
+  return Array.from({ length: wins }, () => terminalFixture('win'))
+    .concat(Array.from({ length: losses }, () => terminalFixture('loss')));
+}
 function buildVerifiedPayload(player, opponent, bo, result) {
+  const outcomes = result.outcome_records || outcomeFixture(
+    result.wins === undefined ? 1 : result.wins, result.losses || 0);
   const provenance = {
     schema_version: 'champions-simulation-provenance-v1', engine_version: '1.1.1', build_id: 'mock-build',
     ruleset_id: 'champions_reg_m_doubles_bo3', opponent_ruleset_id: 'champions_reg_m_doubles_bo3',
     ruleset_version: 'champions-reg-ma-2026-v1', regulation_id: 'champions_reg_m_a_2026',
     format: 'doubles', bo, player_team_id: player, opp_team_id: opponent,
     player_team_digest: 'a'.repeat(64), opp_team_digest: 'b'.repeat(64), policy_model: 'deterministic-v1',
-    selection_policy: { player: 'manual', opponent: 'random' }
+    selection_policy: { player: 'manual', opponent: 'random' }, outcome_count: outcomes.length
   };
-  const sample = Object.assign({ provenance }, result);
-  if (sample.allLogs) sample.allLogs = sample.allLogs.map(log => Object.assign({
-    result: 'win', turns: 4, trTurns: 1, winCondition: 'KO', log: ['synthetic mock turn'],
+  const sample = Object.assign({ provenance, outcome_records: outcomes, requestedBattles: outcomes.length }, result);
+  if (sample.allLogs) sample.allLogs = sample.allLogs.map((log, index) => Object.assign({
+    outcome_proof: outcomes[index], result: outcomes[index].result,
+    turns: 4, trTurns: 1, winCondition: 'KO', log: ['synthetic mock turn'],
     provenance, format: provenance.format
   }, typeof log === 'object' ? log : {}));
   return ctx.window._buildAnalysisPayload(player, opponent, bo, sample);
@@ -104,7 +117,8 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
   
   T('T-save-4', function() {
     // Missing provenance cannot borrow a current ruleset.
-    var payload = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {});
+    var payload = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3,
+      { outcome_records: outcomeFixture(), requestedBattles: 1 });
     eq(payload.ruleset_id, 'unknown', 'missing provenance has no invented ruleset');
   });
   
@@ -249,29 +263,24 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
   });
   
   T('T-save-10', function() {
-    // analyses.win_rate is numeric(5,4) in [0,1] — reject out-of-range only.
-    // 0.5 is valid; 1.5 and -0.1 must be rejected by _buildAnalysisPayload.
+    // The verified terminal records, not supplied aggregate scalars, own win rate.
     installAdapter(ctx, { forceMock: true });
-    // Valid mid-range value should NOT throw.
-    var ok = buildVerifiedPayload('player', 'mega_altaria', 3, { win_rate: 0.5 });
-    eq(ok.win_rate, 0.5, 'win_rate=0.5 is valid (in [0,1])');
-    // Out-of-range high
-    var threwHigh = false;
-    try { buildVerifiedPayload('player', 'mega_altaria', 3, { win_rate: 1.5 }); }
-    catch (e) { threwHigh = true; }
-    eq(threwHigh, true, '_buildAnalysisPayload should reject win_rate=1.5 (>1)');
-    // Out-of-range low
-    var threwLow = false;
-    try { buildVerifiedPayload('player', 'mega_altaria', 3, { win_rate: -0.1 }); }
-    catch (e) { threwLow = true; }
-    eq(threwLow, true, '_buildAnalysisPayload should reject win_rate=-0.1 (<0)');
+    for (const claimed of [0.5, 1.5, -0.1]) {
+      var ok = buildVerifiedPayload('player', 'mega_altaria', 3,
+        { outcome_records: outcomeFixture(1, 1), wins: 999, losses: 0, win_rate: claimed });
+      eq(ok.win_rate, 0.5, 'terminal evidence overrides claimed win rate ' + claimed);
+      eq(ok.wins, 1, 'verified wins override scalar');
+      eq(ok.losses, 1, 'verified losses override scalar');
+    }
   });
   
   T('T-save-11', function() {
     // wins + losses + draws === sample_size
     installAdapter(ctx, { forceMock: true });
-    var payload = buildVerifiedPayload('player', 'mega_altaria', 3, { sample_size: 100 });
-    payload.wins = 60; payload.losses = 30; payload.draws = 10;
+    var payload = buildVerifiedPayload('player', 'mega_altaria', 3, {
+      outcome_records: outcomeFixture(60, 40), sample_size: 999
+    });
+    eq(payload.sample_size, 100, 'sample size is derived from terminal evidence');
     return Promise.resolve(ctx.window.SupabaseAdapter.saveAnalysis(payload)).then(function() {
       // In mock mode, we can check the mock state
       // In live mode, the data is in the real database, so just verify the payload was correct
@@ -428,8 +437,13 @@ describe('Module 4 — Save analyses suite (18 cases)', function() {
 
 T('identity: incomplete legacy payload makes no DB writes', async function() {
   installAdapter(ctx, { forceMock: true });
-  const payload = ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {});
-  eq(await ctx.window.SupabaseAdapter.saveAnalysis(payload), null, 'legacy payload quarantined');
+  let rejected = false;
+  try { ctx.window._buildAnalysisPayload('player', 'mega_altaria', 3, {}); }
+  catch (error) { rejected = /Complete outcome evidence required/.test(error.message); }
+  truthy(rejected, 'legacy payload without outcome evidence rejected at construction');
+  const payload = buildVerifiedPayload('player', 'mega_altaria', 3, {});
+  delete payload.analysis_json.game_provenance;
+  eq(await ctx.window.SupabaseAdapter.saveAnalysis(payload), null, 'legacy stored payload quarantined');
   eq(mockSupabaseClient.getState().analyses.length, 0, 'no insert');
 });
 T('identity: JSON envelope survives insert and recent-history read', async function() {
@@ -465,11 +479,40 @@ T('identity: singles storage stays labeled and ineligible for doubles learning',
   installAdapter(ctx, { forceMock: true });
   const payload = buildVerifiedPayload('player', 'mega_altaria', 3, {});
   payload.analysis_json.provenance.format = 'singles';
+  payload.analysis_json.game_provenance.forEach(game => { game.format = 'singles'; });
   payload.format = 'singles';
   truthy(await ctx.window.SupabaseAdapter.saveAnalysis(payload), 'isolated singles history saved');
   const rows = await ctx.window.SupabaseAdapter.loadRecentAnalyses(20);
   eq(rows[0].format, 'singles', 'singles retained');
   eq(rows[0].evidence_policy.learning_eligibility, 'isolated_singles_regression', 'never doubles learning');
+});
+T('outcomes: incomplete, unfinished and contradictory evidence cannot build a saved aggregate', function() {
+  const cases = [
+    { outcome_records: [], requestedBattles: 0 },
+    { outcome_records: outcomeFixture(), requestedBattles: 2 },
+    { outcome_records: [{ ...terminalFixture('win'), terminal: false }], requestedBattles: 1 },
+    { outcome_records: [{ ...terminalFixture('win'), timerExpired: true }], requestedBattles: 1 },
+    { outcome_records: [{ ...terminalFixture('win'), result: 'loss' }], requestedBattles: 1 }
+  ];
+  for (const sample of cases) {
+    let rejected = false;
+    try { buildVerifiedPayload('player', 'mega_altaria', 3, sample); }
+    catch (error) { rejected = /Complete outcome evidence required/.test(error.message); }
+    truthy(rejected, 'invalid outcome aggregate rejected: ' + JSON.stringify(sample));
+  }
+});
+T('outcomes: stored count mismatch or invalid terminal proof makes no DB writes', async function() {
+  for (const corrupt of [
+    payload => { payload.analysis_json.provenance.outcome_count++; },
+    payload => { payload.analysis_json.game_provenance[0].outcome_proof.terminal = false; },
+    payload => { payload.analysis_json.game_provenance[0].outcome_proof.result = 'loss'; }
+  ]) {
+    installAdapter(ctx, { forceMock: true });
+    const payload = buildVerifiedPayload('player', 'mega_altaria', 3, {});
+    corrupt(payload);
+    eq(await ctx.window.SupabaseAdapter.saveAnalysis(payload), null, 'corrupt outcome quarantined');
+    eq(mockSupabaseClient.getState().analyses.length, 0, 'no corrupt insert');
+  }
 });
 
 (async function() {

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {generateKeyPairSync,sign} from 'node:crypto';
+import {FIELDS,ORACLES} from '../tools/competitive-evidence-schema.mjs';
 import {assess,REQUIRED,sha256} from '../tools/check-competitive-readiness.mjs';
 
 // Ephemeral synthetic keys/bytes exercise the validator, never production approval.
@@ -9,7 +10,8 @@ function fixture() {
   const files=new Map(), target={format:'doubles',client_version:'test-1',regulation_id:'synthetic',
     effective_from_utc:'2026-10-01T00:00:00Z',effective_to_utc:'2026-11-01T00:00:00Z',server_context:'synthetic-server-epoch'};
   const identity={build_id:'test-build',engine_sha256:'e'.repeat(64),bundle_sha256:'b'.repeat(64),
-    reference_sha256:'a'.repeat(64),benchmark_sha256:'c'.repeat(64),benchmark_cases:['case-a'],benchmark_requirements:{'case-a':{asserted_fields:['exact_hp'],evidence_kinds:['client-mechanics']}},unproved_cases:[]};
+    reference_sha256:'a'.repeat(64),benchmark_sha256:'c'.repeat(64),benchmark_cases:['case-a'],benchmark_requirements:{'case-a':{asserted_fields:['exact_hp'],evidence_kinds:['client-mechanics'],field_contracts:{exact_hp:{type:'number',unit:'hp',min:0}}}},unproved_cases:[]};
+  Object.assign(identity,{external_assets:{'mc_review.js':'d'.repeat(64)},installed_reference:{'dist/sim/battle.js':'f'.repeat(64)},checker_schema:{checker:'1'.repeat(64)}});
   const pkg={schema_version:1,target,identity,benchmark_cases:['case-a'],unsupported:[],evidence:REQUIRED.map((kind,i)=>{
     const bytes=Buffer.from(`synthetic observation ${kind}`), name=`evidence/${i}.json`;files.set(name,bytes);
     return {id:kind,kind,path:name,sha256:sha256(bytes),status:'passed',mismatches:0,oracle:'champions-client',
@@ -18,6 +20,21 @@ function fixture() {
   pkg.case_results=[{id:'case-a',status:'passed',mismatches:0,asserted_fields:['exact_hp'],evidence_ids:['client-mechanics']}];
   for(const e of pkg.evidence.filter(e=>['official-client-version','regulation-rules'].includes(e.kind))){
     e.oracle='official-publication';e.source_url=e.kind==='official-client-version'?'https://www.nintendo.com/synthetic':'https://champions-news.pokemon-home.com/synthetic';e.extracted={...target};e.source_capture={path:e.path,sha256:e.sha256};
+  }
+  for(const e of pkg.evidence){
+    e.oracle=ORACLES[e.kind];
+
+    const values={registration_accepted:e.kind==='accepted-complete-team',rejection_code:'item-clause',terminal:true,winner:'player',acceptance_met:true,allow:true,deny:false,replay_match:true,loaded_assets_match:true,exact_hp:42,...target};
+    const fields=e.kind==='client-mechanics'?['exact_hp']:FIELDS[e.kind];
+    const input=Buffer.from(JSON.stringify({schema_version:'competitive-observations-v1',kind:e.kind,target,identity,case_id:'case-a',field_contracts:Object.fromEntries(fields.map(field=>[field,field==='exact_hp'?{type:'number',unit:'hp',min:0}:{type:typeof values[field],unit:typeof values[field]==='boolean'?'boolean':'text'}])),protocol_id:'synthetic-held-out-v1',held_out:true,environment:'synthetic-service',loaded_assets:identity.external_assets,status:'complete',expected:values,observed:values}));files.set(`input/${e.id}`,input);
+    const body={schema_version:'competitive-comparison-v1',kind:e.kind,oracle:e.oracle,target,identity,status:'passed',mismatches:0,
+      observations:fields.map((field,i)=>({id:`${e.id}-${i}`,case_id:'case-a',field,comparator:'exact',unit:field==='exact_hp'?'hp':typeof values[field]==='boolean'?'boolean':'text',expected:values[field],observed:values[field],expected_source:{input_id:'observations',pointer:`/expected/${field}`},observed_source:{input_id:'observations',pointer:`/observed/${field}`} })),
+      inputs:[{id:'observations',path:`input/${e.id}`,sha256:sha256(input)}],protocol_id:'synthetic-held-out-v1',held_out:true,environment:'synthetic-service',loaded_assets:identity.external_assets};
+    if(e.oracle==='official-publication'){
+      let text='';body.source_spans={};for(const field of fields){const value=String(target[field]);body.source_spans[field]={start:text.length,end:text.length+value.length};text+=value+'\n';}
+      const raw=Buffer.from(text),name=`source/${e.id}`;files.set(name,raw);e.source_capture={path:name,sha256:sha256(raw)};
+    }
+    const bytes=Buffer.from(JSON.stringify(body));files.set(e.path,bytes);e.sha256=sha256(bytes);
   }
   const manifest={schema_version:1,target};
   const seal=()=>{const bytes=Buffer.from(JSON.stringify(pkg));files.set('package.json',bytes);
@@ -33,6 +50,13 @@ test('synthetic reviewed complete package can pass the pure contract',()=>{
   const f=fixture();assert.equal(assess(f.manifest,f.options).status,'READY');
 });
 const mutations={
+  'empty all evidence':f=>{const bytes=Buffer.from('');f.files.set('empty',bytes);for(const e of f.pkg.evidence){e.path='empty';e.sha256=sha256(bytes);if(e.source_capture)e.source_capture={path:'empty',sha256:sha256(bytes)};}f.seal();},
+  'contradictory body':f=>{const e=f.pkg.evidence.find(e=>e.kind==='client-mechanics');const body=JSON.parse(f.files.get(e.path));body.observations[0].observed=1;const bytes=Buffer.from(JSON.stringify(body));f.files.set(e.path,bytes);e.sha256=sha256(bytes);f.seal();},
+  'unsupported policy service browser oracles':f=>{for(const e of f.pkg.evidence)if(['competitive-policy-quality','live-service','paired-browser-replays'].includes(e.kind))e.oracle='self-generated-unverified';f.seal();},
+  'duplicate benchmark inventory':f=>{f.pkg.benchmark_cases.push('case-a');f.seal();},
+  'changed external identity':f=>{f.options.identity={...f.options.identity,external_assets:{'mc_review.js':'0'.repeat(64)}};},
+  'changed installed reference':f=>{f.options.identity={...f.options.identity,installed_reference:{'dist/sim/battle.js':'0'.repeat(64)}};},
+  'changed checker schema':f=>{f.options.identity={...f.options.identity,checker_schema:{checker:'0'.repeat(64)}};},
   'blank assertion':f=>{f.pkg.case_results[0].asserted_fields=[''];f.seal();},
   'unrelated case evidence':f=>{f.pkg.case_results[0].evidence_ids=['official-client-version'];f.seal();},
   'undeclared case requirements':f=>{delete f.options.identity.benchmark_requirements;},
@@ -81,3 +105,39 @@ test('negative suite kills a deliberately always-ready checker',()=>{
   verifyChecker(assess);
   assert.throws(()=>verifyChecker(()=>({status:'READY'})),assert.AssertionError);
 });
+const bodyMutations={
+  'empty observations':b=>{b.observations=[];},
+  'missing observed':b=>{delete b.observations[0].observed;},
+  'null observed':b=>{b.observations[0].observed=null;},
+  'duplicate assertions':b=>{b.observations.push(b.observations[0]);},
+  'wrong body context':b=>{b.target={...b.target,client_version:'old'};},
+  'body asserts different field':b=>{b.observations[0].field='display_label';},
+  'body failed against passed package':b=>{b.status='failed';b.mismatches=1;},
+  'missing immutable inputs':b=>{b.inputs=[];}
+};
+for(const [name,mutate] of Object.entries(bodyMutations))test(`parsed body rejects ${name}`,()=>{
+  const f=fixture(),e=f.pkg.evidence.find(e=>e.kind==='client-mechanics');const body=JSON.parse(f.files.get(e.path));mutate(body);
+  const bytes=Buffer.from(JSON.stringify(body));f.files.set(e.path,bytes);e.sha256=sha256(bytes);f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');
+});
+test('official source bytes must reproduce extracted values even after resigning',()=>{
+  const f=fixture(),e=f.pkg.evidence[0],raw=Buffer.from('unrelated official publication');f.files.set(e.source_capture.path,raw);e.source_capture.sha256=sha256(raw);f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');
+});
+function rewriteEvidence(f,kind,mutate){const e=f.pkg.evidence.find(e=>e.kind===kind),b=JSON.parse(f.files.get(e.path));mutate(b,e);const bytes=Buffer.from(JSON.stringify(b));f.files.set(e.path,bytes);e.sha256=sha256(bytes);f.seal();}
+for(const value of ['banana',{},-1])test(`typed HP rejects ${JSON.stringify(value)}`,()=>{const f=fixture();rewriteEvidence(f,'client-mechanics',b=>{b.observations[0].expected=value;b.observations[0].observed=value;});assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+test('unrelated kind cannot supply missing case assertion',()=>{const f=fixture();rewriteEvidence(f,'client-mechanics',b=>{b.observations[0].case_id='unrelated-case';});rewriteEvidence(f,'official-client-version',b=>{b.observations.push({id:'borrowed-hp',case_id:'case-a',field:'exact_hp',comparator:'exact',unit:'hp',expected:42,observed:42,expected_source:{input_id:'observations',pointer:'/expected/exact_hp'},observed_source:{input_id:'observations',pointer:'/observed/exact_hp'}});});f.pkg.case_results[0].evidence_ids=['client-mechanics','official-client-version'];f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+for(const mode of ['unsupported','contradictory','failed'])test(`parsed input rejects ${mode}`,()=>{const f=fixture();rewriteEvidence(f,'client-mechanics',b=>{const ref=b.inputs[0];let input=JSON.parse(f.files.get(ref.path));if(mode==='unsupported')input={status:'failed',expected_hp:42,observed_hp:0};if(mode==='contradictory')input.observed.exact_hp=0;if(mode==='failed')input.status='failed';const bytes=Buffer.from(JSON.stringify(input));f.files.set(ref.path,bytes);ref.sha256=sha256(bytes);});assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+test('missing field type contract rejects',()=>{const f=fixture();delete f.options.identity.benchmark_requirements['case-a'].field_contracts;f.seal();assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+test('wrong unit rejects',()=>{const f=fixture();rewriteEvidence(f,'client-mechanics',b=>{b.observations[0].unit='percent';});assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+test('pointer cannot read expected values as observed',()=>{const f=fixture();rewriteEvidence(f,'client-mechanics',b=>{b.observations[0].observed_source.pointer='/expected/exact_hp';});assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+function rewriteInput(f,kind,mutate,mutateBody=()=>{}){rewriteEvidence(f,kind,b=>{const ref=b.inputs[0],input=JSON.parse(f.files.get(ref.path));mutate(input);mutateBody(b);const bytes=Buffer.from(JSON.stringify(input));f.files.set(ref.path,bytes);ref.sha256=sha256(bytes);});}
+for(const [name,kind,mutate] of [
+  ['stale input identity','client-mechanics',i=>{i.identity={build_id:'old',engine_sha256:'0'.repeat(64)};}],
+  ['wrong input case','client-mechanics',i=>{i.case_id='unrelated-case';}],
+  ['wrong input units','client-mechanics',i=>{i.field_contracts.exact_hp.unit='percent';}],
+  ['missing input field contract','client-mechanics',i=>{delete i.field_contracts.exact_hp;}],
+  ['false held-out input','competitive-policy-quality',i=>{i.held_out=false;}],
+  ['wrong input protocol','competitive-policy-quality',i=>{i.protocol_id='unreviewed';}],
+  ['wrong service environment','live-service',i=>{i.environment='another-service';}],
+  ['wrong loaded asset source','paired-browser-replays',i=>{i.loaded_assets={};}]
+])test(name,()=>{const f=fixture();rewriteInput(f,kind,mutate);assert.notEqual(assess(f.manifest,f.options).status,'READY');});
+test('unrelated counter cannot stand in for observed HP',()=>{const f=fixture();rewriteInput(f,'client-mechanics',i=>{i.observed.exact_hp=0;i.observed.unrelated_counter=42;},b=>{b.observations[0].observed_source.pointer='/observed/unrelated_counter';});assert.notEqual(assess(f.manifest,f.options).status,'READY');});

@@ -29,7 +29,8 @@
     "showdown:replays": "node tools/ingest-showdown-replays.mjs",
     "test:accuracy:standard": "node tools/run-accuracy-standard.mjs",
     "readiness:competitive": "node tools/check-competitive-readiness.mjs",
-    "release:competitive:check": "node tools/check-competitive-readiness.mjs --strict"
+    "release:competitive:check": "node tools/check-competitive-readiness.mjs --strict",
+    "test:browser": "node tools/run-browser-audit.mjs"
   },
   "dependencies": {
     "@smogon/calc": "^0.11.0",
@@ -46,6 +47,7 @@
   "license": "MIT",
   "devDependencies": {
     "cheerio": "1.1.2",
+    "playwright": "1.62.1",
     "pokemon-showdown": "0.11.11"
   }
 }

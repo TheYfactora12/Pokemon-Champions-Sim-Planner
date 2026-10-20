@@ -63,6 +63,7 @@ function load(file) {
 
 load('data.js');
 try { load('legality.js'); } catch (_) {}
+load('outcome_policy.js');
 load('engine.js');
 try { load('strategy-injectable.js'); } catch (_) {}
 load('ui.js');
@@ -99,7 +100,7 @@ const KNOWN_TEAMS = [
 
 console.log('\n=== Phase 4d threat response tests ===\n');
 
-T('1. solveThreatResponse returns a candidate for every known team pair', () => {
+T('1. solveThreatResponse accounts for eligible and excluded branches for every known team pair', () => {
   for (const player of KNOWN_TEAMS) {
     for (const opp of KNOWN_TEAMS) {
       const out = ctx.solveThreatResponse(player, opp, {
@@ -109,8 +110,9 @@ T('1. solveThreatResponse returns a candidate for every known team pair', () => 
         budgetMsTotal: 5000
       });
       truthy(out, player + ' vs ' + opp + ' returned null');
-      eq(out.branches.length, 4, player + ' vs ' + opp + ' branch count');
-      truthy(out.best_candidate, player + ' vs ' + opp + ' missing best candidate');
+      eq(out.branches.length + out.excluded_branches.length, 4, player + ' vs ' + opp + ' branch count');
+      eq(!!out.best_candidate, out.branches.length > 0, player + ' vs ' + opp + ' candidate eligibility');
+      out.excluded_branches.forEach(b => { eq(b.n, 0); eq(b.win_rate, null); eq(b.excludedOutcomes, b.attemptedBattles); });
     }
   }
 });
@@ -158,6 +160,30 @@ T('7. renderer emits recommended and alternatives cards', () => {
   truthy(html.includes('Threat Response'), 'missing heading');
   truthy(html.includes('cs-line-recommended'), 'missing recommended card');
   truthy(html.includes('Alternatives'), 'missing alternatives');
+});
+
+T('8. legacy unverified outcomes cannot produce recommendations or confidence', () => {
+  const original = ctx.simulateBattle;
+  try {
+    ctx.simulateBattle = () => ({ result: 'win', turns: 1, turnLog: [] });
+    const out = ctx.solveThreatResponse('player', 'mega_altaria', { simsPerBranch: 2, noCache: true });
+    eq(out.branches.length, 0); eq(out.excluded_branches.length, 4);
+    eq(out.best_candidate, null); eq(out.confidence, null);
+    out.excluded_branches.forEach(b => { eq(b.excludedOutcomes, 2); eq(b.excludedLogs.length, 2); truthy(Object.keys(b.exclusionReasons).length); });
+  } finally { ctx.simulateBattle = original; }
+});
+
+T('9. mixed outcomes exclude uncertain logs from rates and consistency', () => {
+  const original = ctx.simulateBattle; let calls = 0;
+  try {
+    ctx.simulateBattle = (_p, _o, options) => {
+      eq(options.rulesetId, ctx.getSelectedRegulationId(), 'selected ruleset');
+      return ++calls % 2 ? { result: 'win', terminal: true, timerExpired: false, playerSurvivors: 1, oppSurvivors: 0, turns: 2, log: [] } : { result: 'loss', terminal: false, timerExpired: false, turns: 999, log: ['critical missed flinch'] };
+    };
+    const out = ctx.solveThreatResponse('player', 'mega_altaria', { simsPerBranch: 2, noCache: true });
+    eq(out.branches.length, 4); eq(out.excluded_branches.length, 0);
+    out.branches.forEach(b => { eq(b.n, 1); eq(b.win_rate, 1); eq(b.excludedOutcomes, 1); eq(b.consistency_score.variance, 0); eq(b.consistency_score.rng_dependency, 0); });
+  } finally { ctx.simulateBattle = original; }
 });
 
 console.log(`\nPhase 4d threat response: ${pass} pass, ${fail} fail\n`);

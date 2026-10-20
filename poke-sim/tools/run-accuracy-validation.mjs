@@ -57,7 +57,7 @@ export function checkTerminalOutcome(result) {
   return 'one-sided-elimination-checked';
 }
 export const ACCURACY_RUNTIME_FILES = ['data.js','own_state_policy.js','generated/pokemon_showdown_legal_data.js',
-  'generated/pokemon_showdown_species_weights.js','generated/champions_move_overrides.js','runtime_data.js','engine.js','rulesets.js'];
+  'generated/pokemon_showdown_species_weights.js','generated/champions_move_overrides.js','runtime_data.js','outcome_policy.js', 'engine.js','rulesets.js'];
 export function loadAccuracyRuntime() {
   const context=vm.createContext({console}),provenance={};
   for(const file of ACCURACY_RUNTIME_FILES){const text=readFileSync(new URL(file,root),'utf8');provenance[file]=sha(text);vm.runInContext(text,context,{filename:file});}

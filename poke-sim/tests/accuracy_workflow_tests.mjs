@@ -13,4 +13,7 @@ assert(pages.indexOf('npm run release:competitive:check')>0);
 assert(pages.indexOf('npm run release:competitive:check')<pages.indexOf('actions/configure-pages'));
 assert(!pages.includes('continue-on-error'));
 assert(!ci.includes('permissions: write-all'));
+assert.match(ci,/name: Candidate browser replay evidence/);
+assert.match(ci,/npx --no-install playwright install chromium/);
+assert.match(ci,/npm run test:browser/);
 console.log('Accuracy workflow: existing triggers, recurring controls, mandatory evidence and strict pre-deploy readiness verified.');

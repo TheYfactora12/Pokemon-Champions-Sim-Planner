@@ -23,7 +23,7 @@ for(const swap of [false,true]) {
 }
 const full=vm.createContext({console,Math,setTimeout,window:{}});let records=[];
 full.capture=input=>{records.push(JSON.parse(JSON.stringify(input)));};
-for(const f of ['data.js','generated/pokemon_showdown_legal_data.js','runtime_data.js','engine.js']) {
+for(const f of ['data.js','generated/pokemon_showdown_legal_data.js','outcome_policy.js','runtime_data.js','engine.js']) {
  let text=fs.readFileSync(path.join(root,f),'utf8');if(f==='engine.js')text=text.replace('function _chooseDefaultDecision(input) {','function _chooseDefaultDecision(input) { globalThis.capture(input);');vm.runInContext(text,full,{filename:f});
 }
 const mon=(name,moves,ability='Pressure',item='')=>({name,moves,ability,item,nature:'Hardy',evs:{}}),team=members=>({format:'champions',members});

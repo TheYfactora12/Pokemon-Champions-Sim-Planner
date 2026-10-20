@@ -111,6 +111,7 @@ function load(file) {
   'generated/champions_move_pools.js', 'generated/mc_review_reference.js',
   'move_legality.js',
   'logger.js',
+  'outcome_policy.js',
   'engine.js',
   'storage_adapter.js',
   'supabase_adapter.js',

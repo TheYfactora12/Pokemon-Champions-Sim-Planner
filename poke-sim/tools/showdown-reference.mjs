@@ -232,7 +232,7 @@ export function runReferenceProbe({ formatId, player, opponent, turns, seed = [1
 export function loadLocalEngine() {
   const context = vm.createContext({ console });
   const hashes = {};
-  for (const file of ['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/pokemon_showdown_species_weights.js', 'generated/champions_move_overrides.js', 'runtime_data.js', 'engine.js']) {
+  for (const file of ['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/pokemon_showdown_species_weights.js', 'generated/champions_move_overrides.js', 'runtime_data.js', 'outcome_policy.js', 'engine.js']) {
     const content = fs.readFileSync(new URL(file, root), 'utf8');
     hashes[file] = hash(content); vm.runInContext(content, context, { filename: file });
   }

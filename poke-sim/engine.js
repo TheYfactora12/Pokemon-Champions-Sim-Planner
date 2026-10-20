@@ -2,63 +2,9 @@
 // Simulates VGC-style 4v4 doubles with priority, speed tiers,
 // weather, Trick Room, Intimidate, and damage variance
 
-// CHAMPIONS REG M-A MECHANICS REFERENCE (T10, verified April 2026)
-// See docs/CHAMPIONS_MEGA_SYSTEM.md + docs/CHAMPIONS_LEGALITY.md +
-// CHAMPIONS_MECHANICS_VERIFICATION.md + ENGINE_AUDIT_REPORT.md for
-// full audit. Engine hooks for the behaviors below are DEFERRED;
-// this block documents target behavior for future engine tickets.
-//
-// Stat formula (IMPLEMENTED in T1):
-//   HP     = Base + SP + 75
-//   Other  = floor((Base + SP + 20) * Alignment)
-//   Alignment = 0.9 (lowered) | 1.0 (neutral) | 1.1 (raised)
-//   All IVs fixed at 31.
-//
-// Status nerfs (IMPLEMENTED — see canInflictStatus + getStat + end-of-turn):
-//   Paralysis full-para: 12.5%  (was 25%). Speed -50% unchanged.
-//   Sleep:  max 3 turns  (T1 cant act, T2 33% wake, T3 guaranteed).
-//   Freeze: 25% thaw/turn, guaranteed thaw T3. Sun thaws.
-//   Frostbite (T9j.17): 1/16 chip, SpA halved, no action skip.
-//     Cite: https://bulbapedia.bulbagarden.net/wiki/Frostbite_(status_condition)
-//   Toxic ramp: N/16 escalating, capped at N=15.
-//
-// Doubles:
-//   Spread modifier 0.75x; spread MUST hit all valid targets.
-//   Fake Out (T9j.17 hard-gate): cannot be selected past first turn out;
-//     resets on switch-in. Encore->Struggle handled in executeAction.
-//   Protect PP halved 16 -> 8.
-//
-// Ability nerfs (flags in data.js::CHAMPIONS_UPDATED_ABILITIES):
-//   Unseen Fist:   25% damage through Protect (was 100%).
-//   Parental Bond: child hit 1/4 power (was 1/2). T9j.8 inline 2-strike loop.
-//   Protean:       fires once per entry (was every move).
-//
-// New abilities (data.js::CHAMPIONS_NEW_ABILITIES):
-//   Piercing Drill (Mega Excadrill): 25% miss chance on every move (T9j.17).
-//     Cite: https://www.serebii.net/pokemonchampions/newabilities.shtml
-//   Dragonize (Mega Feraligatr):     Normal -> Dragon, +20% BP.
-//   Mega Sol (Mega Meganium):        personal sun, no weather set.
-//   Spicy Spray (Mega Scovillain):   burn attacker on any damage taken.
-//
-// T9j.17 move/item additions:
-//   Expanding Force x Psychic Terrain: grounded user spreads to all foes
-//     and gains 1.5x BP. Cite: https://bulbapedia.bulbagarden.net/wiki/Expanding_Force_(move)
-//   Terrain Seeds (Grassy/Electric +1 Def, Psychic/Misty +1 SpD): consume
-//     on switch-in to matching terrain. Cite: https://bulbapedia.bulbagarden.net/wiki/Grassy_Seed
-//
-// Items outside implemented runtime truth (see legality.js):
-//   Launch-absent rows such as Life Orb / Light Clay / weather rocks may appear
-//   as Reg M-B review candidates for custom testing, but their effects are not
-//   promoted to trusted simulation/ranking until fixtures and effect tests pass.
-//
-// Sources:
-//   https://www.serebii.net/pokemonchampions/rankedbattle/regulationm-a.shtml
-//   https://www.serebii.net/pokemonchampions/statusconditions.shtml
-//   https://www.serebii.net/pokemonchampions/newabilities.shtml
-//   https://www.serebii.net/pokemonchampions/updatedabilities.shtml
-//   https://bulbapedia.bulbagarden.net/wiki/Stat_point
-//   https://game8.co/games/Pokemon-Champions/archives/588871
-//   https://victoryroad.pro/champions-regulations/
+// Historical mechanics claims are not current-client certification.
+// See ../docs/release/COMPETITIVE_READINESS_2026-10-20.md and the immutable reference evidence
+// for supported scope, known gaps and release blockers.
 
 var CHAMPIONS_FORMAT_ID = 'champions-vgc-2026-regma';
 var CHAMPIONS_ACTIVE_SOURCE_RULESET_ID = 'champions_reg_m_b_doubles_bo3_source_review';
@@ -2597,12 +2543,12 @@ class Pokemon {
   calcDamage(move, target, field, partner, rng) {
     // Showdown's Seismic Toss damage:'level' bypasses the damage formula, not immunity.
     const fixedLevelDamage = move === 'Seismic Toss';
-    // --- T9j.8 (Refs #30) Dragonize onModifyMove: Normal -> Dragon + 20% BP ---
+    // T9j.8 (Refs #30) Dragonize onModifyMove: Normal -> Dragon + 20% BP
     const _modRes = _resolveMoveModifiers(this, move, field);
     const _bpMult = _modRes.bpMult;
     let moveType = _modRes.type;
 
-    // --- T9j.9 (Refs #3) Physical/Special classifier ---
+    // T9j.9 (Refs #3) Physical/Special classifier
     // Data-driven: MOVE_CATEGORY from data.js is the canonical source of truth.
     // Fallback: legacy type-heuristic if the move is missing from the table,
     // with a one-shot console warning so gaps are visible in the test log.
@@ -2625,7 +2571,7 @@ class Pokemon {
       }
     }
 
-    // --- T9j.8 (Refs #27) Crit roll ---
+    // T9j.8 (Refs #27) Crit roll
     // Stage ladder: base 0, +1 HIGH_CRIT, +3 ALWAYS_CRIT. Force-crit via field._ctx.forceCrit (tests).
     let _critStage = 0;
     if (HIGH_CRIT_MOVES.has(move)) _critStage += 1;
@@ -6980,9 +6926,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     tryMegaPhase(playerActive, 'playerMegaUsed', 'player');
     tryMegaPhase(oppActive,    'oppMegaUsed',    'opp');
 
-    // --------------------------------------------------------
     // BUILD ACTION QUEUE
-    // --------------------------------------------------------
     const actions = [];
 
     const preparedChoices = diagnosticPolicy ? null : [
@@ -7588,9 +7532,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       mon.flying = mon.types.includes('Flying') || mon.ability === 'Levitate';
     }
 
-    // --------------------------------------------------------
     // REPLACEMENTS
-    // --------------------------------------------------------
     const replacementEntries = [];
     function replaceOnField(activeArr, bench, side, field, log) {
       const fainted = activeArr.filter(m => !m.alive);
@@ -7660,9 +7602,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     window.ChampionsSim.isRNGBlame = isRNGBlame;
   }
 
-  // ============================================================
   // RESULT
-  // ============================================================
   const pAliveAll = [...playerActive, ...playerBench].filter(m => m.alive);
   const oAliveAll = [...oppActive, ...oppBench].filter(m => m.alive);
   const pSurvive = pAliveAll.length;
@@ -7765,9 +7705,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   };
 }
 
-// ============================================================
 // PRIORITY LOOKUP
-// ============================================================
 var STATUS_MOVE_NAMES = new Set([
   'Will-O-Wisp','Thunder Wave','Taunt','Sleep Powder','Hypnosis','Spore','Leech Seed','Perish Song','Trick','Tailwind','Sunny Day',
   'Trick Room','Life Dew','Rage Powder','Roost','Parting Shot','Shed Tail',
@@ -7850,9 +7788,7 @@ function shouldReflectByMagicBounce(attacker, target, move) {
     && TARGETED_STATUS_MOVES.has(move));
 }
 
-// ============================================================
 // MONTE CARLO RUNNER
-// ============================================================
 
 async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress, options) {
   const context = options || {};
@@ -7863,7 +7799,7 @@ async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress, 
   const unsupported = checkSimulationSupport(playerTeamDef).concat(checkSimulationSupport(oppTeamDef));
   if (unsupported.length) throw new Error(unsupported.join('; '));
 
-  const results = { wins:0, losses:0, draws:0, errors:0, totalTurns:0, totalTrTurns:0,
+  const results = { outcome_records:[], excludedOutcomes:0, exclusionReasons:{}, wins:0, losses:0, draws:0, errors:0, totalTurns:0, totalTrTurns:0,
     // T9j.3 (#38) Tailwind cumulative + (#39) timer-draw bucket.
     totalTwTurns:0, timerDraws:0, timerWins:0, timerLosses:0,
     winConditions:{}, allLogs:[], koLogs:[], turnDist:{},
@@ -7889,8 +7825,12 @@ async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress, 
         && window.ChampionsSim.state
         && window.ChampionsSim.state.format) || 'doubles';
       const battle = simulateBattle(playerTeamDef, oppTeamDef, { seed, format: context.format || fmt, rulesetId: context.rulesetId, bo: context.bo });
-      if (battle.result === 'error') {
-        results.errors++;
+      const eligibility = ChampionsOutcome.evaluate(battle);
+      results.outcome_records.push(eligibility.proof);
+      if (!eligibility.eligible) {
+        results.excludedOutcomes++;
+        results.exclusionReasons[eligibility.reason]=(results.exclusionReasons[eligibility.reason]||0)+1;
+        if(battle.result==='error') results.errors++;
         if (results.allLogs.length < 5) results.allLogs.push({ ...battle, oppTeam: oppTeamKey });
         continue;
       }
@@ -7922,7 +7862,7 @@ async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress, 
   const validBattles = results.wins + results.losses + results.draws;
   results.sampleSize = validBattles;
   results.requestedBattles = numBattles;
-  if (!validBattles) throw new Error('No completed battles; simulation results are unavailable.');
+  if (!validBattles) throw Object.assign(new Error('No verified outcomes; simulation results are unavailable.'),{results:results});
   results.winRate = validBattles > 0 ? results.wins / validBattles : 0;
   results.avgTurns = validBattles > 0 ? results.totalTurns / validBattles : 0;
   results.avgTrTurns = validBattles > 0 ? results.totalTrTurns / validBattles : 0;
@@ -7949,7 +7889,6 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
   return allResults;
 }
 
-// ============================================================
 // ISSUE #1 FIX — CANONICAL ANALYSIS PAYLOAD
 // buildAnalysisPayload() wraps any raw sim result (from runSimulation
 // or runBoSeries) into the canonical structured object.
@@ -7972,8 +7911,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-// ============================================================
-const ENGINE_VERSION = '1.1.29'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.30'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];
@@ -8016,7 +7954,10 @@ function applyPrior(prior) {
 }
 
 function buildAnalysisPayload(rawResult, ctx = {}) {
-  const n   = rawResult.wins + rawResult.losses + (rawResult.draws || 0);
+  const verified = ChampionsOutcome.aggregate(rawResult.outcome_records,rawResult.requestedBattles);
+  if(!verified.complete || !verified.sampleSize) throw new Error('Complete outcome evidence required for analysis.');
+  rawResult = Object.assign({},rawResult,verified);
+  const n = verified.sampleSize;
   const ci  = wilsonCI(rawResult.wins, n);
   const tier = n < 20 ? 'Low' : n < 100 ? 'Moderate' : 'High';
 
@@ -8068,7 +8009,11 @@ function buildAnalysisPayload(rawResult, ctx = {}) {
 // Mega trigger sweep: reject invalid games before aggregating samples.
 function runMegaSweepCell(teamA, teamB, bo, policy, triggerTurn, nBattles, options) {
   const context = options || {};
+  if (!Number.isInteger(nBattles) || nBattles < 1) throw new Error('Sweep sample count must be a positive integer.');
   let wins = 0, losses = 0, draws = 0;
+  const outcome_records = [], exclusionReasons = {};
+  let excludedOutcomes = 0;
+  let firstExecutionError = null;
   for (let i = 0; i < nBattles; i++) {
     // Deep copy team data so we can override Mega policy without mutating
     // the caller's team state across cells.
@@ -8083,17 +8028,28 @@ function runMegaSweepCell(teamA, teamB, bo, policy, triggerTurn, nBattles, optio
         triggerTurn: triggerTurn
       }
     });
-    if (!res || res.result === 'error') throw new Error(res && res.winCondition || 'Simulation unavailable; sweep aborted.');
-    if (res && res.winner === 'player') wins++;
-    else if (res && res.winner === 'opp') losses++;
-    else draws++;
+    if (res && res.result === 'error' && !firstExecutionError) firstExecutionError = res.winCondition || 'Simulation unavailable';
+    const eligibility = ChampionsOutcome.evaluate(res);
+    outcome_records.push(eligibility.proof);
+    if (!eligibility.eligible || !['win', 'loss'].includes(eligibility.result) ||
+        eligibility.proof.schema_version !== 'champions-outcome-v1') {
+      excludedOutcomes++;
+      const reason = eligibility.reason || 'OUTCOME_WINNER_UNVERIFIED';
+      exclusionReasons[reason] = (exclusionReasons[reason] || 0) + 1;
+      continue;
+    }
+    if (eligibility.result === 'win') wins++;
+    else losses++;
   }
-  const n  = wins + losses + draws;
-  const wr = n > 0 ? wins / n : 0;
+  const n = wins + losses;
+  const wr = n > 0 ? wins / n : null;
   // 95% Wilson CI half-width (approx)
   const z = 1.96;
-  const ci95 = n > 0 ? z * Math.sqrt(wr * (1 - wr) / n) : 0;
-  return { wr: wr, n: n, wins: wins, losses: losses, draws: draws, ci95: ci95 };
+  const ci95 = n > 0 ? z * Math.sqrt(wr * (1 - wr) / n) : null;
+  const cell = { wr, n, wins, losses, draws, ci95, requestedBattles: nBattles,
+    excludedOutcomes, exclusionReasons, outcome_records };
+  if (!n) throw Object.assign(new Error(firstExecutionError ? firstExecutionError + '; no verified outcomes; Mega sweep cell unavailable.' : 'No verified outcomes; Mega sweep cell unavailable.'), { results: cell });
+  return cell;
 }
 
 /**
@@ -8126,18 +8082,18 @@ function runMegaTriggerSweep(teamA, teamB, bo, opts) {
     // Pass 1: every legal turn
     for (let t = 1; t <= MAX_TURN; t++) {
       const cell = runMegaSweepCell(teamA, teamB, bo, 'at_turn', t, COARSE_N, opts);
-      curve.push({ turn: t, wr: cell.wr, n: cell.n, ci95: cell.ci95 });
+      curve.push(Object.assign({turn:t},cell));
     }
     // Pass 1: 'never' baseline
     const neverCell = runMegaSweepCell(teamA, teamB, bo, 'never', null, COARSE_N, opts);
-    curve.push({ turn: 'never', wr: neverCell.wr, n: neverCell.n, ci95: neverCell.ci95 });
+    curve.push(Object.assign({turn:'never'},neverCell));
 
     // Pass 2: refine top 3 by coarse WR
     const top3 = curve.slice().sort((a, b) => b.wr - a.wr).slice(0, 3);
     const refined = top3.map(function(cell) {
       const policy = cell.turn === 'never' ? 'never' : 'at_turn';
       const refinedCell = runMegaSweepCell(teamA, teamB, bo, policy, cell.turn, REFINE_N, opts);
-      return { turn: cell.turn, wr: refinedCell.wr, n: refinedCell.n, ci95: refinedCell.ci95 };
+      return Object.assign({turn:cell.turn},refinedCell);
     });
     const bestTurn = refined.slice().sort((a, b) => b.wr - a.wr)[0].turn;
 

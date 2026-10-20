@@ -71,10 +71,13 @@ function load(file) {
 
 load('data.js');
 try { load('legality.js'); } catch (_) {}
+load('outcome_policy.js');
+load('release_manifest.js');
+load('app_shell.js');
+ctx.csGetBuildId = ctx.window.csGetBuildId;
 load('engine.js');
 try { load('strategy-injectable.js'); } catch (_) {}
 load('ui.js');
-load('release_manifest.js');
 
 vm.runInContext([
   'this.TEAMS = TEAMS;',
@@ -111,7 +114,8 @@ T('T5a-1 turnLog is populated after simulateBattle', () => {
   truthy(Array.isArray(battleA.turnLog[0].pre.roster.player), 'player roster snapshot missing');
   truthy(Array.isArray(battleA.turnLog[0].pre.roster.opponent), 'opponent roster snapshot missing');
   const payload = ctx.ChampionsSim.internal.buildAnalysisPayload('player', 'mega_altaria', 1, {
-    wins: 1, losses: 0, draws: 0, avgTurns: 1, avgTrTurns: 0, allLogs: [battleA]
+    requestedBattles: 1, outcome_records: [ctx.ChampionsOutcome.evaluate(battleA).proof],
+    avgTurns: battleA.turns, avgTrTurns: 0, allLogs: [battleA]
   });
   truthy(!payload.logs[0].turnLog, 'turnLog must not be persisted in save payload logs');
   truthy(Array.isArray(payload.logs[0].position_path), 'summary position path should persist');

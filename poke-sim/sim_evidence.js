@@ -6,6 +6,7 @@
 // replays, and leaderboard aggregation can stay versioned and auditable.
 (function(root) {
   'use strict';
+  var outcomePolicy = root.ChampionsOutcome || (typeof require==='function' ? require('./outcome_policy.js') : null);
 
   /** @typedef {'team_vs_team'|'team_vs_leaderboard'|'archetype_sweep'|'full_leaderboard_recalc'|'qa_regression'} SimJobType */
   /** @typedef {'queued'|'running'|'completed'|'failed'|'cancelled'} SimJobStatus */
@@ -131,6 +132,7 @@
       turnLog.forEach(function(turn) { effectRows = effectRows.concat((turn && turn.effect_events) || []); });
     }
     return {
+      outcome_proof: replay && (replay.outcome_proof || (replay.qa_coverage_summary||{}).outcome_proof) || null,
       events: eventLog.length,
       turns: Number((replay && replay.turns) || turnLog.length || 0),
       damage_events: damageRows.length,
@@ -486,6 +488,7 @@
       ruleset_version: scope.ruleset_version,
       seed: String(card.seed || payload.seed || 'artifact-seed-needed'),
       winner_team_id: reason !== 'error' && reason !== 'timer' ? artifactWinnerTeamId(result, playerTeamId, opponentTeamId) || undefined : undefined,
+      outcome_proof: outcomePolicy.evaluate(Object.assign({},payload,card)).proof,
       result_reason: reason,
       turns: Number(card.turns || turnLog.length || 0),
       event_log: eventLog,
@@ -500,6 +503,7 @@
       sourceGaps.push(artifactSourceGap('SEED_MISSING_FROM_ARTIFACT', 'Artifact replay card did not include a deterministic seed.', 'seed'));
       replay.seed = 'artifact-seed-needed';
     }
+    replay.qa_coverage_summary=Object.assign({},replay.qa_coverage_summary,{outcome_proof:replay.outcome_proof});
     replay.source_gaps = uniqueGaps(sourceGaps).map(function(gap) { return gap.code; });
     return { replay: normalizeReplayRecord(replay), source_gaps: uniqueGaps(sourceGaps) };
   }
@@ -642,6 +646,7 @@
     run.confidence_flags = unique((run.confidence_flags || []).concat(normalized.confidence_flags || []));
     run.source_gaps = unique((run.source_gaps || []).concat(normalized.source_gaps || []));
     run.confidence_flags = unique(run.confidence_flags.concat(normalized.source_gaps || []));
+    run.outcome_proof = normalized.outcome_proof || (normalized.qa_coverage_summary||{}).outcome_proof || null;
     run.result_reason = normalized.result_reason;
     run.winner_team_id = normalized.winner_team_id || null;
     run.replay_evidence_summary = normalized.evidence_summary;

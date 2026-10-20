@@ -1,6 +1,6 @@
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
 const c=vm.createContext({console,Math,window:{}}),root=path.join(__dirname,'..');
-for(const f of ['data.js','generated/pokemon_showdown_legal_data.js','generated/champions_move_overrides.js','generated/champions_move_pools.js','runtime_data.js','move_legality.js','generated/mc_review_reference.js','mc_review.js','legality.js','rulesets.js','engine.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),c,{filename:f});
+for(const f of ['data.js','generated/pokemon_showdown_legal_data.js','generated/champions_move_overrides.js','generated/champions_move_pools.js','outcome_policy.js','runtime_data.js','move_legality.js','generated/mc_review_reference.js','mc_review.js','legality.js','rulesets.js','engine.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),c,{filename:f});
 const make=(name,ability,moves=['Protect'])=>({name,ability,moves,item:'',nature:'Hardy',level:50,evs:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0}});
 const fillers=()=>[make('Pelipper','Drizzle'),make('Farigiraf','Armor Tail'),make('Garchomp','Rough Skin'),make('Incineroar','Intimidate'),make('Gholdengo','Good as Gold')];
 const team=(m)=>({format:'champions',members:[m,...fillers()]});

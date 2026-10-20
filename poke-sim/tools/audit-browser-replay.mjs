@@ -23,16 +23,25 @@ const expectedCandidate = candidateIdentity(root);
 write('candidate-identity.json',expectedCandidate);
 await verifyServedCandidate(url,expectedCandidate);
 inventory.candidate=expectedCandidate;
-const diagnostics = { url: url.href, page_errors: [], blocked_nonread_requests: [] };
+const diagnostics = { url: url.href, page_errors: [], blocked_nonread_requests: [], loaded_external_assets:{} };
+const expectedResponses=new Map(Object.entries(expectedCandidate.external_assets).map(([name,digest])=>[new URL(name,url).pathname,{name,digest}]));
 const auditMemberEdit = process.env.AUDIT_MEMBER_EDIT === '1';
 const browser = await chromium.launch({ headless: true });
-const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
+const page = await browser.newPage({ serviceWorkers:'block', viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
 page.on('pageerror', error => diagnostics.page_errors.push(error.message));
 await page.route('**/*', async route => {
   const request = route.request();
   if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method())) {
     diagnostics.blocked_nonread_requests.push({ method: request.method(), origin: new URL(request.url()).origin });
     return route.abort();
+  }
+  const external=expectedResponses.get(new URL(request.url()).pathname);
+  if(external){
+    const response=await route.fetch(),body=await response.body();
+    const digest=createHash('sha256').update(body).digest('hex');
+    assert.equal(digest,external.digest,`Loaded external asset differs: ${external.name}`);
+    diagnostics.loaded_external_assets[external.name]=digest;
+    return route.fulfill({response,body});
   }
   if(request.isNavigationRequest() && new URL(request.url()).pathname===url.pathname){
     const response=await route.fetch(),body=await response.body();
@@ -217,6 +226,8 @@ try {
   await page.locator('#tab-btn-simulator').click();
   await run('swapped');
   await inspectReplayLayouts();
+  for(const [name,digest] of Object.entries(expectedCandidate.external_assets).filter(([name])=>name.endsWith('.js')))
+    assert.equal(diagnostics.loaded_external_assets[name],digest,`Executable asset was not observed: ${name}`);
   const report = ingestDirectory(directory, expectedCandidate);
   write('comparison-report.json', report);
   assert.equal(diagnostics.page_errors.length, 0, 'Browser page errors occurred');

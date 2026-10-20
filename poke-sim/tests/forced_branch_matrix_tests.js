@@ -69,6 +69,7 @@ load('generated/mc_review_reference.js');
 try { load('runtime_data.js'); } catch (_) {}
 try { load('move_legality.js'); } catch (_) {}
 try { load('legality.js'); } catch (_) {}
+load('outcome_policy.js');
 load('engine.js');
 load('ui.js');
 // Synthetic algorithm fixtures, not reviewed regulation evidence.

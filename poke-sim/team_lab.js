@@ -1,11 +1,10 @@
-// ============================================================
 // TEAM LAB FOUNDATION
-// ============================================================
 // Evidence-bound team ranking helpers. This module intentionally does not
 // invent Pokemon Champions legality. Unknown source data returns
 // needs_verification so rankings can stay auditable and stale-safe.
 (function(root) {
   'use strict';
+  var outcomePolicy = root.ChampionsOutcome || (typeof require==='function' ? require('./outcome_policy.js') : null);
 
   /** @typedef {'singles'|'doubles'} TeamLabFormat */
   /** @typedef {'private'|'hidden_details'|'public'} TeamLabVisibility */
@@ -398,6 +397,7 @@
     }
 
     (simRuns || []).forEach(function(run) {
+      if (!outcomePolicy || !outcomePolicy.evaluate(run).eligible) return;
       if (!run || run.result_reason === 'error' || (run.source_gaps || []).length ||
           (run.confidence_flags || []).some(function(flag){return /^(OUTCOME_|TIMER_POLICY_UNVERIFIED)/.test(flag);})) return;
       if (opts.regulation_id && run.regulation_id !== opts.regulation_id) return;

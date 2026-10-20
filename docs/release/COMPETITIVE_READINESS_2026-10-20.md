@@ -5,7 +5,7 @@ release only after all required gates. **NO-GO. No scope waiver or percentage.**
 Owner: Kevin for release decisions; implementer for repairs; independent reviewers
 for retest; a current-client capture owner remains unassigned.
 
-Candidate: v2.2.227-amnesia / engine1.1.29, separate follow-up to methodology checkpoint d48b9aa in PR279. This register owns current gate status; older dated reports remain
+Candidate: v2.2.228-evidence-boundaries / engine1.1.30, separate follow-up to methodology d48b9aa and Amnesia 991f4fd in PR279. This register owns current gate status; older dated reports remain
 historical receipts. No merge, deployment, live DB change or key enrollment made.
 
 | ID / severity | Reproduction and impact | Owner / change | Status and independent closure |
@@ -18,8 +18,18 @@ historical receipts. No merge, deployment, live DB change or key enrollment made
 | RULE-01 Critical release | M-C package incomplete; roster262 and October form evidence already available. | Human capture owner + source reviewer. | NO-GO: full-team acceptance/rejection, training/learnset/item constraints, current client traces and immutable reviewed digest missing. |
 | GAME-01 Critical release | Public switching, simultaneous Mega/order, broader lifecycle and held-out player-policy quality unproved. | Mechanics owner + client capture owner. | NO-GO.65 benchmark cases:18 covered,42 partial,5 open. No narrow Practice substitute approved. |
 | DB-01 High release | Future default grants absent on two anon reads and four trusted writers. Docker backend socket launch failure. | Isolated DB reviewer. | Fresh in-memory PostgreSQL86named assertions pass; companion60browser denials+6trusted writes pass. Auth/PostgREST/owner isolation/live ledger, full persistence and deployment-version proof unavailable. No live grants applied. |
-| CI-01 High process | Pages previously independent of battle checks; main has no protection/rulesets. | Implementer + human repository owner. | New always-running methodology job and strict pre-deploy gate proposed. Branch settings unchanged. Hosted browser dependency installation blocked by auto-review; approval needed. |
+| CI-01 High process | Pages previously independent of battle checks; main has no protection/rulesets. | Implementer + human repository owner. | New always-running methodology job and strict pre-deploy gate proposed. Branch settings unchanged. Kevin explicitly approved pinned Playwright/Chromium; isolated installation completed and mandatory browser CI is implemented. Exact-head hosted verification pending; no branch settings changed. |
 | APPROVAL-01 Critical release | No reviewed client package or enrolled human verification key. | Human owner + independent reviewer. | Empty key registry and null package intentionally block. Signature identity requires separately approved enrollment and protected review controls; source-editable keys alone do not establish ownership. |
+
+## Original-auditor R1–R5 retest checkpoint
+
+The d48b9aa retest remained red for downstream uncertain outcomes, declaration-only evidence, partial replay anchors, unbound responses and duplicate capture counts. Those original receipts remain untouched. The current repair is documented in [the bounded checkpoint receipt](EVIDENCE_BOUNDARIES_2026-10-20.md).
+
+- R1: shared explicit outcome proof gates aggregate, series, ranking, branch, threat and persistence consumers. Exclusions survive compact proofs; raw run counts cannot inflate samples. Original retained cutoff/timer rows give 1.0 at d48b9aa and zero eligible samples now. Scoped independent retest passes; original auditor pending.
+- R2: parsed, nonempty typed inputs and observations bind case/field/units/identity/protocol to signed declarations.75 focused tests and independent fresh signed counterexamples pass. No production key/package enrollment; original auditor pending.
+- R3: all anchored actions and every repeated damage tuple are consumed exactly once. Renderer follows actual anchored actors, fixing a duplicate display.25 comparison controls plus retained rerenders pass; original auditor pending.
+- R4: actual navigation and all external executable responses are hashed before fulfillment; service workers blocked for byte audit. Pinned browser dependency and isolated Chromium approved. Final exact-head browser/CI receipts pending.
+- R5: duplicate captures rejected; capture observations/scenarios and verified executions are distinct units. Re-downloads cannot increase independent game counts. Original auditor pending.
 
 ## Verification and units
 

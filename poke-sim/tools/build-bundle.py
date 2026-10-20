@@ -84,6 +84,7 @@ if manifest_value(release_manifest, 'reference_artifact_sha256') != hashlib.sha2
 app_shell = read('app_shell.js')
 logger  = read('logger.js')
 runtime_data = read('runtime_data.js')
+outcome_policy = read('outcome_policy.js')
 engine  = read('engine.js')
 ui      = read('ui.js')
 legality = read('legality.js')
@@ -115,6 +116,7 @@ html = html.replace('<script src="release_manifest.js"></script>', '')
 html = html.replace('<script src="app_shell.js"></script>', '')
 html = html.replace('<script src="logger.js"></script>', '')
 html = html.replace('<script src="runtime_data.js"></script>', '')
+html = html.replace('<script src="outcome_policy.js"></script>', '')
 html = html.replace('<script src="engine.js"></script>', '')
 html = html.replace('<script src="own_state_policy.js"></script>', '')
 html = html.replace('<script src="ui.js"></script>', '')
@@ -182,6 +184,7 @@ inline_js = (
     + sanitize_inline_js(news_feed) + '\n\n'
     + sanitize_inline_js(source_registry) + '\n\n'
     + sanitize_inline_js(runtime_data) + '\n\n'
+    + sanitize_inline_js(outcome_policy) + '\n\n'
     + sanitize_inline_js(engine) + '\n\n'
     + sanitize_inline_js(rulesets) + '\n\n'
     + sanitize_inline_js(regmb_source_conversion) + '\n\n'
@@ -228,7 +231,7 @@ else:
         'hash_scope': 'sha256 of committed poke-sim/pokemon-champion-2026.html bytes'
     }
     artifact['external_assets'] = {}
-    for asset in ['generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'mc_review.js', 'own_state_policy.js',
+    for asset in ['generated/source_sync_status.js', 'generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'mc_review.js', 'own_state_policy.js',
                   'assets/retro-intro/gengar.png', 'assets/retro-intro/nidorino.png']:
         with open(os.path.join(BASE, asset), 'rb') as f:
             asset_bytes = f.read()

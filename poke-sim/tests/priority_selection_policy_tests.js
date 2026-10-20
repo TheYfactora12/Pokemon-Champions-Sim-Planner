@@ -19,8 +19,9 @@ assert.equal(c._selectionPolicyProvenance(true).forced_actions,true);
 console.log(count+' side-swapped conservative priority decisions and execution helpers passed');
 
 const full=vm.createContext({console,Math,window:{}});
-for(const f of ['data.js','engine.js']) vm.runInContext(fs.readFileSync(path.join(__dirname,'..',f),'utf8'),full);
-const legacy={wins:1,losses:0};
+for(const f of ['data.js','outcome_policy.js','engine.js']) vm.runInContext(fs.readFileSync(path.join(__dirname,'..',f),'utf8'),full);
+const legacy={wins:1,losses:0,requestedBattles:1,outcome_records:[{result:'win',terminal:true,timerExpired:false,playerSurvivors:1,oppSurvivors:0}]};
+assert.throws(()=>full.buildAnalysisPayload({wins:1,losses:0}),/Complete outcome/);
 assert.equal(full.buildAnalysisPayload(legacy).policy_provenance,null);
 const supplied={id:'historical-custom',information_model:'unknown'};
 assert.equal(full.buildAnalysisPayload({...legacy,policy_provenance:supplied}).policy_provenance,supplied);

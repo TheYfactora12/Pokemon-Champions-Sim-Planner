@@ -1,7 +1,5 @@
-// ============================================================
 // BATTLE SENSEI
 // Local-only parser and coaching summary helpers.
-// ============================================================
 
 (function(root) {
   var ChampionsSim = root.ChampionsSim = root.ChampionsSim || {};

@@ -7,7 +7,7 @@ Historical candidate observations are not current deployment instructions.
 
 ## Draft review candidate
 
-v2.2.227-amnesia / engine 1.1.29 is the review follow-up to
+v2.2.228-evidence-boundaries / engine 1.1.30 is the review follow-up to
 [draft PR279](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279).
 The [competitive readiness register](docs/release/COMPETITIVE_READINESS_2026-10-20.md)
 owns current defects, severity, evidence, owners, retest and the Wednesday decision.
@@ -21,7 +21,9 @@ checker sensitivity, replay multiplicity/artifact binding, runtime parity and
 recurring GitHub gates. Development checks do not certify current-client rules,
 full mechanics, competitive policy quality or live Supabase. Scoped independent review and final local gates pass;
 methodology checkpoint d48b9aa passed all seven hosted checks;
-the separate Amnesia checkpoint is awaiting publication and hosted checks; no merge/deployment authorized.
+Amnesia checkpoint 991f4fd64cfe308e4f36de3aee56e06a7c497ded also passed all seven hosted checks. The current R1–R5 repair passed scoped checks, battle audit, methodology and fresh browser capture; one aggregate link failure passed its targeted retest. Exact-head hosted checks remain pending; no merge/deployment authorized.
+
+The [R1–R5 repair receipt](docs/release/EVIDENCE_BOUNDARIES_2026-10-20.md) records downstream outcome quarantine, parsed evidence binding, replay completeness and pinned browser CI. Scoped independent controls pass; original-auditor exact-head closure remains pending.
 
 The v225 candidate and its evidence are preserved in
 [the historical candidate receipt](docs/archive/STATUS_V225_CANDIDATE_2026-10-20.md).

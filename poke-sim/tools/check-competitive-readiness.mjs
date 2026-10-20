@@ -3,6 +3,9 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash, verify} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
+import {isDeepStrictEqual as equal} from 'node:util';
+import {createRequire} from 'node:module';
+import {parseEvidence,installedInventory} from './competitive-evidence-schema.mjs';
 
 export const REQUIRED = Object.freeze([
   'official-client-version', 'regulation-rules', 'accepted-complete-team',
@@ -49,11 +52,13 @@ export function assess(manifest, {read, now, identity, keys = []}) {
       if (!identity[field] || pkg.identity?.[field] !== identity[field]) block(`Stale package identity: ${field}`);
     }
     if (!Array.isArray(pkg.evidence)) fault('Evidence inventory absent');
-    const entries = pkg.evidence || [], ids = new Set();
+    const entries = Array.isArray(pkg.evidence) ? pkg.evidence : [], ids = new Set(), parsed = new Map();
+    for(const field of ['external_assets','installed_reference','checker_schema']) if(!identity[field] || !equal(pkg.identity?.[field],identity[field])) block(`Stale complete identity: ${field}`);
     for (const entry of entries) {
       if (!entry.id || ids.has(entry.id)) fault('Duplicate or absent evidence ID');
       ids.add(entry.id);
-      load(entry, entry.id || 'unnamed evidence');
+      const evidenceBytes=load(entry, entry.id || 'unnamed evidence');
+      try { parsed.set(entry.id,parseEvidence(evidenceBytes,entry,{target,identity:pkg.identity,load})); } catch(error) { fault(error.message); }
       if (entry.status !== 'passed' || entry.mismatches !== 0) block(`${entry.id}: comparison not passed`);
       if (!Number.isFinite(Date.parse(entry.captured_at_utc)) ||
           Date.parse(entry.captured_at_utc) > now ||
@@ -79,14 +84,14 @@ export function assess(manifest, {read, now, identity, keys = []}) {
       const required=requirements[id];
       if(!strings(required?.asserted_fields) || !strings(required?.evidence_kinds)) return false;
       return caseResults.some(row=>row.id===id && row.status==='passed' && row.mismatches===0 &&
-        strings(row.asserted_fields) && required.asserted_fields.every(field=>row.asserted_fields.includes(field)) &&
+        strings(row.asserted_fields) && required.asserted_fields.every(field=>row.asserted_fields.includes(field) && row.evidence_ids?.some(eid=>parsed.get(eid)?.cases.get(id)?.has(field))) &&
         strings(row.evidence_ids) && row.evidence_ids.every(eid=>entries.some(e=>e.id===eid && e.status==='passed')) &&
-        required.evidence_kinds.every(kind=>entries.some(e=>row.evidence_ids.includes(e.id) && e.kind===kind && e.status==='passed')));
+        required.evidence_kinds.every(kind=>required.asserted_fields.every(field=>entries.some(e=>row.evidence_ids.includes(e.id) && e.kind===kind && e.status==='passed' && parsed.get(e.id)?.cases.get(id)?.has(field)))));
     })) block('Per-case assertions and evidence bindings incomplete');
     if(Array.isArray(caseResults) && new Set(caseResults.map(r=>r.id)).size!==caseResults.length) fault('Duplicate benchmark results');
     for (const kind of REQUIRED) if (!entries.some(e => e.kind === kind)) block(`Missing mandatory evidence: ${kind}`);
     if (!Array.isArray(pkg.unsupported) || pkg.unsupported.length) block('Included unsupported mechanics unresolved');
-    if (!Array.isArray(pkg.benchmark_cases) || !identity.benchmark_cases?.length ||
+    if (!Array.isArray(pkg.benchmark_cases) || new Set(pkg.benchmark_cases).size!==pkg.benchmark_cases.length || pkg.benchmark_cases.length!==identity.benchmark_cases?.length || !identity.benchmark_cases?.length ||
         identity.benchmark_cases.some(id => !pkg.benchmark_cases.includes(id))) block('Mandatory benchmark case evidence missing');
     const approval = manifest.approval;
     const key = keys.find(k => k.id === approval?.key_id && k.role === 'human-release-reviewer');
@@ -110,7 +115,12 @@ export function localAssessment(base = root) {
   const json = name => JSON.parse(read(name));
   const artifact = json('generated/release_artifact.json');
   const matrix = json('battle_edge_case_matrix.json');
+  const require=createRequire(path.join(base,'package.json'));
+  const referenceRoot=path.dirname(require.resolve('pokemon-showdown/package.json'));
+  const external_assets=Object.fromEntries(Object.entries(artifact.external_assets).map(([name,row])=>{const actual=sha256(read(name));if(actual!==row.sha256)throw Error(`External asset differs: ${name}`);return [name,actual];}));
   const identity = {
+    external_assets,installed_reference:installedInventory(referenceRoot),
+    checker_schema:Object.fromEntries(['tools/check-competitive-readiness.mjs','tools/competitive-evidence-schema.mjs'].map(name=>[name,sha256(read(name))])),
     build_id:artifact.build_id, engine_sha256:sha256(read('engine.js')),
     bundle_sha256:sha256(read(artifact.bundle_name)),
     reference_sha256:sha256(read('package-lock.json')),

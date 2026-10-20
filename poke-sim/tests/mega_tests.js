@@ -13,6 +13,7 @@ function loadFile(f) {
   vm.runInContext(src, ctx, { filename: f });
 }
 loadFile('data.js');
+loadFile('outcome_policy.js');
 loadFile('engine.js');
 // Expose class declarations (class/let/const are lexical, not on ctx object)
 vm.runInContext('this.Pokemon = Pokemon; this.Field = Field; if (typeof TEAMS !== "undefined") this.TEAMS = TEAMS;', ctx);

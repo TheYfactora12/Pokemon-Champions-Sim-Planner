@@ -8,6 +8,16 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const fixture = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'analytics_fixture.json'), 'utf8'));
 
+
+function withOutcomes(value) {
+ const v=Object.assign({},value);const game=result=>({result,terminal:true,timerExpired:false,playerSurvivors:result==='win'?1:0,oppSurvivors:result==='loss'?1:0});
+ v.outcome_records=[];
+ for(const result of ['win','loss','draw'])for(let i=0;i<(v[result==='win'?'wins':result==='loss'?'losses':'draws']||0);i++)v.outcome_records.push(result==='draw'?{schema_version:'champions-series-outcome-v1',bo:10,result:'draw',games:Array.from({length:10},(_,j)=>game(j<5?'win':'loss'))}:game(result));
+ v.requestedBattles=v.outcome_records.length;return v;
+}
+// Explicit synthetic terminal evidence; the draw is a tied ten-game series.
+fixture.strongResult=withOutcomes(fixture.strongResult);
+
 function makeStubEl(id) {
   const el = {
     id: id || '',
@@ -128,7 +138,7 @@ function load(file) {
   if (file === 'move_legality.js') ctx.window.ChampionsSim = ctx.ChampionsSim;
 }
 
-['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'move_legality.js', 'logger.js', 'engine.js', 'storage_adapter.js', 'supabase_adapter.js', 'ui.js'].forEach(load);
+['data.js', 'generated/pokemon_showdown_legal_data.js', 'generated/champions_move_pools.js', 'generated/mc_review_reference.js', 'move_legality.js', 'logger.js', 'outcome_policy.js', 'engine.js', 'storage_adapter.js', 'supabase_adapter.js', 'ui.js'].forEach(load);
 // Isolate rendering contracts from the separately tested historical-move rejection.
 vm.runInContext("TEAMS.player.members[0].moves = ['Fake Out','Parting Shot','Protect','Flare Blitz'];", ctx);
 
@@ -173,8 +183,8 @@ T('2. buildAnalysisPayload returns canonical team ids', () => {
 T('3. buildAnalysisPayload computes sample size from W/L/D', () => {
   eq(buildAnalysisPayload('player', fixture.opponent, 3, fixture.strongResult).sample_size, 12);
 });
-T('4. buildAnalysisPayload preserves explicit winRate branch', () => {
-  eq(buildAnalysisPayload('player', fixture.opponent, 3, fixture.strongResult).win_rate, 0.667);
+T('4. buildAnalysisPayload derives win rate from outcome evidence, ignoring supplied rate', () => {
+  eq(buildAnalysisPayload('player', fixture.opponent, 3, fixture.strongResult).win_rate, 8/12);
 });
 T('5. buildAnalysisPayload carries policy and prior fields', () => {
   const p = buildAnalysisPayload('player', fixture.opponent, 3, fixture.strongResult);
@@ -202,15 +212,15 @@ T('10. buildAnalysisPayload computes Wilson CI for sampled data', () => {
   truthy(p.ci_low > 0 && p.ci_high < 1 && p.ci_low < p.ci_high);
 });
 T('11. buildAnalysisPayload accepts win_conditions array branch', () => {
-  const p = buildAnalysisPayload('player', fixture.opponent, 1, { wins: 1, losses: 0, draws: 0, win_conditions: [{ label: 'Manual', count: 1 }] });
+  const p = buildAnalysisPayload('player', fixture.opponent, 1, withOutcomes({ wins: 1, losses: 0, draws: 0, win_conditions: [{ label: 'Manual', count: 1 }] }));
   eq(p.win_conditions[0].label, 'Manual');
 });
 T('12. buildAnalysisPayload accepts logs array branch', () => {
-  const p = buildAnalysisPayload('player', fixture.opponent, 1, { wins: 1, losses: 0, draws: 0, logs: [{ result: 'win', log: ['x'] }] });
+  const p = buildAnalysisPayload('player', fixture.opponent, 1, withOutcomes({ wins: 1, losses: 0, draws: 0, logs: [{ result: 'win', log: ['x'] }] }));
   eq(p.logs.length, 1);
 });
 T('13. buildAnalysisPayload defaults policy_model only when absent', () => {
-  eq(buildAnalysisPayload('player', fixture.opponent, 1, {}).policy_model, 'deterministic-v1');
+  eq(buildAnalysisPayload('player', fixture.opponent, 1, withOutcomes({wins:1})).policy_model, 'deterministic-v1');
 });
 T('14. buildAnalysisPayload rejects invalid bo', () => {
   throws(() => buildAnalysisPayload('player', fixture.opponent, 2, fixture.strongResult));

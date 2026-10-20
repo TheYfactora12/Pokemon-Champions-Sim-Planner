@@ -71,6 +71,7 @@ vm.createContext(ctx);
 
 function load(f) { vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx, { filename: f }); }
 load('data.js');
+load('outcome_policy.js');
 load('engine.js');
 load('ui.js');
 // Synthetic sweep fixtures, not reviewed regulation evidence.
