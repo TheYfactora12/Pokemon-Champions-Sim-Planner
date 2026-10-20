@@ -2,6 +2,10 @@
 const fs=require('node:fs'),path=require('node:path');
 const original=fs.readFileSync, engine=path.resolve(__dirname,'../engine.js');
 const mutations={
+  encore_queue:["} else if (queued && queued.move!==last) {","} else if (false && queued && queued.move!==last) {"],
+  encore_herb:["if (effects.item(target)==='Mental Herb') {","if (false && effects.item(target)==='Mental Herb') {"],
+  encore_duration:["target.encoredTurns = queued ? 3 : 4;","target.encoredTurns = 3;"],
+  encore_priority:["queued.dynamicPriority=true;","queued.dynamicPriority=false;queued.priority=0;"],
   rest_admission:["if (sleepBlocked || attacker.status === 'sleep'", "if (false || attacker.status === 'sleep'"],
   struggle_fixed:["const _stDmg = captureBattleDamage(attacker, move, _struggleTgt, field, rng);","const _stDmg = Math.max(1, Math.floor(_struggleTgt.maxHp / 4));"],
   struggle_floor:["const _stRecoil = Math.max(1, Math.round(attacker.maxHp / 4));","const _stRecoil = Math.max(1, Math.floor(attacker.maxHp / 4));"],

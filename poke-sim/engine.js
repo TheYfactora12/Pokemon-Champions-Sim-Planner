@@ -23,7 +23,6 @@ function makePRNG(seed) {
   };
 }
 
-// Generate a random seed array (for external callers who don't supply one)
 function makeSeed() {
   return [
     Math.floor(Math.random() * 0xFFFFFFFF),
@@ -142,18 +141,15 @@ function validateTeam(team, format = 'vgc', validationOptions = {}) {
   }
 
   // #T2: Species Clause is a hard ban in VGC/Champions, not a warning.
-  // Same National Dex # (and regional forms share dex #s) not allowed twice.
   const names = team.members.map(m => m.name);
   const dupes = names.filter((n, i) => names.indexOf(n) !== i);
   if (dupes.length > 0) errors.push(`Species Clause violation: duplicate Pokemon: ${[...new Set(dupes)].join(', ')}`);
 
-  // #T2: Item Clause is also a hard ban ("no two Pokemon may hold the same item").
   const items = team.members.map(m => m.item).filter(Boolean);
   const dupeItems = items.filter((it, i) => items.indexOf(it) !== i);
   if (dupeItems.length > 0) errors.push(`Item Clause violation: duplicate items: ${[...new Set(dupeItems)].join(', ')}`);
 
   // #T2: Optional Champions-specific legality (ban list + fakemon) — only
-  // runs if legality.js has been loaded and team is declared Champions format.
   if ((team.format === 'champions' || format === 'champions')
       && typeof validateChampionsLegality === 'function') {
     const champ = validateChampionsLegality(team, validationOptions);
@@ -174,28 +170,18 @@ function validateTeam(team, format = 'vgc', validationOptions = {}) {
 //
 // CRIT_STAGES: Gen 9 crit probability ladder.
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Critical_hit
-// HIGH_CRIT_MOVES: moves that START at stage 1 instead of 0. Narrow Champions list.
-// ALWAYS_CRIT_MOVES: +3 stage floor (always crit). Frost Breath / Storm Throw.
 //
 // CRIT BYPASS RULES (applied in calcDamage when crit lands):
 //   - Attacker's NEGATIVE Atk/SpA stages ignored (taken as 0).
 //   - Defender's POSITIVE Def/SpD stages ignored (taken as 0).
-//   - Screens (Reflect/Light Screen/Aurora Veil) bypassed — screenMod = 1.
-//   - Burn STILL halves physical Atk on crit (Gen 6+ rule — verified Bulbapedia).
 //   - Final damage × 1.5 (Gen 6+; was × 2 in earlier gens).
 //
-// FLINCH_MOVES: secondary-effect flinch chances. Data-driven per Bulbapedia
 // per-move pages and Pokemon Champions nerfs:
 //   Iron Head: 20% in Champions (nerfed from Gen 9's 30%).
 //     Cite: https://www.serebii.net/pokemonchampions/updatedattacks.shtml
-//     Cite: https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Champions
 //   Rock Slide / Air Slash / Bite: 30% (unchanged).
-//   Zen Headbutt: 20%. Fire/Ice/Thunder Fang: 10% flinch (+10% independent status).
-//   Dark Pulse / Twister / Icicle Crash / Waterfall: secondary flinch retained.
-//   Cite: https://game8.co/games/Pokemon-Champions/archives/590527 (move list)
 var CRIT_STAGES = [1/24, 1/8, 1/2, 1, 1]; // index by clamped stage
 var HIGH_CRIT_MOVES = new Set([
-  // Gen 9 +1 stage list. Champions retains standard list per Game8 move pages.
   'Night Slash','Cross Poison','Drill Run','Stone Edge','Leaf Blade',
   'Psycho Cut','Slash','Shadow Claw','Attack Order','Spacial Rend','Blaze Kick'
 ]);
@@ -297,9 +283,7 @@ var SECONDARY_EFFECTS = {
 };
 
 // Contact moves — Champions/Gen 9 contact list used by Piercing Drill,
-// Unseen Fist, and future contact-triggered hooks (Rough Skin, Iron Barbs).
 // Cite: https://bulbapedia.bulbagarden.net/wiki/Contact
-// Conservative: every physical contact move present in the engine's move set.
 var CONTACT_MOVES = new Set([
   'Fake Out','Flare Blitz','Head Smash','Extreme Speed','Wave Crash',
   'Iron Head','Close Combat','Dire Claw','Ice Punch','Knock Off',
@@ -516,8 +500,6 @@ function _movePriority(move) {
   return Number.isFinite(priority) ? priority : 0;
 }
 
-// Runtime data owns the canonical target bridge. This fallback keeps older
-// engine-only VM tests working; runtime_data_bridge_tests.js guards drift.
 var SHOWDOWN_TARGET_CATEGORY_FALLBACK_MAP = {
   allAdjacent: 'all-adjacent',
   allAdjacentFoes: 'all-adjacent-foes',
@@ -733,7 +715,6 @@ function _resolveSoakTarget(source, target, active, field, rng) {
   return fastest.length === 1 ? fastest[0] : fastest[Math.floor(rng() * fastest.length)];
 }
 
-// Pinned Champions diagnostic context: source-owned healing with reflected roles.
 function _resolveMcStatusRedirect(source, target) {
   if (!target || !target.side || source.ability === 'Stalwart' || source.ability === 'Propeller Tail') return target;
   const redirect = target.side.redirectTo;
@@ -800,7 +781,6 @@ function _applySoak(source, target, field, log, rng, reflected, priorityCheck, r
   }
   if (!priorityCheck(source, 'Soak', target, field, log)) return fail('priority-block');
   if (_targetAbilityActive(target, source, 'Good as Gold')) return fail('good-as-gold');
-  // Reflection is an onTryHit effect: it precedes Substitute and accuracy.
   if (!reflected && _targetAbilityActive(target, source, 'Magic Bounce')) {
     log.push(`${target.name}'s Magic Bounce reflected Soak!`);
     return _applySoak(target, source, field, log, rng, true, priorityCheck, redirectTarget);
@@ -965,7 +945,6 @@ function _resolveDynamicMoveType(attacker, move, field, baseMoveType) {
 }
 
 function _canConvertNormalMove(ctx) {
-  // Pinned Showdown type-changing ability exclusions; these moves own their type.
   return !_isActiveTeraBlastContext(ctx) &&
     !['Judgment', 'Multi-Attack', 'Natural Gift', 'Revelation Dance', 'Techno Blast', 'Terrain Pulse', 'Weather Ball'].includes(ctx.move);
 }
@@ -1142,8 +1121,6 @@ function _moveMaxPP(move, actor) {
   var base = Number(override && override.champions_pp != null ? override.champions_pp : row && row.pp);
   var reference = typeof getMcReferenceMove === 'function' && getMcReferenceMove(move, actor);
   if (reference) base = reference.pp;
-  // Isolated engine tests do not always load the generated Showdown mirror.
-  // Use Champions' common 20-PP baseline there; production/import legality
   // still requires a mirrored move row before competitive use.
   if (!Number.isFinite(base) || base < 1) base = 20;
   if (base === 1) return 1;
@@ -1508,31 +1485,15 @@ function _recordMoveFailureEvent(field, mon, move, reason, details) {
 }
 
 // ABILITIES REGISTRY — T9j.8
-// Each entry declares the hooks an ability participates in. Handlers return
-// a mutation object (or undefined for no-op). The engine calls the relevant
 // hook at the canonical trigger points documented below.
 //
 // Hook signatures:
-//   onModifyMove({move, attacker, field}) -> {move?, bpMult?, typeOverride?}
-//     Fires at the top of calcDamage so type/STAB/type-chart all see the change.
-//   onBasePower({move, moveType, basePower, attacker, defender, field}) -> {bpMod}
-//     Fires after dynamic BP resolution and before terrain/helping-hand BP mods.
 //     bpMod uses Showdown's 4096 fixed-point modifier scale.
-//   onSourceModifyAtk({move, moveType, attacker, defender, field}) -> {statMod}
-//     Fires from the defender before base damage is computed. statMod uses
 //     Showdown's 4096 fixed-point scale against the attack/sp-atk value.
-//     Fires during final-mod construction. finalMod uses Showdown's 4096 scale.
-//   onTryHit({move, moveType, attacker, defender, field}) -> {immune, healFraction}
-//     Fires before damage calculation in battle execution and as a zero-damage
 //     guard in calcDamage previews.
-//     Fires when a target's Protect flag is up; default is 0 (full block). A
-//     positive damageMult lets the attacker deal dmg * mult through Protect.
 //     Piercing Drill / Unseen Fist use this shared 25% path.
-//   onDamageTaken({attacker, defender, move, moveType, damage, field, log})
-//     Fires AFTER applyDamage writes HP, iff damage > 0 AND defender still alive.
 //     Used by Spicy Spray (burn attacker).
 //   onWeatherCheck({mon, moveType, field}) -> {effectiveWeather}
-//     Fires inside calcDamage's weather branch. Mega Sol provides personal sun
 //     for the holder's Fire-typed moves even if field weather is 'none'.
 //
 // Sources cited per-ability.
@@ -1563,10 +1524,7 @@ var ABILITIES = {
     suppressesWeather: true
   },
   'Dragonize': {
-    // Normal moves become Dragon-type and gain 20% BP. Mirrors -ate ability
-    // family (Pixilate/Aerilate/Refrigerate) with Dragon as the target type.
     // Cite: https://www.serebii.net/pokemonchampions/newabilities.shtml
-    // Cite: https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_Champions
     onModifyMove: function(ctx) {
       if (!_canConvertNormalMove(ctx)) return null;
       var baseType = _moveType(ctx.move, ctx.attacker);
@@ -1583,17 +1541,12 @@ var ABILITIES = {
     }
   },
   'Piercing Drill': {
-    // The previous T9j.8 implementation (25% Protect bypass on contact) was
     // incorrect for Champions Reg M-A. Rewritten per user-confirmed spec.
     // The 25% miss roll fires inside executeMove right after the standard
-    // accuracy check; this entry is intentionally hookless (no onProtectResolve)
     // so Mega Excadrill obeys default full-block Protect rules.
     // Cite: https://www.serebii.net/pokemonchampions/newabilities.shtml
-    // Cite: https://bulbapedia.bulbagarden.net/wiki/Piercing_Drill_(Ability)
   },
   'Unseen Fist': {
-    // Champions: 25% damage through Protect on contact moves (nerfed from 100%).
-    // Cite: https://www.serebii.net/pokemonchampions/updatedabilities.shtml
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Unseen_Fist_(Ability)
     onProtectResolve: function(ctx) {
       if (ctx.isContact) return { damageMult: 0.25 };
@@ -1610,7 +1563,6 @@ var ABILITIES = {
   },
   'Mega Launcher': {
     // Pulse moves gain 50% power.
-    // Cite: https://bulbapedia.bulbagarden.net/wiki/Mega_Launcher_(Ability)
     onModifyMove: function(ctx) {
       if (_moveHasFlag(ctx.move, 'pulse')) return { bpMult: 1.50 };
       return null;
@@ -1620,14 +1572,12 @@ var ABILITIES = {
     onSwitchOut: function(ctx) { return ctx.mon && ctx.mon.status ? { cureStatus: true } : null; }
   },
   'Regenerator': {
-    // Showdown: onSwitchOut heals baseMaxhp / 3; Pokemon.heal truncates the
     // positive fractional value before applying it.
     onSwitchOut: function() {
       return { healFraction: 1 / 3, healBasis: 'base_max_hp', rounding: 'down' };
     }
   },
   'Spicy Spray': {
-    // 100% burn attacker when holder takes any damage (except Fire attackers,
     // attackers already statused, or if holder is behind a Substitute).
     // Cite: https://www.serebii.net/pokemonchampions/newabilities.shtml
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Spicy_Spray_(Ability)
@@ -1657,8 +1607,6 @@ var ABILITIES = {
     }
   },
   'Sheer Force': {
-    // Moves with eligible secondary effects gain 30% power and those effects
-    // are suppressed after damage. Uses the current engine's secondary-effect
     // surface plus common Showdown secondary moves used by shipped teams.
     onBasePower: function(ctx) {
       if (_hasSheerForceEffect(ctx.attacker, ctx.move)) return { bpMod: 5325 };
@@ -1697,7 +1645,6 @@ var ABILITIES = {
     }
   },
   'Thick Fat': {
-    // Incoming Fire/Ice moves use half the attacker's relevant attacking stat.
     onSourceModifyAtk: function(ctx) {
       if (ctx.moveType === 'Fire' || ctx.moveType === 'Ice') return { statMod: 2048 };
       return null;
@@ -1718,7 +1665,6 @@ var ABILITIES = {
     }
   },
   'Levitate': {
-    // Ground immunity for grounded non-Thousand Arrows attacks. Flying-type
     // immunity is still handled by the type chart; this covers non-Flying
     // Levitate users such as Cresselia/Rotom/Chimecho.
     onTryHit: function(ctx) {
@@ -1729,7 +1675,6 @@ var ABILITIES = {
     }
   },
   'Bulletproof': {
-    // Ballistic move immunity. Uses Showdown's bullet flag where available and
     // a local fallback list for imported/generated gaps.
     onTryHit: function(ctx) {
       if (ctx.defender !== ctx.attacker && _isBallisticMove(ctx.move)) return { immune: true };
@@ -1754,7 +1699,6 @@ var ABILITIES = {
     }
   },
   'Earth Eater': {
-    // Ground moves targeting another Pokemon are absorbed; holder heals 1/4 max HP.
     onTryHit: function(ctx) {
       if (ctx.defender !== ctx.attacker && ctx.moveType === 'Ground') {
         return { immune: true, healFraction: 0.25 };
@@ -1796,7 +1740,6 @@ var ABILITIES = {
   'Mummy': {
     // Contact attackers have their ability overwritten with Mummy after a
     // damaging contact hit.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onDamagingHit: function(ctx) {
       var attacker = ctx.attacker, defender = ctx.defender;
       if (!attacker || !defender || !ctx.damage || ctx.damage <= 0) return;
@@ -1808,22 +1751,15 @@ var ABILITIES = {
     }
   },
   'Stamina': {
-    // Defense rises by one stage after taking a damaging hit and surviving.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onDamagingHit: function(ctx) {
       if (!ctx.defender || ctx.defender.hp <= 0) return;
       _applyStageMap(ctx.defender, { def: 1 }, ctx.log);
     }
   },
-  // Inline in applyDamage: raises Special Attack once damage crosses half HP.
   'Berserk': {},
-  // Inline in calcDamage/applyDamage: ignores modeled target defensive hooks,
-  // defender Unaware, Sturdy, Levitate/Earth Eater immunity, and reductions.
   'Mold Breaker': {},
-  // Inline in calcDamage/applyEntryAbility: Normal/Fighting hit Ghosts and
   // Intimidate-style Attack drops are ignored.
   'Scrappy': {},
-  // Inline in calcDamage/status/applyDamage: bypasses screens and Substitute.
   'Infiltrator': {},
   // Inline in getPriority: Flying moves gain +1 priority at full HP.
   'Gale Wings': {},
@@ -1834,9 +1770,7 @@ var ABILITIES = {
   // Inline in accuracy gates: sand/snow evasion modifiers.
   'Sand Veil': {},
   'Snow Cloak': {},
-  // Inline in status/stat-drop gates: allied Grass-types avoid drops/status.
   'Flower Veil': {},
-  // Inline in accuracy/stat/type gates: ignores evasion, blocks accuracy drops,
   // and lets Normal/Fighting damage Ghost targets.
   "Mind's Eye": {},
   // Inline in canInflictStatus.
@@ -1846,48 +1780,36 @@ var ABILITIES = {
   'Shell Armor': {},
   // Inline in applyDamage: contact hits can poison the target.
   'Poison Touch': {},
-  // Inline in applyDamage: attacker loses HP equal to the holder's pre-hit HP
   // when direct damage knocks the holder out.
   'Innards Out': {},
-  // Inline in executeAction: once per switch-in type change to the used move.
   'Protean': {},
   // Inline in executeMove / Dragon Darts: ignores redirection.
   'Stalwart': {},
-  // Inline in multi-hit execution: supported multi-hit moves hit max count.
   'Skill Link': {},
   // Inline in voluntary switch/pivot helper.
   'Shadow Tag': {},
   // Inline in applyItem: opposing berries cannot activate.
   'Unnerve': {},
-  // Inline in applyEntryAbility: copy the first eligible opposing ability.
   'Trace': {},
-  // Inline at end of turn: 30% chance to cure an adjacent ally's major status.
   'Healer': {},
   // Current sim no-op: item reveal is already visible to the planner.
   'Frisk': {},
   // Inline in selected-move PP consumption: adds one PP for each affected
   // opposing Pressure holder, capped by the move's remaining PP.
   'Pressure': {},
-  // Inline in executeAction/setStanceForm: Aegislash swaps between Shield and Blade.
   'Stance Change': {},
   // Inline in getStat: Attack is doubled after stat-stage resolution.
   'Huge Power': {},
   // Inline in getStat: Attack is doubled after stat-stage resolution.
   'Pure Power': {},
-  // Inline in calcDamage: low-HP Fire moves get a 1.5x attacking-stat boost.
   'Blaze': {},
-  // Inline in calcDamage: low-HP Grass moves get a 1.5x attacking-stat boost.
   'Overgrow': {},
   'Solar Power': {},
-  // Inline in applyDamage: survive lethal direct damage from full HP at 1 HP.
   'Sturdy': {},
   'Supreme Overlord': {},
-  // Inline in calcDamage: ignore opposing offensive/defensive stat stages.
   'Unaware': {},
   'Mega Sol': {
     // Personal sun — treats Fire moves as if sun is up when computing the
-    // weather multiplier, but does NOT set field weather. Water 0.5x penalty
-    // and Fire 1.5x bonus apply only for the holder's own move resolution.
     // Cite: https://www.serebii.net/pokemonchampions/newabilities.shtml
     onWeatherCheck: function(ctx) {
       if (ctx.field.weather === 'none' || !ctx.field.weather) {
@@ -1896,19 +1818,14 @@ var ABILITIES = {
       return null;
     }
   }
-  // Parental Bond handled inline in executeMove (2-strike loop with BP override)
 };
 
 // T9j.17 (Refs #44) -- TERRAIN SEEDS
-// One-shot consumable items that boost the holder by +1 to a defensive stat
-// when present in matching terrain at switch-in. Standard mainline behavior
 // per Bulbapedia. Champions inherits this verbatim (no nerfs).
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Grassy_Seed
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Electric_Seed
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Psychic_Seed
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Misty_Seed
-// Entry handles existing terrain; terrain-setting abilities dispatch to all
-// living active holders. Item availability remains separately review-gated.
 var TERRAIN_SEEDS = {
   'Grassy Seed':  { terrain: 'grassy',   stat: 'def', stages: 1 },
   'Electric Seed':{ terrain: 'electric', stat: 'def', stages: 1 },
@@ -1918,7 +1835,6 @@ var TERRAIN_SEEDS = {
 
 // Triggered from entry and terrain-setting ability hooks. Boosts cap
 // at +6, item is consumed (sets itemConsumed flag for Unburden).
-//   Cite: https://bulbapedia.bulbagarden.net/wiki/Grassy_Seed (mechanics box)
 function tryTerrainSeed(mon, field, log) {
   if (!mon || !mon.alive || mon.hp <= 0) return false;
   if (mon.itemConsumed || mon.ability === 'Klutz') return false;
@@ -2016,7 +1932,6 @@ function applySeedSowerOnHit(target, field, log) {
   return true;
 }
 
-// T9j.8 — Ability hook dispatcher. Safe call: returns null when no ability or
 // no matching hook. Invoked from engine trigger points.
 function _contactEffects(field) {
   const gas = [..._sideActiveMons(field && field.playerSide), ..._sideActiveMons(field && field.oppSide)]
@@ -2159,8 +2074,6 @@ class Pokemon {
     this.item = data.item;
     this.ability = data.ability;
     this.nature = data.nature;
-    // Validated imports may contain numeric strings; never concatenate SPs
-    // into stats or mutate the registered spread while constructing a battle.
     this.evs = Object.fromEntries(['hp','atk','def','spa','spd','spe'].map(stat =>
       [stat, Number(data.evs && data.evs[stat] != null ? data.evs[stat] : 0)]));
     this.moves = [...data.moves];
@@ -2173,8 +2086,6 @@ class Pokemon {
     this.roles = (typeof classifyPokemon === 'function' ? (classifyPokemon(data).roles || []) : []);
     this.teamStyle = teamStyle;
     this.tera = data.teraType || data.tera_type || data.tera || null;
-    // Champions SP caps: 32 per stat, 66 total. Preserve the format mismatch
-    // guard so an SV-scale spread cannot enter the Champions stat formula.
     // Source: https://bulbapedia.bulbagarden.net/wiki/Stat_point
     var _declaredFmt = teamFormat || data.format || null;
     var _resolvedStatFormat = resolveMonStatFormat(data, _declaredFmt);
@@ -2182,7 +2093,6 @@ class Pokemon {
     this.statFormat = _resolvedStatFormat.statFormat;
     this.formatMismatch = _resolvedStatFormat.formatMismatch;
 
-    // Reference admission and construction share canonical form/stone resolution.
     const _megaInfo = referenceMode === 'champions_mc_reference' && typeof resolveMcMega === 'function'
       ? resolveMcMega(data.name,data.item).form
       : (typeof CHAMPIONS_MEGAS !== 'undefined' && CHAMPIONS_MEGAS[data.name]) || null;
@@ -2197,7 +2107,6 @@ class Pokemon {
       };
       this.displayName = data.name;                 // keep Mega name for UI
       this.name        = _megaInfo.baseSpecies;     // engine reads base stats
-      // Legacy active-Mega sets need a base fallback; an explicit base ability
       // belongs to the registered set and must survive initialization.
       const _abilityApi = typeof ChampionsSim !== 'undefined' && ChampionsSim.moveLegality;
       const _baseAbilityCheck = _abilityApi && typeof _abilityApi.isAbilityLegalForSpecies === 'function'
@@ -2220,8 +2129,6 @@ class Pokemon {
                            ? MEGA_TRIGGER_POLICY.FIRST_ELIGIBLE : 'first_eligible');
     this.megaTriggerTurn = 1;
 
-    // Source order: generated Showdown species rows first; local tables only
-    // backfill unknown/custom/partial rows and Champions-specific overrides.
     const _showdownBaseStats = _showdownSpeciesBase(this.name);
     const _isAegislashStanceMon = data.ability === 'Stance Change' &&
       (data.name === 'Aegislash' || data.name === 'Aegislash-Blade');
@@ -2230,7 +2137,6 @@ class Pokemon {
     const _baseStats = _showdownBaseStats || BASE_STATS[this.name] || { hp:80,atk:80,def:80,spa:80,spd:80,spe:80, types:['Normal'] };
     const _sourceWeightKg = Number(data.weightkg != null ? data.weightkg : _showdownSpeciesWeightKg(this.name));
     this.weightkg = Number.isFinite(_sourceWeightKg) && _sourceWeightKg > 0 ? _sourceWeightKg : 0;
-    // Use POKEMON_TYPES_DB for more accurate type coverage on imported Pokémon
     const _types = (_showdownBaseStats && Array.isArray(_showdownBaseStats.types) && _showdownBaseStats.types.length)
       ? _showdownBaseStats.types
       : (typeof POKEMON_TYPES_DB !== 'undefined' && POKEMON_TYPES_DB[this.name])
@@ -2266,12 +2172,8 @@ class Pokemon {
     this.status = data.status || null; // burn, paralysis, sleep, poison, toxic, frozen
     this.statusTurns = data.statusTurns || 0;
     // T9j.4 (#41) — status residual counters.
-    // toxicCounter: N in the N/16 Bad Poison formula. Starts at 1 on inflict,
     //   increments post-tick, caps at 15, resets on switch-out.
-    // frozenTurns: turns spent frozen. Champions: 25% thaw per move attempt;
     //   guaranteed thaw on turn 3 (3-turn maximum).
-    // sleepTurns: turns-asleep counter for 33% turn-2 wake and 3-turn cap.
-    // Cite: Bulbapedia Freeze (Pokemon Champions section); Bulbapedia Status.
     this.toxicCounter = data.toxicCounter || 0;
     this.frozenTurns  = data.frozenTurns || 0;
     this.sleepTurns   = data.sleepTurns || 0;
@@ -2284,8 +2186,6 @@ class Pokemon {
     this.protectKind   = null;
     this.enduring      = false;
     this.turnsSinceEntry = 0;
-    // T9j.17 (Refs #101) -- Fake Out hard-gate flag. Initialized false so first
-    // turn out is the only legal use. Reset on every switch-in (replaceOnField).
     // Cite: https://bulbapedia.bulbagarden.net/wiki/Fake_Out_(move)
     this._fakeDone    = false;
     // T9j.6 (#18) — Choice Scarf move lock. Set to move name after first use,
@@ -4564,6 +4464,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     return switched;
   }
 
+  let pendingActions = [];
   function executeAction(attacker, move, target, allies, enemies, field, log, rng, opts) {
     if (attacker.referenceMode === 'champions_mc_reference') attacker._mcEmergencyBefore = [...playerActive,...oppActive].map(mon=>({mon,hp:mon.hp}));
     try {
@@ -5098,19 +4999,33 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Encore' && target && target.alive) {
-        const targetAllies = (target.side && attacker.side && target.side === attacker.side) ? allies : enemies;
-        const aromaVeilOnSide = targetAllies.some(m => m.alive && m.ability === 'Aroma Veil');
-        if (target.ability === 'Oblivious' || target.ability === 'Aroma Veil' || aromaVeilOnSide) {
-          log.push(`${target.name} is immune to Encore!`);
-          return;
-        }
-        if (!target.lastMoveUsed) {
+        const effects = _contactEffects(field), own = target.side === field.playerSide ? playerActive : oppActive;
+        const last = target.lastMoveUsed;
+        if (own.some(mon=>mon.alive && effects.ability(mon)==='Aroma Veil') || target.encoredTurns>0 ||
+            !last || _moveHasFlag(last,'failencore') || _movePPRemaining(target,last)<=0) {
+          attacker.lastMoveFailed = true;
+          _recordMoveFailureEvent(field,attacker,move,'encore-unavailable');
           log.push(`${attacker.name} used Encore! But it failed!`);
           return;
         }
-        target.encoredMove = target.lastMoveUsed;
-        target.encoredTurns = 3;
+        const queued = pendingActions.find(action=>action.attacker===target);
+        target.encoredMove = last;
+        target.encoredTurns = queued ? 3 : 4;
         log.push(`${target.name} got an Encore!`);
+        if (effects.item(target)==='Mental Herb') {
+          target.itemConsumed=true;target.encoredMove=null;target.encoredTurns=0;
+          log.push(`${target.name}'s Mental Herb removed Encore!`);
+          _recordEffectEvent(field,target,move,'item-consumed',target.hp,target.hp,{item:'Mental Herb',removed_effect:'Encore'});
+        } else if (queued && queued.move!==last) {
+          const foes = own===playerActive?oppActive:playerActive, category=_moveTargetCategory(last);
+          const rawTarget=_showdownMoveRow(last)?.target;
+          const pool=category==='self'?[target]:category==='all-allies'?own.filter(mon=>mon.alive && (rawTarget!=='adjacentAlly'||mon!==target)):foes.filter(mon=>mon.alive);
+          const replacement=pool.length?pool[Math.floor(rng()*pool.length)]:null;
+          queued.move=last;queued.priority=getPriority(last,target);queued.dynamicPriority=true;
+          queued.target=replacement;queued.targetIndex=foes.includes(replacement)?foes.indexOf(replacement):null;
+          queued.targetAllyIndex=own.includes(replacement)?own.indexOf(replacement):null;
+          _recordEffectEvent(field,target,move,'encore-requeue',target.hp,target.hp,{replacement_move:last,priority:queued.priority});
+        }
         return;
       }
       if (move === 'Spite' && target && target.alive) {
@@ -6997,7 +6912,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       _recordEffectEvent(field,switchPlan.actor,'Switch','diagnostic-voluntary-switch',switchPlan.actor.hp,switchPlan.actor.hp,
         {source:'pinned Showdown baseline; diagnostic only',replacement_key:switchPlan.replacement.stableKey,active_slot:switchPlan.slot});
     }
-    const pendingActions = actions.filter(a=>a.kind!=='switch');
+    pendingActions = actions.filter(a=>a.kind!=='switch');
 
     // Showdown Gen 8+ recalculates priority and Speed, then speed-sorts the
     // remaining move queue after every action. Newly formed ties are therefore
@@ -7358,7 +7273,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     }
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.encoredTurns > 0)) {
       mon.encoredTurns--;
-      if (mon.encoredTurns <= 0) {
+      if (mon.encoredTurns <= 0 || _movePPRemaining(mon,mon.encoredMove)<=0) {
         mon.encoredTurns = 0;
         mon.encoredMove = null;
         log.push(`${mon.name}'s Encore wore off.`);
@@ -7889,7 +7804,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.33'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.34'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

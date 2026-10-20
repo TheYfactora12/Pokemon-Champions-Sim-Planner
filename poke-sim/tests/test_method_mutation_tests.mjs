@@ -9,6 +9,7 @@ import {compareProbe,loadLocalEngine} from '../tools/showdown-reference.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),out=new URL('../artifacts/test-method-controls/',import.meta.url);
 fs.mkdirSync(out,{recursive:true});
 for(const [mutant,suite,pattern] of [
+  ...['encore_queue','encore_herb','encore_duration','encore_priority'].map(m=>[m,'encore_reference_tests.mjs','Encore false/0/(before|herb|after|changed-priority)$']),
   ['rest_admission','rest_reference_tests.mjs','Rest terrain and ally admission player/0/(electric|ally)$'],
   ...['struggle_fixed','struggle_floor','struggle_normal'].map(m=>[m,'struggle_reference_tests.mjs','Struggle false/0/0/(normal|ghost)']),
   ['half_damage','showdown_damage_oracle_tests.js'],

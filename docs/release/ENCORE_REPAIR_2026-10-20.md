@@ -1,0 +1,13 @@
+# Champions Encore queue repair
+
+Candidate v2.2.233-encore / engine1.1.34. Actual Champions upstream9b136a8c8cdb860a8ab96fa063f906604e352547 overrides Encore in data/mods/champions/moves.ts309-340: queue.changeAction recalculates replacement priority. Generic generation9 preserves original queued priority instead. Initial investigation guidance incorrectly conflated these and was corrected before implementation; installed shared reference remains separately identified, never silently replaced.
+
+The repair replaces a pending move before execution/PP deduction, selects a replacement target, gives after-action Encore the extra residual turn, rejects absent/exhausted/failencore/repeated locks, and handles ordinary active Mental Herb consumption/cure. The test asserts move, PP spent (not misleading cross-version basePP equality), remaining duration, item state and executed action order. Helping Hand asserts the actual ally target rather than just effect text.
+
+Validation:28 initial bounded cases failed on the old implementation. Expanded32/32 pass installed historical shared reference and exact compiled current Champions/M-C; independent read-only reviewer reran32/32. Four negative controls catch disabled requeue, omitted Herb cure, wrong duration and stale replacement priority. Historical-source priority disagreement is explicit; local expected order follows current Champions: Encore, replaced Extreme Speed, Quick Attack. No current-client observation or legal-team claim.
+
+Independent review caught an adjacentAlly target-evidence error; fixed by excluding caster before selection and retaining a permanent both-side/slot regression. Broader target classes, suppression/Herb/immunity combinations and full duration/switch lifecycle remain partial. Tests do not establish random target distribution or every Encore interaction.
+
+Local battle audit and methodology passed. Browser replay passed: 2 captures, 3 pairs, 22 turns, zero mismatches or page errors. Full project run had one stale matrix-count assertion (67 versus 68); the assertion is corrected and its owning suite rerun separately. All other project files and 12 offline DB files passed. Bundle11526451bytes, SHA256afd66d09ea68592ecc325874ffe772c5b0a186d3ede75a8bc6a6c4e69fc0a10c. Historical comment text moved verbatim to ENGINE_INTERFACE_NOTES.md; budget unchanged. No goldens regenerated, liveDB tests, merge/deploy or settings changes.
+
+Known remaining work: Rest Leaf Guard/sun admission, independently identified Struggle availability/shield/Disguise/random targeting/ability interactions, discrete damage rolls and isolated item integration. Prior independent reports are preserved in independent/ with exact audited heads and hashes. Competitive NO-GO remains.

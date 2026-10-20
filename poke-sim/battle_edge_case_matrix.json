@@ -1367,6 +1367,26 @@
         "fixed-damage-floor-recoil-Normal-type-mutants"
       ],
       "known_gap": "Synthetic pinned-reference scope, not current-client or legal M-C proof. Random target distribution, burn/stages/critical, conversion abilities, Substitute/contact retaliation/special shields remain unproved. Legacy late-Fake-Out synthetic Struggle path remains known incorrect and excluded."
+    },
+    {
+      "id": "MOVE-ENCORE-QUEUE",
+      "family": "moves-effects",
+      "behavior": "Champions Encore replaces queued action, recalculates priority, spends executed PP, respects ordinary Mental Herb and after-action duration.",
+      "status": "partial",
+      "tests": [
+        "tests/encore_reference_tests.mjs",
+        "tests/test_method_mutation_tests.mjs"
+      ],
+      "oracle": "Pinned upstream9b136a8 data/mods/champions/moves.ts309-340 queue.changeAction; historical default reference kept distinct.",
+      "boundary_vectors": [
+        "both-sides-and-slots",
+        "before-after-target",
+        "changed-priority",
+        "last-PP",
+        "MentalHerb",
+        "HelpingHand-ally-target-evidence"
+      ],
+      "known_gap": "No current-client or legal-team proof. Suppressed Herb, full duration/switch lifecycle, immunity combinations and broader targetclasses remain unproved."
     }
   ]
 }
