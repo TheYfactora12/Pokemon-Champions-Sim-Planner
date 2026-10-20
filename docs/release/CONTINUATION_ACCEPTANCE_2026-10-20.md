@@ -103,3 +103,22 @@ what must be supplied before its gate can close; local mocks do not close live g
 | Evidence Brain: private coaching workspace | Lead/lineup/turning-point/drill and private Trainer room consolidation awaits evidence and ownership gates. | Product/evidence owners: promote only supported claims; feedback cannot override mechanics or self-train production. |
 | Optional expansion | Deferred; not a blocker to the bounded free doubles lab. Accounts/sync, subscriptions and LLM learning require separate need/privacy/cost decisions. | Product owner: keep deferred; no spending or expansion in this slice. |
 
+
+## Authorized draft-review reconciliation
+
+Publication for draft review was subsequently authorized; merge, deployment and live
+DB/security changes remain unauthorized. Main advanced to
+`3eb6ab1ce7f026a82934901ac386ae46505c3dde` through two news-only updates. Merge
+`014524a` retains those updates and all v224 repairs. Rebuilt bundle: 11,534,312 bytes,
+SHA256 `79b6dcf629c3cadfe1b0fb2ec498ed91dee869ee2da97c48f559dbfa608f57b1`.
+The earlier bundle hash describes the pre-reconciliation snapshot.
+
+PR278 remains open/draft and is preserved. Its functional repair commit `4bfeed9`
+and local `9b1a307` differ only in news/generated release artifacts; PR278 head
+`8282089` additionally contains its dated publication note. This consolidated
+review includes the repair, and does not close or overwrite PR278. Reviewers must
+choose integration order before merging; neither PR is authorized to merge.
+
+The [Supabase grants assessment](SUPABASE_GRANTS_READINESS_2026-10-20.md) records
+source-proven fresh-schema risks, exact proposals and 15 passing offline checks.
+No migration or permissions change was made; disposable PostgreSQL was unavailable.
