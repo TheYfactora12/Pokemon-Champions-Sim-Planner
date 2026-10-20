@@ -677,13 +677,13 @@ function _accuracyStageMult(stage) {
 var MULTI_HIT_MOVES = new Set([
   'Arm Thrust','Bone Rush','Bullet Seed','Fury Attack','Fury Swipes',
   'Icicle Spear','Pin Missile','Rock Blast','Scale Shot','Tail Slap',
-  'Dual Wingbeat'
+  'Dual Wingbeat','Double Hit','Double Kick'
 ]);
 
 function _multiHitCount(attacker, move, rng) {
-  if (attacker && attacker.ability === 'Skill Link') return 5;
   if (move === 'Triple Kick' || move === 'Triple Axel' || move === 'Triple Dive') return 3;
   if (move === 'Double Hit' || move === 'Double Kick' || move === 'Dual Chop' || move === 'Dual Wingbeat') return 2;
+  if (attacker && attacker.ability === 'Skill Link') return 5;
   var roll = (typeof rng === 'function' ? rng() : Math.random());
   if (roll < 0.35) return 2;
   if (roll < 0.70) return 3;
@@ -6817,6 +6817,25 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       damage: appliedDamage, field: field, log: log,
       recordKO: _recordKO
     });
+    // Pinned Showdown item onDamagingHitOrder=2: Rough Skin order=1 precedes the item.
+    const contactGas = [..._sideActiveMons(field.playerSide), ..._sideActiveMons(field.oppSide)]
+      .some(mon => mon.ability === 'Neutralizing Gas');
+    const contactAbility = mon => (!contactGas || (mon.item === 'Ability Shield' && !mon.itemConsumed)) ? mon.ability : '';
+    const contactItem = mon => !mon.itemConsumed && contactAbility(mon) !== 'Klutz' ? mon.item : '';
+    if (appliedDamage > 0 && attacker.alive && contactItem(target) === 'Rocky Helmet' &&
+        _isContactMove(move) && contactAbility(attacker) !== 'Long Reach' &&
+        contactAbility(attacker) !== 'Magic Guard' && contactItem(attacker) !== 'Protective Pads') {
+      const beforeHelmet = attacker.hp, chip = Math.max(1, Math.floor(attacker.maxHp / 6));
+      attacker.hp = Math.max(0, attacker.hp - chip);
+      log.push(`${attacker.name} was hurt by ${target.name}'s Rocky Helmet! [${beforeHelmet - attacker.hp} dmg]`);
+      _recordEffectEvent(field, attacker, 'Rocky Helmet', 'item-contact-damage', beforeHelmet, attacker.hp, {
+        source: 'pinned Showdown item contact rule', source_actor: target.name,
+        source_actor_key: _snapshotMonStableKey(target.side === field.playerSide ? 'player' : 'opponent',target),
+        rule: {numerator:1,denominator:6,basis:'max_hp',rounding:'down'}, damage_applied:beforeHelmet-attacker.hp
+      });
+      if (!attacker.hp) { attacker.alive=false; log.push(`${attacker.name} fainted!`);
+        _recordKO(attacker,{move,attacker:target,reason:'Rocky Helmet'}); }
+    }
     if (attacker && attacker.alive && attacker.ability === 'Poison Touch' &&
         _isContactMove(move) && target.alive && target.hp > 0 && canInflictStatus(target, 'poison', field, attacker) &&
         rng() < 0.30) {
