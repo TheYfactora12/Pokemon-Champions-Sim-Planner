@@ -1,6 +1,6 @@
 // ============================================================
 // POKE-E-SIM CHAMPION 2026 — UI CONTROLLER
-// Build marker: v2.2.223-switch-hooks
+// Build marker: v2.2.224-replay-resilience
 // ============================================================
 
 // ---- Theme Toggle ----
@@ -41,7 +41,7 @@ var UILog = ChampionsSim.logger.for ? ChampionsSim.logger.for('ui') : ChampionsS
 // ui.js without the documented app-shell script order.
 var csSpriteFallbackAttrs = (typeof csSpriteFallbackAttrs === 'function') ? csSpriteFallbackAttrs : function() { return ''; };
 var csInitPublicSecurityDelegates = (typeof csInitPublicSecurityDelegates === 'function') ? csInitPublicSecurityDelegates : function() {};
-var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.223-switch-hooks'; };
+var csGetBuildId = (typeof csGetBuildId === 'function') ? csGetBuildId : function() { return 'v2.2.224-replay-resilience'; };
 var csApplyReleaseManifestToHeader = (typeof csApplyReleaseManifestToHeader === 'function') ? csApplyReleaseManifestToHeader : function() {};
 var csReloadAfterBuildCacheReset = (typeof csReloadAfterBuildCacheReset === 'function') ? csReloadAfterBuildCacheReset : function() { return false; };
 var csGetSourceUrl = (typeof csGetSourceUrl === 'function') ? csGetSourceUrl : function() { return null; };
@@ -8572,10 +8572,29 @@ function downloadReplayTurnLog(replay, opts) {
     'application/json', JSON.stringify(payload, null, 2));
 }
 
+function csReplayHeaderState(card) {
+  const header = card.querySelector && card.querySelector('.replay-card-hdr');
+  if (header) header.setAttribute('aria-expanded', String(card.classList.contains('open')));
+}
+function csSetupReplayHeader(card) {
+  const header = card.querySelector('.replay-card-hdr');
+  if (!header) return;
+  header.setAttribute('role','button');
+  header.setAttribute('tabindex','0');
+  csReplayHeaderState(card);
+  header.addEventListener('keydown',event=>{
+    if (event.target !== header || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    header.click();
+  });
+}
+
 function csReplayCardClick(card, event) {
   if (event.target && event.target.closest &&
       event.target.closest('button, a, details, input, select, textarea')) return;
   card.classList.toggle('open');
+  csReplayHeaderState(card);
 }
 
 function csBuildReplayCoachingSummary(replay, opts) {
@@ -9769,6 +9788,7 @@ function renderReplays() {
     const dlBtn = card.querySelector('.replay-json-btn');
     if (dlBtn) dlBtn.addEventListener('click', (ev)=>{ ev.stopPropagation(); downloadReplayTurnLog(r); });
     card.addEventListener('click', (event)=>csReplayCardClick(card, event));
+    csSetupReplayHeader(card);
     el.appendChild(card);
   }
 }
@@ -9845,18 +9865,26 @@ function renderHistorySection() {
     card.addEventListener('click', (function(analysisId, cardEl) {
       return function() {
         cardEl.classList.toggle('open');
+        csReplayHeaderState(cardEl);
         if (cardEl.classList.contains('open') && !cardEl.dataset.loaded) {
           lazyLoadAnalysisLogs(analysisId, cardEl);
         }
       };
     })(row.analysis_id, card));
+    csSetupReplayHeader(card);
     el.appendChild(card);
   }
 }
 
 async function lazyLoadAnalysisLogs(analysisId, cardEl) {
+  if (cardEl.dataset.loading) return;
   var adapter = getWindowValue('SupabaseAdapter', null);
-  if (!adapter || typeof adapter.loadAnalysisLogs !== 'function') return;
+  if (!adapter || typeof adapter.loadAnalysisLogs !== 'function') {
+    const expanded=cardEl.querySelector('.replay-expanded');
+    if(expanded) expanded.textContent='Saved game logs are unavailable. Open this replay again to retry.';
+    return;
+  }
+  cardEl.dataset.loading='true';
   try {
     var logs = await adapter.loadAnalysisLogs(analysisId);
     var expanded = cardEl.querySelector('.replay-expanded');
@@ -9876,6 +9904,10 @@ async function lazyLoadAnalysisLogs(analysisId, cardEl) {
     cardEl.dataset.loaded = 'true';
   } catch (e) {
     UILog.warn('lazyLoadAnalysisLogs failed', e);
+    const expanded=cardEl.querySelector('.replay-expanded');
+    if(expanded) expanded.textContent='Could not load saved game logs. Open this replay again to retry.';
+  } finally {
+    delete cardEl.dataset.loading;
   }
 }
 

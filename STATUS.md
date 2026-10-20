@@ -7,18 +7,16 @@ Historical candidate observations are not current deployment instructions.
 
 ## Local repair candidate
 
-v2.2.221-own-policy / engine 1.1.25 is an unpublished local candidate based on
-main `ae3f52ce481924512bff523fdcef75d04935b7a3` plus PR278 prerequisites.
-Utility fix `0fa05c6` is included. Rocky Helmet contact/multihit behavior has 56
-pinned-reference cases. Actual default policy v4 now chooses from frozen own-state,
-public-field and target-slot inputs; hidden opponent attributes do not enter it.
-Strength remains unverified. Voluntary switching and simultaneous Mega resolution
-remain blocked on execution fixtures and approved Champions evidence respectively.
-[Consolidated acceptance gates](docs/release/OVERNIGHT_ACCEPTANCE_GATES_2026-10-20.md).
-Final local gates pass:235 fast files,12 DB files, battle audit,4,624 accuracy runs
-with zero findings, and3 browser games/4pairs with zero mismatches.
-PR278 is still draft/open; no publication,
-security/access change, spending, merge or deployment was performed.
+v2.2.224-replay-resilience / engine1.1.27 is the unpublished local candidate,
+based on main `ae3f52ce481924512bff523fdcef75d04935b7a3`. All v221 repairs remain.
+Development-only scripted switching has63 reference/admission cases; public and
+automatic switching remain unavailable. Natural Cure/Regenerator switch-out fixes
+have64 reference cases. Replay keyboard and saved-log retry repairs are included.
+Battle/accuracy gates and the 6-game/7-pair browser audit pass. Full project gate
+passes 238 fast and 12 local DB test files, with four manual/helpers skipped. See the
+[consolidated acceptance register](docs/release/CONTINUATION_ACCEPTANCE_2026-10-20.md).
+Simultaneous Mega/client evidence, full regulation approval, live DB and publication
+gates remain open. No push, merge, deploy or security/access changes performed.
 
 v2.2.217-current-moves / engine 1.1.21 is draft PR278, not deployed.
 Current Practice uses the September 9 official move removals and PP corrections;

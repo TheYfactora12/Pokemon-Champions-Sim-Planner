@@ -1,5 +1,13 @@
 # Improvement Log
 
+## IMP-0119: Make Replay Expansion and Read Recovery Usable
+
+- Browser inspection reproduced keyboard-inaccessible replay expansion. Add focus,
+  Enter/Space activation and synchronized expanded state to replay headers.
+- Mocked rapid history opens reproduced duplicate pending reads. Coalesce requests
+  and show a visible retry message on failure, keeping failed loads retryable.
+- [Final local resilience and candidate receipts](release/CONTINUATION_ACCEPTANCE_2026-10-20.md).
+
 ## IMP-0118: Repair Shared Switch-Out Ability Effects
 
 - Pinned probes reproduced 18/36 failures: missing Natural Cure and Regenerator

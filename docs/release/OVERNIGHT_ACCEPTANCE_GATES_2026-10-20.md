@@ -1,5 +1,8 @@
 # Overnight acceptance gates — 2026-10-20
 
+Current continuation: [v224 acceptance register](CONTINUATION_ACCEPTANCE_2026-10-20.md).
+This document preserves the completed v221 slice.
+
 ## Candidate and decision
 
 Unpublished `v2.2.221-own-policy`, engine `1.1.25`, branch
