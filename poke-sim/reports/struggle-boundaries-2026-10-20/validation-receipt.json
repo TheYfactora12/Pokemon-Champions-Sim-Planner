@@ -1,0 +1,68 @@
+{
+  "schema_version": "local-validation-v1",
+  "base_commit": "146ba91093ad9c0c3c3b7e675850e2e0f5f57475",
+  "candidate": "v2.2.239-struggle-evidence",
+  "scope": "working-tree local validation; hosted exact-head results follow separately",
+  "recorded_utc": "2026-10-20T18:58:26.019170+00:00",
+  "bundle_sha256": "4b93702d4064bf82f0155c77f2001a04797172b830d248042a266bcbb8f1c8d4",
+  "results": {
+    "project_gate": {
+      "fast_files": 265,
+      "offline_db_files": 12,
+      "failures": 0,
+      "manual_helpers_skipped": 4
+    },
+    "battle_audit": "passed; 4500 stress battles; 3 historical goldens unchanged; current goldens require review",
+    "accuracy_standard": "passed with expanded 26 mutation controls; competitive NO-GO",
+    "invariants": {
+      "cases": 9248,
+      "failures": 0
+    },
+    "browser": {
+      "capture": "KSLQRH",
+      "games": 2,
+      "comparison_pairs": 3,
+      "turns": 20,
+      "mismatches": 0,
+      "page_errors": 0
+    },
+    "struggle_reference": {
+      "installed_pass": 175,
+      "current_9b_pass": 175
+    },
+    "syntax_files": 25,
+    "register_export_checks": "both passed",
+    "diff_check": "passed"
+  },
+  "limitations": [
+    "Official M-C eligibility and current-client proof unresolved",
+    "Fly deliberately unsupported",
+    "Historical bounded assertion is stale for current engine",
+    "Current-profile golden traces unapproved",
+    "Live database not run",
+    "Battle aggregate ran 23 mutation controls; separate final methodology ran all 26 on identical engine bytes"
+  ],
+  "logs": {
+    "browser-host.log": "1606cd2e93786290bace7ea9a9a654f65efd63c692ceaa7de2faa7f9c09076d0",
+    "browser-sandbox-failure.log": "cd6cdbef02c04f97f5cfe9a9c04e6485b1fd2dedbb5cd5c68c480573217ba80a",
+    "css-browser.log": "191893f1ce14545addd29a55d4163ca78808f37b0bb793e8fa88907d9d250708",
+    "fakeout-full-26-methodology.log": "bf4adebdeb672fac9e1113aea361b82dfbea71a05f3ff0f6220d21bf012a84f6",
+    "initial-battle.log": "5370351bbefaf54a968442a36939a9a6541521b144d486c2894fde1c0c03ecea",
+    "initial-methodology.log": "7974afe3d4f961cf296b92ce01d60f24900553532190c2ad22f1900e6b8acf48",
+    "initial-project.log": "9154fe26b69049a45b5b5e9a38d9cce200cc2122410c076d94537ea7c855c439",
+    "installed-struggle.log": "a7141c59373bd01678a2c7ae12a130d60b55e291bc70f109bceef06260da6723",
+    "invariants.log": "90f6f89561fb2d3e8f1a5c09195b18d3c49b900fa10d4f0d0fe18580c847c241",
+    "release-host.log": "a4ad62721c6a4bf3c93b03f70b36eadb1b17b475888c44221f472181420afa25",
+    "struggle-fakeout-final-focused-methodology.log": "949c951af2325ced12d48d24dea5671600e350244aca203be47052305ecfde31",
+    "struggle-final-focused.log": "3c398d46533625cc9381644a3d533d0e885ba526de2ad33c9de0270f793873a5",
+    "struggle-final-mutants.log": "94453d4367550c91747c7b8ae3845edc21b31df156b714ed49e7ccd69f77b02b",
+    "struggle-nearby-regressions.log": "b7da60eaa4beea409fe70a5ff4f8da6a174ba756ce8a604238eb129fb5c8bb95",
+    "v239-final-battle.log": "ec1777adbdff4a07376df9ab2b71c5871b0cf04c8bdff43593ed6176d4be6144",
+    "v239-final-browser.log": "4e1220d4d129453964a9809303c42a7d569def8b73835d0c7d6d437f9d9e0da9",
+    "v239-final-invariants.log": "90f6f89561fb2d3e8f1a5c09195b18d3c49b900fa10d4f0d0fe18580c847c241",
+    "v239-final-methodology-expanded.log": "b8c517d1fdbb2144627e79b71b06469874fddaa34e3c6f86c7bac7c1cc3c7896",
+    "v239-final-methodology.log": "b8c517d1fdbb2144627e79b71b06469874fddaa34e3c6f86c7bac7c1cc3c7896",
+    "v239-final-project.log": "746b4ca3f964b156514ea03a667585db3df76661abe2d44393dc534c240227a8",
+    "workflow-host.log": "ba783911cc445863b99e99fa1b4f449f7a7e787268c6e6b12d5d1b0869db042a"
+  }
+}

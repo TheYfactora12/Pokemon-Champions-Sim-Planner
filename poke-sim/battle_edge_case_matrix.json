@@ -912,18 +912,25 @@
     {
       "id": "RESOURCE-STRUGGLE-RESOLUTION",
       "family": "moves-effects",
-      "behavior": "Supported forced Struggle paths apply fixed damage, recoil, and faint cleanup.",
-      "status": "covered",
+      "behavior": "Champions request-time unavailability can select Struggle; an injected late Fake Out fails without inventing a second hit or recoil.",
+      "status": "partial",
       "tests": [
-        "tests/t9j17_tests.js"
+        "tests/t9j17_tests.js",
+        "tests/struggle_boundary_reference_tests.mjs"
       ],
-      "oracle": "Current project Struggle contract pending full PP integration.",
+      "oracle": "Pinned upstream9b136a8 data/mods/champions/moves.ts onDisableMove and data/moves.ts Fake Out onTry; request and execution scopes remain distinct.",
       "boundary_vectors": [
-        "target-damage",
-        "user-recoil",
-        "user-faints"
+        "both-sides",
+        "late-injected-Fake-Out-fails",
+        "no-extra-hit-or-recoil",
+        "Protect-blocked-first-attempt-consumes-window",
+        "all-unavailable-selects-Struggle"
       ],
-      "known_gap": ""
+      "known_gap": "Bounded reference/request/execution probes, not current-client evidence or universal forced-action lifecycle.",
+      "move_ids": [
+        "fakeout",
+        "struggle"
+      ]
     },
     {
       "id": "FORM-MC-ADMISSION",
@@ -1381,6 +1388,7 @@
       "status": "partial",
       "tests": [
         "tests/struggle_reference_tests.mjs",
+        "tests/struggle_boundary_reference_tests.mjs",
         "tests/test_method_mutation_tests.mjs"
       ],
       "oracle": "Showdown9b136a8c8cdb860a8ab96fa063f906604e352547 data/moves.ts Struggle and sim/battle-actions.ts direct struggleRecoil; exact executable Champions custom reference.",
@@ -1392,9 +1400,17 @@
         "Protect-no-recoil",
         "MagicGuard-RockHead",
         "zero-PP-autoselection",
-        "fixed-damage-floor-recoil-Normal-type-mutants"
+        "fixed-damage-floor-recoil-Normal-type-mutants",
+        "Imprison-availability",
+        "both-side-slot-random-target",
+        "special-shields-contact-and-suppression",
+        "Disguise-cross-move-and-nonhit-boundaries",
+        "five-boundary-reversal-mutants"
       ],
-      "known_gap": "Synthetic pinned-reference scope, not current-client or legal M-C proof. Random target distribution, burn/stages/critical, conversion abilities, Substitute/contact retaliation/special shields remain unproved. Legacy late-Fake-Out synthetic Struggle path remains known incorrect and excluded."
+      "known_gap": "Synthetic pinned-reference scope, not current-client or official legal M-C proof. Broader Disguise paths and unenumerated move/ability/lifecycle combinations remain unproved. Counts describe scoped executions, not full-move certification.",
+      "move_ids": [
+        "struggle"
+      ]
     },
     {
       "id": "MOVE-ENCORE-QUEUE",
@@ -1419,7 +1435,7 @@
     {
       "id": "DAMAGE-ROLL-DISCRETE-016",
       "family": "damage-formula",
-      "behavior": "Champions profile samples sixteen uniform integer percentages85\u2013100 and applies the pinned independent Tackle damage vector.",
+      "behavior": "Champions profile samples sixteen uniform integer percentages85–100 and applies the pinned independent Tackle damage vector.",
       "status": "partial",
       "move_ids": [
         "tackle"
@@ -1428,7 +1444,7 @@
         "tests/discrete_damage_reference_tests.mjs",
         "tests/test_method_mutation_tests.mjs"
       ],
-      "oracle": "Executable current Champions custom/M-C upstream9b136a8c8cdb860a8ab96fa063f906604e352547 sim/battle.ts2407\u20132409 and Champions inherited randomizer. Historical npm generic scope separate.",
+      "oracle": "Executable current Champions custom/M-C upstream9b136a8c8cdb860a8ab96fa063f906604e352547 sim/battle.ts2407–2409 and Champions inherited randomizer. Historical npm generic scope separate.",
       "boundary_vectors": [
         "all-sixteen-bucket-centers-and-boundaries",
         "zero-and-just-below-one",
@@ -1436,7 +1452,7 @@
         "sixteen-executed-Tackle-damage-values",
         "fifteen-bucket-and-continuous-mutants"
       ],
-      "known_gap": "Not current-client observation or full move/damage pipeline certification. Equal semantic roll indices do not establish synchronized RNG seeds. Historical golden loader omits runtime_data and remains scoped legacy evidence."
+      "known_gap": "Not current-client observation or full move/damage pipeline certification. Equal semantic roll indices do not establish synchronized RNG seeds. Historical golden expectations remain unapproved for the separately loaded current runtime profile."
     }
   ]
 }

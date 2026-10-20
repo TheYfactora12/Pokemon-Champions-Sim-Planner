@@ -1,0 +1,148 @@
+{
+  "schema_version": "bounded-contract-v1",
+  "assertion_id": "DAMAGE-ROLL-DISCRETE-016.tackle-vector.v1",
+  "case_id": "DAMAGE-ROLL-DISCRETE-016",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "Snorlax Tackle into Venusaur",
+      "level50 Hardy zero EVs",
+      "no crit",
+      "16 discrete RNG bucket midpoints",
+      "doubles custom format"
+    ]
+  },
+  "fields": [
+    {
+      "field": "bucket_0_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 30
+    },
+    {
+      "field": "bucket_1_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 30
+    },
+    {
+      "field": "bucket_2_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 30
+    },
+    {
+      "field": "bucket_3_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 31
+    },
+    {
+      "field": "bucket_4_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 31
+    },
+    {
+      "field": "bucket_5_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 31
+    },
+    {
+      "field": "bucket_6_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 31
+    },
+    {
+      "field": "bucket_7_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 33
+    },
+    {
+      "field": "bucket_8_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 33
+    },
+    {
+      "field": "bucket_9_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 33
+    },
+    {
+      "field": "bucket_10_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 33
+    },
+    {
+      "field": "bucket_11_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 34
+    },
+    {
+      "field": "bucket_12_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 34
+    },
+    {
+      "field": "bucket_13_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 34
+    },
+    {
+      "field": "bucket_14_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 34
+    },
+    {
+      "field": "bucket_15_damage",
+      "type": "number",
+      "unit": "hp",
+      "min": 0,
+      "max": 500,
+      "expected": 36
+    }
+  ]
+}

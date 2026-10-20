@@ -5,7 +5,31 @@ release only after all required gates. **NO-GO. No scope waiver or percentage.**
 Owner: Kevin for release decisions; implementer for repairs; independent reviewers
 for retest; a current-client capture owner remains unassigned.
 
-Candidate v2.2.236-item-speed-evidence / engine1.1.37 combines Encore, Leaf Guard Rest and reviewed Red Card/White Herb repairs. See [integrated checkpoint](INTEGRATED_MECHANICS_2026-10-20.md) for exact validation boundaries and [register independent audit](independent/REGISTER_RETEST_308DA9B.md) for open data defects. Historical Rest8bfccd3 hosted CI39461951692 passed. Later PR checks were blocked by news-only main conflicts; current news is now integrated, with final hosted status pending. Broader Struggle, discrete damage, register contracts/learnsets and official/client proof remain open. This register owns current gate status; older dated reports retain their historical scope. No merge to main, deployment, live DB change or settings/key enrollment.
+Follow-up candidate: **v2.2.239-struggle-evidence / engine1.1.40**.
+[Bounded Struggle and evidence repairs](STRUGGLE_BOUNDARIES_2026-10-20.md) retain
+independent source-based cases, five reversal controls and the corrected Fake Out
+request/execution distinction. The current-profile golden loader is bound to bytes,
+but its three differing expectations remain unapproved. The first bounded receipt
+is historically passed at146ba91 and currently stale; this is not whole-move approval.
+Fly remains explicitly unsupported. Final local evidence is retained with this
+candidate; exact hosted status is on [draft PR279](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279).
+Official completeness, current-client proof and other release gates remain NO-GO.
+
+Previous terminal hosted checkpoint: **146ba91093ad9c0c3c3b7e675850e2e0f5f57475**,
+v2.2.238-reference-evidence / engine1.1.39. All hosted checks passed;
+[CI39472580253](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39472580253)
+completed at2026-10-20T18:25:41Z. Both c97866f attempts were cancelled, not passes.
+The [independent focused retest](../../poke-sim/reports/focused-independent-146ba91/FOCUSED_RETEST_146BA91.md)
+confirms Unburden causality/provenance counterexamples reject, current-reference
+species/item/pair sets match, six saved team controls agree, and discrete damage
+uses16buckets on an independent4096point grid. No whole-move/client certification.
+Six of312additional full-team probes remain conservatively blocked by unsupported
+Fly. Broader Struggle interactions, positive receipt enrollment, legacy golden
+runtime parity, official eligibility and current-client evidence remain open.
+
+The following original defect register and dated checkpoints retain historical
+scope. Exact-head results above supersede their pending hosted/retest statements,
+not their untested gameplay or release limitations. No merge/deploy/liveDB/settings.
 
 | ID / severity | Reproduction and impact | Owner / change | Status and independent closure |
 |---|---|---|---|

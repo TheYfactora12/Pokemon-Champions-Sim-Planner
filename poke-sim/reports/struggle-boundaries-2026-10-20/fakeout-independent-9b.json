@@ -1,0 +1,238 @@
+[
+  {
+    "swap": false,
+    "kind": "injected",
+    "before": {
+      "hp": 139,
+      "targetHp": 235,
+      "pp": 11,
+      "active": 1,
+      "request": [
+        {
+          "move": "Fake Out",
+          "id": "fakeout",
+          "pp": 11,
+          "maxpp": 12,
+          "target": "normal",
+          "disabled": true
+        },
+        {
+          "move": "Splash",
+          "id": "splash",
+          "pp": 20,
+          "maxpp": 20,
+          "target": "self",
+          "disabled": false
+        }
+      ]
+    },
+    "after": {
+      "hp": 139,
+      "targetHp": 235,
+      "pp": 10,
+      "active": 2,
+      "encore": false
+    },
+    "log": [
+      "|move|p1a: Liepard|Fake Out||[still]",
+      "|-hint|Fake Out only works on your first turn out.",
+      "|-fail|p1a: Liepard"
+    ]
+  },
+  {
+    "swap": false,
+    "kind": "sole",
+    "before": {
+      "hp": 139,
+      "targetHp": 235,
+      "pp": 11,
+      "active": 1,
+      "request": []
+    },
+    "after": {
+      "hp": 104,
+      "targetHp": 207,
+      "pp": 11,
+      "active": 2,
+      "encore": false
+    },
+    "log": [
+      "|",
+      "|t:|1792522173",
+      "|-activate|p1a: Liepard|move: Struggle",
+      "|move|p1a: Liepard|Struggle|p2a: Snorlax",
+      "|split|p2",
+      "|-damage|p2a: Snorlax|207/235",
+      "|-damage|p2a: Snorlax|207/235",
+      "|split|p1",
+      "|-damage|p1a: Liepard|104/139|[from] recoil",
+      "|-damage|p1a: Liepard|104/139|[from] recoil",
+      "|move|p2b: Blissey|Splash|p2b: Blissey",
+      "|-nothing",
+      "|move|p1b: Blissey|Splash|p1b: Blissey",
+      "|-nothing",
+      "|move|p2a: Snorlax|Splash|p2a: Snorlax",
+      "|-nothing",
+      "|",
+      "|upkeep",
+      "|turn|3"
+    ]
+  },
+  {
+    "swap": false,
+    "kind": "encore",
+    "before": {
+      "hp": 139,
+      "targetHp": 213,
+      "pp": 11,
+      "active": 1,
+      "request": []
+    },
+    "after": {
+      "hp": 104,
+      "targetHp": 213,
+      "pp": 11,
+      "active": 2,
+      "encore": true
+    },
+    "log": [
+      "|",
+      "|t:|1792522173",
+      "|-activate|p1a: Liepard|move: Struggle",
+      "|move|p1a: Liepard|Struggle|p2b: Blissey",
+      "|split|p2",
+      "|-damage|p2b: Blissey|254/330",
+      "|-damage|p2b: Blissey|254/330",
+      "|split|p1",
+      "|-damage|p1a: Liepard|104/139|[from] recoil",
+      "|-damage|p1a: Liepard|104/139|[from] recoil",
+      "|move|p1b: Blissey|Splash|p1b: Blissey",
+      "|-nothing",
+      "|move|p2b: Blissey|Splash|p2b: Blissey",
+      "|-nothing",
+      "|move|p2a: Snorlax|Splash|p2a: Snorlax",
+      "|-nothing",
+      "|",
+      "|upkeep",
+      "|turn|3"
+    ]
+  },
+  {
+    "swap": true,
+    "kind": "injected",
+    "before": {
+      "hp": 139,
+      "targetHp": 235,
+      "pp": 11,
+      "active": 1,
+      "request": [
+        {
+          "move": "Fake Out",
+          "id": "fakeout",
+          "pp": 11,
+          "maxpp": 12,
+          "target": "normal",
+          "disabled": true
+        },
+        {
+          "move": "Splash",
+          "id": "splash",
+          "pp": 20,
+          "maxpp": 20,
+          "target": "self",
+          "disabled": false
+        }
+      ]
+    },
+    "after": {
+      "hp": 139,
+      "targetHp": 235,
+      "pp": 10,
+      "active": 2,
+      "encore": false
+    },
+    "log": [
+      "|move|p2a: Liepard|Fake Out||[still]",
+      "|-hint|Fake Out only works on your first turn out.",
+      "|-fail|p2a: Liepard"
+    ]
+  },
+  {
+    "swap": true,
+    "kind": "sole",
+    "before": {
+      "hp": 139,
+      "targetHp": 235,
+      "pp": 11,
+      "active": 1,
+      "request": []
+    },
+    "after": {
+      "hp": 104,
+      "targetHp": 207,
+      "pp": 11,
+      "active": 2,
+      "encore": false
+    },
+    "log": [
+      "|",
+      "|t:|1792522173",
+      "|-activate|p2a: Liepard|move: Struggle",
+      "|move|p2a: Liepard|Struggle|p1a: Snorlax",
+      "|split|p1",
+      "|-damage|p1a: Snorlax|207/235",
+      "|-damage|p1a: Snorlax|207/235",
+      "|split|p2",
+      "|-damage|p2a: Liepard|104/139|[from] recoil",
+      "|-damage|p2a: Liepard|104/139|[from] recoil",
+      "|move|p2b: Blissey|Splash|p2b: Blissey",
+      "|-nothing",
+      "|move|p1b: Blissey|Splash|p1b: Blissey",
+      "|-nothing",
+      "|move|p1a: Snorlax|Splash|p1a: Snorlax",
+      "|-nothing",
+      "|",
+      "|upkeep",
+      "|turn|3"
+    ]
+  },
+  {
+    "swap": true,
+    "kind": "encore",
+    "before": {
+      "hp": 139,
+      "targetHp": 213,
+      "pp": 11,
+      "active": 1,
+      "request": []
+    },
+    "after": {
+      "hp": 104,
+      "targetHp": 213,
+      "pp": 11,
+      "active": 2,
+      "encore": true
+    },
+    "log": [
+      "|",
+      "|t:|1792522173",
+      "|-activate|p2a: Liepard|move: Struggle",
+      "|move|p2a: Liepard|Struggle|p1b: Blissey",
+      "|split|p1",
+      "|-damage|p1b: Blissey|254/330",
+      "|-damage|p1b: Blissey|254/330",
+      "|split|p2",
+      "|-damage|p2a: Liepard|104/139|[from] recoil",
+      "|-damage|p2a: Liepard|104/139|[from] recoil",
+      "|move|p1b: Blissey|Splash|p1b: Blissey",
+      "|-nothing",
+      "|move|p2b: Blissey|Splash|p2b: Blissey",
+      "|-nothing",
+      "|move|p1a: Snorlax|Splash|p1a: Snorlax",
+      "|-nothing",
+      "|",
+      "|upkeep",
+      "|turn|3"
+    ]
+  }
+]

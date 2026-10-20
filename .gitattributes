@@ -19,3 +19,9 @@ poke-sim/source/mc-meteor-assault-independent-receipt.json -text
 poke-sim/source/mc-reference-pair-delta.json text eol=lf
 poke-sim/reports/mc-reference-candidates/** -text
 poke-sim/reports/move-register/** text eol=lf
+# Raw independently retained receipts keep their captured bytes.
+poke-sim/source/bounded-assertions/** -text
+
+# Immutable raw audit receipts and execution logs.
+poke-sim/reports/focused-independent-146ba91/** -text
+poke-sim/reports/struggle-boundaries-2026-10-20/** -text

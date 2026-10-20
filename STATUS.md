@@ -1,16 +1,52 @@
 # Project Status
 
-Reviewed: 2026-10-20. This file owns current release facts and priorities.
-Isolated reserved-item candidate: [Red Card / White Herb receipt](docs/release/RESERVED_ITEMS_2026-10-20.md).
-Current-upstream focused checks pass; bundle exceeds the unchanged 11 MiB gate
-by 4,480 bytes. This is an unpushed integration candidate, not a release.
+Reviewed: 2026-10-20. This file owns current development checkpoint facts.
 [ROADMAP.md](ROADMAP.md) owns milestones; [AGENTS.md](AGENTS.md) owns policy.
-The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
-Historical candidate observations are not current deployment instructions.
+Competitive release remains **NO-GO**. No merge, deployment, live database or
+repository security change is authorized.
 
-Current follow-up: [proof consistency repairs](docs/release/PROOF_CONSISTENCY_2026-10-20.md) address independent S1-S4 survivors. Rest checkpoint303810f has44 reference cases. Hosted checkpoint2769879 passed all CI jobs; original auditor verified S1-S4 tested controls at2769879. Struggle checkpoint91c8206 passed local gates; hosted Battle Audit is pending. A separate [Rest admission repair](docs/release/REST_ADMISSION_REPAIR_2026-10-20.md) passes114 pinned-reference cases and independent review; final local gate is running. Competitive release remains NO-GO.
+## Follow-up candidate in final validation
 
-Generated [move register](poke-sim/docs/MOVE_REGISTER.md):954 catalog moves,68025 reference pairs,67 interaction records. Six export/negative-control tests and independent review passed. Regulation/client approval counts remain zero; broader anti-drift enrollment remains pending.
+v2.2.239-struggle-evidence / engine1.1.40 repairs the independently audited Struggle
+boundaries and late Fake Out request/execution distinction. It also adds bounded
+historical receipt enrollment and an explicit current-profile golden loader.
+[Scope and evidence](docs/release/STRUGGLE_BOUNDARIES_2026-10-20.md) records the limits.
+Final local and hosted outcomes belong to the validation receipt and exact-head PR checks;
+the successful published checkpoint below remains the last terminal hosted result.
+
+## Current reviewed checkpoint
+
+Draft PR279 checkpoint `146ba91093ad9c0c3c3b7e675850e2e0f5f57475`,
+v2.2.238-reference-evidence / engine1.1.39, passed every hosted check.
+[CI39472580253](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39472580253)
+finished successfully at2026-10-20T18:25:41Z; bundle39472580200 and cache39472580173
+also passed. The earlier c97866f CI39469714879 was cancelled on both attempts;
+neither cancellation is counted as a pass.
+
+The [independent focused report](poke-sim/reports/focused-independent-146ba91/FOCUSED_RETEST_146BA91.md)
+verifies prior Unburden causality/provenance controls, zero runtime species/item/pair
+differences against the pinned reference candidate, six saved team controls and
+16discrete damage buckets over an independent4096point grid and45boundary checks.
+These are bounded reference results, not full mechanics or current-client proof.
+Of312additional full-team probes, six reference-accepted teams remain explicitly
+blocked because Fly is unsupported. No new material defect was found within that
+focused scope. Original historical receipts are preserved.
+
+Canonical broad move inventory:954moves,68025historical pairs,70interaction declarations.
+Current M-C reference candidate:392species/forms,537reachable moves,166items,
+225abilities and23756pairs. [Small source/compiled manifest](poke-sim/reports/focused-independent-146ba91/mc-candidate-evidence.json)
+binds the candidate to immutable upstream9b136a8. Official eligibility and client
+verification remain unknown; implementation coverage is separate from inventory.
+
+Next bounded work: enroll positive assertion receipts with dependency invalidation,
+repair audited Struggle boundaries, close the legacy golden-loader gap and evaluate
+Fly without removing unsupported containment before evidence. The
+[readiness register](docs/release/COMPETITIVE_READINESS_2026-10-20.md) owns remaining gates.
+
+## Historical development checkpoints
+
+The sections below retain their original checkpoint scope; pending statements in
+these historical sections do not override the current checkpoint above.
 
 ## Draft review candidate
 

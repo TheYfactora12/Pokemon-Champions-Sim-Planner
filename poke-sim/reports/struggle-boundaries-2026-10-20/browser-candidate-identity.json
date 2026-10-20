@@ -1,0 +1,15 @@
+{
+  "build_id": "v2.2.239-struggle-evidence",
+  "bundle_sha256": "4b93702d4064bf82f0155c77f2001a04797172b830d248042a266bcbb8f1c8d4",
+  "external_assets": {
+    "generated/source_sync_status.js": "c0c4ac50cf1ca1d5a3856e93ec5327e1b70256d44e4d66ea09ef1d954340d888",
+    "generated/champions_move_pools.js": "21099bad04135f23de2d8b23203628c98004faf4a7d1da179ba808ccef2087f9",
+    "generated/mc_review_reference.js": "d81091273c06c39dd1a234c5eeb2bb89af2d6e64d36998b2ae9450d8b6c43827",
+    "mc_review.js": "7d51fec376e60c05e81d23e74770c5f00333570e87e08b7b0a598ac790a6b7e2",
+    "own_state_policy.js": "6089589d22bd58ba9e9a88123d47cbb08fe775f69703c2fff950a0851cf4667a",
+    "assets/retro-intro/gengar.png": "b2cdfb0910d892e8ad877af876040d190c76a7ae5ce492be0116a8838ec9f369",
+    "assets/retro-intro/nidorino.png": "1d279c06304bcaf08048b39b9bc4cc8e0e7e53ddc11ec9dff083b706e994a100"
+  },
+  "commit": "146ba91093ad9c0c3c3b7e675850e2e0f5f57475",
+  "working_tree": "uncommitted"
+}

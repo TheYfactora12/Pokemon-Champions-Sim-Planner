@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import {exportMoveRegister} from './move-register.mjs';
+import {exportMoveRegister,exportBoundedMoveAssertions} from './move-register.mjs';
 import path from 'path';
 import vm from 'vm';
 import {createRequire} from 'module';
@@ -107,4 +107,4 @@ fs.writeFileSync(reportPath, lines.join('\n') + '\n', 'utf8');
 console.log(`Wrote ${reportPath}`);
 }
 
-if(process.argv.includes('--register')) {const i=process.argv.indexOf('--previous');console.log(JSON.stringify(exportMoveRegister(ROOT,{check:process.argv.includes('--check'),previous:i>=0?process.argv[i+1]:null})));}
+if(process.argv.includes('--register')) {const i=process.argv.indexOf('--previous');console.log(JSON.stringify(process.argv.includes('--bounded')?exportBoundedMoveAssertions(ROOT,{check:process.argv.includes('--check')}):exportMoveRegister(ROOT,{check:process.argv.includes('--check'),previous:i>=0?process.argv[i+1]:null})));}

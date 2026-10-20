@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import {canonical,sha256} from './regulation-watch-core.mjs';
+import {readBoundedRegister} from './bounded-register.mjs';
 const fields=['type','category','basePower','accuracy','pp','priority','target'];
 // Historical mode retains the old consistency checks only; it never upgrades
 // an old snapshot to the provenance-v2 contract or authenticates its sources.
@@ -93,6 +94,20 @@ export function registerDiff(previous,current){
 }
 const csvCell=value=>{let s=typeof value==='object'?JSON.stringify(value):String(value??'');if(/^[\s]*[=+@-]/.test(s))s="'"+s;return '"'+s.replaceAll('"','""')+'"';};
 export function csv(rows){const keys=[...new Set(rows.flatMap(Object.keys))];return [keys.map(csvCell).join(','),...rows.map(r=>keys.map(k=>csvCell(r[k])).join(','))].join('\r\n')+'\r\n';}
+// A separate assertion table preserves historical inventory snapshots and never
+// upgrades their move-level implementation/client/legality status.
+export function exportBoundedMoveAssertions(root,{check=false}={}){
+ const assertions=readBoundedRegister(root),data={schema_version:'move-register-bounded-assertions-v1',competitive_use:false,assertions};
+ const identity=sha256(canonical(data)),directory=path.join(root,'reports/move-register/bounded',identity);
+ for(const[name,content]of Object.entries({'assertions.json':JSON.stringify({...data,identity},null,2)+'\n','assertions.csv':csv(assertions)})){
+  const file=path.join(directory,name);
+  if(fs.existsSync(file)){if(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n')!==content.replace(/\r\n/g,'\n'))throw Error('Bounded export differs');}
+  else{if(check)throw Error('Missing bounded export');fs.mkdirSync(directory,{recursive:true});fs.writeFileSync(file,content);}
+ }
+ const pointer=JSON.stringify({identity,path:`${identity}/assertions.json`,competitive_use:false},null,2)+'\n',file=path.join(root,'reports/move-register/bounded/latest.json');
+ if(check){if(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n')!==pointer)throw Error('Stale bounded export');}else fs.writeFileSync(file,pointer);
+ return {identity,directory,assertions:assertions.length};
+}
 export function exportMoveRegister(root,{check=false,previous=null}={}){
  const data=buildMoveRegister(root),generator=sha256(fs.readFileSync(new URL(import.meta.url),'utf8').replace(/\r\n/g,'\n')),identity=sha256(canonical({data,generator}));
  const base=path.join(root,'reports/move-register'),dir=path.join(base,identity);

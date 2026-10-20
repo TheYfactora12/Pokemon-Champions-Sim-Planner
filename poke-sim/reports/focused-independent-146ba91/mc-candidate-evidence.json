@@ -1,0 +1,31 @@
+{
+  "schema_version": "mc-reference-candidate-manifest-v1",
+  "simulator_commit": "146ba91093ad9c0c3c3b7e675850e2e0f5f57475",
+  "candidate_path": "poke-sim/reports/mc-reference-candidates/d02c935ef45bc6f9a70bfbdb8d98d6e62c8a741328783b8dcb5ca30a8f80b59d/candidate.json",
+  "candidate_sha256": "d02c935ef45bc6f9a70bfbdb8d98d6e62c8a741328783b8dcb5ca30a8f80b59d",
+  "candidate_file_sha256": "1d37e59078181af23b8591c8442f3341f358773084a08b485546b3126ed2cdfc",
+  "reference": {
+    "pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+    "format": "gen9championsvgc2026regmc",
+    "compiled_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+    "source_fingerprint": "6ee47d5009706b808a9d079aab9b1a2fa0493edb98b4dd7feee189679d3951a8"
+  },
+  "previous_register": {
+    "validation": "current-provenance-v2-validator",
+    "identity": "a5c765037ec10c37633fb884f1b0545f43596a84d8b4fac3899051d6085c2860",
+    "sha256": "e65f68a6b3c2f2fbf02ce377c68a2f767205aeedb42419ec867251a495dae969"
+  },
+  "counts": {
+    "species": 392,
+    "moves": 537,
+    "items": 166,
+    "abilities": 225,
+    "pairs": 23756
+  },
+  "scope": "Immutable offline reference candidate; no runtime activation, official completeness, mechanics certification or approval",
+  "competitive_use": false,
+  "official_eligibility": "unresolved",
+  "client_verification": "unknown",
+  "approval": null,
+  "runtime_promoted": false
+}

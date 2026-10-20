@@ -140,6 +140,7 @@
       "status": "partial",
       "tests": [
         "tests/struggle_reference_tests.mjs",
+        "tests/struggle_boundary_reference_tests.mjs",
         "tests/move_support_audit_tests.js",
         "tests/move_verification_registry_tests.js",
         "tests/move_secondary_effect_audit_tests.js",
@@ -268,12 +269,15 @@
     {
       "id": "battle-determinism",
       "name": "Seeded whole-battle traces, termination, outcomes, and curated matchup stability",
-      "status": "regression_covered",
+      "status": "partial",
       "tests": [
         "tests/db_m7_golden_battles_tests.js",
-        "tests/t139_audit_mirror_hard_fail_tests.js"
+        "tests/t139_audit_mirror_hard_fail_tests.js",
+        "tests/golden_runtime_profile_tests.mjs"
       ],
-      "known_gaps": []
+      "known_gaps": [
+        "Three historical golden traces do not bind the current runtime profile. Current-profile traces differ and remain unapproved; byte/order loader controls are separate from current expected-outcome approval."
+      ]
     },
     {
       "id": "champion-regulation-deltas",
