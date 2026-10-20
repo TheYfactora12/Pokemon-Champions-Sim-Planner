@@ -4,7 +4,14 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { lifecycleSource } from '../tools/validation-lifecycle.mjs';
+import { lifecycleSource, localExecutionDates } from '../tools/validation-lifecycle.mjs';
+
+test('execution dates come from retained execution evidence, never observation time',()=>{
+ assert.equal(localExecutionDates({}).executed_at,null);
+ const local={started_at:'2026-01-01T00:00:00.000Z',completed_at:'2026-01-01T00:01:00.000Z'};
+ assert.deepEqual(localExecutionDates(local),{...local,executed_at:local.completed_at,date_limitation:null});
+ for(const bad of [{started_at:1,completed_at:2},{...local,completed_at:'2026-02-30T00:00:00.000Z'},{started_at:local.started_at},{started_at:local.completed_at,completed_at:local.started_at},{...local,completed_at:'2999-01-01T00:00:00Z'}])assert.throws(()=>localExecutionDates(bad),/timestamps/);
+});
 
 test('aggregate identity binds owning tests, runners, fixtures, DB inputs and discovery additions/removals', () => {
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'lifecycle-inventory-'));

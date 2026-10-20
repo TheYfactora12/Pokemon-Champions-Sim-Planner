@@ -47,6 +47,13 @@ export function candidateEvidenceBindings(root,facts,local,review){
  const reviewBound=available&&review.assertions?.length>0&&review.assertions.every(row=>canonical(row.dependencies)===canonical(expected));
  return {localBound,reviewBound};
 }
+export function localExecutionDates(local){
+ const start=local.started_at,end=local.completed_at;
+ if(start===undefined&&end===undefined)return {executed_at:null,date_limitation:'Retained aggregate logs lack execution timestamp; observation time is not execution time'};
+ const valid=value=>typeof value==='string'&&Number.isFinite(Date.parse(value))&&new Date(value).toISOString()===value;
+ assert(valid(start)&&valid(end)&&Date.parse(start)<=Date.parse(end)&&Date.parse(end)<=Date.now(),'Invalid local execution timestamps');
+ return {executed_at:end,started_at:start,completed_at:end,date_limitation:null};
+}
 export function lifecycleView(facts,currentSource,{localBound=false,reviewBound=false}={}){
  assert.equal(facts.schema_version,'validation-lifecycle-facts-v1');assert(/^[a-f0-9]{40}$/.test(facts.candidate_commit));assert(/^[a-f0-9]{64}$/.test(facts.source_digest));
  assert.equal(facts.publication.commit,facts.candidate_commit,'Pushed commit mismatch');assert.equal(facts.hosted.headSha,facts.candidate_commit,'Hosted commit mismatch');
@@ -68,6 +75,7 @@ export function refreshLifecycle(root,{check=false}={}){
  const hosted=JSON.parse(fs.readFileSync(path.join(root,facts.hosted.evidence.path)));for(const k of ['headSha','status','conclusion','url','jobs','createdAt','updatedAt'])assert.deepEqual(facts.hosted[k],hosted[k],'Hosted fact differs from evidence: '+k);
  const remote=JSON.parse(fs.readFileSync(path.join(root,facts.publication.evidence.path)));assert.equal(remote.headRefOid,facts.candidate_commit,'Remote evidence head mismatch');assert.equal(remote.url,facts.publication.url);assert.equal(remote.isDraft,true);assert.equal(remote.state,'OPEN');
  const local=JSON.parse(fs.readFileSync(path.join(root,facts.local.evidence.path)));assert.deepEqual({fast_files:facts.local.fast_files,offline_db_files:facts.local.offline_db_files,failures:facts.local.failures},local.project);
+ if(facts.fingerprint_version==='aggregate-inputs-v2')for(const[key,value]of Object.entries(localExecutionDates(local)))assert.equal(facts.local[key],value,'Local execution date differs from retained evidence');
  const review=JSON.parse(fs.readFileSync(path.join(root,facts.review.evidence.path)));assert.equal(facts.review.reviewed_at,review.reviewed_at);assert(review.assertions?.length>0&&review.assertions.every(r=>r.status==='passed_declared_scope'&&r.independent_execution===true));
  assert.equal(lifecycleSource(root,facts.candidate_commit,facts.fingerprint_version||'selected-inputs-v1'),facts.source_digest,'Candidate source binding mismatch');
  const view=lifecycleView(facts,lifecycleSource(root),candidateEvidenceBindings(root,facts,local,review));const content=JSON.stringify(view,null,2)+'\n',file=path.join(root,'reports/move-register/validation/lifecycle.json');fs.mkdirSync(path.dirname(file),{recursive:true});if(check)assert.equal(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n'),content,'Stale lifecycle export');else fs.writeFileSync(file,content);return view;
