@@ -34,10 +34,12 @@ test('aggregate identity binds owning tests, runners, fixtures, DB inputs and di
       fs.unlinkSync(path.join(root,file));assert.equal(lifecycleSource(root),before,'Removed input '+file);
     }
     write('tests/owner.mjs','same\n');const lf=lifecycleSource(root);write('tests/owner.mjs','same\r\n');assert.equal(lifecycleSource(root),lf,'LF normalization');
+    write('../.gitattributes','text\n');const configLf=lifecycleSource(root);write('../.gitattributes','text\r\n');assert.equal(lifecycleSource(root),configLf,'Extensionless config LF normalization');fs.unlinkSync(path.join(root,'../.gitattributes'));
     for(const file of ['source/validation-lifecycle/run/facts.json','reports/move-register/validation/lifecycle.json'])write(file,'dated evidence');
     assert.equal(lifecycleSource(root),lf,'Receipt-only refresh is not a circular source change');
     write('tests/fixtures/binary.bin',Buffer.from([0x80]));const binary=lifecycleSource(root);
     write('tests/fixtures/binary.bin',Buffer.from([0x81]));assert.notEqual(lifecycleSource(root),binary,'Binary fixture bytes remain exact');
+    write('tests/fixtures/binary.bin',Buffer.from('a\r\n'));const binaryLines=lifecycleSource(root);write('tests/fixtures/binary.bin',Buffer.from('a\n'));assert.notEqual(lifecycleSource(root),binaryLines,'Binary CRLF bytes remain exact');
   }finally{assert.equal(path.dirname(dir),path.resolve(os.tmpdir()));assert(path.basename(dir).startsWith('lifecycle-inventory-'));fs.rmSync(dir,{recursive:true,force:true});}
 });
 

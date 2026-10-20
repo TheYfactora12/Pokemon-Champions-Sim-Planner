@@ -1,4 +1,5 @@
 import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
+import {isUtf8} from 'node:buffer';
 import {CURRENT_DEPENDENCY_FILES} from './current-bounded-core.mjs';import {digest} from './bounded-assertions.mjs';import {canonical} from './regulation-watch-core.mjs';
 export const LIFECYCLE_FILES=[...new Set(Object.values(CURRENT_DEPENDENCY_FILES).flat()),'tools/validation-cycle.mjs','tools/validation-lifecycle.mjs','tools/enroll-current-bounded.mjs','tests/validation_cycle_tests.mjs','tools/record-validation-lifecycle.mjs','../.github/workflows/ci.yml'];
 function legacySource(root,commit){return digest(canonical(Object.fromEntries(LIFECYCLE_FILES.map(file=>{let bytes;if(commit){try{bytes=execFileSync('git',['show',commit+':'+path.posix.normalize('poke-sim/'+file)],{cwd:root,encoding:'utf8',stdio:['ignore','pipe','ignore'],maxBuffer:32*1024*1024});}catch{bytes=null;}}else bytes=fs.existsSync(path.join(root,file))?fs.readFileSync(path.join(root,file),'utf8'):null;return [file,bytes===null?null:digest(bytes.replace(/\r\n/g,'\n'))];}))));}
@@ -40,7 +41,9 @@ function lifecycleSourceV2(root,commit,version='aggregate-inputs-v2'){
 // view are outside the tested input tree; their hashes and semantics are checked
 // by refreshLifecycle. Bounded mechanics retain CURRENT_DEPENDENCY_FILES instead.
 export const isAggregateLedgerOutput=file=>file.startsWith('poke-sim/source/validation-lifecycle/')||file==='poke-sim/reports/move-register/validation/lifecycle.json';
-const repoDigest=(file,bytes)=>/\.(md|markdown)$/i.test(file)?digest(bytes.toString('utf8').replace(/\r\n/g,'\n')):inputDigest(file,bytes);
+// Extensionless configuration is text too; invalid UTF-8/NUL-bearing fixtures
+// retain raw bytes rather than collapsing through replacement characters.
+const repoDigest=(file,bytes)=>digest(!/\.(bin|png|gif|jpe?g|webp|ico|pdf|zip|gz|woff2?|ttf|mp[34]|wasm)$/i.test(file)&&isUtf8(bytes)&&!bytes.includes(0)?bytes.toString('utf8').replace(/\r\n/g,'\n'):bytes);
 export function lifecycleSource(root,commit,version='repository-inputs-v3'){
  if(version!=='repository-inputs-v3')return lifecycleSourceV2(root,commit,version);
  const repo=path.resolve(root,'..'),key='v3:'+repo+':'+commit;
