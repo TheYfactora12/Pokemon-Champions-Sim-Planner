@@ -4156,6 +4156,22 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     })[0] || null;
   }
 
+  // Showdown 9b136a8 items.whiteherb: boundary checks, never per-stat.
+  // In particular, Defiant and a move's complete self-drop map resolve first.
+  function activateWhiteHerbs() {
+    const {item} = _contactEffects(field);
+    for (const mon of [...playerActive, ...oppActive]) {
+      if (!mon.alive || mon.hp <= 0 || item(mon) !== 'White Herb') continue;
+      const negative = Object.keys(mon.statBoosts).filter(stat => mon.statBoosts[stat] < 0);
+      if (!negative.length || !_consumeHeldItem(mon)) continue;
+      for (const stat of negative) mon.statBoosts[stat] = 0;
+      log.push(`${mon.name}'s White Herb restored its lowered stats!`);
+      _recordEffectEvent(field, mon, 'White Herb', 'item-clear-negative-stages', mon.hp, mon.hp, {
+        source: 'pokemon-showdown@9b136a8 items.whiteherb', cleared_stats: negative, item_consumed: true
+      });
+    }
+  }
+
   function _clearImprisonEffectsForMon(mon, field) {
     if (!mon || !field) return;
     [field.playerSide, field.oppSide].forEach(function(sideRef) {
@@ -4284,11 +4300,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     else if (!opts || !opts.silentPivotLog) log.push(`${mon.name} pivoted out!`);
     log.push(`${replacement.name} was sent out!`);
     applyEntryAbility(replacement, side, field, log);
+    activateWhiteHerbs();
     return true;
   }
 
   for (const m of playerActive) applyEntryAbility(m, 'player', field, log);
   for (const m of oppActive)    applyEntryAbility(m, 'opp', field, log);
+  activateWhiteHerbs();
 
   // CONSERVATIVE OWN-STATE MOVE SELECTION
   // Scores moves by expected damage or utility value.
@@ -4474,6 +4492,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         mcEmergencySwitches(attacker._mcEmergencyBefore,attacker,move);attacker._mcEmergencyBefore=null;
       }
       if (attacker.referenceMode === 'champions_mc_reference') mcFinishMove(attacker,log);
+      activateWhiteHerbs();
       // One charge applies to the whole action, including spread and child hits.
       _consumeElectricCharge(attacker, move, field, log);
       if (move === 'Beak Blast') attacker._beakBlastPreparing=false;
@@ -6815,6 +6834,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         applyEntryAbility(mon, side, field, log);
       });
       field[sideFlagKey] = true;
+      activateWhiteHerbs();
     }
     tryMegaPhase(playerActive, 'playerMegaUsed', 'player');
     tryMegaPhase(oppActive,    'oppMegaUsed',    'opp');
@@ -7418,6 +7438,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (mon.ability === 'Trace') applyEntryAbility(mon,mon.side === field.playerSide ? 'player' : 'opp',field,log);
     }
     mcEmergencySwitches(_mcResidualHP,null,null);
+    activateWhiteHerbs();
     // Field upkeep
     field.tick(log);
     for (const mon of [...playerActive, ...oppActive].filter(m => m.alive && m.roosting)) {
@@ -7457,6 +7478,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     replacementEntries.forEach(entry => { entry.speed = entry.mon.getEffSpeed(field); });
     _speedSort(replacementEntries, (a, b) => b.speed - a.speed, rng);
     for (const entry of replacementEntries) applyEntryAbility(entry.mon, entry.side, field, log);
+    if (replacementEntries.length) activateWhiteHerbs();
 
     // T9j.3 (#39) — timer-draw check. Deduct deterministic 15s/turn proxy.
     // If either clock expires, force battle end via tiebreaker cascade.
