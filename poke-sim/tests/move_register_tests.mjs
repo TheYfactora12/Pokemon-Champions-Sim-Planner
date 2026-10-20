@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildMoveRegister,validateMoveRegister,registerDiff,csv,exportMoveRegister} from '../tools/move-register.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),data=buildMoveRegister(root);
@@ -32,3 +34,45 @@ test('committed candidate detects edits to metadata and provenance',()=>{
 });
 
 test('generated candidate matches current source and generator bytes',()=>{assert.equal(exportMoveRegister(root,{check:true}).counts.catalog_moves,954);});
+
+test('original independent register counterexamples reject before snapshot hashing',()=>{
+ const mutations={
+ displayed_verified:d=>{d.moves[0].implementation_coverage='verified';},
+ displayed_covered:d=>{d.interactions[0].status='covered';},
+ removed_pair:d=>{d.species_move_pairs.pop();d.counts.reference_pairs--;},
+ removed_case:d=>{d.interactions.pop();d.counts.interaction_cases--;},
+ orphan_move:d=>{d.species_move_pairs[0].move_id='notacatalogmove';d.species_move_pairs[0].pair_id=d.species_move_pairs[0].species_id+':notacatalogmove';},
+ orphan_species:d=>{d.species_move_pairs[0].species_id='notarealspecies';d.species_move_pairs[0].pair_id='notarealspecies:'+d.species_move_pairs[0].move_id;},
+ dangling_evidence:d=>{d.moves[0].evidence_ids=['nonexistent'];},
+ forged_status:d=>{d.moves[0].verification_status='client_verified';d.moves[0].assertion_ids=['invented'];},
+ wrong_scope:d=>{d.moves[0].regulation_id='expired';d.moves[0].format='singles';},
+ null_metadata:d=>{d.moves[0].baseline.accuracy=null;},
+ empty_hashes:d=>{d.source_hashes={};},
+ orphan_interaction:d=>{d.interactions[0].move_ids=['notacatalogmove'];},
+ empty_evidence:d=>{d.evidence=[];},
+ unproved_receipt:d=>{d.moves[0].verification_status='confirmed_working';d.moves[0].assertion_ids=['damage-50'];},
+ stale_receipt:d=>{d.moves[0].verification_status='confirmed_working';d.moves[0].last_verification={result:'passed',engine_commit:'obsolete',regulation_id:'expired',source_revision:'stale'};},
+ removed_move:d=>{d.moves.pop();d.catalog_count--;d.counts.catalog_moves--;}
+ };
+ for(const [name,mutate]of Object.entries(mutations)){const d=structuredClone(data);mutate(d);assert(validateMoveRegister(d).length,name);}
+});
+test('wrong source mod or locked reference pin cannot build an export',()=>{
+ const temporary=fs.mkdtempSync(path.join(os.tmpdir(),'champions-register-source-'));
+ try{for(const file of Object.keys(data.source_hashes)){const dest=path.join(temporary,file);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(path.join(root,file),dest);}
+ const file=path.join(temporary,'generated/champions_move_pools.js'),original=fs.readFileSync(file,'utf8');
+ for(const [from,to]of [['"mod":"champions"','"mod":"gen9"'],['"version":"0.11.11"','"version":"0.0.0"']]){assert(original.includes(from));fs.writeFileSync(file,original.replace(from,to));assert.throws(()=>buildMoveRegister(temporary),/mod\/locked reference mismatch/);}
+ }finally{assert(path.resolve(temporary).startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(temporary,{recursive:true});}
+});
+test('source-only changes invalidate all dependent pairs and declarations',()=>{
+ const next=structuredClone(data);next.source_hashes['generated/champions_move_pools.js']='changed';const diff=registerDiff(data,next);
+ assert.equal(diff.pair_changes.length,data.species_move_pairs.length);assert.equal(diff.interaction_changes.length,data.interactions.length);
+ assert(data.species_move_pairs.every(r=>r.format==='doubles'&&r.regulation_id===data.regulation_id));
+ assert(data.moves.every(r=>r.implementation_coverage==='unverified'));
+ assert(data.interactions.every(r=>r.status==='unverified'&&r.executed_receipt===null));
+});
+test('CRLF generator bytes preserve the committed identity and formula prefixes stay inert',()=>{
+ const original=fs.readFileSync,generator=fileURLToPath(new URL('../tools/move-register.mjs',import.meta.url));let changed=0;
+ fs.readFileSync=function(file,...args){const value=original.call(this,file,...args);if(path.resolve(file instanceof URL?fileURLToPath(file):String(file))===generator){changed++;return String(value).replace(/\r?\n/g,'\r\n');}return value;};
+ try{assert.equal(exportMoveRegister(root,{check:true}).counts.catalog_moves,954);assert.equal(changed,1);}finally{fs.readFileSync=original;}
+ for(const value of ['\t=1+1','\r=1+1',' +1+1'])assert(csv([{value}]).includes('"\''+value));
+});
