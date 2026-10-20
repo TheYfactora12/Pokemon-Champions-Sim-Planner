@@ -2,6 +2,7 @@
 const fs=require('node:fs'),path=require('node:path');
 const original=fs.readFileSync, engine=path.resolve(__dirname,'../engine.js');
 const mutations={
+  rest_admission:["if (sleepBlocked || attacker.status === 'sleep'", "if (false || attacker.status === 'sleep'"],
   struggle_fixed:["const _stDmg = captureBattleDamage(attacker, move, _struggleTgt, field, rng);","const _stDmg = Math.max(1, Math.floor(_struggleTgt.maxHp / 4));"],
   struggle_floor:["const _stRecoil = Math.max(1, Math.round(attacker.maxHp / 4));","const _stRecoil = Math.max(1, Math.floor(attacker.maxHp / 4));"],
   struggle_normal:["if (move === 'Struggle') return {type:'???',bpMult:1};","if (move === 'Struggle') return {type:'Normal',bpMult:1};"],

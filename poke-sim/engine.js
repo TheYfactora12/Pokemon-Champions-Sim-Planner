@@ -3,7 +3,6 @@
 // weather, Trick Room, Intimidate, and damage variance
 
 // Historical mechanics claims are not current-client certification.
-// See ../docs/release/COMPETITIVE_READINESS_2026-10-20.md and the immutable reference evidence
 // for supported scope, known gaps and release blockers.
 
 var CHAMPIONS_FORMAT_ID = 'champions-vgc-2026-regma';
@@ -174,10 +173,8 @@ function validateTeam(team, format = 'vgc', validationOptions = {}) {
 // All tables are `var` for TDZ-safety (referenced from Pokemon methods).
 //
 // CRIT_STAGES: Gen 9 crit probability ladder.
-//   Stage 0 = 1/24 ≈ 4.17%, Stage 1 = 1/8 = 12.5%, Stage 2 = 1/2, Stage 3+ = always.
 //   Cite: https://bulbapedia.bulbagarden.net/wiki/Critical_hit
 // HIGH_CRIT_MOVES: moves that START at stage 1 instead of 0. Narrow Champions list.
-//   Cite: https://bulbapedia.bulbagarden.net/wiki/Critical_hit#High_critical-hit_ratio_moves
 // ALWAYS_CRIT_MOVES: +3 stage floor (always crit). Frost Breath / Storm Throw.
 //
 // CRIT BYPASS RULES (applied in calcDamage when crit lands):
@@ -1524,13 +1521,10 @@ function _recordMoveFailureEvent(field, mon, move, reason, details) {
 //   onSourceModifyAtk({move, moveType, attacker, defender, field}) -> {statMod}
 //     Fires from the defender before base damage is computed. statMod uses
 //     Showdown's 4096 fixed-point scale against the attack/sp-atk value.
-//   onModifyDamage({move, moveType, attacker, defender, typeEffectiveness, field}) -> {finalMod}
-//   onSourceModifyDamage({move, moveType, attacker, defender, typeEffectiveness, field}) -> {finalMod}
 //     Fires during final-mod construction. finalMod uses Showdown's 4096 scale.
 //   onTryHit({move, moveType, attacker, defender, field}) -> {immune, healFraction}
 //     Fires before damage calculation in battle execution and as a zero-damage
 //     guard in calcDamage previews.
-//   onProtectResolve({attacker, defender, move, moveType, isContact}) -> {damageMult}
 //     Fires when a target's Protect flag is up; default is 0 (full block). A
 //     positive damageMult lets the attacker deal dmg * mult through Protect.
 //     Piercing Drill / Unseen Fist use this shared 25% path.
@@ -1589,7 +1583,6 @@ var ABILITIES = {
     }
   },
   'Piercing Drill': {
-    // T9j.17 (Refs #101) -- Champions Piercing Drill: 25% miss chance on every move.
     // The previous T9j.8 implementation (25% Protect bypass on contact) was
     // incorrect for Champions Reg M-A. Rewritten per user-confirmed spec.
     // The 25% miss roll fires inside executeMove right after the standard
@@ -1629,7 +1622,6 @@ var ABILITIES = {
   'Regenerator': {
     // Showdown: onSwitchOut heals baseMaxhp / 3; Pokemon.heal truncates the
     // positive fractional value before applying it.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onSwitchOut: function() {
       return { healFraction: 1 / 3, healBasis: 'base_max_hp', rounding: 'down' };
     }
@@ -1668,7 +1660,6 @@ var ABILITIES = {
     // Moves with eligible secondary effects gain 30% power and those effects
     // are suppressed after damage. Uses the current engine's secondary-effect
     // surface plus common Showdown secondary moves used by shipped teams.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onBasePower: function(ctx) {
       if (_hasSheerForceEffect(ctx.attacker, ctx.move)) return { bpMod: 5325 };
       return null;
@@ -1676,7 +1667,6 @@ var ABILITIES = {
   },
   'Fairy Aura': {
     // Fairy moves gain Showdown's aura modifier, 0x1548 / 0x1000.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onBasePower: function(ctx) {
       if (ctx.moveType === 'Fairy') return { bpMod: 5448 };
       return null;
@@ -1684,7 +1674,6 @@ var ABILITIES = {
   },
   'Iron Fist': {
     // Punch moves gain 20% power.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onBasePower: function(ctx) {
       if (_moveHasFlag(ctx.move, 'punch')) return { bpMod: 4915 };
       return null;
@@ -1692,7 +1681,6 @@ var ABILITIES = {
   },
   'Technician': {
     // Moves with 60 or lower current BP gain 50% power.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onBasePower: function(ctx) {
       if (ctx.basePower <= 60) return { bpMod: 6144 };
       return null;
@@ -1700,7 +1688,6 @@ var ABILITIES = {
   },
   'Sand Force': {
     // Rock/Ground/Steel moves gain 30% power during sand.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onBasePower: function(ctx) {
       if (_effectiveFieldWeather(ctx.field) === 'sand' &&
           (ctx.moveType === 'Rock' || ctx.moveType === 'Ground' || ctx.moveType === 'Steel')) {
@@ -1711,7 +1698,6 @@ var ABILITIES = {
   },
   'Thick Fat': {
     // Incoming Fire/Ice moves use half the attacker's relevant attacking stat.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onSourceModifyAtk: function(ctx) {
       if (ctx.moveType === 'Fire' || ctx.moveType === 'Ice') return { statMod: 2048 };
       return null;
@@ -1719,7 +1705,6 @@ var ABILITIES = {
   },
   'Filter': {
     // Super-effective hits against the holder deal 0.75x damage.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onSourceModifyDamage: function(ctx) {
       if (ctx.typeEffectiveness > 1) return { finalMod: 3072 };
       return null;
@@ -1727,7 +1712,6 @@ var ABILITIES = {
   },
   'Tinted Lens': {
     // Not-very-effective hits from the holder deal 2x damage.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onModifyDamage: function(ctx) {
       if (ctx.typeEffectiveness < 1) return { finalMod: 8192 };
       return null;
@@ -1737,7 +1721,6 @@ var ABILITIES = {
     // Ground immunity for grounded non-Thousand Arrows attacks. Flying-type
     // immunity is still handled by the type chart; this covers non-Flying
     // Levitate users such as Cresselia/Rotom/Chimecho.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onTryHit: function(ctx) {
       if (ctx.defender !== ctx.attacker && ctx.moveType === 'Ground' && ctx.move !== 'Thousand Arrows' && !ctx.defender.groundedByMove && !(ctx.field && ctx.field.gravityTurns > 0)) {
         return { immune: true };
@@ -1748,7 +1731,6 @@ var ABILITIES = {
   'Bulletproof': {
     // Ballistic move immunity. Uses Showdown's bullet flag where available and
     // a local fallback list for imported/generated gaps.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onTryHit: function(ctx) {
       if (ctx.defender !== ctx.attacker && _isBallisticMove(ctx.move)) return { immune: true };
       return null;
@@ -1773,7 +1755,6 @@ var ABILITIES = {
   },
   'Earth Eater': {
     // Ground moves targeting another Pokemon are absorbed; holder heals 1/4 max HP.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onTryHit: function(ctx) {
       if (ctx.defender !== ctx.attacker && ctx.moveType === 'Ground') {
         return { immune: true, healFraction: 0.25 };
@@ -1784,7 +1765,6 @@ var ABILITIES = {
   'Rough Skin': {
     // Contact attackers lose 1/8 of their own max HP on a damaging hit.
     // Mirrors Pokemon Showdown's onDamagingHit hook.
-    // Cite: https://github.com/smogon/pokemon-showdown/blob/master/data/abilities.ts
     onDamagingHit: function(ctx) {
       var attacker = ctx.attacker, defender = ctx.defender;
       if (!attacker || !attacker.alive || !defender) return;
@@ -4955,7 +4935,12 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         return;
       }
       if (move === 'Rest') {
-        if (attacker.status === 'sleep' || attacker.hp >= attacker.maxHp || attacker.ability === 'Comatose' || ['Insomnia','Vital Spirit','Sweet Veil'].includes(_contactEffects(field).ability(attacker))) {
+        const effects = _contactEffects(field), ability = effects.ability(attacker);
+        const grounded = attacker.groundedByMove || field.gravityTurns > 0 || effects.item(attacker) === 'Iron Ball' ||
+          (!attacker.types.includes('Flying') && !['Levitate','Eelevate'].includes(ability) && effects.item(attacker) !== 'Air Balloon');
+        const sleepBlocked = (grounded && ['electric','misty'].includes(field.terrain)) ||
+          allies.some(mon => mon.alive && effects.ability(mon) === 'Sweet Veil');
+        if (sleepBlocked || attacker.status === 'sleep' || attacker.hp >= attacker.maxHp || attacker.ability === 'Comatose' || ['Insomnia','Vital Spirit'].includes(ability)) {
           attacker.lastMoveFailed = true;
           _recordMoveFailureEvent(field,attacker,move,'rest-unavailable');
           log.push(`${attacker.name} used Rest! But it failed!`);
@@ -7904,7 +7889,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.32'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.33'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

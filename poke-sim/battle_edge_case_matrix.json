@@ -1337,9 +1337,14 @@
         "ordinary-burn-fullhp",
         "EarlyBird-Gas-Shield-consumed",
         "SleepTalk-calls-Rest",
-        "Insomnia-VitalSpirit-Comatose"
+        "Insomnia-VitalSpirit-Comatose",
+        "Electric-Misty-terrain-no-heal",
+        "Levitate-Balloon-IronBall-Gravity",
+        "Gas-Shield-Klutz-consumed-items",
+        "active-ally-SweetVeil",
+        "failed-Rest-next-Tantrum-executed-damage"
       ],
-      "known_gap": "Synthetic custom states, not legal-team or client proof. Generic sleep distribution, switching, cure then subsequent sleep, ally/terrain immunity and failed Rest follow-on damage remain unproved."
+      "known_gap": "Synthetic pinned-reference scope, not current-client or legal-roster certification. Generic sleep distribution, switching, cure then subsequent sleep, Roost/Tera grounding and wider immunity/lifecycle combinations remain unproved."
     },
     {
       "id": "MOVE-STRUGGLE-NO-PP",
