@@ -1,0 +1,1428 @@
+{
+  "local_result": {
+    "observations": {
+      "hp_restored": 0,
+      "asleep": false,
+      "rest_pp_spent": 1
+    },
+    "raw": {
+      "log": [
+        "Pincurchin's Electric Surge set Electric Terrain!",
+        "--- Turn 1 ---",
+        "Blastoise used Protect!",
+        "Blastoise used Protect!",
+        "Pincurchin used Protect!",
+        "Snorlax used Rest!",
+        "Snorlax used Rest! But it failed!"
+      ],
+      "turnLog": [
+        {
+          "turn": 1,
+          "initial": {
+            "active": {
+              "player": [
+                "Snorlax",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Pincurchin",
+                "Blastoise"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Snorlax",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Pincurchin",
+                "opponent:active:1:Blastoise"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Snorlax",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Pincurchin",
+                "opponent:slot:1:Blastoise"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Snorlax": 0.915,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Pincurchin": 1,
+              "opponent:active:1:Blastoise": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Snorlax": 0.915,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Pincurchin": 1,
+              "opponent:slot:1:Blastoise": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Snorlax",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Snorlax",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Snorlax",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 1.9148936170212765,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Pincurchin",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Pincurchin",
+                  "opponent:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Pincurchin",
+                  "opponent:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Snorlax",
+                  "stableKey": "player:slot:0:Snorlax",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 91,
+                  "hp_current": 215,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "91%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Rest"
+                  ],
+                  "move_pp": {
+                    "Rest": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Pincurchin",
+                  "stableKey": "opponent:slot:0:Pincurchin",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Pincurchin",
+                  "species": "Pincurchin",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 123,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 123,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Electric Surge",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "48/101/95/91/85/15",
+                  "calculatedStats": "123/121/115/111/105/35"
+                },
+                {
+                  "key": "opponent:active:1:Blastoise",
+                  "stableKey": "opponent:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": "electric",
+              "terrain_turns": 5,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Blastoise",
+              "Blastoise",
+              "Snorlax",
+              "Pincurchin"
+            ],
+            "speed_order_keys": [
+              "player:active:1:Blastoise",
+              "opponent:active:1:Blastoise",
+              "player:active:0:Snorlax",
+              "opponent:active:0:Pincurchin"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:1:Blastoise",
+              "opponent:slot:1:Blastoise",
+              "player:slot:0:Snorlax",
+              "opponent:slot:0:Pincurchin"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Blastoise",
+                "stableKey": "opponent:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Snorlax",
+                "stableKey": "player:slot:0:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Pincurchin",
+                "stableKey": "opponent:slot:0:Pincurchin",
+                "pokemon": "Pincurchin",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 15,
+                "base_speed": 35,
+                "calculated_speed": 35,
+                "speed_stage": 0,
+                "effective_speed": 35,
+                "item": "",
+                "ability": "Electric Surge",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.501,
+            "win_probability": null
+          },
+          "playerHP": [
+            0.915,
+            1
+          ],
+          "oppHP": [
+            1,
+            1
+          ],
+          "activePair": [
+            "Snorlax",
+            "Blastoise",
+            "Pincurchin",
+            "Blastoise"
+          ],
+          "action": "Snorlax:Rest | Blastoise:Protect | Pincurchin:Protect | Blastoise:Protect",
+          "positionScore": 0.501,
+          "pre": {
+            "active": {
+              "player": [
+                "Snorlax",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Pincurchin",
+                "Blastoise"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Snorlax",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Pincurchin",
+                "opponent:active:1:Blastoise"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Snorlax",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Pincurchin",
+                "opponent:slot:1:Blastoise"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Snorlax": 0.915,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Pincurchin": 1,
+              "opponent:active:1:Blastoise": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Snorlax": 0.915,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Pincurchin": 1,
+              "opponent:slot:1:Blastoise": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Snorlax",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Snorlax",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Snorlax",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 1.9148936170212765,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Pincurchin",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Pincurchin",
+                  "opponent:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Pincurchin",
+                  "opponent:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Snorlax",
+                  "stableKey": "player:slot:0:Snorlax",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 91,
+                  "hp_current": 215,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "91%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Rest"
+                  ],
+                  "move_pp": {
+                    "Rest": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Pincurchin",
+                  "stableKey": "opponent:slot:0:Pincurchin",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Pincurchin",
+                  "species": "Pincurchin",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 123,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 123,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Electric Surge",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "48/101/95/91/85/15",
+                  "calculatedStats": "123/121/115/111/105/35"
+                },
+                {
+                  "key": "opponent:active:1:Blastoise",
+                  "stableKey": "opponent:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 8,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": "electric",
+              "terrain_turns": 5,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Blastoise",
+              "Blastoise",
+              "Snorlax",
+              "Pincurchin"
+            ],
+            "speed_order_keys": [
+              "player:active:1:Blastoise",
+              "opponent:active:1:Blastoise",
+              "player:active:0:Snorlax",
+              "opponent:active:0:Pincurchin"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:1:Blastoise",
+              "opponent:slot:1:Blastoise",
+              "player:slot:0:Snorlax",
+              "opponent:slot:0:Pincurchin"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Blastoise",
+                "stableKey": "opponent:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Snorlax",
+                "stableKey": "player:slot:0:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Pincurchin",
+                "stableKey": "opponent:slot:0:Pincurchin",
+                "pokemon": "Pincurchin",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 15,
+                "base_speed": 35,
+                "calculated_speed": 35,
+                "speed_stage": 0,
+                "effective_speed": 35,
+                "item": "",
+                "ability": "Electric Surge",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {
+              "Snorlax": [
+                "Rest -> Pincurchin"
+              ],
+              "Blastoise": [
+                "Protect -> Pincurchin"
+              ]
+            },
+            "position_score": 0.501,
+            "win_probability": null
+          },
+          "actions": {
+            "player": [
+              {
+                "actor": "Snorlax",
+                "actor_key": "player:slot:0:Snorlax",
+                "kind": "move",
+                "move": "Rest",
+                "target": "Pincurchin",
+                "target_key": "opponent:slot:0:Pincurchin",
+                "target_side": "opponent"
+              },
+              {
+                "actor": "Blastoise",
+                "actor_key": "player:slot:1:Blastoise",
+                "kind": "move",
+                "move": "Protect",
+                "target": "Pincurchin",
+                "target_key": "opponent:slot:0:Pincurchin",
+                "target_side": "opponent"
+              }
+            ],
+            "opponent": [
+              {
+                "actor": "Pincurchin",
+                "actor_key": "opponent:slot:0:Pincurchin",
+                "kind": "move",
+                "move": "Protect",
+                "target": "Snorlax",
+                "target_key": "player:slot:0:Snorlax",
+                "target_side": "player"
+              },
+              {
+                "actor": "Blastoise",
+                "actor_key": "opponent:slot:1:Blastoise",
+                "kind": "move",
+                "move": "Protect",
+                "target": "Snorlax",
+                "target_key": "player:slot:0:Snorlax",
+                "target_side": "player"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "log",
+              "text": "Blastoise used Protect!",
+              "actor": "Blastoise",
+              "actor_key": "opponent:slot:1:Blastoise",
+              "side": "opponent",
+              "move": "Protect",
+              "target": "Snorlax",
+              "target_key": "player:slot:0:Snorlax",
+              "target_side": "player",
+              "log_index": 0,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Blastoise used Protect!",
+              "actor": "Blastoise",
+              "actor_key": "player:slot:1:Blastoise",
+              "side": "player",
+              "move": "Protect",
+              "target": "Pincurchin",
+              "target_key": "opponent:slot:0:Pincurchin",
+              "target_side": "opponent",
+              "log_index": 1,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Pincurchin used Protect!",
+              "actor": "Pincurchin",
+              "actor_key": "opponent:slot:0:Pincurchin",
+              "side": "opponent",
+              "move": "Protect",
+              "target": "Snorlax",
+              "target_key": "player:slot:0:Snorlax",
+              "target_side": "player",
+              "log_index": 2,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Snorlax used Rest!",
+              "actor": "Snorlax",
+              "actor_key": "player:slot:0:Snorlax",
+              "side": "player",
+              "move": "Rest",
+              "target": "Snorlax",
+              "target_key": "player:slot:0:Snorlax",
+              "target_side": "player",
+              "log_index": 3,
+              "called_by": null
+            },
+            {
+              "type": "log",
+              "text": "Snorlax used Rest! But it failed!"
+            }
+          ],
+          "damage_events": [],
+          "effect_events": [
+            {
+              "actor": "Snorlax",
+              "actor_key": "player:slot:0:Snorlax",
+              "side": "player",
+              "move": "Rest",
+              "effect_kind": "move-failure",
+              "hp_before": 215,
+              "hp_after": 215,
+              "hp_delta": 0,
+              "max_hp": 235,
+              "source": "engine move failure gate",
+              "move_context": "User sleeps 2 turns and restores HP and status.",
+              "reason_id": "rest_unavailable",
+              "failure_reason_id": "rest_unavailable",
+              "move_failed": true,
+              "failed_move": "Rest",
+              "failure_reason": "rest-unavailable",
+              "skipped_move": false,
+              "action_denial": false
+            }
+          ],
+          "post": {
+            "active": {
+              "player": [
+                "Snorlax",
+                "Blastoise"
+              ],
+              "opponent": [
+                "Pincurchin",
+                "Blastoise"
+              ]
+            },
+            "bench": {
+              "player": [],
+              "opponent": []
+            },
+            "active_keys": {
+              "player": [
+                "player:active:0:Snorlax",
+                "player:active:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:active:0:Pincurchin",
+                "opponent:active:1:Blastoise"
+              ]
+            },
+            "bench_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "active_stable_keys": {
+              "player": [
+                "player:slot:0:Snorlax",
+                "player:slot:1:Blastoise"
+              ],
+              "opponent": [
+                "opponent:slot:0:Pincurchin",
+                "opponent:slot:1:Blastoise"
+              ]
+            },
+            "bench_stable_keys": {
+              "player": [],
+              "opponent": []
+            },
+            "hp_pct": {
+              "player:active:0:Snorlax": 0.915,
+              "player:active:1:Blastoise": 1,
+              "opponent:active:0:Pincurchin": 1,
+              "opponent:active:1:Blastoise": 1
+            },
+            "hp_pct_stable": {
+              "player:slot:0:Snorlax": 0.915,
+              "player:slot:1:Blastoise": 1,
+              "opponent:slot:0:Pincurchin": 1,
+              "opponent:slot:1:Blastoise": 1
+            },
+            "score_state": {
+              "player": {
+                "active": [
+                  "Snorlax",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "player:active:0:Snorlax",
+                  "player:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "player:slot:0:Snorlax",
+                  "player:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 1.9148936170212765,
+                "max_count": 2
+              },
+              "opponent": {
+                "active": [
+                  "Pincurchin",
+                  "Blastoise"
+                ],
+                "bench": [],
+                "active_keys": [
+                  "opponent:active:0:Pincurchin",
+                  "opponent:active:1:Blastoise"
+                ],
+                "bench_keys": [],
+                "active_stable_keys": [
+                  "opponent:slot:0:Pincurchin",
+                  "opponent:slot:1:Blastoise"
+                ],
+                "bench_stable_keys": [],
+                "alive_count": 2,
+                "hp_total": 2,
+                "max_count": 2
+              }
+            },
+            "roster": {
+              "player": [
+                {
+                  "key": "player:active:0:Snorlax",
+                  "stableKey": "player:slot:0:Snorlax",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Snorlax",
+                  "species": "Snorlax",
+                  "types": [
+                    "Normal"
+                  ],
+                  "hp": 91,
+                  "hp_current": 215,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 235,
+                  "hpLabel": "91%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Immunity",
+                  "moves": [
+                    "Rest"
+                  ],
+                  "move_pp": {
+                    "Rest": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "160/110/65/65/110/30",
+                  "calculatedStats": "235/130/85/85/130/50"
+                },
+                {
+                  "key": "player:active:1:Blastoise",
+                  "stableKey": "player:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "player",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ],
+              "opponent": [
+                {
+                  "key": "opponent:active:0:Pincurchin",
+                  "stableKey": "opponent:slot:0:Pincurchin",
+                  "teamSlot": 0,
+                  "zone": "active",
+                  "zoneIndex": 0,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Pincurchin",
+                  "species": "Pincurchin",
+                  "types": [
+                    "Electric"
+                  ],
+                  "hp": 100,
+                  "hp_current": 123,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 123,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Electric Surge",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "48/101/95/91/85/15",
+                  "calculatedStats": "123/121/115/111/105/35"
+                },
+                {
+                  "key": "opponent:active:1:Blastoise",
+                  "stableKey": "opponent:slot:1:Blastoise",
+                  "teamSlot": 1,
+                  "zone": "active",
+                  "zoneIndex": 1,
+                  "side": "opponent",
+                  "status": "active",
+                  "displayName": "Blastoise",
+                  "species": "Blastoise",
+                  "types": [
+                    "Water"
+                  ],
+                  "hp": 100,
+                  "hp_current": 154,
+                  "substitute_hp": 0,
+                  "perish_song_turns": 0,
+                  "hp_max": 154,
+                  "hpLabel": "100%",
+                  "level": 50,
+                  "item": "",
+                  "itemConsumed": false,
+                  "electric_charge": false,
+                  "mc_syrup_turns": 0,
+                  "mc_trap_turns": 0,
+                  "mc_partially_trapped": false,
+                  "ability": "Torrent",
+                  "moves": [
+                    "Protect"
+                  ],
+                  "move_pp": {
+                    "Protect": {
+                      "current": 7,
+                      "max": 8
+                    }
+                  },
+                  "baseStatsLabel": "79/83/100/85/105/78",
+                  "calculatedStats": "154/103/120/105/125/98"
+                }
+              ]
+            },
+            "status": {},
+            "status_stable": {},
+            "stat_boosts": {},
+            "stat_boosts_stable": {},
+            "field": {
+              "weather": null,
+              "weather_turns": 0,
+              "gravity_turns": 0,
+              "terrain": "electric",
+              "terrain_turns": 4,
+              "trick_room": 0
+            },
+            "speed_control": {
+              "player": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              },
+              "opponent": {
+                "tailwind_turns": 0,
+                "screens": {
+                  "reflect": 0,
+                  "light": 0,
+                  "aurora": 0
+                }
+              }
+            },
+            "speed_order": [
+              "Blastoise",
+              "Blastoise",
+              "Snorlax",
+              "Pincurchin"
+            ],
+            "speed_order_keys": [
+              "player:active:1:Blastoise",
+              "opponent:active:1:Blastoise",
+              "player:active:0:Snorlax",
+              "opponent:active:0:Pincurchin"
+            ],
+            "speed_order_stable_keys": [
+              "player:slot:1:Blastoise",
+              "opponent:slot:1:Blastoise",
+              "player:slot:0:Snorlax",
+              "opponent:slot:0:Pincurchin"
+            ],
+            "speed_order_details": [
+              {
+                "side": "player",
+                "key": "player:active:1:Blastoise",
+                "stableKey": "player:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:1:Blastoise",
+                "stableKey": "opponent:slot:1:Blastoise",
+                "pokemon": "Blastoise",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 78,
+                "base_speed": 98,
+                "calculated_speed": 98,
+                "speed_stage": 0,
+                "effective_speed": 98,
+                "item": "",
+                "ability": "Torrent",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": true
+              },
+              {
+                "side": "player",
+                "key": "player:active:0:Snorlax",
+                "stableKey": "player:slot:0:Snorlax",
+                "pokemon": "Snorlax",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 30,
+                "base_speed": 50,
+                "calculated_speed": 50,
+                "speed_stage": 0,
+                "effective_speed": 50,
+                "item": "",
+                "ability": "Immunity",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              },
+              {
+                "side": "opponent",
+                "key": "opponent:active:0:Pincurchin",
+                "stableKey": "opponent:slot:0:Pincurchin",
+                "pokemon": "Pincurchin",
+                "stat_format": "champions",
+                "nature": "Hardy",
+                "speed_points": 0,
+                "species_base_speed": 15,
+                "base_speed": 35,
+                "calculated_speed": 35,
+                "speed_stage": 0,
+                "effective_speed": 35,
+                "item": "",
+                "ability": "Electric Surge",
+                "status": "",
+                "tailwind": false,
+                "trick_room": false,
+                "weather": "none",
+                "exact_speed_tie": false
+              }
+            ],
+            "legal_options": {},
+            "position_score": 0.501,
+            "win_probability": null
+          },
+          "delta": {
+            "position_score": 0,
+            "win_probability": null,
+            "primary_cause": "position_improved",
+            "explanation": ""
+          }
+        }
+      ]
+    }
+  },
+  "reference_result": {
+    "observations": {
+      "hp_restored": 0,
+      "asleep": false,
+      "rest_pp_spent": 1
+    },
+    "raw": {
+      "log": [
+        "|t:|1792539169",
+        "|gametype|doubles",
+        "|player|p1|Player 1||",
+        "|player|p2|Player 2||",
+        "|gen|9",
+        "|tier|[Gen 9 Champions] Doubles Custom Game",
+        "|clearpoke",
+        "|poke|p1|Snorlax, L50, M|",
+        "|poke|p1|Blastoise, L50, M|",
+        "|poke|p2|Pincurchin, L50, F|",
+        "|poke|p2|Blastoise, L50, M|",
+        "|teampreview",
+        "|",
+        "|t:|1792539169",
+        "|teamsize|p1|2",
+        "|teamsize|p2|2",
+        "|start",
+        "|split|p1",
+        "|switch|p1a: p1m1|Snorlax, L50, M|215/235",
+        "|switch|p1a: p1m1|Snorlax, L50, M|215/235",
+        "|split|p1",
+        "|switch|p1b: p1m2|Blastoise, L50, M|154/154",
+        "|switch|p1b: p1m2|Blastoise, L50, M|154/154",
+        "|split|p2",
+        "|switch|p2a: p2m1|Pincurchin, L50, F|123/123",
+        "|switch|p2a: p2m1|Pincurchin, L50, F|123/123",
+        "|split|p2",
+        "|switch|p2b: p2m2|Blastoise, L50, M|154/154",
+        "|switch|p2b: p2m2|Blastoise, L50, M|154/154",
+        "|-fieldstart|move: Electric Terrain|[from] ability: Electric Surge|[of] p2a: p2m1",
+        "|turn|1",
+        "|",
+        "|t:|1792539169",
+        "|move|p2b: p2m2|Protect|p2b: p2m2",
+        "|-singleturn|p2b: p2m2|Protect",
+        "|move|p1b: p1m2|Protect|p1b: p1m2",
+        "|-singleturn|p1b: p1m2|Protect",
+        "|move|p2a: p2m1|Protect|p2a: p2m1",
+        "|-singleturn|p2a: p2m1|Protect",
+        "|move|p1a: p1m1|Rest||[still]",
+        "|-activate|p1a: p1m1|move: Electric Terrain",
+        "|debug|set status [slp] interrupted",
+        "|-fail|p1a: p1m1",
+        "|debug|move failed because it did nothing",
+        "|",
+        "|upkeep",
+        "|turn|2"
+      ],
+      "mod": "champions",
+      "format_mod": "champions"
+    }
+  }
+}

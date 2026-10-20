@@ -17,7 +17,7 @@ test('aggregate identity binds owning tests, runners, fixtures, DB inputs and di
       fs.unlinkSync(path.join(root,file));assert.equal(lifecycleSource(root),before,'Removed input '+file);
     }
     write('tests/owner.mjs','same\n');const lf=lifecycleSource(root);write('tests/owner.mjs','same\r\n');assert.equal(lifecycleSource(root),lf,'LF normalization');
-    for(const file of ['docs/receipt.md','reports/validation/result.json','source/validation-lifecycle/run/facts.json','source/bounded-assertions/cycles/history/result.json'])write(file,'dated evidence');
+    for(const file of ['docs/receipt.md','tests/audit_matrix.json','reports/validation/result.json','source/validation-lifecycle/run/facts.json','source/bounded-assertions/cycles/history/result.json'])write(file,'dated evidence');
     assert.equal(lifecycleSource(root),lf,'Receipt-only refresh is not a circular source change');
     write('tests/fixtures/binary.bin',Buffer.from([0x80]));const binary=lifecycleSource(root);
     write('tests/fixtures/binary.bin',Buffer.from([0x81]));assert.notEqual(lifecycleSource(root),binary,'Binary fixture bytes remain exact');

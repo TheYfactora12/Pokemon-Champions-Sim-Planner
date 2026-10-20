@@ -2324,6 +2324,554 @@
         "path": "source/bounded-assertions/reviews/b2a0603839d4cbcae681fb81cad71378c4f765cc0ecb207784bfc75506ef1867/review.json",
         "sha256": "61fe82b35660a34710cdc4d38e909b9ace0eaf40cb6de08561f3716f05436d01"
       }
+    },
+    {
+      "assertion_id": "RESOURCE-STRUGGLE-CAPTURE.current-runtime.v6",
+      "case_id": "RESOURCE-STRUGGLE-CAPTURE",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "player slot0, no PP, target isolated to opposing slot0",
+          "ordinary physical damage and rounded maxHP recoil; no random-target claim"
+        ]
+      },
+      "executed_at": "2026-10-20T23:32:48.681Z",
+      "enrollment_kind": "current-capture-v1",
+      "receipt": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RESOURCE-STRUGGLE-CAPTURE/receipt.json",
+        "sha256": "09a4f26f4a1f7af371fd0c5033d6bb80d232bab9e49450cd3981240dd0be9d95"
+      },
+      "contract": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RESOURCE-STRUGGLE-CAPTURE/contract.json",
+        "sha256": "6b78fa1d3cc8e732e1feae173589308f3807d8c044db0d308d8b9ae7b9c13a89"
+      },
+      "inputs": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RESOURCE-STRUGGLE-CAPTURE/inputs.json",
+        "sha256": "ac1617aa9cee48e629c5be3b34ccba1ea2156e2ab399aab9375274491811bb39"
+      },
+      "local_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RESOURCE-STRUGGLE-CAPTURE/local_result.json",
+        "sha256": "6977e6b50912f81c565ff3d29b346faec82f1a6f82e38111f54db24787ee29ea"
+      },
+      "reference_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RESOURCE-STRUGGLE-CAPTURE/reference_result.json",
+        "sha256": "ea859f7e5c4993db47b4e846dfff4dff9b8e70fbbf1ac0bb8cea170570b6f2ae"
+      },
+      "raw": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RESOURCE-STRUGGLE-CAPTURE/raw.json",
+        "sha256": "ddd38b466eba04d9563d0ed903243d6c363406801c85bca8b8d96ecf97baab7f"
+      },
+      "dependency_files": {
+        "engine": [
+          "engine.js",
+          "outcome_policy.js",
+          "rulesets.js",
+          "move_legality.js",
+          "mc_review.js",
+          "legality.js"
+        ],
+        "data": [
+          "data.js",
+          "runtime_data.js",
+          "generated/pokemon_showdown_legal_data.js",
+          "generated/pokemon_showdown_species_weights.js",
+          "generated/champions_move_overrides.js",
+          "generated/champions_move_pools.js",
+          "generated/mc_review_reference.js",
+          "package-lock.json",
+          "source/bounded-assertions/reference-target.json"
+        ],
+        "runner": [
+          "tools/bounded-runtime-capture.mjs",
+          "tools/showdown-reference.mjs",
+          "tools/prepare-mc-reference-candidate.mjs"
+        ],
+        "test": [
+          "tests/fixtures/bounded_runtime_cases.mjs"
+        ],
+        "checker": [
+          "tools/bounded-assertions.mjs",
+          "tools/bounded-register.mjs",
+          "tools/current-bounded-core.mjs",
+          "tools/regulation-watch-core.mjs"
+        ]
+      },
+      "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+      "metadata": {
+        "runtime_source_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050"
+      },
+      "move_ids": [
+        "protect",
+        "struggle",
+        "swordsdance"
+      ],
+      "item_ids": [],
+      "simulator_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050",
+      "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+      "independent_review": {
+        "path": "source/bounded-assertions/reviews/86154cc62fc0ae738d2a8ccaa2a5403104ee326b26474058cf4d90f598f77aba/review.json",
+        "sha256": "2f11e2435ad4b49bb9003452cfdc77e09bccc79b08ec9fa1de28e3bfaf06b9b1"
+      }
+    },
+    {
+      "assertion_id": "REST-ELECTRIC-CAPTURE.current-runtime.v6",
+      "case_id": "REST-ELECTRIC-CAPTURE",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "grounded player slot0, missing20HP, ElectricTerrain admission rejection"
+        ]
+      },
+      "executed_at": "2026-10-20T23:32:48.681Z",
+      "enrollment_kind": "current-capture-v1",
+      "receipt": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/REST-ELECTRIC-CAPTURE/receipt.json",
+        "sha256": "7b5c2de69e29ba8affdfd5b43a30cce690eddd952602137a2b84de0f4d235762"
+      },
+      "contract": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/REST-ELECTRIC-CAPTURE/contract.json",
+        "sha256": "6915a31f0a59162c832b5afc6e019e2b51f57cd3515d81328807aea086f50807"
+      },
+      "inputs": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/REST-ELECTRIC-CAPTURE/inputs.json",
+        "sha256": "ffacf628b083ab8d3cb8e1d3202be00d542b013b7c85e2772d3709ab7b44cd68"
+      },
+      "local_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/REST-ELECTRIC-CAPTURE/local_result.json",
+        "sha256": "739749221e855e89aeda201ee726677f17b5a246f71c73e01e000bbcdb3162bf"
+      },
+      "reference_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/REST-ELECTRIC-CAPTURE/reference_result.json",
+        "sha256": "dd96f23ed3300a1ec6c5a8f7939c849f1d38a2ec6ac1481fabf77d93155eaf29"
+      },
+      "raw": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/REST-ELECTRIC-CAPTURE/raw.json",
+        "sha256": "13fb71f109b8db2d3b170ad08c66b08cb450bc9232e69c8909d53052541a840d"
+      },
+      "dependency_files": {
+        "engine": [
+          "engine.js",
+          "outcome_policy.js",
+          "rulesets.js",
+          "move_legality.js",
+          "mc_review.js",
+          "legality.js"
+        ],
+        "data": [
+          "data.js",
+          "runtime_data.js",
+          "generated/pokemon_showdown_legal_data.js",
+          "generated/pokemon_showdown_species_weights.js",
+          "generated/champions_move_overrides.js",
+          "generated/champions_move_pools.js",
+          "generated/mc_review_reference.js",
+          "package-lock.json",
+          "source/bounded-assertions/reference-target.json"
+        ],
+        "runner": [
+          "tools/bounded-runtime-capture.mjs",
+          "tools/showdown-reference.mjs",
+          "tools/prepare-mc-reference-candidate.mjs"
+        ],
+        "test": [
+          "tests/fixtures/bounded_runtime_cases.mjs"
+        ],
+        "checker": [
+          "tools/bounded-assertions.mjs",
+          "tools/bounded-register.mjs",
+          "tools/current-bounded-core.mjs",
+          "tools/regulation-watch-core.mjs"
+        ]
+      },
+      "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+      "metadata": {
+        "runtime_source_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050"
+      },
+      "move_ids": [
+        "protect",
+        "rest"
+      ],
+      "item_ids": [],
+      "simulator_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050",
+      "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+      "independent_review": {
+        "path": "source/bounded-assertions/reviews/86154cc62fc0ae738d2a8ccaa2a5403104ee326b26474058cf4d90f598f77aba/review.json",
+        "sha256": "2f11e2435ad4b49bb9003452cfdc77e09bccc79b08ec9fa1de28e3bfaf06b9b1"
+      }
+    },
+    {
+      "assertion_id": "ENCORE-QUEUE-CAPTURE.current-runtime.v6",
+      "case_id": "ENCORE-QUEUE-CAPTURE",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "two turns, Prankster Encore before queued Flamethrower",
+          "replacement executes Will-O-Wisp and spends replacement PP"
+        ]
+      },
+      "executed_at": "2026-10-20T23:32:48.681Z",
+      "enrollment_kind": "current-capture-v1",
+      "receipt": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/ENCORE-QUEUE-CAPTURE/receipt.json",
+        "sha256": "7a332d8bb14bbda5f42d4748835d4bb208d6bddc488ef05d5fb869da4b7d4189"
+      },
+      "contract": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/ENCORE-QUEUE-CAPTURE/contract.json",
+        "sha256": "4baae5faa7290be4bf5e468e6f621d63d5de2eae0236281c2b46991ba31b5274"
+      },
+      "inputs": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/ENCORE-QUEUE-CAPTURE/inputs.json",
+        "sha256": "c6aaf14762bcb91fa487c72b4fdc80e32b8f8ccb2d3b21defc21e4a4c1e65fc2"
+      },
+      "local_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/ENCORE-QUEUE-CAPTURE/local_result.json",
+        "sha256": "363f7963862724e6919d82455d68de0a9a6b45faa9e0b8503852e7513107a7c6"
+      },
+      "reference_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/ENCORE-QUEUE-CAPTURE/reference_result.json",
+        "sha256": "d7950d267b8c93880446e066f71b4e0d76dec0365f49d26c592ccdcb7de87241"
+      },
+      "raw": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/ENCORE-QUEUE-CAPTURE/raw.json",
+        "sha256": "3e75527772f640f8afd625741f7cbc778b36d6137dea821caec33829fea700fb"
+      },
+      "dependency_files": {
+        "engine": [
+          "engine.js",
+          "outcome_policy.js",
+          "rulesets.js",
+          "move_legality.js",
+          "mc_review.js",
+          "legality.js"
+        ],
+        "data": [
+          "data.js",
+          "runtime_data.js",
+          "generated/pokemon_showdown_legal_data.js",
+          "generated/pokemon_showdown_species_weights.js",
+          "generated/champions_move_overrides.js",
+          "generated/champions_move_pools.js",
+          "generated/mc_review_reference.js",
+          "package-lock.json",
+          "source/bounded-assertions/reference-target.json"
+        ],
+        "runner": [
+          "tools/bounded-runtime-capture.mjs",
+          "tools/showdown-reference.mjs",
+          "tools/prepare-mc-reference-candidate.mjs"
+        ],
+        "test": [
+          "tests/fixtures/bounded_runtime_cases.mjs"
+        ],
+        "checker": [
+          "tools/bounded-assertions.mjs",
+          "tools/bounded-register.mjs",
+          "tools/current-bounded-core.mjs",
+          "tools/regulation-watch-core.mjs"
+        ]
+      },
+      "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+      "metadata": {
+        "runtime_source_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050"
+      },
+      "move_ids": [
+        "amnesia",
+        "encore",
+        "flamethrower",
+        "irondefense",
+        "protect",
+        "willowisp"
+      ],
+      "item_ids": [],
+      "simulator_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050",
+      "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+      "independent_review": {
+        "path": "source/bounded-assertions/reviews/86154cc62fc0ae738d2a8ccaa2a5403104ee326b26474058cf4d90f598f77aba/review.json",
+        "sha256": "2f11e2435ad4b49bb9003452cfdc77e09bccc79b08ec9fa1de28e3bfaf06b9b1"
+      }
+    },
+    {
+      "assertion_id": "RED-CARD-CAPTURE.current-runtime.v6",
+      "case_id": "RED-CARD-CAPTURE",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "single fixed damage hit, surviving holder, exactly one legal reserve",
+          "consumption and forced replacement; no random-reserve claim"
+        ]
+      },
+      "executed_at": "2026-10-20T23:32:48.681Z",
+      "enrollment_kind": "current-capture-v1",
+      "receipt": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RED-CARD-CAPTURE/receipt.json",
+        "sha256": "41777c936e6ede7a9291403e9c4edc1f2ea2edf950886849d0ac3011d078a301"
+      },
+      "contract": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RED-CARD-CAPTURE/contract.json",
+        "sha256": "8a2ba670579477ea4bc441d0a48c8d3e193e6d5ab1f871f5d48a24f4918e8857"
+      },
+      "inputs": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RED-CARD-CAPTURE/inputs.json",
+        "sha256": "e6c0d0f120b69508406282867ffc76ae6fecf2e7142f415956649dc4d2f7b83c"
+      },
+      "local_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RED-CARD-CAPTURE/local_result.json",
+        "sha256": "5c2521f7c1c882b8804d714946c84454dccb183b45e71b0b2a12c9dc65eebcfe"
+      },
+      "reference_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RED-CARD-CAPTURE/reference_result.json",
+        "sha256": "8360de87dc7b8b32cf001b122611a2ba1badf3f122193afb2461bafcd7ddd734"
+      },
+      "raw": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/RED-CARD-CAPTURE/raw.json",
+        "sha256": "def68ce11e502fad6debf0f29fbf9568353c1b24dd9882a9cfd0efb01473d84c"
+      },
+      "dependency_files": {
+        "engine": [
+          "engine.js",
+          "outcome_policy.js",
+          "rulesets.js",
+          "move_legality.js",
+          "mc_review.js",
+          "legality.js"
+        ],
+        "data": [
+          "data.js",
+          "runtime_data.js",
+          "generated/pokemon_showdown_legal_data.js",
+          "generated/pokemon_showdown_species_weights.js",
+          "generated/champions_move_overrides.js",
+          "generated/champions_move_pools.js",
+          "generated/mc_review_reference.js",
+          "package-lock.json",
+          "source/bounded-assertions/reference-target.json"
+        ],
+        "runner": [
+          "tools/bounded-runtime-capture.mjs",
+          "tools/showdown-reference.mjs",
+          "tools/prepare-mc-reference-candidate.mjs"
+        ],
+        "test": [
+          "tests/fixtures/bounded_runtime_cases.mjs"
+        ],
+        "checker": [
+          "tools/bounded-assertions.mjs",
+          "tools/bounded-register.mjs",
+          "tools/current-bounded-core.mjs",
+          "tools/regulation-watch-core.mjs"
+        ]
+      },
+      "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+      "metadata": {
+        "runtime_source_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050"
+      },
+      "move_ids": [
+        "amnesia",
+        "protect",
+        "seismictoss"
+      ],
+      "item_ids": [
+        "redcard"
+      ],
+      "simulator_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050",
+      "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+      "independent_review": {
+        "path": "source/bounded-assertions/reviews/86154cc62fc0ae738d2a8ccaa2a5403104ee326b26474058cf4d90f598f77aba/review.json",
+        "sha256": "2f11e2435ad4b49bb9003452cfdc77e09bccc79b08ec9fa1de28e3bfaf06b9b1"
+      }
+    },
+    {
+      "assertion_id": "WHITE-HERB-CAPTURE.current-runtime.v6",
+      "case_id": "WHITE-HERB-CAPTURE",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "synthetic initial atk-2 def-1 spa+3 stages",
+          "negative stages reset and positive stage retained"
+        ]
+      },
+      "executed_at": "2026-10-20T23:32:48.681Z",
+      "enrollment_kind": "current-capture-v1",
+      "receipt": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/WHITE-HERB-CAPTURE/receipt.json",
+        "sha256": "74591dd7b75c08c5625abea6fa9eb0ad06f13b699bccf762f943bb1ba123c168"
+      },
+      "contract": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/WHITE-HERB-CAPTURE/contract.json",
+        "sha256": "566b4ab54f958247d15745623ec27264e9f648ec2cd0a5d29f9f861ceffac7fa"
+      },
+      "inputs": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/WHITE-HERB-CAPTURE/inputs.json",
+        "sha256": "5bea81631a1a9262440f7e36a41713edccf3edaf3b2870cb72d2c231fcf88e9c"
+      },
+      "local_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/WHITE-HERB-CAPTURE/local_result.json",
+        "sha256": "f5f407f5479a05359a8a8367cfe7d733cd33d444eaf83cc38da8a6581859ce7a"
+      },
+      "reference_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/WHITE-HERB-CAPTURE/reference_result.json",
+        "sha256": "e6d9f9049c0f9e2701652b35e0a2e4082848d6c3a7b9e614370938e50ed5ed0e"
+      },
+      "raw": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/WHITE-HERB-CAPTURE/raw.json",
+        "sha256": "f34277d6a7bb2dc37eb670d4ac59c28bfb1ec0979c252a93363b729f945e9f08"
+      },
+      "dependency_files": {
+        "engine": [
+          "engine.js",
+          "outcome_policy.js",
+          "rulesets.js",
+          "move_legality.js",
+          "mc_review.js",
+          "legality.js"
+        ],
+        "data": [
+          "data.js",
+          "runtime_data.js",
+          "generated/pokemon_showdown_legal_data.js",
+          "generated/pokemon_showdown_species_weights.js",
+          "generated/champions_move_overrides.js",
+          "generated/champions_move_pools.js",
+          "generated/mc_review_reference.js",
+          "package-lock.json",
+          "source/bounded-assertions/reference-target.json"
+        ],
+        "runner": [
+          "tools/bounded-runtime-capture.mjs",
+          "tools/showdown-reference.mjs",
+          "tools/prepare-mc-reference-candidate.mjs"
+        ],
+        "test": [
+          "tests/fixtures/bounded_runtime_cases.mjs"
+        ],
+        "checker": [
+          "tools/bounded-assertions.mjs",
+          "tools/bounded-register.mjs",
+          "tools/current-bounded-core.mjs",
+          "tools/regulation-watch-core.mjs"
+        ]
+      },
+      "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+      "metadata": {
+        "runtime_source_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050"
+      },
+      "move_ids": [
+        "amnesia",
+        "protect"
+      ],
+      "item_ids": [
+        "whiteherb"
+      ],
+      "simulator_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050",
+      "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+      "independent_review": {
+        "path": "source/bounded-assertions/reviews/86154cc62fc0ae738d2a8ccaa2a5403104ee326b26474058cf4d90f598f77aba/review.json",
+        "sha256": "2f11e2435ad4b49bb9003452cfdc77e09bccc79b08ec9fa1de28e3bfaf06b9b1"
+      }
+    },
+    {
+      "assertion_id": "DAMAGE-ROLL-CAPTURE.current-runtime.v6",
+      "case_id": "DAMAGE-ROLL-CAPTURE",
+      "scope": {
+        "oracle_kind": "shared_reference",
+        "format": "gen9championsdoublescustomgame",
+        "regulation_id": null,
+        "client_version": null,
+        "boundaries": [
+          "level50 Hardy zeroEV Snorlax Tackle into Venusaur",
+          "16 explicitly controlled damage draws, no critical hits; calculation API in doubles field"
+        ]
+      },
+      "executed_at": "2026-10-20T23:32:48.681Z",
+      "enrollment_kind": "current-capture-v1",
+      "receipt": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/DAMAGE-ROLL-CAPTURE/receipt.json",
+        "sha256": "13e8407857f67ec1d65cbecf33c40a9177d3393ebfb4b14dd790ae8d44494565"
+      },
+      "contract": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/DAMAGE-ROLL-CAPTURE/contract.json",
+        "sha256": "1b76d78f4a0f184c96abdb410264358f875a542e034b2debeac1d31efa6b69ce"
+      },
+      "inputs": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/DAMAGE-ROLL-CAPTURE/inputs.json",
+        "sha256": "28bdc9a3dfc5f9eb0ded6d67ef129abb3c9fa2513c9dc956561b8d7b8f4eaf4d"
+      },
+      "local_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/DAMAGE-ROLL-CAPTURE/local_result.json",
+        "sha256": "9d44ebb27343ea8a067bb7596b35d8633478311c5464181904c0ced2423a3768"
+      },
+      "reference_result": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/DAMAGE-ROLL-CAPTURE/reference_result.json",
+        "sha256": "5ab088de6c00eb0b8fdcf89a84be5e07192c9b5b040e5dee655bd1848e6f415c"
+      },
+      "raw": {
+        "path": "source/bounded-assertions/cycles/cycle-20261020-v6/DAMAGE-ROLL-CAPTURE/raw.json",
+        "sha256": "0c4f83174e01afb46dec0d7290bc54d7886dd3c99b1ac9d25a70232ab9953f9a"
+      },
+      "dependency_files": {
+        "engine": [
+          "engine.js",
+          "outcome_policy.js",
+          "rulesets.js",
+          "move_legality.js",
+          "mc_review.js",
+          "legality.js"
+        ],
+        "data": [
+          "data.js",
+          "runtime_data.js",
+          "generated/pokemon_showdown_legal_data.js",
+          "generated/pokemon_showdown_species_weights.js",
+          "generated/champions_move_overrides.js",
+          "generated/champions_move_pools.js",
+          "generated/mc_review_reference.js",
+          "package-lock.json",
+          "source/bounded-assertions/reference-target.json"
+        ],
+        "runner": [
+          "tools/bounded-runtime-capture.mjs",
+          "tools/showdown-reference.mjs",
+          "tools/prepare-mc-reference-candidate.mjs"
+        ],
+        "test": [
+          "tests/fixtures/bounded_runtime_cases.mjs"
+        ],
+        "checker": [
+          "tools/bounded-assertions.mjs",
+          "tools/bounded-register.mjs",
+          "tools/current-bounded-core.mjs",
+          "tools/regulation-watch-core.mjs"
+        ]
+      },
+      "reference_fingerprint": "de66162a28b270bdf17ea17a804a7ec65c6d2f286815ae17eaa3336273405f61",
+      "metadata": {
+        "runtime_source_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050"
+      },
+      "move_ids": [
+        "tackle"
+      ],
+      "item_ids": [],
+      "simulator_commit": "306f02ed1d325cc9c60203599cb2ed64591d1050",
+      "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+      "independent_review": {
+        "path": "source/bounded-assertions/reviews/86154cc62fc0ae738d2a8ccaa2a5403104ee326b26474058cf4d90f598f77aba/review.json",
+        "sha256": "2f11e2435ad4b49bb9003452cfdc77e09bccc79b08ec9fa1de28e3bfaf06b9b1"
+      }
     }
   ]
 }

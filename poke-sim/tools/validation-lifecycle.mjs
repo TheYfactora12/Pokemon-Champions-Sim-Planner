@@ -6,6 +6,8 @@ function legacySource(root,commit){return digest(canonical(Object.fromEntries(LI
 // Receipt/output history is verified by its own content-addressed gates, and is
 // excluded here so recording a result cannot change the source it describes.
 export function isLifecycleInput(file){
+ // audit.js writes this ignored result; it is not a runner/fixture input.
+ if(file==='tests/audit_matrix.json')return false;
  return LIFECYCLE_FILES.includes(file)||
   /^(tests|tools|db|generated)\//.test(file)&&!/\.(md|log)$/i.test(file)||
   /^[^/]+\.(js|mjs|cjs|json|py|sh|html|css)$/.test(file)||
