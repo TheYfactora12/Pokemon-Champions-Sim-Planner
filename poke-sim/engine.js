@@ -955,6 +955,7 @@ function _resolveBaseDynamicMoveType(attacker, move, field, baseMoveType) {
 
 // Execution gates and damage previews must use the same converted type.
 function _resolveMoveModifiers(attacker, move, field, baseMoveType) {
+  if (move === 'Struggle') return {type:'???',bpMult:1};
   var result = callAbilityHook(attacker, 'onModifyMove', { move: move, attacker: attacker, field: field });
   return {
     type: _resolveBaseDynamicMoveType(attacker, move, field, (result && result.typeOverride) || baseMoveType),
@@ -2541,7 +2542,9 @@ class Pokemon {
     //   Cite: https://bulbapedia.bulbagarden.net/wiki/Damage_category
     let isPhysical;
     const moveCategory = _moveCategory(move);
-    if (move === 'Tera Blast' && this.teraActivated && this.tera) {
+    if (move === 'Struggle') {
+      isPhysical = true;
+    } else if (move === 'Tera Blast' && this.teraActivated && this.tera) {
       isPhysical = _teraBlastUsesPhysical(this);
     } else if (moveCategory) {
       isPhysical = moveCategory === 'physical';
@@ -2694,7 +2697,9 @@ class Pokemon {
     };
     let bp;
     const moveBasePower = _moveBasePower(move, this);
-    if (moveBasePower !== undefined) {
+    if (move === 'Struggle') {
+      bp = 50;
+    } else if (moveBasePower !== undefined) {
       bp = moveBasePower;
     } else if (BP_MAP[move] !== undefined) {
       bp = BP_MAP[move];
@@ -5609,15 +5614,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       const _struggleTgt = (target && target.alive) ? target : enemies.find(e => e.alive);
       if (!_struggleTgt) return;
       log.push(`${attacker.name} used Struggle!`);
-      const _stDmg = Math.max(1, Math.floor(_struggleTgt.maxHp * 0.25));
+      const _stDmg = captureBattleDamage(attacker, move, _struggleTgt, field, rng);
       applyDamage(attacker, 'Struggle', _struggleTgt, _stDmg, field, log, rng);
-      const _stRecoil = Math.max(1, Math.floor(attacker.maxHp * 0.25));
+      const _stRecoil = Math.max(1, Math.round(attacker.maxHp / 4));
       const _stHpBeforeRecoil = attacker.hp;
       attacker.hp = Math.max(0, attacker.hp - _stRecoil);
       const _stAppliedRecoil = Math.max(0, _stHpBeforeRecoil - attacker.hp);
       log.push(`${attacker.name} is hit by Struggle recoil! [${_stAppliedRecoil} dmg${_stRecoil !== _stAppliedRecoil ? ', calc ' + _stRecoil : ''}]`);
       _recordEffectEvent(field, attacker, 'Struggle', 'recoil', _stHpBeforeRecoil, attacker.hp, {
-        rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'down' },
+        rule: { numerator: 1, denominator: 4, basis: 'max_hp', rounding: 'half_up' },
         calculated_effect_damage: _stRecoil,
         damage_applied_to_user: _stAppliedRecoil
       });
@@ -7899,7 +7904,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   top_loss_paths  — placeholder (requires loss-path tracking)
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
-const ENGINE_VERSION = '1.1.31'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.32'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

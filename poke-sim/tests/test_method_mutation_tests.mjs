@@ -8,17 +8,19 @@ import {referenceProbes} from './fixtures/showdown_reference_probes.mjs';
 import {compareProbe,loadLocalEngine} from '../tools/showdown-reference.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url)),out=new URL('../artifacts/test-method-controls/',import.meta.url);
 fs.mkdirSync(out,{recursive:true});
-for(const [mutant,suite] of [
+for(const [mutant,suite,pattern] of [
+  ...['struggle_fixed','struggle_floor','struggle_normal'].map(m=>[m,'struggle_reference_tests.mjs','Struggle false/0/0/(normal|ghost)']),
   ['half_damage','showdown_damage_oracle_tests.js'],
   ['tantrum_150_percent','amnesia_reference_tests.mjs'],
   ['hidden_read','default_policy_boundary_tests.js'],
   ['switch_noop','scripted_switch_reference_tests.mjs']
 ]) test(`independent ${suite} kills ${mutant} with healthy control`,()=>{
   const childEnv={...process.env};delete childEnv.NODE_TEST_CONTEXT;
-  const baseline=spawnSync(process.execPath,[`tests/${suite}`],{cwd:root,encoding:'utf8',timeout:120000,env:childEnv});
+  const suiteArgs=pattern?[`--test-name-pattern=${pattern}`,`tests/${suite}`]:[`tests/${suite}`];
+  const baseline=spawnSync(process.execPath,suiteArgs,{cwd:root,encoding:'utf8',timeout:120000,env:childEnv});
   fs.writeFileSync(new URL(`${mutant}-baseline.log`,out),(baseline.stdout||'')+(baseline.stderr||''));
   assert.equal(baseline.status,0,baseline.stderr);
-  const bad=spawnSync(process.execPath,['--require','./tools/test-engine-mutant.cjs',`tests/${suite}`],{
+  const bad=spawnSync(process.execPath,['--require','./tools/test-engine-mutant.cjs',...suiteArgs],{
     cwd:root,encoding:'utf8',timeout:120000,env:{...childEnv,CHAMPIONS_TEST_MUTANT:mutant}});
   fs.writeFileSync(new URL(`${mutant}-mutant.log`,out),(bad.stdout||'')+(bad.stderr||''));
   assert.equal(bad.signal,null);assert.notEqual(bad.status,null);assert.notEqual(bad.status,0);

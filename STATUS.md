@@ -5,7 +5,7 @@ Reviewed: 2026-10-20. This file owns current release facts and priorities.
 The full prior status was preserved in [the October 8 archive](docs/archive/STATUS_PRE_ALIGNMENT_2026-10-08.md).
 Historical candidate observations are not current deployment instructions.
 
-Current follow-up: [proof consistency repairs](docs/release/PROOF_CONSISTENCY_2026-10-20.md) address independent S1-S4 survivors. Rest checkpoint303810f has44 reference cases. Final hosted/original-auditor closure pending; competitive release remains NO-GO.
+Current follow-up: [proof consistency repairs](docs/release/PROOF_CONSISTENCY_2026-10-20.md) address independent S1-S4 survivors. Rest checkpoint303810f has44 reference cases. Hosted checkpoint2769879 passed all CI jobs; original auditor verified S1-S4 tested controls at2769879. A separate [Struggle repair](docs/release/STRUGGLE_REPAIR_2026-10-20.md) is under local aggregate validation. Competitive release remains NO-GO.
 
 ## Draft review candidate
 

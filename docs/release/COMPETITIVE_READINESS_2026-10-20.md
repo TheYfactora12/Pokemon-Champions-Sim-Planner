@@ -5,7 +5,7 @@ release only after all required gates. **NO-GO. No scope waiver or percentage.**
 Owner: Kevin for release decisions; implementer for repairs; independent reviewers
 for retest; a current-client capture owner remains unassigned.
 
-Candidate: v2.2.230-proof / engine1.1.31, separate follow-up to methodology d48b9aa and Amnesia 991f4fd in PR279. This register owns current gate status; older dated reports remain
+Candidate under local validation: v2.2.231-struggle / engine1.1.32 ([bounded repair](STRUGGLE_REPAIR_2026-10-20.md)); hosted checkpoint2769879 passed all CI jobs. Prior candidate v2.2.230-proof / engine1.1.31, separate follow-up to methodology d48b9aa and Amnesia 991f4fd in PR279. This register owns current gate status; older dated reports remain
 historical receipts. No merge, deployment, live DB change or key enrollment made.
 
 | ID / severity | Reproduction and impact | Owner / change | Status and independent closure |
@@ -20,6 +20,10 @@ historical receipts. No merge, deployment, live DB change or key enrollment made
 | DB-01 High release | Future default grants absent on two anon reads and four trusted writers. Docker backend socket launch failure. | Isolated DB reviewer. | Fresh in-memory PostgreSQL86named assertions pass; companion60browser denials+6trusted writes pass. Auth/PostgREST/owner isolation/live ledger, full persistence and deployment-version proof unavailable. No live grants applied. |
 | CI-01 High process | Pages previously independent of battle checks; main has no protection/rulesets. | Implementer + human repository owner. | New always-running methodology job and strict pre-deploy gate proposed. Branch settings unchanged. Kevin explicitly approved pinned Playwright/Chromium; isolated installation completed and mandatory browser CI is implemented. Exact-head hosted verification pending; no branch settings changed. |
 | APPROVAL-01 Critical release | No reviewed client package or enrolled human verification key. | Human owner + independent reviewer. | Empty key registry and null package intentionally block. Signature identity requires separately approved enrollment and protected review controls; source-editable keys alone do not establish ownership. |
+
+## Exact checkpoint2769879 independent closure
+
+Original auditor verified all four S1-S4 control classes, including35 nested-proof variants across downstream consumers, the57-versus76 Tantrum negative control, contract/capture consistency and failed/missed-action preservation. This is scoped closure, not a release pass. New Rest admission probes expose grounded Electric Terrain, ally Sweet Veil and synthetic Misty Terrain failures on both sides; timing remains verified but admission remains partial. Hosted CI39457869852 passed on2769879; its merge checkout has the identical Git tree.
 
 ## Current independent follow-up
 

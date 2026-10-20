@@ -1340,6 +1340,28 @@
         "Insomnia-VitalSpirit-Comatose"
       ],
       "known_gap": "Synthetic custom states, not legal-team or client proof. Generic sleep distribution, switching, cure then subsequent sleep, ally/terrain immunity and failed Rest follow-on damage remain unproved."
+    },
+    {
+      "id": "MOVE-STRUGGLE-NO-PP",
+      "family": "moves-effects",
+      "behavior": "Exhausted PP selects typeless physical base50 Struggle with rounded quarter-maxHP direct recoil and retained KO/resource evidence.",
+      "status": "partial",
+      "tests": [
+        "tests/struggle_reference_tests.mjs",
+        "tests/test_method_mutation_tests.mjs"
+      ],
+      "oracle": "Showdown9b136a8c8cdb860a8ab96fa063f906604e352547 data/moves.ts Struggle and sim/battle-actions.ts direct struggleRecoil; exact executable Champions custom reference.",
+      "boundary_vectors": [
+        "both-sides-and-active-slots",
+        "maxHP235-238",
+        "ordinary-Ghost-target",
+        "recoil-KO",
+        "Protect-no-recoil",
+        "MagicGuard-RockHead",
+        "zero-PP-autoselection",
+        "fixed-damage-floor-recoil-Normal-type-mutants"
+      ],
+      "known_gap": "Synthetic pinned-reference scope, not current-client or legal M-C proof. Random target distribution, burn/stages/critical, conversion abilities, Substitute/contact retaliation/special shields remain unproved. Legacy late-Fake-Out synthetic Struggle path remains known incorrect and excluded."
     }
   ]
 }
