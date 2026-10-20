@@ -18,9 +18,11 @@ passed at2026-10-20T22:02:58Z. This does not certify the follow-up runtime.
 The follow-up corrects confusion evidence and effective Power Herb under suppressed
 Klutz. Repeat-charge SpA boosts and Eject Button remain explicit gaps.
 
-The engine change invalidates all six earlier current assertions: canonical tracker
-now preserves13historical stale assertions and0current passes pending independent
-revalidation. No capture or golden is silently promoted. M-C reference candidate:
+The engine change invalidated the six earlier assertions. A fresh independent v3
+replay now provides six dated current bounded passes and preserves13historical stale
+assertions. The [dated validation workflow](docs/release/DATED_VALIDATION_WORKFLOW.md)
+separates local execution/review, push, hosted checks, merge and deployment; generated
+current/history exports must match receipts in CI. No golden is silently promoted. M-C reference candidate:
 392forms,537moves,166items,23756pairs; official eligibility/client proof unresolved.
 
 ## Historical development checkpoints

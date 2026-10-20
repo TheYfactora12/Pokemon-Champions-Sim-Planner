@@ -1,0 +1,64 @@
+{
+  "schema_version": "validation-lifecycle-view-v1",
+  "candidate_commit": "366bbdcefce135c6c68dc65e26bb34219cb04ebd",
+  "observed_at": "2026-10-20T22:31:50.261Z",
+  "scope": "Bounded reference validation and draft CI; excludes official/client certification and deployment",
+  "implementation": {
+    "status": "implemented",
+    "source_digest": "3ff866fa99ee7f3143045d7550af892e0e9830ff51e5dcc147f42fe4e91ac23b"
+  },
+  "local_test": {
+    "status": "passed",
+    "fast_files": 273,
+    "offline_db_files": 12,
+    "failures": 0,
+    "executed_at": null,
+    "date_limitation": "Retained aggregate logs lack execution timestamp; observation time is not execution time",
+    "evidence": {
+      "path": "source/validation-lifecycle/78db7bce211c4de750fbcd8a67088b2ed4634b44850e19f38588507ffc14e085/local.json",
+      "sha256": "76455c89f796fc216c79ac4fb3139c7926ec6c25b7079a85963be391381f89ef"
+    },
+    "candidate_source_bound": true
+  },
+  "independent_verification": {
+    "status": "stale",
+    "reviewed_at": "2026-10-20T22:27:12.831Z",
+    "runtime_source_commit": "366bbdcefce135c6c68dc65e26bb34219cb04ebd",
+    "cases": 6,
+    "evidence": {
+      "path": "source/validation-lifecycle/78db7bce211c4de750fbcd8a67088b2ed4634b44850e19f38588507ffc14e085/review.json",
+      "sha256": "a4d86d75995e0185dd5f78e336963cd0874e9d611fb3dd0cb6b78fe118a61878"
+    },
+    "candidate_source_bound": false
+  },
+  "remote_publication": {
+    "commit": "366bbdcefce135c6c68dc65e26bb34219cb04ebd",
+    "url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/pull/279",
+    "observed_at": "2026-10-20T22:31:50.262Z",
+    "evidence": {
+      "path": "source/validation-lifecycle/78db7bce211c4de750fbcd8a67088b2ed4634b44850e19f38588507ffc14e085/remote.json",
+      "sha256": "e323f0258834d1498188a2cc4f5dd677eb7f443f61b82e6bdd5d0dd87dbab233"
+    },
+    "status": "pushed"
+  },
+  "hosted_checks": {
+    "status": "in_progress",
+    "run_url": "https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39507753055",
+    "commit": "366bbdcefce135c6c68dc65e26bb34219cb04ebd",
+    "started_at": "2026-10-20T22:23:30Z",
+    "updated_at": "2026-10-20T22:23:50Z"
+  },
+  "merge": {
+    "status": "not_performed",
+    "authorization": "not_authorized"
+  },
+  "deployment": {
+    "status": "not_performed",
+    "authorization": "not_authorized"
+  },
+  "current_source_matches": false,
+  "current_workflow_state": "changed_since_checkpoint",
+  "completed": false,
+  "competitive_release_ready": false,
+  "next_blocker": "Rerun/review, refresh tracker, push changed source and verify exact-head CI"
+}

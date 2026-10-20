@@ -22,13 +22,17 @@ function modified(changes,fn){
  try{return fn();}finally{fs.readFileSync=original;}
 }
 const rows=()=>readBoundedRegister(root).filter(row=>current.some(entry=>entry.assertion_id===row.assertion_id));
-function capturedRuntime(fn){return modified(new Map([['engine.js',fs.readFileSync(path.join(root,'reports/fly-assessment-2026-10-20/engine.original.js.txt'))]]),fn);}
+const historicalRows=()=>readBoundedRegister(root).filter(row=>!row.assertion_id.includes('.current-runtime.')||/\.v[12]$/.test(row.assertion_id));
+function capturedRuntime(fn){return modified(new Map([
+ ['engine.js',fs.readFileSync(path.join(root,'reports/fly-assessment-2026-10-20/engine.original.js.txt'))],
+ ['tools/bounded-runtime-capture.mjs',fs.readFileSync(path.join(root,'reports/fly-repair-v2-2026-10-20/source-v2/tools__bounded-runtime-capture.mjs.txt'))]
+]),fn);}
 test('six captured assertions remain historical passes without client promotion',()=>capturedRuntime(()=>{
- assert.equal(current.length,6);const all=readBoundedRegister(root);assert.equal(all.length,13);assert.equal(all.filter(row=>row.status==='stale').length,7);
+ assert.equal(current.length,6);const all=historicalRows();assert.equal(all.length,13);assert.equal(all.filter(row=>row.status==='stale').length,7);
  for(const row of rows()){assert.equal(row.status,'passed_declared_scope');assert.equal(row.client_verification,'unknown');assert.equal(row.competitive_use,false);assert.equal(row.implementation_coverage,'bounded_assertion_only');assert(row.executed_at);}
  assert.equal(all.find(row=>row.assertion_id==='DAMAGE-ROLL-DISCRETE-016.tackle-vector.v1').status,'stale');
 }));
-test('Fly implementation invalidates all six earlier current assertions',()=>{const all=readBoundedRegister(root);assert.equal(all.length,13);assert.equal(all.filter(row=>row.status==='stale').length,13);for(const row of rows())assert.equal(row.historical_execution_status,'passed_declared_scope');});
+test('Fly implementation invalidates all six earlier current assertions',()=>{const all=historicalRows();assert.equal(all.length,13);assert.equal(all.filter(row=>row.status==='stale').length,13);for(const row of rows())assert.equal(row.historical_execution_status,'passed_declared_scope');});
 for(const [role,files]of Object.entries(CURRENT_DEPENDENCY_FILES))for(const file of files)test(`real ${role} change invalidates: ${file}`,()=>{
  const original=fs.readFileSync(path.join(root,file));
  const changed=file===CURRENT_REFERENCE?bytes({...JSON.parse(original),pin:'0'.repeat(40)}):Buffer.concat([original,Buffer.from('\n/* bounded dependency change */\n')]);

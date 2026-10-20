@@ -1,0 +1,36 @@
+{
+  "candidate_runtime_commit": "f2661eb774c1898dbefdfbbe21000d989d35e4a6",
+  "fixture_commit": "a0cad2050c4a1470b55a48e7c1173cd4cb0202de",
+  "project": {
+    "fast_files": 273,
+    "offline_db_files": 12,
+    "failures": 0
+  },
+  "clean_archive": {
+    "checks": 158,
+    "failures": 0,
+    "fixture_followup_checks": 38
+  },
+  "battle": {
+    "first_run": "one unseeded replay fixture failure; retained",
+    "retest": "passed",
+    "historical_goldens": 3,
+    "seeded_battles": 4500,
+    "javascript_errors": 0
+  },
+  "browser": {
+    "games": 2,
+    "pairs": 3,
+    "turns": 18,
+    "mismatches": 0,
+    "page_errors": 0
+  },
+  "independent_review": "behavior review315/316 initially (stale receipt hash only); regenerated receipt3/3; seeded fixture38/38",
+  "admission": false,
+  "client_verified": false,
+  "remaining_gaps": [
+    "Eject Button",
+    "repeat-charge SpA boosts",
+    "broader Fly admission boundaries"
+  ]
+}

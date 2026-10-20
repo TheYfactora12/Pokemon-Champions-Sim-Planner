@@ -1,0 +1,113 @@
+{
+  "schema_version": "bounded-contract-v1",
+  "assertion_id": "DAMAGE-ROLL-CAPTURE.current-runtime.v3",
+  "case_id": "DAMAGE-ROLL-CAPTURE",
+  "scope": {
+    "oracle_kind": "shared_reference",
+    "format": "gen9championsdoublescustomgame",
+    "regulation_id": null,
+    "client_version": null,
+    "boundaries": [
+      "level50 Hardy zeroEV Snorlax Tackle into Venusaur",
+      "16 explicitly controlled damage draws, no critical hits; calculation API in doubles field"
+    ]
+  },
+  "fields": [
+    {
+      "field": "damage_bucket_0",
+      "type": "number",
+      "unit": "HP",
+      "expected": 30
+    },
+    {
+      "field": "damage_bucket_1",
+      "type": "number",
+      "unit": "HP",
+      "expected": 30
+    },
+    {
+      "field": "damage_bucket_2",
+      "type": "number",
+      "unit": "HP",
+      "expected": 30
+    },
+    {
+      "field": "damage_bucket_3",
+      "type": "number",
+      "unit": "HP",
+      "expected": 31
+    },
+    {
+      "field": "damage_bucket_4",
+      "type": "number",
+      "unit": "HP",
+      "expected": 31
+    },
+    {
+      "field": "damage_bucket_5",
+      "type": "number",
+      "unit": "HP",
+      "expected": 31
+    },
+    {
+      "field": "damage_bucket_6",
+      "type": "number",
+      "unit": "HP",
+      "expected": 31
+    },
+    {
+      "field": "damage_bucket_7",
+      "type": "number",
+      "unit": "HP",
+      "expected": 33
+    },
+    {
+      "field": "damage_bucket_8",
+      "type": "number",
+      "unit": "HP",
+      "expected": 33
+    },
+    {
+      "field": "damage_bucket_9",
+      "type": "number",
+      "unit": "HP",
+      "expected": 33
+    },
+    {
+      "field": "damage_bucket_10",
+      "type": "number",
+      "unit": "HP",
+      "expected": 33
+    },
+    {
+      "field": "damage_bucket_11",
+      "type": "number",
+      "unit": "HP",
+      "expected": 34
+    },
+    {
+      "field": "damage_bucket_12",
+      "type": "number",
+      "unit": "HP",
+      "expected": 34
+    },
+    {
+      "field": "damage_bucket_13",
+      "type": "number",
+      "unit": "HP",
+      "expected": 34
+    },
+    {
+      "field": "damage_bucket_14",
+      "type": "number",
+      "unit": "HP",
+      "expected": 34
+    },
+    {
+      "field": "damage_bucket_15",
+      "type": "number",
+      "unit": "HP",
+      "expected": 36
+    }
+  ]
+}

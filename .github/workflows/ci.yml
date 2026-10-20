@@ -83,6 +83,8 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Validate retained immutable checkpoint source identities.
 
       - uses: actions/setup-node@v6
         with:
@@ -198,6 +200,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Validate retained immutable checkpoint source identities.
       - uses: actions/setup-node@v6
         with:
           node-version: '20'
@@ -209,6 +213,12 @@ jobs:
       - name: Run references, information boundaries and negative controls
         working-directory: poke-sim
         run: npm run test:accuracy:standard
+      - name: Require dated tracker and lifecycle refresh
+        working-directory: poke-sim
+        run: |
+          node tools/validation-cycle.mjs export . --check
+          node tools/validation-lifecycle.mjs . --check
+          node --test tests/validation_cycle_tests.mjs
       - name: Run shipped-mechanics invariants (not client accuracy)
         working-directory: poke-sim
         run: npm run test:accuracy

@@ -101,8 +101,8 @@ export function executeReference(upstream,input){
   return {observations:observations(input,actor,target,b.p1.active,move,true),raw:{log:b.log,mod:b.dex.currentMod,format_mod:b.format.mod}};
  }finally{b.destroy();}
 }
-export function captureCurrent(root,upstream,{prefix='reports/bounded-current',catalog=caseCatalog()}={}){
- const runtimeSourceCommit='fd3d00a9c8f1c7e6d0eb95019bea5a93ecb35bc9';
+export function captureCurrent(root,upstream,{prefix='reports/bounded-current',catalog=caseCatalog(),runtimeSourceCommit='fd3d00a9c8f1c7e6d0eb95019bea5a93ecb35bc9'}={}){
+ assert(/^[a-f0-9]{40}$/.test(runtimeSourceCommit),'Exact immutable runtime commit required');
  const runtimeGitHashes=Object.fromEntries(LOCAL_FILES.map(file=>{
   const current=fs.readFileSync(path.join(root,file),'utf8').replace(/\r\n/g,'\n');
   const retained=execFileSync('git',['show',runtimeSourceCommit+':poke-sim/'+file],{cwd:root,encoding:'utf8',maxBuffer:32*1024*1024}).replace(/\r\n/g,'\n');
