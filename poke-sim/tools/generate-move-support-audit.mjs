@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
+import {exportMoveRegister} from './move-register.mjs';
 import path from 'path';
 import vm from 'vm';
 import {createRequire} from 'module';
@@ -100,6 +101,10 @@ for (const row of rows) {
 }
 lines.push('');
 
+if(!process.argv.includes('--register')) {
 fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, lines.join('\n') + '\n', 'utf8');
 console.log(`Wrote ${reportPath}`);
+}
+
+if(process.argv.includes('--register')) {const i=process.argv.indexOf('--previous');console.log(JSON.stringify(exportMoveRegister(ROOT,{check:process.argv.includes('--check'),previous:i>=0?process.argv[i+1]:null})));}

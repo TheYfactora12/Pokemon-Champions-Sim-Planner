@@ -7,6 +7,8 @@ Historical candidate observations are not current deployment instructions.
 
 Current follow-up: [proof consistency repairs](docs/release/PROOF_CONSISTENCY_2026-10-20.md) address independent S1-S4 survivors. Rest checkpoint303810f has44 reference cases. Hosted checkpoint2769879 passed all CI jobs; original auditor verified S1-S4 tested controls at2769879. Struggle checkpoint91c8206 passed local gates; hosted Battle Audit is pending. A separate [Rest admission repair](docs/release/REST_ADMISSION_REPAIR_2026-10-20.md) passes114 pinned-reference cases and independent review; final local gate is running. Competitive release remains NO-GO.
 
+Generated [move register](poke-sim/docs/MOVE_REGISTER.md):954 catalog moves,68025 reference pairs,67 interaction records. Six export/negative-control tests and independent review passed. Regulation/client approval counts remain zero; broader anti-drift enrollment remains pending.
+
 ## Draft review candidate
 
 v2.2.230-proof / engine 1.1.31 is the review follow-up to
