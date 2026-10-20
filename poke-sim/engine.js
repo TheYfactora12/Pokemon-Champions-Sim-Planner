@@ -3999,7 +3999,8 @@ function _actionSummary(actions) {
     out[side].push({
       actor: action.attacker ? action.attacker.name : null,
       actor_key: action.attacker ? _snapshotMonStableKey(side, action.attacker) : null,
-      kind: 'move',
+      kind: action.kind || 'move',
+      ...(action.kind==='switch' ? {replacement_key:action.replacement.stableKey} : {}),
       move: action.move || null,
       target: action.target ? action.target.name : null,
       target_key: action.target ? (targetSide ? _snapshotMonStableKey(targetSide, action.target) : (action.target.stableKey || null)) : null,
@@ -4092,6 +4093,8 @@ function checkSimulationSupport(team) {
 
 function simulateBattle(playerTeam, oppTeam, opts = {}) {
   const diagnosticPolicy = opts.decisionPolicy === 'own-state-diagnostic-v1';
+  const scriptedSwitches = opts.scriptedSwitches != null;
+  const executedSwitchTurns = new Set();
   const playerRegistration = JSON.parse(JSON.stringify(playerTeam && playerTeam.members || []));
   const seed = opts.seed || makeSeed();
   const rng  = makePRNG(seed);
@@ -4124,6 +4127,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   if ((opts.decisionPolicy && opts.decisionPolicy !== 'own-public-heuristic-v4' && !diagnosticPolicy) ||
       (diagnosticPolicy && typeof OwnStatePolicy === 'undefined')) unsupported.push('Unknown or unavailable decision policy.');
   if (Array.isArray(opts.forcedActions) && opts.forcedActions.some(row => row && _moveId(row.move) === 'fly')) unsupported.push('Forced Fly simulation is not supported.');
+  if (scriptedSwitches && typeof ScriptedSwitchDiagnostic === 'undefined') unsupported.push('Scripted switches require the development-only diagnostic harness.');
   log.push(...unsupported);
   const savedDraft = [playerTeam, oppTeam].some(team => team && team.import_context && team.import_context.draft_only === true);
   if (unsupported.length || (referenceMode && !referenceAllowed) || (savedDraft && !referenceAllowed) || (!referenceAllowed && opts.strict && (!playerLegality.valid || !oppLegality.valid))) {
@@ -4138,6 +4142,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       legality: { player: playerLegality, opp: oppLegality },
     };
   }
+
+  if (scriptedSwitches) ScriptedSwitchDiagnostic.checkOptions(opts);
 
   const playerPokemon = buildTeam(playerTeam, 'player', referenceAllowed ? opts.rulesetId : null, opts.rulesetId);
   const oppPokemon    = buildTeam(oppTeam, 'opponent', referenceAllowed ? opts.rulesetId : null, opts.rulesetId);
@@ -4414,7 +4420,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       if (log) log.push(`${mon.name} is trapped by ${mon.trappedByMove}!`);
       return false;
     }
-    const replacement = _chooseBenchReplacement(bench);
+    const replacement = opts && opts.explicitReplacement ? opts.explicitReplacement : _chooseBenchReplacement(bench);
+    if (replacement && (!replacement.alive || !bench.includes(replacement))) return false;
     if (!replacement) return false;
     const switchOutAbility = callAbilityHook(mon, 'onSwitchOut', { mon: mon, field: field, log: log });
     if (switchOutAbility && switchOutAbility.healFraction > 0 && mon.alive && mon.hp < mon.maxHp) {
@@ -4454,7 +4461,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     _applyIncomingSwitchState(replacement, opts && opts.incomingState);
     if (opts && opts.incomingSubstituteHp > 0) replacement.substituteHp = opts.incomingSubstituteHp;
     activeArr[idx] = replacement;
-    if (!opts || !opts.silentPivotLog) log.push(`${mon.name} pivoted out!`);
+    if (opts && opts.cause === 'scriptedDiagnostic') log.push(`${mon.name} switched out!`);
+    else if (!opts || !opts.silentPivotLog) log.push(`${mon.name} pivoted out!`);
     log.push(`${replacement.name} was sent out!`);
     applyEntryAbility(replacement, side, field, log);
     return true;
@@ -6955,6 +6963,9 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     // opponent before moves. Simultaneous Mega and voluntary-switch ordering need
     // approved evidence; no parity claim is made for that execution order.
     // --------------------------------------------------------
+    const switchPlan = scriptedSwitches ? ScriptedSwitchDiagnostic.prepare(opts, turn,
+      {player:playerActive,opponent:oppActive}, {player:playerBench,opponent:oppBench}, field) : null;
+
     function tryMegaPhase(activeArr, sideFlagKey, side) {
       if (field[sideFlagKey]) return;
       const candidates = activeArr.filter(m => shouldMegaThisTurn(m, turn));
@@ -6984,6 +6995,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       return {move:choice.move,target:(choice.targetSide === 'ally' ? allies : enemies)[choice.targetSlot] || null};
     }
     for (const mon of playerActive.filter(m => m.alive)) {
+      if (switchPlan && switchPlan.actor===mon) {
+        actions.push({attacker:mon,side:'player',kind:'switch',replacement:switchPlan.replacement,priority:6,dynamicPriority:false});
+        continue;
+      }
       const wasCharging = !!mon.chargingMove;
       const { move, target } = _forcedActionFor('player', mon, playerActive, oppActive) ||
         pickMove(mon, playerActive, oppActive);
@@ -6991,6 +7006,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         attacker: mon,
         move,
         target,
+        targetAllyIndex: target && playerActive.includes(target) ? playerActive.indexOf(target) : null,
         targetIndex: (target && oppActive.indexOf(target) >= 0) ? oppActive.indexOf(target) : null,
         side: 'player',
         deductPP: !wasCharging,
@@ -7002,6 +7018,10 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       actions.push(_act);
     }
     for (const mon of oppActive.filter(m => m.alive)) {
+      if (switchPlan && switchPlan.actor===mon) {
+        actions.push({attacker:mon,side:'opp',kind:'switch',replacement:switchPlan.replacement,priority:6,dynamicPriority:false});
+        continue;
+      }
       const wasCharging = !!mon.chargingMove;
       const { move, target } = _forcedActionFor('opp', mon, oppActive, playerActive) ||
         pickMove(mon, oppActive, playerActive);
@@ -7009,6 +7029,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
         attacker: mon,
         move,
         target,
+        targetAllyIndex: target && oppActive.includes(target) ? oppActive.indexOf(target) : null,
         targetIndex: (target && playerActive.indexOf(target) >= 0) ? playerActive.indexOf(target) : null,
         side: 'opp',
         deductPP: !wasCharging,
@@ -7019,6 +7040,8 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       _recordAction(_act);
       actions.push(_act);
     }
+
+    if (scriptedSwitches) ScriptedSwitchDiagnostic.checkActions(actions, switchPlan);
 
     // Preparation precedes ordinary actions, even when the later move is denied.
     for (const action of actions) if (action.move === 'Beak Blast' && action.attacker.referenceMode === 'champions_mc_reference') {
@@ -7044,7 +7067,15 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     };
     _turnEntry.positionScore = _turnEntry.pre.position_score;
 
-    const pendingActions = actions.slice();
+    if (switchPlan) {
+      const done = _switchOutActiveMon(switchPlan.actor, switchPlan.side==='player'?'player':'opp', field, log,
+        {cause:'scriptedDiagnostic',explicitReplacement:switchPlan.replacement});
+      if (!done) throw new Error('Scripted switch rejected atomically: execution unavailable');
+      executedSwitchTurns.add(turn);
+      _recordEffectEvent(field,switchPlan.actor,'Switch','diagnostic-voluntary-switch',switchPlan.actor.hp,switchPlan.actor.hp,
+        {source:'pinned Showdown baseline; diagnostic only',replacement_key:switchPlan.replacement.stableKey,active_slot:switchPlan.slot});
+    }
+    const pendingActions = actions.filter(a=>a.kind!=='switch');
 
     // Showdown Gen 8+ recalculates priority and Speed, then speed-sorts the
     // remaining move queue after every action. Newly formed ties are therefore
@@ -7053,7 +7084,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       _speedSort(pendingActions, (a, b) => _compareTurnActionOrder(a, b, field), rng);
       const action = pendingActions.shift();
       if (!action.attacker.alive) continue;
-      if (action.attacker.referenceMode === 'champions_mc_reference' && !playerActive.includes(action.attacker) && !oppActive.includes(action.attacker)) continue;
+      if ((scriptedSwitches || action.attacker.referenceMode === 'champions_mc_reference') && !playerActive.includes(action.attacker) && !oppActive.includes(action.attacker)) continue;
       let electricActionStarted = false;
       try {
       // T9j.4 (#41) — Freeze resolution per Champions rules:
@@ -7244,7 +7275,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
       const _enemies = action.side === 'player' ? oppActive : playerActive;
       const _resolvedTarget = (typeof action.targetIndex === 'number' && action.targetIndex >= 0)
         ? (_enemies[action.targetIndex] || action.target)
-        : action.target;
+        : (scriptedSwitches && Number.isInteger(action.targetAllyIndex) ? _allies[action.targetAllyIndex] : action.target);
       // Showdown spends PP after BeforeMove succeeds. Faint, sleep, freeze,
       // paralysis, flinch, and confusion denial above therefore keep PP.
       if (_denyBeforeMove(action.attacker, action.move, _resolvedTarget, field, log)) {
@@ -7671,6 +7702,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
   if (timerExpired) log.push(`[TIMER] Resolved ${winCondition} — alive p${pSurvive}/o${oSurvive}, HP p${pHpSum}/o${oHpSum}`);
 
   const completedTurns = turnLog.length;
+  if (scriptedSwitches && executedSwitchTurns.size !== opts.scriptedSwitches.length) throw new Error('Scripted switch directive was not executed before battle end.');
   return {
     result,
     terminal,
@@ -7720,6 +7752,7 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     participants: participants,
     playerRegistration,
     policy_provenance: (diagnosticPolicy ? OwnStatePolicy.provenance : _selectionPolicyProvenance)(opts.forcedActions && opts.forcedActions.length),
+    ...(scriptedSwitches ? {switch_diagnostic:{mode:'scripted-one-switch-reference-v1',official_approval:false,trusted_rankings:false}} : {}),
     reference_policy: referenceAllowed ? {mode:'champions_mc_reference',pin:MC_REVIEW_REFERENCE.pin,official_approval:false,trusted_rankings:false} : null,
     // #5 — attach legality verdict so UI can surface warnings on team/match cards.
     legality: { player: playerLegality, opp: oppLegality },
@@ -7823,6 +7856,7 @@ function shouldReflectByMagicBounce(attacker, target, move) {
 
 async function runSimulation(numBattles, playerTeamKey, oppTeamKey, onProgress, options) {
   const context = options || {};
+  if (context.scriptedSwitches != null) throw new Error('Scripted switches are direct diagnostic only; aggregates unsupported.');
   if (context.decisionPolicy && context.decisionPolicy !== 'own-public-heuristic-v4') throw new Error('Diagnostic policies require direct simulateBattle; aggregate integration is not supported.');
   const playerTeamDef = TEAMS[playerTeamKey];
   const oppTeamDef = TEAMS[oppTeamKey];
@@ -7939,7 +7973,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.25'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.26'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

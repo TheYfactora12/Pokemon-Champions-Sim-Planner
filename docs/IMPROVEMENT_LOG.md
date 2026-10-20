@@ -1,5 +1,16 @@
 # Improvement Log
 
+## IMP-0117: Isolate Scripted One-Switch Reference Diagnostics
+
+- Explicit stable outgoing/incoming identity replaces heuristic bench selection only
+  in an injected development harness. Public and aggregate paths reject it.
+- Both sides choose first; ally/enemy targets follow their slots; switcher and
+  incoming member gain no move or PP spend. Unsupported contexts fail closed.
+- Independent review found a delayed-action allowlist bypass; every diagnostic
+  turn now checks actions, with hazard and post-switch negative controls.
+- 51 reference/admission tests pass independently. This is not Champions client
+  validation or automatic switching. [Scope](release/SCRIPTED_SWITCH_2026-10-20.md).
+
 ## IMP-0116: Reconstruct Evidenced Mid-Turn Sitrus/Unburden Ordering
 
 - Final stress exposed two stale turn-start Speed comparisons after Sitrus Berry
