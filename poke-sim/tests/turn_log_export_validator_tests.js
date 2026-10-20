@@ -402,6 +402,41 @@ function stripStableFields(payload) {
     truthy(mismatch(), 'the same order is wrong outside Trick Room after paralysis');
   });
 
+  T('7f. mid-turn Sitrus Unburden requires prior consumption and stable identity', () => {
+    const make = () => {
+      const p = stableFixture(), t = p.turnLog[0];
+      const a = t.pre.roster.player[0], b = t.pre.roster.opponent[0];
+      a.ability = 'Unburden'; a.item = 'Sitrus Berry'; a.itemConsumed = false;
+      t.post = clone(t.pre);
+      Object.assign(t.post.roster.player[0], { ability:'Unburden', item:'Sitrus Berry', itemConsumed:true });
+      t.actions.player[0].move = 'Knock Off'; t.actions.opponent[0].move = 'Scald';
+      t.pre.speed_order_details = [
+        { stableKey:b.stableKey, key:b.key, pokemon:'Milotic', effective_speed:150 },
+        { stableKey:a.stableKey, key:a.key, pokemon:'Incineroar', effective_speed:100 }
+      ];
+      t.events = [{text:"Incineroar's Sitrus Berry restored HP!"},
+        {text:'Incineroar used Knock Off!'}, {text:'Milotic used Scald!'}];
+      return p;
+    };
+    const mismatch = p => validateTurnLogPayload(p).findings.some(f => f.code === 'observed-action-order-mismatch');
+    truthy(!mismatch(make()), 'proven Sitrus consumption doubles 100 above 150');
+    const lateFaint=make(); lateFaint.turnLog[0].post.roster.player[0].zone='fainted';
+    truthy(!mismatch(lateFaint), 'later faint does not invalidate earlier item activation');
+    const controls = [
+      p => p.turnLog[0].events.push(p.turnLog[0].events.shift()),
+      p => p.turnLog[0].events[0].text = "Other's Sitrus Berry restored HP!",
+      p => p.turnLog[0].pre.roster.player[0].ability = 'Intimidate',
+      p => p.turnLog[0].pre.roster.player[0].itemConsumed = true,
+      p => p.turnLog[0].post.roster.player[0].itemConsumed = false,
+      p => p.turnLog[0].post.roster.player[0].stableKey = 'different',
+      p => p.turnLog[0].pre.speed_order_details[0].effective_speed = 250,
+      p => p.turnLog[0].pre.field = {trick_room:2},
+      p => p.turnLog[0].pre.roster.opponent[0].ability = 'Neutralizing Gas',
+      p => p.turnLog[0].pre.roster.opponent[0].displayName = 'Incineroar'
+    ];
+    controls.forEach((change,i) => { const p=make(); change(p); truthy(mismatch(p), 'invalid justification '+i); });
+  });
+
   T('8. speed_order_details provide SP-aware order evidence over legacy name order', () => {
     const payload = stableFixture();
     const turn = payload.turnLog[0];

@@ -464,6 +464,39 @@ function paralysisAdjustedOrderSupports(first, second, turn) {
   return trickRoom ? firstSpeed < secondSpeed : firstSpeed > secondSpeed;
 }
 
+// Narrow legacy-log evidence: other item losses and mixed Speed changes remain unproved.
+function sitrusUnburdenAdjustedOrderSupports(first, second, turn) {
+  const events = Array.isArray(turn.events) ? turn.events : [];
+  const boundary = events.findIndex(e => cleanText(e && (e.text || e.message)) === `${first.actor} used ${first.move}!`);
+  if (boundary < 1) return false;
+  const prior = events.slice(0, boundary).map(e => cleanText(e && (e.text || e.message)));
+  const rows = SIDES.flatMap(side => (turn.pre.roster && turn.pre.roster[side] || []));
+  const active = rows.filter(row => row.zone === 'active');
+  // Decline cases requiring suppression, switch, item-transfer or mixed-modifier reconstruction.
+  if (active.some(row => row.ability === 'Neutralizing Gas')) return false;
+  if (prior.some(text => /switched|sent out|withdrew|replaced|ability|Skill Swap|Role Play|Simple Beam|Worry Seed|Gastro Acid|Entrainment|Trick!|Switcheroo|Speed |Tailwind|paraly|paralis|paralys|weather|sunlight|rain began|snow began|sandstorm/i.test(text))) return false;
+  let changed = false;
+  const adjusted = action => {
+    const row = action.row, speed = snapshotEffectiveSpeed(row, turn.pre);
+    if (speed == null) return null;
+    if (!row || !row.stableKey || row.ability !== 'Unburden' || row.item !== 'Sitrus Berry' || row.itemConsumed !== false) return speed;
+    if (active.filter(r => rowName(r) === action.actor).length !== 1) return speed;
+    if (prior.includes(`${action.actor} fainted!`)) return speed;
+    const post = (turn.post && turn.post.roster && turn.post.roster[action.side] || [])
+      .filter(r => r.stableKey === row.stableKey);
+    if (post.length !== 1 || !['active', 'fainted'].includes(post[0].zone) || post[0].ability !== 'Unburden' ||
+        post[0].item !== 'Sitrus Berry' || post[0].itemConsumed !== true) return speed;
+    if (prior.filter(text => text === `${action.actor}'s Sitrus Berry restored HP!`).length !== 1) return speed;
+    changed = true;
+    return speed * 2;
+  };
+  const a = adjusted(first), b = adjusted(second);
+  if (!changed || a == null || b == null) return false;
+  const preRoom = Number(turn.pre.field && (turn.pre.field.trick_room || turn.pre.field.trickRoom) || 0) > 0;
+  const room = actualTrickRoomToggleCount(turn, boundary) % 2 ? !preRoom : preRoom;
+  return a === b || (room ? a < b : a > b);
+}
+
 function validateObservedActionOrder(turn, findings) {
   const observed = actorOrderFromEvents(turn.events);
   if (observed.length < 2 || !turn.pre || !turn.actions) return;
@@ -544,6 +577,7 @@ function validateObservedActionOrder(turn, findings) {
       if (tailwindAdjustedOrderSupports(first, second, turn, actual.slice(0, i))) continue;
       if (paralysisAdjustedOrderSupports(first, second, turn)) continue;
       if (speedStageAdjustedOrderSupports(first, second, turn)) continue;
+      if (sitrusUnburdenAdjustedOrderSupports(first, second, turn)) continue;
 
       failOrder('speed', second.key, first.key);
       return;

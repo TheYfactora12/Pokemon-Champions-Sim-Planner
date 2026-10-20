@@ -1,5 +1,17 @@
 # Improvement Log
 
+## IMP-0116: Reconstruct Evidenced Mid-Turn Sitrus/Unburden Ordering
+
+- Final stress exposed two stale turn-start Speed comparisons after Sitrus Berry
+  activated Unburden. Engine ordering was correct; the validator was incomplete.
+- Require stable identity, prior exact consumption, unchanged ability/item and
+  sufficient recomputed Speed. Decline ambiguous names and mixed modifiers.
+- Focused suite 32/32, both retained failures and eight independent negative
+  mutations passed. Final 4,624-run cross-format sweep has zero findings.
+- Lesson: a later faint does not erase an earlier activation; end-turn state must
+  not be substituted for the action-time evidence boundary.
+- [Final receipts and limits](release/OVERNIGHT_ACCEPTANCE_GATES_2026-10-20.md).
+
 ## IMP-0115: Put the Actual Default Behind an Information Boundary
 
 - Default v4 receives frozen own-state, public-field and living target-slot inputs.
