@@ -1283,6 +1283,24 @@
         "script-rejection-history"
       ],
       "known_gap": "No public/automatic switching, client approval, simultaneous switches, switch-plus-Mega, hazards or unsupported lifecycle contexts. Incoming sleep/freeze rejected."
+    },
+    {
+      "id": "ABILITY-SWITCH-OUT-HOOKS",
+      "family": "abilities",
+      "behavior": "Natural Cure and Regenerator apply at successful switch-out with scoped Gas and Shield handling.",
+      "status": "partial",
+      "tests": [
+        "tests/switch_out_hooks_reference_tests.mjs",
+        "tests/scripted_switch_reference_tests.mjs"
+      ],
+      "oracle": "Pinned Showdown Champions doubles custom game; synthetic baseline evidence.",
+      "boundary_vectors": [
+        "both-sides",
+        "burn-poison-toxic-no-status",
+        "Gas-Shield-consumed-Shield",
+        "sleep-freeze-paralysis-diagnostic"
+      ],
+      "known_gap": "General ability suppression, suppressed Gas, other item disabling and Champions client parity remain unproved."
     }
   ]
 }

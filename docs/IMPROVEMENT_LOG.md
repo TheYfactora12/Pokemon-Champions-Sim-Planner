@@ -1,5 +1,15 @@
 # Improvement Log
 
+## IMP-0118: Repair Shared Switch-Out Ability Effects
+
+- Pinned probes reproduced 18/36 failures: missing Natural Cure and Regenerator
+  healing under Neutralizing Gas. Add status/counter cure and scoped hook suppression.
+- Intact Ability Shield protects the hook; consumed Shield does not. Both sides,
+  burn/poison/toxic and no-status controls now pass 64/64 reference tests.
+- Extend diagnostic admission only after proving Natural Cure sleep/freeze/paralysis
+  switch-out; diagnostic suite now63/63. Independent mechanics review passed.
+- [Scope](release/SWITCH_OUT_HOOKS_2026-10-20.md); broader suppression remains unproved.
+
 ## IMP-0117: Isolate Scripted One-Switch Reference Diagnostics
 
 - Explicit stable outgoing/incoming identity replaces heuristic bench selection only

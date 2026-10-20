@@ -1703,6 +1703,9 @@ var ABILITIES = {
       return null;
     }
   },
+  'Natural Cure': {
+    onSwitchOut: function(ctx) { return ctx.mon && ctx.mon.status ? { cureStatus: true } : null; }
+  },
   'Regenerator': {
     // Showdown: onSwitchOut heals baseMaxhp / 3; Pokemon.heal truncates the
     // positive fractional value before applying it.
@@ -2115,6 +2118,11 @@ function applySeedSowerOnHit(target, field, log) {
 // no matching hook. Invoked from engine trigger points.
 function callAbilityHook(mon, hookName, ctx) {
   if (!mon || !mon.ability) return null;
+  if (hookName === 'onSwitchOut' && ctx && ctx.field) {
+    const active = [ctx.field.playerSide,ctx.field.oppSide].flatMap(side=>side && side.activeMons || []);
+    const shield = mon.item === 'Ability Shield' && !mon.itemConsumed;
+    if (!shield && active.some(other=>other.alive && other.ability==='Neutralizing Gas')) return null;
+  }
   if ((hookName === 'onTryHit' || hookName === 'onSourceModifyAtk' || hookName === 'onSourceModifyDamage') &&
       ctx && _attackerIgnoresTargetAbility(ctx.attacker, mon)) return null;
   if (typeof mcAbilityHook === 'function') {
@@ -4424,6 +4432,13 @@ function simulateBattle(playerTeam, oppTeam, opts = {}) {
     if (replacement && (!replacement.alive || !bench.includes(replacement))) return false;
     if (!replacement) return false;
     const switchOutAbility = callAbilityHook(mon, 'onSwitchOut', { mon: mon, field: field, log: log });
+    if (switchOutAbility && switchOutAbility.cureStatus && mon.alive && mon.status) {
+      const curedStatus = mon.status;
+      mon.status=null; mon.statusTurns=0; mon.sleepTurns=0; mon.frozenTurns=0; mon.toxicCounter=0;
+      log.push(`${mon.name}'s Natural Cure cured its status!`);
+      _recordEffectEvent(field,mon,'Natural Cure','ability-switch-out-cure',mon.hp,mon.hp,
+        {source:'pokemon-showdown ability onSwitchOut',resolved_status:curedStatus,status_resolution:true});
+    }
     if (switchOutAbility && switchOutAbility.healFraction > 0 && mon.alive && mon.hp < mon.maxHp) {
       const hpBeforeRegenerator = mon.hp;
       const heal = Math.floor(mon.maxHp * switchOutAbility.healFraction);
@@ -7973,7 +7988,7 @@ async function runAllMatchups(numBattles, onProgress, onMatchupDone, options) {
 //   critical_damage_calcs — placeholder for future calc layer
 //   traceable_log_refs    — first N seed refs for replayability
 // ============================================================
-const ENGINE_VERSION = '1.1.26'; // Increment on any mechanics change
+const ENGINE_VERSION = '1.1.27'; // Increment on any mechanics change
 
 function wilsonCI(wins, n, z = 1.96) {
   if (n === 0) return [0, 0];

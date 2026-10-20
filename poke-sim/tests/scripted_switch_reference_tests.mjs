@@ -13,6 +13,7 @@ function setup(side,slot,variant){
  const own=[mon('Blissey'),mon('Pikachu'),mon('Snorlax'),mon('Raichu')];if(slot) [own[0],own[1]]=[own[1],own[0]];
  if(variant==='self')own[1-slot].moves=['Protect'];
  if(variant==='ally') own[1-slot].moves=['Seismic Toss'];
+ if(variant.startsWith('cure-'))own[slot].ability='Natural Cure';
  if(variant==='regenerator')own[slot].ability='Regenerator';
  if(variant==='entry')own[2].ability='Intimidate';
  if(variant==='consumed')own[slot].item='Sitrus Berry';
@@ -20,13 +21,13 @@ function setup(side,slot,variant){
  const teams=side==='player'?[own,foe]:[foe,own];
  return teams.map(members=>({format:'champions',members}));
 }
-for(const side of ['player','opponent'])for(const slot of [0,1])for(const variant of ['enemy','ally','spread','sleep','frozen','paralysis','roundtrip','consumed','regenerator','entry','trickroom','self'])test(`${variant} ${side} slot${slot}`,()=>{
+for(const side of ['player','opponent'])for(const slot of [0,1])for(const variant of ['enemy','ally','spread','sleep','frozen','paralysis','roundtrip','consumed','regenerator','entry','trickroom','self','cure-sleep','cure-frozen','cure-paralysis'])test(`${variant} ${side} slot${slot}`,()=>{
  const teams=setup(side,slot,variant),loaded=loadLocalEngine(),ctx=loaded.context;ctx.ScriptedSwitchDiagnostic=helper;
  const rid=side==='player'?'p1':'p2',other=rid==='p1'?'p2':'p1';
  const b=new Battle({formatid:format,seed,strictChoices:true,p1:{team:mapTeam(teams[0],'p1',format)},p2:{team:mapTeam(teams[1],'p2',format)}});
- const status={sleep:'slp',frozen:'frz',paralysis:'par'}[variant];
+ const status={sleep:'slp',frozen:'frz',paralysis:'par'}[variant.replace('cure-','')];
  let original,incoming,all,foeMons;
- const old=ctx.buildTeam;ctx.buildTeam=function(...args){const ms=old(...args);if(args[1]===side){original=ms[slot];incoming=ms[2];all=ms;if(status){original.status=variant;original.statusTurns=3;original.sleepTurns=1;original.frozenTurns=1;}if(variant==='regenerator')original.hp=Math.floor(original.maxHp/2);if(variant==='consumed')original.itemConsumed=true;}if(args[1]!==side)foeMons=ms;return ms;};
+ const old=ctx.buildTeam;ctx.buildTeam=function(...args){const ms=old(...args);if(args[1]===side){original=ms[slot];incoming=ms[2];all=ms;if(status){original.status=variant.replace('cure-','');original.statusTurns=3;original.sleepTurns=1;original.frozenTurns=1;}if(variant==='regenerator')original.hp=Math.floor(original.maxHp/2);if(variant==='consumed')original.itemConsumed=true;}if(args[1]!==side)foeMons=ms;return ms;};
  try{
   for(const id of ['p1','p2'])b.choose(id,'team 1234');
   const ro=b[rid].active[slot],ri=b[rid].pokemon[2];
@@ -54,7 +55,7 @@ for(const side of ['player','opponent'])for(const slot of [0,1])for(const varian
   if(variant!=='spread')assert.equal(incoming.hp,ri.hp,JSON.stringify({variant,local:result.log,reference:b.log}));
   else {assert(incoming.hp<incoming.maxHp);assert(ri.hp<ri.maxhp);}
   assert.equal(original.movePP.Splash.current,refPp);
-  assert.equal(original.status, status?variant:null);
+  assert.equal(original.status, status&&!variant.startsWith('cure-')?variant:null);
   assert.equal(original.itemConsumed,variant==='consumed');
   assert.equal(result.turnLog[0].actions[side].find(a=>a.actor_key===original.stableKey).kind,'switch');
   assert(!result.log.some(l=>l===`${original.name} used Splash!`));
@@ -75,7 +76,7 @@ test('admission rejects unsupported or conflicting scripts without mutating inpu
  const base={format:'doubles',maxTurns:1,seed,scriptedSwitches:script};
  for(const patch of [[],[...script,...script],[{...script[0],turn:1.5}],[{...script[0],side:'opp'}],[{...script[0],replacementId:script[0].actorId}],[{...script[0],replacementId:'opponent:slot:2:Venusaur'}],[{...script[0],replacementId:'player:slot:1:Pikachu'}],[{...script[0],replacementId:'missing'}]])assert.throws(()=>ctx.simulateBattle(...teams,{...base,scriptedSwitches:patch}),/Scripted switch/);
  assert.throws(()=>ctx.simulateBattle(...teams,{...base,forcedActions:[{turn:1,side:'player',slot:0,move:'Splash'}]}),/conflicting/);
- for(const ability of ['Shadow Tag','Arena Trap','Magnet Pull','Natural Cure','Neutralizing Gas']){const ts=JSON.parse(before);ts[1].members[0].ability=ability;assert.throws(()=>ctx.simulateBattle(...ts,base),/outside allowlist/);}
+ for(const ability of ['Shadow Tag','Arena Trap','Magnet Pull','Neutralizing Gas']){const ts=JSON.parse(before);ts[1].members[0].ability=ability;assert.throws(()=>ctx.simulateBattle(...ts,base),/outside allowlist/);}
  const build=ctx.buildTeam;
  for(const flag of ['trappedByMove','chargingMove','substituteHp','perishSongTurns']){ctx.buildTeam=(...a)=>{const m=build(...a);m[0][flag]=1;return m;};assert.throws(()=>ctx.simulateBattle(...teams,base),/outside scope/);}
  ctx.buildTeam=build;assert.equal(JSON.stringify(teams),before);

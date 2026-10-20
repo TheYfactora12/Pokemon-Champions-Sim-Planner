@@ -57,7 +57,7 @@
       "id": "identity-lifecycle",
       "name": "Pokemon identity, items, switching, bench, fainting, and replacement",
       "status": "regression_covered",
-      "tests": ["tests/phase5_turn_log_tests.js", "tests/turn_log_export_validator_tests.js", "tests/recoil_faint_turn_log_tests.js", "tests/battle_system_mechanics_tests.js", "tests/scripted_switch_reference_tests.mjs"],
+      "tests": ["tests/phase5_turn_log_tests.js", "tests/turn_log_export_validator_tests.js", "tests/recoil_faint_turn_log_tests.js", "tests/battle_system_mechanics_tests.js", "tests/scripted_switch_reference_tests.mjs", "tests/switch_out_hooks_reference_tests.mjs"],
       "known_gaps": []
     },
     {

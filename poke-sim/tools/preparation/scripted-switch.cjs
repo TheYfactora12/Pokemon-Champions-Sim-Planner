@@ -1,6 +1,6 @@
 'use strict';
 // Development injection only. Never loaded by HTML, bundles, service workers or aggregates.
-const abilities=new Set(['','Illuminate','Battle Armor','Shell Armor','Own Tempo','Inner Focus','Limber','Immunity','Keen Eye','Regenerator','Intimidate']);
+const abilities=new Set(['','Illuminate','Battle Armor','Shell Armor','Own Tempo','Inner Focus','Limber','Immunity','Keen Eye','Regenerator','Intimidate','Natural Cure']);
 const items=new Set(['','Leftovers','Sitrus Berry']);
 const moves=new Set(['Splash','Protect','Tackle','Swift','Seismic Toss','Helping Hand','Life Dew','Earthquake','Bulldoze','Thunder Wave','Trick Room']);
 function reject(reason){throw new Error('Scripted switch diagnostic rejected: '+reason);}
