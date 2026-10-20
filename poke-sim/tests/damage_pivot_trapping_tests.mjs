@@ -33,7 +33,7 @@ function probe(move, {swap=false, slot=0, variant='tag'} = {}) {
   const side=swap?'opponent':'player', refSide=swap?'p2':'p1';
   const battle = new Battle({formatid:format,seed,strictChoices:true,p1:{name:'A',team:mapTeam(input[0],'p1',format)},p2:{name:'B',team:mapTeam(input[1],'p2',format)}});
   const configure = (source, victim) => {
-    if(variant==='move-trap') source.addVolatile('trapped',victim,battle.dex.moves.get('meanlook'),'trapper');
+    if(['move-trap','spirit-trap'].includes(variant)) source.addVolatile('trapped',victim,battle.dex.moves.get(variant==='spirit-trap'?'spiritshackle':'meanlook'),'trapper');
     if(variant==='burn-status') source.setStatus('brn');
     if(absorb) victim.hp=Math.floor(victim.maxhp/2);
     if(variant.includes('consumed')) victim.setItem('');
@@ -81,8 +81,8 @@ function probe(move, {swap=false, slot=0, variant='tag'} = {}) {
         if(variant.includes('consumed')) mons[0].itemConsumed=true;
         if(variant==='absorb-healblock') mons[0].healBlockedTurns=2;
       }
-      if(localSource&&localTarget&&variant==='move-trap') {
-        localSource.trappedByMove='Mean Look';localSource.trappedByMon=localTarget;
+      if(localSource&&localTarget&&['move-trap','spirit-trap'].includes(variant)) {
+        localSource.trappedByMove=variant==='spirit-trap'?'Spirit Shackle':'Mean Look';localSource.trappedByMon=localTarget;
       }
       return mons;
     };
@@ -131,7 +131,7 @@ function probe(move, {swap=false, slot=0, variant='tag'} = {}) {
 for(const move of ['U-turn','Flip Turn','Volt Switch']) {
   for(const swap of [false,true]) for(const slot of [0,1]) for(const variant of ['tag','ordinary'])
     test(`${move} swap=${swap} slot=${slot} ${variant}`,()=>probe(move,{swap,slot,variant}));
-  for(const swap of [false,true]) for(const variant of ['protected','no-bench','substitute','contact-ko','miss','move-trap','burn-status','entry'])
+  for(const swap of [false,true]) for(const variant of ['protected','no-bench','substitute','contact-ko','miss','move-trap','spirit-trap','burn-status','entry'])
     test(`${move} swap=${swap} ${variant}`,()=>probe(move,{swap,variant}));
   if(move!=='U-turn') for(const swap of [false,true])
     test(`${move} immune swap=${swap}`,()=>probe(move,{swap,variant:'immune'}));

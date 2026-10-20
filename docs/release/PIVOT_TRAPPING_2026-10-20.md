@@ -65,3 +65,13 @@ move/Mega ordering, simultaneous switches and ties/Trick Room, trapping
 exemptions and lifecycle callbacks; the exact capture packet is in
 `SWITCHING_INFORMATION_PREPARATION_2026-10-18.md`. Do not silently simulate an
 unsupported switch as an ordinary move.
+
+## Final aggregate follow-up
+
+The v220 aggregate exposed an old test expecting Spirit Shackle to block U-turn.
+Six added side-swapped pinned-reference cases confirm an established Spirit
+Shackle trap permits these successful damaging pivots: 107/107 total now pass.
+The legacy secondary test still asserts trap establishment, then pivot and
+replacement entry (9/9 audit tests pass). Independent review approved this
+correction. Reference rows inject trap state; full application lifecycle proof
+is not implied. Runtime source and the prior bundle receipt are unchanged.
