@@ -49,3 +49,6 @@ poke-sim/reports/codex-qa-context-latest.md
 .env.local
 .env.*.local
 poke-sim/local-credentials.js
+
+# Bounded assertion receipts require their immutable raw execution logs.
+!poke-sim/source/bounded-assertions/**/*.log

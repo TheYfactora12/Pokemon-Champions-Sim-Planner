@@ -77,3 +77,5 @@ Project gate: 265 fast files and 12 offline DB files passed; four manual helpers
 ## Hosted change-detection repair
 
 Run 39479571527 at 443bd765744e06222685a532e7ea3e288c80ec96 failed change detection because GitHub's PR-diff API reported that the diff took too long to generate. Browser and syntax jobs passed; full project and battle jobs were skipped, not passes. The same path-filter action now uses its supported empty-token local Git comparison of the event base SHA and checked-out PR merge. Filters and failure handling remain unchanged. The focused host test passed 29 workflow assertions and 11 injection fixtures. No security settings or permissions changed.
+
+The next hosted run exposed an omitted independent/discrete.log: the local evidence existed but the general log-ignore rule excluded it from Git. The bounded checker failed closed. The exact retained file is now included, with a narrow ignore exception for bounded evidence logs; no receipt hashes, expected values or runtime behavior changed.
