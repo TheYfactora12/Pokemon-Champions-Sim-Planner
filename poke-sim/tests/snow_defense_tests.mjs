@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {snowDamageProbe} from '../tools/snow-defense-probes.mjs';
+import {snowDamageProbe,validDamageVector} from '../tools/snow-defense-probes.mjs';
 import {weatherProbe} from '../tools/weather-gas-probes.mjs';
 // SNOW-DEF-001: exact pinned Champions reference damage, not whole-weather proof.
 const expected=[42,42,42,44,44,44,44,46,46,46,46,48,48,48,48,50];
@@ -48,4 +48,13 @@ for(const side of ['player','opponent'])for(const mode of ['pivot','reentry'])fo
  assert.equal(r.reference.weather_hp,shield==='active'?115:91);
  assert.deepEqual(r.candidate,r.reference);
  assert(r.reference_log.some(l=>l.includes('|U-turn|')),'actual U-turn required');
+});
+test('SNOW-DEF-014 unsupported singles and extreme stats reject before runtime load',()=>{
+ for(const input of [{format:'singles'},{def:1,stage:-6},{def:Infinity},{def:NaN},{def:256},{stage:7}])assert.throws(()=>snowDamageProbe(input),/supports doubles|Unsupported/);
+});
+test('SNOW-DEF-015 nonnumerical oracle cannot count as agreement',()=>{
+ validDamageVector(Array(16).fill(0));
+ assert.throws(()=>validDamageVector(Array(16)),/Invalid numerical/);
+ for(const bad of [NaN,Infinity,-Infinity,null,false,undefined,-1,.5])assert.throws(()=>validDamageVector(Array(16).fill(bad)),/Invalid numerical/);
+ assert.throws(()=>snowDamageProbe({},s=>s.replace('let atk, def;','return NaN; let atk, def;')),/Invalid numerical/);
 });

@@ -32,3 +32,12 @@ canonical export, clean checks and exact-head hosted CI are required before this
 draft checkpoint completes. Actual hosted preview, production smoke and rollback
 remain separate gates; the prepared previous preview is not automatically updated
 or published by this change.
+
+The independent fa392530 retest confirms all four original failures and four
+healthy controls, plus 63 additional 16-roll vectors. Its extreme artificial
+Defense 1 / stage -6 diagnostic produced invalid reference values and is not a valid
+mechanics comparison. The probe now explicitly accepts doubles only, synthetic
+Defense 31..255 and stages -6..6, and rejects non-finite, non-integer or negative
+damage vectors before returning evidence. Singles requires a separate supported
+mapper and tests; no singles claim is made. These are test-harness guard changes,
+not a new battle-runtime repair.

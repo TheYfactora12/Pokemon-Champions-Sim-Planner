@@ -1,0 +1,29 @@
+{
+  "schema_version": "snow-harness-independent-review-v1",
+  "reviewed_at": "2026-10-21T04:58:37.7116332Z",
+  "engine_sha256": "081c9746fc599cefcf1518d8743991f23f299be195633e645b18f69f8caca3bd",
+  "reference_pin": "9b136a8c8cdb860a8ab96fa063f906604e352547",
+  "reviewed_files": {
+    "poke-sim/tests/snow_defense_tests.mjs": "db1ab1b57c962f633ae3d7fe1cf079b4ab5bbc5b9e3c462019b57e3f2f4a22f2",
+    "poke-sim/tools/snow-defense-probes.mjs": "69eebbf5f3235b0b12e3e736290e3188477034210e76b7b894e86e852457ae76",
+    "docs/release/SNOW_DEFENSE_2026-10-21.md": "b7312cd173f281114a8909aea974f81e88952a631c00e69523aae454b138e8f8"
+  },
+  "status": "passed_declared_scope",
+  "controls": [
+    "Sparse16array rejected",
+    "NaN Infinity negative infinity null false undefined negative and fractional values rejected",
+    "Runtime NaN mutation rejected",
+    "Singles and unsupported Defense/stage inputs rejected"
+  ],
+  "execution": {
+    "scope": "Two guard tests rerun independently after sparse fix; prior77full run retained separately",
+    "log": "snow-harness-final-controls.txt"
+  },
+  "prior_review": "snow-harness-review.json",
+  "limits": [
+    "Harness only; no runtime changes",
+    "Doubles only",
+    "Eviolite negative stages tera and typechart limitations retained",
+    "Parent final77run not counted as independent rerun"
+  ]
+}

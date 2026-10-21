@@ -6,10 +6,18 @@ import {localContext} from './probe-fly-repair.mjs';
 import {mapTeam} from './showdown-reference.mjs';
 const require=createRequire(import.meta.url);
 const mon=(name,ability,moves)=>({name,ability,moves,item:'',nature:'Hardy',level:50,evs:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0}});
+export function validDamageVector(values){
+ assert(Array.isArray(values)&&values.length===16&&Array.from(values).every(n=>Number.isSafeInteger(n)&&n>=0),'Invalid numerical damage oracle');
+}
 export function snowDamageProbe(input={},mutate){
  const defaults={move:'U-turn',weather:'snow',target:'Abomasnow',attacker:'Weezing',def:95,stage:0,side:'player',format:'doubles',suppressor:'Immunity',crit:false,item:'',types:null,gas:false,shield:'none'};
  assert(Object.keys(input).every(k=>Object.hasOwn(defaults,k)),'unsupported probe field');
  const x={...defaults,...input};
+ assert.equal(x.format,'doubles','Snow probe supports doubles only');
+ assert(Number.isInteger(x.def)&&x.def>=31&&x.def<=255,'Unsupported synthetic Defense domain: 31..255');
+ assert(Number.isInteger(x.stage)&&x.stage>=-6&&x.stage<=6,'Unsupported Defense stage');
+ assert(['player','opponent'].includes(x.side)&&['none','snow','sun','rain','sand'].includes(x.weather),'Unsupported side/weather');
+ assert(typeof x.crit==='boolean'&&typeof x.gas==='boolean'&&['none','active','consumed'].includes(x.shield),'Unsupported effect controls');
  const own={format:'champions',members:[mon(x.attacker,'Pressure',[x.move]),mon('Snorlax',x.suppressor,['Splash']),mon('Pikachu','Static',['Splash']),mon('Raichu','Static',['Splash'])]};
  const foe={format:'champions',members:[mon(x.target,'Pressure',['Splash']),mon('Snorlax','Immunity',['Splash']),mon('Pikachu','Static',['Splash']),mon('Raichu','Static',['Splash'])]};
  foe.members[0].item=x.item;
@@ -38,5 +46,6 @@ export function snowDamageProbe(input={},mutate){
   candidate.push(a.calcDamage(x.move,t,f,null,()=>(k+.5)/16));
  }
  const referenceLog=[...b.log];b.destroy();
+ validDamageVector(reference);validDamageVector(candidate);
  return {input:x,teams,reference,candidate,reference_log:referenceLog};
 }
