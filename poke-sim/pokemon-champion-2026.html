@@ -12458,6 +12458,9 @@ class Pokemon {
     const base = { atk:this.baseAtk, def:this.baseDef, spa:this.baseSpa, spd:this.baseSpd, spe:this.baseSpe }[stat];
     const boost = this.statBoosts[stat] || 0;
     let val = boost >= 0 ? base * boostTable[boost] : base / boostTable[-boost];
+    // Eviolite's defensive lane: stage truncation precedes weather/item modifiers.
+    const evioliteDefense = (stat === 'def' || stat === 'spd') && this.item === 'Eviolite';
+    if (evioliteDefense) val = Math.floor(val);
     // Paralysis halves speed (Gen 9 — no action skip, speed only)
     if (stat === 'spe' && this.status === 'paralysis') val *= 0.5;
     // Sand Rush doubles speed in sand
@@ -12468,8 +12471,8 @@ class Pokemon {
     if (stat === 'atk' && (this.ability === 'Huge Power' || this.ability === 'Pure Power')) val *= 2;
     // Standard baseline: Rock-types gain 1.5x Special Defense in sand.
     if (stat === 'spd' && effectiveWeather === 'sand' && Array.isArray(this.types) && this.types.includes('Rock')) val *= 1.5;
-    // Eviolite for Dusclops
-    if ((stat === 'def' || stat === 'spd') && this.item === 'Eviolite') val *= 1.5;
+    // Sand's direct stat modifier rounds before Eviolite's chained 1.5x modifier.
+    if (evioliteDefense) val = _applyStatMod(Math.floor(val), 6144);
     // Choice Scarf modifies Speed; Band/Specs remain outside this lane.
     if (stat === 'spe' && this.item === 'Choice Scarf' && this.ability !== 'Klutz' && !this.itemConsumed) val *= 1.5;
     // (Choice Band / Choice Specs multipliers removed — #11 WONTFIX pattern.)

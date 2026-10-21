@@ -128,7 +128,8 @@
         "tests/type_multiplier_audit_tests.js",
         "tests/seismic_toss_tests.mjs",
         "tests/discrete_damage_reference_tests.mjs",
-        "tests/type_effectiveness_reference_tests.mjs"
+        "tests/type_effectiveness_reference_tests.mjs",
+        "tests/eviolite_order_tests.mjs"
       ],
       "known_gaps": [
         "Oracle fixtures cover selected supported moves and modifier combinations, not the complete Showdown interaction space.",
@@ -198,7 +199,8 @@
         "tests/white_herb_reference_tests.mjs",
         "tests/red_card_reference_tests.mjs",
         "tests/item_lifecycle_reference_tests.mjs",
-        "tests/charge_herb_suppression_tests.mjs"
+        "tests/charge_herb_suppression_tests.mjs",
+        "tests/eviolite_order_tests.mjs"
       ],
       "known_gaps": [
         "The complete legal item inventory and all item-ability-move interaction orders are not covered.",
@@ -232,7 +234,7 @@
         "tests/snow_defense_tests.mjs"
       ],
       "known_gaps": [
-        "Mixed weather suppression and full residual ordering remain incomplete; snow Eviolite with negative stages has a pre-existing truncation discrepancy."
+        "Mixed weather suppression and full residual ordering remain incomplete. Eviolite defensive stage/weather rounding has bounded pinned custom-game coverage; eligibility, suppression and offensive Body Press remain unproved."
       ]
     },
     {

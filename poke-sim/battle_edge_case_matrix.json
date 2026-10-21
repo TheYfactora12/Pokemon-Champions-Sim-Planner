@@ -14,6 +14,27 @@
   },
   "cases": [
     {
+      "id": "ITEM-EVIOLITE-DEFENSIVE-ROUNDING",
+      "family": "items",
+      "behavior": "Truncate defensive stages before weather, and weather before Eviolite.",
+      "status": "partial",
+      "tests": [
+        "tests/eviolite_order_tests.mjs"
+      ],
+      "oracle": "Showdown9b136a8c8cdb860a8ab96fa063f906604e352547; 221 frozen Champions custom doubles vectors; Eviolite Past, not ranked/client proof.",
+      "boundary_vectors": [
+        "both-orientations",
+        "stats31-95-97-255",
+        "stages-minus6-minus1-0-1-6",
+        "physical-Def-special-SpD-special-Def",
+        "snow-clear-sand-rain-sun",
+        "no-item-critical-controls",
+        "sand-SpD65-to145",
+        "four-mutation-controls"
+      ],
+      "known_gap": "Eviolite eligibility, suppression, consumption, offensive Body Press, singles, arbitrary combined modifiers and fresh client semantics remain unverified."
+    },
+    {
       "id": "ITEM-RED-CARD-WHITE-HERB",
       "family": "items",
       "behavior": "Red Card resolves after complete damage and White Herb clears negative stages at lifecycle boundaries before pivot entry.",
