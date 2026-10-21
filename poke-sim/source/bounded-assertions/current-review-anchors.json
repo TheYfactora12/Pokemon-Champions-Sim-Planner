@@ -28,6 +28,10 @@
     {
       "path": "source/bounded-assertions/reviews/344d4c46430d61588eee7eef7dcf2ef46d7db06fc961b096a9819bb0952ae368/review.json",
       "sha256": "5e3164ec55ef9985eddd024ee9c3e670de104afa133f4c94763715ec2ef8a624"
+    },
+    {
+      "path": "source/bounded-assertions/reviews/00b0fe33208adccb0a179c8bff076f4ef076b0c65607415e4721cd4d8f59cd02/review.json",
+      "sha256": "f02e52e784a3681753b36e1481f534819e52d40a08f2520151a0e6206780131d"
     }
   ]
 }

@@ -33,3 +33,20 @@ This changes runtime dependencies and therefore stales historical tracker result
 Fresh dated captures and independent review must precede re-enrollment. Exact
 local, clean-checkout and hosted outcomes belong to the generated lifecycle export.
 No merge, production publication, database mutation or watcher enablement.
+
+## Frozen runtime and fresh evidence
+
+Runtime commit: 6bfd980f03380ad6663f3da974ba4f4f0e52ae52. The focused suite passed
+140 assertions against both installed and pinned current references; independent
+review retained exact engine hashes and the residual/simultaneous counterexamples.
+Current capture has 130 passing comparisons plus two matching simultaneous-KO
+sequences. Baseline engine aba6fd33 reproduces 88 failures / 42 controls under
+that same harness; baseline receipt explicitly names other current harness inputs.
+These are synthetic pinned-reference cases, not current-client proof.
+
+The v9 dated tracker has six current bounded passes, 43 stale historical versions
+and six blocked attempts. New current/history export identity is
+62cbc48216423a313b820d4ee6aa8c6c7f74fa19b807621885ff83021604de6d.
+The six cases retain their narrow scopes; weather cases are separate reviewed
+receipts, not blanket checked-off moves. Aggregate, clean-checkout and exact-head
+hosted completion must still be recorded in lifecycle evidence before completion.
