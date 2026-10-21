@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import fs from 'node:fs';
 import {evioliteDamageProbe,validDamageVector} from '../tools/eviolite-order-probes.mjs';
 import {verifyEvioliteReference} from '../tools/eviolite-reference-pin.mjs';
-verifyEvioliteReference();
+console.log('EVIO reference:',verifyEvioliteReference().identity);
 const contract=JSON.parse(fs.readFileSync(new URL('./fixtures/eviolite_order_v1.json',import.meta.url)));
 for(const c of contract.cases)test(`${c.id} ${c.input.side}/${c.input.move}/${c.input.weather}/${c.input.def}/${c.input.stage}`,()=>{
  const r=evioliteDamageProbe(c.input);validDamageVector(c.expected);

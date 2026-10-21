@@ -9,5 +9,10 @@
     "sim/battle.ts": "966fe2263d943343bebc7bbf44ba5ec93454448276a6d45b497885d304dfda58"
   },
   "dist_js_sha256": "58da20a619f4eae3c0b5766867ef3d4ee6ec0efae52f0366e4ff47ce20829827",
-  "dist_js_count": 525
+  "dist_js_count": 525,
+  "shared": {
+    "version": "0.11.11",
+    "dist_js_count": 473,
+    "dist_js_sha256": "427e76a4dd30f4d9e17ca6a21ceb51c790e10cbef126ad930c4130718891aa36"
+  }
 }
