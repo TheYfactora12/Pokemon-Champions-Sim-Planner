@@ -16,13 +16,13 @@ not certified. No publication or release-readiness claim.
 
 ## Current development candidate
 
-Last completed published draft checkpoint is `0e23c061cc7ebb453a644b1dd220c549d35c563a`; all six jobs in [39551882693](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39551882693) passed at 2026-10-21T06:20:26Z. Its tested source is `a2c26bb1452bec0e4e16b1ea24b88ebec303db8c`. It is not deployed.
+Last completed draft checkpoint is `3e441cf3773b3120acf89351e2674523c9739bd5`; all six jobs in [39562265788](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39562265788) passed at 2026-10-21T07:58:18Z. Its tested type-chart source is `5c93802893a15bb9716f9143fe20f2cfc5a7c345`. It is not deployed.
 
-Current type-chart repair is v2.2.246-type-chart / engine 1.1.46. See [bounded matrix evidence](docs/release/TYPE_EFFECTIVENESS_2026-10-21.md). The baseline matrix and original U-turn probes pass locally; aggregate, fresh dated enrollment, clean checkout and exact-head hosted checks are pending. Prior runtime checks correctly become stale after this mechanics change.
+Current integration is v2.2.247-eviolite-order / engine 1.1.47. The bounded defensive Eviolite rounding patch is integrated from the isolated reviewed candidate; see [scope and evidence](docs/release/EVIOLITE_ORDER_2026-10-21.md). Fresh runtime captures, integration review, aggregate/clean-checkout tests and exact-head hosted checks are pending. Previous runtime receipts become stale until freshly executed and reviewed.
 
-Production observed at 2026-10-21T06:20:50.695Z remains v2.2.216-beta-feedback, now scheduled-news commit `ed8e11ca263bf4d06d95a8811aed3b83c9b9edfe`, bundle SHA256 `c6f77f54100b857521014dc3c2b5848ad58c6ff1234267653f3e556799b50808`. Existing deployment [39545921411](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39545921411) passed. This is identity verification, not remote E2E. CI browser evidence uses localhost. Private preview approval remains pending; no preview, credentials or deployment were created by this task.
+Production observed on 2026-10-21 remains v2.2.216-beta-feedback at scheduled-news commit `ed8e11ca263bf4d06d95a8811aed3b83c9b9edfe`, bundle SHA256 `c6f77f54100b857521014dc3c2b5848ad58c6ff1234267653f3e556799b50808`. Existing deployment [39545921411](https://github.com/TheYfactora12/Pokemon-Champions-Sim-Planner/actions/runs/39545921411) passed. This is identity verification, not remote E2E. CI browser evidence uses localhost. Private preview approval remains pending.
 
-Open: Eviolite/negative-stage rounding, Fly/Eject Button, broader paired-format coverage, official eligibility and current-client proof. Workflow 349252390 remains disabled; last seed health parsed 9/15 without full discovery. M-C candidate inventory 392 forms, 537 moves, 166 items and 23,756 pairs is reference coverage only. No universal accuracy percentage is established.
+Open: Eviolite eligibility/consumption/suppression and Body Press interactions, Fly/Eject Button, broader paired-format coverage, official eligibility and current-client proof. Workflow 349252390 remains disabled; last seed health parsed 9/15 without full discovery. M-C candidate inventory 392 forms, 537 moves, 166 items and 23,756 pairs is reference coverage only. No universal accuracy percentage is established. No merge, preview publication, production deployment, credentials or settings change is included.
 
 ## Historical development checkpoints
 
